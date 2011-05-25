@@ -295,7 +295,10 @@ INTSRC0 = \
 	sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
 	unshare.cpp sequence.cpp \
-	bin-packing.cpp bin-packing/propagate.cpp
+	bin-packing.cpp bin-packing/propagate.cpp \
+	unary.cpp cumulative.cpp cumulatives.cpp \
+	circuit.cpp
+
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
 	exec.hh exec/when.hpp \
@@ -338,7 +341,21 @@ INTHDR0 = \
 	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
 	sequence.hh sequence/int.hpp sequence/view.hpp \
 	sequence/set-op.hpp sequence/violations.hpp \
-	bin-packing.hh bin-packing/propagate.hpp
+	bin-packing.hh bin-packing/propagate.hpp \
+	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
+	task/iter.hpp task/tree.hpp task/purge.hpp task/prop.hpp \
+	task/man-to-opt.hpp \
+	unary.hh unary/task.hpp unary/task-view.hpp \
+	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
+	unary/not-first-not-last.hpp \
+	unary/edge-finding.hpp unary/subsumption.hpp \
+	unary/man-prop.hpp unary/opt-prop.hpp \
+	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
+	cumulative/task-view.hpp cumulative/overload.hpp \
+	cumulative/basic.hpp cumulative/task.hpp cumulative/edge-finding.hpp \
+	cumulative/tree.hpp \
+	cumulatives.hh cumulatives/val.hpp \
+	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -375,7 +392,8 @@ endif
 INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
 	int/channel int/linear int/bool int/branch int/exec \
-	int/element int/sequence int/bin-packing
+	int/element int/sequence int/bin-packing \
+	int/unary int/cumulative int/cumulatives int/task
 
 #
 # SET COMPONENTS
@@ -458,105 +476,6 @@ SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
 	set/element set/sequence set/var set/var-imp set/view \
 	set/branch
-
-#
-# GRAPH COMPONENTS
-#
-
-GRAPHSRC0 = \
-	circuit.cpp
-GRAPHHDR0 = \
-	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
-
-GRAPHSRC	= $(GRAPHSRC0:%=gecode/graph/%)
-GRAPHHDR	= gecode/graph.hh $(GRAPHHDR0:%=gecode/graph/%)
-GRAPHOBJ	= $(GRAPHSRC:%.cpp=%$(OBJSUFFIX))
-
-ifeq "@enable_graph@" "yes"
-export GRAPHDLL		= $(LIBPREFIX)@GRAPH@$(DLLSUFFIX)
-export GRAPHSTATICLIB	= $(LIBPREFIX)@GRAPH@$(STATICLIBSUFFIX)
-export GRAPHLIB		= $(LIBPREFIX)@GRAPH@$(LIBSUFFIX)
-export LINKGRAPH      	= $(LINKPREFIX)@GRAPH@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export GRAPHSONAME	= \
-	@WLSONAME@$(LIBPREFIX)@GRAPH@$(SOSUFFIX)
-else
-export GRAPHSONAME	= 
-endif
-ifeq "@enable_resource@" "yes"
-export GRAPHRC		= $(LIBPREFIX)@GRAPH@$(RCSUFFIX)
-export GRAPHRES		= $(LIBPREFIX)@GRAPH@$(RESSUFFIX)
-else
-export GRAPHRES		=
-export GRAPHRC		=
-endif
-else
-export GRAPHDLL		=
-export GRAPHSTATICLIB	=
-export GRAPHLIB		=
-export LINKGRAPH      	=
-export GRAPHRES		=
-export GRAPHRC		=
-endif
-GRAPHBUILDDIRS	= \
-	graph
-
-
-#
-# SCHEDULING COMPONENTS
-#
-
-SCHEDULINGSRC0 = \
-	 unary.cpp cumulative.cpp cumulatives.cpp
-
-SCHEDULINGHDR0 = \
-	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
-	task/iter.hpp task/tree.hpp task/purge.hpp task/prop.hpp \
-	task/man-to-opt.hpp \
-	unary.hh unary/task.hpp unary/task-view.hpp \
-	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
-	unary/not-first-not-last.hpp \
-	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/man-prop.hpp unary/opt-prop.hpp \
-	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
-	cumulative/task-view.hpp cumulative/overload.hpp \
-	cumulative/basic.hpp cumulative/task.hpp cumulative/edge-finding.hpp \
-	cumulative/tree.hpp \
-	cumulatives.hh cumulatives/val.hpp
-
-SCHEDULINGSRC	= $(SCHEDULINGSRC0:%=gecode/scheduling/%)
-SCHEDULINGHDR	= gecode/scheduling.hh $(SCHEDULINGHDR0:%=gecode/scheduling/%)
-SCHEDULINGOBJ	= $(SCHEDULINGSRC:%.cpp=%$(OBJSUFFIX))
-
-ifeq "@enable_scheduling@" "yes"
-export SCHEDULINGDLL		= $(LIBPREFIX)@SCHEDULING@$(DLLSUFFIX)
-export SCHEDULINGSTATICLIB	= $(LIBPREFIX)@SCHEDULING@$(STATICLIBSUFFIX)
-export SCHEDULINGLIB		= $(LIBPREFIX)@SCHEDULING@$(LIBSUFFIX)
-export LINKSCHEDULING      	= $(LINKPREFIX)@SCHEDULING@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export SCHEDULINGSONAME	= \
-	@WLSONAME@$(LIBPREFIX)@SCHEDULING@$(SOSUFFIX)
-else
-export SCHEDULINGSONAME	= 
-endif
-ifeq "@enable_resource@" "yes"
-export SCHEDULINGRC		= $(LIBPREFIX)@SCHEDULING@$(RCSUFFIX)
-export SCHEDULINGRES		= $(LIBPREFIX)@SCHEDULING@$(RESSUFFIX)
-else
-export SCHEDULINGRES		=
-export SCHEDULINGRC		=
-endif
-else
-export SCHEDULINGDLL		=
-export SCHEDULINGSTATICLIB	=
-export SCHEDULINGLIB		=
-export LINKSCHEDULING      	=
-export SCHEDULINGRES		=
-export SCHEDULINGRC		=
-endif
-SCHEDULINGBUILDDIRS	= \
-	scheduling scheduling/unary scheduling/cumulative scheduling/cumulatives \
-	scheduling/task
 
 
 #
@@ -798,7 +717,7 @@ INTEXAMPLESRC0 =						\
 	minesweeper domino steel-mill sports-league		\
 	all-interval langford-number warehouses	radiotherapy    \
 	word-square crossword open-shop car-sequencing sat      \
-	bin-packing
+	bin-packing knights tsp perfect-square
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
@@ -817,29 +736,10 @@ else
 SETEXAMPLEEXE  = 
 endif
 
-GRAPHEXAMPLESRC0 = \
-	knights tsp
-GRAPHEXAMPLESRC  = $(GRAPHEXAMPLESRC0:%=examples/%.cpp)
-ifeq "@enable_graph@" "yes"
-GRAPHEXAMPLEEXE  = $(GRAPHEXAMPLESRC:%.cpp=%$(EXESUFFIX))
-else
-GRAPHEXAMPLEEXE  = 
-endif
-
-SCHEDULINGEXAMPLESRC0 = \
-	perfect-square
-SCHEDULINGEXAMPLESRC  = $(SCHEDULINGEXAMPLESRC0:%=examples/%.cpp)
-ifeq "@enable_scheduling@" "yes"
-SCHEDULINGEXAMPLEEXE  = $(SCHEDULINGEXAMPLESRC:%.cpp=%$(EXESUFFIX))
-else
-SCHEDULINGEXAMPLEEXE  = 
-endif
-
-
 EXAMPLEBUILDDIRS = examples
 
 EXAMPLEEXE = \
-  $(INTEXAMPLEEXE) $(GRAPHEXAMPLEEXE) $(SCHEDULINGEXAMPLEEXE) $(SETEXAMPLEEXE)
+  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
 
 
 
@@ -849,14 +749,12 @@ EXAMPLEEXE = \
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(MMSRC) $(GRAPHSRC) $(SCHEDULINGSRC) \
-	$(DRIVERSRC) \
+        $(INTSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
-	$(GRAPHEXAMPLESRC) $(SCHEDULINGEXAMPLESRC) \
 	$(GISTSRC) $(FLATZINCALLSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(MMHDR) $(GRAPHHDR) $(SCHEDULINGHDR) \
+        $(INTHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
 	$(INTEXAMPLEHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
@@ -870,12 +768,10 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(MMDLL) $(GRAPHDLL) $(SCHEDULINGDLL) $(DRIVERDLL) $(GISTDLL) \
-	$(FLATZINCDLL)
+	$(MMDLL) $(DRIVERDLL) $(GISTDLL) $(FLATZINCDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(MMLIB) $(GRAPHLIB) $(SCHEDULINGLIB) $(DRIVERLIB) $(GISTLIB) \
-	$(FLATZINCLIB)
+	$(MMLIB) $(DRIVERLIB) $(GISTLIB) $(FLATZINCLIB)
 else
 DLLTARGETS=
 ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
@@ -883,8 +779,7 @@ export ALLLIB = gecode.framework/Versions/@GECODE_SOVERSION@/gecode
 else
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 endif
 endif
@@ -892,8 +787,7 @@ endif
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) \
-	$(MMSTATICLIB) $(GRAPHSTATICLIB) $(SCHEDULINGSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 else
 STATICTARGETS=
@@ -929,7 +823,7 @@ INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
 	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
-	bin-packing
+	bin-packing unary cumulative cumulatives circuit
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 
@@ -943,27 +837,6 @@ SETTESTOBJ = $(SETTESTSRC0:%.cpp=%$(OBJSUFFIX))
 else
 SETTESTOBJ=
 endif
-
-SCHEDULINGTESTSRC00 = \
-	unary cumulative cumulatives
-SCHEDULINGTESTSRC0 = $(SCHEDULINGTESTSRC00:%=test/scheduling/%.cpp)
-
-ifeq "@enable_scheduling@" "yes"
-SCHEDULINGTESTOBJ = $(SCHEDULINGTESTSRC0:%.cpp=%$(OBJSUFFIX))
-else
-SCHEDULINGTESTOBJ =
-endif
-
-GRAPHTESTSRC00 = \
-	circuit
-GRAPHTESTSRC0 = $(GRAPHTESTSRC00:%=test/graph/%.cpp)
-
-ifeq "@enable_graph@" "yes"
-GRAPHTESTOBJ = $(GRAPHTESTSRC0:%.cpp=%$(OBJSUFFIX))
-else
-GRAPHTESTOBJ =
-endif
-
 
 BRANCHTESTSRC0 = \
 	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
@@ -981,7 +854,6 @@ TESTSRC0 = test/test.cpp test/afc.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) \
-	$(SCHEDULINGTESTSRC0) $(GRAPHTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0) \
 	$(ARRAYTESTSRC0)
 
@@ -990,15 +862,13 @@ TESTHDR0 = \
 	branch.hh assign.hh
 TESTHDR = $(TESTHDR0:%=test/%)
 TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) \
-	$(SCHEDULINGTESTOBJ) $(GRAPHTESTOBJ) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(ARRAYTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/branch test/assign \
-	test/scheduling test/graph
+TESTBUILDDIRS = test test/int test/set test/branch test/assign
 
 BUILDDIRS = \
 	tools \
@@ -1006,8 +876,6 @@ BUILDDIRS = \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
-	$(GRAPHBUILDDIRS:%=gecode/%)  \
-	$(SCHEDULINGBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
 	$(FLATZINCBUILDDIRS) \
@@ -1058,7 +926,7 @@ makecompletedmessage:
 	@echo make install
 	@echo
 
-# ugly hack by Grï¿½goire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
+# ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
 # used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
 .PHONY: contribs\:%
 contribs\:%:
@@ -1166,20 +1034,6 @@ gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-
-gecode/graph/%$(OBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_GRAPH_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/graph/%$(SBJSUFFIX): $(top_srcdir)/gecode/graph/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_GRAPH_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-
-gecode/scheduling/%$(OBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/scheduling/%$(SBJSUFFIX): $(top_srcdir)/gecode/scheduling/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SCHEDULING_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
@@ -1290,8 +1144,7 @@ export LINKALL = -F. -framework gecode
 else
 export LINKALL = \
 	$(LINKFLATZINC) $(LINKDRIVER) $(LINKGIST) \
-	$(LINKSEARCH) $(LINKMM) $(LINKSCHEDULING) \
-	$(LINKGRAPH) $(LINKSET) $(LINKINT) \
+	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 endif
 
@@ -1330,18 +1183,6 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(GRAPHDLL): $(GRAPHOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) $(GRAPHSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		@LINKOUTPUT@$(GRAPHDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SCHEDULINGDLL): $(SCHEDULINGOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) $(SCHEDULINGSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		@LINKOUTPUT@$(SCHEDULINGDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(DRIVERDLL): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL) 
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKGIST) \
@@ -1355,12 +1196,10 @@ $(GISTDLL): $(GISTOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(FLATZINCDLL): $(FLATZINCOBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) \
-	$(INTDLL) $(SETDLL) $(GISTDLL) $(MMDLL) $(SCHEDULINGDLL) $(DRIVERDLL) \
-	$(GRAPHDLL)
+	$(INTDLL) $(SETDLL) $(GISTDLL) $(MMDLL) $(DRIVERDLL)
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) \
-		$(LINKSET) $(LINKMM) $(LINKSCHEDULING) $(LINKGRAPH) \
-		$(LINKGIST) $(LINKDRIVER) $(LINKQT) \
+		$(LINKSET) $(LINKMM) $(LINKGIST) $(LINKDRIVER) $(LINKQT) \
 		@LINKOUTPUT@$(FLATZINCDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1429,28 +1268,6 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(MMRES) \
 	$(MANIFEST) -manifest $(MMDLL).manifest \
 		    -outputresource:$(MMDLL)\;2
 ifeq "@enable_resource@" "yes"
-$(GRAPHRC):
-	$(RCGEN) $(GRAPHDLL) $(GRAPHHDR) $(GRAPHSRC) > $@
-endif
-$(GRAPHDLL) $(GRAPHLIB): $(GRAPHOBJ) $(GRAPHRES) \
-	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(GRAPHOBJ) $(GRAPHRES) \
-		@DLLPATH@ @LINKOUTPUT@$(GRAPHDLL) $(GLDFLAGS)
-	$(FIXMANIFEST) $(GRAPHDLL).manifest
-	$(MANIFEST) -manifest $(GRAPHDLL).manifest \
-		    -outputresource:$(GRAPHDLL)\;2
-ifeq "@enable_resource@" "yes"
-$(SCHEDULINGRC):
-	$(RCGEN) $(SCHEDULINGDLL) $(SCHEDULINGHDR) $(SCHEDULINGSRC) > $@
-endif
-$(SCHEDULINGDLL) $(SCHEDULINGLIB): $(SCHEDULINGOBJ) $(SCHEDULINGRES) \
-	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SCHEDULINGOBJ) $(SCHEDULINGRES) \
-		@DLLPATH@ @LINKOUTPUT@$(SCHEDULINGDLL) $(GLDFLAGS)
-	$(FIXMANIFEST) $(SCHEDULINGDLL).manifest
-	$(MANIFEST) -manifest $(SCHEDULINGDLL).manifest \
-		    -outputresource:$(SCHEDULINGDLL)\;2
-ifeq "@enable_resource@" "yes"
 $(DRIVERRC):
 	$(RCGEN) $(DRIVERDLL) $(DRIVERHDR) $(DRIVERSRC) > $@
 endif
@@ -1479,8 +1296,7 @@ $(FLATZINCRC):
 endif
 $(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(FLATZINCRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) \
-	$(SETDLL) $(GISTDLL) $(MMDLL) $(SCHEDULINGDLL) $(DRIVERDLL) \
-	$(GRAPHDLL)
+	$(SETDLL) $(GISTDLL) $(MMDLL) $(DRIVERDLL)
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) \
 		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
 	$(FIXMANIFEST) $(FLATZINCDLL).manifest
@@ -1509,12 +1325,6 @@ $(SETSTATICLIB): $(SETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
-	$(RANLIB) $@
-$(GRAPHSTATICLIB): $(GRAPHOBJ)
-	$(AR) $(ARFLAGS) $@ $(GRAPHOBJ)
-	$(RANLIB) $@
-$(SCHEDULINGSTATICLIB): $(SCHEDULINGOBJ)
-	$(AR) $(ARFLAGS) $@ $(SCHEDULINGOBJ)
 	$(RANLIB) $@
 $(DRIVERSTATICLIB): $(DRIVEROBJ)
 	$(AR) $(ARFLAGS) $@ $(DRIVEROBJ)

@@ -40,7 +40,6 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
-#include <gecode/scheduling.hh>
 
 using namespace Gecode;
 

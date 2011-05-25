@@ -40,7 +40,6 @@
 #include <gecode/driver.hh>
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
-#include <gecode/graph.hh>
 
 #if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
 #include <QtGui>

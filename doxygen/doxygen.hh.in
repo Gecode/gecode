@@ -144,16 +144,6 @@
  */
 
 /**
- * \defgroup TaskTestScheduling Testing scheduling constraints
- * \ingroup TaskTest
- */
-
-/**
- * \defgroup TaskTestGraph Testing graph constraints
- * \ingroup TaskTest
- */
-
-/**
  * \defgroup Func Common functionality
  */
 
@@ -263,22 +253,6 @@
  * This module contains a description of all predefined integer 
  * propagators. They can be reused, for example, for rewriting
  * newly defined integer propagators into already available
- * propagators.
- * \ingroup Other
- */
-
-/**
- * \defgroup FuncGraphProp Graph propagators
- *
- * This module contains a description of all predefined graph
- * propagators.
- * \ingroup Other
- */
-
-/**
- * \defgroup FuncScheduingProp Scheduling propagators
- *
- * This module contains a description of all predefined scheduling
  * propagators.
  * \ingroup Other
  */

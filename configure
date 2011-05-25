@@ -616,9 +616,7 @@ subdirs
 enable_search
 enable_minimodel
 enable_examples
-enable_scheduling
 enable_flatzinc
-enable_graph
 enable_driver
 HAVEBISON
 HAVE_FLEXBISON
@@ -643,8 +641,6 @@ DOT
 DRIVER
 FLATZINC
 GIST
-GRAPH
-SCHEDULING
 MM
 SET
 INT
@@ -672,8 +668,6 @@ MANIFEST
 GECODE_BUILD_DRIVER_FLAG
 GECODE_BUILD_FLATZINC_FLAG
 GECODE_BUILD_GIST_FLAG
-GECODE_BUILD_GRAPH_FLAG
-GECODE_BUILD_SCHEDULING_FLAG
 GECODE_BUILD_MINIMODEL_FLAG
 GECODE_BUILD_SET_FLAG
 GECODE_BUILD_INT_FLAG
@@ -789,9 +783,7 @@ enable_int_vars
 enable_qt
 enable_gist
 enable_driver
-enable_graph
 enable_flatzinc
-enable_scheduling
 enable_examples
 enable_minimodel
 enable_search
@@ -1446,9 +1438,7 @@ Optional Features:
   --enable-gist           build Gecode Interactive Search Tool [default=yes]
   --enable-driver         build script commandline driver library
                           [default=yes]
-  --enable-graph          build graph library [default=yes]
   --enable-flatzinc       build FlatZinc interpreter [default=yes]
-  --enable-scheduling     build scheduling library [default=yes]
   --enable-examples       build examples for the enabled variable types
                           [default=yes]
   --enable-minimodel      build modeling support library for the enabled
@@ -6275,10 +6265,6 @@ gnu)
 
    GECODE_BUILD_MINIMODEL_FLAG=""
 
-   GECODE_BUILD_SCHEDULING_FLAG=""
-
-   GECODE_BUILD_GRAPH_FLAG=""
-
    GECODE_BUILD_GIST_FLAG=""
 
    GECODE_BUILD_FLATZINC_FLAG=""
@@ -6321,10 +6307,6 @@ gnu)
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
-   GECODE_BUILD_GRAPH_FLAG="-DGECODE_BUILD_GRAPH"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
@@ -6357,10 +6339,6 @@ gnu)
    GECODE_BUILD_SET_FLAG=""
 
    GECODE_BUILD_MINIMODEL_FLAG=""
-
-   GECODE_BUILD_SCHEDULING_FLAG=""
-
-   GECODE_BUILD_GRAPH_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
 
@@ -7296,12 +7274,6 @@ fi
   INT="int"
 
   SET="set"
-
-  MM="minimodel"
-
-  SCHEDULING="scheduling"
-
-  GRAPH="graph"
 
   MM="minimodel"
 
@@ -8483,10 +8455,6 @@ fi
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
-   GECODE_BUILD_GRAPH_FLAG="-DGECODE_BUILD_GRAPH"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
@@ -8524,10 +8492,6 @@ fi
   SET="Set"
 
   MM="Minimodel"
-
-  SCHEDULING="Scheduling"
-
-  GRAPH="Graph"
 
   GIST="Gist"
 
@@ -8653,10 +8617,6 @@ $as_echo "no" >&6; }
 
    GECODE_BUILD_MINIMODEL_FLAG=""
 
-   GECODE_BUILD_SCHEDULING_FLAG=""
-
-   GECODE_BUILD_GRAPH_FLAG=""
-
    GECODE_BUILD_GIST_FLAG=""
 
    GECODE_BUILD_FLATZINC_FLAG=""
@@ -8699,10 +8659,6 @@ $as_echo "no" >&6; }
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
-   GECODE_BUILD_GRAPH_FLAG="-DGECODE_BUILD_GRAPH"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
@@ -8735,10 +8691,6 @@ $as_echo "no" >&6; }
    GECODE_BUILD_SET_FLAG=""
 
    GECODE_BUILD_MINIMODEL_FLAG=""
-
-   GECODE_BUILD_SCHEDULING_FLAG=""
-
-   GECODE_BUILD_GRAPH_FLAG=""
 
    GECODE_BUILD_GIST_FLAG=""
 
@@ -9677,12 +9629,6 @@ fi
 
   MM="minimodel"
 
-  SCHEDULING="scheduling"
-
-  GRAPH="graph"
-
-  MM="minimodel"
-
   GIST="gist"
 
   FLATZINC="flatzinc"
@@ -10429,10 +10375,6 @@ fi
 
    GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
-   GECODE_BUILD_SCHEDULING_FLAG="-DGECODE_BUILD_SCHEDULING"
-
-   GECODE_BUILD_GRAPH_FLAG="-DGECODE_BUILD_GRAPH"
-
    GECODE_BUILD_GIST_FLAG="-DGECODE_BUILD_GIST"
 
    GECODE_BUILD_FLATZINC_FLAG="-DGECODE_BUILD_FLATZINC"
@@ -10470,10 +10412,6 @@ fi
   SET="Set"
 
   MM="Minimodel"
-
-  SCHEDULING="Scheduling"
-
-  GRAPH="Graph"
 
   GIST="Gist"
 
@@ -11375,28 +11313,6 @@ $as_echo "no" >&6; }
 
 
 
-     # Check whether --enable-graph was given.
-if test "${enable_graph+set}" = set; then :
-  enableval=$enable_graph;
-fi
-
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build graph" >&5
-$as_echo_n "checking whether to build graph... " >&6; }
-     if test "${enable_graph:-yes}" = "yes"; then
-        enable_graph="yes";
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-        enable_int="yes";
-
-     else
-        enable_graph="no";
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-     fi
-        enable_graph=${enable_graph}
-
-
-
      # Check whether --enable-flatzinc was given.
 if test "${enable_flatzinc+set}" = set; then :
   enableval=$enable_flatzinc;
@@ -11411,8 +11327,6 @@ $as_echo "yes" >&6; }
         enable_search="yes";
    enable_driver="yes";
    enable_minimodel="yes";
-   enable_graph="yes";
-   enable_scheduling="yes";
 
      else
         enable_flatzinc="no";
@@ -11420,28 +11334,6 @@ $as_echo "yes" >&6; }
 $as_echo "no" >&6; }
      fi
         enable_flatzinc=${enable_flatzinc}
-
-
-
-     # Check whether --enable-scheduling was given.
-if test "${enable_scheduling+set}" = set; then :
-  enableval=$enable_scheduling;
-fi
-
-     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build scheduling" >&5
-$as_echo_n "checking whether to build scheduling... " >&6; }
-     if test "${enable_scheduling:-yes}" = "yes"; then
-        enable_scheduling="yes";
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-        enable_int="yes";
-
-     else
-        enable_scheduling="no";
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-     fi
-        enable_scheduling=${enable_scheduling}
 
 
 

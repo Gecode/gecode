@@ -73,6 +73,22 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: graph
+What:   change
+Rank:   major
+[DESCRIPTION]
+The graph module has been removed and its constraints have been
+added to the integer module.
+
+[ENTRY]
+Module: scheduling
+What:   change
+Rank:   major
+[DESCRIPTION]
+The scheduling module has been removed and its constraints have been
+added to the integer module.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

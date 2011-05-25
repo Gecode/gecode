@@ -56,7 +56,10 @@ if (!(T)) {                                                     \
   }                                                             \
   test = (T);
 
-namespace Test { namespace Array { namespace Iterator {
+namespace Test { 
+
+  /// Tests for arrays
+  namespace Array {
 
   /// Test name prefix
   static const std::string prefix("Array::Iterator::");
@@ -269,6 +272,6 @@ namespace Test { namespace Array { namespace Iterator {
     }
   } sharedArrayIteratorTest;
 
-} } }
+}}
 
 // STATISTICS: test-kernel

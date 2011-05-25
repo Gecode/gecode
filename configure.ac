@@ -277,24 +277,12 @@ AC_GECODE_ENABLE_MODULE(driver, yes,
          enable_int="yes";
 	])
 
-AC_GECODE_ENABLE_MODULE(graph, yes,
-	[build graph library],
-	[enable_int="yes";
-	])
-
 AC_GECODE_ENABLE_MODULE(flatzinc, yes,
   [build FlatZinc interpreter],
   [enable_search="yes";
    enable_driver="yes";
    enable_minimodel="yes";
-   enable_graph="yes";
-   enable_scheduling="yes";
   ])
-
-AC_GECODE_ENABLE_MODULE(scheduling, yes,
-	[build scheduling library],
-	[enable_int="yes";
-	])
 
 AC_GECODE_ENABLE_MODULE(driver, yes,
 	[build script commandline driver library],

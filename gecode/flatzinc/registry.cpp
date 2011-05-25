@@ -42,8 +42,6 @@
 #include <gecode/flatzinc/registry.hh>
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
-#include <gecode/scheduling.hh>
-#include <gecode/graph.hh>
 #include <gecode/minimodel.hh>
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
