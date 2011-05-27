@@ -332,10 +332,10 @@ if ($gen_typehpp) {
       print $meh[$f][$i];
       print "  const Gecode::ModEvent ME_" . $vti[$f] . "_${n} = ";
       if ($mespecial{$f}{$n}) {
-	      print "Gecode::ME_GEN_" . $mespecial{$f}{$n};
+	print "Gecode::ME_GEN_" . $mespecial{$f}{$n};
       } else {
-	      print "static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+" . $o . ")";
-	      $o++;
+	print "Gecode::ME_GEN_ASSIGNED + " . $o;
+	$o++;
       }
       print ";\n";
     }
@@ -351,7 +351,7 @@ if ($gen_typehpp) {
       if ($pcspecial{$f}{$n}) {
 	print "Gecode::PC_GEN_" . $pcspecial{$f}{$n};
       } else {
-	print "static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + " . $o . ")";
+	print "Gecode::PC_GEN_ASSIGNED + " . $o;
 	$o++;
       }
       print ";\n";
@@ -467,9 +467,9 @@ if ($gen_typehpp) {
     print "  $conf[$f]::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {\n";
 
     if ($me_max_n[$f] == 2) {
-      print "    return static_cast<Gecode::ModEvent>(static_cast<int>(me1) | static_cast<int>(me2));\n";
+      print "    return me1 | me2;\n";
     } elsif ($me_max_n[$f] <= 4) {
-      print "    static const int me_c = (\n";
+      print "    static const Gecode::ModEvent me_c = (\n";
 
       for ($i=0; $i<$me_max_n[$f];$i++) {
 	$n1 = $val2me[$f][$i];
@@ -496,7 +496,7 @@ if ($gen_typehpp) {
 	}
       }
       print "    );\n";
-      print "    return static_cast<Gecode::ModEvent>(((me_c >> (me2 << 3)) >> (me1 << 1)) & 3);\n";
+      print "    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;\n";
     } else {
       print "    static const Gecode::ModEvent me_c[$me_max[$f]][$me_max[$f]] = {\n";
       for ($i=0; $i<$me_max_n[$f];$i++) {
@@ -577,7 +577,7 @@ if ($gen_typehpp) {
 	} else {
           print "      {\n";
           if ($me_max_n[$f] <= 8) {
-            print "        static int me_c = (\n";
+            print "        static const Gecode::ModEvent me_c = (\n";
 	    for ($j=0; $j<$me_max_n[$f];$j++) {
 	      $n2 = $val2me[$f][$j];
 	      $n3 = $mec{$f}{$n1}{$n2};
@@ -591,8 +591,8 @@ if ($gen_typehpp) {
 	      }
 	    }
             print "\n        );\n";
-            print "        int me_o = (med & med_mask) >> med_fst;\n";
-            print "        int me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);\n";
+            print "        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n";
+            print "        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);\n";
             print "        if (me_n == 0)\n";
             print "          return false;\n";
             print "        med ^= me_n << med_fst;\n";
@@ -608,7 +608,7 @@ if ($gen_typehpp) {
 	      }
 	    }
             print "\n        };\n";
-            print "        int me_o = (med & med_mask) >> med_fst;\n";
+            print "        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;\n";
             print "        Gecode::ModEventDelta med_n = me_c[me_o];\n";
             print "        if (med_n == 0)\n";
             print "          return false;\n";
@@ -632,7 +632,7 @@ if ($gen_typehpp) {
   for ($f = 0; $f<$n_files; $f++) {
     $vic = "$namespace[$f]::$conf[$f]";
     print $ifdef[$f];
-    print "    (void) ${vic}::med_update(med1,static_cast<ModEvent>((static_cast<int>(med2)  & ${vic}::med_mask) >> ${vic}::med_fst));\n";
+    print "    (void) ${vic}::med_update(med1,(med2 & ${vic}::med_mask) >> ${vic}::med_fst);\n";
     print $endif[$f];
   }
   print "    return med1;\n";

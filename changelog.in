@@ -89,14 +89,6 @@ The scheduling module has been removed and its constraints have been
 added to the integer module.
 
 [ENTRY]
-Module: kernel
-What:   change
-Rank:   minor
-[DESCRIPTION]
-Changed ModEvent and PropCond into enum types, in order to get better
-compiler feedback when macros like GECODE_ME_CHECK are used incorrectly.
-
-[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
