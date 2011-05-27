@@ -124,6 +124,94 @@ namespace Gecode {
     circuit(home,c,0,x,z,icl);
   }
 
+  void
+  path(Home home, int offset, const IntVarArgs& x, IntConLevel icl) {
+    Int::Limits::nonnegative(offset,"Int::path");
+    int n=x.size();
+    if (n == 0)
+      throw Int::TooFewArguments("Int::path");
+    if (x.same(home))
+      throw Int::ArgumentSame("Int::path");
+    if (home.failed()) return;
+    ViewArray<Int::IntView> xv(home,n+1);
+    for (int i=n; i--; )
+      xv[i] = Int::IntView(x[i]);
+    xv[n] = Int::IntView(IntVar(home,offset,offset));
+
+    if (offset == 0) {
+      typedef Int::NoOffset<Int::IntView> NOV;
+      NOV no;
+      if (icl == ICL_DOM) {
+        GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView,NOV>
+                        ::post(home,xv,no)));
+      } else {
+        GECODE_ES_FAIL((Int::Circuit::Val<Int::IntView,NOV>
+                        ::post(home,xv,no)));
+      }
+    } else {
+      typedef Int::Offset OV;
+      OV off(-offset);
+      if (icl == ICL_DOM) {
+        GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView,OV>
+                        ::post(home,xv,off)));
+      } else {
+        GECODE_ES_FAIL((Int::Circuit::Val<Int::IntView,OV>
+                        ::post(home,xv,off)));
+      }
+    }
+  }
+  void
+  path(Home home, const IntVarArgs& x, IntConLevel icl) {
+    path(home,0,x,icl);
+  }
+  
+  void
+  path(Home home, const IntArgs& c, int offset,
+       const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+       IntConLevel icl) {
+    Int::Limits::nonnegative(offset,"Int::path");
+    int n = x.size();
+    if (n == 0)
+      throw Int::TooFewArguments("Int::path");
+    if (x.same(home))
+      throw Int::ArgumentSame("Int::path");
+    if ((y.size() != n) || (c.size() != n*n))
+      throw Int::ArgumentSizeMismatch("Int::path");
+    path(home, offset, x, icl);
+    if (home.failed()) return;
+    IntArgs cx(offset+n+1);
+    for (int i=0; i<offset; i++)
+      cx[i] = 0;
+    cx[offset+n] = 0;
+    for (int i=n; i--; ) {
+      for (int j=0; j<n; j++)
+        cx[offset+j] = c[i*n+j];
+      element(home, cx, x[i], y[i]);
+    }
+    linear(home, y, IRT_EQ, z);
+  }
+  void
+  path(Home home, const IntArgs& c,
+       const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+       IntConLevel icl) {
+    path(home,c,0,x,y,z,icl);
+  }
+  void
+  path(Home home, const IntArgs& c, int offset,
+       const IntVarArgs& x, IntVar z, 
+       IntConLevel icl) {
+    Int::Limits::nonnegative(offset,"Int::path");
+    if (home.failed()) return;
+    IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
+    path(home, c, offset, x, y, z, icl);
+  }
+  void
+  path(Home home, const IntArgs& c,
+       const IntVarArgs& x, IntVar z, 
+       IntConLevel icl) {
+    path(home,c,0,x,z,icl);
+  }
+
 }
 
 // STATISTICS: int-post
