@@ -44,10 +44,10 @@ namespace Gecode {
   void
   circuit(Home home, int offset, const IntVarArgs& x, IntConLevel icl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
-    if (x.same(home))
-      throw Int::ArgumentSame("Int::circuit");
     if (x.size() == 0)
       throw Int::TooFewArguments("Int::circuit");
+    if (x.same(home))
+      throw Int::ArgumentSame("Int::circuit");
     if (home.failed()) return;
     ViewArray<Int::IntView> xv(home,x);
     
@@ -84,6 +84,10 @@ namespace Gecode {
           IntConLevel icl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
     int n = x.size();
+    if (n == 0)
+      throw Int::TooFewArguments("Int::circuit");
+    if (x.same(home))
+      throw Int::ArgumentSame("Int::circuit");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::circuit");
     circuit(home, offset, x, icl);
