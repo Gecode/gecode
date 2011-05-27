@@ -121,7 +121,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Added native support for link_set_to_booleans, 
-global_cardinality_low_up_closed, decreasing_bool, and among.
+global_cardinality_low_up_closed, and decreasing_bool.
 
 [ENTRY]
 Module: int
