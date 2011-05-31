@@ -83,9 +83,59 @@ namespace Test { namespace Int {
            Gecode::IntVarArgs xx(x.size());
            for (int i=x.size(); i--;)
              xx[i] = Gecode::expr(home, x[i]+offset);
-           Gecode::circuit(home, offset, xx);
+           Gecode::circuit(home, offset, xx, icl);
          } else {
            Gecode::circuit(home, x, icl);
+         }
+       }
+     };
+
+     /// Simple test for Hamiltonian path constraint
+     class Path : public Test {
+     private:
+       /// Offset
+       int offset;
+     public:
+       /// Create and register test
+       Path(int n, int min, int max, int off, Gecode::IntConLevel icl)
+         : Test("Path::" + str(icl) + "::" + str(n) + "::" + str(off),
+                n+2,min,max,false,icl), offset(off) {
+         contest = CTL_NONE;
+       }
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size() - 2;
+         int s = x[n];
+         int e = x[n+1];
+         for (int i=n+2; i--; )
+           if ((x[i] < 0) || (x[i] > n))
+             return false;
+         int reachable = (1 << s);
+         {
+           int j=0;
+           for (int i=n; i--; ) {
+             j=x[j]; reachable |= (1 << j);
+           }
+         }
+         for (int i=n; i--; )
+           if (!(reachable & (1 << i)))
+             return false;
+         return x[e] == n;
+       }
+       /// Post path constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n = x.size() - 2;
+         Gecode::IntVarArgs xx(n);
+         if (offset > 0) {
+           for (int i=n; i--;)
+             xx[i] = Gecode::expr(home, x[i]+offset);
+           Gecode::path(home, offset, xx,
+                        Gecode::expr(home, x[n]+offset),
+                        Gecode::expr(home, x[n+1]+offset),icl);
+         } else {
+           for (int i=n; i--;)
+             xx[i] = x[i];
+           Gecode::path(home, xx, x[n], x[n+1], icl);
          }
        }
      };
@@ -140,6 +190,67 @@ namespace Test { namespace Int {
            for (int i=0; i<n; i++)
              y[i]=x[i];
            circuit(home, c, y, x[n], icl);
+         }
+       }
+     };
+
+     /// Simple test for path constraint with total cost
+     class PathCost : public Test {
+     private:
+       /// Offset
+       int offset;
+     public:
+       /// Create and register test
+       PathCost(int n, int min, int max, int off, Gecode::IntConLevel icl)
+         : Test("Path::Cost::"+str(icl)+"::"+str(n)+"::"+str(off),
+                n+3,min,max,false,icl), offset(off) {
+         contest = CTL_NONE;
+       }
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size()-3;
+         int s = x[n];
+         int e = x[n+1];
+         for (int i=n+2; i--; )
+           if ((x[i] < 0) || (x[i] > n))
+             return false;
+         int reachable = (1 << s);
+         {
+           int j=0;
+           for (int i=n; i--; ) {
+             j=x[j]; reachable |= (1 << j);
+           }
+         }
+         for (int i=n; i--; )
+           if (!(reachable & (1 << i)))
+             return false;
+         if (x[e] != n)
+           return false;
+         int c=0;
+         for (int i=n; i--; )
+           c += x[i];
+         return (c == x[n+2]);
+       }
+       /// Post circuit constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n=x.size()-3;
+         IntArgs c(n*n);
+         for (int i=0; i<n; i++)
+           for (int j=0; j<n; j++)
+             c[i*n+j]=j;
+         IntVarArgs y(n);
+         if (offset > 0) {
+           for (int i=n; i--;)
+             y[i] = Gecode::expr(home, x[i]+offset);
+           path(home, c, offset, y, 
+                expr(home, x[n]+offset),
+                expr(home, x[n+1]+offset),
+                x[n+2], icl);
+         } else {
+           for (int i=0; i<n; i++)
+             y[i]=x[i];
+           path(home, c, y, x[n], x[n+1], x[n+2], icl);
          }
        }
      };
@@ -216,6 +327,12 @@ namespace Test { namespace Int {
            (void) new Circuit(i,0,i-1,5,Gecode::ICL_VAL);
            (void) new Circuit(i,0,i-1,5,Gecode::ICL_DOM);
          }
+         for (int i=1; i<=4; i++) {
+           (void) new Path(i,0,i-1,0,Gecode::ICL_VAL);
+           (void) new Path(i,0,i-1,0,Gecode::ICL_DOM);
+           (void) new Path(i,0,i-1,5,Gecode::ICL_VAL);
+           (void) new Path(i,0,i-1,5,Gecode::ICL_DOM);
+         }
          (void) new CircuitCost(4,0,9,0,Gecode::ICL_VAL);
          (void) new CircuitCost(4,0,9,0,Gecode::ICL_DOM);
          (void) new CircuitFullCost(3,0,3,0,Gecode::ICL_VAL);
@@ -224,6 +341,10 @@ namespace Test { namespace Int {
          (void) new CircuitCost(4,0,9,5,Gecode::ICL_DOM);
          (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_VAL);
          (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_DOM);
+         (void) new PathCost(3,0,6,0,Gecode::ICL_VAL);
+         (void) new PathCost(3,0,6,0,Gecode::ICL_DOM);
+         (void) new PathCost(3,0,6,5,Gecode::ICL_VAL);
+         (void) new PathCost(3,0,6,5,Gecode::ICL_DOM);
        }
      };
 

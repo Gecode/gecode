@@ -125,7 +125,8 @@ namespace Gecode {
   }
 
   void
-  path(Home home, int offset, const IntVarArgs& x, IntConLevel icl) {
+  path(Home home, int offset, const IntVarArgs& x, IntVar s, IntVar e,
+       IntConLevel icl) {
     Int::Limits::nonnegative(offset,"Int::path");
     int n=x.size();
     if (n == 0)
@@ -136,9 +137,10 @@ namespace Gecode {
     ViewArray<Int::IntView> xv(home,n+1);
     for (int i=n; i--; )
       xv[i] = Int::IntView(x[i]);
-    xv[n] = Int::IntView(IntVar(home,offset,offset));
+    xv[n] = s;
 
     if (offset == 0) {
+      element(home, x, e, n);
       typedef Int::NoOffset<Int::IntView> NOV;
       NOV no;
       if (icl == ICL_DOM) {
@@ -149,6 +151,13 @@ namespace Gecode {
                         ::post(home,xv,no)));
       }
     } else {
+      IntVarArgs ox(n+offset);
+      IntVar y(home, -1,-1);
+      for (int i=offset; i--; )
+        ox[i] = y;
+      for (int i=n; i--; )
+        ox[offset + i] = x[i];
+      element(home, ox, e, offset+n);
       typedef Int::Offset OV;
       OV off(-offset);
       if (icl == ICL_DOM) {
@@ -161,13 +170,15 @@ namespace Gecode {
     }
   }
   void
-  path(Home home, const IntVarArgs& x, IntConLevel icl) {
-    path(home,0,x,icl);
+  path(Home home, const IntVarArgs& x, IntVar s, IntVar e,
+       IntConLevel icl) {
+    path(home,0,x,s,e,icl);
   }
   
   void
   path(Home home, const IntArgs& c, int offset,
-       const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+       const IntVarArgs& x, IntVar s, IntVar e,
+       const IntVarArgs& y, IntVar z,
        IntConLevel icl) {
     Int::Limits::nonnegative(offset,"Int::path");
     int n = x.size();
@@ -177,7 +188,7 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::path");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::path");
-    path(home, offset, x, icl);
+    path(home, offset, x, s, e, icl);
     if (home.failed()) return;
     IntArgs cx(offset+n+1);
     for (int i=0; i<offset; i++)
@@ -192,24 +203,25 @@ namespace Gecode {
   }
   void
   path(Home home, const IntArgs& c,
-       const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+       const IntVarArgs& x, IntVar s, IntVar e,
+       const IntVarArgs& y, IntVar z,
        IntConLevel icl) {
-    path(home,c,0,x,y,z,icl);
+    path(home,c,0,x,s,e,y,z,icl);
   }
   void
   path(Home home, const IntArgs& c, int offset,
-       const IntVarArgs& x, IntVar z, 
+       const IntVarArgs& x, IntVar s, IntVar e, IntVar z, 
        IntConLevel icl) {
     Int::Limits::nonnegative(offset,"Int::path");
     if (home.failed()) return;
     IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
-    path(home, c, offset, x, y, z, icl);
+    path(home, c, offset, x, s, e, y, z, icl);
   }
   void
   path(Home home, const IntArgs& c,
-       const IntVarArgs& x, IntVar z, 
+       const IntVarArgs& x, IntVar s, IntVar e, IntVar z, 
        IntConLevel icl) {
-    path(home,c,0,x,z,icl);
+    path(home,c,0,x,s,e,z,icl);
   }
 
 }

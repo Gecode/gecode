@@ -2869,7 +2869,7 @@ namespace Gecode {
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at
-   * node 0 and the successor of the last node is equal to \f$|x|+1\f$.
+   * node \a s and the successor of the last node \a e is equal to \f$|x|\f$.
    *
    * Supports domain (\a icl = ICL_DOM) and value propagation (all
    * other values for \a icl), where this refers to whether value or
@@ -2881,14 +2881,14 @@ namespace Gecode {
    *  - Int::TooFewArguments, if \a x has no elements.
    */
   GECODE_INT_EXPORT void
-  path(Home home, const IntVarArgs& x,
+  path(Home home, const IntVarArgs& x, IntVar s, IntVar e,
        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once. 
-   * The path starts at node \a offset and the successor of the last node 
-   * is equal to \f$|x|+\text{offset}+1\f$.
+   * The path starts at node \a s and the successor of the last node \a e 
+   * is equal to \f$|x|+\text{offset}\f$.
    *
    * Supports domain (\a icl = ICL_DOM) and value propagation (all
    * other values for \a icl), where this refers to whether value or
@@ -2901,14 +2901,14 @@ namespace Gecode {
    *  - Int::OutOfLimits, if \a offset is negative.
    */
   GECODE_INT_EXPORT void
-  path(Home home, int offset, const IntVarArgs& x,
+  path(Home home, int offset, const IntVarArgs& x, IntVar s, IntVar e,
        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with costs \a y and \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at node
-   * 0 and the successor of 
-   * the last node is equal to \f$|x|+1\f$. The integer array
+   * \a s and the successor of 
+   * the last node \a e is equal to \f$|x|\f$. The integer array
    * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
    * the entire path. The variables \a y define the cost
@@ -2928,14 +2928,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   path(Home home, 
        const IntArgs& c,
-       const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+       const IntVarArgs& x, IntVar s, IntVar e, const IntVarArgs& y, IntVar z,
        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with costs \a y and \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once. 
-   * The path starts at node \a offset and the successor of 
-   * the last node is equal to \f$|x|+\text{offset}+1\f$.
+   * The path starts at node \a s and the successor of 
+   * the last node \a e is equal to \f$|x|+\text{offset}\f$.
    * The integer array
    * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
@@ -2957,14 +2957,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   path(Home home, 
        const IntArgs& c, int offset,
-       const IntVarArgs& x, const IntVarArgs& y, IntVar z,
+       const IntVarArgs& x, IntVar s, IntVar e, const IntVarArgs& y, IntVar z,
        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with cost \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at node
-   * 0 and the successor of 
-   * the last node is equal to \f$|x|+1\f$. The integer array
+   * \a s and the successor of 
+   * the last node \a e is equal to \f$|x|\f$. The integer array
    * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
    * the entire path.
@@ -2982,14 +2982,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   path(Home home, 
        const IntArgs& c,
-       const IntVarArgs& x, IntVar z,
+       const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with cost \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once. 
-   * The path starts at node \a offset and the successor of 
-   * the last node is equal to \f$|x|+\text{offset}+1\f$.
+   * The path starts at node \a s and the successor of 
+   * the last node \a e is equal to \f$|x|+\text{offset}\f$.
    * The integer array
    * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
@@ -3009,7 +3009,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   path(Home home, 
        const IntArgs& c, int offset,
-       const IntVarArgs& x, IntVar z,
+       const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntConLevel icl=ICL_DEF);
   //@}
 
