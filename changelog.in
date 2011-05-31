@@ -73,6 +73,13 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Zoom-to-fit can now be selected during search.
+
+[ENTRY]
 Module: graph
 What:   change
 Rank:   major

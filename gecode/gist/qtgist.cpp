@@ -574,7 +574,6 @@ namespace Gecode { namespace Gist {
       toggleStop->setEnabled(false);
       unstopAll->setEnabled(false);
       
-      zoomToFit->setEnabled(false);
       center->setEnabled(false);
       exportPDF->setEnabled(false);
       exportWholeTreePDF->setEnabled(false);
@@ -656,7 +655,6 @@ namespace Gecode { namespace Gist {
       psv.run();
       navPrevSol->setEnabled(psv.getCursor().node() != root);
 
-      zoomToFit->setEnabled(true);
       center->setEnabled(true);
       exportPDF->setEnabled(true);
       exportWholeTreePDF->setEnabled(true);
