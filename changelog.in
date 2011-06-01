@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added constraint post functions for Hamiltonian paths (called
+path). See "Modeling and Programming with Gecode" for details.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor

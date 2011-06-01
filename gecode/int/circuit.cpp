@@ -188,8 +188,8 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::path");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::path");
-    path(home, offset, x, s, e, icl);
     if (home.failed()) return;
+    path(home, offset, x, s, e, icl);
     IntArgs cx(offset+n+1);
     for (int i=0; i<offset; i++)
       cx[i] = 0;

@@ -213,7 +213,7 @@ namespace Test { namespace Int {
          int n = x.size() - 3;
          int s = x[n];
          int e = x[n+1];
-         int c = x[n+2];
+         int c = x[n+2] + n;
          if ((s < 0) || (s > n) || (e < 0) || (e > n) || (x[e] != n))
            return false;
          for (int i=n; i--; )
@@ -343,10 +343,10 @@ namespace Test { namespace Int {
          (void) new CircuitCost(4,0,9,5,Gecode::ICL_DOM);
          (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_VAL);
          (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_DOM);
-         (void) new PathCost(3,0,6,0,Gecode::ICL_VAL);
-         (void) new PathCost(3,0,6,0,Gecode::ICL_DOM);
-         (void) new PathCost(3,0,6,5,Gecode::ICL_VAL);
-         (void) new PathCost(3,0,6,5,Gecode::ICL_DOM);
+         (void) new PathCost(3,0,5,0,Gecode::ICL_VAL);
+         (void) new PathCost(3,0,5,0,Gecode::ICL_DOM);
+         (void) new PathCost(3,0,5,5,Gecode::ICL_VAL);
+         (void) new PathCost(3,0,5,5,Gecode::ICL_DOM);
        }
      };
 
