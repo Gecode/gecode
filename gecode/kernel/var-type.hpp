@@ -61,14 +61,14 @@ namespace Gecode { namespace Int {
    * If a propagator subscribes to this variable, it will be processed
    * assuming a ME_INT_BND modification event.
    */
-  const Gecode::ModEvent ME_INT_BND = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+1);
+  const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
   /** 
    * \brief Domain operation has changed the domain
    *
    * Note that this implies that the domain has not resulted in a value
    * and that also the minimum and maximum of the domain have not changed.
    */
-  const Gecode::ModEvent ME_INT_DOM = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+2);
+  const Gecode::ModEvent ME_INT_DOM = Gecode::ME_GEN_ASSIGNED + 2;
   /// Propagation condition to be ignored (convenience)
   const Gecode::PropCond PC_INT_NONE = Gecode::PC_GEN_NONE;
   /**
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int {
    * update operation on \a x returns the modification events ME_INT_VAL
    * or ME_INT_BND.
    */
-  const Gecode::PropCond PC_INT_BND = static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + 1);
+  const Gecode::PropCond PC_INT_BND = Gecode::PC_GEN_ASSIGNED + 1;
   /**
    * \brief Propagate when domain changes
    *
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int {
    * update operation on \a x returns the modification event ME_INT_VAL,
    * ME_INT_BND, or ME_INT_DOM.
    */
-  const Gecode::PropCond PC_INT_DOM = static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + 2);
+  const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
   //@}
 }}
 #endif
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set {
    *
    * Note that this implies that the domain has not resulted in a value.
    */
-  const Gecode::ModEvent ME_SET_CARD = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+1);
+  const Gecode::ModEvent ME_SET_CARD = Gecode::ME_GEN_ASSIGNED + 1;
   /**
    * \brief Domain operation has changed the least upper bound
    *
@@ -152,7 +152,7 @@ namespace Gecode { namespace Set {
    * and that also neither cardinality nor the greatest lower bound
    * have changed.
    */
-  const Gecode::ModEvent ME_SET_LUB = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+2);
+  const Gecode::ModEvent ME_SET_LUB = Gecode::ME_GEN_ASSIGNED + 2;
   /**
    * \brief Domain operation has changed the greatest lower bound
    *
@@ -160,7 +160,7 @@ namespace Gecode { namespace Set {
    * and that also neither cardinality nor the least upper bound
    * have changed.
    */
-  const Gecode::ModEvent ME_SET_GLB = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+3);
+  const Gecode::ModEvent ME_SET_GLB = Gecode::ME_GEN_ASSIGNED + 3;
   /**
    * \brief Domain operation has changed both greatest lower and least
    * upper bound
@@ -168,21 +168,21 @@ namespace Gecode { namespace Set {
    * Note that this implies that the domain has not resulted in a value
    * and that also the cardinality has not changed.
    */
-  const Gecode::ModEvent ME_SET_BB = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+4);
+  const Gecode::ModEvent ME_SET_BB = Gecode::ME_GEN_ASSIGNED + 4;
   /**
    * \brief Domain operation has changed the least upper bound and the cardinality
    *
    * Note that this implies that the domain has not resulted in a value
    * and that also the greatest lower bound has not changed.
    */
-  const Gecode::ModEvent ME_SET_CLUB = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+5);
+  const Gecode::ModEvent ME_SET_CLUB = Gecode::ME_GEN_ASSIGNED + 5;
   /**
    * \brief Domain operation has changed the greatest lower bound and the cardinality
    *
    * Note that this implies that the domain has not resulted in a value
    * and that also the least upper bound has not changed.
    */
-  const Gecode::ModEvent ME_SET_CGLB = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+6);
+  const Gecode::ModEvent ME_SET_CGLB = Gecode::ME_GEN_ASSIGNED + 6;
   /**
    * \brief Domain operation has changed both the greatest lower bound and
    * the least upper bound, as well as the cardinality
@@ -193,7 +193,7 @@ namespace Gecode { namespace Set {
    * assuming a ME_SET_CBB modification event.
    *
    */
-  const Gecode::ModEvent ME_SET_CBB = static_cast<Gecode::ModEvent>(Gecode::ME_GEN_ASSIGNED+7);
+  const Gecode::ModEvent ME_SET_CBB = Gecode::ME_GEN_ASSIGNED + 7;
   /// Propagation condition to be ignored (convenience)
   const Gecode::PropCond PC_SET_NONE = Gecode::PC_GEN_NONE;
   /**
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set {
    * update operation on \a x returns the modification event ME_SET_VAL,
    * ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB, or ME_SET_CBB.
    */
-  const Gecode::PropCond PC_SET_CARD = static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + 1);
+  const Gecode::PropCond PC_SET_CARD = Gecode::PC_GEN_ASSIGNED + 1;
   /**
    * \brief Propagate when the cardinality or the least upper bound
    * of a view changes
@@ -223,7 +223,7 @@ namespace Gecode { namespace Set {
    * ME_SET_LUB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
    * or ME_SET_CBB.
    */
-  const Gecode::PropCond PC_SET_CLUB = static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + 2);
+  const Gecode::PropCond PC_SET_CLUB = Gecode::PC_GEN_ASSIGNED + 2;
   /**
    * \brief Propagate when the cardinality or the greatest lower bound
    * of a view changes
@@ -234,7 +234,7 @@ namespace Gecode { namespace Set {
    * ME_SET_GLB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
    * or ME_SET_CBB.
    */
-  const Gecode::PropCond PC_SET_CGLB = static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + 3);
+  const Gecode::PropCond PC_SET_CGLB = Gecode::PC_GEN_ASSIGNED + 3;
   /**
    * \brief Propagate when any bound or the cardinality
    * of a view changes
@@ -244,7 +244,7 @@ namespace Gecode { namespace Set {
    * update operation on \a x returns any modification event but ME_SET_FAILED
    * and ME_SET_NONE.
    */
-  const Gecode::PropCond PC_SET_ANY = static_cast<Gecode::PropCond>(Gecode::PC_GEN_ASSIGNED + 4);
+  const Gecode::PropCond PC_SET_ANY = Gecode::PC_GEN_ASSIGNED + 4;
   //@}
 }}
 #endif
@@ -385,7 +385,7 @@ namespace Gecode {
 namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    static const int me_c = (
+    static const Gecode::ModEvent me_c = (
       (
         (ME_INT_NONE <<  0) |  // [ME_INT_NONE][ME_INT_NONE]
         (ME_INT_VAL  <<  2) |  // [ME_INT_NONE][ME_INT_VAL ]
@@ -411,7 +411,7 @@ namespace Gecode { namespace Int {
         (ME_INT_DOM  << 30)    // [ME_INT_DOM ][ME_INT_DOM ]
       )
     );
-    return static_cast<Gecode::ModEvent>(((me_c >> (me2 << 3)) >> (me1 << 1)) & 3);
+    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;
   }
   forceinline bool
   IntVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
@@ -429,14 +429,14 @@ namespace Gecode { namespace Int {
       }
     case ME_INT_BND:
       {
-        static int me_c = (
+        static const Gecode::ModEvent me_c = (
           ((ME_INT_NONE ^ ME_INT_BND ) <<  0) |
           ((ME_INT_VAL  ^ ME_INT_VAL ) <<  4) |
           ((ME_INT_BND  ^ ME_INT_BND ) <<  8) |
           ((ME_INT_DOM  ^ ME_INT_BND ) << 12)
         );
-        int me_o = (med & med_mask) >> med_fst;
-        int me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_n = (me_c >> (me_o << 2)) & (med_mask >> med_fst);
         if (me_n == 0)
           return false;
         med ^= me_n << med_fst;
@@ -461,7 +461,7 @@ namespace Gecode { namespace Int {
 namespace Gecode { namespace Int { 
   forceinline Gecode::ModEvent
   BoolVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
-    return static_cast<Gecode::ModEvent>(static_cast<int>(me1) | static_cast<int>(me2));
+    return me1 | me2;
   }
   forceinline bool
   BoolVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
@@ -614,7 +614,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CGLB) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -634,7 +634,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CBB ) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -654,7 +654,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CGLB) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -674,7 +674,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CBB ) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -694,7 +694,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CBB ) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -714,7 +714,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CGLB) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -734,7 +734,7 @@ namespace Gecode { namespace Set {
           (ME_SET_CGLB ^ ME_SET_CBB ) << med_fst,
           (ME_SET_CBB  ^ ME_SET_CBB ) << med_fst
         };
-        int me_o = (med & med_mask) >> med_fst;
+        Gecode::ModEvent me_o = (med & med_mask) >> med_fst;
         Gecode::ModEventDelta med_n = me_c[me_o];
         if (med_n == 0)
           return false;
@@ -752,13 +752,13 @@ namespace Gecode {
   forceinline ModEventDelta
   AllVarConf::med_combine(ModEventDelta med1, ModEventDelta med2) {
 #ifdef GECODE_HAS_INT_VARS
-    (void) Gecode::Int::IntVarImpConf::med_update(med1,static_cast<ModEvent>((static_cast<int>(med2)  & Gecode::Int::IntVarImpConf::med_mask) >> Gecode::Int::IntVarImpConf::med_fst));
+    (void) Gecode::Int::IntVarImpConf::med_update(med1,(med2 & Gecode::Int::IntVarImpConf::med_mask) >> Gecode::Int::IntVarImpConf::med_fst);
 #endif
 #ifdef GECODE_HAS_INT_VARS
-    (void) Gecode::Int::BoolVarImpConf::med_update(med1,static_cast<ModEvent>((static_cast<int>(med2)  & Gecode::Int::BoolVarImpConf::med_mask) >> Gecode::Int::BoolVarImpConf::med_fst));
+    (void) Gecode::Int::BoolVarImpConf::med_update(med1,(med2 & Gecode::Int::BoolVarImpConf::med_mask) >> Gecode::Int::BoolVarImpConf::med_fst);
 #endif
 #ifdef GECODE_HAS_SET_VARS
-    (void) Gecode::Set::SetVarImpConf::med_update(med1,static_cast<ModEvent>((static_cast<int>(med2)  & Gecode::Set::SetVarImpConf::med_mask) >> Gecode::Set::SetVarImpConf::med_fst));
+    (void) Gecode::Set::SetVarImpConf::med_update(med1,(med2 & Gecode::Set::SetVarImpConf::med_mask) >> Gecode::Set::SetVarImpConf::med_fst);
 #endif
     return med1;
   }

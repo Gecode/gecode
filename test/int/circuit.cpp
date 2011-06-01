@@ -107,12 +107,14 @@ namespace Test { namespace Int {
          int n = x.size() - 2;
          int s = x[n];
          int e = x[n+1];
-         for (int i=n+2; i--; )
-           if ((x[i] < 0) || (x[i] > n))
+         if ((s < 0) || (s > n) || (e < 0) || (e > n) || (x[e] != n))
+           return false;
+         for (int i=n; i--; )
+           if ((i != e) && ((x[i] < 0) || (x[i] > n)))
              return false;
          int reachable = (1 << s);
          {
-           int j=0;
+           int j=s;
            for (int i=n; i--; ) {
              j=x[j]; reachable |= (1 << j);
            }
@@ -120,7 +122,7 @@ namespace Test { namespace Int {
          for (int i=n; i--; )
            if (!(reachable & (1 << i)))
              return false;
-         return x[e] == n;
+         return true;
        }
        /// Post path constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -208,15 +210,18 @@ namespace Test { namespace Int {
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int n = x.size()-3;
+         int n = x.size() - 3;
          int s = x[n];
          int e = x[n+1];
-         for (int i=n+2; i--; )
-           if ((x[i] < 0) || (x[i] > n))
+         int c = x[n+2];
+         if ((s < 0) || (s > n) || (e < 0) || (e > n) || (x[e] != n))
+           return false;
+         for (int i=n; i--; )
+           if ((i != e) && ((x[i] < 0) || (x[i] > n)))
              return false;
          int reachable = (1 << s);
          {
-           int j=0;
+           int j=s;
            for (int i=n; i--; ) {
              j=x[j]; reachable |= (1 << j);
            }
@@ -224,12 +229,9 @@ namespace Test { namespace Int {
          for (int i=n; i--; )
            if (!(reachable & (1 << i)))
              return false;
-         if (x[e] != n)
-           return false;
-         int c=0;
          for (int i=n; i--; )
-           c += x[i];
-         return (c == x[n+2]);
+           c -= x[i];
+         return c == 0;
        }
        /// Post circuit constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
