@@ -143,6 +143,16 @@ namespace Gecode { namespace FlatZinc {
         return INT_VAL_RND;
       if (s->id == "indomain")
         return INT_VALUES_MIN;
+      if (s->id == "indomain_middle") {
+        std::cerr << "Warning, replacing unsupported annotation "
+                  << "indomain_middle with indomain_median" << std::endl;
+        return INT_VAL_MED;
+      }
+      if (s->id == "indomain_interval") {
+        std::cerr << "Warning, replacing unsupported annotation "
+                  << "indomain_interval with indomain_split" << std::endl;
+        return INT_VAL_SPLIT_MIN;
+      }
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);

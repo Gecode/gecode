@@ -73,6 +73,15 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Support indomain_middle and indomain_interval search annotation by
+replacing them with indomain_median and indomain_split, respectively.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor
