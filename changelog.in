@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added native support for the no-overlap constraint (called diffn in 
+MiniZinc/FlatZinc).
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major
