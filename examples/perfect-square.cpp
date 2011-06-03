@@ -213,11 +213,10 @@ public:
       rel(*this, y[i], IRT_LQ, w-s[i]);
     }
 
+    IntArgs sa(n,s);
+
     // Squares do not overlap
-    for (int i=0; i<n; i++)
-      for (int j=i+1; j<n; j++)
-        rel(*this, (x[i]+s[i] <= x[j]) || (x[j]+s[j] <= x[i]) ||
-                   (y[i]+s[i] <= y[j]) || (y[j]+s[j] <= y[i]));
+    nooverlap(*this, x, sa, y, sa);
 
     /*
      * Capacity constraints
@@ -226,7 +225,6 @@ public:
     switch (opt.propagation()) {
     case PROP_REIFIED:
       {
-        IntArgs sa(n,s);
         for (int cx=0; cx<w; cx++) {
           BoolVarArgs bx(*this,n,0,1);
           for (int i=0; i<n; i++)

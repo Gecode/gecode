@@ -2236,6 +2236,48 @@ namespace Gecode {
              const IntVarArgs& l, 
              const IntVarArgs& b, const IntArgs& s,
              IntConLevel icl=ICL_DEF);
+  /**
+   * \defgroup TaskModelIntGeoPacking Geometrical packing constraints
+   * \ingroup TaskModelInt
+   *
+   * Constraints for modeling geometrical packing problems.
+   */
+  /** \brief Post propagator for rectangle packing
+   *
+   * Propagate that no two rectangles as described by the coordinates
+   * \a x and \a y, widths \a w, and heights \a h overlap.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, or \a h
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x or \a y share unassigned variables.
+   *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntArgs& w,
+            const IntVarArgs& y, const IntArgs& h,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangle packing
+   *
+   * Propagate that no two rectangles as described by the coordinates
+   * \a x and \a y, widths \a w, and heights \a h overlap.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, or \a h
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a w, \a y, or \a h share 
+   *    unassigned variables.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w,
+            const IntVarArgs& y, const IntVarArgs& h,
+            IntConLevel icl=ICL_DEF);
 
 
   /**
