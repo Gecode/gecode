@@ -48,8 +48,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   forceinline
   View<d>::View(Home home, Box<ViewDim,d>* b, int n, int m0)
     : Base<ViewDim,d>(home,b,n), m(m0), c(home), todo(NOTHING) {
-    for (int i=n; i--; )
-      b[i].subscribe(home,*this);
     Advisor& a = *new (home) Advisor(home,*this,c);
     for (int i=m; i--; )
       b[n+i].subscribe(home,a);
@@ -73,8 +71,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   template<int d>
   forceinline size_t 
   View<d>::dispose(Space& home) {
-    for (int i=n; i--; )
-      b[i].cancel(home,*this);
     Advisor& a = advisor();
     for (int i=m; i--; )
       b[n+i].cancel(home,a);
@@ -106,7 +102,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
       todo = ELIMINATE;
       return ES_NOFIX;
     case ME_INT_BND:
-      todo = MANDATORY;
+      if (todo == NOTHING)
+        todo = MANDATORY;
       return ES_NOFIX;
     default:
       return ES_FIX;

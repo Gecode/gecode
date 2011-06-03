@@ -40,7 +40,10 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   template<class Dim, int d>
   forceinline
   Base<Dim,d>::Base(Home home, Box<Dim,d>* b0, int n0)
-    : Propagator(home), b(b0), n(n0) {}
+    : Propagator(home), b(b0), n(n0) {
+    for (int i=n; i--; )
+      b[i].subscribe(home,*this);
+  }
 
   template<class Dim, int d>
   forceinline int
@@ -58,6 +61,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   template<class Dim, int d>
   forceinline size_t 
   Base<Dim,d>::dispose(Space& home) {
+    for (int i=n; i--; )
+      b[i].cancel(home,*this);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
