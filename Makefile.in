@@ -297,7 +297,7 @@ INTSRC0 = \
 	unshare.cpp sequence.cpp \
 	bin-packing.cpp bin-packing/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
-	circuit.cpp
+	circuit.cpp no-overlap.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -355,7 +355,9 @@ INTHDR0 = \
 	cumulative/basic.hpp cumulative/task.hpp cumulative/edge-finding.hpp \
 	cumulative/tree.hpp \
 	cumulatives.hh cumulatives/val.hpp \
-	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp
+	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
+	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \
+	no-overlap/base.hpp no-overlap/int.hpp no-overlap/view.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -823,7 +825,8 @@ INTTESTSRC00 = \
 	channel arithmetic basic bool count dom distinct element extensional \
 	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
-	bin-packing unary cumulative cumulatives circuit
+	bin-packing unary cumulative cumulatives circuit \
+	no-overlap
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 

@@ -75,6 +75,15 @@ Some bug fixes, probably
 [ENTRY]
 Module: int
 What:   new
+Rank:   major
+[DESCRIPTION]
+Added no-overlap constraint that enforces that rectangles do not
+overlap (also known as diffn). See "Modeling and Programming with
+Gecode" for details.
+
+[ENTRY]
+Module: int
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Added constraint post functions for Hamiltonian paths (called
