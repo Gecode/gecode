@@ -2245,7 +2245,7 @@ namespace Gecode {
   /** \brief Post propagator for rectangle packing
    *
    * Propagate that no two rectangles as described by the coordinates
-   * \a x and \a y, widths \a w, and heights \a h overlap.
+   * \a x, and \a y, widths \a w, and heights \a h overlap.
    * 
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, or \a h
@@ -2277,6 +2277,44 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x, const IntVarArgs& w,
             const IntVarArgs& y, const IntVarArgs& h,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangular cuboid packing
+   *
+   * Propagate that no two rectangular cuboids as described by the coordinates
+   * \a x, \a y, and \a z, widths \a w, heights \a h, and depths \a d overlap.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, \a z, or \a d
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a y, or \a z share unassigned variables.
+   *  - Of type Int::OutOfLimits if \a w, \a h, \a d contain a negative number.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntArgs& w,
+            const IntVarArgs& y, const IntArgs& h,
+            const IntVarArgs& z, const IntArgs& d,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangular cuboid packing
+   *
+   * Propagate that no two rectangular cuboids as described by the coordinates
+   * \a x, \a y, and \a z, widths \a w, heights \a h, and depths \a d overlap.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, \a z, or \a d
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a w, \a y, \a h, \a z, or \a d share 
+   *    unassigned variables.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w,
+            const IntVarArgs& y, const IntVarArgs& h,
+            const IntVarArgs& z, const IntVarArgs& d,
             IntConLevel icl=ICL_DEF);
 
 

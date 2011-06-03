@@ -50,8 +50,8 @@ namespace Test { namespace Int {
      * \ingroup TaskTestInt
      */
     //@{
-    /// %Test for no-overlap with integer dimensions
-    class Int : public Test {
+    /// %Test for no-overlap with integer dimensions (rectangles)
+    class Int2 : public Test {
     protected:
       /// Width
       Gecode::IntArgs w;
@@ -59,12 +59,12 @@ namespace Test { namespace Int {
       Gecode::IntArgs h;
     public:
       /// Create and register test with maximal coordinate value \a m
-      Int(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0) 
-        : Test("NoOverlap::Int::"+str(m)+"::"+str(w0)+"::"+str(h0),
+      Int2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0) 
+        : Test("NoOverlap::Int::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
                2*w0.size(), 0, m-1), 
           w(w0), h(h0) {
       }
-      /// %Test whether \a x is solution
+      /// %Test whether \a xy is solution
       virtual bool solution(const Assignment& xy) const {
         int n = xy.size() / 2;
         for (int i=0; i<n; i++) {
@@ -89,13 +89,13 @@ namespace Test { namespace Int {
         nooverlap(home, x, w, y, h);
       }
     };
-    /// %Test for no-overlap with variable dimensions
-    class Var : public Test {
+    /// %Test for no-overlap with variable dimensions (rectangles)
+    class Var2 : public Test {
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
-      Var(int m, int n)
-        : Test("NoOverlap::Var::"+str(m)+"::"+str(n), 4*n, 0, m) {}
-      /// %Test whether \a x is solution
+      Var2(int m, int n)
+        : Test("NoOverlap::Var::2::"+str(m)+"::"+str(n), 4*n, 0, m) {}
+      /// %Test whether \a xwyh is solution
       virtual bool solution(const Assignment& xwyh) const {
         int n = xwyh.size() / 4;
         for (int i=0; i<n; i++) {
@@ -126,6 +126,51 @@ namespace Test { namespace Int {
       }
     };
     
+    /// %Test for no-overlap with integer dimensions (rectangle cuboids)
+    class Int3 : public Test {
+    protected:
+      /// Width
+      Gecode::IntArgs w;
+      /// Height
+      Gecode::IntArgs h;
+      /// Depth
+      Gecode::IntArgs d;
+    public:
+      /// Create and register test with maximal coordinate value \a m
+      Int3(int m, 
+           const Gecode::IntArgs& w0, const Gecode::IntArgs& h0,
+           const Gecode::IntArgs& d0) 
+        : Test("NoOverlap::Int::3::"+str(m)+"::"+str(w0)+"::"+str(h0)+"::"+str(d0),
+               3*w0.size(), 0, m-1), 
+          w(w0), h(h0), d(d0) {
+      }
+      /// %Test whether \a xyz is solution
+      virtual bool solution(const Assignment& xyz) const {
+        int n = xyz.size() / 3;
+        for (int i=0; i<n; i++) {
+          int xi=xyz[3*i+0], yi=xyz[3*i+1], zi=xyz[3*i+2];
+          for (int j=i+1; j<n; j++) {
+            int xj=xyz[3*j+0], yj=xyz[3*j+1], zj=xyz[3*j+2];
+            if (!((xi + w[i] <= xj) || (xj + w[j] <= xi) ||
+                  (yi + h[i] <= yj) || (yj + h[j] <= yi) ||
+                  (zi + d[i] <= zj) || (zj + d[j] <= zi)))
+              return false;
+          }
+        }
+        return true;
+      }
+      /// Post constraint on \a xyz
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& xyz) {
+        using namespace Gecode;
+        int n = xyz.size() / 3;
+        IntVarArgs x(n), y(n), z(n);
+        for (int i=0; i<n; i++) {
+          x[i]=xyz[3*i+0]; y[i]=xyz[3*i+1]; z[i]=xyz[3*i+2];
+        }
+        nooverlap(home, x, w, y, h, z, d);
+      }
+    };
+    
     /// Help class to create and register tests
     class Create {
     public:
@@ -139,17 +184,19 @@ namespace Test { namespace Int {
         IntArgs s4(4, 1,1,1,1);
 
         for (int m=2; m<4; m++) {
-          (void) new Int(m, s1, s1);
-          (void) new Int(m, s2, s2);
-          (void) new Int(m, s3, s3);
-          (void) new Int(m, s2, s3);
-          (void) new Int(m, s4, s4);
-          (void) new Int(m, s4, s2);
+          (void) new Int2(m, s1, s1);
+          (void) new Int2(m, s2, s2);
+          (void) new Int2(m, s3, s3);
+          (void) new Int2(m, s2, s3);
+          (void) new Int2(m, s4, s4);
+          (void) new Int2(m, s4, s2);
+          (void) new Int3(m, s1, s1, s1);
+          (void) new Int3(m, s2, s3, s4);
         }
 
-        (void) new Var(2, 2);
-        (void) new Var(3, 2);
-        (void) new Var(1, 3);
+        (void) new Var2(2, 2);
+        (void) new Var2(3, 2);
+        (void) new Var2(1, 3);
 
       }
     };

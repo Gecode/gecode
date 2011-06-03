@@ -69,6 +69,38 @@ namespace Gecode {
 
   void
   nooverlap(Home home, 
+            const IntVarArgs& x, const IntArgs& w, 
+            const IntVarArgs& y, const IntArgs& h,
+            const IntVarArgs& z, const IntArgs& d,
+            IntConLevel) {
+    using namespace Int;
+    using namespace NoOverlap;
+    if (x.same(home,y) || x.same(home,z) || y.same(home,z))
+      throw ArgumentSame("Int::nooverlap");
+    int n = x.size();
+    if ((n != w.size()) || (n != y.size()) || (n != h.size()) ||
+        (n != z.size()) || (n != d.size()))
+      throw ArgumentSizeMismatch("Int::nooverlap");      
+    for (int i=n; i--; ) {
+      Limits::nonnegative(w[i],"Int::nooverlap");
+      Limits::nonnegative(h[i],"Int::nooverlap");
+      Limits::nonnegative(d[i],"Int::nooverlap");
+    }
+    if (home.failed()) return;
+
+    Box<IntDim,3>* b 
+      = static_cast<Space&>(home).alloc<Box<IntDim,3> >(n);
+    for (int i=n; i--; ) {
+      b[i][0] = IntDim(x[i],w[i]);
+      b[i][1] = IntDim(y[i],h[i]);
+      b[i][2] = IntDim(z[i],d[i]);
+    }
+
+    GECODE_ES_FAIL((NoOverlap::Int<3>::post(home,b,n)));
+  }
+
+  void
+  nooverlap(Home home, 
             const IntVarArgs& x, const IntVarArgs& w, 
             const IntVarArgs& y, const IntVarArgs& h,
             IntConLevel) {
@@ -94,6 +126,45 @@ namespace Gecode {
     }
 
     GECODE_ES_FAIL((NoOverlap::View<2>::post(home,b,n)));
+  }
+
+  void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w, 
+            const IntVarArgs& y, const IntVarArgs& h,
+            const IntVarArgs& z, const IntVarArgs& d,
+            IntConLevel) {
+    using namespace Int;
+    using namespace NoOverlap;
+    int n = x.size();
+    if ((n != w.size()) || (n != y.size()) || (n != h.size()) ||
+        (n != z.size()) || (n != d.size()))
+      throw ArgumentSizeMismatch("Int::nooverlap");
+    IntVarArgs xwyhzd(6 * n);
+    for (int i=n; i--; ) {
+      xwyhzd[6*i+0]=x[i]; xwyhzd[6*i+1]=w[i];
+      xwyhzd[6*i+2]=y[i]; xwyhzd[6*i+3]=h[i];
+      xwyhzd[6*i+4]=z[i]; xwyhzd[6*i+5]=d[i];
+    }
+    if (x.same(home))
+      throw ArgumentSame("Int::nooverlap");
+    if (home.failed()) return;
+
+    for (int i=n; i--; ) {
+      GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
+      GECODE_ME_FAIL(IntView(h[i]).gq(home,0));
+      GECODE_ME_FAIL(IntView(d[i]).gq(home,0));
+    }
+
+    Box<ViewDim,3>* b 
+      = static_cast<Space&>(home).alloc<Box<ViewDim,3> >(n);
+    for (int i=n; i--; ) {
+      b[i][0] = ViewDim(x[i],w[i]);
+      b[i][1] = ViewDim(y[i],h[i]);
+      b[i][2] = ViewDim(z[i],d[i]);
+    }
+
+    GECODE_ES_FAIL((NoOverlap::View<3>::post(home,b,n)));
   }
 
 }
