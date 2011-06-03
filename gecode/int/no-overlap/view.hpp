@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         b[i]=b[--n];
     // Partition into mandatory and optional boxes
     if (n > 1) {
-      int p = partition(b, 0, n);
+      int p = Base<ViewDim,d>::partition(b, 0, n);
       (void) new (home) View<d>(home,b,p,n-p);
     }
     return ES_OK;
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
           }
       // Reconsider mandatory boxes
       if (m > 0) {
-        int p = partition(b+n, 0, m);
+        int p = Base<ViewDim,d>::partition(b+n, 0, m);
         for (int i=p; i--; ) {
           b[n+i].cancel(home,a);
           b[n+i].subscribe(home,*this);

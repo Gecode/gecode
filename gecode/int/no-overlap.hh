@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Post propagator for boxes \a b
     static ExecStatus post(Home home, Box<ViewDim,d>* b, int n);
     /// Give advice to propagator
-    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& delta);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
