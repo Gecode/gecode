@@ -207,6 +207,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
     }
 
+    // Only if the propagator is at fixpoint here, continue with the more
+    // expensive stage for propagation.
+    if (IntView::me(modeventdelta()) != ME_INT_NONE)
+      return ES_NOFIX;
+
     // Now the invariant holds that no more assigned bins exist!
     {
       Region region(home);

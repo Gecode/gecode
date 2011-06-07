@@ -803,6 +803,14 @@ namespace Gecode {
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const = 0;
     /**
+     * \brief Return the modification event delta
+     * 
+     * This function returns the modification event delta of the currently
+     * executing propagator and hence can only be called within the
+     * propagate function of a propagator.
+     */
+    ModEventDelta modeventdelta(void) const;
+    /**
      * \brief Advise function
      *
      * The advisor is passed as argument \a a.
@@ -2534,6 +2542,11 @@ namespace Gecode {
     assert((u.med == 0) && (u.size == 0));
     // Set forwarding pointer
     p.prev(this);
+  }
+
+  forceinline ModEventDelta
+  Propagator::modeventdelta(void) const {
+    return u.med;
   }
 
   forceinline double

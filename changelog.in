@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Increased performance of bin-packing propagator by 40% to 300%
+percent by using staging.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   major
