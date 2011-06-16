@@ -248,8 +248,12 @@ public:
         rel(*this, h(p,w), IRT_LE, a(p,w));
 
     // Home teams in first week are ordered
-    for (int p=0; p<periods()-1; p++)
-      rel(*this, h(p,0), IRT_LE, h(p+1,0));
+    {
+      IntVarArgs h0(periods());
+      for (int p=0; p<periods(); p++)
+        h0[p] = h(p,0);
+      rel(*this, h0, IRT_LE);
+    }
 
     // Fix first pair
     rel(*this, h(0,0), IRT_EQ, 1);
