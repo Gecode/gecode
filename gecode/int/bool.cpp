@@ -357,15 +357,13 @@ namespace Gecode {
     case IRT_EQ:
       for (int i=x.size()-1; i--; )
         GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
-                             ::post(home,x[i],x[i+1])));
+                        ::post(home,x[i],x[i+1])));
       break;
     case IRT_NQ:
-      if (x.size() == 2) {
-        NegBoolView n(x[1]);
+      for (int i=x.size()-1; i--; ) {
+        NegBoolView n(x[i+1]);
         GECODE_ES_FAIL((Bool::Eq<BoolView,NegBoolView>
-                             ::post(home,x[0],n)));
-      } else {
-        home.fail();
+                        ::post(home,x[i],n)));
       }
       break;
     case IRT_LE:

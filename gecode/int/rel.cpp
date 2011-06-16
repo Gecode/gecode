@@ -280,7 +280,8 @@ namespace Gecode {
       }
       break;
     case IRT_NQ:
-      distinct(home,x,icl);
+      for (int i=x.size()-1; i--; )
+        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,x[i],x[i+1]));
       break;
     case IRT_LE:
       for (int i=x.size()-1; i--; )

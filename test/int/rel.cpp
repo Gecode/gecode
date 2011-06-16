@@ -261,23 +261,22 @@ namespace Test { namespace Int {
        }
      };
 
-     /// %Test for pairwise relation between integer variables
-     class IntPairwise : public Test {
+     /// %Test for sequence of relations between integer variables
+     class IntSeq : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntPairwise(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Pairwise::"+str(irt0)+"::"+str(icl),
+       IntSeq(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
+         : Test("Rel::Int::Seq::"+str(irt0)+"::"+str(icl),
                    4,-3,3,false,icl),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size(); i++)
-           for (int j=i+1; j<x.size(); j++)
-             if (!cmp(x[i],irt,x[j]))
-               return false;
+         for (int i=0; i<x.size()-1; i++)
+           if (!cmp(x[i],irt,x[i+1]))
+             return false;
          return true;
        }
        /// Post constraint on \a x
@@ -286,22 +285,21 @@ namespace Test { namespace Int {
        }
      };
 
-     /// %Test for pairwise relation between Boolean variables
-     class BoolPairwise : public Test {
+     /// %Test for sequence of relations between Boolean variables
+     class BoolSeq : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolPairwise(Gecode::IntRelType irt0)
-         : Test("Rel::Bool::Pairwise::"+str(irt0),8,0,1),
+       BoolSeq(Gecode::IntRelType irt0)
+         : Test("Rel::Bool::Seq::"+str(irt0),8,0,1),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size(); i++)
-           for (int j=i+1; j<x.size(); j++)
-             if (!cmp(x[i],irt,x[j]))
-               return false;
+         for (int i=0; i<x.size()-1; i++)
+           if (!cmp(x[i],irt,x[i+1]))
+             return false;
          return true;
        }
        /// Post constraint on \a x
@@ -429,12 +427,12 @@ namespace Test { namespace Int {
              (void) new IntVarXY(irts.irt(),1,icls.icl());
              (void) new IntVarXY(irts.irt(),2,icls.icl());
              (void) new IntVarXX(irts.irt(),icls.icl());
-             (void) new IntPairwise(irts.irt(),icls.icl());
+             (void) new IntSeq(irts.irt(),icls.icl());
            }
            (void) new BoolVarXY(irts.irt(),1);
            (void) new BoolVarXY(irts.irt(),2);
            (void) new BoolVarXX(irts.irt());
-           (void) new BoolPairwise(irts.irt());
+           (void) new BoolSeq(irts.irt());
            for (int c=-4; c<=4; c++) {
              (void) new IntInt(irts.irt(),1,c);
              (void) new IntInt(irts.irt(),2,c);
