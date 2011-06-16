@@ -73,11 +73,19 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Jan Kelbel
+[DESCRIPTION]
+Fixed a small memory leak in the driver (stop objects were not deleted).
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   major
 [DESCRIPTION]
-Increased performance of bin-packing propagator by 40% to 300%
+Increased performance of bin-packing propagator by 40 to 300
 percent by using staging.
 
 [ENTRY]

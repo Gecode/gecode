@@ -282,6 +282,7 @@ namespace Gecode { namespace Driver {
                << "\tpeak memory:  "
                << static_cast<int>((stat.memory+1023) / 1024) << " KB"
                << endl;
+          delete so.stop;
         }
         break;
       case SM_STAT:
@@ -355,6 +356,7 @@ namespace Gecode { namespace Driver {
               } while (--i != 0);
               if (e.stopped())
                 stopped = true;
+              delete so.stop;
             }
             ts[s] = t.stop() / o.iterations();
           }
