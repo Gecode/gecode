@@ -173,6 +173,43 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Home home, BV b0, BV b1);
   };
 
+  /**
+   * \brief Nary Boolean less or equal propagator
+   *
+   * Requires \code #include <gecode/int/bool.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class VX>
+  class NaryLq : public NaryPropagator<VX,PC_BOOL_NONE> {
+  protected:
+    using NaryPropagator<VX,PC_BOOL_NONE>::x;
+    /// The number of views assigned to zero in \a x
+    int n_zero;
+    /// The number of views assigned to one in \a x
+    int n_one;
+    /// The advisor council
+    Council<Advisor> c;
+    /// Constructor for posting
+    NaryLq(Home home,  ViewArray<VX>& x);
+    /// Constructor for cloning \a p
+    NaryLq(Space& home, bool share, NaryLq<VX>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Cost function (defined as low unary)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ x_0 \leq x_1 \leq \cdots \leq x_{|x|-1}\f$
+    static  ExecStatus post(Home home, ViewArray<VX>& x);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+
+
 
   /**
    * \brief Boolean less propagator

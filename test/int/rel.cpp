@@ -268,9 +268,9 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntSeq(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Seq::"+str(irt0)+"::"+str(icl),
-                   4,-3,3,false,icl),
+       IntSeq(int n, Gecode::IntRelType irt0, Gecode::IntConLevel icl)
+         : Test("Rel::Int::Seq::"+str(n)+"::"+str(irt0)+"::"+str(icl),
+                n,-3,3,false,icl),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -292,8 +292,8 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolSeq(Gecode::IntRelType irt0)
-         : Test("Rel::Bool::Seq::"+str(irt0),8,0,1),
+       BoolSeq(int n, Gecode::IntRelType irt0)
+         : Test("Rel::Bool::Seq::"+str(n)+"::"+str(irt0),n,0,1),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -427,12 +427,18 @@ namespace Test { namespace Int {
              (void) new IntVarXY(irts.irt(),1,icls.icl());
              (void) new IntVarXY(irts.irt(),2,icls.icl());
              (void) new IntVarXX(irts.irt(),icls.icl());
-             (void) new IntSeq(irts.irt(),icls.icl());
+             (void) new IntSeq(1,irts.irt(),icls.icl());
+             (void) new IntSeq(2,irts.irt(),icls.icl());
+             (void) new IntSeq(3,irts.irt(),icls.icl());
+             (void) new IntSeq(5,irts.irt(),icls.icl());
            }
            (void) new BoolVarXY(irts.irt(),1);
            (void) new BoolVarXY(irts.irt(),2);
            (void) new BoolVarXX(irts.irt());
-           (void) new BoolSeq(irts.irt());
+           (void) new BoolSeq(1,irts.irt());
+           (void) new BoolSeq(2,irts.irt());
+           (void) new BoolSeq(3,irts.irt());
+           (void) new BoolSeq(10,irts.irt());
            for (int c=-4; c<=4; c++) {
              (void) new IntInt(irts.irt(),1,c);
              (void) new IntInt(irts.irt(),2,c);

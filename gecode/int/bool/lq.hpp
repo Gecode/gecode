@@ -103,6 +103,130 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+
+  /*
+   * N-ary Boolean less or equal propagator
+   *
+   */
+
+  template<class VX>
+  forceinline
+  NaryLq<VX>::NaryLq(Home home, ViewArray<VX>& x)
+    : NaryPropagator<VX,PC_BOOL_NONE>(home,x),
+      n_zero(0), n_one(0), c(home) {
+    x.subscribe(home,*new (home) Advisor(home,*this,c));
+  }
+
+  template<class VX>
+  forceinline
+  NaryLq<VX>::NaryLq(Space& home, bool share, NaryLq<VX>& p)
+    : NaryPropagator<VX,PC_BOOL_NONE>(home,share,p),
+      n_zero(0), n_one(0) {
+    c.update(home,share,p.c);
+  }
+
+  template<class VX>
+  Actor*
+  NaryLq<VX>::copy(Space& home, bool share) {
+    return new (home) NaryLq<VX>(home,share,*this);
+  }
+
+  template<class VX>
+  inline ExecStatus
+  NaryLq<VX>::post(Home home, ViewArray<VX>& x) {
+    int i = 0;
+    while (i < x.size())
+      if (x[i].zero()) {
+        // All x[j] left of i must be zero as well
+        for (int j=i; j--; )
+          GECODE_ME_CHECK(x[j].zero_none(home));
+        x.drop_fst(i+1); i=0;
+      } else if (x[i].one()) {
+        // All x[j] right of i must be one as well
+        for (int j=i+1; j<x.size(); j++)
+          GECODE_ME_CHECK(x[j].one(home));
+        x.drop_lst(i-1); break;
+      } else {
+        i++;
+      }
+
+    if (x.size() == 2)
+      return Lq<VX>::post(home,x[0],x[1]);
+    if (x.size() > 2)
+      (void) new (home) NaryLq(home,x);
+    return ES_OK;
+  }
+
+  template<class VX>
+  PropCost
+  NaryLq<VX>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::binary(PropCost::LO);
+  }
+
+  template<class VX>
+  ExecStatus
+  NaryLq<VX>::advise(Space&, Advisor&, const Delta& d) {
+    // Is the propagator running?
+    if (n_zero < 0)
+      return ES_FIX;
+    if (VX::zero(d))
+      n_zero++;
+    else
+      n_one++;
+    return ES_NOFIX;
+  }
+
+  template<class VX>
+  forceinline size_t
+  NaryLq<VX>::dispose(Space& home) {
+    Advisors<Advisor> as(c);
+    x.cancel(home,as.advisor());
+    c.dispose(home);
+    (void) NaryPropagator<VX,PC_BOOL_NONE>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class VX>
+  ExecStatus
+  NaryLq<VX>::propagate(Space& home, const ModEventDelta&) {
+    {
+      int n = n_zero;
+      // Mark the propagator as running!
+      n_zero = -1;
+
+      for ( ; n--; ) {
+        int i = 0;
+        while (x[i].none())
+          i++;
+        if (x[i].one())
+          return ES_FAILED;
+        // As the x[j] might be shared, only zero() but not zero_none()
+        for (int j=i; j--; )
+          GECODE_ME_CHECK(x[j].zero(home));
+        x.drop_fst(i+1);
+      }
+    }
+
+    for (int n = n_one; n--; ) {
+      int i = x.size() - 1;
+      while (x[i].none())
+        i--;
+      assert(x[i].one());
+      // As the x[j] might be shared, only one() but not one_none()
+      for (int j=i+1; j<x.size(); j++)
+        GECODE_ME_CHECK(x[j].one(home));
+      x.drop_lst(i-1);
+    }
+
+    n_zero = n_one = 0;
+
+    if (x.size() < 2)
+      return home.ES_SUBSUMED(*this);
+    else
+      return ES_FIX;
+  }
+
+
   /*
    * Less posting
    *

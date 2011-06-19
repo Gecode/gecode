@@ -977,14 +977,10 @@ namespace Gecode {
    *    Supports both bounds (\a icl = ICL_BND) and
    *    domain consistency (\a icl = ICL_DOM, default).
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
-   *    then the elements of \a x are ordered with respt to \a r.
+   *    then the elements of \a x are ordered with respect to \a r.
    *    Supports domain consistency (\a icl = ICL_DOM, default).
-   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise
-   *    distinct (corresponds to the distinct constraint).
-   *    Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *    and domain consistency (\a icl = ICL_DOM).
-   *    Throws an exception of type Int::ArgumentSame, if \a x contains
-   *    the same unassigned variable multiply.
+   *  - if \a r = IRT_NQ, then no two adjacent elements of \a x 
+   *    are allowed to be equal.
    *
    * \ingroup TaskModelIntRelInt
    */
@@ -1079,8 +1075,11 @@ namespace Gecode {
    *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
    *    then the elements of \a x are ordered with respt to \a r.
-   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise
-   *    distinct (corresponds to the distinct constraint).
+   *  - if \a r = IRT_NQ, then succesive elements of \a x must be
+   *    distinct.
+   *   
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same unassigned variable multiply.
    *
    * \ingroup TaskModelIntRelBool
    */

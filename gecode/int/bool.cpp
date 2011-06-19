@@ -352,12 +352,15 @@ namespace Gecode {
   void
   rel(Home home, const BoolVarArgs& x, IntRelType r, IntConLevel) {
     using namespace Int;
+    if (x.same(home))
+      throw ArgumentSame("Int::rel");
     if (home.failed() || (x.size() < 2)) return;
     switch (r) {
     case IRT_EQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
-                        ::post(home,x[i],x[i+1])));
+      {
+        ViewArray<BoolView> y(home,x);
+        GECODE_ES_FAIL(Bool::NaryEq<BoolView>::post(home,y));
+      }
       break;
     case IRT_NQ:
       for (int i=x.size()-1; i--; ) {
@@ -374,8 +377,10 @@ namespace Gecode {
       }
       break;
     case IRT_LQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,x[i],x[i+1]));
+      {
+        ViewArray<BoolView> y(home,x);
+        GECODE_ES_FAIL(Bool::NaryLq<BoolView>::post(home,y));
+      }
       break;
     case IRT_GR:
       if (x.size() == 2) {
@@ -385,6 +390,12 @@ namespace Gecode {
       }
       break;
     case IRT_GQ:
+      {
+        ViewArray<BoolView> y(home,x.size());
+        for (int i=x.size(); i--; )
+          y[i] = x[x.size()-1-i];
+        GECODE_ES_FAIL(Bool::NaryLq<BoolView>::post(home,y));
+      }
       for (int i=x.size()-1; i--; )
         GECODE_ES_FAIL(Bool::Lq<BoolView>::post(home,x[i+1],x[i]));
       break;
