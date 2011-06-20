@@ -143,7 +143,8 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Home home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_NONE>(home,x), c(home), run(false) {
+    : NaryPropagator<View,PC_INT_NONE>(home,x), 
+      c(home), run(false), n_subsumed(0) {
     for (int i=x.size(); i--; )
       x[i].subscribe(home, *new (home) Index(home,*this,c,i));
   }
@@ -224,7 +225,8 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p)
-    : NaryPropagator<View,PC_INT_NONE>(home,share,p), run(false) {
+    : NaryPropagator<View,PC_INT_NONE>(home,share,p), 
+      run(false), n_subsumed(p.n_subsumed) {
     c.update(home, share, p.c);
   }
 
@@ -243,6 +245,8 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline size_t
   NaryLqLe<View,o>::dispose(Space& home) {
+    for (Advisors<Index> as(c); as(); ++as)
+      x[as.advisor().i].cancel(home,as.advisor());
     c.dispose(home);
     (void) NaryPropagator<View,PC_INT_NONE>::dispose(home);
     return sizeof(*this);
@@ -253,13 +257,19 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   NaryLqLe<View,o>::advise(Space& home, Advisor& _a, const Delta& d) {
     Index& a = static_cast<Index&>(_a);
+    const int i = a.i;
     switch (View::modevent(d)) {
     case ME_INT_VAL:
-      if (run)
-        return home.ES_FIX_DISPOSE(c,a);
-      else
-        return home.ES_NOFIX_DISPOSE(c,a);
+      n_subsumed++;
+      a.dispose(home,c);
+      return run ? ES_FIX : ES_NOFIX;
     case ME_INT_BND:
+      if (((i == 0) || (x[i-1].max()+o <= x[i].min())) &&
+          ((i == x.size()-1) || (x[i].max()+o <= x[i+1].min()))) {
+        n_subsumed++;
+        x[i].cancel(home,a);
+        a.dispose(home,c);
+      }
       return run ? ES_FIX : ES_NOFIX;
     default:
       return ES_FIX;
@@ -276,7 +286,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x[i].gq(home,x[i-1].min()+o));
     for (int i=n-1; i--;)
       GECODE_ME_CHECK(x[i].lq(home,x[i+1].max()-o));
-    if (c.empty())
+    if (n_subsumed+1 >= x.size())
       return home.ES_SUBSUMED(*this);
     run = false;
     return ES_FIX;

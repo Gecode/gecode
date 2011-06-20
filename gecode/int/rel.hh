@@ -218,6 +218,8 @@ namespace Gecode { namespace Int { namespace Rel {
     Council<Index> c;
     /// Whether the propagator is currently running
     bool run;
+    /// Number of already subsumed advisors (or views)
+    int n_subsumed;
     /// Constructor for cloning \a p
     NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p);
     /// Constructor for posting
