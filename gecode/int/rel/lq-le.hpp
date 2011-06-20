@@ -226,13 +226,34 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p)
     : NaryPropagator<View,PC_INT_NONE>(home,share,p), 
-      run(false), n_subsumed(p.n_subsumed) {
+      run(false), n_subsumed(0) {
+    assert(p.n_subsumed == 0);
     c.update(home, share, p.c);
   }
 
   template<class View, int o>
   Actor*
   NaryLqLe<View,o>::copy(Space& home, bool share) {
+    if (n_subsumed > 0) {
+      Region r(home);
+      // Record for which views there is an advisor
+      Support::BitSet<Region> a(r,static_cast<unsigned int>(x.size()));
+      for (Advisors<Index> as(c); as(); ++as)
+        a.set(static_cast<unsigned int>(as.advisor().i));
+      // Compact view array and compute map for advisors
+      int* m = r.alloc<int>(x.size());
+      int j=0;
+      for (int i=0; i<x.size(); i++)
+        if (a.get(static_cast<unsigned int>(i))) {
+          m[i] = j; x[j++] = x[i];
+        }
+      x.size(j);
+      // Remap advisors
+      for (Advisors<Index> as(c); as(); ++as)
+        as.advisor().i = m[as.advisor().i];
+      
+      n_subsumed = 0;
+    }
     return new (home) NaryLqLe<View,o>(home,share,*this);
   }
 
