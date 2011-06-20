@@ -285,6 +285,36 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for sequence of relations between shared integer variables
+     class IntSharedSeq : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       IntSharedSeq(int n, Gecode::IntRelType irt0, Gecode::IntConLevel icl)
+         : Test("Rel::Int::Seq::Shared::"+str(n)+"::"+str(irt0)+"::"+str(icl),
+                n,-3,3,false,icl),
+           irt(irt0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size();
+         for (int i=0; i<2*n-1; i++)
+           if (!cmp(x[i % n],irt,x[(i+1) % n]))
+             return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n = x.size();
+         IntVarArgs y(2*n);
+         for (int i=n; i--; ) 
+           y[i] = y[n+i] = x[i];
+         rel(home, y, irt, icl);
+       }
+     };
+
      /// %Test for sequence of relations between Boolean variables
      class BoolSeq : public Test {
      protected:
@@ -308,6 +338,35 @@ namespace Test { namespace Int {
          BoolVarArgs b(x.size());
          for (int i=x.size(); i--; )
            b[i]=channel(home,x[i]);
+         rel(home, b, irt);
+       }
+     };
+
+     /// %Test for sequence of relations between shared Boolean variables
+     class BoolSharedSeq : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       BoolSharedSeq(int n, Gecode::IntRelType irt0)
+         : Test("Rel::Bool::Seq::Shared::"+str(n)+"::"+str(irt0),n,0,1),
+           irt(irt0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size();
+         for (int i=0; i<2*n-1; i++)
+           if (!cmp(x[i % n],irt,x[(i+1) % n]))
+             return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         int n = x.size();
+         BoolVarArgs b(2*n);
+         for (int i=n; i--; )
+           b[i]=b[n+i]=channel(home,x[i]);
          rel(home, b, irt);
        }
      };
@@ -431,6 +490,8 @@ namespace Test { namespace Int {
              (void) new IntSeq(2,irts.irt(),icls.icl());
              (void) new IntSeq(3,irts.irt(),icls.icl());
              (void) new IntSeq(5,irts.irt(),icls.icl());
+             (void) new IntSharedSeq(3,irts.irt(),icls.icl());
+             (void) new IntSharedSeq(4,irts.irt(),icls.icl());
            }
            (void) new BoolVarXY(irts.irt(),1);
            (void) new BoolVarXY(irts.irt(),2);
@@ -439,6 +500,8 @@ namespace Test { namespace Int {
            (void) new BoolSeq(2,irts.irt());
            (void) new BoolSeq(3,irts.irt());
            (void) new BoolSeq(10,irts.irt());
+           (void) new BoolSharedSeq(4,irts.irt());
+           (void) new BoolSharedSeq(8,irts.irt());
            for (int c=-4; c<=4; c++) {
              (void) new IntInt(irts.irt(),1,c);
              (void) new IntInt(irts.irt(),2,c);
