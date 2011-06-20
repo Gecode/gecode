@@ -216,6 +216,8 @@ namespace Gecode { namespace Int { namespace Rel {
     };
     /// The advisor council
     Council<Index> c;
+    /// Whether the propagator is currently running
+    bool run;
     /// Constructor for cloning \a p
     NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p);
     /// Constructor for posting

@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Home home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_NONE>(home,x), c(home) {
+    : NaryPropagator<View,PC_INT_NONE>(home,x), c(home), run(false) {
     for (int i=x.size(); i--; )
       x[i].subscribe(home, *new (home) Index(home,*this,c,i));
   }
@@ -153,14 +153,35 @@ namespace Gecode { namespace Int { namespace Rel {
   NaryLqLe<View,o>::post(Home home, ViewArray<View>& x) {
     assert((o == 0) || (o == 1));
     // Check for sharing
-    if (x.same(home) && (o == 1))
-      return ES_FAILED;
+    if (x.same(home)) {
+      if (o == 1)
+        return ES_FAILED;
+      /*
+       * Eliminate sharing: if a view occurs twice, all views in between
+       * must be equal.
+       */
+      int n = x.size();
+      for (int i=0; i<n; i++)
+        for (int j=n-1; j>i; j--)
+          if (same(x[i],x[j])) {
+            if (i+1 != j) {
+              // Create equality propagator for elements i+1 ... j
+              ViewArray<View> y(home,j-i);
+              for (int k=j-i; k--; )
+                y[k] = x[i+1+k];
+              GECODE_ES_CHECK(NaryEqBnd<View>::post(home,y));
+            }
+            for (int k=0; k<n-1-j-1+1; k++)
+              x[i+1+k]=x[j+1+k];
+            n -= j-i;
+          }
+      x.size(n);
+    }
         
     // Propagate one round
-    int n = x.size();
-    for (int i=1; i<n; i++)
+    for (int i=1; i<x.size(); i++)
       GECODE_ME_CHECK(x[i].gq(home,x[i-1].min()+o));
-    for (int i=n-1; i--;)
+    for (int i=x.size()-1; i--;)
       GECODE_ME_CHECK(x[i].lq(home,x[i+1].max()-o));
     // Eliminate redundant variables
     {
@@ -203,7 +224,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p)
-    : NaryPropagator<View,PC_INT_NONE>(home,share,p) {
+    : NaryPropagator<View,PC_INT_NONE>(home,share,p), run(false) {
     c.update(home, share, p.c);
   }
 
@@ -234,9 +255,12 @@ namespace Gecode { namespace Int { namespace Rel {
     Index& a = static_cast<Index&>(_a);
     switch (View::modevent(d)) {
     case ME_INT_VAL:
-      return home.ES_NOFIX_DISPOSE(c,a);
+      if (run)
+        return home.ES_FIX_DISPOSE(c,a);
+      else
+        return home.ES_NOFIX_DISPOSE(c,a);
     case ME_INT_BND:
-      return ES_NOFIX;
+      return run ? ES_FIX : ES_NOFIX;
     default:
       return ES_FIX;
     }
@@ -245,6 +269,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   ExecStatus
   NaryLqLe<View,o>::propagate(Space& home, const ModEventDelta& med) {
+    run = true;
     // Do one round of propagation
     int n = x.size();
     for (int i=1; i<n; i++)
@@ -253,7 +278,8 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x[i].lq(home,x[i+1].max()-o));
     if (c.empty())
       return home.ES_SUBSUMED(*this);
-    return ES_NOFIX;
+    run = false;
+    return ES_FIX;
   }
 
 

@@ -490,6 +490,8 @@ namespace Test { namespace Int {
              (void) new IntSeq(2,irts.irt(),icls.icl());
              (void) new IntSeq(3,irts.irt(),icls.icl());
              (void) new IntSeq(5,irts.irt(),icls.icl());
+             (void) new IntSharedSeq(1,irts.irt(),icls.icl());
+             (void) new IntSharedSeq(2,irts.irt(),icls.icl());
              (void) new IntSharedSeq(3,irts.irt(),icls.icl());
              (void) new IntSharedSeq(4,irts.irt(),icls.icl());
            }
@@ -500,6 +502,9 @@ namespace Test { namespace Int {
            (void) new BoolSeq(2,irts.irt());
            (void) new BoolSeq(3,irts.irt());
            (void) new BoolSeq(10,irts.irt());
+           (void) new BoolSharedSeq(1,irts.irt());
+           (void) new BoolSharedSeq(2,irts.irt());
+           (void) new BoolSharedSeq(3,irts.irt());
            (void) new BoolSharedSeq(4,irts.irt());
            (void) new BoolSharedSeq(8,irts.irt());
            for (int c=-4; c<=4; c++) {
