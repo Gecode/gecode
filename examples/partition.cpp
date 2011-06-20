@@ -58,6 +58,7 @@ public:
     : x(*this,opt.size(),1,2*opt.size()),
       y(*this,opt.size(),1,2*opt.size()) {
     const int n = opt.size();
+
     // Break symmetries by ordering numbers in each group
     rel(*this, x, IRT_LE);
     rel(*this, y, IRT_LE);
@@ -90,7 +91,7 @@ public:
     linear(*this, y, IRT_EQ, 2*n*(2*n+1)/4);
     linear(*this, sx, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
     linear(*this, sy, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
-    branch(*this, xy, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, xy, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
   }
 
   /// Constructor used during cloning \a s
