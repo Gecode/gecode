@@ -283,18 +283,28 @@ namespace Gecode { namespace Int { namespace Rel {
     case ME_INT_VAL:
       n_subsumed++;
       a.dispose(home,c);
-      return run ? ES_FIX : ES_NOFIX;
+      break;
     case ME_INT_BND:
       if (((i == 0) || (x[i-1].max()+o <= x[i].min())) &&
           ((i == x.size()-1) || (x[i].max()+o <= x[i+1].min()))) {
         n_subsumed++;
         x[i].cancel(home,a);
         a.dispose(home,c);
+        return (n_subsumed+1 >= x.size()) ? ES_NOFIX : ES_FIX;
       }
-      return run ? ES_FIX : ES_NOFIX;
+      break;
     default:
       return ES_FIX;
     }
+    if (n_subsumed+1 >= x.size())
+      return ES_NOFIX;
+    if (run)
+      return ES_FIX;
+    if ((i > 0)          && (x[i].min() < x[i-1].min()+o))
+      return ES_NOFIX;
+    if ((i < x.size()-1) && (x[i].max() > x[i+1].max()-o))
+      return ES_NOFIX;
+    return ES_NOFIX;
   }
 
   template<class View, int o>
