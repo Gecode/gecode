@@ -284,20 +284,34 @@ namespace Gecode {
         GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,x[i],x[i+1]));
       break;
     case IRT_LE:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Rel::Le<IntView>::post(home,x[i],x[i+1]));
+      {
+        ViewArray<IntView> y(home,x);
+        GECODE_ES_FAIL((Rel::NaryLqLe<IntView,1>::post(home,y)));
+      }
       break;
     case IRT_LQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Rel::Lq<IntView>::post(home,x[i],x[i+1]));
+      {
+        ViewArray<IntView> y(home,x);
+        GECODE_ES_FAIL((Rel::NaryLqLe<IntView,0>::post(home,y)));
+      }
       break;
     case IRT_GR:
+      {
+        ViewArray<IntView> y(home,x.size());
+        for (int i=x.size(); i--; )
+          y[i] = x[x.size()-1-i];
+        GECODE_ES_FAIL((Rel::NaryLqLe<IntView,1>::post(home,y)));
+      }
       for (int i=x.size()-1; i--; )
         GECODE_ES_FAIL(Rel::Le<IntView>::post(home,x[i+1],x[i]));
       break;
     case IRT_GQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Rel::Lq<IntView>::post(home,x[i+1],x[i]));
+      {
+        ViewArray<IntView> y(home,x.size());
+        for (int i=x.size(); i--; )
+          y[i] = x[x.size()-1-i];
+        GECODE_ES_FAIL((Rel::NaryLqLe<IntView,0>::post(home,y)));
+      }
       break;
     default:
       throw UnknownRelation("Int::rel");

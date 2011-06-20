@@ -192,6 +192,35 @@ namespace Gecode { namespace Int { namespace Rel {
   };
 
   /**
+   * \brief n-ary less and less or equal propagator
+   *
+   * If \a c is 0, less or equal is propagated, if \a c is 1 less is
+   * propagated.
+   *
+   * Requires \code #include <gecode/int/rel.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View, int c>
+  class NaryLqLe : public NaryPropagator<View,PC_INT_BND> {
+  protected:
+    using NaryPropagator<View,PC_INT_BND>::x;
+
+    /// Constructor for cloning \a p
+    NaryLqLe(Space& home, bool share, NaryLqLe<View,c>& p);
+    /// Constructor for posting
+    NaryLqLe(Home home, ViewArray<View>&);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for \f$ x_0 +c\leq x_1+c\leq\cdots \leq x_{|x|-1}\f$
+    static ExecStatus post(Home home, ViewArray<View>& x);
+  };
+
+  /**
    * \brief Reified binary domain consistent equality propagator
    *
    * Requires \code #include <gecode/int/rel.hh> \endcode

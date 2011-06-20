@@ -124,6 +124,130 @@ namespace Gecode { namespace Int { namespace Rel {
 
 
   /*
+   * Nary less and less or equal propagator
+   *
+   */
+
+  template<class View, int c>
+  forceinline
+  NaryLqLe<View,c>::NaryLqLe(Home home, ViewArray<View>& x)
+    : NaryPropagator<View,PC_INT_BND>(home,x) {}
+
+  template<class View, int c>
+  ExecStatus
+  NaryLqLe<View,c>::post(Home home, ViewArray<View>& x) {
+    assert((c == 0) || (c == 1));
+    // Check for sharing
+    if (x.same(home) && (c == 1))
+      return ES_FAILED;
+        
+    // Propagate one round
+    int n = x.size();
+    for (int i=1; i<n; i++)
+      GECODE_ME_CHECK(x[i].gq(home,x[i-1].min()+c));
+    for (int i=n-1; i--;)
+      GECODE_ME_CHECK(x[i].lq(home,x[i+1].max()-c));
+    // Eliminate redundant variables
+    {
+      // Eliminate at beginning
+      {
+        int i=0;
+        while ((i+1 < x.size()) && (x[i].max()+c <= x[i+1].min()))
+          i++;
+        x.drop_fst(i);
+      }
+      // Eliminate at end
+      {
+        int i=x.size()-1;
+        while ((i > 0) && (x[i-1].max()+c <= x[i].min()))
+          i--;
+        x.drop_lst(i);
+      }
+      // Eliminate in the middle
+      if (x.size() > 1) {
+        int j=1;
+        for (int i=1; i+1<x.size(); i++)
+          if ((x[j-1].max()+c > x[i].min()) ||
+              (x[i].max()+c > x[i+1].min()))
+            x[j++]=x[i];
+        x[j++]=x[x.size()-1];
+        x.size(j);
+      }
+    }
+    if (x.size() == 2) {
+      if (c == 0)
+        return Lq<View>::post(home,x[0],x[1]);
+      else
+        return Le<View>::post(home,x[0],x[1]);
+    } else if (x.size() >= 2) {
+      (void) new (home) NaryLqLe<View,c>(home,x);
+    }
+    return ES_OK;
+  }
+
+  template<class View, int c>
+  forceinline
+  NaryLqLe<View,c>::NaryLqLe(Space& home, bool share, NaryLqLe<View,c>& p)
+    : NaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template<class View, int c>
+  Actor*
+  NaryLqLe<View,c>::copy(Space& home, bool share) {
+    return new (home) NaryLqLe<View,c>(home,share,*this);
+  }
+
+  template<class View, int c>
+  PropCost
+  NaryLqLe<View,c>::cost(const Space&, const ModEventDelta& med) const {
+    return PropCost::binary(PropCost::HI);
+  }
+
+  template<class View, int c>
+  ExecStatus
+  NaryLqLe<View,c>::propagate(Space& home, const ModEventDelta& med) {
+    // Do one round of propagation
+    int n = x.size();
+    for (int i=1; i<n; i++)
+      GECODE_ME_CHECK(x[i].gq(home,x[i-1].min()+c));
+    for (int i=n-1; i--;)
+      GECODE_ME_CHECK(x[i].lq(home,x[i+1].max()-c));
+    // Eliminate redundant variables
+    {
+      // Eliminate at beginning
+      {
+        int i=0;
+        while ((i+1 < x.size()) && (x[i].max()+c <= x[i+1].min()))
+          x[i++].cancel(home,*this,PC_INT_BND);
+        x.drop_fst(i);
+      }
+      // Eliminate at end
+      {
+        int i=x.size()-1;
+        while ((i > 0) && (x[i-1].max()+c <= x[i].min()))
+          x[i--].cancel(home,*this,PC_INT_BND);
+        x.drop_lst(i);
+      }
+      // Eliminate in the middle
+      if (x.size() > 1) {
+        int j=1;
+        for (int i=1; i+1<x.size(); i++)
+          if ((x[j-1].max()+c <= x[i].min()) &&
+              (x[i].max()+c <= x[i+1].min()))
+            x[i].cancel(home,*this,PC_INT_BND);
+          else
+            x[j++]=x[i];
+        x[j++]=x[x.size()-1];
+        x.size(j);
+      }
+    }
+    if (x.size() < 2)
+      return home.ES_SUBSUMED(*this);
+    return ES_NOFIX;
+  }
+
+
+
+  /*
    * Reified less or equal propagator
    *
    */
