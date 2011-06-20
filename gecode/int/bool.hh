@@ -183,6 +183,8 @@ namespace Gecode { namespace Int { namespace Bool {
   class NaryLq : public NaryPropagator<VX,PC_BOOL_NONE> {
   protected:
     using NaryPropagator<VX,PC_BOOL_NONE>::x;
+    /// Whether the propagator is currently running
+    bool run;
     /// The number of views assigned to zero in \a x
     int n_zero;
     /// The number of views assigned to one in \a x

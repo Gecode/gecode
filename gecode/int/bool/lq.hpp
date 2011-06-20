@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline
   NaryLq<VX>::NaryLq(Home home, ViewArray<VX>& x)
     : NaryPropagator<VX,PC_BOOL_NONE>(home,x),
-      n_zero(0), n_one(0), c(home) {
+      run(false), n_zero(0), n_one(0), c(home) {
     x.subscribe(home,*new (home) Advisor(home,*this,c));
   }
 
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline
   NaryLq<VX>::NaryLq(Space& home, bool share, NaryLq<VX>& p)
     : NaryPropagator<VX,PC_BOOL_NONE>(home,share,p),
-      n_zero(0), n_one(0) {
+      run(false), n_zero(0), n_one(0) {
     c.update(home,share,p.c);
   }
 
@@ -166,14 +166,11 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX>
   ExecStatus
   NaryLq<VX>::advise(Space&, Advisor&, const Delta& d) {
-    // Is the propagator running?
-    if (n_zero < 0)
-      return ES_FIX;
     if (VX::zero(d))
       n_zero++;
     else
       n_one++;
-    return ES_NOFIX;
+    return run ? ES_FIX : ES_NOFIX;
   }
 
   template<class VX>
@@ -189,25 +186,22 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX>
   ExecStatus
   NaryLq<VX>::propagate(Space& home, const ModEventDelta&) {
-    {
-      int n = n_zero;
-      // Mark the propagator as running!
-      n_zero = -1;
-
-      for ( ; n--; ) {
-        int i = 0;
-        while (x[i].none())
-          i++;
-        if (x[i].one())
-          return ES_FAILED;
-        // As the x[j] might be shared, only zero() but not zero_none()
-        for (int j=i; j--; )
-          GECODE_ME_CHECK(x[j].zero(home));
-        x.drop_fst(i+1);
-      }
+    run = true;
+    while (n_zero > 0) {
+      int i = 0;
+      while (x[i].none())
+        i++;
+      if (x[i].one())
+        return ES_FAILED;
+      // As the x[j] might be shared, only zero() but not zero_none()
+      for (int j=i; j--; )
+        GECODE_ME_CHECK(x[j].zero(home));
+      n_zero -= i + 1;
+      assert(n_zero >= 0);
+      x.drop_fst(i+1);
     }
 
-    for (int n = n_one; n--; ) {
+    while (n_one > 0) {
       int i = x.size() - 1;
       while (x[i].none())
         i--;
@@ -215,15 +209,16 @@ namespace Gecode { namespace Int { namespace Bool {
       // As the x[j] might be shared, only one() but not one_none()
       for (int j=i+1; j<x.size(); j++)
         GECODE_ME_CHECK(x[j].one(home));
+      n_one -= x.size() - i;
+      assert(n_one >= 0);
       x.drop_lst(i-1);
     }
 
-    n_zero = n_one = 0;
-
     if (x.size() < 2)
       return home.ES_SUBSUMED(*this);
-    else
-      return ES_FIX;
+
+    run = false;
+    return ES_FIX;
   }
 
 

@@ -352,9 +352,8 @@ namespace Gecode {
   void
   rel(Home home, const BoolVarArgs& x, IntRelType r, IntConLevel) {
     using namespace Int;
-    if (x.same(home))
-      throw ArgumentSame("Int::rel");
     if (home.failed() || (x.size() < 2)) return;
+
     switch (r) {
     case IRT_EQ:
       {

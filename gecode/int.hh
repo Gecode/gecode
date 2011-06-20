@@ -1078,9 +1078,6 @@ namespace Gecode {
    *  - if \a r = IRT_NQ, then succesive elements of \a x must be
    *    distinct.
    *   
-   * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply.
-   *
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
