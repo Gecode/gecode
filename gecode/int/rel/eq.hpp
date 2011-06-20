@@ -346,6 +346,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   ExecStatus
   NaryEqBnd<View>::post(Home home, ViewArray<View>& x) {
+    x.unique();
     if (x.size() == 2) {
       return EqBnd<View,View>::post(home,x[0],x[1]);
     } else if (x.size() > 2) {
