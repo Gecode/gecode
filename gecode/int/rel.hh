@@ -194,19 +194,30 @@ namespace Gecode { namespace Int { namespace Rel {
   /**
    * \brief n-ary less and less or equal propagator
    *
-   * If \a c is 0, less or equal is propagated, if \a c is 1 less is
+   * If \a o is 0, less or equal is propagated, if \a o is 1 less is
    * propagated.
    *
    * Requires \code #include <gecode/int/rel.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, int c>
-  class NaryLqLe : public NaryPropagator<View,PC_INT_BND> {
+  template<class View, int o>
+  class NaryLqLe : public NaryPropagator<View,PC_INT_NONE> {
   protected:
-    using NaryPropagator<View,PC_INT_BND>::x;
-
+    using NaryPropagator<View,PC_INT_NONE>::x;
+    /// %Advisors for views (by position in array)
+    class Index : public Advisor {
+    public:
+      /// The position of the view in the view array
+      int i;
+      /// Create index advisor
+      Index(Space& home, Propagator& p, Council<Index>& c, int i);
+      /// Clone index advisor \a a
+      Index(Space& home, bool share, Index& a);
+    };
+    /// The advisor council
+    Council<Index> c;
     /// Constructor for cloning \a p
-    NaryLqLe(Space& home, bool share, NaryLqLe<View,c>& p);
+    NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p);
     /// Constructor for posting
     NaryLqLe(Home home, ViewArray<View>&);
   public:
@@ -214,8 +225,12 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
     /// Post propagator for \f$ x_0 +c\leq x_1+c\leq\cdots \leq x_{|x|-1}\f$
     static ExecStatus post(Home home, ViewArray<View>& x);
   };
