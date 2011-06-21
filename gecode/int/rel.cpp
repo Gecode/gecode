@@ -327,25 +327,25 @@ namespace Gecode {
     case IRT_GR:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::Lex<IntView>::post(home,yv,xv,true));
+        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,yv,xv,true));
       }
       break;
     case IRT_LE:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::Lex<IntView>::post(home,xv,yv,true));
+        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,xv,yv,true));
       }
       break;
     case IRT_GQ:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::Lex<IntView>::post(home,yv,xv,false));
+        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,yv,xv,false));
       }
       break;
     case IRT_LQ:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::Lex<IntView>::post(home,xv,yv,false));
+        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,xv,yv,false));
       }
       break;
     case IRT_EQ:

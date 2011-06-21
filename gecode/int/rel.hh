@@ -566,16 +566,16 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
   template<class View>
-  class Lex : public Propagator {
+  class LexLqLe : public Propagator {
   protected:
     /// View arrays
     ViewArray<View> x, y;
     /// Determines whether propagator is strict or not
     bool strict;
     /// Constructor for cloning \a p
-    Lex(Space& home, bool share, Lex& p);
+    LexLqLe(Space& home, bool share, LexLqLe<View>& p);
     /// Constructor for posting
-    Lex(Home home, ViewArray<View>& x, ViewArray<View>& y, bool strict);
+    LexLqLe(Home home, ViewArray<View>& x, ViewArray<View>& y, bool strict);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);

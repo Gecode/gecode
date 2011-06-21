@@ -39,8 +39,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   inline
-  Lex<View>::Lex(Home home,
-                 ViewArray<View>& x0, ViewArray<View>& y0, bool s)
+  LexLqLe<View>::LexLqLe(Home home,
+                         ViewArray<View>& x0, ViewArray<View>& y0, bool s)
     : Propagator(home), x(x0), y(y0), strict(s) {
     x.subscribe(home, *this, PC_INT_BND);
     y.subscribe(home, *this, PC_INT_BND);
@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   forceinline
-  Lex<View>::Lex(Space& home, bool share, Lex<View>& p)
+  LexLqLe<View>::LexLqLe(Space& home, bool share, LexLqLe<View>& p)
     : Propagator(home,share,p), strict(p.strict) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -56,19 +56,19 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   Actor*
-  Lex<View>::copy(Space& home, bool share) {
-    return new (home) Lex<View>(home,share,*this);
+  LexLqLe<View>::copy(Space& home, bool share) {
+    return new (home) LexLqLe<View>(home,share,*this);
   }
 
   template<class View>
   PropCost
-  Lex<View>::cost(const Space&, const ModEventDelta&) const {
+  LexLqLe<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
   }
 
   template<class View>
   forceinline size_t
-  Lex<View>::dispose(Space& home) {
+  LexLqLe<View>::dispose(Space& home) {
     assert(!home.failed());
     x.cancel(home,*this,PC_INT_BND);
     y.cancel(home,*this,PC_INT_BND);
@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   ExecStatus
-  Lex<View>::propagate(Space& home, const ModEventDelta&) {
+  LexLqLe<View>::propagate(Space& home, const ModEventDelta&) {
     /*
      * State 1
      *
@@ -232,8 +232,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   ExecStatus
-  Lex<View>::post(Home home,
-                  ViewArray<View>& x, ViewArray<View>& y, bool strict) {
+  LexLqLe<View>::post(Home home,
+                      ViewArray<View>& x, ViewArray<View>& y, bool strict) {
     if (x.size() < y.size()) {
       y.size(x.size()); strict=false;
     } else if (x.size() > y.size()) {
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace Rel {
       else
         return Lq<View>::post(home,x[0],y[0]);
     }
-    (void) new (home) Lex<View>(home,x,y,strict);
+    (void) new (home) LexLqLe<View>(home,x,y,strict);
     return ES_OK;
   }
 
