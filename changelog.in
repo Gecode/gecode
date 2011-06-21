@@ -75,6 +75,14 @@ Some bug fixes, probably
 [ENTRY]
 Module: int
 What:   performance
+Rank:   minor
+[DESCRIPTION]
+The disequality constraint between variable arrays has an efficient
+propagator now.
+
+[ENTRY]
+Module: int
+What:   performance
 Rank:   major
 [DESCRIPTION]
 The ordering constraints rel(home, x, IRT_LE) (also for IRT_LQ,
@@ -88,15 +96,6 @@ Rank:   minor
 Thanks: Jan Kelbel
 [DESCRIPTION]
 Fixed a small memory leak in the driver (stop objects were not deleted).
-
-[ENTRY]
-Module: int
-What:   performance
-Rank:   major
-[DESCRIPTION]
-The ordering constraints rel(home, x, IRT_LE) (also for IRT_LQ,
-IRT_GR, IRT_GQ) now have an optimal implementation (single
-incremental propagator).
 
 [ENTRY]
 Module: int
@@ -134,9 +133,9 @@ Gecode" for details.
 [ENTRY]
 Module: int
 What:   new
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Added constraint post functions for Hamiltonian paths (called
+Added constraints for Hamiltonian paths (called
 path). See "Modeling and Programming with Gecode" for details.
 
 [ENTRY]
@@ -369,6 +368,7 @@ Rank:	minor
 Thanks: Marco Correia
 [DESCRIPTION]
 Fixed documentation for set channeling constraint.
+
 
 [RELEASE]
 Version: 3.5.0

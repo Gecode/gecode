@@ -590,6 +590,39 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual size_t dispose(Space& home);
   };
 
+  /**
+   * \brief Lexical disequality propagator
+   *
+   * Requires \code #include <gecode/int/rel.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View>
+  class LexNq : public Propagator {
+  protected:
+    /// Views currently subscribed to
+    View x0, y0, x1, y1;
+    /// Views not yet subscribed to
+    ViewArray<View> x, y;
+    /// Update subscription
+    ExecStatus resubscribe(Space& home, 
+                           RelTest rt, View& x0, View& y0, View x1, View y1);
+    /// Constructor for posting
+    LexNq(Home home, ViewArray<View>& x, ViewArray<View>& y);
+    /// Constructor for cloning \a p
+    LexNq(Space& home, bool share, LexNq<View>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ x\neq y\f$
+    static  ExecStatus post(Home home, ViewArray<View>& x, ViewArray<View>& y);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
 }}}
 
 #include <gecode/int/rel/eq.hpp>

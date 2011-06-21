@@ -444,14 +444,8 @@ namespace Gecode {
       break;
     case IRT_NQ:
       {
-        ViewArray<BoolView> b(home,x.size());
-        for (int i=x.size(); i--; ) {
-          BoolVar bi(home,0,1); b[i]=bi;
-          NegBoolView n(b[i]);
-          GECODE_ES_FAIL((Bool::Eqv<BoolView,BoolView,NegBoolView>
-                               ::post(home,x[i],y[i],n)));
-        }
-        GECODE_ES_FAIL(Bool::NaryOrTrue<BoolView>::post(home,b));
+        ViewArray<BoolView> xv(home,x), yv(home,y);
+        GECODE_ES_FAIL(Rel::LexNq<BoolView>::post(home,xv,yv));
       }
       break;
     default:

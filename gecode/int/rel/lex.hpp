@@ -37,6 +37,9 @@
 
 namespace Gecode { namespace Int { namespace Rel {
 
+  /*
+   * Lexical order propagator
+   */
   template<class View>
   inline
   LexLqLe<View>::LexLqLe(Home home,
@@ -250,6 +253,160 @@ namespace Gecode { namespace Int { namespace Rel {
     (void) new (home) LexLqLe<View>(home,x,y,strict);
     return ES_OK;
   }
+
+
+  /*
+   * Lexical disequality propagator
+   */
+  template<class View>
+  forceinline
+  LexNq<View>::LexNq(Home home, ViewArray<View>& xv, ViewArray<View>& yv)
+    : Propagator(home), 
+      x0(xv[xv.size()-2]), y0(yv[xv.size()-2]),
+      x1(xv[xv.size()-1]), y1(yv[xv.size()-1]),
+      x(xv), y(yv) {
+    assert(x.size() > 1);
+    assert(x.size() == y.size());
+    x.size(x.size()-2); y.size(x.size()-2);
+    x0.subscribe(home,*this,PC_INT_VAL); y0.subscribe(home,*this,PC_INT_VAL);
+    y0.subscribe(home,*this,PC_INT_VAL); y1.subscribe(home,*this,PC_INT_VAL);
+  }
+
+  template<class View>
+  PropCost
+  LexNq<View>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::binary(PropCost::HI);
+  }
+
+  template<class View>
+  forceinline
+  LexNq<View>::LexNq(Space& home, bool share, LexNq<View>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0); y0.update(home,share,p.y0);
+    x1.update(home,share,p.x1); y1.update(home,share,p.y1);
+    x.update(home,share,p.x); y.update(home,share,p.y);
+  }
+
+  template<class View>
+  Actor*
+  LexNq<View>::copy(Space& home, bool share) {
+    int n = x.size();
+    if (n > 0) {
+      // Eliminate all equal views and keep one disequal pair
+      for (int i=n; i--; )
+        switch (rtest_eq_bnd(x[i],y[i])) {
+        case RT_TRUE:
+          // Eliminate equal pair
+          n--; x[i]=x[n]; y[i]=y[n];
+          break;
+        case RT_FALSE:
+          // Just keep a single disequal pair
+          n=1; x[0]=x[i]; y[0]=y[i];
+          goto done;
+        case RT_MAYBE:
+          break;
+        default:
+          GECODE_NEVER;
+        }
+    done:
+      x.size(n); y.size(n);
+    }
+    return new (home) LexNq<View>(home,share,*this);
+  }
+
+  template<class View>
+  inline ExecStatus
+  LexNq<View>::post(Home home, ViewArray<View>& x, ViewArray<View>& y) {
+    if (x.size() != y.size())
+      return ES_OK;
+    int n = x.size();
+    if (n > 0) {
+      // Eliminate all equal views
+      for (int i=n; i--; )
+        switch (rtest_eq_bnd(x[i],y[i])) {
+        case RT_TRUE:
+          // Eliminate equal pair
+          n--; x[i]=x[n]; y[i]=y[n];
+          break;
+        case RT_FALSE:
+          return ES_OK;
+        case RT_MAYBE:
+          if (same(x[i],y[i])) {
+            // Eliminate equal pair
+            n--; x[i]=x[n]; y[i]=y[n];
+          }
+          break;
+        default:
+          GECODE_NEVER;
+        }
+      x.size(n); y.size(n);
+    }
+    if (n == 0)
+      return ES_FAILED;
+    if (n == 1)
+      return Nq<View>::post(home,x[0],y[0]);
+    (void) new (home) LexNq(home,x,y);
+    return ES_OK;
+  }
+
+  template<class View>
+  forceinline size_t
+  LexNq<View>::dispose(Space& home) {
+    x0.cancel(home,*this,PC_INT_VAL); y0.cancel(home,*this,PC_INT_VAL);
+    y0.cancel(home,*this,PC_INT_VAL); y1.cancel(home,*this,PC_INT_VAL);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View>
+  forceinline ExecStatus
+  LexNq<View>::resubscribe(Space& home, 
+                           RelTest rt, View& x0, View& y0, View x1, View y1) {
+    if (rt == RT_TRUE) {
+      int n = x.size();
+      for (int i=n; i--; )
+        switch (rtest_eq_bnd(x[i],y[i])) {
+        case RT_TRUE:
+          // Eliminate equal pair
+          n--; x[i]=x[n]; y[i]=y[n];
+          break;
+        case RT_FALSE:
+          return home.ES_SUBSUMED(*this);
+        case RT_MAYBE:
+          // Move to x0, y0 and subscribe
+          x0.cancel(home,*this,PC_INT_VAL);
+          x0=x[i]; 
+          x0.subscribe(home,*this,PC_INT_VAL,false);
+          y0.cancel(home,*this,PC_INT_VAL);
+          y0=y[i]; 
+          y0.subscribe(home,*this,PC_INT_VAL,false);
+          n--;
+          x[i]=x[n]; y[i]=y[n];
+          x.size(n); y.size(n);
+          return ES_FIX;
+        default:
+          GECODE_NEVER;
+        }
+      // No more views to subscribe to left
+      GECODE_REWRITE(*this,Nq<View>::post(home,x1,y1));
+    }
+    return ES_FIX;
+  }
+
+  template<class View>
+  ExecStatus
+  LexNq<View>::propagate(Space& home, const ModEventDelta&) {
+    RelTest rt0 = rtest_eq_bnd(x0,y0);
+    if (rt0 == RT_FALSE)
+      return home.ES_SUBSUMED(*this);
+    RelTest rt1 = rtest_eq_bnd(x1,y1);
+    if (rt1 == RT_FALSE)
+      return home.ES_SUBSUMED(*this);
+    GECODE_ES_CHECK(resubscribe(home,rt0,x0,y0,x1,y1));
+    GECODE_ES_CHECK(resubscribe(home,rt1,x1,y1,x0,y1));
+    return ES_FIX;
+  }
+
 
 }}}
 
