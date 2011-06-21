@@ -140,11 +140,69 @@ namespace Gecode { namespace Int { namespace Rel {
     : Advisor(home,share,a), i(a.i) {}
 
 
+
+  template<class View, int o>
+  forceinline
+  NaryLqLe<View,o>::Pos::Pos(int p0, Pos* n)
+    : FreeList(n), p(p0) {}
+
+  template<class View, int o>
+  forceinline typename NaryLqLe<View,o>::Pos*
+  NaryLqLe<View,o>::Pos::next(void) const {
+    return static_cast<Pos*>(FreeList::next());
+  }
+
+  template<class View, int o>
+  forceinline void
+  NaryLqLe<View,o>::Pos::operator delete(void*) {}
+
+  template<class View, int o>
+  forceinline void
+  NaryLqLe<View,o>::Pos::operator delete(void*, Space&) {
+    GECODE_NEVER;
+  }
+
+  template<class View, int o>
+  forceinline void*
+  NaryLqLe<View,o>::Pos::operator new(size_t, Space& home) {
+    return home.fl_alloc<sizeof(Pos)>();
+  }
+
+  template<class View, int o>
+  forceinline void
+  NaryLqLe<View,o>::Pos::dispose(Space& home) {
+    home.fl_dispose<sizeof(Pos)>(this,this);
+  }
+
+
+  template<class View, int o>
+  forceinline bool
+  NaryLqLe<View,o>::empty(void) const {
+    return pos == NULL;
+  }
+  template<class View, int o>
+  forceinline void
+  NaryLqLe<View,o>::push(Space& home, int p) {
+    // Try to avoid entering same position twice
+    if ((pos != NULL) && (pos->p == p))
+      return;
+    pos = new (home) Pos(p,pos);
+  }
+  template<class View, int o>
+  forceinline int
+  NaryLqLe<View,o>::pop(Space& home) {
+    Pos* t = pos;
+    int p = t->p;
+    pos = pos->next();
+    t->dispose(home);
+    return p;
+  }
+
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Home home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_NONE>(home,x), 
-      c(home), run(false), n_subsumed(0) {
+      c(home), pos(NULL), run(false), n_subsumed(0) {
     for (int i=x.size(); i--; )
       x[i].subscribe(home, *new (home) Index(home,*this,c,i));
   }
@@ -226,15 +284,15 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p)
     : NaryPropagator<View,PC_INT_NONE>(home,share,p), 
-      run(false), n_subsumed(0) {
-    assert(p.n_subsumed == 0);
+      pos(NULL), run(false), n_subsumed(p.n_subsumed) {
+    assert(p.pos == NULL);
     c.update(home, share, p.c);
   }
 
   template<class View, int o>
   Actor*
   NaryLqLe<View,o>::copy(Space& home, bool share) {
-    if (n_subsumed > 0) {
+    if (n_subsumed > n_threshold) {
       Region r(home);
       // Record for which views there is an advisor
       Support::BitSet<Region> a(r,static_cast<unsigned int>(x.size()));
@@ -269,6 +327,8 @@ namespace Gecode { namespace Int { namespace Rel {
     for (Advisors<Index> as(c); as(); ++as)
       x[as.advisor().i].cancel(home,as.advisor());
     c.dispose(home);
+    while (!empty())
+      (void) pop(home);
     (void) NaryPropagator<View,PC_INT_NONE>::dispose(home);
     return sizeof(*this);
   }
@@ -281,43 +341,60 @@ namespace Gecode { namespace Int { namespace Rel {
     const int i = a.i;
     switch (View::modevent(d)) {
     case ME_INT_VAL:
-      n_subsumed++;
       a.dispose(home,c);
+      n_subsumed++;
       break;
     case ME_INT_BND:
       if (((i == 0) || (x[i-1].max()+o <= x[i].min())) &&
           ((i == x.size()-1) || (x[i].max()+o <= x[i+1].min()))) {
-        n_subsumed++;
         x[i].cancel(home,a);
         a.dispose(home,c);
-        return (n_subsumed+1 >= x.size()) ? ES_NOFIX : ES_FIX;
+        n_subsumed++;
+        return (run || (n_subsumed + 1 < x.size())) ? ES_FIX : ES_NOFIX;
       }
       break;
     default:
       return ES_FIX;
     }
-    if (n_subsumed+1 >= x.size())
-      return ES_NOFIX;
     if (run)
       return ES_FIX;
-    if ((i > 0)          && (x[i].min() < x[i-1].min()+o))
+    if (((i < x.size()-1) && (x[i+1].min() < x[i].min()+o)) ||
+        ((i > 0) && (x[i-1].max() > x[i].max()-o))) {
+      push(home,i);
       return ES_NOFIX;
-    if ((i < x.size()-1) && (x[i].max() > x[i+1].max()-o))
-      return ES_NOFIX;
-    return ES_NOFIX;
+    }
+    return (n_subsumed+1 >= x.size()) ? ES_NOFIX : ES_FIX;
   }
 
   template<class View, int o>
   ExecStatus
   NaryLqLe<View,o>::propagate(Space& home, const ModEventDelta& med) {
     run = true;
-    // Do one round of propagation
     int n = x.size();
-    for (int i=1; i<n; i++)
-      GECODE_ME_CHECK(x[i].gq(home,x[i-1].min()+o));
-    for (int i=n-1; i--;)
-      GECODE_ME_CHECK(x[i].lq(home,x[i+1].max()-o));
-    if (n_subsumed+1 >= x.size())
+    while (!empty()) {
+      int p = pop(home);
+      for (int i=p; i<n-1; i++) {
+        ModEvent me = x[i+1].gq(home,x[i].min()+o);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (!me_modified(me))
+          break;
+      }
+      for (int i=p; i>0; i--) {
+        ModEvent me = x[i-1].lq(home,x[i].max()-o);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (!me_modified(me))
+          break;
+      }
+    }
+#ifdef GECODE_AUDIT
+    for (int i=0; i<n-1; i++)
+      assert(!me_modified(x[i+1].gq(home,x[i].min()+o)));
+    for (int i=n-1; i>0; i--)
+      assert(!me_modified(x[i-1].lq(home,x[i].max()-o)));
+#endif
+    if (n_subsumed+1 >= n)
       return home.ES_SUBSUMED(*this);
     run = false;
     return ES_FIX;

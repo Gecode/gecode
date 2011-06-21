@@ -216,10 +216,51 @@ namespace Gecode { namespace Int { namespace Rel {
     };
     /// The advisor council
     Council<Index> c;
+    /// Positions in view array that have to be propagated
+    class Pos : public FreeList {
+    public:
+      /// Position of view in view array
+      int p;
+
+      /// \name Constructor
+      //@{
+      /// Initialize with position \a p and next position \a n
+      Pos(int p, Pos* n);
+      //@}
+
+      /// \name Linkage access
+      //@{
+      /// Return next position
+      Pos* next(void) const;
+      //@}
+
+      /// \name Memory management
+      //@{
+      /// Free memory for this position
+      void dispose(Space& home);
+
+      /// Allocate memory from space
+      static void* operator new(size_t s, Space& home);
+      /// No-op (for exceptions)
+      static void operator delete(void* p);
+      /// No-op (use dispose instead)
+      static void operator delete(void* p, Space& home);
+      //@}
+    };
+    /// Stack of positions
+    Pos* pos;
+    /// Whether no more positions must be propagated
+    bool empty(void) const;
+    /// Pop a position to be propagated and return it
+    int pop(Space& home);
+    /// Push a new position \a p to be propagated
+    void push(Space& home, int p);
     /// Whether the propagator is currently running
     bool run;
     /// Number of already subsumed advisors (or views)
     int n_subsumed;
+    /// Compact during cloning when more advisors than that are subsumed
+    static const int n_threshold = 7;
     /// Constructor for cloning \a p
     NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p);
     /// Constructor for posting

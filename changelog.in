@@ -73,12 +73,30 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+The ordering constraints rel(home, x, IRT_LE) (also for IRT_LQ,
+IRT_GR, IRT_GQ) now have an optimal implementation (single
+incremental propagator).
+
+[ENTRY]
 Module: driver
 What:   bug
 Rank:   minor
 Thanks: Jan Kelbel
 [DESCRIPTION]
 Fixed a small memory leak in the driver (stop objects were not deleted).
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+The ordering constraints rel(home, x, IRT_LE) (also for IRT_LQ,
+IRT_GR, IRT_GQ) now have an optimal implementation (single
+incremental propagator).
 
 [ENTRY]
 Module: int
