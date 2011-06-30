@@ -54,8 +54,9 @@ namespace Gecode { namespace Int { namespace Precede {
   /**
    * \brief Single value precedence propagator
    *
-   * Uses staging by first performing bounds propagation and only
-   * then domain propagation.
+   * The propagator is based on: Yat Chiu Law and Jimmy H.M. Lee,
+   * Global Constraints for Integer and Set Value Precedence,
+   * CP 2004, 362--376.
    *
    * Requires \code #include <gecode/int/precede.hh> \endcode
    * \ingroup FuncIntProp

@@ -54,6 +54,19 @@ namespace Gecode {
     GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, s, t));
   }
 
+  void
+  precede(Home home, const IntVarArgs& x, const IntArgs& c, IntConLevel) {
+    using namespace Int;
+    for (int i=c.size(); i--; )
+      Limits::check(c[i],"Int::precede");
+    if (home.failed()) return;
+
+    for (int i=c.size()-1; i--; ) {
+      ViewArray<IntView> y(home, x);
+      GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, c[i], c[i+1]));
+    }
+  }
+
 }
 
 // STATISTICS: int-post

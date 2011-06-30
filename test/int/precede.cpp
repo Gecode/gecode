@@ -73,8 +73,40 @@ namespace Test { namespace Int {
        }
      };
      
+     /// %Test for single value precedence constraint
+     class Multi : public Test {
+     private:
+       /// The values for precedence
+       Gecode::IntArgs c;
+     public:
+       /// Create and register test
+       Multi(const Gecode::IntArgs& c0)
+         : Test("Precede::Multi::"+str(c0),6,1,5), c(c0) {
+         contest = CTL_NONE;
+       }
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int j=0; j<c.size()-1; j++)
+           for (int i=0; i<x.size(); i++) {
+             if (x[i] == c[j+1])
+               return false;
+             if (x[i] == c[j])
+               break;
+           }
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::precede(home, x, c);
+       }
+     };
+     
      Single _a(2, 3);
      Single _b(1, 4);
+
+     Multi _c(Gecode::IntArgs(3, 1,2,3));
+     Multi _d(Gecode::IntArgs(3, 3,2,1));
+     Multi _e(Gecode::IntArgs(4, 4,2,3,1));
 
    }
 

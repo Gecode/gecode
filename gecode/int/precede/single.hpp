@@ -41,9 +41,10 @@
 
 namespace Gecode { namespace Int { namespace Precede {
 
+  /// Whether \a x is assigned to value \a v
   template<class View>
   forceinline bool
-  fixedTo(View x, int v) {
+  assigned(View x, int v) {
     return x.assigned() && (x.val() == v);
   }
     
@@ -105,12 +106,12 @@ namespace Gecode { namespace Int { namespace Precede {
       if (x.size() == 0)
         return ES_OK;
     }
+    // alpha has been normalized to 0
     int beta = 0, gamma = 0;
-    assert(x.size() > 0);
     GECODE_ME_CHECK(x[0].nq(home,t));
     do {
       gamma++;
-    } while ((gamma < x.size()) && !fixedTo(x[gamma],t));
+    } while ((gamma < x.size()) && !assigned(x[gamma],t));
     do {
       beta++;
     } while ((beta < x.size()) && !x[beta].in(s));
@@ -137,6 +138,23 @@ namespace Gecode { namespace Int { namespace Precede {
   template<class View>
   Propagator*
   Single<View>::copy(Space& home, bool share) {
+    // Try to eliminate assigned views at the beginning
+    if (alpha > 0) {
+      int i = 0;
+      while ((i < alpha) && x[i].assigned())
+        i++;
+      x.drop_fst(i);
+      for (Advisors<Index> as(c); as(); ++as)
+        as.advisor().i -= i;
+      alpha -= i; beta -= i; gamma -= i;
+    }
+    // Try to eliminate assigned views at the end
+    if (gamma < x.size()) {
+      int i = x.size()-1;
+      while ((i > gamma) && x[i].assigned())
+        i--;
+      x.drop_lst(i);
+    }
     return new (home) Single<View>(home, share, *this);
   }
 
@@ -144,6 +162,7 @@ namespace Gecode { namespace Int { namespace Precede {
   template<class View>
   inline size_t
   Single<View>::dispose(Space& home) {
+    // Cancel remaining advisors
     for (Advisors<Index> as(c); as(); ++as)
       x[as.advisor().i].cancel(home,as.advisor());
     c.dispose(home);
@@ -159,11 +178,11 @@ namespace Gecode { namespace Int { namespace Precede {
 
   template<class View>
   ExecStatus
-  Single<View>::advise(Space& home, Advisor& a0, const Delta&) {
+  Single<View>::advise(Space& home, Advisor& a0, const Delta& d) {
     Index& a(static_cast<Index&>(a0));
     int i = a.i;
     // Check for gamma
-    if ((beta <= gamma) && (i < gamma) && fixedTo(x[i],t))
+    if ((beta <= gamma) && (i < gamma) && assigned(x[i],t))
       gamma = i;
     if (x[i].assigned()) {
       a.dispose(home,c);
@@ -172,13 +191,16 @@ namespace Gecode { namespace Int { namespace Precede {
     } else if ((i < alpha) || (i > gamma)) {
       x[i].cancel(home,a);
       a.dispose(home,c);
-      if (c.empty())
-        return ES_NOFIX;
-      return ES_FIX;
+      return (c.empty()) ? ES_NOFIX : ES_FIX;
     }
-    if ((beta > gamma) ||
-        (((alpha == i) || (beta == i)) && !x[i].in(s)))
+    if (beta > gamma)
       return ES_NOFIX;
+    if ((alpha == i) || (beta == i)) {
+      if (x[i].any(d) && !x[i].in(s))
+        return ES_NOFIX;
+      if ((x[i].min(d) <= s) && (s <= x[i].max(d)))
+        return ES_NOFIX;
+    }
     return ES_FIX;
   }
   
@@ -202,11 +224,7 @@ namespace Gecode { namespace Int { namespace Precede {
       GECODE_ES_CHECK(updateBeta(home));
     }
     
-    if (c.empty()) {
-      return home.ES_SUBSUMED(*this);
-    } else {
-      return ES_FIX;
-    }
+    return (c.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
   
 }}}

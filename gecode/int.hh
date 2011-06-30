@@ -1173,6 +1173,16 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   precede(Home home, const IntVarArgs& x, int s, int t,
           IntConLevel=ICL_DEF);
+  /** \brief Post propagator that successive values in \a c precede each other in \a x
+   *
+   * This constraint enforces that \f$x_0\neq c_k\f$ for \f$0\leq k<|c|\f$ and 
+   * \f$x_j=c_{k} \to \bigvee_{0\leq i<j} x_i=c_{k-1}\f$ for \f$0\leq j<|x|\f$ 
+   * and \f$0< k<|c|\f$.
+   * \ingroup TaskModelIntPrecede
+   */
+  GECODE_INT_EXPORT void
+  precede(Home home, const IntVarArgs& x, const IntArgs& c,
+          IntConLevel=ICL_DEF);
 
 
   /**
