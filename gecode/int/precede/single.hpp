@@ -118,6 +118,8 @@ namespace Gecode { namespace Int { namespace Precede {
       GECODE_ME_CHECK(x[0].eq(home, s));
       return ES_OK;
     }
+    if (gamma < x.size())
+      x.drop_lst(gamma);
     (void) new (home) Single<View>(home, x, s, t, beta, gamma);
     return ES_OK;
   }
@@ -167,6 +169,12 @@ namespace Gecode { namespace Int { namespace Precede {
       a.dispose(home,c);
       if (c.empty())
         return ES_NOFIX;
+    } else if ((i < alpha) || (i > gamma)) {
+      x[i].cancel(home,a);
+      a.dispose(home,c);
+      if (c.empty())
+        return ES_NOFIX;
+      return ES_FIX;
     }
     if ((beta > gamma) ||
         (((alpha == i) || (beta == i)) && !x[i].in(s)))
