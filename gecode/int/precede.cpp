@@ -7,7 +7,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christopher Mear, 2011
+ *     Christopher Mears, 2011
  *     Christian Schulte, 2011
  *
  *  Last modified:

@@ -7,7 +7,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christopher Mear, 2011
+ *     Christopher Mears, 2011
  *     Christian Schulte, 2011
  *
  *  Last modified:
@@ -157,12 +157,21 @@ namespace Gecode { namespace Int { namespace Precede {
 
   template<class View>
   ExecStatus
-  Single<View>::advise(Space&, Advisor& a0, const Delta&) {
+  Single<View>::advise(Space& home, Advisor& a0, const Delta&) {
     Index& a(static_cast<Index&>(a0));
+    int i = a.i;
     // Check for gamma
-    if ((beta <= gamma) && (a.i < gamma) && fixedTo(x[a.i],t))
-      gamma = a.i;
-    return ES_NOFIX;
+    if ((beta <= gamma) && (i < gamma) && fixedTo(x[i],t))
+      gamma = i;
+    if (x[i].assigned()) {
+      a.dispose(home,c);
+      if (c.empty())
+        return ES_NOFIX;
+    }
+    if ((beta > gamma) ||
+        (((alpha == i) || (beta == i)) && !x[i].in(s)))
+      return ES_NOFIX;
+    return ES_FIX;
   }
   
   template<class View>
@@ -185,10 +194,11 @@ namespace Gecode { namespace Int { namespace Precede {
       GECODE_ES_CHECK(updateBeta(home));
     }
     
-    if (x.assigned())
+    if (c.empty()) {
       return home.ES_SUBSUMED(*this);
-    else
+    } else {
       return ES_FIX;
+    }
   }
   
 }}}
