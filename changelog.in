@@ -74,6 +74,14 @@ Some bug fixes, probably
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   major
+Author:	Christopher Mears
+[DESCRIPTION]
+Added value precedence constraint.
+
+[ENTRY]
+Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]

@@ -1161,6 +1161,21 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskModelIntPrecede Value precedence constraints over integer variables
+   * \ingroup TaskModelInt
+   */
+  /** \brief Post propagator that \a s precedes \a t in \a x
+   *
+   * This constraint enforces that \f$x_0\neq t\f$ and 
+   * \f$x_j=t \to \bigvee_{0\leq i<j} x_i=s\f$ for \f$0\leq j<|x|\f$.
+   * \ingroup TaskModelIntPrecede
+   */
+  GECODE_INT_EXPORT void
+  precede(Home home, const IntVarArgs& x, int s, int t,
+          IntConLevel=ICL_DEF);
+
+
+  /**
    * \defgroup TaskModelIntElement Element constraints
    * \ingroup TaskModelInt
    */

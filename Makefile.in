@@ -286,7 +286,8 @@ INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
 	var/bool.cpp array.cpp bool.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
-	dom.cpp rel.cpp element.cpp count.cpp arithmetic.cpp exec.cpp \
+	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
+	arithmetic.cpp exec.cpp \
 	exec/when.cpp element/pair.cpp \
 	linear/int-post.cpp linear-int.cpp \
 	linear/bool-post.cpp linear-bool.cpp \
@@ -306,6 +307,7 @@ INTHDR0 = \
 	arithmetic/sqr.hpp arithmetic/sqrt.hpp arithmetic/divmod.hpp \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
 	bool/clause.hpp \
+	precede.hh precede/single.hpp \
 	branch/post-val-int.hpp branch/post-val-bool.hpp \
 	branch/select-val.hpp \
 	branch/select-values.hpp branch/select-view.hpp \
@@ -826,7 +828,7 @@ INTTESTSRC00 = \
 	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing unary cumulative cumulatives circuit \
-	no-overlap
+	no-overlap precede
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 
