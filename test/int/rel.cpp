@@ -274,10 +274,19 @@ namespace Test { namespace Int {
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size()-1; i++)
-           if (!cmp(x[i],irt,x[i+1]))
+         if (irt == Gecode::IRT_NQ) {
+           if (x.size() < 2)
              return false;
-         return true;
+           for (int i=0; i<x.size()-1; i++)
+             if (x[i] != x[i+1])
+               return true;
+           return false;
+         } else {
+           for (int i=0; i<x.size()-1; i++)
+             if (!cmp(x[i],irt,x[i+1]))
+               return false;
+           return true;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -298,11 +307,20 @@ namespace Test { namespace Int {
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int n = x.size();
-         for (int i=0; i<2*n-1; i++)
-           if (!cmp(x[i % n],irt,x[(i+1) % n]))
+         if (irt == Gecode::IRT_NQ) {
+           if (x.size() < 2)
              return false;
-         return true;
+           for (int i=0; i<x.size()-1; i++)
+             if (x[i] != x[i+1])
+               return true;
+           return false;
+         } else {
+           int n = x.size();
+           for (int i=0; i<2*n-1; i++)
+             if (!cmp(x[i % n],irt,x[(i+1) % n]))
+               return false;
+           return true;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -327,10 +345,19 @@ namespace Test { namespace Int {
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         for (int i=0; i<x.size()-1; i++)
-           if (!cmp(x[i],irt,x[i+1]))
+         if (irt == Gecode::IRT_NQ) {
+           if (x.size() < 2)
              return false;
-         return true;
+           for (int i=0; i<x.size()-1; i++)
+             if (x[i] != x[i+1])
+               return true;
+           return false;
+         } else {
+           for (int i=0; i<x.size()-1; i++)
+             if (!cmp(x[i],irt,x[i+1]))
+               return false;
+           return true;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -354,11 +381,20 @@ namespace Test { namespace Int {
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int n = x.size();
-         for (int i=0; i<2*n-1; i++)
-           if (!cmp(x[i % n],irt,x[(i+1) % n]))
+         if (irt == Gecode::IRT_NQ) {
+           if (x.size() < 2)
              return false;
-         return true;
+           for (int i=0; i<x.size()-1; i++)
+             if (x[i] != x[i+1])
+               return true;
+           return false;
+         } else {
+           int n = x.size();
+           for (int i=0; i<2*n-1; i++)
+             if (!cmp(x[i % n],irt,x[(i+1) % n]))
+               return false;
+           return true;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {

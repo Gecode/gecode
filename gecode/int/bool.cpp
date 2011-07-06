@@ -352,7 +352,8 @@ namespace Gecode {
   void
   rel(Home home, const BoolVarArgs& x, IntRelType r, IntConLevel) {
     using namespace Int;
-    if (home.failed() || (x.size() < 2)) return;
+    if (home.failed() || ((r != IRT_NQ) && (x.size() < 2))) 
+      return;
 
     switch (r) {
     case IRT_EQ:
@@ -362,10 +363,9 @@ namespace Gecode {
       }
       break;
     case IRT_NQ:
-      for (int i=x.size()-1; i--; ) {
-        NegBoolView n(x[i+1]);
-        GECODE_ES_FAIL((Bool::Eq<BoolView,NegBoolView>
-                        ::post(home,x[i],n)));
+      {
+        ViewArray<BoolView> y(home,x);
+        GECODE_ES_FAIL((Rel::NaryNq<BoolView>::post(home,y)));
       }
       break;
     case IRT_LE:

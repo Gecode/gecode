@@ -267,7 +267,8 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType r,
       IntConLevel icl) {
-    if (home.failed() || (x.size() < 2)) return;
+    if (home.failed() || ((r != IRT_NQ) && (x.size() < 2))) 
+      return;
     switch (r) {
     case IRT_EQ:
       {
@@ -280,8 +281,10 @@ namespace Gecode {
       }
       break;
     case IRT_NQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,x[i],x[i+1]));
+      {
+        ViewArray<IntView> y(home,x);
+        GECODE_ES_FAIL((Rel::NaryNq<IntView>::post(home,y)));
+      }
       break;
     case IRT_LE:
       {

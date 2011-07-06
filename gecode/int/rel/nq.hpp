@@ -35,6 +35,8 @@
  *
  */
 
+#include <algorithm>
+
 namespace Gecode { namespace Int { namespace Rel {
 
   /*
@@ -88,6 +90,106 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     return home.ES_SUBSUMED(*this);
   }
+
+
+  /*
+   * Nary disequality propagator
+   */
+  template<class View>
+  forceinline
+  NaryNq<View>::NaryNq(Home home, ViewArray<View>& x)
+    : NaryPropagator<View,PC_INT_VAL>(home,x) {}
+
+  template<class View>
+  PropCost
+  NaryNq<View>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::linear(PropCost::LO,x.size());
+  }
+
+  template<class View>
+  forceinline
+  NaryNq<View>::NaryNq(Space& home, bool share, NaryNq<View>& p)
+    : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
+
+  template<class View>
+  Actor*
+  NaryNq<View>::copy(Space& home, bool share) {
+    return new (home) NaryNq<View>(home,share,*this);
+  }
+
+  template<class View>
+  inline ExecStatus
+  NaryNq<View>::post(Home home, ViewArray<View>& x) {
+    x.unique(home);
+    // Try to find an assigned view
+    int n = x.size();
+    if (n <= 1)
+      return ES_FAILED;
+    for (int i=n; i--; )
+      if (x[i].assigned()) {
+        std::swap(x[0],x[i]);
+        break;
+      }
+    if (x[0].assigned()) {
+      int v = x[0].val();
+      // Eliminate all equal views and possibly find disequal view
+      for (int i=n-1; i>0; i--)
+        if (!x[i].in(v)) {
+          return ES_OK;
+        } else if (x[i].assigned()) {
+          assert(x[i].val() == v);
+          x[i]=x[--n];
+        }
+      x.size(n);
+    }
+    if (n == 1)
+      return ES_FAILED;
+    if (n == 2)
+      return Nq<View>::post(home,x[0],x[1]);
+    (void) new (home) NaryNq(home,x);
+    return ES_OK;
+  }
+
+  template<class View>
+  forceinline size_t
+  NaryNq<View>::dispose(Space& home) {
+    (void) NaryPropagator<View,PC_INT_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class View>
+  ExecStatus
+  NaryNq<View>::propagate(Space& home, const ModEventDelta&) {
+    // Make sure that x[0] is assigned
+    if (!x[0].assigned()) {
+      // Note that there is at least one assigned view
+      for (int i=1; true; i++)
+        if (x[i].assigned()) {
+          std::swap(x[0],x[i]);
+          break;
+        }
+    }
+    int v = x[0].val();
+    int n = x.size();
+    for (int i=n-1; i>0; i--)
+      if (!x[i].in(v)) {
+        x.size(n);
+        return home.ES_SUBSUMED(*this);
+      } else if (x[i].assigned()) {
+        assert(x[i].val() == v);
+        x[i] = x[--n];
+      }
+    x.size(n);
+    if (n == 1)
+      return ES_FAILED;
+    if (n == 2) {
+      GECODE_ME_CHECK(x[1].nq(home,v));
+      return home.ES_SUBSUMED(*this);        
+    }
+    return ES_FIX;
+  }
+
+
 
 }}}
 

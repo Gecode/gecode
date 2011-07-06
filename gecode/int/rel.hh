@@ -281,6 +281,34 @@ namespace Gecode { namespace Int { namespace Rel {
   };
 
   /**
+   * \brief Nary disequality propagator
+   *
+   * Requires \code #include <gecode/int/rel.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View>
+  class NaryNq : public NaryPropagator<View,PC_INT_VAL> {
+  protected:
+    using NaryPropagator<View,PC_INT_VAL>::x;
+    /// Constructor for posting
+    NaryNq(Home home, ViewArray<View>& x);
+    /// Constructor for cloning \a p
+    NaryNq(Space& home, bool share, NaryNq<View>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ \neg\left(x_0=x_1=\cdots=x_{|x|-1}\right)\f$
+    static  ExecStatus post(Home home, ViewArray<View>& x);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+
+  /**
    * \brief Reified binary domain consistent equality propagator
    *
    * Requires \code #include <gecode/int/rel.hh> \endcode

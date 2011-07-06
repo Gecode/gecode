@@ -970,17 +970,17 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, IntVar x, IntRelType r, int c, BoolVar b,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for pairwise relation on \a x.
+  /** \brief Post propagator for relation among elements in \a x.
    *
    * States that the elements of \a x are in the following relation:
-   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
-   *    Supports both bounds (\a icl = ICL_BND) and
-   *    domain consistency (\a icl = ICL_DOM, default).
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
    *    then the elements of \a x are ordered with respect to \a r.
+   *    Supports both bounds (\a icl = ICL_BND) and
+   *    domain consistency (\a icl = ICL_DOM, default).
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
    *    Supports domain consistency (\a icl = ICL_DOM, default).
-   *  - if \a r = IRT_NQ, then no two adjacent elements of \a x 
-   *    are allowed to be equal.
+   *  - if \a r = IRT_NQ, then not all elements of \a x must be equal.
+   *    Supports domain consistency (\a icl = ICL_DOM, default).
    *
    * \ingroup TaskModelIntRelInt
    */
@@ -1069,14 +1069,13 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for pairwise relation on \a x.
+  /** \brief Post propagator for relation between elements in \a x.
    *
    * States that the elements of \a x are in the following relation:
-   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
-   *    then the elements of \a x are ordered with respt to \a r.
-   *  - if \a r = IRT_NQ, then succesive elements of \a x must be
-   *    distinct.
+   *    then the elements of \a x are ordered with respect to \a r.
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
+   *  - if \a r = IRT_NQ, then not all elements of \a x must be equal.
    *   
    * \ingroup TaskModelIntRelBool
    */

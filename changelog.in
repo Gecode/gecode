@@ -74,6 +74,15 @@ Some bug fixes, probably
 
 [ENTRY]
 Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Changed semantics of rel(home, x, IRT_NQ), enforces that not all
+variables in x are equal. See "Modeling and Programming with
+Gecode" for details.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   major
 Author:	Christopher Mears
@@ -104,14 +113,6 @@ Rank:   minor
 Thanks: Jan Kelbel
 [DESCRIPTION]
 Fixed a small memory leak in the driver (stop objects were not deleted).
-
-[ENTRY]
-Module: int
-What:   change
-Rank:   minor
-[DESCRIPTION]
-Changed semantics of rel(home, x, IRT_NQ), see "Modeling and
-Programming with Gecode" for details.
 
 [ENTRY]
 Module: int
