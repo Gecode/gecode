@@ -69,12 +69,10 @@ public:
     // Iterate over balls and find triples
     for (int i=1; i<=n; i++) {
       triple[0] = box[i-1];
-      for (int j=1; j<=n; j++) {
+      for (int j=1; i+j<=n; j++) {
         triple[1] = box[j-1];
-        if ((1 <= i+j) && (i+j <= n)) {
-          triple[2] = box[i+j-1];
-          rel(*this, triple, IRT_NQ);
-        }
+        triple[2] = box[i+j-1];
+        rel(*this, triple, IRT_NQ);
       }
     }
 
