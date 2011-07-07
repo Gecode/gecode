@@ -84,20 +84,43 @@ namespace Gecode { namespace Int { namespace Channel {
 
   forceinline
   LinkMulti::LinkMulti(Space& home, bool share, LinkMulti& p)
-    : MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
-  (home,share,p), o(p.o) {}
+    : MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>
+  (home,share,p), status(S_NONE), o(p.o) {
+    assert(p.status == S_NONE);
+    c.update(home,share,p.c);
+  }
 
   Actor*
   LinkMulti::copy(Space& home, bool share) {
     return new (home) LinkMulti(home,share,*this);
   }
 
+  forceinline size_t
+  LinkMulti::dispose(Space& home) {
+    Advisors<Advisor> as(c);
+    x.cancel(home,as.advisor());
+    c.dispose(home);
+    (void) MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>
+      ::dispose(home);
+    return sizeof(*this);
+  }
+
   PropCost
   LinkMulti::cost(const Space&, const ModEventDelta& med) const {
-    if (IntView::me(med) == ME_INT_VAL)
+    if ((status == S_ONE) || (IntView::me(med) == ME_INT_VAL))
       return PropCost::unary(PropCost::LO);
     else
       return PropCost::linear(PropCost::LO, x.size());
+  }
+
+  ExecStatus
+  LinkMulti::advise(Space&, Advisor&, const Delta& d) {
+    if (status == S_RUN)
+      return ES_FIX;
+    // Detect a one
+    if (BoolView::one(d))
+      status = S_ONE;
+    return ES_NOFIX;
   }
 
   ExecStatus
@@ -108,6 +131,7 @@ namespace Gecode { namespace Int { namespace Channel {
     assert((y.min()-o >= 0) && (y.max()-o < n));
 
     if (y.assigned()) {
+      status = S_RUN;
       int j=y.val()-o;
       GECODE_ME_CHECK(x[j].one(home));
       for (int i=0; i<j; i++)
@@ -116,6 +140,23 @@ namespace Gecode { namespace Int { namespace Channel {
         GECODE_ME_CHECK(x[i].zero(home));
       return home.ES_SUBSUMED(*this);
     }
+
+    // Check whether there is a one
+    if (status == S_ONE) {
+      status = S_RUN;
+      for (int i=0; true; i++)
+        if (x[i].one()) {
+          for (int j=0; j<i; j++)
+            GECODE_ME_CHECK(x[j].zero(home));
+          for (int j=i+1; j<n; j++)
+            GECODE_ME_CHECK(x[j].zero(home));
+          GECODE_ME_CHECK(y.eq(home,i+o));
+          return home.ES_SUBSUMED(*this);
+        }
+      GECODE_NEVER;
+    }
+
+    status = S_RUN;
 
   redo:
 
@@ -164,17 +205,6 @@ namespace Gecode { namespace Int { namespace Channel {
     if ((y.min() > o) || (y.max() < o+n-1))
       goto redo;
 
-    // Check whether there is a one somewhere else
-    for (int i=n; i--; )
-      if (x[i].one()) {
-        for (int j=0; j<i; j++)
-          GECODE_ME_CHECK(x[j].zero(home));
-        for (int j=i+1; j<n; j++)
-          GECODE_ME_CHECK(x[j].zero(home));
-        GECODE_ME_CHECK(y.eq(home,i+o));
-        return home.ES_SUBSUMED(*this);
-      }
-
     assert((n >= 2) && x[0].none() && x[n-1].none());
     assert((y.min()-o == 0) && (y.max()-o == n-1));
 
@@ -201,6 +231,7 @@ namespace Gecode { namespace Int { namespace Channel {
       BoolIter bv(x,o);
       GECODE_ME_CHECK(y.minus_v(home,bv,false));
     }
+    status = S_NONE;
     return ES_FIX;
   }
 

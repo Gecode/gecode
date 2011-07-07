@@ -39,8 +39,11 @@ namespace Gecode { namespace Int { namespace Channel {
 
   forceinline
   LinkMulti::LinkMulti(Home home, ViewArray<BoolView>& x, IntView y, int o0)
-    : MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
-  (home,x,y), o(o0) {}
+    : MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>
+  (home,x,y), c(home), status(S_NONE), o(o0) {
+    x.subscribe(home,*new (home) Advisor(home,*this,c));
+    // Propagator is scheduled because of the dependency subscription
+  }
 
   forceinline ExecStatus
   LinkMulti::post(Home home, ViewArray<BoolView>& x, IntView y, int o) {
@@ -59,6 +62,15 @@ namespace Gecode { namespace Int { namespace Channel {
       for (int i=j+1; i<n; i++)
         GECODE_ME_CHECK(x[i].zero(home));
     } else {
+      for (int i=n; i--; )
+        if (x[i].one()) {
+          for (int j=0; j<i; j++)
+            GECODE_ME_CHECK(x[j].zero(home));
+          for (int j=i+1; j<n; j++)
+            GECODE_ME_CHECK(x[j].zero(home));
+          GECODE_ME_CHECK(y.eq(home,o+i));
+          return ES_OK;
+        }
       (void) new (home) LinkMulti(home,x,y,o);
     }
     return ES_OK;

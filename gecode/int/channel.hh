@@ -197,10 +197,20 @@ namespace Gecode { namespace Int { namespace Channel {
    * \ingroup FuncIntProp
    */
   class LinkMulti :
-    public MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM> {
+    public MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM> {
   private:
-    using MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>::x;
-    using MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>::y;
+    using MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>::x;
+    using MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>::y;
+    /// The advisor council
+    Council<Advisor> c;
+    /// Value for propagator being idle
+    static const int S_NONE = 0;
+    /// Value for propagator having detected a one
+    static const int S_ONE  = 1;
+    /// Value for propagator currently running
+    static const int S_RUN  = 2;
+    /// Propagator status
+    int status;
     /// Offset value
     int o;
     /// Constructor for cloning \a p
@@ -212,12 +222,16 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (low unary if \a y is assigned, low linear otherwise)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
     GECODE_INT_EXPORT
     static  ExecStatus post(Home home,
                             ViewArray<BoolView>& x, IntView y, int o);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
   };
 
 }}}

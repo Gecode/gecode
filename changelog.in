@@ -74,6 +74,14 @@ Some bug fixes, probably
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Optimized channeling propagator between an array of Boolean
+variables and an integer variables.
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   major
 [DESCRIPTION]
