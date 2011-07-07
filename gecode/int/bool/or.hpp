@@ -615,11 +615,9 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   forceinline
   NaryOrTrue<BV>::NaryOrTrue(Home home, ViewArray<BV>& b)
-    : BinaryPropagator<BV,PC_BOOL_VAL>(home,
-                                      b[b.size()-2],
-                                      b[b.size()-1]), x(b) {
+    : BinaryPropagator<BV,PC_BOOL_VAL>(home,b[0],b[1]), x(b) {
     assert(x.size() > 2);
-    x.size(x.size()-2);
+    x.drop_fst(2);
   }
 
   template<class BV>
@@ -706,11 +704,6 @@ namespace Gecode { namespace Int { namespace Bool {
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
-          // Rewrite if there is just one view left
-          if (i == 0) {
-            GECODE_REWRITE(*this,
-                           (BinOrTrue<BV,BV>::post(home(*this),x1,x[0])));
-          }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n];
           x.size(n);
