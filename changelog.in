@@ -73,6 +73,13 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added Schur's Lemma puzzle.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

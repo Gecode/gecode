@@ -721,7 +721,7 @@ INTEXAMPLESRC0 =						\
 	minesweeper domino steel-mill sports-league		\
 	all-interval langford-number warehouses	radiotherapy    \
 	word-square crossword open-shop car-sequencing sat      \
-	bin-packing knights tsp perfect-square
+	bin-packing knights tsp perfect-square schurs-lemma
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
