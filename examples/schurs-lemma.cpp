@@ -42,13 +42,42 @@
 using namespace Gecode;
 
 /**
+ * \brief %Options for Schur's Lemma
+ *
+ */
+class SchurOptions : public Options {
+public:
+  int c, n; ///< Parameters to be given on command line
+  /// Initialize options for example with name \a s
+  SchurOptions(const char* s, int c0, int n0)
+    : Options(s), c(c0), n(n0) {}
+  /// Parse options from arguments \a argv (number is \a argc)
+  void parse(int& argc, char* argv[]) {
+    Options::parse(argc,argv);
+    if (argc < 3)
+      return;
+    c = atoi(argv[1]);
+    n = atoi(argv[2]);
+  }
+  /// Print help message
+  virtual void help(void) {
+    Options::help();
+    std::cerr << "\t(unsigned int) default: " << c << std::endl
+              << "\t\tparameter c (number of boxes)" << std::endl
+              << "\t(unsigned int) default: " << n << std::endl
+              << "\t\tparameter n (number of balls)" << std::endl;
+  }
+};
+
+
+/**
  * \brief %Example: Schur's lemma
  *
- * Put \f$n\f$ balls labeled \f${1,\ldots,n}\f$ into three boxes such 
+ * Put \f$n\f$ balls labeled \f${1,\ldots,n}\f$ into \f$c\f$ boxes such 
  * that for any triple of balls \f$\langle x, y, z\rangle\f$ with
  * \f$x+y = z\f$, not all are in the same box. 
  *
- * This problem has a solution if \f$n < 14\f$.
+ * This problem has a solution for \f$c=3\f$ if \f$n < 14\f$.
  *
  * See also problem 15 at http://www.csplib.org/.
  *
@@ -61,8 +90,8 @@ protected:
   IntVarArray box;
 public:
   /// Actual model
-  Schur(const SizeOptions& opt) : box(*this,opt.size(),1,3) {
-    int n = opt.size();
+  Schur(const SchurOptions& opt) : box(*this,opt.n,1,opt.c) {
+    int n = opt.n;
 
     IntVarArgs triple(3);
 
@@ -77,7 +106,7 @@ public:
     }
 
     // Break value symmetries
-    precede(*this, box, IntArgs(3, 1,2,3));
+    precede(*this, box, IntArgs::create(opt.c, 1));
 
     branch(*this, box, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
   }
@@ -103,10 +132,9 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Schur's Lemma");
-  opt.size(5);
+  SchurOptions opt("Schur's Lemma",3,13);
   opt.parse(argc,argv);
-  Script::run<Schur,DFS,SizeOptions>(opt);
+  Script::run<Schur,DFS,SchurOptions>(opt);
   return 0;
 }
 
