@@ -265,11 +265,12 @@ namespace Gecode { namespace Int { namespace Rel {
       x0(xv[xv.size()-2]), y0(yv[xv.size()-2]),
       x1(xv[xv.size()-1]), y1(yv[xv.size()-1]),
       x(xv), y(yv) {
-    assert(x.size() > 1);
-    assert(x.size() == y.size());
-    x.size(x.size()-2); y.size(x.size()-2);
+    int n = x.size();
+    assert(n > 1);
+    assert(n == y.size());
+    x.size(n-2); y.size(n-2);
     x0.subscribe(home,*this,PC_INT_VAL); y0.subscribe(home,*this,PC_INT_VAL);
-    y0.subscribe(home,*this,PC_INT_VAL); y1.subscribe(home,*this,PC_INT_VAL);
+    x1.subscribe(home,*this,PC_INT_VAL); y1.subscribe(home,*this,PC_INT_VAL);
   }
 
   template<class View>
@@ -290,6 +291,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   Actor*
   LexNq<View>::copy(Space& home, bool share) {
+    /*
     int n = x.size();
     if (n > 0) {
       // Eliminate all equal views and keep one disequal pair
@@ -311,6 +313,7 @@ namespace Gecode { namespace Int { namespace Rel {
     done:
       x.size(n); y.size(n);
     }
+    */
     return new (home) LexNq<View>(home,share,*this);
   }
 
@@ -353,7 +356,7 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline size_t
   LexNq<View>::dispose(Space& home) {
     x0.cancel(home,*this,PC_INT_VAL); y0.cancel(home,*this,PC_INT_VAL);
-    y0.cancel(home,*this,PC_INT_VAL); y1.cancel(home,*this,PC_INT_VAL);
+    x1.cancel(home,*this,PC_INT_VAL); y1.cancel(home,*this,PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -363,6 +366,8 @@ namespace Gecode { namespace Int { namespace Rel {
   LexNq<View>::resubscribe(Space& home, 
                            RelTest rt, View& x0, View& y0, View x1, View y1) {
     if (rt == RT_TRUE) {
+      assert(x0.assigned() && y0.assigned());
+      assert(x0.val() == y0.val());
       int n = x.size();
       for (int i=n; i--; )
         switch (rtest_eq_bnd(x[i],y[i])) {
@@ -374,15 +379,11 @@ namespace Gecode { namespace Int { namespace Rel {
           return home.ES_SUBSUMED(*this);
         case RT_MAYBE:
           // Move to x0, y0 and subscribe
-          x0.cancel(home,*this,PC_INT_VAL);
-          x0=x[i]; 
-          x0.subscribe(home,*this,PC_INT_VAL,false);
-          y0.cancel(home,*this,PC_INT_VAL);
-          y0=y[i]; 
-          y0.subscribe(home,*this,PC_INT_VAL,false);
-          n--;
-          x[i]=x[n]; y[i]=y[n];
+          x0=x[i]; y0=y[i];
+          n--; x[i]=x[n]; y[i]=y[n];
           x.size(n); y.size(n);
+          x0.subscribe(home,*this,PC_INT_VAL,false);
+          y0.subscribe(home,*this,PC_INT_VAL,false);
           return ES_FIX;
         default:
           GECODE_NEVER;
@@ -403,7 +404,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (rt1 == RT_FALSE)
       return home.ES_SUBSUMED(*this);
     GECODE_ES_CHECK(resubscribe(home,rt0,x0,y0,x1,y1));
-    GECODE_ES_CHECK(resubscribe(home,rt1,x1,y1,x0,y1));
+    GECODE_ES_CHECK(resubscribe(home,rt1,x1,y1,x0,y0));
     return ES_FIX;
   }
 
