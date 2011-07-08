@@ -37,103 +37,63 @@
 
 namespace Gecode { namespace Int { namespace NoOverlap {
 
-  template<int d>
-  forceinline Advisor&
-  View<d>::advisor(void) {
-    Advisors<Advisor> as(c);
-    return as.advisor();
-  }
-
-  template<int d>
+  template<class Dim, int d>
   forceinline
-  View<d>::View(Home home, Box<ViewDim,d>* b, int n, int m0)
-    : Base<ViewDim,d>(home,b,n), m(m0), c(home), todo(NOTHING) {
-    Advisor& a = *new (home) Advisor(home,*this,c);
+  OptProp<Dim,d>::OptProp(Home home, OptBox<Dim,d>* b, int n, int m0)
+    : Base<OptBox<Dim,d> >(home,b,n), m(m0) {
     for (int i=m; i--; )
-      b[n+i].subscribe(home,a);
+      b[n+i].subscribe(home, *this);
   }
 
-  template<int d>
+  template<class Dim, int d>
   ExecStatus
-  View<d>::post(Home home, Box<ViewDim,d>* b, int n) {
-    // Eliminate zero-sized boxes
-    for (int i=n; i--; )
-      if (b[i].empty())
-        b[i]=b[--n];
+  OptProp<Dim,d>::post(Home home, OptBox<Dim,d>* b, int n) {
     // Partition into mandatory and optional boxes
     if (n > 1) {
-      int p = Base<ViewDim,d>::partition(b, 0, n);
-      (void) new (home) View<d>(home,b,p,n-p);
+      int p = Base<OptBox<Dim,d> >::partition(b, 0, n);
+      (void) new (home) OptProp<Dim,d>(home,b,p,n-p);
     }
     return ES_OK;
   }
 
-  template<int d>
+  template<class Dim, int d>
   forceinline size_t 
-  View<d>::dispose(Space& home) {
-    Advisor& a = advisor();
+  OptProp<Dim,d>::dispose(Space& home) {
     for (int i=m; i--; )
-      b[n+i].cancel(home,a);
-    c.dispose(home);
-    (void) Base<ViewDim,d>::dispose(home);
+      b[n+i].cancel(home, *this);
+    (void) Base<OptBox<Dim,d> >::dispose(home);
     return sizeof(*this);
   }
 
 
-  template<int d>
+  template<class Dim, int d>
   forceinline
-  View<d>::View(Space& home, bool shared, View<d>& p) 
-    : Base<ViewDim,d>(home, shared, p, p.n + p.m), m(p.m), todo(NOTHING) {
-    c.update(home,shared,p.c);
-  }
+  OptProp<Dim,d>::OptProp(Space& home, bool shared, OptProp<Dim,d>& p) 
+    : Base<OptBox<Dim,d> >(home, shared, p, p.n + p.m), m(p.m) {}
 
-  template<int d>
+  template<class Dim, int d>
   Actor* 
-  View<d>::copy(Space& home, bool share) {
-    return new (home) View<d>(home,share,*this);
+  OptProp<Dim,d>::copy(Space& home, bool share) {
+    return new (home) OptProp<Dim,d>(home,share,*this);
   }
 
-  template<int d>
-  ExecStatus
-  View<d>::advise(Space&, Advisor&, const Delta& delta) {
-    // Decides whether the propagator must be run
-    switch (IntView::modevent(delta)) {
-    case ME_INT_VAL:
-      todo = ELIMINATE;
-      return ES_NOFIX;
-    case ME_INT_BND:
-      if (todo == NOTHING)
-        todo = MANDATORY;
-      return ES_NOFIX;
-    default:
-      return ES_FIX;
-    }
-  }
-
-  template<int d>
+  template<class Dim, int d>
   ExecStatus 
-  View<d>::propagate(Space& home, const ModEventDelta&) {
+  OptProp<Dim,d>::propagate(Space& home, const ModEventDelta& med) {
     Region r(home);
 
-    if (todo != NOTHING) {
-      Advisor& a = advisor();
-      // Eliminate empty boxes
-      if (todo == ELIMINATE)
-        for (int i=m; i--; )
-          if (b[n+i].empty()) {
-            b[n+i].cancel(home,a);
-            b[n+i] = b[n+(--m)];
-          }
-      // Reconsider mandatory boxes
-      if (m > 0) {
-        int p = Base<ViewDim,d>::partition(b+n, 0, m);
-        for (int i=p; i--; ) {
-          b[n+i].cancel(home,a);
-          b[n+i].subscribe(home,*this);
+    if (BoolView::me(med) == ME_BOOL_VAL) {
+      // Eliminate excluded boxes
+      for (int i=m; i--; )
+        if (b[n+i].excluded()) {
+          b[n+i].cancel(home,*this);
+          b[n+i] = b[n+(--m)];
         }
+      // Reconsider optional boxes
+      if (m > 0) {
+        int p = Base<OptBox<Dim,d> >::partition(b+n, 0, m);
         n += p; m -= p;
       }
-      todo = NOTHING;
     }
 
     // Number of disjoint boxes
@@ -154,6 +114,18 @@ namespace Gecode { namespace Int { namespace NoOverlap {
           continue;
         } else {
           GECODE_ES_CHECK(b[i].nooverlap(home,b[j]));
+        }
+    }
+
+    // Check whether some optional boxes must be excluded
+    for (int i=m; i--; ) {
+      assert(b[n+i].optional());
+      for (int j=i; j--; )
+        if (b[n+i].overlap(b[j])) {
+          GECODE_ES_CHECK(b[n+i].exclude(home));
+          b[n+i].cancel(home,*this);
+          b[n+i] = b[n+(--m)];
+          break;
         }
     }
 

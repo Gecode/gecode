@@ -37,17 +37,17 @@
 
 namespace Gecode { namespace Int { namespace NoOverlap {
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline
-  Base<Dim,d>::Base(Home home, Box<Dim,d>* b0, int n0)
+  Base<Box>::Base(Home home, Box* b0, int n0)
     : Propagator(home), b(b0), n(n0) {
     for (int i=n; i--; )
       b[i].subscribe(home,*this);
   }
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline int
-  Base<Dim,d>::partition(Box<Dim,d>* b, int i, int n) {
+  Base<Box>::partition(Box* b, int i, int n) {
     int j = n-1;
     while (true) {
       while (!b[j].mandatory() && (--j >= 0)) {}
@@ -58,9 +58,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     return i;
   }
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline size_t 
-  Base<Dim,d>::dispose(Space& home) {
+  Base<Box>::dispose(Space& home) {
     for (int i=n; i--; )
       b[i].cancel(home,*this);
     (void) Propagator::dispose(home);
@@ -68,18 +68,18 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   }
 
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline
-  Base<Dim,d>::Base(Space& home, bool shared, Base<Dim,d>& p, int m) 
-    : Propagator(home,shared,p), b(home.alloc<Box<Dim,d> >(m)), n(p.n) {
+  Base<Box>::Base(Space& home, bool shared, Base<Box>& p, int m) 
+    : Propagator(home,shared,p), b(home.alloc<Box>(m)), n(p.n) {
     for (int i=m; i--; )
       b[i].update(home,shared,p.b[i]);
   }
 
-  template<class Dim, int d>
+  template<class Box>
   PropCost 
-  Base<Dim,d>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::HI,d*n);
+  Base<Box>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::quadratic(PropCost::HI,Box::dim()*n);
   }
 
 }}}

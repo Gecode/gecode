@@ -39,6 +39,18 @@
 
 namespace Gecode {
 
+  namespace Int { namespace NoOverlap {
+
+    bool
+    optional(const BoolVarArgs& o) {
+      for (int i=o.size(); i--; )
+        if (o[i].none())
+          return true;
+      return false;
+    }
+
+  }}
+
   void
   nooverlap(Home home, 
             const IntVarArgs& x, const IntArgs& w, 
@@ -48,24 +60,155 @@ namespace Gecode {
     using namespace NoOverlap;
     if (x.same(home,y))
       throw ArgumentSame("Int::nooverlap");
-    int n = x.size();
-    if ((n != w.size()) || (n != y.size()) || (n != h.size()))
+    if ((x.size() != w.size()) || (x.size() != y.size()) || 
+        (x.size() != h.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");      
-    for (int i=n; i--; ) {
+    for (int i=x.size(); i--; ) {
       Limits::nonnegative(w[i],"Int::nooverlap");
       Limits::nonnegative(h[i],"Int::nooverlap");
     }
     if (home.failed()) return;
 
-    Box<IntDim,2>* b 
-      = static_cast<Space&>(home).alloc<Box<IntDim,2> >(n);
-    for (int i=n; i--; ) {
+    ManBox<IntDim,2>* b 
+      = static_cast<Space&>(home).alloc<ManBox<IntDim,2> >(x.size());
+    for (int i=x.size(); i--; ) {
       b[i][0] = IntDim(x[i],w[i]);
       b[i][1] = IntDim(y[i],h[i]);
     }
 
-    GECODE_ES_FAIL((NoOverlap::Int<2>::post(home,b,n)));
+    GECODE_ES_FAIL((NoOverlap::ManProp<IntDim,2>::post(home,b,x.size())));
   }
+
+  void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntArgs& w, 
+            const IntVarArgs& y, const IntArgs& h,
+            const BoolVarArgs& o,
+            IntConLevel) {
+    using namespace Int;
+    using namespace NoOverlap;
+    if (x.same(home,y) || o.same(home))
+      throw ArgumentSame("Int::nooverlap");
+    if ((x.size() != w.size()) || (x.size() != y.size()) ||
+        (x.size() != h.size()) || (x.size() != o.size()))
+      throw ArgumentSizeMismatch("Int::nooverlap");      
+    for (int i=x.size(); i--; ) {
+      Limits::nonnegative(w[i],"Int::nooverlap");
+      Limits::nonnegative(h[i],"Int::nooverlap");
+    }
+    if (home.failed()) return;
+    
+    if (optional(o)) {
+      OptBox<IntDim,2>* b 
+        = static_cast<Space&>(home).alloc<OptBox<IntDim,2> >(x.size());
+      for (int i=x.size(); i--; ) {
+        b[i][0] = IntDim(x[i],w[i]);
+        b[i][1] = IntDim(y[i],h[i]);
+        b[i].optional(o[i]);
+      }
+      GECODE_ES_FAIL((NoOverlap::OptProp<IntDim,2>::post(home,b,x.size())));
+    } else {
+      ManBox<IntDim,2>* b 
+        = static_cast<Space&>(home).alloc<ManBox<IntDim,2> >(x.size());
+      int n = 0;
+      for (int i=0; i<x.size(); i++)
+        if (o[i].one()) {
+          b[n][0] = IntDim(x[i],w[i]);
+          b[n][1] = IntDim(y[i],h[i]);
+          n++;
+        }
+      GECODE_ES_FAIL((NoOverlap::ManProp<IntDim,2>::post(home,b,n)));
+    }
+  }
+
+  void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w, 
+            const IntVarArgs& y, const IntVarArgs& h,
+            IntConLevel) {
+    using namespace Int;
+    using namespace NoOverlap;
+    if (x.same(home,y) || x.same(home,w) || x.same(home,h))
+      throw ArgumentSame("Int::nooverlap");
+    if ((x.size() != w.size()) || (x.size() != y.size()) || 
+        (x.size() != h.size()))
+      throw ArgumentSizeMismatch("Int::nooverlap");      
+    if (home.failed()) return;
+
+    for (int i=x.size(); i--; ) {
+      GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
+      GECODE_ME_FAIL(IntView(h[i]).gq(home,0));
+    }
+
+    if (w.assigned() && h.assigned()) {
+      IntArgs wc(x.size()), hc(x.size());
+      for (int i=x.size(); i--; ) {
+        wc[i] = w[i].val();
+        hc[i] = h[i].val();
+      }
+      nooverlap(home, x, wc, y, hc);
+    } else {
+      ManBox<ViewDim,2>* b 
+        = static_cast<Space&>(home).alloc<ManBox<ViewDim,2> >(x.size());
+      for (int i=x.size(); i--; ) {
+        b[i][0] = ViewDim(x[i],w[i]);
+        b[i][1] = ViewDim(y[i],h[i]);
+      }
+      GECODE_ES_FAIL((NoOverlap::ManProp<ViewDim,2>::post(home,b,x.size())));
+    }
+  }
+
+  void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w, 
+            const IntVarArgs& y, const IntVarArgs& h,
+            const BoolVarArgs& o,
+            IntConLevel) {
+    using namespace Int;
+    using namespace NoOverlap;
+    if (x.same(home,y) || x.same(home,w) || x.same(home,h) || o.same(home))
+      throw ArgumentSame("Int::nooverlap");
+    if ((x.size() != w.size()) || (x.size() != y.size()) || 
+        (x.size() != h.size()) || (x.size() != o.size()))
+      throw ArgumentSizeMismatch("Int::nooverlap");      
+    if (home.failed()) return;
+
+    for (int i=x.size(); i--; ) {
+      GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
+      GECODE_ME_FAIL(IntView(h[i]).gq(home,0));
+    }
+
+    if (w.assigned() && h.assigned()) {
+      IntArgs wc(x.size()), hc(x.size());
+      for (int i=x.size(); i--; ) {
+        wc[i] = w[i].val();
+        hc[i] = h[i].val();
+      }
+      nooverlap(home, x, wc, y, wc, o);
+    } else if (optional(o)) {
+      OptBox<ViewDim,2>* b 
+        = static_cast<Space&>(home).alloc<OptBox<ViewDim,2> >(x.size());
+      for (int i=x.size(); i--; ) {
+        b[i][0] = ViewDim(x[i],w[i]);
+        b[i][1] = ViewDim(y[i],h[i]);
+        b[i].optional(o[i]);
+      }
+      GECODE_ES_FAIL((NoOverlap::OptProp<ViewDim,2>::post(home,b,x.size())));
+    } else {
+      ManBox<ViewDim,2>* b 
+        = static_cast<Space&>(home).alloc<ManBox<ViewDim,2> >(x.size());
+      int n = 0;
+      for (int i=0; i<x.size(); i++)
+        if (o[i].one()) {
+          b[n][0] = ViewDim(x[i],w[i]);
+          b[n][1] = ViewDim(y[i],h[i]);
+          n++;
+        }
+      GECODE_ES_FAIL((NoOverlap::ManProp<ViewDim,2>::post(home,b,n)));
+    }
+  }
+
+  /*
 
   void
   nooverlap(Home home, 
@@ -97,35 +240,6 @@ namespace Gecode {
     }
 
     GECODE_ES_FAIL((NoOverlap::Int<3>::post(home,b,n)));
-  }
-
-  void
-  nooverlap(Home home, 
-            const IntVarArgs& x, const IntVarArgs& w, 
-            const IntVarArgs& y, const IntVarArgs& h,
-            IntConLevel) {
-    using namespace Int;
-    using namespace NoOverlap;
-    if (x.same(home,y) || x.same(home,w) || x.same(home,h))
-      throw ArgumentSame("Int::nooverlap");
-    int n = x.size();
-    if ((n != w.size()) || (n != y.size()) || (n != h.size()))
-      throw ArgumentSizeMismatch("Int::nooverlap");      
-    if (home.failed()) return;
-
-    for (int i=n; i--; ) {
-      GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
-      GECODE_ME_FAIL(IntView(h[i]).gq(home,0));
-    }
-
-    Box<ViewDim,2>* b 
-      = static_cast<Space&>(home).alloc<Box<ViewDim,2> >(n);
-    for (int i=n; i--; ) {
-      b[i][0] = ViewDim(x[i],w[i]);
-      b[i][1] = ViewDim(y[i],h[i]);
-    }
-
-    GECODE_ES_FAIL((NoOverlap::View<2>::post(home,b,n)));
   }
 
   void
@@ -166,6 +280,8 @@ namespace Gecode {
 
     GECODE_ES_FAIL((NoOverlap::View<3>::post(home,b,n)));
   }
+
+  */
 
 }
 

@@ -65,16 +65,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     return c.max() + s;
   }
 
-  forceinline bool
-  IntDim::mandatory(void) const {
-    return s > 0;
-  }
-  forceinline bool
-  IntDim::empty(void) const {
-    return s == 0;
-  }
-
-
   forceinline ExecStatus
   IntDim::ssc(Space& home, int n) {
     GECODE_ME_CHECK(c.gq(home, n));
@@ -148,16 +138,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     return c.max() + s.max();
   }
 
-  forceinline bool
-  ViewDim::mandatory(void) const {
-    return s.min() > 0;
-  }
-  forceinline bool
-  ViewDim::empty(void) const {
-    return s.max() == 0;
-  }
-
-
   forceinline ExecStatus
   ViewDim::ssc(Space& home, int n) {
     GECODE_ME_CHECK(c.gq(home, n));
@@ -202,17 +182,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     s.subscribe(home,p,PC_INT_BND);
   }
   forceinline void
-  ViewDim::subscribe(Space& home, Advisor& a) {
-    s.subscribe(home,a);
-  }
-  forceinline void
   ViewDim::cancel(Space& home, Propagator& p) {
     c.cancel(home,p,PC_INT_DOM);
     s.cancel(home,p,PC_INT_BND);
-  }
-  forceinline void
-  ViewDim::cancel(Space& home, Advisor& a) {
-    s.cancel(home,a);
   }
 
 }}}

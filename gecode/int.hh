@@ -2283,6 +2283,27 @@ namespace Gecode {
   /** \brief Post propagator for rectangle packing
    *
    * Propagate that no two rectangles as described by the coordinates
+   * \a x, and \a y, widths \a w, and heights \a h overlap. The rectangles
+   * can be optional, as described by the Boolean variables \a o.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a o
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a y, or \a o share unassigned
+   *    variables.
+   *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntArgs& w,
+            const IntVarArgs& y, const IntArgs& h,
+            const BoolVarArgs& o,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangle packing
+   *
+   * Propagate that no two rectangles as described by the coordinates
    * \a x and \a y, widths \a w, and heights \a h overlap.
    * 
    * Throws the following exceptions:
@@ -2297,6 +2318,26 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x, const IntVarArgs& w,
             const IntVarArgs& y, const IntVarArgs& h,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangle packing
+   *
+   * Propagate that no two rectangles as described by the coordinates
+   * \a x and \a y, widths \a w, and heights \a h overlap. The rectangles
+   * can be optional, as described by the Boolean variables \a o.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a o
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a w, \a y, \a h, or \a o share 
+   *    unassigned variables.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w,
+            const IntVarArgs& y, const IntVarArgs& h,
+            const BoolVarArgs& o,
             IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for rectangular cuboid packing
    *
@@ -2321,6 +2362,27 @@ namespace Gecode {
    *
    * Propagate that no two rectangular cuboids as described by the coordinates
    * \a x, \a y, and \a z, widths \a w, heights \a h, and depths \a d overlap.
+   * The cuboids can be optional, as described by the Boolean variables \a o.
+   *
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, \a z, \a d, or \a o
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a y, \a z, or \a o share unassigned variables.
+   *  - Of type Int::OutOfLimits if \a w, \a h, \a d contain a negative number.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntArgs& w,
+            const IntVarArgs& y, const IntArgs& h,
+            const IntVarArgs& z, const IntArgs& d,
+            const BoolVarArgs& o,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangular cuboid packing
+   *
+   * Propagate that no two rectangular cuboids as described by the coordinates
+   * \a x, \a y, and \a z, widths \a w, heights \a h, and depths \a d overlap.
    * 
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, \a z, or \a d
@@ -2335,6 +2397,27 @@ namespace Gecode {
             const IntVarArgs& x, const IntVarArgs& w,
             const IntVarArgs& y, const IntVarArgs& h,
             const IntVarArgs& z, const IntVarArgs& d,
+            IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for rectangular cuboid packing
+   *
+   * Propagate that no two rectangular cuboids as described by the coordinates
+   * \a x, \a y, and \a z, widths \a w, heights \a h, and depths \a d overlap.
+   * The cuboids can be optional, as described by the Boolean variables \a o.
+   * 
+   * Throws the following exceptions:
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, \a z, \a d, or \a o
+   *    are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x, \a w, \a y, \a h, \a z, \a d, or \a o share 
+   *    unassigned variables.
+   * 
+   * \ingroup TaskModelIntGeoPacking
+   */
+  GECODE_INT_EXPORT void
+  nooverlap(Home home, 
+            const IntVarArgs& x, const IntVarArgs& w,
+            const IntVarArgs& y, const IntVarArgs& h,
+            const IntVarArgs& z, const IntVarArgs& d,
+            const BoolVarArgs& o,
             IntConLevel icl=ICL_DEF);
 
 

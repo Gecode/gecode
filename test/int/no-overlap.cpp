@@ -101,15 +101,13 @@ namespace Test { namespace Int {
         for (int i=0; i<n; i++) {
           int xi=xwyh[4*i+0], yi=xwyh[4*i+2];
           int wi=xwyh[4*i+1], hi=xwyh[4*i+3];
-          if ((wi > 0) && (hi > 0))
-            for (int j=i+1; j<n; j++) {
-              int xj=xwyh[4*j+0], yj=xwyh[4*j+2];
-              int wj=xwyh[4*j+1], hj=xwyh[4*j+3];
-              if ((wj > 0) && (hj > 0))
-                if (!((xi + wi <= xj) || (xj + wj <= xi) ||
-                      (yi + hi <= yj) || (yj + hj <= yi)))
-                  return false;
-            }
+          for (int j=i+1; j<n; j++) {
+            int xj=xwyh[4*j+0], yj=xwyh[4*j+2];
+            int wj=xwyh[4*j+1], hj=xwyh[4*j+3];
+            if (!((xi + wi <= xj) || (xj + wj <= xi) ||
+                  (yi + hi <= yj) || (yj + hj <= yi)))
+              return false;
+          }
         }
         return true;
       }
@@ -126,6 +124,47 @@ namespace Test { namespace Int {
       }
     };
     
+    /// %Test for no-overlap with optional rectangles
+    class Opt2 : public Test {
+    public:
+      /// Create and register test with maximal value \a m and \a n rectangles
+      Opt2(int m, int n)
+        : Test("NoOverlap::Opt::2::"+str(m)+"::"+str(n), 5*n, 0, m) {}
+      /// %Test whether \a xwyho is solution
+      virtual bool solution(const Assignment& xwyho) const {
+        int n = xwyho.size() / 5;
+        for (int i=0; i<n; i++) {
+          int xi=xwyho[5*i+0], yi=xwyho[5*i+2];
+          int wi=xwyho[5*i+1], hi=xwyho[5*i+3];
+          int oi=xwyho[5*i+4];
+          for (int j=i+1; j<n; j++) {
+            int xj=xwyho[5*j+0], yj=xwyho[5*j+2];
+            int wj=xwyho[5*j+1], hj=xwyho[5*j+3];
+            int oj=xwyho[5*j+4];
+            if ((oi > 0) && (oj > 0) &&
+                !((xi + wi <= xj) || (xj + wj <= xi) ||
+                  (yi + hi <= yj) || (yj + hj <= yi)))
+              return false;
+          }
+        }
+        return true;
+      }
+      /// Post constraint on \a xwyho
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& xwyho) {
+        using namespace Gecode;
+        int n = xwyho.size() / 5;
+        IntVarArgs x(n), w(n), y(n), h(n);
+        BoolVarArgs o(n);
+        for (int i=0; i<n; i++) {
+          x[i]=xwyho[5*i+0]; w[i]=xwyho[5*i+1];
+          y[i]=xwyho[5*i+2]; h[i]=xwyho[5*i+3];
+          o[i]=expr(home, xwyho[5*i+4] > 0);
+        }
+        nooverlap(home, x, w, y, h, o);
+      }
+    };
+    
+    /*
     /// %Test for no-overlap with integer dimensions (rectangle cuboids)
     class Int3 : public Test {
     protected:
@@ -170,6 +209,7 @@ namespace Test { namespace Int {
         nooverlap(home, x, w, y, h, z, d);
       }
     };
+    */
     
     /// Help class to create and register tests
     class Create {
@@ -190,13 +230,15 @@ namespace Test { namespace Int {
           (void) new Int2(m, s2, s3);
           (void) new Int2(m, s4, s4);
           (void) new Int2(m, s4, s2);
-          (void) new Int3(m, s1, s1, s1);
-          (void) new Int3(m, s2, s3, s4);
+          //          (void) new Int3(m, s1, s1, s1);
+          //          (void) new Int3(m, s2, s3, s4);
         }
 
         (void) new Var2(2, 2);
         (void) new Var2(3, 2);
         (void) new Var2(1, 3);
+        (void) new Opt2(2, 2);
+        (void) new Opt2(3, 2);
 
       }
     };

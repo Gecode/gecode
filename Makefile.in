@@ -359,7 +359,7 @@ INTHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \
-	no-overlap/base.hpp no-overlap/int.hpp no-overlap/view.hpp
+	no-overlap/base.hpp no-overlap/man.hpp no-overlap/opt.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \

@@ -2004,7 +2004,7 @@ gecode/int/no-overlap$(OBJSUFFIX) gecode/int/no-overlap$(SBJSUFFIX): \
 	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
 	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
 	./gecode/int/no-overlap.hh ./gecode/int/no-overlap/base.hpp ./gecode/int/no-overlap/box.hpp \
-	./gecode/int/no-overlap/dim.hpp ./gecode/int/no-overlap/int.hpp ./gecode/int/no-overlap/view.hpp \
+	./gecode/int/no-overlap/dim.hpp ./gecode/int/no-overlap/man.hpp ./gecode/int/no-overlap/opt.hpp \
 	./gecode/int/propagator.hpp ./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp \
 	./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp \
 	./gecode/int/var/int.hpp ./gecode/int/var/print.hpp ./gecode/int/view.hpp \

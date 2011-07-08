@@ -37,45 +37,41 @@
 
 namespace Gecode { namespace Int { namespace NoOverlap {
 
-  template<int d>
+  template<class Dim, int d>
   forceinline
-  Int<d>::Int(Home home, Box<IntDim,d>* b, int n)
-    : Base<IntDim,d>(home, b, n) {}
+  ManProp<Dim,d>::ManProp(Home home, ManBox<Dim,d>* b, int n)
+    : Base<ManBox<Dim,d> >(home, b, n) {}
 
-  template<int d>
-  ExecStatus
-  Int<d>::post(Home home, Box<IntDim,d>* b, int n) {
-    // Eliminate zero-sized boxes
-    for (int i=n; i--; )
-      if (b[i].empty())
-        b[i]=b[--n];
+  template<class Dim, int d>
+  inline ExecStatus
+  ManProp<Dim,d>::post(Home home, ManBox<Dim,d>* b, int n) {
     if (n > 1)
-      (void) new (home) Int<d>(home,b,n);
+      (void) new (home) ManProp<Dim,d>(home,b,n);
     return ES_OK;
   }
 
-  template<int d>
+  template<class Dim, int d>
   forceinline size_t 
-  Int<d>::dispose(Space& home) {
-    (void) Base<IntDim,d>::dispose(home);
+  ManProp<Dim,d>::dispose(Space& home) {
+    (void) Base<ManBox<Dim,d> >::dispose(home);
     return sizeof(*this);
   }
 
 
-  template<int d>
+  template<class Dim, int d>
   forceinline
-  Int<d>::Int(Space& home, bool shared, Int<d>& p) 
-    : Base<IntDim,d>(home, shared, p, p.n) {}
+  ManProp<Dim,d>::ManProp(Space& home, bool shared, ManProp<Dim,d>& p) 
+    : Base<ManBox<Dim,d> >(home, shared, p, p.n) {}
 
-  template<int d>
+  template<class Dim, int d>
   Actor* 
-  Int<d>::copy(Space& home, bool share) {
-    return new (home) Int<d>(home,share,*this);
+  ManProp<Dim,d>::copy(Space& home, bool share) {
+    return new (home) ManProp<Dim,d>(home,share,*this);
   }
 
-  template<int d>
+  template<class Dim, int d>
   ExecStatus 
-  Int<d>::propagate(Space& home, const ModEventDelta&) {
+  ManProp<Dim,d>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
 
     // Number of disjoint boxes
@@ -86,8 +82,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     // Number of boxes to be eliminated
     int e = 0;
 
-    for (int i=n; i--; ) {
-      assert(b[i].mandatory());
+    for (int i=n; i--; )
       for (int j=i; j--; ) 
         if (b[i].nooverlap(b[j])) {
           assert(db[i] > 0); assert(db[j] > 0);
@@ -97,7 +92,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         } else {
           GECODE_ES_CHECK(b[i].nooverlap(home,b[j]));
         }
-    }
 
     if (e == n)
       return home.ES_SUBSUMED(*this);

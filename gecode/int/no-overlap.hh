@@ -77,11 +77,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Return largest end coordinate
     int lec(void) const;
 
-    /// Whether dimension is mandatory
-    bool mandatory(void) const;
-    /// Whether dimension is empty
-    bool empty(void) const;
-
     /// Dimension must not overlap with \a d
     ExecStatus nooverlap(Space& home, IntDim& d);
 
@@ -124,11 +119,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Return largest end coordinate
     int lec(void) const;
 
-    /// Whether dimension is mandatory
-    bool mandatory(void) const;
-    /// Whether dimension is empty
-    bool empty(void) const;
-
     /// Dimension must not overlap with \a d
     ExecStatus nooverlap(Space& home, ViewDim& d);
 
@@ -137,12 +127,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     /// Subscribe propagator \a p to dimension
     void subscribe(Space& home, Propagator& p);
-    /// Subscribe advisor \a a to dimension
-    void subscribe(Space& home, Advisor& a);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
-    /// Cancel advisor \a a from dimension
-    void cancel(Space& home, Advisor& a);
   };
 
 }}}
@@ -152,10 +138,10 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 namespace Gecode { namespace Int { namespace NoOverlap {
 
   /**
-   * \brief Box class
+   * \brief Mandatory box class
    */
   template<class Dim, int n>
-  class Box {
+  class ManBox {
   protected:
     /// Dimensions
     Dim d[n];
@@ -164,28 +150,65 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     const Dim& operator [](int i) const;
     /// Access to dimension \a i
     Dim& operator [](int i);
+    /// Return number of dimensions
+    static int dim(void);
 
     /// Whether box is mandatory
     bool mandatory(void) const;
-    /// Whether box is empty
-    bool empty(void) const;
+    /// Whether box is optional
+    bool optional(void) const;
+    /// Whether box is excluded
+    bool excluded(void) const;
+
+    /// Exclude box
+    ExecStatus exclude(Space& home);
 
     /// Check whether this box does not any longer overlap with \a b
-    bool nooverlap(const Box<Dim,n>& b) const;
+    bool nooverlap(const ManBox<Dim,n>& b) const;
+    /// Check whether this box overlaps with \a b
+    bool overlap(const ManBox<Dim,n>& b) const;
+
     /// Propagate that this box does not overlap with \a b
-    ExecStatus nooverlap(Space& home, Box<Dim,n>& b);
+    ExecStatus nooverlap(Space& home, ManBox<Dim,n>& b);
 
     /// Update box during cloning
-    void update(Space& home, bool share, Box<Dim,n>& r);
+    void update(Space& home, bool share, ManBox<Dim,n>& r);
 
     /// Subscribe propagator \a p to box
     void subscribe(Space& home, Propagator& p);
-    /// Subscribe advisor \a a to box
-    void subscribe(Space& home, Advisor& a);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
-    /// Cancel advisor \a a from box
-    void cancel(Space& home, Advisor& a);
+  };
+
+  /**
+   * \brief Optional box class
+   */
+  template<class Dim, int n>
+  class OptBox : public ManBox<Dim,n> {
+  protected:
+    using ManBox<Dim,n>::d;
+    /// Whether box is optional or not
+    BoolView o;
+  public:
+    /// Set Boolean view to \a o
+    void optional(BoolView o);
+    /// Whether box is mandatory
+    bool mandatory(void) const;
+    /// Whether box is optional
+    bool optional(void) const;
+    /// Whether box is excluded
+    bool excluded(void) const;
+
+    /// Exclude box
+    ExecStatus exclude(Space& home);
+
+    /// Update box during cloning
+    void update(Space& home, bool share, OptBox<Dim,n>& r);
+
+    /// Subscribe propagator \a p to box
+    void subscribe(Space& home, Propagator& p);
+    /// Cancel propagator \a p from box
+    void cancel(Space& home, Propagator& p);
   };
 
 }}}
@@ -201,23 +224,23 @@ namespace Gecode { namespace Int { namespace NoOverlap {
    *
    * \ingroup FuncIntProp
    */
-  template<class Dim, int d>
+  template<class Box>
   class Base : public Propagator {
   protected:
-    /// Boxes of dimension \a d
-    Box<Dim,d>* b;
+    /// Boxes
+    Box* b;
     /// Number of mandatory boxes: b[0] ... b[n-1]
     int n;
     /// Constructor for posting with \a n mandatory boxes
-    Base(Home home, Box<Dim,d>* b, int n);
+    Base(Home home, Box* b, int n);
     /// Constructor for cloning \a p with \a m boxes
-    Base(Space& home, bool share, Base<Dim,d>& p, int m);
+    Base(Space& home, bool share, Base<Box>& p, int m);
     /**
      * \brief Partition \a n boxes \a b starting at position \a i
      *
      * Returns the number of mandatory boxes at the front of \a b.
      */
-    static int partition(Box<Dim,d>* b, int i, int n);
+    static int partition(Box* b, int i, int n);
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -226,24 +249,24 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   };
 
   /**
-   * \brief No-overlap propagator for integer sized dimensions
+   * \brief No-overlap propagator for mandatory boxes
    *
    * Requires \code #include <gecode/int/no-overlap.hh> \endcode
    *
    * \ingroup FuncIntProp
    */
-  template<int d>
-  class Int : public Base<IntDim,d> {
+  template<class Dim, int d>
+  class ManProp : public Base<ManBox<Dim,d> > {
   protected:
-    using Base<IntDim,d>::b;
-    using Base<IntDim,d>::n;
+    using Base<ManBox<Dim,d> >::b;
+    using Base<ManBox<Dim,d> >::n;
     /// Constructor for posting
-    Int(Home home, Box<IntDim,d>* b, int n);
+    ManProp(Home home, ManBox<Dim,d>* b, int n);
     /// Constructor for cloning \a p
-    Int(Space& home, bool share, Int<d>& p);
+    ManProp(Space& home, bool share, ManProp<Dim,d>& p);
   public:
     /// Post propagator for boxes \a b
-    static ExecStatus post(Home home, Box<IntDim,d>* b, int n);
+    static ExecStatus post(Home home, ManBox<Dim,d>* b, int n);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
@@ -253,41 +276,26 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   };
 
   /**
-   * \brief No-overlap propagator for integer view sized dimensions
+   * \brief No-overlap propagator for optional boxes
    *
    * Requires \code #include <gecode/int/no-overlap.hh> \endcode
    *
    * \ingroup FuncIntProp
    */
-  template<int d>
-  class View : public Base<ViewDim,d> {
+  template<class Dim, int d>
+  class OptProp : public Base<OptBox<Dim,d> > {
   protected:
-    using Base<ViewDim,d>::b;
-    using Base<ViewDim,d>::n;
+    using Base<OptBox<Dim,d> >::b;
+    using Base<OptBox<Dim,d> >::n;
     /// Number of optional boxes: b[n] ... b[n+m-1]
     int m;
-    /// The advisor council
-    Council<Advisor> c;
-    /// What the propagator must do (controlled by advisor)
-    enum {
-      /// Nothing to do but propagation
-      NOTHING,
-      /// Check whether a box has become mandatory
-      MANDATORY,
-      /// Also check whether a box must be eliminated (as it is zero)
-      ELIMINATE
-    } todo;
     /// Constructor for posting
-    View(Home home, Box<ViewDim,d>* b, int n, int m);
+    OptProp(Home home, OptBox<Dim,d>* b, int n, int m);
     /// Constructor for cloning \a p
-    View(Space& home, bool share, View<d>& p);
-    /// Return single advisor
-    Advisor& advisor(void);
+    OptProp(Space& home, bool share, OptProp<Dim,d>& p);
   public:
     /// Post propagator for boxes \a b
-    static ExecStatus post(Home home, Box<ViewDim,d>* b, int n);
-    /// Give advice to propagator
-    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& delta);
+    static ExecStatus post(Home home, OptBox<Dim,d>* b, int n);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
@@ -299,8 +307,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 }}}
 
 #include <gecode/int/no-overlap/base.hpp>
-#include <gecode/int/no-overlap/int.hpp>
-#include <gecode/int/no-overlap/view.hpp>
+#include <gecode/int/no-overlap/man.hpp>
+#include <gecode/int/no-overlap/opt.hpp>
 
 #endif
 
