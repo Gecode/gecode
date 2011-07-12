@@ -97,6 +97,13 @@ variables in x are equal. See "Modeling and Programming with
 Gecode" for details.
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added native support for the precedence constraint.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   major
