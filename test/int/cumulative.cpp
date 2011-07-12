@@ -64,7 +64,7 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=p.size(); i--; )
           e += static_cast<double>(p[i])*u[i];
-        return e / c;
+        return e / std::abs(c);
       }
       /// Offset
       int o;
@@ -76,7 +76,7 @@ namespace Test { namespace Int {
                        int o0)
         : Test("Cumulative::Man::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0),
-               p0.size(),o0,o0+st(c0,p0,u0)), 
+               (c0 > 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0)), 
           c(c0), p(p0), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -88,34 +88,40 @@ namespace Test { namespace Int {
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
+        int cmax = (c > 0) ? c : x[x.size()-1];
+        int n = (c > 0) ? x.size() : x.size()-1;
+        
+        if (c < 0 && x[n] > -c)
+          return false;
+        
         // Compute maximal time
         int t = 0;
-        for (int i=0; i<x.size(); i++)
-          t = std::max(t,x[i]-o+std::max(1,p[i]));
+        for (int i=0; i<n; i++)
+          t = std::max(t,x[i]+std::max(1,p[i]));
         // Compute resource usage (including at start times)
         int* used = new int[t];
         for (int i=0; i<t; i++)
           used[i] = 0;
-        for (int i=0; i<x.size(); i++)
+        for (int i=0; i<n; i++)
           for (int t=0; t<p[i]; t++)
-            used[x[i]-o+t] += u[i];
+            used[x[i]+t] += u[i];
         // Check resource usage
         for (int i=0; i<t; i++)
-          if (used[i] > c) {
+          if (used[i] > cmax) {
             delete [] used;
             return false;
           }
         // Compute resource usage (only internal)
         for (int i=0; i<t; i++)
           used[i] = 0;
-        for (int i=0; i<x.size(); i++) {
+        for (int i=0; i<n; i++) {
           for (int t=1; t<p[i]; t++) {
-            used[x[i]-o+t] += u[i];
+            used[x[i]+t] += u[i];
           }
         }
         // Check resource usage at start times
-        for (int i=0; i<x.size(); i++)
-          if (used[x[i]-o]+u[i] > c) {
+        for (int i=0; i<n; i++)
+          if (used[x[i]]+u[i] > cmax) {
             delete [] used;
             return false;
           }
@@ -124,7 +130,21 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        Gecode::cumulative(home, c, x, p, u);
+        int n = (c > 0) ? x.size() : x.size()-1;
+        Gecode::IntVarArgs xx;
+        if (o==0) {
+          xx=x.slice(0,1,n);
+        } else {
+          xx=Gecode::IntVarArgs(n);
+          for (int i=n; i--;)
+            xx[i]=Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
+        }
+        if (c > 0) {
+          Gecode::cumulative(home, c, xx, p, u);
+        } else {
+          Gecode::rel(home, x[n] <= -c);
+          Gecode::cumulative(home, x[n], xx, p, u);
+        }
       }
     };
 
@@ -148,18 +168,18 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=p.size(); i--; )
           e += static_cast<double>(p[i])*u[i];
-        return e / c;
+        return e / std::abs(c);
       }
     public:
       /// Create and register test
       OptFixPCumulative(int c0, 
-                       const Gecode::IntArgs& p0,
-                       const Gecode::IntArgs& u0,
-                       int o0)
+                        const Gecode::IntArgs& p0,
+                        const Gecode::IntArgs& u0,
+                        int o0)
         : Test("Cumulative::Opt::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0),
-               2*p0.size(),o0,o0+st(c0,p0,u0)), 
-          c(c0), p(p0), u(u0), l(o0+st(c,p,u)/2), o(o0) {
+               (c0 > 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0)), 
+          c(c0), p(p0), u(u0), l(st(c,p,u)/2), o(o0) {
         testsearch = false;
         testfix = false;
         contest = CTL_NONE;
@@ -170,11 +190,17 @@ namespace Test { namespace Int {
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int n = x.size() / 2;
+        int nn = (c > 0) ? x.size() : x.size()-1;
+        int cmax = (c > 0) ? c : x[nn];
+
+        if (c < 0 && x[nn] > -c)
+          return false;
+
+        int n = nn / 2;
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++)
-          t = std::max(t,x[i]-o+std::max(1,p[i]));
+          t = std::max(t,x[i]+std::max(1,p[i]));
         // Compute resource usage (including at start times)
         int* used = new int[t];
         for (int i=0; i<t; i++)
@@ -182,10 +208,10 @@ namespace Test { namespace Int {
         for (int i=0; i<n; i++)
           if (x[n+i] > l)
             for (int t=0; t<p[i]; t++)
-              used[x[i]-o+t] += u[i];
+              used[x[i]+t] += u[i];
         // Check resource usage
         for (int i=0; i<t; i++) {
-          if (used[i] > c) {
+          if (used[i] > cmax) {
             delete [] used;
             return false;
           }
@@ -196,12 +222,12 @@ namespace Test { namespace Int {
         for (int i=0; i<n; i++)
           if (x[n+i] > l) {
             for (int t=1; t<p[i]; t++)
-              used[x[i]-o+t] += u[i];
+              used[x[i]+t] += u[i];
           }
         // Check resource usage at start times
         for (int i=0; i<n; i++)
           if (x[n+i] > l)
-            if (used[x[i]-o]+u[i] > c) {
+            if (used[x[i]]+u[i] > cmax) {
               delete [] used;
               return false;
             }
@@ -210,14 +236,22 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        int n=x.size() / 2;
+        int nn=(c > 0) ? x.size() : x.size()-1;
+        int n=nn / 2;
         Gecode::IntVarArgs s(n);
         Gecode::BoolVarArgs m(n);
+
         for (int i=0; i<n; i++) {
-          s[i]=x[i];
+          s[i]=(c > 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
           m[i]=Gecode::expr(home, x[n+i] > l);
         }
-        Gecode::cumulative(home, c, s, p, u, m);
+
+        if (c > 0) {
+          Gecode::cumulative(home, c, s, p, u, m);
+        } else {
+          Gecode::rel(home, x[nn] <= -c);
+          Gecode::cumulative(home, x[nn], s, p, u, m);
+        }
       }
     };
 
@@ -237,18 +271,19 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=u.size(); i--; )
           e += static_cast<double>(maxP)*u[i];
-        return e / c;
+        return e / std::abs(c);
       }
       /// Offset
       int o;
     public:
       /// Create and register test
       ManFlexCumulative(int c0, int minP, int maxP,
-                       const Gecode::IntArgs& u0,
-                       int o0)
+                        const Gecode::IntArgs& u0,
+                        int o0)
         : Test("Cumulative::Man::Flex::"+str(o0)+"::"+
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0),
-               2*u0.size(),0,std::max(maxP,st(c0,maxP,u0))), 
+               (c0 > 0) ? 2*u0.size() : 2*u0.size()+1,
+               0,std::max(maxP,st(c0,maxP,u0))), 
           c(c0), _minP(minP), _maxP(maxP), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -256,27 +291,35 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomMixAssignment(arity/2,dom,arity/2,
+        return new RandomMixAssignment((c > 0) ? arity/2 : arity/2+1,
+                                       dom,arity/2,
                                        Gecode::IntSet(_minP,_maxP),500);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int n = x.size()/2;
+        int nn = (c > 0) ? x.size() : x.size()-1;
+        int n = nn/2;
+        int cmax = (c > 0) ? c : x[n];
+        int pstart = (c > 0) ? n : n+1;
+
+        if (c < 0 && cmax > -c)
+          return false;
+
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++) {
-          t = std::max(t,x[i]+std::max(1,x[n+i]));
+          t = std::max(t,x[i]+std::max(1,x[pstart+i]));
         }
         // Compute resource usage (including at start times)
         int* used = new int[t];
         for (int i=0; i<t; i++)
           used[i] = 0;
         for (int i=0; i<n; i++)
-          for (int t=0; t<x[n+i]; t++)
+          for (int t=0; t<x[pstart+i]; t++)
             used[x[i]+t] += u[i];
         // Check resource usage
         for (int i=0; i<t; i++)
-          if (used[i] > c) {
+          if (used[i] > cmax) {
             delete [] used;
             return false;
           }
@@ -284,12 +327,12 @@ namespace Test { namespace Int {
         for (int i=0; i<t; i++)
           used[i] = 0;
         for (int i=0; i<n; i++) {
-          for (int t=1; t<x[n+i]; t++)
+          for (int t=1; t<x[pstart+i]; t++)
             used[x[i]+t] += u[i];
         }
         // Check resource usage at start times
         for (int i=0; i<n; i++)
-          if (used[x[i]]+u[i] > c) {
+          if (used[x[i]]+u[i] > cmax) {
             delete [] used;
             return false;
           }
@@ -298,18 +341,26 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        Gecode::IntVarArgs s(x.size()/2);
-        Gecode::IntVarArgs px(x.slice(x.size()/2));
-        Gecode::IntVarArgs e(home,x.size()/2,
+        int nn = (c > 0) ? x.size() : x.size()-1;
+        int n = nn/2;
+        int pstart = (c > 0) ? n : n+1;
+        Gecode::IntVarArgs s(n);
+        Gecode::IntVarArgs px(x.slice(pstart,1,n));
+        Gecode::IntVarArgs e(home,n,
                              Gecode::Int::Limits::min,
                              Gecode::Int::Limits::max);
         for (int i=s.size(); i--;) {
-          s[i] = expr(home, o+x[i]);
+          s[i] = expr(home, o+x[i], Gecode::ICL_DOM);
           rel(home, s[i]+px[i] == e[i]);
           rel(home, _minP <= px[i]);
           rel(home, _maxP >= px[i]);
         }
-        Gecode::cumulative(home, c, s, px, e, u);
+        if (c > 0) {
+          Gecode::cumulative(home, c, s, px, e, u);
+        } else {
+          rel(home, x[n] <= -c);
+          Gecode::cumulative(home, x[n], s, px, e, u);
+        }
       }
     };
 
@@ -333,7 +384,7 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=u.size(); i--; )
           e += static_cast<double>(maxP)*u[i];
-        return e / c;
+        return e / std::abs(c);
       }
     public:
       /// Create and register test
@@ -342,7 +393,8 @@ namespace Test { namespace Int {
                         int o0)
         : Test("Cumulative::Opt::Flex::"+str(o0)+"::"+
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0),
-               3*u0.size(),0,std::max(maxP,st(c0,maxP,u0))), 
+               (c0 > 0) ? 3*u0.size() : 3*u0.size()+1,
+               0,std::max(maxP,st(c0,maxP,u0))), 
           c(c0), _minP(minP), _maxP(maxP), u(u0), 
           l(std::max(maxP,st(c0,maxP,u0))/2), o(o0) {
         testsearch = false;
@@ -351,27 +403,35 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomMixAssignment(2*(arity/3),dom,arity/3,
+        return new RandomMixAssignment((c > 0) ? 2*(arity/3) : 2*(arity/3)+1,
+                                       dom,arity/3,
                                        Gecode::IntSet(_minP,_maxP),500);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int n = x.size() / 3;
+        int nn = (c > 0) ? x.size() : x.size()-1;
+        int n = nn / 3;
+        int cmax = (c > 0) ? c : x[2*n];
+        int pstart = (c > 0) ? 2*n : 2*n+1;
+        
+        if (c < 0 && cmax > -c)
+          return false;
+        
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++)
-          t = std::max(t,x[i]+std::max(1,x[2*n+i]));
+          t = std::max(t,x[i]+std::max(1,x[pstart+i]));
         // Compute resource usage (including at start times)
         int* used = new int[t];
         for (int i=0; i<t; i++)
           used[i] = 0;
         for (int i=0; i<n; i++)
           if (x[n+i] > l)
-            for (int t=0; t<x[2*n+i]; t++)
+            for (int t=0; t<x[pstart+i]; t++)
               used[x[i]+t] += u[i];
         // Check resource usage
         for (int i=0; i<t; i++)
-          if (used[i] > c) {
+          if (used[i] > cmax) {
             delete [] used;
             return false;
           }
@@ -380,11 +440,11 @@ namespace Test { namespace Int {
           used[i] = 0;
         for (int i=0; i<n; i++)
           if (x[n+i] > l)
-            for (int t=1; t<x[2*n+i]; t++)
+            for (int t=1; t<x[pstart+i]; t++)
               used[x[i]+t] += u[i];
         // Check resource usage at start times
         for (int i=0; i<n; i++)
-          if (x[n+i] > l && used[x[i]]+u[i] > c) {
+          if (x[n+i] > l && used[x[i]]+u[i] > cmax) {
             delete [] used;
             return false;
           }
@@ -393,7 +453,9 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        int n=x.size() / 3;
+        int nn = (c > 0) ? x.size() : x.size()-1;
+        int n=nn / 3;
+        int pstart= (c > 0) ? 2*n : 2*n+1;
 
         Gecode::IntVarArgs s(n);
         Gecode::IntVarArgs px(n);
@@ -402,7 +464,7 @@ namespace Test { namespace Int {
                              Gecode::Int::Limits::max);
         for (int i=n; i--;) {
           s[i] = expr(home, o+x[i]);
-          px[i] = x[2*n+i];
+          px[i] = x[pstart+i];
           rel(home, s[i]+px[i] == e[i]);
           rel(home, _minP <= px[i]);
           rel(home, _maxP >= px[i]);
@@ -410,7 +472,12 @@ namespace Test { namespace Int {
         Gecode::BoolVarArgs m(n);
         for (int i=0; i<n; i++)
           m[i]=Gecode::expr(home, (x[n+i] > l));
-        Gecode::cumulative(home, c, s, px, e, u, m);
+        if (c > 0) {
+          Gecode::cumulative(home, c, s, px, e, u, m);
+        } else {
+          Gecode::rel(home, x[2*n] <= -c);
+          Gecode::cumulative(home, x[2*n], s, px, e, u, m);
+        }
       }
     };
 
@@ -445,6 +512,19 @@ namespace Test { namespace Int {
             (void) new ManFixPCumulative(c,p4,u2,off);
             (void) new ManFixPCumulative(c,p4,u3,off);
 
+            (void) new ManFixPCumulative(-c,p1,u1,off);
+            (void) new ManFixPCumulative(-c,p1,u2,off);
+            (void) new ManFixPCumulative(-c,p1,u3,off);
+            (void) new ManFixPCumulative(-c,p2,u1,off);
+            (void) new ManFixPCumulative(-c,p2,u2,off);
+            (void) new ManFixPCumulative(-c,p2,u3,off);
+            (void) new ManFixPCumulative(-c,p3,u1,off);
+            (void) new ManFixPCumulative(-c,p3,u2,off);
+            (void) new ManFixPCumulative(-c,p3,u3,off);
+            (void) new ManFixPCumulative(-c,p4,u1,off);
+            (void) new ManFixPCumulative(-c,p4,u2,off);
+            (void) new ManFixPCumulative(-c,p4,u3,off);
+
             (void) new ManFlexCumulative(c,0,1,u1,off);
             (void) new ManFlexCumulative(c,0,1,u2,off);
             (void) new ManFlexCumulative(c,0,1,u3,off);
@@ -454,6 +534,16 @@ namespace Test { namespace Int {
             (void) new ManFlexCumulative(c,3,5,u1,off);
             (void) new ManFlexCumulative(c,3,5,u2,off);
             (void) new ManFlexCumulative(c,3,5,u3,off);
+
+            (void) new ManFlexCumulative(-c,0,1,u1,off);
+            (void) new ManFlexCumulative(-c,0,1,u2,off);
+            (void) new ManFlexCumulative(-c,0,1,u3,off);
+            (void) new ManFlexCumulative(-c,0,2,u1,off);
+            (void) new ManFlexCumulative(-c,0,2,u2,off);
+            (void) new ManFlexCumulative(-c,0,2,u3,off);
+            (void) new ManFlexCumulative(-c,3,5,u1,off);
+            (void) new ManFlexCumulative(-c,3,5,u2,off);
+            (void) new ManFlexCumulative(-c,3,5,u3,off);
 
             (void) new OptFixPCumulative(c,p1,u1,off);
             (void) new OptFixPCumulative(c,p1,u2,off);
@@ -467,6 +557,19 @@ namespace Test { namespace Int {
             (void) new OptFixPCumulative(c,p4,u1,off);
             (void) new OptFixPCumulative(c,p4,u2,off);
             (void) new OptFixPCumulative(c,p4,u3,off);
+
+            (void) new OptFixPCumulative(-c,p1,u1,off);
+            (void) new OptFixPCumulative(-c,p1,u2,off);
+            (void) new OptFixPCumulative(-c,p1,u3,off);
+            (void) new OptFixPCumulative(-c,p2,u1,off);
+            (void) new OptFixPCumulative(-c,p2,u2,off);
+            (void) new OptFixPCumulative(-c,p2,u3,off);
+            (void) new OptFixPCumulative(-c,p3,u1,off);
+            (void) new OptFixPCumulative(-c,p3,u2,off);
+            (void) new OptFixPCumulative(-c,p3,u3,off);
+            (void) new OptFixPCumulative(-c,p4,u1,off);
+            (void) new OptFixPCumulative(-c,p4,u2,off);
+            (void) new OptFixPCumulative(-c,p4,u3,off);
             
             (void) new OptFlexCumulative(c,0,1,u1,off);
             (void) new OptFlexCumulative(c,0,1,u2,off);
@@ -477,6 +580,16 @@ namespace Test { namespace Int {
             (void) new OptFlexCumulative(c,3,5,u1,off);
             (void) new OptFlexCumulative(c,3,5,u2,off);
             (void) new OptFlexCumulative(c,3,5,u3,off);
+
+            (void) new OptFlexCumulative(-c,0,1,u1,off);
+            (void) new OptFlexCumulative(-c,0,1,u2,off);
+            (void) new OptFlexCumulative(-c,0,1,u3,off);
+            (void) new OptFlexCumulative(-c,0,2,u1,off);
+            (void) new OptFlexCumulative(-c,0,2,u2,off);
+            (void) new OptFlexCumulative(-c,0,2,u3,off);
+            (void) new OptFlexCumulative(-c,3,5,u1,off);
+            (void) new OptFlexCumulative(-c,3,5,u2,off);
+            (void) new OptFlexCumulative(-c,3,5,u3,off);
 
             off = Gecode::Int::Limits::min;
           }

@@ -41,23 +41,28 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
   
-  template<class OptTask>
+  template<class OptTask, class Cap>
   forceinline
-  OptProp<OptTask>::OptProp(Home home, int c0, TaskArray<OptTask>& t)
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,t), c(c0) {}
+  OptProp<OptTask,Cap>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
+    : TaskProp<OptTask,Int::PC_INT_DOM>(home,t), c(c0) {
+    c.subscribe(home,*this,PC_INT_BND);
+  }
 
-  template<class OptTask>
+  template<class OptTask, class Cap>
   forceinline
-  OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,shared,p), c(p.c) {}
+  OptProp<OptTask,Cap>::OptProp(Space& home, bool shared,
+                                OptProp<OptTask,Cap>& p) 
+    : TaskProp<OptTask,Int::PC_INT_DOM>(home,shared,p) {
+    c.update(home,shared,p.c);
+  }
 
-  template<class OptTask>
+  template<class OptTask, class Cap>
   forceinline ExecStatus 
-  OptProp<OptTask>::post(Home home, int c, TaskArray<OptTask>& t) {
+  OptProp<OptTask,Cap>::post(Home home, Cap c, TaskArray<OptTask>& t) {
     // Check for overload by single task and remove excluded tasks
     int n=t.size(), m=0;
     for (int i=n; i--; ) {
-      if (t[i].c() > c) 
+      if (t[i].c() > c.max()) 
         GECODE_ME_CHECK(t[i].excluded(home));
       if (t[i].excluded())
         t[i]=t[--n];
@@ -65,40 +70,52 @@ namespace Gecode { namespace Int { namespace Cumulative {
         m++;
     }
     t.size(n);
-    if (t.size() < 2)
-      return ES_OK;
+    if (t.size() < 2) {
+      if (t.size() == 1) {
+        if (t[0].mandatory()) {
+          GECODE_ME_CHECK(c.gq(home, t[0].c()));
+          return ES_OK;
+        } else if (c.min() >= t[0].c()) {
+          return ES_OK;
+        }
+      } else {
+        return ES_OK;
+      }
+    }
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i]);
-      return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,c,mt);
+      return ManProp<typename TaskTraits<OptTask>::ManTask,Cap>
+        ::post(home,c,mt);
     }
-    (void) new (home) OptProp<OptTask>(home,c,t);
+    (void) new (home) OptProp<OptTask,Cap>(home,c,t);
     return ES_OK;
   }
 
-  template<class OptTask>
+  template<class OptTask, class Cap>
   Actor* 
-  OptProp<OptTask>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask>(home,share,*this);
+  OptProp<OptTask,Cap>::copy(Space& home, bool share) {
+    return new (home) OptProp<OptTask,Cap>(home,share,*this);
   }
 
-  template<class OptTask>  
+  template<class OptTask, class Cap>  
   forceinline size_t 
-  OptProp<OptTask>::dispose(Space& home) {
+  OptProp<OptTask,Cap>::dispose(Space& home) {
     (void) TaskProp<OptTask,Int::PC_INT_DOM>::dispose(home);
+    c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
 
-  template<class OptTask>
+  template<class OptTask, class Cap>
   ExecStatus 
-  OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
+  OptProp<OptTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_DOM>(home,*this,t)));
+      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_DOM>(home,*this,t,c)));
     // Only bounds changes?
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
-      GECODE_ES_CHECK(overload(home,c,t));
+      GECODE_ES_CHECK(overload(home,c.max(),t));
 
     GECODE_ES_CHECK(basic(home,*this,c,t));
 
@@ -115,7 +132,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if (i > 1) {
       // Truncate array to only contain mandatory tasks
       t.size(i);
-      GECODE_ES_CHECK(edgefinding(home,c,t));
+      GECODE_ES_CHECK(edgefinding(home,c.max(),t));
       // Restore to also include optional tasks
       t.size(n);
     }

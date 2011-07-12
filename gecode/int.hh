@@ -2740,6 +2740,15 @@ namespace Gecode {
   cumulative(Home home, int c, const TaskTypeArgs& t,
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u);
 
+  
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   *
+   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&)
+   */
+  GECODE_INT_EXPORT void
+  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
+             const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u);
+
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
    * Schedule tasks with flexible times \a flex, fixed times \a fix,
@@ -2781,6 +2790,14 @@ namespace Gecode {
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
              const BoolVarArgs& m);
 
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&)
+   */
+  GECODE_INT_EXPORT void
+  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
+             const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
+             const BoolVarArgs& m);
+
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
    * Schedule tasks with start times \a s, processing times \a p, and
@@ -2807,6 +2824,13 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& u);
+
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&)
+   */
+  GECODE_INT_EXPORT void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p,
              const IntArgs& u);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
@@ -2837,6 +2861,13 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
+             const IntArgs& u, const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&)
+   */
+  GECODE_INT_EXPORT void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
              const IntArgs& u, const BoolVarArgs& m);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
@@ -2871,6 +2902,13 @@ namespace Gecode {
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
              const IntVarArgs& e, const IntArgs& u);
 
+  /** \brief Post propagators for scheduling tasks on cumulative resources
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&)
+   */
+  GECODE_INT_EXPORT void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
+             const IntVarArgs& e, const IntArgs& u);
+
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
    * Schedule optional tasks with start times \a s, processing times \a p,
@@ -2903,6 +2941,13 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p, 
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m);
+
+  /** \brief Post propagators for scheduling optional tasks on cumulative resources
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,const BoolVarArgs&)
+   */
+  GECODE_INT_EXPORT void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p, 
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m);
   //@}
 

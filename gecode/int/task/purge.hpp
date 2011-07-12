@@ -49,6 +49,25 @@ namespace Gecode { namespace Int {
 
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
+
+  template<class OptTask, PropCond pc, class Cap>
+  ExecStatus
+  purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c) {
+    int n=t.size();
+    for (int i=n; i--; )
+      if (t[i].excluded()) {
+        t[i].cancel(home,p,pc); t[i]=t[--n];
+      }
+    t.size(n);
+    if (t.size() == 1) {
+      if (t[0].mandatory())
+        GECODE_ME_CHECK(c.gq(home, t[0].c()));
+      else if (c.min() < t[0].c())
+        return ES_OK;
+    }
+
+    return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
+  }
   
 }}
 

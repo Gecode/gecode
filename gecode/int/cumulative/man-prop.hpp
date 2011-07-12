@@ -39,49 +39,56 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
   
-  template<class ManTask>
+  template<class ManTask, class Cap>
   forceinline
-  ManProp<ManTask>::ManProp(Home home, int c0, TaskArray<ManTask>& t)
-    : TaskProp<ManTask,Int::PC_INT_DOM>(home,t), c(c0) {}
+  ManProp<ManTask,Cap>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
+    : TaskProp<ManTask,Int::PC_INT_DOM>(home,t), c(c0) {
+    c.subscribe(home,*this,Int::PC_INT_BND);
+  }
 
-  template<class ManTask>
+  template<class ManTask, class Cap>
   forceinline
-  ManProp<ManTask>::ManProp(Space& home, bool shared, 
-                            ManProp<ManTask>& p) 
-    : TaskProp<ManTask,Int::PC_INT_DOM>(home,shared,p), c(p.c) {}
+  ManProp<ManTask,Cap>::ManProp(Space& home, bool shared, 
+                                ManProp<ManTask,Cap>& p) 
+    : TaskProp<ManTask,Int::PC_INT_DOM>(home,shared,p) {
+    c.update(home,shared,p.c);
+  }
 
-  template<class ManTask>
+  template<class ManTask, class Cap>
   forceinline ExecStatus 
-  ManProp<ManTask>::post(Home home, int c, TaskArray<ManTask>& t) {
+  ManProp<ManTask,Cap>::post(Home home, Cap c, TaskArray<ManTask>& t) {
     // Check that tasks do not overload resource
     for (int i=t.size(); i--; )
-      if (t[i].c() > c)
+      if (t[i].c() > c.max())
         return ES_FAILED;
+    if (t.size() == 1)
+      GECODE_ME_CHECK(c.gq(home, t[0].c()));
     if (t.size() > 1)
-      (void) new (home) ManProp<ManTask>(home,c,t);
+      (void) new (home) ManProp<ManTask,Cap>(home,c,t);
     return ES_OK;
   }
 
-  template<class ManTask>
+  template<class ManTask, class Cap>
   Actor* 
-  ManProp<ManTask>::copy(Space& home, bool share) {
-    return new (home) ManProp<ManTask>(home,share,*this);
+  ManProp<ManTask,Cap>::copy(Space& home, bool share) {
+    return new (home) ManProp<ManTask,Cap>(home,share,*this);
   }
 
-  template<class ManTask>  
+  template<class ManTask, class Cap>  
   forceinline size_t 
-  ManProp<ManTask>::dispose(Space& home) {
+  ManProp<ManTask,Cap>::dispose(Space& home) {
     (void) TaskProp<ManTask,Int::PC_INT_DOM>::dispose(home);
+    c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
 
-  template<class ManTask>
+  template<class ManTask, class Cap>
   ExecStatus 
-  ManProp<ManTask>::propagate(Space& home, const ModEventDelta& med) {
+  ManProp<ManTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
     // Only bounds changes?
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
-      GECODE_ES_CHECK(overload(home,c,t));
-    GECODE_ES_CHECK(edgefinding(home,c,t));
+      GECODE_ES_CHECK(overload(home,c.max(),t));
+    GECODE_ES_CHECK(edgefinding(home,c.max(),t));
     return basic(home,*this,c,t);
   }
 

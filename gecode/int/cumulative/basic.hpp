@@ -88,9 +88,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
 
   // Basic propagation
-  template<class Task>
+  template<class Task, class Cap>
   ExecStatus
-  basic(Space& home, Propagator& p, int c, TaskArray<Task>& t) {
+  basic(Space& home, Propagator& p, Cap c, TaskArray<Task>& t) {
+    int ccur = c.max();
+    int cmax = ccur;
+    int cmin = ccur;
     // Sort tasks by decreasing capacity
     TaskByDecCap<Task> tbdc;
     Support::quicksort(&t[0], t.size(), tbdc);
@@ -128,8 +131,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         }
       
       // Check whether no task has a required part
-      if (!required)
+      if (!required) {
         return assigned ? home.ES_SUBSUMED(p) : ES_FIX;
+      }
       
       // Write end marker
       e[n++].init(Event::END,Int::Limits::infinity,-1);
@@ -141,7 +145,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // Set of current but not required tasks
     Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
 
-    // Process events, use c as the capacity that is still free
+    // Process events, use ccur as the capacity that is still free
     while (e->e != Event::END) {
       // Current time
       int time = e->t;
@@ -149,7 +153,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       // Process events for completion of required part
       for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
         if (t[e->i].mandatory()) {
-          tasks.set(static_cast<unsigned int>(e->i)); c += t[e->i].c();
+          tasks.set(static_cast<unsigned int>(e->i)); ccur += t[e->i].c();
         }
       // Process events for completion of task
       for ( ; (e->t == time) && (e->e == Event::LCT); e++)
@@ -158,9 +162,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for ( ; (e->t == time) && (e->e == Event::EST); e++)
         tasks.set(static_cast<unsigned int>(e->i));
       // Process events for zero-length task
-      for ( ; (e->t == time) && (e->e == Event::ZRO); e++)
-        if (c < t[e->i].c())
+      for ( ; (e->t == time) && (e->e == Event::ZRO); e++) {
+        ccur -= t[e->i].c();
+        if (ccur < cmin) cmin=ccur;
+        if (ccur < 0)
           return ES_FAILED;
+        ccur += t[e->i].c();
+      }
 
       // norun start time for 0-length tasks
       int zltime = time;
@@ -168,16 +176,18 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
         if (t[e->i].mandatory()) {
           tasks.clear(static_cast<unsigned int>(e->i)); 
-          c -= t[e->i].c(); zltime = time+1;
-          if (c < 0)
+          ccur -= t[e->i].c();
+          if (ccur < cmin) cmin=ccur;
+          zltime = time+1;
+          if (ccur < 0)
             return ES_FAILED;
-        } else if (t[e->i].optional() && (t[e->i].c() > c)) {
+        } else if (t[e->i].optional() && (t[e->i].c() > ccur)) {
           GECODE_ME_CHECK(t[e->i].excluded(home));
         }
       
       // Exploit that tasks are sorted according to capacity
       for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
-           j() && (t[j.val()].c() > c); ++j) 
+           j() && (t[j.val()].c() > ccur); ++j) 
         // Task j cannot run from time to next time - 1
         if (t[j.val()].mandatory()) {
           if (t[j.val()].pmin() > 0) {
@@ -187,7 +197,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
           }
         }
     }
-    
+
+    GECODE_ME_CHECK(c.gq(home,cmax-cmin));
+
     return assigned ? home.ES_SUBSUMED(p) : ES_NOFIX;
   }
 

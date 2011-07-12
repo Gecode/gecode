@@ -73,6 +73,14 @@ Date: ?
 Some bug fixes, probably
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The cumulative constraints now support an IntVar as the capacity
+argument.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

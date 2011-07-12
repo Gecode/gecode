@@ -649,8 +649,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
 namespace Gecode { namespace Int { namespace Cumulative {
 
   /// Perform basic propagation
-  template<class Task>
-  ExecStatus basic(Space& home, Propagator& p, int c, TaskArray<Task>& t);
+  template<class Task, class Cap>
+  ExecStatus basic(Space& home, Propagator& p, Cap c, TaskArray<Task>& t);
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
@@ -666,14 +666,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ManTask>
+  template<class ManTask, class Cap>
   class ManProp : public TaskProp<ManTask,Int::PC_INT_DOM> {
   protected:
     using TaskProp<ManTask,Int::PC_INT_DOM>::t;
     /// Resource capacity
-    int c;
+    Cap c;
     /// Constructor for creation
-    ManProp(Home home, int c, TaskArray<ManTask>& t);
+    ManProp(Home home, Cap c, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
     ManProp(Space& home, bool shared, ManProp& p);
   public:
@@ -682,7 +682,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on cumulative resource
-    static ExecStatus post(Home home, int c, TaskArray<ManTask>& t);
+    static ExecStatus post(Home home, Cap c, TaskArray<ManTask>& t);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -693,14 +693,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class OptTask>
+  template<class OptTask, class Cap>
   class OptProp : public TaskProp<OptTask,Int::PC_INT_DOM> {
   protected:
     using TaskProp<OptTask,Int::PC_INT_DOM>::t;
     /// Resource capacity
-    int c;
+    Cap c;
     /// Constructor for creation
-    OptProp(Home home, int c, TaskArray<OptTask>& t);
+    OptProp(Home home, Cap c, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
     OptProp(Space& home, bool shared, OptProp& p);
   public:
@@ -709,7 +709,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on cumulative resource
-    static ExecStatus post(Home home, int c, TaskArray<OptTask>& t);
+    static ExecStatus post(Home home, Cap c, TaskArray<OptTask>& t);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

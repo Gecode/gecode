@@ -440,6 +440,10 @@ namespace Gecode { namespace Int {
   template<class OptTask,PropCond pc>
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
+  /// Purge optional tasks that are excluded and possibly rewrite propagator
+  template<class OptTask,PropCond pc,class Cap>
+  ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c);
+
 }}
 
 #include <gecode/int/task/prop.hpp>

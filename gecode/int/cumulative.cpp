@@ -43,8 +43,9 @@
 
 namespace Gecode {
 
+  template<class Cap>
   void
-  cumulative(Home home, int c, const TaskTypeArgs& t,
+  cumulative(Home home, Cap c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
@@ -61,7 +62,7 @@ namespace Gecode {
                                 "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c * w * s.size(),
+    Int::Limits::double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     bool fixp = true;
@@ -73,17 +74,29 @@ namespace Gecode {
       TaskArray<ManFixPTask> tasks(home,s.size());
       for (int i=0; i<s.size(); i++)
         tasks[i].init(s[i],p[i],u[i]);
-      GECODE_ES_FAIL(ManProp<ManFixPTask>::post(home,c,tasks));
+      GECODE_ES_FAIL((ManProp<ManFixPTask,Cap>::post(home,c,tasks)));
     } else {
       TaskArray<ManFixPSETask> tasks(home,s.size());
       for (int i=s.size(); i--;)
         tasks[i].init(t[i],s[i],p[i],u[i]);
-      GECODE_ES_FAIL(ManProp<ManFixPSETask>::post(home,c,tasks));
+      GECODE_ES_FAIL((ManProp<ManFixPSETask,Cap>::post(home,c,tasks)));
     }
   }
 
   void
   cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u) {
+    cumulative(home,Int::ConstIntView(c),t,s,p,u);
+  }
+  void
+  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u) {
+    cumulative(home,Int::IntView(c),t,s,p,u);
+  }
+
+  template<class Cap>
+  void
+  cumulative(Home home, Cap c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
              const BoolVarArgs& m) {
     using namespace Gecode::Int;
@@ -101,7 +114,7 @@ namespace Gecode {
                                 "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c * w * s.size(),
+    Int::Limits::double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     bool fixp = true;
@@ -113,16 +126,31 @@ namespace Gecode {
       TaskArray<OptFixPTask> tasks(home,s.size());
       for (int i=0; i<s.size(); i++)
         tasks[i].init(s[i],p[i],u[i],m[i]);
-      GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,c,tasks));
+      GECODE_ES_FAIL((OptProp<OptFixPTask,Cap>::post(home,c,tasks)));
     } else {
       TaskArray<OptFixPSETask> tasks(home,s.size());
       for (int i=s.size(); i--;)
         tasks[i].init(t[i],s[i],p[i],u[i],m[i]);
-      GECODE_ES_FAIL(OptProp<OptFixPSETask>::post(home,c,tasks));
+      GECODE_ES_FAIL((OptProp<OptFixPSETask,Cap>::post(home,c,tasks)));
     }
   }
+  
   void
-  cumulative(Home home, int c, const IntVarArgs& s, 
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const BoolVarArgs& m) {
+    cumulative(home,Int::ConstIntView(c),t,s,p,u,m);
+  }
+  void
+  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const BoolVarArgs& m) {
+    cumulative(home,Int::IntView(c),t,s,p,u,m);
+  }
+  
+  template<class Cap>
+  void
+  cumulative(Home home, Cap c, const IntVarArgs& s, 
              const IntArgs& p, const IntArgs& u) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
@@ -138,18 +166,30 @@ namespace Gecode {
                                 "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c * w * s.size(),
+    Int::Limits::double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     TaskArray<ManFixPTask> t(home,s.size());
     for (int i=0; i<s.size(); i++) {
       t[i].init(s[i],p[i],u[i]);
     }
-    GECODE_ES_FAIL(ManProp<ManFixPTask>::post(home,c,t));
+    GECODE_ES_FAIL((ManProp<ManFixPTask,Cap>::post(home,c,t)));
   }
 
   void
-  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
+  cumulative(Home home, int c, const IntVarArgs& s, 
+             const IntArgs& p, const IntArgs& u) {
+    cumulative(home,Int::ConstIntView(c),s,p,u);
+  }
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, 
+             const IntArgs& p, const IntArgs& u) {
+    cumulative(home,Int::IntView(c),s,p,u);
+  }
+  
+  template<class Cap>
+  void
+  cumulative(Home home, Cap c, const IntVarArgs& s, const IntArgs& p, 
              const IntArgs& u, const BoolVarArgs& m) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
@@ -166,18 +206,30 @@ namespace Gecode {
                                 "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c * w * s.size(),
+    Int::Limits::double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     TaskArray<OptFixPTask> t(home,s.size());
     for (int i=0; i<s.size(); i++) {
       t[i].init(s[i],p[i],u[i],m[i]);
     }
-    GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,c,t));
+    GECODE_ES_FAIL((OptProp<OptFixPTask,Cap>::post(home,c,t)));
   }
 
   void
-  cumulative(Home home, int c, const IntVarArgs& s, 
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
+             const IntArgs& u, const BoolVarArgs& m) {
+    cumulative(home,Int::ConstIntView(c),s,p,u,m);
+  }
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
+             const IntArgs& u, const BoolVarArgs& m) {
+    cumulative(home,Int::IntView(c),s,p,u,m);
+  }
+
+  template<class Cap>
+  void
+  cumulative(Home home, Cap c, const IntVarArgs& s, 
              const IntVarArgs& p, const IntVarArgs& e,
              const IntArgs& u) {
     using namespace Gecode::Int;
@@ -197,17 +249,31 @@ namespace Gecode {
                                 "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c * w * s.size(),
+    Int::Limits::double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     TaskArray<ManFlexTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i],e[i],u[i]);
-    GECODE_ES_FAIL(ManProp<ManFlexTask>::post(home,c,t));
+    GECODE_ES_FAIL((ManProp<ManFlexTask,Cap>::post(home,c,t)));
   }
 
   void
-  cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
+  cumulative(Home home, int c, const IntVarArgs& s, 
+             const IntVarArgs& p, const IntVarArgs& e,
+             const IntArgs& u) {
+    cumulative(home,Int::ConstIntView(c),s,p,e,u);
+  }
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, 
+             const IntVarArgs& p, const IntVarArgs& e,
+             const IntArgs& u) {
+    cumulative(home,Int::IntView(c),s,p,e,u);
+  }
+
+  template<class Cap>
+  void
+  cumulative(Home home, Cap c, const IntVarArgs& s, const IntVarArgs& p,
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
@@ -226,13 +292,24 @@ namespace Gecode {
                                 "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c * w * s.size(),
+    Int::Limits::double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     TaskArray<OptFlexTask> t(home,s.size());
     for (int i=s.size(); i--; )
       t[i].init(s[i],p[i],e[i],u[i],m[i]);
-    GECODE_ES_FAIL(OptProp<OptFlexTask>::post(home,c,t));
+    GECODE_ES_FAIL((OptProp<OptFlexTask,Cap>::post(home,c,t)));
+  }
+
+  void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m) {
+    cumulative(home,Int::ConstIntView(c),s,p,e,u,m);
+  }
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m) {
+    cumulative(home,Int::IntView(c),s,p,e,u,m);
   }
   
 }
