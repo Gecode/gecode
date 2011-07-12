@@ -416,6 +416,7 @@ SETSRC0 =								 \
 	int.cpp								 \
 	element.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \
+	precede.cpp \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
 	exec.cpp
@@ -441,6 +442,7 @@ SETHDR0 =								     \
 	distinct.hh distinct/atmostOne.hpp				     \
 	sequence/seq.hpp sequence/seq-u.hpp				     \
 	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
+	precede.hh precede/single.hpp \
 	rel-op.hh					     \
 	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
 	branch/post-val.hpp
@@ -834,7 +836,7 @@ INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 
 SETTESTSRC00 = \
 	construct dom rel rel-op rel-op-const convex sequence int element \
-	distinct exec mm-set
+	precede distinct exec mm-set
 SETTESTSRC0 = test/set.cpp $(SETTESTSRC00:%=test/set/%.cpp)
 
 ifeq "@enable_set_vars@" "yes"

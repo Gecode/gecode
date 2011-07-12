@@ -97,6 +97,14 @@ variables in x are equal. See "Modeling and Programming with
 Gecode" for details.
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   major
+Author:	Christopher Mears
+[DESCRIPTION]
+Added value precedence constraint.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

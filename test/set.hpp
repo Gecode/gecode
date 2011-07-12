@@ -72,6 +72,15 @@ namespace Test { namespace Set {
   }
 
   inline
+  std::string
+  SetTest::str(const Gecode::IntArgs& x) {
+    std::string s = "";
+    for (int i=0; i<x.size()-1; i++)
+      s += str(x[i]) + ",";
+    return "[" + s + str(x[x.size()-1]) + "]";
+  }
+
+  inline
   SetRelTypes::SetRelTypes(void)
     : i(sizeof(srts)/sizeof(Gecode::SetRelType)-1) {}
   inline bool

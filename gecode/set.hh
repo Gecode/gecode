@@ -905,6 +905,25 @@ namespace Gecode {
   //@}
 
   /**
+   * \defgroup TaskModelSetPrecede Value precedence constraints over set variables
+   * \ingroup TaskModelSet
+   */
+  /** \brief Post propagator that \a s precedes \a t in \a x
+   *
+   * This constraint enforces that if there exists \f$j\f$ such that
+   * \f$s\notin x_j\land t\in x_j\f$, then there exists \f$i<j\f$ such that
+   * \f$s\in x_i\land t\notin x_i\f$.
+   * \ingroup TaskModelSetPrecede
+   */
+  GECODE_SET_EXPORT void
+  precede(Home home, const SetVarArgs& x, int s, int t);
+  /** \brief Post propagator that successive values in \a c precede each other in \a x
+   * \ingroup TaskModelSetPrecede
+   */
+  GECODE_SET_EXPORT void
+  precede(Home home, const SetVarArgs& x, const IntArgs& c);
+
+  /**
    * \defgroup TaskModelSetElement Element constraints
    * \ingroup TaskModelSet
    *
