@@ -92,7 +92,10 @@ namespace Gecode {
   void
   cumulative(Home home, IntVar c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u) {
-    cumulative(home,Int::IntView(c),t,s,p,u);
+    if (c.assigned())
+      cumulative(home,c.val(),t,s,p,u);
+    else
+      cumulative(home,Int::IntView(c),t,s,p,u);
   }
 
   template<class Cap>
@@ -147,7 +150,10 @@ namespace Gecode {
   cumulative(Home home, IntVar c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
              const BoolVarArgs& m) {
-    cumulative(home,Int::IntView(c),t,s,p,u,m);
+    if (c.assigned())
+      cumulative(home,c.val(),t,s,p,u,m);
+    else
+      cumulative(home,Int::IntView(c),t,s,p,u,m);
   }
   
   template<class Cap>
@@ -187,7 +193,10 @@ namespace Gecode {
   void
   cumulative(Home home, IntVar c, const IntVarArgs& s, 
              const IntArgs& p, const IntArgs& u) {
-    cumulative(home,Int::IntView(c),s,p,u);
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,u);
+    else
+      cumulative(home,Int::IntView(c),s,p,u);
   }
   
   template<class Cap>
@@ -228,7 +237,10 @@ namespace Gecode {
   void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
              const IntArgs& u, const BoolVarArgs& m) {
-    cumulative(home,Int::IntView(c),s,p,u,m);
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,u,m);
+    else
+      cumulative(home,Int::IntView(c),s,p,u,m);
   }
 
   template<class Cap>
@@ -273,7 +285,10 @@ namespace Gecode {
   cumulative(Home home, IntVar c, const IntVarArgs& s, 
              const IntVarArgs& p, const IntVarArgs& e,
              const IntArgs& u) {
-    cumulative(home,Int::IntView(c),s,p,e,u);
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,e,u);
+    else
+      cumulative(home,Int::IntView(c),s,p,e,u);
   }
 
   template<class Cap>
@@ -315,7 +330,10 @@ namespace Gecode {
   void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m) {
-    cumulative(home,Int::IntView(c),s,p,e,u,m);
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,e,u,m);
+    else
+      cumulative(home,Int::IntView(c),s,p,e,u,m);
   }
   
 }

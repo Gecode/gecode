@@ -1145,30 +1145,28 @@ namespace Gecode { namespace FlatZinc {
             rel(s,start[i]+duration[i]==end[i]);
           unary(s,start,duration,end);
         }
-      } else if (bound.assigned()) {
-        if (height.assigned()) {
-          IntArgs heightI(n);
+      } else if (height.assigned()) {
+        IntArgs heightI(n);
+        for (int i=n; i--;)
+          heightI[i] = height[i].val();
+        if (duration.assigned()) {
+          IntArgs durationI(n);
           for (int i=n; i--;)
-            heightI[i] = height[i].val();
-          if (duration.assigned()) {
-            IntArgs durationI(n);
-            for (int i=n; i--;)
-              durationI[i] = duration[i].val();
-            cumulative(s, bound.val(), start, durationI, heightI);
-          } else {
-            IntVarArgs end(n);
-            for (int i = n; i--; )
-              end[i] = expr(s, start[i]+duration[i]);
-            cumulative(s, bound.val(), start, duration, end, heightI);
-          }
+            durationI[i] = duration[i].val();
+          cumulative(s, bound, start, durationI, heightI);
         } else {
-          IntArgs machine = IntArgs::create(n,0,0);
-          IntArgs limit(1, bound.val());
           IntVarArgs end(n);
-          for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
-          cumulatives(s, machine, start, duration, end, height, limit, true,
-                      ann2icl(ann));
-        }        
+          for (int i = n; i--; )
+            end[i] = expr(s, start[i]+duration[i]);
+          cumulative(s, bound, start, duration, end, heightI);
+        }
+      } else if (bound.assigned()) {
+        IntArgs machine = IntArgs::create(n,0,0);
+        IntArgs limit(1, bound.val());
+        IntVarArgs end(n);
+        for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
+        cumulatives(s, machine, start, duration, end, height, limit, true,
+                    ann2icl(ann));
       } else {
         int min = Gecode::Int::Limits::max;
         int max = Gecode::Int::Limits::min;
