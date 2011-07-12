@@ -86,6 +86,7 @@ namespace Gecode {
   void
   cumulative(Home home, int c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
     cumulative(home,Int::ConstIntView(c),t,s,p,u);
   }
   void
@@ -139,6 +140,7 @@ namespace Gecode {
   cumulative(Home home, int c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
              const BoolVarArgs& m) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
     cumulative(home,Int::ConstIntView(c),t,s,p,u,m);
   }
   void
@@ -179,6 +181,7 @@ namespace Gecode {
   void
   cumulative(Home home, int c, const IntVarArgs& s, 
              const IntArgs& p, const IntArgs& u) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
     cumulative(home,Int::ConstIntView(c),s,p,u);
   }
   void
@@ -219,6 +222,7 @@ namespace Gecode {
   void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
              const IntArgs& u, const BoolVarArgs& m) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
     cumulative(home,Int::ConstIntView(c),s,p,u,m);
   }
   void
@@ -262,6 +266,7 @@ namespace Gecode {
   cumulative(Home home, int c, const IntVarArgs& s, 
              const IntVarArgs& p, const IntVarArgs& e,
              const IntArgs& u) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
     cumulative(home,Int::ConstIntView(c),s,p,e,u);
   }
   void
@@ -304,6 +309,7 @@ namespace Gecode {
   void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
     cumulative(home,Int::ConstIntView(c),s,p,e,u,m);
   }
   void

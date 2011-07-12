@@ -59,6 +59,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class OptTask, class Cap>
   forceinline ExecStatus 
   OptProp<OptTask,Cap>::post(Home home, Cap c, TaskArray<OptTask>& t) {
+    // Capacity must be nonnegative
+    GECODE_ME_CHECK(c.gq(home, 0));
     // Check for overload by single task and remove excluded tasks
     int n=t.size(), m=0;
     for (int i=n; i--; ) {

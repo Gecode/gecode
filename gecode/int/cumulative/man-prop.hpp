@@ -57,6 +57,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class ManTask, class Cap>
   forceinline ExecStatus 
   ManProp<ManTask,Cap>::post(Home home, Cap c, TaskArray<ManTask>& t) {
+    // Capacity must be nonnegative
+    GECODE_ME_CHECK(c.gq(home, 0));
     // Check that tasks do not overload resource
     for (int i=t.size(); i--; )
       if (t[i].c() > c.max())

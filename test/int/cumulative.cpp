@@ -64,7 +64,7 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=p.size(); i--; )
           e += static_cast<double>(p[i])*u[i];
-        return e / std::abs(c);
+        return e / std::max(1,std::abs(c));
       }
       /// Offset
       int o;
@@ -76,7 +76,7 @@ namespace Test { namespace Int {
                        int o0)
         : Test("Cumulative::Man::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0),
-               (c0 > 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0)), 
+               (c0 >= 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0)), 
           c(c0), p(p0), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -88,8 +88,8 @@ namespace Test { namespace Int {
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int cmax = (c > 0) ? c : x[x.size()-1];
-        int n = (c > 0) ? x.size() : x.size()-1;
+        int cmax = (c >= 0) ? c : x[x.size()-1];
+        int n = (c >= 0) ? x.size() : x.size()-1;
         
         if (c < 0 && x[n] > -c)
           return false;
@@ -130,7 +130,7 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        int n = (c > 0) ? x.size() : x.size()-1;
+        int n = (c >= 0) ? x.size() : x.size()-1;
         Gecode::IntVarArgs xx;
         if (o==0) {
           xx=x.slice(0,1,n);
@@ -139,7 +139,7 @@ namespace Test { namespace Int {
           for (int i=n; i--;)
             xx[i]=Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
         }
-        if (c > 0) {
+        if (c >= 0) {
           Gecode::cumulative(home, c, xx, p, u);
         } else {
           Gecode::rel(home, x[n] <= -c);
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=p.size(); i--; )
           e += static_cast<double>(p[i])*u[i];
-        return e / std::abs(c);
+        return e / std::max(1,std::abs(c));
       }
     public:
       /// Create and register test
@@ -178,7 +178,7 @@ namespace Test { namespace Int {
                         int o0)
         : Test("Cumulative::Opt::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0),
-               (c0 > 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0)), 
+               (c0 >= 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0)), 
           c(c0), p(p0), u(u0), l(st(c,p,u)/2), o(o0) {
         testsearch = false;
         testfix = false;
@@ -190,8 +190,8 @@ namespace Test { namespace Int {
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int nn = (c > 0) ? x.size() : x.size()-1;
-        int cmax = (c > 0) ? c : x[nn];
+        int nn = (c >= 0) ? x.size() : x.size()-1;
+        int cmax = (c >= 0) ? c : x[nn];
 
         if (c < 0 && x[nn] > -c)
           return false;
@@ -236,17 +236,17 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        int nn=(c > 0) ? x.size() : x.size()-1;
+        int nn=(c >= 0) ? x.size() : x.size()-1;
         int n=nn / 2;
         Gecode::IntVarArgs s(n);
         Gecode::BoolVarArgs m(n);
 
         for (int i=0; i<n; i++) {
-          s[i]=(c > 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
+          s[i]=(c >= 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
           m[i]=Gecode::expr(home, x[n+i] > l);
         }
 
-        if (c > 0) {
+        if (c >= 0) {
           Gecode::cumulative(home, c, s, p, u, m);
         } else {
           Gecode::rel(home, x[nn] <= -c);
@@ -271,7 +271,7 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=u.size(); i--; )
           e += static_cast<double>(maxP)*u[i];
-        return e / std::abs(c);
+        return e / std::max(1,std::abs(c));
       }
       /// Offset
       int o;
@@ -282,7 +282,7 @@ namespace Test { namespace Int {
                         int o0)
         : Test("Cumulative::Man::Flex::"+str(o0)+"::"+
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0),
-               (c0 > 0) ? 2*u0.size() : 2*u0.size()+1,
+               (c0 >= 0) ? 2*u0.size() : 2*u0.size()+1,
                0,std::max(maxP,st(c0,maxP,u0))), 
           c(c0), _minP(minP), _maxP(maxP), u(u0), o(o0) {
         testsearch = false;
@@ -291,16 +291,16 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomMixAssignment((c > 0) ? arity/2 : arity/2+1,
+        return new RandomMixAssignment((c >= 0) ? arity/2 : arity/2+1,
                                        dom,arity/2,
                                        Gecode::IntSet(_minP,_maxP),500);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int nn = (c > 0) ? x.size() : x.size()-1;
+        int nn = (c >= 0) ? x.size() : x.size()-1;
         int n = nn/2;
-        int cmax = (c > 0) ? c : x[n];
-        int pstart = (c > 0) ? n : n+1;
+        int cmax = (c >= 0) ? c : x[n];
+        int pstart = (c >= 0) ? n : n+1;
 
         if (c < 0 && cmax > -c)
           return false;
@@ -341,9 +341,9 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        int nn = (c > 0) ? x.size() : x.size()-1;
+        int nn = (c >= 0) ? x.size() : x.size()-1;
         int n = nn/2;
-        int pstart = (c > 0) ? n : n+1;
+        int pstart = (c >= 0) ? n : n+1;
         Gecode::IntVarArgs s(n);
         Gecode::IntVarArgs px(x.slice(pstart,1,n));
         Gecode::IntVarArgs e(home,n,
@@ -355,7 +355,7 @@ namespace Test { namespace Int {
           rel(home, _minP <= px[i]);
           rel(home, _maxP >= px[i]);
         }
-        if (c > 0) {
+        if (c >= 0) {
           Gecode::cumulative(home, c, s, px, e, u);
         } else {
           rel(home, x[n] <= -c);
@@ -384,7 +384,7 @@ namespace Test { namespace Int {
         double e = 0;
         for (int i=u.size(); i--; )
           e += static_cast<double>(maxP)*u[i];
-        return e / std::abs(c);
+        return e / std::max(1,std::abs(c));
       }
     public:
       /// Create and register test
@@ -393,7 +393,7 @@ namespace Test { namespace Int {
                         int o0)
         : Test("Cumulative::Opt::Flex::"+str(o0)+"::"+
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0),
-               (c0 > 0) ? 3*u0.size() : 3*u0.size()+1,
+               (c0 >= 0) ? 3*u0.size() : 3*u0.size()+1,
                0,std::max(maxP,st(c0,maxP,u0))), 
           c(c0), _minP(minP), _maxP(maxP), u(u0), 
           l(std::max(maxP,st(c0,maxP,u0))/2), o(o0) {
@@ -403,16 +403,16 @@ namespace Test { namespace Int {
       }
       /// Create and register initial assignment
       virtual Assignment* assignment(void) const {
-        return new RandomMixAssignment((c > 0) ? 2*(arity/3) : 2*(arity/3)+1,
+        return new RandomMixAssignment((c >= 0) ? 2*(arity/3) : 2*(arity/3)+1,
                                        dom,arity/3,
                                        Gecode::IntSet(_minP,_maxP),500);
       }
       /// Test whether \a x is solution
       virtual bool solution(const Assignment& x) const {
-        int nn = (c > 0) ? x.size() : x.size()-1;
+        int nn = (c >= 0) ? x.size() : x.size()-1;
         int n = nn / 3;
-        int cmax = (c > 0) ? c : x[2*n];
-        int pstart = (c > 0) ? 2*n : 2*n+1;
+        int cmax = (c >= 0) ? c : x[2*n];
+        int pstart = (c >= 0) ? 2*n : 2*n+1;
         
         if (c < 0 && cmax > -c)
           return false;
@@ -453,9 +453,9 @@ namespace Test { namespace Int {
       }
       /// Post constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-        int nn = (c > 0) ? x.size() : x.size()-1;
+        int nn = (c >= 0) ? x.size() : x.size()-1;
         int n=nn / 3;
-        int pstart= (c > 0) ? 2*n : 2*n+1;
+        int pstart= (c >= 0) ? 2*n : 2*n+1;
 
         Gecode::IntVarArgs s(n);
         Gecode::IntVarArgs px(n);
@@ -472,7 +472,7 @@ namespace Test { namespace Int {
         Gecode::BoolVarArgs m(n);
         for (int i=0; i<n; i++)
           m[i]=Gecode::expr(home, (x[n+i] > l));
-        if (c > 0) {
+        if (c >= 0) {
           Gecode::cumulative(home, c, s, px, e, u, m);
         } else {
           Gecode::rel(home, x[2*n] <= -c);
@@ -496,7 +496,7 @@ namespace Test { namespace Int {
         IntArgs u2(4, 2,2,2,2);
         IntArgs u3(4, 2,3,4,5);
 
-        for (int c=1; c<8; c++) {
+        for (int c=0; c<8; c++) {
           int off = 0;
           for (int coff=0; coff<2; coff++) {
             (void) new ManFixPCumulative(c,p1,u1,off);
@@ -512,18 +512,20 @@ namespace Test { namespace Int {
             (void) new ManFixPCumulative(c,p4,u2,off);
             (void) new ManFixPCumulative(c,p4,u3,off);
 
-            (void) new ManFixPCumulative(-c,p1,u1,off);
-            (void) new ManFixPCumulative(-c,p1,u2,off);
-            (void) new ManFixPCumulative(-c,p1,u3,off);
-            (void) new ManFixPCumulative(-c,p2,u1,off);
-            (void) new ManFixPCumulative(-c,p2,u2,off);
-            (void) new ManFixPCumulative(-c,p2,u3,off);
-            (void) new ManFixPCumulative(-c,p3,u1,off);
-            (void) new ManFixPCumulative(-c,p3,u2,off);
-            (void) new ManFixPCumulative(-c,p3,u3,off);
-            (void) new ManFixPCumulative(-c,p4,u1,off);
-            (void) new ManFixPCumulative(-c,p4,u2,off);
-            (void) new ManFixPCumulative(-c,p4,u3,off);
+            if (c>0) {
+              (void) new ManFixPCumulative(-c,p1,u1,off);
+              (void) new ManFixPCumulative(-c,p1,u2,off);
+              (void) new ManFixPCumulative(-c,p1,u3,off);
+              (void) new ManFixPCumulative(-c,p2,u1,off);
+              (void) new ManFixPCumulative(-c,p2,u2,off);
+              (void) new ManFixPCumulative(-c,p2,u3,off);
+              (void) new ManFixPCumulative(-c,p3,u1,off);
+              (void) new ManFixPCumulative(-c,p3,u2,off);
+              (void) new ManFixPCumulative(-c,p3,u3,off);
+              (void) new ManFixPCumulative(-c,p4,u1,off);
+              (void) new ManFixPCumulative(-c,p4,u2,off);
+              (void) new ManFixPCumulative(-c,p4,u3,off);
+            }
 
             (void) new ManFlexCumulative(c,0,1,u1,off);
             (void) new ManFlexCumulative(c,0,1,u2,off);
@@ -535,15 +537,17 @@ namespace Test { namespace Int {
             (void) new ManFlexCumulative(c,3,5,u2,off);
             (void) new ManFlexCumulative(c,3,5,u3,off);
 
-            (void) new ManFlexCumulative(-c,0,1,u1,off);
-            (void) new ManFlexCumulative(-c,0,1,u2,off);
-            (void) new ManFlexCumulative(-c,0,1,u3,off);
-            (void) new ManFlexCumulative(-c,0,2,u1,off);
-            (void) new ManFlexCumulative(-c,0,2,u2,off);
-            (void) new ManFlexCumulative(-c,0,2,u3,off);
-            (void) new ManFlexCumulative(-c,3,5,u1,off);
-            (void) new ManFlexCumulative(-c,3,5,u2,off);
-            (void) new ManFlexCumulative(-c,3,5,u3,off);
+            if (c>0) {
+              (void) new ManFlexCumulative(-c,0,1,u1,off);
+              (void) new ManFlexCumulative(-c,0,1,u2,off);
+              (void) new ManFlexCumulative(-c,0,1,u3,off);
+              (void) new ManFlexCumulative(-c,0,2,u1,off);
+              (void) new ManFlexCumulative(-c,0,2,u2,off);
+              (void) new ManFlexCumulative(-c,0,2,u3,off);
+              (void) new ManFlexCumulative(-c,3,5,u1,off);
+              (void) new ManFlexCumulative(-c,3,5,u2,off);
+              (void) new ManFlexCumulative(-c,3,5,u3,off);
+            }
 
             (void) new OptFixPCumulative(c,p1,u1,off);
             (void) new OptFixPCumulative(c,p1,u2,off);
@@ -558,18 +562,20 @@ namespace Test { namespace Int {
             (void) new OptFixPCumulative(c,p4,u2,off);
             (void) new OptFixPCumulative(c,p4,u3,off);
 
-            (void) new OptFixPCumulative(-c,p1,u1,off);
-            (void) new OptFixPCumulative(-c,p1,u2,off);
-            (void) new OptFixPCumulative(-c,p1,u3,off);
-            (void) new OptFixPCumulative(-c,p2,u1,off);
-            (void) new OptFixPCumulative(-c,p2,u2,off);
-            (void) new OptFixPCumulative(-c,p2,u3,off);
-            (void) new OptFixPCumulative(-c,p3,u1,off);
-            (void) new OptFixPCumulative(-c,p3,u2,off);
-            (void) new OptFixPCumulative(-c,p3,u3,off);
-            (void) new OptFixPCumulative(-c,p4,u1,off);
-            (void) new OptFixPCumulative(-c,p4,u2,off);
-            (void) new OptFixPCumulative(-c,p4,u3,off);
+            if (c>0) {
+              (void) new OptFixPCumulative(-c,p1,u1,off);
+              (void) new OptFixPCumulative(-c,p1,u2,off);
+              (void) new OptFixPCumulative(-c,p1,u3,off);
+              (void) new OptFixPCumulative(-c,p2,u1,off);
+              (void) new OptFixPCumulative(-c,p2,u2,off);
+              (void) new OptFixPCumulative(-c,p2,u3,off);
+              (void) new OptFixPCumulative(-c,p3,u1,off);
+              (void) new OptFixPCumulative(-c,p3,u2,off);
+              (void) new OptFixPCumulative(-c,p3,u3,off);
+              (void) new OptFixPCumulative(-c,p4,u1,off);
+              (void) new OptFixPCumulative(-c,p4,u2,off);
+              (void) new OptFixPCumulative(-c,p4,u3,off);
+            }
             
             (void) new OptFlexCumulative(c,0,1,u1,off);
             (void) new OptFlexCumulative(c,0,1,u2,off);
@@ -581,15 +587,17 @@ namespace Test { namespace Int {
             (void) new OptFlexCumulative(c,3,5,u2,off);
             (void) new OptFlexCumulative(c,3,5,u3,off);
 
-            (void) new OptFlexCumulative(-c,0,1,u1,off);
-            (void) new OptFlexCumulative(-c,0,1,u2,off);
-            (void) new OptFlexCumulative(-c,0,1,u3,off);
-            (void) new OptFlexCumulative(-c,0,2,u1,off);
-            (void) new OptFlexCumulative(-c,0,2,u2,off);
-            (void) new OptFlexCumulative(-c,0,2,u3,off);
-            (void) new OptFlexCumulative(-c,3,5,u1,off);
-            (void) new OptFlexCumulative(-c,3,5,u2,off);
-            (void) new OptFlexCumulative(-c,3,5,u3,off);
+            if (c>0) {
+              (void) new OptFlexCumulative(-c,0,1,u1,off);
+              (void) new OptFlexCumulative(-c,0,1,u2,off);
+              (void) new OptFlexCumulative(-c,0,1,u3,off);
+              (void) new OptFlexCumulative(-c,0,2,u1,off);
+              (void) new OptFlexCumulative(-c,0,2,u2,off);
+              (void) new OptFlexCumulative(-c,0,2,u3,off);
+              (void) new OptFlexCumulative(-c,3,5,u1,off);
+              (void) new OptFlexCumulative(-c,3,5,u2,off);
+              (void) new OptFlexCumulative(-c,3,5,u3,off);
+            }
 
             off = Gecode::Int::Limits::min;
           }
