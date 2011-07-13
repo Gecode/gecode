@@ -70,7 +70,19 @@
 Version: 3.6.0
 Date: 2011-07-18
 [DESCRIPTION]
+This release adds new constraints (value precedence constraints
+for integer and set variables, no-overlap constraints for
+rectangles, constraints for Hamiltonian paths), improves and
+cleans up a number of existing constraints (scheduling,
+channeling, relation, bin-packing, lexicographic relations), and
+adds new functionality (support for externalization of choices
+for distributed search, support for incremental propagation).
 
+Same models might have to be changed as the graph and scheduling
+modules have been incorporated into the integer module (removing
+the respective include directives is sufficient).
+
+On top, there are many small fixes, in particular for FlatZinc.
 
 [ENTRY]
 Module: int
