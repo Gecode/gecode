@@ -74,6 +74,14 @@ Some bug fixes, probably
 
 [ENTRY]
 Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The cumulatives constraint now does not post the s+p=e constraints,
+harmonizing its semantics with the cumulative and unary constraints.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
