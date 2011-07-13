@@ -46,7 +46,7 @@ namespace Gecode {
   class SetVarArgs;
   class SetVarArray;
 
-  /// Traits of %VarArgArray<SetVar>
+  /// Traits of %VarArgArray&lt;%SetVar>
   template<>
   class ArrayTraits<VarArgArray<SetVar> > {
   public:
@@ -55,7 +55,7 @@ namespace Gecode {
     typedef SetVarArgs ArgsType;
   };
 
-  /// Traits of %VarArray<SetVar>
+  /// Traits of %VarArray&lt;%SetVar>
   template<>
   class ArrayTraits<VarArray<SetVar> > {
   public:

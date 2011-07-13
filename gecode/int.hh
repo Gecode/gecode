@@ -2380,13 +2380,13 @@ namespace Gecode {
    * be used (\a at_most = false).
    *
    * \param home current space
-   * \param machine \f$ m_i \f$ is the machine assigned to task \f$ i \f$
-   * \param start \f$ s_i \f$ is the start time assigned to task \f$ i \f$
-   * \param duration \f$ p_i \f$ is the processing time of task \f$ i \f$
-   * \param end \f$ e_i \f$ is the end time assigned to task \f$ i \f$
-   * \param height \f$ u_i \f$ is the amount of
+   * \param m \f$ m_i \f$ is the machine assigned to task \f$ i \f$
+   * \param s \f$ s_i \f$ is the start time assigned to task \f$ i \f$
+   * \param p \f$ p_i \f$ is the processing time of task \f$ i \f$
+   * \param e \f$ e_i \f$ is the end time assigned to task \f$ i \f$
+   * \param u \f$ u_i \f$ is the amount of
    *               resources consumed by task \f$ i \f$
-   * \param limit \f$ c_r \f$ is the capacity, the amount of resource available
+   * \param c \f$ c_r \f$ is the capacity, the amount of resource available
    *              for machine \f$ r \f$
    * \param at_most \a at_most tells if the amount of resources used
    *                for a machine should be less than the limit (\a at_most
@@ -2679,7 +2679,7 @@ namespace Gecode {
   
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
-   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&)
+   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,IntConLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const TaskTypeArgs& t,
@@ -2728,7 +2728,7 @@ namespace Gecode {
              const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&)
+   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntConLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const TaskTypeArgs& t,
@@ -2764,7 +2764,7 @@ namespace Gecode {
              const IntArgs& u, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,IntConLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p,
@@ -2801,7 +2801,7 @@ namespace Gecode {
              const IntArgs& u, const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntConLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
@@ -2840,7 +2840,7 @@ namespace Gecode {
              const IntVarArgs& e, const IntArgs& u, IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,IntConLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
@@ -2882,7 +2882,7 @@ namespace Gecode {
              IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,const BoolVarArgs&)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,const BoolVarArgs&,IntConLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p, 
