@@ -79,7 +79,7 @@ namespace Gecode {
     bool disjunctive =
       (minU > c.max()/2) || (minU2 > c.max()/2 && minU+minU2>c.max());
     if (disjunctive) {
-      rel(home,c,IRT_GQ,maxU);
+      GECODE_ME_FAIL(c.gq(home,maxU));
       unary(home,t,s,p,icl);
     } else {
       bool fixp = true;
@@ -222,7 +222,7 @@ namespace Gecode {
     bool disjunctive = 
       (minU > c.max()/2) || (minU2 > c.max()/2 && minU+minU2>c.max());
     if (disjunctive) {
-      rel(home,c,IRT_GQ,maxU);
+      GECODE_ME_FAIL(c.gq(home,maxU));
       unary(home,s,p,icl);
     } else {
       TaskArray<ManFixPTask> t(home,s.size());
