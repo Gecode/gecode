@@ -112,32 +112,32 @@ namespace Gecode { namespace Set {
   
   template<class View>
   forceinline ModEvent
-  CachedView<View>::cardMin(Space& home, unsigned int c) {
-    return x.cardMin(home,c);
+  CachedView<View>::cardMin(Space& home, unsigned int m) {
+    return x.cardMin(home,m);
   }
   
   template<class View>
   forceinline ModEvent
-  CachedView<View>::cardMax(Space& home, unsigned int c) {
-    return x.cardMax(home,c);
+  CachedView<View>::cardMax(Space& home, unsigned int m) {
+    return x.cardMax(home,m);
   }
 
   template<class View>
   forceinline ModEvent
-  CachedView<View>::include(Space& home, int c) {
-    return x.include(home,c);
+  CachedView<View>::include(Space& home, int i) {
+    return x.include(home,i);
   }
   
   template<class View>
   forceinline ModEvent
-  CachedView<View>::exclude(Space& home, int c) {
-    return x.exclude(home,c);
+  CachedView<View>::exclude(Space& home, int i) {
+    return x.exclude(home,i);
   }
   
   template<class View>
   forceinline ModEvent
-  CachedView<View>::intersect(Space& home, int c) {
-    return x.intersect(home,c);
+  CachedView<View>::intersect(Space& home, int i) {
+    return x.intersect(home,i);
   }
   
   template<class View>
@@ -148,14 +148,14 @@ namespace Gecode { namespace Set {
   
   template<class View>
   forceinline ModEvent
-  CachedView<View>::include(Space& home, int j, int k) {
-    return x.include(home,j,k);
+  CachedView<View>::include(Space& home, int i, int j) {
+    return x.include(home,i,j);
   }
   
   template<class View>
   forceinline ModEvent
-  CachedView<View>::exclude(Space& home, int j, int k) {
-    return x.exclude(home,j,k);
+  CachedView<View>::exclude(Space& home, int i, int j) {
+    return x.exclude(home,i,j);
   }
   
   template<class View>
