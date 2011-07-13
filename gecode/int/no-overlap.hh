@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   /**
    * \brief Dimension combining coordinate and integer size information
    */
-  class IntDim {
+  class FixDim {
   protected:
     /// Coordinate
     IntView c;
@@ -64,9 +64,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     ExecStatus nooverlap(Space& home, int n, int m);
   public:
     /// Default constructor
-    IntDim(void);
+    FixDim(void);
     /// Constructor
-    IntDim(IntView c, int s);
+    FixDim(IntView c, int s);
 
     /// Return smallest start coordinate
     int ssc(void) const;
@@ -78,10 +78,10 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     int lec(void) const;
 
     /// Dimension must not overlap with \a d
-    ExecStatus nooverlap(Space& home, IntDim& d);
+    ExecStatus nooverlap(Space& home, FixDim& d);
 
     /// Update dimension during cloning
-    void update(Space& home, bool share, IntDim& d);
+    void update(Space& home, bool share, FixDim& d);
 
     /// Subscribe propagator \a p to dimension
     void subscribe(Space& home, Propagator& p);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   /**
    * \brief Dimension combining coordinate and integer view size information
    */
-  class ViewDim {
+  class FlexDim {
   protected:
     /// Start coordinate
     IntView c0;
@@ -108,9 +108,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     ExecStatus nooverlap(Space& home, int n, int m);
   public:
     /// Default constructor
-    ViewDim(void);
+    FlexDim(void);
     /// Constructor
-    ViewDim(IntView c0, IntView s, IntView c1);
+    FlexDim(IntView c0, IntView s, IntView c1);
 
     /// Return smallest start coordinate
     int ssc(void) const;
@@ -122,10 +122,10 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     int lec(void) const;
 
     /// Dimension must not overlap with \a d
-    ExecStatus nooverlap(Space& home, ViewDim& d);
+    ExecStatus nooverlap(Space& home, FlexDim& d);
 
     /// Update dimension during cloning
-    void update(Space& home, bool share, ViewDim& d);
+    void update(Space& home, bool share, FlexDim& d);
 
     /// Subscribe propagator \a p to dimension
     void subscribe(Space& home, Propagator& p);

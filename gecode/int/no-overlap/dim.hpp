@@ -42,41 +42,41 @@ namespace Gecode { namespace Int { namespace NoOverlap {
    *
    */
   forceinline
-  IntDim::IntDim(void) 
+  FixDim::FixDim(void) 
     : s(0) {}
   forceinline
-  IntDim::IntDim(IntView c0, int s0)
+  FixDim::FixDim(IntView c0, int s0)
     : c(c0), s(s0) {}
 
   forceinline int 
-  IntDim::ssc(void) const {
+  FixDim::ssc(void) const {
     return c.min();
   }
   forceinline int 
-  IntDim::lsc(void) const {
+  FixDim::lsc(void) const {
     return c.max();
   }
   forceinline int 
-  IntDim::sec(void) const {
+  FixDim::sec(void) const {
     return c.min() + s;
   }
   forceinline int 
-  IntDim::lec(void) const {
+  FixDim::lec(void) const {
     return c.max() + s;
   }
 
   forceinline ExecStatus
-  IntDim::ssc(Space& home, int n) {
+  FixDim::ssc(Space& home, int n) {
     GECODE_ME_CHECK(c.gq(home, n));
     return ES_OK;
   }
   forceinline ExecStatus
-  IntDim::lec(Space& home, int n) {
+  FixDim::lec(Space& home, int n) {
     GECODE_ME_CHECK(c.lq(home, n - s));
     return ES_OK;
   }
   forceinline ExecStatus
-  IntDim::nooverlap(Space& home, int n, int m) {
+  FixDim::nooverlap(Space& home, int n, int m) {
     if (n <= m) {
       Iter::Ranges::Singleton r(n-s+1,m);
       GECODE_ME_CHECK(c.minus_r(home,r,false));
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     return ES_OK;
   }
   forceinline ExecStatus
-  IntDim::nooverlap(Space& home, IntDim& d) {
+  FixDim::nooverlap(Space& home, FixDim& d) {
     if (d.sec() > lsc()) {
       // Propagate that d must be after this
       GECODE_ES_CHECK(lec(home,d.lsc()));
@@ -96,17 +96,17 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   }
 
   forceinline void
-  IntDim::update(Space& home, bool share, IntDim& d) {
+  FixDim::update(Space& home, bool share, FixDim& d) {
     c.update(home,share,d.c);
     s = d.s;
   }
 
   forceinline void
-  IntDim::subscribe(Space& home, Propagator& p) {
+  FixDim::subscribe(Space& home, Propagator& p) {
     c.subscribe(home,p,PC_INT_DOM);
   }
   forceinline void
-  IntDim::cancel(Space& home, Propagator& p) {
+  FixDim::cancel(Space& home, Propagator& p) {
     c.cancel(home,p,PC_INT_DOM);
   }
 
@@ -116,40 +116,40 @@ namespace Gecode { namespace Int { namespace NoOverlap {
    *
    */
   forceinline
-  ViewDim::ViewDim(void) {}
+  FlexDim::FlexDim(void) {}
   forceinline
-  ViewDim::ViewDim(IntView c00, IntView s0, IntView c10)
+  FlexDim::FlexDim(IntView c00, IntView s0, IntView c10)
     : c0(c00), s(s0), c1(c10) {}
 
   forceinline int 
-  ViewDim::ssc(void) const {
+  FlexDim::ssc(void) const {
     return c0.min();
   }
   forceinline int 
-  ViewDim::lsc(void) const {
+  FlexDim::lsc(void) const {
     return c0.max();
   }
   forceinline int 
-  ViewDim::sec(void) const {
+  FlexDim::sec(void) const {
     return c1.min();
   }
   forceinline int 
-  ViewDim::lec(void) const {
+  FlexDim::lec(void) const {
     return c1.max();
   }
 
   forceinline ExecStatus
-  ViewDim::ssc(Space& home, int n) {
+  FlexDim::ssc(Space& home, int n) {
     GECODE_ME_CHECK(c0.gq(home, n));
     return ES_OK;
   }
   forceinline ExecStatus
-  ViewDim::lec(Space& home, int n) {
+  FlexDim::lec(Space& home, int n) {
     GECODE_ME_CHECK(c1.lq(home, n));
     return ES_OK;
   }
   forceinline ExecStatus
-  ViewDim::nooverlap(Space& home, int n, int m) {
+  FlexDim::nooverlap(Space& home, int n, int m) {
     if (n <= m) {
       Iter::Ranges::Singleton r0(n-s.min()+1,m);
       GECODE_ME_CHECK(c0.minus_r(home,r0,false));
@@ -159,7 +159,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     return ES_OK;
   }
   forceinline ExecStatus
-  ViewDim::nooverlap(Space& home, ViewDim& d) {
+  FlexDim::nooverlap(Space& home, FlexDim& d) {
     if (d.sec() > lsc()) {
       // Propagate that d must be after this
       GECODE_ES_CHECK(lec(home,d.lsc()));
@@ -172,20 +172,20 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
 
   forceinline void
-  ViewDim::update(Space& home, bool share, ViewDim& d) {
+  FlexDim::update(Space& home, bool share, FlexDim& d) {
     c0.update(home,share,d.c0);
     s.update(home,share,d.s);
     c1.update(home,share,d.c1);
   }
 
   forceinline void
-  ViewDim::subscribe(Space& home, Propagator& p) {
+  FlexDim::subscribe(Space& home, Propagator& p) {
     c0.subscribe(home,p,PC_INT_DOM);
     s.subscribe(home,p,PC_INT_BND);
     c1.subscribe(home,p,PC_INT_DOM);
   }
   forceinline void
-  ViewDim::cancel(Space& home, Propagator& p) {
+  FlexDim::cancel(Space& home, Propagator& p) {
     c0.cancel(home,p,PC_INT_DOM);
     s.cancel(home,p,PC_INT_BND);
     c1.cancel(home,p,PC_INT_DOM);

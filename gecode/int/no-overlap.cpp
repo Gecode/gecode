@@ -73,14 +73,14 @@ namespace Gecode {
     }
     if (home.failed()) return;
 
-    ManBox<IntDim,2>* b 
-      = static_cast<Space&>(home).alloc<ManBox<IntDim,2> >(x.size());
+    ManBox<FixDim,2>* b 
+      = static_cast<Space&>(home).alloc<ManBox<FixDim,2> >(x.size());
     for (int i=x.size(); i--; ) {
-      b[i][0] = IntDim(x[i],w[i]);
-      b[i][1] = IntDim(y[i],h[i]);
+      b[i][0] = FixDim(x[i],w[i]);
+      b[i][1] = FixDim(y[i],h[i]);
     }
 
-    GECODE_ES_FAIL((NoOverlap::ManProp<IntDim,2>::post(home,b,x.size())));
+    GECODE_ES_FAIL((NoOverlap::ManProp<FixDim,2>::post(home,b,x.size())));
   }
 
   void
@@ -107,25 +107,25 @@ namespace Gecode {
     if (home.failed()) return;
     
     if (optional(o)) {
-      OptBox<IntDim,2>* b 
-        = static_cast<Space&>(home).alloc<OptBox<IntDim,2> >(x.size());
+      OptBox<FixDim,2>* b 
+        = static_cast<Space&>(home).alloc<OptBox<FixDim,2> >(x.size());
       for (int i=x.size(); i--; ) {
-        b[i][0] = IntDim(x[i],w[i]);
-        b[i][1] = IntDim(y[i],h[i]);
+        b[i][0] = FixDim(x[i],w[i]);
+        b[i][1] = FixDim(y[i],h[i]);
         b[i].optional(o[i]);
       }
-      GECODE_ES_FAIL((NoOverlap::OptProp<IntDim,2>::post(home,b,x.size())));
+      GECODE_ES_FAIL((NoOverlap::OptProp<FixDim,2>::post(home,b,x.size())));
     } else {
-      ManBox<IntDim,2>* b 
-        = static_cast<Space&>(home).alloc<ManBox<IntDim,2> >(x.size());
+      ManBox<FixDim,2>* b 
+        = static_cast<Space&>(home).alloc<ManBox<FixDim,2> >(x.size());
       int n = 0;
       for (int i=0; i<x.size(); i++)
         if (o[i].one()) {
-          b[n][0] = IntDim(x[i],w[i]);
-          b[n][1] = IntDim(y[i],h[i]);
+          b[n][0] = FixDim(x[i],w[i]);
+          b[n][1] = FixDim(y[i],h[i]);
           n++;
         }
-      GECODE_ES_FAIL((NoOverlap::ManProp<IntDim,2>::post(home,b,n)));
+      GECODE_ES_FAIL((NoOverlap::ManProp<FixDim,2>::post(home,b,n)));
     }
   }
 
@@ -158,13 +158,13 @@ namespace Gecode {
       }
       nooverlap(home, x0, wc, y0, hc);
     } else {
-      ManBox<ViewDim,2>* b 
-        = static_cast<Space&>(home).alloc<ManBox<ViewDim,2> >(x0.size());
+      ManBox<FlexDim,2>* b 
+        = static_cast<Space&>(home).alloc<ManBox<FlexDim,2> >(x0.size());
       for (int i=x0.size(); i--; ) {
-        b[i][0] = ViewDim(x0[i],w[i],x1[i]);
-        b[i][1] = ViewDim(y0[i],h[i],y1[i]);
+        b[i][0] = FlexDim(x0[i],w[i],x1[i]);
+        b[i][1] = FlexDim(y0[i],h[i],y1[i]);
       }
-      GECODE_ES_FAIL((NoOverlap::ManProp<ViewDim,2>::post(home,b,x0.size())));
+      GECODE_ES_FAIL((NoOverlap::ManProp<FlexDim,2>::post(home,b,x0.size())));
     }
   }
 
@@ -199,25 +199,25 @@ namespace Gecode {
       }
       nooverlap(home, x0, wc, y0, hc, o);
     } else if (optional(o)) {
-      OptBox<ViewDim,2>* b 
-        = static_cast<Space&>(home).alloc<OptBox<ViewDim,2> >(x0.size());
+      OptBox<FlexDim,2>* b 
+        = static_cast<Space&>(home).alloc<OptBox<FlexDim,2> >(x0.size());
       for (int i=x0.size(); i--; ) {
-        b[i][0] = ViewDim(x0[i],w[i],x1[i]);
-        b[i][1] = ViewDim(y0[i],h[i],y1[i]);
+        b[i][0] = FlexDim(x0[i],w[i],x1[i]);
+        b[i][1] = FlexDim(y0[i],h[i],y1[i]);
         b[i].optional(o[i]);
       }
-      GECODE_ES_FAIL((NoOverlap::OptProp<ViewDim,2>::post(home,b,x0.size())));
+      GECODE_ES_FAIL((NoOverlap::OptProp<FlexDim,2>::post(home,b,x0.size())));
     } else {
-      ManBox<ViewDim,2>* b 
-        = static_cast<Space&>(home).alloc<ManBox<ViewDim,2> >(x0.size());
+      ManBox<FlexDim,2>* b 
+        = static_cast<Space&>(home).alloc<ManBox<FlexDim,2> >(x0.size());
       int n = 0;
       for (int i=0; i<x0.size(); i++)
         if (o[i].one()) {
-          b[n][0] = ViewDim(x0[i],w[i],x1[i]);
-          b[n][1] = ViewDim(y0[i],h[i],y1[i]);
+          b[n][0] = FlexDim(x0[i],w[i],x1[i]);
+          b[n][1] = FlexDim(y0[i],h[i],y1[i]);
           n++;
         }
-      GECODE_ES_FAIL((NoOverlap::ManProp<ViewDim,2>::post(home,b,n)));
+      GECODE_ES_FAIL((NoOverlap::ManProp<FlexDim,2>::post(home,b,n)));
     }
   }
 
