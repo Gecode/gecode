@@ -248,13 +248,17 @@ public:
         IntArgs limit(1, w);
         {
           // x-direction
-          IntVarArgs e(*this, n, 0, w);
+          IntVarArgs e(n);
+          for (int i=n; i--;)
+            e[i]=expr(*this, x[i]+dh[i]);
           cumulatives(*this, m, x, dh, e, dh, limit, true);
           cumulatives(*this, m, x, dh, e, dh, limit, false);
         }
         {
           // y-direction
-          IntVarArgs e(*this, n, 0, w);
+          IntVarArgs e(n);
+          for (int i=n; i--;)
+            e[i]=expr(*this, y[i]+dh[i]);
           cumulatives(*this, m, y, dh, e, dh, limit, true);
           cumulatives(*this, m, y, dh, e, dh, limit, false);
         }

@@ -2442,18 +2442,21 @@ namespace Gecode {
    * over each point in time for a machine where there is at least one
    * task assigned.
    *
+   * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
+   * has to be posted in addition to ensure consistency of the task bounds.
+   *
    * The limit for a machine is either the maximum amount available at
    * any given time (\a at_most = true), or else the least amount to
    * be used (\a at_most = false).
    *
    * \param home current space
-   * \param machine \f$ machine_i \f$ is the machine assigned to task \f$ i \f$
-   * \param start \f$ start_i \f$ is the start date assigned to task \f$ i \f$
-   * \param duration \f$ duration_i \f$ is the duration of task \f$ i \f$
-   * \param end \f$ end_i \f$ is the end date assigned to task \f$ i \f$
-   * \param height \f$ height_i \f$ is the height is the amount of
+   * \param machine \f$ m_i \f$ is the machine assigned to task \f$ i \f$
+   * \param start \f$ s_i \f$ is the start time assigned to task \f$ i \f$
+   * \param duration \f$ p_i \f$ is the processing time of task \f$ i \f$
+   * \param end \f$ e_i \f$ is the end time assigned to task \f$ i \f$
+   * \param height \f$ u_i \f$ is the amount of
    *               resources consumed by task \f$ i \f$
-   * \param limit \f$ limit_r \f$ is the amount of resource available
+   * \param limit \f$ c_r \f$ is the capacity, the amount of resource available
    *              for machine \f$ r \f$
    * \param at_most \a at_most tells if the amount of resources used
    *                for a machine should be less than the limit (\a at_most
@@ -2467,80 +2470,80 @@ namespace Gecode {
    *            Int::Limits::min.
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntVarArgs& machine,
-              const IntVarArgs& start, const IntVarArgs& duration,
-              const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntVarArgs& m,
+              const IntVarArgs& s, const IntVarArgs& p,
+              const IntVarArgs& e, const IntVarArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntArgs& machine,
-              const IntVarArgs& start, const IntVarArgs& duration,
-              const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntArgs& m,
+              const IntVarArgs& s, const IntVarArgs& p,
+              const IntVarArgs& e, const IntVarArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntVarArgs& machine,
-              const IntVarArgs& start, const IntArgs& duration,
-              const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntVarArgs& m,
+              const IntVarArgs& s, const IntArgs& p,
+              const IntVarArgs& e, const IntVarArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntArgs& machine,
-              const IntVarArgs& start, const IntArgs& duration,
-              const IntVarArgs& end, const IntVarArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntArgs& m,
+              const IntVarArgs& s, const IntArgs& p,
+              const IntVarArgs& e, const IntVarArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntVarArgs& machine,
-              const IntVarArgs& start, const IntVarArgs& duration,
-              const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntVarArgs& m,
+              const IntVarArgs& s, const IntVarArgs& p,
+              const IntVarArgs& e, const IntArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntArgs& machine,
-              const IntVarArgs& start, const IntVarArgs& duration,
-              const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntArgs& m,
+              const IntVarArgs& s, const IntVarArgs& p,
+              const IntVarArgs& e, const IntArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntVarArgs& machine,
-              const IntVarArgs& start, const IntArgs& duration,
-              const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntVarArgs& m,
+              const IntVarArgs& s, const IntArgs& p,
+              const IntVarArgs& e, const IntArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Home home, const IntArgs& machine,
-              const IntVarArgs& start, const IntArgs& duration,
-              const IntVarArgs& end, const IntArgs& height,
-              const IntArgs& limit, bool at_most,
+  cumulatives(Home home, const IntArgs& m,
+              const IntVarArgs& s, const IntArgs& p,
+              const IntVarArgs& e, const IntArgs& u,
+              const IntArgs& c, bool at_most,
               IntConLevel icl=ICL_DEF);
 
   /** \brief Post propagators for scheduling tasks on unary resources

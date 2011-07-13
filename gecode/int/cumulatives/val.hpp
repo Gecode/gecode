@@ -46,80 +46,77 @@
 
 namespace Gecode { namespace Int { namespace Cumulatives {
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Home home,
-                                   const ViewArray<ViewM>& _machine,
-                                   const ViewArray<View>& _start,
-                                   const ViewArray<ViewD>& _duration,
-                                   const ViewArray<View>& _end,
-                                   const ViewArray<ViewH>& _height,
-                                   const SharedArray<int>& _limit,
+  Val<ViewM,ViewP,ViewU,View>::Val(Home home,
+                                   const ViewArray<ViewM>& _m,
+                                   const ViewArray<View>& _s,
+                                   const ViewArray<ViewP>& _p,
+                                   const ViewArray<View>& _e,
+                                   const ViewArray<ViewU>& _u,
+                                   const SharedArray<int>& _c,
                                    bool _at_most) :
     Propagator(home),
-    machine(_machine), start(_start), duration(_duration),
-    end(_end), height(_height), limit(_limit), at_most(_at_most) {
+    m(_m), s(_s), p(_p), e(_e), u(_u), c(_c), at_most(_at_most) {
     home.notice(*this,AP_DISPOSE);
 
-    machine.subscribe(home,*this,Int::PC_INT_DOM);
-    start.subscribe(home,*this,Int::PC_INT_BND);
-    duration.subscribe(home,*this,Int::PC_INT_BND);
-    end.subscribe(home,*this,Int::PC_INT_BND);
-    height.subscribe(home,*this,Int::PC_INT_BND);
+    m.subscribe(home,*this,Int::PC_INT_DOM);
+    s.subscribe(home,*this,Int::PC_INT_BND);
+    p.subscribe(home,*this,Int::PC_INT_BND);
+    e.subscribe(home,*this,Int::PC_INT_BND);
+    u.subscribe(home,*this,Int::PC_INT_BND);
   }
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>
-  ::post(Home home, const ViewArray<ViewM>& machine,
-         const ViewArray<View>& start, const ViewArray<ViewD>& duration,
-         const ViewArray<View>& end, const ViewArray<ViewH>& height,
-         const SharedArray<int>& limit, bool at_most) {
-    (void) new (home) Val(home, machine, start, duration,
-                          end, height, limit, at_most);
-
+  Val<ViewM,ViewP,ViewU,View>
+  ::post(Home home, const ViewArray<ViewM>& m,
+         const ViewArray<View>& s, const ViewArray<ViewP>& p,
+         const ViewArray<View>& e, const ViewArray<ViewU>& u,
+         const SharedArray<int>& c, bool at_most) {
+    (void) new (home) Val(home, m,s,p,e,u,c,at_most);
     return ES_OK;
   }
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space& home, bool share,
-                                   Val<ViewM,ViewD,ViewH,View>& p)
-    : Propagator(home,share,p), at_most(p.at_most) {
-    machine.update(home,share,p.machine);
-    start.update(home, share, p.start);
-    duration.update(home, share, p.duration);
-    end.update(home, share, p.end);
-    height.update(home, share, p.height);
-    limit.update(home, share, p.limit);
+  Val<ViewM,ViewP,ViewU,View>::Val(Space& home, bool share,
+                                   Val<ViewM,ViewP,ViewU,View>& vp)
+    : Propagator(home,share,vp), at_most(vp.at_most) {
+    m.update(home,share,vp.m);
+    s.update(home, share, vp.s);
+    p.update(home, share, vp.p);
+    e.update(home, share, vp.e);
+    u.update(home, share, vp.u);
+    c.update(home, share, vp.c);
   }
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   size_t
-  Val<ViewM,ViewD,ViewH,View>::dispose(Space& home) {
+  Val<ViewM,ViewP,ViewU,View>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
-      machine.cancel(home,*this,Int::PC_INT_DOM);
-      start.cancel(home,*this,Int::PC_INT_BND);
-      duration.cancel(home,*this,Int::PC_INT_BND);
-      end.cancel(home,*this,Int::PC_INT_BND);
-      height.cancel(home,*this,Int::PC_INT_BND);
+      m.cancel(home,*this,Int::PC_INT_DOM);
+      s.cancel(home,*this,Int::PC_INT_BND);
+      p.cancel(home,*this,Int::PC_INT_BND);
+      e.cancel(home,*this,Int::PC_INT_BND);
+      u.cancel(home,*this,Int::PC_INT_BND);
     }
-    limit.~SharedArray();
+    c.~SharedArray();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   PropCost
-  Val<ViewM,ViewD,ViewH,View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::quadratic(PropCost::LO, start.size());
+  Val<ViewM,ViewP,ViewU,View>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::quadratic(PropCost::LO, s.size());
   }
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   Actor*
-  Val<ViewM,ViewD,ViewH,View>::copy(Space& home, bool share) {
-    return new (home) Val<ViewM,ViewD,ViewH,View>(home,share,*this);
+  Val<ViewM,ViewP,ViewU,View>::copy(Space& home, bool share) {
+    return new (home) Val<ViewM,ViewP,ViewU,View>(home,share,*this);
   }
 
   /// Types of events for the sweep-line
@@ -161,16 +158,14 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     }
   };
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>::prune(Space& home, int low, int up, int r,
-                                     int ntask, int sheight,
+  Val<ViewM,ViewP,ViewU,View>::prune(Space& home, int low, int up, int r,
+                                     int ntask, int su,
                                      int* contribution,
                                      int* prune_tasks, int& prune_tasks_size) {
 
-    if (ntask > 0 &&
-        (at_most ? sheight > limit[r]
-         : sheight < limit[r])) {
+    if (ntask > 0 && (at_most ? su > c[r] : su < c[r])) {
       return ES_FAILED;
     }
 
@@ -182,17 +177,16 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       // Prune the machine, start, and end for required
       // tasks for machine r that have heights possibly greater than 0.
       if (ntask != 0 &&
-          (at_most ? height[t].min() < 0
-           : height[t].max() > 0) &&
-          (at_most ? sheight-contribution[t] > limit[r]
-           : sheight-contribution[t] < limit[r])) {
-        if (me_failed(machine[t].eq(home, r))||
-            me_failed(start[t].gq(home, up-duration[t].max()+1))||
-            me_failed(start[t].lq(home, low))||
-            me_failed(end[t].lq(home,low+duration[t].max()))||
-            me_failed(end[t].gq(home, up+1))||
-            me_failed(duration[t].gq(home,std::min(up-start[t].max()+1,
-                                                   end[t].min()-low)))
+          (at_most ? u[t].min() < 0
+           : u[t].max() > 0) &&
+          (at_most ? su-contribution[t] > c[r]
+           : su-contribution[t] < c[r])) {
+        if (me_failed(m[t].eq(home, r))||
+            me_failed(s[t].gq(home, up-p[t].max()+1))||
+            me_failed(s[t].lq(home, low))||
+            me_failed(e[t].lq(home,low+p[t].max()))||
+            me_failed(e[t].gq(home, up+1))||
+            me_failed(p[t].gq(home,std::min(up-s[t].max()+1,e[t].min()-low)))
             ) {
           return ES_FAILED;
         }
@@ -200,29 +194,28 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
       // Algorithm 3.
       // Remove values that prevent us from reaching the limit
-      if (at_most ? height[t].min() > std::min(0, limit[r])
-          : height[t].max() < std::max(0, limit[r])) {
-        if (at_most ? sheight-contribution[t]+height[t].min() > limit[r]
-            : sheight-contribution[t]+height[t].max() < limit[r]) {
-          if (end[t].min() > low  &&
-              start[t].max() <= up &&
-              duration[t].min() > 0) {
-            if (me_failed(machine[t].nq(home, r))) {
+      if (at_most ? u[t].min() > std::min(0, c[r])
+          : u[t].max() < std::max(0, c[r])) {
+        if (at_most ? su-contribution[t]+u[t].min() > c[r]
+            : su-contribution[t]+u[t].max() < c[r]) {
+          if (e[t].min() > low  &&
+              s[t].max() <= up &&
+              p[t].min() > 0) {
+            if (me_failed(m[t].nq(home, r))) {
               return ES_FAILED;
             }
-          } else if (machine[t].assigned()) {
-            int dtmin = duration[t].min();
-            if (dtmin > 0) {
+          } else if (m[t].assigned()) {
+            int ptmin = p[t].min();
+            if (ptmin > 0) {
               Iter::Ranges::Singleton
-                a(low-dtmin+1, up), b(low+1, up+dtmin);
-              if (me_failed(start[t].minus_r(home,a,false)) ||
-                  me_failed(end[t].minus_r(home, b,false)))
+                a(low-ptmin+1, up), b(low+1, up+ptmin);
+              if (me_failed(s[t].minus_r(home,a,false)) ||
+                  me_failed(e[t].minus_r(home, b,false)))
                 return ES_FAILED;
             }
-            if (me_failed(duration[t].lq(home,
-                                         std::max(std::max(low-start[t].min(),
-                                                           end[t].max()-up-1),
-                                                  0)))) {
+            if (me_failed(p[t].lq(home,std::max(std::max(low-s[t].min(),
+                                                         e[t].max()-up-1),
+                                                0)))) {
               return ES_FAILED;
             }
           }
@@ -235,20 +228,20 @@ namespace Gecode { namespace Int { namespace Cumulatives {
        *         since Algorithm 3 can remove the value." Check this against
        *         the conditions for Alg3.
        */
-      if (machine[t].assigned() &&
-          machine[t].val() == r &&
-          end[t].min() > low    &&
-          start[t].max() <= up  &&
-          duration[t].min() > 0 ) {
+      if (m[t].assigned() &&
+          m[t].val() == r &&
+          e[t].min() > low    &&
+          s[t].max() <= up  &&
+          p[t].min() > 0 ) {
         if (me_failed(at_most
-                      ? height[t].lq(home, limit[r]-sheight+contribution[t])
-                      : height[t].gq(home, limit[r]-sheight+contribution[t]))) {
+                      ? u[t].lq(home, c[r]-su+contribution[t])
+                      : u[t].gq(home, c[r]-su+contribution[t]))) {
           return ES_FAILED;
         }
       }
 
       // Remove tasks that are no longer relevant.
-      if (!machine[t].in(r) || (end[t].max() <= up+1)) {
+      if (!m[t].in(r) || (e[t].max() <= up+1)) {
         prune_tasks[pti] = prune_tasks[--prune_tasks_size];
       } else {
         ++pti;
@@ -268,69 +261,65 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     };
   }
 
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>::propagate(Space& home, const ModEventDelta&) {
+  Val<ViewM,ViewP,ViewU,View>::propagate(Space& home, const ModEventDelta&) {
     // Check for subsumption
     bool subsumed = true;
-    for (int t = start.size(); t--; )
-      if (!(duration[t].assigned() && end[t].assigned()   &&
-            machine[t].assigned()  && start[t].assigned() &&
-            height[t].assigned())) {
+    for (int t = s.size(); t--; )
+      if (!(p[t].assigned() && e[t].assigned()   &&
+            m[t].assigned()  && s[t].assigned() &&
+            u[t].assigned())) {
         subsumed = false;
         break;
       }
     // Propagate information for machine r
     Region region(home);
-    Event *events = region.alloc<Event>(start.size()*8);
+    Event *events = region.alloc<Event>(s.size()*8);
     int  events_size;
-    int *prune_tasks = region.alloc<int>(start.size());
+    int *prune_tasks = region.alloc<int>(s.size());
     int  prune_tasks_size;
-    int *contribution = region.alloc<int>(start.size());
-    for (int r = limit.size(); r--; ) {
+    int *contribution = region.alloc<int>(s.size());
+    for (int r = c.size(); r--; ) {
       events_size = 0;
-#define GECODE_PUSH_EVENTS(E) assert(events_size < start.size()*8);     \
+#define GECODE_PUSH_EVENTS(E) assert(events_size < s.size()*8);     \
         events[events_size++] = E
 
       // Find events for sweep-line
-      for (int t = start.size(); t--; ) {
-        if (machine[t].assigned() &&
-            machine[t].val() == r &&
-            start[t].max() < end[t].min()) {
+      for (int t = s.size(); t--; ) {
+        if (m[t].assigned() &&
+            m[t].val() == r &&
+            s[t].max() < e[t].min()) {
           if (at_most
-              ? height[t].min() > std::min(0, limit[r])
-              : height[t].max() < std::max(0, limit[r])) {
-            GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, start[t].max(), 1));
-            GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, end[t].min(), -1));
+              ? u[t].min() > std::min(0, c[r])
+              : u[t].max() < std::max(0, c[r])) {
+            GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, s[t].max(), 1));
+            GECODE_PUSH_EVENTS(Event(EVENT_CHCK, t, e[t].min(), -1));
           }
           if (at_most
-              ? height[t].min() > 0
-              : height[t].max() < 0) {
-            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, start[t].max(),
-                                   at_most ? height[t].min()
-                                   : height[t].max(), true));
-            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, end[t].min(),
-                                   at_most ? -height[t].min()
-                                   : -height[t].max()));
+              ? u[t].min() > 0
+              : u[t].max() < 0) {
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, s[t].max(),
+                                     at_most ? u[t].min() : u[t].max(), true));
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, e[t].min(),
+                                     at_most ? -u[t].min() : -u[t].max()));
           }
         }
 
-        if (machine[t].in(r)) {
+        if (m[t].in(r)) {
           if (at_most
-              ? height[t].min() < 0
-              : height[t].max() > 0) {
-            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, start[t].min(),
-                                   at_most ? height[t].min()
-                                   : height[t].max(), true));
-            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, end[t].max(),
-                                   at_most ? -height[t].min()
-                                   : -height[t].max()));
+              ? u[t].min() < 0
+              : u[t].max() > 0) {
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, s[t].min(),
+                                     at_most ? u[t].min() : u[t].max(), true));
+            GECODE_PUSH_EVENTS(Event(EVENT_PROF, t, e[t].max(),
+                                     at_most ? -u[t].min() : -u[t].max()));
           }
-          if (!(machine[t].assigned() &&
-                 height[t].assigned() &&
-                  start[t].assigned() &&
-                    end[t].assigned())) {
-            GECODE_PUSH_EVENTS(Event(EVENT_PRUN, t, start[t].min()));
+          if (!(m[t].assigned() &&
+                u[t].assigned() &&
+                s[t].assigned() &&
+                e[t].assigned())) {
+            GECODE_PUSH_EVENTS(Event(EVENT_PRUN, t, s[t].min()));
           }
         }
       }
@@ -348,39 +337,39 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       // Sweep line along d, starting at 0
       int d        = 0;
       int ntask    = 0;
-      int sheight  = 0;
+      int su  = 0;
       int ei = 0;
 
       prune_tasks_size = 0;
-      for (int i = start.size(); i--; ) contribution[i] = 0;
+      for (int i = s.size(); i--; ) contribution[i] = 0;
 
       d = events[ei].date;
       while (ei < events_size) {
         if (events[ei].e != EVENT_PRUN) {
           if (d != events[ei].date) {
             GECODE_ES_CHECK(prune(home, d, events[ei].date-1, r,
-                                  ntask, sheight,
+                                  ntask, su,
                                   contribution, prune_tasks, prune_tasks_size));
             d = events[ei].date;
           }
           if (events[ei].e == EVENT_CHCK) {
             ntask += events[ei].inc;
           } else /* if (events[ei].e == EVENT_PROF) */ {
-            sheight += events[ei].inc;
+            su += events[ei].inc;
             if(events[ei].first_prof)
               contribution[events[ei].task] = at_most
                 ? std::max(contribution[events[ei].task], events[ei].inc)
                 : std::min(contribution[events[ei].task], events[ei].inc);
           }
         } else /* if (events[ei].e == EVENT_PRUN) */ {
-          assert(prune_tasks_size<start.size());
+          assert(prune_tasks_size<s.size());
           prune_tasks[prune_tasks_size++] = events[ei].task;
         }
         ei++;
       }
 
       GECODE_ES_CHECK(prune(home, d, d, r,
-                            ntask, sheight,
+                            ntask, su,
                             contribution, prune_tasks, prune_tasks_size));
     }
     return subsumed ? home.ES_SUBSUMED(*this): ES_NOFIX;
@@ -389,4 +378,3 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 }}}
 
 // STATISTICS: int-prop
-

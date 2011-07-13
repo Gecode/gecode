@@ -86,24 +86,24 @@ namespace Gecode { namespace Int { namespace Cumulatives {
    * Requires \code #include <gecode/int/cumulatives.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ViewM, class ViewD, class ViewH, class View>
+  template<class ViewM, class ViewP, class ViewU, class View>
   class Val : public Propagator {
   protected:
-    ViewArray<ViewM>  machine;
-    ViewArray<View>   start;
-    ViewArray<ViewD>  duration;
-    ViewArray<View>   end;
-    ViewArray<ViewH>  height;
-    SharedArray<int>  limit;
+    ViewArray<ViewM>  m;
+    ViewArray<View>   s;
+    ViewArray<ViewP>  p;
+    ViewArray<View>   e;
+    ViewArray<ViewU>  u;
+    SharedArray<int>  c;
     const bool        at_most;
 
-    Val(Space& home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
+    Val(Space& home, bool share, Val<ViewM, ViewP, ViewU, View>& p);
     Val(Home home, const ViewArray<ViewM>&, const ViewArray<View>&,
-        const ViewArray<ViewD>&, const ViewArray<View>&,
-        const ViewArray<ViewH>&, const SharedArray<int>&, bool);
+        const ViewArray<ViewP>&, const ViewArray<View>&,
+        const ViewArray<ViewU>&, const SharedArray<int>&, bool);
 
     ExecStatus prune(Space& home, int low, int up, int r,
-                     int ntask, int sheight,
+                     int ntask, int su,
                      int* contribution,
                      int* prune_tasks, int& prune_tasks_size);
   public:
@@ -115,8 +115,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
     static ExecStatus post(Home home, const ViewArray<ViewM>&,
-                           const ViewArray<View>&, const ViewArray<ViewD>&,
-                           const ViewArray<View>&, const ViewArray<ViewH>&,
+                           const ViewArray<View>&, const ViewArray<ViewP>&,
+                           const ViewArray<View>&, const ViewArray<ViewU>&,
                            const SharedArray<int>&, bool);
     /// Dispose propagator
     virtual size_t dispose(Space& home);

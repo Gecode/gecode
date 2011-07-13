@@ -1140,9 +1140,9 @@ namespace Gecode { namespace FlatZinc {
             unary(s,start,durationI);
           }
         } else {
-          IntVarArgs end(s,n,Int::Limits::min,Int::Limits::max);
+          IntVarArgs end(n);
           for (int i=n; i--;)
-            rel(s,start[i]+duration[i]==end[i]);
+            end[i] = expr(s,start[i]+duration[i]);
           unary(s,start,duration,end);
         }
       } else if (height.assigned()) {
@@ -1157,14 +1157,15 @@ namespace Gecode { namespace FlatZinc {
         } else {
           IntVarArgs end(n);
           for (int i = n; i--; )
-            end[i] = expr(s, start[i]+duration[i]);
+            end[i] = expr(s,start[i]+duration[i]);
           cumulative(s, bound, start, duration, end, heightI);
         }
       } else if (bound.assigned()) {
         IntArgs machine = IntArgs::create(n,0,0);
         IntArgs limit(1, bound.val());
         IntVarArgs end(n);
-        for (int i = n; i--; ) end[i] = IntVar(s, 0, Int::Limits::max);
+        for (int i=n; i--;)
+          end[i] = expr(s,start[i]+duration[i]);
         cumulatives(s, machine, start, duration, end, height, limit, true,
                     ann2icl(ann));
       } else {
