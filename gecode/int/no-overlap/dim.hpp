@@ -110,11 +110,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     c.cancel(home,p,PC_INT_DOM);
   }
 
-  forceinline void
-  IntDim::print(void) {
-    std::cout << "IntDim(" << c << "," << s << ")";
-  }
-
 
   /*
    * Dimension with integer view size
@@ -123,42 +118,43 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   forceinline
   ViewDim::ViewDim(void) {}
   forceinline
-  ViewDim::ViewDim(IntView c0, IntView s0)
-    : c(c0), s(s0) {}
+  ViewDim::ViewDim(IntView c00, IntView s0, IntView c10)
+    : c0(c00), s(s0), c1(c10) {}
 
   forceinline int 
   ViewDim::ssc(void) const {
-    return c.min();
+    return c0.min();
   }
   forceinline int 
   ViewDim::lsc(void) const {
-    return c.max();
+    return c0.max();
   }
   forceinline int 
   ViewDim::sec(void) const {
-    return c.min() + s.min();
+    return c1.min();
   }
   forceinline int 
   ViewDim::lec(void) const {
-    return c.max() + s.max();
+    return c1.max();
   }
 
   forceinline ExecStatus
   ViewDim::ssc(Space& home, int n) {
-    GECODE_ME_CHECK(c.gq(home, n));
+    GECODE_ME_CHECK(c0.gq(home, n));
     return ES_OK;
   }
   forceinline ExecStatus
   ViewDim::lec(Space& home, int n) {
-    GECODE_ME_CHECK(c.lq(home, n - s.min()));
-    GECODE_ME_CHECK(s.lq(home, n - c.min()));
+    GECODE_ME_CHECK(c1.lq(home, n));
     return ES_OK;
   }
   forceinline ExecStatus
   ViewDim::nooverlap(Space& home, int n, int m) {
     if (n <= m) {
-      Iter::Ranges::Singleton r(n-s.min()+1,m);
-      GECODE_ME_CHECK(c.minus_r(home,r,false));
+      Iter::Ranges::Singleton r0(n-s.min()+1,m);
+      GECODE_ME_CHECK(c0.minus_r(home,r0,false));
+      Iter::Ranges::Singleton r1(n+1,s.min()+m);
+      GECODE_ME_CHECK(c1.minus_r(home,r1,false));
     }
     return ES_OK;
   }
@@ -177,24 +173,22 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   forceinline void
   ViewDim::update(Space& home, bool share, ViewDim& d) {
-    c.update(home,share,d.c);
+    c0.update(home,share,d.c0);
     s.update(home,share,d.s);
+    c1.update(home,share,d.c1);
   }
 
   forceinline void
   ViewDim::subscribe(Space& home, Propagator& p) {
-    c.subscribe(home,p,PC_INT_DOM);
+    c0.subscribe(home,p,PC_INT_DOM);
     s.subscribe(home,p,PC_INT_BND);
+    c1.subscribe(home,p,PC_INT_DOM);
   }
   forceinline void
   ViewDim::cancel(Space& home, Propagator& p) {
-    c.cancel(home,p,PC_INT_DOM);
+    c0.cancel(home,p,PC_INT_DOM);
     s.cancel(home,p,PC_INT_BND);
-  }
-
-  forceinline void
-  ViewDim::print(void) {
-    std::cout << "ViewDim(" << c << "," << s << ")";
+    c1.cancel(home,p,PC_INT_DOM);
   }
 
 }}}

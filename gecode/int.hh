@@ -2303,40 +2303,50 @@ namespace Gecode {
             IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for rectangle packing
    *
-   * Propagate that no two rectangles as described by the coordinates
-   * \a x and \a y, widths \a w, and heights \a h overlap.
+   * Propagate that no two rectangles as described by the start coordinates
+   * \a x0 and \a y0, widths \a w and heights \a h, and end coordinates
+   * \a x1 and \a y1 overlap.
    * 
+   * Note that the relations \f$x0_i+w_i=x1_i\f$ and \f$y0_i+h_i=y1_i\f$ are
+   * not propagated (for \f$0\leq i<|x0|\f$). That is, additional constraints
+   * must be posted to enforce that relation.
+   *
    * Throws the following exceptions:
-   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, or \a h
-   *    are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x, \a w, \a y, or \a h share 
-   *    unassigned variables.
+   *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
+   *    \a y0, \a y1, or \a h are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x0, \a x1, \a w, \a y0, \a y1, 
+   *    or \a h share unassigned variables.
    * 
    * \ingroup TaskModelIntGeoPacking
    */
   GECODE_INT_EXPORT void
   nooverlap(Home home, 
-            const IntVarArgs& x, const IntVarArgs& w,
-            const IntVarArgs& y, const IntVarArgs& h,
+            const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
+            const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
             IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for rectangle packing
    *
-   * Propagate that no two rectangles as described by the coordinates
-   * \a x and \a y, widths \a w, and heights \a h overlap. The rectangles
-   * can be optional, as described by the Boolean variables \a o.
+   * Propagate that no two rectangles as described by the start coordinates
+   * \a x0 and \a y0, widths \a w and heights \a h, and end coordinates
+   * \a x1 and \a y1 overlap. The rectangles can be optional, as described 
+   * by the Boolean variables \a o.
    * 
+   * Note that the relations \f$x0_i+w_i=x1_i\f$ and \f$y0_i+h_i=y1_i\f$ are
+   * not propagated (for \f$0\leq i<|x0|\f$). That is, additional constraints
+   * must be posted to enforce that relation.
+   *
    * Throws the following exceptions:
-   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a o
-   *    are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x, \a w, \a y, \a h, or \a o share 
-   *    unassigned variables.
+   *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
+   *    \a y0, \a y1, or \a h are not of the same size.
+   *  - Of type Int::ArgumentSame if \a x0, \a x1, \a w, \a y0, \a y1, 
+   *    \a h, or \a o share unassigned variables.
    * 
    * \ingroup TaskModelIntGeoPacking
    */
   GECODE_INT_EXPORT void
   nooverlap(Home home, 
-            const IntVarArgs& x, const IntVarArgs& w,
-            const IntVarArgs& y, const IntVarArgs& h,
+            const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
+            const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
             const BoolVarArgs& o,
             IntConLevel icl=ICL_DEF);
 

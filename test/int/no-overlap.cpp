@@ -158,12 +158,14 @@ namespace Test { namespace Int {
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xwyh) {
         using namespace Gecode;
         int n = xwyh.size() / 4;
-        IntVarArgs x(n), w(n), y(n), h(n);
+        IntVarArgs x0(n), w(n), x1(n), y0(n), h(n), y1(n);
         for (int i=0; i<n; i++) {
-          x[i]=xwyh[4*i+0]; w[i]=xwyh[4*i+1];
-          y[i]=xwyh[4*i+2]; h[i]=xwyh[4*i+3];
+          x0[i]=xwyh[4*i+0]; w[i]=xwyh[4*i+1];
+          x1[i]=expr(home, x0[i] + w[i]);
+          y0[i]=xwyh[4*i+2]; h[i]=xwyh[4*i+3];
+          y1[i]=expr(home, y0[i] + h[i]);
         }
-        nooverlap(home, x, w, y, h);
+        nooverlap(home, x0, w, x1, y0, h, y1);
       }
     };
     
@@ -198,14 +200,16 @@ namespace Test { namespace Int {
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& xwyho) {
         using namespace Gecode;
         int n = xwyho.size() / 5;
-        IntVarArgs x(n), w(n), y(n), h(n);
+        IntVarArgs x0(n), w(n), x1(n), y0(n), h(n), y1(n);
         BoolVarArgs o(n);
         for (int i=0; i<n; i++) {
-          x[i]=xwyho[5*i+0]; w[i]=xwyho[5*i+1];
-          y[i]=xwyho[5*i+2]; h[i]=xwyho[5*i+3];
+          x0[i]=xwyho[5*i+0]; w[i]=xwyho[5*i+1];
+          x1[i]=expr(home, x0[i] + w[i]);
+          y0[i]=xwyho[5*i+2]; h[i]=xwyho[5*i+3];
+          y1[i]=expr(home, y0[i] + h[i]);
           o[i]=expr(home, xwyho[5*i+4] > 0);
         }
-        nooverlap(home, x, w, y, h, o);
+        nooverlap(home, x0, w, x1, y0, h, y1, o);
       }
     };
     

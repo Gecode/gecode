@@ -87,7 +87,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
-    void print(void);
   };
 
   /**
@@ -95,10 +94,12 @@ namespace Gecode { namespace Int { namespace NoOverlap {
    */
   class ViewDim {
   protected:
-    /// Coordinate
-    IntView c;
+    /// Start coordinate
+    IntView c0;
     /// Size
     IntView s;
+    /// End coordinate
+    IntView c1;
     /// Modify smallest start coordinate
     ExecStatus ssc(Space& home, int n);
     /// Modify largest end coordinate
@@ -109,7 +110,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Default constructor
     ViewDim(void);
     /// Constructor
-    ViewDim(IntView c, IntView s);
+    ViewDim(IntView c0, IntView s, IntView c1);
 
     /// Return smallest start coordinate
     int ssc(void) const;
@@ -130,7 +131,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
-    void print(void);
   };
 
 }}}
@@ -180,7 +180,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
-    void print(void);
   };
 
   /**
@@ -212,7 +211,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
-    void print(void);
   };
 
 }}}
