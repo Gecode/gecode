@@ -128,20 +128,22 @@ public:
 
       // Symmetry breaking: order groups
       for (int j=0; j<w; j++) {
-        for (int i=0; i<g-1; i++) {
-          rel(*this, min(schedule(i,j)) < min(schedule(i+1,j)));
-        }
+        IntVarArgs m(g);
+        for (int i=0; i<g; i++)
+          m[i] = expr(*this, min(schedule(i,j)));
+        rel(*this, m, IRT_LE);
       }
 
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
-      for (int i=0; i<w-1; i++) {
-        rel(*this, min(schedule(0,i)-IntSet(0,0)) <
-                   min(schedule(0,i+1)-IntSet(0,0)));
-        
+      {
+        IntVarArgs m(w);
+        for (int i=0; i<w; i++)
+          m[i] = expr(*this, min(schedule(0,i)-IntSet(0,0)));
+        rel(*this, m, IRT_LE);
       }
 
-      /// Symmetry breaking: value symmetry of player numbers
+      // Symmetry breaking: value symmetry of player numbers
       precede(*this, groups, IntArgs::create(groups.size(),0));
     }
 
