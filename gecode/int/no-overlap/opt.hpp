@@ -103,7 +103,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     // Number of boxes to be eliminated
     int e = 0;
-
     for (int i=n; i--; ) {
       assert(b[i].mandatory());
       for (int j=i; j--; ) 
@@ -114,18 +113,6 @@ namespace Gecode { namespace Int { namespace NoOverlap {
           continue;
         } else {
           GECODE_ES_CHECK(b[i].nooverlap(home,b[j]));
-        }
-    }
-
-    // Check whether some optional boxes must be excluded
-    for (int i=m; i--; ) {
-      assert(b[n+i].optional());
-      for (int j=i; j--; )
-        if (b[n+i].overlap(b[j])) {
-          GECODE_ES_CHECK(b[n+i].exclude(home));
-          b[n+i].cancel(home,*this);
-          b[n+i] = b[n+(--m)];
-          break;
         }
     }
 
@@ -143,6 +130,18 @@ namespace Gecode { namespace Int { namespace NoOverlap {
       }
       if (n < 2)
         return home.ES_SUBSUMED(*this);
+    }
+
+    // Check whether some optional boxes must be excluded
+    for (int i=m; i--; ) {
+      assert(b[n+i].optional());
+      for (int j=n; j--; )
+        if (b[n+i].overlap(b[j])) {
+          GECODE_ES_CHECK(b[n+i].exclude(home));
+          b[n+i].cancel(home,*this);
+          b[n+i] = b[n+(--m)];
+          break;
+        }
     }
 
     return ES_NOFIX;

@@ -89,6 +89,49 @@ namespace Test { namespace Int {
         nooverlap(home, x, w, y, h);
       }
     };
+    /// %Test for no-overlap with optional rectangles
+    class IntOpt2 : public Test {
+    protected:
+      /// Width
+      Gecode::IntArgs w;
+      /// Height
+      Gecode::IntArgs h;
+    public:
+      /// Create and register test with maximal value \a m and \a n rectangles
+      IntOpt2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0) 
+        : Test("NoOverlap::Int::Opt::2::"+str(m)+"::"+str(w0)+"::"+str(h0), 
+               3*w0.size(), 0, m-1), w(w0), h(h0) {}
+      /// %Test whether \a xyo is solution
+      virtual bool solution(const Assignment& xyo) const {
+        int n = xyo.size() / 3;
+        for (int i=0; i<n; i++) {
+          int xi=xyo[3*i+0], yi=xyo[3*i+1];
+          int oi=xyo[3*i+2];
+          for (int j=i+1; j<n; j++) {
+            int xj=xyo[3*j+0], yj=xyo[3*j+1];
+            int oj=xyo[3*j+2];
+            if ((oi > 0) && (oj > 0) &&
+                !((xi + w[i] <= xj) || (xj + w[j] <= xi) ||
+                  (yi + h[i] <= yj) || (yj + h[j] <= yi)))
+              return false;
+          }
+        }
+        return true;
+      }
+      /// Post constraint on \a xwyho
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& xyo) {
+        using namespace Gecode;
+        int n = xyo.size() / 3;
+        IntVarArgs x(n), y(n);
+        BoolVarArgs o(n);
+        for (int i=0; i<n; i++) {
+          x[i]=xyo[3*i+0]; y[i]=xyo[3*i+1];
+          o[i]=expr(home, xyo[3*i+2] > 0);
+        }
+        nooverlap(home, x, w, y, h, o);
+      }
+    };
+    
     /// %Test for no-overlap with variable dimensions (rectangles)
     class Var2 : public Test {
     public:
@@ -125,11 +168,13 @@ namespace Test { namespace Int {
     };
     
     /// %Test for no-overlap with optional rectangles
-    class Opt2 : public Test {
+    class VarOpt2 : public Test {
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
-      Opt2(int m, int n)
-        : Test("NoOverlap::Opt::2::"+str(m)+"::"+str(n), 5*n, 0, m) {}
+      VarOpt2(int m, int n)
+        : Test("NoOverlap::Var::Opt::2::"+str(m)+"::"+str(n), 5*n, 0, m) {
+        testfix = false;
+      }
       /// %Test whether \a xwyho is solution
       virtual bool solution(const Assignment& xwyho) const {
         int n = xwyho.size() / 5;
@@ -164,52 +209,6 @@ namespace Test { namespace Int {
       }
     };
     
-    /*
-    /// %Test for no-overlap with integer dimensions (rectangle cuboids)
-    class Int3 : public Test {
-    protected:
-      /// Width
-      Gecode::IntArgs w;
-      /// Height
-      Gecode::IntArgs h;
-      /// Depth
-      Gecode::IntArgs d;
-    public:
-      /// Create and register test with maximal coordinate value \a m
-      Int3(int m, 
-           const Gecode::IntArgs& w0, const Gecode::IntArgs& h0,
-           const Gecode::IntArgs& d0) 
-        : Test("NoOverlap::Int::3::"+str(m)+"::"+str(w0)+"::"+str(h0)+"::"+str(d0),
-               3*w0.size(), 0, m-1), 
-          w(w0), h(h0), d(d0) {
-      }
-      /// %Test whether \a xyz is solution
-      virtual bool solution(const Assignment& xyz) const {
-        int n = xyz.size() / 3;
-        for (int i=0; i<n; i++) {
-          int xi=xyz[3*i+0], yi=xyz[3*i+1], zi=xyz[3*i+2];
-          for (int j=i+1; j<n; j++) {
-            int xj=xyz[3*j+0], yj=xyz[3*j+1], zj=xyz[3*j+2];
-            if (!((xi + w[i] <= xj) || (xj + w[j] <= xi) ||
-                  (yi + h[i] <= yj) || (yj + h[j] <= yi) ||
-                  (zi + d[i] <= zj) || (zj + d[j] <= zi)))
-              return false;
-          }
-        }
-        return true;
-      }
-      /// Post constraint on \a xyz
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& xyz) {
-        using namespace Gecode;
-        int n = xyz.size() / 3;
-        IntVarArgs x(n), y(n), z(n);
-        for (int i=0; i<n; i++) {
-          x[i]=xyz[3*i+0]; y[i]=xyz[3*i+1]; z[i]=xyz[3*i+2];
-        }
-        nooverlap(home, x, w, y, h, z, d);
-      }
-    };
-    */
     
     /// Help class to create and register tests
     class Create {
@@ -223,22 +222,22 @@ namespace Test { namespace Int {
         IntArgs s3(4, 4,3,2,1);
         IntArgs s4(4, 1,1,1,1);
 
-        for (int m=2; m<4; m++) {
+        for (int m=2; m<3; m++) {
           (void) new Int2(m, s1, s1);
           (void) new Int2(m, s2, s2);
           (void) new Int2(m, s3, s3);
           (void) new Int2(m, s2, s3);
           (void) new Int2(m, s4, s4);
           (void) new Int2(m, s4, s2);
-          //          (void) new Int3(m, s1, s1, s1);
-          //          (void) new Int3(m, s2, s3, s4);
+          (void) new IntOpt2(m, s2, s3);
+          (void) new IntOpt2(m, s4, s3);
         }
 
         (void) new Var2(2, 2);
         (void) new Var2(3, 2);
         (void) new Var2(1, 3);
-        (void) new Opt2(2, 2);
-        (void) new Opt2(3, 2);
+        (void) new VarOpt2(2, 2);
+        (void) new VarOpt2(3, 2);
 
       }
     };

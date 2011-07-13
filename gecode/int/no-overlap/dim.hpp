@@ -110,6 +110,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     c.cancel(home,p,PC_INT_DOM);
   }
 
+  forceinline void
+  IntDim::print(void) {
+    std::cout << "IntDim(" << c << "," << s << ")";
+  }
+
 
   /*
    * Dimension with integer view size
@@ -185,6 +190,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   ViewDim::cancel(Space& home, Propagator& p) {
     c.cancel(home,p,PC_INT_DOM);
     s.cancel(home,p,PC_INT_BND);
+  }
+
+  forceinline void
+  ViewDim::print(void) {
+    std::cout << "ViewDim(" << c << "," << s << ")";
   }
 
 }}}

@@ -87,6 +87,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
+    void print(void);
   };
 
   /**
@@ -129,6 +130,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
+    void print(void);
   };
 
 }}}
@@ -178,6 +180,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
+    void print(void);
   };
 
   /**
@@ -209,6 +212,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
+    void print(void);
   };
 
 }}}
