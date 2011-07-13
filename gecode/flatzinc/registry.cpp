@@ -1128,17 +1128,9 @@ namespace Gecode { namespace FlatZinc {
         // Unary
         if (duration.assigned()) {
           IntArgs durationI(n);
-          bool allone = true;
-          for (int i=n; i--;) {
+          for (int i=n; i--;)
             durationI[i] = duration[i].val();
-            if (durationI[i] != 1)
-              allone = false;
-          }
-          if (allone) {
-            distinct(s,start,ann2icl(ann));
-          } else {
-            unary(s,start,durationI);
-          }
+          unary(s,start,durationI);
         } else {
           IntVarArgs end(n);
           for (int i=n; i--;)
