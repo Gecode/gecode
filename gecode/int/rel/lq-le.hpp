@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, int o>
   PropCost
-  NaryLqLe<View,o>::cost(const Space&, const ModEventDelta& med) const {
+  NaryLqLe<View,o>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::HI);
   }
 
@@ -368,7 +368,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, int o>
   ExecStatus
-  NaryLqLe<View,o>::propagate(Space& home, const ModEventDelta& med) {
+  NaryLqLe<View,o>::propagate(Space& home, const ModEventDelta&) {
     run = true;
     int n = x.size();
     while (!empty()) {
