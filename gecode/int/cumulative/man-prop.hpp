@@ -106,6 +106,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if (subsumed)
       return home.ES_SUBSUMED(*this);
     if (Cap::varderived() && c.assigned() && c.val()==1) {
+      // Check that tasks do not overload resource
+      for (int i=t.size(); i--; )
+        if (t[i].c() > 1)
+          return ES_FAILED;
+      // Rewrite to unary resource constraint
       TaskArray<typename TaskTraits<ManTask>::UnaryTask> ut(home,t.size());
       for (int i=t.size(); i--;)
         ut[i]=t[i];

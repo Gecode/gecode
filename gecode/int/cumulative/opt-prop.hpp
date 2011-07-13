@@ -150,11 +150,16 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
 
     if (Cap::varderived() && c.assigned() && c.val()==1) {
+      // Check that tasks do not overload resource
+      for (int i=t.size(); i--; )
+        if (t[i].c() > 1)
+          GECODE_ME_CHECK(t[i].excluded(home));
+      // Rewrite to unary resource constraint
       TaskArray<typename TaskTraits<OptTask>::UnaryTask> ut(home,t.size());
       for (int i=t.size(); i--;)
         ut[i]=t[i];
       GECODE_REWRITE(*this,
-        (Unary::ManProp<typename TaskTraits<OptTask>::UnaryTask>
+        (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask>
           ::post(home(*this),ut)));
     } else {
       return ES_NOFIX;
