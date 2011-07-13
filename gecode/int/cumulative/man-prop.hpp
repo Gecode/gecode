@@ -65,6 +65,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_FAILED;
     if (t.size() == 1)
       GECODE_ME_CHECK(c.gq(home, t[0].c()));
+    if (c.assigned() && c.val()==1) {
+      TaskArray<typename TaskTraits<ManTask>::UnaryTask> mt(home,t.size());
+      for (int i=t.size(); i--; )
+        mt[i]=t[i];
+      return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask>
+        ::post(home,mt);
+    }
     if (t.size() > 1)
       (void) new (home) ManProp<ManTask,Cap>(home,c,t);
     return ES_OK;
@@ -91,7 +98,21 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
     GECODE_ES_CHECK(edgefinding(home,c.max(),t));
-    return basic(home,*this,c,t);
+    bool subsumed;
+    ExecStatus es = basic(home,subsumed,c,t);
+    GECODE_ES_CHECK(es);
+    if (subsumed)
+      return home.ES_SUBSUMED(*this);
+    if (Cap::varderived() && c.assigned() && c.val()==1) {
+      TaskArray<typename TaskTraits<ManTask>::UnaryTask> ut(home,t.size());
+      for (int i=t.size(); i--;)
+        ut[i]=t[i];
+      GECODE_REWRITE(*this,
+        (Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask>
+          ::post(home(*this),ut)));
+    } else {
+      return es;
+    }
   }
 
 }}}

@@ -177,6 +177,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   OptFixPTask::init(IntVar s, int p, int c, BoolVar m) {
     ManFixPTask::init(s,p,c); _m=m;
   }
+  forceinline
+  OptFixPTask::operator Unary::OptFixPTask (void) {
+    return Unary::OptFixPTask(_s,_p,_m);
+  }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
@@ -202,6 +206,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   OptFixPSETask::init(TaskType t, IntVar s, int p, int c, BoolVar m) {
     ManFixPSETask::init(t,s,p,c); _m=m;
   }
+  forceinline
+  OptFixPSETask::operator Unary::OptFixPSETask (void) {
+    return Unary::OptFixPSETask(_t,_s,_p,_m);
+  }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
@@ -226,6 +234,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   OptFlexTask::init(IntVar s, IntVar p, IntVar e, int c, BoolVar m) {
     ManFlexTask::init(s,p,e,c); _m=m;
+  }
+  forceinline
+  OptFlexTask::operator Unary::OptFlexTask (void) {
+    return Unary::OptFlexTask(_s,_p,_e,_m);
   }
 
   template<class Char, class Traits>

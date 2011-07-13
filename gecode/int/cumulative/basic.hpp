@@ -90,7 +90,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
   // Basic propagation
   template<class Task, class Cap>
   ExecStatus
-  basic(Space& home, Propagator& p, Cap c, TaskArray<Task>& t) {
+  basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t) {
+    subsumed = false;
     int ccur = c.max();
     int cmax = ccur;
     int cmin = ccur;
@@ -132,7 +133,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
       
       // Check whether no task has a required part
       if (!required) {
-        return assigned ? home.ES_SUBSUMED(p) : ES_FIX;
+        subsumed = assigned;
+        return ES_FIX;
       }
       
       // Write end marker
@@ -200,7 +202,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     GECODE_ME_CHECK(c.gq(home,cmax-cmin));
 
-    return assigned ? home.ES_SUBSUMED(p) : ES_NOFIX;
+    subsumed = assigned;
+    return ES_NOFIX;
   }
 
 }}}

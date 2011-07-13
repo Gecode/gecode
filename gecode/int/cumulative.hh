@@ -211,6 +211,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
     void init(IntVar s, int p, int c, BoolVar m);
     //@}
+    /// Cast to corresponding unary task
+    operator Unary::OptFixPTask (void);
   };
 
   /**
@@ -235,6 +237,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Initialize with start time \a s, processing time \a p, required capacity \a c, and mandatory flag \a m
     void init(TaskType t, IntVar s, int p, int c, BoolVar m);
     //@}
+    /// Cast to corresponding unary task
+    operator Unary::OptFixPSETask (void);
   };
 
   /**
@@ -259,6 +263,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Initialize with start time \a s, processing time \a p, end time \a e, and mandatory flag \a m
     void init(IntVar s, IntVar p, IntVar e, int c, BoolVar m);
     //@}
+    /// Cast to corresponding unary task
+    operator Unary::OptFlexTask (void);
   };
 
   /**
@@ -455,6 +461,8 @@ namespace Gecode { namespace Int {
     typedef Cumulative::ManFixPTaskFwd TaskViewFwd;
     /// The backward task view type
     typedef Cumulative::ManFixPTaskBwd TaskViewBwd;
+    /// The corresponding unary task type
+    typedef Unary::ManFixPTask UnaryTask;
   };
 
   /// Task traits for mandatory fixed tasks
@@ -465,6 +473,8 @@ namespace Gecode { namespace Int {
     typedef Cumulative::ManFixPSETaskFwd TaskViewFwd;
     /// The backward task view type
     typedef Cumulative::ManFixPSETaskBwd TaskViewBwd;
+    /// The corresponding unary task type
+    typedef Unary::ManFixPSETask UnaryTask;
   };
 
   /// Task traits for optional fixed tasks
@@ -477,6 +487,8 @@ namespace Gecode { namespace Int {
     typedef Cumulative::OptFixPTaskBwd TaskViewBwd;
     /// The corresponding mandatory task
     typedef Cumulative::ManFixPTask ManTask;
+    /// The corresponding unary task type
+    typedef Unary::OptFixPTask UnaryTask;
   };
 
   /// Task traits for optional fixed tasks
@@ -489,6 +501,8 @@ namespace Gecode { namespace Int {
     typedef Cumulative::OptFixPSETaskBwd TaskViewBwd;
     /// The corresponding mandatory task
     typedef Cumulative::ManFixPSETask ManTask;
+    /// The corresponding unary task type
+    typedef Unary::OptFixPSETask UnaryTask;
   };
 
   /// Task traits for mandatory flexible tasks
@@ -499,6 +513,8 @@ namespace Gecode { namespace Int {
     typedef Cumulative::ManFlexTaskFwd TaskViewFwd;
     /// The backward task view type
     typedef Cumulative::ManFlexTaskBwd TaskViewBwd;
+    /// The corresponding unary task type
+    typedef Unary::ManFlexTask UnaryTask;
   };
 
   /// Task traits for optional flexible tasks
@@ -511,6 +527,8 @@ namespace Gecode { namespace Int {
     typedef Cumulative::OptFlexTaskBwd TaskViewBwd;
     /// The corresponding mandatory task
     typedef Cumulative::ManFlexTask ManTask;
+    /// The corresponding unary task type
+    typedef Unary::OptFlexTask UnaryTask;
   };
 
 }}
@@ -650,7 +668,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   /// Perform basic propagation
   template<class Task, class Cap>
-  ExecStatus basic(Space& home, Propagator& p, Cap c, TaskArray<Task>& t);
+  ExecStatus basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t);
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>

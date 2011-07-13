@@ -84,6 +84,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_OK;
       }
     }
+    if (c.assigned() && c.val()==1) {
+      TaskArray<typename TaskTraits<OptTask>::UnaryTask> mt(home,t.size());
+      for (int i=t.size(); i--; )
+        mt[i]=t[i];
+      return Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask>
+        ::post(home,mt);
+    }
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
@@ -119,7 +126,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if (Int::IntView::me(med) != Int::ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
 
-    GECODE_ES_CHECK(basic(home,*this,c,t));
+    bool subsumed;
+    GECODE_ES_CHECK(basic(home,subsumed,c,t));
+    if (subsumed)
+      return home.ES_SUBSUMED(*this);
 
     // Partition into mandatory and optional activities
     int n = t.size();
@@ -139,7 +149,16 @@ namespace Gecode { namespace Int { namespace Cumulative {
       t.size(n);
     }
 
-    return ES_NOFIX;
+    if (Cap::varderived() && c.assigned() && c.val()==1) {
+      TaskArray<typename TaskTraits<OptTask>::UnaryTask> ut(home,t.size());
+      for (int i=t.size(); i--;)
+        ut[i]=t[i];
+      GECODE_REWRITE(*this,
+        (Unary::ManProp<typename TaskTraits<OptTask>::UnaryTask>
+          ::post(home(*this),ut)));
+    } else {
+      return ES_NOFIX;
+    }
   }
 
 }}}
