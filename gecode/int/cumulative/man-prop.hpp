@@ -75,9 +75,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
       } else {
         (void) new (home) ManProp<ManTask,Cap>(home,c,t);
       }
-    } else {
-      return ES_OK;
     }
+    return ES_OK;
   }
 
   template<class ManTask, class Cap>
