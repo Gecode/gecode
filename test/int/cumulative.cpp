@@ -496,7 +496,7 @@ namespace Test { namespace Int {
         IntArgs u2(4, 2,2,2,2);
         IntArgs u3(4, 2,3,4,5);
 
-        for (int c=0; c<8; c++) {
+        for (int c=-7; c<8; c++) {
           int off = 0;
           for (int coff=0; coff<2; coff++) {
             (void) new ManFixPCumulative(c,p1,u1,off);
@@ -512,21 +512,6 @@ namespace Test { namespace Int {
             (void) new ManFixPCumulative(c,p4,u2,off);
             (void) new ManFixPCumulative(c,p4,u3,off);
 
-            if (c>0) {
-              (void) new ManFixPCumulative(-c,p1,u1,off);
-              (void) new ManFixPCumulative(-c,p1,u2,off);
-              (void) new ManFixPCumulative(-c,p1,u3,off);
-              (void) new ManFixPCumulative(-c,p2,u1,off);
-              (void) new ManFixPCumulative(-c,p2,u2,off);
-              (void) new ManFixPCumulative(-c,p2,u3,off);
-              (void) new ManFixPCumulative(-c,p3,u1,off);
-              (void) new ManFixPCumulative(-c,p3,u2,off);
-              (void) new ManFixPCumulative(-c,p3,u3,off);
-              (void) new ManFixPCumulative(-c,p4,u1,off);
-              (void) new ManFixPCumulative(-c,p4,u2,off);
-              (void) new ManFixPCumulative(-c,p4,u3,off);
-            }
-
             (void) new ManFlexCumulative(c,0,1,u1,off);
             (void) new ManFlexCumulative(c,0,1,u2,off);
             (void) new ManFlexCumulative(c,0,1,u3,off);
@@ -536,18 +521,6 @@ namespace Test { namespace Int {
             (void) new ManFlexCumulative(c,3,5,u1,off);
             (void) new ManFlexCumulative(c,3,5,u2,off);
             (void) new ManFlexCumulative(c,3,5,u3,off);
-
-            if (c>0) {
-              (void) new ManFlexCumulative(-c,0,1,u1,off);
-              (void) new ManFlexCumulative(-c,0,1,u2,off);
-              (void) new ManFlexCumulative(-c,0,1,u3,off);
-              (void) new ManFlexCumulative(-c,0,2,u1,off);
-              (void) new ManFlexCumulative(-c,0,2,u2,off);
-              (void) new ManFlexCumulative(-c,0,2,u3,off);
-              (void) new ManFlexCumulative(-c,3,5,u1,off);
-              (void) new ManFlexCumulative(-c,3,5,u2,off);
-              (void) new ManFlexCumulative(-c,3,5,u3,off);
-            }
 
             (void) new OptFixPCumulative(c,p1,u1,off);
             (void) new OptFixPCumulative(c,p1,u2,off);
@@ -562,21 +535,6 @@ namespace Test { namespace Int {
             (void) new OptFixPCumulative(c,p4,u2,off);
             (void) new OptFixPCumulative(c,p4,u3,off);
 
-            if (c>0) {
-              (void) new OptFixPCumulative(-c,p1,u1,off);
-              (void) new OptFixPCumulative(-c,p1,u2,off);
-              (void) new OptFixPCumulative(-c,p1,u3,off);
-              (void) new OptFixPCumulative(-c,p2,u1,off);
-              (void) new OptFixPCumulative(-c,p2,u2,off);
-              (void) new OptFixPCumulative(-c,p2,u3,off);
-              (void) new OptFixPCumulative(-c,p3,u1,off);
-              (void) new OptFixPCumulative(-c,p3,u2,off);
-              (void) new OptFixPCumulative(-c,p3,u3,off);
-              (void) new OptFixPCumulative(-c,p4,u1,off);
-              (void) new OptFixPCumulative(-c,p4,u2,off);
-              (void) new OptFixPCumulative(-c,p4,u3,off);
-            }
-            
             (void) new OptFlexCumulative(c,0,1,u1,off);
             (void) new OptFlexCumulative(c,0,1,u2,off);
             (void) new OptFlexCumulative(c,0,1,u3,off);
@@ -586,18 +544,6 @@ namespace Test { namespace Int {
             (void) new OptFlexCumulative(c,3,5,u1,off);
             (void) new OptFlexCumulative(c,3,5,u2,off);
             (void) new OptFlexCumulative(c,3,5,u3,off);
-
-            if (c>0) {
-              (void) new OptFlexCumulative(-c,0,1,u1,off);
-              (void) new OptFlexCumulative(-c,0,1,u2,off);
-              (void) new OptFlexCumulative(-c,0,1,u3,off);
-              (void) new OptFlexCumulative(-c,0,2,u1,off);
-              (void) new OptFlexCumulative(-c,0,2,u2,off);
-              (void) new OptFlexCumulative(-c,0,2,u3,off);
-              (void) new OptFlexCumulative(-c,3,5,u1,off);
-              (void) new OptFlexCumulative(-c,3,5,u2,off);
-              (void) new OptFlexCumulative(-c,3,5,u3,off);
-            }
 
             off = Gecode::Int::Limits::min;
           }
