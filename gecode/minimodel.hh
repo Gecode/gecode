@@ -966,6 +966,7 @@ namespace Gecode {
       NT_RSET, ///< Reified set relation
       NT_MISC  ///< Other Boolean expression
     };
+    /// Miscealloneous Boolean expressions
     class MiscExpr {
     public:
       /** Constrain \a b to be equivalent to the expression

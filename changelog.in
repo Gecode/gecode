@@ -122,7 +122,7 @@ Added native support for the precedence constraint.
 [ENTRY]
 Module: set
 What:   new
-Rank:   major
+Rank:	major
 Author:	Christopher Mears
 [DESCRIPTION]
 Added value precedence constraint.
@@ -130,7 +130,7 @@ Added value precedence constraint.
 [ENTRY]
 Module: int
 What:   new
-Rank:   major
+Rank:	major
 Author:	Christopher Mears
 [DESCRIPTION]
 Added value precedence constraint.
@@ -273,7 +273,7 @@ Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed memory leak when passing failed space to search engine with cloning 
+Fixed memory leak when passing a failed space to a search engine with cloning 
 option set to false.
 
 [ENTRY]

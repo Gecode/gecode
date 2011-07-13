@@ -146,6 +146,7 @@ namespace Gecode { namespace Int { namespace Unary {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFixPTask& t);
 
+  /// %Unary (mandatory) task with fixed processing, start or end time
   class ManFixPSETask : public ManFixPTask {
   protected:
     /// Task type
