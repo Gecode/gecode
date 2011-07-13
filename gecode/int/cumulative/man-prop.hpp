@@ -65,16 +65,19 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_FAILED;
     if (t.size() == 1)
       GECODE_ME_CHECK(c.gq(home, t[0].c()));
-    if (c.assigned() && c.val()==1) {
-      TaskArray<typename TaskTraits<ManTask>::UnaryTask> mt(home,t.size());
-      for (int i=t.size(); i--; )
-        mt[i]=t[i];
-      return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask>
-        ::post(home,mt);
+    if (t.size() > 1) {
+      if (c.assigned() && c.val()==1) {
+        TaskArray<typename TaskTraits<ManTask>::UnaryTask> mt(home,t.size());
+        for (int i=t.size(); i--; )
+          mt[i]=t[i];
+        return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask>
+          ::post(home,mt);
+      } else {
+        (void) new (home) ManProp<ManTask,Cap>(home,c,t);
+      }
+    } else {
+      return ES_OK;
     }
-    if (t.size() > 1)
-      (void) new (home) ManProp<ManTask,Cap>(home,c,t);
-    return ES_OK;
   }
 
   template<class ManTask, class Cap>
