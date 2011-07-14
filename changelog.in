@@ -68,7 +68,7 @@
 
 [RELEASE]
 Version: 3.6.0
-Date: 2011-07-18
+Date: 2011-07-15
 [DESCRIPTION]
 This release adds new constraints (value precedence constraints
 for integer and set variables, no-overlap constraints for
