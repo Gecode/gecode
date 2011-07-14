@@ -78,7 +78,7 @@ channeling, relation, bin-packing, lexicographic relations), and
 adds new functionality (support for externalization of choices
 for distributed search, support for incremental propagation).
 
-Same models might have to be changed as the graph and scheduling
+Some models might have to be changed as the graph and scheduling
 modules have been incorporated into the integer module (removing
 the respective include directives is sufficient).
 
