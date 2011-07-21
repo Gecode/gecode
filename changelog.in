@@ -67,6 +67,20 @@
 #
 
 [RELEASE]
+Version: 3.6.1
+Date: ?
+[DESCRIPTION]
+Bugfixes
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The set_in and set_in_reif constraints now work for constant sets
+even when Gecode is compiled without support for set variables.
+
+[RELEASE]
 Version: 3.6.0
 Date: 2011-07-15
 [DESCRIPTION]
