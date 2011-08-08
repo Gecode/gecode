@@ -300,16 +300,16 @@ namespace Gecode { namespace Set { namespace RelOp {
           xLBs[i]=lb;
           xUBs[i]=ub;
         }
-        Iter::Ranges::NaryInter<GlbRanges<View0> > lbi(xLBs,xsize);
+        Iter::Ranges::NaryInter lbi(r,xLBs,xsize);
         BndSetRanges dets1(intOfDets);
-        Iter::Ranges::Inter< Iter::Ranges::NaryInter<GlbRanges<View0> >,
+        Iter::Ranges::Inter< Iter::Ranges::NaryInter,
           BndSetRanges >
           lbiAll(lbi,dets1);
         GECODE_ME_CHECK( y.includeI(home,lbiAll) );
 
-        Iter::Ranges::NaryInter<LubRanges<View0> > ubi(xUBs,xsize);
+        Iter::Ranges::NaryInter ubi(r,xUBs,xsize);
         BndSetRanges dets2(intOfDets);
-        Iter::Ranges::Inter< Iter::Ranges::NaryInter<LubRanges<View0> >,
+        Iter::Ranges::Inter< Iter::Ranges::NaryInter,
           BndSetRanges >
           ubiAll(ubi,dets2);
         GECODE_ME_CHECK( y.intersectI(home,ubiAll) );

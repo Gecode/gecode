@@ -65,9 +65,9 @@ namespace Gecode { namespace Set { namespace Distinct {
     for (int i = x.size(); i--; ) {
       lubs[i].init(x[i]);
     }
-    Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT(r, lubs, x.size());
+    Iter::Ranges::NaryUnion bigT(r, lubs, x.size());
 
-    Iter::Ranges::ToValues<Iter::Ranges::NaryUnion<LubRanges<SetView> > >
+    Iter::Ranges::ToValues<Iter::Ranges::NaryUnion>
       as(bigT);
 
     while (as()) {
@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Distinct {
         for (int i = x.size(); i--; ) {
           lubs2[i].init(x[i]);
         }
-        Iter::Ranges::NaryUnion<LubRanges<SetView> > bigT2(r, lubs2, x.size());
+        Iter::Ranges::NaryUnion bigT2(r, lubs2, x.size());
 
         GlbRanges<SetView>* glbs = r.alloc<GlbRanges<SetView> >(cardSa);
         int count = 0;
@@ -121,12 +121,10 @@ namespace Gecode { namespace Set { namespace Distinct {
             count++;
           }
         }
-        Iter::Ranges::NaryUnion<GlbRanges<SetView> > glbsa(r, glbs, cardSa);
-        Iter::Ranges::Diff<Iter::Ranges::NaryUnion<LubRanges<SetView> >,
-          Iter::Ranges::NaryUnion<GlbRanges<SetView> > > deltaA(bigT2, glbsa);
-        Iter::Ranges::Cache<
-        Iter::Ranges::Diff<Iter::Ranges::NaryUnion<LubRanges<SetView> >,
-          Iter::Ranges::NaryUnion<GlbRanges<SetView> > > > deltaAC(r,deltaA);
+        Iter::Ranges::NaryUnion glbsa(r, glbs, cardSa);
+        Iter::Ranges::Diff<Iter::Ranges::NaryUnion,
+          Iter::Ranges::NaryUnion> deltaA(bigT2, glbsa);
+        Iter::Ranges::Cache deltaAC(r,deltaA);
         // deltaAC contains all elements that are not yet known to be
         // in a set together with a.
         // Formally: \cup_i lub(x_i) - \cup_i {glb(s_i) | a\in glb(s_i)}

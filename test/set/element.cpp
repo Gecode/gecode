@@ -83,7 +83,7 @@ namespace Test { namespace Set {
         bool ret;
         {
           Region r(*fs);
-          Iter::Ranges::NaryUnion<CountableSetRanges> u(r, sel, selected);
+          Iter::Ranges::NaryUnion u(r, sel, selected);
           
           CountableSetRanges z(x.lub, x[4]);
           ret = Iter::Ranges::equal(u, z);
@@ -135,7 +135,7 @@ namespace Test { namespace Set {
         bool ret;
         {
           Region r(*fs);
-          Iter::Ranges::NaryUnion<IntSetRanges> u(r, sel, selected);
+          Iter::Ranges::NaryUnion u(r, sel, selected);
 
           CountableSetRanges z(x.lub, x[1]);
           ret = Iter::Ranges::equal(u, z);
@@ -176,11 +176,17 @@ namespace Test { namespace Set {
           }
           sel[i].init(x.lub, x[selector.val()]);
         }
-        Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
+        FakeSpace* fs = new FakeSpace;
+        bool ret;
+        {
+          Region r(*fs);
+          Iter::Ranges::NaryInter u(r, sel, selected);
 
-        CountableSetRanges z(x.lub, x[4]);
-        bool ret = Iter::Ranges::equal(u, z);
-        delete[] sel;
+          CountableSetRanges z(x.lub, x[4]);
+          ret = Iter::Ranges::equal(u, z);
+        }
+        delete fs;
+        delete [] sel;
         return ret;
       }
       /// Post constraint on \a x
@@ -216,11 +222,17 @@ namespace Test { namespace Set {
           }
           sel[i].init(x.lub, x[selector.val()]);
         }
-        Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
-
-        CountableSetRanges z(x.lub, x[4]);
-        bool ret = Iter::Ranges::equal(u, z);
-        delete[] sel;
+        FakeSpace* fs = new FakeSpace;
+        bool ret;
+        {
+          Region r(*fs);
+          Iter::Ranges::NaryInter u(r,sel, selected);
+          
+          CountableSetRanges z(x.lub, x[4]);
+          ret = Iter::Ranges::equal(u, z);
+        }
+        delete fs;
+        delete [] sel;
         return ret;
       }
       /// Post constraint on \a x
@@ -268,7 +280,7 @@ namespace Test { namespace Set {
         FakeSpace* fs = new FakeSpace;
         {
           Region r(*fs);
-          Iter::Ranges::NaryUnion<CountableSetRanges> u(r, sel, selected);
+          Iter::Ranges::NaryUnion u(r, sel, selected);
           ret = Iter::Ranges::size(u) == cardsum;
           u.reset();
           CountableSetRanges z(x.lub, x[4]);

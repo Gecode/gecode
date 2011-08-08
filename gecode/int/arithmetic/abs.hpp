@@ -197,10 +197,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Positive<ViewRanges<View> > p(i);
       Negative<ViewRanges<View> > n(j);
 
-      Minus<Negative<ViewRanges<View> > > m(r,n);
+      Minus m(r,n);
 
-      Union<Positive<ViewRanges<View> >,
-        Minus<Negative<ViewRanges<View> > > > u(p,m);
+      Union<Positive<ViewRanges<View> >,Minus> u(p,m);
 
       GECODE_ME_CHECK(x1.inter_r(home,u,false));
 
@@ -210,9 +209,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ViewRanges<View> i(x1), j(x1);
 
       using namespace Iter::Ranges;
-      Minus<ViewRanges<View> > m(r,j);
+      Minus m(r,j);
 
-      Union<ViewRanges<View>,Minus<ViewRanges<View> > > u(i,m);
+      Union<ViewRanges<View>,Minus> u(i,m);
 
       GECODE_ME_CHECK(x0.inter_r(home,u,false));
     }

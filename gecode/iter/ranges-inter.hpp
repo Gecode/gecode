@@ -71,34 +71,46 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
   /**
-   * \brief Range iterator for intersection for any number of iterators
+   * \brief Range iterator for intersection of iterators
    *
    * \ingroup FuncIterRanges
    */
-  template<class I>
-  class NaryInter : public MinMax {
+  class NaryInter : public RangeListIter {
   protected:
-    /// Array of iterators
-    I* is;
-    /// Number of iterators
-    int n;
+    /// Insert ranges from \a i into \a u
+    template<class I>
+    void insert(I& i, RangeList*& u);
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     NaryInter(void);
+    /// Initialize with single iterator \a i
+    template<class I>
+    NaryInter(Region& r, I& i);
+    /// Initialize with iterators \a i and \a j
+    template<class I, class J>
+    NaryInter(Region& r, I& i, J& j);
     /// Initialize with \a n iterators in \a i
-    NaryInter(I* i, int n);
+    template<class I>
+    NaryInter(Region& r, I* i, int n);
+    /// Initialize with single iterator \a i
+    template<class I>
+    void init(Region& r, I& i);
+    /// Initialize with iterators \a i and \a j
+    template<class I, class J>
+    void init(Region& r, I& i, J& j);
     /// Initialize with \a n iterators in \a i
-    void init(I* i, int n);
-    //@}
-
-    /// \name Iteration control
-    //@{
-    /// Move iterator to next range (if possible)
-    void operator ++(void);
+    template<class I>
+    void init(Region& r, I* i, int n);
+    /// Add iterator \a i
+    template<class I>
+    void operator &=(I& i);
+    /// Assignment operator
+    NaryInter& operator =(const NaryInter& m);
     //@}
   };
+
 
 
   /*
@@ -150,64 +162,116 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
 
   template<class I>
-  inline void
-  NaryInter<I>::operator ++(void) {
-    // The next interval to be returned must have a hole
-    // between it and the previously returned range.
-    mi = ma+2;
-    ma = is[0].max();
-    // Intersect with all other intervals
-  restart:
-    for (int i = n; i--;) {
-      // Skip intervals that are too small
-      while (is[i]() && (is[i].max() < mi))
-        ++is[i];
-      if (!is[i]())
-        goto done;
+  void
+  NaryInter::insert(I& i, RangeList*& u) {
+    // The current rangelist
+    RangeList** c = &u;
+  }
 
-      if (is[i].min() > ma) {
-        mi=is[i].min();
-        ma=is[i].max();
-        goto restart;
-      }
-      // Now the intervals overlap
-      if (mi < is[i].min())
-        mi = is[i].min();
-      if (ma > is[i].max()) {
-        ma = is[i].max();
-      }
+
+  forceinline
+  NaryInter::NaryInter(void) {}
+
+  template<class I>
+  forceinline void
+  NaryInter::init(Region& r, I& i) {
+    RangeListIter::init(r);
+    set(copy(i));
+  }
+
+  template<class I, class J>
+  forceinline void
+  NaryInter::init(Region& r, I& i, J& j) {
+    RangeListIter::init(r);
+    RangeList*  h;
+    RangeList** c = &h;
+    while (i() && j()) {
+      do {
+        while (i() && (i.max() < j.min())) ++i;
+        if (!i()) goto done;
+        while (j() && (j.max() < i.min())) ++j;
+        if (!j()) goto done;
+      } while (i.max() < j.min());
+      // Now the intervals overlap: consume the smaller interval
+      RangeList* t = range(std::max(i.min(),j.min()),
+                           std::min(i.max(),j.max()));
+      *c = t; c = &t->next;
+      if (i.max() < j.max()) ++i; else ++j;
     }
-    return;
   done:
-    finish();
+    *c = NULL;
+    set(h);
+  }
+
+  template<class I>
+  forceinline void
+  NaryInter::init(Region& r, I* i, int n) {
+    RangeListIter::init(r);
+    if ((n > 0) && i[0]()) {
+      RangeList*  h;
+      RangeList** c = &h;
+
+      int min = i[0].min();
+      while (i[0]()) {
+        // Initialize with last interval
+        int max = i[0].max();
+        // Intersect with all other intervals
+      restart:
+        for (int j=n; j--;) {
+          // Skip intervals that are too small
+          while (i[j]() && (i[j].max() < min))
+            ++i[j];
+          if (!i[j]())
+            goto done;
+          if (i[j].min() > max) {
+            min=i[j].min();
+            max=i[j].max();
+            goto restart;
+          }
+          // Now the intervals overlap
+          if (min < i[j].min())
+            min = i[j].min();
+          if (max > i[j].max())
+            max = i[j].max();
+        }
+        RangeList* t = range(min,max);
+        *c = t; c = &t->next;
+        // The next interval must be at least two elements away
+        min = max + 2;
+      }
+    done:
+      *c = NULL;
+      set(h);
+    }
   }
 
   template<class I>
   forceinline
-  NaryInter<I>::NaryInter(void) {}
-
+  NaryInter::NaryInter(Region& r, I& i) {
+    init(r, i);
+  }
+  template<class I, class J>
+  forceinline
+  NaryInter::NaryInter(Region& r, I& i, J& j) {
+    init(r, i, j);
+  }
   template<class I>
-  inline
-  NaryInter<I>::NaryInter(I* is0, int n0)
-    : is(is0), n(n0) {
-    if (!is[0]()) {
-      finish();
-    } else {
-      ma=is[0].min()-2;
-      operator ++();
-    }
+  forceinline
+  NaryInter::NaryInter(Region& r, I* i, int n) {
+    init(r, i, n);
   }
 
   template<class I>
-  inline void
-  NaryInter<I>::init(I* is0, int n0) {
-    is = is0; n = n0;
-    if (!is[0]()) {
-      finish();
-    } else {
-      ma=is[0].min()-2;
-      operator ++();
-    }
+  forceinline void
+  NaryInter::operator &=(I& i) {
+    RangeList* u = get();
+    insert(i, u);
+    set(u);
+  }
+
+  forceinline NaryInter&
+  NaryInter::operator =(const NaryInter& m) {
+    return static_cast<NaryInter&>(RangeListIter::operator =(m));
   }
 
 }}}

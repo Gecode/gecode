@@ -546,7 +546,7 @@ namespace Gecode { namespace Int { namespace Element {
     ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
     for (int i = iv.size(); i--; )
       i_view[i].init(iv[i].view);
-    Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(r, i_view, iv.size());
+    Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
     ModEvent me = x1.inter_r(home,i_val);
     r.free<ViewRanges<VA> >(i_view,iv.size());
     GECODE_ME_CHECK(me);

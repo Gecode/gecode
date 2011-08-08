@@ -578,10 +578,10 @@ namespace Set { namespace RelOp {
       }
     }
     if (nonEmptyCounter !=0) {
-      Iter::Ranges::NaryUnion<GlbRanges<View0> >
+      Iter::Ranges::NaryUnion
         xLBUnion(r,xLBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
-      Iter::Ranges::Union<Iter::Ranges::NaryUnion<GlbRanges<View0> >,
+      Iter::Ranges::Union<Iter::Ranges::NaryUnion,
         BndSetRanges>
         allUnion(xLBUnion,dets);
       GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home,allUnion));
@@ -607,11 +607,10 @@ namespace Set { namespace RelOp {
       }
     }
     if (nonEmptyCounter !=0) {
-      Iter::Ranges::NaryUnion<LubRanges<View0> >
+      Iter::Ranges::NaryUnion
         xUBUnion(r,xUBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
-      Iter::Ranges::Union<Iter::Ranges::NaryUnion<LubRanges<View0> >,
-        BndSetRanges>
+      Iter::Ranges::Union<Iter::Ranges::NaryUnion,BndSetRanges>
         fullUnion(xUBUnion, dets);
       GECODE_ME_CHECK_MODIFIED(modified, y.intersectI(home,fullUnion));
     }

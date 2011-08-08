@@ -108,7 +108,7 @@ namespace Test { namespace Set {
         bool ret;
         {
           Region r(*fs);
-          Iter::Ranges::NaryUnion<CountableSetRanges> u(r, isrs, n);
+          Iter::Ranges::NaryUnion u(r, isrs, n);
           CountableSetRanges xnr(x.lub, x[n]);
           ret = Iter::Ranges::equal(u, xnr);
         }

@@ -48,7 +48,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template<class I>
   class Minus : public RangeListIter {
   public:
     /// \name Constructors and initialization
@@ -58,8 +57,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Copy constructor
     Minus(const Minus& m);
     /// Initialize with ranges from \a i
+    template<class I>
     Minus(Region& r, I& i);
     /// Initialize with ranges from \a i
+    template<class I>
     void init(Region& r, I& i);
     /// Assignment operator
     Minus& operator =(const Minus& m);
@@ -67,18 +68,16 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template<class I>
   forceinline
-  Minus<I>::Minus(void) {}
+  Minus::Minus(void) {}
 
-  template<class I>
   forceinline
-  Minus<I>::Minus(const Minus& m) 
+  Minus::Minus(const Minus& m) 
     : RangeListIter(m) {}
 
   template<class I>
   void
-  Minus<I>::init(Region& r, I& i) {
+  Minus::init(Region& r, I& i) {
     RangeListIter::init(r);
     RangeList* p = NULL;
     for (; i(); ++i) {
@@ -93,13 +92,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<class I>
   forceinline
-  Minus<I>::Minus(Region& r, I& i) {
+  Minus::Minus(Region& r, I& i) {
     init(r,i);
   }
 
-  template<class I>
-  forceinline Minus<I>&
-  Minus<I>::operator =(const Minus<I>& m) {
+  forceinline Minus&
+  Minus::operator =(const Minus& m) {
     return static_cast<Minus&>(RangeListIter::operator =(m));
   }
 

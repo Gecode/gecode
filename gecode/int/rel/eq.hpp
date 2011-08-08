@@ -309,23 +309,21 @@ namespace Gecode { namespace Int { namespace Rel {
       ViewRanges<View> i_xi(x[i]);
       i_x[i] = i_xi;
     }
-    Iter::Ranges::NaryInter<ViewRanges<View> > r(i_x,n);
-    Iter::Ranges::Cache<Iter::Ranges::NaryInter<ViewRanges<View> > > 
-      rc(re,r);
+    Iter::Ranges::NaryInter r(re,i_x,n);
 
-    if (!rc())
+    if (!r())
       return ES_FAILED;
-    ++rc;
-    if (!rc()) {
-      rc.reset();
+    ++r;
+    if (!r()) {
+      r.reset();
       for (int i = n; i--; ) {
-        GECODE_ME_CHECK(x[i].gq(home,rc.min()));
-        GECODE_ME_CHECK(x[i].lq(home,rc.max()));
+        GECODE_ME_CHECK(x[i].gq(home,r.min()));
+        GECODE_ME_CHECK(x[i].lq(home,r.max()));
       }
     } else {
       for (int i = n; i--; ) {
-        rc.reset();
-        GECODE_ME_CHECK(x[i].narrow_r(home,rc,false));
+        r.reset();
+        GECODE_ME_CHECK(x[i].narrow_r(home,r,false));
       }
     }
     return ES_FIX;

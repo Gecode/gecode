@@ -120,13 +120,13 @@ namespace Gecode { namespace Set { namespace Element {
       // Cache the upper bound iterator, as we have to
       // modify the upper bound while iterating
       LubRanges<RView> x1ub(x1);
-      Iter::Ranges::Cache<LubRanges<RView> > x1ubc(r,x1ub);
-      Iter::Ranges::ToValues<Iter::Ranges::Cache<LubRanges<RView> > >
+      Iter::Ranges::Cache x1ubc(r,x1ub);
+      Iter::Ranges::ToValues<Iter::Ranges::Cache>
         vx1ub(x1ubc);
 
       GlbRanges<RView> x1lb(x1);
-      Iter::Ranges::Cache<GlbRanges<RView> > x1lbc(r,x1lb);
-      Iter::Ranges::ToValues<Iter::Ranges::Cache<GlbRanges<RView> > >
+      Iter::Ranges::Cache x1lbc(r,x1lb);
+      Iter::Ranges::ToValues<Iter::Ranges::Cache>
         vx1(x1lbc);
 
       // In the first iteration, compute in before[i] the intersection

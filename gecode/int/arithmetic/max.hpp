@@ -379,7 +379,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     for (int i = x.size(); i--; ) {
       ViewRanges<View> i_xi(x[i]); i_x[i]=i_xi;
     }
-    Iter::Ranges::NaryUnion<ViewRanges<View> > u(r, i_x, x.size());
+    Iter::Ranges::NaryUnion u(r, i_x, x.size());
     GECODE_ME_CHECK(y.inter_r(home,u,false));
     for (int i = x.size(); i--; )
       if (rtest_nq_dom(x[i],y) == RT_TRUE) {

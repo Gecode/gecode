@@ -46,7 +46,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * \ingroup FuncIterRanges
    */
-  template<class I>
   class Cache : public RangeListIter {
   public:
     /// \name Constructors and initialization
@@ -56,8 +55,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Copy constructor
     Cache(const Cache& m);
     /// Initialize with ranges from \a i
+    template<class I>
     Cache(Region& r, I& i);
     /// Initialize with ranges from \a i
+    template<class I>
     void init(Region& r, I& i);
     /// Assignment operator
     Cache& operator =(const Cache& m);
@@ -65,18 +66,16 @@ namespace Gecode { namespace Iter { namespace Ranges {
   };
 
 
-  template<class I>
   forceinline
-  Cache<I>::Cache(void) {}
+  Cache::Cache(void) {}
 
-  template<class I>
   forceinline
-  Cache<I>::Cache(const Cache& m) 
+  Cache::Cache(const Cache& m) 
     : RangeListIter(m) {}
 
   template<class I>
   void
-  Cache<I>::init(Region& r, I& i) {
+  Cache::init(Region& r, I& i) {
     RangeListIter::init(r);
     RangeList* h = NULL;
     RangeList** p = &h;
@@ -92,13 +91,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template<class I>
   forceinline
-  Cache<I>::Cache(Region& r, I& i) {
+  Cache::Cache(Region& r, I& i) {
     init(r,i);
   }
 
-  template<class I>
-  forceinline Cache<I>&
-  Cache<I>::operator =(const Cache<I>& m) {
+  forceinline Cache&
+  Cache::operator =(const Cache& m) {
     return static_cast<Cache&>(RangeListIter::operator =(m));
   }
 

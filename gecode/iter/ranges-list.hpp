@@ -68,6 +68,21 @@ namespace Gecode { namespace Iter { namespace Ranges {
     RangeList* c;
     /// Set range lists
     void set(RangeList* l);
+    /// Get head of current range list
+    RangeList* get(void) const;
+    /// Create new range possibly from freelist \a f and init
+    RangeList* range(int min, int max, RangeList*& f);
+    /// Create new range possibly and init
+    RangeList* range(int min, int max);
+    /// Create new range possibly from freelist \a f and init
+    template<class I>
+    RangeList* range(I& i, RangeList*& f);
+    /// Create new range possibly and init
+    template<class I>
+    RangeList* range(I& i);
+    /// Copy the iterator \a i to a range list
+    template<class I>
+    RangeList* copy(I& i);
   public:
     /// \name Constructors and initialization
     //@{
@@ -162,6 +177,56 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   RangeListIter::set(RangeList* l) {
     h = c = l;
+  }
+
+  forceinline RangeListIter::RangeList*
+  RangeListIter::get(void) const {
+    return h;
+  }
+
+  forceinline RangeListIter::RangeList*
+  RangeListIter::range(int min, int max, RangeList*& f) {
+    RangeList* t;
+    // Take element from freelist if possible
+    if (f != NULL) {
+      t = f; f = f->next;
+    } else {
+      t = new (*rlio) RangeList;
+    }
+    t->min = min; t->max = max;
+    return t;
+  }
+
+  forceinline RangeListIter::RangeList*
+  RangeListIter::range(int min, int max) {
+    RangeList* t = new (*rlio) RangeList;
+    t->min = min; t->max = max;
+    return t;
+  }
+
+  template<class I>
+  forceinline RangeListIter::RangeList*
+  RangeListIter::range(I& i, RangeList*& f) {
+    return range(i.min(),i.max(),f);
+  }
+
+  template<class I>
+  forceinline RangeListIter::RangeList*
+  RangeListIter::range(I& i) {
+    return range(i.min(),i.max());
+  }
+
+  template<class I>
+  inline RangeListIter::RangeList*
+  RangeListIter::copy(I& i) {
+    RangeList*  h;
+    RangeList** c = &h; 
+    for ( ; i(); ++i) {
+      RangeList* t = range(i);
+      *c = t; c = &t->next;
+    }
+    *c = NULL;
+    return h;
   }
 
   forceinline bool

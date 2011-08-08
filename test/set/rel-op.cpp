@@ -253,14 +253,14 @@ namespace Test { namespace Set {
             bool eq;
             if (withConst) {
               Region r(*fs);
-              Iter::Ranges::NaryUnion<CountableSetRanges> u(r, isrs, realN);
+              Iter::Ranges::NaryUnion u(r, isrs, realN);
               IntSetRanges isr(is);
               Iter::Ranges::Union<IntSetRanges,
-                Iter::Ranges::NaryUnion<CountableSetRanges> > uu(isr, u);
+                Iter::Ranges::NaryUnion> uu(isr, u);
               eq = Iter::Ranges::equal(uu, xnr);
             } else {
               Region r(*fs);
-              Iter::Ranges::NaryUnion<CountableSetRanges> u(r, isrs, realN);
+              Iter::Ranges::NaryUnion u(r, isrs, realN);
               eq = Iter::Ranges::equal(u, xnr);
             }
             delete[] isrs;
@@ -269,11 +269,13 @@ namespace Test { namespace Set {
           }
         case SOT_INTER:
           {
+            FakeSpace* fs = new FakeSpace;
             if (withConst) {
-              Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+              Region r(*fs);
+              Iter::Ranges::NaryInter u(r, isrs, realN);
               IntSetRanges isr(is);
               Iter::Ranges::Inter<IntSetRanges,
-                Iter::Ranges::NaryInter<CountableSetRanges> > uu(isr, u);
+                Iter::Ranges::NaryInter> uu(isr, u);
               bool eq = (realN == 0 ? Iter::Ranges::equal(isr, xnr) :
                                       Iter::Ranges::equal(uu, xnr));
               delete[] isrs;
@@ -285,12 +287,14 @@ namespace Test { namespace Set {
                 delete[] isrs;
                 return ret;
               } else {
-                Iter::Ranges::NaryInter<CountableSetRanges> u(isrs, realN);
+                Region r(*fs);
+                Iter::Ranges::NaryInter u(r,isrs, realN);
                 bool eq = Iter::Ranges::equal(u, xnr);
                 delete[] isrs;
                 return eq;
               }
             }
+            delete fs;
           }
         default:
           GECODE_NEVER;

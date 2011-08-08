@@ -919,11 +919,11 @@ namespace Gecode { namespace FlatZinc {
       IntVarRanges* iv0_ri = re.alloc<IntVarRanges>(iv0.size());
       for (int i=iv0.size(); i--;)
         iv0_ri[i] = IntVarRanges(iv0[i]);
-      Iter::Ranges::NaryUnion<IntVarRanges> iv0_r(re,iv0_ri,iv0.size());
-      Iter::Ranges::Diff<Iter::Ranges::NaryUnion<IntVarRanges>,IntSetRanges> 
+      Iter::Ranges::NaryUnion iv0_r(re,iv0_ri,iv0.size());
+      Iter::Ranges::Diff<Iter::Ranges::NaryUnion,IntSetRanges> 
         extra_r(iv0_r,cover_r);
       Iter::Ranges::ToValues<Iter::Ranges::Diff<
-        Iter::Ranges::NaryUnion<IntVarRanges>,IntSetRanges> > extra(extra_r);
+        Iter::Ranges::NaryUnion,IntSetRanges> > extra(extra_r);
       for (; extra(); ++extra) {
         cover << extra.val();
         iv1 << IntVar(s,0,iv0.size());
@@ -955,8 +955,8 @@ namespace Gecode { namespace FlatZinc {
       IntVarRanges* xrs = re.alloc<IntVarRanges>(x.size());
       for (int i=x.size(); i--;)
         xrs[i].init(x[i]);
-      Iter::Ranges::NaryUnion<IntVarRanges> u(re, xrs, x.size());
-      Iter::Ranges::ToValues<Iter::Ranges::NaryUnion<IntVarRanges> > uv(u);
+      Iter::Ranges::NaryUnion u(re, xrs, x.size());
+      Iter::Ranges::ToValues<Iter::Ranges::NaryUnion> uv(u);
       for (; uv(); ++uv) {
         if (!cover_s.in(uv.val())) {
           cover << uv.val();
