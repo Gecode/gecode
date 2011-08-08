@@ -263,38 +263,46 @@ namespace Test { namespace Set {
               Iter::Ranges::NaryUnion u(r, isrs, realN);
               eq = Iter::Ranges::equal(u, xnr);
             }
-            delete[] isrs;
+            delete [] isrs;
             delete fs;
             return eq;
           }
         case SOT_INTER:
           {
-            FakeSpace* fs = new FakeSpace;
             if (withConst) {
-              Region r(*fs);
-              Iter::Ranges::NaryInter u(r, isrs, realN);
-              IntSetRanges isr(is);
-              Iter::Ranges::Inter<IntSetRanges,
-                Iter::Ranges::NaryInter> uu(isr, u);
-              bool eq = (realN == 0 ? Iter::Ranges::equal(isr, xnr) :
-                                      Iter::Ranges::equal(uu, xnr));
-              delete[] isrs;
+              FakeSpace* fs = new FakeSpace;
+              bool eq;
+              {
+                Region r(*fs);
+                Iter::Ranges::NaryInter u(r, isrs, realN);
+                IntSetRanges isr(is);
+                Iter::Ranges::Inter<IntSetRanges,
+                  Iter::Ranges::NaryInter> uu(isr, u);
+                eq = (realN == 0 ? Iter::Ranges::equal(isr, xnr) :
+                           Iter::Ranges::equal(uu, xnr));
+                delete [] isrs;
+              }
+              delete fs;
               return eq;
             } else {
               if (realN == 0) {
                 bool ret =
                   Iter::Ranges::size(xnr) ==  Gecode::Set::Limits::card;
-                delete[] isrs;
+                delete [] isrs;
                 return ret;
               } else {
-                Region r(*fs);
-                Iter::Ranges::NaryInter u(r,isrs, realN);
-                bool eq = Iter::Ranges::equal(u, xnr);
-                delete[] isrs;
+                FakeSpace* fs = new FakeSpace;
+                bool eq;
+                {
+                  Region r(*fs);
+                  Iter::Ranges::NaryInter u(r,isrs, realN);
+                  eq = Iter::Ranges::equal(u, xnr);
+                }
+                delete [] isrs;
+                delete fs;
                 return eq;
               }
             }
-            delete fs;
           }
         default:
           GECODE_NEVER;
