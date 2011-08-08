@@ -73,6 +73,17 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: iter
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Cached iterators such as n-ary union and intersection, minus, and
+cache (of course) are not any longer template classes but take
+template constructors and member functions. N-ary union and
+intersection iterators can now also be initialized incrementaly
+with iterators of different types.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

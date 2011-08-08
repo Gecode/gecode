@@ -77,9 +77,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
    */
   class NaryInter : public RangeListIter {
   protected:
-    /// Insert ranges from \a i into \a u
-    template<class I>
-    void insert(I& i, RangeList*& u);
+    /// Freelist
+    RangeList* f;
   public:
     /// \name Constructors and initialization
     //@{
@@ -161,14 +160,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    */
 
-  template<class I>
-  void
-  NaryInter::insert(I& i, RangeList*& u) {
-    // The current rangelist
-    RangeList** c = &u;
-  }
-
-
   forceinline
   NaryInter::NaryInter(void) {}
 
@@ -176,6 +167,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryInter::init(Region& r, I& i) {
     RangeListIter::init(r);
+    f = NULL;
     set(copy(i));
   }
 
@@ -183,6 +175,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryInter::init(Region& r, I& i, J& j) {
     RangeListIter::init(r);
+    f = NULL;
     RangeList*  h;
     RangeList** c = &h;
     while (i() && j()) {
@@ -207,6 +200,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline void
   NaryInter::init(Region& r, I* i, int n) {
     RangeListIter::init(r);
+    f = NULL;
     if ((n > 0) && i[0]()) {
       RangeList*  h;
       RangeList** c = &h;
@@ -264,13 +258,48 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template<class I>
   forceinline void
   NaryInter::operator &=(I& i) {
-    RangeList* u = get();
-    insert(i, u);
-    set(u);
+    RangeList* j = get();
+    // The new rangelist
+    RangeList* h;
+    RangeList** c = &h;
+    while (i() && (j != NULL)) {
+      do {
+        while (i() && (i.max() < j->min))
+          ++i;
+        if (!i()) goto done;
+        while ((j != NULL) && (j->max < i.min())) {
+          RangeList* t = j->next;
+          j->next = f; f = j;
+          j = t;
+        }
+        if (j == NULL) goto done;
+      } while (i.max() < j->min);
+      // Now the intervals overlap: consume the smaller interval
+      RangeList* t = range(std::max(i.min(),j->min),
+                           std::min(i.max(),j->max),f);
+      *c = t; c = &t->next;
+      if (i.max() < j->max) {
+        ++i; 
+      } else {
+        RangeList* t = j->next;
+        j->next = f; f = j;
+        j = t;
+      }
+    }
+  done:
+    // Put remaining elements into freelist
+    while (j != NULL) {
+      RangeList* t = j->next;
+      j->next = f; f = j;
+      j = t;
+    }
+    *c = NULL;
+    set(h);
   }
 
   forceinline NaryInter&
   NaryInter::operator =(const NaryInter& m) {
+    f = NULL;
     return static_cast<NaryInter&>(RangeListIter::operator =(m));
   }
 

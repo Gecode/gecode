@@ -275,7 +275,6 @@ namespace Gecode { namespace Set { namespace RelOp {
   template<class View0, class View1>
   ExecStatus
   IntersectionN<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
     bool repeat = false;
     do {
       repeat = false;
@@ -292,6 +291,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       }
       {
+        Region r(home);
         GlbRanges<View0>* xLBs = r.alloc<GlbRanges<View0> >(xsize);
         LubRanges<View0>* xUBs = r.alloc<LubRanges<View0> >(xsize);
         for (int i = xsize; i--; ) {
@@ -300,19 +300,18 @@ namespace Gecode { namespace Set { namespace RelOp {
           xLBs[i]=lb;
           xUBs[i]=ub;
         }
-        Iter::Ranges::NaryInter lbi(r,xLBs,xsize);
-        BndSetRanges dets1(intOfDets);
-        Iter::Ranges::Inter< Iter::Ranges::NaryInter,
-          BndSetRanges >
-          lbiAll(lbi,dets1);
-        GECODE_ME_CHECK( y.includeI(home,lbiAll) );
-
-        Iter::Ranges::NaryInter ubi(r,xUBs,xsize);
-        BndSetRanges dets2(intOfDets);
-        Iter::Ranges::Inter< Iter::Ranges::NaryInter,
-          BndSetRanges >
-          ubiAll(ubi,dets2);
-        GECODE_ME_CHECK( y.intersectI(home,ubiAll) );
+        {
+          Iter::Ranges::NaryInter lbi(r,xLBs,xsize);
+          BndSetRanges dets(intOfDets);
+          lbi &= dets;
+          GECODE_ME_CHECK(y.includeI(home,lbi));
+        }
+        {
+          Iter::Ranges::NaryInter ubi(r,xUBs,xsize);
+          BndSetRanges dets(intOfDets);
+          ubi &= dets;
+          GECODE_ME_CHECK(y.intersectI(home,ubi));
+        }
       }
 
       for (int i = xsize; i--; ) {
@@ -322,6 +321,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
+        Region r(home);
         GLBndSet* rightSet =
           static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
         new (&rightSet[xsize-1]) GLBndSet(home);
