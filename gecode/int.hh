@@ -2284,12 +2284,12 @@ namespace Gecode {
    *
    * Propagate that no two rectangles as described by the coordinates
    * \a x, and \a y, widths \a w, and heights \a h overlap. The rectangles
-   * can be optional, as described by the Boolean variables \a o.
+   * can be optional, as described by the Boolean variables \a m.
    * 
    * Throws the following exceptions:
-   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a o
+   *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a m
    *    are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x, \a y, or \a o share unassigned
+   *  - Of type Int::ArgumentSame if \a x, \a y, or \a m share unassigned
    *    variables.
    *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
    * 
@@ -2299,7 +2299,7 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x, const IntArgs& w,
             const IntVarArgs& y, const IntArgs& h,
-            const BoolVarArgs& o,
+            const BoolVarArgs& m,
             IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for rectangle packing
    *
@@ -2329,7 +2329,7 @@ namespace Gecode {
    * Propagate that no two rectangles as described by the start coordinates
    * \a x0 and \a y0, widths \a w and heights \a h, and end coordinates
    * \a x1 and \a y1 overlap. The rectangles can be optional, as described 
-   * by the Boolean variables \a o.
+   * by the Boolean variables \a m.
    * 
    * Note that the relations \f$x0_i+w_i=x1_i\f$ and \f$y0_i+h_i=y1_i\f$ are
    * not propagated (for \f$0\leq i<|x0|\f$). That is, additional constraints
@@ -2337,9 +2337,9 @@ namespace Gecode {
    *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
-   *    \a y0, \a y1, or \a h are not of the same size.
+   *    \a y0, \a y1, \a h, or \a m are not of the same size.
    *  - Of type Int::ArgumentSame if \a x0, \a x1, \a w, \a y0, \a y1, 
-   *    \a h, or \a o share unassigned variables.
+   *    \a h, or \a m share unassigned variables.
    * 
    * \ingroup TaskModelIntGeoPacking
    */
@@ -2347,7 +2347,7 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
-            const BoolVarArgs& o,
+            const BoolVarArgs& m,
             IntConLevel icl=ICL_DEF);
 
 
