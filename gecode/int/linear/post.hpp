@@ -45,14 +45,16 @@ namespace Gecode { namespace Int { namespace Linear {
   estimate(Term<View>* t, int n, int c, int& l, int &u) {
     double min = c;
     double max = c;
-    for (int i=n; i--; )
-      if (t[i].a > 0) {
-        min += t[i].a*t[i].x.min();
-        max += t[i].a*t[i].x.max();
+    for (int i=n; i--; ) {
+      double a = t[i].a;
+      if (a > 0) {
+        min += a*t[i].x.min();
+        max += a*t[i].x.max();
       } else {
-        max += t[i].a*t[i].x.min();
-        min += t[i].a*t[i].x.max();
+        max += a*t[i].x.min();
+        min += a*t[i].x.max();
       }
+    }
     if (min < Limits::min)
       min = Limits::min;
     if (min > Limits::max)

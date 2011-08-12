@@ -73,6 +73,14 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+The estimation of bounds on linear terms did not handle overflow
+correctly.
+
+[ENTRY]
 Module: iter
 What:   change
 Rank:   minor
