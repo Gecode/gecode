@@ -73,6 +73,13 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+View arrays can now also use region-allocated memory.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major

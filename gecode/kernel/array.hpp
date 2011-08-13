@@ -273,10 +273,14 @@ namespace Gecode {
     ViewArray(void);
     /// Allocate array with \a m views
     ViewArray(Space& home, int m);
+    /// Allocate array with \a m views
+    ViewArray(Region& r, int m);
     /// Initialize from view array \a a (share elements)
     ViewArray(const ViewArray<View>& a);
     /// Initialize from view array \a a (copy elements)
     ViewArray(Space& home, const ViewArray<View>& a);
+    /// Initialize from view array \a a (copy elements)
+    ViewArray(Region& r, const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
     const ViewArray<View>& operator =(const ViewArray<View>& a);
     /**
@@ -291,6 +295,24 @@ namespace Gecode {
       // This may not be in the hpp file (to satisfy the MS compiler)
       if (n>0) {
         x = home.alloc<View>(n);
+        for (int i=n; i--; )
+          x[i]=a[i];
+      } else {
+        x = NULL;
+      }
+    }
+    /**
+     * \brief Initialize from variable argument array \a a (copy elements)
+     *
+     * Note that the view type \a View must provide a constructor
+     * for the associated \a Var type.
+     */
+    template<class Var>
+    ViewArray(Region& r, const VarArgArray<Var>& a)
+      : n(a.size()) {
+      // This may not be in the hpp file (to satisfy the MS compiler)
+      if (n>0) {
+        x = r.alloc<View>(n);
         for (int i=n; i--; )
           x[i]=a[i];
       } else {
@@ -1128,12 +1150,29 @@ namespace Gecode {
     : n(n0) {
     x = (n>0) ? home.alloc<View>(n) : NULL;
   }
+  template<class View>
+  forceinline
+  ViewArray<View>::ViewArray(Region& r, int n0)
+    : n(n0) {
+    x = (n>0) ? r.alloc<View>(n) : NULL;
+  }
 
   template<class View>
   ViewArray<View>::ViewArray(Space& home, const ViewArray<View>& a)
     : n(a.size()) {
     if (n>0) {
       x = home.alloc<View>(n);
+      for (int i = n; i--; )
+        x[i] = a[i];
+    } else {
+      x = NULL;
+    }
+  }
+  template<class View>
+  ViewArray<View>::ViewArray(Region& r, const ViewArray<View>& a)
+    : n(a.size()) {
+    if (n>0) {
+      x = r.alloc<View>(n);
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
