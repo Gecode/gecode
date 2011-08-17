@@ -46,6 +46,7 @@
 
 #include <gecode/int.hh>
 
+#include <gecode/int/view-val-graph.hh>
 #include <gecode/int/rel.hh>
 
 /**
@@ -164,8 +165,22 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   ExecStatus prop_bnd(Space& home, ViewArray<View>& x, int m);
 
-  template<class View> class ViewNode;
-  template<class View> class ValNode;
+
+  /// View-value graph for propagation
+  template<class View>
+  class Graph : public ViewValGraph::Graph<View> {
+  public:
+    /// Construct graph as not yet initialized
+    Graph(void);
+    /// Initialize graph
+    ExecStatus init(Space& home, int n, View* x);
+    /// Mark edges in graph
+    void mark(Space& home);
+    /// Prune unmarked edges, \a assigned is true if a view got assigned
+    ExecStatus prune(Space& home, bool& assigned);
+    /// Synchronize graph with new view domains
+    bool sync(Space& home);
+  };
 
   /**
    * \brief Propagation controller for domain consistent distinct
@@ -180,44 +195,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   class DomCtrl {
   protected:
-    /// View-value graph for propagation
-    class ViewValGraph {
-    public:
-      /// Array of view nodes
-      ViewNode<View>** view;
-      /// Number of view nodes
-      int n_view;
-      /// Array of value nodes
-      ValNode<View>* val;
-      /// Number of value nodes
-      int n_val;
-      /// Marking counter
-      unsigned int count;
-    public:
-      /// Construct graph as not yet initialized
-      ViewValGraph(void);
-      /// Test whether graph has been initialized
-      bool initialized(void) const;
-      /// Initialize single view node \a x
-      void init(Space& home, ViewNode<View>* x);
-      /// Initialize graph
-      ExecStatus init(Space& home, int n, View* x);
-      /// Mark edges in graph
-      void mark(Space& home);
-      /// Prune unmarked edges, \a assigned is true if a view got assigned
-      ExecStatus tell(Space& home, bool& assigned);
-      /// Purge graph if necessary
-      void purge(void);
-      /// Synchronize graph with new view domains
-      bool sync(Space& home);
-    public:
-      /// Stack used during matching
-      typedef Support::StaticStack<ViewNode<View>*,Region> ViewNodeStack;
-      /// Find a matching for node \a x
-      bool match(ViewNodeStack& m, ViewNode<View>* x);
-    };
     /// Propagation is performed on a view-value graph
-    ViewValGraph vvg;
+    Graph<View> g;
   public:
     /// Initialize with non-initialized view-value graph
     DomCtrl(void);
@@ -269,7 +248,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x
-    static  ExecStatus post(Home home, ViewArray<View>& x);
+    static ExecStatus post(Home home, ViewArray<View>& x);
   };
 
   /**
@@ -303,6 +282,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 #include <gecode/int/distinct/val.hpp>
 #include <gecode/int/distinct/bnd.hpp>
 #include <gecode/int/distinct/ter-dom.hpp>
+#include <gecode/int/distinct/graph.hpp>
+#include <gecode/int/distinct/dom-ctrl.hpp>
 #include <gecode/int/distinct/dom.hpp>
 
 #endif

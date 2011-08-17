@@ -298,7 +298,7 @@ INTSRC0 = \
 	unshare.cpp sequence.cpp \
 	bin-packing.cpp bin-packing/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
-	circuit.cpp no-overlap.cpp
+	circuit.cpp no-overlap.cpp nvalues.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -312,8 +312,12 @@ INTHDR0 = \
 	branch/select-val.hpp \
 	branch/select-values.hpp branch/select-view.hpp \
 	count/view.hpp count/int.hpp count/rel.hpp \
-	distinct/bilink.hpp distinct/bnd.hpp distinct/combptr.hpp \
-	distinct/dom.hpp distinct/edge.hpp distinct/node.hpp \
+	view-val-graph.hh view-val-graph/graph.hpp \
+	view-val-graph/bi-link.hpp view-val-graph/comb-ptr-flag.hpp \
+	view-val-graph/edge.hpp view-val-graph/node.hpp \
+	view-val-graph/iter-prune-val.hpp \
+	distinct/graph.hpp distinct/dom-ctrl.hpp \
+	distinct/bnd.hpp distinct/dom.hpp \
 	distinct/val.hpp distinct/ter-dom.hpp \
 	dom/range.hpp dom/spec.hpp \
 	element/int.hpp element/view.hpp element/pair.hpp \
@@ -359,7 +363,13 @@ INTHDR0 = \
 	cumulatives.hh cumulatives/val.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \
-	no-overlap/base.hpp no-overlap/man.hpp no-overlap/opt.hpp
+	no-overlap/base.hpp no-overlap/man.hpp no-overlap/opt.hpp \
+	nvalues.hh nvalues/val-set.hpp nvalues/range-event.hpp \
+	nvalues/sym-bit-matrix.hpp nvalues/graph.hpp \
+	nvalues/bool-base.hpp nvalues/bool-eq.hpp \
+	nvalues/bool-lq.hpp nvalues/bool-gq.hpp \
+	nvalues/int-base.hpp nvalues/int-eq.hpp \
+	nvalues/int-lq.hpp nvalues/int-gq.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -723,7 +733,8 @@ INTEXAMPLESRC0 =						\
 	minesweeper domino steel-mill sports-league		\
 	all-interval langford-number warehouses	radiotherapy    \
 	word-square crossword open-shop car-sequencing sat      \
-	bin-packing knights tsp perfect-square schurs-lemma
+	bin-packing knights tsp perfect-square schurs-lemma     \
+	dominating-queens
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
@@ -830,7 +841,7 @@ INTTESTSRC00 = \
 	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing unary cumulative cumulatives circuit \
-	no-overlap precede
+	no-overlap precede nvalues
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 

@@ -73,6 +73,20 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added nvalues constraint.
+
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added Dominating Queens puzzle.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
@@ -105,6 +119,7 @@ Rank:   minor
 [DESCRIPTION]
 The set_in and set_in_reif constraints now work for constant sets
 even when Gecode is compiled without support for set variables.
+
 
 [RELEASE]
 Version: 3.6.0
