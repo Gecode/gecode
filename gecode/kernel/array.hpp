@@ -985,8 +985,8 @@ namespace Gecode {
   template<class Var>
   typename ArrayTraits<VarArgArray<Var> >::ArgsType
   VarArray<Var>::slice(int start, int inc, int maxN) {
-    assert(start < n);
-    if (maxN<0)
+    assert(n==0 || start < n);
+    if (n==0 || maxN<0)
       maxN = n;
     int s;
     if (inc == 0)
@@ -1702,8 +1702,8 @@ namespace Gecode {
   template<class T> template<class A>
   A
   ArgArrayBase<T>::slice(int start, int inc, int maxN) {
-    assert(start < n);
-    if (maxN<0)
+    assert(n==0 || start < n);
+    if (n==0 || maxN<0)
       maxN = n;
     int s;
     if (inc == 0)

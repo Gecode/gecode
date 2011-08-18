@@ -73,6 +73,14 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks: Max Ostrowski
+[DESCRIPTION]
+Array slices can now be created from empty arrays.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   major
