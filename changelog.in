@@ -73,6 +73,13 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added native support for the nvalue constraint.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

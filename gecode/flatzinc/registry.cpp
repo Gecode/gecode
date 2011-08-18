@@ -1275,6 +1275,15 @@ namespace Gecode { namespace FlatZinc {
       precede(s,x,c,ann2icl(ann));
     }
 
+    void p_nvalue(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[1]);
+      if (ce[0]->isIntVar()) {
+        nvalues(s,x,IRT_EQ,ce[0]->getIntVar(),ann2icl(ann));
+      } else {
+        nvalues(s,x,IRT_EQ,ce[0]->getInt(),ann2icl(ann));
+      }
+    }
+
     class IntPoster {
     public:
       IntPoster(void) {
@@ -1398,6 +1407,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_circuit_cost", &p_circuit_cost);
         registry().add("gecode_nooverlap", &p_nooverlap);
         registry().add("gecode_precede", &p_precede);
+        registry().add("nvalue",&p_nvalue);
       }
     };
     IntPoster __int_poster;
