@@ -109,6 +109,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
   forceinline void
   ValSet::update(Space& home, bool share, ValSet& vs) {
+    (void) share;
     if (vs.n > 0) {
       n = vs.n;
       // Count number of ranges

@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline bool
   ViewNode<View>::matched(void) const {
-    return edge_fst() != edge_lst();
+    return Node<View>::edge_fst() != Node<View>::edge_lst();
   }
 
 }}}

@@ -248,6 +248,11 @@ namespace Gecode { namespace Int { namespace NValues {
     using IntBase<VY>::x;
     using IntBase<VY>::y;
     using IntBase<VY>::vs;
+    using IntBase<VY>::add;
+    using IntBase<VY>::all_in_valset;
+    using IntBase<VY>::disjoint;
+    using IntBase<VY>::prune_lower;
+    using IntBase<VY>::prune_upper;
     /// View-value graph
     Graph g;
     /// Constructor for posting
@@ -277,6 +282,11 @@ namespace Gecode { namespace Int { namespace NValues {
     using IntBase<VY>::x;
     using IntBase<VY>::y;
     using IntBase<VY>::vs;
+    using IntBase<VY>::add;
+    using IntBase<VY>::all_in_valset;
+    using IntBase<VY>::disjoint;
+    using IntBase<VY>::prune_lower;
+    using IntBase<VY>::prune_upper;
     /// Constructor for posting
     LqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
@@ -304,6 +314,12 @@ namespace Gecode { namespace Int { namespace NValues {
     using IntBase<VY>::x;
     using IntBase<VY>::y;
     using IntBase<VY>::vs;
+    using IntBase<VY>::add;
+    using IntBase<VY>::all_in_valset;
+    using IntBase<VY>::disjoint;
+    using IntBase<VY>::prune_lower;
+    using IntBase<VY>::prune_upper;
+    using IntBase<VY>::eliminate;
     /// View-value graph
     Graph g;
     /// Constructor for posting

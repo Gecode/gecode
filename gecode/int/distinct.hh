@@ -170,6 +170,13 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   class Graph : public ViewValGraph::Graph<View> {
   public:
+    using ViewValGraph::Graph<View>::view;
+    using ViewValGraph::Graph<View>::n_view;
+    using ViewValGraph::Graph<View>::val;
+    using ViewValGraph::Graph<View>::n_val;
+    using ViewValGraph::Graph<View>::count;
+    using ViewValGraph::Graph<View>::scc;
+    using ViewValGraph::Graph<View>::match;
     /// Construct graph as not yet initialized
     Graph(void);
     /// Initialize graph

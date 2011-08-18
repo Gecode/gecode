@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         ViewValGraph::Graph<View>::init(home,view[i]);
     }
 
-    ViewNodeStack m(r,n_view);
+    typename ViewValGraph::Graph<View>::ViewNodeStack m(r,n_view);
     for (int i = n_view; i--; )
       if (!match(m,view[i]))
         return ES_FAILED;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     using namespace ViewValGraph;
     Region r(home);
     // Stack for view nodes to be rematched
-    ViewNodeStack re(r,n_view);
+    typename ViewValGraph::Graph<View>::ViewNodeStack re(r,n_view);
     // Synchronize nodes
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
       }
     }
-    ViewNodeStack m(r,n_view);
+    typename ViewValGraph::Graph<View>::ViewNodeStack m(r,n_view);
     while (!re.empty())
       if (!match(m,re.pop()))
         return false;

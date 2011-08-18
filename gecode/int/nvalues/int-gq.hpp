@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace NValues {
   template<class VY>
   forceinline
   GqInt<VY>::GqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y)
-    : IntBase(home,vs,x,y) {}
+    : IntBase<VY>(home,vs,x,y) {}
 
   template<class VY>
   inline ExecStatus

@@ -88,8 +88,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
     int i=0;
     while (i < n) { 
-      switch (Iter::Ranges::compare(ViewRanges<IntView>(x[i]),
-                                    ValSet::Ranges(vs))) {
+      ViewRanges<IntView> xir(x[i]);
+      ValSet::Ranges vsr(vs);
+      switch (Iter::Ranges::compare(xir,vsr)) {
       case Iter::Ranges::CS_SUBSET:
         // All values are already contained in vs, eliminate x[i]
         x[i].cancel(home, *this, PC_INT_DOM);
@@ -112,13 +113,15 @@ namespace Gecode { namespace Int { namespace NValues {
   void
   IntBase<VY>::eliminate(Space& home) {
     int n=x.size();
-    for (int i=n; i--; )
-      if (Iter::Ranges::subset(ViewRanges<IntView>(x[i]),
-                               ValSet::Ranges(vs))) {
+    for (int i=n; i--; ) {
+      ViewRanges<IntView> xir(x[i]);
+      ValSet::Ranges vsr(vs);
+      if (Iter::Ranges::subset(xir,vsr)) {
         // All values are already contained in vs, eliminate x[i]
         x[i].cancel(home, *this, PC_INT_DOM);
         x[i] = x[--n]; 
       }
+    }
     x.size(n);
   }
 
@@ -170,7 +173,8 @@ namespace Gecode { namespace Int { namespace NValues {
       // Is there a common value at all?
       if (!iv())
         return ES_FAILED;
-      Iter::Ranges::NaryUnion pv(r,iv,ValSet::Ranges(vs));
+      ValSet::Ranges vsr(vs);
+      Iter::Ranges::NaryUnion pv(r,iv,vsr);
       // Enforce common values
       for (int i=x.size(); i--; ) {
         pv.reset();
@@ -305,7 +309,8 @@ namespace Gecode { namespace Int { namespace NValues {
       for (int i=n_ind; i--; )
         r_ind[i] = ViewRanges<IntView>(x[ind[i]]);
       Iter::Ranges::NaryUnion v_ind(r, r_ind, n_ind);
-      v_ind |= ValSet::Ranges(vs);
+      ValSet::Ranges vsr(vs);
+      v_ind |= vsr;
       for (int i=x.size(); i--; ) {
         v_ind.reset();
         GECODE_ME_CHECK(x[i].inter_r(home,v_ind,false));

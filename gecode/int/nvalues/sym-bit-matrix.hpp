@@ -54,14 +54,14 @@ namespace Gecode { namespace Int { namespace NValues {
   SymBitMatrix::get(int x, int y) const {
     assert(x != y);
     if (x > y) std::swap(x,y);
-    return BitSet<Region>::get(static_cast<unsigned int>(pos(x,y)));
+    return Support::BitSet<Region>::get(static_cast<unsigned int>(pos(x,y)));
   }
 
   forceinline void
   SymBitMatrix::set(int x, int y) {
     assert(x != y);
     if (x > y) std::swap(x,y);
-    BitSet<Region>::set(static_cast<unsigned int>(pos(x,y)));
+    Support::BitSet<Region>::set(static_cast<unsigned int>(pos(x,y)));
   }
 
 }}}

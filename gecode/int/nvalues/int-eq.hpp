@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace NValues {
   template<class VY>
   forceinline
   EqInt<VY>::EqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y)
-    : IntBase(home,vs,x,y) {
+    : IntBase<VY>(home,vs,x,y) {
     home.notice(*this, AP_WEAKLY);
   }
 
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
     // Only if the propagator is at fixpoint here, continue with
     // propagating the lower bound
-    if (IntView::me(modeventdelta()) != ME_INT_NONE)
+    if (IntView::me(Propagator::modeventdelta()) != ME_INT_NONE)
       return ES_NOFIX;
 
     // Do lower bound-based pruning
