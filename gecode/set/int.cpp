@@ -179,15 +179,9 @@ namespace Gecode {
                          ::post(home,xv,y)));
   }
 
-  void weights(Home home, const IntArgs& elements0, const IntArgs& weights0,
+  void weights(Home home, IntSharedArray elements, IntSharedArray weights,
                SetVar x, IntVar y) {
     if (home.failed()) return;
-    SharedArray<int> elements(elements0.size());
-    for (int i=elements0.size(); i--;)
-      elements[i] = elements0[i];
-    SharedArray<int> weights(weights0.size());
-    for (int i=weights0.size(); i--;)
-      weights[i] = weights0[i];
     GECODE_ES_FAIL(Set::Int::Weights<Set::SetView>::post(home,elements,
                                                               weights,x,y));
   }

@@ -73,6 +73,15 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks: Johannes Inführ
+[DESCRIPTION]
+Fixed a memory leak in the set weights constraint, and use
+IntSharedArray instead of IntArgs as parameters for weights.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor

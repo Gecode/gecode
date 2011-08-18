@@ -899,7 +899,7 @@ namespace Gecode {
    * elements.
    */
   GECODE_SET_EXPORT void
-  weights(Home home, const IntArgs& elements, const IntArgs& weights,
+  weights(Home home, IntSharedArray elements, IntSharedArray weights,
           SetVar x, IntVar y);
 
   //@}

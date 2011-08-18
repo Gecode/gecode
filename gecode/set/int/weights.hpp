@@ -153,6 +153,7 @@ namespace Gecode { namespace Set { namespace Int {
                    View x0, Gecode::Int::IntView y0)
     : Propagator(home), elements(elements0), weights(weights0),
       x(x0), y(y0) {
+    home.notice(*this,AP_DISPOSE);
     x.subscribe(home,*this, PC_SET_ANY);
     y.subscribe(home,*this, Gecode::Int::PC_INT_BND);
   }
@@ -194,8 +195,11 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline size_t
   Weights<View>::dispose(Space& home) {
+    home.ignore(*this,AP_DISPOSE);
     x.cancel(home,*this, PC_SET_ANY);
     y.cancel(home,*this, Gecode::Int::PC_INT_BND);
+    elements.~SharedArray();
+    weights.~SharedArray();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
