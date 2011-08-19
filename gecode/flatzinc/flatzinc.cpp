@@ -487,7 +487,7 @@ namespace Gecode { namespace FlatZinc {
         bv_sol[k++] = bv[i];
 
     branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
-    branch(*this, bv_sol, INT_VAR_AFC_MIN, INT_VAL_MIN);
+    branch(*this, bv_sol, INT_VAR_AFC_MAX, INT_VAL_MIN);
 #ifdef GECODE_HAS_SET_VARS
     introduced = 0;
     for (int i=sv.size(); i--;)
@@ -503,7 +503,7 @@ namespace Gecode { namespace FlatZinc {
     branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
 #endif
     branch(*this, iv_tmp, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
-    branch(*this, bv_tmp, INT_VAR_AFC_MIN, INT_VAL_MIN);
+    branch(*this, bv_tmp, INT_VAR_AFC_MAX, INT_VAL_MIN);
 #ifdef GECODE_HAS_SET_VARS
     branch(*this, sv_tmp, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
 #endif
