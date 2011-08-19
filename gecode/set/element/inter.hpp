@@ -39,25 +39,23 @@
 
 namespace Gecode { namespace Set { namespace Element {
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   forceinline
-  ElementIntersection<SView,RView>::
-  ElementIntersection(Home home, RView y0,
-                     IdxViewArray& iv0,
-                     RView y1,
-                     const IntSet& theUniverse)
-    : Propagator(home), universe(theUniverse), x0(y0), iv(iv0), x1(y1) {
+  ElementIntersection<View,View0,View1>::
+  ElementIntersection(Home home, IdxViewArray& iv0, View0 y0, View1 y1,
+                      const IntSet& theUniverse)
+    : Propagator(home), universe(theUniverse), iv(iv0), x0(y0), x1(y1) {
     home.notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
     iv.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   forceinline
-  ElementIntersection<SView,RView>::
+  ElementIntersection<View,View0,View1>::
   ElementIntersection(Space& home, bool share,
-                     ElementIntersection<SView,RView>& p)
+                      ElementIntersection<View,View0,View1>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -65,16 +63,16 @@ namespace Gecode { namespace Set { namespace Element {
     universe.update(home,share,p.universe);
   }
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   PropCost
-  ElementIntersection<SView,RView>::cost(const Space&,
-                                         const ModEventDelta&) const {
+  ElementIntersection<View,View0,View1>::cost(const Space&,
+                                              const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI, iv.size()+2);
   }
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   forceinline size_t
-  ElementIntersection<SView,RView>::dispose(Space& home) {
+  ElementIntersection<View,View0,View1>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     if (!home.failed()) {
       x0.cancel(home,*this, PC_SET_ANY);
@@ -86,30 +84,31 @@ namespace Gecode { namespace Set { namespace Element {
     return sizeof(*this);
   }
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   ExecStatus
-  ElementIntersection<SView,RView>::
-  post(Home home, RView x0, IdxViewArray& xs,
-       RView x1, const IntSet& universe) {
+  ElementIntersection<View,View0,View1>::
+  post(Home home, IdxViewArray& xs, View0 x0, View1 x1,
+       const IntSet& universe) {
     int n = xs.size();
 
-    // s2 \subseteq {1,...,n}
+    // x0 \subseteq {1,...,n}
     Iter::Ranges::Singleton s(0, n-1);
-    GECODE_ME_CHECK(x1.intersectI(home,s));
+    GECODE_ME_CHECK(x0.intersectI(home,s));
     (void) new (home)
-      ElementIntersection<SView,RView>(home,x0,xs,x1,universe);
+      ElementIntersection<View,View0,View1>(home,xs,x0,x1,universe);
     return ES_OK;
   }
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   Actor*
-  ElementIntersection<SView,RView>::copy(Space& home, bool share) {
-    return new (home) ElementIntersection<SView,RView>(home,share,*this);
+  ElementIntersection<View,View0,View1>::copy(Space& home, bool share) {
+    return new (home) ElementIntersection<View,View0,View1>(home,share,*this);
   }
 
-  template<class SView, class RView>
+  template<class View, class View0, class View1>
   ExecStatus
-  ElementIntersection<SView,RView>::propagate(Space& home, const ModEventDelta&) {
+  ElementIntersection<View,View0,View1>::propagate(Space& home,
+                                                   const ModEventDelta&) {
     Region r(home);
     int n = iv.size();
 
@@ -119,19 +118,17 @@ namespace Gecode { namespace Set { namespace Element {
 
       // Cache the upper bound iterator, as we have to
       // modify the upper bound while iterating
-      LubRanges<RView> x1ub(x1);
-      Iter::Ranges::Cache x1ubc(r,x1ub);
-      Iter::Ranges::ToValues<Iter::Ranges::Cache>
-        vx1ub(x1ubc);
+      LubRanges<View0> x0ub(x0);
+      Iter::Ranges::Cache x0ubc(r,x0ub);
+      Iter::Ranges::ToValues<Iter::Ranges::Cache> vx0ub(x0ubc);
 
-      GlbRanges<RView> x1lb(x1);
-      Iter::Ranges::Cache x1lbc(r,x1lb);
-      Iter::Ranges::ToValues<Iter::Ranges::Cache>
-        vx1(x1lbc);
+      GlbRanges<View0> x0lb(x0);
+      Iter::Ranges::Cache x0lbc(r,x0lb);
+      Iter::Ranges::ToValues<Iter::Ranges::Cache> vx0(x0lbc);
 
       // In the first iteration, compute in before[i] the intersection
       // of all the lower bounds of the x_i. At the same time,
-      // exclude inconsistent x_i from x1 and remove them from
+      // exclude inconsistent x_i from x0 and remove them from
       // the list, cancel their dependencies.
 
       LUBndSet sofarBefore(home,universe);
@@ -139,84 +136,84 @@ namespace Gecode { namespace Set { namespace Element {
 
       int j = 0;
       int i = 0;
-      while ( vx1ub() ) {
+      while ( vx0ub() ) {
 
         // Remove vars at indices not in the upper bound
-        if (iv[i].idx < vx1ub.val()) {
+        if (iv[i].idx < vx0ub.val()) {
           iv[i].view.cancel(home,*this, PC_SET_ANY);
           ++i;
           continue;
         }
-        assert(iv[i].idx == vx1ub.val());
+        assert(iv[i].idx == vx0ub.val());
         iv[j] = iv[i];
 
-        SView candidate = iv[j].view;
+        View candidate = iv[j].view;
         int candidateInd = iv[j].idx;
 
-        // inter = glb(x0) & complement(lub(candidate))
-        GlbRanges<RView> x0lb(x0);
-        LubRanges<SView> candub(candidate);
-        Iter::Ranges::Diff<GlbRanges<RView>,LubRanges<SView> >
-          inter(x0lb, candub);
+        // inter = glb(x1) & complement(lub(candidate))
+        GlbRanges<View1> x1lb(x1);
+        LubRanges<View> candub(candidate);
+        Iter::Ranges::Diff<GlbRanges<View1>,LubRanges<View> >
+          inter(x1lb, candub);
 
         // exclude inconsistent x_i
         // an x_i is inconsistent if
-        //  * its max cardinality is less than minCard of x0
+        //  * its max cardinality is less than minCard of x1
         //  * inter is not empty (there are elements in x_0
         //    that can't be in x_i)
-        if (candidate.cardMax() < x0.cardMin() ||
+        if (candidate.cardMax() < x1.cardMin() ||
             inter()) {
-          ModEvent me = (x1.exclude(home,candidateInd));
+          ModEvent me = (x0.exclude(home,candidateInd));
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
 
           iv[j].view.cancel(home,*this, PC_SET_ANY);
           ++i;
-          ++vx1ub;
+          ++vx0ub;
           continue;
         } else {
           // if x_i is consistent, check whether we know
-          // that its index is in x1
-          if (vx1() && vx1.val()==candidateInd) {
-            // x0 <= candidate, candidate >= x0
-            GlbRanges<RView> x0lb(x0);
-            ModEvent me = candidate.includeI(home,x0lb);
+          // that its index is in x0
+          if (vx0() && vx0.val()==candidateInd) {
+            // x1 <= candidate, candidate >= x1
+            GlbRanges<View1> x1lb(x1);
+            ModEvent me = candidate.includeI(home,x1lb);
             loopVar |= me_modified(me);
             GECODE_ME_CHECK(me);
 
-            LubRanges<SView> candub(candidate);
-            me = x0.intersectI(home,candub);
+            LubRanges<View> candub(candidate);
+            me = x1.intersectI(home,candub);
             loopVar |= me_modified(me);
             GECODE_ME_CHECK(me);
-            ++vx1;
+            ++vx0;
           }
           new (&before[j]) LUBndSet(home);
           before[j].update(home,sofarBefore);
-          GlbRanges<SView> clb(candidate);
+          GlbRanges<View> clb(candidate);
           sofarBefore.intersectI(home,clb);
         }
 
-        ++vx1ub;
+        ++vx0ub;
         ++i; ++j;
       }
 
       // cancel the variables with index greater than
-      // max of lub(x1)
+      // max of lub(x0)
       for (int k=i; k<n; k++) {
         iv[k].view.cancel(home,*this, PC_SET_ANY);
       }
       n = j;
       iv.size(n);
 
-      if (x1.cardMax()==0) {
+      if (x0.cardMax()==0) {
         // Elementor is empty, hence the result must be universe
         {
           IntSetRanges uniI(universe);
-          GECODE_ME_CHECK(x0.includeI(home,uniI));
+          GECODE_ME_CHECK(x1.includeI(home,uniI));
         }
         {
           IntSetRanges uniI(universe);
-          GECODE_ME_CHECK(x0.intersectI(home,uniI));
+          GECODE_ME_CHECK(x1.intersectI(home,uniI));
         }
         for (int i=n; i--;)
           before[i].dispose(home);
@@ -224,9 +221,9 @@ namespace Gecode { namespace Set { namespace Element {
       }
 
       {
-        // x0 >= sofarBefore
+        // x1 >= sofarBefore
         BndSetRanges sfB(sofarBefore);
-        ModEvent me = x0.includeI(home,sfB);
+        ModEvent me = x1.includeI(home,sfB);
         loopVar |= me_modified(me);
         GECODE_ME_CHECK(me);
       }
@@ -240,15 +237,15 @@ namespace Gecode { namespace Set { namespace Element {
       for (int i=n; i--;) {
         if (sofarAfter.size() == 0) break;
 
-        // extra = inter(before[i], sofarAfter) - lub(x0)
+        // extra = inter(before[i], sofarAfter) - lub(x1)
         BndSetRanges b(before[i]);
         BndSetRanges s(sofarAfter);
-        LubRanges<RView> x0ub(x0);
+        LubRanges<View1> x1ub(x1);
         Iter::Ranges::Inter<BndSetRanges, BndSetRanges> inter(b,s);
         Iter::Ranges::Diff<Iter::Ranges::Inter<BndSetRanges,
-          BndSetRanges>, LubRanges<RView> > diff(inter, x0ub);
+          BndSetRanges>, LubRanges<View1> > diff(inter, x1ub);
         if (diff()) {
-          ModEvent me = (x1.include(home,iv[i].idx));
+          ModEvent me = (x0.include(home,iv[i].idx));
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
 
@@ -258,7 +255,7 @@ namespace Gecode { namespace Set { namespace Element {
           GECODE_ME_CHECK(me);
         }
 
-        GlbRanges<SView> ivilb(iv[i].view);
+        GlbRanges<View> ivilb(iv[i].view);
         sofarAfter.intersectI(home,ivilb);
         before[i].dispose(home);
       }
@@ -266,27 +263,28 @@ namespace Gecode { namespace Set { namespace Element {
 
     } while (loopVar);
 
-    // Test whether we determined x1 without determining x0
-    if (x1.assigned() && !x0.assigned()) {
-      int ubsize = static_cast<int>(x1.lubSize());
+    // Test whether we determined x0 without determining x1
+    if (x0.assigned() && !x1.assigned()) {
+      int ubsize = static_cast<int>(x0.lubSize());
       if (ubsize > 2) {
         assert(ubsize==n);
-        ViewArray<SView> is(home,ubsize);
+        ViewArray<View> is(home,ubsize);
         for (int i=n; i--;)
           is[i]=iv[i].view;
-        GECODE_REWRITE(*this,(RelOp::IntersectionN<SView, RView>
-                        ::post(home(*this),is,x0)));
+        GECODE_REWRITE(*this,(RelOp::IntersectionN<View, View1>
+                        ::post(home(*this),is,x1)));
       } else if (ubsize == 2) {
         assert(n==2);
-        SView a = iv[0].view;
-        SView b = iv[1].view;
-        GECODE_REWRITE(*this,(RelOp::Intersection<SView, SView, RView>
-                       ::post(home(*this),a,b,x0)));
+        View a = iv[0].view;
+        View b = iv[1].view;
+        GECODE_REWRITE(*this,(RelOp::Intersection<View,View,View1>
+                       ::post(home(*this),a,b,x1)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_REWRITE(*this,(Rel::Eq<RView,SView>::post(home(*this),x0,iv[0].view)));
+        GECODE_REWRITE(*this,
+          (Rel::Eq<View1,View>::post(home(*this),x1,iv[0].view)));
       } else {
-        GECODE_ME_CHECK(x0.cardMax(home, 0));
+        GECODE_ME_CHECK(x1.cardMax(home, 0));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -298,7 +296,7 @@ namespace Gecode { namespace Set { namespace Element {
         break;
       }
     }
-    if (x0.assigned() && x1.assigned() && allAssigned) {
+    if (x1.assigned() && x0.assigned() && allAssigned) {
       return home.ES_SUBSUMED(*this);
     }
 

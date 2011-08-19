@@ -45,16 +45,20 @@ annotation size_afc_max;
 annotation int_assign(array[int] of var int: x, ann:a);
 
 % i in z <-> exists (j in x) (i in y[j])
-predicate array_set_element_union(var set of int: x, array[int] of set of int: y, var set of int: z);
+predicate array_set_element_union(var set of int: x,
+    array[int] of var set of int: y, var set of int: z);
 
 % i in z <-> forall (j in x) (i in y[j])
-predicate array_set_element_intersect(var set of int: x, array[int] of set of int: y, var set of int: z);
+predicate array_set_element_intersect(var set of int: x,
+    array[int] of var set of int: y, var set of int: z);
 
 % (i in z <-> exists (j in x) (i in y[j])) /\ (i in x /\ j in x /\ i!=j -> disjoint(y[i],y[j]))
-predicate array_set_element_partition(var set of int: x, array[int] of set of int: y, var set of int: z);
+predicate array_set_element_partition(var set of int: x,
+    array[int] of var set of int: y, var set of int: z);
 
 % z subset u /\ ( i in z <-> forall (j in x) (i in y[j]) )
-predicate array_set_element_intersect_in(var set of int: x, array[int] of var set of int: y,
+predicate array_set_element_intersect_in(var set of int: x,
+    array[int] of var set of int: y,
     var set of int: z, set of int: u);
 
 % Every subsequence of x of length l has at least m and at most occurrences

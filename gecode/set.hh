@@ -951,6 +951,19 @@ namespace Gecode {
     const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
 
   /**
+   * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle \{x_0\},\dots,\{x_{n-1}\}\rangle[y] \f$
+   *
+   * If \a y is the empty set, the usual conventions for set operations apply:
+   * an empty union is empty, while an empty intersection is the universe,
+   * which can be given as the optional parameter \a u.
+   *
+   * The indices for \a y start at 0.
+   */
+  GECODE_SET_EXPORT void
+  element(Home home, SetOpType op, const IntVarArgs& x, SetVar y, SetVar z,
+          const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
+
+  /**
    * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
    * If \a y is the empty set, the usual conventions for set operations apply:
@@ -961,7 +974,20 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   element(Home home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
-    const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
+          const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
+
+  /**
+   * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle \{x_0\},\dots,\{x_{n-1}\}\rangle[y] \f$
+   *
+   * If \a y is the empty set, the usual conventions for set operations apply:
+   * an empty union is empty, while an empty intersection is the universe,
+   * which can be given as the optional parameter \a u.
+   *
+   * The indices for \a y start at 0.
+   */
+  GECODE_SET_EXPORT void
+  element(Home home, SetOpType op, const IntArgs& x, SetVar y, SetVar z,
+          const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
 
   /**
    * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$

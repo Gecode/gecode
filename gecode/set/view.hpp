@@ -605,6 +605,8 @@ namespace Gecode { namespace Set {
     SingletonView(void);
     /// Initialize with integer view \a y
     SingletonView(Gecode::Int::IntView& y);
+    /// Initialize with integer variable \a y
+    SingletonView(const Gecode::IntVar& y);
     //@}
 
     /// \name Value access

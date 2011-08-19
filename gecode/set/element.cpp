@@ -54,7 +54,7 @@ namespace Gecode {
 
   void
   element(Home home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
-    const IntSet& universe) {
+          const IntSet& universe) {
     if (home.failed()) return;
     
     switch (op) {
@@ -68,19 +68,60 @@ namespace Gecode {
       // fall through
     case SOT_UNION:
       {
-        Set::Element::ElementUnion<SetView,SetView>::IdxViewArray iv(home, x);
+        Set::Element::ElementUnion<SetView,SetView,SetView>::IdxViewArray 
+          iv(home, x);
         GECODE_ES_FAIL(
-                       (Element::ElementUnion<SetView,SetView>::
-                        post(home,z,iv,y)));
+                       (Element::ElementUnion<SetView,SetView,SetView>::
+                        post(home,iv,y,z)));
       }
       break;
     case SOT_INTER:
       {
-        Set::Element::ElementIntersection<SetView,SetView>::IdxViewArray
+        Set::Element::ElementIntersection<SetView,SetView,SetView>::IdxViewArray
           iv(home, x);
         GECODE_ES_FAIL(
-                       (Element::ElementIntersection<SetView,SetView>::
-                        post(home,z,iv,y,universe)));
+                       (Element::ElementIntersection<SetView,SetView,SetView>::
+                        post(home,iv,y,z,universe)));
+      }
+      break;
+    case SOT_MINUS:
+      throw IllegalOperation("Set::element");
+      break;
+    default:
+      throw UnknownOperation("Set::element");
+    }
+  }
+
+  void
+  element(Home home, SetOpType op, const IntVarArgs& x, SetVar y, SetVar z,
+          const IntSet& universe) {
+    if (home.failed()) return;
+    
+    switch (op) {
+    case SOT_DUNION:
+      {
+        Set::Element::ElementDisjoint<SingletonView,SetView>::IdxViewArray 
+          iv(home, x);
+        GECODE_ES_FAIL((Element::ElementDisjoint<SingletonView,SetView>
+          ::post(home,iv,y)));
+      }
+      // fall through
+    case SOT_UNION:
+      {
+        Set::Element::ElementUnion<SingletonView,SetView,SetView>::IdxViewArray 
+          iv(home, x);
+        GECODE_ES_FAIL(
+                       (Element::ElementUnion<SingletonView,SetView,SetView>::
+                        post(home,iv,y,z)));
+      }
+      break;
+    case SOT_INTER:
+      {
+        Set::Element::ElementIntersection<SingletonView,SetView,
+          SetView>::IdxViewArray iv(home, x);
+        GECODE_ES_FAIL(
+                       (Element::ElementIntersection<SingletonView,SetView,
+          SetView>::post(home,iv,y,z,universe)));
       }
       break;
     case SOT_MINUS:
@@ -120,14 +161,14 @@ namespace Gecode {
       break;
     case SOT_INTER:
       {
-        Set::Element::ElementIntersection<ConstSetView,SetView>::IdxViewArray
-          iv(home, x.size());
+        Set::Element::ElementIntersection<ConstSetView,
+          SetView,SetView>::IdxViewArray iv(home, x.size());
         for (int i=x.size(); i--;) {
           iv[i].idx = i; iv[i].view = ConstSetView(home, x[i]);
         }
         GECODE_ES_FAIL(
-                       (Element::ElementIntersection<ConstSetView,SetView>::
-                        post(home,z,iv,y,universe)));
+          (Element::ElementIntersection<ConstSetView,SetView,SetView>::
+            post(home,iv,y,z,universe)));
       }
       break;
     case SOT_MINUS:
@@ -138,19 +179,29 @@ namespace Gecode {
     }
     
   }
+  
+  void
+  element(Home home, SetOpType op, const IntArgs& x, SetVar y, SetVar z,
+          const IntSet& universe) {
+    IntSetArgs xs(x.size());
+    for (int i=x.size(); i--;)
+      xs[i]=IntSet(x[i],x[i]);
+    element(home,op,xs,y,z,universe);
+  }
 
   void
   element(Home home, const SetVarArgs& x, IntVar y, SetVar z) {
     if (x.size() == 0)
       throw Set::TooFewArguments("Set::element");
     if (home.failed()) return;
-    Set::Element::ElementUnion<SetView,SingletonView>::IdxViewArray iv(home, x);
+    Set::Element::ElementUnion<SetView,SingletonView,SetView>::IdxViewArray 
+      iv(home, x);
     SetView zv(z);
 
     Int::IntView yv(y);
     SingletonView single(yv);
-    GECODE_ES_FAIL((Element::ElementUnion<SetView,
-                         SingletonView>::post(home, z, iv, single)));
+    GECODE_ES_FAIL((Element::ElementUnion<SetView,SingletonView,SetView>
+      ::post(home, iv, single,zv)));
   }
 
   void

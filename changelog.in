@@ -77,6 +77,21 @@ Module: flatzinc
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Added native support for the range and roots constraint.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added set element constraints with singleton integer variables
+as arguments.
+
+[ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
 Added native support for the int_set_channel constraint.
 
 [ENTRY]

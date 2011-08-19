@@ -1668,6 +1668,13 @@ namespace Gecode { namespace FlatZinc {
       channel(s,xv,yv);
     }
     
+    void p_range(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      int xoff=ce[1]->getInt();
+      assert(xoff >= 0);
+      IntVarArgs xv = arg2intvarargs(s,ce[0],xoff);
+      element(s, SOT_UNION, xv, getSetVar(s,ce[2]), getSetVar(s,ce[3]));
+    }
+    
     class SetPoster {
     public:
       SetPoster(void) {
@@ -1709,6 +1716,8 @@ namespace Gecode { namespace FlatZinc {
                        &p_array_set_element_partition);
         registry().add("int_set_channel_gecode", 
                        &p_int_set_channel);
+        registry().add("range_gecode",
+                       &p_range);
       }
     };
     SetPoster __set_poster;
