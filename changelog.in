@@ -73,6 +73,13 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added native support for the int_set_channel constraint.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor

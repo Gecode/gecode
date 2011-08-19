@@ -226,11 +226,14 @@ namespace Gecode { namespace FlatZinc {
     }
 
     inline SetVarArgs arg2setvarargs(FlatZincSpace& s, AST::Node* arg,
-                                     int offset = 0) {
+                                     int offset = 0, int doffset = 0,
+                                     const IntSet& od=IntSet::empty) {
       AST::Array* a = arg->getArray();
       SetVarArgs ia(a->a.size()+offset);
-      for (int i=offset; i--;)
-        ia[i] = SetVar(s, IntSet::empty, IntSet::empty);
+      for (int i=offset; i--;) {
+        IntSet d = i<doffset ? od : IntSet::empty;
+        ia[i] = SetVar(s, d, d);
+      }
       for (int i=a->a.size(); i--;) {
         ia[i+offset] = getSetVar(s, a->a[i]);
       }
@@ -1646,6 +1649,25 @@ namespace Gecode { namespace FlatZinc {
       sequence(s, sv, getSetVar(s, ce[1]));
     }
 
+    void p_int_set_channel(FlatZincSpace& s, const ConExpr& ce,
+                           AST::Node *) {
+      int xoff=ce[1]->getInt();
+      assert(xoff >= 0);
+      int yoff=ce[3]->getInt();
+      assert(yoff >= 0);
+      IntVarArgs xv = arg2intvarargs(s, ce[0], xoff);
+      SetVarArgs yv = arg2setvarargs(s, ce[2], yoff, 1, IntSet(0, xoff-1));
+      IntSet xd(yoff,yv.size()-1);
+      for (int i=xoff; i<xv.size(); i++) {
+        dom(s, xv[i], xd);
+      }
+      IntSet yd(xoff,xv.size()-1);
+      for (int i=yoff; i<yv.size(); i++) {
+        dom(s, yv[i], SRT_SUB, yd);
+      }
+      channel(s,xv,yv);
+    }
+    
     class SetPoster {
     public:
       SetPoster(void) {
@@ -1685,6 +1707,8 @@ namespace Gecode { namespace FlatZinc {
                        &p_array_set_element_intersect_in);
         registry().add("array_set_element_partition", 
                        &p_array_set_element_partition);
+        registry().add("int_set_channel_gecode", 
+                       &p_int_set_channel);
       }
     };
     SetPoster __set_poster;
