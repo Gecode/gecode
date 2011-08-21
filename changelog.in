@@ -73,6 +73,13 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added range and roots, which decompose into set element constraints.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor

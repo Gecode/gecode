@@ -1557,6 +1557,26 @@ namespace Gecode {
   channel(Home home, const IntVarArgs& x, SetVar y) {
     rel(home,SOT_UNION,x,y);
   }
+  
+  /** \brief Post propagator for \f$\bigcup_{i\in y}\{x_i\}=z\f$
+   */
+  inline void
+  range(Home home, const IntVarArgs& x, SetVar y, SetVar z) {
+    element(home,SOT_UNION,x,y,z);
+  }
+
+  /** \brief Post propagator for \f$\bigcup_{i\in z}\{j\ |\ x_j=i\}=z\f$
+   *
+   * Note that this creates one temporary set variable for each element
+   * in the upper bound of \a z, so make sure that the bound is tight.
+   */
+  inline void
+  roots(Home home, const IntVarArgs& x, SetVar y, SetVar z) {
+    SetVarArgs xiv(home,z.lubMax()+1,IntSet::empty,0,x.size()-1);
+    channel(home,x,xiv);
+    element(home,SOT_UNION,xiv,z,y);
+  }
+  
   //@}
 #endif
 
