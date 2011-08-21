@@ -90,9 +90,10 @@ Added range and roots, which decompose into set element constraints.
 [ENTRY]
 Module: flatzinc
 What:   new
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
-Added native support for the range and roots constraint.
+Added native support for among, nvalues, int_set_channel, and
+the range and roots constraints.
 
 [ENTRY]
 Module: set
@@ -101,13 +102,6 @@ Rank:   minor
 [DESCRIPTION]
 Added set element constraints with singleton integer variables
 as arguments.
-
-[ENTRY]
-Module: flatzinc
-What:   new
-Rank:   minor
-[DESCRIPTION]
-Added native support for the int_set_channel constraint.
 
 [ENTRY]
 Module: set
@@ -125,13 +119,6 @@ Rank:   minor
 Thanks: Max Ostrowski
 [DESCRIPTION]
 Array slices can now be created from empty arrays.
-
-[ENTRY]
-Module: flatzinc
-What:   new
-Rank:   major
-[DESCRIPTION]
-Added native support for the nvalues constraint.
 
 [ENTRY]
 Module: int

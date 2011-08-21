@@ -1281,9 +1281,23 @@ namespace Gecode { namespace FlatZinc {
     void p_nvalue(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = arg2intvarargs(s, ce[1]);
       if (ce[0]->isIntVar()) {
-        nvalues(s,x,IRT_EQ,ce[0]->getIntVar(),ann2icl(ann));
+        IntVar y = getIntVar(s,ce[0]);
+        nvalues(s,x,IRT_EQ,y,ann2icl(ann));
       } else {
         nvalues(s,x,IRT_EQ,ce[0]->getInt(),ann2icl(ann));
+      }
+    }
+
+    void p_among(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[1]);
+      IntSet v = arg2intset(s, ce[2]);
+      if (ce[0]->isIntVar()) {
+        IntVar n = getIntVar(s,ce[0]);
+        std::cerr << "count " << n << std::endl;
+        count(s,x,v,IRT_EQ,n,ann2icl(ann));
+      } else {
+        std::cerr << "count i " << x << " " << v << " " << ce[0]->getInt() << std::endl;
+        count(s,x,v,IRT_EQ,ce[0]->getInt(),ann2icl(ann));
       }
     }
 
@@ -1411,6 +1425,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_nooverlap", &p_nooverlap);
         registry().add("gecode_precede", &p_precede);
         registry().add("nvalue",&p_nvalue);
+        registry().add("among",&p_among);
       }
     };
     IntPoster __int_poster;
