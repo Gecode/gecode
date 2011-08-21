@@ -93,18 +93,12 @@ namespace Gecode { namespace Int { namespace NValues {
 
   forceinline int
   ValSet::min(void) const {
-    if (fst != NULL)
-      return fst->min();
-    else
-      return -1;
+    return fst->min();
   }
 
   forceinline int
   ValSet::max(void) const {
-    if (lst != NULL)
-      return lst->max();
-    else
-      return -1;
+    return lst->max();
   }
 
   forceinline void
@@ -160,6 +154,26 @@ namespace Gecode { namespace Int { namespace NValues {
   forceinline unsigned int
   ValSet::Ranges::width(void) const {
     return c->width();
+  }
+
+  template<class View>
+  forceinline Iter::Ranges::CompareStatus
+  ValSet::compare(View x) const {
+    if (empty() || (x.max() < min()) || (x.min() > max()))
+      return Iter::Ranges::CS_DISJOINT;
+    ValSet::Ranges vsr(*this);
+    ViewRanges<View> xr(x);
+    return Iter::Ranges::compare(xr,vsr);
+  }
+
+  template<class View>
+  forceinline bool
+  ValSet::subset(View x) const {
+    if (empty() || (x.min() < min()) || (x.max() > max()))
+      return false;
+    ValSet::Ranges vsr(*this);
+    ViewRanges<View> xr(x);
+    return Iter::Ranges::subset(xr,vsr);
   }
 
 }}}

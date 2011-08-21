@@ -87,10 +87,8 @@ namespace Gecode { namespace Int { namespace NValues {
     dis = r.alloc<int>(n); n_dis = 0;
 
     int i=0;
-    while (i < n) { 
-      ViewRanges<IntView> xir(x[i]);
-      ValSet::Ranges vsr(vs);
-      switch (Iter::Ranges::compare(xir,vsr)) {
+    while (i < n)
+      switch (vs.compare(x[i])) {
       case Iter::Ranges::CS_SUBSET:
         // All values are already contained in vs, eliminate x[i]
         x[i].cancel(home, *this, PC_INT_DOM);
@@ -105,7 +103,6 @@ namespace Gecode { namespace Int { namespace NValues {
       default:
         GECODE_NEVER;
       }
-    }
     x.size(n);
   }
 
@@ -113,15 +110,12 @@ namespace Gecode { namespace Int { namespace NValues {
   void
   IntBase<VY>::eliminate(Space& home) {
     int n=x.size();
-    for (int i=n; i--; ) {
-      ViewRanges<IntView> xir(x[i]);
-      ValSet::Ranges vsr(vs);
-      if (Iter::Ranges::subset(xir,vsr)) {
+    for (int i=n; i--; )
+      if (vs.subset(x[i])) {
         // All values are already contained in vs, eliminate x[i]
         x[i].cancel(home, *this, PC_INT_DOM);
         x[i] = x[--n]; 
       }
-    }
     x.size(n);
   }
 

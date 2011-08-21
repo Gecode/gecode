@@ -100,6 +100,11 @@ namespace Gecode {
 
     if (home.failed()) return;
 
+    if (y.assigned()) {
+      nvalues(home, x, r, y.val());
+      return;
+    }
+
     ViewArray<IntView> xv(home,x);
 
     switch (r) {
@@ -190,6 +195,11 @@ namespace Gecode {
     using namespace Int;
 
     if (home.failed()) return;
+
+    if (y.assigned()) {
+      nvalues(home, x, r, y.val());
+      return;
+    }
 
     Region region(home);
     ViewArray<BoolView> xv(region,x);

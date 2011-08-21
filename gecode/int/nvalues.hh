@@ -71,6 +71,12 @@ namespace Gecode { namespace Int { namespace NValues {
     int min(void) const;
     /// Return largest value (provided the set is not empty)
     int max(void) const;
+    /// Compare view \a x with value set
+    template<class View>
+    Iter::Ranges::CompareStatus compare(View x) const;
+    /// Whether all values of \a x are included in the value set
+    template<class View>
+    bool subset(View x) const;
     /// Update value set during cloning
     void update(Space& home, bool share, ValSet& vs);
     /// Dispose value set

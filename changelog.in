@@ -116,7 +116,7 @@ Module: flatzinc
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added native support for the nvalue constraint.
+Added native support for the nvalues constraint.
 
 [ENTRY]
 Module: int
