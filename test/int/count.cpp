@@ -66,7 +66,31 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::count(home, x,0,irt,2);
+         Gecode::count(home, x, 0, irt, 2);
+       }
+     };
+
+     /// %Test number of integers contained in an integer set equal to integer
+     class SetInt : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       SetInt(Gecode::IntRelType irt0)
+         : Test("Count::Set::Int::"+str(irt0),4,-2,2), irt(irt0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int m = 0;
+         for (int i=x.size(); i--; )
+           if ((x[i] >= -1) && (x[i] <= 1))
+             m++;
+         return cmp(m,irt,2);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::IntSet s(-1,1);
+         Gecode::count(home, x, s, irt, 2);
        }
      };
 
@@ -119,6 +143,33 @@ namespace Test { namespace Int {
          for (int i=0; i<4; i++)
            y[i]=x[i];
          Gecode::count(home, y, 0, irt, x[4]);
+       }
+     };
+
+     /// %Test number of integers contained in an integer set equal to integer variable
+     class SetVar : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       SetVar(Gecode::IntRelType irt0)
+         : Test("Count::Set::Var::"+str(irt0),5,-2,2), irt(irt0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int m = 0;
+         for (int i=0; i<4; i++)
+           if ((x[i] >= -1) && (x[i] <= 1))
+             m++;
+         return cmp(m,irt,x[4]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::IntVarArgs y(4);
+         for (int i=0; i<4; i++)
+           y[i]=x[i];
+         Gecode::IntSet s(-1,1);
+         Gecode::count(home, y, s, irt, x[4]);
        }
      };
 
@@ -333,8 +384,10 @@ namespace Test { namespace Int {
        Create(void) {
          for (IntRelTypes irts; irts(); ++irts) {
            (void) new IntInt(irts.irt());
+           (void) new SetInt(irts.irt());
            (void) new IntIntDup(irts.irt());
            (void) new IntVar(irts.irt());
+           (void) new SetVar(irts.irt());
            (void) new IntArrayInt(irts.irt());
            (void) new IntArrayVar(irts.irt());
            (void) new IntVarShared(irts.irt());

@@ -1465,6 +1465,13 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, int n, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_r m\f$
+   *
+   * Supports domain consistent propagation only.
+   */
+  GECODE_INT_EXPORT void
+  count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType r, int m,
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    *
    * Supports domain consistent propagation only.
@@ -1488,6 +1495,13 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
+        IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_r z\f$
+   *
+   * Supports domain consistent propagation only.
+   */
+  GECODE_INT_EXPORT void
+  count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    *

@@ -54,6 +54,15 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   //@{
+  /// Subscribe propagator \a p to view \a y
+  template<class VY>
+  void subscribe(Space& home, Propagator& p, VY y);
+  /// Cancel propagator \a p for view \a y
+  template<class VY>
+  void cancel(Space& home, Propagator& p, VY y);
+  /// Return whether a propagator \a y requires notification
+  template<class VY>
+  bool notify(VY y);
   /// Test whether \a x and \a y are equal
   template<class VX>
   RelTest holds(VX x, VX y);
@@ -63,6 +72,9 @@ namespace Gecode { namespace Int { namespace Count {
   /// Test whether \a x and \a y are equal
   template<class VX>
   RelTest holds(VX x, ZeroIntView y);
+  /// Test whether \a x and \a y are equal
+  template<class VX>
+  RelTest holds(VX x, const IntSet& y);
   /// Post that all views in \a x are equal to \a y
   template<class VX>
   ExecStatus post_true(Home home, ViewArray<VX>& x, VX y);
@@ -72,6 +84,9 @@ namespace Gecode { namespace Int { namespace Count {
   /// Post that all views in \a x are equal to \a y
   template<class VX>
   ExecStatus post_true(Home home, ViewArray<VX>& x, ZeroIntView y);
+  /// Post that all views in \a x are equal to \a y
+  template<class VX>
+  ExecStatus post_true(Home home, ViewArray<VX>& x, const IntSet& y);
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
   ExecStatus post_false(Home home, ViewArray<VX>& x, VX y);
@@ -81,6 +96,9 @@ namespace Gecode { namespace Int { namespace Count {
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
   ExecStatus post_false(Home home, ViewArray<VX>& x, ZeroIntView y);
+  /// Post that all views in \a x are not equal to \a y
+  template<class VX>
+  ExecStatus post_false(Home home, ViewArray<VX>& x, const IntSet& y);
   //@}
 
 }}}

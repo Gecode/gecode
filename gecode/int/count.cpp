@@ -116,6 +116,44 @@ namespace Gecode {
   }
 
   void
+  count(Home home, const IntVarArgs& x, const IntSet& y,
+        IntRelType r, int m, IntConLevel) {
+    using namespace Int;
+    if (y.size() == 1) {
+      count(home,x,y.min(),r,m);
+      return;
+    }
+      
+    Limits::check(y.min(),"Int::count");
+    Limits::check(y.max(),"Int::count");
+    Limits::check(m,"Int::count");
+    if (home.failed()) return;
+    ViewArray<IntView> xv(home,x);
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL((Count::EqInt<IntView,IntSet>::post(home,xv,y,m)));
+      break;
+    case IRT_NQ:
+      GECODE_ES_FAIL((Count::NqInt<IntView,IntSet>::post(home,xv,y,m)));
+      break;
+    case IRT_LE:
+      GECODE_ES_FAIL((Count::LqInt<IntView,IntSet>::post(home,xv,y,m-1)));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL((Count::LqInt<IntView,IntSet>::post(home,xv,y,m)));
+      break;
+    case IRT_GR:
+      GECODE_ES_FAIL((Count::GqInt<IntView,IntSet>::post(home,xv,y,m+1)));
+      break;
+    case IRT_GQ:
+      GECODE_ES_FAIL((Count::GqInt<IntView,IntSet>::post(home,xv,y,m)));
+      break;
+    default:
+      throw UnknownRelation("Int::count");
+    }
+  }
+
+  void
   count(Home home, const IntVarArgs& x, const IntArgs& y,
         IntRelType r, int m, IntConLevel) {
     using namespace Int;
@@ -132,27 +170,27 @@ namespace Gecode {
     switch (r) {
     case IRT_EQ:
       GECODE_ES_FAIL((Count::EqInt<OffsetView,ZeroIntView>
-                           ::post(home,xy,z,m)));
+                      ::post(home,xy,z,m)));
       break;
     case IRT_NQ:
       GECODE_ES_FAIL((Count::NqInt<OffsetView,ZeroIntView>
-                           ::post(home,xy,z,m)));
+                      ::post(home,xy,z,m)));
       break;
     case IRT_LE:
       GECODE_ES_FAIL((Count::LqInt<OffsetView,ZeroIntView>
-                           ::post(home,xy,z,m-1)));
+                      ::post(home,xy,z,m-1)));
       break;
     case IRT_LQ:
       GECODE_ES_FAIL((Count::LqInt<OffsetView,ZeroIntView>
-                           ::post(home,xy,z,m)));
+                      ::post(home,xy,z,m)));
       break;
     case IRT_GR:
       GECODE_ES_FAIL((Count::GqInt<OffsetView,ZeroIntView>
-                           ::post(home,xy,z,m+1)));
+                      ::post(home,xy,z,m+1)));
       break;
     case IRT_GQ:
       GECODE_ES_FAIL((Count::GqInt<OffsetView,ZeroIntView>
-                           ::post(home,xy,z,m)));
+                      ::post(home,xy,z,m)));
       break;
     default:
       throw UnknownRelation("Int::count");
@@ -226,6 +264,51 @@ namespace Gecode {
       break;
     case IRT_GQ:
       GECODE_ES_FAIL((Count::GqView<IntView,IntView,IntView,true>
+                           ::post(home,xv,y,z,0)));
+      break;
+    default:
+      throw UnknownRelation("Int::count");
+    }
+  }
+
+  void
+  count(Home home, const IntVarArgs& x, const IntSet& y,
+        IntRelType r, IntVar z, IntConLevel) {
+    using namespace Int;
+
+    if (y.size() == 1) {
+      count(home,x,y.min(),r,z);
+      return;
+    }
+      
+    Limits::check(y.min(),"Int::count");
+    Limits::check(y.max(),"Int::count");
+
+    if (home.failed()) return;
+    ViewArray<IntView> xv(home,x);
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL((Count::EqView<IntView,IntSet,IntView,true>
+                           ::post(home,xv,y,z,0)));
+      break;
+    case IRT_NQ:
+      GECODE_ES_FAIL((Count::NqView<IntView,IntSet,IntView,true>
+                           ::post(home,xv,y,z,0)));
+      break;
+    case IRT_LE:
+      GECODE_ES_FAIL((Count::LqView<IntView,IntSet,IntView,true>
+                           ::post(home,xv,y,z,-1)));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL((Count::LqView<IntView,IntSet,IntView,true>
+                           ::post(home,xv,y,z,0)));
+      break;
+    case IRT_GR:
+      GECODE_ES_FAIL((Count::GqView<IntView,IntSet,IntView,true>
+                           ::post(home,xv,y,z,1)));
+      break;
+    case IRT_GQ:
+      GECODE_ES_FAIL((Count::GqView<IntView,IntSet,IntView,true>
                            ::post(home,xv,y,z,0)));
       break;
     default:

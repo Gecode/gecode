@@ -47,8 +47,10 @@ namespace Gecode { namespace Int { namespace Count {
   BaseView<VX,VY,VZ,shr>::BaseView(Home home,
                                    ViewArray<VX>& x0, VY y0, VZ z0, int c0)
     : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
+    if (notice(y))
+      home.notice(*this,AP_DISPOSE);
     x.subscribe(home,*this,PC_INT_DOM);
-    y.subscribe(home,*this,PC_INT_DOM);
+    subscribe(home,*this,y);
     z.subscribe(home,*this,PC_INT_BND);
   }
 
@@ -71,8 +73,10 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY, class VZ, bool shr>
   forceinline size_t
   BaseView<VX,VY,VZ,shr>::dispose(Space& home) {
+    if (notice(y))
+      home.ignore(*this,AP_DISPOSE);
     x.cancel(home,*this,PC_INT_DOM);
-    y.cancel(home,*this,PC_INT_DOM);
+    cancel(home,*this,y);
     z.cancel(home,*this,PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -111,6 +115,11 @@ namespace Gecode { namespace Int { namespace Count {
     return x.size()-c;
   }
 
+  template<class VX>
+  forceinline bool
+  shared(const IntSet&, VX) {
+    return false;
+  }
   template<class VX, class VY, class VZ, bool shr>
   forceinline bool
   BaseView<VX,VY,VZ,shr>::sharing(const ViewArray<VX>& x,
@@ -176,8 +185,8 @@ namespace Gecode { namespace Int { namespace Count {
         GECODE_ES_CHECK(post_true(home,x,y));
         return home.ES_SUBSUMED(*this);
       }
-      GECODE_REWRITE(*this,(EqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
-    }
+      VY yc(y);
+      GECODE_REWRITE(*this,(EqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));    }
     return shr ? ES_NOFIX : ES_FIX;
   }
 
@@ -229,8 +238,10 @@ namespace Gecode { namespace Int { namespace Count {
       return home.ES_SUBSUMED(*this);
     if (z.min() > atmost())
       return home.ES_SUBSUMED(*this);
-    if (z.assigned())
-      GECODE_REWRITE(*this,(NqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
+    if (z.assigned()) {
+      VY yc(y);
+      GECODE_REWRITE(*this,(NqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
+    }
     return ES_FIX;
   }
 
@@ -283,8 +294,10 @@ namespace Gecode { namespace Int { namespace Count {
     }
     if (x.size() == 0)
       return home.ES_SUBSUMED(*this);
-    if (z.assigned())
-      GECODE_REWRITE(*this,(LqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
+    if (z.assigned()) {
+      VY yc(y);
+      GECODE_REWRITE(*this,(LqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
+    }
     return shr ? ES_NOFIX : ES_FIX;
   }
 
@@ -338,8 +351,10 @@ namespace Gecode { namespace Int { namespace Count {
     }
     if (x.size() == 0)
       return home.ES_SUBSUMED(*this);
-    if (z.assigned())
-      GECODE_REWRITE(*this,(GqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
+    if (z.assigned()) {
+      VY yc(y);
+      GECODE_REWRITE(*this,(GqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
+    }
     return shr ? ES_NOFIX : ES_FIX;
   }
 

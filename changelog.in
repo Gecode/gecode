@@ -73,6 +73,14 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The count constraints now also support comparison to integer sets
+in addition to integers and integer variables.
+
+[ENTRY]
 Module: minimodel
 What:   new
 Rank:   minor
