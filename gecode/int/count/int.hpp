@@ -107,10 +107,10 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_FAILED;
     // All views must be different
     if (c == 0)
-      return post_false(home,x,y) ? ES_FAILED : ES_OK;
+      return post_false(home,x,y);
     // All views must be equal
     if (c == n_x)
-      return post_true(home,x,y) ? ES_FAILED : ES_OK;
+      return post_true(home,x,y);
     // Compute how many subscriptions must be created
     int n_s = std::max(c,n_x-c)+1;
     assert(n_s <= n_x);
@@ -163,12 +163,16 @@ namespace Gecode { namespace Int { namespace Count {
     x.size(n_x);
     if ((c < 0) || (c > n_x))
       return ES_FAILED;
-    if (c == 0)
+    if (c == 0) {
       // All views must be different
-      return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
-    if (c == n_x)
+      GECODE_ES_CHECK(post_false(home,x,y));
+      return home.ES_SUBSUMED(*this);
+    }
+    if (c == n_x) {
       // All views must be equal
-      return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      GECODE_ES_CHECK(post_true(home,x,y));
+      return home.ES_SUBSUMED(*this);
+    }
     int m = std::max(c,n_x-c)+1;
     assert(m <= n_x);
     // Now, there must be new subscriptions from x[n_s] up to x[m-1]
@@ -211,7 +215,7 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_OK;
     // All views must be equal
     if (c == n_x)
-      return post_true(home,x,y) ? ES_FAILED : ES_OK;
+      return post_true(home,x,y);
     (void) new (home) GqInt<VX,VY>(home,x,c+1,y,c);
     return ES_OK;
   }
@@ -265,9 +269,11 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_FAILED;
     if (c <= 0)
       return home.ES_SUBSUMED(*this);
-    if (c == n_x)
+    if (c == n_x) {
       // All views must be equal
-      return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      GECODE_ES_CHECK(post_true(home,x,y)); 
+      return home.ES_SUBSUMED(*this);
+    }
     // Now, there must be new subscriptions from x[n_s] up to x[c+1]
     while (n_s <= c)
       x[n_s++].subscribe(home,*this,PC_INT_DOM,false);
@@ -306,7 +312,7 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_OK;
     // All views must be different
     if (c == 0)
-      return post_false(home,x,y) ? ES_FAILED : ES_OK;
+      return post_false(home,x,y);
     (void) new (home) LqInt<VX,VY>(home,x,n_x-c+1,y,c);
     return ES_OK;
   }
@@ -360,9 +366,11 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_FAILED;
     if (c >= n_x)
       return home.ES_SUBSUMED(*this);
-    if (c == 0)
+    if (c == 0) {
       // All views must be different
-      return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      GECODE_ES_CHECK(post_false(home,x,y));
+      return home.ES_SUBSUMED(*this);
+    }
     // Now, there must be new subscriptions from x[n_s] up to x[n_x-c+1]
     int m = n_x-c;
     while (n_s <= m)
@@ -419,9 +427,9 @@ namespace Gecode { namespace Int { namespace Count {
       return (c == 0) ? ES_FAILED : ES_OK;
     if (n == 1) {
       if (c == 1)
-        return post_false(home,x[0],y) ? ES_FAILED : ES_OK;
+        return post_false(home,x[0],y);
       else
-        return post_true(home,x[0],y) ? ES_FAILED : ES_OK;
+        return post_true(home,x[0],y);
     }
     (void) new (home) NqInt(home,x,y,c);
     return ES_OK;
@@ -483,16 +491,23 @@ namespace Gecode { namespace Int { namespace Count {
     if (n == 0)
       return (c == 0) ? ES_FAILED : home.ES_SUBSUMED(*this);
     if (n == 1) {
-      if (s0)
-        if (c == 1)
-          return post_false(home,x0,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
-        else
-          return post_true(home,x0,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
-      else
-        if (c == 1)
-          return post_false(home,x1,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
-        else
-          return post_true(home,x1,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      if (s0) {
+        if (c == 1) {
+          GECODE_ES_CHECK(post_false(home,x0,y));
+          return home.ES_SUBSUMED(*this);
+        } else {
+          GECODE_ES_CHECK(post_true(home,x0,y));
+          return home.ES_SUBSUMED(*this);
+        }
+      } else {
+        if (c == 1) {
+          GECODE_ES_CHECK(post_false(home,x1,y));
+          return home.ES_SUBSUMED(*this);
+        } else {
+          GECODE_ES_CHECK(post_true(home,x1,y));
+          return home.ES_SUBSUMED(*this);
+        }
+      }
     }
     return ES_FIX;
   }

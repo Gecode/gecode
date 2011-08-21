@@ -60,18 +60,27 @@ namespace Gecode { namespace Int { namespace Count {
   /// Test whether \a x and \a y are equal
   template<class VX>
   RelTest holds(VX x, ConstIntView y);
+  /// Test whether \a x and \a y are equal
+  template<class VX>
+  RelTest holds(VX x, ZeroIntView y);
   /// Post that all views in \a x are equal to \a y
   template<class VX>
-  bool post_true(Home home, ViewArray<VX>& x, VX y);
+  ExecStatus post_true(Home home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are equal to \a y
   template<class VX>
-  bool post_true(Home home, ViewArray<VX>& x, ConstIntView y);
+  ExecStatus post_true(Home home, ViewArray<VX>& x, ConstIntView y);
+  /// Post that all views in \a x are equal to \a y
+  template<class VX>
+  ExecStatus post_true(Home home, ViewArray<VX>& x, ZeroIntView y);
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
-  bool post_false(Home home, ViewArray<VX>& x, VX y);
+  ExecStatus post_false(Home home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
-  bool post_false(Home home, ViewArray<VX>& x, ConstIntView y);
+  ExecStatus post_false(Home home, ViewArray<VX>& x, ConstIntView y);
+  /// Post that all views in \a x are not equal to \a y
+  template<class VX>
+  ExecStatus post_false(Home home, ViewArray<VX>& x, ZeroIntView y);
   //@}
 
 }}}

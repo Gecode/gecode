@@ -168,10 +168,14 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.assigned()) {
-      if (z.val() == atleast())
-        return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
-      if (z.val() == atmost())
-        return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      if (z.val() == atleast()) {
+        GECODE_ES_CHECK(post_false(home,x,y));
+        return home.ES_SUBSUMED(*this);
+      }
+      if (z.val() == atmost()) {
+        GECODE_ES_CHECK(post_true(home,x,y));
+        return home.ES_SUBSUMED(*this);
+      }
       GECODE_REWRITE(*this,(EqInt<VX,VY>::post(home(*this),x,y,z.val()+c)));
     }
     return shr ? ES_NOFIX : ES_FIX;
@@ -273,8 +277,10 @@ namespace Gecode { namespace Int { namespace Count {
   LqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
     count(home);
     GECODE_ME_CHECK(z.gq(home,atleast()));
-    if (z.max() == atleast())
-      return post_false(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    if (z.max() == atleast()) {
+      GECODE_ES_CHECK(post_false(home,x,y));
+      return home.ES_SUBSUMED(*this);
+    }
     if (x.size() == 0)
       return home.ES_SUBSUMED(*this);
     if (z.assigned())
@@ -326,8 +332,10 @@ namespace Gecode { namespace Int { namespace Count {
 
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
-    if (z.min() == atmost())
-      return post_true(home,x,y) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    if (z.min() == atmost()) {
+      GECODE_ES_CHECK(post_true(home,x,y)); 
+      return home.ES_SUBSUMED(*this);
+    }
     if (x.size() == 0)
       return home.ES_SUBSUMED(*this);
     if (z.assigned())

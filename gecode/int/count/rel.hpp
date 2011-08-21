@@ -60,83 +60,82 @@ namespace Gecode { namespace Int { namespace Count {
     return rtest_eq_dom(x,y);
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_true(Home home, VX x, ConstIntView y) {
-    return me_failed(x.eq(home,y.val()));
+    GECODE_ME_CHECK(x.eq(home,y.val()));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_true(Home home, VX x, ZeroIntView) {
-    return me_failed(x.eq(home,0));
+    GECODE_ME_CHECK(x.eq(home,0));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_true(Home home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
-      if (me_failed(x[i].eq(home,y.val())))
-        return true;
-    return false;
+      GECODE_ME_CHECK(x[i].eq(home,y.val()));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_true(Home home, ViewArray<VX>& x, ZeroIntView) {
     for (int i = x.size(); i--; )
-      if (me_failed(x[i].eq(home,0)))
-        return true;
-    return false;
+      GECODE_ME_CHECK(x[i].eq(home,0));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_false(Home home, VX x, ConstIntView y) {
-    return me_failed(x.nq(home,y.val()));
+    GECODE_ME_CHECK(x.nq(home,y.val()));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_false(Home home, VX x, ZeroIntView) {
-    return me_failed(x.nq(home,0));
+    GECODE_ME_CHECK(x.nq(home,0));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
-      if (me_failed(x[i].nq(home,y.val())))
-        return true;
-    return false;;
+      GECODE_ME_CHECK(x[i].nq(home,y.val()));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, ZeroIntView) {
     for (int i = x.size(); i--; )
-      if (me_failed(x[i].nq(home,0)))
-        return true;
-    return false;;
+      GECODE_ME_CHECK(x[i].nq(home,0));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_true(Home home, ViewArray<VX>& x, VX y) {
     ViewArray<VX> z(home,x.size()+1);
     z[x.size()] = y;
     for (int i = x.size(); i--; )
       z[i] = x[i];
-    return Rel::NaryEqDom<VX>::post(home,z) == ES_FAILED;
+    return Rel::NaryEqDom<VX>::post(home,z);
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_true(Home home, VX x, VX y) {
-    return Rel::EqDom<VX,VX>::post(home,x,y) == ES_FAILED;
+    return Rel::EqDom<VX,VX>::post(home,x,y);
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, VX y) {
     for (int i = x.size(); i--; )
-      if (Rel::Nq<VX>::post(home,x[i],y) == ES_FAILED)
-        return true;
-    return false;
+      GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x[i],y));
+    return ES_OK;
   }
   template<class VX>
-  forceinline bool
+  forceinline ExecStatus
   post_false(Home home, VX x, VX y) {
-    return Rel::Nq<VX>::post(home,x,y) == ES_FAILED;
+    return Rel::Nq<VX>::post(home,x,y);
   }
 
 }}}
