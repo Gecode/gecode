@@ -1322,6 +1322,7 @@ namespace Gecode {
     (void) icl;
     SetVar s(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
     rel(home,SOT_UNION,x,s);
+    nvalues(home,x,IRT_EQ,expr(home,cardinality(s)));
     return s;
   }
 #endif
@@ -1537,6 +1538,13 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF) {
     rel(home,x,r,y,icl);
   }
+  /** \brief Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$
+   */
+  inline void
+  values(Home home, const IntVarArgs& x, IntSet y) {
+    dom(home,x,y);
+    nvalues(home,x,IRT_EQ,y.size());
+  }
 
   //@}
 
@@ -1552,10 +1560,14 @@ namespace Gecode {
 
   //@{
   /** \brief Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$
+   * 
+   * In addition to constraining \a y to the union of the \a x, this
+   * also posts an nvalue constraint for additional cardinality propagation.
    */
   inline void
   channel(Home home, const IntVarArgs& x, SetVar y) {
     rel(home,SOT_UNION,x,y);
+    nvalues(home,x,IRT_EQ,expr(home,cardinality(y)));
   }
   
   /** \brief Post propagator for \f$\bigcup_{i\in y}\{x_i\}=z\f$

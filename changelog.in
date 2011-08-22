@@ -73,6 +73,16 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a convenience function values that restricts the set of values
+taken by an array of integer variables to a fixed set, using the nvalues
+constraint. The channel constraints between IntVarArgs and a SetVar now
+also use nvalues to increase propagation.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
