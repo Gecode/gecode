@@ -74,6 +74,8 @@ namespace Gecode { namespace Int {
     bool subset(View x) const;
     /// Update value set during cloning
     void update(Space& home, bool share, ValSet& vs);
+    /// Flush entries
+    void flush(void);
     /// Dispose value set
     void dispose(Space& home);
     /// Iterator over ranges

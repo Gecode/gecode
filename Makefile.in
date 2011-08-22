@@ -291,14 +291,13 @@ INTSRC0 = \
 	exec/when.cpp element/pair.cpp \
 	linear/int-post.cpp linear-int.cpp \
 	linear/bool-post.cpp linear-bool.cpp \
-	branch.cpp \
-	distinct.cpp \
-	sorted.cpp gcc.cpp \
+	branch.cpp distinct.cpp sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
 	unshare.cpp sequence.cpp \
 	bin-packing.cpp bin-packing/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
-	circuit.cpp no-overlap.cpp nvalues.cpp
+	circuit.cpp no-overlap.cpp nvalues.cpp \
+	member.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -370,7 +369,8 @@ INTHDR0 = \
 	nvalues/bool-lq.hpp nvalues/bool-gq.hpp \
 	nvalues/int-base.hpp nvalues/int-eq.hpp \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
-	val-set.hh val-set.hpp
+	val-set.hh val-set.hpp \
+	member.hh member/prop.hh member/prop-re.hh
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -842,7 +842,7 @@ INTTESTSRC00 = \
 	rel linear gcc sorted unshare exec sequence \
 	mm-arithmetic mm-bool mm-lin mm-count mm-rel \
 	bin-packing unary cumulative cumulatives circuit \
-	no-overlap precede nvalues
+	no-overlap precede nvalues member
 INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 

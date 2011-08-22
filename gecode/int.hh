@@ -1185,6 +1185,30 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskModelIntMember Membership constraints
+   * \ingroup TaskModelInt
+   */
+  //@{
+  /// Post domain-consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
+  GECODE_INT_EXPORT void
+  member(Home home, const IntVarArgs& x, IntVar y,
+         IntConLevel icl=ICL_DEF);
+  /// Post domain-consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
+  GECODE_INT_EXPORT void
+  member(Home home, const BoolVarArgs& x, BoolVar y,
+         IntConLevel icl=ICL_DEF);
+  /// Post domain-consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+  GECODE_INT_EXPORT void
+  member(Home home, const IntVarArgs& x, IntVar y, BoolVar b,
+         IntConLevel icl=ICL_DEF);
+  /// Post domain-consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+  GECODE_INT_EXPORT void
+  member(Home home, const BoolVarArgs& x, BoolVar y, BoolVar b,
+         IntConLevel icl=ICL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskModelIntElement Element constraints
    * \ingroup TaskModelInt
    */

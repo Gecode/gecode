@@ -123,6 +123,11 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void
+  ValSet::flush(void) {
+    fst = lst = NULL;
+  }
+
+  forceinline void
   ValSet::dispose(Space& home) {
     if (fst != NULL)
       fst->dispose(home,lst);
