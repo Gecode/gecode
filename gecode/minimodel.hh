@@ -1342,7 +1342,7 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq m\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1351,7 +1351,7 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_LQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1360,7 +1360,7 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
    *
    * Supports domain consistent propagation only.
    *
@@ -1372,7 +1372,7 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1381,7 +1381,7 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_LQ,z,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1390,7 +1390,7 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,z,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
    *
    * Supports domain consistent propagation only.
    *
@@ -1403,7 +1403,7 @@ namespace Gecode {
     count(home,x,y,IRT_LQ,z,icl);
   }
 
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1412,7 +1412,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_GQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1421,7 +1421,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
    *
    * Supports domain consistent propagation only.
    *
@@ -1433,7 +1433,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1442,7 +1442,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_GQ,z,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1451,7 +1451,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,z,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
    *
    * Supports domain consistent propagation only.
    *
@@ -1464,7 +1464,7 @@ namespace Gecode {
     count(home,x,y,IRT_GQ,z,icl);
   }
 
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1473,7 +1473,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_EQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1482,7 +1482,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
    *
    * Supports domain consistent propagation only.
    *
@@ -1494,7 +1494,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,m,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1503,7 +1503,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_EQ,z,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
    *
    * Supports domain consistent propagation only.
    */
@@ -1512,7 +1512,7 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
+  /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
    *
    * Supports domain consistent propagation only.
    *
@@ -1524,26 +1524,27 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }
-  /** \brief Post propagator for lexical order between \a x and \a y.
+  /** \brief Post lexical order between \a x and \a y.
    */
   inline void
   lex(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF) {
     rel(home,x,r,y,icl);
   }
-  /** \brief Post propagator for lexical order between \a x and \a y.
+  /** \brief Post lexical order between \a x and \a y.
    */
   inline void
   lex(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF) {
     rel(home,x,r,y,icl);
   }
-  /** \brief Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$
+  /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
    */
   inline void
-  values(Home home, const IntVarArgs& x, IntSet y) {
-    dom(home,x,y);
-    nvalues(home,x,IRT_EQ,y.size());
+  values(Home home, const IntVarArgs& x, IntSet y,
+         IntConLevel icl=ICL_DEF) {
+    dom(home,x,y,icl);
+    nvalues(home,x,IRT_EQ,y.size(),icl);
   }
 
   //@}
@@ -1559,7 +1560,7 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$
+  /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
    * 
    * In addition to constraining \a y to the union of the \a x, this
    * also posts an nvalue constraint for additional cardinality propagation.
@@ -1570,14 +1571,14 @@ namespace Gecode {
     nvalues(home,x,IRT_EQ,expr(home,cardinality(y)));
   }
   
-  /** \brief Post propagator for \f$\bigcup_{i\in y}\{x_i\}=z\f$
+  /** \brief Post constraint \f$\bigcup_{i\in y}\{x_i\}=z\f$
    */
   inline void
   range(Home home, const IntVarArgs& x, SetVar y, SetVar z) {
     element(home,SOT_UNION,x,y,z);
   }
 
-  /** \brief Post propagator for \f$\bigcup_{i\in z}\{j\ |\ x_j=i\}=z\f$
+  /** \brief Post constraint \f$\bigcup_{i\in z}\{j\ |\ x_j=i\}=z\f$
    *
    * Note that this creates one temporary set variable for each element
    * in the upper bound of \a z, so make sure that the bound is tight.

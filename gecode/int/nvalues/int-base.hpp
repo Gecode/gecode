@@ -227,7 +227,7 @@ namespace Gecode { namespace Int { namespace NValues {
       Support::quicksort(re,n_re);
 
       // Current views with a range being active
-      Support::BitSet<Region> cur(r,x.size());
+      Support::BitSet<Region> cur(r,static_cast<unsigned int>(x.size()));
       // Process all events
       for (int i=0; true; i++)
         switch (re[i].ret) {
@@ -242,10 +242,10 @@ namespace Gecode { namespace Int { namespace NValues {
               ovl_i[dj][deg[dj]++] = di; 
             }
           }
-          cur.set(re[i].view);
+          cur.set(static_cast<unsigned int>(re[i].view));
           break;
         case RET_LST:
-          cur.clear(re[i].view);
+          cur.clear(static_cast<unsigned int>(re[i].view));
           break;
         case RET_END:
           goto done;

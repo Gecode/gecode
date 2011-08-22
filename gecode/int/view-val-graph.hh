@@ -119,10 +119,10 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   class Node : public BiLink {
   public:
-    /// Values for computing strongly connected components
-    unsigned int low, min, comp;
     /// Next edge for computing strongly connected components
     Edge<View>* iter;
+    /// Values for computing strongly connected components
+    unsigned int low, min, comp;
     /// Initialize
     Node(void);
     /// Return first edge (organized by bi-links)
@@ -289,10 +289,10 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   public:
     /// Array of view nodes
     ViewNode<View>** view;
-    /// Number of view nodes
-    int n_view;
     /// Array of value nodes
     ValNode<View>* val;
+    /// Number of view nodes
+    int n_view;
     /// Number of value nodes
     int n_val;
     /// Marking counter

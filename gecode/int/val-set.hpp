@@ -43,7 +43,7 @@ namespace Gecode { namespace Int {
    */
   forceinline
   ValSet::ValSet(void)
-    : n(0), fst(NULL), lst(NULL) {}
+    : fst(NULL), lst(NULL), n(0) {}
 
   forceinline void
   ValSet::add(Space& home, int v) {

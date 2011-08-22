@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline
   Graph<View>::Graph(void)
-    : view(NULL), n_view(0), val(NULL), n_val(0), count(1U) {}
+    : view(NULL), val(NULL), n_view(0), n_val(0), count(1U) {}
 
   template<class View>
   forceinline bool

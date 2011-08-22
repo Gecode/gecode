@@ -153,10 +153,13 @@ namespace Gecode { namespace Int { namespace Member {
     Region r(home);
 
     assert(x.size() > 0);
-    Iter::Ranges::NaryUnion 
-      u(r,ValSet::Ranges(vs),ViewRanges<View>(x[x.size()-1]));
-    for (int i=x.size()-1; i--; )
-      u |= ViewRanges<View>(x[i]);
+    ValSet::Ranges vsr(vs);
+    ViewRanges<View> xsr(x[x.size()-1]);
+    Iter::Ranges::NaryUnion  u(r,vsr,xsr);
+    for (int i=x.size()-1; i--; ) {
+      ViewRanges<View> xir(x[i]);
+      u |= xir;
+    }
 
     GECODE_ME_CHECK(y.inter_r(home,u,false));
 

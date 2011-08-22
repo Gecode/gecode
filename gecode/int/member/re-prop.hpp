@@ -154,11 +154,14 @@ namespace Gecode { namespace Int { namespace Member {
     if (x.size() > 0) {
       Region r(home);
 
-      Iter::Ranges::NaryUnion 
-        u(r,ValSet::Ranges(vs),ViewRanges<View>(x[x.size()-1]));
-      for (int i=x.size()-1; i--; )
-        u |= ViewRanges<View>(x[i]);
-      
+      ValSet::Ranges vsr(vs);
+      ViewRanges<View> xsr(x[x.size()-1]);
+      Iter::Ranges::NaryUnion  u(r,vsr,xsr);
+      for (int i=x.size()-1; i--; ) {
+        ViewRanges<View> xir(x[i]);
+        u |= xir;
+      }
+
       ViewRanges<View> yr(y);
       
       if (Iter::Ranges::disjoint(u,yr)) {

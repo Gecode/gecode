@@ -47,12 +47,12 @@ namespace Gecode { namespace Int {
    */
   class ValSet {
   protected:
-    /// Number of stored values (integer precision is sufficient)
-    int n;
     /// First element of range list
     RangeList* fst;
     /// Last element of range list
     RangeList* lst;
+    /// Number of stored values (integer precision is sufficient)
+    int n;
   public:
     /// Initialize
     ValSet(void);
