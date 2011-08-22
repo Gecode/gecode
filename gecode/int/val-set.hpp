@@ -35,7 +35,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace NValues {
+namespace Gecode { namespace Int {
 
   /*
    * Value sets
@@ -176,6 +176,6 @@ namespace Gecode { namespace Int { namespace NValues {
     return Iter::Ranges::subset(xr,vsr);
   }
 
-}}}
+}}
 
-// STATISTICS: int-prop
+// STATISTICS: int-other

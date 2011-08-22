@@ -39,6 +39,7 @@
 #define __GECODE_INT_NVALUES_HH__
 
 #include <gecode/int.hh>
+#include <gecode/int/val-set.hh>
 
 /**
  * \namespace Gecode::Int::NValues
@@ -46,71 +47,6 @@
  */
 
 namespace Gecode { namespace Int { namespace NValues {
-
-  /**
-   * \brief Class for storing values of already assigned views
-   */
-  class ValSet {
-  protected:
-    /// Number of stored values (integer precision is sufficient)
-    int n;
-    /// First element of range list
-    RangeList* fst;
-    /// Last element of range list
-    RangeList* lst;
-  public:
-    /// Initialize
-    ValSet(void);
-    /// Add value \a v to value set
-    void add(Space& home, int v);
-    /// Return size (number of values)
-    int size(void) const;
-    /// Test whether set is empty
-    bool empty(void) const;
-    /// Return smallest value (provided the set is not empty)
-    int min(void) const;
-    /// Return largest value (provided the set is not empty)
-    int max(void) const;
-    /// Compare view \a x with value set
-    template<class View>
-    Iter::Ranges::CompareStatus compare(View x) const;
-    /// Whether all values of \a x are included in the value set
-    template<class View>
-    bool subset(View x) const;
-    /// Update value set during cloning
-    void update(Space& home, bool share, ValSet& vs);
-    /// Dispose value set
-    void dispose(Space& home);
-    /// Iterator over ranges
-    class Ranges {
-      /// Current position in range list
-      const RangeList* c;
-    public:
-      /// \name Constructors and initialization
-      //@{
-      /// Initialize
-      Ranges(const ValSet& vs);
-      //@}
-
-      /// \name Iteration control
-      //@{
-      /// Test whether iterator is still at a range or done
-      bool operator ()(void) const;
-      /// Move iterator to next range (if possible)
-      void operator ++(void);
-      //@}
-
-      /// \name Range access
-      //@{
-      /// Return smallest value of range
-      int min(void) const;
-      /// Return largest value of range
-      int max(void) const;
-      /// Return width of range (distance between minimum and maximum)
-      unsigned int width(void) const;
-      //@}
-    };
-  };
 
   /// Event type for range-based overlap analysis
   enum RangeEventType {
@@ -153,7 +89,6 @@ namespace Gecode { namespace Int { namespace NValues {
 
 }}}
 
-#include <gecode/int/nvalues/val-set.hpp>
 #include <gecode/int/nvalues/range-event.hpp>
 #include <gecode/int/nvalues/sym-bit-matrix.hpp>
 

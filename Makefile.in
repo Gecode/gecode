@@ -364,12 +364,13 @@ INTHDR0 = \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \
 	no-overlap/base.hpp no-overlap/man.hpp no-overlap/opt.hpp \
-	nvalues.hh nvalues/val-set.hpp nvalues/range-event.hpp \
+	nvalues.hh nvalues/range-event.hpp \
 	nvalues/sym-bit-matrix.hpp nvalues/graph.hpp \
 	nvalues/bool-base.hpp nvalues/bool-eq.hpp \
 	nvalues/bool-lq.hpp nvalues/bool-gq.hpp \
 	nvalues/int-base.hpp nvalues/int-eq.hpp \
-	nvalues/int-lq.hpp nvalues/int-gq.hpp
+	nvalues/int-lq.hpp nvalues/int-gq.hpp \
+	val-set.hh val-set.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
