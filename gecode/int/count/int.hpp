@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Count {
   BaseInt<VX,VY>::BaseInt(Home home,
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
-    if (notice(y))
+    if (vtd(y) == VTD_INTSET)
       home.notice(*this,AP_DISPOSE);
     for (int i=n_s; i--; )
       x[i].subscribe(home,*this,PC_INT_DOM);
@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   forceinline size_t
   BaseInt<VX,VY>::dispose(Space& home) {
-    if (notice(y))
+    if (vtd(y) == VTD_INTSET)
       home.ignore(*this,AP_DISPOSE);
     for (int i=n_s; i--; )
       x[i].cancel(home,*this,PC_INT_DOM);
@@ -394,7 +394,7 @@ namespace Gecode { namespace Int { namespace Count {
                                       x0[x0.size()-1]), x(x0), y(y0), c(c0) {
     assert(x.size() >= 2);
     x.size(x.size()-2);
-    if (notice(y))
+    if (vtd(y) == VTD_INTSET)
       home.notice(*this,AP_DISPOSE);
     subscribe(home,*this,y);
   }
@@ -402,7 +402,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   forceinline size_t
   NqInt<VX,VY>::dispose(Space& home) {
-    if (notice(y))
+    if (vtd(y) == VTD_INTSET)
       home.ignore(*this,AP_DISPOSE);
     cancel(home,*this,y);
     (void) BinaryPropagator<VX,PC_INT_DOM>::dispose(home);

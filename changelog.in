@@ -74,6 +74,15 @@ Bugfixes
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Added some additional propagation for the count constraints (now,
+for example, count(home, x, y, IRT_GQ, 1) also constrains y to
+only take values supported by x).
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]

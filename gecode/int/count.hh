@@ -54,15 +54,23 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   //@{
+  /// Description of view type
+  enum ViewTypeDesc {
+    VTD_CONSTVIEW, ///< Constant view
+    VTD_INTSET,    ///< Integer set
+    VTD_VARVIEW    ///< Variable view
+  };
+  /// Return the view type description of \a y
+  template<class VY>
+  ViewTypeDesc vtd(VY y);
+
   /// Subscribe propagator \a p to view \a y
   template<class VY>
   void subscribe(Space& home, Propagator& p, VY y);
   /// Cancel propagator \a p for view \a y
   template<class VY>
   void cancel(Space& home, Propagator& p, VY y);
-  /// Return whether a propagator \a y requires notification
-  template<class VY>
-  bool notify(VY y);
+
   /// Test whether \a x and \a y are equal
   template<class VX>
   RelTest holds(VX x, VX y);
@@ -75,6 +83,7 @@ namespace Gecode { namespace Int { namespace Count {
   /// Test whether \a x and \a y are equal
   template<class VX>
   RelTest holds(VX x, const IntSet& y);
+
   /// Post that all views in \a x are equal to \a y
   template<class VX>
   ExecStatus post_true(Home home, ViewArray<VX>& x, VX y);
@@ -87,6 +96,7 @@ namespace Gecode { namespace Int { namespace Count {
   /// Post that all views in \a x are equal to \a y
   template<class VX>
   ExecStatus post_true(Home home, ViewArray<VX>& x, const IntSet& y);
+
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
   ExecStatus post_false(Home home, ViewArray<VX>& x, VX y);
@@ -99,6 +109,19 @@ namespace Gecode { namespace Int { namespace Count {
   /// Post that all views in \a x are not equal to \a y
   template<class VX>
   ExecStatus post_false(Home home, ViewArray<VX>& x, const IntSet& y);
+
+  /// Prune that \a y is the union of \a x
+  template<class VX>
+  ExecStatus prune(Home home, ViewArray<VX>& x, VX y);
+  /// Prune that \a y is the union of \a x
+  template<class VX>
+  ExecStatus prune(Home home, ViewArray<VX>& x, ConstIntView y);
+  /// Prune that \a y is the union of \a x
+  template<class VX>
+  ExecStatus prune(Home home, ViewArray<VX>& x, ZeroIntView y);
+  /// Prune that \a y is the union of \a x
+  template<class VX>
+  ExecStatus prune(Home home, ViewArray<VX>& x, const IntSet& y);
   //@}
 
 }}}
@@ -138,7 +161,8 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
@@ -167,7 +191,8 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (greater or equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
@@ -196,7 +221,8 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (less or equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
@@ -225,7 +251,8 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (not equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
@@ -271,7 +298,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief Base-class for count propagators (view)
    *
    */
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ>
   class BaseView : public Propagator {
   protected:
     /// Views still to count
@@ -306,22 +333,23 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class EqView : public BaseView<VX,VY,VZ,shr> {
+  class EqView : public BaseView<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ,shr>::x;
-    using BaseView<VX,VY,VZ,shr>::z;
-    using BaseView<VX,VY,VZ,shr>::c;
-    using BaseView<VX,VY,VZ,shr>::y;
-    using BaseView<VX,VY,VZ,shr>::count;
-    using BaseView<VX,VY,VZ,shr>::atleast;
-    using BaseView<VX,VY,VZ,shr>::atmost;
-    using BaseView<VX,VY,VZ,shr>::sharing;
+    using BaseView<VX,VY,VZ>::x;
+    using BaseView<VX,VY,VZ>::z;
+    using BaseView<VX,VY,VZ>::c;
+    using BaseView<VX,VY,VZ>::y;
+    using BaseView<VX,VY,VZ>::count;
+    using BaseView<VX,VY,VZ>::atleast;
+    using BaseView<VX,VY,VZ>::atmost;
+    using BaseView<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     EqView(Space& home, bool share, EqView& p);
@@ -340,22 +368,23 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (different from number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class NqView : public BaseView<VX,VY,VZ,shr> {
+  class NqView : public BaseView<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ,shr>::x;
-    using BaseView<VX,VY,VZ,shr>::z;
-    using BaseView<VX,VY,VZ,shr>::c;
-    using BaseView<VX,VY,VZ,shr>::y;
-    using BaseView<VX,VY,VZ,shr>::count;
-    using BaseView<VX,VY,VZ,shr>::atleast;
-    using BaseView<VX,VY,VZ,shr>::atmost;
-    using BaseView<VX,VY,VZ,shr>::sharing;
+    using BaseView<VX,VY,VZ>::x;
+    using BaseView<VX,VY,VZ>::z;
+    using BaseView<VX,VY,VZ>::c;
+    using BaseView<VX,VY,VZ>::y;
+    using BaseView<VX,VY,VZ>::count;
+    using BaseView<VX,VY,VZ>::atleast;
+    using BaseView<VX,VY,VZ>::atmost;
+    using BaseView<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     NqView(Space& home, bool share, NqView& p);
@@ -374,22 +403,23 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (less or equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class LqView : public BaseView<VX,VY,VZ,shr> {
+  class LqView : public BaseView<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ,shr>::x;
-    using BaseView<VX,VY,VZ,shr>::z;
-    using BaseView<VX,VY,VZ,shr>::c;
-    using BaseView<VX,VY,VZ,shr>::y;
-    using BaseView<VX,VY,VZ,shr>::count;
-    using BaseView<VX,VY,VZ,shr>::atleast;
-    using BaseView<VX,VY,VZ,shr>::atmost;
-    using BaseView<VX,VY,VZ,shr>::sharing;
+    using BaseView<VX,VY,VZ>::x;
+    using BaseView<VX,VY,VZ>::z;
+    using BaseView<VX,VY,VZ>::c;
+    using BaseView<VX,VY,VZ>::y;
+    using BaseView<VX,VY,VZ>::count;
+    using BaseView<VX,VY,VZ>::atleast;
+    using BaseView<VX,VY,VZ>::atmost;
+    using BaseView<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     LqView(Space& home, bool share, LqView& p);
@@ -408,22 +438,23 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (greater or equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class GqView : public BaseView<VX,VY,VZ,shr> {
+  class GqView : public BaseView<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ,shr>::x;
-    using BaseView<VX,VY,VZ,shr>::z;
-    using BaseView<VX,VY,VZ,shr>::c;
-    using BaseView<VX,VY,VZ,shr>::y;
-    using BaseView<VX,VY,VZ,shr>::count;
-    using BaseView<VX,VY,VZ,shr>::atleast;
-    using BaseView<VX,VY,VZ,shr>::atmost;
-    using BaseView<VX,VY,VZ,shr>::sharing;
+    using BaseView<VX,VY,VZ>::x;
+    using BaseView<VX,VY,VZ>::z;
+    using BaseView<VX,VY,VZ>::c;
+    using BaseView<VX,VY,VZ>::y;
+    using BaseView<VX,VY,VZ>::count;
+    using BaseView<VX,VY,VZ>::atleast;
+    using BaseView<VX,VY,VZ>::atmost;
+    using BaseView<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     GqView(Space& home, bool share, GqView& p);

@@ -362,7 +362,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        VarVarSharedC(Gecode::IntRelType irt0)
-         : Test("Count::Var::Var::Shared::A::"+str(irt0),4,-2,2), irt(irt0) {}
+         : Test("Count::Var::Var::Shared::C::"+str(irt0),4,-2,2), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;

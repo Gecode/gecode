@@ -44,6 +44,32 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
+  template<class VY>
+  forceinline ViewTypeDesc
+  vtd(VY y) {
+    (void) y;
+    return VTD_VARVIEW;
+  }
+  template<>
+  forceinline ViewTypeDesc
+  vtd(const IntSet& y) {
+    (void) y;
+    return VTD_INTSET;
+  }
+  template<>
+  forceinline ViewTypeDesc
+  vtd(ConstIntView y) {
+    (void) y;
+    return VTD_CONSTVIEW;
+  }
+  template<>
+  forceinline ViewTypeDesc
+  vtd(ZeroIntView y) {
+    (void) y;
+    return VTD_CONSTVIEW;
+  }
+
+
   forceinline void
   subscribe(Space& home, Propagator& p, IntSet& y) {
     (void) home; (void) p; (void) y;
@@ -63,19 +89,6 @@ namespace Gecode { namespace Int { namespace Count {
   forceinline void
   cancel(Space& home, Propagator& p, VY y) {
     y.cancel(home, p, PC_INT_DOM);
-  }
-
-  template<class VY>
-  forceinline bool
-  notice(VY y) {
-    (void) y;
-    return false;
-  }
-  template<>
-  forceinline bool
-  notice(IntSet& y) {
-    (void) y;
-    return true;
   }
 
   template<class VX>
@@ -156,6 +169,7 @@ namespace Gecode { namespace Int { namespace Count {
     }
     return ES_OK;
   }
+
   template<class VX>
   forceinline ExecStatus
   post_false(Home home, VX x, ConstIntView y) {
@@ -224,6 +238,35 @@ namespace Gecode { namespace Int { namespace Count {
   forceinline ExecStatus
   post_false(Home home, VX x, VX y) {
     return Rel::Nq<VX>::post(home,x,y);
+  }
+
+  template<class VX>
+  forceinline ExecStatus
+  prune(Space& home, ViewArray<VX>& x, ConstIntView) {
+    return ES_OK;
+  }
+  template<class VX>
+  forceinline ExecStatus
+  prune(Space& home, ViewArray<VX>& x, ZeroIntView) {
+    return ES_OK;
+  }
+  template<class VX>
+  forceinline ExecStatus
+  prune(Space& home, ViewArray<VX>& x, const IntSet& y) {
+    return ES_OK;
+  }
+  template<class VX>
+  forceinline ExecStatus
+  prune(Space& home, ViewArray<VX>& x, VX y) {
+    if (x.size() == 0)
+      return ES_OK;
+    Region r(home);
+    ViewRanges<VX>* rx = r.alloc<ViewRanges<VX> >(x.size());
+    for (int i=x.size(); i--; )
+      rx[i] = ViewRanges<VX>(x[i]);
+    Iter::Ranges::NaryUnion u(r, rx, x.size());
+    GECODE_ME_CHECK(y.inter_r(home, u, false));
+    return ES_OK;
   }
 
 }}}
