@@ -370,7 +370,7 @@ INTHDR0 = \
 	nvalues/int-base.hpp nvalues/int-eq.hpp \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
 	val-set.hh val-set.hpp \
-	member.hh member/prop.hh member/prop-re.hh
+	member.hh member/prop.hpp member/prop-re.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
