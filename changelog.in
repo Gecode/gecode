@@ -129,8 +129,9 @@ Module: flatzinc
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added native support for among, nvalues, int_set_channel, member_int,
-sum_pred, and the range and roots constraints.
+Added native support for among, nvalues, int_set_channel,
+member_bool, member_int, sum_pred, and the range and roots
+constraints.
 
 [ENTRY]
 Module: set
