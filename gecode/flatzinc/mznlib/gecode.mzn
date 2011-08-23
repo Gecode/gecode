@@ -61,6 +61,10 @@ predicate array_set_element_intersect_in(var set of int: x,
     array[int] of var set of int: y,
     var set of int: z, set of int: u);
 
+% y = sum of the weights of the elements of x
+predicate set_weights_gecode(array[int] of int: elements,
+    array[int] of int: weights, var set of int: x, var int: y);
+
 % Every subsequence of x of length l has at least m and at most occurrences
 % of the values in S
 predicate among_seq_int(array[int] of var int: x, set of int: S,

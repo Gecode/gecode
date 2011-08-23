@@ -120,7 +120,7 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 Added native support for among, nvalues, int_set_channel, member_int,
-and the range and roots constraints.
+sum_pred, and the range and roots constraints.
 
 [ENTRY]
 Module: set

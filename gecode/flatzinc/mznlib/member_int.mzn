@@ -35,4 +35,7 @@
 %
 
 predicate member_int(array[int] of var int: x, var int: y);
-predicate member_int_reif(array[int] of var int: x, var int: y, var bool: b);
+predicate member_int_reif_gecode(array[int] of var int: x, var int: y,
+    var bool: b);
+predicate member_int_reif(array[int] of var int: x, var int: y,
+    var bool: b) = member_int_reif_gecode(x,y,b);

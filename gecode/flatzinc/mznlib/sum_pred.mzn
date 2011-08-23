@@ -36,5 +36,4 @@
 
 predicate sum_pred(var int: i, array[int] of set of int: sets,
                    array[int] of int: cs, var int: s) =
-    bool_lin_eq([cs[j] | j in index_set(cs)],
-                [j in sets[i] | j in index_set(cs)], s);
+    set_weights_gecode([j|j in index_set(cs)],cs,sets[i],s);
