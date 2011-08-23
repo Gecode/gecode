@@ -111,10 +111,11 @@ only take values supported by x).
 [ENTRY]
 Module: int
 What:   new
-Rank:   minor
+Rank:   major
 [DESCRIPTION]
 The count constraints now also support comparison to integer sets
-in addition to integers and integer variables.
+in addition to integers and integer variables (which then implements among
+from the GCCAT).
 
 [ENTRY]
 Module: minimodel
