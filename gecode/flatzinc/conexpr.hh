@@ -54,6 +54,8 @@ namespace Gecode { namespace FlatZinc {
     ConExpr(const std::string& id0, AST::Array* args0);
     /// Return argument \a i
     AST::Node* operator[](int i) const;
+    /// Return number of arguments
+    int size(void) const;
     /// Destructor
     ~ConExpr(void);
   };
@@ -64,6 +66,9 @@ namespace Gecode { namespace FlatZinc {
 
   forceinline AST::Node*
   ConExpr::operator[](int i) const { return args->a[i]; }
+
+  forceinline int
+  ConExpr::size(void) const { return args->a.size(); }
 
   forceinline
   ConExpr::~ConExpr(void) {

@@ -1301,6 +1301,36 @@ namespace Gecode { namespace FlatZinc {
       }
     }
 
+    void p_member_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntVar y = getIntVar(s, ce[1]);
+      if (ce.size()==2)
+        member(s,x,y,ann2icl(ann));
+      else
+        member(s,x,y,getBoolVar(s, ce[2]),ann2icl(ann));
+    }
+    void p_member_int_reif(FlatZincSpace& s, const ConExpr& ce,
+                           AST::Node* ann) {
+      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntVar y = getIntVar(s, ce[1]);
+      BoolVar b = getBoolVar(s, ce[2]);
+      member(s,x,y,b,ann2icl(ann));
+    }
+    void p_member_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
+      BoolVar y = getBoolVar(s, ce[1]);
+      if (ce.size()==2)
+        member(s,x,y,ann2icl(ann));
+      else
+        member(s,x,y,getBoolVar(s, ce[2]),ann2icl(ann));
+    }
+    void p_member_bool_reif(FlatZincSpace& s, const ConExpr& ce,
+                            AST::Node* ann) {
+      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
+      BoolVar y = getBoolVar(s, ce[1]);
+      member(s,x,y,getBoolVar(s, ce[2]),ann2icl(ann));
+    }
+
     class IntPoster {
     public:
       IntPoster(void) {
@@ -1426,6 +1456,10 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_precede", &p_precede);
         registry().add("nvalue",&p_nvalue);
         registry().add("among",&p_among);
+        registry().add("member_int",&p_member_int);
+        registry().add("member_int_reif",&p_member_int_reif);
+        registry().add("member_bool",&p_member_bool);
+        registry().add("member_bool_reif",&p_member_bool_reif);
       }
     };
     IntPoster __int_poster;
