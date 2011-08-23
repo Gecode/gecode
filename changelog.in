@@ -73,6 +73,15 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks: Gustavo Gutierrez
+[DESCRIPTION]
+Install generated variable implementation headers instead of the shipped 
+versions (fixes a problem when building Gecode in a separate directory).
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major
