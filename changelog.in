@@ -67,10 +67,10 @@
 #
 
 [RELEASE]
-Version: 3.6.1
+Version: 3.7.0
 Date: ?
 [DESCRIPTION]
-Bugfixes
+Really cool stuff!
 
 [ENTRY]
 Module: flatzinc
