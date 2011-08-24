@@ -1504,17 +1504,27 @@ namespace Gecode { namespace FlatZinc {
     }
 
 
+    void p_set_rel(FlatZincSpace& s, SetRelType srt, const ConExpr& ce) {
+      rel(s, getSetVar(s, ce[0]), srt, getSetVar(s, ce[1]));
+    }
+
     void p_set_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_EQ, getSetVar(s, ce[1]));
+      p_set_rel(s, SRT_EQ, ce);
     }
     void p_set_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_NQ, getSetVar(s, ce[1]));
+      p_set_rel(s, SRT_NQ, ce);
     }
     void p_set_subset(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_SUB, getSetVar(s, ce[1]));
+      p_set_rel(s, SRT_SUB, ce);
     }
     void p_set_superset(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_SUP, getSetVar(s, ce[1]));
+      p_set_rel(s, SRT_SUP, ce);
+    }
+    void p_set_le(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+      p_set_rel(s, SRT_LQ, ce);
+    }
+    void p_set_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+      p_set_rel(s, SRT_LE, ce);
     }
     void p_set_card(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isIntVar()) {
@@ -1549,23 +1559,30 @@ namespace Gecode { namespace FlatZinc {
         }
       }
     }
-    void p_set_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_EQ, getSetVar(s, ce[1]),
+    void p_set_rel_reif(FlatZincSpace& s, SetRelType srt, const ConExpr& ce) {
+      rel(s, getSetVar(s, ce[0]), srt, getSetVar(s, ce[1]),
           getBoolVar(s, ce[2]));
     }
+
+    void p_set_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+      p_set_rel_reif(s,SRT_EQ,ce);
+    }
+    void p_set_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+      p_set_rel_reif(s,SRT_LQ,ce);
+    }
+    void p_set_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+      p_set_rel_reif(s,SRT_LE,ce);
+    }
     void p_set_ne_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_NQ, getSetVar(s, ce[1]),
-          getBoolVar(s, ce[2]));
+      p_set_rel_reif(s,SRT_NQ,ce);
     }
     void p_set_subset_reif(FlatZincSpace& s, const ConExpr& ce,
                            AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_SUB, getSetVar(s, ce[1]),
-          getBoolVar(s, ce[2]));
+      p_set_rel_reif(s,SRT_SUB,ce);
     }
     void p_set_superset_reif(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_SUP, getSetVar(s, ce[1]),
-          getBoolVar(s, ce[2]));
+      p_set_rel_reif(s,SRT_SUP,ce);
     }
     void p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isSetVar()) {
@@ -1730,6 +1747,8 @@ namespace Gecode { namespace FlatZinc {
     public:
       SetPoster(void) {
         registry().add("set_eq", &p_set_eq);
+        registry().add("set_le", &p_set_le);
+        registry().add("set_lt", &p_set_lt);
         registry().add("equal", &p_set_eq);
         registry().add("set_ne", &p_set_ne);
         registry().add("set_union", &p_set_union);
@@ -1743,6 +1762,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_card", &p_set_card);
         registry().add("set_in", &p_set_in);
         registry().add("set_eq_reif", &p_set_eq_reif);
+        registry().add("set_le_reif", &p_set_le_reif);
+        registry().add("set_lt_reif", &p_set_lt_reif);
         registry().add("equal_reif", &p_set_eq_reif);
         registry().add("set_ne_reif", &p_set_ne_reif);
         registry().add("set_subset_reif", &p_set_subset_reif);

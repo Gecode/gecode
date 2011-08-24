@@ -73,6 +73,21 @@ Date: ?
 Bugfixes
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Added missing primitives set_le, set_lt, set_ge, and set_gt.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added set relations SRT_LQ, SRT_LE, SRT_GQ, SRT_GR for total
+(lexicographic) order.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

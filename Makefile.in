@@ -445,6 +445,7 @@ SETHDR0 =								     \
 	view/complement.hpp view/const.hpp view/set.hpp view/singleton.hpp   \
 	view/cached.hpp view/print.hpp                                       \
 	rel/subset.hpp rel/re-subset.hpp rel/eq.hpp rel/nq.hpp rel/re-eq.hpp \
+	rel/lq.hpp rel/re-lq.hpp \
 	rel/common.hpp rel/nosubset.hpp sequence.hh	                     \
 	rel-op/union.hpp rel-op/partition.hpp rel-op/subofunion.hpp	     \
 	rel-op/inter.hpp rel-op/superofinter.hpp			     \

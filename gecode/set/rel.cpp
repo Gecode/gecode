@@ -91,6 +91,18 @@ namespace Gecode {
                         ::post(home, cx0, x1)));
       }
       break;
+    case SRT_LQ:
+      GECODE_ES_FAIL((Lq<View0,View1,false>::post(home,x0,x1)));
+      break;
+    case SRT_LE:
+      GECODE_ES_FAIL((Lq<View0,View1,true>::post(home,x0,x1)));
+      break;
+    case SRT_GQ:
+      GECODE_ES_FAIL((Lq<View1,View0,false>::post(home,x1,x0)));
+      break;
+    case SRT_GR:
+      GECODE_ES_FAIL((Lq<View1,View0,true>::post(home,x1,x0)));
+      break;
     default:
       throw UnknownRelation("Set::rel");
     }
@@ -145,6 +157,18 @@ namespace Gecode {
                        (ReEq<ComplementView<View0>,View1>
                        ::post(home, xc, y, b)));
       }
+      break;
+    case SRT_LQ:
+      GECODE_ES_FAIL((ReLq<View0,View1,false>::post(home,x,y,b)));
+      break;
+    case SRT_LE:
+      GECODE_ES_FAIL((ReLq<View0,View1,true>::post(home,x,y,b)));
+      break;
+    case SRT_GQ:
+      GECODE_ES_FAIL((ReLq<View1,View0,false>::post(home,y,x,b)));
+      break;
+    case SRT_GR:
+      GECODE_ES_FAIL((ReLq<View1,View0,true>::post(home,y,x,b)));
       break;
     default:
       throw UnknownRelation("Set::rel");

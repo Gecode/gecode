@@ -626,6 +626,13 @@ namespace Gecode {
 
   /**
    * \brief Common relation types for sets
+   *
+   * The total order on sets is defined as the lexicographic
+   * order on their characteristic functions, e.g.,
+   * \f$x\leq y\f$ means that either \f$x\f$ is empty or
+   * the minimal element of the symmetric difference
+   * \f$x\ominus y\f$ is in \f$y\f$.
+   *
    * \ingroup TaskModelSet
    */
   enum SetRelType {
@@ -634,7 +641,11 @@ namespace Gecode {
     SRT_SUB,  ///< Subset (\f$\subseteq\f$)
     SRT_SUP,  ///< Superset (\f$\supseteq\f$)
     SRT_DISJ, ///< Disjoint (\f$\parallel\f$)
-    SRT_CMPL  ///< Complement
+    SRT_CMPL, ///< Complement
+    SRT_LQ,   ///< Less or equal (\f$\leq\f$)
+    SRT_LE,   ///< Less (\f$<\f$)
+    SRT_GQ,   ///< Greater or equal (\f$\geq\f$)
+    SRT_GR    ///< Greater (\f$>\f$)
   };
 
   /**

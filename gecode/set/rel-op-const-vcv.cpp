@@ -67,6 +67,20 @@ namespace Gecode {
                           ::post(home,cy,x,z)));
         }
         break;
+      case SRT_LQ: case SRT_LE: case SRT_GQ: case SRT_GR:
+        {
+          GlbRanges<ConstSetView> yr(yv);
+          RangesCompl<GlbRanges<ConstSetView> > yrc(yr);
+          IntSet yc(yrc);
+          ConstSetView cy(home, yc);
+          SetVar tmp(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
+          GECODE_ES_FAIL(
+                         (Intersection<ConstSetView,
+                          SetView,SetView>
+                          ::post(home,cy,x,tmp)));
+          rel(home,tmp,r,z);
+        }
+        break;
       case SRT_NQ:
         {
           SetVar tmp(home);

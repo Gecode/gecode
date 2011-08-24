@@ -166,14 +166,42 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   }
 
+  template<class View>
+  forceinline void
+  rel_op_post_lex(Home home, SetView x0, SetRelType r, View x1) {
+    switch (r) {
+    case SRT_LQ:
+      GECODE_ES_FAIL((Rel::Lq<SetView,View,false>::post(home,x0,x1)));
+      break;
+    case SRT_LE:
+      GECODE_ES_FAIL((Rel::Lq<SetView,View,true>::post(home,x0,x1)));
+      break;
+    case SRT_GQ:
+      GECODE_ES_FAIL((Rel::Lq<View,SetView,false>::post(home,x1,x0)));
+      break;
+    case SRT_GR:
+      GECODE_ES_FAIL((Rel::Lq<View,SetView,true>::post(home,x1,x0)));
+      break;
+    default:
+      throw UnknownRelation("Set::rel");
+    }
+  }
+
   template<class View0, class View1, class View2>
   forceinline void
   rel_op_post_nocompl(Home home, View0 x, SetOpType op, View1 y,
-           SetRelType r, View2 z) {
+                      SetRelType r, View2 z) {
     if (home.failed()) return;
     switch(r) {
     case SRT_EQ:
       rel_eq<View0,View1,View2>(home, x, op, y, z);
+      break;
+    case SRT_LQ: case SRT_LE: case SRT_GQ: case SRT_GR:
+      {
+        SetVar tmp(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
+        rel_eq<View0,View1,SetView>(home, x, op, y, tmp);
+        rel_op_post_lex<View2>(home,tmp,r,z);
+      }
       break;
     case SRT_NQ:
       {

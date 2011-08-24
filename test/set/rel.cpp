@@ -63,6 +63,24 @@ namespace Test { namespace Set {
         : SetTest("Rel::Bin::"+str(srt0)+"::S"+(shared0 ? "1":"0"),
                   shared ? 1 : 2,ds_33,true)
         , srt(srt0), shared(shared0){}
+      int minSymDiff(const SetAssignment& x) const {
+        int x1 = shared ? x[0] : x[1];
+        typedef Iter::Ranges::Diff<CountableSetRanges,CountableSetRanges> Diff;
+        CountableSetRanges xr00(x.lub, x[0]);
+        CountableSetRanges xr10(x.lub, x1);
+        Diff a(xr00,xr10);
+        CountableSetRanges xr01(x.lub, x[0]);
+        CountableSetRanges xr11(x.lub, x1);
+        Diff b(xr11,xr01);
+        Iter::Ranges::Union<Diff,Diff> u(a,b);
+        return u() ? u.min() : Gecode::Set::Limits::max+1;
+      }
+      bool in(int i, CountableSetRanges& c, bool eq=false) const {
+        if (eq && i==Gecode::Set::Limits::max+1)
+          return true;
+        Iter::Ranges::Singleton s(i,i);
+        return Iter::Ranges::subset(s,c);
+      }
       /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int x1 = shared ? x[0] : x[1];
@@ -71,6 +89,12 @@ namespace Test { namespace Set {
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr0, xr1);
         case SRT_NQ: return !Iter::Ranges::equal(xr0, xr1);
+        
+        case SRT_LQ: return (!xr0()) || in(minSymDiff(x),xr1,true);
+        case SRT_LE: return xr0() ? in(minSymDiff(x),xr1) : xr1();
+        case SRT_GQ: return (!xr1()) || in(minSymDiff(x),xr0,true);
+        case SRT_GR: return xr1() ? in(minSymDiff(x),xr0) : xr0();
+        
         case SRT_SUB: return Iter::Ranges::subset(xr0, xr1);
         case SRT_SUP: return Iter::Ranges::subset(xr1, xr0);
         case SRT_DISJ:
@@ -106,12 +130,20 @@ namespace Test { namespace Set {
       }
     };
     RelBin _relbin_eq(Gecode::SRT_EQ,false);
+    RelBin _relbin_lq(Gecode::SRT_LQ,false);
+    RelBin _relbin_le(Gecode::SRT_LE,false);
+    RelBin _relbin_gq(Gecode::SRT_GQ,false);
+    RelBin _relbin_gr(Gecode::SRT_GR,false);
     RelBin _relbin_nq(Gecode::SRT_NQ,false);
     RelBin _relbin_sub(Gecode::SRT_SUB,false);
     RelBin _relbin_sup(Gecode::SRT_SUP,false);
     RelBin _relbin_disj(Gecode::SRT_DISJ,false);
     RelBin _relbin_cmpl(Gecode::SRT_CMPL,false);
     RelBin _relbin_shared_eq(Gecode::SRT_EQ,true);
+    RelBin _relbin_shared_lq(Gecode::SRT_LQ,true);
+    RelBin _relbin_shared_le(Gecode::SRT_LE,true);
+    RelBin _relbin_shared_gq(Gecode::SRT_GQ,true);
+    RelBin _relbin_shared_gr(Gecode::SRT_GR,true);
     RelBin _relbin_shared_nq(Gecode::SRT_NQ,true);
     RelBin _relbin_shared_sub(Gecode::SRT_SUB,true);
     RelBin _relbin_shared_sup(Gecode::SRT_SUP,true);

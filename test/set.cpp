@@ -180,9 +180,13 @@ namespace Test { namespace Set {
       olog << ind(4) << "x[" << i << "] ";
       switch (srt) {
       case Gecode::SRT_EQ: olog << "="; break;
+      case Gecode::SRT_LQ: olog << "<="; break;
+      case Gecode::SRT_LE: olog << "<"; break;
+      case Gecode::SRT_GQ: olog << ">="; break;
+      case Gecode::SRT_GR: olog << ">"; break;
       case Gecode::SRT_NQ: olog << "!="; break;
-      case Gecode::SRT_SUB: olog << "<="; break;
-      case Gecode::SRT_SUP: olog << ">="; break;
+      case Gecode::SRT_SUB: olog << "sub"; break;
+      case Gecode::SRT_SUP: olog << "sup"; break;
       case Gecode::SRT_DISJ: olog << "||"; break;
       case Gecode::SRT_CMPL: olog << "^-1 = "; break;
       }

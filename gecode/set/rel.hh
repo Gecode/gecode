@@ -142,7 +142,6 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-
   template<class View0, class View1>
   class Eq : public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
@@ -188,6 +187,65 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$
+    static ExecStatus post(Home home,View0 x, View1 y,
+                           Gecode::Int::BoolView b);
+  };
+
+  /**
+   * \brief %Propagator for set less than or equal
+   *
+   * Propagates strict inequality if \a strict is true.
+   *
+   * Requires \code #include <gecode/set/rel.hh> \endcode
+   * \ingroup FuncSetProp
+   */
+  template<class View0, class View1, bool strict=false>
+  class Lq : public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
+  protected:
+    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
+    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
+    /// Constructor for cloning \a p
+    Lq(Space& home, bool share,Lq& p);
+    /// Constructor for posting
+    Lq(Home home,View0, View1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space& home,bool);
+    /// Perform propagation
+    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ x\leq y \f$
+    static  ExecStatus  post(Home home,View0,View1);
+  };
+
+  /**
+   * \brief %Reified propagator for set less than or equal
+   *
+   * Propagates strict inequality if \a strict is true.
+   *
+   * Requires \code #include <gecode/set/rel.hh> \endcode
+   * \ingroup FuncSetProp
+   */
+  template<class View0, class View1, bool strict=false>
+  class ReLq : public Propagator {
+  protected:
+    View0 x0;
+    View1 x1;
+    Gecode::Int::BoolView b;
+
+    /// Constructor for cloning \a p
+    ReLq(Space& home, bool share,ReLq&);
+    /// Constructor for posting
+    ReLq(Home home,View0, View1, Gecode::Int::BoolView);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space& home,bool);
+    /// Cost function (defined as PC_TERNARY_LO)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator for \f$ (x\leq y) \Leftrightarrow b\f$
     static ExecStatus post(Home home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
   };
@@ -256,6 +314,8 @@ namespace Gecode { namespace Set { namespace Rel {
 #include <gecode/set/rel/eq.hpp>
 #include <gecode/set/rel/re-eq.hpp>
 #include <gecode/set/rel/nq.hpp>
+#include <gecode/set/rel/lq.hpp>
+#include <gecode/set/rel/re-lq.hpp>
 
 #endif
 

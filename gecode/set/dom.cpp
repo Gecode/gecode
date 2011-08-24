@@ -79,6 +79,38 @@ namespace Gecode {
         }
       }
       break;
+    case SRT_LQ:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::Lq<Set::SetView,Set::ConstSetView,false>
+            ::post(home,s,cv)));
+      }
+      break;
+    case SRT_LE:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::Lq<Set::SetView,Set::ConstSetView,true>
+            ::post(home,s,cv)));
+      }
+      break;
+    case SRT_GQ:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::Lq<Set::ConstSetView,Set::SetView,false>
+            ::post(home,cv,s)));
+      }
+      break;
+    case SRT_GR:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::Lq<Set::ConstSetView,Set::SetView,true>
+            ::post(home,cv,s)));
+      }
+      break;
     case SRT_DISJ:
       {
         if (is.ranges() == 1) {
@@ -169,6 +201,38 @@ namespace Gecode {
         GECODE_ES_FAIL(
                        (Set::Rel::ReEq<Set::SetView,
                         Set::ConstSetView>::post(home, s, cv, b)));
+      }
+      break;
+    case SRT_LQ:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::ReLq<Set::SetView,Set::ConstSetView,false>
+            ::post(home,s,cv,b)));
+      }
+      break;
+    case SRT_LE:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::ReLq<Set::SetView,Set::ConstSetView,true>
+            ::post(home,s,cv,b)));
+      }
+      break;
+    case SRT_GQ:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,false>
+            ::post(home,cv,s,b)));
+      }
+      break;
+    case SRT_GR:
+      {
+        Set::ConstSetView cv(home, is);
+        GECODE_ES_FAIL(
+          (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,true>
+            ::post(home,cv,s,b)));
       }
       break;
     case SRT_NQ:

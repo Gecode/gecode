@@ -50,6 +50,10 @@ namespace Test { namespace Set {
   SetTest::str(Gecode::SetRelType srt) {
     switch (srt) {
     case Gecode::SRT_EQ: return "Eq";
+    case Gecode::SRT_LQ: return "Lq";
+    case Gecode::SRT_LE: return "Le";
+    case Gecode::SRT_GQ: return "Gq";
+    case Gecode::SRT_GR: return "Gr";
     case Gecode::SRT_NQ: return "Nq";
     case Gecode::SRT_SUB: return "Sub";
     case Gecode::SRT_SUP: return "Sup";
