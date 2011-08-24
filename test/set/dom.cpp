@@ -70,6 +70,28 @@ namespace Test { namespace Set {
     static IntSet ds_33c(d2r,2);
     static IntSet ds_55(-5,5);
 
+    namespace {
+      static int minSymDiff(const SetAssignment& x, const IntSet& is) {
+        typedef Iter::Ranges::Diff<CountableSetRanges,IntSetRanges> DiffA;
+        CountableSetRanges xr00(x.lub, x[0]);
+        IntSetRanges xr10(is);
+        DiffA a(xr00,xr10);
+        typedef Iter::Ranges::Diff<IntSetRanges,CountableSetRanges> DiffB;
+        CountableSetRanges xr01(x.lub, x[0]);
+        IntSetRanges xr11(is);
+        DiffB b(xr11,xr01);
+        Iter::Ranges::Union<DiffA,DiffB> u(a,b);
+        return u() ? u.min() : Gecode::Set::Limits::max+1;
+      }
+      template<class I>
+      static bool in(int i, I& c, bool eq=false) {
+        if (eq && i==Gecode::Set::Limits::max+1)
+          return true;
+        Iter::Ranges::Singleton s(i,i);
+        return Iter::Ranges::subset(s,c);
+      }
+    }
+
     /// %Test for equality with a range
     class DomRange : public SetTest {
     private:
@@ -86,6 +108,10 @@ namespace Test { namespace Set {
         IntSetRanges dr(is);
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
+        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
+        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
+        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
         case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
         case SRT_SUB: return Iter::Ranges::subset(xr, dr);
         case SRT_SUP: return Iter::Ranges::subset(dr, xr);
@@ -114,6 +140,10 @@ namespace Test { namespace Set {
       }
     };
     DomRange _domrange_eq(SRT_EQ);
+    DomRange _domrange_lq(SRT_LQ);
+    DomRange _domrange_le(SRT_LE);
+    DomRange _domrange_gq(SRT_GQ);
+    DomRange _domrange_gr(SRT_GR);
     DomRange _domrange_nq(SRT_NQ);
     DomRange _domrange_sub(SRT_SUB);
     DomRange _domrange_sup(SRT_SUP);
@@ -135,6 +165,10 @@ namespace Test { namespace Set {
         IntSetRanges dr(is);
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
+        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
+        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
+        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
         case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
         case SRT_SUB: return Iter::Ranges::subset(xr, dr);
         case SRT_SUP: return Iter::Ranges::subset(dr, xr);
@@ -163,6 +197,10 @@ namespace Test { namespace Set {
       }
     };
     DomIntRange _domintrange_eq(SRT_EQ);
+    DomIntRange _domintrange_lq(SRT_LQ);
+    DomIntRange _domintrange_le(SRT_LE);
+    DomIntRange _domintrange_gq(SRT_GQ);
+    DomIntRange _domintrange_gr(SRT_GR);
     DomIntRange _domintrange_nq(SRT_NQ);
     DomIntRange _domintrange_sub(SRT_SUB);
     DomIntRange _domintrange_sup(SRT_SUP);
@@ -184,6 +222,10 @@ namespace Test { namespace Set {
         IntSetRanges dr(is);
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
+        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
+        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
+        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
         case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
         case SRT_SUB: return Iter::Ranges::subset(xr, dr);
         case SRT_SUP: return Iter::Ranges::subset(dr, xr);
@@ -212,6 +254,10 @@ namespace Test { namespace Set {
       }
     };
     DomInt _domint_eq(SRT_EQ);
+    DomInt _domint_lq(SRT_LQ);
+    DomInt _domint_le(SRT_LE);
+    DomInt _domint_gq(SRT_GQ);
+    DomInt _domint_gr(SRT_GR);
     DomInt _domint_nq(SRT_NQ);
     DomInt _domint_sub(SRT_SUB);
     DomInt _domint_sup(SRT_SUP);
@@ -234,6 +280,10 @@ namespace Test { namespace Set {
         IntSetRanges dr(is);
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr, dr);
+        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
+        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
+        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
+        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
         case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
         case SRT_SUB: return Iter::Ranges::subset(xr, dr);
         case SRT_SUP: return Iter::Ranges::subset(dr, xr);
@@ -262,6 +312,10 @@ namespace Test { namespace Set {
       }
     };
     DomDom _domdom_eq(SRT_EQ);
+    DomDom _domdom_lq(SRT_LQ);
+    DomDom _domdom_le(SRT_LE);
+    DomDom _domdom_gq(SRT_GQ);
+    DomDom _domdom_gr(SRT_GR);
     DomDom _domdom_nq(SRT_NQ);
     DomDom _domdom_sub(SRT_SUB);
     DomDom _domdom_sup(SRT_SUP);
