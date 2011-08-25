@@ -146,6 +146,8 @@ namespace Gecode { namespace Int { namespace Count {
   ExecStatus
   EqView<VX,VY,VZ,shr>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
+    GECODE_ME_CHECK(z.gq(home,-c));
+    GECODE_ME_CHECK(z.lq(home,x.size()-c));
     if ((vtd(y) != VTD_VARVIEW) && z.assigned())
       return EqInt<VX,VY>::post(home,x,y,z.val()+c);
     if (sharing(x,y,z))
@@ -282,6 +284,7 @@ namespace Gecode { namespace Int { namespace Count {
   ExecStatus
   LqView<VX,VY,VZ,shr>::post(Home home, ViewArray<VX>& x,
                              VY y, VZ z, int c) {
+    GECODE_ME_CHECK(z.gq(home,-c));
     if (z.assigned())
       return LqInt<VX,VY>::post(home,x,y,z.val()+c);
     if (sharing(x,y,z))
@@ -341,6 +344,7 @@ namespace Gecode { namespace Int { namespace Count {
   ExecStatus
   GqView<VX,VY,VZ,shr>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
+    GECODE_ME_CHECK(z.lq(home,x.size()-c));
     if ((vtd(y) != VTD_VARVIEW) && z.assigned())
       return GqInt<VX,VY>::post(home,x,y,z.val()+c);
     if (sharing(x,y,z))
