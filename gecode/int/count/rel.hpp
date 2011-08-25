@@ -243,16 +243,23 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX>
   forceinline ExecStatus
   prune(Space& home, ViewArray<VX>& x, ConstIntView) {
+    (void) home;
+    (void) x;
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   prune(Space& home, ViewArray<VX>& x, ZeroIntView) {
+    (void) home;
+    (void) x;
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   prune(Space& home, ViewArray<VX>& x, const IntSet& y) {
+    (void) home;
+    (void) x;
+    (void) y;
     return ES_OK;
   }
   template<class VX>
