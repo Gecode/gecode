@@ -135,6 +135,7 @@ namespace Gecode { namespace Gist {
     init();
     addHtml("<pre>\n");
     dynamic_cast<const S&>(node).print(getStream());
+    flush();
     addHtml("</pre><hr />");
   }
 

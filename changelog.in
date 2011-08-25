@@ -73,6 +73,14 @@ Date: ?
 Really cool stuff!
 
 [ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Flush output to Gist console, so that output that is not ended by a
+newline is not lost.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   major

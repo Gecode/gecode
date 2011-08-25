@@ -62,6 +62,8 @@ namespace Gecode { namespace Gist {
     std::ostream& getStream(void);
     /// Add html string \a s to the output
     void insertHtml(const QString& s);
+    /// Flush output
+    void flush(void);
   protected Q_SLOTS:
     void changeStayOnTop(void);
   };

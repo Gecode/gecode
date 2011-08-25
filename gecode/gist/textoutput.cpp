@@ -51,20 +51,22 @@ namespace Gecode { namespace Gist {
     : public std::basic_streambuf<char, std::char_traits<char> > {
       QString buffer;
       QTextEdit* editor;
-    protected:
+    public:
+      void flush(void) {
+        QTextBlockFormat bf = editor->textCursor().blockFormat();
+        bf.setBottomMargin(0);
+        editor->textCursor().setBlockFormat(bf);
+        editor->append(buffer);
+        buffer.clear();        
+      }
       virtual int overflow(int v = std::char_traits<char>::eof()) {
         if (v == '\n') {
-          QTextBlockFormat bf = editor->textCursor().blockFormat();
-          bf.setBottomMargin(0);
-          editor->textCursor().setBlockFormat(bf);
-          editor->append(buffer);
-          buffer.clear();
+          flush();
         } else {
           buffer += (char)v;
         }
         return v;
       }
-    public:
       Buf(QTextEdit* e) : editor(e) {}
     };
 
@@ -74,6 +76,9 @@ namespace Gecode { namespace Gist {
     : std::basic_ostream<char, std::char_traits<char> >(&_buf),
       _buf(editor) {
       clear();
+    }
+    void flush(void) {
+      _buf.flush();
     }
   };
 
@@ -138,6 +143,11 @@ namespace Gecode { namespace Gist {
   std::ostream&
   TextOutputI::getStream(void) {
     return *os;
+  }
+
+  void
+  TextOutputI::flush(void) {
+    static_cast<GistOutputStream*>(os)->flush();
   }
 
   void

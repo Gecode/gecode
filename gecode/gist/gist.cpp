@@ -90,6 +90,11 @@ namespace Gecode { namespace Gist {
   }
   
   void
+  TextOutput::flush(void) {
+    t->flush();
+  }
+  
+  void
   TextOutput::addHtml(const char* s) {
     t->insertHtml(s);
   }
