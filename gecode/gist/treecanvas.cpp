@@ -93,6 +93,8 @@ namespace Gecode { namespace Gist {
       connect(&searcher, SIGNAL(solution(const Space*)),
               this, SIGNAL(solution(const Space*)),
               Qt::BlockingQueuedConnection);
+      connect(this, SIGNAL(solution(const Space*)),
+              this, SLOT(inspectSolution(const Space*)));
       connect(&searcher, SIGNAL(solution(const Space*)),
               this, SLOT(inspectSolution(const Space*)),
               Qt::BlockingQueuedConnection);

@@ -77,6 +77,13 @@ Module: gist
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Call solution inspectors also when exploring manually.
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Flush output to Gist console, so that output that is not ended by a
 newline is not lost.
 
