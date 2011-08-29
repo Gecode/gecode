@@ -212,63 +212,6 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
 
-
-
-  /*
-   * Disequality
-   *
-   */
-
-  template<class VX, class VY, class VZ, bool shr>
-  forceinline
-  NqView<VX,VY,VZ,shr>::NqView(Home home,
-                               ViewArray<VX>& x, VY y, VZ z, int c)
-    : BaseView<VX,VY,VZ>(home,x,y,z,c) {}
-
-  template<class VX, class VY, class VZ, bool shr>
-  ExecStatus
-  NqView<VX,VY,VZ,shr>::post(Home home,
-                             ViewArray<VX>& x, VY y, VZ z, int c) {
-    if (z.assigned())
-      return NqInt<VX,VY>::post(home,x,y,z.val()+c);
-    (void) new (home) NqView<VX,VY,VZ,shr>(home,x,y,z,c);
-    return ES_OK;
-  }
-
-  template<class VX, class VY, class VZ, bool shr>
-  forceinline
-  NqView<VX,VY,VZ,shr>::NqView(Space& home, bool share,
-                               NqView<VX,VY,VZ,shr>& p)
-    : BaseView<VX,VY,VZ>(home,share,p) {}
-
-  template<class VX, class VY, class VZ, bool shr>
-  Actor*
-  NqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
-    return new (home) NqView<VX,VY,VZ,shr>(home,share,*this);
-  }
-
-  template<class VX, class VY, class VZ, bool shr>
-  ExecStatus
-  NqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
-    count(home);
-    if (atleast() == atmost()) {
-      GECODE_ME_CHECK(z.nq(home,atleast()));
-      return home.ES_SUBSUMED(*this);
-    }
-    if (z.max() < atleast())
-      return home.ES_SUBSUMED(*this);
-    if (z.min() > atmost())
-      return home.ES_SUBSUMED(*this);
-    if (z.assigned()) {
-      VY yc(y);
-      GECODE_REWRITE(*this,(NqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
-    }
-
-    return ES_FIX;
-  }
-
-
-
   /*
    * Less or equal
    *
