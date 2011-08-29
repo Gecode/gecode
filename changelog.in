@@ -68,9 +68,23 @@
 
 [RELEASE]
 Version: 3.7.0
-Date: ?
+Date: 2011-08-31
 [DESCRIPTION]
-Really cool stuff!
+This release adds and improves quite a number of constraints
+(total lexicographic order for set variables, membership
+constraints for integer variables, counting constraints for
+integer variables using integer sets, range, roots, set element
+constraints for integer variables, number of values for integer
+variables). All of these constraints (and some more) are now also
+available in FlatZinc. Additionally, some fixes and improvements.
+
+This release is an important milestone as Gecode now provides
+native implementations for all important constraints available
+in MiniZinc/FlatZinc.
+
+The documentation of constraints in "Modeling and Programming
+with Gecode" now refers to the Global Constraint Catalog (for
+those constraints that are listed in the catalog).
 
 [ENTRY]
 Module: gist
