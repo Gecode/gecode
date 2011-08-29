@@ -908,8 +908,10 @@ gecode/int/element$(OBJSUFFIX) gecode/int/element$(SBJSUFFIX): \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
-	./gecode/int/count.hh ./gecode/int/count/int.hpp ./gecode/int/count/rel.hpp \
-	./gecode/int/count/view.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
+	./gecode/int/count.hh ./gecode/int/count/int-base.hpp ./gecode/int/count/int-eq.hpp \
+	./gecode/int/count/int-gq.hpp ./gecode/int/count/int-lq.hpp ./gecode/int/count/rel.hpp \
+	./gecode/int/count/view-base.hpp ./gecode/int/count/view-eq.hpp ./gecode/int/count/view-gq.hpp \
+	./gecode/int/count/view-lq.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
 	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
 	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.hpp ./gecode/int/rel/lex.hpp ./gecode/int/rel/lq-le.hpp \

@@ -309,7 +309,11 @@ INTHDR0 = \
 	branch/post-val-int.hpp branch/post-val-bool.hpp \
 	branch/select-val.hpp \
 	branch/select-values.hpp branch/select-view.hpp \
-	count/view.hpp count/int.hpp count/rel.hpp \
+	count.hh count/rel.hpp \
+	count/int-base.hpp count/int-eq.hpp \
+	count/int-gq.hpp count/int-lq.hpp \
+	count/view-base.hpp count/view-eq.hpp \
+	count/view-gq.hpp count/view-lq.hpp \
 	view-val-graph.hh view-val-graph/graph.hpp \
 	view-val-graph/bi-link.hpp view-val-graph/comb-ptr-flag.hpp \
 	view-val-graph/edge.hpp view-val-graph/node.hpp \
@@ -337,7 +341,7 @@ INTHDR0 = \
 	view/minus.hpp view/print.hpp view/neg-bool.hpp view/bool-test.hpp \
 	view/offset.hpp view/rel-test.hpp view/scale.hpp view/iter.hpp \
 	arithmetic.hh array.hpp array-traits.hpp bool.hh branch.hh \
-	count.hh distinct.hh dom.hh \
+	distinct.hh dom.hh \
 	element.hh exception.hpp  gcc.hh linear.hh \
 	propagator.hpp extensional.hh rel.hh \
 	sorted.hh var-imp.hpp view.hpp \
@@ -1606,7 +1610,7 @@ doxygen.conf.use: doxygen.conf
 
 endif
 
-doc: $(ALLHDR:%=$(top_srcdir)/%) $(VARIMPHDR) $(ALLSRC:%=$(top_srcdir)/%) \ 
+doc: $(ALLHDR:%=$(top_srcdir)/%) $(VARIMPHDR) $(ALLSRC:%=$(top_srcdir)/%) \
 	$(DOCSRC)
 	mkdir -p doc/html
 	cp -f $(top_srcdir)/misc/doxygen/back.png \

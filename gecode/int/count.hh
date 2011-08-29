@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   template<class VX, class VY>
-  class BaseInt : public Propagator {
+  class IntBase : public Propagator {
   protected:
     /// Views still to count
     ViewArray<VX> x;
@@ -147,9 +147,9 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int c;
     /// Constructor for cloning \a p
-    BaseInt(Space& home, bool share, BaseInt& p);
+    IntBase(Space& home, bool share, IntBase& p);
     /// Constructor for creation
-    BaseInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
+    IntBase(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -168,12 +168,12 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
-  class EqInt : public BaseInt<VX,VY> {
+  class EqInt : public IntBase<VX,VY> {
   protected:
-    using BaseInt<VX,VY>::x;
-    using BaseInt<VX,VY>::n_s;
-    using BaseInt<VX,VY>::y;
-    using BaseInt<VX,VY>::c;
+    using IntBase<VX,VY>::x;
+    using IntBase<VX,VY>::n_s;
+    using IntBase<VX,VY>::y;
+    using IntBase<VX,VY>::c;
     /// Constructor for cloning \a p
     EqInt(Space& home, bool share, EqInt& p);
     /// Constructor for creation
@@ -198,12 +198,12 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
-  class GqInt : public BaseInt<VX,VY> {
+  class GqInt : public IntBase<VX,VY> {
   protected:
-    using BaseInt<VX,VY>::x;
-    using BaseInt<VX,VY>::n_s;
-    using BaseInt<VX,VY>::y;
-    using BaseInt<VX,VY>::c;
+    using IntBase<VX,VY>::x;
+    using IntBase<VX,VY>::n_s;
+    using IntBase<VX,VY>::y;
+    using IntBase<VX,VY>::c;
     /// Constructor for cloning \a p
     GqInt(Space& home, bool share, GqInt& p);
     /// Constructor for creation
@@ -228,12 +228,12 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY>
-  class LqInt : public BaseInt<VX,VY> {
+  class LqInt : public IntBase<VX,VY> {
   protected:
-    using BaseInt<VX,VY>::x;
-    using BaseInt<VX,VY>::n_s;
-    using BaseInt<VX,VY>::y;
-    using BaseInt<VX,VY>::c;
+    using IntBase<VX,VY>::x;
+    using IntBase<VX,VY>::n_s;
+    using IntBase<VX,VY>::y;
+    using IntBase<VX,VY>::c;
     /// Constructor for cloning \a p
     LqInt(Space& home, bool share, LqInt& p);
     /// Constructor for creation
@@ -249,7 +249,10 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include <gecode/int/count/int.hpp>
+#include <gecode/int/count/int-base.hpp>
+#include <gecode/int/count/int-eq.hpp>
+#include <gecode/int/count/int-gq.hpp>
+#include <gecode/int/count/int-lq.hpp>
 
 
 namespace Gecode { namespace Int { namespace Count {
@@ -259,7 +262,7 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   template<class VX, class VY, class VZ>
-  class BaseView : public Propagator {
+  class ViewBase : public Propagator {
   protected:
     /// Views still to count
     ViewArray<VX> x;
@@ -270,9 +273,9 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int   c;
     /// Constructor for cloning \a p
-    BaseView(Space& home, bool share, BaseView& p);
+    ViewBase(Space& home, bool share, ViewBase& p);
     /// Constructor for creation
-    BaseView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
+    ViewBase(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -300,16 +303,16 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class EqView : public BaseView<VX,VY,VZ> {
+  class EqView : public ViewBase<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ>::x;
-    using BaseView<VX,VY,VZ>::z;
-    using BaseView<VX,VY,VZ>::c;
-    using BaseView<VX,VY,VZ>::y;
-    using BaseView<VX,VY,VZ>::count;
-    using BaseView<VX,VY,VZ>::atleast;
-    using BaseView<VX,VY,VZ>::atmost;
-    using BaseView<VX,VY,VZ>::sharing;
+    using ViewBase<VX,VY,VZ>::x;
+    using ViewBase<VX,VY,VZ>::z;
+    using ViewBase<VX,VY,VZ>::c;
+    using ViewBase<VX,VY,VZ>::y;
+    using ViewBase<VX,VY,VZ>::count;
+    using ViewBase<VX,VY,VZ>::atleast;
+    using ViewBase<VX,VY,VZ>::atmost;
+    using ViewBase<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     EqView(Space& home, bool share, EqView& p);
@@ -335,16 +338,16 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class LqView : public BaseView<VX,VY,VZ> {
+  class LqView : public ViewBase<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ>::x;
-    using BaseView<VX,VY,VZ>::z;
-    using BaseView<VX,VY,VZ>::c;
-    using BaseView<VX,VY,VZ>::y;
-    using BaseView<VX,VY,VZ>::count;
-    using BaseView<VX,VY,VZ>::atleast;
-    using BaseView<VX,VY,VZ>::atmost;
-    using BaseView<VX,VY,VZ>::sharing;
+    using ViewBase<VX,VY,VZ>::x;
+    using ViewBase<VX,VY,VZ>::z;
+    using ViewBase<VX,VY,VZ>::c;
+    using ViewBase<VX,VY,VZ>::y;
+    using ViewBase<VX,VY,VZ>::count;
+    using ViewBase<VX,VY,VZ>::atleast;
+    using ViewBase<VX,VY,VZ>::atmost;
+    using ViewBase<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     LqView(Space& home, bool share, LqView& p);
@@ -370,16 +373,16 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template<class VX, class VY, class VZ, bool shr>
-  class GqView : public BaseView<VX,VY,VZ> {
+  class GqView : public ViewBase<VX,VY,VZ> {
   protected:
-    using BaseView<VX,VY,VZ>::x;
-    using BaseView<VX,VY,VZ>::z;
-    using BaseView<VX,VY,VZ>::c;
-    using BaseView<VX,VY,VZ>::y;
-    using BaseView<VX,VY,VZ>::count;
-    using BaseView<VX,VY,VZ>::atleast;
-    using BaseView<VX,VY,VZ>::atmost;
-    using BaseView<VX,VY,VZ>::sharing;
+    using ViewBase<VX,VY,VZ>::x;
+    using ViewBase<VX,VY,VZ>::z;
+    using ViewBase<VX,VY,VZ>::c;
+    using ViewBase<VX,VY,VZ>::y;
+    using ViewBase<VX,VY,VZ>::count;
+    using ViewBase<VX,VY,VZ>::atleast;
+    using ViewBase<VX,VY,VZ>::atmost;
+    using ViewBase<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
     GqView(Space& home, bool share, GqView& p);
@@ -396,7 +399,10 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include <gecode/int/count/view.hpp>
+#include <gecode/int/count/view-base.hpp>
+#include <gecode/int/count/view-eq.hpp>
+#include <gecode/int/count/view-gq.hpp>
+#include <gecode/int/count/view-lq.hpp>
 
 #endif
 
