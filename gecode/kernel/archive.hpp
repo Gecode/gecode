@@ -182,7 +182,7 @@ namespace Gecode {
   }
   forceinline Archive&
   operator <<(Archive& e, int i) {
-    e.put(i);
+    e.put(static_cast<unsigned int>(i));
     return e;
   }
   forceinline Archive&
@@ -192,7 +192,7 @@ namespace Gecode {
   }
   forceinline Archive&
   operator <<(Archive& e, short i) {
-    e.put(i);
+    e.put(static_cast<unsigned int>(i));
     return e;
   }
   forceinline Archive&
@@ -202,12 +202,12 @@ namespace Gecode {
   }
   forceinline Archive&
   operator <<(Archive& e, char i) {
-    e.put(i);
+    e.put(static_cast<unsigned int>(i));
     return e;
   }
   forceinline Archive&
   operator <<(Archive& e, bool i) {
-    e.put(i);
+    e.put(static_cast<unsigned int>(i));
     return e;
   }
 
@@ -218,32 +218,32 @@ namespace Gecode {
   }
   forceinline Archive&
   operator >>(Archive& e, int& i) {
-    i = e.get();
+    i = static_cast<int>(e.get());
     return e;
   }
   forceinline Archive&
   operator >>(Archive& e, unsigned short& i) {
-    i = e.get();
+    i = static_cast<unsigned short>(e.get());
     return e;
   }
   forceinline Archive&
   operator >>(Archive& e, short& i) {
-    i = e.get();
+    i = static_cast<short>(e.get());
     return e;
   }
   forceinline Archive&
   operator >>(Archive& e, unsigned char& i) {
-    i = e.get();
+    i = static_cast<unsigned char>(e.get());
     return e;
   }
   forceinline Archive&
   operator >>(Archive& e, char& i) {
-    i = e.get();
+    i = static_cast<char>(e.get());
     return e;
   }
   forceinline Archive&
   operator >>(Archive& e, bool& i) {
-    i = e.get();
+    i = static_cast<bool>(e.get());
     return e;
   }
 
