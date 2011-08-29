@@ -78,7 +78,7 @@ constraints for integer variables, number of values for integer
 variables). All of these constraints (and some more) are now also
 available in FlatZinc. Additionally, some fixes and improvements.
 
-This release is an important milestone as Gecode now provides
+This release is an important milestone as %Gecode now provides
 native implementations for all important constraints available
 in MiniZinc/FlatZinc.
 
@@ -214,7 +214,7 @@ Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added Dominating Queens puzzle.
+Added Dominating %Queens puzzle.
 
 [ENTRY]
 Module: kernel
@@ -248,7 +248,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 The set_in and set_in_reif constraints now work for constant sets
-even when Gecode is compiled without support for set variables.
+even when %Gecode is compiled without support for set variables.
 
 
 [RELEASE]
