@@ -67,6 +67,20 @@
 #
 
 [RELEASE]
+Version: 3.7.1
+Date: ?
+[DESCRIPTION]
+Bug fixes
+
+[ENTRY]
+Module: gist
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a crash that occurred when double-clicking an unexplored
+node while move inspectors were active.
+
+[RELEASE]
 Version: 3.7.0
 Date: 2011-08-31
 [DESCRIPTION]
