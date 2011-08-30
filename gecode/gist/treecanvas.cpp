@@ -642,7 +642,6 @@ namespace Gecode { namespace Gist {
             if (currentNode->getStatus() == SOLVED) {
               assert(currentNode->hasCopy());
               emit solution(currentNode->getWorkingSpace());
-              currentNode->purge(*na);
             }
             emit statusChanged(currentNode,stats,true);
             for (int i=0; i<moveInspectors.size(); i++) {
@@ -653,6 +652,9 @@ namespace Gecode { namespace Gist {
                   inspect(*currentNode->getWorkingSpace());
                 failedInspectorType = -1;
               }
+            }
+            if (currentNode->getStatus() == SOLVED) {
+              currentNode->purge(*na);
             }
           }
           break;
@@ -767,16 +769,6 @@ namespace Gecode { namespace Gist {
           failedInspectorType = 1;
           failedInspector = i;
           solutionInspectors[i].first->inspect(*c);
-          failedInspectorType = -1;
-        }
-      }
-      for (int i=0; i<moveInspectors.size(); i++) {
-        if (moveInspectors[i].second) {
-          if (c == NULL)
-            c = s->clone();
-          failedInspectorType = 0;
-          failedInspector = i;
-          moveInspectors[i].first->inspect(*c);
           failedInspectorType = -1;
         }
       }
