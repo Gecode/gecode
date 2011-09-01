@@ -126,7 +126,7 @@ AC_DEFUN([AC_GECODE_CHECK_GXX_FLAG],
    ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
    CXXFLAGS="$1${CXXFLAGS:+ }${CXXFLAGS} -Werror"
    AC_LANG_PUSH(C++)
-   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
      [if grep -q "unrecognized\|argument unused" conftest.err; then
         CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
         AC_MSG_RESULT([no])
@@ -159,7 +159,7 @@ AC_DEFUN([AC_GECODE_CHECK_GCC_FLAG],[
    ac_gecode_save_CFLAGS="${CFLAGS}"
    CFLAGS="$1${CFLAGS:+ }${CFLAGS} -Werror"
    AC_LANG_PUSH(C)
-   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
+   AC_COMPILE_IFELSE([AC_LANG_PROGRAM()],
      [if grep -q "unrecognized\|argument unused" conftest.err; then
         CFLAGS="${ac_gecode_save_CFLAGS}"
         AC_MSG_RESULT([no])
@@ -233,7 +233,7 @@ AC_DEFUN([AC_GECODE_CHECK_GLDFLAG],
    AC_MSG_CHECKING(whether the linker accepts [$1])
    ac_gecode_save_GLDFLAGS="${GLDFLAGS}"
    GLDFLAGS="$1${GLDFLAGS:+ }${GLDFLAGS}"
-   AC_LINK_IFELSE(AC_LANG_PROGRAM(),
+   AC_LINK_IFELSE([AC_LANG_PROGRAM()],
      [AC_MSG_RESULT(yes)
       GLDFLAGS="$ac_gecode_save_GLDFLAGS"
       ifelse([$2], , [GLDFLAGS="$1${GLDFLAGS:+ }${GLDFLAGS}"], [$2])],
@@ -251,12 +251,12 @@ dnl @author Ludovic Court�s <ludo@chbouib.org>
 dnl @version 2004-09-07
 dnl @license AllPermissive
 AC_DEFUN([_AC_C_IFDEF],
-  [AC_COMPILE_IFELSE([#ifndef $1
+  [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#ifndef $1
                       # error "Macro $1 is undefined!"
               /* For some compilers (eg. SGI's CC), #error is not
                  enough...  */
               please, do fail
-              #endif],
+              #endif]],[[]])],
              [$2], [$3])])
 
 dnl @synopsis AC_CXX_COMPILER_VENDOR(VENDOR-NAME)
@@ -314,20 +314,20 @@ AC_DEFUN([AC_CXX_COMPILER_VENDOR],
 AC_DEFUN([AC_CHECK_GCC_VERSION],
     [
     AC_LANG_PUSH(C)
-    AC_COMPILE_IFELSE(
-    [#if __GNUC__ < $1 || (__GNUC__ == $1 && __GNUC_MINOR__ < $2)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+     #if __GNUC__ < $1 || (__GNUC__ == $1 && __GNUC_MINOR__ < $2)
      #error Version too old
      really, the version is too old
-     #endif],[],
+     #endif]],[[]])],[],
     [AC_MSG_ERROR([Your version of gcc is too old. You need at least version $1.$2.])]
     )
     AC_LANG_POP()
     AC_LANG_PUSH(C++)
-    AC_COMPILE_IFELSE(
-    [#if __GNUC__ < $1 || (__GNUC__ == $1 && __GNUC_MINOR__ < $2)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+     #if __GNUC__ < $1 || (__GNUC__ == $1 && __GNUC_MINOR__ < $2)
      #error Version too old
      really, the version is too old
-     #endif],[],
+     #endif]],[[]])],[],
     [AC_MSG_ERROR([Your version of g++ is too old. You need at least version $1.$2.])]
     )
     AC_LANG_POP()
@@ -336,11 +336,11 @@ AC_DEFUN([AC_CHECK_GCC_VERSION],
 AC_DEFUN([AC_CHECK_MSVC_VERSION],
     [
     AC_LANG_PUSH(C)
-    AC_COMPILE_IFELSE(
-    [#if _MSC_VER < $1
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+     #if _MSC_VER < $1
      #error Version too old
      really, the version is too old
-     #endif],[],
+     #endif]],[[]])],[],
     [AC_MSG_ERROR([Your version of cl is too old. You need at least Microsoft Visual C++ $2.])]
     AC_LANG_POP()
     )
