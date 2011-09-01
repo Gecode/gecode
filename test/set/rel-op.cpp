@@ -91,7 +91,7 @@ namespace Test { namespace Set {
         , sot(sot0), srt(srt0), share(share0) {}
       /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
-        int a,b,c;
+        int a=0, b=0, c=0;
         switch (share) {
           case 0: a=x[0]; b=x[1]; c=x[2]; break;
           case 1: a=x[0]; b=x[0]; c=x[0]; break;

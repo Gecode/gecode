@@ -1218,7 +1218,6 @@ namespace Gecode { namespace Int { namespace GCC {
         if (x[i].assigned()) {
           int  v = x[i].val();
           ValNode* rv = NULL;
-          int rv_idx  = 0;
           Edge* mub = vrn->get_match(UBC);
           if ((mub != NULL) && (v != mub->getVal()->val)) {
             mub->unmatch(UBC);
@@ -1244,7 +1243,6 @@ namespace Gecode { namespace Int { namespace GCC {
               e->unlink();
             } else {
               rv = e->getVal();
-              rv_idx = rv->kindex();
             }
           }
         } else {

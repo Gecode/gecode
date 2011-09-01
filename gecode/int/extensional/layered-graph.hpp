@@ -356,8 +356,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       StateIdx* o_map = r.alloc<StateIdx>(max_states);
       // Number of in-states
       StateIdx i_n = 0;
-      // Number of out-states
-      StateIdx o_n = 0;
 
       // Initialize map for in-states (special for last layer)
       // Degree for single final state
@@ -393,7 +391,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
       for (int i=n; i--; ) {
         // In-states become out-states
-        std::swap(o_map,i_map); o_n=i_n; i_n=0;
+        std::swap(o_map,i_map); i_n=0;
         // Initialize map for in-states
         for (StateIdx j=max_states; j--; )
           if ((layers[i].states[j].o_deg != 0) ||
@@ -786,8 +784,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       StateIdx* o_map = r.alloc<StateIdx>(max_states);
       // Number of in-states
       StateIdx i_n = 0;
-      // Number of out-states
-      StateIdx o_n = 0;
 
       n_states -= layers[l].n_states;
       // Initialize map for in-states and compress
@@ -812,7 +808,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       // Update all changed layers
       for (int i=l-1; i>=f; i--) {
         // In-states become out-states
-        std::swap(o_map,i_map); o_n=i_n; i_n=0;
+        std::swap(o_map,i_map); i_n=0;
         // Initialize map for in-states and compress
         n_states -= layers[i].n_states;
         for (StateIdx j=0; j<layers[i].n_states; j++)
