@@ -87,18 +87,24 @@ namespace Gecode { namespace Int { namespace Linear {
     for (int i = n_p; i--; ) {
       sl += t_p[i].a * static_cast<double>(t_p[i].x.min());
       su += t_p[i].a * static_cast<double>(t_p[i].x.max());
+      if ((sl < Limits::double_min) || (su > Limits::double_max))
+        throw OutOfLimits("Int::linear");
     }
     for (int i = n_n; i--; ) {
       sl -= t_n[i].a * static_cast<double>(t_n[i].x.max());
       su -= t_n[i].a * static_cast<double>(t_n[i].x.min());
+      if ((sl < Limits::double_min) || (su > Limits::double_max))
+        throw OutOfLimits("Int::linear");
     }
+
+    bool is_ip = (sl >= Limits::min) && (su <= Limits::max);
+
     sl -= d;
     su -= d;
-
     if ((sl < Limits::double_min) || (su > Limits::double_max))
       throw OutOfLimits("Int::linear");
 
-    bool is_ip = (sl >= Limits::min) && (su <= Limits::max);
+    is_ip = is_ip && (sl >= Limits::min) && (su <= Limits::max);
 
     for (int i = n_p; i--; ) {
       if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) 
