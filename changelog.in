@@ -73,6 +73,14 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a bug that crashed the single-thread branch-and-bound
+search engine when initialized with a failed space.
+
+[ENTRY]
 Module: gist
 What:   bug
 Rank:   minor

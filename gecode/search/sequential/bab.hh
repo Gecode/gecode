@@ -87,7 +87,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     } else {
       cur = snapshot(s,opt);
     }
-    current(s);
     current(NULL);
     current(cur);
   }
