@@ -64,36 +64,39 @@ namespace Test { namespace Int {
        Gecode::IntArgs a;
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
+       /// Result
+       int c;
      public:
        /// Create and register test
        IntInt(const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
-              Gecode::IntConLevel icl=Gecode::ICL_BND)
+              int c0, Gecode::IntConLevel icl=Gecode::ICL_BND)
          : Test("Linear::Int::Int::"+
-                str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
+                str(irt0)+"::"+str(icl)+"::"+s+"::"+str(c0)+"::"
+                +str(a0.size()),
                 a0.size(),d,icl != Gecode::ICL_DOM,icl),
-         a(a0), irt(irt0) {}
+         a(a0), irt(irt0), c(c0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
          for (int i=0; i<x.size(); i++)
            e += a[i]*x[i];
-         return cmp(e, irt, static_cast<double>(0));
+         return cmp(e, irt, static_cast<double>(c));
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          if (one(a))
-           Gecode::linear(home, x, irt, 0, icl);
+           Gecode::linear(home, x, irt, c, icl);
          else
-           Gecode::linear(home, a, x, irt, 0, icl);
+           Gecode::linear(home, a, x, irt, c, icl);
        }
        /// Post reified constraint on \a x for \a b
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::BoolVar b) {
          if (one(a))
-           Gecode::linear(home, x, irt, 0, b, icl);
+           Gecode::linear(home, x, irt, c, b, icl);
          else
-           Gecode::linear(home, a, x, irt, 0, b, icl);
+           Gecode::linear(home, a, x, irt, c, b, icl);
        }
      };
 
@@ -262,17 +265,21 @@ namespace Test { namespace Int {
            const int dv2[] = {-4,-1,0,1,4};
            IntSet d2(dv2,5);
 
+           const int dv3[] = {0,1500000000};
+           IntSet d3(dv3,2);
+
            IntArgs a1(1, 0);
 
            for (IntRelTypes irts; irts(); ++irts) {
-             (void) new IntInt("11",d1,a1,irts.irt());
+             (void) new IntInt("11",d1,a1,irts.irt(),0);
              (void) new IntVar("11",d1,a1,irts.irt());
-             (void) new IntInt("21",d2,a1,irts.irt());
+             (void) new IntInt("21",d2,a1,irts.irt(),0);
              (void) new IntVar("21",d2,a1,irts.irt());
+             (void) new IntInt("31",d3,a1,irts.irt(),150000000);
            }
-           (void) new IntInt("11",d1,a1,IRT_EQ,ICL_DOM);
+           (void) new IntInt("11",d1,a1,IRT_EQ,0,ICL_DOM);
            (void) new IntVar("11",d1,a1,IRT_EQ,ICL_DOM);
-           (void) new IntInt("21",d2,a1,IRT_EQ,ICL_DOM);
+           (void) new IntInt("21",d2,a1,IRT_EQ,0,ICL_DOM);
            (void) new IntVar("21",d2,a1,IRT_EQ,ICL_DOM);
 
            const int av2[5] = {1,1,1,1,1};
@@ -286,14 +293,15 @@ namespace Test { namespace Int {
              IntArgs a4(i, av4);
              IntArgs a5(i, av5);
              for (IntRelTypes irts; irts(); ++irts) {
-               (void) new IntInt("12",d1,a2,irts.irt());
-               (void) new IntInt("13",d1,a3,irts.irt());
-               (void) new IntInt("14",d1,a4,irts.irt());
-               (void) new IntInt("15",d1,a5,irts.irt());
-               (void) new IntInt("22",d2,a2,irts.irt());
-               (void) new IntInt("23",d2,a3,irts.irt());
-               (void) new IntInt("24",d2,a4,irts.irt());
-               (void) new IntInt("25",d2,a5,irts.irt());
+               (void) new IntInt("12",d1,a2,irts.irt(),0);
+               (void) new IntInt("13",d1,a3,irts.irt(),0);
+               (void) new IntInt("14",d1,a4,irts.irt(),0);
+               (void) new IntInt("15",d1,a5,irts.irt(),0);
+               (void) new IntInt("22",d2,a2,irts.irt(),0);
+               (void) new IntInt("23",d2,a3,irts.irt(),0);
+               (void) new IntInt("24",d2,a4,irts.irt(),0);
+               (void) new IntInt("25",d2,a5,irts.irt(),0);
+               (void) new IntInt("32",d3,a2,irts.irt(),1500000000);
                if (i < 5) {
                  (void) new IntVar("12",d1,a2,irts.irt());
                  (void) new IntVar("13",d1,a3,irts.irt());
@@ -305,14 +313,14 @@ namespace Test { namespace Int {
                  (void) new IntVar("25",d2,a5,irts.irt());
                }
              }
-             (void) new IntInt("12",d1,a2,IRT_EQ,ICL_DOM);
-             (void) new IntInt("13",d1,a3,IRT_EQ,ICL_DOM);
-             (void) new IntInt("14",d1,a4,IRT_EQ,ICL_DOM);
-             (void) new IntInt("15",d1,a5,IRT_EQ,ICL_DOM);
-             (void) new IntInt("22",d2,a2,IRT_EQ,ICL_DOM);
-             (void) new IntInt("23",d2,a3,IRT_EQ,ICL_DOM);
-             (void) new IntInt("24",d2,a4,IRT_EQ,ICL_DOM);
-             (void) new IntInt("25",d2,a5,IRT_EQ,ICL_DOM);
+             (void) new IntInt("12",d1,a2,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("13",d1,a3,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("14",d1,a4,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("15",d1,a5,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("22",d2,a2,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("23",d2,a3,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("24",d2,a4,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("25",d2,a5,IRT_EQ,0,ICL_DOM);
              if (i < 4) {
                (void) new IntVar("12",d1,a2,IRT_EQ,ICL_DOM);
                (void) new IntVar("13",d1,a3,IRT_EQ,ICL_DOM);
