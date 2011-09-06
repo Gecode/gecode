@@ -43,12 +43,15 @@ namespace Gecode { namespace Set { namespace Element {
   forceinline
   ElementUnionConst<SView,RView>::
   ElementUnionConst(Home home, SView y0,
-                     SharedArray<IntSet>& iv0,
-                     RView y1)
-    : Propagator(home), x0(y0), iv(iv0), x1(y1) {
+                    const IntSetArgs& iv0,
+                    RView y1)
+    : Propagator(home), x0(y0), n_iv(iv0.size()), x1(y1) {
     home.notice(*this,AP_DISPOSE);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
+    iv=static_cast<Space&>(home).alloc<IntSet>(n_iv);
+    for (unsigned int i=iv0.size(); i--;)
+      iv[i]=iv0[i];
   }
 
   template<class SView, class RView>
@@ -56,16 +59,18 @@ namespace Gecode { namespace Set { namespace Element {
   ElementUnionConst<SView,RView>::
   ElementUnionConst(Space& home, bool share,
                      ElementUnionConst<SView,RView>& p)
-    : Propagator(home,share,p) {
+    : Propagator(home,share,p), n_iv(p.n_iv) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
-    iv.update(home,share,p.iv);
+    iv=home.alloc<IntSet>(n_iv);
+    for (unsigned int i=n_iv; i--;)
+      iv[i].update(home,share,p.iv[i]);
   }
 
   template<class SView, class RView>
   PropCost
   ElementUnionConst<SView,RView>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::linear(PropCost::HI, iv.size()+2);
+    return PropCost::linear(PropCost::HI, n_iv+2);
   }
 
   template<class SView, class RView>
@@ -76,7 +81,8 @@ namespace Gecode { namespace Set { namespace Element {
       x0.cancel(home,*this, PC_SET_ANY);
       x1.cancel(home,*this, PC_SET_ANY);
     }
-    iv.~SharedArray();
+    for (unsigned int i=n_iv; i--;)
+      iv[i].~IntSet();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -84,7 +90,7 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   ExecStatus
   ElementUnionConst<SView,RView>::
-  post(Home home, SView x0, SharedArray<IntSet>& xs,
+  post(Home home, SView x0, const IntSetArgs& xs,
        RView x1) {
     int n = xs.size();
 
@@ -106,14 +112,13 @@ namespace Gecode { namespace Set { namespace Element {
   ExecStatus
   ElementUnionConst<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
-    int n = iv.size();
 
-    bool* stillSelected = r.alloc<bool>(n);
+    bool* stillSelected = r.alloc<bool>(n_iv);
 
     bool loopVar;
     do {
       loopVar = false;
-      for (int i=n; i--;)
+      for (int i=n_iv; i--;)
         stillSelected[i] = false;
 
       // Cache the upper bound iterator, as we have to
@@ -136,7 +141,7 @@ namespace Gecode { namespace Set { namespace Element {
       LUBndSet selectedInter(home, IntSet (Limits::min,
                                    Limits::max));
       GLBndSet* before =
-        static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*n));
+        static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*n_iv));
 
       int i = 0;
 
@@ -208,7 +213,7 @@ namespace Gecode { namespace Set { namespace Element {
         {
           GECODE_ME_CHECK(x0.cardMax(home,0));
         }
-        for (int i=n; i--;)
+        for (int i=n_iv; i--;)
           if (stillSelected[i])
             before[i].dispose(home);
         selectedInter.dispose(home);
@@ -249,7 +254,7 @@ namespace Gecode { namespace Set { namespace Element {
 
       // In the second iteration, this time backwards, compute
       // sofarAfter as the union of all lub(x_j) with j>i
-      for (int i=n; i--;) {
+      for (int i=n_iv; i--;) {
         if (!stillSelected[i])
           continue;
         BndSetRanges b(before[i]);

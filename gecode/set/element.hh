@@ -151,13 +151,14 @@ namespace Gecode { namespace Set { namespace Element {
   class ElementUnionConst : public Propagator {
   protected:
     SView x0;
-    SharedArray<IntSet> iv;
+    IntSet* iv;
+    int n_iv;
     RView x1;
 
     /// Constructor for cloning \a p
     ElementUnionConst(Space& home, bool share,ElementUnionConst& p);
     /// Constructor for posting
-    ElementUnionConst(Home home,SView,SharedArray<IntSet>&,RView);
+    ElementUnionConst(Home home,SView,const IntSetArgs&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home,bool);
@@ -171,8 +172,7 @@ namespace Gecode { namespace Set { namespace Element {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Home home,SView z,SharedArray<IntSet>& x,
-                             RView y);
+    static  ExecStatus  post(Home home,SView z,const IntSetArgs& x,RView y);
   };
 
   /**

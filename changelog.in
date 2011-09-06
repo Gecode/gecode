@@ -73,6 +73,15 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Do not use SharedArray<IntSet> in the set element constraints,
+because it does not properly udpate the IntSet during copying.
+This could cause memory corruption.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major

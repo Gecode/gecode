@@ -151,12 +151,9 @@ namespace Gecode {
       // fall through
     case SOT_UNION:
       {
-        SharedArray<IntSet> s(x.size());
-        for (int i=s.size(); i--;)
-          new (&s[i]) IntSet(x[i]);
         GECODE_ES_FAIL(
                        (Element::ElementUnionConst<SetView,SetView>::
-                        post(home,z,s,y)));
+                        post(home,z,x,y)));
       }
       break;
     case SOT_INTER:
@@ -205,16 +202,13 @@ namespace Gecode {
   }
 
   void
-  element(Home home, const IntSetArgs& s, IntVar y, SetVar z) {
-    if (s.size() == 0)
+  element(Home home, const IntSetArgs& x, IntVar y, SetVar z) {
+    if (x.size() == 0)
       throw Set::TooFewArguments("Set::element");
-    for (int i=s.size(); i--;)
-      Set::Limits::check(s[i], "Set::element");
+    for (int i=x.size(); i--;)
+      Set::Limits::check(x[i], "Set::element");
     if (home.failed()) return;
     SetView zv(z);
-    SharedArray<IntSet> x(s.size());
-    for (int i=s.size(); i--;)
-      new (&x[i]) IntSet(s[i]);
 
     Int::IntView yv(y);
     SingletonView single(yv);
