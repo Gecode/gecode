@@ -56,8 +56,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   ExecStatus
-  DomCtrl<View>::init(Space& home, int n, View* x) {
-    return g.init(home,n,x);
+  DomCtrl<View>::init(Space& home, ViewArray<View>& x) {
+    return g.init(home,x);
   }
 
   template<class View>

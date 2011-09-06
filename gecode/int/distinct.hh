@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Construct graph as not yet initialized
     Graph(void);
     /// Initialize graph
-    ExecStatus init(Space& home, int n, View* x);
+    ExecStatus init(Space& home, ViewArray<View>& x);
     /// Mark edges in graph
     void mark(Space& home);
     /// Prune unmarked edges, \a assigned is true if a view got assigned
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Check whether a view-value graph is available
     bool available(void);
     /// Initialize view-value graph for views \a x
-    ExecStatus init(Space& home, int n, View* x);
+    ExecStatus init(Space& home, ViewArray<View>& x);
     /// Synchronize available view-value graph
     ExecStatus sync(Space& home);
     /// Perform propagation, \a assigned is true if a view gets assigned

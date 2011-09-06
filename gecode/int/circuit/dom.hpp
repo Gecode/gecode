@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync(home));
     } else {
-      GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
+      GECODE_ES_CHECK(dc.init(home,y));
     }
     bool assigned;
     GECODE_ES_CHECK(dc.propagate(home,assigned));

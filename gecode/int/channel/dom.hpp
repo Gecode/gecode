@@ -252,10 +252,10 @@ namespace Gecode { namespace Int { namespace Channel {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync(home));
     } else {
-      View* xv = r.alloc<View>(n);
+      ViewArray<View> xv(r,n);
       for (int i=n; i--; )
         xv[i] = x[i].view;
-      GECODE_ES_CHECK(dc.init(home,n,&xv[0]));
+      GECODE_ES_CHECK(dc.init(home,xv));
     }
     bool assigned;
     GECODE_ES_CHECK(dc.propagate(home,assigned));

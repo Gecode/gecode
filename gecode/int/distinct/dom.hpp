@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync(home));
     } else {
-      GECODE_ES_CHECK(dc.init(home,x.size(),&x[0]));
+      GECODE_ES_CHECK(dc.init(home,x));
     }
 
     bool assigned;

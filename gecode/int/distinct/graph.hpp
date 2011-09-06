@@ -45,9 +45,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline ExecStatus
-  Graph<View>::init(Space& home, int n, View* x) {
+  Graph<View>::init(Space& home, ViewArray<View>& x) {
     using namespace ViewValGraph;
-    n_view = n;
+    n_view = x.size();
     view = home.alloc<ViewNode<View>*>(n_view);
 
     // Find value information for construction of view value graph
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       for (unsigned int i=width; i--; )
         val2node[i]=NULL;
 
-      for (int i=n; i--; ) {
+      for (int i=n_view; i--; ) {
         Edge<View>** edge_p = view[i]->val_edges_ref();
         for (ViewValues<View> xi(x[i]); xi(); ++xi) {
           if (val2node[xi.val()-min] == NULL)
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     } else {
       // Values are sparse
-      for (int i=n; i--; )
+      for (int i=n_view; i--; )
         ViewValGraph::Graph<View>::init(home,view[i]);
     }
 
