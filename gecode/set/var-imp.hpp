@@ -122,7 +122,7 @@ namespace Gecode { namespace Set {
     /// Initialize as the set \f$ \{i,\dots,j\}\f$
     BndSet(Space& home, int i, int j);
     /// Initialize as the set represented by \a s
-    BndSet(Space& home, const IntSet& s);
+    GECODE_SET_EXPORT BndSet(Space& home, const IntSet& s);
     //@}
 
     /// \name Memory management
