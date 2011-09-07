@@ -146,11 +146,12 @@ namespace Gecode { namespace Int { namespace NValues {
     }
   }
 
-  forceinline void
+  forceinline bool
   Graph::mark(Space& home) {
     using namespace ViewValGraph;
     Region r(home);
 
+    int n_view_visited = 0;
     {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free value node by depth-first-search
@@ -188,6 +189,7 @@ namespace Gecode { namespace Int { namespace NValues {
             // Mark the edge as used
             e->use();
             if (x->min < count) {
+              n_view_visited++;
               x->min = count;
               assert(x->edge_fst()->next() == x->edge_lst());
               ValNode<IntView>* m = x->edge_fst()->val(x);
@@ -203,7 +205,7 @@ namespace Gecode { namespace Int { namespace NValues {
       
     }
 
-    {
+    if (n_view_visited < n_view) {
       // Mark all edges as used starting from a free view node on
       // an alternating path by depth-first search.
       Support::StaticStack<ViewNode<IntView>*,Region> visit(r,n_view);
@@ -218,6 +220,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
       // Invariant: only view nodes are on the stack!
       while (!visit.empty()) {
+        n_view_visited++;
         ViewNode<IntView>* x = visit.pop();
         for (Edge<IntView>* e = x->val_edges(); e != NULL; e = e->next_edge())
           // Consider only free edges
@@ -237,8 +240,13 @@ namespace Gecode { namespace Int { namespace NValues {
       }
 
     }
-     
-    scc(home);
+
+    if (n_view_visited < n_view) {
+      scc(home);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   forceinline ExecStatus

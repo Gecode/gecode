@@ -110,8 +110,12 @@ namespace Gecode { namespace Int { namespace NValues {
     void init(Space& home, const ValSet& vs, const ViewArray<IntView>& x);
     /// Synchronize graph with new view domains
     void sync(Space& home);
-    /// Mark all edges used that can appear in some maximal matching
-    void mark(Space& home);
+    /*
+     * \brief Mark all edges used that can appear in some maximal matching
+     *
+     * Return true, if any edge can be in fact pruned.
+     */
+    bool mark(Space& home);
     /// Prune all values corresponding to unused edges
     ExecStatus prune(Space& home);
   };

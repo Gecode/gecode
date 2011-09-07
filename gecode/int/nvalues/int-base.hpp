@@ -333,8 +333,8 @@ namespace Gecode { namespace Int { namespace NValues {
         }
         GECODE_REWRITE(*this,Distinct::Dom<IntView>::post(home,x));
       }
-      g.mark(home);
-      GECODE_ES_CHECK(g.prune(home));
+      if (g.mark(home))
+        GECODE_ES_CHECK(g.prune(home));
     }
     return ES_OK;
   }

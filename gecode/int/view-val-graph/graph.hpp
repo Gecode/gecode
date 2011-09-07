@@ -154,7 +154,14 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     unsigned int cnt1 = count;
     
     for (int i = n_view; i--; )
-      if (view[i]->min < count) {
+      /*
+       * The following test is subtle: for scc, the test should be:
+       *   view[i]->min < count
+       * However, if view[i] < count-1, then the node has already been
+       * reached on a path and all edges connected to the node have been
+       * marked anyway! So just ignore this node altogether for scc.
+       */ 
+      if (view[i]->min < count-1) {
         Node<View>* w = view[i];
       start:
         w->low = w->min = cnt0++;

@@ -181,8 +181,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     Graph(void);
     /// Initialize graph
     ExecStatus init(Space& home, ViewArray<View>& x);
-    /// Mark edges in graph
-    void mark(Space& home);
+    /// Mark edges in graph, return true if pruning is at all possible
+    bool mark(Space& home);
     /// Prune unmarked edges, \a assigned is true if a view got assigned
     ExecStatus prune(Space& home, bool& assigned);
     /// Synchronize graph with new view domains

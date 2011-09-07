@@ -70,7 +70,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   ExecStatus
   DomCtrl<View>::propagate(Space& home, bool& assigned) {
-    g.mark(home);
+    if (!g.mark(home))
+      return ES_OK;
     return g.prune(home,assigned);
   }
 

@@ -57,12 +57,12 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Distinct(const Gecode::IntSet& d0, Gecode::IntConLevel icl)
-         : Test(std::string(useCount ? "Count::Distinct" : "Distinct")+
-                "::Sparse::"+str(icl),6,d0,false,icl), d(d0) {}
+         : Test(std::string(useCount ? "Count::Distinct::" : "Distinct::")+
+                str(icl)+"::Sparse",6,d0,false,icl), d(d0) {}
        /// Create and register test
        Distinct(int min, int max, Gecode::IntConLevel icl)
-         : Test(std::string(useCount ? "Count::Distinct" : "Distinct")+
-                "::Dense::"+str(icl),6,min,max,false,icl), d(min,max) {}
+         : Test(std::string(useCount ? "Count::Distinct::" : "Distinct::")+
+                str(icl)+"::Dense",6,min,max,false,icl), d(min,max) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)

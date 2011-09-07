@@ -165,12 +165,13 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 
   template<class View>
-  forceinline void
+  forceinline bool
   Graph<View>::mark(Space& home) {
     using namespace ViewValGraph;
 
     Region r(home);
 
+    int n_view_visited = 0;
     {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
@@ -204,6 +205,7 @@ namespace Gecode { namespace Int { namespace Distinct {
           e->use();
           ViewNode<View>* x = e->view(n);
           if (x->min < count) {
+            n_view_visited++;
             x->min = count;
             assert(x->edge_fst()->next() == x->edge_lst());
             ValNode<View>* m = x->edge_fst()->val(x);
@@ -215,10 +217,15 @@ namespace Gecode { namespace Int { namespace Distinct {
           }
         }
       }
-      
     }
 
-    scc(home);
+    // If all view nodes have been visited, also all edges are used!
+    if (n_view_visited < n_view) {
+      scc(home);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   template<class View>

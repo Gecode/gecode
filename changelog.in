@@ -73,6 +73,13 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Domain consistent distinct runs 10-20% faster.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   major
@@ -82,7 +89,7 @@ because it does not properly udpate the IntSet during copying.
 This could cause memory corruption.
 
 [ENTRY]
-Module: search
+Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]
