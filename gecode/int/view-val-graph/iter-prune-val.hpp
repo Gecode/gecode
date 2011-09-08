@@ -52,6 +52,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   forceinline void
   IterPruneVal<View>::operator ++(void) {
+    assert(!e->used(x));
     do {
       e = e->next_edge();
     } while ((e != NULL) && e->used(x));

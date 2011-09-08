@@ -177,19 +177,29 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   template<class View>
   class ViewNode : public Node<View> {
   protected:
+    /// The size of the view after last change
+    unsigned int _size;
     /// The node's view
     View        _view;
     /// The first value edge
     Edge<View>* _val_edges;
   public:
+    /// Initialize node for a non-view
+    ViewNode(void);
     /// Initialize new node for view \a x
     ViewNode(View x);
     /// Return first edge of all value edges
     Edge<View>*  val_edges(void) const;
     /// Return pointer to first edge fields of all value edges
     Edge<View>** val_edges_ref(void);
+    /// Test whether node has a fake view
+    bool fake(void) const;
     /// Return view
     View view(void) const;
+    /// Update size of view after change
+    void update(void);
+    /// Return whether view has changed its size
+    bool changed(void) const;
     /// Whether the node is matched
     bool matched(void) const;
   };
@@ -203,7 +213,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   protected:
     /// Next edge in chain of value edges
     Edge<View>* _next_edge;
-    /// Combine source and destination node anf flag
+    /// Combine source and destination node and flag
     CombPtrFlag<Node<View> > sd;
   public:
     /// Construct new edge between \a x and \a v
@@ -286,7 +296,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   /// View-value graph base class 
   template<class View>
   class Graph {
-  public:
+  protected:
     /// Array of view nodes
     ViewNode<View>** view;
     /// Array of value nodes

@@ -54,13 +54,12 @@ namespace Gecode { namespace Int { namespace NValues {
 
     // Create nodes corresponding to the value set vs
     {
-      IntView null(NULL);
       int i = x.size();
       ValSet::Ranges vsr(vs);
       ValNode<IntView>** v = &val;
       for (Iter::Ranges::ToValues<ValSet::Ranges> n(vsr); n(); ++n) {
         // Create view node
-        view[i] = new (home) ViewNode<IntView>(null);
+        view[i] = new (home) ViewNode<IntView>();
         // Create and link value node
         ValNode<IntView>* nv = new (home) ValNode<IntView>(n.val());
         *v = nv; v = nv->next_val_ref();
@@ -103,39 +102,44 @@ namespace Gecode { namespace Int { namespace NValues {
     for (int i = n_view; i--; ) {
       ViewNode<IntView>* x = view[i];
       // Skip faked view nodes, they correspond to values in the value set
-      if (x->view().varimp() != NULL) {
-        ViewRanges<IntView> r(x->view());
-        Edge<IntView>*  m = x->matched() ? x->edge_fst() : NULL;
-        Edge<IntView>** p = x->val_edges_ref();
-        Edge<IntView>*  e = *p;
-        do {
-          while (e->val(x)->val() < r.min()) {
-            // Skip edge
+      if (!x->fake()) 
+        if (x->changed()) {
+          ViewRanges<IntView> r(x->view());
+          Edge<IntView>*  m = x->matched() ? x->edge_fst() : NULL;
+          Edge<IntView>** p = x->val_edges_ref();
+          Edge<IntView>*  e = *p;
+          do {
+            while (e->val(x)->val() < r.min()) {
+              // Skip edge
+              e->unlink(); e->mark();
+              e = e->next_edge();
+            }
+            *p = e;
+            assert(r.min() == e->val(x)->val());
+            // This edges must be kept
+            for (unsigned int j=r.width(); j--; ) {
+              e->free();
+              p = e->next_edge_ref();
+              e = e->next_edge();
+            }
+            ++r;
+          } while (r());
+          *p = NULL;
+          while (e != NULL) {
             e->unlink(); e->mark();
             e = e->next_edge();
           }
-          *p = e;
-          assert(r.min() == e->val(x)->val());
-          // This edges must be kept
-          for (unsigned int j=r.width(); j--; ) {
-            e->free();
-            p = e->next_edge_ref();
-            e = e->next_edge();
+          if ((m != NULL) && m->marked()) {
+            // Matching has been deleted!
+            m->val(x)->matching(NULL);
+            rematch = true;
+            n_matched--;
           }
-          ++r;
-        } while (r());
-        *p = NULL;
-        while (e != NULL) {
-          e->unlink(); e->mark();
-          e = e->next_edge();
+        } else {
+          // Just free edges
+          for (Edge<IntView>* e=x->val_edges(); e != NULL; e = e->next_edge())
+            e->free();
         }
-        if ((m != NULL) && m->marked()) {
-          // Matching has been deleted!
-          m->val(x)->matching(NULL);
-          rematch = true;
-          n_matched--;
-        }
-      }
     }
 
     if (rematch) {
@@ -268,6 +272,7 @@ namespace Gecode { namespace Int { namespace NValues {
         }
       }
     }
+
     return ES_OK;
   }
 

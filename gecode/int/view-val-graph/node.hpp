@@ -123,8 +123,12 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
   template<class View>
   forceinline
+  ViewNode<View>::ViewNode(void)
+    : _view(View(NULL)) {}
+  template<class View>
+  forceinline
   ViewNode<View>::ViewNode(View x)
-    : _view(x) {}
+    : _size(x.size()), _view(x) {}
   template<class View>
   forceinline Edge<View>*
   ViewNode<View>::val_edges(void) const {
@@ -136,9 +140,24 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     return &_val_edges;
   }
   template<class View>
+  forceinline bool
+  ViewNode<View>::fake(void) const {
+    return _view.varimp() == NULL;
+  }
+  template<class View>
   forceinline View
   ViewNode<View>::view(void) const {
     return _view;
+  }
+  template<class View>
+  forceinline bool
+  ViewNode<View>::changed(void) const {
+    return _size != _view.size();
+  }
+  template<class View>
+  forceinline void
+  ViewNode<View>::update(void) {
+    _size = _view.size();
   }
   template<class View>
   forceinline bool

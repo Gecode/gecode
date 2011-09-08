@@ -101,6 +101,9 @@ namespace Gecode { namespace Int { namespace Distinct {
         ViewValGraph::Graph<View>::init(home,view[i]);
     }
 
+    if (n_val < n_view)
+      return ES_FAILED;
+
     typename ViewValGraph::Graph<View>::ViewNodeStack m(r,n_view);
     for (int i = n_view; i--; )
       if (!match(m,view[i]))
@@ -123,7 +126,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
           e->unlink();
         view[i] = view[--n_view];
-      } else {
+      } else if (x->changed()) {
         ViewRanges<View> r(x->view());
         Edge<View>*  m = x->edge_fst();      // Matching edge
         Edge<View>** p = x->val_edges_ref();
@@ -154,8 +157,14 @@ namespace Gecode { namespace Int { namespace Distinct {
           m->val(x)->matching(NULL);
           re.push(x);
         }
+        x->update();
+      } else {
+        // Just free edges
+        for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
+          e->free();
       }
     }
+
     typename ViewValGraph::Graph<View>::ViewNodeStack m(r,n_view);
     while (!re.empty())
       if (!match(m,re.pop()))
