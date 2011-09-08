@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace NValues {
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; ) {
       ViewNode<IntView>* x = view[i];
-      if (x->view().varimp() != NULL) {
+      if (!x->fake())
         if (x->matched() && !x->edge_fst()->used(x)) {
           GECODE_ME_CHECK(x->view().eq(home,x->edge_fst()->val(x)->val()));
           x->edge_fst()->val(x)->matching(NULL);
@@ -267,10 +267,9 @@ namespace Gecode { namespace Int { namespace NValues {
             e->unlink();
           view[i] = view[--n_view];
         } else {
-          IterPruneVal<IntView> pv(view[i]);
-          GECODE_ME_CHECK(view[i]->view().minus_v(home,pv,false));
+          IterPruneVal<IntView> pv(x);
+          GECODE_ME_CHECK(x->view().minus_v(home,pv,false));
         }
-      }
     }
 
     return ES_OK;
