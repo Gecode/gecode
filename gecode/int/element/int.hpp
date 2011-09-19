@@ -270,8 +270,8 @@ namespace Gecode { namespace Int { namespace Element {
     for (ViewValues<V0> i(x0); i(); ++i)
       if (c[i.val()] != x1.val())
         v[n++]=i.val();
-    Iter::Values::Array i(v,n);
-    GECODE_ME_CHECK(x0.minus_v(home,i,false));
+    Iter::Values::Array iv(v,n);
+    GECODE_ME_CHECK(x0.minus_v(home,iv,false));
     return ES_OK;
   }
 

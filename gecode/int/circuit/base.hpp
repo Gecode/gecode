@@ -123,81 +123,83 @@ namespace Gecode { namespace Int { namespace Circuit {
      *
      */
 
-    // Start always at node start
-    int i = start;
-    // Counter for scc
-    int cnt = 0;
-    // Smallest preorder number of last subtree (initially, the root node)
-    int subtree_min = 0;
-    // Largest preorder number of last subtree (initially, the root node)
-    int subtree_max = 0;
-    // Number of back edges into last subtree or root
-    int back = 0;
-  start:
-    si[i].min = si[i].pre = si[i].low = cnt++;
-    si[i].v.init(o(x[i]));
-    do {
-      if (si[si[i].v.val()].pre < 0) {
-        next.push(i);
-        i=si[i].v.val();
-        goto start;
-      } else if ((subtree_min <= si[si[i].v.val()].pre) &&
+    {
+      // Start always at node start
+      int i = start;
+      // Counter for scc
+      int cnt = 0;
+      // Smallest preorder number of last subtree (initially, the root node)
+      int subtree_min = 0;
+      // Largest preorder number of last subtree (initially, the root node)
+      int subtree_max = 0;
+      // Number of back edges into last subtree or root
+      int back = 0;
+    start:
+      si[i].min = si[i].pre = si[i].low = cnt++;
+      si[i].v.init(o(x[i]));
+      do {
+        if (si[si[i].v.val()].pre < 0) {
+          next.push(i);
+          i=si[i].v.val();
+          goto start;
+        } else if ((subtree_min <= si[si[i].v.val()].pre) &&
                  (si[si[i].v.val()].pre <= subtree_max)) {
-        back++;
-        eq[n_eq].x = o(x[i]);
-        eq[n_eq].n = si[i].v.val();
-      } else if (si[si[i].v.val()].pre < subtree_min) {
-        nq[n_nq].x = o(x[i]);
-        nq[n_nq].n = si[i].v.val();
-        n_nq++;
+          back++;
+          eq[n_eq].x = o(x[i]);
+          eq[n_eq].n = si[i].v.val();
+        } else if (si[si[i].v.val()].pre < subtree_min) {
+          nq[n_nq].x = o(x[i]);
+          nq[n_nq].n = si[i].v.val();
+          n_nq++;
+        }
+      cont:
+        if (si[si[i].v.val()].low < si[i].min)
+          si[i].min = si[si[i].v.val()].low;
+        ++si[i].v;
+      } while (si[i].v());
+      if (si[i].min < si[i].low) {
+        si[i].low = si[i].min;
+      } else if (i != start) {
+        // If it is not the first node visited, there is more than one SCC
+        return ES_FAILED;
       }
-    cont:
-      if (si[si[i].v.val()].low < si[i].min)
-        si[i].min = si[si[i].v.val()].low;
-      ++si[i].v;
-    } while (si[i].v());
-    if (si[i].min < si[i].low) {
-      si[i].low = si[i].min;
-    } else if (i != start) {
-      // If it is not the first node visited, there is more than one SCC
-      return ES_FAILED;
-    }
-    if (!next.empty()) {
-      i=next.pop();
-      if (i == start) {
-        // No back edge
-        if (back == 0)
+      if (!next.empty()) {
+        i=next.pop();
+        if (i == start) {
+          // No back edge
+          if (back == 0)
+            return ES_FAILED;
+          // Exactly one back edge, make it mandatory (keep topmost entry)
+          if (back == 1)
+            n_eq++;
+          back        = 0;
+          subtree_min = subtree_max+1;
+          subtree_max = cnt-1;
+        }
+        goto cont;
+      }
+      // Whether all nodes have been visited
+      if (cnt != n)
+        return ES_FAILED;
+      ExecStatus es = ES_FIX;
+      // Assign all mandatory edges
+      while (n_eq-- > 0) {
+        ModEvent me = eq[n_eq].x.eq(home,eq[n_eq].n);
+        if (me_failed(me))
           return ES_FAILED;
-        // Exactly one back edge, make it mandatory (keep topmost entry on ti)
-        if (back == 1)
-          n_eq++;
-        back        = 0;
-        subtree_min = subtree_max+1;
-        subtree_max = cnt-1;
+        if (me_modified(me))
+          es = ES_NOFIX;
       }
-      goto cont;
+      // Remove all edges that would require a non-simple cycle
+      while (n_nq-- > 0) {
+        ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me))
+          es = ES_NOFIX;
+      }
+      return es;
     }
-    // Whether all nodes have been visited
-    if (cnt != n)
-      return ES_FAILED;
-    ExecStatus es = ES_FIX;
-    // Assign all mandatory edges
-    while (n_eq-- > 0) {
-      ModEvent me = eq[n_eq].x.eq(home,eq[n_eq].n);
-      if (me_failed(me))
-        return ES_FAILED;
-      if (me_modified(me))
-        es = ES_NOFIX;
-    }
-    // Remove all edges that would require a non-simple cycle
-    while (n_nq-- > 0) {
-      ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
-      if (me_failed(me))
-        return ES_FAILED;
-      if (me_modified(me))
-        es = ES_NOFIX;
-    }
-    return es;
   }
 
   template<class View, class Offset>

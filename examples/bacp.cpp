@@ -121,19 +121,19 @@ public:
 
   /// Actual model
   BACP(const SizeOptions& opt) : curr(curriculum[opt.size()]) {
+    std::map<std::string, int> courseMap; // Map names to course numbers
+    int maxCredit = 0;
+    int numberOfCourses = 0;
+    for (const Course* co=curr.courses; co->name != 0; co++) {
+      courseMap[co->name] = numberOfCourses++;
+      maxCredit += co->credit;
+    }
+
     int p = curr.p;
     int a = curr.a;
     int b = curr.b;
     int c = curr.c;
     int d = curr.d;
-
-    std::map<std::string, int> courseMap; // Map names to course numbers
-    int maxCredit = 0;
-    int numberOfCourses = 0;
-    for (const Course* c=curr.courses; c->name != 0; c++) {
-      courseMap[c->name] = numberOfCourses++;
-      maxCredit += c->credit;
-    }
 
     l = IntVarArray(*this, p, a, b);
     u = IntVar(*this, 0, maxCredit);
@@ -154,9 +154,8 @@ public:
     }
 
     // Precedence
-    for (const char** prereq = curr.prereqs; *prereq != 0; prereq+=2) {
+    for (const char** prereq = curr.prereqs; *prereq != 0; prereq+=2)
       rel(*this, x[courseMap[*prereq]] < x[courseMap[*(prereq+1)]]);
-    }
 
     // Optimization criterion: minimize u
     max(*this, l, u);

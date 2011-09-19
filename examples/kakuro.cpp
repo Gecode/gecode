@@ -440,12 +440,14 @@ namespace {
       for (Entry* e = cache; e != NULL; e = e->next)
         if ((e->n == n) && (e->c == c))
           return e->ts;
-      Entry* e = new Entry;
-      e->n = n;
-      e->c = c;
-      e->ts = generate(n,c);
-      e->next = cache;
-      cache = e;
+      {
+        Entry* e = new Entry;
+        e->n = n;
+        e->c = c;
+        e->ts = generate(n,c);
+        e->next = cache;
+        cache = e;
+      }
       return cache->ts;
     }
     /// Delete cache entries

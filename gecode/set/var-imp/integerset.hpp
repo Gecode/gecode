@@ -142,12 +142,12 @@ namespace Gecode { namespace Set {
 
   forceinline void
   BndSet::update(Space& home, BndSet& d) {
-    if ( d.fst() == fst())
+    if (d.fst() == fst())
       return;
-    if (fst()!=NULL)
+    if (fst() != NULL)
       fst()->dispose(home,lst());
     _size = d.size();
-    if (_size==0) {
+    if (_size == 0) {
       fst(NULL); lst(NULL);
       return;
     }
@@ -159,12 +159,14 @@ namespace Gecode { namespace Set {
     RangeList* r = home.alloc<RangeList>(n);
     fst(r); lst(r+n-1);
 
-    RangeList* c = d.fst();
-    for (int i=0; i<n; i++) {
-      r[i].min(c->min());
-      r[i].max(c->max());
-      r[i].next(&r[i+1]);
-      c = c->next();
+    {
+      RangeList* c = d.fst();
+      for (int i=0; i<n; i++) {
+        r[i].min(c->min());
+        r[i].max(c->max());
+        r[i].next(&r[i+1]);
+        c = c->next();
+      }
     }
     r[n-1].next(NULL);
   }

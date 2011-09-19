@@ -143,14 +143,12 @@ namespace Gecode { namespace Set { namespace Element {
       GLBndSet* before =
         static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*n_iv));
 
-      int i = 0;
-
       unsigned int maxCard = 0;
       unsigned int minCard = Limits::card;
 
-      while ( vx1ub() ) {
+      while (vx1ub()) {
+        int i = vx1ub.val();
 
-        i = vx1ub.val();
         IntSetRanges candCardR(iv[i]);
         unsigned int candidateCard = Iter::Ranges::size(candCardR);
 
@@ -282,9 +280,8 @@ namespace Gecode { namespace Set { namespace Element {
 
     } while (loopVar);
 
-    if (x0.assigned() || x1.assigned()) {
+    if (x0.assigned() || x1.assigned())
       return home.ES_SUBSUMED(*this);
-    }
 
     return ES_FIX;
   }

@@ -162,17 +162,19 @@ namespace {
     }
     // Find number of possible positions
     int max = 0;
-    int i = x.size();
-    while (i--) {
-      if (x[i].max() != val) break;
-      ++max;
-      if (max >= y.max()) break;
+    {
+      int i = x.size();
+      while (i--) {
+        if (x[i].max() != val) break;
+        ++max;
+        if (max >= y.max()) break;
+      }
+      // No variables later than max can have value val
+      while (i--) {
+        GECODE_ME_CHECK(x[i].le(home, val));
+      }
     }
-    // No variables later than max can have value val
-    while (i--) {
-      GECODE_ME_CHECK(x[i].le(home, val));
-    }
-    
+
     // Constrain y to be in {min..max}
     GECODE_ME_CHECK(y.gq(home, min));
     GECODE_ME_CHECK(y.lq(home, max));
@@ -297,15 +299,17 @@ public:
     delete [] n;
 
     // Count the cars
-    IntSetArgs c(nclasses+2);
-    for (int i = nclasses; i--; ) {
-      c[i] = IntSet(ncc[i], ncc[i]);
+    {
+      IntSetArgs c(nclasses+2);
+      for (int i = nclasses; i--; ) {
+        c[i] = IntSet(ncc[i], ncc[i]);
+      }
+      c[stallval] = IntSet(0, maxstall);
+      c[  endval] = IntSet(0, maxstall);
+      count(*this, s, c);
     }
-    c[stallval] = IntSet(0, maxstall);
-    c[  endval] = IntSet(0, maxstall);
-    count(*this, s, c);
 
-    // Count number of end and stallss
+    // Count number of end and stalls
     count(*this, s, stallval, IRT_EQ, nstall);
     count(*this, s,   endval, IRT_EQ,   nend);
     rel(*this, nstall+nend == maxstall);
