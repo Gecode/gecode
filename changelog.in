@@ -73,6 +73,13 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: support
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Compile again if threads are disabled.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor
