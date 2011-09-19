@@ -70,6 +70,7 @@ namespace Gecode { namespace Support {
   /*
    * Thread
    */
+  inline
   Thread::Run::Run(Runnable*) {
     throw OperatingSystemError("Thread::run[Threads not supported]");
   }
