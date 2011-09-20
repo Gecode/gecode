@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   class EqView : public ViewBase<VX,VY,VZ> {
   protected:
     using ViewBase<VX,VY,VZ>::x;
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace Count {
    * Requires \code #include <gecode/int/count.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   class GqView : public ViewBase<VX,VY,VZ> {
   protected:
     using ViewBase<VX,VY,VZ>::x;

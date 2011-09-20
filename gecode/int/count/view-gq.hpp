@@ -37,40 +37,40 @@
 
 namespace Gecode { namespace Int { namespace Count {
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   forceinline
-  GqView<VX,VY,VZ,shr>::GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c)
+  GqView<VX,VY,VZ,shr,dom>::GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c)
     : ViewBase<VX,VY,VZ>(home,x,y,z,c) {}
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   ExecStatus
-  GqView<VX,VY,VZ,shr>::post(Home home,
+  GqView<VX,VY,VZ,shr,dom>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     GECODE_ME_CHECK(z.lq(home,x.size()-c));
     if ((vtd(y) != VTD_VARVIEW) && z.assigned())
       return GqInt<VX,VY>::post(home,x,y,z.val()+c);
     if (sharing(x,y,z))
-      (void) new (home) GqView<VX,VY,VZ,true>(home,x,y,z,c);
+      (void) new (home) GqView<VX,VY,VZ,true,dom>(home,x,y,z,c);
     else
-      (void) new (home) GqView<VX,VY,VZ,false>(home,x,y,z,c);
+      (void) new (home) GqView<VX,VY,VZ,false,dom>(home,x,y,z,c);
     return ES_OK;
   }
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   forceinline
-  GqView<VX,VY,VZ,shr>::GqView(Space& home, bool share,
-                               GqView<VX,VY,VZ,shr>& p)
+  GqView<VX,VY,VZ,shr,dom>::GqView(Space& home, bool share,
+                               GqView<VX,VY,VZ,shr,dom>& p)
     : ViewBase<VX,VY,VZ>(home,share,p) {}
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   Actor*
-  GqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
-    return new (home) GqView<VX,VY,VZ,shr>(home,share,*this);
+  GqView<VX,VY,VZ,shr,dom>::copy(Space& home, bool share) {
+    return new (home) GqView<VX,VY,VZ,shr,dom>(home,share,*this);
   }
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   ExecStatus
-  GqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
+  GqView<VX,VY,VZ,shr,dom>::propagate(Space& home, const ModEventDelta&) {
     count(home);
 
     GECODE_ME_CHECK(z.lq(home,atmost()));
@@ -82,12 +82,12 @@ namespace Gecode { namespace Int { namespace Count {
     if (x.size() == 0)
       return home.ES_SUBSUMED(*this);
 
-    if (z.assigned() && (vtd(y) != VTD_VARVIEW)) {
+    if (z.assigned() && (!dom || (vtd(y) != VTD_VARVIEW))) {
       VY yc(y);
       GECODE_REWRITE(*this,(GqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
     }
 
-    if ((vtd(y) == VTD_VARVIEW) && (z.min() > 0)) {
+    if (dom && (vtd(y) == VTD_VARVIEW) && (z.min() > 0)) {
       /* 
        * Only if the propagator is at fixpoint here, continue
        * when things are shared: the reason is that prune

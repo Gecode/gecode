@@ -1498,7 +1498,9 @@ namespace Gecode {
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    *
-   * Supports domain consistent propagation only.
+   * Supports domain consistent propagation (\a icl = ICL_DOM, default)
+   * and "almost" domain consistent propagation (all other values for \a icl),
+   * where \a y is not pruned.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
@@ -1529,7 +1531,9 @@ namespace Gecode {
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    *
-   * Supports domain consistent propagation only.
+   * Supports domain consistent propagation (\a icl = ICL_DOM, default)
+   * and "almost" domain consistent propagation (all other values for \a icl),
+   * where \a y is not pruned.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,

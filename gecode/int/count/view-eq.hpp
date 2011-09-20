@@ -37,42 +37,42 @@
 
 namespace Gecode { namespace Int { namespace Count {
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   forceinline
-  EqView<VX,VY,VZ,shr>::EqView(Home home,
+  EqView<VX,VY,VZ,shr,dom>::EqView(Home home,
                                ViewArray<VX>& x, VY y, VZ z, int c)
     : ViewBase<VX,VY,VZ>(home,x,y,z,c) {}
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   ExecStatus
-  EqView<VX,VY,VZ,shr>::post(Home home,
+  EqView<VX,VY,VZ,shr,dom>::post(Home home,
                              ViewArray<VX>& x, VY y, VZ z, int c) {
     GECODE_ME_CHECK(z.gq(home,-c));
     GECODE_ME_CHECK(z.lq(home,x.size()-c));
     if ((vtd(y) != VTD_VARVIEW) && z.assigned())
       return EqInt<VX,VY>::post(home,x,y,z.val()+c);
     if (sharing(x,y,z))
-      (void) new (home) EqView<VX,VY,VZ,true>(home,x,y,z,c);
+      (void) new (home) EqView<VX,VY,VZ,true,dom>(home,x,y,z,c);
     else
-      (void) new (home) EqView<VX,VY,VZ,false>(home,x,y,z,c);
+      (void) new (home) EqView<VX,VY,VZ,false,dom>(home,x,y,z,c);
     return ES_OK;
   }
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   forceinline
-  EqView<VX,VY,VZ,shr>::EqView(Space& home, bool share,
-                               EqView<VX,VY,VZ,shr>& p)
+  EqView<VX,VY,VZ,shr,dom>::EqView(Space& home, bool share,
+                               EqView<VX,VY,VZ,shr,dom>& p)
     : ViewBase<VX,VY,VZ>(home,share,p) {}
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   Actor*
-  EqView<VX,VY,VZ,shr>::copy(Space& home, bool share) {
-    return new (home) EqView<VX,VY,VZ,shr>(home,share,*this);
+  EqView<VX,VY,VZ,shr,dom>::copy(Space& home, bool share) {
+    return new (home) EqView<VX,VY,VZ,shr,dom>(home,share,*this);
   }
 
-  template<class VX, class VY, class VZ, bool shr>
+  template<class VX, class VY, class VZ, bool shr, bool dom>
   ExecStatus
-  EqView<VX,VY,VZ,shr>::propagate(Space& home, const ModEventDelta&) {
+  EqView<VX,VY,VZ,shr,dom>::propagate(Space& home, const ModEventDelta&) {
     count(home);
 
     GECODE_ME_CHECK(z.gq(home,atleast()));
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Count {
         GECODE_ES_CHECK(post_true(home,x,y));
         return home.ES_SUBSUMED(*this);
       }
-      if (vtd(y) != VTD_VARVIEW) {
+      if (!dom || (vtd(y) != VTD_VARVIEW)) {
         VY yc(y);
         GECODE_REWRITE(*this,(EqInt<VX,VY>
                               ::post(home(*this),x,yc,z.val()+c)));    
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Count {
     }
 
 
-    if ((vtd(y) == VTD_VARVIEW) && (z.min() > 0)) {
+    if (dom && (vtd(y) == VTD_VARVIEW) && (z.min() > 0)) {
       /* 
        * Only if the propagator is at fixpoint here, continue
        * when things are shared: the reason is that prune
