@@ -73,6 +73,15 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thaks:  Håkan Kjellerstrand
+[DESCRIPTION]
+Fixed linear inequations over integer variables that are channeled
+from Boolean variables.
+
+[ENTRY]
 Module: support
 What:   bug
 Rank:   minor

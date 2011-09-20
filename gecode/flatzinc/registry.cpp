@@ -396,7 +396,8 @@ namespace Gecode { namespace FlatZinc {
               if (i != singleIntVar)
                 ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
-            linear(s, ia_tmp, iv, irt, siv, ann2icl(ann));
+            IntRelType t = (ia[singleIntVar] == -1 ? irt : swap(irt));
+            linear(s, ia_tmp, iv, t, siv, ann2icl(ann));
           } else {
             IntVarArgs iv = arg2intvarargs(s, ce[1]);
             linear(s, ia, iv, irt, ce[2]->getInt(), ann2icl(ann));
@@ -433,7 +434,8 @@ namespace Gecode { namespace FlatZinc {
               if (i != singleIntVar)
                 ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
-            linear(s, ia_tmp, iv, irt, siv, getBoolVar(s, ce[3]), 
+            IntRelType t = (ia[singleIntVar] == -1 ? irt : swap(irt));
+            linear(s, ia_tmp, iv, t, siv, getBoolVar(s, ce[3]), 
                    ann2icl(ann));
           } else {
             IntVarArgs iv = arg2intvarargs(s, ce[1]);
