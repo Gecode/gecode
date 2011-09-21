@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 
   if (fg) {
     
-    fg->createBranchers(fg->solveAnnotations(), false, std::cerr);
+    fg->createBranchers(fg->solveAnnotations(), opt.seed(), false, std::cerr);
     fg->shrinkArrays(p);
     if (opt.output()) {
       std::ofstream os(opt.output());

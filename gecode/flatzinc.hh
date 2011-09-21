@@ -166,6 +166,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
       Gecode::Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
       Gecode::Driver::UnsignedIntOption _time;      ///< Cutoff for time
+      Gecode::Driver::IntOption         _seed;      ///< Random seed
       //@}
     
       /// \name Execution options
@@ -194,6 +195,7 @@ namespace Gecode { namespace FlatZinc {
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
+      _seed("-r","random seed",0),
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
       _stat("-s","emit statistics"),
       _print("-print","which solutions to print",0),
@@ -211,6 +213,7 @@ namespace Gecode { namespace FlatZinc {
       add(_free);
       add(_search);
       add(_node); add(_fail); add(_time);
+      add(_seed);
       add(_mode); add(_stat);
       add(_print); add(_output);
     }
@@ -241,6 +244,7 @@ namespace Gecode { namespace FlatZinc {
     unsigned int node(void) const { return _node.value(); }
     unsigned int fail(void) const { return _fail.value(); }
     unsigned int time(void) const { return _time.value(); }
+    int seed(void) const { return _seed.value(); }
     unsigned int print(void) const { return _print.value(); }
     const char* output(void) const { return _output.value(); }
     Gecode::ScriptMode mode(void) const {
@@ -361,8 +365,13 @@ namespace Gecode { namespace FlatZinc {
      *
      * If \a ignoreUnknown is true, unknown solve item annotations will be
      * ignored, otherwise a warning is written to \a err.
+     *
+     * The seed for random branchers is given by the \a seed parameter.
+     *
      */
-    void createBranchers(AST::Node* ann, bool ignoreUnknown,
+    void createBranchers(AST::Node* ann,
+                         int seed,
+                         bool ignoreUnknown,
                          std::ostream& err = std::cerr);
 
     /// Return the solve item annotations

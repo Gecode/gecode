@@ -692,7 +692,9 @@ namespace Gecode { namespace FlatZinc {
 
 #define BOOL_ARRAY_OP(op) \
     BoolVarArgs bv = arg2boolvarargs(s, ce[0]); \
-    if (ce[1]->isBool()) { \
+    if (ce.size()==1) { \
+      rel(s, op, bv, 1, ann2icl(ann)); \
+    } else if (ce[1]->isBool()) { \
       rel(s, op, bv, ce[1]->getBool(), ann2icl(ann)); \
     } else { \
       rel(s, op, bv, s.bv[ce[1]->getBoolVar()], ann2icl(ann)); \
@@ -711,6 +713,10 @@ namespace Gecode { namespace FlatZinc {
     void p_array_bool_or(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       BOOL_ARRAY_OP(BOT_OR);
+    }
+    void p_array_bool_xor(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
+    {
+      BOOL_ARRAY_OP(BOT_XOR);
     }
     void p_array_bool_clause(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node* ann) {
@@ -1383,6 +1389,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_xor", &p_bool_xor);
         registry().add("array_bool_and", &p_array_bool_and);
         registry().add("array_bool_or", &p_array_bool_or);
+        registry().add("array_bool_xor", &p_array_bool_xor);
         registry().add("bool_clause", &p_array_bool_clause);
         registry().add("bool_clause_reif", &p_array_bool_clause_reif);
         registry().add("bool_left_imp", &p_bool_l_imp);

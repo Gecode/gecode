@@ -73,6 +73,16 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The FlatZinc interpreter is now compatible with the G12 MiniZinc
+distribution 1.4. This adds support for var and par identifiers that
+begin with underscores, the array_bool_xor primitive, as well as the
+command line option -r for specifying a random seed.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

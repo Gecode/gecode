@@ -362,7 +362,7 @@ namespace Gecode { namespace FlatZinc {
 
 %token <iValue> FZ_INT_LIT FZ_BOOL_LIT
 %token <dValue> FZ_FLOAT_LIT
-%token <sValue> FZ_ID FZ_STRING_LIT
+%token <sValue> FZ_ID FZ_U_ID FZ_STRING_LIT
 
 %token <bValue> FZ_VAR FZ_PAR
 
@@ -404,6 +404,7 @@ namespace Gecode { namespace FlatZinc {
 %token FZ_VARIANT_RECORD
 %token FZ_WHERE
 
+%type <sValue> var_par_id
 %type <setLit> set_literal
 
 %type <varSpec> int_init bool_init set_init float_init
@@ -513,8 +514,10 @@ pred_array_init_arg:
 /* variable declarations        */
 /********************************/
 
+var_par_id : FZ_ID | FZ_U_ID
+
 vardecl_item:
-      FZ_VAR int_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
+      FZ_VAR int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, !$2() || !$2.some()->empty(), "Empty var int domain");
@@ -546,7 +549,7 @@ vardecl_item:
         }
         delete $5; free($4);
       }
-    | FZ_VAR bool_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
+    | FZ_VAR bool_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
@@ -577,12 +580,12 @@ vardecl_item:
         }
         delete $5; free($4);
       }
-    | FZ_VAR float_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
+    | FZ_VAR float_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       { ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, false, "Floats not supported");
         delete $5; free($4);
       }
-    | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' FZ_ID annotations non_array_expr_opt
+    | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $7->hasAtom("output_var");
@@ -614,7 +617,7 @@ vardecl_item:
         }
         delete $7; free($6);
       }
-    | int_ti_expr_tail ':' FZ_ID annotations '=' non_array_expr
+    | int_ti_expr_tail ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, !$1() || !$1.some()->empty(), "Empty int domain");
@@ -640,7 +643,7 @@ vardecl_item:
           "Duplicate symbol");
         delete $4; free($3);        
       }
-    | FZ_BOOL ':' FZ_ID annotations '=' non_array_expr
+    | FZ_BOOL ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $6->isBool(), "Invalid bool initializer");
@@ -651,7 +654,7 @@ vardecl_item:
         }
         delete $4; free($3);        
       }    
-    | FZ_SET FZ_OF int_ti_expr_tail ':' FZ_ID annotations '=' non_array_expr
+    | FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, !$3() || !$3.some()->empty(), "Empty set domain");
@@ -665,7 +668,7 @@ vardecl_item:
         delete $6; free($5);        
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR int_ti_expr_tail ':' 
-        FZ_ID annotations vardecl_int_var_array_init
+        var_par_id annotations vardecl_int_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
@@ -730,7 +733,7 @@ vardecl_item:
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR bool_ti_expr_tail ':'
-        FZ_ID annotations vardecl_bool_var_array_init
+        var_par_id annotations vardecl_bool_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $12->hasCall("output_array");
@@ -788,14 +791,14 @@ vardecl_item:
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR float_ti_expr_tail ':'
-        FZ_ID annotations vardecl_float_var_array_init
+        var_par_id annotations vardecl_float_var_array_init
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, false, "Floats not supported");
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':'
-        FZ_ID annotations vardecl_set_var_array_init
+        var_par_id annotations vardecl_set_var_array_init
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $14->hasCall("output_array");
@@ -856,7 +859,7 @@ vardecl_item:
         delete $14; free($13);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF int_ti_expr_tail ':'
-        FZ_ID annotations '=' '[' int_list ']'
+        var_par_id annotations '=' '[' int_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
@@ -877,7 +880,7 @@ vardecl_item:
         delete $11;
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_BOOL ':'
-        FZ_ID annotations '=' '[' bool_list ']'
+        var_par_id annotations '=' '[' bool_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
@@ -897,14 +900,14 @@ vardecl_item:
         delete $11;
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_FLOAT ':'
-        FZ_ID annotations '=' '[' float_list ']'
+        var_par_id annotations '=' '[' float_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, false, "Floats not supported");
         delete $11; free($10);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF int_ti_expr_tail ':'
-        FZ_ID annotations '=' '[' set_literal_list ']'
+        var_par_id annotations '=' '[' set_literal_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
@@ -930,7 +933,7 @@ int_init :
       { 
         $$ = new IntVarSpec($1,false);
       }
-    | FZ_ID
+    | var_par_id
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -945,7 +948,7 @@ int_init :
         }
         free($1);
       }
-    | FZ_ID '[' FZ_INT_LIT ']'
+    | var_par_id '[' FZ_INT_LIT ']'
       { 
         vector<int> v;
         SymbolEntry e;
@@ -987,7 +990,7 @@ int_var_array_literal : '[' int_init_list ']'
 float_init :
       FZ_FLOAT_LIT
       { $$ = new FloatVarSpec($1,false); }
-    | FZ_ID
+    | var_par_id
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -1002,7 +1005,7 @@ float_init :
         }
         free($1);
       }
-    | FZ_ID '[' FZ_INT_LIT ']'
+    | var_par_id '[' FZ_INT_LIT ']'
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -1042,7 +1045,7 @@ float_var_array_literal :
 bool_init :
       FZ_BOOL_LIT
       { $$ = new BoolVarSpec($1,false); }
-    | FZ_ID
+    | var_par_id
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -1057,7 +1060,7 @@ bool_init :
         }
         free($1);
       }
-    | FZ_ID '[' FZ_INT_LIT ']'
+    | var_par_id '[' FZ_INT_LIT ']'
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -1095,7 +1098,7 @@ bool_var_array_literal : '[' bool_init_list ']' { $$ = $2; }
 set_init :
       set_literal
       { $$ = new SetVarSpec(Option<AST::SetLit*>::some($1),false); }
-    | FZ_ID
+    | var_par_id
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
@@ -1110,7 +1113,7 @@ set_init :
         }
         free($1);
       }
-    | FZ_ID '[' FZ_INT_LIT ']'
+    | var_par_id '[' FZ_INT_LIT ']'
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -1339,7 +1342,7 @@ non_array_expr :
       { $$ = new AST::FloatLit($1); }
     | set_literal
       { $$ = $1; }
-    | FZ_ID /* variable, possibly array */
+    | var_par_id /* variable, possibly array */
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
@@ -1409,7 +1412,7 @@ non_array_expr :
         }
         free($1);
       }
-    | FZ_ID '[' non_array_expr ']' /* array access */
+    | var_par_id '[' non_array_expr ']' /* array access */
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;
@@ -1438,7 +1441,7 @@ non_array_expr_list_head :
 /********************************/
 
 solve_expr:
-      FZ_ID
+      var_par_id
       { 
         ParserState *pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
@@ -1452,7 +1455,7 @@ solve_expr:
         }
         free($1);
       }
-    | FZ_ID '[' FZ_INT_LIT ']'
+    | var_par_id '[' FZ_INT_LIT ']'
       {
         SymbolEntry e;
         ParserState *pp = static_cast<ParserState*>(parm);
@@ -1522,7 +1525,7 @@ ann_non_array_expr :
       { $$ = new AST::FloatLit($1); }
     | set_literal
       { $$ = $1; }
-    | FZ_ID /* variable, possibly array */
+    | var_par_id /* variable, possibly array */
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
@@ -1596,7 +1599,7 @@ ann_non_array_expr :
           $$ = getVarRefArg(pp,$1,true);
         free($1);
       }
-    | FZ_ID '[' ann_non_array_expr ']' /* array access */
+    | var_par_id '[' ann_non_array_expr ']' /* array access */
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         int i = -1;

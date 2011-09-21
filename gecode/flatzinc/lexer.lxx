@@ -118,6 +118,7 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 "variant_record"  { return FZ_VARIANT_RECORD; }
 "where"           { return FZ_WHERE; }
 [A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_ID; }
+_[_]*[A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_U_ID; }
 \"[^"\n]*\"       {
                     yylval->sValue = strdup(yytext+1);
                     yylval->sValue[strlen(yytext)-2] = 0; 

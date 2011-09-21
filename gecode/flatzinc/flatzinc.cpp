@@ -356,8 +356,13 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::createBranchers(AST::Node* ann, bool ignoreUnknown,
+  FlatZincSpace::createBranchers(AST::Node* ann, int seed,
+                                 bool ignoreUnknown,
                                  std::ostream& err) {
+    VarBranchOptions varbo;
+    varbo.seed = seed;
+    ValBranchOptions valbo;
+    valbo.seed = seed;
     if (ann) {
       std::vector<AST::Node*> flatAnn;
       if (ann->isArray()) {
@@ -385,7 +390,8 @@ namespace Gecode { namespace FlatZinc {
               continue;
             va[k++] = iv[vars->a[i]->getIntVar()];
           }
-          branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]));
+          branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]),
+                 varbo,valbo);
         } catch (AST::TypeError& e) {
         try {
           AST::Call *call = flatAnn[i]->getCall("int_assign");
@@ -421,7 +427,7 @@ namespace Gecode { namespace FlatZinc {
               va[k++] = bv[vars->a[i]->getBoolVar()];
             }
             branch(*this, va, ann2ivarsel(args->a[1]), 
-                   ann2ivalsel(args->a[2]));        
+                   ann2ivalsel(args->a[2]), varbo, valbo);
           } catch (AST::TypeError& e) {
             (void) e;
 #ifdef GECODE_HAS_SET_VARS
@@ -441,7 +447,7 @@ namespace Gecode { namespace FlatZinc {
                 va[k++] = sv[vars->a[i]->getSetVar()];
               }
               branch(*this, va, ann2svarsel(args->a[1]), 
-                               ann2svalsel(args->a[2]));        
+                     ann2svalsel(args->a[2]), varbo, valbo);
             } catch (AST::TypeError& e) {
               (void) e;
               if (!ignoreUnknown) {
