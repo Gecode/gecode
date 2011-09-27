@@ -876,7 +876,7 @@ namespace Gecode {
    */
 
   //@{
-  /// Propagates \f$ x=n\f$
+  /// Propagates \f$x=n\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int n,
       IntConLevel icl=ICL_DEF);
@@ -903,15 +903,15 @@ namespace Gecode {
   dom(Home home, const IntVarArgs& x, const IntSet& s,
       IntConLevel icl=ICL_DEF);
 
-  /// Post propagator for \f$ (x=n) \Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$ (x=n) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int n, BoolVar b,
       IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int l, int m, BoolVar b,
       IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ (x \in s) \Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$ (x \in s) \Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, const IntSet& s, BoolVar b,
       IntConLevel icl=ICL_DEF);
@@ -931,7 +931,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, IntVar x0, IntRelType r, IntVar x1,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagators for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
@@ -975,10 +975,10 @@ namespace Gecode {
    * States that the elements of \a x are in the following relation:
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
    *    then the elements of \a x are ordered with respect to \a r.
+   *    Supports domain consistency (\a icl = ICL_DOM, default).
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
    *    Supports both bounds (\a icl = ICL_BND) and
    *    domain consistency (\a icl = ICL_DOM, default).
-   *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
-   *    Supports domain consistency (\a icl = ICL_DOM, default).
    *  - if \a r = IRT_NQ, then not all elements of \a x must be equal.
    *    Supports domain consistency (\a icl = ICL_DOM, default).
    *
@@ -1009,19 +1009,19 @@ namespace Gecode {
    * \defgroup TaskModelIntRelBool Simple relation constraints over Boolean variables
    * \ingroup TaskModelInt
    */
-  /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
+  /** \brief Post domain consistent propagator for \f$ x_0 \sim_r x_1\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
+  /** \brief Post domain consistent propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Post doamin consistent propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
@@ -1038,7 +1038,7 @@ namespace Gecode {
   rel(Home home, BoolVar x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF);
   /**
-   * \brief Propagates \f$(x \sim_r n)\Leftrightarrow b\f$
+   * \brief Post domain consistent propagator for \f$(x \sim_r n)\Leftrightarrow b\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
@@ -1057,7 +1057,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for relation between \a x and \a y.
+  /** \brief Post domain consistent propagator for relation between \a x and \a y.
    *
    * Note that for the inequality relations this corresponds to
    * the lexical order between \a x and \a y.
@@ -1069,7 +1069,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for relation between elements in \a x.
+  /** \brief Post domain consistent propagator for relation between elements in \a x.
    *
    * States that the elements of \a x are in the following relation:
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
@@ -1082,7 +1082,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType r,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for Boolean operation on \a x0 and \a x1
+  /** \brief Post domain consistent propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = x_2\f$
    * \ingroup TaskModelIntRelBool
@@ -1090,7 +1090,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for Boolean operation on \a x0 and \a x1
+  /** \brief Post domain consistent propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = n\f$
    *
@@ -1101,7 +1101,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for Boolean operation on \a x
+  /** \brief Post domain consistent propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
    * \diamond_{\mathit{o}} x_{|x|-1}= y\f$
@@ -1113,7 +1113,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for Boolean operation on \a x
+  /** \brief Post domain consistent propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
    * \diamond_{\mathit{o}} x_{|x|-1}= n\f$
@@ -1128,7 +1128,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, int n,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
+  /** \brief Post domain consistent propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
    * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0
@@ -1141,7 +1141,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
          BoolVar z, IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for Boolean clause with positive variables \a x and negative variables \a y
+  /** \brief Post domain consistent propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
    * \diamond_{\mathit{o}} x_{|x|-1} \diamond_{\mathit{o}} \neg y_0
@@ -1190,19 +1190,19 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   //@{
-  /// Post domain-consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
+  /// Post domain consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
   GECODE_INT_EXPORT void
   member(Home home, const IntVarArgs& x, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /// Post domain-consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
+  /// Post domain consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
   GECODE_INT_EXPORT void
   member(Home home, const BoolVarArgs& x, BoolVar y,
          IntConLevel icl=ICL_DEF);
-  /// Post domain-consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   member(Home home, const IntVarArgs& x, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /// Post domain-consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   member(Home home, const BoolVarArgs& x, BoolVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
@@ -1217,7 +1217,7 @@ namespace Gecode {
   //@{
   /// Arrays of integers that can be shared among several element constraints
   typedef SharedArray<int> IntSharedArray;
-  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
+  /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
@@ -1225,7 +1225,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
+  /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
@@ -1233,7 +1233,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
+  /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
    *  the integers in \a n exceed the limits in Int::Limits.
@@ -1257,16 +1257,16 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, const IntVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ x_{y_0}=y_1\f$
+  /// Post domain consistent propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
           IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ x_{y_0}=y_1\f$
+  /// Post domain consistent propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+  /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
    * order of width \a w and height \a h, then \a z is constrained
@@ -1282,7 +1282,7 @@ namespace Gecode {
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+  /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
    * order of width \a w and height \a h, then \a z is constrained
@@ -1317,7 +1317,7 @@ namespace Gecode {
   element(Home home, const IntVarArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
+  /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
    * order of width \a w and height \a h, then \a z is constrained
@@ -1380,7 +1380,7 @@ namespace Gecode {
   /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
    *
    * \li Supports domain consistency (\a icl = ICL_DOM) and value 
-   *     propagation (all other values for \a icl).
+   *     propagation (all other values for \a icl, default).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
@@ -1395,7 +1395,7 @@ namespace Gecode {
   /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
    *
    * \li Supports domain consistency (\a icl = ICL_DOM) and value 
-   *     propagation (all other values for \a icl).
+   *     propagation (all other values for \a icl, default).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
@@ -1410,17 +1410,17 @@ namespace Gecode {
           const IntVarArgs& y, int yoff,
           IntConLevel icl=ICL_DEF);
 
-  /// Post propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
+  /// Post domain consistent propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
   GECODE_INT_EXPORT void
   channel(Home home, BoolVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF);
-  /// Post propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
+  /// Post domain consistent propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
   forceinline void
   channel(Home home, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF) {
     channel(home,x1,x0,icl);
   }
-  /** \brief Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
+  /** \brief Post domain consistent propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
    *
    * Throws an exception of type Int::ArgumentSame, if \a x
    * contains the same unassigned variable multiply.
@@ -1434,7 +1434,7 @@ namespace Gecode {
   /**
    * \defgroup TaskModelIntSorted Sorted constraints
    *
-   * All sorted constraints support bounds consistency.
+   * All sorted constraints support bounds consistency only.
    *
    * \ingroup TaskModelInt
    */
@@ -1854,7 +1854,7 @@ namespace Gecode {
   };
 
   /**
-   * \brief Post propagator for extensional constraint described by a DFA
+   * \brief Post domain consistent propagator for extensional constraint described by a DFA
    *
    * The elements of \a x must be a word of the language described by
    * the DFA \a d.
@@ -1868,7 +1868,7 @@ namespace Gecode {
               IntConLevel icl=ICL_DEF);
 
   /**
-   * \brief Post propagator for extensional constraint described by a DFA
+   * \brief Post domain consistent propagator for extensional constraint described by a DFA
    *
    * The elements of \a x must be a word of the language described by
    * the DFA \a d.
@@ -2310,7 +2310,8 @@ namespace Gecode {
    * \defgroup TaskModelIntBinPacking Bin packing constraints
    * \ingroup TaskModelInt
    *
-   * Constraints for modeling bin packing problems.
+   * Constraints for modeling bin packing problems. Propagation follows:
+   *   Paul Shaw. A Constraint for Bin Packing. CP 2004.
    */
   /** \brief Post propagator for bin packing
    *
@@ -2441,7 +2442,7 @@ namespace Gecode {
    * \brief Post propagators for the cumulatives constraint
    *
    * This function creates propagators for the cumulatives constraint
-   * presented in <em> "A new multi-resource cumulatives constraint
+   * presented in <em>"A new multi-resource cumulatives constraint
    * with negative heights"</em>, Nicolas Beldiceanu and Mats
    * Carlsson, Principles and Practice of Constraint Programming 2002.
    *
