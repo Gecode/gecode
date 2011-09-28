@@ -150,6 +150,14 @@ namespace Gecode {
       //@}
     };
 
+    /**
+     * \brief Print integer variable view
+     * \relates Gecode::Int::Linear::NoView
+     */
+    template<class Char, class Traits>
+    std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const NoView&) { return os; }
+
   }}
 
 
@@ -186,6 +194,12 @@ namespace Gecode {
     //@{
     /// Return view at position \a i
     Int::Linear::NoView operator [](int i) {
+      (void)  i;
+      Int::Linear::NoView n;
+      return n;
+    }
+    /// Return view at position \a i
+    const Int::Linear::NoView operator [](int i) const {
       (void)  i;
       Int::Linear::NoView n;
       return n;

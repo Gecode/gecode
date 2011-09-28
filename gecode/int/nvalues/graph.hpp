@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace NValues {
     for (int i = n_view; i--; ) {
       ViewNode<IntView>* x = view[i];
       // Skip faked view nodes, they correspond to values in the value set
-      if (!x->fake()) 
+      if (!x->fake()) {
         if (x->changed()) {
           ViewRanges<IntView> r(x->view());
           Edge<IntView>*  m = x->matched() ? x->edge_fst() : NULL;
@@ -140,6 +140,7 @@ namespace Gecode { namespace Int { namespace NValues {
           for (Edge<IntView>* e=x->val_edges(); e != NULL; e = e->next_edge())
             e->free();
         }
+      }
     }
 
     if (rematch) {
@@ -259,7 +260,7 @@ namespace Gecode { namespace Int { namespace NValues {
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; ) {
       ViewNode<IntView>* x = view[i];
-      if (!x->fake())
+      if (!x->fake()) {
         if (x->matched() && !x->edge_fst()->used(x)) {
           GECODE_ME_CHECK(x->view().eq(home,x->edge_fst()->val(x)->val()));
           x->edge_fst()->val(x)->matching(NULL);
@@ -270,6 +271,7 @@ namespace Gecode { namespace Int { namespace NValues {
           IterPruneVal<IntView> pv(x);
           GECODE_ME_CHECK(x->view().minus_v(home,pv,false));
         }
+      }
     }
 
     return ES_OK;

@@ -117,12 +117,12 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x) {
-    return print_scale<int,unsigned int>(os,x);
+    return print_scale<Char,Traits,int,unsigned int>(os,x);
   }
   template<class Char, class Traits>
   inline std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const DoubleScaleView& x) {
-    return print_scale<double,double>(os,x);
+    return print_scale<Char,Traits,double,double>(os,x);
   }
 
   template<class Char, class Traits>
