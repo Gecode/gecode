@@ -128,9 +128,10 @@ Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]
-Fixed a bug in the computation of the required precision
-(int or double) for linear propagation. This could cause
-an incorrect treatment of overflow in linear constraints.
+Fixed bugs in the computation of the required precision
+(int or double) for linear propagation, and in division
+operations of scale views. These could cause an incorrect
+treatment of overflow in linear constraints.
 
 [ENTRY]
 Module: search

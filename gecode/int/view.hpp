@@ -673,11 +673,11 @@ namespace Gecode { namespace Int {
     /// \name Support functions for division
     //@{
     /// Return \f$\lfloor y/a\rfloor\f$
-    int floor_div(double y) const;
+    Val floor_div(double y) const;
     /// Return \f$\lceil y/a\rceil\f$
-    int ceil_div(double y) const;
+    Val ceil_div(double y) const;
     /// Return \f$y/a\f$ and set \a exact to true if \a y is multiple of \a a
-    int exact_div(double y, bool& exact) const;
+    Val exact_div(double y, bool& exact) const;
 #if GECODE_INT_RND_TWDS_ZERO
     /// Return \f$\lfloor y/a\rfloor\f$
     int floor_div(int y) const;

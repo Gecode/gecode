@@ -42,23 +42,23 @@ namespace Gecode { namespace Int {
    *
    */
   template<class Val, class UnsVal>
-  forceinline int
+  forceinline Val
   ScaleView<Val,UnsVal>::floor_div(double y) const {
-    return static_cast<int>(floor(y / a));
+    return static_cast<Val>(floor(y / a));
   }
 
   template<class Val, class UnsVal>
-  forceinline int
+  forceinline Val
   ScaleView<Val,UnsVal>::ceil_div(double y) const {
-    return static_cast<int>(ceil(y / a));
+    return static_cast<Val>(ceil(y / a));
   }
 
   template<class Val, class UnsVal>
-  forceinline int
+  forceinline Val
   ScaleView<Val,UnsVal>::exact_div(double y, bool& exact) const {
     double ya = y / a;
     if (ceil(ya) == ya) {
-      exact = true;  return static_cast<int>(ya);
+      exact = true;  return static_cast<Val>(ya);
     } else {
       exact = false; return 0;
     }
