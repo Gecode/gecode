@@ -68,9 +68,10 @@
 
 [RELEASE]
 Version: 3.7.1
-Date: ?
+Date: 2011-10-10
 [DESCRIPTION]
-Bug fixes
+This release fixes several bugs, upgrades to MiniZinc version
+1.4, and features some minor improvements.
 
 [ENTRY]
 Module: int
