@@ -966,7 +966,7 @@ namespace Gecode {
    *
    * \ingroup TaskActor
    */
-  class Choice {
+  class GECODE_VTABLE_EXPORT Choice {
     friend class Space;
   private:
     unsigned int _id;  ///< Identity to match creating brancher
