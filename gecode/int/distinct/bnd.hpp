@@ -47,6 +47,12 @@ namespace Gecode { namespace Int { namespace Distinct {
     // They can not be shared as singleton propagation removes
     // determined variables still required for bounds propagation.
     y.subscribe(home,*this,PC_INT_BND);
+    int min = x[x.size()-1].min(), max = x[x.size()-1].max();
+    for (int i=x.size()-1; i--; ) {
+      min = std::min(min,x[i].min());
+      max = std::max(max,x[i].max());
+    }
+    min_x = min; max_x = max;
   }
 
   template<class View>
@@ -60,9 +66,9 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   forceinline
   Bnd<View>::Bnd(Space& home, bool share, Bnd<View>& p)
-    : Propagator(home,share,p) {
-      x.update(home,share,p.x);
-      y.update(home,share,p.y);
+    : Propagator(home,share,p), min_x(p.min_x), max_x(p.max_x) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
   }
 
   template<class View>
@@ -87,20 +93,35 @@ namespace Gecode { namespace Int { namespace Distinct {
     int min, max;
   };
 
-  /// Sort-order by increasing maximum
+  /// Sort-order by increasing maximum (by index)
   template<class View>
-  class MaxInc {
+  class MaxIncIdx {
   protected:
     ViewArray<View> x;
   public:
-    MaxInc(const ViewArray<View>& x0) : x(x0) {}
+    forceinline
+    MaxIncIdx(const ViewArray<View>& x0) : x(x0) {}
     forceinline bool
     operator ()(const int i, const int j) {
       return x[i].max() < x[j].max();
     }
   };
 
-  /// Sort-order by increasing minimum
+  /// Sort-order by increasing minimum (by index)
+  template<class View>
+  class MinIncIdx {
+  protected:
+    ViewArray<View> x;
+  public:
+    forceinline 
+    MinIncIdx(const ViewArray<View>& x0) : x(x0) {}
+    forceinline bool
+    operator ()(const int i, const int j) {
+      return x[i].min() < x[j].min();
+    }
+  };
+
+  /// Sort-order by increasing minimum (direct)
   template<class View>
   class MinInc {
   public:
@@ -160,30 +181,60 @@ namespace Gecode { namespace Int { namespace Distinct {
     return i;
   }
 
-#define GECODE_INT_MINSORTED(i) (i)
-#define GECODE_INT_MAXSORTED(i) (_maxsorted[i])
-
   template<class View>
   ExecStatus
-  prop_bnd(Space& home, ViewArray<View>& x) {
+  prop_bnd(Space& home, ViewArray<View>& x, int& min_x, int& max_x) {
     const int n = x.size();
-    // Sort variable array for minimum directly
-    {
-      MinInc<View> min_inc;
-      Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
-    }
 
     Region r(home);
 
-    int* _maxsorted = r.alloc<int>(n);
+    int* minsorted = r.alloc<int>(n);
+    int* maxsorted = r.alloc<int>(n);
 
-    for (int i = n; i--; )
-      _maxsorted[i]=i;
+    int d = max_x - min_x + 1;
 
-    {
-      MaxInc<View> max_inc(x);
-      Support::insertion<int,MaxInc<View> >(_maxsorted, n, max_inc);
+    if (d < n)
+      return ES_FAILED;
+
+    if (d > 2*n) {
+      for (int i = n; i--; )
+        minsorted[i]=maxsorted[i]=i;
+
+      MinIncIdx<View> min_inc(x);
+      Support::quicksort<int,MinIncIdx<View> >(minsorted, n, min_inc);
+      MaxIncIdx<View> max_inc(x);
+      Support::quicksort<int,MaxIncIdx<View> >(maxsorted, n, max_inc);
+    } else {
+
+      int* minbucket = r.alloc<int>(d);
+      int* maxbucket = r.alloc<int>(d);
+      for (int i=d; i--; )
+        minbucket[i]=maxbucket[i]=0;
+
+      for (int i=n; i--; ) {
+        minbucket[x[i].min() - min_x]++;
+        maxbucket[x[i].max() - min_x]++;
+      }
+
+      int c_min = 0, c_max = 0;
+      for (int i=0; i<d; i++) {
+        int t_min = minbucket[i];
+        int t_max = maxbucket[i];
+        minbucket[i] = c_min; c_min += t_min;
+        maxbucket[i] = c_max; c_max += t_max;
+      }
+      assert((c_min == n) && (c_max == n));
+
+      for (int i=n; i--; ) {
+        minsorted[minbucket[x[i].min() - min_x]++] = i;
+        maxsorted[maxbucket[x[i].max() - min_x]++] = i;
+      }
     }
+
+    // Update minimum and maximum information
+    min_x = x[minsorted[0]].min();
+    max_x = x[maxsorted[n-1]].max();
+
 
     // Setup rank and bounds info
     HallInfo* hall = r.alloc<HallInfo>(2*n+2);
@@ -191,8 +242,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     int nb = 0;
     {
-      int min  = x[GECODE_INT_MINSORTED(0)].min();
-      int max  = x[GECODE_INT_MAXSORTED(0)].max() + 1;
+      int min  = x[minsorted[0]].min();
+      int max  = x[maxsorted[0]].max() + 1;
       int last = min - 2;
 
       hall[0].bounds = last;
@@ -203,16 +254,16 @@ namespace Gecode { namespace Int { namespace Distinct {
         if ((i < n) && (min < max)) {
           if (min != last)
             hall[++nb].bounds = last = min;
-          rank[GECODE_INT_MINSORTED(i)].min = nb;
+          rank[minsorted[i]].min = nb;
           if (++i < n)
-            min = x[GECODE_INT_MINSORTED(i)].min();
+            min = x[minsorted[i]].min();
         } else {
           if (max != last)
             hall[++nb].bounds = last = max;
-          rank[GECODE_INT_MAXSORTED(j)].max = nb;
+          rank[maxsorted[j]].max = nb;
           if (++j == n)
             break;
-          max = x[GECODE_INT_MAXSORTED(j)].max() + 1;
+          max = x[maxsorted[j]].max() + 1;
         }
       }
       hall[nb+1].bounds = hall[nb].bounds + 2;
@@ -227,23 +278,23 @@ namespace Gecode { namespace Int { namespace Distinct {
       hall[i].d = hall[i].bounds - hall[i-1].bounds;
     }
     for (int i=0; i<n; i++) { // visit intervals in increasing max order
-      int x0 = rank[GECODE_INT_MAXSORTED(i)].min;
+      int x0 = rank[maxsorted[i]].min;
       int z = pathmax_t(hall, x0+1);
       int j = hall[z].t;
       if (--hall[z].d == 0)
         hall[z = pathmax_t(hall, hall[z].t=z+1)].t = j;
       pathset_t(hall, x0+1, z, z); // path compression
-      int y = rank[GECODE_INT_MAXSORTED(i)].max;
+      int y = rank[maxsorted[i]].max;
       if (hall[z].d < hall[z].bounds-hall[y].bounds)
         return ES_FAILED;
       if (hall[x0].h > x0) {
         int w = pathmax_h(hall, hall[x0].h);
         int m = hall[w].bounds;
-        ModEvent me = x[GECODE_INT_MAXSORTED(i)].gq(home,m);
+        ModEvent me = x[maxsorted[i]].gq(home,m);
         if (me_failed(me))
           return ES_FAILED;
         if ((me == ME_INT_VAL) ||
-            ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
+            ((me == ME_INT_BND) && (m != x[maxsorted[i]].min())))
           es = ES_NOFIX;
         pathset_h(hall, x0, w, w); // path compression
       }
@@ -259,23 +310,23 @@ namespace Gecode { namespace Int { namespace Distinct {
       hall[i].d = hall[i+1].bounds - hall[i].bounds;
     }
     for (int i=n; --i>=0; ) { // visit intervals in decreasing min order
-      int x0 = rank[GECODE_INT_MINSORTED(i)].max;
+      int x0 = rank[minsorted[i]].max;
       int z = pathmin_t(hall, x0-1);
       int j = hall[z].t;
       if (--hall[z].d == 0)
         hall[z = pathmin_t(hall, hall[z].t=z-1)].t = j;
       pathset_t(hall, x0-1, z, z);
-      int y = rank[GECODE_INT_MINSORTED(i)].min;
+      int y = rank[minsorted[i]].min;
       if (hall[z].d < hall[y].bounds-hall[z].bounds)
         return ES_FAILED;
       if (hall[x0].h < x0) {
         int w = pathmin_h(hall, hall[x0].h);
         int m = hall[w].bounds - 1;
-        ModEvent me = x[GECODE_INT_MINSORTED(i)].lq(home,m);
+        ModEvent me = x[minsorted[i]].lq(home,m);
         if (me_failed(me))
           return ES_FAILED;
         if ((me == ME_INT_VAL) ||
-            ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
+            ((me == ME_INT_BND) && (m != x[maxsorted[i]].min())))
           es = ES_NOFIX;
         pathset_h(hall, x0, w, w);
       }
@@ -288,8 +339,16 @@ namespace Gecode { namespace Int { namespace Distinct {
     return es;
   }
 
-#undef GECODE_INT_MINSORTED
-#undef GECODE_INT_MAXSORTED
+  template<class View>
+  ExecStatus
+  prop_bnd(Space& home, ViewArray<View>& x) {
+    int min = x[x.size()-1].min(), max = x[x.size()-1].max();
+    for (int i=x.size()-1; i--; ) {
+      min = std::min(min,x[i].min());
+      max = std::max(max,x[i].max());
+    }
+    return prop_bnd(home, x, min, max);
+  }
 
   template<class View>
   ExecStatus
@@ -308,7 +367,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (y.size() == 2)
       GECODE_REWRITE(*this,Rel::Nq<View>::post(home(*this),y[0],y[1]));
 
-    ExecStatus es = prop_bnd<View>(home,x);
+    ExecStatus es = prop_bnd<View>(home,x,min_x,max_x);
 
     GECODE_ES_CHECK(es);
 
@@ -316,8 +375,33 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if ((n > 2*y.size()) && (n > 6)) {
       // If there are many assigned views, try to eliminate them
-      MinInc<View> min_inc;
-      Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
+      int d = max_x - min_x + 1;
+      if (d > 2*n) {
+        MinInc<View> min_inc;
+        Support::quicksort<View,MinInc<View> >(&x[0], n, min_inc);
+      } else {
+        Region r(home);
+        int* minbucket = r.alloc<int>(d);
+        View* minsorted = r.alloc<View>(n);
+
+        for (int i=d; i--; )
+          minbucket[i]=0;
+        for (int i=n; i--; )
+          minbucket[x[i].min() - min_x]++;
+
+        int c_min = 0;
+        for (int i=0; i<d; i++) {
+          int t_min = minbucket[i];
+          minbucket[i] = c_min; c_min += t_min;
+        }
+        assert(c_min == n);
+
+        for (int i=n; i--;)
+          minsorted[minbucket[x[i].min() - min_x]++] = x[i];
+        for (int i=n; i--;)
+          x[i] = minsorted[i];
+      }
+
       int i   = 0;
       int j   = 0;
       int max = x[0].max()-1;

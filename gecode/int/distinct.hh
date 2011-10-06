@@ -132,6 +132,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     ViewArray<View> x;
     /// Views on which to perform value-propagation (subset of \c x)
     ViewArray<View> y;
+    /// Minimum (approximation) of view in \a x
+    int min_x;
+    /// Maximum (approximation) of view in \a x
+    int max_x;
     /// Constructor for posting
     Bnd(Home home, ViewArray<View>& x);
     /// Constructor for cloning \a p
@@ -163,7 +167,18 @@ namespace Gecode { namespace Int { namespace Distinct {
    * propagators.
    */
   template<class View>
-  ExecStatus prop_bnd(Space& home, ViewArray<View>& x, int m);
+  ExecStatus prop_bnd(Space& home, ViewArray<View>& x, int& min_x, int& max_x);
+
+  /**
+   * \brief Perform bounds consistent distinct propagation
+   *
+   * This is actually the propagation algorithm for Distinct::Bnd.
+   * It is available as separate function as it is reused for
+   * both bounds consistent and domain consistent distinct
+   * propagators.
+   */
+  template<class View>
+  ExecStatus prop_bnd(Space& home, ViewArray<View>& x);
 
 
   /// View-value graph for propagation
