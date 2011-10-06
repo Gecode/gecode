@@ -283,7 +283,7 @@ SEARCHBUILDDIRS = search search/sequential search/parallel
 
 INTSRC0 = \
 	int-set.cpp var-imp/int.cpp var-imp/bool.cpp var/int.cpp \
-	var/bool.cpp array.cpp bool.cpp \
+	var/bool.cpp array.cpp bool.cpp bool/eqv.cpp \
 	extensional/dfa.cpp extensional/tuple-set.cpp extensional.cpp \
 	dom.cpp rel.cpp precede.cpp element.cpp count.cpp \
 	arithmetic.cpp exec.cpp \

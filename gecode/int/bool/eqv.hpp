@@ -152,6 +152,51 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+
+  /*
+   * N-ary Boolean equivalence propagator
+   *
+   */
+
+  forceinline
+  NaryEqv::NaryEqv(Home home, ViewArray<BoolView>& x0, int pm20)
+    : BinaryPropagator<BoolView,PC_BOOL_VAL>(home,x0[0],x0[1]), 
+      x(x0), pm2(pm20) {
+    assert(x.size() >= 2);
+    x.drop_fst(2);
+  }
+
+  forceinline
+  NaryEqv::NaryEqv(Space& home, bool share, NaryEqv& p)
+    : BinaryPropagator<BoolView,PC_BOOL_VAL>(home,share,p), pm2(p.pm2) {
+    x.update(home,share,p.x);
+  }
+
+  forceinline size_t
+  NaryEqv::dispose(Space& home) {
+    (void) BinaryPropagator<BoolView,PC_BOOL_VAL>::dispose(home);
+    return sizeof(*this);
+  }
+
+  forceinline void
+  NaryEqv::resubscribe(Space& home, BoolView& x0, BoolView x1) {
+    if (x0.assigned()) {
+      pm2 ^= x0.val();
+      int n = x.size();
+      for (int i=n; i--; )
+        if (x[i].assigned()) {
+          pm2 ^= x[i].val();
+          x[i] = x[--n];
+        } else {
+          // Move to x0 and subscribe
+          x0=x[i]; x[i]=x[--n];
+          x0.subscribe(home,*this,PC_BOOL_VAL,false);
+          break;
+        }
+      x.size(n);
+    }
+  }
+
 }}}
 
 // STATISTICS: int-prop

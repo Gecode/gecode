@@ -73,6 +73,24 @@ Date: ?
 Bug fixes
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The semantics of n-ary Boolean implication has been changed (to
+the more convential reading): rel(home, BOT_IMP, x, y) where x is
+an array of Boolean variable now assumes implication to be right
+associative. See MPG for explanation.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added efficient propagators for n-ary Boolean xor and equivalence
+(as they are now primitive in MiniZinc).
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

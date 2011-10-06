@@ -227,10 +227,11 @@ namespace Test { namespace Int {
          : Test("Bool::Nary::"+str(op0)+"::"+str(n),n+1,0,1), op(op0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int b = check(x[0],op,x[1]);
-         for (int i=2; i<x.size()-1; i++)
-           b = check(b,op,x[i]);
-         return b == x[x.size()-1];
+         int n = x.size()-1;
+         int b = check(x[n-2],op,x[n-1]);
+         for (int i=0; i<n-2; i++)
+           b = check(x[i],op,b);
+         return b == x[n];
        }
        /// Post constraint
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -251,13 +252,17 @@ namespace Test { namespace Int {
        /// Construct and register test
        NaryShared(Gecode::BoolOpType op0, int n)
          : Test("Bool::Nary::Shared::"+str(op0)+"::"+str(n),n,0,1),
-           op(op0) {}
+           op(op0) {
+         if ((op == Gecode::BOT_EQV) || (op == Gecode::BOT_XOR))
+           testfix = false;
+       }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int b = check(x[0],op,x[1]);
-         for (int i=2; i<x.size(); i++)
-           b = check(b,op,x[i]);
-         return b == x[x.size()-1];
+         int n = x.size();
+         int b = check(x[n-2],op,x[n-1]);
+         for (int i=0; i<n-2; i++)
+           b = check(x[i],op,b);
+         return b == x[n-1];
        }
        /// Post constraint
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -283,9 +288,10 @@ namespace Test { namespace Int {
            op(op0), c(c0) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         int b = check(x[0],op,x[1]);
-         for (int i=2; i<x.size(); i++)
-           b = check(b,op,x[i]);
+         int n = x.size();
+         int b = check(x[n-2],op,x[n-1]);
+         for (int i=0; i<n-2; i++)
+           b = check(x[i],op,b);
          return b == c;
        }
        /// Post constraint

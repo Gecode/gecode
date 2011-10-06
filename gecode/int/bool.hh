@@ -441,6 +441,46 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
   /**
+   * \brief Boolean n-ary equivalence propagator
+   *
+   * Enforces that the parity of the views is odd.
+   *
+   * Requires \code #include <gecode/int/bool.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  class NaryEqv : public BinaryPropagator<BoolView,PC_BOOL_VAL> {
+  protected:
+    using BinaryPropagator<BoolView,PC_BOOL_VAL>::x0;
+    using BinaryPropagator<BoolView,PC_BOOL_VAL>::x1;
+    /// Views not yet subscribed to
+    ViewArray<BoolView> x;
+    /// Parity information mod 2
+    int pm2;
+    /// Update subscription
+    void resubscribe(Space& home, BoolView& x0, BoolView x1);
+    /// Constructor for posting
+    NaryEqv(Home home, ViewArray<BoolView>& x, int pm2);
+    /// Constructor for cloning \a p
+    NaryEqv(Space& home, bool share, NaryEqv& p);
+  public:
+    /// Copy propagator during cloning
+    GECODE_INT_EXPORT 
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function (defined as low binary)
+    GECODE_INT_EXPORT 
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    GECODE_INT_EXPORT 
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$ x_0 \Leftrightarrow x_1 \Leftrightarrow \cdots \Leftrightarrow x_{|x|-1}=p\f$
+    GECODE_INT_EXPORT 
+    static ExecStatus post(Home home, ViewArray<BoolView>& x, int pm2);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+
+  /**
    * \brief Boolean clause propagator (disjunctive)
    *
    * Requires \code #include <gecode/int/bool.hh> \endcode
