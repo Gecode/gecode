@@ -457,7 +457,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Parity information mod 2
     int pm2;
     /// Update subscription
-    void resubscribe(Space& home, BoolView& x0, BoolView x1);
+    void resubscribe(Space& home, BoolView& x0);
     /// Constructor for posting
     NaryEqv(Home home, ViewArray<BoolView>& x, int pm2);
     /// Constructor for cloning \a p

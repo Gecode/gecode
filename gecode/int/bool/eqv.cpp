@@ -83,8 +83,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   ExecStatus
   NaryEqv::propagate(Space& home, const ModEventDelta&) {
-    resubscribe(home,x0,x1);
-    resubscribe(home,x1,x0);
+    resubscribe(home,x0);
+    resubscribe(home,x1);
     if (x.size() == 0) {
       if (x0.assigned() && x1.assigned()) {
         return (pm2 == 1) ? home.ES_SUBSUMED(*this) : ES_FAILED;

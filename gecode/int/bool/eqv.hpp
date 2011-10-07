@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   forceinline void
-  NaryEqv::resubscribe(Space& home, BoolView& x0, BoolView x1) {
+  NaryEqv::resubscribe(Space& home, BoolView& x0) {
     if (x0.assigned()) {
       pm2 ^= x0.val();
       int n = x.size();
