@@ -116,7 +116,7 @@ $catclear{"any"} = "All";
 $catclear{"other"} = "Miscellaneous";
 $catclear{"int"} = "Finite domain integers";
 $catclear{"set"} = "Finite integer sets";
-$catclear{"minimodel"} = "Minimal modelling support";
+$catclear{"minimodel"} = "Minimal modeling support";
 $catclear{"stress"} = "System stress";
 
 print <<EOF
