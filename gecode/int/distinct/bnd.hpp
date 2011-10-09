@@ -191,12 +191,12 @@ namespace Gecode { namespace Int { namespace Distinct {
     int* minsorted = r.alloc<int>(n);
     int* maxsorted = r.alloc<int>(n);
 
-    int d = max_x - min_x + 1;
+    unsigned int d = static_cast<unsigned int>(max_x - min_x) + 1;
 
-    if (d < n)
+    if (d < static_cast<unsigned int>(n))
       return ES_FAILED;
 
-    if (d > 2*n) {
+    if (d > 2*static_cast<unsigned int>(n)) {
       for (int i = n; i--; )
         minsorted[i]=maxsorted[i]=i;
 
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
       int* minbucket = r.alloc<int>(d);
       int* maxbucket = r.alloc<int>(d);
-      for (int i=d; i--; )
+      for (unsigned int i=d; i--; )
         minbucket[i]=maxbucket[i]=0;
 
       for (int i=n; i--; ) {
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
 
       int c_min = 0, c_max = 0;
-      for (int i=0; i<d; i++) {
+      for (unsigned int i=0; i<d; i++) {
         int t_min = minbucket[i];
         int t_max = maxbucket[i];
         minbucket[i] = c_min; c_min += t_min;
@@ -375,8 +375,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if ((n > 2*y.size()) && (n > 6)) {
       // If there are many assigned views, try to eliminate them
-      int d = max_x - min_x + 1;
-      if (d > 2*n) {
+      unsigned int d = static_cast<unsigned int>(max_x - min_x) + 1;
+      if (d > 2*static_cast<unsigned int>(n)) {
         MinInc<View> min_inc;
         Support::quicksort<View,MinInc<View> >(&x[0], n, min_inc);
       } else {
@@ -384,13 +384,13 @@ namespace Gecode { namespace Int { namespace Distinct {
         int* minbucket = r.alloc<int>(d);
         View* minsorted = r.alloc<View>(n);
 
-        for (int i=d; i--; )
+        for (unsigned int i=d; i--; )
           minbucket[i]=0;
         for (int i=n; i--; )
           minbucket[x[i].min() - min_x]++;
 
         int c_min = 0;
-        for (int i=0; i<d; i++) {
+        for (unsigned int i=0; i<d; i++) {
           int t_min = minbucket[i];
           minbucket[i] = c_min; c_min += t_min;
         }
