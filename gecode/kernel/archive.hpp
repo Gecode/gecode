@@ -108,6 +108,16 @@ namespace Gecode {
    */
   Archive&
   operator <<(Archive& e, bool i);
+  /** Add \a d to the end of \a e
+   * \relates Archive
+   */
+  Archive&
+  operator <<(Archive& e, float d);
+  /** Add \a d to the end of \a e
+   * \relates Archive
+   */
+  Archive&
+  operator <<(Archive& e, double d);
 
   /** Read next element from \a e into \a i
    * \relates Archive
@@ -144,6 +154,16 @@ namespace Gecode {
    */  
   Archive&
   operator >>(Archive& e, bool& i);
+  /** Read next element from \a e into \a d
+   * \relates Archive
+   */  
+  Archive&
+  operator >>(Archive& e, float& d);
+  /** Read next element from \a e into \a d
+   * \relates Archive
+   */  
+  Archive&
+  operator >>(Archive& e, double& d);
 
   /*
    * Implementation
@@ -210,6 +230,18 @@ namespace Gecode {
     e.put(static_cast<unsigned int>(i));
     return e;
   }
+  forceinline Archive&
+  operator <<(Archive& e, float d) {
+    for (size_t i=0; i<sizeof(float); i++)
+      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&d)[i]));
+    return e;
+  }
+  forceinline Archive&
+  operator <<(Archive& e, double d) {
+    for (size_t i=0; i<sizeof(double); i++)
+      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&d)[i]));
+    return e;
+  }
 
   forceinline Archive&
   operator >>(Archive& e, unsigned int& i) {
@@ -244,6 +276,20 @@ namespace Gecode {
   forceinline Archive&
   operator >>(Archive& e, bool& i) {
     i = static_cast<bool>(e.get());
+    return e;
+  }
+  forceinline Archive&
+  operator >>(Archive& e, float& d) {
+    char* cd = reinterpret_cast<char*>(&d);
+    for (size_t i=0; i<sizeof(float); i++)
+      cd[i] = static_cast<char>(e.get());
+    return e;
+  }
+  forceinline Archive&
+  operator >>(Archive& e, double& d) {
+    char* cd = reinterpret_cast<char*>(&d);
+    for (size_t i=0; i<sizeof(double); i++)
+      cd[i] = static_cast<char>(e.get());
     return e;
   }
 

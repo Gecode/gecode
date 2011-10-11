@@ -67,6 +67,19 @@
 #
 
 [RELEASE]
+Version: 3.x
+Date: ?
+[DESCRIPTION]
+Fixes, or perhaps more?
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added Archive operators for floats and doubles.
+
+[RELEASE]
 Version: 3.7.1
 Date: 2011-10-10
 [DESCRIPTION]
