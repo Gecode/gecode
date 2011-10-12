@@ -43,51 +43,9 @@ namespace Gecode {
    * Operations for expressions
    *
    */
-  forceinline
-  SetExpr::Node::Node(void) : use(1) {}
-
-  forceinline void*
-  SetExpr::Node::operator new(size_t size) {
-    return heap.ralloc(size);
-  }
-  forceinline void
-  SetExpr::Node::operator delete(void* p, size_t) {
-    heap.rfree(p);
-  }
 
   forceinline
   SetExpr::SetExpr(void) : n(NULL) {}
-
-  forceinline
-  SetExpr::SetExpr(const SetExpr& e) : n(e.n) {
-    n->use++;
-  }
-
-  forceinline bool
-  SetExpr::same(NodeType t0, NodeType t1) {
-    return (t0==t1) || (t1==NT_VAR) || (t1==NT_CONST) || (t1==NT_LEXP);
-  }
-
-  inline SetVar
-  SetExpr::post(Home home) const {
-    Region r(home);
-    SetVar s(home,IntSet::empty,
-             IntSet(Set::Limits::min,Set::Limits::max));
-    NNF::nnf(r,n,false)->post(home,SRT_EQ,s);
-    return s;
-  }
-
-  inline void
-  SetExpr::post(Home home, SetRelType srt, const SetExpr& e) const {
-    Region r(home);
-    return NNF::nnf(r,n,false)->post(home,srt,NNF::nnf(r,e.n,false));
-  }
-  inline void
-  SetExpr::post(Home home, BoolVar b, bool t,
-                SetRelType srt, const SetExpr& e) const {
-    Region r(home);
-    return NNF::nnf(r,n,false)->post(home,b,t,srt,NNF::nnf(r,e.n,false));                  
-  }
 
 }
 

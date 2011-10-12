@@ -508,7 +508,7 @@ MMSRC0 = \
 	set-expr.cpp set-rel.cpp \
 	reg.cpp arithmetic.cpp
 MMHDR0 = \
-	lin-expr.hpp lin-rel.hpp exception.hpp matrix.hpp \
+	lin-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
 	optimize.hpp reg.hpp
 

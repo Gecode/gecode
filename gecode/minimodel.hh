@@ -47,7 +47,6 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
-#include <gecode/int/linear.hh>
 
 #include <gecode/minimodel/exception.hpp>
 
@@ -148,54 +147,7 @@ namespace Gecode {
     };
   private:
     /// Nodes for linear expressions
-    class Node {
-    public:
-      /// Nodes are reference counted
-      unsigned int use;
-      /// Integer variables in tree
-      int n_int;
-      /// Boolean variables in tree
-      int n_bool;
-      /// Type of expression
-      NodeType t;
-      /// Subexpressions
-      Node *l, *r;
-      /// Sum of integer or Boolean variables, or non-linear expression
-      union {
-        /// Integer views and coefficients
-        Int::Linear::Term<Int::IntView>* ti;
-        /// Bool views and coefficients
-        Int::Linear::Term<Int::BoolView>* tb;
-        /// Non-linear expression
-        NonLinExpr* ne;
-      } sum;
-      /// Coefficient and offset
-      int a, c;
-      /// Integer variable (potentially)
-      IntVar x_int;
-      /// Boolean variable (potentially)
-      BoolVar x_bool;
-      /// Default constructor
-      Node(void);
-      /// Generate linear terms from expression
-      GECODE_MINIMODEL_EXPORT
-      void fill(Home home, IntConLevel icl,
-                Int::Linear::Term<Int::IntView>*& ti,
-                Int::Linear::Term<Int::BoolView>*& tb,
-                double m, double& d) const;
-      /// Generate linear terms for expressions
-      int fill(Home home, IntConLevel icl,
-               Int::Linear::Term<Int::IntView>* ti,
-               Int::Linear::Term<Int::BoolView>* tb) const;
-      /// Decrement reference count and possibly free memory
-      bool decrement(void);
-      /// Destructor
-      ~Node(void);
-      /// Memory management
-      static void* operator new(size_t size);
-      /// Memory management
-      static void  operator delete(void* p,size_t size);
-    };
+    class Node;
     Node* n;
   public:
     /// Default constructor
@@ -223,6 +175,7 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     LinExpr(const IntArgs& a, const BoolVarArgs& x);
     /// Copy constructor
+    GECODE_MINIMODEL_EXPORT
     LinExpr(const LinExpr& e);
     /// Create expression for type and subexpressions
     GECODE_MINIMODEL_EXPORT
@@ -240,13 +193,17 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     const LinExpr& operator =(const LinExpr& e);
     /// Post propagator
+    GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, IntConLevel icl) const;
     /// Post reified propagator
+    GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, const BoolVar& b,
               IntConLevel icl) const;
     /// Post propagator and return variable for value
+    GECODE_MINIMODEL_EXPORT
     IntVar post(Home home, IntConLevel icl) const;
     /// Return non-linear expression inside, or NULL if not non-linear
+    GECODE_MINIMODEL_EXPORT
     NonLinExpr* nle(void) const;
     /// Destructor
     GECODE_MINIMODEL_EXPORT
@@ -723,96 +680,16 @@ namespace Gecode {
       NT_UNION,  ///< Union
       NT_DUNION  ///< Disjoint union
     };
-    /// Check if types agree
-    static bool same(NodeType t0, NodeType t1);
     /// %Node for set expression
-    class Node {
-    public:
-      /// Nodes are reference counted
-      unsigned int use;
-      /// Number of variables in subtree with same type (for INTER and UNION)
-      int same;
-      /// Type of expression
-      NodeType t;
-      /// Subexpressions
-      Node *l, *r;
-      /// Possibly a variable
-      SetVar x;
-      /// Possibly a constant
-      IntSet s;
-      /// Possibly a linear expression
-      LinExpr e;
-
-      /// Default constructor
-      Node(void);
-      /// Decrement reference count and possibly free memory
-      GECODE_MINIMODEL_EXPORT
-      bool decrement(void);
-      /// Memory management
-      static void* operator new(size_t size);
-      /// Memory management
-      static void  operator delete(void* p, size_t size);
-    };
-    /// %Node for negation normalform (%NNF)
-    class NNF {
-    public:
-      /// Type of node
-      NodeType t;
-      /// Number of positive literals for node type
-      int p;
-      /// Number of negative literals for node type
-      int n;
-      /// Union depending on nodetype \a t
-      union {
-        /// For binary nodes (and, or, eqv)
-        struct {
-          /// Left subtree
-          NNF* l;
-          /// Right subtree
-          NNF* r;
-        } b;
-        /// For atomic nodes
-        struct {
-          /// Pointer to corresponding Boolean expression node
-          Node* x;
-        } a;
-      } u;
-      /// Is formula negative
-      bool neg;
-      /// Create negation normalform
-      GECODE_MINIMODEL_EXPORT
-      static NNF* nnf(Region& r, Node* n, bool neg);
-      /// Post propagators for nested conjunctive and disjunctive expression
-      GECODE_MINIMODEL_EXPORT
-      void post(Home home, NodeType t, SetVarArgs& b, int& i) const;
-      /// Post propagators for expression
-      GECODE_MINIMODEL_EXPORT
-      void post(Home home, SetRelType srt, SetVar s) const;
-      /// Post propagators for reified expression
-      GECODE_MINIMODEL_EXPORT
-      void post(Home home, SetRelType srt, SetVar s, BoolVar b) const;
-      /// Post propagators for relation
-      GECODE_MINIMODEL_EXPORT
-      void post(Home home, SetRelType srt, const NNF* n) const;
-      /// Post reified propagators for relation (or negated relation if \a t is false)
-      GECODE_MINIMODEL_EXPORT
-      void post(Home home, BoolVar b, bool t, SetRelType srt,
-                const NNF* n) const;
-      /// Allocate memory from region
-      static void* operator new(size_t s, Region& r);
-      /// No-op (for exceptions)
-      static void operator delete(void*);
-      /// No-op
-      static void operator delete(void*, Region&);
-    };
+    class Node;
   private:
     /// Pointer to node for expression
     Node* n;
   public:
     /// Default constructor
-    GECODE_MINIMODEL_EXPORT
     SetExpr(void);
     /// Copy constructor
+    GECODE_MINIMODEL_EXPORT
     SetExpr(const SetExpr& e);
     /// Construct expression for type and subexpresssions
     GECODE_MINIMODEL_EXPORT
@@ -830,10 +707,13 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     SetExpr(const SetExpr& e, NodeType t);
     /// Post propagators for expression
+    GECODE_MINIMODEL_EXPORT
     SetVar post(Home home) const;
     /// Post propagators for relation
+    GECODE_MINIMODEL_EXPORT
     void post(Home home, SetRelType srt, const SetExpr& e) const;
     /// Post propagators for reified relation
+    GECODE_MINIMODEL_EXPORT
     void post(Home home, BoolVar b, bool t,
               SetRelType srt, const SetExpr& e) const;
     /// Assignment operator
@@ -982,87 +862,7 @@ namespace Gecode {
       static void  operator delete(void* p, size_t size);
     };
     /// %Node for Boolean expression
-    class Node {
-    public:
-      /// Nodes are reference counted
-      unsigned int use;
-      /// Number of variables in subtree with same type (for AND and OR)
-      int same;
-      /// Type of expression
-      NodeType t;
-      /// Subexpressions
-      Node *l, *r;
-      /// Possibly a variable
-      BoolVar x;
-      /// Possibly a reified linear relation
-      LinRel rl;
-#ifdef GECODE_HAS_SET_VARS
-      /// Possibly a reified set relation
-      SetRel rs;
-#endif
-      /// Possibly a misc Boolean expression
-      MiscExpr* m;
-
-      /// Default constructor
-      Node(void);
-      /// Destructor
-      ~Node(void);
-      /// Decrement reference count and possibly free memory
-      GECODE_MINIMODEL_EXPORT
-      bool decrement(void);
-      /// Memory management
-      static void* operator new(size_t size);
-      /// Memory management
-      static void  operator delete(void* p, size_t size);
-    };
-    /// %Node for negation normalform (%NNF)
-    class NNF {
-    public:
-      /// Type of node
-      NodeType t;
-      /// Number of positive literals for node type
-      int p;
-      /// Number of negative literals for node type
-      int n;
-      /// Union depending on nodetype \a t
-      union {
-        /// For binary nodes (and, or, eqv)
-        struct {
-          /// Left subtree
-          NNF* l;
-          /// Right subtree
-          NNF* r;
-        } b;
-        /// For atomic nodes
-        struct {
-          /// Is atomic formula negative
-          bool neg;
-          /// Pointer to corresponding Boolean expression node
-          Node* x;
-        } a;
-      } u;
-      /// Create negation normalform
-      GECODE_MINIMODEL_EXPORT
-      static NNF* nnf(Region& r, Node* n, bool neg);
-      /// Post propagators for nested conjunctive and disjunctive expression
-      GECODE_MINIMODEL_EXPORT
-      void post(Home home, NodeType t,
-                BoolVarArgs& bp, BoolVarArgs& bn,
-                int& ip, int& in,
-                IntConLevel icl) const;
-      /// Post propagators for expression
-      GECODE_MINIMODEL_EXPORT
-      BoolVar expr(Home home, IntConLevel icl) const;
-      /// Post propagators for relation
-      GECODE_MINIMODEL_EXPORT
-      void rel(Home home, IntConLevel icl) const;
-      /// Allocate memory from region
-      static void* operator new(size_t s, Region& r);
-      /// No-op (for exceptions)
-      static void operator delete(void*);
-      /// No-op
-      static void operator delete(void*, Region&);
-    };
+    class Node;
   private:
     /// Pointer to node for expression
     Node* n;
@@ -1070,6 +870,7 @@ namespace Gecode {
     /// Default constructor
     BoolExpr(void);
     /// Copy constructor
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(const BoolExpr& e);
     /// Construct expression for type and subexpresssions
     GECODE_MINIMODEL_EXPORT
@@ -1095,8 +896,10 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     explicit BoolExpr(MiscExpr* m);
     /// Post propagators for expression
+    GECODE_MINIMODEL_EXPORT
     BoolVar expr(Home home, IntConLevel icl) const;
     /// Post propagators for relation
+    GECODE_MINIMODEL_EXPORT
     void rel(Home home, IntConLevel icl) const;
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
@@ -1168,7 +971,6 @@ namespace Gecode {
 
 }
 
-#include <gecode/minimodel/lin-expr.hpp>
 #include <gecode/minimodel/lin-rel.hpp>
 #include <gecode/minimodel/bool-expr.hpp>
 #include <gecode/minimodel/set-expr.hpp>

@@ -73,6 +73,15 @@ Date: ?
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: minimodel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Made implementations of MiniModel expressions private, so that the
+MiniModel headers do not have to include propagator headers like
+gecode/int/linear.hh any longer.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

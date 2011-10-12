@@ -41,20 +41,6 @@ namespace Gecode {
    * Operations for expressions
    *
    */
-  forceinline
-  BoolExpr::Node::Node(void) : use(1) {}
-
-  forceinline
-  BoolExpr::Node::~Node(void) { delete m; }
-
-  forceinline void*
-  BoolExpr::Node::operator new(size_t size) {
-    return heap.ralloc(size);
-  }
-  forceinline void
-  BoolExpr::Node::operator delete(void* p, size_t) {
-    heap.rfree(p);
-  }
 
   forceinline void*
   BoolExpr::MiscExpr::operator new(size_t size) {
@@ -67,23 +53,6 @@ namespace Gecode {
 
   forceinline
   BoolExpr::BoolExpr(void) : n(NULL) {}
-
-  forceinline
-  BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
-    n->use++;
-  }
-
-  inline BoolVar
-  BoolExpr::expr(Home home, IntConLevel icl) const {
-    Region r(home);
-    return NNF::nnf(r,n,false)->expr(home,icl);
-  }
-
-  inline void
-  BoolExpr::rel(Home home, IntConLevel icl) const {
-    Region r(home);
-    return NNF::nnf(r,n,false)->rel(home,icl);
-  }
 
 }
 
