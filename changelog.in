@@ -73,6 +73,14 @@ Date: ?
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Jan Kelbel
+[DESCRIPTION]
+Fixed time output for times with zero minutes but nonzero hours.
+
+[ENTRY]
 Module: minimodel
 What:   change
 Rank:   minor

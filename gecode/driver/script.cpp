@@ -58,7 +58,7 @@ namespace Gecode { namespace Driver {
       os << o_day << " days, ";
     if (o_hour)
       os << o_hour << ":";
-    if (o_min) {
+    if (o_hour || o_min) {
       if (o_hour) {
         os.width(2); os.fill('0');
       }
