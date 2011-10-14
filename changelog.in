@@ -67,8 +67,8 @@
 #
 
 [RELEASE]
-Version: 3.x
-Date: ?
+Version: 4.0.0
+Date: 2012-01-01
 [DESCRIPTION]
 Fixes, or perhaps more?
 
@@ -95,6 +95,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Added Archive operators for floats and doubles.
+
 
 [RELEASE]
 Version: 3.7.1
