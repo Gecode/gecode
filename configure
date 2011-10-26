@@ -11557,6 +11557,12 @@ ALLVIS=${ac_gecode_vis}
 
 VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
 
+ARR=($(echo $PACKAGE_VERSION | sed 's/\./ /g'))
+
+PACKAGE_VERSION_NUMBER=$(expr $(expr $(expr ${ARR[0]} "*" 100000) + $(expr ${ARR[1]} "*" 100)) + ${ARR[2]})
+
+
+
 cat >>confdefs.h <<_ACEOF
 #define GECODE_VERSION "${PACKAGE_VERSION}"
 _ACEOF
@@ -11564,6 +11570,11 @@ _ACEOF
 
 cat >>confdefs.h <<_ACEOF
 #define GECODE_LIBRARY_VERSION "${VERSION_DASHES}"
+_ACEOF
+
+
+cat >>confdefs.h <<_ACEOF
+#define GECODE_VERSION_NUMBER ${PACKAGE_VERSION_NUMBER}
 _ACEOF
 
 

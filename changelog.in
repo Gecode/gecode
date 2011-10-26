@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Denys Duchier
+[DESCRIPTION]
+Added a macro GECODE_VERSION_NUMBER that is defined as
+x*1000000+y*100+z for Gecode version x.y.z.
+
+[ENTRY]
 Module: driver
 What:   bug
 Rank:   minor
