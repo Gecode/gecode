@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Added some missing propagation when posting a channel constraint
+between an array of Boolean variables and an integer variable.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

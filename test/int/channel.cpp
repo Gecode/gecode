@@ -174,7 +174,6 @@ namespace Test { namespace Int {
        /// Construct and register test
        ChannelLinkMulti(const std::string& s, int min, int max, int o0)
          : Test("Channel::Bool::Multi::"+s,7,min,max), o(o0) {
-         contest = CTL_NONE;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
