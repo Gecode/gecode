@@ -274,4 +274,4 @@ namespace Test {
 
 }}
 
-// STATISTICS: test-kernel
+// STATISTICS: test-core

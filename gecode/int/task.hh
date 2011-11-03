@@ -451,4 +451,4 @@ namespace Gecode { namespace Int {
 
 #endif
 
-// STATISTICS: scheduling-prop
+// STATISTICS: int-prop

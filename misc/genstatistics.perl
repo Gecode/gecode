@@ -35,6 +35,44 @@
 #
 #
 
+@modorder = ("kernel","search","int","set","minimodel","gist","driver",
+	     "iter","support","example","test","flatzinc");
+
+@catorder = ("core","var","prop","branch","post",
+	     "int","set","minimodel","stress","any",
+	     "sequential","parallel","search",
+	     "other");
+
+$modclear{"kernel"} = "Kernel";
+$modclear{"search"} = "Search engines";
+$modclear{"gist"} = "Gist";
+$modclear{"int"} = "Finite domain integers";
+$modclear{"set"} = "Finite integer sets";
+$modclear{"minimodel"} = "Minimal modeling support";
+$modclear{"driver"} = "Script commandline driver";
+$modclear{"iter"} = "Range and value iterators";
+$modclear{"support"} = "Support algorithms and datastructures";
+$modclear{"example"} = "\%Example scripts";
+$modclear{"test"} = "Systematic tests";
+$modclear{"flatzinc"} = "FlatZinc interpreter";
+
+
+$catclear{"core"} = "Core functionality";
+$catclear{"var"} = "Variables, views, and variable implementations";
+$catclear{"prop"} = "Propagators";
+$catclear{"branch"} = "Branchers";
+$catclear{"sequential"} = "Sequential search engines";
+$catclear{"parallel"} = "Parallel search engines";
+$catclear{"post"} = "Posting propagators for constraints";
+$catclear{"any"} = "All";
+$catclear{"other"} = "Miscellaneous";
+$catclear{"int"} = "Finite domain integers";
+$catclear{"set"} = "Finite integer sets";
+$catclear{"minimodel"} = "Minimal modeling support";
+$catclear{"stress"} = "System stress";
+$catclear{"search"} = "Search";
+$catclear{"ignore"} = "ignored";
+
 #
 # Get statistics for all files
 #
@@ -53,6 +91,8 @@ while ($file = @ARGV[$i++]) {
     if ($l =~ /\/\/ STATISTICS: ([A-Za-z]+)-([A-Za-z]+)/) {
       $module = $1;
       $cat    = $2;
+      exists $modclear{$module} or die "Module $m undefined (file $file)";
+      exists $catclear{$cat} or die "Category $cat undefined (file $file)";
     }
     if ($l =~ /^[ \t]*$/) {
       $n_blank += 1;
@@ -83,41 +123,7 @@ while ($file = @ARGV[$i++]) {
   close FILE;
 }
 
-@modorder = ("kernel","search","int","set","minimodel","driver",
-	     "iter","support","example","test","flatzinc");
-
-@catorder = ("core","var","prop","branch","post",
-	     "int","set","minimodel","stress","any",
-	     "sequential","parallel",
-	     "other");
 $i = 0;
-
-$modclear{"kernel"} = "Kernel";
-$modclear{"search"} = "Search engines";
-$modclear{"int"} = "Finite domain integers";
-$modclear{"set"} = "Finite integer sets";
-$modclear{"minimodel"} = "Minimal modeling support";
-$modclear{"driver"} = "Script commandline driver";
-$modclear{"iter"} = "Range and value iterators";
-$modclear{"support"} = "Support algorithms and datastructures";
-$modclear{"example"} = "\%Example scripts";
-$modclear{"test"} = "Systematic tests";
-$modclear{"flatzinc"} = "FlatZinc interpreter";
-
-
-$catclear{"core"} = "Core functionality";
-$catclear{"var"} = "Variables, views, and variable implementations";
-$catclear{"prop"} = "Propagators";
-$catclear{"branch"} = "Branchers";
-$catclear{"sequential"} = "Sequential search engines";
-$catclear{"parallel"} = "Parallel search engines";
-$catclear{"post"} = "Posting propagators for constraints";
-$catclear{"any"} = "All";
-$catclear{"other"} = "Miscellaneous";
-$catclear{"int"} = "Finite domain integers";
-$catclear{"set"} = "Finite integer sets";
-$catclear{"minimodel"} = "Minimal modeling support";
-$catclear{"stress"} = "System stress";
 
 print <<EOF
 /**
