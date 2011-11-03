@@ -882,26 +882,9 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   max(Home home, SetVar s, IntVar x, BoolVar b);
 
-  /// Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$ and \f$x_i<x_{i+1}\f$
-  GECODE_SET_EXPORT void
-  channelSorted(Home home, const IntVarArgs& x, SetVar y);
-
-  /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-  GECODE_SET_EXPORT void
-  channel(Home home, const IntVarArgs& x,const SetVarArgs& y);
-
-  /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
-  GECODE_SET_EXPORT void
-  channel(Home home, const BoolVarArgs& x, SetVar y);
-
-  /// Post propagator for \f$j\in x_i \Leftrightarrow i\in y_j\f$
-  GECODE_SET_EXPORT void
-  channel(Home home, const SetVarArgs& x, const SetVarArgs& y);
-
   /// Post propagator for \f$ |s|=x \f$
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar s, IntVar x);
-
 
   /**
    * \brief Post propagator for \f$y = \mathrm{weight}(x)\f$
@@ -916,6 +899,32 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   weights(Home home, IntSharedArray elements, IntSharedArray weights,
           SetVar x, IntVar y);
+
+  //@}
+
+  /**
+   * \defgroup TaskModelSetChannel Channel constraints
+   * \ingroup TaskModelSet
+   *
+   */
+
+  //@{
+
+  /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
+  GECODE_SET_EXPORT void
+  channel(Home home, const IntVarArgs& x,const SetVarArgs& y);
+
+  /// Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$ and \f$x_i<x_{i+1}\f$
+  GECODE_SET_EXPORT void
+  channelSorted(Home home, const IntVarArgs& x, SetVar y);
+
+  /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
+  GECODE_SET_EXPORT void
+  channel(Home home, const BoolVarArgs& x, SetVar y);
+
+  /// Post propagator for \f$j\in x_i \Leftrightarrow i\in y_j\f$
+  GECODE_SET_EXPORT void
+  channel(Home home, const SetVarArgs& x, const SetVarArgs& y);
 
   //@}
 
