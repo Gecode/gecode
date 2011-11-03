@@ -1752,6 +1752,14 @@ namespace Gecode { namespace FlatZinc {
       weights(s,e,w,x,y);
     }
     
+    void p_inverse_set(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      int xoff = ce[2]->getInt();
+      int yoff = ce[3]->getInt();
+      SetVarArgs x = arg2setvarargs(s,ce[0],xoff);
+      SetVarArgs y = arg2setvarargs(s,ce[1],yoff);
+      channel(s, x, y);
+    }
+    
     class SetPoster {
     public:
       SetPoster(void) {
@@ -1801,6 +1809,7 @@ namespace Gecode { namespace FlatZinc {
                        &p_range);
         registry().add("set_weights_gecode",
                        &p_weights);
+        registry().add("inverse_set_gecode", &p_inverse_set);
       }
     };
     SetPoster __set_poster;

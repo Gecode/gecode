@@ -42,8 +42,6 @@
 #include <gecode/set/int.hh>
 #include <gecode/set/rel.hh>
 
-using namespace Gecode::Int;
-
 namespace Gecode {
 
   void
@@ -101,7 +99,7 @@ namespace Gecode {
       }
       break;
     default:
-      throw UnknownRelation("Set::rel");
+      throw Int::UnknownRelation("Set::rel");
     }
 
   }
@@ -150,33 +148,6 @@ namespace Gecode {
     if (home.failed()) return;
     GECODE_ES_FAIL(
                    Set::Int::ReMaxElement<Set::SetView>::post(home,s,x,b));
-  }
-
-  void
-  channelSorted(Home home, const IntVarArgs& x, SetVar y) {
-    if (home.failed()) return;
-    ViewArray<IntView> xa(home,x);
-    GECODE_ES_FAIL(Set::Int::Match<Set::SetView>::post(home,y,xa));
-  }
-
-  void
-  channel(Home home, const IntVarArgs& x, const SetVarArgs& y) {
-    if (home.failed()) return;
-    ViewArray<Int::CachedView<Int::IntView> > xa(home,x.size());
-    for (int i=x.size(); i--;)
-      new (&xa[i]) Int::CachedView<Int::IntView>(x[i]);
-    ViewArray<Set::CachedView<Set::SetView> > ya(home,y.size());
-    for (int i=y.size(); i--;)
-      new (&ya[i]) Set::CachedView<Set::SetView>(y[i]);
-    GECODE_ES_FAIL((Set::Int::ChannelInt<Set::SetView>::post(home,xa,ya)));
-  }
-
-  void
-  channel(Home home, const BoolVarArgs& x, SetVar y) {
-    if (home.failed()) return;
-    ViewArray<Int::BoolView> xv(home,x);
-    GECODE_ES_FAIL((Set::Int::ChannelBool<Set::SetView>
-                         ::post(home,xv,y)));
   }
 
   void weights(Home home, IntSharedArray elements, IntSharedArray weights,

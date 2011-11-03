@@ -37,7 +37,7 @@
 
 #include <gecode/int.hh>
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   template<class A>

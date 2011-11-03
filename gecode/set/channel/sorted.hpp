@@ -45,11 +45,12 @@
 #include <gecode/int.hh>
 #include <gecode/set/rel.hh>
 
-namespace Gecode { namespace Set { namespace Int {
+namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   forceinline
-  Match<View>::Match(Home home, View y0, ViewArray< Gecode::Int::IntView >& ys)
+  ChannelSorted<View>::ChannelSorted(Home home, View y0,
+                                     ViewArray< Gecode::Int::IntView >& ys)
     : Propagator(home), x0(y0), xs(ys) {
     x0.subscribe(home,*this, PC_SET_ANY);
     xs.subscribe(home,*this, Gecode::Int::PC_INT_BND);
@@ -57,7 +58,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  Match<View>::Match(Space& home, bool share, Match& p)
+  ChannelSorted<View>::ChannelSorted(Space& home, bool share, ChannelSorted& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     xs.update(home,share,p.xs);
@@ -65,7 +66,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline ExecStatus
-  Match<View>::post(Home home, View x0, ViewArray<Gecode::Int::IntView>& xs) {
+  ChannelSorted<View>::post(Home home, View x0,
+                            ViewArray<Gecode::Int::IntView>& xs) {
     unsigned int xs_size = static_cast<unsigned int>(xs.size());
     GECODE_ME_CHECK(x0.cardMin(home,xs_size));
     GECODE_ME_CHECK(x0.cardMax(home,xs_size));
@@ -76,20 +78,20 @@ namespace Gecode { namespace Set { namespace Int {
     } else {
       // Sharing in xs is handled correctly in the propagator:
       // if two views in xs are shared, this leads to failure.
-      (void) new (home) Match(home,x0,xs);
+      (void) new (home) ChannelSorted(home,x0,xs);
     }
     return ES_OK;
   }
 
   template<class View>
   PropCost
-  Match<View>::cost(const Space&, const ModEventDelta&) const {
+  ChannelSorted<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, xs.size()+1);
   }
 
   template<class View>
   forceinline size_t
-  Match<View>::dispose(Space& home) {
+  ChannelSorted<View>::dispose(Space& home) {
     x0.cancel(home,*this, PC_SET_ANY);
     xs.cancel(home,*this, Gecode::Int::PC_INT_BND);
     (void) Propagator::dispose(home);
@@ -98,13 +100,13 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   Actor*
-  Match<View>::copy(Space& home, bool share) {
-    return new (home) Match(home,share,*this);
+  ChannelSorted<View>::copy(Space& home, bool share) {
+    return new (home) ChannelSorted(home,share,*this);
   }
 
   template<class View>
   ExecStatus
-  Match<View>::propagate(Space& home, const ModEventDelta&) {
+  ChannelSorted<View>::propagate(Space& home, const ModEventDelta&) {
 
     int xs_size = xs.size();
 

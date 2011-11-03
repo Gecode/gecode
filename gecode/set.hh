@@ -894,6 +894,10 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   channel(Home home, const BoolVarArgs& x, SetVar y);
 
+  /// Post propagator for \f$j\in x_i \Leftrightarrow i\in y_j\f$
+  GECODE_SET_EXPORT void
+  channel(Home home, const SetVarArgs& x, const SetVarArgs& y);
+
   /// Post propagator for \f$ |s|=x \f$
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar s, IntVar x);

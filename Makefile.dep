@@ -2364,24 +2364,20 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/int.hh ./gecode/set/int/card.hpp \
-	./gecode/set/int/channel-bool.hpp ./gecode/set/int/channel-int.hpp ./gecode/set/int/match.hpp \
 	./gecode/set/int/minmax.hpp ./gecode/set/int/weights.hpp ./gecode/set/limits.hpp \
-	./gecode/set/rel.hh ./gecode/set/rel/common.hpp ./gecode/set/rel/eq.hpp \
-	./gecode/set/rel/lq.hpp ./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp \
-	./gecode/set/rel/re-eq.hpp ./gecode/set/rel/re-lq.hpp ./gecode/set/rel/re-subset.hpp \
-	./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
@@ -2610,7 +2606,6 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/int.hh ./gecode/set/int/card.hpp \
-	./gecode/set/int/channel-bool.hpp ./gecode/set/int/channel-int.hpp ./gecode/set/int/match.hpp \
 	./gecode/set/int/minmax.hpp ./gecode/set/int/weights.hpp ./gecode/set/limits.hpp \
 	./gecode/set/rel-op.hh ./gecode/set/rel-op/common.hpp ./gecode/set/rel-op/inter.hpp \
 	./gecode/set/rel-op/partition.hpp ./gecode/set/rel-op/post.hpp ./gecode/set/rel-op/subofunion.hpp \
@@ -3513,7 +3508,6 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/int.hh ./gecode/set/int/card.hpp \
-	./gecode/set/int/channel-bool.hpp ./gecode/set/int/channel-int.hpp ./gecode/set/int/match.hpp \
 	./gecode/set/int/minmax.hpp ./gecode/set/int/weights.hpp ./gecode/set/limits.hpp \
 	./gecode/set/rel.hh ./gecode/set/rel/common.hpp ./gecode/set/rel/eq.hpp \
 	./gecode/set/rel/lq.hpp ./gecode/set/rel/nosubset.hpp ./gecode/set/rel/nq.hpp \
@@ -3531,6 +3525,58 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
+gecode/set/channel$(OBJSUFFIX) gecode/set/channel$(SBJSUFFIX): \
+	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp \
+	./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp \
+	./gecode/int/var/int.hpp ./gecode/int/var/print.hpp ./gecode/int/view.hpp \
+	./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp \
+	./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp \
+	./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp \
+	./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp \
+	./gecode/int/view/zero.hpp ./gecode/iter.hh ./gecode/iter/ranges-add.hpp \
+	./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp \
+	./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp \
+	./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp \
+	./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp \
+	./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp \
+	./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp \
+	./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp \
+	./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp \
+	./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp \
+	./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp \
+	./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp \
+	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/kernel.hh \
+	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
+	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
+	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
+	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
+	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
+	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
+	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
+	./gecode/set/channel.hh ./gecode/set/channel/bool.hpp ./gecode/set/channel/int.hpp \
+	./gecode/set/channel/set.hpp ./gecode/set/channel/sorted.hpp ./gecode/set/exception.hpp \
+	./gecode/set/limits.hpp ./gecode/set/rel.hh ./gecode/set/rel/common.hpp \
+	./gecode/set/rel/eq.hpp ./gecode/set/rel/lq.hpp ./gecode/set/rel/nosubset.hpp \
+	./gecode/set/rel/nq.hpp ./gecode/set/rel/re-eq.hpp ./gecode/set/rel/re-lq.hpp \
+	./gecode/set/rel/re-subset.hpp ./gecode/set/rel/subset.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/none.hpp \
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/set/element$(OBJSUFFIX) gecode/set/element$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/element.hh ./gecode/int/element/int.hpp ./gecode/int/element/pair.hpp \
@@ -10294,6 +10340,60 @@ test/set/mm-set$(OBJSUFFIX) test/set/mm-set$(SBJSUFFIX): \
 	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
 	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
 	./test/test.hh ./test/test.hpp 
+test/set/channel$(OBJSUFFIX) test/set/channel$(SBJSUFFIX): \
+	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp \
+	./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp \
+	./gecode/int/var/int.hpp ./gecode/int/var/print.hpp ./gecode/int/view.hpp \
+	./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp \
+	./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp \
+	./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp \
+	./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp \
+	./gecode/int/view/zero.hpp ./gecode/iter.hh ./gecode/iter/ranges-add.hpp \
+	./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp \
+	./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp \
+	./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp \
+	./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp \
+	./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp \
+	./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp \
+	./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp \
+	./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp \
+	./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp \
+	./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp \
+	./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp \
+	./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp ./gecode/kernel.hh \
+	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
+	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
+	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
+	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
+	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
+	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
+	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
+	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
+	./gecode/minimodel.hh ./gecode/minimodel/bool-expr.hpp ./gecode/minimodel/exception.hpp \
+	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
+	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
+	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/none.hpp \
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp ./test/int.hh ./test/int.hpp \
+	./test/set.hh ./test/set.hpp ./test/test.hh \
+	./test/test.hpp 
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
