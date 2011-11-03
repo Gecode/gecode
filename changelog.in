@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   bug
+Thanks: Nicholas Tung
+[DESCRIPTION]
+Do not crash when ecountering undefined identifier as constraint argument.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

@@ -1409,6 +1409,12 @@ non_array_expr :
           default:
             $$ = getVarRefArg(pp,$1);
           }
+        } else {
+          pp->err << "Error: undefined identifier " << $1
+                  << " in line no. "
+                  << yyget_lineno(pp->yyscanner) << std::endl;
+          pp->hadError = true;
+          $$ = NULL;
         }
         free($1);
       }
