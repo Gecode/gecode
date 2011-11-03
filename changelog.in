@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Fixed sorted constraint to accept zero-length arrays.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   major
