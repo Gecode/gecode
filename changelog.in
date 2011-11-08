@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Posting a reified dom constraint on IntVars with an assigned control
+variable does not create propagators any more, but updates the
+domain immediately.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   bug
