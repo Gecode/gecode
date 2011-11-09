@@ -106,6 +106,8 @@ namespace Gecode {
     return false;
   }
 
+  BoolExpr::BoolExpr(void) : n(new Node) {}
+
   BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
     n->use++;
   }

@@ -51,9 +51,6 @@ namespace Gecode {
     heap.rfree(p);
   }
 
-  forceinline
-  BoolExpr::BoolExpr(void) : n(NULL) {}
-
 }
 
 // STATISTICS: minimodel-any

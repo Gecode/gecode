@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The BoolExpr default constructor did not properly initialize
+its members, causing crashes.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

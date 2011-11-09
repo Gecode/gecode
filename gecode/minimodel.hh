@@ -868,6 +868,7 @@ namespace Gecode {
     Node* n;
   public:
     /// Default constructor
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(void);
     /// Copy constructor
     GECODE_MINIMODEL_EXPORT
