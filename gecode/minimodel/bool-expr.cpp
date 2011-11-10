@@ -81,7 +81,7 @@ namespace Gecode {
    * Operations for nodes
    *
    */
-  BoolExpr::Node::Node(void) : use(1) {}
+  BoolExpr::Node::Node(void) : use(1), m(NULL) {}
 
   BoolExpr::Node::~Node(void) { delete m; }
 
@@ -118,7 +118,6 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->x    = x;
-    n->m    = NULL;
   }
 
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
@@ -131,7 +130,6 @@ namespace Gecode {
     n->l->use++;
     n->r    = r.n;
     n->r->use++;
-    n->m    = NULL;
   }
 
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) {
@@ -147,7 +145,6 @@ namespace Gecode {
       n->l    = l.n;
       n->l->use++;
       n->r    = NULL;
-      n->m    = NULL;
     }
   }
 
@@ -158,7 +155,6 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->rl   = rl;
-    n->m    = NULL;
   }
 
 #ifdef GECODE_HAS_SET_VARS
@@ -169,7 +165,6 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->rs   = rs;
-    n->m    = NULL;
   }
 
   BoolExpr::BoolExpr(const SetCmpRel& rs)
@@ -179,7 +174,6 @@ namespace Gecode {
     n->l    = NULL;
     n->r    = NULL;
     n->rs   = rs;
-    n->m    = NULL;
   }
 #endif
 
