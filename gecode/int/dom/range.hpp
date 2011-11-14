@@ -54,12 +54,12 @@ namespace Gecode { namespace Int { namespace Dom {
       GECODE_ME_CHECK(b.zero(home));
     } else if ((min <= x.min()) && (x.max() <= max)) {
       GECODE_ME_CHECK(b.one(home));
-    // } else if (b.one()) {
-    //   GECODE_ME_CHECK(x.gq(home,min));
-    //   GECODE_ME_CHECK(x.lq(home,max));
-    // } else if (b.zero()) {
-    //   Iter::Ranges::Singleton r(min,max);
-    //   GECODE_ME_CHECK(x.minus_r(home,r,false));
+    } else if (b.one()) {
+      GECODE_ME_CHECK(x.gq(home,min));
+      GECODE_ME_CHECK(x.lq(home,max));
+    } else if (b.zero()) {
+      Iter::Ranges::Singleton r(min,max);
+      GECODE_ME_CHECK(x.minus_r(home,r,false));
     } else {
       (void) new (home) ReRange<View>(home,x,min,max,b);
     }
