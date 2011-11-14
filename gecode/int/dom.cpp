@@ -106,27 +106,53 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, IntVar x, int n, BoolVar b, IntConLevel) {
+  dom(Home home, IntVar x, int n, Reify r, IntConLevel) {
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
+    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView>
+                    ::post(home,x,n,r.var())));
   }
 
   void
-  dom(Home home, IntVar x, int min, int max, BoolVar b, IntConLevel) {
+  dom(Home home, IntVar x, int min, int max, Reify r, IntConLevel) {
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL(Dom::ReRange<IntView>::post(home,x,min,max,b));
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Dom::ReRange<IntView,RM_EQV>
+                      ::post(home,x,min,max,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Dom::ReRange<IntView,RM_IMP>
+                      ::post(home,x,min,max,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Dom::ReRange<IntView,RM_PMI>
+                      ::post(home,x,min,max,r.var())));
+      break;
+    default: throw UnknownReifyMode("Int::dom");
+    }
   }
 
 
   void
-  dom(Home home, IntVar x, const IntSet& is, BoolVar b, IntConLevel) {
+  dom(Home home, IntVar x, const IntSet& is, Reify r, IntConLevel) {
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL(Dom::ReIntSet<IntView>::post(home,x,is,b));
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Dom::ReIntSet<IntView,RM_EQV>::post(home,x,is,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Dom::ReIntSet<IntView,RM_IMP>::post(home,x,is,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Dom::ReIntSet<IntView,RM_PMI>::post(home,x,is,r.var())));
+      break;
+    default: throw UnknownReifyMode("Int::dom");
+    }
   }
 
 }

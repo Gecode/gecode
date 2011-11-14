@@ -115,6 +115,13 @@ namespace Gecode { namespace Int {
     UnknownBranching(const char* l);
   };
 
+  /// %Exception: Unknown reification mode passed as argument
+  class GECODE_VTABLE_EXPORT UnknownReifyMode : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownReifyMode(const char* l);
+  };
+
   /// %Exception: Attempt to access value of unassigned variable
   class GECODE_VTABLE_EXPORT ValOfUnassignedVar : public Exception {
   public:
@@ -181,6 +188,10 @@ namespace Gecode { namespace Int {
   inline
   UnknownBranching::UnknownBranching(const char* l)
     : Exception(l,"Unknown branching type") {}
+
+  inline
+  UnknownReifyMode::UnknownReifyMode(const char* l)
+    : Exception(l,"Unknown reification mode") {}
 
   inline
   ValOfUnassignedVar::ValOfUnassignedVar(const char* l)

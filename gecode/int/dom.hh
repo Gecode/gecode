@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Dom {
    * Requires \code #include <gecode/int/dom.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
+  template<class View, ReifyMode rm>
   class ReRange : public ReUnaryPropagator<View,PC_INT_BND,BoolView> {
   protected:
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::x0;
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Dom {
    * Requires \code #include <gecode/int/dom.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
+  template<class View, ReifyMode rm>
   class ReIntSet : public ReUnaryPropagator<View,PC_INT_DOM,BoolView> {
   protected:
     using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::x0;
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Dom {
 }}}
 
 #include <gecode/int/dom/range.hpp>
-#include <gecode/int/dom/spec.hpp>
+#include <gecode/int/dom/set.hpp>
 
 #endif
 

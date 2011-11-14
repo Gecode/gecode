@@ -37,30 +37,30 @@
 
 namespace Gecode { namespace Int { namespace Dom {
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReIntSet<View>::ReIntSet
+  ReIntSet<View,rm>::ReIntSet
   (Home home, View x, const IntSet& s, BoolView b)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b), is(s) {
     home.notice(*this,AP_DISPOSE);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline size_t
-  ReIntSet<View>::dispose(Space& home) {
+  ReIntSet<View,rm>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     is.~IntSet();
     (void) ReUnaryPropagator<View,PC_INT_DOM,BoolView>::dispose(home);
     return sizeof(*this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReIntSet<View>::post(Home home, View x, const IntSet& s, BoolView b) {
+  ReIntSet<View,rm>::post(Home home, View x, const IntSet& s, BoolView b) {
     if (s.ranges() == 0) {
       GECODE_ME_CHECK(b.zero(home));
     } else if (s.ranges() == 1) {
-      return ReRange<View>::post(home,x,s.min(),s.max(),b);
+      return ReRange<View,rm>::post(home,x,s.min(),s.max(),b);
     } else if (b.one()) {
       IntSetRanges i_is(s);
       GECODE_ME_CHECK(x.inter_r(home,i_is,false));
@@ -68,28 +68,28 @@ namespace Gecode { namespace Int { namespace Dom {
       IntSetRanges i_is(s);
       GECODE_ME_CHECK(x.minus_r(home,i_is,false));
     } else {
-      (void) new (home) ReIntSet<View>(home,x,s,b);
+      (void) new (home) ReIntSet<View,rm>(home,x,s,b);
     }
     return ES_OK;
   }
 
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReIntSet<View>::ReIntSet(Space& home, bool share, ReIntSet& p)
+  ReIntSet<View,rm>::ReIntSet(Space& home, bool share, ReIntSet& p)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p) {
     is.update(home,share,p.is);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   Actor*
-  ReIntSet<View>::copy(Space& home, bool share) {
+  ReIntSet<View,rm>::copy(Space& home, bool share) {
     return new (home) ReIntSet(home,share,*this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReIntSet<View>::propagate(Space& home, const ModEventDelta&) {
+  ReIntSet<View,rm>::propagate(Space& home, const ModEventDelta&) {
     IntSetRanges i_is(is);
     if (b.one()) {
       GECODE_ME_CHECK(x0.inter_r(home,i_is,false));

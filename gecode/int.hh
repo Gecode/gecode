@@ -797,6 +797,81 @@ namespace Gecode {
 namespace Gecode {
 
   /**
+   * \brief Mode for reification
+   * \ingroup TaskModelInt
+   */
+  enum ReifyMode {
+    /**
+     * \brief Equivalence for reification (default)
+     *
+     * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
+     * defines that \f$b=1\Leftrightarrow c\f$ is propagated.
+     */
+    RM_EQV,
+    /**
+     * \brief Implication for reification
+     *
+     * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
+     * defines that \f$b=1\Leftarrow c\f$ is propagated.
+     */
+    RM_IMP,
+    /**
+     * \brief Inverse implication for reification
+     *
+     * For a constraint \f$c\f$ and a Boolean control variable \f$b\f$
+     * defines that \f$b=1\Rightarrow c\f$ is propagated.
+     */
+    RM_PMI
+  };
+
+  /**
+   * \brief Reification specification
+   * \ingroup TaskModelInt
+   */
+  class Reify {
+  protected:
+    /// The Boolean control variable
+    BoolVar x;
+    /// The reification mode
+    ReifyMode rm;
+  public:
+    /// Construct reification specification
+    Reify(BoolVar x, ReifyMode rm=RM_EQV);
+    /// Return Boolean control variable
+    BoolVar var(void) const;
+    /// Return reification mode
+    ReifyMode mode(void) const;
+    /// Set Boolean control variable
+    void var(BoolVar x);
+    /// Set reification mode
+    void mode(ReifyMode rm);
+  };
+
+  /**
+   * \brief Use equivalence for reification
+   * \ingroup TaskModelInt
+   */
+  Reify eqv(BoolVar x);
+  
+  /**
+   * \brief Use implication for reification
+   * \ingroup TaskModelInt
+   */
+  Reify imp(BoolVar x);
+  
+  /**
+   * \brief Use reverse implication for reification
+   * \ingroup TaskModelInt
+   */
+  Reify pmi(BoolVar x);
+
+}
+  
+#include <gecode/int/reify.hpp>
+
+namespace Gecode {
+
+  /**
    * \brief Relation types for integers
    * \ingroup TaskModelInt
    */
@@ -903,17 +978,17 @@ namespace Gecode {
   dom(Home home, const IntVarArgs& x, const IntSet& s,
       IntConLevel icl=ICL_DEF);
 
-  /// Post domain consistent propagator for \f$ (x=n) \Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$ (x=n) \equiv r\f$
   GECODE_INT_EXPORT void
-  dom(Home home, IntVar x, int n, BoolVar b,
+  dom(Home home, IntVar x, int n, Reify r,
       IntConLevel icl=ICL_DEF);
-  /// Post domain consistent propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$ (l\leq x \leq m) \equiv r\f$
   GECODE_INT_EXPORT void
-  dom(Home home, IntVar x, int l, int m, BoolVar b,
+  dom(Home home, IntVar x, int l, int m, Reify r,
       IntConLevel icl=ICL_DEF);
-  /// Post domain consistent propagator for \f$ (x \in s) \Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$ (x \in s) \equiv r\f$
   GECODE_INT_EXPORT void
-  dom(Home home, IntVar x, const IntSet& s, BoolVar b,
+  dom(Home home, IntVar x, const IntSet& s, Reify r,
       IntConLevel icl=ICL_DEF);
   //@}
 

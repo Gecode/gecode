@@ -39,15 +39,15 @@
 
 namespace Gecode { namespace Int { namespace Dom {
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReRange<View>::ReRange(Home home, View x, int min0, int max0, BoolView b)
+  ReRange<View,rm>::ReRange(Home home, View x, int min0, int max0, BoolView b)
     : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,x,b),
       min(min0), max(max0) {}
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReRange<View>::post(Home home, View x, int min, int max, BoolView b) {
+  ReRange<View,rm>::post(Home home, View x, int min, int max, BoolView b) {
     if (min == max) {
       return Rel::ReEqDomInt<View,BoolView>::post(home,x,min,b);
     } else if ((min > max) || (max < x.min()) || (min > x.max())) {
@@ -61,27 +61,27 @@ namespace Gecode { namespace Int { namespace Dom {
       Iter::Ranges::Singleton r(min,max);
       GECODE_ME_CHECK(x.minus_r(home,r,false));
     } else {
-      (void) new (home) ReRange<View>(home,x,min,max,b);
+      (void) new (home) ReRange<View,rm>(home,x,min,max,b);
     }
     return ES_OK;
   }
 
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReRange<View>::ReRange(Space& home, bool share, ReRange& p)
+  ReRange<View,rm>::ReRange(Space& home, bool share, ReRange& p)
     : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,share,p),
       min(p.min), max(p.max) {}
 
-  template<class View>
+  template<class View, ReifyMode rm>
   Actor*
-  ReRange<View>::copy(Space& home, bool share) {
-    return new (home) ReRange<View>(home,share,*this);
+  ReRange<View,rm>::copy(Space& home, bool share) {
+    return new (home) ReRange<View,rm>(home,share,*this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReRange<View>::propagate(Space& home, const ModEventDelta&) {
+  ReRange<View,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.gq(home,min));
       GECODE_ME_CHECK(x0.lq(home,max));
