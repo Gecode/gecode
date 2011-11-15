@@ -1315,6 +1315,10 @@ namespace Gecode {
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
      * with the original space.
+     *
+     * Throws an exception of type SpaceNotCloned when the copy constructor
+     * of the Space class is not invoked during cloning.
+     *
      */
     GECODE_KERNEL_EXPORT Space* _clone(bool share=true);
 
@@ -1485,6 +1489,9 @@ namespace Gecode {
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
      * with the original space.
+     *
+     * Throws an exception of type SpaceNotCloned when the copy constructor
+     * of the Space class is not invoked during cloning.
      *
      * \ingroup TaskSearch
      */
