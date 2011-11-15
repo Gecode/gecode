@@ -58,6 +58,13 @@ namespace Gecode {
     SpaceNotStable(const char* l);
   };
 
+  /// %Exception: Copy constructor did not call base class copy constructor
+  class GECODE_VTABLE_EXPORT SpaceNotCloned : public Exception {
+  public:
+    /// Initialize with location \a l
+    SpaceNotCloned(const char* l);
+  };
+
   /// %Exception: Commit when no brancher present
   class GECODE_VTABLE_EXPORT SpaceNoBrancher : public Exception {
   public:
@@ -99,6 +106,10 @@ namespace Gecode {
   inline
   SpaceNotStable::SpaceNotStable(const char* l)
     : Exception(l,"Attempt to invoke operation on not stable space") {}
+
+  inline
+  SpaceNotCloned::SpaceNotCloned(const char* l)
+    : Exception(l,"Copy constructor of space did not call base class copy constructor") {}
 
   inline
   SpaceNoBrancher::SpaceNoBrancher(void)

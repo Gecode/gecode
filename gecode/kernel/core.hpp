@@ -672,6 +672,8 @@ namespace Gecode {
     static Actor* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static const Actor* cast(const ActorLink* al);
+    /// Static member to test against during space cloning
+    static Actor* sentinel;
   public:
     /// Create copy
     virtual Actor* copy(Space& home, bool share) = 0;

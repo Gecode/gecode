@@ -930,10 +930,7 @@ namespace Gecode {
   /*
    * Variable arrays
    *
-   * These arrays are usually allocated in the space, but if they are resized,
-   * the new array is allocated on the heap. The size (n) and capacity show
-   * where the array is allocated: it is in the space if and only if
-   * n==capacity.
+   * These arrays are allocated in the space.
    *
    */
 

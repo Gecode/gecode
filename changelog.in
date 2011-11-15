@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw exception when the user-defined copy constructor of a class
+that inherits from Space does not call the Space copy constructor.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor

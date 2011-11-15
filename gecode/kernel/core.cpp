@@ -59,6 +59,8 @@ namespace Gecode {
     return 0;
   }
 
+  Actor* Actor::sentinel;
+
 #ifdef __GNUC__
   /// To avoid warnings from GCC
   Actor::~Actor(void) {}
@@ -407,6 +409,7 @@ namespace Gecode {
     : sm(s.sm->copy(share)), 
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       gpi(s.gpi),
+      d_fst(&Actor::sentinel),
       n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
@@ -467,6 +470,9 @@ namespace Gecode {
 
     // Copy all data structures (which in turn will invoke the constructor)
     Space* c = copy(share);
+
+    if (c->d_fst != &Actor::sentinel)
+      throw SpaceNotCloned("Space::clone");
 
     // Setup array for actor disposal in c
     {
