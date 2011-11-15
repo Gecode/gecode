@@ -280,8 +280,10 @@ namespace Gecode { namespace Set { namespace Element {
 
     } while (loopVar);
 
-    if (x0.assigned() || x1.assigned())
+    if (x1.assigned()) {
+      assert(x0.assigned());
       return home.ES_SUBSUMED(*this);
+    }
 
     return ES_FIX;
   }

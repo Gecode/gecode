@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   major
+Thanks: Denys Duchier
+[DESCRIPTION]
+The element constraint with SOT_UNION and IntSetArgs reported
+subsumption too early, resulting in incorrect propagation.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
