@@ -66,11 +66,17 @@ namespace Test { namespace Int {
          else
            Gecode::dom(home, x, -2);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          assert(x.size() == 1);
-         Gecode::dom(home, x[0], -2, b);
+         Gecode::dom(home, x[0], -2, r);
+       }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::BoolVar r) {
+         assert(x.size() == 1);
+         Gecode::dom(home, x[0], -2, r);
        }
      };
 
@@ -94,11 +100,17 @@ namespace Test { namespace Int {
          else
            Gecode::dom(home, x, -2, 2);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          assert(x.size() == 1);
-         Gecode::dom(home, x[0], -2, 2, b);
+         Gecode::dom(home, x[0], -2, 2, r);
+       }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::BoolVar r) {
+         assert(x.size() == 1);
+         Gecode::dom(home, x[0], -2, 2, r);
        }
      };
 
@@ -115,10 +127,15 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray&) {
          home.fail();
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
-         Gecode::dom(home, x[0], 3, 2, b);
+                         Gecode::Reify r) {
+         Gecode::dom(home, x[0], 3, 2, r);
+       }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::BoolVar r) {
+         Gecode::dom(home, x[0], 3, 2, r);
        }
      };
 
@@ -150,11 +167,17 @@ namespace Test { namespace Int {
          else
            Gecode::dom(home, x, d);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          assert(x.size() == 1);
-         Gecode::dom(home, x[0], d, b);
+         Gecode::dom(home, x[0], d, r);
+       }
+       /// Post reified constraint on \a x for \a r
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                         Gecode::BoolVar r) {
+         assert(x.size() == 1);
+         Gecode::dom(home, x[0], d, r);
        }
      };
 

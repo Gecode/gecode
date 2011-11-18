@@ -39,17 +39,17 @@
 
 namespace Gecode { namespace Int { namespace Member {
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReProp<View>::ReProp(Home home, ValSet& vs, ViewArray<View>& x, View y, 
-                       BoolView b0)
+  ReProp<View,rm>::ReProp(Home home, ValSet& vs, ViewArray<View>& x, View y, 
+                          BoolView b0)
     : Prop<View>(home,vs,x,y), b(b0) {
     b.subscribe(home,*this,PC_BOOL_VAL);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   inline ExecStatus
-  ReProp<View>::post(Home home, ViewArray<View>& x, View y, BoolView b) {
+  ReProp<View,rm>::post(Home home, ViewArray<View>& x, View y, BoolView b) {
     if (x.size() == 0) {
       GECODE_ME_CHECK(b.zero(home));
       return ES_OK;
@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace Member {
     x.unique(home);
 
     if (x.size() == 1)
-      return Rel::ReEqDom<View,BoolView>::post(home,x[0],y,b);
+      return Rel::ReEqDom<View,BoolView,rm>::post(home,x[0],y,b);
 
     if (x.same(home,y)) {
       GECODE_ME_CHECK(b.one(home));
@@ -85,34 +85,34 @@ namespace Gecode { namespace Int { namespace Member {
       GECODE_NEVER;
     }
 
-    (void) new (home) ReProp<View>(home, vs, x, y, b);
+    (void) new (home) ReProp<View,rm>(home, vs, x, y, b);
     return ES_OK;
   }
     
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReProp<View>::ReProp(Space& home, bool share, ReProp<View>& p)
+  ReProp<View,rm>::ReProp(Space& home, bool share, ReProp<View,rm>& p)
     : Prop<View>(home, share, p) {
     b.update(home, share, p.b);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   Propagator*
-  ReProp<View>::copy(Space& home, bool share) {
-    return new (home) ReProp<View>(home, share, *this);
+  ReProp<View,rm>::copy(Space& home, bool share) {
+    return new (home) ReProp<View,rm>(home, share, *this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline size_t
-  ReProp<View>::dispose(Space& home) {
+  ReProp<View,rm>::dispose(Space& home) {
     b.cancel(home, *this, PC_BOOL_VAL);
     (void) Prop<View>::dispose(home);
     return sizeof(*this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReProp<View>::propagate(Space& home, const ModEventDelta& med) {
+  ReProp<View,rm>::propagate(Space& home, const ModEventDelta& med) {
     // Add assigned views to value set
     if (View::me(med) == ME_INT_VAL)
       add(home,vs,x);

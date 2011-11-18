@@ -92,9 +92,9 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
 
 namespace Test { namespace Int {
 
-  TestSpace::TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log)
-    : d(d0), x(*this,n,d), b(*this,0,1), reified(r), test(t) {
-    if (opt.log && log) {
+  TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t, bool r)
+    : d(d0), x(*this,n,d), b(*this,0,1), test(t), reified(r) {
+    if (opt.log) {
       olog << ind(2) << "Initial: x[]=" << x;
       if (reified)
         olog << " b=" << b;
@@ -103,7 +103,7 @@ namespace Test { namespace Int {
   }
 
   TestSpace::TestSpace(bool share, TestSpace& s)
-    : Gecode::Space(share,s), d(s.d), reified(s.reified), test(s.test) {
+    : Gecode::Space(share,s), d(s.d), test(s.test), reified(s.reified) {
     x.update(*this, share, s.x);
     b.update(*this, share, s.b);
   }
@@ -356,6 +356,10 @@ if (!(T)) {                                                     \
   Test::post(Gecode::Space&, Gecode::IntVarArray&,
              Gecode::BoolVar) {}
 
+  void
+  Test::post(Gecode::Space&, Gecode::IntVarArray&,
+             Gecode::Reify) {}
+
   bool
   Test::run(void) {
     using namespace Gecode;
@@ -367,7 +371,7 @@ if (!(T)) {                                                     \
     Assignment& a = *ap;
 
     // Set up space for all solution search
-    TestSpace* search_s = new TestSpace(arity,dom,false,this,false);
+    TestSpace* search_s = new TestSpace(arity,dom,this,false);
     post(*search_s,search_s->x);
     branch(*search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
     Search::Options search_o;
@@ -385,7 +389,7 @@ if (!(T)) {                                                     \
 
       START_TEST("Assignment (after posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this);
+        TestSpace* s = new TestSpace(arity,dom,this,false);
         TestSpace* sc = NULL;
         s->post();
         switch (Base::rand(3)) {
@@ -426,7 +430,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Partial assignment (after posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this);
+        TestSpace* s = new TestSpace(arity,dom,this,false);
         s->post();
         s->assign(a,true);
         (void) s->failed();
@@ -441,7 +445,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Assignment (before posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this);
+        TestSpace* s = new TestSpace(arity,dom,this,false);
         s->assign(a);
         s->post();
         if (sol) {
@@ -454,7 +458,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Partial assignment (before posting)");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this);
+        TestSpace* s = new TestSpace(arity,dom,this,false);
         s->assign(a,true);
         s->post();
         (void) s->failed();
@@ -469,7 +473,7 @@ if (!(T)) {                                                     \
       }
       START_TEST("Prune");
       {
-        TestSpace* s = new TestSpace(arity,dom,false,this);
+        TestSpace* s = new TestSpace(arity,dom,this,false);
         s->post();
         while (!s->failed() && !s->assigned())
           if (!s->prune(a,testfix)) {
@@ -490,7 +494,7 @@ if (!(T)) {                                                     \
       if (reified && !ignore(a)) {
         START_TEST("Assignment reified (rewrite after post)");
         {
-          TestSpace* s = new TestSpace(arity,dom,true,this);
+          TestSpace* s = new TestSpace(arity,dom,this,true);
           s->post();
           s->rel(sol);
           s->assign(a);
@@ -500,7 +504,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Assignment reified (immediate rewrite)");
         {
-          TestSpace* s = new TestSpace(arity,dom,true,this);
+          TestSpace* s = new TestSpace(arity,dom,this,true);
           s->rel(sol);
           s->post();
           s->assign(a);
@@ -510,7 +514,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Assignment reified (before posting)");
         {
-          TestSpace* s = new TestSpace(arity,dom,true,this);
+          TestSpace* s = new TestSpace(arity,dom,this,true);
           s->assign(a);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
@@ -525,7 +529,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Assignment reified (after posting)");
         {
-          TestSpace* s = new TestSpace(arity,dom,true,this);
+          TestSpace* s = new TestSpace(arity,dom,this,true);
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
@@ -540,7 +544,7 @@ if (!(T)) {                                                     \
         }
         START_TEST("Prune reified");
         {
-          TestSpace* s = new TestSpace(arity,dom,true,this);
+          TestSpace* s = new TestSpace(arity,dom,this,true);
           s->post();
           while (!s->failed() && (!s->assigned() || !s->b.assigned()))
             if (!s->prune(a,testfix)) {
@@ -589,7 +593,7 @@ if (!(T)) {                                                     \
     case CTL_NONE: break;
     case CTL_DOMAIN: {
       START_TEST("Full domain consistency");
-      TestSpace* s = new TestSpace(arity,dom,false,this);
+      TestSpace* s = new TestSpace(arity,dom,this,false);
       s->post();
       if (!s->failed()) {
         while (!s->failed() && !s->assigned())
@@ -602,7 +606,7 @@ if (!(T)) {                                                     \
     }
     case CTL_BOUNDS_D: {
       START_TEST("Bounds(D)-consistency");
-      TestSpace* s = new TestSpace(arity,dom,false,this);
+      TestSpace* s = new TestSpace(arity,dom,this,false);
       s->post();
       for (int i = s->x.size(); i--; )
         s->prune(i, false);
@@ -617,7 +621,7 @@ if (!(T)) {                                                     \
     }
     case CTL_BOUNDS_Z: {
       START_TEST("Bounds(Z)-consistency");
-      TestSpace* s = new TestSpace(arity,dom,false,this);
+      TestSpace* s = new TestSpace(arity,dom,this,false);
       s->post();
       for (int i = s->x.size(); i--; )
         s->prune(i, true);

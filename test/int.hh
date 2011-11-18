@@ -158,20 +158,19 @@ namespace Test {
       Gecode::IntVarArray x;
       /// Control variable for reified propagators
       Gecode::BoolVar b;
-      /// Whether the test is for a reified propagator
-      bool reified;
       /// The test currently run
       Test* test;
+      /// Whether the test is for a reified propagator
+      bool reified;
 
       /**
        * \brief Create test space
        *
-       * Creates \a n variables with domain \a d0 and stores whether
-       * the test is for a reified propagator (\a r), and the test itself
-       * (\a t).
+       * Creates \a n variables with domain \a d for test \a t and stores
+       * whether the test is for a reified propagator (\a r).
        *
        */
-      TestSpace(int n, Gecode::IntSet& d0, bool r, Test* t, bool log=true);
+      TestSpace(int n, Gecode::IntSet& d, Test* t, bool r);
       /// Constructor for cloning \a s
       TestSpace(bool share, TestSpace& s);
       /// Copy space during cloning
@@ -255,6 +254,9 @@ namespace Test {
       /// Post reified constraint
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                         Gecode::BoolVar b);
+      /// Post reified constraint
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
+                        Gecode::Reify r);
       /// Perform test
       virtual bool run(void);
       /// \name Mapping scalar values to strings

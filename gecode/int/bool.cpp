@@ -114,18 +114,19 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
+  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
       IntConLevel) {
+    // FIXME!
     using namespace Int;
     if (home.failed()) return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       GECODE_ES_FAIL((Bool::Eqv<BoolView,BoolView,BoolView>
-                           ::post(home,x0,x1,b)));
+                      ::post(home,x0,x1,r.var())));
       break;
     case IRT_NQ:
       {
-        NegBoolView n(b);
+        NegBoolView n(r.var());
         GECODE_ES_FAIL((Bool::Eqv<BoolView,BoolView,NegBoolView>
                              ::post(home,x0,x1,n)));
       }
@@ -136,14 +137,14 @@ namespace Gecode {
       {
         NegBoolView n0(x0);
         GECODE_ES_FAIL((Bool::Or<NegBoolView,BoolView,BoolView>
-                             ::post(home,n0,x1,b)));
+                             ::post(home,n0,x1,r.var())));
       }
       break;
     case IRT_GR:
       std::swap(x0,x1);
     case IRT_LE:
       {
-        NegBoolView n1(x1), n(b);
+        NegBoolView n1(x1), n(r.var());
         GECODE_ES_FAIL((Bool::Or<BoolView,NegBoolView,NegBoolView>
                              ::post(home,x0,n1,n)));
       }
@@ -154,14 +155,15 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, BoolVar x0, IntRelType r, int n, BoolVar b,
+  rel(Home home, BoolVar x0, IntRelType irt, int n, Reify r,
       IntConLevel) {
+    // FIXME
     using namespace Int;
     if (home.failed()) return;
     BoolView x(x0);
-    BoolView y(b);
+    BoolView y(r.var());
     if (n == 0) {
-      switch (r) {
+      switch (irt) {
       case IRT_LQ:
       case IRT_EQ:
         {
@@ -185,7 +187,7 @@ namespace Gecode {
         throw UnknownRelation("Int::rel");
       }
     } else if (n == 1) {
-      switch (r) {
+      switch (irt) {
       case IRT_GQ:
       case IRT_EQ:
         GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>

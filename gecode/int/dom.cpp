@@ -109,8 +109,21 @@ namespace Gecode {
   dom(Home home, IntVar x, int n, Reify r, IntConLevel) {
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
-    GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView>
-                    ::post(home,x,n,r.var())));
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView,RM_EQV>
+                      ::post(home,x,n,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView,RM_IMP>
+                      ::post(home,x,n,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView,RM_PMI>
+                      ::post(home,x,n,r.var())));
+      break;
+    default: throw UnknownReifyMode("Int::rel");
+    }
   }
 
   void

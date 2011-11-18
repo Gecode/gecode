@@ -431,33 +431,33 @@ namespace Gecode { namespace Int { namespace Linear {
         switch (r) {
         case IRT_EQ:
           if (n_p == 1) {
-            GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView>::post
-                                 (home,t_p[0].x,c,b)));
+            GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_EQV>
+                            ::post(home,t_p[0].x,c,b)));
           } else {
-            GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView>::post
-                                 (home,t_n[0].x,-c,b)));
+            GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_EQV>
+                            ::post(home,t_n[0].x,-c,b)));
           }
           break;
         case IRT_NQ:
           {
             NegBoolView nb(b);
             if (n_p == 1) {
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView>::post
-                                   (home,t_p[0].x,c,nb)));
+              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_EQV>
+                              ::post(home,t_p[0].x,c,nb)));
             } else {
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView>::post
-                                   (home,t_n[0].x,-c,nb)));
+              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_EQV>
+                              ::post(home,t_n[0].x,-c,nb)));
             }
           }
           break;
         case IRT_LQ:
           if (n_p == 1) {
-            GECODE_ES_FAIL((Rel::ReLqInt<IntView,BoolView>::post
-                                 (home,t_p[0].x,c,b)));
+            GECODE_ES_FAIL((Rel::ReLqInt<IntView,BoolView,RM_EQV>
+                            ::post(home,t_p[0].x,c,b)));
           } else {
             NegBoolView nb(b);
-            GECODE_ES_FAIL((Rel::ReLqInt<IntView,NegBoolView>::post
-                                 (home,t_n[0].x,-c-1,nb)));
+            GECODE_ES_FAIL((Rel::ReLqInt<IntView,NegBoolView,RM_EQV>
+                            ::post(home,t_n[0].x,-c-1,nb)));
           }
           break;
         default: GECODE_NEVER;

@@ -58,13 +58,19 @@ namespace Gecode { namespace Int { namespace Dom {
   ExecStatus
   ReIntSet<View,rm>::post(Home home, View x, const IntSet& s, BoolView b) {
     if (s.ranges() == 0) {
+      if (rm == RM_PMI)
+        return ES_OK;
       GECODE_ME_CHECK(b.zero(home));
     } else if (s.ranges() == 1) {
       return ReRange<View,rm>::post(home,x,s.min(),s.max(),b);
     } else if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
       IntSetRanges i_is(s);
       GECODE_ME_CHECK(x.inter_r(home,i_is,false));
     } else if (b.zero()) {
+      if (rm == RM_IMP)
+        return ES_OK;
       IntSetRanges i_is(s);
       GECODE_ME_CHECK(x.minus_r(home,i_is,false));
     } else {
@@ -92,11 +98,13 @@ namespace Gecode { namespace Int { namespace Dom {
   ReIntSet<View,rm>::propagate(Space& home, const ModEventDelta&) {
     IntSetRanges i_is(is);
     if (b.one()) {
-      GECODE_ME_CHECK(x0.inter_r(home,i_is,false));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x0.inter_r(home,i_is,false));
       return home.ES_SUBSUMED(*this);
     }
     if (b.zero()) {
-      GECODE_ME_CHECK(x0.minus_r(home,i_is,false));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x0.minus_r(home,i_is,false));
       return home.ES_SUBSUMED(*this);
     }
 
@@ -105,10 +113,12 @@ namespace Gecode { namespace Int { namespace Dom {
 
       switch (Iter::Ranges::compare(i_x,i_is)) {
       case Iter::Ranges::CS_SUBSET:
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
         return home.ES_SUBSUMED(*this);
       case Iter::Ranges::CS_DISJOINT:
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
         return home.ES_SUBSUMED(*this);
       case Iter::Ranges::CS_NONE:
         break;

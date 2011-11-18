@@ -519,7 +519,7 @@ namespace Gecode { namespace Int { namespace Linear {
     estimate(t,n,0,l,u);
     IntVar z(home,l,u); IntView zv(z);
     post_all(home,t,n,IRT_EQ,zv,0);
-    rel(home,z,r,x,b,icl);
+    rel(home,z,r,x,BoolVar(b),icl);
   }
 
   void
@@ -592,7 +592,7 @@ namespace Gecode { namespace Int { namespace Linear {
       estimate(t,n,0,l,u);
       IntVar z(home,l,u); IntView zv(z);
       post_all(home,t,n,IRT_EQ,zv,0);
-      rel(home,z,r,c,b,icl);
+      rel(home,z,r,c,BoolVar(b),icl);
     }
   }
 

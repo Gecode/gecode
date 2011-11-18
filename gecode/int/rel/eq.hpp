@@ -428,14 +428,14 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqDom<View,CtrlView>::ReEqDom(Home home, View x0, View x1, CtrlView b)
+  ReEqDom<View,CtrlView,rm>::ReEqDom(Home home, View x0, View x1, CtrlView b)
     : ReBinaryPropagator<View,PC_INT_DOM,CtrlView>(home,x0,x1,b) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqDom<View,CtrlView>::post(Home home, View x0, View x1, CtrlView b) {
+  ReEqDom<View,CtrlView,rm>::post(Home home, View x0, View x1, CtrlView b) {
     if (b.one())
       return EqDom<View,View>::post(home,x0,x1);
     if (b.zero())
@@ -449,20 +449,20 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqDom<View,CtrlView>::ReEqDom(Space& home, bool share, ReEqDom& p)
+  ReEqDom<View,CtrlView,rm>::ReEqDom(Space& home, bool share, ReEqDom& p)
     : ReBinaryPropagator<View,PC_INT_DOM,CtrlView>(home,share,p) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReEqDom<View,CtrlView>::copy(Space& home, bool share) {
-    return new (home) ReEqDom<View,CtrlView>(home,share,*this);
+  ReEqDom<View,CtrlView,rm>::copy(Space& home, bool share) {
+    return new (home) ReEqDom<View,CtrlView,rm>(home,share,*this);
   }
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqDom<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
+  ReEqDom<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
       GECODE_REWRITE(*this,(EqDom<View,View>::post(home(*this),x0,x1)));
     if (b.zero())
@@ -486,14 +486,14 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqBnd<View,CtrlView>::ReEqBnd(Home home, View x0, View x1, CtrlView b)
+  ReEqBnd<View,CtrlView,rm>::ReEqBnd(Home home, View x0, View x1, CtrlView b)
     : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,x0,x1,b) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqBnd<View,CtrlView>::post(Home home, View x0, View x1, CtrlView b){
+  ReEqBnd<View,CtrlView,rm>::post(Home home, View x0, View x1, CtrlView b){
     if (b.one())
       return EqBnd<View,View>::post(home,x0,x1);
     if (b.zero())
@@ -507,20 +507,20 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqBnd<View,CtrlView>::ReEqBnd(Space& home, bool share, ReEqBnd& p)
+  ReEqBnd<View,CtrlView,rm>::ReEqBnd(Space& home, bool share, ReEqBnd& p)
     : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,share,p) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReEqBnd<View,CtrlView>::copy(Space& home, bool share) {
-    return new (home) ReEqBnd<View,CtrlView>(home,share,*this);
+  ReEqBnd<View,CtrlView,rm>::copy(Space& home, bool share) {
+    return new (home) ReEqBnd<View,CtrlView,rm>(home,share,*this);
   }
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqBnd<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
+  ReEqBnd<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
       GECODE_REWRITE(*this,(EqBnd<View,View>::post(home(*this),x0,x1)));
     if (b.zero())
@@ -545,15 +545,15 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqDomInt<View,CtrlView>::ReEqDomInt
+  ReEqDomInt<View,CtrlView,rm>::ReEqDomInt
   (Home home, View x, int c0, CtrlView b)
     : ReUnaryPropagator<View,PC_INT_DOM,CtrlView>(home,x,b), c(c0) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqDomInt<View,CtrlView>::post(Home home, View x, int c, CtrlView b) {
+  ReEqDomInt<View,CtrlView,rm>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
       GECODE_ME_CHECK(x.eq(home,c));
     } else if (b.zero()) {
@@ -572,20 +572,20 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqDomInt<View,CtrlView>::ReEqDomInt(Space& home, bool share, ReEqDomInt& p)
+  ReEqDomInt<View,CtrlView,rm>::ReEqDomInt(Space& home, bool share, ReEqDomInt& p)
     : ReUnaryPropagator<View,PC_INT_DOM,CtrlView>(home,share,p), c(p.c) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReEqDomInt<View,CtrlView>::copy(Space& home, bool share) {
-    return new (home) ReEqDomInt<View,CtrlView>(home,share,*this);
+  ReEqDomInt<View,CtrlView,rm>::copy(Space& home, bool share) {
+    return new (home) ReEqDomInt<View,CtrlView,rm>(home,share,*this);
   }
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqDomInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
+  ReEqDomInt<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.eq(home,c));
     } else if (b.zero()) {
@@ -612,15 +612,15 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqBndInt<View,CtrlView>::ReEqBndInt
+  ReEqBndInt<View,CtrlView,rm>::ReEqBndInt
   (Home home, View x, int c0, CtrlView b)
     : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,x,b), c(c0) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqBndInt<View,CtrlView>::post(Home home, View x, int c, CtrlView b) {
+  ReEqBndInt<View,CtrlView,rm>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
       GECODE_ME_CHECK(x.eq(home,c));
     } else if (b.zero()) {
@@ -639,20 +639,20 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqBndInt<View,CtrlView>::ReEqBndInt(Space& home, bool share, ReEqBndInt& p)
+  ReEqBndInt<View,CtrlView,rm>::ReEqBndInt(Space& home, bool share, ReEqBndInt& p)
     : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,share,p), c(p.c) {}
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReEqBndInt<View,CtrlView>::copy(Space& home, bool share) {
-    return new (home) ReEqBndInt<View,CtrlView>(home,share,*this);
+  ReEqBndInt<View,CtrlView,rm>::copy(Space& home, bool share) {
+    return new (home) ReEqBndInt<View,CtrlView,rm>(home,share,*this);
   }
 
-  template<class View, class CtrlView>
+  template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReEqBndInt<View,CtrlView>::propagate(Space& home, const ModEventDelta&) {
+  ReEqBndInt<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       GECODE_ME_CHECK(x0.eq(home,c));
     } else if (b.zero()) {

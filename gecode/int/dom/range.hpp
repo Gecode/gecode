@@ -49,15 +49,23 @@ namespace Gecode { namespace Int { namespace Dom {
   ExecStatus
   ReRange<View,rm>::post(Home home, View x, int min, int max, BoolView b) {
     if (min == max) {
-      return Rel::ReEqDomInt<View,BoolView>::post(home,x,min,b);
+      return Rel::ReEqDomInt<View,BoolView,rm>::post(home,x,min,b);
     } else if ((min > max) || (max < x.min()) || (min > x.max())) {
+      if (rm == RM_PMI)
+        return ES_OK;
       GECODE_ME_CHECK(b.zero(home));
     } else if ((min <= x.min()) && (x.max() <= max)) {
+      if (rm == RM_IMP)
+        return ES_OK;
       GECODE_ME_CHECK(b.one(home));
     } else if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
       GECODE_ME_CHECK(x.gq(home,min));
       GECODE_ME_CHECK(x.lq(home,max));
     } else if (b.zero()) {
+      if (rm == RM_IMP)
+        return ES_OK;
       Iter::Ranges::Singleton r(min,max);
       GECODE_ME_CHECK(x.minus_r(home,r,false));
     } else {
@@ -83,15 +91,21 @@ namespace Gecode { namespace Int { namespace Dom {
   ExecStatus
   ReRange<View,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
-      GECODE_ME_CHECK(x0.gq(home,min));
-      GECODE_ME_CHECK(x0.lq(home,max));
+      if (rm != RM_PMI) {
+        GECODE_ME_CHECK(x0.gq(home,min));
+        GECODE_ME_CHECK(x0.lq(home,max));
+      }
     } else if (b.zero()) {
-      Iter::Ranges::Singleton r(min,max);
-      GECODE_ME_CHECK(x0.minus_r(home,r,false));
+      if (rm != RM_IMP) {
+        Iter::Ranges::Singleton r(min,max);
+        GECODE_ME_CHECK(x0.minus_r(home,r,false));
+      }
     } else if ((x0.max() <= max) && (x0.min() >= min)) {
-      GECODE_ME_CHECK(b.one_none(home));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
     } else if ((x0.max() < min) || (x0.min() > max)) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
     } else {
       return ES_FIX;
     }

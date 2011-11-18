@@ -1027,23 +1027,23 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, const IntVarArgs& x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ (x_0 \sim_r x_1)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$ (x_0 \sim_{irt} x_1)\equiv r\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
+  rel(Home home, IntVar x0, IntRelType irt, IntVar x1, Reify r,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$(x \sim_r c)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$(x \sim_{irt} c)\equiv r\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, IntVar x, IntRelType r, int c, BoolVar b,
+  rel(Home home, IntVar x, IntRelType irt, int c, Reify r,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation among elements in \a x.
    *
@@ -1090,11 +1090,11 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post domain consistent propagator for \f$(x_0 \sim_r x_1)\Leftrightarrow b\f$
+  /** \brief Post domain consistent propagator for \f$(x_0 \sim_{irt} x_1)\equiv r\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, BoolVar x0, IntRelType r, BoolVar x1, BoolVar b,
+  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
       IntConLevel icl=ICL_DEF);
   /** \brief Post doamin consistent propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelBool
@@ -1113,14 +1113,14 @@ namespace Gecode {
   rel(Home home, BoolVar x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF);
   /**
-   * \brief Post domain consistent propagator for \f$(x \sim_r n)\Leftrightarrow b\f$
+   * \brief Post domain consistent propagator for \f$(x \sim_{irt} n)\equiv r\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, BoolVar x, IntRelType r, int n, BoolVar b,
+  rel(Home home, BoolVar x, IntRelType irt, int n, Reify r,
       IntConLevel icl=ICL_DEF);
   /**
    * \brief Propagates \f$ x_i \sim_r n \f$ for all \f$0\leq i<|x|\f$
@@ -1273,13 +1273,13 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   member(Home home, const BoolVarArgs& x, BoolVar y,
          IntConLevel icl=ICL_DEF);
-  /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\equiv r\f$
   GECODE_INT_EXPORT void
-  member(Home home, const IntVarArgs& x, IntVar y, BoolVar b,
+  member(Home home, const IntVarArgs& x, IntVar y, Reify r,
          IntConLevel icl=ICL_DEF);
-  /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\Leftrightarrow b\f$
+  /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\equiv r\f$
   GECODE_INT_EXPORT void
-  member(Home home, const BoolVarArgs& x, BoolVar y, BoolVar b,
+  member(Home home, const BoolVarArgs& x, BoolVar y, Reify r,
          IntConLevel icl=ICL_DEF);
   //@}
 
