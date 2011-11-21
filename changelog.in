@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Serge Le Huitouze
+[DESCRIPTION]
+Fixed rounding for printing the runtime (for example,
+1:60:56.157 could be printed...).
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   major
@@ -126,7 +135,7 @@ Fixed sorted constraint to accept zero-length arrays.
 Module: set
 What:   new
 Rank:   major
-Thanks: Denys Duchier
+Author: Denys Duchier
 [DESCRIPTION]
 Added channeling constraint between arrays of set variables.
 
