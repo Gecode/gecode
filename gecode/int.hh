@@ -1781,7 +1781,7 @@ namespace Gecode {
    *  - Of type Int::TooFewArguments, if \f$|x|=0\f$.
    *  - Of type Int::ArgumentSame, if \a x contains
    *    the same unassigned variable multiply.
-   *  - Of type Exception, if \f$q < 1 \vee q > |x|\f$.
+   *  - Of type Int::OutOfRange, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const IntVarArgs& x, const IntSet& s, 
@@ -1799,7 +1799,7 @@ namespace Gecode {
    *  - Of type Int::TooFewArguments, if \f$|x|=0\f$.
    *  - Of type Int::ArgumentSame, if \a x contains
    *    the same unassigned variable multiply.
-   *  - Of type Exception, if \f$q < 1 \vee q > |x|\f$.
+   *  - Of type Int::OutOfRange, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const BoolVarArgs& x, const IntSet& s, 

@@ -74,6 +74,14 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw exception of type OutOfLimits instead of Exception when
+numerical arguments to sequence constraint are out of range.
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   minor
 Thanks: Joseph Scott
