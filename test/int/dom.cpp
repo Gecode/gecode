@@ -72,12 +72,6 @@ namespace Test { namespace Int {
          assert(x.size() == 1);
          Gecode::dom(home, x[0], -2, r);
        }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar r) {
-         assert(x.size() == 1);
-         Gecode::dom(home, x[0], -2, r);
-       }
      };
 
 
@@ -106,12 +100,6 @@ namespace Test { namespace Int {
          assert(x.size() == 1);
          Gecode::dom(home, x[0], -2, 2, r);
        }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar r) {
-         assert(x.size() == 1);
-         Gecode::dom(home, x[0], -2, 2, r);
-       }
      };
 
      /// %Test for domain constraint (empty range)
@@ -130,11 +118,6 @@ namespace Test { namespace Int {
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
-         Gecode::dom(home, x[0], 3, 2, r);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar r) {
          Gecode::dom(home, x[0], 3, 2, r);
        }
      };
@@ -170,12 +153,6 @@ namespace Test { namespace Int {
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
-         assert(x.size() == 1);
-         Gecode::dom(home, x[0], d, r);
-       }
-       /// Post reified constraint on \a x for \a r
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar r) {
          assert(x.size() == 1);
          Gecode::dom(home, x[0], d, r);
        }

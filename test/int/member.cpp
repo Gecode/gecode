@@ -70,15 +70,15 @@ namespace Test { namespace Int {
            y[i] = x[i];
          member(home, y, x[n]);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          using namespace Gecode;
          int n = x.size() - 1;
          IntVarArgs y(n);
          for (int i=n; i--; )
            y[i] = x[i];
-         member(home, y, x[n], b);
+         member(home, y, x[n], r);
        }
      };
 
@@ -104,15 +104,15 @@ namespace Test { namespace Int {
            y[i] = channel(home,x[i]);
          member(home, y, channel(home,x[n]));
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          using namespace Gecode;
          int n = x.size() - 1;
          BoolVarArgs y(n);
          for (int i=n; i--; )
            y[i] = channel(home,x[i]);
-         member(home, y, channel(home,x[n]), b);
+         member(home, y, channel(home,x[n]), r);
        }
      };
 

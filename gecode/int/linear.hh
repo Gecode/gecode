@@ -1365,7 +1365,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param home current space
    * \param t array of linear terms over integers
    * \param n size of array
-   * \param r type of relation
+   * \param irt type of relation
    * \param c result of linear constraint
    *
    * All variants for linear constraints share the following properties:
@@ -1377,7 +1377,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Assume linear terms for the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for doubles as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
@@ -1388,7 +1388,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Home home, Term<IntView>* t, int n, IntRelType r, int c,
+  post(Home home, Term<IntView>* t, int n, IntRelType irt, int c,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1396,9 +1396,9 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param home current space
    * \param t array of linear terms
    * \param n size of array
-   * \param r type of relation
+   * \param irt type of relation
    * \param c result of linear constraint
-   * \param b Boolean control view
+   * \param r reification specification
    *
    * All variants for linear constraints share the following properties:
    *  - Only bounds consistency is supported.
@@ -1410,7 +1410,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Assume linear terms for the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for doubles as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
@@ -1421,7 +1421,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Home home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
+  post(Home home, Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1429,7 +1429,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
-   * \param r type of relation
+   * \param irt type of relation
    * \param c result of linear constraint
    *
    * All variants for linear constraints share the following properties:
@@ -1441,7 +1441,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Assume linear terms for the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for integers as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
@@ -1452,7 +1452,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Home home, Term<BoolView>* t, int n, IntRelType r, int c,
+  post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1460,9 +1460,9 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
-   * \param r type of relation
+   * \param irt type of relation
    * \param c result of linear constraint
-   * \param b Boolean control varaible
+   * \param r reification specification
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occuring multiply in the term array are replaced
@@ -1473,7 +1473,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Assume linear terms for the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for integers as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
@@ -1484,7 +1484,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Home home, Term<BoolView>* t, int n, IntRelType r, int c, BoolView b,
+  post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c, Reify r,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1492,7 +1492,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
-   * \param r type of relation
+   * \param irt type of relation
    * \param y variable right hand side of linear constraint
    * \param c constant right hand side of linear constraint
    *
@@ -1505,7 +1505,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Assume linear terms for the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for integers as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
@@ -1516,7 +1516,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Home home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
+  post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y, int c=0,
        IntConLevel=ICL_DEF);
 
   /**
@@ -1524,9 +1524,9 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param home current space
    * \param t array of linear terms over Booleans
    * \param n size of array
-   * \param r type of relation
+   * \param irt type of relation
    * \param y variable right hand side of linear constraint
-   * \param b Boolean control variable
+   * \param r reification specification
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occuring multiply in the term array are replaced
@@ -1537,7 +1537,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Assume linear terms for the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for integers as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
@@ -1548,8 +1548,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Home home, Term<BoolView>* t, int n, IntRelType r, IntView y,
-       BoolView b, IntConLevel=ICL_DEF);
+  post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y,
+       Reify r, IntConLevel=ICL_DEF);
 
 }}}
 

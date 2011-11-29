@@ -90,13 +90,13 @@ namespace Test { namespace Int {
          else
            Gecode::linear(home, a, x, irt, c, icl);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          if (one(a))
-           Gecode::linear(home, x, irt, c, b, icl);
+           Gecode::linear(home, x, irt, c, r, icl);
          else
-           Gecode::linear(home, a, x, irt, c, b, icl);
+           Gecode::linear(home, a, x, irt, c, r, icl);
        }
      };
 
@@ -134,17 +134,17 @@ namespace Test { namespace Int {
          else
            Gecode::linear(home, a, y, irt, x[n], icl);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          int n = a.size();
          Gecode::IntVarArgs y(n);
          for (int i=n; i--; )
            y[i] = x[i];
          if (one(a))
-           Gecode::linear(home, y, irt, x[n], b, icl);
+           Gecode::linear(home, y, irt, x[n], r, icl);
          else
-           Gecode::linear(home, a, y, irt, x[n], b, icl);
+           Gecode::linear(home, a, y, irt, x[n], r, icl);
        }
      };
 
@@ -183,16 +183,16 @@ namespace Test { namespace Int {
          else
            Gecode::linear(home, a, y, irt, c, Gecode::ICL_DEF);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          Gecode::BoolVarArgs y(x.size());
          for (int i=x.size(); i--; )
            y[i]=Gecode::channel(home,x[i]);
          if (one(a))
-           Gecode::linear(home, y, irt, c, b, Gecode::ICL_DEF);
+           Gecode::linear(home, y, irt, c, r, Gecode::ICL_DEF);
          else
-           Gecode::linear(home, a, y, irt, c, b, Gecode::ICL_DEF);
+           Gecode::linear(home, a, y, irt, c, r, Gecode::ICL_DEF);
        }
      };
 
@@ -240,17 +240,17 @@ namespace Test { namespace Int {
          else
            Gecode::linear(home, a, y, irt, x[n]);
        }
-       /// Post reified constraint on \a x for \a b
+       /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                         Gecode::BoolVar b) {
+                         Gecode::Reify r) {
          int n=x.size()-1;
          Gecode::BoolVarArgs y(n);
          for (int i=n; i--; )
            y[i]=Gecode::channel(home,x[i]);
          if (one(a))
-           Gecode::linear(home, y, irt, x[n], b);
+           Gecode::linear(home, y, irt, x[n], r);
          else
-           Gecode::linear(home, a, y, irt, x[n], b);
+           Gecode::linear(home, a, y, irt, x[n], r);
        }
      };
 

@@ -64,11 +64,6 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space&, Gecode::IntVarArray&) {
        }
-       /// Post reified constraint on \a x for \a b
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray&,
-                         Gecode::BoolVar b) {
-         Gecode::rel(home, b, Gecode::IRT_EQ, 1);
-       }
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray&,
                          Gecode::Reify r) {

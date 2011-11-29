@@ -56,7 +56,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const IntVarArgs& x, IntRelType irt, int c, BoolVar b,
+         const IntVarArgs& x, IntRelType irt, int c, Reify r,
          IntConLevel) {
     if (home.failed()) return;
     Region re(home);
@@ -64,7 +64,7 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
-    Linear::post(home,t,x.size(),irt,c,b);
+    Linear::post(home,t,x.size(),irt,c,r);
   }
 
   void
@@ -84,8 +84,8 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const IntArgs& a, const IntVarArgs& x, IntRelType irt, int c, BoolVar b,
-         IntConLevel) {
+         const IntArgs& a, const IntVarArgs& x, IntRelType irt, int c, 
+         Reify r, IntConLevel) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home.failed()) return;
@@ -94,7 +94,7 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
-    Linear::post(home,t,x.size(),irt,c,b);
+    Linear::post(home,t,x.size(),irt,c,r);
   }
 
   void
@@ -129,7 +129,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const IntVarArgs& x, IntRelType irt, IntVar y, BoolVar b,
+         const IntVarArgs& x, IntRelType irt, IntVar y, Reify r,
          IntConLevel) {
     if (home.failed()) return;
     Region re(home);
@@ -138,7 +138,7 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
     t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,irt,0,b);
+    Linear::post(home,t,x.size()+1,irt,0,r);
   }
 
   void
@@ -176,7 +176,7 @@ namespace Gecode {
   void
   linear(Home home,
          const IntArgs& a, const IntVarArgs& x, IntRelType irt, IntVar y,
-         BoolVar b, IntConLevel) {
+         Reify r, IntConLevel) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home.failed()) return;
@@ -186,7 +186,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
     t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,irt,0,b);
+    Linear::post(home,t,x.size()+1,irt,0,r);
   }
 
 }

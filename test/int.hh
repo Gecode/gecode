@@ -253,9 +253,6 @@ namespace Test {
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) = 0;
       /// Post reified constraint
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                        Gecode::BoolVar b);
-      /// Post reified constraint
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                         Gecode::Reify r);
       /// Perform test
       virtual bool run(void);

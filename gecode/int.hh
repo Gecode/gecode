@@ -2233,19 +2233,19 @@ namespace Gecode {
   linear(Home home, const IntVarArgs& x,
          IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\equiv r\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
-         IntRelType irt, int c, BoolVar b,
+         IntRelType irt, int c, Reify r,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\equiv r\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
-         IntRelType irt, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, Reify r,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$
    *
@@ -2267,7 +2267,7 @@ namespace Gecode {
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2275,9 +2275,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
-         IntRelType irt, int c, BoolVar b,
+         IntRelType irt, int c, Reify r,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2285,7 +2285,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
-         IntRelType irt, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, Reify r,
          IntConLevel icl=ICL_DEF);
 
 
@@ -2320,12 +2320,12 @@ namespace Gecode {
   linear(Home home, const BoolVarArgs& x,
          IntRelType irt, int c,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\equiv r\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
-         IntRelType irt, int c, BoolVar b,
+         IntRelType irt, int c, Reify r,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\f$
    * \ingroup TaskModelIntLB
@@ -2334,12 +2334,12 @@ namespace Gecode {
   linear(Home home, const BoolVarArgs& x,
          IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\equiv r\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
-         IntRelType irt, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, Reify r,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$
    *
@@ -2351,7 +2351,7 @@ namespace Gecode {
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType irt, int c,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2359,7 +2359,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
-         IntRelType irt, int c, BoolVar b,
+         IntRelType irt, int c, Reify r,
          IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\f$
    *
@@ -2371,7 +2371,7 @@ namespace Gecode {
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2379,7 +2379,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
-         IntRelType irt, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, Reify r,
          IntConLevel icl=ICL_DEF);
 
 

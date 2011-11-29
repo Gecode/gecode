@@ -354,10 +354,6 @@ if (!(T)) {                                                     \
 
   void
   Test::post(Gecode::Space&, Gecode::IntVarArray&,
-             Gecode::BoolVar) {}
-
-  void
-  Test::post(Gecode::Space&, Gecode::IntVarArray&,
              Gecode::Reify) {}
 
   bool
