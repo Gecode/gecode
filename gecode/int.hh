@@ -997,35 +997,35 @@ namespace Gecode {
    * \defgroup TaskModelIntRelInt Simple relation constraints over integer variables
    * \ingroup TaskModelInt
    */
-  /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
+  /** \brief Post propagator for \f$ x_0 \sim_{irt} x_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, IntVar x0, IntRelType r, IntVar x1,
+  rel(Home home, IntVar x0, IntRelType irt, IntVar x1,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Post propagator for \f$ x_i \sim_{irt} y \f$ for all \f$0\leq i<|x|\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
    * domain consistency (\a icl = ICL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const IntVarArgs& x, IntRelType r, IntVar y,
+  rel(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
       IntConLevel icl=ICL_DEF);
-  /** \brief Propagates \f$ x \sim_r c\f$
+  /** \brief Propagates \f$ x \sim_{irt} c\f$
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, IntVar x, IntRelType r, int c,
+  rel(Home home, IntVar x, IntRelType irt, int c,
       IntConLevel icl=ICL_DEF);
-  /** \brief Propagates \f$ x_i \sim_r c \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Propagates \f$ x_i \sim_{irt} c \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const IntVarArgs& x, IntRelType r, int c,
+  rel(Home home, const IntVarArgs& x, IntRelType irt, int c,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_{irt} x_1)\equiv r\f$
    *
@@ -1060,7 +1060,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const IntVarArgs& x, IntRelType r,
+  rel(Home home, const IntVarArgs& x, IntRelType irt,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
@@ -1077,18 +1077,18 @@ namespace Gecode {
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF);
 
   /**
    * \defgroup TaskModelIntRelBool Simple relation constraints over Boolean variables
    * \ingroup TaskModelInt
    */
-  /** \brief Post domain consistent propagator for \f$ x_0 \sim_r x_1\f$
+  /** \brief Post domain consistent propagator for \f$ x_0 \sim_{irt} x_1\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, BoolVar x0, IntRelType r, BoolVar x1,
+  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1,
       IntConLevel icl=ICL_DEF);
   /** \brief Post domain consistent propagator for \f$(x_0 \sim_{irt} x_1)\equiv r\f$
    * \ingroup TaskModelIntRelBool
@@ -1096,21 +1096,21 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post doamin consistent propagator for \f$ x_i \sim_r y \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Post doamin consistent propagator for \f$ x_i \sim_{irt} y \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, BoolVar y,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, BoolVar y,
       IntConLevel icl=ICL_DEF);
   /**
-   * \brief Propagates \f$ x \sim_r n\f$
+   * \brief Propagates \f$ x \sim_{irt} n\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, BoolVar x, IntRelType r, int n,
+  rel(Home home, BoolVar x, IntRelType irt, int n,
       IntConLevel icl=ICL_DEF);
   /**
    * \brief Post domain consistent propagator for \f$(x \sim_{irt} n)\equiv r\f$
@@ -1123,14 +1123,14 @@ namespace Gecode {
   rel(Home home, BoolVar x, IntRelType irt, int n, Reify r,
       IntConLevel icl=ICL_DEF);
   /**
-   * \brief Propagates \f$ x_i \sim_r n \f$ for all \f$0\leq i<|x|\f$
+   * \brief Propagates \f$ x_i \sim_{irt} n \f$ for all \f$0\leq i<|x|\f$
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, int n,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, int n,
       IntConLevel icl=ICL_DEF);
   /** \brief Post domain consistent propagator for relation between \a x and \a y.
    *
@@ -1142,7 +1142,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF);
   /** \brief Post domain consistent propagator for relation between elements in \a x.
    *
@@ -1155,7 +1155,7 @@ namespace Gecode {
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
-  rel(Home home, const BoolVarArgs& x, IntRelType r,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt,
       IntConLevel icl=ICL_DEF);
   /** \brief Post domain consistent propagator for Boolean operation on \a x0 and \a x1
    *
@@ -1558,21 +1558,21 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r m\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_{irt} m\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, int n, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, int n, IntRelType irt, int m,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_r m\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_{irt} m\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType irt, int m,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_{irt} m\f$
    *
    * Performs domain propagation (\a icl = ICL_DOM, default)
    * and slightly less domain propagation (all other values for \a icl),
@@ -1580,9 +1580,9 @@ namespace Gecode {
    * is not comain consistent.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, IntVar y, IntRelType irt, int m,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r m\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_{irt} m\f$
    *
    * Performs domain propagation but is not domain consistent.
    *
@@ -1590,23 +1590,23 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType r, int m,
+  count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType irt, int m,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_{irt} z\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, int n, IntRelType irt, IntVar z,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_r z\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_{irt} z\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType irt, IntVar z,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_{irt} z\f$
    *
    * Performs domain propagation (\a icl = ICL_DOM, default)
    * and slightly less domain propagation (all other values for \a icl),
@@ -1614,9 +1614,9 @@ namespace Gecode {
    * is not comain consistent.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, IntVar y, IntRelType irt, IntVar z,
         IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r z\f$
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_{irt} z\f$
    *
    * Performs domain propagation but is not domain consistent.
    *
@@ -1624,7 +1624,7 @@ namespace Gecode {
    *  \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void
-  count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType r, IntVar z,
+  count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType irt, IntVar z,
         IntConLevel icl=ICL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
@@ -1737,29 +1737,29 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_r y\f$
+  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
-  nvalues(Home home, const IntVarArgs& x, IntRelType r, int y,
+  nvalues(Home home, const IntVarArgs& x, IntRelType irt, int y,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_r y\f$
+  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
-  nvalues(Home home, const IntVarArgs& x, IntRelType r, IntVar y,
+  nvalues(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_r y\f$
+  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
-  nvalues(Home home, const BoolVarArgs& x, IntRelType r, int y,
+  nvalues(Home home, const BoolVarArgs& x, IntRelType irt, int y,
           IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_r y\f$
+  /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
-  nvalues(Home home, const BoolVarArgs& x, IntRelType r, IntVar y,
+  nvalues(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
           IntConLevel icl=ICL_DEF);
   //@}
 
@@ -2212,42 +2212,42 @@ namespace Gecode {
    *    defined in Int::Limits, an exception of type
    *    Int::OutOfLimits is thrown.
    *  - Assume the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the maximal
    *    available precision (at least \f$2^{48}\f$), an exception of
    *    type Int::OutOfLimits is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
-         IntRelType r, int c,
+         IntRelType irt, int c,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
-         IntRelType r, IntVar y,
+         IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
-         IntRelType r, int c, BoolVar b,
+         IntRelType irt, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
-         IntRelType r, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2255,9 +2255,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
-         IntRelType r, int c,
+         IntRelType irt, int c,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2265,9 +2265,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
-         IntRelType r, IntVar y,
+         IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2275,9 +2275,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
-         IntRelType r, int c, BoolVar b,
+         IntRelType irt, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2285,7 +2285,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
-         IntRelType r, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
 
 
@@ -2306,42 +2306,42 @@ namespace Gecode {
    *    defined in Int::Limits, an exception of type
    *    Int::OutOfLimits is thrown.
    *  - Assume the constraint
-   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for integers as defined in Int::Limits, an exception of
    *    type Int::OutOfLimits is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
    */
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
-         IntRelType r, int c,
+         IntRelType irt, int c,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
-         IntRelType r, int c, BoolVar b,
+         IntRelType irt, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
-         IntRelType r, IntVar y,
+         IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\Leftrightarrow b\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
-         IntRelType r, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2349,9 +2349,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
-         IntRelType r, int c,
+         IntRelType irt, int c,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2359,9 +2359,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
-         IntRelType r, int c, BoolVar b,
+         IntRelType irt, int c, BoolVar b,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2369,9 +2369,9 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
-         IntRelType r, IntVar y,
+         IntRelType irt, IntVar y,
          IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a a and \a x are of different size.
@@ -2379,7 +2379,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
-         IntRelType r, IntVar y, BoolVar b,
+         IntRelType irt, IntVar y, BoolVar b,
          IntConLevel icl=ICL_DEF);
 
 

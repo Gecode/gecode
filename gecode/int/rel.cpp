@@ -45,11 +45,11 @@ namespace Gecode {
   using namespace Int;
 
   void
-  rel(Home home, IntVar x0, IntRelType r, int n, IntConLevel) {
+  rel(Home home, IntVar x0, IntRelType irt, int n, IntConLevel) {
     Limits::check(n,"Int::rel");
     if (home.failed()) return;
     IntView x(x0);
-    switch (r) {
+    switch (irt) {
     case IRT_EQ: GECODE_ME_FAIL(x.eq(home,n)); break;
     case IRT_NQ: GECODE_ME_FAIL(x.nq(home,n)); break;
     case IRT_LQ: GECODE_ME_FAIL(x.lq(home,n)); break;
@@ -61,10 +61,10 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const IntVarArgs& x, IntRelType r, int n, IntConLevel) {
+  rel(Home home, const IntVarArgs& x, IntRelType irt, int n, IntConLevel) {
     Limits::check(n,"Int::rel");
     if (home.failed()) return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
         IntView xi(x[i]); GECODE_ME_FAIL(xi.eq(home,n));
@@ -101,9 +101,9 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, IntVar x0, IntRelType r, IntVar x1, IntConLevel icl) {
+  rel(Home home, IntVar x0, IntRelType irt, IntVar x1, IntConLevel icl) {
     if (home.failed()) return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
         GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
@@ -127,10 +127,10 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const IntVarArgs& x, IntRelType r, IntVar y,
+  rel(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
       IntConLevel icl) {
     if (home.failed()) return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       {
         ViewArray<IntView> xv(home,x.size()+1);
@@ -425,11 +425,11 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const IntVarArgs& x, IntRelType r,
+  rel(Home home, const IntVarArgs& x, IntRelType irt,
       IntConLevel icl) {
-    if (home.failed() || ((r != IRT_NQ) && (x.size() < 2))) 
+    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
       return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       {
         ViewArray<IntView> xv(home,x);
@@ -482,11 +482,11 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
       IntConLevel icl) {
     if (home.failed()) return;
 
-    switch (r) {
+    switch (irt) {
     case IRT_GR:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);

@@ -41,10 +41,10 @@
 namespace Gecode {
 
   void
-  rel(Home home, BoolVar x0, IntRelType r, BoolVar x1, IntConLevel) {
+  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
                            ::post(home,x0,x1)));
@@ -74,12 +74,12 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, BoolVar x0, IntRelType r, int n, IntConLevel) {
+  rel(Home home, BoolVar x0, IntRelType irt, int n, IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
     BoolView x(x0);
     if (n == 0) {
-      switch (r) {
+      switch (irt) {
       case IRT_LQ:
       case IRT_EQ:
         GECODE_ME_FAIL(x.zero(home)); break;
@@ -94,7 +94,7 @@ namespace Gecode {
         throw UnknownRelation("Int::rel");
       }
     } else if (n == 1) {
-      switch (r) {
+      switch (irt) {
       case IRT_GQ:
       case IRT_EQ:
         GECODE_ME_FAIL(x.one(home)); break;
@@ -216,11 +216,11 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, BoolVar y,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, BoolVar y,
       IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
         GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
@@ -262,12 +262,12 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, int n,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, int n,
       IntConLevel) {
     using namespace Int;
     if (home.failed()) return;
     if (n == 0) {
-      switch (r) {
+      switch (irt) {
       case IRT_LQ:
       case IRT_EQ:
         for (int i=x.size(); i--; ) {
@@ -288,7 +288,7 @@ namespace Gecode {
         throw UnknownRelation("Int::rel");
       }
     } else if (n == 1) {
-      switch (r) {
+      switch (irt) {
       case IRT_GQ:
       case IRT_EQ:
         for (int i=x.size(); i--; ) {
@@ -314,12 +314,12 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, IntConLevel) {
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, IntConLevel) {
     using namespace Int;
-    if (home.failed() || ((r != IRT_NQ) && (x.size() < 2))) 
+    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
       return;
 
-    switch (r) {
+    switch (irt) {
     case IRT_EQ:
       {
         ViewArray<BoolView> y(home,x);
@@ -368,14 +368,14 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
       IntConLevel) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
     if (home.failed()) return;
 
-    switch (r) {
+    switch (irt) {
     case IRT_GR:
       {
         ViewArray<BoolView> xv(home,x), yv(home,y);
