@@ -835,6 +835,8 @@ namespace Gecode {
     /// The reification mode
     ReifyMode rm;
   public:
+    /// Default constructor without proper initialization
+    Reify(void);
     /// Construct reification specification
     Reify(BoolVar x, ReifyMode rm=RM_EQV);
     /// Return Boolean control variable

@@ -43,6 +43,9 @@ namespace Gecode {
    */
 
   forceinline
+  Reify::Reify(void)
+    : rm(RM_EQV) {}
+  forceinline
   Reify::Reify(BoolVar x0, ReifyMode rm0)
     : x(x0), rm(rm0) {}
   forceinline BoolVar
