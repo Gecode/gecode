@@ -436,13 +436,19 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
   ReEqDom<View,CtrlView,rm>::post(Home home, View x0, View x1, CtrlView b) {
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
       return EqDom<View,View>::post(home,x0,x1);
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return ES_OK;
       return Nq<View>::post(home,x0,x1);
+    }
     if (!same(x0,x1)) {
       (void) new (home) ReEqDom(home,x0,x1,b);
-    } else {
+    } else if (rm != RM_IMP) {
       GECODE_ME_CHECK(b.one(home));
     }
     return ES_OK;
@@ -463,20 +469,30 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
   ReEqDom<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(EqDom<View,View>::post(home(*this),x0,x1)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
+    }
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home)); return home.ES_SUBSUMED(*this);
-    case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); return home.ES_SUBSUMED(*this);
-    case RT_MAYBE:
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.one_none(home)); 
       break;
+    case RT_FALSE:
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.zero_none(home)); 
+      break;
+    case RT_MAYBE:
+      return ES_FIX;
     default: GECODE_NEVER;
     }
-    return ES_FIX;
+    return home.ES_SUBSUMED(*this);
   }
 
 
@@ -494,13 +510,19 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
   ReEqBnd<View,CtrlView,rm>::post(Home home, View x0, View x1, CtrlView b){
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
       return EqBnd<View,View>::post(home,x0,x1);
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return ES_OK;
       return Nq<View>::post(home,x0,x1);
+    }
     if (!same(x0,x1)) {
       (void) new (home) ReEqBnd(home,x0,x1,b);
-    } else {
+    } else if (rm != RM_IMP) {
       GECODE_ME_CHECK(b.one(home));
     }
     return ES_OK;
@@ -521,20 +543,30 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
   ReEqBnd<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(EqBnd<View,View>::post(home(*this),x0,x1)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
+    }
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home));  return home.ES_SUBSUMED(*this);
-    case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); return home.ES_SUBSUMED(*this);
-    case RT_MAYBE:
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
       break;
+    case RT_FALSE:
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
+      break;
+    case RT_MAYBE:
+      return ES_FIX;
     default: GECODE_NEVER;
     }
-    return ES_FIX;
+    return home.ES_SUBSUMED(*this);
   }
 
 
@@ -555,15 +587,19 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqDomInt<View,CtrlView,rm>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
-      GECODE_ME_CHECK(x.eq(home,c));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x.eq(home,c));
     } else if (b.zero()) {
-      GECODE_ME_CHECK(x.nq(home,c));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x.nq(home,c));
     } else if (x.assigned()) {
       assert(b.none());
       if (x.val() == c) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
       } else {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
       (void) new (home) ReEqDomInt(home,x,c,b);
@@ -574,7 +610,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReEqDomInt<View,CtrlView,rm>::ReEqDomInt(Space& home, bool share, ReEqDomInt& p)
+  ReEqDomInt<View,CtrlView,rm>::ReEqDomInt(Space& home, bool share,
+                                           ReEqDomInt& p)
     : ReUnaryPropagator<View,PC_INT_DOM,CtrlView>(home,share,p), c(p.c) {}
 
   template<class View, class CtrlView, ReifyMode rm>
@@ -587,15 +624,21 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqDomInt<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
-      GECODE_ME_CHECK(x0.eq(home,c));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x0.eq(home,c));
     } else if (b.zero()) {
-      GECODE_ME_CHECK(x0.nq(home,c));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x0.nq(home,c));
     } else {
       switch (rtest_eq_dom(x0,c)) {
       case RT_TRUE:
-        GECODE_ME_CHECK(b.one_none(home)); break;
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
+        break;
       case RT_FALSE:
-        GECODE_ME_CHECK(b.zero_none(home)); break;
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
+        break;
       case RT_MAYBE:
         return ES_FIX;
       default: GECODE_NEVER;
@@ -622,15 +665,19 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqBndInt<View,CtrlView,rm>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
-      GECODE_ME_CHECK(x.eq(home,c));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x.eq(home,c));
     } else if (b.zero()) {
-      GECODE_ME_CHECK(x.nq(home,c));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x.nq(home,c));
     } else if (x.assigned()) {
       assert(b.none());
       if (x.val() == c) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
       } else {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
       (void) new (home) ReEqBndInt(home,x,c,b);
@@ -654,15 +701,21 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReEqBndInt<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
-      GECODE_ME_CHECK(x0.eq(home,c));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x0.eq(home,c));
     } else if (b.zero()) {
-      GECODE_ME_CHECK(x0.nq(home,c));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x0.nq(home,c));
     } else {
       switch (rtest_eq_bnd(x0,c)) {
       case RT_TRUE:
-        GECODE_ME_CHECK(b.one_none(home)); break;
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home)); 
+        break;
       case RT_FALSE:
-        GECODE_ME_CHECK(b.zero_none(home)); break;
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home)); 
+        break;
       case RT_MAYBE:
         return ES_FIX;
       default: GECODE_NEVER;

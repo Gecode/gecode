@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Val, class A, class B, class Ctrl>
+  template<class Val, class A, class B, class Ctrl, ReifyMode rm>
   class ReEqBin : public ReLinBin<Val,A,B,PC_INT_BND,Ctrl> {
   protected:
     using ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::x0;
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$(x_0+x_1 = c)\Leftrightarrow b\f$
+    /// Post propagator for \f$(x_0+x_1 = c)\equiv \operatorname{rm}(b)\f$
     static ExecStatus post(Home home, A x0, B x1, Val c, Ctrl b);
   };
 
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Val, class A, class B>
+  template<class Val, class A, class B, ReifyMode rm>
   class ReLqBin : public ReLinBin<Val,A,B,PC_INT_BND,BoolView> {
   protected:
     using ReLinBin<Val,A,B,PC_INT_BND,BoolView>::x0;
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$(x_0+x_1 \leq c)\Leftrightarrow b\f$
+    /// Post propagator for \f$(x_0+x_1 \leq c)\equiv \operatorname{rm}(b)\f$
     static ExecStatus post(Home home, A x0, B x1, Val c, BoolView b);
   };
 
@@ -637,7 +637,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   class ReEq : public ReLin<Val,P,N,PC_INT_BND,Ctrl> {
   protected:
     using ReLin<Val,P,N,PC_INT_BND,Ctrl>::x;
@@ -654,7 +654,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\Leftrightarrow b\f$
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\equiv \operatorname{rm}(b)\f$
     static ExecStatus
     post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   };
@@ -737,7 +737,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Val, class P, class N>
+  template<class Val, class P, class N, ReifyMode rm>
   class ReLq : public ReLin<Val,P,N,PC_INT_BND,BoolView> {
   protected:
     using ReLin<Val,P,N,PC_INT_BND,BoolView>::x;
@@ -754,7 +754,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\Leftrightarrow b\f$
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\equiv \operatorname{rm}(b)\f$
     static ExecStatus
     post(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
   };
@@ -937,7 +937,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   class ReGqBoolInt : public ReLinBoolInt<VX,VB> {
   protected:
     using ReLinBoolInt<VX,VB>::co;
@@ -957,7 +957,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq\right) c \Leftrightarrow b\f$
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i \geq\right) c \equiv \operatorname{rm}(b)\f$
     static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
   };
 
@@ -967,7 +967,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   class ReEqBoolInt : public ReLinBoolInt<VX,VB> {
   protected:
     using ReLinBoolInt<VX,VB>::co;
@@ -987,7 +987,7 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = c\right)\Leftrightarrow b\f$
+    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i = c\right)\equiv \operatorname{rm}(b)\f$
     static ExecStatus post(Home home, ViewArray<VX>& x, int c, VB b);
   };
 

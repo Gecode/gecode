@@ -552,26 +552,26 @@ namespace Gecode { namespace Int { namespace Linear {
    * Reified greater or equal propagator (integer rhs)
    * 
    */
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReGqBoolInt<VX,VB>::ReGqBoolInt(Home home, ViewArray<VX>& x, int c, VB b)
+  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Home home, ViewArray<VX>& x, int c, VB b)
     : ReLinBoolInt<VX,VB>(home,x,c,b) {}
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReGqBoolInt<VX,VB>::ReGqBoolInt(Space& home, bool share, 
-                                  ReGqBoolInt<VX,VB>& p)
+  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, bool share, 
+                                     ReGqBoolInt<VX,VB,rm>& p)
     : ReLinBoolInt<VX,VB>(home,share,p) {}
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   Actor*
-  ReGqBoolInt<VX,VB>::copy(Space& home, bool share) {
-    return new (home) ReGqBoolInt<VX,VB>(home,share,*this);
+  ReGqBoolInt<VX,VB,rm>::copy(Space& home, bool share) {
+    return new (home) ReGqBoolInt<VX,VB,rm>(home,share,*this);
   }
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   ExecStatus
-  ReGqBoolInt<VX,VB>::advise(Space&, Advisor&, const Delta& d) {
+  ReGqBoolInt<VX,VB,rm>::advise(Space&, Advisor&, const Delta& d) {
     if (VX::one(d))
       c--;
     n_s--;
@@ -581,9 +581,9 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_FIX;
   }
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   ExecStatus
-  ReGqBoolInt<VX,VB>::propagate(Space& home, const ModEventDelta&) {
+  ReGqBoolInt<VX,VB,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.none()) {
       if (c <= 0) {
         GECODE_ME_CHECK(b.one_none(home));
@@ -605,9 +605,9 @@ namespace Gecode { namespace Int { namespace Linear {
     return home.ES_SUBSUMED(*this);
   }
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   ExecStatus
-  ReGqBoolInt<VX,VB>::post(Home home, ViewArray<VX>& x, int c, VB b) {
+  ReGqBoolInt<VX,VB,rm>::post(Home home, ViewArray<VX>& x, int c, VB b) {
     assert(!b.assigned()); // checked before posting
 
     // Eliminate assigned views
@@ -638,7 +638,7 @@ namespace Gecode { namespace Int { namespace Linear {
          typename BoolNegTraits<VB>::NegView>
         ::post(home,nx,BoolNegTraits<VB>::neg(b));
     } else {
-      (void) new (home) ReGqBoolInt<VX,VB>(home,x,c,b);
+      (void) new (home) ReGqBoolInt<VX,VB,rm>(home,x,c,b);
     }
     return ES_OK;
   }
@@ -647,26 +647,26 @@ namespace Gecode { namespace Int { namespace Linear {
    * Reified equal propagator (integer rhs)
    * 
    */
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReEqBoolInt<VX,VB>::ReEqBoolInt(Home home, ViewArray<VX>& x, int c, VB b)
+  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Home home, ViewArray<VX>& x, int c, VB b)
     : ReLinBoolInt<VX,VB>(home,x,c,b) {}
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReEqBoolInt<VX,VB>::ReEqBoolInt(Space& home, bool share, 
-                                  ReEqBoolInt<VX,VB>& p)
+  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, bool share, 
+                                     ReEqBoolInt<VX,VB,rm>& p)
     : ReLinBoolInt<VX,VB>(home,share,p) {}
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   Actor*
-  ReEqBoolInt<VX,VB>::copy(Space& home, bool share) {
-    return new (home) ReEqBoolInt<VX,VB>(home,share,*this);
+  ReEqBoolInt<VX,VB,rm>::copy(Space& home, bool share) {
+    return new (home) ReEqBoolInt<VX,VB,rm>(home,share,*this);
   }
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   ExecStatus
-  ReEqBoolInt<VX,VB>::advise(Space&, Advisor&, const Delta& d) {
+  ReEqBoolInt<VX,VB,rm>::advise(Space&, Advisor&, const Delta& d) {
     if (VX::one(d))
       c--;
     n_s--;
@@ -677,9 +677,9 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_FIX;
   }
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   ExecStatus
-  ReEqBoolInt<VX,VB>::propagate(Space& home, const ModEventDelta&) {
+  ReEqBoolInt<VX,VB,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.none()) {
       if ((c == 0) && (n_s == 0)) {
         GECODE_ME_CHECK(b.one_none(home));
@@ -697,9 +697,9 @@ namespace Gecode { namespace Int { namespace Linear {
     return home.ES_SUBSUMED(*this);
   }
 
-  template<class VX, class VB>
+  template<class VX, class VB, ReifyMode rm>
   ExecStatus
-  ReEqBoolInt<VX,VB>::post(Home home, ViewArray<VX>& x, int c, VB b) {
+  ReEqBoolInt<VX,VB,rm>::post(Home home, ViewArray<VX>& x, int c, VB b) {
     assert(!b.assigned()); // checked before posting
 
     // Eliminate assigned views
@@ -731,7 +731,7 @@ namespace Gecode { namespace Int { namespace Linear {
          typename BoolNegTraits<VB>::NegView>
         ::post(home,nx,BoolNegTraits<VB>::neg(b));
     } else {
-      (void) new (home) ReEqBoolInt<VX,VB>(home,x,c,b);
+      (void) new (home) ReEqBoolInt<VX,VB,rm>(home,x,c,b);
     }
     return ES_OK;
   }

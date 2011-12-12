@@ -389,42 +389,43 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template<class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   forceinline
-  ReEq<Val,P,N,Ctrl>::ReEq(Home home,
-                           ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
+  ReEq<Val,P,N,Ctrl,rm>::ReEq(Home home,
+                              ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,x,y,c,b) {}
 
-  template<class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::post(Home home,
-                           ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
+  ReEq<Val,P,N,Ctrl,rm>::post(Home home,
+                              ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
-      (void) new (home) ReEq<Val,P,NoView,Ctrl>(home,x,nva,c,b);
+      (void) new (home) ReEq<Val,P,NoView,Ctrl,rm>(home,x,nva,c,b);
     } else if (x.size() == 0) {
-      (void) new (home) ReEq<Val,N,NoView,Ctrl>(home,y,nva,-c,b);
+      (void) new (home) ReEq<Val,N,NoView,Ctrl,rm>(home,y,nva,-c,b);
     } else {
-      (void) new (home) ReEq<Val,P,N,Ctrl>(home,x,y,c,b);
+      (void) new (home) ReEq<Val,P,N,Ctrl,rm>(home,x,y,c,b);
     }
     return ES_OK;
   }
 
 
-  template<class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   forceinline
-  ReEq<Val,P,N,Ctrl>::ReEq(Space& home, bool share, ReEq<Val,P,N,Ctrl>& p)
+  ReEq<Val,P,N,Ctrl,rm>::ReEq(Space& home, bool share, 
+                              ReEq<Val,P,N,Ctrl,rm>& p)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,share,p) {}
 
-  template<class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   Actor*
-  ReEq<Val,P,N,Ctrl>::copy(Space& home, bool share) {
-    return new (home) ReEq<Val,P,N,Ctrl>(home,share,*this);
+  ReEq<Val,P,N,Ctrl,rm>::copy(Space& home, bool share) {
+    return new (home) ReEq<Val,P,N,Ctrl,rm>(home,share,*this);
   }
 
-  template<class Val, class P, class N, class Ctrl>
+  template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::propagate(Space& home, const ModEventDelta& med) {
+  ReEq<Val,P,N,Ctrl,rm>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero())
       GECODE_REWRITE(*this,(Nq<Val,P,N>::post(home(*this),x,y,c)));
     if (b.one())
@@ -798,42 +799,42 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template<class Val, class P, class N>
+  template<class Val, class P, class N, ReifyMode rm>
   forceinline
-  ReLq<Val,P,N>::ReLq
-  (Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
+  ReLq<Val,P,N,rm>::ReLq(Home home, 
+                      ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
     : ReLin<Val,P,N,PC_INT_BND,BoolView>(home,x,y,c,b) {}
 
-  template<class Val, class P, class N>
+  template<class Val, class P, class N, ReifyMode rm>
   ExecStatus
-  ReLq<Val,P,N>::post
-  (Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
+  ReLq<Val,P,N,rm>::post(Home home, 
+                         ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
-      (void) new (home) ReLq<Val,P,NoView>(home,x,nva,c,b);
+      (void) new (home) ReLq<Val,P,NoView,rm>(home,x,nva,c,b);
     } else if (x.size() == 0) {
-      (void) new (home) ReLq<Val,NoView,N>(home,nva,y,c,b);
+      (void) new (home) ReLq<Val,NoView,N,rm>(home,nva,y,c,b);
     } else {
-      (void) new (home) ReLq<Val,P,N>(home,x,y,c,b);
+      (void) new (home) ReLq<Val,P,N,rm>(home,x,y,c,b);
     }
     return ES_OK;
   }
 
 
-  template<class Val, class P, class N>
+  template<class Val, class P, class N, ReifyMode rm>
   forceinline
-  ReLq<Val,P,N>::ReLq(Space& home, bool share, ReLq<Val,P,N>& p)
+  ReLq<Val,P,N,rm>::ReLq(Space& home, bool share, ReLq<Val,P,N,rm>& p)
     : ReLin<Val,P,N,PC_INT_BND,BoolView>(home,share,p) {}
 
-  template<class Val, class P, class N>
+  template<class Val, class P, class N, ReifyMode rm>
   Actor*
-  ReLq<Val,P,N>::copy(Space& home, bool share) {
-    return new (home) ReLq<Val,P,N>(home,share,*this);
+  ReLq<Val,P,N,rm>::copy(Space& home, bool share) {
+    return new (home) ReLq<Val,P,N,rm>(home,share,*this);
   }
 
-  template<class Val, class P, class N>
+  template<class Val, class P, class N, ReifyMode rm>
   ExecStatus
-  ReLq<Val,P,N>::propagate(Space& home, const ModEventDelta& med) {
+  ReLq<Val,P,N,rm>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero())
       GECODE_REWRITE(*this,(Lq<Val,N,P>::post(home(*this),y,x,-c-1)));
     if (b.one())
