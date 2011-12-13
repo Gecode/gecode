@@ -415,21 +415,32 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
   ReLq<View,CtrlView,rm>::post(Home home, View x0, View x1, CtrlView b) {
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return ES_OK;
       return Lq<View>::post(home,x0,x1);
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return ES_OK;
       return Le<View>::post(home,x1,x0);
+    }
     if (!same(x0,x1)) {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
-        GECODE_ME_CHECK(b.one_none(home)); break;
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home)); 
+        break;
       case RT_FALSE:
-        GECODE_ME_CHECK(b.zero_none(home)); break;
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home)); 
+        break;
       case RT_MAYBE:
-        (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b); break;
+        (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b); 
+        break;
       default: GECODE_NEVER;
       }
-    } else {
+    } else if (rm != RM_IMP) {
       GECODE_ME_CHECK(b.one_none(home));
     }
     return ES_OK;
@@ -449,20 +460,28 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, class CtrlView, ReifyMode rm>
   ExecStatus
   ReLq<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
-      GECODE_REWRITE(*this,Lq<View>::post(home(*this),x0,x1));
-    if (b.zero())
-      GECODE_REWRITE(*this,Le<View>::post(home(*this),x1,x0));
+    if (b.one()) {
+      if (rm != RM_PMI)
+        GECODE_REWRITE(*this,Lq<View>::post(home(*this),x0,x1));
+    }
+    if (b.zero()) {
+      if (rm != RM_IMP)
+        GECODE_REWRITE(*this,Le<View>::post(home(*this),x1,x0));
+    }
     switch (rtest_lq(x0,x1)) {
     case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home));  return home.ES_SUBSUMED(*this);
-    case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); return home.ES_SUBSUMED(*this);
-    case RT_MAYBE:
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
       break;
+    case RT_FALSE:
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home)); 
+      break;
+    case RT_MAYBE:
+      return ES_FIX;
     default: GECODE_NEVER;
     }
-    return ES_FIX;
+    return home.ES_SUBSUMED(*this);
   }
 
   /*
@@ -479,17 +498,24 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReLqInt<View,CtrlView,rm>::post(Home home, View x, int c, CtrlView b) {
     if (b.one()) {
-      GECODE_ME_CHECK(x.lq(home,c));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x.lq(home,c));
     } else if (b.zero()) {
-      GECODE_ME_CHECK(x.gr(home,c));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x.gr(home,c));
     } else {
       switch (rtest_lq(x,c)) {
       case RT_TRUE:
-        GECODE_ME_CHECK(b.one_none(home)); break;
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
+        break;
       case RT_FALSE:
-        GECODE_ME_CHECK(b.zero_none(home)); break;
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
+        break;
       case RT_MAYBE:
-        (void) new (home) ReLqInt<View,CtrlView,rm>(home,x,c,b); break;
+        (void) new (home) ReLqInt<View,CtrlView,rm>(home,x,c,b);
+        break;
       default: GECODE_NEVER;
       }
     }
@@ -512,22 +538,26 @@ namespace Gecode { namespace Int { namespace Rel {
   ExecStatus
   ReLqInt<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
-      GECODE_ME_CHECK(x0.lq(home,c)); goto subsumed;
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(x0.lq(home,c));
+    } else if (b.zero()) {
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(x0.gr(home,c));
+    } else {
+      switch (rtest_lq(x0,c)) {
+      case RT_TRUE:
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
+        break;
+      case RT_FALSE:
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
+        break;
+      case RT_MAYBE:
+        return ES_FIX;
+      default: GECODE_NEVER;
+      }
     }
-    if (b.zero()) {
-      GECODE_ME_CHECK(x0.gr(home,c)); goto subsumed;
-    }
-    switch (rtest_lq(x0,c)) {
-    case RT_TRUE:
-      GECODE_ME_CHECK(b.one_none(home)); goto subsumed;
-    case RT_FALSE:
-      GECODE_ME_CHECK(b.zero_none(home)); goto subsumed;
-    case RT_MAYBE:
-      break;
-    default: GECODE_NEVER;
-    }
-    return ES_FIX;
-  subsumed:
     return home.ES_SUBSUMED(*this);
   }
 
