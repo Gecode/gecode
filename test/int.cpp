@@ -92,12 +92,26 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
 
 namespace Test { namespace Int {
 
-  TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t, bool r)
-    : d(d0), x(*this,n,d), b(*this,0,1), test(t), reified(r) {
+  std::string
+  TestSpace::str(Gecode::ReifyMode rm) {
+    using namespace Gecode;
+    switch (rm) {
+    case RM_EQV: return "<=>";
+    case RM_IMP: return "=>";
+    case RM_PMI: return "<=";
+    default: return "???";
+    }
+  }
+
+  TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t,
+                       bool re, Gecode::ReifyMode rm)
+    : d(d0), x(*this,n,d), test(t), reified(re) {
+    Gecode::BoolVar b(*this,0,1);
+    r = Gecode::Reify(b,rm);
     if (opt.log) {
       olog << ind(2) << "Initial: x[]=" << x;
       if (reified)
-        olog << " b=" << b;
+        olog << " b=" << r.var() << " [mode=" << str(r.mode()) << "]";
       olog << std::endl;
     }
   }
@@ -105,7 +119,9 @@ namespace Test { namespace Int {
   TestSpace::TestSpace(bool share, TestSpace& s)
     : Gecode::Space(share,s), d(s.d), test(s.test), reified(s.reified) {
     x.update(*this, share, s.x);
-    b.update(*this, share, s.b);
+    Gecode::BoolVar b;
+    b.update(*this, share, s.r.var());
+    r.var(b); r.mode(s.r.mode());
   }
 
   Gecode::Space* 
@@ -124,7 +140,7 @@ namespace Test { namespace Int {
   void 
   TestSpace::post(void) {
     if (reified){
-      test->post(*this,x,b);
+      test->post(*this,x,r);
       if (opt.log)
         olog << ind(3) << "Posting reified propagator" << std::endl;
     } else {
@@ -169,7 +185,7 @@ namespace Test { namespace Int {
     assert(reified);
     if (opt.log)
       olog << ind(4) << "b = " << n << std::endl;
-    Gecode::rel(*this, b, Gecode::IRT_EQ, n);
+    Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
   }
 
   void 
@@ -303,7 +319,7 @@ namespace Test { namespace Int {
         if (x[i].size() != c->x[i].size()) {
           delete c; return false;
         }
-      if (reified && (b.size() != c->b.size())) {
+      if (reified && (r.var().size() != c->r.var().size())) {
         delete c; return false;
       }
       if (opt.log)
@@ -515,11 +531,11 @@ if (!(T)) {                                                     \
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumption");
-          CHECK_TEST(s->b.assigned(), "Control variable unassigned");
+          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (sol) {
-            CHECK_TEST(s->b.val()==1, "Zero on solution");
+            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
           } else {
-            CHECK_TEST(s->b.val()==0, "One on non-solution");
+            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
         }
@@ -530,11 +546,11 @@ if (!(T)) {                                                     \
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumption");
-          CHECK_TEST(s->b.assigned(), "Control variable unassigned");
+          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (sol) {
-            CHECK_TEST(s->b.val()==1, "Zero on solution");
+            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
           } else {
-            CHECK_TEST(s->b.val()==0, "One on non-solution");
+            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
         }
@@ -542,7 +558,8 @@ if (!(T)) {                                                     \
         {
           TestSpace* s = new TestSpace(arity,dom,this,true);
           s->post();
-          while (!s->failed() && (!s->assigned() || !s->b.assigned()))
+          while (!s->failed() && 
+                 (!s->assigned() || !s->r.var().assigned()))
             if (!s->prune(a,testfix)) {
               problem = "No fixpoint";
               delete s;
@@ -550,11 +567,11 @@ if (!(T)) {                                                     \
             }
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumption");
-          CHECK_TEST(s->b.assigned(), "Control variable unassigned");
+          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (sol) {
-            CHECK_TEST(s->b.val()==1, "Zero on solution");
+            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
           } else {
-            CHECK_TEST(s->b.val()==0, "One on non-solution");
+            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
         }

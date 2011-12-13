@@ -156,8 +156,8 @@ namespace Test {
       Gecode::IntSet d;
       /// Variables to be tested
       Gecode::IntVarArray x;
-      /// Control variable for reified propagators
-      Gecode::BoolVar b;
+      /// Reification information
+      Gecode::Reify r;
       /// The test currently run
       Test* test;
       /// Whether the test is for a reified propagator
@@ -167,10 +167,12 @@ namespace Test {
        * \brief Create test space
        *
        * Creates \a n variables with domain \a d for test \a t and stores
-       * whether the test is for a reified propagator (\a r).
+       * whether the test is for a reified propagator (\a re) with
+       * reification mode \a rm.
        *
        */
-      TestSpace(int n, Gecode::IntSet& d, Test* t, bool r);
+      TestSpace(int n, Gecode::IntSet& d, Test* t, 
+                bool re, Gecode::ReifyMode rm = Gecode::RM_EQV);
       /// Constructor for cloning \a s
       TestSpace(bool share, TestSpace& s);
       /// Copy space during cloning
@@ -199,6 +201,11 @@ namespace Test {
       void prune(void);
       /// Prune values but not those in assignment \a a
       bool prune(const Assignment& a, bool testfix);
+      /// \name Mapping scalar values to strings
+      //@{
+      /// Map reification mode to string
+      static std::string str(Gecode::ReifyMode rm);
+      //@}
     };
 
     /**
@@ -231,7 +238,8 @@ namespace Test {
        * if \a r is true. The consistency level is
        * maintained for convenience.
        */
-      Test(const std::string& s, int a, const Gecode::IntSet& d, bool r=false,
+      Test(const std::string& s, int a, const Gecode::IntSet& d,
+           bool r=false,
            Gecode::IntConLevel i=Gecode::ICL_DEF);
       /**
        * \brief Constructor
@@ -241,7 +249,8 @@ namespace Test {
        * if \a r is true. The consistency level is
        * maintained for convenience.
        */
-      Test(const std::string& s, int a, int min, int max, bool r=false,
+      Test(const std::string& s, int a, int min, int max,
+           bool r=false,
            Gecode::IntConLevel i=Gecode::ICL_DEF);
       /// Create assignment
       virtual Assignment* assignment(void) const;
