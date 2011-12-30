@@ -46,37 +46,46 @@ namespace Gecode {
   forceinline
   IntSet::IntSet(void) {}
 
+  /**
+   * \brief Integer set initialization
+   *
+   * Helper class to allow partial specialization of
+   * template member function.
+   *
+   */
+  template<class I>
+  class IntSetInit {
+  public:
+    static void init(IntSet& s, I& i) {
+      Support::DynamicArray<IntSet::Range,Heap> d(heap);
+      int n=0;
+      unsigned int size = 0;
+      while (i()) {
+        d[n].min = i.min(); d[n].max = i.max(); size += i.width();
+        ++n; ++i;
+      }
+      if (n > 0) {
+        IntSet::IntSetObject* o = IntSet::IntSetObject::allocate(n);
+        for (int j=n; j--; )
+          o->r[j]=d[j];
+        o->size = size;
+        s.object(o);
+      }
+    }
+  };
+
+  template<>
+  class IntSetInit<IntSet> {
+  public:
+    static void init(IntSet& s, const IntSet& i) {
+      s.object(i.object());
+    }
+  };
+
   template<class I>
   IntSet::IntSet(I& i) {
-    Support::DynamicArray<Range,Heap> d(heap);
-    int n=0;
-    unsigned int s = 0;
-    while (i()) {
-      d[n].min = i.min(); d[n].max = i.max(); s += i.width();
-      ++n; ++i;
-    }
-    if (n > 0) {
-      IntSetObject* o = IntSetObject::allocate(n);
-      for (int j=n; j--; )
-        o->r[j]=d[j];
-      o->size = s;
-      object(o);
-    }
+    IntSetInit<I>::init(*this,i);
   }
-
-#ifndef __INTEL_COMPILER
-  template<>
-#endif
-  forceinline
-  IntSet::IntSet(const IntSet& s)
-    : SharedHandle(s) {}
-
-#ifndef __INTEL_COMPILER
-  template<>
-#endif
-  forceinline
-  IntSet::IntSet(IntSet& s)
-    : SharedHandle(s) {}
 
   forceinline
   IntSet::IntSet(const int r[][2], int n) {

@@ -147,6 +147,8 @@ namespace Gecode {
 
   class IntSetRanges;
 
+  template<class I> class IntSetInit;
+  
   /**
    * \brief Integer sets
    *
@@ -156,6 +158,7 @@ namespace Gecode {
    */
   class IntSet : public SharedHandle {
     friend class IntSetRanges;
+    template<class I> friend class IntSetInit;
   private:
     /// %Range (intervals) of integers
     class Range {
@@ -210,16 +213,6 @@ namespace Gecode {
     /// Initialize with range iterator \a i
     template<class I>
     explicit IntSet(I& i);
-#ifdef __INTEL_COMPILER
-    /// Initialize with integer set \a s
-    IntSet(const IntSet& s);
-    /// Initialize with integer set \a s
-    IntSet(IntSet& s);
-    /// Initialize with integers \a i
-    IntSet(const PrimArgArray<int>& i);
-    /// Initialize with integers \a i
-    IntSet(PrimArgArray<int>& i);
-#endif
     //@}
 
     /// \name Range access
