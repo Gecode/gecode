@@ -222,7 +222,7 @@ namespace Test { namespace Int {
            e += a[i]*x[i];
          return cmp(e, irt, static_cast<double>(x[n]));
        }
-       /// %Test whether \a x is to be ignore
+       /// %Test whether \a x is to be ignored
        virtual bool ignore(const Assignment& x) const {
          for (int i=x.size()-1; i--; )
            if ((x[i] < 0) || (x[i] > 1))
