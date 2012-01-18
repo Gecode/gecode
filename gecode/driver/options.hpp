@@ -42,18 +42,20 @@ namespace Gecode {
 
   namespace Driver {
     /*
+     * Base option
+     *
+     */
+    inline void
+    BaseOption::skip(int& argc, char**& argv) {
+      // Remove option and its argument
+      argc -= 2; argv += 2;
+    }
+
+
+    /*
      * String option
      *
      */
-    inline
-    StringValueOption::StringValueOption(const char* o, const char* e, 
-                                         const char* v)
-      : BaseOption(o,e), cur(strdup(v)) {}
-    inline void
-    StringValueOption::value(const char* v) {
-      strdel(cur);
-      cur = strdup(v);
-    }
     inline const char*
     StringValueOption::value(void) const {
       return cur;
@@ -148,16 +150,6 @@ namespace Gecode {
    * Options
    *
    */
-  inline void
-  BaseOptions::add(Driver::BaseOption& o) {
-    o.next = NULL;
-    if (fst == NULL) {
-      fst=&o;
-    } else {
-      lst->next=&o;
-    }
-    lst=&o;
-  }
   inline const char*
   BaseOptions::name(void) const {
     return _name;

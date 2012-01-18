@@ -68,6 +68,18 @@ namespace Gecode {
       heap.rfree(const_cast<char*>(s));
     }
 
+    const char*
+    BaseOption::argument(int argc, char** argv) const {
+      if ((argc < 2) || strcmp(argv[1],opt))
+        return NULL;
+      if (argc == 2) {
+        std::cerr << "Missing argument for option \"" << opt << "\"" 
+                  << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      return argv[2];
+    }
+
     BaseOption::BaseOption(const char* o, const char* e)
       : opt(strdup(o)), exp(strdup(e)) {}
 
@@ -77,30 +89,29 @@ namespace Gecode {
     }
 
 
-    bool
-    StringValueOption::parse(int& argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt))
-        return false;
-      if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-      cur = strdup(argv[2]);
-      // Remove options
-      argc -= 2;
-      for (int i=1; i<argc; i++)
-        argv[i] = argv[i+2];
-      return true;
+    StringValueOption::StringValueOption(const char* o, const char* e, 
+                                         const char* v)
+      : BaseOption(o,e), cur(strdup(v)) {}
+    void
+    StringValueOption::value(const char* v) {
+      strdel(cur);
+      cur = strdup(v);
     }
-    
+    bool
+    StringValueOption::parse(int& argc, char**& argv) {
+      if (const char* a = argument(argc,argv)) {
+        cur = strdup(a);
+        skip(argc,argv);
+        return true;
+      }
+      return false;
+    }
     void
     StringValueOption::help(void) {
-      using namespace std;
-      cerr << '\t' << opt << " (string) default: " 
-           << ((cur == NULL) ? "NONE" : cur) << endl
-           << "\t\t" << exp << endl;
+      std::cerr << '\t' << opt << " (string) default: " 
+                << ((cur == NULL) ? "NONE" : cur) << std::endl
+                << "\t\t" << exp << std::endl;
     }
-  
     StringValueOption::~StringValueOption(void) {
       strdel(cur);
     }
@@ -121,30 +132,22 @@ namespace Gecode {
       }
       lst = n;
     }
-    
     bool
-    StringOption::parse(int& argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt))
-        return false;
-      if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
+    StringOption::parse(int& argc, char**& argv) {
+      if (const char* a = argument(argc,argv)) {
+        for (Value* v = fst; v != NULL; v = v->next)
+          if (!strcmp(a,v->opt)) {
+            cur = v->val;
+            skip(argc,argv);
+            return true;
+          }
+        std::cerr << "Wrong argument \"" << a
+                  << "\" for option \"" << opt << "\""
+                  << std::endl;
         exit(EXIT_FAILURE);
       }
-      for (Value* v = fst; v != NULL; v = v->next)
-        if (!strcmp(argv[2],v->opt)) {
-          cur = v->val;
-          // Remove options
-          argc -= 2;
-          for (int i=1; i<argc; i++)
-            argv[i] = argv[i+2];
-          return true;
-        }
-      std::cerr << "Wrong argument \"" << argv[2]
-                << "\" for option \"" << opt << "\""
-                << std::endl;
-      exit(EXIT_FAILURE);
+      return false;
     }
-    
     void
     StringOption::help(void) {
       if (fst == NULL)
@@ -178,67 +181,48 @@ namespace Gecode {
     
     
     bool
-    IntOption::parse(int& argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt))
-        return false;
-      if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
-        exit(EXIT_FAILURE);
+    IntOption::parse(int& argc, char**& argv) {
+      if (const char* a = argument(argc,argv)) {
+        cur = atoi(a);
+        skip(argc,argv);
+        return true;
       }
-      cur = atoi(argv[2]);
-      // Remove options
-      argc -= 2;
-      for (int i=1; i<argc; i++)
-        argv[i] = argv[i+2];
-      return true;
+      return false;
     }
     
     void
     IntOption::help(void) {
-      using namespace std;
-      cerr << '\t' << opt << " (int) default: " << cur << endl
-           << "\t\t" << exp << endl;
+      std::cerr << '\t' << opt << " (int) default: " << cur << std::endl
+                << "\t\t" << exp << std::endl;
     }
   
 
     bool
-    UnsignedIntOption::parse(int& argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt))
-        return false;
-      if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
-        exit(EXIT_FAILURE);
+    UnsignedIntOption::parse(int& argc, char**& argv) {
+      if (const char* a = argument(argc,argv)) {
+        cur = static_cast<unsigned int>(atoi(a));
+        skip(argc,argv);
+        return true;
       }
-      cur = static_cast<unsigned int>(atoi(argv[2]));
-      // Remove options
-      argc -= 2;
-      for (int i=1; i<argc; i++)
-        argv[i] = argv[i+2];
-      return true;
+      return false;
     }
     
     void
     UnsignedIntOption::help(void) {
-      using namespace std;
-      cerr << '\t' << opt << " (unsigned int) default: " << cur << endl
-           << "\t\t" << exp << endl;
+      std::cerr << '\t' << opt << " (unsigned int) default: " 
+                << cur << std::endl
+                << "\t\t" << exp << std::endl;
     }
   
 
     bool
-    DoubleOption::parse(int& argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt))
-        return false;
-      if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
-        exit(EXIT_FAILURE);
+    DoubleOption::parse(int& argc, char**& argv) {
+      if (const char* a = argument(argc,argv)) {
+        cur = atof(a);
+        skip(argc,argv);
+        return true;
       }
-      cur = atof(argv[2]);
-      // Remove options
-      argc -= 2;
-      for (int i=1; i<argc; i++)
-        argv[i] = argv[i+2];
-      return true;
+      return false;
     }
     
     void
@@ -249,29 +233,22 @@ namespace Gecode {
     }
 
     bool
-    BoolOption::parse(int& argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt)) {
-        return false;
+    BoolOption::parse(int& argc, char**& argv) {
+      if (const char* a = argument(argc,argv)) {
+        if (!strcmp(a,"true") || !strcmp(a,"1")) {
+          cur = true;
+        } else if (!strcmp(a,"false") || !strcmp(a,"0")) {
+          cur = false;
+        } else {
+          std::cerr << "Wrong argument \"" << a
+                    << "\" for option \"" << opt << "\""
+                    << std::endl;
+          exit(EXIT_FAILURE);
+        }
+        skip(argc,argv);
+        return true;
       }
-      if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
-        exit(EXIT_FAILURE);
-      }
-      if (!strcmp(argv[2],"true") || !strcmp(argv[2],"1")) {
-        cur = true;
-      } else if (!strcmp(argv[2],"false") || !strcmp(argv[2],"0")) {
-        cur = false;
-      } else {
-        std::cerr << "Wrong argument \"" << argv[2]
-                  << "\" for option \"" << opt << "\""
-                  << std::endl;
-        exit(EXIT_FAILURE);
-      }
-      // Remove options
-      argc -= 2;
-      for (int i=1; i<argc; i++)
-        argv[i] = argv[i+2];
-      return true;
+      return false;
     }
 
     void 
@@ -285,6 +262,16 @@ namespace Gecode {
   
   }
 
+  void
+  BaseOptions::add(Driver::BaseOption& o) {
+    o.next = NULL;
+    if (fst == NULL) {
+      fst=&o;
+    } else {
+      lst->next=&o;
+    }
+    lst=&o;
+  }
   BaseOptions::BaseOptions(const char* n)
     : fst(NULL), lst(NULL), 
       _name(Driver::BaseOption::strdup(n)) {}
@@ -333,7 +320,7 @@ namespace Gecode {
   }
 
   void
-  BaseOptions::parse(int& argc, char* argv[]) {
+  BaseOptions::parse(int& argc, char**& argv) {
   next:
     for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
       if (o->parse(argc,argv))
@@ -409,7 +396,7 @@ namespace Gecode {
   }
 
   void
-  SizeOptions::parse(int& argc, char* argv[]) {
+  SizeOptions::parse(int& argc, char**& argv) {
     Options::parse(argc,argv);
     if (argc < 2)
       return;
@@ -435,7 +422,7 @@ namespace Gecode {
   }
 
   void
-  InstanceOptions::parse(int& argc, char* argv[]) {
+  InstanceOptions::parse(int& argc, char**& argv) {
     Options::parse(argc,argv);
     if (argc < 2)
       return;
