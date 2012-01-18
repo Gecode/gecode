@@ -130,8 +130,8 @@ namespace Gecode {
      *
      */
     inline
-    BoolOption::BoolOption(const char* o, const char* e) 
-      : BaseOption(o,e), cur(false) {}
+    BoolOption::BoolOption(const char* o, const char* e, bool v) 
+      : BaseOption(o,e), cur(v) {}
     inline void
     BoolOption::value(bool v) {
       cur = v;
@@ -334,6 +334,15 @@ namespace Gecode {
   }
   
   inline void
+  Options::samples(unsigned int s) {
+    _samples.value(s);
+  }
+  inline unsigned int
+  Options::samples(void) const {
+    return _samples.value();
+  }
+
+  inline void
   Options::iterations(unsigned int i) {
     _iterations.value(i);
   }
@@ -343,12 +352,12 @@ namespace Gecode {
   }
   
   inline void
-  Options::samples(unsigned int s) {
-    _samples.value(s);
+  Options::print_last(bool p) {
+    _print_last.value(p);
   }
-  inline unsigned int
-  Options::samples(void) const {
-    return _samples.value();
+  inline bool
+  Options::print_last(void) const {
+    return _print_last.value();
   }
 
 #ifdef GECODE_HAS_GIST

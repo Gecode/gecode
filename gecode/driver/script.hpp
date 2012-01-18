@@ -238,13 +238,30 @@ namespace Gecode { namespace Driver {
           if (o.interrupt())
             Cutoff::installCtrlHandler(true);
           Engine<Script> e(s,so);
-          do {
-            Script* ex = e.next();
-            if (ex == NULL)
-              break;
-            ex->print(std::cout);
-            delete ex;
-          } while (--i != 0);
+          if (o.print_last()) {
+            Script* px = NULL;
+            do {
+              Script* ex = e.next();
+              if (ex == NULL) {
+                if (px != NULL) {
+                  px->print(std::cout);
+                  delete px;
+                }
+                break;
+              } else {
+                delete px;
+                px = ex;
+              }
+            } while (--i != 0);
+          } else {
+            do {
+              Script* ex = e.next();
+              if (ex == NULL)
+                break;
+              ex->print(std::cout);
+              delete ex;
+            } while (--i != 0);
+          }
           if (o.interrupt())
             Cutoff::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();

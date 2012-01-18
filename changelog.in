@@ -73,6 +73,23 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+Thanks: Josef Eisl
+[DESCRIPTION]
+The command line -print-last configures whether only the last
+solution found is printed.
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Boolean options (BoolOption) now expect a false or true argument
+and hence are in-line with all other option types.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

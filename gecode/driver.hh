@@ -256,8 +256,8 @@ namespace Gecode {
     protected:
       bool cur; ///< Current value
     public:
-      /// Initialize for option \a o and explanation \a e and default false
-      BoolOption(const char* o, const char* e);
+      /// Initialize for option \a o and explanation \a e and default value \a v
+      BoolOption(const char* o, const char* e, bool v=false);
       /// Set default value to \a v
       void value(bool v);
       /// Return current option value
@@ -332,6 +332,7 @@ namespace Gecode {
     Driver::StringOption      _mode;       ///< Script mode to run
     Driver::UnsignedIntOption _samples;    ///< How many samples
     Driver::UnsignedIntOption _iterations; ///< How many iterations per sample
+    Driver::BoolOption        _print_last; ///< Print only last solution found
     //@}
 
   public:
@@ -431,15 +432,20 @@ namespace Gecode {
     /// Return mode
     ScriptMode mode(void) const;
     
+    /// Set default number of samples
+    void samples(unsigned int s);
+    /// Return number of samples
+    unsigned int samples(void) const;
+
     /// Set default number of iterations
     void iterations(unsigned int i);
     /// Return number of iterations
     unsigned int iterations(void) const;
     
-    /// Set default number of samples
-    void samples(unsigned int s);
-    /// Return number of samples
-    unsigned int samples(void) const;
+    /// Set whether to print only last solution found
+    void print_last(bool p);
+    /// Return whether to print only last solution found
+    bool print_last(void) const;
     //@}
 
 #ifdef GECODE_HAS_GIST

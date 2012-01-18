@@ -253,18 +253,33 @@ namespace Gecode {
       if ((argc < 2) || strcmp(argv[1],opt)) {
         return false;
       }
+      if (argc == 2) {
+        std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
+        exit(EXIT_FAILURE);
+      }
+      if (!strcmp(argv[2],"true") || !strcmp(argv[2],"1")) {
+        cur = true;
+      } else if (!strcmp(argv[2],"false") || !strcmp(argv[2],"0")) {
+        cur = false;
+      } else {
+        std::cerr << "Wrong argument \"" << argv[2]
+                  << "\" for option \"" << opt << "\""
+                  << std::endl;
+        exit(EXIT_FAILURE);
+      }
       // Remove options
-      argc--;
+      argc -= 2;
       for (int i=1; i<argc; i++)
-        argv[i] = argv[i+1];
-      cur = true;
+        argv[i] = argv[i+2];
       return true;
     }
 
     void 
     BoolOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt << endl << "\t\t" << exp << endl;
+      cerr << '\t' << opt << " (false, true) default: " 
+           << (cur ? "true" : "false") << endl 
+           << "\t\t" << exp << endl;
     }
 
   
@@ -360,7 +375,10 @@ namespace Gecode {
       
       _mode("-mode","how to execute script",SM_SOLUTION),
       _samples("-samples","how many samples (time mode)",1),
-      _iterations("-iterations","iterations per sample (time mode)",1)
+      _iterations("-iterations","iterations per sample (time mode)",1),
+      _print_last("-print-last",
+                  "whether to only print the last solution (solution mode)",
+                  false)
   {
     
     _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
@@ -378,7 +396,7 @@ namespace Gecode {
     add(_branching);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
     add(_node); add(_fail); add(_time); add(_interrupt);
-    add(_mode); add(_iterations); add(_samples);
+    add(_mode); add(_iterations); add(_samples); add(_print_last);
   }
 
   
