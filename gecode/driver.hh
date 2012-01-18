@@ -324,7 +324,7 @@ namespace Gecode {
     Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;      ///< Cutoff for time
-    Driver::StringOption      _interrupt; ///< Whether to catch SIGINT
+    Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
     //@}
     
     /// \name Execution options

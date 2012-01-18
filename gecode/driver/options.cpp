@@ -277,7 +277,7 @@ namespace Gecode {
     void 
     BoolOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt << " (false, true) default: " 
+      cerr << '\t' << opt << " (false, 0, true, 1) default: " 
            << (cur ? "true" : "false") << endl 
            << "\t\t" << exp << endl;
     }
@@ -371,7 +371,8 @@ namespace Gecode {
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
-      _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)", true),
+      _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
+                 true),
       
       _mode("-mode","how to execute script",SM_SOLUTION),
       _samples("-samples","how many samples (time mode)",1),
@@ -388,9 +389,6 @@ namespace Gecode {
     _mode.add(SM_TIME, "time");
     _mode.add(SM_STAT, "stat");
     _mode.add(SM_GIST, "gist");
-    
-    _interrupt.add(false, "false");
-    _interrupt.add(true, "true");
     
     add(_model); add(_symmetry); add(_propagation); add(_icl); 
     add(_branching);
