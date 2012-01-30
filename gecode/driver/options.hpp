@@ -41,16 +41,6 @@
 namespace Gecode {
 
   namespace Driver {
-    /*
-     * Base option
-     *
-     */
-    inline void
-    BaseOption::skip(int& argc, char**& argv) {
-      // Remove option and its argument
-      argc -= 2; argv += 2;
-    }
-
 
     /*
      * String option

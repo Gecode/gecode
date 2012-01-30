@@ -116,14 +116,12 @@ namespace Gecode {
       const char* exp;  ///< Short explanation
       BaseOption* next; ///< Next option
       /// Check for option and return its argument
-      const char* argument(int argc, char** argv) const;
-      /// Skip to next option and argument
-      void skip(int& argc, char**& argv);
+      char* argument(int argc, char* argv[]) const;
     public:
       /// Initialize for option \a o and explanation \a e
       BaseOption(const char* o, const char* e);
-      /// Parse option at first position and possibly delete
-      virtual bool parse(int& argc, char**& argv) = 0;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]) = 0;
       /// Print help text
       virtual void help(void) = 0;
       /// Destructor
@@ -148,8 +146,8 @@ namespace Gecode {
       void value(const char* v);
       /// Return current option value
       const char* value(void) const;
-      /// Parse option at first position
-      virtual bool parse(int& argc, char**& argv);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
       /// Print help text
       virtual void help(void);
       /// Destructor
@@ -183,8 +181,8 @@ namespace Gecode {
       int value(void) const;
       /// Add option value for value \a v, string \a o, and help text \a h
       void add(int v, const char* o, const char* h = NULL);
-      /// Parse option at first position
-      virtual bool parse(int& argc, char**& argv);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
       /// Print help text
       virtual void help(void);
       /// Destructor
@@ -206,8 +204,8 @@ namespace Gecode {
       void value(int v);
       /// Return current option value
       int value(void) const;
-      /// Parse option at first position
-      virtual bool parse(int& argc, char**& argv);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
       /// Print help text
       virtual void help(void);
     };
@@ -226,8 +224,8 @@ namespace Gecode {
       void value(unsigned int v);
       /// Return current option value
       unsigned int value(void) const;
-      /// Parse option at first position
-      virtual bool parse(int& argc, char**& argv);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
       /// Print help text
       virtual void help(void);
     };
@@ -246,8 +244,8 @@ namespace Gecode {
       void value(double v);
       /// Return current option value
       double value(void) const;
-      /// Parse option at first position
-      virtual bool parse(int& argc, char**& argv);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
       /// Print help text
       virtual void help(void);
     };
@@ -266,8 +264,8 @@ namespace Gecode {
       void value(bool v);
       /// Return current option value
       bool value(void) const;
-      /// Parse option at first position
-      virtual bool parse(int& argc, char**& argv);
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
       /// Print help text
       virtual void help(void);
     };

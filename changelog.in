@@ -86,7 +86,7 @@ Module: driver
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Boolean options (BoolOption) now expect a false or true argument
+Boolean options (BoolOption) can now be given a false or true argument
 and hence are in-line with all other option types.
 
 [ENTRY]
@@ -154,7 +154,7 @@ What:   bug
 Rank:   minor
 Thanks: Nicholas Tung
 [DESCRIPTION]
-Do not crash when ecountering undefined identifier as constraint argument.
+Do not crash when encountering undefined identifier as constraint argument.
 
 [ENTRY]
 Module: int
