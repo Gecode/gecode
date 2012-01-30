@@ -318,20 +318,26 @@ namespace Gecode {
   }
 
   void
-  BaseOptions::parse(int& argc, char**& argv) {
+  BaseOptions::parse(int& argc, char* argv[]) {
+    int c = argc;
+    char** v = argv;
   next:
     for (Driver::BaseOption* o = fst; o != NULL; o = o->next)
-      if (int a = o->parse(argc,argv)) {
-        argc -= a; argv += a;
+      if (int a = o->parse(c,v)) {
+        c -= a; v += a;
         goto next;
       }
-    if (argc < 2)
-      return;
-    if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
-        !strcmp(argv[1],"-?")) {
-      help();
-      exit(EXIT_SUCCESS);
+    if (c >= 2) {
+      if (!strcmp(v[1],"-help") || !strcmp(v[1],"--help") ||
+          !strcmp(v[1],"-?")) {
+        help();
+        exit(EXIT_SUCCESS);
+      }
     }
+    // Copy remaining arguments
+    argc = c;
+    for (int i=1; i<argc; i++)
+      argv[i] = v[i];
     return;
   }
   
@@ -396,7 +402,7 @@ namespace Gecode {
   }
 
   void
-  SizeOptions::parse(int& argc, char**& argv) {
+  SizeOptions::parse(int& argc, char* argv[]) {
     Options::parse(argc,argv);
     if (argc < 2)
       return;
@@ -422,7 +428,7 @@ namespace Gecode {
   }
 
   void
-  InstanceOptions::parse(int& argc, char**& argv) {
+  InstanceOptions::parse(int& argc, char* argv[]) {
     Options::parse(argc,argv);
     if (argc < 2)
       return;

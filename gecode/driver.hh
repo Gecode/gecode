@@ -293,12 +293,10 @@ namespace Gecode {
      * \brief Parse options from arguments \a argv (number is \a argc)
      *
      * The options are parsed from position one onwards until no more options
-     * are detected. The number of arguments \a argc and the arrays of 
-     * arguments \a argv is updated accordingly. That is, after parsing
-     * \a argv[1] refers to the first yet unparsed argument.
+     * are detected. After parsing, the parsed arguments have been removed.
      *
      */
-    void parse(int& argc, char**& argv);
+    void parse(int& argc, char* argv[]);
     
     /// Return name of script
     const char* name(void) const;
@@ -515,7 +513,7 @@ namespace Gecode {
     /// Print help text
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
-    void parse(int& argc, char**& argv);
+    void parse(int& argc, char* argv[]);
     
     /// Set default size
     void size(unsigned int s);
@@ -536,7 +534,7 @@ namespace Gecode {
     /// Print help text
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
-    void parse(int& argc, char**& argv);
+    void parse(int& argc, char* argv[]);
     
     /// Set default instance name
     void instance(const char* s);
