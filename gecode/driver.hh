@@ -289,7 +289,15 @@ namespace Gecode {
 
     /// Add new option \a o
     void add(Driver::BaseOption& o);
-    /// Parse options from arguments \a argv (number is \a argc)
+    /**
+     * \brief Parse options from arguments \a argv (number is \a argc)
+     *
+     * The options are parsed from position one onwards until no more options
+     * are detected. The number of arguments \a argc and the arrays of 
+     * arguments \a argv is updated accordingly. That is, after parsing
+     * \a argv[1] refers to the first yet unparsed argument.
+     *
+     */
     void parse(int& argc, char**& argv);
     
     /// Return name of script
