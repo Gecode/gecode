@@ -577,9 +577,11 @@ namespace Gecode {
        * SIGINT to the process (i.e., pressing Ctrl-C on the command
        * line).
        *
+       * In case \a s is different from NULL, the search engine uses
+       * \a s as root of the search tree.
        */
       template<class Script, template<class> class Engine, class Options>
-      static void run(const Options& opt);
+      static void run(const Options& opt, Script* s=NULL);
     private:
       /// Catch wrong definitions of copy constructor
       explicit ScriptBase(ScriptBase& e);

@@ -190,7 +190,7 @@ namespace Gecode { namespace Driver {
   template<class Space>
   template<class Script, template<class> class Engine, class Options>
   void
-  ScriptBase<Space>::run(const Options& o) {
+  ScriptBase<Space>::run(const Options& o, Script* s) {
     using namespace std;
     try {
       switch (o.mode()) {
@@ -213,7 +213,8 @@ namespace Gecode { namespace Driver {
             opt.inspect.move(o.inspect.move(i));
           for (int i=0; o.inspect.compare(i) != NULL; i++)
             opt.inspect.compare(o.inspect.compare(i));
-          Script* s = new Script(o);
+          if (s == NULL)
+            s = new Script(o);
           (void) GistEngine<Engine<Script> >::explore(s, opt);
         }
         break;
@@ -225,7 +226,8 @@ namespace Gecode { namespace Driver {
           Support::Timer t;
           int i = o.solutions();
           t.start();
-          Script* s = new Script(o);
+          if (s == NULL)
+            s = new Script(o);
           unsigned int n_p = s->propagators();
           unsigned int n_b = s->branchers();
           Search::Options so;
@@ -308,7 +310,8 @@ namespace Gecode { namespace Driver {
           Support::Timer t;
           int i = o.solutions();
           t.start();
-          Script* s = new Script(o);
+          if (s == NULL)
+            s = new Script(o);
           unsigned int n_p = s->propagators();
           unsigned int n_b = s->branchers();
           Search::Options so;
