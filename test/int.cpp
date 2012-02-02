@@ -514,6 +514,15 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
+        START_TEST("Assignment reified (rewrite failure)");
+        {
+          TestSpace* s = new TestSpace(arity,dom,this,true);
+          s->post();
+          s->rel(!sol);
+          s->assign(a);
+          CHECK_TEST(s->failed(), "Not failed");
+          delete s;
+        }
         START_TEST("Assignment reified (immediate rewrite)");
         {
           TestSpace* s = new TestSpace(arity,dom,this,true);
@@ -522,6 +531,15 @@ if (!(T)) {                                                     \
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumption");
+          delete s;
+        }
+        START_TEST("Assignment reified (immediate failure)");
+        {
+          TestSpace* s = new TestSpace(arity,dom,this,true);
+          s->rel(!sol);
+          s->post();
+          s->assign(a);
+          CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
         START_TEST("Assignment reified (before posting)");
