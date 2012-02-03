@@ -463,23 +463,23 @@ namespace Gecode { namespace Int { namespace Rel {
     if (b.one()) {
       if (rm != RM_PMI)
         GECODE_REWRITE(*this,Lq<View>::post(home(*this),x0,x1));
-    }
-    if (b.zero()) {
+    } else if (b.zero()) {
       if (rm != RM_IMP)
         GECODE_REWRITE(*this,Le<View>::post(home(*this),x1,x0));
-    }
-    switch (rtest_lq(x0,x1)) {
-    case RT_TRUE:
-      if (rm != RM_IMP)
-        GECODE_ME_CHECK(b.one_none(home));
-      break;
-    case RT_FALSE:
-      if (rm != RM_PMI)
-        GECODE_ME_CHECK(b.zero_none(home)); 
-      break;
-    case RT_MAYBE:
-      return ES_FIX;
-    default: GECODE_NEVER;
+    } else {
+      switch (rtest_lq(x0,x1)) {
+      case RT_TRUE:
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
+        break;
+      case RT_FALSE:
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home)); 
+        break;
+      case RT_MAYBE:
+        return ES_FIX;
+      default: GECODE_NEVER;
+      }
     }
     return home.ES_SUBSUMED(*this);
   }

@@ -288,6 +288,28 @@ namespace Test {
     };
     //@}
 
+  /// Iterator for reification modes
+  class ReifyModes {
+  protected:
+    /// Array of reification modes
+    Gecode::ReifyMode rms[3];
+    /// Current position in mode array
+    int i;
+  public:
+    /// Initialize iterator with reification mode \a rm
+    ReifyModes(Gecode::ReifyMode rm);
+    /// Initialize iterator with reification modes \a rm0 and \a rm1
+    ReifyModes(Gecode::ReifyMode rm0, Gecode::ReifyMode rm1);
+    /// Initialize iterator with all three reification modes
+    ReifyModes(void);
+    /// Test whether iterator is done
+    bool operator()(void) const;
+    /// Increment to next reification mode
+    void operator++(void);
+    /// Return current reification mode
+    Gecode::ReifyMode rm(void) const;
+    };
+
     /// Iterator for integer consistency levels
     class IntConLevels {
     private:

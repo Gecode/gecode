@@ -504,9 +504,9 @@ if (!(T)) {                                                     \
       }
 
       if (reified && !ignore(a)) {
-        START_TEST("Assignment reified (rewrite after post)");
-        {
-          TestSpace* s = new TestSpace(arity,dom,this,true);
+        for (ReifyModes rms; rms(); ++rms) {
+          START_TEST("Assignment reified (rewrite after post)");
+          TestSpace* s = new TestSpace(arity,dom,this,true,rms.rm());
           s->post();
           s->rel(sol);
           s->assign(a);
@@ -523,9 +523,9 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
-        START_TEST("Assignment reified (immediate rewrite)");
-        {
-          TestSpace* s = new TestSpace(arity,dom,this,true);
+        for (ReifyModes rms; rms(); ++rms) {
+          START_TEST("Assignment reified (immediate rewrite)");
+          TestSpace* s = new TestSpace(arity,dom,this,true,rms.rm());
           s->rel(sol);
           s->post();
           s->assign(a);
