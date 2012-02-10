@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Adam Russell
+[DESCRIPTION]
+Gecode now compiles on NetBSD.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor
