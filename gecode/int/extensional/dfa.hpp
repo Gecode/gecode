@@ -152,6 +152,17 @@ namespace Gecode {
   }
 
 
+  /*
+   * Constructing transitions
+   *
+   */
+
+  forceinline
+  DFA::Transition::Transition() {}
+
+  forceinline
+  DFA::Transition::Transition(int i_state0, int symbol0, int o_state0) 
+    : i_state(i_state0), symbol(symbol0), o_state(o_state0) {}
 
   /*
    * Iterating over all transitions

@@ -1833,6 +1833,10 @@ namespace Gecode {
       int i_state; ///< input state
       int symbol;  ///< symbol
       int o_state; ///< output state
+      /// Default constructor
+      Transition();
+      /// Initialize members
+      Transition(int i_state0, int symbol0, int o_state0);
     };
     /// Iterator for %DFA transitions (sorted by symbols)
     class Transitions {
