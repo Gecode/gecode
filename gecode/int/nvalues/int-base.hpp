@@ -124,10 +124,13 @@ namespace Gecode { namespace Int { namespace NValues {
   IntBase<VY>::size(Space& home) const {
     Region r(home);
     assert(x.size() > 0);
-    Iter::Ranges::NaryUnion 
-      u(r,ValSet::Ranges(vs),ViewRanges<IntView>(x[x.size()-1]));
-    for (int i=x.size()-1; i--; )
-      u |= ViewRanges<IntView>(x[i]);
+    ValSet::Ranges vsr(vs);
+    ViewRanges<IntView> xr(x[x.size()-1]);
+    Iter::Ranges::NaryUnion u(r,vsr,xr);
+    for (int i=x.size()-1; i--; ) {
+      ViewRanges<IntView> xir(x[i]);
+      u |= xir;
+    }
     unsigned int s = Iter::Ranges::size(u);
 
     // To avoid overflow
