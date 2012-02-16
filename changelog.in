@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+New example: Colored matrix without monochromatic rectangles.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

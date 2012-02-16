@@ -739,7 +739,7 @@ INTEXAMPLESRC0 =						\
 	all-interval langford-number warehouses	radiotherapy    \
 	word-square crossword open-shop car-sequencing sat      \
 	bin-packing knights tsp perfect-square schurs-lemma     \
-	dominating-queens
+	dominating-queens colored-matrix
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)
