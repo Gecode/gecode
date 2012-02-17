@@ -120,7 +120,8 @@ namespace Test { namespace Int {
     : Gecode::Space(share,s), d(s.d), test(s.test), reified(s.reified) {
     x.update(*this, share, s.x);
     Gecode::BoolVar b;
-    b.update(*this, share, s.r.var());
+    Gecode::BoolVar sr(s.r.var());
+    b.update(*this, share, sr);
     r.var(b); r.mode(s.r.mode());
   }
 
