@@ -124,6 +124,10 @@ namespace {
    */
   IntSetArgs distinct_except_0_counts(unsigned int colors, unsigned int size);
   
+  /** Return DFA for the not all equals constraint.
+   */
+  DFA not_all_equal_dfa(unsigned int colors);
+  
   //@}
 }
 
@@ -144,7 +148,7 @@ namespace {
  * \ingroup Example
  *
  */
-class ColoredMatrix : public Script {
+class ColoredMatrix : public MinimizeScript {
 protected:
   /** \name Instance specification
    */
@@ -160,6 +164,8 @@ protected:
   //@{
   /// Array for matrix variables
   IntVarArray x;
+  /// Maximum color used
+  IntVar max_color;
   //@}
 
   /** Return variable that is zero if a and b differ, or equal to their value if they agree.
@@ -170,8 +176,9 @@ protected:
     case SAME_OR_0_REIFIED: {
       IntVar result(*this, 0, colors);
       BoolVar same = expr(*this, (a == b));
-      rel(*this, same == (result == a));
-      rel(*this, !same == (result == 0));      
+      rel(*this, result, IRT_EQ, a, same);
+      // Redundant (implied by previous), but improves efficiency
+      rel(*this, result, IRT_NQ, 0, same);      
       return result;
     }
     case SAME_OR_0_TUPLE_SET: {
@@ -199,8 +206,9 @@ protected:
     switch (opt.distinct_except_0()) {
     case DISTINCT_EXCEPT_0_REIFIED:
       for (int i = v.size(); i--; ) {
+        BoolVar viIsZero = expr(*this, v[i] == 0);
         for (int j = i; j--; ) {
-          rel(*this, (v[i] == 0) || (v[j] == 0) || (v[i] != v[j]));
+          rel(*this, viIsZero || (v[i] != v[j]));
         }
       }
       break;
@@ -222,17 +230,40 @@ protected:
   void not_all_equal(const IntVarArgs& v)
   {
     switch (opt.not_all_equal()) {
-    case NOT_ALL_EQUAL_REIFIED:
-      rel(*this, 
-          (v[0] != v[1]) || 
-          (v[0] != v[2]) || 
-          (v[0] != v[3]) || 
-          (v[1] != v[2]) || 
-          (v[1] != v[3]) || 
-          (v[2] != v[3]));
+    case NOT_ALL_EQUAL_NQ: {
+      rel(*this, v, IRT_NQ);
       break;
+    }
+    case NOT_ALL_EQUAL_NAIVE: {
+      // At least one pair must be different.
+      BoolVarArgs disequalities;
+      for (int i = v.size(); i--; )
+        for (int j = i; j--; )
+          disequalities << expr(*this, v[i] != v[j]);
+      rel(*this, BOT_OR, disequalities, 1);
+      break;
+    }
+    case NOT_ALL_EQUAL_REIFIED: {
+      // It must not be the case that all are equal
+      BoolVarArgs equalities;
+      for (int i = 0; i < v.size()-1; ++i)
+        equalities << expr(*this, v[i] == v[i+1]);
+      rel(*this, BOT_AND, equalities, 0);
+      break;
+    }
     case NOT_ALL_EQUAL_NVALUES:
+      // More than one number
       nvalues(*this, v, IRT_GR, 1);
+      break;
+    case NOT_ALL_EQUAL_COUNT:
+      // No number in all positions
+      count(*this, v, IntSet(0, v.size()-1), IntArgs::create(colors, 1), opt.icl());
+      break;
+    case NOT_ALL_EQUAL_DFA: {
+      static const DFA automaton = not_all_equal_dfa(colors);
+      extensional(*this, v, automaton);
+      break;
+    }
     }
   }
 
@@ -250,7 +281,12 @@ protected:
 
 
 public:
-  /// Branching variants
+  /// Search modes
+  enum {
+    SEARCH_DFS, ///< Find solution
+    SEARCH_BAB, ///< Find optimal solution
+  };
+  /// SYmmetry breaking variants
   enum {
     SYMMETRY_NONE,   ///< No symmetry breaking
     SYMMETRY_MATRIX, ///< Order rows and columns of matrix
@@ -259,15 +295,18 @@ public:
   };
   /// Model variants
   enum {
-    MODEL_CORNERS,   ///< Use model on corner combinations
-    MODEL_ROWS,      ///< Use model on pairs of rows 
-    MODEL_COLUMNS,   ///< Use model on pairs of columns 
-    MODEL_MATRIX,    ///< Use model on pairs of rows and pairs of columns
+    MODEL_CORNERS = 1,   ///< Use model on corner combinations
+    MODEL_ROWS    = 2,      ///< Use model on pairs of rows 
+    MODEL_COLUMNS = 4,   ///< Use model on pairs of columns 
   };
   /// Not all equal variants
   enum {
+    NOT_ALL_EQUAL_NQ,      ///< Use direct constraint for implemeting not all equals
+    NOT_ALL_EQUAL_NAIVE,   ///< Use naive reification for implemeting not all equals
     NOT_ALL_EQUAL_REIFIED, ///< Use reification for implemeting not all equals
     NOT_ALL_EQUAL_NVALUES, ///< Use nvalues for implementing not all equals
+    NOT_ALL_EQUAL_COUNT,   ///< Use count for implementing not all equals
+    NOT_ALL_EQUAL_DFA,     ///< Use dfa for implementing not all equals
   };
   /// Same or 0 variants
   enum {
@@ -286,13 +325,16 @@ public:
   /// Actual model
   ColoredMatrix(const ColoredMatrixOptions& opt0)
     : opt(opt0), height(opt.height()), width(opt.width()), colors(opt.colors()),
-      x(*this, height*width, 1, colors)
+      x(*this, height*width, 1, colors),
+      max_color(*this, 1, colors)
   {
+
+    max(*this, x, max_color);
+
     Matrix<IntVarArray> m(x, width, height);
     
-    switch (opt.model()) {
-    case MODEL_CORNERS: {
-      // For each choice of corners in a rectangle, the variables should not be all equal.
+    // For each pair of columns and rows, the intersections may not be equal.
+    if (opt.model() & MODEL_CORNERS) {
       for (unsigned int c1 = 0; c1 < width; ++c1) {
         for (unsigned int c2 = c1+1; c2 < width; ++c2) {
           for (unsigned int r1 = 0; r1 < height; ++r1) {
@@ -302,31 +344,24 @@ public:
           }
         }
       }
-      break;
     }
-    case MODEL_ROWS:
-    case MODEL_COLUMNS:
-    case MODEL_MATRIX: {
-      // Given two rows/columns, construct variables representing if
-      // the corresponding places are equal (and if so, what value).
-      // For the new values, no non-zero value may appear more than
-      // once.
-      if (opt.model() == MODEL_ROWS || opt.model() == MODEL_MATRIX) {
-        for (unsigned int r1 = 0; r1 < height; ++r1) {
-          for (unsigned int r2 = r1+1; r2 < height; ++r2) {
-            no_monochrome_rectangle(m.row(r1), m.row(r2));
-          }
+    // Given two rows/columns, construct variables representing if
+    // the corresponding places are equal (and if so, what value).
+    // For the new values, no non-zero value may appear more than
+    // once.
+    if (opt.model() & MODEL_ROWS) {
+      for (unsigned int r1 = 0; r1 < height; ++r1) {
+        for (unsigned int r2 = r1+1; r2 < height; ++r2) {
+          no_monochrome_rectangle(m.row(r1), m.row(r2));
         }
       }
-      if (opt.model() == MODEL_COLUMNS || opt.model() == MODEL_MATRIX) {
-        for (unsigned int c1 = 0; c1 < width; ++c1) {
-          for (unsigned int c2 = c1+1; c2 < width; ++c2) {
-            no_monochrome_rectangle(m.col(c1), m.col(c2));
-          }
+    }
+    if (opt.model() & MODEL_COLUMNS) {
+      for (unsigned int c1 = 0; c1 < width; ++c1) {
+        for (unsigned int c2 = c1+1; c2 < width; ++c2) {
+          no_monochrome_rectangle(m.col(c1), m.col(c2));
         }
       }
-      break;
-    }
     }
 
     // Symmetry breaking constraints.
@@ -350,6 +385,11 @@ public:
     branch(*this, x, tiebreak(INT_VAR_MIN_MIN, INT_VAR_SIZE_MIN), INT_VAL_MIN);
   }
 
+  /// Return cost
+  virtual IntVar cost(void) const {
+    return max_color;
+  }
+
   /// Print solution
   virtual void
   print(std::ostream& os) const {
@@ -360,15 +400,18 @@ public:
         os << m(c, r) << " ";
       }
       os << std::endl;
-    }
+    }    
+    os << std::endl;
+    os << "\tmax color: " << max_color << std::endl;
     os << std::endl;
   }
 
   /// Constructor for cloning \a s
   ColoredMatrix(bool share, ColoredMatrix& s)
-    : Script(share,s), opt(s.opt),
+    : MinimizeScript(share,s), opt(s.opt),
       height(s.height), width(s.width), colors(s.colors) {
     x.update(*this, share, s.x);
+    max_color.update(*this, share, s.max_color);
   }
   /// Copy during cloning
   virtual Space*
@@ -382,9 +425,9 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
     _height("-height", "Height of matrix", 6),
     _width("-width", "Width of matrix", 6),
     _size("-size", "If different from 0, used as both width and height", 0),
-    _colors("-colors", "Number of colors", 4),
+    _colors("-colors", "Maximum number of colors", 4),
     _not_all_equal("-not-all-equal", "How to implement the not all equals constraint (used in corners model)", 
-                   ColoredMatrix::NOT_ALL_EQUAL_NVALUES),
+                   ColoredMatrix::NOT_ALL_EQUAL_NQ),
     _same_or_0("-same-or-0", "How to implement the same or 0 constraint (used in the rows model)", 
                ColoredMatrix::SAME_OR_0_DFA),
     _distinct_except_0("-distinct-except-0", "How to implement the distinct except 0 constraint (used in the rows model)", 
@@ -397,6 +440,11 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   add(_not_all_equal);
   add(_same_or_0);
   add(_distinct_except_0);
+
+  // Add search options
+  _search.add(ColoredMatrix::SEARCH_DFS,  "dfs", "Find a solution.");
+  _search.add(ColoredMatrix::SEARCH_BAB,  "bab", "Find an optimal solution.");
+  _search.value(ColoredMatrix::SEARCH_DFS);
   
   // Add symmetry options
   _symmetry.add(ColoredMatrix::SYMMETRY_NONE,  "none", "Don't use symmetry breaking.");
@@ -408,13 +456,20 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   // Add model options
   _model.add(ColoredMatrix::MODEL_CORNERS,  "corner", "Use direct corners model with not-all-equal constraints.");
   _model.add(ColoredMatrix::MODEL_ROWS,  "rows", "Use model on pairs of rows (same_or_0 and distinct_except_0 constraints).");
+  _model.add(ColoredMatrix::MODEL_ROWS | ColoredMatrix::MODEL_CORNERS,
+             "both", "Use both rows and corners model");
   _model.add(ColoredMatrix::MODEL_COLUMNS,  "columns", "Use model on pairs of columns (same_or_0 and distinct_except_0 constraints).");
-  _model.add(ColoredMatrix::MODEL_MATRIX,  "matrix", "Use both rows and columns model");
+  _model.add(ColoredMatrix::MODEL_ROWS | ColoredMatrix::MODEL_COLUMNS,
+             "matrix", "Use both rows and columns model");
   _model.value(ColoredMatrix::MODEL_ROWS);
 
   // Add not all equal variants
+  _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_NQ, "nq", "Use nq constraint.");
+  _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_NAIVE, "naive", "Use naive reified decomposition.");
   _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_REIFIED, "reified", "Use reified decomposition.");
   _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_NVALUES, "nvalues", "Use nvalues.");
+  _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_COUNT, "count", "Use count.");
+  _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_DFA, "dfa", "Use dfa.");
 
   // Add same or 0 variants
   _same_or_0.add(ColoredMatrix::SAME_OR_0_REIFIED, "reified", "Use reified decomposition.");
@@ -434,7 +489,11 @@ int
 main(int argc, char* argv[]) {
   ColoredMatrixOptions opt("Colored matrix");
   opt.parse(argc,argv);
-  Script::run<ColoredMatrix,DFS,ColoredMatrixOptions>(opt);
+  if (opt.search() == ColoredMatrix::SEARCH_DFS) {
+    Script::run<ColoredMatrix,DFS,ColoredMatrixOptions>(opt);
+  } else {
+    Script::run<ColoredMatrix,BAB,ColoredMatrixOptions>(opt);
+  }
   return 0;
 }
 
@@ -450,7 +509,7 @@ namespace {
      * for all colors c representing the case when x and y 
      * are equal.
      *
-     * For the case where x and y are non-equal (c and c'), paths
+     * For the cases where x and y are non-equal (c and c'), paths
      *   start -- c --> node -- c' --> not-equal -- 0 --> end
      * are added.
      */
@@ -498,14 +557,11 @@ namespace {
     trans[current_transition++] =
       DFA::Transition(-1, 0, -1);
     
-    int* final_states = new int[2];
-    final_states[0] = final_state;
-    final_states[1] = -1;
+    int final_states[] = {final_state, -1};
     
     DFA result(start_state, trans, final_states, true);
 
     delete[] trans;
-    delete[] final_states;
 
     return result;
   }
@@ -542,7 +598,8 @@ namespace {
 
     DFA::Transition* trans = new DFA::Transition[nstates*colors + 1];
     int current_transition = 0;
-    for (int state = start_state+1; state--; ) {
+
+    for (int state = nstates; state--; ) {
       trans[current_transition++] = DFA::Transition(state, 0, state);
 
       for (unsigned int color = 1; color <= colors; ++color) {
@@ -561,7 +618,7 @@ namespace {
       final_states[i] = i;
     }
 
-    DFA result(start_state, trans, final_states, false);
+    DFA result(start_state, trans, final_states);
 
     delete[] trans;
     delete[] final_states;
@@ -581,6 +638,57 @@ namespace {
 
     return result;
   }
+
+
+  DFA not_all_equal_dfa(unsigned int colors)
+  {
+    /* DFA for not all equal. 
+     *
+     * From the start state, there is a transition for each color to
+     * that colors state.  As long as the same color is seen, the
+     * automaton stays in that state. If a different color is seen,
+     * then it goes to the accepting state.
+     */
+
+    const int nstates = 1 + colors + 1;
+    const int start_state = 0;
+    const int final_state = nstates-1;
+
+    DFA::Transition* trans = new DFA::Transition[2*colors + colors*colors + 1];
+    int current_transition = 0;
+
+    // Each color to its own state
+    for (unsigned int color = 1; color <= colors; ++color) {
+      trans[current_transition++] = DFA::Transition(start_state, color, color);
+    }
+
+    // Each colors state loops on itself, and goes to final on all others
+    for (unsigned int state = 1; state <= colors; ++state) {
+      for (unsigned int color = 1; color <= colors; ++color) {
+        if (state == color) {
+          trans[current_transition++] = DFA::Transition(state, color, state);
+        } else {
+          trans[current_transition++] = DFA::Transition(state, color, final_state);
+        }
+      }
+    }
+
+    // Loop on all colors in final state
+    for (unsigned int color = 1; color <= colors; ++color) {
+      trans[current_transition++] = DFA::Transition(final_state, color, final_state);
+    }
+
+    trans[current_transition++] = DFA::Transition(-1, 0, -1);
+
+    int final_states[] = {final_state, -1};
+
+    DFA result(start_state, trans, final_states);
+
+    delete[] trans;
+
+    return result;
+  }
+
 }
 
 
