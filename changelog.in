@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Export RTTI symbols for the FlatZinc AST so that it can be used
+by client code.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
