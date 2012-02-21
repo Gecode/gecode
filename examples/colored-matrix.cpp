@@ -49,13 +49,22 @@ using namespace Gecode;
  */
 class ColoredMatrixOptions : public Options {
 private:
-  Driver::UnsignedIntOption _height;       ///< Height of matrix
-  Driver::UnsignedIntOption _width;        ///< Width of matrix
-  Driver::UnsignedIntOption _size;         ///< Size of square matrix
-  Driver::UnsignedIntOption _colors;       ///< Number of colors to use
-  Driver::StringOption _not_all_equal;     ///< How to implement the not all equal constraint
-  Driver::StringOption _same_or_0;         ///< How to implement the same or 0 constraint
-  Driver::StringOption _distinct_except_0; ///< How to implement the distinct except 0 constraint
+  /// Height of matrix
+  Driver::UnsignedIntOption _height;
+  /// Width of matrix
+  Driver::UnsignedIntOption _width;
+  /// Size of square matrix
+  Driver::UnsignedIntOption _size;
+  /// Number of colors to use
+  Driver::UnsignedIntOption _colors;
+  /// How to implement the not all equal constraint
+  Driver::StringOption _not_all_equal;
+  /// How to implement the same or 0 constraint
+  Driver::StringOption _same_or_0;
+  /// How to implement the distinct except 0 constraint
+  Driver::StringOption _distinct_except_0;
+  /// How to implement the no monochrome rectangle constraint
+  Driver::StringOption _no_monochrome_rectangle;
 
 public:
   /// Initialize options for example with name \a n
@@ -88,6 +97,10 @@ public:
   int same_or_0(void) const { return _same_or_0.value(); }
   /// Return how to implement distinct except 0
   int distinct_except_0(void) const { return _distinct_except_0.value(); }
+  /// Return how to implement distinct except 0
+  int no_monochrome_rectangle(void) const { 
+    return _no_monochrome_rectangle.value(); 
+  }
 };
 
 namespace {
@@ -119,6 +132,10 @@ namespace {
   /** Return DFA for the distinct_except_0 constraint.
    */
   DFA distinct_except_0_dfa(unsigned int colors);
+  
+  /** Return DFA for the no monochrome rectangle constraint.
+   */
+  DFA no_monochrome_rectangle_dfa(unsigned int colors);
   
   /** Return counts for using a global cardninality constraint for the distinct exept 0 constraint.
    */
@@ -236,6 +253,7 @@ protected:
     }
     case NOT_ALL_EQUAL_NAIVE: {
       // At least one pair must be different.
+      // Bad decomposition since too many disjuncts are created.
       BoolVarArgs disequalities;
       for (int i = v.size(); i--; )
         for (int j = i; j--; )
@@ -272,11 +290,26 @@ protected:
    */
   void no_monochrome_rectangle(IntVarArgs v1, IntVarArgs v2) {
     const unsigned int length = v1.size();
-    IntVarArgs z(length);
-    for (unsigned int i = 0; i < length; ++i) {
-      z[i] = same_or_0(v1[i], v2[i]);
+    switch (opt.no_monochrome_rectangle()) {
+    case NO_MONOCHROME_DECOMPOSITION: {
+      IntVarArgs z(length);
+      for (unsigned int i = 0; i < length; ++i) {
+        z[i] = same_or_0(v1[i], v2[i]);
+      }
+      distinct_except_0(z);
+      break;
     }
-    distinct_except_0(z);
+    case NO_MONOCHROME_DFA: {
+      static const DFA automaton = no_monochrome_rectangle_dfa(colors);
+      IntVarArgs z(2*length);
+      for (int i = length; i--; ) {
+        z[2*i + 0] = v1[i];
+        z[2*i + 1] = v2[i];
+      }
+      extensional(*this, z, automaton);
+      break;
+    }
+    }
   }
 
 
@@ -288,10 +321,9 @@ public:
   };
   /// SYmmetry breaking variants
   enum {
-    SYMMETRY_NONE,   ///< No symmetry breaking
-    SYMMETRY_MATRIX, ///< Order rows and columns of matrix
-    SYMMETRY_VALUES, ///< Order value occurences
-    SYMMETRY_BOTH,   ///< Combine row/column order with value precedence
+    SYMMETRY_NONE   = 0,   ///< No symmetry breaking
+    SYMMETRY_MATRIX = 1, ///< Order rows and columns of matrix
+    SYMMETRY_VALUES = 2, ///< Order value occurences
   };
   /// Model variants
   enum {
@@ -319,6 +351,11 @@ public:
     DISTINCT_EXCEPT_0_REIFIED, ///< Use reification for distinct except 0
     DISTINCT_EXCEPT_0_DFA,     ///< Use dfa for distinct except 0
     DISTINCT_EXCEPT_0_COUNT,   ///< Use count for distinct except 0
+  };
+  /// No monochrome rectangle versions
+  enum {
+    NO_MONOCHROME_DECOMPOSITION, ///< Use decomposition for no monochrome rectangle
+    NO_MONOCHROME_DFA,           ///< Use dfa for no monochrome rectangle
   };
 
 
@@ -365,9 +402,9 @@ public:
     }
 
     // Symmetry breaking constraints.
-    if (opt.symmetry() != SYMMETRY_NONE) {
+    {
       // Lexical order for all columns and rows (all are interchangable)
-      if (opt.symmetry() == SYMMETRY_MATRIX || opt.symmetry() == SYMMETRY_BOTH) {
+      if (opt.symmetry() & SYMMETRY_MATRIX) {
         for (unsigned int r = 0; r < height-1; ++r) {
           rel(*this, m.row(r), IRT_LE, m.row(r+1));
         }
@@ -377,7 +414,7 @@ public:
       }
 
       // Value precedence. Compatible with row/column ordering
-      if (opt.symmetry() == SYMMETRY_VALUES || opt.symmetry() == SYMMETRY_BOTH) {
+      if (opt.symmetry() & SYMMETRY_VALUES) {
         precede(*this, x, IntArgs::create(colors, 1));
       }      
     }
@@ -422,16 +459,18 @@ public:
 
 ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   : Options(n),
-    _height("-height", "Height of matrix", 6),
-    _width("-width", "Width of matrix", 6),
+    _height("-height", "Height of matrix", 8),
+    _width("-width", "Width of matrix", 8),
     _size("-size", "If different from 0, used as both width and height", 0),
     _colors("-colors", "Maximum number of colors", 4),
     _not_all_equal("-not-all-equal", "How to implement the not all equals constraint (used in corners model)", 
                    ColoredMatrix::NOT_ALL_EQUAL_NQ),
-    _same_or_0("-same-or-0", "How to implement the same or 0 constraint (used in the rows model)", 
+    _same_or_0("-same-or-0", "How to implement the same or 0 constraint (used in the decomposed no monochrome rectangle constraint)", 
                ColoredMatrix::SAME_OR_0_DFA),
-    _distinct_except_0("-distinct-except-0", "How to implement the distinct except 0 constraint (used in the rows model)", 
-                       ColoredMatrix::DISTINCT_EXCEPT_0_DFA)
+    _distinct_except_0("-distinct-except-0", "How to implement the distinct except 0 constraint (used in the decomposed no monochrome rectangle constraint)", 
+                       ColoredMatrix::DISTINCT_EXCEPT_0_DFA),
+    _no_monochrome_rectangle("-no-monochrome-rectangle", "How to implement no monochrome rectangle (used in the rows model)", 
+                             ColoredMatrix::NO_MONOCHROME_DFA)
 {
   add(_height);
   add(_width);
@@ -440,6 +479,7 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   add(_not_all_equal);
   add(_same_or_0);
   add(_distinct_except_0);
+  add(_no_monochrome_rectangle);
 
   // Add search options
   _search.add(ColoredMatrix::SEARCH_DFS,  "dfs", "Find a solution.");
@@ -450,8 +490,9 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   _symmetry.add(ColoredMatrix::SYMMETRY_NONE,  "none", "Don't use symmetry breaking.");
   _symmetry.add(ColoredMatrix::SYMMETRY_MATRIX,  "matrix", "Order matrix rows and columns");
   _symmetry.add(ColoredMatrix::SYMMETRY_VALUES,  "values", "Order values");
-  _symmetry.add(ColoredMatrix::SYMMETRY_BOTH,  "both", "Order both rows/columns and values");
-  _symmetry.value(ColoredMatrix::SYMMETRY_BOTH);
+  _symmetry.add(ColoredMatrix::SYMMETRY_MATRIX | ColoredMatrix::SYMMETRY_VALUES,
+                "both", "Order both rows/columns and values");
+  _symmetry.value(ColoredMatrix::SYMMETRY_MATRIX);
 
   // Add model options
   _model.add(ColoredMatrix::MODEL_CORNERS,  "corner", "Use direct corners model with not-all-equal constraints.");
@@ -461,7 +502,7 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   _model.add(ColoredMatrix::MODEL_COLUMNS,  "columns", "Use model on pairs of columns (same_or_0 and distinct_except_0 constraints).");
   _model.add(ColoredMatrix::MODEL_ROWS | ColoredMatrix::MODEL_COLUMNS,
              "matrix", "Use both rows and columns model");
-  _model.value(ColoredMatrix::MODEL_ROWS);
+  _model.value(ColoredMatrix::MODEL_CORNERS);
 
   // Add not all equal variants
   _not_all_equal.add(ColoredMatrix::NOT_ALL_EQUAL_NQ, "nq", "Use nq constraint.");
@@ -480,6 +521,14 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   _distinct_except_0.add(ColoredMatrix::DISTINCT_EXCEPT_0_REIFIED, "reified", "Use reified decomposition.");
   _distinct_except_0.add(ColoredMatrix::DISTINCT_EXCEPT_0_DFA, "dfa", "Use dfa decomposition.");
   _distinct_except_0.add(ColoredMatrix::DISTINCT_EXCEPT_0_COUNT, "count", "Use global cardinality.");
+
+  // Add no monochrome rectangle variants
+  _no_monochrome_rectangle.add(ColoredMatrix::NO_MONOCHROME_DECOMPOSITION, 
+                               "decompositions", 
+                               "Use decompositions into same_or_0 and distinct_except_0.");
+  _no_monochrome_rectangle.add(ColoredMatrix::NO_MONOCHROME_DFA, 
+                               "dfa", 
+                               "Use DFA as direct implementation.");
 }
 
 /** \brief Main-function
@@ -615,6 +664,68 @@ namespace {
     int* final_states = new int[nstates+1];
     final_states[nstates] = -1;
     for (int i = nstates; i--; ) {
+      final_states[i] = i;
+    }
+
+    DFA result(start_state, trans, final_states);
+
+    delete[] trans;
+    delete[] final_states;
+
+    return result;
+  }
+
+  DFA no_monochrome_rectangle_dfa(unsigned int colors)
+  {
+    /* DFA for a sequence of pairs, where each monochromatic pair may
+     * only appear once.
+     * 
+     * For n colors, there are 2^n base states representing which
+     * monochromatic pairs are still available. For each base state s,
+     * the color seen goes to a new intermediate state. A different
+     * color will go back to state s. Seeing the same color will move
+     * to the next base state with that color combination removed (if
+     * it is still allowed).
+     *
+     * In essence, this DFA represents the combination of same_or_0
+     * and distinct_except_0 as a single constraint.
+     */
+
+    const int base_states = 1 << colors;
+    const int start_state = base_states-1;
+    const int nstates = base_states + colors*base_states;
+
+    DFA::Transition* trans = new DFA::Transition[nstates*colors + 1];
+    int current_transition = 0;
+
+    for (int state = base_states; state--; ) {
+      for (unsigned int color = 1; color <= colors; ++color) {
+        const unsigned int color_bit = (1 << (color-1));
+        const int color_remembered_state = state + color*base_states;
+        
+        trans[current_transition++] = 
+          DFA::Transition(state, color, color_remembered_state);
+        
+        for (unsigned int next_color = 1; next_color <= colors; ++next_color) {
+          if (next_color == color) {
+            // Two equal adjacent, only transition if color still allowed
+            if (state & color_bit) {
+              trans[current_transition++] = 
+                DFA::Transition(color_remembered_state, color, state & ~color_bit);
+            }
+          } else {
+            trans[current_transition++] = 
+              DFA::Transition(color_remembered_state, next_color, state);
+          }
+        }
+      }
+    }
+    trans[current_transition++] = DFA::Transition(-1, 0, -1);
+    assert(current_transition <= nstates*colors+1);
+
+    int* final_states = new int[base_states+1];
+    final_states[base_states] = -1;
+    for (int i = base_states; i--; ) {
       final_states[i] = i;
     }
 
