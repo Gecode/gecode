@@ -188,7 +188,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   ScaleUp<Val,UnsVal,I>::width(void) const {
     return (a == 1) ?
       static_cast<UnsVal>(i.width()) :
-      static_cast<UnsVal>(max - min + 1);
+      static_cast<UnsVal>(1);
   }
 
 

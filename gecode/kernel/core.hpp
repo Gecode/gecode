@@ -2918,7 +2918,7 @@ namespace Gecode {
      * enqueuing a propagator in a failed space keeps the space
      * failed.
      */
-    pc.p.active = &pc.p.queue[PropCost::AC_MAX+2];
+    pc.p.active = &pc.p.queue[PropCost::AC_MAX+1]+1;
   }
   forceinline void
   Home::fail(void) {
