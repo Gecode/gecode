@@ -73,27 +73,11 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
-Module: flatzinc
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Export RTTI symbols for the FlatZinc AST so that it can be used
-by client code.
-
-[ENTRY]
 Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
 New example: Colored matrix without monochromatic rectangles.
-
-[ENTRY]
-Module: other
-What:   new
-Rank:   minor
-Thanks: Adam Russell
-[DESCRIPTION]
-Gecode now compiles on NetBSD.
 
 [ENTRY]
 Module: driver
@@ -111,6 +95,60 @@ Rank:   minor
 [DESCRIPTION]
 Boolean options (BoolOption) can now be given a false or true argument
 and hence are in-line with all other option types.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw exception when the user-defined copy constructor of a class
+that inherits from Space does not call the Space copy constructor.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+Author: Denys Duchier
+[DESCRIPTION]
+Added channeling constraint between arrays of set variables.
+
+[ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added native support for the inverse_set constraint.
+
+[ENTRY]
+Module: minimodel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Made implementations of MiniModel expressions private, so that the
+MiniModel headers do not have to include propagator headers like
+gecode/int/linear.hh any longer.
+
+[RELEASE]
+Version: 3.7.2
+Date: 2012-02-27
+[DESCRIPTION]
+This release fixes several small bugs.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Export RTTI symbols for the FlatZinc AST so that it can be used
+by client code.
+
+[ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Adam Russell
+[DESCRIPTION]
+Gecode now compiles on NetBSD.
 
 [ENTRY]
 Module: int
@@ -147,14 +185,6 @@ The element constraint with SOT_UNION and IntSetArgs reported
 subsumption too early, resulting in incorrect propagation.
 
 [ENTRY]
-Module: kernel
-What:   change
-Rank:   minor
-[DESCRIPTION]
-Throw exception when the user-defined copy constructor of a class
-that inherits from Space does not call the Space copy constructor.
-
-[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor
@@ -188,21 +218,6 @@ Thanks: Kish Shen
 Fixed sorted constraint to accept zero-length arrays.
 
 [ENTRY]
-Module: set
-What:   new
-Rank:   major
-Author: Denys Duchier
-[DESCRIPTION]
-Added channeling constraint between arrays of set variables.
-
-[ENTRY]
-Module: flatzinc
-What:   new
-Rank:   minor
-[DESCRIPTION]
-Added native support for the inverse_set constraint.
-
-[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
@@ -229,21 +244,11 @@ Thanks: Jan Kelbel
 Fixed time output for times with zero minutes but nonzero hours.
 
 [ENTRY]
-Module: minimodel
-What:   change
-Rank:   minor
-[DESCRIPTION]
-Made implementations of MiniModel expressions private, so that the
-MiniModel headers do not have to include propagator headers like
-gecode/int/linear.hh any longer.
-
-[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
 [DESCRIPTION]
 Added Archive operators for floats and doubles.
-
 
 [RELEASE]
 Version: 3.7.1
