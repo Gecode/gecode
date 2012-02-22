@@ -45,7 +45,7 @@ AC_INIT(GECODE, 4.0.0, users@gecode.org)
 AC_CONFIG_HEADERS([gecode/support/config.hpp])
 AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
-ac_gecode_soversion=31
+ac_gecode_soversion=32
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 ac_gecode_flatzincversion=1.4
 AC_SUBST(GECODE_FLATZINC_VERSION, ${ac_gecode_flatzincversion})
