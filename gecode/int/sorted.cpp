@@ -50,6 +50,8 @@ namespace Gecode {
 
     if (home.failed()) return;
 
+    if (x.size()==0) return;
+
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
 
     GECODE_ES_FAIL(
@@ -66,6 +68,8 @@ namespace Gecode {
       throw ArgumentSame("Int::Sorted");
 
     if (home.failed()) return;
+
+    if (x.size()==0) return;
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);
 

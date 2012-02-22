@@ -4,9 +4,13 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Joseph Scott <joseph.scott@it.uu.se>
+ *
  *  Copyright:
  *     Christian Schulte, 2009
  *     Guido Tack, 2010
+ *     Joseph Scott, 2011
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -148,15 +152,19 @@ namespace Gecode { namespace Int { namespace Cumulative {
     
     int curJ = 0;
     for (int i=0; i<t.size(); i++) {
+      // discard any curJ with lct > prec[i]:
       while (curJ < t.size() && t[curJ].lct() > prec[precMap[i]])
         curJ++;
-      while (curJ < t.size() && t[curJ].lct() == prec[precMap[i]]) {
-        if (t[curJ].lct() != t[precMap[i]].lct()) {
-          GECODE_ME_CHECK(
-            t[precMap[i]].est(home,update[cap[precMap[i]]*t.size()+curJ]));
+      if (curJ >= t.size())
+        break;
+      // if lct[curJ] == prec[i], then LCut(T,j) <= i, so update est[i]
+      int locJ = curJ;
+      do {
+        if (t[locJ].lct() != t[precMap[i]].lct()) {
+          GECODE_ME_CHECK(t[precMap[i]].est(home,update[cap[precMap[i]]*t.size()+locJ]));
+          break;
         }
-        curJ++;
-      }
+      } while (t[locJ].lct() == prec[precMap[i]] && locJ++ < t.size() - 1);
     }
 
     return ES_OK;

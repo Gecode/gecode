@@ -1068,6 +1068,7 @@ namespace Gecode {
     Node* n;
   public:
     /// Default constructor
+    GECODE_MINIMODEL_EXPORT
     BoolExpr(void);
     /// Copy constructor
     BoolExpr(const BoolExpr& e);

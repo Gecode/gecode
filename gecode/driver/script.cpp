@@ -45,20 +45,20 @@ namespace Gecode { namespace Driver {
   void 
   stop(Support::Timer& timer, std::ostream& os) {
     double t = timer.stop();
-    double sec = floor(t / 1000.0);
-    int o_msec = static_cast<int>(t - 1000.0*sec);
-    double min = floor(sec / 60.0);
-    int o_sec = static_cast<int>(sec - 60.0*min);
-    double hour = floor(min / 60.0);
-    int o_min = static_cast<int>(min - 60.0*hour);
-    double day = floor(hour / 24.0);
-    int o_hour = static_cast<int>(hour - 24.0*day);
-    int o_day = static_cast<int>(day);
-    if (o_day)
-      os << o_day << " days, ";
+    unsigned int sec = static_cast<unsigned int>(floor(t / 1000.0));
+    unsigned int o_msec = static_cast<unsigned int>
+      (t - 1000.0*static_cast<double>(sec));
+    unsigned int min = sec / 60;
+    unsigned int o_sec = sec - 60 * min;
+    unsigned int hour = min / 60;
+    unsigned int o_min = min - 60 * hour;
+    unsigned int day = hour / 24;
+    unsigned int o_hour = hour - 24 * day;
+    if (day)
+      os << day << " days, ";
     if (o_hour)
       os << o_hour << ":";
-    if (o_min) {
+    if (o_hour || o_min) {
       if (o_hour) {
         os.width(2); os.fill('0');
       }
@@ -70,7 +70,7 @@ namespace Gecode { namespace Driver {
     os << o_msec
        << " ("
        << std::showpoint << std::fixed
-       << std::setprecision(6) << t << " ms)";
+       << std::setprecision(3) << t << " ms)";
   }
   
   

@@ -58,6 +58,8 @@ namespace Gecode {
   }
 
 
+  BoolExpr::BoolExpr(void) : n(new Node) {}
+
   BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
     n->same = 1;
     n->t    = NT_VAR;

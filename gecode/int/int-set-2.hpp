@@ -37,21 +37,13 @@
 
 namespace Gecode {
 
-#ifndef __INTEL_COMPILER
   template<>
-#endif
-  forceinline
-  IntSet::IntSet(const IntArgs& i) {
-    init(&i[0],i.size());
-  }
-
-#ifndef __INTEL_COMPILER
-  template<>
-#endif
-  forceinline
-  IntSet::IntSet(IntArgs& i) {
-    init(&i[0],i.size());
-  }
+  class IntSetInit<IntArgs> {
+  public:
+    static void init(IntSet& s, const IntArgs& i) {
+      s.init(&i[0],i.size());
+    }
+  };
 
 }
 

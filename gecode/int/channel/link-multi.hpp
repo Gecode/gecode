@@ -70,6 +70,8 @@ namespace Gecode { namespace Int { namespace Channel {
             GECODE_ME_CHECK(x[j].zero(home));
           GECODE_ME_CHECK(y.eq(home,o+i));
           return ES_OK;
+        } else if (x[i].zero()) {
+          GECODE_ME_CHECK(y.nq(home,o+i));
         }
       (void) new (home) LinkMulti(home,x,y,o);
     }

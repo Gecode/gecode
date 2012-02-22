@@ -67,7 +67,7 @@ namespace Gecode { namespace FlatZinc {
    * gecode/flatzinc/exampleplugin.
    *
    */
-  class BranchPlugin {
+  class GECODE_VTABLE_EXPORT BranchPlugin {
   public:
     /// The custom branch method that this plugin provides
     virtual void branch(Gecode::FlatZinc::FlatZincSpace& s,

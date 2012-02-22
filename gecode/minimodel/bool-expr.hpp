@@ -42,7 +42,7 @@ namespace Gecode {
    *
    */
   forceinline
-  BoolExpr::Node::Node(void) : use(1) {}
+  BoolExpr::Node::Node(void) : use(1), m(NULL) {}
 
   forceinline
   BoolExpr::Node::~Node(void) { delete m; }
@@ -64,9 +64,6 @@ namespace Gecode {
   BoolExpr::MiscExpr::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
-
-  forceinline
-  BoolExpr::BoolExpr(void) : n(NULL) {}
 
   forceinline
   BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {

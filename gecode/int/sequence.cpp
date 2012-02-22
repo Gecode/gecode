@@ -64,7 +64,7 @@ namespace Gecode {
       throw ArgumentSame("Int::sequence");
 
     if ((q < 1) || (q > x.size()))
-      throw Exception("Int::sequence","1<=q<=|x| invalid");
+      throw OutOfLimits("Int::sequence");
 
     if (home.failed())
       return;
@@ -130,7 +130,7 @@ namespace Gecode {
       throw ArgumentSame("Int::sequence");
 
     if ((q < 1) || (q > x.size()))
-      throw Exception("Int::sequence","1<=q<=|x| invalid");
+      throw OutOfLimits("Int::sequence");
 
     if (home.failed())
       return;

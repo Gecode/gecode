@@ -56,7 +56,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   class SetLit;
   
   /// %Exception signaling type error
-  class TypeError {
+  class GECODE_VTABLE_EXPORT TypeError {
   private:
     std::string _what;
   public:
@@ -68,7 +68,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   /**
    * \brief A node in a %FlatZinc abstract syntax tree
    */
-  class Node {
+  class GECODE_VTABLE_EXPORT Node {
   public:
     /// Destructor
     virtual ~Node(void);
@@ -135,7 +135,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
 
   /// Boolean literal node
-  class BoolLit : public Node {
+  class GECODE_VTABLE_EXPORT BoolLit : public Node {
   public:
     bool b;
     BoolLit(bool b0) : b(b0) {}
@@ -144,7 +144,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   /// Integer literal node
-  class IntLit : public Node {
+  class GECODE_VTABLE_EXPORT IntLit : public Node {
   public:
     int i;
     IntLit(int i0) : i(i0) {}
@@ -153,7 +153,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   /// Float literal node
-  class FloatLit : public Node {
+  class GECODE_VTABLE_EXPORT FloatLit : public Node {
   public:
     double d;
     FloatLit(double d0) : d(d0) {}
@@ -162,7 +162,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   /// %Set literal node
-  class SetLit : public Node {
+  class GECODE_VTABLE_EXPORT SetLit : public Node {
   public:
     bool interval;
     int min; int max;
@@ -179,13 +179,13 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
   
   /// Variable node base class
-  class Var : public Node {
+  class GECODE_VTABLE_EXPORT Var : public Node {
   public:
     int i;
     Var(int i0) : i(i0) {}
   };
   /// Boolean variable node
-  class BoolVar : public Var {
+  class GECODE_VTABLE_EXPORT BoolVar : public Var {
   public:
     BoolVar(int i0) : Var(i0) {}
     virtual void print(std::ostream& os) {
@@ -193,7 +193,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   /// Integer variable node
-  class IntVar : public Var {
+  class GECODE_VTABLE_EXPORT IntVar : public Var {
   public:
     IntVar(int i0) : Var(i0) {}
     virtual void print(std::ostream& os) {
@@ -201,7 +201,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   /// Float variable node
-  class FloatVar : public Var {
+  class GECODE_VTABLE_EXPORT FloatVar : public Var {
   public:
     FloatVar(int i0) : Var(i0) {}
     virtual void print(std::ostream& os) {
@@ -209,7 +209,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
   };
   /// %Set variable node
-  class SetVar : public Var {
+  class GECODE_VTABLE_EXPORT SetVar : public Var {
   public:
     SetVar(int i0) : Var(i0) {}
     virtual void print(std::ostream& os) {
@@ -218,7 +218,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
   
   /// %Array node
-  class Array : public Node {
+  class GECODE_VTABLE_EXPORT Array : public Node {
   public:
     std::vector<Node*> a;
     Array(const std::vector<Node*>& a0)
@@ -242,7 +242,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
 
   /// %Node representing a function call
-  class Call : public Node {
+  class GECODE_VTABLE_EXPORT Call : public Node {
   public:
     std::string id;
     Node* args;
@@ -261,7 +261,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
 
   /// %Node representing an array access
-  class ArrayAccess : public Node {
+  class GECODE_VTABLE_EXPORT ArrayAccess : public Node {
   public:
     Node* a;
     Node* idx;
@@ -277,7 +277,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
 
   /// %Node representing an atom
-  class Atom : public Node {
+  class GECODE_VTABLE_EXPORT Atom : public Node {
   public:
     std::string id;
     Atom(const std::string& id0) : id(id0) {}
@@ -287,7 +287,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   };
 
   /// %String node
-  class String : public Node {
+  class GECODE_VTABLE_EXPORT String : public Node {
   public:
     std::string s;
     String(const std::string& s0) : s(s0) {}

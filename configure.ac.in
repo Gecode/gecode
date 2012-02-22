@@ -309,11 +309,20 @@ AC_SUBST(GLDFLAGS, ${GLDFLAGS})
 AC_SUBST(ALLVIS, ${ac_gecode_vis})
 
 VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
+
+ARR=($(echo $PACKAGE_VERSION | sed 's/\./ /g'))
+changequote(,)
+PACKAGE_VERSION_NUMBER=$(expr $(expr $(expr ${ARR[0]} "*" 100000) + $(expr ${ARR[1]} "*" 100)) + ${ARR[2]})
+changequote([,])
+
 AC_DEFINE_UNQUOTED(GECODE_VERSION,
   "${PACKAGE_VERSION}",
   [Gecode version])
 AC_DEFINE_UNQUOTED(GECODE_LIBRARY_VERSION,
   "${VERSION_DASHES}",
+  [Gecode version])
+AC_DEFINE_UNQUOTED(GECODE_VERSION_NUMBER,
+  ${PACKAGE_VERSION_NUMBER},
   [Gecode version])
 
 AC_DEFINE_UNQUOTED(GECODE_FLATZINC_VERSION,

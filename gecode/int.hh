@@ -147,6 +147,8 @@ namespace Gecode {
 
   class IntSetRanges;
 
+  template<class I> class IntSetInit;
+  
   /**
    * \brief Integer sets
    *
@@ -156,6 +158,7 @@ namespace Gecode {
    */
   class IntSet : public SharedHandle {
     friend class IntSetRanges;
+    template<class I> friend class IntSetInit;
   private:
     /// %Range (intervals) of integers
     class Range {
@@ -210,16 +213,6 @@ namespace Gecode {
     /// Initialize with range iterator \a i
     template<class I>
     explicit IntSet(I& i);
-#ifdef __INTEL_COMPILER
-    /// Initialize with integer set \a s
-    IntSet(const IntSet& s);
-    /// Initialize with integer set \a s
-    IntSet(IntSet& s);
-    /// Initialize with integers \a i
-    IntSet(const PrimArgArray<int>& i);
-    /// Initialize with integers \a i
-    IntSet(PrimArgArray<int>& i);
-#endif
     //@}
 
     /// \name Range access
@@ -1485,30 +1478,31 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r m\f$
    *
-   * Supports domain consistent propagation only.
+   * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, int n, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_r m\f$
    *
-   * Supports domain consistent propagation only.
+   * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    *
-   * Supports domain consistent propagation (\a icl = ICL_DOM, default)
-   * and "almost" domain consistent propagation (all other values for \a icl),
-   * where \a y is not pruned.
+   * Performs domain propagation (\a icl = ICL_DOM, default)
+   * and slightly less domain propagation (all other values for \a icl),
+   * where \a y is not pruned. Note that in both cases propagation
+   * is not comain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r m\f$
    *
-   * Supports domain consistent propagation only.
+   * Performs domain propagation but is not domain consistent.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -1518,30 +1512,31 @@ namespace Gecode {
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
    *
-   * Supports domain consistent propagation only.
+   * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_r z\f$
    *
-   * Supports domain consistent propagation only.
+   * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    *
-   * Supports domain consistent propagation (\a icl = ICL_DOM, default)
-   * and "almost" domain consistent propagation (all other values for \a icl),
-   * where \a y is not pruned.
+   * Performs domain propagation (\a icl = ICL_DOM, default)
+   * and slightly less domain propagation (all other values for \a icl),
+   * where \a y is not pruned. Note that in both cases propagation
+   * is not comain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r z\f$
    *
-   * Supports domain consistent propagation only.
+   * Performs domain propagation but is not domain consistent.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    *  \a x and \a y are of different size.
@@ -1704,7 +1699,7 @@ namespace Gecode {
    *  - Of type Int::TooFewArguments, if \f$|x|=0\f$.
    *  - Of type Int::ArgumentSame, if \a x contains
    *    the same unassigned variable multiply.
-   *  - Of type Exception, if \f$q < 1 \vee q > |x|\f$.
+   *  - Of type Int::OutOfRange, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const IntVarArgs& x, const IntSet& s, 
@@ -1722,7 +1717,7 @@ namespace Gecode {
    *  - Of type Int::TooFewArguments, if \f$|x|=0\f$.
    *  - Of type Int::ArgumentSame, if \a x contains
    *    the same unassigned variable multiply.
-   *  - Of type Exception, if \f$q < 1 \vee q > |x|\f$.
+   *  - Of type Int::OutOfRange, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const BoolVarArgs& x, const IntSet& s, 

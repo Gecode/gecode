@@ -61,6 +61,12 @@ namespace Gecode { namespace Int { namespace Dom {
       GECODE_ME_CHECK(b.zero(home));
     } else if (s.ranges() == 1) {
       return ReRange<View>::post(home,x,s.min(),s.max(),b);
+    } else if (b.one()) {
+      IntSetRanges i_is(s);
+      GECODE_ME_CHECK(x.inter_r(home,i_is,false));
+    } else if (b.zero()) {
+      IntSetRanges i_is(s);
+      GECODE_ME_CHECK(x.minus_r(home,i_is,false));
     } else {
       (void) new (home) ReIntSet<View>(home,x,s,b);
     }

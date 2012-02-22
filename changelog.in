@@ -67,6 +67,128 @@
 #
 
 [RELEASE]
+Version: 3.7.2
+Date: 2012-02-27
+[DESCRIPTION]
+This release fixes several small bugs.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Export RTTI symbols for the FlatZinc AST so that it can be used
+by client code.
+
+[ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Adam Russell
+[DESCRIPTION]
+Gecode now compiles on NetBSD.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Throw exception of type OutOfLimits instead of Exception when
+numerical arguments to sequence constraint are out of range.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Joseph Scott
+[DESCRIPTION]
+Added missing pruning to cumulative edge finding propagator.
+
+[ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Serge Le Huitouze
+[DESCRIPTION]
+Fixed rounding for printing the runtime (for example,
+1:60:56.157 could be printed...).
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   major
+Thanks: Denys Duchier
+[DESCRIPTION]
+The element constraint with SOT_UNION and IntSetArgs reported
+subsumption too early, resulting in incorrect propagation.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The BoolExpr default constructor did not properly initialize
+its members, causing crashes.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Posting a reified dom constraint on IntVars with an assigned control
+variable does not create propagators any more, but updates the
+domain immediately.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Nicholas Tung
+[DESCRIPTION]
+Do not crash when encountering undefined identifier as constraint argument.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Fixed sorted constraint to accept zero-length arrays.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Added some missing propagation when posting a channel constraint
+between an array of Boolean variables and an integer variable.
+
+[ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks: Denys Duchier
+[DESCRIPTION]
+Added a macro GECODE_VERSION_NUMBER that is defined as
+x*1000000+y*100+z for Gecode version x.y.z.
+
+[ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Jan Kelbel
+[DESCRIPTION]
+Fixed time output for times with zero minutes but nonzero hours.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added Archive operators for floats and doubles.
+
+[RELEASE]
 Version: 3.7.1
 Date: 2011-10-10
 [DESCRIPTION]
