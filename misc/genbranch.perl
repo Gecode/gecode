@@ -231,6 +231,9 @@ foreach $ns (split('::',$lns)) {
 }
 print "\n\n";
 print "    if (home.failed()) return;\n";
+print "    if (o_vars.activity.initialized() &&\n";
+print "        (o_vars.activity.size() != x.size()))\n";
+print "      throw ActivityWrongArity(\"" . $branchname . "\");\n";
 print "    ViewArray<$view> xv(home,x);\n";
 print "    switch (vars) {\n";
 for ($i=0; $i<$n; $i++) {
@@ -275,6 +278,18 @@ print "        ((vars.b == $vb[$none]) && (vars.c == $vb[$none]) && (vars.d == $
 print "      $branchname(home,x,vars.a,vals,o_vars.a,o_vals);\n";
 print "      return;\n";
 print "    }\n";
+print "    if (o_vars.a.activity.initialized() &&\n";
+print "        (o_vars.a.activity.size() != x.size()))\n";
+print "      throw ActivityWrongArity(\"branch (option a)\");\n";
+print "    if (o_vars.b.activity.initialized() &&\n";
+print "        (o_vars.b.activity.size() != x.size()))\n";
+print "      throw ActivityWrongArity(\"branch (option b)\");\n";
+print "    if (o_vars.c.activity.initialized() &&\n";
+print "        (o_vars.c.activity.size() != x.size()))\n";
+print "      throw ActivityWrongArity(\"branch (option c)\");\n";
+print "    if (o_vars.d.activity.initialized() &&\n";
+print "        (o_vars.d.activity.size() != x.size()))\n";
+print "      throw ActivityWrongArity(\"branch (option d)\");\n";
 print "    ViewArray<$view> xv(home,x);\n";
 print "    Gecode::ViewSelVirtualBase<$view>* tb[3];\n";
 print "    int n=0;\n";

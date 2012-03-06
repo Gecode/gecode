@@ -280,7 +280,10 @@ namespace Gecode {
   ViewBrancher<ViewSel>::ViewBrancher(Home home,
                                       ViewArray<typename ViewSel::View>& x0,
                                       ViewSel& vi_s, BranchFilter bf0)
-    : Brancher(home), x(x0), start(0), viewsel(vi_s), bf(bf0) {}
+    : Brancher(home), x(x0), start(0), viewsel(vi_s), bf(bf0) {
+    if (viewsel.notice())
+      home.notice(*this,AP_DISPOSE);
+  }
 
 
   template<class ViewSel>
@@ -319,10 +322,10 @@ namespace Gecode {
     assert(!x[start].assigned());
     int i = start;
     int b = i++;
-    if (viewsel.init(home,x[b]) != VSS_BEST)
+    if (viewsel.init(home,x[b],b) != VSS_BEST)
       for (; i < x.size(); i++)
         if (!x[i].assigned())
-          switch (viewsel.select(home,x[i])) {
+          switch (viewsel.select(home,x[i],i)) {
           case VSS_BETTER:              b=i; break;
           case VSS_BEST:                b=i; goto create;
           case VSS_TIE: case VSS_WORSE: break;
@@ -342,6 +345,8 @@ namespace Gecode {
   template<class ViewSel>
   forceinline size_t
   ViewBrancher<ViewSel>::dispose(Space& home) {
+    if (viewsel.notice())
+      home.ignore(*this,AP_DISPOSE);
     viewsel.dispose(home);
     (void) Brancher::dispose(home);
     return sizeof(ViewBrancher<ViewSel>);

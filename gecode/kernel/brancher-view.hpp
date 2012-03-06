@@ -74,6 +74,8 @@ namespace Gecode {
     void commit(Space& home, const EmptyViewSelChoice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelBase& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
     /// Delete view selection
     void dispose(Space& home);
   };
@@ -88,10 +90,10 @@ namespace Gecode {
     ViewSelNone(void);
     /// Constructor for initialization
     ViewSelNone(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
   };
 
   /**
@@ -107,10 +109,10 @@ namespace Gecode {
     ViewSelDegreeMin(void);
     /// Constructor for initialization
     ViewSelDegreeMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
   };
 
   /**
@@ -126,10 +128,10 @@ namespace Gecode {
     ViewSelDegreeMax(void);
     /// Constructor for initialization
     ViewSelDegreeMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
   };
 
   /**
@@ -145,10 +147,10 @@ namespace Gecode {
     ViewSelAfcMin(void);
     /// Constructor for initialization
     ViewSelAfcMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
   };
 
   /**
@@ -164,10 +166,64 @@ namespace Gecode {
     ViewSelAfcMax(void);
     /// Constructor for initialization
     ViewSelAfcMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+  };
+
+  /**
+   * \brief View selection class for view with lowest activity
+   */
+  template<class View>
+  class ViewSelActivityMin : public ViewSelBase<View> {
+  protected:
+    /// Activity information
+    Activity activity;
+    /// So-far lowest activity
+    double a;
+  public:
+    /// Default constructor
+    ViewSelActivityMin(void);
+    /// Constructor for initialization
+    ViewSelActivityMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, ViewSelActivityMin& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
+  /**
+   * \brief View selection class for view with highest activity
+   */
+  template<class View>
+  class ViewSelActivityMax : public ViewSelBase<View> {
+  protected:
+    /// Activity information
+    Activity activity;
+    /// So-far highest activity
+    double a;
+  public:
+    /// Default constructor
+    ViewSelActivityMax(void);
+    /// Constructor for initialization
+    ViewSelActivityMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, ViewSelActivityMax& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
   };
 
   /// Random generator with archiving (to be used in branchers)
@@ -202,10 +258,10 @@ namespace Gecode {
     ViewSelRnd(void);
     /// Constructor for initialization
     ViewSelRnd(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, _View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, _View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, _View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, _View x, int i);
     /// Return choice
     Choice choice(Space& home);
     /// Return choice
@@ -214,6 +270,8 @@ namespace Gecode {
     void commit(Space& home, const Choice& c, unsigned a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelRnd& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
     /// Delete view selection
     void dispose(Space& home);
   };
@@ -252,6 +310,11 @@ namespace Gecode {
   forceinline void
   ViewSelBase<View>::update(Space&, bool, ViewSelBase<View>&) {}
   template<class View>
+  forceinline bool
+  ViewSelBase<View>::notice(void) const {
+    return false;
+  }
+  template<class View>
   forceinline void
   ViewSelBase<View>::dispose(Space&) {}
 
@@ -266,12 +329,12 @@ namespace Gecode {
     : ViewSelBase<View>(home,vbo) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelNone<View>::init(Space&, View) {
+  ViewSelNone<View>::init(Space&, View, int) {
     return VSS_BEST;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelNone<View>::select(Space&, View) {
+  ViewSelNone<View>::select(Space&, View, int) {
     return VSS_BEST;
   }
 
@@ -287,13 +350,13 @@ namespace Gecode {
     : ViewSelBase<View>(home,vbo), degree(0U) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMin<View>::init(Space&, View x) {
+  ViewSelDegreeMin<View>::init(Space&, View x, int) {
     degree = x.degree();
     return (degree == 0) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMin<View>::select(Space&, View x) {
+  ViewSelDegreeMin<View>::select(Space&, View x, int) {
     if (x.degree() < degree) {
       degree = x.degree();
       return (degree == 0) ? VSS_BEST : VSS_BETTER;
@@ -316,13 +379,13 @@ namespace Gecode {
     : ViewSelBase<View>(home,vbo), degree(0U) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMax<View>::init(Space&, View x) {
+  ViewSelDegreeMax<View>::init(Space&, View x, int) {
     degree = x.degree();
     return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelDegreeMax<View>::select(Space&, View x) {
+  ViewSelDegreeMax<View>::select(Space&, View x, int) {
     if (x.degree() > degree) {
       degree = x.degree();
       return VSS_BETTER;
@@ -345,13 +408,13 @@ namespace Gecode {
     : ViewSelBase<View>(home,vbo), afc(0.0) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelAfcMin<View>::init(Space&, View x) {
+  ViewSelAfcMin<View>::init(Space&, View x, int) {
     afc = x.afc();
     return (afc == 0.0) ? VSS_BEST : VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelAfcMin<View>::select(Space&, View x) {
+  ViewSelAfcMin<View>::select(Space&, View x, int) {
     if (x.afc() < afc) {
       afc = x.afc();
       return (afc == 0.0) ? VSS_BEST : VSS_BETTER;
@@ -374,13 +437,13 @@ namespace Gecode {
     : ViewSelBase<View>(home,vbo), afc(0.0) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelAfcMax<View>::init(Space&, View x) {
+  ViewSelAfcMax<View>::init(Space&, View x, int) {
     afc = x.afc();
     return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelAfcMax<View>::select(Space&, View x) {
+  ViewSelAfcMax<View>::select(Space&, View x, int) {
     double xafc = x.afc();
     if (xafc > afc) {
       afc = xafc;
@@ -390,6 +453,101 @@ namespace Gecode {
     } else {
       return VSS_TIE;
     }
+  }
+
+
+  // Select variable with lowest activity
+  template<class View>
+  forceinline
+  ViewSelActivityMin<View>::ViewSelActivityMin(void) : a(0.0) {}
+  template<class View>
+  forceinline
+  ViewSelActivityMin<View>::ViewSelActivityMin(Space& home,
+                                               const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo), activity(vbo.activity), a(0.0) {
+    if (!activity.initialized())
+      throw MissingActivity("ViewSelActivityMin (VAR_ACTIVITY_MIN)");
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelActivityMin<View>::init(Space&, View, int i) {
+    a = activity[i];
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelActivityMin<View>::select(Space&, View, int i) {
+    if (activity[i] < a) {
+      a = activity[i];
+      return VSS_BETTER;
+    } else if (activity[i] > a) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  forceinline void
+  ViewSelActivityMin<View>::update(Space& home, bool share, 
+                                   ViewSelActivityMin<View>& vs) {
+    activity.update(home, share, vs.activity);
+  }
+  template<class View>
+  forceinline bool
+  ViewSelActivityMin<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  ViewSelActivityMin<View>::dispose(Space&) {
+    activity.~Activity();
+  }
+
+  // Select variable with highest activity
+  template<class View>
+  forceinline
+  ViewSelActivityMax<View>::ViewSelActivityMax(void) : a(0.0) {}
+  template<class View>
+  forceinline
+  ViewSelActivityMax<View>::ViewSelActivityMax(Space& home,
+                                               const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo), activity(vbo.activity), a(0.0) {
+    if (!activity.initialized())
+      throw MissingActivity("ViewSelActivityMax (VAR_ACTIVITY_MAX)");
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelActivityMax<View>::init(Space&, View, int i) {
+    a = activity[i];
+    return VSS_BETTER;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  ViewSelActivityMax<View>::select(Space&, View, int i) {
+    if (activity[i] > a) {
+      a = activity[i];
+      return VSS_BETTER;
+    } else if (activity[i] < a) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class View>
+  forceinline void
+  ViewSelActivityMax<View>::update(Space& home, bool share, 
+                                   ViewSelActivityMax<View>& vs) {
+    activity.update(home, share, vs.activity);
+  }
+  template<class View>
+  forceinline bool
+  ViewSelActivityMax<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  ViewSelActivityMax<View>::dispose(Space&) {
+    activity.~Activity();
   }
 
 
@@ -415,13 +573,13 @@ namespace Gecode {
     : r(vbo.seed), n(0) {}
   template<class View>
   forceinline ViewSelStatus
-  ViewSelRnd<View>::init(Space&, View) {
+  ViewSelRnd<View>::init(Space&, View, int) {
     n=1;
     return VSS_BETTER;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelRnd<View>::select(Space&, View) {
+  ViewSelRnd<View>::select(Space&, View, int) {
     n++;
     return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
   }
@@ -444,6 +602,11 @@ namespace Gecode {
   forceinline void
   ViewSelRnd<View>::update(Space&, bool, ViewSelRnd<View>& vs) {
     r = vs.r;
+  }
+  template<class View>
+  forceinline bool
+  ViewSelRnd<View>::notice(void) const {
+    return false;
   }
   template<class View>
   forceinline void

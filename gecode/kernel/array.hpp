@@ -2080,7 +2080,7 @@ namespace Gecode {
   template<class Char, class Traits, class Var>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
-             const VarArray<Var>& x) {
+              const VarArray<Var>& x) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << '{';

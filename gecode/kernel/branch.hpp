@@ -58,6 +58,8 @@ namespace Gecode {
    */
   class VarBranchOptions {
   public:
+    /// Activity information
+    Activity activity;
     /// Branch filter function
     BranchFilter bf;
     /// Seed for random variable selection
@@ -65,9 +67,11 @@ namespace Gecode {
     /// Default options
     GECODE_KERNEL_EXPORT static const VarBranchOptions def;
     /// Initialize with default values
-    VarBranchOptions(BranchFilter bf0=NULL);
+    VarBranchOptions(Activity a=Activity::def,
+                     BranchFilter bf0=NULL);
     /// Return object with time-based seed value
-    static VarBranchOptions time(BranchFilter bf=NULL);
+    static VarBranchOptions time(Activity a=Activity::def,
+                                 BranchFilter bf=NULL);
   };
 
   /** \brief Value branch options
@@ -166,12 +170,12 @@ namespace Gecode {
 
   // Variable branch options
   forceinline
-  VarBranchOptions::VarBranchOptions(BranchFilter bf0) 
-    : bf(bf0), seed(0) {}
+  VarBranchOptions::VarBranchOptions(Activity a, BranchFilter bf0) 
+    : activity(a), bf(bf0), seed(0) {}
 
   forceinline VarBranchOptions
-  VarBranchOptions::time(BranchFilter bf) {
-    VarBranchOptions o(bf); 
+  VarBranchOptions::time(Activity a, BranchFilter bf) {
+    VarBranchOptions o(a,bf); 
     o.seed=static_cast<unsigned int>(::time(NULL));
     return o;
   }

@@ -3410,6 +3410,64 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   //@{
+  /// Recording activities for integer variables
+  class IntActivity : public Activity {
+  public:
+    /**
+     * \brief Construct as not yet intialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized activity storage is init or the assignment operator.
+     *
+     */
+    IntActivity(void);
+    /// Copy constructor
+    IntActivity(const IntActivity& a);
+    /// Assignment operator
+    IntActivity& operator =(const IntActivity& a);      
+    /// Initialize for integer variables \a x with decay factor \a d
+    GECODE_INT_EXPORT 
+    IntActivity(Home home, const IntVarArgs& x, double d);
+    /**
+     * \brief Initialize for integer variables \a x with decay factor \a d
+     *
+     * This member function can only be used once and only if the
+     * activity storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_INT_EXPORT void
+    init(Home, const IntVarArgs& x, double d);
+  };
+
+  /// Recording activities for Boolean variables
+  class BoolActivity : public Activity {
+  public:
+    /**
+     * \brief Construct as not yet intialized
+     *
+     * The only member function that can be used on a constructed but not
+     * yet initialized activity storage is init.
+     *
+     */
+    BoolActivity(void);
+    /// Copy constructor
+    BoolActivity(const BoolActivity& a);
+    /// Assignment operator
+    BoolActivity& operator =(const BoolActivity& a);      
+    /// Initialize for Boolean variables \a x with decay factor \a d
+    GECODE_INT_EXPORT
+    BoolActivity(Home home, const BoolVarArgs& x, double d);
+    /**
+     * \brief Initialize for Boolean variables \a x with decay factor \a d
+     *
+     * This member function can only be used once and only if the
+     * activity storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_INT_EXPORT void
+    init(Home home, const BoolVarArgs& x, double a);
+  };
+
   /// Which variable to select for branching
   enum IntVarBranch {
     INT_VAR_NONE = 0,        ///< First unassigned
@@ -3418,6 +3476,8 @@ namespace Gecode {
     INT_VAR_DEGREE_MAX,      ///< With largest degree
     INT_VAR_AFC_MIN,         ///< With smallest accumulated failure count
     INT_VAR_AFC_MAX,         ///< With largest accumulated failure count
+    INT_VAR_ACTIVITY_MIN,    ///< With lowest activity
+    INT_VAR_ACTIVITY_MAX,    ///< With highest activity
     INT_VAR_MIN_MIN,         ///< With smallest min
     INT_VAR_MIN_MAX,         ///< With largest min
     INT_VAR_MAX_MIN,         ///< With smallest max
@@ -3428,6 +3488,8 @@ namespace Gecode {
     INT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
     INT_VAR_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
     INT_VAR_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
+    INT_VAR_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
+    INT_VAR_SIZE_ACTIVITY_MAX, ///< With largest domain size divided by activity
     /** \brief With smallest min-regret
      *
      * The min-regret of a variable is the difference between the
@@ -3534,6 +3596,11 @@ namespace Gecode {
          const ValBranchOptions& o_vals = ValBranchOptions::def);
 
   //@}
+}
+
+#include <gecode/int/activity.hpp>
+
+namespace Gecode {
 
   /** Print DFA \a d
    * \relates Gecode::DFA

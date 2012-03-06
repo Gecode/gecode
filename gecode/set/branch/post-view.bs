@@ -77,6 +77,12 @@ Type:		ViewSelAfcMin<SetView>
 Value:		SET_VAR_AFC_MAX
 Type:		ViewSelAfcMax<SetView>
 [VarBranch]
+Value:		SET_VAR_ACTIVITY_MIN
+Type:		ViewSelActivityMin<SetView>
+[VarBranch]
+Value:		SET_VAR_ACTIVITY_MAX
+Type:		ViewSelActivityMax<SetView>
+[VarBranch]
 Value:		SET_VAR_MIN_MIN
 Type:		ByMinMin
 [VarBranch]
@@ -106,4 +112,10 @@ Type:		BySizeAfcMin
 [VarBranch]
 Value:		SET_VAR_SIZE_AFC_MAX
 Type:		BySizeAfcMax
+[VarBranch]
+Value:		SET_VAR_SIZE_ACTIVITY_MIN
+Type:		BySizeActivityMin
+[VarBranch]
+Value:		SET_VAR_SIZE_ACTIVITY_MAX
+Type:		BySizeActivityMax
 [End]

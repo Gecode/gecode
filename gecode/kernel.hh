@@ -168,6 +168,7 @@
 
 #include <gecode/kernel/propagator.hpp>
 #include <gecode/kernel/advisor.hpp>
+#include <gecode/kernel/activity.hpp>
 #include <gecode/kernel/branch.hpp>
 #include <gecode/kernel/brancher.hpp>
 #include <gecode/kernel/brancher-view.hpp>

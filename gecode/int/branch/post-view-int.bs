@@ -95,6 +95,12 @@ Type:		ViewSelAfcMin<IntView>
 Value:		INT_VAR_AFC_MAX
 Type:		ViewSelAfcMax<IntView>
 [VarBranch]
+Value:		INT_VAR_ACTIVITY_MIN
+Type:		ViewSelActivityMin<IntView>
+[VarBranch]
+Value:		INT_VAR_ACTIVITY_MAX
+Type:		ViewSelActivityMax<IntView>
+[VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
 Type:		BySizeDegreeMin
 [VarBranch]
@@ -106,6 +112,12 @@ Type:		BySizeAfcMin
 [VarBranch]
 Value:		INT_VAR_SIZE_AFC_MAX
 Type:		BySizeAfcMax
+[VarBranch]
+Value:		INT_VAR_SIZE_ACTIVITY_MIN
+Type:		BySizeActivityMin
+[VarBranch]
+Value:		INT_VAR_SIZE_ACTIVITY_MAX
+Type:		BySizeActivityMax
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
 Type:		ByRegretMinMin

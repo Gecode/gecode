@@ -228,10 +228,10 @@ namespace Gecode { namespace Set { namespace Branch {
     ByMinMin(void);
     /// Constructor for initialization
     ByMinMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -249,10 +249,10 @@ namespace Gecode { namespace Set { namespace Branch {
     ByMinMax(void);
     /// Constructor for initialization
     ByMinMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -270,10 +270,10 @@ namespace Gecode { namespace Set { namespace Branch {
     ByMaxMin(void);
     /// Constructor for initialization
     ByMaxMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -291,10 +291,10 @@ namespace Gecode { namespace Set { namespace Branch {
     ByMaxMax(void);
     /// Constructor for initialization
     ByMaxMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -312,10 +312,10 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeMin(void);
     /// Constructor for initialization
     BySizeMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -333,10 +333,10 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeMax(void);
     /// Constructor for initialization
     BySizeMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -355,10 +355,10 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeDegreeMin(void);
     /// Constructor for initialization
     BySizeDegreeMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -377,10 +377,10 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeDegreeMax(void);
     /// Constructor for initialization
     BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -399,10 +399,10 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeAfcMin(void);
     /// Constructor for initialization
     BySizeAfcMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
   };
 
   /**
@@ -421,10 +421,68 @@ namespace Gecode { namespace Set { namespace Branch {
     BySizeAfcMax(void);
     /// Constructor for initialization
     BySizeAfcMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, SetView x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, SetView x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
+  };
+
+  /**
+   * \brief View selection class for view with smallest size divided by activity
+   *
+   * Requires \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeActivityMin : public ViewSelBase<SetView> {
+  protected:
+    /// Activity information
+    Activity activity;
+    /// So-far smallest size/activity
+    double sizeact;
+  public:
+    /// Default constructor
+    BySizeActivityMin(void);
+    /// Constructor for initialization
+    BySizeActivityMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, BySizeActivityMin& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
+  /**
+   * \brief View selection class for view with largest size divided by activity
+   *
+   * Requires \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncIntSelView
+   */
+  class BySizeActivityMax : public ViewSelBase<SetView> {
+  protected:
+    /// Activity information
+    Activity activity;
+    /// So-far largest size/activity
+    double sizeact;
+  public:
+    /// Default constructor
+    BySizeActivityMax(void);
+    /// Constructor for initialization
+    BySizeActivityMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, SetView x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, SetView x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, BySizeActivityMax& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
   };
 
 }}}

@@ -188,14 +188,15 @@ VARIMPHDR = \
 VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
-	archive core memory-manager branch region
+	archive core memory-manager branch region \
+	activity
 
 KERNELHDR0 = \
 	archive array shared-array core exception \
 	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
 	branch brancher brancher-view brancher-tiebreak \
-	brancher-val allocators global-prop-info 
+	brancher-val allocators global-prop-info activity
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
@@ -296,7 +297,7 @@ INTSRC0 = \
 	bin-packing.cpp bin-packing/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
 	circuit.cpp no-overlap.cpp nvalues.cpp \
-	member.cpp
+	member.cpp activity.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -373,7 +374,8 @@ INTHDR0 = \
 	nvalues/int-base.hpp nvalues/int-eq.hpp \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
 	val-set.hh val-set.hpp \
-	member.hh member/prop.hpp member/re-prop.hpp
+	member.hh member/prop.hpp member/re-prop.hpp \
+	activity.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -433,7 +435,7 @@ SETSRC0 =								 \
 	precede.cpp \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
-	exec.cpp
+	exec.cpp activity.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -460,7 +462,7 @@ SETHDR0 =								     \
 	precede.hh precede/single.hpp \
 	rel-op.hh					     \
 	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
-	branch/post-val.hpp
+	branch/post-val.hpp activity.hpp
 
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
 	gecode/set/branch/post-view.cpp

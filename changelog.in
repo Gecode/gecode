@@ -73,6 +73,36 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module:	int
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added activity-based branching strategies for integer and Boolean
+variables: INT_VAR_ACTIVITY_MIN, INT_VAR_ACTIVITY_MAX,
+INT_VAR_SIZE_ACTIVITY_MIN, INT_VAR_SIZE_ACTIVITY_MAX. For
+details, see "Modeling and Programming with Gecode".
+
+[ENTRY]
+Module:	set
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added activity-based branching strategies for set variables:
+SET_VAR_ACTIVITY_MIN, SET_VAR_ACTIVITY_MAX,
+SET_VAR_SIZE_ACTIVITY_MIN, SET_VAR_SIZE_ACTIVITY_MAX. For
+details, see "Modeling and Programming with Gecode".
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+The kernel now can record the activity of variables. The activity
+of a variable is defined as how often the domain of a variable
+has been pruned during search.  For details, see "Modeling and
+Programming with Gecode".
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

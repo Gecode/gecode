@@ -82,6 +82,12 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VAR_AFC_MAX:
       v = new (home) ViewSelVirtual<ViewSelAfcMax<BoolView> >(home,o_vars);
       break;
+    case INT_VAR_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<ViewSelActivityMin<BoolView> >(home,o_vars);
+      break;
+    case INT_VAR_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<ViewSelActivityMax<BoolView> >(home,o_vars);
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       v = new (home) ViewSelVirtual<ViewSelDegreeMax<BoolView> >(home,o_vars);
       break;
@@ -93,6 +99,12 @@ namespace Gecode { namespace Int { namespace Branch {
       break;
     case INT_VAR_SIZE_AFC_MAX:
       v = new (home) ViewSelVirtual<ViewSelAfcMin<BoolView> >(home,o_vars);
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<ViewSelActivityMax<BoolView> >(home,o_vars);
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<ViewSelActivityMin<BoolView> >(home,o_vars);
       break;
     case INT_VAR_REGRET_MIN_MIN:
       v = new (home) ViewSelVirtual<ViewSelNone<BoolView> >(home,o_vars);
@@ -126,6 +138,9 @@ namespace Gecode {
 
 
     if (home.failed()) return;
+    if (o_vars.activity.initialized() &&
+        (o_vars.activity.size() != x.size()))
+      throw ActivityWrongArity("branch");
     ViewArray<BoolView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
@@ -200,6 +215,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
+    case INT_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<BoolView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case INT_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<BoolView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         ViewSelDegreeMax<BoolView> v(home,o_vars);
@@ -221,6 +248,18 @@ namespace Gecode {
     case INT_VAR_SIZE_AFC_MAX:
       {
         ViewSelAfcMin<BoolView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MIN:
+      {
+        ViewSelActivityMax<BoolView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MAX:
+      {
+        ViewSelActivityMin<BoolView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -270,6 +309,18 @@ namespace Gecode {
       branch(home,x,vars.a,vals,o_vars.a,o_vals);
       return;
     }
+    if (o_vars.a.activity.initialized() &&
+        (o_vars.a.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option a)");
+    if (o_vars.b.activity.initialized() &&
+        (o_vars.b.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option b)");
+    if (o_vars.c.activity.initialized() &&
+        (o_vars.c.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option c)");
+    if (o_vars.d.activity.initialized() &&
+        (o_vars.d.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option d)");
     ViewArray<BoolView> xv(home,x);
     Gecode::ViewSelVirtualBase<BoolView>* tb[3];
     int n=0;
@@ -362,6 +413,22 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
+    case INT_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMin<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case INT_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMax<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         ViewSelDegreeMax<BoolView> va(home,o_vars.a);
@@ -390,6 +457,22 @@ namespace Gecode {
       {
         ViewSelAfcMin<BoolView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelAfcMin<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MIN:
+      {
+        ViewSelActivityMax<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMax<BoolView>,
+          ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MAX:
+      {
+        ViewSelActivityMin<BoolView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMin<BoolView>,
           ViewSelTieBreakDynamic<BoolView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }

@@ -74,10 +74,10 @@ namespace Gecode {
     ViewSelTieBreakStatic(void);
     /// Constructor for initialization
     ViewSelTieBreakStatic(Space& home, A& a, B& b);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, typename A::View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, typename A::View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, typename A::View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, typename A::View x, int i);
     /// Return choice
     Choice choice(Space& home);
     /// Return choice
@@ -86,7 +86,9 @@ namespace Gecode {
     void commit(Space& home, const Choice& c, unsigned int a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelTieBreakStatic& vs);
-    /// Delete view selection
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
     void dispose(Space& home);
   };
 
@@ -118,10 +120,10 @@ namespace Gecode {
   template<class View>
   class ViewSelVirtualBase {
   public:
-    /// Intialize with view \a x
-    virtual ViewSelStatus init(Space& home, View x) = 0;
-    /// Possibly select better view \a x
-    virtual ViewSelStatus select(Space& home, View x) = 0;
+    /// Intialize with view \a x at position \a i
+    virtual ViewSelStatus init(Space& home, View x, int i) = 0;
+    /// Possibly select better view \a x at position \a i
+    virtual ViewSelStatus select(Space& home, View x, int i) = 0;
     /// Return choice
     virtual ChoiceVirtualBase* choice(Space& home) = 0;
     /// Return choice
@@ -131,7 +133,9 @@ namespace Gecode {
                         unsigned int a) = 0;
     /// Create copy
     virtual ViewSelVirtualBase<View>* copy(Space& home, bool share) = 0;
-    /// Delete view selection and return its size
+    /// Whether dispose must always be called (that is, notice is needed)
+    virtual bool notice(void) const = 0;
+    /// Dispose view selection and return its size
     virtual size_t dispose(Space& home) = 0;
     /// \name Memory management
     //@{
@@ -177,10 +181,10 @@ namespace Gecode {
     ViewSelVirtual(Space& home, const VarBranchOptions& vbo);
     /// Constructor for cloning \a vsv
     ViewSelVirtual(Space& home, bool share, ViewSelVirtual& vsv);
-    /// Intialize with view \a x
-    virtual ViewSelStatus init(Space& home, typename ViewSel::View x);
-    /// Possibly select better view \a x
-    virtual ViewSelStatus select(Space& home, typename ViewSel::View x);
+    /// Intialize with view \a x at position \a i
+    virtual ViewSelStatus init(Space& home, typename ViewSel::View x, int i);
+    /// Possibly select better view \a x at position \a i
+    virtual ViewSelStatus select(Space& home, typename ViewSel::View x, int i);
     /// Return choice
     virtual ChoiceVirtualBase* choice(Space& home);
     /// Return choice
@@ -191,6 +195,8 @@ namespace Gecode {
     /// Create copy during cloning
     virtual ViewSelVirtualBase<typename ViewSel::View>*
     copy(Space& home, bool share);
+    /// Whether dispose must always be called (that is, notice is needed)
+    virtual bool notice(void) const;
     /// Delete view selection and returns its size
     virtual size_t dispose(Space& home);
   };
@@ -239,10 +245,10 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelTieBreakDynamic(Space& home, ViewSelVirtualBase<_View>** vsv,
                            int n);
-    /// Intialize with view \a x
-    ViewSelStatus init(Space& home, _View x);
-    /// Possibly select better view \a x
-    ViewSelStatus select(Space& home, _View x);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, _View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, _View x, int i);
     /// Return choice
     Choice choice(Space& home);
     /// Return choice
@@ -253,6 +259,8 @@ namespace Gecode {
                 unsigned int a);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelTieBreakDynamic& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
     /// Delete view selection
     void dispose(Space& home);
   };
@@ -287,23 +295,23 @@ namespace Gecode {
     : a(a0), b(b0) {}
   template<class A, class B>
   forceinline ViewSelStatus
-  ViewSelTieBreakStatic<A,B>::init(Space& home, typename A::View x) {
-    ViewSelStatus s = a.init(home,x);
-    return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : s;
+  ViewSelTieBreakStatic<A,B>::init(Space& home, typename A::View x, int i) {
+    ViewSelStatus s = a.init(home,x,i);
+    return (b.init(home,x,i) != VSS_BEST) ? VSS_BETTER : s;
   }
   template<class A, class B>
   forceinline ViewSelStatus
-  ViewSelTieBreakStatic<A,B>::select(Space& home, typename A::View x) {
-    switch (a.select(home,x)) {
+  ViewSelTieBreakStatic<A,B>::select(Space& home, typename A::View x, int i) {
+    switch (a.select(home,x,i)) {
     case VSS_BEST:
-      return (b.init(home,x) != VSS_BEST) ? VSS_BETTER : VSS_BEST;
+      return (b.init(home,x,i) != VSS_BEST) ? VSS_BETTER : VSS_BEST;
     case VSS_BETTER:
-      (void) b.init(home,x);
+      (void) b.init(home,x,i);
       return VSS_BETTER;
     case VSS_WORSE:
       return VSS_WORSE;
     case VSS_TIE:
-      switch (b.select(home,x)) {
+      switch (b.select(home,x,i)) {
       case VSS_BEST:   return VSS_BETTER;
       case VSS_BETTER: return VSS_BETTER;
       case VSS_TIE:    return VSS_TIE;
@@ -341,6 +349,11 @@ namespace Gecode {
                                      ViewSelTieBreakStatic<A,B>& vstb) {
     a.update(home,share,vstb.a);
     b.update(home,share,vstb.b);
+  }
+  template<class A, class B>
+  forceinline bool
+  ViewSelTieBreakStatic<A,B>::notice(void) const {
+    return a.notice() || b.notice();
   }
   template<class A, class B>
   forceinline void
@@ -411,13 +424,13 @@ namespace Gecode {
   }
   template<class ViewSel>
   ViewSelStatus
-  ViewSelVirtual<ViewSel>::init(Space& home, typename ViewSel::View x) {
-    return viewsel.init(home,x);
+  ViewSelVirtual<ViewSel>::init(Space& home, typename ViewSel::View x, int i) {
+    return viewsel.init(home,x,i);
   }
   template<class ViewSel>
   ViewSelStatus
-  ViewSelVirtual<ViewSel>::select(Space& home, typename ViewSel::View x) {
-    return viewsel.select(home,x);
+  ViewSelVirtual<ViewSel>::select(Space& home, typename ViewSel::View x, int i) {
+    return viewsel.select(home,x,i);
   }
   template<class ViewSel>
   ChoiceVirtualBase*
@@ -441,6 +454,11 @@ namespace Gecode {
   ViewSelVirtualBase<typename ViewSel::View>*
   ViewSelVirtual<ViewSel>::copy(Space& home, bool share) {
     return new (home) ViewSelVirtual<ViewSel>(home,share,*this);
+  }
+  template<class ViewSel>
+  bool
+  ViewSelVirtual<ViewSel>::notice(void) const {
+    return viewsel.notice();
   }
   template<class ViewSel>
   size_t
@@ -533,37 +551,37 @@ namespace Gecode {
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelTieBreakDynamic<View>::init(Space& home, View x) {
+  ViewSelTieBreakDynamic<View>::init(Space& home, View x, int i) {
     ViewSelStatus s = VSS_BEST;
-    for (int i=0; i<n; i++)
-      if (tb[i]->init(home,x) != VSS_BEST)
+    for (int j=0; j<n; j++)
+      if (tb[j]->init(home,x,i) != VSS_BEST)
         s = VSS_BETTER;
     return s;
   }
   template<class View>
   forceinline ViewSelStatus
-  ViewSelTieBreakDynamic<View>::select(Space& home, View x) {
-    switch (tb[0]->select(home,x)) {
+  ViewSelTieBreakDynamic<View>::select(Space& home, View x, int i) {
+    switch (tb[0]->select(home,x,i)) {
     case VSS_BEST:
       {
         ViewSelStatus s = VSS_BEST;
-        for (int i=1; i<n; i++)
-          if (tb[i]->init(home,x) != VSS_BEST)
+        for (int j=1; j<n; j++)
+          if (tb[j]->init(home,x,i) != VSS_BEST)
             s = VSS_BETTER;
         return s;
       }
     case VSS_BETTER:
-      for (int i=1; i<n; i++)
-        (void) tb[i]->init(home,x);
+      for (int j=1; j<n; j++)
+        (void) tb[j]->init(home,x,i);
       return VSS_BETTER;
     case VSS_WORSE:
       return VSS_WORSE;
     case VSS_TIE:
-      for (int i=1; i<n; i++)
-        switch (tb[i]->select(home,x)) {
+      for (int j=1; j<n; j++)
+        switch (tb[j]->select(home,x,i)) {
         case VSS_BEST: case VSS_BETTER:
-          for (int j=i+1; j<n; j++)
-            (void) tb[j]->init(home,x);
+          for (int k=j+1; k<n; k++)
+            (void) tb[k]->init(home,x,i);
           return VSS_BETTER;
         case VSS_TIE:    break;
         case VSS_WORSE:  return VSS_WORSE;
@@ -601,6 +619,14 @@ namespace Gecode {
     tb = home.alloc<ViewSelVirtualBase<View>*>(n);
     for (int i=0; i<n; i++)
       tb[i] = vstb.tb[i]->copy(home,share);
+  }
+  template<class _View>
+  bool
+  ViewSelTieBreakDynamic<_View>::notice(void) const {
+    for (int i=n; i--; )
+      if (tb[i]->notice())
+        return true;
+    return false;
   }
   template<class _View>
   forceinline void

@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Mikael Lagerkvist, 2005
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -131,6 +133,8 @@ namespace Test { namespace Branch {
     Gecode::INT_VAR_DEGREE_MAX,
     Gecode::INT_VAR_AFC_MIN,
     Gecode::INT_VAR_AFC_MAX,
+    Gecode::INT_VAR_ACTIVITY_MIN,
+    Gecode::INT_VAR_ACTIVITY_MAX,
     Gecode::INT_VAR_MIN_MIN,
     Gecode::INT_VAR_MIN_MAX,
     Gecode::INT_VAR_MAX_MIN,
@@ -141,6 +145,8 @@ namespace Test { namespace Branch {
     Gecode::INT_VAR_SIZE_DEGREE_MAX,
     Gecode::INT_VAR_SIZE_AFC_MIN,
     Gecode::INT_VAR_SIZE_AFC_MAX,
+    Gecode::INT_VAR_SIZE_ACTIVITY_MIN,
+    Gecode::INT_VAR_SIZE_ACTIVITY_MAX,
     Gecode::INT_VAR_REGRET_MIN_MIN,
     Gecode::INT_VAR_REGRET_MIN_MAX,
     Gecode::INT_VAR_REGRET_MAX_MIN,
@@ -158,6 +164,8 @@ namespace Test { namespace Branch {
     "INT_VAR_DEGREE_MAX",
     "INT_VAR_AFC_MIN",
     "INT_VAR_AFC_MAX",
+    "INT_VAR_ACTIVITY_MIN",
+    "INT_VAR_ACTIVITY_MAX",
     "INT_VAR_MIN_MIN",
     "INT_VAR_MIN_MAX",
     "INT_VAR_MAX_MIN",
@@ -168,6 +176,8 @@ namespace Test { namespace Branch {
     "INT_VAR_SIZE_DEGREE_MAX",
     "INT_VAR_SIZE_AFC_MIN",
     "INT_VAR_SIZE_AFC_MAX",
+    "INT_VAR_SIZE_ACTIVITY_MIN",
+    "INT_VAR_SIZE_ACTIVITY_MAX",
     "INT_VAR_REGRET_MIN_MIN",
     "INT_VAR_REGRET_MIN_MAX",
     "INT_VAR_REGRET_MAX_MIN",
@@ -219,6 +229,8 @@ namespace Test { namespace Branch {
     Gecode::SET_VAR_DEGREE_MAX,
     Gecode::SET_VAR_AFC_MIN,
     Gecode::SET_VAR_AFC_MAX,
+    Gecode::SET_VAR_ACTIVITY_MIN,
+    Gecode::SET_VAR_ACTIVITY_MAX,
     Gecode::SET_VAR_MIN_MIN,
     Gecode::SET_VAR_MIN_MAX,
     Gecode::SET_VAR_MAX_MIN,
@@ -228,7 +240,9 @@ namespace Test { namespace Branch {
     Gecode::SET_VAR_SIZE_DEGREE_MIN,
     Gecode::SET_VAR_SIZE_DEGREE_MAX,
     Gecode::SET_VAR_SIZE_AFC_MIN,
-    Gecode::SET_VAR_SIZE_AFC_MAX
+    Gecode::SET_VAR_SIZE_AFC_MAX,
+    Gecode::SET_VAR_SIZE_ACTIVITY_MIN,
+    Gecode::SET_VAR_SIZE_ACTIVITY_MAX
   };
   /// Number of set variable selections
   const int n_set_var_branch =
@@ -242,6 +256,8 @@ namespace Test { namespace Branch {
     "SET_VAR_DEGREE_MAX",
     "SET_VAR_AFC_MIN",
     "SET_VAR_AFC_MAX",
+    "SET_VAR_ACTIVITY_MIN",
+    "SET_VAR_ACTIVITY_MAX",
     "SET_VAR_MIN_MIN",
     "SET_VAR_MIN_MAX",
     "SET_VAR_MAX_MIN",
@@ -251,7 +267,9 @@ namespace Test { namespace Branch {
     "SET_VAR_SIZE_DEGREE_MIN",
     "SET_VAR_SIZE_DEGREE_MAX",
     "SET_VAR_SIZE_AFC_MIN",
-    "SET_VAR_SIZE_AFC_MAX"
+    "SET_VAR_SIZE_AFC_MAX",
+    "SET_VAR_SIZE_ACTIVITY_MIN",
+    "SET_VAR_SIZE_ACTIVITY_MAX"
   };
   /// Set value selections
   const Gecode::SetValBranch set_val_branch[] = {
@@ -348,13 +366,41 @@ namespace Test { namespace Branch {
       for (int varb = 1; varb<n_int_var_branch; varb++) {
         for (int val = 0; val<n_int_val_branch; val++) {
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
-          if (vara == 0)
+          if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
               branch(*c, c->x[i], int_val_branch[val]);
-          else
+          } else {
+            IntVarBranch ivba = int_var_branch[vara];
+            IntVarBranch ivbb = int_var_branch[varb];
+            VarBranchOptions vboa, vbob;
+            IntActivity iaa, iab;
+
+            switch (ivba) {
+            case INT_VAR_ACTIVITY_MIN:
+            case INT_VAR_ACTIVITY_MAX:
+            case INT_VAR_SIZE_ACTIVITY_MIN:
+            case INT_VAR_SIZE_ACTIVITY_MAX:
+              iaa.init(*c, c->x, 1.0);
+              vboa.activity = iaa;
+              break;
+            default: ;
+            }
+
+            switch (ivbb) {
+            case INT_VAR_ACTIVITY_MIN:
+            case INT_VAR_ACTIVITY_MAX:
+            case INT_VAR_SIZE_ACTIVITY_MIN:
+            case INT_VAR_SIZE_ACTIVITY_MAX:
+              iab.init(*c, c->x, 1.0);
+              vbob.activity = iab;
+              break;
+            default: ;
+            }
+
             branch(*c, c->x,
-                   tiebreak(int_var_branch[vara], int_var_branch[varb]),
-                   int_val_branch[val]);
+                   tiebreak(ivba, ivbb), int_val_branch[val],
+                   tiebreak(vboa, vbob));
+          }
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(int_var_branch_name[vara],
@@ -405,13 +451,41 @@ namespace Test { namespace Branch {
       for (int varb = 1; varb<n_int_var_branch; varb++) {
         for (int val = 0; val<n_int_val_branch; val++) {
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
-          if (vara == 0)
+          if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
               branch(*c, c->x[i], int_val_branch[val]);
-          else
+          } else {
+            IntVarBranch ivba = int_var_branch[vara];
+            IntVarBranch ivbb = int_var_branch[varb];
+            VarBranchOptions vboa, vbob;
+            BoolActivity baa, bab;
+
+            switch (ivba) {
+            case INT_VAR_ACTIVITY_MIN:
+            case INT_VAR_ACTIVITY_MAX:
+            case INT_VAR_SIZE_ACTIVITY_MIN:
+            case INT_VAR_SIZE_ACTIVITY_MAX:
+              baa.init(*c, c->x, 1.0);
+              vboa.activity = baa;
+              break;
+            default: ;
+            }
+
+            switch (ivbb) {
+            case INT_VAR_ACTIVITY_MIN:
+            case INT_VAR_ACTIVITY_MAX:
+            case INT_VAR_SIZE_ACTIVITY_MIN:
+            case INT_VAR_SIZE_ACTIVITY_MAX:
+              bab.init(*c, c->x, 1.0);
+              vbob.activity = bab;
+              break;
+            default: ;
+            }
+
             branch(*c, c->x,
-                   tiebreak(int_var_branch[vara], int_var_branch[varb]),
-                   int_val_branch[val]);
+                   tiebreak(ivba, ivbb), int_val_branch[val],
+                   tiebreak(vboa, vbob));
+          }
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(int_var_branch_name[vara],
@@ -464,13 +538,41 @@ namespace Test { namespace Branch {
       for (int varb = 1; varb<n_set_var_branch; varb++) {
         for (int val = 0; val<n_set_val_branch; val++) {
           SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
-          if (vara == 0)
+          if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
               branch(*c, c->x[i], set_val_branch[val]);
-          else
+          } else {
+            SetVarBranch svba = set_var_branch[vara];
+            SetVarBranch svbb = set_var_branch[varb];
+            VarBranchOptions vboa, vbob;
+            SetActivity saa, sab;
+
+            switch (svba) {
+            case SET_VAR_ACTIVITY_MIN:
+            case SET_VAR_ACTIVITY_MAX:
+            case SET_VAR_SIZE_ACTIVITY_MIN:
+            case SET_VAR_SIZE_ACTIVITY_MAX:
+              saa.init(*c, c->x, 1.0);
+              vboa.activity = saa;
+              break;
+            default: ;
+            }
+
+            switch (svbb) {
+            case SET_VAR_ACTIVITY_MIN:
+            case SET_VAR_ACTIVITY_MAX:
+            case SET_VAR_SIZE_ACTIVITY_MIN:
+            case SET_VAR_SIZE_ACTIVITY_MAX:
+              sab.init(*c, c->x, 1.0);
+              vbob.activity = sab;
+              break;
+            default: ;
+            }
+
             branch(*c, c->x,
-                   tiebreak(set_var_branch[vara], set_var_branch[varb]),
-                   set_val_branch[val]);
+                   tiebreak(svba, svbb), set_val_branch[val],
+                   tiebreak(vboa, vbob));
+          }
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
             (RunInfo(set_var_branch_name[vara],

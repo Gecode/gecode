@@ -64,6 +64,12 @@ namespace Gecode { namespace Set { namespace Branch {
     case SET_VAR_AFC_MAX:
       v = new (home) ViewSelVirtual<ViewSelAfcMax<SetView> >(home,o_vars);
       break;
+    case SET_VAR_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<ViewSelActivityMin<SetView> >(home,o_vars);
+      break;
+    case SET_VAR_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<ViewSelActivityMax<SetView> >(home,o_vars);
+      break;
     case SET_VAR_MIN_MIN:
       v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
       break;
@@ -94,6 +100,12 @@ namespace Gecode { namespace Set { namespace Branch {
     case SET_VAR_SIZE_AFC_MAX:
       v = new (home) ViewSelVirtual<BySizeAfcMax>(home,o_vars);
       break;
+    case SET_VAR_SIZE_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<BySizeActivityMin>(home,o_vars);
+      break;
+    case SET_VAR_SIZE_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<BySizeActivityMax>(home,o_vars);
+      break;
     default:
       throw UnknownBranching("Set::branch");
     }
@@ -114,6 +126,9 @@ namespace Gecode {
 
 
     if (home.failed()) return;
+    if (o_vars.activity.initialized() &&
+        (o_vars.activity.size() != x.size()))
+      throw ActivityWrongArity("branch");
     ViewArray<SetView> xv(home,x);
     switch (vars) {
     case SET_VAR_NONE:
@@ -149,6 +164,18 @@ namespace Gecode {
     case SET_VAR_AFC_MAX:
       {
         ViewSelAfcMax<SetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case SET_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<SetView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case SET_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<SetView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -212,6 +239,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
+    case SET_VAR_SIZE_ACTIVITY_MIN:
+      {
+        BySizeActivityMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case SET_VAR_SIZE_ACTIVITY_MAX:
+      {
+        BySizeActivityMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
     default:
       throw UnknownBranching("Set::branch");
     }
@@ -234,6 +273,18 @@ namespace Gecode {
       branch(home,x,vars.a,vals,o_vars.a,o_vals);
       return;
     }
+    if (o_vars.a.activity.initialized() &&
+        (o_vars.a.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option a)");
+    if (o_vars.b.activity.initialized() &&
+        (o_vars.b.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option b)");
+    if (o_vars.c.activity.initialized() &&
+        (o_vars.c.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option c)");
+    if (o_vars.d.activity.initialized() &&
+        (o_vars.d.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option d)");
     ViewArray<SetView> xv(home,x);
     Gecode::ViewSelVirtualBase<SetView>* tb[3];
     int n=0;
@@ -274,6 +325,22 @@ namespace Gecode {
       {
         ViewSelAfcMax<SetView> va(home,o_vars.a);
         ViewSelTieBreakStatic<ViewSelAfcMax<SetView>,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case SET_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<SetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMin<SetView>,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case SET_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<SetView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMax<SetView>,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
@@ -354,6 +421,22 @@ namespace Gecode {
       {
         BySizeAfcMax va(home,o_vars.a);
         ViewSelTieBreakStatic<BySizeAfcMax,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case SET_VAR_SIZE_ACTIVITY_MIN:
+      {
+        BySizeActivityMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeActivityMin,
+          ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case SET_VAR_SIZE_ACTIVITY_MAX:
+      {
+        BySizeActivityMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeActivityMax,
           ViewSelTieBreakDynamic<SetView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }

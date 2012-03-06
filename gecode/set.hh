@@ -1069,6 +1069,35 @@ namespace Gecode {
    * \defgroup TaskModelSetBranch Branching
    * \ingroup TaskModelSet
    */
+  //@{
+  /// Recording activities for set variables
+  class SetActivity : public Activity {
+  public:
+    /**
+     * \brief Construct as not yet intialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized activity storage is init or the assignment operator.
+     *
+     */
+    SetActivity(void);
+    /// Copy constructor
+    SetActivity(const SetActivity& a);
+    /// Assignment operator
+    SetActivity& operator =(const SetActivity& a);      
+    /// Initialize for set variables \a x with decay factor \a d
+    GECODE_SET_EXPORT 
+    SetActivity(Home home, const SetVarArgs& x, double d);
+    /**
+     * \brief Initialize for set variables \a x with decay factor \a d
+     *
+     * This member function can only be used once and only if the
+     * activity storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_SET_EXPORT void
+    init(Home, const SetVarArgs& x, double d);
+  };
 
   //@{
   /// Which variable to select for branching
@@ -1079,6 +1108,8 @@ namespace Gecode {
     SET_VAR_DEGREE_MAX, ///< With largest degree
     SET_VAR_AFC_MIN,    ///< With smallest accumulated failure count
     SET_VAR_AFC_MAX,    ///< With largest accumulated failure count
+    SET_VAR_ACTIVITY_MIN, ///< With lowest activity
+    SET_VAR_ACTIVITY_MAX, ///< With highest activity
     SET_VAR_MIN_MIN,    ///< With smallest minimum unknown element
     SET_VAR_MIN_MAX,    ///< With largest minimum unknown element
     SET_VAR_MAX_MIN,    ///< With smallest maximum unknown element
@@ -1088,7 +1119,9 @@ namespace Gecode {
     SET_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
     SET_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
     SET_VAR_SIZE_AFC_MIN, ///< With smallest domain size divided by accumulated failure count
-    SET_VAR_SIZE_AFC_MAX  ///< With largest domain size divided by accumulated failure count
+    SET_VAR_SIZE_AFC_MAX, ///< With largest domain size divided by accumulated failure count
+    SET_VAR_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
+    SET_VAR_SIZE_ACTIVITY_MAX  ///< With largest domain size divided by activity
   };
 
   /// Which values to select first for branching
@@ -1150,6 +1183,8 @@ namespace Gecode {
   //@}
 
 }
+
+#include <gecode/set/activity.hpp>
 
 #endif
 

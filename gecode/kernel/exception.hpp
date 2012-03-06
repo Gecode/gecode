@@ -93,6 +93,20 @@ namespace Gecode {
     TooManyBranchers(const char* l);
   };
 
+  /// %Exception: missing activity information
+  class GECODE_VTABLE_EXPORT MissingActivity : public Exception {
+  public:
+    /// Initialize with location \a l
+    MissingActivity(const char* l);
+  };
+
+  /// %Exception: activity has wrong arity
+  class GECODE_VTABLE_EXPORT ActivityWrongArity : public Exception {
+  public:
+    /// Initialize with location \a l
+    ActivityWrongArity(const char* l);
+  };
+
   //@}
 
   /*
@@ -129,6 +143,14 @@ namespace Gecode {
   inline
   TooManyBranchers::TooManyBranchers(const char* l)
     : Exception(l,"Too many branchers created") {}
+
+  inline
+  MissingActivity::MissingActivity(const char* l)
+    : Exception(l,"Missing activity information for branching") {}
+
+  inline
+  ActivityWrongArity::ActivityWrongArity(const char* l)
+    : Exception(l,"Activity has wrong number of variables") {}
 
 }
 

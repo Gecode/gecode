@@ -95,6 +95,12 @@ Type:		ViewSelAfcMin<BoolView>
 Value:		INT_VAR_AFC_MAX
 Type:		ViewSelAfcMax<BoolView>
 [VarBranch]
+Value:		INT_VAR_ACTIVITY_MIN
+Type:		ViewSelActivityMin<BoolView>
+[VarBranch]
+Value:		INT_VAR_ACTIVITY_MAX
+Type:		ViewSelActivityMax<BoolView>
+[VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
 Type:		ViewSelDegreeMax<BoolView>
 [VarBranch]
@@ -106,6 +112,12 @@ Type:		ViewSelAfcMax<BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_AFC_MAX
 Type:		ViewSelAfcMin<BoolView>
+[VarBranch]
+Value:		INT_VAR_SIZE_ACTIVITY_MIN
+Type:		ViewSelActivityMax<BoolView>
+[VarBranch]
+Value:		INT_VAR_SIZE_ACTIVITY_MAX
+Type:		ViewSelActivityMin<BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
 Type:		ViewSelNone<BoolView>

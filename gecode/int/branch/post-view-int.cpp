@@ -82,6 +82,12 @@ namespace Gecode { namespace Int { namespace Branch {
     case INT_VAR_AFC_MAX:
       v = new (home) ViewSelVirtual<ViewSelAfcMax<IntView> >(home,o_vars);
       break;
+    case INT_VAR_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<ViewSelActivityMin<IntView> >(home,o_vars);
+      break;
+    case INT_VAR_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<ViewSelActivityMax<IntView> >(home,o_vars);
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
       break;
@@ -93,6 +99,12 @@ namespace Gecode { namespace Int { namespace Branch {
       break;
     case INT_VAR_SIZE_AFC_MAX:
       v = new (home) ViewSelVirtual<BySizeAfcMax>(home,o_vars);
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<BySizeActivityMin>(home,o_vars);
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<BySizeActivityMax>(home,o_vars);
       break;
     case INT_VAR_REGRET_MIN_MIN:
       v = new (home) ViewSelVirtual<ByRegretMinMin>(home,o_vars);
@@ -126,6 +138,9 @@ namespace Gecode {
 
 
     if (home.failed()) return;
+    if (o_vars.activity.initialized() &&
+        (o_vars.activity.size() != x.size()))
+      throw ActivityWrongArity("branch");
     ViewArray<IntView> xv(home,x);
     switch (vars) {
     case INT_VAR_NONE:
@@ -200,6 +215,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
+    case INT_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<IntView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case INT_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<IntView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         BySizeDegreeMin v(home,o_vars);
@@ -221,6 +248,18 @@ namespace Gecode {
     case INT_VAR_SIZE_AFC_MAX:
       {
         BySizeAfcMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MIN:
+      {
+        BySizeActivityMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MAX:
+      {
+        BySizeActivityMax v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -270,6 +309,18 @@ namespace Gecode {
       branch(home,x,vars.a,vals,o_vars.a,o_vals);
       return;
     }
+    if (o_vars.a.activity.initialized() &&
+        (o_vars.a.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option a)");
+    if (o_vars.b.activity.initialized() &&
+        (o_vars.b.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option b)");
+    if (o_vars.c.activity.initialized() &&
+        (o_vars.c.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option c)");
+    if (o_vars.d.activity.initialized() &&
+        (o_vars.d.activity.size() != x.size()))
+      throw ActivityWrongArity("branch (option d)");
     ViewArray<IntView> xv(home,x);
     Gecode::ViewSelVirtualBase<IntView>* tb[3];
     int n=0;
@@ -362,6 +413,22 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
+    case INT_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMin<IntView>,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case INT_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMax<IntView>,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
     case INT_VAR_SIZE_DEGREE_MIN:
       {
         BySizeDegreeMin va(home,o_vars.a);
@@ -390,6 +457,22 @@ namespace Gecode {
       {
         BySizeAfcMax va(home,o_vars.a);
         ViewSelTieBreakStatic<BySizeAfcMax,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MIN:
+      {
+        BySizeActivityMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeActivityMin,
+          ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case INT_VAR_SIZE_ACTIVITY_MAX:
+      {
+        BySizeActivityMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<BySizeActivityMax,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
