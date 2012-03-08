@@ -795,7 +795,7 @@ static int input (yyscan_t yyscanner );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		int n; \
+		yy_size_t n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -959,7 +959,7 @@ yy_find_action:
 
 		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
 			{
-			int yyl;
+			yy_size_t yyl;
 			for ( yyl = 0; yyl < yyleng; ++yyl )
 				if ( yytext[yyl] == '\n' )
 					   
@@ -1019,12 +1019,12 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 76 "./gecode/flatzinc/lexer.lxx"
-{ yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
+{ yylval->dValue = strtod(yytext,NULL); return FZ_INT_LIT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 77 "./gecode/flatzinc/lexer.lxx"
-{ return FZ_FLOAT_LIT; }
+{ yylval->dValue = strtod(yytext,NULL); return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
