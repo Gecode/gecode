@@ -74,6 +74,15 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Removed the print command line option. Instead, for optimization problems,
+using -a will print all solutions, while not using -a will only print the
+last one. This is consistent with the G12 FlatZinc command line interface.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 Thanks: Thibaut Feydy

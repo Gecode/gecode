@@ -676,19 +676,20 @@ namespace Gecode { namespace FlatZinc {
     Driver::Cutoff::installCtrlHandler(true);
     Engine<FlatZincSpace> se(this,o);
     int noOfSolutions = _method == SAT ? opt.solutions() : 0;
+    bool printAll = _method == SAT || opt.allSolutions();
     int findSol = noOfSolutions;
     FlatZincSpace* sol = NULL;
     while (FlatZincSpace* next_sol = se.next()) {
       delete sol;
       sol = next_sol;
-      if (opt.print()==0) {
+      if (printAll) {
         sol->print(out, p);
         out << "----------" << std::endl;
       }
       if (--findSol==0)
         goto stopped;
     }
-    if (sol && opt.print()!=0) {
+    if (sol && !printAll) {
       sol->print(out, p);
       out << "----------" << std::endl;
     }
