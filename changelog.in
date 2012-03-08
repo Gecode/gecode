@@ -74,6 +74,14 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Thibaut Feydy
+[DESCRIPTION]
+Fixed the parser for set literals.
+
+[ENTRY]
+Module: flatzinc
 What:   new
 Rank:   minor
 [DESCRIPTION]

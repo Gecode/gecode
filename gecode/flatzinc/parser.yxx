@@ -1101,7 +1101,7 @@ bool_var_array_literal : '[' bool_init_list ']' { $$ = $2; }
 
 set_init :
       set_literal
-      { $$ = new SetVarSpec(Option<AST::SetLit*>::some($1),false); }
+      { $$ = new SetVarSpec($1,false); }
     | var_par_id
       { 
         ParserState* pp = static_cast<ParserState*>(parm);

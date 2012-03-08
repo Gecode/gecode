@@ -2717,7 +2717,7 @@ yyreduce:
 
   case 76:
 #line 1104 "gecode/flatzinc/parser.yxx"
-    { (yyval.varSpec) = new SetVarSpec(Option<AST::SetLit*>::some((yyvsp[(1) - (1)].setLit)),false); ;}
+    { (yyval.varSpec) = new SetVarSpec((yyvsp[(1) - (1)].setLit),false); ;}
     break;
 
   case 77:
