@@ -73,10 +73,13 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 "false"           { yylval->iValue = 0; return FZ_BOOL_LIT; }
 -?[0-9]+          { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
 -?0x[0-9A-Fa-f]+  { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
--?0o[0-7]+        { yylval->dValue = strtod(yytext,NULL); return FZ_INT_LIT; }
--?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL); return FZ_FLOAT_LIT; }
--?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { return FZ_FLOAT_LIT; }
--?[0-9]+[Ee][+-]?[0-9]+  { return FZ_FLOAT_LIT; }
+-?0o[0-7]+        { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
+-?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+                    return FZ_FLOAT_LIT; }
+-?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+                                   return FZ_FLOAT_LIT; }
+-?[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+                           return FZ_FLOAT_LIT; }
 [=:;{}(),\[\]\.]    { return *yytext; }
 \.\.              { return FZ_DOTDOT; }
 ::                { return FZ_COLONCOLON; }
