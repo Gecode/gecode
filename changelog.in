@@ -74,6 +74,14 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added mzn-gecode scripts for conveniently solving MiniZinc models
+using the Gecode FlatZinc interpreter.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]

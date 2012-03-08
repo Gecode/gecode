@@ -100,7 +100,7 @@
 /* Gecode version */
 #undef GECODE_VERSION
 
-/* Gecode version as a number */
+/* Gecode version */
 #undef GECODE_VERSION_NUMBER
 
 /* How to tell the compiler to really, really inline */
