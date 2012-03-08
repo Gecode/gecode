@@ -707,9 +707,11 @@ vardecl_item:
               for (int i=0; i<$5-1; i++) {
                 vars[i] = pp->intvars.size();
                 pp->intvars.push_back(varspec(arrayname, ispec));
-              }          
-              vars[$5-1] = pp->intvars.size();
-              pp->intvars.push_back(varspec($11, ispec));
+              }
+              if ($5>0) {
+                vars[$5-1] = pp->intvars.size();
+                pp->intvars.push_back(varspec($11, ispec));
+              }
             }
           }
           if (print) {
@@ -834,9 +836,11 @@ vardecl_item:
             for (int i=0; i<$5-1; i++) {
               vars[i] = pp->setvars.size();
               pp->setvars.push_back(varspec(arrayname, ispec));
-            }          
-            vars[$5-1] = pp->setvars.size();
-            pp->setvars.push_back(varspec($13, ispec));
+            }
+            if ($5>0) {
+              vars[$5-1] = pp->setvars.size();
+              pp->setvars.push_back(varspec($13, ispec));
+            }
           }
           if (print) {
             AST::Array* a = new AST::Array();

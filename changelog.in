@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Support 0-length array declarations.
+
+[ENTRY]
 Module:	int
 What:	new
 Rank:	major
