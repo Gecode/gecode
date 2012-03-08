@@ -43,52 +43,8 @@ namespace Gecode {
    */
   class Activity {
   protected:
-    /// Propagator for recording activity information
     template<class View>
-    class Recorder : public NaryPropagator<View,PC_GEN_NONE> {
-    protected:
-      using NaryPropagator<View,PC_GEN_NONE>::x;
-      /// Advisor with index and change information
-      class Idx : public Advisor {
-      protected:
-        /// Index and mark information
-        int _info;
-      public:
-        /// Constructor for creation
-        Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
-        /// Constructor for cloning \a a
-        Idx(Space& home, bool share, Idx& a);
-        /// Mark advisor as modified
-        void mark(void);
-        /// Mark advisor as unmodified
-        void unmark(void);
-        /// Whether advisor's view has been marked
-        bool marked(void) const;
-        /// Get index of view
-        int idx(void) const;
-      };
-      /// Access to activity information
-      Activity a;
-      /// The advisor council
-      Council<Idx> c;
-      /// Constructor for cloning \a p
-      Recorder(Space& home, bool share, Recorder<View>& p);
-    public:
-      /// Constructor for creation
-      Recorder(Home home, ViewArray<View>& x, Activity& a);
-      /// Copy propagator during cloning
-      virtual Propagator* copy(Space& home, bool share);
-      /// Cost function (crazy so that propagator is likely to run last)
-      virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-      /// Give advice to propagator
-      virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
-      /// Perform propagation
-      virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-      /// Delete propagator and return its size
-      virtual size_t dispose(Space& home);
-      /// Post activity recorder propagator
-      static ExecStatus post(Home home, ViewArray<View>& x, Activity& a);
-    };
+    class Recorder;
     /// Object for storing activity values
     class Storage {
     public:
@@ -189,6 +145,53 @@ namespace Gecode {
     //@}
   };
 
+  /// Propagator for recording activity information
+  template<class View>
+  class Activity::Recorder : public NaryPropagator<View,PC_GEN_NONE> {
+  protected:
+    using NaryPropagator<View,PC_GEN_NONE>::x;
+    /// Advisor with index and change information
+    class Idx : public Advisor {
+    protected:
+      /// Index and mark information
+      int _info;
+    public:
+      /// Constructor for creation
+      Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
+      /// Constructor for cloning \a a
+      Idx(Space& home, bool share, Idx& a);
+      /// Mark advisor as modified
+      void mark(void);
+      /// Mark advisor as unmodified
+      void unmark(void);
+      /// Whether advisor's view has been marked
+      bool marked(void) const;
+      /// Get index of view
+      int idx(void) const;
+    };
+    /// Access to activity information
+    Activity a;
+    /// The advisor council
+    Council<Idx> c;
+    /// Constructor for cloning \a p
+    Recorder(Space& home, bool share, Recorder<View>& p);
+  public:
+    /// Constructor for creation
+    Recorder(Home home, ViewArray<View>& x, Activity& a);
+    /// Copy propagator during cloning
+    virtual Propagator* copy(Space& home, bool share);
+    /// Cost function (crazy so that propagator is likely to run last)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+    /// Post activity recorder propagator
+    static ExecStatus post(Home home, ViewArray<View>& x, Activity& a);
+  };
+    
   /**
    * \brief Print activity values enclosed in curly brackets
    * \relates Activity
@@ -400,7 +403,7 @@ namespace Gecode {
 
   template<class View>
   ExecStatus
-  Activity::Recorder<View>::advise(Space& home, Advisor& a, const Delta&) {
+  Activity::Recorder<View>::advise(Space&, Advisor& a, const Delta&) {
     static_cast<Idx&>(a).mark();
     return ES_NOFIX;
   }
