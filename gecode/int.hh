@@ -2404,7 +2404,7 @@ namespace Gecode {
    *  - Of type Int::ArgumentSizeMismatch if \a b and \a s are not of
    *    the same size.
    *  - Of type Int::ArgumentSame if \a l and \a b share unassigned variables.
-   *  - Of type Int::OutOfLimits if \a s contains a non-positive number.
+   *  - Of type Int::OutOfLimits if \a s contains a negative number.
    * 
    * \ingroup TaskModelIntBinPacking
    */

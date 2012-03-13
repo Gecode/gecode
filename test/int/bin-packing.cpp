@@ -207,7 +207,8 @@ namespace Test { namespace Int {
         IntArgs s5(4, 1,1,1,1);
         IntArgs s6(4, 1,1,2,2);
         IntArgs s7(4, 1,3,3,4);
-        IntArgs s8(6, 1,2,4,8,16,32);
+        IntArgs s8(6, 1,3,3,0,4,0);
+        IntArgs s9(6, 1,2,4,8,16,32);
 
         for (int m=1; m<4; m++) {
           (void) new BPT(m, s1);
@@ -218,6 +219,7 @@ namespace Test { namespace Int {
           (void) new BPT(m, s6);
           (void) new BPT(m, s7);
           (void) new BPT(m, s8);
+          (void) new BPT(m, s9);
           (void) new BPT(m, s1, false);
         }
 

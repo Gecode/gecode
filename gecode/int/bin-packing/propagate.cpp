@@ -356,6 +356,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
   ExecStatus
   Pack::post(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs) {
+    // Eliminate zero sized items (which are at the end as the size are sorted)
+    {
+      int n = bs.size();
+      while (bs[n-1].size() == 0)
+        n--;
+      bs.size(n);
+    }
     if (bs.size() == 0) {
       // No items to be packed
       for (int i=l.size(); i--; )

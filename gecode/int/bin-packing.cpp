@@ -50,7 +50,7 @@ namespace Gecode {
     if (b.size() != s.size())
       throw ArgumentSizeMismatch("Int::binpacking");      
     for (int i=s.size(); i--; )
-      Limits::positive(s[i],"Int::binpacking");
+      Limits::nonnegative(s[i],"Int::binpacking");
     if (home.failed()) return;
 
     ViewArray<OffsetView> lv(home,l.size());
