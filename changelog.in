@@ -102,6 +102,14 @@ Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
+Integer variables with empty domains result in unsatisfiable models
+instead of an error message.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
 Support 0-length array declarations.
 
 [ENTRY]

@@ -259,7 +259,13 @@ namespace Gecode { namespace FlatZinc {
     if (vs->alias) {
       iv[intVarCount++] = iv[vs->i];
     } else {
-      iv[intVarCount++] = IntVar(*this, vs2is(vs));
+      IntSet dom(vs2is(vs));
+      if (dom.size()==0) {
+        fail();
+        return;
+      } else {
+        iv[intVarCount++] = IntVar(*this, dom);
+      }
     }
     iv_introduced[intVarCount-1] = vs->introduced;
     iv_boolalias[intVarCount-1] = -1;

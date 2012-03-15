@@ -520,7 +520,6 @@ vardecl_item:
       FZ_VAR int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$2() || !$2.some()->empty(), "Empty var int domain");
         bool print = $5->hasAtom("output_var");
         bool introduced = $5->hasAtom("var_is_introduced");
         yyassert(pp,
@@ -675,8 +674,6 @@ vardecl_item:
         if (!pp->hadError) {
           bool print = $12->hasCall("output_array");
           vector<int> vars($5);
-          yyassert(pp, !$9() || !$9.some()->empty(),
-                   "Empty var int domain");
           if (!pp->hadError) {
             if ($13()) {
               vector<VarSpec*>* vsv = $13.some();
@@ -702,13 +699,13 @@ vardecl_item:
               }
               delete vsv;
             } else {
-              IntVarSpec* ispec = new IntVarSpec($9,!print);
-              string arrayname = "["; arrayname += $11;
-              for (int i=0; i<$5-1; i++) {
-                vars[i] = pp->intvars.size();
-                pp->intvars.push_back(varspec(arrayname, ispec));
-              }
               if ($5>0) {
+                IntVarSpec* ispec = new IntVarSpec($9,!print);
+                string arrayname = "["; arrayname += $11;
+                for (int i=0; i<$5-1; i++) {
+                  vars[i] = pp->intvars.size();
+                  pp->intvars.push_back(varspec(arrayname, ispec));
+                }
                 vars[$5-1] = pp->intvars.size();
                 pp->intvars.push_back(varspec($11, ispec));
               }
@@ -831,13 +828,13 @@ vardecl_item:
             }
             delete vsv;
           } else {
-            SetVarSpec* ispec = new SetVarSpec($11,!print);
-            string arrayname = "["; arrayname += $13;
-            for (int i=0; i<$5-1; i++) {
-              vars[i] = pp->setvars.size();
-              pp->setvars.push_back(varspec(arrayname, ispec));
-            }
             if ($5>0) {
+              SetVarSpec* ispec = new SetVarSpec($11,!print);
+              string arrayname = "["; arrayname += $13;
+              for (int i=0; i<$5-1; i++) {
+                vars[i] = pp->setvars.size();
+                pp->setvars.push_back(varspec(arrayname, ispec));
+              }
               vars[$5-1] = pp->setvars.size();
               pp->setvars.push_back(varspec($13, ispec));
             }
