@@ -74,6 +74,14 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Marco Correia
+[DESCRIPTION]
+Fixed "largest" variable selection strategy for set variables.
+
+[ENTRY]
+Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]

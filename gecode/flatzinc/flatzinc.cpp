@@ -189,7 +189,7 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "smallest")
         return SET_VAR_MIN_MIN;
       if (s->id == "largest")
-        return SET_VAR_MIN_MAX;
+        return SET_VAR_MAX_MAX;
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
