@@ -616,29 +616,12 @@ vardecl_item:
         }
         delete $7; free($6);
       }
-    | int_ti_expr_tail ':' var_par_id annotations '=' non_array_expr
+    | FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$1() || !$1.some()->empty(), "Empty int domain");
         yyassert(pp, $6->isInt(), "Invalid int initializer");
-        int i = -1;
-        bool isInt = $6->isInt(i);
-        if ($1() && isInt) {
-          AST::SetLit* sl = $1.some();
-          if (sl->interval) {
-            yyassert(pp, i >= sl->min && i <= sl->max, "Empty int domain");
-          } else {
-            bool found = false;
-            for (unsigned int j=0; j<sl->s.size(); j++)
-              if (sl->s[j] == i) {
-                found = true;
-                break;
-              }
-            yyassert(pp, found, "Empty int domain");
-          }
-        }
         yyassert(pp,
-          pp->symbols.put($3, se_i(i)),
+          pp->symbols.put($3, se_i($6->getInt())),
           "Duplicate symbol");
         delete $4; free($3);        
       }
@@ -646,17 +629,14 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $6->isBool(), "Invalid bool initializer");
-        if ($6->isBool()) {
-          yyassert(pp,
-            pp->symbols.put($3, se_b($6->getBool())),
-            "Duplicate symbol");
-        }
+        yyassert(pp,
+          pp->symbols.put($3, se_b($6->getBool())),
+          "Duplicate symbol");
         delete $4; free($3);        
       }    
-    | FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations '=' non_array_expr
+    | FZ_SET FZ_OF FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$3() || !$3.some()->empty(), "Empty set domain");
         yyassert(pp, $8->isSet(), "Invalid set initializer");
         AST::SetLit* set = $8->getSet();
         pp->setvals.push_back(*set);
@@ -859,7 +839,7 @@ vardecl_item:
         }
         delete $14; free($13);
       }
-    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF int_ti_expr_tail ':'
+    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_INT ':'
         var_par_id annotations '=' '[' int_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -907,7 +887,7 @@ vardecl_item:
         yyassert(pp, false, "Floats not supported");
         delete $11; free($10);
       }
-    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF int_ti_expr_tail ':'
+    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF FZ_INT ':'
         var_par_id annotations '=' '[' set_literal_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
