@@ -34,7 +34,7 @@
 %
 %
 
-predicate int_set_channel_gecode(array[int] of var int: x, int: xoff,
+predicate gecode_int_set_channel(array[int] of var int: x, int: xoff,
                                  array[int] of var set of int: y, int: yoff);
 
 predicate int_set_channel(array[int] of var int: x,
@@ -45,5 +45,5 @@ predicate int_set_channel(array[int] of var int: x,
         forall(i in index_set(x), j in index_set(y))
             (x[i]=j <-> i in y[j])
     else
-        int_set_channel_gecode(x,min(index_set(x)),y,min(index_set(y)))
+        gecode_int_set_channel(x,min(index_set(x)),y,min(index_set(y)))
     endif;

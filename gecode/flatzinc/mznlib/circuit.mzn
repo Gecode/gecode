@@ -3,7 +3,7 @@
 %     Guido Tack <tack@gecode.org>
 %
 %  Copyright:
-%     Guido Tack, 2010
+%     Guido Tack, 2007
 %
 %  Last modified:
 %     $Date$ by $Author$
@@ -34,12 +34,7 @@
 %
 %
 
-predicate gecode_bin_packing_load(array[int] of var int: l,
-                                  array[int] of var int: bin,
-                                  array[int] of int: w,
-                                  int: minIndex);
+predicate gecode_circuit(array[int] of var int: x);
 
-predicate bin_packing_load(array[int] of var int: l,
-                           array[int] of var int: bin,
-                           array[int] of int: w) =
-    gecode_bin_packing_load(l,bin,w,min(index_set(l)));
+predicate circuit(array[int] of var int: x) =
+  gecode_circuit([x[i]-min(index_set(x)) | i in index_set(x)]);

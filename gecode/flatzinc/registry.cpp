@@ -1412,7 +1412,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("count", &p_count);
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
-        registry().add("bin_packing_load_gecode", &p_bin_packing_load);
+        registry().add("gecode_bin_packing_load", &p_bin_packing_load);
         registry().add("global_cardinality", &p_global_cardinality);
         registry().add("global_cardinality_closed",
           &p_global_cardinality_closed);
@@ -1432,8 +1432,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("table_int", &p_table_int);
         registry().add("table_bool", &p_table_bool);
         registry().add("cumulatives", &p_cumulatives);
-        registry().add("among_seq_int", &p_among_seq_int);
-        registry().add("among_seq_bool", &p_among_seq_bool);
+        registry().add("gecode_among_seq_int", &p_among_seq_int);
+        registry().add("gecode_among_seq_bool", &p_among_seq_bool);
 
         registry().add("bool_lin_eq", &p_bool_lin_eq);
         registry().add("bool_lin_ne", &p_bool_lin_ne);
@@ -1449,8 +1449,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_lin_ge_reif", &p_bool_lin_ge_reif);
         registry().add("bool_lin_gt_reif", &p_bool_lin_gt_reif);
         
-        registry().add("schedule_unary", &p_schedule_unary);
-        registry().add("schedule_unary_optional", &p_schedule_unary_optional);
+        registry().add("gecode_schedule_unary", &p_schedule_unary);
+        registry().add("gecode_schedule_unary_optional", &p_schedule_unary_optional);
 
         registry().add("gecode_circuit", &p_circuit);
         registry().add("gecode_circuit_cost_array", &p_circuit_cost_array);
@@ -1460,9 +1460,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("nvalue",&p_nvalue);
         registry().add("among",&p_among);
         registry().add("member_int",&p_member_int);
-        registry().add("member_int_reif_gecode",&p_member_int_reif);
+        registry().add("gecode_member_int_reif",&p_member_int_reif);
         registry().add("member_bool",&p_member_bool);
-        registry().add("member_bool_reif_gecode",&p_member_bool_reif);
+        registry().add("gecode_member_bool_reif",&p_member_bool_reif);
       }
     };
     IntPoster __int_poster;
@@ -1787,7 +1787,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_superset_reif", &p_set_superset_reif);
         registry().add("set_in_reif", &p_set_in_reif);
         registry().add("disjoint", &p_set_disjoint);
-        registry().add("link_set_to_booleans_gecode", 
+        registry().add("gecode_link_set_to_booleans", 
                        &p_link_set_to_booleans);
 
         registry().add("array_set_union", &p_array_set_union);
@@ -1795,21 +1795,21 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_convex", &p_set_convex);
         registry().add("array_set_seq", &p_array_set_seq);
         registry().add("array_set_seq_union", &p_array_set_seq_union);
-        registry().add("array_set_element_union", 
+        registry().add("gecode_array_set_element_union", 
                        &p_array_set_element_union);
-        registry().add("array_set_element_intersect", 
+        registry().add("gecode_array_set_element_intersect", 
                        &p_array_set_element_intersect);
-        registry().add("array_set_element_intersect_in", 
+        registry().add("gecode_array_set_element_intersect_in", 
                        &p_array_set_element_intersect_in);
-        registry().add("array_set_element_partition", 
+        registry().add("gecode_array_set_element_partition", 
                        &p_array_set_element_partition);
-        registry().add("int_set_channel_gecode", 
+        registry().add("gecode_int_set_channel", 
                        &p_int_set_channel);
-        registry().add("range_gecode",
+        registry().add("gecode_range",
                        &p_range);
-        registry().add("set_weights_gecode",
+        registry().add("gecode_set_weights",
                        &p_weights);
-        registry().add("inverse_set_gecode", &p_inverse_set);
+        registry().add("gecode_inverse_set", &p_inverse_set);
       }
     };
     SetPoster __set_poster;

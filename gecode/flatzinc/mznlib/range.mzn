@@ -33,7 +33,7 @@
 %  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 %
 %
-predicate range_gecode(array[int] of var int: x, int: xoff,
+predicate gecode_range(array[int] of var int: x, int: xoff,
                        var set of int: s, var set of int: t);
 
 predicate range(array[int] of var int: x, var set of int: s,
@@ -41,7 +41,7 @@ predicate range(array[int] of var int: x, var set of int: s,
     assert(ub(s) subset index_set(x),
         "range: upper bound of 's' must be a subset of the index set of 'x'",
         if (min(index_set(x)) >= 0) then
-            range_gecode(x,min(index_set(x)),s,t)
+            gecode_range(x,min(index_set(x)),s,t)
         else
             forall(i in ub(s)) (i in s -> x[i] in t) /\
             forall(i in ub(t)) (

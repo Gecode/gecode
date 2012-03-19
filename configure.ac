@@ -47,7 +47,7 @@ AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
 ac_gecode_soversion=32
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
-ac_gecode_flatzincversion=1.4
+ac_gecode_flatzincversion=1.5
 AC_SUBST(GECODE_FLATZINC_VERSION, ${ac_gecode_flatzincversion})
 
 # checks for programs

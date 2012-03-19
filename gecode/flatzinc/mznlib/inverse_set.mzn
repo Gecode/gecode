@@ -33,7 +33,7 @@
 %  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 %
 %
-predicate inverse_set_gecode(array[int] of var set of int: f,
+predicate gecode_inverse_set(array[int] of var set of int: f,
     array[int] of var set of int: invf, int: xoff, int: yoff);
 
 predicate inverse_set(array[int] of var set of int: f,
@@ -45,7 +45,7 @@ predicate inverse_set(array[int] of var set of int: f,
         invf[j] subset index_set(f)
     ) /\
     if (min(index_set(f)) >= 0 /\ min(index_set(invf)) >= 0) then
-        inverse_set_gecode(f,invf,min(index_set(f)),min(index_set(invf)))
+        gecode_inverse_set(f,invf,min(index_set(f)),min(index_set(invf)))
     else
         forall(i in index_set(f), j in index_set(invf)) (
             (j in f[i] <-> i in invf[j])
