@@ -42,6 +42,10 @@ SOURCES       = myplugin.cpp
 TARGET        = myplugin
 win32:DESTDIR = ./
 LIBS          += -L../../..
-!win32 {
-	LIBS         += -lgecodekernel -lgecodesupport -lgecodeint -lgecodescheduling -lgecodegraph -lgecodeminimodel -lgecodedriver -lgecodesearch -lgecodeflatzinc
+macx {
+	LIBS	+= -framework gecode
 }
+unix {
+!macx {
+	LIBS         += -lgecodekernel -lgecodesupport -lgecodeint -lgecodescheduling -lgecodegraph -lgecodeminimodel -lgecodedriver -lgecodesearch -lgecodeflatzinc
+}}

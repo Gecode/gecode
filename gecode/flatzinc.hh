@@ -173,7 +173,6 @@ namespace Gecode { namespace FlatZinc {
       //@{
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
       Gecode::Driver::BoolOption        _stat;       ///< Emit statistics
-      Gecode::Driver::StringOption      _print;      ///< Print all solutions
       Gecode::Driver::StringValueOption _output;     ///< Output file
       //@}
   public:
@@ -198,7 +197,6 @@ namespace Gecode { namespace FlatZinc {
       _seed("-r","random seed",0),
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
       _stat("-s","emit statistics"),
-      _print("-print","which solutions to print",0),
       _output("-o","file to send output to") {
 
       _search.add(FZ_SEARCH_BAB, "bab");
@@ -206,8 +204,6 @@ namespace Gecode { namespace FlatZinc {
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
-      _print.add(0,"all");
-      _print.add(1,"last");
       add(_solutions); add(_threads); add(_c_d); add(_a_d);
       add(_allSolutions);
       add(_free);
@@ -215,13 +211,14 @@ namespace Gecode { namespace FlatZinc {
       add(_node); add(_fail); add(_time);
       add(_seed);
       add(_mode); add(_stat);
-      add(_print); add(_output);
+      add(_output);
     }
 
     void parse(int& argc, char* argv[]) {
       Gecode::BaseOptions::parse(argc,argv);
-      if (_allSolutions.value())
+      if (_allSolutions.value()) {
         _solutions.value(0);
+      }
       if (_stat.value())
         _mode.value(Gecode::SM_STAT);
     }
@@ -234,6 +231,7 @@ namespace Gecode { namespace FlatZinc {
     }
   
     unsigned int solutions(void) const { return _solutions.value(); }
+    bool allSolutions(void) const { return _allSolutions.value(); }
     double threads(void) const { return _threads.value(); }
     bool free(void) const { return _free.value(); }
     SearchOptions search(void) const {
@@ -245,7 +243,6 @@ namespace Gecode { namespace FlatZinc {
     unsigned int fail(void) const { return _fail.value(); }
     unsigned int time(void) const { return _time.value(); }
     int seed(void) const { return _seed.value(); }
-    unsigned int print(void) const { return _print.value(); }
     const char* output(void) const { return _output.value(); }
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());

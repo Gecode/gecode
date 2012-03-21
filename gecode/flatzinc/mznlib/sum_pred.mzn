@@ -34,6 +34,9 @@
 %
 %
 
+predicate gecode_set_weights(array[int] of int: csi,array[int] of int: cs,
+    var set of int: x, var int: y);
+
 predicate sum_pred(var int: i, array[int] of set of int: sets,
                    array[int] of int: cs, var int: s) =
-    set_weights_gecode([j|j in index_set(cs)],cs,sets[i],s);
+    gecode_set_weights([j|j in index_set(cs)],cs,sets[i],s);

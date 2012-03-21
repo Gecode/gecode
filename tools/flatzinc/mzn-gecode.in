@@ -1,0 +1,4 @@
+#!/bin/sh
+prefix=@prefix@
+datarootdir=@datarootdir@
+FLATZINC_CMD=fz minizinc -I @datadir@/gecode/mznlib $*

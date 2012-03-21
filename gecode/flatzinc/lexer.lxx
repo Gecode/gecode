@@ -74,9 +74,12 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 -?[0-9]+          { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
 -?0x[0-9A-Fa-f]+  { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
 -?0o[0-7]+        { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
--?[0-9]+\.[0-9]+  { return FZ_FLOAT_LIT; }
--?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { return FZ_FLOAT_LIT; }
--?[0-9]+[Ee][+-]?[0-9]+  { return FZ_FLOAT_LIT; }
+-?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+                    return FZ_FLOAT_LIT; }
+-?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+                                   return FZ_FLOAT_LIT; }
+-?[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
+                           return FZ_FLOAT_LIT; }
 [=:;{}(),\[\]\.]    { return *yytext; }
 \.\.              { return FZ_DOTDOT; }
 ::                { return FZ_COLONCOLON; }
@@ -129,4 +132,6 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
   Gecode::FlatZinc::ParserState* parm = 
     static_cast<Gecode::FlatZinc::ParserState*>(yyget_extra(yyscanner));
   return parm->fillBuffer(buf, size);
+  // work around warning that yyunput is unused
+  yyunput (0,buf,yyscanner);
 }

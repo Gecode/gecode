@@ -520,7 +520,6 @@ vardecl_item:
       FZ_VAR int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$2() || !$2.some()->empty(), "Empty var int domain");
         bool print = $5->hasAtom("output_var");
         bool introduced = $5->hasAtom("var_is_introduced");
         yyassert(pp,
@@ -617,29 +616,12 @@ vardecl_item:
         }
         delete $7; free($6);
       }
-    | int_ti_expr_tail ':' var_par_id annotations '=' non_array_expr
+    | FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$1() || !$1.some()->empty(), "Empty int domain");
         yyassert(pp, $6->isInt(), "Invalid int initializer");
-        int i = -1;
-        bool isInt = $6->isInt(i);
-        if ($1() && isInt) {
-          AST::SetLit* sl = $1.some();
-          if (sl->interval) {
-            yyassert(pp, i >= sl->min && i <= sl->max, "Empty int domain");
-          } else {
-            bool found = false;
-            for (unsigned int j=0; j<sl->s.size(); j++)
-              if (sl->s[j] == i) {
-                found = true;
-                break;
-              }
-            yyassert(pp, found, "Empty int domain");
-          }
-        }
         yyassert(pp,
-          pp->symbols.put($3, se_i(i)),
+          pp->symbols.put($3, se_i($6->getInt())),
           "Duplicate symbol");
         delete $4; free($3);        
       }
@@ -647,17 +629,14 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $6->isBool(), "Invalid bool initializer");
-        if ($6->isBool()) {
-          yyassert(pp,
-            pp->symbols.put($3, se_b($6->getBool())),
-            "Duplicate symbol");
-        }
+        yyassert(pp,
+          pp->symbols.put($3, se_b($6->getBool())),
+          "Duplicate symbol");
         delete $4; free($3);        
       }    
-    | FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations '=' non_array_expr
+    | FZ_SET FZ_OF FZ_INT ':' var_par_id annotations '=' non_array_expr
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, !$3() || !$3.some()->empty(), "Empty set domain");
         yyassert(pp, $8->isSet(), "Invalid set initializer");
         AST::SetLit* set = $8->getSet();
         pp->setvals.push_back(*set);
@@ -675,8 +654,6 @@ vardecl_item:
         if (!pp->hadError) {
           bool print = $12->hasCall("output_array");
           vector<int> vars($5);
-          yyassert(pp, !$9() || !$9.some()->empty(),
-                   "Empty var int domain");
           if (!pp->hadError) {
             if ($13()) {
               vector<VarSpec*>* vsv = $13.some();
@@ -702,14 +679,16 @@ vardecl_item:
               }
               delete vsv;
             } else {
-              IntVarSpec* ispec = new IntVarSpec($9,!print);
-              string arrayname = "["; arrayname += $11;
-              for (int i=0; i<$5-1; i++) {
-                vars[i] = pp->intvars.size();
-                pp->intvars.push_back(varspec(arrayname, ispec));
-              }          
-              vars[$5-1] = pp->intvars.size();
-              pp->intvars.push_back(varspec($11, ispec));
+              if ($5>0) {
+                IntVarSpec* ispec = new IntVarSpec($9,!print);
+                string arrayname = "["; arrayname += $11;
+                for (int i=0; i<$5-1; i++) {
+                  vars[i] = pp->intvars.size();
+                  pp->intvars.push_back(varspec(arrayname, ispec));
+                }
+                vars[$5-1] = pp->intvars.size();
+                pp->intvars.push_back(varspec($11, ispec));
+              }
             }
           }
           if (print) {
@@ -829,14 +808,16 @@ vardecl_item:
             }
             delete vsv;
           } else {
-            SetVarSpec* ispec = new SetVarSpec($11,!print);
-            string arrayname = "["; arrayname += $13;
-            for (int i=0; i<$5-1; i++) {
-              vars[i] = pp->setvars.size();
-              pp->setvars.push_back(varspec(arrayname, ispec));
-            }          
-            vars[$5-1] = pp->setvars.size();
-            pp->setvars.push_back(varspec($13, ispec));
+            if ($5>0) {
+              SetVarSpec* ispec = new SetVarSpec($11,!print);
+              string arrayname = "["; arrayname += $13;
+              for (int i=0; i<$5-1; i++) {
+                vars[i] = pp->setvars.size();
+                pp->setvars.push_back(varspec(arrayname, ispec));
+              }
+              vars[$5-1] = pp->setvars.size();
+              pp->setvars.push_back(varspec($13, ispec));
+            }
           }
           if (print) {
             AST::Array* a = new AST::Array();
@@ -858,7 +839,7 @@ vardecl_item:
         }
         delete $14; free($13);
       }
-    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF int_ti_expr_tail ':'
+    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_INT ':'
         var_par_id annotations '=' '[' int_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -906,7 +887,7 @@ vardecl_item:
         yyassert(pp, false, "Floats not supported");
         delete $11; free($10);
       }
-    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF int_ti_expr_tail ':'
+    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF FZ_INT ':'
         var_par_id annotations '=' '[' set_literal_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
@@ -1097,7 +1078,7 @@ bool_var_array_literal : '[' bool_init_list ']' { $$ = $2; }
 
 set_init :
       set_literal
-      { $$ = new SetVarSpec(Option<AST::SetLit*>::some($1),false); }
+      { $$ = new SetVarSpec($1,false); }
     | var_par_id
       { 
         ParserState* pp = static_cast<ParserState*>(parm);

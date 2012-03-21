@@ -34,8 +34,11 @@
 %
 %
 
-include "gecode.mzn";
 include "int_set_channel.mzn";
+
+% i in z <-> exists (j in x) (i in y[j])
+predicate gecode_array_set_element_union(var set of int: x,
+    array[int] of var set of int: y, var set of int: z);
 
 predicate roots(array[int] of var int: x, var set of int: s,
                                           var set of int: t) =
@@ -55,6 +58,6 @@ predicate roots(array[int] of var int: x, var set of int: s,
         } in
             int_set_channel(x,y) 
             /\
-            array_set_element_union(t,y,s)
+            gecode_array_set_element_union(t,y,s)
         endif
     );

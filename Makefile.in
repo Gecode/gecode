@@ -835,7 +835,7 @@ LIBLIBTARGETS =
 PDBTARGETS =
 endif
 
-EXETARGETS = $(FLATZINCEXE)
+EXETARGETS = $(FLATZINCEXE) tools/flatzinc/mzn-gecode@BATCHFILE@
 
 #
 # Testing

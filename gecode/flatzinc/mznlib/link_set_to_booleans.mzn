@@ -34,7 +34,7 @@
 %
 %
 
-predicate link_set_to_booleans_gecode(var set of int: s, array[int] of var bool: b, int: idx);
+predicate gecode_link_set_to_booleans(var set of int: s, array[int] of var bool: b, int: idx);
 
 predicate link_set_to_booleans(var set of int: s, array[int] of var bool: b) =
     assert(ub(s) subset index_set(b),
@@ -42,6 +42,6 @@ predicate link_set_to_booleans(var set of int: s, array[int] of var bool: b) =
         if min(index_set(b)) < 0 then
           forall(i in index_set(b)) ( b[i] <-> i in s )
         else
-          link_set_to_booleans_gecode(s,b,min(index_set(b)))
+          gecode_link_set_to_booleans(s,b,min(index_set(b)))
         endif
     );

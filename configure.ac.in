@@ -43,7 +43,7 @@ AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
 ac_gecode_soversion=31
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
-ac_gecode_flatzincversion=1.4
+ac_gecode_flatzincversion=1.5
 AC_SUBST(GECODE_FLATZINC_VERSION, ${ac_gecode_flatzincversion})
 
 # checks for programs
@@ -340,6 +340,7 @@ else
 fi
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([tools/flatzinc/mzn-gecode:tools/flatzinc/mzn-gecode.in],[chmod +x tools/flatzinc/mzn-gecode])
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
 AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
 AC_OUTPUT

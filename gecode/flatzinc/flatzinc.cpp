@@ -189,7 +189,7 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "smallest")
         return SET_VAR_MIN_MIN;
       if (s->id == "largest")
-        return SET_VAR_MIN_MAX;
+        return SET_VAR_MAX_MAX;
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -259,7 +259,13 @@ namespace Gecode { namespace FlatZinc {
     if (vs->alias) {
       iv[intVarCount++] = iv[vs->i];
     } else {
-      iv[intVarCount++] = IntVar(*this, vs2is(vs));
+      IntSet dom(vs2is(vs));
+      if (dom.size()==0) {
+        fail();
+        return;
+      } else {
+        iv[intVarCount++] = IntVar(*this, dom);
+      }
     }
     iv_introduced[intVarCount-1] = vs->introduced;
     iv_boolalias[intVarCount-1] = -1;
@@ -676,19 +682,20 @@ namespace Gecode { namespace FlatZinc {
     Driver::Cutoff::installCtrlHandler(true);
     Engine<FlatZincSpace> se(this,o);
     int noOfSolutions = _method == SAT ? opt.solutions() : 0;
+    bool printAll = _method == SAT || opt.allSolutions();
     int findSol = noOfSolutions;
     FlatZincSpace* sol = NULL;
     while (FlatZincSpace* next_sol = se.next()) {
       delete sol;
       sol = next_sol;
-      if (opt.print()==0) {
+      if (printAll) {
         sol->print(out, p);
         out << "----------" << std::endl;
       }
       if (--findSol==0)
         goto stopped;
     }
-    if (sol && opt.print()!=0) {
+    if (sol && !printAll) {
       sol->print(out, p);
       out << "----------" << std::endl;
     }
