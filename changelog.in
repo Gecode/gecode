@@ -73,54 +73,6 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
-Module: flatzinc
-What:   bug
-Rank:   minor
-Thanks: Marco Correia
-[DESCRIPTION]
-Fixed "largest" variable selection strategy for set variables.
-
-[ENTRY]
-Module: flatzinc
-What:   change
-Rank:   minor
-[DESCRIPTION]
-Removed the print command line option. Instead, for optimization problems,
-using -a will print all solutions, while not using -a will only print the
-last one. This is consistent with the G12 FlatZinc command line interface.
-
-[ENTRY]
-Module: flatzinc
-What:   bug
-Rank:   minor
-Thanks: Thibaut Feydy
-[DESCRIPTION]
-Fixed the parser for set literals.
-
-[ENTRY]
-Module: flatzinc
-What:   new
-Rank:   minor
-[DESCRIPTION]
-Added mzn-gecode scripts for conveniently solving MiniZinc models
-using the Gecode FlatZinc interpreter.
-
-[ENTRY]
-Module: flatzinc
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Integer variables with empty domains result in unsatisfiable models
-instead of an error message.
-
-[ENTRY]
-Module: flatzinc
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-Support 0-length array declarations.
-
-[ENTRY]
 Module:	int
 What:	new
 Rank:	minor
@@ -213,6 +165,60 @@ Rank:   minor
 Made implementations of MiniModel expressions private, so that the
 MiniModel headers do not have to include propagator headers like
 gecode/int/linear.hh any longer.
+
+[RELEASE]
+Version: 3.7.3
+Date: 2012-03-23
+[DESCRIPTION]
+This release fixes some small bugs in the FlatZinc interpreter and library.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Marco Correia
+[DESCRIPTION]
+Fixed "largest" variable selection strategy for set variables.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Removed the print command line option. Instead, for optimization problems,
+using -a will print all solutions, while not using -a will only print the
+last one. This is consistent with the G12 FlatZinc command line interface.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Thibaut Feydy
+[DESCRIPTION]
+Fixed the parser for set literals.
+
+[ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added mzn-gecode scripts for conveniently solving MiniZinc models
+using the Gecode FlatZinc interpreter.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Integer variables with empty domains result in unsatisfiable models
+instead of an error message.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Support 0-length array declarations.
 
 [RELEASE]
 Version: 3.7.2
