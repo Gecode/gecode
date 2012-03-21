@@ -41,11 +41,11 @@ dnl
 
 AC_REVISION([$Id$])
 AC_PREREQ(2.53)
-AC_INIT(GECODE, 3.7.2, users@gecode.org)
+AC_INIT(GECODE, 3.7.3, users@gecode.org)
 AC_CONFIG_HEADERS([gecode/support/config.hpp])
 AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
-ac_gecode_soversion=31
+ac_gecode_soversion=32
 AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 ac_gecode_flatzincversion=1.5
 AC_SUBST(GECODE_FLATZINC_VERSION, ${ac_gecode_flatzincversion})
