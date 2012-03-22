@@ -344,7 +344,7 @@ else
 fi
 
 AC_CONFIG_FILES([Makefile])
-if test "${host_os}" = "darwin"; then
+if test "${host_os}" = "windows"; then
   AC_SUBST(BATCHFILE, ".bat")
   AC_CONFIG_FILES([tools/flatzinc/mzn-gecode.bat:tools/flatzinc/mzn-gecode.bat.in],[chmod +x tools/flatzinc/mzn-gecode.bat])
 else
