@@ -70,7 +70,15 @@
 Version: 3.7.3
 Date: 2012-03-23
 [DESCRIPTION]
-This release fixes some small bugs in the FlatZinc interpreter and library.
+This release fixes some bugs, mostly in the FlatZinc interpreter and library.
+
+[ENTRY]
+Module: iter
+What:   bug
+Rank:   major
+Thanks: Jean-Noël Monette
+[DESCRIPTION]
+Fixed segfault in NaryUnion iterator.
 
 [ENTRY]
 Module: flatzinc

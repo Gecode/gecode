@@ -152,7 +152,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline RangeListIter&
   RangeListIter::operator =(const RangeListIter& i) {
     if (&i != this) {
-      if (--rlio->use_cnt == 0) {
+      if ((rlio != NULL) && (--rlio->use_cnt == 0)) {
         Region& r = rlio->allocator();
         rlio->~RLIO();
         r.rfree(rlio,sizeof(RLIO));
@@ -166,7 +166,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline
   RangeListIter::~RangeListIter(void) {
-    if (--rlio->use_cnt == 0) {
+    if ((rlio != NULL) && (--rlio->use_cnt == 0)) {
       Region& r = rlio->allocator();
       rlio->~RLIO();
       r.rfree(rlio,sizeof(RLIO));
