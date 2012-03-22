@@ -727,7 +727,6 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
 
 AC_DEFUN([AC_GECODE_UNIX_PATHS],
  [AC_SUBST(DLLPATH, [-L.])
-  AC_SUBST(BATCHFILE, "")
   dnl flags for creating dlls
   case $host_os in
      darwin*)
@@ -821,7 +820,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(LINKSUFFIX, ".lib")
   AC_SUBST(MINUSLDIR, "")
   AC_SUBST(LINKLIBDIR, "${libdir}/")
-  AC_SUBST(BATCHFILE, ".bat")
 
   cygpathprefix=$prefix
   test "x$cygpathprefix" = xNONE && cygpathprefix=$ac_default_prefix
