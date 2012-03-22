@@ -344,7 +344,13 @@ else
 fi
 
 AC_CONFIG_FILES([Makefile])
-AC_CONFIG_FILES([tools/flatzinc/mzn-gecode:tools/flatzinc/mzn-gecode.in],[chmod +x tools/flatzinc/mzn-gecode])
+if test "${host_os}" = "windows"; then
+  AC_SUBST(BATCHFILE, ".bat")
+  AC_CONFIG_FILES([tools/flatzinc/mzn-gecode.bat:tools/flatzinc/mzn-gecode.bat.in],[chmod +x tools/flatzinc/mzn-gecode.bat])
+else
+  AC_SUBST(BATCHFILE, "")
+  AC_CONFIG_FILES([tools/flatzinc/mzn-gecode:tools/flatzinc/mzn-gecode.in],[chmod +x tools/flatzinc/mzn-gecode])
+fi
 AC_CONFIG_FILES([doxygen.conf:doxygen/doxygen.conf.in])
 AC_CONFIG_FILES([doxygen.hh:doxygen/doxygen.hh.in])
 AC_OUTPUT
