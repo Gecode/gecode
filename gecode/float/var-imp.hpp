@@ -3,6 +3,7 @@
  *  Main authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
  *     Lubomir Moric <lubomir.moric@logis.cz>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -10,10 +11,11 @@
  *  Copyright:
  *     LOGIS, s.r.o., 2008
  *     Christian Schulte, 2010
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
- *     $Date: 2010-11-19 17:07:21 +0100 (Ven, 19 nov 2010) $ by $Author: schulte $
- *     $Revision: 11520 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

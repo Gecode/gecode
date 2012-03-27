@@ -1,10 +1,14 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

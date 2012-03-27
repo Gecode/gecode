@@ -2,13 +2,15 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
  *     Christian Schulte, 2010
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
- *     $Date: 2010-11-19 17:07:21 +0100 (Ven, 19 nov 2010) $ by $Author: schulte $
- *     $Revision: 11520 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
