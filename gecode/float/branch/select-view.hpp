@@ -35,39 +35,6 @@
  *
  */
 
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
-/*
- *  Main authors:
- *
- *  Copyright:
- *
- *  Last modified:
- *
- *  This file is part of Gecode, the generic constraint
- *  development environment:
- *     http://www.gecode.org
- *
- *  Permission is hereby granted, free of charge, to any person obtaining
- *  a copy of this software and associated documentation files (the
- *  "Software"), to deal in the Software without restriction, including
- *  without limitation the rights to use, copy, modify, merge, publish,
- *  distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to
- *  the following conditions:
- *
- *  The above copyright notice and this permission notice shall be
- *  included in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
-
 namespace Gecode { namespace Float { namespace Branch {
 
   // Select variable with smallest min
@@ -300,6 +267,86 @@ namespace Gecode { namespace Float { namespace Branch {
     }
   }
 
+
+  // Select variable with smallest width/activity
+  forceinline
+  ByWidthActivityMin::ByWidthActivityMin(void) : widthact(0.0) {}
+  forceinline
+  ByWidthActivityMin::ByWidthActivityMin(Space& home,
+                                       const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), activity(vbo.activity), widthact(0.0) {
+    if (!activity.initialized())
+      throw MissingActivity("ByWidthActivityMin (FLOAT_VAR_WIDTH_ACTIVITY_MIN)");
+  }
+  forceinline ViewSelStatus
+  ByWidthActivityMin::init(Space&, View x, int i) {
+    widthact = static_cast<double>(x.width())/activity[i];
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  ByWidthActivityMin::select(Space&, View x, int i) {
+    double sa = static_cast<double>(x.width())/activity[i];
+    if (sa < widthact) {
+      widthact = sa;
+      return VSS_BETTER;
+    } else if (sa > widthact) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  forceinline void
+  ByWidthActivityMin::update(Space& home, bool share, ByWidthActivityMin& vs) {
+    activity.update(home, share, vs.activity);
+  }
+  forceinline bool
+  ByWidthActivityMin::notice(void) const {
+    return true;
+  }
+  forceinline void
+  ByWidthActivityMin::dispose(Space&) {
+    activity.~Activity();
+  }
+
+  // Select variable with largest width/activity
+  forceinline
+  ByWidthActivityMax::ByWidthActivityMax(void) : widthact(0.0) {}
+  forceinline
+  ByWidthActivityMax::ByWidthActivityMax(Space& home,
+                                       const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), activity(vbo.activity), widthact(0.0) {
+    if (!activity.initialized())
+      throw MissingActivity("ByWidthActivityMax (FLOAT_VAR_WIDTH_ACTIVITY_MAX)");
+  }
+  forceinline ViewSelStatus
+  ByWidthActivityMax::init(Space&, View x, int i) {
+    widthact = static_cast<double>(x.width())/activity[i];
+    return VSS_BETTER;
+  }
+  forceinline ViewSelStatus
+  ByWidthActivityMax::select(Space&, View x, int i) {
+    double sa = static_cast<double>(x.width())/activity[i];
+    if (sa > widthact) {
+      widthact = sa;
+      return VSS_BETTER;
+    } else if (sa < widthact) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  forceinline void
+  ByWidthActivityMax::update(Space& home, bool share, ByWidthActivityMax& vs) {
+    activity.update(home, share, vs.activity);
+  }
+  forceinline bool
+  ByWidthActivityMax::notice(void) const {
+    return true;
+  }
+  forceinline void
+  ByWidthActivityMax::dispose(Space&) {
+    activity.~Activity();
+  }
 
 }}}
 

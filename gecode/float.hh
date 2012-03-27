@@ -605,24 +605,57 @@ namespace Gecode {
    * \ingroup TaskModelFloat
    */
   //@{
+  /// Recording activities for float variables
+  class FloatActivity : public Activity {
+  public:
+    /**
+     * \brief Construct as not yet intialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized activity storage is init or the assignment operator.
+     *
+     */
+    FloatActivity(void);
+    /// Copy constructor
+    FloatActivity(const FloatActivity& a);
+    /// Assignment operator
+    FloatActivity& operator =(const FloatActivity& a);      
+    /// Initialize for integer variables \a x with decay factor \a d
+    GECODE_FLOAT_EXPORT 
+    FloatActivity(Home home, const FloatVarArgs& x, double d);
+    /**
+     * \brief Initialize for integer variables \a x with decay factor \a d
+     *
+     * This member function can only be used once and only if the
+     * activity storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_FLOAT_EXPORT void
+    init(Home, const FloatVarArgs& x, double d);
+  };
+
   /// Which variable to select for branching
   enum FloatVarBranch {
-    FLOAT_VAR_NONE = 0,         ///< First unassigned
-    FLOAT_VAR_RND,              ///< Random (uniform, for tie breaking)
-    FLOAT_VAR_DEGREE_MIN,       ///< With smallest degree
-    FLOAT_VAR_DEGREE_MAX,       ///< With largest degree
-    FLOAT_VAR_AFC_MIN,          ///< With smallest accumulated failure count
-    FLOAT_VAR_AFC_MAX,          ///< With largest accumulated failure count
-    FLOAT_VAR_MIN_MIN,          ///< With smallest min
-    FLOAT_VAR_MIN_MAX,          ///< With largest min
-    FLOAT_VAR_MAX_MIN,          ///< With smallest max
-    FLOAT_VAR_MAX_MAX,          ///< With largest max
-    FLOAT_VAR_WIDTH_MIN,        ///< With smallest domain width
-    FLOAT_VAR_WIDTH_MAX,        ///< With largest domain width
-    FLOAT_VAR_WIDTH_DEGREE_MIN, ///< With smallest domain width divided by degree
-    FLOAT_VAR_WIDTH_DEGREE_MAX, ///< With largest domain width divided by degree
-    FLOAT_VAR_WIDTH_AFC_MIN,    ///< With smallest domain width divided by accumulated failure count
-    FLOAT_VAR_WIDTH_AFC_MAX,    ///< With largest domain width divided by accumulated failure count
+    FLOAT_VAR_NONE = 0,        ///< First unassigned
+    FLOAT_VAR_RND,             ///< Random (uniform, for tie breaking)
+    FLOAT_VAR_DEGREE_MIN,      ///< With smallest degree
+    FLOAT_VAR_DEGREE_MAX,      ///< With largest degree
+    FLOAT_VAR_AFC_MIN,         ///< With smallest accumulated failure count
+    FLOAT_VAR_AFC_MAX,         ///< With largest accumulated failure count
+    FLOAT_VAR_ACTIVITY_MIN,    ///< With lowest activity
+    FLOAT_VAR_ACTIVITY_MAX,    ///< With highest activity
+    FLOAT_VAR_MIN_MIN,         ///< With smallest min
+    FLOAT_VAR_MIN_MAX,         ///< With largest min
+    FLOAT_VAR_MAX_MIN,         ///< With smallest max
+    FLOAT_VAR_MAX_MAX,         ///< With largest max
+    FLOAT_VAR_WIDTH_MIN,        ///< With smallest domain size
+    FLOAT_VAR_WIDTH_MAX,        ///< With largest domain size
+    FLOAT_VAR_WIDTH_DEGREE_MIN, ///< With smallest domain size divided by degree
+    FLOAT_VAR_WIDTH_DEGREE_MAX, ///< With largest domain size divided by degree
+    FLOAT_VAR_WIDTH_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
+    FLOAT_VAR_WIDTH_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
+    FLOAT_VAR_WIDTH_ACTIVITY_MIN, ///< With smallest domain size divided by activity
+    FLOAT_VAR_WIDTH_ACTIVITY_MAX, ///< With largest domain size divided by activity
   };
   
   /// Which values to select first for branching
@@ -650,6 +683,8 @@ namespace Gecode {
   
   //@}
 }
+
+#include <gecode/float/activity.hpp>
 
 #endif
 

@@ -82,6 +82,12 @@ namespace Gecode { namespace Float { namespace Branch {
     case FLOAT_VAR_AFC_MAX:
       v = new (home) ViewSelVirtual<ViewSelAfcMax<FloatView> >(home,o_vars);
       break;
+    case FLOAT_VAR_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<ViewSelActivityMin<FloatView> >(home,o_vars);
+      break;
+    case FLOAT_VAR_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<ViewSelActivityMax<FloatView> >(home,o_vars);
+      break;
     case FLOAT_VAR_WIDTH_DEGREE_MIN:
       v = new (home) ViewSelVirtual<ByWidthDegreeMin>(home,o_vars);
       break;
@@ -93,6 +99,12 @@ namespace Gecode { namespace Float { namespace Branch {
       break;
     case FLOAT_VAR_WIDTH_AFC_MAX:
       v = new (home) ViewSelVirtual<ByWidthAfcMax>(home,o_vars);
+      break;
+    case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
+      v = new (home) ViewSelVirtual<ByWidthActivityMin>(home,o_vars);
+      break;
+    case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+      v = new (home) ViewSelVirtual<ByWidthActivityMax>(home,o_vars);
       break;
     default:
       throw UnknownBranching("Float::branch");
@@ -191,6 +203,18 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
+    case FLOAT_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<FloatView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case FLOAT_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<FloatView> v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
     case FLOAT_VAR_WIDTH_DEGREE_MIN:
       {
         ByWidthDegreeMin v(home,o_vars);
@@ -212,6 +236,18 @@ namespace Gecode {
     case FLOAT_VAR_WIDTH_AFC_MAX:
       {
         ByWidthAfcMax v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
+      {
+        ByWidthActivityMin v(home,o_vars);
+        post(home,xv,v,vals,o_vals,o_vars.bf);
+      }
+      break;
+    case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+      {
+        ByWidthActivityMax v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -341,6 +377,22 @@ namespace Gecode {
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
+    case FLOAT_VAR_ACTIVITY_MIN:
+      {
+        ViewSelActivityMin<FloatView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMin<FloatView>,
+          ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case FLOAT_VAR_ACTIVITY_MAX:
+      {
+        ViewSelActivityMax<FloatView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelActivityMax<FloatView>,
+          ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
     case FLOAT_VAR_WIDTH_DEGREE_MIN:
       {
         ByWidthDegreeMin va(home,o_vars.a);
@@ -369,6 +421,22 @@ namespace Gecode {
       {
         ByWidthAfcMax va(home,o_vars.a);
         ViewSelTieBreakStatic<ByWidthAfcMax,
+          ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
+      {
+        ByWidthActivityMin va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByWidthActivityMin,
+          ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
+        post(home,xv,v,vals,o_vals,o_vars.a.bf);
+      }
+      break;
+    case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+      {
+        ByWidthActivityMax va(home,o_vars.a);
+        ViewSelTieBreakStatic<ByWidthActivityMax,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }

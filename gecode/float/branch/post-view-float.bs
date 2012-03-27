@@ -95,6 +95,12 @@ Type:		ViewSelAfcMin<FloatView>
 Value:		FLOAT_VAR_AFC_MAX
 Type:		ViewSelAfcMax<FloatView>
 [VarBranch]
+Value:		FLOAT_VAR_ACTIVITY_MIN
+Type:		ViewSelActivityMin<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_ACTIVITY_MAX
+Type:		ViewSelActivityMax<FloatView>
+[VarBranch]
 Value:		FLOAT_VAR_WIDTH_DEGREE_MIN
 Type:		ByWidthDegreeMin
 [VarBranch]
@@ -106,4 +112,10 @@ Type:		ByWidthAfcMin
 [VarBranch]
 Value:		FLOAT_VAR_WIDTH_AFC_MAX
 Type:		ByWidthAfcMax
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_ACTIVITY_MIN
+Type:		ByWidthActivityMin
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_ACTIVITY_MAX
+Type:		ByWidthActivityMax
 [End]

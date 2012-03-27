@@ -422,7 +422,7 @@ INTBUILDDIRS	= \
 
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp \
-	linear/post.cpp
+	linear/post.cpp activity.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -437,7 +437,7 @@ FLOATHDR0 = \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
 	branch.hh branch/post-val-float.hpp branch/select-val.hpp \
-	branch/select-view.hpp
+	branch/select-view.hpp activity.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%) \
 	gecode/float/branch/post-view-float.cpp

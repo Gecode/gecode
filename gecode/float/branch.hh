@@ -312,6 +312,64 @@ namespace Gecode { namespace Float { namespace Branch {
     ViewSelStatus select(Space& home, FloatView x, int i);
   };
 
+  /**
+   * \brief View selection class for view with smallest width divided by activity
+   *
+   * Requires \code #include <gecode/float/branch.hh> \endcode
+   * \ingroup FuncFloatSelView
+   */
+  class ByWidthActivityMin : public ViewSelBase<FloatView> {
+  protected:
+    /// Activity information
+    Activity activity;
+    /// So-far smallest width/activity
+    double widthact;
+  public:
+    /// Default constructor
+    ByWidthActivityMin(void);
+    /// Constructor for initialization
+    ByWidthActivityMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, ByWidthActivityMin& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
+  /**
+   * \brief View selection class for view with largest width divided by activity
+   *
+   * Requires \code #include <gecode/float/branch.hh> \endcode
+   * \ingroup FuncFloatSelView
+   */
+  class ByWidthActivityMax : public ViewSelBase<FloatView> {
+  protected:
+    /// Activity information
+    Activity activity;
+    /// So-far largest width/activity
+    double widthact;
+  public:
+    /// Default constructor
+    ByWidthActivityMax(void);
+    /// Constructor for initialization
+    ByWidthActivityMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, ByWidthActivityMax& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
 }}}
 
 #include <gecode/float/branch/select-val.hpp>
