@@ -90,20 +90,18 @@
 
 #include <gecode/float/exception.hpp>
 
-/**
- * \brief Floating point number base type
- *
- * This type defines the interval bounds used for representing floating
- * point values.
- * \ingroup TaskModelFloatVars
- */
-typedef double FloatNum;
+namespace Gecode {
 
-/**
- * \brief Floating point interval type
- *
- * \ingroup TaskModelFloatVars
- */
+  /**
+   * \brief Floating point number base type
+   *
+   * This type defines the interval bounds used for representing floating
+   * point values.
+   * \ingroup TaskModelFloatVars
+   */
+  typedef double FloatNum;
+
+}
 
 #ifdef GECODE_HAS_MPFR
   //extern "C" {
@@ -113,6 +111,12 @@ typedef double FloatNum;
 #endif
 
 namespace Gecode { namespace Float {
+
+/**
+ * \brief Floating point interval type
+ *
+ * \ingroup TaskModelFloatVars
+ */
 
   using namespace boost;
   using namespace numeric;
@@ -157,25 +161,27 @@ namespace Gecode { namespace Float {
   typedef interval<FloatNum, policies<R, P> > GECODE_FLOAT_FLOATINTERVAL_TYPE;
 }};
 
-typedef Gecode::Float::GECODE_FLOAT_FLOATINTERVAL_TYPE FloatInterval;
+namespace Gecode {
 
-/**
- * \brief Floating rounding mode
- *
- * \ingroup TaskModelFloatVars
- */
-static FloatInterval::traits_type::rounding RND;
+  typedef Gecode::Float::GECODE_FLOAT_FLOATINTERVAL_TYPE FloatInterval;
 
-/**
- * \brief Floating point value type
- *
- * This type defines floating point values, which use an interval
- * representation for better accuracy.
- * \ingroup TaskModelFloatVars
- */
-typedef FloatInterval FloatVal;
+  /**
+   * \brief Floating rounding mode
+   *
+   * \ingroup TaskModelFloatVars
+   */
+  static FloatInterval::traits_type::rounding RND;
+  
+  /**
+   * \brief Floating point value type
+   *
+   * This type defines floating point values, which use an interval
+   * representation for better accuracy.
+   * \ingroup TaskModelFloatVars
+   */
+  typedef FloatInterval FloatVal;
 
-
+}
 
 namespace Gecode { namespace Float {
 
