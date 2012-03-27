@@ -42,7 +42,7 @@
 namespace Gecode {
 
   void
-  rel(Home home, FloatVar x0, FloatRelType frt, FloatVal n, FloatConLevel) {
+  rel(Home home, FloatVar x0, FloatRelType frt, FloatVal n) {
     using namespace Float;
     Limits::check(n,"Float::rel");
     if (home.failed()) return;
@@ -56,7 +56,7 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, FloatConLevel) {
+  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     switch (frt) {
@@ -79,8 +79,7 @@ namespace Gecode {
                                post(home,a,c,Int::NegBoolView(bvar))));
 
   void
-  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r, bool b,
-      FloatConLevel) {
+  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r, bool b) {
     using namespace Float;
     if (home.failed()) return;
     switch (frt) {
@@ -120,8 +119,7 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, FloatVar x, FloatRelType frt, FloatVal n, Reify r, bool b,
-      FloatConLevel) {
+  rel(Home home, FloatVar x, FloatRelType frt, FloatVal n, Reify r, bool b) {
     using namespace Float;
     Limits::check(n,"Float::rel");
     if (home.failed()) return;
@@ -175,7 +173,7 @@ namespace Gecode {
 #undef GECODE_WRITE_REIFIED_UNA_PROP
 
   void
-  rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c, FloatConLevel) {
+  rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
     using namespace Float;
     Limits::check(c,"Float::rel");
     if (home.failed()) return;

@@ -44,7 +44,7 @@
 namespace Gecode {
 
   void
-  abs(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  abs(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Abs<FloatView,FloatView>::post(home,x0,x1)));
@@ -52,16 +52,14 @@ namespace Gecode {
 
 
   void
-  max(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-      FloatConLevel ) {
+  max(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Max<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
   }
 
   void
-  max(Home home, const FloatVarArgs& x, FloatVar y,
-      FloatConLevel ) {
+  max(Home home, const FloatVarArgs& x, FloatVar y) {
     using namespace Float;
     if (x.size() == 0)
       throw TooFewArguments("Float::max");
@@ -72,16 +70,14 @@ namespace Gecode {
 
 
   void
-  min(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-      FloatConLevel ) {
+  min(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Min<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
   }
 
   void
-  min(Home home, const FloatVarArgs& x, FloatVar y,
-      FloatConLevel ) {
+  min(Home home, const FloatVarArgs& x, FloatVar y) {
     using namespace Float;
     if (x.size() == 0)
       throw TooFewArguments("Float::min");
@@ -95,44 +91,42 @@ namespace Gecode {
 
 
   void
-  mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-       FloatConLevel) {
+  mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Mult<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
   }
 
   void
-  sqr(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  sqr(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Square<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  sqrt(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  sqrt(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Sqrt<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  pow(Home home, FloatVar x0, FloatVar x1, int exp, FloatConLevel ) {
+  pow(Home home, FloatVar x0, FloatVar x1, int exp) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,exp)));
   }
 
   void
-  nroot(Home home, FloatVar x0, FloatVar x1, int exp, FloatConLevel ) {
+  nroot(Home home, FloatVar x0, FloatVar x1, int exp) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView,FloatView>::post(home,x0,x1,exp)));
   }
 
   void
-  div(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-      FloatConLevel) {
+  div(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL(
@@ -141,56 +135,56 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_MPFR
   void
-  exp(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  exp(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  log(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  log(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Transcendental::Log<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  asin(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  asin(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Trigonometric::ASin<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  sin(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  sin(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Trigonometric::Sin<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  acos(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  acos(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Trigonometric::ACos<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  cos(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  cos(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Trigonometric::Cos<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  atan(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  atan(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Trigonometric::ATan<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
-  tan(Home home, FloatVar x0, FloatVar x1, FloatConLevel ) {
+  tan(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Trigonometric::Tan<FloatView,FloatView>::post(home,x0,x1)));
@@ -198,7 +192,7 @@ namespace Gecode {
 #endif
 
   void
-  channel(Home home, FloatVar x0, IntVar x1, FloatConLevel) {
+  channel(Home home, FloatVar x0, IntVar x1) {
     using namespace Float;
     using namespace Int;
     if (home.failed()) return;

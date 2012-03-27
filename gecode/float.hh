@@ -415,51 +415,36 @@ namespace Gecode {
   };
 
   /**
-   * \brief Consistency levels for float propagators
-   *
-   * \ingroup TaskModelFloat
-   */
-  enum FloatConLevel {
-    FCL_VAL, ///< Value propagation or consistency (naive)
-    FCL_BND, ///< Bounds propagation or consistency
-    FCL_DEF  ///< The default consistency for a constraint
-  };
-
-  /**
-   * \defgroup TaskModelIntRelFloat Simple relation constraints over float variables
+   * \defgroup TaskModelFloatRelFloat Simple relation constraints over float variables
    * \ingroup TaskModelFloat
    */
   /** \brief Post propagator for \f$ x_0 \sim_{frt} x_1\f$
    *
-   * \ingroup TaskModelIntRelFloat
+   * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1,
-      FloatConLevel fcl=FCL_DEF);
+  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1);
   /** \brief Propagates \f$ x \sim_{frt} c\f$
    * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, FloatVar x, FloatRelType frt, FloatVal c,
-      FloatConLevel fcl=FCL_DEF);
+  rel(Home home, FloatVar x, FloatRelType frt, FloatVal c);
   /** \brief Post propagator for if (b) \f$(x \sim_{frt} c)\equiv r\f$ else \f$(x \sim_{frt} c)\equiv \neg r\f$
    * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, FloatVar x, FloatRelType frt, FloatVal c, Reify r, bool b = true,
-      FloatConLevel fcl=FCL_DEF);
+  rel(Home home, FloatVar x, FloatRelType frt, FloatVal c, Reify r, bool b = true);
   /** \brief Post propagator for if (b) \f$(x_0 \sim_{frt} x_1)\equiv r\f$ else \f$(x_0 \sim_{frt} x_1)\equiv \neg r\f$
    * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r, bool b = true,
-      FloatConLevel fcl=FCL_DEF);
+  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r, bool b = true);
   /** \brief Propagates \f$ x_i \sim_{frt} c \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c,
-      FloatConLevel fcl=FCL_DEF);
+  rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c);
+
 }
 
 
@@ -474,67 +459,56 @@ namespace Gecode {
   /** \brief Post propagator for \f$ \min\{x_0,x_1\}=x_2\f$
    */
   GECODE_FLOAT_EXPORT void
-  min(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-      FloatConLevel fcl=FCL_DEF);
+  min(Home home, FloatVar x0, FloatVar x1, FloatVar x2);
   /** \brief Post propagator for \f$ \min x=y\f$
    * If \a x is empty, an exception of type Float::TooFewArguments is thrown.
    */
   GECODE_FLOAT_EXPORT void
-  min(Home home, const FloatVarArgs& x, FloatVar y,
-      FloatConLevel fcl=FCL_DEF);
+  min(Home home, const FloatVarArgs& x, FloatVar y);
   /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
    */
   GECODE_FLOAT_EXPORT void
-  max(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-      FloatConLevel fcl=FCL_DEF);
+  max(Home home, FloatVar x0, FloatVar x1, FloatVar x2);
   /** \brief Post propagator for \f$ \max x=y\f$
    * If \a x is empty, an exception of type Float::TooFewArguments is thrown.
    */
   GECODE_FLOAT_EXPORT void
-  max(Home home, const FloatVarArgs& x, FloatVar y,
-      FloatConLevel fcl=FCL_DEF);
+  max(Home home, const FloatVarArgs& x, FloatVar y);
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  abs(Home home, FloatVar x0, FloatVar x1,
-      FloatConLevel fcl=FCL_DEF);
+  abs(Home home, FloatVar x0, FloatVar x1);
 
   /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
    */
   GECODE_FLOAT_EXPORT void
-  mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-       FloatConLevel fcl=FCL_DEF);
+  mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2);
 
   /** \brief Post propagator for \f$x_0\cdot x_0=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  sqr(Home home, FloatVar x0, FloatVar x1,
-      FloatConLevel fcl=FCL_DEF);
+  sqr(Home home, FloatVar x0, FloatVar x1);
 
   /** \brief Post propagator for \f$\sqrt{x_0}=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  sqrt(Home home, FloatVar x0, FloatVar x1,
-       FloatConLevel fcl=FCL_DEF);
+  sqrt(Home home, FloatVar x0, FloatVar x1);
 
   /** \brief Post propagator for \f${x_0}^{exp}=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  pow(Home home, FloatVar x0, FloatVar x1, int exp,
-      FloatConLevel fcl=FCL_DEF);
+  pow(Home home, FloatVar x0, FloatVar x1, int exp);
 
   /** \brief Post propagator for \f${x_0}^{1/exp}=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  nroot(Home home, FloatVar x0, FloatVar x1, int exp,
-       FloatConLevel fcl=FCL_DEF);
+  nroot(Home home, FloatVar x0, FloatVar x1, int exp);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2\f$
    */
   GECODE_FLOAT_EXPORT void
-  div(Home home, FloatVar x0, FloatVar x1, FloatVar x2,
-      FloatConLevel fcl=FCL_DEF);
+  div(Home home, FloatVar x0, FloatVar x1, FloatVar x2);
   //@}
 
 #ifdef GECODE_HAS_MPFR
@@ -547,13 +521,11 @@ namespace Gecode {
   /** \brief Post propagator for \f$ \mathrm{exp}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  exp(Home home, FloatVar x0, FloatVar x1, 
-      FloatConLevel fcl=FCL_DEF);
+  exp(Home home, FloatVar x0, FloatVar x1);
   /** \brief Post propagator for \f$ \mathrm{exp}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  log(Home home, FloatVar x0, FloatVar x1, 
-      FloatConLevel fcl=FCL_DEF);
+  log(Home home, FloatVar x0, FloatVar x1);
   //@}
 
   /**
@@ -565,33 +537,27 @@ namespace Gecode {
   /** \brief Post propagator for \f$ \mathrm{asin}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  asin(Home home, FloatVar x0, FloatVar x1, 
-       FloatConLevel fcl=FCL_DEF);
+  asin(Home home, FloatVar x0, FloatVar x1);
   /** \brief Post propagator for \f$ \mathrm{sin}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  sin(Home home, FloatVar x0, FloatVar x1, 
-      FloatConLevel fcl=FCL_DEF);
+  sin(Home home, FloatVar x0, FloatVar x1);
   /** \brief Post propagator for \f$ \mathrm{acos}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  acos(Home home, FloatVar x0, FloatVar x1, 
-       FloatConLevel fcl=FCL_DEF);
+  acos(Home home, FloatVar x0, FloatVar x1);
   /** \brief Post propagator for \f$ \mathrm{cos}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  cos(Home home, FloatVar x0, FloatVar x1, 
-      FloatConLevel fcl=FCL_DEF);
+  cos(Home home, FloatVar x0, FloatVar x1);
   /** \brief Post propagator for \f$ \mathrm{atan}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  atan(Home home, FloatVar x0, FloatVar x1, 
-       FloatConLevel fcl=FCL_DEF);
+  atan(Home home, FloatVar x0, FloatVar x1);
   /** \brief Post propagator for \f$ \mathrm{tan}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  tan(Home home, FloatVar x0, FloatVar x1, 
-      FloatConLevel fcl=FCL_DEF);
+  tan(Home home, FloatVar x0, FloatVar x1);
   //@}
 #endif
 
@@ -602,8 +568,7 @@ namespace Gecode {
   //@{
   /// Post domain consistent propagator for channeling a Float and an integer variable \f$ x_0 = x_1\f$
   GECODE_FLOAT_EXPORT void
-  channel(Home home, FloatVar x0, IntVar x1,
-          FloatConLevel fcl=FCL_DEF);
+  channel(Home home, FloatVar x0, IntVar x1);
   //@}
 
   /**
