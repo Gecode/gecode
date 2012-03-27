@@ -839,9 +839,81 @@ EXAMPLEBUILDDIRS = examples
 EXAMPLEEXE = \
 	$(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(FLOATEXAMPLEEXE)
 
-#EXAMPLEEXE = \
-#	$(FLOATEXAMPLEEXE)
 
+#
+# THIRD PARTY SOFTWARE
+#
+
+BOOSTHDR = \
+	config/compiler/borland.hpp config/compiler/clang.hpp \
+	config/compiler/codegear.hpp config/compiler/comeau.hpp \
+	config/compiler/common_edg.hpp config/compiler/compaq_cxx.hpp \
+	config/compiler/digitalmars.hpp config/compiler/gcc.hpp \
+	config/compiler/gcc_xml.hpp config/compiler/greenhills.hpp \
+	config/compiler/hp_acc.hpp config/compiler/intel.hpp \
+	config/compiler/kai.hpp config/compiler/metrowerks.hpp \
+	config/compiler/mpw.hpp config/compiler/nvcc.hpp \
+	config/compiler/pathscale.hpp config/compiler/pgi.hpp \
+	config/compiler/sgi_mipspro.hpp config/compiler/sunpro_cc.hpp \
+	config/compiler/vacpp.hpp config/compiler/visualc.hpp \
+	config/no_tr1/cmath.hpp config/no_tr1/utility.hpp \
+	config/platform/aix.hpp config/platform/amigaos.hpp \
+	config/platform/beos.hpp config/platform/bsd.hpp \
+	config/platform/cygwin.hpp config/platform/hpux.hpp \
+	config/platform/irix.hpp config/platform/linux.hpp \
+	config/platform/macos.hpp config/platform/qnxnto.hpp \
+	config/platform/solaris.hpp config/platform/symbian.hpp \
+	config/platform/vms.hpp config/platform/vxworks.hpp \
+	config/platform/win32.hpp config/posix_features.hpp \
+	config/select_compiler_config.hpp \
+	config/select_platform_config.hpp \
+	config/select_stdlib_config.hpp \
+	config/stdlib/dinkumware.hpp  config/stdlib/libcomo.hpp \
+	config/stdlib/libcpp.hpp config/stdlib/libstdcpp3.hpp \
+	config/stdlib/modena.hpp config/stdlib/msl.hpp \
+	config/stdlib/roguewave.hpp config/stdlib/sgi.hpp \
+	config/stdlib/stlport.hpp config/stdlib/vacpp.hpp \
+	config/suffix.hpp config/user.hpp config.hpp \
+	detail/endian.hpp detail/limits.hpp \
+	numeric/interval/arith.hpp \
+	numeric/interval/arith2.hpp \
+	numeric/interval/arith3.hpp \
+	numeric/interval/checking.hpp \
+	numeric/interval/compare/certain.hpp \
+	numeric/interval/compare/explicit.hpp \
+	numeric/interval/compare/lexicographic.hpp \
+	numeric/interval/compare/possible.hpp \
+	numeric/interval/compare/set.hpp \
+	numeric/interval/compare.hpp \
+	numeric/interval/constants.hpp \
+	numeric/interval/detail/alpha_rounding_control.hpp \
+	numeric/interval/detail/bcc_rounding_control.hpp \
+	numeric/interval/detail/bugs.hpp \
+	numeric/interval/detail/c99sub_rounding_control.hpp \
+	numeric/interval/detail/c99_rounding_control.hpp \
+	numeric/interval/detail/division.hpp \
+	numeric/interval/detail/ia64_rounding_control.hpp \
+	numeric/interval/detail/interval_prototype.hpp \
+	numeric/interval/detail/msvc_rounding_control.hpp \
+	numeric/interval/detail/ppc_rounding_control.hpp \
+	numeric/interval/detail/sparc_rounding_control.hpp \
+	numeric/interval/detail/test_input.hpp \
+	numeric/interval/detail/x86gcc_rounding_control.hpp \
+	numeric/interval/detail/x86_rounding_control.hpp \
+	numeric/interval/hw_rounding.hpp \
+	numeric/interval/interval.hpp \
+	numeric/interval/policies.hpp \
+	numeric/interval/rounded_arith.hpp \
+	numeric/interval/rounded_transc.hpp \
+	numeric/interval/rounding.hpp \
+	numeric/interval/transc.hpp \
+	numeric/interval/utility.hpp \
+	numeric/interval.hpp \
+	LICENSE_1_0.txt \
+	limits.hpp non_type.hpp type.hpp
+THIRDHDR = \
+	$(BOOSTHDR:%=gecode/third-party/boost/%)
+THIRDSRC =
 
 #
 # COLLECTING ALL
@@ -851,12 +923,12 @@ ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(FLOATSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
-	$(GISTSRC) $(FLATZINCALLSRC)
+	$(GISTSRC) $(FLATZINCALLSRC) $(THIRDSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
-	$(INTEXAMPLEHDR)
+	$(INTEXAMPLEHDR) $(THIRDHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
@@ -1302,7 +1374,7 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(FLOATDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(DRIVERDLL): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL) 
+$(DRIVERDLL): $(DRIVEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(MMDLL) $(GISTDLL)
 	$(CXX) $(DLLFLAGS) $(DRIVEROBJ) $(DRIVERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKMM) $(LINKGIST) \
 		@LINKOUTPUT@$(DRIVERDLL)
@@ -1341,7 +1413,7 @@ $(KERNELRC):
 endif
 $(KERNELDLL) $(KERNELLIB): $(KERNELOBJ) $(KERNELRES) $(SUPPORTDLL)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) $(KERNELRES) \
-		@DLLPATH@ @LINKOUTPUT@$(KERNELDLL) $(GLDFLAGS) 
+		@DLLPATH@ @LINKOUTPUT@$(KERNELDLL) $(GLDFLAGS)
 	$(FIXMANIFEST) $(KERNELDLL).manifest
 	$(MANIFEST) -manifest $(KERNELDLL).manifest \
 		    -outputresource:$(KERNELDLL)\;2
@@ -1351,7 +1423,7 @@ $(SEARCHRC):
 endif
 $(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(SEARCHRES) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHRES) \
-		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS) 
+		@DLLPATH@ @LINKOUTPUT@$(SEARCHDLL) $(GLDFLAGS)
 	$(FIXMANIFEST) $(SEARCHDLL).manifest
 	$(MANIFEST) -manifest $(SEARCHDLL).manifest \
 		    -outputresource:$(SEARCHDLL)\;2
@@ -1361,7 +1433,7 @@ $(INTRC):
 endif
 $(INTDLL) $(INTLIB): $(INTOBJ) $(INTRES) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) $(INTRES) \
-		@DLLPATH@ @LINKOUTPUT@$(INTDLL) $(GLDFLAGS) 
+		@DLLPATH@ @LINKOUTPUT@$(INTDLL) $(GLDFLAGS)
 	$(FIXMANIFEST) $(INTDLL).manifest
 	$(MANIFEST) -manifest $(INTDLL).manifest \
 		    -outputresource:$(INTDLL)\;2
@@ -1381,7 +1453,7 @@ $(SETRC):
 endif
 $(SETDLL) $(SETLIB): $(SETOBJ) $(SETRES) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETRES) \
-		@DLLPATH@ @LINKOUTPUT@$(SETDLL) $(GLDFLAGS) 
+		@DLLPATH@ @LINKOUTPUT@$(SETDLL) $(GLDFLAGS)
 	$(FIXMANIFEST) $(SETDLL).manifest
 	$(MANIFEST) -manifest $(SETDLL).manifest \
 		    -outputresource:$(SETDLL)\;2
@@ -1528,7 +1600,7 @@ $(TESTEXE).rc:
 else
 TESTRES =
 endif
-$(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB) 
+$(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(TESTRES) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(GLDFLAGS)
 	$(FIXMANIFEST) $@.manifest $(DLLSUFFIX)
@@ -1548,7 +1620,7 @@ $(FLATZINCEXE).rc:
 else
 FLATZINCEXERES =
 endif
-$(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB) 
+$(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
 	$(DLLPATH) $(CXXFLAGS) \
 	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS) $(LINKMPFR)
@@ -1773,7 +1845,7 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR)
 		cp $(top_srcdir)/$$f/*.mzn \
 		  $(DESTDIR)$(datadir)/gecode/mznlib; done
 
-doinstalllib: 
+doinstalllib:
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
 	mkdir -p $(DESTDIR)$(libdir) && \
 	mkdir -p $(DESTDIR)$(bindir) && \
