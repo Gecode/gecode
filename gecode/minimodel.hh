@@ -4,11 +4,13 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
  *     Christian Schulte, 2004
  *     Guido Tack, 2004
  *     Mikael Lagerkvist, 2005
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -47,6 +49,15 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
+#include <gecode/float/linear.hh>
+  #ifdef GECODE_HAS_MPFR
+  #include <gecode/float/transcendental.hh>
+  #include <gecode/float/trigonometric.hh>
+  #endif
+#endif
+#include <gecode/int/linear.hh>
 
 #include <gecode/minimodel/exception.hpp>
 
@@ -94,6 +105,9 @@ namespace Gecode {
 #ifdef GECODE_HAS_SET_VARS
   class SetExpr;
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+  class LinFloatExpr;
+#endif
 
   /// Base class for non-linear expressions
   class NonLinExpr {
@@ -131,6 +145,9 @@ namespace Gecode {
     friend class LinRel;
 #ifdef GECODE_HAS_SET_VARS
     friend class SetExpr;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    friend class LinFloatExpr;
 #endif
   public:
     /// Type of linear expression
@@ -666,6 +683,305 @@ namespace Gecode {
   operator >=(const LinExpr& l, const LinExpr& r);
   //@}
 
+#ifdef GECODE_HAS_FLOAT_VARS
+  /// Base class for non-linear float expressions
+  class NonLinFloatExpr {
+  public:
+    /// Return variable constrained to be equal to the expression
+    virtual FloatVar post(Home home, FloatVar* ret, FloatConLevel fcl) const = 0;
+    /// Post expression to be in relation \a frt with \a c
+    virtual void post(Home home, FloatRelType frt, FloatVal c,
+                      FloatConLevel fcl) const = 0;
+    /// Post reified expression to be in relation \a frt with \a c
+    /// (if \a t is false for negated relation)
+    virtual void post(Home home, FloatRelType frt, FloatVal c,
+                      BoolVar b, bool t, FloatConLevel fcl) const = 0;
+    /// Destructor
+    virtual ~NonLinFloatExpr(void) {}
+    /// Return fresh variable if \a x is NULL, \a x otherwise
+    static FloatVar result(Home home, FloatVar* x) {
+      if (x==NULL)
+        return FloatVar(home,Float::Limits::min,Float::Limits::max);
+      return *x;
+    }
+    /// Constrain \a x to be equal to \a y if \a x is not NULL
+    static FloatVar result(Home home, FloatVar* x, FloatVar y) {
+      if (x!=NULL)
+        rel(home,*x,FRT_EQ,y);
+      return y;
+    }
+    /// Memory management
+    void* operator new(size_t size) { return heap.ralloc(size); }
+    /// Memory management
+    void operator delete(void* p, size_t) { heap.rfree(p); }
+  };
+
+  /// %Float expressions
+  class LinFloatExpr {
+    friend class LinFloatRel;
+  public:
+    /// Type of linear expression
+    enum NodeType {
+      NT_CONST,    ///< Integer constant
+      NT_VAR,      ///< Linear term with variable
+      NT_NONLIN,   ///< Non-linear expression
+      NT_SUM,      ///< Sum of float variables
+      NT_ADD,      ///< Addition of linear terms
+      NT_SUB,      ///< Subtraction of linear terms
+      NT_MUL       ///< Multiplication by coefficient
+    };
+  private:
+    /// Nodes for linear expressions
+    class Node;
+    Node* n;
+  public:
+    /// Default constructor
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(void);
+    /// Create expression for constant \a c
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(const FloatVal& c);
+    /// Create expression
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(const FloatVar& x);
+    /// Create expression
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(const FloatVar& x, FloatVal a);
+    /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
+    explicit LinFloatExpr(const FloatVarArgs& x);
+    /// Create sum expression
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(const FloatArgs& a, const FloatVarArgs& x);
+    /// Copy constructor
+    LinFloatExpr(const LinFloatExpr& e);
+    /// Create expression for type and subexpressions
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(const LinFloatExpr& e0, NodeType t, const LinFloatExpr& e1);
+    /// Create expression for type and subexpression
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(const LinFloatExpr& e0, NodeType t, const FloatVal& c);
+    /// Create expression for multiplication
+    GECODE_MINIMODEL_EXPORT
+    LinFloatExpr(FloatVal a, const LinFloatExpr& e);
+    /// Create non-linear expression
+    GECODE_MINIMODEL_EXPORT
+    explicit LinFloatExpr(NonLinFloatExpr* e);
+    /// Assignment operator
+    GECODE_MINIMODEL_EXPORT
+    const LinFloatExpr& operator =(const LinFloatExpr& e);
+    /// Post propagator
+    void post(Home home, FloatRelType frt, FloatConLevel fcl) const;
+    /// Post reified propagator (if \a t is false for negated relation)
+    void post(Home home, FloatRelType frt, const BoolVar& b, bool t,
+              FloatConLevel fcl) const;
+    /// Post propagator and return variable for value
+    FloatVar post(Home home, FloatConLevel fcl) const;
+    /// Return non-linear expression inside, or NULL if not non-linear
+    NonLinFloatExpr* nlfe(void) const;
+    /// Destructor
+    GECODE_MINIMODEL_EXPORT
+    ~LinFloatExpr(void);
+  };
+
+  class BoolExpr;
+
+  /// Linear relations
+  class LinFloatRel {
+    friend class BoolExpr;
+  private:
+    /// Linear float expression describing the entire relation
+    LinFloatExpr e;
+    /// Which relation
+    FloatRelType frt;
+    /// Default constructor
+    LinFloatRel(void);
+  public:
+    /// Create linear float relation for expressions \a l and \a r
+    LinFloatRel(const LinFloatExpr& l, FloatRelType frt, const LinFloatExpr& r);
+    /// Create linear float relation for expression \a l and FloatVal \a r
+    LinFloatRel(const LinFloatExpr& l, FloatRelType frt, FloatVal r);
+    /// Create linear float relation for FloatVal \a l and expression \a r
+    LinFloatRel(FloatVal l, FloatRelType frt, const LinFloatExpr& r);
+    /// Post propagator for relation (if \a t is false for negated relation)
+    void post(Home home, bool t, FloatConLevel fcl) const;
+    /// Post reified propagator for relation (if \a t is false for negated relation)
+    void post(Home home, const BoolVar& b, bool t, FloatConLevel fcl) const;
+  };
+
+  /**
+   * \defgroup TaskModelMiniModelLin Linear float expressions and relations
+   *
+   * Linear float expressions can be freely composed of sums and differences of
+   * float variables (Gecode::FloatVar) with float coefficients and float
+   * constants.
+   *
+   * Linear float relations are obtained from linear float expressions with the normal
+   * relation operators.
+   *
+   * \ingroup TaskModelMiniModel
+   */
+  //@{
+  /// Construct linear float expression as sum of float variable and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const FloatVal&, const FloatVar&);
+  /// Construct linear float expression as sum of linear float expression and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const FloatVal&, const LinFloatExpr&);
+  /// Construct linear float expression as sum of float variable and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const FloatVar&, const FloatVal&);
+  /// Construct linear float expression as sum of linear float expression and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const LinFloatExpr&, const FloatVal&);
+  /// Construct linear float expression as sum of float variables
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const FloatVar&, const FloatVar&);
+  /// Construct linear float expression as sum of float variable and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const FloatVar&, const LinFloatExpr&);
+  /// Construct linear float expression as sum of linear float expression and float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const LinFloatExpr&, const FloatVar&);
+  /// Construct linear float expression as sum of linear float expressions
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator +(const LinFloatExpr&, const LinFloatExpr&);
+
+  /// Construct linear float expression as sum of float variable and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const FloatVal&, const FloatVar&);
+  /// Construct linear float expression as sum of float and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const FloatVal&, const LinFloatExpr&);
+  /// Construct linear float expression as sum of float variable and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const FloatVar&, const FloatVal&);
+  /// Construct linear float expression as sum of linear float expression and float
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const LinFloatExpr&, const FloatVal&);
+  /// Construct linear float expression as sum of float variables
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const FloatVar&, const FloatVar&);
+  /// Construct linear float expression as sum of float variable and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const FloatVar&, const LinFloatExpr&);
+  /// Construct linear float expression as sum of linear float expression and float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const LinFloatExpr&, const FloatVar&);
+  /// Construct linear float expression as sum of linear float expressions
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const LinFloatExpr&, const LinFloatExpr&);
+
+  /// Construct linear float expression as negative of float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const FloatVar&);
+  /// Construct linear float expression as negative of linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator -(const LinFloatExpr&);
+
+  /// Construct linear float expression as product of float coefficient and float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVal&, const FloatVar&);
+  /// Construct linear float expression as product of float coefficient and float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVar&, const FloatVal&);
+  /// Construct linear float expression as product of float coefficient and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const LinFloatExpr&, const FloatVal&);
+  /// Construct linear float expression as product of float coefficient and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVal&, const LinFloatExpr&);
+
+  /// Construct linear float expression as sum of float variables
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  sum(const FloatVarArgs& x);
+  /// Construct linear float expression as sum of float variables with coefficients
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  sum(const FloatArgs& a, const FloatVarArgs& x);
+
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const FloatVal& l, const FloatVar& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const FloatVal& l, const LinFloatExpr& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const FloatVar& l, const FloatVal& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const LinFloatExpr& l, const FloatVal& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const FloatVar& l, const FloatVar& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const FloatVar& l, const BoolVar& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const FloatVar& l, const LinFloatExpr& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const LinFloatExpr& l, const FloatVar& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const LinFloatExpr& l, const BoolVar& r);
+  /// Construct linear float equality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator ==(const LinFloatExpr& l, const LinFloatExpr& r);
+
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const FloatVal& l, const FloatVar& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const FloatVal& l, const LinFloatExpr& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const FloatVar& l, const FloatVal& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const LinFloatExpr& l, const FloatVal& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const FloatVar& l, const FloatVar& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const FloatVar& l, const LinFloatExpr& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const LinFloatExpr& l, const FloatVar& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator <=(const LinFloatExpr& l, const LinFloatExpr& r);
+
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const FloatVal& l, const FloatVar& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const FloatVal& l, const LinFloatExpr& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const FloatVar& l, const FloatVal& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const LinFloatExpr& l, const FloatVal& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const FloatVar& l, const FloatVar& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const FloatVar& l, const LinFloatExpr& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const LinFloatExpr& l, const FloatVar& r);
+  /// Construct linear float inequality relation
+  GECODE_MINIMODEL_EXPORT LinFloatRel
+  operator >=(const LinFloatExpr& l, const LinFloatExpr& r);
+  //@}
+#endif
+
 #ifdef GECODE_HAS_SET_VARS
   /// %Set expressions
   class SetExpr {
@@ -837,14 +1153,15 @@ namespace Gecode {
   public:
     /// Type of Boolean expression
     enum NodeType {
-      NT_VAR,  ///< Variable
-      NT_NOT,  ///< Negation
-      NT_AND,  ///< Conjunction
-      NT_OR,   ///< Disjunction
-      NT_EQV,  ///< Equivalence
-      NT_RLIN, ///< Reified linear relation
-      NT_RSET, ///< Reified set relation
-      NT_MISC  ///< Other Boolean expression
+      NT_VAR,       ///< Variable
+      NT_NOT,       ///< Negation
+      NT_AND,       ///< Conjunction
+      NT_OR,        ///< Disjunction
+      NT_EQV,       ///< Equivalence
+      NT_RLIN,      ///< Reified linear relation
+      NT_RLINFLOAT, ///< Reified linear relation
+      NT_RSET,      ///< Reified set relation
+      NT_MISC       ///< Other Boolean expression
     };
     /// Miscealloneous Boolean expressions
     class MiscExpr {
@@ -885,6 +1202,11 @@ namespace Gecode {
     /// Construct expression for reified linear relation
     GECODE_MINIMODEL_EXPORT
     BoolExpr(const LinRel& rl);
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Construct expression for reified float relation
+    GECODE_MINIMODEL_EXPORT
+    BoolExpr(const LinFloatRel& rfl);
+#endif
 #ifdef GECODE_HAS_SET_VARS
     /// Construct expression for reified set relation
     GECODE_MINIMODEL_EXPORT
@@ -957,6 +1279,11 @@ namespace Gecode {
   /// Post linear expression and return its value
   GECODE_MINIMODEL_EXPORT IntVar 
   expr(Home home, const LinExpr& e, IntConLevel icl=ICL_DEF);
+#ifdef GECODE_HAS_FLOAT_VARS
+  /// Post float expression and return its value
+  GECODE_MINIMODEL_EXPORT FloatVar
+  expr(Home home, const LinFloatExpr& e);
+#endif
 #ifdef GECODE_HAS_SET_VARS
   /// Post set expression and return its value
   GECODE_MINIMODEL_EXPORT SetVar
@@ -973,6 +1300,9 @@ namespace Gecode {
 }
 
 #include <gecode/minimodel/lin-rel.hpp>
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/minimodel/lin-float-rel.hpp>
+#endif
 #include <gecode/minimodel/bool-expr.hpp>
 #include <gecode/minimodel/set-expr.hpp>
 #include <gecode/minimodel/set-rel.hpp>
@@ -1070,6 +1400,17 @@ namespace Gecode {
   /// \brief Return expression for \f$\max(x)\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   max(const IntVarArgs& x);
+#ifdef GECODE_HAS_FLOAT_VARS
+  /// \brief Return expression as product of float variables
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVar&, const FloatVar&);
+  /// \brief Return expression as product of float variable and linear float expression
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const FloatVar&, const LinFloatExpr&);
+  /// \brief Return expression as product of linear float expression and float variable
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const LinFloatExpr&, const FloatVar&);
+#endif
   /// \brief Return expression for \f$x\cdot y\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   operator *(const LinExpr& x, const LinExpr& y);
@@ -1096,6 +1437,85 @@ namespace Gecode {
   element(const IntArgs& x, const LinExpr& y);
   //@}
 
+#ifdef GECODE_HAS_FLOAT_VARS
+  /// \brief Return expression for \f$|e|\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  abs(const LinFloatExpr& e);
+  /// \brief Return expression for \f$\min(x,y)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  min(const LinFloatExpr& x, const LinFloatExpr& y);
+  /// \brief Return expression for \f$\min(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  min(const FloatVarArgs& x);
+  /// \brief Return expression for \f$\max(x,y)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  max(const LinFloatExpr& x, const LinFloatExpr& y);
+  /// \brief Return expression for \f$\max(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  max(const FloatVarArgs& x);
+  /// \brief Return expression for \f$x\cdot y\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator *(const LinFloatExpr& x, const LinFloatExpr& y);
+  /// \brief Return expression for \f$x/y\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  operator /(const LinFloatExpr& x, const LinFloatExpr& y);
+  /// \brief Return expression for \f$x^2\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  sqr(const LinFloatExpr& x);
+  /// \brief Return expression for \f$\sqrt{x}\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  sqrt(const LinFloatExpr& x);
+  /// \brief Return expression for \f$x^{exp}\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  pow(const LinFloatExpr& x, int exp);
+  /// \brief Return expression for \f$x^{1/exp}\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  nroot(const LinFloatExpr& x, int exp);
+  //@}
+
+#ifdef GECODE_HAS_MPFR
+  /**
+   * \defgroup TaskModelMiniModelTrans Transcendental functions
+   *
+   * \ingroup TaskModelMiniModel
+   */
+  //@{
+  /// \brief Return expression for \f$ \mathrm{exp}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  exp(const LinFloatExpr& x);
+  /// \brief Return expression for \f$ \mathrm{log}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  log(const LinFloatExpr& x);
+  //@}
+
+  /**
+   * \defgroup TaskModelMiniModelTrans Trigonometric functions
+   *
+   * \ingroup TaskModelMiniModel
+   */
+  //@{
+  /// \brief Return expression for \f$ \mathrm{asin}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  asin(const LinFloatExpr& x);
+  /// \brief Return expression for \f$ \mathrm{sin}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  sin(const LinFloatExpr& x);
+  /// \brief Return expression for \f$ \mathrm{acos}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  acos(const LinFloatExpr& x);
+  /// \brief Return expression for \f$ \mathrm{cos}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  cos(const LinFloatExpr& x);
+  /// \brief Return expression for \f$ \mathrm{atan}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  atan(const LinFloatExpr& x);
+  /// \brief Return expression for \f$ \mathrm{tan}(x)\f$
+  GECODE_MINIMODEL_EXPORT LinFloatExpr
+  tan(const LinFloatExpr& x);
+  //@}
+#endif
+#endif
+
   /**
    * \defgroup TaskModelMiniModelChannel Channel functions
    *
@@ -1118,6 +1538,16 @@ namespace Gecode {
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }
+#ifdef GECODE_HAS_FLOAT_VARS 
+  /// Return integer variable equal to \f$f\f$
+  inline IntVar
+  channel(Home home, FloatVar f,
+          FloatConLevel fcl=FCL_DEF) {
+    (void) fcl;
+    IntVar x(home,std::ceil(f.min()),std::floor(f.max())); channel(home,f,x);
+    return x;
+  }
+#endif
 #ifdef GECODE_HAS_SET_VARS 
   /// Return set variable equal to \f$\{x_0,\dots,x_{n-1}\}\f$
   inline SetVar
@@ -1395,7 +1825,6 @@ namespace Gecode {
   
   //@}
 #endif
-
 }
 
 namespace Gecode {

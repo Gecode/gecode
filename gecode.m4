@@ -653,6 +653,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(KERNEL,     "kernel")
   AC_SUBST(SEARCH,     "search")
   AC_SUBST(INT,        "int")
+  AC_SUBST(FLOAT,      "float")
   AC_SUBST(SET,        "set")
   AC_SUBST(MM,         "minimodel")
   AC_SUBST(GIST,       "gist")
@@ -707,6 +708,7 @@ AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_KERNEL_FLAG, "")
    AC_SUBST(GECODE_BUILD_SEARCH_FLAG, "")
    AC_SUBST(GECODE_BUILD_INT_FLAG, "")
+   AC_SUBST(GECODE_BUILD_FLOAT_FLAG, "")
    AC_SUBST(GECODE_BUILD_SET_FLAG, "")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "")
@@ -718,6 +720,7 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_KERNEL_FLAG, "-DGECODE_BUILD_KERNEL")
    AC_SUBST(GECODE_BUILD_SEARCH_FLAG, "-DGECODE_BUILD_SEARCH")
    AC_SUBST(GECODE_BUILD_INT_FLAG, "-DGECODE_BUILD_INT")
+   AC_SUBST(GECODE_BUILD_FLOAT_FLAG, "-DGECODE_BUILD_FLOAT")
    AC_SUBST(GECODE_BUILD_SET_FLAG, "-DGECODE_BUILD_SET")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")
    AC_SUBST(GECODE_BUILD_GIST_FLAG, "-DGECODE_BUILD_GIST")
@@ -848,6 +851,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(KERNEL,     "Kernel")
   AC_SUBST(SEARCH,     "Search")
   AC_SUBST(INT,        "Int")
+  AC_SUBST(FLOAT,      "Float")
   AC_SUBST(SET,        "Set")
   AC_SUBST(MM,         "Minimodel")
   AC_SUBST(GIST,       "Gist")
@@ -1060,6 +1064,134 @@ AC_DEFUN([AC_GECODE_BOOST],
                 [Whether to compile boost dependent parts])
   fi
 ])
+
+dnl Macro:
+dnl   AC_GECODE_MPFR_INCLUDE
+dnl
+dnl Description:
+dnl   Produces the configure switch --with-mpfr-include
+dnl   for supplying the path to the mpfr header.
+dnl
+AC_DEFUN([AC_GECODE_MPFR_INCLUDE],
+  [dnl build with support for the mpfr header
+  AC_ARG_WITH([mpfr-include],
+    AC_HELP_STRING([--with-mpfr-include],
+    [path to the mpfr header file]))
+  if test "${with_mpfr_include:-no}" != "no"; then
+      AC_SUBST(MPFR_CPPFLAGS,[-I${with_mpfr_include}])
+  fi
+])
+
+dnl Macro:
+dnl   AC_GECODE_MPFR_LIB
+dnl
+dnl Description:
+dnl   Produces the configure switch --with-mpfr-lib
+dnl   for supplying the path to the mpfr library.
+dnl
+AC_DEFUN([AC_GECODE_MPFR_LIB],
+  [dnl build with support for the mpfr library
+  AC_ARG_WITH([mpfr-header],
+    AC_HELP_STRING([--with-mpfr-lib],
+    [path to the mpfr library]))
+  if test "${with_mpfr_lib:-no}" != "no"; then
+      case $ac_gecode_compiler_vendor in
+        gnu)
+          AC_SUBST(MPFR_LINK,["-L${with_mpfr_lib} -lmpfr"])
+        ;;
+        microsoft)
+          AC_SUBST(MPFR_LINK,["/LIBPATH:${with_mpfr_lib} mpfr.lib"])
+        ;;
+       esac
+  else
+      case $ac_gecode_compiler_vendor in
+        gnu)
+          AC_SUBST(MPFR_LINK,["-lmpfr"])
+        ;;
+        microsoft)
+          AC_SUBST(MPFR_LINK,["mpfr.lib"])
+        ;;
+       esac
+  fi
+])
+
+dnl Macro:
+dnl   AC_GECODE_GMP_INCLUDE
+dnl
+dnl Description:
+dnl   Produces the configure switch --with-gmp-include
+dnl   for supplying the path to the gmp headers.
+dnl
+AC_DEFUN([AC_GECODE_GMP_INCLUDE],
+  [dnl build with support for the gmp headers
+  AC_ARG_WITH([gmp-include],
+    AC_HELP_STRING([--with-gmp-include],
+    [path to the gmp header files]))
+  if test "${with_gmp_include:-no}" != "no"; then
+      AC_SUBST(GMP_CPPFLAGS,[-I${with_gmp_include}])
+  fi
+])
+
+dnl Macro:
+dnl   AC_GECODE_MPFR
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-mpfr
+dnl   for compiling parts of Gecode that need the MPFR library.
+dnl
+dnl Authors:
+AC_DEFUN([AC_GECODE_MPFR],
+  [
+  AC_ARG_ENABLE([mpfr],
+    AC_HELP_STRING([--enable-mpfr],
+      [build with MPFR support @<:@default=yes@:>@]))
+  if test "${enable_float_vars:-yes}" = "yes"; then
+    AC_MSG_CHECKING(whether to build with MPFR support)
+    if test "${enable_mpfr:-yes}" = "yes"; then
+      AC_MSG_RESULT(yes)
+      AC_GECODE_GMP_INCLUDE
+      AC_GECODE_MPFR_INCLUDE
+      AC_GECODE_MPFR_LIB
+      ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
+      ac_gecode_save_LIBS="${LIBS}"
+      case $ac_gecode_compiler_vendor in
+        gnu)
+          CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
+          LIBS="${LIBS}${LIBS:+ } ${MPFR_LINK}"
+          AC_CHECK_HEADERS([gmp.h], 
+            AC_CHECK_HEADERS([mpfr.h], 
+                             AC_CHECK_LIB(mpfr, mpfr_add,
+                                          AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
+                                          enable_mpfr=yes;,
+                                          enable_mpfr=no;),
+                             enable_mpfr=no; )
+                           enable_mpfr=no; )
+        ;;
+        microsoft)
+          CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
+          LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LINK}"
+          AC_CHECK_HEADERS([gmp.h], 
+            AC_CHECK_HEADERS([mpfr.h], 
+                             AC_CHECK_FUNC(mpfr_add,
+                                          AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
+                                          enable_mpfr=yes;,
+                                          enable_mpfr=no;),
+                             enable_mpfr=no; )
+                           enable_mpfr=no; )
+        ;;
+      esac
+      CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
+      LIBS="${ac_gecode_save_LIBS}"
+    else
+      AC_MSG_RESULT(no)
+      enable_mpfr=no;
+    fi
+  else
+    enable_mpfr=no;
+  fi
+  AC_SUBST(enable_mpfr, ${enable_mpfr})
+])
+
 
 dnl Macro:
 dnl   AC_GECODE_QT

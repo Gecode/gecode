@@ -55,6 +55,9 @@
 /* whether __builtin_ffsl is available */
 #undef GECODE_HAS_BUILTIN_FFSL
 
+/* Whether to build FLOAT variables */
+#undef GECODE_HAS_FLOAT_VARS
+
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
 
@@ -63,6 +66,9 @@
 
 /* Whether to build INT variables */
 #undef GECODE_HAS_INT_VARS
+
+/* Whether MPFR is available */
+#undef GECODE_HAS_MPFR
 
 /* Whether we have mtrace for memory leak debugging */
 #undef GECODE_HAS_MTRACE

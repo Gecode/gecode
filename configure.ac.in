@@ -167,8 +167,15 @@ gnu)
   if test "${enable_debug:-no}" = "no" -a "${enable_gcov:-no}" = "no"; then
     dnl compiler flags for an optimized build
     AC_GECODE_GCC_OPTIMIZED_SWITCHES
-
-    AC_GECODE_CHECK_COMPILERFLAG([-ffast-math])
+    dnl compiler flags for optimize float computings
+    dnl AC_GECODE_CHECK_COMPILERFLAG([-ffast-math])
+    dnl ffast-math implies:-fno-math-errno -funsafe-math-optimizations -ffinite-math-only -fno-rounding-math -fno-signaling-nans -fcx-limited-range
+    dnl but -funsafe-math-optimizations break IEEE float comptability, so we have to avoid it
+    AC_GECODE_CHECK_COMPILERFLAG([-fno-math-errno])
+    AC_GECODE_CHECK_COMPILERFLAG([-ffinite-math-only])
+    AC_GECODE_CHECK_COMPILERFLAG([-fno-rounding-math])
+    AC_GECODE_CHECK_COMPILERFLAG([-fno-signaling-nans])
+    AC_GECODE_CHECK_COMPILERFLAG([-fcx-limited-range])
     AC_GECODE_CHECK_COMPILERFLAG([-mthreads])
   else
     if test "${enable_debug:-no}" = "yes"; then
@@ -226,17 +233,22 @@ dnl @VTIS@
 
 AC_GECODE_VIS
 
-dnl AC_GECODE_VTI(float,
-dnl        [float variable library (requires boost interval library)],
-dnl        no,
-dnl				[\$(top_srcdir)/contribs/float/var-imp/float.vis]],
-dnl				[
-dnl	ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
-dnl   	CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
-dnl	AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
-dnl	AC_MSG_ERROR([The boost interval library could not be found.])])
-dnl	CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
-dnl        ],[])
+AC_GECODE_VTI(float,
+       [float variable library (requires boost interval library and implies --enable-int-vars)],
+       no,
+			[\$(top_srcdir)/gecode/float/var-imp/float.vis],
+	    [enable_int_vars="yes";
+       ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
+  	   CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
+       AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
+       AC_MSG_ERROR([The boost interval library could not be found.])])
+       CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
+  	   AC_SUBST(LINKFLOAT,[${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}])
+      ],
+      [
+       AC_SUBST(LINKFLOAT,[]) 
+      ]
+      )
 
 AC_GECODE_VTI(set,
 	[finite set library (implies --enable-int-vars)],
@@ -262,6 +274,7 @@ AC_GECODE_VTI(int, finite domain library, yes,
 dnl End of definition of variable types
 dnl ------------------------------------------------------------------
 
+AC_GECODE_MPFR
 AC_GECODE_QT
 AC_GECODE_GIST
 AC_GECODE_FLEXBISON

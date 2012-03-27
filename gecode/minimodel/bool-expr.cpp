@@ -3,10 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
  *     Guido Tack, 2004
  *     Christian Schulte, 2004
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -56,6 +58,10 @@ namespace Gecode {
     BoolVar x;
     /// Possibly a reified linear relation
     LinRel rl;
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Possibly a reified float linear relation
+    LinFloatRel rfl;
+#endif
 #ifdef GECODE_HAS_SET_VARS
     /// Possibly a reified set relation
     SetRel rs;
@@ -156,6 +162,17 @@ namespace Gecode {
     n->r    = NULL;
     n->rl   = rl;
   }
+
+#ifdef GECODE_HAS_FLOAT_VARS
+  BoolExpr::BoolExpr(const LinFloatRel& rfl)
+    : n(new Node) {
+    n->same  = 1;
+    n->t     = NT_RLINFLOAT;
+    n->l     = NULL;
+    n->r     = NULL;
+    n->rfl   = rfl;
+  }
+#endif
 
 #ifdef GECODE_HAS_SET_VARS
   BoolExpr::BoolExpr(const SetRel& rs)
@@ -284,6 +301,11 @@ namespace Gecode {
       case BoolExpr::NT_RLIN:
         u.a.x->rl.post(home, b, !u.a.neg, icl);
         break;
+  #ifdef GECODE_HAS_FLOAT_VARS
+      case BoolExpr::NT_RLINFLOAT:
+        u.a.x->rfl.post(home, b, !u.a.neg, FCL_DEF);
+        break;
+  #endif
   #ifdef GECODE_HAS_SET_VARS
       case BoolExpr::NT_RSET:
         u.a.x->rs.post(home, b, !u.a.neg);
@@ -355,6 +377,15 @@ namespace Gecode {
             bp[ip++]=b;
           }
           break;
+  #ifdef GECODE_HAS_FLOAT_VARS
+        case BoolExpr::NT_RLINFLOAT:
+          {
+            BoolVar b(home,0,1);
+            u.a.x->rfl.post(home, b, !u.a.neg, FCL_DEF);
+            bp[ip++]=b;
+          }
+          break;
+  #endif
   #ifdef GECODE_HAS_SET_VARS
         case BoolExpr::NT_RSET:
           {
@@ -390,6 +421,11 @@ namespace Gecode {
       case BoolExpr::NT_RLIN:
         u.a.x->rl.post(home, !u.a.neg, icl);
         break;
+  #ifdef GECODE_HAS_FLOAT_VARS
+      case BoolExpr::NT_RLINFLOAT:
+        u.a.x->rfl.post(home, !u.a.neg, FCL_DEF);
+        break;
+  #endif
   #ifdef GECODE_HAS_SET_VARS
       case BoolExpr::NT_RSET:
         u.a.x->rs.post(home, !u.a.neg);
@@ -428,6 +464,22 @@ namespace Gecode {
         } else if (u.b.r->t==BoolExpr::NT_RLIN) {
           u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,icl),
                                 !u.b.r->u.a.neg,icl);
+  #ifdef GECODE_HAS_FLOAT_VARS
+        } else if (u.b.l->t==BoolExpr::NT_VAR && 
+                   u.b.r->t==BoolExpr::NT_RLINFLOAT) {
+          u.b.r->u.a.x->rfl.post(home, u.b.l->u.a.x->x,
+                                 u.b.l->u.a.neg==u.b.r->u.a.neg, FCL_DEF);
+        } else if (u.b.r->t==BoolExpr::NT_VAR && 
+                   u.b.l->t==BoolExpr::NT_RLINFLOAT) {
+          u.b.l->u.a.x->rfl.post(home, u.b.r->u.a.x->x,
+                                 u.b.l->u.a.neg==u.b.r->u.a.neg, FCL_DEF);
+        } else if (u.b.l->t==BoolExpr::NT_RLINFLOAT) {
+          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,icl),
+                                 !u.b.l->u.a.neg, FCL_DEF);
+        } else if (u.b.r->t==BoolExpr::NT_RLINFLOAT) {
+          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,icl),
+                                 !u.b.r->u.a.neg, FCL_DEF);
+  #endif
   #ifdef GECODE_HAS_SET_VARS
         } else if (u.b.l->t==BoolExpr::NT_VAR && 
                    u.b.r->t==BoolExpr::NT_RSET) {
@@ -459,6 +511,9 @@ namespace Gecode {
       case BoolExpr::NT_VAR:
       case BoolExpr::NT_RLIN:
       case BoolExpr::NT_MISC:
+  #ifdef GECODE_HAS_FLOAT_VARS
+      case BoolExpr::NT_RLINFLOAT:
+  #endif
   #ifdef GECODE_HAS_SET_VARS
       case BoolExpr::NT_RSET:
   #endif

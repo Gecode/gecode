@@ -75,6 +75,8 @@ export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
 export QT_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
 export LINKQT = @QTLIBS@
+export MPFR_CPPFLAGS = @GMP_CPPFLAGS@ @MPFR_CPPFLAGS@
+export LINKMPFR = @MPFR_LINK@
 
 ifeq "@BUILDDLL@" "yes"
 export LINKSTATICQT
@@ -416,6 +418,65 @@ INTBUILDDIRS	= \
 	int/unary int/cumulative int/cumulatives int/task
 
 #
+# FLOAT COMPONENTS
+#
+
+FLOATSRC0 = \
+	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp \
+	linear/post.cpp
+
+FLOATHDR0 = \
+	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
+	view.hpp view/float.hpp view/minus.hpp view/offset.hpp \
+	view/scale.hpp view/print.hpp view/rel-test.hpp \
+	linear.hh linear/float-bin.hpp linear/float-ter.hpp \
+	linear/float-noview.hpp linear/float-nary.hpp linear/post.hpp \
+	arithmetic.hh arithmetic/sqr-sqrt-abs.hpp arithmetic/pow-nroot.hpp \
+	arithmetic/mult.hpp arithmetic/div.hpp arithmetic/min-max-channel.hpp \
+	transcendental.hh transcendental/exp-log.hpp trigonometric.hh \
+	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
+	trigonometric/tanatan.hpp \
+	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
+	branch.hh branch/post-val-float.hpp branch/select-val.hpp \
+	branch/select-view.hpp
+
+FLOATSRC	= $(FLOATSRC0:%=gecode/float/%) \
+	gecode/float/branch/post-view-float.cpp
+FLOATHDR	= gecode/float.hh $(FLOATHDR0:%=gecode/float/%)
+FLOATOBJ	= $(FLOATSRC:%.cpp=%$(OBJSUFFIX))
+
+ifeq "@enable_float_vars@" "yes"
+export FLOATDLL		= $(LIBPREFIX)@FLOAT@$(DLLSUFFIX)
+export FLOATSTATICLIB	= $(LIBPREFIX)@FLOAT@$(STATICLIBSUFFIX)
+export FLOATLIB		= $(LIBPREFIX)@FLOAT@$(LIBSUFFIX)
+export LINKFLOAT	= $(LINKPREFIX)@FLOAT@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export FLOATSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@FLOAT@$(SOSUFFIX)
+else
+export FLOATSONAME     = 
+endif
+ifeq "@enable_resource@" "yes"
+export FLOATRC		= $(LIBPREFIX)@FLOAT@$(RCSUFFIX)
+export FLOATRES		= $(LIBPREFIX)@FLOAT@$(RESSUFFIX)
+else
+export FLOATRES		=
+export FLOATRC		=
+endif
+else
+export FLOATDLL	    	=
+export FLOATSTATICLIB	=
+export FLOATLIB		=
+export LINKFLOAT	=
+export FLOATRES		=
+export FLOATRC		=
+endif
+FLOATBUILDDIRS	= \
+	float float/var float/var-imp float/view \
+	float/linear float/branch \
+	float/arithmetic float/transcendental float/trigonometric
+
+#
 # SET COMPONENTS
 #
 
@@ -505,12 +566,17 @@ SETBUILDDIRS	=						\
 # MINIMODEL COMPONENTS
 #
 
-MMSRC0 = \
+MMSRC1 = \
 	lin-expr.cpp lin-rel.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp \
 	reg.cpp arithmetic.cpp
+ifeq "@enable_float_vars@" "yes"
+MMSRC0 = $(MMSRC1) lin-float-expr.cpp lin-float-rel.cpp
+else
+MMSRC0 = $(MMSRC1)
+endif
 MMHDR0 = \
-	lin-rel.hpp exception.hpp matrix.hpp \
+	lin-rel.hpp lin-float-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
 	optimize.hpp reg.hpp
 
@@ -751,6 +817,15 @@ else
 INTEXAMPLEEXE  =
 endif
 
+FLOATEXAMPLESRC0 = \
+	test-float
+FLOATEXAMPLESRC  = $(FLOATEXAMPLESRC0:%=examples/%.cpp)
+ifeq "@enable_float_vars@" "yes"
+FLOATEXAMPLEEXE  = $(FLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
+else
+FLOATEXAMPLEEXE  = 
+endif
+
 SETEXAMPLESRC0 = \
 	crew golf hamming steiner queen-armies
 SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cpp)
@@ -763,8 +838,10 @@ endif
 EXAMPLEBUILDDIRS = examples
 
 EXAMPLEEXE = \
-  $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
+	$(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(FLOATEXAMPLEEXE)
 
+#EXAMPLEEXE = \
+#	$(FLOATEXAMPLEEXE)
 
 
 #
@@ -773,12 +850,12 @@ EXAMPLEEXE = \
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
-        $(INTSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
+        $(INTSRC) $(FLOATSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(GISTSRC) $(FLATZINCALLSRC)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
-        $(INTHDR) $(SETHDR) $(MMHDR) \
+        $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
 	$(INTEXAMPLEHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
@@ -791,10 +868,10 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
-	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
+	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(FLOATDLL) $(SETDLL) \
 	$(MMDLL) $(DRIVERDLL) $(GISTDLL) $(FLATZINCDLL)
 export ALLLIB = \
-	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
+	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(FLOATLIB) $(SETLIB) \
 	$(MMLIB) $(DRIVERLIB) $(GISTLIB) $(FLATZINCLIB)
 else
 DLLTARGETS=
@@ -803,7 +880,7 @@ export ALLLIB = gecode.framework/Versions/@GECODE_SOVERSION@/gecode
 else
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
+	$(INTSTATICLIB) $(FLOATSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 endif
 endif
@@ -811,7 +888,7 @@ endif
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
+	$(INTSTATICLIB) $(FLOATSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB) \
 	$(DRIVERSTATICLIB) $(GISTSTATICLIB) $(FLATZINCSTATICLIB)
 else
 STATICTARGETS=
@@ -899,7 +976,7 @@ BUILDDIRS = \
 	tools \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
-	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
+	$(INTBUILDDIRS:%=gecode/%) $(FLOATBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%)  \
 	$(DRIVERBUILDDIRS:%=gecode/%)  \
 	$(GISTBUILDDIRS:%=gecode/%) \
@@ -993,6 +1070,7 @@ gecode/kernel/var-imp.hpp: $(VISDEP)
 GENBRANCHSRC = \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp \
+	$(top_srcdir)/gecode/float/branch/post-view-float.cpp \
 	$(top_srcdir)/gecode/set/branch/post-view.cpp
 
 $(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
@@ -1001,6 +1079,10 @@ $(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 $(top_srcdir)/gecode/int/branch/post-view-bool.cpp: \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
+	$(top_srcdir)/misc/genbranch.perl
+	perl $(top_srcdir)/misc/genbranch.perl $< > $@
+$(top_srcdir)/gecode/float/branch/post-view-float.cpp: \
+	$(top_srcdir)/gecode/float/branch/post-view-float.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 $(top_srcdir)/gecode/set/branch/post-view.cpp: \
@@ -1047,6 +1129,13 @@ gecode/int/%$(SBJSUFFIX): $(top_srcdir)/gecode/int/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
+gecode/float/%$(OBJSUFFIX): $(top_srcdir)/gecode/float/%.cpp
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_FLOAT_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+gecode/float/%$(SBJSUFFIX): $(top_srcdir)/gecode/float/%.cpp
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_FLOAT_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+
 gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
@@ -1055,25 +1144,25 @@ gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cpp
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/driver/%$(OBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/driver/%$(SBJSUFFIX): $(top_srcdir)/gecode/driver/%.cpp
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(MPFR_CPPFLAGS) @GECODE_BUILD_DRIVER_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cpp
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) $(MPFR_CPPFLAGS) $(QT_CPPFLAGS) \
 	@COMPILEOBJ@$@ @CXXIN@$<
 examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cpp
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) $(MPFR_CPPFLAGS) $(QT_CPPFLAGS) \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 
@@ -1085,29 +1174,29 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cpp
 		@COMPILESBJ@$@ @CXXIN@$<
 
 tools/%$(OBJSUFFIX): $(top_srcdir)/tools/%.cpp
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(MPFR_CPPFLAGS) \
 		@COMPILEOBJ@$@ @CXXIN@$<
 tools/%$(SBJSUFFIX): $(top_srcdir)/tools/%.cpp
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(MPFR_CPPFLAGS) \
 		@COMPILESBJ@$@ @CXXIN@$<
 
 $(GISTSRC:%.cpp=%$(OBJSUFFIX)): gecode/gist/%$(OBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 $(GISTSRC:%.cpp=%$(SBJSUFFIX)): gecode/gist/%$(SBJSUFFIX): $(top_srcdir)/gecode/gist/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 $(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)): gecode/gist/moc_%$(OBJSUFFIX): gecode/gist/moc_%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 $(GISTMOCSRC:%.cpp=%$(SBJSUFFIX)): gecode/gist/moc_%$(SBJSUFFIX): gecode/gist/moc_%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_GIST_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
@@ -1139,22 +1228,22 @@ endif
 endif
 
 $(FLATZINCSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 $(FLATZINCSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): $(top_srcdir)/gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 $(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX)): gecode/flatzinc/%$(OBJSUFFIX): gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 
 $(FLATZINC_GENSRC:%.cpp=%$(SBJSUFFIX)): gecode/flatzinc/%$(SBJSUFFIX): gecode/flatzinc/%.cpp
-	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) \
+	$(CXX) $(CXXFLAGS) $(QT_CPPFLAGS) $(MPFR_CPPFLAGS) \
 	@GECODE_BUILD_FLATZINC_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
@@ -1169,7 +1258,7 @@ export LINKALL = -F. -framework gecode
 else
 export LINKALL = \
 	$(LINKFLATZINC) $(LINKDRIVER) $(LINKGIST) \
-	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKINT) \
+	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKFLOAT) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 endif
 
@@ -1196,15 +1285,21 @@ $(INTDLL): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 		@LINKOUTPUT@$(INTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(FLOATDLL): $(FLOATOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(FLOATOBJ) $(FLOATSONAME) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(FLOATDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(SETDLL): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(SETDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
+$(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(FLOATDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKFLOAT) $(LINKSET) \
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -1272,6 +1367,16 @@ $(INTDLL) $(INTLIB): $(INTOBJ) $(INTRES) $(SUPPORTDLL) $(KERNELDLL)
 	$(MANIFEST) -manifest $(INTDLL).manifest \
 		    -outputresource:$(INTDLL)\;2
 ifeq "@enable_resource@" "yes"
+$(FLOATRC):
+	$(RCGEN) $(FLOATDLL) $(FLOATHDR) $(FLOATSRC) > $@
+endif
+$(FLOATDLL) $(FLOATLIB): $(FLOATOBJ) $(FLOATRES) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(FLOATOBJ) $(FLOATRES) \
+		@DLLPATH@ @LINKOUTPUT@$(FLOATDLL) $(GLDFLAGS) $(LINKMPFR)
+	$(FIXMANIFEST) $(FLOATDLL).manifest
+	$(MANIFEST) -manifest $(FLOATDLL).manifest \
+		    -outputresource:$(FLOATDLL)\;2
+ifeq "@enable_resource@" "yes"
 $(SETRC):
 	$(RCGEN) $(SETDLL) $(SETHDR) $(SETSRC) > $@
 endif
@@ -1286,9 +1391,9 @@ $(MMRC):
 	$(RCGEN) $(MMDLL) $(MMHDR) $(MMSRC) > $@
 endif
 $(MMDLL) $(MMLIB): $(MMOBJ) $(MMRES) \
-	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
+	$(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(FLOATDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMRES) \
-		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS)
+		@DLLPATH@ @LINKOUTPUT@$(MMDLL) $(GLDFLAGS) $(LINKMPFR)
 	$(FIXMANIFEST) $(MMDLL).manifest
 	$(MANIFEST) -manifest $(MMDLL).manifest \
 		    -outputresource:$(MMDLL)\;2
@@ -1323,7 +1428,7 @@ $(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(FLATZINCRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) \
 	$(SETDLL) $(GISTDLL) $(MMDLL) $(DRIVERDLL)
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) \
-		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
+		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS) $(LINKMPFR)
 	$(FIXMANIFEST) $(FLATZINCDLL).manifest
 	$(MANIFEST) -manifest $(FLATZINCDLL).manifest \
 		    -outputresource:$(FLATZINCDLL)\;2
@@ -1344,6 +1449,9 @@ $(SEARCHSTATICLIB): $(SEARCHOBJ)
 	$(RANLIB) $@
 $(INTSTATICLIB): $(INTOBJ)
 	$(AR) $(ARFLAGS) $@ $(INTOBJ)
+	$(RANLIB) $@
+$(FLOATSTATICLIB): $(FLOATOBJ)
+	$(AR) $(ARFLAGS) $@ $(FLOATOBJ)
 	$(RANLIB) $@
 $(SETSTATICLIB): $(SETOBJ)
 	$(AR) $(ARFLAGS) $@ $(SETOBJ)
@@ -1403,13 +1511,13 @@ examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) examples/%$(EXESUFFIX).res \
 	$(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $@.res \
 		$(DLLPATH) $(CXXFLAGS) \
-		$(LINKALL) $(LINKQT) $(GLDFLAGS)
+		$(LINKALL) $(LINKQT) $(GLDFLAGS) $(LINKMPFR)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 else
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(LINKQT) $(GLDFLAGS)
+	$(LINKALL) $(LINKQT) $(GLDFLAGS) $(LINKMPFR)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 endif
@@ -1444,7 +1552,7 @@ endif
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB) 
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
 	$(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
+	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS) $(LINKMPFR)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
@@ -1480,9 +1588,11 @@ DIST_FILES= \
 	variables.vsl \
 	gecode/int/var-imp/int.vis \
 	gecode/int/var-imp/bool.vis \
+	gecode/float/var-imp/float.vis \
 	gecode/set/var-imp/set.vis \
 	gecode/int/branch/post-view-int.bs \
 	gecode/int/branch/post-view-bool.bs \
+	gecode/float/branch/post-view-float.bs \
 	gecode/set/branch/post-view.bs \
 	examples/support.hh \
 	examples/support/example.hpp \
