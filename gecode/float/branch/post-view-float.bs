@@ -1,0 +1,105 @@
+#
+#  Main authors:
+#
+#  Copyright:
+#
+#  Last modified:
+#
+#  This file is part of Gecode, the generic constraint
+#  development environment:
+#     http://www.gecode.org
+#
+#  Permission is hereby granted, free of charge, to any person obtaining
+#  a copy of this software and associated documentation files (the
+#  "Software"), to deal in the Software without restriction, including
+#  without limitation the rights to use, copy, modify, merge, publish,
+#  distribute, sublicense, and/or sell copies of the Software, and to
+#  permit persons to whom the Software is furnished to do so, subject to
+#  the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+#  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+#  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+#  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+
+[Header]
+
+[Footer]
+
+// STATISTICS: float-branch
+
+[General]
+# Type of view
+View:		FloatView
+# Type of variable argument
+VarArgs:	FloatVarArgs
+# Type of variable branching selection
+VarBranch:	FloatVarBranch
+# Type of value branch selection
+ValBranch:	FloatValBranch
+# Exception to be thrown if variable branch selection unknown
+Exception:	UnknownBranching("Float::branch")
+# Header file to include
+Include:	<gecode/float/branch.hh>
+# Local namespace
+LNS:		Gecode::Float::Branch
+# Global namespace
+GNS:		Gecode
+[VarBranch]
+# Value for branching selection, mark as special
+Value:		FLOAT_VAR_NONE = NONE
+# Corresponding type
+Type:		ViewSelNone<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_RND = COMPLETE
+Type:		ViewSelRnd<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_MIN_MIN
+Type:		ByMinMin
+[VarBranch]
+Value:		FLOAT_VAR_MIN_MAX
+Type:		ByMinMax
+[VarBranch]
+Value:		FLOAT_VAR_MAX_MIN
+Type:		ByMaxMin
+[VarBranch]
+Value:		FLOAT_VAR_MAX_MAX
+Type:		ByMaxMax
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_MIN
+Type:		ByWidthMin
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_MAX
+Type:		ByWidthMax
+[VarBranch]
+Value:		FLOAT_VAR_DEGREE_MIN
+Type:		ViewSelDegreeMin<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_DEGREE_MAX
+Type:		ViewSelDegreeMax<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_AFC_MIN
+Type:		ViewSelAfcMin<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_AFC_MAX
+Type:		ViewSelAfcMax<FloatView>
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_DEGREE_MIN
+Type:		ByWidthDegreeMin
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_DEGREE_MAX
+Type:		ByWidthDegreeMax
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_AFC_MIN
+Type:		ByWidthAfcMin
+[VarBranch]
+Value:		FLOAT_VAR_WIDTH_AFC_MAX
+Type:		ByWidthAfcMax
+[End]
