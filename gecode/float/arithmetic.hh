@@ -348,11 +348,11 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
 }}}
 
-#include <gecode/float/arithmetic/sqr_sqrt_abs.hpp>
-#include <gecode/float/arithmetic/pow_nroot.hpp>
+#include <gecode/float/arithmetic/sqr-sqrt-abs.hpp>
+#include <gecode/float/arithmetic/pow-nroot.hpp>
 #include <gecode/float/arithmetic/mult.hpp>
 #include <gecode/float/arithmetic/div.hpp>
-#include <gecode/float/arithmetic/min_max_channel.hpp>
+#include <gecode/float/arithmetic/min-max-channel.hpp>
 
 #endif
 
