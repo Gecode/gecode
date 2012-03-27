@@ -35,7 +35,7 @@
 #
 #
 
-@modorder = ("kernel","search","int","set","minimodel","gist","driver",
+@modorder = ("kernel","search","int","set","float","minimodel","gist","driver",
 	     "iter","support","example","test","flatzinc");
 
 @catorder = ("core","var","prop","branch","post",
@@ -46,8 +46,9 @@
 $modclear{"kernel"} = "Kernel";
 $modclear{"search"} = "Search engines";
 $modclear{"gist"} = "Gist";
-$modclear{"int"} = "Finite domain integers";
-$modclear{"set"} = "Finite integer sets";
+$modclear{"int"} = "Integer and Boolean variables and constraints";
+$modclear{"set"} = "Set variables and constraints";
+$modclear{"float"} = "Float variables and constraints";
 $modclear{"minimodel"} = "Minimal modeling support";
 $modclear{"driver"} = "Script commandline driver";
 $modclear{"iter"} = "Range and value iterators";
@@ -66,8 +67,9 @@ $catclear{"parallel"} = "Parallel search engines";
 $catclear{"post"} = "Posting propagators for constraints";
 $catclear{"any"} = "All";
 $catclear{"other"} = "Miscellaneous";
-$catclear{"int"} = "Finite domain integers";
-$catclear{"set"} = "Finite integer sets";
+$catclear{"int"} = "Integer and Boolean variables and constraints";
+$catclear{"set"} = "Set variables and constraints";
+$catclear{"float"} = "Float variables and constraints";
 $catclear{"minimodel"} = "Minimal modeling support";
 $catclear{"stress"} = "System stress";
 $catclear{"search"} = "Search";
