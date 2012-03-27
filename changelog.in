@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module:	float
+What:	new
+Rank:	major
+Author:	Vincent Barichard
+[DESCRIPTION]
+Added support for float variables (experimental).
+
+[ENTRY]
 Module:	int
 What:	new
 Rank:	minor

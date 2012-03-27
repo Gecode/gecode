@@ -41,10 +41,9 @@
 
 namespace Gecode {
 
-  using namespace Float;
-
   void
   rel(Home home, FloatVar x0, FloatRelType frt, FloatVal n, FloatConLevel) {
+    using namespace Float;
     Limits::check(n,"Float::rel");
     if (home.failed()) return;
     FloatView x(x0);
@@ -58,6 +57,7 @@ namespace Gecode {
 
   void
   rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, FloatConLevel) {
+    using namespace Float;
     if (home.failed()) return;
     switch (frt) {
     case FRT_EQ:
@@ -72,7 +72,7 @@ namespace Gecode {
     }
   }
 
-#define WRITE_REIFIED_UNA_PROP(name,view0,mode,a,c,bvar) \
+#define GECODE_WRITE_REIFIED_UNA_PROP(name,view0,mode,a,c,bvar) \
         if (b) GECODE_ES_FAIL((name<view0,Int::BoolView,mode>:: \
                                post(home,a,c,bvar))); \
         else   GECODE_ES_FAIL((name<view0,Int::NegBoolView,mode>:: \
@@ -81,18 +81,19 @@ namespace Gecode {
   void
   rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r, bool b,
       FloatConLevel) {
+    using namespace Float;
     if (home.failed()) return;
     switch (frt) {
     case FRT_EQ:
       switch (r.mode()) {
       case RM_EQV:
-        WRITE_REIFIED_UNA_PROP(Rel::ReEq,FloatView,RM_EQV,x0,x1,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReEq,FloatView,RM_EQV,x0,x1,r.var());
         break;
       case RM_IMP:
-        WRITE_REIFIED_UNA_PROP(Rel::ReEq,FloatView,RM_IMP,x0,x1,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReEq,FloatView,RM_IMP,x0,x1,r.var());
         break;
       case RM_PMI:
-        WRITE_REIFIED_UNA_PROP(Rel::ReEq,FloatView,RM_PMI,x0,x1,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReEq,FloatView,RM_PMI,x0,x1,r.var());
         break;
       default: throw Int::UnknownReifyMode("Float::rel");
       }
@@ -102,13 +103,13 @@ namespace Gecode {
     case FRT_LQ:
       switch (r.mode()) {
       case RM_EQV:
-        WRITE_REIFIED_UNA_PROP(Rel::ReLq,FloatView,RM_EQV,x0,x1,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReLq,FloatView,RM_EQV,x0,x1,r.var());
         break;
       case RM_IMP:
-        WRITE_REIFIED_UNA_PROP(Rel::ReLq,FloatView,RM_EQV,x0,x1,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReLq,FloatView,RM_EQV,x0,x1,r.var());
         break;
       case RM_PMI:
-        WRITE_REIFIED_UNA_PROP(Rel::ReLq,FloatView,RM_EQV,x0,x1,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReLq,FloatView,RM_EQV,x0,x1,r.var());
         break;
       default: throw Int::UnknownReifyMode("Float::rel");
       }
@@ -121,32 +122,33 @@ namespace Gecode {
   void
   rel(Home home, FloatVar x, FloatRelType frt, FloatVal n, Reify r, bool b,
       FloatConLevel) {
+    using namespace Float;
     Limits::check(n,"Float::rel");
     if (home.failed()) return;
     switch (frt) {
     case FRT_EQ:
       switch (r.mode()) {
       case RM_EQV:
-        WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_EQV,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_EQV,x,n,r.var());
         break;
       case RM_IMP:
-        WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_IMP,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_IMP,x,n,r.var());
         break;
       case RM_PMI:
-        WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_PMI,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_PMI,x,n,r.var());
         break;
       default: throw Int::UnknownReifyMode("Float::rel");
       }
     case FRT_LQ:
       switch (r.mode()) {
       case RM_EQV:
-        WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_EQV,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_EQV,x,n,r.var());
         break;
       case RM_IMP:
-        WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_IMP,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_IMP,x,n,r.var());
         break;
       case RM_PMI:
-        WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_PMI,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_PMI,x,n,r.var());
         break;
       default: throw Int::UnknownReifyMode("Float::rel");
       }
@@ -154,13 +156,13 @@ namespace Gecode {
     case FRT_GQ:
       switch (r.mode()) {
       case RM_EQV:
-        WRITE_REIFIED_UNA_PROP(Rel::ReGqFloat,FloatView,RM_EQV,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReGqFloat,FloatView,RM_EQV,x,n,r.var());
         break;
       case RM_IMP:
-        WRITE_REIFIED_UNA_PROP(Rel::ReGqFloat,FloatView,RM_IMP,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReGqFloat,FloatView,RM_IMP,x,n,r.var());
         break;
       case RM_PMI:
-        WRITE_REIFIED_UNA_PROP(Rel::ReGqFloat,FloatView,RM_PMI,x,n,r.var());
+        GECODE_WRITE_REIFIED_UNA_PROP(Rel::ReGqFloat,FloatView,RM_PMI,x,n,r.var());
         break;
       default: throw Int::UnknownReifyMode("Float::rel");
       }
@@ -170,10 +172,11 @@ namespace Gecode {
     }
   }
 
-#undef WRITE_REIFIED_UNA_PROP
+#undef GECODE_WRITE_REIFIED_UNA_PROP
 
   void
   rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c, FloatConLevel) {
+    using namespace Float;
     Limits::check(c,"Float::rel");
     if (home.failed()) return;
     switch (frt) {

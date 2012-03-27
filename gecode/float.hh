@@ -111,7 +111,9 @@ typedef double FloatNum;
   #include <mpfr.h>
   //}
 #endif
+
 namespace Gecode { namespace Float {
+
   using namespace boost;
   using namespace numeric;
   using namespace interval_lib;
