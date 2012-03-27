@@ -49,9 +49,6 @@
 /* Whether gcc understands visibility attributes */
 #undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
-/* Whether to compile boost dependent parts */
-#undef GECODE_HAS_BOOST
-
 /* whether __builtin_ffsl is available */
 #undef GECODE_HAS_BUILTIN_FFSL
 

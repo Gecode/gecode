@@ -16,3 +16,4 @@
 *.rc
 *.res
 moc_*.cpp
+*.bat

@@ -5,6 +5,7 @@
  *     - ./gecode/int/var-imp/int.vis
  *     - ./gecode/int/var-imp/bool.vis
  *     - ./gecode/set/var-imp/set.vis
+ *     - ./gecode/float/var-imp/float.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -135,6 +136,41 @@ namespace Gecode { namespace Set {
      * Otherwise, the propagator subscribes and is scheduled for execution
      * with modification event \a me provided that \a pc is different
      * from \a PC_SET_VAL.
+     */
+    void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
+    /// Subscribe advisor \a a if \a assigned is false.
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+    //@}
+  };
+}}
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+namespace Gecode { namespace Float { 
+  /// Base-class for Float-variable implementations
+  class FloatVarImpBase : public Gecode::VarImp<Gecode::Float::FloatVarImpConf> {
+  protected:
+    /// Constructor for cloning \a x
+    FloatVarImpBase(Gecode::Space& home, bool share, FloatVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    FloatVarImpBase(void);
+    /// Constructor for creating variable
+    FloatVarImpBase(Gecode::Space& home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc
+     *
+     * In case \a schedule is false, the propagator is just subscribed but
+     * not scheduled for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is
+     * true), the subscribing propagator is scheduled for execution.
+     * Otherwise, the propagator subscribes and is scheduled for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_FLOAT_VAL.
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
@@ -314,6 +350,52 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+namespace Gecode { namespace Float { 
+
+  forceinline
+  FloatVarImpBase::FloatVarImpBase(void) {}
+
+  forceinline
+  FloatVarImpBase::FloatVarImpBase(Gecode::Space& home)
+    : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home) {}
+
+  forceinline
+  FloatVarImpBase::FloatVarImpBase(Gecode::Space& home, bool share, FloatVarImpBase& x)
+    : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home,share,x) {}
+
+  forceinline void
+  FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,p,pc,assigned,ME_FLOAT_BND,schedule);
+  }
+  forceinline void
+  FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,a,assigned);
+  }
+
+  forceinline Gecode::ModEvent
+  FloatVarImpBase::notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d) {
+    switch (me) {
+    case ME_FLOAT_VAL:
+      // Conditions: VAL, BND
+      schedule(home,PC_FLOAT_VAL,PC_FLOAT_BND,ME_FLOAT_VAL);
+      if (!Gecode::VarImp<Gecode::Float::FloatVarImpConf>::advise(home,ME_FLOAT_VAL,d))
+        return ME_FLOAT_FAILED;
+      cancel(home);
+      break;
+    case ME_FLOAT_BND:
+      // Conditions: BND
+      schedule(home,PC_FLOAT_BND,PC_FLOAT_BND,ME_FLOAT_BND);
+      if (!Gecode::VarImp<Gecode::Float::FloatVarImpConf>::advise(home,ME_FLOAT_BND,d))
+        return ME_FLOAT_FAILED;
+      break;
+    default: GECODE_NEVER;
+    }
+    return me;
+  }
+
+}}
+#endif
 namespace Gecode {
 
   forceinline void
@@ -326,6 +408,9 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_SET_VARS
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::update(*this,sub);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::update(*this,sub);
 #endif
   }
 }

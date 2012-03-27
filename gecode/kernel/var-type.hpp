@@ -5,6 +5,7 @@
  *     - ./gecode/int/var-imp/int.vis
  *     - ./gecode/int/var-imp/bool.vis
  *     - ./gecode/set/var-imp/set.vis
+ *     - ./gecode/float/var-imp/float.vis
  *
  *  This file contains generated code fragments which are
  *  copyrighted as follows:
@@ -248,6 +249,50 @@ namespace Gecode { namespace Set {
   //@}
 }}
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+namespace Gecode { namespace Float { 
+  /**
+   * \defgroup TaskActorFloatMEPC Float modification events and propagation conditions
+   * \ingroup TaskActorFloat
+   */
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_FLOAT_FAILED = Gecode::ME_GEN_FAILED;
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_FLOAT_NONE = Gecode::ME_GEN_NONE;
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_FLOAT_VAL = Gecode::ME_GEN_ASSIGNED;
+  /** 
+   * \brief Domain operation has changed the minimum or maximum of the domain
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_FLOAT_BND modification event.
+   */
+  const Gecode::ModEvent ME_FLOAT_BND = Gecode::ME_GEN_ASSIGNED + 1;
+  /// Propagation condition to be ignored (convenience)
+  const Gecode::PropCond PC_FLOAT_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_FLOAT_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_FLOAT_VAL.
+   */
+  const Gecode::PropCond PC_FLOAT_VAL = Gecode::PC_GEN_ASSIGNED;
+  /**
+   * \brief Propagate when minimum or maximum of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_FLOAT_BND, then \a p is propagated when a domain
+   * update operation on \a x returns the modification events ME_FLOAT_VAL
+   * or ME_FLOAT_BND.
+   */
+  const Gecode::PropCond PC_FLOAT_BND = Gecode::PC_GEN_ASSIGNED + 1;
+  //@}
+}}
+#endif
 #ifdef GECODE_HAS_INT_VARS
 namespace Gecode { namespace Int { 
   /// Configuration for Int-variable implementations
@@ -365,6 +410,45 @@ namespace Gecode { namespace Set {
   };
 }}
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+namespace Gecode { namespace Float { 
+  /// Configuration for Float-variable implementations
+  class FloatVarImpConf {
+  public:
+    /// Index for cloning
+    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c+1;
+    /// Index for disposal
+    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
+    /// Maximal propagation condition
+    static const Gecode::PropCond pc_max = PC_FLOAT_BND;
+    /// Freely available bits
+    static const int free_bits = 0;
+    /// Start of bits for modification event delta
+    static const int med_fst = Gecode::Set::SetVarImpConf::med_lst;
+    /// End of bits for modification event delta
+    static const int med_lst = med_fst + 2;
+    /// Bitmask for modification event delta
+    static const int med_mask = ((1 << 2) - 1) << med_fst;
+    /// Combine modification events \a me1 and \a me2
+    static Gecode::ModEvent me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2);
+    /// Update modification even delta \a med by \a me, return true on change
+    static bool med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me);
+  };
+}}
+#else
+namespace Gecode { namespace Float { 
+  /// Dummy configuration for Float-variable implementations
+  class FloatVarImpConf {
+  public:
+    /// Index for cloning
+    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c;
+    /// Index for disposal
+    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d;
+    /// End of bits for modification event delta
+    static const int med_lst = Gecode::Set::SetVarImpConf::med_lst;
+  };
+}}
+#endif
 
 namespace Gecode {
 
@@ -372,9 +456,9 @@ namespace Gecode {
   class AllVarConf {
   public:
     /// Index for cloning
-    static const int idx_c = Gecode::Set::SetVarImpConf::idx_c+1;
+    static const int idx_c = Gecode::Float::FloatVarImpConf::idx_c+1;
     /// Index for dispose
-    static const int idx_d = Gecode::Set::SetVarImpConf::idx_d+1;
+    static const int idx_d = Gecode::Float::FloatVarImpConf::idx_d+1;
     /// Combine modification event delta \a med1 with \a med2
     static ModEventDelta med_combine(ModEventDelta med1, ModEventDelta med2);
   };
@@ -748,6 +832,58 @@ namespace Gecode { namespace Set {
 
 }}
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+namespace Gecode { namespace Float { 
+  forceinline Gecode::ModEvent
+  FloatVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
+    static const Gecode::ModEvent me_c = (
+      (
+        (ME_FLOAT_NONE <<  0) |  // [ME_FLOAT_NONE][ME_FLOAT_NONE]
+        (ME_FLOAT_VAL  <<  2) |  // [ME_FLOAT_NONE][ME_FLOAT_VAL ]
+        (ME_FLOAT_BND  <<  4)    // [ME_FLOAT_NONE][ME_FLOAT_BND ]
+      ) |
+      (
+        (ME_FLOAT_VAL  <<  8) |  // [ME_FLOAT_VAL ][ME_FLOAT_NONE]
+        (ME_FLOAT_VAL  << 10) |  // [ME_FLOAT_VAL ][ME_FLOAT_VAL ]
+        (ME_FLOAT_VAL  << 12)    // [ME_FLOAT_VAL ][ME_FLOAT_BND ]
+      ) |
+      (
+        (ME_FLOAT_BND  << 16) |  // [ME_FLOAT_BND ][ME_FLOAT_NONE]
+        (ME_FLOAT_VAL  << 18) |  // [ME_FLOAT_BND ][ME_FLOAT_VAL ]
+        (ME_FLOAT_BND  << 20)    // [ME_FLOAT_BND ][ME_FLOAT_BND ]
+      )
+    );
+    return ((me_c >> (me2 << 3)) >> (me1 << 1)) & 3;
+  }
+  forceinline bool
+  FloatVarImpConf::med_update(Gecode::ModEventDelta& med, Gecode::ModEvent me) {
+    switch (me) {
+    case ME_FLOAT_NONE:
+      return false;
+    case ME_FLOAT_VAL:
+      {
+        Gecode::ModEventDelta med_float = med & med_mask;
+        if (med_float == (ME_FLOAT_VAL << med_fst))
+          return false;
+        med ^= med_float;
+        med ^= ME_FLOAT_VAL << med_fst;
+        break;
+      }
+    case ME_FLOAT_BND:
+      {
+        Gecode::ModEventDelta med_float = med & med_mask;
+        if (med_float != 0)
+          return false;
+        med |= ME_FLOAT_BND << med_fst;
+        break;
+      }
+    default: GECODE_NEVER;
+    }
+    return true;
+  }
+
+}}
+#endif
 namespace Gecode {
   forceinline ModEventDelta
   AllVarConf::med_combine(ModEventDelta med1, ModEventDelta med2) {
@@ -759,6 +895,9 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_SET_VARS
     (void) Gecode::Set::SetVarImpConf::med_update(med1,(med2 & Gecode::Set::SetVarImpConf::med_mask) >> Gecode::Set::SetVarImpConf::med_fst);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    (void) Gecode::Float::FloatVarImpConf::med_update(med1,(med2 & Gecode::Float::FloatVarImpConf::med_mask) >> Gecode::Float::FloatVarImpConf::med_fst);
 #endif
     return med1;
   }

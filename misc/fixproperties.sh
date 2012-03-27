@@ -41,12 +41,12 @@ set -e
 KEYWORDEXTS="cpp hpp hh sh perl ac in vsl vis mzn m4"
 
 for ext in ${KEYWORDEXTS}; do
-    find . -name "*.$ext" ! -path './contribs/*' -prune \
+    find . -name "*.$ext" ! \( -path './contribs/*' -o -path './gecode/third-party/*' \) -prune \
     -exec svn propset svn:keywords 'Author Date Id Revision' "{}" ";"
 done
 
 # List of normal directories to set ignore properties on
-GECODEDIRS="int iter kernel minimodel search set support gist driver graph scheduling flatzinc"
+GECODEDIRS="int iter kernel minimodel search set support gist driver graph scheduling flatzinc float"
 TOOLSDIRS="flatzinc"
 
 for dir in ${GECODEDIRS}; do

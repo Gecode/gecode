@@ -1056,12 +1056,11 @@ AC_DEFUN([AC_GECODE_BOOST],
   [dnl build with support for the boost library
   AC_ARG_WITH([boost-include],
     AC_HELP_STRING([--with-boost-include],
-    [path to the boost header files]))
+    [path to the boost header files (default: gecode/third-party)]))
   if test "${with_boost_include:-no}" != "no"; then
       AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost_include}])
-      AC_SUBST(BOOST_LINK,["-L${with_boost_include}/../../lib -lboost_serialization"])
-      AC_DEFINE([GECODE_HAS_BOOST],[],
-                [Whether to compile boost dependent parts])
+  else
+      AC_SUBST(BOOST_CPPFLAGS,[-Igecode/third-party])
   fi
 ])
 

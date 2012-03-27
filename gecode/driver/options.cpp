@@ -289,7 +289,17 @@ namespace Gecode {
     std::cerr << "BoolVar IntVar ";
 #endif
 #ifdef GECODE_HAS_SET_VARS
-    std::cerr << "SetVar";
+    std::cerr << "SetVar ";
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    std::cerr << "FloatVar ";
+#endif
+    std::cerr << std::endl
+              << " - Trigonometric and transcedental float constraints: ";
+#ifdef GECODE_HAS_MPFR
+    std::cerr << "enabled";
+#else
+    std::cerr << "disabled";
 #endif
     std::cerr << std::endl
               << " - Thread support: ";
