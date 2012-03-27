@@ -137,8 +137,7 @@ namespace Gecode { namespace Float { namespace Linear {
   }
 
   void
-  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c,
-       FloatConLevel) {
+  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c) {
 
     Limits::check(c,"Float::linear");
 
@@ -280,8 +279,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
   void
   post(Home home,
-       Term<FloatView>* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b,
-       FloatConLevel) {
+       Term<FloatView>* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b) {
     Limits::check(c,"Float::linear");
 
     FloatVal d = c;

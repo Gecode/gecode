@@ -301,16 +301,16 @@ namespace Gecode {
       case BoolExpr::NT_RLIN:
         u.a.x->rl.post(home, b, !u.a.neg, icl);
         break;
-  #ifdef GECODE_HAS_FLOAT_VARS
+#ifdef GECODE_HAS_FLOAT_VARS
       case BoolExpr::NT_RLINFLOAT:
-        u.a.x->rfl.post(home, b, !u.a.neg, FCL_DEF);
+        u.a.x->rfl.post(home, b, !u.a.neg);
         break;
-  #endif
-  #ifdef GECODE_HAS_SET_VARS
+#endif
+#ifdef GECODE_HAS_SET_VARS
       case BoolExpr::NT_RSET:
         u.a.x->rs.post(home, b, !u.a.neg);
         break;
-  #endif
+#endif
       case BoolExpr::NT_MISC:
         u.a.x->m->post(home, b, !u.a.neg, icl);
         break;
@@ -377,16 +377,16 @@ namespace Gecode {
             bp[ip++]=b;
           }
           break;
-  #ifdef GECODE_HAS_FLOAT_VARS
+#ifdef GECODE_HAS_FLOAT_VARS
         case BoolExpr::NT_RLINFLOAT:
           {
             BoolVar b(home,0,1);
-            u.a.x->rfl.post(home, b, !u.a.neg, FCL_DEF);
+            u.a.x->rfl.post(home, b, !u.a.neg);
             bp[ip++]=b;
           }
           break;
-  #endif
-  #ifdef GECODE_HAS_SET_VARS
+#endif
+#ifdef GECODE_HAS_SET_VARS
         case BoolExpr::NT_RSET:
           {
             BoolVar b(home,0,1);
@@ -394,7 +394,7 @@ namespace Gecode {
             bp[ip++]=b;
           }
           break;
-  #endif
+#endif
         case BoolExpr::NT_MISC:
           {
             BoolVar b(home,0,1);
@@ -421,16 +421,16 @@ namespace Gecode {
       case BoolExpr::NT_RLIN:
         u.a.x->rl.post(home, !u.a.neg, icl);
         break;
-  #ifdef GECODE_HAS_FLOAT_VARS
+#ifdef GECODE_HAS_FLOAT_VARS
       case BoolExpr::NT_RLINFLOAT:
-        u.a.x->rfl.post(home, !u.a.neg, FCL_DEF);
+        u.a.x->rfl.post(home, !u.a.neg);
         break;
-  #endif
-  #ifdef GECODE_HAS_SET_VARS
+#endif
+#ifdef GECODE_HAS_SET_VARS
       case BoolExpr::NT_RSET:
         u.a.x->rs.post(home, !u.a.neg);
         break;
-  #endif
+#endif
       case BoolExpr::NT_MISC:
         {
           BoolVar b(home,!u.a.neg,!u.a.neg);
@@ -464,23 +464,23 @@ namespace Gecode {
         } else if (u.b.r->t==BoolExpr::NT_RLIN) {
           u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,icl),
                                 !u.b.r->u.a.neg,icl);
-  #ifdef GECODE_HAS_FLOAT_VARS
+#ifdef GECODE_HAS_FLOAT_VARS
         } else if (u.b.l->t==BoolExpr::NT_VAR && 
                    u.b.r->t==BoolExpr::NT_RLINFLOAT) {
           u.b.r->u.a.x->rfl.post(home, u.b.l->u.a.x->x,
-                                 u.b.l->u.a.neg==u.b.r->u.a.neg, FCL_DEF);
+                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_VAR && 
                    u.b.l->t==BoolExpr::NT_RLINFLOAT) {
           u.b.l->u.a.x->rfl.post(home, u.b.r->u.a.x->x,
-                                 u.b.l->u.a.neg==u.b.r->u.a.neg, FCL_DEF);
+                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RLINFLOAT) {
           u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,icl),
-                                 !u.b.l->u.a.neg, FCL_DEF);
+                                 !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RLINFLOAT) {
           u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,icl),
-                                 !u.b.r->u.a.neg, FCL_DEF);
-  #endif
-  #ifdef GECODE_HAS_SET_VARS
+                                 !u.b.r->u.a.neg);
+#endif
+#ifdef GECODE_HAS_SET_VARS
         } else if (u.b.l->t==BoolExpr::NT_VAR && 
                    u.b.r->t==BoolExpr::NT_RSET) {
           u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
@@ -495,7 +495,7 @@ namespace Gecode {
         } else if (u.b.r->t==BoolExpr::NT_RSET) {
           u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,icl),
                                 !u.b.r->u.a.neg);
-  #endif
+#endif
         } else {
           Gecode::rel(home, expr(home, icl), IRT_EQ, 1);
         }

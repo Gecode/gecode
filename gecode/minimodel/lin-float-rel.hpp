@@ -57,19 +57,19 @@ namespace Gecode {
     : e(l-r), frt(frt0) {}
 
   forceinline void
-  LinFloatRel::post(Home home, bool t, FloatConLevel fcl) const {
+  LinFloatRel::post(Home home, bool t) const {
     if (t)
-      e.post(home,frt,fcl);
+      e.post(home,frt);
     else
     {
       BoolVar b(home,t,t);
-      e.post(home,frt,b,true,fcl);
+      e.post(home,frt,b,true);
     }
   }
 
   forceinline void
-  LinFloatRel::post(Home home, const BoolVar& b, bool t, FloatConLevel fcl) const {
-    e.post(home,frt,b,t,fcl);
+  LinFloatRel::post(Home home, const BoolVar& b, bool t) const {
+    e.post(home,frt,b,t);
   }
 
 }

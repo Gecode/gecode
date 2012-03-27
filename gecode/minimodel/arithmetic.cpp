@@ -287,69 +287,69 @@ namespace Gecode {
       /// Destructor
       ~ArithNonLinFloatExpr(void) { heap.free<LinFloatExpr>(a,n); }
       /// Post expression
-      virtual FloatVar post(Home home, FloatVar* ret, FloatConLevel fcl) const {
+      virtual FloatVar post(Home home, FloatVar* ret) const {
         FloatVar y;
         switch (t) {
         case ANLFE_ABS:
           {
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             if (x.min() >= 0)
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              abs(home, x, y, fcl);
+              abs(home, x, y);
             }
           }
           break;
         case ANLFE_MIN:
           if (n==1) {
-            y = result(home,ret, a[0].post(home, fcl));
+            y = result(home,ret, a[0].post(home));
           } else if (n==2) {
-            FloatVar x0 = a[0].post(home, fcl);
-            FloatVar x1 = a[1].post(home, fcl);
+            FloatVar x0 = a[0].post(home);
+            FloatVar x1 = a[1].post(home);
             if (x0.max() <= x1.min())
               y = result(home,ret,x0);
             else if (x1.max() <= x0.min())
               y = result(home,ret,x1);
             else {
               y = result(home,ret);
-              min(home, x0, x1, y, fcl);
+              min(home, x0, x1, y);
             }
           } else {
             FloatVarArgs x(n);
             for (int i=n; i--;)
-              x[i] = a[i].post(home, fcl);
+              x[i] = a[i].post(home);
             y = result(home,ret);
-            min(home, x, y, fcl);
+            min(home, x, y);
           }
           break;
         case ANLFE_MAX:
           if (n==1) {
-            y = result(home,ret,a[0].post(home, fcl));
+            y = result(home,ret,a[0].post(home));
           } else if (n==2) {
-            FloatVar x0 = a[0].post(home, fcl);
-            FloatVar x1 = a[1].post(home, fcl);
+            FloatVar x0 = a[0].post(home);
+            FloatVar x1 = a[1].post(home);
             if (x0.max() <= x1.min())
               y = result(home,ret,x1);
             else if (x1.max() <= x0.min())
               y = result(home,ret,x0);
             else {
               y = result(home,ret);
-              max(home, x0, x1, y, fcl);
+              max(home, x0, x1, y);
             }
           } else {
             FloatVarArgs x(n);
             for (int i=n; i--;)
-              x[i] = a[i].post(home, fcl);
+              x[i] = a[i].post(home);
             y = result(home,ret);
-            max(home, x, y, fcl);
+            max(home, x, y);
           }
           break;
         case ANLFE_MULT:
           {
             assert(n == 2);
-            FloatVar x0 = a[0].post(home, fcl);
-            FloatVar x1 = a[1].post(home, fcl);
+            FloatVar x0 = a[0].post(home);
+            FloatVar x1 = a[1].post(home);
             if (x0.assigned() && (x0.val() == 0.0))
               y = result(home,ret,x0);
             else if (x0.assigned() && (x0.val() == 1.0))
@@ -360,70 +360,70 @@ namespace Gecode {
               y = result(home,ret,x0);
             else {
               y = result(home,ret);
-              mult(home, x0, x1, y, fcl);
+              mult(home, x0, x1, y);
             }
           }
           break;
         case ANLFE_DIV:
           {
             assert(n == 2);
-            FloatVar x0 = a[0].post(home, fcl);
-            FloatVar x1 = a[1].post(home, fcl);
+            FloatVar x0 = a[0].post(home);
+            FloatVar x1 = a[1].post(home);
             if (x1.assigned() && (x1.val() == 1.0))
               y = result(home,ret,x0);
             else if (x0.assigned() && (x0.val() == 0.0))
               y = result(home,ret,x0);
             else {
               y = result(home,ret);
-              div(home, x0, x1, y, fcl);
+              div(home, x0, x1, y);
             }
           }
           break;
         case ANLFE_SQR:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
               y = x;
             else {
               y = result(home,ret);
-              sqr(home, x, y, fcl);
+              sqr(home, x, y);
             }
           }
           break;
         case ANLFE_SQRT:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              sqrt(home, x, y, fcl);
+              sqrt(home, x, y);
             }
           }
           break;
         case ANLFE_POW:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              pow(home, x, y, aInt, fcl);
+              pow(home, x, y, aInt);
             }
           }
           break;
         case ANLFE_NROOT:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             if (x.assigned() && ((x.val() == 0.0) || (x.val() == 1.0)))
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              nroot(home, x, y, aInt, fcl);
+              nroot(home, x, y, aInt);
             }
           }
           break;
@@ -431,69 +431,69 @@ namespace Gecode {
         case ANLFE_EXP:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             if (x.assigned() && (x.val() == 0.0))
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              exp(home, x, y, fcl);
+              exp(home, x, y);
             }
           }
           break;
         case ANLFE_LOG:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            log(home, x, y, fcl);
+            log(home, x, y);
           }
           break;
         case ANLFE_ASIN:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            asin(home, x, y, fcl);
+            asin(home, x, y);
           }
           break;
         case ANLFE_SIN:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            sin(home, x, y, fcl);
+            sin(home, x, y);
           }
           break;
         case ANLFE_ACOS:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            acos(home, x, y, fcl);
+            acos(home, x, y);
           }
           break;
         case ANLFE_COS:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            cos(home, x, y, fcl);
+            cos(home, x, y);
           }
           break;
         case ANLFE_ATAN:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            atan(home, x, y, fcl);
+            atan(home, x, y);
           }
           break;
         case ANLFE_TAN:
           {
             assert(n == 1);
-            FloatVar x = a[0].post(home, fcl);
+            FloatVar x = a[0].post(home);
             y = result(home,ret);
-            tan(home, x, y, fcl);
+            tan(home, x, y);
           }
           break;
 #endif
@@ -502,21 +502,20 @@ namespace Gecode {
         }
         return y;
       }
-      virtual void post(Home home, FloatRelType frt, FloatVal c,
-                        FloatConLevel fcl) const {
+      virtual void post(Home home, FloatRelType frt, FloatVal c) const {
         if ( (t == ANLFE_MIN && frt == FRT_GQ) ||
              (t == ANLFE_MAX && frt == FRT_LQ) ) {
           FloatVarArgs x(n);
           for (int i=n; i--;)
-            x[i] = a[i].post(home, fcl);
+            x[i] = a[i].post(home);
           rel(home, x, frt, c);
         } else {
-          rel(home, post(home,NULL,fcl), frt, c);
+          rel(home, post(home,NULL), frt, c);
         }
       }
       virtual void post(Home home, FloatRelType frt, FloatVal c,
-                        BoolVar b, bool t, FloatConLevel fcl) const {
-        rel(home, post(home,NULL,fcl), frt, c, b, t);
+                        BoolVar b, bool t) const {
+        rel(home, post(home,NULL), frt, c, b, t);
       }
     };
     /// Check if \a e is of type \a t

@@ -64,12 +64,10 @@ namespace Gecode {
     Node(void);
     /// Generate linear terms from expression
     GECODE_MINIMODEL_EXPORT
-    void fill(Home home, FloatConLevel fcl,
-              Float::Linear::Term<Float::FloatView>*& tf,
+    void fill(Home home, Float::Linear::Term<Float::FloatView>*& tf,
               FloatVal m, FloatVal& d) const;
     /// Generate linear terms for expressions
-    FloatVal fill(Home home, FloatConLevel fcl,
-                  Float::Linear::Term<Float::FloatView>* tf) const;
+    FloatVal fill(Home home, Float::Linear::Term<Float::FloatView>* tf) const;
     /// Decrement reference count and possibly free memory
     bool decrement(void);
     /// Destructor
@@ -141,82 +139,81 @@ namespace Gecode {
   }
 
   FloatVal
-  LinFloatExpr::Node::fill(Home home, FloatConLevel fcl,
-                      Float::Linear::Term<Float::FloatView>* tf) const {
+  LinFloatExpr::Node::fill(Home home, 
+                           Float::Linear::Term<Float::FloatView>* tf) const {
     FloatVal d=0;
-    fill(home,fcl,tf,1.0,d);
+    fill(home,tf,1.0,d);
     Float::Limits::check(d,"MiniModel::LinFloatExpr");
     return d;
   }
 
   void
-  LinFloatExpr::post(Home home, FloatRelType frt, FloatConLevel fcl) const {
+  LinFloatExpr::post(Home home, FloatRelType frt) const {
     if (home.failed()) return;
     Region r(home);
     if (n->t==NT_ADD && n->l == NULL && n->r->t==NT_NONLIN) {
-      n->r->sum.ne->post(home,frt,-n->c,fcl);
+      n->r->sum.ne->post(home,frt,-n->c);
     } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==NULL) {
       switch (frt) {
       case FRT_LQ: frt=FRT_GQ; break;
       case FRT_GQ: frt=FRT_LQ; break;
       default: break;
       }
-      n->r->sum.ne->post(home,frt,n->c,fcl);
+      n->r->sum.ne->post(home,frt,n->c);
     } else if (frt==FRT_EQ &&
                n->t==NT_SUB && n->r->t==NT_NONLIN &&
                n->l != NULL && n->l->t==NT_VAR
                && n->l->a==1) {
-      (void) n->r->sum.ne->post(home,&n->l->x_float,fcl);
+      (void) n->r->sum.ne->post(home,&n->l->x_float);
     } else if (frt==FRT_EQ &&
                n->t==NT_SUB && n->r->t==NT_VAR &&
                n->l != NULL && n->l->t==NT_NONLIN
                && n->r->a==1) {
-      (void) n->l->sum.ne->post(home,&n->r->x_float,fcl);
+      (void) n->l->sum.ne->post(home,&n->r->x_float);
     } else {
       Float::Linear::Term<Float::FloatView>* fts =
         r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float);
-      FloatVal c = n->fill(home,fcl,fts);
-      Float::Linear::post(home, fts, n->n_float, frt, -c, fcl);
+      FloatVal c = n->fill(home,fts);
+      Float::Linear::post(home, fts, n->n_float, frt, -c);
     }
   }
 
   void
-  LinFloatExpr::post(Home home, FloatRelType frt, const BoolVar& b, bool t,
-                FloatConLevel fcl) const {
+  LinFloatExpr::post(Home home, FloatRelType frt, const BoolVar& b, bool t) const {
     if (home.failed()) return;
     Region r(home);
     if (n->t==NT_ADD && n->l==NULL && n->r->t==NT_NONLIN) {
-      n->r->sum.ne->post(home,frt,-n->c,b,t,fcl);
+      n->r->sum.ne->post(home,frt,-n->c,b,t);
     } else if (n->t==NT_SUB && n->l==NULL && n->r->t==NT_NONLIN) {
       switch (frt) {
       case FRT_LQ: frt=FRT_GQ; break;
       case FRT_GQ: frt=FRT_LQ; break;
       default: break;
       }
-      n->r->sum.ne->post(home,frt,n->c,b,t,fcl);
+      n->r->sum.ne->post(home,frt,n->c,b,t);
     } else {
       Float::Linear::Term<Float::FloatView>* fts =
         r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float);
-      FloatVal c = n->fill(home,fcl,fts);
-      Float::Linear::post(home, fts, n->n_float, frt, -c, b, t, fcl);
+      FloatVal c = n->fill(home,fts);
+      Float::Linear::post(home, fts, n->n_float, frt, -c, b, t);
     }
     
   }
 
   FloatVar
-  LinFloatExpr::post(Home home, FloatConLevel fcl) const {
+  LinFloatExpr::post(Home home) const {
     if (home.failed()) return FloatVar(home,0,0);
     Region r(home);
     Float::Linear::Term<Float::FloatView>* fts =
       r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float+1);
-    FloatVal c = n->fill(home,fcl,fts);
+    FloatVal c = n->fill(home,fts);
     if ((n->n_float == 1) && (c == 0) && (fts[0].a == 1))
       return fts[0].x;
     FloatNum min, max;
     Float::Linear::estimate(&fts[0],n->n_float,c,min,max);
     FloatVar x(home, min, max);
     fts[n->n_float].x = x; fts[n->n_float].a = -1;
-    Float::Linear::post(home, fts, n->n_float+1, FRT_EQ, -c, fcl);
+    Float::Linear::post(home, fts, n->n_float+1, FRT_EQ, -c);
     return x;
     
   }
@@ -339,9 +336,9 @@ namespace Gecode {
 
 
   void
-  LinFloatExpr::Node::fill(Home home, FloatConLevel fcl,
-                      Float::Linear::Term<Float::FloatView>*& tf, 
-                      FloatVal m, FloatVal& d) const {
+  LinFloatExpr::Node::fill(Home home, 
+                           Float::Linear::Term<Float::FloatView>*& tf, 
+                           FloatVal m, FloatVal& d) const {
     switch (this->t) {
     case NT_CONST:
       Float::Limits::check(m*c,"MiniModel::LinFloatExpr");
@@ -352,7 +349,7 @@ namespace Gecode {
       tf->a=m*a; tf->x=x_float; tf++;
       break;
     case NT_NONLIN:
-      tf->a=m; tf->x=sum.ne->post(home, NULL, fcl); tf++;
+      tf->a=m; tf->x=sum.ne->post(home, NULL); tf++;
       break;
     case NT_SUM:
       for (int i=n_float; i--; ) {
@@ -366,22 +363,22 @@ namespace Gecode {
         Float::Limits::check(m*c,"MiniModel::LinFloatExpr");
         d += m*c;
       } else {
-        l->fill(home,fcl,tf,m,d);
+        l->fill(home,tf,m,d);
       }
-      r->fill(home,fcl,tf,m,d);
+      r->fill(home,tf,m,d);
       break;
     case NT_SUB:
       if (l == NULL) {
         Float::Limits::check(m*c,"MiniModel::LinFloatExpr");
         d += m*c;
       } else {
-        l->fill(home,fcl,tf,m,d);
+        l->fill(home,tf,m,d);
       }
-      r->fill(home,fcl,tf,-m,d);
+      r->fill(home,tf,-m,d);
       break;
     case NT_MUL:
       Float::Limits::check(m*a,"MiniModel::LinFloatExpr");
-      l->fill(home,fcl,tf,m*a,d);
+      l->fill(home,tf,m*a,d);
       break;
     default:
       GECODE_NEVER;
@@ -550,9 +547,9 @@ namespace Gecode {
   }
 
   FloatVar
-  expr(Home home, const LinFloatExpr& e, FloatConLevel fcl) {
+  expr(Home home, const LinFloatExpr& e) {
     if (!home.failed())
-      return e.post(home,fcl);
+      return e.post(home);
     FloatVar x(home,Float::Limits::min,Float::Limits::max);
     return x;
   }

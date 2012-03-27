@@ -734,8 +734,7 @@ namespace Gecode { namespace Float { namespace Linear {
    * \ingroup FuncFloatProp
    */
   GECODE_FLOAT_EXPORT void
-  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c,
-       FloatConLevel=FCL_DEF);
+  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c);
 
   /**
    * \brief Post propagator for reified linear constraint over floats
@@ -756,8 +755,8 @@ namespace Gecode { namespace Float { namespace Linear {
    * \ingroup FuncFloatProp
    */
   GECODE_FLOAT_EXPORT void
-  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b,
-       FloatConLevel=FCL_DEF);
+  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b);
+
 }}}
 
 #include <gecode/float/linear/post.hpp>

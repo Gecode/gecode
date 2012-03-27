@@ -688,14 +688,13 @@ namespace Gecode {
   class NonLinFloatExpr {
   public:
     /// Return variable constrained to be equal to the expression
-    virtual FloatVar post(Home home, FloatVar* ret, FloatConLevel fcl) const = 0;
+    virtual FloatVar post(Home home, FloatVar* ret) const = 0;
     /// Post expression to be in relation \a frt with \a c
-    virtual void post(Home home, FloatRelType frt, FloatVal c,
-                      FloatConLevel fcl) const = 0;
+    virtual void post(Home home, FloatRelType frt, FloatVal c) const = 0;
     /// Post reified expression to be in relation \a frt with \a c
     /// (if \a t is false for negated relation)
     virtual void post(Home home, FloatRelType frt, FloatVal c,
-                      BoolVar b, bool t, FloatConLevel fcl) const = 0;
+                      BoolVar b, bool t) const = 0;
     /// Destructor
     virtual ~NonLinFloatExpr(void) {}
     /// Return fresh variable if \a x is NULL, \a x otherwise
@@ -771,12 +770,11 @@ namespace Gecode {
     GECODE_MINIMODEL_EXPORT
     const LinFloatExpr& operator =(const LinFloatExpr& e);
     /// Post propagator
-    void post(Home home, FloatRelType frt, FloatConLevel fcl) const;
+    void post(Home home, FloatRelType frt) const;
     /// Post reified propagator (if \a t is false for negated relation)
-    void post(Home home, FloatRelType frt, const BoolVar& b, bool t,
-              FloatConLevel fcl) const;
+    void post(Home home, FloatRelType frt, const BoolVar& b, bool t) const;
     /// Post propagator and return variable for value
-    FloatVar post(Home home, FloatConLevel fcl) const;
+    FloatVar post(Home home) const;
     /// Return non-linear expression inside, or NULL if not non-linear
     NonLinFloatExpr* nlfe(void) const;
     /// Destructor
@@ -804,9 +802,9 @@ namespace Gecode {
     /// Create linear float relation for FloatVal \a l and expression \a r
     LinFloatRel(FloatVal l, FloatRelType frt, const LinFloatExpr& r);
     /// Post propagator for relation (if \a t is false for negated relation)
-    void post(Home home, bool t, FloatConLevel fcl) const;
+    void post(Home home, bool t) const;
     /// Post reified propagator for relation (if \a t is false for negated relation)
-    void post(Home home, const BoolVar& b, bool t, FloatConLevel fcl) const;
+    void post(Home home, const BoolVar& b, bool t) const;
   };
 
   /**
@@ -1541,10 +1539,9 @@ namespace Gecode {
 #ifdef GECODE_HAS_FLOAT_VARS 
   /// Return integer variable equal to \f$f\f$
   inline IntVar
-  channel(Home home, FloatVar f,
-          FloatConLevel fcl=FCL_DEF) {
-    (void) fcl;
-    IntVar x(home,std::ceil(f.min()),std::floor(f.max())); channel(home,f,x);
+  channel(Home home, FloatVar f) {
+    IntVar x(home,std::ceil(f.min()),std::floor(f.max())); 
+    channel(home,f,x);
     return x;
   }
 #endif
