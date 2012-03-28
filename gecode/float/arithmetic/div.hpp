@@ -1,9 +1,11 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Guido Tack <tack@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
+ *     Guido Tack, 2008
  *     Vincent Barichard, 2012
  *
  *  Last modified:

@@ -1,9 +1,17 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
  *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
+ *     Gabor Szokoli, 2003
  *     Vincent Barichard, 2012
  *
  *  Last modified:

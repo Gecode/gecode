@@ -1,9 +1,19 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     David Rijsman <David.Rijsman@quintiq.com>
+ *
  *  Copyright:
+ *     David Rijsman, 2009
+ *     Mikael Lagerkvist, 2006
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
  *     Vincent Barichard, 2012
  *
  *  Last modified:

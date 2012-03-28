@@ -1,9 +1,15 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *     Tias Guns <tias.guns@cs.kuleuven.be>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
+ *     Tias Guns, 2009
  *     Vincent Barichard, 2012
  *
  *  Last modified:

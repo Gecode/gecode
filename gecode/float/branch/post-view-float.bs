@@ -1,8 +1,10 @@
 #
 #  Main authors:
+#     Christian Schulte <schulte@gecode.org>
 #     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
 #
 #  Copyright:
+#     Christian Schulte, 2008
 #     Vincent Barichard, 2012
 #
 #  Last modified:

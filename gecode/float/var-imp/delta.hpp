@@ -7,11 +7,11 @@
  *
  *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Vincent Barichard, 2012
  *
  *  Copyright:
  *     LOGIS, s.r.o., 2008
  *     Christian Schulte, 2010
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
