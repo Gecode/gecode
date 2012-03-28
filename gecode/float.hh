@@ -118,11 +118,7 @@ namespace Gecode { namespace Float {
  * \ingroup TaskModelFloatVars
  */
 
-  using namespace boost;
-  using namespace numeric;
-  using namespace interval_lib;
-
-  struct fullRounding : rounded_arith_opp<FloatNum> {
+  struct fullRounding : boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
 #ifdef GECODE_HAS_MPFR
     private:
       typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
@@ -155,10 +151,10 @@ namespace Gecode { namespace Float {
 #endif
   };
 
-  typedef save_state< fullRounding > R;
-  //  typedef save_state< rounded_transc_opp<FloatNum> > R;
-  typedef checking_strict<FloatNum> P;
-  typedef interval<FloatNum, policies<R, P> > GECODE_FLOAT_FLOATINTERVAL_TYPE;
+  typedef boost::numeric::interval_lib::save_state< fullRounding > R;
+  //  typedef boost::numeric::interval_lib::save_state< boost::numeric::interval_lib::rounded_transc_opp<FloatNum> > R;
+  typedef boost::numeric::interval_lib::checking_strict<FloatNum> P;
+  typedef boost::numeric::interval<FloatNum, boost::numeric::interval_lib::policies<R, P> > GECODE_FLOAT_FLOATINTERVAL_TYPE;
 }};
 
 namespace Gecode {

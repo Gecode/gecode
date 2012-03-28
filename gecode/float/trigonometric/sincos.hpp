@@ -229,7 +229,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Sin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,sin(x0.domain())));
-    FloatInterval iv = fmod(x0.domain(),pi_twice<FloatInterval>());
+    FloatInterval iv = fmod(x0.domain(),boost::numeric::interval_lib::pi_twice<FloatInterval>());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
@@ -270,7 +270,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Cos<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,cos(x0.domain())));
-    FloatInterval iv = fmod(pi_half<FloatInterval>() + x0.domain(),pi_twice<FloatInterval>());
+    FloatInterval iv = fmod(boost::numeric::interval_lib::pi_half<FloatInterval>() + x0.domain(),boost::numeric::interval_lib::pi_twice<FloatInterval>());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
