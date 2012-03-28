@@ -10,7 +10,7 @@
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
 #define BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
 
-#include <boost/numeric/interval/detail/interval_prototype.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
 
 namespace boost {
 namespace numeric {

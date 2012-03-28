@@ -11,7 +11,7 @@
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_BUGS
 #define BOOST_NUMERIC_INTERVAL_DETAIL_BUGS
 
-#include <boost/config.hpp>
+#include <gecode/third-party/boost/config.hpp>
 
 #if defined(__GLIBC__) && (defined(__USE_MISC) || defined(__USE_XOPEN_EXTENDED) || defined(__USE_ISOC99)) && !defined(__ICC)
 #  define BOOST_HAS_INV_HYPERBOLIC
@@ -48,7 +48,7 @@
 #if defined(__GNUC__) && (__GNUC__ <= 2)
 // cf PR c++/1981 for a description of the bug
 #include <algorithm>
-#include <boost/config/no_tr1/cmath.hpp>
+#include <gecode/third-party/boost/config/no_tr1/cmath.hpp>
 namespace boost {
 namespace numeric {
   using std::min;

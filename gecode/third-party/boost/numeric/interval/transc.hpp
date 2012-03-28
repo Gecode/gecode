@@ -11,14 +11,14 @@
 #ifndef BOOST_NUMERIC_INTERVAL_TRANSC_HPP
 #define BOOST_NUMERIC_INTERVAL_TRANSC_HPP
 
-#include <boost/config.hpp>
-#include <boost/numeric/interval/detail/interval_prototype.hpp>
-#include <boost/numeric/interval/detail/bugs.hpp>
-#include <boost/numeric/interval/detail/test_input.hpp>
-#include <boost/numeric/interval/rounding.hpp>
-#include <boost/numeric/interval/constants.hpp>
-#include <boost/numeric/interval/arith.hpp>
-#include <boost/numeric/interval/arith2.hpp>
+#include <gecode/third-party/boost/config.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/bugs.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/test_input.hpp>
+#include <gecode/third-party/boost/numeric/interval/rounding.hpp>
+#include <gecode/third-party/boost/numeric/interval/constants.hpp>
+#include <gecode/third-party/boost/numeric/interval/arith.hpp>
+#include <gecode/third-party/boost/numeric/interval/arith2.hpp>
 #include <algorithm>
 
 namespace boost {

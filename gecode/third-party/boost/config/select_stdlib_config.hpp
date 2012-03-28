@@ -34,7 +34,7 @@
 // we get those definitions)
 // (again do not rely on this header being included since users can short-circuit this 
 //  header if they know whose std lib they are using.)
-#include <boost/config/no_tr1/utility.hpp>
+#include <gecode/third-party/boost/config/no_tr1/utility.hpp>
 
 #if defined(__LIBCOMO__)
 // Comeau STL:

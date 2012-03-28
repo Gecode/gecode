@@ -690,7 +690,6 @@ SOSUFFIX
 DLLEXT
 need_soname
 DLLPATH
-BOOST_CPPFLAGS
 DEBUG_BUILD
 BUILDDLL
 BUILDSTATIC
@@ -778,7 +777,6 @@ enable_leak_debug
 enable_audit
 enable_profile
 enable_gcov
-with_boost_include
 enable_gcc_visibility
 enable_doc_dot
 enable_doc_search
@@ -1443,9 +1441,8 @@ Optional Features:
   --enable-doc-chm        build compressed html documentation [default=yes on
                           Windows]
   --enable-doc-docset     build docset documentation for XCode [default=no]
-  --enable-float-vars     build float variable library (requires boost
-                          interval library and implies --enable-int-vars)
-                          [default=no]
+  --enable-float-vars     build float variable library (implies
+                          --enable-int-vars) [default=no]
   --enable-set-vars       build finite set library (implies --enable-int-vars)
                           [default=yes]
   --enable-int-vars       build finite domain library [default=yes]
@@ -1475,8 +1472,6 @@ Optional Packages:
   --with-architectures    architectures to compile for on Mac OS X
   --with-lib-prefix       add user-defined prefix to library names
   --with-lib-suffix       add user-defined suffix to library names
-  --with-boost-include    path to the boost header files (default:
-                          gecode/third-party)
   --with-vis              additional variable implementation specifications
   --with-gmp-include      path to the gmp header files
   --with-mpfr-include     path to the mpfr header file
@@ -2654,8 +2649,6 @@ GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 
 
 # Test for platform specific behaviour of arithmetic
-
-
 
 
 
@@ -6282,21 +6275,6 @@ ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-
-
-# Check whether --with-boost-include was given.
-if test "${with_boost_include+set}" = set; then :
-  withval=$with_boost_include;
-fi
-
-  if test "${with_boost_include:-no}" != "no"; then
-      BOOST_CPPFLAGS=-I${with_boost_include}
-
-  else
-      BOOST_CPPFLAGS=-Igecode/third-party
-
-  fi
 
 
 
@@ -11221,19 +11199,7 @@ $as_echo_n "checking whether to build the float variables library... " >&6; }
 $as_echo "yes" >&6; }
      enable_float_vars="yes";
      enable_int_vars="yes";
-       ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
-  	   CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
-       ac_fn_cxx_check_header_mongrel "$LINENO" "boost/numeric/interval.hpp" "ac_cv_header_boost_numeric_interval_hpp" "$ac_includes_default"
-if test "x$ac_cv_header_boost_numeric_interval_hpp" = xyes; then :
-
-else
-
-       as_fn_error $? "The boost interval library could not be found." "$LINENO" 5
-fi
-
-
-       CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
-  	   LINKFLOAT=${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}
+	 LINKFLOAT=${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}
 
 
 

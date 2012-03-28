@@ -11,22 +11,22 @@
 #ifndef BOOST_NUMERIC_INTERVAL_HPP
 #define BOOST_NUMERIC_INTERVAL_HPP
 
-#include <boost/limits.hpp>
-#include <boost/numeric/interval/interval.hpp>
-#include <boost/numeric/interval/policies.hpp>
+#include <gecode/third-party/boost/limits.hpp>
+#include <gecode/third-party/boost/numeric/interval/interval.hpp>
+#include <gecode/third-party/boost/numeric/interval/policies.hpp>
 
-#include <boost/numeric/interval/hw_rounding.hpp>
-#include <boost/numeric/interval/rounded_arith.hpp>
-#include <boost/numeric/interval/rounded_transc.hpp>
-#include <boost/numeric/interval/constants.hpp>
+#include <gecode/third-party/boost/numeric/interval/hw_rounding.hpp>
+#include <gecode/third-party/boost/numeric/interval/rounded_arith.hpp>
+#include <gecode/third-party/boost/numeric/interval/rounded_transc.hpp>
+#include <gecode/third-party/boost/numeric/interval/constants.hpp>
 
-#include <boost/numeric/interval/checking.hpp>
-#include <boost/numeric/interval/compare.hpp>
-#include <boost/numeric/interval/utility.hpp>
+#include <gecode/third-party/boost/numeric/interval/checking.hpp>
+#include <gecode/third-party/boost/numeric/interval/compare.hpp>
+#include <gecode/third-party/boost/numeric/interval/utility.hpp>
 
-#include <boost/numeric/interval/arith.hpp>
-#include <boost/numeric/interval/arith2.hpp>
-#include <boost/numeric/interval/arith3.hpp>
-#include <boost/numeric/interval/transc.hpp>
+#include <gecode/third-party/boost/numeric/interval/arith.hpp>
+#include <gecode/third-party/boost/numeric/interval/arith2.hpp>
+#include <gecode/third-party/boost/numeric/interval/arith3.hpp>
+#include <gecode/third-party/boost/numeric/interval/transc.hpp>
 
 #endif // BOOST_NUMERIC_INTERVAL_HPP

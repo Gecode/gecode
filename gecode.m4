@@ -1044,27 +1044,6 @@ AC_DEFUN([AC_GECODE_FRAMEWORK],
 ])
 
 dnl Macro:
-dnl   AC_GECODE_BOOST
-dnl
-dnl Description:
-dnl   Produces the configure switch --with-boost-include
-dnl   for supplying the path to the boost library.
-dnl
-dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
-AC_DEFUN([AC_GECODE_BOOST],
-  [dnl build with support for the boost library
-  AC_ARG_WITH([boost-include],
-    AC_HELP_STRING([--with-boost-include],
-    [path to the boost header files (default: gecode/third-party)]))
-  if test "${with_boost_include:-no}" != "no"; then
-      AC_SUBST(BOOST_CPPFLAGS,[-I${with_boost_include}])
-  else
-      AC_SUBST(BOOST_CPPFLAGS,[-Igecode/third-party])
-  fi
-])
-
-dnl Macro:
 dnl   AC_GECODE_MPFR_INCLUDE
 dnl
 dnl Description:

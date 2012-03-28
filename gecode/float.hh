@@ -85,7 +85,7 @@
 #endif
 
 // Include interval implementation
-#include <boost/numeric/interval.hpp>
+#include <gecode/third-party/boost/numeric/interval.hpp>
 
 /**
  * \namespace Gecode::Float

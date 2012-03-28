@@ -11,10 +11,10 @@
 #ifndef BOOST_LIMITS
 #define BOOST_LIMITS
 
-#include <boost/config.hpp>
+#include <gecode/third-party/boost/config.hpp>
 
 #ifdef BOOST_NO_LIMITS
-# include <boost/detail/limits.hpp>
+# include <gecode/third-party/boost/detail/limits.hpp>
 #else
 # include <limits>
 #endif

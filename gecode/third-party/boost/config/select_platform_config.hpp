@@ -85,7 +85,7 @@
 #     define BOOST_HAS_UNISTD_H
 #  endif
 
-#  include <boost/config/posix_features.hpp>
+#  include <gecode/third-party/boost/config/posix_features.hpp>
 
 #  endif
 

@@ -10,7 +10,7 @@
 #ifndef BOOST_NUMERIC_INTERVAL_POLICIES_HPP
 #define BOOST_NUMERIC_INTERVAL_POLICIES_HPP
 
-#include <boost/numeric/interval/interval.hpp>
+#include <gecode/third-party/boost/numeric/interval/interval.hpp>
 
 namespace boost {
 namespace numeric {

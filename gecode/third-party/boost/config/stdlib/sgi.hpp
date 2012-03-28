@@ -10,7 +10,7 @@
 //  generic SGI STL:
 
 #if !defined(__STL_CONFIG_H)
-#  include <boost/config/no_tr1/utility.hpp>
+#  include <gecode/third-party/boost/config/no_tr1/utility.hpp>
 #  if !defined(__STL_CONFIG_H)
 #      error "This is not the SGI STL!"
 #  endif
@@ -95,7 +95,7 @@
 #  include <string>
 #  if defined(__BASTRING__)
 #     define BOOST_NO_LIMITS
-// Note: <boost/limits.hpp> will provide compile-time constants
+// Note: <gecode/third-party/boost/limits.hpp> will provide compile-time constants
 #     undef BOOST_NO_LIMITS_COMPILE_TIME_CONSTANTS
 #     define BOOST_NO_STD_WSTRING
 #  endif

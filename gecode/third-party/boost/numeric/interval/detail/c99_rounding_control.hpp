@@ -11,7 +11,7 @@
 #ifndef BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
 #define BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
 
-#include <boost/numeric/interval/detail/c99sub_rounding_control.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/c99sub_rounding_control.hpp>
 
 namespace boost {
 namespace numeric {

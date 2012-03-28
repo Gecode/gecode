@@ -10,9 +10,9 @@
 #ifndef BOOST_NUMERIC_INTERVAL_ROUNDED_ARITH_HPP
 #define BOOST_NUMERIC_INTERVAL_ROUNDED_ARITH_HPP
 
-#include <boost/numeric/interval/rounding.hpp>
-#include <boost/numeric/interval/detail/bugs.hpp>
-#include <boost/config/no_tr1/cmath.hpp>
+#include <gecode/third-party/boost/numeric/interval/rounding.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/bugs.hpp>
+#include <gecode/third-party/boost/config/no_tr1/cmath.hpp>
 
 namespace boost {
 namespace numeric {

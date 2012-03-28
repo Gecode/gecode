@@ -57,7 +57,7 @@ while ($target = $ARGV[$i++]) {
       if ($l =~ /^\#include <(gecode\/.*)>/ || $l =~ /^\#include "(.*)"/) {
 	$g = $1;
 	$g =~ s|^\./||og;
-	if (!$done{$g}) {
+	if (!($g =~ /^gecode\/third-party/) && !$done{$g}) {
 	  push @todo, $g;
 	  if (-e "$root/$g") {
 	    $done{$g} = "$root/";

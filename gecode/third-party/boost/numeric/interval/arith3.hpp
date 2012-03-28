@@ -15,8 +15,8 @@
 #ifndef BOOST_NUMERIC_INTERVAL_ARITH3_HPP
 #define BOOST_NUMERIC_INTERVAL_ARITH3_HPP
 
-#include <boost/numeric/interval/detail/interval_prototype.hpp>
-#include <boost/numeric/interval/detail/test_input.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
+#include <gecode/third-party/boost/numeric/interval/detail/test_input.hpp>
 
 namespace boost {
 namespace numeric {

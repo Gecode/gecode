@@ -151,9 +151,6 @@ AC_GECODE_GCOV
 dnl check platform specific behaviour of arithmetic
 AC_GECODE_CHECK_ARITH
 
-dnl check whether we compile with boost support
-AC_GECODE_BOOST
-
 dnl checking for thread support
 AC_GECODE_THREADS
 
@@ -238,20 +235,15 @@ dnl @VTIS@
 AC_GECODE_VIS
 
 AC_GECODE_VTI(float,
-       [float variable library (requires boost interval library and implies --enable-int-vars)],
-       no,
-			[\$(top_srcdir)/gecode/float/var-imp/float.vis],
-	    [enable_int_vars="yes";
-       ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
-  	   CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${BOOST_CPPFLAGS}"
-       AC_CHECK_HEADER([boost/numeric/interval.hpp],[],[
-       AC_MSG_ERROR([The boost interval library could not be found.])])
-       CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
-  	   AC_SUBST(LINKFLOAT,[${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}])
-      ],
-      [
-       AC_SUBST(LINKFLOAT,[]) 
-      ]
+	[float variable library (implies --enable-int-vars)],
+	no,
+	[\$(top_srcdir)/gecode/float/var-imp/float.vis],
+	[enable_int_vars="yes";
+	 AC_SUBST(LINKFLOAT,[${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}])
+	],
+	[
+	 AC_SUBST(LINKFLOAT,[]) 
+	]
       )
 
 AC_GECODE_VTI(set,

@@ -9,7 +9,7 @@
 //  Metrowerks standard library:
 
 #ifndef __MSL_CPP__
-#  include <boost/config/no_tr1/utility.hpp>
+#  include <gecode/third-party/boost/config/no_tr1/utility.hpp>
 #  ifndef __MSL_CPP__
 #     error This is not the MSL standard library!
 #  endif
@@ -34,7 +34,7 @@
 #    define BOOST_HAS_UNISTD_H
 #  endif
    // boilerplate code:
-#  include <boost/config/posix_features.hpp>
+#  include <gecode/third-party/boost/config/posix_features.hpp>
 #endif
 
 #if defined(_MWMT) || _MSL_THREADSAFE

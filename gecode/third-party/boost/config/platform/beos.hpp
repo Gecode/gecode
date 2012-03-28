@@ -20,7 +20,7 @@
 #endif
 
 // boilerplate code:
-#include <boost/config/posix_features.hpp>
+#include <gecode/third-party/boost/config/posix_features.hpp>
  
 
 
