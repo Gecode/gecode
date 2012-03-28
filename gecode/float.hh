@@ -494,12 +494,12 @@ namespace Gecode {
   /** \brief Post propagator for \f${x_0}^{exp}=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  pow(Home home, FloatVar x0, FloatVar x1, int exp);
+  pow(Home home, FloatVar x0, int exp, FloatVar x1);
 
   /** \brief Post propagator for \f${x_0}^{1/exp}=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
-  nroot(Home home, FloatVar x0, FloatVar x1, int exp);
+  nroot(Home home, FloatVar x0, int exp, FloatVar x1);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2\f$
    */

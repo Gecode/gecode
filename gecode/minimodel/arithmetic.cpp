@@ -411,7 +411,7 @@ namespace Gecode {
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              pow(home, x, y, aInt);
+              pow(home, x, aInt, y);
             }
           }
           break;
@@ -423,7 +423,7 @@ namespace Gecode {
               y = result(home,ret,x);
             else {
               y = result(home,ret);
-              nroot(home, x, y, aInt);
+              nroot(home, x, aInt, y);
             }
           }
           break;
