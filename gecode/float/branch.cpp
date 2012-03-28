@@ -48,4 +48,4 @@ namespace Gecode {
   
 }
 
-// STATISTICS: int-post
+// STATISTICS: float-post

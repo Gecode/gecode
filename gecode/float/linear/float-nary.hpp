@@ -123,11 +123,6 @@ namespace Gecode { namespace Float { namespace Linear {
    * Computing bounds
    *
    */
-#define GECODE_FLOAT_ADD_DOWN(X,Y) Round.add_down(X,Y)
-#define GECODE_FLOAT_ADD_UP(X,Y) Round.add_up(X,Y)
-#define GECODE_FLOAT_SUB_DOWN(X,Y) Round.sub_down(X,Y)
-#define GECODE_FLOAT_SUB_UP(X,Y) Round.sub_up(X,Y)
-
   template<class View>
   void
   bounds_p(ModEventDelta med, ViewArray<View>& x, FloatInterval& c, FloatNum& sl, FloatNum& su) {
@@ -138,13 +133,13 @@ namespace Gecode { namespace Float { namespace Linear {
         if (x[i].assigned()) {
           c -= m; x[i] = x[--n];
         } else {
-          sl = GECODE_FLOAT_SUB_UP(sl,m); su = GECODE_FLOAT_SUB_DOWN(su,x[i].max());
+          sl = Round.sub_up(sl,m); su = Round.sub_down(su,x[i].max());
         }
       }
       x.size(n);
     } else {
       for (int i = n; i--; ) {
-        sl = GECODE_FLOAT_SUB_UP(sl,x[i].min()); su = GECODE_FLOAT_SUB_DOWN(su,x[i].max());
+        sl = Round.sub_up(sl,x[i].min()); su = Round.sub_down(su,x[i].max());
       }
     }
   }
@@ -159,15 +154,15 @@ namespace Gecode { namespace Float { namespace Linear {
         if (y[i].assigned()) {
           c += m; y[i] = y[--n];
         } else {
-          sl = GECODE_FLOAT_ADD_UP(sl,m); 
-          su = GECODE_FLOAT_ADD_DOWN(su,y[i].min());
+          sl = Round.add_up(sl,m); 
+          su = Round.add_down(su,y[i].min());
         }
       }
       y.size(n);
     } else {
       for (int i = n; i--; ) {
-        sl = GECODE_FLOAT_ADD_UP(sl,y[i].max()); 
-        su = GECODE_FLOAT_ADD_DOWN(su,y[i].min());
+        sl = Round.add_up(sl,y[i].max()); 
+        su = Round.add_down(su,y[i].min());
       }
     }
   }
@@ -200,8 +195,8 @@ namespace Gecode { namespace Float { namespace Linear {
       return (c == 0.0) ? home.ES_SUBSUMED(p) : ES_FAILED;
     }
 
-    sl = GECODE_FLOAT_ADD_UP(sl,boost::numeric::upper(c)); 
-    su = GECODE_FLOAT_ADD_DOWN(su,boost::numeric::lower(c));
+    sl = Round.add_up(sl,boost::numeric::upper(c)); 
+    su = Round.add_down(su,boost::numeric::lower(c));
 
     const int mod_sl = 1;
     const int mod_su = 2;
@@ -214,24 +209,24 @@ namespace Gecode { namespace Float { namespace Linear {
         // Propagate upper bound for positive variables
         for (int i = x.size(); i--; ) {
           const FloatNum xi_max = x[i].max();
-          ModEvent me = x[i].lq(home,GECODE_FLOAT_ADD_UP(sl,x[i].min()));
+          ModEvent me = x[i].lq(home,Round.add_up(sl,x[i].min()));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(su)) 
-              su = GECODE_FLOAT_ADD_DOWN(su,GECODE_FLOAT_SUB_DOWN(xi_max,x[i].max()));
+              su = Round.add_down(su,Round.sub_down(xi_max,x[i].max()));
             mod |= mod_su;
           }
         }
         // Propagate lower bound for negative variables
         for (int i = y.size(); i--; ) {
           const FloatNum yi_min = y[i].min();
-          ModEvent me = y[i].gq(home,GECODE_FLOAT_SUB_DOWN(y[i].max(),sl));
+          ModEvent me = y[i].gq(home,Round.sub_down(y[i].max(),sl));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(su)) 
-              su = GECODE_FLOAT_ADD_DOWN(su,GECODE_FLOAT_SUB_DOWN(y[i].min(),yi_min));
+              su = Round.add_down(su,Round.sub_down(y[i].min(),yi_min));
             mod |= mod_su;
           }
         }
@@ -241,24 +236,24 @@ namespace Gecode { namespace Float { namespace Linear {
         // Propagate lower bound for positive variables
         for (int i = x.size(); i--; ) {
           const FloatNum xi_min = x[i].min();
-          ModEvent me = x[i].gq(home,GECODE_FLOAT_ADD_DOWN(su,x[i].max()));
+          ModEvent me = x[i].gq(home,Round.add_down(su,x[i].max()));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(sl)) 
-              sl = GECODE_FLOAT_ADD_UP(sl,GECODE_FLOAT_SUB_UP(xi_min,x[i].min()));
+              sl = Round.add_up(sl,Round.sub_up(xi_min,x[i].min()));
             mod |= mod_sl;
           }
         }
         // Propagate upper bound for negative variables
         for (int i = y.size(); i--; ) {
           const FloatNum yi_max = y[i].max();
-          ModEvent me = y[i].lq(home,GECODE_FLOAT_SUB_UP(y[i].min(),su));
+          ModEvent me = y[i].lq(home,Round.sub_up(y[i].min(),su));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(sl)) 
-              sl = GECODE_FLOAT_ADD_UP(sl,GECODE_FLOAT_SUB_UP(y[i].max(),yi_max));
+              sl = Round.add_up(sl,Round.sub_up(y[i].max(),yi_max));
             mod |= mod_sl;
           }
         }
@@ -267,11 +262,6 @@ namespace Gecode { namespace Float { namespace Linear {
 
     return (sl == su) ? home.ES_SUBSUMED(p) : ES_FIX;
   }
-
-#undef GECODE_FLOAT_ADD_DOWN
-#undef GECODE_FLOAT_ADD_UP
-#undef GECODE_FLOAT_SUB_DOWN
-#undef GECODE_FLOAT_SUB_UP
 
   /*
    * Bound consistent linear equation
@@ -736,9 +726,6 @@ namespace Gecode { namespace Float { namespace Linear {
     return new (home) Lq<P,N>(home,share,*this);
   }
 
-#define GECODE_FLOAT_ADD_UP(X,Y) Round.add_up(X,Y)
-#define GECODE_FLOAT_SUB_UP(X,Y) Round.sub_up(X,Y)
-
   template<class P, class N>
   ExecStatus
   Lq<P,N>::propagate(Space& home, const ModEventDelta& med) {
@@ -751,7 +738,7 @@ namespace Gecode { namespace Float { namespace Linear {
         if (x[i].assigned()) {
           c  -= m;  x.move_lst(i);
         } else {
-          sl = GECODE_FLOAT_SUB_UP(sl,m);
+          sl = Round.sub_up(sl,m);
         }
       }
       for (int i = y.size(); i--; ) {
@@ -759,7 +746,7 @@ namespace Gecode { namespace Float { namespace Linear {
         if (y[i].assigned()) {
           c  += m;  y.move_lst(i);
         } else {
-          sl = GECODE_FLOAT_ADD_UP(sl,m);
+          sl = Round.add_up(sl,m);
         }
       }
       if ((x.size() + y.size()) <= 1) {
@@ -775,18 +762,18 @@ namespace Gecode { namespace Float { namespace Linear {
       }
     } else {
       for (int i = x.size(); i--; )
-        sl = GECODE_FLOAT_SUB_UP(sl,x[i].min());
+        sl = Round.sub_up(sl,x[i].min());
       for (int i = y.size(); i--; )
-        sl = GECODE_FLOAT_ADD_UP(sl,y[i].max());
+        sl = Round.add_up(sl,y[i].max());
     }
 
-    sl = GECODE_FLOAT_ADD_UP(sl,boost::numeric::upper(c));
+    sl = Round.add_up(sl,boost::numeric::upper(c));
 
     ExecStatus es = ES_FIX;
     bool assigned = true;
     for (int i = x.size(); i--; ) {
       assert(!x[i].assigned());
-      FloatNum slx = GECODE_FLOAT_ADD_UP(sl,x[i].min());
+      FloatNum slx = Round.add_up(sl,x[i].min());
       ModEvent me = x[i].lq(home,slx);
       if (me == ME_FLOAT_FAILED)
         return ES_FAILED;
@@ -798,7 +785,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
     for (int i = y.size(); i--; ) {
       assert(!y[i].assigned());
-      FloatNum sly = GECODE_FLOAT_SUB_UP(y[i].max(),sl);
+      FloatNum sly = Round.sub_up(y[i].max(),sl);
       ModEvent me = y[i].gq(home,sly);
       if (me == ME_FLOAT_FAILED)
         return ES_FAILED;
@@ -809,9 +796,6 @@ namespace Gecode { namespace Float { namespace Linear {
     }
     return assigned ? home.ES_SUBSUMED(*this) : es;
   }
-
-#undef GECODE_FLOAT_ADD_UP
-#undef GECODE_FLOAT_SUB_UP
 
   /*
    * Reified bound consistent linear inequation
