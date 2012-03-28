@@ -123,10 +123,10 @@ namespace Gecode { namespace Float { namespace Linear {
    * Computing bounds
    *
    */
-#define GECODE_FLOAT_ADD_DOWN(X,Y) RND.add_down(X,Y)
-#define GECODE_FLOAT_ADD_UP(X,Y) RND.add_up(X,Y)
-#define GECODE_FLOAT_SUB_DOWN(X,Y) RND.sub_down(X,Y)
-#define GECODE_FLOAT_SUB_UP(X,Y) RND.sub_up(X,Y)
+#define GECODE_FLOAT_ADD_DOWN(X,Y) Round.add_down(X,Y)
+#define GECODE_FLOAT_ADD_UP(X,Y) Round.add_up(X,Y)
+#define GECODE_FLOAT_SUB_DOWN(X,Y) Round.sub_down(X,Y)
+#define GECODE_FLOAT_SUB_UP(X,Y) Round.sub_up(X,Y)
 
   template<class View>
   void
@@ -736,8 +736,8 @@ namespace Gecode { namespace Float { namespace Linear {
     return new (home) Lq<P,N>(home,share,*this);
   }
 
-#define GECODE_FLOAT_ADD_UP(X,Y) RND.add_up(X,Y)
-#define GECODE_FLOAT_SUB_UP(X,Y) RND.sub_up(X,Y)
+#define GECODE_FLOAT_ADD_UP(X,Y) Round.add_up(X,Y)
+#define GECODE_FLOAT_SUB_UP(X,Y) Round.sub_up(X,Y)
 
   template<class P, class N>
   ExecStatus

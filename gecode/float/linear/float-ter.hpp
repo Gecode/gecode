@@ -144,17 +144,17 @@ namespace Gecode { namespace Float { namespace Linear {
   EqTer<A,B,C>::propagate(Space& home, const ModEventDelta&) {
     int bm = TM_ALL;
     do {
-      GECODE_FLOAT_PV(TM_X0_MIN, x0.gq(home,c - RND.add_up(x1.max(),x2.max())),
+      GECODE_FLOAT_PV(TM_X0_MIN, x0.gq(home,c - Round.add_up(x1.max(),x2.max())),
                       TM_X1_MAX | TM_X2_MAX);
-      GECODE_FLOAT_PV(TM_X1_MIN, x1.gq(home,c - RND.add_up(x0.max(),x2.max())),
+      GECODE_FLOAT_PV(TM_X1_MIN, x1.gq(home,c - Round.add_up(x0.max(),x2.max())),
                       TM_X0_MAX | TM_X2_MAX);
-      GECODE_FLOAT_PV(TM_X2_MIN, x2.gq(home,c - RND.add_up(x0.max(),x1.max())),
+      GECODE_FLOAT_PV(TM_X2_MIN, x2.gq(home,c - Round.add_up(x0.max(),x1.max())),
                       TM_X0_MAX | TM_X1_MAX);
-      GECODE_FLOAT_PV(TM_X0_MAX, x0.lq(home,c - RND.add_down(x1.min(),x2.min())),
+      GECODE_FLOAT_PV(TM_X0_MAX, x0.lq(home,c - Round.add_down(x1.min(),x2.min())),
                       TM_X1_MIN | TM_X2_MIN);
-      GECODE_FLOAT_PV(TM_X1_MAX, x1.lq(home,c - RND.add_down(x0.min(),x2.min())),
+      GECODE_FLOAT_PV(TM_X1_MAX, x1.lq(home,c - Round.add_down(x0.min(),x2.min())),
                       TM_X0_MIN | TM_X2_MIN);
-      GECODE_FLOAT_PV(TM_X2_MAX, x2.lq(home,c - RND.add_down(x0.min(),x1.min())),
+      GECODE_FLOAT_PV(TM_X2_MAX, x2.lq(home,c - Round.add_down(x0.min(),x1.min())),
                       TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ?
@@ -257,10 +257,10 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, class C>
   ExecStatus
   LqTer<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x0.lq(home,c + RND.add_up(x1.min(),x2.min())));
-    GECODE_ME_CHECK(x1.lq(home,c + RND.add_up(x0.min(),x2.min())));
-    GECODE_ME_CHECK(x2.lq(home,c + RND.add_up(x0.min(),x1.min())));
-    return (c >= RND.add_down(x0.max(),RND.add_down(x1.max(),x2.max()))) ?
+    GECODE_ME_CHECK(x0.lq(home,c + Round.add_up(x1.min(),x2.min())));
+    GECODE_ME_CHECK(x1.lq(home,c + Round.add_up(x0.min(),x2.min())));
+    GECODE_ME_CHECK(x2.lq(home,c + Round.add_up(x0.min(),x1.min())));
+    return (c >= Round.add_down(x0.max(),Round.add_down(x1.max(),x2.max()))) ?
       home.ES_SUBSUMED(*this) : ES_FIX;
   }
 

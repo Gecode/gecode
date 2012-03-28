@@ -170,7 +170,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatVars
    */
-  static FloatInterval::traits_type::rounding RND;
+  static FloatInterval::traits_type::rounding Round;
   
   /**
    * \brief Floating point value type
