@@ -911,7 +911,6 @@ BOOSTHDR = \
 	limits.hpp non_type.hpp type.hpp
 THIRDHDR = \
 	$(BOOSTHDR:%=gecode/third-party/boost/%)
-THIRDSRC =
 
 #
 # COLLECTING ALL
@@ -921,12 +920,14 @@ ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(FLOATSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) \
-	$(GISTSRC) $(FLATZINCALLSRC) $(THIRDSRC)
-ALLHDR = \
+	$(GISTSRC) $(FLATZINCALLSRC)
+ALLGECODEHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
         $(INTHDR) $(FLOATHDR) $(SETHDR) $(MMHDR) \
 	$(DRIVERHDR) $(ITERHDR) $(GISTHDR) $(FLATZINCHDR) \
-	$(INTEXAMPLEHDR) $(THIRDHDR)
+	$(INTEXAMPLEHDR)
+ALLHDR = \
+	$(ALLGECODEHDR) $(THIRDHDR)
 ALLOBJ0 = $(ALLSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(GISTMOCSRC:%.cpp=%$(OBJSUFFIX)) \
 	$(FLATZINC_GENSRC:%.cpp=%$(OBJSUFFIX))
@@ -1712,11 +1713,11 @@ changelog.hh: $(top_srcdir)/changelog.in
 ChangeLog: $(top_srcdir)/changelog.in
 	perl $(top_srcdir)/misc/gentxtchangelog.perl < $^ > ChangeLog
 
-license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
+license.hh: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 	$(VARIMPHDR)
 	perl $(top_srcdir)/misc/genlicense.perl $^ > license.hh
 
-stat.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
+stat.hh: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%) \
 	$(VARIMPHDR)
 	perl $(top_srcdir)/misc/genstatistics.perl $^ > stat.hh
@@ -1734,7 +1735,7 @@ doxygen.conf.use: doxygen.conf
 	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
 
-doc: $(ALLHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
+doc: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
 	$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	mkdir -p doc/html
 	cp -f $(top_srcdir)/misc/doxygen/back.png \
@@ -1757,8 +1758,8 @@ doxygen.conf.use: doxygen.conf
 	 echo "DOCSET_FEEDNAME = Gecode") | \
 		cat $< - > $@
 
-doc: $(ALLHDR:%=$(top_srcdir)/%) $(VARIMPHDR) $(ALLSRC:%=$(top_srcdir)/%) \
-	$(DOCSRC)
+doc: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
+	$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	mkdir -p doc/html
 	cp -f $(top_srcdir)/misc/doxygen/back.png \
 	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
@@ -1791,8 +1792,8 @@ doxygen.conf.use: doxygen.conf
 
 endif
 
-doc: $(ALLHDR:%=$(top_srcdir)/%) $(VARIMPHDR) $(ALLSRC:%=$(top_srcdir)/%) \
-	$(DOCSRC)
+doc: $(ALLGECODEHDR:%=$(top_srcdir)/%) $(VARIMPHDR) \
+	$(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	mkdir -p doc/html
 	cp -f $(top_srcdir)/misc/doxygen/back.png \
 	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
