@@ -69,12 +69,14 @@ namespace Gecode { namespace FlatZinc {
     AuxVarBrancher(Space& home, bool share, AuxVarBrancher& b)
       : Brancher(home, share, b), done(b.done) {}
 
-    /// %Choice for aux var brancher
+    /// %Choice that only signals failure or success
     class Choice : public Gecode::Choice {
     public:
-      /** Initialize description for brancher \a b
-       */
-      Choice(const Brancher& b) : Gecode::Choice(b,1) {}
+      /// Whether brancher should fail
+      bool fail;
+      /// Initialize choice for brancher \a b
+      Choice(const Brancher& b, bool fail0)
+      : Gecode::Choice(b,1), fail(fail0) {}
       /// Report size occupied
       virtual size_t size(void) const {
         return sizeof(Choice);
@@ -82,6 +84,7 @@ namespace Gecode { namespace FlatZinc {
       /// Archive into \a e
       virtual void archive(Archive& e) const {
         Gecode::Choice::archive(e);
+        e.put(fail);
       }
     };
 
@@ -103,19 +106,7 @@ namespace Gecode { namespace FlatZinc {
       return false;
     }
     /// Return choice
-    virtual Choice* choice(Space&) {
-      return new Choice(*this);
-    }
-    /// Return choice
-    virtual Choice* choice(const Space&, Archive&) {
-      return new Choice(*this);
-    }
-    /// Perform commit for choice \a c and alternative \a a.
-    virtual ExecStatus commit(Space& home, const Gecode::Choice& c,
-                              unsigned int a) {
-      (void) c;
-      (void) a;
-      
+    virtual Choice* choice(Space& home) {
       done = true;
       FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
 
@@ -127,10 +118,19 @@ namespace Gecode { namespace FlatZinc {
       FlatZincSpace* sol = dfs(&fzs);
       if (sol) {
         delete sol;
-        return ES_OK;
+        return new Choice(*this,false);
       } else {
-        return ES_FAILED;
+        return new Choice(*this,true);
       }
+    }
+    /// Return choice
+    virtual Choice* choice(const Space&, Archive& e) {
+      bool fail; e >> fail;
+      return new Choice(*this, fail);
+    }
+    /// Perform commit for choice \a c
+    virtual ExecStatus commit(Space&, const Gecode::Choice& c, unsigned int) {
+      return static_cast<const Choice&>(c).fail ? ES_FAILED : ES_OK;
     }
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {
