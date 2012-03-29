@@ -565,8 +565,8 @@ namespace boost{
 
 #if defined(BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS) && defined(__cplusplus)
 
-#  include "boost/type.hpp"
-#  include "boost/non_type.hpp"
+#  include "gecode/third-party/boost/type.hpp"
+#  include "gecode/third-party/boost/non_type.hpp"
 
 #  define BOOST_EXPLICIT_TEMPLATE_TYPE(t)              boost::type<t>* = 0
 #  define BOOST_EXPLICIT_TEMPLATE_TYPE_SPEC(t)         boost::type<t>*

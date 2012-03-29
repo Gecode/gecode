@@ -14,7 +14,7 @@
 #define BOOST_HAS_NANOSLEEP
 #define BOOST_HAS_CLOCK_GETTIME
 
-// This needs support in "boost/cstdint.hpp" exactly like FreeBSD.
+// This needs support in "gecode/third-party/boost/cstdint.hpp" exactly like FreeBSD.
 // This platform has header named <inttypes.h> which includes all
 // the things needed.
 #define BOOST_HAS_STDINT_H
