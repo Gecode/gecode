@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+All ArgArrays now accept STL vectors and input iterators for construction.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   major

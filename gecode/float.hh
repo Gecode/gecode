@@ -475,6 +475,9 @@ namespace Gecode {
     FloatArgs(const SharedArray<FloatNum>& x);
     /// Allocate array and copy elements from \a x
     FloatArgs(const std::vector<FloatNum>& x);
+    /// Allocate array and copy elements from \a first to \a last
+    template<class InputIterator>
+    FloatArgs(InputIterator first, InputIterator last);
     /// Allocate array with \a n elements and initialize with \a e0, ...
     GECODE_FLOAT_EXPORT
     FloatArgs(int n, int e0, ...);
@@ -501,6 +504,12 @@ namespace Gecode {
     FloatVarArgs(const FloatVarArgs& a) : VarArgArray<FloatVar>(a) {}
     /// Initialize from variable array \a a (copy elements)
     FloatVarArgs(const VarArray<FloatVar>& a) : VarArgArray<FloatVar>(a) {}
+    /// Initialize from vector \a a
+    FloatVarArgs(const std::vector<FloatVar>& a) : VarArgArray<FloatVar>(a) {}
+    /// Initialize from InputIterator \a first and \a last
+    template<class InputIterator>
+    FloatVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<FloatVar>(first,last) {}
     /**
      * \brief Initialize array with \a n new variables
      *

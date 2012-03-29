@@ -601,6 +601,9 @@ namespace Gecode {
     IntArgs(const SharedArray<int>& x);
     /// Allocate array and copy elements from \a x
     IntArgs(const std::vector<int>& x);
+    /// Allocate array and copy elements from \a first to \a last
+    template<class InputIterator>
+    IntArgs(InputIterator first, InputIterator last);
     /// Allocate array with \a n elements and initialize with \a e0, ...
     GECODE_INT_EXPORT
     IntArgs(int n, int e0, ...);
@@ -627,6 +630,12 @@ namespace Gecode {
     IntVarArgs(const IntVarArgs& a) : VarArgArray<IntVar>(a) {}
     /// Initialize from variable array \a a (copy elements)
     IntVarArgs(const VarArray<IntVar>& a) : VarArgArray<IntVar>(a) {}
+    /// Initialize from vector \a a
+    IntVarArgs(const std::vector<IntVar>& a) : VarArgArray<IntVar>(a) {}
+    /// Initialize from InputIterator \a first and \a last
+    template<class InputIterator>
+    IntVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<IntVar>(first,last) {}
     /**
      * \brief Initialize array with \a n new variables
      *
@@ -676,6 +685,12 @@ namespace Gecode {
     /// Initialize from variable array \a a (copy elements)
     BoolVarArgs(const VarArray<BoolVar>& a)
      : VarArgArray<BoolVar>(a) {}
+    /// Initialize from vector \a a
+    BoolVarArgs(const std::vector<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
+    /// Initialize from InputIterator \a first and \a last
+    template<class InputIterator>
+    BoolVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<BoolVar>(first,last) {}
     /**
      * \brief Initialize array with \a n new variables
      *

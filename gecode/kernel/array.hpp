@@ -44,6 +44,7 @@
 #include <cstdarg>
 #include <iostream>
 #include <iterator>
+#include <vector>
 #include <sstream>
 
 namespace Gecode {
@@ -585,6 +586,11 @@ namespace Gecode {
     ArgArrayBase(const ArgArrayBase<T>& a);
     /// Initialize from view array \a a (copy elements)
     const ArgArrayBase<T>& operator =(const ArgArrayBase<T>& a);
+    /// Initialize from vector \a a
+    ArgArrayBase(const std::vector<T>& a);
+    /// Initialize from InputIterator \a begin and \a end
+    template<class InputIterator>
+    ArgArrayBase(InputIterator first, InputIterator last);
     //@}
 
     /// \name Array size
@@ -683,6 +689,11 @@ namespace Gecode {
     PrimArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
     PrimArgArray(const PrimArgArray<T>& a);
+    /// Initialize from vector \a a
+    PrimArgArray(const std::vector<T>& a);
+    /// Initialize from InputIterator \a first and \a last
+    template<class InputIterator>
+    PrimArgArray(InputIterator first, InputIterator last);
     //@}
     /// \name Array elements
     //@{
@@ -763,6 +774,11 @@ namespace Gecode {
     ArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
     ArgArray(const ArgArray<T>& a);
+    /// Initialize from vector \a a
+    ArgArray(const std::vector<T>& a);
+    /// Initialize from InputIterator \a first and \a last
+    template<class InputIterator>
+    ArgArray(InputIterator first, InputIterator last);
     //@}
     /// \name Array elements
     //@{
@@ -845,6 +861,11 @@ namespace Gecode {
     VarArgArray(const VarArgArray<Var>& a);
     /// Initialize from variable array \a a (copy elements)
     VarArgArray(const VarArray<Var>& a);
+    /// Initialize from vector \a a
+    VarArgArray(const std::vector<Var>& a);
+    /// Initialize from InputIterator \a first and \a last
+    template<class InputIterator>
+    VarArgArray(InputIterator first, InputIterator last);
     //@}
     /// \name Array elements
     //@{
@@ -1608,6 +1629,14 @@ namespace Gecode {
   }
 
   template<class T>
+  inline
+  ArgArrayBase<T>::ArgArrayBase(const std::vector<T>& aa)
+    : n(aa.size()),
+      capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {
+    heap.copy<T>(a,&aa[0],n);
+  }
+
+  template<class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
     if (capacity > onstack_size)
@@ -1723,6 +1752,18 @@ namespace Gecode {
     return static_cast<A&>(*this);
   }
 
+  template<class T>
+  template<class InputIterator>
+  inline
+  ArgArrayBase<T>::ArgArrayBase(InputIterator first, InputIterator last)
+  : n(0), capacity(onstack_size), a(allocate(0)) {
+    while (first != last) {
+      (void) append<ArgArrayBase<T> >(*first);
+      ++first;
+    }
+  }
+
+
   template<class T> template<class A>
   inline A&
   ArgArrayBase<T>::append(const ArgArrayBase<T>& x) {
@@ -1788,6 +1829,17 @@ namespace Gecode {
   forceinline
   PrimArgArray<T>::PrimArgArray(const PrimArgArray<T>& aa)
     : ArgArrayBase<T>(aa) {}
+
+  template<class T>
+  forceinline
+  PrimArgArray<T>::PrimArgArray(const std::vector<T>& aa)
+    : ArgArrayBase<T>(aa) {}
+
+  template<class T>
+  template<class InputIterator>
+  forceinline
+  PrimArgArray<T>::PrimArgArray(InputIterator first, InputIterator last)
+    : ArgArrayBase<T>(first,last) {}
 
   template<class T>
   forceinline typename ArrayTraits<PrimArgArray<T> >::ArgsType
@@ -1861,6 +1913,17 @@ namespace Gecode {
     : ArgArrayBase<T>(aa) {}
 
   template<class T>
+  forceinline
+  ArgArray<T>::ArgArray(const std::vector<T>& aa)
+    : ArgArrayBase<T>(aa) {}
+
+  template<class T>
+  template<class InputIterator>
+  forceinline
+  ArgArray<T>::ArgArray(InputIterator first, InputIterator last)
+    : ArgArrayBase<T>(first,last) {}
+
+  template<class T>
   forceinline typename ArrayTraits<ArgArray<T> >::ArgsType
   ArgArray<T>::slice(int start, int inc, int maxN) {
     return ArgArrayBase<T>::template slice
@@ -1924,6 +1987,17 @@ namespace Gecode {
   forceinline
   VarArgArray<Var>::VarArgArray(const VarArgArray<Var>& aa)
     : ArgArrayBase<Var>(aa) {}
+
+  template<class Var>
+  forceinline
+  VarArgArray<Var>::VarArgArray(const std::vector<Var>& aa)
+    : ArgArrayBase<Var>(aa) {}
+
+  template<class Var>
+  template<class InputIterator>
+  forceinline
+  VarArgArray<Var>::VarArgArray(InputIterator first, InputIterator last)
+    : ArgArrayBase<Var>(first,last) {}
 
   template<class Var>
   inline

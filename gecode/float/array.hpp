@@ -58,13 +58,15 @@ namespace Gecode {
   }
   forceinline
   FloatArgs::FloatArgs(const std::vector<FloatNum>& x)
-    : PrimArgArray<FloatNum>(static_cast<FloatNum>(x.size())) {
-    for (unsigned int i=x.size(); i--;)
-      a[i] = x[i];
-  }
+    : PrimArgArray<FloatNum>(x) {}
+  template<class InputIterator>
+  forceinline
+  FloatArgs::FloatArgs(InputIterator first, InputIterator last)
+    : PrimArgArray<FloatNum>(first,last) {}
   
   forceinline
-  FloatArgs::FloatArgs(int n, const FloatNum* e) : PrimArgArray<FloatNum>(n, e) {}
+  FloatArgs::FloatArgs(int n, const FloatNum* e)
+  : PrimArgArray<FloatNum>(n, e) {}
   
   forceinline
   FloatArgs::FloatArgs(const PrimArgArray<FloatNum>& a) : PrimArgArray<FloatNum>(a) {}

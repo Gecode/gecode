@@ -56,10 +56,11 @@ namespace Gecode {
   }
   forceinline
   IntArgs::IntArgs(const std::vector<int>& x)
-    : PrimArgArray<int>(static_cast<int>(x.size())) {
-    for (std::vector<int>::size_type i=x.size(); i--;)
-      a[i] = x[i];
-  }
+  : PrimArgArray<int>(x) {}
+  template<class InputIterator>
+  forceinline
+  IntArgs::IntArgs(InputIterator first, InputIterator last)
+  : PrimArgArray<int>(first,last) {}
   
   forceinline
   IntArgs::IntArgs(int n, const int* e) : PrimArgArray<int>(n, e) {}
