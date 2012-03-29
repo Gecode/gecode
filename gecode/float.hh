@@ -128,20 +128,20 @@ namespace Gecode { namespace Float {
 #define GECODE_GENR_FUNC(name)      \
     GECODE_FLOAT_EXPORT double name##_down(FloatNum x); \
     GECODE_FLOAT_EXPORT double name##_up  (FloatNum x);
-    GENR_FUNC(exp)
-    GENR_FUNC(log)
-    GENR_FUNC(sin)
-    GENR_FUNC(cos)
-    GENR_FUNC(tan)
-    GENR_FUNC(asin)
-    GENR_FUNC(acos)
-    GENR_FUNC(atan)
-    GENR_FUNC(sinh)
-    GENR_FUNC(cosh)
-    GENR_FUNC(tanh)
-    GENR_FUNC(asinh)
-    GENR_FUNC(acosh)
-    GENR_FUNC(atanh)
+    GECODE_GENR_FUNC(exp)
+    GECODE_GENR_FUNC(log)
+    GECODE_GENR_FUNC(sin)
+    GECODE_GENR_FUNC(cos)
+    GECODE_GENR_FUNC(tan)
+    GECODE_GENR_FUNC(asin)
+    GECODE_GENR_FUNC(acos)
+    GECODE_GENR_FUNC(atan)
+    GECODE_GENR_FUNC(sinh)
+    GECODE_GENR_FUNC(cosh)
+    GECODE_GENR_FUNC(tanh)
+    GECODE_GENR_FUNC(asinh)
+    GECODE_GENR_FUNC(acosh)
+    GECODE_GENR_FUNC(atanh)
 #undef GECODE_GENR_FUNC
 #endif
   };
@@ -619,7 +619,7 @@ namespace Gecode {
   /// Which values to select first for branching
   enum FloatValBranch {
     FLOAT_VAL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
-    FLOAT_VAL_SPLIT_MAX, ///< Select values not smaller than mean of largest and smallest value
+    FLOAT_VAL_SPLIT_MAX ///< Select values not smaller than mean of largest and smallest value
   };
   
   /// Branch over \a x with variable selection \a vars and value selection \a vals

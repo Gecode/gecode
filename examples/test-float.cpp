@@ -155,7 +155,7 @@ public:
 //    // Exemple 4 (coeur paramétrique)
 //    rel(*this, sin(f[0])*cos(f[0])*log(abs(f[0])) == f[1]);
 //    rel(*this, sqrt(abs(f[0]))*cos(f[0]) == f[2]);
-//    rel(*this, f[0] == FloatInterval(-1,1));
+//    rel(*this, f[0] == FloatVal(-1,1));
 //    step = 0.001;
 
 //    // Exemple 5 (coeur cartésien)
@@ -171,7 +171,7 @@ public:
     rel(*this, 3*f[0]/(1+pow(f[0],3)) == f[1]);
     rel(*this, 3*sqr(f[0])/(1+pow(f[0],3)) == f[2]);
     rel(*this, pow(f[1],3) + pow(f[2],3)  == 3 * f[1] * f[2]);
-    rel(*this, f[1] == FloatInterval(-1,2));
+    rel(*this, f[1] == FloatVal(-1,2));
 
 //      // Exemple 7 (rosace)
 //      rel(*this, f[0] >= 0);
@@ -183,7 +183,7 @@ public:
 //      step = 0.001;
 
 #ifdef BOXES
-    rel(*this, f[0] == FloatInterval(sMinValue,sMinValue+step));
+    rel(*this, f[0] == FloatVal(sMinValue,sMinValue+step));
 #endif
   }
 
