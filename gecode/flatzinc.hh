@@ -290,17 +290,23 @@ namespace Gecode { namespace FlatZinc {
   public:
     /// The integer variables
     Gecode::IntVarArray iv;
+    /// The introduced integer variables
+    Gecode::IntVarArray iv_aux;
     /// Indicates whether an integer variable is introduced by mzn2fzn
     std::vector<bool> iv_introduced;
     /// Indicates whether an integer variable aliases a Boolean variable
     int* iv_boolalias;
     /// The Boolean variables
     Gecode::BoolVarArray bv;
+    /// The introduced Boolean variables
+    Gecode::BoolVarArray bv_aux;
     /// Indicates whether a Boolean variable is introduced by mzn2fzn
     std::vector<bool> bv_introduced;
 #ifdef GECODE_HAS_SET_VARS
     /// The set variables
     Gecode::SetVarArray sv;
+    /// The introduced set variables
+    Gecode::SetVarArray sv_aux;
     /// Indicates whether a set variable is introduced by mzn2fzn
     std::vector<bool> sv_introduced;
 #endif

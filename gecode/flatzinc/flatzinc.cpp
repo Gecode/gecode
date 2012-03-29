@@ -47,6 +47,106 @@ using namespace std;
 
 namespace Gecode { namespace FlatZinc {
 
+  /**
+   * \brief Branching on the introduced variables
+   *
+   * This brancher makes sure that when a solution is found for the model 
+   * variables, all introduced variables are either assigned, or the solution
+   * can be extended to a solution of the introduced variables.
+   *
+   * The advantage over simply branching over the introduced variables is that 
+   * only one such extension will be searched for, instead of enumerating all 
+   * possible (equivalent) extensions.
+   *
+   */
+  class AuxVarBrancher : public Brancher {
+  protected:
+    /// Flag whether brancher is done
+    bool done;
+    /// Construct brancher
+    AuxVarBrancher(Home home) : Brancher(home), done(false) {}
+    /// Copy constructor
+    AuxVarBrancher(Space& home, bool share, AuxVarBrancher& b)
+      : Brancher(home, share, b), done(b.done) {}
+
+    /// %Choice for aux var brancher
+    class Choice : public Gecode::Choice {
+    public:
+      /** Initialize description for brancher \a b
+       */
+      Choice(const Brancher& b) : Gecode::Choice(b,1) {}
+      /// Report size occupied
+      virtual size_t size(void) const {
+        return sizeof(Choice);
+      }
+      /// Archive into \a e
+      virtual void archive(Archive& e) const {
+        Gecode::Choice::archive(e);
+      }
+    };
+
+
+  public:
+    /// Check status of brancher, return true if alternatives left.
+    virtual bool status(const Space& _home) const {
+      if (done) return false;
+      const FlatZincSpace& home = static_cast<const FlatZincSpace&>(_home);
+      for (int i=0; i<home.iv_aux.size(); i++)
+        if (!home.iv_aux[i].assigned()) return true;
+      for (int i=0; i<home.bv_aux.size(); i++)
+        if (!home.bv_aux[i].assigned()) return true;
+#ifdef GECODE_HAS_SET_VARS
+      for (int i=0; i<home.sv_aux.size(); i++)
+        if (!home.sv_aux[i].assigned()) return true;
+#endif
+      // No non-assigned variables left
+      return false;
+    }
+    /// Return choice
+    virtual Choice* choice(Space&) {
+      return new Choice(*this);
+    }
+    /// Return choice
+    virtual Choice* choice(const Space&, Archive&) {
+      return new Choice(*this);
+    }
+    /// Perform commit for choice \a c and alternative \a a.
+    virtual ExecStatus commit(Space& home, const Gecode::Choice& c,
+                              unsigned int a) {
+      (void) c;
+      (void) a;
+      
+      done = true;
+      FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
+
+      branch(fzs,fzs.iv_aux,INT_VAR_NONE,INT_VAL_MIN);
+      branch(fzs,fzs.bv_aux,INT_VAR_NONE,INT_VAL_MIN);
+#ifdef GECODE_HAS_SET_VARS
+      branch(fzs,fzs.sv_aux,SET_VAR_NONE,SET_VAL_MIN_INC);
+#endif
+      FlatZincSpace* sol = dfs(&fzs);
+      if (sol) {
+        delete sol;
+        return ES_OK;
+      } else {
+        return ES_FAILED;
+      }
+    }
+    /// Copy brancher
+    virtual Actor* copy(Space& home, bool share) {
+      return new (home) AuxVarBrancher(home, share, *this);
+    }
+    /// Post brancher
+    static void post(Home home) {
+      (void) new (home) AuxVarBrancher(home);
+    }
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space&) {
+      return sizeof(*this);
+    }      
+  };
+
+
   IntSet vs2is(IntVarSpec* vs) {
     if (vs->assigned) {
       return IntSet(vs->i,vs->i);
@@ -221,11 +321,38 @@ namespace Gecode { namespace FlatZinc {
       _method = f._method;
       iv.update(*this, share, f.iv);
       intVarCount = f.intVarCount;
+      
+      IntVarArgs iva;
+      for (int i=0; i<f.iv_aux.size(); i++) {
+        if (!f.iv_aux[i].assigned()) {
+          iva << IntVar();
+          iva[iva.size()-1].update(*this, share, f.iv_aux[i]);
+        }
+      }
+      iv_aux = IntVarArray(*this, iva);
+      
       bv.update(*this, share, f.bv);
       boolVarCount = f.boolVarCount;
+      BoolVarArgs bva;
+      for (int i=0; i<f.bv_aux.size(); i++) {
+        if (!f.bv_aux[i].assigned()) {
+          bva << BoolVar();
+          bva[bva.size()-1].update(*this, share, f.bv_aux[i]);
+        }
+      }
+      bv_aux = BoolVarArray(*this, bva);
+
 #ifdef GECODE_HAS_SET_VARS
       sv.update(*this, share, f.sv);
       setVarCount = f.setVarCount;
+      SetVarArgs sva;
+      for (int i=0; i<f.sv_aux.size(); i++) {
+        if (!f.sv_aux[i].assigned()) {
+          sva << SetVar();
+          sva[sva.size()-1].update(*this, share, f.sv_aux[i]);
+        }
+      }
+      sv_aux = SetVarArray(*this, sva);
 #endif
     }
   
@@ -514,11 +641,12 @@ namespace Gecode { namespace FlatZinc {
         sv_sol[k++] = sv[i];
     branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
 #endif
-    branch(*this, iv_tmp, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
-    branch(*this, bv_tmp, INT_VAR_AFC_MAX, INT_VAL_MIN);
+    iv_aux = IntVarArray(*this, iv_tmp);
+    bv_aux = BoolVarArray(*this, bv_tmp);
 #ifdef GECODE_HAS_SET_VARS
-    branch(*this, sv_tmp, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
+    sv_aux = SetVarArray(*this, sv_tmp);
 #endif
+    AuxVarBrancher::post(*this);
   }
 
   AST::Array*

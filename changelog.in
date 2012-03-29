@@ -73,6 +73,16 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   major
+[DESCRIPTION]
+The FlatZinc interpreter no longer performs a complete search on variables
+annotated as var_is_introduced, but tries to extend a solution on the model
+variables to a solution that includes the introduced variables. Each solution
+on the model variables is therefore only reported once.
+
+[ENTRY]
 Module:	float
 What:	new
 Rank:	major
