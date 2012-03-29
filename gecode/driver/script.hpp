@@ -396,7 +396,7 @@ namespace Gecode { namespace Driver {
         }
         break;
       }
-    } catch (Exception e) {
+    } catch (Exception& e) {
       cerr << "Exception: " << e.what() << "." << endl
            << "Stopping..." << endl;
       exit(EXIT_FAILURE);

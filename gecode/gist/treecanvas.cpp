@@ -726,7 +726,7 @@ namespace Gecode { namespace Gist {
         }
         break;
       }
-    } catch (Exception e) {
+    } catch (Exception& e) {
       switch (failedInspectorType) {
       case 0:
         std::cerr << "Exception in move inspector "
@@ -773,7 +773,7 @@ namespace Gecode { namespace Gist {
         }
       }
       delete c;
-    } catch (Exception e) {
+    } catch (Exception& e) {
       switch (failedInspectorType) {
       case 0:
         std::cerr << "Exception in move inspector "
@@ -1288,7 +1288,7 @@ namespace Gecode { namespace Gist {
             curSpace = n->getSpace(*na,curBest,c_d,a_d);
           try {
             moveInspectors[i].first->inspect(*curSpace);
-          } catch (Exception e) {
+          } catch (Exception& e) {
             std::cerr << "Exception in move inspector " << i
                       << ": " << e.what() << "." << std::endl;
             std::cerr << "Stopping..." << std::endl;
@@ -1344,7 +1344,14 @@ namespace Gecode { namespace Gist {
                     }
                   }
                 }
-                comparators[i].first->compare(*curSpace,*compareSpace);
+                try {
+                  comparators[i].first->compare(*curSpace,*compareSpace);
+                } catch (Exception& e) {
+                  std::cerr << "Exception in comparator "<<i;
+                  std::cerr << ": " << e.what() << "." << std::endl;
+                  std::cerr << "Stopping..." << std::endl;
+                  std::exit(EXIT_FAILURE);
+                }
               }
             }
           }
