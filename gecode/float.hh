@@ -162,6 +162,173 @@ namespace Gecode {
   typedef Gecode::Float::GECODE_FLOAT_FLOATINTERVAL_TYPE FloatVal;
 
   /**
+   * \brief Float value type
+   *
+   * \ingroup TaskModelFloatVars
+   */
+  class NewFloatVal {
+  protected:
+    /// Implementation of float value
+    FloatVal x;
+    /// Initialize from implementation \a i
+    NewFloatVal(const FloatVal& i);
+  public:
+    /// Default constructor
+    NewFloatVal(void);
+    /// Initialize with float number \a n
+    NewFloatVal(const FloatNum& n);
+    /// Initialize with lower bound \a l and upper bound \a u
+    NewFloatVal(const FloatNum& l, const FloatNum& u);
+    /// Copy constructor
+    NewFloatVal(const NewFloatVal& v);
+
+    /// Assignment operator
+    NewFloatVal& operator =(const FloatNum& n);
+    /// Assignment operator
+    NewFloatVal& operator =(const NewFloatVal& v);
+    
+    //    void assign(FloatNum const &l, FloatNum const &u);
+    /// Return lower bound
+    const FloatNum& lower(void) const;
+    /// Return upper bound
+    const FloatNum& upper(void) const;
+    
+    /// Return empty value
+    static NewFloatVal empty(void);
+    /// Return whole value
+    static NewFloatVal whole(void);
+    /// Return hull of \a x and \a y
+    static NewFloatVal hull(FloatNum x, FloatNum y);
+    
+    /// Increment by \a n
+    NewFloatVal& operator +=(const FloatNum& n);
+    /// Subtract by \a n
+    NewFloatVal& operator -=(const FloatNum& n);
+    /// Multiply by \a n
+    NewFloatVal& operator *=(const FloatNum& n);
+    /// Divide by \a n
+    NewFloatVal& operator /=(const FloatNum& n);
+    /// Increment by \a v
+    NewFloatVal& operator +=(const NewFloatVal& v);
+    /// Subtract by \a v
+    NewFloatVal& operator -=(const NewFloatVal& v);
+    /// Multiply by \a v
+    NewFloatVal& operator *=(const NewFloatVal& v);
+    /// Divide by \a v
+    NewFloatVal& operator /=(const NewFloatVal& v);
+  };
+
+//   /* arithmetic operators involving intervals */
+//   NewFloatVal operator+(const NewFloatVal& x);
+//   NewFloatVal operator-(const NewFloatVal& x);
+
+//   NewFloatVal operator+(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal operator+(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal operator+(const FloatNum& x, const NewFloatVal& y);
+
+//   NewFloatVal operator-(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal operator-(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal operator-(const FloatNum& x, const NewFloatVal& y);
+
+//   NewFloatVal operator*(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal operator*(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal operator*(const FloatNum& x, const NewFloatVal& y);
+
+//   NewFloatVal operator/(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal operator/(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal operator/(const FloatNum& r, const NewFloatVal& x);
+
+//   /* algebraic functions: sqrt, abs, square, pow, nth_root */
+//   NewFloatVal abs(const NewFloatVal& x);
+//   NewFloatVal sqrt(const NewFloatVal& x);
+//   NewFloatVal square(const NewFloatVal& x);
+//   NewFloatVal pow(const NewFloatVal& x, int y);
+//   NewFloatVal nth_root(const NewFloatVal& x, int y);
+
+//   /* transcendental functions: exp, log */
+//   NewFloatVal exp(const NewFloatVal& x);
+//   NewFloatVal log(const NewFloatVal& x);
+
+//   /* fmod, for trigonometric function argument reduction (see below) */
+//   NewFloatVal fmod(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal fmod(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal fmod(const FloatNum& x, const NewFloatVal& y);
+
+//   /* trigonometric functions */
+//   NewFloatVal sin(const NewFloatVal& x);
+//   NewFloatVal cos(const NewFloatVal& x);
+//   NewFloatVal tan(const NewFloatVal& x);
+//   NewFloatVal asin(const NewFloatVal& x);
+//   NewFloatVal acos(const NewFloatVal& x);
+//   NewFloatVal atan(const NewFloatVal& x);
+
+//   /* hyperbolic trigonometric functions */
+//   NewFloatVal sinh(const NewFloatVal& x);
+//   NewFloatVal cosh(const NewFloatVal& x);
+//   NewFloatVal tanh(const NewFloatVal& x);
+//   NewFloatVal asinh(const NewFloatVal& x);
+//   NewFloatVal acosh(const NewFloatVal& x);
+//   NewFloatVal atanh(const NewFloatVal& x);
+
+//   /* min, max external functions (NOT std::min/max, see below) */
+//   NewFloatVal max(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal max(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal max(const FloatNum& x, const NewFloatVal& y);
+//   NewFloatVal min(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal min(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal min(const FloatNum& x, const NewFloatVal& y);
+
+//   /* bounds-related interval functions */
+//   FloatNum lower(const NewFloatVal& x);
+//   FloatNum upper(const NewFloatVal& x);
+//   FloatNum width(const NewFloatVal& x);
+//   FloatNum median(const NewFloatVal& x);
+//   FloatNum norm(const NewFloatVal& x);
+
+//   /* bounds-related interval functions */
+//   bool empty(const NewFloatVal& b);
+//   bool singleton(const NewFloatVal& x);
+//   bool equal(const NewFloatVal& x, const NewFloatVal& y);
+//   bool in(const FloatNum& r, const NewFloatVal& b);
+//   bool zero_in(const NewFloatVal& b);
+//   bool subset(const NewFloatVal& a, const NewFloatVal& b);
+//   bool proper_subset(const NewFloatVal& a, const NewFloatVal& b);
+//   bool overlap(const NewFloatVal& x, const NewFloatVal& y);
+
+//   /* set manipulation interval functions */
+//   NewFloatVal intersect(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal hull(const NewFloatVal& x, const NewFloatVal& y);
+//   NewFloatVal hull(const NewFloatVal& x, const FloatNum& y);
+//   NewFloatVal hull(const FloatNum& x, const NewFloatVal& y);
+//   NewFloatVal hull(const FloatNum& x, const FloatNum& y);
+//   std::pair<NewFloatVal, NewFloatVal > bisect(const NewFloatVal& x);
+
+//   /* interval comparison operators */
+//   bool operator<(const NewFloatVal& x, const NewFloatVal& y);
+//   bool operator<(const NewFloatVal& x, const FloatNum& y);
+//   bool operator<(const FloatNum& x, const NewFloatVal& y);
+
+//   bool operator<=(const NewFloatVal& x, const NewFloatVal& y);
+//   bool operator<=(const NewFloatVal& x, const FloatNum& y);
+//   bool operator<=(const FloatNum& x, const NewFloatVal& y);
+
+//   bool operator>(const NewFloatVal& x, const NewFloatVal& y);
+//   bool operator>(const NewFloatVal& x, const FloatNum& y);
+//   bool operator>(const FloatNum& x, const NewFloatVal& y);
+
+//   bool operator>=(const NewFloatVal& x, const NewFloatVal& y);
+//   bool operator>=(const NewFloatVal& x, const FloatNum& y);
+//   bool operator>=(const FloatNum& x, const NewFloatVal& y);
+//   bool operator==(const NewFloatVal& x, const NewFloatVal& y);
+//   bool operator==(const NewFloatVal& x, const FloatNum& y);
+//   bool operator==(const FloatNum& x, const NewFloatVal& y);
+
+//   bool operator!=(const NewFloatVal& x, const NewFloatVal& y);
+//   bool operator!=(const NewFloatVal& x, const FloatNum& y);
+//   bool operator!=(const FloatNum& x, const NewFloatVal& y);
+
+
+  /**
    * \brief Float rounding mode
    *
    * \ingroup TaskModelFloatVars
@@ -169,6 +336,8 @@ namespace Gecode {
   static FloatVal::traits_type::rounding Round;
   
 }
+
+#include <gecode/float/val.hpp>
 
 namespace Gecode { namespace Float {
 
@@ -272,6 +441,13 @@ namespace Gecode {
     //@}
   };
 
+  /**
+   * \brief Print float value \a x
+   * \relates Gecode::FloatVal
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const FloatVal& x);
   /**
    * \brief Print float variable \a x
    * \relates Gecode::FloatVar
