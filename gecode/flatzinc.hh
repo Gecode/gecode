@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Gabriel Hjort Blindell <gabriel.hjort.blindell@gmail.com>
+ *
  *  Copyright:
- *     Guido Tack, 2007
+ *     Guido Tack, 2007-2012
+ *     Gabriel Hjort Blindell, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -114,6 +118,18 @@ namespace Gecode { namespace FlatZinc {
                    const Gecode::SetVarArray& sv
 #endif
                    ) const;
+    void printElemDiff(std::ostream& out,
+                       AST::Node* ai,
+                       const Gecode::IntVarArray& iv1,
+                       const Gecode::IntVarArray& iv2,
+                       const Gecode::BoolVarArray& bv1,
+                       const Gecode::BoolVarArray& bv2
+#ifdef GECODE_HAS_SET_VARS
+                       ,
+                       const Gecode::SetVarArray& sv1,
+                       const Gecode::SetVarArray& sv2
+#endif
+                       ) const;
   public:
     Printer(void) : _output(NULL) {}
     void init(AST::Array* output);
@@ -126,6 +142,16 @@ namespace Gecode { namespace FlatZinc {
                const Gecode::SetVarArray& sv
 #endif
                ) const;
+
+    void printDiff(std::ostream& out,
+               const Gecode::IntVarArray& iv1, const Gecode::IntVarArray& iv2,
+               const Gecode::BoolVarArray& bv1, const Gecode::BoolVarArray& bv2
+#ifdef GECODE_HAS_SET_VARS
+               ,
+               const Gecode::SetVarArray& sv1, const Gecode::SetVarArray& sv2
+#endif
+               ) const;
+
   
     ~Printer(void);
     
@@ -346,6 +372,14 @@ namespace Gecode { namespace FlatZinc {
   
     /// Produce output on \a out using \a p
     void print(std::ostream& out, const Printer& p) const;
+
+    /// Compare this space with space \a s and print the differences on 
+    /// \a out
+    void compare(const Space& s, std::ostream& out) const;
+    /// Compare this space with space \a s and print the differences on 
+    /// \a out using \a p
+    void compare(const FlatZincSpace& s, std::ostream& out,
+                 const Printer& p) const;
 
     /**
      * \brief Remove all variables not needed for output

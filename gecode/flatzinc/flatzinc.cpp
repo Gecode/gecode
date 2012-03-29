@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Gabriel Hjort Blindell <gabriel.hjort.blindell@gmail.com>
+ *
  *  Copyright:
- *     Guido Tack, 2007
+ *     Guido Tack, 2007-2012
+ *     Gabriel Hjort Blindell, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -714,10 +718,11 @@ namespace Gecode { namespace FlatZinc {
   class GistEngine<DFS<S> > {
   public:
     static void explore(S* root, const FlatZincOptions& opt,
-                        Gist::Inspector* i) {
+                        Gist::Inspector* i, Gist::Comparator* c) {
       Gecode::Gist::Options o;
       o.c_d = opt.c_d(); o.a_d = opt.a_d();
       o.inspect.click(i);
+      o.inspect.compare(c);
       (void) Gecode::Gist::dfs(root, o);
     }
   };
@@ -727,10 +732,11 @@ namespace Gecode { namespace FlatZinc {
   class GistEngine<BAB<S> > {
   public:
     static void explore(S* root, const FlatZincOptions& opt,
-                        Gist::Inspector* i) {
+                        Gist::Inspector* i, Gist::Comparator* c) {
       Gecode::Gist::Options o;
       o.c_d = opt.c_d(); o.a_d = opt.a_d();
       o.inspect.click(i);
+      o.inspect.compare(c);
       (void) Gecode::Gist::bab(root, o);
     }
   };
@@ -740,10 +746,11 @@ namespace Gecode { namespace FlatZinc {
   class GistEngine<Restart<S> > {
   public:
     static void explore(S* root, const FlatZincOptions& opt,
-                        Gist::Inspector* i) {
+                        Gist::Inspector* i, Gist::Comparator* c) {
       Gecode::Gist::Options o;
       o.c_d = opt.c_d(); o.a_d = opt.a_d();
       o.inspect.click(i);
+      o.inspect.compare(c);
       (void) Gecode::Gist::bab(root, o);
     }
   };
@@ -781,6 +788,36 @@ namespace Gecode { namespace FlatZinc {
     Gecode::Gist::TextOutput::finalize();
   }
 
+  template<class S>
+  class FZPrintingComparator
+  : public Gecode::Gist::VarComparator<S> {
+  private:
+    const Printer& p;
+  public:
+    /// Constructor
+    FZPrintingComparator(const Printer& p0);
+
+    /// Use the compare method of the template class S to compare two spaces
+    virtual void compare(const Space& s0, const Space& s1);
+  };
+
+  template<class S>
+  FZPrintingComparator<S>::FZPrintingComparator(const Printer& p0)
+  : Gecode::Gist::VarComparator<S>("Gecode/FlatZinc"), p(p0) {}
+
+  template<class S>
+  void
+  FZPrintingComparator<S>::compare(const Space& s0, const Space& s1) {
+    this->init();
+    try {
+      dynamic_cast<const S&>(s0).compare(dynamic_cast<const S&>(s1),
+                                         this->getStream(), p);
+    } catch (Exception& e) {
+      this->getStream() << "Exception: " << e.what();
+    }
+    this->getStream() << std::endl;
+  }
+
 #endif
 
   template<template<class> class Engine>
@@ -790,7 +827,8 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
       FZPrintingInspector<FlatZincSpace> pi(p);
-      (void) GistEngine<Engine<FlatZincSpace> >::explore(this,opt,&pi);
+      FZPrintingComparator<FlatZincSpace> pc(p);
+      (void) GistEngine<Engine<FlatZincSpace> >::explore(this,opt,&pi,&pc);
       return;
     }
 #endif
@@ -952,6 +990,44 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
+  FlatZincSpace::compare(const Space& s, std::ostream& out) const {
+    const FlatZincSpace& fs = dynamic_cast<const FlatZincSpace&>(s);
+    for (int i = 0; i < iv.size(); ++i) {
+      std::stringstream ss;
+      ss << "iv[" << i << "]";
+      std::string result(Gecode::Gist::Comparator::compare(ss.str(), iv[i],
+                                                           fs.iv[i]));
+      if (result.length() > 0) out << result << std::endl;
+    }
+    for (int i = 0; i < bv.size(); ++i) {
+      std::stringstream ss;
+      ss << "bv[" << i << "]";
+      std::string result(Gecode::Gist::Comparator::compare(ss.str(), bv[i],
+                                                           fs.bv[i]));
+      if (result.length() > 0) out << result << std::endl;
+    }
+#ifdef GECODE_HAS_SET_VARS
+    for (int i = 0; i < sv.size(); ++i) {
+      std::stringstream ss;
+      ss << "sv[" << i << "]";
+      std::string result(Gecode::Gist::Comparator::compare(ss.str(), sv[i],
+                                                           fs.sv[i]));
+      if (result.length() > 0) out << result << std::endl;
+    }
+#endif
+  }
+
+  void
+  FlatZincSpace::compare(const FlatZincSpace& s, std::ostream& out,
+                         const Printer& p) const {
+    p.printDiff(out, iv, s.iv, bv, s.bv
+#ifdef GECODE_HAS_SET_VARS
+     , sv, s.sv
+#endif
+    );
+  }
+
+  void
   FlatZincSpace::shrinkArrays(Printer& p) {
     p.shrinkArrays(*this, _optVar, iv, bv
 #ifdef GECODE_HAS_SET_VARS
@@ -1044,6 +1120,81 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
+  Printer::printElemDiff(std::ostream& out,
+                       AST::Node* ai,
+                       const Gecode::IntVarArray& iv1,
+                       const Gecode::IntVarArray& iv2,
+                       const Gecode::BoolVarArray& bv1,
+                       const Gecode::BoolVarArray& bv2
+#ifdef GECODE_HAS_SET_VARS
+                       , const Gecode::SetVarArray& sv1,
+                       const Gecode::SetVarArray& sv2
+#endif
+                       ) const {
+    using namespace Gecode::Gist;
+    int k;
+    if (ai->isInt(k)) {
+      out << k;
+    } else if (ai->isIntVar()) {
+      std::string res(Comparator::compare("",iv1[ai->getIntVar()],
+                                          iv2[ai->getIntVar()]));
+      if (res.length() > 0) {
+        res.erase(0, 1); // Remove '='
+        out << res;
+      } else {
+        out << iv1[ai->getIntVar()];
+      }
+    } else if (ai->isBoolVar()) {
+      std::string res(Comparator::compare("",bv1[ai->getBoolVar()],
+                                          bv2[ai->getBoolVar()]));
+      if (res.length() > 0) {
+        res.erase(0, 1); // Remove '='
+        out << res;
+      } else {
+        out << bv1[ai->getBoolVar()];
+      }
+#ifdef GECODE_HAS_SET_VARS
+    } else if (ai->isSetVar()) {
+      std::string res(Comparator::compare("",sv1[ai->getSetVar()],
+                                          sv2[ai->getSetVar()]));
+      if (res.length() > 0) {
+        res.erase(0, 1); // Remove '='
+        out << res;
+      } else {
+        out << sv1[ai->getSetVar()];
+      }
+#endif
+    } else if (ai->isBool()) {
+      out << (ai->getBool() ? "true" : "false");
+    } else if (ai->isSet()) {
+      AST::SetLit* s = ai->getSet();
+      if (s->interval) {
+        out << s->min << ".." << s->max;
+      } else {
+        out << "{";
+        for (unsigned int i=0; i<s->s.size(); i++) {
+          out << s->s[i] << (i < s->s.size()-1 ? ", " : "}");
+        }
+      }
+    } else if (ai->isString()) {
+      std::string s = ai->getString();
+      for (unsigned int i=0; i<s.size(); i++) {
+        if (s[i] == '\\' && i<s.size()-1) {
+          switch (s[i+1]) {
+          case 'n': out << "\n"; break;
+          case '\\': out << "\\"; break;
+          case 't': out << "\t"; break;
+          default: out << "\\" << s[i+1];
+          }
+          i++;
+        } else {
+          out << s[i];
+        }
+      }
+    }
+  }
+
+  void
   Printer::print(std::ostream& out,
                    const Gecode::IntVarArray& iv,
                    const Gecode::BoolVarArray& bv
@@ -1074,6 +1225,46 @@ namespace Gecode { namespace FlatZinc {
         printElem(out,ai,iv,bv
 #ifdef GECODE_HAS_SET_VARS
         ,sv
+#endif
+        );
+      }
+    }
+  }
+
+  void
+  Printer::printDiff(std::ostream& out,
+                   const Gecode::IntVarArray& iv1,
+                   const Gecode::IntVarArray& iv2,
+                   const Gecode::BoolVarArray& bv1,
+                   const Gecode::BoolVarArray& bv2
+#ifdef GECODE_HAS_SET_VARS
+                   ,
+                   const Gecode::SetVarArray& sv1,
+                   const Gecode::SetVarArray& sv2
+#endif
+                   ) const {
+    if (_output == NULL)
+      return;
+    for (unsigned int i=0; i< _output->a.size(); i++) {
+      AST::Node* ai = _output->a[i];
+      if (ai->isArray()) {
+        AST::Array* aia = ai->getArray();
+        int size = aia->a.size();
+        out << "[";
+        for (int j=0; j<size; j++) {
+          printElemDiff(out,aia->a[j],iv1,iv2,bv1,bv2
+#ifdef GECODE_HAS_SET_VARS
+            ,sv1,sv2
+#endif
+          );
+          if (j<size-1)
+            out << ", ";
+        }
+        out << "]";
+      } else {
+        printElemDiff(out,ai,iv1,iv2,bv1,bv2
+#ifdef GECODE_HAS_SET_VARS
+          ,sv1,sv2
 #endif
         );
       }

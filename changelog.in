@@ -74,6 +74,14 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: flatzinc
+What:   new
+Rank:   major
+Thanks: Gabriel Hjort Blindell
+[DESCRIPTION]
+The FlatZinc interpreter now supports comparing of nodes in Gist.
+
+[ENTRY]
+Module: flatzinc
 What:   change
 Rank:   major
 [DESCRIPTION]
