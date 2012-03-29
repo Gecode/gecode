@@ -522,6 +522,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
         bool introduced = $5->hasAtom("var_is_introduced");
+        bool funcDep = $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_iv(pp->intvars.size())),
           "Duplicate symbol");
@@ -532,10 +533,10 @@ vardecl_item:
           AST::Node* arg = $6.some();
           if (arg->isInt()) {
             pp->intvars.push_back(varspec($4,
-              new IntVarSpec(arg->getInt(),introduced)));
+              new IntVarSpec(arg->getInt(),introduced,funcDep)));
           } else if (arg->isIntVar()) {
             pp->intvars.push_back(varspec($4,
-              new IntVarSpec(Alias(arg->getIntVar()),introduced)));
+              new IntVarSpec(Alias(arg->getIntVar()),introduced,funcDep)));
           } else {
             yyassert(pp, false, "Invalid var int initializer");
           }
@@ -544,7 +545,8 @@ vardecl_item:
                                 new AST::IntVar(pp->intvars.size()-1), $2);
           delete arg;
         } else {
-          pp->intvars.push_back(varspec($4, new IntVarSpec($2,introduced)));
+          pp->intvars.push_back(varspec($4,
+            new IntVarSpec($2,introduced,funcDep)));
         }
         delete $5; free($4);
       }
@@ -553,6 +555,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
         bool introduced = $5->hasAtom("var_is_introduced");
+        bool funcDep = $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_bv(pp->boolvars.size())),
           "Duplicate symbol");
@@ -563,10 +566,10 @@ vardecl_item:
           AST::Node* arg = $6.some();
           if (arg->isBool()) {
             pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(arg->getBool(),introduced)));            
+              new BoolVarSpec(arg->getBool(),introduced,funcDep)));
           } else if (arg->isBoolVar()) {
             pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(Alias(arg->getBoolVar()),introduced)));
+              new BoolVarSpec(Alias(arg->getBoolVar()),introduced,funcDep)));
           } else {
             yyassert(pp, false, "Invalid var bool initializer");
           }
@@ -575,7 +578,8 @@ vardecl_item:
                                 new AST::BoolVar(pp->boolvars.size()-1), $2);
           delete arg;
         } else {
-          pp->boolvars.push_back(varspec($4, new BoolVarSpec($2,introduced)));
+          pp->boolvars.push_back(varspec($4,
+            new BoolVarSpec($2,introduced,funcDep)));
         }
         delete $5; free($4);
       }
@@ -589,6 +593,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $7->hasAtom("output_var");
         bool introduced = $7->hasAtom("var_is_introduced");
+        bool funcDep = $7->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($6, se_sv(pp->setvars.size())),
           "Duplicate symbol");
@@ -599,10 +604,10 @@ vardecl_item:
           AST::Node* arg = $8.some();
           if (arg->isSet()) {
             pp->setvars.push_back(varspec($6,
-              new SetVarSpec(arg->getSet(),introduced)));
+              new SetVarSpec(arg->getSet(),introduced,funcDep)));
           } else if (arg->isSetVar()) {
             pp->setvars.push_back(varspec($6,
-              new SetVarSpec(Alias(arg->getSetVar()),introduced)));
+              new SetVarSpec(Alias(arg->getSetVar()),introduced,funcDep)));
             delete arg;
           } else {
             yyassert(pp, false, "Invalid var set initializer");
@@ -612,7 +617,8 @@ vardecl_item:
             addDomainConstraint(pp, "set_subset",
                                 new AST::SetVar(pp->setvars.size()-1), $4);
         } else {
-          pp->setvars.push_back(varspec($6, new SetVarSpec($4,introduced)));
+          pp->setvars.push_back(varspec($6,
+            new SetVarSpec($4,introduced,funcDep)));
         }
         delete $7; free($6);
       }
@@ -680,7 +686,7 @@ vardecl_item:
               delete vsv;
             } else {
               if ($5>0) {
-                IntVarSpec* ispec = new IntVarSpec($9,!print);
+                IntVarSpec* ispec = new IntVarSpec($9,!print,false);
                 string arrayname = "["; arrayname += $11;
                 for (int i=0; i<$5-1; i++) {
                   vars[i] = pp->intvars.size();
@@ -746,7 +752,7 @@ vardecl_item:
             for (int i=0; i<$5; i++) {
               vars[i] = pp->boolvars.size();
               pp->boolvars.push_back(varspec($11,
-                                             new BoolVarSpec($9,!print)));
+                                       new BoolVarSpec($9,!print,false)));
             }          
           }
           if (print) {
@@ -809,7 +815,7 @@ vardecl_item:
             delete vsv;
           } else {
             if ($5>0) {
-              SetVarSpec* ispec = new SetVarSpec($11,!print);
+              SetVarSpec* ispec = new SetVarSpec($11,!print,false);
               string arrayname = "["; arrayname += $13;
               for (int i=0; i<$5-1; i++) {
                 vars[i] = pp->setvars.size();
@@ -912,20 +918,20 @@ vardecl_item:
 int_init :
       FZ_INT_LIT
       { 
-        $$ = new IntVarSpec($1,false);
+        $$ = new IntVarSpec($1,false,false);
       }
     | var_par_id
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
         if (pp->symbols.get($1, e) && e.t == ST_INTVAR)
-          $$ = new IntVarSpec(Alias(e.i),false);
+          $$ = new IntVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new IntVarSpec(0,false); // keep things consistent
+          $$ = new IntVarSpec(0,false,false); // keep things consistent
         }
         free($1);
       }
@@ -938,15 +944,15 @@ int_init :
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new IntVarSpec(Alias(pp->arrays[e.i+$3]),false);
+            $$ = new IntVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
-            $$ = new IntVarSpec(0,false); // keep things consistent
+            $$ = new IntVarSpec(0,false,false); // keep things consistent
         } else {
           pp->err << "Error: undefined array identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new IntVarSpec(0,false); // keep things consistent
+          $$ = new IntVarSpec(0,false,false); // keep things consistent
         }
         free($1);
       }
@@ -970,19 +976,19 @@ int_var_array_literal : '[' int_init_list ']'
 
 float_init :
       FZ_FLOAT_LIT
-      { $$ = new FloatVarSpec($1,false); }
+      { $$ = new FloatVarSpec($1,false,false); }
     | var_par_id
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
         if (pp->symbols.get($1, e) && e.t == ST_FLOATVAR)
-          $$ = new FloatVarSpec(Alias(e.i),false);
+          $$ = new FloatVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new FloatVarSpec(0.0,false);
+          $$ = new FloatVarSpec(0.0,false,false);
         }
         free($1);
       }
@@ -994,15 +1000,15 @@ float_init :
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new FloatVarSpec(Alias(pp->arrays[e.i+$3]),false);
+            $$ = new FloatVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
-            $$ = new FloatVarSpec(0.0,false);
+            $$ = new FloatVarSpec(0.0,false,false);
         } else {
           pp->err << "Error: undefined array identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new FloatVarSpec(0.0,false);
+          $$ = new FloatVarSpec(0.0,false,false);
         }
         free($1);
       }
@@ -1025,19 +1031,19 @@ float_var_array_literal :
 
 bool_init :
       FZ_BOOL_LIT
-      { $$ = new BoolVarSpec($1,false); }
+      { $$ = new BoolVarSpec($1,false,false); }
     | var_par_id
       { 
         SymbolEntry e;
         ParserState* pp = static_cast<ParserState*>(parm);
         if (pp->symbols.get($1, e) && e.t == ST_BOOLVAR)
-          $$ = new BoolVarSpec(Alias(e.i),false);
+          $$ = new BoolVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new BoolVarSpec(false,false);
+          $$ = new BoolVarSpec(false,false,false);
         }
         free($1);
       }
@@ -1049,15 +1055,15 @@ bool_init :
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new BoolVarSpec(Alias(pp->arrays[e.i+$3]),false);
+            $$ = new BoolVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
-            $$ = new BoolVarSpec(false,false);
+            $$ = new BoolVarSpec(false,false,false);
         } else {
           pp->err << "Error: undefined array identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new BoolVarSpec(false,false);
+          $$ = new BoolVarSpec(false,false,false);
         }
         free($1);
       }
@@ -1078,19 +1084,19 @@ bool_var_array_literal : '[' bool_init_list ']' { $$ = $2; }
 
 set_init :
       set_literal
-      { $$ = new SetVarSpec($1,false); }
+      { $$ = new SetVarSpec($1,false,false); }
     | var_par_id
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
         if (pp->symbols.get($1, e) && e.t == ST_SETVAR)
-          $$ = new SetVarSpec(Alias(e.i),false);
+          $$ = new SetVarSpec(Alias(e.i),false,false);
         else {
           pp->err << "Error: undefined identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new SetVarSpec(Alias(0),false);
+          $$ = new SetVarSpec(Alias(0),false,false);
         }
         free($1);
       }
@@ -1102,15 +1108,15 @@ set_init :
           yyassert(pp,$3 > 0 && $3 <= pp->arrays[e.i],
                    "array access out of bounds");
           if (!pp->hadError)
-            $$ = new SetVarSpec(Alias(pp->arrays[e.i+$3]),false);
+            $$ = new SetVarSpec(Alias(pp->arrays[e.i+$3]),false,false);
           else
-            $$ = new SetVarSpec(Alias(0),false);
+            $$ = new SetVarSpec(Alias(0),false,false);
         } else {
           pp->err << "Error: undefined array identifier " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
-          $$ = new SetVarSpec(Alias(0),false);
+          $$ = new SetVarSpec(Alias(0),false,false);
         }
         free($1);
       }

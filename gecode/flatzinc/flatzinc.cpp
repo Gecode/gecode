@@ -113,7 +113,7 @@ namespace Gecode { namespace FlatZinc {
     virtual Choice* choice(Space& home) {
       done = true;
       FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
-
+      
       branch(fzs,fzs.iv_aux,INT_VAR_NONE,INT_VAL_MIN);
       branch(fzs,fzs.bv_aux,INT_VAR_NONE,INT_VAL_MIN);
 #ifdef GECODE_HAS_SET_VARS
@@ -373,15 +373,15 @@ namespace Gecode { namespace FlatZinc {
 #endif
     intVarCount = 0;
     iv = IntVarArray(*this, intVars);
-    iv_introduced = std::vector<bool>(intVars);
+    iv_introduced = std::vector<bool>(2*intVars);
     iv_boolalias = alloc<int>(intVars+(intVars==0?1:0));
     boolVarCount = 0;
     bv = BoolVarArray(*this, boolVars);
-    bv_introduced = std::vector<bool>(boolVars);
+    bv_introduced = std::vector<bool>(2*boolVars);
 #ifdef GECODE_HAS_SET_VARS
     setVarCount = 0;
     sv = SetVarArray(*this, setVars);
-    sv_introduced = std::vector<bool>(setVars);
+    sv_introduced = std::vector<bool>(2*setVars);
 #endif
   }
 
@@ -398,7 +398,8 @@ namespace Gecode { namespace FlatZinc {
         iv[intVarCount++] = IntVar(*this, dom);
       }
     }
-    iv_introduced[intVarCount-1] = vs->introduced;
+    iv_introduced[2*(intVarCount-1)] = vs->introduced;
+    iv_introduced[2*(intVarCount-1)+1] = vs->funcDep;
     iv_boolalias[intVarCount-1] = -1;
   }
 
@@ -418,7 +419,8 @@ namespace Gecode { namespace FlatZinc {
     } else {
       bv[boolVarCount++] = BoolVar(*this, vs2bsl(vs), vs2bsh(vs));
     }
-    bv_introduced[boolVarCount-1] = vs->introduced;
+    bv_introduced[2*(boolVarCount-1)] = vs->introduced;
+    bv_introduced[2*(boolVarCount-1)+1] = vs->funcDep;
   }
 
 #ifdef GECODE_HAS_SET_VARS
@@ -458,7 +460,8 @@ namespace Gecode { namespace FlatZinc {
                                  IntSet(Set::Limits::min, 
                                         Set::Limits::max));
     }
-    sv_introduced[setVarCount-1] = vs->introduced;
+    sv_introduced[2*(setVarCount-1)] = vs->introduced;
+    sv_introduced[2*(setVarCount-1)+1] = vs->funcDep;
   }
 #else
   void
@@ -606,43 +609,71 @@ namespace Gecode { namespace FlatZinc {
       }
     }
     int introduced = 0;
+    int funcdep = 0;
     for (int i=iv.size(); i--;)
-      if (iv_introduced[i])
-        introduced++;
-    IntVarArgs iv_sol(iv.size()-introduced);
+      if (iv_introduced[2*i]) {
+        if (iv_introduced[2*i+1]) {
+          funcdep++;
+        } else {
+          introduced++;
+        }
+      }
+    IntVarArgs iv_sol(iv.size()-(introduced+funcdep));
     IntVarArgs iv_tmp(introduced);
     for (int i=iv.size(), j=0, k=0; i--;)
-      if (iv_introduced[i])
-        iv_tmp[j++] = iv[i];
-      else
+      if (iv_introduced[2*i]) {
+        if (!iv_introduced[2*i+1]) {
+          iv_tmp[j++] = iv[i];
+        }
+      } else {
         iv_sol[k++] = iv[i];
+      }
 
     introduced = 0;
+    funcdep = 0;
     for (int i=bv.size(); i--;)
-      if (bv_introduced[i])
-        introduced++;
-    BoolVarArgs bv_sol(bv.size()-introduced);
+      if (bv_introduced[2*i]) {
+        if (bv_introduced[2*i+1]) {
+          funcdep++;
+        } else {
+          introduced++;
+        }
+      }
+    BoolVarArgs bv_sol(bv.size()-(introduced+funcdep));
     BoolVarArgs bv_tmp(introduced);
     for (int i=bv.size(), j=0, k=0; i--;)
-      if (bv_introduced[i])
-        bv_tmp[j++] = bv[i];
-      else
+      if (bv_introduced[2*i]) {
+        if (!bv_introduced[2*i+1]) {
+          bv_tmp[j++] = bv[i];
+        }
+      } else {
         bv_sol[k++] = bv[i];
+      }
 
     branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
     branch(*this, bv_sol, INT_VAR_AFC_MAX, INT_VAL_MIN);
 #ifdef GECODE_HAS_SET_VARS
     introduced = 0;
+    funcdep = 0;
     for (int i=sv.size(); i--;)
-      if (sv_introduced[i])
-        introduced++;
-    SetVarArgs sv_sol(sv.size()-introduced);
+      if (sv_introduced[2*i]) {
+        if (sv_introduced[2*i+1]) {
+          funcdep++;
+        } else {
+          introduced++;
+        }
+      }
+    SetVarArgs sv_sol(sv.size()-(introduced+funcdep));
     SetVarArgs sv_tmp(introduced);
     for (int i=sv.size(), j=0, k=0; i--;)
-      if (sv_introduced[i])
-        sv_tmp[j++] = sv[i];
-      else
+      if (sv_introduced[2*i]) {
+        if (!sv_introduced[2*i+1]) {
+          sv_tmp[j++] = sv[i];
+        }
+      } else {
         sv_sol[k++] = sv[i];
+      }
+
     branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
 #endif
     iv_aux = IntVarArray(*this, iv_tmp);
