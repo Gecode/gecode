@@ -45,7 +45,7 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class A, class B, PropCond pc>
   forceinline
-  LinBin<A,B,pc>::LinBin(Home home, A y0, B y1, FloatInterval c0)
+  LinBin<A,B,pc>::LinBin(Home home, A y0, B y1, FloatVal c0)
     : Propagator(home), x0(y0), x1(y1), c(c0) {
     x0.subscribe(home,*this,pc);
     x1.subscribe(home,*this,pc);
@@ -62,7 +62,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, PropCond pc>
   forceinline
   LinBin<A,B,pc>::LinBin(Space& home, bool share, Propagator& p,
-                             A y0, B y1, FloatInterval c0)
+                             A y0, B y1, FloatVal c0)
     : Propagator(home,share,p), c(c0) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -130,12 +130,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class A, class B>
   forceinline
-  EqBin<A,B>::EqBin(Home home, A x0, B x1, FloatInterval c)
+  EqBin<A,B>::EqBin(Home home, A x0, B x1, FloatVal c)
     : LinBin<A,B,PC_FLOAT_BND>(home,x0,x1,c) {}
 
   template<class A, class B>
   ExecStatus
-  EqBin<A,B>::post(Home home, A x0, B x1, FloatInterval c) {
+  EqBin<A,B>::post(Home home, A x0, B x1, FloatVal c) {
     (void) new (home) EqBin<A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -149,7 +149,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B>
   forceinline
   EqBin<A,B>::EqBin(Space& home, bool share, Propagator& p,
-                        A x0, B x1, FloatInterval c)
+                        A x0, B x1, FloatVal c)
     : LinBin<A,B,PC_FLOAT_BND>(home,share,p,x0,x1,c) {}
 
   template<class A, class B>
@@ -294,12 +294,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class A, class B>
   forceinline
-  LqBin<A,B>::LqBin(Home home, A x0, B x1, FloatInterval c)
+  LqBin<A,B>::LqBin(Home home, A x0, B x1, FloatVal c)
     : LinBin<A,B,PC_FLOAT_BND>(home,x0,x1,c) {}
 
   template<class A, class B>
   ExecStatus
-  LqBin<A,B>::post(Home home, A x0, B x1, FloatInterval c) {
+  LqBin<A,B>::post(Home home, A x0, B x1, FloatVal c) {
     (void) new (home) LqBin<A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -319,7 +319,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B>
   forceinline
   LqBin<A,B>::LqBin(Space& home, bool share, Propagator& p,
-                        A x0, B x1, FloatInterval c)
+                        A x0, B x1, FloatVal c)
     : LinBin<A,B,PC_FLOAT_BND>(home,share,p,x0,x1,c) {}
 
   template<class A, class B>
@@ -340,12 +340,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class A, class B>
   forceinline
-  GqBin<A,B>::GqBin(Home home, A x0, B x1, FloatInterval c)
+  GqBin<A,B>::GqBin(Home home, A x0, B x1, FloatVal c)
     : LinBin<A,B,PC_FLOAT_BND>(home,x0,x1,c) {}
 
   template<class A, class B>
   ExecStatus
-  GqBin<A,B>::post(Home home, A x0, B x1, FloatInterval c) {
+  GqBin<A,B>::post(Home home, A x0, B x1, FloatVal c) {
     (void) new (home) GqBin<A,B>(home,x0,x1,c);
     return ES_OK;
   }
@@ -365,7 +365,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B>
   forceinline
   GqBin<A,B>::GqBin(Space& home, bool share, Propagator& p,
-                        A x0, B x1, FloatInterval c)
+                        A x0, B x1, FloatVal c)
     : LinBin<A,B,PC_FLOAT_BND>(home,share,p,x0,x1,c) {}
 
   template<class A, class B>

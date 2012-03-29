@@ -45,7 +45,7 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class A, class B, class C, PropCond pc>
   forceinline
-  LinTer<A,B,C,pc>::LinTer(Home home, A y0, B y1, C y2, FloatInterval c0)
+  LinTer<A,B,C,pc>::LinTer(Home home, A y0, B y1, C y2, FloatVal c0)
     : Propagator(home), x0(y0), x1(y1), x2(y2), c(c0) {
     x0.subscribe(home,*this,pc);
     x1.subscribe(home,*this,pc);
@@ -65,7 +65,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, class C, PropCond pc>
   forceinline
   LinTer<A,B,C,pc>::LinTer(Space& home, bool share, Propagator& p,
-                               A y0, B y1, C y2, FloatInterval c0)
+                               A y0, B y1, C y2, FloatVal c0)
     : Propagator(home,share,p), c(c0) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -95,12 +95,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class A, class B, class C>
   forceinline
-  EqTer<A,B,C>::EqTer(Home home, A x0, B x1, C x2, FloatInterval c)
+  EqTer<A,B,C>::EqTer(Home home, A x0, B x1, C x2, FloatVal c)
     : LinTer<A,B,C,PC_FLOAT_BND>(home,x0,x1,x2,c) {}
 
   template<class A, class B, class C>
   ExecStatus
-  EqTer<A,B,C>::post(Home home, A x0, B x1, C x2, FloatInterval c) {
+  EqTer<A,B,C>::post(Home home, A x0, B x1, C x2, FloatVal c) {
     (void) new (home) EqTer<A,B,C>(home,x0,x1,x2,c);
     return ES_OK;
   }
@@ -114,7 +114,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, class C>
   forceinline
   EqTer<A,B,C>::EqTer(Space& home, bool share, Propagator& p,
-                          A x0, B x1, C x2, FloatInterval c)
+                          A x0, B x1, C x2, FloatVal c)
     : LinTer<A,B,C,PC_FLOAT_BND>(home,share,p,x0,x1,x2,c) {}
 
   template<class A, class B, class C>
@@ -227,12 +227,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class A, class B, class C>
   forceinline
-  LqTer<A,B,C>::LqTer(Home home, A x0, B x1, C x2, FloatInterval c)
+  LqTer<A,B,C>::LqTer(Home home, A x0, B x1, C x2, FloatVal c)
     : LinTer<A,B,C,PC_FLOAT_BND>(home,x0,x1,x2,c) {}
 
   template<class A, class B, class C>
   ExecStatus
-  LqTer<A,B,C>::post(Home home, A x0, B x1, C x2, FloatInterval c) {
+  LqTer<A,B,C>::post(Home home, A x0, B x1, C x2, FloatVal c) {
     (void) new (home) LqTer<A,B,C>(home,x0,x1,x2,c);
     return ES_OK;
   }
@@ -253,7 +253,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, class C>
   forceinline
   LqTer<A,B,C>::LqTer(Space& home, bool share, Propagator& p,
-                          A x0, B x1, C x2, FloatInterval c)
+                          A x0, B x1, C x2, FloatVal c)
     : LinTer<A,B,C,PC_FLOAT_BND>(home,share,p,x0,x1,x2,c) {}
 
   template<class A, class B, class C>

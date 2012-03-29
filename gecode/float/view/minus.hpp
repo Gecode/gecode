@@ -53,7 +53,7 @@ namespace Gecode { namespace Float {
    * Value access
    *
    */
-  forceinline FloatInterval
+  forceinline FloatVal
   MinusView::domain(void) const {
     return -x.domain();
   }
@@ -97,7 +97,7 @@ namespace Gecode { namespace Float {
     return x.in(-n);
   }
   forceinline bool
-  MinusView::in(const FloatInterval& n) const {
+  MinusView::in(const FloatVal& n) const {
     return x.in(-n);
   }
 

@@ -158,7 +158,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   Abs<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,boost::numeric::abs(x0.domain())));
     if (x1.max() >= 0)
-      GECODE_ME_CHECK(x0.eq(home,FloatInterval(-x1.max(), x1.max())));
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
     else
       return ES_FAILED;
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;

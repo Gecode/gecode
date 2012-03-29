@@ -50,7 +50,7 @@ namespace Gecode { namespace Float {
    */
 
   forceinline
-  FloatVarImp::FloatVarImp(Space& home, const FloatInterval& d)
+  FloatVarImp::FloatVarImp(Space& home, const FloatVal& d)
     : FloatVarImpBase(home), dom(d) {}
 
   forceinline
@@ -63,7 +63,7 @@ namespace Gecode { namespace Float {
    *
    */
 
-  forceinline FloatInterval
+  forceinline FloatVal
   FloatVarImp::domain(void) const {
     return dom;
   }
@@ -75,7 +75,7 @@ namespace Gecode { namespace Float {
   FloatVarImp::max(void) const {
     return boost::numeric::upper(dom);
   }
-  forceinline FloatInterval
+  forceinline FloatVal
   FloatVarImp::med(void) const {
     return boost::numeric::median(dom);
   }
@@ -113,7 +113,7 @@ namespace Gecode { namespace Float {
     return boost::numeric::in(n,dom);
   }
   forceinline bool
-  FloatVarImp::in(const FloatInterval& n) const {
+  FloatVarImp::in(const FloatVal& n) const {
     return boost::numeric::subset(n,dom);
   }
 
@@ -143,7 +143,7 @@ namespace Gecode { namespace Float {
     if (n > dom.upper())  return ME_FLOAT_FAILED;
     FloatDelta d(dom.lower(),n);
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatInterval(n,dom.upper()));
+    dom = boost::numeric::intersect(dom,FloatVal(n,dom.upper()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -155,7 +155,7 @@ namespace Gecode { namespace Float {
     if (n.lower() > dom.upper())  return ME_FLOAT_FAILED;
     FloatDelta d(dom.lower(),n.upper());
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatInterval(n.upper(),dom.upper()));
+    dom = boost::numeric::intersect(dom,FloatVal(n.upper(),dom.upper()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -169,7 +169,7 @@ namespace Gecode { namespace Float {
     if (n < dom.lower())  return ME_FLOAT_FAILED;
     FloatDelta d(n,dom.upper());
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatInterval(dom.lower(),n));
+    dom = boost::numeric::intersect(dom,FloatVal(dom.lower(),n));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -181,7 +181,7 @@ namespace Gecode { namespace Float {
     if (n.upper() < dom.lower())  return ME_FLOAT_FAILED;
     FloatDelta d(n.lower(),dom.upper());
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatInterval(dom.lower(),n.lower()));
+    dom = boost::numeric::intersect(dom,FloatVal(dom.lower(),n.lower()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));

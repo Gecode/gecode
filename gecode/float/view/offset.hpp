@@ -62,7 +62,7 @@ namespace Gecode { namespace Float {
   OffsetView::offset(FloatNum n) {
     c = n;
   }
-  forceinline FloatInterval
+  forceinline FloatVal
   OffsetView::domain(void) const {
     return x.domain()+c;
   }
@@ -106,7 +106,7 @@ namespace Gecode { namespace Float {
     return x.in(n-c);
   }
   forceinline bool
-  OffsetView::in(const FloatInterval& n) const {
+  OffsetView::in(const FloatVal& n) const {
     return x.in(n-c);
   }
 

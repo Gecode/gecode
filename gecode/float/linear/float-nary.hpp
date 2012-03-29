@@ -64,7 +64,7 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class P, class N, PropCond pc>
   forceinline
-  Lin<P,N,pc>::Lin(Home home, ViewArray<P>& x0, ViewArray<N>& y0, FloatInterval c0)
+  Lin<P,N,pc>::Lin(Home home, ViewArray<P>& x0, ViewArray<N>& y0, FloatVal c0)
     : Propagator(home), x(x0), y(y0), c(c0) {
     x.subscribe(home,*this,pc);
     y.subscribe(home,*this,pc);
@@ -127,7 +127,7 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class View>
   void
-  bounds_p(ModEventDelta med, ViewArray<View>& x, FloatInterval& c, FloatNum& sl, FloatNum& su) {
+  bounds_p(ModEventDelta med, ViewArray<View>& x, FloatVal& c, FloatNum& sl, FloatNum& su) {
     int n = x.size();
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = n; i--; ) {
@@ -148,7 +148,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class View>
   void
-  bounds_n(ModEventDelta med, ViewArray<View>& y, FloatInterval& c, FloatNum& sl, FloatNum& su) {
+  bounds_n(ModEventDelta med, ViewArray<View>& y, FloatVal& c, FloatNum& sl, FloatNum& su) {
     int n = y.size();
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = n; i--; ) {
@@ -177,7 +177,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class P, class N>
   ExecStatus
   prop_bnd(Space& home, ModEventDelta med, Propagator& p,
-           ViewArray<P>& x, ViewArray<N>& y, FloatInterval& c) {
+           ViewArray<P>& x, ViewArray<N>& y, FloatVal& c) {
     // Eliminate singletons
     FloatNum sl = 0.0;
     FloatNum su = 0.0;
@@ -272,12 +272,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class P, class N>
   forceinline
-  Eq<P,N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatInterval c)
+  Eq<P,N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
     : Lin<P,N,PC_FLOAT_BND>(home,x,y,c) {}
 
   template<class P, class N>
   ExecStatus
-  Eq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatInterval c) {
+  Eq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Eq<P,NoView>(home,x,nva,c);
@@ -301,13 +301,13 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class P, class N>
   forceinline Actor*
-  eqtobin(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatInterval) {
+  eqtobin(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
     return NULL;
   }
   template<class Val>
   forceinline Actor*
   eqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
     assert(x.size() == 2);
     return new (home) EqBin<FloatView,FloatView>
       (home,share,p,x[0],x[1],c);
@@ -315,7 +315,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   eqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
     assert(y.size() == 2);
     return new (home) EqBin<FloatView,FloatView>
       (home,share,p,y[0],y[1],-c);
@@ -323,7 +323,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   eqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
     if (x.size() == 2)
       return new (home) EqBin<FloatView,FloatView>
         (home,share,p,x[0],x[1],c);
@@ -340,13 +340,13 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class P, class N>
   forceinline Actor*
-  eqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatInterval) {
+  eqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
     return NULL;
   }
   template<class Val>
   forceinline Actor*
   eqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
     assert(x.size() == 3);
     return new (home) EqTer<FloatView,FloatView,FloatView>
       (home,share,p,x[0],x[1],x[2],c);
@@ -354,7 +354,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   eqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
     assert(y.size() == 3);
     return new (home) EqTer<FloatView,FloatView,FloatView>
       (home,share,p,y[0],y[1],y[2],-c);
@@ -362,7 +362,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   eqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
     if (x.size() == 3)
       return new (home) EqTer<FloatView,FloatView,FloatView>
         (home,share,p,x[0],x[1],x[2],c);
@@ -611,12 +611,12 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class P, class N>
   forceinline
-  Lq<P,N>::Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatInterval c)
+  Lq<P,N>::Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
     : Lin<P,N,PC_FLOAT_BND>(home,x,y,c) {}
 
   template<class P, class N>
   ExecStatus
-  Lq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatInterval c) {
+  Lq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) Lq<P,NoView>(home,x,nva,c);
@@ -640,13 +640,13 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class P, class N>
   forceinline Actor*
-  lqtobin(Space&, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, FloatInterval) {
+  lqtobin(Space&, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, FloatVal) {
     return NULL;
   }
   template<class Val>
   forceinline Actor*
   lqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
     assert(x.size() == 2);
     return new (home) LqBin<FloatView,FloatView>
       (home,share,p,x[0],x[1],c);
@@ -654,7 +654,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   lqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
     assert(y.size() == 2);
     return new (home) LqBin<MinusView,MinusView>
       (home,share,p,MinusView(y[0]),MinusView(y[1]),c);
@@ -662,7 +662,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   lqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
     if (x.size() == 2)
       return new (home) LqBin<FloatView,FloatView>
         (home,share,p,x[0],x[1],c);
@@ -679,13 +679,13 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class P, class N>
   forceinline Actor*
-  lqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatInterval) {
+  lqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
     return NULL;
   }
   template<class Val>
   forceinline Actor*
   lqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
     assert(x.size() == 3);
     return new (home) LqTer<FloatView,FloatView,FloatView>
       (home,share,p,x[0],x[1],x[2],c);
@@ -693,7 +693,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   lqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
     assert(y.size() == 3);
     return new (home) LqTer<MinusView,MinusView,MinusView>
       (home,share,p,MinusView(y[0]),MinusView(y[1]),MinusView(y[2]),c);
@@ -701,7 +701,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class Val>
   forceinline Actor*
   lqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatInterval c) {
+          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
     if (x.size() == 3)
       return new (home) LqTer<FloatView,FloatView,FloatView>
         (home,share,p,x[0],x[1],x[2],c);

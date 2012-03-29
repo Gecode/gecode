@@ -1,11 +1,13 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
- *     Christian Schulte, 2002
+ *     Christian Schulte, 2012
  *     Vincent Barichard, 2012
  *
  *  Last modified:
@@ -37,61 +39,58 @@
  *
  */
 
-namespace Gecode {
+#include <gecode/float.hh>
 
-  forceinline void
-  FloatVar::_init(Space& home, FloatNum min, FloatNum max) {
-    x = new (home) Float::FloatVarImp(home,FloatVal(min,max));
-  }
+#ifdef GECODE_HAS_MPFR
 
-  forceinline
-  FloatVar::FloatVar(void) {}
-  forceinline
-  FloatVar::FloatVar(const FloatVar& y)
-    : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
-  forceinline
-  FloatVar::FloatVar(const Float::FloatView& y)
-    : VarImpVar<Float::FloatVarImp>(y.varimp()) {}
+#include <gmp.h>
+#include <mpfr.h>
 
-  forceinline FloatVal
-  FloatVar::val(void) const {
-    if (!x->assigned())
-      throw Float::ValOfUnassignedVar("FloatVar::val");
-    return x->val();
-  }
-  forceinline FloatNum
-  FloatVar::min(void) const {
-    return x->min();
-  }
-  forceinline FloatVal
-  FloatVar::med(void) const {
-    return x->med();
-  }
-  forceinline FloatNum
-  FloatVar::median(void) const {
-    return x->median();
-  }
-  forceinline FloatNum
-  FloatVar::max(void) const {
-    return x->max();
+namespace Gecode { namespace Float {
+
+  /// Type signatur of mpfr function
+  typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
+
+  /// Routine to call mpfr function with proper rounding
+  forceinline double 
+  invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
+    mpfr_t xx;
+    mpfr_init_set_d(xx, x, GMP_RNDN);
+    f(xx, xx, r);
+    FloatNum res = mpfr_get_d(xx, r);
+    mpfr_clear(xx);
+    return res;
   }
 
-  forceinline FloatVal
-  FloatVar::domain(void) const {
-    return x->domain();
+  /// Define mpfr functions with proper rounding
+#define GECODE_GENR_FUNC(name)
+  double FullRounding::name##_down(FloatNum x) { 
+    return invoke_mpfr(x, mpfr_##name, GMP_RNDD); 
+  }
+  double FullRounding::name##_up(FloatNum x) {
+    return invoke_mpfr(x, mpfr_##name, GMP_RNDU);
   }
 
-  forceinline FloatVal
-  FloatVar::width(void) const {
-    return x->width();
-  }
+  GENR_FUNC(exp)
+  GENR_FUNC(log)
+  GENR_FUNC(sin)
+  GENR_FUNC(cos)
+  GENR_FUNC(tan)
+  GENR_FUNC(asin)
+  GENR_FUNC(acos)
+  GENR_FUNC(atan)
+  GENR_FUNC(sinh)
+  GENR_FUNC(cosh)
+  GENR_FUNC(tanh)
+  GENR_FUNC(asinh)
+  GENR_FUNC(acosh)
+  GENR_FUNC(atanh)
 
-  forceinline bool
-  FloatVar::in(const FloatVal& n) const {
-    return x->in(n);
-  }
+#undef GECODE_GENR_FUNC
 
-}
+}}
+
+#endif
 
 // STATISTICS: float-var
 

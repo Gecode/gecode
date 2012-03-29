@@ -262,7 +262,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   Channel<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.gq(home,std::ceil(x0.min())));
     GECODE_ME_CHECK(x1.lq(home,std::floor(x0.max())));
-    GECODE_ME_CHECK(x0.eq(home,FloatInterval(x1.min(),x1.max())));
+    GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(),x1.max())));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 

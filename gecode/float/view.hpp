@@ -70,7 +70,7 @@ namespace Gecode { namespace Float {
     /// \name Value access
     //@{
     /// Return domain
-    FloatInterval domain(void) const;
+    FloatVal domain(void) const;
     /// Return minimum of domain
     FloatNum min(void) const;
     /// Return maximum of domain
@@ -99,7 +99,7 @@ namespace Gecode { namespace Float {
     /// Test whether \a n is contained in domain
     bool in(FloatNum n) const;
     /// Test whether \a n is contained in domain
-    bool in(const FloatInterval& n) const;
+    bool in(const FloatVal& n) const;
     //@}
 
     /// \name Domain update by value
@@ -178,7 +178,7 @@ namespace Gecode { namespace Float {
     /// \name Value access
     //@{
     /// Return domain
-    FloatInterval domain(void) const;
+    FloatVal domain(void) const;
     /// Return minimum of domain
     FloatNum min(void) const;
     /// Return maximum of domain
@@ -207,7 +207,7 @@ namespace Gecode { namespace Float {
     /// Test whether \a n is contained in domain
     bool in(FloatNum n) const;
     /// Test whether \a n is contained in domain
-    bool in(const FloatInterval& n) const;
+    bool in(const FloatVal& n) const;
     //@}
 
     /// \name Domain update by value
@@ -294,7 +294,7 @@ namespace Gecode { namespace Float {
     /// Change offset to be \a n
     void offset(FloatNum n);
     /// Return domain
-    FloatInterval domain(void) const;
+    FloatVal domain(void) const;
     /// Return minimum of domain
     FloatNum min(void) const;
     /// Return maximum of domain
@@ -323,7 +323,7 @@ namespace Gecode { namespace Float {
     /// Test whether \a n is contained in domain
     bool in(FloatNum n) const;
     /// Test whether \a n is contained in domain
-    bool in(const FloatInterval& n) const;
+    bool in(const FloatVal& n) const;
     //@}
 
     /// \name Domain update by value
@@ -412,7 +412,7 @@ namespace Gecode { namespace Float {
     /// \name Value access
     //@{
     /// Return domain
-    FloatInterval domain(void) const;
+    FloatVal domain(void) const;
     /// Return scale factor of scale view
     FloatVal scale(void) const;
     /// Return minimum of domain
@@ -444,7 +444,7 @@ namespace Gecode { namespace Float {
     /// Test whether \a n is contained in domain
     bool in(FloatNum n) const;
     /// Test whether \a n is contained in domain
-    bool in(const FloatInterval& n) const;
+    bool in(const FloatVal& n) const;
     //@}
 
     /// \name Domain update by value

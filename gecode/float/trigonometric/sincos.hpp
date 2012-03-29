@@ -43,14 +43,14 @@ namespace Gecode { namespace Float { namespace Trigonometric {
    *
    */
   template<class V>
-  void aSinProject(const V& aSinIv, FloatInterval& iv) {
+  void aSinProject(const V& aSinIv, FloatVal& iv) {
     using namespace boost::numeric;
     using namespace boost::numeric::interval_lib;
     using namespace boost::numeric::interval_lib::constants;
-#define I0__PI_2I    FloatInterval(0,pi_half_upper<FloatNum>())
-#define IPI_2__PII   FloatInterval(pi_half_lower<FloatNum>(),pi_upper<FloatNum>())
-#define IPI__3PI_2I  FloatInterval(pi_lower<FloatNum>(),3*pi_half_upper<FloatNum>())
-#define I3PI_2__2PII FloatInterval(3*pi_half_lower<FloatNum>(),pi_twice_upper<FloatNum>())
+#define I0__PI_2I    FloatVal(0,pi_half_upper<FloatNum>())
+#define IPI_2__PII   FloatVal(pi_half_lower<FloatNum>(),pi_upper<FloatNum>())
+#define IPI__3PI_2I  FloatVal(pi_lower<FloatNum>(),3*pi_half_upper<FloatNum>())
+#define I3PI_2__2PII FloatVal(3*pi_half_lower<FloatNum>(),pi_twice_upper<FloatNum>())
 #define POS(X) ((in(X,I0__PI_2I))?0: (in(X,IPI_2__PII))?1: (in(X,IPI__3PI_2I))?2: 3 )
 #define CASE(X,Y) case ((X << 2) | Y) :
 #define CASE_LABEL(X,Y) case ((X << 2) | Y) : CASE_ ## X ## _ ## Y :
@@ -229,7 +229,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Sin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,sin(x0.domain())));
-    FloatInterval iv = fmod(x0.domain(),boost::numeric::interval_lib::pi_twice<FloatInterval>());
+    FloatVal iv = fmod(x0.domain(),boost::numeric::interval_lib::pi_twice<FloatVal>());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
@@ -270,7 +270,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Cos<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,cos(x0.domain())));
-    FloatInterval iv = fmod(boost::numeric::interval_lib::pi_half<FloatInterval>() + x0.domain(),boost::numeric::interval_lib::pi_twice<FloatInterval>());
+    FloatVal iv = fmod(boost::numeric::interval_lib::pi_half<FloatVal>() + x0.domain(),boost::numeric::interval_lib::pi_twice<FloatVal>());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));

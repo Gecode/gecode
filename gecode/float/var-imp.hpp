@@ -80,17 +80,17 @@ namespace Gecode { namespace Float {
   class FloatVarImp : public FloatVarImpBase {
   protected:
     /// Domain information
-    FloatInterval dom;
+    FloatVal dom;
     /// Constructor for cloning \a x
     FloatVarImp(Space& home, bool share, FloatVarImp& x);
   public:
     /// Initialize with interval \a d
-    FloatVarImp(Space& home, const FloatInterval& d);
+    FloatVarImp(Space& home, const FloatVal& d);
 
     /// \name Value access
     //@{
     /// Return domain
-    FloatInterval domain(void) const;
+    FloatVal domain(void) const;
     /// Return minimum of domain
     FloatNum min(void) const;
     /// Return maximum of domain
@@ -98,7 +98,7 @@ namespace Gecode { namespace Float {
     /// Return value of domain (only if assigned)
     FloatVal val(void) const;
     /// Return median of domain (interval)
-    FloatInterval med(void) const;
+    FloatVal med(void) const;
     /// Return median of domain (closest representation)
     FloatNum median(void) const;
 
@@ -116,7 +116,7 @@ namespace Gecode { namespace Float {
     /// Test whether \a n is contained in domain
     bool in(FloatNum n) const;
     /// Test whether \a n is contained in domain
-    bool in(const FloatInterval& n) const;
+    bool in(const FloatVal& n) const;
     //@}
 
     /// \name Domain update by value

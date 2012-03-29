@@ -56,7 +56,7 @@ namespace Gecode { namespace Float {
    * Value access
    *
    */
-  forceinline FloatInterval
+  forceinline FloatVal
   FloatView::domain(void) const {
     return x->domain();
   }
@@ -100,7 +100,7 @@ namespace Gecode { namespace Float {
     return x->in(n);
   }
   forceinline bool
-  FloatView::in(const FloatInterval& n) const {
+  FloatView::in(const FloatVal& n) const {
     return x->in(n);
   }
 

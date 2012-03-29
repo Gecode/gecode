@@ -113,79 +113,61 @@ namespace Gecode {
 
 }
 
-#ifdef GECODE_HAS_MPFR
-  //extern "C" {
-  #include <gmp.h>
-  #include <mpfr.h>
-  //}
-#endif
-
 namespace Gecode { namespace Float {
 
-/**
- * \brief Floating point interval type
- *
- * \ingroup TaskModelFloatVars
- */
-
-  struct fullRounding : boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
+  /**
+   * \brief Floating point rounding policy
+   *
+   * \ingroup TaskModelFloatVars
+   */
+  class FullRounding : 
+    public boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
 #ifdef GECODE_HAS_MPFR
-    private:
-      typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
-      double invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
-        mpfr_t xx;
-        mpfr_init_set_d(xx, x, GMP_RNDN);
-        f(xx, xx, r);
-        FloatNum res = mpfr_get_d(xx, r);
-        mpfr_clear(xx);
-        return res;
-      }
-    public:
-    # define GENR_FUNC(name) \
-      double name##_down(FloatNum x) { return invoke_mpfr(x, mpfr_##name, GMP_RNDD); } \
-      double name##_up  (FloatNum x) { return invoke_mpfr(x, mpfr_##name, GMP_RNDU); }
-      GENR_FUNC(exp)
-      GENR_FUNC(log)
-      GENR_FUNC(sin)
-      GENR_FUNC(cos)
-      GENR_FUNC(tan)
-      GENR_FUNC(asin)
-      GENR_FUNC(acos)
-      GENR_FUNC(atan)
-      GENR_FUNC(sinh)
-      GENR_FUNC(cosh)
-      GENR_FUNC(tanh)
-      GENR_FUNC(asinh)
-      GENR_FUNC(acosh)
-      GENR_FUNC(atanh)
+  public:
+    /// Define generic mpfr function
+#define GECODE_GENR_FUNC(name)      \
+    GECODE_FLOAT_EXPORT double name##_down(FloatNum x); \
+    GECODE_FLOAT_EXPORT double name##_up  (FloatNum x);
+    GENR_FUNC(exp)
+    GENR_FUNC(log)
+    GENR_FUNC(sin)
+    GENR_FUNC(cos)
+    GENR_FUNC(tan)
+    GENR_FUNC(asin)
+    GENR_FUNC(acos)
+    GENR_FUNC(atan)
+    GENR_FUNC(sinh)
+    GENR_FUNC(cosh)
+    GENR_FUNC(tanh)
+    GENR_FUNC(asinh)
+    GENR_FUNC(acosh)
+    GENR_FUNC(atanh)
+#undef GECODE_GENR_FUNC
 #endif
   };
 
-  typedef boost::numeric::interval_lib::save_state< fullRounding > R;
+  typedef boost::numeric::interval_lib::save_state<FullRounding> R;
   typedef boost::numeric::interval_lib::checking_strict<FloatNum> P;
   typedef boost::numeric::interval<FloatNum, boost::numeric::interval_lib::policies<R, P> > GECODE_FLOAT_FLOATINTERVAL_TYPE;
+
 }};
 
 namespace Gecode {
 
-  typedef Gecode::Float::GECODE_FLOAT_FLOATINTERVAL_TYPE FloatInterval;
-
   /**
-   * \brief Floating rounding mode
+   * \brief Float value type
    *
    * \ingroup TaskModelFloatVars
    */
-  static FloatInterval::traits_type::rounding Round;
+  typedef Gecode::Float::GECODE_FLOAT_FLOATINTERVAL_TYPE FloatVal;
+
+  /**
+   * \brief Float rounding mode
+   *
+   * \ingroup TaskModelFloatVars
+   */
+  static FloatVal::traits_type::rounding Round;
   
-  /**
-   * \brief Floating point value type
-   *
-   * This type defines floating point values, which use an interval
-   * representation for better accuracy.
-   * \ingroup TaskModelFloatVars
-   */
-  typedef FloatInterval FloatVal;
-
 }
 
 namespace Gecode { namespace Float {
@@ -261,7 +243,7 @@ namespace Gecode {
     /// \name Value access
     //@{
     /// Return domain
-    FloatInterval domain(void) const;
+    FloatVal domain(void) const;
     /// Return minimum of domain
     FloatNum min(void) const;
     /// Return maximum of domain
@@ -286,7 +268,7 @@ namespace Gecode {
     /// \name Domain tests
     //@{
     /// Test whether \a n is contained in domain
-    bool in(const FloatInterval& n) const;
+    bool in(const FloatVal& n) const;
     //@}
   };
 

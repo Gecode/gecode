@@ -69,14 +69,14 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Tan<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,tan(x0.domain())));
-    FloatInterval iv = fmod(x0.domain(),boost::numeric::interval_lib::pi<FloatInterval>());
+    FloatVal iv = fmod(x0.domain(),boost::numeric::interval_lib::pi<FloatVal>());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
 
     using namespace boost::numeric;
     using namespace boost::numeric::interval_lib;
     using namespace boost::numeric::interval_lib::constants;
-#define I0__PI_2I    FloatInterval(0,pi_half_upper<FloatNum>())
-#define IPI_2__PII   FloatInterval(pi_half_lower<FloatNum>(),pi_upper<FloatNum>())
+#define I0__PI_2I    FloatVal(0,pi_half_upper<FloatNum>())
+#define IPI_2__PII   FloatVal(pi_half_lower<FloatNum>(),pi_upper<FloatNum>())
 #define POS(X) ((in(X,I0__PI_2I))?0:1)
 #define CASE(X,Y) case ((X << 2) | Y) :
 #define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_upper<FloatNum>()),X)

@@ -42,7 +42,7 @@
 namespace Gecode {
 
   FloatVar::FloatVar(Space& home, FloatNum min, FloatNum max)
-    : VarImpVar<Float::FloatVarImp>(new (home) Float::FloatVarImp(home,FloatInterval(min,max))) {
+    : VarImpVar<Float::FloatVarImp>(new (home) Float::FloatVarImp(home,FloatVal(min,max))) {
     Float::Limits::check(min,"FloatVar::FloatVar");
     Float::Limits::check(max,"FloatVar::FloatVar");
     if (min > max)

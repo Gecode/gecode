@@ -58,7 +58,7 @@ namespace Gecode { namespace Float {
   ScaleView::scale(void) const {
     return a;
   }
-  forceinline FloatInterval
+  forceinline FloatVal
   ScaleView::domain(void) const {
     return x.domain()*a;
   }
@@ -102,7 +102,7 @@ namespace Gecode { namespace Float {
     return x.in(n/a);
   }
   forceinline bool
-  ScaleView::in(const FloatInterval& n) const {
+  ScaleView::in(const FloatVal& n) const {
     return x.in(n/a);
   }
 

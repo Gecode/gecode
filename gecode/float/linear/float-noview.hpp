@@ -54,7 +54,7 @@ namespace Gecode { namespace Float { namespace Linear {
       /// \name Value access
       //@{
       /// Return domain
-      FloatInterval domain(void) const { return FloatInterval(); }
+      FloatVal domain(void) const { return FloatVal(); }
       /// Return minimum of domain
       FloatNum min(void) const { return 0.0; }
       /// Return maximum of domain
@@ -81,7 +81,7 @@ namespace Gecode { namespace Float { namespace Linear {
       /// Test whether \a n is contained in domain
       bool in(FloatNum n) const { (void) n; return false; }
       /// Test whether \a n is contained in domain
-      bool in(const FloatInterval& n) const { (void) n; return false; }
+      bool in(const FloatVal& n) const { (void) n; return false; }
       //@}
 
       /// \name Domain update by value
