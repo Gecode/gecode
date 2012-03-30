@@ -44,28 +44,25 @@ namespace Gecode { namespace Float { namespace Trigonometric {
    */
   template<class V>
   void aSinProject(const V& aSinIv, FloatVal& iv) {
-    using namespace boost::numeric;
-    using namespace boost::numeric::interval_lib;
-    using namespace boost::numeric::interval_lib::constants;
-#define I0__PI_2I    FloatVal(0,pi_half_upper<FloatNum>())
-#define IPI_2__PII   FloatVal(pi_half_lower<FloatNum>(),pi_upper<FloatNum>())
-#define IPI__3PI_2I  FloatVal(pi_lower<FloatNum>(),3*pi_half_upper<FloatNum>())
-#define I3PI_2__2PII FloatVal(3*pi_half_lower<FloatNum>(),pi_twice_upper<FloatNum>())
+#define I0__PI_2I    FloatVal(0,pi_half_upper())
+#define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
+#define IPI__3PI_2I  FloatVal(pi_lower(),3*pi_half_upper())
+#define I3PI_2__2PII FloatVal(3*pi_half_lower(),pi_twice_upper())
 #define POS(X) ((in(X,I0__PI_2I))?0: (in(X,IPI_2__PII))?1: (in(X,IPI__3PI_2I))?2: 3 )
 #define CASE(X,Y) case ((X << 2) | Y) :
 #define CASE_LABEL(X,Y) case ((X << 2) | Y) : CASE_ ## X ## _ ## Y :
-#define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_twice_upper<FloatNum>()),X)
-#define SHIFTN_DOWN(N,X) Round.add_down(Round.mul_down(N,pi_twice_lower<FloatNum>()),X)
+#define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_twice_upper()),X)
+#define SHIFTN_DOWN(N,X) Round.add_down(Round.mul_down(N,pi_twice_lower()),X)
 #define GROWING(I) Round.sin_down(iv.lower()) <= Round.sin_up(iv.upper())
 #define NOT_GROWING(I) Round.sin_up(iv.lower()) >= Round.sin_down(iv.upper())
 #define ASININF_DOWN Round.asin_down(aSinIv.min())
 #define ASINSUP_UP Round.asin_up(aSinIv.max())
-#define PI_UP pi_upper<FloatNum>()
-#define PI_DOWN pi_lower<FloatNum>()
-#define PITWICE_UP pi_twice_upper<FloatNum>()
-#define PITWICE_DOWN pi_twice_lower<FloatNum>()
+#define PI_UP pi_upper()
+#define PI_DOWN pi_lower()
+#define PITWICE_UP pi_twice_upper()
+#define PITWICE_DOWN pi_twice_lower()
 
-    int n = iv.upper() / pi_twice_lower<FloatNum>();
+    int n = iv.upper() / pi_twice_lower();
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
     // 2 <=> in [PI;3*PI/2]
@@ -229,7 +226,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Sin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,sin(x0.domain())));
-    FloatVal iv = fmod(x0.domain(),boost::numeric::interval_lib::pi_twice<FloatVal>());
+    FloatVal iv = fmod(x0.domain(),FloatVal::pi_twice());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
@@ -270,7 +267,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Cos<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,cos(x0.domain())));
-    FloatVal iv = fmod(boost::numeric::interval_lib::pi_half<FloatVal>() + x0.domain(),boost::numeric::interval_lib::pi_twice<FloatVal>());
+    FloatVal iv = fmod(FloatVal::pi_half() + x0.domain(),
+                       FloatVal::pi_twice());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));

@@ -69,8 +69,8 @@ namespace Gecode { namespace Float { namespace Transcendental {
   template<class A, class B>
   ExecStatus
   Exp<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,boost::numeric::exp(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,boost::numeric::log(x1.domain())));
+    GECODE_ME_CHECK(x1.eq(home,exp(x0.domain())));
+    GECODE_ME_CHECK(x0.eq(home,log(x1.domain())));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -106,8 +106,8 @@ namespace Gecode { namespace Float { namespace Transcendental {
   ExecStatus
   Log<A,B>::propagate(Space& home, const ModEventDelta&) {
     if (x0.max() < 0) return ES_FAILED;
-    GECODE_ME_CHECK(x1.eq(home,boost::numeric::log(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,boost::numeric::exp(x1.domain())));
+    GECODE_ME_CHECK(x1.eq(home,log(x0.domain())));
+    GECODE_ME_CHECK(x0.eq(home,exp(x1.domain())));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 

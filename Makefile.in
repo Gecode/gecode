@@ -439,7 +439,7 @@ FLOATHDR0 = \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
 	branch.hh branch/post-val-float.hpp branch/select-val.hpp \
-	branch/select-view.hpp activity.hpp val.hpp
+	branch/select-view.hpp activity.hpp num.hpp val.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%) \
 	gecode/float/branch/post-view-float.cpp

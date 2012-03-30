@@ -69,25 +69,22 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus
   Tan<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,tan(x0.domain())));
-    FloatVal iv = fmod(x0.domain(),boost::numeric::interval_lib::pi<FloatVal>());
+    FloatVal iv = fmod(x0.domain(),FloatVal::pi());
     FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
 
-    using namespace boost::numeric;
-    using namespace boost::numeric::interval_lib;
-    using namespace boost::numeric::interval_lib::constants;
-#define I0__PI_2I    FloatVal(0,pi_half_upper<FloatNum>())
-#define IPI_2__PII   FloatVal(pi_half_lower<FloatNum>(),pi_upper<FloatNum>())
+#define I0__PI_2I    FloatVal(0,pi_half_upper())
+#define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
 #define POS(X) ((in(X,I0__PI_2I))?0:1)
 #define CASE(X,Y) case ((X << 2) | Y) :
-#define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_upper<FloatNum>()),X)
+#define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_upper()),X)
 #define GROWING(I) Round.tan_down(iv.lower()) <= Round.tan_up(iv.upper())
 #define ATANINF_DOWN Round.atan_down(x1.min())
 #define ATANSUP_UP Round.atan_up(x1.max())
-#define PI_UP pi_upper<FloatNum>()
-#define PI_DOWN pi_lower<FloatNum>()
-#define PI_TWICE_DOWN pi_twice_lower<FloatNum>()
+#define PI_UP pi_upper()
+#define PI_DOWN pi_lower()
+#define PI_TWICE_DOWN pi_twice_lower()
 
-    int n = iv.upper() / pi_lower<FloatNum>();
+    int n = iv.upper() / pi_lower();
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
     switch ( (POS(iv.lower()) << 2) | POS(Round.sub_up(iv.upper(),Round.mul_up(n,PI_UP))) )

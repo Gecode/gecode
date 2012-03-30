@@ -73,18 +73,15 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Square<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,boost::numeric::square(x0.domain())));
+    GECODE_ME_CHECK(x1.eq(home,square(x0.domain())));
     if (x0.min() >= 0)
-      GECODE_ME_CHECK(x0.eq(home,boost::numeric::sqrt(x1.domain())));
+      GECODE_ME_CHECK(x0.eq(home,sqrt(x1.domain())));
     else if (x0.max() <= 0)
-      GECODE_ME_CHECK(x0.eq(home,-boost::numeric::sqrt(x1.domain())));
+      GECODE_ME_CHECK(x0.eq(home,-sqrt(x1.domain())));
     else
-      GECODE_ME_CHECK(x0.eq(home,
-                            boost::numeric::hull(
-                                boost::numeric::sqrt(x1.domain()),
-                                -boost::numeric::sqrt(x1.domain())
-                            )
-                      ));
+      GECODE_ME_CHECK(x0.eq(home,hull(sqrt(x1.domain()),
+                                      -sqrt(x1.domain()))
+                            ));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -120,8 +117,8 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   ExecStatus
   Sqrt<A,B>::propagate(Space& home, const ModEventDelta&) {
     if (x0.max() < 0) return ES_FAILED;
-    GECODE_ME_CHECK(x1.eq(home,boost::numeric::sqrt(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,boost::numeric::square(x1.domain())));
+    GECODE_ME_CHECK(x1.eq(home,sqrt(x0.domain())));
+    GECODE_ME_CHECK(x0.eq(home,square(x1.domain())));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -156,7 +153,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Abs<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,boost::numeric::abs(x0.domain())));
+    GECODE_ME_CHECK(x1.eq(home,abs(x0.domain())));
     if (x1.max() >= 0)
       GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
     else

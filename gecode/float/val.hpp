@@ -11,8 +11,8 @@
  *     Vincent Barichard, 2012
  *
  *  Last modified:
- *     $Date: 2012-03-27 13:23:23 +0200 (Tue, 27 Mar 2012) $ by $Author: schulte $
- *     $Revision: 12634 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -46,81 +46,427 @@ namespace Gecode {
    *
    */
   forceinline
-  NewFloatVal::NewFloatVal(void) {}
+  FloatVal::FloatVal(void) {}
   forceinline
-  NewFloatVal::NewFloatVal(const FloatNum& n) : x(n) {}
+  FloatVal::FloatVal(const FloatNum& n) : x(n) {}
   forceinline
-  NewFloatVal::NewFloatVal(const FloatNum& l, const FloatNum& u) : x(l,u) {}
+  FloatVal::FloatVal(const FloatNum& l, const FloatNum& u) : x(l,u) {}
   forceinline
-  NewFloatVal::NewFloatVal(const FloatVal& i) : x(i) {}
+  FloatVal::FloatVal(const FloatValImpType& i) : x(i) {}
   forceinline
-  NewFloatVal::NewFloatVal(const NewFloatVal& v) : x(v.x) {}
+  FloatVal::FloatVal(const FloatVal& v) : x(v.x) {}
 
-  forceinline NewFloatVal&
-  NewFloatVal::operator =(const FloatNum& n) {
+  forceinline FloatVal&
+  FloatVal::operator =(const FloatNum& n) {
     x = n; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator =(const NewFloatVal& v) {
+  forceinline FloatVal&
+  FloatVal::operator =(const FloatVal& v) {
     x = v.x; return *this;
   }
     
-    //    void assign(FloatNum const &l, FloatNum const &u);
+  forceinline void
+  FloatVal::assign(FloatNum const &l, FloatNum const &u) {
+    x.assign(l,u);
+  }
 
-  forceinline const FloatNum&
-  NewFloatVal::lower(void) const {
+  forceinline FloatNum
+  FloatVal::lower(void) const {
     return x.lower();
   }
-  forceinline const FloatNum&
-  NewFloatVal::upper(void) const {
+  forceinline FloatNum
+  FloatVal::upper(void) const {
     return x.upper();
   }
     
-  forceinline NewFloatVal
-  NewFloatVal::empty(void) {
-    NewFloatVal e(FloatVal::empty()); return e;
+  forceinline FloatVal
+  FloatVal::pi_half(void) {
+    FloatVal p(boost::numeric::interval_lib::pi_half<FloatValImpType>());
+    return p;
   }
-  forceinline NewFloatVal
-  NewFloatVal::whole(void) {
-    NewFloatVal w(FloatVal::whole()); return w;
+  forceinline FloatVal
+  FloatVal::pi(void) {
+    FloatVal p(boost::numeric::interval_lib::pi<FloatValImpType>());
+    return p;
   }
-  forceinline NewFloatVal
-  NewFloatVal::hull(FloatNum x, FloatNum y) {
-    NewFloatVal h(FloatVal::hull(x,y)); return h;
+  forceinline FloatVal
+  FloatVal::pi_twice(void) {
+    FloatVal p(boost::numeric::interval_lib::pi_twice<FloatValImpType>());
+    return p;
+  }
+  forceinline FloatVal
+  FloatVal::hull(FloatNum x, FloatNum y) {
+    FloatVal h(FloatVal::hull(x,y)); return h;
   }
     
-  forceinline NewFloatVal&
-  NewFloatVal::operator +=(const FloatNum& n) {
+  forceinline FloatVal&
+  FloatVal::operator +=(const FloatNum& n) {
     x += n; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator -=(const FloatNum& n) {
+  forceinline FloatVal&
+  FloatVal::operator -=(const FloatNum& n) {
     x -= n; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator *=(const FloatNum& n) {
+  forceinline FloatVal&
+  FloatVal::operator *=(const FloatNum& n) {
     x *= n; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator /=(const FloatNum& n) {
+  forceinline FloatVal&
+  FloatVal::operator /=(const FloatNum& n) {
     x /= n; return *this;
   }
 
-  forceinline NewFloatVal&
-  NewFloatVal::operator +=(const NewFloatVal& v) {
+  forceinline FloatVal&
+  FloatVal::operator +=(const FloatVal& v) {
     x += v.x; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator -=(const NewFloatVal& v) {
+  forceinline FloatVal&
+  FloatVal::operator -=(const FloatVal& v) {
     x -= v.x; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator *=(const NewFloatVal& v) {
+  forceinline FloatVal&
+  FloatVal::operator *=(const FloatVal& v) {
     x *= v.x; return *this;
   }
-  forceinline NewFloatVal&
-  NewFloatVal::operator /=(const NewFloatVal& v) {
+  forceinline FloatVal&
+  FloatVal::operator /=(const FloatVal& v) {
     x /= v.x; return *this;
+  }
+
+  /*
+   * Operators and functions on float values
+   *
+   */
+
+//   /* arithmetic operators involving intervals */
+  forceinline FloatVal
+  operator+(const FloatVal& x) {
+    return FloatVal(+x.x);
+  }
+  forceinline FloatVal
+  operator-(const FloatVal& x) {
+    return FloatVal(-x.x);
+  }
+  forceinline FloatVal
+  operator+(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(x.x+y.x);
+  }
+  forceinline FloatVal
+  operator+(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(x.x+y);
+  }
+  forceinline FloatVal
+  operator+(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(x+y.x);
+  }
+
+  forceinline FloatVal
+  operator-(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(x.x-y.x);
+  }
+  forceinline FloatVal
+  operator-(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(x.x-y);
+  }
+  forceinline FloatVal
+  operator-(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(x-y.x);
+  }
+
+  forceinline FloatVal
+  operator*(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(x.x*y.x);
+  }
+  forceinline FloatVal
+  operator*(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(x.x*y);
+  }
+  forceinline FloatVal
+  operator*(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(x*y.x);
+  }
+
+  forceinline FloatVal
+  operator/(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(x.x/y.x);
+  }
+  forceinline FloatVal
+  operator/(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(x.x/y);
+  }
+  forceinline FloatVal
+  operator/(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(x/y.x);
+  }
+
+  forceinline FloatVal
+  abs(const FloatVal& x) {
+    return FloatVal(abs(x.x));
+  }
+  forceinline FloatVal
+  sqrt(const FloatVal& x) {
+    return FloatVal(sqrt(x.x));
+  }
+  forceinline FloatVal
+  square(const FloatVal& x) {
+    return FloatVal(square(x.x));
+  }
+  forceinline FloatVal
+  pow(const FloatVal& x, int n) {
+    return FloatVal(pow(x.x,n));
+  }
+  forceinline FloatVal
+  nth_root(const FloatVal& x, int n) {
+    return FloatVal(nth_root(x.x,n));
+  }
+
+#ifdef GECODE_HAS_MPFR
+
+  forceinline FloatVal
+  exp(const FloatVal& x) {
+    return FloatVal(exp(x.x));
+  }
+  forceinline FloatVal
+  log(const FloatVal& x) {
+    return FloatVal(log(x.x));
+  }
+
+  forceinline FloatVal
+  fmod(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(fmod(x.x,y.x));
+  }
+  forceinline FloatVal
+  fmod(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(fmod(x.x,y));
+  }
+  forceinline FloatVal
+  fmod(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(fmod(x,y.x));
+  }
+
+  forceinline FloatVal
+  sin(const FloatVal& x) {
+    return FloatVal(sin(x.x));
+  }
+  forceinline FloatVal
+  cos(const FloatVal& x) {
+    return FloatVal(cos(x.x));
+  }
+  forceinline FloatVal
+  tan(const FloatVal& x) {
+    return FloatVal(tan(x.x));
+  }
+  forceinline FloatVal
+  asin(const FloatVal& x) {
+    return FloatVal(asin(x.x));
+  }
+  forceinline FloatVal
+  acos(const FloatVal& x) {
+    return FloatVal(acos(x.x));
+  }
+  forceinline FloatVal
+  atan(const FloatVal& x) {
+    return FloatVal(atan(x.x));
+  }
+
+  forceinline FloatVal
+  sinh(const FloatVal& x) {
+    return FloatVal(sinh(x.x));
+  }
+  forceinline FloatVal
+  cosh(const FloatVal& x) {
+    return FloatVal(cosh(x.x));
+  }
+  forceinline FloatVal
+  tanh(const FloatVal& x) {
+    return FloatVal(tanh(x.x));
+  }
+  forceinline FloatVal
+  asinh(const FloatVal& x) {
+    return FloatVal(asinh(x.x));
+  }
+  forceinline FloatVal
+  acosh(const FloatVal& x) {
+    return FloatVal(acosh(x.x));
+  }
+  forceinline FloatVal
+  atanh(const FloatVal& x) {
+    return FloatVal(atanh(x.x));
+  }
+
+#endif
+
+  forceinline FloatVal
+  max(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(max(x.x,y.x));
+  }
+  forceinline FloatVal
+  max(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(max(x.x,y));
+  }
+  forceinline FloatVal
+  max(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(max(x,y.x));
+  }
+  forceinline FloatVal
+  min(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(min(x.x,y.x));
+  }
+  forceinline FloatVal
+  min(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(min(x.x,y));
+  }
+  forceinline FloatVal
+  min(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(min(x,y.x));
+  }
+
+  forceinline FloatNum
+  lower(const FloatVal& x) {
+    return lower(x.x);
+  }
+  forceinline FloatNum
+  upper(const FloatVal& x) {
+    return upper(x.x);
+  }
+  forceinline FloatNum
+  width(const FloatVal& x) {
+    return width(x.x);
+  }
+  forceinline FloatNum
+  median(const FloatVal& x) {
+    return median(x.x);
+  }
+
+  forceinline bool
+  singleton(const FloatVal& x) {
+    return singleton(x.x);
+  }
+  forceinline bool
+  in(const FloatNum& x, const FloatVal& y) {
+    return in(x,y.x);
+  }
+  forceinline bool
+  zero_in(const FloatVal& x) {
+    return zero_in(x.x);
+  }
+  forceinline bool
+  subset(const FloatVal& x, const FloatVal& y) {
+    return subset(x.x,y.x);
+  }
+  forceinline bool
+  proper_subset(const FloatVal& x, const FloatVal& y) {
+    return proper_subset(x.x,y.x);
+  }
+  forceinline bool
+  overlap(const FloatVal& x, const FloatVal& y) {
+    return overlap(x.x,y.x);
+  }
+
+  forceinline FloatVal
+  intersect(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(intersect(x.x,y.x));
+  }
+  forceinline FloatVal
+  hull(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(hull(x.x,y.x));
+  }
+  forceinline FloatVal
+  hull(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(hull(x.x,y));
+  }
+  forceinline FloatVal
+  hull(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(hull(x,y.x));
+  }
+  forceinline FloatVal
+  hull(const FloatNum& x, const FloatNum& y) {
+    return FloatVal(hull(x,y));
+  }
+
+  forceinline bool
+  operator <(const FloatVal& x, const FloatVal& y) {
+    return x.x < y.x;
+  }
+  forceinline bool
+  operator <(const FloatVal& x, const FloatNum& y) {
+    return x.x < y;
+  }
+
+  forceinline bool
+  operator <=(const FloatVal& x, const FloatVal& y) {
+    return x.x <= y.x;
+  }
+  forceinline bool
+  operator <=(const FloatVal& x, const FloatNum& y) {
+    return x.x <= y;
+  }
+
+  forceinline bool
+  operator >(const FloatVal& x, const FloatVal& y) {
+    return x.x > y.x;
+  }
+  forceinline bool
+  operator >(const FloatVal& x, const FloatNum& y) {
+    return x.x > y;
+  }
+
+  forceinline bool
+  operator >=(const FloatVal& x, const FloatVal& y) {
+    return x.x >= y.x;
+  }
+  forceinline bool
+  operator >=(const FloatVal& x, const FloatNum& y) {
+    return x.x >= y;
+  }
+
+  forceinline bool
+  operator ==(const FloatVal& x, const FloatVal& y) {
+    return x.x == y.x;
+  }
+  forceinline bool
+  operator ==(const FloatVal& x, const FloatNum& y) {
+    return x.x == y;
+  }
+
+  forceinline bool
+  operator !=(const FloatVal& x, const FloatVal& y) {
+    return x.x != y.x;
+  }
+  forceinline bool
+  operator !=(const FloatVal& x, const FloatNum& y) {
+    return x.x != y;
+  }
+
+  forceinline bool
+  operator <(const FloatNum& x, const FloatVal& y) {
+    return y > x;
+  }
+  forceinline bool
+  operator <=(const FloatNum& x, const FloatVal& y) {
+    return y >= x;
+  }
+  forceinline bool
+  operator >(const FloatNum& x, const FloatVal& y) {
+    return y < x;
+  }
+  forceinline bool
+  operator >=(const FloatNum& x, const FloatVal& y) {
+    return y <= x;
+  }
+  forceinline bool
+  operator ==(const FloatNum& x, const FloatVal& y) {
+    return y == x;
+  }
+  forceinline bool
+  operator !=(const FloatNum& x, const FloatVal& y) {
+    return y != x;
+  }
+
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const FloatVal& x) {
+    return os << x.x;
   }
 
 }

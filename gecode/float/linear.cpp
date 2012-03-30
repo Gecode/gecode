@@ -41,11 +41,10 @@
 
 namespace Gecode {
 
-  using namespace Float;
-
   void
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatNum c) {
+    using namespace Float;
     if (home.failed()) return;
     Region re(home);
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
@@ -58,6 +57,7 @@ namespace Gecode {
   void
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatNum c, Reify r) {
+    using namespace Float;
     if (home.failed()) return;
     Region re(home);
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
@@ -70,6 +70,7 @@ namespace Gecode {
   void
   linear(Home home,
          const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatNum c) {
+    using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
@@ -85,6 +86,7 @@ namespace Gecode {
   linear(Home home,
          const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatNum c, 
          Reify r) {
+    using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
@@ -99,6 +101,7 @@ namespace Gecode {
   void
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
+    using namespace Float;
     if (home.failed()) return;
     Region re(home);
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
@@ -128,6 +131,7 @@ namespace Gecode {
   void
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
+    using namespace Float;
     if (home.failed()) return;
     Region re(home);
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
@@ -141,6 +145,7 @@ namespace Gecode {
   void
   linear(Home home,
          const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
+    using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
@@ -173,6 +178,7 @@ namespace Gecode {
   linear(Home home,
          const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVar y,
          Reify r) {
+    using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;

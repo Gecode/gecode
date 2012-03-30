@@ -76,7 +76,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B, class C>
   ExecStatus
   Min<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x2.eq(home,boost::numeric::min(x0.domain(),x1.domain())));
+    GECODE_ME_CHECK(x2.eq(home,min(x0.domain(),x1.domain())));
     GECODE_ME_CHECK(x0.gq(home,x2.min()));
     GECODE_ME_CHECK(x1.gq(home,x2.min()));
     return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
@@ -119,7 +119,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B, class C>
   ExecStatus
   Max<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x2.eq(home,boost::numeric::max(x0.domain(),x1.domain())));
+    GECODE_ME_CHECK(x2.eq(home,max(x0.domain(),x1.domain())));
     GECODE_ME_CHECK(x0.lq(home,x2.max()));
     GECODE_ME_CHECK(x1.lq(home,x2.max()));
     return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;

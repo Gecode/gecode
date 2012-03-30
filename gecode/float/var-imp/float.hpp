@@ -69,15 +69,15 @@ namespace Gecode { namespace Float {
   }
   forceinline FloatNum
   FloatVarImp::min(void) const {
-    return boost::numeric::lower(dom);
+    return dom.lower();
   }
   forceinline FloatNum
   FloatVarImp::max(void) const {
-    return boost::numeric::upper(dom);
+    return dom.upper();
   }
   forceinline FloatVal
   FloatVarImp::med(void) const {
-    return boost::numeric::median(dom);
+    return Gecode::median(dom);
   }
   forceinline FloatVal
   FloatVarImp::val(void) const {
@@ -85,17 +85,17 @@ namespace Gecode { namespace Float {
   }
   forceinline FloatNum
   FloatVarImp::median(void) const {
-    return boost::numeric::median(dom);
+    return Gecode::median(dom);
   }
 
   forceinline bool
   FloatVarImp::assigned(void) const {
-    return boost::numeric::singleton(dom);
+    return singleton(dom);
   }
 
   forceinline FloatNum
   FloatVarImp::width(void) const {
-    return boost::numeric::width(dom);
+    return Gecode::width(dom);
   }
 
 
@@ -105,16 +105,16 @@ namespace Gecode { namespace Float {
    */
 
   forceinline bool
-  FloatVarImp::zero_in() const {
-    return boost::numeric::zero_in(dom);
+  FloatVarImp::zero_in(void) const {
+    return Gecode::zero_in(dom);
   }
   forceinline bool
   FloatVarImp::in(FloatNum n) const {
-    return boost::numeric::in(n,dom);
+    return Gecode::in(n,dom);
   }
   forceinline bool
   FloatVarImp::in(const FloatVal& n) const {
-    return boost::numeric::subset(n,dom);
+    return subset(n,dom);
   }
 
 
@@ -143,7 +143,7 @@ namespace Gecode { namespace Float {
     if (n > dom.upper())  return ME_FLOAT_FAILED;
     FloatDelta d(dom.lower(),n);
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatVal(n,dom.upper()));
+    dom = intersect(dom,FloatVal(n,dom.upper()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -155,7 +155,7 @@ namespace Gecode { namespace Float {
     if (n.lower() > dom.upper())  return ME_FLOAT_FAILED;
     FloatDelta d(dom.lower(),n.upper());
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatVal(n.upper(),dom.upper()));
+    dom = intersect(dom,FloatVal(n.upper(),dom.upper()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -169,7 +169,7 @@ namespace Gecode { namespace Float {
     if (n < dom.lower())  return ME_FLOAT_FAILED;
     FloatDelta d(n,dom.upper());
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatVal(dom.lower(),n));
+    dom = intersect(dom,FloatVal(dom.lower(),n));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -181,7 +181,7 @@ namespace Gecode { namespace Float {
     if (n.upper() < dom.lower())  return ME_FLOAT_FAILED;
     FloatDelta d(n.lower(),dom.upper());
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,FloatVal(dom.lower(),n.lower()));
+    dom = intersect(dom,FloatVal(dom.lower(),n.lower()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -191,7 +191,7 @@ namespace Gecode { namespace Float {
 
   forceinline ModEvent
   FloatVarImp::eq(Space& home, FloatNum n) {
-    if (!boost::numeric::in(n,dom))
+    if (!Gecode::in(n,dom))
       return ME_FLOAT_FAILED;
     if (assigned())
       return ME_FLOAT_NONE;
@@ -201,13 +201,13 @@ namespace Gecode { namespace Float {
   }
   forceinline ModEvent
   FloatVarImp::eq(Space& home, const FloatVal& n) {
-    if (!boost::numeric::overlap(dom,n))
+    if (!overlap(dom,n))
       return ME_FLOAT_FAILED;
-    if (assigned() || boost::numeric::subset(dom,n))
+    if (assigned() || subset(dom,n))
       return ME_FLOAT_NONE;
     FloatDelta d;
     ModEvent me = ME_FLOAT_BND;
-    dom = boost::numeric::intersect(dom,n);
+    dom = intersect(dom,n);
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));

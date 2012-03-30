@@ -111,7 +111,22 @@ namespace Gecode {
    */
   typedef double FloatNum;
 
+  /// Return lower bound of \f$\pi/2\f$
+  FloatNum pi_half_lower(void);
+  /// Return upper bound of \f$\pi/2\f$
+  FloatNum pi_half_upper(void);
+  /// Return lower bound of \f$\pi\f$
+  FloatNum pi_lower(void);
+  /// Return upper bound of \f$\pi\f$
+  FloatNum pi_upper(void);
+  /// Return lower bound of \f$2\pi\f$
+  FloatNum pi_twice_lower(void);
+  /// Return upper bound of \f$2\pi\f$
+  FloatNum pi_twice_upper(void);
+
 }
+
+#include <gecode/float/num.hpp>
 
 namespace Gecode { namespace Float {
 
@@ -146,10 +161,6 @@ namespace Gecode { namespace Float {
 #endif
   };
 
-  typedef boost::numeric::interval_lib::save_state<FullRounding> R;
-  typedef boost::numeric::interval_lib::checking_strict<FloatNum> P;
-  typedef boost::numeric::interval<FloatNum, boost::numeric::interval_lib::policies<R, P> > GECODE_FLOAT_FLOATINTERVAL_TYPE;
-
 }};
 
 namespace Gecode {
@@ -159,181 +170,563 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatVars
    */
-  typedef Gecode::Float::GECODE_FLOAT_FLOATINTERVAL_TYPE FloatVal;
-
-  /**
-   * \brief Float value type
-   *
-   * \ingroup TaskModelFloatVars
-   */
-  class NewFloatVal {
+  class FloatVal {
+    friend FloatVal operator+(const FloatVal& x);
+    friend FloatVal operator-(const FloatVal& x);
+    friend FloatVal operator+(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator+(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator+(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator-(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator-(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator-(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator*(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator*(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator*(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator/(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator/(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator/(const FloatNum& x, const FloatVal& y);
+    friend FloatVal abs(const FloatVal& x);
+    friend FloatVal sqrt(const FloatVal& x);
+    friend FloatVal square(const FloatVal& x);
+    friend FloatVal pow(const FloatVal& x, int n);
+    friend FloatVal nth_root(const FloatVal& x, int n);
+#ifdef GECODE_HAS_MPFR
+    friend FloatVal exp(const FloatVal& x);
+    friend FloatVal log(const FloatVal& x);
+    friend FloatVal fmod(const FloatVal& x, const FloatVal& y);
+    friend FloatVal fmod(const FloatVal& x, const FloatNum& y);
+    friend FloatVal fmod(const FloatNum& x, const FloatVal& y);
+    friend FloatVal sin(const FloatVal& x);
+    friend FloatVal cos(const FloatVal& x);
+    friend FloatVal tan(const FloatVal& x);
+    friend FloatVal asin(const FloatVal& x);
+    friend FloatVal acos(const FloatVal& x);
+    friend FloatVal atan(const FloatVal& x);
+    friend FloatVal sinh(const FloatVal& x);
+    friend FloatVal cosh(const FloatVal& x);
+    friend FloatVal tanh(const FloatVal& x);
+    friend FloatVal asinh(const FloatVal& x);
+    friend FloatVal acosh(const FloatVal& x);
+    friend FloatVal atanh(const FloatVal& x);
+#endif
+    friend FloatVal max(const FloatVal& x, const FloatVal& y);
+    friend FloatVal max(const FloatVal& x, const FloatNum& y);
+    friend FloatVal max(const FloatNum& x, const FloatVal& y);
+    friend FloatVal min(const FloatVal& x, const FloatVal& y);
+    friend FloatVal min(const FloatVal& x, const FloatNum& y);
+    friend FloatVal min(const FloatNum& x, const FloatVal& y);
+    friend FloatNum lower(const FloatVal& x);
+    friend FloatNum upper(const FloatVal& x);
+    friend FloatNum width(const FloatVal& x);
+    friend FloatNum median(const FloatVal& x);
+    friend bool singleton(const FloatVal& x);
+    friend bool in(const FloatNum& x, const FloatVal& y);
+    friend bool zero_in(const FloatVal& x);
+    friend bool subset(const FloatVal& x, const FloatVal& y);
+    friend bool proper_subset(const FloatVal& x, const FloatVal& y);
+    friend bool overlap(const FloatVal& x, const FloatVal& y);
+    friend FloatVal intersect(const FloatVal& x, const FloatVal& y);
+    friend FloatVal hull(const FloatVal& x, const FloatVal& y);
+    friend FloatVal hull(const FloatVal& x, const FloatNum& y);
+    friend FloatVal hull(const FloatNum& x, const FloatVal& y);
+    friend FloatVal hull(const FloatNum& x, const FloatNum& y);
+    friend bool operator <(const FloatVal& x, const FloatVal& y);
+    friend bool operator <(const FloatVal& x, const FloatNum& y);
+    friend bool operator <(const FloatNum& x, const FloatVal& y);
+    friend bool operator <=(const FloatVal& x, const FloatVal& y);
+    friend bool operator <=(const FloatVal& x, const FloatNum& y);
+    friend bool operator <=(const FloatNum& x, const FloatVal& y);
+    friend bool operator >(const FloatVal& x, const FloatVal& y);
+    friend bool operator >(const FloatVal& x, const FloatNum& y);
+    friend bool operator >(const FloatNum& x, const FloatVal& y);
+    friend bool operator >=(const FloatVal& x, const FloatVal& y);
+    friend bool operator >=(const FloatVal& x, const FloatNum& y);
+    friend bool operator >=(const FloatNum& x, const FloatVal& y);
+    friend bool operator ==(const FloatVal& x, const FloatVal& y);
+    friend bool operator ==(const FloatVal& x, const FloatNum& y);
+    friend bool operator ==(const FloatNum& x, const FloatVal& y);
+    friend bool operator !=(const FloatVal& x, const FloatVal& y);
+    friend bool operator !=(const FloatVal& x, const FloatNum& y);
+    friend bool operator !=(const FloatNum& x, const FloatVal& y);
+    template<class Char, class Traits>
+    friend std::basic_ostream<Char,Traits>&
+    operator <<(std::basic_ostream<Char,Traits>& os, const FloatVal& x);
   protected:
+    /// Used rounding policies
+    typedef boost::numeric::interval_lib::save_state<Float::FullRounding> R;
+    /// Used checking policy
+    typedef boost::numeric::interval_lib::checking_strict<FloatNum> P;
+    /// Implementation type for float value
+    typedef boost::numeric::interval
+      <FloatNum,
+       boost::numeric::interval_lib::policies<R, P> >
+    FloatValImpType;
     /// Implementation of float value
-    FloatVal x;
+    FloatValImpType x;
     /// Initialize from implementation \a i
-    NewFloatVal(const FloatVal& i);
+    explicit FloatVal(const FloatValImpType& i);
   public:
+    /// Rounding definition
+    typedef FloatValImpType::traits_type::rounding Round;
     /// Default constructor
-    NewFloatVal(void);
+    FloatVal(void);
     /// Initialize with float number \a n
-    NewFloatVal(const FloatNum& n);
+    FloatVal(const FloatNum& n);
     /// Initialize with lower bound \a l and upper bound \a u
-    NewFloatVal(const FloatNum& l, const FloatNum& u);
+    FloatVal(const FloatNum& l, const FloatNum& u);
     /// Copy constructor
-    NewFloatVal(const NewFloatVal& v);
+    FloatVal(const FloatVal& v);
 
     /// Assignment operator
-    NewFloatVal& operator =(const FloatNum& n);
+    FloatVal& operator =(const FloatNum& n);
     /// Assignment operator
-    NewFloatVal& operator =(const NewFloatVal& v);
+    FloatVal& operator =(const FloatVal& v);
     
-    //    void assign(FloatNum const &l, FloatNum const &u);
+    /// Assign lower bound \a l and upper bound \a u
+    void assign(FloatNum const &l, FloatNum const &u);
+
     /// Return lower bound
-    const FloatNum& lower(void) const;
+    FloatNum lower(void) const;
     /// Return upper bound
-    const FloatNum& upper(void) const;
+    FloatNum upper(void) const;
     
-    /// Return empty value
-    static NewFloatVal empty(void);
-    /// Return whole value
-    static NewFloatVal whole(void);
     /// Return hull of \a x and \a y
-    static NewFloatVal hull(FloatNum x, FloatNum y);
+    static FloatVal hull(FloatNum x, FloatNum y);
+    /// Return \f$\pi/2\f$
+    static FloatVal pi_half(void);
+    /// Return lower bound of \f$\pi\f$
+    static FloatVal pi(void);
+    /// Return \f$2\pi\f$
+    static FloatVal pi_twice(void);
     
     /// Increment by \a n
-    NewFloatVal& operator +=(const FloatNum& n);
+    FloatVal& operator +=(const FloatNum& n);
     /// Subtract by \a n
-    NewFloatVal& operator -=(const FloatNum& n);
+    FloatVal& operator -=(const FloatNum& n);
     /// Multiply by \a n
-    NewFloatVal& operator *=(const FloatNum& n);
+    FloatVal& operator *=(const FloatNum& n);
     /// Divide by \a n
-    NewFloatVal& operator /=(const FloatNum& n);
+    FloatVal& operator /=(const FloatNum& n);
     /// Increment by \a v
-    NewFloatVal& operator +=(const NewFloatVal& v);
+    FloatVal& operator +=(const FloatVal& v);
     /// Subtract by \a v
-    NewFloatVal& operator -=(const NewFloatVal& v);
+    FloatVal& operator -=(const FloatVal& v);
     /// Multiply by \a v
-    NewFloatVal& operator *=(const NewFloatVal& v);
+    FloatVal& operator *=(const FloatVal& v);
     /// Divide by \a v
-    NewFloatVal& operator /=(const NewFloatVal& v);
+    FloatVal& operator /=(const FloatVal& v);
   };
 
-//   /* arithmetic operators involving intervals */
-//   NewFloatVal operator+(const NewFloatVal& x);
-//   NewFloatVal operator-(const NewFloatVal& x);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator +(const FloatVal& x);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator -(const FloatVal& x);
 
-//   NewFloatVal operator+(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal operator+(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal operator+(const FloatNum& x, const NewFloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator +(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator +(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator +(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator -(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator -(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator -(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator *(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator *(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator *(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator /(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator /(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Arithmetic operator
+   * \relates Gecode::FloatVal
+   */
+  FloatVal operator /(const FloatNum& r, const FloatVal& x);
 
-//   NewFloatVal operator-(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal operator-(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal operator-(const FloatNum& x, const NewFloatVal& y);
+  /**
+   * \brief Return absolute value of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal abs(const FloatVal& x);
+  /**
+   * \brief Return square root of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal sqrt(const FloatVal& x);
+  /**
+   * \brief Return square of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal square(const FloatVal& x);
+  /**
+   * \brief Return \a n -th power of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal pow(const FloatVal& x, int n);
+  /**
+   * \brief Return \a n -th root of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal nth_root(const FloatVal& x, int n);
 
-//   NewFloatVal operator*(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal operator*(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal operator*(const FloatNum& x, const NewFloatVal& y);
+#ifdef GECODE_HAS_MPFR
+  /* transcendental functions: exp, log */
+  /**
+   * \brief Return exponential of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal exp(const FloatVal& x);
+  /**
+   * \brief Return logarithm of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal log(const FloatVal& x);
 
-//   NewFloatVal operator/(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal operator/(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal operator/(const FloatNum& r, const NewFloatVal& x);
+  /**
+   * \brief Trigonometric function argument reduction
+   * \relates Gecode::FloatVal
+   */
+  FloatVal fmod(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief  Trigonometric function argument reduction
+   * \relates Gecode::FloatVal
+   */
+  FloatVal fmod(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief  Trigonometric function argument reduction
+   * \relates Gecode::FloatVal
+   */
+  FloatVal fmod(const FloatNum& x, const FloatVal& y);
 
-//   /* algebraic functions: sqrt, abs, square, pow, nth_root */
-//   NewFloatVal abs(const NewFloatVal& x);
-//   NewFloatVal sqrt(const NewFloatVal& x);
-//   NewFloatVal square(const NewFloatVal& x);
-//   NewFloatVal pow(const NewFloatVal& x, int y);
-//   NewFloatVal nth_root(const NewFloatVal& x, int y);
+  /**
+   * \brief Return sine of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal sin(const FloatVal& x);
+  /**
+   * \brief  Return cosine of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal cos(const FloatVal& x);
+  /**
+   * \brief  Return tangent of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal tan(const FloatVal& x);
+  /**
+   * \brief  Return arcsine of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal asin(const FloatVal& x);
+  /**
+   * \brief  Return arccosine of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal acos(const FloatVal& x);
+  /**
+   * \brief  Return arctangent of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal atan(const FloatVal& x);
 
-//   /* transcendental functions: exp, log */
-//   NewFloatVal exp(const NewFloatVal& x);
-//   NewFloatVal log(const NewFloatVal& x);
+  /**
+   * \brief  Return hyperbolic of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal sinh(const FloatVal& x);
+  /**
+   * \brief  Return hyperbolic of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal cosh(const FloatVal& x);
+  /**
+   * \brief  Return hyperbolic of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal tanh(const FloatVal& x);
+  /**
+   * \brief  Return hyperbolic of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal asinh(const FloatVal& x);
+  /**
+   * \brief  Return hyperbolic of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal acosh(const FloatVal& x);
+  /**
+   * \brief  Return hyperbolic of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatVal atanh(const FloatVal& x);
 
-//   /* fmod, for trigonometric function argument reduction (see below) */
-//   NewFloatVal fmod(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal fmod(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal fmod(const FloatNum& x, const NewFloatVal& y);
+#endif
 
-//   /* trigonometric functions */
-//   NewFloatVal sin(const NewFloatVal& x);
-//   NewFloatVal cos(const NewFloatVal& x);
-//   NewFloatVal tan(const NewFloatVal& x);
-//   NewFloatVal asin(const NewFloatVal& x);
-//   NewFloatVal acos(const NewFloatVal& x);
-//   NewFloatVal atan(const NewFloatVal& x);
+  /**
+   * \brief Return maximum of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal max(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Return maximum of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal max(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Return maximum of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal max(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Return minimum of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal min(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Return minimum of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal min(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Return minimum of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal min(const FloatNum& x, const FloatVal& y);
 
-//   /* hyperbolic trigonometric functions */
-//   NewFloatVal sinh(const NewFloatVal& x);
-//   NewFloatVal cosh(const NewFloatVal& x);
-//   NewFloatVal tanh(const NewFloatVal& x);
-//   NewFloatVal asinh(const NewFloatVal& x);
-//   NewFloatVal acosh(const NewFloatVal& x);
-//   NewFloatVal atanh(const NewFloatVal& x);
+  /**
+   * \brief Return lower bound of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatNum lower(const FloatVal& x);
+  /**
+   * \brief Return upper bound of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatNum upper(const FloatVal& x);
+  /**
+   * \brief Return width of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatNum width(const FloatVal& x);
+  /**
+   * \brief Return median bound of \a x
+   * \relates Gecode::FloatVal
+   */
+  FloatNum median(const FloatVal& x);
 
-//   /* min, max external functions (NOT std::min/max, see below) */
-//   NewFloatVal max(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal max(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal max(const FloatNum& x, const NewFloatVal& y);
-//   NewFloatVal min(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal min(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal min(const FloatNum& x, const NewFloatVal& y);
+  /**
+   * \brief Test whether \a x is a singleton
+   * \relates Gecode::FloatVal
+   */
+  bool singleton(const FloatVal& x);
+  /**
+   * \brief Test whether \a x is included in \a y
+   * \relates Gecode::FloatVal
+   */
+  bool in(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Test whether zero is included in \a x
+   * \relates Gecode::FloatVal
+   */
+  bool zero_in(const FloatVal& b);
+  /**
+   * \brief Test whether \a x is a subset of \a y
+   * \relates Gecode::FloatVal
+   */
+  bool subset(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Test whether \a x is a proper subset of \a y
+   * \relates Gecode::FloatVal
+   */
+  bool proper_subset(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Test whether \a x and \a y overlap
+   * \relates Gecode::FloatVal
+   */
+  bool overlap(const FloatVal& x, const FloatVal& y);
 
-//   /* bounds-related interval functions */
-//   FloatNum lower(const NewFloatVal& x);
-//   FloatNum upper(const NewFloatVal& x);
-//   FloatNum width(const NewFloatVal& x);
-//   FloatNum median(const NewFloatVal& x);
-//   FloatNum norm(const NewFloatVal& x);
+  /**
+   * \brief Return intersection of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal intersect(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Return hull of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal hull(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Return hull of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal hull(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Return hull of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal hull(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Return hull of \a x and \a y
+   * \relates Gecode::FloatVal
+   */
+  FloatVal hull(const FloatNum& x, const FloatNum& y);
 
-//   /* bounds-related interval functions */
-//   bool empty(const NewFloatVal& b);
-//   bool singleton(const NewFloatVal& x);
-//   bool equal(const NewFloatVal& x, const NewFloatVal& y);
-//   bool in(const FloatNum& r, const NewFloatVal& b);
-//   bool zero_in(const NewFloatVal& b);
-//   bool subset(const NewFloatVal& a, const NewFloatVal& b);
-//   bool proper_subset(const NewFloatVal& a, const NewFloatVal& b);
-//   bool overlap(const NewFloatVal& x, const NewFloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator <(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator <(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator <(const FloatNum& x, const FloatVal& y);
 
-//   /* set manipulation interval functions */
-//   NewFloatVal intersect(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal hull(const NewFloatVal& x, const NewFloatVal& y);
-//   NewFloatVal hull(const NewFloatVal& x, const FloatNum& y);
-//   NewFloatVal hull(const FloatNum& x, const NewFloatVal& y);
-//   NewFloatVal hull(const FloatNum& x, const FloatNum& y);
-//   std::pair<NewFloatVal, NewFloatVal > bisect(const NewFloatVal& x);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator <=(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator <=(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator <=(const FloatNum& x, const FloatVal& y);
 
-//   /* interval comparison operators */
-//   bool operator<(const NewFloatVal& x, const NewFloatVal& y);
-//   bool operator<(const NewFloatVal& x, const FloatNum& y);
-//   bool operator<(const FloatNum& x, const NewFloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator >(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator >(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator >(const FloatNum& x, const FloatVal& y);
 
-//   bool operator<=(const NewFloatVal& x, const NewFloatVal& y);
-//   bool operator<=(const NewFloatVal& x, const FloatNum& y);
-//   bool operator<=(const FloatNum& x, const NewFloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator >=(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator >=(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator >=(const FloatNum& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator ==(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator ==(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator ==(const FloatNum& x, const FloatVal& y);
 
-//   bool operator>(const NewFloatVal& x, const NewFloatVal& y);
-//   bool operator>(const NewFloatVal& x, const FloatNum& y);
-//   bool operator>(const FloatNum& x, const NewFloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator !=(const FloatVal& x, const FloatVal& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator !=(const FloatVal& x, const FloatNum& y);
+  /**
+   * \brief Comparison operator
+   * \relates Gecode::FloatVal
+   */
+  bool operator !=(const FloatNum& x, const FloatVal& y);
 
-//   bool operator>=(const NewFloatVal& x, const NewFloatVal& y);
-//   bool operator>=(const NewFloatVal& x, const FloatNum& y);
-//   bool operator>=(const FloatNum& x, const NewFloatVal& y);
-//   bool operator==(const NewFloatVal& x, const NewFloatVal& y);
-//   bool operator==(const NewFloatVal& x, const FloatNum& y);
-//   bool operator==(const FloatNum& x, const NewFloatVal& y);
 
-//   bool operator!=(const NewFloatVal& x, const NewFloatVal& y);
-//   bool operator!=(const NewFloatVal& x, const FloatNum& y);
-//   bool operator!=(const FloatNum& x, const NewFloatVal& y);
-
+  /**
+   * \brief Print float value \a x
+   * \relates Gecode::FloatVal
+   */
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const FloatVal& x);
 
   /**
    * \brief Float rounding mode
    *
    * \ingroup TaskModelFloatVars
    */
-  static FloatVal::traits_type::rounding Round;
+  static FloatVal::Round Round;
   
 }
 
@@ -441,13 +834,6 @@ namespace Gecode {
     //@}
   };
 
-  /**
-   * \brief Print float value \a x
-   * \relates Gecode::FloatVal
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, const FloatVal& x);
   /**
    * \brief Print float variable \a x
    * \relates Gecode::FloatVar
@@ -740,25 +1126,25 @@ namespace Gecode {
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} c\f$
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
          FloatRelType frt, FloatNum c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\f$
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} c\right)\equiv r\f$
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
          FloatRelType frt, FloatNum c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\right)\equiv r\f$
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y, Reify r);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\f$
@@ -767,7 +1153,7 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatNum c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
@@ -776,7 +1162,7 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\right)\equiv r\f$
@@ -785,7 +1171,7 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatNum c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
@@ -794,7 +1180,7 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    * \ingroup TaskModelFloatLI
    */
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y, Reify r);
 
