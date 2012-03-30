@@ -46,6 +46,9 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
+#endif
 #include <gecode/flatzinc.hh>
 
 namespace Gecode { namespace FlatZinc {
@@ -261,6 +264,18 @@ namespace Gecode { namespace FlatZinc {
       }
       return x0;
     }
+
+#ifdef GECODE_HAS_FLOAT_VARS
+    FloatVar getFloatVar(FlatZincSpace& s, AST::Node* n) {
+      FloatVar x0;
+      if (n->isFloatVar()) {
+        x0 = s.fv[n->getFloatVar()];
+      } else {
+        x0 = FloatVar(s, n->getFloat(), n->getFloat());
+      }
+      return x0;
+    }
+#endif
 
     bool isBoolArray(FlatZincSpace& s, AST::Node* b, int& singleInt) {
       AST::Array* a = b->getArray();
@@ -1813,6 +1828,23 @@ namespace Gecode { namespace FlatZinc {
       }
     };
     SetPoster __set_poster;
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+
+    void p_float_times(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar z = getFloatVar(s, ce[2]);
+      mult(s,x,y,z);
+    }
+
+    class FloatPoster {
+    public:
+      FloatPoster(void) {
+        registry().add("float_times",&p_float_times);
+      }
+    } __float_poster;
 #endif
 
   }

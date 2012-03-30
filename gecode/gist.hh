@@ -43,6 +43,9 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
+#endif
 
 /*
  * Configure linking
@@ -147,6 +150,10 @@ namespace Gecode {
 #ifdef GECODE_HAS_SET_VARS
       /// Return string representation of difference between \a x and \a y, which are called \a x_n
       static std::string compare(std::string x_n, SetVar x, SetVar y);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+      /// Return string representation of difference between \a x and \a y, which are called \a x_n
+      static std::string compare(std::string x_n, FloatVar x, FloatVar y);
 #endif
       //@}
     };

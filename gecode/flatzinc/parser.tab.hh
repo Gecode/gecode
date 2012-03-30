@@ -138,13 +138,14 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 347 "gecode/flatzinc/parser.yxx"
+#line 390 "gecode/flatzinc/parser.yxx"
 { int iValue; char* sValue; bool bValue; double dValue;
          std::vector<int>* setValue;
          Gecode::FlatZinc::AST::SetLit* setLit;
          std::vector<double>* floatSetValue;
          std::vector<Gecode::FlatZinc::AST::SetLit>* setValueList;
          Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > oSet;
+         Gecode::FlatZinc::Option<std::pair<double,double>* > oPFloat;
          Gecode::FlatZinc::VarSpec* varSpec;
          Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> oArg;
          std::vector<Gecode::FlatZinc::VarSpec*>* varSpecVec;
@@ -153,7 +154,7 @@ typedef union YYSTYPE
          Gecode::FlatZinc::AST::Array* argVec;
        }
 /* Line 1529 of yacc.c.  */
-#line 157 "gecode/flatzinc/parser.tab.hpp"
+#line 158 "gecode/flatzinc/parser.tab.hpp"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

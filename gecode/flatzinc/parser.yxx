@@ -109,6 +109,10 @@ AST::Node* getArrayElement(ParserState* pp, string id, int offset) {
         if (offset > pp->arrays[e.i])
           goto error;
         return new AST::SetVar(pp->arrays[e.i+offset]);
+      case ST_FLOATVARARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::FloatVar(pp->arrays[e.i+offset]);
       case ST_INTVALARRAY:
         if (offset > pp->arrays[e.i])
           goto error;
@@ -117,6 +121,10 @@ AST::Node* getArrayElement(ParserState* pp, string id, int offset) {
         if (offset > pp->arrays[e.i])
           goto error;
         return new AST::SetLit(pp->setvals[pp->arrays[e.i+1]+offset-1]);
+      case ST_FLOATVALARRAY:
+        if (offset > pp->arrays[e.i])
+          goto error;
+        return new AST::FloatLit(pp->floatvals[pp->arrays[e.i+1]+offset-1]);
       default:
         break;
       }
@@ -136,6 +144,7 @@ AST::Node* getVarRefArg(ParserState* pp, string id, bool annotation = false) {
     case ST_INTVAR: return new AST::IntVar(e.i);
     case ST_BOOLVAR: return new AST::BoolVar(e.i);
     case ST_SETVAR: return new AST::SetVar(e.i);
+    case ST_FLOATVAR: return new AST::FloatVar(e.i);
     default: break;
     }
   }
@@ -159,6 +168,25 @@ void addDomainConstraint(ParserState* pp, std::string id, AST::Node* var,
   pp->domainConstraints.push_back(new ConExpr(id, args));
 }
 
+void addDomainConstraint(ParserState* pp, AST::Node* var,
+                         Option<std::pair<double,double>* > dom) {
+  if (!dom())
+    return;
+  {
+    AST::Array* args = new AST::Array(2);
+    args->a[0] = new AST::FloatLit(dom.some()->first);
+    args->a[1] = var;
+    pp->domainConstraints.push_back(new ConExpr("float_le", args));
+  }
+  {
+    AST::Array* args = new AST::Array(2);
+    args->a[0] = var;
+    args->a[1] = new AST::FloatLit(dom.some()->second);
+    pp->domainConstraints.push_back(new ConExpr("float_le", args));
+  }
+  delete dom.some();
+}
+
 /*
  * Initialize the root gecode space
  *
@@ -168,7 +196,8 @@ void initfg(ParserState* pp) {
   if (!pp->hadError)
     pp->fg->init(pp->intvars.size(),
                  pp->boolvars.size(),
-                 pp->setvars.size());
+                 pp->setvars.size(),
+                 pp->floatvars.size());
 
   for (unsigned int i=0; i<pp->intvars.size(); i++) {
     if (!pp->hadError) {
@@ -208,6 +237,20 @@ void initfg(ParserState* pp) {
     if (pp->setvars[i].first[0] != '[') {
       delete pp->setvars[i].second;
       pp->setvars[i].second = NULL;
+    }
+  }
+  for (unsigned int i=0; i<pp->floatvars.size(); i++) {
+    if (!pp->hadError) {
+      try {
+        pp->fg->newFloatVar(
+          static_cast<FloatVarSpec*>(pp->floatvars[i].second));
+      } catch (Gecode::FlatZinc::Error& e) {
+        yyerror(pp, e.toString().c_str());
+      }
+    }      
+    if (pp->floatvars[i].first[0] != '[') {
+      delete pp->floatvars[i].second;
+      pp->floatvars[i].second = NULL;
     }
   }
   for (unsigned int i=pp->domainConstraints.size(); i--;) {
@@ -350,6 +393,7 @@ namespace Gecode { namespace FlatZinc {
          std::vector<double>* floatSetValue;
          std::vector<Gecode::FlatZinc::AST::SetLit>* setValueList;
          Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::SetLit* > oSet;
+         Gecode::FlatZinc::Option<std::pair<double,double>* > oPFloat;
          Gecode::FlatZinc::VarSpec* varSpec;
          Gecode::FlatZinc::Option<Gecode::FlatZinc::AST::Node*> oArg;
          std::vector<Gecode::FlatZinc::VarSpec*>* varSpecVec;
@@ -409,6 +453,7 @@ namespace Gecode { namespace FlatZinc {
 
 %type <varSpec> int_init bool_init set_init float_init
 %type <oSet> int_ti_expr_tail bool_ti_expr_tail
+%type <oPFloat> float_ti_expr_tail
 
 %type <oVarSpecVec> vardecl_int_var_array_init
 %type <oVarSpecVec> vardecl_bool_var_array_init
@@ -584,8 +629,43 @@ vardecl_item:
         delete $5; free($4);
       }
     | FZ_VAR float_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
-      { ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported");
+      {
+        ParserState* pp = static_cast<ParserState*>(parm);
+        bool print = $5->hasAtom("output_var");
+        bool introduced = $5->hasAtom("var_is_introduced");
+        bool funcDep = $5->hasAtom("is_defined_var");
+        yyassert(pp,
+          pp->symbols.put($4, se_fv(pp->floatvars.size())),
+          "Duplicate symbol");
+        if (print) {
+          pp->output(std::string($4),
+                     new AST::FloatVar(pp->floatvars.size()));
+        }
+        if ($6()) {
+          AST::Node* arg = $6.some();
+          if (arg->isFloat()) {
+            pp->floatvars.push_back(varspec($4,
+              new FloatVarSpec(arg->getFloat(),introduced,funcDep)));
+          } else if (arg->isFloatVar()) {
+            pp->floatvars.push_back(varspec($4,
+              new FloatVarSpec(
+                Alias(arg->getFloatVar()),introduced,funcDep)));
+          } else {
+            yyassert(pp, false, "Invalid var float initializer");
+          }
+          if (!pp->hadError && $2()) {
+            addDomainConstraint(pp,
+              new AST::FloatVar(pp->floatvars.size()-1), $2);
+          }
+          delete arg;
+        } else {
+          Option<std::pair<double,double> > dom =
+            $2() ? Option<std::pair<double,double> >::some(*$2.some())
+                 : Option<std::pair<double,double> >::none();
+          if ($2()) delete $2.some();
+          pp->floatvars.push_back(varspec($4,
+            new FloatVarSpec(dom,introduced,funcDep)));
+        }
         delete $5; free($4);
       }
     | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
@@ -628,6 +708,16 @@ vardecl_item:
         yyassert(pp, $6->isInt(), "Invalid int initializer");
         yyassert(pp,
           pp->symbols.put($3, se_i($6->getInt())),
+          "Duplicate symbol");
+        delete $4; free($3);        
+      }
+    | FZ_FLOAT ':' var_par_id annotations '=' non_array_expr
+      {
+        ParserState* pp = static_cast<ParserState*>(parm);
+        yyassert(pp, $6->isFloat(), "Invalid float initializer");
+        pp->floatvals.push_back($6->getFloat());
+        yyassert(pp,
+          pp->symbols.put($3, se_f(pp->floatvals.size()-1)),
           "Duplicate symbol");
         delete $4; free($3);        
       }
@@ -775,11 +865,74 @@ vardecl_item:
         }
         delete $12; free($11);
       }
-    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR float_ti_expr_tail ':'
-        var_par_id annotations vardecl_float_var_array_init
+    | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR 
+        float_ti_expr_tail ':' var_par_id annotations 
+        vardecl_float_var_array_init
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported");
+        yyassert(pp, $3==1, "Arrays must start at 1");
+        if (!pp->hadError) {
+          bool print = $12->hasCall("output_array");
+          vector<int> vars($5);
+          if (!pp->hadError) {
+            if ($13()) {
+              vector<VarSpec*>* vsv = $13.some();
+              yyassert(pp, vsv->size() == static_cast<unsigned int>($5),
+                       "Initializer size does not match array dimension");
+              if (!pp->hadError) {
+                for (int i=0; i<$5; i++) {
+                  FloatVarSpec* ivsv = static_cast<FloatVarSpec*>((*vsv)[i]);
+                  if (ivsv->alias) {
+                    vars[i] = ivsv->i;
+                  } else {
+                    vars[i] = pp->floatvars.size();
+                    pp->floatvars.push_back(varspec($11, ivsv));
+                  }
+                  if (!pp->hadError && $9()) {
+                    Option<std::pair<double,double>*> opt =
+                      Option<std::pair<double,double>*>::some(
+                        new std::pair<double,double>(*$9.some()));
+                    addDomainConstraint(pp, new AST::FloatVar(vars[i]),
+                                        opt);
+                  }
+                }
+              }
+              delete vsv;
+            } else {
+              if ($5>0) {
+                Option<std::pair<double,double> > dom =
+                  $9() ? Option<std::pair<double,double> >::some(*$9.some())
+                       : Option<std::pair<double,double> >::none();
+                FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
+                string arrayname = "["; arrayname += $11;
+                for (int i=0; i<$5-1; i++) {
+                  vars[i] = pp->floatvars.size();
+                  pp->floatvars.push_back(varspec(arrayname, ispec));
+                }
+                vars[$5-1] = pp->floatvars.size();
+                pp->floatvars.push_back(varspec($11, ispec));
+              }
+            }
+          }
+          if (print) {
+            AST::Array* a = new AST::Array();
+            a->a.push_back(arrayOutput($12->getCall("output_array")));
+            AST::Array* output = new AST::Array();
+            for (int i=0; i<$5; i++)
+              output->a.push_back(new AST::FloatVar(vars[i]));
+            a->a.push_back(output);
+            a->a.push_back(new AST::String(")"));
+            pp->output(std::string($11), a);
+          }
+          int fva = pp->arrays.size();
+          pp->arrays.push_back(vars.size());
+          for (unsigned int i=0; i<vars.size(); i++)
+            pp->arrays.push_back(vars[i]);
+          yyassert(pp,
+            pp->symbols.put($11, se_fva(fva)),
+            "Duplicate symbol");
+        }
+        if ($9()) delete $9.some();
         delete $12; free($11);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':'
@@ -890,7 +1043,20 @@ vardecl_item:
         var_par_id annotations '=' '[' float_list ']'
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        yyassert(pp, false, "Floats not supported");
+        yyassert(pp, $3==1, "Arrays must start at 1");
+        yyassert(pp, $14->size() == static_cast<unsigned int>($5),
+                 "Initializer size does not match array dimension");
+        if (!pp->hadError) {
+          int fa = pp->arrays.size();
+          pp->arrays.push_back($14->size());
+          pp->arrays.push_back(pp->floatvals.size());
+          for (unsigned int i=0; i<$14->size(); i++)
+            pp->floatvals.push_back((*$14)[i]);
+          yyassert(pp,
+            pp->symbols.put($10, se_fa(fa)),
+            "Duplicate symbol");
+        }
+        delete $14;
         delete $11; free($10);
       }
     | FZ_ARRAY '[' FZ_INT_LIT FZ_DOTDOT FZ_INT_LIT ']' FZ_OF FZ_SET FZ_OF FZ_INT ':'
@@ -1236,7 +1402,10 @@ bool_ti_expr_tail :
 
 float_ti_expr_tail :
       FZ_FLOAT
-    | '{' float_list_head list_tail '}'
+      { $$ = Option<std::pair<double,double>* >::none(); }
+    | FZ_FLOAT_LIT FZ_DOTDOT FZ_FLOAT_LIT
+      { std::pair<double,double>* dom = new std::pair<double,double>($1,$3);
+        $$ = Option<std::pair<double,double>* >::some(dom); }
 
 /********************************/
 /* literals                     */
@@ -1351,6 +1520,14 @@ non_array_expr :
               $$ = v;
             }
             break;
+          case ST_FLOATVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::FloatVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
           case ST_SETVARARRAY:
             {
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
@@ -1384,11 +1561,23 @@ non_array_expr :
               $$ = v;
             }
             break;
+          case ST_FLOATVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              int idx = pp->arrays[e.i+1];
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::FloatLit(pp->floatvals[idx+i]);
+              $$ = v;
+            }
+            break;
           case ST_INT:
             $$ = new AST::IntLit(e.i);
             break;
           case ST_BOOL:
             $$ = new AST::BoolLit(e.i);
+            break;
+          case ST_FLOAT:
+            $$ = new AST::FloatLit(pp->floatvals[e.i]);
             break;
           case ST_SET:
             $$ = new AST::SetLit(pp->setvals[e.i]);
@@ -1542,6 +1731,14 @@ ann_non_array_expr :
               $$ = v;
             }
             break;
+          case ST_FLOATVARARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::FloatVar(pp->arrays[e.i+i+1]);
+              $$ = v;
+            }
+            break;
           case ST_SETVARARRAY:
             {
               AST::Array *v = new AST::Array(pp->arrays[e.i]);
@@ -1575,11 +1772,23 @@ ann_non_array_expr :
               $$ = v;
             }
             break;
+          case ST_FLOATVALARRAY:
+            {
+              AST::Array *v = new AST::Array(pp->arrays[e.i]);
+              int idx = pp->arrays[e.i+1];
+              for (int i=pp->arrays[e.i]; i--;)
+                v->a[i] = new AST::FloatLit(pp->floatvals[idx+i]);
+              $$ = v;
+            }
+            break;
           case ST_INT:
             $$ = new AST::IntLit(e.i);
             break;
           case ST_BOOL:
             $$ = new AST::BoolLit(e.i);
+            break;
+          case ST_FLOAT:
+            $$ = new AST::FloatLit(pp->floatvals[e.i]);
             break;
           case ST_SET:
             $$ = new AST::SetLit(pp->setvals[e.i]);

@@ -122,23 +122,20 @@ namespace Gecode { namespace FlatZinc {
   /// Specification for floating point variables
   class FloatVarSpec : public VarSpec {
   public:
-    Option<std::vector<double>* > domain;
-    FloatVarSpec(Option<std::vector<double>* >& d,
+    Option<std::pair<double,double> > domain;
+    FloatVarSpec(Option<std::pair<double,double> >& d,
                  bool introduced, bool funcDep)
-    : VarSpec(introduced,funcDep) {
-      alias = false; assigned = false; domain = d;
+    : VarSpec(introduced,funcDep), domain(d) {
+      alias = false; assigned = false;
     }
-    FloatVarSpec(bool b, bool introduced, bool funcDep)
+    FloatVarSpec(double d, bool introduced, bool funcDep)
     : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true; i = b;
+      alias = false; assigned = true;
+      domain = Option<std::pair<double,double> >::some(std::pair<double,double>(d,d));
     }
     FloatVarSpec(const Alias& eq, bool introduced, bool funcDep)
     : VarSpec(introduced,funcDep) {
       alias = true; i = eq.v;
-    }
-    ~FloatVarSpec(void) {
-      if (!alias && !assigned && domain())
-        delete domain.some();
     }
   };
 

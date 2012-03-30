@@ -101,6 +101,17 @@ namespace Gecode { namespace Gist {
     return "";
   }
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+  inline std::string
+  Comparator::compare(std::string x_n, FloatVar x, FloatVar y) {
+    if (! (x.min() == y.min() && x.max() == y.max()) ) {
+      std::ostringstream ret;
+      ret << x_n << "=" << x << " -> " << y;
+      return ret.str();
+    }
+    return "";
+  }
+#endif
   template<class Var>
   std::string
   Comparator::compare(std::string x_n, const VarArgArray<Var>& x, 

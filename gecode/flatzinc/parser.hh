@@ -98,9 +98,11 @@ namespace Gecode { namespace FlatZinc {
     ST_INTVALARRAY,   //< Integer array
     ST_BOOLVALARRAY,  //< Boolean array
     ST_SETVALARRAY,   //< Set array
+    ST_FLOATVALARRAY, //< Float array
     ST_INT,           //< Integer
     ST_BOOL,          //< Boolean
-    ST_SET            //< Set
+    ST_SET,           //< Set
+    ST_FLOAT          //< Float
   };
 
   /// Entries in the symbol table
@@ -112,7 +114,6 @@ namespace Gecode { namespace FlatZinc {
     SymbolEntry(void) {}
     /// Constructor
     SymbolEntry(SymbolType t0, int i0) : t(t0), i(i0) {}
-
   };
 
   /// Construct integer variable entry
@@ -161,6 +162,10 @@ namespace Gecode { namespace FlatZinc {
   forceinline SymbolEntry se_s(int i) {
     return SymbolEntry(ST_SET, i);
   }
+  /// Construct float entry
+  forceinline SymbolEntry se_f(int i) {
+    return SymbolEntry(ST_FLOAT, i);
+  }
 
   /// Construct integer array entry
   forceinline SymbolEntry se_ia(int i) {
@@ -173,6 +178,10 @@ namespace Gecode { namespace FlatZinc {
   /// Construct set array entry
   forceinline SymbolEntry se_sa(int i) {
     return SymbolEntry(ST_SETVALARRAY, i);
+  }
+  /// Construct float array entry
+  forceinline SymbolEntry se_fa(int i) {
+    return SymbolEntry(ST_FLOATVALARRAY, i);
   }
 
   /// %State of the %FlatZinc parser
@@ -196,26 +205,13 @@ namespace Gecode { namespace FlatZinc {
 
     SymbolTable<SymbolEntry> symbols;
 
-    // SymbolTable<int> intvarTable;
-    // SymbolTable<int> boolvarTable;
-    // SymbolTable<int> floatvarTable;
-    // SymbolTable<int> setvarTable;
-    // SymbolTable<std::vector<int> > intvararrays;
-    // SymbolTable<std::vector<int> > boolvararrays;
-    // SymbolTable<std::vector<int> > floatvararrays;
-    // SymbolTable<std::vector<int> > setvararrays;
-    // SymbolTable<std::vector<int> > intvalarrays;
-    // SymbolTable<std::vector<int> > boolvalarrays;
-    // SymbolTable<int> intvals;
-    // SymbolTable<bool> boolvals;
-    // SymbolTable<AST::SetLit> setvals;
-    // SymbolTable<std::vector<AST::SetLit> > setvalarrays;
-
     std::vector<varspec> intvars;
     std::vector<varspec> boolvars;
     std::vector<varspec> setvars;
+    std::vector<varspec> floatvars;
     std::vector<int> arrays;
     std::vector<AST::SetLit> setvals;
+    std::vector<double> floatvals;
 
     std::vector<ConExpr*> domainConstraints;
 

@@ -49,7 +49,9 @@
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
-
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
+#endif
 #include <map>
 
 /*
@@ -117,6 +119,10 @@ namespace Gecode { namespace FlatZinc {
                    ,
                    const Gecode::SetVarArray& sv
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+                  ,
+                  const Gecode::FloatVarArray& fv
+#endif
                    ) const;
     void printElemDiff(std::ostream& out,
                        AST::Node* ai,
@@ -128,6 +134,11 @@ namespace Gecode { namespace FlatZinc {
                        ,
                        const Gecode::SetVarArray& sv1,
                        const Gecode::SetVarArray& sv2
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+                       ,
+                       const Gecode::FloatVarArray& fv1,
+                       const Gecode::FloatVarArray& fv2
 #endif
                        ) const;
   public:
@@ -141,6 +152,10 @@ namespace Gecode { namespace FlatZinc {
                ,
                const Gecode::SetVarArray& sv
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+               ,
+               const Gecode::FloatVarArray& fv
+#endif
                ) const;
 
     void printDiff(std::ostream& out,
@@ -150,6 +165,11 @@ namespace Gecode { namespace FlatZinc {
                ,
                const Gecode::SetVarArray& sv1, const Gecode::SetVarArray& sv2
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+               ,
+               const Gecode::FloatVarArray& fv1,
+               const Gecode::FloatVarArray& fv2
+#endif
                ) const;
 
   
@@ -157,7 +177,7 @@ namespace Gecode { namespace FlatZinc {
     
     void shrinkElement(AST::Node* node,
                        std::map<int,int>& iv, std::map<int,int>& bv, 
-                       std::map<int,int>& sv);
+                       std::map<int,int>& sv, std::map<int,int>& fv);
 
     void shrinkArrays(Space& home,
                       int& optVar,
@@ -166,6 +186,10 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_SET_VARS
                       ,
                       Gecode::SetVarArray& sv
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+                      ,
+                      Gecode::FloatVarArray& fv
 #endif
                      );
     
@@ -291,6 +315,8 @@ namespace Gecode { namespace FlatZinc {
     int intVarCount;
     /// Number of Boolean variables
     int boolVarCount;
+    /// Number of float variables
+    int floatVarCount;
     /// Number of set variables
     int setVarCount;
 
@@ -336,6 +362,14 @@ namespace Gecode { namespace FlatZinc {
     /// Indicates whether a set variable is introduced by mzn2fzn
     std::vector<bool> sv_introduced;
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// The float variables
+    Gecode::FloatVarArray fv;
+    /// The introduced float variables
+    Gecode::FloatVarArray fv_aux;
+    /// Indicates whether a float variable is introduced by mzn2fzn
+    std::vector<bool> fv_introduced;
+#endif
     /// Construct empty space
     FlatZincSpace(void);
   
@@ -343,7 +377,7 @@ namespace Gecode { namespace FlatZinc {
     ~FlatZincSpace(void);
   
     /// Initialize space with given number of variables
-    void init(int intVars, int boolVars, int setVars);
+    void init(int intVars, int boolVars, int setVars, int floatVars);
 
     /// Create new integer variable from specification
     void newIntVar(IntVarSpec* vs);
@@ -355,6 +389,8 @@ namespace Gecode { namespace FlatZinc {
     void newBoolVar(BoolVarSpec* vs);
     /// Create new set variable from specification
     void newSetVar(SetVarSpec* vs);
+    /// Create new float variable from specification
+    void newFloatVar(FloatVarSpec* vs);
   
     /// Post a constraint specified by \a ce
     void postConstraint(const ConExpr& ce, AST::Node* annotation);

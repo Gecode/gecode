@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Gecode/FlatZinc now supports float constraints and variables.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

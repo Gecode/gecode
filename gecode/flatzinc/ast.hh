@@ -80,6 +80,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     bool hasAtom(const std::string& id);
     /// Test if node is int, if yes set \a i to the value
     bool isInt(int& i);
+    /// Test if node is float, if yes set \a d to the value
+    bool isFloat(double& i);
     /// Test if node is function call with \a id
     bool isCall(const std::string& id);
     /// Return function call
@@ -96,6 +98,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     int getIntVar(void);
     /// Cast this node to a Boolean variable node
     int getBoolVar(void);
+    /// Cast this node to a Float variable node
+    int getFloatVar(void);
     /// Cast this node to a set variable node
     int getSetVar(void);
     
@@ -117,8 +121,12 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     bool isBoolVar(void);
     /// Test if node is a set variable node
     bool isSetVar(void);
+    /// Test if node is a float variable node
+    bool isFloatVar(void);
     /// Test if node is an integer node
     bool isInt(void);
+    /// Test if node is a float node
+    bool isFloat(void);
     /// Test if node is a Boolean node
     bool isBool(void);
     /// Test if node is a string node
@@ -359,6 +367,15 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     return false;
   }
 
+  inline bool
+  Node::isFloat(double& d) {
+    if (FloatLit* fl = dynamic_cast<FloatLit*>(this)) {
+      d = fl->d;
+      return true;
+    }
+    return false;
+  }
+
   inline Call*
   Node::getCall(const std::string& id) {
     if (Array* a = dynamic_cast<Array*>(this)) {
@@ -398,6 +415,12 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     if (BoolVar* a = dynamic_cast<BoolVar*>(this))
       return a->i;
     throw TypeError("bool variable expected");
+  }
+  inline int
+  Node::getFloatVar(void) {
+    if (FloatVar* a = dynamic_cast<FloatVar*>(this))
+      return a->i;
+    throw TypeError("integer variable expected");
   }
   inline int
   Node::getSetVar(void) {
@@ -448,12 +471,20 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     return (dynamic_cast<SetVar*>(this) != NULL);
   }
   inline bool
+  Node::isFloatVar(void) {
+    return (dynamic_cast<FloatVar*>(this) != NULL);
+  }
+  inline bool
   Node::isInt(void) {
     return (dynamic_cast<IntLit*>(this) != NULL);
   }
   inline bool
   Node::isBool(void) {
     return (dynamic_cast<BoolLit*>(this) != NULL);
+  }
+  inline bool
+  Node::isFloat(void) {
+    return (dynamic_cast<FloatLit*>(this) != NULL);
   }
   inline bool
   Node::isSet(void) {
