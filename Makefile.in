@@ -76,7 +76,11 @@ export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 export QT_CPPFLAGS = @QTDEFINES@ @QTINCLUDES@
 export LINKQT = @QTLIBS@
 export MPFR_CPPFLAGS = @GMP_CPPFLAGS@ @MPFR_CPPFLAGS@
+ifeq "@enable_mpfr@" "yes"
 export LINKMPFR = @MPFR_LINK@
+else
+export LINKMPFR =
+endif
 
 ifeq "@BUILDDLL@" "yes"
 export LINKSTATICQT
