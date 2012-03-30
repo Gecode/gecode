@@ -41,34 +41,20 @@ namespace Gecode {
 
   forceinline Archive&
   operator <<(Archive& e, std::pair<float,bool> pdb) {
-    for (size_t i=0; i<sizeof(float); i++)
-      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&pdb.first)[i]));
-    e.put(static_cast<unsigned int>(pdb.second));
-    return e;
+    return e << pdb.first << pdb.second;
   }
   forceinline Archive&
   operator <<(Archive& e, std::pair<double,bool> pdb) {
-    for (size_t i=0; i<sizeof(double); i++)
-      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&pdb.first)[i]));
-    e.put(static_cast<unsigned int>(pdb.second));
-    return e;
+    return e << pdb.first << pdb.second;
   }
 
   forceinline Archive&
   operator >>(Archive& e, std::pair<float,bool>& pdb) {
-    char* cd = reinterpret_cast<char*>(&pdb.first);
-    for (size_t i=0; i<sizeof(float); i++)
-      cd[i] = static_cast<char>(e.get());
-    pdb.second = static_cast<bool>(e.get());
-    return e;
+    return e >> pdb.first >> pdb.second;
   }
   forceinline Archive&
   operator >>(Archive& e, std::pair<double,bool>& pdb) {
-    char* cd = reinterpret_cast<char*>(&pdb.first);
-    for (size_t i=0; i<sizeof(double); i++)
-      cd[i] = static_cast<char>(e.get());
-    pdb.second = static_cast<bool>(e.get());
-    return e;
+    return e >> pdb.first >> pdb.second;
   }
 }
 
