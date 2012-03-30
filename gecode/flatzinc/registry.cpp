@@ -266,6 +266,38 @@ namespace Gecode { namespace FlatZinc {
     }
 
 #ifdef GECODE_HAS_FLOAT_VARS
+    inline FloatArgs arg2floatargs(AST::Node* arg, int offset = 0) {
+      AST::Array* a = arg->getArray();
+      FloatArgs fa(a->a.size()+offset);
+      for (int i=offset; i--;)
+        fa[i] = 0.0;
+      for (int i=a->a.size(); i--;)
+        fa[i+offset] = a->a[i]->getFloat();
+      return fa;
+    }
+
+    inline FloatVarArgs arg2floatvarargs(FlatZincSpace& s, AST::Node* arg,
+                                         int offset = 0) {
+      AST::Array* a = arg->getArray();
+      if (a->a.size() == 0) {
+        FloatVarArgs emptyFa(0);
+        return emptyFa;
+      }
+      FloatVarArgs fa(a->a.size()+offset);
+      for (int i=offset; i--;)
+        fa[i] = FloatVar(s, 0.0, 0.0);
+      for (int i=a->a.size(); i--;) {
+        if (a->a[i]->isFloatVar()) {
+          fa[i+offset] = s.fv[a->a[i]->getFloatVar()];        
+        } else {
+          double value = a->a[i]->getFloat();
+          FloatVar fv(s, value, value);
+          fa[i+offset] = fv;
+        }
+      }
+      return fa;
+    }
+
     FloatVar getFloatVar(FlatZincSpace& s, AST::Node* n) {
       FloatVar x0;
       if (n->isFloatVar()) {
@@ -1832,11 +1864,45 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
+    void p_float_lin_cmp(FlatZincSpace& s, FloatRelType frt,
+                         const ConExpr& ce, AST::Node*) {
+      FloatArgs fa = arg2floatargs(ce[0]);
+      FloatVarArgs fv = arg2floatvarargs(s, ce[1]);
+      linear(s, fa, fv, frt, ce[2]->getFloat());
+    }
+    void p_float_lin_cmp_reif(FlatZincSpace& s, FloatRelType frt,
+                              const ConExpr& ce, AST::Node*) {
+      FloatArgs fa = arg2floatargs(ce[0]);
+      FloatVarArgs fv = arg2floatvarargs(s, ce[1]);
+      linear(s, fa, fv, frt, ce[2]->getFloat(), getBoolVar(s,ce[3]));
+    }
+    void p_float_lin_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_float_lin_cmp(s,FRT_EQ,ce,ann);
+    }
+    void p_float_lin_eq_reif(FlatZincSpace& s, const ConExpr& ce,
+                             AST::Node* ann) {
+      p_float_lin_cmp_reif(s,FRT_EQ,ce,ann);
+    }
+    void p_float_lin_le(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_float_lin_cmp(s,FRT_LQ,ce,ann);
+    }
+    void p_float_lin_le_reif(FlatZincSpace& s, const ConExpr& ce,
+                             AST::Node* ann) {
+      p_float_lin_cmp_reif(s,FRT_LQ,ce,ann);
+    }
+
     void p_float_times(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       FloatVar x = getFloatVar(s, ce[0]);
       FloatVar y = getFloatVar(s, ce[1]);
       FloatVar z = getFloatVar(s, ce[2]);
       mult(s,x,y,z);
+    }
+
+    void p_float_div(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar z = getFloatVar(s, ce[2]);
+      div(s,x,y,z);
     }
 
     void p_float_sqrt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
@@ -1914,8 +1980,15 @@ namespace Gecode { namespace FlatZinc {
         registry().add("float_le",&p_float_le);
         registry().add("float_le_reif",&p_float_le_reif);
         registry().add("float_times",&p_float_times);
+        registry().add("float_div",&p_float_div);
         registry().add("float_max",&p_float_max);
         registry().add("float_min",&p_float_min);
+        
+        registry().add("float_lin_eq",&p_float_lin_eq);
+        registry().add("float_lin_eq_reif",&p_float_lin_eq_reif);
+        registry().add("float_lin_le",&p_float_lin_le);
+        registry().add("float_lin_le_reif",&p_float_lin_le_reif);
+        
 #ifdef GECODE_HAS_MPFR
         registry().add("float_acos",&p_float_acos);
         registry().add("float_asin",&p_float_asin);
