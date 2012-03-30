@@ -514,6 +514,7 @@ namespace Gecode { namespace Float {
 #include <gecode/float/view/offset.hpp>
 #include <gecode/float/view/scale.hpp>
 #include <gecode/float/view/print.hpp>
+#include <gecode/float/var/print.hpp>
 
 namespace Gecode { namespace Float {
   /**
