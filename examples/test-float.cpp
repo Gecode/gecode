@@ -59,6 +59,7 @@ public:
   {
 #ifndef BOXES
     branch(*this,f[0],FLOAT_VAL_SPLIT_MIN);
+    //branch(*this,f[0],FLOAT_VAL_SPLIT_RND,ValBranchOptions::time());
 #endif
 
 //    Int::IntView iv(ivar);

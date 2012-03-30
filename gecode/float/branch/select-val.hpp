@@ -37,38 +37,40 @@
  *
  */
 
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
-/*
- *  Main authors:
- *
- *  Copyright:
- *
- *  Last modified:
- *
- *  This file is part of Gecode, the generic constraint
- *  development environment:
- *     http://www.gecode.org
- *
- *  Permission is hereby granted, free of charge, to any person obtaining
- *  a copy of this software and associated documentation files (the
- *  "Software"), to deal in the Software without restriction, including
- *  without limitation the rights to use, copy, modify, merge, publish,
- *  distribute, sublicense, and/or sell copies of the Software, and to
- *  permit persons to whom the Software is furnished to do so, subject to
- *  the following conditions:
- *
- *  The above copyright notice and this permission notice shall be
- *  included in all copies or substantial portions of the Software.
- *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
- */
+namespace Gecode {
+
+  forceinline Archive&
+  operator <<(Archive& e, std::pair<float,bool> pdb) {
+    for (size_t i=0; i<sizeof(float); i++)
+      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&pdb.first)[i]));
+    e.put(static_cast<unsigned int>(pdb.second));
+    return e;
+  }
+  forceinline Archive&
+  operator <<(Archive& e, std::pair<double,bool> pdb) {
+    for (size_t i=0; i<sizeof(double); i++)
+      e.put(static_cast<unsigned int>(reinterpret_cast<char*>(&pdb.first)[i]));
+    e.put(static_cast<unsigned int>(pdb.second));
+    return e;
+  }
+
+  forceinline Archive&
+  operator >>(Archive& e, std::pair<float,bool>& pdb) {
+    char* cd = reinterpret_cast<char*>(&pdb.first);
+    for (size_t i=0; i<sizeof(float); i++)
+      cd[i] = static_cast<char>(e.get());
+    pdb.second = static_cast<bool>(e.get());
+    return e;
+  }
+  forceinline Archive&
+  operator >>(Archive& e, std::pair<double,bool>& pdb) {
+    char* cd = reinterpret_cast<char*>(&pdb.first);
+    for (size_t i=0; i<sizeof(double); i++)
+      cd[i] = static_cast<char>(e.get());
+    pdb.second = static_cast<bool>(e.get());
+    return e;
+  }
+}
 
 namespace Gecode { namespace Float { namespace Branch {
 
@@ -127,6 +129,58 @@ namespace Gecode { namespace Float { namespace Branch {
       else return x.lq(home,n);
     }
   }
+
+  template<class View>
+  forceinline
+  ValSplitRnd<View>::ValSplitRnd(void) {}
+  template<class View>
+  forceinline
+  ValSplitRnd<View>::ValSplitRnd(Space&, const ValBranchOptions& vbo)
+    : r(vbo.seed) {}
+  template<class View>
+  forceinline typename ValSplitRnd<View>::Val
+  ValSplitRnd<View>::val(Space&, View x) {
+    unsigned int p = r(2);
+    return std::pair<FloatNum, bool>(x.median(),(p == 0));
+  }
+  template<class View>
+  forceinline ModEvent
+  ValSplitRnd<View>::tell(Space& home, unsigned int a, View x, Val rn) {
+    FloatNum& n = rn.first;
+    if ( ((a==0) && rn.second) || ((a == 1) && !rn.second) )
+    {
+      if ((x.min() == n) || (x.max() == n)) return x.eq(home,x.min());
+      else return x.lq(home,n);
+    }
+    else
+    {
+      if ((x.min() == n) || (x.max() == n)) return x.eq(home,x.max());
+      else return x.gq(home,n);
+    }
+  }
+  template<class View>
+  forceinline typename ValSplitRnd<View>::Choice
+  ValSplitRnd<View>::choice(Space&) {
+    return r;
+  }
+  template<class View>
+  forceinline typename ValSplitRnd<View>::Choice
+  ValSplitRnd<View>::choice(const Space&, Archive& e) {
+    return Choice(e.get());
+  }
+  template<class View>
+  forceinline void
+  ValSplitRnd<View>::commit(Space&, const Choice& c, unsigned int) {
+    r = c;
+  }
+  template<class View>
+  forceinline void
+  ValSplitRnd<View>::update(Space&, bool, ValSplitRnd<View>& vr) {
+    r = vr.r;
+  }
+  template<class View>
+  forceinline void
+  ValSplitRnd<View>::dispose(Space&) {}
 
 }}}
 

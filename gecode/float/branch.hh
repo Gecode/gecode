@@ -69,9 +69,9 @@ namespace Gecode { namespace Float { namespace Branch {
     ValSplitMin(void);
     /// Constructor for initialization
     ValSplitMin(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x
+    /// Return median value of view \a x
     FloatNum val(Space& home, View x) const;
-    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x > n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, FloatNum n);
   };
 
@@ -90,12 +90,53 @@ namespace Gecode { namespace Float { namespace Branch {
     ValSplitMax(void);
     /// Constructor for initialization
     ValSplitMax(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x
+    /// Return median value of view \a x
     FloatNum val(Space& home, View x) const;
-    /// Tell \f$x\geq n\f$ (\a a = 0) or \f$x <n\f$ (\a a = 1)
+    /// Tell \f$x\geq n\f$ (\a a = 0) or \f$x < n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, FloatNum n);
   };
 
+  /**
+   * \brief Class for splitting domain at mean of smallest and largest element
+   * (randomly select upper or lower part first)
+   *
+   * Requires
+   * \code #include <gecode/float/branch.hh> \endcode
+   * \ingroup FuncFloatSelVal
+   */
+  template<class _View>
+  class ValSplitRnd {
+  protected:
+    /// The random number generator
+    ArchivedRandomGenerator r;
+  public:
+    /// View type
+    typedef _View View;
+    /// Value type
+    typedef std::pair<FloatNum, bool> Val;
+    /// Choice type
+    typedef ArchivedRandomGenerator Choice;
+    /// Number of alternatives
+    static const unsigned int alternatives = 2;
+    /// Default constructor
+    ValSplitRnd(void);
+    /// Constructor for initialization
+    ValSplitRnd(Space& home, const ValBranchOptions& vbo);
+    /// Return minimum value of view \a x at position \a i
+    Val val(Space& home, _View x);
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x > n\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, _View x, Val rn);
+    /// Return choice
+    Choice choice(Space& home);
+    /// Return choice
+    Choice choice(const Space& home, Archive& e);
+    /// Commit to choice
+    void commit(Space& home, const Choice& c, unsigned a);
+    /// Updating during cloning
+    void update(Space& home, bool share, ValSplitRnd& vs);
+    /// Delete value selection
+    void dispose(Space& home);
+  };
 
   /*
    * Variable selection classes

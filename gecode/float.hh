@@ -804,7 +804,8 @@ namespace Gecode {
   /// Which values to select first for branching
   enum FloatValBranch {
     FLOAT_VAL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
-    FLOAT_VAL_SPLIT_MAX ///< Select values not smaller than mean of largest and smallest value
+    FLOAT_VAL_SPLIT_MAX, ///< Select values not smaller than mean of largest and smallest value
+    FLOAT_VAL_SPLIT_RND  ///< Select values randomly which are not greater or not smaller than mean of largest and smallest value
   };
   
   /// Branch over \a x with variable selection \a vars and value selection \a vals
