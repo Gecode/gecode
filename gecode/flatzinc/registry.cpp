@@ -1839,10 +1839,93 @@ namespace Gecode { namespace FlatZinc {
       mult(s,x,y,z);
     }
 
+    void p_float_sqrt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      sqrt(s,x,y);
+    }
+
+    void p_float_abs(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      abs(s,x,y);
+    }
+
+    void p_float_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      rel(s,x,FRT_EQ,y);
+    }
+    void p_float_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      BoolVar  b = getBoolVar(s, ce[2]);
+      rel(s,x,FRT_EQ,y,b);
+    }
+    void p_float_le(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      rel(s,x,FRT_LQ,y);
+    }
+    void p_float_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      BoolVar  b = getBoolVar(s, ce[2]);
+      rel(s,x,FRT_LQ,y,b);
+    }
+    void p_float_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar z = getFloatVar(s, ce[2]);
+      max(s,x,y,z);
+    }
+    void p_float_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar z = getFloatVar(s, ce[2]);
+      min(s,x,y,z);
+    }
+
+#ifdef GECODE_HAS_MPFR
+#define P_FLOAT_OP(Op) \
+    void p_float_ ## Op (FlatZincSpace& s, const ConExpr& ce, AST::Node*) {\
+      FloatVar x = getFloatVar(s, ce[0]);\
+      FloatVar y = getFloatVar(s, ce[1]);\
+      Op(s,x,y);\
+    }
+    P_FLOAT_OP(acos)
+    P_FLOAT_OP(asin)
+    P_FLOAT_OP(atan)
+    P_FLOAT_OP(cos)
+    P_FLOAT_OP(exp)
+    P_FLOAT_OP(log)
+    P_FLOAT_OP(sin)
+    P_FLOAT_OP(tan)
+#undef P_FLOAT_OP
+#endif
+
     class FloatPoster {
     public:
       FloatPoster(void) {
+        registry().add("float_abs",&p_float_abs);
+        registry().add("float_sqrt",&p_float_sqrt);
+        registry().add("float_eq",&p_float_eq);
+        registry().add("float_eq_reif",&p_float_eq_reif);
+        registry().add("float_le",&p_float_le);
+        registry().add("float_le_reif",&p_float_le_reif);
         registry().add("float_times",&p_float_times);
+        registry().add("float_max",&p_float_max);
+        registry().add("float_min",&p_float_min);
+#ifdef GECODE_HAS_MPFR
+        registry().add("float_acos",&p_float_acos);
+        registry().add("float_asin",&p_float_asin);
+        registry().add("float_atan",&p_float_atan);
+        registry().add("float_cos",&p_float_cos);
+        registry().add("float_exp",&p_float_exp);
+        registry().add("float_log",&p_float_log);
+        registry().add("float_sin",&p_float_sin);
+        registry().add("float_tan",&p_float_tan);
+#endif
       }
     } __float_poster;
 #endif

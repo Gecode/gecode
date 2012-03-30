@@ -1133,6 +1133,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::compare(const Space& s, std::ostream& out) const {
+#ifdef GECODE_HAS_GIST
     const FlatZincSpace& fs = dynamic_cast<const FlatZincSpace&>(s);
     for (int i = 0; i < iv.size(); ++i) {
       std::stringstream ss;
@@ -1165,6 +1166,7 @@ namespace Gecode { namespace FlatZinc {
                                                            fs.fv[i]));
       if (result.length() > 0) out << result << std::endl;
     }
+#endif
 #endif
   }
 
@@ -1300,6 +1302,7 @@ namespace Gecode { namespace FlatZinc {
                        const Gecode::FloatVarArray& fv2
 #endif
                        ) const {
+#ifdef GECODE_HAS_GIST
     using namespace Gecode::Gist;
     int k;
     if (ai->isInt(k)) {
@@ -1372,6 +1375,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
     }
+#endif
   }
 
   void
