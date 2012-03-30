@@ -90,7 +90,7 @@ namespace Gecode { namespace Float {
 
   forceinline bool
   FloatVarImp::assigned(void) const {
-    return singleton(dom);
+    return dom.singleton();
   }
 
   forceinline FloatNum

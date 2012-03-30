@@ -219,7 +219,6 @@ namespace Gecode {
     friend FloatNum upper(const FloatVal& x);
     friend FloatNum width(const FloatVal& x);
     friend FloatNum median(const FloatVal& x);
-    friend bool singleton(const FloatVal& x);
     friend bool in(const FloatNum& x, const FloatVal& y);
     friend bool zero_in(const FloatVal& x);
     friend bool subset(const FloatVal& x, const FloatVal& y);
@@ -289,6 +288,8 @@ namespace Gecode {
     FloatNum lower(void) const;
     /// Return upper bound
     FloatNum upper(void) const;
+    /// Test whether float is a singleton
+    bool singleton(void) const;
     
     /// Return hull of \a x and \a y
     static FloatVal hull(FloatNum x, FloatNum y);
@@ -560,11 +561,6 @@ namespace Gecode {
    */
   FloatNum median(const FloatVal& x);
 
-  /**
-   * \brief Test whether \a x is a singleton
-   * \relates Gecode::FloatVal
-   */
-  bool singleton(const FloatVal& x);
   /**
    * \brief Test whether \a x is included in \a y
    * \relates Gecode::FloatVal

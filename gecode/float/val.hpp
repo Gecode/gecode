@@ -78,6 +78,10 @@ namespace Gecode {
   FloatVal::upper(void) const {
     return x.upper();
   }
+  forceinline bool
+  FloatVal::singleton(void) const {
+    return boost::numeric::singleton(x);
+  }
     
   forceinline FloatVal
   FloatVal::pi_half(void) {
@@ -338,10 +342,6 @@ namespace Gecode {
     return median(x.x);
   }
 
-  forceinline bool
-  singleton(const FloatVal& x) {
-    return singleton(x.x);
-  }
   forceinline bool
   in(const FloatNum& x, const FloatVal& y) {
     return in(x,y.x);
