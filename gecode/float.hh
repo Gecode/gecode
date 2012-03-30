@@ -734,6 +734,73 @@ namespace Gecode {
 #endif
 
   /**
+   * \defgroup TaskModelFloatLI Linear constraints over float variables
+   * \ingroup TaskModelFloat
+   */
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} c\f$
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatVarArgs& x,
+         FloatRelType frt, FloatNum c);
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\f$
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatVarArgs& x,
+         FloatRelType frt, FloatVar y);
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} c\right)\equiv r\f$
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatVarArgs& x,
+         FloatRelType frt, FloatNum c, Reify r);
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\right)\equiv r\f$
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatVarArgs& x,
+         FloatRelType frt, FloatVar y, Reify r);
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\f$
+   *
+   *  Throws an exception of type Float::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+         FloatRelType frt, FloatNum c);
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
+   *
+   *  Throws an exception of type Float::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+         FloatRelType frt, FloatVar y);
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\right)\equiv r\f$
+   *
+   *  Throws an exception of type Float::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+         FloatRelType frt, FloatNum c, Reify r);
+  /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
+   *
+   *  Throws an exception of type Float::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   * \ingroup TaskModelFloatLI
+   */
+  GECODE_INT_EXPORT void
+  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+         FloatRelType frt, FloatVar y, Reify r);
+
+
+
+  /**
    * \defgroup TaskModelFloatChannel Channel constraints
    * \ingroup TaskModelFloat
    */

@@ -419,7 +419,7 @@ INTBUILDDIRS	= \
 #
 
 FLOATSRC0 = \
-	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp \
+	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp activity.cpp rounding.cpp
 
 FLOATHDR0 = \
