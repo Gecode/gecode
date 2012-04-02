@@ -147,7 +147,24 @@ namespace Gecode {
   log(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
-    GECODE_ES_FAIL((Transcendental::Log<FloatView,FloatView>::post(home,x0,x1)));
+    GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>
+      ::post(home,x1,x0)));
+  }
+
+  void
+  log(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
+    using namespace Float;
+    if (home.failed()) return;
+    GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
+      ::post(home,base,x1,x0)));
+  }
+
+  void
+  pow(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
+    using namespace Float;
+    if (home.failed()) return;
+    GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
+      ::post(home,base,x0,x1)));
   }
 
   void

@@ -1964,10 +1964,29 @@ namespace Gecode { namespace FlatZinc {
     P_FLOAT_OP(atan)
     P_FLOAT_OP(cos)
     P_FLOAT_OP(exp)
-    P_FLOAT_OP(log)
     P_FLOAT_OP(sin)
     P_FLOAT_OP(tan)
+    // P_FLOAT_OP(sinh)
+    // P_FLOAT_OP(tanh)
+    // P_FLOAT_OP(cosh)
 #undef P_FLOAT_OP
+
+    void p_float_ln(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      log(s,x,y);
+    }
+    void p_float_log10(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      log(s,10.0,x,y);
+    }
+    void p_float_log2(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      log(s,2.0,x,y);
+    }
+
 #endif
 
     class FloatPoster {
@@ -1994,10 +2013,15 @@ namespace Gecode { namespace FlatZinc {
         registry().add("float_asin",&p_float_asin);
         registry().add("float_atan",&p_float_atan);
         registry().add("float_cos",&p_float_cos);
+        // registry().add("float_cosh",&p_float_cosh);
         registry().add("float_exp",&p_float_exp);
-        registry().add("float_log",&p_float_log);
+        registry().add("float_ln",&p_float_ln);
+        registry().add("float_log10",&p_float_log10);
+        registry().add("float_log2",&p_float_log2);
         registry().add("float_sin",&p_float_sin);
+        // registry().add("float_sinh",&p_float_sinh);
         registry().add("float_tan",&p_float_tan);
+        // registry().add("float_tanh",&p_float_tanh);
 #endif
       }
     } __float_poster;

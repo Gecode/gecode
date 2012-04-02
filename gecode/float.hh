@@ -1076,10 +1076,18 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   exp(Home home, FloatVar x0, FloatVar x1);
-  /** \brief Post propagator for \f$ \mathrm{exp}(x_0)=x_1\f$
+  /** \brief Post propagator for \f$ \mathrm{log}_e(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
   log(Home home, FloatVar x0, FloatVar x1);
+  /** \brief Post propagator for \f$ \mathit{base}^{x_0}=x_1\f$
+   */
+  GECODE_FLOAT_EXPORT void
+  pow(Home home, FloatNum base, FloatVar x0, FloatVar x1);
+  /** \brief Post propagator for \f$ \mathrm{log}_{\mathit{base}}(x_0)=x_1\f$
+   */
+  GECODE_FLOAT_EXPORT void
+  log(Home home, FloatNum base, FloatVar x0, FloatVar x1);
   //@}
 
   /**

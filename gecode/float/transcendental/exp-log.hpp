@@ -50,6 +50,7 @@ namespace Gecode { namespace Float { namespace Transcendental {
   template<class A, class B>
   ExecStatus
   Exp<A,B>::post(Home home, A x0, B x1) {
+    GECODE_ME_CHECK(x1.gq(home,0.0));
     (void) new (home) Exp<A,B>(home,x0,x1);
     return ES_OK;
   }
@@ -70,44 +71,51 @@ namespace Gecode { namespace Float { namespace Transcendental {
   ExecStatus
   Exp<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,exp(x0.domain())));
+    if (x1.max() == 0.0)
+      return ES_FAILED;
     GECODE_ME_CHECK(x0.eq(home,log(x1.domain())));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
+
   /*
-   * Bounds consistent logarithm operator
+   * Bounds consistent logarithm operator with base
    *
    */
 
   template<class A, class B>
   forceinline
-  Log<A,B>::Log(Home home, A x0, B x1)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1) {}
+  Pow<A,B>::Pow(Home home, FloatNum base0, A x0, B x1)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1),
+      base(base0) {}
 
   template<class A, class B>
   ExecStatus
-  Log<A,B>::post(Home home, A x0, B x1) {
-    (void) new (home) Log<A,B>(home,x0,x1);
+  Pow<A,B>::post(Home home, FloatNum base, A x0, B x1) {
+    GECODE_ME_CHECK(x1.gq(home,0.0));
+    (void) new (home) Pow<A,B>(home,base,x0,x1);
     return ES_OK;
   }
 
   template<class A, class B>
   forceinline
-  Log<A,B>::Log(Space& home, bool share, Log<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  Pow<A,B>::Pow(Space& home, bool share, Pow<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p),
+      base(p.base) {}
 
   template<class A, class B>
   Actor*
-  Log<A,B>::copy(Space& home, bool share) {
-    return new (home) Log<A,B>(home,share,*this);
+  Pow<A,B>::copy(Space& home, bool share) {
+    return new (home) Pow<A,B>(home,share,*this);
   }
 
   template<class A, class B>
   ExecStatus
-  Log<A,B>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.max() < 0) return ES_FAILED;
-    GECODE_ME_CHECK(x1.eq(home,log(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,exp(x1.domain())));
+  Pow<A,B>::propagate(Space& home, const ModEventDelta&) {
+    if (x1.max() == 0.0)
+      return ES_FAILED;
+    GECODE_ME_CHECK(x0.eq(home,log(x1.domain())/log(base)));
+    GECODE_ME_CHECK(x1.eq(home,exp(x0.domain()*log(base))));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 

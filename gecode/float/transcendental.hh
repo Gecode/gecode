@@ -50,7 +50,7 @@
 namespace Gecode { namespace Float { namespace Transcendental {
 
   /**
-   * \brief %Propagator for bounds consistent square operator
+   * \brief %Propagator for bounds consistent exp operator
    *
    * The types \a A and \a B give the types of the views.
    *
@@ -72,12 +72,13 @@ namespace Gecode { namespace Float { namespace Transcendental {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$x_0^2 = x_1\f$
+    /// Post propagator for \f$e^{x_0} = x_1\f$
     static ExecStatus post(Home home, A x0, B x1);
   };
 
+
   /**
-   * \brief %Propagator for bounds consistent square root operator
+   * \brief %Propagator for bounds consistent pow operator
    *
    * The types \a A and \a B give the types of the views.
    *
@@ -85,22 +86,23 @@ namespace Gecode { namespace Float { namespace Transcendental {
    * \ingroup FuncFloatProp
    */
   template<class A, class B>
-  class Log : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
+  class Pow : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    FloatNum base;
 
     /// Constructor for cloning \a p
-    Log(Space& home, bool share, Log& p);
+    Pow(Space& home, bool share, Pow& p);
     /// Constructor for creation
-    Log(Home home, A x0, B x1);
+    Pow(Home home, FloatNum base, A x0, B x1);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$x_0^2 = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
+    /// Post propagator for \f$\mathit{base}^{x_0} = x_1\f$
+    static ExecStatus post(Home home, FloatNum base, A x0, B x1);
   };
 
 }}}
