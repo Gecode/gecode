@@ -60,3 +60,12 @@ predicate bool_sum_ge(array[int] of var bool: x, var int: c) =
     bool_lin_ge([1 | i in index_set(x)],x,c);
 predicate bool_sum_gt(array[int] of var bool: x, var int: c) =
     bool_lin_gt([1 | i in index_set(x)],x,c);
+
+predicate float_sinh(var float: a, var float: b) =
+    b == (exp(a)-exp(-a))/2.0;
+
+predicate float_cosh(var float: a, var float: b) =
+    b == (exp(a)+exp(-a))/2.0;
+
+predicate float_tanh(var float: a, var float: b) =
+    b == (exp(a)-exp(-a))/(exp(x)+exp(-x));
