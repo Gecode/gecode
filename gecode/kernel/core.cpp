@@ -498,6 +498,8 @@ namespace Gecode {
     while (x != NULL) {
       VarImp<NoIdxVarImpConf>* n = x->next();
       x->b.base = NULL; x->u.idx[0] = 0;
+      if (sizeof(ActorLink**) > sizeof(unsigned int))
+        *(1+&x->u.idx[0]) = 0;
       x = n;
     }
     // Update variables with indexing structure
