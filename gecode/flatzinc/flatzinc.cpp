@@ -1071,7 +1071,7 @@ namespace Gecode { namespace FlatZinc {
   }
 #else
   void
-  FlatZincSpace::branchWithPlugin(AST::Node* ann) {
+  FlatZincSpace::branchWithPlugin(AST::Node*) {
     throw FlatZinc::Error("FlatZinc",
       "Branching with plugins not supported (requires Qt support)");
   }
@@ -1133,6 +1133,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::compare(const Space& s, std::ostream& out) const {
+    (void) s; (void) out;
 #ifdef GECODE_HAS_GIST
     const FlatZincSpace& fs = dynamic_cast<const FlatZincSpace&>(s);
     for (int i = 0; i < iv.size(); ++i) {
