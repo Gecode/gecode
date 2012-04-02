@@ -154,19 +154,6 @@ namespace Gecode { namespace Float {
     return x.eq(home,n-c);
   }
 
-  forceinline ModEvent
-  OffsetView::nq(Space& home, int n) {
-    return x.nq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::nq(Space& home, FloatNum n) {
-    return x.nq(home,n-c);
-  }
-  forceinline ModEvent
-  OffsetView::nq(Space& home, const FloatVal& n) {
-    return x.nq(home,n-c);
-  }
-
 
   /*
    * Delta information for advisors

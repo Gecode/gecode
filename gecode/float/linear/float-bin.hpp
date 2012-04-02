@@ -276,12 +276,9 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B>
   ExecStatus
   NqBin<A,B>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.assigned()) {
-      GECODE_ME_CHECK(x1.nq(home,c-x0.val()));
-    } else {
-      assert(x1.assigned());
-      GECODE_ME_CHECK(x0.nq(home,c-x1.val()));
-    }
+    if (x0.assigned() && x1.assigned()) {
+      return (c-x0.val() == x1.val()) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    } 
     return ES_FIX;
   }
 

@@ -148,18 +148,6 @@ namespace Gecode { namespace Float {
     return x->eq(home,n);
   }
 
-  forceinline ModEvent
-  FloatView::nq(Space& home, int n) {
-    return x->nq(home,n);
-  }
-  forceinline ModEvent
-  FloatView::nq(Space& home, FloatNum n) {
-    return x->nq(home,n);
-  }
-  forceinline ModEvent
-  FloatView::nq(Space& home, const FloatVal& n) {
-    return x->nq(home,n);
-  }
 
 
   /*

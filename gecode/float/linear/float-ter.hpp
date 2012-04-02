@@ -204,18 +204,10 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, class C>
   ExecStatus
   NqTer<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.nq(home,c-x0.val()-x1.val()));
-      return home.ES_SUBSUMED(*this);
-    }
-    if (x0.assigned() && x2.assigned()) {
-      GECODE_ME_CHECK(x1.nq(home,c-x0.val()-x2.val()));
-      return home.ES_SUBSUMED(*this);
-    }
-    if (x1.assigned() && x2.assigned()) {
-      GECODE_ME_CHECK(x0.nq(home,c-x1.val()-x2.val()));
-      return home.ES_SUBSUMED(*this);
-    }
+    if (x0.assigned() && x1.assigned() && x2.assigned()) {
+      return (x2.val() == c-x0.val()-x1.val()) ?
+        ES_FAILED : home.ES_SUBSUMED(*this);
+    } 
     return ES_FIX;
   }
 

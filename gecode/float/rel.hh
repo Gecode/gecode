@@ -181,10 +181,10 @@ namespace Gecode { namespace Float { namespace Rel {
    */
   template<class View0, class View1>
   class Nq :
-    public MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND> {
+    public MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL> {
   protected:
-    using MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>::x1;
+    using MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>::x0;
+    using MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>::x1;
 
     /// Constructor for cloning \a p
     Nq(Space& home, bool share, Nq<View0,View1>& p);

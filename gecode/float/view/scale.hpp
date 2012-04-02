@@ -159,22 +159,6 @@ namespace Gecode { namespace Float {
     return x.eq(home,c);
   }
 
-  forceinline ModEvent
-  ScaleView::nq(Space& home, int n) {
-    FloatVal c = n; c /= a;
-    return x.nq(home,c);
-  }
-  forceinline ModEvent
-  ScaleView::nq(Space& home, FloatNum n) {
-    FloatVal c = n; c /= a;
-    return x.nq(home,c);
-  }
-  forceinline ModEvent
-  ScaleView::nq(Space& home, const FloatVal& n) {
-    FloatVal c = n; c /= a;
-    return x.nq(home,c);
-  }
-
 
   /*
    * Delta information for advisors

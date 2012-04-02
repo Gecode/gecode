@@ -125,12 +125,6 @@ namespace Gecode { namespace Float {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, const FloatVal& n);
 
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, int n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, FloatNum n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, const FloatVal& n);
     //@}
 
     /// \name Delta information for advisors
@@ -233,12 +227,6 @@ namespace Gecode { namespace Float {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, const FloatVal& n);
 
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, int n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, FloatNum n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, const FloatVal& n);
     //@}
 
     /// \name Delta information for advisors
@@ -349,12 +337,6 @@ namespace Gecode { namespace Float {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, const FloatVal& n);
 
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, int n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, FloatNum n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, const FloatVal& n);
     //@}
 
     /// \name Delta information for advisors
@@ -470,12 +452,6 @@ namespace Gecode { namespace Float {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, const FloatVal& n);
 
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, int n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, FloatNum n);
-    /// Restrict domain values to be not equal to \a n (poor performance)
-    ModEvent nq(Space& home, const FloatVal& n);
     //@}
 
     /// \name Delta information for advisors

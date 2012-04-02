@@ -46,15 +46,14 @@ namespace Gecode { namespace Float { namespace Rel {
   template<class View0, class View1>
   forceinline
   Nq<View0,View1>::Nq(Home home, View0 x0, View1 x1)
-    : MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>(home,x0,x1) {}
+    : MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>(home,x0,x1) {}
 
   template<class View0, class View1>
   ExecStatus
   Nq<View0,View1>::post(Home home, View0 x0, View1 x1){
-    if (x0.assigned()) {
-      GECODE_ME_CHECK(x1.nq(home,x0.val()));
-    } else if (x1.assigned()) {
-      GECODE_ME_CHECK(x0.nq(home,x1.val()));
+    if (x0.assigned() && x1.assigned()) {
+      if (x0.val() == x1.val())
+        return ES_FAILED;
     } else if (same(x0,x1)) {
       return ES_FAILED;
     } else {
@@ -66,7 +65,7 @@ namespace Gecode { namespace Float { namespace Rel {
   template<class View0, class View1>
   forceinline
   Nq<View0,View1>::Nq(Space& home, bool share, Nq<View0,View1>& p)
-    : MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>(home,share,p) {}
+    : MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>(home,share,p) {}
 
   template<class View0, class View1>
   Actor*
@@ -77,11 +76,9 @@ namespace Gecode { namespace Float { namespace Rel {
   template<class View0, class View1>
   ExecStatus
   Nq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.assigned()) {
-      GECODE_ME_CHECK(x1.nq(home,x0.val()));
-    } else {
-      GECODE_ME_CHECK(x0.nq(home,x1.val()));
-    }
+    if (x0.assigned() && x1.assigned()) {
+      return (x0.val() == x1.val()) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    } 
     return ES_FIX;
   }
 

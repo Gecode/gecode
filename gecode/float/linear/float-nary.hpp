@@ -590,11 +590,11 @@ namespace Gecode { namespace Float { namespace Linear {
         c += y[i].val();  y.move_lst(i);
       }
     if (x.size() + y.size() <= 1) {
-      if (x.size() == 1) {
-        GECODE_ME_CHECK(x[0].nq(home,c)); return home.ES_SUBSUMED(*this);
+      if (x.size() == 1 && x[0].assigned()) {
+        return (x[0].val() == c) ? ES_FAILED : home.ES_SUBSUMED(*this);
       }
-      if (y.size() == 1) {
-        GECODE_ME_CHECK(y[0].nq(home,-c)); return home.ES_SUBSUMED(*this);
+      if (y.size() == 1 && y[0].assigned()) {
+        return (y[0].val() == -c) ? ES_FAILED : home.ES_SUBSUMED(*this);
       }
       return (c == 0.0) ?
         ES_FAILED : home.ES_SUBSUMED(*this);
