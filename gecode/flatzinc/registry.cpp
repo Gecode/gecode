@@ -1905,6 +1905,13 @@ namespace Gecode { namespace FlatZinc {
       div(s,x,y,z);
     }
 
+    void p_float_plus(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar z = getFloatVar(s, ce[2]);
+      rel(s,x+y==z);
+    }
+
     void p_float_sqrt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       FloatVar x = getFloatVar(s, ce[0]);
       FloatVar y = getFloatVar(s, ce[1]);
@@ -1987,6 +1994,30 @@ namespace Gecode { namespace FlatZinc {
       log(s,2.0,x,y);
     }
 
+    void p_float_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      rel(s, x, FRT_LQ, y);
+      rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
+    }
+
+    void p_float_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      BoolVar b = getBoolVar(s, ce[2]);
+      BoolVar b0(s,0,1);
+      BoolVar b1(s,0,1);
+      rel(s, b == (b0 && !b1));
+      rel(s, x, FRT_LQ, y, b0);
+      rel(s, x, FRT_EQ, y, b1);
+    }
+
+    void p_float_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
+    }
+
 #endif
 
     class FloatPoster {
@@ -1998,8 +2029,12 @@ namespace Gecode { namespace FlatZinc {
         registry().add("float_eq_reif",&p_float_eq_reif);
         registry().add("float_le",&p_float_le);
         registry().add("float_le_reif",&p_float_le_reif);
+        registry().add("float_lt",&p_float_lt);
+        registry().add("float_lt_reif",&p_float_lt_reif);
+        registry().add("float_ne",&p_float_ne);
         registry().add("float_times",&p_float_times);
         registry().add("float_div",&p_float_div);
+        registry().add("float_plus",&p_float_plus);
         registry().add("float_max",&p_float_max);
         registry().add("float_min",&p_float_min);
         

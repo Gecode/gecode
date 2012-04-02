@@ -69,3 +69,6 @@ predicate float_cosh(var float: a, var float: b) =
 
 predicate float_tanh(var float: a, var float: b) =
     b == (exp(a)-exp(-a))/(exp(x)+exp(-x));
+
+predicate float_ne_reif(var float: a, var float: b, var bool: c) =
+    not c <-> a==b;
