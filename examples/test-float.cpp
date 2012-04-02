@@ -111,14 +111,15 @@ public:
 //    rel(*this, min(f[0],f[2]) == f[1]);
 //    rel(*this, max(f[0],f[2]) == f[1]);
 //    ivar = channel(*this,f[0]); rel(*this, ivar >= -5); rel(*this, ivar <= 5);
-//    rel(*this, exp(f[0]) == f[1]);
+//    rel(*this, exp(f[1]) == f[2]);
 //    rel(*this, log(f[0]) == f[1]);
 //    rel(*this, asin(f[0]) == f[1]);
 //    rel(*this, sin(f[0]) >= f[1]);
 //    rel(*this, acos(f[0]) == f[1]);
 //    rel(*this, cos(f[0]) == f[1]);
-//    rel(*this, atan(f[0]) == f[1]);
-//    rel(*this, tan(f[0]) == f[1]);
+//    rel(*this, atan(f[1]) == f[2]);
+//    rel(*this, tan(f[1]) == f[2]);
+//    rel(*this, (f[0] == f[1]));
 
 //    rel(*this, bvar == 1);
 //    rel(*this, bvar == (f[0] <= f[1]));
@@ -135,13 +136,13 @@ public:
 //      rel(*this, f[4]*sin(f[0]) == f[2]);
 //      rel(*this, exp(0.306349*f[0]) == f[4]);
 
-//      // Exemple 1-2 (spirale d'archimède)
-//      rel(*this, f[0] >= 0);
-//      rel(*this, f[0] <= 6*3.14);
-//      rel(*this, f[4] >= 0);
-//      rel(*this, f[4]*cos(f[0]) == f[1]);
-//      rel(*this, f[4]*sin(f[0]) == f[2]);
-//      rel(*this, f[4] == f[0]);
+      // Exemple 1-2 (spirale d'archimède)
+      rel(*this, f[0] >= 0);
+      rel(*this, f[0] <= 6*FloatVal::pi());
+      rel(*this, f[4] >= 0);
+      rel(*this, f[4]*cos(f[0]) == f[1]);
+      rel(*this, f[4]*sin(f[0]) == f[2]);
+      rel(*this, f[4] == f[0]);
 
 //      // Exemple 2 (ellipse)
 //      int a = 2, b = 3;
@@ -168,15 +169,15 @@ public:
 //    branch(*this,f[2],FLOAT_VAL_SPLIT_MIN);
 //    // Mettre le rel avec f[0] et f[2]
 
-    // Exemple 6 (Folium de Descartes)
-    rel(*this, 3*f[0]/(1+pow(f[0],3)) == f[1]);
-    rel(*this, 3*sqr(f[0])/(1+pow(f[0],3)) == f[2]);
-    rel(*this, pow(f[1],3) + pow(f[2],3)  == 3 * f[1] * f[2]);
-    rel(*this, f[1] == FloatVal(-1,2));
+//    // Exemple 6 (Folium de Descartes)
+//    rel(*this, 3*f[0]/(1+pow(f[0],3)) == f[1]);
+//    rel(*this, 3*sqr(f[0])/(1+pow(f[0],3)) == f[2]);
+//    rel(*this, pow(f[1],3) + pow(f[2],3)  == 3 * f[1] * f[2]);
+//    rel(*this, f[1] == FloatVal(-1,2));
 
 //      // Exemple 7 (rosace)
 //      rel(*this, f[0] >= 0);
-//      rel(*this, f[0] <= 2*3.14);
+//      rel(*this, f[0] <= 2*FloatVal::pi());
 //      rel(*this, f[4] >= 0);
 //      rel(*this, f[4]*cos(f[0]) == f[1]);
 //      rel(*this, f[4]*sin(f[0]) == f[2]);

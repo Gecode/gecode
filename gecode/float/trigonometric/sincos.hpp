@@ -206,6 +206,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   Sin<A,B>::post(Home home, A x0, B x1) {
+    GECODE_ME_CHECK(x1.gq(home,-1.0));
+    GECODE_ME_CHECK(x1.lq(home,1.0));
     (void) new (home) Sin<A,B>(home,x0,x1);
     return ES_OK;
   }
@@ -247,6 +249,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   Cos<A,B>::post(Home home, A x0, B x1) {
+    GECODE_ME_CHECK(x1.gq(home,-1.0));
+    GECODE_ME_CHECK(x1.lq(home,1.0));
     (void) new (home) Cos<A,B>(home,x0,x1);
     return ES_OK;
   }
