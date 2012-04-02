@@ -1075,7 +1075,7 @@ AC_DEFUN([AC_GECODE_MPFR_LIB],
   if test "${with_mpfr_lib:-no}" != "no"; then
       case $ac_gecode_compiler_vendor in
         gnu)
-          AC_SUBST(MPFR_LINK,["-L${with_mpfr_lib} -lmpfr"])
+          AC_SUBST(MPFR_LINK,["-L${with_mpfr_lib} -lmpfr -lgmp"])
         ;;
         microsoft)
           AC_SUBST(MPFR_LINK,["/LIBPATH:${with_mpfr_lib} mpfr.lib"])
@@ -1084,7 +1084,7 @@ AC_DEFUN([AC_GECODE_MPFR_LIB],
   else
       case $ac_gecode_compiler_vendor in
         gnu)
-          AC_SUBST(MPFR_LINK,["-lmpfr"])
+          AC_SUBST(MPFR_LINK,["-lmpfr -lgmp"])
         ;;
         microsoft)
           AC_SUBST(MPFR_LINK,["mpfr.lib"])
@@ -1142,7 +1142,7 @@ AC_DEFUN([AC_GECODE_MPFR],
                                           AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
                                           enable_mpfr=yes;,
                                           enable_mpfr=no;),
-                             enable_mpfr=no; )
+                             enable_mpfr=no; ),
                            enable_mpfr=no; )
         ;;
         microsoft)
@@ -1154,7 +1154,7 @@ AC_DEFUN([AC_GECODE_MPFR],
                                           AC_DEFINE([GECODE_HAS_MPFR],[],[Whether MPFR is available])
                                           enable_mpfr=yes;,
                                           enable_mpfr=no;),
-                             enable_mpfr=no; )
+                             enable_mpfr=no; ),
                            enable_mpfr=no; )
         ;;
       esac
