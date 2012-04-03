@@ -168,6 +168,32 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline void
   ValSplitRnd<View>::dispose(Space&) {}
 
+  template<class View>
+  forceinline
+  AssignValMin<View>::AssignValMin(void) {}
+  template<class View>
+  forceinline
+  AssignValMin<View>::AssignValMin(Space& home, const ValBranchOptions& vbo)
+    : ValSplitMin<View>(home,vbo) {}
+
+
+  template<class View>
+  forceinline
+  AssignValMax<View>::AssignValMax(void) {}
+  template<class View>
+  forceinline
+  AssignValMax<View>::AssignValMax(Space& home, const ValBranchOptions& vbo)
+    : ValSplitMax<View>(home,vbo) {}
+
+
+  template<class View>
+  forceinline
+  AssignValRnd<View>::AssignValRnd(void) {}
+  template<class View>
+  forceinline
+  AssignValRnd<View>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
+    : ValSplitRnd<View>(home,vbo) {}
+
 }}}
 
 // STATISTICS: float-branch

@@ -42,10 +42,54 @@
 namespace Gecode {
 
   void
+  assign(Home home, const FloatVarArgs& x, FloatAssign vals,
+         const ValBranchOptions& o_vals) {
+    using namespace Float;
+    if (home.failed()) return;
+    ViewArray<FloatView> xv(home,x);
+    ViewSelNone<FloatView> v(home,VarBranchOptions::def);
+    switch (vals) {
+    case FLOAT_ASSIGN_MIN:
+      {
+        Branch::AssignValMin<FloatView> a(home,o_vals);
+        ViewValBrancher
+          <ViewSelNone<FloatView>,Branch::AssignValMin<FloatView> >
+          ::post(home,xv,v,a);
+      }
+      break;
+    case FLOAT_ASSIGN_MAX:
+      {
+        Branch::AssignValMax<FloatView> a(home,o_vals);
+        ViewValBrancher
+          <ViewSelNone<FloatView>,Branch::AssignValMax<FloatView> >
+          ::post(home,xv,v,a);
+      }
+      break;
+    case FLOAT_ASSIGN_RND:
+      {
+        Branch::AssignValRnd<FloatView> a(home,o_vals);
+        ViewValBrancher
+          <ViewSelNone<FloatView>,Branch::AssignValRnd<FloatView> >
+          ::post(home,xv,v,a);
+      }
+      break;
+    default:
+      throw UnknownBranching("Float::assign");
+    }
+  }
+
+  void
   branch(Home home, FloatVar x, FloatValBranch vals,
          const ValBranchOptions& o_vals) {
     FloatVarArgs xv(1); xv[0]=x;
     branch(home, xv, FLOAT_VAR_NONE, vals, VarBranchOptions::def, o_vals);
+  }
+  
+  void
+  assign(Home home, FloatVar x, FloatAssign vals,
+         const ValBranchOptions& o_vals) {
+    FloatVarArgs xv(1); xv[0]=x;
+    assign(home, xv, vals, o_vals);
   }
   
 }

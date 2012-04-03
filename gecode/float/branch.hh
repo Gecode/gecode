@@ -138,6 +138,43 @@ namespace Gecode { namespace Float { namespace Branch {
     void dispose(Space& home);
   };
 
+  /// Class for assigning median value of lower part of the interval
+  template<class View>
+  class AssignValMin : public ValSplitMin<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMin(void);
+    /// Constructor for initialization
+    AssignValMin(Space& home, const ValBranchOptions& vbo);
+  };
+
+  /// Class for assigning median value of upper part of the interval
+  template<class View>
+  class AssignValMax : public ValSplitMax<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValMax(void);
+    /// Constructor for initialization
+    AssignValMax(Space& home, const ValBranchOptions& vbo);
+  };
+
+  /// Class for assigning median value of a randomly chosen part of the interval
+  template<class View>
+  class AssignValRnd : public ValSplitRnd<View> {
+  public:
+    /// Number of alternatives
+    static const unsigned int alternatives = 1;
+    /// Default constructor
+    AssignValRnd(void);
+    /// Constructor for initialization
+    AssignValRnd(Space& home, const ValBranchOptions& vbo);
+  };
+
+
   /*
    * Variable selection classes
    *

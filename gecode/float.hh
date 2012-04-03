@@ -1283,6 +1283,28 @@ namespace Gecode {
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   
   //@}
+
+  /**
+   * \defgroup TaskModelFloatAssign Assigning
+   * \ingroup TaskModelFloat
+   */
+  //@{
+  /// Which value to select for assignment
+  enum FloatAssign {
+    FLOAT_ASSIGN_MIN, ///< Select median value of the lower part
+    FLOAT_ASSIGN_MAX, ///< Select median value of the upper part
+    FLOAT_ASSIGN_RND  ///< Select median value of a randomly chosen part
+  };
+
+  /// Assign all \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  assign(Home home, const FloatVarArgs& x, FloatAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  /// Assign \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  assign(Home home, FloatVar x, FloatAssign vals,
+         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  //@}
 }
 
 #include <gecode/float/activity.hpp>
