@@ -251,9 +251,9 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class A, class B, class C>
   ExecStatus
   LqTer<A,B,C>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x0.lq(home,c + Round.add_up(x1.min(),x2.min())));
-    GECODE_ME_CHECK(x1.lq(home,c + Round.add_up(x0.min(),x2.min())));
-    GECODE_ME_CHECK(x2.lq(home,c + Round.add_up(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x0.lq(home,c - Round.add_up(x1.min(),x2.min())));
+    GECODE_ME_CHECK(x1.lq(home,c - Round.add_up(x0.min(),x2.min())));
+    GECODE_ME_CHECK(x2.lq(home,c - Round.add_up(x0.min(),x1.min())));
     return (c >= Round.add_down(x0.max(),Round.add_down(x1.max(),x2.max()))) ?
       home.ES_SUBSUMED(*this) : ES_FIX;
   }
