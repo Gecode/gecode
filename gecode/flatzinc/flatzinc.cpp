@@ -106,6 +106,10 @@ namespace Gecode { namespace FlatZinc {
       for (int i=0; i<home.sv_aux.size(); i++)
         if (!home.sv_aux[i].assigned()) return true;
 #endif
+#ifdef GECODE_HAS_FLOAT_VARS
+      for (int i=0; i<home.fv_aux.size(); i++)
+        if (!home.fv_aux[i].assigned()) return true;
+#endif
       // No non-assigned variables left
       return false;
     }
@@ -118,6 +122,9 @@ namespace Gecode { namespace FlatZinc {
       branch(fzs,fzs.bv_aux,INT_VAR_NONE,INT_VAL_MIN);
 #ifdef GECODE_HAS_SET_VARS
       branch(fzs,fzs.sv_aux,SET_VAR_NONE,SET_VAL_MIN_INC);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+      branch(fzs,fzs.fv_aux,FLOAT_VAR_NONE,FLOAT_VAL_SPLIT_MIN);
 #endif
       FlatZincSpace* sol = dfs(&fzs);
       if (sol) {
@@ -760,6 +767,30 @@ namespace Gecode { namespace FlatZinc {
 
     branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
     branch(*this, bv_sol, INT_VAR_AFC_MAX, INT_VAL_MIN);
+#ifdef GECODE_HAS_FLOAT_VARS
+    introduced = 0;
+    funcdep = 0;
+    for (int i=fv.size(); i--;)
+      if (fv_introduced[2*i]) {
+        if (fv_introduced[2*i+1]) {
+          funcdep++;
+        } else {
+          introduced++;
+        }
+      }
+    FloatVarArgs fv_sol(fv.size()-(introduced+funcdep));
+    FloatVarArgs fv_tmp(introduced);
+    for (int i=fv.size(), j=0, k=0; i--;)
+      if (fv_introduced[2*i]) {
+        if (!fv_introduced[2*i+1]) {
+          fv_tmp[j++] = fv[i];
+        }
+      } else {
+        fv_sol[k++] = fv[i];
+      }
+
+    branch(*this, fv_sol, FLOAT_VAR_WIDTH_MIN, FLOAT_VAL_SPLIT_MIN);
+#endif
 #ifdef GECODE_HAS_SET_VARS
     introduced = 0;
     funcdep = 0;
@@ -788,6 +819,9 @@ namespace Gecode { namespace FlatZinc {
     bv_aux = BoolVarArray(*this, bv_tmp);
 #ifdef GECODE_HAS_SET_VARS
     sv_aux = SetVarArray(*this, sv_tmp);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    fv_aux = FloatVarArray(*this, fv_tmp);
 #endif
     AuxVarBrancher::post(*this);
   }
