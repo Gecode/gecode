@@ -820,7 +820,7 @@ namespace Gecode {
     FloatVal val(void) const;
 
     /// Return width of domain (distance between maximum and minimum)
-    FloatVal width(void) const;
+    FloatNum width(void) const;
     //@}
 
     /// \name Domain tests

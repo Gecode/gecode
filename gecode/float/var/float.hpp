@@ -81,7 +81,7 @@ namespace Gecode {
     return x->domain();
   }
 
-  forceinline FloatVal
+  forceinline FloatNum
   FloatVar::width(void) const {
     return x->width();
   }
