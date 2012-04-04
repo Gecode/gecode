@@ -1194,7 +1194,7 @@ namespace Gecode { namespace FlatZinc {
     }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    for (int i = 0; i < sv.size(); ++i) {
+    for (int i = 0; i < fv.size(); ++i) {
       std::stringstream ss;
       ss << "fv[" << i << "]";
       std::string result(Gecode::Gist::Comparator::compare(ss.str(), fv[i],
