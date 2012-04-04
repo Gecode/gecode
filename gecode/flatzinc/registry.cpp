@@ -1958,6 +1958,29 @@ namespace Gecode { namespace FlatZinc {
       FloatVar z = getFloatVar(s, ce[2]);
       min(s,x,y,z);
     }
+    void p_float_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      rel(s, x, FRT_LQ, y);
+      rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
+    }
+
+    void p_float_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      BoolVar b = getBoolVar(s, ce[2]);
+      BoolVar b0(s,0,1);
+      BoolVar b1(s,0,1);
+      rel(s, b == (b0 && !b1));
+      rel(s, x, FRT_LQ, y, b0);
+      rel(s, x, FRT_EQ, y, b1);
+    }
+
+    void p_float_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
+      FloatVar x = getFloatVar(s, ce[0]);
+      FloatVar y = getFloatVar(s, ce[1]);
+      rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
+    }
 
 #ifdef GECODE_HAS_MPFR
 #define P_FLOAT_OP(Op) \
@@ -1992,30 +2015,6 @@ namespace Gecode { namespace FlatZinc {
       FloatVar x = getFloatVar(s, ce[0]);
       FloatVar y = getFloatVar(s, ce[1]);
       log(s,2.0,x,y);
-    }
-
-    void p_float_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      rel(s, x, FRT_LQ, y);
-      rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
-    }
-
-    void p_float_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      BoolVar b = getBoolVar(s, ce[2]);
-      BoolVar b0(s,0,1);
-      BoolVar b1(s,0,1);
-      rel(s, b == (b0 && !b1));
-      rel(s, x, FRT_LQ, y, b0);
-      rel(s, x, FRT_EQ, y, b1);
-    }
-
-    void p_float_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
     }
 
 #endif
