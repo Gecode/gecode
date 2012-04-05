@@ -45,16 +45,74 @@
 
 namespace Gecode {
 
+  namespace {
+    
+    /// Comparison operator
+    template<class X>
+    struct LessP {
+      bool operator ()(const std::pair<X,int>& lhs,
+                       const std::pair<X,int>& rhs) {
+        return lhs.second < rhs.second;
+      }      
+    };
+
+    /// Make \a x and \a y equal
+    IntVar unify(Home home, IntVar x, IntVar y) {
+      rel(home, x, IRT_EQ, y);
+      return x;
+    }
+    /// Make \a x and \a y equal
+    IntSet unify(Home, IntSet x, IntSet y) {
+      IntSetRanges xr(x);
+      IntSetRanges yr(y);
+      Iter::Ranges::Inter<IntSetRanges,IntSetRanges> i(xr,yr);
+      IntSet z(i);
+      return y;
+    }
+    
+    /// Remove dupliate entries in \a v from both \a v and \a c
+    template<class A>
+    void removeDuplicates(Home home, A& c, IntArgs& v) {
+      typedef typename A::value_type S;
+      typedef std::pair<S,int> P;
+      Region re(home);
+      P* a = re.alloc<P>(c.size());
+      for (int i=c.size(); i--;)
+        a[i] = P(c[i],v[i]);
+      LessP<S> l;
+      Support::quicksort(a,c.size(),l);
+      A cc;
+      IntArgs vv;
+      int cur = a[0].second-1;
+      for (int i=0; i<c.size(); i++) {
+        if (a[i].second==cur) {
+          cc[cc.size()-1] = unify(home, cc[cc.size()-1], a[i].first);
+        } else {
+          cc << a[i].first;
+          vv << a[i].second;
+          cur = a[i].second;
+        }
+      }
+      c = cc;
+      v = vv;
+    }
+    
+  }
+
   void count(Home home, const IntVarArgs& x,
-             const IntVarArgs& c, const IntArgs& v,
+             const IntVarArgs& _c, const IntArgs& _v,
              IntConLevel icl) {
     using namespace Int;
+    IntVarArgs c(_c);
+    IntArgs v(_v);
     if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
       throw ArgumentSame("Int::count");
     if (home.failed())
       return;
+
+    removeDuplicates(home,c,v);
 
     ViewArray<IntView> xv(home, x);
     ViewArray<GCC::CardView> cv(home, c.size());
@@ -87,9 +145,11 @@ namespace Gecode {
 
   // constant cards
   void count(Home home, const IntVarArgs& x,
-             const IntSetArgs& c, const IntArgs& v,
+             const IntSetArgs& _c, const IntArgs& _v,
              IntConLevel icl) {
     using namespace Int;
+    IntSetArgs c(_c);
+    IntArgs v(_v);
     if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
@@ -102,6 +162,8 @@ namespace Gecode {
 
     if (home.failed())
       return;
+
+    removeDuplicates(home,c,v);    
 
     ViewArray<IntView> xv(home, x);
 
