@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
+ *
  *  Copyright:
  *     Christian Schulte, 2008
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -97,6 +101,29 @@ namespace Test { namespace Assign {
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
       return new SetTestSpace(share,*this);
+    }
+  };
+
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+
+  /// Space for executing Boolean tests
+  class FloatTestSpace : public Gecode::Space {
+  public:
+    /// Variables to be tested
+    Gecode::FloatVarArray x;
+    /// Initialize test space
+    FloatTestSpace(int n, const Gecode::FloatVal& d)
+      : x(*this, n, d.lower(), d.upper()) {}
+    /// Constructor for cloning \a s
+    FloatTestSpace(bool share, FloatTestSpace& s)
+      : Gecode::Space(share,s) {
+      x.update(*this, share, s.x);
+    }
+    /// Copy space during cloning
+    virtual Gecode::Space* copy(bool share) {
+      return new FloatTestSpace(share,*this);
     }
   };
 
@@ -263,6 +290,69 @@ namespace Test { namespace Assign {
         std::cout << "FAILURE" << std::endl
                   << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
                   << "\t" << set_assign_name[val] << std::endl;
+        delete root;
+        return false;
+      }
+    }
+    delete root;
+    return true;
+  }
+
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+
+  /** \name Collection of possible arguments for float assignments
+   *
+   * \relates FloatTestSpace
+   */
+  //@{
+  /// Float value assignments
+  const Gecode::FloatAssign float_assign[] = {
+    Gecode::FLOAT_ASSIGN_MIN,
+    Gecode::FLOAT_ASSIGN_MAX,
+    Gecode::FLOAT_ASSIGN_RND
+  };
+  /// Number of float value selections
+  const int n_float_assign =
+    sizeof(float_assign)/sizeof(Gecode::FloatAssign);
+  /// Names for float assignments
+  const char* float_assign_name[] = {
+    "FLOAT_ASSIGN_MIN",
+    "FLOAT_ASSIGN_MAX",
+    "FLOAT_ASSIGN_RND"
+  };
+  //@}
+
+  FloatTest::FloatTest(const std::string& s, int a, const Gecode::FloatVal& d)
+    : Base("Float::Assign::"+s), arity(a), dom(d) {
+  }
+
+  bool
+  FloatTest::run(void) {
+    using namespace Gecode;
+    FloatTestSpace* root = new FloatTestSpace(arity,dom);
+    post(*root, root->x);
+    (void) root->status();
+
+    for (int val = n_float_assign; val--; ) {
+      FloatTestSpace* clone = static_cast<FloatTestSpace*>(root->clone(false));
+      Gecode::Search::Options o;
+      o.a_d = Base::rand(10);
+      o.c_d = Base::rand(10);
+      assign(*clone, clone->x, float_assign[val]);
+      Gecode::DFS<FloatTestSpace> e_s(clone, o);
+      delete clone;
+
+      // Find number of solutions
+      int solutions = 0;
+      while (Space* s = e_s.next()) {
+        delete s; solutions++;
+      }
+      if (solutions != 1) {
+        std::cout << "FAILURE" << std::endl
+                  << "\tc_d=" << o.c_d << ", a_d=" << o.a_d << std::endl
+                  << "\t" << float_assign_name[val] << std::endl;
         delete root;
         return false;
       }

@@ -4,9 +4,13 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
+ *
  *  Copyright:
  *     Mikael Lagerkvist, 2005
  *     Christian Schulte, 2009
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -48,6 +52,9 @@
 #include <gecode/int.hh>
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+#include <gecode/float.hh>
 #endif
 
 #include <gecode/search.hh>
@@ -115,6 +122,27 @@ namespace Test { namespace Branch {
     /// Copy space during cloning
     virtual Gecode::Space* copy(bool share) {
       return new SetTestSpace(share,*this);
+    }
+  };
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+  /// Space for executing Boolean tests
+  class FloatTestSpace : public Gecode::Space {
+  public:
+    /// Variables to be tested
+    Gecode::FloatVarArray x;
+    /// Initialize test space
+    FloatTestSpace(int n, Gecode::FloatVal& d)
+      : x(*this, n, d.lower(), d.upper()) {}
+    /// Constructor for cloning \a s
+    FloatTestSpace(bool share, FloatTestSpace& s)
+      : Gecode::Space(share,s) {
+      x.update(*this, share, s.x);
+    }
+    /// Copy space during cloning
+    virtual Gecode::Space* copy(bool share) {
+      return new FloatTestSpace(share,*this);
     }
   };
 #endif
@@ -299,6 +327,81 @@ namespace Test { namespace Branch {
   //@}
 #endif
 
+#ifdef GECODE_HAS_FLOAT_VARS
+  /** \name Collection of possible arguments for float branchers
+   *
+   * \relates FloatTestSpace
+   */
+  //@{
+  /// Float variable selections
+  const Gecode::FloatVarBranch float_var_branch[] = {
+    Gecode::FLOAT_VAR_NONE, // Use several single variable branchers
+    Gecode::FLOAT_VAR_NONE,
+    Gecode::FLOAT_VAR_RND,
+    Gecode::FLOAT_VAR_DEGREE_MIN,
+    Gecode::FLOAT_VAR_DEGREE_MAX,
+    Gecode::FLOAT_VAR_AFC_MIN,
+    Gecode::FLOAT_VAR_AFC_MAX,
+    Gecode::FLOAT_VAR_ACTIVITY_MIN,
+    Gecode::FLOAT_VAR_ACTIVITY_MAX,
+    Gecode::FLOAT_VAR_MIN_MIN,
+    Gecode::FLOAT_VAR_MIN_MAX,
+    Gecode::FLOAT_VAR_MAX_MIN,
+    Gecode::FLOAT_VAR_MAX_MAX,
+    Gecode::FLOAT_VAR_WIDTH_MIN,
+    Gecode::FLOAT_VAR_WIDTH_MAX,
+    Gecode::FLOAT_VAR_WIDTH_DEGREE_MIN,
+    Gecode::FLOAT_VAR_WIDTH_DEGREE_MAX,
+    Gecode::FLOAT_VAR_WIDTH_AFC_MIN,
+    Gecode::FLOAT_VAR_WIDTH_AFC_MAX,
+    Gecode::FLOAT_VAR_WIDTH_ACTIVITY_MIN,
+    Gecode::FLOAT_VAR_WIDTH_ACTIVITY_MAX
+  };
+  /// Number of float variable selections
+  const int n_float_var_branch =
+    sizeof(float_var_branch)/sizeof(Gecode::FloatVarBranch);
+  /// Names for float variable selections
+  const char* float_var_branch_name[] = {
+    "SINGLE VARIABLE",
+    "FLOAT_VAR_NONE",
+    "FLOAT_VAR_RND",
+    "FLOAT_VAR_DEGREE_MIN",
+    "FLOAT_VAR_DEGREE_MAX",
+    "FLOAT_VAR_AFC_MIN",
+    "FLOAT_VAR_AFC_MAX",
+    "FLOAT_VAR_ACTIVITY_MIN",
+    "FLOAT_VAR_ACTIVITY_MAX",
+    "FLOAT_VAR_MIN_MIN",
+    "FLOAT_VAR_MIN_MAX",
+    "FLOAT_VAR_MAX_MIN",
+    "FLOAT_VAR_MAX_MAX",
+    "FLOAT_VAR_WIDTH_MIN",
+    "FLOAT_VAR_WIDTH_MAX",
+    "FLOAT_VAR_WIDTH_DEGREE_MIN",
+    "FLOAT_VAR_WIDTH_DEGREE_MAX",
+    "FLOAT_VAR_WIDTH_AFC_MIN",
+    "FLOAT_VAR_WIDTH_AFC_MAX",
+    "FLOAT_VAR_WIDTH_ACTIVITY_MIN",
+    "FLOAT_VAR_WIDTH_ACTIVITY_MAX"
+  };
+  /// Float value selections
+  const Gecode::FloatValBranch float_val_branch[] = {
+    Gecode::FLOAT_VAL_SPLIT_MIN,
+    Gecode::FLOAT_VAL_SPLIT_MAX,
+    Gecode::FLOAT_VAL_SPLIT_RND
+  };
+  /// Number of float value selections
+  const int n_float_val_branch =
+    sizeof(float_val_branch)/sizeof(Gecode::FloatValBranch);
+  /// Names for float value selections
+  const char* float_val_branch_name[] = {
+    "FLOAT_VAL_SPLIT_MIN",
+    "FLOAT_VAL_SPLIT_MAX",
+    "FLOAT_VAL_SPLIT_RND"
+  };
+  //@}
+#endif
+
   /// Information about one test-run
   class RunInfo {
   public:
@@ -326,7 +429,7 @@ namespace Test { namespace Branch {
 
   /// Find number of solutions
   template<class TestSpace>
-  int solutions(TestSpace* c, Gecode::Search::Options& o) {
+  int solutions(TestSpace* c, Gecode::Search::Options& o, int maxNbSol = -1) {
     o.a_d = Base::rand(10);
     o.c_d = Base::rand(10);
     Gecode::DFS<TestSpace> e_s(c, o);
@@ -339,6 +442,7 @@ namespace Test { namespace Branch {
       if (ex == NULL) break;
       delete ex;
       ++s;
+      if ((maxNbSol >= 0) && (maxNbSol == s)) break;
     } while (true);
     return s;
   }
@@ -578,6 +682,94 @@ namespace Test { namespace Branch {
             (RunInfo(set_var_branch_name[vara],
                      set_var_branch_name[varb],
                      set_val_branch_name[val],
+                     o));
+        }
+      }
+    }
+    if (results.size() > 1)
+      goto failed;
+    delete root;
+    return true;
+  failed:
+    std::cout   << "FAILURE" << std::endl;
+    for (map<int, vector<RunInfo> >::iterator it = results.begin();
+         it != results.end(); ++it) {
+      std::cout << "Number of solutions: " << it->first << std::endl;
+      for (unsigned int i = 0; i < it->second.size(); ++i)
+        std::cout << it->second[i] << " ";
+      std::cout << std::endl;
+    }
+
+    delete root;
+    return results.size() == 1;
+  }
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+  FloatTest::FloatTest(const std::string& s, int a, const Gecode::FloatVal& d, int nbs)
+    : Base("Float::Branch::"+s), arity(a), dom(d), nbSols(nbs) {
+  }
+
+  bool
+  FloatTest::run(void) {
+    using std::map;
+    using std::vector;
+    using std::string;
+    using std::ostream;
+    using namespace Gecode;
+
+    // Results of tests run
+    map<int, vector<RunInfo> > results;
+    // Set up root space
+    FloatTestSpace* root = new FloatTestSpace(arity,dom);
+    post(*root, root->x);
+    root->status();
+    results.clear();
+
+    for (int vara = 0; vara<n_float_var_branch; vara++) {
+      for (int varb = 1; varb<n_float_var_branch; varb++) {
+        for (int val = 0; val<n_float_val_branch; val++) {
+          FloatTestSpace* c = static_cast<FloatTestSpace*>(root->clone(false));
+          if (vara == 0) {
+            for (int i=0; i<c->x.size(); i++)
+              branch(*c, c->x[i], float_val_branch[val]);
+          } else {
+            FloatVarBranch fvba = float_var_branch[vara];
+            FloatVarBranch fvbb = float_var_branch[varb];
+            VarBranchOptions vboa, vbob;
+            FloatActivity faa, fab;
+
+            switch (fvba) {
+            case FLOAT_VAR_ACTIVITY_MIN:
+            case FLOAT_VAR_ACTIVITY_MAX:
+            case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
+            case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+              faa.init(*c, c->x, 1.0);
+              vboa.activity = faa;
+              break;
+            default: ;
+            }
+
+            switch (fvbb) {
+            case FLOAT_VAR_ACTIVITY_MIN:
+            case FLOAT_VAR_ACTIVITY_MAX:
+            case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
+            case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+              fab.init(*c, c->x, 1.0);
+              vbob.activity = fab;
+              break;
+            default: ;
+            }
+
+            branch(*c, c->x,
+                   tiebreak(fvba, fvbb), float_val_branch[val],
+                   tiebreak(vboa, vbob));
+          }
+          Gecode::Search::Options o;
+          results[solutions(c,o,nbSols)].push_back
+            (RunInfo(float_var_branch_name[vara],
+                     float_var_branch_name[varb],
+                     float_val_branch_name[val],
                      o));
         }
       }
