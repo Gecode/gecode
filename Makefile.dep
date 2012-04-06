@@ -2640,8 +2640,8 @@ gecode/float/rel$(OBJSUFFIX) gecode/float/rel$(SBJSUFFIX): \
 gecode/float/linear$(OBJSUFFIX) gecode/float/linear$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -2690,8 +2690,8 @@ gecode/float/linear$(OBJSUFFIX) gecode/float/linear$(SBJSUFFIX): \
 gecode/float/linear/post$(OBJSUFFIX) gecode/float/linear/post$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/rel.hh ./gecode/float/rel/eq.hpp \
 	./gecode/float/rel/gq.hpp ./gecode/float/rel/lq.hpp ./gecode/float/rel/nq.hpp \
 	./gecode/float/val.hpp ./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp \
@@ -4910,8 +4910,8 @@ gecode/set/branch/post-view$(OBJSUFFIX) gecode/set/branch/post-view$(SBJSUFFIX):
 gecode/minimodel/lin-expr$(OBJSUFFIX) gecode/minimodel/lin-expr$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -4975,8 +4975,8 @@ gecode/minimodel/lin-expr$(OBJSUFFIX) gecode/minimodel/lin-expr$(SBJSUFFIX): \
 gecode/minimodel/lin-rel$(OBJSUFFIX) gecode/minimodel/lin-rel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5040,8 +5040,8 @@ gecode/minimodel/lin-rel$(OBJSUFFIX) gecode/minimodel/lin-rel$(SBJSUFFIX): \
 gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5105,8 +5105,8 @@ gecode/minimodel/bool-expr$(OBJSUFFIX) gecode/minimodel/bool-expr$(SBJSUFFIX): \
 gecode/minimodel/set-expr$(OBJSUFFIX) gecode/minimodel/set-expr$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5170,8 +5170,8 @@ gecode/minimodel/set-expr$(OBJSUFFIX) gecode/minimodel/set-expr$(SBJSUFFIX): \
 gecode/minimodel/set-rel$(OBJSUFFIX) gecode/minimodel/set-rel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5235,8 +5235,8 @@ gecode/minimodel/set-rel$(OBJSUFFIX) gecode/minimodel/set-rel$(SBJSUFFIX): \
 gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5300,8 +5300,8 @@ gecode/minimodel/reg$(OBJSUFFIX) gecode/minimodel/reg$(SBJSUFFIX): \
 gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5365,8 +5365,8 @@ gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX):
 gecode/minimodel/lin-float-expr$(OBJSUFFIX) gecode/minimodel/lin-float-expr$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5430,8 +5430,8 @@ gecode/minimodel/lin-float-expr$(OBJSUFFIX) gecode/minimodel/lin-float-expr$(SBJ
 gecode/minimodel/lin-float-rel$(OBJSUFFIX) gecode/minimodel/lin-float-rel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5496,8 +5496,8 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5565,8 +5565,8 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5634,8 +5634,8 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5703,8 +5703,8 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5774,8 +5774,8 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5843,8 +5843,8 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5912,8 +5912,8 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -5981,8 +5981,8 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6050,8 +6050,8 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6119,8 +6119,8 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6188,8 +6188,8 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6257,8 +6257,8 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6326,8 +6326,8 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6395,8 +6395,8 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6464,8 +6464,8 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6533,8 +6533,8 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6602,8 +6602,8 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6671,8 +6671,8 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6740,8 +6740,8 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6809,8 +6809,8 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6878,8 +6878,8 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -6947,8 +6947,8 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7016,8 +7016,8 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7085,8 +7085,8 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7154,8 +7154,8 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7223,8 +7223,8 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7292,8 +7292,8 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7361,8 +7361,8 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7430,8 +7430,8 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7499,8 +7499,8 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7568,8 +7568,8 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7637,8 +7637,8 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7706,8 +7706,8 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7775,9 +7775,9 @@ examples/word-square$(OBJSUFFIX) examples/word-square$(SBJSUFFIX): \
 	./examples/scowl.hpp ./gecode/driver.hh ./gecode/driver/options.hpp \
 	./gecode/driver/script.hpp ./gecode/float.hh ./gecode/float/activity.hpp \
 	./gecode/float/array-traits.hpp ./gecode/float/array.hpp ./gecode/float/exception.hpp \
-	./gecode/float/limits.hpp ./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp \
-	./gecode/float/linear/float-nary.hpp ./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp \
-	./gecode/float/linear/post.hpp ./gecode/float/num.hpp ./gecode/float/val.hpp \
+	./gecode/float/limits.hpp ./gecode/float/linear.hh ./gecode/float/linear/bin.hpp \
+	./gecode/float/linear/nary.hpp ./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear/ter.hpp ./gecode/float/num.hpp ./gecode/float/val.hpp \
 	./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp \
 	./gecode/float/var/float.hpp ./gecode/float/var/print.hpp ./gecode/float/view.hpp \
 	./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp \
@@ -7845,9 +7845,9 @@ examples/crossword$(OBJSUFFIX) examples/crossword$(SBJSUFFIX): \
 	./examples/scowl.hpp ./gecode/driver.hh ./gecode/driver/options.hpp \
 	./gecode/driver/script.hpp ./gecode/float.hh ./gecode/float/activity.hpp \
 	./gecode/float/array-traits.hpp ./gecode/float/array.hpp ./gecode/float/exception.hpp \
-	./gecode/float/limits.hpp ./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp \
-	./gecode/float/linear/float-nary.hpp ./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp \
-	./gecode/float/linear/post.hpp ./gecode/float/num.hpp ./gecode/float/val.hpp \
+	./gecode/float/limits.hpp ./gecode/float/linear.hh ./gecode/float/linear/bin.hpp \
+	./gecode/float/linear/nary.hpp ./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear/ter.hpp ./gecode/float/num.hpp ./gecode/float/val.hpp \
 	./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp \
 	./gecode/float/var/float.hpp ./gecode/float/var/print.hpp ./gecode/float/view.hpp \
 	./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp \
@@ -7915,8 +7915,8 @@ examples/open-shop$(OBJSUFFIX) examples/open-shop$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -7984,8 +7984,8 @@ examples/car-sequencing$(OBJSUFFIX) examples/car-sequencing$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8053,8 +8053,8 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8122,8 +8122,8 @@ examples/bin-packing$(OBJSUFFIX) examples/bin-packing$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8191,8 +8191,8 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8260,8 +8260,8 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8329,8 +8329,8 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8398,8 +8398,8 @@ examples/schurs-lemma$(OBJSUFFIX) examples/schurs-lemma$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8467,8 +8467,8 @@ examples/dominating-queens$(OBJSUFFIX) examples/dominating-queens$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8536,8 +8536,8 @@ examples/colored-matrix$(OBJSUFFIX) examples/colored-matrix$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8605,8 +8605,8 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8674,8 +8674,8 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8743,8 +8743,8 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8812,8 +8812,8 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -8881,8 +8881,8 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -9574,9 +9574,9 @@ gecode/flatzinc/flatzinc$(OBJSUFFIX) gecode/flatzinc/flatzinc$(SBJSUFFIX): \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/plugin.hh ./gecode/flatzinc/registry.hh \
 	./gecode/flatzinc/varspec.hh ./gecode/float.hh ./gecode/float/activity.hpp \
 	./gecode/float/array-traits.hpp ./gecode/float/array.hpp ./gecode/float/exception.hpp \
-	./gecode/float/limits.hpp ./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp \
-	./gecode/float/linear/float-nary.hpp ./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp \
-	./gecode/float/linear/post.hpp ./gecode/float/num.hpp ./gecode/float/val.hpp \
+	./gecode/float/limits.hpp ./gecode/float/linear.hh ./gecode/float/linear/bin.hpp \
+	./gecode/float/linear/nary.hpp ./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear/ter.hpp ./gecode/float/num.hpp ./gecode/float/val.hpp \
 	./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp \
 	./gecode/float/var/float.hpp ./gecode/float/var/print.hpp ./gecode/float/view.hpp \
 	./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp \
@@ -9646,8 +9646,8 @@ gecode/flatzinc/registry$(OBJSUFFIX) gecode/flatzinc/registry$(SBJSUFFIX): \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/registry.hh ./gecode/flatzinc/varspec.hh \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -9717,8 +9717,8 @@ tools/flatzinc/fz$(OBJSUFFIX) tools/flatzinc/fz$(SBJSUFFIX): \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/varspec.hh ./gecode/float.hh \
 	./gecode/float/activity.hpp ./gecode/float/array-traits.hpp ./gecode/float/array.hpp \
 	./gecode/float/exception.hpp ./gecode/float/limits.hpp ./gecode/float/linear.hh \
-	./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp ./gecode/float/linear/float-noview.hpp \
-	./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp ./gecode/float/num.hpp \
+	./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp ./gecode/float/linear/noview.hpp \
+	./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp ./gecode/float/num.hpp \
 	./gecode/float/val.hpp ./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp \
 	./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp ./gecode/float/var/print.hpp \
 	./gecode/float/view.hpp ./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp \
@@ -9789,8 +9789,8 @@ gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/parser.tab$(SBJSUFFIX): \
 	./gecode/flatzinc/symboltable.hh ./gecode/flatzinc/varspec.hh ./gecode/float.hh \
 	./gecode/float/activity.hpp ./gecode/float/array-traits.hpp ./gecode/float/array.hpp \
 	./gecode/float/exception.hpp ./gecode/float/limits.hpp ./gecode/float/linear.hh \
-	./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp ./gecode/float/linear/float-noview.hpp \
-	./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp ./gecode/float/num.hpp \
+	./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp ./gecode/float/linear/noview.hpp \
+	./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp ./gecode/float/num.hpp \
 	./gecode/float/val.hpp ./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp \
 	./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp ./gecode/float/var/print.hpp \
 	./gecode/float/view.hpp ./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp \
@@ -9861,8 +9861,8 @@ gecode/flatzinc/lexer.yy$(OBJSUFFIX) gecode/flatzinc/lexer.yy$(SBJSUFFIX): \
 	./gecode/flatzinc/symboltable.hh ./gecode/flatzinc/varspec.hh ./gecode/float.hh \
 	./gecode/float/activity.hpp ./gecode/float/array-traits.hpp ./gecode/float/array.hpp \
 	./gecode/float/exception.hpp ./gecode/float/limits.hpp ./gecode/float/linear.hh \
-	./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp ./gecode/float/linear/float-noview.hpp \
-	./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp ./gecode/float/num.hpp \
+	./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp ./gecode/float/linear/noview.hpp \
+	./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp ./gecode/float/num.hpp \
 	./gecode/float/val.hpp ./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp \
 	./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp ./gecode/float/var/print.hpp \
 	./gecode/float/view.hpp ./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp \
@@ -10039,8 +10039,8 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10198,8 +10198,8 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10402,8 +10402,8 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10471,8 +10471,8 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10540,8 +10540,8 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10609,8 +10609,8 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10768,8 +10768,8 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10837,8 +10837,8 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10906,8 +10906,8 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 test/int/sequence$(OBJSUFFIX) test/int/sequence$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -10975,8 +10975,8 @@ test/int/sequence$(OBJSUFFIX) test/int/sequence$(SBJSUFFIX): \
 test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11044,8 +11044,8 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11113,8 +11113,8 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11182,8 +11182,8 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11251,8 +11251,8 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11320,8 +11320,8 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 test/int/bin-packing$(OBJSUFFIX) test/int/bin-packing$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11389,8 +11389,8 @@ test/int/bin-packing$(OBJSUFFIX) test/int/bin-packing$(SBJSUFFIX): \
 test/int/unary$(OBJSUFFIX) test/int/unary$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11458,8 +11458,8 @@ test/int/unary$(OBJSUFFIX) test/int/unary$(SBJSUFFIX): \
 test/int/cumulative$(OBJSUFFIX) test/int/cumulative$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11527,8 +11527,8 @@ test/int/cumulative$(OBJSUFFIX) test/int/cumulative$(SBJSUFFIX): \
 test/int/cumulatives$(OBJSUFFIX) test/int/cumulatives$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11596,8 +11596,8 @@ test/int/cumulatives$(OBJSUFFIX) test/int/cumulatives$(SBJSUFFIX): \
 test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11665,8 +11665,8 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 test/int/no-overlap$(OBJSUFFIX) test/int/no-overlap$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11779,8 +11779,8 @@ test/int/precede$(OBJSUFFIX) test/int/precede$(SBJSUFFIX): \
 test/int/nvalues$(OBJSUFFIX) test/int/nvalues$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -11848,8 +11848,8 @@ test/int/nvalues$(OBJSUFFIX) test/int/nvalues$(SBJSUFFIX): \
 test/int/member$(OBJSUFFIX) test/int/member$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -12333,8 +12333,8 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -12403,8 +12403,8 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -12629,8 +12629,8 @@ test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 test/set/mm-set$(OBJSUFFIX) test/set/mm-set$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -12698,8 +12698,8 @@ test/set/mm-set$(OBJSUFFIX) test/set/mm-set$(SBJSUFFIX): \
 test/set/channel$(OBJSUFFIX) test/set/channel$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
@@ -12766,418 +12766,590 @@ test/set/channel$(OBJSUFFIX) test/set/channel$(SBJSUFFIX): \
 	./test/set.hh ./test/set.hpp ./test/test.hh \
 	./test/test.hpp 
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/branch.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/branch.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/branch.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/branch.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
+test/branch/float$(OBJSUFFIX) test/branch/float$(SBJSUFFIX): \
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/branch.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/assign.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/assign.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/assign.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
-	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
-	./gecode/int/array.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \
-	./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp \
-	./gecode/int/limits.hpp ./gecode/int/propagator.hpp ./gecode/int/reify.hpp \
-	./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp \
-	./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp \
-	./gecode/int/var/print.hpp ./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp \
-	./gecode/int/view/bool.hpp ./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp \
-	./gecode/int/view/int.hpp ./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp \
-	./gecode/int/view/neg-bool.hpp ./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp \
-	./gecode/int/view/rel-test.hpp ./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp \
-	./gecode/iter.hh ./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp \
-	./gecode/iter/ranges-array.hpp ./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp \
-	./gecode/iter/ranges-diff.hpp ./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp \
-	./gecode/iter/ranges-list.hpp ./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp \
-	./gecode/iter/ranges-minus.hpp ./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp \
-	./gecode/iter/ranges-operations.hpp ./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp \
-	./gecode/iter/ranges-scale.hpp ./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp \
-	./gecode/iter/ranges-size.hpp ./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp \
-	./gecode/iter/values-array.hpp ./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp \
-	./gecode/iter/values-list.hpp ./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp \
-	./gecode/iter/values-negative.hpp ./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp \
-	./gecode/iter/values-ranges.hpp ./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp \
-	./gecode/iter/values-unique.hpp ./gecode/kernel.hh ./gecode/kernel/activity.hpp \
-	./gecode/kernel/advisor.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
-	./gecode/kernel/array.hpp ./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp \
-	./gecode/kernel/brancher-val.hpp ./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp \
-	./gecode/kernel/core.hpp ./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp \
-	./gecode/kernel/macros.hpp ./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp \
-	./gecode/kernel/modevent.hpp ./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp \
-	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
-	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
-	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
-	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
-	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
-	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
-	./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp \
-	./gecode/set/var/print.hpp ./gecode/set/var/set.hpp ./gecode/set/view.hpp \
-	./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp \
-	./gecode/set/view/print.hpp ./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp \
-	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
-	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
-	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
-	./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp ./gecode/support/heap.hpp \
-	./gecode/support/int-type.hpp ./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp \
-	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
-	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
-	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp \
-	./test/assign.hh ./test/test.hh ./test/test.hpp 
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
+test/assign/float$(OBJSUFFIX) test/assign/float$(SBJSUFFIX): \
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
+	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
+	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \
+	./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp ./gecode/float/view/print.hpp \
+	./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp ./gecode/int.hh \
+	./gecode/int/activity.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
+	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
+	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
+	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
+	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
+	./gecode/set/var-imp/iter.hpp ./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp \
+	./gecode/set/var/set.hpp ./gecode/set/view.hpp ./gecode/set/view/cached.hpp \
+	./gecode/set/view/complement.hpp ./gecode/set/view/const.hpp ./gecode/set/view/print.hpp \
+	./gecode/set/view/set.hpp ./gecode/set/view/singleton.hpp ./gecode/support.hh \
+	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
+	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
+	./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp \
+	./gecode/support/exception.hpp ./gecode/support/heap.hpp ./gecode/support/int-type.hpp \
+	./gecode/support/macros.hpp ./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp \
+	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
+	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
+	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/assign.hh \
+	./test/test.hh ./test/test.hpp 
 test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
 	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
-	./gecode/float/linear.hh ./gecode/float/linear/float-bin.hpp ./gecode/float/linear/float-nary.hpp \
-	./gecode/float/linear/float-noview.hpp ./gecode/float/linear/float-ter.hpp ./gecode/float/linear/post.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
 	./gecode/float/num.hpp ./gecode/float/val.hpp ./gecode/float/var-imp.hpp \
 	./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp ./gecode/float/var/float.hpp \
 	./gecode/float/var/print.hpp ./gecode/float/view.hpp ./gecode/float/view/float.hpp \

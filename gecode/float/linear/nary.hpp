@@ -37,7 +37,7 @@
  *
  */
 
-#include <gecode/float/linear/float-noview.hpp>
+#include <gecode/float/linear/noview.hpp>
 
 namespace Gecode { namespace Float { namespace Linear {
 

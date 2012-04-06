@@ -305,7 +305,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
 }}}
 
-#include <gecode/float/linear/float-bin.hpp>
+#include <gecode/float/linear/bin.hpp>
 
 namespace Gecode { namespace Float { namespace Linear {
 
@@ -446,7 +446,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
 }}}
 
-#include <gecode/float/linear/float-ter.hpp>
+#include <gecode/float/linear/ter.hpp>
 
 namespace Gecode { namespace Float { namespace Linear {
 
@@ -666,7 +666,7 @@ namespace Gecode { namespace Float { namespace Linear {
   };
 }}}
 
-#include <gecode/float/linear/float-nary.hpp>
+#include <gecode/float/linear/nary.hpp>
 
 namespace Gecode { namespace Float { namespace Linear {
 
