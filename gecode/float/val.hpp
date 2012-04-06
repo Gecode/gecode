@@ -220,162 +220,6 @@ namespace Gecode {
     return FloatVal(x/y.x);
   }
 
-  forceinline FloatVal
-  abs(const FloatVal& x) {
-    return FloatVal(abs(x.x));
-  }
-  forceinline FloatVal
-  sqrt(const FloatVal& x) {
-    return FloatVal(sqrt(x.x));
-  }
-  forceinline FloatVal
-  square(const FloatVal& x) {
-    return FloatVal(square(x.x));
-  }
-  forceinline FloatVal
-  pow(const FloatVal& x, int n) {
-    return FloatVal(pow(x.x,n));
-  }
-  forceinline FloatVal
-  nth_root(const FloatVal& x, int n) {
-    return FloatVal(nth_root(x.x,n));
-  }
-
-#ifdef GECODE_HAS_MPFR
-
-  forceinline FloatVal
-  exp(const FloatVal& x) {
-    return FloatVal(exp(x.x));
-  }
-  forceinline FloatVal
-  log(const FloatVal& x) {
-    return FloatVal(log(x.x));
-  }
-
-  forceinline FloatVal
-  fmod(const FloatVal& x, const FloatVal& y) {
-    return FloatVal(fmod(x.x,y.x));
-  }
-  forceinline FloatVal
-  fmod(const FloatVal& x, const FloatNum& y) {
-    return FloatVal(fmod(x.x,y));
-  }
-  forceinline FloatVal
-  fmod(const FloatNum& x, const FloatVal& y) {
-    return FloatVal(fmod(x,y.x));
-  }
-
-  forceinline FloatVal
-  sin(const FloatVal& x) {
-    return FloatVal(sin(x.x));
-  }
-  forceinline FloatVal
-  cos(const FloatVal& x) {
-    return FloatVal(cos(x.x));
-  }
-  forceinline FloatVal
-  tan(const FloatVal& x) {
-    return FloatVal(tan(x.x));
-  }
-  forceinline FloatVal
-  asin(const FloatVal& x) {
-    return FloatVal(asin(x.x));
-  }
-  forceinline FloatVal
-  acos(const FloatVal& x) {
-    return FloatVal(acos(x.x));
-  }
-  forceinline FloatVal
-  atan(const FloatVal& x) {
-    return FloatVal(atan(x.x));
-  }
-
-  forceinline FloatVal
-  sinh(const FloatVal& x) {
-    return FloatVal(sinh(x.x));
-  }
-  forceinline FloatVal
-  cosh(const FloatVal& x) {
-    return FloatVal(cosh(x.x));
-  }
-  forceinline FloatVal
-  tanh(const FloatVal& x) {
-    return FloatVal(tanh(x.x));
-  }
-  forceinline FloatVal
-  asinh(const FloatVal& x) {
-    return FloatVal(asinh(x.x));
-  }
-  forceinline FloatVal
-  acosh(const FloatVal& x) {
-    return FloatVal(acosh(x.x));
-  }
-  forceinline FloatVal
-  atanh(const FloatVal& x) {
-    return FloatVal(atanh(x.x));
-  }
-
-#endif
-
-  forceinline FloatVal
-  max(const FloatVal& x, const FloatVal& y) {
-    return FloatVal(max(x.x,y.x));
-  }
-  forceinline FloatVal
-  max(const FloatVal& x, const FloatNum& y) {
-    return FloatVal(max(x.x,y));
-  }
-  forceinline FloatVal
-  max(const FloatNum& x, const FloatVal& y) {
-    return FloatVal(max(x,y.x));
-  }
-  forceinline FloatVal
-  min(const FloatVal& x, const FloatVal& y) {
-    return FloatVal(min(x.x,y.x));
-  }
-  forceinline FloatVal
-  min(const FloatVal& x, const FloatNum& y) {
-    return FloatVal(min(x.x,y));
-  }
-  forceinline FloatVal
-  min(const FloatNum& x, const FloatVal& y) {
-    return FloatVal(min(x,y.x));
-  }
-
-  forceinline bool
-  subset(const FloatVal& x, const FloatVal& y) {
-    return subset(x.x,y.x);
-  }
-  forceinline bool
-  proper_subset(const FloatVal& x, const FloatVal& y) {
-    return proper_subset(x.x,y.x);
-  }
-  forceinline bool
-  overlap(const FloatVal& x, const FloatVal& y) {
-    return overlap(x.x,y.x);
-  }
-
-  forceinline FloatVal
-  intersect(const FloatVal& x, const FloatVal& y) {
-    return FloatVal(intersect(x.x,y.x));
-  }
-  forceinline FloatVal
-  hull(const FloatVal& x, const FloatVal& y) {
-    return FloatVal(hull(x.x,y.x));
-  }
-  forceinline FloatVal
-  hull(const FloatVal& x, const FloatNum& y) {
-    return FloatVal(hull(x.x,y));
-  }
-  forceinline FloatVal
-  hull(const FloatNum& x, const FloatVal& y) {
-    return FloatVal(hull(x,y.x));
-  }
-  forceinline FloatVal
-  hull(const FloatNum& x, const FloatNum& y) {
-    return FloatVal(hull(x,y));
-  }
-
   forceinline bool
   operator <(const FloatVal& x, const FloatVal& y) {
     return x.x < y.x;
@@ -461,7 +305,166 @@ namespace Gecode {
     return os << x.x;
   }
 
+  forceinline FloatVal
+  abs(const FloatVal& x) {
+    return FloatVal(abs(x.x));
+  }
+  forceinline FloatVal
+  sqrt(const FloatVal& x) {
+    return FloatVal(sqrt(x.x));
+  }
+  forceinline FloatVal
+  square(const FloatVal& x) {
+    return FloatVal(square(x.x));
+  }
+  forceinline FloatVal
+  pow(const FloatVal& x, int n) {
+    return FloatVal(pow(x.x,n));
+  }
+  forceinline FloatVal
+  nth_root(const FloatVal& x, int n) {
+    return FloatVal(nth_root(x.x,n));
+  }
+
+  forceinline FloatVal
+  max(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(max(x.x,y.x));
+  }
+  forceinline FloatVal
+  max(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(max(x.x,y));
+  }
+  forceinline FloatVal
+  max(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(max(x,y.x));
+  }
+  forceinline FloatVal
+  min(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(min(x.x,y.x));
+  }
+  forceinline FloatVal
+  min(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(min(x.x,y));
+  }
+  forceinline FloatVal
+  min(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(min(x,y.x));
+  }
+
+#ifdef GECODE_HAS_MPFR
+
+  forceinline FloatVal
+  exp(const FloatVal& x) {
+    return FloatVal(exp(x.x));
+  }
+  forceinline FloatVal
+  log(const FloatVal& x) {
+    return FloatVal(log(x.x));
+  }
+
+  forceinline FloatVal
+  fmod(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(fmod(x.x,y.x));
+  }
+  forceinline FloatVal
+  fmod(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(fmod(x.x,y));
+  }
+  forceinline FloatVal
+  fmod(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(fmod(x,y.x));
+  }
+
+  forceinline FloatVal
+  sin(const FloatVal& x) {
+    return FloatVal(sin(x.x));
+  }
+  forceinline FloatVal
+  cos(const FloatVal& x) {
+    return FloatVal(cos(x.x));
+  }
+  forceinline FloatVal
+  tan(const FloatVal& x) {
+    return FloatVal(tan(x.x));
+  }
+  forceinline FloatVal
+  asin(const FloatVal& x) {
+    return FloatVal(asin(x.x));
+  }
+  forceinline FloatVal
+  acos(const FloatVal& x) {
+    return FloatVal(acos(x.x));
+  }
+  forceinline FloatVal
+  atan(const FloatVal& x) {
+    return FloatVal(atan(x.x));
+  }
+
+  forceinline FloatVal
+  sinh(const FloatVal& x) {
+    return FloatVal(sinh(x.x));
+  }
+  forceinline FloatVal
+  cosh(const FloatVal& x) {
+    return FloatVal(cosh(x.x));
+  }
+  forceinline FloatVal
+  tanh(const FloatVal& x) {
+    return FloatVal(tanh(x.x));
+  }
+  forceinline FloatVal
+  asinh(const FloatVal& x) {
+    return FloatVal(asinh(x.x));
+  }
+  forceinline FloatVal
+  acosh(const FloatVal& x) {
+    return FloatVal(acosh(x.x));
+  }
+  forceinline FloatVal
+  atanh(const FloatVal& x) {
+    return FloatVal(atanh(x.x));
+  }
+
+#endif
 }
+
+namespace Gecode { namespace Float {
+
+  forceinline bool
+  subset(const FloatVal& x, const FloatVal& y) {
+    return subset(x.x,y.x);
+  }
+  forceinline bool
+  proper_subset(const FloatVal& x, const FloatVal& y) {
+    return proper_subset(x.x,y.x);
+  }
+  forceinline bool
+  overlap(const FloatVal& x, const FloatVal& y) {
+    return overlap(x.x,y.x);
+  }
+
+  forceinline FloatVal
+  intersect(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(intersect(x.x,y.x));
+  }
+  forceinline FloatVal
+  hull(const FloatVal& x, const FloatVal& y) {
+    return FloatVal(hull(x.x,y.x));
+  }
+  forceinline FloatVal
+  hull(const FloatVal& x, const FloatNum& y) {
+    return FloatVal(hull(x.x,y));
+  }
+  forceinline FloatVal
+  hull(const FloatNum& x, const FloatVal& y) {
+    return FloatVal(hull(x,y.x));
+  }
+  forceinline FloatVal
+  hull(const FloatNum& x, const FloatNum& y) {
+    return FloatVal(hull(x,y));
+  }
+
+}}
 
 // STATISTICS: float-var
 
