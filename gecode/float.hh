@@ -140,9 +140,9 @@ namespace Gecode { namespace Float {
   public:
     /// \name Constructor and destructor
     //@{
-    /// Default constructor
+    /// Default constructor (configures full rounding mode)
     FullRounding(void);
-    /// Destructor
+    /// Destructor (restores previous rounding mode)
     ~FullRounding(void);
     //@}
   

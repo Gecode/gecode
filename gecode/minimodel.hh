@@ -721,7 +721,7 @@ namespace Gecode {
   public:
     /// Type of linear expression
     enum NodeType {
-      NT_CONST,    ///< Integer constant
+      NT_CONST,    ///< Float value constant
       NT_VAR,      ///< Linear term with variable
       NT_NONLIN,   ///< Non-linear expression
       NT_SUM,      ///< Sum of float variables
@@ -1463,12 +1463,12 @@ namespace Gecode {
   /// \brief Return expression for \f$\sqrt{x}\f$
   GECODE_MINIMODEL_EXPORT LinFloatExpr
   sqrt(const LinFloatExpr& x);
-  /// \brief Return expression for \f$x^{exp}\f$
+  /// \brief Return expression for \f$x^n\f$
   GECODE_MINIMODEL_EXPORT LinFloatExpr
-  pow(const LinFloatExpr& x, int exp);
-  /// \brief Return expression for \f$x^{1/exp}\f$
+  pow(const LinFloatExpr& x, int n);
+  /// \brief Return expression for \f$x^{1/n}\f$
   GECODE_MINIMODEL_EXPORT LinFloatExpr
-  nroot(const LinFloatExpr& x, int exp);
+  nroot(const LinFloatExpr& x, int n);
   //@}
 
 #ifdef GECODE_HAS_MPFR
