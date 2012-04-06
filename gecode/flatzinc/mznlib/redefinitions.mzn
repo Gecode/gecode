@@ -68,7 +68,8 @@ predicate float_cosh(var float: a, var float: b) =
     b == (exp(a)+exp(-a))/2.0;
 
 predicate float_tanh(var float: a, var float: b) =
-    b == (exp(a)-exp(-a))/(exp(x)+exp(-x));
+    let { var float: e2a = exp(2.0*a) } in
+    b == (e2a-1.0)/(e2a+1.0);
 
 predicate float_ne_reif(var float: a, var float: b, var bool: c) =
     not c <-> a==b;
