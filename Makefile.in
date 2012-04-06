@@ -424,7 +424,7 @@ INTBUILDDIRS	= \
 
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
-	linear/post.cpp activity.cpp rounding.cpp
+	linear/post.cpp activity.cpp rounding.cpp exec.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \

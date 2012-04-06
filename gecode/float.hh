@@ -1180,7 +1180,6 @@ namespace Gecode {
          FloatRelType frt, FloatVar y, Reify r);
 
 
-
   /**
    * \defgroup TaskModelFloatChannel Channel constraints
    * \ingroup TaskModelFloat
@@ -1190,6 +1189,24 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   channel(Home home, FloatVar x0, IntVar x1);
   //@}
+
+
+  /**
+   * \defgroup TaskModelFloatExec Synchronized execution
+   * \ingroup TaskModelFloat
+   *
+   * Synchronized execution executes a function or a static member function
+   * when a certain event happends.
+   */
+  //@{
+  /// Execute \a c when \a x becomes assigned
+  GECODE_FLOAT_EXPORT void
+  wait(Home home, FloatVar x, void (*c)(Space& home));
+  /// Execute \a c when all variables in \a x become assigned
+  GECODE_FLOAT_EXPORT void
+  wait(Home home, const IntVarArgs& x, void (*c)(Space& home));
+  //@}
+
 
   /**
    * \defgroup TaskModelFloatBranch Branching
