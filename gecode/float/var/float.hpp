@@ -63,10 +63,6 @@ namespace Gecode {
   FloatVar::min(void) const {
     return x->min();
   }
-  forceinline FloatVal
-  FloatVar::med(void) const {
-    return x->med();
-  }
   forceinline FloatNum
   FloatVar::median(void) const {
     return x->median();

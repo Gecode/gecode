@@ -76,16 +76,12 @@ namespace Gecode { namespace Float {
     return dom.upper();
   }
   forceinline FloatVal
-  FloatVarImp::med(void) const {
-    return Gecode::median(dom);
-  }
-  forceinline FloatVal
   FloatVarImp::val(void) const {
     return dom;
   }
   forceinline FloatNum
   FloatVarImp::median(void) const {
-    return Gecode::median(dom);
+    return dom.median();
   }
 
   forceinline bool
@@ -95,7 +91,7 @@ namespace Gecode { namespace Float {
 
   forceinline FloatNum
   FloatVarImp::width(void) const {
-    return Gecode::width(dom);
+    return dom.width();
   }
 
 
@@ -106,11 +102,11 @@ namespace Gecode { namespace Float {
 
   forceinline bool
   FloatVarImp::zero_in(void) const {
-    return Gecode::zero_in(dom);
+    return dom.zero_in();
   }
   forceinline bool
   FloatVarImp::in(FloatNum n) const {
-    return Gecode::in(n,dom);
+    return dom.in(n);
   }
   forceinline bool
   FloatVarImp::in(const FloatVal& n) const {
@@ -191,7 +187,7 @@ namespace Gecode { namespace Float {
 
   forceinline ModEvent
   FloatVarImp::eq(Space& home, FloatNum n) {
-    if (!Gecode::in(n,dom))
+    if (!dom.in(n))
       return ME_FLOAT_FAILED;
     if (assigned())
       return ME_FLOAT_NONE;

@@ -5,13 +5,7 @@
  *     Guido Tack <tack@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
- *  Contributing authors:
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
- *     David Rijsman <David.Rijsman@quintiq.com>
- *
  *  Copyright:
- *     David Rijsman, 2009
- *     Mikael Lagerkvist, 2006
  *     Christian Schulte, 2002
  *     Guido Tack, 2004
  *     Vincent Barichard, 2012
@@ -215,12 +209,6 @@ namespace Gecode {
     friend FloatVal min(const FloatVal& x, const FloatVal& y);
     friend FloatVal min(const FloatVal& x, const FloatNum& y);
     friend FloatVal min(const FloatNum& x, const FloatVal& y);
-    friend FloatNum lower(const FloatVal& x);
-    friend FloatNum upper(const FloatVal& x);
-    friend FloatNum width(const FloatVal& x);
-    friend FloatNum median(const FloatVal& x);
-    friend bool in(const FloatNum& x, const FloatVal& y);
-    friend bool zero_in(const FloatVal& x);
     friend bool subset(const FloatVal& x, const FloatVal& y);
     friend bool proper_subset(const FloatVal& x, const FloatVal& y);
     friend bool overlap(const FloatVal& x, const FloatVal& y);
@@ -267,6 +255,8 @@ namespace Gecode {
   public:
     /// Rounding definition
     typedef FloatValImpType::traits_type::rounding Round;
+    /// \name Constructors and initialization
+    //@{
     /// Default constructor
     FloatVal(void);
     /// Initialize with float number \a n
@@ -283,14 +273,32 @@ namespace Gecode {
     
     /// Assign lower bound \a l and upper bound \a u
     void assign(FloatNum const &l, FloatNum const &u);
+    //@}
 
+    /// \name Value access
+    //@{
     /// Return lower bound
     FloatNum lower(void) const;
     /// Return upper bound
     FloatNum upper(void) const;
+    /// Return width of float value
+    FloatNum width(void) const;
+    /// Return median of loat value
+    FloatNum median(void) const;
+    //@}
+
+    /// \name Value tests
+    //@{
     /// Test whether float is a singleton
     bool singleton(void) const;
+    /// Test whether \a n is included
+    bool in(FloatNum n) const;
+    /// Test whether zero is included
+    bool zero_in(void) const;
+    //@}
     
+    /// \name Float value construction
+    //@{
     /// Return hull of \a x and \a y
     static FloatVal hull(FloatNum x, FloatNum y);
     /// Return \f$\pi/2\f$
@@ -299,7 +307,10 @@ namespace Gecode {
     static FloatVal pi(void);
     /// Return \f$2\pi\f$
     static FloatVal pi_twice(void);
+    //@}
     
+    /// \name Update operators
+    //@{
     /// Increment by \a n
     FloatVal& operator +=(const FloatNum& n);
     /// Subtract by \a n
@@ -316,6 +327,7 @@ namespace Gecode {
     FloatVal& operator *=(const FloatVal& v);
     /// Divide by \a v
     FloatVal& operator /=(const FloatVal& v);
+    //@}
   };
 
   /**
@@ -540,37 +552,6 @@ namespace Gecode {
    */
   FloatVal min(const FloatNum& x, const FloatVal& y);
 
-  /**
-   * \brief Return lower bound of \a x
-   * \relates Gecode::FloatVal
-   */
-  FloatNum lower(const FloatVal& x);
-  /**
-   * \brief Return upper bound of \a x
-   * \relates Gecode::FloatVal
-   */
-  FloatNum upper(const FloatVal& x);
-  /**
-   * \brief Return width of \a x
-   * \relates Gecode::FloatVal
-   */
-  FloatNum width(const FloatVal& x);
-  /**
-   * \brief Return median bound of \a x
-   * \relates Gecode::FloatVal
-   */
-  FloatNum median(const FloatVal& x);
-
-  /**
-   * \brief Test whether \a x is included in \a y
-   * \relates Gecode::FloatVal
-   */
-  bool in(const FloatNum& x, const FloatVal& y);
-  /**
-   * \brief Test whether zero is included in \a x
-   * \relates Gecode::FloatVal
-   */
-  bool zero_in(const FloatVal& b);
   /**
    * \brief Test whether \a x is a subset of \a y
    * \relates Gecode::FloatVal
@@ -806,10 +787,10 @@ namespace Gecode {
     FloatNum min(void) const;
     /// Return maximum of domain
     FloatNum max(void) const;
-    /// Return median of domain (interval)
-    FloatVal med(void) const;
-    /// Return median of domain (closest representation)
+    /// Return median of domain
     FloatNum median(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    FloatNum width(void) const;
     /**
      * \brief Return assigned value
      *
@@ -819,8 +800,6 @@ namespace Gecode {
      */
     FloatVal val(void) const;
 
-    /// Return width of domain (distance between maximum and minimum)
-    FloatNum width(void) const;
     //@}
 
     /// \name Domain tests
@@ -1297,11 +1276,11 @@ namespace Gecode {
   };
 
   /// Assign all \a x with value selection \a vals
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   /// Assign \a x with value selection \a vals
-  GECODE_INT_EXPORT void
+  GECODE_FLOAT_EXPORT void
   assign(Home home, FloatVar x, FloatAssign vals,
          const ValBranchOptions& o_vals = ValBranchOptions::def);
   //@}

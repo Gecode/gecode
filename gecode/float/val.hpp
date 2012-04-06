@@ -78,11 +78,32 @@ namespace Gecode {
   FloatVal::upper(void) const {
     return x.upper();
   }
+  forceinline FloatNum
+  FloatVal::width(void) const {
+    return boost::numeric::width(x);
+  }
+  forceinline FloatNum
+  FloatVal::median(void) const {
+    return boost::numeric::median(x);
+  }
+
   forceinline bool
   FloatVal::singleton(void) const {
     return boost::numeric::singleton(x);
   }
+  forceinline bool
+  FloatVal::in(FloatNum n) const {
+    return boost::numeric::in(n,x);
+  }
+  forceinline bool
+  FloatVal::zero_in(void) const {
+    return boost::numeric::zero_in(x);
+  }
     
+  forceinline FloatVal
+  FloatVal::hull(FloatNum x, FloatNum y) {
+    FloatVal h(FloatVal::hull(x,y)); return h;
+  }
   forceinline FloatVal
   FloatVal::pi_half(void) {
     FloatVal p(boost::numeric::interval_lib::pi_half<FloatValImpType>());
@@ -97,10 +118,6 @@ namespace Gecode {
   FloatVal::pi_twice(void) {
     FloatVal p(boost::numeric::interval_lib::pi_twice<FloatValImpType>());
     return p;
-  }
-  forceinline FloatVal
-  FloatVal::hull(FloatNum x, FloatNum y) {
-    FloatVal h(FloatVal::hull(x,y)); return h;
   }
     
   forceinline FloatVal&
@@ -325,31 +342,6 @@ namespace Gecode {
     return FloatVal(min(x,y.x));
   }
 
-  forceinline FloatNum
-  lower(const FloatVal& x) {
-    return lower(x.x);
-  }
-  forceinline FloatNum
-  upper(const FloatVal& x) {
-    return upper(x.x);
-  }
-  forceinline FloatNum
-  width(const FloatVal& x) {
-    return width(x.x);
-  }
-  forceinline FloatNum
-  median(const FloatVal& x) {
-    return median(x.x);
-  }
-
-  forceinline bool
-  in(const FloatNum& x, const FloatVal& y) {
-    return in(x,y.x);
-  }
-  forceinline bool
-  zero_in(const FloatVal& x) {
-    return zero_in(x.x);
-  }
   forceinline bool
   subset(const FloatVal& x, const FloatVal& y) {
     return subset(x.x,y.x);

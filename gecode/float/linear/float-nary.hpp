@@ -197,8 +197,8 @@ namespace Gecode { namespace Float { namespace Linear {
       return (c == 0.0) ? home.ES_SUBSUMED(p) : ES_FAILED;
     }
 
-    sl = Round.add_up(sl,upper(c)); 
-    su = Round.add_down(su,lower(c));
+    sl = Round.add_up(sl,c.upper()); 
+    su = Round.add_down(su,c.lower());
 
     const int mod_sl = 1;
     const int mod_su = 2;
@@ -753,11 +753,11 @@ namespace Gecode { namespace Float { namespace Linear {
       }
       if ((x.size() + y.size()) <= 1) {
         if (x.size() == 1) {
-          GECODE_ME_CHECK(x[0].lq(home,upper(c)));
+          GECODE_ME_CHECK(x[0].lq(home,c.upper()));
           return home.ES_SUBSUMED(*this);
         }
         if (y.size() == 1) {
-          GECODE_ME_CHECK(y[0].gq(home,lower(-c)));
+          GECODE_ME_CHECK(y[0].gq(home,(-c).lower()));
           return home.ES_SUBSUMED(*this);
         }
         return (c >= 0.0) ? home.ES_SUBSUMED(*this) : ES_FAILED;
@@ -769,7 +769,7 @@ namespace Gecode { namespace Float { namespace Linear {
         sl = Round.add_up(sl,y[i].max());
     }
 
-    sl = Round.add_up(sl,upper(c));
+    sl = Round.add_up(sl,c.upper());
 
     ExecStatus es = ES_FIX;
     bool assigned = true;
