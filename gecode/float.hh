@@ -134,31 +134,134 @@ namespace Gecode { namespace Float {
    */
   class FullRounding : 
     public boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
-#ifdef GECODE_HAS_MPFR
+  protected:
+    /// Base class
+    typedef boost::numeric::interval_lib::rounded_arith_opp<FloatNum> Base;
   public:
-    /// Define generic mpfr function
-#define GECODE_GENR_FUNC(name)      \
-    GECODE_FLOAT_EXPORT double name##_down(FloatNum x); \
-    GECODE_FLOAT_EXPORT double name##_up  (FloatNum x);
-    GECODE_GENR_FUNC(exp)
-    GECODE_GENR_FUNC(log)
-    GECODE_GENR_FUNC(sin)
-    GECODE_GENR_FUNC(cos)
-    GECODE_GENR_FUNC(tan)
-    GECODE_GENR_FUNC(asin)
-    GECODE_GENR_FUNC(acos)
-    GECODE_GENR_FUNC(atan)
-    GECODE_GENR_FUNC(sinh)
-    GECODE_GENR_FUNC(cosh)
-    GECODE_GENR_FUNC(tanh)
-    GECODE_GENR_FUNC(asinh)
-    GECODE_GENR_FUNC(acosh)
-    GECODE_GENR_FUNC(atanh)
-#undef GECODE_GENR_FUNC
+    /// \name Constructor and destructor
+    //@{
+    /// Default constructor
+    FullRounding(void);
+    /// Destructor
+    ~FullRounding(void);
+    //@}
+  
+    /// \name Arithmetic operations
+    //@{
+    /// Return lower bound of \a x plus \a y (domain: \f$ [-\infty;+\infty][-\infty;+\infty]\f$)
+    FloatNum add_down(FloatNum x, FloatNum y);
+    /// Return upper bound of \a x plus \a y (domain: \f$ [-\infty;+\infty] [-\infty;+\infty]\f$)
+    FloatNum add_up  (FloatNum x, FloatNum y);
+    /// Return lower bound of \a x minus \a y (domain: \f$ [-\infty;+\infty] [-\infty;+\infty]\f$)
+    FloatNum sub_down(FloatNum x, FloatNum y);
+    /// Return upper bound of \a x minus \a y (domain: \f$ [-\infty;+\infty] [-\infty;+\infty]\f$)
+    FloatNum sub_up  (FloatNum x, FloatNum y);
+    /// Return lower bound of \a x times \a y (domain: \f$ [-\infty;+\infty] [-\infty;+\infty]\f$)
+    FloatNum mul_down(FloatNum x, FloatNum y);
+    /// Return upper bound of \a x times \a y (domain: \f$ [-\infty;+\infty] [-\infty;+\infty]\f$)
+    FloatNum mul_up  (FloatNum x, FloatNum y);
+    /// Return lower bound of \a x divided by \a y (domain: \f$ [-\infty;+\infty] ([-\infty;+\infty]-{0})   \f$)
+    FloatNum div_down(FloatNum x, FloatNum y);
+    /// Return upper bound of \a x divided \a y (domain: \f$ [-\infty;+\infty] ([-\infty;+\infty]-{0})\f$)
+    FloatNum div_up  (FloatNum x, FloatNum y);
+    /// Return lower bound of square root of \a x (domain: \f$ ]0;+\infty]   \f$)
+    FloatNum sqrt_down(FloatNum x);
+    /// Return upper bound of square root of \a x (domain: \f$ ]0;+\infty]\f$)
+    FloatNum sqrt_up  (FloatNum x);
+    //@}
+
+    /// \name Miscellaneous operations
+    //@{
+    /// Return median of \a x and \a y (domain: \f$ [-\infty;+\infty][-\infty;+\infty]\f$)
+    FloatNum median(FloatNum x, FloatNum y);
+    /// Return next downward-rounded integer of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    FloatNum int_down(FloatNum x);
+    /// Return next upward-rounded integer of \a x (domain: \f$ [-\infty;+\infty] \f$)
+    FloatNum int_up  (FloatNum x);
+    //@}
+
+#ifdef GECODE_HAS_MPFR
+    /// \name Exponential functions
+    //@{
+    /// Return lower bound of exponential of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum exp_down(FloatNum x);
+    /// Return upper bound of exponential of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum exp_up  (FloatNum x);
+    /// Return lower bound of logarithm of \a x (domain: \f$ ]0;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum log_down(FloatNum x);
+    /// Return upper bound of logarithm of \a x (domain: \f$ ]0;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum log_up  (FloatNum x);
+    //@}
+
+    /// \name Trigonometric functions
+    //@{
+    /// Return lower bound of sine of \a x (domain: \f$ [0;2\pi]\f$)
+    GECODE_FLOAT_EXPORT FloatNum sin_down(FloatNum x);
+    /// Return upper bound of sine of \a x (domain: \f$ [0;2\pi]\f$)
+    GECODE_FLOAT_EXPORT FloatNum sin_up  (FloatNum x);
+    /// Return lower bound of cosine of \a x (domain: \f$ [0;2\pi]\f$)
+    GECODE_FLOAT_EXPORT FloatNum cos_down(FloatNum x);
+    /// Return upper bound of cosine of \a x (domain: \f$ [0;2\pi]\f$)
+    GECODE_FLOAT_EXPORT FloatNum cos_up  (FloatNum x);
+    /// Return lower bound of tangent of \a x (domain: \f$ ]-\pi/2;\pi/2[\f$)
+    GECODE_FLOAT_EXPORT FloatNum tan_down(FloatNum x);
+    /// Return upper bound of tangent of \a x (domain: \f$ ]-\pi/2;\pi/2[\f$)
+    GECODE_FLOAT_EXPORT FloatNum tan_up  (FloatNum x);
+    //@}
+
+    /// \name Inverse trigonometric functions
+    //@{
+    /// Return lower bound of arcsine of \a x (domain: \f$ [-1;1]\f$)
+    GECODE_FLOAT_EXPORT FloatNum asin_down(FloatNum x);
+    /// Return upper bound of arcsine of \a x (domain: \f$ [-1;1]\f$)
+    GECODE_FLOAT_EXPORT FloatNum asin_up  (FloatNum x);
+    /// Return lower bound of arccosine of \a x (domain: \f$ [-1;1]\f$)
+    GECODE_FLOAT_EXPORT FloatNum acos_down(FloatNum x);
+    /// Return upper bound of arccossine of \a x (domain: \f$ [-1;1]\f$)
+    GECODE_FLOAT_EXPORT FloatNum acos_up  (FloatNum x);
+    /// Return lower bound of arctangent of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum atan_down(FloatNum x);
+    /// Return upper bound of arctangent of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum atan_up  (FloatNum x);
+    //@}
+
+    /// \name Hyperbolic functions
+    //@{
+    /// Return lower bound of hyperbolic sine of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum sinh_down(FloatNum x);
+    /// Return upper bound of hyperbolic sine of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum sinh_up  (FloatNum x);
+    /// Return lower bound of hyperbolic cosine of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum cosh_down(FloatNum x);
+    /// Return upper bound of hyperbolic cosine of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum cosh_up  (FloatNum x);
+    /// Return lower bound of hyperbolic tangent of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum tanh_down(FloatNum x);
+    /// Return upper bound of hyperbolic tangent of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum tanh_up  (FloatNum x);
+    //@}
+
+    /// \name Inverse hyperbolic functions
+    //@{
+    /// Return lower bound of hyperbolic arcsine of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum asinh_down(FloatNum x);
+    /// Return upper bound of hyperbolic arcsine of \a x (domain: \f$ [-\infty;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum asinh_up  (FloatNum x);
+    /// Return lower bound of hyperbolic arccosine of \a x (domain: \f$ [1;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum acosh_down(FloatNum x);
+    /// Return upper bound of hyperbolic arccosine of \a x (domain: \f$ [1;+\infty]\f$)
+    GECODE_FLOAT_EXPORT FloatNum acosh_up  (FloatNum x);
+    /// Return lower bound of hyperbolic arctangent of \a x (domain: \f$ [-1;1]\f$)
+    GECODE_FLOAT_EXPORT FloatNum atanh_down(FloatNum x);
+    /// Return upper bound of hyperbolic arctangent of \a x (domain: \f$ [-1;1]\f$)
+    GECODE_FLOAT_EXPORT FloatNum atanh_up  (FloatNum x);
+    //@}
 #endif
   };
 
-}};
+}}
+
+#include <gecode/float/rounding.hpp>
 
 namespace Gecode { namespace Float {
 

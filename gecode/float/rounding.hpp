@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2012
- *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,57 +35,51 @@
  *
  */
 
-#include <gecode/float.hh>
-
-#ifdef GECODE_HAS_MPFR
-
-#include <gmp.h>
-#include <mpfr.h>
-
 namespace Gecode { namespace Float {
 
-  /// Type signatur of mpfr function
-  typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
+  forceinline
+  FullRounding::FullRounding(void) {}
+  forceinline
+  FullRounding::~FullRounding(void) {}
 
-  /// Routine to call mpfr function with proper rounding
-  forceinline double 
-  invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
-    mpfr_t xx;
-    mpfr_init_set_d(xx, x, GMP_RNDN);
-    f(xx, xx, r);
-    FloatNum res = mpfr_get_d(xx, r);
-    mpfr_clear(xx);
-    return res;
+  forceinline FloatNum
+  FullRounding::median(FloatNum x, FloatNum y) {
+    return Base::median(x,y);
   }
 
-  /// Define mpfr functions with proper rounding
-#define GECODE_GENR_FUNC(name) \
-  FloatNum FullRounding::name##_down(FloatNum x) { \
-    return invoke_mpfr(x, mpfr_##name, GMP_RNDD); \
-  } \
-  FloatNum FullRounding::name##_up(FloatNum x) { \
-    return invoke_mpfr(x, mpfr_##name, GMP_RNDU); \
+#define GECODE_ROUND_OP(name)                           \
+  forceinline FloatNum                                  \
+  FullRounding::name##_down(FloatNum x, FloatNum y) {   \
+    return Base::name##_down(x,y);                      \
+  }                                                     \
+  forceinline FloatNum                                  \
+  FullRounding::name##_up(FloatNum x, FloatNum y) {     \
+    return Base::name##_up(x,y);                        \
   }
-  GECODE_GENR_FUNC(exp)
-  GECODE_GENR_FUNC(log)
-  GECODE_GENR_FUNC(sin)
-  GECODE_GENR_FUNC(cos)
-  GECODE_GENR_FUNC(tan)
-  GECODE_GENR_FUNC(asin)
-  GECODE_GENR_FUNC(acos)
-  GECODE_GENR_FUNC(atan)
-  GECODE_GENR_FUNC(sinh)
-  GECODE_GENR_FUNC(cosh)
-  GECODE_GENR_FUNC(tanh)
-  GECODE_GENR_FUNC(asinh)
-  GECODE_GENR_FUNC(acosh)
-  GECODE_GENR_FUNC(atanh)
 
-#undef GECODE_GENR_FUNC
+  GECODE_ROUND_OP(add)
+  GECODE_ROUND_OP(sub)
+  GECODE_ROUND_OP(mul)
+  GECODE_ROUND_OP(div)
+
+#undef GECODE_ROUND_OP
+
+#define GECODE_ROUND_FUN(name)                  \
+  forceinline FloatNum                          \
+  FullRounding::name##_down(FloatNum x) {       \
+    return Base::name##_down(x);                \
+  }                                             \
+  forceinline FloatNum                          \
+  FullRounding::name##_up(FloatNum x) {         \
+    return Base::name##_up(x);                  \
+  }
+
+  GECODE_ROUND_FUN(sqrt)
+  GECODE_ROUND_FUN(int)
+
+#undef GECODE_ROUND_FUN
 
 }}
-
-#endif
 
 // STATISTICS: float-var
 
