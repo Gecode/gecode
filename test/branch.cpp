@@ -134,7 +134,7 @@ namespace Test { namespace Branch {
     Gecode::FloatVarArray x;
     /// Initialize test space
     FloatTestSpace(int n, Gecode::FloatVal& d)
-      : x(*this, n, d.lower(), d.upper()) {}
+      : x(*this, n, d.min(), d.max()) {}
     /// Constructor for cloning \a s
     FloatTestSpace(bool share, FloatTestSpace& s)
       : Gecode::Space(share,s) {
@@ -348,14 +348,14 @@ namespace Test { namespace Branch {
     Gecode::FLOAT_VAR_MIN_MAX,
     Gecode::FLOAT_VAR_MAX_MIN,
     Gecode::FLOAT_VAR_MAX_MAX,
-    Gecode::FLOAT_VAR_WIDTH_MIN,
-    Gecode::FLOAT_VAR_WIDTH_MAX,
-    Gecode::FLOAT_VAR_WIDTH_DEGREE_MIN,
-    Gecode::FLOAT_VAR_WIDTH_DEGREE_MAX,
-    Gecode::FLOAT_VAR_WIDTH_AFC_MIN,
-    Gecode::FLOAT_VAR_WIDTH_AFC_MAX,
-    Gecode::FLOAT_VAR_WIDTH_ACTIVITY_MIN,
-    Gecode::FLOAT_VAR_WIDTH_ACTIVITY_MAX
+    Gecode::FLOAT_VAR_SIZE_MIN,
+    Gecode::FLOAT_VAR_SIZE_MAX,
+    Gecode::FLOAT_VAR_SIZE_DEGREE_MIN,
+    Gecode::FLOAT_VAR_SIZE_DEGREE_MAX,
+    Gecode::FLOAT_VAR_SIZE_AFC_MIN,
+    Gecode::FLOAT_VAR_SIZE_AFC_MAX,
+    Gecode::FLOAT_VAR_SIZE_ACTIVITY_MIN,
+    Gecode::FLOAT_VAR_SIZE_ACTIVITY_MAX
   };
   /// Number of float variable selections
   const int n_float_var_branch =
@@ -375,14 +375,14 @@ namespace Test { namespace Branch {
     "FLOAT_VAR_MIN_MAX",
     "FLOAT_VAR_MAX_MIN",
     "FLOAT_VAR_MAX_MAX",
-    "FLOAT_VAR_WIDTH_MIN",
-    "FLOAT_VAR_WIDTH_MAX",
-    "FLOAT_VAR_WIDTH_DEGREE_MIN",
-    "FLOAT_VAR_WIDTH_DEGREE_MAX",
-    "FLOAT_VAR_WIDTH_AFC_MIN",
-    "FLOAT_VAR_WIDTH_AFC_MAX",
-    "FLOAT_VAR_WIDTH_ACTIVITY_MIN",
-    "FLOAT_VAR_WIDTH_ACTIVITY_MAX"
+    "FLOAT_VAR_SIZE_MIN",
+    "FLOAT_VAR_SIZE_MAX",
+    "FLOAT_VAR_SIZE_DEGREE_MIN",
+    "FLOAT_VAR_SIZE_DEGREE_MAX",
+    "FLOAT_VAR_SIZE_AFC_MIN",
+    "FLOAT_VAR_SIZE_AFC_MAX",
+    "FLOAT_VAR_SIZE_ACTIVITY_MIN",
+    "FLOAT_VAR_SIZE_ACTIVITY_MAX"
   };
   /// Float value selections
   const Gecode::FloatValBranch float_val_branch[] = {
@@ -742,8 +742,8 @@ namespace Test { namespace Branch {
             switch (fvba) {
             case FLOAT_VAR_ACTIVITY_MIN:
             case FLOAT_VAR_ACTIVITY_MAX:
-            case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
-            case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+            case FLOAT_VAR_SIZE_ACTIVITY_MIN:
+            case FLOAT_VAR_SIZE_ACTIVITY_MAX:
               faa.init(*c, c->x, 1.0);
               vboa.activity = faa;
               break;
@@ -753,8 +753,8 @@ namespace Test { namespace Branch {
             switch (fvbb) {
             case FLOAT_VAR_ACTIVITY_MIN:
             case FLOAT_VAR_ACTIVITY_MAX:
-            case FLOAT_VAR_WIDTH_ACTIVITY_MIN:
-            case FLOAT_VAR_WIDTH_ACTIVITY_MAX:
+            case FLOAT_VAR_SIZE_ACTIVITY_MIN:
+            case FLOAT_VAR_SIZE_ACTIVITY_MAX:
               fab.init(*c, c->x, 1.0);
               vbob.activity = fab;
               break;

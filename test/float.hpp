@@ -61,11 +61,11 @@ namespace Test { namespace Float {
       dsv(new Gecode::FloatNum[static_cast<unsigned int>(n)]),
       step(s) {
     for (int i=n; i--; )
-      dsv[i] = d.lower();
+      dsv[i] = d.min();
   }
   inline bool
   CpltAssignment::operator()(void) const {
-    return dsv[0] <= d.upper();
+    return dsv[0] <= d.max();
   }
   inline Gecode::FloatNum
   CpltAssignment::operator[](int i) const {
@@ -80,15 +80,16 @@ namespace Test { namespace Float {
   forceinline Gecode::FloatNum
   RandomAssignment::randval(void) {
     using namespace Gecode;
+    using namespace Gecode::Float;
     return 
       Round.add_down(
-        d.lower(),
+        d.min(),
         Round.mul_down(
           Round.div_down(
             Base::rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
-          Round.sub_down(d.upper(),d.lower())
+          Round.sub_down(d.max(),d.min())
         )
       );
   }

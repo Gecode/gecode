@@ -54,9 +54,9 @@ namespace Test { namespace Float {
     int i = n-1;
     while (true) {
       dsv[i] += step;
-      if ((dsv[i] < d.upper()) || (i == 0))
+      if ((dsv[i] < d.max()) || (i == 0))
         return;
-      dsv[i--] = d.lower();
+      dsv[i--] = d.min();
     }
   }
 
@@ -87,6 +87,7 @@ namespace Test { namespace Float {
 
   Gecode::FloatNum randFValDown(Gecode::FloatNum l, Gecode::FloatNum u) {
     using namespace Gecode;
+    using namespace Gecode::Float;
     return 
       Round.add_down(
         l,
@@ -102,6 +103,7 @@ namespace Test { namespace Float {
 
   Gecode::FloatNum randFValUp(Gecode::FloatNum l, Gecode::FloatNum u) {
     using namespace Gecode;
+    using namespace Gecode::Float;
     return 
       Round.sub_up(
         u,
@@ -129,7 +131,7 @@ namespace Test { namespace Float {
 
   TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s, Test* t,
                        bool re, Gecode::ReifyMode rm)
-    : d(d0), step(s), x(*this,n,d.lower(),d.upper()), test(t), reified(re) {
+    : d(d0), step(s), x(*this,n,d.min(),d.max()), test(t), reified(re) {
     Gecode::BoolVar b(*this,0,1);
     r = Gecode::Reify(b,rm);
     if (opt.log) {
@@ -158,9 +160,8 @@ namespace Test { namespace Float {
     const TestSpace& s = static_cast<const TestSpace&>(_s);
     int i = x.size()-1;
     while (true) {
-      Gecode::FloatNum v = Gecode::Round.add_up(s.x[i].max(),step);
-      if ((v < d.upper()) || (i == 0))
-      {
+      Gecode::FloatNum v = Gecode::Float::Round.add_up(s.x[i].max(),step);
+      if ((v < d.max()) || (i == 0)) {
         Gecode::rel(*this, x[i], Gecode::FRT_GQ, v);
         while (i--) 
           Gecode::rel(*this, x[i], Gecode::FRT_GQ, s.x[i].max());
@@ -312,7 +313,7 @@ namespace Test { namespace Float {
         delete c; return false;
       }
       for (int i=x.size(); i--; )
-        if (x[i].width() != c->x[i].width()) {
+        if (x[i].size() != c->x[i].size()) {
           delete c; return false;
         }
       if (reified && (r.var().size() != c->r.var().size())) {

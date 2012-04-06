@@ -115,7 +115,7 @@ namespace Test { namespace Assign {
     Gecode::FloatVarArray x;
     /// Initialize test space
     FloatTestSpace(int n, const Gecode::FloatVal& d)
-      : x(*this, n, d.lower(), d.upper()) {}
+      : x(*this, n, d.min(), d.max()) {}
     /// Constructor for cloning \a s
     FloatTestSpace(bool share, FloatTestSpace& s)
       : Gecode::Space(share,s) {
