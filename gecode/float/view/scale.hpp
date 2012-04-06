@@ -64,19 +64,15 @@ namespace Gecode { namespace Float {
   }
   forceinline FloatNum
   ScaleView::min(void) const {
-    FloatVal c = x.min(); c *= a; return c.lower();
+    FloatVal c = x.min(); c *= a; return c.min();
   }
   forceinline FloatNum
   ScaleView::max(void) const {
-    FloatVal c = x.max(); c *= a; return c.upper();
-  }
-  forceinline FloatVal
-  ScaleView::med(void) const {
-    FloatVal c = x.med(); c *= a; return c;
+    FloatVal c = x.max(); c *= a; return c.max();
   }
   forceinline FloatNum
-  ScaleView::median(void) const {
-    FloatVal c = x.median(); c *= a; return (c.lower()+c.upper())/2;
+  ScaleView::med(void) const {
+    FloatVal c = x.med(); c *= a; return (c.min()+c.max())/2;
   }
   forceinline FloatVal
   ScaleView::val(void) const {
@@ -84,8 +80,8 @@ namespace Gecode { namespace Float {
   }
 
   forceinline FloatNum
-  ScaleView::width(void) const {
-    FloatVal c = x.width(); c *= a; return c.upper();
+  ScaleView::size(void) const {
+    FloatVal c = x.size(); c *= a; return c.max();
   }
 
 
@@ -94,7 +90,7 @@ namespace Gecode { namespace Float {
    *
    */
   forceinline bool
-  ScaleView::zero_in() const {
+  ScaleView::zero_in(void) const {
     return x.zero_in();
   }
   forceinline bool
@@ -114,33 +110,33 @@ namespace Gecode { namespace Float {
   forceinline ModEvent
   ScaleView::lq(Space& home, int n) {
     FloatVal c = n; c /= a;
-    return x.lq(home,c.upper());
+    return x.lq(home,c.max());
   }
   forceinline ModEvent
   ScaleView::lq(Space& home, FloatNum n) {
     FloatVal c = n; c /= a;
-    return x.lq(home,c.upper());
+    return x.lq(home,c.max());
   }
   forceinline ModEvent
   ScaleView::lq(Space& home, FloatVal n) {
     FloatVal c = n; c /= a;
-    return x.lq(home,c.upper());
+    return x.lq(home,c.max());
   }
 
   forceinline ModEvent
   ScaleView::gq(Space& home, int n) {
     FloatVal c = n; c /= a;
-    return x.gq(home,c.lower());
+    return x.gq(home,c.min());
   }
   forceinline ModEvent
   ScaleView::gq(Space& home, FloatNum n) {
     FloatVal c = n; c /= a;
-    return x.gq(home,c.lower());
+    return x.gq(home,c.min());
   }
   forceinline ModEvent
   ScaleView::gq(Space& home, FloatVal n) {
     FloatVal c = n; c /= a;
-    return x.gq(home,c.lower());
+    return x.gq(home,c.min());
   }
 
   forceinline ModEvent
@@ -166,11 +162,11 @@ namespace Gecode { namespace Float {
    */
   forceinline FloatNum
   ScaleView::min(const Delta& d) const {
-    FloatVal c = x.min(d); c *= a; return c.lower();
+    FloatVal c = x.min(d); c *= a; return c.min();
   }
   forceinline FloatNum
   ScaleView::max(const Delta& d) const {
-    FloatVal c = x.max(d); c *= a; return c.upper();
+    FloatVal c = x.max(d); c *= a; return c.max();
   }
 
   forceinline ModEventDelta

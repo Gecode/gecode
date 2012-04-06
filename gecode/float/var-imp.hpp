@@ -97,13 +97,11 @@ namespace Gecode { namespace Float {
     FloatNum max(void) const;
     /// Return value of domain (only if assigned)
     FloatVal val(void) const;
-    /// Return median of domain (interval)
-    FloatVal med(void) const;
     /// Return median of domain (closest representation)
-    FloatNum median(void) const;
+    FloatNum med(void) const;
 
     /// Return width of domain (distance between maximum and minimum)
-    FloatNum width(void) const;
+    FloatNum size(void) const;
     //@}
 
     /// \name Domain tests
@@ -112,7 +110,7 @@ namespace Gecode { namespace Float {
     bool assigned(void) const;
 
     /// Test whether 0 is contained in domain
-    bool zero_in() const;
+    bool zero_in(void) const;
     /// Test whether \a n is contained in domain
     bool in(FloatNum n) const;
     /// Test whether \a n is contained in domain

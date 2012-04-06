@@ -54,7 +54,7 @@ namespace Gecode { namespace Float {
   template<class View>
   forceinline RelTest
   rtest_eq_bnd(View x, FloatVal n) {
-    if ((x.min() > n.upper()) || (x.max() < n.lower())) return RT_FALSE;
+    if ((x.min() > n.max()) || (x.max() < n.min())) return RT_FALSE;
     return x.assigned() ? RT_TRUE : RT_MAYBE;
   }
 
@@ -74,8 +74,8 @@ namespace Gecode { namespace Float {
   template<class View>
   forceinline RelTest
   rtest_lq(View x, FloatVal n) {
-    if (x.max() <= n.lower()) return RT_TRUE;
-    if (x.min() > n.upper())  return RT_FALSE;
+    if (x.max() <= n.min()) return RT_TRUE;
+    if (x.min() > n.max())  return RT_FALSE;
     return RT_MAYBE;
   }
 
@@ -90,8 +90,8 @@ namespace Gecode { namespace Float {
   template<class View>
   forceinline RelTest
   rtest_gq(View x, FloatVal n) {
-    if (x.min() >= n.upper()) return RT_TRUE;
-    if (x.max() < n.lower())  return RT_FALSE;
+    if (x.min() >= n.max()) return RT_TRUE;
+    if (x.max() < n.min())  return RT_FALSE;
     return RT_MAYBE;
   }
 

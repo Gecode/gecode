@@ -71,19 +71,19 @@ namespace Gecode {
   }
 
   forceinline FloatNum
-  FloatVal::lower(void) const {
+  FloatVal::min(void) const {
     return x.lower();
   }
   forceinline FloatNum
-  FloatVal::upper(void) const {
+  FloatVal::max(void) const {
     return x.upper();
   }
   forceinline FloatNum
-  FloatVal::width(void) const {
+  FloatVal::size(void) const {
     return boost::numeric::width(x);
   }
   forceinline FloatNum
-  FloatVal::median(void) const {
+  FloatVal::med(void) const {
     return boost::numeric::median(x);
   }
 

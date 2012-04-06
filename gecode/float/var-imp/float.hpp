@@ -69,19 +69,19 @@ namespace Gecode { namespace Float {
   }
   forceinline FloatNum
   FloatVarImp::min(void) const {
-    return dom.lower();
+    return dom.min();
   }
   forceinline FloatNum
   FloatVarImp::max(void) const {
-    return dom.upper();
+    return dom.max();
   }
   forceinline FloatVal
   FloatVarImp::val(void) const {
     return dom;
   }
   forceinline FloatNum
-  FloatVarImp::median(void) const {
-    return dom.median();
+  FloatVarImp::med(void) const {
+    return dom.med();
   }
 
   forceinline bool
@@ -90,8 +90,8 @@ namespace Gecode { namespace Float {
   }
 
   forceinline FloatNum
-  FloatVarImp::width(void) const {
-    return dom.width();
+  FloatVarImp::size(void) const {
+    return dom.size();
   }
 
 
@@ -135,11 +135,11 @@ namespace Gecode { namespace Float {
 
   forceinline ModEvent
   FloatVarImp::gq(Space& home, FloatNum n) {
-    if (n <= dom.lower()) return ME_FLOAT_NONE;
-    if (n > dom.upper())  return ME_FLOAT_FAILED;
-    FloatDelta d(dom.lower(),n);
+    if (n <= dom.min()) return ME_FLOAT_NONE;
+    if (n > dom.max())  return ME_FLOAT_FAILED;
+    FloatDelta d(dom.min(),n);
     ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(n,dom.upper()));
+    dom = intersect(dom,FloatVal(n,dom.max()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -147,11 +147,11 @@ namespace Gecode { namespace Float {
   }
   forceinline ModEvent
   FloatVarImp::gq(Space& home, const FloatVal& n) {
-    if (n.lower() <= dom.lower()) return ME_FLOAT_NONE;
-    if (n.lower() > dom.upper())  return ME_FLOAT_FAILED;
-    FloatDelta d(dom.lower(),n.upper());
+    if (n.min() <= dom.min()) return ME_FLOAT_NONE;
+    if (n.min() > dom.max())  return ME_FLOAT_FAILED;
+    FloatDelta d(dom.min(),n.max());
     ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(n.upper(),dom.upper()));
+    dom = intersect(dom,FloatVal(n.max(),dom.max()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -161,11 +161,11 @@ namespace Gecode { namespace Float {
 
   forceinline ModEvent
   FloatVarImp::lq(Space& home, FloatNum n) {
-    if (n >= dom.upper()) return ME_FLOAT_NONE;
-    if (n < dom.lower())  return ME_FLOAT_FAILED;
-    FloatDelta d(n,dom.upper());
+    if (n >= dom.max()) return ME_FLOAT_NONE;
+    if (n < dom.min())  return ME_FLOAT_FAILED;
+    FloatDelta d(n,dom.max());
     ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(dom.lower(),n));
+    dom = intersect(dom,FloatVal(dom.min(),n));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -173,11 +173,11 @@ namespace Gecode { namespace Float {
   }
   forceinline ModEvent
   FloatVarImp::lq(Space& home, const FloatVal& n) {
-    if (n.upper() >= dom.upper()) return ME_FLOAT_NONE;
-    if (n.upper() < dom.lower())  return ME_FLOAT_FAILED;
-    FloatDelta d(n.lower(),dom.upper());
+    if (n.max() >= dom.max()) return ME_FLOAT_NONE;
+    if (n.max() < dom.min())  return ME_FLOAT_FAILED;
+    FloatDelta d(n.min(),dom.max());
     ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(dom.lower(),n.lower()));
+    dom = intersect(dom,FloatVal(dom.min(),n.min()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));

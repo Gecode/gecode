@@ -64,8 +64,8 @@ namespace Gecode {
     return x->min();
   }
   forceinline FloatNum
-  FloatVar::median(void) const {
-    return x->median();
+  FloatVar::med(void) const {
+    return x->med();
   }
   forceinline FloatNum
   FloatVar::max(void) const {
@@ -78,8 +78,8 @@ namespace Gecode {
   }
 
   forceinline FloatNum
-  FloatVar::width(void) const {
-    return x->width();
+  FloatVar::size(void) const {
+    return x->size();
   }
 
   forceinline bool

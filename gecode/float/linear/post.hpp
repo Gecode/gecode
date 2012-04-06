@@ -47,8 +47,8 @@ namespace Gecode { namespace Float { namespace Linear {
   estimate(Term<View>* t, int n, FloatVal c, FloatNum& l, FloatNum &u) {
     FloatVal est = c;
     for (int i=n; i--; ) est += t[i].a * t[i].x.domain();
-    FloatNum min = est.lower();
-    FloatNum max = est.upper();
+    FloatNum min = est.min();
+    FloatNum max = est.max();
     if (min < Limits::min)
       min = Limits::min;
     if (min > Limits::max)

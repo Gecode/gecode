@@ -197,8 +197,8 @@ namespace Gecode { namespace Float { namespace Linear {
       return (c == 0.0) ? home.ES_SUBSUMED(p) : ES_FAILED;
     }
 
-    sl = Round.add_up(sl,c.upper()); 
-    su = Round.add_down(su,c.lower());
+    sl = Round.add_up(sl,c.max()); 
+    su = Round.add_down(su,c.min());
 
     const int mod_sl = 1;
     const int mod_su = 2;
@@ -208,7 +208,7 @@ namespace Gecode { namespace Float { namespace Linear {
     do {
       if (mod & mod_sl) {
         mod -= mod_sl;
-        // Propagate upper bound for positive variables
+        // Propagate max bound for positive variables
         for (int i = x.size(); i--; ) {
           const FloatNum xi_max = x[i].max();
           ModEvent me = x[i].lq(home,Round.add_up(sl,x[i].min()));
@@ -220,7 +220,7 @@ namespace Gecode { namespace Float { namespace Linear {
             mod |= mod_su;
           }
         }
-        // Propagate lower bound for negative variables
+        // Propagate min bound for negative variables
         for (int i = y.size(); i--; ) {
           const FloatNum yi_min = y[i].min();
           ModEvent me = y[i].gq(home,Round.sub_down(y[i].max(),sl));
@@ -235,7 +235,7 @@ namespace Gecode { namespace Float { namespace Linear {
       }
       if (mod & mod_su) {
         mod -= mod_su;
-        // Propagate lower bound for positive variables
+        // Propagate min bound for positive variables
         for (int i = x.size(); i--; ) {
           const FloatNum xi_min = x[i].min();
           ModEvent me = x[i].gq(home,Round.add_down(su,x[i].max()));
@@ -247,7 +247,7 @@ namespace Gecode { namespace Float { namespace Linear {
             mod |= mod_sl;
           }
         }
-        // Propagate upper bound for negative variables
+        // Propagate max bound for negative variables
         for (int i = y.size(); i--; ) {
           const FloatNum yi_max = y[i].max();
           ModEvent me = y[i].lq(home,Round.sub_up(y[i].min(),su));
@@ -753,11 +753,11 @@ namespace Gecode { namespace Float { namespace Linear {
       }
       if ((x.size() + y.size()) <= 1) {
         if (x.size() == 1) {
-          GECODE_ME_CHECK(x[0].lq(home,c.upper()));
+          GECODE_ME_CHECK(x[0].lq(home,c.max()));
           return home.ES_SUBSUMED(*this);
         }
         if (y.size() == 1) {
-          GECODE_ME_CHECK(y[0].gq(home,(-c).lower()));
+          GECODE_ME_CHECK(y[0].gq(home,(-c).min()));
           return home.ES_SUBSUMED(*this);
         }
         return (c >= 0.0) ? home.ES_SUBSUMED(*this) : ES_FAILED;
@@ -769,7 +769,7 @@ namespace Gecode { namespace Float { namespace Linear {
         sl = Round.add_up(sl,y[i].max());
     }
 
-    sl = Round.add_up(sl,c.upper());
+    sl = Round.add_up(sl,c.max());
 
     ExecStatus es = ES_FIX;
     bool assigned = true;

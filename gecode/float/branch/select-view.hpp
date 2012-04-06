@@ -127,142 +127,142 @@ namespace Gecode { namespace Float { namespace Branch {
     }
   }
 
-  // Select variable with smallest width
+  // Select variable with smallest size
   forceinline
-  ByWidthMin::ByWidthMin(void) : width(0) {}
+  BySizeMin::BySizeMin(void) : size(0) {}
   forceinline
-  ByWidthMin::ByWidthMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), width(0) {}
+  BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), size(0) {}
   forceinline ViewSelStatus
-  ByWidthMin::init(Space&, View x, int) {
-    width = x.width();
-    return (width == 2) ? VSS_BEST : VSS_BETTER;
+  BySizeMin::init(Space&, View x, int) {
+    size = x.size();
+    return (size == 2) ? VSS_BEST : VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthMin::select(Space&, View x, int) {
-    if (x.width() < width) {
-      width = x.width();
-      return (width == 2) ? VSS_BEST : VSS_BETTER;
-    } else if (x.width() > width) {
+  BySizeMin::select(Space&, View x, int) {
+    if (x.size() < size) {
+      size = x.size();
+      return (size == 2) ? VSS_BEST : VSS_BETTER;
+    } else if (x.size() > size) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
 
-  // Select variable with largest width
+  // Select variable with largest size
   forceinline
-  ByWidthMax::ByWidthMax(void) : width(0) {}
+  BySizeMax::BySizeMax(void) : size(0) {}
   forceinline
-  ByWidthMax::ByWidthMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), width(0) {}
+  BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), size(0) {}
   forceinline ViewSelStatus
-  ByWidthMax::init(Space&, View x, int) {
-    width = x.width();
+  BySizeMax::init(Space&, View x, int) {
+    size = x.size();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthMax::select(Space&, View x, int) {
-    if (x.width() > width) {
-      width = x.width();
+  BySizeMax::select(Space&, View x, int) {
+    if (x.size() > size) {
+      size = x.size();
       return VSS_BETTER;
-    } else if (x.width() < width) {
+    } else if (x.size() < size) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
 
-  // Select variable with smallest width/degree
+  // Select variable with smallest size/degree
   forceinline
-  ByWidthDegreeMin::ByWidthDegreeMin(void) : widthdegree(0) {}
+  BySizeDegreeMin::BySizeDegreeMin(void) : sizedegree(0) {}
   forceinline
-  ByWidthDegreeMin::ByWidthDegreeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), widthdegree(0) {}
+  BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), sizedegree(0) {}
   forceinline ViewSelStatus
-  ByWidthDegreeMin::init(Space&, View x, int) {
-    widthdegree =
-      static_cast<double>(x.width())/static_cast<double>(x.degree());
+  BySizeDegreeMin::init(Space&, View x, int) {
+    sizedegree =
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthDegreeMin::select(Space&, View x, int) {
+  BySizeDegreeMin::select(Space&, View x, int) {
     double sd =
-      static_cast<double>(x.width())/static_cast<double>(x.degree());
-    if (sd < widthdegree) {
-      widthdegree = sd; return VSS_BETTER;
-    } else if (sd > widthdegree) {
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
+    if (sd < sizedegree) {
+      sizedegree = sd; return VSS_BETTER;
+    } else if (sd > sizedegree) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
 
-  // Select variable with largest width/degree
+  // Select variable with largest size/degree
   forceinline
-  ByWidthDegreeMax::ByWidthDegreeMax(void) : widthdegree(0) {}
+  BySizeDegreeMax::BySizeDegreeMax(void) : sizedegree(0) {}
   forceinline
-  ByWidthDegreeMax::ByWidthDegreeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), widthdegree(0) {}
+  BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), sizedegree(0) {}
   forceinline ViewSelStatus
-  ByWidthDegreeMax::init(Space&, View x, int) {
-    widthdegree =
-      static_cast<double>(x.width())/static_cast<double>(x.degree());
+  BySizeDegreeMax::init(Space&, View x, int) {
+    sizedegree =
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthDegreeMax::select(Space&, View x, int) {
+  BySizeDegreeMax::select(Space&, View x, int) {
     double sd =
-      static_cast<double>(x.width())/static_cast<double>(x.degree());
-    if (sd > widthdegree) {
-      widthdegree = sd; return VSS_BETTER;
-    } else if (sd < widthdegree) {
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
+    if (sd > sizedegree) {
+      sizedegree = sd; return VSS_BETTER;
+    } else if (sd < sizedegree) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
 
-  // Select variable with smallest width/afc
+  // Select variable with smallest size/afc
   forceinline
-  ByWidthAfcMin::ByWidthAfcMin(void) : widthafc(0) {}
+  BySizeAfcMin::BySizeAfcMin(void) : sizeafc(0) {}
   forceinline
-  ByWidthAfcMin::ByWidthAfcMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), widthafc(0) {}
+  BySizeAfcMin::BySizeAfcMin(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), sizeafc(0) {}
   forceinline ViewSelStatus
-  ByWidthAfcMin::init(Space&, View x, int) {
-    widthafc = static_cast<double>(x.width())/x.afc();
+  BySizeAfcMin::init(Space&, View x, int) {
+    sizeafc = static_cast<double>(x.size())/x.afc();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthAfcMin::select(Space&, View x, int) {
-    double sa = static_cast<double>(x.width())/x.afc();
-    if (sa < widthafc) {
-      widthafc = sa; return VSS_BETTER;
-    } else if (sa > widthafc) {
+  BySizeAfcMin::select(Space&, View x, int) {
+    double sa = static_cast<double>(x.size())/x.afc();
+    if (sa < sizeafc) {
+      sizeafc = sa; return VSS_BETTER;
+    } else if (sa > sizeafc) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
 
-  // Select variable with largest width/afc
+  // Select variable with largest size/afc
   forceinline
-  ByWidthAfcMax::ByWidthAfcMax(void) : widthafc(0) {}
+  BySizeAfcMax::BySizeAfcMax(void) : sizeafc(0) {}
   forceinline
-  ByWidthAfcMax::ByWidthAfcMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), widthafc(0) {}
+  BySizeAfcMax::BySizeAfcMax(Space& home, const VarBranchOptions& vbo)
+    : ViewSelBase<FloatView>(home,vbo), sizeafc(0) {}
   forceinline ViewSelStatus
-  ByWidthAfcMax::init(Space&, View x, int) {
-    widthafc = static_cast<double>(x.width())/x.afc();
+  BySizeAfcMax::init(Space&, View x, int) {
+    sizeafc = static_cast<double>(x.size())/x.afc();
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthAfcMax::select(Space&, View x, int) {
-    double sa = static_cast<double>(x.width())/x.afc();
-    if (sa > widthafc) {
-      widthafc = sa; return VSS_BETTER;
-    } else if (sa < widthafc) {
+  BySizeAfcMax::select(Space&, View x, int) {
+    double sa = static_cast<double>(x.size())/x.afc();
+    if (sa > sizeafc) {
+      sizeafc = sa; return VSS_BETTER;
+    } else if (sa < sizeafc) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
@@ -270,83 +270,83 @@ namespace Gecode { namespace Float { namespace Branch {
   }
 
 
-  // Select variable with smallest width/activity
+  // Select variable with smallest size/activity
   forceinline
-  ByWidthActivityMin::ByWidthActivityMin(void) : widthact(0.0) {}
+  BySizeActivityMin::BySizeActivityMin(void) : sizeact(0.0) {}
   forceinline
-  ByWidthActivityMin::ByWidthActivityMin(Space& home,
+  BySizeActivityMin::BySizeActivityMin(Space& home,
                                        const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), activity(vbo.activity), widthact(0.0) {
+    : ViewSelBase<FloatView>(home,vbo), activity(vbo.activity), sizeact(0.0) {
     if (!activity.initialized())
-      throw MissingActivity("ByWidthActivityMin (FLOAT_VAR_WIDTH_ACTIVITY_MIN)");
+      throw MissingActivity("BySizeActivityMin (FLOAT_VAR_SIZE_ACTIVITY_MIN)");
   }
   forceinline ViewSelStatus
-  ByWidthActivityMin::init(Space&, View x, int i) {
-    widthact = static_cast<double>(x.width())/activity[i];
+  BySizeActivityMin::init(Space&, View x, int i) {
+    sizeact = static_cast<double>(x.size())/activity[i];
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthActivityMin::select(Space&, View x, int i) {
-    double sa = static_cast<double>(x.width())/activity[i];
-    if (sa < widthact) {
-      widthact = sa;
+  BySizeActivityMin::select(Space&, View x, int i) {
+    double sa = static_cast<double>(x.size())/activity[i];
+    if (sa < sizeact) {
+      sizeact = sa;
       return VSS_BETTER;
-    } else if (sa > widthact) {
+    } else if (sa > sizeact) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
   forceinline void
-  ByWidthActivityMin::update(Space& home, bool share, ByWidthActivityMin& vs) {
+  BySizeActivityMin::update(Space& home, bool share, BySizeActivityMin& vs) {
     activity.update(home, share, vs.activity);
   }
   forceinline bool
-  ByWidthActivityMin::notice(void) const {
+  BySizeActivityMin::notice(void) const {
     return true;
   }
   forceinline void
-  ByWidthActivityMin::dispose(Space&) {
+  BySizeActivityMin::dispose(Space&) {
     activity.~Activity();
   }
 
-  // Select variable with largest width/activity
+  // Select variable with largest size/activity
   forceinline
-  ByWidthActivityMax::ByWidthActivityMax(void) : widthact(0.0) {}
+  BySizeActivityMax::BySizeActivityMax(void) : sizeact(0.0) {}
   forceinline
-  ByWidthActivityMax::ByWidthActivityMax(Space& home,
+  BySizeActivityMax::BySizeActivityMax(Space& home,
                                        const VarBranchOptions& vbo)
-    : ViewSelBase<FloatView>(home,vbo), activity(vbo.activity), widthact(0.0) {
+    : ViewSelBase<FloatView>(home,vbo), activity(vbo.activity), sizeact(0.0) {
     if (!activity.initialized())
-      throw MissingActivity("ByWidthActivityMax (FLOAT_VAR_WIDTH_ACTIVITY_MAX)");
+      throw MissingActivity("BySizeActivityMax (FLOAT_VAR_SIZE_ACTIVITY_MAX)");
   }
   forceinline ViewSelStatus
-  ByWidthActivityMax::init(Space&, View x, int i) {
-    widthact = static_cast<double>(x.width())/activity[i];
+  BySizeActivityMax::init(Space&, View x, int i) {
+    sizeact = static_cast<double>(x.size())/activity[i];
     return VSS_BETTER;
   }
   forceinline ViewSelStatus
-  ByWidthActivityMax::select(Space&, View x, int i) {
-    double sa = static_cast<double>(x.width())/activity[i];
-    if (sa > widthact) {
-      widthact = sa;
+  BySizeActivityMax::select(Space&, View x, int i) {
+    double sa = static_cast<double>(x.size())/activity[i];
+    if (sa > sizeact) {
+      sizeact = sa;
       return VSS_BETTER;
-    } else if (sa < widthact) {
+    } else if (sa < sizeact) {
       return VSS_WORSE;
     } else {
       return VSS_TIE;
     }
   }
   forceinline void
-  ByWidthActivityMax::update(Space& home, bool share, ByWidthActivityMax& vs) {
+  BySizeActivityMax::update(Space& home, bool share, BySizeActivityMax& vs) {
     activity.update(home, share, vs.activity);
   }
   forceinline bool
-  ByWidthActivityMax::notice(void) const {
+  BySizeActivityMax::notice(void) const {
     return true;
   }
   forceinline void
-  ByWidthActivityMax::dispose(Space&) {
+  BySizeActivityMax::dispose(Space&) {
     activity.~Activity();
   }
 

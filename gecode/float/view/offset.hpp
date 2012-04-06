@@ -74,13 +74,9 @@ namespace Gecode { namespace Float {
   OffsetView::max(void) const {
     return x.max()+c;
   }
-  forceinline FloatVal
+  forceinline FloatNum
   OffsetView::med(void) const {
     return x.med()+c;
-  }
-  forceinline FloatNum
-  OffsetView::median(void) const {
-    return x.median()+c;
   }
   forceinline FloatVal
   OffsetView::val(void) const {
@@ -88,8 +84,8 @@ namespace Gecode { namespace Float {
   }
 
   forceinline FloatNum
-  OffsetView::width(void) const {
-    return x.width();
+  OffsetView::size(void) const {
+    return x.size();
   }
 
 
@@ -98,7 +94,7 @@ namespace Gecode { namespace Float {
    *
    */
   forceinline bool
-  OffsetView::zero_in() const {
+  OffsetView::zero_in(void) const {
     return x.in(-c);
   }
   forceinline bool

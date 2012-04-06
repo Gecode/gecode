@@ -332,9 +332,9 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "input_order")
         return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE);
       if (s->id == "first_fail")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_WIDTH_MIN);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN);
       if (s->id == "anti_first_fail")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_WIDTH_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MAX);
       if (s->id == "smallest")
         return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MIN_MIN);
       if (s->id == "largest")
@@ -342,7 +342,7 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "occurrence")
         return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_DEGREE_MAX);
       if (s->id == "most_constrained")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_WIDTH_MIN,
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN,
           FLOAT_VAR_DEGREE_MAX);
       if (s->id == "random")
         return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_RND);
@@ -351,9 +351,9 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "afc_max")
         return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MAX);
       if (s->id == "size_afc_min")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_WIDTH_AFC_MIN);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MIN);
       if (s->id == "size_afc_max")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_WIDTH_AFC_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MAX);
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -789,7 +789,7 @@ namespace Gecode { namespace FlatZinc {
         fv_sol[k++] = fv[i];
       }
 
-    branch(*this, fv_sol, FLOAT_VAR_WIDTH_MIN, FLOAT_VAL_SPLIT_MIN);
+    branch(*this, fv_sol, FLOAT_VAR_SIZE_MIN, FLOAT_VAL_SPLIT_MIN);
 #endif
 #ifdef GECODE_HAS_SET_VARS
     introduced = 0;

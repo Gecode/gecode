@@ -333,13 +333,13 @@ namespace Gecode {
     /// \name Value access
     //@{
     /// Return lower bound
-    FloatNum lower(void) const;
+    FloatNum min(void) const;
     /// Return upper bound
-    FloatNum upper(void) const;
-    /// Return width of float value
-    FloatNum width(void) const;
-    /// Return median of loat value
-    FloatNum median(void) const;
+    FloatNum max(void) const;
+    /// Return size of float value (distnace between maximum and minimum)
+    FloatNum size(void) const;
+    /// Return median of float value
+    FloatNum med(void) const;
     //@}
 
     /// \name Value tests
@@ -800,9 +800,9 @@ namespace Gecode {
     /// Return maximum of domain
     FloatNum max(void) const;
     /// Return median of domain
-    FloatNum median(void) const;
-    /// Return width of domain (distance between maximum and minimum)
-    FloatNum width(void) const;
+    FloatNum med(void) const;
+    /// Return size of domain (distance between maximum and minimum)
+    FloatNum size(void) const;
     /**
      * \brief Return assigned value
      *
@@ -1239,14 +1239,14 @@ namespace Gecode {
     FLOAT_VAR_MIN_MAX,         ///< With largest min
     FLOAT_VAR_MAX_MIN,         ///< With smallest max
     FLOAT_VAR_MAX_MAX,         ///< With largest max
-    FLOAT_VAR_WIDTH_MIN,        ///< With smallest domain size
-    FLOAT_VAR_WIDTH_MAX,        ///< With largest domain size
-    FLOAT_VAR_WIDTH_DEGREE_MIN, ///< With smallest domain size divided by degree
-    FLOAT_VAR_WIDTH_DEGREE_MAX, ///< With largest domain size divided by degree
-    FLOAT_VAR_WIDTH_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
-    FLOAT_VAR_WIDTH_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
-    FLOAT_VAR_WIDTH_ACTIVITY_MIN, ///< With smallest domain size divided by activity
-    FLOAT_VAR_WIDTH_ACTIVITY_MAX, ///< With largest domain size divided by activity
+    FLOAT_VAR_SIZE_MIN,        ///< With smallest domain size
+    FLOAT_VAR_SIZE_MAX,        ///< With largest domain size
+    FLOAT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
+    FLOAT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
+    FLOAT_VAR_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
+    FLOAT_VAR_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
+    FLOAT_VAR_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
+    FLOAT_VAR_SIZE_ACTIVITY_MAX, ///< With largest domain size divided by activity
   };
   
   /// Which values to select first for branching

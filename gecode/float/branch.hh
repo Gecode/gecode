@@ -265,20 +265,20 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with smallest width
+   * \brief View selection class for view with smallest size
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthMin : public ViewSelBase<FloatView> {
+  class BySizeMin : public ViewSelBase<FloatView> {
   protected:
-    /// So-far smallest width
-    FloatNum width;
+    /// So-far smallest size
+    FloatNum size;
   public:
     /// Default constructor
-    ByWidthMin(void);
+    BySizeMin(void);
     /// Constructor for initialization
-    ByWidthMin(Space& home, const VarBranchOptions& vbo);
+    BySizeMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \i
     ViewSelStatus init(Space& home, FloatView x, int i);
     /// Possibly select better view \a x at position \i
@@ -286,20 +286,20 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest width
+   * \brief View selection class for view with largest size
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthMax : public ViewSelBase<FloatView> {
+  class BySizeMax : public ViewSelBase<FloatView> {
   protected:
-    /// So-far largest width
-    FloatNum width;
+    /// So-far largest size
+    FloatNum size;
   public:
     /// Default constructor
-    ByWidthMax(void);
+    BySizeMax(void);
     /// Constructor for initialization
-    ByWidthMax(Space& home, const VarBranchOptions& vbo);
+    BySizeMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \i
     ViewSelStatus init(Space& home, FloatView x, int i);
     /// Possibly select better view \a x at position \i
@@ -307,21 +307,21 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with smallest Width divided
+   * \brief View selection class for view with smallest Size divided
    * by degree.
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthDegreeMin : public ViewSelBase<FloatView> {
+  class BySizeDegreeMin : public ViewSelBase<FloatView> {
   protected:
-    /// So-far smallest width/degree
-    FloatNum widthdegree;
+    /// So-far smallest size/degree
+    FloatNum sizedegree;
   public:
     /// Default constructor
-    ByWidthDegreeMin(void);
+    BySizeDegreeMin(void);
     /// Constructor for initialization
-    ByWidthDegreeMin(Space& home, const VarBranchOptions& vbo);
+    BySizeDegreeMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \i
     ViewSelStatus init(Space& home, FloatView x, int i);
     /// Possibly select better view \a x at position \i
@@ -329,21 +329,21 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest width divided
+   * \brief View selection class for view with largest size divided
    * by degree.
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthDegreeMax : public ViewSelBase<FloatView> {
+  class BySizeDegreeMax : public ViewSelBase<FloatView> {
   protected:
-    /// So-far largest width/degree
-    FloatNum widthdegree;
+    /// So-far largest size/degree
+    FloatNum sizedegree;
   public:
     /// Default constructor
-    ByWidthDegreeMax(void);
+    BySizeDegreeMax(void);
     /// Constructor for initialization
-    ByWidthDegreeMax(Space& home, const VarBranchOptions& vbo);
+    BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \i
     ViewSelStatus init(Space& home, FloatView x, int i);
     /// Possibly select better view \a x at position \i
@@ -351,20 +351,20 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with smallest width divided by accumulated failure count
+   * \brief View selection class for view with smallest size divided by accumulated failure count
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthAfcMin : public ViewSelBase<FloatView> {
+  class BySizeAfcMin : public ViewSelBase<FloatView> {
   protected:
-    /// So-far smallest width/afc
-    FloatNum widthafc;
+    /// So-far smallest size/afc
+    FloatNum sizeafc;
   public:
     /// Default constructor
-    ByWidthAfcMin(void);
+    BySizeAfcMin(void);
     /// Constructor for initialization
-    ByWidthAfcMin(Space& home, const VarBranchOptions& vbo);
+    BySizeAfcMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \i
     ViewSelStatus init(Space& home, FloatView x, int i);
     /// Possibly select better view \a x at position \i
@@ -372,20 +372,20 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest width divided by accumulated failure count
+   * \brief View selection class for view with largest size divided by accumulated failure count
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthAfcMax : public ViewSelBase<FloatView> {
+  class BySizeAfcMax : public ViewSelBase<FloatView> {
   protected:
-    /// So-far largest width/afc
-    FloatNum widthafc;
+    /// So-far largest size/afc
+    FloatNum sizeafc;
   public:
     /// Default constructor
-    ByWidthAfcMax(void);
+    BySizeAfcMax(void);
     /// Constructor for initialization
-    ByWidthAfcMax(Space& home, const VarBranchOptions& vbo);
+    BySizeAfcMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \i
     ViewSelStatus init(Space& home, FloatView x, int i);
     /// Possibly select better view \a x at position \i
@@ -393,28 +393,28 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with smallest width divided by activity
+   * \brief View selection class for view with smallest size divided by activity
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthActivityMin : public ViewSelBase<FloatView> {
+  class BySizeActivityMin : public ViewSelBase<FloatView> {
   protected:
     /// Activity information
     Activity activity;
-    /// So-far smallest width/activity
-    double widthact;
+    /// So-far smallest size/activity
+    double sizeact;
   public:
     /// Default constructor
-    ByWidthActivityMin(void);
+    BySizeActivityMin(void);
     /// Constructor for initialization
-    ByWidthActivityMin(Space& home, const VarBranchOptions& vbo);
+    BySizeActivityMin(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \a i
     ViewSelStatus init(Space& home, View x, int i);
     /// Possibly select better view \a x at position \a i
     ViewSelStatus select(Space& home, View x, int i);
     /// Updating during cloning
-    void update(Space& home, bool share, ByWidthActivityMin& vs);
+    void update(Space& home, bool share, BySizeActivityMin& vs);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Dispose view selection
@@ -422,28 +422,28 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest width divided by activity
+   * \brief View selection class for view with largest size divided by activity
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelView
    */
-  class ByWidthActivityMax : public ViewSelBase<FloatView> {
+  class BySizeActivityMax : public ViewSelBase<FloatView> {
   protected:
     /// Activity information
     Activity activity;
-    /// So-far largest width/activity
-    double widthact;
+    /// So-far largest size/activity
+    double sizeact;
   public:
     /// Default constructor
-    ByWidthActivityMax(void);
+    BySizeActivityMax(void);
     /// Constructor for initialization
-    ByWidthActivityMax(Space& home, const VarBranchOptions& vbo);
+    BySizeActivityMax(Space& home, const VarBranchOptions& vbo);
     /// Intialize with view \a x at position \a i
     ViewSelStatus init(Space& home, View x, int i);
     /// Possibly select better view \a x at position \a i
     ViewSelStatus select(Space& home, View x, int i);
     /// Updating during cloning
-    void update(Space& home, bool share, ByWidthActivityMax& vs);
+    void update(Space& home, bool share, BySizeActivityMax& vs);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Dispose view selection

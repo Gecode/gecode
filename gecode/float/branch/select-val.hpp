@@ -71,7 +71,7 @@ namespace Gecode { namespace Float { namespace Branch {
   template<class View>
   forceinline FloatNum
   ValSplitMin<View>::val(Space&, View x) const {
-    return x.median();
+    return x.med();
   }
   template<class View>
   forceinline ModEvent
@@ -99,7 +99,7 @@ namespace Gecode { namespace Float { namespace Branch {
   template<class View>
   forceinline FloatNum
   ValSplitMax<View>::val(Space&, View x) const {
-    return x.median();
+    return x.med();
   }
   template<class View>
   forceinline ModEvent
@@ -127,7 +127,7 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline typename ValSplitRnd<View>::Val
   ValSplitRnd<View>::val(Space&, View x) {
     unsigned int p = r(2);
-    return std::pair<FloatNum, bool>(x.median(),(p == 0));
+    return std::pair<FloatNum, bool>(x.med(),(p == 0));
   }
   template<class View>
   forceinline ModEvent
