@@ -808,7 +808,7 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskModelMiniModelLin Linear float expressions and relations
+   * \defgroup TaskModelMiniModelFloat Linear float expressions and relations
    *
    * Linear float expressions can be freely composed of sums and differences of
    * float variables (Gecode::FloatVar) with float coefficients and float
@@ -1487,7 +1487,7 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskModelMiniModelTrans Trigonometric functions
+   * \defgroup TaskModelMiniModelTrigo Trigonometric functions
    *
    * \ingroup TaskModelMiniModel
    */
