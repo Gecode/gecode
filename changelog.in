@@ -78,6 +78,14 @@ What:   bug
 Rank:   minor
 Thanks: Peter Nightingale
 [DESCRIPTION]
+Make extensional constraints work with empty tuple sets.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Peter Nightingale
+[DESCRIPTION]
 Fix count (global cardinality constraint) for multiple occurrences
 of the same value in the cover array.
 

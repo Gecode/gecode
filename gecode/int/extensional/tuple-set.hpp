@@ -110,7 +110,14 @@ namespace Gecode {
   forceinline void
   TupleSet::finalize(void) {
     TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
+    if (imp == NULL) {
+      imp = new TupleSetI;
+      imp->arity = 0;
+      imp->excess = -1;
+      imp->domsize = 1;
+      imp->size = 1;
+      object(imp);
+    }
     if (!imp->finalized()) {
       imp->finalize();
     }

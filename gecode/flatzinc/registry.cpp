@@ -1155,7 +1155,7 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs x = arg2intvarargs(s, ce[0]);
       IntArgs tuples = arg2intargs(ce[1]);
       int noOfVars   = x.size();
-      int noOfTuples = tuples.size()/noOfVars;
+      int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
       TupleSet ts;
       for (int i=0; i<noOfTuples; i++) {
         IntArgs t(noOfVars);
@@ -1172,7 +1172,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs x = arg2boolvarargs(s, ce[0]);
       IntArgs tuples = arg2boolargs(ce[1]);
       int noOfVars   = x.size();
-      int noOfTuples = tuples.size()/noOfVars;
+      int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
       TupleSet ts;
       for (int i=0; i<noOfTuples; i++) {
         IntArgs t(noOfVars);

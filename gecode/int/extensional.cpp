@@ -67,6 +67,13 @@ namespace Gecode {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
+    if (t.tuples()==0) {
+      if (x.size()!=0) {
+        home.fail();
+      }
+      return;
+    }
+    
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home.failed()) return;
@@ -96,6 +103,14 @@ namespace Gecode {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
+
+    if (t.tuples()==0) {
+      if (x.size()!=0) {
+        home.fail();
+      }
+      return;
+    }
+
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home.failed()) return;
