@@ -909,6 +909,20 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
       rel(s, iv0, IRT_LQ, iv1, ann2icl(ann));
     }
+
+    void p_array_bool_lt(FlatZincSpace& s, const ConExpr& ce,
+                         AST::Node* ann) {
+      BoolVarArgs bv0 = arg2boolvarargs(s, ce[0]);
+      BoolVarArgs bv1 = arg2boolvarargs(s, ce[1]);
+      rel(s, bv0, IRT_LE, bv1, ann2icl(ann));
+    }
+
+    void p_array_bool_lq(FlatZincSpace& s, const ConExpr& ce,
+                         AST::Node* ann) {
+      BoolVarArgs bv0 = arg2boolvarargs(s, ce[0]);
+      BoolVarArgs bv1 = arg2boolvarargs(s, ce[1]);
+      rel(s, bv0, IRT_LQ, bv1, ann2icl(ann));
+    }
   
     void p_count(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = arg2intvarargs(s, ce[0]);
@@ -1456,6 +1470,8 @@ namespace Gecode { namespace FlatZinc {
       
         registry().add("array_int_lt", &p_array_int_lt);
         registry().add("array_int_lq", &p_array_int_lq);
+        registry().add("array_bool_lt", &p_array_bool_lt);
+        registry().add("array_bool_lq", &p_array_bool_lq);
         registry().add("count", &p_count);
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
