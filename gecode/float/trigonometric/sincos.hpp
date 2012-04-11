@@ -48,13 +48,13 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 #define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
 #define IPI__3PI_2I  FloatVal(pi_lower(),3*pi_half_upper())
 #define I3PI_2__2PII FloatVal(3*pi_half_lower(),pi_twice_upper())
-#define POS(X) ((in(X,I0__PI_2I))?0: (in(X,IPI_2__PII))?1: (in(X,IPI__3PI_2I))?2: 3 )
+#define POS(X) ((I0__PI_2I.in(X))?0: (IPI_2__PII.in(X))?1: (IPI__3PI_2I.in(X))?2: 3 )
 #define CASE(X,Y) case ((X << 2) | Y) :
 #define CASE_LABEL(X,Y) case ((X << 2) | Y) : CASE_ ## X ## _ ## Y :
 #define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_twice_upper()),X)
 #define SHIFTN_DOWN(N,X) Round.add_down(Round.mul_down(N,pi_twice_lower()),X)
-#define GROWING(I) Round.sin_down(iv.lower()) <= Round.sin_up(iv.upper())
-#define NOT_GROWING(I) Round.sin_up(iv.lower()) >= Round.sin_down(iv.upper())
+#define GROWING(I) Round.sin_down(iv.min()) <= Round.sin_up(iv.max())
+#define NOT_GROWING(I) Round.sin_up(iv.min()) >= Round.sin_down(iv.max())
 #define ASININF_DOWN Round.asin_down(aSinIv.min())
 #define ASINSUP_UP Round.asin_up(aSinIv.max())
 #define PI_UP pi_upper()
@@ -62,113 +62,113 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 #define PITWICE_UP pi_twice_upper()
 #define PITWICE_DOWN pi_twice_lower()
 
-    int n = iv.upper() / pi_twice_lower();
+    int n = iv.max() / pi_twice_lower();
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
     // 2 <=> in [PI;3*PI/2]
     // 3 <=> in [3*PI/2;2*PI]
-    switch ( (POS(iv.lower()) << 2) | POS(Round.sub_up(iv.upper(),Round.mul_up(n,PITWICE_UP))) )
+    switch ( (POS(iv.min()) << 2) | POS(Round.sub_up(iv.max(),Round.mul_up(n,PITWICE_UP))) )
     {
       CASE_LABEL(0,0)
         if (GROWING(iv)) iv.assign(ASININF_DOWN,SHIFTN_UP(n,ASINSUP_UP));
-        else  if (Round.sin_down(iv.lower()) <= aSinIv.max())
-                if (Round.sin_up(iv.upper()) >= aSinIv.min()) break; // Nothing changed
-                else iv.assign(iv.lower(), SHIFTN_UP(n-1,Round.sub_up(PI_UP, ASININF_DOWN)));
+        else  if (Round.sin_down(iv.min()) <= aSinIv.max())
+                if (Round.sin_up(iv.max()) >= aSinIv.min()) break; // Nothing changed
+                else iv.assign(iv.min(), SHIFTN_UP(n-1,Round.sub_up(PI_UP, ASININF_DOWN)));
               else
-                if (Round.sin_up(iv.upper()) >= aSinIv.min()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.upper());
+                if (Round.sin_up(iv.max()) >= aSinIv.min()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.max());
                 else iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), SHIFTN_UP(n-1,Round.sub_up(PI_UP, ASININF_DOWN)));
         break;
       CASE(0,1)
         if (GROWING(iv)) {
-          if (Round.sin_down(iv.upper()) <= aSinIv.max()) iv.assign(ASININF_DOWN, iv.upper());
+          if (Round.sin_down(iv.max()) <= aSinIv.max()) iv.assign(ASININF_DOWN, iv.max());
           else goto CASE_0_0;
         } else {
-          if (Round.sin_down(iv.lower()) <= aSinIv.max()) iv.assign(iv.lower(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
+          if (Round.sin_down(iv.min()) <= aSinIv.max()) iv.assign(iv.min(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
           else goto CASE_1_1;
         }
         break;
       CASE_LABEL(0,2)
-        if (Round.sin_down(iv.lower()) <= aSinIv.max()) iv.assign(iv.lower(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
+        if (Round.sin_down(iv.min()) <= aSinIv.max()) iv.assign(iv.min(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
         else goto CASE_1_2;
         break;
       CASE(0,3)
-        if (Round.sin_down(iv.lower()) <= aSinIv.max())
-          if (Round.sin_up(iv.upper()) >= aSinIv.min()) break; // Nothing changed
+        if (Round.sin_down(iv.min()) <= aSinIv.max())
+          if (Round.sin_up(iv.max()) >= aSinIv.min()) break; // Nothing changed
           else goto CASE_0_2;
         else goto CASE_1_3;
         break;
       CASE(1,0)
         if (GROWING(iv)) {
-          if (Round.sin_up(iv.lower()) >= aSinIv.min()) iv.assign(iv.lower(), SHIFTN_UP(n,ASINSUP_UP));
+          if (Round.sin_up(iv.min()) >= aSinIv.min()) iv.assign(iv.min(), SHIFTN_UP(n,ASINSUP_UP));
           else iv.assign(Round.add_down(PITWICE_DOWN,ASININF_DOWN), SHIFTN_UP(n,ASINSUP_UP));
         } else {
-          if (Round.sin_down(iv.upper()) <= aSinIv.max()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.upper());
+          if (Round.sin_down(iv.max()) <= aSinIv.max()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.max());
           else { n--; goto CASE_1_1; }
         }
         break;
       CASE_LABEL(1,1)
         if (NOT_GROWING(iv)) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
-        else  if (Round.sin_up(iv.lower()) >= aSinIv.min())
-                if (Round.sin_down(iv.upper()) <= aSinIv.max()) break; // Nothing changed
-                else iv.assign(iv.lower(), SHIFTN_UP(n,ASINSUP_UP));
+        else  if (Round.sin_up(iv.min()) >= aSinIv.min())
+                if (Round.sin_down(iv.max()) <= aSinIv.max()) break; // Nothing changed
+                else iv.assign(iv.min(), SHIFTN_UP(n,ASINSUP_UP));
               else
-                if (Round.sin_down(iv.upper()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), iv.upper());
+                if (Round.sin_down(iv.max()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), iv.max());
                 else iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), SHIFTN_UP(n,ASINSUP_UP));
         break;
       CASE_LABEL(1,2) goto CASE_2_2;
       CASE_LABEL(1,3)
-        if (Round.sin_up(iv.upper()) >= aSinIv.min()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.upper());
+        if (Round.sin_up(iv.max()) >= aSinIv.min()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.max());
         else goto CASE_1_2;
         break;
       CASE_LABEL(2,0)
-        if (Round.sin_up(iv.lower()) >= aSinIv.min()) iv.assign(iv.lower(), SHIFTN_UP(n,ASINSUP_UP));
+        if (Round.sin_up(iv.min()) >= aSinIv.min()) iv.assign(iv.min(), SHIFTN_UP(n,ASINSUP_UP));
         else iv.assign(Round.add_down(PITWICE_DOWN,ASININF_DOWN), SHIFTN_UP(n,ASINSUP_UP));
         break;
       CASE(2,1)
-        if (Round.sin_up(iv.lower()) >= aSinIv.min())
-          if (Round.sin_down(iv.upper()) <= aSinIv.max()) break; // Nothing changed
+        if (Round.sin_up(iv.min()) >= aSinIv.min())
+          if (Round.sin_down(iv.max()) <= aSinIv.max()) break; // Nothing changed
           else goto CASE_2_0;
         else goto CASE_3_0;
         break;
       CASE_LABEL(2,2)
         if (NOT_GROWING(iv)) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
-        else  if (Round.sin_up(iv.lower()) >= aSinIv.min())
-                if (Round.sin_down(iv.upper()) <= aSinIv.max()) break; // Nothing changed
-                else iv.assign(iv.lower(), SHIFTN_UP(n-1,Round.add_up(PITWICE_UP, ASINSUP_UP)));
+        else  if (Round.sin_up(iv.min()) >= aSinIv.min())
+                if (Round.sin_down(iv.max()) <= aSinIv.max()) break; // Nothing changed
+                else iv.assign(iv.min(), SHIFTN_UP(n-1,Round.add_up(PITWICE_UP, ASINSUP_UP)));
               else
-                if (Round.sin_down(iv.upper()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), iv.upper());
+                if (Round.sin_down(iv.max()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), iv.max());
                 else iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), SHIFTN_UP(n-1,Round.add_up(PITWICE_UP, ASINSUP_UP)));
         break;
       CASE(2,3)
         if (GROWING(iv)) {
-          if (Round.sin_up(iv.lower()) >= aSinIv.min()) iv.assign(iv.lower(), SHIFTN_UP(n,Round.add_up(PITWICE_UP, ASINSUP_UP)));
+          if (Round.sin_up(iv.min()) >= aSinIv.min()) iv.assign(iv.min(), SHIFTN_UP(n,Round.add_up(PITWICE_UP, ASINSUP_UP)));
           else goto CASE_3_3;
         } else {
-          if (Round.sin_up(iv.upper()) >= aSinIv.min()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.upper());
+          if (Round.sin_up(iv.max()) >= aSinIv.min()) iv.assign(Round.sub_down(PI_DOWN, ASINSUP_UP), iv.max());
           else goto CASE_2_2;
         }
         break;
       CASE_LABEL(3,0) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), SHIFTN_UP(n,ASINSUP_UP)); break;
       CASE(3,1)
-        if (Round.sin_down(iv.upper()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), iv.upper());
+        if (Round.sin_down(iv.max()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), iv.max());
         else goto CASE_3_0;
         break;
       CASE(3,2)
         if (GROWING(iv)) {
-          if (Round.sin_down(iv.upper()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN),iv.upper());
+          if (Round.sin_down(iv.max()) <= aSinIv.max()) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN),iv.max());
           else { n--; goto CASE_3_3; }
         } else {
-          if (Round.sin_down(iv.lower()) <= aSinIv.max()) iv.assign(iv.lower(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
+          if (Round.sin_down(iv.min()) <= aSinIv.max()) iv.assign(iv.min(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
           else iv.assign(Round.add_down(PITWICE_DOWN, Round.sub_down(PI_DOWN, ASINSUP_UP)), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
         }
         break;
       CASE_LABEL(3,3)
         if (GROWING(iv)) iv.assign(Round.add_down(PITWICE_DOWN, ASININF_DOWN), SHIFTN_UP(n,Round.add_up(PITWICE_UP, ASINSUP_UP)));
-        else  if (Round.sin_up(iv.lower()) <= aSinIv.max())
-                if (Round.sin_down(iv.upper()) >= aSinIv.min()) break; // Nothing changed
-                else iv.assign(iv.lower(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
+        else  if (Round.sin_up(iv.min()) <= aSinIv.max())
+                if (Round.sin_down(iv.max()) >= aSinIv.min()) break; // Nothing changed
+                else iv.assign(iv.min(), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
               else
-                if (Round.sin_down(iv.upper()) >= aSinIv.min()) iv.assign(Round.sub_down(Round.add_down(PITWICE_DOWN,PI_DOWN), ASINSUP_UP), iv.upper());
+                if (Round.sin_down(iv.max()) >= aSinIv.min()) iv.assign(Round.sub_down(Round.add_down(PITWICE_DOWN,PI_DOWN), ASINSUP_UP), iv.max());
                 else iv.assign(Round.sub_down(Round.add_down(PITWICE_DOWN,PI_DOWN), ASINSUP_UP), SHIFTN_UP(n,Round.sub_up(PI_UP, ASININF_DOWN)));
         break;
       default:
@@ -229,7 +229,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   Sin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,sin(x0.domain())));
     FloatVal iv = fmod(x0.domain(),FloatVal::pi_twice());
-    FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
+    FloatNum offSet(Round.sub_down(x0.min(),iv.min()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
     return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
@@ -273,7 +273,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     GECODE_ME_CHECK(x1.eq(home,cos(x0.domain())));
     FloatVal iv = fmod(FloatVal::pi_half() + x0.domain(),
                        FloatVal::pi_twice());
-    FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
+    FloatNum offSet(Round.sub_down(x0.min(),iv.min()));
     aSinProject(x1,iv);
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
     return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;

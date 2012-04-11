@@ -44,36 +44,36 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   ExecStatus aTanProject(const V& aTanIv, FloatVal& iv) {
 #define I0__PI_2I    FloatVal(0,pi_half_upper())
 #define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
-#define POS(X) ((in(X,I0__PI_2I))?0:1)
+#define POS(X) ((I0__PI_2I.in(X))?0:1)
 #define CASE(X,Y) case ((X << 2) | Y) :
 #define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_upper()),X)
-#define GROWING(I) Round.tan_down(iv.lower()) <= Round.tan_up(iv.upper())
+#define GROWING(I) Round.tan_down(iv.min()) <= Round.tan_up(iv.max())
 #define ATANINF_DOWN Round.atan_down(aTanIv.min())
 #define ATANSUP_UP Round.atan_up(aTanIv.max())
 #define PI_UP pi_upper()
 #define PI_DOWN pi_lower()
 #define PI_TWICE_DOWN pi_twice_lower()
 
-    int n = iv.upper() / pi_lower();
+    int n = iv.max() / pi_lower();
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
-    switch ( (POS(iv.lower()) << 2) | POS(Round.sub_up(iv.upper(),Round.mul_up(n,PI_UP))) )
+    switch ( (POS(iv.min()) << 2) | POS(Round.sub_up(iv.max(),Round.mul_up(n,PI_UP))) )
     {
       CASE(0,0)
         if (GROWING(iv)) iv.assign(ATANINF_DOWN,SHIFTN_UP(n,ATANSUP_UP));
-        else  if (Round.tan_down(iv.lower()) <= aTanIv.max())
-                if (Round.tan_up(iv.upper()) >= aTanIv.min()) break; // Nothing changed
-                else iv.assign(iv.lower(),SHIFTN_UP(n-1, ATANSUP_UP));
+        else  if (Round.tan_down(iv.min()) <= aTanIv.max())
+                if (Round.tan_up(iv.max()) >= aTanIv.min()) break; // Nothing changed
+                else iv.assign(iv.min(),SHIFTN_UP(n-1, ATANSUP_UP));
               else
-                if (Round.tan_up(iv.upper()) >= aTanIv.min()) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), iv.upper());
+                if (Round.tan_up(iv.max()) >= aTanIv.min()) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), iv.max());
                 else { if (n <= 1) return ES_FAILED; else iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n-1, ATANSUP_UP)); }
         break;
       CASE(0,1)
-        if (Round.tan_down(iv.lower()) <= aTanIv.max())
-          if (Round.tan_up(iv.upper()) >= aTanIv.min()) break; // Nothing changed
-          else iv.assign(iv.lower(), SHIFTN_UP(n,ATANSUP_UP));
+        if (Round.tan_down(iv.min()) <= aTanIv.max())
+          if (Round.tan_up(iv.max()) >= aTanIv.min()) break; // Nothing changed
+          else iv.assign(iv.min(), SHIFTN_UP(n,ATANSUP_UP));
         else
-          if (Round.tan_up(iv.upper()) >= aTanIv.min()) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), iv.upper());
+          if (Round.tan_up(iv.max()) >= aTanIv.min()) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), iv.max());
           else { if (n <= 1) return ES_FAILED; else iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n,ATANSUP_UP)); }
         break;
       CASE(1,0)
@@ -81,11 +81,11 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         break;
       CASE(1,1)
         if (GROWING(iv)) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n+1,ATANSUP_UP));
-        else  if (Round.tan_down(iv.lower()) <= aTanIv.max())
-                if (Round.tan_up(iv.upper()) >= aTanIv.min()) break; // Nothing changed
-                else iv.assign(iv.lower(), SHIFTN_UP(n,ATANSUP_UP));
+        else  if (Round.tan_down(iv.min()) <= aTanIv.max())
+                if (Round.tan_up(iv.max()) >= aTanIv.min()) break; // Nothing changed
+                else iv.assign(iv.min(), SHIFTN_UP(n,ATANSUP_UP));
               else
-                if (Round.tan_up(iv.upper()) >= aTanIv.min()) iv.assign(Round.add_down(PI_TWICE_DOWN, ATANINF_DOWN), iv.upper());
+                if (Round.tan_up(iv.max()) >= aTanIv.min()) iv.assign(Round.add_down(PI_TWICE_DOWN, ATANINF_DOWN), iv.max());
                 else { if (n <= 1) return ES_FAILED; iv.assign(Round.add_down(PI_TWICE_DOWN, ATANINF_DOWN), SHIFTN_UP(n,ATANSUP_UP)); }
         break;
       default:
@@ -139,7 +139,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   Tan<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,tan(x0.domain())));
     FloatVal iv = fmod(x0.domain(),FloatVal::pi());
-    FloatNum offSet(Round.sub_down(x0.min(),iv.lower()));
+    FloatNum offSet(Round.sub_down(x0.min(),iv.min()));
     GECODE_ES_CHECK(aTanProject(x1,iv));
     GECODE_ME_CHECK(x0.eq(home,iv + offSet));
     return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
