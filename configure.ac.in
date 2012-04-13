@@ -232,7 +232,7 @@ AC_GECODE_VIS
 
 AC_GECODE_VTI(float,
 	[float variable library (implies --enable-int-vars)],
-	no,
+	yes,
 	[\$(top_srcdir)/gecode/float/var-imp/float.vis],
 	[enable_int_vars="yes";
 	 AC_SUBST(LINKFLOAT,[${LINKLIBDIR}${LINKPREFIX}${FLOAT}${DLL_ARCH}${LINKSUFFIX}])
