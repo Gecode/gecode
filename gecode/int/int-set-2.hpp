@@ -41,7 +41,8 @@ namespace Gecode {
   class IntSetInit<IntArgs> {
   public:
     static void init(IntSet& s, const IntArgs& i) {
-      s.init(&i[0],i.size());
+      if (i.size() > 0)
+        s.init(&i[0],i.size());
     }
   };
 
