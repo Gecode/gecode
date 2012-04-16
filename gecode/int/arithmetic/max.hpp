@@ -223,7 +223,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View>
   ExecStatus
   NaryMaxBnd<View>::propagate(Space& home, const ModEventDelta&) {
-    return prop_nary_max_bnd(home,*this,x,y,PC_INT_BND);
+    ExecStatus es = prop_nary_max_bnd(home,*this,x,y,PC_INT_BND);
+    GECODE_ES_CHECK(es);
+    if (x.size() == 1)
+      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x[0],y)));
+    return es;
   }
 
 

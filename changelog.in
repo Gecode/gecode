@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Jean-Noël Monette
+[DESCRIPTION]
+Added missing propagation for nary min/max constraint.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
