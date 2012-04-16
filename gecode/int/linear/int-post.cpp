@@ -434,10 +434,56 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
+  template<class CtrlView>
+  void
+  posteqint(Home home, IntView& x, int c, CtrlView b, const ReifyMode& rm,
+            IntConLevel icl) {
+    switch (icl) {
+    case ICL_DOM:
+      {
+        switch (rm) {
+        case RM_EQV:
+          GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_EQV>::
+                          post(home,x,c,b)));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_IMP>::
+                          post(home,x,c,b)));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_PMI>::
+                          post(home,x,c,b)));
+          break;
+        default: GECODE_NEVER;
+        }
+      }
+      break;
+    default:
+      {
+        switch (rm) {
+        case RM_EQV:
+          GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_EQV>::
+                          post(home,x,c,b)));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_IMP>::
+                          post(home,x,c,b)));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_PMI>::
+                          post(home,x,c,b)));
+          break;
+        default: GECODE_NEVER;
+        }
+      }
+      break;
+    }
+  }
+
   void
   post(Home home,
        Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel) {
+       IntConLevel icl) {
 
     Limits::check(c,"Int::linear");
 
@@ -475,74 +521,18 @@ namespace Gecode { namespace Int { namespace Linear {
         switch (irt) {
         case IRT_EQ:
           if (n_p == 1) {
-            switch (r.mode()) {
-            case RM_EQV:
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_EQV>::
-                              post(home,t_p[0].x,c,r.var())));
-              break;
-            case RM_IMP:
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_IMP>::
-                              post(home,t_p[0].x,c,r.var())));
-              break;
-            case RM_PMI:
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_PMI>::
-                              post(home,t_p[0].x,c,r.var())));
-              break;
-            default: GECODE_NEVER;
-            }
+            posteqint<BoolView>(home,t_p[0].x,c,r.var(),r.mode(),icl);
           } else {
-            switch (r.mode()) {
-            case RM_EQV:
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_EQV>::
-                              post(home,t_n[0].x,-c,r.var())));
-              break;
-            case RM_IMP:
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_IMP>::
-                              post(home,t_n[0].x,-c,r.var())));
-              break;
-            case RM_PMI:
-              GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,BoolView,RM_PMI>::
-                              post(home,t_n[0].x,-c,r.var())));
-              break;
-            default: GECODE_NEVER;
-            }
+            posteqint<BoolView>(home,t_p[0].x,-c,r.var(),r.mode(),icl);
           }
           break;
         case IRT_NQ:
           {
             NegBoolView nb(r.var());
             if (n_p == 1) {
-              switch (r.mode()) {
-              case RM_EQV:
-                GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_EQV>::
-                                post(home,t_p[0].x,c,nb)));
-                break;
-              case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_IMP>::
-                                post(home,t_p[0].x,c,nb)));
-                break;
-              case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_PMI>::
-                                post(home,t_p[0].x,c,nb)));
-                break;
-              default: GECODE_NEVER;
-              }
+              posteqint<NegBoolView>(home,t_p[0].x,c,nb,r.mode(),icl);
             } else {
-              switch (r.mode()) {
-              case RM_EQV:
-                GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_EQV>::
-                                post(home,t_n[0].x,-c,nb)));
-                break;
-              case RM_IMP:
-                GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_IMP>::
-                                post(home,t_n[0].x,-c,nb)));
-                break;
-              case RM_PMI:
-                GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_PMI>::
-                                post(home,t_n[0].x,-c,nb)));
-                break;
-              default: GECODE_NEVER;
-              }
+              posteqint<NegBoolView>(home,t_p[0].x,-c,nb,r.mode(),icl);
             }
           }
           break;
