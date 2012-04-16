@@ -438,45 +438,38 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   posteqint(Home home, IntView& x, int c, CtrlView b, const ReifyMode& rm,
             IntConLevel icl) {
-    switch (icl) {
-    case ICL_DOM:
-      {
-        switch (rm) {
-        case RM_EQV:
-          GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_EQV>::
-                          post(home,x,c,b)));
-          break;
-        case RM_IMP:
-          GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_IMP>::
-                          post(home,x,c,b)));
-          break;
-        case RM_PMI:
-          GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_PMI>::
-                          post(home,x,c,b)));
-          break;
-        default: GECODE_NEVER;
-        }
+    if (icl==ICL_DOM || icl==ICL_DEF) {
+      switch (rm) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_EQV>::
+                        post(home,x,c,b)));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_IMP>::
+                        post(home,x,c,b)));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_PMI>::
+                        post(home,x,c,b)));
+        break;
+      default: GECODE_NEVER;
       }
-      break;
-    default:
-      {
-        switch (rm) {
-        case RM_EQV:
-          GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_EQV>::
-                          post(home,x,c,b)));
-          break;
-        case RM_IMP:
-          GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_IMP>::
-                          post(home,x,c,b)));
-          break;
-        case RM_PMI:
-          GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_PMI>::
-                          post(home,x,c,b)));
-          break;
-        default: GECODE_NEVER;
-        }
+    } else {
+      switch (rm) {
+      case RM_EQV:
+        GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_EQV>::
+                        post(home,x,c,b)));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_IMP>::
+                        post(home,x,c,b)));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,CtrlView,RM_PMI>::
+                        post(home,x,c,b)));
+        break;
+      default: GECODE_NEVER;
       }
-      break;
     }
   }
 
