@@ -56,6 +56,7 @@ namespace Gecode { namespace Gist {
     QCheckBox* copiesCheck;
     QSpinBox*  refreshBox;
     QCheckBox* slowBox;
+    QCheckBox* moveDuringSearchBox;
     QSpinBox*  cdBox;
     QSpinBox*  adBox;
   protected Q_SLOTS:
@@ -81,6 +82,8 @@ namespace Gecode { namespace Gist {
     int refreshPause;
     /// Whether to use smooth scrolling and zooming
     bool smoothScrollAndZoom;
+    /// Whether to move cursor during search
+    bool moveDuringSearch;
 
     /// The copying distance
     int c_d;

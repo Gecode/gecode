@@ -296,6 +296,7 @@ namespace Gecode { namespace Gist {
       c->setRefresh(pd.refresh);
       c->setRefreshPause(pd.refreshPause);
       c->setSmoothScrollAndZoom(pd.smoothScrollAndZoom);
+      c->setMoveDuringSearch(pd.moveDuringSearch);
       c->setRecompDistances(pd.c_d,pd.a_d);
       opt.c_d = pd.c_d;
       opt.a_d = pd.a_d;

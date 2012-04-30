@@ -775,6 +775,14 @@ namespace Gecode { namespace Gist {
   Gist::setSmoothScrollAndZoom(bool b) {
     canvas->setSmoothScrollAndZoom(b);
   }
+  bool
+  Gist::getMoveDuringSearch(void) {
+    return canvas->getMoveDuringSearch();
+  }
+  void
+  Gist::setMoveDuringSearch(bool b) {
+    canvas->setMoveDuringSearch(b);
+  }
   void
   Gist::setRecompDistances(int c_d, int a_d) {
     canvas->setRecompDistances(c_d, a_d);

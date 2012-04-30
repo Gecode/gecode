@@ -60,6 +60,7 @@ namespace Gecode { namespace Gist {
     , compareNodes(false), compareNodesBeforeFP(false)
     , autoHideFailed(true), autoZoom(false)
     , refresh(500), refreshPause(0), smoothScrollAndZoom(false)
+    , moveDuringSearch(false)
     , zoomTimeLine(500)
     , scrollTimeLine(1000), targetX(0), sourceX(0), targetY(0), sourceY(0)
     , targetW(0), targetH(0), targetScale(0)
@@ -97,6 +98,10 @@ namespace Gecode { namespace Gist {
               this, SLOT(inspectSolution(const Space*)));
       connect(&searcher, SIGNAL(solution(const Space*)),
               this, SLOT(inspectSolution(const Space*)),
+              Qt::BlockingQueuedConnection);
+
+      connect(&searcher, SIGNAL(moveToNode(VisualNode*,bool)),
+              this, SLOT(setCurrentNode(VisualNode*,bool)),
               Qt::BlockingQueuedConnection);
 
       connect(&searcher, SIGNAL(searchFinished(void)), this, SIGNAL(searchFinished(void)));
@@ -426,15 +431,17 @@ namespace Gecode { namespace Gist {
                          static_cast<long unsigned int>(depth+stck.size()));
             }
           }
+          if (t->moveDuringSearch)
+            emit moveToNode(n,false);
         }
       }
       node->dirtyUp(*t->na);
       t->stopSearchFlag = false;
       t->mutex.unlock();
       if (sol != NULL) {
-        t->setCurrentNode(sol,false);
+        t->setCurrentNode(sol,true,false);
       } else {
-        t->setCurrentNode(node,false);
+        t->setCurrentNode(node,true,false);
       }
     }
     updateCanvas();
@@ -648,8 +655,17 @@ namespace Gecode { namespace Gist {
               if (moveInspectors[i].second) {
                 failedInspectorType = 0;
                 failedInspector = i;
-                moveInspectors[i].first->
-                  inspect(*currentNode->getWorkingSpace());
+                if (currentNode->getStatus() == FAILED) {
+                  if (!currentNode->isRoot()) {
+                    Space* curSpace =
+                      currentNode->getSpace(*na,curBest,c_d,a_d);
+                    moveInspectors[i].first->inspect(*curSpace);
+                    delete curSpace;
+                  }
+                } else {
+                  moveInspectors[i].first->
+                    inspect(*currentNode->getWorkingSpace());
+                }
                 failedInspectorType = -1;
               }
             }
@@ -1277,8 +1293,9 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  TreeCanvas::setCurrentNode(VisualNode* n, bool update) {
-    QMutexLocker locker(&mutex);
+  TreeCanvas::setCurrentNode(VisualNode* n, bool finished, bool update) {
+    if (finished)
+      mutex.lock();
     if (update && n != NULL && n != currentNode &&
         n->getStatus() != UNDETERMINED && !n->isHidden()) {
       Space* curSpace = NULL;
@@ -1301,13 +1318,15 @@ namespace Gecode { namespace Gist {
       currentNode->setMarked(false);
       currentNode = n;
       currentNode->setMarked(true);
-      emit statusChanged(currentNode,stats,true);
+      emit statusChanged(currentNode,stats,finished);
       if (update) {
         compareNodes = false;
         setCursor(QCursor(Qt::ArrowCursor));
         QWidget::update();
       }
     }
+    if (finished)
+      mutex.unlock();
   }
 
   void
@@ -1430,6 +1449,16 @@ namespace Gecode { namespace Gist {
   void
   TreeCanvas::setSmoothScrollAndZoom(bool b) {
     smoothScrollAndZoom = b;
+  }
+
+  bool
+  TreeCanvas::getMoveDuringSearch(void) {
+    return moveDuringSearch;
+  }
+
+  void
+  TreeCanvas::setMoveDuringSearch(bool b) {
+    moveDuringSearch = b;
   }
 
 }}

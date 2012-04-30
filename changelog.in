@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: gist
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added option to invoke move cursors during the automatic search.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

@@ -49,6 +49,8 @@ namespace Gecode { namespace Gist {
     refreshPause = settings.value("search/refreshPause", 0).toInt();
     smoothScrollAndZoom =
       settings.value("smoothScrollAndZoom", true).toBool();
+    moveDuringSearch =
+      settings.value("moveDuringSearch", true).toBool();
 
     c_d = opt.c_d;
     a_d = opt.a_d;
@@ -94,12 +96,17 @@ namespace Gecode { namespace Gist {
     connect(slowBox, SIGNAL(stateChanged(int)), this,
                      SLOT(toggleSlow(int)));
 
+    moveDuringSearchBox =
+      new QCheckBox(tr("Move cursor during search"));
+    moveDuringSearchBox->setChecked(moveDuringSearch);
+
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(hideCheck);
     layout->addWidget(zoomCheck);
     layout->addWidget(smoothCheck);
     layout->addLayout(refreshLayout);
     layout->addWidget(slowBox);
+    layout->addWidget(moveDuringSearchBox);
 
     QTabWidget* tabs = new QTabWidget;
     QWidget* page1 = new QWidget;
@@ -147,6 +154,7 @@ namespace Gecode { namespace Gist {
     zoom = zoomCheck->isChecked();
     refresh = refreshBox->value();
     refreshPause = slowBox->isChecked() ? 200 : 0;
+    moveDuringSearch = moveDuringSearchBox->isChecked();
     smoothScrollAndZoom = smoothCheck->isChecked();
     copies = copiesCheck->isChecked();
     c_d = cdBox->value();
@@ -158,6 +166,7 @@ namespace Gecode { namespace Gist {
     settings.setValue("search/refresh", refresh);
     settings.setValue("search/refreshPause", refreshPause);
     settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
+    settings.setValue("moveDuringSearch", moveDuringSearch);
 
     accept();
   }
@@ -169,6 +178,7 @@ namespace Gecode { namespace Gist {
     refresh = 500;
     refreshPause = 0;
     smoothScrollAndZoom = true;
+    moveDuringSearch = false;
     copies = false;
     c_d = 8;
     a_d = 2;
@@ -178,6 +188,7 @@ namespace Gecode { namespace Gist {
     slowBox->setChecked(refreshPause > 0);
     smoothCheck->setChecked(smoothScrollAndZoom);
     copiesCheck->setChecked(copies);
+    moveDuringSearchBox->setChecked(moveDuringSearch);
   }
 
   void

@@ -228,6 +228,10 @@ namespace Gecode {  namespace Gist {
     bool getSmoothScrollAndZoom(void);
     /// Set preference whether to use smooth scrolling and zooming
     void setSmoothScrollAndZoom(bool b);
+    /// Return preference whether to move cursor during search
+    bool getMoveDuringSearch(void);
+    /// Set preference whether to move cursor during search
+    void setMoveDuringSearch(bool b);
 
     /// Set recomputation parameters \a c_d and \a a_d
     void setRecompDistances(int c_d, int a_d);

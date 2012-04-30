@@ -79,6 +79,7 @@ namespace Gecode {  namespace Gist {
     void scaleChanged(int);
     void solution(const Space*);
     void searchFinished(void);
+    void moveToNode(VisualNode* n,bool);
   protected:
     void run(void);
   };
@@ -210,6 +211,10 @@ namespace Gecode {  namespace Gist {
     bool getSmoothScrollAndZoom(void);
     /// Set preference whether to use smooth scrolling and zooming
     void setSmoothScrollAndZoom(bool b);
+    /// Return preference whether to move cursor during search
+    bool getMoveDuringSearch(void);
+    /// Set preference whether to move cursor during search
+    void setMoveDuringSearch(bool b);
     /// Resize to the outer widget size if auto zoom is enabled
     void resizeToOuter(void);
 
@@ -294,7 +299,9 @@ namespace Gecode {  namespace Gist {
     int refreshPause;
     /// Whether to use smooth scrolling and zooming
     bool smoothScrollAndZoom;
-
+    /// Whether to move cursor during search
+    bool moveDuringSearch;
+    
     /// The recomputation distance
     int c_d;
     /// The adaptive recomputation distance
@@ -316,8 +323,6 @@ namespace Gecode {  namespace Gist {
     void resizeEvent(QResizeEvent* event);
     /// Handle mouse wheel events
     void wheelEvent(QWheelEvent* event);
-    /// Set the selected node to \a n
-    void setCurrentNode(VisualNode* n, bool update=true);
 
     /// Timer for smooth zooming
     QTimeLine zoomTimeLine;
@@ -351,6 +356,8 @@ namespace Gecode {  namespace Gist {
     void scroll(void);
     /// Layout done
     void layoutDone(int w, int h, int scale0);
+    /// Set the selected node to \a n
+    void setCurrentNode(VisualNode* n, bool finished=true, bool update=true);
   private Q_SLOTS:
     /// Search has finished
     void statusChanged(bool);
