@@ -122,6 +122,11 @@ namespace Gecode { namespace Support {
     bool _get(unsigned int i) const;
     /// Set bit \a i (no index check)
     void _set(unsigned int i);
+  private:
+    /// Copy constructor (disabled)
+    BitSetBase(const BitSetBase&);
+    /// Assignment operator (disabled)
+    BitSetBase& operator =(const BitSetBase&);
   public:
     /// Default constructor (yields empty set)
     BitSetBase(void);
