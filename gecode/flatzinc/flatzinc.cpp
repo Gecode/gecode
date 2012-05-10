@@ -1230,6 +1230,232 @@ namespace Gecode { namespace FlatZinc {
     );
   }
 
+  IntArgs
+  FlatZincSpace::arg2intargs(AST::Node* arg, int offset) {
+    AST::Array* a = arg->getArray();
+    IntArgs ia(a->a.size()+offset);
+    for (int i=offset; i--;)
+      ia[i] = 0;
+    for (int i=a->a.size(); i--;)
+      ia[i+offset] = a->a[i]->getInt();
+    return ia;
+  }
+  IntArgs
+  FlatZincSpace::arg2boolargs(AST::Node* arg, int offset) {
+    AST::Array* a = arg->getArray();
+    IntArgs ia(a->a.size()+offset);
+    for (int i=offset; i--;)
+      ia[i] = 0;
+    for (int i=a->a.size(); i--;)
+      ia[i+offset] = a->a[i]->getBool();
+    return ia;
+  }
+  IntSet
+  FlatZincSpace::arg2intset(AST::Node* n) {
+    AST::SetLit* sl = n->getSet();
+    IntSet d;
+    if (sl->interval) {
+      d = IntSet(sl->min, sl->max);
+    } else {
+      Region re(*this);
+      int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
+      for (int i=sl->s.size(); i--; )
+        is[i] = sl->s[i];
+      d = IntSet(is, sl->s.size());
+    }
+    return d;
+  }
+  IntSetArgs
+  FlatZincSpace::arg2intsetargs(AST::Node* arg, int offset) {
+    AST::Array* a = arg->getArray();
+    if (a->a.size() == 0) {
+      IntSetArgs emptyIa(0);
+      return emptyIa;
+    }
+    IntSetArgs ia(a->a.size()+offset);      
+    for (int i=offset; i--;)
+      ia[i] = IntSet::empty;
+    for (int i=a->a.size(); i--;) {
+      ia[i+offset] = arg2intset(a->a[i]);
+    }
+    return ia;
+  }
+  IntVarArgs
+  FlatZincSpace::arg2intvarargs(AST::Node* arg, int offset) {
+    AST::Array* a = arg->getArray();
+    if (a->a.size() == 0) {
+      IntVarArgs emptyIa(0);
+      return emptyIa;
+    }
+    IntVarArgs ia(a->a.size()+offset);
+    for (int i=offset; i--;)
+      ia[i] = IntVar(*this, 0, 0);
+    for (int i=a->a.size(); i--;) {
+      if (a->a[i]->isIntVar()) {
+        ia[i+offset] = iv[a->a[i]->getIntVar()];        
+      } else {
+        int value = a->a[i]->getInt();
+        IntVar iv(*this, value, value);
+        ia[i+offset] = iv;        
+      }
+    }
+    return ia;
+  }
+  BoolVarArgs
+  FlatZincSpace::arg2boolvarargs(AST::Node* arg, int offset, int siv) {
+    AST::Array* a = arg->getArray();
+    if (a->a.size() == 0) {
+      BoolVarArgs emptyIa(0);
+      return emptyIa;
+    }
+    BoolVarArgs ia(a->a.size()+offset-(siv==-1?0:1));
+    for (int i=offset; i--;)
+      ia[i] = BoolVar(*this, 0, 0);
+    for (int i=0; i<static_cast<int>(a->a.size()); i++) {
+      if (i==siv)
+        continue;
+      if (a->a[i]->isBool()) {
+        bool value = a->a[i]->getBool();
+        BoolVar iv(*this, value, value);
+        ia[offset++] = iv;
+      } else if (a->a[i]->isIntVar() &&
+                 aliasBool2Int(a->a[i]->getIntVar()) != -1) {
+        ia[offset++] = bv[aliasBool2Int(a->a[i]->getIntVar())];
+      } else {
+        ia[offset++] = bv[a->a[i]->getBoolVar()];
+      }
+    }
+    return ia;
+  }
+  BoolVar
+  FlatZincSpace::arg2BoolVar(AST::Node* n) {
+    BoolVar x0;
+    if (n->isBool()) {
+      x0 = BoolVar(*this, n->getBool(), n->getBool());
+    }
+    else {
+      x0 = bv[n->getBoolVar()];
+    }
+    return x0;
+  }
+  IntVar
+  FlatZincSpace::arg2IntVar(AST::Node* n) {
+    IntVar x0;
+    if (n->isIntVar()) {
+      x0 = iv[n->getIntVar()];
+    } else {
+      x0 = IntVar(*this, n->getInt(), n->getInt());            
+    }
+    return x0;
+  }
+  bool
+  FlatZincSpace::isBoolArray(AST::Node* b, int& singleInt) {
+    AST::Array* a = b->getArray();
+    singleInt = -1;
+    if (a->a.size() == 0)
+      return true;
+    for (int i=a->a.size(); i--;) {
+      if (a->a[i]->isBoolVar() || a->a[i]->isBool()) {
+      } else if (a->a[i]->isIntVar()) {
+        if (aliasBool2Int(a->a[i]->getIntVar()) == -1) {
+          if (singleInt != -1) {
+            return false;
+          }
+          singleInt = i;
+        }
+      } else {
+        return false;
+      }
+    }
+    return singleInt==-1 || a->a.size() > 1;
+  }
+#ifdef GECODE_HAS_SET_VARS
+  SetVar
+  FlatZincSpace::arg2SetVar(AST::Node* n) {
+    SetVar x0;
+    if (!n->isSetVar()) {
+      IntSet d = arg2intset(n);
+      x0 = SetVar(*this, d, d);
+    } else {
+      x0 = sv[n->getSetVar()];
+    }
+    return x0;
+  }
+  SetVarArgs
+  FlatZincSpace::arg2setvarargs(AST::Node* arg, int offset, int doffset,
+                                const IntSet& od) {
+    AST::Array* a = arg->getArray();
+    SetVarArgs ia(a->a.size()+offset);
+    for (int i=offset; i--;) {
+      IntSet d = i<doffset ? od : IntSet::empty;
+      ia[i] = SetVar(*this, d, d);
+    }
+    for (int i=a->a.size(); i--;) {
+      ia[i+offset] = arg2SetVar(a->a[i]);
+    }
+    return ia;
+  }
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+  FloatArgs
+  FlatZincSpace::arg2floatargs(AST::Node* arg, int offset) {
+    AST::Array* a = arg->getArray();
+    FloatArgs fa(a->a.size()+offset);
+    for (int i=offset; i--;)
+      fa[i] = 0.0;
+    for (int i=a->a.size(); i--;)
+      fa[i+offset] = a->a[i]->getFloat();
+    return fa;
+  }
+  FloatVarArgs
+  FlatZincSpace::arg2floatvarargs(AST::Node* arg, int offset) {
+    AST::Array* a = arg->getArray();
+    if (a->a.size() == 0) {
+      FloatVarArgs emptyFa(0);
+      return emptyFa;
+    }
+    FloatVarArgs fa(a->a.size()+offset);
+    for (int i=offset; i--;)
+      fa[i] = FloatVar(*this, 0.0, 0.0);
+    for (int i=a->a.size(); i--;) {
+      if (a->a[i]->isFloatVar()) {
+        fa[i+offset] = fv[a->a[i]->getFloatVar()];        
+      } else {
+        double value = a->a[i]->getFloat();
+        FloatVar fv(*this, value, value);
+        fa[i+offset] = fv;
+      }
+    }
+    return fa;
+  }
+  FloatVar
+  FlatZincSpace::arg2FloatVar(AST::Node* n) {
+    FloatVar x0;
+    if (n->isFloatVar()) {
+      x0 = fv[n->getFloatVar()];
+    } else {
+      x0 = FloatVar(*this, n->getFloat(), n->getFloat());
+    }
+    return x0;
+  }
+#endif
+  IntConLevel
+  FlatZincSpace::ann2icl(AST::Node* ann) {
+    if (ann) {
+      if (ann->hasAtom("val"))
+        return ICL_VAL;
+      if (ann->hasAtom("domain"))
+        return ICL_DOM;
+      if (ann->hasAtom("bounds") ||
+          ann->hasAtom("boundsR") ||
+          ann->hasAtom("boundsD") ||
+          ann->hasAtom("boundsZ"))
+        return ICL_BND;
+    }
+    return ICL_DEF;
+  }
+
+
   void
   Printer::init(AST::Array* output) {
     _output = output;

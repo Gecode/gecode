@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Jean-Noël Monette
+[DESCRIPTION]
+Exported registry and helper functions so that users can add
+constraint handlers to the FlatZinc interpreter.
+
+[ENTRY]
 Module: gist
 What:   new
 Rank:   minor

@@ -74,22 +74,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   namespace {
-  
-    IntConLevel ann2icl(AST::Node* ann) {
-      if (ann) {
-        if (ann->hasAtom("val"))
-          return ICL_VAL;
-        if (ann->hasAtom("domain"))
-          return ICL_DOM;
-        if (ann->hasAtom("bounds") ||
-            ann->hasAtom("boundsR") ||
-            ann->hasAtom("boundsD") ||
-            ann->hasAtom("boundsZ"))
-          return ICL_BND;
-      }
-      return ICL_DEF;
-    }
-  
+    
     inline IntRelType
     swap(IntRelType irt) {
       switch (irt) {
@@ -116,253 +101,41 @@ namespace Gecode { namespace FlatZinc {
       return IRT_LQ;
     }
 
-    inline IntArgs arg2intargs(AST::Node* arg, int offset = 0) {
-      AST::Array* a = arg->getArray();
-      IntArgs ia(a->a.size()+offset);
-      for (int i=offset; i--;)
-        ia[i] = 0;
-      for (int i=a->a.size(); i--;)
-        ia[i+offset] = a->a[i]->getInt();
-      return ia;
-    }
 
-    inline IntArgs arg2boolargs(AST::Node* arg, int offset = 0) {
-      AST::Array* a = arg->getArray();
-      IntArgs ia(a->a.size()+offset);
-      for (int i=offset; i--;)
-        ia[i] = 0;
-      for (int i=a->a.size(); i--;)
-        ia[i+offset] = a->a[i]->getBool();
-      return ia;
-    }
-
-    inline IntSet arg2intset(FlatZincSpace& s, AST::Node* n) {
-      AST::SetLit* sl = n->getSet();
-      IntSet d;
-      if (sl->interval) {
-        d = IntSet(sl->min, sl->max);
-      } else {
-        Region re(s);
-        int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
-        for (int i=sl->s.size(); i--; )
-          is[i] = sl->s[i];
-        d = IntSet(is, sl->s.size());
-      }
-      return d;
-    }
-
-    inline IntSetArgs arg2intsetargs(FlatZincSpace& s,
-                                     AST::Node* arg, int offset = 0) {
-      AST::Array* a = arg->getArray();
-      if (a->a.size() == 0) {
-        IntSetArgs emptyIa(0);
-        return emptyIa;
-      }
-      IntSetArgs ia(a->a.size()+offset);      
-      for (int i=offset; i--;)
-        ia[i] = IntSet::empty;
-      for (int i=a->a.size(); i--;) {
-        ia[i+offset] = arg2intset(s, a->a[i]);
-      }
-      return ia;
-    }
-  
-    inline IntVarArgs arg2intvarargs(FlatZincSpace& s, AST::Node* arg,
-                                     int offset = 0) {
-      AST::Array* a = arg->getArray();
-      if (a->a.size() == 0) {
-        IntVarArgs emptyIa(0);
-        return emptyIa;
-      }
-      IntVarArgs ia(a->a.size()+offset);
-      for (int i=offset; i--;)
-        ia[i] = IntVar(s, 0, 0);
-      for (int i=a->a.size(); i--;) {
-        if (a->a[i]->isIntVar()) {
-          ia[i+offset] = s.iv[a->a[i]->getIntVar()];        
-        } else {
-          int value = a->a[i]->getInt();
-          IntVar iv(s, value, value);
-          ia[i+offset] = iv;        
-        }
-      }
-      return ia;
-    }
-
-    inline BoolVarArgs arg2boolvarargs(FlatZincSpace& s, AST::Node* arg,
-                                       int offset = 0, int siv=-1) {
-      AST::Array* a = arg->getArray();
-      if (a->a.size() == 0) {
-        BoolVarArgs emptyIa(0);
-        return emptyIa;
-      }
-      BoolVarArgs ia(a->a.size()+offset-(siv==-1?0:1));
-      for (int i=offset; i--;)
-        ia[i] = BoolVar(s, 0, 0);
-      for (int i=0; i<static_cast<int>(a->a.size()); i++) {
-        if (i==siv)
-          continue;
-        if (a->a[i]->isBool()) {
-          bool value = a->a[i]->getBool();
-          BoolVar iv(s, value, value);
-          ia[offset++] = iv;
-        } else if (a->a[i]->isIntVar() &&
-                   s.aliasBool2Int(a->a[i]->getIntVar()) != -1) {
-          ia[offset++] = s.bv[s.aliasBool2Int(a->a[i]->getIntVar())];
-        } else {
-          ia[offset++] = s.bv[a->a[i]->getBoolVar()];
-        }
-      }
-      return ia;
-    }
-
-#ifdef GECODE_HAS_SET_VARS
-    SetVar getSetVar(FlatZincSpace& s, AST::Node* n) {
-      SetVar x0;
-      if (!n->isSetVar()) {
-        IntSet d = arg2intset(s,n);
-        x0 = SetVar(s, d, d);        
-      } else {
-        x0 = s.sv[n->getSetVar()];
-      }
-      return x0;
-    }
-
-    inline SetVarArgs arg2setvarargs(FlatZincSpace& s, AST::Node* arg,
-                                     int offset = 0, int doffset = 0,
-                                     const IntSet& od=IntSet::empty) {
-      AST::Array* a = arg->getArray();
-      SetVarArgs ia(a->a.size()+offset);
-      for (int i=offset; i--;) {
-        IntSet d = i<doffset ? od : IntSet::empty;
-        ia[i] = SetVar(s, d, d);
-      }
-      for (int i=a->a.size(); i--;) {
-        ia[i+offset] = getSetVar(s, a->a[i]);
-      }
-      return ia;
-    }
-#endif
-
-    BoolVar getBoolVar(FlatZincSpace& s, AST::Node* n) {
-      BoolVar x0;
-      if (n->isBool()) {
-        x0 = BoolVar(s, n->getBool(), n->getBool());
-      }
-      else {
-        x0 = s.bv[n->getBoolVar()];
-      }
-      return x0;
-    }
-
-    IntVar getIntVar(FlatZincSpace& s, AST::Node* n) {
-      IntVar x0;
-      if (n->isIntVar()) {
-        x0 = s.iv[n->getIntVar()];
-      } else {
-        x0 = IntVar(s, n->getInt(), n->getInt());            
-      }
-      return x0;
-    }
-
-#ifdef GECODE_HAS_FLOAT_VARS
-    inline FloatArgs arg2floatargs(AST::Node* arg, int offset = 0) {
-      AST::Array* a = arg->getArray();
-      FloatArgs fa(a->a.size()+offset);
-      for (int i=offset; i--;)
-        fa[i] = 0.0;
-      for (int i=a->a.size(); i--;)
-        fa[i+offset] = a->a[i]->getFloat();
-      return fa;
-    }
-
-    inline FloatVarArgs arg2floatvarargs(FlatZincSpace& s, AST::Node* arg,
-                                         int offset = 0) {
-      AST::Array* a = arg->getArray();
-      if (a->a.size() == 0) {
-        FloatVarArgs emptyFa(0);
-        return emptyFa;
-      }
-      FloatVarArgs fa(a->a.size()+offset);
-      for (int i=offset; i--;)
-        fa[i] = FloatVar(s, 0.0, 0.0);
-      for (int i=a->a.size(); i--;) {
-        if (a->a[i]->isFloatVar()) {
-          fa[i+offset] = s.fv[a->a[i]->getFloatVar()];        
-        } else {
-          double value = a->a[i]->getFloat();
-          FloatVar fv(s, value, value);
-          fa[i+offset] = fv;
-        }
-      }
-      return fa;
-    }
-
-    FloatVar getFloatVar(FlatZincSpace& s, AST::Node* n) {
-      FloatVar x0;
-      if (n->isFloatVar()) {
-        x0 = s.fv[n->getFloatVar()];
-      } else {
-        x0 = FloatVar(s, n->getFloat(), n->getFloat());
-      }
-      return x0;
-    }
-#endif
-
-    bool isBoolArray(FlatZincSpace& s, AST::Node* b, int& singleInt) {
-      AST::Array* a = b->getArray();
-      singleInt = -1;
-      if (a->a.size() == 0)
-        return true;
-      for (int i=a->a.size(); i--;) {
-        if (a->a[i]->isBoolVar() || a->a[i]->isBool()) {
-        } else if (a->a[i]->isIntVar()) {
-          if (s.aliasBool2Int(a->a[i]->getIntVar()) == -1) {
-            if (singleInt != -1) {
-              return false;
-            }
-            singleInt = i;
-          }
-        } else {
-          return false;
-        }
-      }
-      return singleInt==-1 || a->a.size() > 1;
-    }
 
     void p_distinct(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs va = arg2intvarargs(s, ce[0]);
-      IntConLevel icl = ann2icl(ann);
+      IntVarArgs va = s.arg2intvarargs(ce[0]);
+      IntConLevel icl = s.ann2icl(ann);
       distinct(s, va, icl == ICL_DEF ? ICL_BND : icl);
     }
     void p_distinctOffset(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs va = arg2intvarargs(s, ce[1]);
+      IntVarArgs va = s.arg2intvarargs(ce[1]);
       AST::Array* offs = ce.args->a[0]->getArray();
       IntArgs oa(offs->a.size());
       for (int i=offs->a.size(); i--; ) {
         oa[i] = offs->a[i]->getInt();    
       }
-      IntConLevel icl = ann2icl(ann);
+      IntConLevel icl = s.ann2icl(ann);
       distinct(s, oa, va, icl == ICL_DEF ? ICL_BND : icl);
     }
 
     void p_all_equal(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs va = arg2intvarargs(s, ce[0]);
-      rel(s, va, IRT_EQ, ann2icl(ann));
+      IntVarArgs va = s.arg2intvarargs(ce[0]);
+      rel(s, va, IRT_EQ, s.ann2icl(ann));
     }
 
     void p_int_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
                    AST::Node* ann) {
       if (ce[0]->isIntVar()) {
         if (ce[1]->isIntVar()) {
-          rel(s, getIntVar(s, ce[0]), irt, getIntVar(s, ce[1]), 
-              ann2icl(ann));
+          rel(s, s.arg2IntVar(ce[0]), irt, s.arg2IntVar(ce[1]), 
+              s.ann2icl(ann));
         } else {
-          rel(s, getIntVar(s, ce[0]), irt, ce[1]->getInt(), ann2icl(ann));
+          rel(s, s.arg2IntVar(ce[0]), irt, ce[1]->getInt(), s.ann2icl(ann));
         }
       } else {
-        rel(s, getIntVar(s, ce[1]), swap(irt), ce[0]->getInt(), 
-            ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[1]), swap(irt), ce[0]->getInt(), 
+            s.ann2icl(ann));
       }
     }
     void p_int_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -395,15 +168,15 @@ namespace Gecode { namespace FlatZinc {
       }
       if (ce[0]->isIntVar()) {
         if (ce[1]->isIntVar()) {
-          rel(s, getIntVar(s, ce[0]), irt, getIntVar(s, ce[1]),
-                 getBoolVar(s, ce[2]), ann2icl(ann));
+          rel(s, s.arg2IntVar(ce[0]), irt, s.arg2IntVar(ce[1]),
+                 s.arg2BoolVar(ce[2]), s.ann2icl(ann));
         } else {
-          rel(s, getIntVar(s, ce[0]), irt, ce[1]->getInt(),
-                 getBoolVar(s, ce[2]), ann2icl(ann));
+          rel(s, s.arg2IntVar(ce[0]), irt, ce[1]->getInt(),
+                 s.arg2BoolVar(ce[2]), s.ann2icl(ann));
         }
       } else {
-        rel(s, getIntVar(s, ce[1]), swap(irt), ce[0]->getInt(),
-               getBoolVar(s, ce[2]), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[1]), swap(irt), ce[0]->getInt(),
+               s.arg2BoolVar(ce[2]), s.ann2icl(ann));
       }
     }
 
@@ -430,13 +203,13 @@ namespace Gecode { namespace FlatZinc {
     /* linear (in-)equations */
     void p_int_lin_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce,
                        AST::Node* ann) {
-      IntArgs ia = arg2intargs(ce[0]);
+      IntArgs ia = s.arg2intargs(ce[0]);
       int singleIntVar;
-      if (isBoolArray(s,ce[1],singleIntVar)) {
+      if (s.isBoolArray(ce[1],singleIntVar)) {
         if (singleIntVar != -1) {
           if (std::abs(ia[singleIntVar]) == 1 && ce[2]->getInt() == 0) {
-            IntVar siv = getIntVar(s, ce[1]->getArray()->a[singleIntVar]);
-            BoolVarArgs iv = arg2boolvarargs(s, ce[1], 0, singleIntVar);
+            IntVar siv = s.arg2IntVar(ce[1]->getArray()->a[singleIntVar]);
+            BoolVarArgs iv = s.arg2boolvarargs(ce[1], 0, singleIntVar);
             IntArgs ia_tmp(ia.size()-1);
             int count = 0;
             for (int i=0; i<ia.size(); i++) {
@@ -444,18 +217,18 @@ namespace Gecode { namespace FlatZinc {
                 ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
             IntRelType t = (ia[singleIntVar] == -1 ? irt : swap(irt));
-            linear(s, ia_tmp, iv, t, siv, ann2icl(ann));
+            linear(s, ia_tmp, iv, t, siv, s.ann2icl(ann));
           } else {
-            IntVarArgs iv = arg2intvarargs(s, ce[1]);
-            linear(s, ia, iv, irt, ce[2]->getInt(), ann2icl(ann));
+            IntVarArgs iv = s.arg2intvarargs(ce[1]);
+            linear(s, ia, iv, irt, ce[2]->getInt(), s.ann2icl(ann));
           }
         } else {
-          BoolVarArgs iv = arg2boolvarargs(s, ce[1]);
-          linear(s, ia, iv, irt, ce[2]->getInt(), ann2icl(ann));
+          BoolVarArgs iv = s.arg2boolvarargs(ce[1]);
+          linear(s, ia, iv, irt, ce[2]->getInt(), s.ann2icl(ann));
         }
       } else {
-        IntVarArgs iv = arg2intvarargs(s, ce[1]);
-        linear(s, ia, iv, irt, ce[2]->getInt(), ann2icl(ann));
+        IntVarArgs iv = s.arg2intvarargs(ce[1]);
+        linear(s, ia, iv, irt, ce[2]->getInt(), s.ann2icl(ann));
       }
     }
     void p_int_lin_CMP_reif(FlatZincSpace& s, IntRelType irt,
@@ -468,13 +241,13 @@ namespace Gecode { namespace FlatZinc {
         }
         return;
       }
-      IntArgs ia = arg2intargs(ce[0]);
+      IntArgs ia = s.arg2intargs(ce[0]);
       int singleIntVar;
-      if (isBoolArray(s,ce[1],singleIntVar)) {
+      if (s.isBoolArray(ce[1],singleIntVar)) {
         if (singleIntVar != -1) {
           if (std::abs(ia[singleIntVar]) == 1 && ce[2]->getInt() == 0) {
-            IntVar siv = getIntVar(s, ce[1]->getArray()->a[singleIntVar]);
-            BoolVarArgs iv = arg2boolvarargs(s, ce[1], 0, singleIntVar);
+            IntVar siv = s.arg2IntVar(ce[1]->getArray()->a[singleIntVar]);
+            BoolVarArgs iv = s.arg2boolvarargs(ce[1], 0, singleIntVar);
             IntArgs ia_tmp(ia.size()-1);
             int count = 0;
             for (int i=0; i<ia.size(); i++) {
@@ -482,22 +255,22 @@ namespace Gecode { namespace FlatZinc {
                 ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
             IntRelType t = (ia[singleIntVar] == -1 ? irt : swap(irt));
-            linear(s, ia_tmp, iv, t, siv, getBoolVar(s, ce[3]), 
-                   ann2icl(ann));
+            linear(s, ia_tmp, iv, t, siv, s.arg2BoolVar(ce[3]), 
+                   s.ann2icl(ann));
           } else {
-            IntVarArgs iv = arg2intvarargs(s, ce[1]);
+            IntVarArgs iv = s.arg2intvarargs(ce[1]);
             linear(s, ia, iv, irt, ce[2]->getInt(),
-                   getBoolVar(s, ce[3]), ann2icl(ann));
+                   s.arg2BoolVar(ce[3]), s.ann2icl(ann));
           }
         } else {
-          BoolVarArgs iv = arg2boolvarargs(s, ce[1]);
+          BoolVarArgs iv = s.arg2boolvarargs(ce[1]);
           linear(s, ia, iv, irt, ce[2]->getInt(),
-                 getBoolVar(s, ce[3]), ann2icl(ann));
+                 s.arg2BoolVar(ce[3]), s.ann2icl(ann));
         }
       } else {
-        IntVarArgs iv = arg2intvarargs(s, ce[1]);
-        linear(s, ia, iv, irt, ce[2]->getInt(), getBoolVar(s, ce[3]), 
-               ann2icl(ann));
+        IntVarArgs iv = s.arg2intvarargs(ce[1]);
+        linear(s, ia, iv, irt, ce[2]->getInt(), s.arg2BoolVar(ce[3]), 
+               s.ann2icl(ann));
       }
     }
     void p_int_lin_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -539,12 +312,12 @@ namespace Gecode { namespace FlatZinc {
 
     void p_bool_lin_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce,
                         AST::Node* ann) {
-      IntArgs ia = arg2intargs(ce[0]);
-      BoolVarArgs iv = arg2boolvarargs(s, ce[1]);
+      IntArgs ia = s.arg2intargs(ce[0]);
+      BoolVarArgs iv = s.arg2boolvarargs(ce[1]);
       if (ce[2]->isIntVar())
-        linear(s, ia, iv, irt, s.iv[ce[2]->getIntVar()], ann2icl(ann));
+        linear(s, ia, iv, irt, s.iv[ce[2]->getIntVar()], s.ann2icl(ann));
       else
-        linear(s, ia, iv, irt, ce[2]->getInt(), ann2icl(ann));
+        linear(s, ia, iv, irt, ce[2]->getInt(), s.ann2icl(ann));
     }
     void p_bool_lin_CMP_reif(FlatZincSpace& s, IntRelType irt,
                             const ConExpr& ce, AST::Node* ann) {
@@ -556,14 +329,14 @@ namespace Gecode { namespace FlatZinc {
         }
         return;
       }
-      IntArgs ia = arg2intargs(ce[0]);
-      BoolVarArgs iv = arg2boolvarargs(s, ce[1]);
+      IntArgs ia = s.arg2intargs(ce[0]);
+      BoolVarArgs iv = s.arg2boolvarargs(ce[1]);
       if (ce[2]->isIntVar())
-        linear(s, ia, iv, irt, s.iv[ce[2]->getIntVar()], getBoolVar(s, ce[3]), 
-               ann2icl(ann));
+        linear(s, ia, iv, irt, s.iv[ce[2]->getIntVar()], s.arg2BoolVar(ce[3]), 
+               s.ann2icl(ann));
       else
-        linear(s, ia, iv, irt, ce[2]->getInt(), getBoolVar(s, ce[3]), 
-               ann2icl(ann));
+        linear(s, ia, iv, irt, ce[2]->getInt(), s.arg2BoolVar(ce[3]), 
+               s.ann2icl(ann));
     }
     void p_bool_lin_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_lin_CMP(s, IRT_EQ, ce, ann);
@@ -613,83 +386,83 @@ namespace Gecode { namespace FlatZinc {
   
     void p_int_plus(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       if (!ce[0]->isIntVar()) {
-        rel(s, ce[0]->getInt() + getIntVar(s, ce[1])
-                == getIntVar(s,ce[2]), ann2icl(ann));
+        rel(s, ce[0]->getInt() + s.arg2IntVar(ce[1])
+                == s.arg2IntVar(ce[2]), s.ann2icl(ann));
       } else if (!ce[1]->isIntVar()) {
-        rel(s, getIntVar(s,ce[0]) + ce[1]->getInt()
-                == getIntVar(s,ce[2]), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[0]) + ce[1]->getInt()
+                == s.arg2IntVar(ce[2]), s.ann2icl(ann));
       } else if (!ce[2]->isIntVar()) {
-        rel(s, getIntVar(s,ce[0]) + getIntVar(s,ce[1]) 
-                == ce[2]->getInt(), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[0]) + s.arg2IntVar(ce[1]) 
+                == ce[2]->getInt(), s.ann2icl(ann));
       } else {
-        rel(s, getIntVar(s,ce[0]) + getIntVar(s,ce[1]) 
-                == getIntVar(s,ce[2]), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[0]) + s.arg2IntVar(ce[1]) 
+                == s.arg2IntVar(ce[2]), s.ann2icl(ann));
       }
     }
 
     void p_int_minus(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       if (!ce[0]->isIntVar()) {
-        rel(s, ce[0]->getInt() - getIntVar(s, ce[1])
-                == getIntVar(s,ce[2]), ann2icl(ann));
+        rel(s, ce[0]->getInt() - s.arg2IntVar(ce[1])
+                == s.arg2IntVar(ce[2]), s.ann2icl(ann));
       } else if (!ce[1]->isIntVar()) {
-        rel(s, getIntVar(s,ce[0]) - ce[1]->getInt()
-                == getIntVar(s,ce[2]), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[0]) - ce[1]->getInt()
+                == s.arg2IntVar(ce[2]), s.ann2icl(ann));
       } else if (!ce[2]->isIntVar()) {
-        rel(s, getIntVar(s,ce[0]) - getIntVar(s,ce[1]) 
-                == ce[2]->getInt(), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[0]) - s.arg2IntVar(ce[1]) 
+                == ce[2]->getInt(), s.ann2icl(ann));
       } else {
-        rel(s, getIntVar(s,ce[0]) - getIntVar(s,ce[1]) 
-                == getIntVar(s,ce[2]), ann2icl(ann));
+        rel(s, s.arg2IntVar(ce[0]) - s.arg2IntVar(ce[1]) 
+                == s.arg2IntVar(ce[2]), s.ann2icl(ann));
       }
     }
 
     void p_int_times(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      IntVar x2 = getIntVar(s, ce[2]);
-      mult(s, x0, x1, x2, ann2icl(ann));    
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      mult(s, x0, x1, x2, s.ann2icl(ann));    
     }
     void p_int_div(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      IntVar x2 = getIntVar(s, ce[2]);
-      div(s,x0,x1,x2, ann2icl(ann));
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      div(s,x0,x1,x2, s.ann2icl(ann));
     }
     void p_int_mod(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      IntVar x2 = getIntVar(s, ce[2]);
-      mod(s,x0,x1,x2, ann2icl(ann));
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      mod(s,x0,x1,x2, s.ann2icl(ann));
     }
 
     void p_int_min(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      IntVar x2 = getIntVar(s, ce[2]);
-      min(s, x0, x1, x2, ann2icl(ann));
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      min(s, x0, x1, x2, s.ann2icl(ann));
     }
     void p_int_max(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      IntVar x2 = getIntVar(s, ce[2]);
-      max(s, x0, x1, x2, ann2icl(ann));
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      max(s, x0, x1, x2, s.ann2icl(ann));
     }
     void p_int_negate(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      rel(s, x0 == -x1, ann2icl(ann));
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      rel(s, x0 == -x1, s.ann2icl(ann));
     }
 
     /* Boolean constraints */
     void p_bool_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
                    AST::Node* ann) {
-      rel(s, getBoolVar(s, ce[0]), irt, getBoolVar(s, ce[1]), 
-          ann2icl(ann));
+      rel(s, s.arg2BoolVar(ce[0]), irt, s.arg2BoolVar(ce[1]), 
+          s.ann2icl(ann));
     }
     void p_bool_CMP_reif(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
                    AST::Node* ann) {
-      rel(s, getBoolVar(s, ce[0]), irt, getBoolVar(s, ce[1]),
-          getBoolVar(s, ce[2]), ann2icl(ann));
+      rel(s, s.arg2BoolVar(ce[0]), irt, s.arg2BoolVar(ce[1]),
+          s.arg2BoolVar(ce[2]), s.ann2icl(ann));
     }
     void p_bool_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_CMP(s, IRT_EQ, ce, ann);
@@ -729,22 +502,22 @@ namespace Gecode { namespace FlatZinc {
     }
 
 #define BOOL_OP(op) \
-    BoolVar b0 = getBoolVar(s, ce[0]); \
-    BoolVar b1 = getBoolVar(s, ce[1]); \
+    BoolVar b0 = s.arg2BoolVar(ce[0]); \
+    BoolVar b1 = s.arg2BoolVar(ce[1]); \
     if (ce[2]->isBool()) { \
-      rel(s, b0, op, b1, ce[2]->getBool(), ann2icl(ann)); \
+      rel(s, b0, op, b1, ce[2]->getBool(), s.ann2icl(ann)); \
     } else { \
-      rel(s, b0, op, b1, s.bv[ce[2]->getBoolVar()], ann2icl(ann)); \
+      rel(s, b0, op, b1, s.bv[ce[2]->getBoolVar()], s.ann2icl(ann)); \
     }
 
 #define BOOL_ARRAY_OP(op) \
-    BoolVarArgs bv = arg2boolvarargs(s, ce[0]); \
+    BoolVarArgs bv = s.arg2boolvarargs(ce[0]); \
     if (ce.size()==1) { \
-      rel(s, op, bv, 1, ann2icl(ann)); \
+      rel(s, op, bv, 1, s.ann2icl(ann)); \
     } else if (ce[1]->isBool()) { \
-      rel(s, op, bv, ce[1]->getBool(), ann2icl(ann)); \
+      rel(s, op, bv, ce[1]->getBool(), s.ann2icl(ann)); \
     } else { \
-      rel(s, op, bv, s.bv[ce[1]->getBoolVar()], ann2icl(ann)); \
+      rel(s, op, bv, s.bv[ce[1]->getBoolVar()], s.ann2icl(ann)); \
     }
 
     void p_bool_or(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -767,36 +540,36 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_array_bool_clause(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node* ann) {
-      BoolVarArgs bvp = arg2boolvarargs(s, ce[0]);
-      BoolVarArgs bvn = arg2boolvarargs(s, ce[1]);
-      clause(s, BOT_OR, bvp, bvn, 1, ann2icl(ann));
+      BoolVarArgs bvp = s.arg2boolvarargs(ce[0]);
+      BoolVarArgs bvn = s.arg2boolvarargs(ce[1]);
+      clause(s, BOT_OR, bvp, bvn, 1, s.ann2icl(ann));
     }
     void p_array_bool_clause_reif(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node* ann) {
-      BoolVarArgs bvp = arg2boolvarargs(s, ce[0]);
-      BoolVarArgs bvn = arg2boolvarargs(s, ce[1]);
-      BoolVar b0 = getBoolVar(s, ce[2]);
-      clause(s, BOT_OR, bvp, bvn, b0, ann2icl(ann));
+      BoolVarArgs bvp = s.arg2boolvarargs(ce[0]);
+      BoolVarArgs bvn = s.arg2boolvarargs(ce[1]);
+      BoolVar b0 = s.arg2BoolVar(ce[2]);
+      clause(s, BOT_OR, bvp, bvn, b0, s.ann2icl(ann));
     }
     void p_bool_xor(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BOOL_OP(BOT_XOR);
     }
     void p_bool_l_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVar b0 = getBoolVar(s, ce[0]);
-      BoolVar b1 = getBoolVar(s, ce[1]);
+      BoolVar b0 = s.arg2BoolVar(ce[0]);
+      BoolVar b1 = s.arg2BoolVar(ce[1]);
       if (ce[2]->isBool()) {
-        rel(s, b1, BOT_IMP, b0, ce[2]->getBool(), ann2icl(ann));
+        rel(s, b1, BOT_IMP, b0, ce[2]->getBool(), s.ann2icl(ann));
       } else {
-        rel(s, b1, BOT_IMP, b0, s.bv[ce[2]->getBoolVar()], ann2icl(ann));
+        rel(s, b1, BOT_IMP, b0, s.bv[ce[2]->getBoolVar()], s.ann2icl(ann));
       }
     }
     void p_bool_r_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BOOL_OP(BOT_IMP);
     }
     void p_bool_not(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVar x0 = getBoolVar(s, ce[0]);
-      BoolVar x1 = getBoolVar(s, ce[1]);
-      rel(s, x0, BOT_XOR, x1, 1, ann2icl(ann));
+      BoolVar x0 = s.arg2BoolVar(ce[0]);
+      BoolVar x1 = s.arg2BoolVar(ce[1]);
+      rel(s, x0, BOT_XOR, x1, 1, s.ann2icl(ann));
     }
   
     /* element constraints */
@@ -810,14 +583,14 @@ namespace Gecode { namespace FlatZinc {
           break;
         }
       }
-      IntVar selector = getIntVar(s, ce[0]);
+      IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntArgs ia = arg2intargs(ce[1], 1);
-        element(s, ia, selector, getIntVar(s, ce[2]), ann2icl(ann));
+        IntArgs ia = s.arg2intargs(ce[1], 1);
+        element(s, ia, selector, s.arg2IntVar(ce[2]), s.ann2icl(ann));
       } else {
-        IntVarArgs iv = arg2intvarargs(s, ce[1], 1);
-        element(s, iv, selector, getIntVar(s, ce[2]), ann2icl(ann));
+        IntVarArgs iv = s.arg2intvarargs(ce[1], 1);
+        element(s, iv, selector, s.arg2IntVar(ce[2]), s.ann2icl(ann));
       }
     }
     void p_array_bool_element(FlatZincSpace& s, const ConExpr& ce, 
@@ -830,29 +603,29 @@ namespace Gecode { namespace FlatZinc {
           break;
         }
       }
-      IntVar selector = getIntVar(s, ce[0]);
+      IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntArgs ia = arg2boolargs(ce[1], 1);
-        element(s, ia, selector, getBoolVar(s, ce[2]), ann2icl(ann));
+        IntArgs ia = s.arg2boolargs(ce[1], 1);
+        element(s, ia, selector, s.arg2BoolVar(ce[2]), s.ann2icl(ann));
       } else {
-        BoolVarArgs iv = arg2boolvarargs(s, ce[1], 1);
-        element(s, iv, selector, getBoolVar(s, ce[2]), ann2icl(ann));
+        BoolVarArgs iv = s.arg2boolvarargs(ce[1], 1);
+        element(s, iv, selector, s.arg2BoolVar(ce[2]), s.ann2icl(ann));
       }
     }
   
     /* coercion constraints */
     void p_bool2int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVar x0 = getBoolVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
+      BoolVar x0 = s.arg2BoolVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
       if (ce[0]->isBoolVar() && ce[1]->isIntVar()) {
         s.aliasBool2Int(ce[1]->getIntVar(), ce[0]->getBoolVar());
       }
-      channel(s, x0, x1, ann2icl(ann));
+      channel(s, x0, x1, s.ann2icl(ann));
     }
 
     void p_int_in(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      IntSet d = arg2intset(s,ce[1]);
+      IntSet d = s.arg2intset(ce[1]);
       if (ce[0]->isBoolVar()) {
         IntSetRanges dr(d);
         Iter::Ranges::Singleton sr(0,1);
@@ -861,92 +634,92 @@ namespace Gecode { namespace FlatZinc {
         if (d01.size() == 0) {
           s.fail();
         } else {
-          rel(s, getBoolVar(s, ce[0]), IRT_GQ, d01.min());
-          rel(s, getBoolVar(s, ce[0]), IRT_LQ, d01.max());
+          rel(s, s.arg2BoolVar(ce[0]), IRT_GQ, d01.min());
+          rel(s, s.arg2BoolVar(ce[0]), IRT_LQ, d01.max());
         }
       } else {
-        dom(s, getIntVar(s, ce[0]), d);
+        dom(s, s.arg2IntVar(ce[0]), d);
       }
     }
     void p_int_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      IntSet d = arg2intset(s,ce[1]);
+      IntSet d = s.arg2intset(ce[1]);
       if (ce[0]->isBoolVar()) {
         IntSetRanges dr(d);
         Iter::Ranges::Singleton sr(0,1);
         Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
         IntSet d01(i);
         if (d01.size() == 0) {
-          rel(s, getBoolVar(s, ce[2]) == 0);
+          rel(s, s.arg2BoolVar(ce[2]) == 0);
         } else if (d01.max() == 0) {
-          rel(s, getBoolVar(s, ce[2]) == !getBoolVar(s, ce[0]));
+          rel(s, s.arg2BoolVar(ce[2]) == !s.arg2BoolVar(ce[0]));
         } else if (d01.min() == 1) {
-          rel(s, getBoolVar(s, ce[2]) == getBoolVar(s, ce[0]));
+          rel(s, s.arg2BoolVar(ce[2]) == s.arg2BoolVar(ce[0]));
         } else {
-          rel(s, getBoolVar(s, ce[2]) == 1);
+          rel(s, s.arg2BoolVar(ce[2]) == 1);
         }
       } else {
-        std::cerr << "in_in_reif("<<getIntVar(s, ce[0])<<","<<d<<","<<getBoolVar(s, ce[2])<<")\n";
-        dom(s, getIntVar(s, ce[0]), d, getBoolVar(s, ce[2]));
+        std::cerr << "in_in_reif("<<s.arg2IntVar(ce[0])<<","<<d<<","<<s.arg2BoolVar(ce[2])<<")\n";
+        dom(s, s.arg2IntVar(ce[0]), d, s.arg2BoolVar(ce[2]));
       }
     }
 
     /* constraints from the standard library */
   
     void p_abs(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVar x0 = getIntVar(s, ce[0]);
-      IntVar x1 = getIntVar(s, ce[1]);
-      abs(s, x0, x1, ann2icl(ann));
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x1 = s.arg2IntVar(ce[1]);
+      abs(s, x0, x1, s.ann2icl(ann));
     }
   
     void p_array_int_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
-      IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
-      rel(s, iv0, IRT_LE, iv1, ann2icl(ann));
+      IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
+      IntVarArgs iv1 = s.arg2intvarargs(ce[1]);
+      rel(s, iv0, IRT_LE, iv1, s.ann2icl(ann));
     }
 
     void p_array_int_lq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
-      IntVarArgs iv1 = arg2intvarargs(s, ce[1]);
-      rel(s, iv0, IRT_LQ, iv1, ann2icl(ann));
+      IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
+      IntVarArgs iv1 = s.arg2intvarargs(ce[1]);
+      rel(s, iv0, IRT_LQ, iv1, s.ann2icl(ann));
     }
 
     void p_array_bool_lt(FlatZincSpace& s, const ConExpr& ce,
                          AST::Node* ann) {
-      BoolVarArgs bv0 = arg2boolvarargs(s, ce[0]);
-      BoolVarArgs bv1 = arg2boolvarargs(s, ce[1]);
-      rel(s, bv0, IRT_LE, bv1, ann2icl(ann));
+      BoolVarArgs bv0 = s.arg2boolvarargs(ce[0]);
+      BoolVarArgs bv1 = s.arg2boolvarargs(ce[1]);
+      rel(s, bv0, IRT_LE, bv1, s.ann2icl(ann));
     }
 
     void p_array_bool_lq(FlatZincSpace& s, const ConExpr& ce,
                          AST::Node* ann) {
-      BoolVarArgs bv0 = arg2boolvarargs(s, ce[0]);
-      BoolVarArgs bv1 = arg2boolvarargs(s, ce[1]);
-      rel(s, bv0, IRT_LQ, bv1, ann2icl(ann));
+      BoolVarArgs bv0 = s.arg2boolvarargs(ce[0]);
+      BoolVarArgs bv1 = s.arg2boolvarargs(ce[1]);
+      rel(s, bv0, IRT_LQ, bv1, s.ann2icl(ann));
     }
   
     void p_count(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = arg2intvarargs(s, ce[0]);
+      IntVarArgs iv = s.arg2intvarargs(ce[0]);
       if (!ce[1]->isIntVar()) {
         if (!ce[2]->isIntVar()) {
           count(s, iv, ce[1]->getInt(), IRT_EQ, ce[2]->getInt(), 
-                ann2icl(ann));
+                s.ann2icl(ann));
         } else {
-          count(s, iv, ce[1]->getInt(), IRT_EQ, getIntVar(s, ce[2]), 
-                ann2icl(ann));
+          count(s, iv, ce[1]->getInt(), IRT_EQ, s.arg2IntVar(ce[2]), 
+                s.ann2icl(ann));
         }
       } else if (!ce[2]->isIntVar()) {
-        count(s, iv, getIntVar(s, ce[1]), IRT_EQ, ce[2]->getInt(), 
-              ann2icl(ann));
+        count(s, iv, s.arg2IntVar(ce[1]), IRT_EQ, ce[2]->getInt(), 
+              s.ann2icl(ann));
       } else {
-        count(s, iv, getIntVar(s, ce[1]), IRT_EQ, getIntVar(s, ce[2]), 
-              ann2icl(ann));
+        count(s, iv, s.arg2IntVar(ce[1]), IRT_EQ, s.arg2IntVar(ce[2]), 
+              s.ann2icl(ann));
       }
     }
 
     void count_rel(IntRelType irt,
                    FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = arg2intvarargs(s, ce[1]);
-      count(s, iv, ce[2]->getInt(), irt, ce[0]->getInt(), ann2icl(ann));
+      IntVarArgs iv = s.arg2intvarargs(ce[1]);
+      count(s, iv, ce[2]->getInt(), irt, ce[0]->getInt(), s.ann2icl(ann));
     }
 
     void p_at_most(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -960,9 +733,9 @@ namespace Gecode { namespace FlatZinc {
     void p_bin_packing_load(FlatZincSpace& s, const ConExpr& ce,
                             AST::Node* ann) {
       int minIdx = ce[3]->getInt();
-      IntVarArgs load = arg2intvarargs(s, ce[0]);
+      IntVarArgs load = s.arg2intvarargs(ce[0]);
       IntVarArgs l;
-      IntVarArgs bin = arg2intvarargs(s, ce[1]);
+      IntVarArgs bin = s.arg2intvarargs(ce[1]);
       for (int i=bin.size(); i--;)
         rel(s, bin[i] >= minIdx);
       if (minIdx > 0) {
@@ -971,19 +744,19 @@ namespace Gecode { namespace FlatZinc {
       } else if (minIdx < 0) {
         IntVarArgs bin2(bin.size());
         for (int i=bin.size(); i--;)
-          bin2[i] = expr(s, bin[i]-minIdx, ann2icl(ann));
+          bin2[i] = expr(s, bin[i]-minIdx, s.ann2icl(ann));
         bin = bin2;
       }
       l << load;
-      IntArgs sizes = arg2intargs(ce[2]);
-      binpacking(s, l, bin, sizes, ann2icl(ann));
+      IntArgs sizes = s.arg2intargs(ce[2]);
+      binpacking(s, l, bin, sizes, s.ann2icl(ann));
     }
 
     void p_global_cardinality(FlatZincSpace& s, const ConExpr& ce,
                               AST::Node* ann) {
-      IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
-      IntArgs cover = arg2intargs(ce[1]);
-      IntVarArgs iv1 = arg2intvarargs(s, ce[2]);
+      IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
+      IntArgs cover = s.arg2intargs(ce[1]);
+      IntVarArgs iv1 = s.arg2intvarargs(ce[2]);
 
       Region re(s);
       IntSet cover_s(cover);
@@ -1000,24 +773,24 @@ namespace Gecode { namespace FlatZinc {
         cover << extra.val();
         iv1 << IntVar(s,0,iv0.size());
       }
-      count(s, iv0, iv1, cover, ann2icl(ann));
+      count(s, iv0, iv1, cover, s.ann2icl(ann));
     }
 
     void p_global_cardinality_closed(FlatZincSpace& s, const ConExpr& ce,
                                      AST::Node* ann) {
-      IntVarArgs iv0 = arg2intvarargs(s, ce[0]);
-      IntArgs cover = arg2intargs(ce[1]);
-      IntVarArgs iv1 = arg2intvarargs(s, ce[2]);
-      count(s, iv0, iv1, cover, ann2icl(ann));
+      IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
+      IntArgs cover = s.arg2intargs(ce[1]);
+      IntVarArgs iv1 = s.arg2intvarargs(ce[2]);
+      count(s, iv0, iv1, cover, s.ann2icl(ann));
     }
 
     void p_global_cardinality_low_up(FlatZincSpace& s, const ConExpr& ce,
                                      AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntArgs cover = arg2intargs(ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs cover = s.arg2intargs(ce[1]);
 
-      IntArgs lbound = arg2intargs(ce[2]);
-      IntArgs ubound = arg2intargs(ce[3]);
+      IntArgs lbound = s.arg2intargs(ce[2]);
+      IntArgs ubound = s.arg2intargs(ce[3]);
       IntSetArgs y(cover.size());
       for (int i=cover.size(); i--;)
         y[i] = IntSet(lbound[i],ubound[i]);
@@ -1036,39 +809,39 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       
-      count(s, x, y, cover, ann2icl(ann));
+      count(s, x, y, cover, s.ann2icl(ann));
     }
 
     void p_global_cardinality_low_up_closed(FlatZincSpace& s,
                                             const ConExpr& ce,
                                             AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntArgs cover = arg2intargs(ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs cover = s.arg2intargs(ce[1]);
 
-      IntArgs lbound = arg2intargs(ce[2]);
-      IntArgs ubound = arg2intargs(ce[3]);
+      IntArgs lbound = s.arg2intargs(ce[2]);
+      IntArgs ubound = s.arg2intargs(ce[3]);
       IntSetArgs y(cover.size());
       for (int i=cover.size(); i--;)
         y[i] = IntSet(lbound[i],ubound[i]);
 
-      count(s, x, y, cover, ann2icl(ann));
+      count(s, x, y, cover, s.ann2icl(ann));
     }
 
     void p_minimum(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = arg2intvarargs(s, ce[1]);
-      min(s, iv, getIntVar(s, ce[0]), ann2icl(ann));
+      IntVarArgs iv = s.arg2intvarargs(ce[1]);
+      min(s, iv, s.arg2IntVar(ce[0]), s.ann2icl(ann));
     }
 
     void p_maximum(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = arg2intvarargs(s, ce[1]);
-      max(s, iv, getIntVar(s, ce[0]), ann2icl(ann));
+      IntVarArgs iv = s.arg2intvarargs(ce[1]);
+      max(s, iv, s.arg2IntVar(ce[0]), s.ann2icl(ann));
     }
 
     void p_regular(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs iv = arg2intvarargs(s, ce[0]);
+      IntVarArgs iv = s.arg2intvarargs(ce[0]);
       int q = ce[1]->getInt();
       int symbols = ce[2]->getInt();
-      IntArgs d = arg2intargs(ce[3]);
+      IntArgs d = s.arg2intargs(ce[3]);
       int q0 = ce[4]->getInt();
 
       int noOfTrans = 0;
@@ -1111,13 +884,13 @@ namespace Gecode { namespace FlatZinc {
         
       DFA dfa(q0,t,f);
       free(f);
-      extensional(s, iv, dfa, ann2icl(ann));
+      extensional(s, iv, dfa, s.ann2icl(ann));
     }
 
     void
     p_sort(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntVarArgs y = arg2intvarargs(s, ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVarArgs y = s.arg2intvarargs(ce[1]);
       IntVarArgs xy(x.size()+y.size());
       for (int i=x.size(); i--;)
         xy[i] = x[i];
@@ -1128,46 +901,46 @@ namespace Gecode { namespace FlatZinc {
         x[i] = xy[i];
       for (int i=y.size(); i--;)
         y[i] = xy[i+x.size()];
-      sorted(s, x, y, ann2icl(ann));
+      sorted(s, x, y, s.ann2icl(ann));
     }
 
     void
     p_inverse_offsets(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
       int xoff = ce[1]->getInt();
-      IntVarArgs y = arg2intvarargs(s, ce[2]);
+      IntVarArgs y = s.arg2intvarargs(ce[2]);
       int yoff = ce[3]->getInt();
-      channel(s, x, xoff, y, yoff, ann2icl(ann));
+      channel(s, x, xoff, y, yoff, s.ann2icl(ann));
     }
 
     void
     p_increasing_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      rel(s,x,IRT_LQ,ann2icl(ann));
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      rel(s,x,IRT_LQ,s.ann2icl(ann));
     }
 
     void
     p_increasing_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
-      rel(s,x,IRT_LQ,ann2icl(ann));
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      rel(s,x,IRT_LQ,s.ann2icl(ann));
     }
 
     void
     p_decreasing_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      rel(s,x,IRT_GQ,ann2icl(ann));
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      rel(s,x,IRT_GQ,s.ann2icl(ann));
     }
 
     void
     p_decreasing_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
-      rel(s,x,IRT_GQ,ann2icl(ann));
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      rel(s,x,IRT_GQ,s.ann2icl(ann));
     }
 
     void
     p_table_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntArgs tuples = arg2intargs(ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs tuples = s.arg2intargs(ce[1]);
       int noOfVars   = x.size();
       int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
       TupleSet ts;
@@ -1179,12 +952,12 @@ namespace Gecode { namespace FlatZinc {
         ts.add(t);
       }
       ts.finalize();
-      extensional(s,x,ts,EPK_DEF,ann2icl(ann));
+      extensional(s,x,ts,EPK_DEF,s.ann2icl(ann));
     }
     void
     p_table_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
-      IntArgs tuples = arg2boolargs(ce[1]);
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      IntArgs tuples = s.arg2boolargs(ce[1]);
       int noOfVars   = x.size();
       int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
       TupleSet ts;
@@ -1196,16 +969,16 @@ namespace Gecode { namespace FlatZinc {
         ts.add(t);
       }
       ts.finalize();
-      extensional(s,x,ts,EPK_DEF,ann2icl(ann));
+      extensional(s,x,ts,EPK_DEF,s.ann2icl(ann));
     }
 
     void p_cumulatives(FlatZincSpace& s, const ConExpr& ce,
                       AST::Node* ann) {
-      IntVarArgs start = arg2intvarargs(s, ce[0]);
-      IntVarArgs duration = arg2intvarargs(s, ce[1]);
-      IntVarArgs height = arg2intvarargs(s, ce[2]);
+      IntVarArgs start = s.arg2intvarargs(ce[0]);
+      IntVarArgs duration = s.arg2intvarargs(ce[1]);
+      IntVarArgs height = s.arg2intvarargs(ce[2]);
       int n = start.size();
-      IntVar bound = getIntVar(s, ce[3]);
+      IntVar bound = s.arg2IntVar(ce[3]);
 
       int minHeight = INT_MAX; int minHeight2 = INT_MAX;
       for (int i=n; i--;)
@@ -1252,7 +1025,7 @@ namespace Gecode { namespace FlatZinc {
         for (int i=n; i--;)
           end[i] = expr(s,start[i]+duration[i]);
         cumulatives(s, machine, start, duration, end, height, limit, true,
-                    ann2icl(ann));
+                    s.ann2icl(ann));
       } else {
         int min = Gecode::Int::Limits::max;
         int max = Gecode::Int::Limits::min;
@@ -1276,122 +1049,122 @@ namespace Gecode { namespace FlatZinc {
 
     void p_among_seq_int(FlatZincSpace& s, const ConExpr& ce,
                          AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntSet S = arg2intset(s, ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntSet S = s.arg2intset(ce[1]);
       int q = ce[2]->getInt();
       int l = ce[3]->getInt();
       int u = ce[4]->getInt();
-      sequence(s, x, S, q, l, u, ann2icl(ann));
+      sequence(s, x, S, q, l, u, s.ann2icl(ann));
     }
 
     void p_among_seq_bool(FlatZincSpace& s, const ConExpr& ce,
                           AST::Node* ann) {
-      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       bool val = ce[1]->getBool();
       int q = ce[2]->getInt();
       int l = ce[3]->getInt();
       int u = ce[4]->getInt();
       IntSet S(val, val);
-      sequence(s, x, S, q, l, u, ann2icl(ann));
+      sequence(s, x, S, q, l, u, s.ann2icl(ann));
     }
 
     void p_schedule_unary(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntArgs p = arg2intargs(ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs p = s.arg2intargs(ce[1]);
       unary(s, x, p);
     }
 
     void p_schedule_unary_optional(FlatZincSpace& s, const ConExpr& ce,
                                    AST::Node*) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntArgs p = arg2intargs(ce[1]);
-      BoolVarArgs m = arg2boolvarargs(s, ce[2]);
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs p = s.arg2intargs(ce[1]);
+      BoolVarArgs m = s.arg2boolvarargs(ce[2]);
       unary(s, x, p, m);
     }
 
     void p_circuit(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
-      IntVarArgs xv = arg2intvarargs(s, ce[0]);
-      circuit(s,xv,ann2icl(ann));
+      IntVarArgs xv = s.arg2intvarargs(ce[0]);
+      circuit(s,xv,s.ann2icl(ann));
     }
     void p_circuit_cost_array(FlatZincSpace& s, const ConExpr& ce,
                               AST::Node *ann) {
-      IntArgs c = arg2intargs(ce[0]);
-      IntVarArgs xv = arg2intvarargs(s, ce[1]);
-      IntVarArgs yv = arg2intvarargs(s, ce[2]);
-      IntVar z = getIntVar(s, ce[3]);
-      circuit(s,c,xv,yv,z,ann2icl(ann));
+      IntArgs c = s.arg2intargs(ce[0]);
+      IntVarArgs xv = s.arg2intvarargs(ce[1]);
+      IntVarArgs yv = s.arg2intvarargs(ce[2]);
+      IntVar z = s.arg2IntVar(ce[3]);
+      circuit(s,c,xv,yv,z,s.ann2icl(ann));
     }
     void p_circuit_cost(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
-      IntArgs c = arg2intargs(ce[0]);
-      IntVarArgs xv = arg2intvarargs(s, ce[1]);
-      IntVar z = getIntVar(s, ce[2]);
-      circuit(s,c,xv,z,ann2icl(ann));
+      IntArgs c = s.arg2intargs(ce[0]);
+      IntVarArgs xv = s.arg2intvarargs(ce[1]);
+      IntVar z = s.arg2IntVar(ce[2]);
+      circuit(s,c,xv,z,s.ann2icl(ann));
     }
 
     void p_nooverlap(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
-      IntVarArgs x0 = arg2intvarargs(s, ce[0]);
-      IntVarArgs w = arg2intvarargs(s, ce[1]);
-      IntVarArgs y0 = arg2intvarargs(s, ce[2]);
-      IntVarArgs h = arg2intvarargs(s, ce[3]);
+      IntVarArgs x0 = s.arg2intvarargs(ce[0]);
+      IntVarArgs w = s.arg2intvarargs(ce[1]);
+      IntVarArgs y0 = s.arg2intvarargs(ce[2]);
+      IntVarArgs h = s.arg2intvarargs(ce[3]);
       IntVarArgs x1(x0.size()), y1(y0.size());
       for (int i=x0.size(); i--; )
         x1[i] = expr(s, x0[i] + w[i]);
       for (int i=y0.size(); i--; )
         y1[i] = expr(s, y0[i] + h[i]);
-      nooverlap(s,x0,w,x1,y0,h,y1,ann2icl(ann));
+      nooverlap(s,x0,w,x1,y0,h,y1,s.ann2icl(ann));
     }
 
     void p_precede(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntArgs c = arg2intargs(ce[1]);
-      precede(s,x,c,ann2icl(ann));
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntArgs c = s.arg2intargs(ce[1]);
+      precede(s,x,c,s.ann2icl(ann));
     }
 
     void p_nvalue(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[1]);
+      IntVarArgs x = s.arg2intvarargs(ce[1]);
       if (ce[0]->isIntVar()) {
-        IntVar y = getIntVar(s,ce[0]);
-        nvalues(s,x,IRT_EQ,y,ann2icl(ann));
+        IntVar y = s.arg2IntVar(ce[0]);
+        nvalues(s,x,IRT_EQ,y,s.ann2icl(ann));
       } else {
-        nvalues(s,x,IRT_EQ,ce[0]->getInt(),ann2icl(ann));
+        nvalues(s,x,IRT_EQ,ce[0]->getInt(),s.ann2icl(ann));
       }
     }
 
     void p_among(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[1]);
-      IntSet v = arg2intset(s, ce[2]);
+      IntVarArgs x = s.arg2intvarargs(ce[1]);
+      IntSet v = s.arg2intset(ce[2]);
       if (ce[0]->isIntVar()) {
-        IntVar n = getIntVar(s,ce[0]);
+        IntVar n = s.arg2IntVar(ce[0]);
         std::cerr << "count " << n << std::endl;
-        count(s,x,v,IRT_EQ,n,ann2icl(ann));
+        count(s,x,v,IRT_EQ,n,s.ann2icl(ann));
       } else {
         std::cerr << "count i " << x << " " << v << " " << ce[0]->getInt() << std::endl;
-        count(s,x,v,IRT_EQ,ce[0]->getInt(),ann2icl(ann));
+        count(s,x,v,IRT_EQ,ce[0]->getInt(),s.ann2icl(ann));
       }
     }
 
     void p_member_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntVar y = getIntVar(s, ce[1]);
-      member(s,x,y,ann2icl(ann));
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVar y = s.arg2IntVar(ce[1]);
+      member(s,x,y,s.ann2icl(ann));
     }
     void p_member_int_reif(FlatZincSpace& s, const ConExpr& ce,
                            AST::Node* ann) {
-      IntVarArgs x = arg2intvarargs(s, ce[0]);
-      IntVar y = getIntVar(s, ce[1]);
-      BoolVar b = getBoolVar(s, ce[2]);
-      member(s,x,y,b,ann2icl(ann));
+      IntVarArgs x = s.arg2intvarargs(ce[0]);
+      IntVar y = s.arg2IntVar(ce[1]);
+      BoolVar b = s.arg2BoolVar(ce[2]);
+      member(s,x,y,b,s.ann2icl(ann));
     }
     void p_member_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
-      BoolVar y = getBoolVar(s, ce[1]);
-      member(s,x,y,ann2icl(ann));
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      BoolVar y = s.arg2BoolVar(ce[1]);
+      member(s,x,y,s.ann2icl(ann));
     }
     void p_member_bool_reif(FlatZincSpace& s, const ConExpr& ce,
                             AST::Node* ann) {
-      BoolVarArgs x = arg2boolvarargs(s, ce[0]);
-      BoolVar y = getBoolVar(s, ce[1]);
-      member(s,x,y,getBoolVar(s, ce[2]),ann2icl(ann));
+      BoolVarArgs x = s.arg2boolvarargs(ce[0]);
+      BoolVar y = s.arg2BoolVar(ce[1]);
+      member(s,x,y,s.arg2BoolVar(ce[2]),s.ann2icl(ann));
     }
 
     class IntPoster {
@@ -1533,8 +1306,8 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_SET_VARS
     void p_set_OP(FlatZincSpace& s, SetOpType op,
                   const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), op, getSetVar(s, ce[1]), 
-          SRT_EQ, getSetVar(s, ce[2]));
+      rel(s, s.arg2SetVar(ce[0]), op, s.arg2SetVar(ce[1]), 
+          SRT_EQ, s.arg2SetVar(ce[2]));
     }
     void p_set_union(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
       p_set_OP(s, SOT_UNION, ce, ann);
@@ -1547,8 +1320,8 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void p_set_symdiff(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      SetVar x = getSetVar(s, ce[0]);
-      SetVar y = getSetVar(s, ce[1]);
+      SetVar x = s.arg2SetVar(ce[0]);
+      SetVar y = s.arg2SetVar(ce[1]);
 
       SetVarLubRanges xub(x);
       IntSet xubs(xub);
@@ -1560,13 +1333,13 @@ namespace Gecode { namespace FlatZinc {
       SetVar y_x(s,IntSet::empty,yubs);
       rel(s, y, SOT_MINUS, x, SRT_EQ, y_x);
     
-      rel(s, x_y, SOT_UNION, y_x, SRT_EQ, getSetVar(s, ce[2]));
+      rel(s, x_y, SOT_UNION, y_x, SRT_EQ, s.arg2SetVar(ce[2]));
     }
 
     void p_array_set_OP(FlatZincSpace& s, SetOpType op,
                         const ConExpr& ce, AST::Node *) {
-      SetVarArgs xs = arg2setvarargs(s, ce[0]);
-      rel(s, op, xs, getSetVar(s, ce[1]));
+      SetVarArgs xs = s.arg2setvarargs(ce[0]);
+      rel(s, op, xs, s.arg2SetVar(ce[1]));
     }
     void p_array_set_union(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
       p_array_set_OP(s, SOT_UNION, ce, ann);
@@ -1577,7 +1350,7 @@ namespace Gecode { namespace FlatZinc {
 
 
     void p_set_rel(FlatZincSpace& s, SetRelType srt, const ConExpr& ce) {
-      rel(s, getSetVar(s, ce[0]), srt, getSetVar(s, ce[1]));
+      rel(s, s.arg2SetVar(ce[0]), srt, s.arg2SetVar(ce[1]));
     }
 
     void p_set_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
@@ -1600,15 +1373,15 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_set_card(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isIntVar()) {
-        cardinality(s, getSetVar(s, ce[0]), ce[1]->getInt(), 
+        cardinality(s, s.arg2SetVar(ce[0]), ce[1]->getInt(), 
                     ce[1]->getInt());
       } else {
-        cardinality(s, getSetVar(s, ce[0]), getIntVar(s, ce[1]));
+        cardinality(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
       }
     }
     void p_set_in(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isSetVar()) {
-        IntSet d = arg2intset(s,ce[1]);
+        IntSet d = s.arg2intset(ce[1]);
         if (ce[0]->isBoolVar()) {
           IntSetRanges dr(d);
           Iter::Ranges::Singleton sr(0,1);
@@ -1617,23 +1390,23 @@ namespace Gecode { namespace FlatZinc {
           if (d01.size() == 0) {
             s.fail();
           } else {
-            rel(s, getBoolVar(s, ce[0]), IRT_GQ, d01.min());
-            rel(s, getBoolVar(s, ce[0]), IRT_LQ, d01.max());
+            rel(s, s.arg2BoolVar(ce[0]), IRT_GQ, d01.min());
+            rel(s, s.arg2BoolVar(ce[0]), IRT_LQ, d01.max());
           }
         } else {
-          dom(s, getIntVar(s, ce[0]), d);
+          dom(s, s.arg2IntVar(ce[0]), d);
         }
       } else {
         if (!ce[0]->isIntVar()) {
-          dom(s, getSetVar(s, ce[1]), SRT_SUP, ce[0]->getInt());
+          dom(s, s.arg2SetVar(ce[1]), SRT_SUP, ce[0]->getInt());
         } else {
-          rel(s, getSetVar(s, ce[1]), SRT_SUP, getIntVar(s, ce[0]));
+          rel(s, s.arg2SetVar(ce[1]), SRT_SUP, s.arg2IntVar(ce[0]));
         }
       }
     }
     void p_set_rel_reif(FlatZincSpace& s, SetRelType srt, const ConExpr& ce) {
-      rel(s, getSetVar(s, ce[0]), srt, getSetVar(s, ce[1]),
-          getBoolVar(s, ce[2]));
+      rel(s, s.arg2SetVar(ce[0]), srt, s.arg2SetVar(ce[1]),
+          s.arg2BoolVar(ce[2]));
     }
 
     void p_set_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
@@ -1658,45 +1431,45 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isSetVar()) {
-        IntSet d = arg2intset(s,ce[1]);
+        IntSet d = s.arg2intset(ce[1]);
         if (ce[0]->isBoolVar()) {
           IntSetRanges dr(d);
           Iter::Ranges::Singleton sr(0,1);
           Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
           IntSet d01(i);
           if (d01.size() == 0) {
-            rel(s, getBoolVar(s, ce[2]) == 0);
+            rel(s, s.arg2BoolVar(ce[2]) == 0);
           } else if (d01.max() == 0) {
-            rel(s, getBoolVar(s, ce[2]) == !getBoolVar(s, ce[0]));
+            rel(s, s.arg2BoolVar(ce[2]) == !s.arg2BoolVar(ce[0]));
           } else if (d01.min() == 1) {
-            rel(s, getBoolVar(s, ce[2]) == getBoolVar(s, ce[0]));
+            rel(s, s.arg2BoolVar(ce[2]) == s.arg2BoolVar(ce[0]));
           } else {
-            rel(s, getBoolVar(s, ce[2]) == 1);
+            rel(s, s.arg2BoolVar(ce[2]) == 1);
           }
         } else {
-          dom(s, getIntVar(s, ce[0]), d, getBoolVar(s, ce[2]));
+          dom(s, s.arg2IntVar(ce[0]), d, s.arg2BoolVar(ce[2]));
         }
       } else {
         if (!ce[0]->isIntVar()) {
-          dom(s, getSetVar(s, ce[1]), SRT_SUP, ce[0]->getInt(),
-              getBoolVar(s, ce[2]));
+          dom(s, s.arg2SetVar(ce[1]), SRT_SUP, ce[0]->getInt(),
+              s.arg2BoolVar(ce[2]));
         } else {
-          rel(s, getSetVar(s, ce[1]), SRT_SUP, getIntVar(s, ce[0]),
-              getBoolVar(s, ce[2]));
+          rel(s, s.arg2SetVar(ce[1]), SRT_SUP, s.arg2IntVar(ce[0]),
+              s.arg2BoolVar(ce[2]));
         }
       }
     }
     void p_set_disjoint(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      rel(s, getSetVar(s, ce[0]), SRT_DISJ, getSetVar(s, ce[1]));
+      rel(s, s.arg2SetVar(ce[0]), SRT_DISJ, s.arg2SetVar(ce[1]));
     }
     
     void p_link_set_to_booleans(FlatZincSpace& s, const ConExpr& ce,
                                 AST::Node *) {
-      SetVar x = getSetVar(s, ce[0]);
+      SetVar x = s.arg2SetVar(ce[0]);
       int idx = ce[2]->getInt();
       assert(idx >= 0);
       rel(s, x || IntSet(Set::Limits::min,idx-1));
-      BoolVarArgs y = arg2boolvarargs(s,ce[1],idx);
+      BoolVarArgs y = s.arg2boolvarargs(ce[1],idx);
       channel(s, y, x);
     }
 
@@ -1710,14 +1483,14 @@ namespace Gecode { namespace FlatZinc {
           break;
         }
       }
-      IntVar selector = getIntVar(s, ce[0]);
+      IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntSetArgs sv = arg2intsetargs(s,ce[1],1);
-        element(s, sv, selector, getSetVar(s, ce[2]));
+        IntSetArgs sv = s.arg2intsetargs(ce[1],1);
+        element(s, sv, selector, s.arg2SetVar(ce[2]));
       } else {
-        SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
-        element(s, sv, selector, getSetVar(s, ce[2]));
+        SetVarArgs sv = s.arg2setvarargs(ce[1], 1);
+        element(s, sv, selector, s.arg2SetVar(ce[2]));
       }
     }
 
@@ -1733,14 +1506,14 @@ namespace Gecode { namespace FlatZinc {
           break;
         }
       }
-      SetVar selector = getSetVar(s, ce[0]);
+      SetVar selector = s.arg2SetVar(ce[0]);
       dom(s, selector, SRT_DISJ, 0);
       if (isConstant) {
-        IntSetArgs sv = arg2intsetargs(s,ce[1], 1);
-        element(s, op, sv, selector, getSetVar(s, ce[2]), universe);
+        IntSetArgs sv = s.arg2intsetargs(ce[1], 1);
+        element(s, op, sv, selector, s.arg2SetVar(ce[2]), universe);
       } else {
-        SetVarArgs sv = arg2setvarargs(s, ce[1], 1);
-        element(s, op, sv, selector, getSetVar(s, ce[2]), universe);
+        SetVarArgs sv = s.arg2setvarargs(ce[1], 1);
+        element(s, op, sv, selector, s.arg2SetVar(ce[2]), universe);
       }
     }
 
@@ -1757,7 +1530,7 @@ namespace Gecode { namespace FlatZinc {
     void p_array_set_element_intersect_in(FlatZincSpace& s,
                                               const ConExpr& ce,
                                               AST::Node* ann) {
-      IntSet d = arg2intset(s, ce[3]);
+      IntSet d = s.arg2intset(ce[3]);
       p_array_set_element_op(s, ce, ann, SOT_INTER, d);
     }
 
@@ -1767,18 +1540,18 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void p_set_convex(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      convex(s, getSetVar(s, ce[0]));
+      convex(s, s.arg2SetVar(ce[0]));
     }
 
     void p_array_set_seq(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
-      SetVarArgs sv = arg2setvarargs(s, ce[0]);
+      SetVarArgs sv = s.arg2setvarargs(ce[0]);
       sequence(s, sv);
     }
 
     void p_array_set_seq_union(FlatZincSpace& s, const ConExpr& ce,
                                AST::Node *) {
-      SetVarArgs sv = arg2setvarargs(s, ce[0]);
-      sequence(s, sv, getSetVar(s, ce[1]));
+      SetVarArgs sv = s.arg2setvarargs(ce[0]);
+      sequence(s, sv, s.arg2SetVar(ce[1]));
     }
 
     void p_int_set_channel(FlatZincSpace& s, const ConExpr& ce,
@@ -1787,8 +1560,8 @@ namespace Gecode { namespace FlatZinc {
       assert(xoff >= 0);
       int yoff=ce[3]->getInt();
       assert(yoff >= 0);
-      IntVarArgs xv = arg2intvarargs(s, ce[0], xoff);
-      SetVarArgs yv = arg2setvarargs(s, ce[2], yoff, 1, IntSet(0, xoff-1));
+      IntVarArgs xv = s.arg2intvarargs(ce[0], xoff);
+      SetVarArgs yv = s.arg2setvarargs(ce[2], yoff, 1, IntSet(0, xoff-1));
       IntSet xd(yoff,yv.size()-1);
       for (int i=xoff; i<xv.size(); i++) {
         dom(s, xv[i], xd);
@@ -1803,23 +1576,23 @@ namespace Gecode { namespace FlatZinc {
     void p_range(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       int xoff=ce[1]->getInt();
       assert(xoff >= 0);
-      IntVarArgs xv = arg2intvarargs(s,ce[0],xoff);
-      element(s, SOT_UNION, xv, getSetVar(s,ce[2]), getSetVar(s,ce[3]));
+      IntVarArgs xv = s.arg2intvarargs(ce[0],xoff);
+      element(s, SOT_UNION, xv, s.arg2SetVar(ce[2]), s.arg2SetVar(ce[3]));
     }
     
     void p_weights(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      IntArgs e = arg2intargs(ce[0]);
-      IntArgs w = arg2intargs(ce[1]);
-      SetVar x = getSetVar(s,ce[2]);
-      IntVar y = getIntVar(s,ce[3]);
+      IntArgs e = s.arg2intargs(ce[0]);
+      IntArgs w = s.arg2intargs(ce[1]);
+      SetVar x = s.arg2SetVar(ce[2]);
+      IntVar y = s.arg2IntVar(ce[3]);
       weights(s,e,w,x,y);
     }
     
     void p_inverse_set(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       int xoff = ce[2]->getInt();
       int yoff = ce[3]->getInt();
-      SetVarArgs x = arg2setvarargs(s,ce[0],xoff);
-      SetVarArgs y = arg2setvarargs(s,ce[1],yoff);
+      SetVarArgs x = s.arg2setvarargs(ce[0],xoff);
+      SetVarArgs y = s.arg2setvarargs(ce[1],yoff);
       channel(s, x, y);
     }
     
@@ -1882,15 +1655,15 @@ namespace Gecode { namespace FlatZinc {
 
     void p_float_lin_cmp(FlatZincSpace& s, FloatRelType frt,
                          const ConExpr& ce, AST::Node*) {
-      FloatArgs fa = arg2floatargs(ce[0]);
-      FloatVarArgs fv = arg2floatvarargs(s, ce[1]);
+      FloatArgs fa = s.arg2floatargs(ce[0]);
+      FloatVarArgs fv = s.arg2floatvarargs(ce[1]);
       linear(s, fa, fv, frt, ce[2]->getFloat());
     }
     void p_float_lin_cmp_reif(FlatZincSpace& s, FloatRelType frt,
                               const ConExpr& ce, AST::Node*) {
-      FloatArgs fa = arg2floatargs(ce[0]);
-      FloatVarArgs fv = arg2floatvarargs(s, ce[1]);
-      linear(s, fa, fv, frt, ce[2]->getFloat(), getBoolVar(s,ce[3]));
+      FloatArgs fa = s.arg2floatargs(ce[0]);
+      FloatVarArgs fv = s.arg2floatvarargs(ce[1]);
+      linear(s, fa, fv, frt, ce[2]->getFloat(), s.arg2BoolVar(ce[3]));
     }
     void p_float_lin_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_float_lin_cmp(s,FRT_EQ,ce,ann);
@@ -1908,83 +1681,83 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void p_float_times(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      FloatVar z = getFloatVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      FloatVar z = s.arg2FloatVar(ce[2]);
       mult(s,x,y,z);
     }
 
     void p_float_div(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      FloatVar z = getFloatVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      FloatVar z = s.arg2FloatVar(ce[2]);
       div(s,x,y,z);
     }
 
     void p_float_plus(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      FloatVar z = getFloatVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      FloatVar z = s.arg2FloatVar(ce[2]);
       rel(s,x+y==z);
     }
 
     void p_float_sqrt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       sqrt(s,x,y);
     }
 
     void p_float_abs(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       abs(s,x,y);
     }
 
     void p_float_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       rel(s,x,FRT_EQ,y);
     }
     void p_float_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      BoolVar  b = getBoolVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      BoolVar  b = s.arg2BoolVar(ce[2]);
       rel(s,x,FRT_EQ,y,b);
     }
     void p_float_le(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       rel(s,x,FRT_LQ,y);
     }
     void p_float_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      BoolVar  b = getBoolVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      BoolVar  b = s.arg2BoolVar(ce[2]);
       rel(s,x,FRT_LQ,y,b);
     }
     void p_float_max(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      FloatVar z = getFloatVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      FloatVar z = s.arg2FloatVar(ce[2]);
       max(s,x,y,z);
     }
     void p_float_min(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      FloatVar z = getFloatVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      FloatVar z = s.arg2FloatVar(ce[2]);
       min(s,x,y,z);
     }
     void p_float_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       rel(s, x, FRT_LQ, y);
       rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
     }
 
     void p_float_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
-      BoolVar b = getBoolVar(s, ce[2]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
+      BoolVar b = s.arg2BoolVar(ce[2]);
       BoolVar b0(s,0,1);
       BoolVar b1(s,0,1);
       rel(s, b == (b0 && !b1));
@@ -1993,16 +1766,16 @@ namespace Gecode { namespace FlatZinc {
     }
 
     void p_float_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       rel(s, x, FRT_EQ, y, BoolVar(s,0,0));
     }
 
 #ifdef GECODE_HAS_MPFR
 #define P_FLOAT_OP(Op) \
     void p_float_ ## Op (FlatZincSpace& s, const ConExpr& ce, AST::Node*) {\
-      FloatVar x = getFloatVar(s, ce[0]);\
-      FloatVar y = getFloatVar(s, ce[1]);\
+      FloatVar x = s.arg2FloatVar(ce[0]);\
+      FloatVar y = s.arg2FloatVar(ce[1]);\
       Op(s,x,y);\
     }
     P_FLOAT_OP(acos)
@@ -2018,18 +1791,18 @@ namespace Gecode { namespace FlatZinc {
 #undef P_FLOAT_OP
 
     void p_float_ln(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       log(s,x,y);
     }
     void p_float_log10(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       log(s,10.0,x,y);
     }
     void p_float_log2(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
-      FloatVar x = getFloatVar(s, ce[0]);
-      FloatVar y = getFloatVar(s, ce[1]);
+      FloatVar x = s.arg2FloatVar(ce[0]);
+      FloatVar y = s.arg2FloatVar(ce[1]);
       log(s,2.0,x,y);
     }
 

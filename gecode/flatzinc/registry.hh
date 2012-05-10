@@ -45,7 +45,7 @@
 namespace Gecode { namespace FlatZinc {
 
   /// Map from constraint identifier to constraint posting functions
-  class Registry {
+  class GECODE_FLATZINC_EXPORT Registry {
   public:
     /// Type of constraint posting function
     typedef void (*poster) (FlatZincSpace&,
@@ -62,7 +62,7 @@ namespace Gecode { namespace FlatZinc {
   };
   
   /// Return global registry object
-  Registry& registry(void);
+  GECODE_FLATZINC_EXPORT Registry& registry(void);
 
 }}
 

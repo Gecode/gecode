@@ -454,6 +454,46 @@ namespace Gecode { namespace FlatZinc {
     virtual void constrain(const Space& s);
     /// Copy function
     virtual Gecode::Space* copy(bool share);
+    
+    
+    /// \name AST to variable and value conversion
+    //@{
+    /// Convert \a arg (array of integers) to IntArgs
+    IntArgs arg2intargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg (array of Booleans) to IntArgs
+    IntArgs arg2boolargs(AST::Node* arg, int offset = 0);
+    /// Convert \a n to IntSet
+    IntSet arg2intset(AST::Node* n);
+    /// Convert \a arg to IntSetArgs
+    IntSetArgs arg2intsetargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg to IntVarArgs
+    IntVarArgs arg2intvarargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg to BoolVarArgs
+    BoolVarArgs arg2boolvarargs(AST::Node* arg, int offset = 0, int siv=-1);
+    /// Convert \a n to BoolVar
+    BoolVar arg2BoolVar(AST::Node* n);
+    /// Convert \a n to IntVar
+    IntVar arg2IntVar(AST::Node* n);
+    /// Check if \a b is array of Booleans (or has a single integer)
+    bool isBoolArray(AST::Node* b, int& singleInt);
+#ifdef GECODE_HAS_SET_VARS
+    /// Convert \a n to SetVar
+    SetVar arg2SetVar(AST::Node* n);
+    /// Convert \a n to SetVarArgs
+    SetVarArgs arg2setvarargs(AST::Node* arg, int offset = 0, int doffset = 0,
+                              const IntSet& od=IntSet::empty);
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Convert \a n to FloatArgs
+    FloatArgs arg2floatargs(AST::Node* arg, int offset = 0);
+    /// Convert \a n to FloatVar
+    FloatVar arg2FloatVar(AST::Node* n);
+    /// Convert \a n to FloatVarArgs
+    FloatVarArgs arg2floatvarargs(AST::Node* arg, int offset = 0);
+#endif
+    /// Convert \a ann to IntConLevel
+    IntConLevel ann2icl(AST::Node* ann);
+    //@}
   };
 
   /// %Exception class for %FlatZinc errors
