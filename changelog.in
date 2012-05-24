@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+Thanks: Andrea Pretto
+[DESCRIPTION]
+Added options -file-sol and -file-stat for writing solutions and
+statistics to arbitrary files and streams.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor

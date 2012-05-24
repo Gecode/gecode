@@ -342,6 +342,26 @@ namespace Gecode {
     return _print_last.value();
   }
 
+  inline void
+  Options::out_file(const char *f) {
+    _out_file.value(f);
+  }
+
+  inline const char*
+  Options::out_file(void) const {
+    return _out_file.value();
+  }
+
+  inline void
+  Options::log_file(const char* f) {
+    _log_file.value(f);
+  }
+
+  inline const char*
+  Options::log_file(void) const {
+    return _log_file.value();
+  }
+
 #ifdef GECODE_HAS_GIST
   forceinline
   Options::_I::_I(void) : _click(heap,1), n_click(0),

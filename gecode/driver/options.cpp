@@ -382,7 +382,11 @@ namespace Gecode {
       _iterations("-iterations","iterations per sample (time mode)",1),
       _print_last("-print-last",
                   "whether to only print the last solution (solution mode)",
-                  false)
+                  false),
+      _out_file("-file-sol", "where to print solutions "
+                "(supports stdout, stdlog, stderr)","stdout"),
+      _log_file("-file-stat", "where to print statistics "
+                "(supports stdout, stdlog, stderr)","stdout")
   {
     
     _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
@@ -398,6 +402,7 @@ namespace Gecode {
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
     add(_node); add(_fail); add(_time); add(_interrupt);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
+    add(_out_file); add(_log_file);
   }
 
   

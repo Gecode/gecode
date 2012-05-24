@@ -38,6 +38,8 @@
 
 #include <iostream>
 #include <iomanip>
+#include <fstream>
+#include <cstring>
 
 #ifndef GECODE_THREADS_WINDOWS
 #include <csignal>
@@ -187,11 +189,34 @@ namespace Gecode { namespace Driver {
   
 #endif
 
+
+  template<class Space>
+  std::ostream&
+  ScriptBase<Space>::select_ostream(const char* name, std::ofstream& ofs) {
+    if (strcmp(name, "stdout") == 0) {
+      return std::cout;
+    } else if (strcmp(name, "stdlog") == 0) {
+      return std::clog;
+    } else if (strcmp(name, "stderr") == 0) {
+      return std::cerr;
+    } else {
+      ofs.open(name);
+      return ofs;
+    }
+  }
+
+
   template<class Space>
   template<class Script, template<class> class Engine, class Options>
   void
   ScriptBase<Space>::run(const Options& o, Script* s) {
     using namespace std;
+
+    ofstream sol_file, log_file;
+
+    ostream& s_out = select_ostream(o.out_file(), sol_file);
+    ostream& l_out = select_ostream(o.log_file(), log_file);
+
     try {
       switch (o.mode()) {
       case SM_GIST:
@@ -222,7 +247,7 @@ namespace Gecode { namespace Driver {
 #endif
       case SM_SOLUTION:
         {
-          cout << o.name() << endl;
+          l_out << o.name() << endl;
           Support::Timer t;
           int i = o.solutions();
           t.start();
@@ -246,7 +271,7 @@ namespace Gecode { namespace Driver {
               Script* ex = e.next();
               if (ex == NULL) {
                 if (px != NULL) {
-                  px->print(std::cout);
+                  px->print(s_out);
                   delete px;
                 }
                 break;
@@ -260,53 +285,53 @@ namespace Gecode { namespace Driver {
               Script* ex = e.next();
               if (ex == NULL)
                 break;
-              ex->print(std::cout);
+              ex->print(s_out);
               delete ex;
             } while (--i != 0);
           }
           if (o.interrupt())
             Cutoff::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();
-          cout << endl;
+          s_out << endl;
           if (e.stopped()) {
-            cout << "Search engine stopped..." << endl
-                 << "\treason: ";
+            l_out << "Search engine stopped..." << endl
+                  << "\treason: ";
             int r = static_cast<Cutoff*>(so.stop)->reason(stat,so);
             if (r & Cutoff::SR_INT)
-              cout << "user interrupt " << endl;
+              l_out << "user interrupt " << endl;
             else {
               if (r & Cutoff::SR_NODE)
-                cout << "node ";
+                l_out << "node ";
               if (r & Cutoff::SR_FAIL)
-                cout << "fail ";
+                l_out << "fail ";
               if (r & Cutoff::SR_TIME)
-                cout << "time ";
-              cout << "limit reached" << endl << endl;
+                l_out << "time ";
+              l_out << "limit reached" << endl << endl;
             }
           }
-          cout << "Initial" << endl
-               << "\tpropagators: " << n_p << endl
-               << "\tbranchers:   " << n_b << endl
-               << endl
-               << "Summary" << endl
-               << "\truntime:      ";
-          stop(t, cout);
-          cout << endl
-               << "\tsolutions:    "
-               << ::abs(static_cast<int>(o.solutions()) - i) << endl
-               << "\tpropagations: " << stat.propagate << endl
-               << "\tnodes:        " << stat.node << endl
-               << "\tfailures:     " << stat.fail << endl
-               << "\tpeak depth:   " << stat.depth << endl
-               << "\tpeak memory:  "
-               << static_cast<int>((stat.memory+1023) / 1024) << " KB"
-               << endl;
+          l_out << "Initial" << endl
+                << "\tpropagators: " << n_p << endl
+                << "\tbranchers:   " << n_b << endl
+                << endl
+                << "Summary" << endl
+                << "\truntime:      ";
+          stop(t, l_out);
+          l_out << endl
+                << "\tsolutions:    "
+                << ::abs(static_cast<int>(o.solutions()) - i) << endl
+                << "\tpropagations: " << stat.propagate << endl
+                << "\tnodes:        " << stat.node << endl
+                << "\tfailures:     " << stat.fail << endl
+                << "\tpeak depth:   " << stat.depth << endl
+                << "\tpeak memory:  "
+                << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+                << endl;
           delete so.stop;
         }
         break;
       case SM_STAT:
         {
-          cout << o.name() << endl;
+          l_out << o.name() << endl;
           Support::Timer t;
           int i = o.solutions();
           t.start();
@@ -333,12 +358,12 @@ namespace Gecode { namespace Driver {
           if (o.interrupt())
             Cutoff::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();
-          cout << endl
+          l_out << endl
                << "\tpropagators:  " << n_p << endl
                << "\tbranchers:    " << n_b << endl
                << "\truntime:      ";
-          stop(t, cout);
-          cout << endl
+          stop(t, l_out);
+          l_out << endl
                << "\tsolutions:    "
                << ::abs(static_cast<int>(o.solutions()) - i) << endl
                << "\tpropagations: " << stat.propagate << endl
@@ -352,7 +377,7 @@ namespace Gecode { namespace Driver {
         break;
       case SM_TIME:
         {
-          cout << o.name() << endl;
+          l_out << o.name() << endl;
           Support::Timer t;
           double* ts = new double[o.samples()];
           bool stopped = false;
@@ -381,11 +406,11 @@ namespace Gecode { namespace Driver {
             ts[s] = t.stop() / o.iterations();
           }
           if (stopped) {
-            cout << "\tSTOPPED" << endl;
+            l_out << "\tSTOPPED" << endl;
           } else {
             double m = am(ts,o.samples());
             double d = dev(ts,o.samples()) * 100.0;
-            cout << "\tRuntime: "
+            l_out << "\tRuntime: "
                  << setw(20) << right
                  << showpoint << fixed
                  << setprecision(6) << m << "ms"
@@ -399,8 +424,16 @@ namespace Gecode { namespace Driver {
     } catch (Exception& e) {
       cerr << "Exception: " << e.what() << "." << endl
            << "Stopping..." << endl;
+      if (sol_file.is_open())
+        sol_file.close();
+      if (log_file.is_open())
+        log_file.close();
       exit(EXIT_FAILURE);
     }
+    if (sol_file.is_open())
+      sol_file.close();
+    if (log_file.is_open())
+      log_file.close();
   }
 
 }}

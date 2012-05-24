@@ -341,6 +341,8 @@ namespace Gecode {
     Driver::UnsignedIntOption _samples;    ///< How many samples
     Driver::UnsignedIntOption _iterations; ///< How many iterations per sample
     Driver::BoolOption        _print_last; ///< Print only last solution found
+    Driver::StringValueOption _out_file;   ///< Where to print solutions
+    Driver::StringValueOption _log_file;   ///< Where to print statistics
     //@}
 
   public:
@@ -454,6 +456,16 @@ namespace Gecode {
     void print_last(bool p);
     /// Return whether to print only last solution found
     bool print_last(void) const;
+
+    /// Set default output file name for solutions
+    void out_file(const char* f);
+    /// Get file name for solutions
+    const char* out_file(void) const;
+
+    /// Set default output file name for Gecode stats
+    void log_file(const char* f);
+    /// Get file name for Gecode stats
+    const char* log_file(void) const;
     //@}
 
 #ifdef GECODE_HAS_GIST
@@ -571,6 +583,8 @@ namespace Gecode {
       virtual void compare(const Space&, std::ostream& os) const {
         (void) os;
       }
+      /// Choose output stream according to \a name
+      static std::ostream& select_ostream(const char* name, std::ofstream& ofs);
       /** Run script with search engine \a Engine and options \a opt
        *
        * In the solution and stat modes, search can be aborted by sending
