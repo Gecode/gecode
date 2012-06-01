@@ -408,7 +408,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Knights::PROP_REIFIED, "reified");
   opt.propagation(Knights::PROP_CIRCUIT, "circuit");
   opt.branching(Knights::BRANCH_NAIVE);
-  opt.branching(Knights::BRANCH_NAIVE, "reified");
+  opt.branching(Knights::BRANCH_NAIVE, "naive");
   opt.branching(Knights::BRANCH_WARNSDORFF, "warnsdorff");
 
 #if defined(GECODE_HAS_QT) && defined(GECODE_HAS_GIST)
