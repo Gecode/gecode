@@ -48,7 +48,7 @@ using namespace Gecode;
  *
  * An all-interval series of length \f$n\f$ is a sequence
  * \f[
- * (x_0,x_1,\ldots,n_{n-1})
+ * (x_0,x_1,\ldots,x_{n-1})
  * \f]
  * where each \f$x_i\f$ is an integer between \f$0\f$ and \f$n-1\f$
  * such that the following conditions hold:
@@ -67,20 +67,18 @@ class AllInterval : public Script {
 private:
   /// The numbers
   IntVarArray x;
+  /// The differences
+  IntVarArray d;
 public:
   /// Actual model
   AllInterval(const SizeOptions& opt) :
-    x(*this, opt.size(), 0, opt.size() - 1) {
+    x(*this, opt.size(), 0, opt.size()-1),
+    d(*this, opt.size()-1, 1, opt.size()-1) {
     const int n = x.size();
-
-    IntVarArgs d(n-1);
 
     // Set up variables for distance
     for (int i=0; i<n-1; i++)
-      d[i] = expr(*this, abs(x[i+1]-x[i]), opt.icl());
-
-    // Constrain them to be between 1 and n-1
-    dom(*this, d, 1, n-1);
+      rel(*this, d[i] == abs(x[i+1]-x[i]), opt.icl());
 
     distinct(*this, x, opt.icl());
     distinct(*this, d, opt.icl());
@@ -93,9 +91,10 @@ public:
     branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a e
-  AllInterval(bool share, AllInterval& e)
-    : Script(share, e) {
-    x.update(*this, share, e.x);
+  AllInterval(bool share, AllInterval& s)
+    : Script(share, s) {
+    x.update(*this, share, s.x);
+    d.update(*this, share, s.d);
   }
   /// Copy during cloning
   virtual Space*
@@ -108,7 +107,7 @@ public:
     const int n = x.size();
     os << "\tx[" << n << "] = {";
     for (int i = 0; i < n-1; i++)
-      os << x[i] << "(" << abs(x[i+1].val()-x[i].val()) << "),";
+      os << x[i] << "(" << d[i] << "),";
     os << x[n-1] << "}" << std::endl;
   }
 };

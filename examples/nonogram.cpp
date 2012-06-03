@@ -49,12 +49,6 @@ namespace {
   /// Number of specifications
   extern const unsigned int n_examples;
 
-  /// Structure for computing the slack of rows/cols.
-  struct Slack {
-    int slack, n;
-    bool row;
-    bool operator<(const Slack& rhs) const { return slack < rhs.slack; }
-  };
 }
 
 /**
