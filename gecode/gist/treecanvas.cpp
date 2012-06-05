@@ -699,8 +699,10 @@ namespace Gecode { namespace Gist {
             curSpace = currentNode->getSpace(*na,curBest,c_d,a_d);
             if (currentNode->getStatus() == SOLVED &&
                 curSpace->status() != SS_SOLVED) {
-              // in the presence of weakly monotonic propagators, we may have to
-              // use search to find the solution here
+              // in the presence of weakly monotonic propagators, we may have
+              // to use search to find the solution here
+              assert(curSpace->status() == SS_BRANCH &&
+                     "Something went wrong - probably an incorrect brancher");
               Space* dfsSpace = Gecode::dfs(curSpace);
               delete curSpace;
               curSpace = dfsSpace;
