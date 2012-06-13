@@ -666,16 +666,20 @@ AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
   AC_LANG_PUSH([C++])
   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
   CXXFLAGS="$1${CXXFLAGS:+ }${CXXFLAGS} -Werror"
-  AC_COMPILE_IFELSE(
-    [AC_LANG_PROGRAM([
-      [inline __attribute__ ((__always_inline__)) void foo(void) {}]],
-      [])],
-    [AC_MSG_RESULT(yes)
-     AC_DEFINE(forceinline, [inline __attribute__ ((__always_inline__))],
-       [How to tell the compiler to really, really inline])],
+  _AC_C_IFDEF([__clang__],
     [AC_MSG_RESULT(no)
      AC_DEFINE(forceinline, [inline],
-       [How to tell the compiler to really, really inline])])
+       [How to tell the compiler to really, really inline])],
+    [AC_COMPILE_IFELSE(
+       [AC_LANG_PROGRAM([
+         [inline __attribute__ ((__always_inline__)) void foo(void) {}]],
+         [])],
+       [AC_MSG_RESULT(yes)
+        AC_DEFINE(forceinline, [inline __attribute__ ((__always_inline__))],
+          [How to tell the compiler to really, really inline])],
+       [AC_MSG_RESULT(no)
+        AC_DEFINE(forceinline, [inline],
+          [How to tell the compiler to really, really inline])])])
   CXXFLAGS=${ac_gecode_save_CXXFLAGS}
   AC_LANG_POP([C++])
     AC_GECODE_CHECK_COMPILERFLAG([${ac_gecode_gcc_optimize_flag}])
