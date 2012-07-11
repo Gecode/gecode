@@ -73,6 +73,18 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   performance
+Rank:   major
+Thanks: Zandra Norman
+[DESCRIPTION]
+Fixed a bug in the main memory allocation routine: now heap block
+sizes are decreased dynamically as they should be. Also changed
+the memory configuration parameters as explained in: Zandra
+Norman, Memory Management for Gecode.  KTH Royal Institute of
+Technology, Sweden, Bachelor thesis, TRITA-ICT-EX-2012:143, 2012.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor

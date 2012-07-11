@@ -6,6 +6,9 @@
  *  Contributing authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Bugfixes provided by:
+ *     Zandra Norman
+ *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2004
@@ -350,7 +353,8 @@ namespace Gecode {
     // Adjust current heap chunk size
     if (((requested > MemoryConfig::hcsz_inc_ratio*cur_hcsz) ||
          (sz > cur_hcsz)) &&
-        (cur_hcsz < MemoryConfig::hcsz_max)) {
+        (cur_hcsz < MemoryConfig::hcsz_max) &&
+        !first) {
       cur_hcsz <<= 1;
     }
     // Increment the size that it caters for the initial overhead
