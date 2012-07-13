@@ -171,7 +171,7 @@ namespace Gecode { namespace Support {
   }
   forceinline unsigned int
   BitSetData::data(unsigned int s) {
-    return (s+bpb-1) / bpb;
+    return s == 0 ? 0 : ((s-1) / bpb + 1);
   }
   forceinline bool
   BitSetData::operator ()(unsigned int i) const {

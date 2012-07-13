@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: support
+What:   bug
+Rank:   minor
+Thanks: Max Ostrowski
+[DESCRIPTION]
+Fixed a bug in the allocation of very large bitsets.
+
+[ENTRY]
 Module: kernel
 What:   performance
 Rank:   major
