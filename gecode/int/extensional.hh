@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for posting
     Base(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize last support
-    void init_last(Space& home, Tuple** source);
+    void init_last(Space& home, Tuple** source, Tuple* base);
     /// Find last support for view at position \a i and value \a n
     Tuple last(int i, int n);
     /// Find last support for view at position \a i and value \a n

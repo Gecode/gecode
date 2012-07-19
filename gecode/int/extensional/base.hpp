@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     assert(ts()->finalized());
 
-    init_last(home, ts()->last);
+    init_last(home, ts()->last, ts()->tuple_data);
 
     home.notice(*this,AP_DISPOSE);
   }
@@ -66,17 +66,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     x.update(home, share, p.x);
     tupleSet.update(home, share, p.tupleSet);
 
-    init_last(home, p.last_data);
+    init_last(home, p.last_data, p.ts()->tuple_data);
   }
 
   template<class View, bool subscribe>
   forceinline void
-  Base<View,subscribe>::init_last(Space& home, Tuple** source) {
+  Base<View,subscribe>::init_last(Space& home, Tuple** source, Tuple* base) {
     if (last_data == NULL) {
       int literals = static_cast<int>(ts()->domsize*x.size());
       last_data = home.alloc<Tuple*>(literals);
       for (int i = literals; i--; )
-        last_data[i] = source[i];
+        last_data[i] = ts()->tuple_data+(source[i]-base);
     }
   }
 
