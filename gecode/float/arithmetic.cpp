@@ -96,14 +96,14 @@ namespace Gecode {
   mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
     if (home.failed()) return;
-    GECODE_ES_FAIL((Arithmetic::Mult<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
+    GECODE_ES_FAIL((Arithmetic::Mult<FloatView>::post(home,x0,x1,x2)));
   }
 
   void
   sqr(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
-    GECODE_ES_FAIL((Arithmetic::Square<FloatView,FloatView>::post(home,x0,x1)));
+    GECODE_ES_FAIL((Arithmetic::Sqr<FloatView>::post(home,x0,x1)));
   }
 
   void

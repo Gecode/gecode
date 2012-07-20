@@ -36,6 +36,7 @@
  */
 
 #include <gecode/driver.hh>
+#include <gecode/minimodel.hh>
 #include <gecode/float.hh>
 #include <gecode/float/linear.hh>
 #include <gecode/float/arithmetic.hh>
@@ -79,10 +80,10 @@ public:
 //    Float::Linear::LqBin<Float::FloatView,Float::MinusView>::post(*this,x0,mx1,0);
 //    Float::Linear::GqBin<Float::FloatView,Float::MinusView>::post(*this,x0,mx1,0);
 //    Float::Linear::EqBin<Float::FloatView,Float::MinusView>::post(*this,x0,mx1,0);
-//    Float::Arithmetic::Mult<Float::FloatView,Float::FloatView,Float::FloatView>::post(*this,x0,x0,x1);
+//    Float::Arithmetic::Mult<Float::FloatView>::post(*this,x0,x0,x1);
 //    Float::Arithmetic::Div<Float::FloatView,Float::FloatView,Float::FloatView>::post(*this,x2,x0,x1);
 //    Float::Arithmetic::Div<Float::FloatView,Float::FloatView,Float::FloatView>::post(*this,x2,x3,x4);
-//    Float::Arithmetic::Square<Float::FloatView,Float::FloatView>::post(*this,x0,x1);
+//    Float::Arithmetic::Sqr<Float::FloatView>::post(*this,x0,x1);
 //    Float::Arithmetic::Sqrt<Float::FloatView,Float::FloatView>::post(*this,x0,x1);
 //    Float::Arithmetic::Abs<Float::FloatView,Float::FloatView>::post(*this,x0,x1);
 //    Float::Arithmetic::NthRoot<Float::FloatView,Float::FloatView>::post(*this,x0,x1,3);
@@ -136,13 +137,13 @@ public:
 //      rel(*this, f[4]*sin(f[0]) == f[2]);
 //      rel(*this, exp(0.306349*f[0]) == f[4]);
 
-      // Exemple 1-2 (spirale d'archimède)
-      rel(*this, f[0] >= 0);
-      rel(*this, f[0] <= 6*FloatVal::pi());
-      rel(*this, f[4] >= 0);
-      rel(*this, f[4]*cos(f[0]) == f[1]);
-      rel(*this, f[4]*sin(f[0]) == f[2]);
-      rel(*this, f[4] == f[0]);
+//       // Exemple 1-2 (spirale d'archimède)
+//       rel(*this, f[0] >= 0);
+//       rel(*this, f[0] <= 6*FloatVal::pi());
+//       rel(*this, f[4] >= 0);
+//       rel(*this, f[4]*cos(f[0]) == f[1]);
+//       rel(*this, f[4]*sin(f[0]) == f[2]);
+//       rel(*this, f[4] == f[0]);
 
 //      // Exemple 2 (ellipse)
 //      int a = 2, b = 3;
@@ -160,14 +161,14 @@ public:
 //    rel(*this, f[0] == FloatVal(-1,1));
 //    step = 0.001;
 
-//    // Exemple 5 (coeur cartésien)
-//    int q = 2;
-//    double p = 0.5;
-//    rel(*this, sqr(f[1]) + 2*sqr(f[2]-p*nroot(abs(f[1]),q)) == 1);
-//    rel(*this, f[0] == f[1]);
-//    step = 0.01;
-//    branch(*this,f[2],FLOAT_VAL_SPLIT_MIN);
-//    // Mettre le rel avec f[0] et f[2]
+   // Exemple 5 (coeur cartésien)
+   int q = 2;
+   double p = 0.5;
+   rel(*this, sqr(f[1]) + 2*sqr(f[2]-p*nroot(abs(f[1]),q)) == 1);
+   rel(*this, f[0] == f[1]);
+   step = 0.01; 
+   branch(*this,f[2],FLOAT_VAL_SPLIT_MIN);
+   // Mettre le rel avec f[0] et f[2] dans le constrain
 
 //    // Exemple 6 (Folium de Descartes)
 //    rel(*this, 3*f[0]/(1+pow(f[0],3)) == f[1]);
@@ -201,9 +202,9 @@ public:
 
   virtual void constrain(const Space& _b) {
     const TestFloat& b = static_cast<const TestFloat&>(_b);
-//    rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[2] >= (b.f[2].max()+step))
-//                                             || (f[2] <= (b.f[2].min()-step)));
-    rel(*this, f[0] >= (b.f[0].max()+step));
+    rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[2] >= (b.f[2].max()+step))
+                                             || (f[2] <= (b.f[2].min()-step)));
+//     rel(*this, f[0] >= (b.f[0].max()+step));
   }
 
   virtual void
@@ -211,7 +212,7 @@ public:
   {
 //  ./examples/test-float | grep FV | ploticus -prefab lines data=- pointsym=none x=2 y=3
 #ifndef BOXES
-    os << "FV " << f[1].median() << " " << f[2].median();
+    os << "FV " << f[1].med() << " " << f[2].med();
 //    if (v0.min() == v1.min()) os << " MIN == "; else os << " MIN != " ;
 //    if (v0.max() == v1.max()) os << " MAX == "; else os << " MAX != " ;
 #else

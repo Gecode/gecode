@@ -439,7 +439,7 @@ namespace Gecode {
     FloatNum min(void) const;
     /// Return upper bound
     FloatNum max(void) const;
-    /// Return size of float value (distnace between maximum and minimum)
+    /// Return size of float value (distance between maximum and minimum)
     FloatNum size(void) const;
     /// Return median of float value
     FloatNum med(void) const;
@@ -447,6 +447,8 @@ namespace Gecode {
 
     /// \name Value tests
     //@{
+    /// Test whether float can be reduced or not (assigned)
+    bool assigned(void) const;
     /// Test whether float is a singleton
     bool singleton(void) const;
     /// Test whether \a n is included

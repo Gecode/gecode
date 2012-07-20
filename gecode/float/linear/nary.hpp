@@ -194,7 +194,7 @@ namespace Gecode { namespace Float { namespace Linear {
         GECODE_ME_CHECK(y[0].eq(home,-c));
         return home.ES_SUBSUMED(p);
       }
-      return (c == 0.0) ? home.ES_SUBSUMED(p) : ES_FAILED;
+      return (c.in(0.0)) ? home.ES_SUBSUMED(p) : ES_FAILED;
     }
 
     sl = Round.add_up(sl,c.max()); 

@@ -364,7 +364,8 @@ template<class T, class Policies> inline
 bool interval<T, Policies>::operator== (const interval_holder& r) const
 {
   if (!checking::is_empty(low, up)) {
-    if (up == r.low && low == r.up) return true;
+//Boost bug ?    if (up == r.low && low == r.up) return true;
+    if (up == r.up && low == r.low) return true;
     else if (up < r.low || low > r.up) return false;
   }
   throw interval_lib::comparison_error();

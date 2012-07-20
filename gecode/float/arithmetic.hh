@@ -54,30 +54,51 @@
 namespace Gecode { namespace Float { namespace Arithmetic {
 
   /**
-   * \brief %Propagator for bounds consistent square operator
+   * \brief Bounds consistent positive square propagator
    *
-   * The types \a A and \a B give the types of the views.
+   * This propagator provides multiplication for positive views only.
+   */
+  template<class VA, class VB>
+  class SqrPlus : public MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND> {
+  protected:
+    using MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND>::x0;
+    using MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND>::x1;
+    /// Constructor for posting
+    SqrPlus(Home home, VA x0, VB x1);
+    /// Constructor for cloning \a p
+    SqrPlus(Space& home, bool share, SqrPlus<VA,VB>& p);
+  public:
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
+    static ExecStatus post(Home home, VA x0, VB x1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /**
+   * \brief %Propagator for bounds consistent square operator
    *
    * Requires \code #include <gecode/float/arithmetic.hh> \endcode
    * \ingroup FuncFloatProp
    */
-  template<class A, class B>
-  class Square : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
+  template<class View>
+  class Sqr : public BinaryPropagator<View,PC_FLOAT_BND> {
   protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    using BinaryPropagator<View,PC_FLOAT_BND>::x0;
+    using BinaryPropagator<View,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Square(Space& home, bool share, Square& p);
+    Sqr(Space& home, bool share, Sqr& p);
     /// Constructor for creation
-    Square(Home home, A x0, B x1);
+    Sqr(Home home, View x0, View x1);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0^2 = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
+    static ExecStatus post(Home home, View x0, View x1);
   };
 
   /**
@@ -193,6 +214,85 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   };
 
   /**
+   * \brief Bounds or domain consistent propagator for \f$x_0\times x_1=x_0\f$
+   *
+   * Requires \code #include <gecode/float/arithmetic.hh> \endcode
+   * \ingroup FuncFloatProp
+   */
+  template<class View>
+  class MultZeroOne : public BinaryPropagator<View,PC_FLOAT_BND> {
+  protected:
+    using BinaryPropagator<View,PC_FLOAT_BND>::x0;
+    using BinaryPropagator<View,PC_FLOAT_BND>::x1;
+
+    /// Constructor for cloning \a p
+    MultZeroOne(Space& home, bool share, MultZeroOne<View>& p);
+    /// Constructor for posting
+    MultZeroOne(Home home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$x_0\cdot x_1=x_0\f$
+    static ExecStatus post(Home home, View x0, View x1);
+  };
+
+
+  /**
+   * \brief Bounds consistent positive multiplication propagator
+   *
+   * This propagator provides multiplication for positive views only.
+   */
+  template<class VA, class VB, class VC>
+  class MultPlus :
+    public MixTernaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND,VC,PC_FLOAT_BND> {
+  protected:
+    using MixTernaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND,VC,PC_FLOAT_BND>::x0;
+    using MixTernaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND,VC,PC_FLOAT_BND>::x1;
+    using MixTernaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND,VC,PC_FLOAT_BND>::x2;
+  public:
+    /// Constructor for posting
+    MultPlus(Home home, VA x0, VB x1, VC x2);
+    /// Constructor for cloning \a p
+    MultPlus(Space& home, bool share, MultPlus<VA,VB,VC>& p);
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
+    static ExecStatus post(Home home, VA x0, VB x1, VC x2);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /**
+   * \brief Bounds consistent multiplication propagator
+   *
+   * Requires \code #include <gecode/float/arithmetic.hh> \endcode
+   *
+   * \ingroup FuncFloatProp
+   */
+  template<class View>
+  class Mult : public TernaryPropagator<View,PC_FLOAT_BND> {
+  protected:
+    using TernaryPropagator<View,PC_FLOAT_BND>::x0;
+    using TernaryPropagator<View,PC_FLOAT_BND>::x1;
+    using TernaryPropagator<View,PC_FLOAT_BND>::x2;
+
+    /// Constructor for cloning \a p
+    Mult(Space& home, bool share, Mult<View>& p);
+  public:
+    /// Constructor for posting
+    Mult(Home home, View x0, View x1, View x2);
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
+    static  ExecStatus post(Home home, View x0, View x1, View x2);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+
+  /**
    * \brief %Propagator for bounds multiplication operator
    *
    * The types \a A, \a B and \a C give the types of the views.
@@ -200,6 +300,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
    * Requires \code #include <gecode/float/arithmetic.hh> \endcode
    * \ingroup FuncFloatProp
    */
+  /*
   template<class A, class B, class C>
   class Mult : public MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND> {
   protected:
@@ -218,6 +319,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     /// Post propagator for \f$ x_0 * x_1 = x_2\f$
     static ExecStatus post(Home home, A x0, B x1, C x2);
   };
+  */
 
   /**
    * \brief %Propagator for bounds division operator

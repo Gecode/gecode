@@ -42,48 +42,121 @@
 namespace Gecode { namespace Float { namespace Arithmetic {
 
   /*
-   * Bounds consistent square operator
+   * Positive bounds consistent squaring
    *
    */
-
-  template<class A, class B>
+  template<class VA, class VB>
   forceinline
-  Square<A,B>::Square(Home home, A x0, B x1)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1) {}
+  SqrPlus<VA,VB>::SqrPlus(Home home, VA x0, VB x1)
+    : MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND>(home,x0,x1) {}
 
-  template<class A, class B>
-  ExecStatus
-  Square<A,B>::post(Home home, A x0, B x1) {
-    (void) new (home) Square<A,B>(home,x0,x1);
+  template<class VA, class VB>
+  forceinline ExecStatus
+  SqrPlus<VA,VB>::post(Home home, VA x0, VB x1) {
+    if (same(x0,x1)) {
+      if (x0.assigned())
+        return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
+    } else {
+      GECODE_ME_CHECK(x0.eq(home,sqrt(x1.val())));
+      GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+    }
+
+    (void) new (home) SqrPlus<VA,VB>(home,x0,x1);
     return ES_OK;
   }
 
-  template<class A, class B>
+  template<class VA, class VB>
   forceinline
-  Square<A,B>::Square(Space& home, bool share, Square<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  SqrPlus<VA,VB>::SqrPlus(Space& home, bool share, SqrPlus<VA,VB>& p)
+    : MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND>(home,share,p) {}
 
-
-  template<class A, class B>
+  template<class VA, class VB>
   Actor*
-  Square<A,B>::copy(Space& home, bool share) {
-    return new (home) Square<A,B>(home,share,*this);
+  SqrPlus<VA,VB>::copy(Space& home, bool share) {
+    return new (home) SqrPlus<VA,VB>(home,share,*this);
   }
 
-  template<class A, class B>
+  template<class VA, class VB>
   ExecStatus
-  Square<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,square(x0.domain())));
-    if (x0.min() >= 0)
-      GECODE_ME_CHECK(x0.eq(home,sqrt(x1.domain())));
-    else if (x0.max() <= 0)
-      GECODE_ME_CHECK(x0.eq(home,-sqrt(x1.domain())));
-    else
-      GECODE_ME_CHECK(x0.eq(home,hull(sqrt(x1.domain()),
-                                      -sqrt(x1.domain()))
-                            ));
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+  SqrPlus<VA,VB>::propagate(Space& home, const ModEventDelta&) {
+    if (same(x0,x1)) {
+      if (x0.max() < 1) GECODE_ME_CHECK(x0.eq(home,0));
+      else if (x0.min() > 0) GECODE_ME_CHECK(x0.eq(home,1));
+      if (x0.assigned())
+        return ((x0.val() == 0) || (x0.val() == 1))? home.ES_SUBSUMED(*this) : ES_FAILED;
+    } else {
+      GECODE_ME_CHECK(x0.eq(home,sqrt(x1.val())));
+      GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+      if (x0.assigned() || x1.assigned()) return home.ES_SUBSUMED(*this);
+    }
+
+    return ES_FIX;
   }
+
+
+  /*
+   * Bounds consistent squaring
+   *
+   */
+
+  template<class View>
+  forceinline
+  Sqr<View>::Sqr(Home home, View x0, View x1)
+    : BinaryPropagator<View,PC_FLOAT_BND>(home,x0,x1) {}
+
+  template<class View>
+  forceinline ExecStatus
+  Sqr<View>::post(Home home, View x0, View x1) {
+    GECODE_ME_CHECK(x1.gq(home,0));
+    if (same(x0,x1)) {
+      if (x0.assigned())
+        return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
+      GECODE_ME_CHECK(x1.lq(home,1));
+      return SqrPlus<FloatView,FloatView>::post(home,x0,x1);
+    } else {
+      if (x0.min() >= 0)
+        return SqrPlus<FloatView,FloatView>::post(home,x0,x1);
+      if (x0.max() <= 0)
+        return SqrPlus<MinusView,FloatView>::post(home,MinusView(x0),x1);
+      GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+      (void) new (home) Sqr<View>(home,x0,x1);
+    }
+    return ES_OK;
+  }
+
+  template<class View>
+  forceinline
+  Sqr<View>::Sqr(Space& home, bool share, Sqr<View>& p)
+    : BinaryPropagator<View,PC_FLOAT_BND>(home,share,p) {}
+
+  template<class View>
+  Actor*
+  Sqr<View>::copy(Space& home, bool share) {
+    return new (home) Sqr<View>(home,share,*this);
+  }
+
+  template<class View>
+  ExecStatus
+  Sqr<View>::propagate(Space& home, const ModEventDelta&) {
+    assert(x1.min() >= 0);
+    if (x0.min() >= 0)
+      GECODE_REWRITE(*this,(SqrPlus<FloatView,FloatView>::post(home(*this),x0,x1)));
+    if (x0.max() <= 0)
+      GECODE_REWRITE(*this,(SqrPlus<MinusView,FloatView>::post(home(*this),
+        MinusView(x0),x1)));
+
+    GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+    FloatVal z = sqrt(x1.val());
+    if (x0.min() > -Round.sqrt_up(x1.min()))
+      GECODE_ME_CHECK(x0.eq(home,z));
+    else if (x0.max() < Round.sqrt_down(x1.min()))
+      GECODE_ME_CHECK(x0.eq(home,-z));
+    else
+      GECODE_ME_CHECK(x0.eq(home,hull(z,-z)));
+
+    return ES_NOFIX;
+  }
+
 
   /*
    * Bounds consistent square root operator
@@ -98,7 +171,16 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Sqrt<A,B>::post(Home home, A x0, B x1) {
-    (void) new (home) Sqrt<A,B>(home,x0,x1);
+    GECODE_ME_CHECK(x0.gq(home,0));    
+    if (same(x0,x1)) {
+      if (x0.assigned())
+        return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
+      GECODE_ME_CHECK(x0.lq(home,1));
+      (void) new (home) Sqrt<A,B>(home,x0,x1);
+    } else {
+      GECODE_ME_CHECK(x1.eq(home,sqrt(x0.val())));
+      (void) new (home) Sqrt<A,B>(home,x0,x1);
+    }
     return ES_OK;
   }
 
@@ -116,10 +198,18 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Sqrt<A,B>::propagate(Space& home, const ModEventDelta&) {
-    if (x0.max() < 0) return ES_FAILED;
-    GECODE_ME_CHECK(x1.eq(home,sqrt(x0.domain())));
-    GECODE_ME_CHECK(x0.eq(home,square(x1.domain())));
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    if (same(x0,x1)) {
+      if (x0.max() < 1) GECODE_ME_CHECK(x0.eq(home,0));
+      else if (x0.min() > 0) GECODE_ME_CHECK(x0.eq(home,1));
+      if (x0.assigned())
+        return ((x0.val() == 0) || (x0.val() == 1))? home.ES_SUBSUMED(*this) : ES_FAILED;
+    } else {
+      GECODE_ME_CHECK(x0.eq(home,square(x1.val())));
+      GECODE_ME_CHECK(x1.eq(home,sqrt(x0.val())));
+      if (x0.assigned() || x1.assigned()) return home.ES_SUBSUMED(*this);
+    }
+    
+    return ES_FIX;
   }
 
   /*
@@ -153,12 +243,14 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Abs<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,abs(x0.domain())));
-    if (x1.max() >= 0)
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
+    GECODE_ME_CHECK(x1.eq(home,abs(x0.val())));
+    if (x0.min() >= 0)
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(), x1.max())));
+    else if (x0.max() <= 0)
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), -x1.min())));
     else
-      return ES_FAILED;
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
+    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 }}}

@@ -88,6 +88,10 @@ namespace Gecode {
   }
 
   forceinline bool
+  FloatVal::assigned(void) const {
+    return (boost::numeric::singleton(x) || (nextafter(x.lower(),x.upper()) == x.upper()));
+  }
+  forceinline bool
   FloatVal::singleton(void) const {
     return boost::numeric::singleton(x);
   }
@@ -166,7 +170,9 @@ namespace Gecode {
   }
   forceinline FloatVal
   operator-(const FloatVal& x) {
-    return FloatVal(-x.x);
+    FloatNum mmi = (x.min()==0)?0:-x.min();
+    FloatNum mma = (x.max()==0)?0:-x.max();
+    return FloatVal(mma,mmi);
   }
   forceinline FloatVal
   operator+(const FloatVal& x, const FloatVal& y) {
@@ -262,7 +268,13 @@ namespace Gecode {
   }
   forceinline bool
   operator ==(const FloatVal& x, const FloatNum& y) {
-    return x.x == y;
+    if (!boost::numeric::interval_lib::checking_strict<FloatNum>::is_empty(x.x.lower(), x.x.upper())) {
+      if (x.x.lower() == y && x.x.upper() == y) return true;
+      else if ( (x.x.lower() == y && nextafter(x.x.lower(),x.x.upper()) == x.x.upper()) ||
+                (x.x.upper() == y && nextafter(x.x.upper(),x.x.lower()) == x.x.lower()) ) return true;
+      else if (x.x.upper() < y || x.x.lower() > y) return false;
+    }
+    throw boost::numeric::interval_lib::comparison_error();
   }
 
   forceinline bool

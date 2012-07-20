@@ -77,7 +77,7 @@ namespace Gecode { namespace Float { namespace Rel {
   Lq<View>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
-    return (x0.max() <= x1.min()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    return (x0.assigned() || x1.assigned() || (x0.max() <= x1.min())) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 
