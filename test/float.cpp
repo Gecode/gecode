@@ -53,14 +53,36 @@ namespace Test { namespace Float {
   CpltAssignment::operator++(void) {
     int i = n-1;
     while (true) {
-      dsv[i] += step;
-      if ((dsv[i] < d.max()) || (i == 0))
+      Gecode::FloatNum ns = dsv[i].min() + step;
+      dsv[i] = Gecode::FloatVal(ns,nextafter(ns,ns+1));
+      if ((dsv[i].max() < d.max()) || (i == 0))
         return;
-      dsv[i--] = d.min();
+      dsv[i--] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
     }
   }
 
-
+  /*
+   * Extended assignments
+   *
+   */
+  void
+  ExtAssignment::operator++(void) {
+    assert(n > 1);
+    int i = n-2;
+    while (true) {
+      Gecode::FloatNum ns = dsv[i].min() + step;
+      dsv[i] = Gecode::FloatVal(ns,nextafter(ns,ns+1));
+      if ((dsv[i].max() < d.max()) || (i == 0))
+      {
+        if (curPb->extendAssignement(*this)) return;
+        if ((dsv[i].max() >= d.max()) && (i == 0)) return;
+        continue;
+      }
+      dsv[i--] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
+    }
+  }
+  
+  
   /*
    * Random assignments
    *
@@ -79,7 +101,7 @@ operator<<(std::ostream& os, const Test::Float::Assignment& a) {
   int n = a.size();
   os << "{";
   for (int i=0; i<n; i++)
-    os << a[i] << ((i!=n-1) ? "," : "}");
+    os << "[" << a[i].min() << "," << a[i].max() << "]" << ((i!=n-1) ? "," : "}");
   return os;
 }
 
@@ -156,22 +178,12 @@ namespace Test { namespace Float {
     return new TestSpace(share,*this);
   }
 
-  void TestSpace::next_as(const Gecode::Space& _s) {
-    const TestSpace& s = static_cast<const TestSpace&>(_s);
-    int i = x.size()-1;
-    while (true) {
-      Gecode::FloatNum v = Gecode::Float::Round.add_up(s.x[i].max(),step);
-      if ((v < d.max()) || (i == 0)) {
-        Gecode::rel(*this, x[i], Gecode::FRT_GQ, v);
-        while (i--) 
-          Gecode::rel(*this, x[i], Gecode::FRT_GQ, s.x[i].max());
-        return;
-      }
-      i--;
-    }
+  void TestSpace::dropUntil(const Assignment& a) {
+    int i = x.size();
+    while (i--) 
+      Gecode::rel(*this, x[i], Gecode::FRT_GQ, a[i].min());
   }
-
-
+  
   bool 
   TestSpace::assigned(void) const {
     for (int i=x.size(); i--; )
@@ -179,7 +191,15 @@ namespace Test { namespace Float {
         return false;
     return true;
   }
-
+  
+  bool 
+  TestSpace::matchAssignment(const Assignment& a) const {
+    for (int i=x.size(); i--; )
+      if ((x[i].min() != a[i].min()) || (x[i].max() != a[i].max()))
+        return false;
+      return true;
+  }
+  
   void 
   TestSpace::post(void) {
     if (reified){
@@ -206,7 +226,7 @@ namespace Test { namespace Float {
   }
 
   void 
-  TestSpace::rel(int i, Gecode::FloatRelType frt, Gecode::FloatNum n) {
+  TestSpace::rel(int i, Gecode::FloatRelType frt, Gecode::FloatVal n) {
     if (opt.log) {
       olog << ind(4) << "x[" << i << "] ";
       switch (frt) {
@@ -214,7 +234,7 @@ namespace Test { namespace Float {
       case Gecode::FRT_LQ: olog << "<="; break;
       case Gecode::FRT_GQ: olog << ">="; break;
       }
-      olog << " " << n << std::endl;
+      olog << " [" << n.min() << "," << n.max() << "]" << std::endl;
     }
     Gecode::rel(*this, x[i], frt, n);
   }
@@ -229,11 +249,17 @@ namespace Test { namespace Float {
   }
 
   void 
-  TestSpace::assign(const Assignment& a, bool skip) {
+  TestSpace::assign(const Assignment& a, SolutionTestType& sol, bool skip) {
     using namespace Gecode;
     int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
+
     for (int j=a.size(); j--; )
       if (i != j) {
+        if ((x[j].min() == a[j].max()) || (x[j].max() == a[j].min()))
+        {
+          sol = UNCERTAIN;
+          return;
+        }
         rel(j, FRT_EQ, a[j]);
         if (Base::fixpoint() && failed())
           return;
@@ -249,7 +275,10 @@ namespace Test { namespace Float {
       i = (i+1) % x.size();
     }
     bool min = Base::rand(2);
-    rel(i, FRT_EQ, min ? x[i].min() : x[i].max());
+    if (min)
+      rel(i, FRT_LQ, nextafter(x[i].min(), x[i].max()));
+    else
+      rel(i, FRT_GQ, nextafter(x[i].max(), x[i].min()));
   }
 
   void 
@@ -288,16 +317,16 @@ namespace Test { namespace Float {
     // Select mode for pruning
     switch (Base::rand(2)) {
     case 0:
-      if (a[i] < x[i].max()) {
-        Gecode::FloatNum v=randFValDown(a[i],x[i].max());
-        assert((v >= a[i]) && (v <= x[i].max()));
+      if (a[i].max() < x[i].max()) {
+        Gecode::FloatNum v=randFValDown(a[i].max(),x[i].max());
+        assert((v >= a[i].max()) && (v <= x[i].max()));
         rel(i, Gecode::FRT_LQ, v);
       }
       break;
     case 1:
-      if (a[i] > x[i].min()) {
-        Gecode::FloatNum v=randFValUp(x[i].min(),a[i]);
-        assert((v <= a[i]) && (v >= x[i].min()));
+      if (a[i].min() > x[i].min()) {
+        Gecode::FloatNum v=randFValUp(x[i].min(),a[i].min());
+        assert((v <= a[i].min()) && (v >= x[i].min()));
         rel(i, Gecode::FRT_GQ, v);
       }
       break;
@@ -333,10 +362,32 @@ namespace Test { namespace Float {
 
   Assignment*
   Test::assignment(void) const {
-    return new CpltAssignment(arity,dom,step);
+    switch (assigmentType)
+    {
+      case CPLT_ASSIGNMENT:
+        return new CpltAssignment(arity,dom,step);
+      case RANDOM_ASSIGNMENT:
+        return new RandomAssignment(arity,dom,step);
+      case EXTEND_ASSIGNMENT:
+        return new ExtAssignment(arity,dom,step,this);
+      default :
+        GECODE_NEVER;
+    }
   }
 
-
+  bool
+  Test::extendAssignement(Assignment&) const {
+    GECODE_NEVER;
+    return false;
+  }
+  
+  bool
+  Test::subsumed(const TestSpace& ts) const {
+    if (ts.propagators()==0) return true;
+    if (assigmentType == EXTEND_ASSIGNMENT) return true;
+    return false;
+  }
+  
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
 if (opt.log)                                                    \
@@ -371,20 +422,20 @@ if (!(T)) {                                                     \
     // Set up assignments
     Assignment* ap = assignment();
     Assignment& a = *ap;
-
+    
     // Set up space for all solution search
-    TestSpace* search_s_ini = new TestSpace(arity,dom,step,this,false);
-    post(*search_s_ini,search_s_ini->x);
-    branch(*search_s_ini,search_s_ini->x,FLOAT_VAR_NONE,FLOAT_VAL_SPLIT_MIN);
+    TestSpace* search_s = new TestSpace(arity,dom,step,this,false);
+    post(*search_s,search_s->x);
+    branch(*search_s,search_s->x,FLOAT_VAR_NONE,FLOAT_VAL_SPLIT_MIN);
     Search::Options search_o;
     search_o.threads = 1;
-    TestSpace* search_s = static_cast<TestSpace*>(search_s_ini->clone(false));
+    DFS<TestSpace> * e_s = new DFS<TestSpace>(search_s,search_o);
 
     while (a()) {
-      bool sol = solution(a);
+      SolutionTestType sol = solution(a);
       if (opt.log) {
         olog << ind(1) << "Assignment: " << a
-             << (sol ? " (solution)" : " (no solution)")
+             << ((sol==SOLUTION) ? " (solution)" : ((sol==NO_SOLUTION)?" (no solution)":" (uncertain)"))
              << std::endl;
       }
 
@@ -420,11 +471,11 @@ if (!(T)) {                                                     \
             break;
           default: assert(false);
         }
-        sc->assign(a);
-        if (sol) {
+        sc->assign(a,sol);
+        if (sol == SOLUTION) {
           CHECK_TEST(!sc->failed(), "Failed on solution");
-          CHECK_TEST(sc->propagators()==0, "No subsumption");
-        } else {
+          CHECK_TEST(subsumed(*sc), "No subsumption");
+        } else if (sol == NO_SOLUTION) {
           CHECK_TEST(sc->failed(), "Solved on non-solution");
         }
         delete s; delete sc;
@@ -433,13 +484,13 @@ if (!(T)) {                                                     \
       {
         TestSpace* s = new TestSpace(arity,dom,step,this,false);
         s->post();
-        s->assign(a,true);
+        s->assign(a,sol,true);
         (void) s->failed();
-        s->assign(a);
-        if (sol) {
+        s->assign(a,sol);
+        if (sol == SOLUTION) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-        } else {
+          CHECK_TEST(subsumed(*s), "No subsumption");
+        } else if (sol == NO_SOLUTION) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -447,12 +498,12 @@ if (!(T)) {                                                     \
       START_TEST("Assignment (before posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this,false);
-        s->assign(a);
+        s->assign(a,sol);
         s->post();
-        if (sol) {
+        if (sol == SOLUTION) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-        } else {
+          CHECK_TEST(subsumed(*s), "No subsumption");
+        } else if (sol == NO_SOLUTION) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -460,14 +511,14 @@ if (!(T)) {                                                     \
       START_TEST("Partial assignment (before posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this,false);
-        s->assign(a,true);
+        s->assign(a,sol,true);
         s->post();
         (void) s->failed();
-        s->assign(a);
-        if (sol) {
+        s->assign(a,sol);
+        if (sol == SOLUTION) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-        } else {
+          CHECK_TEST(subsumed(*s), "No subsumption");
+        } else if (sol == NO_SOLUTION) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -476,17 +527,17 @@ if (!(T)) {                                                     \
       {
         TestSpace* s = new TestSpace(arity,dom,step,this,false);
         s->post();
-        while (!s->failed() && !s->assigned())
+        while (!s->failed() && !s->assigned() && !s->matchAssignment(a))
           if (!s->prune(a,testfix)) {
             problem = "No fixpoint";
             delete s;
             goto failed;
           }
-        s->assign(a);
-        if (sol) {
+        s->assign(a,sol);
+        if (sol == SOLUTION) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-        } else {
+          CHECK_TEST(subsumed(*s), "No subsumption");
+        } else if (sol == NO_SOLUTION) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -498,9 +549,9 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,step,this,true,rms.rm());
           s->post();
           s->rel(sol);
-          s->assign(a);
+          s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (rewrite failure)");
@@ -508,7 +559,7 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
           s->post();
           s->rel(!sol);
-          s->assign(a);
+          s->assign(a,sol);
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
@@ -517,9 +568,9 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,step,this,true,rms.rm());
           s->rel(sol);
           s->post();
-          s->assign(a);
+          s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(subsumed(*s), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (immediate failure)");
@@ -527,21 +578,21 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
           s->rel(!sol);
           s->post();
-          s->assign(a);
+          s->assign(a,sol);
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
         START_TEST("Assignment reified (before posting)");
         {
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
-          s->assign(a);
+          s->assign(a,sol);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(subsumed(*s), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol) {
+          if (sol == SOLUTION) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
+          } else if (sol == NO_SOLUTION) {
             CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
@@ -550,13 +601,13 @@ if (!(T)) {                                                     \
         {
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
           s->post();
-          s->assign(a);
+          s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(subsumed(*s), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol) {
+          if (sol == SOLUTION) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
+          } else if (sol == NO_SOLUTION) {
             CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
@@ -573,11 +624,11 @@ if (!(T)) {                                                     \
               goto failed;
             }
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(subsumed(*s), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol) {
+          if (sol == SOLUTION) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
+          } else if (sol == NO_SOLUTION) {
             CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
@@ -585,18 +636,21 @@ if (!(T)) {                                                     \
       }
 
       if (testsearch) {
-        if (sol) {
+        if (sol == SOLUTION) {
           START_TEST("Search");
-          DFS<TestSpace> e_s(search_s,search_o);
-          TestSpace* s = e_s.next();
-          delete search_s;
-          search_s= static_cast<TestSpace*>(search_s_ini->clone(false));
-          search_s->next_as(*s);
+          if (!search_s->failed()) {
+            TestSpace* ss = static_cast<TestSpace*>(search_s->clone(false));
+            ss->dropUntil(a);
+            delete e_s;
+            e_s = new DFS<TestSpace>(ss,search_o);
+            delete ss;
+          }
+          TestSpace* s = e_s->next();
           CHECK_TEST(s != NULL, "Solutions exhausted");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(subsumed(*s), "No subsumption");
           for (int i=a.size(); i--; ) {
             CHECK_TEST(s->x[i].assigned(), "Unassigned variable");
-            CHECK_TEST(a[i] == s->x[i].val(), "Wrong value in solution");
+            CHECK_TEST(Gecode::Float::overlap(a[i], s->x[i].val()), "Wrong value in solution");
           }
           delete s;
         }
@@ -607,10 +661,14 @@ if (!(T)) {                                                     \
 
     if (testsearch) {
       test = "Search";
-      DFS<TestSpace> e_s(search_s,search_o);
-      TestSpace* s = e_s.next();
-      delete s;
-      if (e_s.next() != NULL) {
+      if (!search_s->failed()) {
+        TestSpace* ss = static_cast<TestSpace*>(search_s->clone(false));
+        ss->dropUntil(a);
+        delete e_s;
+        e_s = new DFS<TestSpace>(ss,search_o);
+        delete ss;
+      }
+      if (e_s->next() != NULL) {
         problem = "Excess solutions";
         goto failed;
       }
@@ -626,14 +684,14 @@ if (!(T)) {                                                     \
         while (!s->failed() && !s->assigned())
           s->bound();
         CHECK_TEST(!s->failed(), "Failed");
-        CHECK_TEST(s->propagators()==0, "No subsumption");
+        CHECK_TEST(subsumed(*s), "No subsumption");
       }
       delete s;
     }
 
     delete ap;
     delete search_s;
-    delete search_s_ini;
+    delete e_s;
     return true;
 
   failed:
@@ -645,7 +703,7 @@ if (!(T)) {                                                     \
       olog << ind(1) << "Assignment: " << a << std::endl;
     delete ap;
     delete search_s;
-    delete search_s_ini;
+    delete e_s;
 
     return false;
   }

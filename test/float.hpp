@@ -58,25 +58,58 @@ namespace Test { namespace Float {
   inline
   CpltAssignment::CpltAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s)
     : Assignment(n,d),
-      dsv(new Gecode::FloatNum[static_cast<unsigned int>(n)]),
+      dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]),
       step(s) {
     for (int i=n; i--; )
-      dsv[i] = d.min();
+      dsv[i] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
   }
   inline bool
   CpltAssignment::operator()(void) const {
-    return dsv[0] <= d.max();
+    return dsv[0].min() <= d.max();
   }
-  inline Gecode::FloatNum
+  inline Gecode::FloatVal
   CpltAssignment::operator[](int i) const {
     assert((i>=0) && (i<n));
     return dsv[i];
+  }
+  inline void
+  CpltAssignment::set(int i, const Gecode::FloatVal& val) {
+    assert((i>=0) && (i<n));
+    dsv[i] = val;
   }
   inline
   CpltAssignment::~CpltAssignment(void) {
     delete [] dsv;
   }
 
+  inline
+  ExtAssignment::ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test * pb)
+  : Assignment(n,d),curPb(pb),
+  dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]),
+  step(s) {
+    for (int i=n-1; i--; )
+      dsv[i] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
+    ++(*this);
+  }
+  inline bool
+  ExtAssignment::operator()(void) const {
+    return dsv[0].min() <= d.max();
+  }
+  inline Gecode::FloatVal
+  ExtAssignment::operator[](int i) const {
+    assert((i>=0) && (i<n));
+    return dsv[i];
+  }
+  inline void
+  ExtAssignment::set(int i, const Gecode::FloatVal& val) {
+    assert((i>=0) && (i<n));
+    dsv[i] = val;
+  }
+  inline
+  ExtAssignment::~ExtAssignment(void) {
+    delete [] dsv;
+  }
+  
   forceinline Gecode::FloatNum
   RandomAssignment::randval(void) {
     using namespace Gecode;
@@ -96,7 +129,7 @@ namespace Test { namespace Float {
 
   inline
   RandomAssignment::RandomAssignment(int n, const Gecode::FloatVal& d, int a0)
-    : Assignment(n,d), vals(new Gecode::FloatNum[n]), a(a0) {
+    : Assignment(n,d), vals(new Gecode::FloatVal[n]), a(a0) {
     for (int i=n; i--; )
       vals[i] = randval();
   }
@@ -105,10 +138,15 @@ namespace Test { namespace Float {
   RandomAssignment::operator()(void) const {
     return a>0;
   }
-  inline Gecode::FloatNum
+  inline Gecode::FloatVal
   RandomAssignment::operator[](int i) const {
     assert((i>=0) && (i<n));
     return vals[i];
+  }
+  inline void
+  RandomAssignment::set(int i, const Gecode::FloatVal& val) {
+    assert((i>=0) && (i<n));
+    vals[i] = val;
   }
   inline
   RandomAssignment::~RandomAssignment(void) {
@@ -120,15 +158,15 @@ namespace Test { namespace Float {
    *
    */
   inline
-  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st,
+  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
              bool r)
-    : Base("Float::"+s), arity(a), dom(d), step(st), reified(r),
+      : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at), reified(r),
       testsearch(true), testfix(true) {}
 
   inline
-  Test::Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st,
+  Test::Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
              bool r)
-    : Base("Float::"+s), arity(a), dom(min,max), step(st), reified(r),
+      : Base("Float::"+s), arity(a), dom(min,max), step(st), assigmentType(at), reified(r),
       testsearch(true), testfix(true) {}
 
   inline

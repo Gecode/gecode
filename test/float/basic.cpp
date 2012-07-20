@@ -55,13 +55,13 @@ namespace Test { namespace Float {
      public:
        /// Initialize test
        Basic(Gecode::FloatNum n, Gecode::FloatNum s)
-         : Test("Basic",3,-n,n,s,true) {}
+         : Test("Basic",3,-n,n,s,CPLT_ASSIGNMENT,true) {}
        /// Initialize test
        Basic(Gecode::FloatVal v, Gecode::FloatNum s)
-         : Test("Basic",3,v,s,true) {}
+          : Test("Basic",3,v,s,CPLT_ASSIGNMENT,true) {}
        /// Check whether \a x is a solution
-       virtual bool solution(const Assignment&) const {
-         return true;
+       virtual SolutionTestType solution(const Assignment&) const {
+         return SOLUTION;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space&, Gecode::FloatVarArray&) {

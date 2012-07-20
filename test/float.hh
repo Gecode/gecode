@@ -50,7 +50,22 @@ namespace Test {
 
   /// Testing domain floats
   namespace Float {
-
+    /// Solution test type
+    enum SolutionTestType {
+      NO_SOLUTION = 0,
+      SOLUTION,
+      UNCERTAIN
+    };
+    
+    /// Assignment possible types
+    enum AssignmentType {
+      CPLT_ASSIGNMENT = 0,
+      RANDOM_ASSIGNMENT,
+      EXTEND_ASSIGNMENT
+    };
+    
+    class Test;
+    
     /**
      * \defgroup TaskTestFloat Testing domain floats
      * \ingroup TaskTest
@@ -74,7 +89,9 @@ namespace Test {
       /// Move to next assignment
       virtual void operator++(void) = 0;
       /// Return value for variable \a i
-      virtual Gecode::FloatNum operator[](int i) const = 0;
+      virtual Gecode::FloatVal operator[](int i) const = 0;
+      /// Set assignment to value \a val for variable \a i
+      virtual void set(int i, const Gecode::FloatVal& val) = 0;
       /// Return number of variables
       int size(void) const;
       /// Destructor
@@ -84,7 +101,7 @@ namespace Test {
     /// Generate all assignments
     class CpltAssignment : public Assignment {
     protected:
-      Gecode::FloatNum* dsv; ///< Iterator for each variable
+      Gecode::FloatVal* dsv; ///< Iterator for each variable
       Gecode::FloatNum step; ///< Step for next assignment
     public:
       /// Initialize assignments for \a n variables and values \a d with step \a s
@@ -94,16 +111,39 @@ namespace Test {
       /// Move to next assignment
       virtual void operator++(void);
       /// Return value for variable \a i
-      virtual Gecode::FloatNum operator[](int i) const;
+      virtual Gecode::FloatVal operator[](int i) const;
+      /// Set assignment to value \a val for variable \a i
+      virtual void set(int i, const Gecode::FloatVal& val);
       /// Destructor
       virtual ~CpltAssignment(void);
     };
 
-
+    /// Generate all assignments except the last variable and complete it to get a solution
+    class ExtAssignment : public Assignment {
+    protected:
+      const Test* curPb;     ///< Current problem used to complete assignment
+      Gecode::FloatVal* dsv; ///< Iterator for each variable
+      Gecode::FloatNum step; ///< Step for next assignment
+    public:
+      /// Initialize assignments for \a n variables and values \a d with step \a s
+      ExtAssignment(int n, const Gecode::FloatVal& d, Gecode::FloatNum s, const Test * pb);
+      /// Test whether all assignments have been iterated
+      virtual bool operator()(void) const;
+      /// Move to next assignment
+      virtual void operator++(void);
+      /// Return value for variable \a i
+      virtual Gecode::FloatVal operator[](int i) const;
+      /// Set assignment to value \a val for variable \a i
+      virtual void set(int i, const Gecode::FloatVal& val);
+      /// Destructor
+      virtual ~ExtAssignment(void);
+    };
+    
+    
     /// Generate random selection of assignments
     class RandomAssignment : public Assignment {
     protected:
-      Gecode::FloatNum* vals; ///< The current values for the variables
+      Gecode::FloatVal* vals; ///< The current values for the variables
       int  a;                 ///< How many assigments still to be generated
       /// Generate new value according to domain
       Gecode::FloatNum randval(void);
@@ -115,12 +155,12 @@ namespace Test {
       /// Move to next assignment
       virtual void operator++(void);
       /// Return value for variable \a i
-      virtual Gecode::FloatNum operator[](int i) const;
+      virtual Gecode::FloatVal operator[](int i) const;
+      /// Set assignment to value \a val for variable \a i
+      virtual void set(int i, const Gecode::FloatVal& val);
       /// Destructor
       virtual ~RandomAssignment(void);
     };
-
-    class Test;
 
     /// Space for executing tests
     class TestSpace : public Gecode::Space {
@@ -152,20 +192,24 @@ namespace Test {
       TestSpace(bool share, TestSpace& s);
       /// Copy space during cloning
       virtual Gecode::Space* copy(bool share);
-      /// Add constraints to skip solutions to the next assignment
-      virtual void next_as(const Space& s);
+      /// Add constraints to skip solutions to the \a a assignment
+      virtual void dropUntil(const Assignment& a);
       /// Test whether all variables are assigned
       bool assigned(void) const;
+      /// Test whether all variables match assignment \a a
+      bool matchAssignment(const Assignment& a) const;
       /// Post propagator
       void post(void);
       /// Compute a fixpoint and check for failure
       bool failed(void);
       /// Perform integer tell operation on \a x[i]
-      void rel(int i, Gecode::FloatRelType frt, Gecode::FloatNum n);
+      void rel(int i, Gecode::FloatRelType frt, Gecode::FloatVal n);
       /// Perform Boolean tell on \a b
       void rel(bool sol);
       /// Assign all (or all but one, if \a skip is true) variables to values in \a a
-      void assign(const Assignment& a, bool skip=false);
+      /// If assignment of a variable is UNCERTAIN (if the two intervals are contiguous),
+      /// \a sol is set to UNCERTAIN
+      void assign(const Assignment& a, SolutionTestType& sol, bool skip=false);
       /// Assing a random variable to a random bound
       void bound(void);
       /// Prune some random values from variable \a i
@@ -193,6 +237,8 @@ namespace Test {
       Gecode::FloatVal dom;
       /// Step for going to next solution
       Gecode::FloatNum step;
+      /// Gives the type of assignment to use
+      AssignmentType assigmentType;
       /// Does the constraint also exist as reified constraint
       bool reified;
       /// Whether to perform search test
@@ -205,24 +251,30 @@ namespace Test {
        * \brief Constructor
        *
        * Constructs a test with name \a s and arity \a a and variable
-       * domain \a d and step \a st. Also tests for a reified constraint,
-       * if \a r is true.
+       * domain \a d and step \a st and assignment type \a at. Also
+       * tests for a reified constraint, if \a r is true.
        */
-      Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st,
+      Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
            bool r);
       /**
        * \brief Constructor
        *
        * Constructs a test with name \a s and arity \a a and variable
-       * domain \a min ... \a max and step \a st. Also tests for a reified constraint,
-       * if \a r is true.
+       * domain \a min ... \a max and step \a st and assignment type \a at. Also
+       * tests for a reified constraint, if \a r is true.
        */
-      Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st,
+      Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
            bool r);
       /// Create assignment
       virtual Assignment* assignment(void) const;
+      /// Complete the current assignment to get a feasible one (which satisfies all constraint).
+      /// If such an assignment is computed, it returns true, false otherwise
+      virtual bool extendAssignement(Assignment& a) const;
       /// Check for solution
-      virtual bool solution(const Assignment&) const = 0;
+      virtual SolutionTestType solution(const Assignment&) const = 0;
+      /// Test if \a ts is subsumed or not (i.e. if there is no more propagator unless
+      /// the assignment is an extended assigment.
+      bool subsumed(const TestSpace& ts) const;
       /// Whether to ignore assignment for reification
       virtual bool ignore(const Assignment&) const;
       /// Post constraint
