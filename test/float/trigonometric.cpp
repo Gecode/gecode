@@ -36,7 +36,9 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 #include "test/float.hh"
+#ifdef GECODE_HAS_MPFR
 
 #include <cmath>
 #include <algorithm>
@@ -587,4 +589,5 @@ namespace Test { namespace Float {
    }
 }}
 
+#endif
 // STATISTICS: test-float
