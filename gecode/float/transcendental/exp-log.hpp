@@ -97,8 +97,13 @@ namespace Gecode { namespace Float { namespace Transcendental {
   template<class A, class B>
   ExecStatus
   Pow<A,B>::post(Home home, FloatNum base, A x0, B x1) {
-    GECODE_ME_CHECK(x1.gq(home,0.0));
-    (void) new (home) Pow<A,B>(home,base,x0,x1);
+    if (base <= 0) return ES_FAILED;
+    if (same(x0,x1)) {
+      GECODE_ME_CHECK(x0.eq(home,0.0));
+    } else {
+      GECODE_ME_CHECK(x1.gq(home,0.0));
+      (void) new (home) Pow<A,B>(home,base,x0,x1);
+    }
     return ES_OK;
   }
 
