@@ -41,69 +41,49 @@ namespace Gecode { namespace Float { namespace Trigonometric {
    *
    */
   template<class V>
-  ExecStatus aTanProject(const V& aTanIv, FloatVal& iv) {
-#define I0__PI_2I    FloatVal(0,pi_half_upper())
-#define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
-#define POS(X) ((I0__PI_2I.in(X))?0:1)
-#define CASE(X,Y) case ((X << 2) | Y) :
-#define SHIFTN_UP(N,X) Round.add_up(Round.mul_up(N,pi_upper()),X)
-#define GROWING(I) Round.tan_down(iv.min()) <= Round.tan_up(iv.max())
-#define ATANINF_DOWN Round.atan_down(aTanIv.min())
-#define ATANSUP_UP Round.atan_up(aTanIv.max())
-#define PI_UP pi_upper()
-#define PI_DOWN pi_lower()
-#define PI_TWICE_DOWN pi_twice_lower()
-
-    int n = iv.max() / pi_lower();
+  void aTanProject(const V& aTanIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
+    #define I0__PI_2I    FloatVal(0,pi_half_upper())
+    #define POS(X) ((I0__PI_2I.in(X))?0:1)
+    #define ATANINF_DOWN Round.atan_down(aTanIv.min())
+    #define ATANSUP_UP   Round.atan_up(aTanIv.max())
+    
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
-    switch ( (POS(iv.min()) << 2) | POS(Round.sub_up(iv.max(),Round.mul_up(n,PI_UP))) )
+    switch ( POS(iv_min) )
     {
-      CASE(0,0)
-        if (GROWING(iv)) iv.assign(ATANINF_DOWN,SHIFTN_UP(n,ATANSUP_UP));
-        else  if (Round.tan_down(iv.min()) <= aTanIv.max())
-                if (Round.tan_up(iv.max()) >= aTanIv.min()) break; // Nothing changed
-                else iv.assign(iv.min(),SHIFTN_UP(n-1, ATANSUP_UP));
-              else
-                if (Round.tan_up(iv.max()) >= aTanIv.min()) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), iv.max());
-                else { if (n <= 1) return ES_FAILED; else iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n-1, ATANSUP_UP)); }
+      case 0:
+        if (Round.tan_down(iv_min) > aTanIv.max())    { n_min++; iv_min = ATANINF_DOWN; }
+        else if (Round.tan_up(iv_min) < aTanIv.min()) {          iv_min = ATANINF_DOWN; }
         break;
-      CASE(0,1)
-        if (Round.tan_down(iv.min()) <= aTanIv.max())
-          if (Round.tan_up(iv.max()) >= aTanIv.min()) break; // Nothing changed
-          else iv.assign(iv.min(), SHIFTN_UP(n,ATANSUP_UP));
-        else
-          if (Round.tan_up(iv.max()) >= aTanIv.min()) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), iv.max());
-          else { if (n <= 1) return ES_FAILED; else iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n,ATANSUP_UP)); }
-        break;
-      CASE(1,0)
-        iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n,ATANSUP_UP));
-        break;
-      CASE(1,1)
-        if (GROWING(iv)) iv.assign(Round.add_down(PI_DOWN, ATANINF_DOWN), SHIFTN_UP(n+1,ATANSUP_UP));
-        else  if (Round.tan_down(iv.min()) <= aTanIv.max())
-                if (Round.tan_up(iv.max()) >= aTanIv.min()) break; // Nothing changed
-                else iv.assign(iv.min(), SHIFTN_UP(n,ATANSUP_UP));
-              else
-                if (Round.tan_up(iv.max()) >= aTanIv.min()) iv.assign(Round.add_down(PI_TWICE_DOWN, ATANINF_DOWN), iv.max());
-                else { if (n <= 1) return ES_FAILED; iv.assign(Round.add_down(PI_TWICE_DOWN, ATANINF_DOWN), SHIFTN_UP(n,ATANSUP_UP)); }
+      case 1:
+        if (Round.tan_down(iv_min) > aTanIv.max())    { n_min+=2; iv_min = ATANINF_DOWN; }
+        else if (Round.tan_up(iv_min) < aTanIv.min()) { n_min++;  iv_min = ATANINF_DOWN; }
         break;
       default:
         GECODE_NEVER;
         break;
     }
-    return ES_OK;
-#undef PI_TWICE_DOWN
-#undef PI_UP
-#undef PI_DOWN
-#undef ATANINF_DOWN
-#undef ATANSUP_UP
-#undef GROWING
-#undef SHIFTN_UP
-#undef CASE
-#undef POS
-#undef I0__PI_2I
-#undef IPI_2__PII
+    
+    // 0 <=> in [0;PI/2]
+    // 1 <=> in [PI/2;PI]
+    switch ( POS(iv_max) )
+    {
+      case 0:
+        if (Round.tan_down(iv_max) > aTanIv.max())    {          iv_max = ATANSUP_UP; }
+        else if (Round.tan_up(iv_max) < aTanIv.min()) { n_max--; iv_max = ATANSUP_UP; }
+        break;
+      case 1:
+        if (Round.tan_down(iv_max) > aTanIv.max())    { n_max++; iv_max = ATANSUP_UP; }
+        else if (Round.tan_up(iv_max) < aTanIv.min()) {          iv_max = ATANSUP_UP; }
+        break;
+      default:
+        GECODE_NEVER;
+        break;
+    }
+    #undef ATANINF_DOWN
+    #undef ATANSUP_UP
+    #undef POS
+    #undef I0__PI_2I
   }
 
   /*
@@ -119,6 +99,13 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   Tan<A,B>::post(Home home, A x0, B x1) {
+    if (same(x0,x1)) {
+      #define I0__PI_2I    FloatVal(0,pi_half_upper())
+      if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
+      if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
+      #undef I0__PI_2I
+    }
+
     (void) new (home) Tan<A,B>(home,x0,x1);
     return ES_OK;
   }
@@ -137,12 +124,53 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   Tan<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,tan(x0.domain())));
-    FloatVal iv = fmod(x0.domain(),FloatVal::pi());
-    FloatNum offSet(Round.sub_down(x0.min(),iv.min()));
-    GECODE_ES_CHECK(aTanProject(x1,iv));
-    GECODE_ME_CHECK(x0.eq(home,iv + offSet));
-    return (x0.assigned() && x1.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
+    int n_min = static_cast<int>(Round.div_up(x0.min() + pi_half_upper(), pi_upper()));
+    int n_max = static_cast<int>(Round.div_up(x0.max() + pi_half_upper(), pi_upper()));
+
+    if (same(x0,x1)) {
+      #define I0__PI_2I    FloatVal(0,pi_half_upper())
+      if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
+      if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
+      #undef I0__PI_2I
+      
+      n_min = static_cast<int>(Round.div_up(x0.min(), pi_upper()));
+      n_max = static_cast<int>(Round.div_up(x0.max(), pi_upper()));
+
+      FloatNum x0_min;
+      FloatNum x0_max;
+      FloatNum t = x0.min();
+      do {
+        x0_min = t;
+        if (Round.tan_down(x0_min) > x0_min) n_min++;
+        t = Round.add_down(Round.mul_up(n_min,pi_upper()),Round.tan_down(x0_min));
+      } while (t > x0_min);
+      t = Round.sub_down(Round.mul_up(2*n_max,pi_upper()),x0.max());
+      do {
+        x0_max = t;
+        if (Round.tan_down(x0_max) < x0_max) n_max--;
+        t = Round.add_up(Round.mul_up(n_max,pi_upper()),Round.tan_up(x0_max));
+      } while (t > x0_max);
+      x0_max = Round.sub_up(Round.mul_up(2*n_max,pi_upper()),x0_max);
+      
+      if (x0_min > x0_max) return ES_FAILED;
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(x0_min,x0_max)));      
+    } else {
+      GECODE_ME_CHECK(x1.eq(home,tan(x0.val())));
+      n_min = static_cast<int>(Round.div_up(x0.min(), pi_upper()));
+      n_max = static_cast<int>(Round.div_up(x0.max(), pi_upper()));
+      if (x0.min() < 0) n_min--;
+      if (x0.max() < 0) n_max--;
+      FloatNum iv_min = Round.sub_down(x0.min(),Round.mul_down(n_min, pi_upper()));
+      FloatNum iv_max = Round.sub_up  (x0.max(),Round.mul_down(n_max, pi_upper()));
+      aTanProject(x1,iv_min,iv_max,n_min,n_max);
+      FloatNum n_iv_min = Round.add_down(iv_min,Round.mul_down(n_min, pi_upper()));
+      FloatNum n_iv_max = Round.add_up  (iv_max,Round.mul_down(n_max, pi_upper()));
+      if (n_iv_min > n_iv_max) return ES_FAILED;
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max)));
+      GECODE_ME_CHECK(x1.eq(home,tan(x0.val()))); // Redo tan because with x0 reduction, sin may be more accurate
+    }
+
+    return (x0.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
   /*
@@ -158,7 +186,11 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   template<class A, class B>
   ExecStatus
   ATan<A,B>::post(Home home, A x0, B x1) {
-    (void) new (home) ATan<A,B>(home,x0,x1);
+    if (same(x0,x1)) {
+      GECODE_ME_CHECK(x0.eq(home,0.0));
+    } else {
+      (void) new (home) ATan<A,B>(home,x0,x1);
+    }
     return ES_OK;
   }
 

@@ -115,7 +115,7 @@ public:
 //    rel(*this, exp(f[1]) == f[2]);
 //    rel(*this, log(f[0]) == f[1]);
 //    rel(*this, asin(f[0]) == f[1]);
-//    rel(*this, sin(f[0]) >= f[1]);
+//    rel(*this, sin(f[0]) == f[2]);
 //    rel(*this, acos(f[0]) == f[1]);
 //    rel(*this, cos(f[0]) == f[1]);
 //    rel(*this, atan(f[1]) == f[2]);
@@ -161,14 +161,14 @@ public:
 //    rel(*this, f[0] == FloatVal(-1,1));
 //    step = 0.001;
 
-   // Exemple 5 (coeur cartésien)
-   int q = 2;
-   double p = 0.5;
-   rel(*this, sqr(f[1]) + 2*sqr(f[2]-p*nroot(abs(f[1]),q)) == 1);
-   rel(*this, f[0] == f[1]);
-   step = 0.01; 
-   branch(*this,f[2],FLOAT_VAL_SPLIT_MIN);
-   // Mettre le rel avec f[0] et f[2] dans le constrain
+//    // Exemple 5 (coeur cartésien)
+//    int q = 2;
+//    double p = 0.5;
+//    rel(*this, sqr(f[1]) + 2*sqr(f[2]-p*nroot(abs(f[1]),q)) == 1);
+//    rel(*this, f[0] == f[1]);
+//    step = 0.01; 
+//    branch(*this,f[2],FLOAT_VAL_SPLIT_MIN);
+//    // Mettre le rel avec f[0] et f[2] dans le constrain
 
 //    // Exemple 6 (Folium de Descartes)
 //    rel(*this, 3*f[0]/(1+pow(f[0],3)) == f[1]);
@@ -176,14 +176,14 @@ public:
 //    rel(*this, pow(f[1],3) + pow(f[2],3)  == 3 * f[1] * f[2]);
 //    rel(*this, f[1] == FloatVal(-1,2));
 
-//      // Exemple 7 (rosace)
-//      rel(*this, f[0] >= 0);
-//      rel(*this, f[0] <= 2*FloatVal::pi());
-//      rel(*this, f[4] >= 0);
-//      rel(*this, f[4]*cos(f[0]) == f[1]);
-//      rel(*this, f[4]*sin(f[0]) == f[2]);
-//      rel(*this, f[4] == 2*cos(10*f[0]));
-//      step = 0.001;
+     // Exemple 7 (rosace)
+     rel(*this, f[0] >= 0);
+     rel(*this, f[0] <= 2*FloatVal::pi());
+     rel(*this, f[4] >= 0);
+     rel(*this, f[4]*cos(f[0]) == f[1]);
+     rel(*this, f[4]*sin(f[0]) == f[2]);
+     rel(*this, f[4] == 2*cos(10*f[0]));
+     step = 0.001;
 
 #ifdef BOXES
     rel(*this, f[0] == FloatVal(sMinValue,sMinValue+step));
@@ -202,9 +202,9 @@ public:
 
   virtual void constrain(const Space& _b) {
     const TestFloat& b = static_cast<const TestFloat&>(_b);
-    rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[2] >= (b.f[2].max()+step))
-                                             || (f[2] <= (b.f[2].min()-step)));
-//     rel(*this, f[0] >= (b.f[0].max()+step));
+//     rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[2] >= (b.f[2].max()+step))
+//                                              || (f[2] <= (b.f[2].min()-step)));
+    rel(*this, f[0] >= (b.f[0].max()+step));
   }
 
   virtual void

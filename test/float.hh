@@ -212,6 +212,10 @@ namespace Test {
       void assign(const Assignment& a, SolutionTestType& sol, bool skip=false);
       /// Assing a random variable to a random bound
       void bound(void);
+      /// Cut the bigger variable to an half sized interval. It returns
+      /// the new size of the cut interval. \a cutDirections gives the direction
+      /// to follow (upper part or lower part of the interval).
+      Gecode::FloatNum cut(int* cutDirections);
       /// Prune some random values from variable \a i
       void prune(int i);
       /// Prune some random values for some random variable

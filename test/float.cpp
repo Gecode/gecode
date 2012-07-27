@@ -281,6 +281,34 @@ namespace Test { namespace Float {
       rel(i, FRT_GQ, nextafter(x[i].max(), x[i].min()));
   }
 
+  Gecode::FloatNum
+  TestSpace::cut(int* cutDirections) {
+    using namespace Gecode;
+    using namespace Gecode::Float;
+    // Select variable to be cut
+    int i = 0;
+    while (x[i].assigned()) i++;
+    for (int j=x.size(); j--; ) {
+      if (!x[j].assigned() && (x[j].size() > x[i].size())) i = j;
+    }
+    if (cutDirections[i]) {
+      FloatNum m = Round.div_up(Round.add_up(x[i].min(),x[i].max()),2);
+      FloatNum n = nextafter(x[i].min(), x[i].max());
+      if (m > n)
+        rel(i, FRT_LQ, m);
+      else
+        rel(i, FRT_LQ, n);
+    } else {
+      FloatNum m = Round.div_down(Round.add_down(x[i].min(),x[i].max()),2);
+      FloatNum n = nextafter(x[i].max(), x[i].min());
+      if (m < n)
+        rel(i, FRT_GQ, m);
+      else
+        rel(i, FRT_GQ, n);
+    }
+    return x[i].size();
+  }
+  
   void 
   TestSpace::prune(int i) {
     using namespace Gecode;
@@ -430,7 +458,6 @@ if (!(T)) {                                                     \
     Search::Options search_o;
     search_o.threads = 1;
     DFS<TestSpace> * e_s = new DFS<TestSpace>(search_s,search_o);
-
     while (a()) {
       SolutionTestType sol = solution(a);
       if (opt.log) {
@@ -681,10 +708,20 @@ if (!(T)) {                                                     \
       for (int i = s->x.size(); i--; )
         s->prune(i);
       if (!s->failed()) {
+        TestSpace* ss = static_cast<TestSpace*>(s->clone(false));
         while (!s->failed() && !s->assigned())
           s->bound();
+        if (s->failed()) {
+          delete s;
+          s = ss;
+          Gecode::FloatNum size = 1.0;
+          int cutDirections[s->x.size()];
+          for (int j = s->x.size(); j--; ) cutDirections[j] = Base::rand(2);
+          while (!s->failed() && !s->assigned() && (size > 1e-10))
+              size = s->cut(cutDirections);
+        }
         CHECK_TEST(!s->failed(), "Failed");
-        CHECK_TEST(subsumed(*s), "No subsumption");
+        if (s->assigned()) { CHECK_TEST(subsumed(*s), "No subsumption"); }
       }
       delete s;
     }
