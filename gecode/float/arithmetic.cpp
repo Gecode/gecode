@@ -114,14 +114,14 @@ namespace Gecode {
   }
 
   void
-  pow(Home home, FloatVar x0, int exp, FloatVar x1) {
+  pow(Home home, FloatVar x0, unsigned int exp, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,exp)));
   }
 
   void
-  nroot(Home home, FloatVar x0, int exp, FloatVar x1) {
+  nroot(Home home, FloatVar x0, unsigned int exp, FloatVar x1) {
     using namespace Float;
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView,FloatView>::post(home,x0,x1,exp)));

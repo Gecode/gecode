@@ -439,6 +439,170 @@ namespace Test { namespace Float {
        }
      };
 
+     /// %Test for pow  constraint
+     class PowXY : public Test {
+       unsigned int n;
+     public:
+       /// Create and register test
+       PowXY(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
+       /// %Test whether \a x is solution
+       virtual SolutionTestType solution(const Assignment& x) const {
+         Gecode::FloatVal d0 = x[0];
+         Gecode::FloatVal d1 = x[1];
+         try {
+           return (d1 == pow(d0,n))?SOLUTION:NO_SOLUTION;
+         } catch (boost::numeric::interval_lib::comparison_error&) {
+           return UNCERTAIN;
+         }         
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::pow(home, x[0], n, x[1]);
+       }
+     };
+     
+     /// %Test for pow  constraint where solution is ensured
+     class PowXY_Sol : public Test {
+       unsigned int n;
+     public:
+       /// Create and register test
+       PowXY_Sol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
+       /// %Test whether \a x is solution
+       virtual SolutionTestType solution(const Assignment& x) const {
+         Gecode::FloatVal d0 = x[0];
+         Gecode::FloatVal d1 = x[1];
+         try {
+           return (d1 == pow(d0,n))?SOLUTION:NO_SOLUTION;
+         } catch (boost::numeric::interval_lib::comparison_error&) {
+           return UNCERTAIN;
+         }         
+       }
+       /// Extend assignment \a x
+       virtual bool extendAssignement(Assignment& x) const {
+         Gecode::FloatVal d = pow(x[0],n);
+         if (Gecode::Float::subset(d, dom))
+         {
+           x.set(1, d);
+           return true;
+         } else
+           return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::pow(home, x[0], n, x[1]);
+       }
+     };
+     
+     /// %Test for pow  constraint with shared variables
+     class PowXX : public Test {
+       unsigned int n;
+     public:
+       /// Create and register test
+       PowXX(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       : Test("Arithmetic::Pow::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       /// %Test whether \a x is solution
+       virtual SolutionTestType solution(const Assignment& x) const {
+         Gecode::FloatVal d0 = x[0];
+         try {
+           return (d0 == pow(d0,n))?SOLUTION:NO_SOLUTION;
+         } catch (boost::numeric::interval_lib::comparison_error&) {
+           return UNCERTAIN;
+         }         
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::pow(home, x[0], n, x[0]);
+       }
+     };
+     
+     /// %Test for nroot  constraint
+     class NRootXY : public Test {
+       unsigned int n;
+     public:
+       /// Create and register test
+       NRootXY(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
+       /// %Test whether \a x is solution
+       virtual SolutionTestType solution(const Assignment& x) const {
+         if (n == 0) return NO_SOLUTION;
+         if (x[0].max() < 0) return NO_SOLUTION;
+         Gecode::FloatVal d0 = x[0];
+         Gecode::FloatVal d1 = x[1];
+         try {
+           return (d1 == nth_root(d0,n))?SOLUTION:NO_SOLUTION;
+         } catch (boost::numeric::interval_lib::comparison_error&) {
+           return UNCERTAIN;
+         }         
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::nroot(home, x[0], n, x[1]);
+       }
+     };
+     
+     /// %Test for nroot  constraint where solution is ensured
+     class NRootXY_Sol : public Test {
+       unsigned int n;
+     public:
+       /// Create and register test
+       NRootXY_Sol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
+       /// %Test whether \a x is solution
+       virtual SolutionTestType solution(const Assignment& x) const {
+         if (n == 0) return NO_SOLUTION;
+         if (x[0].max() < 0) return NO_SOLUTION;
+         Gecode::FloatVal d0 = x[0];
+         Gecode::FloatVal d1 = x[1];
+         try {
+           return (d1 == nth_root(d0,n))?SOLUTION:NO_SOLUTION;
+         } catch (boost::numeric::interval_lib::comparison_error&) {
+           return UNCERTAIN;
+         }         
+       }
+       /// Extend assignment \a x
+       virtual bool extendAssignement(Assignment& x) const {
+         if (n == 0) return false;
+         if (x[0].max() < 0) return false;
+         Gecode::FloatVal d = nth_root(x[0],n);
+         if (Gecode::Float::subset(d, dom))
+         {
+           x.set(1, d);
+           return true;
+         } else
+           return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::nroot(home, x[0], n, x[1]);
+       }
+     };
+     
+     /// %Test for nroot  constraint with shared variables
+     class NRootXX : public Test {
+       unsigned int n;
+     public:
+       /// Create and register test
+       NRootXX(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       : Test("Arithmetic::NRoot::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
+       /// %Test whether \a x is solution
+       virtual SolutionTestType solution(const Assignment& x) const {
+         if (n == 0) return NO_SOLUTION;
+         if (x[0].max() < 0) return NO_SOLUTION;
+         Gecode::FloatVal d0 = x[0];
+         try {
+           return (d0 == nth_root(d0,n))?SOLUTION:NO_SOLUTION;
+         } catch (boost::numeric::interval_lib::comparison_error&) {
+           return UNCERTAIN;
+         }         
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         Gecode::nroot(home, x[0], n, x[0]);
+       }
+     };
+     
      /// %Test for absolute value constraint
      class AbsXY : public Test {
      public:
@@ -867,6 +1031,78 @@ namespace Test { namespace Float {
      SqrtXX sqrt_xx_b("B",b,step);
      SqrtXX sqrt_xx_c("C",c,step);
 
+     PowXY pow_xy_a_1("A",a,2,step);
+     PowXY pow_xy_b_1("B",b,2,step);
+     PowXY pow_xy_c_1("C",c,2,step);
+     
+     PowXY_Sol pow_xy_sol_a_1("A",a,2,step);
+     PowXY_Sol pow_xy_sol_b_1("B",b,2,step);
+     PowXY_Sol pow_xy_sol_c_1("C",c,2,step);
+     
+     PowXX pow_xx_a_1("A",a,2,step);
+     PowXX pow_xx_b_1("B",b,2,step);
+     PowXX pow_xx_c_1("C",c,2,step);
+     
+     PowXY pow_xy_a_2("A",a,3,step);
+     PowXY pow_xy_b_2("B",b,3,step);
+     PowXY pow_xy_c_2("C",c,3,step);
+     
+     PowXY_Sol pow_xy_sol_a_2("A",a,3,step);
+     PowXY_Sol pow_xy_sol_b_2("B",b,3,step);
+     PowXY_Sol pow_xy_sol_c_2("C",c,3,step);
+     
+     PowXX pow_xx_a_2("A",a,3,step);
+     PowXX pow_xx_b_2("B",b,3,step);
+     PowXX pow_xx_c_2("C",c,3,step);
+     
+     PowXY pow_xy_a_3("A",a,0,step);
+     PowXY pow_xy_b_3("B",b,0,step);
+     PowXY pow_xy_c_3("C",c,0,step);
+     
+     PowXY_Sol pow_xy_sol_a_3("A",a,0,step);
+     PowXY_Sol pow_xy_sol_b_3("B",b,0,step);
+     PowXY_Sol pow_xy_sol_c_3("C",c,0,step);
+     
+     PowXX pow_xx_a_3("A",a,0,step);
+     PowXX pow_xx_b_3("B",b,0,step);
+     PowXX pow_xx_c_3("C",c,0,step);
+     
+     NRootXY nroot_xy_a_1("A",a,2,step);
+     NRootXY nroot_xy_b_1("B",b,2,step);
+     NRootXY nroot_xy_c_1("C",c,2,step);
+     
+     NRootXY_Sol nroot_xy_sol_a_1("A",a,2,step);
+     NRootXY_Sol nroot_xy_sol_b_1("B",b,2,step);
+     NRootXY_Sol nroot_xy_sol_c_1("C",c,2,step);
+     
+     NRootXX nroot_xx_a_1("A",a,2,step);
+     NRootXX nroot_xx_b_1("B",b,2,step);
+     NRootXX nroot_xx_c_1("C",c,2,step);
+     
+     NRootXY nroot_xy_a_2("A",a,3,step);
+     NRootXY nroot_xy_b_2("B",b,3,step);
+     NRootXY nroot_xy_c_2("C",c,3,step);
+     
+     NRootXY_Sol nroot_xy_sol_a_2("A",a,3,step);
+     NRootXY_Sol nroot_xy_sol_b_2("B",b,3,step);
+     NRootXY_Sol nroot_xy_sol_c_2("C",c,3,step);
+     
+     NRootXX nroot_xx_a_2("A",a,3,step);
+     NRootXX nroot_xx_b_2("B",b,3,step);
+     NRootXX nroot_xx_c_2("C",c,3,step);
+     
+     NRootXY nroot_xy_a_3("A",a,0,step);
+     NRootXY nroot_xy_b_3("B",b,0,step);
+     NRootXY nroot_xy_c_3("C",c,0,step);
+     
+     NRootXY_Sol nroot_xy_sol_a_3("A",a,0,step);
+     NRootXY_Sol nroot_xy_sol_b_3("B",b,0,step);
+     NRootXY_Sol nroot_xy_sol_c_3("C",c,0,step);
+     
+     NRootXX nroot_xx_a_3("A",a,0,step);
+     NRootXX nroot_xx_b_3("B",b,0,step);
+     NRootXX nroot_xx_c_3("C",c,0,step);
+     
      AbsXY abs_xy_a("A",a,step);
      AbsXY abs_xy_b("B",b,step);
      AbsXY abs_xy_c("C",c,step);
