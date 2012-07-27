@@ -86,6 +86,8 @@ namespace Gecode { namespace Search { namespace Sequential {
       bool rightmost(void) const;
       /// Move to next alternative
       void next(void);
+      /// Test whether current alternative was LAO
+      bool lao(void) const;
       
       /// Free memory for edge
       void dispose(void);
@@ -150,7 +152,11 @@ namespace Gecode { namespace Search { namespace Sequential {
   }
   forceinline bool
   Path::Edge::rightmost(void) const {
-    return _alt+1 == _choice->alternatives();
+    return _alt+1 >= _choice->alternatives();
+  }
+  forceinline bool
+  Path::Edge::lao(void) const {
+    return _alt >= _choice->alternatives();
   }
   forceinline void
   Path::Edge::next(void) {
@@ -180,6 +186,11 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
+    if (!ds.empty() && ds.top().lao()) {
+      // Topmost stack entry was LAO -> reuse
+      stat.pop(ds.top().space(),ds.top().choice());
+      ds.pop().dispose();
+    }
     Edge sn(s,c);
     ds.push(sn);
     stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
@@ -262,6 +273,8 @@ namespace Gecode { namespace Search { namespace Sequential {
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
+      // Mark as reusable
+      ds.top().next();
       d = 0;
       return s;
     }
@@ -330,6 +343,8 @@ namespace Gecode { namespace Search { namespace Sequential {
         s->constrain(*best);
       }
       ds.top().space(NULL);
+      // Mark as reusable
+      ds.top().next();
       d = 0;
       return s;
     }

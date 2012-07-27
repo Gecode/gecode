@@ -86,6 +86,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       unsigned int alt(void) const;
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
+      /// Test whether current alternative was LAO
+      bool lao(void) const;
       /// Test whether there is an alternative that can be stolen
       bool work(void) const;
       /// Move to next alternative
@@ -164,11 +166,15 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline bool
   Path::Edge::rightmost(void) const {
-    return _alt == _alt_max;
+    return _alt >= _alt_max;
+  }
+  forceinline bool
+  Path::Edge::lao(void) const {
+    return _alt > _alt_max;
   }
   forceinline bool
   Path::Edge::work(void) const {
-    return _alt != _alt_max;
+    return _alt < _alt_max;
   }
   forceinline void
   Path::Edge::next(void) {
@@ -203,6 +209,11 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
+    if (!ds.empty() && ds.top().lao()) {
+      // Topmost stack entry was LAO -> reuse
+      stat.pop(ds.top().space(),ds.top().choice());
+      ds.pop().dispose();
+    }
     Edge sn(s,c);
     if (sn.work())
       n_work++;
@@ -328,6 +339,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
+      // Mark as reusable
+      ds.top().next();
       d = 0;
       return s;
     }
@@ -396,6 +409,8 @@ namespace Gecode { namespace Search { namespace Parallel {
         s->constrain(*best);
       }
       ds.top().space(NULL);
+      // Mark as reusable
+      ds.top().next();
       d = 0;
       return s;
     }

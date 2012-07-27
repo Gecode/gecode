@@ -73,6 +73,17 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: search
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+The search engines now do not allocate memory on the search stack for
+the rightmost branch of each node. This means that the search tree
+depth is now computed differently. It now represents the actual peak
+depth required at any one time, taking into account that rightmost
+branches reuse the stack entry of their parents.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major
