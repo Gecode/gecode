@@ -139,6 +139,7 @@ namespace Gecode {
         break;
       default: throw Int::UnknownReifyMode("Float::rel");
       }
+      break;
     case FRT_LQ:
       switch (r.mode()) {
       case RM_EQV:
@@ -200,6 +201,34 @@ namespace Gecode {
     }
   }
 
+  void
+  rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
+    using namespace Float;
+    if (home.failed()) return;
+    switch (frt) {
+    case FRT_EQ:
+      {
+        ViewArray<FloatView> xv(home,x.size()+1);
+        xv[x.size()]=y;
+        for (int i=x.size(); i--; )
+          xv[i]=x[i];
+        GECODE_ES_FAIL(Rel::NaryEq<FloatView>::post(home,xv));
+      }
+      break;
+    case FRT_GQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(Rel::Lq<FloatView>::post(home,y,x[i]));
+      }
+      break;
+    case FRT_LQ:
+      for (int i=x.size(); i--; ) {
+        GECODE_ES_FAIL(Rel::Lq<FloatView>::post(home,x[i],y));
+      }
+      break;
+    default:
+      throw UnknownRelation("Floatt::rel");
+    }
+  }
 }
 
 // STATISTICS: float-post

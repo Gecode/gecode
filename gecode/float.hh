@@ -1094,6 +1094,11 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c);
+  /** \brief Propagates \f$ x_i \sim_{frt} y \f$ for all \f$0\leq i<|x|\f$
+   * \ingroup TaskModelFloatRelFloat
+   */
+  GECODE_FLOAT_EXPORT void
+  rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y);
 
 }
 

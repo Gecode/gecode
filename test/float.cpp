@@ -465,7 +465,6 @@ if (!(T)) {                                                     \
              << ((sol==SOLUTION) ? " (solution)" : ((sol==NO_SOLUTION)?" (no solution)":" (uncertain)"))
              << std::endl;
       }
-
       START_TEST("Assignment (after posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this,false);
@@ -570,12 +569,12 @@ if (!(T)) {                                                     \
         delete s;
       }
 
-      if (reified && !ignore(a)) {
+      if (reified && !ignore(a) && (sol!=UNCERTAIN)) {
         for (ReifyModes rms; rms(); ++rms) {
           START_TEST("Assignment reified (rewrite after post)");
           TestSpace* s = new TestSpace(arity,dom,step,this,true,rms.rm());
           s->post();
-          s->rel(sol);
+          s->rel(sol==SOLUTION);
           s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -585,7 +584,7 @@ if (!(T)) {                                                     \
         {
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
           s->post();
-          s->rel(!sol);
+          s->rel(!(sol==SOLUTION));
           s->assign(a,sol);
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
@@ -593,7 +592,7 @@ if (!(T)) {                                                     \
         for (ReifyModes rms; rms(); ++rms) {
           START_TEST("Assignment reified (immediate rewrite)");
           TestSpace* s = new TestSpace(arity,dom,step,this,true,rms.rm());
-          s->rel(sol);
+          s->rel(sol==SOLUTION);
           s->post();
           s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
@@ -603,7 +602,7 @@ if (!(T)) {                                                     \
         START_TEST("Assignment reified (immediate failure)");
         {
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
-          s->rel(!sol);
+          s->rel(!(sol==SOLUTION));
           s->post();
           s->assign(a,sol);
           CHECK_TEST(s->failed(), "Not failed");

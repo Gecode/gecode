@@ -1007,7 +1007,7 @@ INTTESTSRC0 = test/int.cpp $(INTTESTSRC00:%=test/int/%.cpp)
 INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 
 FLOATTESTSRC00 = \
-	basic arithmetic transcendental trigonometric
+	basic arithmetic transcendental trigonometric linear rel channel
 FLOATTESTSRC0 = test/float.cpp $(FLOATTESTSRC00:%=test/float/%.cpp)
 
 ifeq "@enable_float_vars@" "yes"

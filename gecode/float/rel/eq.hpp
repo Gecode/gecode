@@ -168,7 +168,7 @@ namespace Gecode { namespace Float { namespace Rel {
       // One of the variables is assigned
       for (int i = 0; ; i++)
         if (x[i].assigned()) {
-          FloatNum n = x[i].val();
+          FloatVal n = x[i].val();
           x.move_lst(i);
           for (int j = x.size(); j--; )
             GECODE_ME_CHECK(x[j].eq(home,n));
@@ -289,10 +289,9 @@ namespace Gecode { namespace Float { namespace Rel {
   ReEqFloat<View,CtrlView,rm>::post(Home home, View x, FloatVal c, CtrlView b) {
     if (b.one()) {
       if (rm != RM_PMI)
-        GECODE_ME_CHECK(x.eq(home,c));
+        GECODE_ME_CHECK(x.eq(home,c));      
     } else if (x.assigned()) {
-      assert(b.none());
-      if (x.val() == c) {
+      if (overlap(x.val(),c)) {
         if (rm != RM_IMP)
           GECODE_ME_CHECK(b.one(home));
       } else {

@@ -118,7 +118,12 @@ namespace Gecode { namespace Float { namespace Rel {
           GECODE_ME_CHECK(b.zero_none(home)); 
         break;
       case RT_MAYBE:
-        (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b); 
+        if (!x0.assigned() || !x1.assigned())
+          (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b);
+        else {
+          if (rm != RM_IMP)
+            GECODE_ME_CHECK(b.one_none(home)); 
+        }
         break;
       default: GECODE_NEVER;
       }
@@ -163,7 +168,13 @@ namespace Gecode { namespace Float { namespace Rel {
         GECODE_ME_CHECK(b.zero_none(home)); 
       break;
     case RT_MAYBE:
-      return ES_FIX;
+      if (!x0.assigned() || !x1.assigned())
+        return ES_FIX;
+      else {
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
+        break;
+      }
     default: GECODE_NEVER;
     }
     return home.ES_SUBSUMED(*this);

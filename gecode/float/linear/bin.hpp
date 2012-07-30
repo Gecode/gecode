@@ -324,6 +324,7 @@ namespace Gecode { namespace Float { namespace Linear {
   LqBin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,c - x1.min()));
     GECODE_ME_CHECK(x1.lq(home,c - x0.min()));
+    if (x0.assigned() && x1.assigned()) return home.ES_SUBSUMED(*this);
     return (c >= Round.add_up(x0.max(),x1.max())) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -370,6 +371,7 @@ namespace Gecode { namespace Float { namespace Linear {
   GqBin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.gq(home,c - x1.max()));
     GECODE_ME_CHECK(x1.gq(home,c - x0.max()));
+    if (x0.assigned() && x1.assigned()) return home.ES_SUBSUMED(*this);
     return (c <= Round.add_down(x0.min(),x1.min())) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 

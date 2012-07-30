@@ -180,7 +180,7 @@ namespace Gecode { namespace Float { namespace Rel {
   ReGqFloat<View,CtrlView,rm>::post(Home home, View x, FloatVal c, CtrlView b) {
     if (b.one()) {
       if (rm != RM_PMI)
-        GECODE_ME_CHECK(x.lq(home,c));
+        GECODE_ME_CHECK(x.gq(home,c));
     } else {
       switch (rtest_gq(x,c)) {
       case Int::RT_TRUE:
@@ -217,7 +217,7 @@ namespace Gecode { namespace Float { namespace Rel {
   ReGqFloat<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       if (rm != RM_PMI)
-        GECODE_ME_CHECK(x0.lq(home,c));
+        GECODE_ME_CHECK(x0.gq(home,c));
     } else {
       switch (rtest_gq(x0,c)) {
       case Int::RT_TRUE:

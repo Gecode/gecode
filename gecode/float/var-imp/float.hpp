@@ -149,9 +149,9 @@ namespace Gecode { namespace Float {
   FloatVarImp::gq(Space& home, const FloatVal& n) {
     if (n.min() > dom.max())  return ME_FLOAT_FAILED;
     if ((n.min() <= dom.min()) || assigned()) return ME_FLOAT_NONE;
-    FloatDelta d(dom.min(),n.max());
+    FloatDelta d(dom.min(),n.min());
     ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(n.max(),dom.max()));
+    dom = intersect(dom,FloatVal(n.min(),dom.max()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));
@@ -175,9 +175,9 @@ namespace Gecode { namespace Float {
   FloatVarImp::lq(Space& home, const FloatVal& n) {
     if (n.max() < dom.min())  return ME_FLOAT_FAILED;
     if ((n.max() >= dom.max()) || assigned()) return ME_FLOAT_NONE;
-    FloatDelta d(n.min(),dom.max());
+    FloatDelta d(n.max(),dom.max());
     ModEvent me = ME_FLOAT_BND;
-    dom = intersect(dom,FloatVal(dom.min(),n.min()));
+    dom = intersect(dom,FloatVal(dom.min(),n.max()));
     if (assigned()) me = ME_FLOAT_VAL;
     GECODE_ASSUME((me == ME_FLOAT_VAL) |
                   (me == ME_FLOAT_BND));

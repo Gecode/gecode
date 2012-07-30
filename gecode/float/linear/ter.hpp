@@ -254,6 +254,7 @@ namespace Gecode { namespace Float { namespace Linear {
     GECODE_ME_CHECK(x0.lq(home,c - Round.add_up(x1.min(),x2.min())));
     GECODE_ME_CHECK(x1.lq(home,c - Round.add_up(x0.min(),x2.min())));
     GECODE_ME_CHECK(x2.lq(home,c - Round.add_up(x0.min(),x1.min())));
+    if (x0.assigned() && x1.assigned() && x2.assigned()) return home.ES_SUBSUMED(*this);
     return (c >= Round.add_down(x0.max(),Round.add_down(x1.max(),x2.max()))) ?
       home.ES_SUBSUMED(*this) : ES_FIX;
   }
