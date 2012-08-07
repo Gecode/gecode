@@ -327,7 +327,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       SupportEntry*  o = p.support_data[i];
       while (o != NULL) {
         // Allocate new support entry
-        SupportEntry* s = new (home) SupportEntry(o->t);
+        SupportEntry* s =
+          new (home) SupportEntry(ts()->data+(o->t-p.ts()->data));
         // Link in support entry
         (*n) = s; n = s->nextRef();
         // move to next one
