@@ -89,8 +89,8 @@ What:   bug
 Rank:   major
 Thanks: Manuel Baclet
 [DESCRIPTION]
-Fixed copying of tuple sets in extensional constraints (could lead to
-crashes when using parallel search).
+Fixed copying of tuple sets in extensional constraints and IntSets in
+sequence constraints (could lead to crashes when using parallel search).
 
 [ENTRY]
 Module: support
