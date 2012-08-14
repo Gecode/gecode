@@ -716,6 +716,16 @@ namespace Gecode { namespace FlatZinc {
       }
     }
 
+    void p_count_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      IntVar x = s.arg2IntVar(ce[1]);
+      IntVar y = s.arg2IntVar(ce[2]);
+      BoolVar b = s.arg2BoolVar(ce[3]);
+      IntVar c(s,0,Int::Limits::max);
+      count(s,iv,x,IRT_EQ,c,s.ann2icl(ann));
+      rel(s, b == (c==y));
+    }
+
     void count_rel(IntRelType irt,
                    FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = s.arg2intvarargs(ce[1]);
@@ -1246,6 +1256,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("array_bool_lt", &p_array_bool_lt);
         registry().add("array_bool_lq", &p_array_bool_lq);
         registry().add("count", &p_count);
+        registry().add("count_reif", &p_count_reif);
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
         registry().add("gecode_bin_packing_load", &p_bin_packing_load);
