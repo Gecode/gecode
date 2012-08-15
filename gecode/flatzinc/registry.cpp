@@ -783,7 +783,16 @@ namespace Gecode { namespace FlatZinc {
         cover << extra.val();
         iv1 << IntVar(s,0,iv0.size());
       }
-      count(s, iv0, iv1, cover, s.ann2icl(ann));
+      IntConLevel icl = s.ann2icl(ann);
+      if (icl==ICL_DOM) {
+        IntVarArgs allvars = iv0+iv1;
+        unshare(s, allvars);
+        count(s, allvars.slice(0,1,iv0.size()), 
+                 allvars.slice(iv0.size(),1,iv1.size()),
+                 cover, s.ann2icl(ann));
+      } else {
+        count(s, iv0, iv1, cover, s.ann2icl(ann));
+      }
     }
 
     void p_global_cardinality_closed(FlatZincSpace& s, const ConExpr& ce,
