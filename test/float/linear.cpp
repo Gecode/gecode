@@ -9,8 +9,8 @@
  *     Vincent Barichard, 2012
  *
  *  Last modified:
- *     $Date: 2012-01-18 10:44:07 +0100 (mer. 18 janv. 2012) $ by $Author: schulte $
- *     $Revision: 12496 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

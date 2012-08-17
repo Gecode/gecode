@@ -168,7 +168,7 @@ namespace Test { namespace Int {
          Gecode::sqr(home, x[0], x[1], icl);
        }
      };
-
+     
      /// %Test for squaring constraint with shared variables
      class SqrXX : public Test {
      public:
@@ -221,6 +221,122 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::sqrt(home, x[0], x[0], icl);
+       }
+     };
+
+     /// %Test for power constraint
+     class PowXY : public Test {
+     protected:
+       /// The exponent
+       int n;
+     public:
+       /// Create and register test
+       PowXY(const std::string& s, int n0, const Gecode::IntSet& d,
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Pow::XY::"+str(n0)+"::"+str(icl)+"::"+s,
+                2,d,false,icl), n(n0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         long long int p = 1;
+         for (int i=0; i<n; i++) {
+           p *= x[0];
+           if ((p < Gecode::Int::Limits::min) || 
+               (p > Gecode::Int::Limits::max))
+             return false;
+         }
+         return p == x[1];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::pow(home, x[0], n, x[1], icl);
+       }
+     };
+
+     /// %Test for power constraint with shared variables
+     class PowXX : public Test {
+     protected:
+       /// The exponent
+       int n;
+     public:
+       /// Create and register test
+       PowXX(const std::string& s, int n0, const Gecode::IntSet& d,
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Pow::XX::"+str(n0)+"::"+str(icl)+"::"+s,
+                1,d,false,icl), n(n0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         long long int p = 1;
+         for (int i=0; i<n; i++) {
+           p *= x[0];
+           if ((p < Gecode::Int::Limits::min) || 
+               (p > Gecode::Int::Limits::max))
+             return false;
+         }
+         return p == x[0];
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::pow(home, x[0], n, x[0], icl);
+       }
+     };
+
+     /// %Test for nroot constraint
+     class NrootXY : public Test {
+     protected:
+       /// The root index
+       int n;
+     public:
+       /// Create and register test
+       NrootXY(const std::string& s, int n0, const Gecode::IntSet& d,
+             Gecode::IntConLevel icl)
+         : Test("Arithmetic::Nroot::XY::"+str(n0)+"::"+str(icl)+"::"+s,
+                2,d,false,icl), n(n0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         if ((x[0] < 0) || (x[1] < 0))
+           return false;
+         long long int l = 1;
+         long long int u = 1;
+         for (int i=0; i<n; i++) {
+           l *= x[1]; u *= x[1]+1;
+           if (l > Gecode::Int::Limits::max)
+             return false;
+         }
+         return (x[0] >= l) && (x[0] < u);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::nroot(home, x[0], n, x[1], icl);
+       }
+     };
+
+     /// %Test for nroot constraint with shared variables
+     class NrootXX : public Test {
+     protected:
+       /// The root index
+       int n;
+     public:
+       /// Create and register test
+       NrootXX(const std::string& s, int n0, const Gecode::IntSet& d,
+               Gecode::IntConLevel icl)
+         : Test("Arithmetic::Nroot::XX::"+str(n0)+"::"+str(icl)+"::"+s,
+                1,d,false,icl), n(n0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         if (x[0] < 0)
+           return false;
+         long long int l = 1;
+         long long int u = 1;
+         for (int i=0; i<n; i++) {
+           l *= x[0]; u *= x[0]+1;
+           if (l > Gecode::Int::Limits::max)
+             return false;
+         }
+         return (x[0] >= l) && (x[0] < u);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::nroot(home, x[0], n, x[0], icl);
        }
      };
 
@@ -574,196 +690,169 @@ namespace Test { namespace Int {
      };
 
 
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
 
-     const int va[7] = {
-       Gecode::Int::Limits::min, Gecode::Int::Limits::min+1,
-       -1,0,1,
-       Gecode::Int::Limits::max-1, Gecode::Int::Limits::max
+         const int va[7] = {
+           Gecode::Int::Limits::min, Gecode::Int::Limits::min+1,
+           -1,0,1,
+           Gecode::Int::Limits::max-1, Gecode::Int::Limits::max
+         };
+         const int vb[9] = {
+           static_cast<int>(-sqrt(static_cast<double>
+                                  (-Gecode::Int::Limits::min))),
+           -4,-2,-1,0,1,2,4,
+           static_cast<int>(sqrt(static_cast<double>
+                                 (Gecode::Int::Limits::max)))
+         };
+         
+         Gecode::IntSet a(va,7);
+         Gecode::IntSet b(vb,9);
+         Gecode::IntSet c(-8,8);
+         Gecode::IntSet d(-70,70);
+
+         (void) new DivMod("A",a);
+         (void) new DivMod("B",b);
+         (void) new DivMod("C",c);
+         
+         (void) new Div("A",a);
+         (void) new Div("B",b);
+         (void) new Div("C",c);
+         
+         (void) new Mod("A",a);
+         (void) new Mod("B",b);
+         (void) new Mod("C",c);
+
+
+         for (IntConLevels icls; icls(); ++icls) 
+           if (icls.icl() != Gecode::ICL_VAL) {
+             (void) new MultXYZ("A",a,icls.icl());
+             (void) new MultXYZ("B",b,icls.icl());
+             (void) new MultXYZ("C",c,icls.icl());
+
+             (void) new MultXXY("A",a,icls.icl());
+             (void) new MultXXY("B",b,icls.icl());
+             (void) new MultXXY("C",c,icls.icl());
+
+             (void) new MultXYX("A",a,icls.icl());
+             (void) new MultXYX("B",b,icls.icl());
+             (void) new MultXYX("C",c,icls.icl());
+
+             (void) new MultXYY("A",a,icls.icl());
+             (void) new MultXYY("B",b,icls.icl());
+             (void) new MultXYY("C",c,icls.icl());
+
+             (void) new MultXXX("A",a,icls.icl());
+             (void) new MultXXX("B",b,icls.icl());
+             (void) new MultXXX("C",c,icls.icl());
+
+             (void) new SqrXY("A",a,icls.icl());
+             (void) new SqrXY("B",b,icls.icl());
+             (void) new SqrXY("C",c,icls.icl());
+
+             (void) new SqrXX("A",a,icls.icl());
+             (void) new SqrXX("B",b,icls.icl());
+             (void) new SqrXX("C",c,icls.icl());
+
+             for (int n=0; n<=6; n++) {
+               (void) new PowXY("A",n,a,icls.icl());
+               (void) new PowXY("B",n,b,icls.icl());
+               (void) new PowXY("C",n,c,icls.icl());
+               (void) new PowXY("D",n,d,icls.icl());
+  
+               (void) new PowXX("A",n,a,icls.icl());
+               (void) new PowXX("B",n,b,icls.icl());
+               (void) new PowXX("C",n,c,icls.icl());
+               (void) new PowXX("D",n,d,icls.icl());
+             }
+
+             for (int n=1; n<=6; n++) {
+               (void) new NrootXY("A",n,a,icls.icl());
+               (void) new NrootXY("B",n,b,icls.icl());
+               (void) new NrootXY("C",n,c,icls.icl());
+               (void) new NrootXY("D",n,d,icls.icl());
+  
+               (void) new NrootXX("A",n,a,icls.icl());
+               (void) new NrootXX("B",n,b,icls.icl());
+               (void) new NrootXX("C",n,c,icls.icl());
+               (void) new NrootXX("D",n,d,icls.icl());
+             }
+
+             for (int n=30; n<=34; n++) {
+               (void) new PowXY("C",n,c,icls.icl());
+               (void) new PowXX("C",n,c,icls.icl());
+               (void) new NrootXY("C",n,c,icls.icl());
+               (void) new NrootXX("C",n,c,icls.icl());
+             }
+
+             (void) new SqrtXY("A",a,icls.icl());
+             (void) new SqrtXY("B",b,icls.icl());
+             (void) new SqrtXY("C",c,icls.icl());
+
+             (void) new SqrtXX("A",a,icls.icl());
+             (void) new SqrtXX("B",b,icls.icl());
+             (void) new SqrtXX("C",c,icls.icl());
+
+             (void) new AbsXY("A",a,icls.icl());
+             (void) new AbsXY("B",b,icls.icl());
+             (void) new AbsXY("C",c,icls.icl());
+
+             (void) new AbsXX("A",a,icls.icl());
+             (void) new AbsXX("B",b,icls.icl());
+             (void) new AbsXX("C",c,icls.icl());
+
+             (void) new MinXYZ("A",a,icls.icl());
+             (void) new MinXYZ("B",b,icls.icl());
+             (void) new MinXYZ("C",c,icls.icl());
+
+             (void) new MinXXY("A",a,icls.icl());
+             (void) new MinXXY("B",b,icls.icl());
+             (void) new MinXXY("C",c,icls.icl());
+
+             (void) new MinXYX("A",a,icls.icl());
+             (void) new MinXYX("B",b,icls.icl());
+             (void) new MinXYX("C",c,icls.icl());
+
+             (void) new MinXYY("A",a,icls.icl());
+             (void) new MinXYY("B",b,icls.icl());
+             (void) new MinXYY("C",c,icls.icl());
+
+             (void) new MinXXX("A",a,icls.icl());
+             (void) new MinXXX("B",b,icls.icl());
+             (void) new MinXXX("C",c,icls.icl());
+
+             (void) new MaxXYZ("A",a,icls.icl());
+             (void) new MaxXYZ("B",b,icls.icl());
+             (void) new MaxXYZ("C",c,icls.icl());
+
+             (void) new MaxXXY("A",a,icls.icl());
+             (void) new MaxXXY("B",b,icls.icl());
+             (void) new MaxXXY("C",c,icls.icl());
+
+             (void) new MaxXYX("A",a,icls.icl());
+             (void) new MaxXYX("B",b,icls.icl());
+             (void) new MaxXYX("C",c,icls.icl());
+
+             (void) new MaxXYY("A",a,icls.icl());
+             (void) new MaxXYY("B",b,icls.icl());
+             (void) new MaxXYY("C",c,icls.icl());
+
+             (void) new MaxXXX("A",a,icls.icl());
+             (void) new MaxXXX("B",b,icls.icl());
+             (void) new MaxXXX("C",c,icls.icl());
+
+             (void) new MinNary(icls.icl());
+             (void) new MinNaryShared(icls.icl());
+             (void) new MaxNary(icls.icl());
+             (void) new MaxNaryShared(icls.icl());
+           }
+       }
      };
-     const int vb[9] = {
-       static_cast<int>(-sqrt(static_cast<double>
-                              (-Gecode::Int::Limits::min))),
-       -4,-2,-1,0,1,2,4,
-       static_cast<int>(sqrt(static_cast<double>
-                             (Gecode::Int::Limits::max)))
-     };
 
-     Gecode::IntSet a(va,7);
-     Gecode::IntSet b(vb,9);
-     Gecode::IntSet c(-8,8);
-
-     MultXYZ mult_xyz_b_a("A",a,Gecode::ICL_BND);
-     MultXYZ mult_xyz_b_b("B",b,Gecode::ICL_BND);
-     MultXYZ mult_xyz_b_c("C",c,Gecode::ICL_BND);
-
-     MultXXY mult_xxy_b_a("A",a,Gecode::ICL_BND);
-     MultXXY mult_xxy_b_b("B",b,Gecode::ICL_BND);
-     MultXXY mult_xxy_b_c("C",c,Gecode::ICL_BND);
-
-     MultXYX mult_xyx_b_a("A",a,Gecode::ICL_BND);
-     MultXYX mult_xyx_b_b("B",b,Gecode::ICL_BND);
-     MultXYX mult_xyx_b_c("C",c,Gecode::ICL_BND);
-
-     MultXYY mult_xyy_b_a("A",a,Gecode::ICL_BND);
-     MultXYY mult_xyy_b_b("B",b,Gecode::ICL_BND);
-     MultXYY mult_xyy_b_c("C",c,Gecode::ICL_BND);
-
-     MultXXX mult_xxx_b_a("A",a,Gecode::ICL_BND);
-     MultXXX mult_xxx_b_b("B",b,Gecode::ICL_BND);
-     MultXXX mult_xxx_b_c("C",c,Gecode::ICL_BND);
-
-     MultXYZ mult_xyz_d_a("A",a,Gecode::ICL_DOM);
-     MultXYZ mult_xyz_d_b("B",b,Gecode::ICL_DOM);
-     MultXYZ mult_xyz_d_c("C",c,Gecode::ICL_DOM);
-
-     MultXXY mult_xxy_d_a("A",a,Gecode::ICL_DOM);
-     MultXXY mult_xxy_d_b("B",b,Gecode::ICL_DOM);
-     MultXXY mult_xxy_d_c("C",c,Gecode::ICL_DOM);
-
-     MultXYX mult_xyx_d_a("A",a,Gecode::ICL_DOM);
-     MultXYX mult_xyx_d_b("B",b,Gecode::ICL_DOM);
-     MultXYX mult_xyx_d_c("C",c,Gecode::ICL_DOM);
-
-     MultXYY mult_xyy_d_a("A",a,Gecode::ICL_DOM);
-     MultXYY mult_xyy_d_b("B",b,Gecode::ICL_DOM);
-     MultXYY mult_xyy_d_c("C",c,Gecode::ICL_DOM);
-
-     MultXXX mult_xxx_d_a("A",a,Gecode::ICL_DOM);
-     MultXXX mult_xxx_d_b("B",b,Gecode::ICL_DOM);
-     MultXXX mult_xxx_d_c("C",c,Gecode::ICL_DOM);
-
-     SqrXY sqr_xy_b_a("A",a,Gecode::ICL_BND);
-     SqrXY sqr_xy_b_b("B",b,Gecode::ICL_BND);
-     SqrXY sqr_xy_b_c("C",c,Gecode::ICL_BND);
-     SqrXY sqr_xy_d_a("A",a,Gecode::ICL_DOM);
-     SqrXY sqr_xy_d_b("B",b,Gecode::ICL_DOM);
-     SqrXY sqr_xy_d_c("C",c,Gecode::ICL_DOM);
-
-     SqrXX sqr_xx_b_a("A",a,Gecode::ICL_BND);
-     SqrXX sqr_xx_b_b("B",b,Gecode::ICL_BND);
-     SqrXX sqr_xx_b_c("C",c,Gecode::ICL_BND);
-     SqrXX sqr_xx_d_a("A",a,Gecode::ICL_DOM);
-     SqrXX sqr_xx_d_b("B",b,Gecode::ICL_DOM);
-     SqrXX sqr_xx_d_c("C",c,Gecode::ICL_DOM);
-
-     SqrtXY sqrt_xy_b_a("A",a,Gecode::ICL_BND);
-     SqrtXY sqrt_xy_b_b("B",b,Gecode::ICL_BND);
-     SqrtXY sqrt_xy_b_c("C",c,Gecode::ICL_BND);
-     SqrtXY sqrt_xy_d_a("A",a,Gecode::ICL_DOM);
-     SqrtXY sqrt_xy_d_b("B",b,Gecode::ICL_DOM);
-     SqrtXY sqrt_xy_d_c("C",c,Gecode::ICL_DOM);
-
-     SqrtXX sqrt_xx_b_a("A",a,Gecode::ICL_BND);
-     SqrtXX sqrt_xx_b_b("B",b,Gecode::ICL_BND);
-     SqrtXX sqrt_xx_b_c("C",c,Gecode::ICL_BND);
-     SqrtXX sqrt_xx_d_a("A",a,Gecode::ICL_DOM);
-     SqrtXX sqrt_xx_d_b("B",b,Gecode::ICL_DOM);
-     SqrtXX sqrt_xx_d_c("C",c,Gecode::ICL_DOM);
-
-     DivMod divmod_a_bnd("A",a);
-     DivMod divmod_b_bnd("B",b);
-     DivMod divmod_c_bnd("C",c);
-
-     Div div_a_bnd("A",a);
-     Div div_b_bnd("B",b);
-     Div div_c_bnd("C",c);
-
-     Mod mod_a_bnd("A",a);
-     Mod mod_b_bnd("B",b);
-     Mod mod_c_bnd("C",c);
-
-     AbsXY abs_xy_b_a("A",a,Gecode::ICL_BND);
-     AbsXY abs_xy_b_b("B",b,Gecode::ICL_BND);
-     AbsXY abs_xy_b_c("C",c,Gecode::ICL_BND);
-     AbsXY abs_xy_d_a("A",a,Gecode::ICL_DOM);
-     AbsXY abs_xy_d_b("B",b,Gecode::ICL_DOM);
-     AbsXY abs_xy_d_c("C",c,Gecode::ICL_DOM);
-
-     AbsXX abs_xx_b_a("A",a,Gecode::ICL_BND);
-     AbsXX abs_xx_b_b("B",b,Gecode::ICL_BND);
-     AbsXX abs_xx_b_c("C",c,Gecode::ICL_BND);
-     AbsXX abs_xx_d_a("A",a,Gecode::ICL_DOM);
-     AbsXX abs_xx_d_b("B",b,Gecode::ICL_DOM);
-     AbsXX abs_xx_d_c("C",c,Gecode::ICL_DOM);
-
-     MinXYZ min_xyz_b_a("A",a,Gecode::ICL_BND);
-     MinXYZ min_xyz_b_b("B",b,Gecode::ICL_BND);
-     MinXYZ min_xyz_b_c("C",c,Gecode::ICL_BND);
-     MinXYZ min_xyz_d_a("A",a,Gecode::ICL_DOM);
-     MinXYZ min_xyz_d_b("B",b,Gecode::ICL_DOM);
-     MinXYZ min_xyz_d_c("C",c,Gecode::ICL_DOM);
-
-     MinXXY min_xxy_b_a("A",a,Gecode::ICL_BND);
-     MinXXY min_xxy_b_b("B",b,Gecode::ICL_BND);
-     MinXXY min_xxy_b_c("C",c,Gecode::ICL_BND);
-     MinXXY min_xxy_d_a("A",a,Gecode::ICL_DOM);
-     MinXXY min_xxy_d_b("B",b,Gecode::ICL_DOM);
-     MinXXY min_xxy_d_c("C",c,Gecode::ICL_DOM);
-
-     MinXYX min_xyx_b_a("A",a,Gecode::ICL_BND);
-     MinXYX min_xyx_b_b("B",b,Gecode::ICL_BND);
-     MinXYX min_xyx_b_c("C",c,Gecode::ICL_BND);
-     MinXYX min_xyx_d_a("A",a,Gecode::ICL_DOM);
-     MinXYX min_xyx_d_b("B",b,Gecode::ICL_DOM);
-     MinXYX min_xyx_d_c("C",c,Gecode::ICL_DOM);
-
-     MinXYY min_xyy_b_a("A",a,Gecode::ICL_BND);
-     MinXYY min_xyy_b_b("B",b,Gecode::ICL_BND);
-     MinXYY min_xyy_b_c("C",c,Gecode::ICL_BND);
-     MinXYY min_xyy_d_a("A",a,Gecode::ICL_DOM);
-     MinXYY min_xyy_d_b("B",b,Gecode::ICL_DOM);
-     MinXYY min_xyy_d_c("C",c,Gecode::ICL_DOM);
-
-     MinXXX min_xxx_b_a("A",a,Gecode::ICL_BND);
-     MinXXX min_xxx_b_b("B",b,Gecode::ICL_BND);
-     MinXXX min_xxx_b_c("C",c,Gecode::ICL_BND);
-     MinXXX min_xxx_d_a("A",a,Gecode::ICL_DOM);
-     MinXXX min_xxx_d_b("B",b,Gecode::ICL_DOM);
-     MinXXX min_xxx_d_c("C",c,Gecode::ICL_DOM);
-
-     MaxXYZ max_xyz_b_a("A",a,Gecode::ICL_BND);
-     MaxXYZ max_xyz_b_b("B",b,Gecode::ICL_BND);
-     MaxXYZ max_xyz_b_c("C",c,Gecode::ICL_BND);
-     MaxXYZ max_xyz_d_a("A",a,Gecode::ICL_DOM);
-     MaxXYZ max_xyz_d_b("B",b,Gecode::ICL_DOM);
-     MaxXYZ max_xyz_d_c("C",c,Gecode::ICL_DOM);
-
-     MaxXXY max_xxy_b_a("A",a,Gecode::ICL_BND);
-     MaxXXY max_xxy_b_b("B",b,Gecode::ICL_BND);
-     MaxXXY max_xxy_b_c("C",c,Gecode::ICL_BND);
-     MaxXXY max_xxy_d_a("A",a,Gecode::ICL_DOM);
-     MaxXXY max_xxy_d_b("B",b,Gecode::ICL_DOM);
-     MaxXXY max_xxy_d_c("C",c,Gecode::ICL_DOM);
-
-     MaxXYX max_xyx_b_a("A",a,Gecode::ICL_BND);
-     MaxXYX max_xyx_b_b("B",b,Gecode::ICL_BND);
-     MaxXYX max_xyx_b_c("C",c,Gecode::ICL_BND);
-     MaxXYX max_xyx_d_a("A",a,Gecode::ICL_DOM);
-     MaxXYX max_xyx_d_b("B",b,Gecode::ICL_DOM);
-     MaxXYX max_xyx_d_c("C",c,Gecode::ICL_DOM);
-
-     MaxXYY max_xyy_b_a("A",a,Gecode::ICL_BND);
-     MaxXYY max_xyy_b_b("B",b,Gecode::ICL_BND);
-     MaxXYY max_xyy_b_c("C",c,Gecode::ICL_BND);
-     MaxXYY max_xyy_d_a("A",a,Gecode::ICL_DOM);
-     MaxXYY max_xyy_d_b("B",b,Gecode::ICL_DOM);
-     MaxXYY max_xyy_d_c("C",c,Gecode::ICL_DOM);
-
-     MaxXXX max_xxx_b_a("A",a,Gecode::ICL_BND);
-     MaxXXX max_xxx_b_b("B",b,Gecode::ICL_BND);
-     MaxXXX max_xxx_b_c("C",c,Gecode::ICL_BND);
-     MaxXXX max_xxx_d_a("A",a,Gecode::ICL_DOM);
-     MaxXXX max_xxx_d_b("B",b,Gecode::ICL_DOM);
-     MaxXXX max_xxx_d_c("C",c,Gecode::ICL_DOM);
-
-     MinNary       min_nary_b(Gecode::ICL_BND);
-     MinNary       min_nary_d(Gecode::ICL_DOM);
-     MinNaryShared min_s_nary_b(Gecode::ICL_BND);
-     MinNaryShared min_s_nary_d(Gecode::ICL_DOM);
-     MaxNary       max_nary_b(Gecode::ICL_BND);
-     MaxNary       max_nary_d(Gecode::ICL_DOM);
-     MaxNaryShared max_s_nary_b(Gecode::ICL_BND);
-     MaxNaryShared max_s_nary_d(Gecode::ICL_DOM);
+     Create c;
      //@}
 
    }

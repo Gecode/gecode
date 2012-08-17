@@ -2162,24 +2162,6 @@ namespace Gecode {
   mult(Home home, IntVar x0, IntVar x1, IntVar x2,
        IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for \f$x_0\cdot x_0=x_1\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
-  GECODE_INT_EXPORT void
-  sqr(Home home, IntVar x0, IntVar x1,
-      IntConLevel icl=ICL_DEF);
-
-  /** \brief Post propagator for \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
-   *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
-   */
-  GECODE_INT_EXPORT void
-  sqrt(Home home, IntVar x0, IntVar x1,
-       IntConLevel icl=ICL_DEF);
-
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
    * Supports bounds consistency (\a icl = ICL_BND, default).
@@ -2203,6 +2185,49 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   mod(Home home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel icl=ICL_DEF);
+
+  /** \brief Post propagator for \f$x_0^2=x_1\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain consistency (\a icl = ICL_DOM).
+   */
+  GECODE_INT_EXPORT void
+  sqr(Home home, IntVar x0, IntVar x1,
+      IntConLevel icl=ICL_DEF);
+
+  /** \brief Post propagator for \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain consistency (\a icl = ICL_DOM).
+   */
+  GECODE_INT_EXPORT void
+  sqrt(Home home, IntVar x0, IntVar x1,
+       IntConLevel icl=ICL_DEF);
+
+  /** \brief Post propagator for \f$x_0^n=x_1\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain consistency (\a icl = ICL_DOM).
+   *
+   * Throws an exception of type Int::OutOfLimits, if \a n is
+   * negative.
+   */
+  GECODE_INT_EXPORT void
+  pow(Home home, IntVar x0, int n, IntVar x1,
+      IntConLevel icl=ICL_DEF);
+
+  /** \brief Post propagator for \f$\lfloor\sqrt[n]{x_0}\rfloor=x_1\f$
+   *
+   * Supports both bounds consistency (\a icl = ICL_BND, default)
+   * and domain consistency (\a icl = ICL_DOM).
+   *
+   * Throws an exception of type Int::OutOfLimits, if \a n is
+   * not strictly positive.
+   */
+  GECODE_INT_EXPORT void
+  nroot(Home home, IntVar x0, int n, IntVar x1,
+       IntConLevel icl=ICL_DEF);
+
   //@}
 
   /**

@@ -53,6 +53,33 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
+   * \brief Mathematical support functions over the integers
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  //@{
+  /// Test whether \a n is even
+  template<class IntType>
+  bool even(IntType n);
+  /// Return \f$x^n\f$ where \f$n>0\f$
+  template<class IntType>
+  IntType pow(IntType x, int n);
+  /// Return \f$\min(x^n,m+1)\f$ where \f$n>0\f$ and \f$m\f$ is Int::Limits::max
+  int tpow(int x, int n);
+  /// Return \f$\lfloor \sqrt[n]{x}\rfloor\f$ where \a x must be non-negative and \f$n>0\f$
+  int fnroot(int x, int n);
+  /// Return \f$\lceil \sqrt[n]{x}\rceil\f$ where \a x must be non-negative and \f$n>0\f$
+  int cnroot(int x, int n);
+  //@}
+
+}}}
+
+#include <gecode/int/arithmetic/math.hpp>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /**
    * \brief Bounds consistent absolute value propagator
    *
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
@@ -246,7 +273,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Bounds consistent positive square propagator
    *
-   * This propagator provides multiplication for positive views only.
+   * This propagator provides squaring for positive views only.
    */
   template<class VA, class VB>
   class SqrPlusBnd : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
@@ -296,7 +323,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   /**
    * \brief Domain consistent positive square propagator
    *
-   * This propagator provides multiplication for positive views only.
+   * This propagator provides squaring for positive views only.
    */
   template<class VA, class VB>
   class SqrPlusDom : public MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM> {
@@ -651,6 +678,189 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
+
+
+
+  /**
+   * \brief Bounds consistent positive power propagator
+   *
+   * This propagator is for positive views only.
+   */
+  template<class VA, class VB>
+  class PowPlusBnd : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
+  protected:
+    using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
+    using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x1;
+    /// Exponent
+    int n;
+    /// Constructor for posting
+    PowPlusBnd(Home home, VA x0, int n, VB x1);
+    /// Constructor for cloning \a p
+    PowPlusBnd(Space& home, bool share, PowPlusBnd<VA,VB>& p);
+  public:
+    /// Post propagator \f$x_0^n=x_1\f$
+    static ExecStatus post(Home home, VA x0, int n, VB x1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /**
+   * \brief Bounds consistent power propagator
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<bool even>
+  class PowBnd : public BinaryPropagator<IntView,PC_INT_BND> {
+  protected:
+    using BinaryPropagator<IntView,PC_INT_BND>::x0;
+    using BinaryPropagator<IntView,PC_INT_BND>::x1;
+    /// Exponent
+    int n;
+    /// Constructor for cloning \a p
+    PowBnd(Space& home, bool share, PowBnd& p);
+    /// Constructor for posting
+    PowBnd(Home home, IntView x0, int n, IntView x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$x_0^n=x_1\f$
+    static ExecStatus post(Home home, IntView x0, int n, IntView x1);
+  };
+
+
+
+  /**
+   * \brief Domain consistent positive power propagator
+   *
+   * This propagator is for positive views only.
+   */
+  template<class VA, class VB>
+  class PowPlusDom : public MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM> {
+  protected:
+    using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x0;
+    using MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>::x1;
+    /// Exponent
+    int n;
+    /// Constructor for posting
+    PowPlusDom(Home home, VA x0, int n, VB x1);
+    /// Constructor for cloning \a p
+    PowPlusDom(Space& home, bool share, PowPlusDom<VA,VB>& p);
+  public:
+    /// Post propagator \f$x_0^n=x_1\f$
+    static ExecStatus post(Home home, VA x0, int n, VB x1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is low unary.
+     * If in stage for bounds propagation, the cost is
+     * low binary. Otherwise it is high binary.
+     */
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+  };
+
+  /**
+   * \brief Domain consistent power propagator
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<bool even>
+  class PowDom : public BinaryPropagator<IntView,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<IntView,PC_INT_DOM>::x0;
+    using BinaryPropagator<IntView,PC_INT_DOM>::x1;
+    /// Exponent
+    int n;
+    /// Constructor for cloning \a p
+    PowDom(Space& home, bool share, PowDom& p);
+    /// Constructor for posting
+    PowDom(Home home, IntView x0, int n, IntView x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is low unary.
+     * If in stage for bounds propagation, the cost is
+     * low binary. Otherwise it is high binary.
+     */
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Post propagator \f$x_0^n=x_1\f$
+    static ExecStatus post(Home home, IntView x0, int n, IntView x1);
+  };
+
+  /**
+   * \brief Bounds consistent n-th root propagator
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View>
+  class NrootBnd : public BinaryPropagator<View,PC_INT_BND> {
+  protected:
+    using BinaryPropagator<View,PC_INT_BND>::x0;
+    using BinaryPropagator<View,PC_INT_BND>::x1;
+    /// Root index
+    int n;
+    /// Constructor for cloning \a p
+    NrootBnd(Space& home, bool share, NrootBnd<View>& p);
+    /// Constructor for posting
+    NrootBnd(Home home, View x0, int n, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator \f$\lceil \sqrt[n]{x_0}\rceil=x_1\f$
+    static ExecStatus post(Home home, View x0, int n, View x1);
+  };
+
+  /**
+   * \brief Domain consistent n-th root propagator
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View>
+  class NrootDom : public BinaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_INT_DOM>::x0;
+    using BinaryPropagator<View,PC_INT_DOM>::x1;
+    /// Root index
+    int n;
+    /// Constructor for cloning \a p
+    NrootDom(Space& home, bool share, NrootDom<View>& p);
+    /// Constructor for posting
+    NrootDom(Home home, View x0, int n, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is low unary.
+     * If in stage for bounds propagation, the cost is
+     * low binary. Otherwise it is high binary.
+     */
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Post propagator \f$\lceil \sqrt[n]{x_0}\rceil=x_1\f$
+    static ExecStatus post(Home home, View x0, int n, View x1);
+  };
+
 }}}
 
 #include <gecode/int/arithmetic/abs.hpp>
@@ -659,6 +869,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 #include <gecode/int/arithmetic/sqrt.hpp>
 #include <gecode/int/arithmetic/mult.hpp>
 #include <gecode/int/arithmetic/divmod.hpp>
+#include <gecode/int/arithmetic/pow.hpp>
+#include <gecode/int/arithmetic/nroot.hpp>
 
 #endif
 
