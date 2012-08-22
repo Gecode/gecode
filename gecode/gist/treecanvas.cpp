@@ -747,20 +747,17 @@ namespace Gecode { namespace Gist {
     } catch (Exception& e) {
       switch (failedInspectorType) {
       case 0:
-        std::cerr << "Exception in move inspector "
-                  << failedInspector;
+        qFatal("Exception in move inspector %d: %s.\n Stopping.",
+               failedInspector, e.what());
         break;
       case 1:
-        std::cerr << "Exception in double-click inspector "
-                  << failedInspector;
+        qFatal("Exception in double click inspector %d: %s.\n Stopping.",
+               failedInspector, e.what());
         break;
       default:
-        std::cerr << "Exception ";
+        qFatal("Exception: %s.\n Stopping.", e.what());
         break;
       }
-      std::cerr << ": " << e.what() << "." << std::endl;
-      std::cerr << "Stopping..." << std::endl;
-      std::exit(EXIT_FAILURE);
     }
 
     currentNode->dirtyUp(*na);
@@ -794,20 +791,17 @@ namespace Gecode { namespace Gist {
     } catch (Exception& e) {
       switch (failedInspectorType) {
       case 0:
-        std::cerr << "Exception in move inspector "
-                  << failedInspector;
+        qFatal("Exception in move inspector %d: %s.\n Stopping.",
+               failedInspector, e.what());
         break;
       case 1:
-        std::cerr << "Exception in solution inspector "
-                  << failedInspector;
+        qFatal("Exception in solution inspector %d: %s.\n Stopping.",
+               failedInspector, e.what());
         break;
       default:
-        std::cerr << "Exception ";
+        qFatal("Exception: %s.\n Stopping.", e.what());
         break;
       }
-      std::cerr << ": " << e.what() << "." << std::endl;
-      std::cerr << "Stopping..." << std::endl;
-      std::exit(EXIT_FAILURE);      
     }
   }
 
@@ -1308,10 +1302,8 @@ namespace Gecode { namespace Gist {
           try {
             moveInspectors[i].first->inspect(*curSpace);
           } catch (Exception& e) {
-            std::cerr << "Exception in move inspector " << i
-                      << ": " << e.what() << "." << std::endl;
-            std::cerr << "Stopping..." << std::endl;
-            std::exit(EXIT_FAILURE);
+            qFatal("Exception in move inspector %d: %s.\n Stopping.",
+                   i, e.what());
           }
         }
       }
@@ -1368,10 +1360,8 @@ namespace Gecode { namespace Gist {
                 try {
                   comparators[i].first->compare(*curSpace,*compareSpace);
                 } catch (Exception& e) {
-                  std::cerr << "Exception in comparator "<<i;
-                  std::cerr << ": " << e.what() << "." << std::endl;
-                  std::cerr << "Stopping..." << std::endl;
-                  std::exit(EXIT_FAILURE);
+                  qFatal("Exception in comparator %d: %s.\n Stopping.",
+                    i, e.what());
                 }
               }
             }
