@@ -165,8 +165,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return ES_OK;
     } else if (ops.exp() == 1) {
       return Rel::EqBnd<IntView,IntView>::post(home,x0,x1);
-    } else if (ops.exp() == 2) {
-      return SqrBnd<IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
@@ -405,8 +403,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return ES_OK;
     } else if (ops.exp() == 1) {
       return Rel::EqDom<IntView,IntView>::post(home,x0,x1);
-    } else if (ops.exp() == 2) {
-      return SqrDom<IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
@@ -500,8 +496,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
       return home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
     }
-
-    assert((x0.min() < 0) && (0 < x0.max()));
 
     Region r(home);
     if (ops.even()) {

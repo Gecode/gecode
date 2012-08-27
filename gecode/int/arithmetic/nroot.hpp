@@ -100,8 +100,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return ES_OK;
     } else if (ops.exp() == 1) {
       return Rel::EqBnd<IntView,IntView>::post(home,x0,x1);      
-    } else if (ops.exp() == 2) {
-      return SqrtBnd<IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
@@ -203,8 +201,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return ES_OK;
     } else if (ops.exp() == 1) {
       return Rel::EqDom<IntView,IntView>::post(home,x0,x1);      
-    } else if (ops.exp() == 2) {
-      return SqrtDom<IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {

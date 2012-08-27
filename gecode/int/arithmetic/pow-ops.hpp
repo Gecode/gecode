@@ -7,8 +7,8 @@
  *     Christian Schulte, 2012
  *
  *  Last modified:
- *     $Date: 2012-08-17 14:23:02 +0200 (Fri, 17 Aug 2012) $ by $Author: schulte $
- *     $Revision: 12994 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -164,6 +164,75 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     do {
       int m = (l + u) >> 1;
       if (powle(m,x)) l=m; else u=m;
+    } while (l+1 < u);
+    assert((pow(static_cast<long long int>(u-1)) < x) && 
+           (x <= pow(static_cast<long long int>(u))));
+    return u;
+  }
+
+
+
+  forceinline
+  bool SqrOps::even(void) const {
+    return true;
+  }
+
+  forceinline
+  int SqrOps::exp(void) const {
+    return 2;
+  }
+
+  forceinline
+  void SqrOps::exp(int m) {
+    GECODE_NEVER;
+  }
+
+  template<class IntType>
+  inline
+  IntType SqrOps::pow(IntType x) const {
+    return x * x;
+  }
+
+  inline
+  int SqrOps::tpow(int _x) const {
+    long long int x = _x;
+    if (x*x > Limits::max)
+      return Limits::max+1;
+    return static_cast<int>(x*x);
+  }
+
+  inline
+  int SqrOps::fnroot(int x) const {
+    if (x < 2)
+      return x;
+    /*
+     * We look for l such that: l^2 <= x < (l+1)^2
+     */
+    long long int xx = 
+      static_cast<long long int>(x) * static_cast<long long int>(x);
+    int l = 1;
+    int u = x;
+    do {
+      long long int m = (l + u) >> 1;
+      if (m*m > x) u=m; else l=m;
+    } while (l+1 < u);
+    assert((pow(static_cast<long long int>(l)) <= x) && 
+           (x < pow(static_cast<long long int>(l+1))));
+    return l;
+  }
+
+  inline
+  int SqrOps::cnroot(int x) const {
+    if (x < 2)
+      return x;
+    /*
+     * We look for u such that: (u-1)^n < x <= u^n
+     */
+    int l = 1;
+    int u = x;
+    do {
+      long long int m = (l + u) >> 1;
+      if (m*m < x) l=m; else u=m;
     } while (l+1 < u);
     assert((pow(static_cast<long long int>(u-1)) < x) && 
            (x <= pow(static_cast<long long int>(u))));

@@ -1033,10 +1033,9 @@ gecode/int/count$(OBJSUFFIX) gecode/int/count$(SBJSUFFIX): \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/int/arithmetic$(OBJSUFFIX) gecode/int/arithmetic$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/arithmetic.hh \
-	./gecode/int/arithmetic/abs.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/math.hpp \
-	./gecode/int/arithmetic/max.hpp ./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp \
-	./gecode/int/arithmetic/pow-ops.hpp ./gecode/int/arithmetic/pow.hpp ./gecode/int/arithmetic/sqr.hpp \
-	./gecode/int/arithmetic/sqrt.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
+	./gecode/int/arithmetic/abs.hpp ./gecode/int/arithmetic/divmod.hpp ./gecode/int/arithmetic/max.hpp \
+	./gecode/int/arithmetic/mult.hpp ./gecode/int/arithmetic/nroot.hpp ./gecode/int/arithmetic/pow-ops.hpp \
+	./gecode/int/arithmetic/pow.hpp ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/bool.hh ./gecode/int/bool/base.hpp ./gecode/int/bool/clause.hpp \
 	./gecode/int/bool/eq.hpp ./gecode/int/bool/eqv.hpp ./gecode/int/bool/lq.hpp \
 	./gecode/int/bool/or.hpp ./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp \

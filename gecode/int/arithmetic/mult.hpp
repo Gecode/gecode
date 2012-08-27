@@ -435,8 +435,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View>
   ExecStatus
   MultBnd<View>::post(Home home, View x0, View x1, View x2) {
-    if (same(x0,x1))
-      return SqrBnd<View>::post(home,x0,x2);
+    if (same(x0,x1)) {
+      SqrOps ops;
+      return PowBnd<SqrOps>::post(home,x0,x2,ops);
+    }
     if (same(x0,x2))
       return MultZeroOne<View,PC_INT_BND>::post(home,x0,x1);
     if (same(x1,x2))
@@ -698,8 +700,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View>
   ExecStatus
   MultDom<View>::post(Home home, View x0, View x1, View x2) {
-    if (same(x0,x1))
-      return SqrDom<View>::post(home,x0,x2);
+    if (same(x0,x1)) {
+      SqrOps ops;
+      return PowDom<SqrOps>::post(home,x0,x2,ops);
+    }
     if (same(x0,x2))
       return MultZeroOne<View,PC_INT_DOM>::post(home,x0,x1);
     if (same(x1,x2))

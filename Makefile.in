@@ -305,7 +305,6 @@ INTSRC0 = \
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
 	exec.hh exec/when.hpp \
-	arithmetic/math.hpp \
 	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
 	arithmetic/sqr.hpp arithmetic/sqrt.hpp arithmetic/divmod.hpp \
 	arithmetic/pow-ops.hpp arithmetic/pow.hpp arithmetic/nroot.hpp \
