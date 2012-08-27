@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added pow and nroot expressions for integer variables.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

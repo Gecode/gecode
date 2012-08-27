@@ -40,6 +40,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include <gecode/minimodel.hh>
+
 namespace Test { namespace Int {
 
    /// %Tests for arithmetic constraints
@@ -248,7 +250,11 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::pow(home, x[0], n, x[1], icl);
+         using namespace Gecode;
+         if (n > 4)
+           pow(home, x[0], n, x[1], icl);
+         else
+           rel(home, expr(home, pow(x[0],n), icl), IRT_EQ, x[1], icl);
        }
      };
 
@@ -306,7 +312,11 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::nroot(home, x[0], n, x[1], icl);
+         using namespace Gecode;
+         if (n > 4)
+           nroot(home, x[0], n, x[1], icl);
+         else
+           rel(home, expr(home, nroot(x[0],n), icl), IRT_EQ, x[1], icl);
        }
      };
 

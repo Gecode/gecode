@@ -55,17 +55,26 @@ namespace Gecode {
         ANLE_MOD,   ///< Modulo expression
         ANLE_SQR,   ///< Square expression
         ANLE_SQRT,  ///< Square root expression
+        ANLE_POW,   ///< Pow expression
+        ANLE_NROOT, ///< Nroot expression
         ANLE_ELMNT  ///< Element expression
       } t;
       /// Expressions
       LinExpr* a;
       /// Size of variable array
       int n;
+      /// Integer argument (used in nroot for example)
+      int aInt;
       /// Constructor
       ArithNonLinExpr(ArithNonLinExprType t0, int n0)
-       : t(t0), a(heap.alloc<LinExpr>(n0)), n(n0) {}
+        : t(t0), a(heap.alloc<LinExpr>(n0)), n(n0) {}
+      /// Constructor
+      ArithNonLinExpr(ArithNonLinExprType t0, int n0, int a0)
+        : t(t0), a(heap.alloc<LinExpr>(n0)), n(n0), aInt(a0) {}
       /// Destructor
-      ~ArithNonLinExpr(void) { heap.free<LinExpr>(a,n); }
+      ~ArithNonLinExpr(void) { 
+        heap.free<LinExpr>(a,n); 
+      }
       /// Post expression
       virtual IntVar post(Home home, IntVar* ret, IntConLevel icl) const {
         IntVar y;
@@ -190,6 +199,32 @@ namespace Gecode {
             else {
               y = result(home,ret);
               sqrt(home, x, y, icl);
+            }
+          }
+          break;
+        case ANLE_POW:
+          {
+            assert(n == 1);
+            IntVar x = a[0].post(home, icl);
+            if (x.assigned() && (aInt > 0) && 
+                ((x.val() == 0) || (x.val() == 1)))
+              y = x;
+            else {
+              y = result(home,ret);
+              pow(home, x, aInt, y, icl);
+            }
+          }
+          break;
+        case ANLE_NROOT:
+          {
+            assert(n == 1);
+            IntVar x = a[0].post(home, icl);
+            if (x.assigned() && (aInt > 0) && 
+                ((x.val() == 0) || (x.val() == 1)))
+              y = result(home,ret,x);
+            else {
+              y = result(home,ret);
+              nroot(home, x, aInt, y, icl);
             }
           }
           break;
@@ -882,6 +917,22 @@ namespace Gecode {
   sqrt(const LinExpr& e) {
     ArithNonLinExpr* ae =
       new ArithNonLinExpr(ArithNonLinExpr::ANLE_SQRT,1);
+    ae->a[0] = e;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  pow(const LinExpr& e, int n) {
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_POW,1,n);
+    ae->a[0] = e;
+    return LinExpr(ae);
+  }
+
+  LinExpr
+  nroot(const LinExpr& e, int n) {
+    ArithNonLinExpr* ae =
+      new ArithNonLinExpr(ArithNonLinExpr::ANLE_NROOT,1,n);
     ae->a[0] = e;
     return LinExpr(ae);
   }

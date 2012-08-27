@@ -1424,6 +1424,12 @@ namespace Gecode {
   /// \brief Return expression for \f$\lfloor\sqrt{x}\rfloor\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   sqrt(const LinExpr& x);
+  /// \brief Return expression for \f$x^n\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  pow(const LinExpr& x, int n);
+  /// \brief Return expression for \f$\lfloor\sqrt[n]{x}\rfloor\f$
+  GECODE_MINIMODEL_EXPORT LinExpr
+  nroot(const LinExpr& x, int n);
   /// \brief Return expression for \f$x[y]\f$
   GECODE_MINIMODEL_EXPORT LinExpr
   element(const IntVarArgs& x, const LinExpr& y);

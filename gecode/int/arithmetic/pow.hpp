@@ -474,22 +474,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   ExecStatus
   PowDom<Ops>::propagate(Space& home, const ModEventDelta& med) {
-    if (IntView::me(med) != ME_INT_DOM) {
-      if ((x0.min() >= 0) || ((x1.min() >= 0) && !ops.even()))
-        GECODE_REWRITE(*this,(PowPlusDom<IntView,IntView,Ops>
-                              ::post(home(*this),x0,x1,ops)));
+    if ((x0.min() >= 0) || ((x1.min() >= 0) && !ops.even()))
+      GECODE_REWRITE(*this,(PowPlusDom<IntView,IntView,Ops>
+                            ::post(home(*this),x0,x1,ops)));
     
-      if (ops.even() && (x0.max() <= 0))
-        GECODE_REWRITE(*this,(PowPlusDom<MinusView,IntView,Ops>
-                              ::post(home(*this),MinusView(x0),x1,ops)));
-      
-      if (!ops.even() && ((x0.max() <= 0) || (x1.max() <= 0)))
-        GECODE_REWRITE(*this,(PowPlusDom<MinusView,MinusView,Ops>
-                              ::post(home(*this),MinusView(x0),
-                                     MinusView(x1),ops)));
+    if (ops.even() && (x0.max() <= 0))
+      GECODE_REWRITE(*this,(PowPlusDom<MinusView,IntView,Ops>
+                            ::post(home(*this),MinusView(x0),x1,ops)));
+    
+    if (!ops.even() && ((x0.max() <= 0) || (x1.max() <= 0)))
+      GECODE_REWRITE(*this,(PowPlusDom<MinusView,MinusView,Ops>
+                            ::post(home(*this),MinusView(x0),
+                                   MinusView(x1),ops)));
 
+    if (IntView::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_pow_bnd<Ops>(home,x0,x1,ops));
-
       if (x0.assigned() && x1.assigned())
         return (ops.pow(x0.val()) == x1.val()) ?
           home.ES_SUBSUMED(*this) : ES_FAILED;
