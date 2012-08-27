@@ -75,18 +75,36 @@ public:
   };
   /// Actual model
   GolombRuler(const SizeOptions& opt)
-    : m(*this,8,0,8) {
+    : m(*this,opt.size(),0,
+        (opt.size() < 31) ? (1 << (opt.size()-1))-1 : Int::Limits::max) {
 
-    dom(*this, m[0], 0,1);
-    dom(*this, m[1], 0,1);
-    dom(*this, m[2], IntSet(IntArgs(4, 0,1,2,4)));
-    dom(*this, m[3], IntSet(IntArgs(3, 2,3,4)));
-    dom(*this, m[4], IntSet(IntArgs(3, 2,3,4)));
-    dom(*this, m[5], IntSet(IntArgs(2, 4,6)));
-    dom(*this, m[6], 4,8);
-    dom(*this, m[7], 7,8);
+    // Assume first mark to be zero
+    rel(*this, m[0], IRT_EQ, 0);
 
-    distinct(*this, m, ICL_DOM);
+    // Order marks
+    rel(*this, m, IRT_LE);
+
+    // Number of marks and differences
+    const int n = m.size();
+    const int n_d = (n*n-n)/2;
+
+    // Array of differences
+    IntVarArgs d(n_d);
+
+    // Setup difference constraints
+    for (int k=0, i=0; i<n-1; i++)
+      for (int j=i+1; j<n; j++, k++)
+        // d[k] is m[j]-m[i] and must be at least sum of first j-i integers
+        rel(*this, d[k] = expr(*this, m[j]-m[i]),
+                   IRT_GQ, (j-i)*(j-i+1)/2);
+
+    distinct(*this, d, opt.icl());
+
+    // Symmetry breaking
+    if (n > 2)
+      rel(*this, d[0], IRT_LE, d[n_d-1]);
+
+    branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Return cost
