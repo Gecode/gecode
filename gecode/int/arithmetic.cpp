@@ -193,16 +193,13 @@ namespace Gecode {
     using namespace Int;
     Limits::nonnegative(n,"Int::pow");
     if (home.failed()) return;
+    Arithmetic::PowOps ops(n);
     if (icl == ICL_DOM) {
-      if (Arithmetic::even(n))
-        GECODE_ES_FAIL(Arithmetic::PowDom<true>::post(home,x0,n,x1));
-      else
-        GECODE_ES_FAIL(Arithmetic::PowDom<false>::post(home,x0,n,x1));
+      GECODE_ES_FAIL(Arithmetic::PowDom<Arithmetic::PowOps>
+                     ::post(home,x0,x1,ops));
     } else {
-      if (Arithmetic::even(n))
-        GECODE_ES_FAIL(Arithmetic::PowBnd<true>::post(home,x0,n,x1));
-      else
-        GECODE_ES_FAIL(Arithmetic::PowBnd<false>::post(home,x0,n,x1));
+      GECODE_ES_FAIL(Arithmetic::PowBnd<Arithmetic::PowOps>
+                     ::post(home,x0,x1,ops));
     }
   }
 
@@ -211,10 +208,13 @@ namespace Gecode {
     using namespace Int;
     Limits::positive(n,"Int::nroot");
     if (home.failed()) return;
+    Arithmetic::PowOps ops(n);
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(Arithmetic::NrootDom<IntView>::post(home,x0,n,x1));
+      GECODE_ES_FAIL(Arithmetic::NrootDom<Arithmetic::PowOps>
+                     ::post(home,x0,x1,ops));
     } else {
-      GECODE_ES_FAIL(Arithmetic::NrootBnd<IntView>::post(home,x0,n,x1));
+      GECODE_ES_FAIL(Arithmetic::NrootBnd<Arithmetic::PowOps>
+                     ::post(home,x0,x1,ops));
     }
   }
 

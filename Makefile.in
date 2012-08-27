@@ -308,7 +308,7 @@ INTHDR0 = \
 	arithmetic/math.hpp \
 	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
 	arithmetic/sqr.hpp arithmetic/sqrt.hpp arithmetic/divmod.hpp \
-	arithmetic/pow.hpp arithmetic/nroot.hpp \
+	arithmetic/pow-ops.hpp arithmetic/pow.hpp arithmetic/nroot.hpp \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
 	bool/clause.hpp \
 	precede.hh precede/single.hpp \

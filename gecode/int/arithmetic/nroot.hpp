@@ -47,29 +47,29 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template<class View>
+  template<class Ops>
   forceinline ExecStatus
-  prop_nroot_bnd(Space& home, View x0, int n, View x1) {
+  prop_nroot_bnd(Space& home, IntView x0, IntView x1, const Ops& ops) {
     bool mod;
     do {
       mod = false;
       {
-        ModEvent me = x1.lq(home,fnroot(x0.max(),n));
+        ModEvent me = x1.lq(home,ops.fnroot(x0.max()));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
       }
       {
-        ModEvent me = x1.gq(home,fnroot(x0.min(),n));
+        ModEvent me = x1.gq(home,ops.fnroot(x0.min()));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
       }
       {
-        ModEvent me = x0.le(home,tpow(x1.max()+1,n));
+        ModEvent me = x0.le(home,ops.tpow(x1.max()+1));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
       }
       {
-        ModEvent me = x0.gq(home,pow(x1.min(),n));
+        ModEvent me = x0.gq(home,ops.pow(x1.min()));
         if (me_failed(me)) return ES_FAILED;
         mod |= me_modified(me);
       }
@@ -77,62 +77,64 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
-  template<class View>
+  template<class Ops>
   forceinline
-  NrootBnd<View>::NrootBnd(Home home, View x0, int n0, View x1)
-    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1), n(n0) {
+  NrootBnd<Ops>::NrootBnd(Home home, IntView x0, IntView x1, const Ops& o)
+    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1), 
+      ops(o) {
   }
 
-  template<class View>
+  template<class Ops>
   forceinline ExecStatus
-  NrootBnd<View>::post(Home home, View x0, int n, View x1) {
+  NrootBnd<Ops>::post(Home home, IntView x0, IntView x1, Ops ops) {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x1.gq(home,0));
 
-    if (n >= sizeof(int) * CHAR_BIT) {
+    if (ops.exp() >= sizeof(int) * CHAR_BIT) {
       // The integer limits allow only 0 and 1 for x1
       GECODE_ME_CHECK(x1.lq(home,1));
     }
 
-    if (n == 0) {
+    if (ops.exp() == 0) {
       GECODE_ME_CHECK(x1.eq(home,1));
       return ES_OK;
-    } else if (n == 1) {
+    } else if (ops.exp() == 1) {
       return Rel::EqBnd<IntView,IntView>::post(home,x0,x1);      
-    } else if (n == 2) {
+    } else if (ops.exp() == 2) {
       return SqrtBnd<IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
-      assert(n > 1);
+      assert(ops.exp() > 1);
       GECODE_ME_CHECK(x1.lq(home,1));
       return ES_OK;
     } 
 
     // Limits values such that no overflow can occur
-    GECODE_ME_CHECK(x1.lq(home,fnroot(Limits::max,n)));
+    GECODE_ME_CHECK(x1.lq(home,ops.fnroot(Limits::max)));
 
-    GECODE_ES_CHECK(prop_nroot_bnd(home,x0,n,x1));
-    (void) new (home) NrootBnd<View>(home,x0,n,x1);
+    GECODE_ES_CHECK(prop_nroot_bnd<Ops>(home,x0,x1,ops));
+    (void) new (home) NrootBnd(home,x0,x1,ops);
 
     return ES_OK;
   }
 
-  template<class View>
+  template<class Ops>
   forceinline
-  NrootBnd<View>::NrootBnd(Space& home, bool share, NrootBnd<View>& p)
-    : BinaryPropagator<View,PC_INT_BND>(home,share,p), n(p.n) {}
+  NrootBnd<Ops>::NrootBnd(Space& home, bool share, NrootBnd<Ops>& p)
+    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p), 
+      ops(p.ops) {}
 
-  template<class View>
+  template<class Ops>
   Actor*
-  NrootBnd<View>::copy(Space& home, bool share) {
-    return new (home) NrootBnd<View>(home,share,*this);
+  NrootBnd<Ops>::copy(Space& home, bool share) {
+    return new (home) NrootBnd<Ops>(home,share,*this);
   }
 
-  template<class View>
+  template<class Ops>
   ExecStatus
-  NrootBnd<View>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK(prop_nroot_bnd(home,x0,n,x1));
+  NrootBnd<Ops>::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
     return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -142,123 +144,129 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
   /// Mapping ranges to powers
+  template<class Ops>
   class RangesMapPow {
   protected:
-    /// Exponent
-    int n;
+    /// Power operations
+    Ops ops;
   public:
-    /// Initialize with exponent \a n0
-    forceinline RangesMapPow(int n0) : n(n0) {}
+    /// Initialize with operations \a o
+    forceinline RangesMapPow(const Ops& o) : ops(o) {}
     /// Perform mapping of minimum
     forceinline int min(int x) const {
-      return pow(x,n);
+      return ops.pow(x);
     }
     /// Perform mapping of maximum
     forceinline int max(int x) const {
-      return tpow(x+1,n)-1;
+      return ops.tpow(x+1)-1;
     }
   };
 
   /// Mapping integer to n-th root
+  template<class Ops>
   class RangesMapNroot {
   protected:
-    /// Index of root
-    int n;
+    /// Power operations
+    Ops ops;
   public:
-    /// Initialize with root index \a n0
-    forceinline RangesMapNroot(int n0) : n(n0) {}
+    /// Initialize with operations \a o
+    forceinline RangesMapNroot(const Ops& o) : ops(o) {}
     /// Perform mapping of minimum
     forceinline int min(int x) const {
-      return fnroot(x,n);
+      return ops.fnroot(x);
     }
     /// Perform mapping of maximum
     forceinline int max(int x) const {
-      return fnroot(x,n);
+      return ops.fnroot(x);
     }
  };
 
-  template<class View>
+  template<class Ops>
   forceinline
-  NrootDom<View>::NrootDom(Home home, View x0, int n0, View x1)
-    : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1), n(n0) {}
+  NrootDom<Ops>::NrootDom(Home home, IntView x0, IntView x1, const Ops& o)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,x0,x1),
+      ops(o) {}
 
-  template<class View>
+  template<class Ops>
   forceinline ExecStatus
-  NrootDom<View>::post(Home home, View x0, int n, View x1) {
+  NrootDom<Ops>::post(Home home, IntView x0, IntView x1, Ops ops) {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x1.gq(home,0));
 
-    if (n >= sizeof(int) * CHAR_BIT) {
+    if (ops.exp() >= sizeof(int) * CHAR_BIT) {
       // The integer limits allow only 0 and 1 for x1
       GECODE_ME_CHECK(x1.lq(home,1));
     }
 
-    if (n == 0) {
+    if (ops.exp() == 0) {
       GECODE_ME_CHECK(x1.eq(home,1));
       return ES_OK;
-    } else if (n == 1) {
+    } else if (ops.exp() == 1) {
       return Rel::EqDom<IntView,IntView>::post(home,x0,x1);      
-    } else if (n == 2) {
+    } else if (ops.exp() == 2) {
       return SqrtDom<IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
-      assert(n > 1);
+      assert(ops.exp() > 1);
       GECODE_ME_CHECK(x1.lq(home,1));
       return ES_OK;
     } 
 
     // Limits values such that no overflow can occur
-    GECODE_ME_CHECK(x1.lq(home,fnroot(Limits::max,n)));
+    GECODE_ME_CHECK(x1.lq(home,ops.fnroot(Limits::max)));
 
-    GECODE_ES_CHECK(prop_nroot_bnd(home,x0,n,x1));
-    (void) new (home) NrootDom<View>(home,x0,n,x1);
+    GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
+    (void) new (home) NrootDom<Ops>(home,x0,x1,ops);
 
     return ES_OK;
   }
 
-  template<class View>
+  template<class Ops>
   forceinline
-  NrootDom<View>::NrootDom(Space& home, bool share, NrootDom<View>& p)
-    : BinaryPropagator<View,PC_INT_DOM>(home,share,p), n(p.n) {}
+  NrootDom<Ops>::NrootDom(Space& home, bool share, NrootDom<Ops>& p)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p), 
+      ops(p.ops) {}
 
-  template<class View>
+  template<class Ops>
   Actor*
-  NrootDom<View>::copy(Space& home, bool share) {
-    return new (home) NrootDom<View>(home,share,*this);
+  NrootDom<Ops>::copy(Space& home, bool share) {
+    return new (home) NrootDom<Ops>(home,share,*this);
   }
 
-  template<class View>
+  template<class Ops>
   PropCost
-  NrootDom<View>::cost(const Space&, const ModEventDelta& med) const {
-    if (View::me(med) == ME_INT_VAL)
+  NrootDom<Ops>::cost(const Space&, const ModEventDelta& med) const {
+    if (IntView::me(med) == ME_INT_VAL)
       return PropCost::unary(PropCost::LO);
-    else if (View::me(med) == ME_INT_DOM)
+    else if (IntView::me(med) == ME_INT_DOM)
       return PropCost::binary(PropCost::HI);
     else
       return PropCost::binary(PropCost::LO);
   }
 
-  template<class View>
+  template<class Ops>
   ExecStatus
-  NrootDom<View>::propagate(Space& home, const ModEventDelta& med) {
-    if (View::me(med) != ME_INT_DOM) {
-      GECODE_ES_CHECK(prop_nroot_bnd(home,x0,n,x1));
+  NrootDom<Ops>::propagate(Space& home, const ModEventDelta& med) {
+    if (IntView::me(med) != ME_INT_DOM) {
+      GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
       return x1.assigned() ? home.ES_SUBSUMED(*this)
-        : home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
+        : home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
     }
 
     {
-      ViewRanges<View> r(x0);
-      RangesMapNroot rmn(n);
-      Iter::Ranges::Map<ViewRanges<View>,RangesMapNroot,false> m(r,rmn);
+      ViewRanges<IntView> r(x0);
+      RangesMapNroot<Ops> rmn(ops);
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapNroot<Ops>,false> 
+        m(r,rmn);
       GECODE_ME_CHECK(x1.inter_r(home,m,false));
     }
 
     {
-      ViewRanges<View> r(x1);
-      RangesMapPow rmp(n);
-      Iter::Ranges::Map<ViewRanges<View>,RangesMapPow,true> m(r,rmp);
+      ViewRanges<IntView> r(x1);
+      RangesMapPow<Ops> rmp(ops);
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapPow<Ops>,true> 
+        m(r,rmp);
       GECODE_ME_CHECK(x0.inter_r(home,m,false));
     }
 

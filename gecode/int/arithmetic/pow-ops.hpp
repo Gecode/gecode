@@ -7,8 +7,8 @@
  *     Christian Schulte, 2012
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2012-08-17 14:23:02 +0200 (Fri, 17 Aug 2012) $ by $Author: schulte $
+ *     $Revision: 12994 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -37,67 +37,84 @@
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 
-  template<class IntType>
   forceinline
-  bool even(IntType n) {
-    return (n & 1) == 0;
+  PowOps::PowOps(int n0) : n(n0) {}
+
+  forceinline
+  bool PowOps::even(int m) {
+    return (m & 1) == 0;
+  }
+
+  forceinline
+  bool PowOps::even(void) const {
+    return even(n);
+  }
+
+  forceinline
+  int PowOps::exp(void) const {
+    return n;
+  }
+
+  forceinline
+  void PowOps::exp(int m) {
+    n=m;
   }
 
   template<class IntType>
   inline
-  IntType pow(IntType x, int n) {
-    assert(n > 0);
+  IntType PowOps::pow(IntType x) const {
+    int m = n;
     IntType p = 1;
     do {
-      if (even(n)) {
-        x *= x; n >>= 1;
+      if (even(m)) {
+        x *= x; m >>= 1;
       } else {
-        p *= x; n--;
+        p *= x; m--;
       }
-    } while (n > 0);
+    } while (m > 0);
     return p;
   }
 
-  forceinline
-  int tpow(int _x, int n) {
-    assert(n > 0);
+  inline
+  int PowOps::tpow(int _x) const {
+    int m = n;
     long long int p = 1;
     long long int x = _x;
     do {
-      if (even(n)) {
-        x *= x; n >>= 1;
+      if (even(m)) {
+        x *= x; m >>= 1;
       } else {
-        p *= x; n--;
+        p *= x; m--;
       }
       if (p > Limits::max)
         return Limits::max+1;
-    } while (n > 0);
+    } while (m > 0);
     return static_cast<int>(p);
   }
 
-  /// Test whether \f$r^n>x\f$
   forceinline
-  bool powgr(int r, int n, int x) {
-    assert((r >= 0) && (n > 0));
+  bool PowOps::powgr(int r, int x) const {
+    assert(r >= 0);
+    int m = n;
     unsigned long long int y = static_cast<unsigned long long int>(r);
     unsigned long long int p = static_cast<unsigned long long int>(1);
     do {
-      if (even(n)) {
-        y *= y; n >>= 1;
+      if (even(m)) {
+        y *= y; m >>= 1;
         if (y > x)
           return true;
       } else {
-        p *= y; n--;
+        p *= y; m--;
         if (p > x)
           return true;
       }
-    } while (n > 0);
+    } while (m > 0);
     assert(y <= x);
     return false;
   }
 
   inline
-  int fnroot(int x, int n) {
+  int PowOps::fnroot(int x) const {
     if (x < 2)
       return x;
     /*
@@ -107,37 +124,36 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     int u = x;
     do {
       int m = (l + u) >> 1;
-      if (powgr(m,n,x)) u=m; else l=m;
+      if (powgr(m,x)) u=m; else l=m;
     } while (l+1 < u);
-    assert((pow(static_cast<long long int>(l),n) <= x) && 
-           (x < pow(static_cast<long long int>(l+1),n)));
+    assert((pow(static_cast<long long int>(l)) <= x) && 
+           (x < pow(static_cast<long long int>(l+1))));
     return l;
   }
 
-  /// Test whether \f$r^n<x\f$
   forceinline
-  bool powle(int r, int n, int x) {
-    assert((r >= 0) && (n > 0));
+  bool PowOps::powle(int r, int x) const {
+    assert(r >= 0);
+    int m = n;
     unsigned long long int y = static_cast<unsigned long long int>(r);
     unsigned long long int p = static_cast<unsigned long long int>(1);
     do {
-      if (even(n)) {
-        y *= y; n >>= 1;
+      if (even(m)) {
+        y *= y; m >>= 1;
         if (y >= x)
           return false;
       } else {
-        p *= y; n--;
+        p *= y; m--;
         if (p >= x)
           return false;
       }
-    } while (n > 0);
+    } while (m > 0);
     assert(y < x);
     return true;
   }
 
-  /// Return \f$\lceil \sqrt[n]{x}\rceil\f$ where \a x must be non-negative and \f$n>0\f$
   inline
-  int cnroot(int x, int n) {
+  int PowOps::cnroot(int x) const {
     if (x < 2)
       return x;
     /*
@@ -147,10 +163,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     int u = x;
     do {
       int m = (l + u) >> 1;
-      if (powle(m,n,x)) l=m; else u=m;
+      if (powle(m,x)) l=m; else u=m;
     } while (l+1 < u);
-    assert((pow(static_cast<long long int>(u-1),n) < x) && 
-           (x <= pow(static_cast<long long int>(u),n)));
+    assert((pow(static_cast<long long int>(u-1)) < x) && 
+           (x <= pow(static_cast<long long int>(u))));
     return u;
   }
 
