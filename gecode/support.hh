@@ -129,6 +129,7 @@
 
 #include <gecode/support/thread.hpp>
 #include <gecode/support/timer.hpp>
+#include <gecode/support/hw-rnd.hpp>
 
 #endif
 

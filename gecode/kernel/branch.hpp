@@ -72,6 +72,9 @@ namespace Gecode {
     /// Return object with time-based seed value
     static VarBranchOptions time(Activity a=Activity::def,
                                  BranchFilter bf=NULL);
+    /// Return object with hardware-based random seed value
+    static VarBranchOptions hwrnd(Activity a=Activity::def,
+                                  BranchFilter bf=NULL);
   };
 
   /** \brief Value branch options
@@ -87,6 +90,8 @@ namespace Gecode {
     ValBranchOptions(void);
     /// Return object with time-based seed value
     static ValBranchOptions time(void);
+    /// Return object with hardware-based random seed value
+    static ValBranchOptions hwrnd(void);
   };
 
 
@@ -173,10 +178,17 @@ namespace Gecode {
   VarBranchOptions::VarBranchOptions(Activity a, BranchFilter bf0) 
     : activity(a), bf(bf0), seed(0) {}
 
-  forceinline VarBranchOptions
+  inline VarBranchOptions
   VarBranchOptions::time(Activity a, BranchFilter bf) {
     VarBranchOptions o(a,bf); 
     o.seed=static_cast<unsigned int>(::time(NULL));
+    return o;
+  }
+
+  inline VarBranchOptions
+  VarBranchOptions::hwrnd(Activity a, BranchFilter bf) {
+    VarBranchOptions o(a,bf); 
+    o.seed=Support::hwrnd();
     return o;
   }
 
@@ -184,9 +196,15 @@ namespace Gecode {
   forceinline
   ValBranchOptions::ValBranchOptions(void) : seed(0) {}
 
-  forceinline ValBranchOptions
+  inline ValBranchOptions
   ValBranchOptions::time(void) {
     ValBranchOptions o; o.seed=static_cast<unsigned int>(::time(NULL));
+    return o;
+  }
+
+  inline ValBranchOptions
+  ValBranchOptions::hwrnd(void) {
+    ValBranchOptions o; o.seed=Support::hwrnd();
     return o;
   }
 

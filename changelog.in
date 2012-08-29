@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The random seeds for variable and value branching options can now
+be initialized from a hardware random number generator (see MPG
+for details).
+
+[ENTRY]
 Module: search
 What:   change
 Rank:   major
