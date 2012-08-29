@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+The restart best solution search engine has been renamed from
+Restart to RBS.
+
+[ENTRY]
 Module: minimodel
 What:   new
 Rank:   minor

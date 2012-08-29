@@ -466,8 +466,8 @@ namespace Test {
                       (void) new Best<HasSolutions,BAB>
                         ("BAB",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
                          c_d,a_d,t);
-                      (void) new Best<HasSolutions,Restart>
-                        ("Restart",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
+                      (void) new Best<HasSolutions,RBS>
+                        ("RBS",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
                          c_d,a_d,t);
                   }
               (void) new Best<FailImmediate,BAB>

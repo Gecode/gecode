@@ -85,8 +85,8 @@ public:
 
   /// Search variants
   enum {
-    SEARCH_BAB,    ///< Use branch and bound to optimize
-    SEARCH_RESTART ///< Use restart to optimize
+    SEARCH_BAB, ///< Use branch and bound to optimize
+    SEARCH_RBS  ///< Use restart to optimize
   };
 
   /// Constructor
@@ -284,7 +284,7 @@ main(int argc, char* argv[]) {
   opt.branching(QueenArmies::BRANCH_SPECIFIC, "specific");
   opt.search(QueenArmies::SEARCH_BAB);
   opt.search(QueenArmies::SEARCH_BAB, "bab");
-  opt.search(QueenArmies::SEARCH_RESTART, "restart");
+  opt.search(QueenArmies::SEARCH_RBS, "rbs");
   opt.solutions(0);
   opt.parse(argc,argv);
 
@@ -326,8 +326,8 @@ main(int argc, char* argv[]) {
   switch (opt.search()) {
   case QueenArmies::SEARCH_BAB:
     MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt); break;
-  case QueenArmies::SEARCH_RESTART:
-    MaximizeScript::run<QueenArmies,Restart,SizeOptions>(opt); break;
+  case QueenArmies::SEARCH_RBS:
+    MaximizeScript::run<QueenArmies,RBS,SizeOptions>(opt); break;
   }
   return 0;
 }

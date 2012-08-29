@@ -162,7 +162,7 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
@@ -182,7 +182,7 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
@@ -202,7 +202,7 @@ gecode/search/parallel/engine$(OBJSUFFIX) gecode/search/parallel/engine$(SBJSUFF
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/restart.hpp \
+	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/search/worker.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
@@ -225,7 +225,7 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
 	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
-	./gecode/search/restart.hpp ./gecode/search/sequential/dfs.hh ./gecode/search/sequential/path.hh \
+	./gecode/search/rbs.hpp ./gecode/search/sequential/dfs.hh ./gecode/search/sequential/path.hh \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/search/worker.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
@@ -248,7 +248,7 @@ gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
 	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/search/worker.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -270,7 +270,7 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
 	./gecode/search/parallel/bab.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
-	./gecode/search/restart.hpp ./gecode/search/sequential/bab.hh ./gecode/search/sequential/path.hh \
+	./gecode/search/rbs.hpp ./gecode/search/sequential/bab.hh ./gecode/search/sequential/path.hh \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/search/worker.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
@@ -293,7 +293,7 @@ gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
 	./gecode/search/parallel/bab.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/search/worker.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -303,7 +303,7 @@ gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/support/sort.hpp ./gecode/support/static-stack.hpp ./gecode/support/thread.hpp \
 	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
-gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
+gecode/search/rbs$(OBJSUFFIX) gecode/search/rbs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
 	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
@@ -315,8 +315,8 @@ gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
 	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
-	./gecode/search/parallel/restart.hh ./gecode/search/restart.hpp ./gecode/search/sequential/dfs.hh \
-	./gecode/search/sequential/path.hh ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/parallel/rbs.hh ./gecode/search/rbs.hpp ./gecode/search/sequential/dfs.hh \
+	./gecode/search/sequential/path.hh ./gecode/search/sequential/rbs.hh ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/search/worker.hh \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
@@ -326,7 +326,7 @@ gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
-gecode/search/parallel/restart$(OBJSUFFIX) gecode/search/parallel/restart$(SBJSUFFIX): \
+gecode/search/parallel/rbs$(OBJSUFFIX) gecode/search/parallel/rbs$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
 	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
@@ -338,7 +338,7 @@ gecode/search/parallel/restart$(OBJSUFFIX) gecode/search/parallel/restart$(SBJSU
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
 	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
-	./gecode/search/parallel/restart.hh ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/parallel/rbs.hh ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/search/worker.hh \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
@@ -5420,6 +5420,138 @@ gecode/minimodel/arithmetic$(OBJSUFFIX) gecode/minimodel/arithmetic$(SBJSUFFIX):
 	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/none.hpp \
 	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
 	./gecode/support/timer.hpp 
+gecode/minimodel/lin-float-expr$(OBJSUFFIX) gecode/minimodel/lin-float-expr$(SBJSUFFIX): \
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
+	./gecode/float/num.hpp ./gecode/float/rounding.hpp ./gecode/float/val.hpp \
+	./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp \
+	./gecode/float/var/float.hpp ./gecode/float/var/print.hpp ./gecode/float/view.hpp \
+	./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp \
+	./gecode/float/view/print.hpp ./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp \
+	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
+	./gecode/int/array.hpp ./gecode/int/bool.hh ./gecode/int/bool/base.hpp \
+	./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp ./gecode/int/bool/eqv.hpp \
+	./gecode/int/bool/lq.hpp ./gecode/int/bool/or.hpp ./gecode/int/exception.hpp \
+	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
+	./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp ./gecode/int/linear.hh \
+	./gecode/int/linear/bool-int.hpp ./gecode/int/linear/bool-scale.hpp ./gecode/int/linear/bool-view.hpp \
+	./gecode/int/linear/int-bin.hpp ./gecode/int/linear/int-dom.hpp ./gecode/int/linear/int-nary.hpp \
+	./gecode/int/linear/int-noview.hpp ./gecode/int/linear/int-ter.hpp ./gecode/int/linear/post.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/minimodel.hh \
+	./gecode/minimodel/bool-expr.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp \
+	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
+	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/set.hh \
+	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
+	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/none.hpp \
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
+gecode/minimodel/lin-float-rel$(OBJSUFFIX) gecode/minimodel/lin-float-rel$(SBJSUFFIX): \
+	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
+	./gecode/float/array.hpp ./gecode/float/exception.hpp ./gecode/float/limits.hpp \
+	./gecode/float/linear.hh ./gecode/float/linear/bin.hpp ./gecode/float/linear/nary.hpp \
+	./gecode/float/linear/noview.hpp ./gecode/float/linear/post.hpp ./gecode/float/linear/ter.hpp \
+	./gecode/float/num.hpp ./gecode/float/rounding.hpp ./gecode/float/val.hpp \
+	./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp ./gecode/float/var-imp/float.hpp \
+	./gecode/float/var/float.hpp ./gecode/float/var/print.hpp ./gecode/float/view.hpp \
+	./gecode/float/view/float.hpp ./gecode/float/view/minus.hpp ./gecode/float/view/offset.hpp \
+	./gecode/float/view/print.hpp ./gecode/float/view/rel-test.hpp ./gecode/float/view/scale.hpp \
+	./gecode/int.hh ./gecode/int/activity.hpp ./gecode/int/array-traits.hpp \
+	./gecode/int/array.hpp ./gecode/int/bool.hh ./gecode/int/bool/base.hpp \
+	./gecode/int/bool/clause.hpp ./gecode/int/bool/eq.hpp ./gecode/int/bool/eqv.hpp \
+	./gecode/int/bool/lq.hpp ./gecode/int/bool/or.hpp ./gecode/int/exception.hpp \
+	./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp ./gecode/int/int-set-1.hpp \
+	./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp ./gecode/int/linear.hh \
+	./gecode/int/linear/bool-int.hpp ./gecode/int/linear/bool-scale.hpp ./gecode/int/linear/bool-view.hpp \
+	./gecode/int/linear/int-bin.hpp ./gecode/int/linear/int-dom.hpp ./gecode/int/linear/int-nary.hpp \
+	./gecode/int/linear/int-noview.hpp ./gecode/int/linear/int-ter.hpp ./gecode/int/linear/post.hpp \
+	./gecode/int/propagator.hpp ./gecode/int/reify.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
+	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
+	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \
+	./gecode/int/view/cached.hpp ./gecode/int/view/constint.hpp ./gecode/int/view/int.hpp \
+	./gecode/int/view/iter.hpp ./gecode/int/view/minus.hpp ./gecode/int/view/neg-bool.hpp \
+	./gecode/int/view/offset.hpp ./gecode/int/view/print.hpp ./gecode/int/view/rel-test.hpp \
+	./gecode/int/view/scale.hpp ./gecode/int/view/zero.hpp ./gecode/iter.hh \
+	./gecode/iter/ranges-add.hpp ./gecode/iter/ranges-append.hpp ./gecode/iter/ranges-array.hpp \
+	./gecode/iter/ranges-cache.hpp ./gecode/iter/ranges-compl.hpp ./gecode/iter/ranges-diff.hpp \
+	./gecode/iter/ranges-empty.hpp ./gecode/iter/ranges-inter.hpp ./gecode/iter/ranges-list.hpp \
+	./gecode/iter/ranges-map.hpp ./gecode/iter/ranges-minmax.hpp ./gecode/iter/ranges-minus.hpp \
+	./gecode/iter/ranges-negative.hpp ./gecode/iter/ranges-offset.hpp ./gecode/iter/ranges-operations.hpp \
+	./gecode/iter/ranges-positive.hpp ./gecode/iter/ranges-rangelist.hpp ./gecode/iter/ranges-scale.hpp \
+	./gecode/iter/ranges-singleton-append.hpp ./gecode/iter/ranges-singleton.hpp ./gecode/iter/ranges-size.hpp \
+	./gecode/iter/ranges-union.hpp ./gecode/iter/ranges-values.hpp ./gecode/iter/values-array.hpp \
+	./gecode/iter/values-bitset.hpp ./gecode/iter/values-inter.hpp ./gecode/iter/values-list.hpp \
+	./gecode/iter/values-map.hpp ./gecode/iter/values-minus.hpp ./gecode/iter/values-negative.hpp \
+	./gecode/iter/values-offset.hpp ./gecode/iter/values-positive.hpp ./gecode/iter/values-ranges.hpp \
+	./gecode/iter/values-singleton.hpp ./gecode/iter/values-union.hpp ./gecode/iter/values-unique.hpp \
+	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
+	./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp ./gecode/kernel/array.hpp \
+	./gecode/kernel/branch.hpp ./gecode/kernel/brancher-tiebreak.hpp ./gecode/kernel/brancher-val.hpp \
+	./gecode/kernel/brancher-view.hpp ./gecode/kernel/brancher.hpp ./gecode/kernel/core.hpp \
+	./gecode/kernel/exception.hpp ./gecode/kernel/global-prop-info.hpp ./gecode/kernel/macros.hpp \
+	./gecode/kernel/memory-config.hpp ./gecode/kernel/memory-manager.hpp ./gecode/kernel/modevent.hpp \
+	./gecode/kernel/propagator.hpp ./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp \
+	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
+	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/minimodel.hh \
+	./gecode/minimodel/bool-expr.hpp ./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp \
+	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
+	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/set.hh \
+	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
+	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
+	./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp ./gecode/set/var-imp/iter.hpp \
+	./gecode/set/var-imp/set.hpp ./gecode/set/var/print.hpp ./gecode/set/var/set.hpp \
+	./gecode/set/view.hpp ./gecode/set/view/cached.hpp ./gecode/set/view/complement.hpp \
+	./gecode/set/view/const.hpp ./gecode/set/view/print.hpp ./gecode/set/view/set.hpp \
+	./gecode/set/view/singleton.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
+	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
+	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
+	./gecode/support/dynamic-queue.hpp ./gecode/support/dynamic-stack.hpp ./gecode/support/exception.hpp \
+	./gecode/support/heap.hpp ./gecode/support/int-type.hpp ./gecode/support/macros.hpp \
+	./gecode/support/marked-pointer.hpp ./gecode/support/random.hpp ./gecode/support/sort.hpp \
+	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/none.hpp \
+	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
+	./gecode/support/timer.hpp 
 gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
@@ -5473,7 +5605,7 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5543,7 +5675,7 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5613,7 +5745,7 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5685,7 +5817,7 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5755,7 +5887,7 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5825,7 +5957,7 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5895,7 +6027,7 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -5965,7 +6097,7 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6035,7 +6167,7 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6105,7 +6237,7 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6175,7 +6307,7 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6245,7 +6377,7 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6315,7 +6447,7 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6385,7 +6517,7 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6455,7 +6587,7 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6525,7 +6657,7 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6595,7 +6727,7 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6665,7 +6797,7 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6735,7 +6867,7 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6805,7 +6937,7 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6875,7 +7007,7 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -6945,7 +7077,7 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7015,7 +7147,7 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7085,7 +7217,7 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7155,7 +7287,7 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7225,7 +7357,7 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7295,7 +7427,7 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7365,7 +7497,7 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7435,7 +7567,7 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7505,7 +7637,7 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7575,7 +7707,7 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7645,7 +7777,7 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7715,7 +7847,7 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7786,7 +7918,7 @@ examples/word-square$(OBJSUFFIX) examples/word-square$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -7856,7 +7988,7 @@ examples/crossword$(OBJSUFFIX) examples/crossword$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -7925,7 +8057,7 @@ examples/open-shop$(OBJSUFFIX) examples/open-shop$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -7995,7 +8127,7 @@ examples/car-sequencing$(OBJSUFFIX) examples/car-sequencing$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8065,7 +8197,7 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8135,7 +8267,7 @@ examples/bin-packing$(OBJSUFFIX) examples/bin-packing$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8205,7 +8337,7 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8275,7 +8407,7 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8345,7 +8477,7 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8415,7 +8547,7 @@ examples/schurs-lemma$(OBJSUFFIX) examples/schurs-lemma$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8485,7 +8617,7 @@ examples/dominating-queens$(OBJSUFFIX) examples/dominating-queens$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8555,7 +8687,7 @@ examples/colored-matrix$(OBJSUFFIX) examples/colored-matrix$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8625,7 +8757,7 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8695,7 +8827,7 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8765,7 +8897,7 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8835,7 +8967,7 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8905,7 +9037,7 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -8990,7 +9122,7 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -9072,7 +9204,7 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9137,7 +9269,7 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9199,7 +9331,7 @@ gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/kernel/range-list.hpp ./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -9286,7 +9418,7 @@ gecode/gist/nodestats$(OBJSUFFIX) gecode/gist/nodestats$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -9349,7 +9481,7 @@ gecode/gist/nodewidget$(OBJSUFFIX) gecode/gist/nodewidget$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9413,7 +9545,7 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9471,7 +9603,7 @@ gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9529,7 +9661,7 @@ gecode/gist/stopbrancher$(OBJSUFFIX) gecode/gist/stopbrancher$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9601,7 +9733,7 @@ gecode/flatzinc/flatzinc$(OBJSUFFIX) gecode/flatzinc/flatzinc$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -9672,7 +9804,7 @@ gecode/flatzinc/registry$(OBJSUFFIX) gecode/flatzinc/registry$(SBJSUFFIX): \
 	./gecode/minimodel/exception.hpp ./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
-	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/restart.hpp \
+	./gecode/search/dfs.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/set.hh \
 	./gecode/set/activity.hpp ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/exception.hpp ./gecode/set/limits.hpp ./gecode/set/var-imp.hpp \
@@ -9744,7 +9876,7 @@ tools/flatzinc/fz$(OBJSUFFIX) tools/flatzinc/fz$(SBJSUFFIX): \
 	./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9816,7 +9948,7 @@ gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/parser.tab$(SBJSUFFIX): \
 	./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9888,7 +10020,7 @@ gecode/flatzinc/lexer.yy$(OBJSUFFIX) gecode/flatzinc/lexer.yy$(SBJSUFFIX): \
 	./gecode/minimodel/lin-float-rel.hpp ./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -9915,7 +10047,7 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
 	./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp ./gecode/support/dynamic-queue.hpp \
@@ -9959,7 +10091,7 @@ test/afc$(OBJSUFFIX) test/afc$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10003,7 +10135,7 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10066,7 +10198,7 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10135,7 +10267,7 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10186,7 +10318,7 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10249,7 +10381,7 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10300,7 +10432,7 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10345,7 +10477,7 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10390,7 +10522,7 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10453,7 +10585,7 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10522,7 +10654,7 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10591,7 +10723,7 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10660,7 +10792,7 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10711,7 +10843,7 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10756,7 +10888,7 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -10819,7 +10951,7 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10888,7 +11020,7 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -10957,7 +11089,7 @@ test/int/sequence$(OBJSUFFIX) test/int/sequence$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11026,7 +11158,7 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11095,7 +11227,7 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11164,7 +11296,7 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11233,7 +11365,7 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11302,7 +11434,7 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11371,7 +11503,7 @@ test/int/bin-packing$(OBJSUFFIX) test/int/bin-packing$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11440,7 +11572,7 @@ test/int/unary$(OBJSUFFIX) test/int/unary$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11509,7 +11641,7 @@ test/int/cumulative$(OBJSUFFIX) test/int/cumulative$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11578,7 +11710,7 @@ test/int/cumulatives$(OBJSUFFIX) test/int/cumulatives$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11647,7 +11779,7 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11716,7 +11848,7 @@ test/int/no-overlap$(OBJSUFFIX) test/int/no-overlap$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11767,7 +11899,7 @@ test/int/precede$(OBJSUFFIX) test/int/precede$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -11830,7 +11962,7 @@ test/int/nvalues$(OBJSUFFIX) test/int/nvalues$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11899,7 +12031,7 @@ test/int/member$(OBJSUFFIX) test/int/member$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -11950,7 +12082,7 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12002,7 +12134,7 @@ test/set/construct$(OBJSUFFIX) test/set/construct$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12054,7 +12186,7 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12106,7 +12238,7 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12158,7 +12290,7 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12210,7 +12342,7 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12262,7 +12394,7 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12314,7 +12446,7 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12384,7 +12516,7 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -12454,7 +12586,7 @@ test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -12506,7 +12638,7 @@ test/set/precede$(OBJSUFFIX) test/set/precede$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12558,7 +12690,7 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12610,7 +12742,7 @@ test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12680,7 +12812,7 @@ test/set/mm-set$(OBJSUFFIX) test/set/mm-set$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -12749,7 +12881,7 @@ test/set/channel$(OBJSUFFIX) test/set/channel$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -12808,7 +12940,7 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12866,7 +12998,7 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12924,7 +13056,7 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -12982,7 +13114,7 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13040,7 +13172,7 @@ test/branch/float$(OBJSUFFIX) test/branch/float$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13098,7 +13230,7 @@ test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13156,7 +13288,7 @@ test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13214,7 +13346,7 @@ test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13272,7 +13404,7 @@ test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13330,7 +13462,7 @@ test/assign/float$(OBJSUFFIX) test/assign/float$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/set.hh ./gecode/set/activity.hpp \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/exception.hpp \
 	./gecode/set/limits.hpp ./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp \
@@ -13399,7 +13531,7 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/minimodel/lin-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/dfs.hpp ./gecode/search/options.hpp \
-	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/set.hh ./gecode/set/activity.hpp ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/exception.hpp ./gecode/set/limits.hpp \
 	./gecode/set/var-imp.hpp ./gecode/set/var-imp/delta.hpp ./gecode/set/var-imp/integerset.hpp \
@@ -13450,7 +13582,7 @@ test/array$(OBJSUFFIX) test/array$(SBJSUFFIX): \
 	./gecode/kernel/region.hpp ./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/options.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \

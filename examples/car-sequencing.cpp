@@ -213,8 +213,8 @@ class CarSequencing : public Script {
 public:
   /// Search variants
   enum {
-    SEARCH_BAB,    ///< Use branch and bound to optimize
-    SEARCH_RESTART ///< Use restart to optimize
+    SEARCH_BAB, ///< Use branch and bound to optimize
+    SEARCH_RBS  ///< Use restart to optimize
   };
   /// Branching variants
   enum {
@@ -433,7 +433,7 @@ main(int argc, char* argv[]) {
   opt.size(0);
   opt.search(CarSequencing::SEARCH_BAB);
   opt.search(CarSequencing::SEARCH_BAB, "bab");
-  opt.search(CarSequencing::SEARCH_RESTART, "restart");
+  opt.search(CarSequencing::SEARCH_RBS, "rbs");
   opt.branching(CarSequencing::BRANCH_INORDER);
   opt.branching(CarSequencing::BRANCH_INORDER,  "inorder");
   opt.branching(CarSequencing::BRANCH_MIDDLE, "middle");
@@ -450,8 +450,8 @@ main(int argc, char* argv[]) {
   switch (opt.search()) {
   case CarSequencing::SEARCH_BAB:
     Script::run<CarSequencing,BAB,CarOptions>(opt); break;
-  case CarSequencing::SEARCH_RESTART:
-    Script::run<CarSequencing,Restart,CarOptions>(opt); break;
+  case CarSequencing::SEARCH_RBS:
+    Script::run<CarSequencing,RBS,CarOptions>(opt); break;
   }
   return 0;
 }
