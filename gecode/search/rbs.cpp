@@ -35,39 +35,28 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_PARALLEL_RESTART_HH__
-#define __GECODE_SEARCH_PARALLEL_RESTART_HH__
-
-#include <gecode/search/parallel/dfs.hh>
-
-namespace Gecode { namespace Search { namespace Parallel {
-
-  /// Depth-first restart best solution search engine implementation
-  class Restart : public DFS {
-  protected:
-    /// Root node
-    Space* root;
-    /// So-far best solution
-    Space* best;
-    /// Whether a reset is needed
-    bool reset_needed;
-  public:
-    /// Initialize engine for space \a s (with size \a sz) and options \a o
-    Restart(Space* s, size_t sz, const Search::Options& o);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Destructor
-    virtual ~Restart(void);
-  };
-
-  forceinline 
-  Restart::Restart(Space* s, size_t sz, const Search::Options& o) :
-    DFS(s,sz,o),
-    root(s->status() == SS_FAILED ? NULL : s->clone()), 
-    best(NULL), reset_needed(false) {}
-
-}}}
-
+#include <gecode/search.hh>
+#include <gecode/search/sequential/rbs.hh>
+#ifdef GECODE_HAS_THREADS
+#include <gecode/search/parallel/rbs.hh>
 #endif
+#include <gecode/search/support.hh>
 
-// STATISTICS: search-parallel
+namespace Gecode { namespace Search {
+    
+  Engine* 
+  rbs(Space* s, size_t sz, const Options& o) {
+#ifdef GECODE_HAS_THREADS
+    Options to = o.expand();
+    if (to.threads == 1.0)
+      return new WorkerToEngine<Sequential::RBS>(s,sz,to);
+    else
+      return new Parallel::RBS(s,sz,to);
+#else
+    return new WorkerToEngine<Sequential::RBS>(s,sz,o);
+#endif
+  }
+
+}}
+
+// STATISTICS: search-other

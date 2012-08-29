@@ -914,9 +914,9 @@ namespace Gecode { namespace FlatZinc {
     }
   };
 
-  /// Specialization for Restart
+  /// Specialization for RBS
   template<typename S>
-  class GistEngine<Restart<S> > {
+  class GistEngine<RBS<S> > {
   public:
     static void explore(S* root, const FlatZincOptions& opt,
                         Gist::Inspector* i, Gist::Comparator* c) {
@@ -1120,7 +1120,7 @@ namespace Gecode { namespace FlatZinc {
       if (opt.search() == FlatZincOptions::FZ_SEARCH_BAB)
         runEngine<BAB>(out,p,opt,t_total);
       else
-        runEngine<Restart>(out,p,opt,t_total);
+        runEngine<RBS>(out,p,opt,t_total);
       break;
     case SAT:
       runEngine<DFS>(out,p,opt,t_total);

@@ -178,9 +178,9 @@ namespace Gecode { namespace Driver {
     }
   };
   
-  /// Specialization for Restart
+  /// Specialization for RBS
   template<typename S>
-  class GistEngine<Restart<S> > {
+  class GistEngine<RBS<S> > {
   public:
     static void explore(S* root, const Gist::Options& opt) {
       (void) Gist::bab(root, opt);

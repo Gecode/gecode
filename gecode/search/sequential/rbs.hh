@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,54 +35,55 @@
  *
  */
 
-namespace Gecode {
+#ifndef __GECODE_SEARCH_SEQUENTIAL_RBS_HH__
+#define __GECODE_SEARCH_SEQUENTIAL_RBS_HH__
 
-  namespace Search {
-    /// Create restart engine
-    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz, const Options& o);
-  }
+#include <gecode/search/sequential/dfs.hh>
 
-  template<class T>
-  forceinline
-  Restart<T>::Restart(T* s, const Search::Options& o)
-    : e(Search::restart(s,sizeof(T),o)) {}
+namespace Gecode { namespace Search { namespace Sequential {
 
-  template<class T>
-  forceinline T*
-  Restart<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
+  /// Depth-first restart best solution search engine implementation
+  class RBS : public DFS {
+  protected:
+    /// Root node
+    Space* root;
+    /// So-far best solution
+    Space* best;
+  public:
+    /// Initialize engine for space \a s (with size \a sz) and options \a o
+    RBS(Space* s, size_t sz, const Search::Options& o);
+    /// Return next better solution (NULL, if none exists or search has been stopped)
+    Space* next(void);
+    /// Destructor
+    ~RBS(void);
+  };
 
-  template<class T>
-  forceinline Search::Statistics
-  Restart<T>::statistics(void) const {
-    return e->statistics();
-  }
+  forceinline 
+  RBS::RBS(Space* s, size_t sz, const Search::Options& o) :
+    DFS(s,sz,o),
+    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
 
-  template<class T>
-  forceinline bool
-  Restart<T>::stopped(void) const {
-    return e->stopped();
-  }
-
-  template<class T>
-  forceinline
-  Restart<T>::~Restart(void) {
-    delete e;
-  }
-
-
-  template<class T>
-  T*
-  restart(T* s, const Search::Options& o) {
-    Restart<T> b(s,o);
-    T* l = NULL;
-    while (T* n = b.next()) {
-      delete l; l = n;
+  forceinline Space*
+  RBS::next(void) {
+    if (best != NULL) {
+      root->constrain(*best);
+      root = reset(root);
     }
-    return l;
+    if (root == NULL)
+      return NULL;
+    delete best;
+    best = DFS::next();
+    return (best != NULL) ? best->clone() : NULL;
   }
 
-}
+  forceinline 
+  RBS::~RBS(void) {
+    delete best;
+    delete root;
+  }
 
-// STATISTICS: search-other
+}}}
+
+#endif
+
+// STATISTICS: search-sequential

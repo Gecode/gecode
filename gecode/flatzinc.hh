@@ -227,8 +227,8 @@ namespace Gecode { namespace FlatZinc {
       //@}
   public:
     enum SearchOptions {
-      FZ_SEARCH_BAB,    //< Branch-and-bound search
-      FZ_SEARCH_RESTART //< Restart search
+      FZ_SEARCH_BAB, //< Branch-and-bound search
+      FZ_SEARCH_RBS  //< Restart search
     };
     /// Constructor
     FlatZincOptions(const char* s)
@@ -250,7 +250,7 @@ namespace Gecode { namespace FlatZinc {
       _output("-o","file to send output to") {
 
       _search.add(FZ_SEARCH_BAB, "bab");
-      _search.add(FZ_SEARCH_RESTART, "restart");
+      _search.add(FZ_SEARCH_RBS, "rbs");
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");

@@ -39,12 +39,12 @@
 
 #ifdef GECODE_HAS_THREADS
 
-#include <gecode/search/parallel/restart.hh>
+#include <gecode/search/parallel/rbs.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
 
   Space*
-  Restart::next(void) {
+  RBS::next(void) {
     // Invariant: the worker holds the wait mutex
     m_search.acquire();
     // Check whether root space is already failed
@@ -155,7 +155,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return NULL;
   }
 
-  Restart::~Restart(void) {
+  RBS::~RBS(void) {
     delete best;
     delete root;
   }

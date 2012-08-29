@@ -416,13 +416,13 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class Restart {
+  class RBS {
   private:
     /// The actual search engine
     Search::Engine* e;
   public:
     /// Initialize engine for space \a s and options \a o
-    Restart(T* s, const Search::Options& o=Search::Options::def);
+    RBS(T* s, const Search::Options& o=Search::Options::def);
     /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
     /// Return statistics
@@ -430,7 +430,7 @@ namespace Gecode {
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// Destructor
-    ~Restart(void);
+    ~RBS(void);
   };
 
   /**
@@ -445,13 +445,13 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  T* restart(T* s, const Search::Options& o=Search::Options::def);
+  T* rbs(T* s, const Search::Options& o=Search::Options::def);
 
 }
 
 #include <gecode/search/dfs.hpp>
 #include <gecode/search/bab.hpp>
-#include <gecode/search/restart.hpp>
+#include <gecode/search/rbs.hpp>
 
 #endif
 
