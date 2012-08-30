@@ -35,6 +35,7 @@
  *
  */
 
+#include <gecode/support.hh>
 
 #ifdef _MSC_VER
 
@@ -47,6 +48,23 @@ namespace Gecode { namespace Support {
     unsigned int r;
     (void) rand_s(&r);
     return r;
+  }
+
+}}
+
+#else
+
+#include <fstream>
+
+namespace Gecode { namespace Support {
+
+  unsigned int hwrnd(void) {
+    std::fstream devrandom;
+    devrandom.open("/dev/random", std::fstream::in);
+    unsigned int rnd;
+    devrandom.read(reinterpret_cast<char*>(&rnd),sizeof(unsigned int));
+    devrandom.close();
+    return rnd;
   }
 
 }}
