@@ -45,7 +45,7 @@ namespace Gecode {
              const IntVarArgs& b, const IntArgs& s,
              IntConLevel) {
     using namespace Int;
-    if (l.same(home,b))
+    if (l.same(b))
       throw ArgumentSame("Int::binpacking");
     if (b.size() != s.size())
       throw ArgumentSizeMismatch("Int::binpacking");      

@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   template<class Dim, int d>
   ExecStatus 
   ManProp<Dim,d>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
 
     // Number of disjoint boxes
     int* db = r.alloc<int>(n);

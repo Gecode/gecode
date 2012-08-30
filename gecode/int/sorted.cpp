@@ -45,7 +45,7 @@ namespace Gecode {
     using namespace Int;
     if ((x.size() != y.size()) || (x.size() != z.size()))
       throw ArgumentSizeMismatch("Int::Sorted");
-    if (x.same(home,y) || x.same(home,z) || y.same(home,z))
+    if (x.same(y) || x.same(z) || y.same(z))
       throw ArgumentSame("Int::Sorted");
 
     if (home.failed()) return;
@@ -54,8 +54,7 @@ namespace Gecode {
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,z);
 
-    GECODE_ES_FAIL(
-                   (Sorted::Sorted<IntView,true>::post(home,x0,y0,z0)));
+    GECODE_ES_FAIL((Sorted::Sorted<IntView,true>::post(home,x0,y0,z0)));
   }
 
   void
@@ -64,7 +63,7 @@ namespace Gecode {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::Sorted");
-    if (x.same(home,y))
+    if (x.same(y))
       throw ArgumentSame("Int::Sorted");
 
     if (home.failed()) return;
@@ -73,8 +72,7 @@ namespace Gecode {
 
     ViewArray<IntView> x0(home,x), y0(home,y), z0(home,0);
 
-    GECODE_ES_FAIL(
-                   (Sorted::Sorted<IntView,false>::post(home,x0,y0,z0)));
+    GECODE_ES_FAIL((Sorted::Sorted<IntView,false>::post(home,x0,y0,z0)));
   }
 
 }

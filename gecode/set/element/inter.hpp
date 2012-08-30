@@ -109,7 +109,7 @@ namespace Gecode { namespace Set { namespace Element {
   ExecStatus
   ElementIntersection<View,View0,View1>::propagate(Space& home,
                                                    const ModEventDelta&) {
-    Region r(home);
+    Region r;
     int n = iv.size();
 
     bool loopVar;

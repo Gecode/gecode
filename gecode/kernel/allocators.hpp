@@ -130,7 +130,7 @@ Space& home = ...;
 typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
 // Create a set with the region allocator. Note that the set destructor is still quite costly...
 {
-  Region r(home);
+  Region r;
   SR r_safe_set(SR::key_compare(), (SR::allocator_type(r)));
   for(int i=0; i<10000; ++i)
     r_safe_set.insert(i*75321%10000);

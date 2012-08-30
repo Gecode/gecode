@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                      const VarArgArray<Var>& x, 
                                                      const DFA& dfa) {
 
-    Region r(home);
+    Region r;
 
     // Allocate memory for layers
     layers = home.alloc<Layer>(n+1);
@@ -777,7 +777,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       int f = a_ch.fst();
       int l = a_ch.lst();
       assert((f >= 0) && (l <= n));
-      Region r(home);
+      Region r;
       // State map for in-states
       StateIdx* i_map = r.alloc<StateIdx>(max_states);
       // State map for out-states

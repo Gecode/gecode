@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     int n = x.size();
 
-    Region r(home);
+    Region r;
     int* tau = r.alloc<int>(n);
     int* phi = r.alloc<int>(n);
     int* phiprime = r.alloc<int>(n);
@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (!normalize(home, y, x, nofix))
       return ES_FAILED;
 
-    Region r(home);
+    Region r;
     int* tau = r.alloc<int>(n);
     if (match_fixed) {
       // sorting is determined

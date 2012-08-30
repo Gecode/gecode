@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     assert(x.size() > 1);
     int n = x.size();
 
-    Region r(home);
+    Region r;
     int* stack = r.alloc<int>(n);
     int* c_v = &stack[0];
     // c_n is the current number of values on stack

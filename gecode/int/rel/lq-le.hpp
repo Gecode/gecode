@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Rel {
   NaryLqLe<View,o>::post(Home home, ViewArray<View>& x) {
     assert((o == 0) || (o == 1));
     // Check for sharing
-    if (x.same(home)) {
+    if (x.same()) {
       if (o == 1)
         return ES_FAILED;
       /*
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   NaryLqLe<View,o>::copy(Space& home, bool share) {
     if (n_subsumed > n_threshold) {
-      Region r(home);
+      Region r;
       // Record for which views there is an advisor
       Support::BitSet<Region> a(r,static_cast<unsigned int>(x.size()));
       for (Advisors<Index> as(c); as(); ++as)

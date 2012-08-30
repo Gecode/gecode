@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace NValues {
       return ES_OK;
     }
 
-    x.unique(home);
+    x.unique();
 
     GECODE_ME_CHECK(y.gq(home,1));
 

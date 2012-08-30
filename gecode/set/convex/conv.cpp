@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Convex {
 
     //I + III
 
-    Region r(home);
+    Region r;
     LubRanges<SetView> ubRangeIt(x0);
     Iter::Ranges::Cache ubRangeItC(r,ubRangeIt);
 

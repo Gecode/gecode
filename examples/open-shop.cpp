@@ -123,7 +123,7 @@ protected:
       minmakespan = std::max(minmakespan, ms);
     }
 
-    Region re(*this);
+    Region re;
     int* ct_j = re.alloc<int>(spec.n); // Job completion time
     int* ct_m = re.alloc<int>(spec.m); // Machine completion time
     Task* tasks = re.alloc<Task>(spec.n*spec.m); // Tasks
@@ -284,7 +284,7 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    Region re(*this);
+    Region re;
     PrintTask* m = re.alloc<PrintTask>(spec.n);
     for (int i=0; i<spec.m; i++) {
       int k=0;

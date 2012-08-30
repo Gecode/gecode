@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   ExecStatus
   Pair::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
     
     if (x0.assigned()) {
       // Bitset for supported div and mod values

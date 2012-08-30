@@ -632,7 +632,7 @@ namespace Gecode {
 
   SetVar
   SetExpr::post(Home home) const {
-    Region r(home);
+    Region r;
     SetVar s(home,IntSet::empty,
              IntSet(Set::Limits::min,Set::Limits::max));
     NNF::nnf(r,n,false)->post(home,SRT_EQ,s);
@@ -641,13 +641,13 @@ namespace Gecode {
 
   void
   SetExpr::post(Home home, SetRelType srt, const SetExpr& e) const {
-    Region r(home);
+    Region r;
     return NNF::nnf(r,n,false)->post(home,srt,NNF::nnf(r,e.n,false));
   }
   void
   SetExpr::post(Home home, BoolVar b, bool t,
                 SetRelType srt, const SetExpr& e) const {
-    Region r(home);
+    Region r;
     return NNF::nnf(r,n,false)->post(home,b,t,srt,
                                      NNF::nnf(r,e.n,false));
   }

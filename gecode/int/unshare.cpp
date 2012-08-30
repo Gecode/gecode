@@ -108,7 +108,7 @@ namespace Gecode {
       if (n < 2)
         return ES_OK;
 
-      Region r(home);
+      Region r;
       Var** y = r.alloc<Var*>(n);
       for (int i=n; i--; )
         y[i]=&x[i];

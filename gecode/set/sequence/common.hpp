@@ -50,7 +50,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     int cur_max = BndSet::MAX_OF_EMPTY;
     int cur_min = BndSet::MIN_OF_EMPTY;
 
-    Region r(home);
+    Region r;
     Support::DynamicArray<int,Region> ub(r);
 
     for (int i=0; i<lastElem; i++) {

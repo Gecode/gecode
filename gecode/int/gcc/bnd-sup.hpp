@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace GCC {
             ViewArray<IntView>& x, ViewArray<Card>& k) {
     int n = x.size();
     int m = k.size();
-    Region r(home);
+    Region r;
     UnReachable* rv = r.alloc<UnReachable>(m);
     for(int i = m; i--; )
       rv[i].minb=rv[i].maxb=rv[i].le=rv[i].gr=rv[i].eq=0;

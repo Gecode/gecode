@@ -219,7 +219,7 @@ namespace Gecode { namespace Kernel {
       c(home);
       return home.failed() ? ES_FAILED : ES_OK;
     } else {
-      x.unique(home);
+      x.unique();
       if (x.size() == 1) {
         return UnaryWait<View>::post(home,x[0],c);
       } else {

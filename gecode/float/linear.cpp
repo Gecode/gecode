@@ -46,7 +46,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatNum c) {
     using namespace Float;
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
@@ -59,7 +59,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatNum c, Reify r) {
     using namespace Float;
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
@@ -74,7 +74,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
@@ -90,7 +90,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
@@ -103,7 +103,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
     using namespace Float;
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
@@ -133,7 +133,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
     using namespace Float;
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
@@ -149,7 +149,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
@@ -182,7 +182,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
-    Region re(home);
+    Region re;
     Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];

@@ -58,7 +58,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   forceinline ExecStatus
   Seq::post(Home home, ViewArray<SetView> x) {
-    if (x.shared(home))
+    if (x.shared())
       return ES_FAILED;
     (void) new (home) Seq(home,x);
     return ES_OK;

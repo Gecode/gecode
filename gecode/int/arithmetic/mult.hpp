@@ -491,7 +491,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Val, class View>
   forceinline ExecStatus
   prop_mult_dom(Space& home, Propagator& p, View x0, View x1, View x2) {
-    Region r(home);
+    Region r;
     SupportValues<View,Region> s0(r,x0), s1(r,x1), s2(r,x2);
     while (s0()) {
       while (s1()) {

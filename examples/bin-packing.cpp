@@ -275,10 +275,10 @@ public:
 
     int n = bin.size(), m = load.size();
 
-    Region region(home);
+    Region r;
 
     // Free space in bins
-    int* free = region.alloc<int>(m);
+    int* free = r.alloc<int>(m);
 
     for (int j=m; j--; )
       free[j] = load[j].max();
@@ -287,7 +287,7 @@ public:
         free[bin[i].val()] -= size[i];
 
     // Equivalent bins with same free space
-    int* same = region.alloc<int>(m+1);
+    int* same = r.alloc<int>(m+1);
     unsigned int n_same = 0;
     unsigned int n_possible = 0;
     
@@ -326,9 +326,10 @@ public:
   virtual const Gecode::Choice* choice(const Space& home, Archive& e) {
     int alt, item, n_same;
     e >> alt >> item >> n_same;
-    Region re(home);
-    int* same = re.alloc<int>(n_same);
-    for (int i=n_same; i--;) e >> same[i];
+    Region r;
+    int* same = r.alloc<int>(n_same);
+    for (int i=n_same; i--;) 
+      e >> same[i];
     return new Choice(*this, alt, item, same, n_same);
   }
   /// Perform commit for choice \a _c and alternative \a a

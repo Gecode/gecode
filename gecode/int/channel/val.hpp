@@ -202,7 +202,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template<class View, class Offset, bool shared>
   ExecStatus
   Val<View,Offset,shared>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
     ProcessStack xa(r,n);
     ProcessStack ya(r,n);
 

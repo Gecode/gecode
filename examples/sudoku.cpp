@@ -256,7 +256,7 @@ public:
 
     const int nn = n*n;
 
-    Region r(*this);
+    Region r;
     IntSet* row = r.alloc<IntSet>(nn);
     IntSet* col = r.alloc<IntSet>(nn);
     IntSet* block = r.alloc<IntSet>(nn);

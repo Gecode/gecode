@@ -103,7 +103,7 @@ namespace Gecode { namespace Set { namespace Element {
   template<class View, class View0, class View1>
   ExecStatus
   ElementUnion<View,View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
     int n = iv.size();
 
     bool loopVar;

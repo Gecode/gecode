@@ -567,7 +567,7 @@ namespace Gecode { namespace Int { namespace GCC {
         n_z++;
 
     if (n_z > 0) {
-      Region r(home);
+      Region r;
       int* z = r.alloc<int>(n_z);
       n_z = 0;
       int n_k = 0;
@@ -599,7 +599,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (Card::propagate)
       GECODE_ES_CHECK(pruneCards(home));
 
-    Region r(home);
+    Region r;
     int* count = r.alloc<int>(k.size());
 
     for (int i = k.size(); i--; )

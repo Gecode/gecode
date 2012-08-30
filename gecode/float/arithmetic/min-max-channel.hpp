@@ -151,7 +151,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   ExecStatus
   NaryMax<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
-    x.unique(home);
+    x.unique();
     if (x.size() == 1)
       return Rel::Eq<View,View>::post(home,x[0],y);
     if (x.size() == 2)
@@ -164,7 +164,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     }
     GECODE_ME_CHECK(y.gq(home,l));
     GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK((Rel::Lq<View>::post(home,x[i],y)));

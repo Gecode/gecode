@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace NValues {
       return ES_OK;
     }
 
-    x.unique(home);
+    x.unique();
 
     if (x.size() == 1) {
       GECODE_ME_CHECK(y.lq(home,1));

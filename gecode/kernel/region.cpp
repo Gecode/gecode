@@ -39,6 +39,30 @@
 
 namespace Gecode {
 
+  Region::Pool::Pool(void) 
+    : use(0U), idle(1U), avg(1.0) {
+    cached = static_cast<Area*>(heap.ralloc(sizeof(Area)));
+    cached->next = NULL;
+  }
+
+  Region::Pool::~Pool(void) {
+    m.acquire();
+    Area* b = cached;
+    while (b != NULL) {
+      Area* t = b;
+      b = b->next;
+      heap.rfree(t);
+    }
+    m.release();
+  }
+
+  Region::Pool Region::pool;
+
+  Region::Region(void)
+    : area(pool.alloc()), 
+      free_area(MemoryConfig::region_area_size), 
+      hi(0) {}
+  
   void*
   Region::heap_alloc(size_t s) {
     void* p = heap.ralloc(s);
@@ -67,19 +91,11 @@ namespace Gecode {
     return p;
   }
 
-  void
-  Region::heap_free(void) {
-    assert(hi != NULL);
-    if (Support::marked(hi)) {
-      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      for (unsigned int i=h->n; i--; )
-        heap.rfree(h->blocks[i]);
-      heap.rfree(h);
-    } else {
-      heap.rfree(hi);
-    }
+  Region::~Region(void) {
+    pool.free(area);
+    if (hi != NULL)
+      heap_free();
   }
-
 }
 
 // STATISTICS: kernel-other

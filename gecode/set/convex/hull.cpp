@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Convex {
 
       unsigned int cardMin = x1.cardMin();
 
-      Region r(home);
+      Region r;
       LubRanges<SetView> ubRangeIt(x1);
       Iter::Ranges::Cache ubRangeItC(r,ubRangeIt);
       for (;ubRangeItC();++ubRangeItC){

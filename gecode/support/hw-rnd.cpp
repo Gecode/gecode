@@ -35,12 +35,12 @@
  *
  */
 
-#include <gecode/support.hh>
-
 #ifdef _MSC_VER
 
 #define _CRT_RAND_S
 #include <stdlib.h>
+
+#include <gecode/support.hh>
 
 namespace Gecode { namespace Support {
 
@@ -53,6 +53,8 @@ namespace Gecode { namespace Support {
 }}
 
 #else
+
+#include <gecode/support.hh>
 
 #include <fstream>
 

@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   prop_bnd(Space& home, ViewArray<View>& x, int& min_x, int& max_x) {
     const int n = x.size();
 
-    Region r(home);
+    Region r;
 
     int* minsorted = r.alloc<int>(n);
     int* maxsorted = r.alloc<int>(n);
@@ -380,7 +380,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         MinInc<View> min_inc;
         Support::quicksort<View,MinInc<View> >(&x[0], n, min_inc);
       } else {
-        Region r(home);
+        Region r;
         int* minbucket = r.alloc<int>(d);
         View* minsorted = r.alloc<View>(n);
 

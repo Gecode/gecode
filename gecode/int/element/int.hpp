@@ -264,7 +264,7 @@ namespace Gecode { namespace Int { namespace Element {
   ExecStatus
   Int<V0,V1,Idx,Val>::assigned_val(Space& home, IntSharedArray& c, 
                                    V0 x0, V1 x1) {
-    Region r(home);
+    Region r;
     int* v = r.alloc<int>(x0.size());
     int n = 0;
     for (ViewValues<V0> i(x0); i(); ++i)
@@ -338,7 +338,7 @@ namespace Gecode { namespace Int { namespace Element {
       if (size == 0)
         return ES_FAILED;
       // Create val links sorted by val
-      Region r(home);
+      Region r;
       Idx* by_val = r.alloc<Idx>(size);
       if (x1.width() <= 128) {
         int n_buckets = static_cast<int>(x1.width());

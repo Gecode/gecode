@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   NaryMaxBnd<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
-    x.unique(home);
+    x.unique();
     if (x.size() == 1)
       return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     GECODE_ME_CHECK(y.gq(home,l));
     GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   NaryMaxDom<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
-    x.unique(home);
+    x.unique();
     if (x.size() == 1)
       return Rel::EqDom<View,View>::post(home,x[0],y);
     if (x.size() == 2)
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     GECODE_ME_CHECK(y.gq(home,l));
     GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM)) :
         home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
-    Region r(home);
+    Region r;
     ViewRanges<View>* i_x = r.alloc<ViewRanges<View> >(x.size());
     for (int i = x.size(); i--; ) {
       ViewRanges<View> i_xi(x[i]); i_x[i]=i_xi;

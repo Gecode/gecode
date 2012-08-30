@@ -149,7 +149,7 @@ namespace Gecode {
 
     if (home.failed()) return;
 
-    Region region(home);
+    Region region;
     ViewArray<BoolView> xv(region,x);
 
     switch (irt) {
@@ -201,7 +201,7 @@ namespace Gecode {
       return;
     }
 
-    Region region(home);
+    Region region;
     ViewArray<BoolView> xv(region,x);
 
     switch (irt) {

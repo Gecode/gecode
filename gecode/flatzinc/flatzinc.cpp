@@ -1257,7 +1257,7 @@ namespace Gecode { namespace FlatZinc {
     if (sl->interval) {
       d = IntSet(sl->min, sl->max);
     } else {
-      Region re(*this);
+      Region re;
       int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
       for (int i=sl->s.size(); i--; )
         is[i] = sl->s[i];

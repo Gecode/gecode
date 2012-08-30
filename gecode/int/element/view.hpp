@@ -542,7 +542,7 @@ namespace Gecode { namespace Int { namespace Element {
       return es;
     }
     assert(iv.size() > 1);
-    Region r(home);
+    Region r;
     ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
     for (int i = iv.size(); i--; )
       i_view[i].init(iv[i].view);

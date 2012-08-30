@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace Int {
       unsigned int size = 0;
       int maxN = BndSet::MAX_OF_EMPTY;
       for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++size) {}
-      Region r(home);
+      Region r;
       int* ub = r.alloc<int>(size*2);
       int i=0;
       for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++i) {
@@ -225,7 +225,7 @@ namespace Gecode { namespace Set { namespace Int {
       int num_ranges = 0;
       for (LubRanges<View> ur(x0); ur(); ++ur, ++num_ranges) {}
       // create an array for storing min and max of each range
-      Region r(home);
+      Region r;
       int* _ur = r.alloc<int>(num_ranges*2);
       // now, we fill the array:
       int i = 0;
@@ -347,7 +347,7 @@ namespace Gecode { namespace Set { namespace Int {
     //   int num_ranges = 0;
     //   for (LubRanges<View> ur(x0); ur(); ++ur, ++num_ranges) {}
     //   // create an array for storing min and max of each range
-    //   Region re(home);
+    //   Region re;
     //   int* _ur = re.alloc<int>(num_ranges*2);
     //   // now, we fill the array:
     //   int i = 0;

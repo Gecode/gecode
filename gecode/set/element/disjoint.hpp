@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Element {
   ElementDisjoint<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     int n = iv.size();
 
-    Region r(home);
+    Region r;
 
     bool fix_flag = false;
     do {

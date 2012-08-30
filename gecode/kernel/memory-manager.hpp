@@ -60,28 +60,15 @@ namespace Gecode {
     double area[1];
   };
 
-  class Region;
-
   /// Shared object for several memory areas
   class SharedMemory {
-    friend class Region;
   private:
     /// How many spaces use this shared memory object
     unsigned int use_cnt;
-    /// The components for the shared region area
-    struct {
-      /// Amount of free memory
-      size_t free;
-      /// The actual memory area (allocated from top to bottom)
-      double area[MemoryConfig::region_area_size / sizeof(double)];
-    } region;
-    /// The components for shared heap memory
-    struct {
-      /// How many heap chunks are available for caching
-      unsigned int n_hc;
-      /// A list of cached heap chunks
-      HeapChunk* hc;
-    } heap;
+    /// How many heap chunks are available for caching
+    unsigned int n_hc;
+    /// A list of cached heap chunks
+    HeapChunk* hc;
   public:
     /// Initialize
     SharedMemory(void);
@@ -89,18 +76,10 @@ namespace Gecode {
     void flush(void);
     /// Destructor
     ~SharedMemory(void);
-    /// \name Region management
-    //@
-    /// Return memory chunk if available
-    bool region_alloc(size_t s, void*& p);
-    //@}
-    /// \name Heap management
-    //@
     /// Return heap chunk, preferable of size \a s, but at least of size \a l
-    HeapChunk* heap_alloc(size_t s, size_t l);
+    HeapChunk* alloc(size_t s, size_t l);
     /// Free heap chunk (or cache for later)
-    void heap_free(HeapChunk* hc);
-    //@}
+    void free(HeapChunk* hc);
     /// Return copy during cloning
     SharedMemory* copy(bool share);
     /// Release by one space
@@ -210,18 +189,14 @@ namespace Gecode {
   }
   forceinline
   SharedMemory::SharedMemory(void)
-    : use_cnt(1) {
-    region.free = MemoryConfig::region_area_size;
-    heap.n_hc = 0;
-    heap.hc = NULL;
-  }
+    : use_cnt(1U), n_hc(0U), hc(NULL) {}
   forceinline void
   SharedMemory::flush(void) {
-    heap.n_hc = 0;
-    while (heap.hc != NULL) {
-      HeapChunk* hc = heap.hc;
-      heap.hc = static_cast<HeapChunk*>(hc->next);
-      Gecode::heap.rfree(hc);
+    n_hc = 0;
+    while (hc != NULL) {
+      HeapChunk* t = hc;
+      hc = static_cast<HeapChunk*>(t->next);
+      Gecode::heap.rfree(t);
     }
   }
   forceinline
@@ -241,42 +216,33 @@ namespace Gecode {
   SharedMemory::release(void) {
     return --use_cnt == 0;
   }
-  forceinline bool
-  SharedMemory::region_alloc(size_t s, void*& p) {
-    MemoryConfig::align(s);
-    if (s > region.free)
-      return false;
-    region.free -= s;
-    p = Support::ptr_cast<char*>(&region.area[0]) + region.free;
-    return true;
-  }
   forceinline HeapChunk*
-  SharedMemory::heap_alloc(size_t s, size_t l) {
-    while ((heap.hc != NULL) && (heap.hc->size < l)) {
-      heap.n_hc--;
-      HeapChunk* hc = heap.hc;
-      heap.hc = static_cast<HeapChunk*>(hc->next);
-      Gecode::heap.rfree(hc);
+  SharedMemory::alloc(size_t s, size_t l) {
+    while ((hc != NULL) && (hc->size < l)) {
+      n_hc--;
+      HeapChunk* t = hc;
+      hc = static_cast<HeapChunk*>(t->next);
+      Gecode::heap.rfree(t);
     }
-    if (heap.hc == NULL) {
-      assert(heap.n_hc == 0);
-      HeapChunk* hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
-      hc->size = s;
-      return hc;
+    if (hc == NULL) {
+      assert(n_hc == 0);
+      HeapChunk* t = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
+      t->size = s;
+      return t;
     } else {
-      heap.n_hc--;
-      HeapChunk* hc = heap.hc;
-      heap.hc = static_cast<HeapChunk*>(hc->next);
-      return hc;
+      n_hc--;
+      HeapChunk* t = hc;
+      hc = static_cast<HeapChunk*>(t->next);
+      return t;
     }
   }
   forceinline void
-  SharedMemory::heap_free(HeapChunk* hc) {
-    if (heap.n_hc == MemoryConfig::n_hc_cache) {
-      Gecode::heap.rfree(hc);
+  SharedMemory::free(HeapChunk* t) {
+    if (n_hc == MemoryConfig::n_hc_cache) {
+      Gecode::heap.rfree(t);
     } else {
-      heap.n_hc++;
-      hc->next = heap.hc; heap.hc = hc;
+      n_hc++;
+      t->next = hc; hc = t;
     }
   }
 
@@ -364,7 +330,7 @@ namespace Gecode {
     size_t allocate = ((sz > cur_hcsz) ?
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
     // Request a chunk of preferably size allocate, but at least size sz
-    HeapChunk* hc = sm->heap_alloc(allocate,sz);
+    HeapChunk* hc = sm->alloc(allocate,sz);
     start = Support::ptr_cast<char*>(&hc->area[0]);
     lsz   = hc->size - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
@@ -414,7 +380,7 @@ namespace Gecode {
     HeapChunk* hc = cur_hc;
     do {
       HeapChunk* t = hc; hc = static_cast<HeapChunk*>(hc->next);
-      sm->heap_free(t);
+      sm->free(t);
     } while (hc != NULL);
   }
 
