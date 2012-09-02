@@ -2604,7 +2604,7 @@ gecode/float/array$(OBJSUFFIX) gecode/float/array$(SBJSUFFIX): \
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
 gecode/float/branch$(OBJSUFFIX) gecode/float/branch$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
-	./gecode/float/array.hpp ./gecode/float/branch.hh ./gecode/float/branch/post-val-float.hpp \
+	./gecode/float/array.hpp ./gecode/float/branch.hh ./gecode/float/branch/post-val.hpp \
 	./gecode/float/branch/select-val.hpp ./gecode/float/branch/select-view.hpp ./gecode/float/exception.hpp \
 	./gecode/float/limits.hpp ./gecode/float/num.hpp ./gecode/float/rounding.hpp \
 	./gecode/float/val.hpp ./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp \
@@ -2954,9 +2954,9 @@ gecode/float/exec$(OBJSUFFIX) gecode/float/exec$(SBJSUFFIX): \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
-gecode/float/branch/post-view-float$(OBJSUFFIX) gecode/float/branch/post-view-float$(SBJSUFFIX): \
+gecode/float/branch/post-view$(OBJSUFFIX) gecode/float/branch/post-view$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/activity.hpp ./gecode/float/array-traits.hpp \
-	./gecode/float/array.hpp ./gecode/float/branch.hh ./gecode/float/branch/post-val-float.hpp \
+	./gecode/float/array.hpp ./gecode/float/branch.hh ./gecode/float/branch/post-val.hpp \
 	./gecode/float/branch/select-val.hpp ./gecode/float/branch/select-view.hpp ./gecode/float/exception.hpp \
 	./gecode/float/limits.hpp ./gecode/float/num.hpp ./gecode/float/rounding.hpp \
 	./gecode/float/val.hpp ./gecode/float/var-imp.hpp ./gecode/float/var-imp/delta.hpp \

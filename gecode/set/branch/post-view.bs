@@ -66,22 +66,22 @@ Value:		SET_VAR_RND = COMPLETE
 Type:		ViewSelRnd<SetView>
 [VarBranch]
 Value:		SET_VAR_DEGREE_MIN
-Type:		ViewSelMin<MeritDegree<SetView>,SetView>
+Type:		ViewSelMin<MeritDegree<SetView> >
 [VarBranch]
 Value:		SET_VAR_DEGREE_MAX
-Type:		ViewSelMax<MeritDegree<SetView>,SetView>
+Type:		ViewSelMax<MeritDegree<SetView> >
 [VarBranch]
 Value:		SET_VAR_AFC_MIN
-Type:           ViewSelMin<MeritAfc<SetView>,SetView>
+Type:           ViewSelMin<MeritAfc<SetView> >
 [VarBranch]
 Value:		SET_VAR_AFC_MAX
-Type:		ViewSelMax<MeritAfc<SetView>,SetView>
+Type:		ViewSelMax<MeritAfc<SetView> >
 [VarBranch]
 Value:		SET_VAR_ACTIVITY_MIN
-Type:		ViewSelMin<MeritActivity<SetView>,SetView>
+Type:		ViewSelMin<MeritActivity<SetView> >
 [VarBranch]
 Value:		SET_VAR_ACTIVITY_MAX
-Type:		ViewSelMax<MeritActivity<SetView>,SetView>
+Type:		ViewSelMax<MeritActivity<SetView> >
 [VarBranch]
 Value:		SET_VAR_MIN_MIN
 Type:		ByMinMin

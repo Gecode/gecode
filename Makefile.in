@@ -442,12 +442,12 @@ FLOATHDR0 = \
 	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
-	branch.hh branch/post-val-float.hpp branch/select-val.hpp \
+	branch.hh branch/post-val.hpp branch/select-val.hpp \
 	branch/select-view.hpp activity.hpp num.hpp val.hpp \
 	rounding.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%) \
-	gecode/float/branch/post-view-float.cpp
+	gecode/float/branch/post-view.cpp
 FLOATHDR	= gecode/float.hh $(FLOATHDR0:%=gecode/float/%)
 FLOATOBJ	= $(FLOATSRC:%.cpp=%$(OBJSUFFIX))
 
@@ -1159,7 +1159,7 @@ gecode/kernel/var-imp.hpp: $(VISDEP)
 GENBRANCHSRC = \
 	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp \
-	$(top_srcdir)/gecode/float/branch/post-view-float.cpp \
+	$(top_srcdir)/gecode/float/branch/post-view.cpp \
 	$(top_srcdir)/gecode/set/branch/post-view.cpp
 
 $(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
@@ -1170,8 +1170,8 @@ $(top_srcdir)/gecode/int/branch/post-view-bool.cpp: \
 	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/float/branch/post-view-float.cpp: \
-	$(top_srcdir)/gecode/float/branch/post-view-float.bs \
+$(top_srcdir)/gecode/float/branch/post-view.cpp: \
+	$(top_srcdir)/gecode/float/branch/post-view.bs \
 	$(top_srcdir)/misc/genbranch.perl
 	perl $(top_srcdir)/misc/genbranch.perl $< > $@
 $(top_srcdir)/gecode/set/branch/post-view.cpp: \
@@ -1681,7 +1681,7 @@ DIST_FILES= \
 	gecode/set/var-imp/set.vis \
 	gecode/int/branch/post-view-int.bs \
 	gecode/int/branch/post-view-bool.bs \
-	gecode/float/branch/post-view-float.bs \
+	gecode/float/branch/post-view.bs \
 	gecode/set/branch/post-view.bs \
 	examples/support.hh \
 	examples/support/example.hpp \

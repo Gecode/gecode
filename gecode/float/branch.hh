@@ -454,7 +454,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
 #include <gecode/float/branch/select-val.hpp>
 #include <gecode/float/branch/select-view.hpp>
-#include <gecode/float/branch/post-val-float.hpp>
+#include <gecode/float/branch/post-val.hpp>
 
 #endif
 

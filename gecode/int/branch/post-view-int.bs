@@ -66,68 +66,68 @@ Value:		INT_VAR_RND = COMPLETE
 Type:		ViewSelRnd<IntView>
 [VarBranch]
 Value:		INT_VAR_MIN_MIN
-Type:		ViewSelMin<MeritMin,IntView>
+Type:		ViewSelMin<MeritMin>
 [VarBranch]
 Value:		INT_VAR_MIN_MAX
-Type:		ViewSelMax<MeritMin,IntView>
+Type:		ViewSelMax<MeritMin>
 [VarBranch]
 Value:		INT_VAR_MAX_MIN
-Type:		ViewSelMin<MeritMax,IntView>
+Type:		ViewSelMin<MeritMax>
 [VarBranch]
 Value:		INT_VAR_MAX_MAX
-Type:		ViewSelMax<MeritMax,IntView>
+Type:		ViewSelMax<MeritMax>
 [VarBranch]
 Value:		INT_VAR_SIZE_MIN
-Type:		ViewSelMin<MeritSize,IntView>
+Type:		ViewSelMin<MeritSize>
 [VarBranch]
 Value:		INT_VAR_SIZE_MAX
-Type:		ViewSelMax<MeritSize,IntView>
+Type:		ViewSelMax<MeritSize>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
-Type:		ViewSelMin<MeritDegree<IntView>,IntView>
+Type:		ViewSelMin<MeritDegree<IntView> >
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelMax<MeritDegree<IntView>,IntView>
+Type:		ViewSelMax<MeritDegree<IntView> >
 [VarBranch]
 Value:		INT_VAR_AFC_MIN
-Type:		ViewSelMin<MeritAfc<IntView>,IntView>
+Type:		ViewSelMin<MeritAfc<IntView> >
 [VarBranch]
 Value:		INT_VAR_AFC_MAX
-Type:		ViewSelMax<MeritAfc<IntView>,IntView>
+Type:		ViewSelMax<MeritAfc<IntView> >
 [VarBranch]
 Value:		INT_VAR_ACTIVITY_MIN
-Type:		ViewSelMin<MeritActivity<IntView>,IntView>
+Type:		ViewSelMin<MeritActivity<IntView> >
 [VarBranch]
 Value:		INT_VAR_ACTIVITY_MAX
-Type:		ViewSelMax<MeritActivity<IntView>,IntView>
+Type:		ViewSelMax<MeritActivity<IntView> >
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
-Type:		ViewSelMin<MeritSizeDegree,IntView>
+Type:		ViewSelMin<MeritSizeDegree>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
-Type:		ViewSelMax<MeritSizeDegree,IntView>
+Type:		ViewSelMax<MeritSizeDegree>
 [VarBranch]
 Value:		INT_VAR_SIZE_AFC_MIN
-Type:		ViewSelMin<MeritSizeAfc,IntView>
+Type:		ViewSelMin<MeritSizeAfc>
 [VarBranch]
 Value:		INT_VAR_SIZE_AFC_MAX
-Type:		ViewSelMax<MeritSizeAfc,IntView>
+Type:		ViewSelMax<MeritSizeAfc>
 [VarBranch]
 Value:		INT_VAR_SIZE_ACTIVITY_MIN
-Type:		ViewSelMin<MeritSizeActivity,IntView>
+Type:		ViewSelMin<MeritSizeActivity>
 [VarBranch]
 Value:		INT_VAR_SIZE_ACTIVITY_MAX
-Type:		ViewSelMax<MeritSizeActivity,IntView>
+Type:		ViewSelMax<MeritSizeActivity>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
-Type:		ViewSelMin<MeritRegretMin,IntView>
+Type:		ViewSelMin<MeritRegretMin>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MAX
-Type:		ViewSelMax<MeritRegretMin,IntView>
+Type:		ViewSelMax<MeritRegretMin>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MIN
-Type:		ViewSelMin<MeritRegretMax,IntView>
+Type:		ViewSelMin<MeritRegretMax>
 [VarBranch]
 Value:		INT_VAR_REGRET_MAX_MAX
-Type:		ViewSelMax<MeritRegretMax,IntView>
+Type:		ViewSelMax<MeritRegretMax>
 [End]

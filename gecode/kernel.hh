@@ -171,8 +171,8 @@
 #include <gecode/kernel/activity.hpp>
 #include <gecode/kernel/branch.hpp>
 #include <gecode/kernel/brancher.hpp>
-#include <gecode/kernel/brancher-view.hpp>
 #include <gecode/kernel/brancher-merit.hpp>
+#include <gecode/kernel/brancher-view.hpp>
 #include <gecode/kernel/brancher-tiebreak.hpp>
 #include <gecode/kernel/brancher-val.hpp>
 

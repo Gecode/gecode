@@ -46,8 +46,11 @@ namespace Gecode {
   /**
    * \brief Base-class for merit class
    */
+  template<class _View>
   class MeritBase {
   public:
+    /// View type
+    typedef _View View;
     /// Default constructor
     MeritBase(void);
     /// Constructor for initialization
@@ -64,7 +67,7 @@ namespace Gecode {
    * \brief Merit class for degree
    */
   template<class View>
-  class MeritDegree : public MeritBase {
+  class MeritDegree : public MeritBase<View> {
   public:
     /// Default constructor
     MeritDegree(void);
@@ -78,7 +81,7 @@ namespace Gecode {
    * \brief Merit class for AFC
    */
   template<class View>
-  class MeritAfc : public MeritBase {
+  class MeritAfc : public MeritBase<View> {
   public:
     /// Default constructor
     MeritAfc(void);
@@ -92,7 +95,7 @@ namespace Gecode {
    * \brief Merit class for activity
    */
   template<class View>
-  class MeritActivity : public MeritBase {
+  class MeritActivity : public MeritBase<View> {
   protected:
     /// Activity information
     Activity activity;
@@ -113,18 +116,23 @@ namespace Gecode {
   //@}
 
   // Merit base class
+  template<class View>
   forceinline
-  MeritBase::MeritBase(void) {}
+  MeritBase<View>::MeritBase(void) {}
+  template<class View>
   forceinline
-  MeritBase::MeritBase(Space&, const VarBranchOptions&) {}
+  MeritBase<View>::MeritBase(Space&, const VarBranchOptions&) {}
+  template<class View>
   forceinline void
-  MeritBase::update(Space&, bool, MeritBase&) {}
+  MeritBase<View>::update(Space&, bool, MeritBase&) {}
+  template<class View>
   forceinline bool
-  MeritBase::notice(void) const {
+  MeritBase<View>::notice(void) const {
     return false;
   }
+  template<class View>
   forceinline void
-  MeritBase::dispose(Space& home) {
+  MeritBase<View>::dispose(Space& home) {
   }
 
   // Degree merit
@@ -135,7 +143,7 @@ namespace Gecode {
   forceinline
   MeritDegree<View>::MeritDegree(Space& home,
                                  const VarBranchOptions& vbo)
-    : MeritBase(home,vbo) {}
+    : MeritBase<View>(home,vbo) {}
   template<class View>
   forceinline double
   MeritDegree<View>::operator ()(Space&, View x, int) {
@@ -150,7 +158,7 @@ namespace Gecode {
   forceinline
   MeritAfc<View>::MeritAfc(Space& home,
                            const VarBranchOptions& vbo)
-    : MeritBase(home,vbo) {}
+    : MeritBase<View>(home,vbo) {}
   template<class View>
   forceinline double
   MeritAfc<View>::operator ()(Space&, View x, int) {
@@ -166,7 +174,7 @@ namespace Gecode {
   forceinline
   MeritActivity<View>::MeritActivity(Space& home,
                                      const VarBranchOptions& vbo)
-    : MeritBase(home,vbo), activity(vbo.activity) {
+    : MeritBase<View>(home,vbo), activity(vbo.activity) {
     if (!activity.initialized())
       throw MissingActivity("MeritActivity (VAR_ACTIVITY_MIN)");
   }

@@ -149,14 +149,16 @@ namespace Gecode {
   /**
    * \brief View selection class for view with least merit
    */
-  template<class Merit, class View>
-  class ViewSelMin : public ViewSelBase<View> {
+  template<class Merit>
+  class ViewSelMin : public ViewSelBase<typename Merit::View> {
   protected:
     /// The merit used
     Merit m;
     /// So-far least merit value
     double sfb;
   public:
+    /// View type
+    typedef typename Merit::View View;
     /// Default constructor
     ViewSelMin(void);
     /// Constructor for initialization
@@ -166,7 +168,7 @@ namespace Gecode {
     /// Possibly select better view \a x at position \a i
     ViewSelStatus select(Space& home, View x, int i);
     /// Updating during cloning
-    void update(Space& home, bool share, ViewSelMin<Merit,View>& vs);
+    void update(Space& home, bool share, ViewSelMin<Merit>& vs);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete view merit
@@ -176,14 +178,16 @@ namespace Gecode {
   /**
    * \brief View selection class for view with largest merit
    */
-  template<class Merit, class View>
-  class ViewSelMax : public ViewSelBase<View> {
+  template<class Merit>
+  class ViewSelMax : public ViewSelBase<typename Merit::View> {
   protected:
     /// The merit used
     Merit m;
     /// So-far largest merit value
     double sfb;
   public:
+    /// View type
+    typedef typename Merit::View View;
     /// Default constructor
     ViewSelMax(void);
     /// Constructor for initialization
@@ -193,7 +197,7 @@ namespace Gecode {
     /// Possibly select better view \a x at position \a i
     ViewSelStatus select(Space& home, View x, int i);
     /// Updating during cloning
-    void update(Space& home, bool share, ViewSelMax<Merit,View>& vs);
+    void update(Space& home, bool share, ViewSelMax<Merit>& vs);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete view merit
@@ -324,24 +328,24 @@ namespace Gecode {
   }
 
   // Select variable with least merit
-  template<class Merit, class View>
+  template<class Merit>
   forceinline
-  ViewSelMin<Merit,View>::ViewSelMin(void) 
+  ViewSelMin<Merit>::ViewSelMin(void) 
     : sfb(0.0) {}
-  template<class Merit, class View>
+  template<class Merit>
   forceinline
-  ViewSelMin<Merit,View>::ViewSelMin(Space& home,
+  ViewSelMin<Merit>::ViewSelMin(Space& home,
                                      const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo), m(home,vbo), sfb(0.0) {}
-  template<class Merit, class View>
+  template<class Merit>
   forceinline ViewSelStatus
-  ViewSelMin<Merit,View>::init(Space& home, View x, int i) {
+  ViewSelMin<Merit>::init(Space& home, View x, int i) {
     sfb = m(home,x,i);
     return VSS_BETTER;
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline ViewSelStatus
-  ViewSelMin<Merit,View>::select(Space& home, View x, int i) {
+  ViewSelMin<Merit>::select(Space& home, View x, int i) {
     double mxi = m(home,x,i);
     if (mxi < sfb) {
       sfb = mxi;
@@ -352,43 +356,43 @@ namespace Gecode {
       return VSS_TIE;
     }
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline void
-  ViewSelMin<Merit,View>::update(Space& home, bool share, 
-                                 ViewSelMin<Merit,View>& vsm) {
+  ViewSelMin<Merit>::update(Space& home, bool share, 
+                                 ViewSelMin<Merit>& vsm) {
     m.update(home, share, vsm.m);
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline bool
-  ViewSelMin<Merit,View>::notice(void) const {
+  ViewSelMin<Merit>::notice(void) const {
     return m.notice();
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline void
-  ViewSelMin<Merit,View>::dispose(Space& home) {
+  ViewSelMin<Merit>::dispose(Space& home) {
     m.dispose(home);
   }
 
 
   // Select variable with largest merit
-  template<class Merit, class View>
+  template<class Merit>
   forceinline
-  ViewSelMax<Merit,View>::ViewSelMax(void) 
+  ViewSelMax<Merit>::ViewSelMax(void) 
     : sfb(0.0) {}
-  template<class Merit, class View>
+  template<class Merit>
   forceinline
-  ViewSelMax<Merit,View>::ViewSelMax(Space& home,
+  ViewSelMax<Merit>::ViewSelMax(Space& home,
                                      const VarBranchOptions& vbo)
     : ViewSelBase<View>(home,vbo), m(home,vbo), sfb(0.0) {}
-  template<class Merit, class View>
+  template<class Merit>
   forceinline ViewSelStatus
-  ViewSelMax<Merit,View>::init(Space& home, View x, int i) {
+  ViewSelMax<Merit>::init(Space& home, View x, int i) {
     sfb = m(home,x,i);
     return VSS_BETTER;
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline ViewSelStatus
-  ViewSelMax<Merit,View>::select(Space& home, View x, int i) {
+  ViewSelMax<Merit>::select(Space& home, View x, int i) {
     double mxi = m(home,x,i);
     if (mxi > sfb) {
       sfb = mxi;
@@ -399,20 +403,20 @@ namespace Gecode {
       return VSS_TIE;
     }
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline void
-  ViewSelMax<Merit,View>::update(Space& home, bool share, 
-                                 ViewSelMax<Merit,View>& vsm) {
+  ViewSelMax<Merit>::update(Space& home, bool share, 
+                                 ViewSelMax<Merit>& vsm) {
     m.update(home, share, vsm.m);
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline bool
-  ViewSelMax<Merit,View>::notice(void) const {
+  ViewSelMax<Merit>::notice(void) const {
     return m.notice();
   }
-  template<class Merit, class View>
+  template<class Merit>
   forceinline void
-  ViewSelMax<Merit,View>::dispose(Space& home) {
+  ViewSelMax<Merit>::dispose(Space& home) {
     m.dispose(home);
   }
 

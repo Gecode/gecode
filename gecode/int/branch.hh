@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritMin : public MeritBase {
+  class MeritMin : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritMin(void);
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritMax : public MeritBase {
+  class MeritMax : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritMax(void);
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritSize : public MeritBase {
+  class MeritSize : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritSize(void);
@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritSizeDegree : public MeritBase {
+  class MeritSizeDegree : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritSizeDegree(void);
@@ -368,7 +368,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritSizeAfc : public MeritBase {
+  class MeritSizeAfc : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritSizeAfc(void);
@@ -384,7 +384,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritSizeActivity : public MeritBase {
+  class MeritSizeActivity : public MeritBase<IntView> {
     /// Activity information
     Activity activity;
   public:
@@ -408,7 +408,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritRegretMin : public MeritBase {
+  class MeritRegretMin : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritRegretMin(void);
@@ -424,7 +424,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class MeritRegretMax : public MeritBase {
+  class MeritRegretMax : public MeritBase<IntView> {
   public:
     /// Default constructor
     MeritRegretMax(void);
