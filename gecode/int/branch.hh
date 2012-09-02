@@ -294,245 +294,108 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /*
-   * Variable selection classes
+   * View merit classes
    *
    */
 
   /**
-   * \brief View selection class for view with smallest min
+   * \brief Merit class for mimimum
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class ByMinMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest minimum
-    int min;
+  class MeritMin : public MeritBase {
   public:
     /// Default constructor
-    ByMinMin(void);
+    MeritMin(void);
     /// Constructor for initialization
-    ByMinMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
+    MeritMin(Space& home, const VarBranchOptions& vbo);
+    /// Return minimum as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
   /**
-   * \brief View selection class for view with largest min
+   * \brief Merit class for maximum
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class ByMinMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest minimum
-    int min;
+  class MeritMax : public MeritBase {
   public:
     /// Default constructor
-    ByMinMax(void);
+    MeritMax(void);
     /// Constructor for initialization
-    ByMinMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
+    MeritMax(Space& home, const VarBranchOptions& vbo);
+    /// Return maximum as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
   /**
-   * \brief View selection class for view with smallest max
+   * \brief Merit class for size
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class ByMaxMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest maximum
-    int max;
+  class MeritSize : public MeritBase {
   public:
     /// Default constructor
-    ByMaxMin(void);
+    MeritSize(void);
     /// Constructor for initialization
-    ByMaxMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
+    MeritSize(Space& home, const VarBranchOptions& vbo);
+    /// Return size as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
   /**
-   * \brief View selection class for view with largest max
+   * \brief Merit class for size over degree
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class ByMaxMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest maximum
-    int max;
+  class MeritSizeDegree : public MeritBase {
   public:
     /// Default constructor
-    ByMaxMax(void);
+    MeritSizeDegree(void);
     /// Constructor for initialization
-    ByMaxMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
+    MeritSizeDegree(Space& home, const VarBranchOptions& vbo);
+    /// Return size over degree as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
   /**
-   * \brief View selection class for view with smallest size
+   * \brief Merit class for size over afc
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class BySizeMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest size
-    unsigned int size;
+  class MeritSizeAfc : public MeritBase {
   public:
     /// Default constructor
-    BySizeMin(void);
+    MeritSizeAfc(void);
     /// Constructor for initialization
-    BySizeMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
+    MeritSizeAfc(Space& home, const VarBranchOptions& vbo);
+    /// Return size over AFC as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
   /**
-   * \brief View selection class for view with largest size
+   * \brief Merit class for size over activity
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class BySizeMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest size
-    unsigned int size;
-  public:
-    /// Default constructor
-    BySizeMax(void);
-    /// Constructor for initialization
-    BySizeMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with smallest size divided
-   * by degree.
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class BySizeDegreeMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest size/degree
-    double sizedegree;
-  public:
-    /// Default constructor
-    BySizeDegreeMin(void);
-    /// Constructor for initialization
-    BySizeDegreeMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with largest size divided
-   * by degree.
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class BySizeDegreeMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest size/degree
-    double sizedegree;
-  public:
-    /// Default constructor
-    BySizeDegreeMax(void);
-    /// Constructor for initialization
-    BySizeDegreeMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with smallest size divided by accumulated failure count
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class BySizeAfcMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest size/afc
-    double sizeafc;
-  public:
-    /// Default constructor
-    BySizeAfcMin(void);
-    /// Constructor for initialization
-    BySizeAfcMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with largest size divided by accumulated failure count
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class BySizeAfcMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest size/afc
-    double sizeafc;
-  public:
-    /// Default constructor
-    BySizeAfcMax(void);
-    /// Constructor for initialization
-    BySizeAfcMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with smallest size divided by activity
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class BySizeActivityMin : public ViewSelBase<IntView> {
-  protected:
+  class MeritSizeActivity : public MeritBase {
     /// Activity information
     Activity activity;
-    /// So-far smallest size/activity
-    double sizeact;
   public:
     /// Default constructor
-    BySizeActivityMin(void);
+    MeritSizeActivity(void);
     /// Constructor for initialization
-    BySizeActivityMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
+    MeritSizeActivity(Space& home, const VarBranchOptions& vbo);
+    /// Return size over activity as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
     /// Updating during cloning
-    void update(Space& home, bool share, BySizeActivityMin& vs);
+    void update(Space& home, bool share, MeritSizeActivity& msa);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Dispose view selection
@@ -540,116 +403,35 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
-   * \brief View selection class for view with largest size divided by activity
+   * \brief Merit class for minimum regret
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class BySizeActivityMax : public ViewSelBase<IntView> {
-  protected:
-    /// Activity information
-    Activity activity;
-    /// So-far largest size/activity
-    double sizeact;
+  class MeritRegretMin : public MeritBase {
   public:
     /// Default constructor
-    BySizeActivityMax(void);
+    MeritRegretMin(void);
     /// Constructor for initialization
-    BySizeActivityMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, BySizeActivityMax& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
+    MeritRegretMin(Space& home, const VarBranchOptions& vbo);
+    /// Return minimum regret as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
   /**
-   * \brief View selection class for view with smallest min-regret
+   * \brief Merit class for maximum regret
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelView
    */
-  class ByRegretMinMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest regret
-    unsigned int regret;
+  class MeritRegretMax : public MeritBase {
   public:
     /// Default constructor
-    ByRegretMinMin(void);
+    MeritRegretMax(void);
     /// Constructor for initialization
-    ByRegretMinMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with largest min-regret
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class ByRegretMinMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest regret
-    unsigned int regret;
-  public:
-    /// Default constructor
-    ByRegretMinMax(void);
-    /// Constructor for initialization
-    ByRegretMinMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with smallest max-regret
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class ByRegretMaxMin : public ViewSelBase<IntView> {
-  protected:
-    /// So-far smallest regret
-    unsigned int regret;
-  public:
-    /// Default constructor
-    ByRegretMaxMin(void);
-    /// Constructor for initialization
-    ByRegretMaxMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with largest max-regret
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntSelView
-   */
-  class ByRegretMaxMax : public ViewSelBase<IntView> {
-  protected:
-    /// So-far largest regret
-    unsigned int regret;
-  public:
-    /// Default constructor
-    ByRegretMaxMax(void);
-    /// Constructor for initialization
-    ByRegretMaxMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, IntView x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, IntView x, int i);
+    MeritRegretMax(Space& home, const VarBranchOptions& vbo);
+    /// Return maximum regret as merit for view \a x at position \a i
+    double operator ()(Space& home, IntView x, int i);
   };
 
 }}}

@@ -273,13 +273,13 @@
  */
 
 /**
- * \defgroup FuncIntSelView Integer view selection for brancher
+ * \defgroup FuncIntSelView Merit-based integer view selection for branchers
  *
- * Contains a description of view selection strategies on integer
+ * Contains merit-based view selection strategies on integer
  * views that can be used together with the generic view/value
- * brancher class Gecode::ViewValBrancher (argument \a ViewSel).
+ * brancher classes.
  *
- * All view selection classes require 
+ * All merit-based view selection classes require 
  * \code #include <gecode/int/branch.hh> \endcode
  * \ingroup Other
  */
@@ -307,13 +307,13 @@
  */
 
 /**
- * \defgroup FuncSetSelView Set view selection for brancher
+ * \defgroup FuncSetSelView Merit-based set view selection for branchers
  *
- * Contains a description of view selection strategies on set
+ * Contains merit-based view selection strategies on set
  * views that can be used together with the generic view/value
- * brancher class Gecode::ViewValBrancher (argument \a ViewSel).
+ * brancher classes.
  *
- * All view selection classes require 
+ * All merit-based view selection classes require 
  * \code #include <gecode/set/branch.hh> \endcode
  * \ingroup Other
  */
@@ -341,13 +341,13 @@
  */
 
 /**
- * \defgroup FuncFloatSelView Float view selection for brancher
+ * \defgroup FuncFloatSelView Merit-based float view selection for branchers
  *
- * Contains a description of view selection strategies on float
+ * Contains merit-based view selection strategies on float
  * views that can be used together with the generic view/value
- * brancher class Gecode::ViewValBrancher (argument \a ViewSel).
+ * brancher classes.
  *
- * All view selection classes require 
+ * All merit-based view selection classes require 
  * \code #include <gecode/float/branch.hh> \endcode
  * \ingroup Other
  */

@@ -37,406 +37,109 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  // Select variable with smallest min
+  // Minimum merit
   forceinline
-  ByMinMin::ByMinMin(void) : min(0) {}
+  MeritMin::MeritMin(void) {}
   forceinline
-  ByMinMin::ByMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), min(0) {}
-  forceinline ViewSelStatus
-  ByMinMin::init(Space&, View x, int) {
-    min = x.min();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMinMin::select(Space&, View x, int) {
-    if (x.min() < min) {
-      min = x.min(); return VSS_BETTER;
-    } else if (x.min() > min) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritMin::MeritMin(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritMin::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.min());
   }
 
-  // Select variable with largest min
+  // Maximum merit
   forceinline
-  ByMinMax::ByMinMax(void) : min(0) {}
+  MeritMax::MeritMax(void) {}
   forceinline
-  ByMinMax::ByMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), min(0) {}
-  forceinline ViewSelStatus
-  ByMinMax::init(Space&, View x, int) {
-    min = x.min();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMinMax::select(Space&, View x, int) {
-    if (x.min() > min) {
-      min = x.min(); return VSS_BETTER;
-    } else if (x.min() < min) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritMax::MeritMax(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritMax::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.max());
   }
 
-  // Select variable with smallest max
+  // Size merit
   forceinline
-  ByMaxMin::ByMaxMin(void) : max(0) {}
+  MeritSize::MeritSize(void) {}
   forceinline
-  ByMaxMin::ByMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), max(0) {}
-  forceinline ViewSelStatus
-  ByMaxMin::init(Space&, View x, int) {
-    max = x.max();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMaxMin::select(Space&, View x, int) {
-    if (x.max() < max) {
-      max = x.max(); return VSS_BETTER;
-    } else if (x.max() > max) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritSize::MeritSize(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritSize::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.size());
   }
 
-  // Select variable with largest max
+  // Size over degree merit
   forceinline
-  ByMaxMax::ByMaxMax(void) : max(0) {}
+  MeritSizeDegree::MeritSizeDegree(void) {}
   forceinline
-  ByMaxMax::ByMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), max(0) {}
-  forceinline ViewSelStatus
-  ByMaxMax::init(Space&, View x, int) {
-    max = x.max();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMaxMax::select(Space&, View x, int) {
-    if (x.max() > max) {
-      max = x.max(); return VSS_BETTER;
-    } else if (x.max() < max) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritSizeDegree::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.size()) / static_cast<double>(x.degree());
   }
 
-  // Select variable with smallest size
+  // Size over AFC merit
   forceinline
-  BySizeMin::BySizeMin(void) : size(0U) {}
+  MeritSizeAfc::MeritSizeAfc(void) {}
   forceinline
-  BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), size(0U) {}
-  forceinline ViewSelStatus
-  BySizeMin::init(Space&, View x, int) {
-    size = x.size();
-    return (size == 2) ? VSS_BEST : VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeMin::select(Space&, View x, int) {
-    if (x.size() < size) {
-      size = x.size();
-      return (size == 2) ? VSS_BEST : VSS_BETTER;
-    } else if (x.size() > size) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritSizeAfc::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.size()) / x.afc();
   }
 
-  // Select variable with largest size
+  // Size over activity merit
   forceinline
-  BySizeMax::BySizeMax(void) : size(0U) {}
+  MeritSizeActivity::MeritSizeActivity(void) {}
   forceinline
-  BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), size(0U) {}
-  forceinline ViewSelStatus
-  BySizeMax::init(Space&, View x, int) {
-    size = x.size();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeMax::select(Space&, View x, int) {
-    if (x.size() > size) {
-      size = x.size();
-      return VSS_BETTER;
-    } else if (x.size() < size) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with smallest size/degree
-  forceinline
-  BySizeDegreeMin::BySizeDegreeMin(void) : sizedegree(0) {}
-  forceinline
-  BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), sizedegree(0) {}
-  forceinline ViewSelStatus
-  BySizeDegreeMin::init(Space&, View x, int) {
-    sizedegree =
-      static_cast<double>(x.size())/static_cast<double>(x.degree());
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeDegreeMin::select(Space&, View x, int) {
-    double sd =
-      static_cast<double>(x.size())/static_cast<double>(x.degree());
-    if (sd < sizedegree) {
-      sizedegree = sd; return VSS_BETTER;
-    } else if (sd > sizedegree) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with largest size/degree
-  forceinline
-  BySizeDegreeMax::BySizeDegreeMax(void) : sizedegree(0) {}
-  forceinline
-  BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), sizedegree(0) {}
-  forceinline ViewSelStatus
-  BySizeDegreeMax::init(Space&, View x, int) {
-    sizedegree =
-      static_cast<double>(x.size())/static_cast<double>(x.degree());
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeDegreeMax::select(Space&, View x, int) {
-    double sd =
-      static_cast<double>(x.size())/static_cast<double>(x.degree());
-    if (sd > sizedegree) {
-      sizedegree = sd; return VSS_BETTER;
-    } else if (sd < sizedegree) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with smallest size/afc
-  forceinline
-  BySizeAfcMin::BySizeAfcMin(void) : sizeafc(0) {}
-  forceinline
-  BySizeAfcMin::BySizeAfcMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), sizeafc(0) {}
-  forceinline ViewSelStatus
-  BySizeAfcMin::init(Space&, View x, int) {
-    sizeafc = static_cast<double>(x.size())/x.afc();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeAfcMin::select(Space&, View x, int) {
-    double sa = static_cast<double>(x.size())/x.afc();
-    if (sa < sizeafc) {
-      sizeafc = sa; return VSS_BETTER;
-    } else if (sa > sizeafc) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with largest size/afc
-  forceinline
-  BySizeAfcMax::BySizeAfcMax(void) : sizeafc(0) {}
-  forceinline
-  BySizeAfcMax::BySizeAfcMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), sizeafc(0) {}
-  forceinline ViewSelStatus
-  BySizeAfcMax::init(Space&, View x, int) {
-    sizeafc = static_cast<double>(x.size())/x.afc();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeAfcMax::select(Space&, View x, int) {
-    double sa = static_cast<double>(x.size())/x.afc();
-    if (sa > sizeafc) {
-      sizeafc = sa; return VSS_BETTER;
-    } else if (sa < sizeafc) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with smallest size/activity
-  forceinline
-  BySizeActivityMin::BySizeActivityMin(void) : sizeact(0.0) {}
-  forceinline
-  BySizeActivityMin::BySizeActivityMin(Space& home,
+  MeritSizeActivity::MeritSizeActivity(Space& home,
                                        const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), activity(vbo.activity), sizeact(0.0) {
+    : MeritBase(home,vbo), activity(vbo.activity) {
     if (!activity.initialized())
-      throw MissingActivity("BySizeActivityMin (INT_VAR_SIZE_ACTIVITY_MIN)");
+      throw MissingActivity("MeritActivity (INT_VAR_SIZE_ACTIVITY)");
   }
-  forceinline ViewSelStatus
-  BySizeActivityMin::init(Space&, View x, int i) {
-    sizeact = static_cast<double>(x.size())/activity[i];
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeActivityMin::select(Space&, View x, int i) {
-    double sa = static_cast<double>(x.size())/activity[i];
-    if (sa < sizeact) {
-      sizeact = sa;
-      return VSS_BETTER;
-    } else if (sa > sizeact) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  forceinline double
+  MeritSizeActivity::operator ()(Space&, IntView x, int i) {
+    return static_cast<double>(x.size()) / activity[i];
   }
   forceinline void
-  BySizeActivityMin::update(Space& home, bool share, BySizeActivityMin& vs) {
-    activity.update(home, share, vs.activity);
+  MeritSizeActivity::update(Space& home, bool share, 
+                            MeritSizeActivity& msa) {
+    activity.update(home, share, msa.activity);
   }
   forceinline bool
-  BySizeActivityMin::notice(void) const {
+  MeritSizeActivity::notice(void) const {
     return true;
   }
   forceinline void
-  BySizeActivityMin::dispose(Space&) {
+  MeritSizeActivity::dispose(Space&) {
     activity.~Activity();
   }
 
-  // Select variable with largest size/activity
+  // Minimum regret merit
   forceinline
-  BySizeActivityMax::BySizeActivityMax(void) : sizeact(0.0) {}
+  MeritRegretMin::MeritRegretMin(void) {}
   forceinline
-  BySizeActivityMax::BySizeActivityMax(Space& home,
-                                       const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), activity(vbo.activity), sizeact(0.0) {
-    if (!activity.initialized())
-      throw MissingActivity("BySizeActivityMax (INT_VAR_SIZE_ACTIVITY_MAX)");
-  }
-  forceinline ViewSelStatus
-  BySizeActivityMax::init(Space&, View x, int i) {
-    sizeact = static_cast<double>(x.size())/activity[i];
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeActivityMax::select(Space&, View x, int i) {
-    double sa = static_cast<double>(x.size())/activity[i];
-    if (sa > sizeact) {
-      sizeact = sa;
-      return VSS_BETTER;
-    } else if (sa < sizeact) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-  forceinline void
-  BySizeActivityMax::update(Space& home, bool share, BySizeActivityMax& vs) {
-    activity.update(home, share, vs.activity);
-  }
-  forceinline bool
-  BySizeActivityMax::notice(void) const {
-    return true;
-  }
-  forceinline void
-  BySizeActivityMax::dispose(Space&) {
-    activity.~Activity();
+  MeritRegretMin::MeritRegretMin(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritRegretMin::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.regret_min());
   }
 
-  // Select variable with smallest min-regret
+  // Maximum regret merit
   forceinline
-  ByRegretMinMin::ByRegretMinMin(void) : regret(0U) {}
+  MeritRegretMax::MeritRegretMax(void) {}
   forceinline
-  ByRegretMinMin::ByRegretMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
-  forceinline ViewSelStatus
-  ByRegretMinMin::init(Space&, View x, int) {
-    regret = x.regret_min();
-    return (regret == 1) ? VSS_BEST : VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByRegretMinMin::select(Space&, View x, int) {
-    if (x.regret_min() < regret) {
-      regret = x.regret_min();
-      return (regret == 1) ? VSS_BEST : VSS_BETTER;
-    } else if (x.regret_min() > regret) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with largest min-regret
-  forceinline
-  ByRegretMinMax::ByRegretMinMax(void) : regret(0U) {}
-  forceinline
-  ByRegretMinMax::ByRegretMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
-  forceinline ViewSelStatus
-  ByRegretMinMax::init(Space&, View x, int) {
-    regret = x.regret_min();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByRegretMinMax::select(Space&, View x, int) {
-    if (x.regret_min() > regret) {
-      regret = x.regret_min();
-      return VSS_BETTER;
-    } else if (x.regret_min() < regret) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with smallest max-regret
-  forceinline
-  ByRegretMaxMin::ByRegretMaxMin(void) : regret(0U) {}
-  forceinline
-  ByRegretMaxMin::ByRegretMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
-  forceinline ViewSelStatus
-  ByRegretMaxMin::init(Space&, View x, int) {
-    regret = x.regret_max();
-    return (regret == 1) ? VSS_BEST : VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByRegretMaxMin::select(Space&, View x, int) {
-    if (x.regret_max() < regret) {
-      regret = x.regret_max();
-      return (regret == 1) ? VSS_BEST : VSS_BETTER;
-    } else if (x.regret_max() > regret) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with largest max-regret
-  forceinline
-  ByRegretMaxMax::ByRegretMaxMax(void) : regret(0U) {}
-  forceinline
-  ByRegretMaxMax::ByRegretMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<IntView>(home,vbo), regret(0U) {}
-  forceinline ViewSelStatus
-  ByRegretMaxMax::init(Space&, View x, int) {
-    regret = x.regret_max();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByRegretMaxMax::select(Space&, View x, int) {
-    if (x.regret_max() > regret) {
-      regret = x.regret_max();
-      return VSS_BETTER;
-    } else if (x.regret_max() < regret) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritRegretMax::MeritRegretMax(Space& home, const VarBranchOptions& vbo)
+    : MeritBase(home,vbo) {}
+  forceinline double
+  MeritRegretMax::operator ()(Space&, IntView x, int) {
+    return static_cast<double>(x.regret_max());
   }
 
 }}}

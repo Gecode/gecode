@@ -154,7 +154,7 @@ namespace Gecode {
   template<class View>
   forceinline double
   MeritAfc<View>::operator ()(Space&, View x, int) {
-    return static_cast<double>(x.afc());
+    return x.afc();
   }
 
 
@@ -173,7 +173,7 @@ namespace Gecode {
   template<class View>
   forceinline double
   MeritActivity<View>::operator ()(Space&, View, int i) {
-    return static_cast<double>(activity[i]);
+    return activity[i];
   }
   template<class View>
   forceinline void
