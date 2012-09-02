@@ -1,16 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *     Gabor Szokoli <szokoli@gecode.org>
- *
  *  Copyright:
- *     Guido Tack, 2004
- *     Christian Schulte, 2004
- *     Gabor Szokoli, 2004
+ *     Christian Schulte, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -43,345 +37,91 @@
 
 namespace Gecode { namespace Set { namespace Branch {
 
+  // Minimum merit
   forceinline
-  BySizeMin::BySizeMin(void) : size(0U) {}
+  MeritMin::MeritMin(void) {}
   forceinline
-  BySizeMin::BySizeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), size(0U) {}
-  forceinline ViewSelStatus
-  BySizeMin::init(Space&, SetView x, int) {
-    size = x.unknownSize();
-    return (size == 1) ? VSS_BEST : VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeMin::select(Space&, SetView x, int) {
-    unsigned int us = x.unknownSize();
-    if (us < size) {
-      size = us;
-      return (size == 1) ? VSS_BEST : VSS_BETTER;
-    } else if (us > size) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  forceinline
-  BySizeMax::BySizeMax(void) : size(0U) {}
-  forceinline
-  BySizeMax::BySizeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), size(0U) {}
-  forceinline ViewSelStatus
-  BySizeMax::init(Space&, SetView x, int) {
-    size = x.unknownSize();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeMax::select(Space&, SetView x, int) {
-    unsigned int us = x.unknownSize();
-    if (us > size) {
-      size = us;
-      return VSS_BETTER;
-    } else if (us < size) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  forceinline
-  ByMinMin::ByMinMin(void) : min(0) {}
-  forceinline
-  ByMinMin::ByMinMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), min(0) {}
-  forceinline ViewSelStatus
-  ByMinMin::init(Space&, SetView x, int) {
+  MeritMin::MeritMin(Space& home, const VarBranchOptions& vbo)
+    : MeritBase<SetView>(home,vbo) {}
+  forceinline double
+  MeritMin::operator ()(Space&, SetView x, int) {
     UnknownRanges<SetView> u(x);
-    min = u.min();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMinMin::select(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    if (u.min() < min) {
-      min = u.min(); return VSS_BETTER;
-    } else if (u.min() > min) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+    return static_cast<double>(u.min());
   }
 
-
+  // Maximum merit
   forceinline
-  ByMinMax::ByMinMax(void) : min(0) {}
+  MeritMax::MeritMax(void) {}
   forceinline
-  ByMinMax::ByMinMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), min(0) {}
-  forceinline ViewSelStatus
-  ByMinMax::init(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    min = u.min();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMinMax::select(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    if (u.min() > min) {
-      min = u.min(); return VSS_BETTER;
-    } else if (u.min() < min) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  forceinline
-  ByMaxMin::ByMaxMin(void) : max(0) {}
-  forceinline
-  ByMaxMin::ByMaxMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), max(0) {}
-  forceinline ViewSelStatus
-  ByMaxMin::init(Space&, SetView x, int) {
+  MeritMax::MeritMax(Space& home, const VarBranchOptions& vbo)
+    : MeritBase<SetView>(home,vbo) {}
+  forceinline double
+  MeritMax::operator ()(Space&, SetView x, int) {
+    int max = Limits::max;
     for (UnknownRanges<SetView> u(x); u(); ++u)
       max = u.max();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMaxMin::select(Space&, SetView x, int) {
-    int um = 0;
-    for (UnknownRanges<SetView> u(x); u(); ++u)
-      um = u.max();
-    if (um < max) {
-      max = um; return VSS_BETTER;
-    } else if (um > max) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+    return static_cast<double>(max);
   }
 
-
+  // Size merit
   forceinline
-  ByMaxMax::ByMaxMax(void) : max(0) {}
+  MeritSize::MeritSize(void) {}
   forceinline
-  ByMaxMax::ByMaxMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), max(0) {}
-  forceinline ViewSelStatus
-  ByMaxMax::init(Space&, SetView x, int) {
-    for (UnknownRanges<SetView> u(x); u(); ++u)
-      max = u.max();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  ByMaxMax::select(Space&, SetView x, int) {
-    int um = 0;
-    for (UnknownRanges<SetView> u(x); u(); ++u)
-      um = u.max();
-    if (um > max) {
-      max = um; return VSS_BETTER;
-    } else if (um < max) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritSize::MeritSize(Space& home, const VarBranchOptions& vbo)
+    : MeritBase<SetView>(home,vbo) {}
+  forceinline double
+  MeritSize::operator ()(Space&, SetView x, int) {
+    return static_cast<double>(x.unknownSize());
   }
 
-
-  // Select variable with smallest size/degree
+  // Size over degree merit
   forceinline
-  BySizeDegreeMin::BySizeDegreeMin(void) : sizedegree(0) {}
+  MeritSizeDegree::MeritSizeDegree(void) {}
   forceinline
-  BySizeDegreeMin::BySizeDegreeMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), sizedegree(0) {}
-  forceinline ViewSelStatus
-  BySizeDegreeMin::init(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    sizedegree =
-      static_cast<double>(Iter::Ranges::size(u))/
+  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranchOptions& vbo)
+    : MeritBase<SetView>(home,vbo) {}
+  forceinline double
+  MeritSizeDegree::operator ()(Space&, SetView x, int) {
+    return static_cast<double>(x.unknownSize()) / 
       static_cast<double>(x.degree());
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeDegreeMin::select(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    double sd =
-      static_cast<double>(Iter::Ranges::size(u))/
-      static_cast<double>(x.degree());
-    if (sd < sizedegree) {
-      sizedegree = sd; return VSS_BETTER;
-    } else if (sd > sizedegree) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
   }
 
-
-  // Select variable with largest size/degree
+  // Size over AFC merit
   forceinline
-  BySizeDegreeMax::BySizeDegreeMax(void) : sizedegree(0) {}
+  MeritSizeAfc::MeritSizeAfc(void) {}
   forceinline
-  BySizeDegreeMax::BySizeDegreeMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), sizedegree(0) {}
-  forceinline ViewSelStatus
-  BySizeDegreeMax::init(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    sizedegree =
-      static_cast<double>(Iter::Ranges::size(u))/
-      static_cast<double>(x.degree());
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeDegreeMax::select(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    double sd =
-      static_cast<double>(Iter::Ranges::size(u))/
-      static_cast<double>(x.degree());
-    if (sd > sizedegree) {
-      sizedegree = sd; return VSS_BETTER;
-    } else if (sd < sizedegree) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranchOptions& vbo)
+    : MeritBase<SetView>(home,vbo) {}
+  forceinline double
+  MeritSizeAfc::operator ()(Space&, SetView x, int) {
+    return static_cast<double>(x.unknownSize()) / x.afc();
   }
 
-  // Select variable with smallest size/afc
+  // Size over activity merit
   forceinline
-  BySizeAfcMin::BySizeAfcMin(void) : sizeafc(0) {}
+  MeritSizeActivity::MeritSizeActivity(void) {}
   forceinline
-  BySizeAfcMin::BySizeAfcMin(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), sizeafc(0) {}
-  forceinline ViewSelStatus
-  BySizeAfcMin::init(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    sizeafc = static_cast<double>(Iter::Ranges::size(u))/x.afc();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeAfcMin::select(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    double sa = static_cast<double>(Iter::Ranges::size(u))/x.afc();
-    if (sa < sizeafc) {
-      sizeafc = sa; return VSS_BETTER;
-    } else if (sa > sizeafc) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  // Select variable with largest size/afc
-  forceinline
-  BySizeAfcMax::BySizeAfcMax(void) : sizeafc(0) {}
-  forceinline
-  BySizeAfcMax::BySizeAfcMax(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), sizeafc(0) {}
-  forceinline ViewSelStatus
-  BySizeAfcMax::init(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    sizeafc = static_cast<double>(Iter::Ranges::size(u))/x.afc();
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeAfcMax::select(Space&, SetView x, int) {
-    UnknownRanges<SetView> u(x);
-    double sa = static_cast<double>(Iter::Ranges::size(u))/x.afc();
-    if (sa > sizeafc) {
-      sizeafc = sa; return VSS_BETTER;
-    } else if (sa < sizeafc) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-  // Select variable with smallest size/activity
-  forceinline
-  BySizeActivityMin::BySizeActivityMin(void) : sizeact(0.0) {}
-  forceinline
-  BySizeActivityMin::BySizeActivityMin(Space& home,
+  MeritSizeActivity::MeritSizeActivity(Space& home,
                                        const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), activity(vbo.activity), sizeact(0.0) {
+    : MeritBase<SetView>(home,vbo), activity(vbo.activity) {
     if (!activity.initialized())
-      throw MissingActivity("BySizeActivityMin (SET_VAR_SIZE_ACTIVITY_MIN)");
+      throw MissingActivity("MeritActivity (SET_VAR_SIZE_ACTIVITY)");
   }
-  forceinline ViewSelStatus
-  BySizeActivityMin::init(Space&, View x, int i) {
-    UnknownRanges<SetView> u(x);
-    sizeact = static_cast<double>(Iter::Ranges::size(u))/activity[i];
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeActivityMin::select(Space&, View x, int i) {
-    UnknownRanges<SetView> u(x);
-    double sa = static_cast<double>(Iter::Ranges::size(u))/activity[i];
-    if (sa < sizeact) {
-      sizeact = sa;
-      return VSS_BETTER;
-    } else if (sa > sizeact) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
+  forceinline double
+  MeritSizeActivity::operator ()(Space&, SetView x, int i) {
+    return static_cast<double>(x.unknownSize()) / activity[i];
   }
   forceinline void
-  BySizeActivityMin::update(Space& home, bool share, BySizeActivityMin& vs) {
-    activity.update(home, share, vs.activity);
+  MeritSizeActivity::update(Space& home, bool share, 
+                            MeritSizeActivity& msa) {
+    activity.update(home, share, msa.activity);
   }
   forceinline bool
-  BySizeActivityMin::notice(void) const {
+  MeritSizeActivity::notice(void) const {
     return true;
   }
   forceinline void
-  BySizeActivityMin::dispose(Space&) {
-    activity.~Activity();
-  }
-
-  // Select variable with largest size/activity
-  forceinline
-  BySizeActivityMax::BySizeActivityMax(void) : sizeact(0.0) {}
-  forceinline
-  BySizeActivityMax::BySizeActivityMax(Space& home,
-                                       const VarBranchOptions& vbo)
-    : ViewSelBase<SetView>(home,vbo), activity(vbo.activity), sizeact(0.0) {
-    if (!activity.initialized())
-      throw MissingActivity("BySizeActivityMax (SET_VAR_SIZE_ACTIVITY_MAX)");
-  }
-  forceinline ViewSelStatus
-  BySizeActivityMax::init(Space&, View x, int i) {
-    UnknownRanges<SetView> u(x);
-    sizeact = static_cast<double>(Iter::Ranges::size(u))/activity[i];
-    return VSS_BETTER;
-  }
-  forceinline ViewSelStatus
-  BySizeActivityMax::select(Space&, View x, int i) {
-    UnknownRanges<SetView> u(x);
-    double sa = static_cast<double>(Iter::Ranges::size(u))/activity[i];
-    if (sa > sizeact) {
-      sizeact = sa;
-      return VSS_BETTER;
-    } else if (sa < sizeact) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-  forceinline void
-  BySizeActivityMax::update(Space& home, bool share, BySizeActivityMax& vs) {
-    activity.update(home, share, vs.activity);
-  }
-  forceinline bool
-  BySizeActivityMax::notice(void) const {
-    return true;
-  }
-  forceinline void
-  BySizeActivityMax::dispose(Space&) {
+  MeritSizeActivity::dispose(Space&) {
     activity.~Activity();
   }
 

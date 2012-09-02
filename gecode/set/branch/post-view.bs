@@ -65,6 +65,24 @@ Type:		ViewSelNone<SetView>
 Value:		SET_VAR_RND = COMPLETE
 Type:		ViewSelRnd<SetView>
 [VarBranch]
+Value:		SET_VAR_MIN_MIN
+Type:		ViewSelMin<MeritMin>
+[VarBranch]
+Value:		SET_VAR_MIN_MAX
+Type:		ViewSelMax<MeritMin>
+[VarBranch]
+Value:		SET_VAR_MAX_MIN
+Type:		ViewSelMin<MeritMax>
+[VarBranch]
+Value:		SET_VAR_MAX_MAX
+Type:		ViewSelMax<MeritMax>
+[VarBranch]
+Value:		SET_VAR_SIZE_MIN
+Type:		ViewSelMin<MeritSize>
+[VarBranch]
+Value:		SET_VAR_SIZE_MAX
+Type:		ViewSelMax<MeritSize>
+[VarBranch]
 Value:		SET_VAR_DEGREE_MIN
 Type:		ViewSelMin<MeritDegree<SetView> >
 [VarBranch]
@@ -72,7 +90,7 @@ Value:		SET_VAR_DEGREE_MAX
 Type:		ViewSelMax<MeritDegree<SetView> >
 [VarBranch]
 Value:		SET_VAR_AFC_MIN
-Type:           ViewSelMin<MeritAfc<SetView> >
+Type:		ViewSelMin<MeritAfc<SetView> >
 [VarBranch]
 Value:		SET_VAR_AFC_MAX
 Type:		ViewSelMax<MeritAfc<SetView> >
@@ -83,39 +101,21 @@ Type:		ViewSelMin<MeritActivity<SetView> >
 Value:		SET_VAR_ACTIVITY_MAX
 Type:		ViewSelMax<MeritActivity<SetView> >
 [VarBranch]
-Value:		SET_VAR_MIN_MIN
-Type:		ByMinMin
-[VarBranch]
-Value:		SET_VAR_MIN_MAX
-Type:		ByMinMin
-[VarBranch]
-Value:		SET_VAR_MAX_MIN
-Type:		ByMaxMin
-[VarBranch]
-Value:		SET_VAR_MAX_MAX
-Type:		ByMaxMax
-[VarBranch]
-Value:		SET_VAR_SIZE_MIN
-Type:		BySizeMin
-[VarBranch]
-Value:		SET_VAR_SIZE_MAX
-Type:		BySizeMax
-[VarBranch]
 Value:		SET_VAR_SIZE_DEGREE_MIN
-Type:		BySizeDegreeMin
+Type:		ViewSelMin<MeritSizeDegree>
 [VarBranch]
 Value:		SET_VAR_SIZE_DEGREE_MAX
-Type:		BySizeDegreeMax
+Type:		ViewSelMax<MeritSizeDegree>
 [VarBranch]
 Value:		SET_VAR_SIZE_AFC_MIN
-Type:		BySizeAfcMin
+Type:		ViewSelMin<MeritSizeAfc>
 [VarBranch]
 Value:		SET_VAR_SIZE_AFC_MAX
-Type:		BySizeAfcMax
+Type:		ViewSelMax<MeritSizeAfc>
 [VarBranch]
 Value:		SET_VAR_SIZE_ACTIVITY_MIN
-Type:		BySizeActivityMin
+Type:		ViewSelMin<MeritSizeActivity>
 [VarBranch]
 Value:		SET_VAR_SIZE_ACTIVITY_MAX
-Type:		BySizeActivityMax
+Type:		ViewSelMax<MeritSizeActivity>
 [End]
