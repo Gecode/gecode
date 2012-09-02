@@ -53,22 +53,22 @@ namespace Gecode { namespace Float { namespace Branch {
       v = new (home) ViewSelVirtual<ViewSelRnd<FloatView> >(home,o_vars);
       break;
     case FLOAT_VAR_MIN_MIN:
-      v = new (home) ViewSelVirtual<ByMinMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritMin> >(home,o_vars);
       break;
     case FLOAT_VAR_MIN_MAX:
-      v = new (home) ViewSelVirtual<ByMinMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritMin> >(home,o_vars);
       break;
     case FLOAT_VAR_MAX_MIN:
-      v = new (home) ViewSelVirtual<ByMaxMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritMax> >(home,o_vars);
       break;
     case FLOAT_VAR_MAX_MAX:
-      v = new (home) ViewSelVirtual<ByMaxMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritMax> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_MIN:
-      v = new (home) ViewSelVirtual<BySizeMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritSize> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_MAX:
-      v = new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritSize> >(home,o_vars);
       break;
     case FLOAT_VAR_DEGREE_MIN:
       v = new (home) ViewSelVirtual<ViewSelMin<MeritDegree<FloatView> > >(home,o_vars);
@@ -89,22 +89,22 @@ namespace Gecode { namespace Float { namespace Branch {
       v = new (home) ViewSelVirtual<ViewSelMax<MeritActivity<FloatView> > >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_DEGREE_MIN:
-      v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritSizeDegree> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_DEGREE_MAX:
-      v = new (home) ViewSelVirtual<BySizeDegreeMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritSizeDegree> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_AFC_MIN:
-      v = new (home) ViewSelVirtual<BySizeAfcMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritSizeAfc> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_AFC_MAX:
-      v = new (home) ViewSelVirtual<BySizeAfcMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritSizeAfc> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_ACTIVITY_MIN:
-      v = new (home) ViewSelVirtual<BySizeActivityMin>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritSizeActivity> >(home,o_vars);
       break;
     case FLOAT_VAR_SIZE_ACTIVITY_MAX:
-      v = new (home) ViewSelVirtual<BySizeActivityMax>(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritSizeActivity> >(home,o_vars);
       break;
     default:
       throw UnknownBranching("Float::branch");
@@ -145,37 +145,37 @@ namespace Gecode {
       break;
     case FLOAT_VAR_MIN_MIN:
       {
-        ByMinMin v(home,o_vars);
+        ViewSelMin<MeritMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_MIN_MAX:
       {
-        ByMinMax v(home,o_vars);
+        ViewSelMax<MeritMin> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_MAX_MIN:
       {
-        ByMaxMin v(home,o_vars);
+        ViewSelMin<MeritMax> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_MAX_MAX:
       {
-        ByMaxMax v(home,o_vars);
+        ViewSelMax<MeritMax> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_MIN:
       {
-        BySizeMin v(home,o_vars);
+        ViewSelMin<MeritSize> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_MAX:
       {
-        BySizeMax v(home,o_vars);
+        ViewSelMax<MeritSize> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -217,37 +217,37 @@ namespace Gecode {
       break;
     case FLOAT_VAR_SIZE_DEGREE_MIN:
       {
-        BySizeDegreeMin v(home,o_vars);
+        ViewSelMin<MeritSizeDegree> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_DEGREE_MAX:
       {
-        BySizeDegreeMax v(home,o_vars);
+        ViewSelMax<MeritSizeDegree> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_AFC_MIN:
       {
-        BySizeAfcMin v(home,o_vars);
+        ViewSelMin<MeritSizeAfc> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_AFC_MAX:
       {
-        BySizeAfcMax v(home,o_vars);
+        ViewSelMax<MeritSizeAfc> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_ACTIVITY_MIN:
       {
-        BySizeActivityMin v(home,o_vars);
+        ViewSelMin<MeritSizeActivity> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case FLOAT_VAR_SIZE_ACTIVITY_MAX:
       {
-        BySizeActivityMax v(home,o_vars);
+        ViewSelMax<MeritSizeActivity> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -299,48 +299,48 @@ namespace Gecode {
     switch (vars.a) {
     case FLOAT_VAR_MIN_MIN:
       {
-        ByMinMin va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMinMin,
+        ViewSelMin<MeritMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritMin>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_MIN_MAX:
       {
-        ByMinMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMinMax,
+        ViewSelMax<MeritMin> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritMin>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_MAX_MIN:
       {
-        ByMaxMin va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMaxMin,
+        ViewSelMin<MeritMax> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritMax>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_MAX_MAX:
       {
-        ByMaxMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<ByMaxMax,
+        ViewSelMax<MeritMax> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritMax>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_MIN:
       {
-        BySizeMin va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeMin,
+        ViewSelMin<MeritSize> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritSize>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_MAX:
       {
-        BySizeMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeMax,
+        ViewSelMax<MeritSize> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritSize>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
@@ -395,48 +395,48 @@ namespace Gecode {
       break;
     case FLOAT_VAR_SIZE_DEGREE_MIN:
       {
-        BySizeDegreeMin va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeDegreeMin,
+        ViewSelMin<MeritSizeDegree> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritSizeDegree>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_DEGREE_MAX:
       {
-        BySizeDegreeMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeDegreeMax,
+        ViewSelMax<MeritSizeDegree> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritSizeDegree>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_AFC_MIN:
       {
-        BySizeAfcMin va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeAfcMin,
+        ViewSelMin<MeritSizeAfc> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritSizeAfc>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_AFC_MAX:
       {
-        BySizeAfcMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeAfcMax,
+        ViewSelMax<MeritSizeAfc> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritSizeAfc>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_ACTIVITY_MIN:
       {
-        BySizeActivityMin va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeActivityMin,
+        ViewSelMin<MeritSizeActivity> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritSizeActivity>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case FLOAT_VAR_SIZE_ACTIVITY_MAX:
       {
-        BySizeActivityMax va(home,o_vars.a);
-        ViewSelTieBreakStatic<BySizeActivityMax,
+        ViewSelMax<MeritSizeActivity> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritSizeActivity>,
           ViewSelTieBreakDynamic<FloatView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }

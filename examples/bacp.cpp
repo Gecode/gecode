@@ -167,17 +167,17 @@ public:
     if (opt.branching() == BRANCHING_NAIVE) {
       branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
     } else {
-      ViewSelMin<Int::Branch::MeritSize,Int::IntView> 
+      ViewSelMin<Int::Branch::MeritSize> 
         varsel(*this, VarBranchOptions::def);
       ViewArray<Int::IntView> xv(*this, IntVarArgs(x));
       if (opt.branching() == BRANCHING_LOAD) {
         ValBestLoad<true> valsel(*this, ValBranchOptions::def);
-        ViewValBrancher<ViewSelMin<Int::Branch::MeritSize,Int::IntView>, 
+        ViewValBrancher<ViewSelMin<Int::Branch::MeritSize>, 
           ValBestLoad<true> >
           ::post(*this,xv,varsel,valsel);
       } else { 
         ValBestLoad<false> valsel(*this, ValBranchOptions::def);
-        ViewValBrancher<ViewSelMin<Int::Branch::MeritSize,Int::IntView>,
+        ViewValBrancher<ViewSelMin<Int::Branch::MeritSize>,
           ValBestLoad<false> >
           ::post(*this,xv,varsel,valsel);
       }
