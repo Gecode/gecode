@@ -96,136 +96,6 @@ namespace Gecode {
     ViewSelStatus select(Space& home, View x, int i);
   };
 
-  /**
-   * \brief View selection class for view with smallest degree
-   */
-  template<class View>
-  class ViewSelDegreeMin : public ViewSelBase<View> {
-  protected:
-    /// So-far smallest degree
-    unsigned int degree;
-  public:
-    /// Default constructor
-    ViewSelDegreeMin(void);
-    /// Constructor for initialization
-    ViewSelDegreeMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with largest degree
-   */
-  template<class View>
-  class ViewSelDegreeMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest degree
-    unsigned int degree;
-  public:
-    /// Default constructor
-    ViewSelDegreeMax(void);
-    /// Constructor for initialization
-    ViewSelDegreeMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with smallest accumulated failure count
-   */
-  template<class View>
-  class ViewSelAfcMin : public ViewSelBase<View> {
-  protected:
-    /// So-far smallest afc
-    double afc;
-  public:
-    /// Default constructor
-    ViewSelAfcMin(void);
-    /// Constructor for initialization
-    ViewSelAfcMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with largest accumulated failure count
-   */
-  template<class View>
-  class ViewSelAfcMax : public ViewSelBase<View> {
-  protected:
-    /// So-far largest afc
-    double afc;
-  public:
-    /// Default constructor
-    ViewSelAfcMax(void);
-    /// Constructor for initialization
-    ViewSelAfcMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-  };
-
-  /**
-   * \brief View selection class for view with lowest activity
-   */
-  template<class View>
-  class ViewSelActivityMin : public ViewSelBase<View> {
-  protected:
-    /// Activity information
-    Activity activity;
-    /// So-far lowest activity
-    double a;
-  public:
-    /// Default constructor
-    ViewSelActivityMin(void);
-    /// Constructor for initialization
-    ViewSelActivityMin(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, ViewSelActivityMin& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
-
-  /**
-   * \brief View selection class for view with highest activity
-   */
-  template<class View>
-  class ViewSelActivityMax : public ViewSelBase<View> {
-  protected:
-    /// Activity information
-    Activity activity;
-    /// So-far highest activity
-    double a;
-  public:
-    /// Default constructor
-    ViewSelActivityMax(void);
-    /// Constructor for initialization
-    ViewSelActivityMax(Space& home, const VarBranchOptions& vbo);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, ViewSelActivityMax& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Dispose view selection
-    void dispose(Space& home);
-  };
-
   /// Random generator with archiving (to be used in branchers)
   class ArchivedRandomGenerator : public Support::RandomGenerator {
   public:
@@ -275,6 +145,60 @@ namespace Gecode {
     /// Delete view selection
     void dispose(Space& home);
   };
+
+  /**
+   * \brief View selection class for view with least merit
+   */
+  template<class Merit, class View>
+  class ViewSelMin : public ViewSelBase<View> {
+  protected:
+    /// The merit used
+    Merit m;
+    /// So-far least merit value
+    double sfb;
+  public:
+    /// Default constructor
+    ViewSelMin(void);
+    /// Constructor for initialization
+    ViewSelMin(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, ViewSelMin<Merit,View>& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Delete view merit
+    void dispose(Space& home);
+  };
+
+  /**
+   * \brief View selection class for view with largest merit
+   */
+  template<class Merit, class View>
+  class ViewSelMax : public ViewSelBase<View> {
+  protected:
+    /// The merit used
+    Merit m;
+    /// So-far largest merit value
+    double sfb;
+  public:
+    /// Default constructor
+    ViewSelMax(void);
+    /// Constructor for initialization
+    ViewSelMax(Space& home, const VarBranchOptions& vbo);
+    /// Intialize with view \a x at position \a i
+    ViewSelStatus init(Space& home, View x, int i);
+    /// Possibly select better view \a x at position \a i
+    ViewSelStatus select(Space& home, View x, int i);
+    /// Updating during cloning
+    void update(Space& home, bool share, ViewSelMax<Merit,View>& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Delete view merit
+    void dispose(Space& home);
+  };
   //@}
 
   // Empty view selection choice
@@ -318,7 +242,6 @@ namespace Gecode {
   forceinline void
   ViewSelBase<View>::dispose(Space&) {}
 
-
   // Select first view
   template<class View>
   forceinline
@@ -337,219 +260,6 @@ namespace Gecode {
   ViewSelNone<View>::select(Space&, View, int) {
     return VSS_BEST;
   }
-
-
-  // Select variable with smallest degree
-  template<class View>
-  forceinline
-  ViewSelDegreeMin<View>::ViewSelDegreeMin(void) : degree(0U) {}
-  template<class View>
-  forceinline
-  ViewSelDegreeMin<View>::ViewSelDegreeMin(Space& home,
-                                           const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), degree(0U) {}
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelDegreeMin<View>::init(Space&, View x, int) {
-    degree = x.degree();
-    return (degree == 0) ? VSS_BEST : VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelDegreeMin<View>::select(Space&, View x, int) {
-    if (x.degree() < degree) {
-      degree = x.degree();
-      return (degree == 0) ? VSS_BEST : VSS_BETTER;
-    } else if (x.degree() > degree) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  // Select variable with largest degree
-  template<class View>
-  forceinline
-  ViewSelDegreeMax<View>::ViewSelDegreeMax(void) : degree(0) {}
-  template<class View>
-  forceinline
-  ViewSelDegreeMax<View>::ViewSelDegreeMax(Space& home,
-                                           const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), degree(0U) {}
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelDegreeMax<View>::init(Space&, View x, int) {
-    degree = x.degree();
-    return VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelDegreeMax<View>::select(Space&, View x, int) {
-    if (x.degree() > degree) {
-      degree = x.degree();
-      return VSS_BETTER;
-    } else if (x.degree() < degree) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  // Select variable with smallest afc
-  template<class View>
-  forceinline
-  ViewSelAfcMin<View>::ViewSelAfcMin(void) : afc(0.0) {}
-  template<class View>
-  forceinline
-  ViewSelAfcMin<View>::ViewSelAfcMin(Space& home,
-                                     const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), afc(0.0) {}
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelAfcMin<View>::init(Space&, View x, int) {
-    afc = x.afc();
-    return (afc == 0.0) ? VSS_BEST : VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelAfcMin<View>::select(Space&, View x, int) {
-    if (x.afc() < afc) {
-      afc = x.afc();
-      return (afc == 0.0) ? VSS_BEST : VSS_BETTER;
-    } else if (x.afc() > afc) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  // Select variable with largest afc
-  template<class View>
-  forceinline
-  ViewSelAfcMax<View>::ViewSelAfcMax(void) : afc(0.0) {}
-  template<class View>
-  forceinline
-  ViewSelAfcMax<View>::ViewSelAfcMax(Space& home,
-                                     const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), afc(0.0) {}
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelAfcMax<View>::init(Space&, View x, int) {
-    afc = x.afc();
-    return VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelAfcMax<View>::select(Space&, View x, int) {
-    double xafc = x.afc();
-    if (xafc > afc) {
-      afc = xafc;
-      return VSS_BETTER;
-    } else if (xafc < afc) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-
-
-  // Select variable with lowest activity
-  template<class View>
-  forceinline
-  ViewSelActivityMin<View>::ViewSelActivityMin(void) : a(0.0) {}
-  template<class View>
-  forceinline
-  ViewSelActivityMin<View>::ViewSelActivityMin(Space& home,
-                                               const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), activity(vbo.activity), a(0.0) {
-    if (!activity.initialized())
-      throw MissingActivity("ViewSelActivityMin (VAR_ACTIVITY_MIN)");
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelActivityMin<View>::init(Space&, View, int i) {
-    a = activity[i];
-    return VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelActivityMin<View>::select(Space&, View, int i) {
-    if (activity[i] < a) {
-      a = activity[i];
-      return VSS_BETTER;
-    } else if (activity[i] > a) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-  template<class View>
-  forceinline void
-  ViewSelActivityMin<View>::update(Space& home, bool share, 
-                                   ViewSelActivityMin<View>& vs) {
-    activity.update(home, share, vs.activity);
-  }
-  template<class View>
-  forceinline bool
-  ViewSelActivityMin<View>::notice(void) const {
-    return true;
-  }
-  template<class View>
-  forceinline void
-  ViewSelActivityMin<View>::dispose(Space&) {
-    activity.~Activity();
-  }
-
-  // Select variable with highest activity
-  template<class View>
-  forceinline
-  ViewSelActivityMax<View>::ViewSelActivityMax(void) : a(0.0) {}
-  template<class View>
-  forceinline
-  ViewSelActivityMax<View>::ViewSelActivityMax(Space& home,
-                                               const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), activity(vbo.activity), a(0.0) {
-    if (!activity.initialized())
-      throw MissingActivity("ViewSelActivityMax (VAR_ACTIVITY_MAX)");
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelActivityMax<View>::init(Space&, View, int i) {
-    a = activity[i];
-    return VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelActivityMax<View>::select(Space&, View, int i) {
-    if (activity[i] > a) {
-      a = activity[i];
-      return VSS_BETTER;
-    } else if (activity[i] < a) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-  template<class View>
-  forceinline void
-  ViewSelActivityMax<View>::update(Space& home, bool share, 
-                                   ViewSelActivityMax<View>& vs) {
-    activity.update(home, share, vs.activity);
-  }
-  template<class View>
-  forceinline bool
-  ViewSelActivityMax<View>::notice(void) const {
-    return true;
-  }
-  template<class View>
-  forceinline void
-  ViewSelActivityMax<View>::dispose(Space&) {
-    activity.~Activity();
-  }
-
 
   // Archived random generator
   forceinline
@@ -611,6 +321,99 @@ namespace Gecode {
   template<class View>
   forceinline void
   ViewSelRnd<View>::dispose(Space&) {
+  }
+
+  // Select variable with least merit
+  template<class Merit, class View>
+  forceinline
+  ViewSelMin<Merit,View>::ViewSelMin(void) 
+    : sfb(0.0) {}
+  template<class Merit, class View>
+  forceinline
+  ViewSelMin<Merit,View>::ViewSelMin(Space& home,
+                                     const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo), m(home,vbo), sfb(0.0) {}
+  template<class Merit, class View>
+  forceinline ViewSelStatus
+  ViewSelMin<Merit,View>::init(Space& home, View x, int i) {
+    sfb = m(home,x,i);
+    return VSS_BETTER;
+  }
+  template<class Merit, class View>
+  forceinline ViewSelStatus
+  ViewSelMin<Merit,View>::select(Space& home, View x, int i) {
+    double mxi = m(home,x,i);
+    if (mxi < sfb) {
+      sfb = mxi;
+      return VSS_BETTER;
+    } else if (mxi > sfb) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class Merit, class View>
+  forceinline void
+  ViewSelMin<Merit,View>::update(Space& home, bool share, 
+                                 ViewSelMin<Merit,View>& vsm) {
+    m.update(home, share, vsm.m);
+  }
+  template<class Merit, class View>
+  forceinline bool
+  ViewSelMin<Merit,View>::notice(void) const {
+    return m.notice();
+  }
+  template<class Merit, class View>
+  forceinline void
+  ViewSelMin<Merit,View>::dispose(Space& home) {
+    m.dispose(home);
+  }
+
+
+  // Select variable with largest merit
+  template<class Merit, class View>
+  forceinline
+  ViewSelMax<Merit,View>::ViewSelMax(void) 
+    : sfb(0.0) {}
+  template<class Merit, class View>
+  forceinline
+  ViewSelMax<Merit,View>::ViewSelMax(Space& home,
+                                     const VarBranchOptions& vbo)
+    : ViewSelBase<View>(home,vbo), m(home,vbo), sfb(0.0) {}
+  template<class Merit, class View>
+  forceinline ViewSelStatus
+  ViewSelMax<Merit,View>::init(Space& home, View x, int i) {
+    sfb = m(home,x,i);
+    return VSS_BETTER;
+  }
+  template<class Merit, class View>
+  forceinline ViewSelStatus
+  ViewSelMax<Merit,View>::select(Space& home, View x, int i) {
+    double mxi = m(home,x,i);
+    if (mxi > sfb) {
+      sfb = mxi;
+      return VSS_BETTER;
+    } else if (mxi < sfb) {
+      return VSS_WORSE;
+    } else {
+      return VSS_TIE;
+    }
+  }
+  template<class Merit, class View>
+  forceinline void
+  ViewSelMax<Merit,View>::update(Space& home, bool share, 
+                                 ViewSelMax<Merit,View>& vsm) {
+    m.update(home, share, vsm.m);
+  }
+  template<class Merit, class View>
+  forceinline bool
+  ViewSelMax<Merit,View>::notice(void) const {
+    return m.notice();
+  }
+  template<class Merit, class View>
+  forceinline void
+  ViewSelMax<Merit,View>::dispose(Space& home) {
+    m.dispose(home);
   }
 
 }

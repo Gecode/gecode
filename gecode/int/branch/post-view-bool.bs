@@ -84,40 +84,40 @@ Value:		INT_VAR_SIZE_MAX
 Type:		ViewSelNone<BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
-Type:		ViewSelDegreeMin<BoolView>
+Type:		ViewSelMin<MeritDegree<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelDegreeMax<BoolView>
+Type:		ViewSelMax<MeritDegree<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_AFC_MIN
-Type:		ViewSelAfcMin<BoolView>
+Type:		ViewSelMin<MeritAfc<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_AFC_MAX
-Type:		ViewSelAfcMax<BoolView>
+Type:		ViewSelMax<MeritAfc<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_ACTIVITY_MIN
-Type:		ViewSelActivityMin<BoolView>
+Type:		ViewSelMin<MeritActivity<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_ACTIVITY_MAX
-Type:		ViewSelActivityMax<BoolView>
+Type:		ViewSelMax<MeritActivity<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
-Type:		ViewSelDegreeMax<BoolView>
+Type:		ViewSelMax<MeritDegree<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MAX
-Type:		ViewSelDegreeMin<BoolView>
+Type:		ViewSelMin<MeritDegree<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_AFC_MIN
-Type:		ViewSelAfcMax<BoolView>
+Type:		ViewSelMax<MeritAfc<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_AFC_MAX
-Type:		ViewSelAfcMin<BoolView>
+Type:		ViewSelMin<MeritAfc<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_ACTIVITY_MIN
-Type:		ViewSelActivityMax<BoolView>
+Type:		ViewSelMax<MeritActivity<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_SIZE_ACTIVITY_MAX
-Type:		ViewSelActivityMin<BoolView>
+Type:		ViewSelMin<MeritActivity<BoolView>,BoolView>
 [VarBranch]
 Value:		INT_VAR_REGRET_MIN_MIN
 Type:		ViewSelNone<BoolView>

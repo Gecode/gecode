@@ -84,22 +84,22 @@ Value:		INT_VAR_SIZE_MAX
 Type:		BySizeMax
 [VarBranch]
 Value:		INT_VAR_DEGREE_MIN
-Type:		ViewSelDegreeMin<IntView>
+Type:		ViewSelMin<MeritDegree<IntView>,IntView>
 [VarBranch]
 Value:		INT_VAR_DEGREE_MAX
-Type:		ViewSelDegreeMax<IntView>
+Type:		ViewSelMax<MeritDegree<IntView>,IntView>
 [VarBranch]
 Value:		INT_VAR_AFC_MIN
-Type:		ViewSelAfcMin<IntView>
+Type:		ViewSelMin<MeritAfc<IntView>,IntView>
 [VarBranch]
 Value:		INT_VAR_AFC_MAX
-Type:		ViewSelAfcMax<IntView>
+Type:		ViewSelMax<MeritAfc<IntView>,IntView>
 [VarBranch]
 Value:		INT_VAR_ACTIVITY_MIN
-Type:		ViewSelActivityMin<IntView>
+Type:		ViewSelMin<MeritActivity<IntView>,IntView>
 [VarBranch]
 Value:		INT_VAR_ACTIVITY_MAX
-Type:		ViewSelActivityMax<IntView>
+Type:		ViewSelMax<MeritActivity<IntView>,IntView>
 [VarBranch]
 Value:		INT_VAR_SIZE_DEGREE_MIN
 Type:		BySizeDegreeMin

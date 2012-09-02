@@ -86,22 +86,22 @@ Value:		FLOAT_VAR_SIZE_MAX
 Type:		BySizeMax
 [VarBranch]
 Value:		FLOAT_VAR_DEGREE_MIN
-Type:		ViewSelDegreeMin<FloatView>
+Type:		ViewSelMin<MeritDegree<FloatView>,FloatView>
 [VarBranch]
 Value:		FLOAT_VAR_DEGREE_MAX
-Type:		ViewSelDegreeMax<FloatView>
+Type:		ViewSelMax<MeritDegree<FloatView>,FloatView>
 [VarBranch]
 Value:		FLOAT_VAR_AFC_MIN
-Type:		ViewSelAfcMin<FloatView>
+Type:		ViewSelMin<MeritAfc<FloatView>,FloatView>
 [VarBranch]
 Value:		FLOAT_VAR_AFC_MAX
-Type:		ViewSelAfcMax<FloatView>
+Type:		ViewSelMax<MeritAfc<FloatView>,FloatView>
 [VarBranch]
 Value:		FLOAT_VAR_ACTIVITY_MIN
-Type:		ViewSelActivityMin<FloatView>
+Type:		ViewSelMin<MeritActivity<FloatView>,FloatView>
 [VarBranch]
 Value:		FLOAT_VAR_ACTIVITY_MAX
-Type:		ViewSelActivityMax<FloatView>
+Type:		ViewSelMax<MeritActivity<FloatView>,FloatView>
 [VarBranch]
 Value:		FLOAT_VAR_SIZE_DEGREE_MIN
 Type:		BySizeDegreeMin

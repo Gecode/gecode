@@ -71,22 +71,22 @@ namespace Gecode { namespace Int { namespace Branch {
       v = new (home) ViewSelVirtual<BySizeMax>(home,o_vars);
       break;
     case INT_VAR_DEGREE_MIN:
-      v = new (home) ViewSelVirtual<ViewSelDegreeMin<IntView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritDegree<IntView>,IntView> >(home,o_vars);
       break;
     case INT_VAR_DEGREE_MAX:
-      v = new (home) ViewSelVirtual<ViewSelDegreeMax<IntView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritDegree<IntView>,IntView> >(home,o_vars);
       break;
     case INT_VAR_AFC_MIN:
-      v = new (home) ViewSelVirtual<ViewSelAfcMin<IntView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritAfc<IntView>,IntView> >(home,o_vars);
       break;
     case INT_VAR_AFC_MAX:
-      v = new (home) ViewSelVirtual<ViewSelAfcMax<IntView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritAfc<IntView>,IntView> >(home,o_vars);
       break;
     case INT_VAR_ACTIVITY_MIN:
-      v = new (home) ViewSelVirtual<ViewSelActivityMin<IntView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMin<MeritActivity<IntView>,IntView> >(home,o_vars);
       break;
     case INT_VAR_ACTIVITY_MAX:
-      v = new (home) ViewSelVirtual<ViewSelActivityMax<IntView> >(home,o_vars);
+      v = new (home) ViewSelVirtual<ViewSelMax<MeritActivity<IntView>,IntView> >(home,o_vars);
       break;
     case INT_VAR_SIZE_DEGREE_MIN:
       v = new (home) ViewSelVirtual<BySizeDegreeMin>(home,o_vars);
@@ -193,37 +193,37 @@ namespace Gecode {
       break;
     case INT_VAR_DEGREE_MIN:
       {
-        ViewSelDegreeMin<IntView> v(home,o_vars);
+        ViewSelMin<MeritDegree<IntView>,IntView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_DEGREE_MAX:
       {
-        ViewSelDegreeMax<IntView> v(home,o_vars);
+        ViewSelMax<MeritDegree<IntView>,IntView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_AFC_MIN:
       {
-        ViewSelAfcMin<IntView> v(home,o_vars);
+        ViewSelMin<MeritAfc<IntView>,IntView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_AFC_MAX:
       {
-        ViewSelAfcMax<IntView> v(home,o_vars);
+        ViewSelMax<MeritAfc<IntView>,IntView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_ACTIVITY_MIN:
       {
-        ViewSelActivityMin<IntView> v(home,o_vars);
+        ViewSelMin<MeritActivity<IntView>,IntView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
     case INT_VAR_ACTIVITY_MAX:
       {
-        ViewSelActivityMax<IntView> v(home,o_vars);
+        ViewSelMax<MeritActivity<IntView>,IntView> v(home,o_vars);
         post(home,xv,v,vals,o_vals,o_vars.bf);
       }
       break;
@@ -383,48 +383,48 @@ namespace Gecode {
       break;
     case INT_VAR_DEGREE_MIN:
       {
-        ViewSelDegreeMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelDegreeMin<IntView>,
+        ViewSelMin<MeritDegree<IntView>,IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritDegree<IntView>,IntView>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_DEGREE_MAX:
       {
-        ViewSelDegreeMax<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelDegreeMax<IntView>,
+        ViewSelMax<MeritDegree<IntView>,IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritDegree<IntView>,IntView>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_AFC_MIN:
       {
-        ViewSelAfcMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelAfcMin<IntView>,
+        ViewSelMin<MeritAfc<IntView>,IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritAfc<IntView>,IntView>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_AFC_MAX:
       {
-        ViewSelAfcMax<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelAfcMax<IntView>,
+        ViewSelMax<MeritAfc<IntView>,IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritAfc<IntView>,IntView>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_ACTIVITY_MIN:
       {
-        ViewSelActivityMin<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelActivityMin<IntView>,
+        ViewSelMin<MeritActivity<IntView>,IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMin<MeritActivity<IntView>,IntView>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }
       break;
     case INT_VAR_ACTIVITY_MAX:
       {
-        ViewSelActivityMax<IntView> va(home,o_vars.a);
-        ViewSelTieBreakStatic<ViewSelActivityMax<IntView>,
+        ViewSelMax<MeritActivity<IntView>,IntView> va(home,o_vars.a);
+        ViewSelTieBreakStatic<ViewSelMax<MeritActivity<IntView>,IntView>,
           ViewSelTieBreakDynamic<IntView> > v(home,va,vbcd);
         post(home,xv,v,vals,o_vals,o_vars.a.bf);
       }

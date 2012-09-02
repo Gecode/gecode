@@ -200,7 +200,7 @@ KERNELHDR0 = \
 	archive array shared-array core exception \
 	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
-	branch brancher brancher-view brancher-tiebreak \
+	branch brancher brancher-view brancher-merit brancher-tiebreak \
 	brancher-val allocators global-prop-info activity
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
