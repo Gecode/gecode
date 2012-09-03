@@ -573,23 +573,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class MultBnd : public TernaryPropagator<View,PC_INT_BND> {
+  class MultBnd : public TernaryPropagator<IntView,PC_INT_BND> {
   protected:
-    using TernaryPropagator<View,PC_INT_BND>::x0;
-    using TernaryPropagator<View,PC_INT_BND>::x1;
-    using TernaryPropagator<View,PC_INT_BND>::x2;
-
+    using TernaryPropagator<IntView,PC_INT_BND>::x0;
+    using TernaryPropagator<IntView,PC_INT_BND>::x1;
+    using TernaryPropagator<IntView,PC_INT_BND>::x2;
     /// Constructor for cloning \a p
-    MultBnd(Space& home, bool share, MultBnd<View>& p);
+    MultBnd(Space& home, bool share, MultBnd& p);
   public:
     /// Constructor for posting
-    MultBnd(Home home, View x0, View x1, View x2);
+    MultBnd(Home home, IntView x0, IntView x1, IntView x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static  ExecStatus post(Home home, View x0, View x1, View x2);
+    GECODE_INT_EXPORT
+    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
     /// Copy propagator during cloning
+    GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
+    GECODE_INT_EXPORT 
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
@@ -634,21 +635,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class MultDom : public TernaryPropagator<View,PC_INT_DOM> {
+  class MultDom : public TernaryPropagator<IntView,PC_INT_DOM> {
   protected:
-    using TernaryPropagator<View,PC_INT_DOM>::x0;
-    using TernaryPropagator<View,PC_INT_DOM>::x1;
-    using TernaryPropagator<View,PC_INT_DOM>::x2;
-
+    using TernaryPropagator<IntView,PC_INT_DOM>::x0;
+    using TernaryPropagator<IntView,PC_INT_DOM>::x1;
+    using TernaryPropagator<IntView,PC_INT_DOM>::x2;
     /// Constructor for cloning \a p
-    MultDom(Space& home, bool share, MultDom<View>& p);
+    MultDom(Space& home, bool share, MultDom& p);
   public:
     /// Constructor for posting
-    MultDom(Home home, View x0, View x1, View x2);
+    MultDom(Home home, IntView x0, IntView x1, IntView x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static  ExecStatus post(Home home, View x0, View x1, View x2);
+    GECODE_INT_EXPORT 
+    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
     /// Copy propagator during cloning
+    GECODE_INT_EXPORT 
     virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
@@ -656,8 +657,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      * If in stage for bounds propagation, the cost is
      * low ternary. Otherwise it is high ternary.
      */
+    GECODE_INT_EXPORT 
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
+    GECODE_INT_EXPORT 
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 

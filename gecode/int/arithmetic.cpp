@@ -116,9 +116,9 @@ namespace Gecode {
     using namespace Int;
     if (home.failed()) return;
     if (icl == ICL_DOM) {
-      GECODE_ES_FAIL(Arithmetic::MultDom<IntView>::post(home,x0,x1,x2));
+      GECODE_ES_FAIL(Arithmetic::MultDom::post(home,x0,x1,x2));
     } else {
-      GECODE_ES_FAIL(Arithmetic::MultBnd<IntView>::post(home,x0,x1,x2));
+      GECODE_ES_FAIL(Arithmetic::MultBnd::post(home,x0,x1,x2));
     }
   }
 
@@ -130,8 +130,7 @@ namespace Gecode {
     if (home.failed()) return;
 
     IntVar prod(home, Int::Limits::min, Int::Limits::max);
-    GECODE_ES_FAIL(
-                   Arithmetic::MultBnd<IntView>::post(home,x1,x2,prod));
+    GECODE_ES_FAIL(Arithmetic::MultBnd::post(home,x1,x2,prod));
     Linear::Term<IntView> t[3];
     t[0].a = 1; t[0].x = prod;
     t[1].a = 1; t[1].x = x3;

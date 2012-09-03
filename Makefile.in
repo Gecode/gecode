@@ -301,7 +301,8 @@ INTSRC0 = \
 	bin-packing.cpp bin-packing/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
 	circuit.cpp no-overlap.cpp nvalues.cpp \
-	member.cpp activity.cpp
+	member.cpp activity.cpp \
+	arithmetic/mult.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
