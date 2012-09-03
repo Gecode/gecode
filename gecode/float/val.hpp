@@ -39,6 +39,24 @@
  *
  */
 
+#ifdef _MSC_VER
+
+// Provide access to nextafter function
+
+#include <cfloat>
+
+namespace Gecode {
+
+  /// Return next double value from \a x in direction \a y
+  forceinline double
+  nextafter(double x, double y) {
+    return _nextafter(x,y);
+  }
+
+}
+
+#endif
+
 namespace Gecode {
 
   /*
@@ -89,7 +107,8 @@ namespace Gecode {
 
   forceinline bool
   FloatVal::assigned(void) const {
-    return (boost::numeric::singleton(x) || (nextafter(x.lower(),x.upper()) == x.upper()));
+    return (boost::numeric::singleton(x) || 
+            (nextafter(x.lower(),x.upper()) == x.upper()));
   }
   forceinline bool
   FloatVal::singleton(void) const {
@@ -268,11 +287,18 @@ namespace Gecode {
   }
   forceinline bool
   operator ==(const FloatVal& x, const FloatNum& y) {
-    if (!boost::numeric::interval_lib::checking_strict<FloatNum>::is_empty(x.x.lower(), x.x.upper())) {
-      if (x.x.lower() == y && x.x.upper() == y) return true;
-      else if ( (x.x.lower() == y && nextafter(x.x.lower(),x.x.upper()) == x.x.upper()) ||
-                (x.x.upper() == y && nextafter(x.x.upper(),x.x.lower()) == x.x.lower()) ) return true;
-      else if (x.x.upper() < y || x.x.lower() > y) return false;
+    if (!boost::numeric::interval_lib::checking_strict<FloatNum>
+        ::is_empty(x.x.lower(), x.x.upper())) {
+      if (x.x.lower() == y && x.x.upper() == y) { 
+        return true;
+      } else if (((x.x.lower() == y) && 
+                  (nextafter(x.x.lower(),x.x.upper()) == x.x.upper())) ||
+                 ((x.x.upper() == y) && 
+                  (nextafter(x.x.upper(),x.x.lower()) == x.x.lower()))) {
+        return true;
+      } else if ((x.x.upper() < y) || (x.x.lower() > y)) {
+        return false;
+      }
     }
     throw boost::numeric::interval_lib::comparison_error();
   }
