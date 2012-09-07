@@ -73,6 +73,38 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+The interface for branching on integer and Boolean variables has
+changed considerably (supporting user-defined variable and value
+selection, tie breaking tolerance, and more). In order to change,
+you have to add () to all variants of INT_VAR, INT_VAL, and
+INT_ASSIGN. For example, INT_VAR_SIZE_MIN becomes the function
+call INT_VAR_SIZE_MIN() and INT_VAL_MIN_MIN becomes the function
+call INT_VAL_MIN_MIN(). Some of these functions expect additional
+arguments and can take also optional arguments (this replaces the
+VarBranchOptions and ValBranchOptions). Please read the section
+"Branching" of the "Search" chapter in MPG.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+The interface for branching on integer and Boolean variables has
+changed considerably (supporting user-defined variable and value
+selection, tie breaking tolerance, and more). In order to change,
+you have to add () to all variants of SET_VAR, SET_VAL, and
+SET_ASSIGN. For example, SET_VAR_SIZE_MIN becomes the function
+call SET_VAR_SIZE_MIN() and SET_VAL_MIN_INC becomes the function
+call SET_VAL_MIN_INC(). Some of these functions expect additional
+arguments and can take also optional arguments (this replaces the
+VarBranchOptions and ValBranchOptions). Please read the
+section "Branching" of the "Search" chapter in MPG.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
