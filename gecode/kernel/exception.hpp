@@ -93,11 +93,18 @@ namespace Gecode {
     TooManyBranchers(const char* l);
   };
 
-  /// %Exception: missing activity information
-  class GECODE_VTABLE_EXPORT MissingActivity : public Exception {
+  /// %Exception: uninitialized activity
+  class GECODE_VTABLE_EXPORT UninitializedActivity : public Exception {
   public:
     /// Initialize with location \a l
-    MissingActivity(const char* l);
+    UninitializedActivity(const char* l);
+  };
+
+  /// %Exception: uninitialized random number generator
+  class GECODE_VTABLE_EXPORT UninitializedRnd : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedRnd(const char* l);
   };
 
   /// %Exception: activity has wrong arity
@@ -145,8 +152,12 @@ namespace Gecode {
     : Exception(l,"Too many branchers created") {}
 
   inline
-  MissingActivity::MissingActivity(const char* l)
-    : Exception(l,"Missing activity information for branching") {}
+  UninitializedRnd::UninitializedRnd(const char* l)
+    : Exception(l,"Uninitialized random generator for branching") {}
+
+  inline
+  UninitializedActivity::UninitializedActivity(const char* l)
+    : Exception(l,"Uninitialized activity information for branching") {}
 
   inline
   ActivityWrongArity::ActivityWrongArity(const char* l)

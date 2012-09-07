@@ -147,7 +147,7 @@ public:
       precede(*this, groups, IntArgs::create(groups.size(),0));
     }
 
-    branch(*this, groups, SET_VAR_MIN_MIN, SET_VAL_MIN_INC);
+    branch(*this, groups, SET_VAR_MIN_MIN(), SET_VAL_MIN_INC());
   }
 
   /// Print solution

@@ -118,13 +118,13 @@ namespace Gecode { namespace FlatZinc {
       done = true;
       FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
       
-      branch(fzs,fzs.iv_aux,INT_VAR_NONE,INT_VAL_MIN);
-      branch(fzs,fzs.bv_aux,INT_VAR_NONE,INT_VAL_MIN);
+      branch(fzs,fzs.iv_aux,INT_VAR_NONE(),INT_VAL_MIN());
+      branch(fzs,fzs.bv_aux,INT_VAR_NONE(),INT_VAL_MIN());
 #ifdef GECODE_HAS_SET_VARS
-      branch(fzs,fzs.sv_aux,SET_VAR_NONE,SET_VAL_MIN_INC);
+      branch(fzs,fzs.sv_aux,SET_VAR_NONE(),SET_VAL_MIN_INC());
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-      branch(fzs,fzs.fv_aux,FLOAT_VAR_NONE,FLOAT_VAL_SPLIT_MIN);
+      branch(fzs,fzs.fv_aux,FLOAT_VAR_NONE(),FLOAT_VAL_SPLIT_MIN());
 #endif
       FlatZincSpace* sol = dfs(&fzs);
       if (sol) {
@@ -202,176 +202,186 @@ namespace Gecode { namespace FlatZinc {
     return 1;
   }
 
-  TieBreakVarBranch<IntVarBranch> ann2ivarsel(AST::Node* ann) {
+  TieBreakVarBranch<IntVarBranch> ann2ivarsel(AST::Node* ann, int seed) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_NONE);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_NONE());
       if (s->id == "first_fail")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MIN);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MIN());
       if (s->id == "anti_first_fail")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MAX);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MAX());
       if (s->id == "smallest")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_MIN_MIN);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_MIN_MIN());
       if (s->id == "largest")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_MAX_MAX);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_MAX_MAX());
       if (s->id == "occurrence")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_DEGREE_MAX);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_DEGREE_MAX());
       if (s->id == "max_regret")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_REGRET_MIN_MAX);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_REGRET_MIN_MAX());
       if (s->id == "most_constrained")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MIN,
-          INT_VAR_DEGREE_MAX);
-      if (s->id == "random")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_RND);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MIN(),
+                                               INT_VAR_DEGREE_MAX());
+      if (s->id == "random") {
+        Rnd r(static_cast<unsigned int>(seed));
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_RND(r));
+      }
       if (s->id == "afc_min")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MIN);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MIN());
       if (s->id == "afc_max")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MAX);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MAX());
       if (s->id == "size_afc_min")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MIN);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MIN());
       if (s->id == "size_afc_max")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MAX);
+        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MAX());
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return TieBreakVarBranch<IntVarBranch>(INT_VAR_NONE);
+    return TieBreakVarBranch<IntVarBranch>(INT_VAR_NONE());
   }
 
-  IntValBranch ann2ivalsel(AST::Node* ann) {
+  IntValBranch ann2ivalsel(AST::Node* ann, int seed) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "indomain_min")
-        return INT_VAL_MIN;
+        return INT_VAL_MIN();
       if (s->id == "indomain_max")
-        return INT_VAL_MAX;
+        return INT_VAL_MAX();
       if (s->id == "indomain_median")
-        return INT_VAL_MED;
+        return INT_VAL_MED();
       if (s->id == "indomain_split")
-        return INT_VAL_SPLIT_MIN;
+        return INT_VAL_SPLIT_MIN();
       if (s->id == "indomain_reverse_split")
-        return INT_VAL_SPLIT_MAX;
-      if (s->id == "indomain_random")
-        return INT_VAL_RND;
+        return INT_VAL_SPLIT_MAX();
+      if (s->id == "indomain_random") {
+        Rnd r(static_cast<unsigned int>(seed));
+        return INT_VAL_RND(r);
+      }
       if (s->id == "indomain")
-        return INT_VALUES_MIN;
+        return INT_VALUES_MIN();
       if (s->id == "indomain_middle") {
         std::cerr << "Warning, replacing unsupported annotation "
                   << "indomain_middle with indomain_median" << std::endl;
-        return INT_VAL_MED;
+        return INT_VAL_MED();
       }
       if (s->id == "indomain_interval") {
         std::cerr << "Warning, replacing unsupported annotation "
                   << "indomain_interval with indomain_split" << std::endl;
-        return INT_VAL_SPLIT_MIN;
+        return INT_VAL_SPLIT_MIN();
       }
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return INT_VAL_MIN;
+    return INT_VAL_MIN();
   }
 
-  IntAssign ann2asnivalsel(AST::Node* ann) {
+  IntAssign ann2asnivalsel(AST::Node* ann, int seed) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "indomain_min")
-        return INT_ASSIGN_MIN;
+        return INT_ASSIGN_MIN();
       if (s->id == "indomain_max")
-        return INT_ASSIGN_MAX;
+        return INT_ASSIGN_MAX();
       if (s->id == "indomain_median")
-        return INT_ASSIGN_MED;
-      if (s->id == "indomain_random")
-        return INT_ASSIGN_RND;
+        return INT_ASSIGN_MED();
+      if (s->id == "indomain_random") {
+        Rnd r(static_cast<unsigned int>(seed));
+        return INT_ASSIGN_RND(r);
+      }
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return INT_ASSIGN_MIN;
+    return INT_ASSIGN_MIN();
   }
 
 #ifdef GECODE_HAS_SET_VARS
-  SetVarBranch ann2svarsel(AST::Node* ann) {
+  SetVarBranch ann2svarsel(AST::Node* ann, int seed) {
+    (void) seed;
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
-        return SET_VAR_NONE;
+        return SET_VAR_NONE();
       if (s->id == "first_fail")
-        return SET_VAR_SIZE_MIN;
+        return SET_VAR_SIZE_MIN();
       if (s->id == "anti_first_fail")
-        return SET_VAR_SIZE_MAX;
+        return SET_VAR_SIZE_MAX();
       if (s->id == "smallest")
-        return SET_VAR_MIN_MIN;
+        return SET_VAR_MIN_MIN();
       if (s->id == "largest")
-        return SET_VAR_MAX_MAX;
+        return SET_VAR_MAX_MAX();
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return SET_VAR_NONE;
+    return SET_VAR_NONE();
   }
 
-  SetValBranch ann2svalsel(AST::Node* ann) {
+  SetValBranch ann2svalsel(AST::Node* ann, int seed) {
+    (void) seed;
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "indomain_min")
-        return SET_VAL_MIN_INC;
+        return SET_VAL_MIN_INC();
       if (s->id == "indomain_max")
-        return SET_VAL_MAX_INC;
+        return SET_VAL_MAX_INC();
       if (s->id == "outdomain_min")
-        return SET_VAL_MIN_EXC;
+        return SET_VAL_MIN_EXC();
       if (s->id == "outdomain_max")
-        return SET_VAL_MAX_EXC;
+        return SET_VAL_MAX_EXC();
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return SET_VAL_MIN_INC;
+    return SET_VAL_MIN_INC();
   }
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  TieBreakVarBranch<FloatVarBranch> ann2fvarsel(AST::Node* ann) {
+  TieBreakVarBranch<FloatVarBranch> ann2fvarsel(AST::Node* ann, int seed) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE());
       if (s->id == "first_fail")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN());
       if (s->id == "anti_first_fail")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MAX());
       if (s->id == "smallest")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MIN_MIN);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MIN_MIN());
       if (s->id == "largest")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MAX_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MAX_MAX());
       if (s->id == "occurrence")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_DEGREE_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_DEGREE_MAX());
       if (s->id == "most_constrained")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN,
-          FLOAT_VAR_DEGREE_MAX);
-      if (s->id == "random")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_RND);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN(),
+                                                 FLOAT_VAR_DEGREE_MAX());
+      if (s->id == "random") {
+        Rnd r(static_cast<unsigned int>(seed));
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_RND(r));
+      }
       if (s->id == "afc_min")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MIN);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MIN());
       if (s->id == "afc_max")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MAX());
       if (s->id == "size_afc_min")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MIN);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MIN());
       if (s->id == "size_afc_max")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MAX);
+        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MAX());
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE);
+    return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE());
   }
 
   FloatValBranch ann2fvalsel(AST::Node* ann) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "indomain_split")
-        return FLOAT_VAL_SPLIT_MIN;
+        return FLOAT_VAL_SPLIT_MIN();
       if (s->id == "indomain_reverse_split")
-        return FLOAT_VAL_SPLIT_MAX;
+        return FLOAT_VAL_SPLIT_MAX();
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return FLOAT_VAL_SPLIT_MIN;
+    return FLOAT_VAL_SPLIT_MIN();
   }
 
 #endif
@@ -602,10 +612,6 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::createBranchers(AST::Node* ann, int seed,
                                  bool ignoreUnknown,
                                  std::ostream& err) {
-    VarBranchOptions varbo;
-    varbo.seed = seed;
-    ValBranchOptions valbo;
-    valbo.seed = seed;
     if (ann) {
       std::vector<AST::Node*> flatAnn;
       if (ann->isArray()) {
@@ -633,8 +639,9 @@ namespace Gecode { namespace FlatZinc {
               continue;
             va[k++] = iv[vars->a[i]->getIntVar()];
           }
-          branch(*this, va, ann2ivarsel(args->a[1]), ann2ivalsel(args->a[2]),
-                 varbo,valbo);
+          branch(*this, va, 
+                 ann2ivarsel(args->a[1],seed), 
+                 ann2ivalsel(args->a[2],seed));
         } else if (flatAnn[i]->isCall("int_assign")) {
           AST::Call *call = flatAnn[i]->getCall("int_assign");
           AST::Array *args = call->getArgs(2);
@@ -650,7 +657,7 @@ namespace Gecode { namespace FlatZinc {
               continue;
             va[k++] = iv[vars->a[i]->getIntVar()];
           }
-          assign(*this, va, ann2asnivalsel(args->a[1]));
+          assign(*this, va, ann2asnivalsel(args->a[1],seed));
         } else if (flatAnn[i]->isCall("bool_search")) {
           AST::Call *call = flatAnn[i]->getCall("bool_search");
           AST::Array *args = call->getArgs(4);
@@ -666,8 +673,9 @@ namespace Gecode { namespace FlatZinc {
               continue;
             va[k++] = bv[vars->a[i]->getBoolVar()];
           }
-          branch(*this, va, ann2ivarsel(args->a[1]), 
-                 ann2ivalsel(args->a[2]), varbo, valbo);
+          branch(*this, va, 
+                 ann2ivarsel(args->a[1],seed), 
+                 ann2ivalsel(args->a[2],seed));
         } else if (flatAnn[i]->isCall("set_search")) {
 #ifdef GECODE_HAS_SET_VARS
           AST::Call *call = flatAnn[i]->getCall("set_search");
@@ -684,8 +692,9 @@ namespace Gecode { namespace FlatZinc {
               continue;
             va[k++] = sv[vars->a[i]->getSetVar()];
           }
-          branch(*this, va, ann2svarsel(args->a[1]), 
-                 ann2svalsel(args->a[2]), varbo, valbo);
+          branch(*this, va, 
+                 ann2svarsel(args->a[1],seed), 
+                 ann2svalsel(args->a[2],seed));
 #else
           if (!ignoreUnknown) {
             err << "Warning, ignored search annotation: ";
@@ -710,8 +719,9 @@ namespace Gecode { namespace FlatZinc {
               continue;
             va[k++] = fv[vars->a[i]->getFloatVar()];
           }
-          branch(*this, va, ann2fvarsel(args->a[2]), 
-                 ann2fvalsel(args->a[3]), varbo, valbo);
+          branch(*this, va,
+                 ann2fvarsel(args->a[2],seed), 
+                 ann2fvalsel(args->a[3]));
         }
 #endif
         else {
@@ -765,8 +775,8 @@ namespace Gecode { namespace FlatZinc {
         bv_sol[k++] = bv[i];
       }
 
-    branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
-    branch(*this, bv_sol, INT_VAR_AFC_MAX, INT_VAL_MIN);
+    branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN(), INT_VAL_MIN());
+    branch(*this, bv_sol, INT_VAR_AFC_MAX(), INT_VAL_MIN());
 #ifdef GECODE_HAS_FLOAT_VARS
     introduced = 0;
     funcdep = 0;
@@ -789,7 +799,7 @@ namespace Gecode { namespace FlatZinc {
         fv_sol[k++] = fv[i];
       }
 
-    branch(*this, fv_sol, FLOAT_VAR_SIZE_MIN, FLOAT_VAL_SPLIT_MIN);
+    branch(*this, fv_sol, FLOAT_VAR_SIZE_MIN(), FLOAT_VAL_SPLIT_MIN());
 #endif
 #ifdef GECODE_HAS_SET_VARS
     introduced = 0;
@@ -813,7 +823,7 @@ namespace Gecode { namespace FlatZinc {
         sv_sol[k++] = sv[i];
       }
 
-    branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
+    branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN(), SET_VAL_MIN_INC());
 #endif
     iv_aux = IntVarArray(*this, iv_tmp);
     bv_aux = BoolVarArray(*this, bv_tmp);

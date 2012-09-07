@@ -437,7 +437,7 @@ public:
     }
 
     // Install branching
-    branch(*this, board, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, board, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning \a s

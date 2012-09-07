@@ -93,7 +93,7 @@ public:
     default: GECODE_NEVER;
     }
 
-    branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
   }
   /// Print solution
   virtual void

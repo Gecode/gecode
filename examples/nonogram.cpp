@@ -152,10 +152,10 @@ public:
         
         if (rows*width() > cols*height()) {
           for (int w=0; w<width(); w++)
-            branch(*this, m.col(w), INT_VAR_NONE, INT_VAL_MAX);
+            branch(*this, m.col(w), INT_VAR_NONE(), INT_VAL_MAX());
         } else {
           for (int h=0; h<height(); h++)
-            branch(*this, m.row(h), INT_VAR_NONE, INT_VAL_MAX);
+            branch(*this, m.row(h), INT_VAR_NONE(), INT_VAL_MAX());
         }
       }
       break;
@@ -165,7 +165,7 @@ public:
        * equivalent to SIZE/AFC in this case since the variables are
        * binary.
        */
-      branch(*this, b, INT_VAR_AFC_MAX, INT_VAL_MAX);
+      branch(*this, b, INT_VAR_AFC_MAX(), INT_VAL_MAX());
       break;
     }
   }

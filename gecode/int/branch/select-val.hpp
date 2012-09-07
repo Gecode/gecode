@@ -42,8 +42,8 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMin<View>::ValMin(void) {}
   template<class View>
   forceinline
-  ValMin<View>::ValMin(Space& home, const ValBranchOptions& vbo)
-    : ValSelBase<View,int>(home,vbo) {}
+  ValMin<View>::ValMin(Space& home, const ValBranch& vb)
+    : ValSelBase<View,int>(home,vb) {}
   template<class View>
   forceinline int
   ValMin<View>::val(Space&, View x) const {
@@ -60,8 +60,8 @@ namespace Gecode { namespace Int { namespace Branch {
   ValMed<View>::ValMed(void) {}
   template<class View>
   forceinline
-  ValMed<View>::ValMed(Space& home, const ValBranchOptions& vbo)
-    : ValSelBase<View,int>(home,vbo) {}
+  ValMed<View>::ValMed(Space& home, const ValBranch& vb)
+    : ValSelBase<View,int>(home,vb) {}
   template<class View>
   forceinline int
   ValMed<View>::val(Space&, View x) const {
@@ -79,8 +79,8 @@ namespace Gecode { namespace Int { namespace Branch {
   ValRnd<View>::ValRnd(void) {}
   template<class View>
   forceinline
-  ValRnd<View>::ValRnd(Space&, const ValBranchOptions& vbo)
-    : r(vbo.seed) {}
+  ValRnd<View>::ValRnd(Space&, const ValBranch& vb)
+    : r(vb.rnd()) {}
   template<class View>
   forceinline int
   ValRnd<View>::val(Space&, View x) {
@@ -99,28 +99,20 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
   template<class View>
-  forceinline typename ValRnd<View>::Choice
-  ValRnd<View>::choice(Space&) {
-    return r;
-  }
-  template<class View>
-  forceinline typename ValRnd<View>::Choice
-  ValRnd<View>::choice(const Space&, Archive& e) {
-    return Choice(e.get());
-  }
-  template<class View>
-  forceinline void
-  ValRnd<View>::commit(Space&, const Choice& c, unsigned int) {
-    r = c;
-  }
-  template<class View>
   forceinline void
   ValRnd<View>::update(Space&, bool, ValRnd<View>& vr) {
     r = vr.r;
   }
   template<class View>
+  forceinline bool
+  ValRnd<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
   forceinline void
-  ValRnd<View>::dispose(Space&) {}
+  ValRnd<View>::dispose(Space&) {
+    r.~Rnd();
+  }
 
 
   template<class View>
@@ -129,8 +121,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline
   ValSplitMin<View>::ValSplitMin(Space& home,
-    const ValBranchOptions& vbo)
-    : ValSelBase<View,int>(home,vbo) {}
+    const ValBranch& vb)
+    : ValSelBase<View,int>(home,vb) {}
   template<class View>
   forceinline int
   ValSplitMin<View>::val(Space&, View x) const {
@@ -149,8 +141,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline
   ValRangeMin<View>::ValRangeMin(Space& home,
-    const ValBranchOptions& vbo)
-    : ValSelBase<View,int>(home,vbo) {}
+    const ValBranch& vb)
+    : ValSelBase<View,int>(home,vb) {}
   template<class View>
   forceinline int
   ValRangeMin<View>::val(Space&, View x) const {
@@ -173,8 +165,8 @@ namespace Gecode { namespace Int { namespace Branch {
   ValZeroOne<View>::ValZeroOne(void) {}
   template<class View>
   forceinline
-  ValZeroOne<View>::ValZeroOne(Space& home, const ValBranchOptions& vbo)
-    : ValSelBase<View,NoValue>(home,vbo) {}
+  ValZeroOne<View>::ValZeroOne(Space& home, const ValBranch& vb)
+    : ValSelBase<View,NoValue>(home,vb) {}
   template<class View>
   forceinline NoValue
   ValZeroOne<View>::val(Space&, View) const {
@@ -192,8 +184,8 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignValMin<View>::AssignValMin(void) {}
   template<class View>
   forceinline
-  AssignValMin<View>::AssignValMin(Space& home, const ValBranchOptions& vbo)
-    : ValMin<View>(home,vbo) {}
+  AssignValMin<View>::AssignValMin(Space& home, const ValBranch& vb)
+    : ValMin<View>(home,vb) {}
 
 
   template<class View>
@@ -201,8 +193,8 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignValMed<View>::AssignValMed(void) {}
   template<class View>
   forceinline
-  AssignValMed<View>::AssignValMed(Space& home, const ValBranchOptions& vbo)
-    : ValMed<View>(home,vbo) {}
+  AssignValMed<View>::AssignValMed(Space& home, const ValBranch& vb)
+    : ValMed<View>(home,vb) {}
 
 
   template<class View>
@@ -210,8 +202,8 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignValRnd<View>::AssignValRnd(void) {}
   template<class View>
   forceinline
-  AssignValRnd<View>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
-    : ValRnd<View>(home,vbo) {}
+  AssignValRnd<View>::AssignValRnd(Space& home, const ValBranch& vb)
+    : ValRnd<View>(home,vb) {}
 
 
   template<class View>
@@ -220,8 +212,8 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline
   AssignValZero<View>::AssignValZero(Space& home,
-                                     const ValBranchOptions& vbo)
-    : ValZeroOne<View>(home,vbo) {}
+                                     const ValBranch& vb)
+    : ValZeroOne<View>(home,vb) {}
 
 }}}
 

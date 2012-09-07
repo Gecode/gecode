@@ -104,7 +104,7 @@ public:
     if (n > 2)
       rel(*this, d[0], IRT_LE, d[n_d-1]);
 
-    branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, m, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   /// Return cost

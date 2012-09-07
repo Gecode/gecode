@@ -86,7 +86,7 @@ public:
       break;
     }
     linear(*this, IntArgs::create(n,-1,1), s, IRT_EQ, 0);
-    branch(*this, s, INT_VAR_NONE, INT_VAL_MAX);
+    branch(*this, s, INT_VAR_NONE(), INT_VAL_MAX());
   }
 
   /// Constructor for cloning \a e

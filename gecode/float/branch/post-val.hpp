@@ -43,24 +43,34 @@ namespace Gecode { namespace Float { namespace Branch {
   template<class SelView>
   void
   post(Space& home, ViewArray<FloatView>& x, SelView& v,
-       FloatValBranch vals, const ValBranchOptions& o_vals, BranchFilter bf) {
-    switch (vals) {
-    case FLOAT_VAL_SPLIT_MIN:
+       const FloatValBranch& vals, FloatBranchFilter fbf) {
+    switch (vals.select()) {
+    case FloatValBranch::SEL_SPLIT_MIN:
       {
-        ValSplitMin<FloatView> a(home,o_vals);
-        ViewValBrancher<SelView,ValSplitMin<FloatView> >::post(home,x,v,a,bf);
+        ValSplitMin<FloatView> a(home,vals);
+        ViewValBrancher<SelView,ValSplitMin<FloatView> >
+          ::post(home,x,v,a,fbf);
       }
       break;
-    case FLOAT_VAL_SPLIT_MAX:
+    case FloatValBranch::SEL_SPLIT_MAX:
       {
-        ValSplitMax<FloatView> a(home,o_vals);
-        ViewValBrancher<SelView,ValSplitMax<FloatView> >::post(home,x,v,a,bf);
+        ValSplitMax<FloatView> a(home,vals);
+        ViewValBrancher<SelView,ValSplitMax<FloatView> >
+          ::post(home,x,v,a,fbf);
       }
       break;
-    case FLOAT_VAL_SPLIT_RND:
+    case FloatValBranch::SEL_SPLIT_RND:
       {
-        ValSplitRnd<FloatView> a(home,o_vals);
-        ViewValBrancher<SelView,ValSplitRnd<FloatView> >::post(home,x,v,a,bf);
+        ValSplitRnd<FloatView> a(home,vals);
+        ViewValBrancher<SelView,ValSplitRnd<FloatView> >
+          ::post(home,x,v,a,fbf);
+      }
+      break;
+    case FloatValBranch::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<FloatView,2> a(home,vals);
+        ViewValBrancher<SelView,ValSelValCommit<FloatView,2> >
+          ::post(home,x,v,a,fbf);
       }
       break;
     default:

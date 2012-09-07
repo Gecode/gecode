@@ -41,34 +41,41 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class SelView>
   void
   post(Space& home, ViewArray<BoolView>& x, SelView& v,
-       IntValBranch vals, const ValBranchOptions& o_vals, BranchFilter bf) {
-    switch (vals) {
-    case INT_VAL_MIN:
-    case INT_VAL_MED:
-    case INT_VAL_SPLIT_MIN:
-    case INT_VAL_RANGE_MIN:
-    case INT_VALUES_MIN:
+       const IntValBranch& vals, BoolBranchFilter bbf) {
+    switch (vals.select()) {
+    case IntValBranch::SEL_MIN:
+    case IntValBranch::SEL_MED:
+    case IntValBranch::SEL_SPLIT_MIN:
+    case IntValBranch::SEL_RANGE_MIN:
+    case IntValBranch::SEL_VALUES_MIN:
       {
-        ValZeroOne<BoolView> a(home,o_vals);
+        ValZeroOne<BoolView> a(home,vals);
         ViewValBrancher<SelView,ValZeroOne<BoolView> >
-          ::post(home,x,v,a,bf);
+          ::post(home,x,v,a,bbf);
       }
       break;
-    case INT_VAL_MAX:
-    case INT_VAL_SPLIT_MAX:
-    case INT_VAL_RANGE_MAX:
-    case INT_VALUES_MAX:
+    case IntValBranch::SEL_MAX:
+    case IntValBranch::SEL_SPLIT_MAX:
+    case IntValBranch::SEL_RANGE_MAX:
+    case IntValBranch::SEL_VALUES_MAX:
       {
-        ValZeroOne<NegBoolView> a(home,o_vals);
+        ValZeroOne<NegBoolView> a(home,vals);
         ViewValBrancher<SelView,ValZeroOne<NegBoolView> >
-          ::post(home,x,v,a,bf);
+          ::post(home,x,v,a,bbf);
       }
       break;
-    case INT_VAL_RND:
+    case IntValBranch::SEL_RND:
       {
-        ValRnd<BoolView> a(home,o_vals);
+        ValRnd<BoolView> a(home,vals);
         ViewValBrancher<SelView,ValRnd<BoolView> >
-          ::post(home,x,v,a,bf);
+          ::post(home,x,v,a,bbf);
+      }
+      break;
+    case IntValBranch::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<BoolView,2> a(home,vals);
+        ViewValBrancher<SelView,ValSelValCommit<BoolView,2> >
+          ::post(home,x,v,a,bbf);
       }
       break;
     default:

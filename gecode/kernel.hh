@@ -162,14 +162,53 @@
 
 
 /*
+ * Random number generator (for branching)
+ *
+ */
+
+#include <gecode/kernel/rnd.hpp>
+
+
+/*
  * Common propagator and branching patterns
  *
  */
 
+namespace Gecode {
+
+  /**
+   * \defgroup TaskModelBranch Generic branching support
+   *
+   * Support for randomization and tie-breaking that are independent
+   * of a particular variable domain.
+   *
+   * \ingroup TaskModel
+   */
+  
+  /** 
+   * \defgroup TaskModelBranchExec Branch with a function
+   * 
+   * This does not really branch (it just offers a single alternative) but
+   * executes a single function during branching. A typical
+   * application is to post more constraints after another brancher 
+   * has finished.
+   *
+   * \ingroup TaskModelBranch
+   */
+  //@{
+  /// Call the function \a f (with the current space as argument) for branching
+  GECODE_KERNEL_EXPORT void
+  branch(Home home, void (*f)(Space& home));
+  //@}
+
+}
+
 #include <gecode/kernel/propagator.hpp>
 #include <gecode/kernel/advisor.hpp>
 #include <gecode/kernel/activity.hpp>
-#include <gecode/kernel/branch.hpp>
+#include <gecode/kernel/branch-traits.hpp>
+#include <gecode/kernel/branch-var.hpp>
+#include <gecode/kernel/branch-val.hpp>
 #include <gecode/kernel/brancher.hpp>
 #include <gecode/kernel/brancher-merit.hpp>
 #include <gecode/kernel/brancher-view.hpp>

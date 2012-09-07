@@ -419,7 +419,7 @@ public:
       }      
     }
 
-    branch(*this, x, tiebreak(INT_VAR_MIN_MIN, INT_VAR_SIZE_MIN), INT_VAL_MIN);
+    branch(*this, x, tiebreak(INT_VAR_MIN_MIN(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
   }
 
   /// Return cost

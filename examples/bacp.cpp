@@ -165,21 +165,21 @@ public:
     linear(*this, q, IRT_EQ, numberOfCourses);
 
     if (opt.branching() == BRANCHING_NAIVE) {
-      branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+      branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     } else {
       ViewSelMin<Int::Branch::MeritSize> 
-        varsel(*this, VarBranchOptions::def);
+        varsel(*this, IntVarBranch());
       ViewArray<Int::IntView> xv(*this, IntVarArgs(x));
       if (opt.branching() == BRANCHING_LOAD) {
-        ValBestLoad<true> valsel(*this, ValBranchOptions::def);
-        ViewValBrancher<ViewSelMin<Int::Branch::MeritSize>, 
+        ValBestLoad<true> valsel(*this, ValBranch());
+        ViewValBrancher<ViewSelMin<Int::Branch::MeritSize>,
           ValBestLoad<true> >
-          ::post(*this,xv,varsel,valsel);
+        ::post(*this,xv,varsel,valsel,NULL);
       } else { 
-        ValBestLoad<false> valsel(*this, ValBranchOptions::def);
+        ValBestLoad<false> valsel(*this, ValBranch());
         ViewValBrancher<ViewSelMin<Int::Branch::MeritSize>,
           ValBestLoad<false> >
-          ::post(*this,xv,varsel,valsel);
+      ::post(*this,xv,varsel,valsel,NULL);
       }
     }
   }
@@ -232,8 +232,8 @@ public:
     ValBestLoad(void) {}
 
     /// Constructor for initialization
-    ValBestLoad(Space& home, const ValBranchOptions& vbo)
-      : ValSelBase<Int::IntView,int>(home,vbo) {}
+    ValBestLoad(Space& home, const ValBranch& vb)
+      : ValSelBase<Int::IntView,int>(home,vb) {}
 
     /// Return minimum value of view \a x
     int val(Space& home, Int::IntView x) const {

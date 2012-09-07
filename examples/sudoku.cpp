@@ -173,15 +173,15 @@ public:
     }
 #endif
     if (opt.branching() == BRANCH_NONE) {
-      branch(*this, x, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
+      branch(*this, x, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_SIZE) {
-      branch(*this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+      branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
-      branch(*this, x, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_SPLIT_MIN);
+      branch(*this, x, INT_VAR_SIZE_DEGREE_MIN(), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_SIZE_AFC) {
-      branch(*this, x, INT_VAR_SIZE_AFC_MIN, INT_VAL_SPLIT_MIN);
+      branch(*this, x, INT_VAR_SIZE_AFC_MIN(), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_AFC) {
-      branch(*this, x, INT_VAR_AFC_MAX, INT_VAL_SPLIT_MIN);
+      branch(*this, x, INT_VAR_AFC_MAX(), INT_VAL_SPLIT_MIN());
     }
   }
 
@@ -309,15 +309,15 @@ public:
           dom(*this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     if (opt.branching() == BRANCH_NONE) {
-      branch(*this, y, SET_VAR_NONE, SET_VAL_MIN_INC);
+      branch(*this, y, SET_VAR_NONE(), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_SIZE) {
-      branch(*this, y, SET_VAR_SIZE_MIN, SET_VAL_MIN_INC);
+      branch(*this, y, SET_VAR_SIZE_MIN(), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
-      branch(*this, y, SET_VAR_SIZE_DEGREE_MIN, SET_VAL_MIN_INC);
+      branch(*this, y, SET_VAR_SIZE_DEGREE_MIN(), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_SIZE_AFC) {
-      branch(*this, y, SET_VAR_SIZE_AFC_MIN, SET_VAL_MIN_INC);
+      branch(*this, y, SET_VAR_SIZE_AFC_MIN(), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_AFC) {
-      branch(*this, y, SET_VAR_AFC_MAX, SET_VAL_MIN_INC);
+      branch(*this, y, SET_VAR_AFC_MAX(), SET_VAL_MIN_INC());
     }
   }
 

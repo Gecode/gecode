@@ -65,7 +65,7 @@ namespace Gecode {
     /// Default constructor
     ViewSelBase(void);
     /// Constructor for initialization
-    ViewSelBase(Space& home, const VarBranchOptions& vbo);
+    ViewSelBase(Space& home, const VarBranch& vb);
     /// Return choice
     EmptyViewSelChoice choice(Space& home);
     /// Return choice
@@ -89,55 +89,32 @@ namespace Gecode {
     /// Default constructor
     ViewSelNone(void);
     /// Constructor for initialization
-    ViewSelNone(Space& home, const VarBranchOptions& vbo);
+    ViewSelNone(Space& home, const VarBranch& vb);
     /// Intialize with view \a x at position \a i
     ViewSelStatus init(Space& home, View x, int i);
     /// Possibly select better view \a x at position \a i
     ViewSelStatus select(Space& home, View x, int i);
   };
 
-  /// Random generator with archiving (to be used in branchers)
-  class ArchivedRandomGenerator : public Support::RandomGenerator {
-  public:
-    /// Default constructor
-    ArchivedRandomGenerator(void);
-    /// Constructor
-    ArchivedRandomGenerator(unsigned int seed);
-    /// Copy constructor
-    ArchivedRandomGenerator(const Support::RandomGenerator& r);
-    /// Archive
-    void archive(Archive& e) const;
-  };
-
   /**
    * \brief View selection class for random selection
    */
-  template<class _View>
-  class ViewSelRnd {
+  template<class View>
+  class ViewSelRnd  : public ViewSelBase<View> {
   protected:
     /// Random number generator
-    ArchivedRandomGenerator r;
+    Rnd r;
     /// Number of views considered so far
     unsigned int n;
   public:
-    /// View type
-    typedef _View View;
-    /// View selection choice
-    typedef ArchivedRandomGenerator Choice;
     /// Default constructor
     ViewSelRnd(void);
     /// Constructor for initialization
-    ViewSelRnd(Space& home, const VarBranchOptions& vbo);
+    ViewSelRnd(Space& home, const VarBranch& vb);
     /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, _View x, int i);
+    ViewSelStatus init(Space& home, View x, int i);
     /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, _View x, int i);
-    /// Return choice
-    Choice choice(Space& home);
-    /// Return choice
-    Choice choice(const Space& home, Archive& e);
-    /// Commit to choice
-    void commit(Space& home, const Choice& c, unsigned a);
+    ViewSelStatus select(Space& home, View x, int i);
     /// Updating during cloning
     void update(Space& home, bool share, ViewSelRnd& vs);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -162,7 +139,7 @@ namespace Gecode {
     /// Default constructor
     ViewSelMin(void);
     /// Constructor for initialization
-    ViewSelMin(Space& home, const VarBranchOptions& vbo);
+    ViewSelMin(Space& home, const VarBranch& vb);
     /// Intialize with view \a x at position \a i
     ViewSelStatus init(Space& home, View x, int i);
     /// Possibly select better view \a x at position \a i
@@ -191,7 +168,7 @@ namespace Gecode {
     /// Default constructor
     ViewSelMax(void);
     /// Constructor for initialization
-    ViewSelMax(Space& home, const VarBranchOptions& vbo);
+    ViewSelMax(Space& home, const VarBranch& vb);
     /// Intialize with view \a x at position \a i
     ViewSelStatus init(Space& home, View x, int i);
     /// Possibly select better view \a x at position \a i
@@ -220,7 +197,7 @@ namespace Gecode {
   ViewSelBase<View>::ViewSelBase(void) {}
   template<class View>
   forceinline
-  ViewSelBase<View>::ViewSelBase(Space&, const VarBranchOptions&) {}
+  ViewSelBase<View>::ViewSelBase(Space&, const VarBranch&) {}
   template<class View>
   forceinline EmptyViewSelChoice
   ViewSelBase<View>::choice(Space&) {
@@ -252,8 +229,8 @@ namespace Gecode {
   ViewSelNone<View>::ViewSelNone(void) {}
   template<class View>
   forceinline
-  ViewSelNone<View>::ViewSelNone(Space& home, const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo) {}
+  ViewSelNone<View>::ViewSelNone(Space& home, const VarBranch& vb)
+    : ViewSelBase<View>(home,vb) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelNone<View>::init(Space&, View, int) {
@@ -265,26 +242,14 @@ namespace Gecode {
     return VSS_BEST;
   }
 
-  // Archived random generator
-  forceinline
-  ArchivedRandomGenerator::ArchivedRandomGenerator(void) {}
-  forceinline
-  ArchivedRandomGenerator::ArchivedRandomGenerator(unsigned int seed)
-    : Support::RandomGenerator(seed) {}
-  forceinline
-  ArchivedRandomGenerator::ArchivedRandomGenerator
-    (const Support::RandomGenerator& r) : Support::RandomGenerator(r) {}
-  forceinline void
-  ArchivedRandomGenerator::archive(Archive& e) const { e << seed(); }
-
   // Select variable by random
   template<class View>
   forceinline
   ViewSelRnd<View>::ViewSelRnd(void) : n(0) {}
   template<class View>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space&, const VarBranchOptions& vbo)
-    : r(vbo.seed), n(0) {}
+  ViewSelRnd<View>::ViewSelRnd(Space&, const VarBranch& vb)
+    : r(vb.rnd()), n(0) {}
   template<class View>
   forceinline ViewSelStatus
   ViewSelRnd<View>::init(Space&, View, int) {
@@ -298,21 +263,6 @@ namespace Gecode {
     return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
   }
   template<class View>
-  forceinline typename ViewSelRnd<View>::Choice
-  ViewSelRnd<View>::choice(Space&) {
-    return r;
-  }
-  template<class View>
-  forceinline typename ViewSelRnd<View>::Choice
-  ViewSelRnd<View>::choice(const Space&, Archive& e) {
-    return Choice(e.get());
-  }
-  template<class View>
-  forceinline void
-  ViewSelRnd<View>::commit(Space&, const Choice& c, unsigned int) {
-    r = c;
-  }
-  template<class View>
   forceinline void
   ViewSelRnd<View>::update(Space&, bool, ViewSelRnd<View>& vs) {
     r = vs.r;
@@ -320,11 +270,12 @@ namespace Gecode {
   template<class View>
   forceinline bool
   ViewSelRnd<View>::notice(void) const {
-    return false;
+    return true;
   }
   template<class View>
   forceinline void
   ViewSelRnd<View>::dispose(Space&) {
+    r.~Rnd();
   }
 
   // Select variable with least merit
@@ -335,8 +286,8 @@ namespace Gecode {
   template<class Merit>
   forceinline
   ViewSelMin<Merit>::ViewSelMin(Space& home,
-                                     const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), m(home,vbo), sfb(0.0) {}
+                                     const VarBranch& vb)
+    : ViewSelBase<View>(home,vb), m(home,vb), sfb(0.0) {}
   template<class Merit>
   forceinline ViewSelStatus
   ViewSelMin<Merit>::init(Space& home, View x, int i) {
@@ -359,7 +310,7 @@ namespace Gecode {
   template<class Merit>
   forceinline void
   ViewSelMin<Merit>::update(Space& home, bool share, 
-                                 ViewSelMin<Merit>& vsm) {
+                            ViewSelMin<Merit>& vsm) {
     m.update(home, share, vsm.m);
   }
   template<class Merit>
@@ -382,8 +333,8 @@ namespace Gecode {
   template<class Merit>
   forceinline
   ViewSelMax<Merit>::ViewSelMax(Space& home,
-                                     const VarBranchOptions& vbo)
-    : ViewSelBase<View>(home,vbo), m(home,vbo), sfb(0.0) {}
+                                     const VarBranch& vb)
+    : ViewSelBase<View>(home,vb), m(home,vb), sfb(0.0) {}
   template<class Merit>
   forceinline ViewSelStatus
   ViewSelMax<Merit>::init(Space& home, View x, int i) {

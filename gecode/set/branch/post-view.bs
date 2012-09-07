@@ -48,6 +48,8 @@ VarArgs:	SetVarArgs
 VarBranch:	SetVarBranch
 # Type of value branch selection
 ValBranch:	SetValBranch
+# Type of branch filter function
+BranchFilter:	SetBranchFilter
 # Exception to be thrown if variable branch selection unknown
 Exception:	UnknownBranching("Set::branch")
 # Header file to include
@@ -58,64 +60,70 @@ LNS:		Gecode::Set::Branch
 GNS:		Gecode
 [VarBranch]
 # Value for branching selection, mark as special
-Value:		SET_VAR_NONE = NONE
+Value:		SEL_NONE = NONE
 # Corresponding type
 Type:		ViewSelNone<SetView>
 [VarBranch]
-Value:		SET_VAR_RND = COMPLETE
+Value:		SEL_RND = COMPLETE
 Type:		ViewSelRnd<SetView>
 [VarBranch]
-Value:		SET_VAR_MIN_MIN
+Value:		SEL_MERIT_MIN
+Type:		ViewSelMin<MeritFunction<SetView> >
+[VarBranch]
+Value:		SEL_MERIT_MAX
+Type:		ViewSelMax<MeritFunction<SetView> >
+[VarBranch]
+Value:		SEL_MIN_MIN
 Type:		ViewSelMin<MeritMin>
 [VarBranch]
-Value:		SET_VAR_MIN_MAX
+Value:		SEL_MIN_MAX
 Type:		ViewSelMax<MeritMin>
 [VarBranch]
-Value:		SET_VAR_MAX_MIN
+Value:		SEL_MAX_MIN
 Type:		ViewSelMin<MeritMax>
 [VarBranch]
-Value:		SET_VAR_MAX_MAX
+Value:		SEL_MAX_MAX
 Type:		ViewSelMax<MeritMax>
 [VarBranch]
-Value:		SET_VAR_SIZE_MIN
+Value:		SEL_SIZE_MIN
 Type:		ViewSelMin<MeritSize>
 [VarBranch]
-Value:		SET_VAR_SIZE_MAX
+Value:		SEL_SIZE_MAX
 Type:		ViewSelMax<MeritSize>
 [VarBranch]
-Value:		SET_VAR_DEGREE_MIN
+Value:		SEL_DEGREE_MIN
 Type:		ViewSelMin<MeritDegree<SetView> >
 [VarBranch]
-Value:		SET_VAR_DEGREE_MAX
+Value:		SEL_DEGREE_MAX
 Type:		ViewSelMax<MeritDegree<SetView> >
 [VarBranch]
-Value:		SET_VAR_AFC_MIN
+Value:		SEL_AFC_MIN
 Type:		ViewSelMin<MeritAfc<SetView> >
 [VarBranch]
-Value:		SET_VAR_AFC_MAX
+Value:		SEL_AFC_MAX
 Type:		ViewSelMax<MeritAfc<SetView> >
 [VarBranch]
-Value:		SET_VAR_ACTIVITY_MIN
+Value:		SEL_ACTIVITY_MIN
 Type:		ViewSelMin<MeritActivity<SetView> >
 [VarBranch]
-Value:		SET_VAR_ACTIVITY_MAX
+Value:		SEL_ACTIVITY_MAX
 Type:		ViewSelMax<MeritActivity<SetView> >
 [VarBranch]
-Value:		SET_VAR_SIZE_DEGREE_MIN
+Value:		SEL_SIZE_DEGREE_MIN
 Type:		ViewSelMin<MeritSizeDegree>
 [VarBranch]
-Value:		SET_VAR_SIZE_DEGREE_MAX
+Value:		SEL_SIZE_DEGREE_MAX
 Type:		ViewSelMax<MeritSizeDegree>
 [VarBranch]
-Value:		SET_VAR_SIZE_AFC_MIN
+Value:		SEL_SIZE_AFC_MIN
 Type:		ViewSelMin<MeritSizeAfc>
 [VarBranch]
-Value:		SET_VAR_SIZE_AFC_MAX
+Value:		SEL_SIZE_AFC_MAX
 Type:		ViewSelMax<MeritSizeAfc>
 [VarBranch]
-Value:		SET_VAR_SIZE_ACTIVITY_MIN
+Value:		SEL_SIZE_ACTIVITY_MIN
 Type:		ViewSelMin<MeritSizeActivity>
 [VarBranch]
-Value:		SET_VAR_SIZE_ACTIVITY_MAX
+Value:		SEL_SIZE_ACTIVITY_MAX
 Type:		ViewSelMax<MeritSizeActivity>
 [End]

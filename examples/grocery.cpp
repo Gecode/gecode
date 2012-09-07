@@ -79,7 +79,7 @@ public:
     // Break symmetries: order the variables
     rel(*this, abcd, IRT_LQ);
 
-    branch(*this, abcd, INT_VAR_NONE, INT_VAL_SPLIT_MAX);
+    branch(*this, abcd, INT_VAR_NONE(), INT_VAL_SPLIT_MAX());
   }
 
   /// Constructor for cloning \a s

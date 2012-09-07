@@ -351,7 +351,7 @@ public:
     // Branching
     switch (opt.branching()) {
     case BRANCH_INORDER:
-      branch(*this, s, INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, s, INT_VAR_NONE(), INT_VAL_MIN());
       break;
     case BRANCH_MIDDLE: {
       IntVarArgs m(s.size());
@@ -365,7 +365,7 @@ public:
           m[pos++] = s[mid+i];
       }
       assert(pos == m.size());
-      branch(*this, m, INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, m, INT_VAR_NONE(), INT_VAL_MIN());
       break;
     }
     }

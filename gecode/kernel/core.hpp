@@ -119,7 +119,7 @@ namespace Gecode {
     SharedHandle(SharedHandle::Object* so);
     /// Copy constructor maintaining reference count
     SharedHandle(const SharedHandle& sh);
-    /// Assignment operator mainitaining reference count
+    /// Assignment operator maintaining reference count
     SharedHandle& operator =(const SharedHandle& sh);
     /// Updating during cloning
     void update(Space& home, bool share, SharedHandle& sh);

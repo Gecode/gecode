@@ -199,7 +199,7 @@ public:
     : n(opt.size()), succ(*this,n*n,0,n*n-1) {
     switch (opt.branching()) {
     case BRANCH_NAIVE:
-      branch(*this, succ, INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, succ, INT_VAR_NONE(), INT_VAL_MIN());
       break;
     case BRANCH_WARNSDORFF:
       Warnsdorff::post(*this, succ);

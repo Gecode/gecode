@@ -125,7 +125,7 @@ public:
       rel(*this, ry1, IRT_GQ, ry2);
     }
 
-    branch(*this, z, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+    branch(*this, z, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
   }
 
   /// Constructor for cloning \a s

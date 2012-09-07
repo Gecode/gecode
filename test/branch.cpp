@@ -73,8 +73,8 @@ namespace Test { namespace Branch {
     /// Initialize test space
     IntTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, d), 
-        vara(Gecode::INT_VAR_NONE), varb(Gecode::INT_VAR_NONE),
-        val(Gecode::INT_VAL_MIN) {}
+        vara(Gecode::INT_VAR_NONE()), varb(Gecode::INT_VAR_NONE()),
+        val(Gecode::INT_VAL_MIN()) {}
     /// Constructor for cloning \a s
     IntTestSpace(bool share, IntTestSpace& s)
       : Gecode::Space(share,s), vara(s.vara), varb(s.varb), val(s.val) {
@@ -152,42 +152,13 @@ namespace Test { namespace Branch {
    * \relates IntTestSpace BoolTestSpace
    */
   //@{
-  /// Integer variable selections
-  const Gecode::IntVarBranch int_var_branch[] = {
-    Gecode::INT_VAR_NONE, // Use several single variable branchers
-    Gecode::INT_VAR_NONE,
-    Gecode::INT_VAR_RND,
-    Gecode::INT_VAR_DEGREE_MIN,
-    Gecode::INT_VAR_DEGREE_MAX,
-    Gecode::INT_VAR_AFC_MIN,
-    Gecode::INT_VAR_AFC_MAX,
-    Gecode::INT_VAR_ACTIVITY_MIN,
-    Gecode::INT_VAR_ACTIVITY_MAX,
-    Gecode::INT_VAR_MIN_MIN,
-    Gecode::INT_VAR_MIN_MAX,
-    Gecode::INT_VAR_MAX_MIN,
-    Gecode::INT_VAR_MAX_MAX,
-    Gecode::INT_VAR_SIZE_MIN,
-    Gecode::INT_VAR_SIZE_MAX,
-    Gecode::INT_VAR_SIZE_DEGREE_MIN,
-    Gecode::INT_VAR_SIZE_DEGREE_MAX,
-    Gecode::INT_VAR_SIZE_AFC_MIN,
-    Gecode::INT_VAR_SIZE_AFC_MAX,
-    Gecode::INT_VAR_SIZE_ACTIVITY_MIN,
-    Gecode::INT_VAR_SIZE_ACTIVITY_MAX,
-    Gecode::INT_VAR_REGRET_MIN_MIN,
-    Gecode::INT_VAR_REGRET_MIN_MAX,
-    Gecode::INT_VAR_REGRET_MAX_MIN,
-    Gecode::INT_VAR_REGRET_MAX_MAX
-  };
-  /// Number of integer variable selections
-  const int n_int_var_branch =
-    sizeof(int_var_branch)/sizeof(Gecode::IntVarBranch);
   /// Names for integer variable selections
   const char* int_var_branch_name[] = {
     "SINGLE VARIABLE",
     "INT_VAR_NONE",
     "INT_VAR_RND",
+    "INT_VAR_MERIT_MIN",
+    "INT_VAR_MERIT_MAX",
     "INT_VAR_DEGREE_MIN",
     "INT_VAR_DEGREE_MAX",
     "INT_VAR_AFC_MIN",
@@ -211,22 +182,17 @@ namespace Test { namespace Branch {
     "INT_VAR_REGRET_MAX_MIN",
     "INT_VAR_REGRET_MAX_MAX"
   };
-  /// Integer value selections
-  const Gecode::IntValBranch int_val_branch[] = {
-    Gecode::INT_VAL_MIN,
-    Gecode::INT_VAL_MED,
-    Gecode::INT_VAL_MAX,
-    Gecode::INT_VAL_RND,
-    Gecode::INT_VAL_SPLIT_MIN,
-    Gecode::INT_VAL_SPLIT_MAX,
-    Gecode::INT_VAL_RANGE_MIN,
-    Gecode::INT_VAL_RANGE_MAX,
-    Gecode::INT_VALUES_MIN,
-    Gecode::INT_VALUES_MAX
-  };
-  /// Number of integer value selections
-  const int n_int_val_branch =
-    sizeof(int_val_branch)/sizeof(Gecode::IntValBranch);
+  /// Number of integer variable selections
+  const int n_int_var_branch =
+    sizeof(int_var_branch_name)/sizeof(const char*);
+  /// Test function for branch merit function
+  double int_merit(const Gecode::Space&, const Gecode::IntVar& x, int) {
+    return x.min();
+  }
+  /// Test function for branch merit function
+  double bool_merit(const Gecode::Space&, const Gecode::BoolVar& x, int) {
+    return x.min();
+  }
   /// Names for integer value selections
   const char* int_val_branch_name[] = {
     "INT_VAL_MIN",
@@ -237,9 +203,37 @@ namespace Test { namespace Branch {
     "INT_VAL_SPLIT_MAX",
     "INT_VAL_RANGE_MIN",
     "INT_VAL_RANGE_MAX",
+    "INT_VAL",
     "INT_VALUES_MIN",
     "INT_VALUES_MAX"
   };
+  /// Number of integer value selections
+  const int n_int_val_branch =
+    sizeof(int_val_branch_name)/sizeof(const char*);
+  /// Test function for branch value function
+  int int_val(const Gecode::Space&, const Gecode::IntVar& x) {
+    return x.min();
+  }
+  /// Test function for branch commit function
+  void int_commit(Gecode::Space& home, unsigned int a, 
+                  Gecode::IntVar x, int n) {
+    if (a == 0)
+      Gecode::rel(home, x, Gecode::IRT_EQ, n);
+    else
+      Gecode::rel(home, x, Gecode::IRT_NQ, n);
+  }
+  /// Test function for branch value function
+  int bool_val(const Gecode::Space&, const Gecode::BoolVar& x) {
+    return x.min();
+  }
+  /// Test function for branch commit function
+  void bool_commit(Gecode::Space& home, unsigned int a, 
+                   Gecode::BoolVar x, int n) {
+    if (a == 0)
+      Gecode::rel(home, x, Gecode::IRT_EQ, n);
+    else
+      Gecode::rel(home, x, Gecode::IRT_NQ, n);
+  }
   //@}
 
 #ifdef GECODE_HAS_SET_VARS
@@ -248,38 +242,13 @@ namespace Test { namespace Branch {
    * \relates SetTestSpace
    */
   //@{
-  /// Set variable selections
-  const Gecode::SetVarBranch set_var_branch[] = {
-    Gecode::SET_VAR_NONE, // Use several single variable branchers
-    Gecode::SET_VAR_NONE,
-    Gecode::SET_VAR_RND,
-    Gecode::SET_VAR_DEGREE_MIN,
-    Gecode::SET_VAR_DEGREE_MAX,
-    Gecode::SET_VAR_AFC_MIN,
-    Gecode::SET_VAR_AFC_MAX,
-    Gecode::SET_VAR_ACTIVITY_MIN,
-    Gecode::SET_VAR_ACTIVITY_MAX,
-    Gecode::SET_VAR_MIN_MIN,
-    Gecode::SET_VAR_MIN_MAX,
-    Gecode::SET_VAR_MAX_MIN,
-    Gecode::SET_VAR_MAX_MAX,
-    Gecode::SET_VAR_SIZE_MIN,
-    Gecode::SET_VAR_SIZE_MAX,
-    Gecode::SET_VAR_SIZE_DEGREE_MIN,
-    Gecode::SET_VAR_SIZE_DEGREE_MAX,
-    Gecode::SET_VAR_SIZE_AFC_MIN,
-    Gecode::SET_VAR_SIZE_AFC_MAX,
-    Gecode::SET_VAR_SIZE_ACTIVITY_MIN,
-    Gecode::SET_VAR_SIZE_ACTIVITY_MAX
-  };
-  /// Number of set variable selections
-  const int n_set_var_branch =
-    sizeof(set_var_branch)/sizeof(Gecode::SetVarBranch);
   /// Names for set variable selections
   const char* set_var_branch_name[] = {
     "SINGLE VARIABLE",
     "SET_VAR_NONE",
     "SET_VAR_RND",
+    "SET_VAR_MERIT_MIN",
+    "SET_VAR_MERIT_MAX",
     "SET_VAR_DEGREE_MIN",
     "SET_VAR_DEGREE_MAX",
     "SET_VAR_AFC_MIN",
@@ -299,20 +268,13 @@ namespace Test { namespace Branch {
     "SET_VAR_SIZE_ACTIVITY_MIN",
     "SET_VAR_SIZE_ACTIVITY_MAX"
   };
-  /// Set value selections
-  const Gecode::SetValBranch set_val_branch[] = {
-    Gecode::SET_VAL_MIN_INC,
-    Gecode::SET_VAL_MIN_EXC,
-    Gecode::SET_VAL_MED_INC,
-    Gecode::SET_VAL_MED_EXC,
-    Gecode::SET_VAL_MAX_INC,
-    Gecode::SET_VAL_MAX_EXC,
-    Gecode::SET_VAL_RND_INC,
-    Gecode::SET_VAL_RND_EXC
-  };
-  /// Number of set value selections
-  const int n_set_val_branch =
-    sizeof(set_val_branch)/sizeof(Gecode::SetValBranch);
+  /// Number of set variable selections
+  const int n_set_var_branch =
+    sizeof(set_var_branch_name)/sizeof(const char*);
+  /// Test function for branch merit function
+  double set_merit(const Gecode::Space&, const Gecode::SetVar& x, int) {
+    return 2.0;
+  }
   /// Names for set value selections
   const char* set_val_branch_name[] = {
     "SET_VAL_MIN_INC",
@@ -322,8 +284,25 @@ namespace Test { namespace Branch {
     "SET_VAL_MAX_INC",
     "SET_VAL_MAX_EXC",
     "SET_VAL_RND_INC",
-    "SET_VAL_RND_EXC"
+    "SET_VAL_RND_EXC",
+    "SET_VAL"
   };
+  /// Number of set value selections
+  const int n_set_val_branch =
+    sizeof(set_val_branch_name)/sizeof(const char*);
+  /// Test function for branch value function
+  int set_val(const Gecode::Space&, const Gecode::SetVar& x) {
+    Gecode::SetVarUnknownRanges r(x);
+    return r.min();
+  }
+  /// Test function for branch commit function
+  void set_commit(Gecode::Space& home, unsigned int a, 
+                  Gecode::SetVar x, int n) {
+    if (a == 0)
+      Gecode::dom(home, x, Gecode::SRT_EQ, n);
+    else
+      Gecode::dom(home, x, Gecode::SRT_NQ, n);
+  }
   //@}
 #endif
 
@@ -333,38 +312,13 @@ namespace Test { namespace Branch {
    * \relates FloatTestSpace
    */
   //@{
-  /// Float variable selections
-  const Gecode::FloatVarBranch float_var_branch[] = {
-    Gecode::FLOAT_VAR_NONE, // Use several single variable branchers
-    Gecode::FLOAT_VAR_NONE,
-    Gecode::FLOAT_VAR_RND,
-    Gecode::FLOAT_VAR_DEGREE_MIN,
-    Gecode::FLOAT_VAR_DEGREE_MAX,
-    Gecode::FLOAT_VAR_AFC_MIN,
-    Gecode::FLOAT_VAR_AFC_MAX,
-    Gecode::FLOAT_VAR_ACTIVITY_MIN,
-    Gecode::FLOAT_VAR_ACTIVITY_MAX,
-    Gecode::FLOAT_VAR_MIN_MIN,
-    Gecode::FLOAT_VAR_MIN_MAX,
-    Gecode::FLOAT_VAR_MAX_MIN,
-    Gecode::FLOAT_VAR_MAX_MAX,
-    Gecode::FLOAT_VAR_SIZE_MIN,
-    Gecode::FLOAT_VAR_SIZE_MAX,
-    Gecode::FLOAT_VAR_SIZE_DEGREE_MIN,
-    Gecode::FLOAT_VAR_SIZE_DEGREE_MAX,
-    Gecode::FLOAT_VAR_SIZE_AFC_MIN,
-    Gecode::FLOAT_VAR_SIZE_AFC_MAX,
-    Gecode::FLOAT_VAR_SIZE_ACTIVITY_MIN,
-    Gecode::FLOAT_VAR_SIZE_ACTIVITY_MAX
-  };
-  /// Number of float variable selections
-  const int n_float_var_branch =
-    sizeof(float_var_branch)/sizeof(Gecode::FloatVarBranch);
   /// Names for float variable selections
   const char* float_var_branch_name[] = {
     "SINGLE VARIABLE",
     "FLOAT_VAR_NONE",
     "FLOAT_VAR_RND",
+    "FLOAT_VAR_MERIT_MIN",
+    "FLOAT_VAR_MERIT_MAX",
     "FLOAT_VAR_DEGREE_MIN",
     "FLOAT_VAR_DEGREE_MAX",
     "FLOAT_VAR_AFC_MIN",
@@ -384,21 +338,35 @@ namespace Test { namespace Branch {
     "FLOAT_VAR_SIZE_ACTIVITY_MIN",
     "FLOAT_VAR_SIZE_ACTIVITY_MAX"
   };
-  /// Float value selections
-  const Gecode::FloatValBranch float_val_branch[] = {
-    Gecode::FLOAT_VAL_SPLIT_MIN,
-    Gecode::FLOAT_VAL_SPLIT_MAX,
-    Gecode::FLOAT_VAL_SPLIT_RND
-  };
-  /// Number of float value selections
-  const int n_float_val_branch =
-    sizeof(float_val_branch)/sizeof(Gecode::FloatValBranch);
+  /// Number of float variable selections
+  const int n_float_var_branch =
+    sizeof(float_var_branch_name)/sizeof(const char*);
+  /// Test function for branch merit function
+  double float_merit(const Gecode::Space&, const Gecode::FloatVar& x, int) {
+    return static_cast<double>(x.degree());
+  }
   /// Names for float value selections
   const char* float_val_branch_name[] = {
     "FLOAT_VAL_SPLIT_MIN",
     "FLOAT_VAL_SPLIT_MAX",
-    "FLOAT_VAL_SPLIT_RND"
+    "FLOAT_VAL_SPLIT_RND",
+    "FLOAT_VAL"
   };
+  /// Number of float value selections
+  const int n_float_val_branch =
+    sizeof(float_val_branch_name)/sizeof(const char*);
+  /// Test function for branch value function
+  Gecode::FloatNum float_val(const Gecode::Space&, const Gecode::FloatVar& x) {
+    return x.med();
+  }
+  /// Test function for branch commit function
+  void float_commit(Gecode::Space& home, unsigned int a, 
+                   Gecode::FloatVar x, Gecode::FloatNum n) {
+    if (a == 0)
+      Gecode::rel(home, x, Gecode::FRT_LQ, n);
+    else
+      Gecode::rel(home, x, Gecode::FRT_GQ, n);
+  }
   //@}
 #endif
 
@@ -469,41 +437,96 @@ namespace Test { namespace Branch {
     for (int vara = 0; vara<n_int_var_branch; vara++) {
       for (int varb = 1; varb<n_int_var_branch; varb++) {
         for (int val = 0; val<n_int_val_branch; val++) {
+          Rnd r(1);
+
+          IntValBranch ivb;
+          switch (val) {
+          case  0: ivb = INT_VAL_MIN(); break;
+          case  1: ivb = INT_VAL_MED(); break;
+          case  2: ivb = INT_VAL_MAX(); break;
+          case  3: ivb = INT_VAL_RND(r); break;
+          case  4: ivb = INT_VAL_SPLIT_MIN(); break;
+          case  5: ivb = INT_VAL_SPLIT_MAX(); break;
+          case  6: ivb = INT_VAL_RANGE_MIN(); break;
+          case  7: ivb = INT_VAL_RANGE_MAX(); break;
+          case  8: ivb = INT_VAL(&int_val,&int_commit); break;
+          case  9: ivb = INT_VALUES_MIN(); break;
+          case 10: ivb = INT_VALUES_MAX(); break;
+          }
+          
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
+
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
-              branch(*c, c->x[i], int_val_branch[val]);
+              branch(*c, c->x[i], ivb);
           } else {
-            IntVarBranch ivba = int_var_branch[vara];
-            IntVarBranch ivbb = int_var_branch[varb];
-            VarBranchOptions vboa, vbob;
-            IntActivity iaa, iab;
-
-            switch (ivba) {
-            case INT_VAR_ACTIVITY_MIN:
-            case INT_VAR_ACTIVITY_MAX:
-            case INT_VAR_SIZE_ACTIVITY_MIN:
-            case INT_VAR_SIZE_ACTIVITY_MAX:
-              iaa.init(*c, c->x, 1.0);
-              vboa.activity = iaa;
-              break;
-            default: ;
+            Rnd ra(1);
+            IntVarBranch ivba;
+            IntActivity iaa(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: ivba = INT_VAR_NONE(); break;
+            case  2: ivba = INT_VAR_RND(ra); break;
+            case  3: ivba = INT_VAR_MERIT_MIN(&int_merit); break;
+            case  4: ivba = INT_VAR_MERIT_MAX(&int_merit); break;
+            case  5: ivba = INT_VAR_DEGREE_MIN(); break;
+            case  6: ivba = INT_VAR_DEGREE_MAX(); break;
+            case  7: ivba = INT_VAR_AFC_MIN(); break;
+            case  8: ivba = INT_VAR_AFC_MAX(); break;
+            case  9: ivba = INT_VAR_ACTIVITY_MIN(iaa); break;
+            case 10: ivba = INT_VAR_ACTIVITY_MAX(iaa); break;
+            case 11: ivba = INT_VAR_MIN_MIN(); break;
+            case 12: ivba = INT_VAR_MIN_MAX(); break;
+            case 13: ivba = INT_VAR_MAX_MIN(); break;
+            case 14: ivba = INT_VAR_MAX_MAX(); break;
+            case 15: ivba = INT_VAR_SIZE_MIN(); break;
+            case 16: ivba = INT_VAR_SIZE_MAX(); break;
+            case 17: ivba = INT_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: ivba = INT_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: ivba = INT_VAR_SIZE_AFC_MIN(); break;
+            case 20: ivba = INT_VAR_SIZE_AFC_MAX(); break;
+            case 21: ivba = INT_VAR_SIZE_ACTIVITY_MIN(iaa); break;
+            case 22: ivba = INT_VAR_SIZE_ACTIVITY_MAX(iaa); break;
+            case 23: ivba = INT_VAR_REGRET_MIN_MIN(); break;
+            case 24: ivba = INT_VAR_REGRET_MIN_MAX(); break;
+            case 25: ivba = INT_VAR_REGRET_MAX_MIN(); break;
+            case 26: ivba = INT_VAR_REGRET_MAX_MAX(); break;
             }
 
-            switch (ivbb) {
-            case INT_VAR_ACTIVITY_MIN:
-            case INT_VAR_ACTIVITY_MAX:
-            case INT_VAR_SIZE_ACTIVITY_MIN:
-            case INT_VAR_SIZE_ACTIVITY_MAX:
-              iab.init(*c, c->x, 1.0);
-              vbob.activity = iab;
-              break;
-            default: ;
+            Rnd rb(2);
+            IntVarBranch ivbb;
+            IntActivity iab(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: ivbb = INT_VAR_NONE(); break;
+            case  2: ivbb = INT_VAR_RND(rb); break;
+            case  3: ivbb = INT_VAR_MERIT_MIN(&int_merit); break;
+            case  4: ivbb = INT_VAR_MERIT_MAX(&int_merit); break;
+            case  5: ivbb = INT_VAR_DEGREE_MIN(); break;
+            case  6: ivbb = INT_VAR_DEGREE_MAX(); break;
+            case  7: ivbb = INT_VAR_AFC_MIN(); break;
+            case  8: ivbb = INT_VAR_AFC_MAX(); break;
+            case  9: ivbb = INT_VAR_ACTIVITY_MIN(iab); break;
+            case 10: ivbb = INT_VAR_ACTIVITY_MAX(iab); break;
+            case 11: ivbb = INT_VAR_MIN_MIN(); break;
+            case 12: ivbb = INT_VAR_MIN_MAX(); break;
+            case 13: ivbb = INT_VAR_MAX_MIN(); break;
+            case 14: ivbb = INT_VAR_MAX_MAX(); break;
+            case 15: ivbb = INT_VAR_SIZE_MIN(); break;
+            case 16: ivbb = INT_VAR_SIZE_MAX(); break;
+            case 17: ivbb = INT_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: ivbb = INT_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: ivbb = INT_VAR_SIZE_AFC_MIN(); break;
+            case 20: ivbb = INT_VAR_SIZE_AFC_MAX(); break;
+            case 21: ivbb = INT_VAR_SIZE_ACTIVITY_MIN(iab); break;
+            case 22: ivbb = INT_VAR_SIZE_ACTIVITY_MAX(iab); break;
+            case 23: ivbb = INT_VAR_REGRET_MIN_MIN(); break;
+            case 24: ivbb = INT_VAR_REGRET_MIN_MAX(); break;
+            case 25: ivbb = INT_VAR_REGRET_MAX_MIN(); break;
+            case 26: ivbb = INT_VAR_REGRET_MAX_MAX(); break;
             }
 
-            branch(*c, c->x,
-                   tiebreak(ivba, ivbb), int_val_branch[val],
-                   tiebreak(vboa, vbob));
+            branch(*c, c->x, tiebreak(ivba, ivbb), ivb);
           }
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
@@ -554,41 +577,99 @@ namespace Test { namespace Branch {
     for (int vara = 0; vara<n_int_var_branch; vara++) {
       for (int varb = 1; varb<n_int_var_branch; varb++) {
         for (int val = 0; val<n_int_val_branch; val++) {
+
+          Rnd r(1);
+
+          IntValBranch ivb;
+          switch (val) {
+          case  0: ivb = INT_VAL_MIN(); break;
+          case  1: ivb = INT_VAL_MED(); break;
+          case  2: ivb = INT_VAL_MAX(); break;
+          case  3: ivb = INT_VAL_RND(r); break;
+          case  4: ivb = INT_VAL_SPLIT_MIN(); break;
+          case  5: ivb = INT_VAL_SPLIT_MAX(); break;
+          case  6: ivb = INT_VAL_RANGE_MIN(); break;
+          case  7: ivb = INT_VAL_RANGE_MAX(); break;
+          case  8: ivb = INT_VAL(&bool_val,&bool_commit); break;
+          case  9: ivb = INT_VALUES_MIN(); break;
+          case 10: ivb = INT_VALUES_MAX(); break;
+          }
+          
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
+
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
-              branch(*c, c->x[i], int_val_branch[val]);
+              branch(*c, c->x[i], ivb);
           } else {
-            IntVarBranch ivba = int_var_branch[vara];
-            IntVarBranch ivbb = int_var_branch[varb];
-            VarBranchOptions vboa, vbob;
-            BoolActivity baa, bab;
 
-            switch (ivba) {
-            case INT_VAR_ACTIVITY_MIN:
-            case INT_VAR_ACTIVITY_MAX:
-            case INT_VAR_SIZE_ACTIVITY_MIN:
-            case INT_VAR_SIZE_ACTIVITY_MAX:
-              baa.init(*c, c->x, 1.0);
-              vboa.activity = baa;
-              break;
-            default: ;
+
+            Rnd ra(1);
+            IntVarBranch ivba;
+            BoolActivity iaa(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: ivba = INT_VAR_NONE(); break;
+            case  2: ivba = INT_VAR_RND(ra); break;
+            case  3: ivba = INT_VAR_MERIT_MIN(&bool_merit); break;
+            case  4: ivba = INT_VAR_MERIT_MAX(&bool_merit); break;
+            case  5: ivba = INT_VAR_DEGREE_MIN(); break;
+            case  6: ivba = INT_VAR_DEGREE_MAX(); break;
+            case  7: ivba = INT_VAR_AFC_MIN(); break;
+            case  8: ivba = INT_VAR_AFC_MAX(); break;
+            case  9: ivba = INT_VAR_ACTIVITY_MIN(iaa); break;
+            case 10: ivba = INT_VAR_ACTIVITY_MAX(iaa); break;
+            case 11: ivba = INT_VAR_MIN_MIN(); break;
+            case 12: ivba = INT_VAR_MIN_MAX(); break;
+            case 13: ivba = INT_VAR_MAX_MIN(); break;
+            case 14: ivba = INT_VAR_MAX_MAX(); break;
+            case 15: ivba = INT_VAR_SIZE_MIN(); break;
+            case 16: ivba = INT_VAR_SIZE_MAX(); break;
+            case 17: ivba = INT_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: ivba = INT_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: ivba = INT_VAR_SIZE_AFC_MIN(); break;
+            case 20: ivba = INT_VAR_SIZE_AFC_MAX(); break;
+            case 21: ivba = INT_VAR_SIZE_ACTIVITY_MIN(iaa); break;
+            case 22: ivba = INT_VAR_SIZE_ACTIVITY_MAX(iaa); break;
+            case 23: ivba = INT_VAR_REGRET_MIN_MIN(); break;
+            case 24: ivba = INT_VAR_REGRET_MIN_MAX(); break;
+            case 25: ivba = INT_VAR_REGRET_MAX_MIN(); break;
+            case 26: ivba = INT_VAR_REGRET_MAX_MAX(); break;
             }
 
-            switch (ivbb) {
-            case INT_VAR_ACTIVITY_MIN:
-            case INT_VAR_ACTIVITY_MAX:
-            case INT_VAR_SIZE_ACTIVITY_MIN:
-            case INT_VAR_SIZE_ACTIVITY_MAX:
-              bab.init(*c, c->x, 1.0);
-              vbob.activity = bab;
-              break;
-            default: ;
+            Rnd rb(2);
+            IntVarBranch ivbb;
+            BoolActivity iab(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: ivbb = INT_VAR_NONE(); break;
+            case  2: ivbb = INT_VAR_RND(rb); break;
+            case  3: ivbb = INT_VAR_MERIT_MIN(&bool_merit); break;
+            case  4: ivbb = INT_VAR_MERIT_MAX(&bool_merit); break;
+            case  5: ivbb = INT_VAR_DEGREE_MIN(); break;
+            case  6: ivbb = INT_VAR_DEGREE_MAX(); break;
+            case  7: ivbb = INT_VAR_AFC_MIN(); break;
+            case  8: ivbb = INT_VAR_AFC_MAX(); break;
+            case  9: ivbb = INT_VAR_ACTIVITY_MIN(iab); break;
+            case 10: ivbb = INT_VAR_ACTIVITY_MAX(iab); break;
+            case 11: ivbb = INT_VAR_MIN_MIN(); break;
+            case 12: ivbb = INT_VAR_MIN_MAX(); break;
+            case 13: ivbb = INT_VAR_MAX_MIN(); break;
+            case 14: ivbb = INT_VAR_MAX_MAX(); break;
+            case 15: ivbb = INT_VAR_SIZE_MIN(); break;
+            case 16: ivbb = INT_VAR_SIZE_MAX(); break;
+            case 17: ivbb = INT_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: ivbb = INT_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: ivbb = INT_VAR_SIZE_AFC_MIN(); break;
+            case 20: ivbb = INT_VAR_SIZE_AFC_MAX(); break;
+            case 21: ivbb = INT_VAR_SIZE_ACTIVITY_MIN(iab); break;
+            case 22: ivbb = INT_VAR_SIZE_ACTIVITY_MAX(iab); break;
+            case 23: ivbb = INT_VAR_REGRET_MIN_MIN(); break;
+            case 24: ivbb = INT_VAR_REGRET_MIN_MAX(); break;
+            case 25: ivbb = INT_VAR_REGRET_MAX_MIN(); break;
+            case 26: ivbb = INT_VAR_REGRET_MAX_MAX(); break;
             }
 
-            branch(*c, c->x,
-                   tiebreak(ivba, ivbb), int_val_branch[val],
-                   tiebreak(vboa, vbob));
+            branch(*c, c->x, tiebreak(ivba, ivbb), ivb);
           }
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
@@ -641,41 +722,86 @@ namespace Test { namespace Branch {
     for (int vara = 0; vara<n_set_var_branch; vara++) {
       for (int varb = 1; varb<n_set_var_branch; varb++) {
         for (int val = 0; val<n_set_val_branch; val++) {
+          Rnd r(1);
+
+          SetValBranch svb;
+          switch (val) {
+          case 0: svb = SET_VAL_MIN_INC(); break;
+          case 1: svb = SET_VAL_MIN_EXC(); break;
+          case 2: svb = SET_VAL_MED_INC(); break;
+          case 3: svb = SET_VAL_MED_EXC(); break;
+          case 4: svb = SET_VAL_MAX_INC(); break;
+          case 5: svb = SET_VAL_MAX_EXC(); break;
+          case 6: svb = SET_VAL_RND_INC(r); break;
+          case 7: svb = SET_VAL_RND_EXC(r); break;
+          case 8: svb = SET_VAL(&set_val,&set_commit); break;
+          }
+          
           SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
+
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
-              branch(*c, c->x[i], set_val_branch[val]);
+              branch(*c, c->x[i], svb);
           } else {
-            SetVarBranch svba = set_var_branch[vara];
-            SetVarBranch svbb = set_var_branch[varb];
-            VarBranchOptions vboa, vbob;
-            SetActivity saa, sab;
-
-            switch (svba) {
-            case SET_VAR_ACTIVITY_MIN:
-            case SET_VAR_ACTIVITY_MAX:
-            case SET_VAR_SIZE_ACTIVITY_MIN:
-            case SET_VAR_SIZE_ACTIVITY_MAX:
-              saa.init(*c, c->x, 1.0);
-              vboa.activity = saa;
-              break;
-            default: ;
+            Rnd ra(1);
+            SetVarBranch svba;
+            SetActivity saa(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: svba = SET_VAR_NONE(); break;
+            case  2: svba = SET_VAR_RND(ra); break;
+            case  3: svba = SET_VAR_MERIT_MIN(&set_merit); break;
+            case  4: svba = SET_VAR_MERIT_MAX(&set_merit); break;
+            case  5: svba = SET_VAR_DEGREE_MIN(); break;
+            case  6: svba = SET_VAR_DEGREE_MAX(); break;
+            case  7: svba = SET_VAR_AFC_MIN(); break;
+            case  8: svba = SET_VAR_AFC_MAX(); break;
+            case  9: svba = SET_VAR_ACTIVITY_MIN(saa); break;
+            case 10: svba = SET_VAR_ACTIVITY_MAX(saa); break;
+            case 11: svba = SET_VAR_MIN_MIN(); break;
+            case 12: svba = SET_VAR_MIN_MAX(); break;
+            case 13: svba = SET_VAR_MAX_MIN(); break;
+            case 14: svba = SET_VAR_MAX_MAX(); break;
+            case 15: svba = SET_VAR_SIZE_MIN(); break;
+            case 16: svba = SET_VAR_SIZE_MAX(); break;
+            case 17: svba = SET_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: svba = SET_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: svba = SET_VAR_SIZE_AFC_MIN(); break;
+            case 20: svba = SET_VAR_SIZE_AFC_MAX(); break;
+            case 21: svba = SET_VAR_SIZE_ACTIVITY_MIN(saa); break;
+            case 22: svba = SET_VAR_SIZE_ACTIVITY_MAX(saa); break;
             }
 
-            switch (svbb) {
-            case SET_VAR_ACTIVITY_MIN:
-            case SET_VAR_ACTIVITY_MAX:
-            case SET_VAR_SIZE_ACTIVITY_MIN:
-            case SET_VAR_SIZE_ACTIVITY_MAX:
-              sab.init(*c, c->x, 1.0);
-              vbob.activity = sab;
-              break;
-            default: ;
+            Rnd rb(2);
+            SetVarBranch svbb;
+            SetActivity sab(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: svbb = SET_VAR_NONE(); break;
+            case  2: svbb = SET_VAR_RND(rb); break;
+            case  3: svbb = SET_VAR_MERIT_MIN(&set_merit); break;
+            case  4: svbb = SET_VAR_MERIT_MAX(&set_merit); break;
+            case  5: svbb = SET_VAR_DEGREE_MIN(); break;
+            case  6: svbb = SET_VAR_DEGREE_MAX(); break;
+            case  7: svbb = SET_VAR_AFC_MIN(); break;
+            case  8: svbb = SET_VAR_AFC_MAX(); break;
+            case  9: svbb = SET_VAR_ACTIVITY_MIN(sab); break;
+            case 10: svbb = SET_VAR_ACTIVITY_MAX(sab); break;
+            case 11: svbb = SET_VAR_MIN_MIN(); break;
+            case 12: svbb = SET_VAR_MIN_MAX(); break;
+            case 13: svbb = SET_VAR_MAX_MIN(); break;
+            case 14: svbb = SET_VAR_MAX_MAX(); break;
+            case 15: svbb = SET_VAR_SIZE_MIN(); break;
+            case 16: svbb = SET_VAR_SIZE_MAX(); break;
+            case 17: svbb = SET_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: svbb = SET_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: svbb = SET_VAR_SIZE_AFC_MIN(); break;
+            case 20: svbb = SET_VAR_SIZE_AFC_MAX(); break;
+            case 21: svbb = SET_VAR_SIZE_ACTIVITY_MIN(sab); break;
+            case 22: svbb = SET_VAR_SIZE_ACTIVITY_MAX(sab); break;
             }
 
-            branch(*c, c->x,
-                   tiebreak(svba, svbb), set_val_branch[val],
-                   tiebreak(vboa, vbob));
+            branch(*c, c->x, tiebreak(svba, svbb), svb);
           }
           Gecode::Search::Options o;
           results[solutions(c,o)].push_back
@@ -729,41 +855,80 @@ namespace Test { namespace Branch {
     for (int vara = 0; vara<n_float_var_branch; vara++) {
       for (int varb = 1; varb<n_float_var_branch; varb++) {
         for (int val = 0; val<n_float_val_branch; val++) {
+          Rnd r(1);
+
+          FloatValBranch fvb;
+          switch (val) {
+          case 0: fvb = FLOAT_VAL_SPLIT_MIN(); break;
+          case 1: fvb = FLOAT_VAL_SPLIT_MAX(); break;
+          case 2: fvb = FLOAT_VAL_SPLIT_RND(r); break;
+          case 3: fvb = FLOAT_VAL(&float_val,&float_commit); break;
+          }
+          
           FloatTestSpace* c = static_cast<FloatTestSpace*>(root->clone(false));
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
-              branch(*c, c->x[i], float_val_branch[val]);
+              branch(*c, c->x[i], fvb);
           } else {
-            FloatVarBranch fvba = float_var_branch[vara];
-            FloatVarBranch fvbb = float_var_branch[varb];
-            VarBranchOptions vboa, vbob;
-            FloatActivity faa, fab;
-
-            switch (fvba) {
-            case FLOAT_VAR_ACTIVITY_MIN:
-            case FLOAT_VAR_ACTIVITY_MAX:
-            case FLOAT_VAR_SIZE_ACTIVITY_MIN:
-            case FLOAT_VAR_SIZE_ACTIVITY_MAX:
-              faa.init(*c, c->x, 1.0);
-              vboa.activity = faa;
-              break;
-            default: ;
+            Rnd ra(1);
+            FloatVarBranch fvba;
+            FloatActivity faa(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: fvba = FLOAT_VAR_NONE(); break;
+            case  2: fvba = FLOAT_VAR_RND(ra); break;
+            case  3: fvba = FLOAT_VAR_MERIT_MIN(&float_merit); break;
+            case  4: fvba = FLOAT_VAR_MERIT_MAX(&float_merit); break;
+            case  5: fvba = FLOAT_VAR_DEGREE_MIN(); break;
+            case  6: fvba = FLOAT_VAR_DEGREE_MAX(); break;
+            case  7: fvba = FLOAT_VAR_AFC_MIN(); break;
+            case  8: fvba = FLOAT_VAR_AFC_MAX(); break;
+            case  9: fvba = FLOAT_VAR_ACTIVITY_MIN(faa); break;
+            case 10: fvba = FLOAT_VAR_ACTIVITY_MAX(faa); break;
+            case 11: fvba = FLOAT_VAR_MIN_MIN(); break;
+            case 12: fvba = FLOAT_VAR_MIN_MAX(); break;
+            case 13: fvba = FLOAT_VAR_MAX_MIN(); break;
+            case 14: fvba = FLOAT_VAR_MAX_MAX(); break;
+            case 15: fvba = FLOAT_VAR_SIZE_MIN(); break;
+            case 16: fvba = FLOAT_VAR_SIZE_MAX(); break;
+            case 17: fvba = FLOAT_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: fvba = FLOAT_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: fvba = FLOAT_VAR_SIZE_AFC_MIN(); break;
+            case 20: fvba = FLOAT_VAR_SIZE_AFC_MAX(); break;
+            case 21: fvba = FLOAT_VAR_SIZE_ACTIVITY_MIN(faa); break;
+            case 22: fvba = FLOAT_VAR_SIZE_ACTIVITY_MAX(faa); break;
             }
 
-            switch (fvbb) {
-            case FLOAT_VAR_ACTIVITY_MIN:
-            case FLOAT_VAR_ACTIVITY_MAX:
-            case FLOAT_VAR_SIZE_ACTIVITY_MIN:
-            case FLOAT_VAR_SIZE_ACTIVITY_MAX:
-              fab.init(*c, c->x, 1.0);
-              vbob.activity = fab;
-              break;
-            default: ;
+            Rnd rb(2);
+            FloatVarBranch fvbb;
+            FloatActivity fab(*c, c->x, 0.9);
+            switch (vara) {
+            case  0: break; 
+            case  1: fvbb = FLOAT_VAR_NONE(); break;
+            case  2: fvbb = FLOAT_VAR_RND(rb); break;
+            case  3: fvbb = FLOAT_VAR_MERIT_MIN(&float_merit); break;
+            case  4: fvbb = FLOAT_VAR_MERIT_MAX(&float_merit); break;
+            case  5: fvbb = FLOAT_VAR_DEGREE_MIN(); break;
+            case  6: fvbb = FLOAT_VAR_DEGREE_MAX(); break;
+            case  7: fvbb = FLOAT_VAR_AFC_MIN(); break;
+            case  8: fvbb = FLOAT_VAR_AFC_MAX(); break;
+            case  9: fvbb = FLOAT_VAR_ACTIVITY_MIN(fab); break;
+            case 10: fvbb = FLOAT_VAR_ACTIVITY_MAX(fab); break;
+            case 11: fvbb = FLOAT_VAR_MIN_MIN(); break;
+            case 12: fvbb = FLOAT_VAR_MIN_MAX(); break;
+            case 13: fvbb = FLOAT_VAR_MAX_MIN(); break;
+            case 14: fvbb = FLOAT_VAR_MAX_MAX(); break;
+            case 15: fvbb = FLOAT_VAR_SIZE_MIN(); break;
+            case 16: fvbb = FLOAT_VAR_SIZE_MAX(); break;
+            case 17: fvbb = FLOAT_VAR_SIZE_DEGREE_MIN(); break;
+            case 18: fvbb = FLOAT_VAR_SIZE_DEGREE_MAX(); break;
+            case 19: fvbb = FLOAT_VAR_SIZE_AFC_MIN(); break;
+            case 20: fvbb = FLOAT_VAR_SIZE_AFC_MAX(); break;
+            case 21: fvbb = FLOAT_VAR_SIZE_ACTIVITY_MIN(fab); break;
+            case 22: fvbb = FLOAT_VAR_SIZE_ACTIVITY_MAX(fab); break;
             }
 
-            branch(*c, c->x,
-                   tiebreak(fvba, fvbb), float_val_branch[val],
-                   tiebreak(vboa, vbob));
+            branch(*c, c->x, tiebreak(fvba, fvbb), fvb);
           }
           Gecode::Search::Options o;
           results[solutions(c,o,nbSols)].push_back

@@ -60,8 +60,9 @@ namespace Test { namespace Float {
     : Assignment(n,d),
       dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]),
       step(s) {
+    using namespace Gecode;
     for (int i=n; i--; )
-      dsv[i] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
+      dsv[i] = FloatVal(d.min(),nextafter(d.min(),d.max()));
   }
   inline bool
   CpltAssignment::operator()(void) const {
@@ -87,8 +88,9 @@ namespace Test { namespace Float {
   : Assignment(n,d),curPb(pb),
   dsv(new Gecode::FloatVal[static_cast<unsigned int>(n)]),
   step(s) {
+    using namespace Gecode;
     for (int i=n-1; i--; )
-      dsv[i] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
+      dsv[i] = FloatVal(d.min(),nextafter(d.min(),d.max()));
     ++(*this);
   }
   inline bool

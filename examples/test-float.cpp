@@ -59,8 +59,8 @@ public:
   TestFloat(const Options& ) : ivar(*this,-5,5), bvar(*this,0,1), f(*this,5,-20,20), step(0.1)
   {
 #ifndef BOXES
-    branch(*this,f[0],FLOAT_VAL_SPLIT_MIN);
-    //branch(*this,f[0],FLOAT_VAL_SPLIT_RND,ValBranchOptions::time());
+    branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
+    //branch(*this,f[0],FLOAT_VAL_SPLIT_RND(),ValBranchOptions::time());
 #endif
 
 //    Int::IntView iv(ivar);
@@ -167,7 +167,7 @@ public:
 //    rel(*this, sqr(f[1]) + 2*sqr(f[2]-p*nroot(abs(f[1]),q)) == 1);
 //    rel(*this, f[0] == f[1]);
 //    step = 0.01; 
-//    branch(*this,f[2],FLOAT_VAL_SPLIT_MIN);
+//    branch(*this,f[2],FLOAT_VAL_SPLIT_MIN());
 //    // Mettre le rel avec f[0] et f[2] dans le constrain
 
 //    // Exemple 6 (Folium de Descartes)
@@ -180,9 +180,11 @@ public:
      rel(*this, f[0] >= 0);
      rel(*this, f[0] <= 2*FloatVal::pi());
      rel(*this, f[4] >= 0);
+#ifdef GECODE_HAS_MPFR
      rel(*this, f[4]*cos(f[0]) == f[1]);
      rel(*this, f[4]*sin(f[0]) == f[2]);
      rel(*this, f[4] == 2*cos(10*f[0]));
+#endif
      step = 0.001;
 
 #ifdef BOXES

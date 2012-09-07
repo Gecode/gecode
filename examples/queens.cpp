@@ -91,7 +91,7 @@ public:
       distinct(*this, q, opt.icl());
       break;
     }
-    branch(*this, q, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, q, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning \a s

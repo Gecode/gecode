@@ -93,7 +93,7 @@ namespace {
       rel(*this, kb(n-1,   0), IRT_EQ, 1);
       rel(*this, kb(n-1, n-1), IRT_EQ, 1);
       branch(*this, k,
-             tiebreak(INT_VAR_DEGREE_MAX,INT_VAR_SIZE_MIN), INT_VAL_MAX);
+             tiebreak(INT_VAR_DEGREE_MAX(),INT_VAR_SIZE_MIN()), INT_VAL_MAX());
     }
     Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
       k.update(*this, share, s.k);
@@ -337,7 +337,7 @@ public:
     // Branching
     // ***********************
     // Place each piece in turn
-    branch(*this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);
+    branch(*this, s, INT_VAR_MIN_MIN(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning e

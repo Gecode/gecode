@@ -105,6 +105,8 @@ while ($l = <FILE>) {
         $varbranch = $1;
       } elsif ($l =~ /^ValBranch:\s*(\w+)/io) {
         $valbranch = $1;
+      } elsif ($l =~ /^BranchFilter:\s*(\w+)/io) {
+        $branchfilter = $1;
       } elsif ($l =~ /^GNS:\s*(.+)/io) {
         $gns = $1;
       } elsif ($l =~ /^LNS:\s*(.+)/io) {
@@ -189,14 +191,13 @@ $cns =~ s| $||g;
 print "$cns\n\n";
 print "  /// Create virtual view selector for tie-breaking\n";
 print "  void\n";
-print "  virtualize(Gecode::Home home, $varbranch vars,\n";
-print "             const Gecode::VarBranchOptions& o_vars,\n";
+print "  virtualize(Gecode::Home home, const ${varbranch}& vars,\n";
 print "             Gecode::ViewSelVirtualBase<$view>*& v) {\n";
-print "    switch (vars) {\n";
+print "    switch (vars.select()) {\n";
 for ($i=0; $i<$n; $i++) {
   next unless ($i != $none);
-  print "    case $vb[$i]:\n";
-  $l =  "      v = new (home) ViewSelVirtual<$type[$i]>(home,o_vars);\n";
+  print "    case ${varbranch}::$vb[$i]:\n";
+  $l =  "      v = new (home) ViewSelVirtual<$type[$i]>(home,vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
   print "      break;\n";
@@ -218,8 +219,7 @@ print "$cns\n\n";
 print "  void\n";
 print "  $branchname(Gecode::Home home, const $varargs\& x,\n";
 print "         $varbranch vars, $valbranch vals,\n";
-print "         const Gecode::VarBranchOptions& o_vars,\n";
-print "         const Gecode::ValBranchOptions& o_vals) {\n";
+print "         $branchfilter bf) {\n";
 $ans = "";
 foreach $ns (split('::',$lns)) {
   if ($ans eq "") {
@@ -231,18 +231,18 @@ foreach $ns (split('::',$lns)) {
 }
 print "\n\n";
 print "    if (home.failed()) return;\n";
-print "    if (o_vars.activity.initialized() &&\n";
-print "        (o_vars.activity.size() != x.size()))\n";
+print "    if (vars.activity().initialized() &&\n";
+print "        (vars.activity().size() != x.size()))\n";
 print "      throw ActivityWrongArity(\"" . $branchname . "\");\n";
 print "    ViewArray<$view> xv(home,x);\n";
-print "    switch (vars) {\n";
+print "    switch (vars.select()) {\n";
 for ($i=0; $i<$n; $i++) {
-  print "    case $vb[$i]:\n";
+  print "    case ${varbranch}::$vb[$i]:\n";
   print "      {\n";
-  $l =  "        $type[$i] v(home,o_vars);\n";
+  $l =  "        $type[$i] v(home,vars);\n";
   $l =~ s|>>|> >|og; $l =~ s|>>|> >|og;
   print $l;
-  print "        ".$pns."post(home,xv,v,vals,o_vals,o_vars.bf);\n";
+  print "        ".$pns."post(home,xv,v,vals,bf);\n";
   print "      }\n";
   print "      break;\n";
 }
@@ -254,8 +254,7 @@ print "  void\n";
 print "  $branchname(Gecode::Home home, const $varargs\& x,\n";
 print "         const Gecode::TieBreakVarBranch<$varbranch>\& vars,\n";
 print "         $valbranch vals,\n";
-print "         const Gecode::TieBreakVarBranchOptions& o_vars,\n";
-print "         const Gecode::ValBranchOptions& o_vals) {\n";
+print "         $branchfilter bf) {\n";
 $ans = "";
 foreach $ns (split('::',$lns)) {
   if ($ans eq "") {
@@ -270,46 +269,44 @@ print "    if (home.failed()) return;\n";
 $c = "";
 for ($i=0; $i<$n; $i++) {
   if ($complete[$i]) {
-    $c = "$c || (vars.a == $vb[$i])";
+    $c = "$c || (vars.a.select() == ${varbranch}::$vb[$i])";
   }
 }
-print "    if ((vars.a == $vb[$none])$c ||\n";
-print "        ((vars.b == $vb[$none]) && (vars.c == $vb[$none]) && (vars.d == $vb[$none]))) {\n";
-print "      $branchname(home,x,vars.a,vals,o_vars.a,o_vals);\n";
+print "    if ((vars.a.select() == ${varbranch}::$vb[$none])$c ||\n";
+print "        ((vars.b.select() == ${varbranch}::$vb[$none]) &&\n";
+print "         (vars.c.select() == ${varbranch}::$vb[$none]) &&\n";
+print "         (vars.d.select() == ${varbranch}::$vb[$none]))) {\n";
+print "      $branchname(home,x,vars.a,vals,bf);\n";
 print "      return;\n";
 print "    }\n";
-print "    if (o_vars.a.activity.initialized() &&\n";
-print "        (o_vars.a.activity.size() != x.size()))\n";
+print "    if (vars.a.activity().initialized() && (vars.a.activity().size() != x.size()))\n";
 print "      throw ActivityWrongArity(\"branch (option a)\");\n";
-print "    if (o_vars.b.activity.initialized() &&\n";
-print "        (o_vars.b.activity.size() != x.size()))\n";
+print "    if (vars.b.activity().initialized() && (vars.b.activity().size() != x.size()))\n";
 print "      throw ActivityWrongArity(\"branch (option b)\");\n";
-print "    if (o_vars.c.activity.initialized() &&\n";
-print "        (o_vars.c.activity.size() != x.size()))\n";
+print "    if (vars.c.activity().initialized() && (vars.c.activity().size() != x.size()))\n";
 print "      throw ActivityWrongArity(\"branch (option c)\");\n";
-print "    if (o_vars.d.activity.initialized() &&\n";
-print "        (o_vars.d.activity.size() != x.size()))\n";
+print "    if (vars.d.activity().initialized() && (vars.d.activity().size() != x.size()))\n";
 print "      throw ActivityWrongArity(\"branch (option d)\");\n";
 print "    ViewArray<$view> xv(home,x);\n";
 print "    Gecode::ViewSelVirtualBase<$view>* tb[3];\n";
 print "    int n=0;\n";
-print "    if (vars.b != $vb[$none])\n";
-print "      virtualize(home,vars.b,o_vars.b,tb[n++]);\n";
-print "    if (vars.c != $vb[$none])\n";
-print "      virtualize(home,vars.c,o_vars.c,tb[n++]);\n";
-print "    if (vars.d != $vb[$none])\n";
-print "      virtualize(home,vars.d,o_vars.d,tb[n++]);\n";
+print "    if (vars.b.select() != ${varbranch}::$vb[$none])\n";
+print "      virtualize(home,vars.b,tb[n++]);\n";
+print "    if (vars.c.select() != ${varbranch}::$vb[$none])\n";
+print "      virtualize(home,vars.c,tb[n++]);\n";
+print "    if (vars.d.select() != ${varbranch}::$vb[$none])\n";
+print "      virtualize(home,vars.d,tb[n++]);\n";
 print "    assert(n > 0);\n";
 print "    ViewSelTieBreakDynamic<$view> vbcd(home,tb,n);\n";
-print "    switch (vars.a) {\n";
+print "    switch (vars.a.select()) {\n";
 for ($i=0; $i<$n; $i++) {
   next unless ($i != $none) && !$complete[$i];
-  print "    case $vb[$i]:\n";
+  print "    case ${varbranch}::$vb[$i]:\n";
   print "      {\n";
-  print "        $type[$i] va(home,o_vars.a);\n";
+  print "        $type[$i] va(home,vars.a);\n";
   print "        ViewSelTieBreakStatic<$type[$i],\n";
   print "          ViewSelTieBreakDynamic<$view> > v(home,va,vbcd);\n";
-  print "        ".$pns."post(home,xv,v,vals,o_vals,o_vars.a.bf);\n";
+  print "        ".$pns."post(home,xv,v,vals,bf);\n";
   print "      }\n";
   print "      break;\n";
 }

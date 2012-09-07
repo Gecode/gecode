@@ -41,42 +41,49 @@ namespace Gecode {
 
   void
   assign(Home home, const IntVarArgs& x, IntAssign vals,
-         const ValBranchOptions& o_vals) {
+         IntBranchFilter ibf) {
     using namespace Int;
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    ViewSelNone<IntView> v(home,VarBranchOptions::def);
-    switch (vals) {
-    case INT_ASSIGN_MIN:
+    ViewSelNone<IntView> v(home,IntVarBranch());
+    switch (vals.select()) {
+    case IntAssign::SEL_MIN:
       {
-        Branch::AssignValMin<IntView> a(home,o_vals);
+        Branch::AssignValMin<IntView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValMin<IntView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,ibf);
       }
       break;
-    case INT_ASSIGN_MED:
+    case IntAssign::SEL_MED:
       {
-        Branch::AssignValMed<IntView> a(home,o_vals);
+        Branch::AssignValMed<IntView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValMed<IntView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,ibf);
       }
       break;
-    case INT_ASSIGN_MAX:
+    case IntAssign::SEL_MAX:
       {
-        Branch::AssignValMin<MinusView> a(home,o_vals);
+        Branch::AssignValMin<MinusView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValMin<MinusView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,ibf);
       }
       break;
-    case INT_ASSIGN_RND:
+    case IntAssign::SEL_RND:
       {
-        Branch::AssignValRnd<IntView> a(home,o_vals);
+        Branch::AssignValRnd<IntView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<IntView>,Branch::AssignValRnd<IntView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,ibf);
+      }
+      break;
+    case IntAssign::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<IntView,1> a(home,vals);
+        ViewValBrancher<ViewSelNone<IntView>,ValSelValCommit<IntView,1> >
+          ::post(home,xv,v,a,ibf);
       }
       break;
     default:
@@ -86,32 +93,39 @@ namespace Gecode {
 
   void
   assign(Home home, const BoolVarArgs& x, IntAssign vals,
-         const ValBranchOptions& o_vals) {
+         BoolBranchFilter bbf) {
     using namespace Int;
     if (home.failed()) return;
     ViewArray<BoolView> xv(home,x);
-    ViewSelNone<BoolView> v(home,VarBranchOptions::def);
-    switch (vals) {
-    case INT_ASSIGN_MIN:
-    case INT_ASSIGN_MED: {
-        Branch::AssignValZero<BoolView> a(home,o_vals);
+    ViewSelNone<BoolView> v(home,IntVarBranch());
+    switch (vals.select()) {
+    case IntAssign::SEL_MIN:
+    case IntAssign::SEL_MED: {
+        Branch::AssignValZero<BoolView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<BoolView>,Branch::AssignValZero<BoolView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,bbf);
       }
       break;
-    case INT_ASSIGN_MAX: {
-        Branch::AssignValZero<NegBoolView> a(home,o_vals);
+    case IntAssign::SEL_MAX: {
+        Branch::AssignValZero<NegBoolView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<BoolView>,Branch::AssignValZero<NegBoolView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,bbf);
       }
       break;
-    case INT_ASSIGN_RND: {
-        Branch::AssignValRnd<BoolView> a(home,o_vals);
+    case IntAssign::SEL_RND: {
+        Branch::AssignValRnd<BoolView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<BoolView>,Branch::AssignValRnd<BoolView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,bbf);
+      }
+      break;
+    case IntAssign::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<BoolView,1> a(home,vals);
+        ViewValBrancher<ViewSelNone<BoolView>,ValSelValCommit<BoolView,1> >
+          ::post(home,xv,v,a,bbf);
       }
       break;
     default:
@@ -120,31 +134,27 @@ namespace Gecode {
   }
 
   void
-  branch(Home home, IntVar x, IntValBranch vals,
-         const ValBranchOptions& o_vals) {
+  branch(Home home, IntVar x, IntValBranch vals) {
     IntVarArgs xv(1); xv[0]=x;
-    branch(home, xv, INT_VAR_NONE, vals, VarBranchOptions::def, o_vals);
+    branch(home, xv, INT_VAR_NONE(), vals);
   }
   
   void
-  branch(Home home, BoolVar x, IntValBranch vals,
-         const ValBranchOptions& o_vals) {
+  branch(Home home, BoolVar x, IntValBranch vals) {
     BoolVarArgs xv(1); xv[0]=x;
-    branch(home, xv, INT_VAR_NONE, vals, VarBranchOptions::def, o_vals);
+    branch(home, xv, INT_VAR_NONE(), vals);
   }
   
   void
-  assign(Home home, IntVar x, IntAssign vals,
-         const ValBranchOptions& o_vals) {
+  assign(Home home, IntVar x, IntAssign vals) {
     IntVarArgs xv(1); xv[0]=x;
-    assign(home, xv, vals, o_vals);
+    assign(home, xv, vals);
   }
   
   void
-  assign(Home home, BoolVar x, IntAssign vals,
-         const ValBranchOptions& o_vals) {
+  assign(Home home, BoolVar x, IntAssign vals) {
     BoolVarArgs xv(1); xv[0]=x;
-    assign(home, xv, vals, o_vals);
+    assign(home, xv, vals);
   }
   
 }

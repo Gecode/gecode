@@ -458,10 +458,10 @@ public:
     for (int j=spec.lower()+1; j <= spec.upper(); j++)
       rel(*this, (bins < j) == (load[j-1] == 0));
 
-    branch(*this, bins, INT_VAL_MIN);
+    branch(*this, bins, INT_VAL_MIN());
     switch (opt.branching()) {
     case BRANCH_NAIVE:
-      branch(*this, bin, INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, bin, INT_VAR_NONE(), INT_VAL_MIN());
       break;
     case BRANCH_CDBF:
       cdbf(*this, load, bin, sizes);

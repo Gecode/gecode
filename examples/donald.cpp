@@ -95,7 +95,7 @@ public:
     default: GECODE_NEVER;
     }
 
-    branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MAX);
+    branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
   }
   /// Constructor for cloning \a s
   Donald(bool share, Donald& s) : Script(share,s) {

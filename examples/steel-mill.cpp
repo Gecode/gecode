@@ -256,7 +256,7 @@ public:
       // Symmetry breaking branching
       SteelMillBranch::post(*this);
     } else { // opt.symmetry() == SYMMETRY_NONE
-      branch(*this, slab, INT_VAR_MAX_MIN, INT_VAL_MIN);
+      branch(*this, slab, INT_VAR_MAX_MIN(), INT_VAL_MIN());
     }
   }
 

@@ -3444,17 +3444,118 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF);
   //@}
 
+}
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelIntBranch Branching
    * \ingroup TaskModelInt
    */
-  //@{
-  /// Recording activities for integer variables
+
+  /**
+   * \brief Branch filter function type for integer variables
+   *
+   * The variable \a x is considered for selection and \a i refers to the
+   * variable's position in the original array passed to the brancher.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef bool (*IntBranchFilter)(const Space& home, 
+                                  const IntVar& x, int i);
+  /**
+   * \brief Branch filter function type for Boolean variables
+   *
+   * The variable \a x is considered for selection and \a i refers to the
+   * variable's position in the original array passed to the brancher.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef bool (*BoolBranchFilter)(const Space& home, 
+                                   const BoolVar& x, int i);
+
+  /**
+   * \brief Branch merit function type for integer variables
+   *
+   * The function must return a non-negative merit value for the variable
+   * \a x.
+   * The value \a i refers to the variable's position in the original array
+   * passed to the brancher.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef double (*IntBranchMerit)(const Space& home, 
+                                   const IntVar& x, int i);
+  /**
+   * \brief Branch merit function type for Boolean variables
+   *
+   * The function must return a non-negative merit value for the variable
+   * \a x.
+   * The value \a i refers to the variable's position in the original array
+   * passed to the brancher.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef double (*BoolBranchMerit)(const Space& home, 
+                                    const BoolVar& x, int i);
+
+  /**
+   * \brief Branch value function type for integer variables
+   *
+   * Returns a value for the variable \a x that is to be used in the
+   * corresponding branch commit function.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef int (*IntBranchVal)(const Space& home, const IntVar& x);
+  /**
+   * \brief Branch value function type for Boolean variables
+   *
+   * Returns a value for the variable \a x that is to be used in the
+   * corresponding branch commit function.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef int (*BoolBranchVal)(const Space& home, const BoolVar& x);
+
+  /**
+   * \brief Branch commit function type for integer variables
+   *
+   * The function must post a constraint on the variable \a x which
+   * corresponds to the alternative \a a. The value \a n is the value
+   * computed by the corresponding branch value function.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef void (*IntBranchCommit)(Space& home, unsigned int a,
+                                  IntVar x, int n);
+  /**
+   * \brief Branch commit function type for Boolean variables
+   *
+   * The function must post a constraint on the variable \a x which
+   * corresponds to the alternative \a a. The value \a n is the value
+   * computed by the corresponding branch value function.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  typedef void (*BoolBranchCommit)(Space& home, unsigned int a,
+                                   BoolVar x, int n);
+
+}
+
+#include <gecode/int/branch/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Recording activities for integer variables
+   *
+   * \ingroup TaskModelIntBranch
+   */
   class IntActivity : public Activity {
   public:
     /**
-     * \brief Construct as not yet intialized
+     * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
      * yet initialized activity storage is init or the assignment operator.
@@ -3479,11 +3580,15 @@ namespace Gecode {
     init(Home, const IntVarArgs& x, double d);
   };
 
-  /// Recording activities for Boolean variables
+  /**
+   * \brief Recording activities for Boolean variables
+   *
+   * \ingroup TaskModelIntBranch
+   */
   class BoolActivity : public Activity {
   public:
     /**
-     * \brief Construct as not yet intialized
+     * \brief Construct as not yet initialized
      *
      * The only member function that can be used on a constructed but not
      * yet initialized activity storage is init.
@@ -3508,137 +3613,388 @@ namespace Gecode {
     init(Home home, const BoolVarArgs& x, double a);
   };
 
-  /// Which variable to select for branching
-  enum IntVarBranch {
-    INT_VAR_NONE = 0,        ///< First unassigned
-    INT_VAR_RND,             ///< Random (uniform, for tie breaking)
-    INT_VAR_DEGREE_MIN,      ///< With smallest degree
-    INT_VAR_DEGREE_MAX,      ///< With largest degree
-    INT_VAR_AFC_MIN,         ///< With smallest accumulated failure count
-    INT_VAR_AFC_MAX,         ///< With largest accumulated failure count
-    INT_VAR_ACTIVITY_MIN,    ///< With lowest activity
-    INT_VAR_ACTIVITY_MAX,    ///< With highest activity
-    INT_VAR_MIN_MIN,         ///< With smallest min
-    INT_VAR_MIN_MAX,         ///< With largest min
-    INT_VAR_MAX_MIN,         ///< With smallest max
-    INT_VAR_MAX_MAX,         ///< With largest max
-    INT_VAR_SIZE_MIN,        ///< With smallest domain size
-    INT_VAR_SIZE_MAX,        ///< With largest domain size
-    INT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
-    INT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
-    INT_VAR_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
-    INT_VAR_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
-    INT_VAR_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
-    INT_VAR_SIZE_ACTIVITY_MAX, ///< With largest domain size divided by activity
-    /** \brief With smallest min-regret
-     *
-     * The min-regret of a variable is the difference between the
-     * smallest and second-smallest value still in the domain.
-     */
-    INT_VAR_REGRET_MIN_MIN,
-    /** \brief With largest min-regret
-     *
-     * The min-regret of a variable is the difference between the
-     * smallest and second-smallest value still in the domain.
-     */
-    INT_VAR_REGRET_MIN_MAX,
-    /** \brief With smallest max-regret
-     *
-     * The max-regret of a variable is the difference between the
-     * largest and second-largest value still in the domain.
-     */
-    INT_VAR_REGRET_MAX_MIN,
-    /** \brief With largest max-regret
-     *
-     * The max-regret of a variable is the difference between the
-     * largest and second-largest value still in the domain.
-     */
-    INT_VAR_REGRET_MAX_MAX
-  };
-
-  /// Which values to select first for branching
-  enum IntValBranch {
-    INT_VAL_MIN,       ///< Select smallest value
-    INT_VAL_MED,       ///< Select greatest value not greater than the median
-    INT_VAL_MAX,       ///< Select largest value
-    INT_VAL_RND,       ///< Select random value
-    INT_VAL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
-    INT_VAL_SPLIT_MAX, ///< Select values greater than mean of smallest and largest value
-    INT_VAL_RANGE_MIN, ///< Select the smallest range of the variable domain if it has sevral ranges, otherwise select values not greater than mean of smallest and largest value
-    INT_VAL_RANGE_MAX, ///< Select the largest range of the variable domain if it has sevral ranges, otherwise select values greater than mean of smallest and largest value
-    INT_VALUES_MIN,    ///< Try all values starting from smallest
-    INT_VALUES_MAX     ///< Try all values starting from largest
-  };
-
-  /// Branch over \a x with variable selection \a vars and value selection \a vals
-  GECODE_INT_EXPORT void
-  branch(Home home, const IntVarArgs& x,
-         IntVarBranch vars, IntValBranch vals,
-         const VarBranchOptions& o_vars = VarBranchOptions::def,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
-  GECODE_INT_EXPORT void
-  branch(Home home, const IntVarArgs& x,
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with value selection \a vals
-  GECODE_INT_EXPORT void
-  branch(Home home, IntVar x, IntValBranch vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with variable selection \a vars and value selection \a vals
-  GECODE_INT_EXPORT void
-  branch(Home home, const BoolVarArgs& x,
-         IntVarBranch vars, IntValBranch vals,
-         const VarBranchOptions& o_vars = VarBranchOptions::def,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
-  GECODE_INT_EXPORT void
-  branch(Home home, const BoolVarArgs& x,
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with value selection \a vals
-  GECODE_INT_EXPORT void
-  branch(Home home, BoolVar x, IntValBranch vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-
-  //@}
-
-  /**
-   * \defgroup TaskModelIntAssign Assigning
-   * \ingroup TaskModelInt
-   */
-  //@{
-  /// Which value to select for assignment
-  enum IntAssign {
-    INT_ASSIGN_MIN, ///< Select smallest value
-    INT_ASSIGN_MED, ///< Select greatest element not greater than the median
-    INT_ASSIGN_MAX, ///< Select maximum value
-    INT_ASSIGN_RND  ///< Select random value
-  };
-
-  /// Assign all \a x with value selection \a vals
-  GECODE_INT_EXPORT void
-  assign(Home home, const IntVarArgs& x, IntAssign vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Assign \a x with value selection \a vals
-  GECODE_INT_EXPORT void
-  assign(Home home, IntVar x, IntAssign vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Assign all \a x with value selection \a vals
-  GECODE_INT_EXPORT void
-  assign(Home home, const BoolVarArgs& x, IntAssign vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Assign \a x with value selection \a vals
-  GECODE_INT_EXPORT void
-  assign(Home home, BoolVar x, IntAssign vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-
-  //@}
 }
 
-#include <gecode/int/activity.hpp>
+#include <gecode/int/branch/activity.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Which variable to select for branching
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  class IntVarBranch : public VarBranch {
+  public:
+    /// Which variable selection
+    enum Select {
+      SEL_NONE = 0,        ///< First unassigned
+      SEL_RND,             ///< Random (uniform, for tie breaking)
+      SEL_MERIT_MIN,       ///< With least merit
+      SEL_MERIT_MAX,       ///< With highest merit
+      SEL_DEGREE_MIN,      ///< With smallest degree
+      SEL_DEGREE_MAX,      ///< With largest degree
+      SEL_AFC_MIN,         ///< With smallest accumulated failure count
+      SEL_AFC_MAX,         ///< With largest accumulated failure count
+      SEL_ACTIVITY_MIN,    ///< With lowest activity
+      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_MIN_MIN,         ///< With smallest min
+      SEL_MIN_MAX,         ///< With largest min
+      SEL_MAX_MIN,         ///< With smallest max
+      SEL_MAX_MAX,         ///< With largest max
+      SEL_SIZE_MIN,        ///< With smallest domain size
+      SEL_SIZE_MAX,        ///< With largest domain size
+      SEL_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
+      SEL_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
+      SEL_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
+      SEL_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
+      SEL_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
+      SEL_SIZE_ACTIVITY_MAX, ///< With largest domain size divided by activity
+      /** \brief With smallest min-regret
+       *
+       * The min-regret of a variable is the difference between the
+       * smallest and second-smallest value still in the domain.
+       */
+      SEL_REGRET_MIN_MIN,
+      /** \brief With largest min-regret
+       *
+       * The min-regret of a variable is the difference between the
+       * smallest and second-smallest value still in the domain.
+       */
+      SEL_REGRET_MIN_MAX,
+      /** \brief With smallest max-regret
+       *
+       * The max-regret of a variable is the difference between the
+       * largest and second-largest value still in the domain.
+       */
+      SEL_REGRET_MAX_MIN,
+      /** \brief With largest max-regret
+       *
+       * The max-regret of a variable is the difference between the
+       * largest and second-largest value still in the domain.
+       */
+      SEL_REGRET_MAX_MAX
+    };
+  protected:
+    /// Which variable to select
+    Select s;
+  public:
+    /// Initialize with strategy SEL_NONE
+    IntVarBranch(void);
+    /// Initialize with random number generator \a r
+    IntVarBranch(Rnd r);
+    /// Initialize with selection strategy \a s and tie-breaking tolerance \a t
+    IntVarBranch(Select s, double t);
+    /// Initialize with selection strategy \a s, activity \a a, and tie-breaking tolerance \a t
+    IntVarBranch(Select s, Activity a, double t);
+    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-breaking tolerance \a t
+    IntVarBranch(Select s, void* mf, double t);
+    /// Return selection strategy
+    Select select(void) const;
+  };
+
+  /**
+   * \defgroup TaskModelIntBranchVar Variable selection for integer and Boolean variables
+   * \ingroup TaskModelIntBranch
+   */
+  //@{
+  /// Select first unassigned variable
+  IntVarBranch INT_VAR_NONE(void);
+  /// Select random variable (uniform distribution, for tie breaking)
+  IntVarBranch INT_VAR_RND(Rnd r);
+  /// Select variable with least merit according to branch merit function \a bm
+  IntVarBranch INT_VAR_MERIT_MIN(IntBranchMerit bm, double tbt=0.0);
+  /// Select variable with least merit according to branch merit function \a bm
+  IntVarBranch INT_VAR_MERIT_MIN(BoolBranchMerit bm, double tbt=0.0);
+  /// Select variable with highest merit according to branch merit function \a bm
+  IntVarBranch INT_VAR_MERIT_MAX(IntBranchMerit bm, double tbt=0.0);
+  /// Select variable with highest merit according to branch merit function \a bm
+  IntVarBranch INT_VAR_MERIT_MAX(BoolBranchMerit bm, double tbt=0.0);
+  /// Select variable with smallest degree
+  IntVarBranch INT_VAR_DEGREE_MIN(double tbt=0.0);
+  /// Select variable with largest degree
+  IntVarBranch INT_VAR_DEGREE_MAX(double tbt=0.0);
+  /// Select variable with smallest accumulated failure count
+  IntVarBranch INT_VAR_AFC_MIN(double tbt=0.0);
+  /// Select variable with largest accumulated failure count    
+  IntVarBranch INT_VAR_AFC_MAX(double tbt=0.0);
+  /// Select variable with lowest activity
+  IntVarBranch INT_VAR_ACTIVITY_MIN(IntActivity a, double tbt=0.0);    
+  /// Select variable with lowest activity
+  IntVarBranch INT_VAR_ACTIVITY_MIN(BoolActivity a, double tbt=0.0);    
+  /// Select variable with highest activity
+  IntVarBranch INT_VAR_ACTIVITY_MAX(IntActivity a, double tbt=0.0);     
+  /// Select variable with highest activity
+  IntVarBranch INT_VAR_ACTIVITY_MAX(BoolActivity a, double tbt=0.0);     
+  /// Select variable with smallest min
+  IntVarBranch INT_VAR_MIN_MIN(double tbt=0.0);         
+  /// Select variable with largest min
+  IntVarBranch INT_VAR_MIN_MAX(double tbt=0.0);
+  /// Select variable with smallest max
+  IntVarBranch INT_VAR_MAX_MIN(double tbt=0.0); 
+  /// Select variable with largest max
+  IntVarBranch INT_VAR_MAX_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size
+  IntVarBranch INT_VAR_SIZE_MIN(double tbt=0.0);
+  /// Select variable with largest domain size
+  IntVarBranch INT_VAR_SIZE_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size divided by degree
+  IntVarBranch INT_VAR_SIZE_DEGREE_MIN(double tbt=0.0);
+  /// Select variable with largest domain size divided by degree
+  IntVarBranch INT_VAR_SIZE_DEGREE_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size divided by accumulated failure count
+  IntVarBranch INT_VAR_SIZE_AFC_MIN(double tbt=0.0);
+  /// Select variable with largest domain size divided by accumulated failure count
+  IntVarBranch INT_VAR_SIZE_AFC_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size divided by activity
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MIN(IntActivity a, double tbt=0.0);
+  /// Select variable with smallest domain size divided by activity
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MIN(BoolActivity a, double tbt=0.0);
+  /// Select variable with largest domain size divided by activity
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MAX(IntActivity a, double tbt=0.0);
+  /// Select variable with largest domain size divided by activity
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MAX(BoolActivity a, double tbt=0.0);
+  /** \brief Select variable with smallest min-regret
+   *
+   * The min-regret of a variable is the difference between the
+   * smallest and second-smallest value still in the domain.
+   */
+  IntVarBranch INT_VAR_REGRET_MIN_MIN(double tbt=0.0);
+  /** \brief Select variable with largest min-regret
+   *
+   * The min-regret of a variable is the difference between the
+   * smallest and second-smallest value still in the domain.
+   */
+  IntVarBranch INT_VAR_REGRET_MIN_MAX(double tbt=0.0);
+  /** \brief Select variable with smallest max-regret
+   *
+   * The max-regret of a variable is the difference between the
+   * largest and second-largest value still in the domain.
+   */
+  IntVarBranch INT_VAR_REGRET_MAX_MIN(double tbt=0.0);
+  /** \brief Select variable with largest max-regret
+   *
+   * The max-regret of a variable is the difference between the
+   * largest and second-largest value still in the domain.
+   */
+  IntVarBranch INT_VAR_REGRET_MAX_MAX(double tbt=0.0);
+  //@}
+
+}
+
+#include <gecode/int/branch/var.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Which values to select for branching first
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  class IntValBranch : public ValBranch {
+  public:
+    /// Which value selection
+    enum Select {
+      SEL_MIN,        ///< Select smallest value
+      SEL_MED,        ///< Select greatest value not greater than the median
+      SEL_MAX,        ///< Select largest value
+      SEL_RND,        ///< Select random value
+      SEL_SPLIT_MIN,  ///< Select values not greater than mean of smallest and largest value
+      SEL_SPLIT_MAX,  ///< Select values greater than mean of smallest and largest value
+      SEL_RANGE_MIN,  ///< Select the smallest range of the variable domain if it has several ranges, otherwise select values not greater than mean of smallest and largest value
+      SEL_RANGE_MAX,  ///< Select the largest range of the variable domain if it has several ranges, otherwise select values greater than mean of smallest and largest value
+      SEL_VAL_COMMIT, ///< Select value according to user-defined functions
+      SEL_VALUES_MIN, ///< Select all values starting from smallest
+      SEL_VALUES_MAX  ///< Select all values starting from largest
+    };
+  protected:
+    /// Which value to select
+    Select s;
+  public:
+    /// Initialize with selection strategy \a s
+    IntValBranch(Select s = SEL_MIN);
+    /// Initialize with random number generator \a r
+    IntValBranch(Rnd r);
+    /// Initialize with value function \a f and commit function \a c
+    IntValBranch(void* v, void* c);
+    /// Return selection strategy
+    Select select(void) const;
+  };
+
+  /**
+   * \defgroup TaskModelIntBranchVal Value selection for integer and Boolean variables
+   * \ingroup TaskModelIntBranch
+   */
+  //@{
+  /// Select smallest value
+  IntValBranch INT_VAL_MIN(void);
+  /// Select greatest value not greater than the median
+  IntValBranch INT_VAL_MED(void);
+  /// Select largest value
+  IntValBranch INT_VAL_MAX(void);
+  /// Select random value
+  IntValBranch INT_VAL_RND(Rnd r);
+  /// Select values not greater than mean of smallest and largest value
+  IntValBranch INT_VAL_SPLIT_MIN(void);
+  /// Select values greater than mean of smallest and largest value
+  IntValBranch INT_VAL_SPLIT_MAX(void);
+  /// Select the smallest range of the variable domain if it has several ranges, otherwise select values not greater than mean of smallest and largest value
+  IntValBranch INT_VAL_RANGE_MIN(void);
+  /// Select the largest range of the variable domain if it has several ranges, otherwise select values greater than mean of smallest and largest value
+  IntValBranch INT_VAL_RANGE_MAX(void);
+  /// Select value as defined by the value function \a v and commit function \a c
+  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c);
+  /// Select value as defined by the value function \a v and commit function \a c
+  IntValBranch INT_VAL(BoolBranchVal v, BoolBranchCommit c);
+  /// Try all values starting from smallest
+  IntValBranch INT_VALUES_MIN(void); 
+  /// Try all values starting from largest
+  IntValBranch INT_VALUES_MAX(void);
+  //@}
+
+}
+
+#include <gecode/int/branch/val.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Which values to select for assignment
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  class IntAssign : public ValBranch {
+  public:
+    /// Which value selection
+    enum Select {
+      SEL_MIN,       ///< Select smallest value
+      SEL_MED,       ///< Select greatest value not greater than the median
+      SEL_MAX,       ///< Select largest value
+      SEL_RND,       ///< Select random value
+      SEL_VAL_COMMIT ///< Select value according to user-defined functions
+    };
+  protected:
+    /// Which value to select
+    Select s;
+  public:
+    /// Initialize with selection strategy \a s
+    IntAssign(Select s = SEL_MIN);
+    /// Initialize with random number generator \a r
+    IntAssign(Rnd r);
+    /// Initialize with value function \a f and commit function \a c
+    IntAssign(void* v, void* c);
+    /// Return selection strategy
+    Select select(void) const;
+  };
+
+  /**
+   * \defgroup TaskModelIntBranchAssign Value selection for assigning integer and Boolean variables
+   * \ingroup TaskModelIntBranch
+   */
+  //@{
+  /// Select smallest value
+  IntAssign INT_ASSIGN_MIN(void);
+  /// Select greatest value not greater than the median
+  IntAssign INT_ASSIGN_MED(void);
+  /// Select largest value
+  IntAssign INT_ASSIGN_MAX(void);
+  /// Select random value
+  IntAssign INT_ASSIGN_RND(Rnd r);
+  /// Select value as defined by the value function \a v and commit function \a c
+  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c);
+  /// Select value as defined by the value function \a v and commit function \a c
+  IntAssign INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c);
+  //@}
+
+}
+
+#include <gecode/int/branch/assign.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, const IntVarArgs& x,
+         IntVarBranch vars, IntValBranch vals, 
+         IntBranchFilter ibf=NULL);
+  /**
+   * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, const IntVarArgs& x,
+         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
+         IntBranchFilter ibf=NULL);
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, IntVar x, IntValBranch vals);
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, const BoolVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         BoolBranchFilter bbf=NULL);
+  /**
+   * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, const BoolVarArgs& x,
+         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
+         BoolBranchFilter bbf=NULL);
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  branch(Home home, BoolVar x, IntValBranch vals);
+
+  /**
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  assign(Home home, const IntVarArgs& x, IntAssign vals,
+         IntBranchFilter ibf=NULL);
+  /**
+   * \brief Assign \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  assign(Home home, IntVar x, IntAssign vals);
+  /**
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  assign(Home home, const BoolVarArgs& x, IntAssign vals,
+         BoolBranchFilter bbf=NULL);
+  /**
+   * \brief Assign \a x with value selection \a vals
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  assign(Home home, BoolVar x, IntAssign vals);
+
+}
 
 namespace Gecode {
 

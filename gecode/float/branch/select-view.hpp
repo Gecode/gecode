@@ -43,8 +43,8 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline
   MeritMin::MeritMin(void) {}
   forceinline
-  MeritMin::MeritMin(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<FloatView>(home,vbo) {}
+  MeritMin::MeritMin(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView>(home,vb) {}
   forceinline double
   MeritMin::operator ()(Space&, FloatView x, int) {
     return x.min();
@@ -54,8 +54,8 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline
   MeritMax::MeritMax(void) {}
   forceinline
-  MeritMax::MeritMax(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<FloatView>(home,vbo) {}
+  MeritMax::MeritMax(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView>(home,vb) {}
   forceinline double
   MeritMax::operator ()(Space&, FloatView x, int) {
     return x.max();
@@ -65,8 +65,8 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline
   MeritSize::MeritSize(void) {}
   forceinline
-  MeritSize::MeritSize(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<FloatView>(home,vbo) {}
+  MeritSize::MeritSize(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView>(home,vb) {}
   forceinline double
   MeritSize::operator ()(Space&, FloatView x, int) {
     return x.size();
@@ -76,8 +76,8 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline
   MeritSizeDegree::MeritSizeDegree(void) {}
   forceinline
-  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<FloatView>(home,vbo) {}
+  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView>(home,vb) {}
   forceinline double
   MeritSizeDegree::operator ()(Space&, FloatView x, int) {
     return x.size() / static_cast<double>(x.degree());
@@ -87,8 +87,8 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline
   MeritSizeAfc::MeritSizeAfc(void) {}
   forceinline
-  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<FloatView>(home,vbo) {}
+  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView>(home,vb) {}
   forceinline double
   MeritSizeAfc::operator ()(Space&, FloatView x, int) {
     return x.size() / x.afc();
@@ -98,12 +98,8 @@ namespace Gecode { namespace Float { namespace Branch {
   forceinline
   MeritSizeActivity::MeritSizeActivity(void) {}
   forceinline
-  MeritSizeActivity::MeritSizeActivity(Space& home,
-                                       const VarBranchOptions& vbo)
-    : MeritBase<FloatView>(home,vbo), activity(vbo.activity) {
-    if (!activity.initialized())
-      throw MissingActivity("MeritActivity (FLOAT_VAR_SIZE_ACTIVITY)");
-  }
+  MeritSizeActivity::MeritSizeActivity(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView>(home,vb), activity(vb.activity()) {}
   forceinline double
   MeritSizeActivity::operator ()(Space&, FloatView x, int i) {
     return x.size() / activity[i];

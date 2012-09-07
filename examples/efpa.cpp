@@ -273,7 +273,7 @@ public:
       }
     }
 
-    branch(*this, c, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, c, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   /// Print instance and solution

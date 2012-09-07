@@ -41,66 +41,80 @@ namespace Gecode {
 
   void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
-         const ValBranchOptions& o_vals) {
+         SetBranchFilter sbf) {
     using namespace Set;
     if (home.failed()) return;
     ViewArray<SetView> xv(home,x);
-    ViewSelNone<SetView> v(home,VarBranchOptions::def);
-    switch (vals) {
-    case SET_ASSIGN_MIN_INC:
+    ViewSelNone<SetView> v(home,SetVarBranch());
+    switch (vals.select()) {
+    case SetAssign::SEL_MIN_INC:
       {
-        Branch::AssignValMin<true> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValMin<true> >
-          ::post(home,xv,v,a);
+        Branch::AssignValMin<true> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValMin<true> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_MIN_EXC:
+    case SetAssign::SEL_MIN_EXC:
       {
-        Branch::AssignValMin<false> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValMin<false> >
-          ::post(home,xv,v,a);
+        Branch::AssignValMin<false> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValMin<false> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_MED_INC:
+    case SetAssign::SEL_MED_INC:
       {
-        Branch::AssignValMed<true> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValMed<true> >
-          ::post(home,xv,v,a);
+        Branch::AssignValMed<true> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValMed<true> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_MED_EXC:
+    case SetAssign::SEL_MED_EXC:
       {
-        Branch::AssignValMed<false> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValMed<false> >
-          ::post(home,xv,v,a);
+        Branch::AssignValMed<false> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValMed<false> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_MAX_INC:
+    case SetAssign::SEL_MAX_INC:
       {
-        Branch::AssignValMax<true> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValMax<true> >
-          ::post(home,xv,v,a);
+        Branch::AssignValMax<true> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValMax<true> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_MAX_EXC:
+    case SetAssign::SEL_MAX_EXC:
       {
-        Branch::AssignValMax<false> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValMax<false> >
-          ::post(home,xv,v,a);
+        Branch::AssignValMax<false> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValMax<false> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_RND_INC:
+    case SetAssign::SEL_RND_INC:
       {
-        Branch::AssignValRnd<true> a(home,o_vals);
-        ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValRnd<true> >
-          ::post(home,xv,v,a);
+        Branch::AssignValRnd<true> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,
+          Branch::AssignValRnd<true> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
-    case SET_ASSIGN_RND_EXC:
+    case SetAssign::SEL_RND_EXC:
       {
-        Branch::AssignValRnd<false> a(home,o_vals);
+        Branch::AssignValRnd<false> a(home,vals);
         ViewValBrancher<ViewSelNone<SetView>,Branch::AssignValRnd<false> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,sbf);
+      }
+      break;
+    case SetAssign::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<SetView,1> a(home,vals);
+        ViewValBrancher<ViewSelNone<SetView>,ValSelValCommit<SetView,1> >
+          ::post(home,xv,v,a,sbf);
       }
       break;
     default:
@@ -109,17 +123,15 @@ namespace Gecode {
   }
 
   void
-  branch(Home home, SetVar x, SetValBranch vals,
-         const ValBranchOptions& o_vals) {
+  branch(Home home, SetVar x, SetValBranch vals) {
     SetVarArgs xv(1); xv[0]=x;
-    branch(home, xv, SET_VAR_NONE, vals, VarBranchOptions::def, o_vals);
+    branch(home, xv, SET_VAR_NONE(), vals);
   }
   
   void
-  assign(Home home, SetVar x, SetAssign vals,
-         const ValBranchOptions& o_vals) {
+  assign(Home home, SetVar x, SetAssign vals) {
     SetVarArgs xv(1); xv[0]=x;
-    assign(home, xv, vals, o_vals);
+    assign(home, xv, vals);
   }
 
 }

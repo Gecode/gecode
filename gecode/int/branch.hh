@@ -65,8 +65,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ValMin(void);
     /// Constructor for initialization
-    ValMin(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x at position \a i
+    ValMin(Space& home, const ValBranch& vb);
+    /// Return minimum value of view \a x
     int val(Space& home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, int n);
@@ -85,8 +85,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ValMed(void);
     /// Constructor for initialization
-    ValMed(Space& home, const ValBranchOptions& vbo);
-    /// Return maximum value of view \a x at position \a i
+    ValMed(Space& home, const ValBranch& vb);
+    /// Return maximum value of view \a x
     int val(Space& home, View x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, int n);
@@ -99,36 +99,24 @@ namespace Gecode { namespace Int { namespace Branch {
    * \code #include <gecode/int/branch.hh> \endcode
    * \ingroup FuncIntSelVal
    */
-  template<class _View>
-  class ValRnd {
+  template<class View>
+  class ValRnd : public ValSelBase<View,int> {
   protected:
     /// The random number generator
-    ArchivedRandomGenerator r;
+    Rnd r;
   public:
-    /// View type
-    typedef _View View;
-    /// Value type
-    typedef int Val;
-    /// Choice type
-    typedef ArchivedRandomGenerator Choice;
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
     /// Default constructor
     ValRnd(void);
     /// Constructor for initialization
-    ValRnd(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x at position \a i
-    int val(Space& home, _View x);
+    ValRnd(Space& home, const ValBranch& vb);
+    /// Return random value of view \a x
+    int val(Space& home, View x);
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
-    ModEvent tell(Space& home, unsigned int a, _View x, int n);
-    /// Return choice
-    Choice choice(Space& home);
-    /// Return choice
-    Choice choice(const Space& home, Archive& e);
-    /// Commit to choice
-    void commit(Space& home, const Choice& c, unsigned a);
+    ModEvent tell(Space& home, unsigned int a, View x, int n);
     /// Updating during cloning
     void update(Space& home, bool share, ValRnd& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
     /// Delete value selection
     void dispose(Space& home);
   };
@@ -147,8 +135,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ValSplitMin(void);
     /// Constructor for initialization
-    ValSplitMin(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x at position \a i
+    ValSplitMin(Space& home, const ValBranch& vb);
+    /// Return minimum value of view \a x
     int val(Space& home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, int n);
@@ -169,8 +157,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ValRangeMin(void);
     /// Constructor for initialization
-    ValRangeMin(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x at position \a i
+    ValRangeMin(Space& home, const ValBranch& vb);
+    /// Return minimum value of view \a x
     int val(Space& home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, int n);
@@ -208,8 +196,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     ValZeroOne(void);
     /// Constructor for initialization
-    ValZeroOne(Space& home, const ValBranchOptions& vbo);
-    /// Return no value of view \a x at position \a i
+    ValZeroOne(Space& home, const ValBranch& vb);
+    /// Return no value of view \a x
     NoValue val(Space& home, View x) const;
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
     ModEvent tell(Space& home, unsigned int a, View x, NoValue n);
@@ -241,7 +229,7 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual Actor* copy(Space& home, bool share);
     /// Constructor for creation
     static void post(Home home, ViewArray<typename ViewSel::View>& x,
-                     ViewSel& vi_s, BranchFilter bf=NULL);
+                     ViewSel& vi_s, BranchFilter bf);
   };
 
 
@@ -254,7 +242,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     AssignValMin(void);
     /// Constructor for initialization
-    AssignValMin(Space& home, const ValBranchOptions& vbo);
+    AssignValMin(Space& home, const ValBranch& vb);
   };
 
   /// Class for assigning maximum value
@@ -266,7 +254,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     AssignValMed(void);
     /// Constructor for initialization
-    AssignValMed(Space& home, const ValBranchOptions& vbo);
+    AssignValMed(Space& home, const ValBranch& vb);
   };
 
   /// Class for assigning random value
@@ -278,7 +266,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     AssignValRnd(void);
     /// Constructor for initialization
-    AssignValRnd(Space& home, const ValBranchOptions& vbo);
+    AssignValRnd(Space& home, const ValBranch& vb);
   };
 
   /// Class for assigning zero
@@ -290,7 +278,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     AssignValZero(void);
     /// Constructor for initialization
-    AssignValZero(Space& home, const ValBranchOptions& vbo);
+    AssignValZero(Space& home, const ValBranch& vb);
   };
 
   /*
@@ -309,7 +297,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritMin(void);
     /// Constructor for initialization
-    MeritMin(Space& home, const VarBranchOptions& vbo);
+    MeritMin(Space& home, const VarBranch& vb);
     /// Return minimum as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };
@@ -325,7 +313,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritMax(void);
     /// Constructor for initialization
-    MeritMax(Space& home, const VarBranchOptions& vbo);
+    MeritMax(Space& home, const VarBranch& vb);
     /// Return maximum as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };
@@ -341,7 +329,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritSize(void);
     /// Constructor for initialization
-    MeritSize(Space& home, const VarBranchOptions& vbo);
+    MeritSize(Space& home, const VarBranch& vb);
     /// Return size as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };
@@ -357,7 +345,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritSizeDegree(void);
     /// Constructor for initialization
-    MeritSizeDegree(Space& home, const VarBranchOptions& vbo);
+    MeritSizeDegree(Space& home, const VarBranch& vb);
     /// Return size over degree as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };
@@ -373,7 +361,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritSizeAfc(void);
     /// Constructor for initialization
-    MeritSizeAfc(Space& home, const VarBranchOptions& vbo);
+    MeritSizeAfc(Space& home, const VarBranch& vb);
     /// Return size over AFC as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };
@@ -391,7 +379,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritSizeActivity(void);
     /// Constructor for initialization
-    MeritSizeActivity(Space& home, const VarBranchOptions& vbo);
+    MeritSizeActivity(Space& home, const VarBranch& vb);
     /// Return size over activity as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
     /// Updating during cloning
@@ -413,7 +401,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritRegretMin(void);
     /// Constructor for initialization
-    MeritRegretMin(Space& home, const VarBranchOptions& vbo);
+    MeritRegretMin(Space& home, const VarBranch& vb);
     /// Return minimum regret as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };
@@ -429,7 +417,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Default constructor
     MeritRegretMax(void);
     /// Constructor for initialization
-    MeritRegretMax(Space& home, const VarBranchOptions& vbo);
+    MeritRegretMax(Space& home, const VarBranch& vb);
     /// Return maximum regret as merit for view \a x at position \a i
     double operator ()(Space& home, IntView x, int i);
   };

@@ -780,7 +780,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
 AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
  [dnl general compiler flags
   AC_DEFINE(forceinline,[__forceinline])
-  AC_GECODE_ADD_TO_COMPILERFLAGS([-nologo])
+  AC_GECODE_ADD_TO_COMPILERFLAGS([-nologo -bigobj])
   AC_GECODE_ADD_TO_CFLAGS([-D_CRT_SECURE_NO_DEPRECATE])
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
   AC_DEFINE([GECODE_MEMORY_ALIGNMENT], [sizeof(void*)],
@@ -840,7 +840,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(COMPILESBJ, "-c -Fa")
   AC_SUBST(CXXIN, "-Tp")
   AC_SUBST(CCIN, "-Tc")
-  AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "-bigobj")
 
   dnl Install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "yes")

@@ -243,11 +243,11 @@ public:
     }
 
     // First branch over the precedences
-    branch(*this, b, INT_VAR_AFC_MAX, INT_VAL_MAX);
+    branch(*this, b, INT_VAR_AFC_MAX(), INT_VAL_MAX());
     // When the precedences are fixed, simply assign the start times
-    assign(*this, _start, INT_ASSIGN_MIN);
+    assign(*this, _start, INT_ASSIGN_MIN());
     // When the start times are fixed, use the tightest makespan
-    assign(*this, makespan, INT_ASSIGN_MIN);
+    assign(*this, makespan, INT_ASSIGN_MIN());
   }
 
   /// Constructor for cloning \a s

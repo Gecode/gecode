@@ -194,14 +194,15 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	activity
+	activity rnd
 
 KERNELHDR0 = \
 	archive array shared-array core exception \
 	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
-	branch brancher brancher-view brancher-merit brancher-tiebreak \
-	brancher-val allocators global-prop-info activity
+	branch-var branch-val brancher brancher-view brancher-merit brancher-tiebreak \
+	brancher-val allocators global-prop-info activity rnd \
+	branch-traits
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
@@ -301,7 +302,7 @@ INTSRC0 = \
 	bin-packing.cpp bin-packing/propagate.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
 	circuit.cpp no-overlap.cpp nvalues.cpp \
-	member.cpp activity.cpp \
+	member.cpp branch/activity.cpp \
 	arithmetic/mult.cpp
 
 INTHDR0 = \
@@ -313,6 +314,7 @@ INTHDR0 = \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
 	bool/clause.hpp \
 	precede.hh precede/single.hpp \
+	branch/traits.hpp branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/post-val-int.hpp branch/post-val-bool.hpp \
 	branch/select-val.hpp \
 	branch/select-values.hpp branch/select-view.hpp \
@@ -381,7 +383,7 @@ INTHDR0 = \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
 	val-set.hh val-set.hpp \
 	member.hh member/prop.hpp member/re-prop.hpp \
-	activity.hpp
+	branch/activity.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%) \
 	gecode/int/branch/post-view-int.cpp \
@@ -427,7 +429,7 @@ INTBUILDDIRS	= \
 
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
-	linear/post.cpp activity.cpp rounding.cpp exec.cpp
+	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -444,8 +446,9 @@ FLOATHDR0 = \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
 	branch.hh branch/post-val.hpp branch/select-val.hpp \
-	branch/select-view.hpp activity.hpp num.hpp val.hpp \
-	rounding.hpp
+	branch/select-view.hpp branch/activity.hpp branch/traits.hpp \
+	branch/var.hpp branch/val.hpp branch/assign.hpp \
+	num.hpp val.hpp rounding.hpp nextafter.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%) \
 	gecode/float/branch/post-view.cpp
@@ -503,7 +506,7 @@ SETSRC0 =								 \
 	precede.cpp \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
-	exec.cpp activity.cpp
+	exec.cpp branch/activity.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -530,7 +533,8 @@ SETHDR0 =								     \
 	precede.hh precede/single.hpp \
 	rel-op.hh					     \
 	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
-	branch/post-val.hpp activity.hpp
+	branch/post-val.hpp branch/activity.hpp branch/traits.hpp \
+	branch/var.hpp branch/val.hpp branch/assign.hpp \
 
 SETSRC		= $(SETSRC0:%=gecode/set/%) \
 	gecode/set/branch/post-view.cpp

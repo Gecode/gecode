@@ -190,7 +190,7 @@ public:
       ps[2*i+1] = p2[i];
     }
 
-    branch(*this, ps, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, ps, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   /// Print solution

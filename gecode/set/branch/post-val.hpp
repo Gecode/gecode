@@ -47,54 +47,69 @@ namespace Gecode { namespace Set { namespace Branch {
   template<class SelView>
   void
   post(Space& home, ViewArray<SetView>& x, SelView& v,
-       SetValBranch vals, const ValBranchOptions& o_vals, BranchFilter bf) {
-    switch (vals) {
-    case SET_VAL_MIN_INC:
+       const SetValBranch& vals, SetBranchFilter sbf) {
+    switch (vals.select()) {
+    case SetValBranch::SEL_MIN_INC:
       {
-        ValMin<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValMin<true> >::post(home,x,v,a,bf);
+        ValMin<true> a(home,vals);
+        ViewValBrancher<SelView,ValMin<true> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_MIN_EXC:
+    case SetValBranch::SEL_MIN_EXC:
       {
-        ValMin<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValMin<false> >::post(home,x,v,a,bf);
+        ValMin<false> a(home,vals);
+        ViewValBrancher<SelView,ValMin<false> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_MED_INC:
+    case SetValBranch::SEL_MED_INC:
       {
-        ValMed<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValMed<true> >::post(home,x,v,a,bf);
+        ValMed<true> a(home,vals);
+        ViewValBrancher<SelView,ValMed<true> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_MED_EXC:
+    case SetValBranch::SEL_MED_EXC:
       {
-        ValMed<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValMed<false> >::post(home,x,v,a,bf);
+        ValMed<false> a(home,vals);
+        ViewValBrancher<SelView,ValMed<false> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_MAX_INC:
+    case SetValBranch::SEL_MAX_INC:
       {
-        ValMax<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValMax<true> >::post(home,x,v,a,bf);
+        ValMax<true> a(home,vals);
+        ViewValBrancher<SelView,ValMax<true> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_MAX_EXC:
+    case SetValBranch::SEL_MAX_EXC:
       {
-        ValMax<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValMax<false> >::post(home,x,v,a,bf);
+        ValMax<false> a(home,vals);
+        ViewValBrancher<SelView,ValMax<false> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_RND_INC:
+    case SetValBranch::SEL_RND_INC:
       {
-        ValRnd<true> a(home,o_vals);
-        ViewValBrancher<SelView,ValRnd<true> >::post(home,x,v,a,bf);
+        ValRnd<true> a(home,vals);
+        ViewValBrancher<SelView,ValRnd<true> >
+          ::post(home,x,v,a,sbf);
       }
       break;
-    case SET_VAL_RND_EXC:
+    case SetValBranch::SEL_RND_EXC:
       {
-        ValRnd<false> a(home,o_vals);
-        ViewValBrancher<SelView,ValRnd<false> >::post(home,x,v,a,bf);
+        ValRnd<false> a(home,vals);
+        ViewValBrancher<SelView,ValRnd<false> >
+          ::post(home,x,v,a,sbf);
+      }
+      break;
+    case SetValBranch::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<SetView,2> a(home,vals);
+        ViewValBrancher<SelView,ValSelValCommit<SetView,2> >
+          ::post(home,x,v,a,sbf);
       }
       break;
     default:

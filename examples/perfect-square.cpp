@@ -268,8 +268,8 @@ public:
       GECODE_NEVER;
     }
 
-    branch(*this, x, INT_VAR_MIN_MIN, INT_VAL_MIN);
-    branch(*this, y, INT_VAR_MIN_MIN, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_MIN_MIN(), INT_VAL_MIN());
+    branch(*this, y, INT_VAR_MIN_MIN(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning \a s

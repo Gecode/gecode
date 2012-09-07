@@ -135,10 +135,10 @@ public:
     c_total = expr(*this, c_fixed*sum(open) + sum(c_store));
 
     // Branch with largest minimum regret on store cost
-    branch(*this, c_store, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
+    branch(*this, c_store, INT_VAR_REGRET_MIN_MAX(), INT_VAL_MIN());
 
     // Branch by assigning a supplier to each store
-    branch(*this, supplier, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, supplier, INT_VAR_NONE(), INT_VAL_MIN());
   }
   /// Return solution cost
   virtual IntVar cost(void) const {

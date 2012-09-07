@@ -105,7 +105,7 @@ public:
             cardinality(x[j] & cx[i]) +
             cardinality(x[i] & cx[j]) >= opt.distance());
 
-    branch(*this, x, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, x, SET_VAR_NONE(), SET_VAL_MIN_INC());
   }
 
   /// Print solution

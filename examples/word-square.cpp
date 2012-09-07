@@ -107,11 +107,11 @@ public:
     switch (opt.branching()) {
     case BRANCH_WORDS:
       // Branch by assigning words
-      branch(*this, words, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
+      branch(*this, words, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
       break;
     case BRANCH_LETTERS:
       // Branch by assigning letters
-      branch(*this, letters, INT_VAR_SIZE_AFC_MIN, INT_VAL_MIN);
+      branch(*this, letters, INT_VAR_SIZE_AFC_MIN(), INT_VAL_MIN());
       break;
     }
   }

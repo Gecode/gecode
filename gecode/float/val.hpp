@@ -39,24 +39,6 @@
  *
  */
 
-#ifdef _MSC_VER
-
-// Provide access to nextafter function
-
-#include <cfloat>
-
-namespace Gecode {
-
-  /// Return next double value from \a x in direction \a y
-  forceinline double
-  nextafter(double x, double y) {
-    return _nextafter(x,y);
-  }
-
-}
-
-#endif
-
 namespace Gecode {
 
   /*

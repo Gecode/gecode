@@ -51,13 +51,14 @@ namespace Test { namespace Float {
    */
   void
   CpltAssignment::operator++(void) {
+    using namespace Gecode;
     int i = n-1;
     while (true) {
       Gecode::FloatNum ns = dsv[i].min() + step;
-      dsv[i] = Gecode::FloatVal(ns,nextafter(ns,ns+1));
+      dsv[i] = FloatVal(ns,nextafter(ns,ns+1));
       if ((dsv[i].max() < d.max()) || (i == 0))
         return;
-      dsv[i--] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
+      dsv[i--] = FloatVal(d.min(),nextafter(d.min(),d.max()));
     }
   }
 
@@ -67,18 +68,18 @@ namespace Test { namespace Float {
    */
   void
   ExtAssignment::operator++(void) {
+    using namespace Gecode;
     assert(n > 1);
     int i = n-2;
     while (true) {
-      Gecode::FloatNum ns = dsv[i].min() + step;
-      dsv[i] = Gecode::FloatVal(ns,nextafter(ns,ns+1));
-      if ((dsv[i].max() < d.max()) || (i == 0))
-      {
+      FloatNum ns = dsv[i].min() + step;
+      dsv[i] = FloatVal(ns,nextafter(ns,ns+1));
+      if ((dsv[i].max() < d.max()) || (i == 0)) {
         if (curPb->extendAssignement(*this)) return;
         if ((dsv[i].max() >= d.max()) && (i == 0)) return;
         continue;
       }
-      dsv[i--] = Gecode::FloatVal(d.min(),nextafter(d.min(),d.max()));
+      dsv[i--] = FloatVal(d.min(),nextafter(d.min(),d.max()));
     }
   }
   
@@ -454,7 +455,7 @@ if (!(T)) {                                                     \
     // Set up space for all solution search
     TestSpace* search_s = new TestSpace(arity,dom,step,this,false);
     post(*search_s,search_s->x);
-    branch(*search_s,search_s->x,FLOAT_VAR_NONE,FLOAT_VAL_SPLIT_MIN);
+    branch(*search_s,search_s->x,FLOAT_VAR_NONE(),FLOAT_VAL_SPLIT_MIN());
     Search::Options search_o;
     search_o.threads = 1;
     DFS<TestSpace> * e_s = new DFS<TestSpace>(search_s,search_o);
@@ -714,13 +715,17 @@ if (!(T)) {                                                     \
           delete s;
           s = ss;
           Gecode::FloatNum size = 1.0;
-          int cutDirections[s->x.size()];
-          for (int j = s->x.size(); j--; ) cutDirections[j] = Base::rand(2);
+          int* cutDirections = new int[s->x.size()];
+          for (int j = s->x.size(); j--; ) 
+            cutDirections[j] = Base::rand(2);
           while (!s->failed() && !s->assigned() && (size > 1e-10))
-              size = s->cut(cutDirections);
+            size = s->cut(cutDirections);
+          delete [] cutDirections;
         }
         CHECK_TEST(!s->failed(), "Failed");
-        if (s->assigned()) { CHECK_TEST(subsumed(*s), "No subsumption"); }
+        if (s->assigned()) { 
+          CHECK_TEST(subsumed(*s), "No subsumption"); 
+        }
       }
       delete s;
     }

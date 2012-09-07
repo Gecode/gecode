@@ -113,7 +113,7 @@ public:
       }
 
     // Install branching
-    branch(*this, b, INT_VAR_NONE, INT_VAL_MAX);
+    branch(*this, b, INT_VAR_NONE(), INT_VAL_MAX());
   }
 
   /// Print solution

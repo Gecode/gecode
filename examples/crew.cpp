@@ -130,7 +130,7 @@ public:
     }
     rel(*this, flight[noOfFlights-2] || flight[noOfFlights-1]);
 
-    branch(*this, flight, SET_VAR_NONE, SET_VAL_MIN_INC);
+    branch(*this, flight, SET_VAR_NONE(), SET_VAL_MIN_INC());
   }
 
   /// Print solution

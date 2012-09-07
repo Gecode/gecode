@@ -165,7 +165,7 @@ public:
     rel(*this, y[0], IRT_LE, y[n*k-1]);
 
     // Branching
-    branch(*this, y, INT_VAR_SIZE_MIN, INT_VAL_MAX);
+    branch(*this, y, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
   }
 
   /// Print solution

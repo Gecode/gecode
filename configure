@@ -8808,8 +8808,8 @@ intel)
      windows*)
          $as_echo "#define forceinline __forceinline" >>confdefs.h
 
-  CFLAGS="-nologo${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-nologo${CXXFLAGS:+ }${CXXFLAGS}"
+  CFLAGS="-nologo -bigobj${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-nologo -bigobj${CXXFLAGS:+ }${CXXFLAGS}"
   CFLAGS="-D_CRT_SECURE_NO_DEPRECATE${CFLAGS:+ }${CFLAGS}"
   CXXFLAGS="-EHsc${CXXFLAGS:+ }${CXXFLAGS}"
 
@@ -9052,8 +9052,6 @@ fi
   CXXIN="-Tp"
 
   CCIN="-Tc"
-
-  EXAMPLES_EXTRA_CXXFLAGS="-bigobj"
 
 
     INSTALLLIBS="yes"
@@ -10765,8 +10763,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 microsoft)
     $as_echo "#define forceinline __forceinline" >>confdefs.h
 
-  CFLAGS="-nologo${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-nologo${CXXFLAGS:+ }${CXXFLAGS}"
+  CFLAGS="-nologo -bigobj${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-nologo -bigobj${CXXFLAGS:+ }${CXXFLAGS}"
   CFLAGS="-D_CRT_SECURE_NO_DEPRECATE${CFLAGS:+ }${CFLAGS}"
   CXXFLAGS="-EHsc${CXXFLAGS:+ }${CXXFLAGS}"
 
@@ -11009,8 +11007,6 @@ fi
   CXXIN="-Tp"
 
   CCIN="-Tc"
-
-  EXAMPLES_EXTRA_CXXFLAGS="-bigobj"
 
 
     INSTALLLIBS="yes"

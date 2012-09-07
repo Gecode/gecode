@@ -100,7 +100,7 @@ public:
       rel(*this, v[*e1], BOT_AND, v[*e2], 0);
     }
     linear(*this, v, IRT_EQ, k);
-    branch(*this, v, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, v, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning \a s

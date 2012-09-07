@@ -41,17 +41,6 @@
 
 namespace Gecode {
 
-  const VarBranchOptions VarBranchOptions::def;
-
-  const ValBranchOptions ValBranchOptions::def;
-
-  const TieBreakVarBranchOptions TieBreakVarBranchOptions::def;
-
-
-  /*
-   * Function brancher
-   */
-
   /// %Brancher for calling a function
   class GECODE_KERNEL_EXPORT FunctionBranch : public Brancher {
   protected:

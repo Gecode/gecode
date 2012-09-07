@@ -43,34 +43,43 @@ namespace Gecode {
 
   void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
-         const ValBranchOptions& o_vals) {
+         FloatBranchFilter fbf) {
     using namespace Float;
     if (home.failed()) return;
     ViewArray<FloatView> xv(home,x);
-    ViewSelNone<FloatView> v(home,VarBranchOptions::def);
-    switch (vals) {
-    case FLOAT_ASSIGN_MIN:
+    ViewSelNone<FloatView> v(home,FloatVarBranch());
+    switch (vals.select()) {
+    case FloatAssign::SEL_MIN:
       {
-        Branch::AssignValMin<FloatView> a(home,o_vals);
+        Branch::AssignValMin<FloatView> a(home,vals);
         ViewValBrancher
-          <ViewSelNone<FloatView>,Branch::AssignValMin<FloatView> >
-          ::post(home,xv,v,a);
+          <ViewSelNone<FloatView>,
+          Branch::AssignValMin<FloatView> >
+          ::post(home,xv,v,a,fbf);
       }
       break;
-    case FLOAT_ASSIGN_MAX:
+    case FloatAssign::SEL_MAX:
       {
-        Branch::AssignValMax<FloatView> a(home,o_vals);
+        Branch::AssignValMax<FloatView> a(home,vals);
         ViewValBrancher
-          <ViewSelNone<FloatView>,Branch::AssignValMax<FloatView> >
-          ::post(home,xv,v,a);
+          <ViewSelNone<FloatView>,
+          Branch::AssignValMax<FloatView> >
+          ::post(home,xv,v,a,fbf);
       }
       break;
-    case FLOAT_ASSIGN_RND:
+    case FloatAssign::SEL_RND:
       {
-        Branch::AssignValRnd<FloatView> a(home,o_vals);
+        Branch::AssignValRnd<FloatView> a(home,vals);
         ViewValBrancher
           <ViewSelNone<FloatView>,Branch::AssignValRnd<FloatView> >
-          ::post(home,xv,v,a);
+          ::post(home,xv,v,a,fbf);
+      }
+      break;
+    case FloatAssign::SEL_VAL_COMMIT:
+      {
+        ValSelValCommit<FloatView,1> a(home,vals);
+        ViewValBrancher<ViewSelNone<FloatView>,ValSelValCommit<FloatView,1> >
+          ::post(home,xv,v,a,fbf);
       }
       break;
     default:
@@ -79,17 +88,15 @@ namespace Gecode {
   }
 
   void
-  branch(Home home, FloatVar x, FloatValBranch vals,
-         const ValBranchOptions& o_vals) {
+  branch(Home home, FloatVar x, FloatValBranch vals) {
     FloatVarArgs xv(1); xv[0]=x;
-    branch(home, xv, FLOAT_VAR_NONE, vals, VarBranchOptions::def, o_vals);
+    branch(home, xv, FLOAT_VAR_NONE(), vals);
   }
   
   void
-  assign(Home home, FloatVar x, FloatAssign vals,
-         const ValBranchOptions& o_vals) {
+  assign(Home home, FloatVar x, FloatAssign vals) {
     FloatVarArgs xv(1); xv[0]=x;
-    assign(home, xv, vals, o_vals);
+    assign(home, xv, vals);
   }
   
 }

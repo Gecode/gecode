@@ -178,7 +178,7 @@ namespace Gecode {
     ViewSel viewsel;
   public:
     /// Constructor for initialization
-    ViewSelVirtual(Space& home, const VarBranchOptions& vbo);
+    ViewSelVirtual(Space& home, const VarBranch& vb);
     /// Constructor for cloning \a vsv
     ViewSelVirtual(Space& home, bool share, ViewSelVirtual& vsv);
     /// Intialize with view \a x at position \a i
@@ -414,8 +414,8 @@ namespace Gecode {
   template<class ViewSel>
   forceinline
   ViewSelVirtual<ViewSel>::ViewSelVirtual(Space& home,
-                                          const VarBranchOptions& vbo)
-    : viewsel(home,vbo) {}
+                                          const VarBranch& vb)
+    : viewsel(home,vb) {}
   template<class ViewSel>
   forceinline
   ViewSelVirtual<ViewSel>::ViewSelVirtual(Space& home, bool share,

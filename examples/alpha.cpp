@@ -97,13 +97,13 @@ public:
 
     switch (opt.branching()) {
     case BRANCH_NONE:
-      branch(*this, le, INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, le, INT_VAR_NONE(), INT_VAL_MIN());
       break;
     case BRANCH_INVERSE:
-      branch(*this, le.slice(le.size()-1,-1), INT_VAR_NONE, INT_VAL_MIN);
+      branch(*this, le.slice(le.size()-1,-1), INT_VAR_NONE(), INT_VAL_MIN());
       break;
     case BRANCH_SIZE:
-      branch(*this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+      branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
       break;
     }
   }

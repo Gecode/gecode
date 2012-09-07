@@ -68,7 +68,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     ValSplitMin(void);
     /// Constructor for initialization
-    ValSplitMin(Space& home, const ValBranchOptions& vbo);
+    ValSplitMin(Space& home, const ValBranch& vb);
     /// Return median value of view \a x
     FloatNum val(Space& home, View x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x > n\f$ (\a a = 1)
@@ -89,7 +89,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     ValSplitMax(void);
     /// Constructor for initialization
-    ValSplitMax(Space& home, const ValBranchOptions& vbo);
+    ValSplitMax(Space& home, const ValBranch& vb);
     /// Return median value of view \a x
     FloatNum val(Space& home, View x) const;
     /// Tell \f$x\geq n\f$ (\a a = 0) or \f$x < n\f$ (\a a = 1)
@@ -104,36 +104,24 @@ namespace Gecode { namespace Float { namespace Branch {
    * \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatSelVal
    */
-  template<class _View>
-  class ValSplitRnd {
+  template<class View>
+  class ValSplitRnd : public ValSelBase<View,std::pair<FloatNum, bool> > {
   protected:
     /// The random number generator
-    ArchivedRandomGenerator r;
+    Rnd r;
   public:
-    /// View type
-    typedef _View View;
-    /// Value type
-    typedef std::pair<FloatNum, bool> Val;
-    /// Choice type
-    typedef ArchivedRandomGenerator Choice;
-    /// Number of alternatives
-    static const unsigned int alternatives = 2;
     /// Default constructor
     ValSplitRnd(void);
     /// Constructor for initialization
-    ValSplitRnd(Space& home, const ValBranchOptions& vbo);
-    /// Return minimum value of view \a x at position \a i
-    Val val(Space& home, _View x);
-    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x > n\f$ (\a a = 1)
-    ModEvent tell(Space& home, unsigned int a, _View x, Val rn);
-    /// Return choice
-    Choice choice(Space& home);
-    /// Return choice
-    Choice choice(const Space& home, Archive& e);
-    /// Commit to choice
-    void commit(Space& home, const Choice& c, unsigned a);
+    ValSplitRnd(Space& home, const ValBranch& vb);
+    /// Return random value of view \a x
+    Val val(Space& home, View x);
+    /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
+    ModEvent tell(Space& home, unsigned int a, View x, Val n);
     /// Updating during cloning
     void update(Space& home, bool share, ValSplitRnd& vs);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
     /// Delete value selection
     void dispose(Space& home);
   };
@@ -147,7 +135,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     AssignValMin(void);
     /// Constructor for initialization
-    AssignValMin(Space& home, const ValBranchOptions& vbo);
+    AssignValMin(Space& home, const ValBranch& vb);
   };
 
   /// Class for assigning median value of upper part of the interval
@@ -159,7 +147,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     AssignValMax(void);
     /// Constructor for initialization
-    AssignValMax(Space& home, const ValBranchOptions& vbo);
+    AssignValMax(Space& home, const ValBranch& vb);
   };
 
   /// Class for assigning median value of a randomly chosen part of the interval
@@ -171,7 +159,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     AssignValRnd(void);
     /// Constructor for initialization
-    AssignValRnd(Space& home, const ValBranchOptions& vbo);
+    AssignValRnd(Space& home, const ValBranch& vbo);
   };
 
 
@@ -191,7 +179,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     MeritMin(void);
     /// Constructor for initialization
-    MeritMin(Space& home, const VarBranchOptions& vbo);
+    MeritMin(Space& home, const VarBranch& vb);
     /// Return minimum as merit for view \a x at position \a i
     double operator ()(Space& home, FloatView x, int i);
   };
@@ -207,7 +195,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     MeritMax(void);
     /// Constructor for initialization
-    MeritMax(Space& home, const VarBranchOptions& vbo);
+    MeritMax(Space& home, const VarBranch& vb);
     /// Return maximum as merit for view \a x at position \a i
     double operator ()(Space& home, FloatView x, int i);
   };
@@ -223,7 +211,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     MeritSize(void);
     /// Constructor for initialization
-    MeritSize(Space& home, const VarBranchOptions& vbo);
+    MeritSize(Space& home, const VarBranch& vb);
     /// Return size as merit for view \a x at position \a i
     double operator ()(Space& home, FloatView x, int i);
   };
@@ -239,7 +227,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     MeritSizeDegree(void);
     /// Constructor for initialization
-    MeritSizeDegree(Space& home, const VarBranchOptions& vbo);
+    MeritSizeDegree(Space& home, const VarBranch& vb);
     /// Return size over degree as merit for view \a x at position \a i
     double operator ()(Space& home, FloatView x, int i);
   };
@@ -255,7 +243,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     MeritSizeAfc(void);
     /// Constructor for initialization
-    MeritSizeAfc(Space& home, const VarBranchOptions& vbo);
+    MeritSizeAfc(Space& home, const VarBranch& vb);
     /// Return size over AFC as merit for view \a x at position \a i
     double operator ()(Space& home, FloatView x, int i);
   };
@@ -273,7 +261,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Default constructor
     MeritSizeActivity(void);
     /// Constructor for initialization
-    MeritSizeActivity(Space& home, const VarBranchOptions& vbo);
+    MeritSizeActivity(Space& home, const VarBranch& vb);
     /// Return size over activity as merit for view \a x at position \a i
     double operator ()(Space& home, FloatView x, int i);
     /// Updating during cloning

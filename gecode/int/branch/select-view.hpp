@@ -41,8 +41,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritMin::MeritMin(void) {}
   forceinline
-  MeritMin::MeritMin(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritMin::MeritMin(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritMin::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.min());
@@ -52,8 +52,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritMax::MeritMax(void) {}
   forceinline
-  MeritMax::MeritMax(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritMax::MeritMax(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritMax::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.max());
@@ -63,8 +63,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritSize::MeritSize(void) {}
   forceinline
-  MeritSize::MeritSize(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritSize::MeritSize(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritSize::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.size());
@@ -74,8 +74,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritSizeDegree::MeritSizeDegree(void) {}
   forceinline
-  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritSizeDegree::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.size()) / static_cast<double>(x.degree());
@@ -85,8 +85,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritSizeAfc::MeritSizeAfc(void) {}
   forceinline
-  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritSizeAfc::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.size()) / x.afc();
@@ -97,11 +97,8 @@ namespace Gecode { namespace Int { namespace Branch {
   MeritSizeActivity::MeritSizeActivity(void) {}
   forceinline
   MeritSizeActivity::MeritSizeActivity(Space& home,
-                                       const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo), activity(vbo.activity) {
-    if (!activity.initialized())
-      throw MissingActivity("MeritActivity (INT_VAR_SIZE_ACTIVITY)");
-  }
+                                       const VarBranch& vb)
+    : MeritBase<IntView>(home,vb), activity(vb.activity()) {}
   forceinline double
   MeritSizeActivity::operator ()(Space&, IntView x, int i) {
     return static_cast<double>(x.size()) / activity[i];
@@ -124,8 +121,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritRegretMin::MeritRegretMin(void) {}
   forceinline
-  MeritRegretMin::MeritRegretMin(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritRegretMin::MeritRegretMin(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritRegretMin::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.regret_min());
@@ -135,8 +132,8 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   MeritRegretMax::MeritRegretMax(void) {}
   forceinline
-  MeritRegretMax::MeritRegretMax(Space& home, const VarBranchOptions& vbo)
-    : MeritBase<IntView>(home,vbo) {}
+  MeritRegretMax::MeritRegretMax(Space& home, const VarBranch& vb)
+    : MeritBase<IntView>(home,vb) {}
   forceinline double
   MeritRegretMax::operator ()(Space&, IntView x, int) {
     return static_cast<double>(x.regret_max());

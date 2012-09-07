@@ -48,8 +48,8 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin<inc>::ValMin(void) {}
   template<bool inc>
   forceinline
-  ValMin<inc>::ValMin(Space& home, const ValBranchOptions& vbo)
-    : ValSelBase<SetView,int>(home,vbo) {}
+  ValMin<inc>::ValMin(Space& home, const ValBranch& vb)
+    : ValSelBase<SetView,int>(home,vb) {}
   template<bool inc>
   forceinline int
   ValMin<inc>::val(Space&, SetView x) const {
@@ -68,8 +68,8 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMed<inc>::ValMed(void) {}
   template<bool inc>
   forceinline
-  ValMed<inc>::ValMed(Space& home, const ValBranchOptions& vbo)
-    : ValSelBase<SetView,int>(home,vbo) {}
+  ValMed<inc>::ValMed(Space& home, const ValBranch& vb)
+    : ValSelBase<SetView,int>(home,vb) {}
   template<bool inc>
   forceinline int
   ValMed<inc>::val(Space&, SetView x) const {
@@ -99,8 +99,8 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMax<inc>::ValMax(void) {}
   template<bool inc>
   forceinline
-  ValMax<inc>::ValMax(Space& home, const ValBranchOptions& vbo)
-    : ValSelBase<SetView,int>(home,vbo) {}
+  ValMax<inc>::ValMax(Space& home, const ValBranch& vb)
+    : ValSelBase<SetView,int>(home,vb) {}
   template<bool inc>
   forceinline int
   ValMax<inc>::val(Space&, SetView x) const {
@@ -121,8 +121,8 @@ namespace Gecode { namespace Set { namespace Branch {
   ValRnd<inc>::ValRnd(void) {}
   template<bool inc>
   forceinline
-  ValRnd<inc>::ValRnd(Space&, const ValBranchOptions& vbo)
-    : r(vbo.seed) {}
+  ValRnd<inc>::ValRnd(Space&, const ValBranch& vb)
+    : r(vb.rnd()) {}
   template<bool inc>
   forceinline int
   ValRnd<inc>::val(Space&, SetView x) {
@@ -142,29 +142,20 @@ namespace Gecode { namespace Set { namespace Branch {
     return ((a == 0) == inc) ? x.include(home,v) : x.exclude(home,v);
   }
   template<bool inc>
-  forceinline typename ValRnd<inc>::Choice
-  ValRnd<inc>::choice(Space&) {
-    return r;
-  }
-  template<bool inc>
-  forceinline typename ValRnd<inc>::Choice
-  ValRnd<inc>::choice(const Space&, Archive& e) {
-    return Choice(e.get());
-  }
-  template<bool inc>
-  forceinline void
-  ValRnd<inc>::commit(Space&, const Choice& c,
-                      unsigned int) {
-    r = c;
-  }
-  template<bool inc>
   forceinline void
   ValRnd<inc>::update(Space&, bool, ValRnd<inc>& vr) {
     r = vr.r;
   }
   template<bool inc>
+  forceinline bool
+  ValRnd<inc>::notice(void) const {
+    return true;
+  }
+  template<bool inc>
   forceinline void
-  ValRnd<inc>::dispose(Space&) {}
+  ValRnd<inc>::dispose(Space& home) {
+    r.~Rnd();
+  }
 
 
   template<bool inc>
@@ -172,32 +163,32 @@ namespace Gecode { namespace Set { namespace Branch {
   AssignValMin<inc>::AssignValMin(void) {}
   template<bool inc>
   forceinline
-  AssignValMin<inc>::AssignValMin(Space& home, const ValBranchOptions& vbo)
-    : ValMin<inc>(home,vbo) {}
+  AssignValMin<inc>::AssignValMin(Space& home, const ValBranch& vb)
+    : ValMin<inc>(home,vb) {}
 
   template<bool inc>
   forceinline
   AssignValMed<inc>::AssignValMed(void) {}
   template<bool inc>
   forceinline
-  AssignValMed<inc>::AssignValMed(Space& home, const ValBranchOptions& vbo)
-    : ValMed<inc>(home,vbo) {}
+  AssignValMed<inc>::AssignValMed(Space& home, const ValBranch& vb)
+    : ValMed<inc>(home,vb) {}
 
   template<bool inc>
   forceinline
   AssignValMax<inc>::AssignValMax(void) {}
   template<bool inc>
   forceinline
-  AssignValMax<inc>::AssignValMax(Space& home, const ValBranchOptions& vbo)
-    : ValMax<inc>(home,vbo) {}
+  AssignValMax<inc>::AssignValMax(Space& home, const ValBranch& vb)
+    : ValMax<inc>(home,vb) {}
 
   template<bool inc>
   forceinline
   AssignValRnd<inc>::AssignValRnd(void) {}
   template<bool inc>
   forceinline
-  AssignValRnd<inc>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
-    : ValRnd<inc>(home,vbo) {}
+  AssignValRnd<inc>::AssignValRnd(Space& home, const ValBranch& vb)
+    : ValRnd<inc>(home,vb) {}
 
 }}}
 

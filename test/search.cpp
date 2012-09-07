@@ -136,13 +136,13 @@ namespace Test {
         case HTB_NONE:
           break;
         case HTB_UNARY:
-          assign(*this, x, INT_ASSIGN_MIN);
+          assign(*this, x, INT_ASSIGN_MIN());
           break;
         case HTB_BINARY:
-          Gecode::branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
+          Gecode::branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
           break;
         case HTB_NARY:
-          Gecode::branch(*this, x, INT_VAR_NONE, INT_VALUES_MIN);
+          Gecode::branch(*this, x, INT_VAR_NONE(), INT_VALUES_MIN());
           break;
         }
       }

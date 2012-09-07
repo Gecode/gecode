@@ -120,7 +120,7 @@ public:
   /// The actual problem
   Sat(const SatOptions& opt) {
     parseDIMACS(opt.filename.c_str());
-    branch(*this, x, INT_VAR_NONE, INT_VAL_MIN);
+    branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning

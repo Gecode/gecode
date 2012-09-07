@@ -106,9 +106,9 @@ public:
     if (n <= 120)
       dom(*this, q, (n+1)/2, (n+1)/2 + 1);
 
-    branch(*this, b, INT_VAR_SIZE_MIN, INT_VAL_MIN);
+    branch(*this, b, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
     // Try the easier solution first
-    branch(*this, q, INT_VAL_MAX);
+    branch(*this, q, INT_VAL_MAX());
   }
 
   /// Return cost

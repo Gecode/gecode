@@ -94,6 +94,8 @@
 
 #include <gecode/float/exception.hpp>
 
+#include <gecode/float/nextafter.hpp>
+
 namespace Gecode {
 
   /**
@@ -1317,17 +1319,76 @@ namespace Gecode {
   wait(Home home, const FloatVarArgs& x, void (*c)(Space& home));
   //@}
 
+}
+
+namespace Gecode {
 
   /**
-   * \defgroup TaskModelFloatBranch Branching
+   * \defgroup TaskModelFloatBranch Branching on float variables
    * \ingroup TaskModelFloat
    */
-  //@{
-  /// Recording activities for float variables
+
+  /**
+   * \brief Branch filter function type for float variables
+   *
+   * The variable \a x is considered for selection and \a i refers to the
+   * variable's position in the original array passed to the brancher.
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  typedef bool (*FloatBranchFilter)(const Space& home, 
+                                  const FloatVar& x, int i);
+
+  /**
+   * \brief Branch merit function type for float variables
+   *
+   * The function must return a non-negative merit value for the variable
+   * \a x.
+   * The value \a i refers to the variable's position in the original array
+   * passed to the brancher.
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  typedef double (*FloatBranchMerit)(const Space& home, 
+                                     const FloatVar& x, int i);
+
+  /**
+   * \brief Branch value function type for float variables
+   *
+   * Returns a value for the variable \a x that is to be used in the
+   * corresponding branch commit function.
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  typedef FloatNum (*FloatBranchVal)(const Space& home, const FloatVar& x);
+
+  /**
+   * \brief Branch commit function type for float variables
+   *
+   * The function must post a constraint on the variable \a x which
+   * corresponds to the alternative \a a. The value \a n is the value
+   * computed by the corresponding branch value function.
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  typedef void (*FloatBranchCommit)(Space& home, unsigned int a,
+                                    FloatVar x, FloatNum n);
+
+}
+
+#include <gecode/float/branch/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Recording activities for float variables
+   *
+   * \ingroup TaskModelFloatBranch
+   */
   class FloatActivity : public Activity {
   public:
     /**
-     * \brief Construct as not yet intialized
+     * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
      * yet initialized activity storage is init or the assignment operator.
@@ -1338,11 +1399,11 @@ namespace Gecode {
     FloatActivity(const FloatActivity& a);
     /// Assignment operator
     FloatActivity& operator =(const FloatActivity& a);      
-    /// Initialize for integer variables \a x with decay factor \a d
+    /// Initialize for float variables \a x with decay factor \a d
     GECODE_FLOAT_EXPORT 
     FloatActivity(Home home, const FloatVarArgs& x, double d);
     /**
-     * \brief Initialize for integer variables \a x with decay factor \a d
+     * \brief Initialize for float variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * activity storage has been constructed with the default constructor.
@@ -1352,80 +1413,262 @@ namespace Gecode {
     init(Home, const FloatVarArgs& x, double d);
   };
 
-  /// Which variable to select for branching
-  enum FloatVarBranch {
-    FLOAT_VAR_NONE = 0,        ///< First unassigned
-    FLOAT_VAR_RND,             ///< Random (uniform, for tie breaking)
-    FLOAT_VAR_DEGREE_MIN,      ///< With smallest degree
-    FLOAT_VAR_DEGREE_MAX,      ///< With largest degree
-    FLOAT_VAR_AFC_MIN,         ///< With smallest accumulated failure count
-    FLOAT_VAR_AFC_MAX,         ///< With largest accumulated failure count
-    FLOAT_VAR_ACTIVITY_MIN,    ///< With lowest activity
-    FLOAT_VAR_ACTIVITY_MAX,    ///< With highest activity
-    FLOAT_VAR_MIN_MIN,         ///< With smallest min
-    FLOAT_VAR_MIN_MAX,         ///< With largest min
-    FLOAT_VAR_MAX_MIN,         ///< With smallest max
-    FLOAT_VAR_MAX_MAX,         ///< With largest max
-    FLOAT_VAR_SIZE_MIN,        ///< With smallest domain size
-    FLOAT_VAR_SIZE_MAX,        ///< With largest domain size
-    FLOAT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
-    FLOAT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
-    FLOAT_VAR_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
-    FLOAT_VAR_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
-    FLOAT_VAR_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
-    FLOAT_VAR_SIZE_ACTIVITY_MAX, ///< With largest domain size divided by activity
+}
+
+#include <gecode/float/branch/activity.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Which variable to select for branching
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  class FloatVarBranch : public VarBranch {
+  public:
+    /// Which variable selection
+    enum Select {
+      SEL_NONE = 0,        ///< First unassigned
+      SEL_RND,             ///< Random (uniform, for tie breaking)
+      SEL_MERIT_MIN,       ///< With least merit
+      SEL_MERIT_MAX,       ///< With highest merit
+      SEL_DEGREE_MIN,      ///< With smallest degree
+      SEL_DEGREE_MAX,      ///< With largest degree
+      SEL_AFC_MIN,         ///< With smallest accumulated failure count
+      SEL_AFC_MAX,         ///< With largest accumulated failure count
+      SEL_ACTIVITY_MIN,    ///< With lowest activity
+      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_MIN_MIN,         ///< With smallest min
+      SEL_MIN_MAX,         ///< With largest min
+      SEL_MAX_MIN,         ///< With smallest max
+      SEL_MAX_MAX,         ///< With largest max
+      SEL_SIZE_MIN,        ///< With smallest domain size
+      SEL_SIZE_MAX,        ///< With largest domain size
+      SEL_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
+      SEL_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
+      SEL_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
+      SEL_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
+      SEL_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
+      SEL_SIZE_ACTIVITY_MAX  ///< With largest domain size divided by activity
+    };
+  protected:
+    /// Which variable to select
+    Select s;
+  public:
+    /// Initialize with strategy SEL_NONE
+    FloatVarBranch(void);
+    /// Initialize with random number generator \a r
+    FloatVarBranch(Rnd r);
+    /// Initialize with selection strategy \a s and tie-breaking tolerance \a t
+    FloatVarBranch(Select s, double t);
+    /// Initialize with selection strategy \a s, activity \a a, and tie-breaking tolerance \a t
+    FloatVarBranch(Select s, Activity a, double t);
+    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-breaking tolerance \a t
+    FloatVarBranch(Select s, void* mf, double t);
+    /// Return selection strategy
+    Select select(void) const;
   };
+
   
-  /// Which values to select first for branching
-  enum FloatValBranch {
-    FLOAT_VAL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
-    FLOAT_VAL_SPLIT_MAX, ///< Select values not smaller than mean of largest and smallest value
-    FLOAT_VAL_SPLIT_RND  ///< Select values randomly which are not greater or not smaller than mean of largest and smallest value
+  /**
+   * \defgroup TaskModelFloatBranchVar Variable selection for float variables
+   * \ingroup TaskModelFloatBranch
+   */
+  //@{
+  /// Select first unassigned variable
+  FloatVarBranch FLOAT_VAR_NONE(void);
+  /// Select random variable (uniform distribution, for tie breaking)
+  FloatVarBranch FLOAT_VAR_RND(Rnd r);
+  /// Select variable with least merit according to branch merit function \a bm
+  FloatVarBranch FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, double tbt=0.0);
+  /// Select variable with highest merit according to branch merit function \a bm
+  FloatVarBranch FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, double tbt=0.0);
+  /// Select variable with smallest degree
+  FloatVarBranch FLOAT_VAR_DEGREE_MIN(double tbt=0.0);
+  /// Select variable with largest degree
+  FloatVarBranch FLOAT_VAR_DEGREE_MAX(double tbt=0.0);
+  /// Select variable with smallest accumulated failure count
+  FloatVarBranch FLOAT_VAR_AFC_MIN(double tbt=0.0);
+  /// Select variable with largest accumulated failure count    
+  FloatVarBranch FLOAT_VAR_AFC_MAX(double tbt=0.0);
+  /// Select variable with lowest activity
+  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(FloatActivity a, double tbt=0.0);    
+  /// Select variable with highest activity
+  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, double tbt=0.0);     
+  /// Select variable with smallest min
+  FloatVarBranch FLOAT_VAR_MIN_MIN(double tbt=0.0);         
+  /// Select variable with largest min
+  FloatVarBranch FLOAT_VAR_MIN_MAX(double tbt=0.0);
+  /// Select variable with smallest max
+  FloatVarBranch FLOAT_VAR_MAX_MIN(double tbt=0.0); 
+  /// Select variable with largest max
+  FloatVarBranch FLOAT_VAR_MAX_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size
+  FloatVarBranch FLOAT_VAR_SIZE_MIN(double tbt=0.0);
+  /// Select variable with largest domain size
+  FloatVarBranch FLOAT_VAR_SIZE_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size divided by degree
+  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MIN(double tbt=0.0);
+  /// Select variable with largest domain size divided by degree
+  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size divided by accumulated failure count
+  FloatVarBranch FLOAT_VAR_SIZE_AFC_MIN(double tbt=0.0);
+  /// Select variable with largest domain size divided by accumulated failure count
+  FloatVarBranch FLOAT_VAR_SIZE_AFC_MAX(double tbt=0.0);
+  /// Select variable with smallest domain size divided by activity
+  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MIN(FloatActivity a, double tbt=0.0);
+  /// Select variable with largest domain size divided by activity
+  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MAX(FloatActivity a, double tbt=0.0);
+  //@}
+
+}
+
+#include <gecode/float/branch/var.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Which values to select for branching first
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  class FloatValBranch : public ValBranch {
+  public:
+    /// Which value selection
+    enum Select {
+      SEL_SPLIT_MIN, ///< Select values not greater than mean of smallest and largest value
+      SEL_SPLIT_MAX, ///< Select values greater than mean of smallest and largest value
+      SEL_SPLIT_RND,  ///< Select values randomly which are not greater or not smaller than mean of largest and smallest value
+      SEL_VAL_COMMIT, ///< Select value according to user-defined functions
+    };
+  protected:
+    /// Which value to select
+    Select s;
+  public:
+    /// Initialize with selection strategy \a s
+    FloatValBranch(Select s = SEL_SPLIT_MIN);
+    /// Initialize with random number generator \a r
+    FloatValBranch(Rnd r);
+    /// Initialize with value function \a f and commit function \a c
+    FloatValBranch(void* v, void* c);
+    /// Return selection strategy
+    Select select(void) const;
   };
-  
-  /// Branch over \a x with variable selection \a vars and value selection \a vals
+
+  /**
+   * \defgroup TaskModelFloatBranchVal Value selection for float variables
+   * \ingroup TaskModelFloatBranch
+   */
+  //@{
+  /// Select values not greater than mean of smallest and largest value
+  FloatValBranch FLOAT_VAL_SPLIT_MIN(void);
+  /// Select values greater than mean of smallest and largest value
+  FloatValBranch FLOAT_VAL_SPLIT_MAX(void);
+  /// Select values randomly which are not greater or not smaller than mean of largest and smallest value
+  FloatValBranch FLOAT_VAL_SPLIT_RND(void);
+  /// Select value as defined by the value function \a v and commit function \a c
+  FloatValBranch FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c);
+  //@}
+
+}
+
+#include <gecode/float/branch/val.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Which values to select for assignment
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  class FloatAssign : public ValBranch {
+  public:
+    /// Which value selection
+    enum Select {
+      SEL_MIN,       ///< Select median value of the lower part
+      SEL_MAX,       ///< Select median value of the upper part
+      SEL_RND,       ///< Select median value of a randomly chosen part
+      SEL_VAL_COMMIT ///< Select value according to user-defined functions
+    };
+  protected:
+    /// Which value to select
+    Select s;
+  public:
+    /// Initialize with selection strategy \a s
+    FloatAssign(Select s = SEL_MIN);
+    /// Initialize with random number generator \a r
+    FloatAssign(Rnd r);
+    /// Initialize with value function \a f and commit function \a c
+    FloatAssign(void* v, void* c);
+    /// Return selection strategy
+    Select select(void) const;
+  };
+
+  /**
+   * \defgroup TaskModelFloatBranchAssign Value selection for assigning float variables
+   * \ingroup TaskModelFloatBranch
+   */
+  //@{
+  /// Select median value of the lower part
+  FloatAssign FLOAT_ASSIGN_MIN(void);
+  /// Select median value of the upper part
+  FloatAssign FLOAT_ASSIGN_MAX(void);
+  /// Select median value of a randomly chosen part
+  FloatAssign FLOAT_ASSIGN_RND(Rnd r);
+  /// Select value as defined by the value function \a v and commit function \a c
+  FloatAssign FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c);
+  //@}
+
+}
+
+#include <gecode/float/branch/assign.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
-         FloatVarBranch vars, FloatValBranch vals,
-         const VarBranchOptions& o_vars = VarBranchOptions::def,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
+         FloatVarBranch vars, FloatValBranch vals, 
+         FloatBranchFilter fbf=NULL);
+  /**
+   * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          const TieBreakVarBranch<FloatVarBranch>& vars, FloatValBranch vals,
-         const TieBreakVarBranchOptions& o_vars = TieBreakVarBranchOptions::def,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Branch over \a x with value selection \a vals
+         FloatBranchFilter fbf=NULL);
+  /**
+   * \brief Branch over \a x with value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
   GECODE_FLOAT_EXPORT void
-  branch(Home home, FloatVar x, FloatValBranch vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  
-  //@}
+  branch(Home home, FloatVar x, FloatValBranch vals);
 
   /**
-   * \defgroup TaskModelFloatAssign Assigning
-   * \ingroup TaskModelFloat
+   * \brief Assign all \a x with value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
    */
-  //@{
-  /// Which value to select for assignment
-  enum FloatAssign {
-    FLOAT_ASSIGN_MIN, ///< Select median value of the lower part
-    FLOAT_ASSIGN_MAX, ///< Select median value of the upper part
-    FLOAT_ASSIGN_RND  ///< Select median value of a randomly chosen part
-  };
-
-  /// Assign all \a x with value selection \a vals
   GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
-  /// Assign \a x with value selection \a vals
+         FloatBranchFilter fbf=NULL);
+  /**
+   * \brief Assign \a x with value selection \a vals
+   *
+   * \ingroup TaskModelFloatBranch
+   */
   GECODE_FLOAT_EXPORT void
-  assign(Home home, FloatVar x, FloatAssign vals,
-         const ValBranchOptions& o_vals = ValBranchOptions::def);
+  assign(Home home, FloatVar x, FloatAssign vals);
   //@}
-}
 
-#include <gecode/float/activity.hpp>
+}
 
 #endif
 

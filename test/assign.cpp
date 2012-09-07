@@ -134,23 +134,38 @@ namespace Test { namespace Assign {
    * \relates IntTestSpace BoolTestSpace
    */
   //@{
-  /// Integer value assignments
-  const Gecode::IntAssign int_assign[] = {
-    Gecode::INT_ASSIGN_MIN,
-    Gecode::INT_ASSIGN_MED,
-    Gecode::INT_ASSIGN_MAX,
-    Gecode::INT_ASSIGN_RND
-  };
-  /// Number of integer value selections
-  const int n_int_assign =
-    sizeof(int_assign)/sizeof(Gecode::IntAssign);
   /// Names for integer assignments
   const char* int_assign_name[] = {
     "INT_ASSIGN_MIN",
     "INT_ASSIGN_MED",
     "INT_ASSIGN_MAX",
-    "INT_ASSIGN_RND"
+    "INT_ASSIGN_RND",
+    "INT_ASSIGN"
   };
+  /// Number of integer value selections
+  const int n_int_assign =
+    sizeof(int_assign_name)/sizeof(const char*);
+  /// Test function for branch value function
+  int int_val(const Gecode::Space&, const Gecode::IntVar& x) {
+    return x.min();
+  }
+  /// Test function for branch commit function
+  void int_commit(Gecode::Space& home, unsigned int a, 
+                  Gecode::IntVar x, int n) {
+    if (a == 0)
+      Gecode::rel(home, x, Gecode::IRT_EQ, n);
+    else
+      Gecode::rel(home, x, Gecode::IRT_NQ, n);
+  }
+  /// Test function for branch value function
+  int bool_val(const Gecode::Space&, const Gecode::BoolVar& x) {
+    return x.min();
+  }
+  /// Test function for branch commit function
+  void bool_commit(Gecode::Space& home, unsigned int, 
+                   Gecode::BoolVar x, int n) {
+    Gecode::rel(home, x, Gecode::IRT_EQ, n);
+  }
   //@}
 
   IntTest::IntTest(const std::string& s, int a, const Gecode::IntSet& d)
@@ -164,12 +179,23 @@ namespace Test { namespace Assign {
     post(*root, root->x);
     (void) root->status();
 
-    for (int val = n_int_assign; val--; ) {
+    for (int val = 0; val<n_int_assign; val++) {
       IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone(false));
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
-      assign(*clone, clone->x, int_assign[val]);
+
+      Rnd r(1);
+      IntAssign ia;
+      switch (val) {
+      case 0: ia = INT_ASSIGN_MIN(); break;
+      case 1: ia = INT_ASSIGN_MED(); break;
+      case 2: ia = INT_ASSIGN_MAX(); break;
+      case 3: ia = INT_ASSIGN_RND(r); break;
+      case 4: ia = INT_ASSIGN(&int_val,&int_commit); break;
+      }
+
+      assign(*clone, clone->x, ia);
       Gecode::DFS<IntTestSpace> e_s(clone, o);
       delete clone;
 
@@ -206,7 +232,17 @@ namespace Test { namespace Assign {
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
-      assign(*clone, clone->x, int_assign[val]);
+      Rnd r(1);
+      IntAssign ia;
+      switch (val) {
+      case 0: ia = INT_ASSIGN_MIN(); break;
+      case 1: ia = INT_ASSIGN_MED(); break;
+      case 2: ia = INT_ASSIGN_MAX(); break;
+      case 3: ia = INT_ASSIGN_RND(r); break;
+      case 4: ia = INT_ASSIGN(&bool_val,&bool_commit); break;
+      }
+
+      assign(*clone, clone->x, ia);
       Gecode::DFS<BoolTestSpace> e_s(clone, o);
       delete clone;
 
@@ -234,20 +270,6 @@ namespace Test { namespace Assign {
    * \relates SetTestSpace
    */
   //@{
-  /// Set value assignments
-  const Gecode::SetAssign set_assign[] = {
-    Gecode::SET_ASSIGN_MIN_INC,
-    Gecode::SET_ASSIGN_MIN_EXC,
-    Gecode::SET_ASSIGN_MED_INC,
-    Gecode::SET_ASSIGN_MED_EXC,
-    Gecode::SET_ASSIGN_MAX_INC,
-    Gecode::SET_ASSIGN_MAX_EXC,
-    Gecode::SET_ASSIGN_RND_INC,
-    Gecode::SET_ASSIGN_RND_EXC
-  };
-  /// Number of set value selections
-  const int n_set_assign =
-    sizeof(set_assign)/sizeof(Gecode::SetAssign);
   /// Names for integer assignments
   const char* set_assign_name[] = {
     "SET_ASSIGN_MIN_INC",
@@ -257,8 +279,22 @@ namespace Test { namespace Assign {
     "SET_ASSIGN_MAX_INC",
     "SET_ASSIGN_MAX_EXC",
     "SET_ASSIGN_RND_INC",
-    "SET_ASSIGN_RND_EXC"
+    "SET_ASSIGN_RND_EXC",
+    "SET_ASSIGN"
   };
+  /// Number of set value selections
+  const int n_set_assign =
+    sizeof(set_assign_name)/sizeof(const char*);
+  /// Test function for branch value function
+  int set_val(const Gecode::Space&, const Gecode::SetVar& x) {
+    Gecode::SetVarUnknownRanges r(x);
+    return r.min();
+  }
+  /// Test function for branch commit function
+  void set_commit(Gecode::Space& home, unsigned int, 
+                  Gecode::SetVar x, int n) {
+    Gecode::dom(home, x, Gecode::SRT_EQ, n);
+  }
   //@}
 
   SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d)
@@ -277,7 +313,23 @@ namespace Test { namespace Assign {
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
-      assign(*clone, clone->x, set_assign[val]);
+
+      Rnd r(1);
+
+      SetAssign sa;
+      switch (val) {
+      case 0: sa = SET_ASSIGN_MIN_INC(); break;
+      case 1: sa = SET_ASSIGN_MIN_EXC(); break;
+      case 2: sa = SET_ASSIGN_MED_INC(); break;
+      case 3: sa = SET_ASSIGN_MED_EXC(); break;
+      case 4: sa = SET_ASSIGN_MAX_INC(); break;
+      case 5: sa = SET_ASSIGN_MAX_EXC(); break;
+      case 6: sa = SET_ASSIGN_RND_INC(r); break;
+      case 7: sa = SET_ASSIGN_RND_EXC(r); break;
+      case 8: sa = SET_ASSIGN(&set_val,&set_commit); break;
+      }
+          
+      assign(*clone, clone->x, sa);
       Gecode::DFS<SetTestSpace> e_s(clone, o);
       delete clone;
 
@@ -307,21 +359,25 @@ namespace Test { namespace Assign {
    * \relates FloatTestSpace
    */
   //@{
-  /// Float value assignments
-  const Gecode::FloatAssign float_assign[] = {
-    Gecode::FLOAT_ASSIGN_MIN,
-    Gecode::FLOAT_ASSIGN_MAX,
-    Gecode::FLOAT_ASSIGN_RND
-  };
-  /// Number of float value selections
-  const int n_float_assign =
-    sizeof(float_assign)/sizeof(Gecode::FloatAssign);
   /// Names for float assignments
   const char* float_assign_name[] = {
     "FLOAT_ASSIGN_MIN",
     "FLOAT_ASSIGN_MAX",
-    "FLOAT_ASSIGN_RND"
+    "FLOAT_ASSIGN_RND",
+    "FLOAT_ASSIGN"
   };
+  /// Number of float value selections
+  const int n_float_assign =
+    sizeof(float_assign_name)/sizeof(const char*);
+  /// Test function for branch value function
+  Gecode::FloatNum float_val(const Gecode::Space&, const Gecode::FloatVar& x) {
+    return x.min();
+  }
+  /// Test function for branch commit function
+  void float_commit(Gecode::Space& home, unsigned int, 
+                   Gecode::FloatVar x, Gecode::FloatNum n) {
+    Gecode::rel(home, x, Gecode::FRT_LQ, n);
+  }
   //@}
 
   FloatTest::FloatTest(const std::string& s, int a, const Gecode::FloatVal& d)
@@ -340,7 +396,18 @@ namespace Test { namespace Assign {
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
-      assign(*clone, clone->x, float_assign[val]);
+
+      Rnd r(1);
+
+      FloatAssign fa;
+      switch (val) {
+      case 0: fa = FLOAT_ASSIGN_MIN(); break;
+      case 1: fa = FLOAT_ASSIGN_MAX(); break;
+      case 2: fa = FLOAT_ASSIGN_RND(r); break;
+      case 3: fa = FLOAT_ASSIGN(&float_val,&float_commit); break;
+      }
+          
+      assign(*clone, clone->x, fa);
       Gecode::DFS<FloatTestSpace> e_s(clone, o);
       delete clone;
 

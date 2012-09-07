@@ -56,10 +56,10 @@ namespace Gecode { namespace Support {
     /// Generate next number in series
     unsigned int next(void);
   public:
-    /// Set the current seed
-    void seed(unsigned int _s);
-    /// Construct the generator instance.
-    LinearCongruentialGenerator(unsigned int _s = 1);
+    /// Set the current seed to \a s
+    void seed(unsigned int s);
+    /// Construct the generator instance with seed \a s
+    LinearCongruentialGenerator(unsigned int s = 1);
     /// Return current seed
     unsigned int seed(void) const;
     /// Returns a random integer from the interval [0..n)

@@ -66,8 +66,8 @@ namespace Gecode { namespace Float { namespace Branch {
   template<class View>
   forceinline
   ValSplitMin<View>::ValSplitMin(Space& home,
-    const ValBranchOptions& vbo)
-    : ValSelBase<View,FloatNum>(home,vbo) {}
+    const ValBranch& vb)
+    : ValSelBase<View,FloatNum>(home,vb) {}
   template<class View>
   forceinline FloatNum
   ValSplitMin<View>::val(Space&, View x) const {
@@ -94,8 +94,8 @@ namespace Gecode { namespace Float { namespace Branch {
   template<class View>
   forceinline
   ValSplitMax<View>::ValSplitMax(Space& home,
-    const ValBranchOptions& vbo)
-    : ValSelBase<View,FloatNum>(home,vbo) {}
+    const ValBranch& vb)
+    : ValSelBase<View,FloatNum>(home,vb) {}
   template<class View>
   forceinline FloatNum
   ValSplitMax<View>::val(Space&, View x) const {
@@ -121,8 +121,8 @@ namespace Gecode { namespace Float { namespace Branch {
   ValSplitRnd<View>::ValSplitRnd(void) {}
   template<class View>
   forceinline
-  ValSplitRnd<View>::ValSplitRnd(Space&, const ValBranchOptions& vbo)
-    : r(vbo.seed) {}
+  ValSplitRnd<View>::ValSplitRnd(Space&, const ValBranch& vb)
+    : r(vb.rnd()) {}
   template<class View>
   forceinline typename ValSplitRnd<View>::Val
   ValSplitRnd<View>::val(Space&, View x) {
@@ -145,36 +145,28 @@ namespace Gecode { namespace Float { namespace Branch {
     }
   }
   template<class View>
-  forceinline typename ValSplitRnd<View>::Choice
-  ValSplitRnd<View>::choice(Space&) {
-    return r;
-  }
-  template<class View>
-  forceinline typename ValSplitRnd<View>::Choice
-  ValSplitRnd<View>::choice(const Space&, Archive& e) {
-    return Choice(e.get());
-  }
-  template<class View>
-  forceinline void
-  ValSplitRnd<View>::commit(Space&, const Choice& c, unsigned int) {
-    r = c;
-  }
-  template<class View>
   forceinline void
   ValSplitRnd<View>::update(Space&, bool, ValSplitRnd<View>& vr) {
     r = vr.r;
   }
   template<class View>
+  forceinline bool
+  ValSplitRnd<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
   forceinline void
-  ValSplitRnd<View>::dispose(Space&) {}
+  ValSplitRnd<View>::dispose(Space& home) {
+    r.~Rnd();
+  }
 
   template<class View>
   forceinline
   AssignValMin<View>::AssignValMin(void) {}
   template<class View>
   forceinline
-  AssignValMin<View>::AssignValMin(Space& home, const ValBranchOptions& vbo)
-    : ValSplitMin<View>(home,vbo) {}
+  AssignValMin<View>::AssignValMin(Space& home, const ValBranch& vb)
+    : ValSplitMin<View>(home,vb) {}
 
 
   template<class View>
@@ -182,8 +174,8 @@ namespace Gecode { namespace Float { namespace Branch {
   AssignValMax<View>::AssignValMax(void) {}
   template<class View>
   forceinline
-  AssignValMax<View>::AssignValMax(Space& home, const ValBranchOptions& vbo)
-    : ValSplitMax<View>(home,vbo) {}
+  AssignValMax<View>::AssignValMax(Space& home, const ValBranch& vb)
+    : ValSplitMax<View>(home,vb) {}
 
 
   template<class View>
@@ -191,8 +183,8 @@ namespace Gecode { namespace Float { namespace Branch {
   AssignValRnd<View>::AssignValRnd(void) {}
   template<class View>
   forceinline
-  AssignValRnd<View>::AssignValRnd(Space& home, const ValBranchOptions& vbo)
-    : ValSplitRnd<View>(home,vbo) {}
+  AssignValRnd<View>::AssignValRnd(Space& home, const ValBranch& vb)
+    : ValSplitRnd<View>(home,vb) {}
 
 }}}
 
