@@ -62,7 +62,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Initialize with ranges from \a i
     template<class I>
     void init(Region& r, I& i);
-    /// Assignment operator
+    /// Assignment operator (both iterators must be allocated from the same region)
     Minus& operator =(const Minus& m);
     //@}
   };

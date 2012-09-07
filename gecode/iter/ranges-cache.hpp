@@ -60,7 +60,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Initialize with ranges from \a i
     template<class I>
     void init(Region& r, I& i);
-    /// Assignment operator
+    /// Assignment operator (both caches must be allocated from the same region)
     Cache& operator =(const Cache& m);
     //@}
   };

@@ -79,7 +79,7 @@ namespace Gecode { namespace Iter { namespace Values {
     ValueListIter(Region& r);
     /// Initialize
     void init(Region& r);
-    /// Assignment operator
+    /// Assignment operator (both iterators must be allocated from the same region)
     ValueListIter& operator =(const ValueListIter& i);
     //@}
 

@@ -105,7 +105,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// Add iterator \a i
     template<class I>
     void operator &=(I& i);
-    /// Assignment operator
+    /// Assignment operator (both iterators must be allocated from the same region)
     NaryInter& operator =(const NaryInter& m);
     //@}
   };

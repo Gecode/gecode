@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: iter
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Clarified for several iterators that when using the assignment
+operator both iterators must be allocated from the very same
+region.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   major
