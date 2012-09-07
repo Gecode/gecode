@@ -239,7 +239,7 @@ public:
     }
 
     // Install custom brancher
-    branch(*this, x, INT_VAR_NONE(), INT_VAL(&val,&commit));
+    branch(*this, x, INT_VAR_NONE(), INT_VAL(&val));
   }
   /// Value selection function for branching
   static int val(const Space&, const IntVar& x) {
@@ -253,13 +253,6 @@ public:
       }
     assert(v >= 1 && v < 52);
     return v;
-  }
-  /// Commit function for branching
-  static void commit(Space& home, unsigned int a, IntVar x, int n) {
-    if (a == 0)
-      rel(home, x == n);
-    else
-      rel(home, x != n);
   }
   /// Print instance and solution
   virtual void

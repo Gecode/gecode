@@ -303,7 +303,7 @@ INTSRC0 = \
 	unary.cpp cumulative.cpp cumulatives.cpp \
 	circuit.cpp no-overlap.cpp nvalues.cpp \
 	member.cpp branch/activity.cpp \
-	arithmetic/mult.cpp
+	arithmetic/mult.cpp branch/commit.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -429,7 +429,8 @@ INTBUILDDIRS	= \
 
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
-	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp
+	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
+	branch/commit.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -506,7 +507,7 @@ SETSRC0 =								 \
 	precede.cpp \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
-	exec.cpp branch/activity.cpp
+	exec.cpp branch/activity.cpp branch/commit.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \

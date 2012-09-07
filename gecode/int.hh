@@ -3541,6 +3541,28 @@ namespace Gecode {
   typedef void (*BoolBranchCommit)(Space& home, unsigned int a,
                                    BoolVar x, int n);
 
+  /**
+   * \brief Default commit function for integer variables
+   *
+   * Posts the constraint that \a x must be equal to \a n for \a a=0, and
+   * that \a x must be different from \a n otherwise.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT
+  void commiteq(Space& home, unsigned int a, IntVar x, int n);
+
+  /**
+   * \brief Default commit function for Bool variables
+   *
+   * Posts the constraint that \a x must be equal to \a n for \a a=0, and
+   * that \a x must be different from \a n otherwise.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT
+  void commiteq(Space& home, unsigned int a, BoolVar x, int n);
+
 }
 
 #include <gecode/int/branch/traits.hpp>
@@ -3843,9 +3865,9 @@ namespace Gecode {
   /// Select the largest range of the variable domain if it has several ranges, otherwise select values greater than mean of smallest and largest value
   IntValBranch INT_VAL_RANGE_MAX(void);
   /// Select value as defined by the value function \a v and commit function \a c
-  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c);
+  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c=commiteq);
   /// Select value as defined by the value function \a v and commit function \a c
-  IntValBranch INT_VAL(BoolBranchVal v, BoolBranchCommit c);
+  IntValBranch INT_VAL(BoolBranchVal v, BoolBranchCommit c=commiteq);
   /// Try all values starting from smallest
   IntValBranch INT_VALUES_MIN(void); 
   /// Try all values starting from largest
@@ -3901,9 +3923,9 @@ namespace Gecode {
   /// Select random value
   IntAssign INT_ASSIGN_RND(Rnd r);
   /// Select value as defined by the value function \a v and commit function \a c
-  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c);
+  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=commiteq);
   /// Select value as defined by the value function \a v and commit function \a c
-  IntAssign INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c);
+  IntAssign INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c=commiteq);
   //@}
 
 }

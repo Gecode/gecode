@@ -1126,6 +1126,17 @@ namespace Gecode {
   typedef void (*SetBranchCommit)(Space& home, unsigned int a,
                                   SetVar x, int n);
 
+  /**
+   * \brief Default commit function for set variables
+   *
+   * Posts the constraint that \a n must be included in \a x for \a a=0, and
+   * that \a n must be excluded from \a x otherwise.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_SET_EXPORT
+  void commitinc(Space& home, unsigned int a, SetVar x, int n);
+
 }
 
 #include <gecode/set/branch/traits.hpp>
@@ -1334,7 +1345,7 @@ namespace Gecode {
   /// Exclude random element
   SetValBranch SET_VAL_RND_EXC(Rnd r);
   /// Select value as defined by the value function \a v and commit function \a c
-  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c);
+  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=commitinc);
   //@}
 
 }
@@ -1398,7 +1409,7 @@ namespace Gecode {
   /// Exclude random element
   SetAssign SET_ASSIGN_RND_EXC(Rnd r);
   /// Select value as defined by the value function \a v and commit function \a c
-  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c);
+  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=commitinc);
   //@}
 
 }
