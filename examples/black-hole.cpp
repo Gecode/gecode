@@ -85,109 +85,6 @@ namespace {
   }
 }
 
-
-
-/** \brief Custom brancher for black hole patience
- *
- * This class implements a custom brancher for BlackHole that
- * instantiates the variables in lexical order, and chooses the value
- * with the most cards under it.
- *
- * \relates BlackHole
- */
-class BlackHoleBranch : Brancher {
-protected:
-  /// Views of the brancher
-  ViewArray<Int::IntView> x;
-  /// Cache of first unassigned variable
-  mutable int start;
-  /// %Choice for black hole brancher
-  class Choice : public Gecode::Choice {
-  public:
-    /// Position of variable
-    int pos;
-    /// Value of variable
-    int val;
-    /** Initialize description for brancher \a b, position \a pos0, 
-     *  and value \a val0.
-     */
-    Choice(const Brancher& b, int pos0, int val0)
-      : Gecode::Choice(b,2), pos(pos0), val(val0) {}
-    /// Report size occupied
-    virtual size_t size(void) const {
-      return sizeof(Choice);
-    }
-    /// Archive into \a e
-    virtual void archive(Archive& e) const {
-      Gecode::Choice::archive(e);
-      e << pos << val;
-    }
-  };
-
-  /// Construct brancher
-  BlackHoleBranch(Home home, ViewArray<Int::IntView>& xv)
-    : Brancher(home), x(xv), start(0) {}
-  /// Copy constructor
-  BlackHoleBranch(Space& home, bool share, BlackHoleBranch& b)
-    : Brancher(home, share, b), start(b.start) {
-    x.update(home, share, b.x);
-  }
-
-public:
-  /// Check status of brancher, return true if alternatives left.
-  virtual bool status(const Space&) const {
-    for (int i = start; i < x.size(); ++i)
-      if (!x[i].assigned()) {
-        start = i;
-        return true;
-      }
-    // No non-assigned orders left
-    return false;
-  }
-  /// Return choice
-  virtual Choice* choice(Space&) {
-    int val = -1;
-    int w = 4;
-    for (Int::ViewValues<Int::IntView> vals(x[start]); vals(); ++vals)
-      if (layer[vals.val()] < w) {
-        val = vals.val();
-        if ((w = layer[vals.val()]) == 0) break;
-      }
-
-    assert(val >= 1 && val < 52);
-    return new Choice(*this, start, val);
-  }
-  /// Return choice
-  virtual Choice* choice(const Space&, Archive& e) {
-    int pos, val;
-    e >> pos >> val;
-    return new Choice(*this, pos, val);
-  }
-  /// Perform commit for choice \a _c and alternative \a a.
-  virtual ExecStatus commit(Space& home, const Gecode::Choice& _c,
-                            unsigned int a) {
-    const Choice& c = static_cast<const Choice&>(_c);
-    if (a)
-      return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
-    else
-      return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
-  }
-  /// Copy brancher
-  virtual Actor* copy(Space& home, bool share) {
-    return new (home) BlackHoleBranch(home, share, *this);
-  }
-  /// Post brancher
-  static void post(Home home, IntVarArgs x) {
-    ViewArray<Int::IntView> xv(home, x);
-    (void) new (home) BlackHoleBranch(home, xv);
-  }
-  /// Delete brancher and return its size
-  virtual size_t dispose(Space&) {
-    return sizeof(*this);
-  }
-};
-
-
 /**
  * \brief %Example: Black hole patience
  *
@@ -342,9 +239,28 @@ public:
     }
 
     // Install custom brancher
-    BlackHoleBranch::post(*this, x);
+    branch(*this, x, INT_VAR_NONE(), INT_VAL(&val,&commit));
   }
-
+  /// Value selection function for branching
+  static int val(const Space&, const IntVar& x) {
+    int v = -1;
+    int w = 4;
+    for (IntVarValues vals(x); vals(); ++vals)
+      if (layer[vals.val()] < w) {
+        v = vals.val();
+        if ((w = layer[vals.val()]) == 0) 
+          break;
+      }
+    assert(v >= 1 && v < 52);
+    return v;
+  }
+  /// Commit function for branching
+  static void commit(Space& home, unsigned int a, IntVar x, int n) {
+    if (a == 0)
+      rel(home, x == n);
+    else
+      rel(home, x != n);
+  }
   /// Print instance and solution
   virtual void
   print(std::ostream& os) const {
