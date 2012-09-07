@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
-    Region r;
+    Region r(home);
 
     {
       ViewRanges<View> i(x0), j(x0);

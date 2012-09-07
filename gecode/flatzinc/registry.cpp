@@ -768,7 +768,7 @@ namespace Gecode { namespace FlatZinc {
       IntArgs cover = s.arg2intargs(ce[1]);
       IntVarArgs iv1 = s.arg2intvarargs(ce[2]);
 
-      Region re;
+      Region re(s);
       IntSet cover_s(cover);
       IntSetRanges cover_r(cover_s);
       IntVarRanges* iv0_ri = re.alloc<IntVarRanges>(iv0.size());
@@ -815,7 +815,7 @@ namespace Gecode { namespace FlatZinc {
         y[i] = IntSet(lbound[i],ubound[i]);
 
       IntSet cover_s(cover);
-      Region re;
+      Region re(s);
       IntVarRanges* xrs = re.alloc<IntVarRanges>(x.size());
       for (int i=x.size(); i--;)
         xrs[i].init(x[i]);
@@ -871,7 +871,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
     
-      Region re;
+      Region re(s);
       DFA::Transition* t = re.alloc<DFA::Transition>(noOfTrans+1);
       noOfTrans = 0;
       for (int i=1; i<=q; i++) {

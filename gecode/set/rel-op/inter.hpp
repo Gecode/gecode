@@ -210,7 +210,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                             View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
-    shared = x.shared() || viewarrayshared(x,y);
+    shared = x.shared(home) || viewarrayshared(home,x,y);
   }
 
   template<class View0, class View1>
@@ -219,7 +219,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                             const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
-    shared = x.shared() || viewarrayshared(x,y);
+    shared = x.shared(home) || viewarrayshared(home,x,y);
     IntSetRanges rz(z);
     intOfDets.intersectI(home, rz);
   }
@@ -291,7 +291,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       }
       {
-        Region r;
+        Region r(home);
         GlbRanges<View0>* xLBs = r.alloc<GlbRanges<View0> >(xsize);
         LubRanges<View0>* xUBs = r.alloc<LubRanges<View0> >(xsize);
         for (int i = xsize; i--; ) {
@@ -321,7 +321,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
-        Region r;
+        Region r(home);
         GLBndSet* rightSet =
           static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
         new (&rightSet[xsize-1]) GLBndSet(home);

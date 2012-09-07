@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Set up datastructures
 
     // Bit-sets for amortized O(1) access to domains
-    Region r;
+    Region r(home);
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
 

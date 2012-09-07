@@ -1188,6 +1188,7 @@ namespace Gecode {
     template<class VarImp> friend class VarImpDisposer;
     friend class SharedHandle;
     friend class LocalObject;
+    friend class Region;
   private:
     /// Manager for shared memory areas
     SharedMemory* sm;

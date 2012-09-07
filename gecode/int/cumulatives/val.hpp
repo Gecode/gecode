@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         break;
       }
     // Propagate information for machine r
-    Region region;
+    Region region(home);
     Event *events = region.alloc<Event>(s.size()*8);
     int  events_size;
     int *prune_tasks = region.alloc<int>(s.size());

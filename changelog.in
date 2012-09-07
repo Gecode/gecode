@@ -106,22 +106,6 @@ section "Branching" of the "Search" chapter in MPG.
 
 [ENTRY]
 Module: kernel
-What:   change
-Rank:   minor
-[DESCRIPTION]
-The member functions shared, same, and unique for arrays do not
-require any longer a home space as argument.
-
-[ENTRY]
-Module: kernel
-What:   change
-Rank:   major
-[DESCRIPTION]
-Regions have been completely re-implemented. Their constructor
-now does not any longer take a home space as argument.
-
-[ENTRY]
-Module: kernel
 What:   new
 Rank:   minor
 [DESCRIPTION]

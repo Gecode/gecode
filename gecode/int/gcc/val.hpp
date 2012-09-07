@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace GCC {
            ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
     
-    Region r;
+    Region r(home);
     // count[i] denotes how often value k[i].card() occurs in x
     int* count = r.alloc<int>(k.size());
 

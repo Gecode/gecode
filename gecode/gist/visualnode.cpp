@@ -375,7 +375,7 @@ namespace Gecode { namespace Gist {
       // shape[i] and shape[i+1], when shape[i] and shape[i+1] are merged
       // right-to-left.
       assert(root->copy != NULL);
-      Region r;
+      Region r(*root->copy);
       std::pair<int,int>* alpha =
         r.alloc<std::pair<int,int> >(numberOfShapes);
 

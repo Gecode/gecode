@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
-    Region r;
+    Region r(home);
 
     int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )

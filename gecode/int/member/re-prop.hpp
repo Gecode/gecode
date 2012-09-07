@@ -56,12 +56,12 @@ namespace Gecode { namespace Int { namespace Member {
       return ES_OK;
     }
 
-    x.unique();
+    x.unique(home);
 
     if (x.size() == 1)
       return Rel::ReEqDom<View,BoolView,rm>::post(home,x[0],y,b);
 
-    if (x.same(y)) {
+    if (x.same(home,y)) {
       if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one(home));
       return ES_OK;
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Member {
 
     // Check whether y is in union of x and value set
     if (x.size() > 0) {
-      Region r;
+      Region r(home);
 
       ValSet::Ranges vsr(vs);
       ViewRanges<View> xsr(x[x.size()-1]);

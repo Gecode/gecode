@@ -44,11 +44,13 @@ namespace Gecode {
   /**
    * \defgroup FuncMemRegion Region memory management
    *
-   * A region provides a handle to temporary memory. The memory 
-   * allocated through a region will be released only after the 
-   * region is deleted.
+   * A region provides a handle to temporary memory owned by
+   * a space. The memory will be managed in a stack fashion, that is,
+   * the memory allocated through a region will be released
+   * only after the region is deleted and all other regions
+   * created later also have been deleted.
    *
-   * In case a memory request cannot be fulfilled from a region,
+   * In case a memory request cannot be fulfilled from a space's region,
    * heap memory is allocated and returned to the operating system
    * as soon as the region is deleted.
    *
@@ -57,44 +59,11 @@ namespace Gecode {
   //@{
   /// Handle to region
   class Region {
-  protected:
-    /// A region area
-    class Area {
-    public:
-      /// The actual memory area (allocated from top to bottom)
-      double area[MemoryConfig::region_area_size / sizeof(double)];
-      /// Pointer to the next area
-      Area* next;
-    };
-    /// Pool of memory areas used for regions
-    class Pool {
-    protected:
-      /// Mutex to synchronize globally shared access
-      Support::Mutex m;
-      /// Cached areas
-      Area* cached;
-      /// Number of areas in use
-      unsigned int use;
-      /// Number of areas which are idle (these are in cached)
-      unsigned int idle;
-      /// Average used areas
-      double avg;
-    public:
-      /// Initialize pool
-      GECODE_KERNEL_EXPORT Pool(void);
-      /// Allocate area
-      Area* alloc(void);
-      /// Free area
-      void free(Area* b);
-      /// Deallocate all areas
-      GECODE_KERNEL_EXPORT ~Pool(void);      
-    };
-    /// Pool
-    GECODE_KERNEL_EXPORT static Pool pool;
-    /// Area used for region
-    Area* area;
-    /// Free memory in area
-    size_t free_area;
+  private:
+    /// Location to space
+    Space& home;
+    /// Free memory to reset
+    size_t free_reset;
     /// Heap information data structure
     class HeapInfo {
     public:
@@ -116,12 +85,10 @@ namespace Gecode {
     /// Allocate memory from heap
     GECODE_KERNEL_EXPORT void* heap_alloc(size_t s);
     /// Free memory previously allocated from heap
-    void heap_free(void);
+    GECODE_KERNEL_EXPORT void heap_free(void);
   public:
-    /// Initialize region
-    GECODE_KERNEL_EXPORT Region(void);
-    /// flush region (that is, all region memory becomes available again)
-    void flush(void);
+    /// Initialize region from space
+    Region(const Space& home);
     /// \name Typed allocation routines
     //@{
     /**
@@ -309,14 +276,14 @@ namespace Gecode {
     T& construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5);
     //@}
     /// Return memory
-    GECODE_KERNEL_EXPORT ~Region(void);
+    ~Region(void);
   private:
     /// Allocate memory from heap (disabled)
     static void* operator new(size_t s) throw() { (void) s; return NULL; }
     /// Free memory allocated from heap (disabled)
     static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)
-    Region(const Region& r) {}
+    Region(const Region& r) : home(r.home) {}
     /// Assignment operator (disabled)
     const Region& operator =(const Region&) { return *this; }
   };
@@ -327,64 +294,27 @@ namespace Gecode {
    * Implementation
    *
    */
-
-  forceinline Region::Area*
-  Region::Pool::alloc(void) {
-    Area* b;
-    m.acquire();
-    use++; avg = (7.0*avg + static_cast<double>(use)) / 8.0;
-    if (cached != NULL) {
-      idle--;
-      b = cached; cached = cached->next;
-    } else {
-      b = static_cast<Area*>(heap.ralloc(sizeof(Area)));
-    }
-    m.release();
-    return b;
-  }
-
-  forceinline void
-  Region::Pool::free(Area* b) {
-    m.acquire();
-    use--;
-    if ((cached == NULL) || (static_cast<double>(idle) < avg)) {
-      idle++;
-      b->next = cached; cached = b;
-    } else {
-      heap.rfree(b);
-    }
-    m.release();
-  }
-
-  forceinline void
-  Region::heap_free(void) {
-    assert(hi != NULL);
-    if (Support::marked(hi)) {
-      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      for (unsigned int i=h->n; i--; )
-        heap.rfree(h->blocks[i]);
-      heap.rfree(h);
-    } else {
-      heap.rfree(hi);
-    }
-  }
-
-  forceinline void
-  Region::flush(void) {
-    free_area = MemoryConfig::region_area_size;
-  }
+  forceinline
+  Region::Region(const Space& h)
+    : home(const_cast<Space&>(h)), free_reset(home.sm->region.free), hi(0) {}
 
   forceinline void*
   Region::ralloc(size_t s) {
-    MemoryConfig::align(s);
-    if (s > free_area)
-      return heap_alloc(s);
-    free_area -= s;
-    return Support::ptr_cast<char*>(&area[0]) + free_area;
+    void* p;
+    if (home.sm->region_alloc(s,p))
+      return p;
+    return heap_alloc(s);
   }
 
   forceinline void
   Region::rfree(void*, size_t) {}
+
+  forceinline
+  Region::~Region(void) {
+    home.sm->region.free = free_reset;
+    if (hi != NULL)
+      heap_free();
+  }
 
 
   /*

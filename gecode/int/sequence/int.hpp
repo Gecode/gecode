@@ -131,7 +131,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val>
   forceinline ExecStatus
   Sequence<View,Val>::check(Space& home, ViewArray<View>& x, Val s, int q, int l, int u) {
-    Region r;
+    Region r(home);
     // could do this with an array of length q...
     int* upper = r.alloc<int>(x.size()+1);
     int* lower = r.alloc<int>(x.size()+1);

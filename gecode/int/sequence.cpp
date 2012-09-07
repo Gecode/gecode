@@ -60,7 +60,7 @@ namespace Gecode {
     Limits::check(l,"Int::sequence");
     Limits::check(u,"Int::sequence");
 
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::sequence");
 
     if ((q < 1) || (q > x.size()))
@@ -126,7 +126,7 @@ namespace Gecode {
     Limits::check(l,"Int::sequence");
     Limits::check(u,"Int::sequence");
 
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::sequence");
 
     if ((q < 1) || (q > x.size()))

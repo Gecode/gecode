@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Rel {
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
 
-    Region r;
+    Region r(home);
 
     if (testSetEventLB(me0,me1)) {
       GlbRanges<View0> x0lb(x0);

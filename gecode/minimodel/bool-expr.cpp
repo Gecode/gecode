@@ -574,13 +574,13 @@ namespace Gecode {
   
   BoolVar
   BoolExpr::expr(Home home, IntConLevel icl) const {
-    Region r;
+    Region r(home);
     return NNF::nnf(r,n,false)->expr(home,icl);
   }
 
   void
   BoolExpr::rel(Home home, IntConLevel icl) const {
-    Region r;
+    Region r(home);
     return NNF::nnf(r,n,false)->rel(home,icl);
   }
 

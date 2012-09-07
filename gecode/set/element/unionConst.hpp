@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   ExecStatus
   ElementUnionConst<SView,RView>::propagate(Space& home, const ModEventDelta&) {
-    Region r;
+    Region r(home);
 
     bool* stillSelected = r.alloc<bool>(n_iv);
 

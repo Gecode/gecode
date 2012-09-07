@@ -76,12 +76,12 @@ namespace Gecode { namespace Int { namespace Member {
     if (x.size() == 0)
       return ES_FAILED;
 
-    x.unique();
+    x.unique(home);
 
     if (x.size() == 1)
       return Rel::EqDom<View,View>::post(home,x[0],y);
     
-    if (x.same(y))
+    if (x.same(home,y))
       return ES_OK;
 
     // Eliminate assigned views and store them into the value set
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Member {
     }
 
     // Constrain y to union of x and value set
-    Region r;
+    Region r(home);
 
     assert(x.size() > 0);
     ValSet::Ranges vsr(vs);

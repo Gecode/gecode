@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   inline ExecStatus
   NaryNq<View>::post(Home home, ViewArray<View>& x) {
-    x.unique();
+    x.unique(home);
     // Try to find an assigned view
     int n = x.size();
     if (n <= 1)

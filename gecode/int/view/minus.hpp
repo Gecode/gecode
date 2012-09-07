@@ -162,42 +162,42 @@ namespace Gecode { namespace Int {
   template<class I>
   forceinline ModEvent
   MinusView::narrow_r(Space& home, I& i, bool) {
-    Region r;
+    Region r(home);
     Iter::Ranges::Minus mi(r,i);
     return x.narrow_r(home,mi,false);
   }
   template<class I>
   forceinline ModEvent
   MinusView::inter_r(Space& home, I& i, bool) {
-    Region r;
+    Region r(home);
     Iter::Ranges::Minus mi(r,i);
     return x.inter_r(home,mi,false);
   }
   template<class I>
   forceinline ModEvent
   MinusView::minus_r(Space& home, I& i, bool) {
-    Region r;
+    Region r(home);
     Iter::Ranges::Minus mi(r,i);
     return x.minus_r(home,mi,false);
   }
   template<class I>
   forceinline ModEvent
   MinusView::narrow_v(Space& home, I& i, bool) {
-    Region r;
+    Region r(home);
     Iter::Values::Minus mi(r,i);
     return x.narrow_v(home,mi,false);
   }
   template<class I>
   forceinline ModEvent
   MinusView::inter_v(Space& home, I& i, bool) {
-    Region r;
+    Region r(home);
     Iter::Values::Minus mi(r,i);
     return x.inter_v(home,mi,false);
   }
   template<class I>
   forceinline ModEvent
   MinusView::minus_v(Space& home, I& i, bool) {
-    Region r;
+    Region r(home);
     Iter::Values::Minus mi(r,i);
     return x.minus_v(home,mi,false);
   }

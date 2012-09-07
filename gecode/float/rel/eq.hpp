@@ -121,7 +121,7 @@ namespace Gecode { namespace Float { namespace Rel {
   template<class View>
   ExecStatus
   NaryEq<View>::post(Home home, ViewArray<View>& x) {
-    x.unique();
+    x.unique(home);
     if (x.size() == 2) {
       return Eq<View,View>::post(home,x[0],x[1]);
     } else if (x.size() > 2) {

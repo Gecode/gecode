@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
 
     /// Information needed for checking scc's
-    Region r;
+    Region r(home);
     typedef typename Offset::ViewType OView;
     SsccInfo<OView>* si = r.alloc<SsccInfo<OView> >(n);
     unsigned int n_edges = 0;
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Circuit {
 
     int n=x.size();
 
-    Region r;
+    Region r(home);
 
     // The path starting at assigned x[i] ends at x[end[j]] which is
     // not assigned.

@@ -150,7 +150,7 @@ namespace Gecode {
   void
   LinFloatExpr::post(Home home, FloatRelType frt) const {
     if (home.failed()) return;
-    Region r;
+    Region r(home);
     if (n->t==NT_ADD && n->l == NULL && n->r->t==NT_NONLIN) {
       n->r->sum.ne->post(home,frt,-n->c);
     } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==NULL) {
@@ -181,7 +181,7 @@ namespace Gecode {
   void
   LinFloatExpr::post(Home home, FloatRelType frt, const BoolVar& b, bool t) const {
     if (home.failed()) return;
-    Region r;
+    Region r(home);
     if (n->t==NT_ADD && n->l==NULL && n->r->t==NT_NONLIN) {
       n->r->sum.ne->post(home,frt,-n->c,b,t);
     } else if (n->t==NT_SUB && n->l==NULL && n->r->t==NT_NONLIN) {
@@ -203,7 +203,7 @@ namespace Gecode {
   FloatVar
   LinFloatExpr::post(Home home) const {
     if (home.failed()) return FloatVar(home,0,0);
-    Region r;
+    Region r(home);
     Float::Linear::Term<Float::FloatView>* fts =
       r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float+1);
     FloatVal c = n->fill(home,fts);

@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         x[i].subscribe(home,*new (home) SupportAdvisor(home,*this,ac,i));
       }
 
-    Region r;
+    Region r(home);
 
     // Add initial supports
     BitSet* dom = r.alloc<BitSet>(x.size());
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(!w_support.empty() || !w_remove.empty() || unassigned==0);
     // Set up datastructures
     // Bit-sets for amortized O(1) access to domains
-    Region r;
+    Region r(home);
     // Add initial supports
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);

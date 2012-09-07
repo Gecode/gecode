@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace Count {
   prune(Space& home, ViewArray<VX>& x, VX y) {
     if (x.size() == 0)
       return ES_OK;
-    Region r;
+    Region r(home);
     ViewRanges<VX>* rx = r.alloc<ViewRanges<VX> >(x.size());
     for (int i=x.size(); i--; )
       rx[i] = ViewRanges<VX>(x[i]);

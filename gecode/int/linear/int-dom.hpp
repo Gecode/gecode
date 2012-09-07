@@ -405,7 +405,7 @@ namespace Gecode { namespace Int { namespace Linear {
     int n = x.size();
     int m = y.size();
 
-    Region r;
+    Region r(home);
     // Create support-base iterators
     PosSupportIter<Val>* xp = r.alloc<PosSupportIter<Val> >(n);
     NegSupportIter<Val>* yp = r.alloc<NegSupportIter<Val> >(m);

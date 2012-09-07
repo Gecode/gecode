@@ -75,7 +75,7 @@ namespace Gecode {
     void removeDuplicates(Home home, A& c, IntArgs& v) {
       typedef typename A::value_type S;
       typedef std::pair<S,int> P;
-      Region re;
+      Region re(home);
       P* a = re.alloc<P>(c.size());
       for (int i=c.size(); i--;)
         a[i] = P(c[i],v[i]);
@@ -107,7 +107,7 @@ namespace Gecode {
     IntArgs v(_v);
     if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::count");
     if (home.failed())
       return;
@@ -152,7 +152,7 @@ namespace Gecode {
     IntArgs v(_v);
     if (v.size() != c.size())
       throw ArgumentSizeMismatch("Int::count");
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::count");
     for (int i=c.size(); i--; ) {
       Limits::check(v[i],"Int::count");

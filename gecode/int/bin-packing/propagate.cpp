@@ -114,8 +114,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     // Number of bins
     int m = l.size();
 
-    Region region;
     {
+      Region region(home);
 
       // Possible sizes for bins
       int* s = region.alloc<int>(m);
@@ -212,10 +212,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
     if (IntView::me(modeventdelta()) != ME_INT_NONE)
       return ES_NOFIX;
 
-    region.flush();
-
     // Now the invariant holds that no more assigned bins exist!
     {
+      Region region(home);
+
       // Size of items
       SizeSetMinusOne* s = region.alloc<SizeSetMinusOne>(m);
 
@@ -274,9 +274,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
 
     // Perform lower bound checking
-    region.flush();
-
     if (n > 0) {
+      Region region(home);
+
       // Find capacity estimate (we start from bs[0] as it might be
       // not packable, actually (will be detected later anyway)!
       int c = bs[0].size();

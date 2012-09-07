@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace NValues {
       return ES_OK;
     }
 
-    x.unique();
+    x.unique(home);
 
     if (x.size() == 1) {
       GECODE_ME_CHECK(y.eq(home,1));
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace NValues {
       return all_in_valset(home);
 
     // Compute positions of disjoint views and eliminate subsumed views
-    Region r;
+    Region r(home);
     int* dis; int n_dis;
     disjoint(home,r,dis,n_dis);
 

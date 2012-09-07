@@ -496,7 +496,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
     }
 
-    Region r;
+    Region r(home);
     if (ops.even()) {
       ViewValues<IntView> i(x0), j(x0);
       using namespace Iter::Values;

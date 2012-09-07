@@ -277,7 +277,7 @@ namespace Gecode { namespace Set { namespace Rel {
     
     bool assigned = x0.assigned() && x1.assigned();
     
-    Region re;
+    Region re(home);
     CharacteristicSets cs(re,x0,x1);
 
     /*

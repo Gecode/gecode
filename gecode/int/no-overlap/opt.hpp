@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   template<class Dim, int d>
   ExecStatus 
   OptProp<Dim,d>::propagate(Space& home, const ModEventDelta& med) {
-    Region r;
+    Region r(home);
 
     if (BoolView::me(med) == ME_BOOL_VAL) {
       // Eliminate excluded boxes

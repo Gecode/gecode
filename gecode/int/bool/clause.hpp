@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOrTrue<VX>::post(home,x);
     if ((x.size() == 1) && (y.size() == 1)) {
       return BinOrTrue<VX,VY>::post(home,x[0],y[0]);
-    } else if (!x.shared(y)) {
+    } else if (!x.shared(home,y)) {
       (void) new (home) ClauseTrue(home,x,y);
     }
     return ES_OK;
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   inline ExecStatus
   Clause<VX,VY>::post(Home home, ViewArray<VX>& x, ViewArray<VY>& y, VX z) {
-    assert(!x.shared() && !y.shared());
+    assert(!x.shared(home) && !y.shared(home));
     if (z.one())
       return ClauseTrue<VX,VY>::post(home,x,y);
     if (z.zero()) {
@@ -278,7 +278,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOr<VX,VX>::post(home,x,z);
     if ((x.size() == 1) && (y.size() == 1)) {
       return Or<VX,VY,VX>::post(home,x[0],y[0],z);
-    } else if (x.shared(y)) {
+    } else if (x.shared(home,y)) {
       GECODE_ME_CHECK(z.one_none(home));
     } else {
       (void) new (home) Clause<VX,VY>(home,x,y,z);

@@ -539,6 +539,7 @@ namespace Gecode {
     using namespace Int;
     if (home.failed()) return;
     int m = x.size();
+    Region r(home);
     switch (o) {
     case BOT_AND:
       {
@@ -547,7 +548,7 @@ namespace Gecode {
           NegBoolView nb(x[i]); b[i]=nb;
         }
         NegBoolView ny(y);
-        b.unique();
+        b.unique(home);
         GECODE_ES_FAIL((Bool::NaryOr<NegBoolView,NegBoolView>
                              ::post(home,b,ny)));
       }
@@ -555,7 +556,7 @@ namespace Gecode {
     case BOT_OR:
       {
         ViewArray<BoolView> b(home,x);
-        b.unique();
+        b.unique(home);
         GECODE_ES_FAIL((Bool::NaryOr<BoolView,BoolView>::post(home,b,y)));
       }
       break;
@@ -603,6 +604,7 @@ namespace Gecode {
       throw NotZeroOne("Int::rel");
     if (home.failed()) return;
     int m = x.size();
+    Region r(home);
     switch (o) {
     case BOT_AND:
       if (n == 0) {
@@ -610,7 +612,7 @@ namespace Gecode {
         for (int i=m; i--; ) {
           NegBoolView nb(x[i]); b[i]=nb;
         }
-        b.unique();
+        b.unique(home);
         GECODE_ES_FAIL(Bool::NaryOrTrue<NegBoolView>::post(home,b));
       } else {
         for (int i=m; i--; ) {
@@ -625,7 +627,7 @@ namespace Gecode {
         }
       } else {
         ViewArray<BoolView> b(home,x);
-        b.unique();
+        b.unique(home);
         GECODE_ES_FAIL(Bool::NaryOrTrue<BoolView>::post(home,b));
       }
       break;
@@ -678,7 +680,7 @@ namespace Gecode {
           NegBoolView n(x[i]); xv[i]=n;
         }
         ViewArray<BoolView> yv(home,y);
-        xv.unique(); yv.unique();
+        xv.unique(home); yv.unique(home);
         GECODE_ES_FAIL((Bool::ClauseTrue<NegBoolView,BoolView>
                         ::post(home,xv,yv)));
       } else {
@@ -704,7 +706,7 @@ namespace Gecode {
         for (int i=y.size(); i--; ) {
           NegBoolView n(y[i]); yv[i]=n;
         }
-        xv.unique(); yv.unique();
+        xv.unique(home); yv.unique(home);
         GECODE_ES_FAIL((Bool::ClauseTrue<BoolView,NegBoolView>
                         ::post(home,xv,yv)));
       }
@@ -727,7 +729,7 @@ namespace Gecode {
           NegBoolView n(x[i]); xv[i]=n;
         }
         ViewArray<BoolView> yv(home,y);
-        xv.unique(); yv.unique();
+        xv.unique(home); yv.unique(home);
         NegBoolView nz(z);
         GECODE_ES_FAIL((Bool::Clause<NegBoolView,BoolView>
                         ::post(home,xv,yv,nz)));
@@ -740,7 +742,7 @@ namespace Gecode {
         for (int i=y.size(); i--; ) {
           NegBoolView n(y[i]); yv[i]=n;
         }
-        xv.unique(); yv.unique();
+        xv.unique(home); yv.unique(home);
         GECODE_ES_FAIL((Bool::Clause<BoolView,NegBoolView>
                         ::post(home,xv,yv,z)));
       }

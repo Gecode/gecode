@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   ExecStatus
   NaryEqDom<View>::post(Home home, ViewArray<View>& x) {
-    x.unique();
+    x.unique(home);
     if (x.size() == 2) {
       return EqDom<View,View>::post(home,x[0],x[1]);
     } else if (x.size() > 2) {
@@ -303,7 +303,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
     int n = x.size();
 
-    Region re;
+    Region re(home);
     ViewRanges<View>* i_x = re.alloc<ViewRanges<View> >(n);
     for (int i = n; i--; ) {
       ViewRanges<View> i_xi(x[i]);
@@ -344,7 +344,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   ExecStatus
   NaryEqBnd<View>::post(Home home, ViewArray<View>& x) {
-    x.unique();
+    x.unique(home);
     if (x.size() == 2) {
       return EqBnd<View,View>::post(home,x[0],x[1]);
     } else if (x.size() > 2) {

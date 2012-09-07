@@ -45,7 +45,7 @@ namespace Gecode {
   extensional(Home home, const IntVarArgs& x, DFA dfa,
               IntConLevel) {
     using namespace Int;
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
@@ -55,7 +55,7 @@ namespace Gecode {
   extensional(Home home, const BoolVarArgs& x, DFA dfa,
               IntConLevel) {
     using namespace Int;
-    if (x.same())
+    if (x.same(home))
       throw ArgumentSame("Int::extensional");
     if (home.failed()) return;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
@@ -86,7 +86,7 @@ namespace Gecode {
                            ::post(home,xv,t)));
       break;
     default:
-      if (x.same()) {
+      if (x.same(home)) {
         GECODE_ES_FAIL((Extensional::Basic<IntView,true>
                              ::post(home,xv,t)));
       } else {
@@ -123,7 +123,7 @@ namespace Gecode {
                            ::post(home,xv,t)));
       break;
     default:
-      if (x.same()) {
+      if (x.same(home)) {
         GECODE_ES_FAIL((Extensional::Basic<BoolView,true>
                              ::post(home,xv,t)));
       } else {

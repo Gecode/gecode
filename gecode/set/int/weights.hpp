@@ -175,7 +175,7 @@ namespace Gecode { namespace Set { namespace Int {
                       View x, Gecode::Int::IntView y) {
     if (elements.size() != weights.size())
       throw ArgumentSizeMismatch("Weights");
-    Region r;
+    Region r(home);
     int* els_arr = r.alloc<int>(elements.size());
     for (int i=elements.size(); i--;)
       els_arr[i] = elements[i];
@@ -250,7 +250,7 @@ namespace Gecode { namespace Set { namespace Int {
     if (!x.assigned()) {
       // Collect the weights of the elements in the unknown set in an array
       int size = elements.size();
-      Region r;
+      Region r(home);
       int* currentWeights = r.alloc<int>(size);
 
       UnknownRanges<View> ur(x);
