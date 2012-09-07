@@ -291,7 +291,7 @@ public:
         branch(*row, getRow(row, index[i].idx), 
                INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
         Search::Options o; o.clone = false;
-        if ( Radiotherapy* newSol = dfs(row, o) ) {
+        if (Radiotherapy* newSol = dfs(row, o) ) {
           // Found a solution for row i, so try to find one for i+1
           delete newSol;
           std::cerr << index[i].idx;
