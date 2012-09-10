@@ -37,49 +37,49 @@
 
 namespace Gecode { namespace Int { namespace NoOverlap {
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline
-  OptProp<Dim,d>::OptProp(Home home, OptBox<Dim,d>* b, int n, int m0)
-    : Base<OptBox<Dim,d> >(home,b,n), m(m0) {
+  OptProp<Box>::OptProp(Home home, Box* b, int n, int m0)
+    : Base<Box>(home,b,n), m(m0) {
     for (int i=m; i--; )
       b[n+i].subscribe(home, *this);
   }
 
-  template<class Dim, int d>
+  template<class Box>
   ExecStatus
-  OptProp<Dim,d>::post(Home home, OptBox<Dim,d>* b, int n) {
+  OptProp<Box>::post(Home home, Box* b, int n) {
     // Partition into mandatory and optional boxes
     if (n > 1) {
-      int p = Base<OptBox<Dim,d> >::partition(b, 0, n);
-      (void) new (home) OptProp<Dim,d>(home,b,p,n-p);
+      int p = Base<Box>::partition(b, 0, n);
+      (void) new (home) OptProp<Box>(home,b,p,n-p);
     }
     return ES_OK;
   }
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline size_t 
-  OptProp<Dim,d>::dispose(Space& home) {
+  OptProp<Box>::dispose(Space& home) {
     for (int i=m; i--; )
       b[n+i].cancel(home, *this);
-    (void) Base<OptBox<Dim,d> >::dispose(home);
+    (void) Base<Box>::dispose(home);
     return sizeof(*this);
   }
 
 
-  template<class Dim, int d>
+  template<class Box>
   forceinline
-  OptProp<Dim,d>::OptProp(Space& home, bool shared, OptProp<Dim,d>& p) 
-    : Base<OptBox<Dim,d> >(home, shared, p, p.n + p.m), m(p.m) {}
+  OptProp<Box>::OptProp(Space& home, bool shared, OptProp<Box>& p) 
+    : Base<Box>(home, shared, p, p.n + p.m), m(p.m) {}
 
-  template<class Dim, int d>
+  template<class Box>
   Actor* 
-  OptProp<Dim,d>::copy(Space& home, bool share) {
-    return new (home) OptProp<Dim,d>(home,share,*this);
+  OptProp<Box>::copy(Space& home, bool share) {
+    return new (home) OptProp<Box>(home,share,*this);
   }
 
-  template<class Dim, int d>
+  template<class Box>
   ExecStatus 
-  OptProp<Dim,d>::propagate(Space& home, const ModEventDelta& med) {
+  OptProp<Box>::propagate(Space& home, const ModEventDelta& med) {
     Region r(home);
 
     if (BoolView::me(med) == ME_BOOL_VAL) {
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
         }
       // Reconsider optional boxes
       if (m > 0) {
-        int p = Base<OptBox<Dim,d> >::partition(b+n, 0, m);
+        int p = Base<Box>::partition(b+n, 0, m);
         n += p; m -= p;
       }
     }

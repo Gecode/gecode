@@ -80,7 +80,8 @@ namespace Gecode {
       b[i][1] = FixDim(y[i],h[i]);
     }
 
-    GECODE_ES_FAIL((NoOverlap::ManProp<FixDim,2>::post(home,b,x.size())));
+    GECODE_ES_FAIL((
+      NoOverlap::ManProp<ManBox<FixDim,2> >::post(home,b,x.size())));
   }
 
   void
@@ -114,7 +115,8 @@ namespace Gecode {
         b[i][1] = FixDim(y[i],h[i]);
         b[i].optional(m[i]);
       }
-      GECODE_ES_FAIL((NoOverlap::OptProp<FixDim,2>::post(home,b,x.size())));
+      GECODE_ES_FAIL((
+        NoOverlap::OptProp<OptBox<FixDim,2> >::post(home,b,x.size())));
     } else {
       ManBox<FixDim,2>* b 
         = static_cast<Space&>(home).alloc<ManBox<FixDim,2> >(x.size());
@@ -125,7 +127,7 @@ namespace Gecode {
           b[n][1] = FixDim(y[i],h[i]);
           n++;
         }
-      GECODE_ES_FAIL((NoOverlap::ManProp<FixDim,2>::post(home,b,n)));
+      GECODE_ES_FAIL((NoOverlap::ManProp<ManBox<FixDim,2> >::post(home,b,n)));
     }
   }
 
@@ -164,7 +166,8 @@ namespace Gecode {
         b[i][0] = FlexDim(x0[i],w[i],x1[i]);
         b[i][1] = FlexDim(y0[i],h[i],y1[i]);
       }
-      GECODE_ES_FAIL((NoOverlap::ManProp<FlexDim,2>::post(home,b,x0.size())));
+      GECODE_ES_FAIL((
+        NoOverlap::ManProp<ManBox<FlexDim,2> >::post(home,b,x0.size())));
     }
   }
 
@@ -206,7 +209,8 @@ namespace Gecode {
         b[i][1] = FlexDim(y0[i],h[i],y1[i]);
         b[i].optional(m[i]);
       }
-      GECODE_ES_FAIL((NoOverlap::OptProp<FlexDim,2>::post(home,b,x0.size())));
+      GECODE_ES_FAIL((
+        NoOverlap::OptProp<OptBox<FlexDim,2> >::post(home,b,x0.size())));
     } else {
       ManBox<FlexDim,2>* b 
         = static_cast<Space&>(home).alloc<ManBox<FlexDim,2> >(x0.size());
@@ -217,7 +221,7 @@ namespace Gecode {
           b[n][1] = FlexDim(y0[i],h[i],y1[i]);
           n++;
         }
-      GECODE_ES_FAIL((NoOverlap::ManProp<FlexDim,2>::post(home,b,n)));
+      GECODE_ES_FAIL((NoOverlap::ManProp<ManBox<FlexDim,2> >::post(home,b,n)));
     }
   }
 

@@ -257,18 +257,18 @@ namespace Gecode { namespace Int { namespace NoOverlap {
    *
    * \ingroup FuncIntProp
    */
-  template<class Dim, int d>
-  class ManProp : public Base<ManBox<Dim,d> > {
+  template<class Box>
+  class ManProp : public Base<Box> {
   protected:
-    using Base<ManBox<Dim,d> >::b;
-    using Base<ManBox<Dim,d> >::n;
+    using Base<Box>::b;
+    using Base<Box>::n;
     /// Constructor for posting
-    ManProp(Home home, ManBox<Dim,d>* b, int n);
+    ManProp(Home home, Box* b, int n);
     /// Constructor for cloning \a p
-    ManProp(Space& home, bool share, ManProp<Dim,d>& p);
+    ManProp(Space& home, bool share, ManProp<Box>& p);
   public:
     /// Post propagator for boxes \a b
-    static ExecStatus post(Home home, ManBox<Dim,d>* b, int n);
+    static ExecStatus post(Home home, Box* b, int n);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
@@ -284,20 +284,20 @@ namespace Gecode { namespace Int { namespace NoOverlap {
    *
    * \ingroup FuncIntProp
    */
-  template<class Dim, int d>
-  class OptProp : public Base<OptBox<Dim,d> > {
+  template<class Box>
+  class OptProp : public Base<Box> {
   protected:
-    using Base<OptBox<Dim,d> >::b;
-    using Base<OptBox<Dim,d> >::n;
+    using Base<Box>::b;
+    using Base<Box>::n;
     /// Number of optional boxes: b[n] ... b[n+m-1]
     int m;
     /// Constructor for posting
-    OptProp(Home home, OptBox<Dim,d>* b, int n, int m);
+    OptProp(Home home, Box* b, int n, int m);
     /// Constructor for cloning \a p
-    OptProp(Space& home, bool share, OptProp<Dim,d>& p);
+    OptProp(Space& home, bool share, OptProp<Box>& p);
   public:
     /// Post propagator for boxes \a b
-    static ExecStatus post(Home home, OptBox<Dim,d>* b, int n);
+    static ExecStatus post(Home home, Box* b, int n);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning

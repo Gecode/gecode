@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Generalized definition of no-overlap propagators for better reuse.
+
+[ENTRY]
 Module: iter
 What:   documentation
 Rank:   minor
