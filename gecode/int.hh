@@ -3705,12 +3705,12 @@ namespace Gecode {
     IntVarBranch(void);
     /// Initialize with random number generator \a r
     IntVarBranch(Rnd r);
-    /// Initialize with selection strategy \a s and tie-breaking tolerance \a t
-    IntVarBranch(Select s, double t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-breaking tolerance \a t
-    IntVarBranch(Select s, Activity a, double t);
-    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-breaking tolerance \a t
-    IntVarBranch(Select s, void* mf, double t);
+    /// Initialize with selection strategy \a s and tie-break limit function \a t
+    IntVarBranch(Select s, BranchTbl t);
+    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
+    IntVarBranch(Select s, Activity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
+    IntVarBranch(Select s, void* mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -3725,81 +3725,81 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   IntVarBranch INT_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  IntVarBranch INT_VAR_MERIT_MIN(IntBranchMerit bm, double tbt=0.0);
+  IntVarBranch INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with least merit according to branch merit function \a bm
-  IntVarBranch INT_VAR_MERIT_MIN(BoolBranchMerit bm, double tbt=0.0);
+  IntVarBranch INT_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with highest merit according to branch merit function \a bm
-  IntVarBranch INT_VAR_MERIT_MAX(IntBranchMerit bm, double tbt=0.0);
+  IntVarBranch INT_VAR_MERIT_MAX(IntBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with highest merit according to branch merit function \a bm
-  IntVarBranch INT_VAR_MERIT_MAX(BoolBranchMerit bm, double tbt=0.0);
+  IntVarBranch INT_VAR_MERIT_MAX(BoolBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with smallest degree
-  IntVarBranch INT_VAR_DEGREE_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest degree
-  IntVarBranch INT_VAR_DEGREE_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest accumulated failure count
-  IntVarBranch INT_VAR_AFC_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_AFC_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count    
-  IntVarBranch INT_VAR_AFC_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_AFC_MAX(BranchTbl tbl=NULL);
   /// Select variable with lowest activity
-  IntVarBranch INT_VAR_ACTIVITY_MIN(IntActivity a, double tbt=0.0);    
+  IntVarBranch INT_VAR_ACTIVITY_MIN(IntActivity a, BranchTbl tbl=NULL);    
   /// Select variable with lowest activity
-  IntVarBranch INT_VAR_ACTIVITY_MIN(BoolActivity a, double tbt=0.0);    
+  IntVarBranch INT_VAR_ACTIVITY_MIN(BoolActivity a, BranchTbl tbl=NULL);    
   /// Select variable with highest activity
-  IntVarBranch INT_VAR_ACTIVITY_MAX(IntActivity a, double tbt=0.0);     
+  IntVarBranch INT_VAR_ACTIVITY_MAX(IntActivity a, BranchTbl tbl=NULL);     
   /// Select variable with highest activity
-  IntVarBranch INT_VAR_ACTIVITY_MAX(BoolActivity a, double tbt=0.0);     
+  IntVarBranch INT_VAR_ACTIVITY_MAX(BoolActivity a, BranchTbl tbl=NULL);     
   /// Select variable with smallest min
-  IntVarBranch INT_VAR_MIN_MIN(double tbt=0.0);         
+  IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=NULL);         
   /// Select variable with largest min
-  IntVarBranch INT_VAR_MIN_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest max
-  IntVarBranch INT_VAR_MAX_MIN(double tbt=0.0); 
+  IntVarBranch INT_VAR_MAX_MIN(BranchTbl tbl=NULL); 
   /// Select variable with largest max
-  IntVarBranch INT_VAR_MAX_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size
-  IntVarBranch INT_VAR_SIZE_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size
-  IntVarBranch INT_VAR_SIZE_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by degree
-  IntVarBranch INT_VAR_SIZE_DEGREE_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by degree
-  IntVarBranch INT_VAR_SIZE_DEGREE_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_DEGREE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by accumulated failure count
-  IntVarBranch INT_VAR_SIZE_AFC_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_AFC_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by accumulated failure count
-  IntVarBranch INT_VAR_SIZE_AFC_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_AFC_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by activity
-  IntVarBranch INT_VAR_SIZE_ACTIVITY_MIN(IntActivity a, double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MIN(IntActivity a, BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by activity
-  IntVarBranch INT_VAR_SIZE_ACTIVITY_MIN(BoolActivity a, double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MIN(BoolActivity a, BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by activity
-  IntVarBranch INT_VAR_SIZE_ACTIVITY_MAX(IntActivity a, double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MAX(IntActivity a, BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by activity
-  IntVarBranch INT_VAR_SIZE_ACTIVITY_MAX(BoolActivity a, double tbt=0.0);
+  IntVarBranch INT_VAR_SIZE_ACTIVITY_MAX(BoolActivity a, BranchTbl tbl=NULL);
   /** \brief Select variable with smallest min-regret
    *
    * The min-regret of a variable is the difference between the
    * smallest and second-smallest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MIN_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_REGRET_MIN_MIN(BranchTbl tbl=NULL);
   /** \brief Select variable with largest min-regret
    *
    * The min-regret of a variable is the difference between the
    * smallest and second-smallest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MIN_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_REGRET_MIN_MAX(BranchTbl tbl=NULL);
   /** \brief Select variable with smallest max-regret
    *
    * The max-regret of a variable is the difference between the
    * largest and second-largest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MAX_MIN(double tbt=0.0);
+  IntVarBranch INT_VAR_REGRET_MAX_MIN(BranchTbl tbl=NULL);
   /** \brief Select variable with largest max-regret
    *
    * The max-regret of a variable is the difference between the
    * largest and second-largest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MAX_MAX(double tbt=0.0);
+  IntVarBranch INT_VAR_REGRET_MAX_MAX(BranchTbl tbl=NULL);
   //@}
 
 }

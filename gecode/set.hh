@@ -1223,12 +1223,12 @@ namespace Gecode {
     SetVarBranch(void);
     /// Initialize with random number generator \a r
     SetVarBranch(Rnd r);
-    /// Initialize with selection strategy \a s and tie-breaking tolerance \a t
-    SetVarBranch(Select s, double t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-breaking tolerance \a t
-    SetVarBranch(Select s, Activity a, double t);
-    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-breaking tolerance \a t
-    SetVarBranch(Select s, void* mf, double t);
+    /// Initialize with selection strategy \a s and tie-break limit function \a t
+    SetVarBranch(Select s, BranchTbl t);
+    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
+    SetVarBranch(Select s, Activity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
+    SetVarBranch(Select s, void* mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1243,45 +1243,45 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   SetVarBranch SET_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  SetVarBranch SET_VAR_MERIT_MIN(SetBranchMerit bm, double tbt=0.0);
+  SetVarBranch SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with highest merit according to branch merit function \a bm
-  SetVarBranch SET_VAR_MERIT_MAX(SetBranchMerit bm, double tbt=0.0);
+  SetVarBranch SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with smallest degree
-  SetVarBranch SET_VAR_DEGREE_MIN(double tbt=0.0);
+  SetVarBranch SET_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest degree
-  SetVarBranch SET_VAR_DEGREE_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest accumulated failure count
-  SetVarBranch SET_VAR_AFC_MIN(double tbt=0.0);
+  SetVarBranch SET_VAR_AFC_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count    
-  SetVarBranch SET_VAR_AFC_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_AFC_MAX(BranchTbl tbl=NULL);
   /// Select variable with lowest activity
-  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, double tbt=0.0);    
+  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);    
   /// Select variable with highest activity
-  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, double tbt=0.0);     
+  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);     
   /// Select variable with smallest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MIN(double tbt=0.0);         
+  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);         
   /// Select variable with largest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MIN(double tbt=0.0); 
+  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL); 
   /// Select variable with largest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest unknown set
-  SetVarBranch SET_VAR_SIZE_MIN(double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest  unknown set
-  SetVarBranch SET_VAR_SIZE_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by degree
-  SetVarBranch SET_VAR_SIZE_DEGREE_MIN(double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by degree
-  SetVarBranch SET_VAR_SIZE_DEGREE_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_DEGREE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by accumulated failure count
-  SetVarBranch SET_VAR_SIZE_AFC_MIN(double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_AFC_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by accumulated failure count
-  SetVarBranch SET_VAR_SIZE_AFC_MAX(double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_AFC_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by activity
-  SetVarBranch SET_VAR_SIZE_ACTIVITY_MIN(SetActivity a, double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by activity
-  SetVarBranch SET_VAR_SIZE_ACTIVITY_MAX(SetActivity a, double tbt=0.0);
+  SetVarBranch SET_VAR_SIZE_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
   //@}
 
 }

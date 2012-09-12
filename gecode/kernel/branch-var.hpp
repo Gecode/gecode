@@ -38,13 +38,24 @@
 namespace Gecode {
 
   /**
+   * \brief Tie-break limit function
+   * 
+   * Here the value \b is the best merit value found. The function
+   * must return the merit value that is considered the limit for
+   * breaking ties.
+   *
+   * \ingroup TaskModelBranch
+   */
+  typedef double (*BranchTbl)(const Space& home, double b);
+
+  /**
    * \brief Variable branching information
    * \ingroup TaskModelBranch
    */
   class VarBranch {
   protected:
-    /// Tie-breaking tolerance
-    double t;
+    /// Tie-breaking limit function
+    BranchTbl t;
     /// Random number generator
     Rnd r;
     /// Activity information
@@ -52,16 +63,16 @@ namespace Gecode {
     /// Merit function (generic pointer)
     void* mf;
   public:
-    /// Initialize with tie-breaking tolerance \a t
-    VarBranch(double t);
+    /// Initialize with tie-break limit function \a t
+    VarBranch(BranchTbl t);
     /// Initialize with random number generator \a r
     VarBranch(Rnd r);
-    /// Initialize with activity \a a and tie-breaking tolerance \a t
-    VarBranch(Activity a, double t);
-    /// Initialize with merit function \a f and tie-breaking tolerance \a t
-    VarBranch(void* f, double t);
-    /// Return tie-breaking tolerance
-    double tbt(void) const;
+    /// Initialize with activity \a a and tie-break limit function \a t
+    VarBranch(Activity a, BranchTbl t);
+    /// Initialize with merit function \a f and tie-break limit function \a t
+    VarBranch(void* f, BranchTbl t);
+    /// Return tie-break limit function
+    BranchTbl tbl(void) const;
     /// Return random number generator
     Rnd rnd(void) const;
     /// Return activity
@@ -105,11 +116,11 @@ namespace Gecode {
 
   // Variable branching
   forceinline 
-  VarBranch::VarBranch(double t0)
+  VarBranch::VarBranch(BranchTbl t0)
     : t(t0), mf(NULL) {}
 
   forceinline 
-  VarBranch::VarBranch(Activity a0, double t0)
+  VarBranch::VarBranch(Activity a0, BranchTbl t0)
     : t(t0), a(a0), mf(NULL) {
     if (!a.initialized())
       throw UninitializedActivity("VarBranch::VarBranch");
@@ -117,17 +128,17 @@ namespace Gecode {
 
   forceinline 
   VarBranch::VarBranch(Rnd r0)
-    : t(0.0), r(r0), mf(NULL) {
+    : t(NULL), r(r0), mf(NULL) {
     if (!r.initialized())
       throw UninitializedRnd("VarBranch::VarBranch");
   }
 
   forceinline 
-  VarBranch::VarBranch(void* f, double t0)
+  VarBranch::VarBranch(void* f, BranchTbl t0)
     : t(t0), mf(f) {}
 
-  forceinline double
-  VarBranch::tbt(void) const {
+  forceinline BranchTbl
+  VarBranch::tbl(void) const {
     return t;
   }
 

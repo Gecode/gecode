@@ -1470,12 +1470,12 @@ namespace Gecode {
     FloatVarBranch(void);
     /// Initialize with random number generator \a r
     FloatVarBranch(Rnd r);
-    /// Initialize with selection strategy \a s and tie-breaking tolerance \a t
-    FloatVarBranch(Select s, double t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-breaking tolerance \a t
-    FloatVarBranch(Select s, Activity a, double t);
-    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-breaking tolerance \a t
-    FloatVarBranch(Select s, void* mf, double t);
+    /// Initialize with selection strategy \a s and tie-break limit function \a t
+    FloatVarBranch(Select s, BranchTbl t);
+    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
+    FloatVarBranch(Select s, Activity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
+    FloatVarBranch(Select s, void* mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1491,45 +1491,45 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   FloatVarBranch FLOAT_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  FloatVarBranch FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with highest merit according to branch merit function \a bm
-  FloatVarBranch FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl=NULL);
   /// Select variable with smallest degree
-  FloatVarBranch FLOAT_VAR_DEGREE_MIN(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest degree
-  FloatVarBranch FLOAT_VAR_DEGREE_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest accumulated failure count
-  FloatVarBranch FLOAT_VAR_AFC_MIN(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_AFC_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count    
-  FloatVarBranch FLOAT_VAR_AFC_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_AFC_MAX(BranchTbl tbl=NULL);
   /// Select variable with lowest activity
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(FloatActivity a, double tbt=0.0);    
+  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(FloatActivity a, BranchTbl tbl=NULL);    
   /// Select variable with highest activity
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, double tbt=0.0);     
+  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);     
   /// Select variable with smallest min
-  FloatVarBranch FLOAT_VAR_MIN_MIN(double tbt=0.0);         
+  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);         
   /// Select variable with largest min
-  FloatVarBranch FLOAT_VAR_MIN_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest max
-  FloatVarBranch FLOAT_VAR_MAX_MIN(double tbt=0.0); 
+  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=NULL); 
   /// Select variable with largest max
-  FloatVarBranch FLOAT_VAR_MAX_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size
-  FloatVarBranch FLOAT_VAR_SIZE_MIN(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size
-  FloatVarBranch FLOAT_VAR_SIZE_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by degree
-  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MIN(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by degree
-  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by accumulated failure count
-  FloatVarBranch FLOAT_VAR_SIZE_AFC_MIN(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_AFC_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by accumulated failure count
-  FloatVarBranch FLOAT_VAR_SIZE_AFC_MAX(double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_AFC_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by activity
-  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MIN(FloatActivity a, double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MIN(FloatActivity a, BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by activity
-  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MAX(FloatActivity a, double tbt=0.0);
+  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);
   //@}
 
 }
