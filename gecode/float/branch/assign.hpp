@@ -72,7 +72,7 @@ namespace Gecode {
 
   inline FloatAssign
   FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c) {
-    return FloatAssign(v,c);
+    return FloatAssign(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
 }

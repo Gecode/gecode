@@ -2,7 +2,7 @@
  *  CAUTION:
  *    This file has been automatically generated. Do not edit,
  *    edit the specification file
- *      gecode/float/branch/post-view.bs
+ *      /home/vincent/Dropbox/gecode_trunk/gecode/float/branch/post-view.bs
  *    instead.
  *
  *  This file contains generated code fragments which are

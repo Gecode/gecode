@@ -72,7 +72,7 @@ namespace Gecode {
 
   inline FloatValBranch
   FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c) {
-    return FloatValBranch(v,c);
+    return FloatValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
 }

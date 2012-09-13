@@ -74,22 +74,22 @@ namespace Gecode {
 
   inline IntVarBranch
   INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,bm,tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline IntVarBranch
   INT_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,bm,tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline IntVarBranch
   INT_VAR_MERIT_MAX(IntBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,bm,tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline IntVarBranch
   INT_VAR_MERIT_MAX(BoolBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,bm,tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline IntVarBranch

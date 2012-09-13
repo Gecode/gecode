@@ -110,6 +110,8 @@ namespace Gecode { namespace Float { namespace Branch {
     /// The random number generator
     Rnd r;
   public:
+    /// Value type
+    typedef typename std::pair<FloatNum, bool> Val;
     /// Default constructor
     ValSplitRnd(void);
     /// Constructor for initialization

@@ -211,6 +211,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class ViewSel, class View>
   class ViewValuesBrancher : public ViewBrancher<ViewSel> {
   protected:
+    using typename ViewBrancher<ViewSel>::BranchFilter;
     using ViewBrancher<ViewSel>::x;
     using ViewBrancher<ViewSel>::viewsel;
     /// Constructor for cloning \a b

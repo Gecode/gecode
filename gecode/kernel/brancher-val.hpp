@@ -96,6 +96,8 @@ namespace Gecode {
     ValSelBase<View,
                typename BranchTraits<typename View::VarType>::ValType> {
   public:
+    /// Value type
+    typedef typename BranchTraits<typename View::VarType>::ValType Val;
     /// The corresponding variable type
     typedef typename View::VarType Var;
     /// The corresponding value function
@@ -172,8 +174,8 @@ namespace Gecode {
   template<class View, unsigned int alt>
   forceinline
   ValSelValCommit<View,alt>::ValSelValCommit(Space&, const ValBranch& vb) :
-    v(static_cast<ValFunction>(vb.val())),
-    c(static_cast<CommitFunction>(vb.commit())) {}
+    v(reinterpret_cast<ValFunction>(vb.val())),
+    c(reinterpret_cast<CommitFunction>(vb.commit())) {}
   template<class View, unsigned int alt>
   forceinline typename ValSelValCommit<View,alt>::Val
   ValSelValCommit<View,alt>::val(const Space& home, View x) const {

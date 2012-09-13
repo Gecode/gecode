@@ -167,7 +167,7 @@ namespace Gecode {
   forceinline
   MeritFunction<View>::MeritFunction(Space& home, const VarBranch& vb)
     : MeritBase<View>(home,vb),
-      f(static_cast<Function>(vb.merit())) {}
+      f(reinterpret_cast<Function>(vb.merit())) {}
   template<class View>
   forceinline double
   MeritFunction<View>::operator ()(const Space& home, View x, int i) {

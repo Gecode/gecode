@@ -156,7 +156,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   template<class View>
   forceinline void
-  ValSplitRnd<View>::dispose(Space& home) {
+  ValSplitRnd<View>::dispose(Space&) {
     r.~Rnd();
   }
 

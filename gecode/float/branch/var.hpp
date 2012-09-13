@@ -70,12 +70,12 @@ namespace Gecode {
 
   inline FloatVarBranch
   FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN,bm,tbl);
+    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline FloatVarBranch
   FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX,bm,tbl);
+    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline FloatVarBranch

@@ -97,12 +97,12 @@ namespace Gecode {
 
   inline IntValBranch
   INT_VAL(IntBranchVal v, IntBranchCommit c) {
-    return IntValBranch(v,c);
+    return IntValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
   inline IntValBranch
   INT_VAL(BoolBranchVal v, BoolBranchCommit c) {
-    return IntValBranch(v,c);
+    return IntValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
   inline IntValBranch

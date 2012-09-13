@@ -97,7 +97,7 @@ namespace Gecode {
 
   inline SetValBranch
   SET_VAL(SetBranchVal v, SetBranchCommit c) {
-    return SetValBranch(v,c);
+    return SetValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
 }

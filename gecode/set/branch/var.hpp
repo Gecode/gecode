@@ -75,12 +75,12 @@ namespace Gecode {
 
   inline SetVarBranch
   SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_MERIT_MIN,bm,tbl);
+    return SetVarBranch(SetVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline SetVarBranch
   SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_MERIT_MAX,bm,tbl);
+    return SetVarBranch(SetVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
   }
 
   inline SetVarBranch

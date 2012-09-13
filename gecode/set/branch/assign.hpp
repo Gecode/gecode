@@ -97,7 +97,7 @@ namespace Gecode {
 
   inline SetAssign
   SET_ASSIGN(SetBranchVal v, SetBranchCommit c) {
-    return SetAssign(v,c);
+    return SetAssign(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
 }

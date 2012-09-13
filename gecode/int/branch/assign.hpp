@@ -77,12 +77,12 @@ namespace Gecode {
 
   inline IntAssign
   INT_ASSIGN(IntBranchVal v, IntBranchCommit c) {
-    return IntAssign(v,c);
+    return IntAssign(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
   inline IntAssign
   INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
-    return IntAssign(v,c);
+    return IntAssign(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
   }
 
 }

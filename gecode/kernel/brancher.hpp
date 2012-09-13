@@ -118,6 +118,7 @@ namespace Gecode {
   protected:
     using ViewBrancher<ViewSel>::viewsel;
     using ViewBrancher<ViewSel>::x;
+    using typename ViewBrancher<ViewSel>::BranchFilter;
     /// Value selection object
     ValSel valsel;
     /// Constructor for cloning \a b
