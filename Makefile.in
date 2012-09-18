@@ -200,9 +200,11 @@ KERNELHDR0 = \
 	archive array shared-array core exception \
 	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
-	branch-var branch-val brancher brancher-view brancher-merit brancher-tiebreak \
-	brancher-val allocators global-prop-info activity rnd \
-	branch-traits
+	branch-var branch-val brancher-view-sel brancher-merit \
+	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
+	brancher-val-sel-commit \
+	allocators global-prop-info \
+	activity rnd branch-traits
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
@@ -303,7 +305,9 @@ INTSRC0 = \
 	unary.cpp cumulative.cpp cumulatives.cpp \
 	circuit.cpp no-overlap.cpp nvalues.cpp \
 	member.cpp branch/activity.cpp \
-	arithmetic/mult.cpp branch/commit.cpp
+	arithmetic/mult.cpp  \
+	branch/view-sel.cpp branch/val-sel-commit.cpp \
+	branch/view-values.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -315,9 +319,8 @@ INTHDR0 = \
 	bool/clause.hpp \
 	precede.hh precede/single.hpp \
 	branch/traits.hpp branch/var.hpp branch/val.hpp branch/assign.hpp \
-	branch/post-val-int.hpp branch/post-val-bool.hpp \
-	branch/select-val.hpp \
-	branch/select-values.hpp branch/select-view.hpp \
+	branch/view-values.hpp branch/merit.hpp \
+	branch/val-sel.hpp branch/val-commit.hpp \
 	count.hh count/rel.hpp \
 	count/int-base.hpp count/int-eq.hpp \
 	count/int-gq.hpp count/int-lq.hpp \
@@ -385,9 +388,7 @@ INTHDR0 = \
 	member.hh member/prop.hpp member/re-prop.hpp \
 	branch/activity.hpp
 
-INTSRC		= $(INTSRC0:%=gecode/int/%) \
-	gecode/int/branch/post-view-int.cpp \
-	gecode/int/branch/post-view-bool.cpp
+INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
 INTOBJ		= $(INTSRC:%.cpp=%$(OBJSUFFIX))
 
@@ -430,7 +431,7 @@ INTBUILDDIRS	= \
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
-	branch/commit.cpp
+	branch/val-sel-commit.cpp branch/view-sel.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -446,13 +447,12 @@ FLOATHDR0 = \
 	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
-	branch.hh branch/post-val.hpp branch/select-val.hpp \
-	branch/select-view.hpp branch/activity.hpp branch/traits.hpp \
+	branch.hh branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
+	branch/val-commit.hpp branch/val-sel.hpp \
 	num.hpp val.hpp rounding.hpp nextafter.hpp
 
-FLOATSRC	= $(FLOATSRC0:%=gecode/float/%) \
-	gecode/float/branch/post-view.cpp
+FLOATSRC	= $(FLOATSRC0:%=gecode/float/%)
 FLOATHDR	= gecode/float.hh $(FLOATHDR0:%=gecode/float/%)
 FLOATOBJ	= $(FLOATSRC:%.cpp=%$(OBJSUFFIX))
 
@@ -507,7 +507,8 @@ SETSRC0 =								 \
 	precede.cpp \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
-	exec.cpp branch/activity.cpp branch/commit.cpp
+	exec.cpp branch/activity.cpp branch/view-sel.cpp \
+	branch/val-sel-commit.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -533,12 +534,11 @@ SETHDR0 =								     \
 	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
 	precede.hh precede/single.hpp \
 	rel-op.hh					     \
-	branch.hh branch/select-val.hpp branch/select-view.hpp		     \
-	branch/post-val.hpp branch/activity.hpp branch/traits.hpp \
+	branch.hh branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
+	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp
 
-SETSRC		= $(SETSRC0:%=gecode/set/%) \
-	gecode/set/branch/post-view.cpp
+SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
 SETOBJ		= $(SETSRC:%.cpp=%$(OBJSUFFIX))
 
@@ -1160,33 +1160,6 @@ gecode/kernel/var-imp.hpp: $(VISDEP)
 	perl $(top_srcdir)/misc/genvarimp.perl -header $(VIS) > $@
 
 #
-# Generated branchers
-#
-GENBRANCHSRC = \
-	$(top_srcdir)/gecode/int/branch/post-view-int.cpp \
-	$(top_srcdir)/gecode/int/branch/post-view-bool.cpp \
-	$(top_srcdir)/gecode/float/branch/post-view.cpp \
-	$(top_srcdir)/gecode/set/branch/post-view.cpp
-
-$(top_srcdir)/gecode/int/branch/post-view-int.cpp: \
-	$(top_srcdir)/gecode/int/branch/post-view-int.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/int/branch/post-view-bool.cpp: \
-	$(top_srcdir)/gecode/int/branch/post-view-bool.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/float/branch/post-view.cpp: \
-	$(top_srcdir)/gecode/float/branch/post-view.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-$(top_srcdir)/gecode/set/branch/post-view.cpp: \
-	$(top_srcdir)/gecode/set/branch/post-view.bs \
-	$(top_srcdir)/misc/genbranch.perl
-	perl $(top_srcdir)/misc/genbranch.perl $< > $@
-
-
-#
 # Object targets
 #
 
@@ -1685,10 +1658,6 @@ DIST_FILES= \
 	gecode/int/var-imp/bool.vis \
 	gecode/float/var-imp/float.vis \
 	gecode/set/var-imp/set.vis \
-	gecode/int/branch/post-view-int.bs \
-	gecode/int/branch/post-view-bool.bs \
-	gecode/float/branch/post-view.bs \
-	gecode/set/branch/post-view.bs \
 	examples/support.hh \
 	examples/support/example.hpp \
 	examples/support/options.hpp \
@@ -1697,8 +1666,7 @@ DIST_FILES= \
 	misc/doxygen/header.html misc/genlicense.perl \
 	misc/genstatistics.perl misc/getrevision.perl \
 	misc/genchangelog.perl misc/genvarimp.perl \
-	misc/gentxtchangelog.perl misc/makedepend.perl \
-	misc/genbranch.perl
+	misc/gentxtchangelog.perl misc/makedepend.perl
 
 distdir:
 	rm -rf gecode-$(VERSION) && \
@@ -1986,13 +1954,12 @@ veryclean: clean
 
 distclean: veryclean
 	$(RMF) $(VARIMP)
-	$(RMF) $(GENBRANCHSRC)
 	$(RMF) Makefile doxygen.conf
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
 depend: mkcompiledirs
-	@$(MAKE) $(VARIMP) $(GENBRANCHSRC)
+	@$(MAKE) $(VARIMP)
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \

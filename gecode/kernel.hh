@@ -209,11 +209,13 @@ namespace Gecode {
 #include <gecode/kernel/branch-traits.hpp>
 #include <gecode/kernel/branch-var.hpp>
 #include <gecode/kernel/branch-val.hpp>
-#include <gecode/kernel/brancher.hpp>
 #include <gecode/kernel/brancher-merit.hpp>
+#include <gecode/kernel/brancher-view-sel.hpp>
 #include <gecode/kernel/brancher-view.hpp>
-#include <gecode/kernel/brancher-tiebreak.hpp>
-#include <gecode/kernel/brancher-val.hpp>
+#include <gecode/kernel/brancher-val-sel.hpp>
+#include <gecode/kernel/brancher-val-commit.hpp>
+#include <gecode/kernel/brancher-val-sel-commit.hpp>
+#include <gecode/kernel/brancher-view-val.hpp>
 
 
 /*

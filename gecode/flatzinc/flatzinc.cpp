@@ -202,42 +202,42 @@ namespace Gecode { namespace FlatZinc {
     return 1;
   }
 
-  TieBreakVarBranch<IntVarBranch> ann2ivarsel(AST::Node* ann, int seed) {
+  TieBreak<IntVarBranch> ann2ivarsel(AST::Node* ann, int seed) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_NONE());
+        return TieBreak<IntVarBranch>(INT_VAR_NONE());
       if (s->id == "first_fail")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MIN());
+        return TieBreak<IntVarBranch>(INT_VAR_SIZE_MIN());
       if (s->id == "anti_first_fail")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_SIZE_MAX());
       if (s->id == "smallest")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_MIN_MIN());
+        return TieBreak<IntVarBranch>(INT_VAR_MIN_MIN());
       if (s->id == "largest")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_MAX_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_MAX_MAX());
       if (s->id == "occurrence")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_DEGREE_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_DEGREE_MAX());
       if (s->id == "max_regret")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_REGRET_MIN_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_REGRET_MIN_MAX());
       if (s->id == "most_constrained")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_MIN(),
+        return TieBreak<IntVarBranch>(INT_VAR_SIZE_MIN(),
                                                INT_VAR_DEGREE_MAX());
       if (s->id == "random") {
         Rnd r(static_cast<unsigned int>(seed));
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_RND(r));
+        return TieBreak<IntVarBranch>(INT_VAR_RND(r));
       }
       if (s->id == "afc_min")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MIN());
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_MIN());
       if (s->id == "afc_max")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_AFC_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_MAX());
       if (s->id == "size_afc_min")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MIN());
+        return TieBreak<IntVarBranch>(INT_VAR_SIZE_AFC_MIN());
       if (s->id == "size_afc_max")
-        return TieBreakVarBranch<IntVarBranch>(INT_VAR_SIZE_AFC_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_SIZE_AFC_MAX());
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return TieBreakVarBranch<IntVarBranch>(INT_VAR_NONE());
+    return TieBreak<IntVarBranch>(INT_VAR_NONE());
   }
 
   IntValBranch ann2ivalsel(AST::Node* ann, int seed) {
@@ -335,40 +335,40 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  TieBreakVarBranch<FloatVarBranch> ann2fvarsel(AST::Node* ann, int seed) {
+  TieBreak<FloatVarBranch> ann2fvarsel(AST::Node* ann, int seed) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_NONE());
       if (s->id == "first_fail")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_MIN());
       if (s->id == "anti_first_fail")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_MAX());
       if (s->id == "smallest")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MIN_MIN());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_MIN_MIN());
       if (s->id == "largest")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_MAX_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_MAX_MAX());
       if (s->id == "occurrence")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_DEGREE_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_DEGREE_MAX());
       if (s->id == "most_constrained")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_MIN(),
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_MIN(),
                                                  FLOAT_VAR_DEGREE_MAX());
       if (s->id == "random") {
         Rnd r(static_cast<unsigned int>(seed));
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_RND(r));
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_RND(r));
       }
       if (s->id == "afc_min")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MIN());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MIN());
       if (s->id == "afc_max")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_AFC_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MAX());
       if (s->id == "size_afc_min")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MIN());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MIN());
       if (s->id == "size_afc_max")
-        return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MAX());
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
     std::cerr << std::endl;
-    return TieBreakVarBranch<FloatVarBranch>(FLOAT_VAR_NONE());
+    return TieBreak<FloatVarBranch>(FLOAT_VAR_NONE());
   }
 
   FloatValBranch ann2fvalsel(AST::Node* ann) {

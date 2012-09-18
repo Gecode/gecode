@@ -2,11 +2,9 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
- *     Christian Schulte, 2008
- *     Vincent Barichard, 2012
+ *     Christian Schulte, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -37,47 +35,53 @@
  *
  */
 
+#include <gecode/float/branch.hh>
+
 namespace Gecode { namespace Float { namespace Branch {
 
-  /// Post brancher according to \a v and \a vals
-  template<class SelView>
-  void
-  post(Space& home, ViewArray<FloatView>& x, SelView& v,
-       const FloatValBranch& vals, FloatBranchFilter fbf) {
-    switch (vals.select()) {
+  ValSelCommitBase<FloatView,FloatNum>* 
+  valselcommit(Space& home, const FloatValBranch& fvb) {
+    assert(fvb.select() != FloatValBranch::SEL_SPLIT_RND);
+    switch (fvb.select()) {
     case FloatValBranch::SEL_SPLIT_MIN:
-      {
-        ValSplitMin<FloatView> a(home,vals);
-        ViewValBrancher<SelView,ValSplitMin<FloatView> >
-          ::post(home,x,v,a,fbf);
-      }
-      break;
+      return new (home) ValSelCommit<ValSelMed,ValCommitLq>(home,fvb);
     case FloatValBranch::SEL_SPLIT_MAX:
-      {
-        ValSplitMax<FloatView> a(home,vals);
-        ViewValBrancher<SelView,ValSplitMax<FloatView> >
-          ::post(home,x,v,a,fbf);
-      }
-      break;
-    case FloatValBranch::SEL_SPLIT_RND:
-      {
-        ValSplitRnd<FloatView> a(home,vals);
-        ViewValBrancher<SelView,ValSplitRnd<FloatView> >
-          ::post(home,x,v,a,fbf);
-      }
-      break;
+      return new (home) ValSelCommit<ValSelMed,ValCommitGq>(home,fvb);
     case FloatValBranch::SEL_VAL_COMMIT:
-      {
-        ValSelValCommit<FloatView,2> a(home,vals);
-        ViewValBrancher<SelView,ValSelValCommit<FloatView,2> >
-          ::post(home,x,v,a,fbf);
+      if (fvb.commit() == NULL) {
+        return new (home)
+          ValSelCommit<ValSelFunction<FloatView>,ValCommitLq>(home,fvb);
+      } else {
+        return new (home)
+          ValSelCommit<ValSelFunction<FloatView>,ValCommitFunction<FloatView> >(home,fvb);
       }
-      break;
     default:
       throw UnknownBranching("Float::branch");
+    }
+  }
+
+  ValSelCommitBase<FloatView,FloatNum>* 
+  valselcommit(Space& home, const FloatAssign& fa) {
+    assert(fa.select() != FloatAssign::SEL_RND);
+    switch (fa.select()) {
+    case FloatAssign::SEL_MIN:
+      return new (home) ValSelCommit<ValSelMed,ValCommitLq>(home,fa);
+    case FloatAssign::SEL_MAX:
+      return new (home) ValSelCommit<ValSelMed,ValCommitGq>(home,fa);
+    case FloatAssign::SEL_VAL_COMMIT:
+      if (fa.commit() == NULL) {
+        return new (home)
+          ValSelCommit<ValSelFunction<FloatView>,ValCommitLq>(home,fa);
+      } else {
+        return new (home)
+          ValSelCommit<ValSelFunction<FloatView>,ValCommitFunction<FloatView> >(home,fa);
+      }
+    default:
+      throw UnknownBranching("Float::assign");
     }
   }
 
 }}}
 
 // STATISTICS: float-branch
+

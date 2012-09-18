@@ -3541,28 +3541,6 @@ namespace Gecode {
   typedef void (*BoolBranchCommit)(Space& home, unsigned int a,
                                    BoolVar x, int n);
 
-  /**
-   * \brief Default commit function for integer variables
-   *
-   * Posts the constraint that \a x must be equal to \a n for \a a=0, and
-   * that \a x must be different from \a n otherwise.
-   *
-   * \ingroup TaskModelIntBranch
-   */
-  GECODE_INT_EXPORT
-  void commiteq(Space& home, unsigned int a, IntVar x, int n);
-
-  /**
-   * \brief Default commit function for Bool variables
-   *
-   * Posts the constraint that \a x must be equal to \a n for \a a=0, and
-   * that \a x must be different from \a n otherwise.
-   *
-   * \ingroup TaskModelIntBranch
-   */
-  GECODE_INT_EXPORT
-  void commiteq(Space& home, unsigned int a, BoolVar x, int n);
-
 }
 
 #include <gecode/int/branch/traits.hpp>
@@ -3864,10 +3842,20 @@ namespace Gecode {
   IntValBranch INT_VAL_RANGE_MIN(void);
   /// Select the largest range of the variable domain if it has several ranges, otherwise select values greater than mean of smallest and largest value
   IntValBranch INT_VAL_RANGE_MAX(void);
-  /// Select value as defined by the value function \a v and commit function \a c
-  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c=commiteq);
-  /// Select value as defined by the value function \a v and commit function \a c
-  IntValBranch INT_VAL(BoolBranchVal v, BoolBranchCommit c=commiteq);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   * Uses a commit function as default that posts the constraints that 
+   * a variable \a x must be equal to a value \a n for the first alternative
+   * and that \a x must be different from \a n for the second alternative.
+   */
+  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c=NULL);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   * Uses a commit function as default that posts the constraints that 
+   * a variable \a x must be equal to a value \a n for the first alternative
+   * and that \a x must be different from \a n for the second alternative.
+   */
+  IntValBranch INT_VAL(BoolBranchVal v, BoolBranchCommit c=NULL);
   /// Try all values starting from smallest
   IntValBranch INT_VALUES_MIN(void); 
   /// Try all values starting from largest
@@ -3922,10 +3910,20 @@ namespace Gecode {
   IntAssign INT_ASSIGN_MAX(void);
   /// Select random value
   IntAssign INT_ASSIGN_RND(Rnd r);
-  /// Select value as defined by the value function \a v and commit function \a c
-  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=commiteq);
-  /// Select value as defined by the value function \a v and commit function \a c
-  IntAssign INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c=commiteq);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   *
+   * Uses a commit function as default that posts the constraint that 
+   * a variable \a x must be equal to the value \a n.
+   */
+  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=NULL);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   *
+   * Uses a commit function as default that posts the constraint that 
+   * a variable \a x must be equal to the value \a n.
+   */
+  IntAssign INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c=NULL);
   //@}
 
 }
@@ -3942,7 +3940,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals, 
-         IntBranchFilter ibf=NULL);
+         IntBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -3950,8 +3948,8 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-         IntBranchFilter ibf=NULL);
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         IntBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with value selection \a vals
    *
@@ -3967,7 +3965,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         BoolBranchFilter bbf=NULL);
+         BoolBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -3975,8 +3973,8 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
-         const TieBreakVarBranch<IntVarBranch>& vars, IntValBranch vals,
-         BoolBranchFilter bbf=NULL);
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         BoolBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with value selection \a vals
    *

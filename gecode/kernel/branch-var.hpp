@@ -40,13 +40,13 @@ namespace Gecode {
   /**
    * \brief Tie-break limit function
    * 
-   * Here the value \b is the best merit value found. The function
-   * must return the merit value that is considered the limit for
-   * breaking ties.
+   * Here the value \a w is the worst and \b is the best merit value
+   * found. The function must return the merit value that is considered
+   * the limit for breaking ties.
    *
    * \ingroup TaskModelBranch
    */
-  typedef double (*BranchTbl)(const Space& home, double b);
+  typedef double (*BranchTbl)(const Space& home, double w, double b);
 
   /**
    * \brief Variable branching information
@@ -83,15 +83,15 @@ namespace Gecode {
 
   /// Combine variable selection criteria for tie-breaking
   template<class VarBranch>
-  class TieBreakVarBranch {
+  class TieBreak {
   public:
     /// Branching criteria to try in order
     VarBranch a, b, c, d;
     /// Initialize with variable selection criteria
-    TieBreakVarBranch(VarBranch a0 = VarBranch(),
-                      VarBranch b0 = VarBranch(),
-                      VarBranch c0 = VarBranch(),
-                      VarBranch d0 = VarBranch());
+    TieBreak(VarBranch a0 = VarBranch(),
+             VarBranch b0 = VarBranch(),
+             VarBranch c0 = VarBranch(),
+             VarBranch d0 = VarBranch());
   };
 
   /** 
@@ -102,15 +102,15 @@ namespace Gecode {
   //@{
   /// Combine variable selection criteria \a a and \a b for tie-breaking
   template<class VarBranch>
-  TieBreakVarBranch<VarBranch>
+  TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b);
   /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
   template<class VarBranch>
-  TieBreakVarBranch<VarBranch>
+  TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c);
   /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
   template<class VarBranch>
-  TieBreakVarBranch<VarBranch>
+  TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
   //@}
 
@@ -160,30 +160,30 @@ namespace Gecode {
 
   template<class VarBranch>
   forceinline
-  TieBreakVarBranch<VarBranch>::TieBreakVarBranch(VarBranch a0,
-                                                  VarBranch b0,
-                                                  VarBranch c0,
-                                                  VarBranch d0)
+  TieBreak<VarBranch>::TieBreak(VarBranch a0,
+                                VarBranch b0,
+                                VarBranch c0,
+                                VarBranch d0)
     : a(a0), b(b0), c(c0), d(d0) {}
 
   template<class VarBranch>
-  forceinline TieBreakVarBranch<VarBranch>
+  forceinline TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b) {
-    TieBreakVarBranch<VarBranch> ab(a,b);
+    TieBreak<VarBranch> ab(a,b);
     return ab;
   }
 
   template<class VarBranch>
-  forceinline TieBreakVarBranch<VarBranch>
+  forceinline TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c) {
-    TieBreakVarBranch<VarBranch> abc(a,b,c);
+    TieBreak<VarBranch> abc(a,b,c);
     return abc;
   }
 
   template<class VarBranch>
-  forceinline TieBreakVarBranch<VarBranch>
+  forceinline TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
-    TieBreakVarBranch<VarBranch> abcd(a,b,c,d);
+    TieBreak<VarBranch> abcd(a,b,c,d);
     return abcd;
   }
 

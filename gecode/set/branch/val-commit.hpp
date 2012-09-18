@@ -2,9 +2,15 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
-*
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
  *  Copyright:
  *     Christian Schulte, 2012
+ *     Gabor Szokoli, 2004
+ *     Guido Tack, 2004
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,34 +41,31 @@
  *
  */
 
-#include <gecode/int.hh>
+namespace Gecode { namespace Set { namespace Branch {
 
-namespace Gecode {
+  forceinline
+  ValCommitInc::ValCommitInc(Space& home, const ValBranch& vb)
+    : ValCommit<SetView,int>(home,vb) {}
+  forceinline
+  ValCommitInc::ValCommitInc(Space& home, bool shared, ValCommitInc& vc)
+    : ValCommit<SetView,int>(home,shared,vc) {}
+  forceinline ModEvent
+  ValCommitInc::commit(Space& home, unsigned int a, SetView x, int n) {
+    return (a == 0) ? x.include(home,n) : x.exclude(home,n);
+  }
 
-  void
-  commiteq(Space& home, unsigned int a, IntVar x, int n) {
-    Int::IntView v(x);
-    if (a == 0) {
-      if (me_failed(v.eq(home,n)))
-        home.fail();
-    } else {
-      if (me_failed(v.nq(home,n)))
-        home.fail();
-    }
-  }  
+  forceinline
+  ValCommitExc::ValCommitExc(Space& home, const ValBranch& vb)
+    : ValCommit<SetView,int>(home,vb) {}
+  forceinline
+  ValCommitExc::ValCommitExc(Space& home, bool shared, ValCommitExc& vc)
+    : ValCommit<SetView,int>(home,shared,vc) {}
+  forceinline ModEvent
+  ValCommitExc::commit(Space& home, unsigned int a, SetView x, int n) {
+    return (a == 0) ? x.exclude(home,n) : x.include(home,n);
+  }
 
-  void
-  commiteq(Space& home, unsigned int a, BoolVar x, int n) {
-    Int::BoolView v(x);
-    if (a == 0) {
-      if (me_failed(v.eq(home,n)))
-        home.fail();
-    } else {
-      if (me_failed(v.nq(home,n)))
-        home.fail();
-    }
-  }  
+}}}
 
-}
+// STATISTICS: set-branch
 
-// STATISTICS: int-branch

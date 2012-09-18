@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
+ *
  *  Copyright:
- *     Christian Schulte, 2002
+ *     Christian Schulte, 2012
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,78 +39,83 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Branch {
+namespace Gecode { namespace Float { namespace Branch {
 
   // Minimum merit
   forceinline
-  MeritMin::MeritMin(void) {}
-  forceinline
   MeritMin::MeritMin(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
+    : MeritBase<FloatView,double>(home,vb) {}
+  forceinline
+  MeritMin::MeritMin(Space& home, bool shared, MeritMin& m)
+    : MeritBase<FloatView,double>(home,shared,m) {}
   forceinline double
-  MeritMin::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.min());
+  MeritMin::operator ()(const Space&, FloatView x, int) {
+    return x.min();
   }
 
   // Maximum merit
   forceinline
-  MeritMax::MeritMax(void) {}
-  forceinline
   MeritMax::MeritMax(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
+    : MeritBase<FloatView,double>(home,vb) {}
+  forceinline
+  MeritMax::MeritMax(Space& home, bool shared, MeritMax& m)
+    : MeritBase<FloatView,double>(home,shared,m) {}
   forceinline double
-  MeritMax::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.max());
+  MeritMax::operator ()(const Space&, FloatView x, int) {
+    return x.max();
   }
 
   // Size merit
   forceinline
-  MeritSize::MeritSize(void) {}
-  forceinline
   MeritSize::MeritSize(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
+    : MeritBase<FloatView,double>(home,vb) {}
+  forceinline
+  MeritSize::MeritSize(Space& home, bool shared, MeritSize& m)
+    : MeritBase<FloatView,double>(home,shared,m) {}
   forceinline double
-  MeritSize::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.size());
+  MeritSize::operator ()(const Space&, FloatView x, int) {
+    return x.size();
   }
 
   // Size over degree merit
   forceinline
-  MeritSizeDegree::MeritSizeDegree(void) {}
-  forceinline
   MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
+    : MeritBase<FloatView,double>(home,vb) {}
+  forceinline
+  MeritSizeDegree::MeritSizeDegree(Space& home, bool shared, 
+                                   MeritSizeDegree& m)
+    : MeritBase<FloatView,double>(home,shared,m) {}
   forceinline double
-  MeritSizeDegree::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.size()) / static_cast<double>(x.degree());
+  MeritSizeDegree::operator ()(const Space&, FloatView x, int) {
+    return x.size() / static_cast<double>(x.degree());
   }
 
   // Size over AFC merit
   forceinline
-  MeritSizeAfc::MeritSizeAfc(void) {}
-  forceinline
   MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
+    : MeritBase<FloatView,double>(home,vb) {}
+  forceinline
+  MeritSizeAfc::MeritSizeAfc(Space& home, bool shared, MeritSizeAfc& m)
+    : MeritBase<FloatView,double>(home,shared,m) {}
   forceinline double
-  MeritSizeAfc::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.size()) / x.afc();
+  MeritSizeAfc::operator ()(const Space&, FloatView x, int) {
+    return x.size() / x.afc();
   }
 
   // Size over activity merit
   forceinline
-  MeritSizeActivity::MeritSizeActivity(void) {}
-  forceinline
   MeritSizeActivity::MeritSizeActivity(Space& home,
                                        const VarBranch& vb)
-    : MeritBase<IntView>(home,vb), activity(vb.activity()) {}
-  forceinline double
-  MeritSizeActivity::operator ()(Space&, IntView x, int i) {
-    return static_cast<double>(x.size()) / activity[i];
+    : MeritBase<FloatView,double>(home,vb), activity(vb.activity()) {}
+  forceinline
+  MeritSizeActivity::MeritSizeActivity(Space& home, bool shared, 
+                                       MeritSizeActivity& m)
+    : MeritBase<FloatView,double>(home,shared,m) {
+    activity.update(home, shared, m.activity);
   }
-  forceinline void
-  MeritSizeActivity::update(Space& home, bool share, 
-                            MeritSizeActivity& msa) {
-    activity.update(home, share, msa.activity);
+  forceinline double
+  MeritSizeActivity::operator ()(const Space&, FloatView x, int i) {
+    return x.size() / activity[i];
   }
   forceinline bool
   MeritSizeActivity::notice(void) const {
@@ -117,28 +126,6 @@ namespace Gecode { namespace Int { namespace Branch {
     activity.~Activity();
   }
 
-  // Minimum regret merit
-  forceinline
-  MeritRegretMin::MeritRegretMin(void) {}
-  forceinline
-  MeritRegretMin::MeritRegretMin(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
-  forceinline double
-  MeritRegretMin::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.regret_min());
-  }
-
-  // Maximum regret merit
-  forceinline
-  MeritRegretMax::MeritRegretMax(void) {}
-  forceinline
-  MeritRegretMax::MeritRegretMax(Space& home, const VarBranch& vb)
-    : MeritBase<IntView>(home,vb) {}
-  forceinline double
-  MeritRegretMax::operator ()(Space&, IntView x, int) {
-    return static_cast<double>(x.regret_max());
-  }
-
 }}}
 
-// STATISTICS: int-branch
+// STATISTICS: float-branch

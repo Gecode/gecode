@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- *  Main author:
+ *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,337 +38,206 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskBranchViewSel Generic view selection for brancher based on view and value selection
+   * \defgroup TaskBranchView Generic brancher based on view selection
    *
-   * \ingroup TaskBranchViewVal
+   * Implements view-based brancher for an array of views and value.
+   * \ingroup TaskActor
    */
   //@{
-  /// Emty view selection choice
-  class EmptyViewSelChoice {
+  /// Position information
+  class Pos {
   public:
+    /// Position of view
+    const int pos;
+    /// Create position information
+    Pos(int p);
+  };
+
+  /// %Choices storing position
+  class GECODE_VTABLE_EXPORT PosChoice : public Choice {
+  private:
+    /// Position information
+    const Pos _pos;
+  public:
+    /// Initialize choice for brancher \a b, number of alternatives \a a, and position \a p
+    PosChoice(const Brancher& b, unsigned int a, const Pos& p);
+    /// Return position in array
+    const Pos& pos(void) const;
     /// Report size occupied
-    size_t size(void) const;
+    virtual size_t size(void) const;
     /// Archive into \a e
-    void archive(Archive& e) const;
+    virtual void archive(Archive& e) const;
   };
 
   /**
-   * \brief Base class for view selection
+   * \brief Generic brancher by view selection
+   *
+   * Defined for views of type \a View and \a n view selectors for 
+   * tie-breaking.
    */
-  template<class _View>
-  class ViewSelBase {
-  public:
-    /// View type
-    typedef _View View;
-    /// View selection choice
-    typedef EmptyViewSelChoice Choice;
-    /// Default constructor
-    ViewSelBase(void);
-    /// Constructor for initialization
-    ViewSelBase(Space& home, const VarBranch& vb);
-    /// Return choice
-    EmptyViewSelChoice choice(Space& home);
-    /// Return choice
-    EmptyViewSelChoice choice(const Space& home, Archive& e);
-    /// Commit to choice
-    void commit(Space& home, const EmptyViewSelChoice& c, unsigned a);
-    /// Updating during cloning
-    void update(Space& home, bool share, ViewSelBase& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete view selection
-    void dispose(Space& home);
-  };
-
-  /**
-   * \brief Select first not assigned view
-   */
-  template<class View>
-  class ViewSelNone : public ViewSelBase<View> {
-  public:
-    /// Default constructor
-    ViewSelNone(void);
-    /// Constructor for initialization
-    ViewSelNone(Space& home, const VarBranch& vb);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-  };
-
-  /**
-   * \brief View selection class for random selection
-   */
-  template<class View>
-  class ViewSelRnd  : public ViewSelBase<View> {
+  template<class View, int n>
+  class ViewBrancher : public Brancher {
   protected:
-    /// Random number generator
-    Rnd r;
-    /// Number of views considered so far
-    unsigned int n;
+    /// The branch filter that corresponds to the var type
+    typedef typename BranchTraits<typename View::VarType>::Filter BranchFilter;
+    /// Views to branch on
+    ViewArray<View> x;
+    /// Unassigned views start at x[start]
+    mutable int start;
+    /// View selection objects
+    ViewSel<View>* vs[n];
+    /// Branch filter function
+    BranchFilter bf;
+    /// Return position information
+    Pos pos(Space& home);
+    /// Return view according to position information \a p
+    typename View view(const Pos& p) const;
+    /// Constructor for cloning \a b
+    ViewBrancher(Space& home, bool shared, ViewBrancher<View,n>& b);
+    /// Constructor for creation
+    ViewBrancher(Home home, ViewArray<View>& x,
+                 ViewSel<View>* vs[n], BranchFilter bf);
   public:
-    /// Default constructor
-    ViewSelRnd(void);
-    /// Constructor for initialization
-    ViewSelRnd(Space& home, const VarBranch& vb);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, ViewSelRnd& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete view selection
-    void dispose(Space& home);
+    /// Check status of brancher, return true if alternatives left
+    virtual bool status(const Space& home) const;
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space& home);
   };
 
-  /**
-   * \brief View selection class for view with least merit
-   */
-  template<class Merit>
-  class ViewSelMin : public ViewSelBase<typename Merit::View> {
-  protected:
-    /// The merit used
-    Merit m;
-    /// So-far least merit value
-    double sfb;
-  public:
-    /// View type
-    typedef typename Merit::View View;
-    /// Default constructor
-    ViewSelMin(void);
-    /// Constructor for initialization
-    ViewSelMin(Space& home, const VarBranch& vb);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, ViewSelMin<Merit>& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete view merit
-    void dispose(Space& home);
-  };
-
-  /**
-   * \brief View selection class for view with largest merit
-   */
-  template<class Merit>
-  class ViewSelMax : public ViewSelBase<typename Merit::View> {
-  protected:
-    /// The merit used
-    Merit m;
-    /// So-far largest merit value
-    double sfb;
-  public:
-    /// View type
-    typedef typename Merit::View View;
-    /// Default constructor
-    ViewSelMax(void);
-    /// Constructor for initialization
-    ViewSelMax(Space& home, const VarBranch& vb);
-    /// Intialize with view \a x at position \a i
-    ViewSelStatus init(Space& home, View x, int i);
-    /// Possibly select better view \a x at position \a i
-    ViewSelStatus select(Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, ViewSelMax<Merit>& vs);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete view merit
-    void dispose(Space& home);
-  };
   //@}
 
-  // Empty view selection choice
+
+  /*
+   * Position information
+   *
+   */
+  forceinline
+  Pos::Pos(int p) : pos(p) {}
+
+  /*
+   * Choice with position
+   *
+   */
+  forceinline
+  PosChoice::PosChoice(const Brancher& b, unsigned int a, const Pos& p)
+    : Choice(b,a), _pos(p) {}
+  forceinline const Pos&
+  PosChoice::pos(void) const {
+    return _pos;
+  }
   forceinline size_t
-  EmptyViewSelChoice::size(void) const {
-    return sizeof(EmptyViewSelChoice);
+  PosChoice::size(void) const {
+    return sizeof(PosChoice);
+  }
+  forceinline void
+  PosChoice::archive(Archive& e) const {
+    Choice::archive(e);
+    e << _pos.pos;
   }
 
-  forceinline void
-  EmptyViewSelChoice::archive(Archive& e) const { (void)e; }
+  template<class View, int n>
+  forceinline
+  ViewBrancher<View,n>::ViewBrancher(Home home, ViewArray<View>& x0,
+                                     ViewSel<View>* vs0[n], BranchFilter bf0)
+    : Brancher(home), x(x0), start(0), bf(bf0) {
+    for (int i=0; i<n; i++)
+      vs[i] = vs0[i];
+    for (int i=0; i<n; i++)
+      if (vs[i]->notice()) {
+        home.notice(*this,AP_DISPOSE);
+        break;
+      }
+  }
 
-  // Selection base class
-  template<class View>
+  template<class View, int n>
   forceinline
-  ViewSelBase<View>::ViewSelBase(void) {}
-  template<class View>
-  forceinline
-  ViewSelBase<View>::ViewSelBase(Space&, const VarBranch&) {}
-  template<class View>
-  forceinline EmptyViewSelChoice
-  ViewSelBase<View>::choice(Space&) {
-    EmptyViewSelChoice c; return c;
+  ViewBrancher<View,n>::ViewBrancher(Space& home, bool shared,
+                                     ViewBrancher<View,n>& vb)
+    : Brancher(home,shared,vb), start(vb.start), bf(vb.bf) {
+    x.update(home,shared,vb.x);
+    for (int i=0; i<n; i++)
+      vs[i] = vb.vs[i]->copy(home,shared);
   }
-  template<class View>
-  forceinline EmptyViewSelChoice
-  ViewSelBase<View>::choice(const Space&, Archive&) {
-    EmptyViewSelChoice c; return c;
-  }
-  template<class View>
-  forceinline void
-  ViewSelBase<View>::commit(Space&, const EmptyViewSelChoice&, unsigned int) {}
-  template<class View>
-  forceinline void
-  ViewSelBase<View>::update(Space&, bool, ViewSelBase<View>&) {}
-  template<class View>
-  forceinline bool
-  ViewSelBase<View>::notice(void) const {
+
+  template<class View, int n>
+  bool
+  ViewBrancher<View,n>::status(const Space& home) const {
+    if (bf == NULL) {
+      for (int i=start; i < x.size(); i++)
+        if (!x[i].assigned()) {
+          start = i;
+          return true;
+        }
+    } else {
+      for (int i=start; i < x.size(); i++) {
+        typename View::VarType y(x[i].varimp());
+        if (!x[i].assigned() && bf(home,y,i)) {
+          start = i;
+          return true;
+        }
+      }
+    }
     return false;
   }
-  template<class View>
-  forceinline void
-  ViewSelBase<View>::dispose(Space&) {}
 
-  // Select first view
-  template<class View>
-  forceinline
-  ViewSelNone<View>::ViewSelNone(void) {}
-  template<class View>
-  forceinline
-  ViewSelNone<View>::ViewSelNone(Space& home, const VarBranch& vb)
-    : ViewSelBase<View>(home,vb) {}
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelNone<View>::init(Space&, View, int) {
-    return VSS_BEST;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelNone<View>::select(Space&, View, int) {
-    return VSS_BEST;
-  }
-
-  // Select variable by random
-  template<class View>
-  forceinline
-  ViewSelRnd<View>::ViewSelRnd(void) : n(0) {}
-  template<class View>
-  forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space&, const VarBranch& vb)
-    : r(vb.rnd()), n(0) {}
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelRnd<View>::init(Space&, View, int) {
-    n=1;
-    return VSS_BETTER;
-  }
-  template<class View>
-  forceinline ViewSelStatus
-  ViewSelRnd<View>::select(Space&, View, int) {
-    n++;
-    return (r(n) == (n-1)) ? VSS_BETTER : VSS_WORSE;
-  }
-  template<class View>
-  forceinline void
-  ViewSelRnd<View>::update(Space&, bool, ViewSelRnd<View>& vs) {
-    r = vs.r;
-  }
-  template<class View>
-  forceinline bool
-  ViewSelRnd<View>::notice(void) const {
-    return true;
-  }
-  template<class View>
-  forceinline void
-  ViewSelRnd<View>::dispose(Space&) {
-    r.~Rnd();
-  }
-
-  // Select variable with least merit
-  template<class Merit>
-  forceinline
-  ViewSelMin<Merit>::ViewSelMin(void) 
-    : sfb(0.0) {}
-  template<class Merit>
-  forceinline
-  ViewSelMin<Merit>::ViewSelMin(Space& home,
-                                     const VarBranch& vb)
-    : ViewSelBase<View>(home,vb), m(home,vb), sfb(0.0) {}
-  template<class Merit>
-  forceinline ViewSelStatus
-  ViewSelMin<Merit>::init(Space& home, View x, int i) {
-    sfb = m(home,x,i);
-    return VSS_BETTER;
-  }
-  template<class Merit>
-  forceinline ViewSelStatus
-  ViewSelMin<Merit>::select(Space& home, View x, int i) {
-    double mxi = m(home,x,i);
-    if (mxi < sfb) {
-      sfb = mxi;
-      return VSS_BETTER;
-    } else if (mxi > sfb) {
-      return VSS_WORSE;
+  template<class View, int n>
+  forceinline Pos
+  ViewBrancher<View,n>::pos(Space& home) {
+    assert(!x[start].assigned());
+    int s;
+    if (bf == NULL) {
+      if (n == 1) {
+        s = vs[0]->select(home,x,start);
+      } else {
+        Region r(home);
+        int* ties = r.alloc<int>(x.size()-start+1);
+        int n_ties;
+        vs[0]->ties(home,x,start,ties,n_ties);
+        for (int i=1; (i < n-1) && (n_ties > 1); i++)
+          vs[i]->brk(home,x,ties,n_ties);
+        if (n_ties > 1)
+          s = vs[n-1]->select(home,x,ties,n_ties);
+        else
+          s = ties[0];
+      }
     } else {
-      return VSS_TIE;
+      if (n == 1) {
+        s = vs[0]->select(home,x,start,bf);
+      } else {
+        Region r(home);
+        int* ties = r.alloc<int>(x.size()-start+1);
+        int n_ties;
+        vs[0]->ties(home,x,start,ties,n_ties,bf);
+        for (int i=1; (i < n-1) && (n_ties > 1); i++)
+          vs[i]->brk(home,x,ties,n_ties);
+        if (n_ties > 1)
+          s = vs[n-1]->select(home,x,ties,n_ties);
+        else
+          s = ties[0];
+      }
     }
-  }
-  template<class Merit>
-  forceinline void
-  ViewSelMin<Merit>::update(Space& home, bool share, 
-                            ViewSelMin<Merit>& vsm) {
-    m.update(home, share, vsm.m);
-  }
-  template<class Merit>
-  forceinline bool
-  ViewSelMin<Merit>::notice(void) const {
-    return m.notice();
-  }
-  template<class Merit>
-  forceinline void
-  ViewSelMin<Merit>::dispose(Space& home) {
-    m.dispose(home);
+    Pos p(s);
+    return p;
   }
 
+  template<class View, int n>
+  forceinline View
+  ViewBrancher<View,n>::view(const Pos& p) const {
+    return x[p.pos];
+  }
 
-  // Select variable with largest merit
-  template<class Merit>
-  forceinline
-  ViewSelMax<Merit>::ViewSelMax(void) 
-    : sfb(0.0) {}
-  template<class Merit>
-  forceinline
-  ViewSelMax<Merit>::ViewSelMax(Space& home,
-                                     const VarBranch& vb)
-    : ViewSelBase<View>(home,vb), m(home,vb), sfb(0.0) {}
-  template<class Merit>
-  forceinline ViewSelStatus
-  ViewSelMax<Merit>::init(Space& home, View x, int i) {
-    sfb = m(home,x,i);
-    return VSS_BETTER;
-  }
-  template<class Merit>
-  forceinline ViewSelStatus
-  ViewSelMax<Merit>::select(Space& home, View x, int i) {
-    double mxi = m(home,x,i);
-    if (mxi > sfb) {
-      sfb = mxi;
-      return VSS_BETTER;
-    } else if (mxi < sfb) {
-      return VSS_WORSE;
-    } else {
-      return VSS_TIE;
-    }
-  }
-  template<class Merit>
-  forceinline void
-  ViewSelMax<Merit>::update(Space& home, bool share, 
-                                 ViewSelMax<Merit>& vsm) {
-    m.update(home, share, vsm.m);
-  }
-  template<class Merit>
-  forceinline bool
-  ViewSelMax<Merit>::notice(void) const {
-    return m.notice();
-  }
-  template<class Merit>
-  forceinline void
-  ViewSelMax<Merit>::dispose(Space& home) {
-    m.dispose(home);
+  template<class View, int n>
+  forceinline size_t
+  ViewBrancher<View,n>::dispose(Space& home) {
+    for (int i=0; i<n; i++)
+      if (vs[i]->notice()) {
+        home.ignore(*this,AP_DISPOSE);
+        break;
+      }
+    for (int i=0; i<n; i++)
+      vs[i]->dispose(home);
+    (void) Brancher::dispose(home);
+    return sizeof(ViewBrancher<View,n>);
   }
 
 }

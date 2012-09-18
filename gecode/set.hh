@@ -1126,17 +1126,6 @@ namespace Gecode {
   typedef void (*SetBranchCommit)(Space& home, unsigned int a,
                                   SetVar x, int n);
 
-  /**
-   * \brief Default commit function for set variables
-   *
-   * Posts the constraint that \a n must be included in \a x for \a a=0, and
-   * that \a n must be excluded from \a x otherwise.
-   *
-   * \ingroup TaskModelIntBranch
-   */
-  GECODE_SET_EXPORT
-  void commitinc(Space& home, unsigned int a, SetVar x, int n);
-
 }
 
 #include <gecode/set/branch/traits.hpp>
@@ -1344,8 +1333,14 @@ namespace Gecode {
   SetValBranch SET_VAL_RND_INC(Rnd r);
   /// Exclude random element
   SetValBranch SET_VAL_RND_EXC(Rnd r);
-  /// Select value as defined by the value function \a v and commit function \a c
-  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=commitinc);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   *
+   * The default commit function posts the constraint that the value \a n
+   * must be included in the set variable \a x for the first alternative,
+   * and that \a n must be excluded from \a x otherwise.
+   */
+  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=NULL);
   //@}
 
 }
@@ -1408,8 +1403,13 @@ namespace Gecode {
   SetAssign SET_ASSIGN_RND_INC(Rnd r);
   /// Exclude random element
   SetAssign SET_ASSIGN_RND_EXC(Rnd r);
-  /// Select value as defined by the value function \a v and commit function \a c
-  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=commitinc);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   *
+   * The default commit function posts the constraint that the value \a n
+   * must be included in the set variable \a x.
+   */
+  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=NULL);
   //@}
 
 }
@@ -1434,7 +1434,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
-         const TieBreakVarBranch<SetVarBranch>& vars, SetValBranch vals,
+         TieBreak<SetVarBranch> vars, SetValBranch vals,
          SetBranchFilter sbf=NULL);
   /**
    * \brief Branch over \a x with value selection \a vals

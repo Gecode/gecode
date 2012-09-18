@@ -1374,17 +1374,6 @@ namespace Gecode {
   typedef void (*FloatBranchCommit)(Space& home, unsigned int a,
                                     FloatVar x, FloatNum n);
 
-  /**
-   * \brief Default commit function for float variables
-   *
-   * Posts the constraint that \a x must be less or equal than \a n
-   * for \a a=0, and \a x must be greater than \a n otherwise.
-   *
-   * \ingroup TaskModelIntBranch
-   */
-  GECODE_FLOAT_EXPORT
-  void commitlq(Space& home, unsigned int a, FloatVar x, FloatNum n);
-
 }
 
 #include <gecode/float/branch/traits.hpp>
@@ -1577,8 +1566,13 @@ namespace Gecode {
   FloatValBranch FLOAT_VAL_SPLIT_MAX(void);
   /// Select values randomly which are not greater or not smaller than mean of largest and smallest value
   FloatValBranch FLOAT_VAL_SPLIT_RND(void);
-  /// Select value as defined by the value function \a v and commit function \a c
-  FloatValBranch FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c=commitlq);
+  /**
+   * Select value as defined by the value function \a v and commit function \a c
+   * The default commit function posts the constraint that the float variable
+   * \a x must be less or equal than the value \a n for the first
+   * alternative and that \a x must be greater or equal than \a n otherwise.
+   */
+  FloatValBranch FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c=NULL);
   //@}
 
 }
@@ -1626,8 +1620,12 @@ namespace Gecode {
   FloatAssign FLOAT_ASSIGN_MAX(void);
   /// Select median value of a randomly chosen part
   FloatAssign FLOAT_ASSIGN_RND(Rnd r);
-  /// Select value as defined by the value function \a v and commit function \a c
-  FloatAssign FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c=commitlq);
+  /**
+   * Select value as defined by the value function \a v and commit function \a c
+   * The default commit function posts the constraint that the float variable
+   * \a x must be less or equal than the value \a n.
+   */
+  FloatAssign FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c=NULL);
   //@}
 
 }
@@ -1652,8 +1650,8 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
-         const TieBreakVarBranch<FloatVarBranch>& vars, FloatValBranch vals,
-         FloatBranchFilter fbf=NULL);
+         TieBreak<FloatVarBranch> vars, FloatValBranch vals,
+         FloatBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with value selection \a vals
    *

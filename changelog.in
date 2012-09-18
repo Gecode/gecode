@@ -73,6 +73,21 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The entire infrastructure for variable-value branchers has been
+reimplemented from scratch. The new design makes a much better
+compromoise between code size, efficiency, and expressiveness:
+the efficiency is about the same (for examples with no
+propagation and just branching one can note a slowdown of 2-4%)
+while code size shrinks drastically (the overall code size for
+integer variables shrinks by 20%) and the architecture is much
+more expressive (in particular, it supports tie-break limits, see
+MPG).
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

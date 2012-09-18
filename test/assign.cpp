@@ -149,22 +149,9 @@ namespace Test { namespace Assign {
   int int_val(const Gecode::Space&, const Gecode::IntVar& x) {
     return x.min();
   }
-  /// Test function for branch commit function
-  void int_commit(Gecode::Space& home, unsigned int a, 
-                  Gecode::IntVar x, int n) {
-    if (a == 0)
-      Gecode::rel(home, x, Gecode::IRT_EQ, n);
-    else
-      Gecode::rel(home, x, Gecode::IRT_NQ, n);
-  }
   /// Test function for branch value function
   int bool_val(const Gecode::Space&, const Gecode::BoolVar& x) {
     return x.min();
-  }
-  /// Test function for branch commit function
-  void bool_commit(Gecode::Space& home, unsigned int, 
-                   Gecode::BoolVar x, int n) {
-    Gecode::rel(home, x, Gecode::IRT_EQ, n);
   }
   //@}
 
@@ -192,7 +179,7 @@ namespace Test { namespace Assign {
       case 1: ia = INT_ASSIGN_MED(); break;
       case 2: ia = INT_ASSIGN_MAX(); break;
       case 3: ia = INT_ASSIGN_RND(r); break;
-      case 4: ia = INT_ASSIGN(&int_val,&int_commit); break;
+      case 4: ia = INT_ASSIGN(&int_val); break;
       }
 
       assign(*clone, clone->x, ia);
@@ -239,7 +226,7 @@ namespace Test { namespace Assign {
       case 1: ia = INT_ASSIGN_MED(); break;
       case 2: ia = INT_ASSIGN_MAX(); break;
       case 3: ia = INT_ASSIGN_RND(r); break;
-      case 4: ia = INT_ASSIGN(&bool_val,&bool_commit); break;
+      case 4: ia = INT_ASSIGN(&bool_val); break;
       }
 
       assign(*clone, clone->x, ia);
@@ -290,11 +277,6 @@ namespace Test { namespace Assign {
     Gecode::SetVarUnknownRanges r(x);
     return r.min();
   }
-  /// Test function for branch commit function
-  void set_commit(Gecode::Space& home, unsigned int, 
-                  Gecode::SetVar x, int n) {
-    Gecode::dom(home, x, Gecode::SRT_EQ, n);
-  }
   //@}
 
   SetTest::SetTest(const std::string& s, int a, const Gecode::IntSet& d)
@@ -326,7 +308,7 @@ namespace Test { namespace Assign {
       case 5: sa = SET_ASSIGN_MAX_EXC(); break;
       case 6: sa = SET_ASSIGN_RND_INC(r); break;
       case 7: sa = SET_ASSIGN_RND_EXC(r); break;
-      case 8: sa = SET_ASSIGN(&set_val,&set_commit); break;
+      case 8: sa = SET_ASSIGN(&set_val); break;
       }
           
       assign(*clone, clone->x, sa);
@@ -373,11 +355,6 @@ namespace Test { namespace Assign {
   Gecode::FloatNum float_val(const Gecode::Space&, const Gecode::FloatVar& x) {
     return x.min();
   }
-  /// Test function for branch commit function
-  void float_commit(Gecode::Space& home, unsigned int, 
-                   Gecode::FloatVar x, Gecode::FloatNum n) {
-    Gecode::rel(home, x, Gecode::FRT_LQ, n);
-  }
   //@}
 
   FloatTest::FloatTest(const std::string& s, int a, const Gecode::FloatVal& d)
@@ -404,7 +381,7 @@ namespace Test { namespace Assign {
       case 0: fa = FLOAT_ASSIGN_MIN(); break;
       case 1: fa = FLOAT_ASSIGN_MAX(); break;
       case 2: fa = FLOAT_ASSIGN_RND(r); break;
-      case 3: fa = FLOAT_ASSIGN(&float_val,&float_commit); break;
+      case 3: fa = FLOAT_ASSIGN(&float_val); break;
       }
           
       assign(*clone, clone->x, fa);
