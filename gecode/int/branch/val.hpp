@@ -46,7 +46,7 @@ namespace Gecode {
     : ValBranch(r), s(SEL_RND) {}
 
   forceinline 
-  IntValBranch::IntValBranch(void* v, void* c)
+  IntValBranch::IntValBranch(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline IntValBranch::Select
@@ -97,12 +97,14 @@ namespace Gecode {
 
   inline IntValBranch
   INT_VAL(IntBranchVal v, IntBranchCommit c) {
-    return IntValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
+    return IntValBranch(function_cast<VoidFunction>(v),
+                        function_cast<VoidFunction>(c));
   }
 
   inline IntValBranch
   INT_VAL(BoolBranchVal v, BoolBranchCommit c) {
-    return IntValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
+    return IntValBranch(function_cast<VoidFunction>(v),
+                        function_cast<VoidFunction>(c));
   }
 
   inline IntValBranch

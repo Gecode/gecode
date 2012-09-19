@@ -54,7 +54,7 @@ namespace Gecode {
     : VarBranch(a,t), s(s0) {}
 
   forceinline 
-  IntVarBranch::IntVarBranch(Select s0, void* mf, BranchTbl t)
+  IntVarBranch::IntVarBranch(Select s0, VoidFunction mf, BranchTbl t)
     : VarBranch(mf,t), s(s0) {}
 
   forceinline IntVarBranch::Select
@@ -74,22 +74,26 @@ namespace Gecode {
 
   inline IntVarBranch
   INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,
+                        function_cast<VoidFunction>(bm),tbl);
   }
 
   inline IntVarBranch
   INT_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MIN,
+                        function_cast<VoidFunction>(bm),tbl);
   }
 
   inline IntVarBranch
   INT_VAR_MERIT_MAX(IntBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,
+                        function_cast<VoidFunction>(bm),tbl);
   }
 
   inline IntVarBranch
   INT_VAR_MERIT_MAX(BoolBranchMerit bm, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
+    return IntVarBranch(IntVarBranch::SEL_MERIT_MAX,
+                        function_cast<VoidFunction>(bm),tbl);
   }
 
   inline IntVarBranch

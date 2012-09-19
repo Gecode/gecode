@@ -1217,7 +1217,7 @@ namespace Gecode {
     /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
     SetVarBranch(Select s, Activity a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
-    SetVarBranch(Select s, void* mf, BranchTbl t);
+    SetVarBranch(Select s, VoidFunction mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1307,7 +1307,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     SetValBranch(Select s, Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    SetValBranch(void* v, void* c);
+    SetValBranch(VoidFunction v, VoidFunction c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1377,7 +1377,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     SetAssign(Select s, Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    SetAssign(void* v, void* c);
+    SetAssign(VoidFunction v, VoidFunction c);
     /// Return selection strategy
     Select select(void) const;
   };

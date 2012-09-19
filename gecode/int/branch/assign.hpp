@@ -46,7 +46,7 @@ namespace Gecode {
     : ValBranch(r), s(SEL_RND) {}
 
   forceinline 
-  IntAssign::IntAssign(void* v, void* c)
+  IntAssign::IntAssign(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline IntAssign::Select
@@ -77,12 +77,14 @@ namespace Gecode {
 
   inline IntAssign
   INT_ASSIGN(IntBranchVal v, IntBranchCommit c) {
-    return IntAssign(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
+    return IntAssign(function_cast<VoidFunction>(v),
+                     function_cast<VoidFunction>(c));
   }
 
   inline IntAssign
   INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
-    return IntAssign(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
+    return IntAssign(function_cast<VoidFunction>(v),
+                     function_cast<VoidFunction>(c));
   }
 
 }

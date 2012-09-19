@@ -108,7 +108,7 @@ namespace Gecode {
   ValCommitFunction<View>::ValCommitFunction(Space& home, 
                                              const ValBranch& vb) 
     : ValCommit<View,Val>(home,vb),
-      c(static_cast<CommitFunction>(vb.commit())) {}
+      c(function_cast<CommitFunction>(vb.commit())) {}
   template<class View>
   forceinline
   ValCommitFunction<View>::ValCommitFunction(Space& home, bool shared, 

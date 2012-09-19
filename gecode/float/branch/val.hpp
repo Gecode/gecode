@@ -46,7 +46,7 @@ namespace Gecode {
     : ValBranch(r), s(SEL_SPLIT_RND) {}
 
   forceinline 
-  FloatValBranch::FloatValBranch(void* v, void* c)
+  FloatValBranch::FloatValBranch(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline FloatValBranch::Select
@@ -72,7 +72,8 @@ namespace Gecode {
 
   inline FloatValBranch
   FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c) {
-    return FloatValBranch(reinterpret_cast<void*>(v),reinterpret_cast<void*>(c));
+    return FloatValBranch(function_cast<VoidFunction>(v),
+                          function_cast<VoidFunction>(c));
   }
 
 }

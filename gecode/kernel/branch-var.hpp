@@ -60,8 +60,8 @@ namespace Gecode {
     Rnd r;
     /// Activity information
     Activity a;
-    /// Merit function (generic pointer)
-    void* mf;
+    /// Merit function (generic function pointer)
+    VoidFunction mf;
   public:
     /// Initialize with tie-break limit function \a t
     VarBranch(BranchTbl t);
@@ -70,7 +70,7 @@ namespace Gecode {
     /// Initialize with activity \a a and tie-break limit function \a t
     VarBranch(Activity a, BranchTbl t);
     /// Initialize with merit function \a f and tie-break limit function \a t
-    VarBranch(void* f, BranchTbl t);
+    VarBranch(void (*f)(void), BranchTbl t);
     /// Return tie-break limit function
     BranchTbl tbl(void) const;
     /// Return random number generator
@@ -78,7 +78,7 @@ namespace Gecode {
     /// Return activity
     Activity activity(void) const;
     /// Return merit function
-    void* merit(void) const;
+    VoidFunction merit(void) const;
   };
 
   /// Combine variable selection criteria for tie-breaking
@@ -134,7 +134,7 @@ namespace Gecode {
   }
 
   forceinline 
-  VarBranch::VarBranch(void* f, BranchTbl t0)
+  VarBranch::VarBranch(VoidFunction f, BranchTbl t0)
     : t(t0), mf(f) {}
 
   forceinline BranchTbl
@@ -152,7 +152,7 @@ namespace Gecode {
     return a;
   }
 
-  forceinline void*
+  forceinline VoidFunction
   VarBranch::merit(void) const {
     return mf;
   }

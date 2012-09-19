@@ -159,7 +159,7 @@ namespace Gecode {
   forceinline
   MeritFunction<View>::MeritFunction(Space& home, const VarBranch& vb)
     : MeritBase<View,double>(home,vb),
-      f(reinterpret_cast<Function>(vb.merit())) {}
+      f(function_cast<Function>(vb.merit())) {}
   template<class View>
   forceinline
   MeritFunction<View>::MeritFunction(Space& home, bool shared, 

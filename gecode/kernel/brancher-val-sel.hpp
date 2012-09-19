@@ -108,7 +108,7 @@ namespace Gecode {
   forceinline
   ValSelFunction<View>::ValSelFunction(Space& home, const ValBranch& vb)
     : ValSel<View,Val>(home,vb),
-      v(static_cast<ValFunction>(vb.val())) {}
+      v(function_cast<ValFunction>(vb.val())) {}
   template<class View>
   forceinline
   ValSelFunction<View>::ValSelFunction(Space& home, bool shared, 

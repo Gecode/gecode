@@ -46,22 +46,22 @@ namespace Gecode {
     /// Random number generator
     Rnd r;
     /// Value function
-    void* vf;
+    VoidFunction vf;
     /// Commit function
-    void* cf;
+    VoidFunction cf;
   public:
     /// Initialize
     ValBranch(void);
     /// Initialize with random number generator \a r
     ValBranch(Rnd r);
     /// Initialize with value function \a v and commit function \a c
-    ValBranch(void* v, void* c);
+    ValBranch(VoidFunction v, VoidFunction c);
     /// Return random number generator
     Rnd rnd(void) const;
     /// Return value function
-    void* val(void) const;
+    VoidFunction val(void) const;
     /// Return commit function
-    void* commit(void) const;
+    VoidFunction commit(void) const;
   };
 
 
@@ -77,7 +77,7 @@ namespace Gecode {
   }
 
   forceinline 
-  ValBranch::ValBranch(void* v, void* c)
+  ValBranch::ValBranch(VoidFunction v, VoidFunction c)
     : vf(v), cf(c) {}
 
   forceinline Rnd
@@ -85,12 +85,12 @@ namespace Gecode {
     return r;
   }
 
-  forceinline void*
+  forceinline VoidFunction
   ValBranch::val(void) const {
     return vf;
   }
 
-  forceinline void*
+  forceinline VoidFunction
   ValBranch::commit(void) const {
     return cf;
   }

@@ -54,7 +54,7 @@ namespace Gecode {
     : VarBranch(a,t), s(s0) {}
 
   forceinline 
-  FloatVarBranch::FloatVarBranch(Select s0, void* mf, BranchTbl t)
+  FloatVarBranch::FloatVarBranch(Select s0, VoidFunction mf, BranchTbl t)
     : VarBranch(mf,t), s(s0) {}
 
   forceinline FloatVarBranch::Select
@@ -70,12 +70,14 @@ namespace Gecode {
 
   inline FloatVarBranch
   FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
+    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN,
+                          function_cast<VoidFunction>(bm),tbl);
   }
 
   inline FloatVarBranch
   FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
+    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX,
+                          function_cast<VoidFunction>(bm),tbl);
   }
 
   inline FloatVarBranch

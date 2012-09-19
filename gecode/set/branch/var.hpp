@@ -54,7 +54,7 @@ namespace Gecode {
     : VarBranch(a,t), s(s0) {}
 
   forceinline 
-  SetVarBranch::SetVarBranch(Select s0, void* mf, BranchTbl t)
+  SetVarBranch::SetVarBranch(Select s0, VoidFunction mf, BranchTbl t)
     : VarBranch(mf,t), s(s0) {}
 
   forceinline SetVarBranch::Select
@@ -75,12 +75,14 @@ namespace Gecode {
 
   inline SetVarBranch
   SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_MERIT_MIN,reinterpret_cast<void*>(bm),tbl);
+    return SetVarBranch(SetVarBranch::SEL_MERIT_MIN,
+                        function_cast<VoidFunction>(bm),tbl);
   }
 
   inline SetVarBranch
   SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_MERIT_MAX,reinterpret_cast<void*>(bm),tbl);
+    return SetVarBranch(SetVarBranch::SEL_MERIT_MAX,
+                        function_cast<VoidFunction>(bm),tbl);
   }
 
   inline SetVarBranch
