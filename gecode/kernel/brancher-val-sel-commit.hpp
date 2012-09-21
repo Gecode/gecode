@@ -58,15 +58,15 @@ namespace Gecode {
     ValSelCommitBase(Space& home, bool shared, 
                      ValSelCommitBase<View,Val>& vsc);
     /// Return value of view \a x
-    virtual Val val(const Space& home, View x) = NULL;
+    virtual Val val(const Space& home, View x) = 0;
     /// Commit view \a x to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a, View x, Val n) = NULL;
+    virtual ModEvent commit(Space& home, unsigned int a, View x, Val n) = 0;
     /// Perform cloning
-    virtual ValSelCommitBase<View,Val>* copy(Space& home, bool shared) = NULL;
+    virtual ValSelCommitBase<View,Val>* copy(Space& home, bool shared) = 0;
     /// Whether dispose must always be called (that is, notice is needed)
-    virtual bool notice(void) const = NULL;
+    virtual bool notice(void) const = 0;
     /// Delete value selection
-    virtual void dispose(Space& home) = NULL;
+    virtual void dispose(Space& home) = 0;
     /// \name Memory management
     //@{
     /// Allocate memory from space
@@ -83,6 +83,10 @@ namespace Gecode {
   class ValSelCommit 
     : public ValSelCommitBase<typename ValSel::View,typename ValSel::Val> {
   protected:
+    typedef typename ValSelCommitBase<typename ValSel::View,
+                                      typename ValSel::Val>::Val Val;
+    typedef typename ValSelCommitBase<typename ValSel::View,
+                                      typename ValSel::Val>::View View;
     /// The value selection object used
     ValSel s;
     /// The commit object used

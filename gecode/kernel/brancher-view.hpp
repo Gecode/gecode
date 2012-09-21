@@ -91,7 +91,7 @@ namespace Gecode {
     /// Return position information
     Pos pos(Space& home);
     /// Return view according to position information \a p
-    typename View view(const Pos& p) const;
+    View view(const Pos& p) const;
     /// Constructor for cloning \a b
     ViewBrancher(Space& home, bool shared, ViewBrancher<View,n>& b);
     /// Constructor for creation

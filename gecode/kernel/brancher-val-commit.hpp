@@ -67,6 +67,9 @@ namespace Gecode {
   class ValCommitFunction : public 
   ValCommit<View,
             typename BranchTraits<typename View::VarType>::ValType> {
+    typedef typename ValCommit<View,
+                               typename BranchTraits<typename View::VarType>
+                                 ::ValType>::Val Val;
   public:
     /// The corresponding variable type
     typedef typename View::VarType Var;

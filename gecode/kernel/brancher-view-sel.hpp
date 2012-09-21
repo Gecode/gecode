@@ -61,27 +61,27 @@ namespace Gecode {
     /// \name View selection and tie breaking
     //@{
     /// Select a view from \a x starting from \a s and return its position
-    virtual int select(Space& home, ViewArray<View>& x, int s) = NULL;
+    virtual int select(Space& home, ViewArray<View>& x, int s) = 0;
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s, 
-                       BranchFilter bf) = NULL;
+                       BranchFilter bf) = 0;
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s, 
-                      int* ties, int& n) = NULL;
+                      int* ties, int& n) = 0;
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s, 
-                      int* ties, int& n, BranchFilter bf) = NULL;
+                      int* ties, int& n, BranchFilter bf) = 0;
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, 
-                     int* ties, int& n) = NULL;
+                     int* ties, int& n) = 0;
     /// Select a view from \a x considering views with positions in \a ties
     virtual int select(Space& home, ViewArray<View>& x, 
-                       int* ties, int n) = NULL;
+                       int* ties, int n) = 0;
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared) = NULL;
+    virtual ViewSel<View>* copy(Space& home, bool shared) = 0;
     /// Whether dispose must always be called (that is, notice is needed)
     virtual bool notice(void) const;
     /// Dispose view selection
@@ -101,6 +101,7 @@ namespace Gecode {
   /// Select the first unassigned view
   template<class View>
   class ViewSelNone : public ViewSel<View> {
+    typedef typename ViewSel<View>::BranchFilter BranchFilter;
   public:
     /// \name Initialization
     //@{
@@ -121,7 +122,8 @@ namespace Gecode {
                       int* ties, int& n);
     /// Select ties from \a x starting at \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s, 
-                      int* ties, int& n, BranchFilter bf);
+                      int* ties, int& n,
+                      BranchFilter bf);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, 
                      int* ties, int& n);
@@ -138,6 +140,7 @@ namespace Gecode {
   /// Select a view randomly
   template<class View>
   class ViewSelRnd : public ViewSel<View> {
+    typedef typename ViewSel<View>::BranchFilter BranchFilter;
   protected:
     /// The random number generator used
     Rnd r;
@@ -194,6 +197,8 @@ namespace Gecode {
   template<class Choose, class Merit>
   class ViewSelChoose : public ViewSel<typename Merit::View> {
   protected:
+    typedef typename ViewSel<typename Merit::View>::View View;
+    typedef typename ViewSel<typename Merit::View>::BranchFilter BranchFilter;
     /// Type of merit
     typedef typename Merit::Val Val;
     /// How to choose
@@ -240,6 +245,10 @@ namespace Gecode {
   template<class Choose, class Merit>
   class ViewSelChooseTbl : public ViewSelChoose<Choose,Merit> {
   protected:
+    typedef typename ViewSelChoose<Choose,Merit>::Val Val;
+    typedef typename ViewSelChoose<Choose,Merit>::View View;
+    typedef typename ViewSelChoose<Choose,Merit>::BranchFilter BranchFilter;
+    using ViewSelChoose<Choose,Merit>::c;
     /// Tie-break limit function
     BranchTbl tbl;
   public:
@@ -267,6 +276,8 @@ namespace Gecode {
   /// Select view with least merit
   template<class Merit>
   class ViewSelMin : public ViewSelChoose<ChooseMin,Merit> {
+    typedef typename ViewSelChoose<ChooseMin,Merit>::View View;
+    typedef typename ViewSelChoose<ChooseMin,Merit>::BranchFilter BranchFilter;
   public:
     /// \name Initialization
     //@{
@@ -285,6 +296,8 @@ namespace Gecode {
   /// Select view with least merit taking tie-break limit into account
   template<class Merit>
   class ViewSelMinTbl : public ViewSelChooseTbl<ChooseMin,Merit> {
+    typedef typename ViewSelChooseTbl<ChooseMin,Merit>::View View;
+    typedef typename ViewSelChooseTbl<ChooseMin,Merit>::BranchFilter BranchFilter;
   public:
     /// \name Initialization
     //@{
@@ -303,6 +316,8 @@ namespace Gecode {
   /// Select view with largest merit
   template<class Merit>
   class ViewSelMax : public ViewSelChoose<ChooseMax,Merit> {
+    typedef typename ViewSelChoose<ChooseMax,Merit>::View View;
+    typedef typename ViewSelChoose<ChooseMax,Merit>::BranchFilter BranchFilter;
   public:
     /// \name Initialization
     //@{
@@ -321,6 +336,8 @@ namespace Gecode {
   /// Select view with largest merit taking tie-break limit into account
   template<class Merit>
   class ViewSelMaxTbl : public ViewSelChooseTbl<ChooseMax,Merit> {
+    typedef typename ViewSelChooseTbl<ChooseMax,Merit>::View View;
+    typedef typename ViewSelChooseTbl<ChooseMax,Merit>::BranchFilter BranchFilter;
   public:
     /// \name Initialization
     //@{
