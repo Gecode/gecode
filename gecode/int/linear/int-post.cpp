@@ -56,24 +56,42 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   /// Rewrite all inequations in terms of IRT_LQ
-  inline void
-  rewrite(IntRelType &irt, double &d,
+  inline bool
+  rewrite(Space& home, IntRelType &irt, double &d,
           Term<IntView>* &t_p, int &n_p,
-          Term<IntView>* &t_n, int &n_n) {
+          Term<IntView>* &t_n, int &n_n, int gcd) {
+    bool divisible = (std::fmod(d,gcd)==0.0);
+    d = d/gcd;
     switch (irt) {
-    case IRT_EQ: case IRT_NQ: case IRT_LQ:
+    case IRT_EQ:
+      if (!divisible) {
+        home.fail();
+        return false;
+      }
+      break;
+    case IRT_NQ:
+      if (!divisible)
+        return false;
+      break;
+    case IRT_LQ:
+      d = std::floor(d);
       break;
     case IRT_LE:
-      d--; irt = IRT_LQ; break;
+      d = std::floor(d-1.0);
+      irt = IRT_LQ;
+      break;
     case IRT_GR:
-      d++; /* fall through */
+      d += 1.0;
+      /* fall through */
     case IRT_GQ:
+      d = std::ceil(d);
       irt = IRT_LQ;
       std::swap(n_p,n_n); std::swap(t_p,t_n); d = -d;
       break;
     default:
       throw UnknownRelation("Int::linear");
     }
+    return true;
   }
 
   /// Decide the required precision and check for overflow
@@ -210,10 +228,11 @@ namespace Gecode { namespace Int { namespace Linear {
     eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
-    int n_p, n_n;
-    bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n);
+    int n_p, n_n, gcd;
+    bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n,gcd);
 
-    rewrite(irt,d,t_p,n_p,t_n,n_n);
+    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd))
+      return;
 
     if (n == 0) {
       switch (irt) {
@@ -485,10 +504,11 @@ namespace Gecode { namespace Int { namespace Linear {
     eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
-    int n_p, n_n;
-    bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n);
+    int n_p, n_n, gcd;
+    bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n,gcd);
 
-    rewrite(irt,d,t_p,n_p,t_n,n_n);
+    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd))
+      return;
 
     if (n == 0) {
       // FIXME!

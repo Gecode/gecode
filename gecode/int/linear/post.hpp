@@ -81,7 +81,8 @@ namespace Gecode { namespace Int { namespace Linear {
   inline bool
   normalize(Term<View>* t, int &n,
             Term<View>* &t_p, int &n_p,
-            Term<View>* &t_n, int &n_n) {
+            Term<View>* &t_n, int &n_n,
+            int& gcd) {
     /*
      * Join coefficients for aliased variables:
      *
@@ -135,6 +136,38 @@ namespace Gecode { namespace Int { namespace Linear {
      */
     for (int i=n_n; i--; )
       t_n[i].a = -t_n[i].a;
+
+    /*
+     * Compute greatest common divisor
+     *
+     */
+    class GCD {
+    public:
+      int operator ()(int a, int b) {
+        if (b > a) std::swap(a,b);
+        int tmp;
+        while (b > 0) {
+          tmp = b;
+          b = a % b;
+          a = tmp;
+        }
+        return a;
+      }
+    } _gcd;
+
+    if (n > 0) {
+      gcd = (n_p > 0 ? t_p[0].a : t_n[0].a);
+      for (int i=n_p; i--; )
+        gcd = _gcd(gcd, t_p[i].a);
+      for (int i=n_n; i--; )
+        gcd = _gcd(gcd, t_n[i].a);
+      for (int i=n_p; i--; )
+        t_p[i].a = t_p[i].a/gcd;
+      for (int i=n_n; i--; )
+        t_n[i].a = t_n[i].a/gcd;
+    } else {
+      gcd = 1;
+    }
 
     /*
      * Test for unit coefficients only

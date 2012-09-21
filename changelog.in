@@ -73,6 +73,17 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The coefficients for linear constraints are now divided by
+their greatest common divisor. That means that some equations
+can be handled now that previously threw an OutOfLimits exception,
+and some equations can be handled with the more efficient integer
+precision propagators that previously required double precision.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major

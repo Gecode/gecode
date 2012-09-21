@@ -70,18 +70,35 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   /// Rewrite non-strict relations
-  inline void
-  rewrite(IntRelType &irt, double &d) {
-      switch (irt) {
-      case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
-        break;
-      case IRT_LE:
-        d--; irt = IRT_LQ; break;
-      case IRT_GR:
-        d++; irt = IRT_GQ; break;
-      default:
-        throw UnknownRelation("Int::linear");
+  inline bool
+  rewrite(Space& home, IntRelType &irt, double &d, int gcd) {
+    bool divisible = (std::fmod(d,gcd)==0.0);
+    d = d/gcd;
+    switch (irt) {
+    case IRT_EQ:
+      if (!divisible) {
+        home.fail();
+        return false;
       }
+      break;
+    case IRT_NQ:
+      if (!divisible)
+        return false;
+      break;
+    case IRT_LQ:
+      d = std::floor(d);
+      break;
+    case IRT_GQ:
+      d = std::ceil(d);
+      break;
+    case IRT_LE:
+      d = std::floor(d-1.0); irt = IRT_LQ; break;
+    case IRT_GR:
+      d = std::ceil(d+1.0); irt = IRT_GQ; break;
+    default:
+      throw UnknownRelation("Int::linear");
+    }
+    return true;
   }
 
   void
@@ -560,13 +577,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
     eliminate(t,n,d);
 
-    rewrite(irt,d);
+    Term<BoolView> *t_p, *t_n;
+    int n_p, n_n, gcd;
+    bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n,gcd);
+
+    if (!rewrite(home,irt,d,gcd))
+      return;
 
     c = static_cast<int>(d);
-
-    Term<BoolView> *t_p, *t_n;
-    int n_p, n_n;
-    bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n);
 
     if (n == 0) {
       switch (irt) {
@@ -646,7 +664,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
     eliminate(t,n,d);
 
-    rewrite(irt,d);
+    Term<BoolView> *t_p, *t_n;
+    int n_p, n_n, gcd;
+    bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n,gcd);
+
+    if (!rewrite(home,irt,d,gcd))
+      return;
 
     c = static_cast<int>(d);
 
@@ -666,10 +689,6 @@ namespace Gecode { namespace Int { namespace Linear {
         home.fail();
       return;
     }
-
-    Term<BoolView> *t_p, *t_n;
-    int n_p, n_n;
-    bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n);
 
     // Check for overflow
     {

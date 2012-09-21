@@ -1341,6 +1341,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \param n_p number of postive terms
    * \param t_n array of linear terms over integers with negative coefficients
    * \param n_n number of negative terms
+   * \param gcd greatest common divisor of all coefficients
    *
    * Replaces all negative coefficients by positive coefficients.
    *
@@ -1351,13 +1352,16 @@ namespace Gecode { namespace Int { namespace Linear {
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
+   *  - Divides all coefficients by their greatest common divisor and
+   *    returns the gcd
    *
    * Returns true, if all coefficients are unit coefficients
    */
   template<class View>
   bool normalize(Term<View>* t, int &n,
                  Term<View>* &t_p, int &n_p,
-                 Term<View>* &t_n, int &n_n);
+                 Term<View>* &t_n, int &n_n,
+                 int& gcd);
 
 
   /**
