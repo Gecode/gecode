@@ -1094,7 +1094,7 @@ namespace Gecode {
   /**
    * \brief Branch merit function type for set variables
    *
-   * The function must return a non-negative merit value for the variable
+   * The function must return a merit value for the variable
    * \a x.
    * The value \a i refers to the variable's position in the original array
    * passed to the brancher.
