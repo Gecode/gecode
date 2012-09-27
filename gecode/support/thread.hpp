@@ -230,7 +230,7 @@ namespace Gecode { namespace Support {
       static void  operator delete(void* p);
     };
     /// Mutex for synchronization
-    GECODE_SUPPORT_EXPORT static Mutex m;
+    GECODE_SUPPORT_EXPORT static Mutex* m(void);
     /// Idle runners
     GECODE_SUPPORT_EXPORT static Run* idle;
   public:

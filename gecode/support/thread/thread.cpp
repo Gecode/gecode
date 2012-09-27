@@ -42,7 +42,12 @@ namespace Gecode { namespace Support {
   /*
    * Threads
    */
-  Mutex Thread::m;
+  
+  Mutex* Thread::m(void) {
+    static Mutex* m = new Mutex;
+    return m;
+  }
+  
   Thread::Run* Thread::idle = NULL;
 
   void
@@ -59,9 +64,9 @@ namespace Gecode { namespace Support {
         delete e;
       }
       // Put into idle stack
-      Thread::m.acquire();
+      Thread::m()->acquire();
       n=Thread::idle; Thread::idle=this;
-      Thread::m.release();
+      Thread::m()->release();
       // Wait for next runnable
       e.wait();
     }

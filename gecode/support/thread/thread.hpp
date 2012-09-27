@@ -90,13 +90,13 @@ namespace Gecode { namespace Support {
   }
   inline void
   Thread::run(Runnable* r) {
-    m.acquire();
+    m()->acquire();
     if (idle != NULL) {
       idle->run(r);
       idle = idle->n;
-      m.release();
+      m()->release();
     } else {
-      m.release();
+      m()->release();
       (void) new Run(r);
     }
   }

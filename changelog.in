@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: support
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a concurrency problem that caused an exception to be thrown at
+the end of a multithreaded search on some platforms.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor
