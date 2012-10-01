@@ -92,9 +92,10 @@ namespace Gecode { namespace Support {
   Thread::run(Runnable* r) {
     m()->acquire();
     if (idle != NULL) {
-      idle->run(r);
+      Run* i = idle;
       idle = idle->n;
       m()->release();
+      i->run(r);
     } else {
       m()->release();
       (void) new Run(r);
