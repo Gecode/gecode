@@ -90,8 +90,8 @@ namespace Gecode {
     virtual const Choice* choice(Space& home);
     /// Return choice
     virtual const Choice* choice(const Space& home, Archive& e);
-    /// Perform commit for choice \a c and alternative \a a
-    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
+    /// Perform commit for choice \a c and alternative \a b
+    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Delete brancher and return its size
