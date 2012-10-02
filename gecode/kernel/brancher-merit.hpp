@@ -168,7 +168,8 @@ namespace Gecode {
   template<class View>
   forceinline double
   MeritFunction<View>::operator ()(const Space& home, View x, int i) {
-    return f(home,x,i);
+    typename View::VarType y(x.varimp());
+    return f(home,y,i);
   }
 
   // Degree merit

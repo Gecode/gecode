@@ -84,8 +84,8 @@ namespace Gecode {
     ValSelFunction(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelFunction(Space& home, bool shared, ValSelFunction<View>& vs);
-    /// Return user-defined value of view \a x
-    Val val(const Space& home, View x);
+    /// Return user-defined value of view \a x at position \a i
+    Val val(const Space& home, View x, int i);
   };
   //@}
 
@@ -120,8 +120,9 @@ namespace Gecode {
     : ValSel<View,Val>(home,shared,vs), v(vs.v) {}
   template<class View>
   forceinline typename ValSelFunction<View>::Val
-  ValSelFunction<View>::val(const Space& home, View x) {
-    return v(home,x);
+  ValSelFunction<View>::val(const Space& home, View x, int i) {
+    typename View::VarType y(x.varimp());
+    return v(home,y,i);
   }
 
 }

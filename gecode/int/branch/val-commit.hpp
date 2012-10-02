@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValCommit<View,int>(home,shared,vc) {}
   template<class View>
   forceinline ModEvent
-  ValCommitEq<View>::commit(Space& home, unsigned int a, View x, int n) {
+  ValCommitEq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
 
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValCommit<View,int>(home,shared,vc) {}
   template<class View>
   forceinline ModEvent
-  ValCommitLq<View>::commit(Space& home, unsigned int a, View x, int n) {
+  ValCommitLq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
 
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValCommit<View,int>(home,shared,vc) {}
   template<class View>
   forceinline ModEvent
-  ValCommitGq<View>::commit(Space& home, unsigned int a, View x, int n) {
+  ValCommitGq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.gq(home,n) : x.le(home,n);
   }
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValCommit<View,int>(home,shared,vc) {}
   template<class View>
   forceinline ModEvent
-  ValCommitGr<View>::commit(Space& home, unsigned int a, View x, int n) {
+  ValCommitGr<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
   }
 

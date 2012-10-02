@@ -177,7 +177,7 @@ public:
     }
   }
   /// Value selection function for load branching
-  static int load(const Space& home, const IntVar& x) {
+  static int load(const Space& home, IntVar x, int) {
     const BACP& b = static_cast<const BACP&>(home);
     IntVarValues values(x);
     int val = -1;
@@ -193,7 +193,7 @@ public:
     return val;
   }
   /// Value selection function for reverse load branching
-  static int load_rev(const Space& home, const IntVar& x) {
+  static int load_rev(const Space& home, IntVar x, int) {
     const BACP& b = static_cast<const BACP&>(home);
     IntVarValues values(x);
     int val = -1;

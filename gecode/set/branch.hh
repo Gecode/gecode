@@ -205,8 +205,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValSelMin(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMin(Space& home, bool shared, ValSelMin& vs);
-    /// Return value of view \a x
-    int val(const Space& home, SetView x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, SetView x, int i);
   };
 
   /**
@@ -221,8 +221,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValSelMax(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMax(Space& home, bool shared, ValSelMax& vs);
-    /// Return value of view \a x
-    int val(const Space& home, SetView x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, SetView x, int i);
   };
 
   /**
@@ -237,8 +237,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValSelMed(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMed(Space& home, bool shared, ValSelMed& vs);
-    /// Return value of view \a x
-    int val(const Space& home, SetView x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, SetView x, int i);
   };
 
   /**
@@ -256,8 +256,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValSelRnd(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
-    /// Return value of view \a x
-    int val(const Space& home, SetView x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value selection
@@ -294,8 +294,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValCommitInc(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitInc(Space& home, bool shared, ValCommitInc& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, View x, int n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
   };
 
   /**
@@ -310,8 +310,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValCommitExc(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitExc(Space& home, bool shared, ValCommitExc& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, SetView x, int n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
   };
 
 }}}

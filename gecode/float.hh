@@ -1336,8 +1336,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef bool (*FloatBranchFilter)(const Space& home, 
-                                  const FloatVar& x, int i);
+  typedef bool (*FloatBranchFilter)(const Space& home, FloatVar x, int i);
 
   /**
    * \brief Branch merit function type for float variables
@@ -1349,30 +1348,33 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef double (*FloatBranchMerit)(const Space& home, 
-                                     const FloatVar& x, int i);
+  typedef double (*FloatBranchMerit)(const Space& home, FloatVar x, int i);
 
   /**
    * \brief Branch value function type for float variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function.
+   * corresponding branch commit function. The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher.
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef FloatNum (*FloatBranchVal)(const Space& home, const FloatVar& x);
+  typedef FloatNum (*FloatBranchVal)(const Space& home, FloatVar x, int i);
 
   /**
    * \brief Branch commit function type for float variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The value \a n is the value
+   * corresponds to the alternative \a a.  The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
    * \ingroup TaskModelFloatBranch
    */
   typedef void (*FloatBranchCommit)(Space& home, unsigned int a,
-                                    FloatVar x, FloatNum n);
+                                    FloatVar x, int i, FloatNum n);
 
 }
 

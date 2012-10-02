@@ -191,11 +191,11 @@ namespace Test { namespace Branch {
   const int n_int_var_branch =
     sizeof(int_var_branch_name)/sizeof(const char*);
   /// Test function for branch merit function
-  double int_merit(const Gecode::Space&, const Gecode::IntVar& x, int) {
+  double int_merit(const Gecode::Space&, Gecode::IntVar x, int) {
     return x.min();
   }
   /// Test function for branch merit function
-  double bool_merit(const Gecode::Space&, const Gecode::BoolVar& x, int) {
+  double bool_merit(const Gecode::Space&, Gecode::BoolVar x, int) {
     return x.min();
   }
   /// Names for integer value selections
@@ -216,11 +216,11 @@ namespace Test { namespace Branch {
   const int n_int_val_branch =
     sizeof(int_val_branch_name)/sizeof(const char*);
   /// Test function for branch value function
-  int int_val(const Gecode::Space&, const Gecode::IntVar& x) {
+  int int_val(const Gecode::Space&, Gecode::IntVar x, int) {
     return x.min();
   }
   /// Test function for branch value function
-  int bool_val(const Gecode::Space&, const Gecode::BoolVar& x) {
+  int bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
     return x.min();
   }
   //@}
@@ -261,7 +261,7 @@ namespace Test { namespace Branch {
   const int n_set_var_branch =
     sizeof(set_var_branch_name)/sizeof(const char*);
   /// Test function for branch merit function
-  double set_merit(const Gecode::Space&, const Gecode::SetVar& x, int) {
+  double set_merit(const Gecode::Space&, Gecode::SetVar, int) {
     return 2.0;
   }
   /// Names for set value selections
@@ -280,7 +280,7 @@ namespace Test { namespace Branch {
   const int n_set_val_branch =
     sizeof(set_val_branch_name)/sizeof(const char*);
   /// Test function for branch value function
-  int set_val(const Gecode::Space&, const Gecode::SetVar& x) {
+  int set_val(const Gecode::Space&, Gecode::SetVar x, int) {
     Gecode::SetVarUnknownRanges r(x);
     return r.min();
   }
@@ -323,7 +323,7 @@ namespace Test { namespace Branch {
   const int n_float_var_branch =
     sizeof(float_var_branch_name)/sizeof(const char*);
   /// Test function for branch merit function
-  double float_merit(const Gecode::Space&, const Gecode::FloatVar& x, int) {
+  double float_merit(const Gecode::Space&, Gecode::FloatVar x, int) {
     return static_cast<double>(x.degree());
   }
   /// Names for float value selections
@@ -337,7 +337,7 @@ namespace Test { namespace Branch {
   const int n_float_val_branch =
     sizeof(float_val_branch_name)/sizeof(const char*);
   /// Test function for branch value function
-  Gecode::FloatNum float_val(const Gecode::Space&, const Gecode::FloatVar& x) {
+  Gecode::FloatNum float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
     return x.med();
   }
   //@}

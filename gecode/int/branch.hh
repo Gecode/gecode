@@ -243,8 +243,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelMin(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMin(Space& home, bool shared, ValSelMin& vs);
-    /// Return value of view \a x
-    int val(const Space& home, View x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, View x, int i);
   };
 
   /**
@@ -260,8 +260,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelMax(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMax(Space& home, bool shared, ValSelMax& vs);
-    /// Return value of view \a x
-    int val(const Space& home, View x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, View x, int i);
   };
 
   /**
@@ -277,8 +277,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelMed(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMed(Space& home, bool shared, ValSelMed& vs);
-    /// Return value of view \a x
-    int val(const Space& home, View x);
+    /// Return value of view \a x at position  i
+    int val(const Space& home, View x, int i);
   };
 
   /**
@@ -294,8 +294,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelAvg(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelAvg(Space& home, bool shared, ValSelAvg& vs);
-    /// Return value of view \a x
-    int val(const Space& home, View x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, View x, int i);
   };
 
   /**
@@ -314,8 +314,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelRnd(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
-    /// Return value of view \a x
-    int val(const Space& home, View x);
+    /// Return value of view \a x at position \a i
+    int val(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value selection
@@ -334,8 +334,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelRangeMin(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelRangeMin(Space& home, bool shared, ValSelRangeMin& vs);
-    /// Return value of integer view \a x
-    int val(const Space& home, IntView x);
+    /// Return value of integer view \a x at position \a i
+    int val(const Space& home, IntView x, int i);
   };
 
   /**
@@ -350,8 +350,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValSelRangeMax(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelRangeMax(Space& home, bool shared, ValSelRangeMax& vs);
-    /// Return value of integer view \a x
-    int val(const Space& home, IntView x);
+    /// Return value of integer view \a x at position \a i
+    int val(const Space& home, IntView x, int i);
   };
 
 }}}
@@ -385,8 +385,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitEq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitEq(Space& home, bool shared, ValCommitEq& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, View x, int n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
   };
 
   /**
@@ -402,8 +402,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitLq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitLq(Space& home, bool shared, ValCommitLq& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, View x, int n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
   };
 
   /**
@@ -419,8 +419,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitGq(Space& home, bool shared, ValCommitGq& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, View x, int n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
   };
 
   /**
@@ -436,8 +436,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGr(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitGr(Space& home, bool shared, ValCommitGr& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, View x, int n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
   };
 
 }}}

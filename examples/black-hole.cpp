@@ -242,7 +242,7 @@ public:
     branch(*this, x, INT_VAR_NONE(), INT_VAL(&val));
   }
   /// Value selection function for branching
-  static int val(const Space&, const IntVar& x) {
+  static int val(const Space&, IntVar x, int) {
     int v = -1;
     int w = 4;
     for (IntVarValues vals(x); vals(); ++vals)

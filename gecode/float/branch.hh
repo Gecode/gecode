@@ -201,8 +201,8 @@ namespace Gecode { namespace Float { namespace Branch {
     ValSelMed(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelMed(Space& home, bool shared, ValSelMed& vs);
-    /// Return value of view \a x
-    FloatNum val(const Space& home, FloatView x);
+    /// Return value of view \a x at position \a i
+    FloatNum val(const Space& home, FloatView x, int i);
   };
 
   /**
@@ -221,8 +221,8 @@ namespace Gecode { namespace Float { namespace Branch {
     ValSelRnd(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
-    /// Return value of view \a x
-    Val val(const Space& home, FloatView x);
+    /// Return value of view \a x at position \a i
+    Val val(const Space& home, FloatView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value selection
@@ -259,8 +259,9 @@ namespace Gecode { namespace Float { namespace Branch {
     ValCommitLq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitLq(Space& home, bool shared, ValCommitLq& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, FloatNum n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, FloatView x, int i, 
+                    FloatNum n);
   };
 
   /**
@@ -275,8 +276,9 @@ namespace Gecode { namespace Float { namespace Branch {
     ValCommitGq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitGq(Space& home, bool shared, ValCommitGq& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, FloatNum n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, FloatView x, int i,
+                    FloatNum n);
   };
 
   /**
@@ -292,8 +294,8 @@ namespace Gecode { namespace Float { namespace Branch {
     ValCommitLqGq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc);
-    /// Commit view \a c to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, Val n);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    ModEvent commit(Space& home, unsigned int a, FloatView x, int i, Val n);
   };
 
 }}}

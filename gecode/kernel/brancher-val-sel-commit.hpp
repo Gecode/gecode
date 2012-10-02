@@ -57,10 +57,10 @@ namespace Gecode {
     /// Constructor for cloning
     ValSelCommitBase(Space& home, bool shared, 
                      ValSelCommitBase<View,Val>& vsc);
-    /// Return value of view \a x
-    virtual Val val(const Space& home, View x) = 0;
-    /// Commit view \a x to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a, View x, Val n) = 0;
+    /// Return value of view \a x at position \a i
+    virtual Val val(const Space& home, View x, int i) = 0;
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n) = 0;
     /// Perform cloning
     virtual ValSelCommitBase<View,Val>* copy(Space& home, bool shared) = 0;
     /// Whether dispose must always be called (that is, notice is needed)
@@ -97,10 +97,10 @@ namespace Gecode {
     /// Constructor for cloning
     ValSelCommit(Space& home, bool shared, 
                  ValSelCommit<ValSel,ValCommit>& vsc);
-    /// Return value of view \a x
-    virtual Val val(const Space& home, View x);
-    /// Commit view \a x to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a, View x, Val n);
+    /// Return value of view \a x at position \a i
+    virtual Val val(const Space& home, View x, int i);
+    /// Commit view \a x at position \a i to value \a n for alternative \a a
+    virtual ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
     /// Perform cloning
     virtual ValSelCommit<ValSel,ValCommit>* copy(Space& home, bool shared);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -151,15 +151,15 @@ namespace Gecode {
 
   template<class ValSel, class ValCommit>
   typename ValSelCommit<ValSel,ValCommit>::Val
-  ValSelCommit<ValSel,ValCommit>::val(const Space& home, View x) {
-    return s.val(home,x);
+  ValSelCommit<ValSel,ValCommit>::val(const Space& home, View x, int i) {
+    return s.val(home,x,i);
   }
 
   template<class ValSel, class ValCommit>
   ModEvent
   ValSelCommit<ValSel,ValCommit>::commit(Space& home, unsigned int a, 
-                                         View x, Val n) {
-    return c.commit(home,a,x,n);
+                                         View x, int i, Val n) {
+    return c.commit(home,a,x,i,n);
   }
 
   template<class ValSel, class ValCommit>

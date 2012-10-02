@@ -67,7 +67,7 @@ namespace Gecode { namespace Float { namespace Branch {
   ValSelMed::ValSelMed(Space& home, bool shared, ValSelMed& vs)
     : ValSel<FloatView,FloatNum>(home,shared,vs) {}
   forceinline FloatNum
-  ValSelMed::val(const Space&, FloatView x) {
+  ValSelMed::val(const Space&, FloatView x, int) {
     return x.med();
   }
 
@@ -80,7 +80,7 @@ namespace Gecode { namespace Float { namespace Branch {
     r.update(home,shared,vs.r);
   }
   forceinline std::pair<FloatNum,bool>
-  ValSelRnd::val(const Space&, FloatView x) {
+  ValSelRnd::val(const Space&, FloatView x, int) {
     unsigned int p = r(2U);
     return std::pair<FloatNum,bool>(x.med(),(p == 0U));
   }

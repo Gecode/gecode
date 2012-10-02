@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
   forceinline int 
-  ValSelMin<View>::val(const Space&, View x) {
+  ValSelMin<View>::val(const Space&, View x, int) {
     return x.min();
   }
 
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
   forceinline int 
-  ValSelMax<View>::val(const Space&, View x) {
+  ValSelMax<View>::val(const Space&, View x, int) {
     return x.max();
   }
 
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
   forceinline int 
-  ValSelMed<View>::val(const Space&, View x) {
+  ValSelMed<View>::val(const Space&, View x, int) {
     return x.med();
   }
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
   forceinline int 
-  ValSelAvg<View>::val(const Space&, View x) {
+  ValSelAvg<View>::val(const Space&, View x, int) {
     return (x.width() == 2U) ? x.min() : ((x.min()+x.max()) / 2);
   }
 
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template<class View>
   forceinline int
-  ValSelRnd<View>::val(const Space&, View x) {
+  ValSelRnd<View>::val(const Space&, View x, int) {
     unsigned int p = r(x.size());
     for (ViewRanges<View> i(x); i(); ++i) {
       if (i.width() > p)
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSelRangeMin::ValSelRangeMin(Space& home, bool shared, ValSelRangeMin& vs)
     : ValSel<IntView,int>(home,shared,vs) {}
   forceinline int
-  ValSelRangeMin::val(const Space&, IntView x) {
+  ValSelRangeMin::val(const Space&, IntView x, int) {
     if (x.range()) {
       return (x.width() == 2) ? x.min() : (x.min() + (x.max()-x.min())/2);
     } else {
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSelRangeMax::ValSelRangeMax(Space& home, bool shared, ValSelRangeMax& vs)
     : ValSel<IntView,int>(home,shared,vs) {}
   forceinline int
-  ValSelRangeMax::val(const Space&, IntView x) {
+  ValSelRangeMax::val(const Space&, IntView x, int) {
     if (x.range()) {
       return (x.width() == 2) ? x.max() : (x.max() - (x.max()-x.min())/2);
     } else {

@@ -84,7 +84,7 @@ namespace Gecode {
     /// Constructor for cloning during copying
     ValCommitFunction(Space& home, bool shared, ValCommitFunction& vc);
     /// Perform user-defined commit
-    ModEvent commit(Space& home, unsigned int a, View x, Val n);
+    ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
   };
   //@}
 
@@ -119,8 +119,10 @@ namespace Gecode {
     : ValCommit<View,Val>(home,shared,vc), c(vc.c) {}
   template<class View>
   forceinline ModEvent
-  ValCommitFunction<View>::commit(Space& home, unsigned int a, View x, Val n) {
-    c(home,a,x,n);
+  ValCommitFunction<View>::commit(Space& home, unsigned int a, View x, int i, 
+                                  Val n) {
+    typename View::VarType y(x.varimp());
+    c(home,a,y,i,n);
     return home.failed() ? ES_FAILED : ES_OK;
   }
 

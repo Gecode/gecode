@@ -48,7 +48,8 @@ namespace Gecode { namespace Float { namespace Branch {
   ValCommitLq::ValCommitLq(Space& home, bool shared, ValCommitLq& vc)
     : ValCommit<FloatView,FloatNum>(home,shared,vc) {}
   forceinline ModEvent
-  ValCommitLq::commit(Space& home, unsigned int a, FloatView x, FloatNum n) {
+  ValCommitLq::commit(Space& home, unsigned int a, FloatView x, int, 
+                      FloatNum n) {
     if (a == 0) {
       if ((x.min() == n) || (x.max() == n)) 
         return x.eq(home,x.min());
@@ -69,7 +70,8 @@ namespace Gecode { namespace Float { namespace Branch {
   ValCommitGq::ValCommitGq(Space& home, bool shared, ValCommitGq& vc)
     : ValCommit<FloatView,FloatNum>(home,shared,vc) {}
   forceinline ModEvent
-  ValCommitGq::commit(Space& home, unsigned int a, FloatView x, FloatNum n) {
+  ValCommitGq::commit(Space& home, unsigned int a, FloatView x, int,
+                      FloatNum n) {
     if (a == 0) {
       if ((x.min() == n) || (x.max() == n)) 
         return x.eq(home,x.max());
@@ -90,7 +92,8 @@ namespace Gecode { namespace Float { namespace Branch {
   ValCommitLqGq::ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc)
     : ValCommit<FloatView,std::pair<FloatNum,bool> >(home,shared,vc) {}
   forceinline ModEvent
-  ValCommitLqGq::commit(Space& home, unsigned int a, FloatView x, Val nb) {
+  ValCommitLqGq::commit(Space& home, unsigned int a, FloatView x, int, 
+                        Val nb) {
     FloatNum& n = nb.first;
     bool& b = nb.second;
     if ((a == 0) == b) {

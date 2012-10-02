@@ -1088,8 +1088,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef bool (*SetBranchFilter)(const Space& home, 
-                                  const SetVar& x, int i);
+  typedef bool (*SetBranchFilter)(const Space& home, SetVar x, int i);
 
   /**
    * \brief Branch merit function type for set variables
@@ -1101,30 +1100,33 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef double (*SetBranchMerit)(const Space& home, 
-                                   const SetVar& x, int i);
+  typedef double (*SetBranchMerit)(const Space& home, SetVar x, int i);
 
   /**
    * \brief Branch value function type for set variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function.
+   * corresponding branch commit function. The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher.
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef int (*SetBranchVal)(const Space& home, const SetVar& x);
+  typedef int (*SetBranchVal)(const Space& home, SetVar x, int i);
 
   /**
    * \brief Branch commit function type for set variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The value \a n is the value
+   * corresponds to the alternative \a a. The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
    * \ingroup TaskModelSetBranch
    */
   typedef void (*SetBranchCommit)(Space& home, unsigned int a,
-                                  SetVar x, int n);
+                                  SetVar x, int i, int n);
 
 }
 

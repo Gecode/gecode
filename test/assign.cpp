@@ -146,11 +146,11 @@ namespace Test { namespace Assign {
   const int n_int_assign =
     sizeof(int_assign_name)/sizeof(const char*);
   /// Test function for branch value function
-  int int_val(const Gecode::Space&, const Gecode::IntVar& x) {
+  int int_val(const Gecode::Space&, Gecode::IntVar x, int) {
     return x.min();
   }
   /// Test function for branch value function
-  int bool_val(const Gecode::Space&, const Gecode::BoolVar& x) {
+  int bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
     return x.min();
   }
   //@}
@@ -273,7 +273,7 @@ namespace Test { namespace Assign {
   const int n_set_assign =
     sizeof(set_assign_name)/sizeof(const char*);
   /// Test function for branch value function
-  int set_val(const Gecode::Space&, const Gecode::SetVar& x) {
+  int set_val(const Gecode::Space&, Gecode::SetVar x, int) {
     Gecode::SetVarUnknownRanges r(x);
     return r.min();
   }
@@ -352,7 +352,7 @@ namespace Test { namespace Assign {
   const int n_float_assign =
     sizeof(float_assign_name)/sizeof(const char*);
   /// Test function for branch value function
-  Gecode::FloatNum float_val(const Gecode::Space&, const Gecode::FloatVar& x) {
+  Gecode::FloatNum float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
     return x.min();
   }
   //@}

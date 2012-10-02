@@ -3461,8 +3461,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef bool (*IntBranchFilter)(const Space& home, 
-                                  const IntVar& x, int i);
+  typedef bool (*IntBranchFilter)(const Space& home, IntVar x, int i);
   /**
    * \brief Branch filter function type for Boolean variables
    *
@@ -3471,75 +3470,78 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef bool (*BoolBranchFilter)(const Space& home, 
-                                   const BoolVar& x, int i);
+  typedef bool (*BoolBranchFilter)(const Space& home, BoolVar x, int i);
 
   /**
    * \brief Branch merit function type for integer variables
    *
    * The function must return a merit value for the variable
-   * \a x.
-   * The value \a i refers to the variable's position in the original array
-   * passed to the brancher.
+   * \a x. The integer \a i refers to the variable's position
+   * in the original array passed to the brancher.
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef double (*IntBranchMerit)(const Space& home, 
-                                   const IntVar& x, int i);
+  typedef double (*IntBranchMerit)(const Space& home, IntVar x, int i);
   /**
    * \brief Branch merit function type for Boolean variables
    *
    * The function must return a merit value for the variable
-   * \a x.
-   * The value \a i refers to the variable's position in the original array
-   * passed to the brancher.
+   * \a x. The integer \a i refers to the variable's position
+   * in the original array passed to the brancher.
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef double (*BoolBranchMerit)(const Space& home, 
-                                    const BoolVar& x, int i);
+  typedef double (*BoolBranchMerit)(const Space& home, BoolVar x, int i);
 
   /**
    * \brief Branch value function type for integer variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function.
+   * corresponding branch commit function. The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher.
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef int (*IntBranchVal)(const Space& home, const IntVar& x);
+  typedef int (*IntBranchVal)(const Space& home, IntVar x, int i);
   /**
    * \brief Branch value function type for Boolean variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function.
+   * corresponding branch commit function. The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher.
    *
    * \ingroup TaskModelIntBranch
    */
-  typedef int (*BoolBranchVal)(const Space& home, const BoolVar& x);
+  typedef int (*BoolBranchVal)(const Space& home, BoolVar x, int i);
 
   /**
    * \brief Branch commit function type for integer variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The value \a n is the value
+   * corresponds to the alternative \a a. The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
    * \ingroup TaskModelIntBranch
    */
   typedef void (*IntBranchCommit)(Space& home, unsigned int a,
-                                  IntVar x, int n);
+                                  IntVar x, int i, int n);
   /**
    * \brief Branch commit function type for Boolean variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The value \a n is the value
+   * corresponds to the alternative \a a.  The integer \a i refers 
+   * to the variable's position in the original array passed to the 
+   * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
    * \ingroup TaskModelIntBranch
    */
   typedef void (*BoolBranchCommit)(Space& home, unsigned int a,
-                                   BoolVar x, int n);
+                                   BoolVar x, int i, int n);
 
 }
 

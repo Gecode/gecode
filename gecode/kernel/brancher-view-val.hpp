@@ -186,7 +186,7 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a>::choice(Space& home) {
     Pos p = ViewBrancher<View,n>::pos(home);
     View v = ViewBrancher<View,n>::view(p);
-    return new PosValChoice<Val>(*this,a,p,vsc->val(home,v));
+    return new PosValChoice<Val>(*this,a,p,vsc->val(home,v,p.pos));
   }
 
   template<class View, int n, class Val, unsigned int a>
@@ -205,6 +205,7 @@ namespace Gecode {
       = static_cast<const PosValChoice<Val>&>(c);
     return me_failed(vsc->commit(home,b,
                                  ViewBrancher<View,n>::view(pvc.pos()),
+                                 pvc.pos().pos,
                                  pvc.val())) 
       ? ES_FAILED : ES_OK;
   }
