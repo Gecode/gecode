@@ -536,11 +536,11 @@ namespace Gecode {
   ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x, int s) {
     // Consider x[s] as the so-far best view
     int b_i = s;
-    Val b_m = m(home,x[s],s);
+    Val b_m = this->m(home,x[s],s);
     // Scan all non-assigned views from s+1 onwards
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned()) {
-        Val mxi = m(home,x[i],i);
+        Val mxi = this->m(home,x[i],i);
         if (c(mxi,b_m)) {
           b_i = i; b_m = mxi;
         }
@@ -554,12 +554,12 @@ namespace Gecode {
                                       BranchFilter bf) {
     // Consider x[s] as the so-far best view
     int b_i = s;
-    Val b_m = m(home,x[s],s);
+    Val b_m = this->m(home,x[s],s);
     // Scan all assigned views from s+1 onwards
     for (int i=s+1; i<x.size(); i++) {
       typename View::VarType y(x[i].varimp());
       if (!x[i].assigned() && bf(home,y,i)) {
-        Val mxi = m(home,x[i],i);
+        Val mxi = this->m(home,x[i],i);
         if (c(mxi,b_m)) {
           b_i = i; b_m = mxi;
         }
@@ -573,11 +573,11 @@ namespace Gecode {
   ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
                                     int* ties, int& n) {
     // Consider x[s] as the so-far best view and record as tie
-    Val b = m(home,x[s],s);
+    Val b = this->m(home,x[s],s);
     int j=0; ties[j++]=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned()) {
-        Val mxi = m(home,x[i],i);
+        Val mxi = this->m(home,x[i],i);
         if (c(mxi,b)) {
           // Found a better one, reset all ties and record
           j=0; ties[j++]=i; b=mxi;
@@ -596,12 +596,12 @@ namespace Gecode {
   ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
                                     int* ties, int& n, BranchFilter bf) {
     // Consider x[s] as the so-far best view and record as tie
-    Val b = m(home,x[s],s);
+    Val b = this->m(home,x[s],s);
     int j=0; ties[j++]=s;
     for (int i=s+1; i<x.size(); i++) {
       typename View::VarType y(x[i].varimp());
       if (!x[i].assigned() && bf(home,y,i)) {
-        Val mxi = m(home,x[i],i);
+        Val mxi = this->m(home,x[i],i);
         if (c(mxi,b)) {
           // Found a better one, reset all ties and record
           j=0; ties[j++]=i; b=mxi;
@@ -621,11 +621,11 @@ namespace Gecode {
   ViewSelChoose<Choose,Merit>::brk(Space& home, ViewArray<View>& x, 
                                    int* ties, int& n) {
     // Keep first tie in place
-    Val b = m(home,x[ties[0]],ties[0]);
+    Val b = this->m(home,x[ties[0]],ties[0]);
     int j=1;
     // Scan remaining ties
     for (int i=1; i<n; i++) {
-      Val mxi = m(home,x[ties[i]],ties[i]);
+      Val mxi = this->m(home,x[ties[i]],ties[i]);
       if (c(mxi,b)) {
         // Found a better one, reset all ties
         b=mxi; j=0; ties[j++]=ties[i];
@@ -644,9 +644,9 @@ namespace Gecode {
   ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x, 
                                       int* ties, int n) {
     int b_i = ties[0];
-    Val b_m = m(home,x[ties[0]],ties[0]);
+    Val b_m = this->m(home,x[ties[0]],ties[0]);
     for (int i=1; i<n; i++) {
-      Val mxi = m(home,x[ties[i]],ties[i]);
+      Val mxi = this->m(home,x[ties[i]],ties[i]);
       if (c(mxi,b_m)) {
         b_i = ties[i]; b_m = mxi;
       }
@@ -657,13 +657,13 @@ namespace Gecode {
   template<class Choose, class Merit>
   bool 
   ViewSelChoose<Choose,Merit>::notice(void) const {
-    return m.notice();
+    return this->m.notice();
   }
 
   template<class Choose, class Merit>
   void 
   ViewSelChoose<Choose,Merit>::dispose(Space& home) {
-    m.dispose(home);
+    this->m.dispose(home);
   }
 
 
@@ -685,11 +685,11 @@ namespace Gecode {
   ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
                                        int* ties, int& n) {
     // Find the worst and best merit value
-    Val w = m(home,x[s],s);
+    Val w = this->m(home,x[s],s);
     Val b = w;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned()) {
-        Val mxi = m(home,x[i],i);
+        Val mxi = this->m(home,x[i],i);
         if (c(mxi,b))
           b=mxi;
         else if (c(w,mxi))
@@ -711,7 +711,7 @@ namespace Gecode {
       // Record all ties that are not worse than the limit merit value
       int j=0;
       for (int i=s; i<x.size(); i++)
-        if (!x[i].assigned() && !c(l,static_cast<double>(m(home,x[i],i))))
+        if (!x[i].assigned() && !c(l,static_cast<double>(this->m(home,x[i],i))))
           ties[j++]=i;
       n=j;
     }
@@ -724,12 +724,12 @@ namespace Gecode {
   ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
                                        int* ties, int& n, BranchFilter bf) {
     // Find the worst and best merit value
-    Val w = m(home,x[s],s);
+    Val w = this->m(home,x[s],s);
     Val b = w;
     for (int i=s+1; i<x.size(); i++) {
       typename View::VarType y(x[i].varimp());
       if (!x[i].assigned() && bf(home,y,i)) {
-        Val mxi = m(home,x[i],i);
+        Val mxi = this->m(home,x[i],i);
         if (c(mxi,b))
           b=mxi;
         else if (c(w,mxi))
@@ -756,7 +756,7 @@ namespace Gecode {
       for (int i=s; i<x.size(); i++) {
         typename View::VarType y(x[i].varimp());
         if (!x[i].assigned() && bf(home,y,i) && 
-            !c(l,static_cast<double>(m(home,x[i],i))))
+            !c(l,static_cast<double>(this->m(home,x[i],i))))
           ties[j++]=i;
       }
       n=j;
@@ -770,10 +770,10 @@ namespace Gecode {
   ViewSelChooseTbl<Choose,Merit>::brk(Space& home, ViewArray<View>& x,
                                       int* ties, int& n) {
     // Find the worst and best merit value
-    Val w = m(home,x[ties[0]],ties[0]);
+    Val w = this->m(home,x[ties[0]],ties[0]);
     Val b = w;
     for (int i=1; i<n; i++) {
-      Val mxi = m(home,x[ties[i]],ties[i]);
+      Val mxi = this->m(home,x[ties[i]],ties[i]);
       if (c(mxi,b))
         b=mxi;
       else if (c(w,mxi))
@@ -790,7 +790,7 @@ namespace Gecode {
       // Keep all ties that are not worse than the limit merit value
       int j=0;
       for (int i=0; i<n; i++)
-        if (!c(l,static_cast<double>(m(home,x[ties[i]],ties[i]))))
+        if (!c(l,static_cast<double>(this->m(home,x[ties[i]],ties[i]))))
           ties[j++]=ties[i];
       n=j;
     }
