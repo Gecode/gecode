@@ -830,7 +830,7 @@ INTEXAMPLEEXE  =
 endif
 
 FLOATEXAMPLESRC0 = \
-	test-float
+	archimedean-spiral parametric-heart descartes-folium golden-spiral
 FLOATEXAMPLESRC  = $(FLOATEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_float_vars@" "yes"
 FLOATEXAMPLEEXE  = $(FLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
