@@ -75,7 +75,24 @@ namespace Gecode { namespace Float {
   }
 
   GECODE_ROUND_FUN(sqrt)
+
+#if defined(_M_X64) || defined(_M_IA64)
+
+  // Workaround as MSVC on x64 does not have a rint function
+  forceinline FloatNum
+  FullRounding::int_down(FloatNum x) {
+    return floor(x);
+  }
+  forceinline FloatNum
+  FullRounding::int_up(FloatNum x) {
+    return ceil(x);
+  }
+
+#else
+
   GECODE_ROUND_FUN(int)
+
+#endif
 
 #undef GECODE_ROUND_FUN
 
