@@ -631,7 +631,10 @@ MOC
 QMAKE
 enable_mpfr
 MPFR_LINK
+MPFR_LIB_PATH
 MPFR_CPPFLAGS
+GMP_LINK
+GMP_LIB_PATH
 GMP_CPPFLAGS
 enable_int_vars
 LINKINT
@@ -789,8 +792,9 @@ enable_set_vars
 enable_int_vars
 enable_mpfr
 with_gmp_include
+with_gmp_lib
 with_mpfr_include
-with_mpfr_header
+with_mpfr_lib
 enable_qt
 enable_gist
 enable_driver
@@ -1474,6 +1478,7 @@ Optional Packages:
   --with-lib-suffix       add user-defined suffix to library names
   --with-vis              additional variable implementation specifications
   --with-gmp-include      path to the gmp header files
+  --with-gmp-lib          path to the gmp or mpir library
   --with-mpfr-include     path to the mpfr header file
   --with-mpfr-lib         path to the mpfr library
 
@@ -2649,6 +2654,9 @@ GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 
 
 # Test for platform specific behaviour of arithmetic
+
+
+
 
 
 
@@ -11354,6 +11362,233 @@ fi
   fi
 
 
+# Check whether --with-gmp-lib was given.
+if test "${with_gmp_lib+set}" = set; then :
+  withval=$with_gmp_lib;
+fi
+
+
+  ac_gecode_tmp_gmp_lib=""
+  if test "${with_gmp_lib:-no}" != "no"; then
+      case $ac_gecode_compiler_vendor in
+        gnu)
+          GMP_LIB_PATH="-L${with_gmp_lib}"
+
+        ;;
+        microsoft)
+          GMP_LIB_PATH="/LIBPATH:${with_gmp_lib}"
+
+        ;;
+       esac
+  else
+       GMP_LIB_PATH=""
+
+  fi
+
+  ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
+  ac_gecode_save_LIBS="${LIBS}"
+  case $ac_gecode_compiler_vendor in
+    gnu)
+      CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${GMP_CPPFLAGS}"
+      LIBS="${LIBS}${LIBS:+ } ${GMP_LIB_PATH}"
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __gmpz_init in -lgmp" >&5
+$as_echo_n "checking for __gmpz_init in -lgmp... " >&6; }
+if ${ac_cv_lib_gmp___gmpz_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgmp  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char __gmpz_init ();
+int
+main ()
+{
+return __gmpz_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_gmp___gmpz_init=yes
+else
+  ac_cv_lib_gmp___gmpz_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gmp___gmpz_init" >&5
+$as_echo "$ac_cv_lib_gmp___gmpz_init" >&6; }
+if test "x$ac_cv_lib_gmp___gmpz_init" = xyes; then :
+
+        GMP_LINK="${ac_gecode_tmp_gmp_lib} -lgmp"
+
+
+else
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __gmpz_init in -lmpir" >&5
+$as_echo_n "checking for __gmpz_init in -lmpir... " >&6; }
+if ${ac_cv_lib_mpir___gmpz_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmpir  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char __gmpz_init ();
+int
+main ()
+{
+return __gmpz_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_mpir___gmpz_init=yes
+else
+  ac_cv_lib_mpir___gmpz_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpir___gmpz_init" >&5
+$as_echo "$ac_cv_lib_mpir___gmpz_init" >&6; }
+if test "x$ac_cv_lib_mpir___gmpz_init" = xyes; then :
+
+          GMP_LINK="${ac_gecode_tmp_gmp_lib} -lmpir"
+
+
+else
+
+          enable_mpfr=no;
+
+fi
+
+
+fi
+
+    ;;
+    microsoft)
+      CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${GMP_CPPFLAGS}"
+      LIBS="${LIBS}${LIBS:+ } /link ${GMP_LIB_PATH} gmp.lib"
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __gmpz_init in -lgmp" >&5
+$as_echo_n "checking for __gmpz_init in -lgmp... " >&6; }
+if ${ac_cv_lib_gmp___gmpz_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgmp  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char __gmpz_init ();
+int
+main ()
+{
+return __gmpz_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_gmp___gmpz_init=yes
+else
+  ac_cv_lib_gmp___gmpz_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gmp___gmpz_init" >&5
+$as_echo "$ac_cv_lib_gmp___gmpz_init" >&6; }
+if test "x$ac_cv_lib_gmp___gmpz_init" = xyes; then :
+
+        GMP_LINK="${ac_gecode_tmp_gmp_lib} gmp.lib"
+
+
+else
+
+        LIBS="${ac_gecode_save_LIBS}"
+        LIBS="${LIBS}${LIBS:+ } /link ${GMP_LIB_PATH} mpir.lib"
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for __gmpz_init in -lmpir" >&5
+$as_echo_n "checking for __gmpz_init in -lmpir... " >&6; }
+if ${ac_cv_lib_mpir___gmpz_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmpir  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char __gmpz_init ();
+int
+main ()
+{
+return __gmpz_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_mpir___gmpz_init=yes
+else
+  ac_cv_lib_mpir___gmpz_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpir___gmpz_init" >&5
+$as_echo "$ac_cv_lib_mpir___gmpz_init" >&6; }
+if test "x$ac_cv_lib_mpir___gmpz_init" = xyes; then :
+
+          GMP_LINK="${ac_gecode_tmp_gmp_lib} mpir.lib"
+
+
+else
+
+          enable_mpfr=no;
+
+fi
+
+
+fi
+
+    ;;
+  esac
+  CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
+  LIBS="${ac_gecode_save_LIBS}"
+
+
 # Check whether --with-mpfr-include was given.
 if test "${with_mpfr_include+set}" = set; then :
   withval=$with_mpfr_include;
@@ -11365,41 +11600,43 @@ fi
   fi
 
 
-# Check whether --with-mpfr-header was given.
-if test "${with_mpfr_header+set}" = set; then :
-  withval=$with_mpfr_header;
+# Check whether --with-mpfr-lib was given.
+if test "${with_mpfr_lib+set}" = set; then :
+  withval=$with_mpfr_lib;
 fi
 
   if test "${with_mpfr_lib:-no}" != "no"; then
       case $ac_gecode_compiler_vendor in
         gnu)
-          MPFR_LINK="-L${with_mpfr_lib} -lmpfr -lgmp"
+          MPFR_LIB_PATH="-L${with_mpfr_lib}"
 
         ;;
         microsoft)
-          MPFR_LINK="/LIBPATH:${with_mpfr_lib} mpfr.lib"
+          MPFR_LIB_PATH="/LIBPATH:${with_mpfr_lib}"
 
         ;;
        esac
   else
-      case $ac_gecode_compiler_vendor in
-        gnu)
-          MPFR_LINK="-lmpfr -lgmp"
+       MPFR_LIB_PATH=""
 
-        ;;
-        microsoft)
-          MPFR_LINK="mpfr.lib"
-
-        ;;
-       esac
   fi
+  case $ac_gecode_compiler_vendor in
+    gnu)
+     MPFR_LINK="-lmpfr"
+
+    ;;
+    microsoft)
+      MPFR_LINK="mpfr.lib"
+
+    ;;
+  esac
 
       ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
       ac_gecode_save_LIBS="${LIBS}"
       case $ac_gecode_compiler_vendor in
         gnu)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
-          LIBS="${LIBS}${LIBS:+ } ${MPFR_LINK}"
+          LIBS="${LIBS}${LIBS:+ } ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
           for ac_header in gmp.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "gmp.h" "ac_cv_header_gmp_h" "$ac_includes_default"
@@ -11474,7 +11711,7 @@ done
         ;;
         microsoft)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
-          LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LINK}"
+          LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
           for ac_header in gmp.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "gmp.h" "ac_cv_header_gmp_h" "$ac_includes_default"

@@ -1072,28 +1072,29 @@ dnl   for supplying the path to the mpfr library.
 dnl
 AC_DEFUN([AC_GECODE_MPFR_LIB],
   [dnl build with support for the mpfr library
-  AC_ARG_WITH([mpfr-header],
+  AC_ARG_WITH([mpfr-lib],
     AC_HELP_STRING([--with-mpfr-lib],
     [path to the mpfr library]))
   if test "${with_mpfr_lib:-no}" != "no"; then
       case $ac_gecode_compiler_vendor in
         gnu)
-          AC_SUBST(MPFR_LINK,["-L${with_mpfr_lib} -lmpfr -lgmp"])
+          AC_SUBST(MPFR_LIB_PATH,["-L${with_mpfr_lib}"])
         ;;
         microsoft)
-          AC_SUBST(MPFR_LINK,["/LIBPATH:${with_mpfr_lib} mpfr.lib"])
+          AC_SUBST(MPFR_LIB_PATH,["/LIBPATH:${with_mpfr_lib}"])
         ;;
        esac
   else
-      case $ac_gecode_compiler_vendor in
-        gnu)
-          AC_SUBST(MPFR_LINK,["-lmpfr -lgmp"])
-        ;;
-        microsoft)
-          AC_SUBST(MPFR_LINK,["mpfr.lib"])
-        ;;
-       esac
+       AC_SUBST(MPFR_LIB_PATH,[""])
   fi
+  case $ac_gecode_compiler_vendor in
+    gnu)
+     AC_SUBST(MPFR_LINK,["-lmpfr"])
+    ;;
+    microsoft)
+      AC_SUBST(MPFR_LINK,["mpfr.lib"])
+    ;;
+  esac
 ])
 
 dnl Macro:
@@ -1101,7 +1102,7 @@ dnl   AC_GECODE_GMP_INCLUDE
 dnl
 dnl Description:
 dnl   Produces the configure switch --with-gmp-include
-dnl   for supplying the path to the gmp headers.
+dnl   for supplying the path to the gmp or mpir headers.
 dnl
 AC_DEFUN([AC_GECODE_GMP_INCLUDE],
   [dnl build with support for the gmp headers
@@ -1112,6 +1113,70 @@ AC_DEFUN([AC_GECODE_GMP_INCLUDE],
       AC_SUBST(GMP_CPPFLAGS,[-I${with_gmp_include}])
   fi
 ])
+
+dnl Macro:
+dnl   AC_GECODE_GMP_LIB
+dnl
+dnl Description:
+dnl   Produces the configure switch --with-gmp-lib
+dnl   for supplying the path to the GMP library.
+dnl
+AC_DEFUN([AC_GECODE_GMP_LIB],
+  [dnl build with support for the GMP library
+  AC_ARG_WITH([gmp-lib],
+    AC_HELP_STRING([--with-gmp-lib],
+    [path to the gmp or mpir library]))
+
+  ac_gecode_tmp_gmp_lib=""
+  if test "${with_gmp_lib:-no}" != "no"; then
+      case $ac_gecode_compiler_vendor in
+        gnu)
+          AC_SUBST(GMP_LIB_PATH,["-L${with_gmp_lib}"])
+        ;;
+        microsoft)
+          AC_SUBST(GMP_LIB_PATH,["/LIBPATH:${with_gmp_lib}"])
+        ;;
+       esac
+  else
+       AC_SUBST(GMP_LIB_PATH,[""])
+  fi
+
+  ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
+  ac_gecode_save_LIBS="${LIBS}"
+  case $ac_gecode_compiler_vendor in
+    gnu)
+      CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${GMP_CPPFLAGS}"
+      LIBS="${LIBS}${LIBS:+ } ${GMP_LIB_PATH}"
+      AC_CHECK_LIB(gmp, __gmpz_init,[
+        AC_SUBST(GMP_LINK,"${ac_gecode_tmp_gmp_lib} -lgmp")
+      ],[
+        AC_CHECK_LIB(mpir, __gmpz_init,[
+          AC_SUBST(GMP_LINK,"${ac_gecode_tmp_gmp_lib} -lmpir")
+          ],[
+          enable_mpfr=no;
+          ])
+      ])
+    ;;
+    microsoft)
+      CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${GMP_CPPFLAGS}"
+      LIBS="${LIBS}${LIBS:+ } /link ${GMP_LIB_PATH} gmp.lib"
+      AC_CHECK_LIB(gmp, __gmpz_init,[
+        AC_SUBST(GMP_LINK,"${ac_gecode_tmp_gmp_lib} gmp.lib")
+      ],[
+        LIBS="${ac_gecode_save_LIBS}"
+        LIBS="${LIBS}${LIBS:+ } /link ${GMP_LIB_PATH} mpir.lib"
+        AC_CHECK_LIB(mpir, __gmpz_init,[
+          AC_SUBST(GMP_LINK,"${ac_gecode_tmp_gmp_lib} mpir.lib")
+          ],[
+          enable_mpfr=no;
+          ])
+      ])
+    ;;
+  esac
+  CPPFLAGS="${ac_gecode_save_CPPFLAGS}"
+  LIBS="${ac_gecode_save_LIBS}"
+  ])
+
 
 dnl Macro:
 dnl   AC_GECODE_MPFR
@@ -1131,6 +1196,7 @@ AC_DEFUN([AC_GECODE_MPFR],
     if test "${enable_mpfr:-yes}" = "yes"; then
       AC_MSG_RESULT(yes)
       AC_GECODE_GMP_INCLUDE
+      AC_GECODE_GMP_LIB
       AC_GECODE_MPFR_INCLUDE
       AC_GECODE_MPFR_LIB
       ac_gecode_save_CPPFLAGS="${CPPFLAGS}"
@@ -1138,7 +1204,7 @@ AC_DEFUN([AC_GECODE_MPFR],
       case $ac_gecode_compiler_vendor in
         gnu)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
-          LIBS="${LIBS}${LIBS:+ } ${MPFR_LINK}"
+          LIBS="${LIBS}${LIBS:+ } ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
           AC_CHECK_HEADERS([gmp.h], 
             AC_CHECK_HEADERS([mpfr.h], 
                              AC_CHECK_LIB(mpfr, mpfr_add,
@@ -1150,7 +1216,7 @@ AC_DEFUN([AC_GECODE_MPFR],
         ;;
         microsoft)
           CPPFLAGS="${CPPFLAGS}${CPPFLAGS:+ } ${MPFR_CPPFLAGS} ${GMP_CPPFLAGS}"
-          LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LINK}"
+          LIBS="${LIBS}${LIBS:+ } /link ${MPFR_LIB_PATH} ${GMP_LIB_PATH} ${MPFR_LINK} ${GMP_LINK}"
           AC_CHECK_HEADERS([gmp.h], 
             AC_CHECK_HEADERS([mpfr.h], 
                              AC_CHECK_FUNC(mpfr_add,
