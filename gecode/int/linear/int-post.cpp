@@ -64,10 +64,8 @@ namespace Gecode { namespace Int { namespace Linear {
     d = d/gcd;
     switch (irt) {
     case IRT_EQ:
-      if (!divisible) {
-        home.fail();
+      if (!divisible)
         return false;
-      }
       break;
     case IRT_NQ:
       if (!divisible)
@@ -231,8 +229,11 @@ namespace Gecode { namespace Int { namespace Linear {
     int n_p, n_n, gcd;
     bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n,gcd);
 
-    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd))
+    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd)) {
+      if (irt == IRT_EQ)
+        home.fail();
       return;
+    }
 
     if (n == 0) {
       switch (irt) {
@@ -507,8 +508,16 @@ namespace Gecode { namespace Int { namespace Linear {
     int n_p, n_n, gcd;
     bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n,gcd);
 
-    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd))
+    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd)) {
+      if (irt == IRT_EQ) {
+        if (me_failed(BoolView(r.var()).zero(home)))
+          home.fail();
+      } else if (irt == IRT_NQ) {
+        if (me_failed(BoolView(r.var()).one(home)))
+          home.fail();
+      }
       return;
+    }
 
     if (n == 0) {
       // FIXME!
