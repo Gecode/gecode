@@ -829,8 +829,19 @@ else
 INTEXAMPLEEXE  =
 endif
 
+MPFRFLOATEXAMPLESRC0 = \
+	archimedean-spiral golden-spiral
+MPFRFLOATEXAMPLESRC  = $(MPFRFLOATEXAMPLESRC0:%=examples/%.cpp)
+ifeq "@enable_float_vars@" "yes"
+  ifeq "@enable_mpfr@" "yes"
+  MPFRFLOATEXAMPLEEXE  = $(MPFRFLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
+  else
+  MPFRFLOATEXAMPLEEXE  = 
+  endif
+endif
+
 FLOATEXAMPLESRC0 = \
-	archimedean-spiral parametric-heart descartes-folium golden-spiral
+	parametric-heart descartes-folium
 FLOATEXAMPLESRC  = $(FLOATEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_float_vars@" "yes"
 FLOATEXAMPLEEXE  = $(FLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
@@ -850,7 +861,7 @@ endif
 EXAMPLEBUILDDIRS = examples
 
 EXAMPLEEXE = \
-	$(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(FLOATEXAMPLEEXE)
+	$(INTEXAMPLEEXE) $(SETEXAMPLEEXE) $(FLOATEXAMPLEEXE) $(MPFRFLOATEXAMPLEEXE)
 
 
 #
@@ -934,7 +945,7 @@ THIRDHDR = \
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) \
         $(INTSRC) $(FLOATSRC) $(SETSRC) $(MMSRC) $(DRIVERSRC) \
-	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(FLOATEXAMPLESRC) \
+	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(FLOATEXAMPLESRC)  $(MPFRFLOATEXAMPLESRC) \
 	$(GISTSRC) $(FLATZINCALLSRC)
 ALLGECODEHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) \
