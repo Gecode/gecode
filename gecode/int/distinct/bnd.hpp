@@ -370,6 +370,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     ExecStatus es = prop_bnd<View>(home,x,min_x,max_x);
 
     GECODE_ES_CHECK(es);
+    if (es == ES_NOFIX && View::me(modeventdelta()) ==  ME_INT_VAL)
+      return es;
 
     const int n = x.size();
 

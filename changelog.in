@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks: Lin Yong
+[DESCRIPTION]
+Fixed a bug where bounds consistent distinct reported subsumption
+instead of failure in certain cases.
+
+[ENTRY]
 Module: support
 What:   bug
 Rank:   minor
