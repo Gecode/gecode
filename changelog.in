@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Simon Ekvy
+[DESCRIPTION]
+Removed spurious debug output for among constraint.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major

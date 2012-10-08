@@ -658,7 +658,6 @@ namespace Gecode { namespace FlatZinc {
           rel(s, s.arg2BoolVar(ce[2]) == 1);
         }
       } else {
-        std::cerr << "in_in_reif("<<s.arg2IntVar(ce[0])<<","<<d<<","<<s.arg2BoolVar(ce[2])<<")\n";
         dom(s, s.arg2IntVar(ce[0]), d, s.arg2BoolVar(ce[2]));
       }
     }
@@ -1154,10 +1153,8 @@ namespace Gecode { namespace FlatZinc {
       IntSet v = s.arg2intset(ce[2]);
       if (ce[0]->isIntVar()) {
         IntVar n = s.arg2IntVar(ce[0]);
-        std::cerr << "count " << n << std::endl;
         count(s,x,v,IRT_EQ,n,s.ann2icl(ann));
       } else {
-        std::cerr << "count i " << x << " " << v << " " << ce[0]->getInt() << std::endl;
         count(s,x,v,IRT_EQ,ce[0]->getInt(),s.ann2icl(ann));
       }
     }
