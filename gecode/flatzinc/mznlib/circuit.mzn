@@ -34,7 +34,11 @@
 %
 %
 
-predicate gecode_circuit(int: off, array[int] of var int: x);
+predicate gecode_circuit(int: offset, array[int] of var int: x);
 
 predicate circuit(array[int] of var int: x) =
-    gecode_circuit(min(index_set(x)),x);
+  if min(index_set(x)) >= 0 then
+    gecode_circuit(min(index_set(x)),x)
+  else
+    gecode_circuit(0,[x[i]-min(index_set(x)) | i in index_set(x)]);
+  endif
