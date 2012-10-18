@@ -53,10 +53,10 @@ namespace Test { namespace Int {
      public:
        /// Initialize test
        Basic(int n)
-         : Test("Basic",3,-n,n,true) {}
+         : Test("Basic::A",3,-n,n,true) {}
        /// Initialize test
        Basic(Gecode::IntArgs& i)
-         : Test("Basic",3,Gecode::IntSet(i),true) {}
+         : Test("Basic::B",3,Gecode::IntSet(i),true) {}
        /// Check whether \a x is a solution
        virtual bool solution(const Assignment&) const {
          return true;
@@ -67,7 +67,8 @@ namespace Test { namespace Int {
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray&,
                          Gecode::Reify r) {
-         Gecode::rel(home, r.var(), Gecode::IRT_EQ, 1);
+         if (r.mode() != Gecode::RM_IMP)
+           Gecode::rel(home, r.var(), Gecode::IRT_EQ, 1);
        }
      };
 

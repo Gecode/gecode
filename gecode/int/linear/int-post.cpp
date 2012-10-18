@@ -44,7 +44,7 @@
 namespace Gecode { namespace Int { namespace Linear {
 
   /// Eliminate assigned views
-  inline void
+  forceinline void
   eliminate(Term<IntView>* t, int &n, double& d) {
     for (int i=n; i--; )
       if (t[i].x.assigned()) {
@@ -56,44 +56,30 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   /// Rewrite all inequations in terms of IRT_LQ
-  inline bool
-  rewrite(Space& home, IntRelType &irt, double &d,
+  forceinline void
+  rewrite(IntRelType &irt, double &d,
           Term<IntView>* &t_p, int &n_p,
-          Term<IntView>* &t_n, int &n_n, int gcd) {
-    bool divisible = (std::fmod(d,gcd)==0.0);
-    d = d/gcd;
+          Term<IntView>* &t_n, int &n_n) {
     switch (irt) {
-    case IRT_EQ:
-      if (!divisible)
-        return false;
-      break;
-    case IRT_NQ:
-      if (!divisible)
-        return false;
-      break;
-    case IRT_LQ:
-      d = std::floor(d);
+    case IRT_EQ: case IRT_NQ: case IRT_LQ:
       break;
     case IRT_LE:
-      d = std::floor(d-1.0);
-      irt = IRT_LQ;
+      d -= 1.0; irt = IRT_LQ;
       break;
     case IRT_GR:
       d += 1.0;
       /* fall through */
     case IRT_GQ:
-      d = std::ceil(d);
       irt = IRT_LQ;
       std::swap(n_p,n_n); std::swap(t_p,t_n); d = -d;
       break;
     default:
       throw UnknownRelation("Int::linear");
     }
-    return true;
   }
 
   /// Decide the required precision and check for overflow
-  inline bool
+  forceinline bool
   precision(Term<IntView>* t_p, int n_p,
             Term<IntView>* t_n, int n_n,
             double d) {
@@ -226,13 +212,31 @@ namespace Gecode { namespace Int { namespace Linear {
     eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
-    int n_p, n_n, gcd;
+    int n_p, n_n, gcd=1;
     bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n,gcd);
 
-    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd)) {
-      if (irt == IRT_EQ)
-        home.fail();
-      return;
+    rewrite(irt,d,t_p,n_p,t_n,n_n);
+
+    // Divide by gcd
+    if (gcd > 1) {
+      bool divisible = (std::fmod(d,gcd) == 0.0);
+      d /= gcd;
+      switch (irt) {
+      case IRT_EQ:
+        if (!divisible) {
+          home.fail();
+          return;
+        }
+        break;
+      case IRT_NQ: 
+        if (!divisible)
+          return;
+        break;
+      case IRT_LQ:
+        d = std::floor(d);
+        break;
+      default: GECODE_NEVER;
+      }
     }
 
     if (n == 0) {
@@ -422,11 +426,11 @@ namespace Gecode { namespace Int { namespace Linear {
                           post(home,x,y,c,n)));
           break;
         case RM_IMP:
-          GECODE_ES_FAIL((ReEq<Val,View,View,NegBoolView,RM_IMP>::
+          GECODE_ES_FAIL((ReEq<Val,View,View,NegBoolView,RM_PMI>::
                           post(home,x,y,c,n)));
           break;
         case RM_PMI:
-          GECODE_ES_FAIL((ReEq<Val,View,View,NegBoolView,RM_PMI>::
+          GECODE_ES_FAIL((ReEq<Val,View,View,NegBoolView,RM_IMP>::
                           post(home,x,y,c,n)));
           break;
         default: GECODE_NEVER;
@@ -455,10 +459,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class CtrlView>
-  void
-  posteqint(Home home, IntView& x, int c, CtrlView b, const ReifyMode& rm,
+  forceinline void
+  posteqint(Home home, IntView& x, int c, CtrlView b, ReifyMode rm,
             IntConLevel icl) {
-    if (icl==ICL_DOM || icl==ICL_DEF) {
+    if (icl == ICL_DOM) {
       switch (rm) {
       case RM_EQV:
         GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_EQV>::
@@ -497,30 +501,44 @@ namespace Gecode { namespace Int { namespace Linear {
   post(Home home,
        Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
        IntConLevel icl) {
-
     Limits::check(c,"Int::linear");
-
     double d = c;
 
     eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
-    int n_p, n_n, gcd;
+    int n_p, n_n, gcd=1;
     bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n,gcd);
 
-    if (!rewrite(home,irt,d,t_p,n_p,t_n,n_n,gcd)) {
-      if (irt == IRT_EQ) {
-        if (me_failed(BoolView(r.var()).zero(home)))
-          home.fail();
-      } else if (irt == IRT_NQ) {
-        if (me_failed(BoolView(r.var()).one(home)))
-          home.fail();
+    rewrite(irt,d,t_p,n_p,t_n,n_n);
+
+    // Divide by gcd
+    if (gcd > 1) {
+      bool divisible = (std::fmod(d,gcd) == 0.0);
+      d /= gcd;
+      switch (irt) {
+      case IRT_EQ:
+        if (!divisible) {
+          if (r.mode() != RM_PMI)
+            GECODE_ME_FAIL(BoolView(r.var()).zero(home));
+          return;
+        }
+        break;
+      case IRT_NQ: 
+        if (!divisible) {
+          if (r.mode() != RM_IMP)
+            GECODE_ME_FAIL(BoolView(r.var()).one(home));
+          return;
+        }
+        break;
+      case IRT_LQ:
+        d = std::floor(d);
+        break;
+      default: GECODE_NEVER;
       }
-      return;
     }
 
     if (n == 0) {
-      // FIXME!
       bool fail = false;
       switch (irt) {
       case IRT_EQ: fail = (d != 0.0); break;
@@ -528,10 +546,13 @@ namespace Gecode { namespace Int { namespace Linear {
       case IRT_LQ: fail = (0.0 > d); break;
       default: GECODE_NEVER;
       }
-      if ((fail ? 
-           BoolView(r.var()).zero(home) : 
-           BoolView(r.var()).one(home)) == ME_INT_FAILED)
-        home.fail();
+      if (fail) {
+        if (r.mode() != RM_PMI)
+          GECODE_ME_FAIL(BoolView(r.var()).zero(home));
+      } else {
+        if (r.mode() != RM_IMP)
+          GECODE_ME_FAIL(BoolView(r.var()).one(home));
+      }
       return;
     }
 
@@ -551,10 +572,16 @@ namespace Gecode { namespace Int { namespace Linear {
         case IRT_NQ:
           {
             NegBoolView nb(r.var());
+            ReifyMode rm = r.mode();
+            switch (rm) {
+            case RM_IMP: rm = RM_PMI; break;
+            case RM_PMI: rm = RM_IMP; break;
+            default: ;
+            }
             if (n_p == 1) {
-              posteqint<NegBoolView>(home,t_p[0].x,c,nb,r.mode(),icl);
+              posteqint<NegBoolView>(home,t_p[0].x,c,nb,rm,icl);
             } else {
-              posteqint<NegBoolView>(home,t_p[0].x,-c,nb,r.mode(),icl);
+              posteqint<NegBoolView>(home,t_p[0].x,-c,nb,rm,icl);
             }
           }
           break;
@@ -583,11 +610,11 @@ namespace Gecode { namespace Int { namespace Linear {
                               post(home,t_n[0].x,-c-1,nb)));
               break;
             case RM_IMP:
-              GECODE_ES_FAIL((Rel::ReLqInt<IntView,NegBoolView,RM_IMP>::
+              GECODE_ES_FAIL((Rel::ReLqInt<IntView,NegBoolView,RM_PMI>::
                               post(home,t_n[0].x,-c-1,nb)));
               break;
             case RM_PMI:
-              GECODE_ES_FAIL((Rel::ReLqInt<IntView,NegBoolView,RM_PMI>::
+              GECODE_ES_FAIL((Rel::ReLqInt<IntView,NegBoolView,RM_IMP>::
                               post(home,t_n[0].x,-c-1,nb)));
               break;
             default: GECODE_NEVER;
@@ -668,11 +695,11 @@ namespace Gecode { namespace Int { namespace Linear {
                                 post(home,t_p[0].x,t_p[1].x,c,nb)));
                 break;
               case RM_IMP:
-                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_IMP>::
+                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_PMI>::
                                 post(home,t_p[0].x,t_p[1].x,c,nb)));
                 break;
               case RM_PMI:
-                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_PMI>::
+                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_IMP>::
                                 post(home,t_p[0].x,t_p[1].x,c,nb)));
                 break;
               default: GECODE_NEVER;
@@ -685,11 +712,11 @@ namespace Gecode { namespace Int { namespace Linear {
                                 post(home,t_p[0].x,MinusView(t_n[0].x),c,nb)));
                 break;
               case RM_IMP:
-                GECODE_ES_FAIL((ReEqBin<int,IntView,MinusView,NegBoolView,RM_IMP>::
+                GECODE_ES_FAIL((ReEqBin<int,IntView,MinusView,NegBoolView,RM_PMI>::
                                 post(home,t_p[0].x,MinusView(t_n[0].x),c,nb)));
                 break;
               case RM_PMI:
-                GECODE_ES_FAIL((ReEqBin<int,IntView,MinusView,NegBoolView,RM_PMI>::
+                GECODE_ES_FAIL((ReEqBin<int,IntView,MinusView,NegBoolView,RM_IMP>::
                                 post(home,t_p[0].x,MinusView(t_n[0].x),c,nb)));
                 break;
               default: GECODE_NEVER;
@@ -702,11 +729,11 @@ namespace Gecode { namespace Int { namespace Linear {
                                 post(home,t_p[0].x,t_p[1].x,-c,nb)));
                 break;
               case RM_IMP:
-                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_IMP>::
+                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_PMI>::
                                 post(home,t_p[0].x,t_p[1].x,-c,nb)));
                 break;
               case RM_PMI:
-                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_PMI>::
+                GECODE_ES_FAIL((ReEqBin<int,IntView,IntView,NegBoolView,RM_IMP>::
                                 post(home,t_p[0].x,t_p[1].x,-c,nb)));
                 break;
               default: GECODE_NEVER;

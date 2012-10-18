@@ -44,7 +44,7 @@ namespace Test { namespace Int {
    /// %Tests for linear constraints
    namespace Linear {
 
-     /// Check whether \a has only one coefficients
+     /// Check whether \a a has only one coefficients
      bool one(const Gecode::IntArgs& a) {
       for (int i=a.size(); i--; )
         if (a[i] != 1)
@@ -75,7 +75,9 @@ namespace Test { namespace Int {
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
                 a0.size(),d,icl != Gecode::ICL_DOM,icl),
-         a(a0), irt(irt0), c(c0) {}
+         a(a0), irt(irt0), c(c0) {
+         testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
@@ -115,7 +117,9 @@ namespace Test { namespace Int {
          : Test("Linear::Int::Var::"+
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,icl != Gecode::ICL_DOM,icl),
-           a(a0), irt(irt0) {}
+           a(a0), irt(irt0) {
+         testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double e = 0.0;
@@ -165,6 +169,7 @@ namespace Test { namespace Int {
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
                 a0.size(),0,1,true,Gecode::ICL_DEF),
            a(a0), irt(irt0), c(c0) {
+         testfix=false;
        }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -210,7 +215,9 @@ namespace Test { namespace Int {
                Gecode::IntRelType irt0)
          : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,a0.size()+1,
                 min,max,true),
-           a(a0), irt(irt0) {}
+           a(a0), irt(irt0) {
+         testfix=false;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;

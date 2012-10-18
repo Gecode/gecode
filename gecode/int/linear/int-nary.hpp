@@ -426,10 +426,16 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   ExecStatus
   ReEq<Val,P,N,Ctrl,rm>::propagate(Space& home, const ModEventDelta& med) {
-    if (b.zero())
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(Nq<Val,P,N>::post(home(*this),x,y,c)));
-    if (b.one())
+    }
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(Eq<Val,P,N>::post(home(*this),x,y,c)));
+    }
 
     Val sl = 0;
     Val su = 0;
@@ -438,11 +444,13 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(med, y, c, sl, su);
 
     if ((-sl == c) && (-su == c)) {
-      GECODE_ME_CHECK(b.one_none(home));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
       return home.ES_SUBSUMED(*this);
     }
     if ((-sl > c) || (-su < c)) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
@@ -835,10 +843,16 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N, ReifyMode rm>
   ExecStatus
   ReLq<Val,P,N,rm>::propagate(Space& home, const ModEventDelta& med) {
-    if (b.zero())
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);              
       GECODE_REWRITE(*this,(Lq<Val,N,P>::post(home(*this),y,x,-c-1)));
-    if (b.one())
+    }
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(Lq<Val,P,N>::post(home(*this),x,y,c)));
+    }
 
     // Eliminate singletons
     Val sl = 0;
@@ -848,11 +862,13 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(med,y,c,sl,su);
 
     if (-sl > c) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
     if (-su <= c) {
-      GECODE_ME_CHECK(b.one_none(home));
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
       return home.ES_SUBSUMED(*this);
     }
 

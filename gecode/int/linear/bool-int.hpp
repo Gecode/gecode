@@ -586,20 +586,25 @@ namespace Gecode { namespace Int { namespace Linear {
   ReGqBoolInt<VX,VB,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.none()) {
       if (c <= 0) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
       } else {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
       normalize();
       if (b.one()) {
-        GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home(*this),x,c)));
+        if (rm != RM_PMI)
+          GECODE_REWRITE(*this,(GqBoolInt<VX>::post(home(*this),x,c)));
       } else {
-        ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,x.size());
-        for (int i=x.size(); i--; )
-          nx[i]=BoolNegTraits<VX>::neg(x[i]);
-        GECODE_REWRITE(*this,GqBoolInt<typename BoolNegTraits<VX>::NegView>
-                       ::post(home(*this),nx,x.size()-c+1));
+        if (rm != RM_IMP) {
+          ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,x.size());
+          for (int i=x.size(); i--; )
+            nx[i]=BoolNegTraits<VX>::neg(x[i]);
+          GECODE_REWRITE(*this,GqBoolInt<typename BoolNegTraits<VX>::NegView>
+                         ::post(home(*this),nx,x.size()-c+1));
+        }
       }
     }
     return home.ES_SUBSUMED(*this);
@@ -621,14 +626,16 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n_x);
     if (n_x < c) {
       // RHS too large
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
     } else if (c <= 0) {
       // Whatever the x[i] take for values, the inequality is subsumed
-      GECODE_ME_CHECK(b.one_none(home));
-    } else if (c == 1) {
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
+    } else if ((c == 1) && (rm == RM_EQV)) {
       // Equivalent to Boolean disjunction
       return Bool::NaryOr<VX,VB>::post(home,x,b);
-    } else if (c == n_x) {
+    } else if ((c == n_x) && (rm == RM_EQV)) {
       // Equivalent to Boolean conjunction, transform to Boolean disjunction
       ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,n_x);
       for (int i=n_x; i--; )
@@ -682,16 +689,20 @@ namespace Gecode { namespace Int { namespace Linear {
   ReEqBoolInt<VX,VB,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.none()) {
       if ((c == 0) && (n_s == 0)) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
       } else {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
       normalize();
       if (b.one()) {
-        GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home(*this),x,c)));
+        if (rm != RM_PMI)
+          GECODE_REWRITE(*this,(EqBoolInt<VX>::post(home(*this),x,c)));
       } else {
-        GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home(*this),x,c)));
+        if (rm != RM_IMP)
+          GECODE_REWRITE(*this,(NqBoolInt<VX>::post(home(*this),x,c)));
       }
     }
     return home.ES_SUBSUMED(*this);
@@ -713,15 +724,17 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n_x);
     if ((n_x < c) || (c < 0)) {
       // RHS too large
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
     } else if ((c == 0) && (n_x == 0)) {
       // all variables set, and c == 0: equality
-      GECODE_ME_CHECK(b.one_none(home));
-    } else if (c == 0) {
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
+    } else if ((c == 0) && (rm == RM_EQV)) {
       // Equivalent to Boolean disjunction
       return Bool::NaryOr<VX,typename BoolNegTraits<VB>::NegView>
         ::post(home,x,BoolNegTraits<VB>::neg(b));
-    } else if (c == n_x) {
+    } else if ((c == n_x) && (rm == RM_EQV)) {
       // Equivalent to Boolean conjunction, transform to Boolean disjunction
       ViewArray<typename BoolNegTraits<VX>::NegView> nx(home,n_x);
       for (int i=n_x; i--; )

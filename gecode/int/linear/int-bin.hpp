@@ -224,16 +224,26 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class A, class B, class Ctrl, ReifyMode rm>
   ExecStatus
   ReEqBin<Val,A,B,Ctrl,rm>::propagate(Space& home, const ModEventDelta&) {
-    if (b.zero())
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(NqBin<Val,A,B>::post(home(*this),x0,x1,c)));
-    if (b.one())
+    }
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(EqBin<Val,A,B>::post(home(*this),x0,x1,c)));
+    }
     if ((x0.min() + x1.min() > c) || (x0.max() + x1.max() < c)) {
-      GECODE_ME_CHECK(b.zero_none(home)); return home.ES_SUBSUMED(*this);
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home)); 
+      return home.ES_SUBSUMED(*this);
     }
     if (x0.assigned() && x1.assigned()) {
       assert(x0.val() + x1.val() == c);
-      GECODE_ME_CHECK(b.one_none(home)); return home.ES_SUBSUMED(*this);
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home)); 
+      return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }
@@ -420,15 +430,25 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class A, class B, ReifyMode rm>
   ExecStatus
   ReLqBin<Val,A,B,rm>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(LqBin<Val,A,B>::post(home(*this),x0,x1,c)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(GqBin<Val,A,B>::post(home(*this),x0,x1,c+1)));
+    }
     if (x0.max() + x1.max() <= c) {
-      GECODE_ME_CHECK(b.one_none(home)); return home.ES_SUBSUMED(*this);
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home)); 
+      return home.ES_SUBSUMED(*this);
     }
     if (x0.min() + x1.min() > c) {
-      GECODE_ME_CHECK(b.zero_none(home)); return home.ES_SUBSUMED(*this);
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home)); 
+      return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }

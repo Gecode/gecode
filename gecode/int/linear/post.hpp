@@ -77,12 +77,23 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   };
 
+  /// Compute the greatest common divisor of \a a and \a b
+  inline int 
+  gcd(int a, int b) {
+    if (b > a) 
+      std::swap(a,b);
+    while (b > 0) {
+      int t = b; b = a % b; a = t;
+    }
+    return a;
+  }
+
   template<class View>
   inline bool
   normalize(Term<View>* t, int &n,
             Term<View>* &t_p, int &n_p,
-            Term<View>* &t_n, int &n_n,
-            int& gcd) {
+            Term<View>* &t_n, int &n_n, 
+            int& g) {
     /*
      * Join coefficients for aliased variables:
      *
@@ -141,32 +152,15 @@ namespace Gecode { namespace Int { namespace Linear {
      * Compute greatest common divisor
      *
      */
-    class GCD {
-    public:
-      int operator ()(int a, int b) {
-        if (b > a) std::swap(a,b);
-        int tmp;
-        while (b > 0) {
-          tmp = b;
-          b = a % b;
-          a = tmp;
-        }
-        return a;
-      }
-    } _gcd;
-
-    if (n > 0) {
-      gcd = (n_p > 0 ? t_p[0].a : t_n[0].a);
-      for (int i=n_p; i--; )
-        gcd = _gcd(gcd, t_p[i].a);
-      for (int i=n_n; i--; )
-        gcd = _gcd(gcd, t_n[i].a);
-      for (int i=n_p; i--; )
-        t_p[i].a = t_p[i].a/gcd;
-      for (int i=n_n; i--; )
-        t_n[i].a = t_n[i].a/gcd;
+    if ((n > 0) && (g > 0)) {
+      g = t[0].a;
+      for (int i=1; (g > 1) && (i < n); i++)
+        g = gcd(t[i].a,g);
+      if (g > 1)
+        for (int i=n; i--; )
+          t[i].a /= g;
     } else {
-      gcd = 1;
+      g = 1;
     }
 
     /*

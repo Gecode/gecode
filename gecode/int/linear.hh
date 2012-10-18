@@ -1353,7 +1353,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
    *  - Divides all coefficients by their greatest common divisor and
-   *    returns the gcd
+   *    returns the gcd \a g
    *
    * Returns true, if all coefficients are unit coefficients
    */
@@ -1361,7 +1361,7 @@ namespace Gecode { namespace Int { namespace Linear {
   bool normalize(Term<View>* t, int &n,
                  Term<View>* &t_p, int &n_p,
                  Term<View>* &t_n, int &n_n,
-                 int& gcd);
+                 int& g);
 
 
   /**

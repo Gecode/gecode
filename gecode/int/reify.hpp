@@ -65,7 +65,6 @@ namespace Gecode {
     rm = rm0;
   }
 
-
   /*
    * Reification convenience functions
    *

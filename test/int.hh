@@ -164,15 +164,20 @@ namespace Test {
       bool reified;
 
       /**
-       * \brief Create test space
+       * \brief Create test space without reification
        *
-       * Creates \a n variables with domain \a d for test \a t and stores
-       * whether the test is for a reified propagator (\a re) with
-       * reification mode \a rm.
+       * Creates \a n variables with domain \a d for test \a t.
        *
        */
-      TestSpace(int n, Gecode::IntSet& d, Test* t, 
-                bool re, Gecode::ReifyMode rm = Gecode::RM_EQV);
+      TestSpace(int n, Gecode::IntSet& d, Test* t); 
+      /**
+       * \brief Create test space with reification
+       *
+       * Creates \a n variables with domain \a d for test \a t and stores
+       * the reification mode \a rm.
+       *
+       */
+      TestSpace(int n, Gecode::IntSet& d, Test* t, Gecode::ReifyMode rm);
       /// Constructor for cloning \a s
       TestSpace(bool share, TestSpace& s);
       /// Copy space during cloning
@@ -201,11 +206,6 @@ namespace Test {
       void prune(void);
       /// Prune values but not those in assignment \a a
       bool prune(const Assignment& a, bool testfix);
-      /// \name Mapping scalar values to strings
-      //@{
-      /// Map reification mode to string
-      static std::string str(Gecode::ReifyMode rm);
-      //@}
     };
 
     /**
@@ -287,28 +287,6 @@ namespace Test {
       //@}
     };
     //@}
-
-  /// Iterator for reification modes
-  class ReifyModes {
-  protected:
-    /// Array of reification modes
-    Gecode::ReifyMode rms[3];
-    /// Current position in mode array
-    int i;
-  public:
-    /// Initialize iterator with reification mode \a rm
-    ReifyModes(Gecode::ReifyMode rm);
-    /// Initialize iterator with reification modes \a rm0 and \a rm1
-    ReifyModes(Gecode::ReifyMode rm0, Gecode::ReifyMode rm1);
-    /// Initialize iterator with all three reification modes
-    ReifyModes(void);
-    /// Test whether iterator is done
-    bool operator()(void) const;
-    /// Increment to next reification mode
-    void operator++(void);
-    /// Return current reification mode
-    Gecode::ReifyMode rm(void) const;
-    };
 
     /// Iterator for integer consistency levels
     class IntConLevels {

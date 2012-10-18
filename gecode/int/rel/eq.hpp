@@ -481,11 +481,11 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
-      if (rm != RM_PMI)
+      if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one_none(home)); 
       break;
     case RT_FALSE:
-      if (rm != RM_IMP)
+      if (rm != RM_PMI)
         GECODE_ME_CHECK(b.zero_none(home)); 
       break;
     case RT_MAYBE:

@@ -255,40 +255,6 @@ namespace Test { namespace Int {
   }
 
 
-  /*
-   * Iterators for reification modes
-   *
-   */
-
-  inline
-  ReifyModes::ReifyModes(Gecode::ReifyMode rm)
-    : i(0) {
-    rms[0]=rm;
-  }
-  inline
-  ReifyModes::ReifyModes(Gecode::ReifyMode rm0, Gecode::ReifyMode rm1)
-    : i(1) {
-    rms[1]=rm0; rms[0]=rm1;
-  }
-  inline
-  ReifyModes::ReifyModes(void)
-    : i(2) {
-    using namespace Gecode;
-    rms[2]=RM_EQV; rms[1]=RM_IMP; rms[0]=RM_PMI;
-  }
-  inline bool
-  ReifyModes::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  ReifyModes::operator++(void) {
-    i--;
-  }
-  inline Gecode::ReifyMode
-  ReifyModes::rm(void) const {
-    return rms[i];
-  }
-
 
   inline
   IntConLevels::IntConLevels(void)
