@@ -128,10 +128,23 @@ namespace Gecode {
     GECODE_ES_FAIL(Set::Int::NotMinElement<Set::SetView>::post(home,s,x));
   }
   void
-  min(Home home, SetVar s, IntVar x, BoolVar b){
+  min(Home home, SetVar s, IntVar x, Reify r){
     if (home.failed()) return;
-    GECODE_ES_FAIL(
-                   Set::Int::ReMinElement<Set::SetView>::post(home,s,x,b));
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Set::Int::ReMinElement<Set::SetView,RM_EQV>
+                     ::post(home,s,x,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Set::Int::ReMinElement<Set::SetView,RM_IMP>
+                     ::post(home,s,x,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Set::Int::ReMinElement<Set::SetView,RM_PMI>
+                     ::post(home,s,x,r.var())));
+      break;
+    default: throw Gecode::Int::UnknownReifyMode("Set::min");
+    }
   }
   void
   max(Home home, SetVar s, IntVar x){
@@ -144,10 +157,23 @@ namespace Gecode {
     GECODE_ES_FAIL(Set::Int::NotMaxElement<Set::SetView>::post(home,s,x));
   }
   void
-  max(Home home, SetVar s, IntVar x, BoolVar b){
+  max(Home home, SetVar s, IntVar x, Reify r){
     if (home.failed()) return;
-    GECODE_ES_FAIL(
-                   Set::Int::ReMaxElement<Set::SetView>::post(home,s,x,b));
+    switch (r.mode()) {
+    case RM_EQV:
+      GECODE_ES_FAIL((Set::Int::ReMaxElement<Set::SetView,RM_EQV>
+                     ::post(home,s,x,r.var())));
+      break;
+    case RM_IMP:
+      GECODE_ES_FAIL((Set::Int::ReMaxElement<Set::SetView,RM_IMP>
+                     ::post(home,s,x,r.var())));
+      break;
+    case RM_PMI:
+      GECODE_ES_FAIL((Set::Int::ReMaxElement<Set::SetView,RM_PMI>
+                     ::post(home,s,x,r.var())));
+      break;
+    default: throw Gecode::Int::UnknownReifyMode("Set::max");
+    }
   }
 
   void weights(Home home, IntSharedArray elements, IntSharedArray weights,

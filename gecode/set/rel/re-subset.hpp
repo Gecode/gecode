@@ -39,34 +39,34 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   forceinline
-  ReSubset<View0,View1>::ReSubset(Home home, View0 y0,
-                                  View1 y1, Gecode::Int::BoolView y2)
+  ReSubset<View0,View1,rm>::ReSubset(Home home, View0 y0,
+                                     View1 y1, Gecode::Int::BoolView y2)
     : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   forceinline
-  ReSubset<View0,View1>::ReSubset(Space& home, bool share, ReSubset& p)
+  ReSubset<View0,View1,rm>::ReSubset(Space& home, bool share, ReSubset& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     b.update(home,share,p.b);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   PropCost
-  ReSubset<View0,View1>::cost(const Space&, const ModEventDelta&) const {
+  ReSubset<View0,View1,rm>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   forceinline size_t
-  ReSubset<View0,View1>::dispose(Space& home) {
+  ReSubset<View0,View1,rm>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
     x0.cancel(home,*this, PC_SET_ANY);
     x1.cancel(home,*this, PC_SET_ANY);
@@ -74,31 +74,38 @@ namespace Gecode { namespace Set { namespace Rel {
     return sizeof(*this);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   ExecStatus
-  ReSubset<View0,View1>::post(Home home, View0 x0, View1 x1,
+  ReSubset<View0,View1,rm>::post(Home home, View0 x0, View1 x1,
                               Gecode::Int::BoolView b) {
-    (void) new (home) ReSubset<View0,View1>(home,x0,x1,b);
+    (void) new (home) ReSubset<View0,View1,rm>(home,x0,x1,b);
     return ES_OK;
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   Actor*
-  ReSubset<View0,View1>::copy(Space& home, bool share) {
-    return new (home) ReSubset<View0,View1>(home,share,*this);
+  ReSubset<View0,View1,rm>::copy(Space& home, bool share) {
+    return new (home) ReSubset<View0,View1,rm>(home,share,*this);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   ExecStatus
-  ReSubset<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
+  ReSubset<View0,View1,rm>::propagate(Space& home, const ModEventDelta&) {
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Subset<View0,View1>::post(home(*this),x0,x1)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(NoSubset<View0,View1>::post(home(*this),x0,x1)));
+    }
 
     // check whether cardinalities still allow subset
     if (x0.cardMin() > x1.cardMax()) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
 
@@ -108,7 +115,8 @@ namespace Gecode { namespace Set { namespace Rel {
       GlbRanges<View1> x1lb(x1);
       Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> > d(x0ub,x1lb);
       if (!d()) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -119,10 +127,12 @@ namespace Gecode { namespace Set { namespace Rel {
       LubRanges<View1> x1ub(x1);
       Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > d(x0lb,x1ub);
       if (d()) {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
         return home.ES_SUBSUMED(*this);
       } else if (x0.assigned() && x1.assigned()) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -133,7 +143,8 @@ namespace Gecode { namespace Set { namespace Rel {
       Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> >
         i(x0ub,x1ub);
       if (!i()) {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }

@@ -256,43 +256,51 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_FIX;
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReMinElement<View>::ReMinElement(Home home, View y0, Gecode::Int::IntView y1,
-                                   Gecode::Int::BoolView b2)
+  ReMinElement<View,rm>::ReMinElement(Home home, View y0,
+                                      Gecode::Int::IntView y1,
+                                      Gecode::Int::BoolView b2)
     : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
       Gecode::Int::BoolView> (home, y0, y1, b2) {}
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline ExecStatus
-  ReMinElement<View>::post(Home home, View x0, Gecode::Int::IntView x1,
-                           Gecode::Int::BoolView b2) {
+  ReMinElement<View,rm>::post(Home home, View x0, Gecode::Int::IntView x1,
+                              Gecode::Int::BoolView b2) {
     (void) new (home) ReMinElement(home,x0,x1,b2);
     return ES_OK;
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReMinElement<View>::ReMinElement(Space& home, bool share, ReMinElement& p)
+  ReMinElement<View,rm>::ReMinElement(Space& home, bool share,
+                                      ReMinElement& p)
     : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
       Gecode::Int::BoolView> (home, share, p) {}
 
-  template<class View>
+  template<class View, ReifyMode rm>
   Actor*
-  ReMinElement<View>::copy(Space& home, bool share) {
+  ReMinElement<View,rm>::copy(Space& home, bool share) {
    return new (home) ReMinElement(home,share,*this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReMinElement<View>::propagate(Space& home, const ModEventDelta&) {
+  ReMinElement<View,rm>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this, (MinElement<View>::post(home(*this),x0,x1)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this, (NotMinElement<View>::post(home(*this),x0,x1)));
+    }
     // cheap tests for => b=0
     // if x0 is empty, then b=0 and entailed
     // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then b=0 and entailed
@@ -301,7 +309,8 @@ namespace Gecode { namespace Set { namespace Int {
         ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
         ((x0.glbSize() > 0) && (x0.glbMin() < x1.min())))
       {
-        GECODE_ME_CHECK(b.zero(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero(home));
         return home.ES_SUBSUMED(*this);
       }
     // if min(x0) is decided
@@ -309,9 +318,11 @@ namespace Gecode { namespace Set { namespace Int {
       // if x1 is det: check if = min(x0), assign b, entailed
       if (x1.assigned()) {
         if (x1.val() == x0.glbMin()) {
-          GECODE_ME_CHECK(b.one(home));
+          if (rm != RM_IMP)
+            GECODE_ME_CHECK(b.one(home));
         } else {
-          GECODE_ME_CHECK(b.zero(home));
+          if (rm != RM_PMI)
+            GECODE_ME_CHECK(b.zero(home));
         }
         return home.ES_SUBSUMED(*this);
       }
@@ -320,7 +331,8 @@ namespace Gecode { namespace Set { namespace Int {
                (x0.glbMin() > x1.max()) ||
                !x1.in(x0.glbMin()))
         {
-          GECODE_ME_CHECK(b.zero(home));
+          if (rm != RM_PMI)
+            GECODE_ME_CHECK(b.zero(home));
           return home.ES_SUBSUMED(*this);
         }
     }
@@ -535,44 +547,52 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_FIX;
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReMaxElement<View>::ReMaxElement(Home home, View y0, Gecode::Int::IntView y1,
-                                   Gecode::Int::BoolView b2)
+  ReMaxElement<View,rm>::ReMaxElement(Home home, View y0,
+                                      Gecode::Int::IntView y1,
+                                      Gecode::Int::BoolView b2)
     : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
       Gecode::Int::BoolView> (home, y0, y1, b2) {}
 
-  template<class View>
+  template<class View, ReifyMode rm>
   forceinline
-  ReMaxElement<View>::ReMaxElement(Space& home, bool share, ReMaxElement& p)
+  ReMaxElement<View,rm>::ReMaxElement(Space& home, bool share,
+                                      ReMaxElement& p)
     : Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,
       Gecode::Int::BoolView> (home, share, p) {}
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReMaxElement<View>::post(Home home, View x0,
-                           Gecode::Int::IntView x1,
-                           Gecode::Int::BoolView b2) {
+  ReMaxElement<View,rm>::post(Home home, View x0,
+                              Gecode::Int::IntView x1,
+                              Gecode::Int::BoolView b2) {
     (void) new (home) ReMaxElement(home,x0,x1,b2);
     return ES_OK;
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   Actor*
-  ReMaxElement<View>::copy(Space& home, bool share) {
+  ReMaxElement<View,rm>::copy(Space& home, bool share) {
     return new (home) ReMaxElement(home,share,*this);
   }
 
-  template<class View>
+  template<class View, ReifyMode rm>
   ExecStatus
-  ReMaxElement<View>::propagate(Space& home, const ModEventDelta&) {
+  ReMaxElement<View,rm>::propagate(Space& home, const ModEventDelta&) {
     // check if b is determined
-    if (b.one())
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this, (MaxElement<View>::post(home(*this),x0,x1)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this, (NotMaxElement<View>::post(home(*this),x0,x1)));
+    }
     // cheap tests for => b=0
     // if x0 is empty, then b=0 and entailed
     // if max(x1) < min(x0.lub) or min(x1) > max(x0.lub), then b=0 and entailed
@@ -581,7 +601,8 @@ namespace Gecode { namespace Set { namespace Int {
         ((x1.max() < x0.lubMin()) || (x1.min() > x0.lubMax())) ||
         ((x0.glbSize() > 0) && (x0.glbMax() > x1.max())))
       {
-        GECODE_ME_CHECK(b.zero(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero(home));
         return home.ES_SUBSUMED(*this);
       }
     // if max(x0) is decided
@@ -589,9 +610,11 @@ namespace Gecode { namespace Set { namespace Int {
       // if x1 is det: check if = max(x0), assign b, entailed
       if (x1.assigned()) {
         if (x1.val() == x0.glbMax()) {
-          GECODE_ME_CHECK(b.one(home));
+          if (rm != RM_IMP)
+            GECODE_ME_CHECK(b.one(home));
         } else {
-          GECODE_ME_CHECK(b.zero(home));
+          if (rm != RM_PMI)
+            GECODE_ME_CHECK(b.zero(home));
         }
         return home.ES_SUBSUMED(*this);
       }
@@ -600,7 +623,8 @@ namespace Gecode { namespace Set { namespace Int {
                (x0.glbMax() > x1.max()) ||
                !x1.in(x0.glbMax()))
         {
-          GECODE_ME_CHECK(b.zero(home));
+          if (rm != RM_PMI)
+            GECODE_ME_CHECK(b.zero(home));
           return home.ES_SUBSUMED(*this);
         }
     }
@@ -611,7 +635,8 @@ namespace Gecode { namespace Set { namespace Int {
       Gecode::Iter::Ranges::Inter<LubRanges<View>,
         Gecode::Int::ViewRanges<Gecode::Int::IntView> > ir(ub,d);
       if (!ir()) {
-        GECODE_ME_CHECK(b.zero(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero(home));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -633,7 +658,8 @@ namespace Gecode { namespace Set { namespace Int {
       }
       // if x1.max < nth_smallest, then entailed
       if (x1.max() < nth_smallest) {
-        GECODE_ME_CHECK(b.zero(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero(home));
         return home.ES_SUBSUMED(*this);
       }
     }

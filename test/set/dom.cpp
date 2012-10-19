@@ -135,8 +135,8 @@ namespace Test { namespace Set {
         Gecode::dom(home, x[0], srt, is);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], srt, is, b);
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        Gecode::dom(home, x[0], srt, is, r);
       }
     };
     DomRange _domrange_eq(SRT_EQ);
@@ -192,8 +192,8 @@ namespace Test { namespace Set {
         Gecode::dom(home, x[0], srt, -3, -1);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], srt, -3, -1, b);
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        Gecode::dom(home, x[0], srt, -3, -1, r);
       }
     };
     DomIntRange _domintrange_eq(SRT_EQ);
@@ -249,8 +249,8 @@ namespace Test { namespace Set {
         Gecode::dom(home, x[0], srt, -3);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], srt, -3, b);
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        Gecode::dom(home, x[0], srt, -3, r);
       }
     };
     DomInt _domint_eq(SRT_EQ);
@@ -307,8 +307,8 @@ namespace Test { namespace Set {
         Gecode::dom(home, x[0], srt, is);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space& home, SetVarArray& x, IntVarArray&,BoolVar b) {
-        Gecode::dom(home, x[0], srt, is, b);
+      virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        Gecode::dom(home, x[0], srt, is, r);
       }
     };
     DomDom _domdom_eq(SRT_EQ);

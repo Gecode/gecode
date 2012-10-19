@@ -122,11 +122,11 @@ namespace Test { namespace Set {
           Gecode::rel(home, x[0], srt, x[0]);
       }
       /// Post reified constraint on \a x for \a b
-      void post(Space& home, SetVarArray& x, IntVarArray&, BoolVar b) {
+      void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         if (!shared)
-          Gecode::rel(home, x[0], srt, x[1], b);
+          Gecode::rel(home, x[0], srt, x[1], r);
         else
-          Gecode::rel(home, x[0], srt, x[0], b);
+          Gecode::rel(home, x[0], srt, x[0], r);
       }
     };
     RelBin _relbin_eq(Gecode::SRT_EQ,false);

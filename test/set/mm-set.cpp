@@ -174,7 +174,7 @@ namespace Test { namespace Int {
       }
       /// Post reified constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
-                        Gecode::BoolVar b) {
+                        Gecode::Reify r) {
         using namespace Gecode;
         SetVarArgs s(home,4,IntSet::empty,1,1);
         Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
@@ -184,13 +184,19 @@ namespace Test { namespace Int {
         Gecode::SetExpr reg[4] = {s[0],s[1],s[2],s[3]};
         Gecode::SetExpr res = (c==0) ? IntSet::empty : singleton(1);
         Gecode::SetExpr e = eval(bis,reg);
+        Gecode::SetRel irel;
         switch (srt) {
-          case Gecode::SRT_EQ: Gecode::rel(home, (e == res)==b); break;
-          case Gecode::SRT_NQ: Gecode::rel(home, (e != res)==b); break;
-          case Gecode::SRT_SUB: Gecode::rel(home, (e <= res)==b); break;
-          case Gecode::SRT_SUP: Gecode::rel(home, (e >= res)==b); break;
-          case Gecode::SRT_DISJ: Gecode::rel(home, (e || res)==b); break;
-          case Gecode::SRT_CMPL: Gecode::rel(home, (e == -res)==b); break;
+          case Gecode::SRT_EQ: irel = (e == res); break;
+          case Gecode::SRT_NQ: irel = (e != res); break;
+          case Gecode::SRT_SUB: irel = (e <= res); break;
+          case Gecode::SRT_SUP: irel = (e >= res); break;
+          case Gecode::SRT_DISJ: irel = (e || res); break;
+          case Gecode::SRT_CMPL: irel = (e == -res); break;
+        }
+        switch (r.mode()) {
+          case Gecode::RM_EQV: Gecode::rel(home, r.var()==irel); break;
+          case Gecode::RM_IMP: Gecode::rel(home, r.var() >> irel); break;
+          case Gecode::RM_PMI: Gecode::rel(home, r.var() << irel); break;
         }
       }
     };
@@ -272,7 +278,7 @@ namespace Test { namespace Int {
       }
       /// Post reified constraint on \a x
       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
-                        Gecode::BoolVar b) {
+                        Gecode::Reify r) {
         using namespace Gecode;
         SetVarArgs s(home,8,IntSet::empty,1,1);
         Gecode::rel(home, (singleton(1) == s[0]) == (x[0] != x[2]));
@@ -291,13 +297,19 @@ namespace Test { namespace Int {
         Gecode::SetExpr reg1[4] = {s[4],s[5],s[6],s[7]};
         Gecode::SetExpr e1 = eval(bis1,reg1);
     
+        Gecode::SetRel srel;
         switch (srt) {
-          case Gecode::SRT_EQ: Gecode::rel(home, (e0 == e1)==b); break;
-          case Gecode::SRT_NQ: Gecode::rel(home, (e0 != e1)==b); break;
-          case Gecode::SRT_SUB: Gecode::rel(home, (e0 <= e1)==b); break;
-          case Gecode::SRT_SUP: Gecode::rel(home, (e0 >= e1)==b); break;
-          case Gecode::SRT_DISJ: Gecode::rel(home, (e0 || e1)==b); break;
-          case Gecode::SRT_CMPL: Gecode::rel(home, (e0 == -e1)==b); break;
+          case Gecode::SRT_EQ: srel = (e0 == e1); break;
+          case Gecode::SRT_NQ: srel = (e0 != e1); break;
+          case Gecode::SRT_SUB: srel = (e0 <= e1); break;
+          case Gecode::SRT_SUP: srel = (e0 >= e1); break;
+          case Gecode::SRT_DISJ: srel = (e0 || e1); break;
+          case Gecode::SRT_CMPL: srel = (e0 == -e1); break;
+        }
+        switch (r.mode()) {
+          case Gecode::RM_EQV: Gecode::rel(home, r.var()==srel); break;
+          case Gecode::RM_IMP: Gecode::rel(home, r.var() >> srel); break;
+          case Gecode::RM_PMI: Gecode::rel(home, r.var() << srel); break;
         }
       }
     };

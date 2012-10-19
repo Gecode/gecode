@@ -205,15 +205,15 @@ namespace Test {
       Gecode::IntVarArray y;
       /// How many integer variables are used by the test
       int withInt;
-      /// Control variable for reified propagators
-      Gecode::BoolVar b;
+      /// Reification information
+      Gecode::Reify r;
       /// Whether the test is for a reified propagator
       bool reified;
       /// The test currently run
       SetTest* test;
       
       /**
-       * \brief Create test space
+       * \brief Create test space without reification
        *
        * Creates \a n set variables with domain \a d0,
        * \a i integer variables with domain \a d0, and stores whether
@@ -221,8 +221,19 @@ namespace Test {
        * (\a t).
        *
        */
-      SetTestSpace(int n, Gecode::IntSet& d0, int i, bool r, SetTest* t,
+      SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t,
                    bool log=true);
+      /**
+       * \brief Create test space with reification
+       *
+       * Creates \a n set variables with domain \a d0,
+       * \a i integer variables with domain \a d0, and stores whether
+       * the test is for a reified propagator (\a r), and the test itself
+       * (\a t).
+       *
+       */
+      SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t,
+                   Gecode::ReifyMode rm, bool log=true);
       /// Constructor for cloning \a s
       SetTestSpace(bool share, SetTestSpace& s);
       /// Copy space during cloning
@@ -292,7 +303,7 @@ namespace Test {
                         Gecode::IntVarArray& y) = 0;
       /// Post reified propagator
       virtual void post(Gecode::Space&, Gecode::SetVarArray&,
-                        Gecode::IntVarArray&, Gecode::BoolVar) {}
+                        Gecode::IntVarArray&, Gecode::Reify) {}
       /// Perform test
       virtual bool run(void);
 

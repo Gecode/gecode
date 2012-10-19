@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template<class View>
+  template<class View, ReifyMode rm>
   class ReMinElement :
     public Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView> {
@@ -198,7 +198,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template<class View>
+  template<class View, ReifyMode rm>
   class ReMaxElement :
     public Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView> {

@@ -102,8 +102,8 @@ namespace Test { namespace Set {
       }
       /// Post reified constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
-                        BoolVar b) {
-        Gecode::min(home, x[0], y[0], b);
+                        Reify r) {
+        Gecode::min(home, x[0], y[0], r);
       }
     };
     Min _min("Int::Min");
@@ -144,8 +144,8 @@ namespace Test { namespace Set {
       }
       /// Post reified constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
-                        BoolVar b) {
-        Gecode::max(home, x[0], y[0], b);
+                        Reify r) {
+        Gecode::max(home, x[0], y[0], r);
       }
     };
     Max _max("Int::Max");
@@ -187,8 +187,9 @@ namespace Test { namespace Set {
         Gecode::rel(home, x[0], SRT_SUP, y[0]);
       }
       /// Post reified constraint on \a x for \a b
-      virtual void post(Space& home, SetVarArray& x, IntVarArray& y, BoolVar b) {
-        Gecode::rel(home, x[0], SRT_SUP, y[0], b);
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
+                        Reify r) {
+        Gecode::rel(home, x[0], SRT_SUP, y[0], r);
       }
     };
     Elem _elem("Int::Elem");
@@ -267,11 +268,11 @@ namespace Test { namespace Set {
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
-                        BoolVar b) {
+                        Reify r) {
         if (!inverse)
-          Gecode::rel(home, x[0], srt, y[0], b);
+          Gecode::rel(home, x[0], srt, y[0], r);
         else
-          Gecode::rel(home, y[0], srt, x[0], b);
+          Gecode::rel(home, y[0], srt, x[0], r);
       }
     };
     Rel _rel_eq(Gecode::SRT_EQ,false);

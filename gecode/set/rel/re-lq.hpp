@@ -37,34 +37,35 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   forceinline
-  ReLq<View0,View1,strict>::ReLq(Home home, View0 y0, View1 y1,
-                          Gecode::Int::BoolView y2)
+  ReLq<View0,View1,rm,strict>::ReLq(Home home, View0 y0, View1 y1,
+                                    Gecode::Int::BoolView y2)
     : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   forceinline
-  ReLq<View0,View1,strict>::ReLq(Space& home, bool share, ReLq& p)
+  ReLq<View0,View1,rm,strict>::ReLq(Space& home, bool share, ReLq& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     b.update(home,share,p.b);
   }
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   PropCost
-  ReLq<View0,View1,strict>::cost(const Space&, const ModEventDelta&) const {
+  ReLq<View0,View1,rm,strict>::cost(const Space&, const ModEventDelta&) const 
+  {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   forceinline size_t
-  ReLq<View0,View1,strict>::dispose(Space& home) {
+  ReLq<View0,View1,rm,strict>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
     x0.cancel(home,*this, PC_SET_ANY);
     x1.cancel(home,*this, PC_SET_ANY);
@@ -72,35 +73,43 @@ namespace Gecode { namespace Set { namespace Rel {
     return sizeof(*this);
   }
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   ExecStatus
-  ReLq<View0,View1,strict>::post(Home home, View0 x0, View1 x1,
+  ReLq<View0,View1,rm,strict>::post(Home home, View0 x0, View1 x1,
                             Gecode::Int::BoolView b) {
-    (void) new (home) ReLq<View0,View1,strict>(home,x0,x1,b);
+    (void) new (home) ReLq<View0,View1,rm,strict>(home,x0,x1,b);
     return ES_OK;
   }
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   Actor*
-  ReLq<View0,View1,strict>::copy(Space& home, bool share) {
-    return new (home) ReLq<View0,View1,strict>(home,share,*this);
+  ReLq<View0,View1,rm,strict>::copy(Space& home, bool share) {
+    return new (home) ReLq<View0,View1,rm,strict>(home,share,*this);
   }
 
-  template<class View0, class View1, bool strict>
+  template<class View0, class View1, ReifyMode rm, bool strict>
   ExecStatus
-  ReLq<View0,View1,strict>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
+  ReLq<View0,View1,rm,strict>::propagate(Space& home, const ModEventDelta&) {
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Lq<View0,View1,strict>::post(home(*this),x0,x1)));
-    if (b.zero())
-      GECODE_REWRITE(*this,(Lq<View1,View0,!strict>::post(home(*this),x1,x0)));
-
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);
+      GECODE_REWRITE(*this,
+        (Lq<View1,View0,!strict>::post(home(*this),x1,x0)));
+    }
     if (x0.cardMax() == 0) {
       if ( (!strict) || x1.cardMin() > 0) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
         return home.ES_SUBSUMED(*this);
       }
       if (strict && x1.cardMax() == 0) {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -115,10 +124,12 @@ namespace Gecode { namespace Set { namespace Rel {
         if (!d()) {
           if ((!strict) && x0.cardMax() == x1.cardMax()) {
             // equal
-            GECODE_ME_CHECK(b.one_none(home));
+            if (rm != RM_IMP)
+              GECODE_ME_CHECK(b.one_none(home));
           } else {
             // subset
-            GECODE_ME_CHECK(b.zero_none(home));
+            if (rm != RM_PMI)
+              GECODE_ME_CHECK(b.zero_none(home));
           }
           return home.ES_SUBSUMED(*this);
         }
@@ -132,10 +143,12 @@ namespace Gecode { namespace Set { namespace Rel {
         if (!d()) {
           if (strict && x0.cardMax() == x1.cardMax()) {
             // equal
-            GECODE_ME_CHECK(b.zero_none(home));
+            if (rm != RM_PMI)
+              GECODE_ME_CHECK(b.zero_none(home));
           } else {
             // subset
-            GECODE_ME_CHECK(b.one_none(home));
+            if (rm != RM_IMP)
+              GECODE_ME_CHECK(b.one_none(home));
           }
           return home.ES_SUBSUMED(*this);
         }
@@ -144,9 +157,11 @@ namespace Gecode { namespace Set { namespace Rel {
 
       assert(min01 != min10);
       if (min01<min10) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
       } else {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
       }
       return home.ES_SUBSUMED(*this);
     }
@@ -158,7 +173,8 @@ namespace Gecode { namespace Set { namespace Rel {
       int x1umin=x1u.min();
       Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > d(x0l,x1u);
       if (d() && d.min() < x1umin) {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -169,7 +185,8 @@ namespace Gecode { namespace Set { namespace Rel {
       int x0umin=x0u.min();
       Iter::Ranges::Diff<GlbRanges<View1>,LubRanges<View0> > d(x1l,x0u);
       if (d() && d.min() < x0umin) {
-        GECODE_ME_CHECK(b.one_none(home));
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }

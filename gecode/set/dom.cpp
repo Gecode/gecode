@@ -176,89 +176,209 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, SetVar s, SetRelType r, int i, BoolVar b) {
+  dom(Home home, SetVar s, SetRelType rt, int i, Reify r) {
     Set::Limits::check(i, "Set::dom");
     IntSet d(i,i);
-    dom(home, s, r, d, b);
+    dom(home, s, rt, d, r);
   }
 
   void
-  dom(Home home, SetVar s, SetRelType r, int i, int j, BoolVar b) {
+  dom(Home home, SetVar s, SetRelType rt, int i, int j, Reify r) {
     Set::Limits::check(i, "Set::dom");
     Set::Limits::check(j, "Set::dom");
     IntSet d(i,j);
-    dom(home, s, r, d, b);
+    dom(home, s, rt, d, r);
   }
 
   void
-  dom(Home home, SetVar s, SetRelType r, const IntSet& is, BoolVar b) {
+  dom(Home home, SetVar s, SetRelType rt, const IntSet& is, Reify r) {
     Set::Limits::check(is, "Set::dom");
     if (home.failed()) return;
-    switch (r) {
+    switch (rt) {
     case SRT_EQ:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-                       (Set::Rel::ReEq<Set::SetView,
-                        Set::ConstSetView>::post(home, s, cv, b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_EQV>::post(home, s, cv, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_IMP>::post(home, s, cv, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_PMI>::post(home, s, cv, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_LQ:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-          (Set::Rel::ReLq<Set::SetView,Set::ConstSetView,false>
-            ::post(home,s,cv,b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::SetView,
+             Set::ConstSetView,RM_EQV,false>::post(home, s, cv, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::SetView,
+             Set::ConstSetView,RM_IMP,false>::post(home, s, cv, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::SetView,
+             Set::ConstSetView,RM_PMI,false>::post(home, s, cv, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_LE:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-          (Set::Rel::ReLq<Set::SetView,Set::ConstSetView,true>
-            ::post(home,s,cv,b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::SetView,
+             Set::ConstSetView,RM_EQV,true>::post(home, s, cv, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::SetView,
+             Set::ConstSetView,RM_IMP,true>::post(home, s, cv, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::SetView,
+             Set::ConstSetView,RM_PMI,true>::post(home, s, cv, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_GQ:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-          (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,false>
-            ::post(home,cv,s,b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,RM_EQV,false>
+            ::post(home,cv,s,r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,RM_IMP,false>
+            ::post(home,cv,s,r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,RM_PMI,false>
+            ::post(home,cv,s,r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_GR:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-          (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,true>
-            ::post(home,cv,s,b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,RM_EQV,true>
+            ::post(home,cv,s,r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,RM_IMP,true>
+            ::post(home,cv,s,r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReLq<Set::ConstSetView,Set::SetView,RM_PMI,true>
+            ::post(home,cv,s,r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_NQ:
       {
         BoolVar notb(home,0,1);
-        rel(home, b, IRT_NQ, notb);
+        rel(home, r.var(), IRT_NQ, notb);
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-                       (Set::Rel::ReEq<Set::SetView,
-                        Set::ConstSetView>::post(home, s, cv, notb)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_EQV>::post(home, s, cv, notb)));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_IMP>::post(home, s, cv, notb)));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_PMI>::post(home, s, cv, notb)));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_SUB:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-                       (Set::Rel::ReSubset<Set::SetView,Set::ConstSetView>
-                        ::post(home, s, cv, b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::SetView,
+             Set::ConstSetView,RM_EQV>::post(home, s, cv, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::SetView,
+             Set::ConstSetView,RM_IMP>::post(home, s, cv, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::SetView,
+             Set::ConstSetView,RM_PMI>::post(home, s, cv, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_SUP:
       {
         Set::ConstSetView cv(home, is);
-        GECODE_ES_FAIL(
-                       (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView>
-                        ::post(home, cv, s, b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,RM_EQV>
+            ::post(home, cv, s, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,RM_IMP>
+            ::post(home, cv, s, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,RM_PMI>
+            ::post(home, cv, s, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_DISJ:
@@ -271,9 +391,24 @@ namespace Gecode {
         Set::RangesCompl<IntSetRanges > dc1(dr1);
         IntSet dcompl(dc1);
         Set::ConstSetView cvcompl(home, dcompl);
-        GECODE_ES_FAIL(
-                       (Set::Rel::ReSubset<Set::SetView,Set::ConstSetView>
-                        ::post(home, s, cvcompl, b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::SetView,
+             Set::ConstSetView,RM_EQV>::post(home, s, cvcompl, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::SetView,
+             Set::ConstSetView,RM_IMP>::post(home, s, cvcompl, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReSubset<Set::SetView,
+             Set::ConstSetView,RM_PMI>::post(home, s, cvcompl, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     case SRT_CMPL:
@@ -285,9 +420,24 @@ namespace Gecode {
         IntSet dcompl(dc1);
         Set::ConstSetView cvcompl(home, dcompl);
 
-        GECODE_ES_FAIL(
-                       (Set::Rel::ReEq<Set::SetView,Set::ConstSetView>
-                        ::post(home, sv, cvcompl, b)));
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_EQV>::post(home, s, cvcompl, r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_IMP>::post(home, s, cvcompl, r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+            (Set::Rel::ReEq<Set::SetView,
+             Set::ConstSetView,RM_PMI>::post(home, s, cvcompl, r.var())));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::dom");
+        }
       }
       break;
     default:

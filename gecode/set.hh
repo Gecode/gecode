@@ -685,17 +685,17 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   dom(Home home, SetVar x, SetRelType r, const IntSet& s);
 
-  /// Post propagator for \f$ (x \sim_r \{i\}) \Leftrightarrow b \f$
+  /// Post propagator for \f$ (x \sim_{rt} \{i\}) \equiv r \f$
   GECODE_SET_EXPORT void
-  dom(Home home, SetVar x, SetRelType r, int i, BoolVar b);
+  dom(Home home, SetVar x, SetRelType rt, int i, Reify r);
 
-  /// Post propagator for \f$ (x \sim_r \{i,\dots,j\}) \Leftrightarrow b \f$
+  /// Post propagator for \f$ (x \sim_{rt} \{i,\dots,j\}) \equiv r \f$
   GECODE_SET_EXPORT void
-  dom(Home home, SetVar x, SetRelType r, int i, int j, BoolVar b);
+  dom(Home home, SetVar x, SetRelType rt, int i, int j, Reify r);
 
-  /// Post propagator for \f$ (x \sim_r s) \Leftrightarrow b \f$
+  /// Post propagator for \f$ (x \sim_{rt} s) \equiv r \f$
   GECODE_SET_EXPORT void
-  dom(Home home, SetVar x, SetRelType r, const IntSet& s, BoolVar b);
+  dom(Home home, SetVar x, SetRelType rt, const IntSet& s, Reify r);
 
   /// Propagates \f$ i \leq |s| \leq j \f$
   GECODE_SET_EXPORT void
@@ -716,9 +716,9 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetRelType r, SetVar y);
 
-  /// Post propagator for \f$ (x \sim_r y) \Leftrightarrow b \f$
+  /// Post propagator for \f$ (x \sim_{rt} y) \equiv r\f$
   GECODE_SET_EXPORT void
-  rel(Home home, SetVar x, SetRelType r, SetVar y, BoolVar b);
+  rel(Home home, SetVar x, SetRelType rt, SetVar y, Reify r);
 
   /// Post propagator for \f$ s \sim_r \{x\}\f$
   GECODE_SET_EXPORT void
@@ -728,13 +728,13 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Home home, IntVar x, SetRelType r, SetVar s);
 
-  /// Post propagator for \f$ (s \sim_r \{x\}) \Leftrightarrow b \f$
+  /// Post propagator for \f$ (s \sim_{rt} \{x\}) \equiv r\f$
   GECODE_SET_EXPORT void
-  rel(Home home, SetVar s, SetRelType r, IntVar x, BoolVar b);
+  rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r);
 
-  /// Post propagator for \f$ (\{x\} \sim_r s) \Leftrightarrow b \f$
+  /// Post propagator for \f$ (\{x\} \sim_{rt} s) \equiv r \f$
   GECODE_SET_EXPORT void
-  rel(Home home, IntVar x, SetRelType r, SetVar s, BoolVar b);
+  rel(Home home, IntVar x, SetRelType r, SetVar s, Reify r);
 
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_r x\f$
   GECODE_SET_EXPORT void
@@ -871,7 +871,7 @@ namespace Gecode {
   /** \brief Post reified propagator for \a b iff \a x is the
    *  minimal element of \a s */
   GECODE_SET_EXPORT void
-  min(Home home, SetVar s, IntVar x, BoolVar b);
+  min(Home home, SetVar s, IntVar x, Reify r);
 
   /** \brief Post propagator that propagates that \a x is the
    *  maximal element of \a s, and that \a s is not empty */
@@ -886,7 +886,7 @@ namespace Gecode {
   /** \brief Post reified propagator for \a b iff \a x is the
    *  maximal element of \a s */
   GECODE_SET_EXPORT void
-  max(Home home, SetVar s, IntVar x, BoolVar b);
+  max(Home home, SetVar s, IntVar x, Reify r);
 
   /// Post propagator for \f$ |s|=x \f$
   GECODE_SET_EXPORT void

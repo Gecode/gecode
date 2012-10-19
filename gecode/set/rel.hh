@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   class ReSubset : public Propagator {
   protected:
     View0 x0;
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   class ReEq : public Propagator {
   protected:
     View0 x0;
@@ -225,7 +225,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template<class View0, class View1, bool strict=false>
+  template<class View0, class View1, ReifyMode rm, bool strict=false>
   class ReLq : public Propagator {
   protected:
     View0 x0;

@@ -42,34 +42,34 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   forceinline
-  ReEq<View0,View1>::ReEq(Home home, View0 y0, View1 y1,
-                          Gecode::Int::BoolView y2)
+  ReEq<View0,View1,rm>::ReEq(Home home, View0 y0, View1 y1,
+                             Gecode::Int::BoolView y2)
     : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   forceinline
-  ReEq<View0,View1>::ReEq(Space& home, bool share, ReEq& p)
+  ReEq<View0,View1,rm>::ReEq(Space& home, bool share, ReEq& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     b.update(home,share,p.b);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   PropCost
-  ReEq<View0,View1>::cost(const Space&, const ModEventDelta&) const {
+  ReEq<View0,View1,rm>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   forceinline size_t
-  ReEq<View0,View1>::dispose(Space& home) {
+  ReEq<View0,View1,rm>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
     x0.cancel(home,*this, PC_SET_ANY);
     x1.cancel(home,*this, PC_SET_ANY);
@@ -77,44 +77,53 @@ namespace Gecode { namespace Set { namespace Rel {
     return sizeof(*this);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   ExecStatus
-  ReEq<View0,View1>::post(Home home, View0 x0, View1 x1,
+  ReEq<View0,View1,rm>::post(Home home, View0 x0, View1 x1,
                             Gecode::Int::BoolView b) {
-    (void) new (home) ReEq<View0,View1>(home,x0,x1,b);
+    (void) new (home) ReEq<View0,View1,rm>(home,x0,x1,b);
     return ES_OK;
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   Actor*
-  ReEq<View0,View1>::copy(Space& home, bool share) {
-    return new (home) ReEq<View0,View1>(home,share,*this);
+  ReEq<View0,View1,rm>::copy(Space& home, bool share) {
+    return new (home) ReEq<View0,View1,rm>(home,share,*this);
   }
 
-  template<class View0, class View1>
+  template<class View0, class View1, ReifyMode rm>
   ExecStatus
-  ReEq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    if (b.one())
+  ReEq<View0,View1,rm>::propagate(Space& home, const ModEventDelta&) {
+    if (b.one()) {
+      if (rm == RM_PMI)
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Eq<View0,View1>::post(home(*this),x0,x1)));
-    if (b.zero())
+    }
+    if (b.zero()) {
+      if (rm == RM_IMP)
+        return home.ES_SUBSUMED(*this);        
       GECODE_REWRITE(*this,(Distinct<View0,View1>::post(home(*this),x0,x1)));
+    }
 
     if (x0.assigned() && x1.assigned()) {
       // directly test x0==x1
       GlbRanges<View0> x0lb(x0);
       GlbRanges<View1> x1lb(x1);
+      bool x0eqx1 = true;
       for (; x0lb() && x1lb(); ++x0lb, ++x1lb) {
         if (x0lb.min() != x1lb.min() ||
             x0lb.max() != x1lb.max()) {
-          GECODE_ME_CHECK(b.zero_none(home));
-          return home.ES_SUBSUMED(*this);
+          x0eqx1 = false;
+          break;
         }
       }
-      if (!x0lb() && !x1lb()) {
-        GECODE_ME_CHECK(b.one_none(home));
+      if (x0eqx1 && !x0lb() && !x1lb()) {
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
         return home.ES_SUBSUMED(*this);
       } else {
-        GECODE_ME_CHECK(b.zero_none(home));
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
         return home.ES_SUBSUMED(*this);
       }
     }
@@ -122,7 +131,8 @@ namespace Gecode { namespace Set { namespace Rel {
     // check whether cardinalities still allow equality
     if (x0.cardMin() > x1.cardMax() ||
         x1.cardMin() > x0.cardMax()) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
 
@@ -131,7 +141,8 @@ namespace Gecode { namespace Set { namespace Rel {
     LubRanges<View1> x1ub(x1);
     Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View1> > diff1(x0lb, x1ub);
     if ( diff1() ) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
 
@@ -140,7 +151,8 @@ namespace Gecode { namespace Set { namespace Rel {
     LubRanges<View0> x0ub(x0);
     Iter::Ranges::Diff<GlbRanges<View1>, LubRanges<View0> > diff2(x1lb, x0ub);
     if ( diff2() ) {
-      GECODE_ME_CHECK(b.zero_none(home));
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
       return home.ES_SUBSUMED(*this);
     }
 
