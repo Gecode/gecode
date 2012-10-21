@@ -40,5 +40,5 @@ predicate circuit(array[int] of var int: x) =
   if min(index_set(x)) >= 0 then
     gecode_circuit(min(index_set(x)),x)
   else
-    gecode_circuit(0,[x[i]-min(index_set(x)) | i in index_set(x)]);
-  endif
+    gecode_circuit(0,[x[i]-min(index_set(x)) | i in index_set(x)])
+  endif;
