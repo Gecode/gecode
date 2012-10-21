@@ -734,7 +734,7 @@ namespace Gecode {
 
   /// Post propagator for \f$ (\{x\} \sim_{rt} s) \equiv r \f$
   GECODE_SET_EXPORT void
-  rel(Home home, IntVar x, SetRelType r, SetVar s, Reify r);
+  rel(Home home, IntVar x, SetRelType rt, SetVar s, Reify r);
 
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_r x\f$
   GECODE_SET_EXPORT void
