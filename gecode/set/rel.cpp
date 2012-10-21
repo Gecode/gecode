@@ -116,15 +116,31 @@ namespace Gecode {
     case SRT_EQ:
       {
         GECODE_ES_FAIL(
-                       (ReEq<View0,View1,rm>::post(home, x,y,b)));
+                       (ReEq<View0,View1,Gecode::Int::BoolView,rm>
+                       ::post(home, x,y,b)));
       }
       break;
     case SRT_NQ:
       {
-        BoolVar notb(home, 0, 1);
-        rel(home, b, IRT_NQ, notb);
-        GECODE_ES_FAIL(
-                       (ReEq<View0,View1,rm>::post(home,x,y,notb)));
+        Gecode::Int::NegBoolView notb(b);
+        switch (rm) {
+        case RM_EQV:
+          GECODE_ES_FAIL(
+                         (ReEq<View0,View1,Gecode::Int::NegBoolView,RM_EQV>
+                         ::post(home,x,y,notb)));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL(
+                         (ReEq<View0,View1,Gecode::Int::NegBoolView,RM_PMI>
+                         ::post(home,x,y,notb)));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL(
+                         (ReEq<View0,View1,Gecode::Int::NegBoolView,RM_IMP>
+                         ::post(home,x,y,notb)));
+          break;
+        default: throw Gecode::Int::UnknownReifyMode("Set::rel");
+        }
       }
       break;
     case SRT_SUB:
@@ -154,7 +170,8 @@ namespace Gecode {
       {
         ComplementView<View0> xc(x);
         GECODE_ES_FAIL(
-                       (ReEq<ComplementView<View0>,View1,rm>
+                       (ReEq<ComplementView<View0>,View1,
+                       Gecode::Int::BoolView,rm>
                        ::post(home, xc, y, b)));
       }
       break;
