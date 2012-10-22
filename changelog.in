@@ -75,6 +75,22 @@ Fixes, or perhaps more?
 [ENTRY]
 Module: int
 What:   new
+Rank:   minor
+[DESCRIPTION]
+The nooverlap constraint now allows sharing of unassigned
+variables in its argument arrays.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added half-reification for reified constraints (see Modeling and
+Programming with Gecode for details).
+
+[ENTRY]
+Module: int
+What:   new
 Rank:   major
 [DESCRIPTION]
 Added half-reification for reified constraints (see Modeling and

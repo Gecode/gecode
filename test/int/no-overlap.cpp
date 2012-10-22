@@ -213,6 +213,51 @@ namespace Test { namespace Int {
       }
     };
     
+     /// %Test for no-overlap with optional rectangles and shared variables
+    class VarOptShared2 : public Test {
+    public:
+      /// Create and register test with maximal value \a m and \a n rectangles
+      VarOptShared2(int m, int n)
+        : Test("NoOverlap::Var::Opt::Shared::2::"+
+               str(m)+"::"+str(n), 2*n+2, 0, m) {
+        testfix = false;
+      }
+      /// %Test whether \a xwyho is solution
+      virtual bool solution(const Assignment& xwyho) const {
+        int n = (xwyho.size() - 2) / 2;
+        for (int i=0; i<n; i++) {
+          int xi=xwyho[2*i+0], yi=xwyho[2*i+0];
+          int wi=xwyho[2*i+1], hi=xwyho[2*i+1];
+          int oi=xwyho[2*n + (i % 2)];
+          for (int j=i+1; j<n; j++) {
+            int xj=xwyho[2*j+0], yj=xwyho[2*j+0];
+            int wj=xwyho[2*j+1], hj=xwyho[2*j+1];
+            int oj=xwyho[2*n + (j % 2)];
+            if ((oi > 0) && (oj > 0) &&
+                !((xi + wi <= xj) || (xj + wj <= xi) ||
+                  (yi + hi <= yj) || (yj + hj <= yi)))
+              return false;
+          }
+        }
+        return true;
+      }
+      /// Post constraint on \a xwyho
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& xwyho) {
+        using namespace Gecode;
+        int n = (xwyho.size() - 2) / 2;
+        IntVarArgs x0(n), w(n), x1(n), y0(n), h(n), y1(n);
+        BoolVarArgs o(n);
+        for (int i=0; i<n; i++) {
+          x0[i]=xwyho[2*i+0]; w[i]=xwyho[2*i+1];
+          x1[i]=expr(home, x0[i] + w[i]);
+          y0[i]=xwyho[2*i+0]; h[i]=xwyho[2*i+1];
+          y1[i]=expr(home, y0[i] + h[i]);
+          o[i]=expr(home, xwyho[2*n + (i % 2)] > 0);
+        }
+        nooverlap(home, x0, w, x1, y0, h, y1, o);
+      }
+    };
+    
     
     /// Help class to create and register tests
     class Create {
@@ -242,6 +287,9 @@ namespace Test { namespace Int {
         (void) new Var2(1, 3);
         (void) new VarOpt2(2, 2);
         (void) new VarOpt2(3, 2);
+        (void) new VarOptShared2(2, 2);
+        (void) new VarOptShared2(3, 2);
+        (void) new VarOptShared2(4, 2);
 
       }
     };

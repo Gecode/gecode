@@ -134,14 +134,21 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
     // Check whether some optional boxes must be excluded
     for (int i=m; i--; ) {
-      assert(b[n+i].optional());
-      for (int j=n; j--; )
-        if (b[n+i].overlap(b[j])) {
-          GECODE_ES_CHECK(b[n+i].exclude(home));
-          b[n+i].cancel(home,*this);
-          b[n+i] = b[n+(--m)];
-          break;
-        }
+      if (b[n+i].optional()) {
+        for (int j=n; j--; )
+          if (b[n+i].overlap(b[j])) {
+            GECODE_ES_CHECK(b[n+i].exclude(home));
+            b[n+i].cancel(home,*this);
+            b[n+i] = b[n+(--m)];
+            break;
+          }
+      } else {
+        // This might be the case if the same Boolean view occurs
+        // several times and has already been excluded
+        assert(b[n+i].excluded());
+        b[n+i].cancel(home,*this);
+        b[n+i] = b[n+(--m)];
+      }
     }
 
     return ES_NOFIX;

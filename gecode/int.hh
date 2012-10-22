@@ -2467,7 +2467,6 @@ namespace Gecode {
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, or \a h
    *    are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x or \a y share unassigned variables.
    *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
    * 
    * \ingroup TaskModelIntGeoPacking
@@ -2486,8 +2485,6 @@ namespace Gecode {
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a o
    *    are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x, \a y, or \a o share unassigned
-   *    variables.
    *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
    * 
    * \ingroup TaskModelIntGeoPacking
@@ -2511,8 +2508,6 @@ namespace Gecode {
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
    *    \a y0, \a y1, or \a h are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x0, \a x1, \a w, \a y0, \a y1, 
-   *    or \a h share unassigned variables.
    * 
    * \ingroup TaskModelIntGeoPacking
    */
@@ -2535,8 +2530,6 @@ namespace Gecode {
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
    *    \a y0, \a y1, or \a h are not of the same size.
-   *  - Of type Int::ArgumentSame if \a x0, \a x1, \a w, \a y0, \a y1, 
-   *    \a h, or \a o share unassigned variables.
    * 
    * \ingroup TaskModelIntGeoPacking
    */

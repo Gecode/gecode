@@ -58,8 +58,6 @@ namespace Gecode {
             IntConLevel) {
     using namespace Int;
     using namespace NoOverlap;
-    if (x.same(home) || y.same(home))
-      throw ArgumentSame("Int::nooverlap");
     if ((x.size() != w.size()) || (x.size() != y.size()) || 
         (x.size() != h.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");      
@@ -92,8 +90,6 @@ namespace Gecode {
             IntConLevel) {
     using namespace Int;
     using namespace NoOverlap;
-    if (x.same(home) || y.same(home) || m.same(home))
-      throw ArgumentSame("Int::nooverlap");
     if ((x.size() != w.size()) || (x.size() != y.size()) ||
         (x.size() != h.size()) || (x.size() != m.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");      
@@ -142,9 +138,6 @@ namespace Gecode {
         (x0.size() != y0.size()) || (x0.size() != h.size()) || 
         (x0.size() != y1.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");
-    if (x0.same(home) || w.same(home) || x1.same(home) ||
-        y0.same(home) || h.same(home) || y1.same(home))
-      throw ArgumentSame("Int::nooverlap");
     if (home.failed()) return;
 
     for (int i=x0.size(); i--; ) {
@@ -183,10 +176,6 @@ namespace Gecode {
         (x0.size() != y0.size()) || (x0.size() != h.size()) || 
         (x0.size() != y1.size()) || (x0.size() != m.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");
-    if (x0.same(home) || w.same(home) || x1.same(home) ||
-        y0.same(home) || h.same(home) || y1.same(home) ||
-        m.same(home))
-      throw ArgumentSame("Int::nooverlap");
     if (home.failed()) return;
 
     for (int i=x0.size(); i--; ) {
