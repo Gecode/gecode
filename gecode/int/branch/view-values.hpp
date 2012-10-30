@@ -129,6 +129,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<int n, bool min>
   const Choice*
   ViewValuesBrancher<n,min>::choice(const Space& home, Archive& e) {
+    (void) home;
     int p;
     unsigned int a;
     e >> p >> a;

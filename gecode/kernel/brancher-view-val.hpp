@@ -192,6 +192,7 @@ namespace Gecode {
   template<class View, int n, class Val, unsigned int a>
   const Choice*
   ViewValBrancher<View,n,Val,a>::choice(const Space& home, Archive& e) {
+    (void) home;
     int p; e >> p;
     Val v; e >> v;
     return new PosValChoice<Val>(*this,a,p,v);

@@ -152,7 +152,7 @@ namespace Gecode {
   }
   template<class View, class Val>
   forceinline void
-  MeritBase<View,Val>::dispose(Space& home) {}
+  MeritBase<View,Val>::dispose(Space&) {}
 
   // User-defined function merit
   template<class View>

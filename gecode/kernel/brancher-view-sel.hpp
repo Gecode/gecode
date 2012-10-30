@@ -493,7 +493,7 @@ namespace Gecode {
   }
   template<class View>
   void 
-  ViewSelRnd<View>::brk(Space&, ViewArray<View>& x, int* ties, int& n) {
+  ViewSelRnd<View>::brk(Space&, ViewArray<View>&, int* ties, int& n) {
     ties[0] = ties[static_cast<int>(r(static_cast<unsigned int>(n)))];
     n=1;
   }

@@ -113,13 +113,11 @@ namespace Gecode {
 
   template<class View, class Val>
   forceinline
-  ValSelCommitBase<View,Val>::ValSelCommitBase(Space& home, 
-                                               const ValBranch& vb) {}
+  ValSelCommitBase<View,Val>::ValSelCommitBase(Space&, const ValBranch&) {}
   template<class View, class Val>
   forceinline
   ValSelCommitBase<View,Val>::
-    ValSelCommitBase(Space& home, bool shared, 
-                     ValSelCommitBase<View,Val>& vsc) {}
+    ValSelCommitBase(Space&, bool, ValSelCommitBase<View,Val>&) {}
 
   template<class View, class Val>
   forceinline void
