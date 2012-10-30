@@ -152,17 +152,35 @@ namespace Test { namespace Int {
    * Tests with integer constraints
    *
    */
+  forceinline bool
+  Test::eqv(void) const {
+    return reified && ((rms & (1 << Gecode::RM_EQV)) != 0);
+  }
+  forceinline bool
+  Test::imp(void) const {
+    return reified && ((rms & (1 << Gecode::RM_IMP)) != 0);
+  }
+  forceinline bool
+  Test::pmi(void) const {
+    return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
+  }
   inline
   Test::Test(const std::string& s, int a, const Gecode::IntSet& d,
              bool r, Gecode::IntConLevel i)
-    : Base("Int::"+s), arity(a), dom(d), reified(r), icl(i),
-      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+    : Base("Int::"+s), arity(a), dom(d), 
+      reified(r), rms((1 << Gecode::RM_EQV) || 
+                      (1 << Gecode::RM_IMP) || 
+                      (1 << Gecode::RM_PMI)),
+      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
   Test::Test(const std::string& s, int a, int min, int max,
              bool r, Gecode::IntConLevel i)
-    : Base("Int::"+s), arity(a), dom(min,max), reified(r), icl(i),
+    : Base("Int::"+s), arity(a), dom(min,max),
+      reified(r), rms((1 << Gecode::RM_EQV) || 
+                      (1 << Gecode::RM_IMP) || 
+                      (1 << Gecode::RM_PMI)),
       contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 

@@ -505,9 +505,9 @@ if (!(T)) {                                                     \
         delete s;
       }
 
-      if (reified && !ignore(a)) {
-        START_TEST("Assignment reified (rewrite after post, <=>)");
-        {
+      if (!ignore(a)) {
+        if (eqv()) {
+          START_TEST("Assignment reified (rewrite after post, <=>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->post();
           s->rel(sol);
@@ -516,8 +516,8 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
-        START_TEST("Assignment reified (rewrite after post, =>)");
-        {
+        if (imp()) {
+          START_TEST("Assignment reified (rewrite after post, =>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->post();
           s->rel(sol);
@@ -526,8 +526,8 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
-        START_TEST("Assignment reified (rewrite after post, <=)");
-        {
+        if (pmi()) {
+          START_TEST("Assignment reified (rewrite after post, <=)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->post();
           s->rel(sol);
@@ -536,7 +536,7 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
-        {
+        if (eqv()) {
           START_TEST("Assignment reified (rewrite failure, <=>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->post();
@@ -545,7 +545,7 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
-        {
+        if (imp()) {
           START_TEST("Assignment reified (rewrite failure, =>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->post();
@@ -559,7 +559,7 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        {
+        if (pmi()) {
           START_TEST("Assignment reified (rewrite failure, <=)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->post();
@@ -573,8 +573,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (immediate rewrite, <=>)");
-        {
+        if (eqv()) {
+          START_TEST("Assignment reified (immediate rewrite, <=>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->rel(sol);
           s->post();
@@ -583,8 +583,8 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
-        START_TEST("Assignment reified (immediate rewrite, =>)");
-        {
+        if (imp()) {
+          START_TEST("Assignment reified (immediate rewrite, =>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->rel(sol);
           s->post();
@@ -593,8 +593,8 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
-        START_TEST("Assignment reified (immediate rewrite, <=)");
-        {
+        if (pmi()) {
+          START_TEST("Assignment reified (immediate rewrite, <=)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->rel(sol);
           s->post();
@@ -603,8 +603,8 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->propagators()==0, "No subsumption");
           delete s;
         }
-        START_TEST("Assignment reified (immediate failure, <=>)");
-        {
+        if (eqv()) {
+          START_TEST("Assignment reified (immediate failure, <=>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->rel(!sol);
           s->post();
@@ -612,8 +612,8 @@ if (!(T)) {                                                     \
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
         }
-        START_TEST("Assignment reified (immediate failure, =>)");
-        {
+        if (imp()) {
+          START_TEST("Assignment reified (immediate failure, =>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->rel(!sol);
           s->post();
@@ -626,8 +626,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (immediate failure, <=)");
-        {
+        if (pmi()) {
+          START_TEST("Assignment reified (immediate failure, <=)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->rel(!sol);
           s->post();
@@ -640,8 +640,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (before posting, <=>)");
-        {
+        if (eqv()) {
+          START_TEST("Assignment reified (before posting, <=>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->assign(a);
           s->post();
@@ -655,8 +655,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (before posting, =>)");
-        {
+        if (imp()) {
+          START_TEST("Assignment reified (before posting, =>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->assign(a);
           s->post();
@@ -670,8 +670,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (before posting, <=)");
-        {
+        if (pmi()) {
+          START_TEST("Assignment reified (before posting, <=)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->assign(a);
           s->post();
@@ -685,8 +685,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (after posting, <=>)");
-        {
+        if (eqv()) {
+          START_TEST("Assignment reified (after posting, <=>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->post();
           s->assign(a);
@@ -700,8 +700,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (after posting, =>)");
-        {
+        if (imp()) {
+          START_TEST("Assignment reified (after posting, =>)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->post();
           s->assign(a);
@@ -715,8 +715,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Assignment reified (after posting, <=)");
-        {
+        if (pmi()) {
+          START_TEST("Assignment reified (after posting, <=)");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->post();
           s->assign(a);
@@ -730,8 +730,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Prune reified, <=>");
-        {
+        if (eqv()) {
+          START_TEST("Prune reified, <=>");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->post();
           while (!s->failed() && 
@@ -751,8 +751,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Prune reified, =>");
-        {
+        if (imp()) {
+          START_TEST("Prune reified, =>");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->post();
           while (!s->failed() && 
@@ -772,8 +772,8 @@ if (!(T)) {                                                     \
           }
           delete s;
         }
-        START_TEST("Prune reified, <=");
-        {
+        if (pmi()) {
+          START_TEST("Prune reified, <=");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->post();
           while (!s->failed() && 

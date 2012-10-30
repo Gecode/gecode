@@ -220,6 +220,8 @@ namespace Test {
       Gecode::IntSet dom;
       /// Does the constraint also exist as reified constraint
       bool reified;
+      /// Which reification modes are supported
+      int rms;
       /// Consistency level
       Gecode::IntConLevel icl;
       /// Whether to test for certain consistency
@@ -228,7 +230,15 @@ namespace Test {
       bool testsearch;
       /// Whether to perform fixpoint test
       bool testfix;
-
+      /// \name Test for reification modes
+      //@{
+      /// Test whether equivalence as reification mode is supported
+      bool eqv(void) const;
+      /// Test whether implication as reification mode is supported
+      bool imp(void) const;
+      /// Test whether reverse implication as reification mode is supported
+      bool pmi(void) const;
+      //@}
     public:
       /**
        * \brief Constructor
