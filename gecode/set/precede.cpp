@@ -59,6 +59,8 @@ namespace Gecode {
   void
   precede(Home home, const SetVarArgs& x, const IntArgs& c) {
     using namespace Set;
+    if (c.size() < 2)
+      return;
     for (int i=c.size(); i--; )
       Limits::check(c[i],"Set::precede");
     if (home.failed()) return;

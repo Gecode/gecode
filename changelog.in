@@ -74,6 +74,22 @@ Fixes, or perhaps more?
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Fixed precede constraint with less than two values.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Fixed precede constraint with less than two values.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
