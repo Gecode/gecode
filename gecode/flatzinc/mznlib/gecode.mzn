@@ -58,10 +58,6 @@ predicate gecode_array_set_element_intersect_in(var set of int: x,
     array[int] of var set of int: y,
     var set of int: z, set of int: u);
 
-% y = sum of the weights of the elements of x
-predicate gecode_set_weights(array[int] of int: elements,
-    array[int] of int: weights, var set of int: x, var int: y);
-
 % Every subsequence of x of length l has at least m and at most occurrences
 % of the values in S
 predicate gecode_among_seq_int(array[int] of var int: x, set of int: S,
@@ -74,9 +70,9 @@ predicate gecode_among_seq_bool(array[int] of var bool: x, bool: b,
 
 % Overloading for among_seq
 predicate among_seq(array[int] of var int: x, set of int: S,
-    int: l, int: m, int: n) = among_seq_int(x,S,l,m,n);
+    int: l, int: m, int: n) = gecode_among_seq_int(x,S,l,m,n);
 predicate among_seq(array[int] of var bool: x, bool: b,
-    int: l, int: m, int: n) = among_seq_bool(x,b,l,m,n);
+    int: l, int: m, int: n) = gecode_among_seq_bool(x,b,l,m,n);
 
 % Circuit constraints
 predicate gecode_circuit_cost_array(array[int] of int: c,
