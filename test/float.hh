@@ -294,8 +294,10 @@ namespace Test {
       static std::string str(Gecode::ExtensionalPropKind epk);
       /// Map float relation to string
       static std::string str(Gecode::FloatRelType frt);
-      /// Map float to string
+      /// Map floatNum to string
       static std::string str(Gecode::FloatNum f);
+      /// Map floatVal to string
+      static std::string str(Gecode::FloatVal f);
       /// Map float array to string
       static std::string str(const Gecode::FloatArgs& f);
       //@}

@@ -943,7 +943,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing float arguments
-  class FloatArgs : public PrimArgArray<FloatNum> {
+  class FloatArgs : public PrimArgArray<FloatVal> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -952,9 +952,9 @@ namespace Gecode {
     /// Allocate array with \a n elements
     explicit FloatArgs(int n);
     /// Allocate array and copy elements from \a x
-    FloatArgs(const SharedArray<FloatNum>& x);
+    FloatArgs(const SharedArray<FloatVal>& x);
     /// Allocate array and copy elements from \a x
-    FloatArgs(const std::vector<FloatNum>& x);
+    FloatArgs(const std::vector<FloatVal>& x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     FloatArgs(InputIterator first, InputIterator last);
@@ -962,12 +962,12 @@ namespace Gecode {
     GECODE_FLOAT_EXPORT
     FloatArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
-    FloatArgs(int n, const FloatNum* e);
+    FloatArgs(int n, const FloatVal* e);
     /// Initialize from primitive argument array \a a (copy elements)
-    FloatArgs(const PrimArgArray<FloatNum>& a);
+    FloatArgs(const PrimArgArray<FloatVal>& a);
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
-    static FloatArgs create(int n, FloatNum start, int inc=1);
+    static FloatArgs create(int n, FloatVal start, int inc=1);
     //@}
   };
 

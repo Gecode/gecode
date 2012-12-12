@@ -41,7 +41,7 @@
 
 namespace Gecode {
 
-  FloatArgs::FloatArgs(int n, int e0, ...) : PrimArgArray<FloatNum>(n) {
+  FloatArgs::FloatArgs(int n, int e0, ...) : PrimArgArray<FloatVal>(n) {
     va_list args;
     va_start(args, e0);
     a[0] = e0;

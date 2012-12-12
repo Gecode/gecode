@@ -201,10 +201,10 @@ namespace Test { namespace Float {
              (void) new FloatFloat("31",f3,a1,frts.frt(),1.0,step);
            }
 
-           const FloatNum av2[5] = {1.0,1.0,1.0,1.0,1.0};
-           const FloatNum av3[5] = {1.0,-1.0,-1.0,1.0,-1.0};
-           const FloatNum av4[5] = {2.0,3.0,5.0,7.0,11.0};
-           const FloatNum av5[5] = {-2.0,3.0,-5.0,7.0,-11.0};
+           const FloatVal av2[5] = {1.0,1.0,1.0,1.0,1.0};
+           const FloatVal av3[5] = {1.0,-1.0,-1.0,1.0,-1.0};
+           const FloatVal av4[5] = {2.0,3.0,5.0,7.0,11.0};
+           const FloatVal av5[5] = {-2.0,3.0,-5.0,7.0,-11.0};
 
            for (int i=1; i<=5; i++) {
              FloatArgs a2(i, av2);

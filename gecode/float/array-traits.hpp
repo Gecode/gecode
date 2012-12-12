@@ -63,10 +63,10 @@ namespace Gecode {
 
   /// Traits of %FloatArgs
   template<>
-  class ArrayTraits<PrimArgArray<FloatNum> > {
+  class ArrayTraits<PrimArgArray<FloatVal> > {
   public:
     typedef FloatArgs StorageType;
-    typedef FloatNum  ValueType;
+    typedef FloatVal  ValueType;
     typedef FloatArgs ArgsType;
   };
 
@@ -93,7 +93,7 @@ namespace Gecode {
   class ArrayTraits<FloatArgs> {
   public:
     typedef FloatArgs StorageType;
-    typedef FloatNum  ValueType;
+    typedef FloatVal  ValueType;
     typedef FloatArgs ArgsType;
   };
   

@@ -206,6 +206,14 @@ namespace Test { namespace Float {
 
   inline
   std::string
+  Test::str(Gecode::FloatVal f) {
+    std::stringstream s;
+    s << "[" << f.min() << ":" << f.max() << "]";
+    return s.str();
+  }
+
+  inline
+  std::string
   Test::str(const Gecode::FloatArgs& x) {
     std::string s = "";
     for (int i=0; i<x.size()-1; i++)
