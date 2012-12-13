@@ -187,9 +187,12 @@ namespace Test { namespace Float {
   Test::str(Gecode::FloatRelType frt) {
     using namespace Gecode;
     switch (frt) {
-    case FRT_LQ: return "Lq";
-    case FRT_GQ: return "Gq";
     case FRT_EQ: return "Eq";
+    case FRT_NQ: return "Nq";
+    case FRT_LQ: return "Lq";
+    case FRT_LE: return "Le";
+    case FRT_GQ: return "Gq";
+    case FRT_GR: return "Gr";
     default: ;
     }
     GECODE_NEVER;
@@ -227,8 +230,11 @@ namespace Test { namespace Float {
     using namespace Gecode;
     switch (r) {
     case FRT_EQ: return x == y;
+    case FRT_NQ: return x != y;
     case FRT_LQ: return x <= y;
+    case FRT_LE: return x < y;
     case FRT_GQ: return x >= y;
+    case FRT_GR: return x > y;
     default: ;
     }
     return false;

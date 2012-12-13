@@ -232,8 +232,11 @@ namespace Test { namespace Float {
       olog << ind(4) << "x[" << i << "] ";
       switch (frt) {
       case Gecode::FRT_EQ: olog << "="; break;
+      case Gecode::FRT_NQ: olog << "!="; break;
       case Gecode::FRT_LQ: olog << "<="; break;
+      case Gecode::FRT_LE: olog << "<"; break;
       case Gecode::FRT_GQ: olog << ">="; break;
+      case Gecode::FRT_GR: olog << ">"; break;
       }
       olog << " [" << n.min() << "," << n.max() << "]" << std::endl;
     }
@@ -386,8 +389,8 @@ namespace Test { namespace Float {
 
 
   const Gecode::FloatRelType FloatRelTypes::frts[] =
-    {Gecode::FRT_EQ,Gecode::FRT_LQ,
-     Gecode::FRT_GQ};
+    {Gecode::FRT_EQ,Gecode::FRT_NQ,Gecode::FRT_LQ,Gecode::FRT_LE,
+     Gecode::FRT_GQ,Gecode::FRT_GR};
 
   Assignment*
   Test::assignment(void) const {

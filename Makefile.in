@@ -446,7 +446,7 @@ FLOATHDR0 = \
 	transcendental.hh transcendental/exp-log.hpp trigonometric.hh \
 	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
 	trigonometric/tanatan.hpp \
-	rel.hh rel/eq.hpp rel/lq.hpp rel/gq.hpp rel/nq.hpp \
+	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp \
 	branch.hh branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp \

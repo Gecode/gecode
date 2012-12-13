@@ -1062,8 +1062,11 @@ namespace Gecode {
    */
   enum FloatRelType {
     FRT_EQ, ///< Equality (\f$=\f$)
+    FRT_NQ, ///< Disequality (\f$\neq\f$)
     FRT_LQ, ///< Less or equal (\f$\leq\f$)
-    FRT_GQ  ///< Greater or equal (\f$\geq\f$)
+    FRT_LE, ///< Less (\f$<\f$)
+    FRT_GQ, ///< Greater or equal (\f$\geq\f$)
+    FRT_GR ///< Greater (\f$>\f$)
   };
 
   /**
@@ -1081,16 +1084,16 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   rel(Home home, FloatVar x, FloatRelType frt, FloatVal c);
-  /** \brief Post propagator for if (b) \f$(x \sim_{frt} c)\equiv r\f$ else \f$(x \sim_{frt} c)\equiv \neg r\f$
+  /** \brief Post propagator for \f$(x \sim_{frt} c)\equiv r\f$
    * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, FloatVar x, FloatRelType frt, FloatVal c, Reify r, bool b = true);
-  /** \brief Post propagator for if (b) \f$(x_0 \sim_{frt} x_1)\equiv r\f$ else \f$(x_0 \sim_{frt} x_1)\equiv \neg r\f$
+  rel(Home home, FloatVar x, FloatRelType frt, FloatVal c, Reify r);
+  /** \brief Post propagator for \f$(x_0 \sim_{frt} x_1)\equiv r\f$
    * \ingroup TaskModelFloatRelFloat
    */
   GECODE_FLOAT_EXPORT void
-  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r, bool b = true);
+  rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r);
   /** \brief Propagates \f$ x_i \sim_{frt} c \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelFloatRelFloat
    */

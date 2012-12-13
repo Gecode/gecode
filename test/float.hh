@@ -335,7 +335,7 @@ namespace Test {
     class FloatRelTypes {
     private:
       /// Array of relation types
-      static const Gecode::FloatRelType frts[3];
+      static const Gecode::FloatRelType frts[6];
       /// Current position in relation type array
       int i;
     public:

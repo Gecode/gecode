@@ -549,8 +549,8 @@ namespace Gecode {
         }
       }
       virtual void post(Home home, FloatRelType frt, FloatVal c,
-                        BoolVar b, bool t) const {
-        rel(home, post(home,NULL), frt, c, b, t);
+                        BoolVar b) const {
+        rel(home, post(home,NULL), frt, c, b);
       }
     };
     /// Check if \a e is of type \a t

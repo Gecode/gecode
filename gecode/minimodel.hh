@@ -692,9 +692,8 @@ namespace Gecode {
     /// Post expression to be in relation \a frt with \a c
     virtual void post(Home home, FloatRelType frt, FloatVal c) const = 0;
     /// Post reified expression to be in relation \a frt with \a c
-    /// (if \a t is false for negated relation)
     virtual void post(Home home, FloatRelType frt, FloatVal c,
-                      BoolVar b, bool t) const = 0;
+                      BoolVar b) const = 0;
     /// Destructor
     virtual ~NonLinFloatExpr(void) {}
     /// Return fresh variable if \a x is NULL, \a x otherwise
@@ -771,8 +770,8 @@ namespace Gecode {
     const LinFloatExpr& operator =(const LinFloatExpr& e);
     /// Post propagator
     void post(Home home, FloatRelType frt) const;
-    /// Post reified propagator (if \a t is false for negated relation)
-    void post(Home home, FloatRelType frt, const BoolVar& b, bool t) const;
+    /// Post reified propagator
+    void post(Home home, FloatRelType frt, const BoolVar& b) const;
     /// Post propagator and return variable for value
     FloatVar post(Home home) const;
     /// Return non-linear expression inside, or NULL if not non-linear
@@ -792,6 +791,8 @@ namespace Gecode {
     LinFloatExpr e;
     /// Which relation
     FloatRelType frt;
+    /// Negate relation type
+    static FloatRelType neg(FloatRelType frt);
     /// Default constructor
     LinFloatRel(void);
   public:

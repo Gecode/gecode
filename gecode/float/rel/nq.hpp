@@ -52,7 +52,7 @@ namespace Gecode { namespace Float { namespace Rel {
   ExecStatus
   Nq<View0,View1>::post(Home home, View0 x0, View1 x1){
     if (x0.assigned() && x1.assigned()) {
-      if (x0.val() == x1.val())
+      if (overlap(x0.val(),x1.val()))
         return ES_FAILED;
     } else if (same(x0,x1)) {
       return ES_FAILED;
@@ -77,7 +77,48 @@ namespace Gecode { namespace Float { namespace Rel {
   ExecStatus
   Nq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned() && x1.assigned()) {
-      return (x0.val() == x1.val()) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      return (overlap(x0.val(),x1.val())) ? ES_FAILED : home.ES_SUBSUMED(*this);
+    } 
+    return ES_FIX;
+  }
+
+  /*
+   * Disequality with float value
+   *
+   */
+  template<class View>
+  forceinline
+  NqFloat<View>::NqFloat(Home home, View x, FloatVal _c)
+    : UnaryPropagator<View,PC_FLOAT_VAL>(home,x), c(_c) {}
+
+  template<class View>
+  ExecStatus
+  NqFloat<View>::post(Home home, View x, FloatVal c){
+    if (x.assigned()) {
+      if (overlap(x.val(),c))
+        return ES_FAILED;
+    } else {
+      (void) new (home) NqFloat<View>(home,x,c);
+    }
+    return ES_OK;
+  }
+
+  template<class View>
+  forceinline
+  NqFloat<View>::NqFloat(Space& home, bool share, NqFloat<View>& p)
+    : UnaryPropagator<View,PC_FLOAT_VAL>(home,share,p), c(p.c) {}
+
+  template<class View>
+  Actor*
+  NqFloat<View>::copy(Space& home, bool share) {
+    return new (home) NqFloat<View>(home,share,*this);
+  }
+
+  template<class View>
+  ExecStatus
+  NqFloat<View>::propagate(Space& home, const ModEventDelta&) {
+    if (x0.assigned()) {
+      return (overlap(x0.val(),c)) ? ES_FAILED : home.ES_SUBSUMED(*this);
     } 
     return ES_FIX;
   }
