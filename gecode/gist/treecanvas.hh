@@ -39,6 +39,9 @@
 #define GECODE_GIST_TREECANVAS_HH
 
 #include <QtGui>
+#if QT_VERSION >= 0x050000
+#include <QtWidgets>
+#endif
 
 #include <gecode/kernel.hh>
 #include <gecode/gist.hh>

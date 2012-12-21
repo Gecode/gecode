@@ -1108,7 +1108,7 @@ AC_DEFUN([AC_GECODE_GMP_INCLUDE],
   [dnl build with support for the gmp headers
   AC_ARG_WITH([gmp-include],
     AC_HELP_STRING([--with-gmp-include],
-    [path to the gmp header files]))
+    [path to the gmp or mpir header files]))
   if test "${with_gmp_include:-no}" != "no"; then
       AC_SUBST(GMP_CPPFLAGS,[-I${with_gmp_include}])
   fi
@@ -1279,6 +1279,9 @@ AC_DEFUN([AC_GECODE_QT],
         ac_gecode_qt_tmpdir=`mktemp -d gistqt.XXXXXX` || exit 1
         cd ${ac_gecode_qt_tmpdir}
         echo "CONFIG += release" > a.pro
+        if test ${ac_gecode_qt_major} -eq 5; then
+          echo "QT += widgets printsupport" >> a.pro
+        fi
         ${QMAKE}
         if test -d a.xcodeproj; then
           ac_gecode_qt_makefile=a.xcodeproj/qt_preprocess.mak

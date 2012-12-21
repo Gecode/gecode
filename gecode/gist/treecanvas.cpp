@@ -36,6 +36,8 @@
  */
 
 #include <QtGui/QPainter>
+#include <QPrinter>
+#include <QPrintDialog>
 
 #include <stack>
 #include <fstream>

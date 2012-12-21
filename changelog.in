@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: gist
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Updated to compile with Qt version 5.0 (still works with Qt >= 4.3 as well).
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
