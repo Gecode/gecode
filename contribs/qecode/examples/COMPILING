@@ -1,0 +1,13 @@
+To compile the examples, you must add the qecode folder and the gecode folder (i.e. .. and ../../.. from this examples folder) to your include and library paths. These examples have to been linked against the gecodeint, gecodekernel, gecodeminimodel, gecodesupport, and gecodeqecode libraries. If you built the dynamic version of the gecode/qecode libraries, you will also have to add these folders to the dynamic libraries search path.
+
+Example (with dynamic libs) : 
+  For Linux, using gcc :
+    $ g++ stress_test.cpp -I.. -I../../.. -L.. -L../../.. -lgecodeqecode -lgecodeminimodel -lgecodesearch -lgecodeint -lgecodekernel -lgecodesupport -lpthread -o stress_test
+    $ export LD_LIBRARY_PATH="..:../../.." # only if using shared libraries
+    $ ./stress_test
+
+  For MacOS, using gcc : 
+    $ g++ stress_test.cpp -I.. -I../../.. -L.. -L../../.. -lgecodeqecode -lgecodeminimodel -lgecodesearch -lgecodeint -lgecodekernel -lgecodesupport -lpthread -o stress_test
+    $ export DYLD_LIBRARY_PATH="..:../../.." # only if using shared libraries
+    $ ./stress_test
+

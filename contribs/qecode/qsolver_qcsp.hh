@@ -29,10 +29,11 @@ THE SOFTWARE.
 #include "gecode/search.hh"
 #include "gecode/search/support.hh"
 #include "gecode/search/sequential/dfs.hh"
-
+#include <climits>
 #include "Strategy.hh"
 #include "qecode.hh"
 
+using namespace std;
 using namespace Gecode::Support;
 using namespace Gecode::Search;
 using namespace Gecode::Search::Sequential;
@@ -57,7 +58,7 @@ public:
     /** Solves the problem and returns a corresponding winning strategy. 
         @param nodes A reference that is increased by the number of nodes encountered in the search tree.
         */
-	QECODE_EXPORT Strategy solve(unsigned long int& nodes,unsigned int limit);
+	QECODE_EXPORT Strategy solve(unsigned long int& nodes,unsigned int limit=INT_MAX);
 };
 
 #endif
