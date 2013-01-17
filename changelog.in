@@ -2449,7 +2449,7 @@ Element constraints for integer arrays now accept shared integer
 arrays (IntSharedArray). By this, the very same array can be
 shared among several element constraints. Models require no
 change, as IntArgs are automatically coerced to
-IntSharedArrays. See "Modelling with Gecode" for more
+IntSharedArrays. See "Modeling with Gecode" for more
 explanation.
 
 [ENTRY]

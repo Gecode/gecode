@@ -66,7 +66,6 @@ AC_DEFUN([AC_GECODE_GET_OS],
 
 dnl Macros:
 dnl   AC_GECODE_ADD_TO_CXXFLAGS ([FLAG...])
-dnl   AC_GECODE_ADD_TO_GLDFLAGS ([FLAG...])
 dnl
 dnl Description:
 dnl   Add the flags to the corresponding variables
@@ -81,8 +80,6 @@ AC_DEFUN([AC_GECODE_ADD_TO_COMPILERFLAGS],
     CXXFLAGS="$1${CXXFLAGS:+ }${CXXFLAGS}"])
 AC_DEFUN([AC_GECODE_ADD_TO_CFLAGS],
    [CFLAGS="$1${CFLAGS:+ }${CFLAGS}"])
-AC_DEFUN([AC_GECODE_ADD_TO_GLDFLAGS],
-   [GLDFLAGS="$1${GLDFLAGS:+ }${GLDFLAGS}"])
 AC_DEFUN([AC_GECODE_ADD_TO_DLLFLAGS],
   [DLLFLAGS="$1${DLLFLAGS:+ }${DLLFLAGS}"])
 
@@ -213,33 +210,6 @@ AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
       AC_GECODE_CHECK_GCC_FLAG($1,[
         CFLAGS="$1${CFLAGS:+ }${CFLAGS}"],[])
    fi])dnl
-
-dnl Macro:
-dnl   AC_GECODE_CHECK_GLDFLAG (FLAG, [ACTION-IF-TRUE,
-dnl                                  [ACTION-IF-FALSE]])
-dnl
-dnl Description:
-dnl   Check whether FLAG is supported by the linker.  Run the
-dnl   shell commands ACTION-IF-TRUE if it is, ACTION-IF-FALSE
-dnl   otherwise.  If ACTION-IF-TRUE is not given, append FLAG to
-dnl   the contents of $GLDFLAGS.
-dnl
-dnl Authors:
-dnl   Leif Kornstaedt <kornstae@ps.uni-sb.de>
-dnl   Marco Kuhlmann <kuhlmann@ps.uni-sb.de>
-dnl
-AC_DEFUN([AC_GECODE_CHECK_GLDFLAG],
-  [AC_REQUIRE([AC_PROG_CXX])
-   AC_MSG_CHECKING(whether the linker accepts [$1])
-   ac_gecode_save_GLDFLAGS="${GLDFLAGS}"
-   GLDFLAGS="$1${GLDFLAGS:+ }${GLDFLAGS}"
-   AC_LINK_IFELSE([AC_LANG_PROGRAM()],
-     [AC_MSG_RESULT(yes)
-      GLDFLAGS="$ac_gecode_save_GLDFLAGS"
-      ifelse([$2], , [GLDFLAGS="$1${GLDFLAGS:+ }${GLDFLAGS}"], [$2])],
-     [AC_MSG_RESULT(no)
-      GLDFLAGS="$ac_gecode_save_GLDFLAGS"
-      ifelse([$3], , :, [$3])])])dnl
 
 dnl @synopsis _AC_C_IFDEF(MACRO-NAME, ACTION-IF-DEF, ACTION-IF-NOT-DEF)
 dnl
@@ -785,7 +755,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
   AC_DEFINE([GECODE_MEMORY_ALIGNMENT], [sizeof(void*)],
             [Heap memory alignment])
-
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
     AC_GECODE_ADD_TO_COMPILERFLAGS([${ac_gecode_cl_optimize_flag}])

@@ -1495,7 +1495,7 @@ endif
 $(GISTDLL) $(GISTLIB): $(GISTOBJ) $(GISTRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(GISTOBJ) $(GISTRES) \
-		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(GISTDLL) $(GLDFLAGS)
+		@DLLPATH@ @LINKOUTPUT@$(GISTDLL) $(GLDFLAGS) $(LINKQT)
 	$(FIXMANIFEST) $(GISTDLL).manifest
 	$(MANIFEST) -manifest $(GISTDLL).manifest \
 		    -outputresource:$(GISTDLL)\;2
@@ -1507,7 +1507,7 @@ $(FLATZINCDLL) $(FLATZINCLIB): $(FLATZINCOBJ) $(FLATZINCRES) \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) \
 	$(SETDLL) $(FLOATDLL) $(GISTDLL) $(MMDLL) $(DRIVERDLL)
 	$(CXX) $(DLLFLAGS) $(FLATZINCOBJ) $(FLATZINCRES) \
-		@DLLPATH@ $(LINKQT) @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS)
+		@DLLPATH@ @LINKOUTPUT@$(FLATZINCDLL) $(GLDFLAGS) $(LINKQT)
 	$(FIXMANIFEST) $(FLATZINCDLL).manifest
 	$(MANIFEST) -manifest $(FLATZINCDLL).manifest \
 		    -outputresource:$(FLATZINCDLL)\;2
@@ -1590,13 +1590,13 @@ examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) examples/%$(EXESUFFIX).res \
 	$(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $@.res \
 		$(DLLPATH) $(CXXFLAGS) \
-		$(LINKALL) $(LINKQT) $(GLDFLAGS)
+		$(LINKALL) $(GLDFLAGS) $(LINKQT) 
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 else
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $< $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(LINKQT) $(GLDFLAGS)
+	$(LINKALL) $(GLDFLAGS) $(LINKQT)
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 endif
@@ -1631,7 +1631,7 @@ endif
 $(FLATZINCEXE): $(FLATZINCEXEOBJ) $(FLATZINCEXERES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(FLATZINCEXEOBJ) $(FLATZINCEXERES) \
 	$(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(LINKSTATICQT) $(GLDFLAGS)
+	$(LINKALL) $(GLDFLAGS) $(LINKSTATICQT) 
 	$(FIXMANIFEST) $@.manifest
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
