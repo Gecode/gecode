@@ -73,6 +73,13 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Compiles with MSVC 2012.
+
+[ENTRY]
 Module: gist
 What:   change
 Rank:   minor
