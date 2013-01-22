@@ -57,7 +57,7 @@ namespace Gecode {
     /// Possibly a variable
     BoolVar x;
     /// Possibly a reified linear relation
-    LinRel rl;
+    LinIntRel rl;
 #ifdef GECODE_HAS_FLOAT_VARS
     /// Possibly a reified float linear relation
     LinFloatRel rfl;
@@ -154,7 +154,7 @@ namespace Gecode {
     }
   }
 
-  BoolExpr::BoolExpr(const LinRel& rl)
+  BoolExpr::BoolExpr(const LinIntRel& rl)
     : n(new Node) {
     n->same = 1;
     n->t    = NT_RLIN;
@@ -652,7 +652,7 @@ namespace Gecode {
     /// The number of Boolean expressions
     int n;
     /// The linear expression for the index
-    LinExpr idx;
+    LinIntExpr idx;
     /// Constructor
     BElementExpr(int size);
     /// Destructor
@@ -684,7 +684,7 @@ namespace Gecode {
   }
 
   BoolExpr
-  element(const BoolVarArgs& b, const LinExpr& idx) {
+  element(const BoolVarArgs& b, const LinIntExpr& idx) {
     BElementExpr* be = new BElementExpr(b.size());
     for (int i=b.size(); i--;)
       new (&be->a[i]) BoolExpr(b[i]);

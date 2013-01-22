@@ -67,7 +67,7 @@ namespace Gecode {
     /// Possibly a constant
     IntSet s;
     /// Possibly a linear expression
-    LinExpr e;
+    LinIntExpr e;
 
     /// Default constructor
     Node(void);
@@ -574,7 +574,7 @@ namespace Gecode {
     n->s    = s;
   }
 
-  SetExpr::SetExpr(const LinExpr& e) : n(new Node) {
+  SetExpr::SetExpr(const LinIntExpr& e) : n(new Node) {
     n->same = 1;
     n->t    = NT_LEXP;
     n->l    = NULL;
@@ -673,7 +673,7 @@ namespace Gecode {
     return SetExpr(l,SetExpr::NT_INTER,-r);
   }
   SetExpr
-  singleton(const LinExpr& e) {
+  singleton(const LinIntExpr& e) {
     return SetExpr(e);
   }
 
@@ -707,10 +707,10 @@ namespace Gecode {
 
   namespace MiniModel {
     /// Integer valued set expressions
-    class GECODE_MINIMODEL_EXPORT SetNonLinExpr : public NonLinExpr {
+    class GECODE_MINIMODEL_EXPORT SetNonLinIntExpr : public NonLinIntExpr {
     public:
       /// The expression type
-      enum SetNonLinExprType {
+      enum SetNonLinIntExprType {
         SNLE_CARD, ///< Cardinality expression
         SNLE_MIN,  ///< Minimum element expression
         SNLE_MAX   ///< Maximum element expression
@@ -718,7 +718,7 @@ namespace Gecode {
       /// The expression
       SetExpr e;
       /// Constructor
-      SetNonLinExpr(const SetExpr& e0, SetNonLinExprType t0)
+      SetNonLinIntExpr(const SetExpr& e0, SetNonLinIntExprType t0)
         : t(t0), e(e0) {}
       /// Post expression
       virtual IntVar post(Home home, IntVar* ret, IntConLevel) const {
@@ -796,20 +796,20 @@ namespace Gecode {
     };
   }
 
-  LinExpr
+  LinIntExpr
   cardinality(const SetExpr& e) {
-    return LinExpr(new MiniModel::SetNonLinExpr(e,
-      MiniModel::SetNonLinExpr::SNLE_CARD));
+    return LinIntExpr(new MiniModel::SetNonLinIntExpr(e,
+      MiniModel::SetNonLinIntExpr::SNLE_CARD));
   }
-  LinExpr
+  LinIntExpr
   min(const SetExpr& e) {
-    return LinExpr(new MiniModel::SetNonLinExpr(e,
-      MiniModel::SetNonLinExpr::SNLE_MIN));
+    return LinIntExpr(new MiniModel::SetNonLinIntExpr(e,
+      MiniModel::SetNonLinIntExpr::SNLE_MIN));
   }
-  LinExpr
+  LinIntExpr
   max(const SetExpr& e) {
-    return LinExpr(new MiniModel::SetNonLinExpr(e,
-      MiniModel::SetNonLinExpr::SNLE_MAX));
+    return LinIntExpr(new MiniModel::SetNonLinIntExpr(e,
+      MiniModel::SetNonLinIntExpr::SNLE_MAX));
   }
 
   /*

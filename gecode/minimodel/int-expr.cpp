@@ -40,7 +40,7 @@
 
 namespace Gecode {
 
-  class LinExpr::Node {
+  class LinIntExpr::Node {
   public:
     /// Nodes are reference counted
     unsigned int use;
@@ -59,7 +59,7 @@ namespace Gecode {
       /// Bool views and coefficients
       Int::Linear::Term<Int::BoolView>* tb;
       /// Non-linear expression
-      NonLinExpr* ne;
+      NonLinIntExpr* ne;
     } sum;
     /// Coefficient and offset
     int a, c;
@@ -93,11 +93,11 @@ namespace Gecode {
    *
    */
   forceinline
-  LinExpr::Node::Node(void) : use(1) {
+  LinIntExpr::Node::Node(void) : use(1) {
   }
 
   forceinline
-  LinExpr::Node::~Node(void) {
+  LinIntExpr::Node::~Node(void) {
     switch (t) {
     case NT_SUM_INT:
       if (n_int > 0)
@@ -115,16 +115,16 @@ namespace Gecode {
   }
 
   forceinline void*
-  LinExpr::Node::operator new(size_t size) {
+  LinIntExpr::Node::operator new(size_t size) {
     return heap.ralloc(size);
   }
 
   forceinline void
-  LinExpr::Node::operator delete(void* p, size_t) {
+  LinIntExpr::Node::operator delete(void* p, size_t) {
     heap.rfree(p);
   }
   bool
-  LinExpr::Node::decrement(void) {
+  LinIntExpr::Node::decrement(void) {
     if (--use == 0) {
       if ((l != NULL) && l->decrement())
         delete l;
@@ -140,23 +140,23 @@ namespace Gecode {
    *
    */
 
-  LinExpr::LinExpr(const LinExpr& e)
+  LinIntExpr::LinIntExpr(const LinIntExpr& e)
     : n(e.n) {
     n->use++;
   }
 
   int
-  LinExpr::Node::fill(Home home, IntConLevel icl,
+  LinIntExpr::Node::fill(Home home, IntConLevel icl,
                       Int::Linear::Term<Int::IntView>* ti, 
                       Int::Linear::Term<Int::BoolView>* tb) const {
     double d=0;
     fill(home,icl,ti,tb,1.0,d);
-    Int::Limits::check(d,"MiniModel::LinExpr");
+    Int::Limits::check(d,"MiniModel::LinIntExpr");
     return static_cast<int>(d);
   }
 
   void
-  LinExpr::post(Home home, IntRelType irt, IntConLevel icl) const {
+  LinIntExpr::post(Home home, IntRelType irt, IntConLevel icl) const {
     if (home.failed()) return;
     Region r(home);
     if (n->n_bool == 0) {
@@ -223,7 +223,7 @@ namespace Gecode {
   }
 
   void
-  LinExpr::post(Home home, IntRelType irt, const BoolVar& b,
+  LinIntExpr::post(Home home, IntRelType irt, const BoolVar& b,
                 IntConLevel icl) const {
     if (home.failed()) return;
     Region r(home);
@@ -281,7 +281,7 @@ namespace Gecode {
   }
 
   IntVar
-  LinExpr::post(Home home, IntConLevel icl) const {
+  LinIntExpr::post(Home home, IntConLevel icl) const {
     if (home.failed()) return IntVar(home,0,0);
     Region r(home);
     if (n->n_bool == 0) {
@@ -344,12 +344,12 @@ namespace Gecode {
     }
   }
 
-  NonLinExpr*
-  LinExpr::nle(void) const {
+  NonLinIntExpr*
+  LinIntExpr::nle(void) const {
     return n->t == NT_NONLIN ? n->sum.ne : NULL;
   }
 
-  LinExpr::LinExpr(void) :
+  LinIntExpr::LinIntExpr(void) :
     n(new Node) {
     n->n_int = n->n_bool = 0;
     n->t = NT_VAR_INT;
@@ -357,17 +357,17 @@ namespace Gecode {
     n->a = 0;
   }
 
-  LinExpr::LinExpr(int c) :
+  LinIntExpr::LinIntExpr(int c) :
     n(new Node) {
     n->n_int = n->n_bool = 0;
     n->t = NT_CONST;
     n->l = n->r = NULL;
     n->a = 0;
-    Int::Limits::check(c,"MiniModel::LinExpr");
+    Int::Limits::check(c,"MiniModel::LinIntExpr");
     n->c = c;
   }
 
-  LinExpr::LinExpr(const IntVar& x, int a) :
+  LinIntExpr::LinIntExpr(const IntVar& x, int a) :
     n(new Node) {
     n->n_int = 1;
     n->n_bool = 0;
@@ -377,7 +377,7 @@ namespace Gecode {
     n->x_int = x;
   }
 
-  LinExpr::LinExpr(const BoolVar& x, int a) :
+  LinIntExpr::LinIntExpr(const BoolVar& x, int a) :
     n(new Node) {
     n->n_int = 0;
     n->n_bool = 1;
@@ -387,7 +387,7 @@ namespace Gecode {
     n->x_bool = x;
   }
 
-  LinExpr::LinExpr(const IntVarArgs& x) :
+  LinIntExpr::LinIntExpr(const IntVarArgs& x) :
     n(new Node) {
     n->n_int = x.size();
     n->n_bool = 0;
@@ -402,10 +402,10 @@ namespace Gecode {
     }
   }
 
-  LinExpr::LinExpr(const IntArgs& a, const IntVarArgs& x) :
+  LinIntExpr::LinIntExpr(const IntArgs& a, const IntVarArgs& x) :
     n(new Node) {
     if (a.size() != x.size())
-      throw Int::ArgumentSizeMismatch("MiniModel::LinExpr");
+      throw Int::ArgumentSizeMismatch("MiniModel::LinIntExpr");
     n->n_int = x.size();
     n->n_bool = 0;
     n->t = NT_SUM_INT;
@@ -419,7 +419,7 @@ namespace Gecode {
     }
   }
 
-  LinExpr::LinExpr(const BoolVarArgs& x) :
+  LinIntExpr::LinIntExpr(const BoolVarArgs& x) :
     n(new Node) {
     n->n_int = 0;
     n->n_bool = x.size();
@@ -434,10 +434,10 @@ namespace Gecode {
     }
   }
 
-  LinExpr::LinExpr(const IntArgs& a, const BoolVarArgs& x) :
+  LinIntExpr::LinIntExpr(const IntArgs& a, const BoolVarArgs& x) :
     n(new Node) {
     if (a.size() != x.size())
-      throw Int::ArgumentSizeMismatch("MiniModel::LinExpr");
+      throw Int::ArgumentSizeMismatch("MiniModel::LinIntExpr");
     n->n_int = 0;
     n->n_bool = x.size();
     n->t = NT_SUM_BOOL;
@@ -451,7 +451,7 @@ namespace Gecode {
     }
   }
 
-  LinExpr::LinExpr(const LinExpr& e0, NodeType t, const LinExpr& e1) :
+  LinIntExpr::LinIntExpr(const LinIntExpr& e0, NodeType t, const LinIntExpr& e1) :
     n(new Node) {
     n->n_int = e0.n->n_int + e1.n->n_int;
     n->n_bool = e0.n->n_bool + e1.n->n_bool;
@@ -460,7 +460,7 @@ namespace Gecode {
     n->r = e1.n; n->r->use++;
   }
 
-  LinExpr::LinExpr(const LinExpr& e, NodeType t, int c) :
+  LinIntExpr::LinIntExpr(const LinIntExpr& e, NodeType t, int c) :
     n(new Node) {
     n->n_int = e.n->n_int;
     n->n_bool = e.n->n_bool;
@@ -470,7 +470,7 @@ namespace Gecode {
     n->c = c;
   }
 
-  LinExpr::LinExpr(int a, const LinExpr& e) :
+  LinIntExpr::LinIntExpr(int a, const LinIntExpr& e) :
     n(new Node) {
     n->n_int = e.n->n_int;
     n->n_bool = e.n->n_bool;
@@ -480,7 +480,7 @@ namespace Gecode {
     n->a = a;
   }
 
-  LinExpr::LinExpr(NonLinExpr* e) :
+  LinIntExpr::LinIntExpr(NonLinIntExpr* e) :
     n(new Node) {
     n->n_int = 1;
     n->n_bool = 0;
@@ -490,8 +490,8 @@ namespace Gecode {
     n->sum.ne = e;
   }
 
-  const LinExpr&
-  LinExpr::operator =(const LinExpr& e) {
+  const LinIntExpr&
+  LinIntExpr::operator =(const LinIntExpr& e) {
     if (this != &e) {
       if (n->decrement())
         delete n;
@@ -500,50 +500,50 @@ namespace Gecode {
     return *this;
   }
 
-  LinExpr::~LinExpr(void) {
+  LinIntExpr::~LinIntExpr(void) {
     if (n->decrement())
       delete n;
   }
 
 
   void
-  LinExpr::Node::fill(Home home, IntConLevel icl,
+  LinIntExpr::Node::fill(Home home, IntConLevel icl,
                       Int::Linear::Term<Int::IntView>*& ti, 
                       Int::Linear::Term<Int::BoolView>*& tb,
                       double m, double& d) const {
     switch (this->t) {
     case NT_CONST:
-      Int::Limits::check(m*c,"MiniModel::LinExpr");
+      Int::Limits::check(m*c,"MiniModel::LinIntExpr");
       d += m*c;
       break;
     case NT_VAR_INT:
-      Int::Limits::check(m*a,"MiniModel::LinExpr");
+      Int::Limits::check(m*a,"MiniModel::LinIntExpr");
       ti->a=static_cast<int>(m*a); ti->x=x_int; ti++;
       break;
     case NT_NONLIN:
       ti->a=static_cast<int>(m); ti->x=sum.ne->post(home, NULL, icl); ti++;
       break;
     case NT_VAR_BOOL:
-      Int::Limits::check(m*a,"MiniModel::LinExpr");
+      Int::Limits::check(m*a,"MiniModel::LinIntExpr");
       tb->a=static_cast<int>(m*a); tb->x=x_bool; tb++;
       break;
     case NT_SUM_INT:
       for (int i=n_int; i--; ) {
-        Int::Limits::check(m*sum.ti[i].a,"MiniModel::LinExpr");
+        Int::Limits::check(m*sum.ti[i].a,"MiniModel::LinIntExpr");
         ti[i].x = sum.ti[i].x; ti[i].a = static_cast<int>(m*sum.ti[i].a);
       }
       ti += n_int;
       break;
     case NT_SUM_BOOL:
       for (int i=n_bool; i--; ) {
-        Int::Limits::check(m*sum.tb[i].a,"MiniModel::LinExpr");
+        Int::Limits::check(m*sum.tb[i].a,"MiniModel::LinIntExpr");
         tb[i].x = sum.tb[i].x; tb[i].a = static_cast<int>(m*sum.tb[i].a);
       }
       tb += n_bool;
       break;
     case NT_ADD:
       if (l == NULL) {
-        Int::Limits::check(m*c,"MiniModel::LinExpr");
+        Int::Limits::check(m*c,"MiniModel::LinIntExpr");
         d += m*c;
       } else {
         l->fill(home,icl,ti,tb,m,d);
@@ -552,7 +552,7 @@ namespace Gecode {
       break;
     case NT_SUB:
       if (l == NULL) {
-        Int::Limits::check(m*c,"MiniModel::LinExpr");
+        Int::Limits::check(m*c,"MiniModel::LinIntExpr");
         d += m*c;
       } else {
         l->fill(home,icl,ti,tb,m,d);
@@ -560,7 +560,7 @@ namespace Gecode {
       r->fill(home,icl,ti,tb,-m,d);
       break;
     case NT_MUL:
-      Int::Limits::check(m*a,"MiniModel::LinExpr");
+      Int::Limits::check(m*a,"MiniModel::LinIntExpr");
       l->fill(home,icl,ti,tb,m*a,d);
       break;
     default:
@@ -573,310 +573,310 @@ namespace Gecode {
    * Operators
    *
    */
-  LinExpr
+  LinIntExpr
   operator +(int c, const IntVar& x) {
     if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
-      return LinExpr(static_cast<double>(c)+x.val());
+      return LinIntExpr(static_cast<double>(c)+x.val());
     else
-      return LinExpr(x,LinExpr::NT_ADD,c);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,c);
   }
-  LinExpr
+  LinIntExpr
   operator +(int c, const BoolVar& x) {
     if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
-      return LinExpr(static_cast<double>(c)+x.val());
+      return LinIntExpr(static_cast<double>(c)+x.val());
     else
-      return LinExpr(x,LinExpr::NT_ADD,c);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,c);
   }
-  LinExpr
-  operator +(int c, const LinExpr& e) {
-    return LinExpr(e,LinExpr::NT_ADD,c);
+  LinIntExpr
+  operator +(int c, const LinIntExpr& e) {
+    return LinIntExpr(e,LinIntExpr::NT_ADD,c);
   }
-  LinExpr
+  LinIntExpr
   operator +(const IntVar& x, int c) {
     if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
-      return LinExpr(static_cast<double>(c)+x.val());
+      return LinIntExpr(static_cast<double>(c)+x.val());
     else
-      return LinExpr(x,LinExpr::NT_ADD,c);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,c);
   }
-  LinExpr
+  LinIntExpr
   operator +(const BoolVar& x, int c) {
     if (x.assigned() && Int::Limits::valid(static_cast<double>(c)+x.val()))
-      return LinExpr(static_cast<double>(c)+x.val());
+      return LinIntExpr(static_cast<double>(c)+x.val());
     else
-      return LinExpr(x,LinExpr::NT_ADD,c);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,c);
   }
-  LinExpr
-  operator +(const LinExpr& e, int c) {
-    return LinExpr(e,LinExpr::NT_ADD,c);
+  LinIntExpr
+  operator +(const LinIntExpr& e, int c) {
+    return LinIntExpr(e,LinIntExpr::NT_ADD,c);
   }
-  LinExpr
+  LinIntExpr
   operator +(const IntVar& x, const IntVar& y) {
     if (x.assigned())
       return x.val() + y;
     else if (y.assigned())
       return x + y.val();
     else
-      return LinExpr(x,LinExpr::NT_ADD,y);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,y);
   }
-  LinExpr
+  LinIntExpr
   operator +(const IntVar& x, const BoolVar& y) {
     if (x.assigned())
       return x.val() + y;
     else if (y.assigned())
       return x + y.val();
     else
-      return LinExpr(x,LinExpr::NT_ADD,y);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,y);
   }
-  LinExpr
+  LinIntExpr
   operator +(const BoolVar& x, const IntVar& y) {
     if (x.assigned())
       return x.val() + y;
     else if (y.assigned())
       return x + y.val();
     else
-      return LinExpr(x,LinExpr::NT_ADD,y);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,y);
   }
-  LinExpr
+  LinIntExpr
   operator +(const BoolVar& x, const BoolVar& y) {
     if (x.assigned())
       return x.val() + y;
     else if (y.assigned())
       return x + y.val();
     else
-      return LinExpr(x,LinExpr::NT_ADD,y);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,y);
   }
-  LinExpr
-  operator +(const IntVar& x, const LinExpr& e) {
+  LinIntExpr
+  operator +(const IntVar& x, const LinIntExpr& e) {
     if (x.assigned())
       return x.val() + e;
     else
-      return LinExpr(x,LinExpr::NT_ADD,e);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,e);
   }
-  LinExpr
-  operator +(const BoolVar& x, const LinExpr& e) {
+  LinIntExpr
+  operator +(const BoolVar& x, const LinIntExpr& e) {
     if (x.assigned())
       return x.val() + e;
     else
-      return LinExpr(x,LinExpr::NT_ADD,e);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,e);
   }
-  LinExpr
-  operator +(const LinExpr& e, const IntVar& x) {
+  LinIntExpr
+  operator +(const LinIntExpr& e, const IntVar& x) {
     if (x.assigned())
       return e + x.val();
     else
-      return LinExpr(e,LinExpr::NT_ADD,x);
+      return LinIntExpr(e,LinIntExpr::NT_ADD,x);
   }
-  LinExpr
-  operator +(const LinExpr& e, const BoolVar& x) {
+  LinIntExpr
+  operator +(const LinIntExpr& e, const BoolVar& x) {
     if (x.assigned())
       return e + x.val();
     else
-      return LinExpr(e,LinExpr::NT_ADD,x);
+      return LinIntExpr(e,LinIntExpr::NT_ADD,x);
   }
-  LinExpr
-  operator +(const LinExpr& e1, const LinExpr& e2) {
-    return LinExpr(e1,LinExpr::NT_ADD,e2);
+  LinIntExpr
+  operator +(const LinIntExpr& e1, const LinIntExpr& e2) {
+    return LinIntExpr(e1,LinIntExpr::NT_ADD,e2);
   }
 
-  LinExpr
+  LinIntExpr
   operator -(int c, const IntVar& x) {
     if (x.assigned() && Int::Limits::valid(static_cast<double>(c)-x.val()))
-      return LinExpr(static_cast<double>(c)-x.val());
+      return LinIntExpr(static_cast<double>(c)-x.val());
     else
-      return LinExpr(x,LinExpr::NT_SUB,c);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,c);
   }
-  LinExpr
+  LinIntExpr
   operator -(int c, const BoolVar& x) {
     if (x.assigned() && Int::Limits::valid(static_cast<double>(c)-x.val()))
-      return LinExpr(static_cast<double>(c)-x.val());
+      return LinIntExpr(static_cast<double>(c)-x.val());
     else
-      return LinExpr(x,LinExpr::NT_SUB,c);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,c);
   }
-  LinExpr
-  operator -(int c, const LinExpr& e) {
-    return LinExpr(e,LinExpr::NT_SUB,c);
+  LinIntExpr
+  operator -(int c, const LinIntExpr& e) {
+    return LinIntExpr(e,LinIntExpr::NT_SUB,c);
   }
-  LinExpr
+  LinIntExpr
   operator -(const IntVar& x, int c) {
     if (x.assigned() && Int::Limits::valid(x.val()-static_cast<double>(c)))
-      return LinExpr(x.val()-static_cast<double>(c));
+      return LinIntExpr(x.val()-static_cast<double>(c));
     else
-      return LinExpr(x,LinExpr::NT_ADD,-c);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,-c);
   }
-  LinExpr
+  LinIntExpr
   operator -(const BoolVar& x, int c) {
     if (x.assigned() && Int::Limits::valid(x.val()-static_cast<double>(c)))
-      return LinExpr(x.val()-static_cast<double>(c));
+      return LinIntExpr(x.val()-static_cast<double>(c));
     else
-      return LinExpr(x,LinExpr::NT_ADD,-c);
+      return LinIntExpr(x,LinIntExpr::NT_ADD,-c);
   }
-  LinExpr
-  operator -(const LinExpr& e, int c) {
-    return LinExpr(e,LinExpr::NT_ADD,-c);
+  LinIntExpr
+  operator -(const LinIntExpr& e, int c) {
+    return LinIntExpr(e,LinIntExpr::NT_ADD,-c);
   }
-  LinExpr
+  LinIntExpr
   operator -(const IntVar& x, const IntVar& y) {
     if (x.assigned())
       return x.val() - y;
     else if (y.assigned())
       return x - y.val();
     else
-      return LinExpr(x,LinExpr::NT_SUB,y);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,y);
   }
-  LinExpr
+  LinIntExpr
   operator -(const IntVar& x, const BoolVar& y) {
     if (x.assigned())
       return x.val() - y;
     else if (y.assigned())
       return x - y.val();
     else
-      return LinExpr(x,LinExpr::NT_SUB,y);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,y);
   }
-  LinExpr
+  LinIntExpr
   operator -(const BoolVar& x, const IntVar& y) {
     if (x.assigned())
       return x.val() - y;
     else if (y.assigned())
       return x - y.val();
     else
-      return LinExpr(x,LinExpr::NT_SUB,y);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,y);
   }
-  LinExpr
+  LinIntExpr
   operator -(const BoolVar& x, const BoolVar& y) {
     if (x.assigned())
       return x.val() - y;
     else if (y.assigned())
       return x - y.val();
     else
-      return LinExpr(x,LinExpr::NT_SUB,y);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,y);
   }
-  LinExpr
-  operator -(const IntVar& x, const LinExpr& e) {
+  LinIntExpr
+  operator -(const IntVar& x, const LinIntExpr& e) {
     if (x.assigned())
       return x.val() - e;
     else
-      return LinExpr(x,LinExpr::NT_SUB,e);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,e);
   }
-  LinExpr
-  operator -(const BoolVar& x, const LinExpr& e) {
+  LinIntExpr
+  operator -(const BoolVar& x, const LinIntExpr& e) {
     if (x.assigned())
       return x.val() - e;
     else
-      return LinExpr(x,LinExpr::NT_SUB,e);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,e);
   }
-  LinExpr
-  operator -(const LinExpr& e, const IntVar& x) {
+  LinIntExpr
+  operator -(const LinIntExpr& e, const IntVar& x) {
     if (x.assigned())
       return e - x.val();
     else
-      return LinExpr(e,LinExpr::NT_SUB,x);
+      return LinIntExpr(e,LinIntExpr::NT_SUB,x);
   }
-  LinExpr
-  operator -(const LinExpr& e, const BoolVar& x) {
+  LinIntExpr
+  operator -(const LinIntExpr& e, const BoolVar& x) {
     if (x.assigned())
       return e - x.val();
     else
-      return LinExpr(e,LinExpr::NT_SUB,x);
+      return LinIntExpr(e,LinIntExpr::NT_SUB,x);
   }
-  LinExpr
-  operator -(const LinExpr& e1, const LinExpr& e2) {
-    return LinExpr(e1,LinExpr::NT_SUB,e2);
+  LinIntExpr
+  operator -(const LinIntExpr& e1, const LinIntExpr& e2) {
+    return LinIntExpr(e1,LinIntExpr::NT_SUB,e2);
   }
 
-  LinExpr
+  LinIntExpr
   operator -(const IntVar& x) {
     if (x.assigned())
-      return LinExpr(-x.val());
+      return LinIntExpr(-x.val());
     else
-      return LinExpr(x,LinExpr::NT_SUB,0);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,0);
   }
-  LinExpr
+  LinIntExpr
   operator -(const BoolVar& x) {
     if (x.assigned())
-      return LinExpr(-x.val());
+      return LinIntExpr(-x.val());
     else
-      return LinExpr(x,LinExpr::NT_SUB,0);
+      return LinIntExpr(x,LinIntExpr::NT_SUB,0);
   }
-  LinExpr
-  operator -(const LinExpr& e) {
-    return LinExpr(e,LinExpr::NT_SUB,0);
+  LinIntExpr
+  operator -(const LinIntExpr& e) {
+    return LinIntExpr(e,LinIntExpr::NT_SUB,0);
   }
 
-  LinExpr
+  LinIntExpr
   operator *(int a, const IntVar& x) {
     if (a == 0)
-      return LinExpr(0.0);
+      return LinIntExpr(0.0);
     else if (x.assigned() && 
              Int::Limits::valid(static_cast<double>(a)*x.val()))
-      return LinExpr(static_cast<double>(a)*x.val());
+      return LinIntExpr(static_cast<double>(a)*x.val());
     else
-      return LinExpr(x,a);
+      return LinIntExpr(x,a);
   }
-  LinExpr
+  LinIntExpr
   operator *(int a, const BoolVar& x) {
     if (a == 0)
-      return LinExpr(0.0);
+      return LinIntExpr(0.0);
     else if (x.assigned() && 
              Int::Limits::valid(static_cast<double>(a)*x.val()))
-      return LinExpr(static_cast<double>(a)*x.val());
+      return LinIntExpr(static_cast<double>(a)*x.val());
     else
-      return LinExpr(x,a);
+      return LinIntExpr(x,a);
   }
-  LinExpr
+  LinIntExpr
   operator *(const IntVar& x, int a) {
     if (a == 0)
-      return LinExpr(0.0);
+      return LinIntExpr(0.0);
     else if (x.assigned() && 
              Int::Limits::valid(static_cast<double>(a)*x.val()))
-      return LinExpr(static_cast<double>(a)*x.val());
+      return LinIntExpr(static_cast<double>(a)*x.val());
     else
-      return LinExpr(x,a);
+      return LinIntExpr(x,a);
   }
-  LinExpr
+  LinIntExpr
   operator *(const BoolVar& x, int a) {
     if (a == 0)
-      return LinExpr(0.0);
+      return LinIntExpr(0.0);
     else if (x.assigned() && 
              Int::Limits::valid(static_cast<double>(a)*x.val()))
-      return LinExpr(static_cast<double>(a)*x.val());
+      return LinIntExpr(static_cast<double>(a)*x.val());
     else
-      return LinExpr(x,a);
+      return LinIntExpr(x,a);
   }
-  LinExpr
-  operator *(const LinExpr& e, int a) {
+  LinIntExpr
+  operator *(const LinIntExpr& e, int a) {
     if (a == 0)
-      return LinExpr(0.0);
+      return LinIntExpr(0.0);
     else
-      return LinExpr(a,e);
+      return LinIntExpr(a,e);
   }
-  LinExpr
-  operator *(int a, const LinExpr& e) {
+  LinIntExpr
+  operator *(int a, const LinIntExpr& e) {
     if (a == 0)
-      return LinExpr(0.0);
+      return LinIntExpr(0.0);
     else
-      return LinExpr(a,e);
+      return LinIntExpr(a,e);
   }
 
-  LinExpr
+  LinIntExpr
   sum(const IntVarArgs& x) {
-    return LinExpr(x);
+    return LinIntExpr(x);
   }
-  LinExpr
+  LinIntExpr
   sum(const IntArgs& a, const IntVarArgs& x) {
-    return LinExpr(a,x);
+    return LinIntExpr(a,x);
   }
-  LinExpr
+  LinIntExpr
   sum(const BoolVarArgs& x) {
-    return LinExpr(x);
+    return LinIntExpr(x);
   }
-  LinExpr
+  LinIntExpr
   sum(const IntArgs& a, const BoolVarArgs& x) {
-    return LinExpr(a,x);
+    return LinIntExpr(a,x);
   }
 
 
   IntVar
-  expr(Home home, const LinExpr& e, IntConLevel icl) {
+  expr(Home home, const LinIntExpr& e, IntConLevel icl) {
     if (!home.failed())
       return e.post(home,icl);
     IntVar x(home,Int::Limits::min,Int::Limits::max);

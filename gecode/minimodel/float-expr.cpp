@@ -37,6 +37,10 @@
 
 #include <gecode/minimodel.hh>
 
+#ifdef GECODE_HAS_FLOAT_VARS
+
+#include <gecode/float/linear.hh>
+
 namespace Gecode {
 
   class LinFloatExpr::Node {
@@ -557,5 +561,7 @@ namespace Gecode {
   }
 
 }
+
+#endif
 
 // STATISTICS: minimodel-any

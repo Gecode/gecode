@@ -37,6 +37,8 @@
 
 #include <gecode/minimodel.hh>
 
+#ifdef GECODE_HAS_FLOAT_VARS
+
 namespace Gecode {
 
   /*
@@ -242,5 +244,7 @@ namespace Gecode {
   }
 
 }
+
+#endif
 
 // STATISTICS: minimodel-any

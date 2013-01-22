@@ -578,17 +578,13 @@ SETBUILDDIRS	=						\
 # MINIMODEL COMPONENTS
 #
 
-MMSRC1 = \
-	lin-expr.cpp lin-rel.cpp bool-expr.cpp \
+MMSRC0 = \
+	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp \
-	reg.cpp arithmetic.cpp
-ifeq "@enable_float_vars@" "yes"
-MMSRC0 = $(MMSRC1) lin-float-expr.cpp lin-float-rel.cpp
-else
-MMSRC0 = $(MMSRC1)
-endif
+	float-expr.cpp float-rel.cpp float-arith.cpp \
+	reg.cpp
 MMHDR0 = \
-	lin-rel.hpp lin-float-rel.hpp exception.hpp matrix.hpp \
+	int-rel.hpp float-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
 	optimize.hpp reg.hpp
 

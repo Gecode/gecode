@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
- *     Christian Schulte, 2005
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,51 +35,55 @@
  *
  */
 
+#ifdef GECODE_HAS_FLOAT_VARS
+
 namespace Gecode {
 
   /*
-   * Operations for linear expressions
+   * Operations for linear float relations
    *
    */
   forceinline
-  LinRel::LinRel(void) {}
+  LinFloatRel::LinFloatRel(void) {}
 
   forceinline
-  LinRel::LinRel(const LinExpr& l, IntRelType irt0, const LinExpr& r)
-    : e(l-r), irt(irt0) {}
+  LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, const LinFloatExpr& r)
+    : e(l-r), frt(frt0) {}
 
   forceinline
-  LinRel::LinRel(const LinExpr& l, IntRelType irt0, int r)
-    : e(l-r), irt(irt0) {}
+  LinFloatRel::LinFloatRel(const LinFloatExpr& l, FloatRelType frt0, FloatVal r)
+    : e(l-r), frt(frt0) {}
 
   forceinline
-  LinRel::LinRel(int l, IntRelType irt0, const LinExpr& r)
-    : e(l-r), irt(irt0) {}
+  LinFloatRel::LinFloatRel(FloatVal l, FloatRelType frt0, const LinFloatExpr& r)
+    : e(l-r), frt(frt0) {}
 
-  forceinline IntRelType
-  LinRel::neg(IntRelType irt) {
-    switch (irt) {
-    case IRT_EQ: return IRT_NQ;
-    case IRT_NQ: return IRT_EQ;
-    case IRT_LQ: return IRT_GR;
-    case IRT_LE: return IRT_GQ;
-    case IRT_GQ: return IRT_LE;
-    case IRT_GR: return IRT_LQ;
+  forceinline FloatRelType
+  LinFloatRel::neg(FloatRelType frt) {
+    switch (frt) {
+    case FRT_EQ: return FRT_NQ;
+    case FRT_NQ: return FRT_EQ;
+    case FRT_LQ: return FRT_GR;
+    case FRT_LE: return FRT_GQ;
+    case FRT_GQ: return FRT_LE;
+    case FRT_GR: return FRT_LQ;
     default: GECODE_NEVER;
     }
-    return IRT_LQ;
+    return FRT_LQ;
   }
 
   forceinline void
-  LinRel::post(Home home, bool t, IntConLevel icl) const {
-    e.post(home,t ? irt : neg(irt),icl);
+  LinFloatRel::post(Home home, bool t) const {
+    e.post(home,t ? frt : neg(frt));
   }
 
   forceinline void
-  LinRel::post(Home home, const BoolVar& b, bool t, IntConLevel icl) const {
-    e.post(home,t ? irt : neg(irt),b,icl);
+  LinFloatRel::post(Home home, const BoolVar& b, bool t) const {
+    e.post(home,t ? frt : neg(frt),b);
   }
 
 }
+
+#endif
 
 // STATISTICS: minimodel-any
