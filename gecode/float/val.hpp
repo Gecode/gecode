@@ -164,134 +164,176 @@ namespace Gecode {
    *
    */
 
-//   /* arithmetic operators involving intervals */
   forceinline FloatVal
-  operator+(const FloatVal& x) {
+  operator +(const FloatVal& x) {
     return FloatVal(+x.x);
   }
   forceinline FloatVal
-  operator-(const FloatVal& x) {
-    FloatNum mmi = (x.min()==0)?0:-x.min();
-    FloatNum mma = (x.max()==0)?0:-x.max();
+  operator -(const FloatVal& x) {
+    FloatNum mmi = (x.min() == 0.0) ? 0.0 : -x.min();
+    FloatNum mma = (x.max() == 0.0) ? 0.0 :-x.max();
     return FloatVal(mma,mmi);
   }
   forceinline FloatVal
-  operator+(const FloatVal& x, const FloatVal& y) {
+  operator +(const FloatVal& x, const FloatVal& y) {
     return FloatVal(x.x+y.x);
   }
   forceinline FloatVal
-  operator+(const FloatVal& x, const FloatNum& y) {
+  operator +(const FloatVal& x, const FloatNum& y) {
     return FloatVal(x.x+y);
   }
   forceinline FloatVal
-  operator+(const FloatNum& x, const FloatVal& y) {
+  operator +(const FloatNum& x, const FloatVal& y) {
     return FloatVal(x+y.x);
   }
 
   forceinline FloatVal
-  operator-(const FloatVal& x, const FloatVal& y) {
+  operator -(const FloatVal& x, const FloatVal& y) {
     return FloatVal(x.x-y.x);
   }
   forceinline FloatVal
-  operator-(const FloatVal& x, const FloatNum& y) {
+  operator -(const FloatVal& x, const FloatNum& y) {
     return FloatVal(x.x-y);
   }
   forceinline FloatVal
-  operator-(const FloatNum& x, const FloatVal& y) {
+  operator -(const FloatNum& x, const FloatVal& y) {
     return FloatVal(x-y.x);
   }
 
   forceinline FloatVal
-  operator*(const FloatVal& x, const FloatVal& y) {
+  operator *(const FloatVal& x, const FloatVal& y) {
     return FloatVal(x.x*y.x);
   }
   forceinline FloatVal
-  operator*(const FloatVal& x, const FloatNum& y) {
+  operator *(const FloatVal& x, const FloatNum& y) {
     return FloatVal(x.x*y);
   }
   forceinline FloatVal
-  operator*(const FloatNum& x, const FloatVal& y) {
+  operator *(const FloatNum& x, const FloatVal& y) {
     return FloatVal(x*y.x);
   }
 
   forceinline FloatVal
-  operator/(const FloatVal& x, const FloatVal& y) {
+  operator /(const FloatVal& x, const FloatVal& y) {
     return FloatVal(x.x/y.x);
   }
   forceinline FloatVal
-  operator/(const FloatVal& x, const FloatNum& y) {
+  operator /(const FloatVal& x, const FloatNum& y) {
     return FloatVal(x.x/y);
   }
   forceinline FloatVal
-  operator/(const FloatNum& x, const FloatVal& y) {
+  operator /(const FloatNum& x, const FloatVal& y) {
     return FloatVal(x/y.x);
   }
 
   forceinline bool
   operator <(const FloatVal& x, const FloatVal& y) {
-    return x.x < y.x;
+    try {
+      return x.x < y.x;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal < FloatVal");
+    }         
   }
   forceinline bool
   operator <(const FloatVal& x, const FloatNum& y) {
-    return x.x < y;
+    try {
+      return x.x < y;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal < FloatNum");
+    }         
   }
 
   forceinline bool
   operator <=(const FloatVal& x, const FloatVal& y) {
-    return x.x <= y.x;
+    try {
+      return x.x <= y.x;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal <= FloatVal");
+    }         
   }
   forceinline bool
   operator <=(const FloatVal& x, const FloatNum& y) {
-    return x.x <= y;
+    try {
+      return x.x <= y;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal <= FloatNum");
+    }         
   }
 
   forceinline bool
   operator >(const FloatVal& x, const FloatVal& y) {
-    return x.x > y.x;
+    try {
+      return x.x > y.x;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal > FloatVal");
+    }         
   }
   forceinline bool
   operator >(const FloatVal& x, const FloatNum& y) {
-    return x.x > y;
+    try {
+      return x.x > y;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal > FloatNum");
+    }         
   }
 
   forceinline bool
   operator >=(const FloatVal& x, const FloatVal& y) {
-    return x.x >= y.x;
+    try {
+      return x.x >= y.x;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal >= FloatVal");
+    }         
   }
   forceinline bool
   operator >=(const FloatVal& x, const FloatNum& y) {
-    return x.x >= y;
+    try {
+      return x.x >= y;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal >= FloatNum");
+    }         
   }
 
   forceinline bool
   operator ==(const FloatVal& x, const FloatVal& y) {
-    return x.x == y.x;
+    try {
+      return x.x == y.x;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal == FloatVal");
+    }         
   }
   forceinline bool
   operator ==(const FloatVal& x, const FloatNum& y) {
     if (!boost::numeric::interval_lib::checking_strict<FloatNum>
         ::is_empty(x.x.lower(), x.x.upper())) {
-      if (x.x.lower() == y && x.x.upper() == y) { 
+      if ((x.x.lower() == y) && (x.x.upper() == y))
         return true;
-      } else if (((x.x.lower() == y) && 
-                  (nextafter(x.x.lower(),x.x.upper()) == x.x.upper())) ||
-                 ((x.x.upper() == y) && 
-                  (nextafter(x.x.upper(),x.x.lower()) == x.x.lower()))) {
-        return true;
-      } else if ((x.x.upper() < y) || (x.x.lower() > y)) {
-        return false;
       }
-    }
-    throw boost::numeric::interval_lib::comparison_error();
+    if (((x.x.lower() == y) && 
+         (nextafter(x.x.lower(),x.x.upper()) == x.x.upper())) ||
+        ((x.x.upper() == y) && 
+         (nextafter(x.x.upper(),x.x.lower()) == x.x.lower())))
+      return true;
+    if ((x.x.upper() < y) || (x.x.lower() > y))
+      return false;
+    throw Float::ComparisonError("FloatVal == FloatNum");
   }
 
   forceinline bool
   operator !=(const FloatVal& x, const FloatVal& y) {
-    return x.x != y.x;
+    try {
+      return x.x != y.x;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal != FloatVal");
+    }         
   }
   forceinline bool
   operator !=(const FloatVal& x, const FloatNum& y) {
-    return x.x != y;
+    try {
+      return x.x != y;
+    } catch (boost::numeric::interval_lib::comparison_error&) {
+      throw Float::ComparisonError("FloatVal != FloatNum");
+    }         
   }
 
   forceinline bool

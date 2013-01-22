@@ -96,7 +96,7 @@ namespace Test { namespace Float {
                return UNCERTAIN;
            } else
              return SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -150,7 +150,7 @@ namespace Test { namespace Float {
                return UNCERTAIN;
            } else
              return SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }
        }

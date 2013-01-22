@@ -113,7 +113,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinIntExpr reg[3] = {x[0],x[1],x[2]};
          rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis,reg)));
        }
      };
@@ -140,7 +140,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr reg[3] = {
+         Gecode::LinIntExpr reg[3] = {
            channel(home,x[0]),channel(home,x[1]),channel(home,x[2])
          };
          rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis,reg)));
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr reg[3] = {
+         Gecode::LinIntExpr reg[3] = {
            x[0],x[1],channel(home,x[2])
          };
          rel(home, x[3], IRT_EQ, Gecode::expr(home, eval(lis,reg)));
@@ -203,8 +203,8 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::LinExpr r_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinIntExpr l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinIntExpr r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
            {
@@ -238,8 +238,8 @@ namespace Test { namespace Int {
                          Gecode::Reify r) {
          using namespace Gecode;
          assert(r.mode() == RM_EQV);
-         Gecode::LinExpr l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::LinExpr r_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinIntExpr l_reg[3] = {x[0],x[1],x[2]};
+         Gecode::LinIntExpr r_reg[3] = {x[0],x[1],x[2]};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::expr(home,
@@ -302,8 +302,8 @@ namespace Test { namespace Int {
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]);
          y[2] = channel(home,x[2]);
-         Gecode::LinExpr l_reg[3] = {y[0],y[1],y[2]};
-         Gecode::LinExpr r_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinIntExpr l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinIntExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
            {
@@ -340,8 +340,8 @@ namespace Test { namespace Int {
          BoolVarArgs y(3);
          y[0] = channel(home,x[0]); y[1] = channel(home,x[1]);
          y[2] = channel(home,x[2]);
-         Gecode::LinExpr l_reg[3] = {y[0],y[1],y[2]};
-         Gecode::LinExpr r_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinIntExpr l_reg[3] = {y[0],y[1],y[2]};
+         Gecode::LinIntExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::expr(home,
@@ -401,9 +401,9 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinExpr l_reg[3] = {channel(home,x[0]),x[1],x[2]};
-         Gecode::LinExpr r_reg[3] = {channel(home,x[3]),x[4],
-                                     channel(home,x[5])};
+         Gecode::LinIntExpr l_reg[3] = {channel(home,x[0]),x[1],x[2]};
+         Gecode::LinIntExpr r_reg[3] = {channel(home,x[3]),x[4],
+                                        channel(home,x[5])};
          switch (irt) {
          case IRT_EQ:
            Gecode::rel(home, 0 == eval(l_lis,l_reg) - eval(r_lis,r_reg));
@@ -431,9 +431,9 @@ namespace Test { namespace Int {
                          Gecode::Reify r) {
          using namespace Gecode;
          assert(r.mode() == RM_EQV);
-         Gecode::LinExpr l_reg[3] = {channel(home,x[0]),x[1],x[2]};
-         Gecode::LinExpr r_reg[3] = {channel(home,x[3]),x[4],
-                                     channel(home,x[5])};
+         Gecode::LinIntExpr l_reg[3] = {channel(home,x[0]),x[1],x[2]};
+         Gecode::LinIntExpr r_reg[3] = {channel(home,x[3]),x[4],
+                                        channel(home,x[5])};
          switch (irt) {
          case IRT_EQ:
            rel(home, Gecode::expr(home,

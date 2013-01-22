@@ -70,7 +70,7 @@ namespace Test { namespace Float {
            } else {
              return (cmp(x[0],frt,x[2]) && cmp(x[1],frt,x[2]))?SOLUTION:NO_SOLUTION;
            }
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -108,7 +108,7 @@ namespace Test { namespace Float {
        virtual SolutionTestType solution(const Assignment& x) const {
          try {
            return cmp(x[0],frt,x[0])?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -144,7 +144,7 @@ namespace Test { namespace Float {
            } else {
              return (cmp(x[0],frt,c) && cmp(x[1],frt,c))?SOLUTION:NO_SOLUTION;
            }
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }

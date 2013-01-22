@@ -53,6 +53,13 @@ namespace Gecode { namespace Float {
     OutOfLimits(const char* l);
   };
 
+  /// %Exception: Comparison Error
+  class GECODE_VTABLE_EXPORT ComparisonError : public Exception {
+  public:
+    /// Initialize with location \a l
+    ComparisonError(const char* l);
+  };
+
   /// %Exception: %Variable created with empty domain
   class GECODE_VTABLE_EXPORT VariableEmptyDomain : public Exception {
   public:
@@ -130,6 +137,10 @@ namespace Gecode { namespace Float {
   inline
   OutOfLimits::OutOfLimits(const char* l)
     : Exception(l,"Number out of limits") {}
+
+  inline
+  ComparisonError::ComparisonError(const char* l)
+    : Exception(l,"FloatVal comparison error") {}
 
   inline
   VariableEmptyDomain::VariableEmptyDomain(const char* l)

@@ -394,9 +394,8 @@ namespace Test { namespace Float {
 
   Assignment*
   Test::assignment(void) const {
-    switch (assigmentType)
-    {
-      case CPLT_ASSIGNMENT:
+    switch (assigmentType) {
+    case CPLT_ASSIGNMENT:
         return new CpltAssignment(arity,dom,step);
       case RANDOM_ASSIGNMENT:
         return new RandomAssignment(arity,dom,step);
@@ -405,6 +404,7 @@ namespace Test { namespace Float {
       default :
         GECODE_NEVER;
     }
+    return NULL; // Avoid compiler warnings
   }
 
   bool

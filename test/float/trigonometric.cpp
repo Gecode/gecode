@@ -60,7 +60,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == sin(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -82,7 +82,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == sin(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -113,7 +113,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d0 = x[0];
          try {
            return (d0 == sin(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -135,7 +135,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == cos(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -157,7 +157,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == cos(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -188,7 +188,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d0 = x[0];
          try {
            return (d0 == cos(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -210,7 +210,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == tan(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -232,7 +232,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == tan(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -263,7 +263,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d0 = x[0];
          try {
            return (d0 == tan(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -286,7 +286,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == asin(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -309,7 +309,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == asin(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -342,7 +342,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d0 = x[0];
          try {
            return (d0 == asin(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -365,7 +365,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == acos(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -388,7 +388,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == acos(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -421,7 +421,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d0 = x[0];
          try {
            return (d0 == acos(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -443,7 +443,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == atan(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -465,7 +465,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d1 = x[1];
          try {
            return (d1 == atan(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }
@@ -496,7 +496,7 @@ namespace Test { namespace Float {
          Gecode::FloatVal d0 = x[0];
          try {
            return (d0 == atan(d0))?SOLUTION:NO_SOLUTION;
-         } catch (boost::numeric::interval_lib::comparison_error&) {
+         } catch (Gecode::Float::ComparisonError&) {
            return UNCERTAIN;
          }         
        }

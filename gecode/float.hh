@@ -319,20 +319,20 @@ namespace Gecode {
    * \ingroup TaskModelFloatVars
    */
   class FloatVal {
-    friend FloatVal operator+(const FloatVal& x);
-    friend FloatVal operator-(const FloatVal& x);
-    friend FloatVal operator+(const FloatVal& x, const FloatVal& y);
-    friend FloatVal operator+(const FloatVal& x, const FloatNum& y);
-    friend FloatVal operator+(const FloatNum& x, const FloatVal& y);
-    friend FloatVal operator-(const FloatVal& x, const FloatVal& y);
-    friend FloatVal operator-(const FloatVal& x, const FloatNum& y);
-    friend FloatVal operator-(const FloatNum& x, const FloatVal& y);
-    friend FloatVal operator*(const FloatVal& x, const FloatVal& y);
-    friend FloatVal operator*(const FloatVal& x, const FloatNum& y);
-    friend FloatVal operator*(const FloatNum& x, const FloatVal& y);
-    friend FloatVal operator/(const FloatVal& x, const FloatVal& y);
-    friend FloatVal operator/(const FloatVal& x, const FloatNum& y);
-    friend FloatVal operator/(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator +(const FloatVal& x);
+    friend FloatVal operator -(const FloatVal& x);
+    friend FloatVal operator +(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator +(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator +(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator -(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator -(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator -(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator *(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator *(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator *(const FloatNum& x, const FloatVal& y);
+    friend FloatVal operator /(const FloatVal& x, const FloatVal& y);
+    friend FloatVal operator /(const FloatVal& x, const FloatNum& y);
+    friend FloatVal operator /(const FloatNum& x, const FloatVal& y);
 
     friend bool operator <(const FloatVal& x, const FloatVal& y);
     friend bool operator <(const FloatVal& x, const FloatNum& y);
