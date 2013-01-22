@@ -53,6 +53,7 @@ namespace Gecode { namespace Int { namespace Linear {
       case IRT_GR: return IRT_LQ; break;
       default: GECODE_NEVER;
     }
+    return IRT_EQ; // Avoid compiler warnings
   }
 
   /// Eliminate assigned views
