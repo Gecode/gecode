@@ -63,16 +63,12 @@ namespace Test { namespace Float {
                 n+1,-3,3,st,CPLT_ASSIGNMENT,n==1),
            frt(frt0) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         try {
-           if (x.size() == 2) {
-             return cmp(x[0],frt,x[1])?SOLUTION:NO_SOLUTION;
-           } else {
-             return (cmp(x[0],frt,x[2]) && cmp(x[1],frt,x[2]))?SOLUTION:NO_SOLUTION;
-           }
-         } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
-         }         
+       virtual MaybeType solution(const Assignment& x) const {
+         if (x.size() == 2) {
+           return cmp(x[0],frt,x[1]);
+         } else {
+           return cmp(x[0],frt,x[2]) && cmp(x[1],frt,x[2]);
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -105,12 +101,8 @@ namespace Test { namespace Float {
                 1,-3,3,st,CPLT_ASSIGNMENT,true),
            frt(frt0) { }
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         try {
-           return cmp(x[0],frt,x[0])?SOLUTION:NO_SOLUTION;
-         } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
-         }         
+       virtual MaybeType solution(const Assignment& x) const {
+         return cmp(x[0],frt,x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -137,16 +129,12 @@ namespace Test { namespace Float {
                 n,-3,3,st,CPLT_ASSIGNMENT,n==1),
            frt(frt0), c(c0) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         try {
-           if (x.size() == 1) {
-             return cmp(x[0],frt,c)?SOLUTION:NO_SOLUTION;
-           } else {
-             return (cmp(x[0],frt,c) && cmp(x[1],frt,c))?SOLUTION:NO_SOLUTION;
-           }
-         } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
-         }         
+       virtual MaybeType solution(const Assignment& x) const {
+         if (x.size() == 1) {
+           return cmp(x[0],frt,c);
+         } else {
+           return cmp(x[0],frt,c) && cmp(x[1],frt,c);
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {

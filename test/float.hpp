@@ -224,22 +224,35 @@ namespace Test { namespace Float {
     return "[" + s + str(x[x.size()-1]) + "]";
   }
 
-  template<class T>
-  inline bool
-  Test::cmp(T x, Gecode::FloatRelType r, T y) {
+  inline MaybeType
+  Test::cmp(Gecode::FloatVal x, Gecode::FloatRelType r, Gecode::FloatVal y) {
     using namespace Gecode;
-    switch (r) {
-    case FRT_EQ: return x == y;
-    case FRT_NQ: return x != y;
-    case FRT_LQ: return x <= y;
-    case FRT_LE: return x < y;
-    case FRT_GQ: return x >= y;
-    case FRT_GR: return x > y;
-    default: ;
-    }
-    return false;
+    try {
+      bool b = false;
+      switch (r) {
+      case FRT_EQ: b = (x == y); break;
+      case FRT_NQ: b = (x != y); break;
+      case FRT_LQ: b = (x <= y); break;
+      case FRT_LE: b = (x < y);  break;
+      case FRT_GQ: b = (x >= y); break;
+      case FRT_GR: b = (x > y);  break;
+      default: ;
+      }
+      return b ? MT_TRUE : MT_FALSE;
+    } catch (Gecode::Float::ComparisonError&) {
+      return MT_MAYBE;
+    }         
   }
 
+  inline MaybeType 
+  operator &&(MaybeType a, MaybeType b) {
+    switch (a) {
+    case MT_TRUE:  return b;
+    case MT_FALSE: return MT_FALSE;
+    default: ;
+    }
+    return (b == MT_FALSE) ? MT_FALSE : MT_MAYBE;
+  }
 
   /*
    * Iterators for reification modes

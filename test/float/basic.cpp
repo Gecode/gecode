@@ -60,8 +60,8 @@ namespace Test { namespace Float {
        Basic(Gecode::FloatVal v, Gecode::FloatNum s)
           : Test("Basic",3,v,s,CPLT_ASSIGNMENT,true) {}
        /// Check whether \a x is a solution
-       virtual SolutionTestType solution(const Assignment&) const {
-         return SOLUTION;
+       virtual MaybeType solution(const Assignment&) const {
+         return MT_TRUE;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space&, Gecode::FloatVarArray&) {

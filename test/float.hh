@@ -50,13 +50,17 @@ namespace Test {
 
   /// Testing domain floats
   namespace Float {
-    /// Solution test type
-    enum SolutionTestType {
-      NO_SOLUTION = 0,
-      SOLUTION,
-      UNCERTAIN
+
+    /// Type for comparisons and solutions
+    enum MaybeType {
+      MT_FALSE = 0, //< Does hold
+      MT_TRUE,      //< Does not hold
+      MT_MAYBE      //< Might or might not hold
     };
     
+    /// Three-valued conjunction of MaybeType
+    MaybeType operator &&(MaybeType a, MaybeType b);
+
     /// Assignment possible types
     enum AssignmentType {
       CPLT_ASSIGNMENT = 0,
@@ -207,9 +211,9 @@ namespace Test {
       /// Perform Boolean tell on \a b
       void rel(bool sol);
       /// Assign all (or all but one, if \a skip is true) variables to values in \a a
-      /// If assignment of a variable is UNCERTAIN (if the two intervals are contiguous),
-      /// \a sol is set to UNCERTAIN
-      void assign(const Assignment& a, SolutionTestType& sol, bool skip=false);
+      /// If assignment of a variable is MT_MAYBE (if the two intervals are contiguous),
+      /// \a sol is set to MT_MAYBE
+      void assign(const Assignment& a, MaybeType& sol, bool skip=false);
       /// Assing a random variable to a random bound
       void bound(void);
       /// Cut the bigger variable to an half sized interval. It returns
@@ -275,7 +279,7 @@ namespace Test {
       /// If such an assignment is computed, it returns true, false otherwise
       virtual bool extendAssignement(Assignment& a) const;
       /// Check for solution
-      virtual SolutionTestType solution(const Assignment&) const = 0;
+      virtual MaybeType solution(const Assignment&) const = 0;
       /// Test if \a ts is subsumed or not (i.e. if there is no more propagator unless
       /// the assignment is an extended assigment.
       bool subsumed(const TestSpace& ts) const;
@@ -304,7 +308,8 @@ namespace Test {
       /// \name General support
       //@{
       /// Compare \a x and \a y with respect to \a r
-      template<class T> static bool cmp(T x, Gecode::FloatRelType r, T y);
+      static MaybeType cmp(Gecode::FloatVal x, Gecode::FloatRelType r, 
+                           Gecode::FloatVal y);
       //@}
     };
     //@}

@@ -253,7 +253,7 @@ namespace Test { namespace Float {
   }
 
   void 
-  TestSpace::assign(const Assignment& a, SolutionTestType& sol, bool skip) {
+  TestSpace::assign(const Assignment& a, MaybeType& sol, bool skip) {
     using namespace Gecode;
     int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
 
@@ -261,7 +261,7 @@ namespace Test { namespace Float {
       if (i != j) {
         if ((x[j].min() == a[j].max()) || (x[j].max() == a[j].min()))
         {
-          sol = UNCERTAIN;
+          sol = MT_MAYBE;
           return;
         }
         rel(j, FRT_EQ, a[j]);
@@ -463,10 +463,10 @@ if (!(T)) {                                                     \
     search_o.threads = 1;
     DFS<TestSpace> * e_s = new DFS<TestSpace>(search_s,search_o);
     while (a()) {
-      SolutionTestType sol = solution(a);
+      MaybeType sol = solution(a);
       if (opt.log) {
         olog << ind(1) << "Assignment: " << a
-             << ((sol==SOLUTION) ? " (solution)" : ((sol==NO_SOLUTION)?" (no solution)":" (uncertain)"))
+             << ((sol==MT_TRUE) ? " (solution)" : ((sol==MT_FALSE)?" (no solution)":" (maybe)"))
              << std::endl;
       }
       START_TEST("Assignment (after posting)");
@@ -502,10 +502,10 @@ if (!(T)) {                                                     \
           default: assert(false);
         }
         sc->assign(a,sol);
-        if (sol == SOLUTION) {
+        if (sol == MT_TRUE) {
           CHECK_TEST(!sc->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*sc), "No subsumption");
-        } else if (sol == NO_SOLUTION) {
+        } else if (sol == MT_FALSE) {
           CHECK_TEST(sc->failed(), "Solved on non-solution");
         }
         delete s; delete sc;
@@ -517,10 +517,10 @@ if (!(T)) {                                                     \
         s->assign(a,sol,true);
         (void) s->failed();
         s->assign(a,sol);
-        if (sol == SOLUTION) {
+        if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
-        } else if (sol == NO_SOLUTION) {
+        } else if (sol == MT_FALSE) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -530,10 +530,10 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,step,this,false);
         s->assign(a,sol);
         s->post();
-        if (sol == SOLUTION) {
+        if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
-        } else if (sol == NO_SOLUTION) {
+        } else if (sol == MT_FALSE) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -545,10 +545,10 @@ if (!(T)) {                                                     \
         s->post();
         (void) s->failed();
         s->assign(a,sol);
-        if (sol == SOLUTION) {
+        if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
-        } else if (sol == NO_SOLUTION) {
+        } else if (sol == MT_FALSE) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
@@ -564,21 +564,21 @@ if (!(T)) {                                                     \
             goto failed;
           }
         s->assign(a,sol);
-        if (sol == SOLUTION) {
+        if (sol == MT_TRUE) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(subsumed(*s), "No subsumption");
-        } else if (sol == NO_SOLUTION) {
+        } else if (sol == MT_FALSE) {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
         delete s;
       }
 
-      if (reified && !ignore(a) && (sol!=UNCERTAIN)) {
+      if (reified && !ignore(a) && (sol!=MT_MAYBE)) {
         for (ReifyModes rms; rms(); ++rms) {
           START_TEST("Assignment reified (rewrite after post)");
           TestSpace* s = new TestSpace(arity,dom,step,this,true,rms.rm());
           s->post();
-          s->rel(sol==SOLUTION);
+          s->rel(sol==MT_TRUE);
           s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
@@ -588,7 +588,7 @@ if (!(T)) {                                                     \
         {
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
           s->post();
-          s->rel(!(sol==SOLUTION));
+          s->rel(!(sol==MT_TRUE));
           s->assign(a,sol);
           CHECK_TEST(s->failed(), "Not failed");
           delete s;
@@ -596,7 +596,7 @@ if (!(T)) {                                                     \
         for (ReifyModes rms; rms(); ++rms) {
           START_TEST("Assignment reified (immediate rewrite)");
           TestSpace* s = new TestSpace(arity,dom,step,this,true,rms.rm());
-          s->rel(sol==SOLUTION);
+          s->rel(sol==MT_TRUE);
           s->post();
           s->assign(a,sol);
           CHECK_TEST(!s->failed(), "Failed");
@@ -606,7 +606,7 @@ if (!(T)) {                                                     \
         START_TEST("Assignment reified (immediate failure)");
         {
           TestSpace* s = new TestSpace(arity,dom,step,this,true);
-          s->rel(!(sol==SOLUTION));
+          s->rel(!(sol==MT_TRUE));
           s->post();
           s->assign(a,sol);
           CHECK_TEST(s->failed(), "Not failed");
@@ -620,9 +620,9 @@ if (!(T)) {                                                     \
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol == SOLUTION) {
+          if (sol == MT_TRUE) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else if (sol == NO_SOLUTION) {
+          } else if (sol == MT_FALSE) {
             CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
@@ -635,9 +635,9 @@ if (!(T)) {                                                     \
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol == SOLUTION) {
+          if (sol == MT_TRUE) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else if (sol == NO_SOLUTION) {
+          } else if (sol == MT_FALSE) {
             CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
@@ -656,9 +656,9 @@ if (!(T)) {                                                     \
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(subsumed(*s), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol == SOLUTION) {
+          if (sol == MT_TRUE) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else if (sol == NO_SOLUTION) {
+          } else if (sol == MT_FALSE) {
             CHECK_TEST(s->r.var().val()==0, "One on non-solution");
           }
           delete s;
@@ -666,7 +666,7 @@ if (!(T)) {                                                     \
       }
 
       if (testsearch) {
-        if (sol == SOLUTION) {
+        if (sol == MT_TRUE) {
           START_TEST("Search");
           if (!search_s->failed()) {
             TestSpace* ss = static_cast<TestSpace*>(search_s->clone(false));

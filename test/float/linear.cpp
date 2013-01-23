@@ -81,24 +81,27 @@ namespace Test { namespace Float {
           testfix = false;
         }
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal e = 0.0;
          for (int i=x.size(); i--; )
            e += a[i]*x[i];
-         try {
-           if (!cmp(e, frt, Gecode::FloatVal(c))) {
-             Gecode::FloatVal eError = e;
-             for (int i=x.size(); i--; )
-               eError -= a[i]*x[i];
-             if (!cmp(e+eError, frt, Gecode::FloatVal(c)))
-               return NO_SOLUTION;
-             else
-               return UNCERTAIN;
-           } else
-             return SOLUTION;
-         } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
-         }         
+         switch (cmp(e, frt, Gecode::FloatVal(c))) {
+         case MT_FALSE: {
+           Gecode::FloatVal eError = e;
+           for (int i=x.size(); i--; )
+             eError -= a[i]*x[i];
+           if (cmp(e+eError, frt, Gecode::FloatVal(c)) == MT_FALSE)
+             return MT_FALSE;
+           else
+             return MT_MAYBE;
+         }
+         case MT_TRUE:
+           return MT_TRUE;
+         case MT_MAYBE:
+           return MT_MAYBE;
+         }
+         GECODE_NEVER;
+         return MT_FALSE;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -135,24 +138,27 @@ namespace Test { namespace Float {
           testfix = false;
         }
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal e = 0.0;
          for (int i=a.size(); i--; )
            e += a[i]*x[i];
-         try {
-           if (!cmp(e, frt, x[a.size()])) {
-             Gecode::FloatVal eError = e;
-             for (int i=a.size(); i--; )
-               eError -= a[i]*x[i];
-             if (!cmp(e+eError, frt, x[a.size()]))
-               return NO_SOLUTION;
-             else
-               return UNCERTAIN;
-           } else
-             return SOLUTION;
-         } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+         switch (cmp(e, frt, x[a.size()])) {
+         case MT_FALSE: {
+           Gecode::FloatVal eError = e;
+           for (int i=x.size(); i--; )
+             eError -= a[i]*x[i];
+           if (cmp(e+eError, frt, x[a.size()]) == MT_FALSE)
+             return MT_FALSE;
+           else
+             return MT_MAYBE;
          }
+         case MT_TRUE:
+           return MT_TRUE;
+         case MT_MAYBE:
+           return MT_MAYBE;
+         }
+         GECODE_NEVER;
+         return MT_FALSE;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {

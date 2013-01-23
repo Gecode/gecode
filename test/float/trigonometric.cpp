@@ -55,13 +55,13 @@ namespace Test { namespace Float {
        SinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
          : Test("Trigonometric::Sin::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == sin(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == sin(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -77,13 +77,13 @@ namespace Test { namespace Float {
        SinXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Sin::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == sin(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == sin(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Extend assignment \a x
@@ -109,12 +109,12 @@ namespace Test { namespace Float {
        SinXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
          : Test("Trigonometric::Sin::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          try {
-           return (d0 == sin(d0))?SOLUTION:NO_SOLUTION;
+           return (d0 == sin(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -130,13 +130,13 @@ namespace Test { namespace Float {
        CosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Cos::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == cos(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == cos(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -152,13 +152,13 @@ namespace Test { namespace Float {
        CosXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Cos::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == cos(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == cos(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Extend assignment \a x
@@ -184,12 +184,12 @@ namespace Test { namespace Float {
        CosXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Cos::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          try {
-           return (d0 == cos(d0))?SOLUTION:NO_SOLUTION;
+           return (d0 == cos(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -205,13 +205,13 @@ namespace Test { namespace Float {
        TanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Tan::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == tan(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == tan(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -227,13 +227,13 @@ namespace Test { namespace Float {
        TanXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Tan::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == tan(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == tan(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Extend assignment \a x
@@ -259,12 +259,12 @@ namespace Test { namespace Float {
        TanXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::Tan::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          try {
-           return (d0 == tan(d0))?SOLUTION:NO_SOLUTION;
+           return (d0 == tan(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -280,14 +280,14 @@ namespace Test { namespace Float {
        ASinXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ASin::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return NO_SOLUTION;
+       virtual MaybeType solution(const Assignment& x) const {
+         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return MT_FALSE;
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == asin(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == asin(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -303,14 +303,14 @@ namespace Test { namespace Float {
        ASinXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ASin::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return NO_SOLUTION;
+       virtual MaybeType solution(const Assignment& x) const {
+         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return MT_FALSE;
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == asin(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == asin(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Extend assignment \a x
@@ -337,13 +337,13 @@ namespace Test { namespace Float {
        ASinXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ASin::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return NO_SOLUTION;
+       virtual MaybeType solution(const Assignment& x) const {
+         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return MT_FALSE;
          Gecode::FloatVal d0 = x[0];
          try {
-           return (d0 == asin(d0))?SOLUTION:NO_SOLUTION;
+           return (d0 == asin(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -359,14 +359,14 @@ namespace Test { namespace Float {
        ACosXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ACos::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return NO_SOLUTION;
+       virtual MaybeType solution(const Assignment& x) const {
+         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return MT_FALSE;
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == acos(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == acos(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -382,14 +382,14 @@ namespace Test { namespace Float {
        ACosXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ACos::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return NO_SOLUTION;
+       virtual MaybeType solution(const Assignment& x) const {
+         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return MT_FALSE;
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == acos(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == acos(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Extend assignment \a x
@@ -416,13 +416,13 @@ namespace Test { namespace Float {
        ACosXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ACos::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
-         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return NO_SOLUTION;
+       virtual MaybeType solution(const Assignment& x) const {
+         if ((x[0].min() > 1.0) || (x[0].max() < -1.0)) return MT_FALSE;
          Gecode::FloatVal d0 = x[0];
          try {
-           return (d0 == acos(d0))?SOLUTION:NO_SOLUTION;
+           return (d0 == acos(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -438,13 +438,13 @@ namespace Test { namespace Float {
        ATanXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ATan::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == atan(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == atan(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
@@ -460,13 +460,13 @@ namespace Test { namespace Float {
        ATanXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ATan::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          Gecode::FloatVal d1 = x[1];
          try {
-           return (d1 == atan(d0))?SOLUTION:NO_SOLUTION;
+           return (d1 == atan(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Extend assignment \a x
@@ -492,12 +492,12 @@ namespace Test { namespace Float {
        ATanXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Trigonometric::ATan::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
-       virtual SolutionTestType solution(const Assignment& x) const {
+       virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal d0 = x[0];
          try {
-           return (d0 == atan(d0))?SOLUTION:NO_SOLUTION;
+           return (d0 == atan(d0))?MT_TRUE:MT_FALSE;
          } catch (Gecode::Float::ComparisonError&) {
-           return UNCERTAIN;
+           return MT_MAYBE;
          }         
        }
        /// Post constraint on \a x
