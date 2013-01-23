@@ -69,10 +69,10 @@ namespace Test { namespace Float {
      };
 
      /// %Test for multiplication constraint when solution is ensured
-     class MultXYZ_Sol : public Test {
+     class MultXYZSol : public Test {
      public:
        /// Create and register test
-       MultXYZ_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       MultXYZSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Arithmetic::Mult::XYZ::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -111,10 +111,10 @@ namespace Test { namespace Float {
      };
 
      /// %Test for multiplication constraint with shared variables when solution is ensured
-     class MultXXY_Sol : public Test {
+     class MultXXYSol : public Test {
      public:
        /// Create and register test
-       MultXXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       MultXXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Arithmetic::Mult::XXY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -201,10 +201,10 @@ namespace Test { namespace Float {
      };
      
      /// %Test for division constraint when solution is ensured
-     class Div_Sol : public Test {
+     class DivSol : public Test {
      public:
        /// Create and register test
-       Div_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       DivSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Arithmetic::Div::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -243,10 +243,10 @@ namespace Test { namespace Float {
      };
 
      /// %Test for squaring constraint where solution is ensured
-     class SqrXY_Sol : public Test {
+     class SqrXYSol : public Test {
      public:
        /// Create and register test
-       SqrXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       SqrXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Arithmetic::Sqr::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -306,10 +306,10 @@ namespace Test { namespace Float {
      };
 
      /// %Test for square root constraint where solution is ensured
-     class SqrtXY_Sol : public Test {
+     class SqrtXYSol : public Test {
      public:
        /// Create and register test
-       SqrtXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       SqrtXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Arithmetic::Sqrt::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -375,11 +375,11 @@ namespace Test { namespace Float {
      };
      
      /// %Test for pow  constraint where solution is ensured
-     class PowXY_Sol : public Test {
+     class PowXYSol : public Test {
        unsigned int n;
      public:
        /// Create and register test
-       PowXY_Sol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       PowXYSol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
        : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -438,11 +438,11 @@ namespace Test { namespace Float {
      };
      
      /// %Test for nroot  constraint where solution is ensured
-     class NRootXY_Sol : public Test {
+     class NRootXYSol : public Test {
        unsigned int n;
      public:
        /// Create and register test
-       NRootXY_Sol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
+       NRootXYSol(const std::string& s, const Gecode::FloatVal& d, unsigned int _n, Gecode::FloatNum st)
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
@@ -761,9 +761,9 @@ namespace Test { namespace Float {
      MultXXY mult_xxy_b("B",b,step);
      MultXXY mult_xxy_c("C",c,step);
 
-     MultXXY_Sol mult_xxy_sol_a("A",a,step);
-     MultXXY_Sol mult_xxy_sol_b("B",b,step);
-     MultXXY_Sol mult_xxy_sol_c("C",c,step);
+     MultXXYSol mult_xxy_sol_a("A",a,step);
+     MultXXYSol mult_xxy_sol_b("B",b,step);
+     MultXXYSol mult_xxy_sol_c("C",c,step);
      
      MultXYX mult_xyx_a("A",a,step);
      MultXYX mult_xyx_b("B",b,step);
@@ -781,25 +781,25 @@ namespace Test { namespace Float {
      MultXYZ mult_xyz_b("B",b,step);
      MultXYZ mult_xyz_c("C",c,step);
 
-     MultXYZ_Sol mult_xyz_sol_a("A",a,step);
-     MultXYZ_Sol mult_xyz_sol_b("B",b,step);
-     MultXYZ_Sol mult_xyz_sol_c("C",c,step);
+     MultXYZSol mult_xyz_sol_a("A",a,step);
+     MultXYZSol mult_xyz_sol_b("B",b,step);
+     MultXYZSol mult_xyz_sol_c("C",c,step);
      
      Div div_a("A",a,step);
      Div div_b("B",b,step);
      Div div_c("C",c,step);
      
-     Div_Sol div_sol_a("A",a,step);
-     Div_Sol div_sol_b("B",b,step);
-     Div_Sol div_sol_c("C",c,step);
+     DivSol div_sol_a("A",a,step);
+     DivSol div_sol_b("B",b,step);
+     DivSol div_sol_c("C",c,step);
      
      SqrXY sqr_xy_a("A",a,step);
      SqrXY sqr_xy_b("B",b,step);
      SqrXY sqr_xy_c("C",c,step);
 
-     SqrXY_Sol sqr_xy_sol_a("A",a,step);
-     SqrXY_Sol sqr_xy_sol_b("B",b,step);
-     SqrXY_Sol sqr_xy_sol_c("C",c,step);
+     SqrXYSol sqr_xy_sol_a("A",a,step);
+     SqrXYSol sqr_xy_sol_b("B",b,step);
+     SqrXYSol sqr_xy_sol_c("C",c,step);
      
      SqrXX sqr_xx_a("A",a,step);
      SqrXX sqr_xx_b("B",b,step);
@@ -809,9 +809,9 @@ namespace Test { namespace Float {
      SqrtXY sqrt_xy_b("B",b,step);
      SqrtXY sqrt_xy_c("C",c,step);
 
-     SqrtXY_Sol sqrt_xy_sol_a("A",a,step);
-     SqrtXY_Sol sqrt_xy_sol_b("B",b,step);
-     SqrtXY_Sol sqrt_xy_sol_c("C",c,step);
+     SqrtXYSol sqrt_xy_sol_a("A",a,step);
+     SqrtXYSol sqrt_xy_sol_b("B",b,step);
+     SqrtXYSol sqrt_xy_sol_c("C",c,step);
      
      SqrtXX sqrt_xx_a("A",a,step);
      SqrtXX sqrt_xx_b("B",b,step);
@@ -821,9 +821,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_1("B",b,2,step);
      PowXY pow_xy_c_1("C",c,2,step);
      
-     PowXY_Sol pow_xy_sol_a_1("A",a,2,step);
-     PowXY_Sol pow_xy_sol_b_1("B",b,2,step);
-     PowXY_Sol pow_xy_sol_c_1("C",c,2,step);
+     PowXYSol pow_xy_sol_a_1("A",a,2,step);
+     PowXYSol pow_xy_sol_b_1("B",b,2,step);
+     PowXYSol pow_xy_sol_c_1("C",c,2,step);
      
      PowXX pow_xx_a_1("A",a,2,step);
      PowXX pow_xx_b_1("B",b,2,step);
@@ -833,9 +833,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_2("B",b,3,step);
      PowXY pow_xy_c_2("C",c,3,step);
      
-     PowXY_Sol pow_xy_sol_a_2("A",a,3,step);
-     PowXY_Sol pow_xy_sol_b_2("B",b,3,step);
-     PowXY_Sol pow_xy_sol_c_2("C",c,3,step);
+     PowXYSol pow_xy_sol_a_2("A",a,3,step);
+     PowXYSol pow_xy_sol_b_2("B",b,3,step);
+     PowXYSol pow_xy_sol_c_2("C",c,3,step);
      
      PowXX pow_xx_a_2("A",a,3,step);
      PowXX pow_xx_b_2("B",b,3,step);
@@ -845,9 +845,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_3("B",b,0,step);
      PowXY pow_xy_c_3("C",c,0,step);
      
-     PowXY_Sol pow_xy_sol_a_3("A",a,0,step);
-     PowXY_Sol pow_xy_sol_b_3("B",b,0,step);
-     PowXY_Sol pow_xy_sol_c_3("C",c,0,step);
+     PowXYSol pow_xy_sol_a_3("A",a,0,step);
+     PowXYSol pow_xy_sol_b_3("B",b,0,step);
+     PowXYSol pow_xy_sol_c_3("C",c,0,step);
      
      PowXX pow_xx_a_3("A",a,0,step);
      PowXX pow_xx_b_3("B",b,0,step);
@@ -857,9 +857,9 @@ namespace Test { namespace Float {
      NRootXY nroot_xy_b_1("B",b,2,step);
      NRootXY nroot_xy_c_1("C",c,2,step);
      
-     NRootXY_Sol nroot_xy_sol_a_1("A",a,2,step);
-     NRootXY_Sol nroot_xy_sol_b_1("B",b,2,step);
-     NRootXY_Sol nroot_xy_sol_c_1("C",c,2,step);
+     NRootXYSol nroot_xy_sol_a_1("A",a,2,step);
+     NRootXYSol nroot_xy_sol_b_1("B",b,2,step);
+     NRootXYSol nroot_xy_sol_c_1("C",c,2,step);
      
      NRootXX nroot_xx_a_1("A",a,2,step);
      NRootXX nroot_xx_b_1("B",b,2,step);
@@ -869,9 +869,9 @@ namespace Test { namespace Float {
      NRootXY nroot_xy_b_2("B",b,3,step);
      NRootXY nroot_xy_c_2("C",c,3,step);
      
-     NRootXY_Sol nroot_xy_sol_a_2("A",a,3,step);
-     NRootXY_Sol nroot_xy_sol_b_2("B",b,3,step);
-     NRootXY_Sol nroot_xy_sol_c_2("C",c,3,step);
+     NRootXYSol nroot_xy_sol_a_2("A",a,3,step);
+     NRootXYSol nroot_xy_sol_b_2("B",b,3,step);
+     NRootXYSol nroot_xy_sol_c_2("C",c,3,step);
      
      NRootXX nroot_xx_a_2("A",a,3,step);
      NRootXX nroot_xx_b_2("B",b,3,step);
@@ -881,9 +881,9 @@ namespace Test { namespace Float {
      NRootXY nroot_xy_b_3("B",b,0,step);
      NRootXY nroot_xy_c_3("C",c,0,step);
      
-     NRootXY_Sol nroot_xy_sol_a_3("A",a,0,step);
-     NRootXY_Sol nroot_xy_sol_b_3("B",b,0,step);
-     NRootXY_Sol nroot_xy_sol_c_3("C",c,0,step);
+     NRootXYSol nroot_xy_sol_a_3("A",a,0,step);
+     NRootXYSol nroot_xy_sol_b_3("B",b,0,step);
+     NRootXYSol nroot_xy_sol_c_3("C",c,0,step);
      
      NRootXX nroot_xx_a_3("A",a,0,step);
      NRootXX nroot_xx_b_3("B",b,0,step);

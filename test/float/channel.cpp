@@ -51,11 +51,13 @@ namespace Test { namespace Float {
      public:
        /// Construct and register test
        ChannelLinkSingle(Gecode::FloatNum st)
-         : Test("Channel::Float::Single",2,-1,2,st,CPLT_ASSIGNMENT,false) {}
+         : Test("Channel",2,-1,2,st,CPLT_ASSIGNMENT,false) {}
        /// Check whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatNum tmp;
-         return (((modf(x[0].min(),&tmp)==0) || (modf(x[0].max(),&tmp)==0)) && (x[0]==x[1]))?MT_TRUE:MT_FALSE;
+         return (((modf(x[0].min(),&tmp)==0) || 
+                  (modf(x[0].max(),&tmp)==0)) 
+                 && (x[0]==x[1])) ? MT_TRUE : MT_FALSE;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {

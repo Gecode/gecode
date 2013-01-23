@@ -56,13 +56,7 @@ namespace Test { namespace Float {
          : Test("Transcendental::Exp::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == exp(d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(exp(x[0]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -71,30 +65,24 @@ namespace Test { namespace Float {
      };
 
      /// %Test for exponent constraint where solution is ensured
-     class ExpXY_Sol : public Test {
+     class ExpXYSol : public Test {
      public:
        /// Create and register test
-       ExpXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       ExpXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Transcendental::Exp::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == exp(d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(exp(x[0]), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = exp(x[0]);
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -110,12 +98,7 @@ namespace Test { namespace Float {
          : Test("Transcendental::Exp::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == exp(d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(exp(x[0]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -128,17 +111,12 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        LogXY(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Transcendental::Log::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test("Transcendental::Log::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == log(d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if (x[0].max() < 0.0) 
+           return MT_FALSE;
+         return eq(log(x[0]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -147,32 +125,27 @@ namespace Test { namespace Float {
      };
      
      /// %Test for logarithm constraint where solution is ensured
-     class LogXY_Sol : public Test {
+     class LogXYSol : public Test {
      public:
        /// Create and register test
-       LogXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
+       LogXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
        : Test("Transcendental::Log::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == log(d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if (x[0].max() < 0.0) 
+           return MT_FALSE;
+         return eq(log(x[0]), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          if (x[0].max() < 0.0) return false;
          Gecode::FloatVal d = log(x[0]);
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -188,13 +161,9 @@ namespace Test { namespace Float {
        : Test("Transcendental::Log::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == log(d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if (x[0].max() < 0.0) 
+           return MT_FALSE;
+         return eq(log(x[0]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -211,15 +180,9 @@ namespace Test { namespace Float {
        : Test("Transcendental::Log::N::"+str(_base)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() <= 0.0) return MT_FALSE;
-         if (base <= 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == log(d0)/log(base))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((x[0].max() <= 0.0) || (base <= 0.0)) 
+           return MT_FALSE;
+         return eq(log(x[0]) / log(base), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -228,35 +191,29 @@ namespace Test { namespace Float {
      };
      
      /// %Test for logarithm base n constraint where solution is ensured
-     class LogNXY_Sol : public Test {
+     class LogNXYSol : public Test {
        Gecode::FloatNum base;
      public:
        /// Create and register test
-       LogNXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+       LogNXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
        : Test("Transcendental::Log::N::"+str(_base)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() <= 0.0) return MT_FALSE;
-         if (base <= 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == log(d0)/log(base))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((x[0].max() <= 0.0) || (base <= 0.0)) 
+           return MT_FALSE;
+         return eq(log(x[0]) / log(base), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
-         if (x[0].max() <= 0.0) return false;
-         if (base <= 0.0) return false;
+         if ((x[0].max() <= 0.0) || (base <= 0.0))
+           return false;
          Gecode::FloatVal d = log(x[0])/log(base);
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -270,17 +227,12 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        LogNXX(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
-       : Test("Transcendental::Log::N::"+str(_base)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
+         : Test("Transcendental::Log::N::"+str(_base)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() <= 0.0) return MT_FALSE;
-         if (base <= 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == log(d0)/log(base))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((x[0].max() <= 0.0) || (base <= 0.0))
+           return MT_FALSE;
+         return eq(log(x[0]) / log(base), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -297,14 +249,9 @@ namespace Test { namespace Float {
        : Test("Transcendental::Pow::N::"+str(_base)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (base <= 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == exp(d0*log(base)))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if (base <= 0.0) 
+           return MT_FALSE;
+         return eq(exp(x[0] * log(base)), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -313,33 +260,28 @@ namespace Test { namespace Float {
      };
      
      /// %Test for pow exponent n constraint where solution is ensured
-     class PowXY_Sol : public Test {
+     class PowXYSol : public Test {
        Gecode::FloatNum base;
      public:
        /// Create and register test
-       PowXY_Sol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
+       PowXYSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum _base, Gecode::FloatNum st)
        : Test("Transcendental::Pow::N::"+str(_base)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (base <= 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == exp(d0*log(base)))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if (base <= 0.0) 
+           return MT_FALSE;
+         return eq(exp(x[0] * log(base)), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          if (base <= 0.0) return false;
          Gecode::FloatVal d = exp(x[0]*log(base));
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -356,14 +298,9 @@ namespace Test { namespace Float {
        : Test("Transcendental::Pow::N::"+str(_base)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() <= 0.0) return MT_FALSE;
-         if (base <= 0.0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == exp(d0*log(base)))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((x[0].max() <= 0.0) || (base <= 0.0))
+           return MT_FALSE;
+         return eq(exp(x[0] * log(base)), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -381,9 +318,9 @@ namespace Test { namespace Float {
      ExpXY exp_xy_b("B",b,step);
      ExpXY exp_xy_c("C",c,step);
 
-     ExpXY_Sol exp_xy_sol_a("A",a,step);
-     ExpXY_Sol exp_xy_sol_b("B",b,step);
-     ExpXY_Sol exp_xy_sol_c("C",c,step);
+     ExpXYSol exp_xy_sol_a("A",a,step);
+     ExpXYSol exp_xy_sol_b("B",b,step);
+     ExpXYSol exp_xy_sol_c("C",c,step);
      
      ExpXX exp_xx_a("A",a,step);
      ExpXX exp_xx_b("B",b,step);
@@ -393,9 +330,9 @@ namespace Test { namespace Float {
      LogXY log_xy_b("B",b,step);
      LogXY log_xy_c("C",c,step);
      
-     LogXY_Sol log_xy_sol_a("A",a,step);
-     LogXY_Sol log_xy_sol_b("B",b,step);
-     LogXY_Sol log_xy_sol_c("C",c,step);
+     LogXYSol log_xy_sol_a("A",a,step);
+     LogXYSol log_xy_sol_b("B",b,step);
+     LogXYSol log_xy_sol_c("C",c,step);
      
      LogXX log_xx_a("A",a,step);
      LogXX log_xx_b("B",b,step);
@@ -405,9 +342,9 @@ namespace Test { namespace Float {
      LogNXY logn_xy_b_1("B",b,-1.5,step);
      LogNXY logn_xy_c_1("C",c,-1.5,step);
      
-     LogNXY_Sol logn_xy_sol_a_1("A",a,-1.5,step);
-     LogNXY_Sol logn_xy_sol_b_1("B",b,-1.5,step);
-     LogNXY_Sol logn_xy_sol_c_1("C",c,-1.5,step);
+     LogNXYSol logn_xy_sol_a_1("A",a,-1.5,step);
+     LogNXYSol logn_xy_sol_b_1("B",b,-1.5,step);
+     LogNXYSol logn_xy_sol_c_1("C",c,-1.5,step);
      
      LogNXX logn_xx_a_1("A",a,-1.5,step);
      LogNXX logn_xx_b_1("B",b,-1.5,step);
@@ -417,9 +354,9 @@ namespace Test { namespace Float {
      LogNXY logn_xy_b_2("B",b,1.5,step);
      LogNXY logn_xy_c_2("C",c,1.5,step);
      
-     LogNXY_Sol logn_xy_sol_a_2("A",a,1.5,step);
-     LogNXY_Sol logn_xy_sol_b_2("B",b,1.5,step);
-     LogNXY_Sol logn_xy_sol_c_2("C",c,1.5,step);
+     LogNXYSol logn_xy_sol_a_2("A",a,1.5,step);
+     LogNXYSol logn_xy_sol_b_2("B",b,1.5,step);
+     LogNXYSol logn_xy_sol_c_2("C",c,1.5,step);
      
      LogNXX logn_xx_a_2("A",a,1.5,step);
      LogNXX logn_xx_b_2("B",b,1.5,step);
@@ -429,9 +366,9 @@ namespace Test { namespace Float {
      LogNXY logn_xy_b_3("B",b,0,step);
      LogNXY logn_xy_c_3("C",c,0,step);
      
-     LogNXY_Sol logn_xy_sol_a_3("A",a,0,step);
-     LogNXY_Sol logn_xy_sol_b_3("B",b,0,step);
-     LogNXY_Sol logn_xy_sol_c_3("C",c,0,step);
+     LogNXYSol logn_xy_sol_a_3("A",a,0,step);
+     LogNXYSol logn_xy_sol_b_3("B",b,0,step);
+     LogNXYSol logn_xy_sol_c_3("C",c,0,step);
      
      LogNXX logn_xx_a_3("A",a,0,step);
      LogNXX logn_xx_b_3("B",b,0,step);
@@ -441,9 +378,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_1("B",b,-1.5,step);
      PowXY pow_xy_c_1("C",c,-1.5,step);
      
-     PowXY_Sol pow_xy_sol_a_1("A",a,-1.5,step);
-     PowXY_Sol pow_xy_sol_b_1("B",b,-1.5,step);
-     PowXY_Sol pow_xy_sol_c_1("C",c,-1.5,step);
+     PowXYSol pow_xy_sol_a_1("A",a,-1.5,step);
+     PowXYSol pow_xy_sol_b_1("B",b,-1.5,step);
+     PowXYSol pow_xy_sol_c_1("C",c,-1.5,step);
      
      PowXX pow_xx_a_1("A",a,-1.5,step);
      PowXX pow_xx_b_1("B",b,-1.5,step);
@@ -453,9 +390,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_2("B",b,1.5,step);
      PowXY pow_xy_c_2("C",c,1.5,step);
      
-     PowXY_Sol pow_xy_sol_a_2("A",a,1.5,step);
-     PowXY_Sol pow_xy_sol_b_2("B",b,1.5,step);
-     PowXY_Sol pow_xy_sol_c_2("C",c,1.5,step);
+     PowXYSol pow_xy_sol_a_2("A",a,1.5,step);
+     PowXYSol pow_xy_sol_b_2("B",b,1.5,step);
+     PowXYSol pow_xy_sol_c_2("C",c,1.5,step);
      
      PowXX pow_xx_a_2("A",a,1.5,step);
      PowXX pow_xx_b_2("B",b,1.5,step);
@@ -465,9 +402,9 @@ namespace Test { namespace Float {
      PowXY pow_xy_b_3("B",b,0,step);
      PowXY pow_xy_c_3("C",c,0,step);
       
-     PowXY_Sol pow_xy_sol_a_3("A",a,0,step);
-     PowXY_Sol pow_xy_sol_b_3("B",b,0,step);
-     PowXY_Sol pow_xy_sol_c_3("C",c,0,step);
+     PowXYSol pow_xy_sol_a_3("A",a,0,step);
+     PowXYSol pow_xy_sol_b_3("B",b,0,step);
+     PowXYSol pow_xy_sol_c_3("C",c,0,step);
       
      PowXX pow_xx_a_3("A",a,0,step);
      PowXX pow_xx_b_3("B",b,0,step);
