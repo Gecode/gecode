@@ -49,8 +49,7 @@ namespace Gecode { namespace Gist {
     refreshPause = settings.value("search/refreshPause", 0).toInt();
     smoothScrollAndZoom =
       settings.value("smoothScrollAndZoom", true).toBool();
-    moveDuringSearch =
-      settings.value("moveDuringSearch", true).toBool();
+    moveDuringSearch = false;
 
     c_d = opt.c_d;
     a_d = opt.a_d;
@@ -166,7 +165,6 @@ namespace Gecode { namespace Gist {
     settings.setValue("search/refresh", refresh);
     settings.setValue("search/refreshPause", refreshPause);
     settings.setValue("smoothScrollAndZoom", smoothScrollAndZoom);
-    settings.setValue("moveDuringSearch", moveDuringSearch);
 
     accept();
   }
