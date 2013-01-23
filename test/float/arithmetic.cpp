@@ -60,14 +60,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Mult::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[2];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[1], x[2]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -83,24 +76,17 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Mult::XYZ::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[2];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[1], x[2]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = x[0]*x[1];
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(2, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -116,14 +102,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Mult::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[0], x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -139,24 +118,17 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Mult::XXY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[0], x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = x[0]*x[0];
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -172,14 +144,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Mult::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[0];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[1], x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -195,14 +160,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Mult::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[1], x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -218,14 +176,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Mult::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[0];
-         try {
-           return (d2 == d0*d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[0], x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -241,14 +192,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Div::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[2];
-         try {
-           return (d2 == d0/d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] / x[1], x[2]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -264,24 +208,17 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Div::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[2];
-         try {
-           return (d2 == d0/d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] / x[1], x[2]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = x[0]/x[1];
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(2, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -297,13 +234,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Sqr::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == d0*d0)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[0], x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -319,23 +250,17 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Sqr::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == d0*d0)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[0], x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = square(x[0]);
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -351,12 +276,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Sqr::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == d0*d0)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(x[0] * x[0], x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -372,13 +292,12 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Sqrt::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return ((d0 >= 0) && (sqrt(d0) == d1))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
+         case MT_FALSE: return MT_FALSE;
+         case MT_MAYBE: return MT_MAYBE;
+         default:
+           return eq(sqrt(x[0]), x[1]);
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -394,23 +313,22 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Sqrt::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return ((d0 >= 0) && (sqrt(d0) == d1))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
+         case MT_FALSE: return MT_FALSE;
+         case MT_MAYBE: return MT_MAYBE;
+         default:
+           return eq(sqrt(x[0]), x[1]);
+         }
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = sqrt(abs(x[0]));
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -426,12 +344,12 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Sqrt::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return ((d0 >= 0) && (sqrt(d0) == d0))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         switch (cmp(x[0], Gecode::FRT_GQ, 0.0)) {
+         case MT_FALSE: return MT_FALSE;
+         case MT_MAYBE: return MT_MAYBE;
+         default:
+           return eq(sqrt(x[0]), x[0]);
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -448,13 +366,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == pow(d0,n))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(pow(x[0],n), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -471,23 +383,17 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Pow::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == pow(d0,n))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(pow(x[0],n), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          Gecode::FloatVal d = pow(x[0],n);
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -504,12 +410,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Pow::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == pow(d0,n))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(pow(x[0],n), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -526,15 +427,9 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (n == 0) return MT_FALSE;
-         if (x[0].max() < 0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == nth_root(d0,n))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((n == 0) || (x[0].max() < 0.0))
+           return MT_FALSE;
+         return eq(nth_root(x[0],n), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -551,27 +446,21 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), n(_n) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (n == 0) return MT_FALSE;
-         if (x[0].max() < 0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (d1 == nth_root(d0,n))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((n == 0) || (x[0].max() < 0.0))
+           return MT_FALSE;
+         return eq(nth_root(x[0],n), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
-         if (n == 0) return false;
-         if (x[0].max() < 0) return false;
+         if ((n == 0) || (x[0].max() < 0)) 
+           return false;
          Gecode::FloatVal d = nth_root(x[0],n);
-         if (Gecode::Float::subset(d, dom))
-         {
+         if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
-         } else
+         } else {
            return false;
+         }
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -588,14 +477,9 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (n == 0) return MT_FALSE;
-         if (x[0].max() < 0) return MT_FALSE;
-         Gecode::FloatVal d0 = x[0];
-         try {
-           return (d0 == nth_root(d0,n))?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         if ((n == 0) || (x[0].max() < 0)) 
+           return MT_FALSE;
+         return eq(nth_root(x[0],n), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -611,13 +495,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Abs::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         try {
-           return (abs(d0) == d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(abs(x[0]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -633,13 +511,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Abs::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         try {
-           return (abs(d0) == d1)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(abs(x[0]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -655,14 +527,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Min::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[2];
-         try {
-           return (min(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(x[0],x[1]), x[2]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -678,14 +543,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Min::Bin::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (min(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(x[0],x[0]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -701,14 +559,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Min::Bin::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[0];
-         try {
-           return (min(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(x[0],x[1]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -724,14 +575,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Min::Bin::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (min(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(x[0],x[1]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -747,14 +591,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Min::Bin::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[0];
-         try {
-           return (min(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(x[0],x[0]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -770,14 +607,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Max::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[2];
-         try {
-           return (max(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(x[0],x[1]), x[2]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -793,14 +623,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Max::Bin::XXY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (max(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(x[0],x[0]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -816,14 +639,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Max::Bin::XYX::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[0];
-         try {
-           return (max(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(x[0],x[1]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -839,14 +655,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Max::Bin::XYY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[1];
-         Gecode::FloatVal d2 = x[1];
-         try {
-           return (max(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(x[0],x[1]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -862,14 +671,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::Max::Bin::XXX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal d0 = x[0];
-         Gecode::FloatVal d1 = x[0];
-         Gecode::FloatVal d2 = x[0];
-         try {
-           return (max(d0,d1) == d2)?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(x[0],x[0]), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -885,11 +687,7 @@ namespace Test { namespace Float {
          : Test("Arithmetic::Min::Nary",4,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         try {
-           return (min(min(x[0],x[1]), x[2]) == x[3])?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(min(x[0],x[1]),x[2]), x[3]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -907,11 +705,7 @@ namespace Test { namespace Float {
           : Test("Arithmetic::Min::Nary::Shared",3,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         try {
-           return (min(min(x[0],x[1]), x[2]) == x[1])?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(min(min(x[0],x[1]),x[2]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -929,11 +723,7 @@ namespace Test { namespace Float {
           : Test("Arithmetic::Max::Nary",4,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         try {
-           return (max(max(x[0],x[1]), x[2]) == x[3])?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(max(x[0],x[1]),x[2]), x[3]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -951,11 +741,7 @@ namespace Test { namespace Float {
           : Test("Arithmetic::Max::Nary::Shared",3,-4,4,0.5,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         try {
-           return (max(max(x[0],x[1]), x[2]) == x[1])?MT_TRUE:MT_FALSE;
-         } catch (Gecode::Float::ComparisonError&) {
-           return MT_MAYBE;
-         }         
+         return eq(max(max(x[0],x[1]),x[2]), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {

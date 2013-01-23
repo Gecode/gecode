@@ -67,7 +67,7 @@ namespace Test { namespace Float {
          if (x.size() == 2) {
            return cmp(x[0],frt,x[1]);
          } else {
-           return cmp(x[0],frt,x[2]) && cmp(x[1],frt,x[2]);
+           return cmp(x[0],frt,x[2]) & cmp(x[1],frt,x[2]);
          }
        }
        /// Post constraint on \a x
@@ -133,7 +133,7 @@ namespace Test { namespace Float {
          if (x.size() == 1) {
            return cmp(x[0],frt,c);
          } else {
-           return cmp(x[0],frt,c) && cmp(x[1],frt,c);
+           return cmp(x[0],frt,c) & cmp(x[1],frt,c);
          }
        }
        /// Post constraint on \a x

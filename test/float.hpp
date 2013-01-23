@@ -244,8 +244,13 @@ namespace Test { namespace Float {
     }         
   }
 
+  inline MaybeType
+  Test::eq(Gecode::FloatVal x, Gecode::FloatVal y) {
+    return cmp(x, Gecode::FRT_EQ, y);
+  }
+
   inline MaybeType 
-  operator &&(MaybeType a, MaybeType b) {
+  operator &(MaybeType a, MaybeType b) {
     switch (a) {
     case MT_TRUE:  return b;
     case MT_FALSE: return MT_FALSE;

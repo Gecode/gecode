@@ -59,7 +59,7 @@ namespace Test {
     };
     
     /// Three-valued conjunction of MaybeType
-    MaybeType operator &&(MaybeType a, MaybeType b);
+    MaybeType operator &(MaybeType a, MaybeType b);
 
     /// Assignment possible types
     enum AssignmentType {
@@ -310,6 +310,8 @@ namespace Test {
       /// Compare \a x and \a y with respect to \a r
       static MaybeType cmp(Gecode::FloatVal x, Gecode::FloatRelType r, 
                            Gecode::FloatVal y);
+      /// Whether \a x and \a y are equal
+      static MaybeType eq(Gecode::FloatVal x, Gecode::FloatVal y);
       //@}
     };
     //@}
