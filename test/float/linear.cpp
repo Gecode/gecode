@@ -73,7 +73,7 @@ namespace Test { namespace Float {
        FloatFloat(const std::string& s, const Gecode::FloatVal& d,
                   const Gecode::FloatArgs& a0, Gecode::FloatRelType frt0,
                   Gecode::FloatNum c0, Gecode::FloatNum st)
-         : Test("Linear::Float::Float::"+
+         : Test("Linear::Float::"+
                 str(frt0)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
                 a0.size(),d,st,CPLT_ASSIGNMENT,false),
@@ -131,7 +131,7 @@ namespace Test { namespace Float {
        /// Create and register test
        FloatVar(const std::string& s, const Gecode::FloatVal& d,
                 const Gecode::FloatArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
-         : Test("Linear::Float::Var::"+
+         : Test("Linear::Var::"+
                 str(frt0)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,st,CPLT_ASSIGNMENT,false),
            a(a0), frt(frt0) {
@@ -145,7 +145,7 @@ namespace Test { namespace Float {
          switch (cmp(e, frt, x[a.size()])) {
          case MT_FALSE: {
            Gecode::FloatVal eError = e;
-           for (int i=x.size(); i--; )
+           for (int i=a.size(); i--; )
              eError -= a[i]*x[i];
            if (cmp(e+eError, frt, x[a.size()]) == MT_FALSE)
              return MT_FALSE;
@@ -200,11 +200,16 @@ namespace Test { namespace Float {
            FloatArgs a1(1, 0.0);
 
            for (FloatRelTypes frts; frts(); ++frts) {
-             (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);
-             (void) new FloatVar("11",f1,a1,frts.frt(),step);
-             (void) new FloatFloat("21",f2,a1,frts.frt(),0.0,step);
-             (void) new FloatVar("21",f2,a1,frts.frt(),step);
-             (void) new FloatFloat("31",f3,a1,frts.frt(),1.0,step);
+             switch (frts.frt()) {
+             case FRT_EQ: case FRT_LQ: case FRT_GQ:
+               (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);
+               (void) new FloatVar("11",f1,a1,frts.frt(),step);
+               (void) new FloatFloat("21",f2,a1,frts.frt(),0.0,step);
+               (void) new FloatVar("21",f2,a1,frts.frt(),step);
+               (void) new FloatFloat("31",f3,a1,frts.frt(),1.0,step);
+               break;
+             default: ;
+             }
            }
 
            const FloatVal av2[5] = {1.0,1.0,1.0,1.0,1.0};
@@ -218,24 +223,29 @@ namespace Test { namespace Float {
              FloatArgs a4(i, av4);
              FloatArgs a5(i, av5);
              for (FloatRelTypes frts; frts(); ++frts) {
-               (void) new FloatFloat("12",f1,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat("13",f1,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat("14",f1,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat("15",f1,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat("22",f2,a2,frts.frt(),0.0,step);
-               (void) new FloatFloat("23",f2,a3,frts.frt(),0.0,step);
-               (void) new FloatFloat("24",f2,a4,frts.frt(),0.0,step);
-               (void) new FloatFloat("25",f2,a5,frts.frt(),0.0,step);
-               (void) new FloatFloat("32",f3,a2,frts.frt(),1.0,step);
-               if (i < 5) {
-                 (void) new FloatVar("12",f1,a2,frts.frt(),step);
-                 (void) new FloatVar("13",f1,a3,frts.frt(),step);
-                 (void) new FloatVar("14",f1,a4,frts.frt(),step);
-                 (void) new FloatVar("15",f1,a5,frts.frt(),step);
-                 (void) new FloatVar("22",f2,a2,frts.frt(),step);
-                 (void) new FloatVar("23",f2,a3,frts.frt(),step);
-                 (void) new FloatVar("24",f2,a4,frts.frt(),step);
-                 (void) new FloatVar("25",f2,a5,frts.frt(),step);
+               switch (frts.frt()) {
+               case FRT_EQ: case FRT_LQ: case FRT_GQ:
+                 (void) new FloatFloat("12",f1,a2,frts.frt(),0.0,step);
+                 (void) new FloatFloat("13",f1,a3,frts.frt(),0.0,step);
+                 (void) new FloatFloat("14",f1,a4,frts.frt(),0.0,step);
+                 (void) new FloatFloat("15",f1,a5,frts.frt(),0.0,step);
+                 (void) new FloatFloat("22",f2,a2,frts.frt(),0.0,step);
+                 (void) new FloatFloat("23",f2,a3,frts.frt(),0.0,step);
+                 (void) new FloatFloat("24",f2,a4,frts.frt(),0.0,step);
+                 (void) new FloatFloat("25",f2,a5,frts.frt(),0.0,step);
+                 (void) new FloatFloat("32",f3,a2,frts.frt(),1.0,step);
+                 if (i < 5) {
+                   (void) new FloatVar("12",f1,a2,frts.frt(),step);
+                   (void) new FloatVar("13",f1,a3,frts.frt(),step);
+                   (void) new FloatVar("14",f1,a4,frts.frt(),step);
+                   (void) new FloatVar("15",f1,a5,frts.frt(),step);
+                   (void) new FloatVar("22",f2,a2,frts.frt(),step);
+                   (void) new FloatVar("23",f2,a3,frts.frt(),step);
+                   (void) new FloatVar("24",f2,a4,frts.frt(),step);
+                   (void) new FloatVar("25",f2,a5,frts.frt(),step);
+                 }
+                 break;
+               default: ;
                }
              }
            }
