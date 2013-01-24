@@ -77,7 +77,7 @@ namespace Gecode { namespace Float { namespace Rel {
   ExecStatus
   Nq<View0,View1>::propagate(Space& home, const ModEventDelta&) {
     if (x0.assigned() && x1.assigned()) {
-      return (overlap(x0.val(),x1.val())) ? ES_FAILED : home.ES_SUBSUMED(*this);
+      return overlap(x0.val(),x1.val()) ? ES_FAILED : home.ES_SUBSUMED(*this);
     } 
     return ES_FIX;
   }

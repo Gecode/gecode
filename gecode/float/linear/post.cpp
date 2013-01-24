@@ -41,6 +41,7 @@
 #include <climits>
 
 #include <gecode/float/linear.hh>
+#include <gecode/float/rel.hh>
 
 namespace Gecode { namespace Float { namespace Linear {
 
@@ -72,9 +73,54 @@ namespace Gecode { namespace Float { namespace Linear {
     }
   };
 
-  bool
-  normalize(Term* t, int &n,
-            Term* &t_p, int &n_p, Term* &t_n, int &n_n) {
+  /// Extend terms by adding view for result
+  FloatView
+  extend(Home home, Region& r, Term*& t, int& n) {
+    FloatNum min, max;
+    estimate(t,n,0.0,min,max);
+    FloatVar x(home,min,max);
+    Term* et = r.alloc<Term>(n+1);
+    for (int i=n; i--; )
+      et[i] = t[i];
+    et[n].a=-1.0; et[n].x=x;
+    t=et; n++;
+    return x;
+  }
+
+
+  /**
+   * \brief Posting n-ary propagators
+   *
+   */
+  template<class View>
+  forceinline void
+  post_nary(Home home,
+            ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, 
+            FloatVal c) {
+    switch (frt) {
+    case FRT_EQ:
+      GECODE_ES_FAIL((Eq<View,View >::post(home,x,y,c)));
+      break;
+    case FRT_LQ:
+      GECODE_ES_FAIL((Lq<View,View >::post(home,x,y,c)));
+      break;
+    default: GECODE_NEVER;
+    }
+  }
+
+  void
+  dopost(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
+    Limits::check(c,"Float::linear");
+
+    for (int i=n; i--; )
+      if (t[i].x.assigned()) {
+        c -= t[i].a * t[i].x.val();
+        t[i]=t[--n];
+      }
+
+    if ((c < Limits::min) || (c > Limits::max))
+      throw OutOfLimits("Float::linear");
+
     /*
      * Join coefficients for aliased variables:
      *
@@ -101,6 +147,9 @@ namespace Gecode { namespace Float { namespace Linear {
       }
       n = j;
     }
+
+    Term *t_p, *t_n;
+    int n_p, n_n;
 
     /*
      * Partition into positive/negative coefficents
@@ -129,109 +178,31 @@ namespace Gecode { namespace Float { namespace Linear {
     for (int i=n_n; i--; )
       t_n[i].a = -t_n[i].a;
 
-    /*
-     * Test for unit coefficients only
-     *
-     */
-    for (int i=n; i--; )
-      if (t[i].a != 1)
-        return false;
-    return true;
-  }
-
-  /// Eliminate assigned views
-  inline void
-  eliminate(Term* t, int &n, FloatVal& d) {
-    for (int i=n; i--; )
-      if (t[i].x.assigned()) {
-        d -= t[i].a * t[i].x.val();
-        t[i]=t[--n];
-      }
-    if ((d < Limits::min) || (d > Limits::max))
-      throw OutOfLimits("Float::linear");
-  }
-
-  /// Rewrite all inequations in terms of FRT_LQ
-  inline void
-  rewrite(FloatRelType &frt, FloatVal &d,
-          Term* &t_p, int &n_p,
-          Term* &t_n, int &n_n) {
-    switch (frt) {
-    case FRT_EQ: case FRT_LQ:
-      break;
-    case FRT_GQ:
+    if (frt == FRT_GQ) {
       frt = FRT_LQ;
-      std::swap(n_p,n_n); std::swap(t_p,t_n); d = -d;
-      break;
-    default:
-      throw UnknownRelation("Float::linear");
+      std::swap(n_p,n_n); std::swap(t_p,t_n); c = -c;
     }
-  }
-
-
-  /**
-   * \brief Posting n-ary propagators
-   *
-   */
-  template<class View>
-  forceinline void
-  post_nary(Home home,
-            ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, 
-            FloatVal c) {
-    switch (frt) {
-    case FRT_EQ:
-      GECODE_ES_FAIL((Eq<View,View >::post(home,x,y,c)));
-      break;
-    case FRT_LQ:
-      GECODE_ES_FAIL((Lq<View,View >::post(home,x,y,c)));
-      break;
-    default: GECODE_NEVER;
-    }
-  }
-
-  void
-  post(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
-
-    Limits::check(c,"Float::linear");
-
-    FloatVal d = c;
-
-    eliminate(t,n,d);
-
-    Term *t_p, *t_n;
-    int n_p, n_n;
-    bool is_unit = normalize(t,n,t_p,n_p,t_n,n_n);
-
-    rewrite(frt,d,t_p,n_p,t_n,n_n);
 
     if (n == 0) {
       switch (frt) {
-      case FRT_EQ: if (!d.in(0.0)) home.fail(); break;
-      case FRT_LQ: if (d.max() < 0.0)  home.fail(); break;
+      case FRT_EQ: if (!c.in(0.0)) home.fail(); break;
+      case FRT_LQ: if (c.max() < 0.0) home.fail(); break;
       default: GECODE_NEVER;
       }
       return;
     }
 
-    if (n == 1) {
-      if (n_p == 1) {
-        ScaleView y(t_p[0].a,t_p[0].x);
-        switch (frt) {
-        case FRT_EQ: GECODE_ME_FAIL(y.eq(home,d)); break;
-        case FRT_LQ: GECODE_ME_FAIL(y.lq(home,d)); break;
-        default: GECODE_NEVER;
-        }
-      } else {
-        ScaleView y(t_n[0].a,t_n[0].x);
-        switch (frt) {
-        case FRT_EQ: GECODE_ME_FAIL(y.eq(home,-d)); break;
-        case FRT_LQ: GECODE_ME_FAIL(y.gq(home,-d)); break;
-        default: GECODE_NEVER;
-        }
+    /*
+     * Test for unit coefficients only
+     *
+     */
+    bool is_unit = true;
+    for (int i=n; i--; )
+      if (t[i].a != 1.0) {
+        is_unit = false;
+        break;
       }
-      return;
-    }
-
+    
     if (is_unit) {
       // Unit coefficients
       ViewArray<FloatView> x(home,n_p);
@@ -240,7 +211,7 @@ namespace Gecode { namespace Float { namespace Linear {
       ViewArray<FloatView> y(home,n_n);
       for (int i = n_n; i--; )
         y[i] = t_n[i].x;
-      post_nary<FloatView>(home,x,y,frt,d);
+      post_nary<FloatView>(home,x,y,frt,c);
     } else {
       // Arbitrary coefficients 
       ViewArray<ScaleView> x(home,n_p);
@@ -249,112 +220,31 @@ namespace Gecode { namespace Float { namespace Linear {
       ViewArray<ScaleView> y(home,n_n);
       for (int i = n_n; i--; )
         y[i] = ScaleView(t_n[i].a,t_n[i].x);
-      post_nary<ScaleView>(home,x,y,frt,d);
-    }
-  }
-
-  /**
-   * \brief Posting reified n-ary propagators
-   *
-   */
-  template<class View, class ReifyView>
-  forceinline void
-  post_nary(Home home,
-            ViewArray<View>& x, ViewArray<View>& y,
-            FloatRelType frt, FloatVal c, Reify r) {
-    switch (frt) {
-    case FRT_EQ:
-      switch (r.mode()) {
-      case RM_EQV:
-        GECODE_ES_FAIL((ReEq<View,View,ReifyView,RM_EQV>::
-                        post(home,x,y,c,ReifyView(r.var()))));
-        break;
-      case RM_IMP:
-        GECODE_ES_FAIL((ReEq<View,View,ReifyView,RM_IMP>::
-                        post(home,x,y,c,ReifyView(r.var()))));
-        break;
-      case RM_PMI:
-        GECODE_ES_FAIL((ReEq<View,View,ReifyView,RM_PMI>::
-                        post(home,x,y,c,ReifyView(r.var()))));
-        break;
-      default: GECODE_NEVER;
-      }
-      break;
-    case FRT_LQ:
-      switch (r.mode()) {
-      case RM_EQV:
-        GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_EQV>::
-                        post(home,x,y,c,ReifyView(r.var()))));
-        break;
-      case RM_IMP:
-        GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_IMP>::
-                        post(home,x,y,c,ReifyView(r.var()))));
-        break;
-      case RM_PMI:
-        GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_PMI>::
-                        post(home,x,y,c,ReifyView(r.var()))));
-        break;
-      default: GECODE_NEVER;
-      }
-      break;
-    default: GECODE_NEVER;
+      post_nary<ScaleView>(home,x,y,frt,c);
     }
   }
 
   void
-  post(Home home,
-       Term* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b) {
-    Limits::check(c,"Float::linear");
-
-    FloatVal d = c;
-
-    eliminate(t,n,d);
-
-    Term *t_p, *t_n;
-    int n_p, n_n;
-    bool is_unit = normalize(t,n,t_p,n_p,t_n,n_n);
-
-    rewrite(frt,d,t_p,n_p,t_n,n_n);
-
-    if (n == 0) {
-      // FIXME!
-      bool fail = false;
-      switch (frt) {
-      case FRT_EQ: fail = (d != 0.0); break;
-      case FRT_LQ: fail = (d < 0.0); break;
-      default: GECODE_NEVER;
-      }
-      if (((fail && b)? 
-           Int::BoolView(r.var()).zero(home) : 
-           Int::BoolView(r.var()).one(home)) == Int::ME_INT_FAILED)
-        home.fail();
-      return;
+  post(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
+    Region re(home);
+    switch (frt) {
+    case FRT_EQ: case FRT_LQ: case FRT_GQ:
+      break;
+    case FRT_NQ: case FRT_LE: case FRT_GR:
+      rel(home, extend(home,re,t,n), frt, c); 
+      frt=FRT_EQ; c=0.0;
+      break;
+    default:
+      throw UnknownRelation("Float::linear");
     }
+    dopost(home, t, n, frt, c);
+  }
 
-    if (is_unit) {
-      ViewArray<FloatView> x(home,n_p);
-      for (int i = n_p; i--; )
-        x[i] = t_p[i].x;
-      ViewArray<FloatView> y(home,n_n);
-      for (int i = n_n; i--; )
-        y[i] = t_n[i].x;
-      if (b) 
-        post_nary<FloatView,Int::BoolView>(home,x,y,frt,d,r);
-      else   
-        post_nary<FloatView,Int::NegBoolView>(home,x,y,frt,d,r);
-    } else {
-      // Arbitrary coefficients with double precision
-      ViewArray<ScaleView> x(home,n_p);
-      for (int i = n_p; i--; )
-        x[i] = ScaleView(t_p[i].a,t_p[i].x);
-      ViewArray<ScaleView> y(home,n_n);
-      for (int i = n_n; i--; )
-        y[i] = ScaleView(t_n[i].a,t_n[i].x);
-      if (b) 
-        post_nary<ScaleView,Int::BoolView>(home,x,y,frt,d,r);
-      else   
-        post_nary<ScaleView,Int::NegBoolView>(home,x,y,frt,d,r);
-    }
+  void
+  post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r) {
+    Region re(home);
+    rel(home, extend(home,re,t,n), frt, c, r); 
+    dopost(home, t, n, FRT_EQ, 0.0);
   }
 
 }}}

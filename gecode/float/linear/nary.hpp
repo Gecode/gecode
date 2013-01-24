@@ -74,33 +74,6 @@ namespace Gecode { namespace Float { namespace Linear {
     return sizeof(*this);
   }
 
-  /*
-   * Reified linear propagators
-   *
-   */
-  template<class P, class N, PropCond pc, class Ctrl>
-  forceinline
-  ReLin<P,N,pc,Ctrl>::ReLin
-  (Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b0)
-    : Lin<P,N,pc>(home,x,y,c), b(b0) {
-    b.subscribe(home,*this,Int::PC_BOOL_VAL);
-  }
-
-  template<class P, class N, PropCond pc, class Ctrl>
-  forceinline
-  ReLin<P,N,pc,Ctrl>::ReLin
-  (Space& home, bool share, ReLin<P,N,pc,Ctrl>& p)
-    : Lin<P,N,pc>(home,share,p) {
-    b.update(home,share,p.b);
-  }
-
-  template<class P, class N, PropCond pc, class Ctrl>
-  forceinline size_t
-  ReLin<P,N,pc,Ctrl>::dispose(Space& home) {
-    b.cancel(home,*this,Int::PC_BOOL_VAL);
-    (void) Lin<P,N,pc>::dispose(home);
-    return sizeof(*this);
-  }
 
   /*
    * Computing bounds
@@ -146,15 +119,44 @@ namespace Gecode { namespace Float { namespace Linear {
     }
   }
 
-  forceinline bool infty(const FloatNum& n) {
-    return (  (n == std::numeric_limits<FloatNum>::infinity())
-           || (n == -std::numeric_limits<FloatNum>::infinity()) );
+  forceinline bool 
+  infty(const FloatNum& n) {
+    return ((n == std::numeric_limits<FloatNum>::infinity()) || 
+            (n == -std::numeric_limits<FloatNum>::infinity()));
+  }
+
+  /*
+   * Bound consistent linear equation
+   *
+   */
+
+  template<class P, class N>
+  forceinline
+  Eq<P,N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
+    : Lin<P,N,PC_FLOAT_BND>(home,x,y,c) {}
+
+  template<class P, class N>
+  ExecStatus
+  Eq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
+    (void) new (home) Eq<P,N>(home,x,y,c);
+    return ES_OK;
+  }
+
+
+  template<class P, class N>
+  forceinline
+  Eq<P,N>::Eq(Space& home, bool share, Eq<P,N>& p)
+    : Lin<P,N,PC_FLOAT_BND>(home,share,p) {}
+
+  template<class P, class N>
+  Actor*
+  Eq<P,N>::copy(Space& home, bool share) {
+    return new (home) Eq<P,N>(home,share,*this);
   }
 
   template<class P, class N>
   ExecStatus
-  prop_bnd(Space& home, ModEventDelta med, Propagator& p,
-           ViewArray<P>& x, ViewArray<N>& y, FloatVal& c) {
+  Eq<P,N>::propagate(Space& home, const ModEventDelta& med) {
     // Eliminate singletons
     FloatNum sl = 0.0;
     FloatNum su = 0.0;
@@ -165,13 +167,13 @@ namespace Gecode { namespace Float { namespace Linear {
     if ((FloatView::me(med) == ME_FLOAT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
         GECODE_ME_CHECK(x[0].eq(home,c));
-        return home.ES_SUBSUMED(p);
+        return home.ES_SUBSUMED(*this);
       }
       if (y.size() == 1) {
         GECODE_ME_CHECK(y[0].eq(home,-c));
-        return home.ES_SUBSUMED(p);
+        return home.ES_SUBSUMED(*this);
       }
-      return (c.in(0.0)) ? home.ES_SUBSUMED(p) : ES_FAILED;
+      return (c.in(0.0)) ? home.ES_SUBSUMED(*this) : ES_FAILED;
     }
 
     sl = Round.add_up(sl,c.max()); 
@@ -239,155 +241,8 @@ namespace Gecode { namespace Float { namespace Linear {
       }
     } while (mod);
 
-    return (sl == su) ? home.ES_SUBSUMED(p) : ES_NOFIX;
+    return (sl == su) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
-
-  /*
-   * Bound consistent linear equation
-   *
-   */
-
-  template<class P, class N>
-  forceinline
-  Eq<P,N>::Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
-    : Lin<P,N,PC_FLOAT_BND>(home,x,y,c) {}
-
-  template<class P, class N>
-  ExecStatus
-  Eq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
-    (void) new (home) Eq<P,N>(home,x,y,c);
-    return ES_OK;
-  }
-
-
-  template<class P, class N>
-  forceinline
-  Eq<P,N>::Eq(Space& home, bool share, Eq<P,N>& p)
-    : Lin<P,N,PC_FLOAT_BND>(home,share,p) {}
-
-  template<class P, class N>
-  Actor*
-  Eq<P,N>::copy(Space& home, bool share) {
-    return new (home) Eq<P,N>(home,share,*this);
-  }
-
-  template<class P, class N>
-  ExecStatus
-  Eq<P,N>::propagate(Space& home, const ModEventDelta& med) {
-    return prop_bnd<P,N>(home,med,*this,x,y,c);
-  }
-
-  /*
-   * Reified bound consistent linear equation
-   *
-   */
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  forceinline
-  ReEq<P,N,Ctrl,rm>::ReEq(Home home,
-                          ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b)
-    : ReLin<P,N,PC_FLOAT_BND,Ctrl>(home,x,y,c,b) {}
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  ExecStatus
-  ReEq<P,N,Ctrl,rm>::post(Home home,
-                          ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b) {
-    (void) new (home) ReEq<P,N,Ctrl,rm>(home,x,y,c,b);
-    return ES_OK;
-  }
-
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  forceinline
-  ReEq<P,N,Ctrl,rm>::ReEq(Space& home, bool share, 
-                          ReEq<P,N,Ctrl,rm>& p)
-    : ReLin<P,N,PC_FLOAT_BND,Ctrl>(home,share,p) {}
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  Actor*
-  ReEq<P,N,Ctrl,rm>::copy(Space& home, bool share) {
-    return new (home) ReEq<P,N,Ctrl,rm>(home,share,*this);
-  }
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  ExecStatus
-  ReEq<P,N,Ctrl,rm>::propagate(Space& home, const ModEventDelta& med) {
-    if (b.zero())
-      GECODE_REWRITE(*this,(Nq<P,N>::post(home(*this),x,y,c)));
-    if (b.one())
-      GECODE_REWRITE(*this,(Eq<P,N>::post(home(*this),x,y,c)));
-
-    FloatNum sl = 0;
-    FloatNum su = 0;
-
-    bounds_p<P>(med, x, c, sl, su);
-    bounds_n<N>(med, y, c, sl, su);
-
-    if ((c == -sl) && (c == -su)) {
-      GECODE_ME_CHECK(b.one_none(home));
-      return home.ES_SUBSUMED(*this);
-    }
-    if ((c.max() < -sl) || (c.min() > -su)) {
-      GECODE_ME_CHECK(b.zero_none(home));
-      return home.ES_SUBSUMED(*this);
-    }
-    return ES_FIX;
-  }
-
-
-  /*
-   * Domain consistent linear disequation
-   *
-   */
-
-  template<class P, class N>
-  forceinline
-  Nq<P,N>::Nq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c)
-    : Lin<P,N,PC_FLOAT_VAL>(home,x,y,c) {}
-
-  template<class P, class N>
-  ExecStatus
-  Nq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
-    (void) new (home) Nq<P,N>(home,x,y,c);
-    return ES_OK;
-  }
-
-
-  template<class P, class N>
-  forceinline
-  Nq<P,N>::Nq(Space& home, bool share, Nq<P,N>& p)
-    : Lin<P,N,PC_FLOAT_VAL>(home,share,p) {}
-
-  template<class P, class N>
-  Actor*
-  Nq<P,N>::copy(Space& home, bool share) {
-    return new (home) Nq<P,N>(home,share,*this);
-  }
-
-  template<class P, class N>
-  ExecStatus
-  Nq<P,N>::propagate(Space& home, const ModEventDelta&) {
-    for (int i = x.size(); i--; )
-      if (x[i].assigned()) {
-        c -= x[i].val();  x.move_lst(i);
-      }
-    for (int i = y.size(); i--; )
-      if (y[i].assigned()) {
-        c += y[i].val();  y.move_lst(i);
-      }
-    if (x.size() + y.size() <= 1) {
-      if (x.size() == 1 && x[0].assigned()) {
-        return (x[0].val() == c) ? ES_FAILED : home.ES_SUBSUMED(*this);
-      }
-      if (y.size() == 1 && y[0].assigned()) {
-        return (y[0].val() == -c) ? ES_FAILED : home.ES_SUBSUMED(*this);
-      }
-      return (c.in(0.0)) ?
-        ES_FAILED : home.ES_SUBSUMED(*this);
-    }
-    return ES_FIX;
-  }
-
 
 
   /*
@@ -407,7 +262,6 @@ namespace Gecode { namespace Float { namespace Linear {
     return ES_OK;
   }
 
-
   template<class P, class N>
   forceinline
   Lq<P,N>::Lq(Space& home, bool share, Lq<P,N>& p)
@@ -423,7 +277,7 @@ namespace Gecode { namespace Float { namespace Linear {
   ExecStatus
   Lq<P,N>::propagate(Space& home, const ModEventDelta& med) {
     // Eliminate singletons
-    FloatNum sl = 0;
+    FloatNum sl = 0.0;
 
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = x.size(); i--; ) {
@@ -487,67 +341,6 @@ namespace Gecode { namespace Float { namespace Linear {
     }
 
     return assigned ? home.ES_SUBSUMED(*this) : es;
-  }
-
-  /*
-   * Reified bound consistent linear inequation
-   *
-   */
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  forceinline
-  ReLq<P,N,Ctrl,rm>::ReLq(Home home, 
-                          ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b)
-    : ReLin<P,N,PC_FLOAT_BND,Ctrl>(home,x,y,c,b) {}
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  ExecStatus
-  ReLq<P,N,Ctrl,rm>::post(Home home, 
-                          ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b) {
-    (void) new (home) ReLq<P,N,Ctrl,rm>(home,x,y,c,b);
-    return ES_OK;
-  }
-
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  forceinline
-  ReLq<P,N,Ctrl,rm>::ReLq(Space& home, bool share, ReLq<P,N,Ctrl,rm>& p)
-    : ReLin<P,N,PC_FLOAT_BND,Ctrl>(home,share,p) {}
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  Actor*
-  ReLq<P,N,Ctrl,rm>::copy(Space& home, bool share) {
-    return new (home) ReLq<P,N,Ctrl,rm>(home,share,*this);
-  }
-
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  ExecStatus
-  ReLq<P,N,Ctrl,rm>::propagate(Space& home, const ModEventDelta& med) {
-    if (b.zero())
-    {
-      GECODE_ES_CHECK((Nq<P,N>::post(home(*this),x,y,c)));
-      GECODE_REWRITE(*this,(Lq<P,N>::post(home(*this),x,y,c)));
-    }
-    if (b.one())
-      GECODE_REWRITE(*this,(Lq<P,N>::post(home(*this),x,y,c)));
-
-    // Eliminate singletons
-    FloatNum sl = 0;
-    FloatNum su = 0;
-
-    bounds_p<P>(med,x,c,sl,su);
-    bounds_n<N>(med,y,c,sl,su);
-
-    if (c.max() < -sl) {
-      GECODE_ME_CHECK(b.zero_none(home));
-      return home.ES_SUBSUMED(*this);
-    }
-    if (c.min() >= -su) {
-      GECODE_ME_CHECK(b.one_none(home));
-      return home.ES_SUBSUMED(*this);
-    }
-
-    return ES_FIX;
   }
 
 }}}

@@ -76,10 +76,13 @@ namespace Test { namespace Float {
          : Test("Linear::Float::"+
                 str(frt0)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
-                a0.size(),d,st,CPLT_ASSIGNMENT,false),
-         a(a0), frt(frt0), c(c0) {
-          testfix = false;
-        }
+                a0.size(),d,st,CPLT_ASSIGNMENT,true),
+           a(a0), frt(frt0), c(c0) {
+         using namespace Gecode;
+         testfix = false;
+         if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
+           testsubsumed = false;
+       }
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal e = 0.0;
@@ -133,10 +136,13 @@ namespace Test { namespace Float {
                 const Gecode::FloatArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
          : Test("Linear::Var::"+
                 str(frt0)+"::"+s+"::"+str(a0.size()),
-                a0.size()+1,d,st,CPLT_ASSIGNMENT,false),
+                a0.size()+1,d,st,CPLT_ASSIGNMENT,true),
            a(a0), frt(frt0) {
-          testfix = false;
-        }
+         using namespace Gecode;
+         testfix = false;
+         if ((frt == FRT_NQ) || (frt == FRT_LE) || (frt == FRT_GR) || reified)
+           testsubsumed = false;
+       }
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatVal e = 0.0;
@@ -200,52 +206,42 @@ namespace Test { namespace Float {
            FloatArgs a1(1, 0.0);
 
            for (FloatRelTypes frts; frts(); ++frts) {
-             switch (frts.frt()) {
-             case FRT_EQ: case FRT_LQ: case FRT_GQ:
-               (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);
-               (void) new FloatVar("11",f1,a1,frts.frt(),step);
-               (void) new FloatFloat("21",f2,a1,frts.frt(),0.0,step);
-               (void) new FloatVar("21",f2,a1,frts.frt(),step);
-               (void) new FloatFloat("31",f3,a1,frts.frt(),1.0,step);
-               break;
-             default: ;
-             }
+             (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);
+             (void) new FloatVar("11",f1,a1,frts.frt(),step);
+             (void) new FloatFloat("21",f2,a1,frts.frt(),0.0,step);
+             (void) new FloatVar("21",f2,a1,frts.frt(),step);
+             (void) new FloatFloat("31",f3,a1,frts.frt(),1.0,step);
            }
 
-           const FloatVal av2[5] = {1.0,1.0,1.0,1.0,1.0};
-           const FloatVal av3[5] = {1.0,-1.0,-1.0,1.0,-1.0};
-           const FloatVal av4[5] = {2.0,3.0,5.0,7.0,11.0};
-           const FloatVal av5[5] = {-2.0,3.0,-5.0,7.0,-11.0};
+           const FloatVal av2[4] = {1.0,1.0,1.0,1.0};
+           const FloatVal av3[4] = {1.0,-1.0,-1.0,1.0};
+           const FloatVal av4[4] = {2.0,3.0,5.0,7.0};
+           const FloatVal av5[4] = {-2.0,3.0,-5.0,7.0};
 
-           for (int i=1; i<=5; i++) {
+           for (int i=1; i<=4; i++) {
              FloatArgs a2(i, av2);
              FloatArgs a3(i, av3);
              FloatArgs a4(i, av4);
              FloatArgs a5(i, av5);
              for (FloatRelTypes frts; frts(); ++frts) {
-               switch (frts.frt()) {
-               case FRT_EQ: case FRT_LQ: case FRT_GQ:
-                 (void) new FloatFloat("12",f1,a2,frts.frt(),0.0,step);
-                 (void) new FloatFloat("13",f1,a3,frts.frt(),0.0,step);
-                 (void) new FloatFloat("14",f1,a4,frts.frt(),0.0,step);
-                 (void) new FloatFloat("15",f1,a5,frts.frt(),0.0,step);
-                 (void) new FloatFloat("22",f2,a2,frts.frt(),0.0,step);
-                 (void) new FloatFloat("23",f2,a3,frts.frt(),0.0,step);
-                 (void) new FloatFloat("24",f2,a4,frts.frt(),0.0,step);
-                 (void) new FloatFloat("25",f2,a5,frts.frt(),0.0,step);
-                 (void) new FloatFloat("32",f3,a2,frts.frt(),1.0,step);
-                 if (i < 5) {
-                   (void) new FloatVar("12",f1,a2,frts.frt(),step);
-                   (void) new FloatVar("13",f1,a3,frts.frt(),step);
-                   (void) new FloatVar("14",f1,a4,frts.frt(),step);
-                   (void) new FloatVar("15",f1,a5,frts.frt(),step);
-                   (void) new FloatVar("22",f2,a2,frts.frt(),step);
-                   (void) new FloatVar("23",f2,a3,frts.frt(),step);
-                   (void) new FloatVar("24",f2,a4,frts.frt(),step);
-                   (void) new FloatVar("25",f2,a5,frts.frt(),step);
-                 }
-                 break;
-               default: ;
+               (void) new FloatFloat("12",f1,a2,frts.frt(),0.0,step);
+               (void) new FloatFloat("13",f1,a3,frts.frt(),0.0,step);
+               (void) new FloatFloat("14",f1,a4,frts.frt(),0.0,step);
+               (void) new FloatFloat("15",f1,a5,frts.frt(),0.0,step);
+               (void) new FloatFloat("22",f2,a2,frts.frt(),0.0,step);
+               (void) new FloatFloat("23",f2,a3,frts.frt(),0.0,step);
+               (void) new FloatFloat("24",f2,a4,frts.frt(),0.0,step);
+               (void) new FloatFloat("25",f2,a5,frts.frt(),0.0,step);
+               (void) new FloatFloat("32",f3,a2,frts.frt(),1.0,step);
+               if (i < 4) {
+                 (void) new FloatVar("12",f1,a2,frts.frt(),step);
+                 (void) new FloatVar("13",f1,a3,frts.frt(),step);
+                 (void) new FloatVar("14",f1,a4,frts.frt(),step);
+                 (void) new FloatVar("15",f1,a5,frts.frt(),step);
+                 (void) new FloatVar("22",f2,a2,frts.frt(),step);
+                 (void) new FloatVar("23",f2,a3,frts.frt(),step);
+                 (void) new FloatVar("24",f2,a4,frts.frt(),step);
+                 (void) new FloatVar("25",f2,a5,frts.frt(),step);
                }
              }
            }

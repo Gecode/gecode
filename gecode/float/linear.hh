@@ -79,25 +79,6 @@ namespace Gecode { namespace Float { namespace Linear {
   };
 
   /**
-   * \brief Base-class for reified n-ary linear propagators
-   *
-   * The propagation condition \a pc refers to all views.
-   */
-  template<class P, class N, PropCond pc, class Ctrl>
-  class ReLin : public Lin<P,N,pc> {
-  protected:
-    /// Control view for reification
-    Ctrl b;
-    /// Constructor for cloning \a p
-    ReLin(Space& home, bool share, ReLin& p);
-    /// Constructor for creation
-    ReLin(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b);
-  public:
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-  /**
    * \brief Compute bounds information for positive views
    *
    * \relates Lin
@@ -144,64 +125,6 @@ namespace Gecode { namespace Float { namespace Linear {
     post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
   };
 
-  /**
-   * \brief %Propagator for reified bounds consistent n-ary linear equality
-   *
-   * The propagation condition \a pc refers to both views.
-   *
-   * Requires \code #include <gecode/float/linear.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  class ReEq : public ReLin<P,N,PC_FLOAT_BND,Ctrl> {
-  protected:
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::x;
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::y;
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::c;
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::b;
-
-    /// Constructor for cloning \a p
-    ReEq(Space& home, bool share, ReEq& p);
-  public:
-    /// Constructor for creation
-    ReEq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b);
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\equiv \operatorname{rm}(b)\f$
-    static ExecStatus
-    post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b);
-  };
-  /**
-   * \brief %Propagator for bounds consistent n-ary linear disequality
-   *
-   * The propagation condition \a pc refers to both views.
-   *
-   * Requires \code #include <gecode/float/linear.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class P, class N>
-  class Nq : public Lin<P,N,PC_FLOAT_VAL> {
-  protected:
-    using Lin<P,N,PC_FLOAT_VAL>::x;
-    using Lin<P,N,PC_FLOAT_VAL>::y;
-    using Lin<P,N,PC_FLOAT_VAL>::c;
-
-    /// Constructor for cloning \a p
-    Nq(Space& home, bool share, Nq& p);
-  public:
-    /// Constructor for creation
-    Nq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
-    static ExecStatus
-    post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
-  };
-
 
   /**
    * \brief %Propagator for bounds consistent n-ary linear less or equal
@@ -232,35 +155,6 @@ namespace Gecode { namespace Float { namespace Linear {
     post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
   };
 
-  /**
-   * \brief %Propagator for reified bounds consistent n-ary linear less or equal
-   *
-   * The propagation condition \a pc refers to both views.
-   *
-   * Requires \code #include <gecode/float/linear.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class P, class N, class Ctrl, ReifyMode rm>
-  class ReLq : public ReLin<P,N,PC_FLOAT_BND,Ctrl> {
-  protected:
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::x;
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::y;
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::c;
-    using ReLin<P,N,PC_FLOAT_BND,Ctrl>::b;
-
-    /// Constructor for cloning \a p
-    ReLq(Space& home, bool share, ReLq& p);
-  public:
-    /// Constructor for creation
-    ReLq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b);
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\equiv \operatorname{rm}(b)\f$
-    static ExecStatus
-    post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b);
-  };
 }}}
 
 #include <gecode/float/linear/nary.hpp>
@@ -296,27 +190,6 @@ namespace Gecode { namespace Float { namespace Linear {
   GECODE_FLOAT_EXPORT void 
   estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum& u);
 
-  /** \brief Normalize linear constraints
-   *
-   * \param t array of linear terms
-   * \param n size of array
-   * \param t_p array of linear terms with positive coefficients
-   * \param n_p number of postive terms
-   * \param t_n array of linear terms with negative coefficients
-   * \param n_n number of negative terms
-   *
-   * Replaces all negative coefficients by positive coefficients.
-   *
-   *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes
-   *    \f$(a+b)x\f$.
-   *
-   * Returns true, if all coefficients are unit coefficients
-   */
-  GECODE_FLOAT_EXPORT bool 
-  normalize(Term* t, int &n,
-            Term* &t_p, int &n_p, Term* &t_n, int &n_n);
-
   /**
    * \brief Post propagator for linear constraint over floats
    * \param home current space
@@ -344,7 +217,6 @@ namespace Gecode { namespace Float { namespace Linear {
    * \param frt type of relation
    * \param c result of linear constraint
    * \param r reification specification
-   * \param b false for negation of Reify mode
    *
    * All variants for linear constraints share the following properties:
    *  - Variables occuring multiply in the term array are replaced
@@ -355,7 +227,7 @@ namespace Gecode { namespace Float { namespace Linear {
    * \ingroup FuncFloatProp
    */
   GECODE_FLOAT_EXPORT void
-  post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b = true);
+  post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r);
 
 }}}
 

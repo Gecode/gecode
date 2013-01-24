@@ -163,13 +163,13 @@ namespace Test { namespace Float {
   Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
              bool r)
       : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at), reified(r),
-      testsearch(true), testfix(true) {}
+        testsearch(true), testfix(true), testsubsumed(true) {}
 
   inline
   Test::Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
              bool r)
       : Base("Float::"+s), arity(a), dom(min,max), step(st), assigmentType(at), reified(r),
-      testsearch(true), testfix(true) {}
+        testsearch(true), testfix(true), testsubsumed(true) {}
 
   inline
   std::string
@@ -231,7 +231,7 @@ namespace Test { namespace Float {
       bool b = false;
       switch (r) {
       case FRT_EQ: b = (x == y); break;
-      case FRT_NQ: b = (x != y); break;
+      case FRT_NQ: b = !(x == y); break;
       case FRT_LQ: b = (x <= y); break;
       case FRT_LE: b = (x < y);  break;
       case FRT_GQ: b = (x >= y); break;

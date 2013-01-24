@@ -253,6 +253,8 @@ namespace Test {
       bool testsearch;
       /// Whether to perform fixpoint test
       bool testfix;
+      /// Whether to test for subsumption
+      bool testsubsumed;
 
     public:
       /**

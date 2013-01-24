@@ -39,29 +39,19 @@
 
 namespace Gecode { namespace Float {
 
-  /*
-   * Testing equality
-   *
-   */
-
   template<class View>
   forceinline RelTest
-  rtest_eq_bnd(View x, View y) {
+  rtest_eq(View x, View y) {
     if ((x.min() > y.max()) || (x.max() < y.min())) return RT_FALSE;
     return (x.assigned() && y.assigned()) ? RT_TRUE : RT_MAYBE;
   }
 
   template<class View>
   forceinline RelTest
-  rtest_eq_bnd(View x, FloatVal n) {
+  rtest_eq(View x, FloatVal n) {
     if ((x.min() > n.max()) || (x.max() < n.min())) return RT_FALSE;
     return x.assigned() ? RT_TRUE : RT_MAYBE;
   }
-
-  /*
-   * Testing inequalities
-   *
-   */
 
   template<class View>
   forceinline RelTest

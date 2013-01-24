@@ -43,19 +43,19 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class View>
   forceinline bool
   pos(const View& x) {
-    return x.min() >= 0;
+    return x.min() >= 0.0;
   }
   /// Test whether \a x is negative
   template<class View>
   forceinline bool
   neg(const View& x) {
-    return x.max() <= 0;
+    return x.max() <= 0.0;
   }
   /// Test whether \a x is neither positive nor negative
   template<class View>
   forceinline bool
   any(const View& x) {
-    return (x.min() <= 0) && (x.max() >= 0);
+    return (x.min() <= 0.0) && (x.max() >= 0.0);
   }
 
   /*
@@ -71,16 +71,16 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class View>
   forceinline ExecStatus
   MultZeroOne<View>::post(Home home, View x0, View x1) {
-    switch (rtest_eq_bnd(x0,0)) {
+    switch (rtest_eq(x0,0.0)) {
     case RT_FALSE:
-      GECODE_ME_CHECK(x1.eq(home,1));
+      GECODE_ME_CHECK(x1.eq(home,1.0));
       break;
     case RT_TRUE:
       break;
     case RT_MAYBE:
-      switch (rtest_eq_bnd(x1,1)) {
+      switch (rtest_eq(x1,1.0)) {
       case RT_FALSE:
-        GECODE_ME_CHECK(x0.eq(home,0));
+        GECODE_ME_CHECK(x0.eq(home,0.0));
         break;
       case RT_TRUE:
         break;
@@ -110,16 +110,16 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class View>
   ExecStatus
   MultZeroOne<View>::propagate(Space& home, const ModEventDelta&) {
-    switch (rtest_eq_bnd(x0,0)) {
+    switch (rtest_eq(x0,0.0)) {
     case RT_FALSE:
-      GECODE_ME_CHECK(x1.eq(home,1));
+      GECODE_ME_CHECK(x1.eq(home,1.0));
       break;
     case RT_TRUE:
       break;
     case RT_MAYBE:
-      switch (rtest_eq_bnd(x1,1)) {
+      switch (rtest_eq(x1,1.0)) {
       case RT_FALSE:
-        GECODE_ME_CHECK(x0.eq(home,0));
+        GECODE_ME_CHECK(x0.eq(home,0.0));
         break;
       case RT_TRUE:
         break;
@@ -160,18 +160,21 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class VA, class VB, class VC>
   ExecStatus
   MultPlus<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
-    if (x1.min() != 0) GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
-    if (x0.min() != 0) GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
+    if (x1.min() != 0.0) 
+      GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
+    if (x0.min() != 0.0) 
+      GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
     GECODE_ME_CHECK(x2.eq(home,x0.val() * x1.val()));
-    if (x0.assigned() && x1.assigned() && x2.assigned()) return home.ES_SUBSUMED(*this);
-    else return ES_NOFIX;
+    if (x0.assigned() && x1.assigned() && x2.assigned()) 
+      return home.ES_SUBSUMED(*this);
+    return ES_NOFIX;
   }
 
   template<class VA, class VB, class VC>
   forceinline ExecStatus
   MultPlus<VA,VB,VC>::post(Home home, VA x0, VB x1, VC x2) {
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x1.gq(home,0));
+    GECODE_ME_CHECK(x0.gq(home,0.0));
+    GECODE_ME_CHECK(x1.gq(home,0.0));
     GECODE_ME_CHECK(x2.gq(home,Round.mul_down(x0.min(),x1.min())));
     (void) new (home) MultPlus<VA,VB,VC>(home,x0,x1,x2);
     return ES_OK;
@@ -242,12 +245,12 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     }
 
     if (x0.assigned()) {
-      assert((x0.val() == 0) && (x2.val() == 0));
+      assert((x0.val() == 0.0) && (x2.val() == 0.0));
       return home.ES_SUBSUMED(*this);
     }
 
     if (x1.assigned()) {
-      assert((x1.val() == 0) && (x2.val() == 0));
+      assert((x1.val() == 0.0) && (x2.val() == 0.0));
       return home.ES_SUBSUMED(*this);
     }
 
@@ -285,8 +288,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     if (pos(x2)) goto rewrite_nnp;
     if (neg(x2)) goto rewrite_npn;
 
-    if (x0.max() != 0) 
-    {
+    if (x0.max() != 0.0) {
       GECODE_ME_CHECK(x1.lq(home,Round.div_up(x2.min(),x0.max())));
       GECODE_ME_CHECK(x1.gq(home,Round.div_down(x2.max(),x0.max())));
     }

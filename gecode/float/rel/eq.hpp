@@ -256,7 +256,7 @@ namespace Gecode { namespace Float { namespace Rel {
         return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Nq<View,View>::post(home(*this),x0,x1)));
     }
-    switch (rtest_eq_bnd(x0,x1)) {
+    switch (rtest_eq(x0,x1)) {
     case RT_TRUE:
       if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one_none(home));
@@ -323,7 +323,7 @@ namespace Gecode { namespace Float { namespace Rel {
       if (rm != RM_PMI)
         GECODE_ME_CHECK(x0.eq(home,c));
     } else {
-      switch (rtest_eq_bnd(x0,c)) {
+      switch (rtest_eq(x0,c)) {
       case RT_TRUE:
         if (rm != RM_IMP)
           GECODE_ME_CHECK(b.one(home)); 

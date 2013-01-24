@@ -49,7 +49,7 @@ namespace Gecode {
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
-      t[i].a=1; t[i].x=x[i];
+      t[i].a=1.0; t[i].x=x[i];
     }
     Linear::post(home,t,x.size(),frt,c);
   }
@@ -62,14 +62,15 @@ namespace Gecode {
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
-      t[i].a=1; t[i].x=x[i];
+      t[i].a=1.0; t[i].x=x[i];
     }
     Linear::post(home,t,x.size(),frt,c,r);
   }
 
   void
   linear(Home home,
-         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatNum c) {
+         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         FloatNum c) {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
@@ -84,8 +85,8 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatNum c, 
-         Reify r) {
+         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         FloatNum c, Reify r) {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
@@ -106,10 +107,10 @@ namespace Gecode {
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
-      t[i].a=1; t[i].x=x[i];
+      t[i].a=1.0; t[i].x=x[i];
     }
     FloatNum min, max;
-    estimate(t,x.size(),0,min,max);
+    estimate(t,x.size(),0.0,min,max);
     FloatView v(y);
     switch (frt) {
     case FRT_EQ:
@@ -124,8 +125,8 @@ namespace Gecode {
     default: ;
     }
     if (home.failed()) return;
-    t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0);
+    t[x.size()].a=-1.0; t[x.size()].x=y;
+    Linear::post(home,t,x.size()+1,frt,0.0);
   }
 
   void
@@ -136,15 +137,16 @@ namespace Gecode {
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
-      t[i].a=1; t[i].x=x[i];
+      t[i].a=1.0; t[i].x=x[i];
     }
     t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0,r);
+    Linear::post(home,t,x.size()+1,frt,0.0,r);
   }
 
   void
   linear(Home home,
-         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
+         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         FloatVar y) {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
@@ -155,7 +157,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
     FloatNum min, max;
-    estimate(t,x.size(),0,min,max);
+    estimate(t,x.size(),0.0,min,max);
     FloatView v(y);
     switch (frt) {
     case FRT_EQ:
@@ -170,14 +172,14 @@ namespace Gecode {
     default: ;
     }
     if (home.failed()) return;
-    t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0);
+    t[x.size()].a=-1.0; t[x.size()].x=y;
+    Linear::post(home,t,x.size()+1,frt,0.0);
   }
 
   void
   linear(Home home,
-         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, FloatVar y,
-         Reify r) {
+         const FloatArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         FloatVar y, Reify r) {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
@@ -187,8 +189,8 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
-    t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,frt,0,r);
+    t[x.size()].a=-1.0; t[x.size()].x=y;
+    Linear::post(home,t,x.size()+1,frt,0.0,r);
   }
 
 }
