@@ -37,26 +37,7 @@
  *
  */
 
-#include <gecode/float/linear/noview.hpp>
-
 namespace Gecode { namespace Float { namespace Linear {
-
-  /**
-   * \brief Test if only unit-coefficient arrays used
-   *
-   */
-  template<class P, class N>
-  forceinline bool
-  isunit(ViewArray<P>&, ViewArray<N>&) { return false; }
-  template<>
-  forceinline bool
-  isunit(ViewArray<FloatView>&, ViewArray<FloatView>&) { return true; }
-  template<>
-  forceinline bool
-  isunit(ViewArray<FloatView>&, ViewArray<NoView>&) { return true; }
-  template<>
-  forceinline bool
-  isunit(ViewArray<NoView>&, ViewArray<FloatView>&) { return true; }
 
   /*
    * Linear propagators
@@ -274,14 +255,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class P, class N>
   ExecStatus
   Eq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
-    ViewArray<NoView> nva;
-    if (y.size() == 0) {
-      (void) new (home) Eq<P,NoView>(home,x,nva,c);
-    } else if (x.size() == 0) {
-      (void) new (home) Eq<N,NoView>(home,y,nva,-c);
-    } else {
-      (void) new (home) Eq<P,N>(home,x,y,c);
-    }
+    (void) new (home) Eq<P,N>(home,x,y,c);
     return ES_OK;
   }
 
@@ -291,97 +265,9 @@ namespace Gecode { namespace Float { namespace Linear {
   Eq<P,N>::Eq(Space& home, bool share, Eq<P,N>& p)
     : Lin<P,N,PC_FLOAT_BND>(home,share,p) {}
 
-  /**
-   * \brief Rewriting of equality to binary propagators
-   *
-   */
-  template<class P, class N>
-  forceinline Actor*
-  eqtobin(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
-    return NULL;
-  }
-  template<>
-  forceinline Actor*
-  eqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
-    assert(x.size() == 2);
-    return new (home) EqBin<FloatView,FloatView>
-      (home,share,p,x[0],x[1],c);
-  }
-  template<>
-  forceinline Actor*
-  eqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
-    assert(y.size() == 2);
-    return new (home) EqBin<FloatView,FloatView>
-      (home,share,p,y[0],y[1],-c);
-  }
-  template<>
-  forceinline Actor*
-  eqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
-    if (x.size() == 2)
-      return new (home) EqBin<FloatView,FloatView>
-        (home,share,p,x[0],x[1],c);
-    if (x.size() == 1)
-      return new (home) EqBin<FloatView,MinusView>
-        (home,share,p,x[0],MinusView(y[0]),c);
-    return new (home) EqBin<FloatView,FloatView>
-      (home,share,p,y[0],y[1],-c);
-  }
-
-  /**
-   * \brief Rewriting of equality to ternary propagators
-   *
-   */
-  template<class P, class N>
-  forceinline Actor*
-  eqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
-    return NULL;
-  }
-  template<>
-  forceinline Actor*
-  eqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
-    assert(x.size() == 3);
-    return new (home) EqTer<FloatView,FloatView,FloatView>
-      (home,share,p,x[0],x[1],x[2],c);
-  }
-  template<>
-  forceinline Actor*
-  eqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
-    assert(y.size() == 3);
-    return new (home) EqTer<FloatView,FloatView,FloatView>
-      (home,share,p,y[0],y[1],y[2],-c);
-  }
-  template<>
-  forceinline Actor*
-  eqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
-    if (x.size() == 3)
-      return new (home) EqTer<FloatView,FloatView,FloatView>
-        (home,share,p,x[0],x[1],x[2],c);
-    if (x.size() == 2)
-      return new (home) EqTer<FloatView,FloatView,MinusView>
-        (home,share,p,x[0],x[1],MinusView(y[0]),c);
-    if (x.size() == 1)
-      return new (home) EqTer<FloatView,FloatView,MinusView>
-        (home,share,p,y[0],y[1],MinusView(x[0]),-c);
-    return new (home) EqTer<FloatView,FloatView,FloatView>
-      (home,share,p,y[0],y[1],y[2],-c);
-  }
-
   template<class P, class N>
   Actor*
   Eq<P,N>::copy(Space& home, bool share) {
-    if (isunit(x,y)) {
-      // Check whether rewriting is possible
-      if (x.size() + y.size() == 2)
-        return eqtobin(home,share,*this,x,y,c);
-      if (x.size() + y.size() == 3)
-        return eqtoter(home,share,*this,x,y,c);
-    }
     return new (home) Eq<P,N>(home,share,*this);
   }
 
@@ -406,14 +292,7 @@ namespace Gecode { namespace Float { namespace Linear {
   ExecStatus
   ReEq<P,N,Ctrl,rm>::post(Home home,
                           ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b) {
-    ViewArray<NoView> nva;
-    if (y.size() == 0) {
-      (void) new (home) ReEq<P,NoView,Ctrl,rm>(home,x,nva,c,b);
-    } else if (x.size() == 0) {
-      (void) new (home) ReEq<N,NoView,Ctrl,rm>(home,y,nva,-c,b);
-    } else {
-      (void) new (home) ReEq<P,N,Ctrl,rm>(home,x,y,c,b);
-    }
+    (void) new (home) ReEq<P,N,Ctrl,rm>(home,x,y,c,b);
     return ES_OK;
   }
 
@@ -469,14 +348,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class P, class N>
   ExecStatus
   Nq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
-    ViewArray<NoView> nva;
-    if (y.size() == 0) {
-      (void) new (home) Nq<P,NoView>(home,x,nva,c);
-    } else if (x.size() == 0) {
-      (void) new (home) Nq<N,NoView>(home,y,nva,-c);
-    } else {
-      (void) new (home) Nq<P,N>(home,x,y,c);
-    }
+    (void) new (home) Nq<P,N>(home,x,y,c);
     return ES_OK;
   }
 
@@ -486,94 +358,9 @@ namespace Gecode { namespace Float { namespace Linear {
   Nq<P,N>::Nq(Space& home, bool share, Nq<P,N>& p)
     : Lin<P,N,PC_FLOAT_VAL>(home,share,p) {}
 
-  /**
-   * \brief Rewriting of disequality to binary propagators
-   *
-   */
-  template<class P, class N>
-  forceinline Actor*
-  nqtobin(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
-    return NULL;
-  }
-  forceinline Actor*
-  nqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
-    assert(x.size() == 2);
-    return new (home) NqBin<FloatView,FloatView>
-      (home,share,p,x[0],x[1],c);
-  }
-  forceinline Actor*
-  nqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
-    assert(y.size() == 2);
-    return new (home) NqBin<FloatView,FloatView>
-      (home,share,p,y[0],y[1],-c);
-  }
-  forceinline Actor*
-  nqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
-    if (x.size() == 2)
-      return new (home) NqBin<FloatView,FloatView>
-        (home,share,p,x[0],x[1],c);
-    if (x.size() == 1)
-      return new (home) NqBin<FloatView,MinusView>
-        (home,share,p,x[0],MinusView(y[0]),c);
-    return new (home) NqBin<FloatView,FloatView>
-      (home,share,p,y[0],y[1],-c);
-  }
-
-  /**
-   * \brief Rewriting of disequality to ternary propagators
-   *
-   */
-  template<class P, class N>
-  forceinline Actor*
-  nqtoter(Space&, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, FloatVal) {
-    return NULL;
-  }
-  template<>
-  forceinline Actor*
-  nqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
-    assert(x.size() == 3);
-    return new (home) NqTer<FloatView,FloatView,FloatView>
-      (home,share,p,x[0],x[1],x[2],c);
-  }
-  template<>
-  forceinline Actor*
-  nqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
-    assert(y.size() == 3);
-    return new (home) NqTer<FloatView,FloatView,FloatView>
-      (home,share,p,y[0],y[1],y[2],-c);
-  }
-  template<>
-  forceinline Actor*
-  nqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
-    if (x.size() == 3)
-      return new (home) NqTer<FloatView,FloatView,FloatView>
-        (home,share,p,x[0],x[1],x[2],c);
-    if (x.size() == 2)
-      return new (home) NqTer<FloatView,FloatView,MinusView>
-        (home,share,p,x[0],x[1],MinusView(y[0]),c);
-    if (x.size() == 1)
-      return new (home) NqTer<FloatView,FloatView,MinusView>
-        (home,share,p,y[0],y[1],MinusView(x[0]),-c);
-    return new (home) NqTer<FloatView,FloatView,FloatView>
-      (home,share,p,y[0],y[1],y[2],-c);
-  }
-
   template<class P, class N>
   Actor*
   Nq<P,N>::copy(Space& home, bool share) {
-    if (isunit(x,y)) {
-      // Check whether rewriting is possible
-      if (x.size() + y.size() == 2)
-        return nqtobin(home,share,*this,x,y,c);
-      if (x.size() + y.size() == 3)
-        return nqtoter(home,share,*this,x,y,c);
-    }
     return new (home) Nq<P,N>(home,share,*this);
   }
 
@@ -616,14 +403,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class P, class N>
   ExecStatus
   Lq<P,N>::post(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c) {
-    ViewArray<NoView> nva;
-    if (y.size() == 0) {
-      (void) new (home) Lq<P,NoView>(home,x,nva,c);
-    } else if (x.size() == 0) {
-      (void) new (home) Lq<NoView,N>(home,nva,y,c);
-    } else {
-      (void) new (home) Lq<P,N>(home,x,y,c);
-    }
+    (void) new (home) Lq<P,N>(home,x,y,c);
     return ES_OK;
   }
 
@@ -633,97 +413,9 @@ namespace Gecode { namespace Float { namespace Linear {
   Lq<P,N>::Lq(Space& home, bool share, Lq<P,N>& p)
     : Lin<P,N,PC_FLOAT_BND>(home,share,p) {}
 
-  /**
-   * \brief Rewriting of inequality to binary propagators
-   *
-   */
-  template<class P, class N>
-  forceinline Actor*
-  lqtobin(Space&, bool, Propagator&,ViewArray<P>&, ViewArray<N>&, FloatVal) {
-    return NULL;
-  }
-  template<>
-  forceinline Actor*
-  lqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
-    assert(x.size() == 2);
-    return new (home) LqBin<FloatView,FloatView>
-      (home,share,p,x[0],x[1],c);
-  }
-  template<>
-  forceinline Actor*
-  lqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
-    assert(y.size() == 2);
-    return new (home) LqBin<MinusView,MinusView>
-      (home,share,p,MinusView(y[0]),MinusView(y[1]),c);
-  }
-  template<>
-  forceinline Actor*
-  lqtobin(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
-    if (x.size() == 2)
-      return new (home) LqBin<FloatView,FloatView>
-        (home,share,p,x[0],x[1],c);
-    if (x.size() == 1)
-      return new (home) LqBin<FloatView,MinusView>
-        (home,share,p,x[0],MinusView(y[0]),c);
-    return new (home) LqBin<MinusView,MinusView>
-      (home,share,p,MinusView(y[0]),MinusView(y[1]),c);
-  }
-
-  /**
-   * \brief Rewriting of inequality to ternary propagators
-   *
-   */
-  template<class P, class N>
-  forceinline Actor*
-  lqtoter(Space&, bool, Propagator&, ViewArray<P>&, ViewArray<N>&, FloatVal) {
-    return NULL;
-  }
-  template<>
-  forceinline Actor*
-  lqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<NoView>&, FloatVal c) {
-    assert(x.size() == 3);
-    return new (home) LqTer<FloatView,FloatView,FloatView>
-      (home,share,p,x[0],x[1],x[2],c);
-  }
-  template<>
-  forceinline Actor*
-  lqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<NoView>&, ViewArray<FloatView>& y, FloatVal c) {
-    assert(y.size() == 3);
-    return new (home) LqTer<MinusView,MinusView,MinusView>
-      (home,share,p,MinusView(y[0]),MinusView(y[1]),MinusView(y[2]),c);
-  }
-  template<>
-  forceinline Actor*
-  lqtoter(Space& home, bool share, Propagator& p,
-          ViewArray<FloatView>& x, ViewArray<FloatView>& y, FloatVal c) {
-    if (x.size() == 3)
-      return new (home) LqTer<FloatView,FloatView,FloatView>
-        (home,share,p,x[0],x[1],x[2],c);
-    if (x.size() == 2)
-      return new (home) LqTer<FloatView,FloatView,MinusView>
-        (home,share,p,x[0],x[1],MinusView(y[0]),c);
-    if (x.size() == 1)
-      return new (home) LqTer<FloatView,MinusView,MinusView>
-        (home,share,p,x[0],MinusView(y[0]),MinusView(y[1]),c);
-    return new (home) LqTer<MinusView,MinusView,MinusView>
-      (home,share,p,MinusView(y[0]),MinusView(y[1]),MinusView(y[2]),c);
-  }
-
   template<class P, class N>
   Actor*
   Lq<P,N>::copy(Space& home, bool share) {
-    if (isunit(x,y)) {
-      // Check whether rewriting is possible
-      if (x.size() + y.size() == 2)
-        return lqtobin(home,share,*this,x,y,c);
-      if (x.size() + y.size() == 3)
-        return lqtoter(home,share,*this,x,y,c);
-    }
     return new (home) Lq<P,N>(home,share,*this);
   }
 
@@ -812,14 +504,7 @@ namespace Gecode { namespace Float { namespace Linear {
   ExecStatus
   ReLq<P,N,Ctrl,rm>::post(Home home, 
                           ViewArray<P>& x, ViewArray<N>& y, FloatVal c, Ctrl b) {
-    ViewArray<NoView> nva;
-    if (y.size() == 0) {
-      (void) new (home) ReLq<P,NoView,Ctrl,rm>(home,x,nva,c,b);
-    } else if (x.size() == 0) {
-      (void) new (home) ReLq<NoView,N,Ctrl,rm>(home,nva,y,c,b);
-    } else {
-      (void) new (home) ReLq<P,N,Ctrl,rm>(home,x,y,c,b);
-    }
+    (void) new (home) ReLq<P,N,Ctrl,rm>(home,x,y,c,b);
     return ES_OK;
   }
 

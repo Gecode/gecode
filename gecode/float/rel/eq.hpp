@@ -76,7 +76,7 @@ namespace Gecode { namespace Float { namespace Rel {
   Eq<View0,View1>::Eq(Space& home, bool share, Propagator& p,
                       View0 x0, View1 x1)
     : MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>(home,share,p,
-                                                             x0,x1) {}
+                                                                 x0,x1) {}
 
   template<class View0, class View1>
   Actor*

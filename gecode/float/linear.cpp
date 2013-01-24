@@ -1,6 +1,6 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
- *  Main authors:
+o *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
@@ -47,7 +47,7 @@ namespace Gecode {
     using namespace Float;
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
+    Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -60,7 +60,7 @@ namespace Gecode {
     using namespace Float;
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
+    Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -75,7 +75,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
+    Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -91,7 +91,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size());
+    Linear::Term* t = re.alloc<Linear::Term >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -104,7 +104,7 @@ namespace Gecode {
     using namespace Float;
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
+    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -115,10 +115,10 @@ namespace Gecode {
     case FRT_EQ:
       GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
       break;
-    case FRT_GQ:
+    case FRT_GQ: case FRT_GR:
       GECODE_ME_FAIL(v.lq(home,max));
       break;
-    case FRT_LQ:
+    case FRT_LQ: case FRT_LE:
       GECODE_ME_FAIL(v.gq(home,min));
       break;
     default: ;
@@ -134,7 +134,7 @@ namespace Gecode {
     using namespace Float;
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
+    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -150,7 +150,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
+    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -161,10 +161,10 @@ namespace Gecode {
     case FRT_EQ:
       GECODE_ME_FAIL(v.gq(home,min)); GECODE_ME_FAIL(v.lq(home,max));
       break;
-    case FRT_GQ:
+    case FRT_GQ: case FRT_GR:
       GECODE_ME_FAIL(v.lq(home,max));
       break;
-    case FRT_LQ:
+    case FRT_LQ: case FRT_LE:
       GECODE_ME_FAIL(v.gq(home,min));
       break;
     default: ;
@@ -183,7 +183,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Float::linear");
     if (home.failed()) return;
     Region re(home);
-    Linear::Term<FloatView>* t = re.alloc<Linear::Term<FloatView> >(x.size()+1);
+    Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }

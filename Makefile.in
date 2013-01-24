@@ -438,9 +438,7 @@ FLOATHDR0 = \
 	view.hpp view/float.hpp view/minus.hpp view/offset.hpp \
 	view/scale.hpp view/print.hpp view/rel-test.hpp \
 	var-imp/float.hpp var-imp/delta.hpp \
-	var/float.hpp var/print.hpp \
-	linear.hh linear/bin.hpp linear/ter.hpp \
-	linear/noview.hpp linear/nary.hpp linear/post.hpp \
+	var/float.hpp var/print.hpp linear.hh linear/nary.hpp \
 	arithmetic.hh arithmetic/sqr-sqrt-abs.hpp arithmetic/pow-nroot.hpp \
 	arithmetic/mult.hpp arithmetic/div.hpp arithmetic/min-max-channel.hpp \
 	transcendental.hh transcendental/exp-log.hpp trigonometric.hh \

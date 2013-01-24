@@ -56,7 +56,7 @@ namespace Gecode {
     /// Sum of integer or Boolean variables, or non-linear expression
     union {
       /// Integer views and coefficients
-      Float::Linear::Term<Float::FloatView>* tf;
+      Float::Linear::Term* tf;
       /// Non-linear expression
       NonLinFloatExpr* ne;
     } sum;
@@ -68,10 +68,10 @@ namespace Gecode {
     Node(void);
     /// Generate linear terms from expression
     GECODE_MINIMODEL_EXPORT
-    void fill(Home home, Float::Linear::Term<Float::FloatView>*& tf,
+    void fill(Home home, Float::Linear::Term*& tf,
               FloatVal m, FloatVal& d) const;
     /// Generate linear terms for expressions
-    FloatVal fill(Home home, Float::Linear::Term<Float::FloatView>* tf) const;
+    FloatVal fill(Home home, Float::Linear::Term* tf) const;
     /// Decrement reference count and possibly free memory
     bool decrement(void);
     /// Destructor
@@ -96,7 +96,7 @@ namespace Gecode {
     switch (t) {
     case NT_SUM:
       if (n_float > 0)
-        heap.free<Float::Linear::Term<Float::FloatView> >(sum.tf,n_float);
+        heap.free<Float::Linear::Term>(sum.tf,n_float);
       break;
     case NT_NONLIN:
       delete sum.ne;
@@ -144,7 +144,7 @@ namespace Gecode {
 
   FloatVal
   LinFloatExpr::Node::fill(Home home, 
-                           Float::Linear::Term<Float::FloatView>* tf) const {
+                           Float::Linear::Term* tf) const {
     FloatVal d=0;
     fill(home,tf,1.0,d);
     Float::Limits::check(d,"MiniModel::LinFloatExpr");
@@ -175,8 +175,8 @@ namespace Gecode {
                && n->r->a==1) {
       (void) n->l->sum.ne->post(home,&n->r->x_float);
     } else {
-      Float::Linear::Term<Float::FloatView>* fts =
-        r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float);
+      Float::Linear::Term* fts =
+        r.alloc<Float::Linear::Term>(n->n_float);
       FloatVal c = n->fill(home,fts);
       Float::Linear::post(home, fts, n->n_float, frt, -c);
     }
@@ -198,8 +198,8 @@ namespace Gecode {
       }
       n->r->sum.ne->post(home,frt,n->c,b);
     } else {
-      Float::Linear::Term<Float::FloatView>* fts =
-        r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float);
+      Float::Linear::Term* fts =
+        r.alloc<Float::Linear::Term>(n->n_float);
       FloatVal c = n->fill(home,fts);
       Float::Linear::post(home, fts, n->n_float, frt, -c, b);
     }
@@ -210,8 +210,8 @@ namespace Gecode {
   LinFloatExpr::post(Home home) const {
     if (home.failed()) return FloatVar(home,0,0);
     Region r(home);
-    Float::Linear::Term<Float::FloatView>* fts =
-      r.alloc<Float::Linear::Term<Float::FloatView> >(n->n_float+1);
+    Float::Linear::Term* fts =
+      r.alloc<Float::Linear::Term>(n->n_float+1);
     FloatVal c = n->fill(home,fts);
     if ((n->n_float == 1) && (c == 0) && (fts[0].a == 1))
       return fts[0].x;
@@ -266,7 +266,7 @@ namespace Gecode {
     n->t = NT_SUM;
     n->l = n->r = NULL;
     if (x.size() > 0) {
-      n->sum.tf = heap.alloc<Float::Linear::Term<Float::FloatView> >(x.size());
+      n->sum.tf = heap.alloc<Float::Linear::Term>(x.size());
       for (int i=x.size(); i--; ) {
         n->sum.tf[i].x = x[i];
         n->sum.tf[i].a = 1.0;
@@ -282,7 +282,7 @@ namespace Gecode {
     n->t = NT_SUM;
     n->l = n->r = NULL;
     if (x.size() > 0) {
-      n->sum.tf = heap.alloc<Float::Linear::Term<Float::FloatView> >(x.size());
+      n->sum.tf = heap.alloc<Float::Linear::Term>(x.size());
       for (int i=x.size(); i--; ) {
         n->sum.tf[i].x = x[i];
         n->sum.tf[i].a = a[i];
@@ -343,7 +343,7 @@ namespace Gecode {
 
   void
   LinFloatExpr::Node::fill(Home home, 
-                           Float::Linear::Term<Float::FloatView>*& tf, 
+                           Float::Linear::Term*& tf, 
                            FloatVal m, FloatVal& d) const {
     switch (this->t) {
     case NT_CONST:

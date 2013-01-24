@@ -41,13 +41,107 @@
 #include <climits>
 
 #include <gecode/float/linear.hh>
-#include <gecode/float/rel.hh>
 
 namespace Gecode { namespace Float { namespace Linear {
 
+  void
+  estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum &u) {
+    FloatVal est = c;
+    for (int i=n; i--; ) 
+      est += t[i].a * t[i].x.domain();
+    FloatNum min = est.min();
+    FloatNum max = est.max();
+    if (min < Limits::min)
+      min = Limits::min;
+    if (min > Limits::max)
+      min = Limits::max;
+    l = min;
+    if (max < Limits::min)
+      max = Limits::min;
+    if (max > Limits::max)
+      max = Limits::max;
+    u = max;
+  }
+
+  /// Sort linear terms by view
+  class TermLess {
+  public:
+    forceinline bool
+    operator ()(const Term& a, const Term& b) {
+      return before(a.x,b.x);
+    }
+  };
+
+  bool
+  normalize(Term* t, int &n,
+            Term* &t_p, int &n_p, Term* &t_n, int &n_n) {
+    /*
+     * Join coefficients for aliased variables:
+     *
+     */
+    {
+      // Group same variables
+      TermLess tl;
+      Support::quicksort<Term,TermLess>(t,n,tl);
+
+      // Join adjacent variables
+      int i = 0;
+      int j = 0;
+      while (i < n) {
+        Limits::check(t[i].a,"Float::linear");
+        FloatVal a = t[i].a;
+        FloatView x = t[i].x;
+        while ((++i < n) && same(t[i].x,x)) {
+          a += t[i].a;
+          Limits::check(a,"Float::linear");
+        }
+        if (a != 0.0) {
+          t[j].a = a; t[j].x = x; j++;
+        }
+      }
+      n = j;
+    }
+
+    /*
+     * Partition into positive/negative coefficents
+     *
+     */
+    if (n > 0) {
+      int i = 0;
+      int j = n-1;
+      while (true) {
+        while ((t[j].a < 0) && (--j >= 0)) ;
+        while ((t[i].a > 0) && (++i <  n)) ;
+        if (j <= i) break;
+        std::swap(t[i],t[j]);
+      }
+      t_p = t;     n_p = i;
+      t_n = t+n_p; n_n = n-n_p;
+    } else {
+      t_p = t; n_p = 0;
+      t_n = t; n_n = 0;
+    }
+
+    /*
+     * Make all coefficients positive
+     *
+     */
+    for (int i=n_n; i--; )
+      t_n[i].a = -t_n[i].a;
+
+    /*
+     * Test for unit coefficients only
+     *
+     */
+    for (int i=n; i--; )
+      if (t[i].a != 1)
+        return false;
+    return true;
+  }
+
   /// Eliminate assigned views
   inline void
-  eliminate(Term<FloatView>* t, int &n, FloatVal& d) {
+  eliminate(Term* t, int &n, FloatVal& d) {
     for (int i=n; i--; )
       if (t[i].x.assigned()) {
         d -= t[i].a * t[i].x.val();
@@ -60,8 +154,8 @@ namespace Gecode { namespace Float { namespace Linear {
   /// Rewrite all inequations in terms of FRT_LQ
   inline void
   rewrite(FloatRelType &frt, FloatVal &d,
-          Term<FloatView>* &t_p, int &n_p,
-          Term<FloatView>* &t_n, int &n_n) {
+          Term* &t_p, int &n_p,
+          Term* &t_n, int &n_n) {
     switch (frt) {
     case FRT_EQ: case FRT_LQ:
       break;
@@ -82,7 +176,8 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class View>
   forceinline void
   post_nary(Home home,
-            ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, FloatVal c) {
+            ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, 
+            FloatVal c) {
     switch (frt) {
     case FRT_EQ:
       GECODE_ES_FAIL((Eq<View,View >::post(home,x,y,c)));
@@ -94,52 +189,8 @@ namespace Gecode { namespace Float { namespace Linear {
     }
   }
 
-
-/// Macro for posting binary special cases for linear constraints
-#define GECODE_FLOAT_PL_BIN(CLASS)                                             \
-  switch (n_p) {                                                             \
-  case 2:                                                                    \
-    GECODE_ES_FAIL((CLASS<FloatView,FloatView>::post                         \
-                         (home,t_p[0].x,t_p[1].x,d)));                       \
-    break;                                                                   \
-  case 1:                                                                    \
-    GECODE_ES_FAIL((CLASS<FloatView,MinusView>::post                       \
-                         (home,t_p[0].x,MinusView(t_n[0].x),d)));            \
-    break;                                                                   \
-  case 0:                                                                    \
-    GECODE_ES_FAIL((CLASS<MinusView,MinusView>::post                     \
-                         (home,MinusView(t_n[0].x),MinusView(t_n[1].x),d))); \
-    break;                                                                   \
-  default: GECODE_NEVER;                                                     \
-  }
-
-/// Macro for posting ternary special cases for linear constraints
-#define GECODE_FLOAT_PL_TER(CLASS)                                        \
-  switch (n_p) {                                                        \
-  case 3:                                                               \
-    GECODE_ES_FAIL((CLASS<FloatView,FloatView,FloatView>::post            \
-                         (home,t_p[0].x,t_p[1].x,t_p[2].x,d)));         \
-    break;                                                              \
-  case 2:                                                               \
-    GECODE_ES_FAIL((CLASS<FloatView,FloatView,MinusView>::post          \
-                         (home,t_p[0].x,t_p[1].x,                       \
-                          MinusView(t_n[0].x),d)));                     \
-    break;                                                              \
-  case 1:                                                               \
-    GECODE_ES_FAIL((CLASS<FloatView,MinusView,MinusView>::post        \
-                         (home,t_p[0].x,                                \
-                          MinusView(t_n[0].x),MinusView(t_n[1].x),d))); \
-    break;                                                              \
-  case 0:                                                               \
-    GECODE_ES_FAIL((CLASS<MinusView,MinusView,MinusView>::post      \
-                         (home,MinusView(t_n[0].x),                     \
-                          MinusView(t_n[1].x),MinusView(t_n[2].x),d))); \
-    break;                                                              \
-  default: GECODE_NEVER;                                                \
-  }
-
   void
-  post(Home home, Term<FloatView>* t, int n, FloatRelType frt, FloatVal c) {
+  post(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
 
     Limits::check(c,"Float::linear");
 
@@ -147,9 +198,9 @@ namespace Gecode { namespace Float { namespace Linear {
 
     eliminate(t,n,d);
 
-    Term<FloatView> *t_p, *t_n;
+    Term *t_p, *t_n;
     int n_p, n_n;
-    bool is_unit = normalize<FloatView>(t,n,t_p,n_p,t_n,n_n);
+    bool is_unit = normalize(t,n,t_p,n_p,t_n,n_n);
 
     rewrite(frt,d,t_p,n_p,t_n,n_n);
 
@@ -183,27 +234,13 @@ namespace Gecode { namespace Float { namespace Linear {
 
     if (is_unit) {
       // Unit coefficients
-      if (n == 2) {
-        switch (frt) {
-        case FRT_EQ: GECODE_FLOAT_PL_BIN(EqBin); break;
-        case FRT_LQ: GECODE_FLOAT_PL_BIN(LqBin); break;
-        default: GECODE_NEVER;
-        }
-      } else if (n == 3) {
-        switch (frt) {
-        case FRT_EQ: GECODE_FLOAT_PL_TER(EqTer); break;
-        case FRT_LQ: GECODE_FLOAT_PL_TER(LqTer); break;
-        default: GECODE_NEVER;
-        }
-      } else {
-        ViewArray<FloatView> x(home,n_p);
-        for (int i = n_p; i--; )
-          x[i] = t_p[i].x;
-        ViewArray<FloatView> y(home,n_n);
-        for (int i = n_n; i--; )
-          y[i] = t_n[i].x;
-        post_nary<FloatView>(home,x,y,frt,d);
-      }
+      ViewArray<FloatView> x(home,n_p);
+      for (int i = n_p; i--; )
+        x[i] = t_p[i].x;
+      ViewArray<FloatView> y(home,n_n);
+      for (int i = n_n; i--; )
+        y[i] = t_n[i].x;
+      post_nary<FloatView>(home,x,y,frt,d);
     } else {
       // Arbitrary coefficients 
       ViewArray<ScaleView> x(home,n_p);
@@ -215,9 +252,6 @@ namespace Gecode { namespace Float { namespace Linear {
       post_nary<ScaleView>(home,x,y,frt,d);
     }
   }
-
-#undef GECODE_FLOAT_PL_BIN
-#undef GECODE_FLOAT_PL_TER
 
   /**
    * \brief Posting reified n-ary propagators
@@ -247,50 +281,38 @@ namespace Gecode { namespace Float { namespace Linear {
       }
       break;
     case FRT_LQ:
-        switch (r.mode()) {
-        case RM_EQV:
-          GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_EQV>::
-                          post(home,x,y,c,ReifyView(r.var()))));
-          break;
-        case RM_IMP:
-          GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_IMP>::
-                          post(home,x,y,c,ReifyView(r.var()))));
-          break;
-        case RM_PMI:
-          GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_PMI>::
-                          post(home,x,y,c,ReifyView(r.var()))));
-          break;
-        default: GECODE_NEVER;
-        }
+      switch (r.mode()) {
+      case RM_EQV:
+        GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_EQV>::
+                        post(home,x,y,c,ReifyView(r.var()))));
+        break;
+      case RM_IMP:
+        GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_IMP>::
+                        post(home,x,y,c,ReifyView(r.var()))));
+        break;
+      case RM_PMI:
+        GECODE_ES_FAIL((ReLq<View,View,ReifyView,RM_PMI>::
+                        post(home,x,y,c,ReifyView(r.var()))));
+        break;
+      default: GECODE_NEVER;
+      }
       break;
     default: GECODE_NEVER;
     }
   }
 
-#define WRITE_REIFIED_UNA_PROP(name,view0,mode,a,d,bvar) \
-        if (b) GECODE_ES_FAIL((name<view0,Int::BoolView,mode>:: \
-                               post(home,a,d,bvar))); \
-        else   GECODE_ES_FAIL((name<view0,Int::NegBoolView,mode>:: \
-                               post(home,a,d,Int::NegBoolView(bvar))));
-
-#define WRITE_REIFIED_BIN_PROP(name,view0,view1,mode,a0,a1,d,bvar) \
-        if (b) GECODE_ES_FAIL((name<view0,view1,Int::BoolView,mode>:: \
-                               post(home,a0,a1,d,bvar))); \
-        else   GECODE_ES_FAIL((name<view0,view1,Int::NegBoolView,mode>:: \
-                               post(home,a0,a1,d,Int::NegBoolView(bvar))));
-
   void
   post(Home home,
-       Term<FloatView>* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b) {
+       Term* t, int n, FloatRelType frt, FloatVal c, Reify r, bool b) {
     Limits::check(c,"Float::linear");
 
     FloatVal d = c;
 
     eliminate(t,n,d);
 
-    Term<FloatView> *t_p, *t_n;
+    Term *t_p, *t_n;
     int n_p, n_n;
-    bool is_unit = normalize<FloatView>(t,n,t_p,n_p,t_n,n_n);
+    bool is_unit = normalize(t,n,t_p,n_p,t_n,n_n);
 
     rewrite(frt,d,t_p,n_p,t_n,n_n);
 
@@ -310,177 +332,16 @@ namespace Gecode { namespace Float { namespace Linear {
     }
 
     if (is_unit) {
-      c = d;
-      if (n == 1) {
-        switch (frt) {
-        case FRT_EQ:
-          if (n_p == 1) {
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_EQV,t_p[0].x,d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_IMP,t_p[0].x,d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_PMI,t_p[0].x,d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-          } else {
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_EQV,t_n[0].x,-d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_IMP,t_n[0].x,-d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_UNA_PROP(Rel::ReEqFloat,FloatView,RM_PMI,t_n[0].x,-d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-          }
-          break;
-        case FRT_LQ:
-          if (n_p == 1) {
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_EQV,t_p[0].x,d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_IMP,t_p[0].x,d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,FloatView,RM_PMI,t_p[0].x,d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-          } else {
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,MinusView,RM_EQV,MinusView(t_n[0].x),d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,MinusView,RM_IMP,MinusView(t_n[0].x),d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_UNA_PROP(Rel::ReLqFloat,MinusView,RM_PMI,MinusView(t_n[0].x),d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-          }
-          break;
-        default: GECODE_NEVER;
-        }
-      } else if (n == 2) {
-        switch (frt) {
-        case FRT_EQ:
-          switch (n_p) {
-          case 2:
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,FloatView,RM_EQV,t_p[0].x,t_p[1].x,d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,FloatView,RM_IMP,t_p[0].x,t_p[1].x,d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,FloatView,RM_PMI,t_p[0].x,t_p[1].x,d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-            break;
-          case 1:
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,MinusView,RM_EQV,t_p[0].x,MinusView(t_n[0].x),d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,MinusView,RM_IMP,t_p[0].x,MinusView(t_n[0].x),d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,MinusView,RM_PMI,t_p[0].x,MinusView(t_n[0].x),d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-            break;
-          case 0:
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,FloatView,RM_EQV,t_n[0].x,t_n[1].x,-d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,FloatView,RM_IMP,t_n[0].x,t_n[1].x,-d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_BIN_PROP(ReEqBin,FloatView,FloatView,RM_PMI,t_n[0].x,t_n[1].x,-d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
-        case FRT_LQ:
-          switch (n_p) {
-          case 2:
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,FloatView,FloatView,RM_EQV,t_p[0].x,t_p[1].x,d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,FloatView,FloatView,RM_IMP,t_p[0].x,t_p[1].x,d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,FloatView,FloatView,RM_PMI,t_p[0].x,t_p[1].x,d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-            break;
-          case 1:
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,FloatView,MinusView,RM_EQV,t_p[0].x,MinusView(t_n[0].x),d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,FloatView,MinusView,RM_IMP,t_p[0].x,MinusView(t_n[0].x),d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,FloatView,MinusView,RM_PMI,t_p[0].x,MinusView(t_n[0].x),d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-            break;
-          case 0:
-            switch (r.mode()) {
-            case RM_EQV:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,MinusView,MinusView,RM_EQV,MinusView(t_n[0].x),MinusView(t_n[1].x),d,r.var());
-              break;
-            case RM_IMP:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,MinusView,MinusView,RM_IMP,MinusView(t_n[0].x),MinusView(t_n[1].x),d,r.var());
-              break;
-            case RM_PMI:
-              WRITE_REIFIED_BIN_PROP(ReLqBin,MinusView,MinusView,RM_PMI,MinusView(t_n[0].x),MinusView(t_n[1].x),d,r.var());
-              break;
-            default: GECODE_NEVER;
-            }
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
-        default: GECODE_NEVER;
-        }
-      } else {
-        ViewArray<FloatView> x(home,n_p);
-        for (int i = n_p; i--; )
-          x[i] = t_p[i].x;
-        ViewArray<FloatView> y(home,n_n);
-        for (int i = n_n; i--; )
-          y[i] = t_n[i].x;
-        if (b) post_nary<FloatView,Int::BoolView>(home,x,y,frt,d,r);
-        else   post_nary<FloatView,Int::NegBoolView>(home,x,y,frt,d,r);
-      }
+      ViewArray<FloatView> x(home,n_p);
+      for (int i = n_p; i--; )
+        x[i] = t_p[i].x;
+      ViewArray<FloatView> y(home,n_n);
+      for (int i = n_n; i--; )
+        y[i] = t_n[i].x;
+      if (b) 
+        post_nary<FloatView,Int::BoolView>(home,x,y,frt,d,r);
+      else   
+        post_nary<FloatView,Int::NegBoolView>(home,x,y,frt,d,r);
     } else {
       // Arbitrary coefficients with double precision
       ViewArray<ScaleView> x(home,n_p);
@@ -489,12 +350,12 @@ namespace Gecode { namespace Float { namespace Linear {
       ViewArray<ScaleView> y(home,n_n);
       for (int i = n_n; i--; )
         y[i] = ScaleView(t_n[i].a,t_n[i].x);
-      if (b) post_nary<ScaleView,Int::BoolView>(home,x,y,frt,d,r);
-      else   post_nary<ScaleView,Int::NegBoolView>(home,x,y,frt,d,r);
+      if (b) 
+        post_nary<ScaleView,Int::BoolView>(home,x,y,frt,d,r);
+      else   
+        post_nary<ScaleView,Int::NegBoolView>(home,x,y,frt,d,r);
     }
   }
-#undef WRITE_REIFIED_UNA_PROP
-#undef WRITE_REIFIED_BIN_PROP
 
 }}}
 
