@@ -159,28 +159,38 @@ namespace Test { namespace Float {
    * Tests with float constraints
    *
    */
-  inline
-  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
-             bool r)
-      : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at), reified(r),
-        testsearch(true), testfix(true), testsubsumed(true) {}
-
-  inline
-  Test::Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
-             bool r)
-      : Base("Float::"+s), arity(a), dom(min,max), step(st), assigmentType(at), reified(r),
-        testsearch(true), testfix(true), testsubsumed(true) {}
-
-  inline
-  std::string
-  Test::str(Gecode::ExtensionalPropKind epk) {
-    using namespace Gecode;
-    switch (epk) {
-    case EPK_MEMORY: return "Memory";
-    case EPK_SPEED:  return "Speed";
-    default: return "Def";
-    }
+  forceinline bool
+  Test::eqv(void) const {
+    return reified && ((rms & (1 << Gecode::RM_EQV)) != 0);
   }
+  forceinline bool
+  Test::imp(void) const {
+    return reified && ((rms & (1 << Gecode::RM_IMP)) != 0);
+  }
+  forceinline bool
+  Test::pmi(void) const {
+    return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
+  }
+  inline
+  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, 
+             Gecode::FloatNum st, AssignmentType at,
+             bool r)
+    : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at), 
+      reified(r), rms((1 << Gecode::RM_EQV) || 
+                      (1 << Gecode::RM_IMP) || 
+                      (1 << Gecode::RM_PMI)),
+      testsearch(true), testfix(true), testsubsumed(true) {}
+
+  inline
+  Test::Test(const std::string& s, int a, Gecode::FloatNum min, 
+             Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
+             bool r)
+      : Base("Float::"+s), arity(a), dom(min,max), step(st), 
+        assigmentType(at), reified(r),
+        rms((1 << Gecode::RM_EQV) || 
+            (1 << Gecode::RM_IMP) || 
+            (1 << Gecode::RM_PMI)),
+        testsearch(true), testfix(true), testsubsumed(true) {}
 
   inline
   std::string
@@ -257,40 +267,6 @@ namespace Test { namespace Float {
     default: ;
     }
     return (b == MT_FALSE) ? MT_FALSE : MT_MAYBE;
-  }
-
-  /*
-   * Iterators for reification modes
-   *
-   */
-
-  inline
-  ReifyModes::ReifyModes(Gecode::ReifyMode rm)
-    : i(0) {
-    rms[0]=rm;
-  }
-  inline
-  ReifyModes::ReifyModes(Gecode::ReifyMode rm0, Gecode::ReifyMode rm1)
-    : i(1) {
-    rms[1]=rm0; rms[0]=rm1;
-  }
-  inline
-  ReifyModes::ReifyModes(void)
-    : i(2) {
-    using namespace Gecode;
-    rms[2]=RM_EQV; rms[1]=RM_IMP; rms[0]=RM_PMI;
-  }
-  inline bool
-  ReifyModes::operator()(void) const {
-    return i>=0;
-  }
-  inline void
-  ReifyModes::operator++(void) {
-    i--;
-  }
-  inline Gecode::ReifyMode
-  ReifyModes::rm(void) const {
-    return rms[i];
   }
 
 

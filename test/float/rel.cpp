@@ -124,7 +124,8 @@ namespace Test { namespace Float {
        Gecode::FloatVal c;
      public:
        /// Create and register test
-       FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0, Gecode::FloatNum st)
+       FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0, 
+                  Gecode::FloatNum st)
          : Test("Rel::Float::Float::"+str(frt0)+"::"+str(n)+"::"+str(c0),
                 n,-3,3,st,CPLT_ASSIGNMENT,n==1),
            frt(frt0), c(c0) {}
@@ -175,6 +176,7 @@ namespace Test { namespace Float {
      //@}
 
    }
+
 }}
 
 // STATISTICS: test-float

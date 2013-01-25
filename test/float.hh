@@ -185,13 +185,20 @@ namespace Test {
       /**
        * \brief Create test space
        *
-       * Creates \a n variables with domain \a d and step \a s for test \a t and stores
-       * whether the test is for a reified propagator (\a re) with
-       * reification mode \a rm.
+       * Creates \a n variables with domain \a d and step \a s for 
+       * test \a t.
+       *
+       */
+      TestSpace(int n, Gecode::FloatVal& d, Gecode::FloatNum s, Test* t);
+      /**
+       * \brief Create test space
+       *
+       * Creates \a n variables with domain \a d and step \a s for
+       * test \a t annd reification mode \a rm.
        *
        */
       TestSpace(int n, Gecode::FloatVal& d, Gecode::FloatNum s, Test* t, 
-                bool re, Gecode::ReifyMode rm = Gecode::RM_EQV);
+                Gecode::ReifyMode rm);
       /// Constructor for cloning \a s
       TestSpace(bool share, TestSpace& s);
       /// Copy space during cloning
@@ -226,11 +233,6 @@ namespace Test {
       void prune(void);
       /// Prune values but not those in assignment \a a
       bool prune(const Assignment& a, bool testfix);
-      /// \name Mapping scalar values to strings
-      //@{
-      /// Map reification mode to string
-      static std::string str(Gecode::ReifyMode rm);
-      //@}
     };
 
     /**
@@ -249,13 +251,23 @@ namespace Test {
       AssignmentType assigmentType;
       /// Does the constraint also exist as reified constraint
       bool reified;
+      /// Which reification modes are supported
+      int rms;
       /// Whether to perform search test
       bool testsearch;
       /// Whether to perform fixpoint test
       bool testfix;
       /// Whether to test for subsumption
       bool testsubsumed;
-
+      /// \name Test for reification modes
+      //@{
+      /// Test whether equivalence as reification mode is supported
+      bool eqv(void) const;
+      /// Test whether implication as reification mode is supported
+      bool imp(void) const;
+      /// Test whether reverse implication as reification mode is supported
+      bool pmi(void) const;
+      //@}
     public:
       /**
        * \brief Constructor
@@ -264,7 +276,8 @@ namespace Test {
        * domain \a d and step \a st and assignment type \a at. Also
        * tests for a reified constraint, if \a r is true.
        */
-      Test(const std::string& s, int a, const Gecode::FloatVal& d, Gecode::FloatNum st, AssignmentType at,
+      Test(const std::string& s, int a, const Gecode::FloatVal& d, 
+           Gecode::FloatNum st, AssignmentType at,
            bool r);
       /**
        * \brief Constructor
@@ -273,7 +286,9 @@ namespace Test {
        * domain \a min ... \a max and step \a st and assignment type \a at. Also
        * tests for a reified constraint, if \a r is true.
        */
-      Test(const std::string& s, int a, Gecode::FloatNum min, Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
+      Test(const std::string& s, int a, 
+           Gecode::FloatNum min, Gecode::FloatNum max, 
+           Gecode::FloatNum st, AssignmentType at,
            bool r);
       /// Create assignment
       virtual Assignment* assignment(void) const;
@@ -286,7 +301,7 @@ namespace Test {
       /// the assignment is an extended assigment.
       bool subsumed(const TestSpace& ts) const;
       /// Whether to ignore assignment for reification
-      virtual bool ignore(const Assignment&) const;
+      virtual bool ignore(const Assignment& a) const;
       /// Post constraint
       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) = 0;
       /// Post reified constraint
@@ -296,8 +311,6 @@ namespace Test {
       virtual bool run(void);
       /// \name Mapping scalar values to strings
       //@{
-      /// Map extensional propagation kind to string
-      static std::string str(Gecode::ExtensionalPropKind epk);
       /// Map float relation to string
       static std::string str(Gecode::FloatRelType frt);
       /// Map floatNum to string
@@ -317,28 +330,6 @@ namespace Test {
       //@}
     };
     //@}
-
-  /// Iterator for reification modes
-  class ReifyModes {
-  protected:
-    /// Array of reification modes
-    Gecode::ReifyMode rms[3];
-    /// Current position in mode array
-    int i;
-  public:
-    /// Initialize iterator with reification mode \a rm
-    ReifyModes(Gecode::ReifyMode rm);
-    /// Initialize iterator with reification modes \a rm0 and \a rm1
-    ReifyModes(Gecode::ReifyMode rm0, Gecode::ReifyMode rm1);
-    /// Initialize iterator with all three reification modes
-    ReifyModes(void);
-    /// Test whether iterator is done
-    bool operator()(void) const;
-    /// Increment to next reification mode
-    void operator++(void);
-    /// Return current reification mode
-    Gecode::ReifyMode rm(void) const;
-    };
 
     /// Iterator for float relation types
     class FloatRelTypes {
