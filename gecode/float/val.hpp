@@ -231,7 +231,7 @@ namespace Gecode {
     try {
       return x.x < y.x;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal < FloatVal");
+      return false;
     }         
   }
   forceinline bool
@@ -239,7 +239,7 @@ namespace Gecode {
     try {
       return x.x < y;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal < FloatNum");
+      return false;
     }         
   }
 
@@ -248,7 +248,7 @@ namespace Gecode {
     try {
       return x.x <= y.x;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal <= FloatVal");
+      return false;
     }         
   }
   forceinline bool
@@ -256,7 +256,7 @@ namespace Gecode {
     try {
       return x.x <= y;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal <= FloatNum");
+      return false;
     }         
   }
 
@@ -265,7 +265,7 @@ namespace Gecode {
     try {
       return x.x > y.x;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal > FloatVal");
+      return false;
     }         
   }
   forceinline bool
@@ -273,7 +273,7 @@ namespace Gecode {
     try {
       return x.x > y;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal > FloatNum");
+      return false;
     }         
   }
 
@@ -282,7 +282,7 @@ namespace Gecode {
     try {
       return x.x >= y.x;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal >= FloatVal");
+      return false;
     }         
   }
   forceinline bool
@@ -290,7 +290,7 @@ namespace Gecode {
     try {
       return x.x >= y;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal >= FloatNum");
+      return false;
     }         
   }
 
@@ -299,7 +299,7 @@ namespace Gecode {
     try {
       return x.x == y.x;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal == FloatVal");
+      return false;
     }         
   }
   forceinline bool
@@ -314,9 +314,7 @@ namespace Gecode {
         ((x.x.upper() == y) && 
          (nextafter(x.x.upper(),x.x.lower()) == x.x.lower())))
       return true;
-    if ((x.x.upper() < y) || (x.x.lower() > y))
-      return false;
-    throw Float::ComparisonError("FloatVal == FloatNum");
+    return false;
   }
 
   forceinline bool
@@ -324,7 +322,7 @@ namespace Gecode {
     try {
       return x.x != y.x;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal != FloatVal");
+      return false;
     }         
   }
   forceinline bool
@@ -332,7 +330,7 @@ namespace Gecode {
     try {
       return x.x != y;
     } catch (boost::numeric::interval_lib::comparison_error&) {
-      throw Float::ComparisonError("FloatVal != FloatNum");
+      return false;
     }         
   }
 

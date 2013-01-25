@@ -237,21 +237,34 @@ namespace Test { namespace Float {
   inline MaybeType
   Test::cmp(Gecode::FloatVal x, Gecode::FloatRelType r, Gecode::FloatVal y) {
     using namespace Gecode;
-    try {
-      bool b = false;
-      switch (r) {
-      case FRT_EQ: b = (x == y); break;
-      case FRT_NQ: b = !(x == y); break;
-      case FRT_LQ: b = (x <= y); break;
-      case FRT_LE: b = (x < y);  break;
-      case FRT_GQ: b = (x >= y); break;
-      case FRT_GR: b = (x > y);  break;
-      default: ;
-      }
-      return b ? MT_TRUE : MT_FALSE;
-    } catch (Gecode::Float::ComparisonError&) {
-      return MT_MAYBE;
-    }         
+    switch (r) {
+    case FRT_EQ:
+      if (x == y) return MT_TRUE;
+      if (x != y) return MT_FALSE;
+      break;
+    case FRT_NQ:
+      if (x != y) return MT_TRUE;
+      if (x == y) return MT_FALSE;
+      break;
+    case FRT_LQ:
+      if (x <= y) return MT_TRUE;
+      if (x > y) return MT_FALSE;
+      break;
+    case FRT_LE:
+      if (x < y) return MT_TRUE;
+      if (x >= y) return MT_FALSE;
+      break;
+    case FRT_GQ:
+      if (x >= y) return MT_TRUE;
+      if (x < y) return MT_FALSE;
+      break;
+    case FRT_GR:
+      if (x > y) return MT_TRUE;
+      if (x <= y) return MT_FALSE;
+      break;
+    default: ;
+    }
+    return MT_MAYBE;
   }
 
   inline MaybeType
