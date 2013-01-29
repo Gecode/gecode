@@ -88,7 +88,7 @@ namespace Gecode {
   }
 
   forceinline bool
-  FloatVal::assigned(void) const {
+  FloatVal::tight(void) const {
     return (boost::numeric::singleton(x) || 
             (nextafter(x.lower(),x.upper()) == x.upper()));
   }
@@ -374,7 +374,7 @@ namespace Gecode {
     return FloatVal(sqrt(x.x));
   }
   forceinline FloatVal
-  square(const FloatVal& x) {
+  sqr(const FloatVal& x) {
     return FloatVal(square(x.x));
   }
   forceinline FloatVal
@@ -382,7 +382,7 @@ namespace Gecode {
     return FloatVal(pow(x.x,n));
   }
   forceinline FloatVal
-  nth_root(const FloatVal& x, int n) {
+  nroot(const FloatVal& x, int n) {
     return FloatVal(nth_root(x.x,n));
   }
 

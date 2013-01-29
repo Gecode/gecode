@@ -58,7 +58,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
     } else {
       GECODE_ME_CHECK(x0.eq(home,sqrt(x1.val())));
-      GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+      GECODE_ME_CHECK(x1.eq(home,sqr(x0.val())));
     }
 
     (void) new (home) SqrPlus<VA,VB>(home,x0,x1);
@@ -86,7 +86,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return ((x0.val() == 0) || (x0.val() == 1))? home.ES_SUBSUMED(*this) : ES_FAILED;
     } else {
       GECODE_ME_CHECK(x0.eq(home,sqrt(x1.val())));
-      GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+      GECODE_ME_CHECK(x1.eq(home,sqr(x0.val())));
       if (x0.assigned() || x1.assigned()) return home.ES_SUBSUMED(*this);
     }
 
@@ -118,7 +118,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         return SqrPlus<FloatView,FloatView>::post(home,x0,x1);
       if (x0.max() <= 0)
         return SqrPlus<MinusView,FloatView>::post(home,MinusView(x0),x1);
-      GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+      GECODE_ME_CHECK(x1.eq(home,sqr(x0.val())));
       (void) new (home) Sqr<View>(home,x0,x1);
     }
     return ES_OK;
@@ -145,7 +145,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       GECODE_REWRITE(*this,(SqrPlus<MinusView,FloatView>::post(home(*this),
         MinusView(x0),x1)));
 
-    GECODE_ME_CHECK(x1.eq(home,square(x0.val())));
+    GECODE_ME_CHECK(x1.eq(home,sqr(x0.val())));
     FloatVal z = sqrt(x1.val());
     if (x0.min() > -Round.sqrt_up(x1.min()))
       GECODE_ME_CHECK(x0.eq(home,z));
@@ -204,7 +204,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       if (x0.assigned())
         return ((x0.val() == 0) || (x0.val() == 1))? home.ES_SUBSUMED(*this) : ES_FAILED;
     } else {
-      GECODE_ME_CHECK(x0.eq(home,square(x1.val())));
+      GECODE_ME_CHECK(x0.eq(home,sqr(x1.val())));
       GECODE_ME_CHECK(x1.eq(home,sqrt(x0.val())));
       if (x0.assigned() || x1.assigned()) return home.ES_SUBSUMED(*this);
     }

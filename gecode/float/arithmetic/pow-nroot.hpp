@@ -85,18 +85,18 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     if ((m_n % 2) == 0)
     {
       if (x0.min() >= 0)
-        GECODE_ME_CHECK(x0.eq(home,nth_root(x1.domain(),m_n)));
+        GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),m_n)));
       else if (x0.max() <= 0)
-        GECODE_ME_CHECK(x0.eq(home,-nth_root(x1.domain(),m_n)));
+        GECODE_ME_CHECK(x0.eq(home,-nroot(x1.domain(),m_n)));
       else
         GECODE_ME_CHECK(x0.eq(home,
                               hull(
-                                  nth_root(x1.domain(),m_n),
-                                  -nth_root(x1.domain(),m_n)
+                                  nroot(x1.domain(),m_n),
+                                  -nroot(x1.domain(),m_n)
                               )
                         ));
     } else
-      GECODE_ME_CHECK(x0.eq(home,nth_root(x1.domain(),m_n)));
+      GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),m_n)));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -133,7 +133,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   NthRoot<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,nth_root(x0.domain(),m_n)));
+    GECODE_ME_CHECK(x1.eq(home,nroot(x0.domain(),m_n)));
     GECODE_ME_CHECK(x0.eq(home,pow(x1.domain(),m_n)));
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }

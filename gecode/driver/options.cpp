@@ -293,7 +293,6 @@ namespace Gecode {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     std::cerr << "FloatVar ";
-#endif
     std::cerr << std::endl
               << " - Trigonometric and transcedental float constraints: ";
 #ifdef GECODE_HAS_MPFR
@@ -302,6 +301,7 @@ namespace Gecode {
     std::cerr << "disabled";
 #endif
     std::cerr << std::endl
+#endif
               << " - Thread support: ";
 #ifdef GECODE_HAS_THREADS
     if (Support::Thread::npu() == 1)

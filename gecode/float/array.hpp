@@ -45,35 +45,35 @@ namespace Gecode {
    */
 
   forceinline
-  FloatArgs::FloatArgs(void) : PrimArgArray<FloatVal>(0) {}
+  FloatValArgs::FloatValArgs(void) : PrimArgArray<FloatVal>(0) {}
 
   forceinline
-  FloatArgs::FloatArgs(int n) : PrimArgArray<FloatVal>(n) {}
+  FloatValArgs::FloatValArgs(int n) : PrimArgArray<FloatVal>(n) {}
   
   forceinline
-  FloatArgs::FloatArgs(const SharedArray<FloatVal>& x)
+  FloatValArgs::FloatValArgs(const SharedArray<FloatVal>& x)
     : PrimArgArray<FloatVal>(x.size()) {
     for (int i=x.size(); i--;)
       a[i] = x[i];
   }
   forceinline
-  FloatArgs::FloatArgs(const std::vector<FloatVal>& x)
+  FloatValArgs::FloatValArgs(const std::vector<FloatVal>& x)
     : PrimArgArray<FloatVal>(x) {}
   template<class InputIterator>
   forceinline
-  FloatArgs::FloatArgs(InputIterator first, InputIterator last)
+  FloatValArgs::FloatValArgs(InputIterator first, InputIterator last)
     : PrimArgArray<FloatVal>(first,last) {}
   
   forceinline
-  FloatArgs::FloatArgs(int n, const FloatVal* e)
+  FloatValArgs::FloatValArgs(int n, const FloatVal* e)
   : PrimArgArray<FloatVal>(n, e) {}
   
   forceinline
-  FloatArgs::FloatArgs(const PrimArgArray<FloatVal>& a) : PrimArgArray<FloatVal>(a) {}
+  FloatValArgs::FloatValArgs(const PrimArgArray<FloatVal>& a) : PrimArgArray<FloatVal>(a) {}
 
-  forceinline FloatArgs
-  FloatArgs::create(int n, FloatVal start, int inc) {
-    FloatArgs r(n);
+  forceinline FloatValArgs
+  FloatValArgs::create(int n, FloatVal start, int inc) {
+    FloatValArgs r(n);
     for (int i=0; i<n; i++, start+=inc)
       r[i] = start;
     return r;

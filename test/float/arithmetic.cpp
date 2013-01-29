@@ -254,7 +254,7 @@ namespace Test { namespace Float {
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
-         Gecode::FloatVal d = square(x[0]);
+         Gecode::FloatVal d = sqr(x[0]);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
@@ -429,7 +429,7 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((n == 0) || (x[0].max() < 0.0))
            return MT_FALSE;
-         return eq(nth_root(x[0],n), x[1]);
+         return eq(nroot(x[0],n), x[1]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
@@ -448,13 +448,13 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((n == 0) || (x[0].max() < 0.0))
            return MT_FALSE;
-         return eq(nth_root(x[0],n), x[1]);
+         return eq(nroot(x[0],n), x[1]);
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
          if ((n == 0) || (x[0].max() < 0)) 
            return false;
-         Gecode::FloatVal d = nth_root(x[0],n);
+         Gecode::FloatVal d = nroot(x[0],n);
          if (Gecode::Float::subset(d, dom)) {
            x.set(1, d);
            return true;
@@ -479,7 +479,7 @@ namespace Test { namespace Float {
        virtual MaybeType solution(const Assignment& x) const {
          if ((n == 0) || (x[0].max() < 0)) 
            return MT_FALSE;
-         return eq(nth_root(x[0],n), x[0]);
+         return eq(nroot(x[0],n), x[0]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {

@@ -41,7 +41,7 @@ namespace Gecode {
 
   class FloatVarArgs;
   class FloatVarArray;
-  class FloatArgs;
+  class FloatValArgs;
   
   /// Traits of %FloatVarArgs
   template<>
@@ -61,13 +61,13 @@ namespace Gecode {
     typedef FloatVarArgs   ArgsType;
   };
 
-  /// Traits of %FloatArgs
+  /// Traits of %FloatValArgs
   template<>
   class ArrayTraits<PrimArgArray<FloatVal> > {
   public:
-    typedef FloatArgs StorageType;
+    typedef FloatValArgs StorageType;
     typedef FloatVal  ValueType;
-    typedef FloatArgs ArgsType;
+    typedef FloatValArgs ArgsType;
   };
 
   /// Traits of %FloatVarArray
@@ -88,13 +88,13 @@ namespace Gecode {
     typedef FloatVarArgs ArgsType;
   };
 
-  /// Traits of %FloatArgs
+  /// Traits of %FloatValArgs
   template<>
-  class ArrayTraits<FloatArgs> {
+  class ArrayTraits<FloatValArgs> {
   public:
-    typedef FloatArgs StorageType;
+    typedef FloatValArgs StorageType;
     typedef FloatVal  ValueType;
-    typedef FloatArgs ArgsType;
+    typedef FloatValArgs ArgsType;
   };
   
 }

@@ -1407,10 +1407,10 @@ namespace Gecode { namespace FlatZinc {
   }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-  FloatArgs
+  FloatValArgs
   FlatZincSpace::arg2floatargs(AST::Node* arg, int offset) {
     AST::Array* a = arg->getArray();
-    FloatArgs fa(a->a.size()+offset);
+    FloatValArgs fa(a->a.size()+offset);
     for (int i=offset; i--;)
       fa[i] = 0.0;
     for (int i=a->a.size(); i--;)

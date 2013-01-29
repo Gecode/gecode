@@ -484,8 +484,8 @@ namespace Gecode { namespace FlatZinc {
                               const IntSet& od=IntSet::empty);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-    /// Convert \a n to FloatArgs
-    FloatArgs arg2floatargs(AST::Node* arg, int offset = 0);
+    /// Convert \a n to FloatValArgs
+    FloatValArgs arg2floatargs(AST::Node* arg, int offset = 0);
     /// Convert \a n to FloatVar
     FloatVar arg2FloatVar(AST::Node* n);
     /// Convert \a n to FloatVarArgs

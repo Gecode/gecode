@@ -359,9 +359,9 @@ namespace Gecode {
 
     friend FloatVal abs(const FloatVal& x);
     friend FloatVal sqrt(const FloatVal& x);
-    friend FloatVal square(const FloatVal& x);
+    friend FloatVal sqr(const FloatVal& x);
     friend FloatVal pow(const FloatVal& x, int n);
-    friend FloatVal nth_root(const FloatVal& x, int n);
+    friend FloatVal nroot(const FloatVal& x, int n);
 
     friend FloatVal max(const FloatVal& x, const FloatVal& y);
     friend FloatVal max(const FloatVal& x, const FloatNum& y);
@@ -449,8 +449,8 @@ namespace Gecode {
 
     /// \name Value tests
     //@{
-    /// Test whether float can be reduced or not (assigned)
-    bool assigned(void) const;
+    /// Test whether float is tight
+    bool tight(void) const;
     /// Test whether float is a singleton
     bool singleton(void) const;
     /// Test whether \a n is included
@@ -681,7 +681,7 @@ namespace Gecode {
    * \brief Return square of \a x
    * \relates Gecode::FloatVal
    */
-  FloatVal square(const FloatVal& x);
+  FloatVal sqr(const FloatVal& x);
   /**
    * \brief Return \a n -th power of \a x
    * \relates Gecode::FloatVal
@@ -691,7 +691,7 @@ namespace Gecode {
    * \brief Return \a n -th root of \a x
    * \relates Gecode::FloatVal
    */
-  FloatVal nth_root(const FloatVal& x, int n);
+  FloatVal nroot(const FloatVal& x, int n);
 
   /**
    * \brief Return maximum of \a x and \a y
@@ -943,31 +943,31 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing float arguments
-  class FloatArgs : public PrimArgArray<FloatVal> {
+  class FloatValArgs : public PrimArgArray<FloatVal> {
   public:
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    FloatArgs(void);
+    FloatValArgs(void);
     /// Allocate array with \a n elements
-    explicit FloatArgs(int n);
+    explicit FloatValArgs(int n);
     /// Allocate array and copy elements from \a x
-    FloatArgs(const SharedArray<FloatVal>& x);
+    FloatValArgs(const SharedArray<FloatVal>& x);
     /// Allocate array and copy elements from \a x
-    FloatArgs(const std::vector<FloatVal>& x);
+    FloatValArgs(const std::vector<FloatVal>& x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
-    FloatArgs(InputIterator first, InputIterator last);
+    FloatValArgs(InputIterator first, InputIterator last);
     /// Allocate array with \a n elements and initialize with \a e0, ...
     GECODE_FLOAT_EXPORT
-    FloatArgs(int n, int e0, ...);
+    FloatValArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
-    FloatArgs(int n, const FloatVal* e);
+    FloatValArgs(int n, const FloatVal* e);
     /// Initialize from primitive argument array \a a (copy elements)
-    FloatArgs(const PrimArgArray<FloatVal>& a);
+    FloatValArgs(const PrimArgArray<FloatVal>& a);
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
-    static FloatArgs create(int n, FloatVal start, int inc=1);
+    static FloatValArgs create(int n, FloatVal start, int inc=1);
     //@}
   };
 
@@ -1169,15 +1169,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   div(Home home, FloatVar x0, FloatVar x1, FloatVar x2);
-  //@}
-
 #ifdef GECODE_HAS_MPFR
-  /**
-   * \defgroup TaskModelFloatTrans Transcendental constraints
-   * \ingroup TaskModelFloat
-   */
-
-  //@{
   /** \brief Post propagator for \f$ \mathrm{exp}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
@@ -1194,14 +1186,6 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   log(Home home, FloatNum base, FloatVar x0, FloatVar x1);
-  //@}
-
-  /**
-   * \defgroup TaskModelFloatTrigo Trigonometric constraints
-   * \ingroup TaskModelFloat
-   */
-
-  //@{
   /** \brief Post propagator for \f$ \mathrm{asin}(x_0)=x_1\f$
    */
   GECODE_FLOAT_EXPORT void
@@ -1264,7 +1248,7 @@ namespace Gecode {
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
-  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+  linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatNum c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
    *
@@ -1273,7 +1257,7 @@ namespace Gecode {
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
-  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+  linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\right)\equiv r\f$
    *
@@ -1282,7 +1266,7 @@ namespace Gecode {
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
-  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+  linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatNum c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
    *
@@ -1291,7 +1275,7 @@ namespace Gecode {
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
-  linear(Home home, const FloatArgs& a, const FloatVarArgs& x,
+  linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y, Reify r);
 
 
@@ -1300,9 +1284,12 @@ namespace Gecode {
    * \ingroup TaskModelFloat
    */
   //@{
-  /// Post domain consistent propagator for channeling a Float and an integer variable \f$ x_0 = x_1\f$
+  /// Post propagator for channeling a float and an integer variable \f$ x_0 = x_1\f$
   GECODE_FLOAT_EXPORT void
   channel(Home home, FloatVar x0, IntVar x1);
+  /// Post propagator for channeling a float and an integer variable \f$ x_0 = x_1\f$
+  GECODE_FLOAT_EXPORT void
+  channel(Home home, IntVar x0, FloatVar x1);
   //@}
 
 

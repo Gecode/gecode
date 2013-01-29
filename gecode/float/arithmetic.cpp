@@ -217,6 +217,15 @@ namespace Gecode {
     if (home.failed()) return;
     GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x0,x1)));
   }
+
+  void
+  channel(Home home, IntVar x0, FloatVar x1) {
+    using namespace Float;
+    using namespace Int;
+    if (home.failed()) return;
+    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x1,x0)));
+  }
+
 }
 
 // STATISTICS: float-post

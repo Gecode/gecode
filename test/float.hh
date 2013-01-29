@@ -318,7 +318,7 @@ namespace Test {
       /// Map floatVal to string
       static std::string str(Gecode::FloatVal f);
       /// Map float array to string
-      static std::string str(const Gecode::FloatArgs& f);
+      static std::string str(const Gecode::FloatValArgs& f);
       //@}
       /// \name General support
       //@{

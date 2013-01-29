@@ -274,7 +274,7 @@ namespace Gecode {
     }
   }
 
-  LinFloatExpr::LinFloatExpr(const FloatArgs& a, const FloatVarArgs& x) :
+  LinFloatExpr::LinFloatExpr(const FloatValArgs& a, const FloatVarArgs& x) :
     n(new Node) {
     if (a.size() != x.size())
       throw Float::ArgumentSizeMismatch("MiniModel::LinFloatExpr");
@@ -548,7 +548,7 @@ namespace Gecode {
     return LinFloatExpr(x);
   }
   LinFloatExpr
-  sum(const FloatArgs& a, const FloatVarArgs& x) {
+  sum(const FloatValArgs& a, const FloatVarArgs& x) {
     return LinFloatExpr(a,x);
   }
 

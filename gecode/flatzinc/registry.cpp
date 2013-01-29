@@ -1684,13 +1684,13 @@ namespace Gecode { namespace FlatZinc {
 
     void p_float_lin_cmp(FlatZincSpace& s, FloatRelType frt,
                          const ConExpr& ce, AST::Node*) {
-      FloatArgs fa = s.arg2floatargs(ce[0]);
+      FloatValArgs fa = s.arg2floatargs(ce[0]);
       FloatVarArgs fv = s.arg2floatvarargs(ce[1]);
       linear(s, fa, fv, frt, ce[2]->getFloat());
     }
     void p_float_lin_cmp_reif(FlatZincSpace& s, FloatRelType frt,
                               const ConExpr& ce, AST::Node*) {
-      FloatArgs fa = s.arg2floatargs(ce[0]);
+      FloatValArgs fa = s.arg2floatargs(ce[0]);
       FloatVarArgs fv = s.arg2floatvarargs(ce[1]);
       linear(s, fa, fv, frt, ce[2]->getFloat(), s.arg2BoolVar(ce[3]));
     }

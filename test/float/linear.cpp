@@ -47,7 +47,7 @@ namespace Test { namespace Float {
    namespace Linear {
 
      /// Check whether \a has only one coefficients
-     bool one(const Gecode::FloatArgs& a) {
+     bool one(const Gecode::FloatValArgs& a) {
       for (int i=a.size(); i--; )
         if (a[i] != 1)
           return false;
@@ -63,7 +63,7 @@ namespace Test { namespace Float {
      class FloatFloat : public Test {
      protected:
        /// Coefficients
-       Gecode::FloatArgs a;
+       Gecode::FloatValArgs a;
        /// Float relation type to propagate
        Gecode::FloatRelType frt;
        /// Result
@@ -71,7 +71,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        FloatFloat(const std::string& s, const Gecode::FloatVal& d,
-                  const Gecode::FloatArgs& a0, Gecode::FloatRelType frt0,
+                  const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0,
                   Gecode::FloatNum c0, Gecode::FloatNum st)
          : Test("Linear::Float::"+
                 str(frt0)+"::"+s+"::"+str(c0)+"::"
@@ -127,13 +127,13 @@ namespace Test { namespace Float {
      class FloatVar : public Test {
      protected:
        /// Coefficients
-       Gecode::FloatArgs a;
+       Gecode::FloatValArgs a;
        /// Float relation type to propagate
        Gecode::FloatRelType frt;
      public:
        /// Create and register test
        FloatVar(const std::string& s, const Gecode::FloatVal& d,
-                const Gecode::FloatArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
+                const Gecode::FloatValArgs& a0, Gecode::FloatRelType frt0, Gecode::FloatNum st)
          : Test("Linear::Var::"+
                 str(frt0)+"::"+s+"::"+str(a0.size()),
                 a0.size()+1,d,st,CPLT_ASSIGNMENT,true),
@@ -203,7 +203,7 @@ namespace Test { namespace Float {
            FloatVal f2(-3,-1);
            FloatVal f3(3,8);
 
-           FloatArgs a1(1, 0.0);
+           FloatValArgs a1(1, 0.0);
 
            for (FloatRelTypes frts; frts(); ++frts) {
              (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);
@@ -219,10 +219,10 @@ namespace Test { namespace Float {
            const FloatVal av5[4] = {-2.0,3.0,-5.0,7.0};
 
            for (int i=1; i<=4; i++) {
-             FloatArgs a2(i, av2);
-             FloatArgs a3(i, av3);
-             FloatArgs a4(i, av4);
-             FloatArgs a5(i, av5);
+             FloatValArgs a2(i, av2);
+             FloatValArgs a3(i, av3);
+             FloatValArgs a4(i, av4);
+             FloatValArgs a5(i, av5);
              for (FloatRelTypes frts; frts(); ++frts) {
                (void) new FloatFloat("12",f1,a2,frts.frt(),0.0,step);
                (void) new FloatFloat("13",f1,a3,frts.frt(),0.0,step);

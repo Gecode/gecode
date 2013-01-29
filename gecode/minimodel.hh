@@ -744,7 +744,7 @@ namespace Gecode {
     explicit LinFloatExpr(const FloatVarArgs& x);
     /// Create sum expression
     GECODE_MINIMODEL_EXPORT
-    LinFloatExpr(const FloatArgs& a, const FloatVarArgs& x);
+    LinFloatExpr(const FloatValArgs& a, const FloatVarArgs& x);
     /// Copy constructor
     LinFloatExpr(const LinFloatExpr& e);
     /// Create expression for type and subexpressions
@@ -890,7 +890,7 @@ namespace Gecode {
   sum(const FloatVarArgs& x);
   /// Construct linear float expression as sum of float variables with coefficients
   GECODE_MINIMODEL_EXPORT LinFloatExpr
-  sum(const FloatArgs& a, const FloatVarArgs& x);
+  sum(const FloatValArgs& a, const FloatVarArgs& x);
 
   /// Construct linear float equality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
