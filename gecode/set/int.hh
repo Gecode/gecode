@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propagator for not minimum element
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template<class View>
@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propagator for reified minimum element
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template<class View, ReifyMode rm>
@@ -167,7 +167,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Propagator for not maximum element
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template<class View>
@@ -195,7 +195,7 @@ namespace Gecode { namespace Set { namespace Int {
   /**
    * \brief %Reified propagator for maximum element
    *
-   * Requires \code #include "gecode/set/int.hh" \endcode
+   * Requires \code #include <gecode/set/int.hh> \endcode
    * \ingroup FuncSetProp
    */
   template<class View, ReifyMode rm>

@@ -175,7 +175,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   MultPlus<VA,VB,VC>::post(Home home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gq(home,0.0));
     GECODE_ME_CHECK(x1.gq(home,0.0));
-    GECODE_ME_CHECK(x2.gq(home,Round.mul_down(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x2.gq(home,round.mul_down(x0.min(),x1.min())));
     (void) new (home) MultPlus<VA,VB,VC>(home,x0,x1,x2);
     return ES_OK;
   }
@@ -226,21 +226,21 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     }
 
     assert(any(x0) && any(x1));
-    GECODE_ME_CHECK(x2.lq(home,std::max(Round.mul_up(x0.max(),x1.max()),
-                                        Round.mul_up(x0.min(),x1.min()))));
-    GECODE_ME_CHECK(x2.gq(home,std::min(Round.mul_down(x0.min(),x1.max()),
-                                        Round.mul_down(x0.max(),x1.min()))));
+    GECODE_ME_CHECK(x2.lq(home,std::max(round.mul_up(x0.max(),x1.max()),
+                                        round.mul_up(x0.min(),x1.min()))));
+    GECODE_ME_CHECK(x2.gq(home,std::min(round.mul_down(x0.min(),x1.max()),
+                                        round.mul_down(x0.max(),x1.min()))));
 
     if (pos(x2)) {
-      if (Round.div_up(x2.min(),x1.min()) < x0.min())
+      if (round.div_up(x2.min(),x1.min()) < x0.min())
         GECODE_ME_CHECK(x0.gq(home,0));
-      if (Round.div_up(x2.min(),x0.min()) < x1.min())
+      if (round.div_up(x2.min(),x0.min()) < x1.min())
         GECODE_ME_CHECK(x1.gq(home,0));
     }
     if (neg(x2)) {
-      if (Round.div_up(x2.max(),x1.max()) < x0.min())
+      if (round.div_up(x2.max(),x1.max()) < x0.min())
         GECODE_ME_CHECK(x0.gq(home,0));
-      if (Round.div_up(x2.max(),x0.max()) < x1.min())
+      if (round.div_up(x2.max(),x0.max()) < x1.min())
         GECODE_ME_CHECK(x1.gq(home,0));
     }
 
@@ -261,14 +261,14 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   prop_pxx:
     assert(pos(x0) && any(x1) && any(x2));
 
-    GECODE_ME_CHECK(x2.lq(home,Round.mul_up(x0.max(),x1.max())));
-    GECODE_ME_CHECK(x2.gq(home,Round.mul_down(x0.max(),x1.min())));
+    GECODE_ME_CHECK(x2.lq(home,round.mul_up(x0.max(),x1.max())));
+    GECODE_ME_CHECK(x2.gq(home,round.mul_down(x0.max(),x1.min())));
 
     if (pos(x2)) goto rewrite_ppp;
     if (neg(x2)) goto rewrite_pnn;
 
-    GECODE_ME_CHECK(x1.lq(home,Round.div_up(x2.max(),x0.min())));
-    GECODE_ME_CHECK(x1.gq(home,Round.div_down(x2.min(),x0.min())));
+    GECODE_ME_CHECK(x1.lq(home,round.div_up(x2.max(),x0.min())));
+    GECODE_ME_CHECK(x1.gq(home,round.div_down(x2.min(),x0.min())));
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,x0.val()*x1.val()));
@@ -282,15 +282,15 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   prop_nxx:
     assert(neg(x0) && any(x1) && any(x2));
 
-    GECODE_ME_CHECK(x2.lq(home,Round.mul_up(x0.min(),x1.min())));
-    GECODE_ME_CHECK(x2.gq(home,Round.mul_down(x0.min(),x1.max())));
+    GECODE_ME_CHECK(x2.lq(home,round.mul_up(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x2.gq(home,round.mul_down(x0.min(),x1.max())));
 
     if (pos(x2)) goto rewrite_nnp;
     if (neg(x2)) goto rewrite_npn;
 
     if (x0.max() != 0.0) {
-      GECODE_ME_CHECK(x1.lq(home,Round.div_up(x2.min(),x0.max())));
-      GECODE_ME_CHECK(x1.gq(home,Round.div_down(x2.max(),x0.max())));
+      GECODE_ME_CHECK(x1.lq(home,round.div_up(x2.min(),x0.max())));
+      GECODE_ME_CHECK(x1.gq(home,round.div_down(x2.max(),x0.max())));
     }
 
     if (x0.assigned() && x1.assigned()) {

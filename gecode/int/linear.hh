@@ -934,7 +934,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified integer less or equal to Boolean sum (cardinality)
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * Requires \code #include <gecode/int/linear.hh> \endcode
    * \ingroup FuncIntProp
    */
   template<class VX, class VB, ReifyMode rm>

@@ -828,7 +828,7 @@ namespace Gecode { namespace Float {
    *
    * \ingroup TaskModelFloatVars
    */
-  static FloatVal::Round Round;
+  static FloatVal::Round round;
   
   /**
    * \brief Numerical limits for floating point variables

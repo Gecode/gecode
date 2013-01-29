@@ -482,7 +482,7 @@ export FLOATRC		=
 endif
 FLOATBUILDDIRS	= \
 	float float/var float/var-imp float/view \
-	float/linear float/branch \
+	float/linear float/branch float/rel float/branch \
 	float/arithmetic float/transcendental float/trigonometric
 
 #
@@ -1055,7 +1055,7 @@ ARRAYTESTSRC0 = \
 TESTSRC0 = test/test.cpp test/afc.cpp
 
 TESTSRC = \
-	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) \
+	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0) \
 	$(ARRAYTESTSRC0)
 
