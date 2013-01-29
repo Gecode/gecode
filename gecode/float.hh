@@ -1155,15 +1155,15 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   sqrt(Home home, FloatVar x0, FloatVar x1);
 
-  /** \brief Post propagator for \f${x_0}^{exp}=x_1\f$
+  /** \brief Post propagator for \f${x_0}^{n}=x_1\f$ for $n\geq 0$
    */
   GECODE_FLOAT_EXPORT void
-  pow(Home home, FloatVar x0, unsigned int exp, FloatVar x1);
+  pow(Home home, FloatVar x0, int n, FloatVar x1);
 
-  /** \brief Post propagator for \f${x_0}^{1/exp}=x_1\f$
+  /** \brief Post propagator for \f${x_0}^{1/n}=x_1\f$ for $n\geq 0$
    */
   GECODE_FLOAT_EXPORT void
-  nroot(Home home, FloatVar x0, unsigned int exp, FloatVar x1);
+  nroot(Home home, FloatVar x0, int n, FloatVar x1);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2\f$
    */

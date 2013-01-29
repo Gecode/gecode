@@ -170,19 +170,19 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    unsigned int m_n;
+    int m_n;
 
     /// Constructor for cloning \a p
     Pow(Space& home, bool share, Pow& p);
     /// Constructor for creation
-    Pow(Home home, A x0, B x1, unsigned int n);
+    Pow(Home home, A x0, B x1, int n);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0^n = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1, unsigned int n);
+    static ExecStatus post(Home home, A x0, B x1, int n);
   };
 
   /**
@@ -198,19 +198,19 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    unsigned int m_n;
+    int m_n;
 
     /// Constructor for cloning \a p
     NthRoot(Space& home, bool share, NthRoot& p);
     /// Constructor for creation
-    NthRoot(Home home, A x0, B x1, unsigned int n);
+    NthRoot(Home home, A x0, B x1, int n);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$x_0^(1/n) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1, unsigned int n);
+    static ExecStatus post(Home home, A x0, B x1, int n);
   };
 
   /**

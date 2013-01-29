@@ -114,17 +114,21 @@ namespace Gecode {
   }
 
   void
-  pow(Home home, FloatVar x0, unsigned int exp, FloatVar x1) {
+  pow(Home home, FloatVar x0, int n, FloatVar x1) {
     using namespace Float;
+    if (n < 0)
+      throw OutOfLimits("nroot");
     if (home.failed()) return;
-    GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,exp)));
+    GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,n)));
   }
 
   void
-  nroot(Home home, FloatVar x0, unsigned int exp, FloatVar x1) {
+  nroot(Home home, FloatVar x0, int n, FloatVar x1) {
     using namespace Float;
+    if (n < 0)
+      throw OutOfLimits("nroot");
     if (home.failed()) return;
-    GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView,FloatView>::post(home,x0,x1,exp)));
+    GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView,FloatView>::post(home,x0,x1,n)));
   }
 
   void

@@ -45,12 +45,12 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B>
   forceinline
-  Pow<A,B>::Pow(Home home, A x0, B x1, unsigned int n)
+  Pow<A,B>::Pow(Home home, A x0, B x1, int n)
     : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1), m_n(n) {}
 
   template<class A, class B>
   ExecStatus
-  Pow<A,B>::post(Home home, A x0, B x1, unsigned int n) {
+  Pow<A,B>::post(Home home, A x0, B x1, int n) {
     if (n == 0) {
       if ((x0.min() == 0.0) && (x0.max() == 0.0)) return ES_FAILED;
       GECODE_ME_CHECK(x1.eq(home,1.0));
@@ -107,12 +107,12 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B>
   forceinline
-  NthRoot<A,B>::NthRoot(Home home, A x0, B x1, unsigned int n)
+  NthRoot<A,B>::NthRoot(Home home, A x0, B x1, int n)
     : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1), m_n(n) {}
 
   template<class A, class B>
   ExecStatus
-  NthRoot<A,B>::post(Home home, A x0, B x1, unsigned int n) {
+  NthRoot<A,B>::post(Home home, A x0, B x1, int n) {
     if (n == 0) return ES_FAILED;
     GECODE_ME_CHECK(x0.gq(home,0.0));
     (void) new (home) NthRoot<A,B>(home,x0,x1,n);
