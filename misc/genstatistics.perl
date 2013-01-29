@@ -39,7 +39,7 @@
 	     "iter","support","example","test","flatzinc");
 
 @catorder = ("core","var","prop","branch","post",
-	     "int","set","minimodel","stress","any",
+	     "int","set","float","minimodel","stress","any",
 	     "sequential","parallel","search",
 	     "other");
 
