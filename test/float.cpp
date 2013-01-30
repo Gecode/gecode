@@ -112,14 +112,14 @@ namespace Test { namespace Float {
     using namespace Gecode;
     using namespace Gecode::Float;
     return 
-      Round.add_down(
+      Gecode::Float::round.add_down(
         l,
-        Round.mul_down(
-          Round.div_down(
+        Gecode::Float::round.mul_down(
+          Gecode::Float::round.div_down(
             Base::rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
-          Round.sub_down(u,l)
+          Gecode::Float::round.sub_down(u,l)
         )
       );
   }
@@ -128,14 +128,14 @@ namespace Test { namespace Float {
     using namespace Gecode;
     using namespace Gecode::Float;
     return 
-      Round.sub_up(
+      Gecode::Float::round.sub_up(
         u,
-        Round.mul_down(
-          Round.div_down(
+        Gecode::Float::round.mul_down(
+          Gecode::Float::round.div_down(
             Base::rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
-          Round.sub_down(u,l)
+          Gecode::Float::round.sub_down(u,l)
         )
       );
   }
@@ -293,14 +293,14 @@ namespace Test { namespace Float {
       if (!x[j].assigned() && (x[j].size() > x[i].size())) i = j;
     }
     if (cutDirections[i]) {
-      FloatNum m = Round.div_up(Round.add_up(x[i].min(),x[i].max()),2);
+      FloatNum m = Gecode::Float::round.div_up(Gecode::Float::round.add_up(x[i].min(),x[i].max()),2);
       FloatNum n = nextafter(x[i].min(), x[i].max());
       if (m > n)
         rel(i, FRT_LQ, m);
       else
         rel(i, FRT_LQ, n);
     } else {
-      FloatNum m = Round.div_down(Round.add_down(x[i].min(),x[i].max()),2);
+      FloatNum m = Gecode::Float::round.div_down(Gecode::Float::round.add_down(x[i].min(),x[i].max()),2);
       FloatNum n = nextafter(x[i].max(), x[i].min());
       if (m < n)
         rel(i, FRT_GQ, m);

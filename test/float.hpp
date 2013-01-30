@@ -117,14 +117,14 @@ namespace Test { namespace Float {
     using namespace Gecode;
     using namespace Gecode::Float;
     return 
-      Round.add_down(
+      Gecode::Float::round.add_down(
         d.min(),
-        Round.mul_down(
-          Round.div_down(
+        Gecode::Float::round.mul_down(
+          Gecode::Float::round.div_down(
             Base::rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
-          Round.sub_down(d.max(),d.min())
+          Gecode::Float::round.sub_down(d.max(),d.min())
         )
       );
   }

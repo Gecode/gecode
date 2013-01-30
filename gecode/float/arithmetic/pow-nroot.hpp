@@ -56,7 +56,30 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       GECODE_ME_CHECK(x1.eq(home,1.0));
       return ES_OK;
     }
-    (void) new (home) Pow<A,B>(home,x0,x1,n);
+
+    GECODE_ME_CHECK(x1.eq(home,pow(x0.domain(),n)));
+    if ((x1.min() == 0.0) && (x1.max() == 0.0)) {
+      GECODE_ME_CHECK(x1.eq(home,0.0));
+      return ES_OK;
+    }
+    
+    if ((n % 2) == 0)
+    {
+      if (x0.min() >= 0)
+        GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),n)));
+      else if (x0.max() <= 0)
+        GECODE_ME_CHECK(x0.eq(home,-nroot(x1.domain(),n)));
+      else
+        GECODE_ME_CHECK(x0.eq(home,
+                              hull(
+                                  nroot(x1.domain(),n),
+                                  -nroot(x1.domain(),n)
+                              )
+                        ));
+    } else
+      GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),n)));
+
+    if (!x0.assigned()) (void) new (home) Pow<A,B>(home,x0,x1,n);
     return ES_OK;
   }
 
