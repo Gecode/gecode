@@ -45,36 +45,78 @@
 
 using namespace Gecode;
 
+/**
+ * \brief %Example: Archimedean spiral
+ *
+ * The Archimedean Spiral is a spiral where all points corresponding to the locations over time of
+ * a point moving away from a fixed point with a constant speed along a line which rotates with
+ * constant angular velocity.
+ * It is defined by the polar equation:
+ * \f[
+ * r = a+b\theta
+ * \f]
+ * 
+ * To get cartesian coordinates, it can be solved for \f$x\f$
+ * and \f$y\f$ in terms of \f$r\f$ and \f$\theta\f$.
+ * By setting \f$a=1\f$ and \f$b=1\f$, it yields to the equation:
+ * 
+ * \f[
+ * r = \theta
+ * \f]
+ * with
+ * \f[
+ * x=r\operatorname{cos}(\theta), \quad y=r\operatorname{sin}(\theta)
+ * \f]
+ * 
+ * The tuple \f$(r,\theta)\f$ is related to the position for \f$x\f$ and \f$y\f$ on the curve.
+ * \f$r\f$ and \f$\theta\f$ are positive numbers. 
+ * To get reasonable interval starting sizes, \f$x\f$ and \f$y\f$ are restricted to \f$[-20;20]\f$.
+ *
+ * \ingroup Example
+ */
 class ArchimedeanSpiral : public Script {
+  /// The numbers
   FloatVarArray f;
 public:
+  /// Minimum distance between two solution according to
+  /// the branching variable
   double step;
-  static FloatNum sMinValue;
-  ArchimedeanSpiral(const Options& ) : f(*this,5,-20,20), step(0.1)
+
+  /// Actual model
+  ArchimedeanSpiral(const Options& ) : f(*this,4,-20,20), step(0.1)
   {
-	rel(*this, f[0] >= 0);
-	rel(*this, f[0] <= 6*FloatVal::pi());
-	rel(*this, f[4] >= 0);
-	rel(*this, f[4]*cos(f[0]) == f[1]);
-	rel(*this, f[4]*sin(f[0]) == f[2]);
-	rel(*this, f[4] == f[0]);
+    // Post equation
+    FloatVar theta = f[0];
+    FloatVar r = f[3];
+    FloatVar x = f[1];
+    FloatVar y = f[2];
+	  rel(*this, theta >= 0);
+	  rel(*this, theta <= 6*FloatVal::pi());
+	  rel(*this, r >= 0);
+	  rel(*this, r*cos(theta) == x);
+	  rel(*this, r*sin(theta) == y);
+	  rel(*this, r == theta);
 
     branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
   }
 
+  /// Constructor for cloning \a p
   ArchimedeanSpiral(bool share, ArchimedeanSpiral& p) : Script(share,p)
   {
     f.update(*this,share,p.f);
     step = p.step;
   }
 
+  /// Copy during cloning
   virtual Space* copy(bool share) { return new ArchimedeanSpiral(share,*this); }
 
+  /// Add constraint to current model to get next solution (not too close)
   virtual void constrain(const Space& _b) {
     const ArchimedeanSpiral& b = static_cast<const ArchimedeanSpiral&>(_b);
     rel(*this, f[0] >= (b.f[0].max()+step));
   }
 
+  /// Print solution coordinates
   virtual void
   print(std::ostream& os) const
   {
@@ -84,8 +126,9 @@ public:
 
 };
 
-double ArchimedeanSpiral::sMinValue = -20;
-
+/** \brief Main-function
+ *  \relates ArchimedeanSpiral
+ */
 int main(int argc, char* argv[])
 {
   Options opt("Coordinates of solutions of Archimedean' spiral equation.");

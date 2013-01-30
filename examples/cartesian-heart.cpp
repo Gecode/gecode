@@ -44,53 +44,83 @@
 
 using namespace Gecode;
 
-class ParametricHeart : public Script {
+/**
+ * \brief %Example: Cartesian Heart
+ *
+ * There are many mathematical curves that produce heart shapes.
+ * With a good solving effort, coordinates of a filled heart shape
+ * can be computed by solving the cartesian equation:
+ *
+ * \f[
+ * x^2+2\left(y-p\times\operatorname{abs}(x)^{\frac{1}{q}}\right)^2 = 1
+ * \f]
+ *
+ * By setting \f$p=0.5\f$ and \f$q=2\f$, it yields to the equation:
+ * 
+ * \f[
+ * x^2+2\left(y-\frac{\operatorname{abs}(x)^{\frac{1}{2}}}{2}\right)^2 = 1
+ * \f]
+ * 
+ * To get reasonable interval starting sizes, \f$x\f$ and \f$y\f$ are restricted to \f$[-20;20]\f$.
+ *
+ * \ingroup Example
+ */
+class CartesianHeart : public Script {
+  /// The numbers
   FloatVarArray f;
 public:
+  /// Minimum distance between two solution according to
+  /// the branching variable
   double step;
-  static FloatNum sMinValue;
-  ParametricHeart(const Options& ) : f(*this,5,-20,20), step(0.1)
+
+  /// Actual model
+  CartesianHeart(const Options& ) : f(*this,2,-20,20), step(0.1)
   {
-	int q = 2;
-	double p = 0.5;
-	rel(*this, sqr(f[1]) + 2*sqr(f[2]-p*nroot(abs(f[1]),q)) == 1);
-	rel(*this, f[0] == f[1]);
-	step = 0.01;
+	  int q = 2;
+	  double p = 0.5;
+    // Post equation
+	  rel(*this, sqr(f[0]) + 2*sqr(f[1]-p*nroot(abs(f[0]),q)) == 1);
+	  step = 0.01;
     branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
-	branch(*this,f[2],FLOAT_VAL_SPLIT_MIN());
+	  branch(*this,f[1],FLOAT_VAL_SPLIT_MIN());
   }
 
-  ParametricHeart(bool share, ParametricHeart& p) : Script(share,p)
+  /// Constructor for cloning \a p
+  CartesianHeart(bool share, CartesianHeart& p) : Script(share,p)
   {
     f.update(*this,share,p.f);
     step = p.step;
   }
 
-  virtual Space* copy(bool share) { return new ParametricHeart(share,*this); }
+  /// Copy during cloning
+  virtual Space* copy(bool share) { return new CartesianHeart(share,*this); }
 
+  /// Add constraints to current model to get next solution (not too close)
   virtual void constrain(const Space& _b) {
-    const ParametricHeart& b = static_cast<const ParametricHeart&>(_b);
-	rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[2] >= (b.f[2].max()+step))
-											 || (f[2] <= (b.f[2].min()-step)));
+    const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
+    rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[1] >= (b.f[1].max()+step))
+											 || (f[1] <= (b.f[1].min()-step)));
   }
 
+  /// Print solution coordinates
   virtual void
   print(std::ostream& os) const
   {
-    os << "XY " << f[1].med() << " " << f[2].med();
+    os << "XY " << f[0].med() << " " << f[1].med();
     os << std::endl;
   }
 
 };
 
-double ParametricHeart::sMinValue = -20;
-
+/** \brief Main-function
+ *  \relates CartesianHeart
+ */
 int main(int argc, char* argv[])
 {
   Options opt("Coordinates of solutions of a parametric heart equation.");
   opt.parse(argc,argv);
   opt.solutions(0);
-  Script::run<ParametricHeart,BAB,Options>(opt);
+  Script::run<CartesianHeart,BAB,Options>(opt);
   return 0;
 }
 

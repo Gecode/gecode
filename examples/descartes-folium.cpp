@@ -45,34 +45,71 @@
 
 using namespace Gecode;
 
+/**
+ * \brief %Example: Folium of Descartes
+ *
+ * The folium of Descartes is a curve defined by the equation:
+ * \f[
+ * x^3 + y^3 - 3axy = 0
+ * \f]
+ * 
+ * A technique to solve it, is to write \f$y=px\f$
+ * and solve for \f$x\f$ and \f$y\f$ in terms of \f$p\f$.
+ * By setting \f$a=1\f$, it yields to the paramatric equation:
+ * 
+ * \f[
+ * x^3 + y^3 - 3xy = 0
+ * \f]
+ * \f[
+ * x=\frac{3p}{1+p^3},\quad y=\frac{3p^2}{1+p^3}
+ * \f]
+ * 
+ * The parameter \f$p\f$ is related to the position on the curve and is constrained
+ * to get different solutions for \f$x\f$ and \f$y\f$. To get reasonable interval starting sizes,
+ * \f$p\f$ and \f$y\f$ are restricted to \f$[-20;20]\f$ and \f$x\f$ is restricted to \f$[-1;2]\f$.
+ *
+ * \ingroup Example
+ */
 class Folium : public Script {
+  /// The numbers
   FloatVarArray f;
 public:
+  /// Minimum distance between two solution according to
+  /// the branching variable
   double step;
-  static FloatNum sMinValue;
-  Folium(const Options& ) : f(*this,5,-20,20), step(0.1)
-  {
-    rel(*this, 3*f[0]/(1+pow(f[0],3)) == f[1]);
-    rel(*this, 3*sqr(f[0])/(1+pow(f[0],3)) == f[2]);
-    rel(*this, pow(f[1],3) + pow(f[2],3)  == 3 * f[1] * f[2]);
-    rel(*this, f[1] == FloatVal(-1,2));
 
-    branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
+  /// Actual model
+  Folium(const Options& ) : f(*this,3,-20,20), step(0.1)
+  {
+    // Post equation
+    FloatVar p = f[0];
+    FloatVar x = f[1];
+    FloatVar y = f[2];
+    rel(*this, 3*p/(1+pow(p,3)) == x);
+    rel(*this, 3*sqr(p)/(1+pow(p,3)) == y);
+    rel(*this, pow(x,3) + pow(y,3)  == 3 * x * y);
+    rel(*this, x == FloatVal(-1,2));
+
+    branch(*this,p,FLOAT_VAL_SPLIT_MIN());
   }
 
+  /// Constructor for cloning \a p
   Folium(bool share, Folium& p) : Script(share,p)
   {
     f.update(*this,share,p.f);
     step = p.step;
   }
 
+  /// Copy during cloning
   virtual Space* copy(bool share) { return new Folium(share,*this); }
 
+  /// Add constraint to current model to get next solution (not too close)
   virtual void constrain(const Space& _b) {
     const Folium& b = static_cast<const Folium&>(_b);
     rel(*this, f[0] >= (b.f[0].max()+step));
   }
 
+  /// Print solution coordinates
   virtual void
   print(std::ostream& os) const
   {
@@ -82,8 +119,9 @@ public:
 
 };
 
-double Folium::sMinValue = -20;
-
+/** \brief Main-function
+ *  \relates Folium
+ */
 int main(int argc, char* argv[])
 {
   Options opt("Coordinates of solutions of Descartes' Folium equation.");

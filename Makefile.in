@@ -835,7 +835,7 @@ ifeq "@enable_float_vars@" "yes"
 endif
 
 FLOATEXAMPLESRC0 = \
-	parametric-heart descartes-folium
+	cartesian-heart descartes-folium
 FLOATEXAMPLESRC  = $(FLOATEXAMPLESRC0:%=examples/%.cpp)
 ifeq "@enable_float_vars@" "yes"
 FLOATEXAMPLEEXE  = $(FLOATEXAMPLESRC:%.cpp=%$(EXESUFFIX))
