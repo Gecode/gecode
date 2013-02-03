@@ -294,7 +294,7 @@ namespace Gecode {
 #ifdef GECODE_HAS_FLOAT_VARS
     std::cerr << "FloatVar ";
     std::cerr << std::endl
-              << " - Trigonometric and transcedental float constraints: ";
+              << " - Trigonometric and transcendental float constraints: ";
 #ifdef GECODE_HAS_MPFR
     std::cerr << "enabled";
 #else
