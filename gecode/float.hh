@@ -134,7 +134,7 @@ namespace Gecode { namespace Float {
    *
    * \ingroup TaskModelFloatVars
    */
-  class FullRounding : 
+  class Rounding : 
     public boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
   protected:
     /// Base class
@@ -143,9 +143,9 @@ namespace Gecode { namespace Float {
     /// \name Constructor and destructor
     //@{
     /// Default constructor (configures full rounding mode)
-    FullRounding(void);
+    Rounding(void);
     /// Destructor (restores previous rounding mode)
-    ~FullRounding(void);
+    ~Rounding(void);
     //@}
   
     /// \name Arithmetic operations
@@ -400,7 +400,7 @@ namespace Gecode {
     friend FloatVal Float::hull(const FloatNum& x, const FloatNum& y);
   protected:
     /// Used rounding policies
-    typedef boost::numeric::interval_lib::save_state<Float::FullRounding> R;
+    typedef boost::numeric::interval_lib::save_state<Float::Rounding> R;
     /// Used checking policy
     typedef boost::numeric::interval_lib::checking_strict<FloatNum> P;
     /// Implementation type for float value
@@ -413,8 +413,6 @@ namespace Gecode {
     /// Initialize from implementation \a i
     explicit FloatVal(const FloatValImpType& i);
   public:
-    /// Rounding definition
-    typedef FloatValImpType::traits_type::rounding Round;
     /// \name Constructors and initialization
     //@{
     /// Default constructor
@@ -828,7 +826,7 @@ namespace Gecode { namespace Float {
    *
    * \ingroup TaskModelFloatVars
    */
-  static FloatVal::Round round;
+  static Rounding round;
   
   /**
    * \brief Numerical limits for floating point variables

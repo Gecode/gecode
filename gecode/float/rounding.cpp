@@ -64,10 +64,10 @@ namespace Gecode { namespace Float {
 
   /// Define mpfr functions with proper rounding
 #define GECODE_GENR_FUNC(name) \
-  FloatNum FullRounding::name##_down(FloatNum x) { \
+  FloatNum Rounding::name##_down(FloatNum x) { \
     return invoke_mpfr(x, mpfr_##name, GMP_RNDD); \
   } \
-  FloatNum FullRounding::name##_up(FloatNum x) { \
+  FloatNum Rounding::name##_up(FloatNum x) { \
     return invoke_mpfr(x, mpfr_##name, GMP_RNDU); \
   }
   GECODE_GENR_FUNC(exp)

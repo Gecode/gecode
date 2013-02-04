@@ -119,6 +119,10 @@ namespace Gecode { namespace Float {
 
     /// \name Domain update by value
     //@{
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, FloatNum n);
+    /// Restrict domain values to be equal to \a n
+    ModEvent eq(Space& home, const FloatVal& n);
     /// Restrict domain values to be less or equal than \a n
     ModEvent lq(Space& home, FloatNum n);
     /// Restrict domain values to be less or equal than \a n
@@ -127,16 +131,6 @@ namespace Gecode { namespace Float {
     ModEvent gq(Space& home, FloatNum n);
     /// Restrict domain values to be greater or equal than \a n
     ModEvent gq(Space& home, const FloatVal& n);
-    /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space& home, FloatNum n);
-    /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space& home, const FloatVal& n);
-    /// Restrict domain values to be different to \a n
-    /// Poor contraction performance.
-    ModEvent nq(Space& home, FloatNum n);
-    /// Restrict domain values to be different to \a n
-    /// Poor contraction performance.
-    ModEvent nq(Space& home, const FloatVal& n);
     //@}
 
     /// \name Dependencies

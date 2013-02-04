@@ -50,7 +50,7 @@ namespace Gecode { namespace Float {
    */
 
   /**
-   * \brief Integer view for integer variables
+   * \brief Float view for float variables
    * \ingroup TaskActorFloatView
    */
   class FloatView : public VarImpView<FloatVar> {

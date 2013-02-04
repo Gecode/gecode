@@ -38,22 +38,22 @@
 namespace Gecode { namespace Float {
 
   forceinline
-  FullRounding::FullRounding(void) {}
+  Rounding::Rounding(void) {}
   forceinline
-  FullRounding::~FullRounding(void) {}
+  Rounding::~Rounding(void) {}
 
   forceinline FloatNum
-  FullRounding::median(FloatNum x, FloatNum y) {
+  Rounding::median(FloatNum x, FloatNum y) {
     return Base::median(x,y);
   }
 
 #define GECODE_ROUND_OP(name)                           \
   forceinline FloatNum                                  \
-  FullRounding::name##_down(FloatNum x, FloatNum y) {   \
+  Rounding::name##_down(FloatNum x, FloatNum y) {   \
     return Base::name##_down(x,y);                      \
   }                                                     \
   forceinline FloatNum                                  \
-  FullRounding::name##_up(FloatNum x, FloatNum y) {     \
+  Rounding::name##_up(FloatNum x, FloatNum y) {     \
     return Base::name##_up(x,y);                        \
   }
 
@@ -66,11 +66,11 @@ namespace Gecode { namespace Float {
 
 #define GECODE_ROUND_FUN(name)                  \
   forceinline FloatNum                          \
-  FullRounding::name##_down(FloatNum x) {       \
+  Rounding::name##_down(FloatNum x) {       \
     return Base::name##_down(x);                \
   }                                             \
   forceinline FloatNum                          \
-  FullRounding::name##_up(FloatNum x) {         \
+  Rounding::name##_up(FloatNum x) {         \
     return Base::name##_up(x);                  \
   }
 
@@ -80,11 +80,11 @@ namespace Gecode { namespace Float {
 
   // Workaround as MSVC on x64 does not have a rint function
   forceinline FloatNum
-  FullRounding::int_down(FloatNum x) {
+  Rounding::int_down(FloatNum x) {
     return floor(x);
   }
   forceinline FloatNum
-  FullRounding::int_up(FloatNum x) {
+  Rounding::int_up(FloatNum x) {
     return ceil(x);
   }
 

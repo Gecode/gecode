@@ -211,18 +211,6 @@ namespace Gecode { namespace Float {
   }
 
 
-  forceinline ModEvent
-  FloatVarImp::nq(Space& , FloatNum n) {
-    if (dom == n) return ME_FLOAT_FAILED;
-    return ME_FLOAT_NONE;
-  }
-  forceinline ModEvent
-  FloatVarImp::nq(Space& , const FloatVal& n) {
-    if (assigned() && (n == dom))
-      return ME_FLOAT_FAILED;
-    return ME_FLOAT_NONE;
-  }
-
   /*
    * Copying a variable
    *
