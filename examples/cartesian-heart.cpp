@@ -36,11 +36,9 @@
  */
 
 #include <gecode/driver.hh>
+
 #include <gecode/minimodel.hh>
 #include <gecode/float.hh>
-#include <gecode/float/linear.hh>
-
-#include <iostream>
 
 using namespace Gecode;
 
@@ -61,53 +59,49 @@ using namespace Gecode;
  * x^2+2\left(y-\frac{\operatorname{abs}(x)^{\frac{1}{2}}}{2}\right)^2 = 1
  * \f]
  * 
- * To get reasonable interval starting sizes, \f$x\f$ and \f$y\f$ are restricted to \f$[-20;20]\f$.
+ * To get reasonable interval starting sizes, \f$x\f$ and \f$y\f$
+ * are restricted to \f$[-20;20]\f$.
  *
  * \ingroup Example
  */
 class CartesianHeart : public Script {
+protected:
   /// The numbers
   FloatVarArray f;
+  /// Minimum distance between two solutions
+  FloatNum step;
 public:
-  /// Minimum distance between two solution according to
-  /// the branching variable
-  double step;
-
   /// Actual model
-  CartesianHeart(const Options& ) : f(*this,2,-20,20), step(0.1)
-  {
-	  int q = 2;
-	  double p = 0.5;
+  CartesianHeart(const Options&) 
+    : f(*this,2,-20,20), step(0.01) {
+    int q = 2;
+    FloatNum p = 0.5;
     // Post equation
-	  rel(*this, sqr(f[0]) + 2*sqr(f[1]-p*nroot(abs(f[0]),q)) == 1);
-	  step = 0.01;
-    branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
-	  branch(*this,f[1],FLOAT_VAL_SPLIT_MIN());
+    rel(*this, sqr(f[0]) + 2*sqr(f[1]-p*nroot(abs(f[0]),q)) == 1);
+    branch(*this, f[0], FLOAT_VAL_SPLIT_MIN());
+    branch(*this, f[1], FLOAT_VAL_SPLIT_MIN());
   }
-
   /// Constructor for cloning \a p
-  CartesianHeart(bool share, CartesianHeart& p) : Script(share,p)
-  {
+  CartesianHeart(bool share, CartesianHeart& p) 
+    : Script(share,p), step(p.step) {
     f.update(*this,share,p.f);
-    step = p.step;
   }
-
   /// Copy during cloning
-  virtual Space* copy(bool share) { return new CartesianHeart(share,*this); }
-
+  virtual Space* copy(bool share) { 
+    return new CartesianHeart(share,*this); 
+  }
   /// Add constraints to current model to get next solution (not too close)
   virtual void constrain(const Space& _b) {
     const CartesianHeart& b = static_cast<const CartesianHeart&>(_b);
-    rel(*this, (f[0] >= (b.f[0].max()+step)) || (f[1] >= (b.f[1].max()+step))
-											 || (f[1] <= (b.f[1].min()-step)));
+    rel(*this, 
+        (f[0] >= (b.f[0].max()+step)) || 
+        (f[1] >= (b.f[1].max()+step)) || 
+        (f[1] <= (b.f[1].min()-step)));
   }
-
   /// Print solution coordinates
-  virtual void
-  print(std::ostream& os) const
-  {
-    os << "XY " << f[0].med() << " " << f[1].med();
-    os << std::endl;
+  virtual void print(std::ostream& os) const {
+    os << "XY " << f[0].med() << " " << f[1].med()
+       << std::endl;
   }
 
 };
@@ -115,9 +109,8 @@ public:
 /** \brief Main-function
  *  \relates CartesianHeart
  */
-int main(int argc, char* argv[])
-{
-  Options opt("Coordinates of solutions of a parametric heart equation.");
+int main(int argc, char* argv[]) {
+  Options opt("CartesianHeart");
   opt.parse(argc,argv);
   opt.solutions(0);
   Script::run<CartesianHeart,BAB,Options>(opt);
