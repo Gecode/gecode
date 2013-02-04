@@ -146,10 +146,11 @@ namespace Gecode { namespace Float { namespace Arithmetic {
         MinusView(x0),x1)));
 
     GECODE_ME_CHECK(x1.eq(home,sqr(x0.val())));
+    Rounding r;
     FloatVal z = sqrt(x1.val());
-    if (x0.min() > -round.sqrt_up(x1.min()))
+    if (x0.min() > -r.sqrt_up(x1.min()))
       GECODE_ME_CHECK(x0.eq(home,z));
-    else if (x0.max() < round.sqrt_down(x1.min()))
+    else if (x0.max() < r.sqrt_down(x1.min()))
       GECODE_ME_CHECK(x0.eq(home,-z));
     else
       GECODE_ME_CHECK(x0.eq(home,hull(z,-z)));

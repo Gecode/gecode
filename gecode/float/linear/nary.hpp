@@ -81,40 +81,40 @@ namespace Gecode { namespace Float { namespace Linear {
    */
   template<class View>
   void
-  bounds_p(ModEventDelta med, ViewArray<View>& x, FloatVal& c, FloatNum& sl, FloatNum& su) {
+  bounds_p(Rounding& r, ModEventDelta med, ViewArray<View>& x, FloatVal& c, FloatNum& sl, FloatNum& su) {
     int n = x.size();
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = n; i--; ) {
         if (x[i].assigned()) {
           c -= x[i].val(); x[i] = x[--n];
         } else {
-          sl = round.sub_up(sl,x[i].min()); su = round.sub_down(su,x[i].max());
+          sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
         }
       }
       x.size(n);
     } else {
       for (int i = n; i--; ) {
-        sl = round.sub_up(sl,x[i].min()); su = round.sub_down(su,x[i].max());
+        sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
       }
     }
   }
 
   template<class View>
   void
-  bounds_n(ModEventDelta med, ViewArray<View>& y, FloatVal& c, FloatNum& sl, FloatNum& su) {
+  bounds_n(Rounding& r, ModEventDelta med, ViewArray<View>& y, FloatVal& c, FloatNum& sl, FloatNum& su) {
     int n = y.size();
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = n; i--; ) {
         if (y[i].assigned()) {
           c += y[i].val(); y[i] = y[--n];
         } else {
-          sl = round.add_up(sl,y[i].max()); su = round.add_down(su,y[i].min());
+          sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
         }
       }
       y.size(n);
     } else {
       for (int i = n; i--; ) {
-        sl = round.add_up(sl,y[i].max()); su = round.add_down(su,y[i].min());
+        sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
       }
     }
   }
@@ -161,8 +161,10 @@ namespace Gecode { namespace Float { namespace Linear {
     FloatNum sl = 0.0;
     FloatNum su = 0.0;
 
-    bounds_p<P>(med, x, c, sl, su);
-    bounds_n<N>(med, y, c, sl, su);
+    Rounding r;
+
+    bounds_p<P>(r, med, x, c, sl, su);
+    bounds_n<N>(r, med, y, c, sl, su);
 
     if ((FloatView::me(med) == ME_FLOAT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
@@ -176,8 +178,9 @@ namespace Gecode { namespace Float { namespace Linear {
       return (c.in(0.0)) ? home.ES_SUBSUMED(*this) : ES_FAILED;
     }
 
-    sl = round.add_up(sl,c.max()); 
-    su = round.add_down(su,c.min());
+
+    sl = r.add_up(sl,c.max()); 
+    su = r.add_down(su,c.min());
 
     const int mod_sl = 1;
     const int mod_su = 2;
@@ -190,24 +193,24 @@ namespace Gecode { namespace Float { namespace Linear {
         // Propagate max bound for positive variables
         for (int i = x.size(); i--; ) {
           const FloatNum xi_max = x[i].max();
-          ModEvent me = x[i].lq(home,round.add_up(sl,x[i].min()));
+          ModEvent me = x[i].lq(home,r.add_up(sl,x[i].min()));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(su)) 
-              su = round.add_down(su,round.sub_down(xi_max,x[i].max()));
+              su = r.add_down(su,r.sub_down(xi_max,x[i].max()));
             mod |= mod_su;
           }
         }
         // Propagate min bound for negative variables
         for (int i = y.size(); i--; ) {
           const FloatNum yi_min = y[i].min();
-          ModEvent me = y[i].gq(home,round.sub_down(y[i].max(),sl));
+          ModEvent me = y[i].gq(home,r.sub_down(y[i].max(),sl));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(su)) 
-              su = round.add_down(su,round.sub_down(y[i].min(),yi_min));
+              su = r.add_down(su,r.sub_down(y[i].min(),yi_min));
             mod |= mod_su;
           }
         }
@@ -217,24 +220,24 @@ namespace Gecode { namespace Float { namespace Linear {
         // Propagate min bound for positive variables
         for (int i = x.size(); i--; ) {
           const FloatNum xi_min = x[i].min();
-          ModEvent me = x[i].gq(home,round.add_down(su,x[i].max()));
+          ModEvent me = x[i].gq(home,r.add_down(su,x[i].max()));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(sl)) 
-              sl = round.add_up(sl,round.sub_up(xi_min,x[i].min()));
+              sl = r.add_up(sl,r.sub_up(xi_min,x[i].min()));
             mod |= mod_sl;
           }
         }
         // Propagate max bound for negative variables
         for (int i = y.size(); i--; ) {
           const FloatNum yi_max = y[i].max();
-          ModEvent me = y[i].lq(home,round.sub_up(y[i].min(),su));
+          ModEvent me = y[i].lq(home,r.sub_up(y[i].min(),su));
           if (me_failed(me))
             return ES_FAILED;
           if (me_modified(me)) {
             if (!infty(sl)) 
-              sl = round.add_up(sl,round.sub_up(y[i].max(),yi_max));
+              sl = r.add_up(sl,r.sub_up(y[i].max(),yi_max));
             mod |= mod_sl;
           }
         }
@@ -279,19 +282,21 @@ namespace Gecode { namespace Float { namespace Linear {
     // Eliminate singletons
     FloatNum sl = 0.0;
 
+    Rounding r;
+
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = x.size(); i--; ) {
         if (x[i].assigned()) {
           c  -= x[i].val();  x.move_lst(i);
         } else {
-          sl = round.sub_up(sl,x[i].min());
+          sl = r.sub_up(sl,x[i].min());
         }
       }
       for (int i = y.size(); i--; ) {
         if (y[i].assigned()) {
           c  += y[i].val();  y.move_lst(i);
         } else {
-          sl = round.add_up(sl,y[i].max());
+          sl = r.add_up(sl,y[i].max());
         }
       }
       if ((x.size() + y.size()) <= 1) {
@@ -307,18 +312,18 @@ namespace Gecode { namespace Float { namespace Linear {
       }
     } else {
       for (int i = x.size(); i--; )
-        sl = round.sub_up(sl,x[i].min());
+        sl = r.sub_up(sl,x[i].min());
       for (int i = y.size(); i--; )
-        sl = round.add_up(sl,y[i].max());
+        sl = r.add_up(sl,y[i].max());
     }
 
-    sl = round.add_up(sl,c.max());
+    sl = r.add_up(sl,c.max());
 
     ExecStatus es = ES_FIX;
     bool assigned = true;
     for (int i = x.size(); i--; ) {
       assert(!x[i].assigned());
-      FloatNum slx = round.add_up(sl,x[i].min());
+      FloatNum slx = r.add_up(sl,x[i].min());
       ModEvent me = x[i].lq(home,slx);
       if (me == ME_FLOAT_FAILED)
         return ES_FAILED;
@@ -330,7 +335,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
     for (int i = y.size(); i--; ) {
       assert(!y[i].assigned());
-      FloatNum sly = round.sub_up(y[i].max(),sl);
+      FloatNum sly = r.sub_up(y[i].max(),sl);
       ModEvent me = y[i].gq(home,sly);
       if (me == ME_FLOAT_FAILED)
         return ES_FAILED;

@@ -43,14 +43,14 @@ namespace Gecode { namespace Float { namespace Trigonometric {
    *
    */
 template<class V>
-void aSinProject(const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
+void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
   #define I0__PI_2I    FloatVal(0,pi_half_upper())
   #define IPI_2__PII   FloatVal(pi_half_lower(),pi_upper())
   #define IPI__3PI_2I  FloatVal(pi_lower(),3*pi_half_upper())
   #define I3PI_2__2PII FloatVal(3*pi_half_lower(),pi_twice_upper())
   #define POS(X) ((I0__PI_2I.in(X))?0: (IPI_2__PII.in(X))?1: (IPI__3PI_2I.in(X))?2: 3 )
-  #define ASININF_DOWN round.asin_down(aSinIv.min())
-  #define ASINSUP_UP round.asin_up(aSinIv.max())
+  #define ASININF_DOWN r.asin_down(aSinIv.min())
+  #define ASINSUP_UP r.asin_up(aSinIv.max())
   
   // 0 <=> in [0;PI/2]
   // 1 <=> in [PI/2;PI]
@@ -59,20 +59,20 @@ void aSinProject(const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min
   switch ( POS(iv_min) )
   {
     case 0:
-      if (round.sin_down(iv_min) > aSinIv.max())    { n_min++; iv_min = -ASINSUP_UP;   }
-      else if (round.sin_up(iv_min) < aSinIv.min()) {          iv_min = ASININF_DOWN;  }
+      if (r.sin_down(iv_min) > aSinIv.max())    { n_min++; iv_min = -ASINSUP_UP;   }
+      else if (r.sin_up(iv_min) < aSinIv.min()) {          iv_min = ASININF_DOWN;  }
     break;
     case 1:
-      if (round.sin_down(iv_min) > aSinIv.max())    { n_min++;  iv_min = -ASINSUP_UP;   }
-      else if (round.sin_up(iv_min) < aSinIv.min()) { n_min+=2; iv_min = ASININF_DOWN;  }
+      if (r.sin_down(iv_min) > aSinIv.max())    { n_min++;  iv_min = -ASINSUP_UP;   }
+      else if (r.sin_up(iv_min) < aSinIv.min()) { n_min+=2; iv_min = ASININF_DOWN;  }
     break;
     case 2:
-      if (round.sin_down(iv_min) > aSinIv.max())    { n_min++;  iv_min = -ASINSUP_UP;   }
-      else if (round.sin_up(iv_min) < aSinIv.min()) { n_min+=2; iv_min = ASININF_DOWN; }
+      if (r.sin_down(iv_min) > aSinIv.max())    { n_min++;  iv_min = -ASINSUP_UP;   }
+      else if (r.sin_up(iv_min) < aSinIv.min()) { n_min+=2; iv_min = ASININF_DOWN; }
     break;
     case 3:
-      if (round.sin_down(iv_min) > aSinIv.max())    { n_min+=3; iv_min = -ASINSUP_UP;    }
-      else if (round.sin_up(iv_min) < aSinIv.min()) { n_min+=2; iv_min = ASININF_DOWN; }
+      if (r.sin_down(iv_min) > aSinIv.max())    { n_min+=3; iv_min = -ASINSUP_UP;    }
+      else if (r.sin_up(iv_min) < aSinIv.min()) { n_min+=2; iv_min = ASININF_DOWN; }
     break;
     default:
       GECODE_NEVER;
@@ -86,20 +86,20 @@ void aSinProject(const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min
   switch ( POS(iv_max) )
   {
     case 0:
-      if (round.sin_down(iv_max) > aSinIv.max())    {           iv_max = ASINSUP_UP;    }
-      else if (round.sin_up(iv_max) < aSinIv.min()) { n_max--;  iv_max = -ASININF_DOWN; }
+      if (r.sin_down(iv_max) > aSinIv.max())    {           iv_max = ASINSUP_UP;    }
+      else if (r.sin_up(iv_max) < aSinIv.min()) { n_max--;  iv_max = -ASININF_DOWN; }
     break;
     case 1:
-      if (round.sin_down(iv_max) > aSinIv.max())    {          iv_max = ASINSUP_UP;    }
-      else if (round.sin_up(iv_max) < aSinIv.min()) { n_max++; iv_max = -ASININF_DOWN; }
+      if (r.sin_down(iv_max) > aSinIv.max())    {          iv_max = ASINSUP_UP;    }
+      else if (r.sin_up(iv_max) < aSinIv.min()) { n_max++; iv_max = -ASININF_DOWN; }
     break;
     case 2:
-      if (round.sin_down(iv_max) > aSinIv.max())    {          iv_max = ASINSUP_UP;    }
-      else if (round.sin_up(iv_max) < aSinIv.min()) { n_max++; iv_max = -ASININF_DOWN; }
+      if (r.sin_down(iv_max) > aSinIv.max())    {          iv_max = ASINSUP_UP;    }
+      else if (r.sin_up(iv_max) < aSinIv.min()) { n_max++; iv_max = -ASININF_DOWN; }
     break;
     case 3:
-      if (round.sin_down(iv_max) > aSinIv.max())    { n_max+=2; iv_max = ASINSUP_UP;    }
-      else if (round.sin_up(iv_max) < aSinIv.min()) { n_max++;  iv_max = -ASININF_DOWN; }
+      if (r.sin_down(iv_max) > aSinIv.max())    { n_max+=2; iv_max = ASINSUP_UP;    }
+      else if (r.sin_up(iv_max) < aSinIv.min()) { n_max++;  iv_max = -ASININF_DOWN; }
     break;
     default:
       GECODE_NEVER;
@@ -154,15 +154,16 @@ void aSinProject(const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min
   ExecStatus
   Sin<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,sin(x0.val())));
-    int n_min = 2*static_cast<int>(round.div_up(x0.min(), pi_twice_upper()));
-    int n_max = 2*static_cast<int>(round.div_up(x0.max(), pi_twice_upper()));
+    Rounding r;
+    int n_min = 2*static_cast<int>(r.div_up(x0.min(), pi_twice_upper()));
+    int n_max = 2*static_cast<int>(r.div_up(x0.max(), pi_twice_upper()));
     if (x0.min() < 0) n_min-=2;
     if (x0.max() < 0) n_max-=2;
-    FloatNum iv_min = round.sub_down(x0.min(),round.mul_down(n_min, pi_upper()));
-    FloatNum iv_max = round.sub_up  (x0.max(),round.mul_down(n_max, pi_upper()));
-    aSinProject(x1,iv_min,iv_max,n_min,n_max);
-    FloatNum n_iv_min = round.add_down(iv_min,round.mul_down(n_min, pi_upper()));
-    FloatNum n_iv_max = round.add_up  (iv_max,round.mul_down(n_max, pi_upper()));
+    FloatNum iv_min = r.sub_down(x0.min(),r.mul_down(n_min, pi_upper()));
+    FloatNum iv_max = r.sub_up  (x0.max(),r.mul_down(n_max, pi_upper()));
+    aSinProject(r,x1,iv_min,iv_max,n_min,n_max);
+    FloatNum n_iv_min = r.add_down(iv_min,r.mul_down(n_min, pi_upper()));
+    FloatNum n_iv_max = r.add_up  (iv_max,r.mul_down(n_max, pi_upper()));
     if (n_iv_min > n_iv_max) return ES_FAILED;
     GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max)));
     GECODE_ME_CHECK(x1.eq(home,sin(x0.val()))); // Redo sin because with x0 reduction, sin may be more accurate
@@ -214,16 +215,17 @@ void aSinProject(const V& aSinIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min
   ExecStatus
   Cos<A,B>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x1.eq(home,cos(x0.val())));
+    Rounding r;
     FloatVal x0Trans = x0.val() + FloatVal::pi_half();
-    int n_min = 2*static_cast<int>(round.div_up(x0Trans.min(), pi_twice_upper()));
-    int n_max = 2*static_cast<int>(round.div_up(x0Trans.max(), pi_twice_upper()));
+    int n_min = 2*static_cast<int>(r.div_up(x0Trans.min(), pi_twice_upper()));
+    int n_max = 2*static_cast<int>(r.div_up(x0Trans.max(), pi_twice_upper()));
     if (x0Trans.min() < 0) n_min-=2;
     if (x0Trans.max() < 0) n_max-=2;
-    FloatNum iv_min = round.sub_down(x0Trans.min(),round.mul_down(n_min, pi_upper()));
-    FloatNum iv_max = round.sub_up  (x0Trans.max(),round.mul_down(n_max, pi_upper()));
-    aSinProject(x1,iv_min,iv_max,n_min,n_max);
-    FloatNum n_iv_min = round.add_down(iv_min,round.mul_down(n_min, pi_upper()));
-    FloatNum n_iv_max = round.add_up  (iv_max,round.mul_down(n_max, pi_upper()));
+    FloatNum iv_min = r.sub_down(x0Trans.min(),r.mul_down(n_min, pi_upper()));
+    FloatNum iv_max = r.sub_up  (x0Trans.max(),r.mul_down(n_max, pi_upper()));
+    aSinProject(r,x1,iv_min,iv_max,n_min,n_max);
+    FloatNum n_iv_min = r.add_down(iv_min,r.mul_down(n_min, pi_upper()));
+    FloatNum n_iv_max = r.add_up  (iv_max,r.mul_down(n_max, pi_upper()));
     if (n_iv_min > n_iv_max) return ES_FAILED;
     GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max) - FloatVal::pi_half()));
     GECODE_ME_CHECK(x1.eq(home,cos(x0.val()))); // Redo sin because with x0 reduction, sin may be more accurate

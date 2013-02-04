@@ -822,13 +822,6 @@ namespace Gecode {
 namespace Gecode { namespace Float {
 
   /**
-   * \brief Float rounding mode
-   *
-   * \ingroup TaskModelFloatVars
-   */
-  static Rounding round;
-  
-  /**
    * \brief Numerical limits for floating point variables
    *
    * \ingroup TaskModelFloatVars

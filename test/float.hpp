@@ -116,15 +116,16 @@ namespace Test { namespace Float {
   RandomAssignment::randval(void) {
     using namespace Gecode;
     using namespace Gecode::Float;
+    Rounding r;
     return 
-      Gecode::Float::round.add_down(
+      r.add_down(
         d.min(),
-        Gecode::Float::round.mul_down(
-          Gecode::Float::round.div_down(
+        r.mul_down(
+          r.div_down(
             Base::rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
-          Gecode::Float::round.sub_down(d.max(),d.min())
+          r.sub_down(d.max(),d.min())
         )
       );
   }

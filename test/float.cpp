@@ -111,31 +111,33 @@ namespace Test { namespace Float {
   Gecode::FloatNum randFValDown(Gecode::FloatNum l, Gecode::FloatNum u) {
     using namespace Gecode;
     using namespace Gecode::Float;
+    Rounding r;
     return 
-      Gecode::Float::round.add_down(
+      r.add_down(
         l,
-        Gecode::Float::round.mul_down(
-          Gecode::Float::round.div_down(
-            Base::rand(static_cast<unsigned int>(Int::Limits::max)),
-            static_cast<FloatNum>(Int::Limits::max)
-          ),
-          Gecode::Float::round.sub_down(u,l)
-        )
-      );
+        r.mul_down(
+                   r.div_down(
+                              Base::rand(static_cast<unsigned int>(Int::Limits::max)),
+                              static_cast<FloatNum>(Int::Limits::max)
+                              ),
+                   r.sub_down(u,l)
+                   )
+        );
   }
 
   Gecode::FloatNum randFValUp(Gecode::FloatNum l, Gecode::FloatNum u) {
     using namespace Gecode;
     using namespace Gecode::Float;
+    Rounding r;
     return 
-      Gecode::Float::round.sub_up(
+      r.sub_up(
         u,
-        Gecode::Float::round.mul_down(
-          Gecode::Float::round.div_down(
+        r.mul_down(
+          r.div_down(
             Base::rand(static_cast<unsigned int>(Int::Limits::max)),
             static_cast<FloatNum>(Int::Limits::max)
           ),
-          Gecode::Float::round.sub_down(u,l)
+          r.sub_down(u,l)
         )
       );
   }
@@ -292,15 +294,16 @@ namespace Test { namespace Float {
     for (int j=x.size(); j--; ) {
       if (!x[j].assigned() && (x[j].size() > x[i].size())) i = j;
     }
+    Rounding r;
     if (cutDirections[i]) {
-      FloatNum m = Gecode::Float::round.div_up(Gecode::Float::round.add_up(x[i].min(),x[i].max()),2);
+      FloatNum m = r.div_up(r.add_up(x[i].min(),x[i].max()),2);
       FloatNum n = nextafter(x[i].min(), x[i].max());
       if (m > n)
         rel(i, FRT_LQ, m);
       else
         rel(i, FRT_LQ, n);
     } else {
-      FloatNum m = Gecode::Float::round.div_down(Gecode::Float::round.add_down(x[i].min(),x[i].max()),2);
+      FloatNum m = r.div_down(r.add_down(x[i].min(),x[i].max()),2);
       FloatNum n = nextafter(x[i].max(), x[i].min());
       if (m < n)
         rel(i, FRT_GQ, m);
