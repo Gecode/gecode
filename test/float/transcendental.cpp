@@ -38,6 +38,8 @@
  */
 
 #include "test/float.hh"
+#include <gecode/minimodel.hh>
+
 #ifdef GECODE_HAS_MPFR
 
 #include <cmath>
@@ -60,7 +62,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::exp(home, x[0], x[1]);
+         if (flip())
+           Gecode::exp(home, x[0], x[1]);
+         else
+           Gecode::rel(home, exp(x[0]) == x[1]);
        }
      };
 
@@ -120,7 +125,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::log(home, x[0], x[1]);
+         if (flip())
+           Gecode::log(home, x[0], x[1]);
+         else
+           Gecode::rel(home, log(x[0]) == x[1]);
        }
      };
      

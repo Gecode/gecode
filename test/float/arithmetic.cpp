@@ -39,6 +39,8 @@
 
 #include "test/float.hh"
 
+#include <gecode/minimodel.hh>
+
 #include <cmath>
 #include <algorithm>
 
@@ -64,7 +66,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[2]);
+         if (flip())
+           Gecode::mult(home, x[0], x[1], x[2]);
+         else
+           Gecode::rel(home, x[0] * x[1] == x[2]);
        }
      };
 
@@ -73,7 +78,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MultXYZSol(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Mult::XYZ::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
+         : Test("Arithmetic::Mult::XYZ::Sol::"+s,3,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(x[0] * x[1], x[2]);
@@ -196,7 +201,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::div(home, x[0], x[1], x[2]);
+         if (flip())
+           Gecode::div(home, x[0], x[1], x[2]);
+         else
+           Gecode::rel(home, x[0] / x[1] == x[2]);
        }
      };
      
@@ -238,7 +246,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::sqr(home, x[0], x[1]);
+         if (flip())
+           Gecode::sqr(home, x[0], x[1]);
+         else
+           Gecode::rel(home, sqr(x[0]) == x[1]);
        }
      };
 
@@ -301,7 +312,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::sqrt(home, x[0], x[1]);
+         if (flip())
+           Gecode::sqrt(home, x[0], x[1]);
+         else
+           Gecode::rel(home, sqrt(x[0]) == x[1]);
        }
      };
 
@@ -370,7 +384,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::pow(home, x[0], n, x[1]);
+         if (flip())
+           Gecode::pow(home, x[0], n, x[1]);
+         else
+           Gecode::rel(home, pow(x[0],n) == x[1]);
        }
      };
      
@@ -433,7 +450,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::nroot(home, x[0], n, x[1]);
+         if (flip())
+           Gecode::nroot(home, x[0], n, x[1]);
+         else
+           Gecode::rel(home, nroot(x[0],n) == x[1]);
        }
      };
      
@@ -499,7 +519,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::abs(home, x[0], x[1]);
+         if (flip())
+           Gecode::abs(home, x[0], x[1]);
+         else
+           Gecode::rel(home, abs(x[0]) == x[1]);
        }
      };
 
@@ -531,7 +554,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[2]);
+         if (flip())
+           Gecode::min(home, x[0], x[1], x[2]);
+         else
+           Gecode::rel(home, min(x[0],x[1]) == x[2]);
        }
      };
 
@@ -604,14 +630,17 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        MaxXYZ(const std::string& s, const Gecode::FloatVal& d, Gecode::FloatNum st)
-       : Test("Arithmetic::Max::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
+         : Test("Arithmetic::Max::Bin::XYZ::"+s,3,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          return eq(max(x[0],x[1]), x[2]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[2]);
+         if (flip())
+           Gecode::max(home, x[0], x[1], x[2]);
+         else
+           Gecode::rel(home, max(x[0], x[1]) == x[2]);
        }
      };
 
@@ -693,7 +722,10 @@ namespace Test { namespace Float {
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
          Gecode::FloatVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::min(home, m, x[3]);
+         if (flip())
+           Gecode::min(home, m, x[3]);
+         else
+           Gecode::rel(home, min(m) == x[3]);
        }
      };
 
@@ -729,7 +761,10 @@ namespace Test { namespace Float {
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
          Gecode::FloatVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::max(home, m, x[3]);
+         if (flip())
+           Gecode::max(home, m, x[3]);
+         else
+           Gecode::rel(home, max(m) == x[3]);
        }
      };
 

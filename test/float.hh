@@ -327,6 +327,8 @@ namespace Test {
                            Gecode::FloatVal y);
       /// Whether \a x and \a y are equal
       static MaybeType eq(Gecode::FloatVal x, Gecode::FloatVal y);
+      /// Flip a coin and return true or false randomly
+      bool flip(void);
       //@}
     };
     //@}

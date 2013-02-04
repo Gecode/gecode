@@ -273,6 +273,11 @@ namespace Test { namespace Float {
     return cmp(x, Gecode::FRT_EQ, y);
   }
 
+  inline bool
+  Test::flip(void) {
+    return Base::rand(2U) == 0U;
+  }
+
   inline MaybeType 
   operator &(MaybeType a, MaybeType b) {
     switch (a) {

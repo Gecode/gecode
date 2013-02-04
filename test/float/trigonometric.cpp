@@ -38,6 +38,8 @@
  */
 
 #include "test/float.hh"
+#include <gecode/minimodel.hh>
+
 #ifdef GECODE_HAS_MPFR
 
 #include <cmath>
@@ -60,7 +62,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::sin(home, x[0], x[1]);
+         if (flip())
+           Gecode::sin(home, x[0], x[1]);
+         else
+           Gecode::rel(home, sin(x[0]) == x[1]);
        }
      };
 
@@ -118,7 +123,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::cos(home, x[0], x[1]);
+         if (flip())
+           Gecode::cos(home, x[0], x[1]);
+         else
+           Gecode::rel(home, cos(x[0]) == x[1]);
        }
      };
      
@@ -176,7 +184,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::tan(home, x[0], x[1]);
+         if (flip())
+           Gecode::tan(home, x[0], x[1]);
+         else
+           Gecode::rel(home, tan(x[0]) == x[1]);
        }
      };
      
@@ -236,7 +247,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::asin(home, x[0], x[1]);
+         if (flip())
+           Gecode::asin(home, x[0], x[1]);
+         else
+           Gecode::rel(home, asin(x[0]) == x[1]);
        }
      };
      
@@ -302,7 +316,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::acos(home, x[0], x[1]);
+         if (flip())
+           Gecode::acos(home, x[0], x[1]);
+         else
+           Gecode::rel(home, acos(x[0]) == x[1]);
        }
      };
      
@@ -366,7 +383,10 @@ namespace Test { namespace Float {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
-         Gecode::atan(home, x[0], x[1]);
+         if (flip())
+           Gecode::atan(home, x[0], x[1]);
+         else
+           Gecode::rel(home, atan(x[0]) == x[1]);
        }
      };
      
