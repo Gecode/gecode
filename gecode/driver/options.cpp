@@ -296,11 +296,11 @@ namespace Gecode {
               << std::endl
               << " - Trigonometric and transcendental float constraints: ";
 #ifdef GECODE_HAS_MPFR
-              << "enabled"
+    std::cerr  << "enabled";
 #else
-              << "disabled"
+    std::cerr << "disabled";
 #endif
-              << std::endl;
+    std::cerr << std::endl;
 #endif
     std::cerr << " - Thread support: ";
 #ifdef GECODE_HAS_THREADS
