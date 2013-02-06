@@ -35,6 +35,7 @@
  *
  */
 
+#include "test/int.hh"
 #include "test/float.hh"
 
 #include <gecode/minimodel.hh>
@@ -63,7 +64,7 @@ namespace Test { namespace Float {
      public:
        LinOpcode o; ///< Which instruction to execute
        unsigned char x, y, z; ///< Instruction arguments, \a y is destination (or \a z)
-       Gecode::FloatVal c; ///< Numerical constant
+       int c; ///< Numerical constant
      };
 
      /// Evaluate linear instructions
@@ -95,34 +96,37 @@ namespace Test { namespace Float {
       */
      //@{
      /// %Test linear expressions over float variables
-     class LinExpr : public Test {
+     class LinExpr : public Int::Test {
      protected:
        /// Linear instruction sequence
        const LinInstr* lis;
      public:
        /// Create and register test
        LinExpr(const LinInstr* lis0, const std::string& s)
-         : Test("MiniModel::LinExpr::"+s,
-                4,Gecode::FloatVal(-3,3),0.7,CPLT_ASSIGNMENT,false), 
+         : Test("Float::","MiniModel::LinExpr::"+s,4,-3,3), 
            lis(lis0) {
          testfix = false;
-         testsubsumed = false;
        }
        /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal reg[3] = {x[0],x[1],x[2]};
-         return eq(eval(lis, reg), x[3]);
+       virtual bool solution(const Int::Assignment& x) const {
+         int reg[3] = {x[0],x[1],x[2]};
+         return eval(lis, reg) == x[3];
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         LinFloatExpr reg[3] = {x[0],x[1],x[2]};
-         rel(home, x[3], FRT_EQ, expr(home, eval(lis,reg)));
+         FloatVarArray y(home,4,dom.min(),dom.max());
+         channel(home, x[0], y[0]);
+         channel(home, x[1], y[1]);
+         channel(home, x[2], y[2]);
+         channel(home, x[3], y[3]);
+         LinFloatExpr reg[3] = {y[0],y[1],y[2]};
+         rel(home, y[3], FRT_EQ, expr(home, eval(lis,reg)));
        }
      };
 
      /// %Test linear relations over float variables
-     class LinRel : public Test {
+     class LinRel : public Int::Test {
      protected:
        /// Linear instruction sequence for left hand side
        const LinInstr* l_lis;
@@ -134,32 +138,47 @@ namespace Test { namespace Float {
        /// Create and register test
        LinRel(const LinInstr* l_lis0, const LinInstr* r_lis0,
               Gecode::FloatRelType frt0, const std::string& s)
-         : Test("MiniModel::LinRel::"+s+"::"+str(frt0),
-                3,Gecode::FloatVal(-3,3),0.7,CPLT_ASSIGNMENT,false),
+         : Test("Float::","MiniModel::LinRel::"+s+"::"+
+                Float::Test::str(frt0),3,-3,3),
            l_lis(l_lis0), r_lis(r_lis0), frt(frt0) {
          testfix = false;
-         testsubsumed = false;
        }
        /// %Test whether \a x is solution
-       virtual MaybeType solution(const Assignment& x) const {
-         Gecode::FloatVal l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::FloatVal r_reg[3] = {x[0],x[1],x[2]};
-         return cmp(eval(l_lis,l_reg),frt,eval(r_lis,r_reg));
+       virtual bool solution(const Int::Assignment& x) const {
+         using namespace Gecode;
+         int l_reg[3] = {x[0],x[1],x[2]};
+         int l = eval(l_lis,l_reg);
+         int r_reg[3] = {x[0],x[1],x[2]};
+         int r = eval(r_lis,r_reg);
+         switch (frt) {
+         case FRT_EQ: return l == r; 
+         case FRT_NQ: return l != r; 
+         case FRT_LE: return l < r; 
+         case FRT_GR: return l > r; 
+         case FRT_LQ: return l <= r; 
+         case FRT_GQ: return l >= r; 
+         default: GECODE_NEVER;
+         }
+         return false;
        }
        /// Post constraint on \a x
-       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::LinFloatExpr l_reg[3] = {x[0],x[1],x[2]};
-         Gecode::LinFloatExpr r_reg[3] = {x[0],x[1],x[2]};
+         FloatVarArray y(home,3,dom.min(),dom.max());
+         channel(home, x[0], y[0]);
+         channel(home, x[1], y[1]);
+         channel(home, x[2], y[2]);
+         LinFloatExpr l_reg[3] = {y[0],y[1],y[2]};
+         LinFloatExpr r_reg[3] = {y[0],y[1],y[2]};
          switch (frt) {
          case FRT_EQ:
            Gecode::rel(home, eval(l_lis,l_reg) == eval(r_lis,r_reg));
            break;
          case FRT_NQ:
-           Gecode::rel(home, eval(l_lis,l_reg) - eval(r_lis,r_reg) != 0);
+           Gecode::rel(home, eval(l_lis,l_reg) != eval(r_lis,r_reg));
            break;
          case FRT_LQ:
-           Gecode::rel(home, !(eval(l_lis,l_reg) > eval(r_lis,r_reg)));
+           Gecode::rel(home, eval(l_lis,l_reg) <= eval(r_lis,r_reg));
            break;
          case FRT_LE:
            Gecode::rel(home, eval(l_lis,l_reg) < eval(r_lis,r_reg));
@@ -168,7 +187,7 @@ namespace Test { namespace Float {
            Gecode::rel(home, eval(l_lis,l_reg) >= eval(r_lis,r_reg));
            break;
          case FRT_GR:
-           Gecode::rel(home, !(eval(l_lis,l_reg) <= eval(r_lis,r_reg)));
+           Gecode::rel(home, eval(l_lis,l_reg) > eval(r_lis,r_reg));
            break;
          default: GECODE_NEVER;
          }
@@ -1877,10 +1896,7 @@ namespace Test { namespace Float {
        }
      };
 
-     // Not yet working
-#if 0
      Create c;
-#endif
      //@}
    }
 

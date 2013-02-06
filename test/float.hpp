@@ -122,8 +122,8 @@ namespace Test { namespace Float {
         d.min(),
         r.mul_down(
           r.div_down(
-            Base::rand(static_cast<unsigned int>(Int::Limits::max)),
-            static_cast<FloatNum>(Int::Limits::max)
+            Base::rand(static_cast<unsigned int>(Gecode::Int::Limits::max)),
+            static_cast<FloatNum>(Gecode::Int::Limits::max)
           ),
           r.sub_down(d.max(),d.min())
         )

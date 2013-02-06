@@ -165,8 +165,20 @@ namespace Test { namespace Int {
     return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
   }
   inline
-  Test::Test(const std::string& s, int a, const Gecode::IntSet& d,
-             bool r, Gecode::IntConLevel i)
+  Test::Test(const std::string& p, const std::string& s, 
+             int a, const Gecode::IntSet& d, bool r, 
+             Gecode::IntConLevel i)
+    : Base(p+s), arity(a), dom(d), 
+      reified(r), rms((1 << Gecode::RM_EQV) || 
+                      (1 << Gecode::RM_IMP) || 
+                      (1 << Gecode::RM_PMI)),
+      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      testsearch(true), testfix(true) {}
+
+  inline
+  Test::Test(const std::string& s, 
+             int a, const Gecode::IntSet& d, bool r, 
+             Gecode::IntConLevel i)
     : Base("Int::"+s), arity(a), dom(d), 
       reified(r), rms((1 << Gecode::RM_EQV) || 
                       (1 << Gecode::RM_IMP) || 
@@ -175,8 +187,19 @@ namespace Test { namespace Int {
       testsearch(true), testfix(true) {}
 
   inline
-  Test::Test(const std::string& s, int a, int min, int max,
-             bool r, Gecode::IntConLevel i)
+  Test::Test(const std::string& p, const std::string& s,
+             int a, int min, int max, bool r, 
+             Gecode::IntConLevel i)
+    : Base(p+s), arity(a), dom(min,max),
+      reified(r), rms((1 << Gecode::RM_EQV) || 
+                      (1 << Gecode::RM_IMP) || 
+                      (1 << Gecode::RM_PMI)),
+      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      testsearch(true), testfix(true) {}
+
+  inline
+  Test::Test(const std::string& s, 
+             int a, int min, int max, bool r, Gecode::IntConLevel i)
     : Base("Int::"+s), arity(a), dom(min,max),
       reified(r), rms((1 << Gecode::RM_EQV) || 
                       (1 << Gecode::RM_IMP) || 

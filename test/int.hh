@@ -243,24 +243,46 @@ namespace Test {
       /**
        * \brief Constructor
        *
-       * Constructs a test with name \a s and arity \a a and variable
-       * domain \a d. Also tests for a reified constraint,
-       * if \a r is true. The consistency level is
+       * Constructs a test with prefix \a p, name \a s, arity \a a,
+       * and variable domain \a d. Also tests for a reified
+       * constraint, if \a r is true. The consistency level is
        * maintained for convenience.
        */
-      Test(const std::string& s, int a, const Gecode::IntSet& d,
-           bool r=false,
+      Test(const std::string& p, const std::string& s,
+           int a, const Gecode::IntSet& d, bool r=false,
            Gecode::IntConLevel i=Gecode::ICL_DEF);
       /**
        * \brief Constructor
        *
-       * Constructs a test with name \a s and arity \a a and variable
+       * Constructs a test with name \a s, arity \a a, and variable
+       * domain \a d. Also tests for a reified constraint,
+       * if \a r is true. The consistency level is
+       * maintained for convenience.
+       */
+      Test(const std::string& s,
+           int a, const Gecode::IntSet& d, bool r=false,
+           Gecode::IntConLevel i=Gecode::ICL_DEF);
+      /**
+       * \brief Constructor
+       *
+       * Constructs a test with prefix \a p, name \a s, arity \a a,
+       * and variable domain \a min ... \a max. Also tests for
+       * a reified constraint, if \a r is true. The consistency
+       * level is maintained for convenience.
+       */
+      Test(const std::string& p, const std::string& s, 
+           int a, int min, int max, bool r=false,
+           Gecode::IntConLevel i=Gecode::ICL_DEF);
+      /**
+       * \brief Constructor
+       *
+       * Constructs a test with name \a s, arity \a a, variable
        * domain \a min ... \a max. Also tests for a reified constraint,
        * if \a r is true. The consistency level is
        * maintained for convenience.
        */
-      Test(const std::string& s, int a, int min, int max,
-           bool r=false,
+      Test(const std::string& s, 
+           int a, int min, int max, bool r=false,
            Gecode::IntConLevel i=Gecode::ICL_DEF);
       /// Create assignment
       virtual Assignment* assignment(void) const;

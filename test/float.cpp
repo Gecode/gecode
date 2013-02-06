@@ -54,7 +54,7 @@ namespace Test { namespace Float {
     using namespace Gecode;
     int i = n-1;
     while (true) {
-      Gecode::FloatNum ns = dsv[i].min() + step;
+      FloatNum ns = dsv[i].min() + step;
       dsv[i] = FloatVal(ns,nextafter(ns,ns+1));
       if ((dsv[i].max() < d.max()) || (i == 0))
         return;
@@ -396,13 +396,13 @@ namespace Test { namespace Float {
   Test::assignment(void) const {
     switch (assigmentType) {
     case CPLT_ASSIGNMENT:
-        return new CpltAssignment(arity,dom,step);
-      case RANDOM_ASSIGNMENT:
-        return new RandomAssignment(arity,dom,step);
-      case EXTEND_ASSIGNMENT:
-        return new ExtAssignment(arity,dom,step,this);
-      default :
-        GECODE_NEVER;
+      return new CpltAssignment(arity,dom,step);
+    case RANDOM_ASSIGNMENT:
+      return new RandomAssignment(arity,dom,step);
+    case EXTEND_ASSIGNMENT:
+      return new ExtAssignment(arity,dom,step,this);
+    default :
+      GECODE_NEVER;
     }
     return NULL; // Avoid compiler warnings
   }
