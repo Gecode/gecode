@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The mzn-gecode shell script now passes arguments correctly to the
+FlatZinc interpreter.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
