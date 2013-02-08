@@ -44,7 +44,7 @@ namespace Gecode { namespace Gist {
     cur_t = 0;
     if (cur_b==n) {
       int oldn = n;
-      n *= 1.5;
+      n = static_cast<int>(n*1.5+1.0);
       b = heap.realloc<Block*>(b,oldn,n);
     }
     b[cur_b] = static_cast<Block*>(heap.ralloc(sizeof(Block)));

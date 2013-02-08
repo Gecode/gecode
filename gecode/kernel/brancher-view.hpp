@@ -181,7 +181,7 @@ namespace Gecode {
   }
 
   template<class View, int n>
-  forceinline Pos
+  inline Pos
   ViewBrancher<View,n>::pos(Space& home) {
     assert(!x[start].assigned());
     int s;

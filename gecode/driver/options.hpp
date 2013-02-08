@@ -106,7 +106,7 @@ namespace Gecode {
      */
     inline
     DoubleOption::DoubleOption(const char* o, const char* e,
-                               unsigned int v)
+                               double v)
       : BaseOption(o,e), cur(v) {}
     inline void
     DoubleOption::value(double v) {

@@ -200,7 +200,8 @@ KERNELHDR0 = \
 	archive array shared-array core exception \
 	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
-	branch-var branch-val brancher-view-sel brancher-merit \
+	branch-var branch-val branch-tiebreak \
+	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit \
 	allocators global-prop-info \

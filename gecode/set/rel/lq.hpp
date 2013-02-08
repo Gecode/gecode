@@ -85,7 +85,8 @@ namespace Gecode { namespace Set { namespace Rel {
       CSIter(void) {}
       /// Constructor
       CSIter(CharacteristicSets& cs0, int xoff0, int yoff0)
-        : cs(&cs0), i(-1), xoff(xoff0), yoff(yoff0) {
+        : cs(&cs0), i(static_cast<unsigned int>(-1)), 
+          xoff(xoff0), yoff(yoff0) {
         ++(*this);
       }
       /// Test if iterator is finished

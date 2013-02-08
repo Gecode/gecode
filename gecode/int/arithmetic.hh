@@ -257,11 +257,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   class SqrOps {
-  protected:
-    /// Test whether \f$r^n>x\f$
-    bool powgr(int r, int x) const;
-    /// Test whether \f$r^n<x\f$
-    bool powle(int r, int x) const;
   public:
     /// Return whether exponent is even
     bool even(void) const;
@@ -293,9 +288,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Return whether \a m is even
     static bool even(int m);
     /// Test whether \f$r^n>x\f$
-    bool powgr(int r, int x) const;
+    bool powgr(long long int r, int x) const;
     /// Test whether \f$r^n<x\f$
-    bool powle(int r, int x) const;
+    bool powle(long long int r, int x) const;
   public:
     /// Initialize with exponent \a n
     PowOps(int n);

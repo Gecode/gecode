@@ -47,7 +47,7 @@ namespace Gecode {
       assert(!Support::marked(hi));
     } else if (!Support::marked(hi)) {
       HeapInfo* h = static_cast<HeapInfo*>
-        (heap.ralloc(sizeof(HeapInfo)+4*sizeof(void*)));
+        (heap.ralloc(sizeof(HeapInfo)+(4-1)*sizeof(void*)));
       h->n=2; h->size=4;
       h->blocks[0]=hi; h->blocks[1]=p;
       hi = Support::mark(h);
@@ -55,7 +55,7 @@ namespace Gecode {
       HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
       if (h->n == h->size) {
         HeapInfo* n = static_cast<HeapInfo*>
-          (heap.ralloc(sizeof(HeapInfo)+2*h->n*sizeof(void*)));
+          (heap.ralloc(sizeof(HeapInfo)+(2*h->n-1)*sizeof(void*)));
         n->size = 2*h->n;
         n->n = h->n;
         memcpy(&n->blocks[0], &h->blocks[0], h->n*sizeof(void*));

@@ -81,39 +81,6 @@ namespace Gecode {
     VoidFunction merit(void) const;
   };
 
-  /// Combine variable selection criteria for tie-breaking
-  template<class VarBranch>
-  class TieBreak {
-  public:
-    /// Branching criteria to try in order
-    VarBranch a, b, c, d;
-    /// Initialize with variable selection criteria
-    TieBreak(VarBranch a0 = VarBranch(),
-             VarBranch b0 = VarBranch(),
-             VarBranch c0 = VarBranch(),
-             VarBranch d0 = VarBranch());
-  };
-
-  /** 
-   * \defgroup TaskModelBranchTieBreak Tie-breaking for variable selection
-   * 
-   * \ingroup TaskModelBranch
-   */
-  //@{
-  /// Combine variable selection criteria \a a and \a b for tie-breaking
-  template<class VarBranch>
-  TieBreak<VarBranch>
-  tiebreak(VarBranch a, VarBranch b);
-  /// Combine variable selection criteria \a a, \a b, and \a c for tie-breaking
-  template<class VarBranch>
-  TieBreak<VarBranch>
-  tiebreak(VarBranch a, VarBranch b, VarBranch c);
-  /// Combine variable selection criteria \a a, \a b, \a c, and \a d for tie-breaking
-  template<class VarBranch>
-  TieBreak<VarBranch>
-  tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d);
-  //@}
-
   // Variable branching
   forceinline 
   VarBranch::VarBranch(BranchTbl t0)
@@ -142,12 +109,12 @@ namespace Gecode {
     return t;
   }
 
-  forceinline Rnd
+  inline Rnd
   VarBranch::rnd(void) const {
     return r;
   }
 
-  forceinline Activity
+  inline Activity
   VarBranch::activity(void) const {
     return a;
   }
@@ -155,36 +122,6 @@ namespace Gecode {
   forceinline VoidFunction
   VarBranch::merit(void) const {
     return mf;
-  }
-
-
-  template<class VarBranch>
-  forceinline
-  TieBreak<VarBranch>::TieBreak(VarBranch a0,
-                                VarBranch b0,
-                                VarBranch c0,
-                                VarBranch d0)
-    : a(a0), b(b0), c(c0), d(d0) {}
-
-  template<class VarBranch>
-  forceinline TieBreak<VarBranch>
-  tiebreak(VarBranch a, VarBranch b) {
-    TieBreak<VarBranch> ab(a,b);
-    return ab;
-  }
-
-  template<class VarBranch>
-  forceinline TieBreak<VarBranch>
-  tiebreak(VarBranch a, VarBranch b, VarBranch c) {
-    TieBreak<VarBranch> abc(a,b,c);
-    return abc;
-  }
-
-  template<class VarBranch>
-  forceinline TieBreak<VarBranch>
-  tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
-    TieBreak<VarBranch> abcd(a,b,c,d);
-    return abcd;
   }
 
 }

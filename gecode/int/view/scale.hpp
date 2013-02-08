@@ -215,7 +215,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   ScaleView<Val,UnsVal>::nq(Space& home, Val n) {
     bool exact;
-    int nda = exact_div(n,exact);
+    int nda = static_cast<int>(exact_div(n,exact));
     return exact ? x.nq(home,nda) :  ME_INT_NONE;
   }
 
@@ -223,7 +223,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   ScaleView<Val,UnsVal>::eq(Space& home, Val n) {
     bool exact;
-    int nda = exact_div(n,exact);
+    int nda = static_cast<int>(exact_div(n,exact));
     return exact ? x.eq(home,nda) : ME_INT_FAILED;
   }
 

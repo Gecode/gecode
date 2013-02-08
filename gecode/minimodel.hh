@@ -1625,7 +1625,11 @@ namespace Gecode {
   /// Return integer variable equal to \f$f\f$
   inline IntVar
   channel(Home home, FloatVar f) {
-    IntVar x(home,std::ceil(f.min()),std::floor(f.max())); 
+    int min = static_cast<int>(std::max(static_cast<double>(Int::Limits::min),
+                                        std::ceil(f.min())));
+    int max = static_cast<int>(std::min(static_cast<double>(Int::Limits::max),
+                                        std::floor(f.max())));
+    IntVar x(home,min,max);
     channel(home,f,x);
     return x;
   }

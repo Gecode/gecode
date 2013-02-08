@@ -432,7 +432,7 @@ namespace Gecode {
   void
   InstanceOptions::instance(const char* s) {
     Driver::BaseOption::strdel(_inst);
-    _inst = strdup(s);
+    _inst = Driver::BaseOption::strdup(s);
   }
 
   void

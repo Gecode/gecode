@@ -239,7 +239,7 @@ namespace Gecode {
       double cur; ///< Current value
     public:
       /// Initialize for option \a o and explanation \a e and default value \a v
-      DoubleOption(const char* o, const char* e, unsigned int v=0);
+      DoubleOption(const char* o, const char* e, double v=0);
       /// Set default value to \a v
       void value(double v);
       /// Return current option value

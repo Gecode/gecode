@@ -723,6 +723,8 @@ namespace Gecode {
     //@{
     /// Initialize the home with space \a s and propagator \a p
     Home(Space& s, Propagator* p=NULL);
+    /// Assignment operator
+    Home& operator =(const Home& h);
     /// Retrieve the space of the home
     operator Space&(void);
     //@}
@@ -2495,6 +2497,11 @@ namespace Gecode {
    */
   forceinline
   Home::Home(Space& s0, Propagator* p0) : s(s0), p(p0) {}
+  forceinline Home&
+  Home::operator =(const Home& h) {
+    s=h.s; p=h.p;
+    return *this;
+  }
   forceinline
   Home::operator Space&(void) { 
     return s; 
