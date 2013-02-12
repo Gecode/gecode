@@ -67,7 +67,11 @@ namespace Test { namespace Float {
          if (x.size() == 2) {
            return cmp(x[0],frt,x[1]);
          } else {
-           return cmp(x[0],frt,x[2]) & cmp(x[1],frt,x[2]);
+           MaybeType r1 = cmp(x[0],frt,x[2]);
+           MaybeType r2 = cmp(x[1],frt,x[2]);
+           if ((r1 == MT_TRUE) && (r2 == MT_TRUE)) return MT_TRUE;
+           else if ((r1 == MT_FALSE) || (r2 == MT_FALSE)) return MT_FALSE;
+           else return MT_MAYBE;
          }
        }
        /// Post constraint on \a x

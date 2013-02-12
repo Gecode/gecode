@@ -374,6 +374,7 @@ namespace Gecode {
       for (int i=x.size(); i--; ) {
         GECODE_ES_FAIL((Rel::Lq<FloatView>::post(home,x[i],y)));
       }
+      break;
     case FRT_LE:
       for (int i=x.size(); i--; ) {
         GECODE_ES_FAIL((Rel::Le<FloatView>::post(home,x[i],y)));

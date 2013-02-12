@@ -79,43 +79,72 @@ namespace Gecode { namespace Float { namespace Linear {
    * Computing bounds
    *
    */
+//  template<class View>
+//  void
+//  bounds_p(Rounding& r, ModEventDelta med, ViewArray<View>& x, FloatVal& c, FloatNum& sl, FloatNum& su) {
+//    int n = x.size();
+//    if (FloatView::me(med) == ME_FLOAT_VAL) {
+//      for (int i = n; i--; ) {
+//        if (x[i].assigned()) {
+//          c -= x[i].val(); x[i] = x[--n];
+//        } else {
+//          sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
+//        }
+//      }
+//      x.size(n);
+//    } else {
+//      for (int i = n; i--; ) {
+//        sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
+//      }
+//    }
+//  }
+//
+//  template<class View>
+//  void
+//  bounds_n(Rounding& r, ModEventDelta med, ViewArray<View>& y, FloatVal& c, FloatNum& sl, FloatNum& su) {
+//    int n = y.size();
+//    if (FloatView::me(med) == ME_FLOAT_VAL) {
+//      for (int i = n; i--; ) {
+//        if (y[i].assigned()) {
+//          c += y[i].val(); y[i] = y[--n];
+//        } else {
+//          sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
+//        }
+//      }
+//      y.size(n);
+//    } else {
+//      for (int i = n; i--; ) {
+//        sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
+//      }
+//    }
+//  }
+
   template<class View>
   void
-  bounds_p(Rounding& r, ModEventDelta med, ViewArray<View>& x, FloatVal& c, FloatNum& sl, FloatNum& su) {
+  eliminate_p(ModEventDelta med, ViewArray<View>& x, FloatVal& c) {
     int n = x.size();
+
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = n; i--; ) {
         if (x[i].assigned()) {
           c -= x[i].val(); x[i] = x[--n];
-        } else {
-          sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
         }
       }
       x.size(n);
-    } else {
-      for (int i = n; i--; ) {
-        sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
-      }
     }
   }
 
   template<class View>
   void
-  bounds_n(Rounding& r, ModEventDelta med, ViewArray<View>& y, FloatVal& c, FloatNum& sl, FloatNum& su) {
+  eliminate_n(ModEventDelta med, ViewArray<View>& y, FloatVal& c) {
     int n = y.size();
     if (FloatView::me(med) == ME_FLOAT_VAL) {
       for (int i = n; i--; ) {
         if (y[i].assigned()) {
           c += y[i].val(); y[i] = y[--n];
-        } else {
-          sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
         }
       }
       y.size(n);
-    } else {
-      for (int i = n; i--; ) {
-        sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
-      }
     }
   }
 
@@ -158,13 +187,9 @@ namespace Gecode { namespace Float { namespace Linear {
   ExecStatus
   Eq<P,N>::propagate(Space& home, const ModEventDelta& med) {
     // Eliminate singletons
-    FloatNum sl = 0.0;
-    FloatNum su = 0.0;
-
     Rounding r;
-
-    bounds_p<P>(r, med, x, c, sl, su);
-    bounds_n<N>(r, med, y, c, sl, su);
+    eliminate_p<P>(med, x, c);
+    eliminate_n<N>(med, y, c);
 
     if ((FloatView::me(med) == ME_FLOAT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
@@ -178,73 +203,86 @@ namespace Gecode { namespace Float { namespace Linear {
       return (c.in(0.0)) ? home.ES_SUBSUMED(*this) : ES_FAILED;
     }
 
+    ExecStatus es = ES_FIX;
+    bool assigned = true;
 
-    sl = r.add_up(sl,c.max()); 
-    su = r.add_down(su,c.min());
-
-    const int mod_sl = 1;
-    const int mod_su = 2;
-
-    int mod = mod_sl | mod_su;
-
-    do {
-      if (mod & mod_sl) {
-        mod -= mod_sl;
-        // Propagate max bound for positive variables
-        for (int i = x.size(); i--; ) {
-          const FloatNum xi_max = x[i].max();
-          ModEvent me = x[i].lq(home,r.add_up(sl,x[i].min()));
-          if (me_failed(me))
-            return ES_FAILED;
-          if (me_modified(me)) {
-            if (!infty(su)) 
-              su = r.add_down(su,r.sub_down(xi_max,x[i].max()));
-            mod |= mod_su;
-          }
-        }
-        // Propagate min bound for negative variables
-        for (int i = y.size(); i--; ) {
-          const FloatNum yi_min = y[i].min();
-          ModEvent me = y[i].gq(home,r.sub_down(y[i].max(),sl));
-          if (me_failed(me))
-            return ES_FAILED;
-          if (me_modified(me)) {
-            if (!infty(su)) 
-              su = r.add_down(su,r.sub_down(y[i].min(),yi_min));
-            mod |= mod_su;
-          }
-        }
+    // Propagate max bound for positive variables
+    for (int i = x.size(); i--; ) {
+      // Compute bound
+      FloatNum sl = c.max();
+      for (int j = x.size(); j--; ) {
+        if (i == j) continue;
+        sl = r.sub_up(sl,x[j].min());
       }
-      if (mod & mod_su) {
-        mod -= mod_su;
-        // Propagate min bound for positive variables
-        for (int i = x.size(); i--; ) {
-          const FloatNum xi_min = x[i].min();
-          ModEvent me = x[i].gq(home,r.add_down(su,x[i].max()));
-          if (me_failed(me))
-            return ES_FAILED;
-          if (me_modified(me)) {
-            if (!infty(sl)) 
-              sl = r.add_up(sl,r.sub_up(xi_min,x[i].min()));
-            mod |= mod_sl;
-          }
-        }
-        // Propagate max bound for negative variables
-        for (int i = y.size(); i--; ) {
-          const FloatNum yi_max = y[i].max();
-          ModEvent me = y[i].lq(home,r.sub_up(y[i].min(),su));
-          if (me_failed(me))
-            return ES_FAILED;
-          if (me_modified(me)) {
-            if (!infty(sl)) 
-              sl = r.add_up(sl,r.sub_up(y[i].max(),yi_max));
-            mod |= mod_sl;
-          }
-        }
+      for (int j = y.size(); j--; )
+        sl = r.add_up(sl,y[j].max());
+      ModEvent me = x[i].lq(home,sl);
+      if (me_failed(me))
+        return ES_FAILED;
+      if (me != ME_FLOAT_VAL)
+        assigned = false;
+      if (me_modified(me))
+        es = ES_NOFIX;
+    }
+    // Propagate min bound for negative variables
+    for (int i = y.size(); i--; ) {
+      // Compute bound
+      FloatNum sl = -c.max();
+      for (int j = x.size(); j--; )
+        sl = r.add_down(sl,x[j].min());
+      for (int j = y.size(); j--; ) {
+        if (i == j) continue;
+        sl = r.sub_down(sl,y[j].max());
       }
-    } while (mod);
+      ModEvent me = y[i].gq(home,sl);
+      if (me_failed(me))
+        return ES_FAILED;
+      if (me != ME_FLOAT_VAL)
+        assigned = false;
+      if (me_modified(me))
+        es = ES_NOFIX;
+    }
+   
+    // Propagate min bound for positive variables
+    for (int i = x.size(); i--; ) {
+      // Compute bound
+      FloatNum su = c.min();
+      for (int j = x.size(); j--; ) {
+        if (i == j) continue;
+        su = r.sub_down(su,x[j].max());
+      }
+      for (int j = y.size(); j--; )
+        su = r.add_down(su,y[j].min());
+      ModEvent me = x[i].gq(home,su);
+      if (me_failed(me))
+        return ES_FAILED;
+      if (me != ME_FLOAT_VAL)
+        assigned = false;
+      if (me_modified(me))
+        es = ES_NOFIX;
+    }
+    // Propagate max bound for negative variables
+    for (int i = y.size(); i--; ) {
+      // Compute bound
+      FloatNum su = -c.min();
+      for (int j = x.size(); j--; )
+        su = r.add_up(su,x[j].max());
+      for (int j = y.size(); j--; ) {
+        if (i == j) continue;
+        su = r.sub_up(su,y[j].min());
+      }
+      ModEvent me = y[i].lq(home,su);
+      if (me_failed(me))
+        return ES_FAILED;
+      if (me != ME_FLOAT_VAL)
+        assigned = false;
+      if (me_modified(me))
+        es = ES_NOFIX;
+      if (me_failed(me))
+        return ES_FAILED;
+    }
 
-    return (sl == su) ? home.ES_SUBSUMED(*this) : ES_NOFIX;
+    return assigned ? home.ES_SUBSUMED(*this) : es;
   }
 
 
