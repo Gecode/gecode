@@ -278,8 +278,6 @@ namespace Gecode { namespace Float { namespace Linear {
         assigned = false;
       if (me_modified(me))
         es = ES_NOFIX;
-      if (me_failed(me))
-        return ES_FAILED;
     }
 
     return assigned ? home.ES_SUBSUMED(*this) : es;
