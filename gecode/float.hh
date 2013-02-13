@@ -135,10 +135,10 @@ namespace Gecode { namespace Float {
    * \ingroup TaskModelFloatVars
    */
   class Rounding : 
-    public boost::numeric::interval_lib::rounded_arith_std<FloatNum> {
+    public boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
   protected:
     /// Base class
-    typedef boost::numeric::interval_lib::rounded_arith_std<FloatNum> Base;
+    typedef boost::numeric::interval_lib::rounded_arith_opp<FloatNum> Base;
   public:
     /// \name Constructor and destructor
     //@{

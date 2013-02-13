@@ -38,7 +38,7 @@
 namespace Gecode { namespace Float {
 
   forceinline
-  Rounding::Rounding(void) {}
+  Rounding::Rounding(void) { Base::init(); }
   forceinline
   Rounding::~Rounding(void) {}
 
