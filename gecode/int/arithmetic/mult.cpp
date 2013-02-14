@@ -72,10 +72,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     assert(any(x0) && any(x1));
-    GECODE_ME_CHECK(x2.lq(home,std::max(m<double>(x0.max(),x1.max()),
-                                        m<double>(x0.min(),x1.min()))));
-    GECODE_ME_CHECK(x2.gq(home,std::min(m<double>(x0.min(),x1.max()),
-                                        m<double>(x0.max(),x1.min()))));
+    GECODE_ME_CHECK(x2.lq(home,std::max(mll(x0.max(),x1.max()),
+                                        mll(x0.min(),x1.min()))));
+    GECODE_ME_CHECK(x2.gq(home,std::min(mll(x0.min(),x1.max()),
+                                        mll(x0.max(),x1.min()))));
 
     if (x0.assigned()) {
       assert((x0.val() == 0) && (x2.val() == 0));
@@ -94,17 +94,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_pxx:
     assert(pos(x0) && any(x1) && any(x2));
 
-    GECODE_ME_CHECK(x2.lq(home,m<double>(x0.max(),x1.max())));
-    GECODE_ME_CHECK(x2.gq(home,m<double>(x0.max(),x1.min())));
+    GECODE_ME_CHECK(x2.lq(home,mll(x0.max(),x1.max())));
+    GECODE_ME_CHECK(x2.gq(home,mll(x0.max(),x1.min())));
 
     if (pos(x2)) goto rewrite_ppp;
     if (neg(x2)) goto rewrite_pnn;
 
-    GECODE_ME_CHECK(x1.lq(home,f_d(x2.max(),x0.min())));
-    GECODE_ME_CHECK(x1.gq(home,c_d(x2.min(),x0.min())));
+    GECODE_ME_CHECK(x1.lq(home,floor_div_xp(x2.max(),x0.min())));
+    GECODE_ME_CHECK(x1.gq(home,ceil_div_xp(x2.min(),x0.min())));
 
     if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
+      GECODE_ME_CHECK(x2.eq(home,mll(x0.val(),x1.val())));
       return home.ES_SUBSUMED(*this);
     }
 
@@ -115,32 +115,32 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_nxx:
     assert(neg(x0) && any(x1) && any(x2));
 
-    GECODE_ME_CHECK(x2.lq(home,m<double>(x0.min(),x1.min())));
-    GECODE_ME_CHECK(x2.gq(home,m<double>(x0.min(),x1.max())));
+    GECODE_ME_CHECK(x2.lq(home,mll(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x2.gq(home,mll(x0.min(),x1.max())));
 
     if (pos(x2)) goto rewrite_nnp;
     if (neg(x2)) goto rewrite_npn;
 
-    GECODE_ME_CHECK(x1.lq(home,f_d(x2.min(),x0.max())));
-    GECODE_ME_CHECK(x1.gq(home,c_d(x2.max(),x0.max())));
+    GECODE_ME_CHECK(x1.lq(home,floor_div_xx(x2.min(),x0.max())));
+    GECODE_ME_CHECK(x1.gq(home,ceil_div_xx(x2.max(),x0.max())));
 
     if (x0.assigned() && x1.assigned()) {
-      GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
+      GECODE_ME_CHECK(x2.eq(home,mll(x0.val(),x1.val())));
       return home.ES_SUBSUMED(*this);
     }
 
     return ES_NOFIX;
 
   rewrite_ppp:
-    GECODE_REWRITE(*this,(MultPlusBnd<double,IntView,IntView,IntView>
+    GECODE_REWRITE(*this,(MultPlusBnd<IntView,IntView,IntView>
                          ::post(home(*this),x0,x1,x2)));
   rewrite_nnp:
-    GECODE_REWRITE(*this,(MultPlusBnd<double,MinusView,MinusView,IntView>
+    GECODE_REWRITE(*this,(MultPlusBnd<MinusView,MinusView,IntView>
                          ::post(home(*this),MinusView(x0),MinusView(x1),x2)));
   rewrite_pnn:
     std::swap(x0,x1);
   rewrite_npn:
-    GECODE_REWRITE(*this,(MultPlusBnd<double,MinusView,IntView,MinusView>
+    GECODE_REWRITE(*this,(MultPlusBnd<MinusView,IntView,MinusView>
                          ::post(home(*this),MinusView(x0),x1,MinusView(x2))));
   }
 
@@ -168,14 +168,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (neg(x2)) goto post_pnn;
     }
     {
-      double a =
-        static_cast<double>(x0.min()) * static_cast<double>(x1.min());
-      double b =
-        static_cast<double>(x0.min()) * static_cast<double>(x1.max());
-      double c =
-        static_cast<double>(x0.max()) * static_cast<double>(x1.min());
-      double d =
-        static_cast<double>(x0.max()) * static_cast<double>(x1.max());
+      long long int a = mll(x0.min(),x1.min());
+      long long int b = mll(x0.min(),x1.max());
+      long long int c = mll(x0.max(),x1.min());
+      long long int d = mll(x0.max(),x1.max());
       GECODE_ME_CHECK(x2.gq(home,std::min(std::min(a,b),std::min(c,d))));
       GECODE_ME_CHECK(x2.lq(home,std::max(std::max(a,b),std::max(c,d))));
       (void) new (home) MultBnd(home,x0,x1,x2);
@@ -183,15 +179,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
 
   post_ppp:
-    return MultPlusBnd<double,IntView,IntView,IntView>::post(home,x0,x1,x2);
+    return MultPlusBnd<IntView,IntView,IntView>
+      ::post(home,x0,x1,x2);
   post_nnp:
-    return MultPlusBnd<double,MinusView,MinusView,IntView>::post(home,
-      MinusView(x0),MinusView(x1),x2);
+    return MultPlusBnd<MinusView,MinusView,IntView>
+      ::post(home,MinusView(x0),MinusView(x1),x2);
   post_pnn:
     std::swap(x0,x1);
   post_npn:
-    return MultPlusBnd<double,MinusView,IntView,MinusView>::post(home,
-      MinusView(x0),x1,MinusView(x2));
+    return MultPlusBnd<MinusView,IntView,MinusView>
+      ::post(home,MinusView(x0),x1,MinusView(x2));
   }
 
 
@@ -238,10 +235,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
 
       assert(any(x0) && any(x1));
-      GECODE_ME_CHECK(x2.lq(home,std::max(m<double>(x0.max(),x1.max()),
-                                          m<double>(x0.min(),x1.min()))));
-      GECODE_ME_CHECK(x2.gq(home,std::min(m<double>(x0.min(),x1.max()),
-                                          m<double>(x0.max(),x1.min()))));
+      GECODE_ME_CHECK(x2.lq(home,std::max(mll(x0.max(),x1.max()),
+                                          mll(x0.min(),x1.min()))));
+      GECODE_ME_CHECK(x2.gq(home,std::min(mll(x0.min(),x1.max()),
+                                          mll(x0.max(),x1.min()))));
 
       if (x0.assigned()) {
         assert((x0.val() == 0) && (x2.val() == 0));
@@ -260,17 +257,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     prop_pxx:
       assert(pos(x0) && any(x1) && any(x2));
 
-      GECODE_ME_CHECK(x2.lq(home,m<double>(x0.max(),x1.max())));
-      GECODE_ME_CHECK(x2.gq(home,m<double>(x0.max(),x1.min())));
+      GECODE_ME_CHECK(x2.lq(home,mll(x0.max(),x1.max())));
+      GECODE_ME_CHECK(x2.gq(home,mll(x0.max(),x1.min())));
 
       if (pos(x2)) goto rewrite_ppp;
       if (neg(x2)) goto rewrite_pnn;
 
-      GECODE_ME_CHECK(x1.lq(home,f_d(x2.max(),x0.min())));
-      GECODE_ME_CHECK(x1.gq(home,c_d(x2.min(),x0.min())));
+      GECODE_ME_CHECK(x1.lq(home,floor_div_xp(x2.max(),x0.min())));
+      GECODE_ME_CHECK(x1.gq(home,ceil_div_xp(x2.min(),x0.min())));
 
       if (x0.assigned() && x1.assigned()) {
-        GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
+        GECODE_ME_CHECK(x2.eq(home,mll(x0.val(),x1.val())));
         return home.ES_SUBSUMED(*this);
       }
 
@@ -281,37 +278,37 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     prop_nxx:
       assert(neg(x0) && any(x1) && any(x2));
 
-      GECODE_ME_CHECK(x2.lq(home,m<double>(x0.min(),x1.min())));
-      GECODE_ME_CHECK(x2.gq(home,m<double>(x0.min(),x1.max())));
+      GECODE_ME_CHECK(x2.lq(home,mll(x0.min(),x1.min())));
+      GECODE_ME_CHECK(x2.gq(home,mll(x0.min(),x1.max())));
 
       if (pos(x2)) goto rewrite_nnp;
       if (neg(x2)) goto rewrite_npn;
 
-      GECODE_ME_CHECK(x1.lq(home,f_d(x2.min(),x0.max())));
-      GECODE_ME_CHECK(x1.gq(home,c_d(x2.max(),x0.max())));
+      GECODE_ME_CHECK(x1.lq(home,floor_div_xx(x2.min(),x0.max())));
+      GECODE_ME_CHECK(x1.gq(home,ceil_div_xx(x2.max(),x0.max())));
 
       if (x0.assigned() && x1.assigned()) {
-        GECODE_ME_CHECK(x2.eq(home,m<double>(x0.val(),x1.val())));
+        GECODE_ME_CHECK(x2.eq(home,mll(x0.val(),x1.val())));
         return home.ES_SUBSUMED(*this);
       }
 
       return home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
 
     rewrite_ppp:
-      GECODE_REWRITE(*this,(MultPlusDom<double,IntView,IntView,IntView>
+      GECODE_REWRITE(*this,(MultPlusDom<IntView,IntView,IntView>
                            ::post(home(*this),x0,x1,x2)));
     rewrite_nnp:
-      GECODE_REWRITE(*this,(MultPlusDom<double,MinusView,MinusView,IntView>
+      GECODE_REWRITE(*this,(MultPlusDom<MinusView,MinusView,IntView>
                            ::post(home(*this),
                                   MinusView(x0),MinusView(x1),x2)));
     rewrite_pnn:
       std::swap(x0,x1);
     rewrite_npn:
-      GECODE_REWRITE(*this,(MultPlusDom<double,MinusView,IntView,MinusView>
+      GECODE_REWRITE(*this,(MultPlusDom<MinusView,IntView,MinusView>
                            ::post(home(*this),
                                   MinusView(x0),x1,MinusView(x2))));
     }
-    return prop_mult_dom<double,IntView>(home,*this,x0,x1,x2);
+    return prop_mult_dom<IntView>(home,*this,x0,x1,x2);
   }
 
   ExecStatus
@@ -338,14 +335,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (neg(x2)) goto post_pnn;
     }
     {
-      double a =
-        static_cast<double>(x0.min()) * static_cast<double>(x1.min());
-      double b =
-        static_cast<double>(x0.min()) * static_cast<double>(x1.max());
-      double c =
-        static_cast<double>(x0.max()) * static_cast<double>(x1.min());
-      double d =
-        static_cast<double>(x0.max()) * static_cast<double>(x1.max());
+      long long int a = mll(x0.min(),x1.min());
+      long long int b = mll(x0.min(),x1.max());
+      long long int c = mll(x0.max(),x1.min());
+      long long int d = mll(x0.max(),x1.max());
       GECODE_ME_CHECK(x2.gq(home,std::min(std::min(a,b),std::min(c,d))));
       GECODE_ME_CHECK(x2.lq(home,std::max(std::max(a,b),std::max(c,d))));
       (void) new (home) MultDom(home,x0,x1,x2);
@@ -353,15 +346,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
 
   post_ppp:
-    return MultPlusDom<double,IntView,IntView,IntView>::post(home,x0,x1,x2);
+    return MultPlusDom<IntView,IntView,IntView>
+      ::post(home,x0,x1,x2);
   post_nnp:
-    return MultPlusDom<double,MinusView,MinusView,IntView>::post(home,
-      MinusView(x0),MinusView(x1),x2);
+    return MultPlusDom<MinusView,MinusView,IntView>
+      ::post(home,MinusView(x0),MinusView(x1),x2);
   post_pnn:
     std::swap(x0,x1);
   post_npn:
-    return MultPlusDom<double,MinusView,IntView,MinusView>::post(home,
-      MinusView(x0),x1,MinusView(x2));
+    return MultPlusDom<MinusView,IntView,MinusView>
+      ::post(home,MinusView(x0),x1,MinusView(x2));
   }
 
 }}}

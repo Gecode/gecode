@@ -46,8 +46,8 @@ namespace Gecode {
     using namespace Int;
     Limits::check(y,"Int::nvalues");
     // Due to the quadratic Boolean matrix used in propagation
-    Limits::check(static_cast<double>(x.size())*static_cast<double>(x.size()),
-                  "Int::nvalues");
+    long long int n = x.size();
+    Limits::check(n*n,"Int::nvalues");
 
     if (home.failed()) return;
 
@@ -95,8 +95,8 @@ namespace Gecode {
           IntConLevel) {
     using namespace Int;
     // Due to the quadratic Boolean matrix used in propagation
-    Limits::check(static_cast<double>(x.size())*static_cast<double>(x.size()),
-                  "Int::nvalues");
+    long long int n = x.size();
+    Limits::check(n*n,"Int::nvalues");
 
     if (home.failed()) return;
 

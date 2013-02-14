@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief Base-class for binary linear propagators
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief Base-class for reified binary linear propagators
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent binary linear equality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified bounds consistent binary linear equality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent binary linear disequality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent binary linear less or equal
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent binary linear greater or equal
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -292,7 +292,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified bounds consistent binary linear less or equal
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A and \a B
    * give the types of the views.
    *
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief Base-class for ternary linear propagators
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent ternary linear equality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
@@ -404,7 +404,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent ternary linear disquality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
@@ -439,7 +439,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent ternary linear less or equal
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief Base-class for n-ary linear propagators
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. Positive views are of
    * type \a P whereas negative views are of type \a N.
    *
@@ -515,7 +515,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief Base-class for reified n-ary linear propagators
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. Positive views are of
    * type \a P whereas negative views are of type \a N.
    *
@@ -556,7 +556,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent n-ary linear equality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
    * give the types of the views.
    *
@@ -589,7 +589,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for domain consistent n-ary linear equality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a View
    * give the type of the view.
    *
@@ -628,7 +628,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified bounds consistent n-ary linear equality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
    * give the types of the views.
    *
@@ -662,7 +662,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent n-ary linear disequality
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
    * give the types of the views.
    *
@@ -695,7 +695,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for bounds consistent n-ary linear less or equal
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
    * give the types of the views.
    *
@@ -728,7 +728,7 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for reified bounds consistent n-ary linear less or equal
    *
-   * The type \a Val can be either \c double or \c int, defining the
+   * The type \a Val can be either \c long long int or \c int, defining the
    * numerical precision during propagation. The types \a P and \a N
    * give the types of the views.
    *
@@ -1352,7 +1352,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - Assume linear terms for the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
-   *    for doubles as defined in Limits::Int, an exception of
+   *    for long long ints as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).
@@ -1385,7 +1385,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *  - Assume linear terms for the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
-   *    for doubles as defined in Limits::Int, an exception of
+   *    for long long ints as defined in Limits::Int, an exception of
    *    type Int::NumericalOverflow is thrown.
    *  - In all other cases, the created propagators are accurate (that
    *    is, they will not silently overflow during propagation).

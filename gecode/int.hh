@@ -108,35 +108,45 @@ namespace Gecode { namespace Int {
    */
   namespace Limits {
     /// Largest allowed integer value
-    const int max =  INT_MAX - 1;
+    const int max = INT_MAX - 1;
     /// Smallest allowed integer value
     const int min = -max;
-    /// Infinity
+    /// Infinity for integers
     const int infinity = max + 1;
-    /// Return whether integer \a n is in range
+    /// Largest allowed long long integer value
+    const long long int llmax =  LLONG_MAX - 1;
+    /// Smallest allowed long long integer value
+    const long long int llmin = -llmax;
+    /// Infinity for long long integers
+    const long long int llinfinity = llmax + 1;
+    /// Return whether \a n is in range
     bool valid(int n);
-    /// Return whether double \a n is in range
-    bool valid(double n);
-    /// Check whether integer \a n is in range, otherwise throw out of limits with information \a l
+    /// Return whether \a n is in range
+    bool valid(long long int n);
+    /// Check whether \a n is in range, otherwise throw out of limits with information \a l
     void check(int n, const char* l);
-    /// Check whether double \a n is in integer range, otherwise throw out of limits exception with information \a l
-    void check(double n, const char* l);
-    /// Check whether integer \a n is in range and strictly positive, otherwise throw out of limits with information \a l
+    /// Check whether \a n is in range, otherwise throw out of limits with information \a l
+    void check(long long int n, const char* l);
+    /// Check whether \a n is in range and strictly positive, otherwise throw out of limits with information \a l
     void positive(int n, const char* l);
-    /// Check whether double \a n is in integer range and strictly postive, otherwise throw out of limits exception with information \a l
-    void positive(double n, const char* l);
-    /// Check whether integer \a n is in range and nonnegative, otherwise throw out of limits with information \a l
+    /// Check whether \a n is in range and strictly positive, otherwise throw out of limits with information \a l
+    void positive(long long int n, const char* l);
+    /// Check whether \a n is in range and nonnegative, otherwise throw out of limits with information \a l
     void nonnegative(int n, const char* l);
-    /// Check whether double \a n is in integer range and nonnegative, otherwise throw out of limits exception with information \a l
-    void nonnegative(double n, const char* l);
-    /// Largest double that can exactly be represented
-    const double double_max = 9007199254740991.0;
-    /// Smallest double that can exactly be represented
-    const double double_min = -9007199254740991.0;
-    /// Check whether double \a n is in exactly representable range, otherwise throw out of limits with information \a l
-    void double_check(double n, const char* l);
-    /// Infinity value for doubles
-    const double double_infinity = DBL_MAX;
+    /// Check whether \a n is in integer range and nonnegative, otherwise throw out of limits exception with information \a l
+    void nonnegative(long long int n, const char* l);
+    /// Check whether adding \a n and \a m would overflow
+    bool overflow_add(int n, int m);
+    /// Check whether adding \a n and \a m would overflow
+    bool overflow_add(long long int n, long long int m);
+    /// Check whether subtracting \a m from \a n would overflow
+    bool overflow_sub(int n, int m);
+    /// Check whether subtracting \a m from \a n would overflow
+    bool overflow_sub(long long int n, long long int m);
+    /// Check whether multiplying \a n and \a m would overflow
+    bool overflow_mul(int n, int m);
+    /// Check whether multiplying \a n and \a m would overflow
+    bool overflow_mul(long long int n, long long int m);
   }
 
 }}

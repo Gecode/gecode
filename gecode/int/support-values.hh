@@ -138,7 +138,7 @@ namespace Gecode { namespace Int {
     /// Mark \a n as supported if possible
     bool support(int n);
     /// Mark \a n as supported if possible
-    bool support(double n);
+    bool support(long long int n);
     /// Remove all unsupported values
     ModEvent tell(Space& home);
     //@}

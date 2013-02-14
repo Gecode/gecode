@@ -96,7 +96,7 @@ namespace Gecode { namespace Int {
     return x.in(-n);
   }
   forceinline bool
-  MinusView::in(double n) const {
+  MinusView::in(long long int n) const {
     return x.in(-n);
   }
 
@@ -110,47 +110,52 @@ namespace Gecode { namespace Int {
     return x.gq(home,-n);
   }
   forceinline ModEvent
-  MinusView::lq(Space& home, double n) {
+  MinusView::lq(Space& home, long long int n) {
     return x.gq(home,-n);
   }
+
   forceinline ModEvent
   MinusView::le(Space& home, int n) {
     return x.gr(home,-n);
   }
   forceinline ModEvent
-  MinusView::le(Space& home, double n) {
+  MinusView::le(Space& home, long long int n) {
     return x.gr(home,-n);
   }
+
   forceinline ModEvent
   MinusView::gq(Space& home, int n) {
     return x.lq(home,-n);
   }
   forceinline ModEvent
-  MinusView::gq(Space& home, double n) {
+  MinusView::gq(Space& home, long long int n) {
     return x.lq(home,-n);
   }
+
   forceinline ModEvent
   MinusView::gr(Space& home, int n) {
     return x.le(home,-n);
   }
   forceinline ModEvent
-  MinusView::gr(Space& home, double n) {
+  MinusView::gr(Space& home, long long int n) {
     return x.le(home,-n);
   }
+
   forceinline ModEvent
   MinusView::nq(Space& home, int n) {
     return x.nq(home,-n);
   }
   forceinline ModEvent
-  MinusView::nq(Space& home, double n) {
+  MinusView::nq(Space& home, long long int n) {
     return x.nq(home,-n);
   }
+
   forceinline ModEvent
   MinusView::eq(Space& home, int n) {
     return x.eq(home,-n);
   }
   forceinline ModEvent
-  MinusView::eq(Space& home, double n) {
+  MinusView::eq(Space& home, long long int n) {
     return x.eq(home,-n);
   }
 

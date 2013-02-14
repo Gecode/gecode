@@ -312,6 +312,7 @@ INTSRC0 = \
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
+	div.hh div.hpp \
 	exec.hh exec/when.hpp \
 	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
 	arithmetic/divmod.hpp \
@@ -374,7 +375,7 @@ INTHDR0 = \
 	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
 	cumulative/task-view.hpp cumulative/overload.hpp \
 	cumulative/basic.hpp cumulative/task.hpp cumulative/edge-finding.hpp \
-	cumulative/tree.hpp \
+	cumulative/tree.hpp cumulative/limits.hpp \
 	cumulatives.hh cumulatives/val.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \

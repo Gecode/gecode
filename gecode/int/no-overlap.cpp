@@ -64,9 +64,9 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       Limits::nonnegative(w[i],"Int::nooverlap");
       Limits::nonnegative(h[i],"Int::nooverlap");
-      Limits::check(static_cast<double>(x[i].max()) + w[i],
+      Limits::check(static_cast<long long int>(x[i].max()) + w[i],
                     "Int::nooverlap");
-      Limits::check(static_cast<double>(y[i].max()) + h[i],
+      Limits::check(static_cast<long long int>(y[i].max()) + h[i],
                     "Int::nooverlap");
     }
     if (home.failed()) return;
@@ -96,9 +96,9 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       Limits::nonnegative(w[i],"Int::nooverlap");
       Limits::nonnegative(h[i],"Int::nooverlap");
-      Limits::check(static_cast<double>(x[i].max()) + w[i],
+      Limits::check(static_cast<long long int>(x[i].max()) + w[i],
                     "Int::nooverlap");
-      Limits::check(static_cast<double>(y[i].max()) + h[i],
+      Limits::check(static_cast<long long int>(y[i].max()) + h[i],
                     "Int::nooverlap");
     }
     if (home.failed()) return;

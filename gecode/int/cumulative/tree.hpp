@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   forceinline void
   OmegaNode::init(const OmegaNode&, const OmegaNode&) {
-    e = 0.0; env = -Int::Limits::double_infinity;
+    e = 0.0; env = -double_infinity;
   }
 
   forceinline void
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                                  const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t), c(c0) {
     for (int i=tasks.size(); i--; ) {
-      leaf(i).e = 0.0; leaf(i).env = -Int::Limits::double_infinity;
+      leaf(i).e = 0.0; leaf(i).env = -double_infinity;
     }
     init();
   }
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
-    leaf(i).e = 0.0; leaf(i).env = -Int::Limits::double_infinity;
+    leaf(i).e = 0.0; leaf(i).env = -double_infinity;
     update(i);
   }
 
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   ExtOmegaNode::init(const ExtOmegaNode& l, const ExtOmegaNode& r) {
     OmegaNode::init(l,r);
-    cenv = -Int::Limits::double_infinity;
+    cenv = -double_infinity;
   }
 
   forceinline void
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     ci = ci0;
     for (int i=tasks.size(); i--; ) {
       leaf(i).e = 0.0; 
-      leaf(i).env = leaf(i).cenv = -Int::Limits::double_infinity;
+      leaf(i).env = leaf(i).cenv = -double_infinity;
     }
     init();
   }
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
     OmegaNode::init(l,r);
-    le = 0.0; lenv = -Int::Limits::double_infinity;
+    le = 0.0; lenv = -double_infinity;
     resLe = undef; resLenv = undef;
   }
 
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       leaf(i).e = tasks[i].e();
       leaf(i).le = 0.0;
       leaf(i).env = static_cast<double>(c)*tasks[i].est()+tasks[i].e();
-      leaf(i).lenv = -Int::Limits::double_infinity;
+      leaf(i).lenv = -double_infinity;
       leaf(i).resLe = OmegaLambdaNode::undef;
       leaf(i).resLenv = OmegaLambdaNode::undef;
     }
@@ -220,11 +220,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void 
   OmegaLambdaTree<TaskView>::shift(int i) {
     // i is in omega
-    assert(leaf(i).env > -Int::Limits::double_infinity);
+    assert(leaf(i).env > -double_infinity);
     leaf(i).le = leaf(i).e;
     leaf(i).e = 0.0;
     leaf(i).lenv = leaf(i).env;
-    leaf(i).env = -Int::Limits::double_infinity;
+    leaf(i).env = -double_infinity;
     leaf(i).resLe = i;
     leaf(i).resLenv = i;
     update(i);
@@ -234,10 +234,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   OmegaLambdaTree<TaskView>::lremove(int i) {
     // i not in omega but in lambda
-    assert(leaf(i).env == -Int::Limits::double_infinity);
-    assert(leaf(i).lenv > -Int::Limits::double_infinity);
+    assert(leaf(i).env == -double_infinity);
+    assert(leaf(i).lenv > -double_infinity);
     leaf(i).le = 0.0; 
-    leaf(i).lenv = -Int::Limits::double_infinity;
+    leaf(i).lenv = -double_infinity;
     leaf(i).resLe = OmegaLambdaNode::undef;
     leaf(i).resLenv = OmegaLambdaNode::undef;
     update(i);

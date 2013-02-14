@@ -55,16 +55,15 @@ namespace Gecode {
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     double w = 0.0;
     for (int i=p.size(); i--; ) {
-      Int::Limits::nonnegative(p[i],"Int::cumulative");
-      Int::Limits::nonnegative(u[i],"Int::cumulative");
-      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
-                         "Int::cumulative");
-      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
-                                "Int::cumulative");
+      Limits::nonnegative(p[i],"Int::cumulative");
+      Limits::nonnegative(u[i],"Int::cumulative");
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i], 
+                    "Int::cumulative");
+      double_check(static_cast<double>(p[i]) * u[i], "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c.max() * w * s.size(),
-                              "Int::cumulative");
+    double_check(c.max() * w * s.size(),
+                 "Int::cumulative");
     if (home.failed()) return;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
@@ -130,15 +129,15 @@ namespace Gecode {
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     double w = 0.0;
     for (int i=p.size(); i--; ) {
-      Int::Limits::nonnegative(p[i],"Int::cumulative");
-      Int::Limits::nonnegative(u[i],"Int::cumulative");
-      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
-                         "Int::cumulative");
-      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
-                                "Int::cumulative");
+      Limits::nonnegative(p[i],"Int::cumulative");
+      Limits::nonnegative(u[i],"Int::cumulative");
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i],
+                    "Int::cumulative");
+      double_check(static_cast<double>(p[i]) * u[i],
+                   "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c.max() * w * s.size(),
+    double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
     
@@ -198,15 +197,15 @@ namespace Gecode {
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     double w = 0.0;
     for (int i=p.size(); i--; ) {
-      Int::Limits::nonnegative(p[i],"Int::cumulative");
-      Int::Limits::nonnegative(u[i],"Int::cumulative");
-      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
-                         "Int::cumulative");
-      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
-                                "Int::cumulative");
+      Limits::nonnegative(p[i],"Int::cumulative");
+      Limits::nonnegative(u[i],"Int::cumulative");
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i],
+                    "Int::cumulative");
+      double_check(static_cast<double>(p[i]) * u[i],
+                   "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c.max() * w * s.size(),
+    double_check(c.max() * w * s.size(),
                               "Int::cumulative");
     if (home.failed()) return;
 
@@ -259,16 +258,16 @@ namespace Gecode {
       throw Int::ArgumentSizeMismatch("Int::cumulative");
     double w = 0.0;
     for (int i=p.size(); i--; ) {
-      Int::Limits::nonnegative(p[i],"Int::cumulative");
-      Int::Limits::nonnegative(u[i],"Int::cumulative");
-      Int::Limits::check(static_cast<double>(s[i].max()) + p[i],
-                         "Int::cumulative");
-      Int::Limits::double_check(static_cast<double>(p[i]) * u[i],
-                                "Int::cumulative");
+      Limits::nonnegative(p[i],"Int::cumulative");
+      Limits::nonnegative(u[i],"Int::cumulative");
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i],
+                    "Int::cumulative");
+      double_check(static_cast<double>(p[i]) * u[i],
+                   "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c.max() * w * s.size(),
-                              "Int::cumulative");
+    double_check(c.max() * w * s.size(),
+                 "Int::cumulative");
     if (home.failed()) return;
 
     bool allMandatory = true;
@@ -319,15 +318,15 @@ namespace Gecode {
       rel(home, p[i], IRT_GQ, 0);
     }
     for (int i=p.size(); i--; ) {
-      Int::Limits::nonnegative(u[i],"Int::cumulative");
-      Int::Limits::check(static_cast<double>(s[i].max()) + p[i].max(),
-                         "Int::cumulative");
-      Int::Limits::double_check(static_cast<double>(p[i].max()) * u[i],
-                                "Int::cumulative");
+      Limits::nonnegative(u[i],"Int::cumulative");
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i].max(),
+                    "Int::cumulative");
+      double_check(static_cast<double>(p[i].max()) * u[i],
+                   "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c.max() * w * s.size(),
-                              "Int::cumulative");
+    double_check(c.max() * w * s.size(),
+                 "Int::cumulative");
     if (home.failed()) return;
 
     bool fixP = true;
@@ -382,15 +381,15 @@ namespace Gecode {
     }
     double w = 0.0;
     for (int i=p.size(); i--; ) {
-      Int::Limits::nonnegative(u[i],"Int::cumulative");
-      Int::Limits::check(static_cast<double>(s[i].max()) + p[i].max(),
-                         "Int::cumulative");
-      Int::Limits::double_check(static_cast<double>(p[i].max()) * u[i],
-                                "Int::cumulative");
+      Limits::nonnegative(u[i],"Int::cumulative");
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i].max(),
+                    "Int::cumulative");
+      double_check(static_cast<double>(p[i].max()) * u[i],
+                   "Int::cumulative");
       w += s[i].width();
     }
-    Int::Limits::double_check(c.max() * w * s.size(),
-                              "Int::cumulative");
+    double_check(c.max() * w * s.size(),
+                 "Int::cumulative");
     if (home.failed()) return;
 
     bool allMandatory = true;

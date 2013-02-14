@@ -541,7 +541,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   class MultPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
@@ -552,7 +552,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     MultPlusBnd(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlusBnd(Space& home, bool share, MultPlusBnd<Val,VA,VB,VC>& p);
+    MultPlusBnd(Space& home, bool share, MultPlusBnd<VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
@@ -596,7 +596,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   class MultPlusDom :
     public MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM> {
   protected:
@@ -607,7 +607,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     MultPlusDom(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlusDom(Space& home, bool share, MultPlusDom<Val,VA,VB,VC>& p);
+    MultPlusDom(Space& home, bool share, MultPlusDom<VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
@@ -670,7 +670,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides division for positive views only.
    */
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   class DivPlusBnd :
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
@@ -681,8 +681,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     DivPlusBnd(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    DivPlusBnd(Space& home, bool share,
-               DivPlusBnd<Val,VA,VB,VC>& p);
+    DivPlusBnd(Space& home, bool share, DivPlusBnd<VA,VB,VC>& p);
     /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning

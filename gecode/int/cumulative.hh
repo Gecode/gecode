@@ -58,6 +58,15 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
+  /// Check whether double \a n is in exactly representable range, otherwise throw out of limits with information \a l
+  void double_check(double n, const char* l);
+
+}}}
+
+#include <gecode/int/cumulative/limits.hpp>
+
+namespace Gecode { namespace Int { namespace Cumulative {
+  
   /// Cumulative (mandatory) task with fixed processing time
   class ManFixPTask : public Unary::ManFixPTask {
   protected:

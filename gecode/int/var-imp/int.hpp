@@ -293,7 +293,7 @@ namespace Gecode { namespace Int {
     return (fst() == NULL) || in_full(n);
   }
   forceinline bool
-  IntVarImp::in(double n) const {
+  IntVarImp::in(long long int n) const {
     if ((n < dom.min()) || (n > dom.max()))
       return false;
     return (fst() == NULL) || in_full(static_cast<int>(n));
@@ -351,7 +351,7 @@ namespace Gecode { namespace Int {
     return me;
   }
   forceinline ModEvent
-  IntVarImp::gq(Space& home, double n) {
+  IntVarImp::gq(Space& home, long long int n) {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
     ModEvent me = gq_full(home,static_cast<int>(n));
@@ -360,7 +360,6 @@ namespace Gecode { namespace Int {
                   (me == ME_INT_BND));
     return me;
   }
-
 
   forceinline ModEvent
   IntVarImp::lq(Space& home, int n) {
@@ -373,7 +372,7 @@ namespace Gecode { namespace Int {
     return me;
   }
   forceinline ModEvent
-  IntVarImp::lq(Space& home, double n) {
+  IntVarImp::lq(Space& home, long long int n) {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
     ModEvent me = lq_full(home,static_cast<int>(n));
@@ -382,7 +381,6 @@ namespace Gecode { namespace Int {
                   (me == ME_INT_BND));
     return me;
   }
-
 
   forceinline ModEvent
   IntVarImp::eq(Space& home, int n) {
@@ -395,7 +393,7 @@ namespace Gecode { namespace Int {
     return me;
   }
   forceinline ModEvent
-  IntVarImp::eq(Space& home, double m) {
+  IntVarImp::eq(Space& home, long long int m) {
     if ((m < dom.min()) || (m > dom.max()))
       return ME_INT_FAILED;
     int n = static_cast<int>(m);
@@ -406,7 +404,6 @@ namespace Gecode { namespace Int {
     return me;
   }
 
-
   forceinline ModEvent
   IntVarImp::nq(Space& home, int n) {
     if ((n < dom.min()) || (n > dom.max()))
@@ -414,7 +411,7 @@ namespace Gecode { namespace Int {
     return nq_full(home,n);
   }
   forceinline ModEvent
-  IntVarImp::nq(Space& home, double d) {
+  IntVarImp::nq(Space& home, long long int d) {
     if ((d < dom.min()) || (d > dom.max()))
       return ME_INT_NONE;
     return nq_full(home,static_cast<int>(d));

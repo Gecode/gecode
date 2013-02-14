@@ -82,7 +82,7 @@ namespace Gecode {
       /// Test whether \a n is contained in domain
       bool in(int n) const { (void) n; return false; }
       /// Test whether \a n is contained in domain
-      bool in(double n) const { (void) n; return false; }
+      bool in(long long int n) const { (void) n; return false; }
       //@}
 
       /// \name Domain update by value
@@ -93,7 +93,7 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space& home, double n) {
+      ModEvent lq(Space& home, long long int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
@@ -103,7 +103,7 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space& home, double n) {
+      ModEvent le(Space& home, long long int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
@@ -113,7 +113,7 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space& home, double n) {
+      ModEvent gq(Space& home, long long int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
@@ -123,7 +123,7 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space& home, double n) {
+      ModEvent gr(Space& home, long long int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
@@ -133,7 +133,7 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space& home, double n) {
+      ModEvent nq(Space& home, long long int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }
@@ -143,7 +143,7 @@ namespace Gecode {
         return ME_INT_NONE;
       }
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space& home, double n) {
+      ModEvent eq(Space& home, long long int n) {
         (void) home; (void) n;
         return ME_INT_NONE;
       }

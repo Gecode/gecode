@@ -132,7 +132,7 @@ namespace Gecode { namespace Int {
 
   template<class View, class A>
   forceinline bool
-  SupportValues<View,A>::support(double n) {
+  SupportValues<View,A>::support(long long int n) {
     if ((n < x.min()) || (n > x.max()))
       return false;
     return _support(static_cast<int>(n));

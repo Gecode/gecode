@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for (int j=t.size(); j--;) {
         double lctj = static_cast<double>(c-capacities[i])*t[j].lct();
         double diff_d = ceil(div(plus(eo.env(j), -lctj),capacities[i]));
-        int diff = (diff_d == -Int::Limits::double_infinity) ? 
+        int diff = (diff_d == -double_infinity) ? 
           -Int::Limits::infinity : static_cast<int>(diff_d);
         u = std::max(u,diff);
         update[i*t.size()+j] = u;

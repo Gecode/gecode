@@ -35,39 +35,39 @@
  *
  */
 
-#include <cfloat>
 #include <algorithm>
 
 #include <gecode/int/rel.hh>
 #include <gecode/int/linear.hh>
+#include <gecode/int/div.hh>
 
 namespace Gecode { namespace Int { namespace Linear {
 
   /// Eliminate assigned views
   forceinline void
-  eliminate(Term<IntView>* t, int &n, double& d) {
+  eliminate(Term<IntView>* t, int &n, long long int& d) {
     for (int i=n; i--; )
       if (t[i].x.assigned()) {
-        d -= t[i].a * static_cast<double>(t[i].x.val());
-        t[i]=t[--n];
+        long long int ax = t[i].a * static_cast<long long int>(t[i].x.val());
+        if (Limits::overflow_sub(d,ax))
+          throw OutOfLimits("Int::linear");
+        d=d-ax; t[i]=t[--n];
       }
-    if ((d < Limits::double_min) || (d > Limits::double_max))
-      throw OutOfLimits("Int::linear");
   }
 
   /// Rewrite all inequations in terms of IRT_LQ
   forceinline void
-  rewrite(IntRelType &irt, double &d,
+  rewrite(IntRelType &irt, long long int &d,
           Term<IntView>* &t_p, int &n_p,
           Term<IntView>* &t_n, int &n_n) {
     switch (irt) {
     case IRT_EQ: case IRT_NQ: case IRT_LQ:
       break;
     case IRT_LE:
-      d -= 1.0; irt = IRT_LQ;
+      d--; irt = IRT_LQ;
       break;
     case IRT_GR:
-      d += 1.0;
+      d++;
       /* fall through */
     case IRT_GQ:
       irt = IRT_LQ;
@@ -82,54 +82,72 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline bool
   precision(Term<IntView>* t_p, int n_p,
             Term<IntView>* t_n, int n_n,
-            double d) {
-    double sl = 0.0;
-    double su = 0.0;
+            long long int d) {
+    long long int sl = 0;
+    long long int su = 0;
 
     for (int i = n_p; i--; ) {
-      sl += t_p[i].a * static_cast<double>(t_p[i].x.min());
-      su += t_p[i].a * static_cast<double>(t_p[i].x.max());
-      if ((sl < Limits::double_min) || (su > Limits::double_max))
+      long long int axmin = 
+        t_p[i].a * static_cast<long long int>(t_p[i].x.min());
+      if (Limits::overflow_add(sl,axmin))
         throw OutOfLimits("Int::linear");
+      sl = sl + axmin;
+      long long int axmax = 
+        t_p[i].a * static_cast<long long int>(t_p[i].x.max());
+      if (Limits::overflow_add(sl,axmax))
+        throw OutOfLimits("Int::linear");
+      su = su + axmax;
     }
     for (int i = n_n; i--; ) {
-      sl -= t_n[i].a * static_cast<double>(t_n[i].x.max());
-      su -= t_n[i].a * static_cast<double>(t_n[i].x.min());
-      if ((sl < Limits::double_min) || (su > Limits::double_max))
+      long long int axmax = 
+        t_n[i].a * static_cast<long long int>(t_n[i].x.max());
+      if (Limits::overflow_sub(sl,axmax))
         throw OutOfLimits("Int::linear");
+      sl = sl - axmax;
+      long long int axmin = 
+        t_n[i].a * static_cast<long long int>(t_n[i].x.min());
+      if (Limits::overflow_sub(su,axmin))
+        throw OutOfLimits("Int::linear");
+      su = su - axmin;
     }
 
     bool is_ip = (sl >= Limits::min) && (su <= Limits::max);
 
-    sl -= d;
-    su -= d;
-    if ((sl < Limits::double_min) || (su > Limits::double_max))
+    if (Limits::overflow_sub(sl,d))
       throw OutOfLimits("Int::linear");
+    sl = sl - d;
+    if (Limits::overflow_sub(su,d))
+      throw OutOfLimits("Int::linear");
+    su = su - d;
 
     is_ip = is_ip && (sl >= Limits::min) && (su <= Limits::max);
 
     for (int i = n_p; i--; ) {
-      if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) 
-          < Limits::double_min)
+      long long int axmin = 
+        t_p[i].a * static_cast<long long int>(t_p[i].x.min());
+      if (Limits::overflow_sub(sl,axmin))
         throw OutOfLimits("Int::linear");
-      if (sl - t_p[i].a * static_cast<double>(t_p[i].x.min()) < Limits::min)
+      if (sl - axmin < Limits::min)
         is_ip = false;
-      if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) 
-          > Limits::double_max)
+      long long int axmax = 
+        t_p[i].a * static_cast<long long int>(t_p[i].x.max());
+      if (Limits::overflow_sub(su,axmax))
         throw OutOfLimits("Int::linear");
-      if (su - t_p[i].a * static_cast<double>(t_p[i].x.max()) > Limits::max)
+      if (su - axmax > Limits::max)
         is_ip = false;
     }
     for (int i = n_n; i--; ) {
-      if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) 
-          < Limits::double_min)
+      long long int axmin = 
+        t_n[i].a * static_cast<long long int>(t_n[i].x.min());
+      if (Limits::overflow_add(sl,axmin))
         throw OutOfLimits("Int::linear");
-      if (sl + t_n[i].a * static_cast<double>(t_n[i].x.min()) < Limits::min)
+      if (sl + axmin < Limits::min)
         is_ip = false;
-      if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) 
-          > Limits::double_max)
+      long long int axmax = 
+        t_n[i].a * static_cast<long long int>(t_n[i].x.max());
+      if (Limits::overflow_add(su,axmax))
         throw OutOfLimits("Int::linear");
-      if (su + t_n[i].a * static_cast<double>(t_n[i].x.max()) > Limits::max)
+      if (su + axmax > Limits::max)
         is_ip = false;
     }
     return is_ip;
@@ -207,7 +225,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     Limits::check(c,"Int::linear");
 
-    double d = c;
+    long long int d = c;
 
     eliminate(t,n,d);
 
@@ -219,21 +237,21 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Divide by gcd
     if (gcd > 1) {
-      bool divisible = (std::fmod(d,gcd) == 0.0);
-      d /= gcd;
       switch (irt) {
       case IRT_EQ:
-        if (!divisible) {
+        if ((d % gcd) != 0) {
           home.fail();
           return;
         }
+        d /= gcd;
         break;
       case IRT_NQ: 
-        if (!divisible)
+        if ((d % gcd) != 0)
           return;
+        d /= gcd;
         break;
       case IRT_LQ:
-        d = std::floor(d);
+        d = floor_div_xp(d,static_cast<long long int>(gcd));
         break;
       default: GECODE_NEVER;
       }
@@ -241,9 +259,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (n == 0) {
       switch (irt) {
-      case IRT_EQ: if (d != 0.0) home.fail(); break;
-      case IRT_NQ: if (d == 0.0) home.fail(); break;
-      case IRT_LQ: if (d < 0.0)  home.fail(); break;
+      case IRT_EQ: if (d != 0) home.fail(); break;
+      case IRT_NQ: if (d == 0) home.fail(); break;
+      case IRT_LQ: if (d < 0)  home.fail(); break;
       default: GECODE_NEVER;
       }
       return;
@@ -251,7 +269,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (n == 1) {
       if (n_p == 1) {
-        DoubleScaleView y(t_p[0].a,t_p[0].x);
+        LLongScaleView y(t_p[0].a,t_p[0].x);
         switch (irt) {
         case IRT_EQ: GECODE_ME_FAIL(y.eq(home,d)); break;
         case IRT_NQ: GECODE_ME_FAIL(y.nq(home,d)); break;
@@ -259,7 +277,7 @@ namespace Gecode { namespace Int { namespace Linear {
         default: GECODE_NEVER;
         }
       } else {
-        DoubleScaleView y(t_n[0].a,t_n[0].x);
+        LLongScaleView y(t_n[0].a,t_n[0].x);
         switch (irt) {
         case IRT_EQ: GECODE_ME_FAIL(y.eq(home,-d)); break;
         case IRT_NQ: GECODE_ME_FAIL(y.nq(home,-d)); break;
@@ -371,17 +389,18 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       }
     } else {
-      // Arbitrary coefficients with double precision
-      ViewArray<DoubleScaleView> x(home,n_p);
+      // Arbitrary coefficients with long long precision
+      ViewArray<LLongScaleView> x(home,n_p);
       for (int i = n_p; i--; )
-        x[i] = DoubleScaleView(t_p[i].a,t_p[i].x);
-      ViewArray<DoubleScaleView> y(home,n_n);
+        x[i] = LLongScaleView(t_p[i].a,t_p[i].x);
+      ViewArray<LLongScaleView> y(home,n_n);
       for (int i = n_n; i--; )
-        y[i] = DoubleScaleView(t_n[i].a,t_n[i].x);
+        y[i] = LLongScaleView(t_n[i].a,t_n[i].x);
       if ((icl == ICL_DOM) && (irt == IRT_EQ)) {
-        GECODE_ES_FAIL((DomEq<double,DoubleScaleView>::post(home,x,y,d)));
+        GECODE_ES_FAIL((DomEq<long long int,LLongScaleView>
+                        ::post(home,x,y,d)));
       } else {
-        post_nary<double,DoubleScaleView>(home,x,y,irt,d);
+        post_nary<long long int,LLongScaleView>(home,x,y,irt,d);
       }
     }
   }
@@ -502,7 +521,7 @@ namespace Gecode { namespace Int { namespace Linear {
        Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
        IntConLevel icl) {
     Limits::check(c,"Int::linear");
-    double d = c;
+    long long int d = c;
 
     eliminate(t,n,d);
 
@@ -514,25 +533,25 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Divide by gcd
     if (gcd > 1) {
-      bool divisible = (std::fmod(d,gcd) == 0.0);
-      d /= gcd;
       switch (irt) {
       case IRT_EQ:
-        if (!divisible) {
+        if ((d % gcd) != 0) {
           if (r.mode() != RM_PMI)
             GECODE_ME_FAIL(BoolView(r.var()).zero(home));
           return;
         }
+        d /= gcd;
         break;
       case IRT_NQ: 
-        if (!divisible) {
+        if ((d % gcd) != 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));
           return;
         }
+        d /= gcd;
         break;
       case IRT_LQ:
-        d = std::floor(d);
+        d = floor_div_xp(d,static_cast<long long int>(gcd));
         break;
       default: GECODE_NEVER;
       }
@@ -541,9 +560,9 @@ namespace Gecode { namespace Int { namespace Linear {
     if (n == 0) {
       bool fail = false;
       switch (irt) {
-      case IRT_EQ: fail = (d != 0.0); break;
-      case IRT_NQ: fail = (d == 0.0); break;
-      case IRT_LQ: fail = (0.0 > d); break;
+      case IRT_EQ: fail = (d != 0); break;
+      case IRT_NQ: fail = (d == 0); break;
+      case IRT_LQ: fail = (0 > d); break;
       default: GECODE_NEVER;
       }
       if (fail) {
@@ -827,14 +846,14 @@ namespace Gecode { namespace Int { namespace Linear {
         y[i] = IntScaleView(t_n[i].a,t_n[i].x);
       post_nary<int,IntScaleView>(home,x,y,irt,c,r);
     } else {
-      // Arbitrary coefficients with double precision
-      ViewArray<DoubleScaleView> x(home,n_p);
+      // Arbitrary coefficients with long long precision
+      ViewArray<LLongScaleView> x(home,n_p);
       for (int i = n_p; i--; )
-        x[i] = DoubleScaleView(t_p[i].a,t_p[i].x);
-      ViewArray<DoubleScaleView> y(home,n_n);
+        x[i] = LLongScaleView(t_p[i].a,t_p[i].x);
+      ViewArray<LLongScaleView> y(home,n_n);
       for (int i = n_n; i--; )
-        y[i] = DoubleScaleView(t_n[i].a,t_n[i].x);
-      post_nary<double,DoubleScaleView>(home,x,y,irt,d,r);
+        y[i] = LLongScaleView(t_n[i].a,t_n[i].x);
+      post_nary<long long int,LLongScaleView>(home,x,y,irt,d,r);
     }
   }
 

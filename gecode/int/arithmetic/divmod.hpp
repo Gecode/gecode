@@ -44,62 +44,56 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
 
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline
-  DivPlusBnd<Val,VA,VB,VC>
-  ::DivPlusBnd(Home home, VA x0, VB x1, VC x2)
+  DivPlusBnd<VA,VB,VC>::DivPlusBnd(Home home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,x0,x1,x2) {}
 
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline
-  DivPlusBnd<Val,VA,VB,VC>
-  ::DivPlusBnd(Space& home, bool share,
-               DivPlusBnd<Val,VA,VB,VC>& p)
+  DivPlusBnd<VA,VB,VC>::DivPlusBnd(Space& home, bool share, 
+                                   DivPlusBnd<VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}
 
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   Actor*
-  DivPlusBnd<Val,VA,VB,VC>::copy(Space& home, bool share) {
-    return new (home) DivPlusBnd<Val,VA,VB,VC>(home,share,*this);
+  DivPlusBnd<VA,VB,VC>::copy(Space& home, bool share) {
+    return new (home) DivPlusBnd<VA,VB,VC>(home,share,*this);
   }
 
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   ExecStatus
-  DivPlusBnd<Val,VA,VB,VC>
-  ::propagate(Space& home, const ModEventDelta&) {
+  DivPlusBnd<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
     assert(pos(x0) && pos(x1) && !neg(x2));
     bool mod;
     do {
       mod = false;
-      GECODE_ME_CHECK_MODIFIED(mod,x2.lq(home,f_d_p<Val>(x0.max(),x1.min())));
-      GECODE_ME_CHECK_MODIFIED(mod,x2.gq(home,f_d_p<Val>(x0.min(),x1.max())));
-      GECODE_ME_CHECK_MODIFIED(mod,x0.le(home,m<Val>(x1.max(),
-                                              static_cast<Val>(x2.max())+
-                                              static_cast<Val>(1))));
-      GECODE_ME_CHECK_MODIFIED(mod,x0.gq(home,m<Val>(x1.min(),x2.min())));
+      GECODE_ME_CHECK_MODIFIED(mod,x2.lq(home,
+                                         floor_div_pp(x0.max(),x1.min())));
+      GECODE_ME_CHECK_MODIFIED(mod,x2.gq(home,
+                                         floor_div_px(x0.min(),x1.max())));
+      GECODE_ME_CHECK_MODIFIED(mod,x0.le(home,mll(x1.max(),ill(x2.max()))));
+      GECODE_ME_CHECK_MODIFIED(mod,x0.gq(home,mll(x1.min(),x2.min())));
       if (x2.min() > 0) {
           GECODE_ME_CHECK_MODIFIED(mod,
-            x1.lq(home,f_d_p<Val>(x0.max(),x2.min())));
+            x1.lq(home,floor_div_pp(x0.max(),x2.min())));
       }
-      GECODE_ME_CHECK_MODIFIED(mod,x1.gq(home,c_d_p<Val>(x0.min(),
-          static_cast<Val>(x2.max())+static_cast<Val>(1))));
+      GECODE_ME_CHECK_MODIFIED(mod,x1.gq(home,ceil_div_pp(ll(x0.min()),
+                                                          ill(x2.max()))));
     } while (mod);
     return x0.assigned() && x1.assigned() ?
       home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
-  template<class Val, class VA, class VB, class VC>
+  template<class VA, class VB, class VC>
   forceinline ExecStatus
-  DivPlusBnd<Val,VA,VB,VC>
-  ::post(Home home, VA x0, VB x1, VC x2) {
+  DivPlusBnd<VA,VB,VC>::post(Home home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
-    GECODE_ME_CHECK(x2.gq(home,floor(static_cast<double>(x0.min()) /
-                                     static_cast<double>(x1.max()))));
-    (void)
-      new (home) DivPlusBnd<double,VA,VB,VC>(home,x0,x1,x2);
+    GECODE_ME_CHECK(x2.gq(home,floor_div_pp(x0.min(),x1.max())));
+    (void) new (home) DivPlusBnd<VA,VB,VC>(home,x0,x1,x2);
     return ES_OK;
   }
 
@@ -148,23 +142,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       goto prop_xxn;
     }
     assert(any(x1) && any(x2));
-    GECODE_ME_CHECK(x0.lq(home,std::max(m<double>(x1.max(),x2.max()+1)-1,
-                                        m<double>(x1.min(),x2.min()-1)-1)));
-    GECODE_ME_CHECK(x0.gq(home,std::min(m<double>(x1.min(),x2.max()+1),
-                                        m<double>(x1.max(),x2.min()-1))));
+    GECODE_ME_CHECK(x0.lq(home,std::max(mll(x1.max(),ill(x2.max()))-1,
+                                        mll(x1.min(),dll(x2.min()))-1)));
+    GECODE_ME_CHECK(x0.gq(home,std::min(mll(x1.min(),ill(x2.max())),
+                                        mll(x1.max(),dll(x2.min())))));
     return ES_NOFIX;
 
   prop_xxp:
     assert(any(x0) && any(x1) && pos(x2));
 
-    GECODE_ME_CHECK(x0.le(home, m<double>(x1.max(),x2.max()+1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.min(),x2.max()+1)));
+    GECODE_ME_CHECK(x0.le(home, mll(x1.max(),ill(x2.max()))));
+    GECODE_ME_CHECK(x0.gq(home, mll(x1.min(),ill(x2.max()))));
 
     if (pos(x0)) goto rewrite_ppp;
     if (neg(x0)) goto rewrite_nnp;
 
-    GECODE_ME_CHECK(x1.lq(home,f_d_p<double>(x0.max(),x2.min())));
-    GECODE_ME_CHECK(x1.gq(home,c_d(x0.min(),x2.min())));
+    GECODE_ME_CHECK(x1.lq(home,floor_div_pp(x0.max(),x2.min())));
+    GECODE_ME_CHECK(x1.gq(home,ceil_div_xp(x0.min(),x2.min())));
 
     if (x0.assigned() && x1.assigned())
       goto subsumed;
@@ -173,14 +167,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_xpx:
     assert(any(x0) && pos(x1) && any(x2));
 
-    GECODE_ME_CHECK(x0.le(home, m<double>(x1.max(),x2.max()+1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.le(home, mll(x1.max(),ill(x2.max()))));
+    GECODE_ME_CHECK(x0.gq(home, mll(x1.max(),dll(x2.min()))));
 
     if (pos(x0)) goto rewrite_ppp;
     if (neg(x0)) goto rewrite_npn;
 
-    GECODE_ME_CHECK(x2.lq(home,f_d(x0.max(),x1.min())));
-    GECODE_ME_CHECK(x2.gq(home,f_d(x0.min(),x1.min())));
+    GECODE_ME_CHECK(x2.lq(home,floor_div_xp(x0.max(),x1.min())));
+    GECODE_ME_CHECK(x2.gq(home,floor_div_xp(x0.min(),x1.min())));
 
     if (x0.assigned() && x1.assigned())
       goto subsumed;
@@ -189,16 +183,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_xxn:
     assert(any(x0) && any(x1) && neg(x2));
 
-    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min()-1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.max(),x2.min()-1)));
+    GECODE_ME_CHECK(x0.lq(home, mll(x1.min(),dll(x2.min()))));
+    GECODE_ME_CHECK(x0.gq(home, mll(x1.max(),dll(x2.min()))));
 
     if (pos(x0)) goto rewrite_pnn;
     if (neg(x0)) goto rewrite_npn;
 
     if (x2.max() != -1)
-      GECODE_ME_CHECK(x1.lq(home,c_d(x0.min(),x2.max()+1)));
+      GECODE_ME_CHECK(x1.lq(home,ceil_div_xx(ll(x0.min()),ill(x2.max()))));
     if (x2.max() != -1)
-      GECODE_ME_CHECK(x1.gq(home,c_d(x0.max(),x2.max()+1)));
+      GECODE_ME_CHECK(x1.gq(home,ceil_div_xx(ll(x0.max()),ill(x2.max()))));
 
     if (x0.assigned() && x1.assigned())
       goto subsumed;
@@ -207,31 +201,31 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_xnx:
     assert(any(x0) && neg(x1) && any(x2));
 
-    GECODE_ME_CHECK(x0.lq(home, m<double>(x1.min(),x2.min()-1)));
-    GECODE_ME_CHECK(x0.gq(home, m<double>(x1.min(),x2.max()+1)));
+    GECODE_ME_CHECK(x0.lq(home, mll(x1.min(),dll(x2.min()))));
+    GECODE_ME_CHECK(x0.gq(home, mll(x1.min(),ill(x2.max()))));
 
     if (pos(x0)) goto rewrite_pnn;
     if (neg(x0)) goto rewrite_nnp;
 
-    GECODE_ME_CHECK(x2.lq(home,f_d(x0.min(),x1.max())));
-    GECODE_ME_CHECK(x2.gq(home,f_d(x0.max(),x1.max())));
+    GECODE_ME_CHECK(x2.lq(home,floor_div_xx(x0.min(),x1.max())));
+    GECODE_ME_CHECK(x2.gq(home,floor_div_xx(x0.max(),x1.max())));
 
     if (x0.assigned() && x1.assigned())
       goto subsumed;
     return ES_NOFIX;
 
   rewrite_ppp:
-    GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,IntView,IntView>
-                         ::post(home(*this),x0,x1,x2)));
+    GECODE_REWRITE(*this,(DivPlusBnd<IntView,IntView,IntView>
+                          ::post(home(*this),x0,x1,x2)));
   rewrite_nnp:
-    GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,MinusView,IntView>
-                         ::post(home(*this),MinusView(x0),MinusView(x1),x2)));
+    GECODE_REWRITE(*this,(DivPlusBnd<MinusView,MinusView,IntView>
+                          ::post(home(*this),MinusView(x0),MinusView(x1),x2)));
   rewrite_pnn:
-    GECODE_REWRITE(*this,(DivPlusBnd<double,IntView,MinusView,MinusView>
-                         ::post(home(*this),x0,MinusView(x1),MinusView(x2))));
+    GECODE_REWRITE(*this,(DivPlusBnd<IntView,MinusView,MinusView>
+                          ::post(home(*this),x0,MinusView(x1),MinusView(x2))));
   rewrite_npn:
-    GECODE_REWRITE(*this,(DivPlusBnd<double,MinusView,IntView,MinusView>
-                         ::post(home(*this),MinusView(x0),x1,MinusView(x2))));
+    GECODE_REWRITE(*this,(DivPlusBnd<MinusView,IntView,MinusView>
+                          ::post(home(*this),MinusView(x0),x1,MinusView(x2))));
   subsumed:
     assert(x0.assigned() && x1.assigned());
     int result = std::abs(x0.val()) / std::abs(x1.val());
@@ -262,16 +256,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
 
   post_ppp:
-    return DivPlusBnd<double,IntView,IntView,IntView>::post(home,x0,x1,x2);
+    return DivPlusBnd<IntView,IntView,IntView>
+      ::post(home,x0,x1,x2);
   post_nnp:
-    return DivPlusBnd<double,MinusView,MinusView,IntView>::post(home,
-      MinusView(x0),MinusView(x1),x2);
+    return DivPlusBnd<MinusView,MinusView,IntView>
+      ::post(home,MinusView(x0),MinusView(x1),x2);
   post_pnn:
-    return DivPlusBnd<double,IntView,MinusView,MinusView>::post(home,
-      x0,MinusView(x1),MinusView(x2));
+    return DivPlusBnd<IntView,MinusView,MinusView>
+      ::post(home,x0,MinusView(x1),MinusView(x2));
   post_npn:
-    return DivPlusBnd<double,MinusView,IntView,MinusView>::post(home,
-      MinusView(x0),x1,MinusView(x2));
+    return DivPlusBnd<MinusView,IntView,MinusView>
+      ::post(home,MinusView(x0),x1,MinusView(x2));
   }
 
 

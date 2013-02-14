@@ -35,62 +35,9 @@
  *
  */
 
+#include <gecode/int/div.hh>
+
 namespace Gecode { namespace Int {
-
-  /*
-   * Support functions for division
-   *
-   */
-  template<class Val, class UnsVal>
-  forceinline Val
-  ScaleView<Val,UnsVal>::floor_div(double y) const {
-    return static_cast<Val>(floor(y / a));
-  }
-
-  template<class Val, class UnsVal>
-  forceinline Val
-  ScaleView<Val,UnsVal>::ceil_div(double y) const {
-    return static_cast<Val>(ceil(y / a));
-  }
-
-  template<class Val, class UnsVal>
-  forceinline Val
-  ScaleView<Val,UnsVal>::exact_div(double y, bool& exact) const {
-    double ya = y / a;
-    if (ceil(ya) == ya) {
-      exact = true;  return static_cast<Val>(ya);
-    } else {
-      exact = false; return 0;
-    }
-  }
-
-#if GECODE_INT_RND_TWDS_ZERO
-
-  template<class Val, class UnsVal>
-  forceinline int
-  ScaleView<Val,UnsVal>::floor_div(int y) const {
-    return ((y >= 0) ? y : (y-a+1))/a;
-  }
-
-  template<class Val, class UnsVal>
-  forceinline int
-  ScaleView<Val,UnsVal>::ceil_div(int y) const {
-    return ((y >= 0) ? (y+a-1) : y)/a;
-  }
-
-  template<class Val, class UnsVal>
-  forceinline int
-  ScaleView<Val,UnsVal>::exact_div(int y, bool& exact) const {
-    int ya = y / a;
-    if (a * ya == y) {
-      exact = true;  return ya;
-    } else {
-      exact = false; return 0;
-    }
-  }
-
-#endif
-
 
   /*
    * Constructors and initialization
@@ -118,25 +65,25 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline Val
   ScaleView<Val,UnsVal>::min(void) const {
-    Val c = x.min(); c *= a; return c;
+    return static_cast<Val>(x.min()) * a;
   }
 
   template<class Val, class UnsVal>
   forceinline Val
   ScaleView<Val,UnsVal>::max(void) const {
-    Val c = x.max(); c *= a; return c;
+    return static_cast<Val>(x.max()) * a;
   }
 
   template<class Val, class UnsVal>
   forceinline Val
   ScaleView<Val,UnsVal>::med(void) const {
-    Val c = x.med(); c *= a; return c;
+    return static_cast<Val>(x.med()) * a;
   }
 
   template<class Val, class UnsVal>
   forceinline Val
   ScaleView<Val,UnsVal>::val(void) const {
-    Val c = x.val(); c *= a; return c;
+    return static_cast<Val>(x.val()) * a;
   }
 
   template<class Val, class UnsVal>
@@ -148,19 +95,19 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline UnsVal
   ScaleView<Val,UnsVal>::width(void) const {
-    UnsVal c = x.width(); c *= a; return c;
+    return static_cast<UnsVal>(x.width()) * a;
   }
 
   template<class Val, class UnsVal>
   forceinline UnsVal
   ScaleView<Val,UnsVal>::regret_min(void) const {
-    UnsVal c = x.regret_min(); c *= a; return c;
+    return static_cast<UnsVal>(x.regret_min()) * a;
   }
 
   template<class Val, class UnsVal>
   forceinline UnsVal
   ScaleView<Val,UnsVal>::regret_max(void) const {
-    UnsVal c = x.regret_max(); c *= a; return c;
+    return static_cast<UnsVal>(x.regret_max()) * a;
   }
 
 
@@ -176,9 +123,7 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline bool
   ScaleView<Val,UnsVal>::in(Val n) const {
-    bool exact;
-    int nda = exact_div(n, exact);
-    return exact && x.in(nda);
+    return ((n % a) == 0) && x.in(n / a);
   }
 
 
@@ -191,40 +136,40 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::lq(Space& home, Val n) {
-    return (n >= max()) ? ME_INT_NONE : x.lq(home,floor_div(n));
+    return (n >= max()) ? ME_INT_NONE : 
+      x.lq(home,floor_div_xp(n,static_cast<Val>(a)));
   }
 
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::le(Space& home, Val n) {
-    return (n > max()) ? ME_INT_NONE : x.le(home,floor_div(n));
+    return (n > max()) ? ME_INT_NONE : 
+      x.le(home,floor_div_xp(n,static_cast<Val>(a)));
   }
 
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::gq(Space& home, Val n) {
-    return (n <= min()) ? ME_INT_NONE : x.gq(home,ceil_div(n));
+    return (n <= min()) ? ME_INT_NONE : 
+      x.gq(home,ceil_div_xp(n,static_cast<Val>(a)));
   }
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::gr(Space& home, Val n) {
-    return (n < min()) ? ME_INT_NONE : x.gr(home,ceil_div(n));
+    return (n < min()) ? ME_INT_NONE : 
+      x.gr(home,ceil_div_xp(n,static_cast<Val>(a)));
   }
 
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::nq(Space& home, Val n) {
-    bool exact;
-    int nda = static_cast<int>(exact_div(n,exact));
-    return exact ? x.nq(home,nda) :  ME_INT_NONE;
+    return ((n % a) == 0) ? x.nq(home,n/a) :  ME_INT_NONE;
   }
 
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::eq(Space& home, Val n) {
-    bool exact;
-    int nda = static_cast<int>(exact_div(n,exact));
-    return exact ? x.eq(home,nda) : ME_INT_FAILED;
+    return ((n % a) == 0) ? x.eq(home,n/a) : ME_INT_FAILED;
   }
 
 
@@ -247,12 +192,12 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline Val
   ScaleView<Val,UnsVal>::min(const Delta& d) const {
-    Val c = x.min(d); c *= a; return c;
+    return static_cast<Val>(x.min(d)) * a;
   }
   template<class Val, class UnsVal>
   forceinline Val
   ScaleView<Val,UnsVal>::max(const Delta& d) const {
-    Val c = x.max(d); c *= a; return c;
+    return static_cast<Val>(x.max(d)) * a;
   }
   template<class Val, class UnsVal>
   forceinline bool
@@ -312,37 +257,38 @@ namespace Gecode { namespace Int {
 
 
   /**
-   * \brief %Range iterator for double-precision scale integer views
+   * \brief %Range iterator for long long int-precision scale integer views
    * \ingroup TaskActorIntView
    */
   template<>
-  class ViewRanges<DoubleScaleView>
-    : public Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> > {
+  class ViewRanges<LLongScaleView>
+    : public Iter::Ranges::ScaleUp<long long int,unsigned long long int,
+                                   ViewRanges<IntView> > {
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     ViewRanges(void);
     /// Initialize with ranges for view \a x
-    ViewRanges(const DoubleScaleView& x);
+    ViewRanges(const LLongScaleView& x);
     /// Initialize with ranges for view \a x
-    void init(const DoubleScaleView& x);
+    void init(const LLongScaleView& x);
     //@}
   };
 
   forceinline
-  ViewRanges<DoubleScaleView>::ViewRanges(void) {}
+  ViewRanges<LLongScaleView>::ViewRanges(void) {}
   forceinline
-  ViewRanges<DoubleScaleView>::ViewRanges(const DoubleScaleView& x) {
+  ViewRanges<LLongScaleView>::ViewRanges(const LLongScaleView& x) {
     ViewRanges<IntView> xi(x.base());
-    Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> >::init
-      (xi,x.scale());
+    Iter::Ranges::ScaleUp<long long int,unsigned long long int,
+      ViewRanges<IntView> >::init(xi,x.scale());
   }
   forceinline void
-  ViewRanges<DoubleScaleView>::init(const DoubleScaleView& x) {
+  ViewRanges<LLongScaleView>::init(const LLongScaleView& x) {
     ViewRanges<IntView> xi(x.base());
-    Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> >::init
-      (xi,x.scale());
+    Iter::Ranges::ScaleUp<long long int,unsigned long long int,
+      ViewRanges<IntView> >::init(xi,x.scale());
   }
 
 

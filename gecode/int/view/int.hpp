@@ -102,7 +102,7 @@ namespace Gecode { namespace Int {
     return x->in(n);
   }
   forceinline bool
-  IntView::in(double n) const {
+  IntView::in(long long int n) const {
     return x->in(n);
   }
 
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int {
     return x->lq(home,n);
   }
   forceinline ModEvent
-  IntView::lq(Space& home, double n) {
+  IntView::lq(Space& home, long long int n) {
     return x->lq(home,n);
   }
 
@@ -125,8 +125,8 @@ namespace Gecode { namespace Int {
     return x->lq(home,n-1);
   }
   forceinline ModEvent
-  IntView::le(Space& home, double n) {
-    return lq(home,n-1.0);
+  IntView::le(Space& home, long long int n) {
+    return x->lq(home,n-1);
   }
 
   forceinline ModEvent
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int {
     return x->gq(home,n);
   }
   forceinline ModEvent
-  IntView::gq(Space& home, double n) {
+  IntView::gq(Space& home, long long int n) {
     return x->gq(home,n);
   }
 
@@ -143,8 +143,8 @@ namespace Gecode { namespace Int {
     return x->gq(home,n+1);
   }
   forceinline ModEvent
-  IntView::gr(Space& home, double n) {
-    return gq(home,n+1.0);
+  IntView::gr(Space& home, long long int n) {
+    return x->gq(home,n+1);
   }
 
   forceinline ModEvent
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int {
     return x->nq(home,n);
   }
   forceinline ModEvent
-  IntView::nq(Space& home, double n) {
+  IntView::nq(Space& home, long long int n) {
     return x->nq(home,n);
   }
 
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int {
     return x->eq(home,n);
   }
   forceinline ModEvent
-  IntView::eq(Space& home, double n) {
+  IntView::eq(Space& home, long long int n) {
     return x->eq(home,n);
   }
 

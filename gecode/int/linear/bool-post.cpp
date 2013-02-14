@@ -38,6 +38,7 @@
  */
 
 #include <gecode/int/linear.hh>
+#include <gecode/int/div.hh>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -58,7 +59,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /// Eliminate assigned views
   forceinline void
-  eliminate(Term<BoolView>* t, int &n, double& d) {
+  eliminate(Term<BoolView>* t, int &n, long long int& d) {
     for (int i=n; i--; )
       if (t[i].x.one()) {
         d -= t[i].a; t[i]=t[--n];
@@ -70,14 +71,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /// Rewrite non-strict relations
   forceinline void
-  rewrite(IntRelType &r, double &d) {
+  rewrite(IntRelType &r, long long int &d) {
       switch (r) {
       case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
         break;
       case IRT_LE:
-        d -= 1.0; r = IRT_LQ; break;
+        d--; r = IRT_LQ; break;
       case IRT_GR:
-        d += 1.0; r = IRT_GQ; break;
+        d++; r = IRT_GQ; break;
       default:
         throw UnknownRelation("Int::linear");
       }
@@ -555,7 +556,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     Limits::check(c,"Int::linear");
 
-    double d = c;
+    long long int d = c;
 
     eliminate(t,n,d);
 
@@ -580,8 +581,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Check for overflow
     {
-      double sl = x.max()+c;
-      double su = x.min()+c;
+      long long int sl = static_cast<long long int>(x.max())+c;
+      long long int su = static_cast<long long int>(x.min())+c;
       for (int i=n_p; i--; )
         su -= t_p[i].a;
       for (int i=n_n; i--; )
@@ -647,7 +648,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     Limits::check(c,"Int::linear");
 
-    double d = c;
+    long long int d = c;
 
     eliminate(t,n,d);
 
@@ -659,28 +660,28 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Divide by gcd
     if (gcd > 1) {
-      bool divisible = (std::fmod(d,gcd) == 0.0);
-      d /= gcd;
       switch (irt) {
       case IRT_EQ:
-        if (!divisible) {
+        if ((d % gcd) != 0) {
           if (r.mode() != RM_PMI)
             GECODE_ME_FAIL(BoolView(r.var()).zero(home));
           return;
         }
+        d /= gcd;
         break;
       case IRT_NQ: 
-        if (!divisible) {
+        if ((d % gcd) == 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));
           return;
         }
+        d /= gcd;
         break;
       case IRT_LQ:
-        d = std::floor(d);
+        d = floor_div_xp(d,static_cast<long long int>(gcd));
         break;
       case IRT_GQ:
-        d = std::ceil(d);
+        d = ceil_div_xp(d,static_cast<long long int>(gcd));
         break;
       default: GECODE_NEVER;
       }
@@ -709,8 +710,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Check for overflow
     {
-      double sl = c;
-      double su = c;
+      long long int sl = c;
+      long long int su = c;
       for (int i=n_p; i--; )
         su -= t_p[i].a;
       for (int i=n_n; i--; )

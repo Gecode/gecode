@@ -43,10 +43,10 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class View>
   inline void
   estimate(Term<View>* t, int n, int c, int& l, int &u) {
-    double min = c;
-    double max = c;
+    long long int min = c;
+    long long int max = c;
     for (int i=n; i--; ) {
-      double a = t[i].a;
+      long long int a = t[i].a;
       if (a > 0) {
         min += a*t[i].x.min();
         max += a*t[i].x.max();
@@ -134,13 +134,13 @@ namespace Gecode { namespace Int { namespace Linear {
       int j = 0;
       while (i < n) {
         Limits::check(t[i].a,"Int::linear");
-        double a = t[i].a;
+        long long int a = t[i].a;
         View x = t[i].x;
         while ((++i < n) && same(t[i].x,x)) {
           a += t[i].a;
           Limits::check(a,"Int::linear");
         }
-        if (a != 0.0) {
+        if (a != 0) {
           t[j].a = static_cast<int>(a); t[j].x = x; j++;
         }
       }

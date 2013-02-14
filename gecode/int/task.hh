@@ -42,6 +42,9 @@
 
 namespace Gecode { namespace Int {
 
+  /// Infinity value for doubles
+  const double double_infinity = DBL_MAX;
+
   /// Class to define an optional from a mandatory task
   template<class ManTask>
   class ManToOptTask : public ManTask {

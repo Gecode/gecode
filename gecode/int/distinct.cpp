@@ -71,10 +71,10 @@ namespace Gecode {
     if (home.failed()) return;
     ViewArray<OffsetView> cx(home,x.size());
     for (int i = c.size(); i--; ) {
-      double cx_min = (static_cast<double>(c[i]) +
-                       static_cast<double>(x[i].min()));
-      double cx_max = (static_cast<double>(c[i]) +
-                       static_cast<double>(x[i].max()));
+      long long int cx_min = (static_cast<long long int>(c[i]) +
+                              static_cast<long long int>(x[i].min()));
+      long long int cx_max = (static_cast<long long int>(c[i]) +
+                              static_cast<long long int>(x[i].max()));
       Limits::check(c[i],"Int::distinct");
       Limits::check(cx_min,"Int::distinct");
       Limits::check(cx_max,"Int::distinct");

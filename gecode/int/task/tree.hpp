@@ -47,14 +47,14 @@ namespace Gecode { namespace Int {
 
   forceinline double 
   plus(double x, double y) {
-    assert(y != -Int::Limits::double_infinity);
-    return (x == -Int::Limits::double_infinity) ? x : x+y;
+    assert(y != -double_infinity);
+    return (x == -double_infinity) ? x : x+y;
   }
 
   forceinline double 
   div(double x, double y) {
-    assert(y != -Int::Limits::double_infinity);
-    return (x == -Int::Limits::double_infinity) ? x : x / y;
+    assert(y != -double_infinity);
+    return (x == -double_infinity) ? x : x / y;
   }
 
   template<class TaskView, class Node>
