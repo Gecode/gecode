@@ -1299,10 +1299,6 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static CloneStatistics unused_clone;
     /// Used for default argument
     GECODE_KERNEL_EXPORT static CommitStatistics unused_commit;
-    /// Used for default argument
-    GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
-    /// Used for default arguments
-    GECODE_KERNEL_EXPORT static bool unused_b;
 
     /**
      * \brief Clone space

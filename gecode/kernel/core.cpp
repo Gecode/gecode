@@ -84,8 +84,6 @@ namespace Gecode {
    * Space: Misc
    *
    */
-  unsigned long int Space::unused_uli;
-  bool Space::unused_b;
   StatusStatistics Space::unused_status;
   CloneStatistics Space::unused_clone;
   CommitStatistics Space::unused_commit;
