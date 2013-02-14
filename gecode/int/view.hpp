@@ -37,12 +37,6 @@
 
 #include <iostream>
 
-#if (-17 / 7) == -2
-#define GECODE_INT_RND_TWDS_ZERO 1
-#else
-#define GECODE_INT_RND_TWDS_ZERO 0
-#endif
-
 namespace Gecode { namespace Int {
 
   /**
