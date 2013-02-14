@@ -1871,15 +1871,26 @@ namespace Gecode {
      */
     size_t allocated(void) const;
     /**
-     * \brief Flush cached memory blocks and AFC information
+     * \brief Flush cached memory blocks
      *
      * All spaces that are obtained as non-shared clones from some same space
      * try to cache memory blocks from failed spaces. To minimize memory
      * consumption, these blocks can be flushed.
      *
-     * Also, the numbers for AFC are reset to zero.
      */
     GECODE_KERNEL_EXPORT void flush(void);
+    /**
+     * \brief Reset AFC information
+     *
+     * The numbers for AFC are reset to zero.
+     */
+    GECODE_KERNEL_EXPORT void AFC_reset(void);
+    /**
+     * \brief Decay AFC information
+     *
+     * Decays AFC information by multiplying with decay factor \a d.
+     */
+    GECODE_KERNEL_EXPORT void AFC_decay(double d);
     //@}
     /// Construction routines
     //@{

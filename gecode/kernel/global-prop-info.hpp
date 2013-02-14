@@ -49,6 +49,8 @@ namespace Gecode {
     PropInfo(void);
     /// Initialize
     void init(void);
+    /// Decay AFC information by factor \a d
+    void decay(double d);
     /// Return accumulated failure count
     double afc(void) const;
     /// Increment failure count
@@ -126,7 +128,11 @@ namespace Gecode {
     : _afc(0.0) {}
   forceinline void
   PropInfo::init(void) {
-    _afc=0.0;
+    _afc = 0.0;
+  }
+  forceinline void
+  PropInfo::decay(double d) {
+    _afc *= d;
   }
   forceinline double
   PropInfo::afc(void) const {

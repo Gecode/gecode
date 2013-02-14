@@ -150,9 +150,18 @@ namespace Gecode {
   Space::flush(void) {
     // Flush malloc cache
     sm->flush();
-    // Flush AFC information
+  }
+
+  void
+  Space::AFC_reset(void) {
     for (Propagators p(*this); p(); ++p)
       p.propagator().pi.init();
+  }
+
+  void
+  Space::AFC_decay(double d) {
+    for (Propagators p(*this); p(); ++p)
+      p.propagator().pi.decay(d);
   }
 
   Space::~Space(void) {

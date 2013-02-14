@@ -73,6 +73,15 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added member functions AFC_reset() and AFC_decay() to reset and
+decay the AFC information of a space (the flush() member function
+does not reset the AFC information any longer).
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   major
