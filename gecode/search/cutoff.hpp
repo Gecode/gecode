@@ -85,8 +85,11 @@ namespace Gecode { namespace Search {
   private:
     /// Random number generator
     Support::RandomGenerator rnd;
+    /// Minimum cutoff value
     unsigned long int min;
+    /// Random values
     unsigned long int n;
+    /// Step size
     unsigned long int step;
     /// Constructor
     CutoffRandom(unsigned int seed, 
