@@ -8846,8 +8846,8 @@ $as_echo "#define GECODE_MEMORY_ALIGNMENT sizeof(void*)" >>confdefs.h
   if test "${enable_debug:-no}" = "no"; then
         CFLAGS="${ac_gecode_cl_optimize_flag}${CFLAGS:+ }${CFLAGS}"
     CXXFLAGS="${ac_gecode_cl_optimize_flag}${CXXFLAGS:+ }${CXXFLAGS}"
-    CFLAGS="-MD -fp:fast -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-MD -fp:fast -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
+    CFLAGS="-MD -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MD -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -arch:SSE2" >&5
@@ -10800,8 +10800,8 @@ $as_echo "#define GECODE_MEMORY_ALIGNMENT sizeof(void*)" >>confdefs.h
   if test "${enable_debug:-no}" = "no"; then
         CFLAGS="${ac_gecode_cl_optimize_flag}${CFLAGS:+ }${CFLAGS}"
     CXXFLAGS="${ac_gecode_cl_optimize_flag}${CXXFLAGS:+ }${CXXFLAGS}"
-    CFLAGS="-MD -fp:fast -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
-    CXXFLAGS="-MD -fp:fast -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
+    CFLAGS="-MD -GS- -wd4355${CFLAGS:+ }${CFLAGS}"
+    CXXFLAGS="-MD -GS- -wd4355${CXXFLAGS:+ }${CXXFLAGS}"
 
    if test "${ac_cv_cxx_compiler_vendor}" = "microsoft"; then
      { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether ${CXX} accepts -arch:SSE2" >&5

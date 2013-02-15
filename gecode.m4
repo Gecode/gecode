@@ -758,7 +758,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
     AC_GECODE_ADD_TO_COMPILERFLAGS([${ac_gecode_cl_optimize_flag}])
-    AC_GECODE_ADD_TO_COMPILERFLAGS([-MD -fp:fast -GS- -wd4355])
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-MD -GS- -wd4355])
     AC_GECODE_CHECK_COMPILERFLAG([-arch:SSE2])
 
     dnl flags for creating optimized dlls
