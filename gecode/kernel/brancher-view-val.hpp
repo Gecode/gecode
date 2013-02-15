@@ -72,8 +72,8 @@ namespace Gecode {
   template<class View, int n, class Val, unsigned int a>
   class ViewValBrancher : public ViewBrancher<View,n> {
     typedef typename ViewBrancher<View,n>::BranchFilter BranchFilter;
-    using ViewBrancher<View,n>::vs;
   protected:
+    using ViewBrancher<View,n>::vs;
     using ViewBrancher<View,n>::x;
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
