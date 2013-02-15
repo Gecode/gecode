@@ -107,6 +107,25 @@ namespace Gecode { namespace Search {
 
 
   /*
+   * Stopping for restart limit
+   *
+   */
+
+  forceinline
+  RestartStop::RestartStop(unsigned long int l0) : l(l0) {}
+
+  forceinline unsigned long int
+  RestartStop::limit(void) const {
+    return l;
+  }
+
+  forceinline void
+  RestartStop::limit(unsigned long int l0) {
+    l=l0;
+  }
+
+
+  /*
    * Stopping for time limit
    *
    */

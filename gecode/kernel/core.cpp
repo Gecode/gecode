@@ -562,6 +562,10 @@ namespace Gecode {
   }
 
   void
+  Space::configure(const Space&) {
+  }
+
+  void
   LocalObject::fwdcopy(Space& home, bool share) {
     ActorLink::cast(this)->prev(copy(home,share));
     next(home.pc.c.local);

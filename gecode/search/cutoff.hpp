@@ -58,7 +58,7 @@ namespace Gecode { namespace Search {
     /// Compute Luby number for step \a i
     static unsigned long int luby(unsigned long int i);
     /// Constructor
-    CutoffLuby(unsigned long int scale0);
+    CutoffLuby(unsigned long int scale);
   public:
     /// Return next cutoff value
     virtual unsigned long int operator() (void);
@@ -73,7 +73,7 @@ namespace Gecode { namespace Search {
     /// Scale factor
     double scale;
     /// Constructor
-    CutoffGeometric(unsigned long int base, double scale0);
+    CutoffGeometric(unsigned long int base, double scale);
   public:
     /// Return next cutoff value
     virtual unsigned long int operator ()(void);
@@ -93,8 +93,8 @@ namespace Gecode { namespace Search {
     unsigned long int step;
     /// Constructor
     CutoffRandom(unsigned int seed, 
-                 unsigned long int min0, unsigned long int max0, 
-                 unsigned long int n0);
+                 unsigned long int min, unsigned long int max, 
+                 unsigned long int n);
   public:
     /// Return next cutoff value
     virtual unsigned long int operator ()(void);

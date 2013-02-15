@@ -70,6 +70,16 @@ namespace Gecode { namespace Search {
 
 
   /*
+   * Stopping for restart limit
+   *
+   */
+  bool
+  RestartStop::stop(const Statistics& s, const Options&) {
+    return s.restart > l;
+  }
+
+
+  /*
    * Stopping for time limit
    *
    */

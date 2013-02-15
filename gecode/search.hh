@@ -109,6 +109,8 @@ namespace Gecode { namespace Search {
     unsigned long int depth;
     /// Peak memory allocated
     size_t memory;
+    /// Number of restarts (only with meta engines)
+    unsigned long int restart;
     /// Initialize
     Statistics(void);
     /// Reset
@@ -278,6 +280,29 @@ namespace Gecode { namespace Search {
     /// Set current limit to \a l failures
     void limit(unsigned long int l);
     /// Return true if failure limit is exceeded
+    virtual bool stop(const Statistics& s, const Options& o);
+  };
+  
+  /**
+   * \brief %Stop-object based on number of restarts
+   *
+   * The number of restarts reported (by the statistics) is the
+   * number since the meta engine started exploration. It is not the
+   * number since the last stop!
+   * \ingroup TaskModelSearchStop
+   */
+  class GECODE_SEARCH_EXPORT RestartStop : public Stop {
+  protected:
+    /// Restart limit
+    unsigned long int l;
+  public:
+    /// Stop if failure limit \a l is exceeded
+    RestartStop(unsigned long int l);
+    /// Return current limit
+    unsigned long int limit(void) const;
+    /// Set current limit to \a l failures
+    void limit(unsigned long int l);
+    /// Return true if restart limit is exceeded
     virtual bool stop(const Statistics& s, const Options& o);
   };
   
