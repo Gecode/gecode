@@ -319,6 +319,11 @@
  */
 
 /**
+ * \namespace Gecode::Search
+ * \brief %Search engines
+ */
+
+/**
  * \mainpage %Gecode Reference Documentation
  *
  * This document provides reference information about
