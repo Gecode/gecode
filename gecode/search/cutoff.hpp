@@ -101,7 +101,17 @@ namespace Gecode { namespace Search {
   };
   
   forceinline
+  Cutoff::Cutoff(void) {}
+  forceinline
   Cutoff::~Cutoff(void) {}
+  forceinline void*
+  Cutoff::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  Cutoff::operator delete(void* p) {
+    heap.rfree(p);
+  }
 
 }}
 

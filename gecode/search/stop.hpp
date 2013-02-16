@@ -43,9 +43,16 @@ namespace Gecode { namespace Search {
    */
   forceinline
   Stop::Stop(void) {}
-
   forceinline
   Stop::~Stop(void) {}
+  forceinline void*
+  Stop::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  Stop::operator delete(void* p) {
+    heap.rfree(p);
+  }
 
 
 
@@ -102,25 +109,6 @@ namespace Gecode { namespace Search {
 
   forceinline void
   FailStop::limit(unsigned long int l0) {
-    l=l0;
-  }
-
-
-  /*
-   * Stopping for restart limit
-   *
-   */
-
-  forceinline
-  RestartStop::RestartStop(unsigned long int l0) : l(l0) {}
-
-  forceinline unsigned long int
-  RestartStop::limit(void) const {
-    return l;
-  }
-
-  forceinline void
-  RestartStop::limit(unsigned long int l0) {
     l=l0;
   }
 

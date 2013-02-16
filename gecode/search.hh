@@ -109,7 +109,7 @@ namespace Gecode { namespace Search {
     unsigned long int depth;
     /// Peak memory allocated
     size_t memory;
-    /// Number of restarts (only with meta engines)
+    /// Number of restarts
     unsigned long int restart;
     /// Initialize
     Statistics(void);
@@ -128,6 +128,7 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
     class Stop;
+    class Cutoff;
 
     /**
      * \brief %Search engine options
@@ -178,6 +179,8 @@ namespace Gecode { namespace Search {
       unsigned int a_d;
       /// Stop object for stopping search
       Stop* stop;
+      /// Cutoff for restart-based search
+      Cutoff* cutoff;
       /// Default options
       GECODE_SEARCH_EXPORT static const Options def;
       /// Initialize with default values
@@ -215,6 +218,10 @@ namespace Gecode { namespace Search {
     virtual bool stop(const Statistics& s, const Options& o) = 0;
     /// Destructor
     virtual ~Stop(void);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
   };
   
   /**
@@ -284,29 +291,6 @@ namespace Gecode { namespace Search {
   };
   
   /**
-   * \brief %Stop-object based on number of restarts
-   *
-   * The number of restarts reported (by the statistics) is the
-   * number since the meta engine started exploration. It is not the
-   * number since the last stop!
-   * \ingroup TaskModelSearchStop
-   */
-  class GECODE_SEARCH_EXPORT RestartStop : public Stop {
-  protected:
-    /// Restart limit
-    unsigned long int l;
-  public:
-    /// Stop if failure limit \a l is exceeded
-    RestartStop(unsigned long int l);
-    /// Return current limit
-    unsigned long int limit(void) const;
-    /// Set current limit to \a l failures
-    void limit(unsigned long int l);
-    /// Return true if restart limit is exceeded
-    virtual bool stop(const Statistics& s, const Options& o);
-  };
-  
-  /**
    * \brief %Stop-object based on time
    * \ingroup TaskModelSearchStop
    */
@@ -340,6 +324,8 @@ namespace Gecode { namespace Search {
      */
     class GECODE_SEARCH_EXPORT Cutoff {
     public:
+      /// Default constructor
+      Cutoff(void);
       /// Return next cutoff value
       virtual unsigned long int operator ()(void) = 0;
       /// Destructor
@@ -360,6 +346,10 @@ namespace Gecode { namespace Search {
       rnd(unsigned int seed, 
           unsigned long int min, unsigned long int max, 
           unsigned long int n);
+      /// Allocate memory from heap
+      static void* operator new(size_t s);
+      /// Free memory allocated from heap
+      static void  operator delete(void* p);
     };
     
 }}
