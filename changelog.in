@@ -73,13 +73,19 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
-Module: kernel
+Module: driver
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added member functions AFC_reset() and AFC_decay() to reset and
-decay the AFC information of a space (the flush() member function
-does not reset the AFC information any longer).
+Decay values can now be passed on the command line using the
+switch -decay.
+
+[ENTRY]
+Module: other
+What:   new
+Rank:   major
+[DESCRIPTION]
+Variable selection using AFC now supports decay. Read more in MPG.
 
 [ENTRY]
 Module: int

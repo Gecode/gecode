@@ -165,7 +165,7 @@ public:
        * equivalent to SIZE/AFC in this case since the variables are
        * binary.
        */
-      branch(*this, b, INT_VAR_AFC_MAX(), INT_VAL_MAX());
+      branch(*this, b, INT_VAR_AFC_MAX(opt.decay()), INT_VAL_MAX());
       break;
     }
   }

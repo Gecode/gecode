@@ -55,18 +55,26 @@ namespace Gecode {
   class VarBranch {
   protected:
     /// Tie-breaking limit function
-    BranchTbl t;
+    BranchTbl _tbl;
     /// Random number generator
-    Rnd r;
+    Rnd _rnd;
+    /// Decay information for AFC and activity
+    double _decay;
+    /// AFC information
+    AFC _afc;
     /// Activity information
-    Activity a;
+    Activity _act;
     /// Merit function (generic function pointer)
-    VoidFunction mf;
+    VoidFunction _mf;
   public:
     /// Initialize with tie-break limit function \a t
     VarBranch(BranchTbl t);
     /// Initialize with random number generator \a r
     VarBranch(Rnd r);
+    /// Initialize with decay factor \a d and tie-break limit function \a t
+    VarBranch(double d, BranchTbl t);
+    /// Initialize with AFC \a a and tie-break limit function \a t
+    VarBranch(AFC a, BranchTbl t);
     /// Initialize with activity \a a and tie-break limit function \a t
     VarBranch(Activity a, BranchTbl t);
     /// Initialize with merit function \a f and tie-break limit function \a t
@@ -75,6 +83,10 @@ namespace Gecode {
     BranchTbl tbl(void) const;
     /// Return random number generator
     Rnd rnd(void) const;
+    /// Return decay factor
+    double decay(void) const;
+    /// Return AFC
+    AFC afc(void) const;
     /// Return activity
     Activity activity(void) const;
     /// Return merit function
@@ -83,45 +95,66 @@ namespace Gecode {
 
   // Variable branching
   forceinline 
-  VarBranch::VarBranch(BranchTbl t0)
-    : t(t0), mf(NULL) {}
+  VarBranch::VarBranch(BranchTbl t)
+    : _tbl(t) {}
 
   forceinline 
-  VarBranch::VarBranch(Activity a0, BranchTbl t0)
-    : t(t0), a(a0), mf(NULL) {
-    if (!a.initialized())
+  VarBranch::VarBranch(double d, BranchTbl t)
+    : _tbl(t), _decay(d) {}
+
+  forceinline 
+  VarBranch::VarBranch(AFC a, BranchTbl t)
+    : _tbl(t), _afc(a) {
+    if (!_afc.initialized())
+      throw UninitializedAFC("VarBranch::VarBranch");
+  }
+
+  forceinline 
+  VarBranch::VarBranch(Activity a, BranchTbl t)
+    : _tbl(t), _act(a) {
+    if (!_act.initialized())
       throw UninitializedActivity("VarBranch::VarBranch");
   }
 
   forceinline 
-  VarBranch::VarBranch(Rnd r0)
-    : t(NULL), r(r0), mf(NULL) {
-    if (!r.initialized())
+  VarBranch::VarBranch(Rnd r)
+    : _tbl(NULL), _rnd(r) {
+    if (!_rnd.initialized())
       throw UninitializedRnd("VarBranch::VarBranch");
   }
 
   forceinline 
-  VarBranch::VarBranch(VoidFunction f, BranchTbl t0)
-    : t(t0), mf(f) {}
+  VarBranch::VarBranch(VoidFunction f, BranchTbl t)
+    : _tbl(t), _mf(f) {}
 
   forceinline BranchTbl
   VarBranch::tbl(void) const {
-    return t;
+    return _tbl;
   }
 
   inline Rnd
   VarBranch::rnd(void) const {
-    return r;
+    return _rnd;
+  }
+
+  inline double
+  VarBranch::decay(void) const {
+    return _decay;
+  }
+
+  inline AFC
+  VarBranch::afc(void) const {
+    return _afc;
   }
 
   inline Activity
   VarBranch::activity(void) const {
-    return a;
+    return _act;
   }
 
   forceinline VoidFunction
   VarBranch::merit(void) const {
-    return mf;
+    return _mf;
   }
 
 }

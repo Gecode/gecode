@@ -44,19 +44,19 @@ namespace Gecode {
     Activity::init(home,y,d);
   }
 
+  IntActivity::IntActivity(Home home, const BoolVarArgs& x, double d) {
+    ViewArray<Int::BoolView> y(home,x);
+    Activity::init(home,y,d);
+  }
+
   void
   IntActivity::init(Home home, const IntVarArgs& x, double d) {
     ViewArray<Int::IntView> y(home,x);
     Activity::init(home,y,d);
   }
 
-  BoolActivity::BoolActivity(Home home, const BoolVarArgs& x, double d) {
-    ViewArray<Int::BoolView> y(home,x);
-    Activity::init(home,y,d);
-  }
-
   void
-  BoolActivity::init(Home home, const BoolVarArgs& x, double d) {
+  IntActivity::init(Home home, const BoolVarArgs& x, double d) {
     ViewArray<Int::BoolView> y(home,x);
     Activity::init(home,y,d);
   }

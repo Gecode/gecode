@@ -108,7 +108,7 @@ public:
     // Break value symmetries
     precede(*this, box, IntArgs::create(opt.c, 1));
 
-    branch(*this, box, INT_VAR_SIZE_AFC_MIN(), INT_VAL_MIN());
+    branch(*this, box, INT_VAR_SIZE_AFC_MIN(opt.decay()), INT_VAL_MIN());
   }
   /// Print solution
   virtual void

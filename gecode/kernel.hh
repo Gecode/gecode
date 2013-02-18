@@ -123,7 +123,7 @@
  */
 
 #include <gecode/kernel/archive.hpp>
-#include <gecode/kernel/global-prop-info.hpp>
+#include <gecode/kernel/global-afc.hpp>
 #include <gecode/kernel/core.hpp>
 #include <gecode/kernel/modevent.hpp>
 #include <gecode/kernel/range-list.hpp>
@@ -205,6 +205,7 @@ namespace Gecode {
 
 #include <gecode/kernel/propagator.hpp>
 #include <gecode/kernel/advisor.hpp>
+#include <gecode/kernel/afc.hpp>
 #include <gecode/kernel/activity.hpp>
 #include <gecode/kernel/branch-traits.hpp>
 #include <gecode/kernel/branch-var.hpp>

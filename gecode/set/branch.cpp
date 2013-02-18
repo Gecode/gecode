@@ -44,6 +44,7 @@ namespace Gecode {
          SetVarBranch vars, SetValBranch vals, SetBranchFilter bf) {
     using namespace Set;
     if (home.failed()) return;
+    vars.expand(home,x);
     ViewArray<SetView> xv(home,x);
     ViewSel<SetView>* vs[1] = { 
       Branch::viewsel(home,vars) 
@@ -57,15 +58,19 @@ namespace Gecode {
          TieBreak<SetVarBranch> vars, SetValBranch vals, SetBranchFilter bf) {
     using namespace Set;
     if (home.failed()) return;
+    vars.a.expand(home,x);
     if ((vars.a.select() == SetVarBranch::SEL_NONE) ||
         (vars.a.select() == SetVarBranch::SEL_RND))
       vars.b = SET_VAR_NONE();
+    vars.b.expand(home,x);
     if ((vars.b.select() == SetVarBranch::SEL_NONE) ||
         (vars.b.select() == SetVarBranch::SEL_RND))
       vars.c = SET_VAR_NONE();
+    vars.c.expand(home,x);
     if ((vars.c.select() == SetVarBranch::SEL_NONE) ||
         (vars.c.select() == SetVarBranch::SEL_RND))
       vars.d = SET_VAR_NONE();
+    vars.d.expand(home,x);
     if (vars.b.select() == SetVarBranch::SEL_NONE) {
       branch(home,x,vars.a,vals,bf);
     } else {

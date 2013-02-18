@@ -71,9 +71,9 @@ namespace Gecode { namespace Set { namespace Branch {
       case SetVarBranch::SEL_DEGREE_MAX:
         return new (home) ViewSelMaxTbl<MeritDegree<SetView> >(home,svb);
       case SetVarBranch::SEL_AFC_MIN:
-        return new (home) ViewSelMinTbl<MeritAfc<SetView> >(home,svb);
+        return new (home) ViewSelMinTbl<MeritAFC<SetView> >(home,svb);
       case SetVarBranch::SEL_AFC_MAX:
-        return new (home) ViewSelMaxTbl<MeritAfc<SetView> >(home,svb);
+        return new (home) ViewSelMaxTbl<MeritAFC<SetView> >(home,svb);
       case SetVarBranch::SEL_ACTIVITY_MIN:
         return new (home) ViewSelMinTbl<MeritActivity<SetView> >(home,svb);
       case SetVarBranch::SEL_ACTIVITY_MAX:
@@ -83,9 +83,9 @@ namespace Gecode { namespace Set { namespace Branch {
       case SetVarBranch::SEL_SIZE_DEGREE_MAX:
         return new (home) ViewSelMaxTbl<MeritSizeDegree>(home,svb);
       case SetVarBranch::SEL_SIZE_AFC_MIN:
-        return new (home) ViewSelMinTbl<MeritSizeAfc>(home,svb);
+        return new (home) ViewSelMinTbl<MeritSizeAFC>(home,svb);
       case SetVarBranch::SEL_SIZE_AFC_MAX:
-        return new (home) ViewSelMaxTbl<MeritSizeAfc>(home,svb);
+        return new (home) ViewSelMaxTbl<MeritSizeAFC>(home,svb);
       case SetVarBranch::SEL_SIZE_ACTIVITY_MIN:
         return new (home) ViewSelMinTbl<MeritSizeActivity>(home,svb);
       case SetVarBranch::SEL_SIZE_ACTIVITY_MAX:
@@ -116,9 +116,9 @@ namespace Gecode { namespace Set { namespace Branch {
       case SetVarBranch::SEL_DEGREE_MAX:
         return new (home) ViewSelMax<MeritDegree<SetView> >(home,svb);
       case SetVarBranch::SEL_AFC_MIN:
-        return new (home) ViewSelMin<MeritAfc<SetView> >(home,svb);
+        return new (home) ViewSelMin<MeritAFC<SetView> >(home,svb);
       case SetVarBranch::SEL_AFC_MAX:
-        return new (home) ViewSelMax<MeritAfc<SetView> >(home,svb);
+        return new (home) ViewSelMax<MeritAFC<SetView> >(home,svb);
       case SetVarBranch::SEL_ACTIVITY_MIN:
         return new (home) ViewSelMin<MeritActivity<SetView> >(home,svb);
       case SetVarBranch::SEL_ACTIVITY_MAX:
@@ -128,9 +128,9 @@ namespace Gecode { namespace Set { namespace Branch {
       case SetVarBranch::SEL_SIZE_DEGREE_MAX:
         return new (home) ViewSelMax<MeritSizeDegree>(home,svb);
       case SetVarBranch::SEL_SIZE_AFC_MIN:
-        return new (home) ViewSelMin<MeritSizeAfc>(home,svb);
+        return new (home) ViewSelMin<MeritSizeAFC>(home,svb);
       case SetVarBranch::SEL_SIZE_AFC_MAX:
-        return new (home) ViewSelMax<MeritSizeAfc>(home,svb);
+        return new (home) ViewSelMax<MeritSizeAFC>(home,svb);
       case SetVarBranch::SEL_SIZE_ACTIVITY_MIN:
         return new (home) ViewSelMin<MeritSizeActivity>(home,svb);
       case SetVarBranch::SEL_SIZE_ACTIVITY_MAX:

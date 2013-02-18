@@ -44,6 +44,7 @@ namespace Gecode {
          IntVarBranch vars, IntValBranch vals, IntBranchFilter bf) {
     using namespace Int;
     if (home.failed()) return;
+    vars.expand(home,x);
     ViewArray<IntView> xv(home,x);
     ViewSel<IntView>* vs[1] = { 
       Branch::viewselint(home,vars) 
@@ -66,15 +67,19 @@ namespace Gecode {
          TieBreak<IntVarBranch> vars, IntValBranch vals, IntBranchFilter bf) {
     using namespace Int;
     if (home.failed()) return;
+    vars.a.expand(home,x);
     if ((vars.a.select() == IntVarBranch::SEL_NONE) ||
         (vars.a.select() == IntVarBranch::SEL_RND))
       vars.b = INT_VAR_NONE();
+    vars.b.expand(home,x);
     if ((vars.b.select() == IntVarBranch::SEL_NONE) ||
         (vars.b.select() == IntVarBranch::SEL_RND))
       vars.c = INT_VAR_NONE();
+    vars.c.expand(home,x);
     if ((vars.c.select() == IntVarBranch::SEL_NONE) ||
         (vars.c.select() == IntVarBranch::SEL_RND))
       vars.d = INT_VAR_NONE();
+    vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
       branch(home,x,vars.a,vals,bf);
     } else {
@@ -161,6 +166,7 @@ namespace Gecode {
          IntVarBranch vars, IntValBranch vals, BoolBranchFilter bf) {
     using namespace Int;
     if (home.failed()) return;
+    vars.expand(home,x);
     ViewArray<BoolView> xv(home,x);
     ViewSel<BoolView>* vs[1] = { 
       Branch::viewselbool(home,vars) 
@@ -175,15 +181,19 @@ namespace Gecode {
          BoolBranchFilter bf) {
     using namespace Int;
     if (home.failed()) return;
+    vars.a.expand(home,x);
     if ((vars.a.select() == IntVarBranch::SEL_NONE) ||
         (vars.a.select() == IntVarBranch::SEL_RND))
       vars.b = INT_VAR_NONE();
+    vars.b.expand(home,x);
     if ((vars.b.select() == IntVarBranch::SEL_NONE) ||
         (vars.b.select() == IntVarBranch::SEL_RND))
       vars.c = INT_VAR_NONE();
+    vars.c.expand(home,x);
     if ((vars.c.select() == IntVarBranch::SEL_NONE) ||
         (vars.c.select() == IntVarBranch::SEL_RND))
       vars.d = INT_VAR_NONE();
+    vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
       branch(home,x,vars.a,vals,bf);
     } else {

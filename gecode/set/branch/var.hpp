@@ -50,6 +50,14 @@ namespace Gecode {
     : VarBranch(r), s(SEL_RND) {}
 
   forceinline 
+  SetVarBranch::SetVarBranch(Select s0, double d, BranchTbl t)
+    : VarBranch(d,t), s(s0) {}
+
+  forceinline 
+  SetVarBranch::SetVarBranch(Select s0, AFC a, BranchTbl t)
+    : VarBranch(a,t), s(s0) {}
+
+  forceinline 
   SetVarBranch::SetVarBranch(Select s0, Activity a, BranchTbl t)
     : VarBranch(a,t), s(s0) {}
 
@@ -62,6 +70,22 @@ namespace Gecode {
     return s;
   }
 
+  forceinline void
+  SetVarBranch::expand(Home home, const SetVarArgs& x) {
+    switch (select()) {
+    case SEL_AFC_MIN: case SEL_AFC_MAX:
+    case SEL_SIZE_AFC_MIN: case SEL_SIZE_AFC_MAX:
+      if (!_afc.initialized())
+        _afc = SetAFC(home,x,decay());
+      break;
+    case SEL_ACTIVITY_MIN: case SEL_ACTIVITY_MAX:
+    case SEL_SIZE_ACTIVITY_MIN: case SEL_SIZE_ACTIVITY_MAX:
+      if (!_act.initialized())
+        _act = SetActivity(home,x,decay());
+      break;
+    default: ;
+    }
+  }
 
   inline SetVarBranch
   SET_VAR_NONE(void) {
@@ -96,18 +120,38 @@ namespace Gecode {
   }
 
   inline SetVarBranch
-  SET_VAR_AFC_MIN(BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_AFC_MIN,tbl);
+  SET_VAR_AFC_MIN(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_AFC_MIN,d,tbl);
   }
 
   inline SetVarBranch
-  SET_VAR_AFC_MAX(BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_AFC_MAX,tbl);
+  SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_AFC_MIN,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_AFC_MAX(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_AFC_MAX,d,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_AFC_MAX,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_ACTIVITY_MIN(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_ACTIVITY_MIN,d,tbl);
   }
 
   inline SetVarBranch
   SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl) {
     return SetVarBranch(SetVarBranch::SEL_ACTIVITY_MIN,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_ACTIVITY_MAX(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_ACTIVITY_MAX,d,tbl);
   }
 
   inline SetVarBranch
@@ -156,18 +200,38 @@ namespace Gecode {
   }
 
   inline SetVarBranch
-  SET_VAR_SIZE_AFC_MIN(BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_SIZE_AFC_MIN,tbl);
+  SET_VAR_SIZE_AFC_MIN(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_SIZE_AFC_MIN,d,tbl);
   }
 
   inline SetVarBranch
-  SET_VAR_SIZE_AFC_MAX(BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_SIZE_AFC_MAX,tbl);
+  SET_VAR_SIZE_AFC_MIN(SetAFC a, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_SIZE_AFC_MIN,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_SIZE_AFC_MAX(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_SIZE_AFC_MAX,d,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_SIZE_AFC_MAX(SetAFC a, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_SIZE_AFC_MAX,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_SIZE_ACTIVITY_MIN(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_SIZE_ACTIVITY_MIN,d,tbl);
   }
 
   inline SetVarBranch
   SET_VAR_SIZE_ACTIVITY_MIN(SetActivity a, BranchTbl tbl) {
     return SetVarBranch(SetVarBranch::SEL_SIZE_ACTIVITY_MIN,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_SIZE_ACTIVITY_MAX(double d, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_SIZE_ACTIVITY_MAX,d,tbl);
   }
 
   inline SetVarBranch

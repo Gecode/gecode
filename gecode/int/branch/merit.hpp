@@ -101,28 +101,40 @@ namespace Gecode { namespace Int { namespace Branch {
   // Size over AFC merit
   template<class View>
   forceinline
-  MeritSizeAfc<View>::MeritSizeAfc(Space& home, const VarBranch& vb)
-    : MeritBase<View,double>(home,vb) {}
+  MeritSizeAFC<View>::MeritSizeAFC(Space& home, const VarBranch& vb)
+    : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
-  MeritSizeAfc<View>::MeritSizeAfc(Space& home, bool shared, MeritSizeAfc& m)
-    : MeritBase<View,double>(home,shared,m) {}
+  MeritSizeAFC<View>::MeritSizeAFC(Space& home, bool shared, MeritSizeAFC& m)
+    : MeritBase<View,double>(home,shared,m) {
+    afc.update(home,shared,m.afc);
+  }
   template<class View>
   forceinline double
-  MeritSizeAfc<View>::operator ()(const Space&, View x, int) {
-    return static_cast<double>(x.size()) / x.afc();
+  MeritSizeAFC<View>::operator ()(const Space& home, View x, int) {
+    return static_cast<double>(x.size()) / x.afc(home);
+  }
+  template<class View>
+  forceinline bool
+  MeritSizeAFC<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  MeritSizeAFC<View>::dispose(Space&) {
+    afc.~AFC();
   }
 
   // Size over activity merit
   template<class View>
   forceinline
   MeritSizeActivity<View>::MeritSizeActivity(Space& home,
-                                       const VarBranch& vb)
+                                             const VarBranch& vb)
     : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
   template<class View>
   forceinline
   MeritSizeActivity<View>::MeritSizeActivity(Space& home, bool shared, 
-                                       MeritSizeActivity& m)
+                                             MeritSizeActivity& m)
     : MeritBase<View,double>(home,shared,m) {
     activity.update(home, shared, m.activity);
   }

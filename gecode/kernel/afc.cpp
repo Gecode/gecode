@@ -35,20 +35,12 @@
  *
  */
 
+#include <gecode/kernel.hh>
+
 namespace Gecode {
 
-  forceinline
-  IntActivity::IntActivity(void) {}
-
-  forceinline
-  IntActivity::IntActivity(const IntActivity& a)
-    : Activity(a) {}
-
-  forceinline IntActivity&
-  IntActivity::operator =(const IntActivity& a) {
-    return static_cast<IntActivity&>(Activity::operator =(a));
-  }
+  const AFC AFC::def;
 
 }
 
-// STATISTICS: int-branch
+// STATISTICS: kernel-branch

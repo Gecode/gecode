@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2012
+ *     Christian Schulte, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,15 +38,35 @@
 namespace Gecode {
 
   forceinline
-  IntActivity::IntActivity(void) {}
+  IntAFC::IntAFC(void) {}
 
   forceinline
-  IntActivity::IntActivity(const IntActivity& a)
-    : Activity(a) {}
+  IntAFC::IntAFC(const IntAFC& a)
+    : AFC(a) {}
 
-  forceinline IntActivity&
-  IntActivity::operator =(const IntActivity& a) {
-    return static_cast<IntActivity&>(Activity::operator =(a));
+  forceinline IntAFC&
+  IntAFC::operator =(const IntAFC& a) {
+    return static_cast<IntAFC&>(AFC::operator =(a));
+  }
+
+  forceinline
+  IntAFC::IntAFC(Home home, const IntVarArgs& x, double d) {
+    AFC::init(home,x,d);
+  }
+
+  forceinline
+  IntAFC::IntAFC(Home home, const BoolVarArgs& x, double d) {
+    AFC::init(home,x,d);
+  }
+
+  forceinline void
+  IntAFC::init(Home home, const IntVarArgs& x, double d) {
+    AFC::init(home,x,d);
+  }
+
+  forceinline void
+  IntAFC::init(Home home, const BoolVarArgs& x, double d) {
+    AFC::init(home,x,d);
   }
 
 }

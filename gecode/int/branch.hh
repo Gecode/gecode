@@ -134,14 +134,21 @@ namespace Gecode { namespace Int { namespace Branch {
    * \ingroup FuncIntViewSel
    */
   template<class View>
-  class MeritSizeAfc : public MeritBase<View,double> {
+  class MeritSizeAFC : public MeritBase<View,double> {
+  protected:
+    /// AFC information
+    AFC afc;
   public:
     /// Constructor for initialization
-    MeritSizeAfc(Space& home, const VarBranch& vb);
+    MeritSizeAFC(Space& home, const VarBranch& vb);
     /// Constructor for cloning
-    MeritSizeAfc(Space& home, bool shared, MeritSizeAfc& m);
+    MeritSizeAFC(Space& home, bool shared, MeritSizeAFC& m);
     /// Return size over AFC as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
   };
 
   /**
@@ -152,6 +159,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class View>
   class MeritSizeActivity : public MeritBase<View,double> {
+  protected:
     /// Activity information
     Activity activity;
   public:

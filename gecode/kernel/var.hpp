@@ -65,8 +65,8 @@ namespace Gecode {
     VarImp* varimp(void) const;
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
-    /// Return accumulated failure count (plus degree)
-    double afc(void) const;
+    /// Return accumulated failure count
+    double afc(const Space& home) const;
     //@}
 
     /// \name Domain tests
@@ -115,8 +115,8 @@ namespace Gecode {
   }
   template<class VarImp>
   forceinline double
-  VarImpVar<VarImp>::afc(void) const {
-    return x->afc();
+  VarImpVar<VarImp>::afc(const Space& home) const {
+    return x->afc(home);
   }
   template<class VarImp>
   forceinline bool

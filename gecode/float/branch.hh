@@ -131,14 +131,21 @@ namespace Gecode { namespace Float { namespace Branch {
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatViewSel
    */
-  class MeritSizeAfc : public MeritBase<FloatView,double> {
+  class MeritSizeAFC : public MeritBase<FloatView,double> {
+  protected:
+    /// AFC information
+    AFC afc;
   public:
     /// Constructor for initialization
-    MeritSizeAfc(Space& home, const VarBranch& vb);
+    MeritSizeAFC(Space& home, const VarBranch& vb);
     /// Constructor for cloning
-    MeritSizeAfc(Space& home, bool shared, MeritSizeAfc& m);
+    MeritSizeAFC(Space& home, bool shared, MeritSizeAFC& m);
     /// Return size over AFC as merit for view \a x at position \a i
     double operator ()(const Space& home, FloatView x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
   };
 
   /**
@@ -148,6 +155,7 @@ namespace Gecode { namespace Float { namespace Branch {
    * \ingroup FuncFloatViewSel
    */
   class MeritSizeActivity : public MeritBase<FloatView,double> {
+  protected:
     /// Activity information
     Activity activity;
   public:

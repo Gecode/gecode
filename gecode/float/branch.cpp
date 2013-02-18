@@ -44,6 +44,7 @@ namespace Gecode {
          FloatVarBranch vars, FloatValBranch vals, FloatBranchFilter bf) {
     using namespace Float;
     if (home.failed()) return;
+    vars.expand(home,x);
     ViewArray<FloatView> xv(home,x);
     ViewSel<FloatView>* vs[1] = { 
       Branch::viewsel(home,vars) 
@@ -66,15 +67,19 @@ namespace Gecode {
          FloatBranchFilter bf) {
     using namespace Float;
     if (home.failed()) return;
+    vars.a.expand(home,x);
     if ((vars.a.select() == FloatVarBranch::SEL_NONE) ||
         (vars.a.select() == FloatVarBranch::SEL_RND))
       vars.b = FLOAT_VAR_NONE();
+    vars.b.expand(home,x);
     if ((vars.b.select() == FloatVarBranch::SEL_NONE) ||
         (vars.b.select() == FloatVarBranch::SEL_RND))
       vars.c = FLOAT_VAR_NONE();
+    vars.c.expand(home,x);
     if ((vars.c.select() == FloatVarBranch::SEL_NONE) ||
         (vars.c.select() == FloatVarBranch::SEL_RND))
       vars.d = FLOAT_VAR_NONE();
+    vars.d.expand(home,x);
     if (vars.b.select() == FloatVarBranch::SEL_NONE) {
       branch(home,x,vars.a,vals,bf);
     } else {

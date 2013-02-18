@@ -211,6 +211,16 @@ namespace Gecode {
   Options::branching(void) const {
     return _branching.value();
   }
+
+  inline void
+  Options::decay(double d) {
+    _decay.value(d);
+  }
+  inline double
+  Options::decay(void) const {
+    return _decay.value();
+  }
+  
   
   /*
    * Search options

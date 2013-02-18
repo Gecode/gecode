@@ -220,7 +220,7 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<IntVarBranch>(INT_VAR_REGRET_MIN_MAX());
       if (s->id == "most_constrained")
         return TieBreak<IntVarBranch>(INT_VAR_SIZE_MIN(),
-                                               INT_VAR_DEGREE_MAX());
+                                      INT_VAR_DEGREE_MAX());
       if (s->id == "random") {
         Rnd r(static_cast<unsigned int>(seed));
         return TieBreak<IntVarBranch>(INT_VAR_RND(r));
@@ -351,7 +351,7 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<FloatVarBranch>(FLOAT_VAR_DEGREE_MAX());
       if (s->id == "most_constrained")
         return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_MIN(),
-                                                 FLOAT_VAR_DEGREE_MAX());
+                                        FLOAT_VAR_DEGREE_MAX());
       if (s->id == "random") {
         Rnd r(static_cast<unsigned int>(seed));
         return TieBreak<FloatVarBranch>(FLOAT_VAR_RND(r));
@@ -775,8 +775,8 @@ namespace Gecode { namespace FlatZinc {
         bv_sol[k++] = bv[i];
       }
 
-    branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN(), INT_VAL_MIN());
-    branch(*this, bv_sol, INT_VAR_AFC_MAX(), INT_VAL_MIN());
+    branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN(0.99), INT_VAL_MIN());
+    branch(*this, bv_sol, INT_VAR_AFC_MAX(0.99), INT_VAL_MIN());
 #ifdef GECODE_HAS_FLOAT_VARS
     introduced = 0;
     funcdep = 0;
@@ -823,7 +823,7 @@ namespace Gecode { namespace FlatZinc {
         sv_sol[k++] = sv[i];
       }
 
-    branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN(), SET_VAL_MIN_INC());
+    branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN(0.99), SET_VAL_MIN_INC());
 #endif
     iv_aux = IntVarArray(*this, iv_tmp);
     bv_aux = BoolVarArray(*this, bv_tmp);

@@ -194,7 +194,7 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	activity rnd
+	afc activity rnd
 
 KERNELHDR0 = \
 	archive array shared-array core exception \
@@ -204,8 +204,9 @@ KERNELHDR0 = \
 	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit \
-	allocators global-prop-info \
-	activity rnd branch-traits
+	allocators global-afc \
+	afc activity rnd branch-traits
+
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
@@ -388,7 +389,7 @@ INTHDR0 = \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
 	val-set.hh val-set.hpp \
 	member.hh member/prop.hpp member/re-prop.hpp \
-	branch/activity.hpp
+	branch/afc.hpp branch/activity.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
@@ -447,7 +448,7 @@ FLOATHDR0 = \
 	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp \
-	branch.hh branch/activity.hpp branch/traits.hpp \
+	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp \
 	num.hpp val.hpp rounding.hpp nextafter.hpp
@@ -534,7 +535,7 @@ SETHDR0 =								     \
 	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
 	precede.hh precede/single.hpp \
 	rel-op.hh					     \
-	branch.hh branch/activity.hpp branch/traits.hpp \
+	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp
 

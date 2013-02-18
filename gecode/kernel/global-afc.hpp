@@ -35,41 +35,62 @@
  *
  */
 
+#include <cmath>
+
 namespace Gecode {
 
-  class GlobalPropInfo;
-
-  /// Class for propagator information
-  class PropInfo {
-  private:
-    /// Accumulated failure count
-    double _afc;
-  public:
-    /// Initialize
-    PropInfo(void);
-    /// Initialize
-    void init(void);
-    /// Decay AFC information by factor \a d
-    void decay(double d);
-    /// Return accumulated failure count
-    double afc(void) const;
-    /// Increment failure count
-    void fail(GlobalPropInfo& gpi);
-  };
-
   /// Globally shared object for propagator information
-  class GlobalPropInfo {
-    friend class PropInfo;
+  class GlobalAFC {
+  public:
+    /// Class for storing timed-decay value
+    class Counter {
+    public:
+      /// The counter value
+      double c;
+      /// The time-stamp
+      unsigned long int t;
+      /// Initialize
+      void init(void);
+    };
   private:
     /// Block of propagator information (of variable size)
     class Block {
     public:
       /// Next block
       Block* next;
-      /// Start of information entries
-      PropInfo pi[1];
+      /// Start of counter entries
+      Counter c[1];
       /// Allocate block with \a n entries and previous block \a p
       static Block* allocate(unsigned int n, Block* p=NULL);
+    };
+    /// Class for managing timed-decay values
+    class DecayManager {
+    protected:
+      /// The decay factor
+      double d;
+      /// The number of precomputed decay powers
+      static const unsigned int n_dpow = 8U;
+      /// Precomputed decay powers
+      double dpow[n_dpow];
+      /// The global time-stamp
+      unsigned long int t;
+      /// Decay counter value
+      void decay(Counter& c);
+    public:
+      /// Initialize
+      DecayManager(void);
+      /// Set decay factor to \a d
+      void decay(double d);
+      /// Return current decay factor
+      double decay(void) const;
+      /// Increment counter and perform decay
+      void inc(Counter& c);
+      /// Return counter value 
+      double val(Counter& c);
+      /// Allocate memory from heap
+      static void* operator new(size_t s);
+      /// Free memory allocated from heap
+      static void  operator delete(void* p);
     };
     /// Initial smallest number of entries per block
     static const unsigned int size_min = 32;
@@ -80,6 +101,8 @@ namespace Gecode {
     public:
       /// Mutex to synchronize globally shared access
       Support::Mutex* mutex;
+      /// Pointer to timed decay manager
+      DecayManager* decay;
       /// Link to previous object (NULL if none)
       Object* parent;
       /// How many spaces or objects use this object
@@ -109,91 +132,147 @@ namespace Gecode {
     void global(void* mo);
   public:
     /// Initialize
-    GlobalPropInfo(void);
+    GlobalAFC(void);
     /// Copy during cloning
-    GlobalPropInfo(const GlobalPropInfo& gpi);
+    GlobalAFC(const GlobalAFC& ga);
     /// Destructor
-    ~GlobalPropInfo(void);
+    ~GlobalAFC(void);
+    /// Set decay factor to \a d
+    void decay(double d);
+    /// Return decay factor
+    double decay(void) const;
+    /// Increment failure count
+    void fail(Counter& c);
+    /// Return failure count
+    double afc(Counter& c) const;
     /// Allocate new propagator info
-    PropInfo& allocate(void);
+    Counter& allocate(void);
   };
 
 
-  /*
-   * Propagator information
-   *
-   */
-  forceinline
-  PropInfo::PropInfo(void)
-    : _afc(0.0) {}
+
   forceinline void
-  PropInfo::init(void) {
-    _afc = 0.0;
+  GlobalAFC::Counter::init(void) {
+    c=1.0; t=0UL;
+  }
+
+  forceinline void
+  GlobalAFC::DecayManager::decay(double d0) {
+    d = d0;
+    if (d != 1.0) {
+      double p = d;
+      unsigned int i=0;
+      do {
+        dpow[i++]=p; p*=d;
+      } while (i<n_dpow);
+    }
+  }
+  forceinline
+  GlobalAFC::DecayManager::DecayManager(void)
+    : d(1.0), t(0UL) {}
+
+  forceinline double
+  GlobalAFC::DecayManager::decay(void) const {
+    return d;
   }
   forceinline void
-  PropInfo::decay(double d) {
-    _afc *= d;
+  GlobalAFC::DecayManager::decay(Counter& c) {
+    assert((t >= c.t) && (d != 1.0));
+    unsigned int n = t - c.t;
+    if (n > 0) {
+      if (n <= n_dpow) {
+        c.c *= dpow[n-1];
+      } else {
+        c.c *= pow(d,static_cast<double>(n));
+      }
+      c.t = t;
+    }
+  }
+  forceinline void
+  GlobalAFC::DecayManager::inc(Counter& c) {
+    if (d == 1.0) {
+      c.c += 1.0;
+    } else {
+      decay(c);
+      c.c += 1.0; c.t = ++t;
+    }
   }
   forceinline double
-  PropInfo::afc(void) const {
-    return _afc;
+  GlobalAFC::DecayManager::val(Counter& c) {
+    if (d != 1.0)
+      decay(c);
+    return c.c;
+  }
+  forceinline void*
+  GlobalAFC::DecayManager::operator new(size_t s) {
+    return Gecode::heap.ralloc(s);
+  }
+  forceinline void
+  GlobalAFC::DecayManager::operator delete(void* p) {
+    Gecode::heap.rfree(p);
   }
 
 
   /*
-   * Global propagator information
+   * Global AFC information
    *
    */
 
   forceinline void*
-  GlobalPropInfo::Object::operator new(size_t s) {
+  GlobalAFC::Object::operator new(size_t s) {
     return Gecode::heap.ralloc(s);
   }
 
   forceinline void
-  GlobalPropInfo::Object::operator delete(void* p) {
+  GlobalAFC::Object::operator delete(void* p) {
     Gecode::heap.rfree(p);
   }
 
-  forceinline GlobalPropInfo::Block*
-  GlobalPropInfo::Block::allocate(unsigned int n, GlobalPropInfo::Block* p) {
+  forceinline GlobalAFC::Block*
+  GlobalAFC::Block::allocate(unsigned int n, GlobalAFC::Block* p) {
     Block* b = static_cast<Block*>(heap.ralloc(sizeof(Block)+
-                                               (n-1)*sizeof(PropInfo)));
+                                               (n-1)*sizeof(Counter)));
     b->next = p;
     return b;
   }
 
   forceinline
-  GlobalPropInfo::Object::Object(Support::Mutex* m, Object* p)
+  GlobalAFC::Object::Object(Support::Mutex* m, Object* p)
     : mutex(m), parent(p), use_cnt(1), size(size_min), free(size_min),
-      cur(Block::allocate(size)) {}
+      cur(Block::allocate(size)) {
+    if (parent == NULL) {
+      decay = new DecayManager;
+    } else {
+      decay = parent->decay;
+    }
+  }
 
-  forceinline GlobalPropInfo::Object*
-  GlobalPropInfo::object(void) const {
+  forceinline GlobalAFC::Object*
+  GlobalAFC::object(void) const {
     return static_cast<Object*>(Support::funmark(mo));
   }
   forceinline bool
-  GlobalPropInfo::local(void) const {
+  GlobalAFC::local(void) const {
     return !Support::marked(mo);
   }
   forceinline void
-  GlobalPropInfo::local(Object* o) {
+  GlobalAFC::local(Object* o) {
     assert(!Support::marked(o));
     mo = o;
   }
   forceinline void
-  GlobalPropInfo::global(void* o) {
+  GlobalAFC::global(void* o) {
     mo = Support::fmark(o);
   }
 
   forceinline
-  GlobalPropInfo::GlobalPropInfo(void) {
+  GlobalAFC::GlobalAFC(void) {
     // No synchronization needed as single thread is creating this object
     local(new Object(new Support::Mutex));
   }
 
   forceinline
-  GlobalPropInfo::GlobalPropInfo(const GlobalPropInfo& gpi) {
+  GlobalAFC::GlobalAFC(const GlobalAFC& gpi) {
     global(gpi.mo);
     Object* o = object();
     o->mutex->acquire();
@@ -202,10 +281,11 @@ namespace Gecode {
   }
 
   forceinline
-  GlobalPropInfo::~GlobalPropInfo(void) {
+  GlobalAFC::~GlobalAFC(void) {
     Support::Mutex* m = object()->mutex;
     m->acquire();
     Object* c = object();
+    DecayManager* decay = c->decay;
     while ((c != NULL) && (--c->use_cnt == 0)) {
       // Delete all blocks for c
       Block* b = c->cur;
@@ -218,21 +298,51 @@ namespace Gecode {
       delete d; 
     }
     m->release();
-    // All objects are deleted, so also delete mutex
-    if (c == NULL)
+    // All objects are deleted, so also delete mutex and decya info
+    if (c == NULL) {
+      delete decay;
       delete m;
+    }
   }
 
   forceinline void
-  PropInfo::fail(GlobalPropInfo& gpi) {
-    Support::Mutex& m = *gpi.object()->mutex;
+  GlobalAFC::fail(Counter& c) {
+    Support::Mutex& m = *object()->mutex;
     m.acquire();
-    _afc++;
+    object()->decay->inc(c);
     m.release();
   }
 
-  forceinline PropInfo&
-  GlobalPropInfo::allocate(void) {
+  forceinline double
+  GlobalAFC::afc(Counter& c) const {
+    Support::Mutex& m = *object()->mutex;
+    double d;
+    m.acquire();
+    d = const_cast<DecayManager*>(object()->decay)->val(c);
+    m.release();
+    return d;
+  }
+
+  forceinline double
+  GlobalAFC::decay(void) const {
+    Support::Mutex& m = *object()->mutex;
+    double d;
+    m.acquire();
+    d = object()->decay->decay();
+    m.release();
+    return d;
+  }
+
+  forceinline void
+  GlobalAFC::decay(double d) {
+    Support::Mutex& m = *object()->mutex;
+    m.acquire();
+    object()->decay->decay(d);
+    m.release();
+  }
+
+  forceinline GlobalAFC::Counter&
+  GlobalAFC::allocate(void) {
     /*
      * If there is no local object, create one.
      *
@@ -253,10 +363,10 @@ namespace Gecode {
       o->cur  = Block::allocate(o->size,o->cur);
     }
 
-    PropInfo* pi = &o->cur->pi[--o->free];
-    pi->init();
+    Counter* c = &o->cur->c[--o->free];
+    c->init();
 
-    return *pi;
+    return *c;
   }
 
 }

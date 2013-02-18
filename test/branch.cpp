@@ -444,8 +444,8 @@ namespace Test { namespace Branch {
             case  4: ivba = INT_VAR_MERIT_MAX(&int_merit); break;
             case  5: ivba = INT_VAR_DEGREE_MIN(); break;
             case  6: ivba = INT_VAR_DEGREE_MAX(); break;
-            case  7: ivba = INT_VAR_AFC_MIN(); break;
-            case  8: ivba = INT_VAR_AFC_MAX(); break;
+            case  7: ivba = INT_VAR_AFC_MIN(0.5); break;
+            case  8: ivba = INT_VAR_AFC_MAX(0.5); break;
             case  9: ivba = INT_VAR_ACTIVITY_MIN(iaa); break;
             case 10: ivba = INT_VAR_ACTIVITY_MAX(iaa); break;
             case 11: ivba = INT_VAR_MIN_MIN(); break;
@@ -477,8 +477,8 @@ namespace Test { namespace Branch {
             case  4: ivbb = INT_VAR_MERIT_MAX(&int_merit,&tbl); break;
             case  5: ivbb = INT_VAR_DEGREE_MIN(&tbl); break;
             case  6: ivbb = INT_VAR_DEGREE_MAX(&tbl); break;
-            case  7: ivbb = INT_VAR_AFC_MIN(&tbl); break;
-            case  8: ivbb = INT_VAR_AFC_MAX(&tbl); break;
+            case  7: ivbb = INT_VAR_AFC_MIN(0.5,&tbl); break;
+            case  8: ivbb = INT_VAR_AFC_MAX(0.5,&tbl); break;
             case  9: ivbb = INT_VAR_ACTIVITY_MIN(iab,&tbl); break;
             case 10: ivbb = INT_VAR_ACTIVITY_MAX(iab,&tbl); break;
             case 11: ivbb = INT_VAR_MIN_MIN(&tbl); break;
@@ -489,8 +489,8 @@ namespace Test { namespace Branch {
             case 16: ivbb = INT_VAR_SIZE_MAX(&tbl); break;
             case 17: ivbb = INT_VAR_SIZE_DEGREE_MIN(&tbl); break;
             case 18: ivbb = INT_VAR_SIZE_DEGREE_MAX(&tbl); break;
-            case 19: ivbb = INT_VAR_SIZE_AFC_MIN(&tbl); break;
-            case 20: ivbb = INT_VAR_SIZE_AFC_MAX(&tbl); break;
+            case 19: ivbb = INT_VAR_SIZE_AFC_MIN(1.0,&tbl); break;
+            case 20: ivbb = INT_VAR_SIZE_AFC_MAX(1.0,&tbl); break;
             case 21: ivbb = INT_VAR_SIZE_ACTIVITY_MIN(iab,&tbl); break;
             case 22: ivbb = INT_VAR_SIZE_ACTIVITY_MAX(iab,&tbl); break;
             case 23: ivbb = INT_VAR_REGRET_MIN_MIN(&tbl); break;
@@ -598,7 +598,7 @@ namespace Test { namespace Branch {
 
             Rnd ra(1);
             IntVarBranch ivba;
-            BoolActivity iaa(*c, c->x, 0.9);
+            IntActivity iaa(*c, c->x, 0.9);
             switch (vara) {
             case  0: break; 
             case  1: ivba = INT_VAR_NONE(); break;
@@ -607,8 +607,8 @@ namespace Test { namespace Branch {
             case  4: ivba = INT_VAR_MERIT_MAX(&bool_merit); break;
             case  5: ivba = INT_VAR_DEGREE_MIN(); break;
             case  6: ivba = INT_VAR_DEGREE_MAX(); break;
-            case  7: ivba = INT_VAR_AFC_MIN(); break;
-            case  8: ivba = INT_VAR_AFC_MAX(); break;
+            case  7: ivba = INT_VAR_AFC_MIN(0.5); break;
+            case  8: ivba = INT_VAR_AFC_MAX(0.5); break;
             case  9: ivba = INT_VAR_ACTIVITY_MIN(iaa); break;
             case 10: ivba = INT_VAR_ACTIVITY_MAX(iaa); break;
             case 11: ivba = INT_VAR_MIN_MIN(); break;
@@ -631,7 +631,7 @@ namespace Test { namespace Branch {
 
             Rnd rb(2);
             IntVarBranch ivbb;
-            BoolActivity iab(*c, c->x, 0.9);
+            IntActivity iab(*c, c->x, 0.9);
             switch (vara) {
             case  0: break; 
             case  1: ivbb = INT_VAR_NONE(); break;
@@ -640,8 +640,8 @@ namespace Test { namespace Branch {
             case  4: ivbb = INT_VAR_MERIT_MAX(&bool_merit,&tbl); break;
             case  5: ivbb = INT_VAR_DEGREE_MIN(&tbl); break;
             case  6: ivbb = INT_VAR_DEGREE_MAX(&tbl); break;
-            case  7: ivbb = INT_VAR_AFC_MIN(&tbl); break;
-            case  8: ivbb = INT_VAR_AFC_MAX(&tbl); break;
+            case  7: ivbb = INT_VAR_AFC_MIN(0.5,&tbl); break;
+            case  8: ivbb = INT_VAR_AFC_MAX(0.5,&tbl); break;
             case  9: ivbb = INT_VAR_ACTIVITY_MIN(iab,&tbl); break;
             case 10: ivbb = INT_VAR_ACTIVITY_MAX(iab,&tbl); break;
             case 11: ivbb = INT_VAR_MIN_MIN(&tbl); break;
@@ -652,8 +652,8 @@ namespace Test { namespace Branch {
             case 16: ivbb = INT_VAR_SIZE_MAX(&tbl); break;
             case 17: ivbb = INT_VAR_SIZE_DEGREE_MIN(&tbl); break;
             case 18: ivbb = INT_VAR_SIZE_DEGREE_MAX(&tbl); break;
-            case 19: ivbb = INT_VAR_SIZE_AFC_MIN(&tbl); break;
-            case 20: ivbb = INT_VAR_SIZE_AFC_MAX(&tbl); break;
+            case 19: ivbb = INT_VAR_SIZE_AFC_MIN(1.0,&tbl); break;
+            case 20: ivbb = INT_VAR_SIZE_AFC_MAX(1.0,&tbl); break;
             case 21: ivbb = INT_VAR_SIZE_ACTIVITY_MIN(iab,&tbl); break;
             case 22: ivbb = INT_VAR_SIZE_ACTIVITY_MAX(iab,&tbl); break;
             case 23: ivbb = INT_VAR_REGRET_MIN_MIN(&tbl); break;
@@ -767,8 +767,8 @@ namespace Test { namespace Branch {
             case  4: svba = SET_VAR_MERIT_MAX(&set_merit); break;
             case  5: svba = SET_VAR_DEGREE_MIN(); break;
             case  6: svba = SET_VAR_DEGREE_MAX(); break;
-            case  7: svba = SET_VAR_AFC_MIN(); break;
-            case  8: svba = SET_VAR_AFC_MAX(); break;
+            case  7: svba = SET_VAR_AFC_MIN(0.5); break;
+            case  8: svba = SET_VAR_AFC_MAX(0.5); break;
             case  9: svba = SET_VAR_ACTIVITY_MIN(saa); break;
             case 10: svba = SET_VAR_ACTIVITY_MAX(saa); break;
             case 11: svba = SET_VAR_MIN_MIN(); break;
@@ -796,8 +796,8 @@ namespace Test { namespace Branch {
             case  4: svbb = SET_VAR_MERIT_MAX(&set_merit,&tbl); break;
             case  5: svbb = SET_VAR_DEGREE_MIN(&tbl); break;
             case  6: svbb = SET_VAR_DEGREE_MAX(&tbl); break;
-            case  7: svbb = SET_VAR_AFC_MIN(&tbl); break;
-            case  8: svbb = SET_VAR_AFC_MAX(&tbl); break;
+            case  7: svbb = SET_VAR_AFC_MIN(0.5,&tbl); break;
+            case  8: svbb = SET_VAR_AFC_MAX(0.5,&tbl); break;
             case  9: svbb = SET_VAR_ACTIVITY_MIN(sab,&tbl); break;
             case 10: svbb = SET_VAR_ACTIVITY_MAX(sab,&tbl); break;
             case 11: svbb = SET_VAR_MIN_MIN(&tbl); break;
@@ -808,8 +808,8 @@ namespace Test { namespace Branch {
             case 16: svbb = SET_VAR_SIZE_MAX(&tbl); break;
             case 17: svbb = SET_VAR_SIZE_DEGREE_MIN(&tbl); break;
             case 18: svbb = SET_VAR_SIZE_DEGREE_MAX(&tbl); break;
-            case 19: svbb = SET_VAR_SIZE_AFC_MIN(&tbl); break;
-            case 20: svbb = SET_VAR_SIZE_AFC_MAX(&tbl); break;
+            case 19: svbb = SET_VAR_SIZE_AFC_MIN(1.0,&tbl); break;
+            case 20: svbb = SET_VAR_SIZE_AFC_MAX(1.0,&tbl); break;
             case 21: svbb = SET_VAR_SIZE_ACTIVITY_MIN(sab,&tbl); break;
             case 22: svbb = SET_VAR_SIZE_ACTIVITY_MAX(sab,&tbl); break;
             }
@@ -914,8 +914,8 @@ namespace Test { namespace Branch {
             case  4: fvba = FLOAT_VAR_MERIT_MAX(&float_merit); break;
             case  5: fvba = FLOAT_VAR_DEGREE_MIN(); break;
             case  6: fvba = FLOAT_VAR_DEGREE_MAX(); break;
-            case  7: fvba = FLOAT_VAR_AFC_MIN(); break;
-            case  8: fvba = FLOAT_VAR_AFC_MAX(); break;
+            case  7: fvba = FLOAT_VAR_AFC_MIN(0.5); break;
+            case  8: fvba = FLOAT_VAR_AFC_MAX(0.5); break;
             case  9: fvba = FLOAT_VAR_ACTIVITY_MIN(faa); break;
             case 10: fvba = FLOAT_VAR_ACTIVITY_MAX(faa); break;
             case 11: fvba = FLOAT_VAR_MIN_MIN(); break;
@@ -943,8 +943,8 @@ namespace Test { namespace Branch {
             case  4: fvbb = FLOAT_VAR_MERIT_MAX(&float_merit,&tbl); break;
             case  5: fvbb = FLOAT_VAR_DEGREE_MIN(&tbl); break;
             case  6: fvbb = FLOAT_VAR_DEGREE_MAX(&tbl); break;
-            case  7: fvbb = FLOAT_VAR_AFC_MIN(&tbl); break;
-            case  8: fvbb = FLOAT_VAR_AFC_MAX(&tbl); break;
+            case  7: fvbb = FLOAT_VAR_AFC_MIN(0.5,&tbl); break;
+            case  8: fvbb = FLOAT_VAR_AFC_MAX(0.5,&tbl); break;
             case  9: fvbb = FLOAT_VAR_ACTIVITY_MIN(fab,&tbl); break;
             case 10: fvbb = FLOAT_VAR_ACTIVITY_MAX(fab,&tbl); break;
             case 11: fvbb = FLOAT_VAR_MIN_MIN(&tbl); break;
@@ -955,8 +955,8 @@ namespace Test { namespace Branch {
             case 16: fvbb = FLOAT_VAR_SIZE_MAX(&tbl); break;
             case 17: fvbb = FLOAT_VAR_SIZE_DEGREE_MIN(&tbl); break;
             case 18: fvbb = FLOAT_VAR_SIZE_DEGREE_MAX(&tbl); break;
-            case 19: fvbb = FLOAT_VAR_SIZE_AFC_MIN(&tbl); break;
-            case 20: fvbb = FLOAT_VAR_SIZE_AFC_MAX(&tbl); break;
+            case 19: fvbb = FLOAT_VAR_SIZE_AFC_MIN(1.0,&tbl); break;
+            case 20: fvbb = FLOAT_VAR_SIZE_AFC_MAX(1.0,&tbl); break;
             case 21: fvbb = FLOAT_VAR_SIZE_ACTIVITY_MIN(fab,&tbl); break;
             case 22: fvbb = FLOAT_VAR_SIZE_ACTIVITY_MAX(fab,&tbl); break;
             }

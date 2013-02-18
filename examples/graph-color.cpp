@@ -362,7 +362,7 @@ public:
       branch(*this, v, INT_VAR_SIZE_DEGREE_MIN(), INT_VAL_MIN());
       break;
     case BRANCH_SIZE_AFC:
-      branch(*this, v, INT_VAR_SIZE_AFC_MIN(), INT_VAL_MIN());
+      branch(*this, v, INT_VAR_SIZE_AFC_MIN(opt.decay()), INT_VAL_MIN());
       break;
     default:
       break;

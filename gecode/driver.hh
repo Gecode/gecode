@@ -320,6 +320,7 @@ namespace Gecode {
     Driver::StringOption _propagation; ///< Propagation options
     Driver::StringOption _icl;         ///< Integer consistency level
     Driver::StringOption _branching;   ///< Branching options
+    Driver::DoubleOption _decay;       ///< Decay option
     //@}
     
     /// \name Search options
@@ -383,6 +384,11 @@ namespace Gecode {
     void branching(int v, const char* o, const char* h = NULL);
     /// Return branching value
     int branching(void) const;
+
+    /// Set default decay factor
+    void decay(double d);
+    /// Return decay factor
+    double decay(void) const;
     //@}
     
     /// \name Search options

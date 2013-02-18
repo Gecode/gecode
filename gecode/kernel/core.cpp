@@ -152,18 +152,6 @@ namespace Gecode {
     sm->flush();
   }
 
-  void
-  Space::AFC_reset(void) {
-    for (Propagators p(*this); p(); ++p)
-      p.propagator().pi.init();
-  }
-
-  void
-  Space::AFC_decay(double d) {
-    for (Propagators p(*this); p(); ++p)
-      p.propagator().pi.decay(d);
-  }
-
   Space::~Space(void) {
     // Mark space as failed
     fail();
@@ -220,7 +208,7 @@ namespace Gecode {
       switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
         // Count failure
-        p->pi.fail(gpi);
+        gafc.fail(p->gafc);
         // Mark as failed
         fail(); s = SS_FAILED; goto exit;
       case ES_NOFIX:
@@ -415,7 +403,7 @@ namespace Gecode {
   Space::Space(bool share, Space& s)
     : sm(s.sm->copy(share)), 
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
-      gpi(s.gpi),
+      gafc(s.gafc),
       d_fst(&Actor::sentinel),
       n_wmp(s.n_wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE

@@ -1134,6 +1134,43 @@ namespace Gecode {
 
 namespace Gecode {
 
+  /**
+   * \brief Recording AFC information for set variables
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  class SetAFC : public AFC {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized AFC storage is init or the assignment operator.
+     *
+     */
+    SetAFC(void);
+    /// Copy constructor
+    SetAFC(const SetAFC& a);
+    /// Assignment operator
+    SetAFC& operator =(const SetAFC& a);      
+    /// Initialize for set variables \a x with decay factor \a d
+    SetAFC(Home home, const SetVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for set variables \a x with decay factor \a d
+     *
+     * This member function can only be used once and only if the
+     * AFC storage has been constructed with the default constructor.
+     *
+     */
+    void init(Home, const SetVarArgs& x, double d=1.0);
+  };
+
+}
+
+#include <gecode/set/branch/afc.hpp>
+
+namespace Gecode {
+
 
   /**
    * \brief Recording activities for set variables
@@ -1156,7 +1193,7 @@ namespace Gecode {
     SetActivity& operator =(const SetActivity& a);      
     /// Initialize for set variables \a x with decay factor \a d
     GECODE_SET_EXPORT 
-    SetActivity(Home home, const SetVarArgs& x, double d);
+    SetActivity(Home home, const SetVarArgs& x, double d=1.0);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
@@ -1165,7 +1202,7 @@ namespace Gecode {
      *
      */
     GECODE_SET_EXPORT void
-    init(Home, const SetVarArgs& x, double d);
+    init(Home, const SetVarArgs& x, double d=1.0);
   };
 
 }
@@ -1216,12 +1253,18 @@ namespace Gecode {
     SetVarBranch(Rnd r);
     /// Initialize with selection strategy \a s and tie-break limit function \a t
     SetVarBranch(Select s, BranchTbl t);
+    /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
+    SetVarBranch(Select s, double d, BranchTbl t);
+    /// Initialize with selection strategy \a s, afc \a a, and tie-break limit function \a t
+    SetVarBranch(Select s, AFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
     SetVarBranch(Select s, Activity a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     SetVarBranch(Select s, VoidFunction mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
+    /// Expand decay factor into AFC or activity
+    void expand(Home home, const SetVarArgs& x);
   };
 
   /**
@@ -1241,12 +1284,20 @@ namespace Gecode {
   SetVarBranch SET_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest degree
   SetVarBranch SET_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
+  /// Select variable with smallest accumulated failure count with decay factor \a d
+  SetVarBranch SET_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with smallest accumulated failure count
-  SetVarBranch SET_VAR_AFC_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
+  /// Select variable with largest accumulated failure count with decay factor \a d
+  SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count    
-  SetVarBranch SET_VAR_AFC_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
+  /// Select variable with lowest activity with decay factor \a d
+  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);    
   /// Select variable with lowest activity
   SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);    
+  /// Select variable with highest activity with decay factor \a d
+  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);     
   /// Select variable with highest activity
   SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);     
   /// Select variable with smallest minimum unknown element
@@ -1265,12 +1316,20 @@ namespace Gecode {
   SetVarBranch SET_VAR_SIZE_DEGREE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by degree
   SetVarBranch SET_VAR_SIZE_DEGREE_MAX(BranchTbl tbl=NULL);
+  /// Select variable with smallest domain size divided by accumulated failure count with decay factor \a d
+  SetVarBranch SET_VAR_SIZE_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by accumulated failure count
-  SetVarBranch SET_VAR_SIZE_AFC_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_SIZE_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
+  /// Select variable with largest domain size divided by accumulated failure count with decay factor \a d
+  SetVarBranch SET_VAR_SIZE_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by accumulated failure count
-  SetVarBranch SET_VAR_SIZE_AFC_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_SIZE_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
+  /// Select variable with smallest domain size divided by activity with decay factor \a d
+  SetVarBranch SET_VAR_SIZE_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with smallest domain size divided by activity
   SetVarBranch SET_VAR_SIZE_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
+  /// Select variable with largest domain size divided by activity with decay factor \a d
+  SetVarBranch SET_VAR_SIZE_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest domain size divided by activity
   SetVarBranch SET_VAR_SIZE_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
   //@}

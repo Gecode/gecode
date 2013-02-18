@@ -103,14 +103,21 @@ namespace Gecode {
    * \brief Merit class for AFC
    */
   template<class View>
-  class MeritAfc : public MeritBase<View,double> {
+  class MeritAFC : public MeritBase<View,double> {
+  protected:
+    /// AFC information
+    AFC afc;    
   public:
     /// Constructor for initialization
-    MeritAfc(Space& home, const VarBranch& vb);
+    MeritAFC(Space& home, const VarBranch& vb);
     /// Constructor for cloning
-    MeritAfc(Space& home, bool shared, MeritAfc& ma);
+    MeritAFC(Space& home, bool shared, MeritAFC& ma);
     /// Return AFC as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
   };
 
   /**
@@ -128,8 +135,6 @@ namespace Gecode {
     MeritActivity(Space& home, bool shared, MeritActivity& ma);
     /// Return activity as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
-    /// Updating during cloning
-    void update(Space& home, bool share, MeritActivity& ma);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Dispose view selection
@@ -191,17 +196,29 @@ namespace Gecode {
   // AFC merit
   template<class View>
   forceinline
-  MeritAfc<View>::MeritAfc(Space& home, const VarBranch& vb)
-    : MeritBase<View,double>(home,vb) {}
+  MeritAFC<View>::MeritAFC(Space& home, const VarBranch& vb)
+    : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
-  MeritAfc<View>::MeritAfc(Space& home, bool shared, 
-                           MeritAfc& ma)
-    : MeritBase<View,double>(home,shared,ma) {}
+  MeritAFC<View>::MeritAFC(Space& home, bool shared, 
+                           MeritAFC& ma)
+    : MeritBase<View,double>(home,shared,ma) {
+    afc.update(home,shared,ma.afc);
+  }
   template<class View>
   forceinline double
-  MeritAfc<View>::operator ()(const Space&, View x, int) {
-    return x.afc();
+  MeritAFC<View>::operator ()(const Space& home, View x, int) {
+    return x.afc(home);
+  }
+  template<class View>
+  forceinline bool
+  MeritAFC<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  MeritAFC<View>::dispose(Space&) {
+    afc.~AFC();
   }
 
 

@@ -95,14 +95,16 @@ namespace Gecode {
   }
 
   void
-  Activity::decay(double d) {
+  Activity::decay(Space&, double d) {
+    if ((d <= 0.0) || (d > 1.0))
+      throw IllegalDecay("Activity");
     acquire();
     storage->d = d;
     release();
   }
 
   double
-  Activity::decay(void) const {
+  Activity::decay(const Space&) const {
     double d;
     const_cast<Activity*>(this)->acquire();
     d = storage->d;

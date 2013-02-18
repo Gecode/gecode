@@ -92,14 +92,24 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Size over AFC merit
   forceinline
-  MeritSizeAfc::MeritSizeAfc(Space& home, const VarBranch& vb)
-    : MeritBase<FloatView,double>(home,vb) {}
+  MeritSizeAFC::MeritSizeAFC(Space& home, const VarBranch& vb)
+    : MeritBase<FloatView,double>(home,vb), afc(vb.afc()) {}
   forceinline
-  MeritSizeAfc::MeritSizeAfc(Space& home, bool shared, MeritSizeAfc& m)
-    : MeritBase<FloatView,double>(home,shared,m) {}
+  MeritSizeAFC::MeritSizeAFC(Space& home, bool shared, MeritSizeAFC& m)
+    : MeritBase<FloatView,double>(home,shared,m) {
+    afc.update(home,shared,m.afc);
+  }
   forceinline double
-  MeritSizeAfc::operator ()(const Space&, FloatView x, int) {
-    return x.size() / x.afc();
+  MeritSizeAFC::operator ()(const Space& home, FloatView x, int) {
+    return x.size() / x.afc(home);
+  }
+  forceinline bool
+  MeritSizeAFC::notice(void) const {
+    return true;
+  }
+  forceinline void
+  MeritSizeAFC::dispose(Space&) {
+    afc.~AFC();
   }
 
   // Size over activity merit

@@ -138,10 +138,10 @@ namespace Gecode {
     //@{
     /// Set decay factor to \a d
     GECODE_KERNEL_EXPORT
-    void decay(double d);
+    void decay(Space& home, double d);
     /// Return decay factor
     GECODE_KERNEL_EXPORT
-    double decay(void) const;
+    double decay(const Space& home) const;
     //@}
   };
 

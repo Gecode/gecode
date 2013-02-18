@@ -93,6 +93,20 @@ namespace Gecode {
     TooManyBranchers(const char* l);
   };
 
+  /// %Exception: illegal decay factor
+  class GECODE_VTABLE_EXPORT IllegalDecay : public Exception {
+  public:
+    /// Initialize with location \a l
+    IllegalDecay(const char* l);
+  };
+
+  /// %Exception: uninitialized AFC
+  class GECODE_VTABLE_EXPORT UninitializedAFC : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedAFC(const char* l);
+  };
+
   /// %Exception: uninitialized activity
   class GECODE_VTABLE_EXPORT UninitializedActivity : public Exception {
   public:
@@ -105,6 +119,13 @@ namespace Gecode {
   public:
     /// Initialize with location \a l
     UninitializedRnd(const char* l);
+  };
+
+  /// %Exception: AFC has wrong arity
+  class GECODE_VTABLE_EXPORT AFCWrongArity : public Exception {
+  public:
+    /// Initialize with location \a l
+    AFCWrongArity(const char* l);
   };
 
   /// %Exception: activity has wrong arity
@@ -156,8 +177,20 @@ namespace Gecode {
     : Exception(l,"Uninitialized random generator for branching") {}
 
   inline
+  IllegalDecay::IllegalDecay(const char* l)
+    : Exception(l,"Illegal decay factor") {}
+
+  inline
+  UninitializedAFC::UninitializedAFC(const char* l)
+    : Exception(l,"Uninitialized AFC information for branching") {}
+
+  inline
   UninitializedActivity::UninitializedActivity(const char* l)
     : Exception(l,"Uninitialized activity information for branching") {}
+
+  inline
+  AFCWrongArity::AFCWrongArity(const char* l)
+    : Exception(l,"AFC has wrong number of variables") {}
 
   inline
   ActivityWrongArity::ActivityWrongArity(const char* l)

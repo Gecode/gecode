@@ -218,6 +218,7 @@ namespace Gecode {
   class Propagator;
   class LocalObject;
   class Advisor;
+  class AFC;
   template<class A> class Council;
   template<class A> class Advisors;
   template<class VIC> class VarImp;
@@ -443,7 +444,7 @@ namespace Gecode {
      * Note that the accumulated failure count of a variable implementation
      * is not available during cloning.
      */
-    double afc(void) const;
+    double afc(const Space& home) const;
     //@}
 
     /// \name Cloning variables
@@ -765,8 +766,8 @@ namespace Gecode {
       /// A list of advisors (used during cloning)
       Gecode::ActorLink* advisors;
     } u;
-    /// A reference to global propagator information
-    PropInfo& pi;
+    /// A reference to a counter for afc
+    GlobalAFC::Counter& gafc;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Propagator* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -855,7 +856,7 @@ namespace Gecode {
     /// \name Information
     //@{
     /// Return the accumlated failure count
-    double afc(void) const;
+    double afc(const Space& home) const;
     //@}
   };
 
@@ -1178,6 +1179,7 @@ namespace Gecode {
     CommitStatistics& operator +=(const CommitStatistics& s);
   };
 
+
   /**
    * \brief Computation spaces
    */
@@ -1191,13 +1193,14 @@ namespace Gecode {
     friend class SharedHandle;
     friend class LocalObject;
     friend class Region;
+    friend class AFC;
   private:
     /// Manager for shared memory areas
     SharedMemory* sm;
     /// Performs memory management for space
     MemoryManager mm;
-    /// Global propagator information
-    GlobalPropInfo gpi;
+    /// Global AFC information
+    GlobalAFC gafc;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -1355,6 +1358,10 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void _commit(const Choice& c, unsigned int a);
 
+    /// Set AFC decay factor to \a d
+    void afc_decay(double d);
+    /// Return AFC decay factor
+    double afc_decay(void) const;
   public:
     /**
      * \brief Default constructor
@@ -1892,18 +1899,6 @@ namespace Gecode {
      *
      */
     GECODE_KERNEL_EXPORT void flush(void);
-    /**
-     * \brief Reset AFC information
-     *
-     * The numbers for AFC are reset to zero.
-     */
-    GECODE_KERNEL_EXPORT void AFC_reset(void);
-    /**
-     * \brief Decay AFC information
-     *
-     * Decays AFC information by multiplying with decay factor \a d.
-     */
-    GECODE_KERNEL_EXPORT void AFC_decay(double d);
     //@}
     /// Construction routines
     //@{
@@ -2505,6 +2500,16 @@ namespace Gecode {
     _commit(c,a);
   }
 
+  forceinline double
+  Space::afc_decay(void) const {
+    return gafc.decay();
+  }
+
+  forceinline void
+  Space::afc_decay(double d) {
+    gafc.decay(d);
+  }
+
   forceinline size_t
   Actor::dispose(Space&) {
     return sizeof(*this);
@@ -2561,11 +2566,11 @@ namespace Gecode {
 
   forceinline
   Propagator::Propagator(Home home) 
-    : pi((home.propagator() != NULL) ?
-         // Inherit propagator information
-         home.propagator()->pi :
-         // New propagator information
-         static_cast<Space&>(home).gpi.allocate()) {
+    : gafc((home.propagator() != NULL) ?
+           // Inherit time counter information
+           home.propagator()->gafc :
+           // New propagator information
+           static_cast<Space&>(home).gafc.allocate()) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     static_cast<Space&>(home).pl.head(this);
@@ -2573,7 +2578,7 @@ namespace Gecode {
 
   forceinline
   Propagator::Propagator(Space&, bool, Propagator& p) 
-    : pi(p.pi) {
+    : gafc(p.gafc) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     // Set forwarding pointer
@@ -2586,8 +2591,8 @@ namespace Gecode {
   }
 
   forceinline double
-  Propagator::afc(void) const {
-    return pi.afc();
+  Propagator::afc(const Space& home) const {
+    return home.gafc.afc(gafc);
   }
 
   forceinline ExecStatus
@@ -3037,16 +3042,17 @@ namespace Gecode {
 
   template<class VIC>
   forceinline double
-  VarImp<VIC>::afc(void) const {
+  VarImp<VIC>::afc(const Space& home) const {
     if (degree() == 0)
       return 0.0;
-    double d = degree();
+    // So that afc is never zero
+    double d = 0.00000001;
     // Count the afc of each propagator
     {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor(0);
       ActorLink** e = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
       while (a < e) {
-        d += Propagator::cast(*a)->afc(); a++;
+        d += Propagator::cast(*a)->afc(home); a++;
       }
     }
     // Count the afc of each advisor's propagator
@@ -3054,7 +3060,7 @@ namespace Gecode {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
       ActorLink** e = const_cast<VarImp<VIC>*>(this)->b.base+entries;
       while (a < e) {
-        d += Advisor::cast(*a)->propagator().afc(); a++;
+        d += Advisor::cast(*a)->propagator().afc(home); a++;
       }
     }
     return d;
@@ -3374,7 +3380,7 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        p.pi.fail(home.gpi);
+        home.gafc.fail(p.gafc);
         return false;
       case ES_NOFIX:
         schedule(home,p,me);

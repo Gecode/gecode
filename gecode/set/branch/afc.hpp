@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2012
+ *     Christian Schulte, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,17 +38,27 @@
 namespace Gecode {
 
   forceinline
-  IntActivity::IntActivity(void) {}
+  SetAFC::SetAFC(void) {}
 
   forceinline
-  IntActivity::IntActivity(const IntActivity& a)
-    : Activity(a) {}
+  SetAFC::SetAFC(const SetAFC& a)
+    : AFC(a) {}
 
-  forceinline IntActivity&
-  IntActivity::operator =(const IntActivity& a) {
-    return static_cast<IntActivity&>(Activity::operator =(a));
+  forceinline SetAFC&
+  SetAFC::operator =(const SetAFC& a) {
+    return static_cast<SetAFC&>(AFC::operator =(a));
+  }
+
+  forceinline
+  SetAFC::SetAFC(Home home, const SetVarArgs& x, double d) {
+    AFC::init(home,x,d);
+  }
+
+  forceinline void
+  SetAFC::init(Home home, const SetVarArgs& x, double d) {
+    AFC::init(home,x,d);
   }
 
 }
 
-// STATISTICS: int-branch
+// STATISTICS: set-branch
