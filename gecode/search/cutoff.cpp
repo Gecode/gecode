@@ -59,14 +59,18 @@ namespace Gecode { namespace Search {
     while ( (i >> (++exp)) > 1U ) {}
     return exp;
   }
-  unsigned long int 
+  forceinline unsigned long int 
   CutoffLuby::luby(unsigned long int i) {
-    if (i <= n_start)
-      return start[i];
-    unsigned long int l = log(i);
-    if (i == (1U<<(l+1))-1)
-      return 1<<l;
-    return luby(i-(1U<<l)+1);
+    while (true) {
+      if (i <= n_start)
+        return start[i];
+      unsigned long int l = log(i);
+      if (i == (1U<<(l+1))-1)
+        return 1<<l;
+      i=i-(1U<<l)+1;
+    }
+    GECODE_NEVER;
+    return 0;
   }
   unsigned long int 
   CutoffLuby::operator() (void) {
