@@ -180,8 +180,10 @@ namespace Gecode {
     using namespace Int;    
     if (home.failed()) return;
     IntView xv(x), dv(d);
-    ViewRanges<IntView> r(dv);
-    GECODE_ME_FAIL(xv.inter_r(home,r,false));
+    if (!same(xv,dv)) {
+      ViewRanges<IntView> r(dv);
+      GECODE_ME_FAIL(xv.inter_r(home,r,false));
+    }
   }
 
   void
@@ -202,8 +204,10 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       if (home.failed()) return;
       IntView xv(x[i]), dv(d[i]);
-      ViewRanges<IntView> r(dv);
-      GECODE_ME_FAIL(xv.inter_r(home,r,false));
+      if (!same(xv,dv)) {
+        ViewRanges<IntView> r(dv);
+        GECODE_ME_FAIL(xv.inter_r(home,r,false));
+      }
     }
   }
 
