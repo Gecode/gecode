@@ -1236,12 +1236,12 @@ namespace Gecode {
       SEL_MAX_MAX,         ///< With largest maximum unknown element
       SEL_SIZE_MIN,        ///< With smallest unknown set
       SEL_SIZE_MAX,        ///< With largest unknown set
-      SEL_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
-      SEL_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
-      SEL_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
-      SEL_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
-      SEL_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
-      SEL_SIZE_ACTIVITY_MAX, ///< With largest domain size divided by activity
+      SEL_DEGREE_SIZE_MIN, ///< With smallest degree divided by domain size
+      SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
+      SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
+      SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
+      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
+      SEL_ACTIVITY_SIZE_MAX, ///< With largest activity divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1312,26 +1312,26 @@ namespace Gecode {
   SetVarBranch SET_VAR_SIZE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest  unknown set
   SetVarBranch SET_VAR_SIZE_MAX(BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by degree
-  SetVarBranch SET_VAR_SIZE_DEGREE_MIN(BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by degree
-  SetVarBranch SET_VAR_SIZE_DEGREE_MAX(BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by accumulated failure count with decay factor \a d
-  SetVarBranch SET_VAR_SIZE_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by accumulated failure count
-  SetVarBranch SET_VAR_SIZE_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by accumulated failure count with decay factor \a d
-  SetVarBranch SET_VAR_SIZE_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by accumulated failure count
-  SetVarBranch SET_VAR_SIZE_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by activity with decay factor \a d
-  SetVarBranch SET_VAR_SIZE_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by activity
-  SetVarBranch SET_VAR_SIZE_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by activity with decay factor \a d
-  SetVarBranch SET_VAR_SIZE_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by activity
-  SetVarBranch SET_VAR_SIZE_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
+  /// Select variable with smallest degree divided by domain size
+  SetVarBranch SET_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=NULL);
+  /// Select variable with largest degree divided by domain size
+  SetVarBranch SET_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
+  /// Select variable with smallest accumulated failure count divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest accumulated failure count divided by domain size
+  SetVarBranch SET_VAR_AFC_SIZE_MIN(SetAFC a, BranchTbl tbl=NULL);
+  /// Select variable with largest accumulated failure count divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest accumulated failure count divided by domain size
+  SetVarBranch SET_VAR_AFC_SIZE_MAX(SetAFC a, BranchTbl tbl=NULL);
+  /// Select variable with smallest activity divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest activity divided by domain size
+  SetVarBranch SET_VAR_ACTIVITY_SIZE_MIN(SetActivity a, BranchTbl tbl=NULL);
+  /// Select variable with largest activity divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest activity divided by domain size
+  SetVarBranch SET_VAR_ACTIVITY_SIZE_MAX(SetActivity a, BranchTbl tbl=NULL);
   //@}
 
 }

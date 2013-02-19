@@ -74,12 +74,12 @@ namespace Gecode {
   IntVarBranch::expand(Home home, const IntVarArgs& x) {
     switch (select()) {
     case SEL_AFC_MIN: case SEL_AFC_MAX:
-    case SEL_SIZE_AFC_MIN: case SEL_SIZE_AFC_MAX:
+    case SEL_AFC_SIZE_MIN: case SEL_AFC_SIZE_MAX:
       if (!_afc.initialized())
         _afc = IntAFC(home,x,decay());
       break;
     case SEL_ACTIVITY_MIN: case SEL_ACTIVITY_MAX:
-    case SEL_SIZE_ACTIVITY_MIN: case SEL_SIZE_ACTIVITY_MAX:
+    case SEL_ACTIVITY_SIZE_MIN: case SEL_ACTIVITY_SIZE_MAX:
       if (!_act.initialized())
         _act = IntActivity(home,x,decay());
       break;
@@ -91,12 +91,12 @@ namespace Gecode {
   IntVarBranch::expand(Home home, const BoolVarArgs& x) {
     switch (select()) {
     case SEL_AFC_MIN: case SEL_AFC_MAX:
-    case SEL_SIZE_AFC_MIN: case SEL_SIZE_AFC_MAX:
+    case SEL_AFC_SIZE_MIN: case SEL_AFC_SIZE_MAX:
       if (!_afc.initialized())
         _afc = IntAFC(home,x,decay());
       break;
     case SEL_ACTIVITY_MIN: case SEL_ACTIVITY_MAX:
-    case SEL_SIZE_ACTIVITY_MIN: case SEL_SIZE_ACTIVITY_MAX:
+    case SEL_ACTIVITY_SIZE_MIN: case SEL_ACTIVITY_SIZE_MAX:
       if (!_act.initialized())
         _act = IntActivity(home,x,decay());
       break;
@@ -219,53 +219,53 @@ namespace Gecode {
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_DEGREE_MIN(BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_DEGREE_MIN,tbl);
+  INT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_DEGREE_SIZE_MIN,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_DEGREE_MAX(BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_DEGREE_MAX,tbl);
+  INT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_DEGREE_SIZE_MAX,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_AFC_MIN(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_AFC_MIN,d,tbl);
+  INT_VAR_AFC_SIZE_MIN(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MIN,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_AFC_MIN(IntAFC a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_AFC_MIN,a,tbl);
+  INT_VAR_AFC_SIZE_MIN(IntAFC a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MIN,a,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_AFC_MAX(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_AFC_MAX,d,tbl);
+  INT_VAR_AFC_SIZE_MAX(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MAX,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_AFC_MAX(IntAFC a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_AFC_MAX,a,tbl);
+  INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_AFC_SIZE_MAX,a,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_ACTIVITY_MIN(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_ACTIVITY_MIN,d,tbl);
+  INT_VAR_ACTIVITY_SIZE_MIN(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MIN,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_ACTIVITY_MIN(IntActivity a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_ACTIVITY_MIN,a,tbl);
+  INT_VAR_ACTIVITY_SIZE_MIN(IntActivity a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MIN,a,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_ACTIVITY_MAX(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_ACTIVITY_MAX,d,tbl);
+  INT_VAR_ACTIVITY_SIZE_MAX(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MAX,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_SIZE_ACTIVITY_MAX(IntActivity a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_SIZE_ACTIVITY_MAX,a,tbl);
+  INT_VAR_ACTIVITY_SIZE_MAX(IntActivity a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MAX,a,tbl);
   }
 
   inline IntVarBranch

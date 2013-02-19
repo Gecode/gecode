@@ -1464,12 +1464,12 @@ namespace Gecode {
       SEL_MAX_MAX,         ///< With largest max
       SEL_SIZE_MIN,        ///< With smallest domain size
       SEL_SIZE_MAX,        ///< With largest domain size
-      SEL_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
-      SEL_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
-      SEL_SIZE_AFC_MIN,    ///< With smallest domain size divided by accumulated failure count
-      SEL_SIZE_AFC_MAX,    ///< With largest domain size divided by accumulated failure count
-      SEL_SIZE_ACTIVITY_MIN, ///< With smallest domain size divided by activity
-      SEL_SIZE_ACTIVITY_MAX  ///< With largest domain size divided by activity
+      SEL_DEGREE_SIZE_MIN, ///< With smallest degree divided by domain size
+      SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
+      SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
+      SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
+      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
+      SEL_ACTIVITY_SIZE_MAX  ///< With largest activity divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1541,26 +1541,26 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_SIZE_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest domain size
   FloatVarBranch FLOAT_VAR_SIZE_MAX(BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by degree
-  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MIN(BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by degree
-  FloatVarBranch FLOAT_VAR_SIZE_DEGREE_MAX(BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by accumulated failure count with decay factor \a d
-  FloatVarBranch FLOAT_VAR_SIZE_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by accumulated failure count
-  FloatVarBranch FLOAT_VAR_SIZE_AFC_MIN(FloatAFC a, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by accumulated failure count with decay factor \a d
-  FloatVarBranch FLOAT_VAR_SIZE_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by accumulated failure count
-  FloatVarBranch FLOAT_VAR_SIZE_AFC_MAX(FloatAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by activity with decay factor \a d
-  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest domain size divided by activity
-  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MIN(FloatActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by activity with decay factor \a d
-  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest domain size divided by activity
-  FloatVarBranch FLOAT_VAR_SIZE_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);
+  /// Select variable with smallest degree divided by domain size
+  FloatVarBranch FLOAT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=NULL);
+  /// Select variable with largest degree divided by domain size
+  FloatVarBranch FLOAT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
+  /// Select variable with smalllest accumulated failure count  divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest accumulated failure count divided by domain size
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(FloatAFC a, BranchTbl tbl=NULL);
+  /// Select variable with largest accumulated failure count  divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest accumulated failure count divided by domain size
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(FloatAFC a, BranchTbl tbl=NULL);
+  /// Select variable with smallest activity divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest activity divided by domain size
+  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MIN(FloatActivity a, BranchTbl tbl=NULL);
+  /// Select variable with largest activity divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest activity divided by domain size
+  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MAX(FloatActivity a, BranchTbl tbl=NULL);
   //@}
 
 }

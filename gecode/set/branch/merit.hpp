@@ -85,61 +85,61 @@ namespace Gecode { namespace Set { namespace Branch {
 
   // Size over degree merit
   forceinline
-  MeritSizeDegree::MeritSizeDegree(Space& home, const VarBranch& vb)
+  MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch& vb)
     : MeritBase<SetView,double>(home,vb) {}
   forceinline
-  MeritSizeDegree::MeritSizeDegree(Space& home, bool shared, 
-                                   MeritSizeDegree& m)
+  MeritDegreeSize::MeritDegreeSize(Space& home, bool shared, 
+                                   MeritDegreeSize& m)
     : MeritBase<SetView,double>(home,shared,m) {}
   forceinline double
-  MeritSizeDegree::operator ()(const Space&, SetView x, int) {
+  MeritDegreeSize::operator ()(const Space&, SetView x, int) {
     return static_cast<double>(x.unknownSize()) / 
       static_cast<double>(x.degree());
   }
 
   // Size over AFC merit
   forceinline
-  MeritSizeAFC::MeritSizeAFC(Space& home, const VarBranch& vb)
+  MeritAFCSize::MeritAFCSize(Space& home, const VarBranch& vb)
     : MeritBase<SetView,double>(home,vb), afc(vb.afc()) {}
   forceinline
-  MeritSizeAFC::MeritSizeAFC(Space& home, bool shared, MeritSizeAFC& m)
+  MeritAFCSize::MeritAFCSize(Space& home, bool shared, MeritAFCSize& m)
     : MeritBase<SetView,double>(home,shared,m) {
     afc.update(home,shared,m.afc);
   }
   forceinline double
-  MeritSizeAFC::operator ()(const Space& home, SetView x, int) {
+  MeritAFCSize::operator ()(const Space& home, SetView x, int) {
     return static_cast<double>(x.unknownSize()) / x.afc(home);
   }
   forceinline bool
-  MeritSizeAFC::notice(void) const {
+  MeritAFCSize::notice(void) const {
     return true;
   }
   forceinline void
-  MeritSizeAFC::dispose(Space&) {
+  MeritAFCSize::dispose(Space&) {
     afc.~AFC();
   }
 
   // Size over activity merit
   forceinline
-  MeritSizeActivity::MeritSizeActivity(Space& home,
+  MeritActivitySize::MeritActivitySize(Space& home,
                                        const VarBranch& vb)
     : MeritBase<SetView,double>(home,vb), activity(vb.activity()) {}
   forceinline
-  MeritSizeActivity::MeritSizeActivity(Space& home, bool shared, 
-                                       MeritSizeActivity& m)
+  MeritActivitySize::MeritActivitySize(Space& home, bool shared, 
+                                       MeritActivitySize& m)
     : MeritBase<SetView,double>(home,shared,m) {
     activity.update(home, shared, m.activity);
   }
   forceinline double
-  MeritSizeActivity::operator ()(const Space&, SetView x, int i) {
+  MeritActivitySize::operator ()(const Space&, SetView x, int i) {
     return static_cast<double>(x.unknownSize()) / activity[i];
   }
   forceinline bool
-  MeritSizeActivity::notice(void) const {
+  MeritActivitySize::notice(void) const {
     return true;
   }
   forceinline void
-  MeritSizeActivity::dispose(Space&) {
+  MeritActivitySize::dispose(Space&) {
     activity.~Activity();
   }
 

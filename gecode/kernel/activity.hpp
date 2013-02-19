@@ -279,7 +279,7 @@ namespace Gecode {
   Activity::Storage::Storage(int n0, double d0)
     : use_cnt(1), a(heap.alloc<double>(n0)), n(n0), d(d0) {
     for (int i=n; i--; )
-      a[i] = 0.00001;
+      a[i] = 0.0;
   }
   forceinline
   Activity::Storage::~Storage(void) {

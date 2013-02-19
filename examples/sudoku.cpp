@@ -177,9 +177,9 @@ public:
     } else if (opt.branching() == BRANCH_SIZE) {
       branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
-      branch(*this, x, INT_VAR_SIZE_DEGREE_MIN(), INT_VAL_SPLIT_MIN());
+      branch(*this, x, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_SIZE_AFC) {
-      branch(*this, x, INT_VAR_SIZE_AFC_MIN(opt.decay()), INT_VAL_SPLIT_MIN());
+      branch(*this, x, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
     } else if (opt.branching() == BRANCH_AFC) {
       branch(*this, x, INT_VAR_AFC_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
     }
@@ -313,9 +313,9 @@ public:
     } else if (opt.branching() == BRANCH_SIZE) {
       branch(*this, y, SET_VAR_SIZE_MIN(), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_SIZE_DEGREE) {
-      branch(*this, y, SET_VAR_SIZE_DEGREE_MIN(), SET_VAL_MIN_INC());
+      branch(*this, y, SET_VAR_DEGREE_SIZE_MAX(), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_SIZE_AFC) {
-      branch(*this, y, SET_VAR_SIZE_AFC_MIN(opt.decay()), SET_VAL_MIN_INC());
+      branch(*this, y, SET_VAR_AFC_SIZE_MAX(opt.decay()), SET_VAL_MIN_INC());
     } else if (opt.branching() == BRANCH_AFC) {
       branch(*this, y, SET_VAR_AFC_MAX(opt.decay()), SET_VAL_MIN_INC());
     }

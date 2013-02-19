@@ -359,10 +359,10 @@ public:
              INT_VAL_MIN());
       break;
     case BRANCH_SIZE_DEGREE:
-      branch(*this, v, INT_VAR_SIZE_DEGREE_MIN(), INT_VAL_MIN());
+      branch(*this, v, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_MIN());
       break;
     case BRANCH_SIZE_AFC:
-      branch(*this, v, INT_VAR_SIZE_AFC_MIN(opt.decay()), INT_VAL_MIN());
+      branch(*this, v, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
       break;
     default:
       break;

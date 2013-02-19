@@ -111,7 +111,7 @@ public:
       break;
     case BRANCH_LETTERS:
       // Branch by assigning letters
-      branch(*this, letters, INT_VAR_SIZE_AFC_MIN(opt.decay()), INT_VAL_MIN());
+      branch(*this, letters, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
       break;
     }
   }

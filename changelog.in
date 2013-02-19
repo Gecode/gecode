@@ -81,6 +81,23 @@ Decay values can now be passed on the command line using the
 switch -decay.
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variable selection for branching used the quotient of size
+divided by degree, accumulated failure count, or activity. They
+now use the inverse. That is, for example, it is not any longer
+INT_VAR_SIZE_DEGREE_MIN() but INT_VAR_DEGREE_SIZE_MAX() (that is,
+largest degree divided by size).
+[MORE]
+That looks like an annoying change but is in fact essential: the
+strategies using accumulated failure count and activity now could
+have run into division by zero issues. And just changing the
+implementation is not good enough because the values of these
+measures can now be exposed during tie-breaking.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   major

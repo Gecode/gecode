@@ -229,10 +229,10 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<IntVarBranch>(INT_VAR_AFC_MIN());
       if (s->id == "afc_max")
         return TieBreak<IntVarBranch>(INT_VAR_AFC_MAX());
-      if (s->id == "size_afc_min")
-        return TieBreak<IntVarBranch>(INT_VAR_SIZE_AFC_MIN());
-      if (s->id == "size_afc_max")
-        return TieBreak<IntVarBranch>(INT_VAR_SIZE_AFC_MAX());
+      if (s->id == "afc_size_min")
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MIN());
+      if (s->id == "afc_size_max")
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MAX());
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -360,10 +360,10 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MIN());
       if (s->id == "afc_max")
         return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MAX());
-      if (s->id == "size_afc_min")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MIN());
-      if (s->id == "size_afc_max")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_SIZE_AFC_MAX());
+      if (s->id == "afc_size_min")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MIN());
+      if (s->id == "afc_size_max")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MAX());
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -775,7 +775,7 @@ namespace Gecode { namespace FlatZinc {
         bv_sol[k++] = bv[i];
       }
 
-    branch(*this, iv_sol, INT_VAR_SIZE_AFC_MIN(0.99), INT_VAL_MIN());
+    branch(*this, iv_sol, INT_VAR_AFC_SIZE_MAX(0.99), INT_VAL_MIN());
     branch(*this, bv_sol, INT_VAR_AFC_MAX(0.99), INT_VAL_MIN());
 #ifdef GECODE_HAS_FLOAT_VARS
     introduced = 0;
@@ -823,7 +823,7 @@ namespace Gecode { namespace FlatZinc {
         sv_sol[k++] = sv[i];
       }
 
-    branch(*this, sv_sol, SET_VAR_SIZE_AFC_MIN(0.99), SET_VAL_MIN_INC());
+    branch(*this, sv_sol, SET_VAR_AFC_SIZE_MAX(0.99), SET_VAL_MIN_INC());
 #endif
     iv_aux = IntVarArray(*this, iv_tmp);
     bv_aux = BoolVarArray(*this, bv_tmp);

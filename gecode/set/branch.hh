@@ -119,12 +119,12 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
    */
-  class MeritSizeDegree : public MeritBase<SetView,double> {
+  class MeritDegreeSize : public MeritBase<SetView,double> {
   public:
     /// Constructor for initialization
-    MeritSizeDegree(Space& home, const VarBranch& vb);
+    MeritDegreeSize(Space& home, const VarBranch& vb);
     /// Constructor for cloning
-    MeritSizeDegree(Space& home, bool shared, MeritSizeDegree& m);
+    MeritDegreeSize(Space& home, bool shared, MeritDegreeSize& m);
     /// Return size over degree as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
   };
@@ -135,15 +135,15 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
    */
-  class MeritSizeAFC : public MeritBase<SetView,double> {
+  class MeritAFCSize : public MeritBase<SetView,double> {
   protected:
     /// AFC information
     AFC afc;
   public:
     /// Constructor for initialization
-    MeritSizeAFC(Space& home, const VarBranch& vb);
+    MeritAFCSize(Space& home, const VarBranch& vb);
     /// Constructor for cloning
-    MeritSizeAFC(Space& home, bool shared, MeritSizeAFC& m);
+    MeritAFCSize(Space& home, bool shared, MeritAFCSize& m);
     /// Return size over AFC as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -158,15 +158,15 @@ namespace Gecode { namespace Set { namespace Branch {
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
    */
-  class MeritSizeActivity : public MeritBase<SetView,double> {
+  class MeritActivitySize : public MeritBase<SetView,double> {
   protected:
     /// Activity information
     Activity activity;
   public:
     /// Constructor for initialization
-    MeritSizeActivity(Space& home, const VarBranch& vb);
+    MeritActivitySize(Space& home, const VarBranch& vb);
     /// Constructor for cloning
-    MeritSizeActivity(Space& home, bool shared, MeritSizeActivity& m);
+    MeritActivitySize(Space& home, bool shared, MeritActivitySize& m);
     /// Return size over activity as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)

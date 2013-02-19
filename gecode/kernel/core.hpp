@@ -3043,10 +3043,7 @@ namespace Gecode {
   template<class VIC>
   forceinline double
   VarImp<VIC>::afc(const Space& home) const {
-    if (degree() == 0)
-      return 0.0;
-    // So that afc is never zero
-    double d = 0.00000001;
+    double d = 0.0;
     // Count the afc of each propagator
     {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor(0);

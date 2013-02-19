@@ -574,7 +574,7 @@ public:
         row[i]=init(b(x+i+1,y));
       distinctlinear(cache,row,s,opt);
     }
-    branch(*this, f, INT_VAR_SIZE_AFC_MIN(opt.decay()), INT_VAL_SPLIT_MIN());
+    branch(*this, f, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a s
   Kakuro(bool share, Kakuro& s) : Script(share,s), w(s.w), h(s.h) {
