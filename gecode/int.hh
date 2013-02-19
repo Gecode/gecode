@@ -1010,6 +1010,23 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, const IntSet& s, Reify r,
       IntConLevel icl=ICL_DEF);
+
+  /// Constrain domain of \a x according to domain of \a d
+  GECODE_INT_EXPORT void
+  dom(Home home, IntVar x, IntVar d,
+      IntConLevel icl=ICL_DEF);
+  /// Constrain domain of \a x according to domain of \a d
+  GECODE_INT_EXPORT void
+  dom(Home home, BoolVar x, BoolVar d,
+      IntConLevel icl=ICL_DEF);
+  /// Constrain domain of \f$ x_i \f$ according to domain of \f$ d_i \f$ for all \f$0\leq i<|x|\f$
+  GECODE_INT_EXPORT void
+  dom(Home home, const IntVarArgs& x, const IntVarArgs& d,
+      IntConLevel icl=ICL_DEF);
+  /// Constrain domain of \f$ x_i \f$ according to domain of \f$ d_i \f$ for all \f$0\leq i<|x|\f$
+  GECODE_INT_EXPORT void
+  dom(Home home, const BoolVarArgs& x, const BoolVarArgs& d,
+      IntConLevel icl=ICL_DEF);
   //@}
 
 

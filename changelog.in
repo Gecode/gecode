@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added variants of dom that copy the domain from one variable to
+another.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor
