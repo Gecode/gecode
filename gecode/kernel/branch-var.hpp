@@ -87,8 +87,12 @@ namespace Gecode {
     double decay(void) const;
     /// Return AFC
     AFC afc(void) const;
+    /// Set AFC to \a a
+    void afc(AFC a);
     /// Return activity
     Activity activity(void) const;
+    /// Set activity to \a a
+    void activity(Activity a);
     /// Return merit function
     VoidFunction merit(void) const;
   };
@@ -147,9 +151,19 @@ namespace Gecode {
     return _afc;
   }
 
+  inline void
+  VarBranch::afc(AFC a) {
+    _afc=a;
+  }
+
   inline Activity
   VarBranch::activity(void) const {
     return _act;
+  }
+
+  inline void
+  VarBranch::activity(Activity a) {
+    _act=a;
   }
 
   forceinline VoidFunction

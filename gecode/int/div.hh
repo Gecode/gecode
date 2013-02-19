@@ -73,5 +73,5 @@ namespace Gecode { namespace Int {
 
 #endif
 
-// STATISTICS: int-misc
+// STATISTICS: int-prop
 
