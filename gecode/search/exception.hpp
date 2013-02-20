@@ -1,14 +1,14 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2012
+ *     Christian Schulte, 2004
  *
  *  Last modified:
- *     $Date: 2012-08-29 12:29:14 +0200 (Wed, 29 Aug 2012) $ by $Author: schulte $
- *     $Revision: 13015 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,19 +35,11 @@
  *
  */
 
-#include <gecode/search.hh>
-#include <gecode/search/sequential/restart.hh>
-
 namespace Gecode { namespace Search {
-    
-  Engine* 
-  restart(Space* s, size_t sz, MetaStop* stop,
-          Engine* e, const Options& o) {
-    Cutoff* co = o.cutoff;
-    if (co == NULL)
-      throw UninitializedCutoff("restart");
-    return new Sequential::Restart(s,sz,co,stop,e,o);
-  }
+
+  inline
+  UninitializedCutoff::UninitializedCutoff(const char* l)
+    : Exception(l,"Cutoff for restart-based search is missing") {}
 
 }}
 

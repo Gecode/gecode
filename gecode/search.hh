@@ -95,6 +95,28 @@ namespace Gecode { namespace Search {
     const unsigned int initial_delay = 5;
   }
 
+}}
+
+namespace Gecode { namespace Search {
+
+  /**
+   * \defgroup FuncThrowSearch %Search exceptions
+   * \ingroup FuncThrow
+   */
+  //@{
+  /// %Exception: Uninitialized cutoff for restart search
+  class GECODE_VTABLE_EXPORT UninitializedCutoff : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedCutoff(const char* l);
+  };
+  //@}
+}}
+
+#include <gecode/search/exception.hpp>
+
+namespace Gecode { namespace Search {
+
   /**
    * \brief %Search engine statistics
    * \ingroup TaskModelSearch

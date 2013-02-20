@@ -249,7 +249,7 @@ SEARCHSRC0 = \
 	restart
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
-	support.hh worker.hh \
+	support.hh worker.hh exception.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	sequential/rbs.hh sequential/restart.hh \
 	parallel/path.hh parallel/engine.hh \
