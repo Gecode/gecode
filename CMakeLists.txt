@@ -6,8 +6,8 @@
 #     Victor Zverovich, 2013
 #
 #  Last modified:
-#     $Date: 2013-02-20 18:04:29 +0100 (Wed, 20 Feb 2013) $ by $Author: schulte $
-#     $Revision: 13343 $
+#     $Date$ by $Author$
+#     $Revision$
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:
