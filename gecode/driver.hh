@@ -102,6 +102,16 @@ namespace Gecode {
     SM_GIST      ///< Run script in Gist
   };
 
+  /**
+   * \brief Different modes for restart-based search
+   * \ingroup TaskDriverCmd
+   */
+  enum RestartMode {
+    RM_NONE, ///< No restarts
+    RM_LUBY, ///< Restart with Luby sequence
+    RM_GEOM  ///< Restart with geometric sequence
+  };
+
   class BaseOptions;
 
   namespace Driver {
@@ -333,6 +343,9 @@ namespace Gecode {
     Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;      ///< Cutoff for time
+    Driver::StringOption      _restart;   ///< Restart method option
+    Driver::UnsignedIntOption _r_base;    ///< Restart base
+    Driver::DoubleOption      _r_scale;   ///< Restart scale factor
     Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
     //@}
     
@@ -434,6 +447,21 @@ namespace Gecode {
     void time(unsigned int t);
     /// Return time cutoff
     unsigned int time(void) const;
+    
+    /// Set default restart mode
+    void restart(RestartMode r);
+    /// Return restart mode
+    RestartMode restart(void) const;
+    
+    /// Set default restart base
+    void r_base(unsigned int base);
+    /// Return restart base
+    unsigned int r_base(void) const;
+    
+    /// Set default restart scale factor
+    void r_scale(double scale);
+    /// Return restart scale factor
+    double r_scale(void) const;
     
     /// Set default interrupt behavior
     void interrupt(bool b);
@@ -603,6 +631,9 @@ namespace Gecode {
       template<class Script, template<class> class Engine, class Options>
       static void run(const Options& opt, Script* s=NULL);
     private:
+      template<class Script, template<class> class Engine, class Options,
+               template<template<class> class,class> class Meta>
+      static void runMeta(const Options& opt, Script* s);
       /// Catch wrong definitions of copy constructor
       explicit ScriptBase(ScriptBase& e);
     };

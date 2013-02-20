@@ -62,6 +62,10 @@ namespace Gecode { namespace Search {
     virtual Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
+    /// Reset engine to restart at space \a s and return new root
+    virtual Space* reset(Space* s);
+    /// Return reference to deepest space on the stack
+    virtual const Space& deepest(void) const;
   };
 
   template<class Worker>
@@ -82,6 +86,16 @@ namespace Gecode { namespace Search {
   bool 
   WorkerToEngine<Worker>::stopped(void) const {
     return w.stopped();
+  }
+  template<class Worker>
+  Space*
+  WorkerToEngine<Worker>::reset(Space* s) {
+    return w.reset(s);
+  }
+  template<class Worker>
+  const Space&
+  WorkerToEngine<Worker>::deepest(void) const {
+    return w.deepest();
   }
 
 }}

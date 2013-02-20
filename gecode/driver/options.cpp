@@ -375,6 +375,9 @@ namespace Gecode {
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
+      _restart("-restart","restart sequence type",RM_NONE),
+      _r_base("-restart-base","base value for restart sequence",100),
+      _r_scale("-restart-scale","scale factor for restart sequence",1.2),
       _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
       
@@ -398,10 +401,15 @@ namespace Gecode {
     _mode.add(SM_STAT, "stat");
     _mode.add(SM_GIST, "gist");
     
+    _restart.add(RM_NONE,"none");
+    _restart.add(RM_LUBY,"luby");
+    _restart.add(RM_GEOM,"geometric");
+    
     add(_model); add(_symmetry); add(_propagation); add(_icl); 
     add(_branching); add(_decay);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
     add(_node); add(_fail); add(_time); add(_interrupt);
+    add(_restart); add(_r_base); add(_r_scale);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
     add(_out_file); add(_log_file);
   }

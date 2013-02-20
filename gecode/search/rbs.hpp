@@ -45,7 +45,7 @@ namespace Gecode {
   template<class T>
   forceinline
   RBS<T>::RBS(T* s, const Search::Options& o)
-    : e(Search::rbs(s,sizeof(T),o)) {}
+    : EngineBase(Search::rbs(s,sizeof(T),o)) {}
 
   template<class T>
   forceinline T*
@@ -63,12 +63,6 @@ namespace Gecode {
   forceinline bool
   RBS<T>::stopped(void) const {
     return e->stopped();
-  }
-
-  template<class T>
-  forceinline
-  RBS<T>::~RBS(void) {
-    delete e;
   }
 
 

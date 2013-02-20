@@ -313,44 +313,75 @@ namespace Gecode { namespace Search {
     virtual bool stop(const Statistics& s, const Options& o);
   };
 
+  /**
+   * \brief %Stop-object for meta engine
+   * \ingroup TaskModelSearchStop
+   */
+  class GECODE_SEARCH_EXPORT MetaStop : public Stop {
+  private:
+    /// The failure stop object for the engine
+    FailStop* e_stop;
+    /// The stop object for the meta engine
+    Stop* m_stop;
+    /// Whether the engine was stopped
+    bool e_stopped;
+    /// Accumulated statistics for the meta engine
+    Statistics m_stat;
+  public:
+    /// Stop the meta engine if indicated by the stop object \a s
+    MetaStop(Stop* s);
+    /// Return true if meta engine must be stopped
+    virtual bool stop(const Statistics& s, const Options& o);
+    /// Set current limit for the engine to \a l fails
+    void limit(const Search::Statistics& s, unsigned int l);
+    /// Return the stop object to control the engine
+    Stop* enginestop(void) const;
+    /// Return whether the engine has been stopped
+    bool enginestopped(void) const;
+    /// Return statistics for the meta engine
+    Statistics metastatistics(void) const;
+    /// Delete object
+    ~MetaStop(void);
+  };
+
 }}
 
 #include <gecode/search/stop.hpp>
 
 namespace Gecode { namespace Search {
 
-    /**
-     * \brief Base class for cutoff generators for restart meta engines
-     */
-    class GECODE_SEARCH_EXPORT Cutoff {
-    public:
-      /// Default constructor
-      Cutoff(void);
-      /// Return next cutoff value
-      virtual unsigned long int operator ()(void) = 0;
+  /**
+   * \brief Base class for cutoff generators for restart meta engines
+   */
+  class GECODE_SEARCH_EXPORT Cutoff {
+  public:
+    /// Default constructor
+    Cutoff(void);
+    /// Return next cutoff value
+    virtual unsigned long int operator ()(void) = 0;
       /// Destructor
-      virtual ~Cutoff(void);
-      /// Create generator for luby sequence with scale factor \a scale
-      static Cutoff*
-      luby(unsigned long int scale=1U);
-      /** Create generator for geometric sequence starting from
-       *  \a base and scaling by \a scale
-       */
-      static Cutoff*
-      geometric(unsigned long int base, double scale);
-      /** Create generator for random sequence with seed \a seed that
-       *  generates values between \a min and \a max with \a n steps
-       *  between the extreme values (use 0 for \a n to get step size 1).
-       */
-      static Cutoff*
-      rnd(unsigned int seed, 
-          unsigned long int min, unsigned long int max, 
-          unsigned long int n);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
-    };
+    virtual ~Cutoff(void);
+    /// Create generator for luby sequence with scale factor \a scale
+    static Cutoff*
+    luby(unsigned long int scale=1U);
+    /** Create generator for geometric sequence starting from
+     *  \a base and scaling by \a scale
+     */
+    static Cutoff*
+    geometric(unsigned long int base, double scale);
+    /** Create generator for random sequence with seed \a seed that
+     *  generates values between \a min and \a max with \a n steps
+     *  between the extreme values (use 0 for \a n to get step size 1).
+     */
+    static Cutoff*
+    rnd(unsigned int seed, 
+        unsigned long int min, unsigned long int max, 
+        unsigned long int n);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+  };
     
 }}
 
@@ -359,16 +390,20 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
   /**
-   * \brief %Search engine interface
+   * \brief %Search engine implementation interface
    */
   class Engine {
   public:
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void) = 0;
     /// Return statistics
-    virtual Search::Statistics statistics(void) const = 0;
+    virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
+    /// Reset engine to restart at space \a s and return new root
+    virtual Space* reset(Space* s) = 0;
+    /// Return reference to deepest space on the stack
+    virtual const Space& deepest(void) const = 0;
     /// Destructor
     virtual ~Engine(void) {}
   };
@@ -383,6 +418,33 @@ namespace Gecode { namespace Search {
 
 namespace Gecode {
 
+  template<template<class> class E, class T>
+  class Restart;
+
+  /**
+   *  \brief Base-class for search engines
+   */
+  class EngineBase {
+    template<template<class>class,class> friend class Restart;
+  protected:
+    /// The actual search engine
+    Search::Engine* e;
+    /// Destructor
+    ~EngineBase(void);
+    /// Constructor
+    EngineBase(Search::Engine* e = NULL);
+  };
+
+  inline
+  EngineBase::EngineBase(Search::Engine* e0) : e(e0) {}
+  inline
+  EngineBase::~EngineBase(void) { delete e; }
+
+}
+
+namespace Gecode {
+
+
   /**
    * \brief Depth-first search engine
    *
@@ -391,10 +453,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class DFS {
-  private:
-    /// The actual search engine
-    Search::Engine* e;
+  class DFS : public EngineBase {
   public:
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
@@ -404,8 +463,6 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
-    /// Destructor
-    ~DFS(void);
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
@@ -430,10 +487,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class BAB {
-  private:
-    /// The actual search engine
-    Search::Engine* e;
+  class BAB : public EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
@@ -443,8 +497,6 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
-    /// Destructor
-    ~BAB(void);
   };
 
   /**
@@ -480,10 +532,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class RBS {
-  private:
-    /// The actual search engine
-    Search::Engine* e;
+  class RBS : public EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o=Search::Options::def);
@@ -493,8 +542,6 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
-    /// Destructor
-    ~RBS(void);
   };
 
   /**
@@ -511,9 +558,41 @@ namespace Gecode {
   template<class T>
   T* rbs(T* s, const Search::Options& o=Search::Options::def);
 
+  /**
+   * \brief Meta-engine performing restart-based search
+   *
+   * The engine uses the Cutoff sequence supplied in the options \a o to
+   * periodically restart the search of engine \a E.
+   *
+   * The class \a T must implement a member function
+   * \code virtual void configure(const Space& last) \endcode
+   * Whenever exploration restarts or a solution is found, the engine
+   * executes \c configure(t) on the master space where \a t is either
+   * the solution or the last space on the stack of the engine \a E.
+   *
+   * If you want to use this search engine for best solution search,
+   * \c configure(t) must call \c constrain whenever the status of \a t
+   * is SS_SOLVED.
+   *
+   * \ingroup TaskModelSearch
+   */
+  template<template<class> class E, class T>
+  class Restart : public EngineBase {
+  public:
+    /// Initialize engine for space \a s and options \a o
+    Restart(T* s, const Search::Options& o=Search::Options::def);
+    /// Return next solution (NULL, if non exists or search has been stopped)
+    T* next(void);
+    /// Return statistics
+    Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    bool stopped(void) const;
+  };
+
 }
 
 #include <gecode/search/rbs.hpp>
+#include <gecode/search/restart.hpp>
 
 #endif
 

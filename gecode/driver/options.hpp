@@ -301,6 +301,34 @@ namespace Gecode {
   Options::time(void) const {
     return _time.value();
   }
+
+  inline void
+  Options::restart(RestartMode rm) {
+    _restart.value(rm);
+  }
+  inline RestartMode
+  Options::restart(void) const {
+    return static_cast<RestartMode>(_restart.value());
+  }
+  
+  inline void
+  Options::r_base(unsigned int base) {
+    _r_base.value(base);
+  }
+  inline unsigned int
+  Options::r_base(void) const {
+    return _r_base.value();
+  }
+  
+  inline void
+  Options::r_scale(double scale) {
+    _r_scale.value(scale);
+  }
+  inline double
+  Options::r_scale(void) const {
+    return _r_scale.value();
+  }
+  
   
   inline void
   Options::interrupt(bool b) {

@@ -56,9 +56,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* cur;
     /// Distance until next clone
     unsigned int d;
-  protected:
-    /// Reset engine to restart at space \a s and return new root
-    Space* reset(Space* s);
   public:
     /// Initialize for space \a s (of size \a sz) with options \a o
     DFS(Space* s, size_t sz, const Options& o);
@@ -66,6 +63,10 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
+    /// Reset engine to restart at space \a s and return new root
+    Space* reset(Space* s);
+    /// Return reference to deepest space on the stack
+    const Space& deepest(void) const;
     /// Destructor
     ~DFS(void);
   };
@@ -154,6 +155,15 @@ namespace Gecode { namespace Search { namespace Sequential {
     }
     GECODE_NEVER;
     return NULL;
+  }
+
+  forceinline const Space&
+  DFS::deepest(void) const {
+    if (path.empty()) {
+      assert(cur != NULL);
+      return *cur;
+    }
+    return path.deepest();
   }
 
   forceinline Statistics

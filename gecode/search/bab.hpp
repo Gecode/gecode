@@ -49,7 +49,7 @@ namespace Gecode {
   template<class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
-    : e(Search::bab(s,sizeof(T),o)) {}
+    : EngineBase(Search::bab(s,sizeof(T),o)) {}
 
   template<class T>
   forceinline T*
@@ -67,12 +67,6 @@ namespace Gecode {
   forceinline bool
   BAB<T>::stopped(void) const {
     return e->stopped();
-  }
-
-  template<class T>
-  forceinline
-  BAB<T>::~BAB(void) {
-    delete e;
   }
 
   template<class T>

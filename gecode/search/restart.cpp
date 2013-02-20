@@ -1,14 +1,14 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Guido Tack, 2012
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2012-08-29 12:29:14 +0200 (Wed, 29 Aug 2012) $ by $Author: schulte $
+ *     $Revision: 13015 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,56 +35,20 @@
  *
  */
 
-#ifndef __GECODE_SEARCH_SEQUENTIAL_RBS_HH__
-#define __GECODE_SEARCH_SEQUENTIAL_RBS_HH__
+#include <gecode/search.hh>
+#include <gecode/search/sequential/restart.hh>
 
-#include <gecode/search/sequential/dfs.hh>
-
-namespace Gecode { namespace Search { namespace Sequential {
-
-  /// Depth-first restart best solution search engine implementation
-  class RBS : public DFS {
-  protected:
-    /// Root node
-    Space* root;
-    /// So-far best solution
-    Space* best;
-  public:
-    /// Initialize engine for space \a s (with size \a sz) and options \a o
-    RBS(Space* s, size_t sz, const Search::Options& o);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    Space* next(void);
-    /// Destructor
-    ~RBS(void);
-  };
-
-  forceinline 
-  RBS::RBS(Space* s, size_t sz, const Search::Options& o) :
-    DFS(s,sz,o),
-    root(s->status() == SS_FAILED ? NULL : s->clone()), best(NULL) {}
-
-  forceinline Space*
-  RBS::next(void) {
-    if (best != NULL) {
-      root->constrain(*best);
-      root = reset(root);
-    }
-    if (root == NULL)
-      return NULL;
-    delete best;
-    best = DFS::next();
-    return (best != NULL) ? best->clone() : NULL;
+namespace Gecode { namespace Search {
+    
+  Engine* 
+  restart(Space* s, size_t sz, MetaStop* stop,
+          Engine* e, const Options& o) {
+    Cutoff* co = o.cutoff;
+    if (co==NULL)
+      co = Search::Cutoff::geometric(10,1.2);
+    return new Sequential::Restart(s,sz,co,stop,e,o);
   }
 
+}}
 
-  forceinline 
-  RBS::~RBS(void) {
-    delete best;
-    delete root;
-  }
-
-}}}
-
-#endif
-
-// STATISTICS: search-sequential
+// STATISTICS: search-other

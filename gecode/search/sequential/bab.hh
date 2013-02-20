@@ -71,6 +71,10 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
+    /// Reset engine to restart at space \a s and return new root
+    Space* reset(Space* s);
+    /// Return reference to deepest space on the stack
+    const Space& deepest(void) const;
     /// Destructor
     ~BAB(void);
   };
@@ -161,6 +165,18 @@ namespace Gecode { namespace Search { namespace Sequential {
     Statistics s = *this;
     s.memory += path.size();
     return s;
+  }
+
+  forceinline Space*
+  BAB::reset(Space*) { return NULL; }
+
+  forceinline const Space&
+  BAB::deepest(void) const {
+    if (path.empty()) {
+      assert(cur != NULL);
+      return *cur;
+    }
+    return path.deepest();
   }
 
   forceinline 

@@ -45,7 +45,7 @@ namespace Gecode {
   template<class T>
   forceinline
   DFS<T>::DFS(T* s, const Search::Options& o)
-    : e(Search::dfs(s,sizeof(T),o)) {}
+    : EngineBase(Search::dfs(s,sizeof(T),o)) {}
 
   template<class T>
   forceinline T*
@@ -63,12 +63,6 @@ namespace Gecode {
   forceinline bool
   DFS<T>::stopped(void) const {
     return e->stopped();
-  }
-
-  template<class T>
-  forceinline
-  DFS<T>::~DFS(void) {
-    delete e;
   }
 
 

@@ -51,7 +51,7 @@ namespace Gecode { namespace Driver {
    * \brief Stop object based on nodes, failures, and time
    *
    */
-  class Cutoff : public Search::Stop {
+  class CombinedStop : public Search::Stop {
   private:
     Search::NodeStop* ns; ///< Used node stop object
     Search::FailStop* fs; ///< Used fail stop object
@@ -59,7 +59,7 @@ namespace Gecode { namespace Driver {
     GECODE_DRIVER_EXPORT
     static bool sigint;   ///< Whether search was interrupted using Ctrl-C
     /// Initialize stop object
-    Cutoff(unsigned int node, unsigned int fail, unsigned int time)
+    CombinedStop(unsigned int node, unsigned int fail, unsigned int time)
       : ns((node > 0) ? new Search::NodeStop(node) : NULL),
         fs((fail > 0) ? new Search::FailStop(fail) : NULL),
         ts((time > 0) ? new Search::TimeStop(time) : NULL) {
@@ -96,7 +96,7 @@ namespace Gecode { namespace Driver {
       if ( (!intr) && (node == 0) && (fail == 0) && (time == 0))
         return NULL;
       else
-        return new Cutoff(node,fail,time);
+        return new CombinedStop(node,fail,time);
     }
 #ifdef GECODE_THREADS_WINDOWS
     /// Handler for catching Ctrl-C
@@ -127,7 +127,7 @@ namespace Gecode { namespace Driver {
       }
     }
     /// Destructor
-    ~Cutoff(void) {
+    ~CombinedStop(void) {
       delete ns; delete fs; delete ts;
     }
   };
@@ -151,6 +151,18 @@ namespace Gecode { namespace Driver {
   GECODE_DRIVER_EXPORT double
   dev(double t[], int n);
   
+  /// Create cutoff object from options
+  inline Search::Cutoff* createCutoff(const Options& o) {
+    switch (o.restart()) {
+    case RM_NONE: return NULL;
+    case RM_LUBY: return Search::Cutoff::luby(o.r_scale());
+    case RM_GEOM: return Search::Cutoff::geometric(o.r_base(),o.r_scale());
+    default: GECODE_NEVER;
+    }
+    return NULL;
+  }
+  
+  
 #ifdef GECODE_HAS_GIST
   
   /**
@@ -158,6 +170,10 @@ namespace Gecode { namespace Driver {
    */
   template<class Engine>
   class GistEngine {
+  public:
+    static void explore(Space* root, const Gist::Options& opt) {
+      (void) Gist::dfs(root, opt);
+    }
   };
   
   /// Specialization for DFS
@@ -205,11 +221,31 @@ namespace Gecode { namespace Driver {
     }
   }
 
+  /**
+   * \brief Wrapper class to add engine template argument
+   */
+  template<template<class> class E, class T>
+  class EngineToMeta : public E<T> {
+  public:
+    EngineToMeta(T* s, const Search::Options& o) : E<T>(s,o) {}
+  };
 
   template<class Space>
   template<class Script, template<class> class Engine, class Options>
   void
   ScriptBase<Space>::run(const Options& o, Script* s) {
+    if (o.restart()==RM_NONE) {
+      runMeta<Script,Engine,Options,EngineToMeta>(o,s);
+    } else {
+      runMeta<Script,Engine,Options,Restart>(o,s);
+    }
+  }
+
+  template<class Space>
+  template<class Script, template<class> class Engine, class Options,
+           template<template<class> class,class> class Meta>
+  void
+  ScriptBase<Space>::runMeta(const Options& o, Script* s) {
     using namespace std;
 
     ofstream sol_file, log_file;
@@ -259,12 +295,13 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
-          so.stop    = Cutoff::create(o.node(),o.fail(), o.time(), 
-                                      o.interrupt());
+          so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
+                                            o.interrupt());
+          so.cutoff  = createCutoff(o);
           so.clone   = false;
           if (o.interrupt())
-            Cutoff::installCtrlHandler(true);
-          Engine<Script> e(s,so);
+            CombinedStop::installCtrlHandler(true);
+          Meta<Engine,Script> e(s,so);
           if (o.print_last()) {
             Script* px = NULL;
             do {
@@ -290,21 +327,21 @@ namespace Gecode { namespace Driver {
             } while (--i != 0);
           }
           if (o.interrupt())
-            Cutoff::installCtrlHandler(false);
+            CombinedStop::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();
           s_out << endl;
           if (e.stopped()) {
             l_out << "Search engine stopped..." << endl
                   << "\treason: ";
-            int r = static_cast<Cutoff*>(so.stop)->reason(stat,so);
-            if (r & Cutoff::SR_INT)
+            int r = static_cast<CombinedStop*>(so.stop)->reason(stat,so);
+            if (r & CombinedStop::SR_INT)
               l_out << "user interrupt " << endl;
             else {
-              if (r & Cutoff::SR_NODE)
+              if (r & CombinedStop::SR_NODE)
                 l_out << "node ";
-              if (r & Cutoff::SR_FAIL)
+              if (r & CombinedStop::SR_FAIL)
                 l_out << "fail ";
-              if (r & Cutoff::SR_TIME)
+              if (r & CombinedStop::SR_TIME)
                 l_out << "time ";
               l_out << "limit reached" << endl << endl;
             }
@@ -344,11 +381,12 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
-          so.stop    = Cutoff::create(o.node(),o.fail(), o.time(),
-                                      o.interrupt());
+          so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
+                                            o.interrupt());
+          so.cutoff  = createCutoff(o);
           if (o.interrupt())
-            Cutoff::installCtrlHandler(true);
-          Engine<Script> e(s,so);
+            CombinedStop::installCtrlHandler(true);
+          Meta<Engine,Script> e(s,so);
           do {
             Script* ex = e.next();
             if (ex == NULL)
@@ -356,7 +394,7 @@ namespace Gecode { namespace Driver {
             delete ex;
           } while (--i != 0);
           if (o.interrupt())
-            Cutoff::installCtrlHandler(false);
+            CombinedStop::installCtrlHandler(false);
           Search::Statistics stat = e.statistics();
           l_out << endl
                << "\tpropagators:  " << n_p << endl
@@ -391,8 +429,10 @@ namespace Gecode { namespace Driver {
               so.threads = o.threads();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
-              so.stop    = Cutoff::create(o.node(),o.fail(), o.time(), false);
-              Engine<Script> e(s,so);
+              so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
+                                                false);
+              so.cutoff  = createCutoff(o);
+              Meta<Engine,Script> e(s,so);
               do {
                 Script* ex = e.next();
                 if (ex == NULL)
