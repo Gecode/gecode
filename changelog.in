@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: other
+What:   new
+Rank:   minor
+Thanks:	Victor Zverovich
+[DESCRIPTION]
+Added CMake build script for Gecode (CMakeLists.txt).
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

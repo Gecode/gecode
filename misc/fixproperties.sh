@@ -38,7 +38,7 @@
 set -e
 
 # List of file extensions for which properties should be set
-KEYWORDEXTS="cpp hpp hh sh perl ac in vsl vis mzn m4"
+KEYWORDEXTS="cpp hpp hh sh perl ac in vsl vis mzn m4 txt"
 
 for ext in ${KEYWORDEXTS}; do
     find . -name "*.$ext" ! \( -path './contribs/*' -o -path './gecode/third-party/*' \) -prune \
