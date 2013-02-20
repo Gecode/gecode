@@ -76,12 +76,11 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   inline Space*
   Restart::next(void) {
-    for (;;) {
+    while (true) {
       Space* n = e->next();
       if (n != NULL) {
         master->configure(*n);
         if (master->status() == SS_FAILED) {
-          std::cerr << "MASTER FAILED AFTER SOL\n";
           delete master;
           master = NULL;
           e->reset(NULL);
@@ -92,17 +91,16 @@ namespace Gecode { namespace Search { namespace Sequential {
       } else if (e->stopped() && stop->enginestopped()) {
         master->configure(e->deepest());
         long unsigned int nl = (*co)();
-        std::cerr << "restart with " << nl << std::endl;
         stop->limit(e->statistics(),nl);
-        if (master->status() == SS_FAILED) {
-          std::cerr << "MASTER FAILED\n";
+        if (master->status() == SS_FAILED)
           return NULL;
-        }
         e->reset(master->clone());
       } else {
         return NULL;
       }
     }
+    GECODE_NEVER;
+    return NULL;
   }
   
   inline Search::Statistics
