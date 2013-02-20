@@ -92,6 +92,7 @@ namespace Gecode { namespace Search {
     // Also stop if the fail stop object for the engine says so
     if (e_stop->stop(s,o)) {
       e_stopped = true;
+      m_stat.restart++;
       return true;
     }
     return false;
