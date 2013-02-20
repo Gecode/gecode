@@ -38,7 +38,7 @@
 @modorder = ("kernel","search","int","set","float","minimodel","gist","driver",
 	     "iter","support","example","test","flatzinc");
 
-@catorder = ("core","var","prop","branch","post",
+@catorder = ("core","memory","var","prop","branch","post",
 	     "int","set","float","minimodel","stress","any",
 	     "sequential","parallel","search",
 	     "other");
@@ -59,6 +59,7 @@ $modclear{"flatzinc"} = "FlatZinc interpreter";
 
 
 $catclear{"core"} = "Core functionality";
+$catclear{"memory"} = "Memory management";
 $catclear{"var"} = "Variables, views, and variable implementations";
 $catclear{"prop"} = "Propagators";
 $catclear{"branch"} = "Branchers";

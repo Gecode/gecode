@@ -82,4 +82,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-memory

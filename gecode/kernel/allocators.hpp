@@ -473,4 +473,4 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-memory

@@ -48,6 +48,6 @@ namespace Gecode {
 
 }
 
-// STATISTICS: kernel-core
+// STATISTICS: kernel-memory
 
 
