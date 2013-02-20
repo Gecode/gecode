@@ -110,11 +110,13 @@ namespace Gecode { namespace Search { namespace Sequential {
   
   inline bool
   Restart::stopped(void) const {
-    return e->stopped();
+    return e->stopped() && !stop->enginestopped();
   }
   
   inline Space*
-  Restart::reset(Space*) { return NULL; }
+  Restart::reset(Space*) { 
+    return NULL; 
+  }
   
   inline
   Restart::~Restart(void) {
