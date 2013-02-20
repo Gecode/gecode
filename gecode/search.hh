@@ -386,11 +386,11 @@ namespace Gecode { namespace Search {
     /// Create generator for luby sequence with scale factor \a scale
     static Cutoff*
     luby(unsigned long int scale=1U);
-    /** Create generator for geometric sequence starting from
-     *  \a base and scaling by \a scale
+    /** Create generator for geometric sequence scaled by
+     *  \a scale using base \a base
      */
     static Cutoff*
-    geometric(unsigned long int base, double scale);
+    geometric(unsigned long int start=1U, double base=1.5);
     /** Create generator for random sequence with seed \a seed that
      *  generates values between \a min and \a max with \a n steps
      *  between the extreme values (use 0 for \a n to get step size 1).

@@ -152,11 +152,15 @@ namespace Gecode { namespace Driver {
   dev(double t[], int n);
   
   /// Create cutoff object from options
-  inline Search::Cutoff* createCutoff(const Options& o) {
+  inline Search::Cutoff* 
+  createCutoff(const Options& o) {
     switch (o.restart()) {
-    case RM_NONE: return NULL;
-    case RM_LUBY: return Search::Cutoff::luby(o.r_scale());
-    case RM_GEOM: return Search::Cutoff::geometric(o.r_base(),o.r_scale());
+    case RM_NONE: 
+      return NULL;
+    case RM_LUBY: 
+      return Search::Cutoff::luby(o.restart_scale());
+    case RM_GEOM: 
+      return Search::Cutoff::geometric(o.restart_scale(),o.restart_base());
     default: GECODE_NEVER;
     }
     return NULL;

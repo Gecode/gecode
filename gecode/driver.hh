@@ -344,8 +344,8 @@ namespace Gecode {
     Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;      ///< Cutoff for time
     Driver::StringOption      _restart;   ///< Restart method option
-    Driver::UnsignedIntOption _r_base;    ///< Restart base
-    Driver::DoubleOption      _r_scale;   ///< Restart scale factor
+    Driver::DoubleOption      _r_base;    ///< Restart base
+    Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
     Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
     //@}
     
@@ -454,14 +454,14 @@ namespace Gecode {
     RestartMode restart(void) const;
     
     /// Set default restart base
-    void r_base(unsigned int base);
+    void restart_base(double base);
     /// Return restart base
-    unsigned int r_base(void) const;
+    double restart_base(void) const;
     
     /// Set default restart scale factor
-    void r_scale(double scale);
+    void restart_scale(unsigned int scale);
     /// Return restart scale factor
-    double r_scale(void) const;
+    unsigned int restart_scale(void) const;
     
     /// Set default interrupt behavior
     void interrupt(bool b);

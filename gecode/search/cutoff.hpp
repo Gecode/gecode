@@ -70,10 +70,10 @@ namespace Gecode { namespace Search {
   private:
     /// Current cutoff value
     unsigned long int n;
-    /// Scale factor
-    double scale;
+    /// Base
+    double base;
     /// Constructor
-    CutoffGeometric(unsigned long int base, double scale);
+    CutoffGeometric(unsigned long int scale, double base);
   public:
     /// Return next cutoff value
     virtual unsigned long int operator ()(void);

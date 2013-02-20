@@ -376,8 +376,8 @@ namespace Gecode {
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
       _restart("-restart","restart sequence type",RM_NONE),
-      _r_base("-restart-base","base value for restart sequence",100),
-      _r_scale("-restart-scale","scale factor for restart sequence",1.2),
+      _r_base("-restart-base","base for geometric restart sequence",1.5),
+      _r_scale("-restart-scale","scale factor for restart sequence",250),
       _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
       

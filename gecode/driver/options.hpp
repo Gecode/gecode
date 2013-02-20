@@ -312,20 +312,20 @@ namespace Gecode {
   }
   
   inline void
-  Options::r_base(unsigned int base) {
-    _r_base.value(base);
+  Options::restart_base(double n) {
+    _r_base.value(n);
   }
-  inline unsigned int
-  Options::r_base(void) const {
+  inline double
+  Options::restart_base(void) const {
     return _r_base.value();
   }
   
   inline void
-  Options::r_scale(double scale) {
-    _r_scale.value(scale);
+  Options::restart_scale(unsigned int n) {
+    _r_scale.value(n);
   }
-  inline double
-  Options::r_scale(void) const {
+  inline unsigned int
+  Options::restart_scale(void) const {
     return _r_scale.value();
   }
   

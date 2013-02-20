@@ -79,12 +79,12 @@ namespace Gecode { namespace Search {
 
 
   forceinline
-  CutoffGeometric::CutoffGeometric(unsigned long int base, double scale0) 
-    : n(base), scale(scale0) {}
+  CutoffGeometric::CutoffGeometric(unsigned long int scale, double base0) 
+    : n(scale), base(base0) {}
   unsigned long int 
   CutoffGeometric::operator ()(void) {
     unsigned long int oldn = n;
-    n = static_cast<unsigned long int>(n * scale);
+    n = static_cast<unsigned long int>(n * base);
     return oldn;
   }
   
