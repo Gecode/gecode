@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
- *     Guido Tack, 2012
+ *     Christian Schulte, 2013
+ *     Guido Tack, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,50 +39,14 @@
  *
  */
 
-#include <gecode/search/sequential/restart.hh>
-
 namespace Gecode {
 
-  namespace Search {
-    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz,
-                                         MetaStop* stop,
-                                         Engine* e,
-                                         const Options& o);
-  }
-
-  template<template<class> class E, class T>
   forceinline
-  Restart<E,T>::Restart(T* s, const Search::Options& o) {
-    Search::Options o_single;
-    o_single.clone = true;
-    o_single.threads = 1.0;
-    o_single.c_d = o.c_d;
-    o_single.a_d = o.a_d;
-    Search::MetaStop* rs = new Search::MetaStop(o.stop);
-    o_single.stop = rs;
-    E<T> engine(s,o_single);
-    EngineBase* eb = &engine;
-    Search::Engine* ee = eb->e;
-    eb->e = NULL;
-    e = Search::restart(s,sizeof(T),rs,ee,o);
-  }
-
-  template<template<class> class E, class T>
-  forceinline T*
-  Restart<E,T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-
-  template<template<class> class E, class T>
-  forceinline Search::Statistics
-  Restart<E,T>::statistics(void) const {
-    return e->statistics();
-  }
-
-  template<template<class> class E, class T>
-  forceinline bool
-  Restart<E,T>::stopped(void) const {
-    return e->stopped();
+  EngineBase::EngineBase(Search::Engine* e0) 
+    : e(e0) {}
+  forceinline
+  EngineBase::~EngineBase(void) { 
+    delete e; 
   }
 
 }

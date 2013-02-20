@@ -457,12 +457,9 @@ namespace Gecode {
     EngineBase(Search::Engine* e = NULL);
   };
 
-  inline
-  EngineBase::EngineBase(Search::Engine* e0) : e(e0) {}
-  inline
-  EngineBase::~EngineBase(void) { delete e; }
-
 }
+
+#include <gecode/search/engine-base.hpp>
 
 namespace Gecode {
 
