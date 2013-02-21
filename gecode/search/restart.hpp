@@ -54,7 +54,7 @@ namespace Gecode {
       throw Search::UninitializedCutoff("Restart::Restart");
     Search::Options e_opt;
     e_opt.clone = true;
-    e_opt.threads = 1.0;
+    e_opt.threads = m_opt.threads;
     e_opt.c_d = m_opt.c_d;
     e_opt.a_d = m_opt.a_d;
     Search::MetaStop* ms = new Search::MetaStop(m_opt.stop);
