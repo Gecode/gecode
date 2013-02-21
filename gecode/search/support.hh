@@ -44,9 +44,17 @@ namespace Gecode { namespace Search {
 
   /// Clone space \a s dependening on options \a o
   forceinline Space*
-  snapshot(Space* s, const Options& o, bool share=true) {
-    return o.clone ? s->clone(share) : s;
-  }
+  snapshot(Space* s, const Options& o, bool share=true);
+
+  /// A failed space by construction
+  class FailedSpace : public Space {
+  public:
+    /// Constructor for creation
+    FailedSpace(void);
+    /// Copy during cloning
+    GECODE_SEARCH_EXPORT
+    virtual Space* copy(bool share);
+  };
 
   /// Virtualize a worker to an engine
   template<class Worker>
@@ -67,6 +75,20 @@ namespace Gecode { namespace Search {
     /// Return reference to deepest space on the stack
     virtual const Space& deepest(void) const;
   };
+
+
+
+  forceinline Space*
+  snapshot(Space* s, const Options& o, bool share) {
+    return o.clone ? s->clone(share) : s;
+  }
+
+  
+  forceinline
+  FailedSpace::FailedSpace(void) {
+    fail();
+  }
+  
 
   template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, size_t sz, 

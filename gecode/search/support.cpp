@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2012
+ *     Christian Schulte, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -36,16 +36,15 @@
  */
 
 #include <gecode/search.hh>
-#include <gecode/search/sequential/restart.hh>
 
 namespace Gecode { namespace Search {
-    
-  Engine* 
-  restart(Space* s, size_t sz, MetaStop* stop,
-          Engine* e, const Options& o) {
-    return new Sequential::Restart(s,sz,o.cutoff,stop,e,o);
-  }
 
+  Space*
+  FailedSpace::copy(bool) {
+    GECODE_NEVER;
+    return NULL;
+  }
+  
 }}
 
 // STATISTICS: search-other

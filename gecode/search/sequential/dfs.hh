@@ -78,7 +78,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     if (s->status(*this) == SS_FAILED) {
       fail++;
       cur = NULL;
-      if (!o.clone)
+      if (!opt.clone)
         delete s;
     } else {
       cur = snapshot(s,opt);

@@ -216,6 +216,13 @@ namespace Gecode { namespace Search {
 
 #include <gecode/search/options.hpp>
 
+namespace Gecode {
+
+  template<template<class> class E, class T>
+  class Restart;
+
+}
+
 namespace Gecode { namespace Search {
 
   /**
@@ -340,6 +347,7 @@ namespace Gecode { namespace Search {
    * \ingroup TaskModelSearchStop
    */
   class GECODE_SEARCH_EXPORT MetaStop : public Stop {
+    template<template<class>class,class> friend class Restart;
   private:
     /// The failure stop object for the engine
     FailStop* e_stop;
@@ -439,9 +447,6 @@ namespace Gecode { namespace Search {
 }}
 
 namespace Gecode {
-
-  template<template<class> class E, class T>
-  class Restart;
 
   /**
    *  \brief Base-class for search engines
@@ -577,6 +582,12 @@ namespace Gecode {
   template<class T>
   T* rbs(T* s, const Search::Options& o=Search::Options::def);
 
+}
+
+#include <gecode/search/rbs.hpp>
+
+namespace Gecode {
+
   /**
    * \brief Meta-engine performing restart-based search
    *
@@ -610,7 +621,6 @@ namespace Gecode {
 
 }
 
-#include <gecode/search/rbs.hpp>
 #include <gecode/search/restart.hpp>
 
 #endif

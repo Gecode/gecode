@@ -35,6 +35,7 @@
  *
  */
 
+#include <gecode/search/support.hh>
 #include <gecode/search/sequential/restart.hh>
 
 namespace Gecode {
@@ -48,19 +49,32 @@ namespace Gecode {
 
   template<template<class> class E, class T>
   forceinline
-  Restart<E,T>::Restart(T* s, const Search::Options& o) {
-    Search::Options o_single;
-    o_single.clone = true;
-    o_single.threads = 1.0;
-    o_single.c_d = o.c_d;
-    o_single.a_d = o.a_d;
-    Search::MetaStop* rs = new Search::MetaStop(o.stop);
-    o_single.stop = rs;
-    E<T> engine(s,o_single);
+  Restart<E,T>::Restart(T* s, const Search::Options& m_opt) {
+    if (m_opt.cutoff == NULL)
+      throw Search::UninitializedCutoff("Restart::Restart");
+    Search::Options e_opt;
+    e_opt.clone = true;
+    e_opt.threads = 1.0;
+    e_opt.c_d = m_opt.c_d;
+    e_opt.a_d = m_opt.a_d;
+    Search::MetaStop* ms = new Search::MetaStop(m_opt.stop);
+    e_opt.stop = ms;
+    Space* master;
+    if (m_opt.clone) {
+      if (s->status(ms->m_stat) == SS_FAILED) {
+        ms->m_stat.fail++;
+        master = new Search::FailedSpace();
+      } else {
+        master = s->clone();
+      }
+    } else {
+      master = s;
+    }
+    E<T> engine(dynamic_cast<T*>(master),e_opt);
     EngineBase* eb = &engine;
     Search::Engine* ee = eb->e;
     eb->e = NULL;
-    e = Search::restart(s,sizeof(T),rs,ee,o);
+    e = Search::restart(master,sizeof(T),ms,ee,m_opt);
   }
 
   template<template<class> class E, class T>

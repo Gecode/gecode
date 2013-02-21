@@ -55,11 +55,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     MetaStop* stop;
   public:
     /// Constructor
-    Restart(Space* s, size_t, Cutoff* co0, MetaStop* stop0,
-            Engine* e0, const Options&)
-      : e(e0), master(s), co(co0), stop(stop0) {
-      stop->limit(Statistics(),(*co)());
-    }
+    Restart(Space*, size_t, Cutoff* co0, MetaStop* stop0,
+            Engine* e0, const Options& o);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
@@ -73,6 +70,13 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Destructor
     virtual ~Restart(void);
   };
+
+  inline
+  Restart::Restart(Space* s, size_t, Cutoff* co0, MetaStop* stop0,
+                   Engine* e0, const Options&)
+    : e(e0), master(s), co(co0), stop(stop0) {
+    stop->limit(Statistics(),(*co)());
+  }
 
   inline Space*
   Restart::next(void) {
