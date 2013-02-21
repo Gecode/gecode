@@ -610,7 +610,7 @@ namespace Gecode {
   class Restart : public EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
-    Restart(T* s, const Search::Options& o=Search::Options::def);
+    Restart(T* s, const Search::Options& o);
     /// Return next solution (NULL, if non exists or search has been stopped)
     T* next(void);
     /// Return statistics
