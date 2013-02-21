@@ -456,7 +456,7 @@ namespace Gecode { namespace Driver {
           } else {
             double m = am(ts,o.samples());
             double d = dev(ts,o.samples()) * 100.0;
-            l_out << "\tRuntime: "
+            l_out << "\truntime: "
                  << setw(20) << right
                  << showpoint << fixed
                  << setprecision(6) << m << "ms"
