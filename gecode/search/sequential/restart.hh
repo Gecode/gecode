@@ -82,23 +82,28 @@ namespace Gecode { namespace Search { namespace Sequential {
   Restart::next(void) {
     while (true) {
       Space* n = e->next();
+      unsigned long int i = stop->m_stat.restart;
       if (n != NULL) {
-        master->configure(*n);
+        master->configure(*n,i);
         if (master->status() == SS_FAILED) {
           delete master;
           master = NULL;
           e->reset(NULL);
         } else {
-          e->reset(master->clone());
+          Space* slave = master->clone();
+          slave->configure(i);
+          e->reset(slave);
         }
         return n;
       } else if (e->stopped() && stop->enginestopped()) {
-        master->configure(e->deepest());
+        master->configure(e->deepest(),i);
         long unsigned int nl = (*co)();
         stop->limit(e->statistics(),nl);
         if (master->status() == SS_FAILED)
           return NULL;
-        e->reset(master->clone());
+        Space* slave = master->clone();
+        slave->configure(i);
+        e->reset(slave);
       } else {
         return NULL;
       }

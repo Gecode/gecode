@@ -550,7 +550,11 @@ namespace Gecode {
   }
 
   void
-  Space::configure(const Space&) {
+  Space::configure(const Space&, unsigned long int) {
+  }
+
+  void
+  Space::configure(unsigned long int) {
   }
 
   void

@@ -498,7 +498,7 @@ Rank:	major
 [DESCRIPTION]
 Added activity-based branching strategies for integer and Boolean
 variables: INT_VAR_ACTIVITY_MIN, INT_VAR_ACTIVITY_MAX,
-INT_VAR_SIZE_ACTIVITY_MIN, INT_VAR_SIZE_ACTIVITY_MAX. For
+INT_VAR_ACTIVITY_SIZE__MIN, INT_VAR_ACTIVITY_SIZE_MAX. For
 details, see "Modeling and Programming with Gecode".
 
 [ENTRY]
@@ -508,7 +508,7 @@ Rank:	major
 [DESCRIPTION]
 Added activity-based branching strategies for set variables:
 SET_VAR_ACTIVITY_MIN, SET_VAR_ACTIVITY_MAX,
-SET_VAR_SIZE_ACTIVITY_MIN, SET_VAR_SIZE_ACTIVITY_MAX. For
+SET_VAR_ACTIVITY_SIZE_MIN, SET_VAR_ACTIVITY_SIZE_MAX. For
 details, see "Modeling and Programming with Gecode".
 
 [ENTRY]

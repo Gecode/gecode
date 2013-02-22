@@ -74,6 +74,12 @@
 
 namespace Gecode { namespace Search {
 
+  /// %Sequential search engine implementations
+  namespace Sequential {}
+  
+  /// %Parallel search engine implementations
+  namespace Parallel {}
+
   /**
    * \brief %Search configuration
    *
@@ -223,6 +229,12 @@ namespace Gecode {
 
 }
 
+namespace Gecode { namespace Search { namespace Sequential {
+
+  class Restart;
+
+}}}
+
 namespace Gecode { namespace Search {
 
   /**
@@ -348,6 +360,7 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT MetaStop : public Stop {
     template<template<class>class,class> friend class ::Gecode::Restart;
+    friend class ::Gecode::Search::Sequential::Restart;
   private:
     /// The failure stop object for the engine
     FailStop* e_stop;
@@ -398,7 +411,7 @@ namespace Gecode { namespace Search {
      *  \a scale using base \a base
      */
     static Cutoff*
-    geometric(unsigned long int start=1U, double base=1.5);
+    geometric(unsigned long int scale=1U, double base=1.5);
     /** Create generator for random sequence with seed \a seed that
      *  generates values between \a min and \a max with \a n steps
      *  between the extreme values (use 0 for \a n to get step size 1).
@@ -437,12 +450,6 @@ namespace Gecode { namespace Search {
     /// Destructor
     virtual ~Engine(void) {}
   };
-
-  /// %Sequential search engine implementations
-  namespace Sequential {}
-  
-  /// %Parallel search engine implementations
-  namespace Parallel {}
 
 }}
 

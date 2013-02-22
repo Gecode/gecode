@@ -1404,18 +1404,32 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
     /**
-     * \brief Configuration function for restart meta search engine
+     * \brief Master configuration function for restart meta search engine
      *
      * A restart meta search engine calls this function on its master space
      * whenever it finds a solution or exploration restarts. \a last is 
      * either the solution space or the last space on the stack of the
-     * engine used by the meta engine.
+     * engine used by the meta engine. \a i is the number of the restart.
      *
      * The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT virtual void configure(const Space& last);
+    GECODE_KERNEL_EXPORT 
+    virtual void configure(const Space& last, unsigned long int i);
+    /**
+     * \brief Slave configuration function for restart meta search engine
+     *
+     * A restart meta search engine calls this function on a
+     * slave space whenever it finds a solution or exploration
+     * restarts. \a i is the number of the restart.
+     *
+     * The default function does nothing.
+     *
+     * \ingroup TaskModelScript
+     */
+    GECODE_KERNEL_EXPORT 
+    virtual void configure(unsigned long int i);
     /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript
