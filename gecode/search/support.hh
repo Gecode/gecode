@@ -47,7 +47,7 @@ namespace Gecode { namespace Search {
   snapshot(Space* s, const Options& o, bool share=true);
 
   /// A failed space by construction
-  class FailedSpace : public Space {
+  class GECODE_VTABLE_EXPORT FailedSpace : public Space {
   public:
     /// Constructor for creation
     FailedSpace(void);
