@@ -173,6 +173,7 @@ namespace Gecode {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
               const AFC& a) {
+    (void)a;
     return os << "AFC(no information available)";
   }
   
