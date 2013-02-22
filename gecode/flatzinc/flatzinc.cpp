@@ -1003,10 +1003,23 @@ namespace Gecode { namespace FlatZinc {
 
 #endif
 
+
   template<template<class> class Engine>
   void
   FlatZincSpace::runEngine(std::ostream& out, const Printer& p,
-                            const FlatZincOptions& opt, Support::Timer& t_total) {
+                           const FlatZincOptions& opt, Support::Timer& t_total) {
+    if (opt.restart()==RM_NONE) {
+      runMeta<Engine,Driver::EngineToMeta>(out,p,opt,t_total);
+    } else {
+      runMeta<Engine,Restart>(out,p,opt,t_total);
+    }
+  }
+
+  template<template<class> class Engine,
+           template<template<class> class,class> class Meta>
+  void
+  FlatZincSpace::runMeta(std::ostream& out, const Printer& p,
+                         const FlatZincOptions& opt, Support::Timer& t_total) {
 #ifdef GECODE_HAS_GIST
     if (opt.mode() == SM_GIST) {
       FZPrintingInspector<FlatZincSpace> pi(p);
@@ -1028,8 +1041,10 @@ namespace Gecode { namespace FlatZinc {
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
     o.threads = opt.threads();
-    Driver::CombinedStop::installCtrlHandler(true);
-    Engine<FlatZincSpace> se(this,o);
+    o.cutoff  = Driver::createCutoff(opt);
+    if (opt.interrupt())
+      Driver::CombinedStop::installCtrlHandler(true);
+    Meta<Engine,FlatZincSpace> se(this,o);
     int noOfSolutions = _method == SAT ? opt.solutions() : 0;
     bool printAll = _method == SAT || opt.allSolutions();
     int findSol = noOfSolutions;
@@ -1059,7 +1074,8 @@ namespace Gecode { namespace FlatZinc {
     }
     delete sol;
     stopped:
-    Driver::CombinedStop::installCtrlHandler(false);
+    if (opt.interrupt())
+      Driver::CombinedStop::installCtrlHandler(false);
     if (opt.mode() == SM_STAT) {
       Gecode::Search::Statistics stat = se.statistics();
       out << endl
@@ -1077,6 +1093,7 @@ namespace Gecode { namespace FlatZinc {
            << "%%  propagations:  " << sstat.propagate+stat.propagate << endl
            << "%%  nodes:         " << stat.node << endl
            << "%%  failures:      " << stat.fail << endl
+           << "%%  restarts:      " << stat.restart << endl
            << "%%  peak depth:    " << stat.depth << endl
            << "%%  peak memory:   "
            << static_cast<int>((stat.memory+1023) / 1024) << " KB"

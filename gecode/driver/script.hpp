@@ -152,6 +152,7 @@ namespace Gecode { namespace Driver {
   dev(double t[], int n);
   
   /// Create cutoff object from options
+  template<class Options>
   inline Search::Cutoff* 
   createCutoff(const Options& o) {
     switch (o.restart()) {

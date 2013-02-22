@@ -211,12 +211,17 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::DoubleOption      _threads;   ///< How many threads to use
       Gecode::Driver::BoolOption        _free; ///< Use free search
       Gecode::Driver::StringOption      _search; ///< Search engine variant
+      Gecode::Driver::DoubleOption      _decay;       ///< Decay option
       Gecode::Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
       Gecode::Driver::UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
       Gecode::Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
       Gecode::Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
       Gecode::Driver::UnsignedIntOption _time;      ///< Cutoff for time
       Gecode::Driver::IntOption         _seed;      ///< Random seed
+      Gecode::Driver::StringOption      _restart;   ///< Restart method option
+      Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
+      Gecode::Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
+      Gecode::Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
       //@}
     
       /// \name Execution options
@@ -239,12 +244,18 @@ namespace Gecode { namespace FlatZinc {
                Gecode::Search::Config::threads),
       _free("--free", "no need to follow search-specification"),
       _search("-search","search engine variant", FZ_SEARCH_BAB),
+      _decay("-decay","decay factor",1.0),
       _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
       _a_d("-a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
       _seed("-r","random seed",0),
+      _restart("-restart","restart sequence type",RM_NONE),
+      _r_base("-restart-base","base for geometric restart sequence",1.5),
+      _r_scale("-restart-scale","scale factor for restart sequence",250),
+      _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
+                 true),
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
       _stat("-s","emit statistics"),
       _output("-o","file to send output to") {
@@ -254,12 +265,18 @@ namespace Gecode { namespace FlatZinc {
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
+      _restart.add(RM_NONE,"none");
+      _restart.add(RM_LUBY,"luby");
+      _restart.add(RM_GEOM,"geometric");
+
       add(_solutions); add(_threads); add(_c_d); add(_a_d);
       add(_allSolutions);
       add(_free);
       add(_search);
-      add(_node); add(_fail); add(_time);
+      add(_decay);
+      add(_node); add(_fail); add(_time); add(_interrupt);
       add(_seed);
+      add(_restart); add(_r_base); add(_r_scale);
       add(_mode); add(_stat);
       add(_output);
     }
@@ -297,6 +314,15 @@ namespace Gecode { namespace FlatZinc {
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());
     }
+
+    double decay(void) const { return _decay.value(); }
+    RestartMode restart(void) const {
+      return static_cast<RestartMode>(_restart.value());
+    }
+    double restart_base(void) const { return _r_base.value(); }
+    unsigned int restart_scale(void) const { return _r_scale.value(); }
+    bool interrupt(void) const { return _interrupt.value(); }
+
   };
 
   /**
@@ -337,6 +363,12 @@ namespace Gecode { namespace FlatZinc {
     void
     runEngine(std::ostream& out, const Printer& p, 
               const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
+    /// Run the meta search engine
+    template<template<class> class Engine,
+             template<template<class> class,class> class Meta>
+    void
+    runMeta(std::ostream& out, const Printer& p, 
+            const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
     void
     branchWithPlugin(AST::Node* ann);
   public:
