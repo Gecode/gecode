@@ -202,7 +202,7 @@ namespace Gecode { namespace FlatZinc {
     return 1;
   }
 
-  TieBreak<IntVarBranch> ann2ivarsel(AST::Node* ann, int seed) {
+  TieBreak<IntVarBranch> ann2ivarsel(AST::Node* ann, int seed, double decay) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
         return TieBreak<IntVarBranch>(INT_VAR_NONE());
@@ -226,13 +226,23 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<IntVarBranch>(INT_VAR_RND(r));
       }
       if (s->id == "afc_min")
-        return TieBreak<IntVarBranch>(INT_VAR_AFC_MIN());
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_MIN(decay));
       if (s->id == "afc_max")
-        return TieBreak<IntVarBranch>(INT_VAR_AFC_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_MAX(decay));
       if (s->id == "afc_size_min")
-        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MIN());
-      if (s->id == "afc_size_max")
-        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MAX());
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MIN(decay));
+      if (s->id == "afc_size_max") {
+        std::cerr << "decay = " << decay << std::endl;
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MAX(decay));
+      }
+      if (s->id == "activity_min")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_MIN(decay));
+      if (s->id == "activity_max")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_MAX(decay));
+      if (s->id == "activity_size_min")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_SIZE_MIN(decay));
+      if (s->id == "activity_size_max")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_SIZE_MAX(decay));
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -295,7 +305,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
 #ifdef GECODE_HAS_SET_VARS
-  SetVarBranch ann2svarsel(AST::Node* ann, int seed) {
+  SetVarBranch ann2svarsel(AST::Node* ann, int seed, double decay) {
     (void) seed;
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
@@ -308,6 +318,22 @@ namespace Gecode { namespace FlatZinc {
         return SET_VAR_MIN_MIN();
       if (s->id == "largest")
         return SET_VAR_MAX_MAX();
+      if (s->id == "afc_min")
+        return SET_VAR_AFC_MIN(decay);
+      if (s->id == "afc_max")
+        return SET_VAR_AFC_MAX(decay);
+      if (s->id == "afc_size_min")
+        return SET_VAR_AFC_SIZE_MIN(decay);
+      if (s->id == "afc_size_max")
+        return SET_VAR_AFC_SIZE_MAX(decay);
+      if (s->id == "activity_min")
+        return SET_VAR_ACTIVITY_MIN(decay);
+      if (s->id == "activity_max")
+        return SET_VAR_ACTIVITY_MAX(decay);
+      if (s->id == "activity_size_min")
+        return SET_VAR_ACTIVITY_SIZE_MIN(decay);
+      if (s->id == "activity_size_max")
+        return SET_VAR_ACTIVITY_SIZE_MAX(decay);
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -335,7 +361,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  TieBreak<FloatVarBranch> ann2fvarsel(AST::Node* ann, int seed) {
+  TieBreak<FloatVarBranch> ann2fvarsel(AST::Node* ann, int seed, double decay) {
     if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
       if (s->id == "input_order")
         return TieBreak<FloatVarBranch>(FLOAT_VAR_NONE());
@@ -357,13 +383,21 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<FloatVarBranch>(FLOAT_VAR_RND(r));
       }
       if (s->id == "afc_min")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MIN());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MIN(decay));
       if (s->id == "afc_max")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_MAX(decay));
       if (s->id == "afc_size_min")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MIN());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MIN(decay));
       if (s->id == "afc_size_max")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MAX());
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MAX(decay));
+      if (s->id == "activity_min")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_MIN(decay));
+      if (s->id == "activity_max")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_MAX(decay));
+      if (s->id == "activity_size_min")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_SIZE_MIN(decay));
+      if (s->id == "activity_size_max")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_SIZE_MAX(decay));
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -609,9 +643,10 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::createBranchers(AST::Node* ann, int seed,
+  FlatZincSpace::createBranchers(AST::Node* ann, int seed, double decay,
                                  bool ignoreUnknown,
                                  std::ostream& err) {
+    std::cerr << "createBranchers\n";
     if (ann) {
       std::vector<AST::Node*> flatAnn;
       if (ann->isArray()) {
@@ -625,6 +660,7 @@ namespace Gecode { namespace FlatZinc {
           AST::Call* c = flatAnn[i]->getCall();
           branchWithPlugin(c->args);
         } else if (flatAnn[i]->isCall("int_search")) {
+          std::cerr << "ann["<<i<<"] is int_search\n";
           AST::Call *call = flatAnn[i]->getCall("int_search");
           AST::Array *args = call->getArgs(4);
           AST::Array *vars = args->a[0]->getArray();
@@ -640,7 +676,7 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = iv[vars->a[i]->getIntVar()];
           }
           branch(*this, va, 
-                 ann2ivarsel(args->a[1],seed), 
+                 ann2ivarsel(args->a[1],seed,decay), 
                  ann2ivalsel(args->a[2],seed));
         } else if (flatAnn[i]->isCall("int_assign")) {
           AST::Call *call = flatAnn[i]->getCall("int_assign");
@@ -674,7 +710,7 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = bv[vars->a[i]->getBoolVar()];
           }
           branch(*this, va, 
-                 ann2ivarsel(args->a[1],seed), 
+                 ann2ivarsel(args->a[1],seed,decay), 
                  ann2ivalsel(args->a[2],seed));
         } else if (flatAnn[i]->isCall("set_search")) {
 #ifdef GECODE_HAS_SET_VARS
@@ -693,7 +729,7 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = sv[vars->a[i]->getSetVar()];
           }
           branch(*this, va, 
-                 ann2svarsel(args->a[1],seed), 
+                 ann2svarsel(args->a[1],seed,decay), 
                  ann2svalsel(args->a[2],seed));
 #else
           if (!ignoreUnknown) {
@@ -720,7 +756,7 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = fv[vars->a[i]->getFloatVar()];
           }
           branch(*this, va,
-                 ann2fvarsel(args->a[2],seed), 
+                 ann2fvarsel(args->a[2],seed,decay), 
                  ann2fvalsel(args->a[3]));
         }
 #endif

@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added support for more search annotations (defined in gecode.mzn), and for
+the restart and decay command line options.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:   minor

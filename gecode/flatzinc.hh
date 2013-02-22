@@ -475,7 +475,7 @@ namespace Gecode { namespace FlatZinc {
      *
      */
     void createBranchers(AST::Node* ann,
-                         int seed,
+                         int seed, double decay,
                          bool ignoreUnknown,
                          std::ostream& err = std::cerr);
 
