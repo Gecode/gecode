@@ -347,7 +347,7 @@ namespace Gecode { namespace Search {
    * \ingroup TaskModelSearchStop
    */
   class GECODE_SEARCH_EXPORT MetaStop : public Stop {
-    template<template<class>class,class> friend class Restart;
+    template<template<class>class,class> friend class ::Gecode::Restart;
   private:
     /// The failure stop object for the engine
     FailStop* e_stop;
@@ -452,7 +452,7 @@ namespace Gecode {
    *  \brief Base-class for search engines
    */
   class EngineBase {
-    template<template<class>class,class> friend class Restart;
+    template<template<class>class,class> friend class ::Gecode::Restart;
   protected:
     /// The actual search engine
     Search::Engine* e;
