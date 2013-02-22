@@ -1406,15 +1406,17 @@ namespace Gecode { namespace Int { namespace GCC {
       vals[i]->index(n_var + i);
     }
 
-    for (int i = n_var; i--; )
-      if (vars[i]->noe > 1)
-        for (Edge* e = vars[i]->first(); e != NULL; e = e->next())
+    for (int i = n_var; i--; ) {
+      if (vars[i]->noe > 1) {
+        for (Edge* e = vars[i]->first(); e != NULL; e = e->next()) {
           if (!e->matched(bc) && !e->used(bc)) {
             GECODE_ME_CHECK(x[i].nq(home, e->getVal()->val));
           } else {
             e->free(bc);
           }
-
+        }
+      }
+    }
     return ES_OK;
   }
 
