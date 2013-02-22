@@ -73,6 +73,21 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: driver
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added commandline options to control restart-based search, see
+MPG for details.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for restart-based search, see MPG for details.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
