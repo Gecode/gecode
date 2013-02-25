@@ -72,7 +72,7 @@ namespace Gecode {
 
     /// Less than.  The ordering is the lexicographical order
     /// on the (variable,value) pair.
-    bool operator< (const Literal &rhs) const {
+    bool operator <(const Literal &rhs) const {
       int d = rhs.variable - variable;
       if (d > 0)       return true;
       else if (d == 0) return rhs.value > value;
@@ -106,6 +106,10 @@ namespace Gecode {
     static void* operator new(size_t s, Space& home) {
       return home.ralloc(s);
     }
+    /// Return memory to space
+    static void  operator delete(void*,Space&) {}
+    /// Needed for exceptions
+    static void  operator delete(void*) {}
   protected:
     virtual void printOn(std::ostream& os) const = 0;
     friend std::ostream& operator << (std::ostream& os, const SymmetryImp& sym) {
