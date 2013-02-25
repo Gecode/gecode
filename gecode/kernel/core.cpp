@@ -93,7 +93,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void)
-    : sm(new SharedMemory), mm(sm), n_wmp(0) {
+    : sm(new SharedMemory), mm(sm), _wmp_afc(0U) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -208,7 +208,8 @@ namespace Gecode {
       switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
         // Count failure
-        gafc.fail(p->gafc);
+        if (afc_enabled())
+          gafc.fail(p->gafc);
         // Mark as failed
         fail(); s = SS_FAILED; goto exit;
       case ES_NOFIX:
@@ -292,8 +293,9 @@ namespace Gecode {
     // No brancher with alternatives left, space is solved
     s = SS_SOLVED;
   exit:
-    stat.wmp = (n_wmp > 0);
-    if (n_wmp == 1) n_wmp = 0;
+    stat.wmp = (wmp() > 0U);
+    if (wmp() == 1U) 
+      wmp(0U);
     return s;
   }
 
@@ -405,7 +407,7 @@ namespace Gecode {
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       gafc(s.gafc),
       d_fst(&Actor::sentinel),
-      n_wmp(s.n_wmp) {
+      _wmp_afc(s._wmp_afc) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -571,6 +573,7 @@ namespace Gecode {
 
   void
   Space::afc_decay(double d) {
+    afc_enable();
     // Commit outstanding decay operations
     if (gafc.decay() != 1.0)
       for (Propagators p(*this); p(); ++p)

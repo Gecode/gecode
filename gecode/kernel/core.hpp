@@ -1288,13 +1288,25 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT void d_resize(void);
 
     /**
-     * \brief Number of weakly monotonic propagators
+     * \brief Number of weakly monotonic propagators and AFC flag
      *
-     * If zero, none exists. If one, then none exists right now but
-     * there has been one since the last fixpoint computed. Otherwise,
-     * it gives the number of weakly monotoning propagators minus one.
+     * The least significant bit encodes whether AFC information
+     * must be collected, the remaining bits encode counting for
+     * weakly monotonic propagators as follows. If zero, none
+     * exists. If one, then none exists right now but there has
+     * been one since the last fixpoint computed. Otherwise, it
+     * gives the number of weakly monotoning propagators minus
+     * one.
      */
-    unsigned int n_wmp;
+    unsigned int _wmp_afc;
+    /// Set that AFC information must be recorded
+    void afc_enable(void);
+    /// Whether AFC information must be recorded
+    bool afc_enabled(void) const;
+    /// Set number of wmp propagators to \a n
+    void wmp(unsigned int n);
+    /// Return number of wmp propagators
+    unsigned int wmp(void) const;
 
     /// Used for default argument
     GECODE_KERNEL_EXPORT static StatusStatistics unused_status;
@@ -2465,6 +2477,23 @@ namespace Gecode {
   }
 
   forceinline void
+  Space::afc_enable(void) {
+    _wmp_afc |= 1U;
+  }
+  forceinline bool
+  Space::afc_enabled(void) const {
+    return (_wmp_afc & 1U) != 0U;
+  }
+  forceinline void
+  Space::wmp(unsigned int n) {
+    _wmp_afc = (_wmp_afc & 1U) | (n << 1);
+  }
+  forceinline unsigned int
+  Space::wmp(void) const {
+    return _wmp_afc >> 1U;
+  }
+
+  forceinline void
   Space::notice(Actor& a, ActorProperty p) {
     if (p & AP_DISPOSE) {
       if (d_cur == d_lst)
@@ -2472,10 +2501,10 @@ namespace Gecode {
       *(d_cur++) = &a;
     }
     if (p & AP_WEAKLY) {
-      if (n_wmp == 0)
-        n_wmp = 2;
+      if (wmp() == 0)
+        wmp(2);
       else
-        n_wmp++;
+        wmp(wmp()+1);
     }
   }
 
@@ -2497,8 +2526,8 @@ namespace Gecode {
       }
     }
     if (p & AP_WEAKLY) {
-      assert(n_wmp > 1);
-      n_wmp--;
+      assert(wmp() > 1U);
+      wmp(wmp()-1);
     }
   }
 
@@ -3387,7 +3416,8 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        home.gafc.fail(p.gafc);
+        if (home.afc_enabled())
+          home.gafc.fail(p.gafc);
         return false;
       case ES_NOFIX:
         schedule(home,p,me);
