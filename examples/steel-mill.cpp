@@ -278,10 +278,10 @@ public:
       // to label larger weights earlier).  To do this, we first sort
       // (stably) by maximum weight, then use min-size domain.
       SortByWeight sbw(orders);
-      int indices[norders];
+      IntArgs indices(norders);
       for (unsigned int i = 0 ; i < norders ; i++)
         indices[i] = i;
-      std::stable_sort(indices, indices+norders, sbw);
+      std::stable_sort(&indices[0], &indices[0]+norders, sbw);
       IntVarArgs sorted_orders(norders);
       for (unsigned int i = 0 ; i < norders ; i++) {
         sorted_orders[i] = slab[indices[i]];
