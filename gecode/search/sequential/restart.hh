@@ -88,11 +88,11 @@ namespace Gecode { namespace Search { namespace Sequential {
         if (master->status() == SS_FAILED) {
           delete master;
           master = NULL;
-          e->reset(NULL);
+          (void) e->reset(NULL);
         } else {
           Space* slave = master->clone();
           slave->configure(i);
-          e->reset(slave);
+          (void) e->reset(slave);
         }
         return n;
       } else if (e->stopped() && stop->enginestopped()) {
@@ -103,7 +103,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           return NULL;
         Space* slave = master->clone();
         slave->configure(i);
-        e->reset(slave);
+        (void) e->reset(slave);
       } else {
         return NULL;
       }

@@ -67,7 +67,8 @@ namespace Gecode { namespace Search { namespace Sequential {
   RBS::next(void) {
     if (best != NULL) {
       root->constrain(*best);
-      root = reset(root);
+      Space* s = reset(root);
+      root = (s != NULL) ? s->clone() : NULL;
     }
     if (root == NULL)
       return NULL;
