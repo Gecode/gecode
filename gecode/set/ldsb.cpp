@@ -167,9 +167,9 @@ namespace Gecode {
   // XXX: could be improved?
   bool
   equalValues(const Set::SetView& x, const Set::SetView& y) {
-    int n = x.lubSize();
+    unsigned int n = x.lubSize();
     if (n != y.lubSize()) return false;
-    for (int i = 0 ; i < n ; i++)
+    for (unsigned int i = 0 ; i < n ; i++)
       if (x.lubMinN(i) != y.lubMinN(i))
         return false;
     return true;

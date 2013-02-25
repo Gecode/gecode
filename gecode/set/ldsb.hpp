@@ -133,8 +133,8 @@ namespace Gecode { namespace Set { namespace Branch {
   LDSBSetBrancher(Space& home, bool shared, LDSBSetBrancher<View,n,Val,a>& b)
     : LDSBBrancher<View,n,Val,a>(home,shared,b),
       _prevPos(b._prevPos),
-      _nCopiedSyms(b._nCopiedSyms),
       _nNonValueSymmetries(b._nNonValueSymmetries),
+      _nCopiedSyms(b._nCopiedSyms),
       _nValueSymmetries(b._nValueSymmetries),
       _leftBranchValues(b._leftBranchValues),
       _stable(b._stable) {
@@ -231,7 +231,6 @@ namespace Gecode { namespace Set { namespace Branch {
     // Compute symmetries.
 
     int choicePos = pvc->pos().pos;
-    int choiceVal = pvc->val();
     delete c;
 
     assert(!_stable);

@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Branch {
   
   class VariableMap : public std::map<VarImpBase*,int> {};
   
-  class SymmetryObject {
+  class GECODE_INT_EXPORT SymmetryObject {
   public:
     /// Number of references that point to this object.
     int nrefs;
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual ~SymmetryObject() {}
   };
 
-  class VariableSymmetryObject : public SymmetryObject {
+  class GECODE_INT_EXPORT VariableSymmetryObject : public SymmetryObject {
   public:
     VarImpBase** xs;
     int nxs;
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   };
 
-  class ValueSymmetryObject : public SymmetryObject {
+  class GECODE_INT_EXPORT ValueSymmetryObject : public SymmetryObject {
   public:
     IntSet values;
   public:
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Branch {
       : values(vs) {}
   };
 
-  class VariableSequenceSymmetryObject : public SymmetryObject {
+  class GECODE_INT_EXPORT VariableSequenceSymmetryObject : public SymmetryObject {
   public:
     VarImpBase** xs;
     int nxs;
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   };
 
-  class ValueSequenceSymmetryObject : public SymmetryObject {
+  class GECODE_INT_EXPORT ValueSequenceSymmetryObject : public SymmetryObject {
   public:
     IntArgs values;
     int seq_size;
