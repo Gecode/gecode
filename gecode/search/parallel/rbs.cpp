@@ -92,7 +92,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       // Wait for reset cycle started
       e_reset_ack_start.wait();
       // Perform reset
-      root = reset(root);
+      Space* s = reset(root);
+      root = (s != NULL) ? s->clone(false) : NULL;
       // Block workers again to ensure invariant
       block();
       // Release reset lock

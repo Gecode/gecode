@@ -99,7 +99,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     } else {
       cur = s;
       Worker::reset(cur);
-      return cur->clone();
+      return cur;
     }
   }
 

@@ -141,7 +141,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     } else {
       cur = s;
       Search::Worker::reset(cur);
-      return s->clone(false);
+      return s;
     }
   }
   forceinline Space*
