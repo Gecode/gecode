@@ -97,11 +97,11 @@ namespace Gecode {
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function
-    static void post(Home home, 
-                     ViewArray<View>& x,
-                     ViewSel<View>* vs[n], 
-                     ValSelCommitBase<View,Val>* vsc, 
-                     BranchFilter bf);
+    static BrancherHandle post(Home home, 
+                               ViewArray<View>& x,
+                               ViewSel<View>* vs[n], 
+                               ValSelCommitBase<View,Val>* vsc, 
+                               BranchFilter bf);
   };
   //@}
 
@@ -160,12 +160,12 @@ namespace Gecode {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  forceinline void
+  forceinline BrancherHandle
   ViewValBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        BranchFilter bf) {
-    (void) new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf);
+    return *new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf);
   }
 
   template<class View, int n, class Val, unsigned int a>

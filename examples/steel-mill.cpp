@@ -415,8 +415,8 @@ public:
       return new (home) SteelMillBranch(home, share, *this);
     }
     /// Post brancher
-    static void post(Home home) {
-      (void) new (home) SteelMillBranch(home);
+    static BrancherHandle post(Home home) {
+      return *new (home) SteelMillBranch(home);
     }
     /// Delete brancher and return its size
     virtual size_t dispose(Space&) {

@@ -219,6 +219,8 @@ namespace Gecode {
   class LocalObject;
   class Advisor;
   class AFC;
+  class Brancher;
+  class BrancherHandle;
   template<class A> class Council;
   template<class A> class Advisors;
   template<class VIC> class VarImp;
@@ -961,7 +963,6 @@ namespace Gecode {
   };
 
 
-  class Brancher;
   /**
    * \brief %Choice for performing commit
    *
@@ -1055,6 +1056,33 @@ namespace Gecode {
     /// Return unsigned brancher id
     unsigned int id(void) const;
     //@}
+  };
+
+  /**
+   * \brief Handle for brancher
+   *
+   * Supports few operations on a brancher, in particular to kill
+   * a brancher.
+   *
+   * \ingroup TaskActor
+   */
+  class BrancherHandle {
+  private:
+    /// Id of the brancher
+    unsigned int _id;
+  public:
+    /// Create handle as unitialized
+    BrancherHandle(void);
+    /// Create handle for brancher \a b
+    BrancherHandle(const Brancher& b);
+    /// Update during cloning
+    void update(Space& home, bool share, BrancherHandle& bh);
+    /// Return brancher id
+    unsigned int id(void) const;
+    /// Check whether brancher is still active
+    bool operator ()(const Space& home) const;
+    /// Kill the brancher
+    void kill(Space& home);
   };
 
   /**
@@ -1194,6 +1222,7 @@ namespace Gecode {
     friend class LocalObject;
     friend class Region;
     friend class AFC;
+    friend class BrancherHandle;
   private:
     /// Manager for shared memory areas
     SharedMemory* sm;
@@ -1223,6 +1252,13 @@ namespace Gecode {
      * If equal to &bl, no brancher does exist.
      */
     Brancher* b_commit;
+    /// Find brancher with identity \a id
+    Brancher* brancher(unsigned int id);
+    /// Kill brancher with identity \a id
+    GECODE_KERNEL_EXPORT
+    void kill_brancher(unsigned int id);
+    /// Reserved brancher id (never created)
+    static const unsigned reserved_branch_id = 0U;
     union {
       /// Data only available during propagation
       struct {
@@ -2708,6 +2744,69 @@ namespace Gecode {
     return _id;
   }
 
+  forceinline Brancher*
+  Space::brancher(unsigned int id) {
+    /*
+     * Due to weakly monotonic propagators the following scenario might
+     * occur: a brancher has been committed with all its available
+     * choices. Then, propagation determines less information
+     * than before and the brancher now will create new choices.
+     * Later, during recomputation, all of these choices
+     * can be used together, possibly interleaved with 
+     * choices for other branchers. That means all branchers
+     * must be scanned to find the matching brancher for the choice.
+     *
+     * b_commit tries to optimize scanning as it is most likely that
+     * recomputation does not generate new choices during recomputation
+     * and hence b_commit is moved from newer to older branchers.
+     */
+    Brancher* b_old = b_commit;
+    // Try whether we are lucky
+    while (b_commit != Brancher::cast(&bl))
+      if (id != b_commit->id())
+        b_commit = Brancher::cast(b_commit->next());
+      else
+        return b_commit;
+    if (b_commit == Brancher::cast(&bl)) {
+      // We did not find the brancher, start at the beginning
+      b_commit = Brancher::cast(bl.next());
+      while (b_commit != b_old)
+        if (id != b_commit->id())
+          b_commit = Brancher::cast(b_commit->next());
+        else
+          return b_commit;
+    }
+    return NULL;
+  }
+  
+  /*
+   * Brancher handle
+   *
+   */
+  forceinline
+  BrancherHandle::BrancherHandle(void)
+    : _id(Space::reserved_branch_id) {}
+  forceinline
+  BrancherHandle::BrancherHandle(const Brancher& b)
+    : _id(b.id()) {}
+  forceinline void
+  BrancherHandle::update(Space&, bool, BrancherHandle& bh) {
+    _id = bh._id;
+  }
+  forceinline unsigned int
+  BrancherHandle::id(void) const {
+    return _id;
+  }
+  forceinline bool
+  BrancherHandle::operator ()(const Space& home) const {
+    return const_cast<Space&>(home).brancher(_id) != NULL;
+  }
+  forceinline void
+  BrancherHandle::kill(Space& home) {
+    home.kill_brancher(_id);
+  }
+
+  
   /*
    * Local objects
    *

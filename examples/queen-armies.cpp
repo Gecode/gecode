@@ -254,8 +254,8 @@ public:
       return new (home) QueenBranch(home, share, *this);
     }
     /// Post brancher
-    static void post(QueenArmies& home) {
-      (void) new (home) QueenBranch(home);
+    static BrancherHandle post(QueenArmies& home) {
+      return *new (home) QueenBranch(home);
     }
     /// Delete brancher and return its size
     virtual size_t dispose(Space&) {

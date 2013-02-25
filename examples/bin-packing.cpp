@@ -239,10 +239,10 @@ public:
     home.notice(*this,AP_DISPOSE);
   }
   /// Brancher post function
-  static void post(Home home, ViewArray<Int::IntView>& l, 
-                              ViewArray<Int::IntView>& b,
-                              IntSharedArray& s) {
-    (void) new (home) CDBF(home, l, b, s);
+  static BrancherHandle post(Home home, ViewArray<Int::IntView>& l, 
+                             ViewArray<Int::IntView>& b,
+                             IntSharedArray& s) {
+    return *new (home) CDBF(home, l, b, s);
   }
   /// Copy constructor
   CDBF(Space& home, bool share, CDBF& cdbf) 
@@ -354,14 +354,14 @@ public:
 };
 
 /// Post branching (assumes that \a s is sorted)
-void cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b,
-                     const IntArgs& s) {
+BrancherHandle cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b,
+                    const IntArgs& s) {
   if (b.size() != s.size())
     throw Int::ArgumentSizeMismatch("cdbf");      
   ViewArray<Int::IntView> load(home, l);
   ViewArray<Int::IntView> bin(home, b);
   IntSharedArray size(s);
-  CDBF::post(home, load, bin, size);
+  return CDBF::post(home, load, bin, size);
 }
 
 

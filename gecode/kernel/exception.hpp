@@ -68,8 +68,8 @@ namespace Gecode {
   /// %Exception: Commit when no brancher present
   class GECODE_VTABLE_EXPORT SpaceNoBrancher : public Exception {
   public:
-    /// Initialize
-    SpaceNoBrancher(void);
+    /// Initialize with location \a l
+    SpaceNoBrancher(const char* l);
   };
 
   /// %Exception: Commit with illegal alternative
@@ -154,9 +154,8 @@ namespace Gecode {
     : Exception(l,"Copy constructor of space did not call base class copy constructor") {}
 
   inline
-  SpaceNoBrancher::SpaceNoBrancher(void)
-    : Exception("Space::commit",
-                "Attempt to commit with no brancher") {}
+  SpaceNoBrancher::SpaceNoBrancher(const char* l)
+    : Exception(l,"Attempt to commit with no brancher") {}
 
   inline
   SpaceIllegalAlternative::SpaceIllegalAlternative(void)

@@ -1681,7 +1681,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT void
+  GECODE_FLOAT_EXPORT BrancherHandle
   branch(Home home, const FloatVarArgs& x,
          FloatVarBranch vars, FloatValBranch vals, 
          FloatBranchFilter fbf=NULL);
@@ -1690,7 +1690,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT void
+  GECODE_FLOAT_EXPORT BrancherHandle
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals,
          FloatBranchFilter bf=NULL);
@@ -1699,7 +1699,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT void
+  GECODE_FLOAT_EXPORT BrancherHandle
   branch(Home home, FloatVar x, FloatValBranch vals);
 
   /**
@@ -1707,7 +1707,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT void
+  GECODE_FLOAT_EXPORT BrancherHandle
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
          FloatBranchFilter fbf=NULL);
   /**
@@ -1715,7 +1715,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT void
+  GECODE_FLOAT_EXPORT BrancherHandle
   assign(Home home, FloatVar x, FloatAssign vals);
   //@}
 

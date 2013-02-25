@@ -99,11 +99,11 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewBrancher<IntView,n>(home,x,vs,bf) {}
 
   template<int n, bool min>
-  void
+  BrancherHandle
   ViewValuesBrancher<n,min>::post(Home home, ViewArray<IntView>& x, 
                                   ViewSel<IntView>* vs[n],
                                   BranchFilter bf) {
-    (void) new (home) ViewValuesBrancher<n,min>(home,x,vs,bf);
+    return *new (home) ViewValuesBrancher<n,min>(home,x,vs,bf);
   }
 
   template<int n, bool min>

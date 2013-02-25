@@ -1484,7 +1484,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT void
+  GECODE_SET_EXPORT BrancherHandle
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals, 
          SetBranchFilter sbf=NULL);
@@ -1493,7 +1493,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT void
+  GECODE_SET_EXPORT BrancherHandle
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          SetBranchFilter sbf=NULL);
@@ -1502,14 +1502,14 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT void
+  GECODE_SET_EXPORT BrancherHandle
   branch(Home home, SetVar x, SetValBranch vals);
   /**
    * \brief Assign all \a x with value selection \a vals
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT void
+  GECODE_SET_EXPORT BrancherHandle
   assign(Home home, const SetVarArgs& x, SetAssign vals,
          SetBranchFilter sbf=NULL);
   /**
@@ -1517,7 +1517,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT void
+  GECODE_SET_EXPORT BrancherHandle
   assign(Home home, SetVar x, SetAssign vals);
 
 }

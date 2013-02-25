@@ -502,8 +502,8 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Constructor for creation
-    static void post(Home home, ViewArray<IntView>& x,
-                     ViewSel<IntView>* vs[n], BranchFilter bf);
+    static BrancherHandle post(Home home, ViewArray<IntView>& x,
+                               ViewSel<IntView>* vs[n], BranchFilter bf);
   };
 
 }}}

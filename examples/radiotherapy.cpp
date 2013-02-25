@@ -319,8 +319,8 @@ public:
       return new (home) NestedSearch(home, share, *this);
     }
     /// Post brancher
-    static void post(Home home) {
-      (void) new (home) NestedSearch(home);
+    static BrancherHandle post(Home home) {
+      return *new (home) NestedSearch(home);
     }
     /// Dispose member function
     size_t dispose(Space& home) {

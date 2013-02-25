@@ -4001,7 +4001,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals, 
          IntBranchFilter bf=NULL);
@@ -4010,7 +4010,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          IntBranchFilter bf=NULL);
@@ -4019,14 +4019,14 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   branch(Home home, IntVar x, IntValBranch vals);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          BoolBranchFilter bf=NULL);
@@ -4035,7 +4035,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const BoolVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          BoolBranchFilter bf=NULL);
@@ -4044,7 +4044,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   branch(Home home, BoolVar x, IntValBranch vals);
 
   /**
@@ -4052,7 +4052,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   assign(Home home, const IntVarArgs& x, IntAssign vals,
          IntBranchFilter ibf=NULL);
   /**
@@ -4060,14 +4060,14 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   assign(Home home, IntVar x, IntAssign vals);
   /**
    * \brief Assign all \a x with value selection \a vals
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   assign(Home home, const BoolVarArgs& x, IntAssign vals,
          BoolBranchFilter bbf=NULL);
   /**
@@ -4075,7 +4075,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT void
+  GECODE_INT_EXPORT BrancherHandle
   assign(Home home, BoolVar x, IntAssign vals);
 
 }

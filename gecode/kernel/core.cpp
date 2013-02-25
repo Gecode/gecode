@@ -109,7 +109,7 @@ namespace Gecode {
     // Initialize propagator queues
     for (int i=0; i<=PropCost::AC_MAX; i++)
       pc.p.queue[i].init();
-    pc.p.branch_id = 0;
+    pc.p.branch_id = reserved_branch_id+1;
     pc.p.n_sub = 0;
   }
 
@@ -342,7 +342,7 @@ namespace Gecode {
         return b_cur->choice(*this,e);
       b_cur = Brancher::cast(b_cur->next());
     }
-    throw SpaceNoBrancher();
+    throw SpaceNoBrancher("Space::choice");
   }
 
   void
@@ -351,43 +351,34 @@ namespace Gecode {
       throw SpaceIllegalAlternative();
     if (failed())
       return;
-    /*
-     * Due to weakly monotonic propagators the following scenario might
-     * occur: a brancher has been committed with all its available
-     * choices. Then, propagation determines less information
-     * than before and the brancher now will create new choices.
-     * Later, during recomputation, all of these choices
-     * can be used together, possibly interleaved with 
-     * choices for other branchers. That means all branchers
-     * must be scanned to find the matching brancher for the choice.
-     *
-     * b_commit tries to optimize scanning as it is most likely that
-     * recomputation does not generate new choices during recomputation
-     * and hence b_commit is moved from newer to older branchers.
-     */
-    Brancher* b_old = b_commit;
-    // Try whether we are lucky
-    while (b_commit != Brancher::cast(&bl))
-      if (c._id != b_commit->id())
-        b_commit = Brancher::cast(b_commit->next());
-      else
-        goto found;
-    if (b_commit == Brancher::cast(&bl)) {
-      // We did not find the brancher, start at the beginning
-      b_commit = Brancher::cast(bl.next());
-      while (b_commit != b_old)
-        if (c._id != b_commit->id())
-          b_commit = Brancher::cast(b_commit->next());
-        else
-          goto found;
+    if (Brancher* b = brancher(c._id)) {
+      // There is a matching brancher
+      if (b->commit(*this,c,a) == ES_FAILED)
+        fail();
+    } else {
+      // There is no matching brancher!
+      throw SpaceNoBrancher("Space::commit");
     }
-    // There is no matching brancher!
-    throw SpaceNoBrancher();
-  found:
-    // There is a matching brancher
-    if (b_commit->commit(*this,c,a) == ES_FAILED)
-      fail();
   }
+
+  void
+  Space::kill_brancher(unsigned int id) {
+    if (failed())
+      return;
+    for (Brancher* b = Brancher::cast(bl.next()); 
+         b != Brancher::cast(&bl); b = Brancher::cast(b->next()))
+      if (b->id() == id) {
+        // Make sure that neither b_status nor b_commit does not point to b
+        if (b_commit == b)
+          b_commit = Brancher::cast(b->next());
+        if (b_status == b)
+          b_status = Brancher::cast(b->next());
+        b->unlink();
+        rfree(b,b->dispose(*this));
+        return;
+      }
+  }
+
 
 
 
