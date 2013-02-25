@@ -43,7 +43,7 @@
 
 namespace Gecode { namespace Search { namespace Sequential {
 
-  class Restart : public MetaEngine {
+  class Restart : public Engine {
   private:
     /// The actual engine
     Engine* e;
@@ -63,6 +63,10 @@ namespace Gecode { namespace Search { namespace Sequential {
     virtual Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
+    /// Reset engine to restart at space \a s and return new root
+    virtual Space* reset(Space* s);
+    /// Return reference to deepest space on the stack
+    const Space& deepest(void) const;
     /// Destructor
     virtual ~Restart(void);
   };
@@ -84,11 +88,11 @@ namespace Gecode { namespace Search { namespace Sequential {
         if (master->status() == SS_FAILED) {
           delete master;
           master = NULL;
-          (void) e->reset(NULL);
+          e->reset(NULL);
         } else {
           Space* slave = master->clone();
           slave->configure(i);
-          (void) e->reset(slave);
+          e->reset(slave);
         }
         return n;
       } else if (e->stopped() && stop->enginestopped()) {
@@ -99,7 +103,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           return NULL;
         Space* slave = master->clone();
         slave->configure(i);
-        (void) e->reset(slave);
+        e->reset(slave);
       } else {
         return NULL;
       }
@@ -118,12 +122,22 @@ namespace Gecode { namespace Search { namespace Sequential {
     return e->stopped() && !stop->enginestopped();
   }
   
+  inline Space*
+  Restart::reset(Space*) { 
+    return NULL; 
+  }
+  
   inline
   Restart::~Restart(void) {
     // Deleting e also deletes stop
     delete e;
     delete master;
     delete co;
+  }
+
+  inline const Space&
+  Restart::deepest(void) const {
+    return e->deepest();
   }
 
 }}}

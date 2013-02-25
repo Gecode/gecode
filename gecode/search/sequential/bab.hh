@@ -168,10 +168,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   }
 
   forceinline Space*
-  BAB::reset(Space*) { 
-    // IMPLEMENT ME
-    return NULL; 
-  }
+  BAB::reset(Space*) { return NULL; }
 
   forceinline const Space&
   BAB::deepest(void) const {

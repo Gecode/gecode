@@ -433,9 +433,9 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
   /**
-   * \brief Meta search engine implementation interface
+   * \brief %Search engine implementation interface
    */
-  class MetaEngine {
+  class Engine {
   public:
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void) = 0;
@@ -443,19 +443,12 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
-    /// Destructor
-    virtual ~MetaEngine(void) {}
-  };
-
-  /**
-   * \brief %Search engine implementation interface
-   */
-  class Engine : public MetaEngine {
-  public:
     /// Reset engine to restart at space \a s and return new root
     virtual Space* reset(Space* s) = 0;
     /// Return reference to deepest space on the stack
     virtual const Space& deepest(void) const = 0;
+    /// Destructor
+    virtual ~Engine(void) {}
   };
 
 }}
@@ -481,6 +474,7 @@ namespace Gecode {
 #include <gecode/search/engine-base.hpp>
 
 namespace Gecode {
+
 
   /**
    * \brief Depth-first search engine
@@ -620,7 +614,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<template<class> class E, class T>
-  class Restart {
+  class Restart : public EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
     Restart(T* s, const Search::Options& o);
