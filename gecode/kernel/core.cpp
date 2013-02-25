@@ -569,6 +569,16 @@ namespace Gecode {
     e << id();
   }
 
+  void
+  Space::afc_decay(double d) {
+    // Commit outstanding decay operations
+    if (gafc.decay() != 1.0)
+      for (Propagators p(*this); p(); ++p)
+        (void) gafc.afc(p.propagator().gafc);
+    gafc.decay(d);
+  }
+
+
 }
 
 // STATISTICS: kernel-core
