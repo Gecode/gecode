@@ -55,6 +55,36 @@ namespace Gecode {
 
   void
   branch(Home home, const SetVarArgs& x,
+         SetVarBranch vars, SetValBranch vals,
+         const Symmetries& syms,
+         SetBranchFilter bf) {
+    using namespace Set;
+    if (home.failed()) return;
+    ViewArray<SetView> xv(home,x);
+    ViewSel<SetView>* vs[1] = { 
+      Branch::viewsel(home,vars) 
+    };
+
+    // Construct mapping from each variable in the array to its index
+    // in the array.
+    Int::Branch::VariableMap variableMap;
+    for (int i = 0 ; i < x.size() ; i++)
+      variableMap[x[i].varimp()] = i;
+    
+    // Convert the modelling-level Symmetries object into an array of
+    // SymmetryImp objects.
+    int n = syms.size();
+    SymmetryImp<SetView>** array = static_cast<Space&>(home).alloc<SymmetryImp<SetView>* >(n);
+    for (int i = 0 ; i < n ; i++) {
+      array[i] = Set::Branch::createSetSym(home, syms[i], variableMap);
+    }
+
+    Set::Branch::LDSBSetBrancher<SetView,1,int,2>::post
+      (home,xv,vs,Branch::valselcommit(home,vals),array,n,bf);
+  }
+
+  void
+  branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals, SetBranchFilter bf) {
     using namespace Set;
     if (home.failed()) return;

@@ -508,6 +508,8 @@ namespace Gecode { namespace Int { namespace Branch {
 
 }}}
 
+#include <map>
+#include <gecode/int/ldsb.hpp>
 #include <gecode/int/branch/view-values.hpp>
 
 #endif

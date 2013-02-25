@@ -151,7 +151,7 @@ SUPPORTHDR0 = \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
 	thread thread/thread thread/windows thread/pthreads thread/none timer \
-	dynamic-queue bitset-base bitset \
+	dynamic-queue bitset-base bitset bitset-offset \
 	hw-rnd
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
@@ -205,12 +205,12 @@ KERNELHDR0 = \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit \
 	allocators global-afc \
-	afc activity rnd branch-traits
-
+	afc activity rnd branch-traits \
+	ldsb brancher-ldsb
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
-	gecode/kernel.hh gecode/kernel/wait.hh \
+	gecode/kernel.hh gecode/kernel/wait.hh gecode/ldsb.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.hpp)
 KERNELOBJ	= $(KERNELSRC:%.cpp=%$(OBJSUFFIX))
 
@@ -310,7 +310,8 @@ INTSRC0 = \
 	member.cpp branch/activity.cpp \
 	arithmetic/mult.cpp  \
 	branch/view-sel.cpp branch/val-sel-commit.cpp \
-	branch/view-values.cpp
+	branch/view-values.cpp \
+	ldsb.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -390,7 +391,8 @@ INTHDR0 = \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
 	val-set.hh val-set.hpp \
 	member.hh member/prop.hpp member/re-prop.hpp \
-	branch/afc.hpp branch/activity.hpp
+	branch/afc.hpp branch/activity.hpp \
+	ldsb.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
@@ -510,7 +512,8 @@ SETSRC0 =								 \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
 	exec.cpp branch/activity.cpp branch/view-sel.cpp \
-	branch/val-sel-commit.cpp
+	branch/val-sel-commit.cpp \
+	ldsb.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -538,7 +541,8 @@ SETHDR0 =								     \
 	rel-op.hh					     \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
-	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp
+	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
+	ldsb.hpp
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
@@ -1057,7 +1061,7 @@ SEARCHTESTSRC0 = \
 ARRAYTESTSRC0 = \
 	test/array.cpp
 
-TESTSRC0 = test/test.cpp test/afc.cpp
+TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \

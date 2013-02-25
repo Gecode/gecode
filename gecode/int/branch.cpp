@@ -64,6 +64,45 @@ namespace Gecode {
 
   void
   branch(Home home, const IntVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         const Symmetries& syms, IntBranchFilter bf) {
+    using namespace Int;
+    if (home.failed()) return;
+    ViewArray<IntView> xv(home,x);
+    ViewSel<IntView>* vs[1] = { 
+      Branch::viewselint(home,vars) 
+    };
+    switch (vals.select()) {
+    case IntValBranch::SEL_VALUES_MIN:
+      Branch::ViewValuesBrancher<1,true>::post(home,xv,vs,bf);
+      break;
+    case IntValBranch::SEL_VALUES_MAX:
+      Branch::ViewValuesBrancher<1,false>::post(home,xv,vs,bf);
+      break;
+    default:
+      // Construct mapping from each variable in the array to its index
+      // in the array.
+      Branch::VariableMap variableMap;
+      for (int i = 0 ; i < x.size() ; i++)
+        variableMap[x[i].varimp()] = i;
+      
+      // Convert the modelling-level Symmetries object into an array of
+      // SymmetryImp objects.
+      int n = syms.size();
+      SymmetryImp<IntView>** array = static_cast<Space&>(home).alloc<SymmetryImp<IntView>* >(n);
+      for (int i = 0 ; i < n ; i++) {
+        // array[i] = syms[i].createInt(home, variableMap);
+        //        array[i] = syms[i].create<IntView>(home, variableMap);
+        array[i] = createIntSym(home, syms[i], variableMap);
+      }
+
+      LDSBBrancher<IntView,1,int,2>::post
+        (home,xv,vs,Branch::valselcommitint(home,vals),array,n,bf);
+    }
+  }
+
+  void
+  branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals, IntBranchFilter bf) {
     using namespace Int;
     if (home.failed()) return;
@@ -173,6 +212,35 @@ namespace Gecode {
     };
     ViewValBrancher<BoolView,1,int,2>::post
       (home,xv,vs,Branch::valselcommitbool(home,vals),bf);
+  }
+
+  void
+  branch(Home home, const BoolVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         const Symmetries& syms, BoolBranchFilter bf) {
+    using namespace Int;
+    if (home.failed()) return;
+    ViewArray<BoolView> xv(home,x);
+    ViewSel<BoolView>* vs[1] = { 
+      Branch::viewselbool(home,vars) 
+    };
+
+    // Construct mapping from each variable in the array to its index
+    // in the array.
+    Branch::VariableMap variableMap;
+    for (int i = 0 ; i < x.size() ; i++)
+      variableMap[x[i].varimp()] = i;
+
+    // Convert the modelling-level Symmetries object into an array of
+    // SymmetryImp objects.
+    int n = syms.size();
+    SymmetryImp<BoolView>** array = static_cast<Space&>(home).alloc<SymmetryImp<BoolView>* >(n);
+    for (int i = 0 ; i < n ; i++) {
+      array[i] = createBoolSym(home, syms[i], variableMap);
+    }
+    
+    LDSBBrancher<BoolView,1,int,2>::post
+      (home,xv,vs,Branch::valselcommitbool(home,vals),array,n,bf);
   }
 
   void

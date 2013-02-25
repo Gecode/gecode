@@ -76,6 +76,7 @@ namespace Gecode {
 
 #include <gecode/iter/values-array.hpp>
 #include <gecode/iter/values-bitset.hpp>
+#include <gecode/iter/values-bitsetoffset.hpp>
 #include <gecode/iter/values-list.hpp>
 
 #include <gecode/iter/values-inter.hpp>
