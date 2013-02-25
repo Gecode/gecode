@@ -340,9 +340,6 @@ namespace Gecode { namespace Set { namespace Branch {
 
 }}}
 
-#include <gecode/int/branch.hh>
-#include <gecode/set/ldsb.hpp>
-
 #endif
 
 // STATISTICS: set-branch

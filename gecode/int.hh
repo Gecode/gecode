@@ -3996,10 +3996,6 @@ namespace Gecode {
 
 namespace Gecode {
 
-  // Forward declaration so that the branch functions can take a
-  // reference to a Symmetries object.
-  class Symmetries;
-
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
@@ -4008,17 +4004,6 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals, 
-         IntBranchFilter bf=NULL);
-  /**
-   * \brief Branch over \a x with variable selection \a vars and value
-   * selection \a vals with symmetry breaking
-   *
-   * \ingroup TaskModelIntBranch
-   */
-  GECODE_INT_EXPORT void
-  branch(Home home, const IntVarArgs& x,
-         IntVarBranch vars, IntValBranch vals,
-         const Symmetries& syms,
          IntBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -4044,17 +4029,6 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         BoolBranchFilter bf=NULL);
-  /**
-   * \brief Branch over \a x with variable selection \a vars and value
-   * selection \a vals with symmetry breaking
-   *
-   * \ingroup TaskModelIntBranch
-   */
-  GECODE_INT_EXPORT void
-  branch(Home home, const BoolVarArgs& x,
-         IntVarBranch vars, IntValBranch vals,
-         const Symmetries& syms,
          BoolBranchFilter bf=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals

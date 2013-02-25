@@ -1520,17 +1520,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   assign(Home home, SetVar x, SetAssign vals);
 
-
-  /**
-   * \brief Branch over \a x with variable selection \a vars and value selection \a vals
-   *
-   * \ingroup TaskModelSetBranch
-   */
-  GECODE_SET_EXPORT void
-  branch(Home home, const SetVarArgs& x,
-         SetVarBranch vars, SetValBranch vals,
-         const Symmetries& syms,
-         SetBranchFilter sbf=NULL);
 }
 
 #endif

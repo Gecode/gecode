@@ -160,13 +160,6 @@
 #include <gecode/kernel/array.hpp>
 #include <gecode/kernel/shared-array.hpp>
 
-/*
- * LDSB
- *
- */
-
-#include <gecode/kernel/ldsb.hpp>
-
 
 /*
  * Random number generator (for branching)
@@ -225,7 +218,6 @@ namespace Gecode {
 #include <gecode/kernel/brancher-val-commit.hpp>
 #include <gecode/kernel/brancher-val-sel-commit.hpp>
 #include <gecode/kernel/brancher-view-val.hpp>
-#include <gecode/kernel/brancher-ldsb.hpp>
 
 
 /*

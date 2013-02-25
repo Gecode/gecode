@@ -144,7 +144,7 @@ namespace Gecode {
     /// Increment failure count
     void fail(Counter& c);
     /// Return failure count
-    double afc(Counter& c);
+    double afc(Counter& c) const;
     /// Allocate new propagator info
     Counter& allocate(void);
   };
@@ -314,11 +314,11 @@ namespace Gecode {
   }
 
   forceinline double
-  GlobalAFC::afc(Counter& c) {
+  GlobalAFC::afc(Counter& c) const {
     Support::Mutex& m = *object()->mutex;
     double d;
     m.acquire();
-    d = object()->decay->val(c);
+    d = const_cast<DecayManager*>(object()->decay)->val(c);
     m.release();
     return d;
   }

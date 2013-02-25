@@ -1288,25 +1288,13 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT void d_resize(void);
 
     /**
-     * \brief Number of weakly monotonic propagators and AFC flag
+     * \brief Number of weakly monotonic propagators
      *
-     * The least significant bit encodes whether AFC information
-     * must be collected, the remaining bits encode counting for
-     * weakly monotonic propagators as follows. If zero, none
-     * exists. If one, then none exists right now but there has
-     * been one since the last fixpoint computed. Otherwise, it
-     * gives the number of weakly monotoning propagators minus
-     * one.
+     * If zero, none exists. If one, then none exists right now but
+     * there has been one since the last fixpoint computed. Otherwise,
+     * it gives the number of weakly monotoning propagators minus one.
      */
-    unsigned int _wmp_afc;
-    /// Set that AFC information must be recorded
-    void afc_enable(void);
-    /// Whether AFC information must be recorded
-    bool afc_enabled(void) const;
-    /// Set number of wmp propagators to \a n
-    void wmp(unsigned int n);
-    /// Return number of wmp propagators
-    unsigned int wmp(void) const;
+    unsigned int n_wmp;
 
     /// Used for default argument
     GECODE_KERNEL_EXPORT static StatusStatistics unused_status;
@@ -1371,7 +1359,6 @@ namespace Gecode {
     void _commit(const Choice& c, unsigned int a);
 
     /// Set AFC decay factor to \a d
-    GECODE_KERNEL_EXPORT
     void afc_decay(double d);
     /// Return AFC decay factor
     double afc_decay(void) const;
@@ -2477,23 +2464,6 @@ namespace Gecode {
   }
 
   forceinline void
-  Space::afc_enable(void) {
-    _wmp_afc |= 1U;
-  }
-  forceinline bool
-  Space::afc_enabled(void) const {
-    return (_wmp_afc & 1U) != 0U;
-  }
-  forceinline void
-  Space::wmp(unsigned int n) {
-    _wmp_afc = (_wmp_afc & 1U) | (n << 1);
-  }
-  forceinline unsigned int
-  Space::wmp(void) const {
-    return _wmp_afc >> 1U;
-  }
-
-  forceinline void
   Space::notice(Actor& a, ActorProperty p) {
     if (p & AP_DISPOSE) {
       if (d_cur == d_lst)
@@ -2501,10 +2471,10 @@ namespace Gecode {
       *(d_cur++) = &a;
     }
     if (p & AP_WEAKLY) {
-      if (wmp() == 0)
-        wmp(2);
+      if (n_wmp == 0)
+        n_wmp = 2;
       else
-        wmp(wmp()+1);
+        n_wmp++;
     }
   }
 
@@ -2526,8 +2496,8 @@ namespace Gecode {
       }
     }
     if (p & AP_WEAKLY) {
-      assert(wmp() > 1U);
-      wmp(wmp()-1);
+      assert(n_wmp > 1);
+      n_wmp--;
     }
   }
 
@@ -2547,6 +2517,11 @@ namespace Gecode {
   forceinline double
   Space::afc_decay(void) const {
     return gafc.decay();
+  }
+
+  forceinline void
+  Space::afc_decay(double d) {
+    gafc.decay(d);
   }
 
   forceinline size_t
@@ -2631,7 +2606,7 @@ namespace Gecode {
 
   forceinline double
   Propagator::afc(const Space& home) const {
-    return const_cast<Space&>(home).gafc.afc(gafc);
+    return home.gafc.afc(gafc);
   }
 
   forceinline ExecStatus
@@ -3416,8 +3391,7 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        if (home.afc_enabled())
-          home.gafc.fail(p.gafc);
+        home.gafc.fail(p.gafc);
         return false;
       case ES_NOFIX:
         schedule(home,p,me);

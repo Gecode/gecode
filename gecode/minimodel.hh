@@ -46,7 +46,6 @@
 
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
-#include <gecode/int/branch.hh>
 #ifdef GECODE_HAS_SET_VARS
 #include <gecode/set.hh>
 #endif
@@ -2137,48 +2136,6 @@ namespace Gecode {
                SetVar z);
 #endif
 
-  /** \brief Interchangeable rows symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle
-  rows_interchange(const Matrix<A>& m) {
-    typename Matrix<A>::ArgsType xs;
-    for (int r = 0 ; r < m.height() ; r++)
-      xs << m.row(r);
-    return VariableSequenceSymmetry(xs, m.width());
-  }
-
-  /** \brief Interchangeable columns symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle
-  columns_interchange(const Matrix<A>& m) {
-    typename Matrix<A>::ArgsType xs;
-    for (int c = 0 ; c < m.width() ; c++)
-      xs << m.col(c);
-    return VariableSequenceSymmetry(xs, m.height());
-  }
-
-  /** \brief Reflect rows symmetry specification.
-   */
-  template<class A>
-  SymmetryHandle
-  rows_reflect(const Matrix<A>& m) {
-    int nrows = m.height();
-    int ncols = m.width();
-    // Length of each sequence in the symmetry.
-    int length = (nrows/2) * ncols;
-    typename Matrix<A>::ArgsType xs(length * 2);
-    for (int i = 0 ; i < length ; i++) {
-      int r1 = i/ncols;
-      int c1 = i%ncols;
-      int r2 = nrows - r1 - 1;
-      int c2 = c1;
-      xs[i] = m(c1,r1);
-      xs[length+i] = m(c2,r2);
-    }
-    return VariableSequenceSymmetry(xs, length);
-  }
 }
 
 #include <gecode/minimodel/matrix.hpp>

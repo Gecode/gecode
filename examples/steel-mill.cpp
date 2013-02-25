@@ -39,7 +39,6 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#include <algorithm>
 #include <fstream>
 
 using namespace Gecode;
@@ -116,15 +115,6 @@ public:
   int norders(void) const       { return _norders;     }
 };
 
-struct SortByWeight {
-  order_t orders;
-  SortByWeight(order_t _orders) : orders(_orders) {}
-  bool operator() (int i, int j) {
-    // Order i comes before order j if the weight of i is larger than
-    // the weight of j.
-    return (orders[i][order_weight] > orders[j][order_weight]);
-  }
-};
 
 /**
  * \brief %Example: Steel-mill slab design problem
@@ -181,9 +171,8 @@ protected:
 public:
   /// Branching variants
   enum {
-    SYMMETRY_NONE,      ///< Simple symmetry
-    SYMMETRY_BRANCHING, ///< Breaking symmetries with symmetry
-    SYMMETRY_LDSB
+    SYMMETRY_NONE,   ///< Simple symmetry
+    SYMMETRY_BRANCHING ///< Breaking symmetries with symmetry
   };
 
   /// Actual model
@@ -266,27 +255,8 @@ public:
     if (opt.symmetry() == SYMMETRY_BRANCHING) {
       // Symmetry breaking branching
       SteelMillBranch::post(*this);
-    } else if (opt.symmetry() == SYMMETRY_NONE) {
+    } else { // opt.symmetry() == SYMMETRY_NONE
       branch(*this, slab, INT_VAR_MAX_MIN(), INT_VAL_MIN());
-    } else { // opt.symmetry() == SYMMETRY_LDSB
-      // There is one symmetry: the values (slabs) are interchangeable.
-      Symmetries syms;
-      syms << ValueSymmetry(IntArgs::create(nslabs,0));
-
-      // For variable order we mimic the custom brancher.  We use
-      // min-size domain, breaking ties by maximum weight (preferring
-      // to label larger weights earlier).  To do this, we first sort
-      // (stably) by maximum weight, then use min-size domain.
-      SortByWeight sbw(orders);
-      IntArgs indices(norders);
-      for (unsigned int i = 0 ; i < norders ; i++)
-        indices[i] = i;
-      std::stable_sort(&indices[0], &indices[0]+norders, sbw);
-      IntVarArgs sorted_orders(norders);
-      for (unsigned int i = 0 ; i < norders ; i++) {
-        sorted_orders[i] = slab[indices[i]];
-      }
-      branch(*this, sorted_orders, INT_VAR_SIZE_MIN(), INT_VAL_MIN(), syms);
     }
   }
 
@@ -464,7 +434,6 @@ main(int argc, char* argv[]) {
   opt.symmetry(SteelMill::SYMMETRY_BRANCHING);
   opt.symmetry(SteelMill::SYMMETRY_NONE,"none");
   opt.symmetry(SteelMill::SYMMETRY_BRANCHING,"branching");
-  opt.symmetry(SteelMill::SYMMETRY_LDSB,"ldsb");
   opt.solutions(0);
   if (!opt.parse(argc,argv))
     return 1;
