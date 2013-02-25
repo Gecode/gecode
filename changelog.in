@@ -290,14 +290,15 @@ Rank:   major
 [DESCRIPTION]
 The interface for branching on integer and Boolean variables has
 changed considerably (supporting user-defined variable and value
-selection, tie-break limit functions, and more). In order to change,
-you have to add () to all variants of INT_VAR, INT_VAL, and
-INT_ASSIGN. For example, INT_VAR_SIZE_MIN becomes the function
-call INT_VAR_SIZE_MIN() and INT_VAL_MIN_MIN becomes the function
-call INT_VAL_MIN_MIN(). Some of these functions expect additional
-arguments and can take also optional arguments (this replaces the
-VarBranchOptions and ValBranchOptions). Please read the section
-"Branching" of the "Search" chapter in MPG.
+selection, tie-break limit functions, handlers to created
+branchers, and more). In order to change, you have to add () to
+all variants of INT_VAR, INT_VAL, and INT_ASSIGN. For example,
+INT_VAR_SIZE_MIN becomes the function call INT_VAR_SIZE_MIN() and
+INT_VAL_MIN_MIN becomes the function call INT_VAL_MIN_MIN(). Some
+of these functions expect additional arguments and can take also
+optional arguments (this replaces the VarBranchOptions and
+ValBranchOptions). Please read the new "Branching" chapter
+in MPG.
 
 [ENTRY]
 Module: set
@@ -306,14 +307,15 @@ Rank:   major
 [DESCRIPTION]
 The interface for branching on integer and Boolean variables has
 changed considerably (supporting user-defined variable and value
-selection, tie-break limit functions, and more). In order to change,
-you have to add () to all variants of SET_VAR, SET_VAL, and
-SET_ASSIGN. For example, SET_VAR_SIZE_MIN becomes the function
-call SET_VAR_SIZE_MIN() and SET_VAL_MIN_INC becomes the function
-call SET_VAL_MIN_INC(). Some of these functions expect additional
-arguments and can take also optional arguments (this replaces the
-VarBranchOptions and ValBranchOptions). Please read the
-section "Branching" of the "Search" chapter in MPG.
+selection, tie-break limit functions, handlers to created
+branchers, and more). In order to change, you have to add () to
+all variants of SET_VAR, SET_VAL, and SET_ASSIGN. For example,
+SET_VAR_SIZE_MIN becomes the function call SET_VAR_SIZE_MIN() and
+SET_VAL_MIN_INC becomes the function call SET_VAL_MIN_INC(). Some
+of these functions expect additional arguments and can take also
+optional arguments (this replaces the VarBranchOptions and
+ValBranchOptions). Please read the new "Branching" chapter in
+MPG.
 
 [ENTRY]
 Module: kernel
