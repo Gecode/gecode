@@ -54,6 +54,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     RBS(Space* s, size_t sz, const Search::Options& o);
     /// Return next better solution (NULL, if none exists or search has been stopped)
     Space* next(void);
+    /// Reset engine to restart at space \a s and return new root
+    Space* reset(Space* s);
     /// Destructor
     ~RBS(void);
   };
@@ -77,6 +79,12 @@ namespace Gecode { namespace Search { namespace Sequential {
     return (best != NULL) ? best->clone() : NULL;
   }
 
+  forceinline Space*
+  RBS::reset(Space* s) {
+    delete best;
+    best = NULL;
+    return DFS::reset(s);
+  }
 
   forceinline 
   RBS::~RBS(void) {

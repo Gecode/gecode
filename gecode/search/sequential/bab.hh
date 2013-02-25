@@ -168,9 +168,21 @@ namespace Gecode { namespace Search { namespace Sequential {
   }
 
   forceinline Space*
-  BAB::reset(Space*) { 
-    // IMPLEMENT ME
-    return NULL; 
+  BAB::reset(Space* s) { 
+    delete best;
+    best = NULL;
+    path.reset();
+    d = mark = 0;
+    delete cur;
+    if (s->status(*this) == SS_FAILED) {
+      cur = NULL;
+      Worker::reset();
+      return NULL;
+    } else {
+      cur = s;
+      Worker::reset(cur);
+      return cur;
+    }
   }
 
   forceinline const Space&
