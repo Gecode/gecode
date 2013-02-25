@@ -40,7 +40,7 @@
 
 namespace Gecode { namespace Search {
     
-  Engine* 
+  MetaEngine* 
   restart(Space* s, size_t sz, MetaStop* stop,
           Engine* e, const Options& o) {
     return new Sequential::Restart(s,sz,o.cutoff,stop,e,o);

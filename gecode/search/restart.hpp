@@ -41,10 +41,11 @@
 namespace Gecode {
 
   namespace Search {
-    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz,
-                                         MetaStop* stop,
-                                         Engine* e,
-                                         const Options& o);
+    GECODE_SEARCH_EXPORT MetaEngine* 
+    restart(Space* s, size_t sz,
+            MetaStop* stop,
+            Engine* e,
+            const Options& o);
   }
 
   template<template<class> class E, class T>
