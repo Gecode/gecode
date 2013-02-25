@@ -1359,6 +1359,7 @@ namespace Gecode {
     void _commit(const Choice& c, unsigned int a);
 
     /// Set AFC decay factor to \a d
+    GECODE_KERNEL_EXPORT
     void afc_decay(double d);
     /// Return AFC decay factor
     double afc_decay(void) const;
@@ -2519,11 +2520,6 @@ namespace Gecode {
     return gafc.decay();
   }
 
-  forceinline void
-  Space::afc_decay(double d) {
-    gafc.decay(d);
-  }
-
   forceinline size_t
   Actor::dispose(Space&) {
     return sizeof(*this);
@@ -2606,7 +2602,7 @@ namespace Gecode {
 
   forceinline double
   Propagator::afc(const Space& home) const {
-    return home.gafc.afc(gafc);
+    return const_cast<Space&>(home).gafc.afc(gafc);
   }
 
   forceinline ExecStatus
