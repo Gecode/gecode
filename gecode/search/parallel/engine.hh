@@ -72,8 +72,6 @@ namespace Gecode { namespace Search { namespace Parallel {
       Statistics statistics(void);
       /// Provide access to engine
       Engine& engine(void) const;
-      /// Return reference to deepest space on the stack
-      const Space& deepest(void) const;
       /// Destructor
       virtual ~Worker(void);
     };
@@ -281,15 +279,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     s.memory += path.size();
     m.release();
     return s;
-  }
-
-  forceinline const Space&
-  Engine::Worker::deepest(void) const {
-    if (path.empty()) {
-      assert(cur != NULL);
-      return *cur;
-    }
-    return path.deepest();
   }
 
 

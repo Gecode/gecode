@@ -65,8 +65,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     Statistics statistics(void) const;
     /// Reset engine to restart at space \a s and return new root
     Space* reset(Space* s);
-    /// Return reference to deepest space on the stack
-    const Space& deepest(void) const;
     /// Destructor
     ~DFS(void);
   };
@@ -155,15 +153,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     }
     GECODE_NEVER;
     return NULL;
-  }
-
-  forceinline const Space&
-  DFS::deepest(void) const {
-    if (path.empty()) {
-      assert(cur != NULL);
-      return *cur;
-    }
-    return path.deepest();
   }
 
   forceinline Statistics

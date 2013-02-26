@@ -79,8 +79,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     DFS(Space* s, size_t sz, const Options& o);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Return reference to deepest space on the stack
-    const Space& deepest(void) const;
     /// Destructor
     virtual ~DFS(void);
     //@}
@@ -166,10 +164,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     m_search.release();
   }
   
-  forceinline const Space&
-  DFS::deepest(void) const {
-    return worker(0)->deepest();
-  }
 
 
   /*

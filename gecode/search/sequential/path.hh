@@ -117,8 +117,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Recompute space according to path
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
                      const Space* best, int& mark);
-    /// Return reference to deepest space on stack
-    const Space& deepest(void) const;
     /// Return number of entries on stack
     int entries(void) const;
     /// Return size used
@@ -419,16 +417,6 @@ namespace Gecode { namespace Search { namespace Sequential {
         commit(s,i);
     }
     return s;
-  }
-
-  inline const Space&
-  Path::deepest(void) const {
-    for (int i = ds.entries(); i--;) {
-      if (ds[i].space() != NULL)
-        return *ds[i].space();
-    }
-    GECODE_NEVER;
-    return *ds[0].space();
   }
 
 }}}

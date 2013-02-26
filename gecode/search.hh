@@ -448,8 +448,6 @@ namespace Gecode { namespace Search {
     virtual bool stopped(void) const = 0;
     /// Reset engine to restart at space \a s and return new root
     virtual Space* reset(Space* s) = 0;
-    /// Return reference to deepest space on the stack
-    virtual const Space& deepest(void) const = 0;
     /// Destructor
     virtual ~Engine(void) {}
   };

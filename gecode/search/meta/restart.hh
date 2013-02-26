@@ -65,8 +65,6 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual bool stopped(void) const;
     /// Reset engine to restart at space \a s and return new root
     virtual Space* reset(Space* s);
-    /// Return reference to deepest space on the stack
-    const Space& deepest(void) const;
     /// Destructor
     virtual ~Restart(void);
   };
@@ -134,11 +132,6 @@ namespace Gecode { namespace Search { namespace Meta {
     delete e;
     delete master;
     delete co;
-  }
-
-  inline const Space&
-  Restart::deepest(void) const {
-    return e->deepest();
   }
 
 }}}

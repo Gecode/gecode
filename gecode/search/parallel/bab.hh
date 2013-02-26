@@ -88,9 +88,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s and return new root
     virtual Space* reset(Space* s);
-    /// Return reference to deepest space on the stack
-    const Space& deepest(void) const;
-    
     /// Destructor
     virtual ~BAB(void);
     //@}
@@ -116,11 +113,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     return NULL; 
   }
 
-  forceinline const Space&
-  BAB::deepest(void) const {
-    // IMPLEMENT ME
-    return worker(0)->deepest();
-  }
 
   /*
    * Engine: initialization

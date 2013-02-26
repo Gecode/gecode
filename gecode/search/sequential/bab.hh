@@ -73,8 +73,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     Statistics statistics(void) const;
     /// Reset engine to restart at space \a s and return new root
     Space* reset(Space* s);
-    /// Return reference to deepest space on the stack
-    const Space& deepest(void) const;
     /// Destructor
     ~BAB(void);
   };
@@ -183,15 +181,6 @@ namespace Gecode { namespace Search { namespace Sequential {
       Worker::reset(cur);
       return cur;
     }
-  }
-
-  forceinline const Space&
-  BAB::deepest(void) const {
-    if (path.empty()) {
-      assert(cur != NULL);
-      return *cur;
-    }
-    return path.deepest();
   }
 
   forceinline 
