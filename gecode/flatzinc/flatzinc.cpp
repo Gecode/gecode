@@ -118,15 +118,16 @@ namespace Gecode { namespace FlatZinc {
       done = true;
       FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
       
-      branch(fzs,fzs.iv_aux,INT_VAR_NONE(),INT_VAL_MIN());
-      branch(fzs,fzs.bv_aux,INT_VAR_NONE(),INT_VAL_MIN());
+      branch(fzs,fzs.iv_aux,INT_VAR_AFC_SIZE_MAX(),INT_VAL_MIN());
+      branch(fzs,fzs.bv_aux,INT_VAR_AFC_MAX(),INT_VAL_MIN());
 #ifdef GECODE_HAS_SET_VARS
-      branch(fzs,fzs.sv_aux,SET_VAR_NONE(),SET_VAL_MIN_INC());
+      branch(fzs,fzs.sv_aux,SET_VAR_AFC_SIZE_MAX(),SET_VAL_MIN_INC());
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-      branch(fzs,fzs.fv_aux,FLOAT_VAR_NONE(),FLOAT_VAL_SPLIT_MIN());
+      branch(fzs,fzs.fv_aux,FLOAT_VAR_AFC_SIZE_MAX(),FLOAT_VAL_SPLIT_MIN());
 #endif
-      FlatZincSpace* sol = dfs(&fzs);
+      Search::Options opt; opt.clone = false;
+      FlatZincSpace* sol = dfs(&fzs, opt);
       if (sol) {
         delete sol;
         return new Choice(*this,false);
