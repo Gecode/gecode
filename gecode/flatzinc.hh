@@ -404,6 +404,8 @@ namespace Gecode { namespace FlatZinc {
     /// Indicates whether a float variable is introduced by mzn2fzn
     std::vector<bool> fv_introduced;
 #endif
+    /// Whether the introduced variables still need to be copied
+    bool needAuxVars;
     /// Construct empty space
     FlatZincSpace(void);
   

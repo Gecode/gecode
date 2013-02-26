@@ -117,7 +117,7 @@ namespace Gecode { namespace FlatZinc {
     virtual Choice* choice(Space& home) {
       done = true;
       FlatZincSpace& fzs = static_cast<FlatZincSpace&>(*home.clone());
-      
+      fzs.needAuxVars = false;
       branch(fzs,fzs.iv_aux,INT_VAR_AFC_SIZE_MAX(),INT_VAL_MIN());
       branch(fzs,fzs.bv_aux,INT_VAR_AFC_MAX(),INT_VAL_MIN());
 #ifdef GECODE_HAS_SET_VARS
@@ -421,61 +421,70 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
   FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
-    : Space(share, f), _solveAnnotations(NULL), iv_boolalias(NULL) {
+    : Space(share, f), _solveAnnotations(NULL), iv_boolalias(NULL),
+      needAuxVars(f.needAuxVars) {
       _optVar = f._optVar;
       _method = f._method;
       iv.update(*this, share, f.iv);
       intVarCount = f.intVarCount;
       
-      IntVarArgs iva;
-      for (int i=0; i<f.iv_aux.size(); i++) {
-        if (!f.iv_aux[i].assigned()) {
-          iva << IntVar();
-          iva[iva.size()-1].update(*this, share, f.iv_aux[i]);
+      if (needAuxVars) {
+        IntVarArgs iva;
+        for (int i=0; i<f.iv_aux.size(); i++) {
+          if (!f.iv_aux[i].assigned()) {
+            iva << IntVar();
+            iva[iva.size()-1].update(*this, share, f.iv_aux[i]);
+          }
         }
+        iv_aux = IntVarArray(*this, iva);
       }
-      iv_aux = IntVarArray(*this, iva);
       
       bv.update(*this, share, f.bv);
       boolVarCount = f.boolVarCount;
-      BoolVarArgs bva;
-      for (int i=0; i<f.bv_aux.size(); i++) {
-        if (!f.bv_aux[i].assigned()) {
-          bva << BoolVar();
-          bva[bva.size()-1].update(*this, share, f.bv_aux[i]);
+      if (needAuxVars) {
+        BoolVarArgs bva;
+        for (int i=0; i<f.bv_aux.size(); i++) {
+          if (!f.bv_aux[i].assigned()) {
+            bva << BoolVar();
+            bva[bva.size()-1].update(*this, share, f.bv_aux[i]);
+          }
         }
+        bv_aux = BoolVarArray(*this, bva);
       }
-      bv_aux = BoolVarArray(*this, bva);
 
 #ifdef GECODE_HAS_SET_VARS
       sv.update(*this, share, f.sv);
       setVarCount = f.setVarCount;
-      SetVarArgs sva;
-      for (int i=0; i<f.sv_aux.size(); i++) {
-        if (!f.sv_aux[i].assigned()) {
-          sva << SetVar();
-          sva[sva.size()-1].update(*this, share, f.sv_aux[i]);
+      if (needAuxVars) {
+        SetVarArgs sva;
+        for (int i=0; i<f.sv_aux.size(); i++) {
+          if (!f.sv_aux[i].assigned()) {
+            sva << SetVar();
+            sva[sva.size()-1].update(*this, share, f.sv_aux[i]);
+          }
         }
+        sv_aux = SetVarArray(*this, sva);
       }
-      sv_aux = SetVarArray(*this, sva);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
       fv.update(*this, share, f.fv);
       floatVarCount = f.floatVarCount;
-      FloatVarArgs fva;
-      for (int i=0; i<f.fv_aux.size(); i++) {
-        if (!f.fv_aux[i].assigned()) {
-          fva << FloatVar();
-          fva[fva.size()-1].update(*this, share, f.fv_aux[i]);
+      if (needAuxVars) {
+        FloatVarArgs fva;
+        for (int i=0; i<f.fv_aux.size(); i++) {
+          if (!f.fv_aux[i].assigned()) {
+            fva << FloatVar();
+            fva[fva.size()-1].update(*this, share, f.fv_aux[i]);
+          }
         }
+        fv_aux = FloatVarArray(*this, fva);
       }
-      fv_aux = FloatVarArray(*this, fva);
 #endif
     }
   
   FlatZincSpace::FlatZincSpace(void)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
-    _optVar(-1), _solveAnnotations(NULL) {}
+    _optVar(-1), _solveAnnotations(NULL), needAuxVars(true) {}
 
   void
   FlatZincSpace::init(int intVars, int boolVars,
