@@ -36,14 +36,14 @@
  */
 
 #include <gecode/search.hh>
-#include <gecode/search/sequential/restart.hh>
+#include <gecode/search/meta/restart.hh>
 
 namespace Gecode { namespace Search {
     
   Engine* 
   restart(Space* s, size_t sz, MetaStop* stop,
           Engine* e, const Options& o) {
-    return new Sequential::Restart(s,sz,o.cutoff,stop,e,o);
+    return new Meta::Restart(s,sz,o.cutoff,stop,e,o);
   }
 
 }}

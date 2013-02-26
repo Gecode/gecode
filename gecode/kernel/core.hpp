@@ -1446,8 +1446,7 @@ namespace Gecode {
      * Must constrain this space to be better than the so far best
      * solution \a best.
      *
-     * If best solution search is used and this method is not redefined,
-     * an exception of type SpaceConstrainUndefined is thrown.
+     * The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
@@ -1455,17 +1454,17 @@ namespace Gecode {
     /**
      * \brief Master configuration function for restart meta search engine
      *
-     * A restart meta search engine calls this function on its master space
-     * whenever it finds a solution or exploration restarts. \a last is 
-     * either the solution space or the last space on the stack of the
-     * engine used by the meta engine. \a i is the number of the restart.
+     * A restart meta search engine calls this function on its
+     * master space whenever it finds a solution or exploration
+     * restarts. \a i is the number of the restart. \a s is 
+     * either the solution space or NULL.
      *
      * The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void configure(const Space& last, unsigned long int i);
+    virtual void master(unsigned long int i, const Space* s);
     /**
      * \brief Slave configuration function for restart meta search engine
      *
@@ -1478,7 +1477,7 @@ namespace Gecode {
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void configure(unsigned long int i);
+    virtual void slave(unsigned long int i);
     /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript

@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The default constrain() function for best-solution search now
+does by default nothing (it used to throw an exception).
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   major

@@ -539,15 +539,14 @@ namespace Gecode {
 
   void
   Space::constrain(const Space&) {
-    throw SpaceConstrainUndefined();
   }
 
   void
-  Space::configure(const Space&, unsigned long int) {
+  Space::master(unsigned long int, const Space*) {
   }
 
   void
-  Space::configure(unsigned long int) {
+  Space::slave(unsigned long int) {
   }
 
   void

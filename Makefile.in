@@ -251,9 +251,10 @@ SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
-	sequential/rbs.hh sequential/restart.hh \
+	sequential/rbs.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh parallel/rbs.hh \
+	meta/restart.hh \
 	dfs.hpp bab.hpp rbs.hpp restart.hpp engine-base.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
@@ -286,7 +287,7 @@ export LINKSEARCH       =
 export SEARCHRES	=
 export SEARCHRC		=
 endif
-SEARCHBUILDDIRS = search search/sequential search/parallel
+SEARCHBUILDDIRS = search search/sequential search/parallel search/meta
 
 #
 # INTEGER COMPONENTS

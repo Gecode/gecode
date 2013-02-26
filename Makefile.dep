@@ -240,8 +240,8 @@ gecode/search/stop$(OBJSUFFIX) gecode/search/stop$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -265,8 +265,8 @@ gecode/search/options$(OBJSUFFIX) gecode/search/options$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -290,8 +290,8 @@ gecode/search/cutoff$(OBJSUFFIX) gecode/search/cutoff$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -315,8 +315,8 @@ gecode/search/support$(OBJSUFFIX) gecode/search/support$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -340,9 +340,9 @@ gecode/search/parallel/engine$(OBJSUFFIX) gecode/search/parallel/engine$(SBJSUFF
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/engine.hh \
-	./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/search/worker.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -366,10 +366,10 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/dfs.hh \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/dfs.hh ./gecode/search/sequential/path.hh \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/dfs.hh \
+	./gecode/search/sequential/path.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/search/worker.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -393,9 +393,9 @@ gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/dfs.hh \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/search/worker.hh \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
@@ -420,10 +420,10 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/bab.hh \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/bab.hh ./gecode/search/sequential/path.hh \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/bab.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/bab.hh \
+	./gecode/search/sequential/path.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/search/worker.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -447,9 +447,9 @@ gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/bab.hh \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/bab.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/search/worker.hh \
 	./gecode/support.hh ./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp \
 	./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp \
@@ -474,10 +474,10 @@ gecode/search/rbs$(OBJSUFFIX) gecode/search/rbs$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/dfs.hh \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/parallel/rbs.hh \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/dfs.hh \
-	./gecode/search/sequential/path.hh ./gecode/search/sequential/rbs.hh ./gecode/search/sequential/restart.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
+	./gecode/search/parallel/rbs.hh ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
+	./gecode/search/sequential/dfs.hh ./gecode/search/sequential/path.hh ./gecode/search/sequential/rbs.hh \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/search/worker.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
@@ -502,9 +502,9 @@ gecode/search/parallel/rbs$(OBJSUFFIX) gecode/search/parallel/rbs$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/parallel/dfs.hh \
-	./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh ./gecode/search/parallel/rbs.hh \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
+	./gecode/search/parallel/rbs.hh ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/search/worker.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
@@ -529,8 +529,8 @@ gecode/search/restart$(OBJSUFFIX) gecode/search/restart$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -6694,8 +6694,8 @@ gecode/driver/options$(OBJSUFFIX) gecode/driver/options$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -6767,8 +6767,8 @@ gecode/driver/script$(OBJSUFFIX) gecode/driver/script$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -6840,8 +6840,8 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -6915,8 +6915,8 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/set.hh \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/branch/activity.hpp \
 	./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp \
@@ -6988,8 +6988,8 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7061,8 +7061,8 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7134,8 +7134,8 @@ examples/efpa$(OBJSUFFIX) examples/efpa$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7207,8 +7207,8 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7280,8 +7280,8 @@ examples/golomb-ruler$(OBJSUFFIX) examples/golomb-ruler$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7353,8 +7353,8 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7426,8 +7426,8 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7499,8 +7499,8 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7572,8 +7572,8 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7645,8 +7645,8 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7718,8 +7718,8 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7791,8 +7791,8 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7864,8 +7864,8 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -7937,8 +7937,8 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8010,8 +8010,8 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8083,8 +8083,8 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8156,8 +8156,8 @@ examples/kakuro$(OBJSUFFIX) examples/kakuro$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8229,8 +8229,8 @@ examples/nonogram$(OBJSUFFIX) examples/nonogram$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8302,8 +8302,8 @@ examples/pentominoes$(OBJSUFFIX) examples/pentominoes$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8375,8 +8375,8 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8448,8 +8448,8 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8521,8 +8521,8 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8594,8 +8594,8 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8667,8 +8667,8 @@ examples/steel-mill$(OBJSUFFIX) examples/steel-mill$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8740,8 +8740,8 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8813,8 +8813,8 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8886,8 +8886,8 @@ examples/langford-number$(OBJSUFFIX) examples/langford-number$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -8959,8 +8959,8 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9032,8 +9032,8 @@ examples/radiotherapy$(OBJSUFFIX) examples/radiotherapy$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9106,8 +9106,8 @@ examples/word-square$(OBJSUFFIX) examples/word-square$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -9179,8 +9179,8 @@ examples/crossword$(OBJSUFFIX) examples/crossword$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -9251,8 +9251,8 @@ examples/open-shop$(OBJSUFFIX) examples/open-shop$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9324,8 +9324,8 @@ examples/car-sequencing$(OBJSUFFIX) examples/car-sequencing$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9397,8 +9397,8 @@ examples/sat$(OBJSUFFIX) examples/sat$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9470,8 +9470,8 @@ examples/bin-packing$(OBJSUFFIX) examples/bin-packing$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9543,8 +9543,8 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9616,8 +9616,8 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9689,8 +9689,8 @@ examples/perfect-square$(OBJSUFFIX) examples/perfect-square$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9762,8 +9762,8 @@ examples/schurs-lemma$(OBJSUFFIX) examples/schurs-lemma$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9835,8 +9835,8 @@ examples/dominating-queens$(OBJSUFFIX) examples/dominating-queens$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9908,8 +9908,8 @@ examples/colored-matrix$(OBJSUFFIX) examples/colored-matrix$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -9981,8 +9981,8 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10054,8 +10054,8 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10127,8 +10127,8 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10200,8 +10200,8 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10273,8 +10273,8 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10346,8 +10346,8 @@ examples/cartesian-heart$(OBJSUFFIX) examples/cartesian-heart$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10419,8 +10419,8 @@ examples/descartes-folium$(OBJSUFFIX) examples/descartes-folium$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10492,8 +10492,8 @@ examples/archimedean-spiral$(OBJSUFFIX) examples/archimedean-spiral$(SBJSUFFIX):
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10565,8 +10565,8 @@ examples/golden-spiral$(OBJSUFFIX) examples/golden-spiral$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10663,8 +10663,8 @@ gecode/gist/gist$(OBJSUFFIX) gecode/gist/gist$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10760,8 +10760,8 @@ gecode/gist/spacenode$(OBJSUFFIX) gecode/gist/spacenode$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -10835,8 +10835,8 @@ gecode/gist/treecanvas$(OBJSUFFIX) gecode/gist/treecanvas$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -10909,8 +10909,8 @@ gecode/gist/qtgist$(OBJSUFFIX) gecode/gist/qtgist$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/set.hh \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/branch/activity.hpp \
 	./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp \
@@ -11009,8 +11009,8 @@ gecode/gist/nodestats$(OBJSUFFIX) gecode/gist/nodestats$(SBJSUFFIX): \
 	./gecode/kernel/shared-array.hpp ./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp \
 	./gecode/kernel/var.hpp ./gecode/kernel/view.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -11084,8 +11084,8 @@ gecode/gist/nodewidget$(OBJSUFFIX) gecode/gist/nodewidget$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -11159,8 +11159,8 @@ gecode/gist/mainwindow$(OBJSUFFIX) gecode/gist/mainwindow$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -11228,8 +11228,8 @@ gecode/gist/preferences$(OBJSUFFIX) gecode/gist/preferences$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -11297,8 +11297,8 @@ gecode/gist/stopbrancher$(OBJSUFFIX) gecode/gist/stopbrancher$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -11372,8 +11372,8 @@ gecode/flatzinc/flatzinc$(OBJSUFFIX) gecode/flatzinc/flatzinc$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -11446,8 +11446,8 @@ gecode/flatzinc/registry$(OBJSUFFIX) gecode/flatzinc/registry$(SBJSUFFIX): \
 	./gecode/minimodel/int-rel.hpp ./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp \
 	./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp ./gecode/search.hh \
 	./gecode/search/bab.hpp ./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp \
-	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/options.hpp \
-	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh \
+	./gecode/search/engine-base.hpp ./gecode/search/exception.hpp ./gecode/search/meta/restart.hh \
+	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
 	./gecode/search/statistics.hpp ./gecode/search/stop.hpp ./gecode/search/support.hh \
 	./gecode/set.hh ./gecode/set/array-traits.hpp ./gecode/set/array.hpp \
 	./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp \
@@ -11521,8 +11521,8 @@ tools/flatzinc/fz$(OBJSUFFIX) tools/flatzinc/fz$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/set.hh \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/branch/activity.hpp \
 	./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp \
@@ -11597,8 +11597,8 @@ gecode/flatzinc/parser.tab$(OBJSUFFIX) gecode/flatzinc/parser.tab$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/set.hh \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/branch/activity.hpp \
 	./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp \
@@ -11673,8 +11673,8 @@ gecode/flatzinc/lexer.yy$(OBJSUFFIX) gecode/flatzinc/lexer.yy$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.hpp ./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp \
 	./gecode/minimodel/set-rel.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/set.hh \
 	./gecode/set/array-traits.hpp ./gecode/set/array.hpp ./gecode/set/branch/activity.hpp \
 	./gecode/set/branch/afc.hpp ./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp \
@@ -11707,8 +11707,8 @@ test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
-	./gecode/search/restart.hpp ./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp \
+	./gecode/search/exception.hpp ./gecode/search/meta/restart.hh ./gecode/search/options.hpp \
+	./gecode/search/rbs.hpp ./gecode/search/restart.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp \
 	./gecode/support/block-allocator.hpp ./gecode/support/cast.hpp ./gecode/support/config.hpp \
@@ -11759,8 +11759,8 @@ test/afc$(OBJSUFFIX) test/afc$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -11811,8 +11811,8 @@ test/brancher-handle$(OBJSUFFIX) test/brancher-handle$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -11863,8 +11863,8 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -11927,8 +11927,8 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12000,8 +12000,8 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12061,8 +12061,8 @@ test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -12125,8 +12125,8 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12186,8 +12186,8 @@ test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -12238,8 +12238,8 @@ test/int/dom$(OBJSUFFIX) test/int/dom$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -12290,8 +12290,8 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -12354,8 +12354,8 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12427,8 +12427,8 @@ test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12500,8 +12500,8 @@ test/int/rel$(OBJSUFFIX) test/int/rel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12573,8 +12573,8 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12634,8 +12634,8 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -12686,8 +12686,8 @@ test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -12750,8 +12750,8 @@ test/int/unshare$(OBJSUFFIX) test/int/unshare$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12823,8 +12823,8 @@ test/int/exec$(OBJSUFFIX) test/int/exec$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12896,8 +12896,8 @@ test/int/sequence$(OBJSUFFIX) test/int/sequence$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -12969,8 +12969,8 @@ test/int/mm-arithmetic$(OBJSUFFIX) test/int/mm-arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13042,8 +13042,8 @@ test/int/mm-bool$(OBJSUFFIX) test/int/mm-bool$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13115,8 +13115,8 @@ test/int/mm-lin$(OBJSUFFIX) test/int/mm-lin$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13188,8 +13188,8 @@ test/int/mm-count$(OBJSUFFIX) test/int/mm-count$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13261,8 +13261,8 @@ test/int/mm-rel$(OBJSUFFIX) test/int/mm-rel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13334,8 +13334,8 @@ test/int/bin-packing$(OBJSUFFIX) test/int/bin-packing$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13407,8 +13407,8 @@ test/int/unary$(OBJSUFFIX) test/int/unary$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13480,8 +13480,8 @@ test/int/cumulative$(OBJSUFFIX) test/int/cumulative$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13553,8 +13553,8 @@ test/int/cumulatives$(OBJSUFFIX) test/int/cumulatives$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13626,8 +13626,8 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13699,8 +13699,8 @@ test/int/no-overlap$(OBJSUFFIX) test/int/no-overlap$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13760,8 +13760,8 @@ test/int/precede$(OBJSUFFIX) test/int/precede$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -13824,8 +13824,8 @@ test/int/nvalues$(OBJSUFFIX) test/int/nvalues$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13897,8 +13897,8 @@ test/int/member$(OBJSUFFIX) test/int/member$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -13958,8 +13958,8 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14019,8 +14019,8 @@ test/set/construct$(OBJSUFFIX) test/set/construct$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14080,8 +14080,8 @@ test/set/dom$(OBJSUFFIX) test/set/dom$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14141,8 +14141,8 @@ test/set/rel$(OBJSUFFIX) test/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14202,8 +14202,8 @@ test/set/rel-op$(OBJSUFFIX) test/set/rel-op$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14263,8 +14263,8 @@ test/set/rel-op-const$(OBJSUFFIX) test/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14324,8 +14324,8 @@ test/set/convex$(OBJSUFFIX) test/set/convex$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14385,8 +14385,8 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14458,8 +14458,8 @@ test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14531,8 +14531,8 @@ test/set/element$(OBJSUFFIX) test/set/element$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14592,8 +14592,8 @@ test/set/precede$(OBJSUFFIX) test/set/precede$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14653,8 +14653,8 @@ test/set/distinct$(OBJSUFFIX) test/set/distinct$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14714,8 +14714,8 @@ test/set/exec$(OBJSUFFIX) test/set/exec$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14787,8 +14787,8 @@ test/set/mm-set$(OBJSUFFIX) test/set/mm-set$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14860,8 +14860,8 @@ test/set/channel$(OBJSUFFIX) test/set/channel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -14930,8 +14930,8 @@ test/float$(OBJSUFFIX) test/float$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -14991,8 +14991,8 @@ test/float/basic$(OBJSUFFIX) test/float/basic$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \
@@ -15055,8 +15055,8 @@ test/float/arithmetic$(OBJSUFFIX) test/float/arithmetic$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15128,8 +15128,8 @@ test/float/transcendental$(OBJSUFFIX) test/float/transcendental$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15201,8 +15201,8 @@ test/float/trigonometric$(OBJSUFFIX) test/float/trigonometric$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15274,8 +15274,8 @@ test/float/linear$(OBJSUFFIX) test/float/linear$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15347,8 +15347,8 @@ test/float/rel$(OBJSUFFIX) test/float/rel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15420,8 +15420,8 @@ test/float/channel$(OBJSUFFIX) test/float/channel$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15493,8 +15493,8 @@ test/float/mm-lin$(OBJSUFFIX) test/float/mm-lin$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15563,8 +15563,8 @@ test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15632,8 +15632,8 @@ test/branch/int$(OBJSUFFIX) test/branch/int$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15701,8 +15701,8 @@ test/branch/bool$(OBJSUFFIX) test/branch/bool$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15770,8 +15770,8 @@ test/branch/set$(OBJSUFFIX) test/branch/set$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15839,8 +15839,8 @@ test/branch/float$(OBJSUFFIX) test/branch/float$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15908,8 +15908,8 @@ test/assign$(OBJSUFFIX) test/assign$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -15977,8 +15977,8 @@ test/assign/int$(OBJSUFFIX) test/assign/int$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -16046,8 +16046,8 @@ test/assign/bool$(OBJSUFFIX) test/assign/bool$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -16115,8 +16115,8 @@ test/assign/set$(OBJSUFFIX) test/assign/set$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -16184,8 +16184,8 @@ test/assign/float$(OBJSUFFIX) test/assign/float$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -16256,8 +16256,8 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/minimodel/optimize.hpp ./gecode/minimodel/set-expr.hpp ./gecode/minimodel/set-rel.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/set.hh ./gecode/set/array-traits.hpp \
 	./gecode/set/array.hpp ./gecode/set/branch/activity.hpp ./gecode/set/branch/afc.hpp \
 	./gecode/set/branch/assign.hpp ./gecode/set/branch/traits.hpp ./gecode/set/branch/val.hpp \
@@ -16316,8 +16316,8 @@ test/array$(OBJSUFFIX) test/array$(SBJSUFFIX): \
 	./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp ./gecode/kernel/view.hpp \
 	./gecode/search.hh ./gecode/search/bab.hpp ./gecode/search/cutoff.hpp \
 	./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp ./gecode/search/exception.hpp \
-	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/restart.hpp \
-	./gecode/search/sequential/restart.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
+	./gecode/search/meta/restart.hh ./gecode/search/options.hpp ./gecode/search/rbs.hpp \
+	./gecode/search/restart.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/support.hh ./gecode/support/auto-link.hpp \
 	./gecode/support/bitset-base.hpp ./gecode/support/bitset.hpp ./gecode/support/block-allocator.hpp \
 	./gecode/support/cast.hpp ./gecode/support/config.hpp ./gecode/support/dynamic-array.hpp \

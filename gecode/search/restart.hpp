@@ -36,7 +36,7 @@
  */
 
 #include <gecode/search/support.hh>
-#include <gecode/search/sequential/restart.hh>
+#include <gecode/search/meta/restart.hh>
 
 namespace Gecode {
 

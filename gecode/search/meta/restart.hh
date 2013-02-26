@@ -36,12 +36,12 @@
  */
 
 
-#ifndef __GECODE_SEARCH_SEQUENTIAL_RESTART_HH__
-#define __GECODE_SEARCH_SEQUENTIAL_RESTART_HH__
+#ifndef __GECODE_SEARCH_META_RESTART_HH__
+#define __GECODE_SEARCH_META_RESTART_HH__
 
 #include <gecode/search.hh>
 
-namespace Gecode { namespace Search { namespace Sequential {
+namespace Gecode { namespace Search { namespace Meta {
 
   class Restart : public Engine {
   private:
@@ -84,25 +84,26 @@ namespace Gecode { namespace Search { namespace Sequential {
       Space* n = e->next();
       unsigned long int i = stop->m_stat.restart;
       if (n != NULL) {
-        master->configure(*n,i);
-        if (master->status() == SS_FAILED) {
+        master->constrain(*n);
+        master->master(i,n);
+        if (master->status(stop->m_stat) == SS_FAILED) {
           delete master;
           master = NULL;
           (void) e->reset(NULL);
         } else {
           Space* slave = master->clone();
-          slave->configure(i);
+          slave->slave(i);
           (void) e->reset(slave);
         }
         return n;
       } else if (e->stopped() && stop->enginestopped()) {
-        master->configure(e->deepest(),i);
+        master->master(i,NULL);
         long unsigned int nl = (*co)();
         stop->limit(e->statistics(),nl);
-        if (master->status() == SS_FAILED)
+        if (master->status(stop->m_stat) == SS_FAILED)
           return NULL;
         Space* slave = master->clone();
-        slave->configure(i);
+        slave->slave(i);
         (void) e->reset(slave);
       } else {
         return NULL;

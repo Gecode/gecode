@@ -80,6 +80,9 @@ namespace Gecode { namespace Search {
   /// %Parallel search engine implementations
   namespace Parallel {}
 
+  /// %Meta search engine implementations
+  namespace Meta {}
+
   /**
    * \brief %Search configuration
    *
@@ -229,7 +232,7 @@ namespace Gecode {
 
 }
 
-namespace Gecode { namespace Search { namespace Sequential {
+namespace Gecode { namespace Search { namespace Meta {
 
   class Restart;
 
@@ -360,7 +363,7 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT MetaStop : public Stop {
     template<template<class>class,class> friend class ::Gecode::Restart;
-    friend class ::Gecode::Search::Sequential::Restart;
+    friend class ::Gecode::Search::Meta::Restart;
   private:
     /// The failure stop object for the engine
     FailStop* e_stop;

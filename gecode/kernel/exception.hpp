@@ -79,13 +79,6 @@ namespace Gecode {
     SpaceIllegalAlternative(void);
   };
 
-  /// %Exception: no constrain member function defined
-  class GECODE_VTABLE_EXPORT SpaceConstrainUndefined : public Exception {
-  public:
-    /// Initialize
-    SpaceConstrainUndefined(void);
-  };
-
   /// %Exception: too many branchers
   class GECODE_VTABLE_EXPORT TooManyBranchers : public Exception {
   public:
@@ -161,11 +154,6 @@ namespace Gecode {
   SpaceIllegalAlternative::SpaceIllegalAlternative(void)
     : Exception("Space::commit",
                 "Attempt to commit with illegal alternative") {}
-
-  inline
-  SpaceConstrainUndefined::SpaceConstrainUndefined(void)
-    : Exception("Space::constrain",
-                "Attempt to use undefined constrain function") {}
 
   inline
   TooManyBranchers::TooManyBranchers(const char* l)
