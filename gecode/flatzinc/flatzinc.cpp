@@ -233,7 +233,6 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "afc_size_min")
         return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MIN(decay));
       if (s->id == "afc_size_max") {
-        std::cerr << "decay = " << decay << std::endl;
         return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MAX(decay));
       }
       if (s->id == "activity_min")
@@ -647,7 +646,6 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::createBranchers(AST::Node* ann, int seed, double decay,
                                  bool ignoreUnknown,
                                  std::ostream& err) {
-    std::cerr << "createBranchers\n";
     if (ann) {
       std::vector<AST::Node*> flatAnn;
       if (ann->isArray()) {
@@ -661,7 +659,6 @@ namespace Gecode { namespace FlatZinc {
           AST::Call* c = flatAnn[i]->getCall();
           branchWithPlugin(c->args);
         } else if (flatAnn[i]->isCall("int_search")) {
-          std::cerr << "ann["<<i<<"] is int_search\n";
           AST::Call *call = flatAnn[i]->getCall("int_search");
           AST::Array *args = call->getArgs(4);
           AST::Array *vars = args->a[0]->getArray();
