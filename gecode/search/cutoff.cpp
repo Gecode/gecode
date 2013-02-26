@@ -43,6 +43,25 @@
 
 namespace Gecode { namespace Search {
 
+  forceinline
+  CutoffConstant::CutoffConstant(unsigned long int c0) 
+    : c(c0) {}
+  unsigned long int 
+  CutoffConstant::operator ()(void) {
+    return c;
+  }
+  
+  
+  forceinline
+  CutoffLinear::CutoffLinear(unsigned long int s) 
+    : scale(s), n(0) {}
+  unsigned long int 
+  CutoffLinear::operator ()(void) {
+    n += scale;
+    return n;
+  }
+  
+  
   unsigned long int
   CutoffLuby::start[CutoffLuby::n_start] = {
     1,1,2,1,1,2,4,1,1,2,1,1,2,4,8,1,1,2,1,1,2,4,1,1,2,1,1,2,4,8,16,
@@ -102,7 +121,33 @@ namespace Gecode { namespace Search {
     return min+step*rnd(n);
   }
   
+
+  forceinline
+  CutoffAppend::CutoffAppend(Cutoff* d1, unsigned long int n0, Cutoff* d2) 
+    : c1(d1), c2(d2), n(n0) {}
+  unsigned long int 
+  CutoffAppend::operator ()(void) {
+    if (n > 0) {
+      n--;
+      return (*c1)();
+    } else {
+      return (*c2)();
+    }
+  }
+  forceinline
+  CutoffAppend::~CutoffAppend(void) {
+    delete c1; delete c2;
+  }
   
+  
+  Cutoff*
+  Cutoff::constant(unsigned long int scale) {
+    return new CutoffConstant(scale);
+  }
+  Cutoff*
+  Cutoff::linear(unsigned long int scale) {
+    return new CutoffLinear(scale);
+  }
   Cutoff*
   Cutoff::luby(unsigned long int scale) {
     return new CutoffLuby(scale);
@@ -117,6 +162,10 @@ namespace Gecode { namespace Search {
               unsigned long int max, 
               unsigned long int n) {
     return new CutoffRandom(seed,min,max,n);
+  }
+  Cutoff*
+  Cutoff::append(Cutoff* c1, unsigned long int n, Cutoff* c2) {
+    return new CutoffAppend(c1,n,c2);
   }
   
 }}

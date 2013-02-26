@@ -266,8 +266,10 @@ namespace Gecode { namespace FlatZinc {
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
       _restart.add(RM_NONE,"none");
+      _restart.add(RM_CONSTANT,"constant");
+      _restart.add(RM_LINEAR,"linear");
       _restart.add(RM_LUBY,"luby");
-      _restart.add(RM_GEOM,"geometric");
+      _restart.add(RM_GEOMETRIC,"geometric");
 
       add(_solutions); add(_threads); add(_c_d); add(_a_d);
       add(_allSolutions);

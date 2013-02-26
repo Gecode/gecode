@@ -158,9 +158,13 @@ namespace Gecode { namespace Driver {
     switch (o.restart()) {
     case RM_NONE: 
       return NULL;
+    case RM_CONSTANT: 
+      return Search::Cutoff::constant(o.restart_scale());
+    case RM_LINEAR: 
+      return Search::Cutoff::linear(o.restart_scale());
     case RM_LUBY: 
       return Search::Cutoff::luby(o.restart_scale());
-    case RM_GEOM: 
+    case RM_GEOMETRIC: 
       return Search::Cutoff::geometric(o.restart_scale(),o.restart_base());
     default: GECODE_NEVER;
     }

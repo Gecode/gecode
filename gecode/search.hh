@@ -407,14 +407,20 @@ namespace Gecode { namespace Search {
     virtual unsigned long int operator ()(void) = 0;
       /// Destructor
     virtual ~Cutoff(void);
-    /// Create generator for luby sequence with scale factor \a scale
+    /// Create generator for constant sequence with constant \a s
     static Cutoff*
-    luby(unsigned long int scale=1U);
+    constant(unsigned long int scale=1U);
+    /// Create generator for linear sequence scaled by \a scale
+    static Cutoff*
+    linear(unsigned long int scale=1U);
     /** Create generator for geometric sequence scaled by
      *  \a scale using base \a base
      */
     static Cutoff*
     geometric(unsigned long int scale=1U, double base=1.5);
+    /// Create generator for luby sequence with scale-factor \a scale
+    static Cutoff*
+    luby(unsigned long int scale=1U);
     /** Create generator for random sequence with seed \a seed that
      *  generates values between \a min and \a max with \a n steps
      *  between the extreme values (use 0 for \a n to get step size 1).
@@ -423,6 +429,9 @@ namespace Gecode { namespace Search {
     rnd(unsigned int seed, 
         unsigned long int min, unsigned long int max, 
         unsigned long int n);
+    /// Append cutoff values from \a c2 after \a n values from \a c1
+    static Cutoff*
+    append(Cutoff* c1, unsigned long int n, Cutoff* c2);
     /// Allocate memory from heap
     static void* operator new(size_t s);
     /// Free memory allocated from heap

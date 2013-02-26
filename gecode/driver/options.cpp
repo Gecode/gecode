@@ -402,8 +402,10 @@ namespace Gecode {
     _mode.add(SM_GIST, "gist");
     
     _restart.add(RM_NONE,"none");
+    _restart.add(RM_CONSTANT,"constant");
+    _restart.add(RM_LINEAR,"linear");
     _restart.add(RM_LUBY,"luby");
-    _restart.add(RM_GEOM,"geometric");
+    _restart.add(RM_GEOMETRIC,"geometric");
     
     add(_model); add(_symmetry); add(_propagation); add(_icl); 
     add(_branching); add(_decay);

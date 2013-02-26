@@ -41,6 +41,34 @@
 
 namespace Gecode { namespace Search {
 
+  /// Cutoff generator for constant sequence
+  class CutoffConstant : public Cutoff {
+    friend class Cutoff;
+  private:
+    /// Constant
+    unsigned long int c;
+    /// Constructor
+    CutoffConstant(unsigned long int c);
+  public:
+    /// Return next cutoff value
+    virtual unsigned long int operator() (void);
+  };
+
+  /// Cutoff generator for linear sequence
+  class CutoffLinear : public Cutoff {
+    friend class Cutoff;
+  private:
+    /// Scale factor
+    unsigned long int scale;
+    /// Next number in sequence
+    unsigned long int n;
+    /// Constructor
+    CutoffLinear(unsigned long int scale);
+  public:
+    /// Return next cutoff value
+    virtual unsigned long int operator() (void);
+  };
+
   /// Cutoff generator for the Luby sequence
   class CutoffLuby : public Cutoff {
     friend class Cutoff;
@@ -98,6 +126,25 @@ namespace Gecode { namespace Search {
   public:
     /// Return next cutoff value
     virtual unsigned long int operator ()(void);
+  };
+  
+  /// Cutoff generator appending two cutoff generators
+  class CutoffAppend : public Cutoff {
+    friend class Cutoff;
+  private:
+    /// First cutoff generators
+    Cutoff* c1;
+    /// Second cutoff generators
+    Cutoff* c2;
+    /// How many number to take from the first
+    unsigned long int n;
+    /// Constructor
+    CutoffAppend(Cutoff* c1, unsigned long int n, Cutoff* c2);
+  public:
+    /// Return next cutoff value
+    virtual unsigned long int operator ()(void);
+    /// Destructor
+    virtual ~CutoffAppend(void);
   };
   
   forceinline

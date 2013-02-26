@@ -107,9 +107,11 @@ namespace Gecode {
    * \ingroup TaskDriverCmd
    */
   enum RestartMode {
-    RM_NONE, ///< No restarts
-    RM_LUBY, ///< Restart with Luby sequence
-    RM_GEOM  ///< Restart with geometric sequence
+    RM_NONE,     ///< No restarts
+    RM_CONSTANT, ///< Restart with constant sequence
+    RM_LINEAR,   ///< Restart with linear sequence
+    RM_LUBY,     ///< Restart with Luby sequence
+    RM_GEOMETRIC ///< Restart with geometric sequence
   };
 
   class BaseOptions;
