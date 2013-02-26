@@ -85,21 +85,9 @@ namespace Gecode { namespace Search { namespace Parallel {
       root->constrain(*best);
       // Leave lock
       m_search.release();
-      // Grab wait lock for reset
-      m_wait_reset.acquire();
-      // Release workers for reset
-      release(C_RESET);
-      // Wait for reset cycle started
-      e_reset_ack_start.wait();
       // Perform reset
-      Space* s = reset(root);
+      Space* s = DFS::reset(root);
       root = (s != NULL) ? s->clone(false) : NULL;
-      // Block workers again to ensure invariant
-      block();
-      // Release reset lock
-      m_wait_reset.release();
-      // Wait for reset cycle stopped
-      e_reset_ack_stop.wait();
       if (root == NULL)
         return NULL;
     } else {

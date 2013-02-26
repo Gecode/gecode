@@ -77,6 +77,14 @@ namespace Gecode { namespace Search { namespace Parallel {
         // Terminate thread
         engine().terminated();
         return;
+      case C_RESET:
+        // Acknowledge reset request
+        engine().ack_reset_start();
+        // Wait until reset has been performed
+        engine().wait_reset();
+        // Acknowledge that reset cycle is over
+        engine().ack_reset_stop();
+        break;
       case C_WORK:
         // Perform exploration work
         {
@@ -155,6 +163,35 @@ namespace Gecode { namespace Search { namespace Parallel {
         GECODE_NEVER;
       }
     }
+  }
+
+
+  /*
+   * Perform reset
+   *
+   */
+  Space*
+  BAB::reset(Space* s) {
+    // Grab wait lock for reset
+    m_wait_reset.acquire();
+    // Release workers for reset
+    release(C_RESET);
+    // Wait for reset cycle started
+    e_reset_ack_start.wait();
+    // All workers are marked as busy again
+    delete best;
+    best = NULL;
+    n_busy = workers();
+    for (unsigned int i=1; i<workers(); i++)
+      (void) worker(i)->reset(NULL);
+    s = worker(0)->reset(s);
+    // Block workers again to ensure invariant
+    block();
+    // Release reset lock
+    m_wait_reset.release();
+    // Wait for reset cycle stopped
+    e_reset_ack_stop.wait();
+    return s;
   }
 
 

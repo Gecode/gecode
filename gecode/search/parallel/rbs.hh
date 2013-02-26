@@ -56,6 +56,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     RBS(Space* s, size_t sz, const Search::Options& o);
     /// Return next better solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
+    /// Reset engine to restart at space \a s and return new root space
+    virtual Space* reset(Space* s);
     /// Destructor
     virtual ~RBS(void);
   };
@@ -65,6 +67,11 @@ namespace Gecode { namespace Search { namespace Parallel {
     DFS(s,sz,o),
     root(s->status() == SS_FAILED ? NULL : s->clone()), 
     best(NULL), reset_needed(false) {}
+
+  forceinline Space*
+  RBS::reset(Space* s) {
+    return s;
+  }
 
 }}}
 

@@ -162,6 +162,33 @@ namespace Gecode { namespace Search { namespace Parallel {
 
 
   /*
+   * Perform reset
+   *
+   */
+  Space*
+  DFS::reset(Space* s) {
+    // Grab wait lock for reset
+    m_wait_reset.acquire();
+    // Release workers for reset
+    release(C_RESET);
+    // Wait for reset cycle started
+    e_reset_ack_start.wait();
+    // All workers are marked as busy again
+    n_busy = workers();
+    for (unsigned int i=1; i<workers(); i++)
+      (void) worker(i)->reset(NULL);
+    s = worker(0)->reset(s);
+    // Block workers again to ensure invariant
+    block();
+    // Release reset lock
+    m_wait_reset.release();
+    // Wait for reset cycle stopped
+    e_reset_ack_stop.wait();
+    return s;
+  }
+
+
+  /*
    * Termination and deletion
    */
   DFS::~DFS(void) {

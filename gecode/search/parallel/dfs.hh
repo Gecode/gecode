@@ -69,8 +69,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     //@{
     /// Report solution \a s
     void solution(Space* s);
-    /// Reset engine to restart at space \a s and return new root space
-    Space* reset(Space* s);
     //@}
 
     /// \name Engine interface
@@ -79,6 +77,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     DFS(Space* s, size_t sz, const Options& o);
     /// Return statistics
     virtual Statistics statistics(void) const;
+    /// Reset engine to restart at space \a s and return new root space
+    virtual Space* reset(Space* s);
     /// Destructor
     virtual ~DFS(void);
     //@}
@@ -142,15 +142,6 @@ namespace Gecode { namespace Search { namespace Parallel {
       return s;
     }
   }
-  forceinline Space*
-  DFS::reset(Space* s) {
-    // All workers are marked as busy again
-    n_busy = workers();
-    for (unsigned int i=1; i<workers(); i++)
-      (void) worker(i)->reset(NULL);
-    return worker(0)->reset(s);
-  }
-
   /*
    * Engine: search control
    */
