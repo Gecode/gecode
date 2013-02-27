@@ -51,7 +51,22 @@ namespace Gecode {
   }
 
   void
+  dom(Home home, const SetVarArgs& s, SetRelType r, int i) {
+    Set::Limits::check(i, "Set::dom");
+    IntSet d(i,i);
+    dom(home, s, r, d);
+  }
+
+  void
   dom(Home home, SetVar s, SetRelType r, int i, int j) {
+    Set::Limits::check(i, "Set::dom");
+    Set::Limits::check(j, "Set::dom");
+    IntSet d(i,j);
+    dom(home, s, r, d);
+  }
+
+  void
+  dom(Home home, const SetVarArgs& s, SetRelType r, int i, int j) {
     Set::Limits::check(i, "Set::dom");
     Set::Limits::check(j, "Set::dom");
     IntSet d(i,j);
@@ -167,6 +182,159 @@ namespace Gecode {
           IntSetRanges rd2(is);
           Set::RangesCompl<IntSetRanges > rdC2(rd2);
           GECODE_ME_FAIL(_s.intersectI(home, rdC2));
+        }
+      }
+      break;
+    default:
+      throw Set::UnknownRelation("Set::dom");
+    }
+  }
+
+  void
+  dom(Home home, const SetVarArgs& s, SetRelType r, const IntSet& is) {
+    Set::Limits::check(is, "Set::dom");
+    if (home.failed()) return;
+
+    switch (r) {
+    case SRT_EQ:
+      {
+        if (is.ranges() == 1) {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ME_FAIL(_s.include(home, is.min(), is.max()));
+            GECODE_ME_FAIL(_s.intersect(home, is.min(), is.max()));
+          }
+        } else {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            IntSetRanges rd1(is);
+            GECODE_ME_FAIL(_s.includeI(home, rd1));
+            IntSetRanges rd2(is);
+            GECODE_ME_FAIL(_s.intersectI(home, rd2));
+          }
+        }
+      }
+      break;
+    case SRT_LQ:
+      {
+        Set::ConstSetView cv(home, is);
+        for (int i=s.size(); i--; ) {
+          Set::SetView _s(s[i]);
+          GECODE_ES_FAIL((Set::Rel::Lq<Set::SetView,Set::ConstSetView,false>
+                          ::post(home,_s,cv)));
+        }
+      }
+      break;
+    case SRT_LE:
+      {
+        Set::ConstSetView cv(home, is);
+        for (int i=s.size(); i--; ) {
+          Set::SetView _s(s[i]);
+          GECODE_ES_FAIL((Set::Rel::Lq<Set::SetView,Set::ConstSetView,true>
+                          ::post(home,_s,cv)));
+        }
+      }
+      break;
+    case SRT_GQ:
+      {
+        Set::ConstSetView cv(home, is);
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ES_FAIL((Set::Rel::Lq<Set::ConstSetView,Set::SetView,false>
+                            ::post(home,cv,_s)));
+          }
+      }
+      break;
+    case SRT_GR:
+      {
+        Set::ConstSetView cv(home, is);
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ES_FAIL((Set::Rel::Lq<Set::ConstSetView,Set::SetView,true>
+                            ::post(home,cv,_s)));
+          }
+      }
+      break;
+    case SRT_DISJ:
+      {
+        if (is.ranges() == 1) {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ME_FAIL(_s.exclude(home, is.min(), is.max()));
+          }
+        } else {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            IntSetRanges rd(is);
+            GECODE_ME_FAIL(_s.excludeI(home, rd));
+          }
+        }
+      }
+      break;
+    case SRT_NQ:
+      {
+        Set::ConstSetView cv(home, is);
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ES_FAIL((Set::Rel::DistinctDoit<Set::SetView>
+                            ::post(home,_s,cv)));
+          }
+      }
+      break;
+    case SRT_SUB:
+      {
+         if (is.ranges() == 1) {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ME_FAIL(_s.intersect(home, is.min(), is.max()));
+          }
+         } else {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            IntSetRanges rd(is);
+            GECODE_ME_FAIL(_s.intersectI(home, rd));
+          }
+         }
+      }
+      break;
+    case SRT_SUP:
+      {
+        if (is.ranges() == 1) {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ME_FAIL(_s.include(home, is.min(), is.max()));
+          }
+        } else {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            IntSetRanges rd(is);
+            GECODE_ME_FAIL(_s.includeI(home, rd));
+          }
+        }
+      }
+      break;
+    case SRT_CMPL:
+      {
+        if (is.ranges() == 1) {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            GECODE_ME_FAIL(_s.exclude(home, is.min(), is.max()));
+            GECODE_ME_FAIL(_s.include(home,
+                                      Set::Limits::min,
+                                      is.min()-1) );
+            GECODE_ME_FAIL(_s.include(home, is.max()+1,
+                                      Set::Limits::max) );
+          }
+        } else {
+          for (int i=s.size(); i--; ) {
+            Set::SetView _s(s[i]);
+            IntSetRanges rd1(is);
+            Set::RangesCompl<IntSetRanges > rdC1(rd1);
+            GECODE_ME_FAIL(_s.includeI(home, rdC1));
+            IntSetRanges rd2(is);
+            Set::RangesCompl<IntSetRanges > rdC2(rd2);
+            GECODE_ME_FAIL(_s.intersectI(home, rdC2));
+          }
         }
       }
       break;

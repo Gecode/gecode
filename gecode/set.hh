@@ -676,31 +676,36 @@ namespace Gecode {
   /// Propagates \f$ x \sim_r \{i\}\f$
   GECODE_SET_EXPORT void
   dom(Home home, SetVar x, SetRelType r, int i);
-
+  /// Propagates \f$ x_i \sim_r \{i\}\f$ for all \f$0\leq i<|x|\f$
+  GECODE_SET_EXPORT void
+  dom(Home home, const SetVarArgs& x, SetRelType r, int i);
   /// Propagates \f$ x \sim_r \{i,\dots,j\}\f$
   GECODE_SET_EXPORT void
   dom(Home home, SetVar x, SetRelType r, int i, int j);
-
+  /// Propagates \f$ x \sim_r \{i,\dots,j\}\f$ for all \f$0\leq i<|x|\f$
+  GECODE_SET_EXPORT void
+  dom(Home home, const SetVarArgs& x, SetRelType r, int i, int j);
   /// Propagates \f$ x \sim_r s\f$
   GECODE_SET_EXPORT void
   dom(Home home, SetVar x, SetRelType r, const IntSet& s);
-
-  /// Post propagator for \f$ (x \sim_{rt} \{i\}) \equiv r \f$
+  /// Propagates \f$ x \sim_r s\f$ for all \f$0\leq i<|x|\f$
   GECODE_SET_EXPORT void
-  dom(Home home, SetVar x, SetRelType rt, int i, Reify r);
-
-  /// Post propagator for \f$ (x \sim_{rt} \{i,\dots,j\}) \equiv r \f$
-  GECODE_SET_EXPORT void
-  dom(Home home, SetVar x, SetRelType rt, int i, int j, Reify r);
-
-  /// Post propagator for \f$ (x \sim_{rt} s) \equiv r \f$
-  GECODE_SET_EXPORT void
-  dom(Home home, SetVar x, SetRelType rt, const IntSet& s, Reify r);
-
+  dom(Home home, const SetVarArgs& x, SetRelType r, const IntSet& s);
   /// Propagates \f$ i \leq |s| \leq j \f$
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar x, unsigned int i, unsigned int j);
-
+  /// Propagates \f$ i \leq |s| \leq j \f$ for all \f$0\leq i<|x|\f$
+  GECODE_SET_EXPORT void
+  cardinality(Home home, const SetVarArgs& x, unsigned int i, unsigned int j);
+  /// Post propagator for \f$ (x \sim_{rt} \{i\}) \equiv r \f$
+  GECODE_SET_EXPORT void
+  dom(Home home, SetVar x, SetRelType rt, int i, Reify r);
+  /// Post propagator for \f$ (x \sim_{rt} \{i,\dots,j\}) \equiv r \f$
+  GECODE_SET_EXPORT void
+  dom(Home home, SetVar x, SetRelType rt, int i, int j, Reify r);
+  /// Post propagator for \f$ (x \sim_{rt} s) \equiv r \f$
+  GECODE_SET_EXPORT void
+  dom(Home home, SetVar x, SetRelType rt, const IntSet& s, Reify r);
   //@}
 
 

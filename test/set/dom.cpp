@@ -68,16 +68,15 @@ namespace Test { namespace Set {
       {Gecode::Set::Limits::min,-4}, {4,Gecode::Set::Limits::max}
     };
     static IntSet ds_33c(d2r,2);
-    static IntSet ds_55(-5,5);
 
     namespace {
-      static int minSymDiff(const SetAssignment& x, const IntSet& is) {
+      static int minSymDiff(const SetAssignment& x, int i, const IntSet& is) {
         typedef Iter::Ranges::Diff<CountableSetRanges,IntSetRanges> DiffA;
-        CountableSetRanges xr00(x.lub, x[0]);
+        CountableSetRanges xr00(x.lub, x[i]);
         IntSetRanges xr10(is);
         DiffA a(xr00,xr10);
         typedef Iter::Ranges::Diff<IntSetRanges,CountableSetRanges> DiffB;
-        CountableSetRanges xr01(x.lub, x[0]);
+        CountableSetRanges xr01(x.lub, x[i]);
         IntSetRanges xr11(is);
         DiffB b(xr11,xr01);
         Iter::Ranges::Union<DiffA,DiffB> u(a,b);
@@ -99,56 +98,79 @@ namespace Test { namespace Set {
       IntSet is;
     public:
       /// Create and register test
-      DomRange(SetRelType srt0)
-        : SetTest("Dom::Range::"+str(srt0),1,ds_55,true), srt(srt0)
-        , is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
+      DomRange(SetRelType srt0, int n) : 
+        SetTest("Dom::Range::"+str(srt0)+"::"+str(n),n,ds_33,(n == 1)), 
+        srt(srt0), is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr(x.lub, x[0]);
-        IntSetRanges dr(is);
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
-        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
-        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
-        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
-        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
-        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
-        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
-        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
-              inter(xr, dr);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
-            return Iter::Ranges::equal(xr,drc);
+        for (int i=x.size(); i--; ) {
+          CountableSetRanges xr(x.lub, x[i]);
+          IntSetRanges dr(is);
+          switch (srt) {
+          case SRT_EQ: 
+            if (!Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_LQ: 
+            if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
+              return false;
+            break;
+          case SRT_LE: 
+            if (!(xr() ? in(minSymDiff(x,i,is),dr) : dr()))
+              return false;
+            break;
+          case SRT_GQ: 
+            if (!((!dr()) || in(minSymDiff(x,i,is),xr,true)))
+              return false;
+            break;
+          case SRT_GR: 
+            if (!(dr() ? in(minSymDiff(x,i,is),xr) : xr()))
+              return false;
+            break;
+          case SRT_NQ: 
+            if (Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_SUB:
+            if (!Iter::Ranges::subset(xr, dr))
+              return false;
+            break;
+          case SRT_SUP: 
+            if (!Iter::Ranges::subset(dr, xr))
+              return false;
+            break;
+          case SRT_DISJ:
+            {
+              Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+                inter(xr, dr);
+              if (inter())
+                return false;
+            }
+            break;
+          case SRT_CMPL:
+            {
+              Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+              if (!Iter::Ranges::equal(xr,drc))
+                return false;
+            }
+            break;
           }
         }
-        GECODE_NEVER;
-        return false;
+        return true;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], srt, is);
+        if (x.size() == 1)
+          Gecode::dom(home, x[0], srt, is);
+        else
+          Gecode::dom(home, x, srt, is);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        assert(x.size() == 1);
         Gecode::dom(home, x[0], srt, is, r);
       }
     };
-    DomRange _domrange_eq(SRT_EQ);
-    DomRange _domrange_lq(SRT_LQ);
-    DomRange _domrange_le(SRT_LE);
-    DomRange _domrange_gq(SRT_GQ);
-    DomRange _domrange_gr(SRT_GR);
-    DomRange _domrange_nq(SRT_NQ);
-    DomRange _domrange_sub(SRT_SUB);
-    DomRange _domrange_sup(SRT_SUP);
-    DomRange _domrange_disj(SRT_DISJ);
-    DomRange _domrange_cmpl(SRT_CMPL);
 
     /// %Test for equality with an integer range
     class DomIntRange : public SetTest {
@@ -156,56 +178,80 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      DomIntRange(Gecode::SetRelType srt0)
-        : SetTest("Dom::IntRange::"+str(srt0),1,ds_55,true), srt(srt0) {}
+      DomIntRange(Gecode::SetRelType srt0, int n) 
+        : SetTest("Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1), 
+          srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr(x.lub, x[0]);
-        IntSet is(-3,-1);
-        IntSetRanges dr(is);
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
-        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
-        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
-        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
-        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
-        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
-        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
-        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
-              inter(xr, dr);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
-            return Iter::Ranges::equal(xr,drc);
+        for (int i=x.size(); i--; ) {
+          CountableSetRanges xr(x.lub, x[i]);
+          IntSet is(-3,-1);
+          IntSetRanges dr(is);
+          switch (srt) {
+          case SRT_EQ: 
+            if (!Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_LQ: 
+            if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
+              return false;
+            break;
+          case SRT_LE:
+            if (!(xr() ? in(minSymDiff(x,i,is),dr) : dr()))
+              return false;
+            break;
+          case SRT_GQ:
+            if (!((!dr()) || in(minSymDiff(x,i,is),xr,true)))
+              return false;
+            break;
+          case SRT_GR:
+            if (!(dr() ? in(minSymDiff(x,i,is),xr) : xr()))
+              return false;
+            break;
+          case SRT_NQ:
+            if (!(!Iter::Ranges::equal(xr, dr)))
+              return false;
+            break;
+          case SRT_SUB:
+            if (!(Iter::Ranges::subset(xr, dr)))
+              return false;
+            break;
+          case SRT_SUP:
+            if (!(Iter::Ranges::subset(dr, xr)))
+              return false;
+            break;
+          case SRT_DISJ:
+            {
+              Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+                inter(xr, dr);
+              if (inter())
+                return false;
+            }
+            break;
+          case SRT_CMPL:
+            {
+              Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+              if (!Iter::Ranges::equal(xr,drc))
+                return false;
+            }
+            break;
           }
         }
-        GECODE_NEVER;
-        return false;
+        return true;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], srt, -3, -1);
+        if (x.size() == 1)
+          Gecode::dom(home, x[0], srt, -3, -1);
+        else
+          Gecode::dom(home, x, srt, -3, -1);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        assert(x.size() == 1);
         Gecode::dom(home, x[0], srt, -3, -1, r);
       }
     };
-    DomIntRange _domintrange_eq(SRT_EQ);
-    DomIntRange _domintrange_lq(SRT_LQ);
-    DomIntRange _domintrange_le(SRT_LE);
-    DomIntRange _domintrange_gq(SRT_GQ);
-    DomIntRange _domintrange_gr(SRT_GR);
-    DomIntRange _domintrange_nq(SRT_NQ);
-    DomIntRange _domintrange_sub(SRT_SUB);
-    DomIntRange _domintrange_sup(SRT_SUP);
-    DomIntRange _domintrange_disj(SRT_DISJ);
-    DomIntRange _domintrange_cmpl(SRT_CMPL);
 
     /// %Test for equality with an integer
     class DomInt : public SetTest {
@@ -213,56 +259,82 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      DomInt(Gecode::SetRelType srt0)
-        : SetTest("Dom::Int::"+str(srt0),1,ds_55,true), srt(srt0) {}
+      DomInt(Gecode::SetRelType srt0, int n) : 
+        SetTest("Dom::Int::"+str(srt0)+"::"+str(n),n,ds_33,n==1), 
+        srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr(x.lub, x[0]);
         IntSet is(-3,-3);
-        IntSetRanges dr(is);
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
-        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
-        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
-        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
-        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
-        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
-        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
-        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
-              inter(xr, dr);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
-            return Iter::Ranges::equal(xr,drc);
+        for (int i=x.size(); i--; ) {
+          CountableSetRanges xr(x.lub, x[i]);
+          IntSetRanges dr(is);
+          switch (srt) {
+          case SRT_EQ:
+            if (!Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_LQ:
+            if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
+              return false;
+            break;
+          case SRT_LE:
+            if (!(xr() ? in(minSymDiff(x,i,is),dr) : dr()))
+              return false;
+            break;
+          case SRT_GQ:
+            if (!((!dr()) || in(minSymDiff(x,i,is),xr,true)))
+              return false;
+            break;
+          case SRT_GR:
+            if (!(dr() ? in(minSymDiff(x,i,is),xr) : xr()))
+              return false;
+            break;
+          case SRT_NQ:
+            if (Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_SUB:
+            if (!(Iter::Ranges::subset(xr, dr)))
+              return false;
+            break;
+          case SRT_SUP:
+            if (!(Iter::Ranges::subset(dr, xr)))
+              return false;
+            break;
+          case SRT_DISJ:
+            {
+              Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+                inter(xr, dr);
+             
+              if (inter())
+                return false;
+              break;
+            }
+          case SRT_CMPL:
+            {
+              Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+             
+              if (!Iter::Ranges::equal(xr,drc))
+                return false;
+              break;
+            }
           }
         }
-        GECODE_NEVER;
-        return false;
+        return true;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], srt, -3);
+        if (x.size() == 1)
+          Gecode::dom(home, x[0], srt, -3);
+        else
+          Gecode::dom(home, x, srt, -3);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        assert(x.size() == 1);
         Gecode::dom(home, x[0], srt, -3, r);
       }
     };
-    DomInt _domint_eq(SRT_EQ);
-    DomInt _domint_lq(SRT_LQ);
-    DomInt _domint_le(SRT_LE);
-    DomInt _domint_gq(SRT_GQ);
-    DomInt _domint_gr(SRT_GR);
-    DomInt _domint_nq(SRT_NQ);
-    DomInt _domint_sub(SRT_SUB);
-    DomInt _domint_sup(SRT_SUP);
-    DomInt _domint_disj(SRT_DISJ);
-    DomInt _domint_cmpl(SRT_CMPL);
 
     /// %Test for equality with a domain
     class DomDom : public SetTest {
@@ -271,75 +343,191 @@ namespace Test { namespace Set {
       Gecode::IntSet is;
     public:
       /// Create and register test
-      DomDom(Gecode::SetRelType srt0)
-        : SetTest("Dom::Dom::"+str(srt0),1,d1,true), srt(srt0)
-        , is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
+      DomDom(Gecode::SetRelType srt0, int n) : 
+        SetTest("Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)), 
+        srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr(x.lub, x[0]);
-        IntSetRanges dr(is);
-        switch (srt) {
-        case SRT_EQ: return Iter::Ranges::equal(xr, dr);
-        case SRT_LQ: return (!xr()) || in(minSymDiff(x,is),dr,true);
-        case SRT_LE: return xr() ? in(minSymDiff(x,is),dr) : dr();
-        case SRT_GQ: return (!dr()) || in(minSymDiff(x,is),xr,true);
-        case SRT_GR: return dr() ? in(minSymDiff(x,is),xr) : xr();
-        case SRT_NQ: return !Iter::Ranges::equal(xr, dr);
-        case SRT_SUB: return Iter::Ranges::subset(xr, dr);
-        case SRT_SUP: return Iter::Ranges::subset(dr, xr);
-        case SRT_DISJ:
-          {
-            Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
-              inter(xr, dr);
-            return !inter();
-          }
-        case SRT_CMPL:
-          {
-            Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
-            return Iter::Ranges::equal(xr,drc);
+        for (int i=x.size(); i--; ) {
+          CountableSetRanges xr(x.lub, x[i]);
+          IntSetRanges dr(is);
+          switch (srt) {
+          case SRT_EQ: 
+            if (!Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_LQ:
+            if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
+              return false;
+            break;
+          case SRT_LE: 
+            if (!(xr() ? in(minSymDiff(x,i,is),dr) : dr()))
+              return false;
+            break;
+          case SRT_GQ: 
+            if (!((!dr()) || in(minSymDiff(x,i,is),xr,true)))
+              return false;
+            break;
+          case SRT_GR: 
+            if (!(dr() ? in(minSymDiff(x,i,is),xr) : xr()))
+              return false;
+            break;
+          case SRT_NQ: 
+            if (Iter::Ranges::equal(xr, dr))
+              return false;
+            break;
+          case SRT_SUB: 
+            if (!Iter::Ranges::subset(xr, dr))
+              return false;
+            break;
+          case SRT_SUP: 
+            if (!Iter::Ranges::subset(dr, xr))
+              return false;
+            break;
+          case SRT_DISJ:
+            {
+              Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
+                inter(xr, dr);
+              if (inter())
+                return false;
+            }
+            break;
+          case SRT_CMPL:
+            {
+              Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
+              if (!Iter::Ranges::equal(xr,drc))
+                return false;
+            }
+            break;
           }
         }
-        GECODE_NEVER;
-        return false;
+        return true;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::dom(home, x[0], srt, is);
+        if (x.size() == 1)
+          Gecode::dom(home, x[0], srt, is);
+        else
+          Gecode::dom(home, x, srt, is);
       }
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
+        assert(x.size() == 1);
         Gecode::dom(home, x[0], srt, is, r);
       }
     };
-    DomDom _domdom_eq(SRT_EQ);
-    DomDom _domdom_lq(SRT_LQ);
-    DomDom _domdom_le(SRT_LE);
-    DomDom _domdom_gq(SRT_GQ);
-    DomDom _domdom_gr(SRT_GR);
-    DomDom _domdom_nq(SRT_NQ);
-    DomDom _domdom_sub(SRT_SUB);
-    DomDom _domdom_sup(SRT_SUP);
-    DomDom _domdom_disj(SRT_DISJ);
-    DomDom _domdom_cmpl(SRT_CMPL);
 
     /// %Test for cardinality range
     class CardRange : public SetTest {
     public:
       /// Create and register test
-      CardRange(void)
-        : SetTest("Dom::CardRange",1,d1,false) {}
+      CardRange(int n)
+        : SetTest("Dom::CardRange::"+str(n),n,d1,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        CountableSetRanges xr(x.lub, x[0]);
-        unsigned int card = Iter::Ranges::size(xr);
-        return card >= 2 && card <= 3;
+        for (int i=x.size(); i--; ) {
+          CountableSetRanges xr(x.lub, x[i]);
+          unsigned int card = Iter::Ranges::size(xr);
+          if ((card < 2) || (card > 3))
+            return false;
+        }
+        return true;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray&) {
-        Gecode::cardinality(home, x[0], 2, 3);
+        if (x.size() == 1)
+          Gecode::cardinality(home, x[0], 2, 3);
+        else
+          Gecode::cardinality(home, x, 2, 3);
       }
     };
-    CardRange _cardRange;
+
+    DomRange _domrange_eq1(SRT_EQ,1);
+    DomRange _domrange_lq1(SRT_LQ,1);
+    DomRange _domrange_le1(SRT_LE,1);
+    DomRange _domrange_gq1(SRT_GQ,1);
+    DomRange _domrange_gr1(SRT_GR,1);
+    DomRange _domrange_nq1(SRT_NQ,1);
+    DomRange _domrange_sub1(SRT_SUB,1);
+    DomRange _domrange_sup1(SRT_SUP,1);
+    DomRange _domrange_disj1(SRT_DISJ,1);
+    DomRange _domrange_cmpl1(SRT_CMPL,1);
+    DomRange _domrange_eq2(SRT_EQ,2);
+    DomRange _domrange_lq2(SRT_LQ,2);
+    DomRange _domrange_le2(SRT_LE,2);
+    DomRange _domrange_gq2(SRT_GQ,2);
+    DomRange _domrange_gr2(SRT_GR,2);
+    DomRange _domrange_nq2(SRT_NQ,2);
+    DomRange _domrange_sub2(SRT_SUB,2);
+    DomRange _domrange_sup2(SRT_SUP,2);
+    DomRange _domrange_disj2(SRT_DISJ,2);
+    DomRange _domrange_cmpl2(SRT_CMPL,2);
+
+    DomIntRange _domintrange_eq1(SRT_EQ,1);
+    DomIntRange _domintrange_lq1(SRT_LQ,1);
+    DomIntRange _domintrange_le1(SRT_LE,1);
+    DomIntRange _domintrange_gq1(SRT_GQ,1);
+    DomIntRange _domintrange_gr1(SRT_GR,1);
+    DomIntRange _domintrange_nq1(SRT_NQ,1);
+    DomIntRange _domintrange_sub1(SRT_SUB,1);
+    DomIntRange _domintrange_sup1(SRT_SUP,1);
+    DomIntRange _domintrange_disj1(SRT_DISJ,1);
+    DomIntRange _domintrange_cmpl1(SRT_CMPL,1);
+    DomIntRange _domintrange_eq2(SRT_EQ,2);
+    DomIntRange _domintrange_lq2(SRT_LQ,2);
+    DomIntRange _domintrange_le2(SRT_LE,2);
+    DomIntRange _domintrange_gq2(SRT_GQ,2);
+    DomIntRange _domintrange_gr2(SRT_GR,2);
+    DomIntRange _domintrange_nq2(SRT_NQ,2);
+    DomIntRange _domintrange_sub2(SRT_SUB,2);
+    DomIntRange _domintrange_sup2(SRT_SUP,2);
+    DomIntRange _domintrange_disj2(SRT_DISJ,2);
+    DomIntRange _domintrange_cmpl2(SRT_CMPL,2);
+
+    DomInt _domint_eq1(SRT_EQ,1);
+    DomInt _domint_lq1(SRT_LQ,1);
+    DomInt _domint_le1(SRT_LE,1);
+    DomInt _domint_gq1(SRT_GQ,1);
+    DomInt _domint_gr1(SRT_GR,1);
+    DomInt _domint_nq1(SRT_NQ,1);
+    DomInt _domint_sub1(SRT_SUB,1);
+    DomInt _domint_sup1(SRT_SUP,1);
+    DomInt _domint_disj1(SRT_DISJ,1);
+    DomInt _domint_cmpl1(SRT_CMPL,1);
+    DomInt _domint_eq2(SRT_EQ,2);
+    DomInt _domint_lq2(SRT_LQ,2);
+    DomInt _domint_le2(SRT_LE,2);
+    DomInt _domint_gq2(SRT_GQ,2);
+    DomInt _domint_gr2(SRT_GR,2);
+    DomInt _domint_nq2(SRT_NQ,2);
+    DomInt _domint_sub2(SRT_SUB,2);
+    DomInt _domint_sup2(SRT_SUP,2);
+    DomInt _domint_disj2(SRT_DISJ,2);
+    DomInt _domint_cmpl2(SRT_CMPL,2);
+
+    DomDom _domdom_eq1(SRT_EQ,1);
+    DomDom _domdom_lq1(SRT_LQ,1);
+    DomDom _domdom_le1(SRT_LE,1);
+    DomDom _domdom_gq1(SRT_GQ,1);
+    DomDom _domdom_gr1(SRT_GR,1);
+    DomDom _domdom_nq1(SRT_NQ,1);
+    DomDom _domdom_sub1(SRT_SUB,1);
+    DomDom _domdom_sup1(SRT_SUP,1);
+    DomDom _domdom_disj1(SRT_DISJ,1);
+    DomDom _domdom_cmpl1(SRT_CMPL,1);
+    DomDom _domdom_eq2(SRT_EQ,2);
+    DomDom _domdom_lq2(SRT_LQ,2);
+    DomDom _domdom_le2(SRT_LE,2);
+    DomDom _domdom_gq2(SRT_GQ,2);
+    DomDom _domdom_gr2(SRT_GR,2);
+    DomDom _domdom_nq2(SRT_NQ,2);
+    DomDom _domdom_sub2(SRT_SUB,2);
+    DomDom _domdom_sup2(SRT_SUP,2);
+    DomDom _domdom_disj2(SRT_DISJ,2);
+    DomDom _domdom_cmpl2(SRT_CMPL,2);
+
+    CardRange _cr1(1);
+    CardRange _cr2(2);
 
 }}}
 
