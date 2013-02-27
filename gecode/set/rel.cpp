@@ -53,41 +53,28 @@ namespace Gecode {
     if (home.failed()) return;
     switch (r) {
     case SRT_EQ:
-      {
-        GECODE_ES_FAIL(
-                       (Eq<View0,View1>::post(home,x0,x1)));
-      }
+      GECODE_ES_FAIL((Eq<View0,View1>::post(home,x0,x1)));
       break;
     case SRT_NQ:
-      {
-        GECODE_ES_FAIL(
-                       (Distinct<View0,View1>::post(home,x0,x1)));
-      }
+      GECODE_ES_FAIL((Distinct<View0,View1>::post(home,x0,x1)));
       break;
     case SRT_SUB:
-      {
-        GECODE_ES_FAIL(
-                       (Subset<View0,View1>::post(home, x0,x1)));
-      }
+      GECODE_ES_FAIL((Subset<View0,View1>::post(home, x0,x1)));
       break;
     case SRT_SUP:
-      {
-        GECODE_ES_FAIL(
-                       (Subset<View1,View0>::post(home, x1,x0)));
-      }
+      GECODE_ES_FAIL((Subset<View1,View0>::post(home, x1,x0)));
       break;
     case SRT_DISJ:
       {
         EmptyView emptyset;
         GECODE_ES_FAIL((SuperOfInter<View0,View1,EmptyView>
-                             ::post(home, x0, x1, emptyset)));
+                        ::post(home, x0, x1, emptyset)));
       }
       break;
     case SRT_CMPL:
       {
         ComplementView<View0> cx0(x0);
-        GECODE_ES_FAIL(
-                       (Eq<ComplementView<View0>, View1>
+        GECODE_ES_FAIL((Eq<ComplementView<View0>, View1>
                         ::post(home, cx0, x1)));
       }
       break;
@@ -114,29 +101,23 @@ namespace Gecode {
     if (home.failed()) return;
     switch (r) {
     case SRT_EQ:
-      {
-        GECODE_ES_FAIL(
-                       (ReEq<View0,View1,Gecode::Int::BoolView,rm>
-                       ::post(home, x,y,b)));
-      }
+      GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::BoolView,rm>
+                      ::post(home, x,y,b)));
       break;
     case SRT_NQ:
       {
         Gecode::Int::NegBoolView notb(b);
         switch (rm) {
         case RM_EQV:
-          GECODE_ES_FAIL(
-                         (ReEq<View0,View1,Gecode::Int::NegBoolView,RM_EQV>
+          GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::NegBoolView,RM_EQV>
                          ::post(home,x,y,notb)));
           break;
         case RM_IMP:
-          GECODE_ES_FAIL(
-                         (ReEq<View0,View1,Gecode::Int::NegBoolView,RM_PMI>
+          GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::NegBoolView,RM_PMI>
                          ::post(home,x,y,notb)));
           break;
         case RM_PMI:
-          GECODE_ES_FAIL(
-                         (ReEq<View0,View1,Gecode::Int::NegBoolView,RM_IMP>
+          GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::NegBoolView,RM_IMP>
                          ::post(home,x,y,notb)));
           break;
         default: throw Gecode::Int::UnknownReifyMode("Set::rel");
@@ -144,16 +125,10 @@ namespace Gecode {
       }
       break;
     case SRT_SUB:
-      {
-        GECODE_ES_FAIL(
-                       (ReSubset<View0,View1,rm>::post(home, x,y,b)));
-      }
+      GECODE_ES_FAIL((ReSubset<View0,View1,rm>::post(home, x,y,b)));
       break;
     case SRT_SUP:
-      {
-        GECODE_ES_FAIL(
-                       (ReSubset<View1,View0,rm>::post(home, y,x,b)));
-      }
+      GECODE_ES_FAIL((ReSubset<View1,View0,rm>::post(home, y,x,b)));
       break;
     case SRT_DISJ:
       {
@@ -161,18 +136,16 @@ namespace Gecode {
         // ( y <= complement(x) ) <=> b
 
         ComplementView<View0> xc(x);
-        GECODE_ES_FAIL(
-                       (ReSubset<View1,ComplementView<View0>,rm>
+        GECODE_ES_FAIL((ReSubset<View1,ComplementView<View0>,rm>
                         ::post(home, y, xc, b)));
       }
       break;
     case SRT_CMPL:
       {
         ComplementView<View0> xc(x);
-        GECODE_ES_FAIL(
-                       (ReEq<ComplementView<View0>,View1,
-                       Gecode::Int::BoolView,rm>
-                       ::post(home, xc, y, b)));
+        GECODE_ES_FAIL((ReEq<ComplementView<View0>,View1,
+                        Gecode::Int::BoolView,rm>
+                        ::post(home, xc, y, b)));
       }
       break;
     case SRT_LQ:
