@@ -436,7 +436,7 @@ INTBUILDDIRS	= \
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
-	branch/val-sel-commit.cpp branch/view-sel.cpp
+	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -1026,7 +1026,7 @@ INTTESTOBJ = $(INTTESTSRC0:%.cpp=%$(OBJSUFFIX))
 
 FLOATTESTSRC00 = \
 	basic arithmetic transcendental trigonometric linear rel channel \
-	mm-lin
+	mm-lin dom
 FLOATTESTSRC0 = test/float.cpp $(FLOATTESTSRC00:%=test/float/%.cpp)
 
 ifeq "@enable_float_vars@" "yes"

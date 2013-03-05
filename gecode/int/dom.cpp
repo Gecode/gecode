@@ -127,7 +127,7 @@ namespace Gecode {
       GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView,RM_PMI>
                       ::post(home,x,n,r.var())));
       break;
-    default: throw UnknownReifyMode("Int::rel");
+    default: throw UnknownReifyMode("Int::dom");
     }
   }
 

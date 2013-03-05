@@ -828,7 +828,7 @@ namespace Gecode { namespace Float {
    */
   namespace Limits {
     /// Largest allowed float value
-    const FloatNum max =  std::numeric_limits<FloatNum>::max();
+    const FloatNum max = std::numeric_limits<FloatNum>::max();
     /// Smallest allowed float value
     const FloatNum min = -max;
     /// Return whether float \a n is a valid number
@@ -1059,6 +1059,39 @@ namespace Gecode {
     FRT_GQ, ///< Greater or equal (\f$\geq\f$)
     FRT_GR ///< Greater (\f$>\f$)
   };
+
+  /**
+   * \defgroup TaskModelFloatDomain Domain constraints
+   * \ingroup TaskModelFloat
+   *
+   */
+
+  //@{
+  /// Propagates \f$x=n\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, FloatVar x, FloatVal n);
+  /// Propagates \f$ x_i=n\f$ for all \f$0\leq i<|x|\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, const FloatVarArgs& x, FloatVal n);
+  /// Propagates \f$ l\leq x\leq u\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, FloatVar x, FloatNum l, FloatNum m);
+  /// Propagates \f$ l\leq x_i\leq u\f$ for all \f$0\leq i<|x|\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, const FloatVarArgs& x, FloatNum l, FloatNum u);
+  /// Post domain consistent propagator for \f$ (x=n) \equiv r\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, FloatVar x, FloatVal n, Reify r);
+  /// Post domain consistent propagator for \f$ (l\leq x \leq u) \equiv r\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, FloatVar x, FloatNum l, FloatNum u, Reify r);
+  /// Constrain domain of \a x according to domain of \a d
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, FloatVar x, FloatVar d);
+  /// Constrain domain of \f$ x_i \f$ according to domain of \f$ d_i \f$ for all \f$0\leq i<|x|\f$
+  GECODE_FLOAT_EXPORT void
+  dom(Home home, const FloatVarArgs& x, const FloatVarArgs& d);
+  //@}
 
   /**
    * \defgroup TaskModelFloatRelFloat Simple relation constraints over float variables
