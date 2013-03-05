@@ -73,6 +73,41 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   major
+Thanks: Manuel Loth
+[DESCRIPTION]
+Added value selection strategies for branching
+INT_VAL_NEAR_MIN(), INT_VAL_NEAR_MAX(), INT_VAL_NEAR_INC(), and
+INT_VAL_NEAR_DEC(). They can take a previous assignment to the
+variables to branch on and try to choose values which are near
+(see MPG for details).
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added domain constraint that constrains a variable (or an array)
+according to the domain of another variable.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added domain constraint that constrains a variable (or an array)
+according to the domain of another variable.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added domain constraints for arrays of set variables.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

@@ -58,7 +58,7 @@ namespace Gecode {
       break;
     default:
       return ViewValBrancher<IntView,1,int,2>::post
-        (home,xv,vs,Branch::valselcommitint(home,vals),bf);
+        (home,xv,vs,Branch::valselcommitint(home,x.size(),vals),bf);
     }
   }
 
@@ -97,7 +97,7 @@ namespace Gecode {
           break;
         default:
           return ViewValBrancher<IntView,2,int,2>
-            ::post(home,xv,vs,Branch::valselcommitint(home,vals),bf);
+            ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),bf);
         }
       } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
         ViewSel<IntView>* vs[3] = { 
@@ -113,7 +113,7 @@ namespace Gecode {
           break;
         default:
           return ViewValBrancher<IntView,3,int,2>
-            ::post(home,xv,vs,Branch::valselcommitint(home,vals),bf);
+            ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),bf);
         }
       } else {
         ViewSel<IntView>* vs[4] = { 
@@ -129,7 +129,7 @@ namespace Gecode {
           break;
         default:
           return ViewValBrancher<IntView,4,int,2>
-            ::post(home,xv,vs,Branch::valselcommitint(home,vals),bf);
+            ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),bf);
         }
       }
     }
@@ -172,7 +172,7 @@ namespace Gecode {
       Branch::viewselbool(home,vars) 
     };
     return ViewValBrancher<BoolView,1,int,2>::post
-      (home,xv,vs,Branch::valselcommitbool(home,vals),bf);
+      (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),bf);
   }
 
   BrancherHandle
@@ -199,7 +199,7 @@ namespace Gecode {
     } else {
       ViewArray<BoolView> xv(home,x);
       ValSelCommitBase<BoolView,int>* 
-        vsc = Branch::valselcommitbool(home,vals); 
+        vsc = Branch::valselcommitbool(home,x.size(),vals); 
       if (vars.c.select() == IntVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[2] = { 
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b)

@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   ValSelCommitBase<IntView,int>* 
-  valselcommitint(Space& home, const IntValBranch& ivb) {
+  valselcommitint(Space& home, int n, const IntValBranch& ivb) {
     assert((ivb.select() != IntValBranch::SEL_VALUES_MIN) &&
            (ivb.select() != IntValBranch::SEL_VALUES_MAX));
     switch (ivb.select()) {
@@ -76,6 +76,36 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) 
           ValSelCommit<ValSelFunction<IntView>,ValCommitFunction<IntView> >(home,ivb);
       }
+    case IntValBranch::SEL_NEAR_MIN:
+    case IntValBranch::SEL_NEAR_MAX:
+    case IntValBranch::SEL_NEAR_INC:
+    case IntValBranch::SEL_NEAR_DEC:
+      {
+        IntSharedArray v(ivb.values());
+        if (n != v.size())
+          throw ArgumentSizeMismatch("Int::branch");
+        for (int i=n; i--; )
+          Limits::check(v[i],"Int::branch");
+        switch (ivb.select()) {
+        case IntValBranch::SEL_NEAR_MIN:
+          return new (home) 
+            ValSelCommit<ValSelNearMinMax<IntView,true>,
+             ValCommitEq<IntView> >(home,ivb);
+        case IntValBranch::SEL_NEAR_MAX:
+          return new (home) 
+            ValSelCommit<ValSelNearMinMax<IntView,false>,
+             ValCommitEq<IntView> >(home,ivb);
+        case IntValBranch::SEL_NEAR_INC:
+          return new (home) 
+            ValSelCommit<ValSelNearIncDec<IntView,true>,
+             ValCommitEq<IntView> >(home,ivb);
+        case IntValBranch::SEL_NEAR_DEC:
+          return new (home) 
+            ValSelCommit<ValSelNearIncDec<IntView,false>,
+             ValCommitEq<IntView> >(home,ivb);
+        default: GECODE_NEVER;
+        }
+      }
     default:
       throw UnknownBranching("Int::branch");
     }
@@ -110,7 +140,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   ValSelCommitBase<BoolView,int>* 
-  valselcommitbool(Space& home, const IntValBranch& ivb) {
+  valselcommitbool(Space& home, int n, const IntValBranch& ivb) {
     switch (ivb.select()) {
     case IntValBranch::SEL_MIN:
     case IntValBranch::SEL_MED:
@@ -135,6 +165,37 @@ namespace Gecode { namespace Int { namespace Branch {
       } else {
         return new (home) 
           ValSelCommit<ValSelFunction<BoolView>,ValCommitFunction<BoolView> >(home,ivb);
+      }
+    case IntValBranch::SEL_NEAR_MIN:
+    case IntValBranch::SEL_NEAR_MAX:
+    case IntValBranch::SEL_NEAR_INC:
+    case IntValBranch::SEL_NEAR_DEC:
+      {
+        IntSharedArray v(ivb.values());
+        if (n != v.size())
+          throw ArgumentSizeMismatch("Int::branch");
+        for (int i=n; i--; )
+          if ((v[i] < 0) || (v[i] > 1))
+            throw OutOfLimits("Int::branch");
+        switch (ivb.select()) {
+        case IntValBranch::SEL_NEAR_MIN:
+          return new (home) 
+            ValSelCommit<ValSelNearMinMax<BoolView,true>,
+             ValCommitEq<BoolView> >(home,ivb);
+        case IntValBranch::SEL_NEAR_MAX:
+          return new (home) 
+            ValSelCommit<ValSelNearMinMax<BoolView,false>,
+             ValCommitEq<BoolView> >(home,ivb);
+        case IntValBranch::SEL_NEAR_INC:
+          return new (home) 
+            ValSelCommit<ValSelNearIncDec<BoolView,true>,
+             ValCommitEq<BoolView> >(home,ivb);
+        case IntValBranch::SEL_NEAR_DEC:
+          return new (home) 
+            ValSelCommit<ValSelNearIncDec<BoolView,false>,
+             ValCommitEq<BoolView> >(home,ivb);
+        default: GECODE_NEVER;
+        }
       }
     default:
       throw UnknownBranching("Int::branch");

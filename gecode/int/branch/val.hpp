@@ -49,9 +49,18 @@ namespace Gecode {
   IntValBranch::IntValBranch(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 
+  forceinline 
+  IntValBranch::IntValBranch(Select s0, IntSharedArray n0)
+    : n(n0), s(s0) {}
+
   forceinline IntValBranch::Select
   IntValBranch::select(void) const {
     return s;
+  }
+
+  forceinline IntSharedArray
+  IntValBranch::values(void) const {
+    return n;
   }
 
 
@@ -115,6 +124,26 @@ namespace Gecode {
   inline IntValBranch
   INT_VALUES_MAX(void) {
     return IntValBranch(IntValBranch::SEL_VALUES_MIN);
+  }
+
+  inline IntValBranch
+  INT_VAL_NEAR_MIN(IntSharedArray n) {
+    return IntValBranch(IntValBranch::SEL_NEAR_MIN,n);
+  }
+
+  inline IntValBranch
+  INT_VAL_NEAR_MAX(IntSharedArray n) {
+    return IntValBranch(IntValBranch::SEL_NEAR_MAX,n);
+  }
+
+  inline IntValBranch
+  INT_VAL_NEAR_INC(IntSharedArray n) {
+    return IntValBranch(IntValBranch::SEL_NEAR_INC,n);
+  }
+
+  inline IntValBranch
+  INT_VAL_NEAR_DEC(IntSharedArray n) {
+    return IntValBranch(IntValBranch::SEL_NEAR_DEC,n);
   }
 
 }

@@ -210,7 +210,11 @@ namespace Test { namespace Branch {
     "INT_VAL_RANGE_MAX",
     "INT_VAL",
     "INT_VALUES_MIN",
-    "INT_VALUES_MAX"
+    "INT_VALUES_MAX",
+    "INT_VAL_NEAR_MIN",
+    "INT_VAL_NEAR_MAX",
+    "INT_VAL_NEAR_INC",
+    "INT_VAL_NEAR_DEC",
   };
   /// Number of integer value selections
   const int n_int_val_branch =
@@ -407,6 +411,10 @@ namespace Test { namespace Branch {
     post(*root, root->x);
     results.clear();
 
+    IntArgs d(arity);
+    for (int i=arity; i--; )
+      d[i]=i;
+
     for (int vara = 0; vara<n_int_var_branch; vara++) {
       for (int varb = 1; varb<n_int_var_branch; varb++) {
         for (int val = 0; val<n_int_val_branch; val++) {
@@ -425,11 +433,15 @@ namespace Test { namespace Branch {
           case  8: ivb = INT_VAL(&int_val); break;
           case  9: ivb = INT_VALUES_MIN(); break;
           case 10: ivb = INT_VALUES_MAX(); break;
+          case 11: ivb = INT_VAL_NEAR_MIN(d); break;
+          case 12: ivb = INT_VAL_NEAR_MAX(d); break;
+          case 13: ivb = INT_VAL_NEAR_INC(d); break;
+          case 14: ivb = INT_VAL_NEAR_DEC(d); break;
           }
           
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
 
-          if (vara == 0) {
+          if ((vara == 0) && (val < 11)) {
             for (int i=0; i<c->x.size(); i++)
               branch(*c, c->x[i], ivb);
           } else {
@@ -437,7 +449,7 @@ namespace Test { namespace Branch {
             IntVarBranch ivba;
             IntActivity iaa(*c, c->x, 0.9);
             switch (vara) {
-            case  0: break; 
+            case  0: ivba = INT_VAR_NONE(); break;
             case  1: ivba = INT_VAR_NONE(); break;
             case  2: ivba = INT_VAR_RND(ra); break;
             case  3: ivba = INT_VAR_MERIT_MIN(&int_merit); break;
@@ -470,7 +482,7 @@ namespace Test { namespace Branch {
             IntVarBranch ivbb;
             IntActivity iab(*c, c->x, 0.9);
             switch (vara) {
-            case  0: break; 
+            case  0: ivbb = INT_VAR_NONE(); break;
             case  1: ivbb = INT_VAR_NONE(); break;
             case  2: ivbb = INT_VAR_RND(rb); break;
             case  3: ivbb = INT_VAR_MERIT_MIN(&int_merit,&tbl); break;
@@ -567,6 +579,10 @@ namespace Test { namespace Branch {
     post(*root, root->x);
     results.clear();
 
+    IntArgs d(arity);
+    for (int i=arity; i--; )
+      d[i]=i % 2;
+
     for (int vara = 0; vara<n_int_var_branch; vara++) {
       for (int varb = 1; varb<n_int_var_branch; varb++) {
         for (int val = 0; val<n_int_val_branch; val++) {
@@ -586,11 +602,15 @@ namespace Test { namespace Branch {
           case  8: ivb = INT_VAL(&bool_val); break;
           case  9: ivb = INT_VALUES_MIN(); break;
           case 10: ivb = INT_VALUES_MAX(); break;
+          case 11: ivb = INT_VAL_NEAR_MIN(d); break;
+          case 12: ivb = INT_VAL_NEAR_MAX(d); break;
+          case 13: ivb = INT_VAL_NEAR_INC(d); break;
+          case 14: ivb = INT_VAL_NEAR_DEC(d); break;
           }
           
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
 
-          if (vara == 0) {
+          if ((vara == 0) && (val < 11)) {
             for (int i=0; i<c->x.size(); i++)
               branch(*c, c->x[i], ivb);
           } else {
@@ -600,7 +620,7 @@ namespace Test { namespace Branch {
             IntVarBranch ivba;
             IntActivity iaa(*c, c->x, 0.9);
             switch (vara) {
-            case  0: break; 
+            case  0: ivba = INT_VAR_NONE(); break;
             case  1: ivba = INT_VAR_NONE(); break;
             case  2: ivba = INT_VAR_RND(ra); break;
             case  3: ivba = INT_VAR_MERIT_MIN(&bool_merit); break;
@@ -633,7 +653,7 @@ namespace Test { namespace Branch {
             IntVarBranch ivbb;
             IntActivity iab(*c, c->x, 0.9);
             switch (vara) {
-            case  0: break; 
+            case  0: ivbb = INT_VAR_NONE(); break;
             case  1: ivbb = INT_VAR_NONE(); break;
             case  2: ivbb = INT_VAR_RND(rb); break;
             case  3: ivbb = INT_VAR_MERIT_MIN(&bool_merit,&tbl); break;
