@@ -89,8 +89,9 @@ namespace Gecode { namespace Search { namespace Meta {
           master = NULL;
           (void) e->reset(NULL);
         } else {
-          Space* slave = master->clone();
-          slave->slave(i);
+          Space* slave = master;
+          master = master->clone();
+          slave->slave(i,n);
           (void) e->reset(slave);
         }
         return n;
@@ -100,8 +101,9 @@ namespace Gecode { namespace Search { namespace Meta {
         stop->limit(e->statistics(),nl);
         if (master->status(stop->m_stat) == SS_FAILED)
           return NULL;
-        Space* slave = master->clone();
-        slave->slave(i);
+        Space* slave = master;
+        master = master->clone();
+        slave->slave(i,n);
         (void) e->reset(slave);
       } else {
         return NULL;

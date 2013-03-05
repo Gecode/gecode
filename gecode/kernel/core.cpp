@@ -546,7 +546,7 @@ namespace Gecode {
   }
 
   void
-  Space::slave(unsigned long int) {
+  Space::slave(unsigned long int, const Space*) {
   }
 
   void

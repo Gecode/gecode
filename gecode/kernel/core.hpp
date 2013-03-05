@@ -1468,16 +1468,17 @@ namespace Gecode {
     /**
      * \brief Slave configuration function for restart meta search engine
      *
-     * A restart meta search engine calls this function on a
+     * A restart meta search engine calls this function on its
      * slave space whenever it finds a solution or exploration
-     * restarts. \a i is the number of the restart.
+     * restarts. \a i is the number of the restart. \a s is 
+     * either the solution space or NULL.
      *
      * The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void slave(unsigned long int i);
+    virtual void slave(unsigned long int i, const Space* s);
     /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript
