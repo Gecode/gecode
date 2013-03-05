@@ -123,9 +123,17 @@ namespace Test { namespace Set {
 
   SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i,
                              SetTest* t, bool log)
-    : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d),
+    : d(d0), y(*this, i, d),
       withInt(i), r(Gecode::BoolVar(*this, 0, 1),Gecode::RM_EQV), 
       reified(false), test(t) {
+    using namespace Gecode;
+    IntSet u(Gecode::Set::Limits::min,Gecode::Set::Limits::max);
+    x = SetVarArray(*this, n, Gecode::IntSet::empty, u);
+    SetVarArgs _x(*this, n, Gecode::IntSet::empty, d);
+    if (x.size() == 1)
+      dom(*this,x[0],_x[0]);
+    else
+      dom(*this,x,_x);
     if (opt.log && log) {
       olog << ind(2) << "Initial: x[]=" << x;
       olog << " y[]=" << y;

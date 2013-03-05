@@ -706,6 +706,12 @@ namespace Gecode {
   /// Post propagator for \f$ (x \sim_{rt} s) \equiv r \f$
   GECODE_SET_EXPORT void
   dom(Home home, SetVar x, SetRelType rt, const IntSet& s, Reify r);
+  /// Constrain domain of \a x according to domain of \a d
+  GECODE_SET_EXPORT void
+  dom(Home home, SetVar x, SetVar d);
+  /// Constrain domain of \f$ x_i \f$ according to domain of \f$ d_i \f$ for all \f$0\leq i<|x|\f$
+  GECODE_SET_EXPORT void
+  dom(Home home, const SetVarArgs& x, const SetVarArgs& d);
   //@}
 
 

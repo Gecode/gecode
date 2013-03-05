@@ -145,7 +145,14 @@ namespace Test { namespace Float {
 
   TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s, 
                        Test* t)
-    : d(d0), step(s), x(*this,n,d.min(),d.max()), test(t), reified(false) {
+    : d(d0), step(s), 
+      x(*this,n,Gecode::Float::Limits::min,Gecode::Float::Limits::max), 
+      test(t), reified(false) {
+    Gecode::FloatVarArgs _x(*this,n,d.min(),d.max());
+    if (x.size() == 1)
+      Gecode::dom(*this,x[0],_x[0]);
+    else
+      Gecode::dom(*this,x,_x);
     Gecode::BoolVar b(*this,0,1);
     r = Gecode::Reify(b,Gecode::RM_EQV);
     if (opt.log)

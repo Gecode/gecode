@@ -93,7 +93,13 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
 namespace Test { namespace Int {
 
   TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t)
-    : d(d0), x(*this,n,d), test(t), reified(false) {
+    : d(d0), x(*this,n,Gecode::Int::Limits::min,Gecode::Int::Limits::max), 
+      test(t), reified(false) {
+    Gecode::IntVarArgs _x(*this,n,d);
+    if (x.size() == 1)
+      Gecode::dom(*this,x[0],_x[0]);
+    else
+      Gecode::dom(*this,x,_x);
     Gecode::BoolVar b(*this,0,1);
     r = Gecode::Reify(b,Gecode::RM_EQV);
     if (opt.log)
@@ -103,7 +109,13 @@ namespace Test { namespace Int {
 
   TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t,
                        Gecode::ReifyMode rm)
-    : d(d0), x(*this,n,d), test(t), reified(true) {
+    : d(d0), x(*this,n,Gecode::Int::Limits::min,Gecode::Int::Limits::max), 
+      test(t), reified(true) {
+    Gecode::IntVarArgs _x(*this,n,d);
+    if (x.size() == 1)
+      Gecode::dom(*this,x[0],_x[0]);
+    else
+      Gecode::dom(*this,x,_x);    
     Gecode::BoolVar b(*this,0,1);
     r = Gecode::Reify(b,rm);
     if (opt.log)

@@ -621,6 +621,40 @@ namespace Gecode {
     }
   }
 
+  void
+  dom(Home home, SetVar x, SetVar d) {
+    using namespace Set;    
+    if (home.failed()) return;
+    SetView xv(x), dv(d);
+    if (!same(xv,dv)) {
+      GECODE_ME_FAIL(xv.cardMax(home,dv.cardMax()));
+      GECODE_ME_FAIL(xv.cardMin(home,dv.cardMin()));
+      GlbRanges<SetView> lb(dv);
+      GECODE_ME_FAIL(xv.includeI(home,lb));
+      LubRanges<SetView> ub(dv);
+      GECODE_ME_FAIL(xv.intersectI(home,ub));
+    }
+  }
+
+  void
+  dom(Home home, const SetVarArgs& x, const SetVarArgs& d) {
+    using namespace Set;    
+    if (x.size() != d.size())
+      throw ArgumentSizeMismatch("Set::dom");
+    for (int i=x.size(); i--; ) {
+      if (home.failed()) return;
+      SetView xv(x[i]), dv(d[i]);
+      if (!same(xv,dv)) {
+        GECODE_ME_FAIL(xv.cardMax(home,dv.cardMax()));
+        GECODE_ME_FAIL(xv.cardMin(home,dv.cardMin()));
+        GlbRanges<SetView> lb(dv);
+        GECODE_ME_FAIL(xv.includeI(home,lb));
+        LubRanges<SetView> ub(dv);
+        GECODE_ME_FAIL(xv.intersectI(home,ub));
+      }
+    }
+  }
+  
 }
 
 // STATISTICS: set-post
