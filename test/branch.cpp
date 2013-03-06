@@ -132,7 +132,7 @@ namespace Test { namespace Branch {
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  /// Space for executing Boolean tests
+  /// Space for executing Float tests
   class FloatTestSpace : public Gecode::Space {
   public:
     /// Variables to be tested
