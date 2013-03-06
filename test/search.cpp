@@ -244,6 +244,16 @@ namespace Test {
       static std::string name(void) {
         return "Sol";
       }
+      /// Rule out that solution is found more than once during restarts
+      virtual void master(unsigned long int i, const Space* _s) {
+        const HasSolutions* s = static_cast<const HasSolutions*>(_s);
+        if (s != NULL) {
+          BoolVarArgs b;
+          for (int i=0; i<x.size(); i++)
+            b << expr(*this, x[i] == s->x[i]);
+          rel(*this, BOT_AND, b, 0);
+        }
+      }
     };
 
     /// %Base class for search tests
@@ -381,6 +391,44 @@ namespace Test {
       }
     };
 
+    /// %Test for restart-based search
+    template<class Model, template<class> class Engine>
+    class Restart : public Test {
+    private:
+      /// Number of threads
+      unsigned int t;
+    public:
+      /// Initialize test
+      Restart(const std::string& e, unsigned int t0)
+        : Test("Restart::"+e+"::"+Model::name()+"::"+str(t0),
+               HTB_BINARY,HTB_BINARY,HTB_BINARY), t(t0) {}
+      /// Run test
+      virtual bool run(void) {
+        Model* m = new Model(htb1,htb2,htb3);
+        Gecode::Search::FailStop f(2);
+        Gecode::Search::Options o;
+        o.threads = t;
+        o.stop = &f;
+        o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
+        Gecode::Restart<Engine,Model> restart(m,o);
+        int n = m->solutions();
+        delete m;
+        while (true) {
+          Model* s = restart.next();
+          if (s != NULL) {
+            n--; delete s;
+          }
+          if ((s == NULL) && !restart.stopped())
+            break;
+          f.limit(f.limit()+2);
+        }
+        if (n != 0) {
+          std::cout << "Solutions: " << n << std::endl;
+        }
+        return n == 0;
+      }
+    };
+
     /// Iterator for branching types
     class BranchTypes {
     private:
@@ -475,7 +523,12 @@ namespace Test {
               (void) new Best<HasSolutions,BAB>
                 ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
-        
+        // Restart-based search
+        for (unsigned int t = 1; t<=4; t++) {
+          (void) new Restart<HasSolutions,Gecode::DFS>("DFS",t);
+          (void) new Restart<HasSolutions,Gecode::BAB>("BAB",t);
+          (void) new Restart<HasSolutions,Gecode::RBS>("RBS",t);
+        }
       }
     };
 
