@@ -422,9 +422,6 @@ namespace Test {
             break;
           f.limit(f.limit()+2);
         }
-        if (n != 0) {
-          std::cout << "Solutions: " << n << std::endl;
-        }
         return n == 0;
       }
     };
@@ -524,7 +521,7 @@ namespace Test {
                 ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
         // Restart-based search
-        for (unsigned int t = 1; t<=4; t++) {
+        for (unsigned int t = 1; t<=1; t++) {
           (void) new Restart<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new Restart<HasSolutions,Gecode::BAB>("BAB",t);
           (void) new Restart<HasSolutions,Gecode::RBS>("RBS",t);
