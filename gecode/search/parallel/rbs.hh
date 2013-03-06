@@ -70,7 +70,12 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline Space*
   RBS::reset(Space* s) {
-    return s;
+    delete root;
+    delete best;
+    best = NULL;
+    s = DFS::reset(s);
+    root = (s != NULL) ? s->clone(false) : NULL;
+    return root;
   }
 
 }}}
