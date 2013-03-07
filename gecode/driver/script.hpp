@@ -203,15 +203,6 @@ namespace Gecode { namespace Driver {
     }
   };
   
-  /// Specialization for RBS
-  template<typename S>
-  class GistEngine<RBS<S> > {
-  public:
-    static void explore(S* root, const Gist::Options& opt) {
-      (void) Gist::bab(root, opt);
-    }
-  };
-  
 #endif
 
 

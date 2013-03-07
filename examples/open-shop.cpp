@@ -192,11 +192,6 @@ protected:
     }
   }
 public:
-  /// Search variants
-  enum {
-    SEARCH_BAB, ///< Use branch and bound to optimize
-    SEARCH_RBS  ///< Use restart to optimize
-  };
   /// The actual problem
   OpenShop(const SizeOptions& opt)
     : spec(examples[opt.size()]),
@@ -314,21 +309,13 @@ main(int argc, char* argv[]) {
   opt.iterations(500);
   opt.size(0);
   opt.solutions(0);
-  opt.search(OpenShop::SEARCH_BAB);
-  opt.search(OpenShop::SEARCH_BAB, "bab");
-  opt.search(OpenShop::SEARCH_RBS, "rbs");
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
               << n_examples-1 << std::endl;
     return 1;
   }
-  switch (opt.search()) {
-  case OpenShop::SEARCH_BAB:
-    MinimizeScript::run<OpenShop,BAB,SizeOptions>(opt); break;
-  case OpenShop::SEARCH_RBS:
-    MinimizeScript::run<OpenShop,RBS,SizeOptions>(opt); break;
-  }
+  MinimizeScript::run<OpenShop,BAB,SizeOptions>(opt); break;
   return 0;
 }
 

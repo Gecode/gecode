@@ -374,8 +374,9 @@ Module: search
 What:   change
 Rank:   major
 [DESCRIPTION]
-The restart best solution search engine has been renamed from
-Restart to RBS.
+The restart best solution search engine has been removed (it is
+subsumed by the new restart-based meta search engine RBS).
+
 
 [ENTRY]
 Module: minimodel

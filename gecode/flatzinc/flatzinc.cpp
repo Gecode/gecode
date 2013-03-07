@@ -967,20 +967,6 @@ namespace Gecode { namespace FlatZinc {
     }
   };
 
-  /// Specialization for RBS
-  template<typename S>
-  class GistEngine<RBS<S> > {
-  public:
-    static void explore(S* root, const FlatZincOptions& opt,
-                        Gist::Inspector* i, Gist::Comparator* c) {
-      Gecode::Gist::Options o;
-      o.c_d = opt.c_d(); o.a_d = opt.a_d();
-      o.inspect.click(i);
-      o.inspect.compare(c);
-      (void) Gecode::Gist::bab(root, o);
-    }
-  };
-
   /// \brief An inspector for printing simple text output
   template<class S>
   class FZPrintingInspector
@@ -1187,10 +1173,7 @@ namespace Gecode { namespace FlatZinc {
     switch (_method) {
     case MIN:
     case MAX:
-      if (opt.search() == FlatZincOptions::FZ_SEARCH_BAB)
-        runEngine<BAB>(out,p,opt,t_total);
-      else
-        runEngine<RBS>(out,p,opt,t_total);
+      runEngine<BAB>(out,p,opt,t_total);
       break;
     case SAT:
       runEngine<DFS>(out,p,opt,t_total);

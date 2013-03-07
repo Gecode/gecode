@@ -562,50 +562,6 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \brief Depth-first restart best solution search engine
-   *
-   * Additionally, \a s must implement a member function
-   * \code virtual void constrain(T& t) \endcode
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c.constrain(t) where \a t is the so-far
-   * best solution.
-   * \ingroup TaskModelSearch
-   */
-  template<class T>
-  class RBS : public EngineBase {
-  public:
-    /// Initialize engine for space \a s and options \a o
-    RBS(T* s, const Search::Options& o=Search::Options::def);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    T* next(void);
-    /// Return statistics
-    Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    bool stopped(void) const;
-  };
-
-  /**
-   * \brief Perform depth-first restart best solution search for subclass \a T of space \a s and options \a o
-   *
-   * Additionally, \a s must implement a member function
-   * \code virtual void constrain(T& t) \endcode
-   * Whenever exploration requires to add a constraint
-   * to the space \a c currently being explored, the engine
-   * executes \c c.constrain(t) where \a t is the so-far
-   * best solution.
-   * \ingroup TaskModelSearch
-   */
-  template<class T>
-  T* rbs(T* s, const Search::Options& o=Search::Options::def);
-
-}
-
-#include <gecode/search/rbs.hpp>
-
-namespace Gecode {
-
-  /**
    * \brief Meta-engine performing restart-based search
    *
    * The engine uses the Cutoff sequence supplied in the options \a o to

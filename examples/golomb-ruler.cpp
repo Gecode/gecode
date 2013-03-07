@@ -68,11 +68,6 @@ protected:
   /// Array for ruler marks
   IntVarArray m;
 public:
-  /// Search variants
-  enum {
-    SEARCH_BAB, ///< Use branch and bound to optimize
-    SEARCH_RBS  ///< Use restart to optimize
-  };
   /// Actual model
   GolombRuler(const SizeOptions& opt)
     : m(*this,opt.size(),0,
@@ -139,17 +134,9 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.size(10);
   opt.icl(ICL_BND);
-  opt.search(GolombRuler::SEARCH_BAB);
-  opt.search(GolombRuler::SEARCH_BAB, "bab");
-  opt.search(GolombRuler::SEARCH_RBS, "rbs");
   opt.parse(argc,argv);
   if (opt.size() > 0)
-    switch (opt.search()) {
-    case GolombRuler::SEARCH_BAB:
-      MinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt); break;
-    case GolombRuler::SEARCH_RBS:
-      MinimizeScript::run<GolombRuler,RBS,SizeOptions>(opt); break;
-    }
+    MinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt); break;
   return 0;
 }
 

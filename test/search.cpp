@@ -511,9 +511,6 @@ namespace Test {
                       (void) new Best<HasSolutions,BAB>
                         ("BAB",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
                          c_d,a_d,t);
-                      (void) new Best<HasSolutions,RBS>
-                        ("RBS",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
-                         c_d,a_d,t);
                   }
               (void) new Best<FailImmediate,BAB>
                 ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
@@ -524,7 +521,6 @@ namespace Test {
         for (unsigned int t = 1; t<=1; t++) {
           (void) new Restart<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new Restart<HasSolutions,Gecode::BAB>("BAB",t);
-          (void) new Restart<HasSolutions,Gecode::RBS>("RBS",t);
         }
       }
     };
