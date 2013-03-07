@@ -87,6 +87,11 @@ namespace Gecode {
     IntSetInit<I>::init(*this,i);
   }
 
+  template<class I>
+  IntSet::IntSet(const I& i) {
+    IntSetInit<I>::init(*this,i);
+  }
+
   forceinline
   IntSet::IntSet(const int r[][2], int n) {
     init(r,n);

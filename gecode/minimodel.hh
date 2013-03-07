@@ -2136,9 +2136,32 @@ namespace Gecode {
                SetVar z);
 #endif
 
+  /** \brief Interchangeable rows symmetry specification.
+   */
+  template<class A>
+  SymmetryHandle rows_interchange(const Matrix<A>& m);
+  /** \brief Interchangeable columns symmetry specification.
+   */
+  template<class A>
+  SymmetryHandle columns_interchange(const Matrix<A>& m);
+  /** \brief Reflect rows symmetry specification.
+   */
+  template<class A>
+  SymmetryHandle rows_reflect(const Matrix<A>& m);
+  /** \brief Reflect columns symmetry specification.
+   */
+  template<class A>
+  SymmetryHandle columns_reflect(const Matrix<A>& m);
+  /** \brief Reflect around main diagonal symmetry specification.
+   *
+   * The matrix \m must be square.  
+   */
+  template<class A>
+  SymmetryHandle diagonal_reflect(const Matrix<A>& m);
 }
 
 #include <gecode/minimodel/matrix.hpp>
+#include <gecode/minimodel/ldsb.hpp>
 
 namespace Gecode {
 

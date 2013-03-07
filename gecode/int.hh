@@ -223,6 +223,9 @@ namespace Gecode {
     /// Initialize with range iterator \a i
     template<class I>
     explicit IntSet(I& i);
+    /// Initialize with range iterator \a i
+    template<class I>
+    explicit IntSet(const I& i);
     //@}
 
     /// \name Range access
@@ -4013,7 +4016,6 @@ namespace Gecode {
 #include <gecode/int/branch/assign.hpp>
 
 namespace Gecode {
-
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
@@ -4114,6 +4116,129 @@ namespace Gecode {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts);
 
+}
+
+// LDSB-related declarations.
+namespace Gecode {
+  namespace Int { namespace LDSB {
+    class SymmetryObject;
+  }}
+  /// A SymmetryHandle is a reference-counted pointer to a SymmetryObject.
+  class GECODE_INT_EXPORT SymmetryHandle {
+  public:
+    /// Symmetry object that this handle refers to.
+    Int::LDSB::SymmetryObject* ref;
+    /// Increment counter
+    GECODE_INT_EXPORT void increment();
+    /// Decrement counter
+    GECODE_INT_EXPORT void decrement();
+  public:
+    /// Default constructor
+    SymmetryHandle(void);
+    /// Initialies with a SymmetryObject
+    SymmetryHandle(Int::LDSB::SymmetryObject* o);
+    /// Copy constructor
+    SymmetryHandle(const SymmetryHandle& h);
+    /// Assignment operator
+    const SymmetryHandle& operator=(const SymmetryHandle& h);
+    /// Destructor
+    ~SymmetryHandle();
+  };
+  class Symmetries;
+  /// Traits of %Symmetries
+  template<>
+  class ArrayTraits<ArgArray<SymmetryHandle> > {
+  public:
+    typedef Symmetries     StorageType;
+    typedef SymmetryHandle ValueType;
+    typedef Symmetries     ArgsType;
+  };
+  /// Collection of symmetries
+  class Symmetries : public ArgArray<SymmetryHandle> {};
+  // If this is instead a typedef, strange things happen with the
+  // overloading of the "branch" function.
+
+
+  /// Variables in \a x are interchangeable
+  GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x);
+  /// Variables in \a x are interchangeable
+  GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const BoolVarArgs& x);
+  /// Specified variables in \a x are interchangeable
+  GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x, 
+                                                    const IntArgs& indices);
+  /// Values in \a v are interchangeable
+  GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(const IntArgs& v);
+  /// Values in \a v are interchangeable
+  GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(const IntSet& v);
+  /// All values in the domain of the given variable are interchangeable
+  GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(IntVar vars);
+  /**
+   * \brief Variable sequences in \a x of size \a ss are interchangeable
+   *
+   * The size of \a x must be a multiple of \a ss. 
+   */
+  GECODE_INT_EXPORT
+  SymmetryHandle VariableSequenceSymmetry(const IntVarArgs& x, int ss);
+  /**
+   * \brief Variable sequences in \a x of size \a ss are interchangeable
+   *
+   * The size of \a x must be a multiple of \a ss. 
+   */
+  GECODE_INT_EXPORT
+  SymmetryHandle VariableSequenceSymmetry(const BoolVarArgs& x, int ss);
+  /**
+   * \brief Value sequences in \a v of size \a ss are interchangeable
+   *
+   * The size of \a v must be a multiple of \a ss. 
+   */
+  GECODE_INT_EXPORT
+  SymmetryHandle ValueSequenceSymmetry(const IntArgs& v, int ss);
+
+  /// The values from \a lower to \a upper (inclusive) can be reflected
+  GECODE_INT_EXPORT SymmetryHandle values_reflect(int lower, int upper);
+  /// The values in the domain of \x can be reflected
+  GECODE_INT_EXPORT SymmetryHandle values_reflect(IntVar x);
+
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value
+   * selection \a vals with symmetry breaking
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT BrancherHandle
+  branch(Home home, const IntVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         const Symmetries& syms, IntBranchFilter bf=NULL);
+  /**
+   * \brief Branch over \a x with tie-breaking variable selection \a
+   * vars and value selection \a vals with symmetry breaking
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT BrancherHandle
+  branch(Home home, const IntVarArgs& x,
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         const Symmetries& syms, IntBranchFilter bf=NULL);
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value
+   * selection \a vals with symmetry breaking
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT BrancherHandle
+  branch(Home home, const BoolVarArgs& x,
+         IntVarBranch vars, IntValBranch vals,
+         const Symmetries& syms, BoolBranchFilter bf=NULL);
+  /**
+   * \brief Branch over \a x with tie-breaking variable selection \a
+   * vars and value selection \a vals with symmetry breaking
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT BrancherHandle
+  branch(Home home, const BoolVarArgs& x,
+         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         const Symmetries& syms, BoolBranchFilter bf=NULL);
 }
 
 #endif

@@ -38,7 +38,6 @@
 #include <gecode/set/branch.hh>
 
 namespace Gecode {
-
   BrancherHandle
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals, SetBranchFilter bf) {

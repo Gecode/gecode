@@ -136,6 +136,20 @@ namespace Gecode { namespace Int {
     NotYetFinalized(const char* l);
   };
 
+  /// %Exception: Variable in symmetry not branched on
+  class GECODE_VTABLE_EXPORT LDSBUnbranchedVariable : public Exception {
+  public:
+    /// Initialize with location \a l
+    LDSBUnbranchedVariable(const char* l);
+  };
+
+  /// %Exception: Value selection incompatible with LDSB
+  class GECODE_VTABLE_EXPORT LDSBBadValueSelection : public Exception {
+  public:
+    /// Initialize with location \a l
+    LDSBBadValueSelection(const char* l);
+  };
+
   //@}
 
 
@@ -200,6 +214,14 @@ namespace Gecode { namespace Int {
   inline
   NotYetFinalized::NotYetFinalized(const char* l)
     : Exception(l,"Tuple set not yet finalized") {}
+
+  inline
+  LDSBUnbranchedVariable::LDSBUnbranchedVariable(const char* l)
+    : Exception(l,"Variable in symmetry not branched on") {}
+
+  inline
+  LDSBBadValueSelection::LDSBBadValueSelection(const char* l)
+    : Exception(l,"Value selection incomatible with LDSB") {}
 
 }}
 

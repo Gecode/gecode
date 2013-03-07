@@ -1533,6 +1533,40 @@ namespace Gecode {
 
 }
 
+// LDSB-related declarations.
+namespace Gecode {
+  /// Variables in \a x are interchangeable
+  GECODE_SET_EXPORT SymmetryHandle VariableSymmetry(const SetVarArgs& x);
+  /**
+   * \brief Variable sequences in \a x of size \a ss are interchangeable
+   *
+   * The size of \a x must be a multiple of \a ss. 
+   */
+  GECODE_SET_EXPORT
+  SymmetryHandle VariableSequenceSymmetry(const SetVarArgs& x, int ss);
+  /**
+   * \brief Branch over \a x with variable selection \a vars and value
+   * selection \a vals with symmetry breaking
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  GECODE_SET_EXPORT BrancherHandle
+  branch(Home home, const SetVarArgs& x,
+         SetVarBranch vars, SetValBranch vals,
+         const Symmetries& syms,
+         SetBranchFilter sbf=NULL);
+  /**
+   * \brief Branch over \a x with tie-breaking variable selection \a
+   * vars and value selection \a vals with symmetry breaking
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  GECODE_SET_EXPORT BrancherHandle
+  branch(Home home, const SetVarArgs& x,
+         TieBreak<SetVarBranch> vars, SetValBranch vals,
+         const Symmetries& syms, SetBranchFilter bf=NULL);
+}
+
 #endif
 
 // IFDEF: GECODE_HAS_SET_VARS

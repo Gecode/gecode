@@ -100,6 +100,13 @@ protected:
   /// Matrix of Boolean variables
   BoolVarArray _p;
 public:
+  /// Symmetry breaking variants
+  enum {
+    SYMMETRY_NONE,      ///< No symmetry breaking
+    SYMMETRY_LEX,       ///< Lex-constraints on rows/columns
+    SYMMETRY_LDSB       ///< LDSB on rows/columns
+  };
+
   /// Actual model
   BIBD(const BIBDOptions& o)
     : opt(o), _p(*this,opt.v*opt.b,0,1) {
@@ -122,13 +129,26 @@ public:
         linear(*this, row, IRT_EQ, opt.lambda);
       }
 
-    // Symmetry breaking
-    for (int i=1; i<opt.v; i++)
-      rel(*this, p.row(i-1), IRT_GQ, p.row(i));
-    for (int j=1; j<opt.b; j++)
-      rel(*this, p.col(j-1), IRT_GQ, p.col(j));
+    // IntVarArray ints(*this, opt.v*opt.b, 0, 1);
+    // for (int i = 0 ; i < opt.v*opt.b ; i++)
+    //   rel(*this, ints[i] == _p[i]);
+    // Matrix<IntVarArray> intm(ints, opt.b, opt.v);
 
-    branch(*this, _p, INT_VAR_NONE(), INT_VAL_MIN());
+    if (opt.symmetry() == SYMMETRY_LDSB) {
+      Symmetries s;
+      s << rows_interchange(p);
+      s << columns_interchange(p);
+      branch(*this, _p, INT_VAR_NONE(), INT_VAL_MIN(), s);
+    } else {
+      if (opt.symmetry() == SYMMETRY_LEX) {
+        for (int i=1; i<opt.v; i++)
+          rel(*this, p.row(i-1), IRT_GQ, p.row(i));
+        for (int j=1; j<opt.b; j++)
+          rel(*this, p.col(j-1), IRT_GQ, p.col(j));
+      }
+      branch(*this, _p, INT_VAR_NONE(), INT_VAL_MIN());
+    }
+
   }
 
   /// Print solution
@@ -167,6 +187,12 @@ public:
 int
 main(int argc, char* argv[]) {
   BIBDOptions opt("BIBD",7,3,60);
+
+  opt.symmetry(BIBD::SYMMETRY_LEX);
+  opt.symmetry(BIBD::SYMMETRY_NONE,"none");
+  opt.symmetry(BIBD::SYMMETRY_LEX,"lex");
+  opt.symmetry(BIBD::SYMMETRY_LDSB,"ldsb");
+
   opt.parse(argc,argv);
 
   /*

@@ -52,7 +52,7 @@ namespace Gecode {
     /// Value to assign to
     const Val _val;
   public:
-    /// Initialize choice for brancher \a b, number of laternatives \a a, position \a p, and value \a n
+    /// Initialize choice for brancher \a b, number of alternatives \a a, position \a p, and value \a n
     PosValChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n);
     /// Return value to branch with
     const Val& val(void) const;
