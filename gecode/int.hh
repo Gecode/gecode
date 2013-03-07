@@ -4123,7 +4123,12 @@ namespace Gecode {
   namespace Int { namespace LDSB {
     class SymmetryObject;
   }}
-  /// A SymmetryHandle is a reference-counted pointer to a SymmetryObject.
+
+  /**
+   * \brief A reference-counted pointer to a SymmetryObject
+   *
+   * \ingroup TaskModelIntBranch
+   */
   class GECODE_INT_EXPORT SymmetryHandle {
   public:
     /// Symmetry object that this handle refers to.
@@ -4153,11 +4158,17 @@ namespace Gecode {
     typedef SymmetryHandle ValueType;
     typedef Symmetries     ArgsType;
   };
+
+  /**
+   * \defgroup TaskModelIntBranchSymm Symmetry declarations
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  //@{
   /// Collection of symmetries
   class Symmetries : public ArgArray<SymmetryHandle> {};
   // If this is instead a typedef, strange things happen with the
   // overloading of the "branch" function.
-
 
   /// Variables in \a x are interchangeable
   GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x);
@@ -4198,6 +4209,7 @@ namespace Gecode {
   GECODE_INT_EXPORT SymmetryHandle values_reflect(int lower, int upper);
   /// The values in the domain of \x can be reflected
   GECODE_INT_EXPORT SymmetryHandle values_reflect(IntVar x);
+  //@}
 
   /**
    * \brief Branch over \a x with variable selection \a vars and value
