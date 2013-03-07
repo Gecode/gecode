@@ -142,10 +142,14 @@ namespace Gecode { namespace Int { namespace LDSB {
   SymmetryImp<IntView>*
   createIntSym(Space& home, const SymmetryHandle& s,
                VariableMap variableMap) {
-    VariableSymmetryObject*         varref    = dynamic_cast<VariableSymmetryObject*>(s.ref);
-    ValueSymmetryObject*            valref    = dynamic_cast<ValueSymmetryObject*>(s.ref);
-    VariableSequenceSymmetryObject* varseqref = dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
-    ValueSequenceSymmetryObject*    valseqref = dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
+    VariableSymmetryObject* varref    = 
+      dynamic_cast<VariableSymmetryObject*>(s.ref);
+    ValueSymmetryObject* valref    =  
+      dynamic_cast<ValueSymmetryObject*>(s.ref);
+    VariableSequenceSymmetryObject* varseqref = 
+      dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
+    ValueSequenceSymmetryObject* valseqref =  
+      dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
     if (varref) {
       int n = varref->nxs;
       int* indices = home.alloc<int>(n);
@@ -171,22 +175,23 @@ namespace Gecode { namespace Int { namespace LDSB {
       int n = varseqref->nxs;
       int* indices = home.alloc<int>(n);
       for (int i = 0 ; i < n ; i++) {
-        VariableMap::const_iterator index = variableMap.find(varseqref->xs[i]);
+        VariableMap::const_iterator index = 
+          variableMap.find(varseqref->xs[i]);
         if (index == variableMap.end())
           throw LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createInt");
         indices[i] = index->second;
       }
-      return new (home) VariableSequenceSymmetryImp<IntView>(home, indices, n, varseqref->seq_size);
+      return new (home) VariableSequenceSymmetryImp<IntView>(home, indices, n, 
+        varseqref->seq_size);
     }
     if (valseqref) {
       unsigned int n = valseqref->values.size();
       int *vs = home.alloc<int>(n);
       for (unsigned int i = 0 ; i < n ; i++)
         vs[i] = valseqref->values[i];
-      return new (home) ValueSequenceSymmetryImp<IntView>(home, vs, n, valseqref->seq_size);
+      return new (home) ValueSequenceSymmetryImp<IntView>(home, vs, n, 
+        valseqref->seq_size);
     }
-    std::cerr << "Unknown symmetry type in createIntSym." << std::endl;
-    abort();
     GECODE_NEVER;
     return NULL;
   }
@@ -194,10 +199,14 @@ namespace Gecode { namespace Int { namespace LDSB {
   /// Create a boolean symmetry implementation from a symmetry handle
   SymmetryImp<BoolView>* createBoolSym(Space& home, const SymmetryHandle& s,
                                        VariableMap variableMap) {
-    VariableSymmetryObject*         varref    = dynamic_cast<VariableSymmetryObject*>(s.ref);
-    ValueSymmetryObject*            valref    = dynamic_cast<ValueSymmetryObject*>(s.ref);
-    VariableSequenceSymmetryObject* varseqref = dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
-    ValueSequenceSymmetryObject*    valseqref = dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
+    VariableSymmetryObject* varref    = 
+      dynamic_cast<VariableSymmetryObject*>(s.ref);
+    ValueSymmetryObject* valref    = 
+      dynamic_cast<ValueSymmetryObject*>(s.ref);
+    VariableSequenceSymmetryObject* varseqref = 
+      dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
+    ValueSequenceSymmetryObject* valseqref =  
+      dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
     if (varref) {
       int n = varref->nxs;
       int* indices = home.alloc<int>(n);
@@ -223,19 +232,22 @@ namespace Gecode { namespace Int { namespace LDSB {
       int n = varseqref->nxs;
       int* indices = home.alloc<int>(n);
       for (int i = 0 ; i < n ; i++) {
-        VariableMap::const_iterator index = variableMap.find(varseqref->xs[i]);
+        VariableMap::const_iterator index = 
+          variableMap.find(varseqref->xs[i]);
         if (index == variableMap.end())
           throw LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createBool");
         indices[i] = index->second;
       }
-      return new (home) VariableSequenceSymmetryImp<BoolView>(home, indices, n, varseqref->seq_size);
+      return new (home) VariableSequenceSymmetryImp<BoolView>(home, indices, 
+        n, varseqref->seq_size);
     }
     if (valseqref) {
       unsigned int n = valseqref->values.size();
       int *vs = home.alloc<int>(n);
       for (unsigned int i = 0 ; i < n ; i++)
         vs[i] = valseqref->values[i];
-      return new (home) ValueSequenceSymmetryImp<BoolView>(home, vs, n, valseqref->seq_size);
+      return new (home) ValueSequenceSymmetryImp<BoolView>(home, vs, n, 
+        valseqref->seq_size);
     }
     GECODE_NEVER;
     return NULL;
@@ -479,19 +491,22 @@ namespace Gecode {
         ViewSel<BoolView>* vs[2] = { 
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b)
         };
-        return LDSBBrancher<BoolView,2,int,2>::post(home,xv,vs,vsc,array,n,bf);
+        return 
+          LDSBBrancher<BoolView,2,int,2>::post(home,xv,vs,vsc,array,n,bf);
       } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[3] = { 
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b),
           Branch::viewselbool(home,vars.c)
         };
-        return LDSBBrancher<BoolView,3,int,2>::post(home,xv,vs,vsc,array,n,bf);
+        return 
+          LDSBBrancher<BoolView,3,int,2>::post(home,xv,vs,vsc,array,n,bf);
       } else {
         ViewSel<BoolView>* vs[4] = { 
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b),
           Branch::viewselbool(home,vars.c),Branch::viewselbool(home,vars.d)
         };
-        return LDSBBrancher<BoolView,4,int,2>::post(home,xv,vs,vsc,array,n,bf);
+        return 
+          LDSBBrancher<BoolView,4,int,2>::post(home,xv,vs,vsc,array,n,bf);
       }
     }
   }

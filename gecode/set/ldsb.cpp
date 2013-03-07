@@ -77,17 +77,22 @@ namespace Gecode { namespace Set { namespace LDSB {
    */
   SymmetryImp<SetView>* createSetSym(Space& home, const SymmetryHandle& s,
                                      VariableMap variableMap) {
-    VariableSymmetryObject*         varref    = dynamic_cast<VariableSymmetryObject*>(s.ref);
-    ValueSymmetryObject*            valref    = dynamic_cast<ValueSymmetryObject*>(s.ref);
-    VariableSequenceSymmetryObject* varseqref = dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
-    ValueSequenceSymmetryObject*    valseqref = dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
+    VariableSymmetryObject* varref    = 
+      dynamic_cast<VariableSymmetryObject*>(s.ref);
+    ValueSymmetryObject* valref    = 
+      dynamic_cast<ValueSymmetryObject*>(s.ref);
+    VariableSequenceSymmetryObject* varseqref = 
+      dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
+    ValueSequenceSymmetryObject* valseqref = 
+      dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
     if (varref) {
       int n = varref->nxs;
       int* indices = home.alloc<int>(n);
       for (int i = 0 ; i < n ; i++) {
         VariableMap::const_iterator index = variableMap.find(varref->xs[i]);
         if (index == variableMap.end())
-          throw Int::LDSBUnbranchedVariable("VariableSymmetryObject::createSet");
+          throw 
+            Int::LDSBUnbranchedVariable("VariableSymmetryObject::createSet");
         indices[i] = index->second;
       }
       return new (home) VariableSymmetryImp<SetView>(home, indices, n);
@@ -106,22 +111,24 @@ namespace Gecode { namespace Set { namespace LDSB {
       int n = varseqref->nxs;
       int* indices = home.alloc<int>(n);
       for (int i = 0 ; i < n ; i++) {
-        VariableMap::const_iterator index = variableMap.find(varseqref->xs[i]);
+        VariableMap::const_iterator index = 
+          variableMap.find(varseqref->xs[i]);
         if (index == variableMap.end())
-          throw Int::LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createSet");
+          throw 
+       Int::LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createSet");
         indices[i] = index->second;
       }
-      return new (home) VariableSequenceSymmetryImp<SetView>(home, indices, n, varseqref->seq_size);
+      return new (home) VariableSequenceSymmetryImp<SetView>(home, indices, n, 
+        varseqref->seq_size);
     }
     if (valseqref) {
       unsigned int n = valseqref->values.size();
       int *vs = home.alloc<int>(n);
       for (unsigned int i = 0 ; i < n ; i++)
         vs[i] = valseqref->values[i];
-      return new (home) ValueSequenceSymmetryImp<SetView>(home, vs, n, valseqref->seq_size);
+      return new (home) ValueSequenceSymmetryImp<SetView>(home, vs, n, 
+        valseqref->seq_size);
     }
-    std::cerr << "Unknown symmetry type in createSetSym." << std::endl;
-    abort();
     GECODE_NEVER;
     return NULL;
   }
@@ -152,7 +159,8 @@ namespace Gecode {
     // Convert the modelling-level Symmetries object into an array of
     // SymmetryImp objects.
     int n = syms.size();
-    SymmetryImp<SetView>** array = static_cast<Space&>(home).alloc<SymmetryImp<SetView>* >(n);
+    SymmetryImp<SetView>** array = 
+      static_cast<Space&>(home).alloc<SymmetryImp<SetView>* >(n);
     for (int i = 0 ; i < n ; i++) {
       array[i] = createSetSym(home, syms[i], variableMap);
     }
@@ -204,19 +212,22 @@ namespace Gecode {
         ViewSel<SetView>* vs[2] = { 
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        return LDSBSetBrancher<SetView,2,int,2>::post(home,xv,vs,vsc,array,n,bf);
+        return 
+          LDSBSetBrancher<SetView,2,int,2>::post(home,xv,vs,vsc,array,n,bf);
       } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
         ViewSel<SetView>* vs[3] = { 
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        return LDSBSetBrancher<SetView,3,int,2>::post(home,xv,vs,vsc,array,n,bf);
+        return 
+          LDSBSetBrancher<SetView,3,int,2>::post(home,xv,vs,vsc,array,n,bf);
       } else {
         ViewSel<SetView>* vs[4] = { 
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        return LDSBSetBrancher<SetView,4,int,2>::post(home,xv,vs,vsc,array,n,bf);
+        return 
+          LDSBSetBrancher<SetView,4,int,2>::post(home,xv,vs,vsc,array,n,bf);
       }
     }
   }
