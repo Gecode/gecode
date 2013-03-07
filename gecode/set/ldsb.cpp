@@ -122,6 +122,8 @@ namespace Gecode { namespace Set { namespace LDSB {
     }
     std::cerr << "Unknown symmetry type in createSetSym." << std::endl;
     abort();
+    GECODE_NEVER;
+    return NULL;
   }
 }}}
 
