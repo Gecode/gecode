@@ -183,7 +183,7 @@ public:
   enum {
     SYMMETRY_NONE,      ///< Simple symmetry
     SYMMETRY_BRANCHING, ///< Breaking symmetries with symmetry
-    SYMMETRY_LDSB
+    SYMMETRY_LDSB       ///< Use LDSB for symmetry breaking
   };
 
   /// Actual model
