@@ -187,6 +187,8 @@ namespace Gecode { namespace Int { namespace LDSB {
     }
     std::cerr << "Unknown symmetry type in createIntSym." << std::endl;
     abort();
+    GECODE_NEVER;
+    return NULL;
   }
 
   /// Create a boolean symmetry implementation from a symmetry handle
@@ -236,6 +238,7 @@ namespace Gecode { namespace Int { namespace LDSB {
       return new (home) ValueSequenceSymmetryImp<BoolView>(home, vs, n, valseqref->seq_size);
     }
     GECODE_NEVER;
+    return NULL;
   }
 }}}
 
