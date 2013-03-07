@@ -71,8 +71,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
-    /// Reset engine to restart at space \a s and return new root
-    Space* reset(Space* s);
+    /// Reset engine to restart at space \a s
+    void reset(Space* s);
     /// Destructor
     ~BAB(void);
   };
@@ -165,7 +165,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     return s;
   }
 
-  forceinline Space*
+  forceinline void
   BAB::reset(Space* s) { 
     delete best;
     best = NULL;
@@ -175,11 +175,9 @@ namespace Gecode { namespace Search { namespace Sequential {
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
       Worker::reset();
-      return NULL;
     } else {
       cur = s;
       Worker::reset(cur);
-      return cur;
     }
   }
 

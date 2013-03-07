@@ -63,8 +63,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
-    /// Reset engine to restart at space \a s and return new root
-    Space* reset(Space* s);
+    /// Reset engine to restart at space \a s
+    void reset(Space* s);
     /// Destructor
     ~DFS(void);
   };
@@ -85,7 +85,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     current(cur);
   }
 
-  forceinline Space*
+  forceinline void
   DFS::reset(Space* s) {
     delete cur;
     path.reset();
@@ -93,11 +93,9 @@ namespace Gecode { namespace Search { namespace Sequential {
     if (s->status(*this) == SS_FAILED) {
       cur = NULL;
       Worker::reset();
-      return NULL;
     } else {
       cur = s;
       Worker::reset(cur);
-      return cur;
     }
   }
 

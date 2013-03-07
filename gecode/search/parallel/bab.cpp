@@ -170,7 +170,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Perform reset
    *
    */
-  Space*
+  void
   BAB::reset(Space* s) {
     // Grab wait lock for reset
     m_wait_reset.acquire();
@@ -183,15 +183,14 @@ namespace Gecode { namespace Search { namespace Parallel {
     best = NULL;
     n_busy = workers();
     for (unsigned int i=1; i<workers(); i++)
-      (void) worker(i)->reset(NULL);
-    s = worker(0)->reset(s);
+      worker(i)->reset(NULL);
+    worker(0)->reset(s);
     // Block workers again to ensure invariant
     block();
     // Release reset lock
     m_wait_reset.release();
     // Wait for reset cycle stopped
     e_reset_ack_stop.wait();
-    return s;
   }
 
 

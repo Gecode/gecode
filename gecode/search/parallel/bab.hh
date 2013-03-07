@@ -63,8 +63,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       void better(Space* b);
       /// Try to find some work
       void find(void);
-      /// Reset engine to restart at space \a s and return new root space
-      Space* reset(Space* s);
+      /// Reset engine to restart at space \a s
+      void reset(Space* s);
       /// Destructor
       virtual ~Worker(void);
     };
@@ -88,8 +88,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     BAB(Space* s, size_t sz, const Options& o);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Reset engine to restart at space \a s and return new root
-    virtual Space* reset(Space* s);
+    /// Reset engine to restart at space \a s
+    virtual void reset(Space* s);
     /// Destructor
     virtual ~BAB(void);
     //@}
@@ -109,7 +109,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return _worker[i];
   }
 
-  forceinline Space* 
+  forceinline void
   BAB::Worker::reset(Space* s) {
     delete cur;
     delete best;
@@ -121,11 +121,9 @@ namespace Gecode { namespace Search { namespace Parallel {
       delete s;
       cur = NULL;
       Search::Worker::reset();
-      return NULL;
     } else {
       cur = s;
       Search::Worker::reset(cur);
-      return s;
     }
   }
 

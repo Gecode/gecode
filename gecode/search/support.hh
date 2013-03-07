@@ -70,8 +70,8 @@ namespace Gecode { namespace Search {
     virtual Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
-    /// Reset engine to restart at space \a s and return new root
-    virtual Space* reset(Space* s);
+    /// Reset engine to restart at space \a s
+    virtual void reset(Space* s);
   };
 
 
@@ -108,9 +108,9 @@ namespace Gecode { namespace Search {
     return w.stopped();
   }
   template<class Worker>
-  Space*
+  void
   WorkerToEngine<Worker>::reset(Space* s) {
-    return w.reset(s);
+    w.reset(s);
   }
 
 }}

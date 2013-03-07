@@ -63,8 +63,8 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
-    /// Reset engine to restart at space \a s and return new root
-    virtual Space* reset(Space* s);
+    /// Reset engine to restart at space \a s
+    virtual void reset(Space* s);
     /// Destructor
     virtual ~RBS(void);
   };
@@ -87,12 +87,12 @@ namespace Gecode { namespace Search { namespace Meta {
         if (master->status(stop->m_stat) == SS_FAILED) {
           delete master;
           master = NULL;
-          (void) e->reset(NULL);
+          e->reset(NULL);
         } else {
           Space* slave = master;
           master = master->clone();
           slave->slave(i,n);
-          (void) e->reset(slave);
+          e->reset(slave);
         }
         return n;
       } else if (e->stopped() && stop->enginestopped()) {
@@ -104,7 +104,7 @@ namespace Gecode { namespace Search { namespace Meta {
         Space* slave = master;
         master = master->clone();
         slave->slave(i,n);
-        (void) e->reset(slave);
+        e->reset(slave);
       } else {
         return NULL;
       }
@@ -123,9 +123,8 @@ namespace Gecode { namespace Search { namespace Meta {
     return e->stopped() && !stop->enginestopped();
   }
   
-  inline Space*
+  inline void
   RBS::reset(Space*) { 
-    return NULL; 
   }
   
   inline

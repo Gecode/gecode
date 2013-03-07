@@ -56,8 +56,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       virtual void run(void);
       /// Try to find some work
       void find(void);
-      /// Reset engine to restart at space \a s and return new root space
-      Space* reset(Space* s);
+      /// Reset worker to restart at space \a s
+      void reset(Space* s);
     };
     /// Array of worker references
     Worker** _worker;
@@ -77,8 +77,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     DFS(Space* s, size_t sz, const Options& o);
     /// Return statistics
     virtual Statistics statistics(void) const;
-    /// Reset engine to restart at space \a s and return new root space
-    virtual Space* reset(Space* s);
+    /// Reset engine to restart at space \a s
+    virtual void reset(Space* s);
     /// Destructor
     virtual ~DFS(void);
     //@}
@@ -125,7 +125,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Statistics
    */
-  forceinline Space*
+  forceinline void
   DFS::Worker::reset(Space* s) {
     delete cur;
     path.reset();
@@ -135,11 +135,9 @@ namespace Gecode { namespace Search { namespace Parallel {
       delete s;
       cur = NULL;
       Search::Worker::reset();
-      return NULL;
     } else {
       cur = s;
       Search::Worker::reset(cur);
-      return s;
     }
   }
   /*

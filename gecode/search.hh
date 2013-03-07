@@ -455,8 +455,8 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
-    /// Reset engine to restart at space \a s and return new root
-    virtual Space* reset(Space* s) = 0;
+    /// Reset engine to restart at space \a s
+    virtual void reset(Space* s) = 0;
     /// Destructor
     virtual ~Engine(void) {}
   };
