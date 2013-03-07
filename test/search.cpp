@@ -393,14 +393,14 @@ namespace Test {
 
     /// %Test for restart-based search
     template<class Model, template<class> class Engine>
-    class Restart : public Test {
+    class RBS : public Test {
     private:
       /// Number of threads
       unsigned int t;
     public:
       /// Initialize test
-      Restart(const std::string& e, unsigned int t0)
-        : Test("Restart::"+e+"::"+Model::name()+"::"+str(t0),
+      RBS(const std::string& e, unsigned int t0)
+        : Test("RBS::"+e+"::"+Model::name()+"::"+str(t0),
                HTB_BINARY,HTB_BINARY,HTB_BINARY), t(t0) {}
       /// Run test
       virtual bool run(void) {
@@ -410,15 +410,15 @@ namespace Test {
         o.threads = t;
         o.stop = &f;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
-        Gecode::Restart<Engine,Model> restart(m,o);
+        Gecode::RBS<Engine,Model> rbs(m,o);
         int n = m->solutions();
         delete m;
         while (true) {
-          Model* s = restart.next();
+          Model* s = rbs.next();
           if (s != NULL) {
             n--; delete s;
           }
-          if ((s == NULL) && !restart.stopped())
+          if ((s == NULL) && !rbs.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -519,8 +519,8 @@ namespace Test {
             }
         // Restart-based search
         for (unsigned int t = 1; t<=1; t++) {
-          (void) new Restart<HasSolutions,Gecode::DFS>("DFS",t);
-          (void) new Restart<HasSolutions,Gecode::BAB>("BAB",t);
+          (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
+          (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t);
         }
       }
     };

@@ -315,7 +315,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  MinimizeScript::run<OpenShop,BAB,SizeOptions>(opt); break;
+  MinimizeScript::run<OpenShop,BAB,SizeOptions>(opt);
   return 0;
 }
 

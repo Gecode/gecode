@@ -113,7 +113,7 @@ namespace Gecode { namespace Search {
    * \ingroup FuncThrow
    */
   //@{
-  /// %Exception: Uninitialized cutoff for restart search
+  /// %Exception: Uninitialized cutoff for restart-based search
   class GECODE_VTABLE_EXPORT UninitializedCutoff : public Exception {
   public:
     /// Initialize with location \a l
@@ -228,13 +228,13 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   template<template<class> class E, class T>
-  class Restart;
+  class RBS;
 
 }
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  class Restart;
+  class RBS;
 
 }}}
 
@@ -362,8 +362,8 @@ namespace Gecode { namespace Search {
    * \ingroup TaskModelSearchStop
    */
   class GECODE_SEARCH_EXPORT MetaStop : public Stop {
-    template<template<class>class,class> friend class ::Gecode::Restart;
-    friend class ::Gecode::Search::Meta::Restart;
+    template<template<class>class,class> friend class ::Gecode::RBS;
+    friend class ::Gecode::Search::Meta::RBS;
   private:
     /// The failure stop object for the engine
     FailStop* e_stop;
@@ -397,7 +397,7 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
   /**
-   * \brief Base class for cutoff generators for restart meta engines
+   * \brief Base class for cutoff generators for restart-based meta engine
    */
   class GECODE_SEARCH_EXPORT Cutoff {
   public:
@@ -469,7 +469,7 @@ namespace Gecode {
    *  \brief Base-class for search engines
    */
   class EngineBase {
-    template<template<class>class,class> friend class ::Gecode::Restart;
+    template<template<class>class,class> friend class ::Gecode::RBS;
   protected:
     /// The actual search engine
     Search::Engine* e;
@@ -580,10 +580,10 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<template<class> class E, class T>
-  class Restart : public EngineBase {
+  class RBS : public EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
-    Restart(T* s, const Search::Options& o);
+    RBS(T* s, const Search::Options& o);
     /// Return next solution (NULL, if non exists or search has been stopped)
     T* next(void);
     /// Return statistics
@@ -594,7 +594,7 @@ namespace Gecode {
 
 }
 
-#include <gecode/search/restart.hpp>
+#include <gecode/search/rbs.hpp>
 
 #endif
 

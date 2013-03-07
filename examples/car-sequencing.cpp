@@ -439,7 +439,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  Script::run<CarSequencing,BAB,CarOptions>(opt); break;
+  Script::run<CarSequencing,BAB,CarOptions>(opt);
   return 0;
 }
 

@@ -36,14 +36,14 @@
  */
 
 #include <gecode/search.hh>
-#include <gecode/search/meta/restart.hh>
+#include <gecode/search/meta/rbs.hh>
 
 namespace Gecode { namespace Search {
     
   Engine* 
-  restart(Space* s, size_t sz, MetaStop* stop,
-          Engine* e, const Options& o) {
-    return new Meta::Restart(s,sz,o.cutoff,stop,e,o);
+  rbs(Space* s, size_t sz, MetaStop* stop,
+      Engine* e, const Options& o) {
+    return new Meta::RBS(s,sz,o.cutoff,stop,e,o);
   }
 
 }}

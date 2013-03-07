@@ -36,14 +36,14 @@
  */
 
 
-#ifndef __GECODE_SEARCH_META_RESTART_HH__
-#define __GECODE_SEARCH_META_RESTART_HH__
+#ifndef __GECODE_SEARCH_META_RBS_HH__
+#define __GECODE_SEARCH_META_RBS_HH__
 
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  class Restart : public Engine {
+  class RBS : public Engine {
   private:
     /// The actual engine
     Engine* e;
@@ -55,8 +55,8 @@ namespace Gecode { namespace Search { namespace Meta {
     MetaStop* stop;
   public:
     /// Constructor
-    Restart(Space*, size_t, Cutoff* co0, MetaStop* stop0,
-            Engine* e0, const Options& o);
+    RBS(Space*, size_t, Cutoff* co0, MetaStop* stop0,
+        Engine* e0, const Options& o);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
@@ -66,18 +66,18 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Reset engine to restart at space \a s and return new root
     virtual Space* reset(Space* s);
     /// Destructor
-    virtual ~Restart(void);
+    virtual ~RBS(void);
   };
 
   inline
-  Restart::Restart(Space* s, size_t, Cutoff* co0, MetaStop* stop0,
-                   Engine* e0, const Options&)
+  RBS::RBS(Space* s, size_t, Cutoff* co0, MetaStop* stop0,
+           Engine* e0, const Options&)
     : e(e0), master(s), co(co0), stop(stop0) {
     stop->limit(Statistics(),(*co)());
   }
 
   inline Space*
-  Restart::next(void) {
+  RBS::next(void) {
     while (true) {
       Space* n = e->next();
       unsigned long int i = stop->m_stat.restart;
@@ -114,22 +114,22 @@ namespace Gecode { namespace Search { namespace Meta {
   }
   
   inline Search::Statistics
-  Restart::statistics(void) const {
+  RBS::statistics(void) const {
     return stop->metastatistics()+e->statistics();
   }
   
   inline bool
-  Restart::stopped(void) const {
+  RBS::stopped(void) const {
     return e->stopped() && !stop->enginestopped();
   }
   
   inline Space*
-  Restart::reset(Space*) { 
+  RBS::reset(Space*) { 
     return NULL; 
   }
   
   inline
-  Restart::~Restart(void) {
+  RBS::~RBS(void) {
     // Deleting e also deletes stop
     delete e;
     delete master;

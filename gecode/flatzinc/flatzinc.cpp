@@ -1040,7 +1040,7 @@ namespace Gecode { namespace FlatZinc {
     if (opt.restart()==RM_NONE) {
       runMeta<Engine,Driver::EngineToMeta>(out,p,opt,t_total);
     } else {
-      runMeta<Engine,Restart>(out,p,opt,t_total);
+      runMeta<Engine,RBS>(out,p,opt,t_total);
     }
   }
 

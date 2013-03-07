@@ -237,7 +237,7 @@ namespace Gecode { namespace Driver {
     if (o.restart()==RM_NONE) {
       runMeta<Script,Engine,Options,EngineToMeta>(o,s);
     } else {
-      runMeta<Script,Engine,Options,Restart>(o,s);
+      runMeta<Script,Engine,Options,RBS>(o,s);
     }
   }
 

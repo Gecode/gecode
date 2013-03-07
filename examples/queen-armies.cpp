@@ -313,7 +313,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt); break;
+  MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt);
   return 0;
 }
 

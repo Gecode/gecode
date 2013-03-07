@@ -244,15 +244,15 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
-	restart
+	rbs
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
-	meta/restart.hh \
-	dfs.hpp bab.hpp restart.hpp engine-base.hpp
+	meta/rbs.hh \
+	dfs.hpp bab.hpp rbs.hpp engine-base.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)

@@ -36,22 +36,22 @@
  */
 
 #include <gecode/search/support.hh>
-#include <gecode/search/meta/restart.hh>
+#include <gecode/search/meta/rbs.hh>
 
 namespace Gecode {
 
   namespace Search {
-    GECODE_SEARCH_EXPORT Engine* restart(Space* s, size_t sz,
-                                         MetaStop* stop,
-                                         Engine* e,
-                                         const Options& o);
+    GECODE_SEARCH_EXPORT Engine* rbs(Space* s, size_t sz,
+                                     MetaStop* stop,
+                                     Engine* e,
+                                     const Options& o);
   }
 
   template<template<class> class E, class T>
   forceinline
-  Restart<E,T>::Restart(T* s, const Search::Options& m_opt) {
+  RBS<E,T>::RBS(T* s, const Search::Options& m_opt) {
     if (m_opt.cutoff == NULL)
-      throw Search::UninitializedCutoff("Restart::Restart");
+      throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt;
     e_opt.clone = true;
     e_opt.threads = m_opt.threads;
@@ -74,24 +74,24 @@ namespace Gecode {
     EngineBase* eb = &engine;
     Search::Engine* ee = eb->e;
     eb->e = NULL;
-    e = Search::restart(master,sizeof(T),ms,ee,m_opt);
+    e = Search::rbs(master,sizeof(T),ms,ee,m_opt);
   }
 
   template<template<class> class E, class T>
   forceinline T*
-  Restart<E,T>::next(void) {
+  RBS<E,T>::next(void) {
     return dynamic_cast<T*>(e->next());
   }
 
   template<template<class> class E, class T>
   forceinline Search::Statistics
-  Restart<E,T>::statistics(void) const {
+  RBS<E,T>::statistics(void) const {
     return e->statistics();
   }
 
   template<template<class> class E, class T>
   forceinline bool
-  Restart<E,T>::stopped(void) const {
+  RBS<E,T>::stopped(void) const {
     return e->stopped();
   }
 
