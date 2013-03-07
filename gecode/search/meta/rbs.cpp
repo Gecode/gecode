@@ -36,51 +36,68 @@
  */
 
 
-#ifndef __GECODE_SEARCH_META_RBS_HH__
-#define __GECODE_SEARCH_META_RBS_HH__
-
-#include <gecode/search.hh>
+#include <gecode/search/meta/rbs.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  class RBS : public Engine {
-  private:
-    /// The actual engine
-    Engine* e;
-    /// The master space to restart from
-    Space* master;
-    /// The cutoff object
-    Cutoff* co;
-    /// The stop control object
-    MetaStop* stop;
-    /// Whether the slave can be shared with the master
-    bool shared;
-  public:
-    /// Constructor
-    RBS(Space*, size_t, Cutoff* co0, MetaStop* stop0,
-        Engine* e0, const Options& o);
-    /// Return next solution (NULL, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Reset engine to restart at space \a s
-    virtual void reset(Space* s);
-    /// Destructor
-    virtual ~RBS(void);
-  };
-
-  forceinline
-  RBS::RBS(Space* s, size_t, Cutoff* co0, MetaStop* stop0,
-           Engine* e0, const Options& opt)
-    : e(e0), master(s), co(co0), stop(stop0), 
-      shared(opt.threads == 1) {
-    stop->limit(Statistics(),(*co)());
+  Space*
+  RBS::next(void) {
+    while (true) {
+      Space* n = e->next();
+      unsigned long int i = stop->m_stat.restart;
+      if (n != NULL) {
+        master->constrain(*n);
+        master->master(i,n);
+        if (master->status(stop->m_stat) == SS_FAILED) {
+          delete master;
+          master = NULL;
+          e->reset(NULL);
+        } else {
+          Space* slave = master;
+          master = master->clone(shared);
+          slave->slave(i,n);
+          e->reset(slave);
+        }
+        return n;
+      } else if (e->stopped() && stop->enginestopped()) {
+        master->master(i,NULL);
+        long unsigned int nl = (*co)();
+        stop->limit(e->statistics(),nl);
+        if (master->status(stop->m_stat) == SS_FAILED)
+          return NULL;
+        Space* slave = master;
+        master = master->clone(shared);
+        slave->slave(i,n);
+        e->reset(slave);
+      } else {
+        return NULL;
+      }
+    }
+    GECODE_NEVER;
+    return NULL;
+  }
+  
+  Search::Statistics
+  RBS::statistics(void) const {
+    return stop->metastatistics()+e->statistics();
+  }
+  
+  bool
+  RBS::stopped(void) const {
+    return e->stopped() && !stop->enginestopped();
+  }
+  
+  void
+  RBS::reset(Space*) { 
+  }
+  
+  RBS::~RBS(void) {
+    // Deleting e also deletes stop
+    delete e;
+    delete master;
+    delete co;
   }
 
 }}}
-
-#endif
 
 // STATISTICS: search-other

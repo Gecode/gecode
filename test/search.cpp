@@ -405,10 +405,10 @@ namespace Test {
       /// Run test
       virtual bool run(void) {
         Model* m = new Model(htb1,htb2,htb3);
-        Gecode::Search::FailStop f(2);
+        //        Gecode::Search::FailStop f(2);
         Gecode::Search::Options o;
         o.threads = t;
-        o.stop = &f;
+        //        o.stop = &f;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
         Gecode::RBS<Engine,Model> rbs(m,o);
         int n = m->solutions();
@@ -420,7 +420,7 @@ namespace Test {
           }
           if ((s == NULL) && !rbs.stopped())
             break;
-          f.limit(f.limit()+2);
+          //          f.limit(f.limit()+2);
         }
         return n == 0;
       }
@@ -518,7 +518,7 @@ namespace Test {
                 ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
         // Restart-based search
-        for (unsigned int t = 1; t<=1; t++) {
+        for (unsigned int t = 1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t);
         }
