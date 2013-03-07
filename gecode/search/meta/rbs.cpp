@@ -84,7 +84,7 @@ namespace Gecode { namespace Search { namespace Meta {
   
   bool
   RBS::stopped(void) const {
-    return e->stopped() && !stop->enginestopped();
+    return e->stopped();
   }
   
   void

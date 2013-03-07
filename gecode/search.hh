@@ -379,7 +379,7 @@ namespace Gecode { namespace Search {
     /// Return true if meta engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
     /// Set current limit for the engine to \a l fails
-    void limit(const Search::Statistics& s, unsigned int l);
+    void limit(const Search::Statistics& s, unsigned long int l);
     /// Return the stop object to control the engine
     Stop* enginestop(void) const;
     /// Return whether the engine has been stopped

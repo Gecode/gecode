@@ -150,7 +150,7 @@ namespace Gecode { namespace Search {
     : e_stop(new FailStop(0)), m_stop(s), e_stopped(false) {}
 
   forceinline void
-  MetaStop::limit(const Search::Statistics& s, unsigned int l) {
+  MetaStop::limit(const Search::Statistics& s, unsigned long int l) {
     m_stat += s;
     e_stopped = false;
     e_stop->limit(l);
