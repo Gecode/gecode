@@ -39,7 +39,6 @@
 #include <gecode/int.hh>
 #include <gecode/minimodel.hh>
 
-#include <algorithm>
 #include <fstream>
 
 using namespace Gecode;
@@ -122,7 +121,8 @@ struct SortByWeight {
   bool operator() (int i, int j) {
     // Order i comes before order j if the weight of i is larger than
     // the weight of j.
-    return (orders[i][order_weight] > orders[j][order_weight]);
+    return (orders[i][order_weight] > orders[j][order_weight]) ||
+      (orders[i][order_weight] == orders[j][order_weight] && i<j);
   }
 };
 
@@ -281,7 +281,7 @@ public:
       IntArgs indices(norders);
       for (unsigned int i = 0 ; i < norders ; i++)
         indices[i] = i;
-      std::stable_sort(&indices[0], &indices[0]+norders, sbw);
+      Support::quicksort(&indices[0],norders,sbw);
       IntVarArgs sorted_orders(norders);
       for (unsigned int i = 0 ; i < norders ; i++) {
         sorted_orders[i] = slab[indices[i]];
