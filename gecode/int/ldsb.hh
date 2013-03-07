@@ -45,6 +45,7 @@
  * \brief Symmetry breaking for integer variables
  */
 namespace Gecode { namespace Int { namespace LDSB {
+
   /// A Literal is a pair of variable index and value.
   class Literal {
   public:

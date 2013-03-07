@@ -1,16 +1,15 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christopher Mears <chris.mears@monash.edu>
  *
  *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
- *
- *  Converted into offset version:
- *     Christopher Mears <chris.mears@monash.edu>
  *
  *  Copyright:
  *     Mikael Lagerkvist, 2007
+ *     Christopher Mears, 2012
  *     Christian Schulte, 2007
  *
  *  Last modified:

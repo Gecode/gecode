@@ -149,7 +149,7 @@ namespace Test { namespace LDSB {
       return new OneArray(share,*this);
     }
     /// Return the solution as IntArgs
-    IntArgs solution() {
+    IntArgs solution(void) {
       IntArgs a(xs.size());
       for (int i = 0 ; i < a.size() ; ++i)
         a[i] = xs[i].val();
@@ -176,7 +176,7 @@ namespace Test { namespace LDSB {
       return new OneArraySet(share,*this);
     }
     /// Return the solution as IntSetArgs
-    IntSetArgs solution() {
+    IntSetArgs solution(void) {
       IntSetArgs a(xs.size());
       for (int i = 0 ; i < a.size() ; ++i) {
         SetVarGlbRanges glbranges(xs[i]);
@@ -193,10 +193,10 @@ namespace Test { namespace LDSB {
   template <class T>
   class LDSB : public Base {
   public:
-    int c_d;
-    int a_d;
+    unsigned int c_d;
+    unsigned int a_d;
     /// Initialize test
-    LDSB(std::string label, int c=-1, int a=-1)
+    LDSB(std::string label, unsigned int c=0, unsigned int a=0)
       : Test::Base("LDSB::" + label),
         c_d(c), a_d(a) {}
     /// Perform actual tests
@@ -204,8 +204,8 @@ namespace Test { namespace LDSB {
       OneArray *s = new OneArray(T::n, T::l, T::u);
       T::setup(*s, s->xs);
       Search::Options o = Search::Options::def;
-      if (c_d != -1) o.c_d = c_d;
-      if (a_d != -1) o.a_d = a_d;
+      if (c_d != 0) o.c_d = c_d;
+      if (a_d != 0) o.a_d = a_d;
       DFS<OneArray> e(s,o);
       bool r = check(e, T::expectedSolutions());
       delete s;
@@ -218,10 +218,10 @@ namespace Test { namespace LDSB {
   template <class T>
   class LDSBSet : public Base {
   public:
-    int c_d;
-    int a_d;
+    unsigned int c_d;
+    unsigned int a_d;
     /// Initialize test
-    LDSBSet(std::string label, int c=-1, int a=-1)
+    LDSBSet(std::string label, unsigned int c=0, unsigned int a=0)
       : Test::Base("LDSB::" + label),
         c_d(c), a_d(a) {}
     /// Perform actual tests
@@ -229,8 +229,8 @@ namespace Test { namespace LDSB {
       OneArraySet *s = new OneArraySet(T::n, T::l, T::u);
       T::setup(*s, s->xs);
       Search::Options o = Search::Options::def;
-      if (c_d != -1) o.c_d = c_d;
-      if (a_d != -1) o.a_d = a_d;
+      if (c_d != 0) o.c_d = c_d;
+      if (a_d != 0) o.a_d = a_d;
       DFS<OneArraySet> e(s,o);
       bool r = check(e, T::expectedSolutions());
       delete s;
@@ -294,7 +294,7 @@ namespace Test { namespace LDSB {
       syms << VariableSymmetry(xs);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(4, 0,0,0,0));
@@ -348,7 +348,7 @@ namespace Test { namespace LDSB {
       syms << VariableSymmetry(IntVarArgs() << xs[0] << xs[1]);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(4, 0,1,2,3));
@@ -381,7 +381,7 @@ namespace Test { namespace LDSB {
       s << VariableSymmetry(symvars);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(3, 0,1,2));
@@ -408,7 +408,7 @@ namespace Test { namespace LDSB {
         s << VariableSymmetry(m.slice(2,4, 0,1));
         branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(4, 0,1,2,3));
@@ -433,7 +433,7 @@ namespace Test { namespace LDSB {
       s << rows_interchange(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(6, 0,0, 0,0, 0,0));
@@ -478,7 +478,7 @@ namespace Test { namespace LDSB {
       s << columns_interchange(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(6, 0,0, 0,0, 0,0));
@@ -534,7 +534,7 @@ namespace Test { namespace LDSB {
       s << columns_interchange(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(6, 0,0, 0,0, 0,0));
@@ -573,7 +573,7 @@ namespace Test { namespace LDSB {
       s << rows_reflect(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(4, 0, 0, 0, 0));
@@ -610,7 +610,7 @@ namespace Test { namespace LDSB {
       s << VariableSequenceSymmetry(xs, 3);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(12, 0,0,3, 1,0,2, 2,0,1, 3,0,0));
@@ -671,7 +671,7 @@ namespace Test { namespace LDSB {
       }
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(12, 0,0,3, 1,0,2, 2,0,1, 3,0,0));
@@ -696,7 +696,7 @@ namespace Test { namespace LDSB {
       s << ValueSequenceSymmetry(values, 3);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(2, 0,6));
@@ -733,7 +733,7 @@ namespace Test { namespace LDSB {
       s << ValueSequenceSymmetry(values, 3);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
-    static std::vector<IntArgs> expectedSolutions() {
+    static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
       expected.push_back(IntArgs(3, 0,1,5));
@@ -1008,14 +1008,14 @@ namespace Test { namespace LDSB {
       { xs.update(*this, share, s.xs); }
       virtual Space* copy(bool share)
       { return new Latin(share,*this); }
-      IntArgs solution() {
+      IntArgs solution(void) {
         IntArgs a(xs.size());
         for (int i = 0 ; i < a.size() ; ++i)
           a[i] = xs[i].val();
         return a;
       }
 
-      static std::vector<IntArgs> expectedSolutions() {
+      static std::vector<IntArgs> expectedSolutions(void) {
         static std::vector<IntArgs> expected;
         expected.clear();
         expected.push_back(IntArgs(16, 1,2,3,4, 2,1,4,3, 3,4,1,2, 4,3,2,1));

@@ -1090,13 +1090,13 @@ namespace Gecode {
   }
   
   template<class Var>
-  void*
+  forceinline void*
   VarArray<Var>::operator new(size_t) {
     return NULL;
   }
 
   template<class Var>
-  void
+  forceinline void
   VarArray<Var>::operator delete(void*,size_t) {
   }
 
@@ -1571,13 +1571,13 @@ namespace Gecode {
   }
 
   template<class View>
-  void*
+  forceinline void*
   ViewArray<View>::operator new(size_t) {
     return NULL;
   }
 
   template<class View>
-  void
+  forceinline void
   ViewArray<View>::operator delete(void*,size_t) {
   }
 
@@ -1792,6 +1792,17 @@ namespace Gecode {
       new (&r[i]) T(a[i]);
     new (&r[n]) T(x);
     return r;
+  }
+
+  template<class T>
+  forceinline void*
+  ArgArrayBase<T>::operator new(size_t) {
+    return NULL;
+  }
+
+  template<class T>
+  forceinline void
+  ArgArrayBase<T>::operator delete(void*,size_t) {
   }
 
   /*

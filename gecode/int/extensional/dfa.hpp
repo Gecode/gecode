@@ -158,7 +158,7 @@ namespace Gecode {
    */
 
   forceinline
-  DFA::Transition::Transition() {}
+  DFA::Transition::Transition(void) {}
 
   forceinline
   DFA::Transition::Transition(int i_state0, int symbol0, int o_state0) 

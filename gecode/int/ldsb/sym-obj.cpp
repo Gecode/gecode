@@ -58,7 +58,7 @@ namespace Gecode {
       increment();
     return *this;
   }
-  SymmetryHandle::~SymmetryHandle() {
+  SymmetryHandle::~SymmetryHandle(void) {
     if (ref != NULL)
       decrement();
   }
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     for (int i = 0 ; i < nxs ; i++)
       xs[i] = vars[i];
   }
-  VariableSymmetryObject::~VariableSymmetryObject() {
+  VariableSymmetryObject::~VariableSymmetryObject(void) {
     delete [] xs;
   }
 
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     for (int i = 0 ; i < nxs ; i++)
       xs[i] = x[i];
   }
-  VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject() {
+  VariableSequenceSymmetryObject::~VariableSequenceSymmetryObject(void) {
     delete [] xs;
   }
 

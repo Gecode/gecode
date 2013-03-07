@@ -67,17 +67,17 @@ namespace Gecode { namespace Int { namespace LDSB {
     {}
 
   template<class Val>
-  LDSBChoice<Val>::~LDSBChoice() {
+  LDSBChoice<Val>::~LDSBChoice(void) {
     delete [] _literals;
   }
   
   template<class Val>
   forceinline const Literal*
-  LDSBChoice<Val>::literals() const { return _literals; }
+  LDSBChoice<Val>::literals(void) const { return _literals; }
 
   template<class Val>
   forceinline int
-  LDSBChoice<Val>::nliterals() const { return _nliterals; }
+  LDSBChoice<Val>::nliterals(void) const { return _nliterals; }
 
   template<class Val>
   size_t

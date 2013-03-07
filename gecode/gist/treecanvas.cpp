@@ -368,7 +368,7 @@ namespace Gecode { namespace Gist {
   };
 
   void
-  SearcherThread::run() {
+  SearcherThread::run(void) {
     {
       if (!node->isOpen())
         return;

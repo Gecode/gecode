@@ -49,7 +49,7 @@ namespace Gecode { namespace Gist {
    : NodeCursor<VisualNode>(theNode,na) {}
 
   forceinline void
-  LayoutCursor::processCurrentNode() {
+  LayoutCursor::processCurrentNode(void) {
     VisualNode* currentNode = node();
     if (currentNode->isDirty()) {
       if (currentNode->isHidden()) {

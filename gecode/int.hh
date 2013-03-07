@@ -4120,6 +4120,7 @@ namespace Gecode {
 
 // LDSB-related declarations.
 namespace Gecode {
+
   namespace Int { namespace LDSB {
     class SymmetryObject;
   }}
@@ -4134,9 +4135,9 @@ namespace Gecode {
     /// Symmetry object that this handle refers to.
     Int::LDSB::SymmetryObject* ref;
     /// Increment counter
-    GECODE_INT_EXPORT void increment();
+    void increment(void);
     /// Decrement counter
-    GECODE_INT_EXPORT void decrement();
+    void decrement(void);
   public:
     /// Default constructor
     SymmetryHandle(void);
@@ -4147,7 +4148,7 @@ namespace Gecode {
     /// Assignment operator
     const SymmetryHandle& operator=(const SymmetryHandle& h);
     /// Destructor
-    ~SymmetryHandle();
+    ~SymmetryHandle(void);
   };
   class Symmetries;
   /// Traits of %Symmetries

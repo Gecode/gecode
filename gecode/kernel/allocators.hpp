@@ -229,7 +229,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     /// Convert a const reference \a x to a const pointer
     const_pointer address(const_reference x) const { return &x; }
     /// Returns the largest size for which a call to allocate might succeed.
-    size_type max_size() const throw() {
+    size_type max_size(void) const throw() {
       return std::numeric_limits<size_type>::max() / 
         (sizeof(T)>0 ? sizeof(T) : 1);
     }
@@ -385,7 +385,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     /// Convert a const reference \a x to a const pointer
     const_pointer address(const_reference x) const { return &x; }
     /// Returns the largest size for which a call to allocate might succeed.
-    size_type max_size() const throw() {
+    size_type max_size(void) const throw() {
       return std::numeric_limits<size_type>::max() 
         / (sizeof(T)>0 ? sizeof(T) : 1);
     }
