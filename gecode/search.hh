@@ -567,15 +567,15 @@ namespace Gecode {
    * The engine uses the Cutoff sequence supplied in the options \a o to
    * periodically restart the search of engine \a E.
    *
-   * The class \a T must implement a member function
-   * \code virtual void configure(const Space& last) \endcode
-   * Whenever exploration restarts or a solution is found, the engine
-   * executes \c configure(t) on the master space where \a t is either
-   * the solution or the last space on the stack of the engine \a E.
+   * The class \a T can implement member functions
+   * \code virtual void master(unsigned long int i, const Space* s) \endcode
+   * and
+   * \code virtual void slave(unsigned long int i, const Space* s) \endcode
    *
-   * If you want to use this search engine for best solution search,
-   * \c configure(t) must call \c constrain whenever the status of \a t
-   * is SS_SOLVED.
+   * Whenever exploration restarts or a solution is found, the
+   * engine executes the functions on the master and slave
+   * space. For more details, consult "Modeling and Programming
+   * with Gecode".
    *
    * \ingroup TaskModelSearch
    */
@@ -591,6 +591,27 @@ namespace Gecode {
     /// Check whether engine has been stopped
     bool stopped(void) const;
   };
+
+  /**
+   * \brief Perform restart-based search
+   *
+   * The engine uses the Cutoff sequence supplied in the options \a o to
+   * periodically restart the search of an engine of type \a E.
+   *
+   * The class \a T can implement member functions
+   * \code virtual void master(unsigned long int i, const Space* s) \endcode
+   * and
+   * \code virtual void slave(unsigned long int i, const Space* s) \endcode
+   *
+   * Whenever exploration restarts or a solution is found, the
+   * engine executes the functions on the master and slave
+   * space. For more details, consult "Modeling and Programming
+   * with Gecode".
+   *
+   * \ingroup TaskModelSearch
+   */
+  template<template<class> class E, class T>
+  T* rbs(T* s, const Search::Options& o);
 
 }
 

@@ -95,6 +95,14 @@ namespace Gecode {
     return e->stopped();
   }
 
+
+  template<template<class> class E, class T>
+  forceinline T*
+  rbs(T* s, const Search::Options& o) {
+    RBS<E,T> r(s,o);
+    return r.next();
+  }
+
 }
 
 // STATISTICS: search-other
