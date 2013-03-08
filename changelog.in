@@ -68,9 +68,21 @@
 
 [RELEASE]
 Version: 4.0.0
-Date: 2012-01-01
+Date: 2013-03-12
 [DESCRIPTION]
-Fixes, or perhaps more?
+This release adds a multitude of new features, fixes many bugs,
+and offers a number of performance improvements. There are too
+many major improvements to even summarize them here all, so here
+are just some highlights: LDSB as automatic symmetry breaking
+during search; restart-based search; complete redesign and
+reimplementation of branching enhancing the expressiveness
+massively (AFC with decay, activity, user-defined variable and
+value selection, tie-break control, better randomization, ...);
+half-reification; addition of floating point constraints.
+
+It is recommended to read the new Chapter in MPG on branching as
+the changes are substantial and require you to change your
+programs, see also the full list of changes below.
 
 [ENTRY]
 Module: flatzinc
@@ -84,6 +96,7 @@ it when installed alongside other FlatZinc implementations.
 Module: int
 What:   new
 Rank:   major
+Author: Christopher Mears
 [DESCRIPTION]
 Gecode now supports Lightweight Dynamic Symmetry Breaking (LDSB),
 see MPG for details.
@@ -92,6 +105,7 @@ see MPG for details.
 Module: set
 What:   new
 Rank:   major
+Author: Christopher Mears
 [DESCRIPTION]
 Gecode now supports Lightweight Dynamic Symmetry Breaking (LDSB),
 see MPG for details.
@@ -661,6 +675,7 @@ Rank:   minor
 Made implementations of MiniModel expressions private, so that the
 MiniModel headers do not have to include propagator headers like
 gecode/int/linear.hh any longer.
+
 
 [RELEASE]
 Version: 3.7.3
