@@ -107,24 +107,30 @@ namespace Test { namespace LDSB {
     for (int i = 0 ; i < nexpected ; ++i) {
       T* s = e.next();
       if (s == NULL) {
-        std::cerr << "Expected a solution but there are no more solutions." << std::endl;
-        std::cerr << "(Expected " << nexpected << " but only found " << i << ")" << std::endl;
-        std::cerr << "Expected: " << expected[i] << std::endl;
+        if (opt.log) {
+          olog << "Expected a solution but there are no more solutions." << std::endl;
+          olog << "(Expected " << nexpected << " but only found " << i << ")" << std::endl;
+          olog << "Expected: " << expected[i] << std::endl;
+        }
         return false;
       }
       if (!equal(s->solution(), expected[i])) {
-        std::cerr << "Solution does not match expected." << std::endl;
-        std::cerr << "Solution: " << s->solution() << std::endl;
-        std::cerr << "Expected: " << expected[i] << std::endl;
+        if (opt.log) {
+          olog << "Solution does not match expected." << std::endl;
+          olog << "Solution: " << s->solution() << std::endl;
+          olog << "Expected: " << expected[i] << std::endl;
+        }
         return false;
       }
       delete s;
     }
     T* s = e.next();
     if (s != NULL) {
-      std::cerr << "More solutions than expected:" << std::endl;
-      std::cerr << "(Expected only " << nexpected << ")" << std::endl;
-      std::cerr << s->solution() << std::endl;
+      if (opt.log) {
+        olog << "More solutions than expected:" << std::endl;
+        olog << "(Expected only " << nexpected << ")" << std::endl;
+        olog << s->solution() << std::endl;
+      }
       return false;
     }
 
@@ -136,6 +142,7 @@ namespace Test { namespace LDSB {
   /// %Test space
   class OneArray : public Space {
   public:
+    /// Variables
     IntVarArray xs;
     /// Constructor for creation
     OneArray(int n, int l, int u) : xs(*this,n,l,u) {
@@ -163,6 +170,7 @@ namespace Test { namespace LDSB {
   /// %Test space (set version)
   class OneArraySet : public Space {
   public:
+    /// Variables
     SetVarArray xs;
     /// Constructor for creation
     OneArraySet(int n, int l, int u) : xs(*this,n, IntSet::empty, l,u) {
@@ -193,7 +201,9 @@ namespace Test { namespace LDSB {
   template <class T>
   class LDSB : public Base {
   public:
+    /// Recomputation distance
     unsigned int c_d;
+    /// Adaptation distance
     unsigned int a_d;
     /// Initialize test
     LDSB(std::string label, unsigned int c=0, unsigned int a=0)
@@ -218,7 +228,9 @@ namespace Test { namespace LDSB {
   template <class T>
   class LDSBSet : public Base {
   public:
+    /// Recomputation distance
     unsigned int c_d;
+    /// Adaptation distance
     unsigned int a_d;
     /// Initialize test
     LDSBSet(std::string label, unsigned int c=0, unsigned int a=0)
@@ -244,9 +256,13 @@ namespace Test { namespace LDSB {
   /// %Test for variable symmetry
   class VarSym1 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries syms;
       IntArgs indices(4, 0,1,2,3);
@@ -254,6 +270,7 @@ namespace Test { namespace LDSB {
       distinct(h, xs);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -265,15 +282,20 @@ namespace Test { namespace LDSB {
   /// %Test for variable symmetry
   class VarSym1b {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries syms;
       syms << VariableSymmetry(xs);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -285,15 +307,20 @@ namespace Test { namespace LDSB {
   /// %Test for variable symmetry
   class VarSym2 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries syms;
       IntArgs indices(4, 0,1,2,3);
       syms << VariableSymmetry(xs);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -339,15 +366,20 @@ namespace Test { namespace LDSB {
   /// %Test for variable symmetry
   class VarSym3 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries syms;
       distinct(h, xs);
       syms << VariableSymmetry(IntVarArgs() << xs[0] << xs[1]);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -370,9 +402,13 @@ namespace Test { namespace LDSB {
   /// %Test for variable symmetry
   class VarSym4 {
   public:
+    /// Number of variables
     static const int n = 3;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 2;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
@@ -381,6 +417,7 @@ namespace Test { namespace LDSB {
       s << VariableSymmetry(symvars);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -397,9 +434,13 @@ namespace Test { namespace LDSB {
   /// %Test for variable symmetry
   class VarSym5 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
         distinct(h, xs);
         Matrix<IntVarArray> m(xs, 4, 1);
@@ -408,6 +449,7 @@ namespace Test { namespace LDSB {
         s << VariableSymmetry(m.slice(2,4, 0,1));
         branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -424,15 +466,20 @@ namespace Test { namespace LDSB {
   /// %Test for matrix symmetry
   class MatSym1 {
   public:
+    /// Number of variables
     static const int n = 6;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Matrix<IntVarArray> m(xs, 2, 3);
       Symmetries s;
       s << rows_interchange(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -469,15 +516,20 @@ namespace Test { namespace LDSB {
   /// %Test for matrix symmetry
   class MatSym2 {
   public:
+    /// Number of variables
     static const int n = 6;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Matrix<IntVarArray> m(xs, 2, 3);
       Symmetries s;
       s << columns_interchange(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -524,9 +576,13 @@ namespace Test { namespace LDSB {
   /// %Test for matrix symmetry
   class MatSym3 {
   public:
+    /// Number of variables
     static const int n = 6;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Matrix<IntVarArray> m(xs, 2, 3);
       Symmetries s;
@@ -534,6 +590,7 @@ namespace Test { namespace LDSB {
       s << columns_interchange(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -564,15 +621,20 @@ namespace Test { namespace LDSB {
   /// %Test for matrix symmetry
   class MatSym4 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Matrix<IntVarArray> m(xs, 1, 4);
       Symmetries s;
       s << rows_reflect(m);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -594,9 +656,13 @@ namespace Test { namespace LDSB {
   /// %Test for variable sequence symmetry
   class SimIntVarSym1 {
   public:
+    /// Number of variables
     static const int n = 12;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Matrix<IntVarArray> m(xs, 3, 4);
       // The values in the first column are distinct.
@@ -610,6 +676,7 @@ namespace Test { namespace LDSB {
       s << VariableSequenceSymmetry(xs, 3);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -643,12 +710,18 @@ namespace Test { namespace LDSB {
 
   /// %Test for variable sequence symmetry
   class SimIntVarSym2 {
+    /// Number of rows
     static const int nrows = 4;
+    /// Number of columns
     static const int ncols = 3;
   public:
+    /// Number of variables
     static const int n = nrows*ncols;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Matrix<IntVarArray> m(xs, 3, 4);
       // The values in the first column are distinct.
@@ -671,6 +744,7 @@ namespace Test { namespace LDSB {
       }
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -685,9 +759,13 @@ namespace Test { namespace LDSB {
   /// %Test for value sequence symmetry
   class SimIntValSym1 {
   public:
+    /// Number of variables
     static const int n = 2;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 6;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       rel(h, xs[0] + xs[1] == 6);
       // Values 0,1,2 are symmetric with 6,5,4.
@@ -696,6 +774,7 @@ namespace Test { namespace LDSB {
       s << ValueSequenceSymmetry(values, 3);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -710,9 +789,13 @@ namespace Test { namespace LDSB {
   /// %Test for value sequence symmetry
   class SimIntValSym2 {
   public:
+    /// Number of variables
     static const int n = 3;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 8;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       TupleSet tuples;
       tuples.add(IntArgs(3, 1,1,1));
@@ -733,6 +816,7 @@ namespace Test { namespace LDSB {
       s << ValueSequenceSymmetry(values, 3);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -745,9 +829,13 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym1 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
@@ -755,6 +843,7 @@ namespace Test { namespace LDSB {
       s << ValueSymmetry(indices);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -766,15 +855,20 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym1b {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
       s << ValueSymmetry(xs[0]);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -786,15 +880,20 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym1c {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
       s << ValueSymmetry(xs[0]);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MAX(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -806,15 +905,20 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym2 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries s;
       IntArgs indices(4, 0,1,2,3);
       s << ValueSymmetry(indices);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -840,14 +944,19 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym2b {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries s;
       s << ValueSymmetry(xs[0]);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -873,9 +982,13 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym3 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
@@ -883,6 +996,7 @@ namespace Test { namespace LDSB {
       s << ValueSymmetry(indices);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -905,9 +1019,13 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym4 {
   public:
+    /// Number of variables
     static const int n = 3;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 2;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
@@ -915,6 +1033,7 @@ namespace Test { namespace LDSB {
       s << ValueSymmetry(indices);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -931,9 +1050,13 @@ namespace Test { namespace LDSB {
   /// %Test for value symmetry
   class ValSym5 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       distinct(h, xs);
       Symmetries s;
@@ -943,6 +1066,7 @@ namespace Test { namespace LDSB {
       s << ValueSymmetry(indices1);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -959,15 +1083,20 @@ namespace Test { namespace LDSB {
   /// %Test for variable and value symmetry
   class VarValSym1 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries s;
       s << VariableSymmetry(xs);
       s << ValueSymmetry(IntArgs::create(4,0));
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -1015,6 +1144,7 @@ namespace Test { namespace LDSB {
         return a;
       }
 
+    /// Compute list of expected solutions
       static std::vector<IntArgs> expectedSolutions(void) {
         static std::vector<IntArgs> expected;
         expected.clear();
@@ -1069,9 +1199,13 @@ namespace Test { namespace LDSB {
   /// %Test for handling of recomputation
   class Recomputation {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       TupleSet t;
       t.add(IntArgs(2, 0,0));
@@ -1084,6 +1218,7 @@ namespace Test { namespace LDSB {
       syms << VariableSequenceSymmetry(xs, 2);
       branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -1119,9 +1254,13 @@ namespace Test { namespace LDSB {
   /// %Test tiebreaking variable heuristic.
   class TieBreak {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 3;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, IntVarArray& xs) {
       Symmetries syms;
       IntArgs indices(4, 0,1,2,3);
@@ -1138,6 +1277,7 @@ namespace Test { namespace LDSB {
       // solution found is {3, 2, 0, 1}.
       branch(h, xs, tiebreak(INT_VAR_DEGREE_MAX(), INT_VAR_MERIT_MAX(position)), INT_VAL_MIN(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
@@ -1171,14 +1311,19 @@ namespace Test { namespace LDSB {
   /// %Test for set variable symmetry
   class SetVarSym1 {
   public:
+    /// Number of variables
     static const int n = 2;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, SetVarArray& xs) {
       Symmetries syms;
       syms << VariableSymmetry(xs);
       branch(h, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntSetArgs> expectedSolutions(void) {
       static std::vector<IntSetArgs> expected;
       expected.clear();
@@ -1216,14 +1361,19 @@ namespace Test { namespace LDSB {
   /// %Test for set value symmetry
   class SetValSym1 {
   public:
+    /// Number of variables
     static const int n = 2;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, SetVarArray& xs) {
       Symmetries syms;
       syms << ValueSymmetry(IntArgs(2, 0,1));
       branch(h, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntSetArgs> expectedSolutions(void) {
       static std::vector<IntSetArgs> expected;
       expected.clear();
@@ -1250,9 +1400,13 @@ namespace Test { namespace LDSB {
   /// %Test for set value symmetry
   class SetValSym2 {
   public:
+    /// Number of variables
     static const int n = 3;
+    /// Lower bound of values
     static const int l = 1;
+    /// Upper bound of values
     static const int u = 4;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, SetVarArray& xs) {
       Symmetries syms;
       syms << ValueSymmetry(IntArgs(4, 1,2,3,4));
@@ -1260,6 +1414,7 @@ namespace Test { namespace LDSB {
         cardinality(h, xs[i], 1, 1);
       branch(h, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntSetArgs> expectedSolutions(void) {
       static std::vector<IntSetArgs> expected;
       expected.clear();
@@ -1275,9 +1430,13 @@ namespace Test { namespace LDSB {
   /// %Test for set variable sequence symmetry
   class SetVarSeqSym1 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 1;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, SetVarArray& xs) {
       Symmetries syms;
       syms << VariableSequenceSymmetry(xs,2);
@@ -1287,6 +1446,7 @@ namespace Test { namespace LDSB {
         cardinality(h, xs[i], 1, 1);
       branch(h, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntSetArgs> expectedSolutions(void) {
       static std::vector<IntSetArgs> expected;
       expected.clear();
@@ -1301,15 +1461,20 @@ namespace Test { namespace LDSB {
   /// %Test for set variable sequence symmetry
   class SetVarSeqSym2 {
   public:
+    /// Number of variables
     static const int n = 4;
+    /// Lower bound of values
     static const int l = 0;
+    /// Upper bound of values
     static const int u = 0;
+    /// Setup problem constraints and symmetries
     static void setup(Home h, SetVarArray& xs) {
       Symmetries syms;
       syms << VariableSequenceSymmetry(xs,2);
       rel(h, xs[0], SRT_EQ, xs[2]);
       branch(h, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
     }
+    /// Compute list of expected solutions
     static std::vector<IntSetArgs> expectedSolutions(void) {
       static std::vector<IntSetArgs> expected;
       expected.clear();
