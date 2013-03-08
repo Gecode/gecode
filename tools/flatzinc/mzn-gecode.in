@@ -38,4 +38,4 @@
 
 prefix=@prefix@
 datarootdir=@datarootdir@
-FLATZINC_CMD=fz minizinc -I @datadir@/gecode/mznlib "$@"
+FLATZINC_CMD=fzn-gecode minizinc -I @datadir@/gecode/mznlib "$@"

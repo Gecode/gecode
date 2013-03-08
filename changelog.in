@@ -73,6 +73,14 @@ Date: 2012-01-01
 Fixes, or perhaps more?
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Renamed the FlatZinc executable to fzn-gecode, to better distinguish
+it when installed alongside other FlatZinc implementations.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major
