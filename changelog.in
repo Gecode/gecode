@@ -84,6 +84,9 @@ It is recommended to read the new Chapter in MPG on branching as
 the changes are substantial and require you to change your
 programs, see also the full list of changes below.
 
+As the interfaces has changed, please consult \ref
+PageHowToChange_4 "How to Change to Gecode 4.0.0".
+
 [ENTRY]
 Module: flatzinc
 What:   change
@@ -580,7 +583,7 @@ What:	new
 Rank:	major
 Author:	Vincent Barichard
 [DESCRIPTION]
-Added support for float variables (experimental).
+Added support for float variables.
 
 [ENTRY]
 Module:	int

@@ -574,3 +574,41 @@ virtual and takes an argument of type const Space& rather than
 Space* as argument.
 
 */
+
+/**
+ * \page PageHowToChange_4 How to Change from %Gecode 3.7.3 to %Gecode 4.0.0
+ *
+
+As %Gecode 4.0.0 is a major revision, your programs that
+are written for %Gecode 3.7.3 are likely to require some
+modifications before they work again.
+
+\section SecChange4NewBranch Changed branching parameters
+
+The pre-defined variable-value branchings have been extended
+considerably and hence some changes are required.
+
+In order to change, you have to add () to all variants of
+INT_VAR, INT_VAL, INT_ASSIGN, SET_VAR, SET_VAL, and
+SET_ASSIGN. For example, INT_VAR_MIN_MIN becomes the function
+call INT_VAR_MIN_MIN() and INT_VAL_MIN becomes the function
+call INT_VAL_MIN(). Some of these functions expect additional
+arguments and can take also optional arguments (this replaces the
+VarBranchOptions and ValBranchOptions). Please read MPG for
+details.
+
+\section SecChange4SizeBranch Branchings treat SIZE differently
+
+Variable selection for branching used the quotient of size
+divided by degree, accumulated failure count, or activity. 
+Now the inverse is used. That is, for example, it is not any longer
+INT_VAR_SIZE_DEGREE_MIN() but INT_VAR_DEGREE_SIZE_MAX() (that is,
+largest degree divided by size).
+
+That looks like an annoying change but is in fact essential: the
+strategies using accumulated failure count and activity now could
+have run into division by zero issues. And just changing the
+implementation is not good enough because the values of these
+measures can now be exposed during tie-breaking.
+
+*/

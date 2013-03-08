@@ -86,7 +86,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 </TT>
 
-\\section SecLicAuthors %Gecode authors
+\\section SecLicAuthors Gecode authors
 
 The following authors have contributed to the %Gecode library
 and its documentation (in alphabetical order of firstname):

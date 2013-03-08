@@ -52,6 +52,7 @@ $modclear{"kernel"} = "Kernel";
 $modclear{"search"} = "Search engines";
 $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
+$modclear{"float"} = "Floats";
 $modclear{"cpltset"} = "Finite integer sets with complete representation";
 $modclear{"minimodel"} = "Minimal modeling support";
 $modclear{"graph"} = "\%Graph constraints";
@@ -75,7 +76,7 @@ $whatclear{"change"} = "Other changes";
 $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
-@modorder = ("kernel","search","int","set","cpltset","scheduling",
+@modorder = ("kernel","search","int","set","float","cpltset","scheduling",
 	     "graph","minimodel","driver",
 	     "iter","support","example","test","gist","flatzinc","other");
 
