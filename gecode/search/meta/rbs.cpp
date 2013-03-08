@@ -84,7 +84,14 @@ namespace Gecode { namespace Search { namespace Meta {
   
   bool
   RBS::stopped(void) const {
-    return e->stopped();
+    /*
+     * What might happen during parallel search is that the
+     * engine has been stopped but the meta engine has not, so
+     * the meta engine does not perform a restart. However the
+     * invocation of next will do so and no restart will be
+     * missed.
+     */
+    return e->stopped(); 
   }
   
   void
