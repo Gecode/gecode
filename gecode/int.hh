@@ -4216,6 +4216,11 @@ namespace Gecode {
    * \brief Branch over \a x with variable selection \a vars and value
    * selection \a vals with symmetry breaking
    *
+   * Throws LDSBBadValueSelection exception if \a vals is any of
+   * SEL_SPLIT_MIN, SEL_SPLIT_MAX, SEL_RANGE_MIN, SEL_RANGE_MAX,
+   * SEL_VALUES_MIN, and SEL_VALUES_MAX, or if \a vals is
+   * SEL_VAL_COMMIT with a custom commit function.
+   *
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT BrancherHandle
@@ -4225,6 +4230,11 @@ namespace Gecode {
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
    * vars and value selection \a vals with symmetry breaking
+   *
+   * Throws LDSBBadValueSelection exception if \a vals is any of
+   * SEL_SPLIT_MIN, SEL_SPLIT_MAX, SEL_RANGE_MIN, SEL_RANGE_MAX,
+   * SEL_VALUES_MIN, and SEL_VALUES_MAX, or if \a vals is
+   * SEL_VAL_COMMIT with a custom commit function.
    *
    * \ingroup TaskModelIntBranch
    */
@@ -4236,6 +4246,11 @@ namespace Gecode {
    * \brief Branch over \a x with variable selection \a vars and value
    * selection \a vals with symmetry breaking
    *
+   * Throws LDSBBadValueSelection exception if \a vals is any of
+   * SEL_SPLIT_MIN, SEL_SPLIT_MAX, SEL_RANGE_MIN, SEL_RANGE_MAX,
+   * SEL_VALUES_MIN, and SEL_VALUES_MAX, or if \a vals is
+   * SEL_VAL_COMMIT with a custom commit function.
+   *
    * \ingroup TaskModelIntBranch
    */
   GECODE_INT_EXPORT BrancherHandle
@@ -4245,6 +4260,11 @@ namespace Gecode {
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
    * vars and value selection \a vals with symmetry breaking
+   *
+   * Throws LDSBBadValueSelection exception if \a vals is any of
+   * SEL_SPLIT_MIN, SEL_SPLIT_MAX, SEL_RANGE_MIN, SEL_RANGE_MAX,
+   * SEL_VALUES_MIN, and SEL_VALUES_MAX, or if \a vals is
+   * SEL_VAL_COMMIT with a custom commit function.
    *
    * \ingroup TaskModelIntBranch
    */

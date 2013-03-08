@@ -441,9 +441,29 @@ namespace Gecode {
     for (int i = 0 ; i < n ; i++) {
       array[i] = createBoolSym(home, syms[i], variableMap);
     }
-    
-    return LDSBBrancher<BoolView,1,int,2>::post
-      (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),array,n,bf);
+
+    // Technically these "bad" value selection could in fact work with
+    // LDSB, because they degenerate to binary splitting for
+    // Booleans.  Nonetheless, we explicitly forbid them for
+    // consistency with the integer version.
+    switch (vals.select()) {
+    case IntValBranch::SEL_SPLIT_MIN:
+    case IntValBranch::SEL_SPLIT_MAX:
+    case IntValBranch::SEL_RANGE_MIN:
+    case IntValBranch::SEL_RANGE_MAX:
+    case IntValBranch::SEL_VALUES_MIN:
+    case IntValBranch::SEL_VALUES_MAX:
+      throw LDSBBadValueSelection("Int::LDSB::branch");
+      break;
+    case IntValBranch::SEL_VAL_COMMIT:
+      if (vals.commit() != NULL)
+        throw LDSBBadValueSelection("Int::LDSB::branch");
+      // If vals.commit() returns NULL, it means it will commit with
+      // binary branching, which is OK for LDSB, so we fall through.
+    default:
+      return LDSBBrancher<BoolView,1,int,2>::post
+        (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),array,n,bf);
+    }
   }
 
 
@@ -482,6 +502,28 @@ namespace Gecode {
         static_cast<Space&>(home).alloc<SymmetryImp<BoolView>* >(n);
       for (int i = 0 ; i < n ; i++) {
         array[i] = createBoolSym(home, syms[i], variableMap);
+      }
+
+      // Technically these "bad" value selection could in fact work with
+      // LDSB, because they degenerate to binary splitting for
+      // Booleans.  Nonetheless, we explicitly forbid them for
+      // consistency with the integer version.
+      switch (vals.select()) {
+      case IntValBranch::SEL_SPLIT_MIN:
+      case IntValBranch::SEL_SPLIT_MAX:
+      case IntValBranch::SEL_RANGE_MIN:
+      case IntValBranch::SEL_RANGE_MAX:
+      case IntValBranch::SEL_VALUES_MIN:
+      case IntValBranch::SEL_VALUES_MAX:
+        throw LDSBBadValueSelection("Int::LDSB::branch");
+        break;
+      case IntValBranch::SEL_VAL_COMMIT:
+        if (vals.commit() != NULL)
+          throw LDSBBadValueSelection("Int::LDSB::branch");
+        // If vals.commit() returns NULL, it means it will commit with
+        // binary branching, which is OK for LDSB, so we fall through.
+      default:
+        // Do nothing and continue.
       }
 
       ViewArray<BoolView> xv(home,x);
