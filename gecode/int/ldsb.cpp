@@ -523,6 +523,7 @@ namespace Gecode {
         // If vals.commit() returns NULL, it means it will commit with
         // binary branching, which is OK for LDSB, so we fall through.
       default:
+        ;
         // Do nothing and continue.
       }
 
