@@ -2137,24 +2137,29 @@ namespace Gecode {
 #endif
 
   /** \brief Interchangeable rows symmetry specification.
+   * \relates Gecode::Matrix
    */
   template<class A>
   SymmetryHandle rows_interchange(const Matrix<A>& m);
   /** \brief Interchangeable columns symmetry specification.
+   * \relates Gecode::Matrix
    */
   template<class A>
   SymmetryHandle columns_interchange(const Matrix<A>& m);
   /** \brief Reflect rows symmetry specification.
+   * \relates Gecode::Matrix
    */
   template<class A>
   SymmetryHandle rows_reflect(const Matrix<A>& m);
   /** \brief Reflect columns symmetry specification.
+   * \relates Gecode::Matrix
    */
   template<class A>
   SymmetryHandle columns_reflect(const Matrix<A>& m);
   /** \brief Reflect around main diagonal symmetry specification.
    *
    * The matrix \m must be square.  
+   * \relates Gecode::Matrix
    */
   template<class A>
   SymmetryHandle diagonal_reflect(const Matrix<A>& m);
