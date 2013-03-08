@@ -76,6 +76,22 @@ Fixes, or perhaps more?
 Module: int
 What:   new
 Rank:   major
+[DESCRIPTION]
+Gecode now supports Lightweight Dynamic Symmetry Breaking (LDSB),
+see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Gecode now supports Lightweight Dynamic Symmetry Breaking (LDSB),
+see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
 Thanks: Manuel Loth
 [DESCRIPTION]
 Added value selection strategies for branching
