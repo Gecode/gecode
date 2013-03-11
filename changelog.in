@@ -232,10 +232,11 @@ Module: int
 What:   performance
 Rank:   major
 [DESCRIPTION]
-All arithmetic and linear constraints now resort to internal
-operations using "long long int" rather than "double". This
-improves performance but also extends the range over integer
-coefficients that can be handeld by linear constraints.
+Arithmetic, linear, and cumulative constraints now resort to
+internal operations using "long long int" rather than
+"double". This improves performance but also extends the range
+over integer coefficients that can be handeld by linear
+constraints.
 
 [ENTRY]
 Module: flatzinc
