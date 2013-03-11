@@ -353,12 +353,14 @@ namespace Test { namespace Int {
      /// %Test for division/modulo constraint
      class DivMod : public Test {
      private:
+       /// Return the absolute value of \a a
        static int abs(int a) { return a<0 ? -a:a; }
+       /// Return the sign of \a a
        static int sgn(int a) { return a<0 ? -1:1; }
      public:
        /// Create and register test
        DivMod(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::DivMod::"+s,4,d,false,icl) {}
+         : Test("Arithmetic::DivMod::"+s,4,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return x[0] == x[1]*x[2]+x[3] &&
@@ -367,7 +369,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::divmod(home, x[0], x[1], x[2], x[3], icl);
+         Gecode::divmod(home, x[0], x[1], x[2], x[3]);
        }
      };
 
@@ -376,7 +378,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Div(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Div::"+s,3,d,false,icl) {}
+         : Test("Arithmetic::Div::"+s,3,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
@@ -390,7 +392,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::div(home, x[0], x[1], x[2], icl);
+         Gecode::div(home, x[0], x[1], x[2]);
        }
      };
 
