@@ -37,17 +37,19 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  /// Largest double that can exactly be represented
-  const double double_max = 9007199254740991.0;
-  /// Smallest double that can exactly be represented
-  const double double_min = -9007199254740991.0;
+  inline void
+  mul_check(long long int x, long long int y) {
+    if (Int::Limits::overflow_mul(x,y))
+      throw OutOfLimits("Int::cumulative");
+  }
 
   inline void
-  double_check(double n, const char* l) {
-    if ((n < double_min) || (n > double_max))
-      throw OutOfLimits(l);
+  mul_check(long long int x, long long int y, long long int z) {
+    if (Int::Limits::overflow_mul(x,y) ||
+        Int::Limits::overflow_mul(x*y,z))
+      throw OutOfLimits("Int::cumulative");
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

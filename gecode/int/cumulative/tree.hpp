@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   forceinline void
   OmegaNode::init(const OmegaNode&, const OmegaNode&) {
-    e = 0.0; env = -double_infinity;
+    e = 0; env = -Limits::llinfinity;
   }
 
   forceinline void
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
                                  const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t), c(c0) {
     for (int i=tasks.size(); i--; ) {
-      leaf(i).e = 0.0; leaf(i).env = -double_infinity;
+      leaf(i).e = 0; leaf(i).env = -Limits::llinfinity;
     }
     init();
   }
@@ -70,19 +70,20 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void 
   OmegaTree<TaskView>::insert(int i) {
     leaf(i).e = tasks[i].e(); 
-    leaf(i).env = static_cast<double>(c)*tasks[i].est()+tasks[i].e();
+    leaf(i).env = 
+      static_cast<long long int>(c)*tasks[i].est()+tasks[i].e();
     update(i);
   }
 
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
-    leaf(i).e = 0.0; leaf(i).env = -double_infinity;
+    leaf(i).e = 0; leaf(i).env = -Limits::llinfinity;
     update(i);
   }
 
   template<class TaskView>
-  forceinline double
+  forceinline long long int
   OmegaTree<TaskView>::env(void) const {
     return root().env;
   }
@@ -94,7 +95,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   ExtOmegaNode::init(const ExtOmegaNode& l, const ExtOmegaNode& r) {
     OmegaNode::init(l,r);
-    cenv = -double_infinity;
+    cenv = -Limits::llinfinity;
   }
 
   forceinline void
@@ -107,8 +108,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ExtOmegaTree<TaskView>::init(int ci0) {
     ci = ci0;
     for (int i=tasks.size(); i--; ) {
-      leaf(i).e = 0.0; 
-      leaf(i).env = leaf(i).cenv = -double_infinity;
+      leaf(i).e = 0; 
+      leaf(i).env = leaf(i).cenv = -Limits::llinfinity;
     }
     init();
   }
@@ -119,21 +120,23 @@ namespace Gecode { namespace Int { namespace Cumulative {
     : TaskTree<TaskView,ExtOmegaNode>(r,t), c(c0) {}
 
   template<class TaskView>
-  forceinline double
+  forceinline long long int
   ExtOmegaTree<TaskView>::env(int i) {
     // Enter task i
     leaf(i).e = tasks[i].e(); 
-    leaf(i).env = static_cast<double>(c)*tasks[i].est()+tasks[i].e();
-    leaf(i).cenv = static_cast<double>(c-ci)*tasks[i].est()+tasks[i].e();
+    leaf(i).env = 
+      static_cast<long long int>(c)*tasks[i].est()+tasks[i].e();
+    leaf(i).cenv = 
+      static_cast<long long int>(c-ci)*tasks[i].est()+tasks[i].e();
     TaskTree<TaskView,ExtOmegaNode>::update(i);
 
     // Perform computation of node for task with minest
     int met = 0;
     {
-      double e = 0.0;
+      long long int e = 0;
       while (!n_leaf(met)) {
         if (plus(node[n_right(met)].cenv,e) > 
-            static_cast<double>(c-ci) * tasks[i].lct()) {
+            static_cast<long long int>(c-ci) * tasks[i].lct()) {
           met = n_right(met);
         } else {
           e += node[n_right(met)].e; met = n_left(met);
@@ -148,9 +151,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
      */
 
     // Now perform split from leaf met upwards
-    double a_e = node[met].e;
-    double a_env = node[met].env;
-    double b_e = 0.0;
+    long long int a_e = node[met].e;
+    long long int a_env = node[met].env;
+    long long int b_e = 0;
 
     while (!n_root(met)) {
       if (left(met)) {
@@ -161,7 +164,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
       }
       met = n_parent(met);
     }
-    return b_e + a_env;
+
+    return plus(a_env,b_e);
   }
 
   
@@ -173,7 +177,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   OmegaLambdaNode::init(const OmegaLambdaNode& l, const OmegaLambdaNode& r) {
     OmegaNode::init(l,r);
-    le = 0.0; lenv = -double_infinity;
+    le = 0; lenv = -Limits::llinfinity;
     resLe = undef; resLenv = undef;
   }
 
@@ -207,9 +211,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // Enter all tasks into tree (omega = all tasks, lambda = empty)
     for (int i=tasks.size(); i--; ) {
       leaf(i).e = tasks[i].e();
-      leaf(i).le = 0.0;
-      leaf(i).env = static_cast<double>(c)*tasks[i].est()+tasks[i].e();
-      leaf(i).lenv = -double_infinity;
+      leaf(i).le = 0;
+      leaf(i).env = static_cast<long long int>(c)*tasks[i].est()+tasks[i].e();
+      leaf(i).lenv = -Limits::llinfinity;
       leaf(i).resLe = OmegaLambdaNode::undef;
       leaf(i).resLenv = OmegaLambdaNode::undef;
     }
@@ -220,11 +224,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void 
   OmegaLambdaTree<TaskView>::shift(int i) {
     // i is in omega
-    assert(leaf(i).env > -double_infinity);
+    assert(leaf(i).env > -Limits::llinfinity);
     leaf(i).le = leaf(i).e;
-    leaf(i).e = 0.0;
+    leaf(i).e = 0;
     leaf(i).lenv = leaf(i).env;
-    leaf(i).env = -double_infinity;
+    leaf(i).env = -Limits::llinfinity;
     leaf(i).resLe = i;
     leaf(i).resLenv = i;
     update(i);
@@ -234,10 +238,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline void
   OmegaLambdaTree<TaskView>::lremove(int i) {
     // i not in omega but in lambda
-    assert(leaf(i).env == -double_infinity);
-    assert(leaf(i).lenv > -double_infinity);
-    leaf(i).le = 0.0; 
-    leaf(i).lenv = -double_infinity;
+    assert(leaf(i).env == -Limits::llinfinity);
+    assert(leaf(i).lenv > -Limits::llinfinity);
+    leaf(i).le = 0; 
+    leaf(i).lenv = -Limits::llinfinity;
     leaf(i).resLe = OmegaLambdaNode::undef;
     leaf(i).resLenv = OmegaLambdaNode::undef;
     update(i);
@@ -256,13 +260,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
   
   template<class TaskView>
-  forceinline double
+  forceinline long long int
   OmegaLambdaTree<TaskView>::env(void) const {
     return root().env;
   }
   
   template<class TaskView>
-  forceinline double
+  forceinline long long int
   OmegaLambdaTree<TaskView>::lenv(void) const {
     return root().lenv;
   }

@@ -45,16 +45,10 @@ namespace Gecode { namespace Int {
     return (x == -Int::Limits::infinity) ? x : x+y;
   }
 
-  forceinline double 
-  plus(double x, double y) {
-    assert(y != -double_infinity);
-    return (x == -double_infinity) ? x : x+y;
-  }
-
-  forceinline double 
-  div(double x, double y) {
-    assert(y != -double_infinity);
-    return (x == -double_infinity) ? x : x / y;
+  forceinline long long int 
+  plus(long long int x, long long int y) {
+    assert(y != -Int::Limits::llinfinity);
+    return (x == -Int::Limits::llinfinity) ? x : x+y;
   }
 
   template<class TaskView, class Node>

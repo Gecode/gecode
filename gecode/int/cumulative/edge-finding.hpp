@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     for (int j=0; j<t.size(); j++) {
       while (!ol.lempty() && 
-             (ol.lenv() > static_cast<double>(c)*t[j].lct())) {
+             (ol.lenv() > static_cast<long long int>(c)*t[j].lct())) {
         int i = ol.responsible();
         prec[i] = std::max(prec[i], t[j].lct());
         ol.lremove(i);
@@ -132,10 +132,17 @@ namespace Gecode { namespace Int { namespace Cumulative {
       eo.init(capacities[i]);
       int u = -Int::Limits::infinity;
       for (int j=t.size(); j--;) {
-        double lctj = static_cast<double>(c-capacities[i])*t[j].lct();
-        double diff_d = ceil(div(plus(eo.env(j), -lctj),capacities[i]));
-        int diff = (diff_d == -double_infinity) ? 
-          -Int::Limits::infinity : static_cast<int>(diff_d);
+        long long int lctj = 
+          static_cast<long long int>(c-capacities[i])*t[j].lct();
+        long long int eml = plus(eo.env(j), -lctj);
+        long long int diff_l;
+        if (eml == -Limits::llinfinity)
+          diff_l = -Limits::llinfinity;
+        else
+          diff_l = ceil_div_xx(eml, 
+                               static_cast<long long int>(capacities[i]));
+        int diff = (diff_l <= -Limits::infinity) ? 
+          -Limits::infinity : static_cast<int>(diff_l);
         u = std::max(u,diff);
         update[i*t.size()+j] = u;
       }

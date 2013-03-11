@@ -42,9 +42,6 @@
 
 namespace Gecode { namespace Int {
 
-  /// Infinity value for doubles
-  const double double_infinity = DBL_MAX;
-
   /// Class to define an optional from a mandatory task
   template<class ManTask>
   class ManToOptTask : public ManTask {
@@ -357,12 +354,12 @@ namespace Gecode { namespace Int {
   /// Safe addition in case \a x is -Int::Limits::infinity
   int plus(int x, int y);
 
+  /// Safe addition in case \a x is -Int::Limits::llinfinity
+  long long int plus(long long int x, long long int y);
+
   /// Safe addition in case \a x is -Int::Limits::double_infinity
   double plus(double x, double y);
   
-  /// Safe division in case \a x is -Int::Limits::double_infinity
-  double div(double x, double y);
-
   /// Task trees for task views with node type \a Node
   template<class TaskView, class Node>
   class TaskTree {

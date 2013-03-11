@@ -61,9 +61,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ManFixPTask::c(void) const {
     return _c;
   }
-  forceinline double
+  forceinline long long int
   ManFixPTask::e(void) const {
-    return static_cast<double>(pmin())*c();
+    return static_cast<long long int>(pmin())*c();
   }
 
   forceinline void
@@ -102,9 +102,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ManFixPSETask::c(void) const {
     return _c;
   }
-  forceinline double
+  forceinline long long int
   ManFixPSETask::e(void) const {
-    return static_cast<double>(pmin())*c();
+    return static_cast<long long int>(pmin())*c();
   }
 
   forceinline void
@@ -143,9 +143,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ManFlexTask::c(void) const {
     return _c;
   }
-  forceinline double
+  forceinline long long int
   ManFlexTask::e(void) const {
-    return static_cast<double>(pmin())*c();
+    return static_cast<long long int>(pmin())*c();
   }
 
   forceinline void
