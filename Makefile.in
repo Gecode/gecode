@@ -426,7 +426,8 @@ INTBUILDDIRS	= \
 	int int/var int/var-imp int/view int/extensional \
 	int/channel int/arithmetic int/linear int/bool int/branch int/exec \
 	int/element int/sequence int/bin-packing \
-	int/unary int/cumulative int/cumulatives int/task
+	int/unary int/cumulative int/cumulatives int/task \
+	int/ldsb
 
 #
 # FLOAT COMPONENTS
@@ -575,7 +576,7 @@ endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
 	set/element set/sequence set/var set/var-imp set/view \
-	set/branch set/channel
+	set/branch set/channel set/ldsb
 
 
 #
