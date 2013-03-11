@@ -43,6 +43,7 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
+  /// Engine for restart-based search
   class RBS : public Engine {
   private:
     /// The actual engine

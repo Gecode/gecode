@@ -56,6 +56,7 @@ namespace Gecode {
   template<class I>
   class IntSetInit {
   public:
+    /// Initialize \a s with iterator \a i
     static void init(IntSet& s, I& i) {
       Support::DynamicArray<IntSet::Range,Heap> d(heap);
       int n=0;
@@ -74,6 +75,7 @@ namespace Gecode {
     }
   };
 
+  /// Initialize integer set with integer set
   template<>
   class IntSetInit<IntSet> {
   public:
@@ -82,11 +84,13 @@ namespace Gecode {
     }
   };
 
+  /// Initialize integer set with iterator
   template<class I>
   IntSet::IntSet(I& i) {
     IntSetInit<I>::init(*this,i);
   }
 
+  /// Initialize integer set with iterator
   template<class I>
   IntSet::IntSet(const I& i) {
     IntSetInit<I>::init(*this,i);

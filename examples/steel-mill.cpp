@@ -115,9 +115,14 @@ public:
   int norders(void) const       { return _norders;     }
 };
 
-struct SortByWeight {
+/// Sort orders by weight
+class SortByWeight {
+public:
+  /// The orders
   order_t orders;
+  /// Initialize orders
   SortByWeight(order_t _orders) : orders(_orders) {}
+  /// Sort order
   bool operator() (int i, int j) {
     // Order i comes before order j if the weight of i is larger than
     // the weight of j.

@@ -37,6 +37,7 @@
 
 namespace Gecode {
 
+  /// Initialize integer set with integer arguments
   template<>
   class IntSetInit<IntArgs> {
   public:

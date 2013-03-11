@@ -43,6 +43,7 @@
 
 namespace Gecode {
 
+  /// Nodes for linear expressions
   class LinFloatExpr::Node {
   public:
     /// Nodes are reference counted

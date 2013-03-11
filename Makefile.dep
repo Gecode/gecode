@@ -11898,7 +11898,7 @@ gecode/flatzinc/registry$(OBJSUFFIX) gecode/flatzinc/registry$(SBJSUFFIX): \
 	./gecode/support/static-stack.hpp ./gecode/support/thread.hpp ./gecode/support/thread/none.hpp \
 	./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp \
 	./gecode/support/timer.hpp 
-tools/flatzinc/fz$(OBJSUFFIX) tools/flatzinc/fz$(SBJSUFFIX): \
+tools/flatzinc/fzn-gecode$(OBJSUFFIX) tools/flatzinc/fzn-gecode$(SBJSUFFIX): \
 	./gecode/driver.hh ./gecode/driver/options.hpp ./gecode/driver/script.hpp \
 	./gecode/flatzinc.hh ./gecode/flatzinc/ast.hh ./gecode/flatzinc/conexpr.hh \
 	./gecode/flatzinc/option.hh ./gecode/flatzinc/varspec.hh ./gecode/float.hh \

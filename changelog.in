@@ -235,7 +235,7 @@ Rank:   major
 Arithmetic, linear, and cumulative constraints now resort to
 internal operations using "long long int" rather than
 "double". This improves performance but also extends the range
-over integer coefficients that can be handeld by linear
+over integer coefficients that can be handled by linear
 constraints.
 
 [ENTRY]
@@ -323,7 +323,7 @@ What:   bug
 Rank:   minor
 [DESCRIPTION]
 Fixed a concurrency problem that caused an exception to be thrown at
-the end of a multithreaded search on some platforms.
+the end of a multi-threaded search on some platforms.
 
 [ENTRY]
 Module: int
@@ -343,7 +343,7 @@ Rank:   major
 [DESCRIPTION]
 The entire infrastructure for variable-value branchers has been
 reimplemented from scratch. The new design makes a much better
-compromoise between code size, efficiency, and expressiveness:
+compromise between code size, efficiency, and expressiveness:
 the efficiency is about the same (for examples with no
 propagation and just branching one can note a slowdown of 2-4%)
 while code size shrinks drastically (the overall code size for
