@@ -2614,7 +2614,7 @@ ac_config_headers="$ac_config_headers gecode/support/config.hpp"
 ac_gecode_soversion=33
 GECODE_SOVERSION=${ac_gecode_soversion}
 
-ac_gecode_flatzincversion=1.5
+ac_gecode_flatzincversion=1.6
 GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 
 
