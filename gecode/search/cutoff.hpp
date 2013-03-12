@@ -97,7 +97,7 @@ namespace Gecode { namespace Search {
     friend class Cutoff;
   private:
     /// Current cutoff value
-    unsigned long int n;
+    double n;
     /// Base
     double base;
     /// Constructor
