@@ -154,7 +154,7 @@ if ($file =~ /Gecode(.*)-([0-9]+-[0-9]+-[0-9]+-[rd]-.+)\.dll$/) {
 } else {
   $filetype    = "VFT_APP";
   $icon        = 1;
-  if ($file =~ /fz\.exe/) {
+  if ($file =~ /fzn-gecode\.exe/) {
     $filename    = "fzn-gecode.exe";
     $basename    = "fzn-gecode";
     $description = "Gecode FlatZinc interpreter";
