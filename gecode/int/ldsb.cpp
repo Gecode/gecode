@@ -415,7 +415,7 @@ namespace Gecode {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return BrancherHandle();
   }
 
   BrancherHandle
@@ -467,7 +467,7 @@ namespace Gecode {
         (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),array,n,bf);
     }
     GECODE_NEVER;
-    return NULL;
+    return BrancherHandle();
   }
 
 
@@ -557,7 +557,7 @@ namespace Gecode {
       }
     }
     GECODE_NEVER;
-    return NULL;
+    return BrancherHandle();
   }
 
 }
