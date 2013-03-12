@@ -401,7 +401,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        Mod(const std::string& s, const Gecode::IntSet& d)
-         : Test("Arithmetic::Mod::"+s,3,d,false,icl) {}
+         : Test("Arithmetic::Mod::"+s,3,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (x[1] == 0)
@@ -415,7 +415,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::mod(home, x[0], x[1], x[2], icl);
+         Gecode::mod(home, x[0], x[1], x[2]);
        }
      };
 
