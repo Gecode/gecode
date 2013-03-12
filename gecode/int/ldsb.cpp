@@ -414,6 +414,8 @@ namespace Gecode {
         }
       }
     }
+    GECODE_NEVER;
+    return NULL;
   }
 
   BrancherHandle
@@ -464,6 +466,8 @@ namespace Gecode {
       return LDSBBrancher<BoolView,1,int,2>::post
         (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),array,n,bf);
     }
+    GECODE_NEVER;
+    return NULL;
   }
 
 
@@ -552,6 +556,8 @@ namespace Gecode {
           LDSBBrancher<BoolView,4,int,2>::post(home,xv,vs,vsc,array,n,bf);
       }
     }
+    GECODE_NEVER;
+    return NULL;
   }
 
 }
