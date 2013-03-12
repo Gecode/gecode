@@ -1217,7 +1217,6 @@ namespace Gecode { namespace Int { namespace GCC {
         // if the variable is already assigned
         if (x[i].assigned()) {
           int  v = x[i].val();
-          ValNode* rv = NULL;
           Edge* mub = vrn->get_match(UBC);
           if ((mub != NULL) && (v != mub->getVal()->val)) {
             mub->unmatch(UBC);
@@ -1241,8 +1240,6 @@ namespace Gecode { namespace Int { namespace GCC {
               e->getVal()->noe--;
               e->del_edge();
               e->unlink();
-            } else {
-              rv = e->getVal();
             }
           }
         } else {
