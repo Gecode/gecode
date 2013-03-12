@@ -194,7 +194,7 @@ namespace Test { namespace Int {
       reified(r), rms((1 << Gecode::RM_EQV) || 
                       (1 << Gecode::RM_IMP) || 
                       (1 << Gecode::RM_PMI)),
-      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
@@ -204,7 +204,7 @@ namespace Test { namespace Int {
       reified(r), rms((1 << Gecode::RM_EQV) || 
                       (1 << Gecode::RM_IMP) || 
                       (1 << Gecode::RM_PMI)),
-      contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
