@@ -277,7 +277,7 @@ public:
     for (int i = noptions; i--; ) n[i] = 0;
     // Read data
     for (int c = 0; c < nclasses; ++c) {
-      *probit++;
+      probit++;
       ncc[c] = *probit++;
       for (int o = 0; o < noptions; ++o) {
         if (*probit++) {
