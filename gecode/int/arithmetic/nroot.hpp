@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x1.gq(home,0));
 
-    if (ops.exp() >= sizeof(int) * CHAR_BIT) {
+    if (static_cast<unsigned int>(ops.exp()) >= sizeof(int) * CHAR_BIT) {
       // The integer limits allow only 0 and 1 for x1
       GECODE_ME_CHECK(x1.lq(home,1));
     }

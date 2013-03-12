@@ -390,7 +390,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   inline ExecStatus
   PowDom<Ops>::post(Home home, IntView x0, IntView x1, Ops ops) {
-    if (ops.exp() >= sizeof(int) * CHAR_BIT) {
+    if (static_cast<unsigned int>(ops.exp()) >= sizeof(int) * CHAR_BIT) {
       // The integer limits allow only -1, 0, 1 for x0
       GECODE_ME_CHECK(x0.lq(home,1));
       GECODE_ME_CHECK(x0.gq(home,-1));
