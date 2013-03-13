@@ -481,7 +481,7 @@ namespace Test { namespace Branch {
             Rnd rb(2);
             IntVarBranch ivbb;
             IntActivity iab(*c, c->x, 0.9);
-            switch (vara) {
+            switch (varb) {
             case  0: ivbb = INT_VAR_NONE(); break;
             case  1: ivbb = INT_VAR_NONE(); break;
             case  2: ivbb = INT_VAR_RND(rb); break;
@@ -652,7 +652,7 @@ namespace Test { namespace Branch {
             Rnd rb(2);
             IntVarBranch ivbb;
             IntActivity iab(*c, c->x, 0.9);
-            switch (vara) {
+            switch (varb) {
             case  0: ivbb = INT_VAR_NONE(); break;
             case  1: ivbb = INT_VAR_NONE(); break;
             case  2: ivbb = INT_VAR_RND(rb); break;
@@ -808,7 +808,7 @@ namespace Test { namespace Branch {
             Rnd rb(2);
             SetVarBranch svbb;
             SetActivity sab(*c, c->x, 0.9);
-            switch (vara) {
+            switch (varb) {
             case  0: break; 
             case  1: svbb = SET_VAR_NONE(); break;
             case  2: svbb = SET_VAR_RND(rb); break;
@@ -955,7 +955,7 @@ namespace Test { namespace Branch {
             Rnd rb(2);
             FloatVarBranch fvbb;
             FloatActivity fab(*c, c->x, 0.9);
-            switch (vara) {
+            switch (varb) {
             case  0: break; 
             case  1: fvbb = FLOAT_VAR_NONE(); break;
             case  2: fvbb = FLOAT_VAR_RND(rb); break;

@@ -62,12 +62,12 @@ namespace Gecode {
       return x;
     }
     /// Make \a x and \a y equal
-    IntSet unify(Home, IntSet x, IntSet y) {
+    IntSet unify(Home, const IntSet& x, const IntSet& y) {
       IntSetRanges xr(x);
       IntSetRanges yr(y);
       Iter::Ranges::Inter<IntSetRanges,IntSetRanges> i(xr,yr);
       IntSet z(i);
-      return y;
+      return z;
     }
     
     /// Remove dupliate entries in \a v from both \a v and \a c
@@ -93,6 +93,7 @@ namespace Gecode {
           cur = a[i].second;
         }
       }
+      re.free<P>(a,c.size());
       c = cc;
       v = vv;
     }

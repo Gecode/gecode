@@ -62,15 +62,17 @@ namespace Gecode {
       if (storage != NULL) {
         bool done;
         acquire();
-        done = (--storage->use_cnt);
+        done = (--storage->use_cnt == 0);
         release();
         if (done)
           delete storage;
       }
       storage = a.storage;
-      acquire();
-      storage->use_cnt++;
-      release();
+      if (storage != NULL) {
+        acquire();
+        storage->use_cnt++;
+        release();
+      }
     }
     return *this;
   }

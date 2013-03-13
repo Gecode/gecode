@@ -82,7 +82,7 @@ namespace Gecode { namespace Search {
   CutoffLuby::luby(unsigned long int i) {
     while (true) {
       if (i <= n_start)
-        return start[i];
+        return start[i-1];
       unsigned long int l = log(i);
       if (i == (1U<<(l+1))-1)
         return 1<<l;
@@ -99,11 +99,11 @@ namespace Gecode { namespace Search {
 
   forceinline
   CutoffGeometric::CutoffGeometric(unsigned long int scale, double base0) 
-    : n(scale), base(base0) {}
+    : n(static_cast<double>(scale)), base(base0) {}
   unsigned long int 
   CutoffGeometric::operator ()(void) {
-    unsigned long int oldn = n;
-    n = static_cast<unsigned long int>(n * base);
+    unsigned long int oldn = static_cast<unsigned long int>(n);
+    n *= base;
     return oldn;
   }
   
