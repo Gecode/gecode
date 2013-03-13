@@ -68,9 +68,11 @@ namespace Gecode {
           delete storage;
       }
       storage = a.storage;
-      acquire();
-      storage->use_cnt++;
-      release();
+      if (storage != NULL) {
+        acquire();
+        storage->use_cnt++;
+        release();
+      }
     }
     return *this;
   }
