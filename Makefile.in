@@ -681,7 +681,8 @@ ITERHDR0 =							\
 	values-array values-minus values-offset values-ranges 	\
 	values-positive values-negative				\
 	values-singleton values-unique values-inter 		\
-	values-union values-map	values-bitset values-list
+	values-union values-map	values-bitset values-list       \
+	values-bitsetoffset
 ITERHDR = gecode/iter.hh \
 	$(ITERHDR0:%=gecode/iter/%.hpp)
 
