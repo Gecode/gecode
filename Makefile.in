@@ -318,6 +318,7 @@ INTHDR0 = \
 	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
 	arithmetic/divmod.hpp \
 	arithmetic/pow-ops.hpp arithmetic/pow.hpp arithmetic/nroot.hpp \
+	arithmetic/math.hpp \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
 	bool/clause.hpp \
 	precede.hh precede/single.hpp \
@@ -452,7 +453,7 @@ FLOATHDR0 = \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
-	branch/val-commit.hpp branch/val-sel.hpp \
+	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
 	num.hpp val.hpp rounding.hpp nextafter.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%)
@@ -541,7 +542,7 @@ SETHDR0 =								     \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
-	ldsb.hh ldsb/brancher.hpp
+	ldsb.hh ldsb/brancher.hpp channel.hh
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
