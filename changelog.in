@@ -67,6 +67,21 @@
 #
 
 [RELEASE]
+Version: 4.0.1
+Date: 2999-12-31
+[DESCRIPTION]
+Bla!
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks: Duong Khanh Chuong
+[DESCRIPTION]
+Fixed missing propagation in reified rel-constraints.
+
+
+[RELEASE]
 Version: 4.0.0
 Date: 2013-03-14
 [DESCRIPTION]
