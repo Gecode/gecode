@@ -80,6 +80,14 @@ Thanks: Duong Khanh Chuong
 [DESCRIPTION]
 Fixed missing propagation in reified rel-constraints.
 
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+Thanks: Chris Mears
+[DESCRIPTION]
+Fixed a bug in restart-based search, which would crash if the problem is
+failed at the root.
 
 [RELEASE]
 Version: 4.0.0
