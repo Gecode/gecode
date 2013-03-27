@@ -73,6 +73,14 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+Thanks: Cliff Yapp
+[DESCRIPTION]
+CMake build system tweaked for out-of-source-dir building.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor

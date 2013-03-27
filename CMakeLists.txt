@@ -41,6 +41,9 @@ cmake_minimum_required(VERSION 2.6)
 
 project(GECODE)
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
 include(CheckCXXCompilerFlag)
 if (GECODE_DISABLE_WARNINGS)
   if (CMAKE_COMPILER_IS_GNUCXX)
@@ -368,7 +371,6 @@ if (FLOATSRC)
   target_link_libraries(gecodeminimodel gecodefloat)
 endif ()
 
-include_directories(.)
 add_executable(gecode-test ${TESTSRC} ${TESTHDR})
 target_link_libraries(gecode-test gecodeminimodel)
 
