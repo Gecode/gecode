@@ -57,6 +57,12 @@ namespace Gecode {
     for (int i=l.size(); i--; )
       lv[i] = OffsetView(l[i],0);
 
+    if (b.size() == 0) {
+      for (int i=l.size(); i--; )
+        GECODE_ME_FAIL(lv[i].eq(home,0));
+      return;
+    }
+
     ViewArray<BinPacking::Item> bs(home,b.size());
     for (int i=bs.size(); i--; )
       bs[i] = BinPacking::Item(b[i],s[i]);
