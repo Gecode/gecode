@@ -46,16 +46,6 @@ namespace Gecode { namespace Search {
   forceinline Space*
   snapshot(Space* s, const Options& o, bool share=true);
 
-  /// A failed space by construction
-  class GECODE_VTABLE_EXPORT FailedSpace : public Space {
-  public:
-    /// Constructor for creation
-    FailedSpace(void);
-    /// Copy during cloning
-    GECODE_SEARCH_EXPORT
-    virtual Space* copy(bool share);
-  };
-
   /// Virtualize a worker to an engine
   template<class Worker>
   class WorkerToEngine : public Engine {
@@ -82,12 +72,6 @@ namespace Gecode { namespace Search {
   }
 
   
-  forceinline
-  FailedSpace::FailedSpace(void) {
-    fail();
-  }
-  
-
   template<class Worker>
   WorkerToEngine<Worker>::WorkerToEngine(Space* s, size_t sz, 
                                          const Options& o) 

@@ -81,7 +81,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   BAB::BAB(Space* s, size_t sz, const Options& o)
     : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
     current(s);
-    if (s->status(*this) == SS_FAILED) {
+    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = NULL;
       if (!o.clone)
@@ -172,7 +172,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     path.reset();
     d = mark = 0;
     delete cur;
-    if (s->status(*this) == SS_FAILED) {
+    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       cur = NULL;
       Worker::reset();
     } else {

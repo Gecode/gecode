@@ -63,7 +63,7 @@ namespace Gecode {
     if (m_opt.clone) {
       if (s->status(ms->m_stat) == SS_FAILED) {
         ms->m_stat.fail++;
-        master = new Search::FailedSpace();
+        master = NULL;
       } else {
         master = s->clone();
       }

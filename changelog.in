@@ -99,11 +99,12 @@ Fixed missing propagation in reified rel-constraints.
 [ENTRY]
 Module: search
 What:   bug
-Rank:   minor
-Thanks: Chris Mears
+Rank:   major
+Thanks: Chris Mears, Roberto Castañeda Lozano
 [DESCRIPTION]
-Fixed a bug in restart-based search, which would crash if the problem is
-failed at the root.
+Fixed a bug in restart-based search, which would crash if the
+problem is failed at the root or only had a single solution
+during best-solution search.
 
 [RELEASE]
 Version: 4.0.0

@@ -240,7 +240,7 @@ EXTRA_HEADERS   = gecode/support/config.hpp
 #
 
 SEARCHSRC0 = \
-	stop options cutoff support \
+	stop options cutoff \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \

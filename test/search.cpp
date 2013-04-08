@@ -121,6 +121,41 @@ namespace Test {
       }
     };
 
+    /// Space that is immediately solved
+    class SolveImmediate : public TestSpace {
+    public:
+      /// Variables used
+      IntVarArray x;
+      /// Constructor for space creation
+      SolveImmediate(HowToBranch, HowToBranch, HowToBranch,
+                     HowToConstrain=HTC_NONE)
+        : x(*this,1,0,0) {}
+      /// Constructor for cloning \a s
+      SolveImmediate(bool share, SolveImmediate& s) : TestSpace(share,s) {
+        x.update(*this, share, s.x);
+      }
+      /// Copy during cloning
+      virtual Space* copy(bool share) {
+        return new SolveImmediate(share,*this);
+      }
+      /// Add constraint for next better solution
+      virtual void constrain(const Space&) {
+        fail();
+      }
+      /// Return number of solutions
+      virtual int solutions(void) const {
+        return 1;
+      }
+      /// Verify that this is best solution
+      virtual bool best(void) const {
+        return true;
+      }
+      /// Return name
+      static std::string name(void) {
+        return "Solve";
+      }
+    };
+
     /// Space that requires propagation and has solutions
     class HasSolutions : public TestSpace {
     public:
@@ -346,8 +381,8 @@ namespace Test {
     };
 
     /// %Test for best solution search
-    template<class Model, template<class> class Engine>
-    class Best : public Test {
+    template<class Model>
+    class BAB : public Test {
     private:
       /// Minimal recomputation distance
       unsigned int c_d;
@@ -357,10 +392,10 @@ namespace Test {
       unsigned int t;
     public:
       /// Initialize test
-      Best(const std::string& b, HowToConstrain htc,
-           HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
-           unsigned int c_d0, unsigned int a_d0, unsigned int t0)
-        : Test(b+"::"+Model::name()+"::"+str(htc)+"::"+
+      BAB(HowToConstrain htc,
+          HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
+          unsigned int c_d0, unsigned int a_d0, unsigned int t0)
+        : Test("BAB::"+Model::name()+"::"+str(htc)+"::"+
                str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+
                str(c_d0)+"::"+str(a_d0)+"::"+str(t0),
                htb1,htb2,htb3,htc), c_d(c_d0), a_d(a_d0), t(t0) {}
@@ -373,15 +408,15 @@ namespace Test {
         o.a_d = a_d;
         o.threads = t;
         o.stop = &f;
-        Engine<Model> best(m,o);
+        Gecode::BAB<Model> bab(m,o);
         delete m;
         Model* b = NULL;
         while (true) {
-          Model* s = best.next();
+          Model* s = bab.next();
           if (s != NULL) {
             delete b; b=s;
           }
-          if ((s == NULL) && !best.stopped())
+          if ((s == NULL) && !bab.stopped())
             break;
           f.limit(f.limit()+2);
         }
@@ -492,10 +527,12 @@ namespace Test {
               for (BranchTypes htb1; htb1(); ++htb1)
                 for (BranchTypes htb2; htb2(); ++htb2)
                   for (BranchTypes htb3; htb3(); ++htb3)
-                    (void) new DFS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb(),
-                                                 c_d, a_d, t);
+                    (void) new DFS<HasSolutions>
+                      (htb1.htb(),htb2.htb(),htb3.htb(),c_d, a_d, t);
               new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, 
                                      c_d, a_d, t);
+              new DFS<SolveImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, 
+                                      c_d, a_d, t);
               new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, 
                                     c_d, a_d, t);
             }
@@ -508,19 +545,25 @@ namespace Test {
                 for (BranchTypes htb1; htb1(); ++htb1)
                   for (BranchTypes htb2; htb2(); ++htb2)
                     for (BranchTypes htb3; htb3(); ++htb3) {
-                      (void) new Best<HasSolutions,BAB>
-                        ("BAB",htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
+                      (void) new BAB<HasSolutions>
+                        (htc.htc(),htb1.htb(),htb2.htb(),htb3.htb(),
                          c_d,a_d,t);
                   }
-              (void) new Best<FailImmediate,BAB>
-                ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
-              (void) new Best<HasSolutions,BAB>
-                ("BAB",HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+              (void) new BAB<FailImmediate>
+                (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+              (void) new BAB<SolveImmediate>
+                (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
+              (void) new BAB<HasSolutions>
+                (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
         // Restart-based search
         for (unsigned int t = 1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t);
+          (void) new RBS<FailImmediate,Gecode::DFS>("DFS",t);
+          (void) new RBS<FailImmediate,Gecode::BAB>("BAB",t);
+          (void) new RBS<SolveImmediate,Gecode::DFS>("DFS",t);
+          (void) new RBS<SolveImmediate,Gecode::BAB>("BAB",t);
         }
       }
     };

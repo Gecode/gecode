@@ -73,7 +73,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   DFS::DFS(Space* s, size_t sz, const Options& o)
     : Worker(sz), opt(o), d(0) {
     current(s);
-    if (s==NULL || s->status(*this) == SS_FAILED) {
+    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = NULL;
       if (!opt.clone)
@@ -90,7 +90,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     delete cur;
     path.reset();
     d = 0;
-    if (s->status(*this) == SS_FAILED) {
+    if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       cur = NULL;
       Worker::reset();
     } else {
