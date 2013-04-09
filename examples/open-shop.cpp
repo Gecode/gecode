@@ -65,7 +65,7 @@ namespace {
  * \ingroup Example
  *
  */
-class OpenShop : public MinimizeScript {
+class OpenShop : public IntMinimizeScript {
 protected:
   /// The instance specification
   const OpenShopSpec& spec;
@@ -246,7 +246,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  OpenShop(bool share, OpenShop& s) : MinimizeScript(share,s), spec(s.spec) {
+  OpenShop(bool share, OpenShop& s) : IntMinimizeScript(share,s), spec(s.spec) {
     b.update(*this, share, s.b);
     makespan.update(*this, share, s.makespan);
     _start.update(*this, share, s._start);
@@ -315,7 +315,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  MinimizeScript::run<OpenShop,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<OpenShop,BAB,SizeOptions>(opt);
   return 0;
 }
 

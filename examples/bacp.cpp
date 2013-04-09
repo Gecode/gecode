@@ -97,7 +97,7 @@ namespace {
  * \ingroup Example
  *
  */
-class BACP : public MinimizeScript {
+class BACP : public IntMinimizeScript {
 protected:
   /// The curriculum to be scheduled
   const Curriculum curr;
@@ -209,7 +209,7 @@ public:
     return val;
   }
   /// Constructor for copying \a bacp
-  BACP(bool share, BACP& bacp) : MinimizeScript(share,bacp),
+  BACP(bool share, BACP& bacp) : IntMinimizeScript(share,bacp),
     curr(bacp.curr) {
     l.update(*this, share, bacp.l);
     u.update(*this, share, bacp.u);
@@ -264,7 +264,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  MinimizeScript::run<BACP,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<BACP,BAB,SizeOptions>(opt);
   return 0;
 }
 

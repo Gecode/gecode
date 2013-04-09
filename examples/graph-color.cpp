@@ -308,7 +308,7 @@ const GraphColorSpec g2(200, g2_e, g2_c);
  * \ingroup Example
  *
  */
-class GraphColor : public MinimizeScript {
+class GraphColor : public IntMinimizeScript {
 private:
   const GraphColorSpec& g;
   /// Color of nodes
@@ -373,7 +373,7 @@ public:
     return m;
   }
   /// Constructor for cloning \a s
-  GraphColor(bool share, GraphColor& s) : MinimizeScript(share,s), g(s.g) {
+  GraphColor(bool share, GraphColor& s) : IntMinimizeScript(share,s), g(s.g) {
     v.update(*this, share, s.v);
     m.update(*this, share, s.m);
   }

@@ -63,7 +63,7 @@ using namespace Gecode;
  * \ingroup Example
  *
  */
-class GolombRuler : public MinimizeScript {
+class GolombRuler : public IntMinimizeScript {
 protected:
   /// Array for ruler marks
   IntVarArray m;
@@ -115,7 +115,7 @@ public:
 
   /// Constructor for cloning \a s
   GolombRuler(bool share, GolombRuler& s)
-    : MinimizeScript(share,s) {
+    : IntMinimizeScript(share,s) {
     m.update(*this, share, s.m);
   }
   /// Copy during cloning
@@ -136,7 +136,7 @@ main(int argc, char* argv[]) {
   opt.icl(ICL_BND);
   opt.parse(argc,argv);
   if (opt.size() > 0)
-    MinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt);
+    IntMinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt);
   return 0;
 }
 

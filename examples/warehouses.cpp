@@ -96,7 +96,7 @@ const int c_supply[n_stores][n_warehouses] = {
  * \ingroup Example
  *
  */
-class Warehouses : public MinimizeScript {
+class Warehouses : public IntMinimizeScript {
 protected:
   /// Which warehouse supplies a store
   IntVarArray supplier;
@@ -145,7 +145,7 @@ public:
     return c_total;
   }
   /// Constructor for cloning \a s
-  Warehouses(bool share, Warehouses& s) : MinimizeScript(share,s) {
+  Warehouses(bool share, Warehouses& s) : IntMinimizeScript(share,s) {
     supplier.update(*this, share, s.supplier);
     open.update(*this, share, s.open);
     c_store.update(*this, share, s.c_store);
@@ -177,7 +177,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(10);
   opt.parse(argc,argv);
-  MinimizeScript::run<Warehouses,BAB,Options>(opt);
+  IntMinimizeScript::run<Warehouses,BAB,Options>(opt);
   return 0;
 }
 

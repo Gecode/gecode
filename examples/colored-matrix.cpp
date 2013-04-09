@@ -165,7 +165,7 @@ namespace {
  * \ingroup Example
  *
  */
-class ColoredMatrix : public MinimizeScript {
+class ColoredMatrix : public IntMinimizeScript {
 protected:
   /** \name Instance specification
    */
@@ -445,7 +445,7 @@ public:
 
   /// Constructor for cloning \a s
   ColoredMatrix(bool share, ColoredMatrix& s)
-    : MinimizeScript(share,s), opt(s.opt),
+    : IntMinimizeScript(share,s), opt(s.opt),
       height(s.height), width(s.width), colors(s.colors) {
     x.update(*this, share, s.x);
     max_color.update(*this, share, s.max_color);

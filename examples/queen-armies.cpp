@@ -68,7 +68,7 @@ IntSet* A;
  * \ingroup Example
  *
  */
-class QueenArmies : public MaximizeScript {
+class QueenArmies : public IntMaximizeScript {
 public:
   const int n;
   SetVar U, ///< Set of un-attacked squares
@@ -121,7 +121,7 @@ public:
   }
   /// Constructor for cloning
   QueenArmies(bool share, QueenArmies& s)
-    : MaximizeScript(share,s), n(s.n) {
+    : IntMaximizeScript(share,s), n(s.n) {
     U.update(*this, share, s.U);
     W.update(*this, share, s.W);
     w.update(*this, share, s.w);
@@ -313,7 +313,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  MaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt);
+  IntMaximizeScript::run<QueenArmies,BAB,SizeOptions>(opt);
   return 0;
 }
 

@@ -159,7 +159,7 @@ public:
  * \ingroup Example
  *
  */
-class SteelMill : public MinimizeScript {
+class SteelMill : public IntMinimizeScript {
 protected:
   /** \name Instance specification
    */
@@ -322,7 +322,7 @@ public:
 
   /// Constructor for cloning \a s
   SteelMill(bool share, SteelMill& s)
-    : MinimizeScript(share,s),
+    : IntMinimizeScript(share,s),
       capacities(s.capacities), ncapacities(s.ncapacities),
       maxcapacity(s.maxcapacity), loss(s.loss),
       ncolors(s.ncolors), orders(s.orders),

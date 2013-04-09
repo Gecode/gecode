@@ -228,7 +228,7 @@ namespace {
  * \ingroup Example
  *
  */
-class TSP : public MinimizeScript {
+class TSP : public IntMinimizeScript {
 protected:
   /// Problem instance to be solved
   Problem     p;
@@ -276,7 +276,7 @@ public:
     return total;
   }
   /// Constructor for cloning \a s
-  TSP(bool share, TSP& s) : MinimizeScript(share,s), p(s.p) {
+  TSP(bool share, TSP& s) : IntMinimizeScript(share,s), p(s.p) {
     succ.update(*this, share, s.succ);
     total.update(*this, share, s.total);
   }
@@ -332,7 +332,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  MinimizeScript::run<TSP,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<TSP,BAB,SizeOptions>(opt);
   return 0;
 }
 

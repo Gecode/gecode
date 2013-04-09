@@ -54,7 +54,7 @@ using namespace Gecode;
  * \ingroup Example
  *
  */
-class DominatingQueens : public MinimizeScript {
+class DominatingQueens : public IntMinimizeScript {
 protected:
   /// Size of the board
   const int n;
@@ -118,7 +118,7 @@ public:
 
   /// Constructor for cloning \a s
   DominatingQueens(bool share, DominatingQueens& s) 
-    : MinimizeScript(share,s), n(s.n) {
+    : IntMinimizeScript(share,s), n(s.n) {
     b.update(*this, share, s.b);
     q.update(*this, share, s.q);
   }
@@ -162,7 +162,7 @@ main(int argc, char* argv[]) {
   opt.size(7);
   opt.solutions(0);
   opt.parse(argc,argv);
-  MinimizeScript::run<DominatingQueens,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<DominatingQueens,BAB,SizeOptions>(opt);
   return 0;
 }
 

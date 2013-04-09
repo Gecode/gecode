@@ -81,7 +81,7 @@ const Graph g_40_20(40, 20, e_40_20);
  * \ingroup Example
  *
  */
-class IndSet : public MaximizeScript {
+class IndSet : public IntMaximizeScript {
 protected:
   /// %Graph used
   const Graph& g;
@@ -104,7 +104,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  IndSet(bool share, IndSet& s) : MaximizeScript(share,s), g(s.g) {
+  IndSet(bool share, IndSet& s) : IntMaximizeScript(share,s), g(s.g) {
     v.update(*this, share, s.v);
     k.update(*this, share, s.k);
   }
@@ -136,7 +136,7 @@ main(int argc, char* argv[]) {
   opt.size(1);
   opt.iterations(2000);
   opt.parse(argc,argv);
-  MaximizeScript::run<IndSet,BAB,SizeOptions>(opt);
+  IntMaximizeScript::run<IndSet,BAB,SizeOptions>(opt);
   return 0;
 }
 

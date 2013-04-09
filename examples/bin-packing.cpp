@@ -372,7 +372,7 @@ BrancherHandle cdbf(Home home, const IntVarArgs& l, const IntVarArgs& b,
  * \ingroup Example
  *
  */
-class BinPacking : public MinimizeScript {
+class BinPacking : public IntMinimizeScript {
 protected:
   /// Specification
   const Spec spec;
@@ -473,7 +473,7 @@ public:
   }
   /// Constructor for cloning \a s
   BinPacking(bool share, BinPacking& s) 
-    : MinimizeScript(share,s), spec(s.spec) {
+    : IntMinimizeScript(share,s), spec(s.spec) {
     load.update(*this, share, s.load);
     bin.update(*this, share, s.bin);
     bins.update(*this, share, s.bins);
@@ -534,7 +534,7 @@ main(int argc, char* argv[]) {
     std::cerr << "Error: unkown instance" << std::endl;
     return 1;
   }
-  MinimizeScript::run<BinPacking,BAB,InstanceOptions>(opt);
+  IntMinimizeScript::run<BinPacking,BAB,InstanceOptions>(opt);
   return 0;
 }
 

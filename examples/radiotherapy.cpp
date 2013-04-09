@@ -99,7 +99,7 @@ namespace {
  *
  */
 
-class Radiotherapy : public MinimizeScript {
+class Radiotherapy : public IntMinimizeScript {
 private:
   /// Instance data
   const RadiotherapyData rd;
@@ -178,7 +178,7 @@ public:
 
   /// Constructor for cloning \a s
   Radiotherapy(bool share, Radiotherapy& s)
-  : MinimizeScript(share,s), rd(s.rd) {
+  : IntMinimizeScript(share,s), rd(s.rd) {
     beamtime.update(*this, share, s.beamtime);
     N.update(*this, share, s.N);
     K.update(*this, share, s.K);
@@ -355,7 +355,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  MinimizeScript::run<Radiotherapy,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<Radiotherapy,BAB,SizeOptions>(opt);
   return 0;
 }
 
