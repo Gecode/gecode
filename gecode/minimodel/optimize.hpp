@@ -39,22 +39,46 @@ namespace Gecode { namespace MiniModel {
 
   template<IntRelType irt>
   forceinline
-  OptimizeSpace<irt>::OptimizeSpace(void) {}
+  IntOptimizeSpace<irt>::IntOptimizeSpace(void) {}
 
   template<IntRelType irt>
   forceinline
-  OptimizeSpace<irt>::OptimizeSpace(bool share, OptimizeSpace& s)
+  IntOptimizeSpace<irt>::IntOptimizeSpace(bool share, IntOptimizeSpace& s)
     : Space(share,s) {}
 
   template<IntRelType irt>
   void
-  OptimizeSpace<irt>::constrain(const Space& _best) {
-    const OptimizeSpace<irt>* best =
-      dynamic_cast<const OptimizeSpace<irt>*>(&_best);
+  IntOptimizeSpace<irt>::constrain(const Space& _best) {
+    const IntOptimizeSpace<irt>* best =
+      dynamic_cast<const IntOptimizeSpace<irt>*>(&_best);
     if (best == NULL)
-      throw DynamicCastFailed("OptimizeSpace::constrain");
+      throw DynamicCastFailed("IntOptimizeSpace::constrain");
     rel(*this, cost(), irt, best->cost().val());
   }
+
+#ifdef GECODE_HAS_FLOAT_VARS 
+
+  template<FloatRelType frt>
+  forceinline
+  FloatOptimizeSpace<frt>::FloatOptimizeSpace(void) {}
+
+  template<FloatRelType frt>
+  forceinline
+  FloatOptimizeSpace<frt>::FloatOptimizeSpace(bool share, 
+                                              FloatOptimizeSpace& s)
+    : Space(share,s) {}
+
+  template<FloatRelType frt>
+  void
+  FloatOptimizeSpace<frt>::constrain(const Space& _best) {
+    const FloatOptimizeSpace<frt>* best =
+      dynamic_cast<const FloatOptimizeSpace<frt>*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("FloatOptimizeSpace::constrain");
+    rel(*this, cost(), frt, best->cost().val());
+  }
+
+#endif
 
 }}
 

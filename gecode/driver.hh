@@ -652,15 +652,40 @@ namespace Gecode {
    */
   typedef Driver::ScriptBase<Space> Script;
   /**
-   * \brief Base-class for scripts for finding solution of lowest cost
+   * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
    */
   typedef Driver::ScriptBase<MinimizeSpace> MinimizeScript;
   /**
-   * \brief Base-class for scripts for finding solution of highest cost
+   * \brief Base-class for scripts for finding solution of highest integer cost
    * \ingroup TaskDriverScript
    */
   typedef Driver::ScriptBase<MaximizeSpace> MaximizeScript;
+  /**
+   * \brief Base-class for scripts for finding solution of lowest integer cost
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<IntMinimizeSpace> IntMinimizeScript;
+  /**
+   * \brief Base-class for scripts for finding solution of highest integer cost
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<IntMaximizeSpace> IntMaximizeScript;
+
+#ifdef GECODE_HAS_FLOAT_VARS 
+
+  /**
+   * \brief Base-class for scripts for finding solution of lowest float cost
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<FloatMinimizeSpace> FloatMinimizeScript;
+  /**
+   * \brief Base-class for scripts for finding solution of highest float cost
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<FloatMaximizeSpace> FloatMaximizeScript;
+
+#endif
 
 }
 

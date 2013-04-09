@@ -73,6 +73,44 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+Thanks:	Pascal Francq
+[DESCRIPTION]
+Added classes FloatMinimizeScript and FloatMaximizeScript for
+cost-based optimization with a float cost variable.
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Added classes IntMinimizeScript and IntMaximizeScript for
+cost-based optimization with an integer cost variable. While the
+classes MinimizeScript and MaximizeSpcript are still available,
+there use is deprecated and a later release might remove them.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Added classes IntMinimizeSpace and IntMaximizeSpace for
+cost-based optimization with an integer cost variable. While the
+classes MinimizeSpace and MaximizeSpace are still available,
+there use is deprecated and a later release might remove them.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+Thanks:	Pascal Francq
+[DESCRIPTION]
+Added classes FloatMinimizeSpace and FloatMaximizeSpace for
+cost-based optimization with a float cost variable.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor

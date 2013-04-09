@@ -2181,27 +2181,58 @@ namespace Gecode {
   //@{
   namespace MiniModel {
 
-    /// Baseclass for cost-based optimization
+    /// Baseclass for integer-based cost-based optimization
     template<IntRelType irt>
-    class OptimizeSpace : public Space {
+    class IntOptimizeSpace : public Space {
     public:
       /// Default constructor
-      OptimizeSpace(void);
+      IntOptimizeSpace(void);
       /// Constructor for cloning
-      OptimizeSpace(bool share, OptimizeSpace& s);
+      IntOptimizeSpace(bool share, IntOptimizeSpace& s);
       /// Member function constraining according to cost
       virtual void constrain(const Space& best);
       /// Return variable with current cost
       virtual IntVar cost(void) const = 0;
     };
 
+#ifdef GECODE_HAS_FLOAT_VARS 
+
+    /// Baseclass for float-based cost-based optimization
+    template<FloatRelType frt>
+    class FloatOptimizeSpace : public Space {
+    public:
+      /// Default constructor
+      FloatOptimizeSpace(void);
+      /// Constructor for cloning
+      FloatOptimizeSpace(bool share, FloatOptimizeSpace& s);
+      /// Member function constraining according to cost
+      virtual void constrain(const Space& best);
+      /// Return variable with current cost
+      virtual FloatVar cost(void) const = 0;
+    };
+
+#endif
+
   }
 
-  /// Class for minimizing cost
-  typedef MiniModel::OptimizeSpace<IRT_LE> MinimizeSpace;
+  /// Class for minimizing integer cost
+  typedef MiniModel::IntOptimizeSpace<IRT_LE> MinimizeSpace;
+  /// Class for maximizing integer cost
+  typedef MiniModel::IntOptimizeSpace<IRT_GR> MaximizeSpace;
+  /// Class for minimizing integer cost
+  typedef MiniModel::IntOptimizeSpace<IRT_LE> IntMinimizeSpace;
+  /// Class for maximizing integer cost
+  typedef MiniModel::IntOptimizeSpace<IRT_GR> IntMaximizeSpace;
 
-  /// Class for maximizing cost
-  typedef MiniModel::OptimizeSpace<IRT_GR> MaximizeSpace;
+#ifdef GECODE_HAS_FLOAT_VARS 
+
+  /// Class for minimizing float cost
+  typedef MiniModel::FloatOptimizeSpace<FRT_LE> FloatMinimizeSpace;
+  /// Class for maximizing float cost
+  typedef MiniModel::FloatOptimizeSpace<FRT_GR> FloatMaximizeSpace;
+
+#endif
+
   //@}
 
 }
