@@ -74,6 +74,15 @@ Bla!
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed the random search strategies to all use the same random number
+generator instead of different generators all initialised with the same
+seed (and therefore all producing the same sequences).
+
+[ENTRY]
+Module: flatzinc
 What:   new
 Rank:   minor
 Thanks: Tias Guns
