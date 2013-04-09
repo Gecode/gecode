@@ -73,6 +73,15 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+Thanks: Tias Guns
+[DESCRIPTION]
+Added int2float constraint which was missing in the FlatZinc
+interpreter.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
