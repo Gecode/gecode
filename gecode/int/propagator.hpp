@@ -67,7 +67,7 @@ namespace Gecode { namespace Int {
     ReUnaryPropagator(Space& home, bool share, Propagator& p,
                       View x0, CtrlView b);
     /// Constructor for creation
-    ReUnaryPropagator(Space& home, View x0, CtrlView b);
+    ReUnaryPropagator(Home home, View x0, CtrlView b);
   public:
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int {
     ReBinaryPropagator(Space& home, bool share, Propagator& p,
                        View x0, View x1, CtrlView b);
     /// Constructor for creation
-    ReBinaryPropagator(Space& home, View x0, View x1, CtrlView b);
+    ReBinaryPropagator(Home home, View x0, View x1, CtrlView b);
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int {
    *
    */
   template<class View0, PropCond pc0, class View1, PropCond pc1,
-            class CtrlView>
+           class CtrlView>
   class ReMixBinaryPropagator : public Propagator {
   protected:
     /// View of type \a View0
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int {
     /// Constructor for cloning \a p
     ReMixBinaryPropagator(Space& home, bool share, ReMixBinaryPropagator& p);
     /// Constructor for creation
-    ReMixBinaryPropagator(Space& home, View0 x0, View1 x1, CtrlView b);
+    ReMixBinaryPropagator(Home home, View0 x0, View1 x1, CtrlView b);
     /// Constructor for rewriting \a p during cloning
     ReMixBinaryPropagator(Space& home, bool share, Propagator& p,
                           View0 x0, View1 x1, CtrlView b);
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int {
    */
   template<class View, PropCond pc, class CtrlView>
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space& home, View y0, CtrlView b0)
+  (Home home, View y0, CtrlView b0)
     : Propagator(home), x0(y0), b(b0) {
     if (pc != PC_GEN_NONE)
       x0.subscribe(home,*this,pc);
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int {
    */
   template<class View, PropCond pc, class CtrlView>
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space& home, View y0, View y1, CtrlView b1)
+  (Home home, View y0, View y1, CtrlView b1)
     : Propagator(home), x0(y0), x1(y1), b(b1) {
     if (pc != PC_GEN_NONE) {
       x0.subscribe(home,*this,pc);
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int {
   template<class View0, PropCond pc0, class View1, PropCond pc1,
             class CtrlView>
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
-  ::ReMixBinaryPropagator(Space& home, View0 y0, View1 y1, CtrlView b1)
+  ::ReMixBinaryPropagator(Home home, View0 y0, View1 y1, CtrlView b1)
     : Propagator(home), x0(y0), x1(y1), b(b1) {
     if (pc0 != PC_GEN_NONE)
       x0.subscribe(home,*this,pc0);
