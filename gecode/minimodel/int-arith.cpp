@@ -54,7 +54,8 @@ namespace Gecode { namespace MiniModel {
       ANLE_SQRT,  ///< Square root expression
       ANLE_POW,   ///< Pow expression
       ANLE_NROOT, ///< Nroot expression
-      ANLE_ELMNT  ///< Element expression
+      ANLE_ELMNT, ///< Element expression
+      ANLE_ITE    ///< If-then-else expression
     } t;
     /// Expressions
     LinIntExpr* a;
@@ -62,12 +63,17 @@ namespace Gecode { namespace MiniModel {
     int n;
     /// Integer argument (used in nroot for example)
     int aInt;
+    /// Boolean expression argument (used in ite for example)
+    BoolExpr b;
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0)
       : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0) {}
     /// Constructor
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, int a0)
       : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), aInt(a0) {}
+    /// Constructor
+    ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
+      : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), b(b0) {}
     /// Destructor
     ~ArithNonLinIntExpr(void) { 
       heap.free<LinIntExpr>(a,n); 
@@ -248,6 +254,16 @@ namespace Gecode { namespace MiniModel {
               element(home, x, z, y, icl);
             }
           }
+        }
+        break;
+      case ANLE_ITE:
+        {
+          assert(n == 2);
+          BoolVar c = b.expr(home, icl); 
+          IntVar x0 = a[0].post(home, icl);
+          IntVar x1 = a[1].post(home, icl);
+          y = result(home,ret);
+          ite(home, c, x0, x1, y, icl);
         }
         break;
       default:
@@ -465,6 +481,16 @@ namespace Gecode {
     for (int i=x.size(); i--;)
       ae->a[i] = x[i];
     ae->a[x.size()] = e;
+    return LinIntExpr(ae);
+  }
+
+  LinIntExpr
+  ite(const BoolExpr& b, const LinIntExpr& e0, const LinIntExpr& e1) {
+    using namespace MiniModel;
+    ArithNonLinIntExpr* ae =
+      new ArithNonLinIntExpr(ArithNonLinIntExpr::ANLE_ITE,2,b);
+    ae->a[0] = e0;
+    ae->a[1] = e1;
     return LinIntExpr(ae);
   }
 

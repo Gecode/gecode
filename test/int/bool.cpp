@@ -441,12 +441,12 @@ namespace Test { namespace Int {
        }
      };
 
-     /// %Test for if-the-else-constraint with integer variables
-     class IntIte : public Test {
+     /// %Test for if-the-else-constraint
+     class ITE : public Test {
      public:
        /// Construct and register test
-       IntIte(Gecode::IntConLevel icl)
-         : Test("ITE::Int::"+str(icl),4,-4,4,false,icl) {}
+       ITE(Gecode::IntConLevel icl)
+         : Test("ITE::"+str(icl),4,-4,4,false,icl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if ((x[0] < 0) || (x[0] > 1))
@@ -459,28 +459,10 @@ namespace Test { namespace Int {
        /// Post constraint
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         ite(home,channel(home,x[0]),x[1],x[2],x[3]);
-       }
-     };
-
-     /// %Test for if-the-else-constraint with Boolean variables
-     class BoolIte : public Test {
-     public:
-       /// Construct and register test
-       BoolIte(void)
-         : Test("ITE::Bool",4,0,1) {}
-       /// Check whether \a x is solution
-       virtual bool solution(const Assignment& x) const {
-         if (x[0] == 1)
-           return x[1] == x[3];
+         if (Base::rand(2) != 0)
+           ite(home,channel(home,x[0]),x[1],x[2],x[3]);
          else
-           return x[2] == x[3];
-       }
-       /// Post constraint
-       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         using namespace Gecode;
-         ite(home,channel(home,x[0]),
-             channel(home,x[1]),channel(home,x[2]),channel(home,x[3]));
+           rel(home, ite(channel(home,x[0]),x[1],x[2]) == x[3]);
        }
      };
 
@@ -534,9 +516,8 @@ namespace Test { namespace Int {
      };
 
      Create c;
-     IntIte itebnd(Gecode::ICL_BND);
-     IntIte itedom(Gecode::ICL_DOM);
-     BoolIte bite;
+     ITE itebnd(Gecode::ICL_BND);
+     ITE itedom(Gecode::ICL_DOM);
 
      //@}
 

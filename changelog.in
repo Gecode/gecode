@@ -77,8 +77,7 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added if-then-else constraint (called ite) for integer and
-Boolean variables.
+Added if-then-else constraint (called ite) for integer variables.
 
 [ENTRY]
 Module: driver

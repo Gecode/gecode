@@ -919,14 +919,6 @@ namespace Gecode {
     }
   }
 
-  void
-  ite(Home home, BoolVar b, BoolVar x, BoolVar y, BoolVar z,
-      IntConLevel) {
-    using namespace Int;
-    if (home.failed()) return;
-    GECODE_ES_FAIL(Bool::IteBnd<BoolView>::post(home,b,x,y,z));
-  }
-
 }
 
 // STATISTICS: int-post

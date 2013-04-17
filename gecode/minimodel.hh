@@ -1518,6 +1518,9 @@ namespace Gecode {
   /// \brief Return expression for \f$x[y]\f$
   GECODE_MINIMODEL_EXPORT LinIntExpr
   element(const IntArgs& x, const LinIntExpr& y);
+  /// \brief Return expression for if-then-else \f$b?x:y\f$
+  GECODE_MINIMODEL_EXPORT LinIntExpr
+  ite(const BoolExpr& b, const LinIntExpr& x, const LinIntExpr& y);
   //@}
 
 #ifdef GECODE_HAS_FLOAT_VARS
