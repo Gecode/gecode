@@ -1272,6 +1272,24 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
          int n, IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   *
+   * \ingroup TaskModelIntRelBool
+   */
+  GECODE_INT_EXPORT void
+  ite(Home home, BoolVar b, IntVar x, IntVar y, IntVar z,
+      IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   *
+   * \ingroup TaskModelIntRelBool
+   */
+  GECODE_INT_EXPORT void
+  ite(Home home, BoolVar b, BoolVar x, BoolVar y, BoolVar z,
+      IntConLevel icl=ICL_DEF);
 
 
   /**

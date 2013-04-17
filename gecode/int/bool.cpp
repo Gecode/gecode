@@ -907,6 +907,26 @@ namespace Gecode {
     }
   }
 
+  void
+  ite(Home home, BoolVar b, IntVar x, IntVar y, IntVar z,
+      IntConLevel icl) {
+    using namespace Int;
+    if (home.failed()) return;
+    if (icl == ICL_BND) {
+      GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
+    } else {
+      GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
+    }
+  }
+
+  void
+  ite(Home home, BoolVar b, BoolVar x, BoolVar y, BoolVar z,
+      IntConLevel) {
+    using namespace Int;
+    if (home.failed()) return;
+    GECODE_ES_FAIL(Bool::IteBnd<BoolView>::post(home,b,x,y,z));
+  }
+
 }
 
 // STATISTICS: int-post

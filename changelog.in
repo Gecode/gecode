@@ -73,6 +73,14 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) for integer and
+Boolean variables.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor
