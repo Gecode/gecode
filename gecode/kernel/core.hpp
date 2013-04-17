@@ -1411,6 +1411,9 @@ namespace Gecode {
     void afc_decay(double d);
     /// Return AFC decay factor
     double afc_decay(void) const;
+    /// Reset AFC to \a a
+    GECODE_KERNEL_EXPORT
+    void afc_set(double a);
   public:
     /**
      * \brief Default constructor

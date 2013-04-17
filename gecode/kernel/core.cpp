@@ -571,6 +571,13 @@ namespace Gecode {
     gafc.decay(d);
   }
 
+  void
+  Space::afc_set(double a) {
+    afc_enable();
+    for (Propagators p(*this); p(); ++p)
+      gafc.set(p.propagator().gafc,a);
+  }
+
 
 }
 

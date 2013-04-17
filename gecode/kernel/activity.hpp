@@ -112,6 +112,9 @@ namespace Gecode {
     void init(Home home, ViewArray<View>& x, double d);
     /// Test whether already initialized
     bool initialized(void) const;
+    /// Set activity to \a a
+    GECODE_KERNEL_EXPORT
+    void set(Space& home, double a=0.0);
     /// Default (empty) activity information
     GECODE_KERNEL_EXPORT static const Activity def;
     //@}

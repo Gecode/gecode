@@ -97,9 +97,15 @@ namespace Gecode {
   }
 
   void
+  Activity::set(Space&, double a) {
+    acquire();
+    for (int i=storage->n; i--; )
+      storage->a[i] = a;
+    release();
+  }
+
+  void
   Activity::decay(Space&, double d) {
-    if ((d <= 0.0) || (d > 1.0))
-      throw IllegalDecay("Activity");
     acquire();
     storage->d = d;
     release();

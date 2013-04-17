@@ -73,6 +73,13 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Both AFC and Activity can be changed by a set() function.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

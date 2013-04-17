@@ -85,6 +85,8 @@ namespace Gecode {
       double decay(void) const;
       /// Increment counter and perform decay
       void inc(Counter& c);
+      /// Set failure count to \a a
+      void set(Counter& c, double a);
       /// Return counter value 
       double val(Counter& c);
       /// Allocate memory from heap
@@ -143,6 +145,8 @@ namespace Gecode {
     double decay(void) const;
     /// Increment failure count
     void fail(Counter& c);
+    /// Set failure count to \a a
+    void set(Counter& c, double a);
     /// Return failure count
     double afc(Counter& c);
     /// Allocate new propagator info
@@ -202,6 +206,10 @@ namespace Gecode {
     if (d != 1.0)
       decay(c);
     return c.c;
+  }
+  forceinline void
+  GlobalAFC::DecayManager::set(Counter& c, double a) {
+    c.c = a;
   }
   forceinline void*
   GlobalAFC::DecayManager::operator new(size_t s) {
@@ -310,6 +318,14 @@ namespace Gecode {
     Support::Mutex& m = *object()->mutex;
     m.acquire();
     object()->decay->inc(c);
+    m.release();
+  }
+
+  forceinline void
+  GlobalAFC::set(Counter& c, double a) {
+    Support::Mutex& m = *object()->mutex;
+    m.acquire();
+    object()->decay->set(c,a);
     m.release();
   }
 
