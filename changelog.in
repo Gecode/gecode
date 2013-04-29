@@ -73,6 +73,15 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Boolean expressions could lead to a segfault when initialized
+with default constructor.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

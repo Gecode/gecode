@@ -87,9 +87,12 @@ namespace Gecode {
    * Operations for nodes
    *
    */
-  BoolExpr::Node::Node(void) : use(1), m(NULL) {}
+  BoolExpr::Node::Node(void) 
+    : use(1), l(NULL), r(NULL), m(NULL) {}
 
-  BoolExpr::Node::~Node(void) { delete m; }
+  BoolExpr::Node::~Node(void) {    
+    delete m;  
+  }
 
   void*
   BoolExpr::Node::operator new(size_t size) {
