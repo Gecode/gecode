@@ -915,7 +915,7 @@ namespace Gecode {
     if (icl == ICL_BND) {
       GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
     } else {
-      GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
+      GECODE_ES_FAIL(Bool::IteDom<IntView>::post(home,b,x,y,z));
     }
   }
 

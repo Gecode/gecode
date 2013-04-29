@@ -260,9 +260,9 @@ namespace Gecode { namespace Int { namespace Bool {
     Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
     
     if (!same(x0,x2) && !same(x1,x2))
-      GECODE_ME_CHECK(x2.inter_r(u,false));
+      GECODE_ME_CHECK(x2.inter_r(home,u,false));
     else
-      GECODE_ME_CHECK(x2.inter_r(u,true));
+      GECODE_ME_CHECK(x2.inter_r(home,u,true));
 
     return ES_FIX;
   }
