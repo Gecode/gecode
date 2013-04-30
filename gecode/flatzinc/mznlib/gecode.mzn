@@ -48,6 +48,10 @@ annotation activity_max;
 annotation size_activity_max;
 annotation int_assign(array[int] of var int: x, ann:a);
 
+annotation int_default_search(ann: varsel, ann: valsel);
+annotation bool_default_search(ann: varsel, ann: valsel);
+annotation set_default_search(ann: varsel, ann: valsel);
+annotation float_default_search(ann: varsel, ann: valsel);
 
 % i in z <-> forall (j in x) (i in y[j])
 predicate gecode_array_set_element_intersect(var set of int: x,
