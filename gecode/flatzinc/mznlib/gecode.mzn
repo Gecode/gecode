@@ -39,13 +39,13 @@
 
 % Additional search annotations
 annotation afc_min;
-annotation size_afc_min;
+annotation afc_size_min;
 annotation afc_max;
-annotation size_afc_max;
+annotation afc_size_max;
 annotation activity_min;
-annotation size_activity_min;
+annotation activity_size_min;
 annotation activity_max;
-annotation size_activity_max;
+annotation activity_size_max;
 annotation int_assign(array[int] of var int: x, ann:a);
 
 annotation int_default_search(ann: varsel, ann: valsel);
