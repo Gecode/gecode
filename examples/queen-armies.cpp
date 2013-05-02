@@ -243,6 +243,14 @@ public:
         ? ES_FAILED
         : ES_OK;
     }
+    /// Print explanation
+    virtual void print(const Space&, const Gecode::Choice& _c, 
+                       unsigned int a,
+                       std::ostream& o) const {
+      const Choice& c = static_cast<const Choice&>(_c);
+      bool val = (a == 0) ? c.val : !c.val;
+      o << "w[" << c.pos << "] = " << val;
+    }
     /// Copy brancher during cloning
     virtual Actor* copy(Space& home, bool share) {
       return new (home) QueenBranch(home, share, *this);

@@ -304,6 +304,9 @@ namespace Gecode { namespace Set { namespace Branch {
     ValCommitInc(Space& home, bool shared, ValCommitInc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, SetView x, int i, int n,
+               std::ostream& o) const;
   };
 
   /**
@@ -320,6 +323,9 @@ namespace Gecode { namespace Set { namespace Branch {
     ValCommitExc(Space& home, bool shared, ValCommitExc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, SetView x, int i, int n,
+               std::ostream& o) const;
   };
 
 }}}

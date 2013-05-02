@@ -104,7 +104,7 @@ namespace Gecode { namespace FlatZinc {
       bool fail;
       /// Initialize choice for brancher \a b
       Choice(const Brancher& b, bool fail0)
-      : Gecode::Choice(b,1), fail(fail0) {}
+        : Gecode::Choice(b,1), fail(fail0) {}
       /// Report size occupied
       virtual size_t size(void) const {
         return sizeof(Choice);
@@ -179,6 +179,14 @@ namespace Gecode { namespace FlatZinc {
     /// Perform commit for choice \a c
     virtual ExecStatus commit(Space&, const Gecode::Choice& c, unsigned int) {
       return static_cast<const Choice&>(c).fail ? ES_FAILED : ES_OK;
+    }
+    /// Print explanation
+    virtual void print(const Space&, const Gecode::Choice& c, 
+                       unsigned int,
+                       std::ostream& o) const {
+      o << "FlatZinc(" 
+        << (static_cast<const Choice&>(c).fail ? "fail" : "ok")
+        << ")";
     }
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {

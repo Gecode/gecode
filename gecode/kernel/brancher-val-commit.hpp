@@ -85,6 +85,9 @@ namespace Gecode {
     ValCommitFunction(Space& home, bool shared, ValCommitFunction& vc);
     /// Perform user-defined commit
     ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, View x, int i, 
+               const Val& n, std::ostream& o) const;
   };
   //@}
 
@@ -124,6 +127,13 @@ namespace Gecode {
     typename View::VarType y(x.varimp());
     c(home,a,y,i,n);
     return home.failed() ? ES_FAILED : ES_OK;
+  }
+  template<class View>
+  forceinline void
+  ValCommitFunction<View>::print(const Space& home, unsigned int, 
+                                 View, int i, const Val&,
+                                 std::ostream& o) const {
+    o << "branch[" << i << "] is user-defined.";
   }
 
 }

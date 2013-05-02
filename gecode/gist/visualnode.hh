@@ -217,7 +217,8 @@ namespace Gecode { namespace Gist {
     VisualNode* findNode(const NodeAllocator& na, int x, int y);
 
     /// Return string that is used as a tool tip
-    std::string toolTip(BestNode* curBest, int c_d, int a_d);
+    std::string toolTip(NodeAllocator& na, BestNode* curBest,
+                        int c_d, int a_d);
 
     /// Return size information
     size_t size(void) const;

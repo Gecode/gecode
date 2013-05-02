@@ -41,6 +41,9 @@
 #include <gecode/search.hh>
 #include <stack>
 
+#include <QString>
+#include <QVector>
+
 namespace Gecode { namespace Gist {
 
   /// \brief Representation of a branch in the search tree
@@ -298,6 +301,7 @@ namespace Gecode { namespace Gist {
     if (isUndetermined()) {
       stats.undetermined--;
       acquireSpace(na, curBest, c_d, a_d);
+      QVector<QString> labels;
       switch (static_cast<Space*>(Support::funmark(copy))->status(stats)) {
       case SS_FAILED:
         {
@@ -333,7 +337,8 @@ namespace Gecode { namespace Gist {
         break;
       case SS_BRANCH:
         {
-          choice = static_cast<Space*>(Support::funmark(copy))->choice();
+          Space* s = static_cast<Space*>(Support::funmark(copy));
+          choice = s->choice();
           kids = choice->alternatives();
           setHasOpenChildren(true);
           if (dynamic_cast<const StopChoice*>(choice)) {
@@ -343,11 +348,19 @@ namespace Gecode { namespace Gist {
             stats.choices++;
           }
           stats.undetermined += kids;
+          for (int i=0; i<kids; i++) {
+            std::ostringstream oss;
+            s->print(*choice,i,oss);
+            labels.push_back(QString(oss.str().c_str()));
+          }
         }
         break;
       }
       static_cast<VisualNode*>(this)->changedStatus(na);
       setNumberOfChildren(kids, na);
+      for (int i=0; i<kids; i++) {
+        na.setLabel(getChild(na,i),labels[i]);
+      }
     } else {
       kids = getNumberOfChildren();
     }

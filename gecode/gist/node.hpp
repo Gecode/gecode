@@ -118,6 +118,18 @@ namespace Gecode { namespace Gist {
     return _bab;
   }
   
+  template<class T>
+  void
+  NodeAllocatorBase<T>::setLabel(T* n, const QString& l) {
+    labels[n] = l;
+  }
+
+  template<class T>
+  QString
+  NodeAllocatorBase<T>::getLabel(T* n) const {
+    return labels.value(n);
+  }
+  
   forceinline unsigned int
   Node::getTag(void) const {
     return static_cast<unsigned int>

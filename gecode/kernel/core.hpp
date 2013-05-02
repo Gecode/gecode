@@ -45,7 +45,9 @@
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
 #include <iostream>
+
 namespace Gecode {
 
   class Space;
@@ -1055,6 +1057,15 @@ namespace Gecode {
                               unsigned int a) = 0;
     /// Return unsigned brancher id
     unsigned int id(void) const;
+    /**
+     * \brief Print branch for choice \a c and alternative \a a
+     *
+     * Prints an explanation of the alternative \a a of choice \a c
+     * on the stream \a o.
+     *
+     */
+    virtual void print(const Space& home, const Choice& c, unsigned int a,
+                       std::ostream& o) const = 0;
     //@}
   };
 
@@ -1617,6 +1628,23 @@ namespace Gecode {
      */
     void commit(const Choice& c, unsigned int a,
                 CommitStatistics& stat=unused_commit);
+
+    /**
+     * \brief Print branch for choice \a c and alternative \a a
+     *
+     * Prints an explanation of the alternative \a a of choice \a c
+     * on the stream \a o.
+     *
+     * Explanation throws the following exceptions:
+     *  - SpaceNoBrancher, if the space has no current brancher (it is
+     *    already solved).
+     *  - SpaceIllegalAlternative, if \a a is not smaller than the number
+     *    of alternatives supported by the choice \a c.
+     *
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    void print(const Choice& c, unsigned int a, std::ostream& o) const;
 
     /**
      * \brief Notice actor property

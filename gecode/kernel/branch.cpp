@@ -87,6 +87,12 @@ namespace Gecode {
       f(home);
       return home.failed() ? ES_FAILED : ES_OK;
     }
+    /// Print explanation
+    virtual void
+    print(const Space& home, const Choice&, unsigned int, 
+          std::ostream& o) const {
+      o << "FunctionBranch(" << f << ")";
+    }
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {
       return new (home) FunctionBranch(home,share,*this);

@@ -60,6 +60,11 @@ namespace Gecode { namespace Set { namespace LDSB {
   template<class View, int n, class Val, unsigned int a>
   class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a> {
   public:
+    /// Function type for printing variable and value selection
+    typedef void (*VarValPrint)(const Space& home, unsigned int a,
+                                typename View::VarType x, int i,
+                                const Val& n,
+                                std::ostream& o);
     /// Position of previous variable that was branched on
     int _prevPos;
     /// Number of non-value symmetries
@@ -91,7 +96,8 @@ namespace Gecode { namespace Set { namespace LDSB {
                     ViewSel<View>* vs[n], 
                     ValSelCommitBase<View,Val>* vsc,
                     SymmetryImp<View>** syms, int nsyms,
-                    SetBranchFilter bf);
+                    SetBranchFilter bf,
+                    VarValPrint vvp);
     /// Return choice
     virtual const Choice* choice(Space& home);
     /// Perform commit for choice \a c and alternative \a b
@@ -105,7 +111,8 @@ namespace Gecode { namespace Set { namespace LDSB {
                                ValSelCommitBase<View,Val>* vsc,
                                SymmetryImp<View>** _syms,
                                int _nsyms,
-                               SetBranchFilter bf);
+                               SetBranchFilter bf,
+                               VarValPrint vvp);
 
     /**
      * \brief Part one of the update phase

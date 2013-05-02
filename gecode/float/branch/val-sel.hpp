@@ -40,49 +40,58 @@
 namespace Gecode {
 
   forceinline Archive&
-  operator <<(Archive& e, std::pair<float,bool> pdb) {
-    return e << pdb.first << pdb.second;
-  }
-  forceinline Archive&
-  operator <<(Archive& e, std::pair<double,bool> pdb) {
-    return e << pdb.first << pdb.second;
+  operator <<(Archive& e, FloatVal n) {
+    return e << n.min() << n.max();
   }
 
   forceinline Archive&
-  operator >>(Archive& e, std::pair<float,bool>& pdb) {
-    return e >> pdb.first >> pdb.second;
+  operator >>(Archive& e, FloatVal& n) {
+    FloatNum min, max;
+    Archive& r = e >> min >> max;
+    FloatVal v(min,max); n=v;
+    return r;
   }
-  forceinline Archive&
-  operator >>(Archive& e, std::pair<double,bool>& pdb) {
-    return e >> pdb.first >> pdb.second;
-  }
+
 }
 
 namespace Gecode { namespace Float { namespace Branch {
 
   forceinline
-  ValSelMed::ValSelMed(Space& home, const ValBranch& vb) 
-    : ValSel<FloatView,FloatNum>(home,vb) {}
+  ValSelLq::ValSelLq(Space& home, const ValBranch& vb) 
+    : ValSel<FloatView,FloatVal>(home,vb) {}
   forceinline
-  ValSelMed::ValSelMed(Space& home, bool shared, ValSelMed& vs)
-    : ValSel<FloatView,FloatNum>(home,shared,vs) {}
-  forceinline FloatNum
-  ValSelMed::val(const Space&, FloatView x, int) {
-    return x.med();
+  ValSelLq::ValSelLq(Space& home, bool shared, ValSelLq& vs)
+    : ValSel<FloatView,FloatVal>(home,shared,vs) {}
+  forceinline FloatVal
+  ValSelLq::val(const Space&, FloatView x, int) {
+    return FloatVal(Limits::min,x.med());
+  }
+
+  forceinline
+  ValSelGq::ValSelGq(Space& home, const ValBranch& vb) 
+    : ValSel<FloatView,FloatVal>(home,vb) {}
+  forceinline
+  ValSelGq::ValSelGq(Space& home, bool shared, ValSelGq& vs)
+    : ValSel<FloatView,FloatVal>(home,shared,vs) {}
+  forceinline FloatVal
+  ValSelGq::val(const Space&, FloatView x, int) {
+    return FloatVal(x.med(),Limits::max);
   }
 
   forceinline
   ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb) 
-    : ValSel<FloatView,std::pair<FloatNum,bool> >(home,vb), r(vb.rnd()) {}
+    : ValSel<FloatView,FloatVal>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, bool shared, ValSelRnd& vs)
-    : ValSel<FloatView,std::pair<FloatNum,bool> >(home,shared,vs) {
+    : ValSel<FloatView,FloatVal>(home,shared,vs) {
     r.update(home,shared,vs.r);
   }
-  forceinline std::pair<FloatNum,bool>
+  forceinline FloatVal
   ValSelRnd::val(const Space&, FloatView x, int) {
-    unsigned int p = r(2U);
-    return std::pair<FloatNum,bool>(x.med(),(p == 0U));
+    if (r(2U) == 0U)
+      return FloatVal(Limits::min,x.med());
+    else
+      return FloatVal(x.med(),Limits::max);
   }
   forceinline bool
   ValSelRnd::notice(void) const {

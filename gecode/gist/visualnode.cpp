@@ -236,7 +236,7 @@ namespace Gecode { namespace Gist {
   }
 
   std::string
-  VisualNode::toolTip(BestNode*, int, int) {
+  VisualNode::toolTip(NodeAllocator&, BestNode*, int, int) {
     return "";
   }
 

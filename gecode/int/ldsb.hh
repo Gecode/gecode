@@ -342,6 +342,11 @@ namespace Gecode { namespace Int { namespace LDSB {
     // Position of variable that last choice was created for
     int _prevPos;
   protected:
+    /// Function type for printing variable and value selection
+    typedef void (*VarValPrint)(const Space& home, unsigned int a,
+                                typename View::VarType x, int i,
+                                const Val& n,
+                                std::ostream& o);
     /// Constructor for cloning \a b
     LDSBBrancher(Space& home, bool share, LDSBBrancher& b);
     /// Constructor for creation
@@ -350,7 +355,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                  ViewSel<View>* vs[n], 
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
-                 BranchFilter bf);
+                 BranchFilter bf,
+                 VarValPrint vvp);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -369,7 +375,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                                ValSelCommitBase<View,Val>* vsc,
                                SymmetryImp<View>** syms,
                                int nsyms,
-                               BranchFilter bf);
+                               BranchFilter bf,
+                               VarValPrint vvp);
   };
 
   /// Exclude value \v from variable view \x

@@ -95,22 +95,23 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   ViewValuesBrancher<n,min>::
   ViewValuesBrancher(Home home, ViewArray<IntView>& x,
-                     ViewSel<IntView>* vs[n], BranchFilter bf)
-    : ViewBrancher<IntView,n>(home,x,vs,bf) {}
+                     ViewSel<IntView>* vs[n], 
+                     BranchFilter bf, IntVarValPrint vvp0)
+    : ViewBrancher<IntView,n>(home,x,vs,bf), vvp(vvp0) {}
 
   template<int n, bool min>
   BrancherHandle
   ViewValuesBrancher<n,min>::post(Home home, ViewArray<IntView>& x, 
                                   ViewSel<IntView>* vs[n],
-                                  BranchFilter bf) {
-    return *new (home) ViewValuesBrancher<n,min>(home,x,vs,bf);
+                                  BranchFilter bf, IntVarValPrint vvp) {
+    return *new (home) ViewValuesBrancher<n,min>(home,x,vs,bf,vvp);
   }
 
   template<int n, bool min>
   forceinline
   ViewValuesBrancher<n,min>::
   ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b)
-    : ViewBrancher<IntView,n>(home,shared,b) {}
+    : ViewBrancher<IntView,n>(home,shared,b), vvp(b.vvp) {}
 
   template<int n, bool min>
   Actor*
@@ -145,6 +146,21 @@ namespace Gecode { namespace Int { namespace Branch {
     IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     return me_failed(x.eq(home,pvc.val(b))) ? ES_FAILED : ES_OK;
+  }
+
+  template<int n, bool min>
+  void
+  ViewValuesBrancher<n,min>::print(const Space& home, const Choice& c, 
+                                   unsigned int a, std::ostream& o) const {
+    const PosValuesChoice& pvc
+      = static_cast<const PosValuesChoice&>(c);
+    IntVar x(ViewBrancher<IntView,n>::view(pvc.pos()).varimp());
+    unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
+    int nn = pvc.val(b);
+    if (vvp != NULL)
+      vvp(home,a,x,pvc.pos().pos,nn,o);
+    else
+      o << "branch[" << pvc.pos().pos << "] = " << nn;
   }
 
 }}}

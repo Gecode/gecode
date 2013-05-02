@@ -73,6 +73,52 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: gist
+What:   new
+Rank:   major
+[DESCRIPTION]
+Gist now can show information on the alternatives in a search tree.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Random value selection for float branchings was not declared with
+the right types.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Set branchings now take an optional argument for a
+user-defined print function. See MPG for details.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   major
+[DESCRIPTION]
+Set branchings now take an optional argument for a
+user-defined print function. See MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Integer and Boolean branchings now take an optional argument for a
+user-defined print function. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Branchers now support a print() member function.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor

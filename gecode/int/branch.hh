@@ -443,6 +443,9 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitEq(Space& home, bool shared, ValCommitEq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, View x, int i, int n,
+               std::ostream& o) const;
   };
 
   /**
@@ -460,6 +463,9 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitLq(Space& home, bool shared, ValCommitLq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, View x, int i, int n,
+               std::ostream& o) const;
   };
 
   /**
@@ -477,6 +483,9 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGq(Space& home, bool shared, ValCommitGq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, View x, int i, int n,
+               std::ostream& o) const;
   };
 
   /**
@@ -494,6 +503,9 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGr(Space& home, bool shared, ValCommitGr& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, View x, int i, int n,
+               std::ostream& o) const;
   };
 
 }}}
@@ -535,11 +547,14 @@ namespace Gecode { namespace Int { namespace Branch {
     typedef typename ViewBrancher<IntView,n>::BranchFilter BranchFilter;
   protected:
     using ViewBrancher<IntView,n>::x;
+    /// Explanation function
+    IntVarValPrint vvp;
     /// Constructor for cloning \a b
     ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b);
     /// Constructor for creation
     ViewValuesBrancher(Home home, ViewArray<IntView>& x,
-                       ViewSel<IntView>* vs[n], BranchFilter bf);
+                       ViewSel<IntView>* vs[n], 
+                       BranchFilter bf, IntVarValPrint vvp);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -547,11 +562,21 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
+    /**
+     * \brief Print branch for choice \a c and alternative \a a
+     *
+     * Prints an explanation of the alternative \a a of choice \a c
+     * on the stream \a o.
+     *
+     */
+    virtual void print(const Space& home, const Choice& c, unsigned int a,
+                       std::ostream& o) const;
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Constructor for creation
     static BrancherHandle post(Home home, ViewArray<IntView>& x,
-                               ViewSel<IntView>* vs[n], BranchFilter bf);
+                               ViewSel<IntView>* vs[n], 
+                               BranchFilter bf, IntVarValPrint vvp);
   };
 
 }}}

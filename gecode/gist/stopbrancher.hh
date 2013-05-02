@@ -69,6 +69,10 @@ namespace Gecode { namespace Gist {
     virtual Choice* choice(const Space& home, Archive&);
     /// Perform commit for choice \a _c and alternative \a a
     virtual ExecStatus commit(Space&, const Choice&, unsigned int);
+    /// Print explanation
+    virtual void print(const Space& home, const Gecode::Choice& c, 
+                       unsigned int,
+                       std::ostream& o) const;
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share);
     /// Post brancher

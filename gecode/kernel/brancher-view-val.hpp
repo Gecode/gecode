@@ -77,6 +77,13 @@ namespace Gecode {
     using ViewBrancher<View,n>::x;
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
+    /// Function type for print variable and value selection
+    typedef void (*VarValPrint)(const Space& home, unsigned int a,
+                                typename View::VarType x, int i,
+                                const Val& n,
+                                std::ostream& o);
+    /// Print function
+    VarValPrint vvp;
     /// Constructor for cloning \a b
     ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
     /// Constructor for creation
@@ -84,7 +91,8 @@ namespace Gecode {
                     ViewArray<View>& x,
                     ViewSel<View>* vs[n], 
                     ValSelCommitBase<View,Val>* vsc,
-                    BranchFilter bf);
+                    BranchFilter bf,
+                    VarValPrint vvp);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -92,6 +100,15 @@ namespace Gecode {
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+    /**
+     * \brief Print branch for choice \a c and alternative \a b
+     *
+     * Prints an explanation of the alternative \a b of choice \a c
+     * on the stream \a o.
+     *
+     */
+    virtual void print(const Space& home, const Choice& c, unsigned int b,
+                       std::ostream& o) const;
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Delete brancher and return its size
@@ -101,7 +118,8 @@ namespace Gecode {
                                ViewArray<View>& x,
                                ViewSel<View>* vs[n], 
                                ValSelCommitBase<View,Val>* vsc, 
-                               BranchFilter bf);
+                               BranchFilter bf,
+                               VarValPrint vvp);
   };
   //@}
 
@@ -148,8 +166,9 @@ namespace Gecode {
                   ViewArray<View>& x,
                   ViewSel<View>* vs[n], 
                   ValSelCommitBase<View,Val>* vsc0,
-                  BranchFilter bf)
-    : ViewBrancher<View,n>(home,x,vs,bf), vsc(vsc0) {
+                  BranchFilter bf,
+                  VarValPrint vvp0)
+    : ViewBrancher<View,n>(home,x,vs,bf), vsc(vsc0), vvp(vvp0) {
     if (vsc->notice()) {
       for (int i=0; i<n; i++)
         if (vs[i]->notice())
@@ -164,8 +183,9 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
-       BranchFilter bf) {
-    return *new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf);
+       BranchFilter bf,
+       VarValPrint vvp) {
+    return *new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf,vvp);
   }
 
   template<class View, int n, class Val, unsigned int a>
@@ -173,7 +193,7 @@ namespace Gecode {
   ViewValBrancher<View,n,Val,a>::
   ViewValBrancher(Space& home, bool shared, ViewValBrancher<View,n,Val,a>& b)
     : ViewBrancher<View,n>(home,shared,b), 
-      vsc(b.vsc->copy(home,shared)) {}
+      vsc(b.vsc->copy(home,shared)), vvp(b.vvp) {}
   
   template<class View, int n, class Val, unsigned int a>
   Actor*
@@ -209,6 +229,21 @@ namespace Gecode {
                                  pvc.pos().pos,
                                  pvc.val())) 
       ? ES_FAILED : ES_OK;
+  }
+
+  template<class View, int n, class Val, unsigned int a>
+  void
+  ViewValBrancher<View,n,Val,a>
+  ::print(const Space& home, const Choice& c, unsigned int b,
+          std::ostream& o) const {
+    const PosValChoice<Val>& pvc
+      = static_cast<const PosValChoice<Val>&>(c);
+    View xi = ViewBrancher<View,n>::view(pvc.pos());
+    typename View::VarType y(ViewBrancher<View,n>::view(pvc.pos()).varimp());
+    if (vvp != NULL)
+      vvp(home,b,y,pvc.pos().pos,pvc.val(),o);
+    else
+      vsc->print(home,b,xi,pvc.pos().pos,pvc.val(),o);
   }
 
   template<class View, int n, class Val, unsigned int a>

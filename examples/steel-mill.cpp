@@ -445,6 +445,15 @@ public:
         return me_failed(Int::IntView(sm.slab[c.pos]).eq(home, c.val))
           ? ES_FAILED : ES_OK;
     }
+    /// Print explanation
+    virtual void print(const Space&, const Gecode::Choice& _c, 
+                       unsigned int a,
+                       std::ostream& o) const {
+      const Choice& c = static_cast<const Choice&>(_c);
+      o << "slab[" << c.pos << "] "
+        << ((a == 0) ? "=" : "!=")
+        << " " << c.val;
+    }
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {
       return new (home) SteelMillBranch(home, share, *this);

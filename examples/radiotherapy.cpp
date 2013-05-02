@@ -274,7 +274,7 @@ public:
       }
       return ri;
     }
-
+    /// Return choice
     virtual Gecode::Choice* choice(Space& home) {
       done = true;
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
@@ -307,12 +307,21 @@ public:
 
       return new Choice(*this, fail);
     }
+    /// Return choice
     virtual Choice* choice(const Space&, Archive& e) {
       bool fail; e >> fail;
       return new Choice(*this, fail);
     }
+    /// Perform commit for choice \a _c and alternative \a a
     virtual ExecStatus commit(Space&, const Gecode::Choice& _c, unsigned int) {
       return static_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
+    }
+    /// Print explanation
+    virtual void print(const Space&, const Gecode::Choice& _c, 
+                       unsigned int,
+                       std::ostream& o) const {
+      const Choice& c = static_cast<const Choice&>(_c);
+      o << (c.fail ? "fail" : "ok");
     }
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share) {

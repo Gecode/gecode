@@ -1155,11 +1155,11 @@ namespace Gecode { namespace Gist {
     if (mutex.tryLock()) {
       if (event->type() == QEvent::ToolTip) {
         VisualNode* n = eventNode(event);
-        if (n != NULL && !n->isHidden() &&
-            (n->getStatus() == BRANCH || n->getStatus() == STOP)) {
+        if (n != NULL) {
           QHelpEvent* he = static_cast<QHelpEvent*>(event);
           QToolTip::showText(he->globalPos(),
-                             QString(n->toolTip(curBest,c_d,a_d).c_str()));
+                             QString(n->toolTip(*na,curBest,
+                                                c_d,a_d).c_str()));
         } else {
           QToolTip::hideText();
         }

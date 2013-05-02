@@ -50,6 +50,13 @@ namespace Gecode { namespace Int { namespace Branch {
   ValCommitEq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
+  template<class View>
+  forceinline void
+  ValCommitEq<View>::print(const Space&, unsigned int a, View, int i, 
+                           int n, std::ostream& o) const {
+    o << "branch[" << i << "] " 
+      << ((a == 0) ? "=" : "!=") << " " << n;
+  }
 
   template<class View>
   forceinline
@@ -63,6 +70,13 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ModEvent
   ValCommitLq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
+  }
+  template<class View>
+  forceinline void
+  ValCommitLq<View>::print(const Space&, unsigned int a, View, int i,
+                           int n, std::ostream& o) const {
+    o << "branch[" << i << "] " 
+      << ((a == 0) ? "<=" : ">") << " " << n;
   }
 
   template<class View>
@@ -78,6 +92,13 @@ namespace Gecode { namespace Int { namespace Branch {
   ValCommitGq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.gq(home,n) : x.le(home,n);
   }
+  template<class View>
+  forceinline void
+  ValCommitGq<View>::print(const Space&, unsigned int a, View, int i, 
+                           int n, std::ostream& o) const {
+    o << "branch[" << i << "] " 
+      << ((a == 0) ? ">=" : "<") << " " << n;
+  }
 
   template<class View>
   forceinline
@@ -91,6 +112,13 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ModEvent
   ValCommitGr<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
+  }
+  template<class View>
+  forceinline void
+  ValCommitGr<View>::print(const Space&, unsigned int a, View, int i, 
+                           int n, std::ostream& o) const {
+    o << "branch[" << i << "] " 
+      << ((a == 0) ? ">" : "<=") << " " << n;
   }
 
 }}}

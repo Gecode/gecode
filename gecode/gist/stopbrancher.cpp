@@ -72,6 +72,11 @@ namespace Gecode { namespace Gist {
     done = true;
     return ES_OK;
   }
+  void 
+  StopBrancher::print(const Space&, const Gecode::Choice&, 
+                      unsigned int, std::ostream&) const {
+  }
+
   Actor*
   StopBrancher::copy(Space& home, bool share) {
     return new (home) StopBrancher(home, share, *this);

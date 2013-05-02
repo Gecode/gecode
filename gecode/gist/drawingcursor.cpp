@@ -107,6 +107,18 @@ namespace Gecode { namespace Gist {
       path.moveTo(myx,myy);
       path.lineTo(parentX,parentY);
       painter.drawPath(path);
+      
+      QFontMetrics fm = painter.fontMetrics();
+      QString label = na.getLabel(n);
+      int alt = n->getAlternative(na);
+      int tw = fm.width(label);
+      int lx;
+      if (alt==0) {
+        lx = myx-tw+3;
+      } else {
+        lx = myx-3;
+      }
+      painter.drawText(QPointF(lx,myy-2),label);
     }
 
     // draw shadow

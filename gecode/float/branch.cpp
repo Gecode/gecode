@@ -41,7 +41,8 @@ namespace Gecode {
 
   BrancherHandle
   branch(Home home, const FloatVarArgs& x,
-         FloatVarBranch vars, FloatValBranch vals, FloatBranchFilter bf) {
+         FloatVarBranch vars, FloatValBranch vals, 
+         FloatBranchFilter bf, FloatVarValPrint vvp) {
     using namespace Float;
     if (home.failed()) return BrancherHandle();
     vars.expand(home,x);
@@ -49,22 +50,14 @@ namespace Gecode {
     ViewSel<FloatView>* vs[1] = { 
       Branch::viewsel(home,vars) 
     };
-    if (vals.select() == FloatValBranch::SEL_SPLIT_RND) {
-      ValSelCommitBase<FloatView,std::pair<FloatNum,bool> >* vsc
-        = new (home) 
-        ValSelCommit<Branch::ValSelRnd,Branch::ValCommitLqGq>(home,vals);
-      return ViewValBrancher<FloatView,1,std::pair<FloatNum,bool>,2>::post
-        (home,xv,vs,vsc,bf);
-    } else {
-      return ViewValBrancher<FloatView,1,FloatNum,2>::post
-        (home,xv,vs,Branch::valselcommit(home,vals),bf);
-    }
+    return ViewValBrancher<FloatView,1,FloatVal,2>::post
+      (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
   }
 
   BrancherHandle
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals, 
-         FloatBranchFilter bf) {
+         FloatBranchFilter bf, FloatVarValPrint vvp) {
     using namespace Float;
     if (home.failed()) return BrancherHandle();
     vars.a.expand(home,x);
@@ -81,93 +74,58 @@ namespace Gecode {
       vars.d = FLOAT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == FloatVarBranch::SEL_NONE) {
-      return branch(home,x,vars.a,vals,bf);
+      return branch(home,x,vars.a,vals,bf,vvp);
     } else {
       ViewArray<FloatView> xv(home,x);
-      if (vals.select() == FloatValBranch::SEL_SPLIT_RND) {
-        ValSelCommitBase<FloatView,std::pair<FloatNum,bool> >* vsc
-          = new (home) 
-          ValSelCommit<Branch::ValSelRnd,Branch::ValCommitLqGq>(home,vals);
-        if (vars.c.select() == FloatVarBranch::SEL_NONE) {
-          ViewSel<FloatView>* vs[2] = { 
-            Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
-          };
-          return ViewValBrancher<FloatView,2,std::pair<FloatNum,bool>,2>
-            ::post(home,xv,vs,vsc,bf);
-        } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
-          ViewSel<FloatView>* vs[3] = { 
-            Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
-            Branch::viewsel(home,vars.c)
-          };
-          return ViewValBrancher<FloatView,3,std::pair<FloatNum,bool>,2>
-            ::post(home,xv,vs,vsc,bf);
-        } else {
-          ViewSel<FloatView>* vs[4] = { 
-            Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
-            Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
-          };
-          return ViewValBrancher<FloatView,4,std::pair<FloatNum,bool>,2>
-            ::post(home,xv,vs,vsc,bf);
-        }
+      ValSelCommitBase<FloatView,FloatVal>* 
+        vsc = Branch::valselcommit(home,vals); 
+      if (vars.c.select() == FloatVarBranch::SEL_NONE) {
+        ViewSel<FloatView>* vs[2] = { 
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
+        };
+        return ViewValBrancher<FloatView,2,FloatVal,2>
+          ::post(home,xv,vs,vsc,bf,vvp);
+      } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
+        ViewSel<FloatView>* vs[3] = { 
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
+          Branch::viewsel(home,vars.c)
+        };
+        return ViewValBrancher<FloatView,3,FloatVal,2>
+          ::post(home,xv,vs,vsc,bf,vvp);
       } else {
-        ValSelCommitBase<FloatView,FloatNum>* 
-          vsc = Branch::valselcommit(home,vals); 
-        if (vars.c.select() == FloatVarBranch::SEL_NONE) {
-          ViewSel<FloatView>* vs[2] = { 
-            Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
-          };
-          return ViewValBrancher<FloatView,2,FloatNum,2>
-            ::post(home,xv,vs,vsc,bf);
-        } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
-          ViewSel<FloatView>* vs[3] = { 
-            Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
-            Branch::viewsel(home,vars.c)
-          };
-          return ViewValBrancher<FloatView,3,FloatNum,2>
-            ::post(home,xv,vs,vsc,bf);
-        } else {
-          ViewSel<FloatView>* vs[4] = { 
-            Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
-            Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
-          };
-          return ViewValBrancher<FloatView,4,FloatNum,2>
-            ::post(home,xv,vs,vsc,bf);
-        }
+        ViewSel<FloatView>* vs[4] = { 
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
+          Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
+        };
+        return ViewValBrancher<FloatView,4,FloatVal,2>
+          ::post(home,xv,vs,vsc,bf,vvp);
       }
     }
   }
 
   BrancherHandle
-  branch(Home home, FloatVar x, FloatValBranch vals) {
+  branch(Home home, FloatVar x, FloatValBranch vals, FloatVarValPrint vvp) {
     FloatVarArgs xv(1); xv[0]=x;
-    return branch(home, xv, FLOAT_VAR_NONE(), vals);
+    return branch(home, xv, FLOAT_VAR_NONE(), vals, NULL, vvp);
   }
   
   BrancherHandle
   assign(Home home, const FloatVarArgs& x, FloatAssign fa,
-         FloatBranchFilter bf) {
+         FloatBranchFilter bf, FloatVarValPrint vvp) {
     using namespace Float;
     if (home.failed()) return BrancherHandle();
     ViewArray<FloatView> xv(home,x);
     ViewSel<FloatView>* vs[1] = { 
       new (home) ViewSelNone<FloatView>(home,FLOAT_VAR_NONE())
     };
-    if (fa.select() == FloatAssign::SEL_RND) {
-      ValSelCommitBase<FloatView,std::pair<FloatNum,bool> >* vsc
-        = new (home) 
-        ValSelCommit<Branch::ValSelRnd,Branch::ValCommitLqGq>(home,fa);
-      return ViewValBrancher<FloatView,1,std::pair<FloatNum,bool>,1>::post
-        (home,xv,vs,vsc,bf);
-    } else {
-      return ViewValBrancher<FloatView,1,FloatNum,1>::post
-        (home,xv,vs,Branch::valselcommit(home,fa),bf);
-    }
+    return ViewValBrancher<FloatView,1,FloatVal,1>::post
+      (home,xv,vs,Branch::valselcommit(home,fa),bf,vvp);
   }
 
   BrancherHandle
-  assign(Home home, FloatVar x, FloatAssign fa) {
+  assign(Home home, FloatVar x, FloatAssign fa, FloatVarValPrint vvp) {
     FloatVarArgs xv(1); xv[0]=x;
-    return assign(home, xv, fa);
+    return assign(home, xv, fa, NULL, vvp);
   }
   
 }

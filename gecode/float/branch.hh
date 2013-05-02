@@ -198,19 +198,35 @@ namespace Gecode { namespace Float { namespace Branch {
    */
 
   /**
-   * \brief Value selection class for median of view
+   * \brief Value selection class for values smaller than median of view
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatValSel
    */
-  class ValSelMed : public ValSel<FloatView,FloatNum> {
+  class ValSelLq : public ValSel<FloatView,FloatVal> {
   public:
     /// Constructor for initialization
-    ValSelMed(Space& home, const ValBranch& vb);
+    ValSelLq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
-    ValSelMed(Space& home, bool shared, ValSelMed& vs);
+    ValSelLq(Space& home, bool shared, ValSelLq& vs);
     /// Return value of view \a x at position \a i
-    FloatNum val(const Space& home, FloatView x, int i);
+    FloatVal val(const Space& home, FloatView x, int i);
+  };
+
+  /**
+   * \brief Value selection class for values smaller than median of view
+   *
+   * Requires \code #include <gecode/float/branch.hh> \endcode
+   * \ingroup FuncFloatValSel
+   */
+  class ValSelGq : public ValSel<FloatView,FloatVal> {
+  public:
+    /// Constructor for initialization
+    ValSelGq(Space& home, const ValBranch& vb);
+    /// Constructor for cloning
+    ValSelGq(Space& home, bool shared, ValSelGq& vs);
+    /// Return value of view \a x at position \a i
+    FloatVal val(const Space& home, FloatView x, int i);
   };
 
   /**
@@ -219,8 +235,7 @@ namespace Gecode { namespace Float { namespace Branch {
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatValSel
    */
-  class ValSelRnd 
-    : public ValSel<FloatView,std::pair<FloatNum,bool> > {
+  class ValSelRnd : public ValSel<FloatView,FloatVal> {
   protected:
     /// The used random number generator
     Rnd r;
@@ -230,7 +245,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
     /// Return value of view \a x at position \a i
-    Val val(const Space& home, FloatView x, int i);
+    FloatVal val(const Space& home, FloatView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value selection
@@ -256,54 +271,24 @@ namespace Gecode { namespace Float { namespace Branch {
    */
 
   /**
-   * \brief Value commit class for less or equal
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatValCommit
-   */
-  class ValCommitLq : public ValCommit<FloatView,FloatNum> {
-  public:
-    /// Constructor for initialization
-    ValCommitLq(Space& home, const ValBranch& vb);
-    /// Constructor for cloning
-    ValCommitLq(Space& home, bool shared, ValCommitLq& vc);
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, int i, 
-                    FloatNum n);
-  };
-
-  /**
-   * \brief Value commit class for greater or equal
-   *
-   * Requires \code #include <gecode/float/branch.hh> \endcode
-   * \ingroup FuncFloatValCommit
-   */
-  class ValCommitGq : public ValCommit<FloatView,FloatNum> {
-  public:
-    /// Constructor for initialization
-    ValCommitGq(Space& home, const ValBranch& vb);
-    /// Constructor for cloning
-    ValCommitGq(Space& home, bool shared, ValCommitGq& vc);
-    /// Commit view \a x at position \a i to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, int i,
-                    FloatNum n);
-  };
-
-  /**
    * \brief Value commit class for less or equal or greater or equal
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatValCommit
    */
-  class ValCommitLqGq 
-    : public ValCommit<FloatView,std::pair<FloatNum,bool> > {
+  class ValCommitLqGq  : public ValCommit<FloatView,FloatVal> {
   public:
     /// Constructor for initialization
     ValCommitLqGq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
-    ModEvent commit(Space& home, unsigned int a, FloatView x, int i, Val n);
+    ModEvent commit(Space& home, unsigned int a, FloatView x, int i, 
+                    FloatVal n);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    void print(const Space& home, unsigned int a, FloatView x, int i, 
+               FloatVal n,
+               std::ostream& o) const;
   };
 
 }}}
@@ -314,12 +299,12 @@ namespace Gecode { namespace Float { namespace Branch {
 
   /// Return value and commit for float views
   GECODE_FLOAT_EXPORT
-  ValSelCommitBase<FloatView,FloatNum>* 
+  ValSelCommitBase<FloatView,FloatVal>* 
   valselcommit(Space& home, const FloatValBranch& svb);
 
   /// Return value and commit for float views
   GECODE_FLOAT_EXPORT
-  ValSelCommitBase<FloatView,FloatNum>* 
+  ValSelCommitBase<FloatView,FloatVal>* 
   valselcommit(Space& home, const FloatAssign& ia);
 
 }}}

@@ -86,7 +86,7 @@ namespace Gecode { namespace Gist {
     Shape* ret;
     if (d == 1) {
       ret = static_cast<Shape*>(heap.ralloc(sizeof(Shape)));
-      ret->shape[0] = Extent(Layout::extent);      
+      ret->shape[0] = Extent(3*Layout::extent);      
     } else {
       ret = static_cast<Shape*>(heap.ralloc(sizeof(Shape) +
                                             (d-2)*sizeof(Extent)));

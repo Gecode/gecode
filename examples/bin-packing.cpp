@@ -351,6 +351,24 @@ public:
     }
     return ES_OK;
   }
+  /// Print explanation
+  virtual void print(const Space&, const Gecode::Choice& _c, 
+                     unsigned int a,
+                     std::ostream& o) const {
+    const Choice& c = static_cast<const Choice&>(_c);
+    if (a == 0) {
+      o << "bin[" << c.item << "] = " << c.same[0];
+    } else {
+      o << "bin[" << c.item;
+      for (int i = c.item+1; (i<bin.size()) && 
+                             (size[i] == size[c.item]); i++)
+        o << "," << i;
+      o << "] != ";
+      for (int i = 0; i<c.n_same-1; i++)
+        o << c.same[i] << ",";
+      o << c.same[c.n_same-1];
+    }
+  }
 };
 
 /// Post branching (assumes that \a s is sorted)

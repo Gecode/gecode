@@ -40,6 +40,8 @@
 
 #include <gecode/kernel.hh>
 
+#include <QHash>
+
 namespace Gecode { namespace Gist {
 
   class VisualNode;
@@ -70,6 +72,8 @@ namespace Gecode { namespace Gist {
     void allocate(void);
     /// Flag whether search uses branch-and-bound
     bool _bab;
+    /// Hash table mapping nodes to label text
+    QHash<T*,QString> labels;
   public:
     /// Constructor
     NodeAllocatorBase(bool bab);
@@ -87,6 +91,10 @@ namespace Gecode { namespace Gist {
     void setBest(int i, int b);
     /// Return branch-and-bound flag
     bool bab(void) const;
+    /// Set label of node \a n to \a l
+    void setLabel(T* n, const QString& l);
+    /// Get label of node \a n
+    QString getLabel(T* n) const;
   };
 
   /// \brief Base class for nodes of the search tree

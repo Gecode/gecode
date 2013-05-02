@@ -348,7 +348,7 @@ namespace Gecode {
   void
   Space::_commit(const Choice& c, unsigned int a) {
     if (a >= c.alternatives())
-      throw SpaceIllegalAlternative();
+      throw SpaceIllegalAlternative("Space::commit");
     if (failed())
       return;
     if (Brancher* b = brancher(c._id)) {
@@ -358,6 +358,21 @@ namespace Gecode {
     } else {
       // There is no matching brancher!
       throw SpaceNoBrancher("Space::commit");
+    }
+  }
+
+  void
+  Space::print(const Choice& c, unsigned int a, std::ostream& o) const {
+    if (a >= c.alternatives())
+      throw SpaceIllegalAlternative("Space::print");
+    if (failed())
+      return;
+    if (Brancher* b = const_cast<Space&>(*this).brancher(c._id)) {
+      // There is a matching brancher
+      b->print(*this,c,a,o);
+    } else {
+      // There is no matching brancher!
+      throw SpaceNoBrancher("Space::print");
     }
   }
 

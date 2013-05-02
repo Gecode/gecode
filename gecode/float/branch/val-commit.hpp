@@ -42,58 +42,29 @@
 namespace Gecode { namespace Float { namespace Branch {
 
   forceinline
-  ValCommitLq::ValCommitLq(Space& home, const ValBranch& vb)
-    : ValCommit<FloatView,FloatNum>(home,vb) {}
-  forceinline
-  ValCommitLq::ValCommitLq(Space& home, bool shared, ValCommitLq& vc)
-    : ValCommit<FloatView,FloatNum>(home,shared,vc) {}
-  forceinline ModEvent
-  ValCommitLq::commit(Space& home, unsigned int a, FloatView x, int, 
-                      FloatNum n) {
-    if (a == 0) {
-      if ((x.min() == n) || (x.max() == n)) 
-        return x.eq(home,x.min());
-      else 
-        return x.lq(home,n);
-    } else {
-      if ((x.min() == n) || (x.max() == n)) 
-        return x.eq(home,x.max());
-      else
-        return x.gq(home,n);
-    }
-  }
-
-  forceinline
-  ValCommitGq::ValCommitGq(Space& home, const ValBranch& vb)
-    : ValCommit<FloatView,FloatNum>(home,vb) {}
-  forceinline
-  ValCommitGq::ValCommitGq(Space& home, bool shared, ValCommitGq& vc)
-    : ValCommit<FloatView,FloatNum>(home,shared,vc) {}
-  forceinline ModEvent
-  ValCommitGq::commit(Space& home, unsigned int a, FloatView x, int,
-                      FloatNum n) {
-    if (a == 0) {
-      if ((x.min() == n) || (x.max() == n)) 
-        return x.eq(home,x.max());
-      else 
-        return x.gq(home,n);
-    } else {
-      if ((x.min() == n) || (x.max() == n)) 
-        return x.eq(home,x.min());
-      else
-        return x.lq(home,n);
-    }
-  }
-
-  forceinline
   ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch& vb)
-    : ValCommit<FloatView,std::pair<FloatNum,bool> >(home,vb) {}
+    : ValCommit<FloatView,FloatVal>(home,vb) {}
   forceinline
   ValCommitLqGq::ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc)
-    : ValCommit<FloatView,std::pair<FloatNum,bool> >(home,shared,vc) {}
+    : ValCommit<FloatView,FloatVal>(home,shared,vc) {}
   forceinline ModEvent
   ValCommitLqGq::commit(Space& home, unsigned int a, FloatView x, int, 
-                        Val nb) {
+                        FloatVal n) {
+    // Should we try the smaller half first?
+    bool lq = (n.min() == Limits::min);
+    FloatNum med = lq ? n.max() : n.min();
+    if ((a == 0) == lq) {
+      if ((x.min() == med) || (x.max() == med)) 
+        return x.eq(home,x.min());
+      else 
+        return x.lq(home,med);
+    } else {
+      if ((x.min() == med) || (x.max() == med))
+        return x.eq(home,x.max());
+      else 
+        return x.gq(home,med);
+    }
+    /*
     FloatNum& n = nb.first;
     bool& b = nb.second;
     if ((a == 0) == b) {
@@ -107,6 +78,16 @@ namespace Gecode { namespace Float { namespace Branch {
       else 
         return x.gq(home,n);
     }
+    */
+  }
+  forceinline void
+  ValCommitLqGq::print(const Space&, unsigned int a, FloatView, int i, 
+                       FloatVal n,
+                       std::ostream& o) const {
+    bool lq = (n.min() == Limits::min);
+    FloatNum med = lq ? n.max() : n.min();
+    o << "branch[" << i << "] " 
+      << (((a == 0) == lq) ? "<=" : ">=") << "(" << med << ")";
   }
 
 }}}

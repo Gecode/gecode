@@ -104,8 +104,9 @@ namespace Gecode { namespace Int { namespace LDSB {
                  ViewSel<View>* vs[n],
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
-                 BranchFilter bf)
-    : ViewValBrancher<View,n,Val,a>(home, x, vs, vsc, bf),
+                 BranchFilter bf,
+                 VarValPrint vvp)
+    : ViewValBrancher<View,n,Val,a>(home, x, vs, vsc, bf, vvp),
       _syms(syms),
       _nsyms(nsyms),
       _prevPos(-1)
@@ -119,8 +120,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
-       BranchFilter bf) {
-    return *new (home) LDSBBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf);
+       BranchFilter bf, VarValPrint vvp) {
+    return *new (home) LDSBBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
   }
 
   template<class View, int n, class Val, unsigned int a>

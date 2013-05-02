@@ -75,8 +75,8 @@ namespace Gecode {
   /// %Exception: Commit with illegal alternative
   class GECODE_VTABLE_EXPORT SpaceIllegalAlternative : public Exception {
   public:
-    /// Initialize
-    SpaceIllegalAlternative(void);
+    /// Initialize with location \a l
+    SpaceIllegalAlternative(const char* l);
   };
 
   /// %Exception: too many branchers
@@ -151,9 +151,8 @@ namespace Gecode {
     : Exception(l,"Attempt to commit with no brancher") {}
 
   inline
-  SpaceIllegalAlternative::SpaceIllegalAlternative(void)
-    : Exception("Space::commit",
-                "Attempt to commit with illegal alternative") {}
+  SpaceIllegalAlternative::SpaceIllegalAlternative(const char* l)
+    : Exception(l,"Attempt to commit with illegal alternative") {}
 
   inline
   TooManyBranchers::TooManyBranchers(const char* l)
