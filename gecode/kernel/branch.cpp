@@ -89,7 +89,7 @@ namespace Gecode {
     }
     /// Print explanation
     virtual void
-    print(const Space& home, const Choice&, unsigned int, 
+    print(const Space&, const Choice&, unsigned int, 
           std::ostream& o) const {
       o << "FunctionBranch(" << f << ")";
     }

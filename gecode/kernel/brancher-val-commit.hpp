@@ -130,7 +130,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ValCommitFunction<View>::print(const Space& home, unsigned int, 
+  ValCommitFunction<View>::print(const Space&, unsigned int, 
                                  View, int i, const Val&,
                                  std::ostream& o) const {
     o << "branch[" << i << "] is user-defined.";

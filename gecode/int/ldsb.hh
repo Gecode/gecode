@@ -343,9 +343,9 @@ namespace Gecode { namespace Int { namespace LDSB {
     int _prevPos;
   protected:
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, unsigned int a,
+    typedef void (*VarValPrint)(const Space& home, unsigned int b,
                                 typename View::VarType x, int i,
-                                const Val& n,
+                                const Val& m,
                                 std::ostream& o);
     /// Constructor for cloning \a b
     LDSBBrancher(Space& home, bool share, LDSBBrancher& b);
