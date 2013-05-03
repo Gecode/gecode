@@ -1063,9 +1063,12 @@ namespace Gecode {
      * Prints an explanation of the alternative \a a of choice \a c
      * on the stream \a o.
      *
+     * The default function prints nothing.
+     *
      */
+    GECODE_KERNEL_EXPORT 
     virtual void print(const Space& home, const Choice& c, unsigned int a,
-                       std::ostream& o) const = 0;
+                       std::ostream& o) const;
     //@}
   };
 

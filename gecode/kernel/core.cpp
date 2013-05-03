@@ -79,6 +79,15 @@ namespace Gecode {
   }
 
 
+  /*
+   * Brancher
+   *
+   */
+  void 
+  Brancher::print(const Space&, const Choice&, unsigned int,
+                  std::ostream&) const {
+  }
+
 
   /*
    * Space: Misc
