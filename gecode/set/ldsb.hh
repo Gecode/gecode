@@ -61,9 +61,9 @@ namespace Gecode { namespace Set { namespace LDSB {
   class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a> {
   public:
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, unsigned int a,
+    typedef void (*VarValPrint)(const Space& home, unsigned int b,
                                 typename View::VarType x, int i,
-                                const Val& n,
+                                const Val& m,
                                 std::ostream& o);
     /// Position of previous variable that was branched on
     int _prevPos;
