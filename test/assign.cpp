@@ -352,8 +352,8 @@ namespace Test { namespace Assign {
   const int n_float_assign =
     sizeof(float_assign_name)/sizeof(const char*);
   /// Test function for branch value function
-  Gecode::FloatNum float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
-    return x.min();
+  Gecode::FloatVal float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
+    return Gecode::FloatVal(Gecode::Float::Limits::min,x.min());
   }
   //@}
 

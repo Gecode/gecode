@@ -144,23 +144,34 @@ public:
     case BRANCH_WORDS:
       // Branch by assigning words
       branch(*this, allwords, 
-             INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
+             INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(),
+             NULL, &printwords);
       break;
     case BRANCH_LETTERS:
       // Branch by assigning letters
       branch(*this, letters, 
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
-             NULL, &printletter);
+             NULL, &printletters);
       break;
     }
   }
-  /// Print brancher information
-  static void printletter(const Space&, unsigned int a,
-                          IntVar, int i, const int& n,
-                          std::ostream& o) {
-    o << "letters[" << i << "] "
+  /// Print brancher information when branching on letters
+  static void printletters(const Space& home, unsigned int a,
+                           IntVar, int i, const int& n,
+                           std::ostream& o) {
+    const Crossword& c = static_cast<const Crossword&>(home);
+    int x = i % c.w, y = i / c.w;
+    o << "letters[" << x << "," << y << "] "
       << ((a == 0) ? "=" : "!=") << " "
       << static_cast<char>(n);
+  }
+  /// Print brancher information when branching on words
+  static void printwords(const Space&, unsigned int a,
+                         IntVar, int i, const int& n,
+                         std::ostream& o) {
+    o << "allwords[" << i << "] "
+      << ((a == 0) ? "<=" : ">") << " "
+      << n;
   }
   /// Constructor for cloning \a s
   Crossword(bool share, Crossword& s) 
