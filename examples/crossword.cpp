@@ -149,9 +149,18 @@ public:
     case BRANCH_LETTERS:
       // Branch by assigning letters
       branch(*this, letters, 
-             INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+             INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
+             NULL, &printletter);
       break;
     }
+  }
+  /// Print brancher information
+  static void printletter(const Space&, unsigned int a,
+                          IntVar, int i, const int& n,
+                          std::ostream& o) {
+    o << "letters[" << i << "] "
+      << ((a == 0) ? "=" : "!=") << " "
+      << static_cast<char>(n);
   }
   /// Constructor for cloning \a s
   Crossword(bool share, Crossword& s) 

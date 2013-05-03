@@ -86,7 +86,7 @@ namespace Gecode { namespace Float { namespace Branch {
                        std::ostream& o) const {
     bool lq = (n.min() == Limits::min);
     FloatNum med = lq ? n.max() : n.min();
-    o << "branch[" << i << "] " 
+    o << "var[" << i << "] " 
       << (((a == 0) == lq) ? "<=" : ">=") << "(" << med << ")";
   }
 

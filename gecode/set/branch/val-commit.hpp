@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline void
   ValCommitInc::print(const Space&, unsigned int a, SetView, int i, int n,
                       std::ostream& o) const {
-    o << "branch[" << i << "]." 
+    o << "var[" << i << "]." 
       << ((a == 0) ? "include" : "exclude") << "(" << n << ")";
   }
 
@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline void
   ValCommitExc::print(const Space&, unsigned int a, SetView, int i, int n,
                       std::ostream& o) const {
-    o << "branch[" << i << "]." 
+    o << "var[" << i << "]." 
       << ((a == 0) ? "exclude" : "include") << "(" << n << ")";
   }
 
