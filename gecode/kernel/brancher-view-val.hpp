@@ -78,9 +78,9 @@ namespace Gecode {
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
     /// Function type for print variable and value selection
-    typedef void (*VarValPrint)(const Space& home, unsigned int a,
+    typedef void (*VarValPrint)(const Space& home, unsigned int b,
                                 typename View::VarType x, int i,
-                                const Val& n,
+                                const Val& m,
                                 std::ostream& o);
     /// Print function
     VarValPrint vvp;
