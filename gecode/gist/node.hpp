@@ -51,7 +51,8 @@ namespace Gecode { namespace Gist {
   }
 
   template<class T>
-  NodeAllocatorBase<T>::NodeAllocatorBase(bool bab) : _bab(bab) {
+  NodeAllocatorBase<T>::NodeAllocatorBase(bool bab)
+    : _bab(bab) {
     b = heap.alloc<Block*>(10);
     n = 10;
     cur_b = -1;
@@ -117,11 +118,29 @@ namespace Gecode { namespace Gist {
   NodeAllocatorBase<T>::bab(void) const {
     return _bab;
   }
+
+  template<class T>
+  forceinline bool
+  NodeAllocatorBase<T>::showLabels(void) const {
+    return !labels.isEmpty();
+  }
+
+  template<class T>
+  bool
+  NodeAllocatorBase<T>::hasLabel(T* n) const {
+    return labels.contains(n);
+  }
   
   template<class T>
   void
   NodeAllocatorBase<T>::setLabel(T* n, const QString& l) {
     labels[n] = l;
+  }
+
+  template<class T>
+  void
+  NodeAllocatorBase<T>::clearLabel(T* n) {
+    labels.remove(n);
   }
 
   template<class T>

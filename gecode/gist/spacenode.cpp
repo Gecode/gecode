@@ -92,8 +92,16 @@ namespace Gecode { namespace Gist {
         idx = parentIdx;
         rdist++;
       }
-      Space* curSpace = curNode->copy->clone();
-      curNode->setDistance(0);
+      
+      Space* curSpace;
+      if (Support::marked(curNode->copy)) {
+        curSpace = static_cast<Space*>(Support::unmark(curNode->copy));
+        curNode->copy = NULL;
+        a_d = -1;
+      } else {
+        curSpace = curNode->copy->clone();
+        curNode->setDistance(0);
+      }
 
       SpaceNode* lastBest = NULL;
       SpaceNode* middleNode = curNode;
@@ -215,11 +223,8 @@ namespace Gecode { namespace Gist {
         !p->isRoot()) {
       // last alternative optimization
 
-      // If p->copy was a working space, we would have stolen it by now
-      assert(!Support::marked(p->copy));
-
       copy = static_cast<Space*>(Support::unmark(copy));
-      delete p->copy;
+      delete static_cast<Space*>(Support::funmark(p->copy));
       p->copy = NULL;
       setDistance(0);
       p->setDistance(p->getParent(na)->getDistance()+1);
@@ -247,7 +252,7 @@ namespace Gecode { namespace Gist {
           getChild(na,i)->hasSolvedChildren());
       SpaceNode* p = getParent(na);
       if (p != NULL) {
-        delete copy;
+        delete static_cast<Space*>(Support::funmark(copy));
         copy = NULL;
         p->closeChild(na, hasFailedChildren(), hasSolvedChildren());
       }
@@ -358,9 +363,6 @@ namespace Gecode { namespace Gist {
       }
       static_cast<VisualNode*>(this)->changedStatus(na);
       setNumberOfChildren(kids, na);
-      for (int i=0; i<kids; i++) {
-        na.setLabel(getChild(na,i),labels[i]);
-      }
     } else {
       kids = getNumberOfChildren();
     }

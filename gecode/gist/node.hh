@@ -91,8 +91,16 @@ namespace Gecode { namespace Gist {
     void setBest(int i, int b);
     /// Return branch-and-bound flag
     bool bab(void) const;
+    /// Return branching label flag
+    bool showLabels(void) const;
+    /// Set branching label flag
+    void showLabels(bool b);
+    /// Return whether node \a n has a label
+    bool hasLabel(T* n) const;
     /// Set label of node \a n to \a l
     void setLabel(T* n, const QString& l);
+    /// Remove label of node \a n
+    void clearLabel(T* n);
     /// Get label of node \a n
     QString getLabel(T* n) const;
   };

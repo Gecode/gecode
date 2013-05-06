@@ -53,9 +53,12 @@ namespace Gecode { namespace Gist {
     /// Constructor
     ShapeAllocator(void) {
       Shape::leaf = Shape::allocate(1);
-      Shape::hidden = Shape::allocate(2);
-      (*Shape::hidden)[1] = Extent(Layout::extent);
+      (*Shape::leaf)[0] = Extent(Layout::extent);
       Shape::leaf->computeBoundingBox();
+
+      Shape::hidden = Shape::allocate(2);
+      (*Shape::hidden)[0] = Extent(Layout::extent);
+      (*Shape::hidden)[1] = Extent(Layout::extent);
       Shape::hidden->computeBoundingBox();
     }
     ~ShapeAllocator(void) {
@@ -164,6 +167,47 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  VisualNode::labelBranches(NodeAllocator& na,
+                            BestNode* curBest, int c_d, int a_d) {
+    bool clear = na.hasLabel(this);
+    BranchLabelCursor c(this,curBest,c_d,a_d,clear,na);
+    PreorderNodeVisitor<BranchLabelCursor>(c).run();
+    dirtyUp(na);
+  }
+
+  void
+  VisualNode::labelPath(NodeAllocator& na,
+                        BestNode* curBest, int c_d, int a_d) {
+    if (na.hasLabel(this)) {
+      // clear labels on path to root
+      VisualNode* p = this;
+      while (p) {
+        na.clearLabel(p);
+        p = p->getParent(na);
+      }
+    } else {
+      // set labels on path to root
+      std::vector<std::pair<VisualNode*,int> > path;
+      VisualNode* p = this;
+      while (p) {
+        path.push_back(std::pair<VisualNode*,int>(p,p->getAlternative(na)));
+        p = p->getParent(na);
+      }
+      while (!path.empty()) {
+        std::pair<VisualNode*,int> cur = path.back(); path.pop_back();
+        if (p) {
+          std::string l =
+            cur.first->getBranchLabel(na,p,p->getChoice(),
+                                      curBest,c_d,a_d,cur.second);
+          na.setLabel(cur.first,QString(l.c_str()));
+        }
+        p = cur.first;
+      }
+    }
+    dirtyUp(na);
+  }
+
+  void
   VisualNode::unhideAll(const NodeAllocator& na) {
     UnhideAllCursor c(this,na);
     PreorderNodeVisitor<UnhideAllCursor>(c).run();
@@ -237,8 +281,23 @@ namespace Gecode { namespace Gist {
 
   std::string
   VisualNode::toolTip(NodeAllocator&, BestNode*, int, int) {
-    return "";
+    std::ostringstream oss;
+    Shape& sh = *getShape();
+    for (int i=0; i<sh.depth(); i++)
+      oss << sh[i].l << "." << sh[i].r << " ";
+    return oss.str();
   }
+
+  std::string
+  VisualNode::getBranchLabel(NodeAllocator& na,
+                             VisualNode* p, const Choice* c,
+                             BestNode* curBest, int c_d, int a_d, int alt) {
+    std::ostringstream oss;
+    p->acquireSpace(na,curBest,c_d,a_d);
+    p->getWorkingSpace()->print(*c,alt,oss);
+    return oss.str();
+  }
+
 
   /// \brief Helper functions for the layout algorithm
   class Layouter {
@@ -347,20 +406,50 @@ namespace Gecode { namespace Gist {
   void
   VisualNode::computeShape(const NodeAllocator& na, VisualNode* root) {
     int numberOfShapes = getNumberOfChildren();
-    Extent extent(Layout::extent);
+    Extent extent;
+    if (na.hasLabel(this)) {
+      int ll = na.getLabel(this).length();
+      ll *= 7;
+      VisualNode* p = getParent(na);
+      int alt = 0;
+      int n_alt = 1;
+      if (p) {
+        alt = getAlternative(na);
+        n_alt = p->getNumberOfChildren();
+      }
+      extent = Extent(Layout::extent);
+      if (alt==0 && n_alt > 1) {
+        extent.l = std::min(extent.l, -ll);
+      } else if (alt==n_alt-1 && n_alt > 1) {
+        extent.r = std::max(extent.r, ll);
+      } else {
+        extent.l = std::min(extent.l, -ll);
+        extent.r = std::max(extent.r, ll);
+      }
+    } else {
+      if (numberOfShapes==0) {
+        setShape(Shape::leaf);
+        return;
+      } else {
+        extent = Extent(Layout::extent);
+      }
+    }
 
     int maxDepth = 0;
     for (int i = numberOfShapes; i--;)
       maxDepth = std::max(maxDepth, getChild(na,i)->getShape()->depth());
     Shape* mergedShape;
-    if (getShape() && getShape()->depth() >= maxDepth+1) {
+    if (getShape() && getShape() != Shape::leaf &&
+        getShape()->depth() >= maxDepth+1) {
       mergedShape = getShape();
       mergedShape->setDepth(maxDepth+1);
     } else {
       mergedShape = Shape::allocate(maxDepth+1);
     }
-
-    if (numberOfShapes == 1) {
+    (*mergedShape)[0] = extent;
+    if (numberOfShapes < 1) {
+      setShape(mergedShape);
+    } else if (numberOfShapes == 1) {
       getChild(na,0)->setOffset(0);
       const Shape* childShape = getChild(na,0)->getShape();
       for (int i=childShape->depth(); i--;)

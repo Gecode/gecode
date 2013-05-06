@@ -111,14 +111,17 @@ namespace Gecode { namespace Gist {
       QFontMetrics fm = painter.fontMetrics();
       QString label = na.getLabel(n);
       int alt = n->getAlternative(na);
+      int n_alt = n->getParent(na)->getNumberOfChildren();
       int tw = fm.width(label);
       int lx;
-      if (alt==0) {
-        lx = myx-tw+3;
+      if (alt==0 && n_alt > 1) {
+        lx = myx-tw-4;
+      } else if (alt==n_alt-1 && n_alt > 1) {
+        lx = myx+4;
       } else {
-        lx = myx-3;
+        lx = myx-tw/2;
       }
-      painter.drawText(QPointF(lx,myy-2),label);
+      painter.drawText(QPointF(lx,myy-1),label);
     }
 
     // draw shadow

@@ -156,6 +156,10 @@ namespace Gecode {  namespace Gist {
     void inspectCurrentNode(bool fix=true, int inspectorNo=-1);
     /// Calls inspectCurrentNode(false)
     void inspectBeforeFP(void);
+    /// Label all branches in subtree under current node
+    void labelBranches(void);
+    /// Label all branches on path to root node
+    void labelPath(void);
 
     /// Stop current search
     void stopSearch(void);

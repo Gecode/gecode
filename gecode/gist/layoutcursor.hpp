@@ -54,7 +54,7 @@ namespace Gecode { namespace Gist {
     if (currentNode->isDirty()) {
       if (currentNode->isHidden()) {
         // do nothing
-      } else if (currentNode->getNumberOfChildren() < 1) {
+      } else if (false && currentNode->getNumberOfChildren() < 1) {
         currentNode->setShape(Shape::leaf);
       } else {
         currentNode->computeShape(na,startNode());

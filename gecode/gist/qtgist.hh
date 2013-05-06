@@ -150,6 +150,10 @@ namespace Gecode {  namespace Gist {
     QAction* hideFailed;
     /// Unhide all hidden subtrees under current node
     QAction* unhideAll;
+    /// Label branches under current node
+    QAction* labelBranches;
+    /// Label branches on path to root
+    QAction* labelPath;
     /// Zoom tree to fit window
     QAction* zoomToFit;
     /// Center on current node

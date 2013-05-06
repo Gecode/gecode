@@ -257,6 +257,37 @@ namespace Gecode { namespace Gist {
   }
 
   forceinline
+  BranchLabelCursor::BranchLabelCursor(VisualNode* root, BestNode* curBest,
+                                       int c_d, int a_d, bool clear,
+                                       VisualNode::NodeAllocator& na)
+    : NodeCursor<VisualNode>(root,na), _na(na), _curBest(curBest),
+      _c_d(c_d), _a_d(a_d), _clear(clear) {}
+
+  forceinline void
+  BranchLabelCursor::processCurrentNode(void) {
+    VisualNode* n = node();
+    if (!_clear) {
+      if (!na.hasLabel(n)) {
+        VisualNode* p = n->getParent(_na);
+        if (p) {
+          std::string l =
+            n->getBranchLabel(_na,p,p->getChoice(),
+              _curBest,_c_d,_a_d,alternative());
+          _na.setLabel(n,QString(l.c_str()));
+          if (n->getNumberOfChildren() < 1 &&
+              alternative() == p->getNumberOfChildren()-1)
+            p->purge(_na);
+        } else {
+          _na.setLabel(n,"");
+        }
+      }
+    } else {
+      _na.clearLabel(n);
+    }
+    n->dirtyUp(na);
+  }
+
+  forceinline
   DisposeCursor::DisposeCursor(VisualNode* root,
                                const VisualNode::NodeAllocator& na)
    : NodeCursor<VisualNode>(root,na) {}

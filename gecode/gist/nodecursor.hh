@@ -191,6 +191,30 @@ namespace Gecode { namespace Gist {
     
   };
 
+  /// \brief A cursor that labels branches
+  class BranchLabelCursor : public NodeCursor<VisualNode> {
+  private:
+    /// The node allocator
+    VisualNode::NodeAllocator& _na;
+    /// Current best solution
+    BestNode* _curBest;
+    /// Recomputation distance
+    int _c_d;
+    /// Adaptive rcomputation distance
+    int _a_d;
+    /// Whether to clear labels
+    bool _clear;
+  public:
+    /// Constructor
+    BranchLabelCursor(VisualNode* theNode, BestNode* curBest,
+                      int c_d, int a_d, bool clear,
+                      VisualNode::NodeAllocator& na);
+    /// \name Cursor interface
+    //@{
+    void processCurrentNode(void);
+    //@}
+  };
+
   /// \brief A cursor that frees all memory
   class DisposeCursor : public NodeCursor<VisualNode> {
   public:

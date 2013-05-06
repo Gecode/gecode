@@ -774,6 +774,23 @@ namespace Gecode { namespace Gist {
   }
 
   void
+  TreeCanvas::labelBranches(void) {
+    QMutexLocker locker(&mutex);
+    currentNode->labelBranches(*na,curBest,c_d,a_d);
+    update();
+    centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);
+  }
+  void
+  TreeCanvas::labelPath(void) {
+    QMutexLocker locker(&mutex);
+    currentNode->labelPath(*na,curBest,c_d,a_d);
+    update();
+    centerCurrentNode();
+    emit statusChanged(currentNode, stats, true);
+  }
+
+  void
   TreeCanvas::inspectSolution(const Space* s) {
     int failedInspectorType = -1;
     int failedInspector = -1;

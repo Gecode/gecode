@@ -216,6 +216,17 @@ namespace Gecode { namespace Gist {
     /// Find a node in this subtree at coordinates \a x, \a y
     VisualNode* findNode(const NodeAllocator& na, int x, int y);
 
+    /// Create or clear branch labels in subtree
+    void labelBranches(NodeAllocator& na,
+                       BestNode* curBest, int c_d, int a_d);
+    /// Create or clear branch labels on path to root
+    void labelPath(NodeAllocator& na,
+                   BestNode* curBest, int c_d, int a_d);
+    /// Return string that describes the branch
+    std::string getBranchLabel(NodeAllocator& na,
+                               VisualNode* p, const Choice* c,
+                               BestNode* curBest, int c_d, int a_d, int alt);
+
     /// Return string that is used as a tool tip
     std::string toolTip(NodeAllocator& na, BestNode* curBest,
                         int c_d, int a_d);

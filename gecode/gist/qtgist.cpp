@@ -158,6 +158,16 @@ namespace Gecode { namespace Gist {
     unhideAll->setShortcut(QKeySequence("U"));
     connect(unhideAll, SIGNAL(triggered()), canvas, SLOT(unhideAll()));
 
+    labelBranches = new QAction("Label branches", this);
+    labelBranches->setShortcut(QKeySequence("L"));
+    connect(labelBranches, SIGNAL(triggered()),
+            canvas, SLOT(labelBranches()));
+
+    labelPath = new QAction("Label path", this);
+    labelPath->setShortcut(QKeySequence("Shift+L"));
+    connect(labelPath, SIGNAL(triggered()),
+            canvas, SLOT(labelPath()));
+
     toggleStop = new QAction("Stop/unstop", this);
     toggleStop->setShortcut(QKeySequence("X"));
     connect(toggleStop, SIGNAL(triggered()), canvas, SLOT(toggleStop()));
@@ -255,6 +265,8 @@ namespace Gecode { namespace Gist {
     addAction(toggleHidden);
     addAction(hideFailed);
     addAction(unhideAll);
+    addAction(labelBranches);
+    addAction(labelPath);
     addAction(toggleStop);
     addAction(unstopAll);
     addAction(zoomToFit);
@@ -353,6 +365,8 @@ namespace Gecode { namespace Gist {
     contextMenu->addAction(toggleHidden);
     contextMenu->addAction(hideFailed);
     contextMenu->addAction(unhideAll);
+    contextMenu->addAction(labelBranches);
+    contextMenu->addAction(labelPath);
 
     contextMenu->addAction(toggleStop);
     contextMenu->addAction(unstopAll);
@@ -570,6 +584,8 @@ namespace Gecode { namespace Gist {
       toggleHidden->setEnabled(false);
       hideFailed->setEnabled(false);
       unhideAll->setEnabled(false);
+      labelBranches->setEnabled(false);
+      labelPath->setEnabled(false);
       
       toggleStop->setEnabled(false);
       unstopAll->setEnabled(false);
@@ -613,18 +629,21 @@ namespace Gecode { namespace Gist {
 
       showNodeStats->setEnabled(true);
       inspect->setEnabled(true);
+      labelPath->setEnabled(true);
       if (n->getStatus() == UNDETERMINED) {
         inspectGroup->setEnabled(false);
         inspectBeforeFP->setEnabled(false);
         inspectBeforeFPGroup->setEnabled(false);
         compareNode->setEnabled(false);
         compareNodeBeforeFP->setEnabled(false);
+        labelBranches->setEnabled(false);
       } else {
-        inspectGroup->setEnabled(true);        
+        inspectGroup->setEnabled(true);
         inspectBeforeFP->setEnabled(true);
         inspectBeforeFPGroup->setEnabled(true);
         compareNode->setEnabled(true);
         compareNodeBeforeFP->setEnabled(true);
+        labelBranches->setEnabled(!n->isHidden());
       }
 
       navRoot->setEnabled(true);

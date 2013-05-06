@@ -144,6 +144,8 @@ namespace Gecode { namespace Gist {
     nodeMenu->addAction(c->toggleHidden);
     nodeMenu->addAction(c->hideFailed);
     nodeMenu->addAction(c->unhideAll);
+    nodeMenu->addAction(c->labelBranches);
+    nodeMenu->addAction(c->labelPath);
     nodeMenu->addAction(c->toggleStop);
     nodeMenu->addAction(c->unstopAll);
     nodeMenu->addSeparator();

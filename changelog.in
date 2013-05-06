@@ -77,7 +77,8 @@ Module: gist
 What:   new
 Rank:   major
 [DESCRIPTION]
-Gist now can show information on the alternatives in a search tree.
+Gist now can show information on the alternatives in a search tree,
+using the new menu options "Label branches" and "Label path".
 
 [ENTRY]
 Module: float
