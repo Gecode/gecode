@@ -158,12 +158,12 @@ namespace Gecode { namespace Gist {
     unhideAll->setShortcut(QKeySequence("U"));
     connect(unhideAll, SIGNAL(triggered()), canvas, SLOT(unhideAll()));
 
-    labelBranches = new QAction("Label branches", this);
+    labelBranches = new QAction("Label/clear branches", this);
     labelBranches->setShortcut(QKeySequence("L"));
     connect(labelBranches, SIGNAL(triggered()),
             canvas, SLOT(labelBranches()));
 
-    labelPath = new QAction("Label path", this);
+    labelPath = new QAction("Label/clear path", this);
     labelPath->setShortcut(QKeySequence("Shift+L"));
     connect(labelPath, SIGNAL(triggered()),
             canvas, SLOT(labelPath()));
