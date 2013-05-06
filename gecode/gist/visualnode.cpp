@@ -281,11 +281,7 @@ namespace Gecode { namespace Gist {
 
   std::string
   VisualNode::toolTip(NodeAllocator&, BestNode*, int, int) {
-    std::ostringstream oss;
-    Shape& sh = *getShape();
-    for (int i=0; i<sh.depth(); i++)
-      oss << sh[i].l << "." << sh[i].r << " ";
-    return oss.str();
+    return "";
   }
 
   std::string
