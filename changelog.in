@@ -101,7 +101,7 @@ Module: float
 What:   new
 Rank:   major
 [DESCRIPTION]
-Set branchings now take an optional argument for a
+Float branchings now take an optional argument for a
 user-defined print function. See MPG for details.
 
 [ENTRY]
