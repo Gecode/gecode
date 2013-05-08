@@ -315,6 +315,23 @@ namespace Gecode { namespace FlatZinc {
 
   };
 
+  class BranchInformation : public SharedHandle {
+  public:
+    /// Constructor
+    BranchInformation(void);
+    /// Add new brancher information
+    void add(const BrancherHandle& bh,
+             const std::string& rel0,
+             const std::string& rel1,
+             const std::vector<std::string>& n);
+    /// Output branch information
+    void print(const BrancherHandle& bh,
+               int a, int i, int n, std::ostream& o) const;
+    /// Output branch information
+    void print(const BrancherHandle& bh,
+               int a, int i, const FloatVal& n, std::ostream& o) const;
+  };
+
   /**
    * \brief A space that can be initialized with a %FlatZinc model
    *
@@ -473,6 +490,9 @@ namespace Gecode { namespace FlatZinc {
 
     /// Return the solve item annotations
     AST::Array* solveAnnotations(void) const;
+
+    /// Information for printing branches
+    BranchInformation branchInfo;
 
     /// Implement optimization
     virtual void constrain(const Space& s);

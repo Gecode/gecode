@@ -94,6 +94,8 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     Array* getArray(void);
     /// Cast this node to an Atom node
     Atom* getAtom(void);
+    /// Return name of variable represented by this node
+    std::string getVarName(void);
     /// Cast this node to an integer variable node
     int getIntVar(void);
     /// Cast this node to a Boolean variable node
@@ -189,13 +191,16 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   /// Variable node base class
   class GECODE_VTABLE_EXPORT Var : public Node {
   public:
-    int i;
-    Var(int i0) : i(i0) {}
+    int i; //< Index
+    std::string n; //< Name
+    /// Constructor
+    Var(int i0, const std::string& n0) : i(i0), n(n0) {}
   };
   /// Boolean variable node
   class GECODE_VTABLE_EXPORT BoolVar : public Var {
   public:
-    BoolVar(int i0) : Var(i0) {}
+    /// Constructor
+    BoolVar(int i0, const std::string& n0="") : Var(i0,n0) {}
     virtual void print(std::ostream& os) {
       os << "xb("<<i<<")";
     }
@@ -203,7 +208,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   /// Integer variable node
   class GECODE_VTABLE_EXPORT IntVar : public Var {
   public:
-    IntVar(int i0) : Var(i0) {}
+    IntVar(int i0, const std::string& n0="") : Var(i0,n0) {}
     virtual void print(std::ostream& os) {
       os << "xi("<<i<<")";
     }
@@ -211,7 +216,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   /// Float variable node
   class GECODE_VTABLE_EXPORT FloatVar : public Var {
   public:
-    FloatVar(int i0) : Var(i0) {}
+    FloatVar(int i0, const std::string& n0="") : Var(i0,n0) {}
     virtual void print(std::ostream& os) {
       os << "xf("<<i<<")";
     }
@@ -219,7 +224,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   /// %Set variable node
   class GECODE_VTABLE_EXPORT SetVar : public Var {
   public:
-    SetVar(int i0) : Var(i0) {}
+    SetVar(int i0, const std::string& n0="") : Var(i0,n0) {}
     virtual void print(std::ostream& os) {
       os << "xs("<<i<<")";
     }
@@ -404,6 +409,12 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     throw TypeError("atom expected");
   }
   
+  inline std::string
+  Node::getVarName(void) {
+    if (Var* a = dynamic_cast<Var*>(this))
+      return a->n;
+    throw TypeError("variable expected");
+  }
   inline int
   Node::getIntVar(void) {
     if (IntVar* a = dynamic_cast<IntVar*>(this))
