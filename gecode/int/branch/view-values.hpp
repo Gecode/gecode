@@ -38,7 +38,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   /// %Choice storing position and values for integer views
-  class PosValuesChoice : public PosChoice {
+  class GECODE_VTABLE_EXPORT PosValuesChoice : public PosChoice {
   private:
     /// Information about position and minimum
     class PosMin {
