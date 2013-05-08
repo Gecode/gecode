@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     int nn = pvc.val(b);
     if (vvp != NULL)
-      vvp(home,a,x,pvc.pos().pos,nn,o);
+      vvp(home,*this,a,x,pvc.pos().pos,nn,o);
     else
       o << "branch[" << pvc.pos().pos << "] = " << nn;
   }

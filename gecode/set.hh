@@ -1223,7 +1223,8 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for printing branching alternatives for set variables
-  typedef void (*SetVarValPrint)(const Space &home, unsigned int a,
+  typedef void (*SetVarValPrint)(const Space &home, const BrancherHandle& bh,
+                                 unsigned int a,
                                  SetVar x, int i, const int& n,
                                  std::ostream& o);
 

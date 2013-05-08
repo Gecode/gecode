@@ -547,7 +547,7 @@ namespace Gecode { namespace Int { namespace Branch {
     typedef typename ViewBrancher<IntView,n>::BranchFilter BranchFilter;
   protected:
     using ViewBrancher<IntView,n>::x;
-    /// Explanation function
+    /// Print function
     IntVarValPrint vvp;
     /// Constructor for cloning \a b
     ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b);

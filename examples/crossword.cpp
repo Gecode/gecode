@@ -156,7 +156,8 @@ public:
     }
   }
   /// Print brancher information when branching on letters
-  static void printletters(const Space& home, unsigned int a,
+  static void printletters(const Space& home, const BrancherHandle& bh,
+                           unsigned int a,
                            IntVar, int i, const int& n,
                            std::ostream& o) {
     const Crossword& c = static_cast<const Crossword&>(home);
@@ -166,7 +167,8 @@ public:
       << static_cast<char>(n);
   }
   /// Print brancher information when branching on words
-  static void printwords(const Space&, unsigned int a,
+  static void printwords(const Space&, const BrancherHandle& bh,
+                         unsigned int a,
                          IntVar, int i, const int& n,
                          std::ostream& o) {
     o << "allwords[" << i << "] "

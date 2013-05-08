@@ -1473,7 +1473,8 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for explaining branching alternatives for set variables
-  typedef void (*FloatVarValPrint)(const Space &home, unsigned int a,
+  typedef void (*FloatVarValPrint)(const Space &home, const BrancherHandle& bh,
+                                   unsigned int a,
                                    FloatVar x, int i, const FloatVal& n,
                                    std::ostream& o);
 

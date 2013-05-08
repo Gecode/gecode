@@ -77,8 +77,9 @@ namespace Gecode {
     using ViewBrancher<View,n>::x;
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
-    /// Function type for print variable and value selection
-    typedef void (*VarValPrint)(const Space& home, unsigned int b,
+    /// Function type for printing variable and value selection
+    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
+                                unsigned int b,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
@@ -241,7 +242,7 @@ namespace Gecode {
     View xi = ViewBrancher<View,n>::view(pvc.pos());
     typename View::VarType y(ViewBrancher<View,n>::view(pvc.pos()).varimp());
     if (vvp != NULL)
-      vvp(home,b,y,pvc.pos().pos,pvc.val(),o);
+      vvp(home,*this,b,y,pvc.pos().pos,pvc.val(),o);
     else
       vsc->print(home,b,xi,pvc.pos().pos,pvc.val(),o);
   }

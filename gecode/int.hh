@@ -3679,12 +3679,14 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for printing branching alternatives for integer variables
-  typedef void (*IntVarValPrint)(const Space &home, unsigned int a,
+  typedef void (*IntVarValPrint)(const Space &home, const BrancherHandle& bh,
+                                 unsigned int a,
                                  IntVar x, int i, const int& n,
                                  std::ostream& o);
 
   /// Function type for printing branching alternatives for Boolean variables
-  typedef void (*BoolVarValPrint)(const Space &home, unsigned int a,
+  typedef void (*BoolVarValPrint)(const Space &home, const BrancherHandle& bh,
+                                  unsigned int a,
                                   BoolVar x, int i, const int& n,
                                   std::ostream& o);
 
