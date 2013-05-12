@@ -73,6 +73,14 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+The FlatZinc interpreter now supports float variables as objective
+functions.
+
+[ENTRY]
 Module: gist
 What:   new
 Rank:   major

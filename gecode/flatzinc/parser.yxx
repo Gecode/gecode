@@ -1395,10 +1395,12 @@ solve_item :
         ParserState *pp = static_cast<ParserState*>(parm);
         if (!pp->hadError) {
           try {
+            int v = $4 < 0 ? (-$4-1) : $4;
+            bool vi = $4 >= 0;
             if ($3)
-              pp->fg->minimize($4,$2);
+              pp->fg->minimize(v,vi,$2);
             else
-              pp->fg->maximize($4,$2);
+              pp->fg->maximize(v,vi,$2);
           } catch (Gecode::FlatZinc::Error& e) {
             yyerror(pp, e.toString().c_str());
           }
@@ -1663,10 +1665,13 @@ solve_expr:
       { 
         ParserState *pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
-        if (pp->symbols.get($1,e) && e.t == ST_INTVAR) {
+        bool haveSym = pp->symbols.get($1,e);
+        if (haveSym && e.t == ST_INTVAR) {
           $$ = e.i;
+        } else if (haveSym && e.t == ST_FLOATVAR) {
+          $$ = -e.i-1;
         } else {
-          pp->err << "Error: unknown integer variable " << $1
+          pp->err << "Error: unknown int or float variable " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1677,8 +1682,9 @@ solve_expr:
       {
         SymbolEntry e;
         ParserState *pp = static_cast<ParserState*>(parm);
-        if ( (!pp->symbols.get($1, e)) || e.t != ST_INTVARARRAY) {
-          pp->err << "Error: unknown integer variable array " << $1
+        if ( (!pp->symbols.get($1, e)) ||
+             (e.t != ST_INTVARARRAY && e.t != ST_FLOATVARARRAY)) {
+          pp->err << "Error: unknown int or float variable array " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1689,7 +1695,10 @@ solve_expr:
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
         } else {
-          $$ = pp->arrays[e.i+$3];
+          if (e.t == ST_INTVARARRAY)
+            $$ = pp->arrays[e.i+$3];
+          else
+            $$ = -pp->arrays[e.i+$3]-1;
         }
         free($1);
       }

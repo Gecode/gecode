@@ -180,7 +180,7 @@ namespace Gecode { namespace FlatZinc {
                        std::map<int,int>& sv, std::map<int,int>& fv);
 
     void shrinkArrays(Space& home,
-                      int& optVar,
+                      int& optVar, bool optVarIsInt,
                       Gecode::IntVarArray& iv,
                       Gecode::BoolVarArray& bv
 #ifdef GECODE_HAS_SET_VARS
@@ -353,8 +353,10 @@ namespace Gecode { namespace FlatZinc {
     /// Number of set variables
     int setVarCount;
 
-    /// Index of the integer variable to optimize
+    /// Index of the variable to optimize
     int _optVar;
+    /// Whether variable to optimize is integer (or float)
+    bool _optVarIsInt;
   
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
@@ -439,9 +441,9 @@ namespace Gecode { namespace FlatZinc {
     /// Post the solve item
     void solve(AST::Array* annotation);
     /// Post that integer variable \a var should be minimized
-    void minimize(int var, AST::Array* annotation);
+    void minimize(int var, bool isInt, AST::Array* annotation);
     /// Post that integer variable \a var should be maximized
-    void maximize(int var, AST::Array* annotation);
+    void maximize(int var, bool isInt, AST::Array* annotation);
 
     /// Run the search
     void run(std::ostream& out, const Printer& p, 
@@ -473,6 +475,8 @@ namespace Gecode { namespace FlatZinc {
 
     /// Return index of variable used for optimization
     int optVar(void) const;
+    /// Return whether variable used for optimization is integer (or float)
+    bool optVarIsInt(void) const;
 
     /**
      * \brief Create branchers corresponding to the solve item annotations

@@ -601,6 +601,7 @@ namespace Gecode { namespace FlatZinc {
     : Space(share, f), _solveAnnotations(NULL), iv_boolalias(NULL),
       needAuxVars(f.needAuxVars) {
       _optVar = f._optVar;
+      _optVarIsInt = f._optVarIsInt;
       _method = f._method;
       branchInfo.update(*this, share, f.branchInfo);
       iv.update(*this, share, f.iv);
@@ -662,7 +663,8 @@ namespace Gecode { namespace FlatZinc {
   
   FlatZincSpace::FlatZincSpace(void)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
-    _optVar(-1), _solveAnnotations(NULL), needAuxVars(true) {}
+    _optVar(-1), _optVarIsInt(true),
+    _solveAnnotations(NULL), needAuxVars(true) {}
 
   void
   FlatZincSpace::init(int intVars, int boolVars,
@@ -1160,17 +1162,29 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::minimize(int var, AST::Array* ann) {
+  FlatZincSpace::minimize(int var, bool isInt, AST::Array* ann) {
     _method = MIN;
     _optVar = var;
+    _optVarIsInt = isInt;
     _solveAnnotations = ann;
     // Branch on optimization variable to ensure that it is given a value.
-    AST::Array* args = new AST::Array(4);
-    args->a[0] = new AST::Array(new AST::IntVar(_optVar));
-    args->a[1] = new AST::Atom("input_order");
-    args->a[2] = new AST::Atom("indomain_min");
-    args->a[3] = new AST::Atom("complete");
-    AST::Call* c = new AST::Call("int_search", args);
+    AST::Call* c;
+    if (isInt) {
+      AST::Array* args = new AST::Array(4);
+      args->a[0] = new AST::Array(new AST::IntVar(_optVar));
+      args->a[1] = new AST::Atom("input_order");
+      args->a[2] = new AST::Atom("indomain_min");
+      args->a[3] = new AST::Atom("complete");
+      c = new AST::Call("int_search", args);
+    } else {
+      AST::Array* args = new AST::Array(5);
+      args->a[0] = new AST::Array(new AST::FloatVar(_optVar));
+      args->a[1] = new AST::FloatLit(0.0);
+      args->a[2] = new AST::Atom("input_order");
+      args->a[3] = new AST::Atom("indomain_split");
+      args->a[4] = new AST::Atom("complete");
+      c = new AST::Call("float_search", args);
+    }
     if (!ann)
       ann = new AST::Array(c);
     else
@@ -1178,17 +1192,29 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::maximize(int var, AST::Array* ann) {
+  FlatZincSpace::maximize(int var, bool isInt, AST::Array* ann) {
     _method = MAX;
     _optVar = var;
+    _optVarIsInt = isInt;
     _solveAnnotations = ann;
     // Branch on optimization variable to ensure that it is given a value.
-    AST::Array* args = new AST::Array(4);
-    args->a[0] = new AST::Array(new AST::IntVar(_optVar));
-    args->a[1] = new AST::Atom("input_order");
-    args->a[2] = new AST::Atom("indomain_min");
-    args->a[3] = new AST::Atom("complete");
-    AST::Call* c = new AST::Call("int_search", args);
+    AST::Call* c;
+    if (isInt) {
+      AST::Array* args = new AST::Array(4);
+      args->a[0] = new AST::Array(new AST::IntVar(_optVar));
+      args->a[1] = new AST::Atom("input_order");
+      args->a[2] = new AST::Atom("indomain_max");
+      args->a[3] = new AST::Atom("complete");
+      c = new AST::Call("int_search", args);
+    } else {
+      AST::Array* args = new AST::Array(5);
+      args->a[0] = new AST::Array(new AST::FloatVar(_optVar));
+      args->a[1] = new AST::FloatLit(0.0);
+      args->a[2] = new AST::Atom("input_order");
+      args->a[3] = new AST::Atom("indomain_split_reverse");
+      args->a[4] = new AST::Atom("complete");
+      c = new AST::Call("float_search", args);
+    }
     if (!ann)
       ann = new AST::Array(c);
     else
@@ -1452,12 +1478,21 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::constrain(const Space& s) {
-    if (_method == MIN)
-      rel(*this, iv[_optVar], IRT_LE, 
-                 static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
-    else if (_method == MAX)
-      rel(*this, iv[_optVar], IRT_GR,
-                 static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+    if (_optVarIsInt) {
+      if (_method == MIN)
+        rel(*this, iv[_optVar], IRT_LE, 
+                   static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+      else if (_method == MAX)
+        rel(*this, iv[_optVar], IRT_GR,
+                   static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
+    } else {
+      if (_method == MIN)
+        rel(*this, fv[_optVar], FRT_LE, 
+                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
+      else if (_method == MAX)
+        rel(*this, fv[_optVar], FRT_GR,
+                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
+    }
   }
 
   Space*
@@ -1473,6 +1508,11 @@ namespace Gecode { namespace FlatZinc {
   int
   FlatZincSpace::optVar(void) const {
     return _optVar;
+  }
+
+  bool
+  FlatZincSpace::optVarIsInt(void) const {
+    return _optVarIsInt;
   }
 
   void
@@ -1542,7 +1582,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   FlatZincSpace::shrinkArrays(Printer& p) {
-    p.shrinkArrays(*this, _optVar, iv, bv
+    p.shrinkArrays(*this, _optVar, _optVarIsInt, iv, bv
 #ifdef GECODE_HAS_SET_VARS
     , sv
 #endif
@@ -2096,7 +2136,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   Printer::shrinkArrays(Space& home,
-                        int& optVar,
+                        int& optVar, bool optVarIsInt,
                         Gecode::IntVarArray& iv,
                         Gecode::BoolVarArray& bv
 #ifdef GECODE_HAS_SET_VARS
@@ -2109,20 +2149,27 @@ namespace Gecode { namespace FlatZinc {
 #endif
                        ) {
     if (_output == NULL) {
-      if (optVar == -1) {
-        iv = IntVarArray(home, 0);
-      } else {
+      if (optVarIsInt && optVar != -1) {
         IntVar ov = iv[optVar];
         iv = IntVarArray(home, 1);
         iv[0] = ov;
         optVar = 0;
+      } else {
+        iv = IntVarArray(home, 0);
       }
       bv = BoolVarArray(home, 0);
 #ifdef GECODE_HAS_SET_VARS
       sv = SetVarArray(home, 0);
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-      fv = FloatVarArray(home,0);
+      if (!optVarIsInt && optVar != -1) {
+        FloatVar ov = fv[optVar];
+        fv = FloatVarArray(home, 1);
+        fv[0] = ov;
+        optVar = 0;
+      } else {
+        fv = FloatVarArray(home,0);
+      }
 #endif
       return;
     }
@@ -2132,7 +2179,10 @@ namespace Gecode { namespace FlatZinc {
     std::map<int,int> fv_new;
 
     if (optVar != -1) {
-      iv_new[optVar] = 0;
+      if (optVarIsInt)
+        iv_new[optVar] = 0;
+      else
+        fv_new[optVar] = 0;
       optVar = 0;
     }
 
