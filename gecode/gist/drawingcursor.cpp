@@ -121,7 +121,7 @@ namespace Gecode { namespace Gist {
       } else {
         lx = myx-tw/2;
       }
-      painter.drawText(QPointF(lx,myy-1),label);
+      painter.drawText(QPointF(lx,myy-2),label);
     }
 
     // draw shadow
