@@ -113,7 +113,7 @@ namespace Gecode { namespace Int {
       int max_c = std::min(m,c->max());
       dom.max(max_c); c->max(max_c);
       if (c != lst()) {
-        lst()->dispose(home,n);
+        n->dispose(home,lst());
         c->next(n,NULL); lst(c);
       }
     }

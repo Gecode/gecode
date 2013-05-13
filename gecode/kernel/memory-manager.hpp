@@ -472,6 +472,13 @@ namespace Gecode {
   forceinline void
   MemoryManager::fl_dispose(FreeList* f, FreeList* l) {
     size_t i = sz2i(s);
+#ifdef GECODE_AUDIT
+    FreeList* cur = f;
+    while (cur != l) {
+      assert(cur->next());
+      cur = cur->next();
+    }
+#endif
     l->next(fl[i]); fl[i] = f;
   }
 

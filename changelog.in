@@ -73,6 +73,14 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+The internal representation of integer variable domains could leak
+memory to the space.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   major
