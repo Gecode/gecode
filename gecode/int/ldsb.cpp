@@ -108,7 +108,7 @@ namespace Gecode {
   }
 
   SymmetryHandle values_reflect(int lower, int upper) {
-    int n = upper-lower+1;
+    int n = (upper-lower+1)/2;
     IntArgs a(n*2);
     int i = lower;
     int j = upper;
@@ -118,6 +118,7 @@ namespace Gecode {
       a[n+k] = i;
       i++;
       j--;
+      k++;
     }
     return ValueSequenceSymmetry(a,n);
   }
