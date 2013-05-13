@@ -1566,7 +1566,38 @@ namespace Test { namespace LDSB {
       return expected;
     }
   };
-  
+
+    /// %Test for reflection symmetry
+  class ReflectSym2 {
+  public:
+    /// Number of variables
+    static const int n = 2;
+    /// Lower bound of values
+    static const int l = 0;
+    /// Upper bound of values
+    static const int u = 3;
+    /// Setup problem constraints and symmetries
+    static void setup(Home h, IntVarArray& xs) {
+      Symmetries s;
+      s << values_reflect(l, u);
+      branch(h, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
+    }
+    /// Compute list of expected solutions
+    static std::vector<IntArgs> expectedSolutions(void) {
+      static std::vector<IntArgs> expected;
+      expected.clear();
+      expected.push_back(IntArgs(2, 0,0));
+      expected.push_back(IntArgs(2, 0,1));
+      expected.push_back(IntArgs(2, 0,2));
+      expected.push_back(IntArgs(2, 0,3));
+      expected.push_back(IntArgs(2, 1,0));
+      expected.push_back(IntArgs(2, 1,1));
+      expected.push_back(IntArgs(2, 1,2));
+      expected.push_back(IntArgs(2, 1,3));
+      return expected;
+    }
+  };
+
 #endif
 
   LDSB<VarSym1> varsym1("VarSym1");
@@ -1597,6 +1628,7 @@ namespace Test { namespace LDSB {
   LDSB<Recomputation> recomp("Recomputation", 999,999);
   LDSB<TieBreak> tiebreak("TieBreak");
   LDSB<ReflectSym1> reflectsym1("ReflectSym1");
+  LDSB<ReflectSym2> reflectsym2("ReflectSym2");
 
 #ifdef GECODE_HAS_SET_VARS
   LDSBSet<SetVarSym1> setvarsym1("SetVarSym1");

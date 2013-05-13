@@ -128,10 +128,12 @@ namespace Gecode { namespace Int { namespace LDSB {
     if (location.first == -1) return dynamicStackToArgArray(s);
     unsigned int seqNum = location.first;
     unsigned int seqPos = location.second;
-    for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
-      if (seq == seqNum) continue;
-      if (dead_sequences.get(seq)) continue;
-      s.push(Literal(l._variable, getVal(seq,seqPos)));
+    if (! dead_sequences.get(seqNum)) {
+      for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
+        if (seq == seqNum) continue;
+        if (dead_sequences.get(seq)) continue;
+        s.push(Literal(l._variable, getVal(seq,seqPos)));
+      }
     }
     return dynamicStackToArgArray(s);
   }
@@ -146,10 +148,12 @@ namespace Gecode { namespace Int { namespace LDSB {
     if (location.first == -1) return dynamicStackToArgArray(s);
     unsigned int seqNum = location.first;
     unsigned int seqPos = location.second;
-    for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
-      if (seq == seqNum) continue;
-      if (dead_sequences.get(seq)) continue;
-      s.push(Literal(l._variable, getVal(seq,seqPos)));
+    if (! dead_sequences.get(seqNum)) {
+      for (unsigned int seq = 0 ; seq < n_seqs ; seq++) {
+        if (seq == seqNum) continue;
+        if (dead_sequences.get(seq)) continue;
+        s.push(Literal(l._variable, getVal(seq,seqPos)));
+      }
     }
     return dynamicStackToArgArray(s);
   }
