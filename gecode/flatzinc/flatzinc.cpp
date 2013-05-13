@@ -285,12 +285,13 @@ namespace Gecode { namespace FlatZinc {
                            int n, std::ostream& o) const {
     static_cast<const BranchInformationO*>(object())->print(bh,a,i,n,o);
   }
+#ifdef GECODE_HAS_FLOAT_VARS
   void
   BranchInformation::print(const BrancherHandle& bh, int a, int i,
                            const FloatVal& n, std::ostream& o) const {
     static_cast<const BranchInformationO*>(object())->print(bh,a,i,n,o);
   }
-
+#endif
   template<class Var>
   void varValPrint(const Space &home, const BrancherHandle& bh,
                    unsigned int a,
@@ -298,12 +299,15 @@ namespace Gecode { namespace FlatZinc {
                    std::ostream& o) {
     static_cast<const FlatZincSpace&>(home).branchInfo.print(bh,a,i,n,o);
   }
+
+#ifdef GECODE_HAS_FLOAT_VARS
   void varValPrintF(const Space &home, const BrancherHandle& bh,
                     unsigned int a,
                     FloatVar, int i, const FloatVal& n,
                     std::ostream& o) {
     static_cast<const FlatZincSpace&>(home).branchInfo.print(bh,a,i,n,o);
   }
+#endif
 
   IntSet vs2is(IntVarSpec* vs) {
     if (vs->assigned) {
@@ -1486,12 +1490,14 @@ namespace Gecode { namespace FlatZinc {
         rel(*this, iv[_optVar], IRT_GR,
                    static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
     } else {
+#ifdef GECODE_HAS_FLOAT_VARS
       if (_method == MIN)
         rel(*this, fv[_optVar], FRT_LE, 
                    static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
       else if (_method == MAX)
         rel(*this, fv[_optVar], FRT_GR,
                    static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
+#endif
     }
   }
 

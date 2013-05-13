@@ -327,9 +327,11 @@ namespace Gecode { namespace FlatZinc {
     /// Output branch information
     void print(const BrancherHandle& bh,
                int a, int i, int n, std::ostream& o) const;
+#ifdef GECODE_HAS_FLOAT_VARS
     /// Output branch information
     void print(const BrancherHandle& bh,
                int a, int i, const FloatVal& n, std::ostream& o) const;
+#endif
   };
 
   /**
