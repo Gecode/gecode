@@ -145,6 +145,7 @@ namespace Gecode {
          SetBranchFilter bf, SetVarValPrint vvp) {
     using namespace Set;
     if (home.failed()) return BrancherHandle();
+    vars.expand(home,x);
     ViewArray<SetView> xv(home,x);
     ViewSel<SetView>* vs[1] = { 
       Branch::viewsel(home,vars) 

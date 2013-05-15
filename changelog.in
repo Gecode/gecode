@@ -73,6 +73,22 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   major
+Thanks:	Stefano Gualandi
+[DESCRIPTION]
+Fixed crash due to combination of LDSB and Activity.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Stefano Gualandi
+[DESCRIPTION]
+Fixed crash due to combination of LDSB and Activity.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major

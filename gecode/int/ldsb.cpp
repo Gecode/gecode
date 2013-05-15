@@ -266,6 +266,7 @@ namespace Gecode {
          IntBranchFilter bf, IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return BrancherHandle();
+    vars.expand(home,x);
     ViewArray<IntView> xv(home,x);
     ViewSel<IntView>* vs[1] = { 
       Branch::viewselint(home,vars) 
@@ -429,6 +430,7 @@ namespace Gecode {
          BoolBranchFilter bf, BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return BrancherHandle();
+    vars.expand(home,x);
     ViewArray<BoolView> xv(home,x);
     ViewSel<BoolView>* vs[1] = { 
       Branch::viewselbool(home,vars) 
