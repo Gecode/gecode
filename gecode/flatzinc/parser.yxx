@@ -216,7 +216,8 @@ void addDomainConstraint(ParserState* pp, AST::Node* var,
   }
   {
     AST::Array* args = new AST::Array(2);
-    args->a[0] = var;
+    AST::FloatVar* fv = static_cast<AST::FloatVar*>(var);
+    args->a[0] = new AST::FloatVar(fv->i,fv->n);
     args->a[1] = new AST::FloatLit(dom.some()->second);
     pp->domainConstraints.push_back(new ConExpr("float_le", args));
   }
@@ -690,8 +691,8 @@ vardecl_item:
             yyassert(pp, false, "Invalid var float initializer");
           }
           if (!pp->hadError && $2()) {
-            addDomainConstraint(pp,
-              new AST::FloatVar(pp->floatvars.size()-1), $2);
+            AST::FloatVar* fv = new AST::FloatVar(pp->floatvars.size()-1);
+            addDomainConstraint(pp, fv, $2);
           }
           delete arg;
         } else {

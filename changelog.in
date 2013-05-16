@@ -73,6 +73,15 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks:	Peter Nightingale
+[DESCRIPTION]
+Fixed a segmentation fault when using FlatZinc with float variables
+that have initializers.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   major
