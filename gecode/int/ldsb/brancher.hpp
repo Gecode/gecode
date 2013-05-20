@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace LDSB {
       _nsyms(nsyms),
       _prevPos(-1)
   {
-    home.notice(*this, AP_DISPOSE);
+    home.notice(*this, AP_DISPOSE, true);
   }
 
   template<class View, int n, class Val, unsigned int a>
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace LDSB {
   template<class View, int n, class Val, unsigned int a>
   size_t
   LDSBBrancher<View,n,Val,a>::dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE);
+    home.ignore(*this,AP_DISPOSE,true);
     (void) ViewValBrancher<View,n,Val,a>::dispose(home);
     return sizeof(LDSBBrancher<View,n,Val,a>);
   }

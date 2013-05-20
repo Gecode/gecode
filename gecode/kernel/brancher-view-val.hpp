@@ -170,13 +170,8 @@ namespace Gecode {
                   BranchFilter bf,
                   VarValPrint vvp0)
     : ViewBrancher<View,n>(home,x,vs,bf), vsc(vsc0), vvp(vvp0) {
-    if (vsc->notice()) {
-      for (int i=0; i<n; i++)
-        if (vs[i]->notice())
-          goto not_needed;
-      home.notice(*this,AP_DISPOSE);      
-    not_needed: ;
-    }
+    if (vsc->notice())
+      home.notice(*this,AP_DISPOSE,true);
   }
 
   template<class View, int n, class Val, unsigned int a>
@@ -250,13 +245,8 @@ namespace Gecode {
   template<class View, int n, class Val, unsigned int a>
   forceinline size_t
   ViewValBrancher<View,n,Val,a>::dispose(Space& home) {
-    if (vsc->notice()) {
-      for (int i=0; i<n; i++)
-        if (vs[i]->notice())
-          goto not_needed;
-      home.ignore(*this,AP_DISPOSE);
-    not_needed: ;
-    }
+    if (vsc->notice())
+      home.ignore(*this,AP_DISPOSE,true);
     vsc->dispose(home);
     (void) ViewBrancher<View,n>::dispose(home);
     return sizeof(ViewValBrancher<View,n,Val,a>);

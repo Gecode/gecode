@@ -349,6 +349,9 @@ public:
       if (opt.model() == MODEL_CLIQUE)
         rel(*this, m, IRT_GQ, n-1);
     }
+    /// Value symmetries on colors
+    Symmetries syms;
+    syms << ValueSymmetry(IntArgs::create(g.n_v,0));
     branch(*this, m, INT_VAL_MIN());
     switch (opt.branching()) {
     case BRANCH_SIZE:
@@ -362,7 +365,10 @@ public:
       branch(*this, v, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_MIN());
       break;
     case BRANCH_SIZE_AFC:
-      branch(*this, v, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+      {
+        IntActivity a(*this,v,opt.decay());
+      branch(*this, v, INT_VAR_ACTIVITY_MAX(a), INT_VAL_MIN(), syms);
+      }
       break;
     default:
       break;
