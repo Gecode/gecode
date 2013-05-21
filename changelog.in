@@ -78,6 +78,14 @@ What:   bug
 Rank:   minor
 Thanks:	Peter Nightingale
 [DESCRIPTION]
+Fixed printing of float variables to be compatible with MiniZinc output.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks:	Peter Nightingale
+[DESCRIPTION]
 Fixed a segmentation fault when using FlatZinc with float variables
 that have initializers.
 

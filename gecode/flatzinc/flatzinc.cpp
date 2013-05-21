@@ -47,6 +47,8 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
+#include <limits>
 using namespace std;
 
 namespace Gecode { namespace FlatZinc {
@@ -1883,7 +1885,25 @@ namespace Gecode { namespace FlatZinc {
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
     } else if (ai->isFloatVar()) {
-      out << fv[ai->getFloatVar()];
+      if (fv[ai->getFloatVar()].assigned()) {
+        FloatVal vv = fv[ai->getFloatVar()].val();
+        FloatNum v;
+        if (vv.singleton())
+          v = vv.min();
+        else if (vv < 0.0)
+          v = vv.max();
+        else
+          v = vv.min();
+        std::ostringstream oss;
+        // oss << std::scientific;
+        oss << std::setprecision(std::numeric_limits<double>::digits10);
+        oss << v;
+        if (oss.str().find(".") == std::string::npos)
+          oss << ".0";
+        out << oss.str();
+      } else {
+        out << fv[ai->getFloatVar()];
+      }
 #endif
     } else if (ai->isBool()) {
       out << (ai->getBool() ? "true" : "false");
