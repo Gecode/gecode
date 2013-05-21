@@ -162,7 +162,6 @@ namespace Gecode {
       // deletion is already in progress
       if (d_fst == NULL)
         return;
-      Actor** f = d_fst;
       if (duplicate) {
         for (Actor** f = d_fst; f < d_cur; f++)
           if (&a == *f) {
