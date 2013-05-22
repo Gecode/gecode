@@ -1598,6 +1598,32 @@ namespace Test { namespace LDSB {
     }
   };
 
+  /// %Test with activity
+  class Activity1 {
+  public:
+    /// Number of variables
+    static const int n = 4;
+    /// Lower bound of values
+    static const int l = 0;
+    /// Upper bound of values
+    static const int u = 3;
+    /// Setup problem constraints and symmetries
+    static void setup(Home h, IntVarArray& xs) {
+      distinct(h, xs);
+      Symmetries s;
+      s << VariableSymmetry(xs);
+      s << ValueSymmetry(IntArgs::create(4,0));
+      branch(h, xs, INT_VAR_ACTIVITY_MIN(0.8), INT_VAL_MIN(), s);
+    }
+    /// Compute list of expected solutions
+    static std::vector<IntArgs> expectedSolutions(void) {
+      static std::vector<IntArgs> expected;
+      expected.clear();
+      expected.push_back(IntArgs(4, 0,1,2,3));
+      return expected;
+    }
+  };
+
 #endif
 
   LDSB<VarSym1> varsym1("VarSym1");
@@ -1629,6 +1655,7 @@ namespace Test { namespace LDSB {
   LDSB<TieBreak> tiebreak("TieBreak");
   LDSB<ReflectSym1> reflectsym1("ReflectSym1");
   LDSB<ReflectSym2> reflectsym2("ReflectSym2");
+  LDSB<Activity1> activity1("Activity1");
 
 #ifdef GECODE_HAS_SET_VARS
   LDSBSet<SetVarSym1> setvarsym1("SetVarSym1");
