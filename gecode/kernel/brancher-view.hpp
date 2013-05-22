@@ -231,7 +231,7 @@ namespace Gecode {
   ViewBrancher<View,n>::dispose(Space& home) {
     for (int i=0; i<n; i++)
       if (vs[i]->notice()) {
-        home.ignore(*this,AP_DISPOSE);
+        home.ignore(*this,AP_DISPOSE,true);
         break;
       }
     for (int i=0; i<n; i++)

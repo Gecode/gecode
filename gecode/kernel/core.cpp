@@ -162,18 +162,20 @@ namespace Gecode {
       // deletion is already in progress
       if (d_fst == NULL)
         return;
+      Actor** f = d_fst;
       if (duplicate) {
-        for (Actor** f = d_fst; f < d_cur; f++)
-          if (&a == *f) {
-            *f = *(--d_cur);
-            return;
-          }
+        while (f < d_cur)
+          if (&a == *f)
+            break;
+          else
+            f++;
+        if (f == d_cur)
+          return;
       } else {
-        Actor** f = d_fst;
         while (&a != *f)
           f++;
-        *f = *(--d_cur);
       }
+      *f = *(--d_cur);
     } else if (p & AP_WEAKLY) {
       assert(wmp() > 1U);
       wmp(wmp()-1);
