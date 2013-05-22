@@ -113,8 +113,8 @@ namespace Gecode {
     int nrows = m.height();
     int ncols = m.width();
 
-    IntVarArgs a1;
-    IntVarArgs a2;
+    typename Matrix<A>::ArgsType a1;
+    typename Matrix<A>::ArgsType a2;
 
     for (int i = 0 ; i < nrows ; i++) {
       for (int j = i+1 ; j < ncols ; j++) {
@@ -123,7 +123,7 @@ namespace Gecode {
       }
     }
 
-    IntVarArgs aboth;
+    typename Matrix<A>::ArgsType aboth;
     aboth << a1;
     aboth << a2;
     return VariableSequenceSymmetry(aboth, a1.size());
