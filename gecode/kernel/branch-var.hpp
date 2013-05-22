@@ -122,7 +122,7 @@ namespace Gecode {
 
   forceinline 
   VarBranch::VarBranch(Rnd r)
-    : _tbl(NULL), _decay(1.0), _rnd(r) {
+    : _tbl(NULL), _rnd(r), _decay(1.0) {
     if (!_rnd.initialized())
       throw UninitializedRnd("VarBranch::VarBranch");
   }
