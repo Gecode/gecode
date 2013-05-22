@@ -100,7 +100,7 @@ namespace Gecode {
   // Variable branching
   forceinline 
   VarBranch::VarBranch(BranchTbl t)
-    : _tbl(t) {}
+    : _tbl(t), _decay(1.0) {}
 
   forceinline 
   VarBranch::VarBranch(double d, BranchTbl t)
@@ -108,28 +108,28 @@ namespace Gecode {
 
   forceinline 
   VarBranch::VarBranch(AFC a, BranchTbl t)
-    : _tbl(t), _afc(a) {
+    : _tbl(t), _decay(1.0), _afc(a) {
     if (!_afc.initialized())
       throw UninitializedAFC("VarBranch::VarBranch");
   }
 
   forceinline 
   VarBranch::VarBranch(Activity a, BranchTbl t)
-    : _tbl(t), _act(a) {
+    : _tbl(t), _decay(1.0), _act(a) {
     if (!_act.initialized())
       throw UninitializedActivity("VarBranch::VarBranch");
   }
 
   forceinline 
   VarBranch::VarBranch(Rnd r)
-    : _tbl(NULL), _rnd(r) {
+    : _tbl(NULL), _decay(1.0), _rnd(r) {
     if (!_rnd.initialized())
       throw UninitializedRnd("VarBranch::VarBranch");
   }
 
   forceinline 
   VarBranch::VarBranch(VoidFunction f, BranchTbl t)
-    : _tbl(t), _mf(f) {}
+    : _tbl(t), _decay(1.0), _mf(f) {}
 
   forceinline BranchTbl
   VarBranch::tbl(void) const {
