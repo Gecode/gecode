@@ -73,6 +73,14 @@ Date: 2999-12-31
 Bla!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+Thanks:	Stefano Gualandi
+[DESCRIPTION]
+Added LDSB-based symmetry breaking to graph coloring example.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
