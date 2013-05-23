@@ -67,10 +67,14 @@
 #
 
 [RELEASE]
-Version: 4.0.1
-Date: 2999-12-31
+Version: 4.1.0
+Date: 2013-05-24
 [DESCRIPTION]
-Bla!
+This release adds a really useful feature and the required
+infrastructure to Gist (it now can show information on the
+alternatives in a search tree), has some new features, and fixes
+quite a number of bugs (some of which are quite serious, in
+particular for: LDSB, restart-based search, and FlatZinc).
 
 [ENTRY]
 Module: example
