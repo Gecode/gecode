@@ -203,14 +203,14 @@ namespace Gecode { namespace Float { namespace Branch {
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatValSel
    */
-  class ValSelLq : public ValSel<FloatView,FloatVal> {
+  class ValSelLq : public ValSel<FloatView,FloatNumBranch> {
   public:
     /// Constructor for initialization
     ValSelLq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelLq(Space& home, bool shared, ValSelLq& vs);
     /// Return value of view \a x at position \a i
-    FloatVal val(const Space& home, FloatView x, int i);
+    FloatNumBranch val(const Space& home, FloatView x, int i);
   };
 
   /**
@@ -219,14 +219,14 @@ namespace Gecode { namespace Float { namespace Branch {
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatValSel
    */
-  class ValSelGq : public ValSel<FloatView,FloatVal> {
+  class ValSelGq : public ValSel<FloatView,FloatNumBranch> {
   public:
     /// Constructor for initialization
     ValSelGq(Space& home, const ValBranch& vb);
     /// Constructor for cloning
     ValSelGq(Space& home, bool shared, ValSelGq& vs);
     /// Return value of view \a x at position \a i
-    FloatVal val(const Space& home, FloatView x, int i);
+    FloatNumBranch val(const Space& home, FloatView x, int i);
   };
 
   /**
@@ -235,7 +235,7 @@ namespace Gecode { namespace Float { namespace Branch {
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatValSel
    */
-  class ValSelRnd : public ValSel<FloatView,FloatVal> {
+  class ValSelRnd : public ValSel<FloatView,FloatNumBranch> {
   protected:
     /// The used random number generator
     Rnd r;
@@ -245,7 +245,7 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
     /// Return value of view \a x at position \a i
-    FloatVal val(const Space& home, FloatView x, int i);
+    FloatNumBranch val(const Space& home, FloatView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value selection
@@ -284,10 +284,10 @@ namespace Gecode { namespace Float { namespace Branch {
     ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, FloatView x, int i, 
-                    FloatVal n);
+                    FloatNumBranch n);
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, FloatView x, int i, 
-               FloatVal n,
+               FloatNumBranch n,
                std::ostream& o) const;
   };
 
@@ -299,12 +299,12 @@ namespace Gecode { namespace Float { namespace Branch {
 
   /// Return value and commit for float views
   GECODE_FLOAT_EXPORT
-  ValSelCommitBase<FloatView,FloatVal>* 
+  ValSelCommitBase<FloatView,FloatNumBranch>* 
   valselcommit(Space& home, const FloatValBranch& svb);
 
   /// Return value and commit for float views
   GECODE_FLOAT_EXPORT
-  ValSelCommitBase<FloatView,FloatVal>* 
+  ValSelCommitBase<FloatView,FloatNumBranch>* 
   valselcommit(Space& home, const FloatAssign& ia);
 
 }}}

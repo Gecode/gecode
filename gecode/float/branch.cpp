@@ -50,7 +50,7 @@ namespace Gecode {
     ViewSel<FloatView>* vs[1] = { 
       Branch::viewsel(home,vars) 
     };
-    return ViewValBrancher<FloatView,1,FloatVal,2>::post
+    return ViewValBrancher<FloatView,1,FloatNumBranch,2>::post
       (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
   }
 
@@ -77,27 +77,27 @@ namespace Gecode {
       return branch(home,x,vars.a,vals,bf,vvp);
     } else {
       ViewArray<FloatView> xv(home,x);
-      ValSelCommitBase<FloatView,FloatVal>* 
+      ValSelCommitBase<FloatView,FloatNumBranch>* 
         vsc = Branch::valselcommit(home,vals); 
       if (vars.c.select() == FloatVarBranch::SEL_NONE) {
         ViewSel<FloatView>* vs[2] = { 
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        return ViewValBrancher<FloatView,2,FloatVal,2>
+        return ViewValBrancher<FloatView,2,FloatNumBranch,2>
           ::post(home,xv,vs,vsc,bf,vvp);
       } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
         ViewSel<FloatView>* vs[3] = { 
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        return ViewValBrancher<FloatView,3,FloatVal,2>
+        return ViewValBrancher<FloatView,3,FloatNumBranch,2>
           ::post(home,xv,vs,vsc,bf,vvp);
       } else {
         ViewSel<FloatView>* vs[4] = { 
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        return ViewValBrancher<FloatView,4,FloatVal,2>
+        return ViewValBrancher<FloatView,4,FloatNumBranch,2>
           ::post(home,xv,vs,vsc,bf,vvp);
       }
     }
@@ -118,7 +118,7 @@ namespace Gecode {
     ViewSel<FloatView>* vs[1] = { 
       new (home) ViewSelNone<FloatView>(home,FLOAT_VAR_NONE())
     };
-    return ViewValBrancher<FloatView,1,FloatVal,1>::post
+    return ViewValBrancher<FloatView,1,FloatNumBranch,1>::post
       (home,xv,vs,Branch::valselcommit(home,fa),bf,vvp);
   }
 

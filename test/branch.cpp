@@ -341,8 +341,10 @@ namespace Test { namespace Branch {
   const int n_float_val_branch =
     sizeof(float_val_branch_name)/sizeof(const char*);
   /// Test function for branch value function
-  Gecode::FloatVal float_val(const Gecode::Space&, Gecode::FloatVar x, int) {
-    return Gecode::FloatVal(Gecode::Float::Limits::min,x.med());
+  Gecode::FloatNumBranch float_val(const Gecode::Space&, 
+                                   Gecode::FloatVar x, int) {
+    Gecode::FloatNumBranch nl; nl.n=x.med(); nl.l=true;
+    return nl;
   }
   //@}
 #endif
