@@ -77,6 +77,14 @@ quite a number of bugs (some of which are quite serious, in
 particular for: LDSB, restart-based search, and FlatZinc).
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed FLOAT_VAR_ACTIVITY_SIZE_MIN/MAX, which used to compute
+size/activity instead of activity/size.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

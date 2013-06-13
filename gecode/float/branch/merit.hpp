@@ -125,7 +125,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   forceinline double
   MeritActivitySize::operator ()(const Space&, FloatView x, int i) {
-    return x.size() / activity[i];
+    return activity[i] / static_cast<double>(x.size());
   }
   forceinline bool
   MeritActivitySize::notice(void) const {
