@@ -123,7 +123,7 @@ namespace Gecode {
 
   inline IntValBranch
   INT_VALUES_MAX(void) {
-    return IntValBranch(IntValBranch::SEL_VALUES_MIN);
+    return IntValBranch(IntValBranch::SEL_VALUES_MAX);
   }
 
   inline IntValBranch

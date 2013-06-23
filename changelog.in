@@ -77,6 +77,14 @@ quite a number of bugs (some of which are quite serious, in
 particular for: LDSB, restart-based search, and FlatZinc).
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Victor Zverovich
+[DESCRIPTION]
+Fixed INT_VALUES_MAX() branching (INT_VALUES_MIN() was used instead).
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor
