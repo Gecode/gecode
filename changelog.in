@@ -77,6 +77,14 @@ quite a number of bugs (some of which are quite serious, in
 particular for: LDSB, restart-based search, and FlatZinc).
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed SET_VAR_ACTIVITY_SIZE_MIN/MAX, which used to compute
+size/activity instead of activity/size.
+
+[ENTRY]
 Module: kernel
 What:   performance
 Rank:   minor
