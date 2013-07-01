@@ -77,6 +77,22 @@ quite a number of bugs (some of which are quite serious, in
 particular for: LDSB, restart-based search, and FlatZinc).
 
 [ENTRY]
+Module: kernel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Implement the AFC search heuristic using FastMutex, which greatly
+improves parallel search performance on Mac OS X when using AFC.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added FastMutex class that is implemented using spin locks on
+some platforms.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

@@ -60,6 +60,12 @@
 
 #include <pthread.h>
 
+#ifdef GECODE_THREADS_OSX
+
+#include <libkern/OSAtomic.h>
+
+#endif
+
 #endif
 
 /**
@@ -119,6 +125,69 @@ namespace Gecode { namespace Support {
     /// A mutex cannot be assigned
     void operator=(const Mutex&) {}
   };
+
+#ifdef GECODE_THREADS_WINDOWS
+
+  typedef Mutex FastMutex;
+
+#endif
+
+#ifdef GECODE_THREADS_PTHREADS
+
+#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+
+  /**
+   * \brief A fast mutex for mutual exclausion among several threads
+   * 
+   * This mutex is implemeneted using spin locks on some platforms
+   * and is not guaranteed to be compatible with events. It should be used
+   * for low-contention locks that are only acquired for short periods of 
+   * time.
+   *
+   * It is not specified whether the mutex is recursive or not.
+   * Likewise, there is no guarantee of fairness among the
+   * blocking threads.
+   *
+   * \ingroup FuncSupportThread
+   */
+  class FastMutex {
+  private:
+#ifdef GECODE_THREADS_OSX
+    /// The OSX spin lock
+    OSSpinLock lck;
+#else
+    /// The Pthread spinlock
+    pthread_spinlock_t p_s;
+#endif
+  public:
+    /// Initialize mutex
+    FastMutex(void);
+    /// Acquire the mutex and possibly block
+    void acquire(void);
+    /// Try to acquire the mutex, return true if succesful
+    bool tryacquire(void);
+    /// Release the mutex
+    void release(void);
+    /// Delete mutex
+    ~FastMutex(void);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+  private:
+    /// A mutex cannot be copied
+    FastMutex(const FastMutex&) {}
+    /// A mutex cannot be assigned
+    void operator=(const FastMutex&) {}
+  };
+
+#else
+
+  typedef Mutex FastMutex;
+
+#endif
+
+#endif
 
   /**
    * \brief A lock as a scoped frontend for a mutex
