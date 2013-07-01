@@ -48,7 +48,7 @@ namespace Gecode {
     /// Type for the branching value function
     typedef FloatBranchVal Val;
     /// Return type of the branching value function
-    typedef FloatVal ValType;
+    typedef FloatNumBranch ValType;
     /// Type for the branching commit function
     typedef FloatBranchCommit Commit;
   };

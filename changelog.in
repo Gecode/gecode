@@ -68,13 +68,45 @@
 
 [RELEASE]
 Version: 4.1.0
-Date: 2013-06-13
+Date: 2013-07-01
 [DESCRIPTION]
 This release adds a really useful feature and the required
 infrastructure to Gist (it now can show information on the
 alternatives in a search tree), has some new features, and fixes
 quite a number of bugs (some of which are quite serious, in
 particular for: LDSB, restart-based search, and FlatZinc).
+
+[ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Vincent Barichard
+[DESCRIPTION]
+Fixed a race condition when using parallel search.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed SET_VAR_ACTIVITY_SIZE_MIN/MAX, which used to compute
+size/activity instead of activity/size.
+
+[ENTRY]
+Module: kernel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Implement the AFC search heuristic using FastMutex, which greatly
+improves parallel search performance on Mac OS X when using AFC.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added FastMutex class that is implemented using spin locks on
+some platforms.
 
 [ENTRY]
 Module: int

@@ -49,20 +49,18 @@ namespace Gecode { namespace Float { namespace Branch {
     : ValCommit<FloatView,FloatVal>(home,shared,vc) {}
   forceinline ModEvent
   ValCommitLqGq::commit(Space& home, unsigned int a, FloatView x, int, 
-                        FloatVal n) {
+                        FloatNumBranch nl) {
     // Should we try the smaller half first?
-    bool lq = (n.min() == Limits::min);
-    FloatNum med = lq ? n.max() : n.min();
-    if ((a == 0) == lq) {
-      if ((x.min() == med) || (x.max() == med)) 
+    if ((a == 0) == nl.l) {
+      if ((x.min() == nl.n) || (x.max() == nl.n)) 
         return x.eq(home,x.min());
       else 
-        return x.lq(home,med);
+        return x.lq(home,nl.n);
     } else {
-      if ((x.min() == med) || (x.max() == med))
+      if ((x.min() == nl.n) || (x.max() == nl.n))
         return x.eq(home,x.max());
       else 
-        return x.gq(home,med);
+        return x.gq(home,nl.n);
     }
     /*
     FloatNum& n = nb.first;
@@ -82,12 +80,10 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   forceinline void
   ValCommitLqGq::print(const Space&, unsigned int a, FloatView, int i, 
-                       FloatVal n,
+                       FloatNumBranch nl,
                        std::ostream& o) const {
-    bool lq = (n.min() == Limits::min);
-    FloatNum med = lq ? n.max() : n.min();
     o << "var[" << i << "] " 
-      << (((a == 0) == lq) ? "<=" : ">=") << "(" << med << ")";
+      << (((a == 0) == nl.l) ? "<=" : ">=") << "(" << nl.n << ")";
   }
 
 }}}

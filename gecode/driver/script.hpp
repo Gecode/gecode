@@ -301,69 +301,71 @@ namespace Gecode { namespace Driver {
           so.clone   = false;
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
-          Meta<Engine,Script> e(s,so);
-          if (o.print_last()) {
-            Script* px = NULL;
-            do {
-              Script* ex = e.next();
-              if (ex == NULL) {
-                if (px != NULL) {
-                  px->print(s_out);
+          {
+            Meta<Engine,Script> e(s,so);
+            if (o.print_last()) {
+              Script* px = NULL;
+              do {
+                Script* ex = e.next();
+                if (ex == NULL) {
+                  if (px != NULL) {
+                    px->print(s_out);
+                    delete px;
+                  }
+                  break;
+                } else {
                   delete px;
+                  px = ex;
                 }
-                break;
-              } else {
-                delete px;
-                px = ex;
-              }
-            } while (--i != 0);
-          } else {
-            do {
-              Script* ex = e.next();
-              if (ex == NULL)
-                break;
-              ex->print(s_out);
-              delete ex;
-            } while (--i != 0);
-          }
-          if (o.interrupt())
-            CombinedStop::installCtrlHandler(false);
-          Search::Statistics stat = e.statistics();
-          s_out << endl;
-          if (e.stopped()) {
-            l_out << "Search engine stopped..." << endl
-                  << "\treason: ";
-            int r = static_cast<CombinedStop*>(so.stop)->reason(stat,so);
-            if (r & CombinedStop::SR_INT)
-              l_out << "user interrupt " << endl;
-            else {
-              if (r & CombinedStop::SR_NODE)
-                l_out << "node ";
-              if (r & CombinedStop::SR_FAIL)
-                l_out << "fail ";
-              if (r & CombinedStop::SR_TIME)
-                l_out << "time ";
-              l_out << "limit reached" << endl << endl;
+              } while (--i != 0);
+            } else {
+              do {
+                Script* ex = e.next();
+                if (ex == NULL)
+                  break;
+                ex->print(s_out);
+                delete ex;
+              } while (--i != 0);
             }
+            if (o.interrupt())
+              CombinedStop::installCtrlHandler(false);
+            Search::Statistics stat = e.statistics();
+            s_out << endl;
+            if (e.stopped()) {
+              l_out << "Search engine stopped..." << endl
+                    << "\treason: ";
+              int r = static_cast<CombinedStop*>(so.stop)->reason(stat,so);
+              if (r & CombinedStop::SR_INT)
+                l_out << "user interrupt " << endl;
+              else {
+                if (r & CombinedStop::SR_NODE)
+                  l_out << "node ";
+                if (r & CombinedStop::SR_FAIL)
+                  l_out << "fail ";
+                if (r & CombinedStop::SR_TIME)
+                  l_out << "time ";
+                l_out << "limit reached" << endl << endl;
+              }
+            }
+            l_out << "Initial" << endl
+                  << "\tpropagators: " << n_p << endl
+                  << "\tbranchers:   " << n_b << endl
+                  << endl
+                  << "Summary" << endl
+                  << "\truntime:      ";
+            stop(t, l_out);
+            l_out << endl
+                  << "\tsolutions:    "
+                  << ::abs(static_cast<int>(o.solutions()) - i) << endl
+                  << "\tpropagations: " << stat.propagate << endl
+                  << "\tnodes:        " << stat.node << endl
+                  << "\tfailures:     " << stat.fail << endl
+                  << "\trestarts:     " << stat.restart << endl
+                  << "\tpeak depth:   " << stat.depth << endl
+                  << "\tpeak memory:  "
+                  << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+                  << endl;
           }
-          l_out << "Initial" << endl
-                << "\tpropagators: " << n_p << endl
-                << "\tbranchers:   " << n_b << endl
-                << endl
-                << "Summary" << endl
-                << "\truntime:      ";
-          stop(t, l_out);
-          l_out << endl
-                << "\tsolutions:    "
-                << ::abs(static_cast<int>(o.solutions()) - i) << endl
-                << "\tpropagations: " << stat.propagate << endl
-                << "\tnodes:        " << stat.node << endl
-                << "\tfailures:     " << stat.fail << endl
-                << "\trestarts:     " << stat.restart << endl
-                << "\tpeak depth:   " << stat.depth << endl
-                << "\tpeak memory:  "
-                << static_cast<int>((stat.memory+1023) / 1024) << " KB"
-                << endl;
           delete so.stop;
         }
         break;
@@ -387,32 +389,35 @@ namespace Gecode { namespace Driver {
           so.cutoff  = createCutoff(o);
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
-          Meta<Engine,Script> e(s,so);
-          do {
-            Script* ex = e.next();
-            if (ex == NULL)
-              break;
-            delete ex;
-          } while (--i != 0);
-          if (o.interrupt())
-            CombinedStop::installCtrlHandler(false);
-          Search::Statistics stat = e.statistics();
-          l_out << endl
-               << "\tpropagators:  " << n_p << endl
-               << "\tbranchers:    " << n_b << endl
-               << "\truntime:      ";
-          stop(t, l_out);
-          l_out << endl
-               << "\tsolutions:    "
-               << ::abs(static_cast<int>(o.solutions()) - i) << endl
-               << "\tpropagations: " << stat.propagate << endl
-               << "\tnodes:        " << stat.node << endl
-               << "\tfailures:     " << stat.fail << endl
-               << "\trestarts:     " << stat.restart << endl
-               << "\tpeak depth:   " << stat.depth << endl
-               << "\tpeak memory:  "
-               << static_cast<int>((stat.memory+1023) / 1024) << " KB"
-               << endl;
+          {
+            Meta<Engine,Script> e(s,so);
+            do {
+              Script* ex = e.next();
+              if (ex == NULL)
+                break;
+              delete ex;
+            } while (--i != 0);
+            if (o.interrupt())
+              CombinedStop::installCtrlHandler(false);
+            Search::Statistics stat = e.statistics();
+            l_out << endl
+                  << "\tpropagators:  " << n_p << endl
+                  << "\tbranchers:    " << n_b << endl
+                  << "\truntime:      ";
+            stop(t, l_out);
+            l_out << endl
+                  << "\tsolutions:    "
+                  << ::abs(static_cast<int>(o.solutions()) - i) << endl
+                  << "\tpropagations: " << stat.propagate << endl
+                  << "\tnodes:        " << stat.node << endl
+                  << "\tfailures:     " << stat.fail << endl
+                  << "\trestarts:     " << stat.restart << endl
+                  << "\tpeak depth:   " << stat.depth << endl
+                  << "\tpeak memory:  "
+                  << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+                  << endl;
+          }
+          delete so.stop;
         }
         break;
       case SM_TIME:
@@ -434,15 +439,17 @@ namespace Gecode { namespace Driver {
               so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
                                                 false);
               so.cutoff  = createCutoff(o);
-              Meta<Engine,Script> e(s,so);
-              do {
-                Script* ex = e.next();
-                if (ex == NULL)
-                  break;
-                delete ex;
-              } while (--i != 0);
-              if (e.stopped())
-                stopped = true;
+              {
+                Meta<Engine,Script> e(s,so);
+                do {
+                  Script* ex = e.next();
+                  if (ex == NULL)
+                    break;
+                  delete ex;
+                } while (--i != 0);
+                if (e.stopped())
+                  stopped = true;
+              }
               delete so.stop;
             }
             ts[s] = t.stop() / o.iterations();

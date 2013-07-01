@@ -1365,6 +1365,19 @@ namespace Gecode {
   typedef double (*FloatBranchMerit)(const Space& home, FloatVar x, int i);
 
   /**
+   * \brief Value description class for branching
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  class FloatNumBranch {
+  public:
+    /// The middle value for branching
+    FloatNum n;
+    /// Whether to try the lower or upper half first
+    bool l;
+  };
+
+  /**
    * \brief Branch value function type for float variables
    *
    * Returns a value for the variable \a x that is to be used in the
@@ -1374,7 +1387,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef FloatVal (*FloatBranchVal)(const Space& home, FloatVar x, int i);
+  typedef FloatNumBranch (*FloatBranchVal)(const Space& home, FloatVar x, int i);
 
   /**
    * \brief Branch commit function type for float variables
@@ -1382,13 +1395,13 @@ namespace Gecode {
    * The function must post a constraint on the variable \a x which
    * corresponds to the alternative \a a.  The integer \a i refers 
    * to the variable's position in the original array passed to the 
-   * brancher. The value \a n is the value
+   * brancher. The value \a nl is the value description
    * computed by the corresponding branch value function.
    *
    * \ingroup TaskModelFloatBranch
    */
   typedef void (*FloatBranchCommit)(Space& home, unsigned int a,
-                                    FloatVar x, int i, FloatVal n);
+                                    FloatVar x, int i, FloatNumBranch nl);
 
 }
 
@@ -1475,7 +1488,7 @@ namespace Gecode {
   /// Function type for explaining branching alternatives for set variables
   typedef void (*FloatVarValPrint)(const Space &home, const BrancherHandle& bh,
                                    unsigned int a,
-                                   FloatVar x, int i, const FloatVal& n,
+                                   FloatVar x, int i, const FloatNumBranch& n,
                                    std::ostream& o);
 
 }

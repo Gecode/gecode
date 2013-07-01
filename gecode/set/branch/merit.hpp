@@ -132,7 +132,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline double
   MeritActivitySize::operator ()(const Space&, SetView x, int i) {
-    return static_cast<double>(x.unknownSize()) / activity[i];
+    return activity[i] / static_cast<double>(x.unknownSize());
   }
   forceinline bool
   MeritActivitySize::notice(void) const {

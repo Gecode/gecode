@@ -40,16 +40,13 @@
 namespace Gecode {
 
   forceinline Archive&
-  operator <<(Archive& e, FloatVal n) {
-    return e << n.min() << n.max();
+  operator <<(Archive& e, FloatNumBranch nl) {
+    return e << nl.n << nl.l;
   }
 
   forceinline Archive&
-  operator >>(Archive& e, FloatVal& n) {
-    FloatNum min, max;
-    Archive& r = e >> min >> max;
-    FloatVal v(min,max); n=v;
-    return r;
+  operator >>(Archive& e, FloatNumBranch& nl) {
+    return e >> nl.n >> nl.l;
   }
 
 }
@@ -58,40 +55,43 @@ namespace Gecode { namespace Float { namespace Branch {
 
   forceinline
   ValSelLq::ValSelLq(Space& home, const ValBranch& vb) 
-    : ValSel<FloatView,FloatVal>(home,vb) {}
+    : ValSel<FloatView,FloatNumBranch>(home,vb) {}
   forceinline
   ValSelLq::ValSelLq(Space& home, bool shared, ValSelLq& vs)
-    : ValSel<FloatView,FloatVal>(home,shared,vs) {}
-  forceinline FloatVal
+    : ValSel<FloatView,FloatNumBranch>(home,shared,vs) {}
+  forceinline FloatNumBranch
   ValSelLq::val(const Space&, FloatView x, int) {
-    return FloatVal(Limits::min,x.med());
+    FloatNumBranch nl;
+    nl.n = x.med(); nl.l = true;
+    return nl;
   }
 
   forceinline
   ValSelGq::ValSelGq(Space& home, const ValBranch& vb) 
-    : ValSel<FloatView,FloatVal>(home,vb) {}
+    : ValSel<FloatView,FloatNumBranch>(home,vb) {}
   forceinline
   ValSelGq::ValSelGq(Space& home, bool shared, ValSelGq& vs)
-    : ValSel<FloatView,FloatVal>(home,shared,vs) {}
-  forceinline FloatVal
+    : ValSel<FloatView,FloatNumBranch>(home,shared,vs) {}
+  forceinline FloatNumBranch
   ValSelGq::val(const Space&, FloatView x, int) {
-    return FloatVal(x.med(),Limits::max);
+    FloatNumBranch nl;
+    nl.n = x.med(); nl.l = false;
+    return nl;
   }
 
   forceinline
   ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb) 
-    : ValSel<FloatView,FloatVal>(home,vb), r(vb.rnd()) {}
+    : ValSel<FloatView,FloatNumBranch>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, bool shared, ValSelRnd& vs)
-    : ValSel<FloatView,FloatVal>(home,shared,vs) {
+    : ValSel<FloatView,FloatNumBranch>(home,shared,vs) {
     r.update(home,shared,vs.r);
   }
-  forceinline FloatVal
+  forceinline FloatNumBranch
   ValSelRnd::val(const Space&, FloatView x, int) {
-    if (r(2U) == 0U)
-      return FloatVal(Limits::min,x.med());
-    else
-      return FloatVal(x.med(),Limits::max);
+    FloatNumBranch nl;
+    nl.n = x.med(); nl.l = (r(2U) == 0U);
+    return nl;
   }
   forceinline bool
   ValSelRnd::notice(void) const {

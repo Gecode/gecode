@@ -261,13 +261,10 @@ namespace Gecode { namespace FlatZinc {
     }
 #ifdef GECODE_HAS_FLOAT_VARS
     void print(const BrancherHandle& bh,
-               int a, int i, const FloatVal& n, ostream& o) const {
+               int a, int i, const FloatNumBranch& nl, ostream& o) const {
       const BI& bi = v[bh.id()];
-
-      bool lq = (n.min() == Float::Limits::min);
-      FloatNum med = lq ? n.max() : n.min();
       o << bi.n[i] << " "
-        << (((a == 0) == lq) ? "<=" : ">=") << med;
+        << (((a == 0) == nl.l) ? "<=" : ">=") << nl.n;
     }
 #endif
   };
@@ -290,8 +287,8 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_FLOAT_VARS
   void
   BranchInformation::print(const BrancherHandle& bh, int a, int i,
-                           const FloatVal& n, std::ostream& o) const {
-    static_cast<const BranchInformationO*>(object())->print(bh,a,i,n,o);
+                           const FloatNumBranch& nl, std::ostream& o) const {
+    static_cast<const BranchInformationO*>(object())->print(bh,a,i,nl,o);
   }
 #endif
   template<class Var>
@@ -305,9 +302,9 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_FLOAT_VARS
   void varValPrintF(const Space &home, const BrancherHandle& bh,
                     unsigned int a,
-                    FloatVar, int i, const FloatVal& n,
+                    FloatVar, int i, const FloatNumBranch& nl,
                     std::ostream& o) {
-    static_cast<const FlatZincSpace&>(home).branchInfo.print(bh,a,i,n,o);
+    static_cast<const FlatZincSpace&>(home).branchInfo.print(bh,a,i,nl,o);
   }
 #endif
 

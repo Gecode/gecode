@@ -64,6 +64,23 @@ namespace Gecode { namespace Support {
     Gecode::heap.rfree(p);
   }
 
+#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+
+  /*
+   * Fast mutexes
+   *
+   */
+  forceinline void*
+  FastMutex::operator new(size_t s) {
+    return Gecode::heap.ralloc(s);
+  }
+
+  forceinline void
+  FastMutex::operator delete(void* p) {
+    Gecode::heap.rfree(p);
+  }
+
+#endif
 
   /*
    * Locks
