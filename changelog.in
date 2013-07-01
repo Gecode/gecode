@@ -77,6 +77,14 @@ quite a number of bugs (some of which are quite serious, in
 particular for: LDSB, restart-based search, and FlatZinc).
 
 [ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+Thanks: Vincent Barichard
+[DESCRIPTION]
+Fixed a race condition when using parallel search.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
