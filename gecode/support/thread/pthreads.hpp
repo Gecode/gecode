@@ -75,7 +75,7 @@ namespace Gecode { namespace Support {
    * FastMutex
    */
   forceinline
-  FastMutex::FastMutex(void) {}
+  FastMutex::FastMutex(void) : lck(OS_SPINLOCK_INIT) {}
   forceinline void
   FastMutex::acquire(void) {
     OSSpinLockLock(&lck);
