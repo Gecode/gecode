@@ -41,6 +41,7 @@
 #include <gecode/kernel.hh>
 
 #include <QHash>
+#include <QString>
 
 namespace Gecode { namespace Gist {
 
