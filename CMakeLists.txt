@@ -301,6 +301,7 @@ file(WRITE ${GECODE_BINARY_DIR}/gecode/support/config.hpp
 #define GECODE_BUILD_SEARCH
 #define GECODE_BUILD_INT
 #define GECODE_BUILD_SET
+#define GECODE_BUILD_FLOAT
 #define GECODE_BUILD_MINIMODEL
 
 ${CONFIG_OUT}")
