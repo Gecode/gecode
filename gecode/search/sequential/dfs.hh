@@ -42,6 +42,7 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
 #include <gecode/search/sequential/path.hh>
+#include <gecode/search/meta/no-goods.hh>
 
 namespace Gecode { namespace Search { namespace Sequential {
 
@@ -65,6 +66,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
     void reset(Space* s);
+    /// Return no-goods
+    NoGoods* nogoods(void);
     /// Destructor
     ~DFS(void);
   };
@@ -97,6 +100,11 @@ namespace Gecode { namespace Search { namespace Sequential {
       cur = s;
       Worker::reset(cur);
     }
+  }
+
+  forceinline NoGoods*
+  DFS::nogoods(void) {
+    return new Gecode::Search::Meta::PathNoGoods<Path>(path);
   }
 
   forceinline Space*

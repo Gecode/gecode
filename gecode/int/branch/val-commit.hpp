@@ -51,6 +51,14 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
   template<class View>
+  forceinline NGL*
+  ValCommitEq<View>::ngl(Space& home, unsigned int a, View x, int n) const {
+    if (a == 0)
+      return new (home) EqNGL<View>(home,x,n);
+    else
+      return NULL;
+  }
+  template<class View>
   forceinline void
   ValCommitEq<View>::print(const Space&, unsigned int a, View, int i, 
                            int n, std::ostream& o) const {
@@ -70,6 +78,14 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ModEvent
   ValCommitLq<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
+  }
+  template<class View>
+  forceinline NGL*
+  ValCommitLq<View>::ngl(Space& home, unsigned int a, View x, int n) const {
+    if (a == 0)
+      return new (home) LqNGL<View>(home,x,n);
+    else
+      return NULL;
   }
   template<class View>
   forceinline void
@@ -93,6 +109,14 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.gq(home,n) : x.le(home,n);
   }
   template<class View>
+  forceinline NGL*
+  ValCommitGq<View>::ngl(Space& home, unsigned int a, View x, int n) const {
+    if (a == 0)
+      return new (home) GqNGL<View>(home,x,n);
+    else
+      return NULL;
+  }
+  template<class View>
   forceinline void
   ValCommitGq<View>::print(const Space&, unsigned int a, View, int i, 
                            int n, std::ostream& o) const {
@@ -112,6 +136,14 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline ModEvent
   ValCommitGr<View>::commit(Space& home, unsigned int a, View x, int, int n) {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
+  }
+  template<class View>
+  forceinline NGL*
+  ValCommitGr<View>::ngl(Space& home, unsigned int a, View x, int n) const {
+    if (a == 0)
+      return new (home) GqNGL<View>(home,x,n+1);
+    else
+      return NULL;
   }
   template<class View>
   forceinline void

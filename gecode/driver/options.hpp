@@ -329,6 +329,16 @@ namespace Gecode {
     return _r_scale.value();
   }
   
+  inline void
+  Options::nogoods(bool b) {
+    _nogoods.value(b);
+  }
+  inline bool
+  Options::nogoods(void) const {
+    return _nogoods.value();
+  }
+  
+  
   
   inline void
   Options::interrupt(bool b) {

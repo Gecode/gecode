@@ -39,6 +39,9 @@
 #define __GECODE_SEARCH_SEQUENTIAL_PATH_HH__
 
 #include <gecode/search.hh>
+#include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/meta/no-goods.hh>
 
 namespace Gecode { namespace Search { namespace Sequential {
 
@@ -56,6 +59,7 @@ namespace Gecode { namespace Search { namespace Sequential {
    *
    */
   class Path {
+    template<class Path> friend class Search::Meta::PathNoGoods;
   public:
     /// %Search tree edge for recomputation
     class Edge {
@@ -82,6 +86,12 @@ namespace Gecode { namespace Search { namespace Sequential {
       
       /// Return number for alternatives
       unsigned int alt(void) const;
+      /// Return true number for alternatives (excluding lao optimization)
+      unsigned int truealt(void) const;
+      /// Return whether alternatives have been stolen
+      bool stolen(void) const;
+      /// Test whether current alternative is leftmost
+      bool leftmost(void) const;
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
       /// Move to next alternative
@@ -150,6 +160,19 @@ namespace Gecode { namespace Search { namespace Sequential {
   Path::Edge::alt(void) const {
     return _alt;
   }
+  forceinline unsigned int
+  Path::Edge::truealt(void) const {
+    unsigned int n = _choice->alternatives();
+    return (_alt >= n) ? n-1 : _alt;
+  }
+  forceinline bool
+  Path::Edge::stolen(void) const {
+    return false;
+  }
+  forceinline bool
+  Path::Edge::leftmost(void) const {
+    return _alt == 0;
+  }
   forceinline bool
   Path::Edge::rightmost(void) const {
     return _alt+1 >= _choice->alternatives();
@@ -186,7 +209,8 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
-    if (!ds.empty() && ds.top().lao()) {
+    if (!ds.empty() && ds.top().lao() && 
+        (ds.entries() > Config::nogood_cutoff)) {
       // Topmost stack entry was LAO -> reuse
       stat.pop(ds.top().space(),ds.top().choice());
       ds.pop().dispose();

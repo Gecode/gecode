@@ -204,7 +204,7 @@ protected:
      PMAX ///< Number of pieces (including empty squares)
     } piece;
 
-  // Is (i,j) a valid position on the board?
+  /// Is (i,j) a valid position on the board?
   bool valid_pos(int i, int j) {
     return (i >= 0 && i < n) &&
       (j >= 0 && j < n);
@@ -236,7 +236,7 @@ public:
 
   /// The model of the problem
   CrowdedChess(const SizeOptions& opt)
-    : n(opt.size()),
+    : Script(opt), n(opt.size()),
       s(*this, n*n, 0, PMAX-1),
       queens(*this, n, 0, n-1),
       rooks(*this, n, 0, n-1),

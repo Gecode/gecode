@@ -278,6 +278,48 @@ namespace Gecode { namespace Set { namespace Branch {
 
 namespace Gecode { namespace Set { namespace Branch {
 
+  /// No-good literal for inclusion
+  class IncNGL : public ViewValNGL<SetView,int,PC_SET_ANY> {
+  public:
+    /// Constructor for creation
+    IncNGL(Space& home, SetView x, int n);
+    /// Constructor for cloning \a ngl
+    IncNGL(Space& home, bool share, IncNGL& ngl);
+    /// Test the status of the no-good literal
+    GECODE_SET_EXPORT
+    virtual NGL::Status status(const Space& home) const;
+    /// Propagate the negation of the no-good literal
+    GECODE_SET_EXPORT
+    virtual ExecStatus prune(Space& home);
+    /// Create copy
+    GECODE_SET_EXPORT
+    virtual NGL* copy(Space& home, bool share);
+  };
+
+  /// No-good literal for exclusion
+  class ExcNGL : public ViewValNGL<SetView,int,PC_SET_ANY> {
+  public:
+    /// Constructor for creation
+    ExcNGL(Space& home, SetView x, int n);
+    /// Constructor for cloning \a ngl
+    ExcNGL(Space& home, bool share, ExcNGL& ngl);
+    /// Test the status of the no-good literal
+    GECODE_SET_EXPORT
+    virtual NGL::Status status(const Space& home) const;
+    /// Propagate the negation of the no-good literal
+    GECODE_SET_EXPORT
+    virtual ExecStatus prune(Space& home);
+    /// Create copy
+    GECODE_SET_EXPORT
+    virtual NGL* copy(Space& home, bool share);
+  };
+
+}}}
+
+#include <gecode/set/branch/ngl.hpp>
+
+namespace Gecode { namespace Set { namespace Branch {
+
   /**
    * \defgroup FuncSetValCommit Set value commit classes
    *
@@ -304,6 +346,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValCommitInc(Space& home, bool shared, ValCommitInc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, SetView x, int i, int n,
                std::ostream& o) const;
@@ -323,6 +367,8 @@ namespace Gecode { namespace Set { namespace Branch {
     ValCommitExc(Space& home, bool shared, ValCommitExc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, SetView x, int i, int n,
                std::ostream& o) const;

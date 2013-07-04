@@ -118,7 +118,8 @@ private:
   BoolVarArray x;
 public:
   /// The actual problem
-  Sat(const SatOptions& opt) {
+  Sat(const SatOptions& opt) 
+    : Script(opt) {
     parseDIMACS(opt.filename.c_str());
     branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
   }

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,39 +35,22 @@
  *
  */
 
-#include <algorithm>
-
-namespace Gecode { namespace Search {
-
-  forceinline void
-  Statistics::reset(void) {
-    StatusStatistics::reset();
-    fail=0; node=0; depth=0; memory=0; restart=0; nogood=0;
-  }
+namespace Gecode { namespace Set { namespace Branch {
 
   forceinline
-  Statistics::Statistics(void)
-    : fail(0), node(0), depth(0), memory(0), 
-      restart(0), nogood(0) {}
+  IncNGL::IncNGL(Space& home, SetView x, int n)
+    : ViewValNGL<SetView,int,PC_SET_ANY>(home,x,n) {}
+  forceinline
+  IncNGL::IncNGL(Space& home, bool share, IncNGL& ngl)
+    : ViewValNGL<SetView,int,PC_SET_ANY>(home,share,ngl) {}
 
-  forceinline Statistics&
-  Statistics::operator +=(const Statistics& s) {
-    (void) StatusStatistics::operator +=(s);
-    fail += s.fail;
-    node += s.node;
-    depth = std::max(depth,s.depth);
-    memory += s.memory;
-    restart += s.restart;
-    nogood += s.nogood;
-    return *this;
-  }
+  forceinline
+  ExcNGL::ExcNGL(Space& home, SetView x, int n)
+    : ViewValNGL<SetView,int,PC_SET_ANY>(home,x,n) {}
+  forceinline
+  ExcNGL::ExcNGL(Space& home, bool share, ExcNGL& ngl)
+    : ViewValNGL<SetView,int,PC_SET_ANY>(home,share,ngl) {}
 
-  forceinline Statistics
-  Statistics::operator +(const Statistics& s) {
-    Statistics t(s); 
-    return t += *this;
-  }
+}}}
 
-}}
-
-// STATISTICS: search-other
+// STATISTICS: set-branch

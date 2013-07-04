@@ -244,14 +244,14 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
-	rbs meta/rbs
+	rbs meta/rbs meta/no-goods
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
-	meta/rbs.hh \
+	meta/rbs.hh meta/no-goods.hh \
 	dfs.hpp bab.hpp rbs.hpp engine-base.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
@@ -324,7 +324,7 @@ INTHDR0 = \
 	precede.hh precede/single.hpp \
 	branch/traits.hpp branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/view-values.hpp branch/merit.hpp \
-	branch/val-sel.hpp branch/val-commit.hpp \
+	branch/val-sel.hpp branch/val-commit.hpp branch/ngl.hpp \
 	count.hh count/rel.hpp \
 	count/int-base.hpp count/int-eq.hpp \
 	count/int-gq.hpp count/int-lq.hpp \
@@ -512,7 +512,7 @@ SETSRC0 =								 \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
 	exec.cpp branch/activity.cpp branch/view-sel.cpp \
-	branch/val-sel-commit.cpp \
+	branch/val-sel-commit.cpp  branch/ngl.cpp \
 	ldsb.cpp ldsb/sym-imp.cpp
 SETHDR0 =								     \
 	limits.hpp \
@@ -542,6 +542,7 @@ SETHDR0 =								     \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
+	branch/ngl.hpp \
 	ldsb.hh ldsb/brancher.hpp channel.hh
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
@@ -1057,7 +1058,7 @@ BRANCHTESTSRC0 = \
 	test/assign/set.cpp test/assign/float.cpp
 
 SEARCHTESTSRC0 = \
-	test/search.cpp
+	test/search.cpp test/no-goods.cpp
 
 ARRAYTESTSRC0 = \
 	test/array.cpp

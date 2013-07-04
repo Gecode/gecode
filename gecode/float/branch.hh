@@ -285,6 +285,8 @@ namespace Gecode { namespace Float { namespace Branch {
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, FloatView x, int i, 
                     FloatNumBranch n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, FloatView x, FloatNumBranch n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, FloatView x, int i, 
                FloatNumBranch n,

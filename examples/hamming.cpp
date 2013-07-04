@@ -94,7 +94,7 @@ private:
 public:
   /// Actual model
   Hamming(const HammingOptions& opt) :
-    x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
+    Script(opt), x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
     SetVarArgs cx(x.size());
     for (int i=x.size(); i--;)
       cx[i] = expr(*this, -x[i]);

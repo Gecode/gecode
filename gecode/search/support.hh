@@ -62,6 +62,8 @@ namespace Gecode { namespace Search {
     virtual bool stopped(void) const;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
+    /// Return no-goods
+    virtual NoGoods* nogoods(void);
   };
 
 
@@ -95,6 +97,12 @@ namespace Gecode { namespace Search {
   void
   WorkerToEngine<Worker>::reset(Space* s) {
     w.reset(s);
+  }
+
+  template<class Worker>
+  NoGoods*
+  WorkerToEngine<Worker>::nogoods(void) {
+    return w.nogoods();
   }
 
 }}

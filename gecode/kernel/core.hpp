@@ -966,6 +966,61 @@ namespace Gecode {
 
 
   /**
+   * \brief No-good literal recorded during search
+   *
+   */
+  class NGL {
+  private:
+    /// Combines pointer to next literal and mark whether it is a leaf
+    void* nl;
+  public:
+    /// The status of a no-good literal
+    enum Status {
+      FAILED,   ///< The literal is failed
+      SUBSUMED, ///< The literal is subsumed
+      NONE      ///< The literal is neither failed nor subsumed
+    };
+    /// Constructor for creation
+    NGL(void);
+    /// Constructor for creation
+    NGL(Space& home);
+    /// Constructor for cloning \a ngl
+    NGL(Space& home, bool share, NGL& ngl);
+    /// Subscribe propagator \a p to all views of the no-good literal
+    virtual void subscribe(Space& home, Propagator& p) = 0;
+    /// Cancel propagator \a p from all views of the no-good literal
+    virtual void cancel(Space& home, Propagator& p) = 0;
+    /// Test the status of the no-good literal
+    virtual NGL::Status status(const Space& home) const = 0;
+    /// Propagate the negation of the no-good literal
+    virtual ExecStatus prune(Space& home) = 0;
+    /// Create copy
+    virtual NGL* copy(Space& home, bool share) = 0;
+    /// \name Internal management routines
+    //@{
+    /// Test whether literal is a leaf
+    bool leaf(void) const;
+    /// Return pointer to next literal
+    NGL* next(void) const;
+    /// Mark literal as leaf or not
+    void leaf(bool l);
+    /// Set pointer to next literal
+    void next(NGL* n);
+    /// Add node \a n and mark it as leaf \a l and return \a n
+    NGL* add(NGL* n, bool l);
+    //@}
+    /// \name Memory management
+    //@{
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space& home);
+    /// Return memory to space
+    static void  operator delete(void* s, Space& home);
+    /// Needed for exceptions
+    static void  operator delete(void* p);
+    //@}
+  };
+
+  /**
    * \brief %Choice for performing commit
    *
    * Must be refined by inheritance such that the information stored
@@ -1028,6 +1083,8 @@ namespace Gecode {
   public:
     /// \name Brancher
     //@{
+    /// Return unsigned brancher id
+    unsigned int id(void) const;
     /**
      * \brief Check status of brancher, return true if alternatives left
      *
@@ -1055,8 +1112,21 @@ namespace Gecode {
      */
     virtual ExecStatus commit(Space& home, const Choice& c, 
                               unsigned int a) = 0;
-    /// Return unsigned brancher id
-    unsigned int id(void) const;
+    /**
+     * \brief Create no-good literal for choice \a c and alternative \a a
+     *
+     * The current brancher in the space \a home creates a no-good literal
+     * from the information provided by the choice \a c and the alternative
+     * \a a. The brancher has the following options:
+     *  - it returns NULL for all alternatives \a a. This means that the
+     *    brancher does not support no-good literals (default).
+     *  - it returns NULL for the last alternative \a a. This means that
+     *    this alternative is equivalent to the negation of the disjunction
+     *    of all other alternatives.
+     *
+     */
+    GECODE_KERNEL_EXPORT 
+    virtual NGL* ngl(Space& home, const Choice& c, unsigned int a) const;
     /**
      * \brief Print branch for choice \a c and alternative \a a
      *
@@ -1156,6 +1226,33 @@ namespace Gecode {
     LocalObject* object(void) const;
     /// Modify local object
     void object(LocalObject* n);
+  };
+
+
+  /**
+   * \brief No-goods recorded from restarts
+   *
+   */
+  class NoGoods {
+  protected:
+    /// Number of no-goods
+    unsigned long int n;
+  public:
+    /// Initialize
+    NoGoods(void);
+    /// Post no-goods
+    GECODE_KERNEL_EXPORT 
+    virtual void post(Space& home);
+    /// Return number of no-goods posted
+    unsigned long int ng(void) const;
+    /// Set number of no-goods posted to \a n
+    void ng(unsigned long int n);
+    /// Destructor
+    virtual ~NoGoods(void);
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
   };
 
 
@@ -1472,14 +1569,16 @@ namespace Gecode {
      * A restart meta search engine calls this function on its
      * master space whenever it finds a solution or exploration
      * restarts. \a i is the number of the restart. \a s is 
-     * either the solution space or NULL.
+     * either the solution space or NULL. \a ng are nogoods recorded
+     * from the last restart (only if \a s is not a solution).
      *
      * The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void master(unsigned long int i, const Space* s);
+    virtual void master(unsigned long int i, const Space* s,
+                        NoGoods& ng);
     /**
      * \brief Slave configuration function for restart meta search engine
      *
@@ -1629,6 +1728,28 @@ namespace Gecode {
      */
     void commit(const Choice& c, unsigned int a,
                 CommitStatistics& stat=unused_commit);
+    /**
+     * \brief Create no-good literal for choice \a c and alternative \a a
+     *
+     * The current brancher in the space \a home creates a no-good literal
+     * from the information provided by the choice \a c and the alternative
+     * \a a. The brancher has the following options:
+     *  - it returns NULL for all alternatives \a a. This means that the
+     *    brancher does not support no-good literals.
+     *  - it returns NULL for the last alternative \a a. This means that
+     *    this alternative is equivalent to the negation of the disjunction
+     *    of all other alternatives.
+     *
+     * It throws the following exceptions:
+     *  - SpaceNoBrancher, if the space has no current brancher (it is
+     *    already solved).
+     *  - SpaceIllegalAlternative, if \a a is not smaller than the number
+     *    of alternatives supported by the choice \a c.
+     *
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    NGL* ngl(const Choice& c, unsigned int a);
 
     /**
      * \brief Print branch for choice \a c and alternative \a a
@@ -1636,7 +1757,7 @@ namespace Gecode {
      * Prints an explanation of the alternative \a a of choice \a c
      * on the stream \a o.
      *
-     * Explanation throws the following exceptions:
+     * Print throws the following exceptions:
      *  - SpaceNoBrancher, if the space has no current brancher (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
@@ -1669,7 +1790,7 @@ namespace Gecode {
 
 
     /**
-     * \brief %Propagator \a p is subsumed
+     * \Brief %Propagator \a p is subsumed
      *
      * First disposes the propagator and then returns subsumption.
      *
@@ -2127,6 +2248,15 @@ namespace Gecode {
     return heap.ralloc(s);
   }
 
+  forceinline void*
+  NoGoods::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  NoGoods::operator delete(void* p) {
+    heap.rfree(p);
+  }
+
   // Space allocation: general space heaps and free lists
   forceinline void*
   Space::ralloc(size_t s) {
@@ -2375,6 +2505,15 @@ namespace Gecode {
     return home.ralloc(s);
   }
 
+  forceinline void
+  NGL::operator delete(void*) {}
+  forceinline void
+  NGL::operator delete(void*, Space&) {}
+  forceinline void*
+  NGL::operator new(size_t s, Space& home) {
+    return home.ralloc(s);
+  }
+
   /*
    * Shared objects and handles
    *
@@ -2445,6 +2584,25 @@ namespace Gecode {
     cancel();
   }
 
+
+
+  /*
+   * No-goods
+   *
+   */
+  forceinline
+  NoGoods::NoGoods(void) 
+    : n(0) {}
+  forceinline unsigned long int
+  NoGoods::ng(void) const {
+    return n;
+  }
+  forceinline void
+  NoGoods::ng(unsigned long int n0) {
+    n=n0;
+  }
+  forceinline
+  NoGoods::~NoGoods(void) {}
 
 
   /*
@@ -2891,6 +3049,44 @@ namespace Gecode {
   forceinline
   Choice::~Choice(void) {}
 
+
+
+  /*
+   * No-good literal
+   *
+   */
+  forceinline bool
+  NGL::leaf(void) const {
+    return Support::marked(nl);
+  }
+  forceinline NGL*
+  NGL::next(void) const {
+    return static_cast<NGL*>(Support::funmark(nl));
+  }
+  forceinline void
+  NGL::leaf(bool l) {
+    nl = l ? Support::fmark(nl) : Support::funmark(nl);
+  }
+  forceinline void
+  NGL::next(NGL* n) {
+    nl = Support::marked(nl) ? Support::mark(n) : n;
+  }
+  forceinline NGL*
+  NGL::add(NGL* n, bool l) {
+    nl = Support::marked(nl) ? Support::mark(n) : n;
+    n->leaf(l);
+    return n;
+  }
+
+  forceinline
+  NGL::NGL(void) 
+    : nl(NULL) {}
+  forceinline
+  NGL::NGL(Space&) 
+    : nl(NULL) {}
+  forceinline
+  NGL::NGL(Space&, bool, NGL&) 
+    : nl(NULL) {}
 
 
   /*

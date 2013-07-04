@@ -65,6 +65,12 @@ namespace Gecode {
     return e->stopped();
   }
 
+  template<class T>
+  forceinline NoGoods*
+  DFS<T>::nogoods(void) {
+    return e->nogoods();
+  }
+
 
   template<class T>
   forceinline T*

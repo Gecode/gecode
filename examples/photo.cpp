@@ -94,6 +94,7 @@ public:
   };
   /// Actual model
   Photo(const SizeOptions& opt) :
+    IntMinimizeScript(opt), 
     spec(opt.size() == 0 ? p_small : p_large),
     pos(*this,spec.n_names, 0, spec.n_names-1),
     violations(*this,0,spec.n_prefs)

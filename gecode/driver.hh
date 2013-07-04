@@ -348,6 +348,7 @@ namespace Gecode {
     Driver::StringOption      _restart;   ///< Restart method option
     Driver::DoubleOption      _r_base;    ///< Restart base
     Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
+    Driver::BoolOption        _nogoods;   ///< Whether to use no-goods
     Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
     //@}
     
@@ -464,6 +465,11 @@ namespace Gecode {
     void restart_scale(unsigned int scale);
     /// Return restart scale factor
     unsigned int restart_scale(void) const;
+    
+    /// Set default nogood posting behavior
+    void nogoods(bool b);
+    /// Return whether nogoods are used
+    bool nogoods(void) const;
     
     /// Set default interrupt behavior
     void interrupt(bool b);
@@ -608,16 +614,28 @@ namespace Gecode {
      */
     template<class BaseSpace>
     class ScriptBase : public BaseSpace {
+    protected:
+      /// Whether to post no-goods
+      bool nogoods;
     public:
-      /// Default constructor
-      ScriptBase(void) {}
+      /// Constructor that evaluates options
+      template<class Options>
+      ScriptBase(const Options& opt)
+        : nogoods(opt.nogoods()) {}
       /// Constructor used for cloning
-      ScriptBase(bool share, ScriptBase& e) : BaseSpace(share,e) {}
+      ScriptBase(bool share, ScriptBase& e) 
+        : BaseSpace(share,e), nogoods(e.nogoods) {}
       /// Print a solution to \a os
       virtual void print(std::ostream& os) const { (void) os; }
       /// Compare with \a s
       virtual void compare(const Space&, std::ostream& os) const {
         (void) os;
+      }
+      /// Master configuration function for restart meta search engine
+      virtual void master(unsigned long int i, const Space* s,
+                          NoGoods& ng) {
+        if (nogoods)
+          ng.post(*this);
       }
       /// Choose output stream according to \a name
       static std::ostream& select_ostream(const char* name, std::ofstream& ofs);

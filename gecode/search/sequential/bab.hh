@@ -73,6 +73,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
     void reset(Space* s);
+    /// Return no-goods
+    NoGoods* nogoods(void);
     /// Destructor
     ~BAB(void);
   };
@@ -179,6 +181,11 @@ namespace Gecode { namespace Search { namespace Sequential {
       cur = s;
       Worker::reset(cur);
     }
+  }
+
+  forceinline NoGoods*
+  BAB::nogoods(void) {
+    return new Gecode::Search::Meta::PathNoGoods<Path>(path);
   }
 
   forceinline 

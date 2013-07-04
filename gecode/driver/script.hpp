@@ -361,6 +361,7 @@ namespace Gecode { namespace Driver {
                   << "\tnodes:        " << stat.node << endl
                   << "\tfailures:     " << stat.fail << endl
                   << "\trestarts:     " << stat.restart << endl
+                  << "\tno-goods:     " << stat.nogood << endl
                   << "\tpeak depth:   " << stat.depth << endl
                   << "\tpeak memory:  "
                   << static_cast<int>((stat.memory+1023) / 1024) << " KB"
@@ -412,6 +413,7 @@ namespace Gecode { namespace Driver {
                   << "\tnodes:        " << stat.node << endl
                   << "\tfailures:     " << stat.fail << endl
                   << "\trestarts:     " << stat.restart << endl
+                  << "\tno-goods:     " << stat.nogood << endl
                   << "\tpeak depth:   " << stat.depth << endl
                   << "\tpeak memory:  "
                   << static_cast<int>((stat.memory+1023) / 1024) << " KB"

@@ -87,7 +87,7 @@ protected:
 public:
   /// Actual model
   GoldenSpiral(const Options&) 
-    : f(*this,4,-20,20), step(0.1) {
+    : Script(opt), f(*this,4,-20,20), step(0.1) {
     // Post equation
     FloatVar theta = f[0];
     FloatVar r = f[3];

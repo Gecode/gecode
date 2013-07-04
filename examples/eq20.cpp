@@ -59,7 +59,7 @@ private:
 public:
   /// The actual problem
   Eq20(const Options& opt)
-    : x(*this,x_n,0,10) {
+    : Script(opt), x(*this,x_n,0,10) {
     // Coefficients and constants for the equations
     int eqs[e_n][x_n+1] = {
       {876370, -16105, 62397, -6704, 43340, 95100, -68610, 58301},

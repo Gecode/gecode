@@ -68,6 +68,8 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual bool stopped(void) const;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
+    /// Return no-goods
+    virtual NoGoods* nogoods(void);
     /// Destructor
     virtual ~RBS(void);
   };

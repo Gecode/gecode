@@ -76,8 +76,8 @@ protected:
   FloatNum step;
 public:
   /// Actual model
-  ArchimedeanSpiral(const Options&) 
-    : f(*this,4,-20,20), step(0.1) {
+  ArchimedeanSpiral(const Options& opt) 
+    : Script(opt), f(*this,4,-20,20), step(0.1) {
     // Post equation
     FloatVar theta = f[0];
     FloatVar r = f[3];

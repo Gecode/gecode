@@ -90,6 +90,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
+    /// Return no-goods
+    virtual NoGoods* nogoods(void);
     /// Destructor
     virtual ~BAB(void);
     //@}
@@ -116,7 +118,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     best = NULL;
     path.reset();
     d = mark = 0;
-    idle = false;
+    ws = (s == NULL) ? 0 : WS_ROOT;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = NULL;
@@ -205,7 +207,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       if (Space* s = engine().worker(i)->steal(r_d)) {
         // Reset this guy
         m.acquire();
-        idle = false;
+        ws = 0; // Not idle but also does not have the root of the tree
         d = 0;
         cur = s;
         mark = 0;

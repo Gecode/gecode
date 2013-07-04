@@ -90,7 +90,8 @@ protected:
   IntVarArray box;
 public:
   /// Actual model
-  Schur(const SchurOptions& opt) : box(*this,opt.n,1,opt.c) {
+  Schur(const SchurOptions& opt) 
+    : Script(opt), box(*this,opt.n,1,opt.c) {
     int n = opt.n;
 
     IntVarArgs triple(3);

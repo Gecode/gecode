@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,39 +35,47 @@
  *
  */
 
-#include <algorithm>
+#include <gecode/set/branch.hh>
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Set { namespace Branch {
 
-  forceinline void
-  Statistics::reset(void) {
-    StatusStatistics::reset();
-    fail=0; node=0; depth=0; memory=0; restart=0; nogood=0;
+  NGL*
+  IncNGL::copy(Space& home, bool share) {
+    return new (home) IncNGL(home,share,*this);
+  }
+  NGL::Status
+  IncNGL::status(const Space&) const {
+    // Is n in the glb(x)?
+    if (x.contains(n))
+      return NGL::SUBSUMED;
+    else
+      // Is n not in the lub(x)?
+      return x.notContains(n) ? NGL::FAILED : NGL::NONE;
+  }
+  ExecStatus
+  IncNGL::prune(Space& home) {
+    return me_failed(x.exclude(home,n)) ? ES_FAILED : ES_OK;
   }
 
-  forceinline
-  Statistics::Statistics(void)
-    : fail(0), node(0), depth(0), memory(0), 
-      restart(0), nogood(0) {}
 
-  forceinline Statistics&
-  Statistics::operator +=(const Statistics& s) {
-    (void) StatusStatistics::operator +=(s);
-    fail += s.fail;
-    node += s.node;
-    depth = std::max(depth,s.depth);
-    memory += s.memory;
-    restart += s.restart;
-    nogood += s.nogood;
-    return *this;
+  NGL*
+  ExcNGL::copy(Space& home, bool share) {
+    return new (home) ExcNGL(home,share,*this);
+  }
+  NGL::Status
+  ExcNGL::status(const Space&) const {
+    // Is n not in the lub(x)?
+    if (x.notContains(n))
+      return NGL::SUBSUMED;
+    else
+      // Is n in the lub(x)?
+      return x.contains(n) ? NGL::FAILED : NGL::NONE;
+  }
+  ExecStatus
+  ExcNGL::prune(Space& home) {
+    return me_failed(x.include(home,n)) ? ES_FAILED : ES_OK;
   }
 
-  forceinline Statistics
-  Statistics::operator +(const Statistics& s) {
-    Statistics t(s); 
-    return t += *this;
-  }
+}}}
 
-}}
-
-// STATISTICS: search-other
+// STATISTICS: set-branch

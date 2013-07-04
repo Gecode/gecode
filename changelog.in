@@ -72,6 +72,30 @@ Date: 2013-07-10
 [DESCRIPTION]
 No-goods baby!
 
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   major
+[DESCRIPTION]
+The constructor of a script inheriting from Script and its subclasses must now call a unary constructor from Script taking the command line options as argument.
+
+This will break all scripts!
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+When using restart-based search, the use of no-goods from restarts can be swi´tched on/off with the -no-goods command line option.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for no-goods from restarts, see Modeling and Programming with Gecode for details.
+
 [ENTRY]
 Module: flatzinc
 What:   bug

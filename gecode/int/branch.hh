@@ -416,6 +416,76 @@ namespace Gecode { namespace Int { namespace Branch {
 
 namespace Gecode { namespace Int { namespace Branch {
 
+  /// No-good literal for equality
+  template<class View>
+  class EqNGL : public ViewValNGL<View,int,PC_INT_VAL> {
+  public:
+    /// Constructor for creation
+    EqNGL(Space& home, View x, int n);
+    /// Constructor for cloning \a ngl
+    EqNGL(Space& home, bool share, EqNGL& ngl);
+    /// Test the status of the no-good literal
+    virtual NGL::Status status(const Space& home) const;
+    /// Propagate the negation of the no-good literal
+    virtual ExecStatus prune(Space& home);
+    /// Create copy
+    virtual NGL* copy(Space& home, bool share);
+  };
+
+  /// No-good literal for dis-equality
+  template<class View>
+  class NqNGL : public ViewValNGL<View,int,PC_INT_DOM> {
+  public:
+    /// Constructor for creation
+    NqNGL(Space& home, View x, int n);
+    /// Constructor for cloning \a ngl
+    NqNGL(Space& home, bool share, NqNGL& ngl);
+    /// Test the status of the no-good literal
+    virtual NGL::Status status(const Space& home) const;
+    /// Propagate the negation of the no-good literal
+    virtual ExecStatus prune(Space& home);
+    /// Create copy
+    virtual NGL* copy(Space& home, bool share);
+  };
+
+  /// No-good literal for less or equal
+  template<class View>
+  class LqNGL : public ViewValNGL<View,int,PC_INT_BND> {
+  public:
+    /// Constructor for creation
+    LqNGL(Space& home, View x, int n);
+    /// Constructor for cloning \a ngl
+    LqNGL(Space& home, bool share, LqNGL& ngl);
+    /// Test the status of the no-good literal
+    virtual NGL::Status status(const Space& home) const;
+    /// Propagate the negation of the no-good literal
+    virtual ExecStatus prune(Space& home);
+    /// Create copy
+    virtual NGL* copy(Space& home, bool share);
+  };
+
+  /// No-good literal for greater or equal
+  template<class View>
+  class GqNGL : public ViewValNGL<View,int,PC_INT_BND> {
+  public:
+    /// Constructor for creation
+    GqNGL(Space& home, View x, int n);
+    /// Constructor for cloning \a ngl
+    GqNGL(Space& home, bool share, GqNGL& ngl);
+    /// Test the status of the no-good literal
+    virtual NGL::Status status(const Space& home) const;
+    /// Propagate the negation of the no-good literal
+    virtual ExecStatus prune(Space& home);
+    /// Create copy
+    virtual NGL* copy(Space& home, bool share);
+  };
+
+}}}
+
+#include <gecode/int/branch/ngl.hpp>
+
+namespace Gecode { namespace Int { namespace Branch {
+
   /**
    * \defgroup FuncIntValCommit Integer value commit classes
    *
@@ -443,6 +513,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitEq(Space& home, bool shared, ValCommitEq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, View x, int i, int n,
                std::ostream& o) const;
@@ -463,6 +535,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitLq(Space& home, bool shared, ValCommitLq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, View x, int i, int n,
                std::ostream& o) const;
@@ -483,6 +557,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGq(Space& home, bool shared, ValCommitGq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, View x, int i, int n,
                std::ostream& o) const;
@@ -503,6 +579,8 @@ namespace Gecode { namespace Int { namespace Branch {
     ValCommitGr(Space& home, bool shared, ValCommitGr& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, View x, int i, int n);
+    /// Create no-good literal for alternative \a a
+    NGL* ngl(Space& home, unsigned int a, View x, int n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, View x, int i, int n,
                std::ostream& o) const;
@@ -562,6 +640,8 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a a
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
+    /// Create no-good literal for choice \a c and alternative \a a
+    virtual NGL* ngl(Space& home, const Choice& c, unsigned int a) const;
     /**
      * \brief Print branch for choice \a c and alternative \a a
      *

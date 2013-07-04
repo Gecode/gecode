@@ -129,7 +129,8 @@ protected:
 public:
   /// Actual model
   EFPA(const EFPAOptions& opt)
-    : v(opt.v()),
+    : Script(opt), 
+      v(opt.v()),
       q(opt.q()),
       l(opt.l()),
       d(opt.d()),

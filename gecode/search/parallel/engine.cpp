@@ -102,7 +102,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     return has_stopped;
   }
 
-
   /*
    * Termination and deletion
    */

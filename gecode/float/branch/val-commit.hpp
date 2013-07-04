@@ -62,21 +62,10 @@ namespace Gecode { namespace Float { namespace Branch {
       else 
         return x.gq(home,nl.n);
     }
-    /*
-    FloatNum& n = nb.first;
-    bool& b = nb.second;
-    if ((a == 0) == b) {
-      if ((x.min() == n) || (x.max() == n)) 
-        return x.eq(home,x.min());
-      else 
-        return x.lq(home,n);
-    } else {
-      if ((x.min() == n) || (x.max() == n))
-        return x.eq(home,x.max());
-      else 
-        return x.gq(home,n);
-    }
-    */
+  }
+  forceinline NGL* 
+  ValCommitLqGq::ngl(Space&, unsigned int, FloatView, FloatNumBranch) const {
+    return NULL;
   }
   forceinline void
   ValCommitLqGq::print(const Space&, unsigned int a, FloatView, int i, 

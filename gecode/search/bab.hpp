@@ -70,6 +70,13 @@ namespace Gecode {
   }
 
   template<class T>
+  forceinline NoGoods*
+  BAB<T>::nogoods(void) {
+    return e->nogoods();
+  }
+
+
+  template<class T>
   T*
   bab(T* s, const Search::Options& o) {
     BAB<T> b(s,o);

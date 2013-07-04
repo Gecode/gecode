@@ -72,6 +72,7 @@ namespace Gecode { namespace Gist {
     done = true;
     return ES_OK;
   }
+
   void 
   StopBrancher::print(const Space&, const Gecode::Choice&, 
                       unsigned int, std::ostream&) const {

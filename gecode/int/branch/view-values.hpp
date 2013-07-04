@@ -149,6 +149,17 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   template<int n, bool min>
+  NGL*
+  ViewValuesBrancher<n,min>::ngl(Space& home, const Choice& c, 
+                                 unsigned int a) const {
+    const PosValuesChoice& pvc
+      = static_cast<const PosValuesChoice&>(c);
+    IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
+    unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
+    return new (home) EqNGL<IntView>(home,x,pvc.val(b));
+  }
+
+  template<int n, bool min>
   void
   ViewValuesBrancher<n,min>::print(const Space& home, const Choice& c, 
                                    unsigned int a, std::ostream& o) const {
@@ -160,7 +171,7 @@ namespace Gecode { namespace Int { namespace Branch {
     if (vvp != NULL)
       vvp(home,*this,a,x,pvc.pos().pos,nn,o);
     else
-      o << "branch[" << pvc.pos().pos << "] = " << nn;
+      o << "var[" << pvc.pos().pos << "] = " << nn;
   }
 
 }}}

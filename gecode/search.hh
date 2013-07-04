@@ -102,6 +102,9 @@ namespace Gecode { namespace Search {
     const unsigned int steal_limit = 3;
     /// Initial delay in milliseconds for all but first worker thread
     const unsigned int initial_delay = 5;
+
+    /// Depth cutoff for no-good generation during search
+    const unsigned int nogood_cutoff = 128;
   }
 
 }}
@@ -142,6 +145,8 @@ namespace Gecode { namespace Search {
     size_t memory;
     /// Number of restarts
     unsigned long int restart;
+    /// Number of no-goods posted
+    unsigned long int nogood;
     /// Initialize
     Statistics(void);
     /// Reset
@@ -457,6 +462,8 @@ namespace Gecode { namespace Search {
     virtual bool stopped(void) const = 0;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s) = 0;
+    /// Return no-goods
+    virtual NoGoods* nogoods(void) = 0;
     /// Destructor
     virtual ~Engine(void) {}
   };
@@ -504,6 +511,8 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Return no-goods
+    NoGoods* nogoods(void);
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
@@ -538,6 +547,8 @@ namespace Gecode {
     Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     bool stopped(void) const;
+    /// Return no-goods
+    NoGoods* nogoods(void);
   };
 
   /**

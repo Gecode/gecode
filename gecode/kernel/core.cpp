@@ -80,9 +80,23 @@ namespace Gecode {
 
 
   /*
+   * No-goods
+   *
+   */
+  void
+  NoGoods::post(Space&) {
+  }
+
+
+  /*
    * Brancher
    *
    */
+  NGL*
+  Brancher::ngl(Space& home, const Choice& c, unsigned int a) const {
+    return NULL;
+  }
+
   void 
   Brancher::print(const Space&, const Choice&, unsigned int,
                   std::ostream&) const {
@@ -413,6 +427,21 @@ namespace Gecode {
     }
   }
 
+  NGL*
+  Space::ngl(const Choice& c, unsigned int a) {
+    if (a >= c.alternatives())
+      throw SpaceIllegalAlternative("Space::ngl");
+    if (failed())
+      return NULL;
+    if (Brancher* b = brancher(c._id)) {
+      // There is a matching brancher
+      return b->ngl(*this,c,a);
+    } else {
+      // There is no matching brancher!
+      throw SpaceNoBrancher("Space::ngl");
+    }
+  }
+
   void
   Space::print(const Choice& c, unsigned int a, std::ostream& o) const {
     if (a >= c.alternatives())
@@ -609,7 +638,7 @@ namespace Gecode {
   }
 
   void
-  Space::master(unsigned long int, const Space*) {
+  Space::master(unsigned long int, const Space* s, NoGoods& ng) {
   }
 
   void

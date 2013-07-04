@@ -79,6 +79,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
+    /// Return no-goods
+    virtual NoGoods* nogoods(void);
     /// Destructor
     virtual ~DFS(void);
     //@}
@@ -123,14 +125,14 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   /*
-   * Statistics
+   * Reset
    */
   forceinline void
   DFS::Worker::reset(Space* s) {
     delete cur;
     path.reset();
     d = 0;
-    idle = false;
+    ws = (s == NULL) ? 0 : WS_ROOT;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = NULL;
@@ -140,6 +142,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       Search::Worker::reset(cur);
     }
   }
+
+
   /*
    * Engine: search control
    */
@@ -166,7 +170,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       if (Space* s = engine().worker(i)->steal(r_d)) {
         // Reset this guy
         m.acquire();
-        idle = false;
+        ws = 0; // Not idle but also does not have the root of the tree
         d = 0;
         cur = s;
         Search::Worker::reset(cur,r_d);

@@ -78,12 +78,13 @@ protected:
 public:
   /// Branching to use for model
   enum {
-    BRANCH_WORDS,  ///< Branch on the words
-    BRANCH_LETTERS ///< Branch on the letters
+    BRANCH_WORDS,      ///< Branch on the words
+    BRANCH_LETTERS,    ///< Branch on the letters
+    BRANCH_LETTERS_ALL ///< Branch on the letters (try all values)
   };
   /// Actual model
   Crossword(const SizeOptions& opt)
-    : w(grids[opt.size()][0]), h(grids[opt.size()][1]),
+    : Script(opt), w(grids[opt.size()][0]), h(grids[opt.size()][1]),
       letters(*this,w*h,'a','z') {
     // Pointer into the grid specification (width and height already skipped)
     const int* g = &grids[opt.size()][2];
@@ -153,6 +154,12 @@ public:
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
              NULL, &printletters);
       break;
+    case BRANCH_LETTERS_ALL:
+      // Branch by assigning letters (try all letters)
+      branch(*this, letters, 
+             INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
+             NULL, &printletters);
+      break;
     }
   }
   /// Print brancher information when branching on letters
@@ -218,6 +225,7 @@ main(int argc, char* argv[]) {
   opt.branching(Crossword::BRANCH_WORDS);
   opt.branching(Crossword::BRANCH_WORDS, "words");
   opt.branching(Crossword::BRANCH_LETTERS, "letters");
+  opt.branching(Crossword::BRANCH_LETTERS_ALL, "letters-all");
   opt.parse(argc,argv);
   dict.init(opt.file());
   if (opt.size() >= n_grids) {

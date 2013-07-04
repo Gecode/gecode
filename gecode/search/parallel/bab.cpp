@@ -89,7 +89,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         // Perform exploration work
         {
           m.acquire();
-          if (idle) {
+          if (ws & WS_IDLE) {
             m.release();
             // Try to find new work
             find();
@@ -152,7 +152,7 @@ namespace Gecode { namespace Search { namespace Parallel {
             Worker::current(cur);
             m.release();
           } else {
-            idle = true;
+            ws |= WS_IDLE;
             m.release();
             // Report that worker is idle
             engine().idle();
@@ -193,6 +193,29 @@ namespace Gecode { namespace Search { namespace Parallel {
     e_reset_ack_stop.wait();
   }
 
+
+  /*
+   * Create no-goods
+   *
+   */
+  NoGoods*
+  BAB::nogoods(void) {
+    NoGoods* ng;
+    // Grab wait lock for reset
+    m_wait_reset.acquire();
+    // Release workers for reset
+    release(C_RESET);
+    // Wait for reset cycle started
+    e_reset_ack_start.wait();
+    ng = worker(0)->nogoods();
+    // Block workers again to ensure invariant
+    block();
+    // Release reset lock
+    m_wait_reset.release();
+    // Wait for reset cycle stopped
+    e_reset_ack_stop.wait();
+    return ng;
+  }
 
   /*
    * Termination and deletion
