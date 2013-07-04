@@ -188,4 +188,4 @@ namespace Gecode { namespace Search { namespace Meta {
 
 }}}
 
-// STATISTICS: search-meta
+// STATISTICS: search-other
