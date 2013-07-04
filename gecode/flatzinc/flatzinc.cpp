@@ -1009,7 +1009,7 @@ namespace Gecode { namespace FlatZinc {
           }
 #endif
         } else if (flatAnn[i]->isCall("float_default_search")) {
-#ifdef GECODE_HAS_SET_VARS
+#ifdef GECODE_HAS_FLOAT_VARS
           AST::Call *call = flatAnn[i]->getCall("float_default_search");
           AST::Array *args = call->getArgs(2);
           def_float_varsel = ann2fvarsel(args->a[0],rnd,decay);
