@@ -2371,7 +2371,7 @@ yyreduce:
               delete vsv;
             } else {
               if ((yyvsp[(5) - (13)].iValue)>0) {
-                IntVarSpec* ispec = new IntVarSpec((yyvsp[(9) - (13)].oSet),!print,false);
+                IntVarSpec* ispec = new IntVarSpec((yyvsp[(9) - (13)].oSet),false,false);
                 string arrayname = "["; arrayname += (yyvsp[(11) - (13)].sValue);
                 for (int i=0; i<(yyvsp[(5) - (13)].iValue)-1; i++) {
                   vars[i] = pp->intvars.size();
@@ -2439,7 +2439,7 @@ yyreduce:
             for (int i=0; i<(yyvsp[(5) - (13)].iValue); i++) {
               vars[i] = pp->boolvars.size();
               pp->boolvars.push_back(varspec((yyvsp[(11) - (13)].sValue),
-                                       new BoolVarSpec((yyvsp[(9) - (13)].oSet),!print,false)));
+                                       new BoolVarSpec((yyvsp[(9) - (13)].oSet),false,false)));
             }          
           }
           if (print) {
@@ -2501,7 +2501,7 @@ yyreduce:
                 Option<std::pair<double,double> > dom =
                   (yyvsp[(9) - (13)].oPFloat)() ? Option<std::pair<double,double> >::some(*(yyvsp[(9) - (13)].oPFloat).some())
                        : Option<std::pair<double,double> >::none();
-                FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
+                FloatVarSpec* ispec = new FloatVarSpec(dom,false,false);
                 string arrayname = "["; arrayname += (yyvsp[(11) - (13)].sValue);
                 for (int i=0; i<(yyvsp[(5) - (13)].iValue)-1; i++) {
                   vars[i] = pp->floatvars.size();
@@ -2568,7 +2568,7 @@ yyreduce:
             delete vsv;
           } else {
             if ((yyvsp[(5) - (15)].iValue)>0) {
-              SetVarSpec* ispec = new SetVarSpec((yyvsp[(11) - (15)].oSet),!print,false);
+              SetVarSpec* ispec = new SetVarSpec((yyvsp[(11) - (15)].oSet),false,false);
               string arrayname = "["; arrayname += (yyvsp[(13) - (15)].sValue);
               for (int i=0; i<(yyvsp[(5) - (15)].iValue)-1; i++) {
                 vars[i] = pp->setvars.size();

@@ -813,7 +813,7 @@ vardecl_item:
               delete vsv;
             } else {
               if ($5>0) {
-                IntVarSpec* ispec = new IntVarSpec($9,!print,false);
+                IntVarSpec* ispec = new IntVarSpec($9,false,false);
                 string arrayname = "["; arrayname += $11;
                 for (int i=0; i<$5-1; i++) {
                   vars[i] = pp->intvars.size();
@@ -879,7 +879,7 @@ vardecl_item:
             for (int i=0; i<$5; i++) {
               vars[i] = pp->boolvars.size();
               pp->boolvars.push_back(varspec($11,
-                                       new BoolVarSpec($9,!print,false)));
+                                       new BoolVarSpec($9,false,false)));
             }          
           }
           if (print) {
@@ -940,7 +940,7 @@ vardecl_item:
                 Option<std::pair<double,double> > dom =
                   $9() ? Option<std::pair<double,double> >::some(*$9.some())
                        : Option<std::pair<double,double> >::none();
-                FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
+                FloatVarSpec* ispec = new FloatVarSpec(dom,false,false);
                 string arrayname = "["; arrayname += $11;
                 for (int i=0; i<$5-1; i++) {
                   vars[i] = pp->floatvars.size();
@@ -1005,7 +1005,7 @@ vardecl_item:
             delete vsv;
           } else {
             if ($5>0) {
-              SetVarSpec* ispec = new SetVarSpec($11,!print,false);
+              SetVarSpec* ispec = new SetVarSpec($11,false,false);
               string arrayname = "["; arrayname += $13;
               for (int i=0; i<$5-1; i++) {
                 vars[i] = pp->setvars.size();
