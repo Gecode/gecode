@@ -1496,6 +1496,8 @@ namespace Gecode { namespace FlatZinc {
            << static_cast<int>((stat.memory+1023) / 1024) << " KB"
            << endl;
     }
+    delete o.stop;
+    delete o.cutoff;
   }
 
 #ifdef GECODE_HAS_QT

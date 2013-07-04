@@ -560,6 +560,7 @@ constraint_items_head:
 
 preddecl_item:
       FZ_PREDICATE FZ_ID '(' pred_arg_list ')'
+      { free($2); }
 
 pred_arg_list:
       /* empty */
@@ -571,6 +572,7 @@ pred_arg_list_head:
 
 pred_arg:
       pred_arg_type ':' FZ_ID
+      { free($3); }
 
 pred_arg_type:
       FZ_ARRAY '[' pred_array_init ']' FZ_OF pred_arg_simple_type
@@ -580,7 +582,9 @@ pred_arg_type:
 
 pred_arg_simple_type:
       int_ti_expr_tail
+      { if ($1()) delete $1.some(); }
     | FZ_SET FZ_OF int_ti_expr_tail
+      { if ($3()) delete $3.some(); }
     | FZ_BOOL
     | FZ_FLOAT
 
@@ -1642,6 +1646,7 @@ non_array_expr :
           $$ = getArrayElement(static_cast<ParserState*>(parm),$1,i,false);
         else
           $$ = new AST::IntLit(0); // keep things consistent
+        delete $3;
         free($1);
       }
 

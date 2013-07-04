@@ -78,7 +78,8 @@ What:   bug
 Rank:   major
 Thanks: Chris Mears
 [DESCRIPTION]
-Fixed a memory leak in FlatZincSpace.
+Fixed a memory leak in FlatZincSpace and a few more in the FlatZinc
+parser.
 
 [ENTRY]
 Module: flatzinc
