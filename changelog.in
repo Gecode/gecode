@@ -75,7 +75,16 @@ No-goods baby!
 [ENTRY]
 Module: flatzinc
 What:   bug
+Rank:   major
+Thanks: Chris Mears
+[DESCRIPTION]
+Fixed a memory leak in FlatZincSpace.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
 Rank:   minor
+Thanks: Chris Mears
 [DESCRIPTION]
 Fixed a bug in implicit search heuristic that could lead to a
 segmentation fault when minimizing an array element.

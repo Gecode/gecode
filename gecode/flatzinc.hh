@@ -319,6 +319,10 @@ namespace Gecode { namespace FlatZinc {
   public:
     /// Constructor
     BranchInformation(void);
+    /// Copy constructor
+    BranchInformation(const BranchInformation& bi);
+    /// Initialise for use
+    void init(void);
     /// Add new brancher information
     void add(const BrancherHandle& bh,
              const std::string& rel0,

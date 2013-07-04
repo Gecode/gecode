@@ -270,8 +270,17 @@ namespace Gecode { namespace FlatZinc {
   };
   
   BranchInformation::BranchInformation(void)
-    : SharedHandle(new BranchInformationO()) {}
-  
+    : SharedHandle(NULL) {}
+
+  BranchInformation::BranchInformation(const BranchInformation& bi)
+    : SharedHandle(bi) {}
+
+  void
+  BranchInformation::init(void) {
+    assert(object() == false);
+    object(new BranchInformationO());
+  }
+
   void
   BranchInformation::add(const BrancherHandle& bh,
                          const std::string& rel0,
@@ -667,7 +676,9 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::FlatZincSpace(void)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true),
-    _solveAnnotations(NULL), needAuxVars(true) {}
+    _solveAnnotations(NULL), needAuxVars(true) {
+    branchInfo.init();
+  }
 
   void
   FlatZincSpace::init(int intVars, int boolVars,
