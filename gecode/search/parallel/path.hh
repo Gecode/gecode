@@ -174,8 +174,8 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
   forceinline unsigned int
   Path::Edge::truealt(void) const {
-    unsigned int n = _choice->alternatives();
-    return (_alt >= n) ? n-1 : _alt;
+    assert(_alt < _choice->alternatives());
+    return _alt;
   }
   forceinline bool
   Path::Edge::stolen(void) const {
@@ -226,8 +226,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
-    if (!ds.empty() && ds.top().lao() &&
-        (ds.entries() > Config::nogood_cutoff)) {
+    if (!ds.empty() && ds.top().lao()) {
       // Topmost stack entry was LAO -> reuse
       stat.pop(ds.top().space(),ds.top().choice());
       ds.pop().dispose();
@@ -358,7 +357,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
       // Mark as reusable
-      ds.top().next();
+      if (ds.entries() > static_cast<int>(Config::nogood_cutoff))
+        ds.top().next();
       d = 0;
       return s;
     }
