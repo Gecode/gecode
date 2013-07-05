@@ -74,6 +74,14 @@ No-goods baby!
 
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+For restart-based search also take the master space into account
+when reporting memory consumption.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   major
@@ -95,6 +103,8 @@ What:   new
 Rank:   major
 [DESCRIPTION]
 Added support for no-goods from restarts, see Modeling and Programming with Gecode for details.
+
+Note that also entails that the statistics will report different a different peak depth than in previous releases of Gecode.
 
 [ENTRY]
 Module: flatzinc

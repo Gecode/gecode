@@ -87,7 +87,10 @@ namespace Gecode { namespace Search { namespace Meta {
   
   Search::Statistics
   RBS::statistics(void) const {
-    return stop->metastatistics()+e->statistics();
+    Search::Statistics s = stop->metastatistics()+e->statistics();
+    if (master != NULL)
+      s.memory += sz + master->allocated();
+    return s;
   }
   
   bool

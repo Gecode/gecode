@@ -179,6 +179,8 @@ namespace Gecode { namespace Search {
 
   forceinline void
   Worker::reset(void) {
+    if (mem_total > memory)
+      memory = mem_total;
     mem_cur    = 0;
     mem_total  = 0;
     root_depth = 0;
