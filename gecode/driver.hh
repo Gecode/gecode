@@ -616,25 +616,29 @@ namespace Gecode {
     class ScriptBase : public BaseSpace {
     protected:
       /// Whether to post no-goods
-      bool nogoods;
+      bool _nogoods;
     public:
       /// Constructor that evaluates options
       template<class Options>
       ScriptBase(const Options& opt)
-        : nogoods(opt.nogoods()) {}
+        : _nogoods(opt.nogoods()) {}
       /// Constructor used for cloning
       ScriptBase(bool share, ScriptBase& e) 
-        : BaseSpace(share,e), nogoods(e.nogoods) {}
+        : BaseSpace(share,e), _nogoods(e._nogoods) {}
       /// Print a solution to \a os
       virtual void print(std::ostream& os) const { (void) os; }
       /// Compare with \a s
       virtual void compare(const Space&, std::ostream& os) const {
         (void) os;
       }
+      /// Whether to post no-goods
+      bool nogoods(void) const {
+        return _nogoods;
+      }
       /// Master configuration function for restart meta search engine
       virtual void master(unsigned long int i, const Space* s,
                           NoGoods& ng) {
-        if (nogoods)
+        if (nogoods())
           ng.post(*this);
       }
       /// Choose output stream according to \a name
