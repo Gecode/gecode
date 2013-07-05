@@ -1653,11 +1653,12 @@ namespace Test { namespace LDSB {
   LDSBLatin latin("Latin");
   LDSB<Recomputation> recomp("Recomputation", 999,999);
   LDSB<TieBreak> tiebreak("TieBreak");
+
+#ifdef GECODE_HAS_SET_VARS
   LDSB<ReflectSym1> reflectsym1("ReflectSym1");
   LDSB<ReflectSym2> reflectsym2("ReflectSym2");
   LDSB<Activity1> activity1("Activity1");
 
-#ifdef GECODE_HAS_SET_VARS
   LDSBSet<SetVarSym1> setvarsym1("SetVarSym1");
   LDSBSet<SetValSym1> setvalsym1("SetValSym1");
   LDSBSet<SetValSym2> setvalsym2("SetValSym2", 0, 1);

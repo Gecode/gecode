@@ -93,7 +93,7 @@ namespace Gecode {
    *
    */
   NGL*
-  Brancher::ngl(Space& home, const Choice& c, unsigned int a) const {
+  Brancher::ngl(Space&, const Choice&, unsigned int) const {
     return NULL;
   }
 
@@ -638,7 +638,7 @@ namespace Gecode {
   }
 
   void
-  Space::master(unsigned long int, const Space* s, NoGoods& ng) {
+  Space::master(unsigned long int, const Space*, NoGoods&) {
   }
 
   void
