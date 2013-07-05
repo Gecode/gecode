@@ -98,6 +98,13 @@ Added support for no-goods from restarts, see Modeling and Programming with Geco
 
 [ENTRY]
 Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added support for value_precede_int and value_precede_set constraints.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   major
 Thanks: Chris Mears
