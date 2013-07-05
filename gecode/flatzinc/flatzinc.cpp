@@ -614,6 +614,7 @@ namespace Gecode { namespace FlatZinc {
       needAuxVars(f.needAuxVars) {
       _optVar = f._optVar;
       _optVarIsInt = f._optVarIsInt;
+      _nogoods = f._nogoods;
       _method = f._method;
       branchInfo.update(*this, share, f.branchInfo);
       iv.update(*this, share, f.iv);
@@ -675,7 +676,7 @@ namespace Gecode { namespace FlatZinc {
   
   FlatZincSpace::FlatZincSpace(void)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
-    _optVar(-1), _optVarIsInt(true),
+    _optVar(-1), _optVarIsInt(true), _nogoods(false),
     _solveAnnotations(NULL), needAuxVars(true) {
     branchInfo.init();
   }
@@ -1405,6 +1406,7 @@ namespace Gecode { namespace FlatZinc {
   void
   FlatZincSpace::runEngine(std::ostream& out, const Printer& p,
                            const FlatZincOptions& opt, Support::Timer& t_total) {
+    _nogoods = opt.nogoods();
     if (opt.restart()==RM_NONE) {
       runMeta<Engine,Driver::EngineToMeta>(out,p,opt,t_total);
     } else {
@@ -1575,6 +1577,13 @@ namespace Gecode { namespace FlatZinc {
   Space*
   FlatZincSpace::copy(bool share) {
     return new FlatZincSpace(share, *this);
+  }
+
+  void
+  FlatZincSpace::master(unsigned long int, const Space*,
+                        NoGoods& ng) {
+    if (_nogoods)
+      ng.post(*this);
   }
 
   FlatZincSpace::Meth
