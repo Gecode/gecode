@@ -419,6 +419,8 @@ namespace Gecode { namespace Int { namespace Branch {
   /// No-good literal for equality
   template<class View>
   class EqNGL : public ViewValNGL<View,int,PC_INT_VAL> {
+    using ViewValNGL<View,int,PC_INT_VAL>::x;
+    using ViewValNGL<View,int,PC_INT_VAL>::n;
   public:
     /// Constructor for creation
     EqNGL(Space& home, View x, int n);
@@ -435,6 +437,8 @@ namespace Gecode { namespace Int { namespace Branch {
   /// No-good literal for dis-equality
   template<class View>
   class NqNGL : public ViewValNGL<View,int,PC_INT_DOM> {
+    using ViewValNGL<View,int,PC_INT_DOM>::x;
+    using ViewValNGL<View,int,PC_INT_DOM>::n;
   public:
     /// Constructor for creation
     NqNGL(Space& home, View x, int n);
@@ -451,6 +455,8 @@ namespace Gecode { namespace Int { namespace Branch {
   /// No-good literal for less or equal
   template<class View>
   class LqNGL : public ViewValNGL<View,int,PC_INT_BND> {
+    using ViewValNGL<View,int,PC_INT_BND>::x;
+    using ViewValNGL<View,int,PC_INT_BND>::n;
   public:
     /// Constructor for creation
     LqNGL(Space& home, View x, int n);
@@ -467,6 +473,8 @@ namespace Gecode { namespace Int { namespace Branch {
   /// No-good literal for greater or equal
   template<class View>
   class GqNGL : public ViewValNGL<View,int,PC_INT_BND> {
+    using ViewValNGL<View,int,PC_INT_BND>::x;
+    using ViewValNGL<View,int,PC_INT_BND>::n;
   public:
     /// Constructor for creation
     GqNGL(Space& home, View x, int n);

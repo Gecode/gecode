@@ -1233,7 +1233,7 @@ namespace Gecode {
    * \brief No-goods recorded from restarts
    *
    */
-  class NoGoods {
+  class GECODE_VTABLE_EXPORT NoGoods {
   protected:
     /// Number of no-goods
     unsigned long int n;
