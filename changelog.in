@@ -87,7 +87,7 @@ Module: driver
 What:   new
 Rank:   minor
 [DESCRIPTION]
-When using restart-based search, the use of no-goods from restarts can be swi´tched on/off with the -no-goods command line option.
+When using restart-based search, the use of no-goods from restarts can be switched on/off with the -no-goods command line option.
 
 [ENTRY]
 Module: search
