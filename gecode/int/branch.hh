@@ -434,24 +434,6 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual NGL* copy(Space& home, bool share);
   };
 
-  /// No-good literal for dis-equality
-  template<class View>
-  class NqNGL : public ViewValNGL<View,int,PC_INT_DOM> {
-    using ViewValNGL<View,int,PC_INT_DOM>::x;
-    using ViewValNGL<View,int,PC_INT_DOM>::n;
-  public:
-    /// Constructor for creation
-    NqNGL(Space& home, View x, int n);
-    /// Constructor for cloning \a ngl
-    NqNGL(Space& home, bool share, NqNGL& ngl);
-    /// Test the status of the no-good literal
-    virtual NGL::Status status(const Space& home) const;
-    /// Propagate the negation of the no-good literal
-    virtual ExecStatus prune(Space& home);
-    /// Create copy
-    virtual NGL* copy(Space& home, bool share);
-  };
-
   /// No-good literal for less or equal
   template<class View>
   class LqNGL : public ViewValNGL<View,int,PC_INT_BND> {

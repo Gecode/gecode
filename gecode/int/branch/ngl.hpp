@@ -67,33 +67,6 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  NqNGL<View>::NqNGL(Space& home, View x, int n)
-    : ViewValNGL<View,int,PC_INT_DOM>(home,x,n) {}
-  template<class View>
-  forceinline
-  NqNGL<View>::NqNGL(Space& home, bool share, NqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_DOM>(home,share,ngl) {}
-  template<class View>
-  NGL*
-  NqNGL<View>::copy(Space& home, bool share) {
-    return new (home) NqNGL<View>(home,share,*this);
-  }
-  template<class View>
-  NGL::Status
-  NqNGL<View>::status(const Space&) const {
-    if (x.assigned())
-      return (x.val() == n) ? NGL::FAILED : NGL::SUBSUMED;
-    return x.in(n) ? NGL::NONE : NGL::SUBSUMED;
-  }
-  template<class View>
-  ExecStatus
-  NqNGL<View>::prune(Space& home) {
-    return me_failed(x.eq(home,n)) ? ES_FAILED : ES_OK;
-  }
-
-
-  template<class View>
-  forceinline
   LqNGL<View>::LqNGL(Space& home, View x, int n)
     : ViewValNGL<View,int,PC_INT_BND>(home,x,n) {}
   template<class View>
