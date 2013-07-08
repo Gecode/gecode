@@ -128,11 +128,10 @@ namespace Gecode { namespace Search { namespace Meta {
     if (l != NULL) {
       l->subscribe(home,*this); n++;
     }
-    if (!notice)
-      while (l != NULL) {
-        notice = notice || l->notice();
-        l = l->next();
-      }
+    while (!notice && (l != NULL)) {
+      notice = notice || l->notice();
+      l = l->next();
+    }
     if (notice)
       home.notice(*this,AP_DISPOSE);
   }
