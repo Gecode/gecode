@@ -428,7 +428,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       }
       ds.top().space(NULL);
       // Mark as reusable
-      ds.top().next();
+      if (ds.entries() > static_cast<int>(Config::nogood_cutoff))
+        ds.top().next();
       d = 0;
       return s;
     }
