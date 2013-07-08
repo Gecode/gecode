@@ -97,7 +97,7 @@ namespace Gecode {
      *
      * The minimal size is given in the number of free list units.
      *
-     * Currently, for 32 bit machines, the minimal size is 12 bytes.
+     * Currently, for 32 bit machines, the minimal size is 8 bytes.
      * For 64 bit machines, it is 16 bytes.
      */
     const int fl_size_min  = ((sizeof(void*) == 4) ? 2 : 2);

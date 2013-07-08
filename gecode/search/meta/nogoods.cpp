@@ -39,6 +39,16 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
+  /// Help function to cancel and dispose a no-good literal
+  forceinline NGL*
+  disposenext(NGL* ngl, Space& home, Propagator& p, bool c) {
+    NGL* n = ngl->next();
+    if (c)
+      ngl->cancel(home,p);
+    home.rfree(ngl,ngl->dispose(home));
+    return n;
+  }
+    
   void
   NoNGL::subscribe(Space&, Propagator&) {
     GECODE_NEVER;
@@ -83,13 +93,12 @@ namespace Gecode { namespace Search { namespace Meta {
       return home.ES_SUBSUMED(*this);
     case NGL::SUBSUMED:
       {
-        root->cancel(home,*this); n--;
-        NGL* l = root->next();
+        NGL* l = disposenext(root,home,*this,true); n--;
         // Prune leaf-literals
         while ((l != NULL) && l->leaf()) {
           l->cancel(home,*this); n--;
           GECODE_ES_CHECK(l->prune(home));
-          l = l->next();
+          l = disposenext(l,home,*this,false);
         }
         root = l;
         // Is there anything left?
@@ -121,15 +130,15 @@ namespace Gecode { namespace Search { namespace Meta {
       while ((l != NULL) && l->leaf()) {
         switch (l->status(home)) {
         case NGL::SUBSUMED:
-          l->cancel(home,*this); n--;
-          l = l->next(); p->next(l);
+          l = disposenext(l,home,*this,true); n--;
+          p->next(l);
           GECODE_ES_CHECK(root->prune(home));
           if (root->status(home) == NGL::FAILED)
             return home.ES_SUBSUMED(*this);
           break;
         case NGL::FAILED:
-          l->cancel(home,*this); n--;
-          l = l->next(); p->next(l);
+          l = disposenext(l,home,*this,true); n--;
+          p->next(l);
           break;
         case NGL::NONE:
           p = l; l = l->next();
@@ -142,15 +151,15 @@ namespace Gecode { namespace Search { namespace Meta {
       if (l != NULL) {
         switch (l->status(home)) {
         case NGL::FAILED:
-          l->cancel(home,*this); n--;
+          (void) disposenext(l,home,*this,true); n--;
           // Prune entire subtree
           p->next(NULL);
           break;
         case NGL::SUBSUMED:
           {
             // Unlink node
-            l->cancel(home,*this); n--;
-            l = l->next(); p->next(l);
+            l = disposenext(l,home,*this,true); n--;
+            p->next(l);
             // Create subscriptions
             while ((l != NULL) && l->leaf()) {
               l->subscribe(home,*this); n++;
@@ -172,16 +181,25 @@ namespace Gecode { namespace Search { namespace Meta {
 
   size_t 
   NoGoodProp::dispose(Space& home) {
-    if (root != NULL) {
-      root->cancel(home,*this);
-      NGL* l = root->next();
-      while ((l != NULL) && l->leaf()) {
-        l->cancel(home,*this);
-        l = l->next();
+    if (home.failed()) {
+      // This will be executed when one ngl returned true for notice()
+      NGL* l = root;
+      while (l != NULL) {
+        NGL* t = l->next();
+        (void) l->dispose(home);
+        l = t;
       }
+    } else if (root != NULL) {
+      // This will be executed for subsumption
+      NGL* l = disposenext(root,home,*this,true);
+      while ((l != NULL) && l->leaf())
+        l = disposenext(l,home,*this,true);
       if (l != NULL)
-        l->cancel(home,*this);
+        l = disposenext(l,home,*this,true);
+      while (l != NULL)
+        l = disposenext(l,home,*this,false);
     }
+    home.ignore(*this,AP_DISPOSE,true);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

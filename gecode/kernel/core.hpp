@@ -996,6 +996,11 @@ namespace Gecode {
     virtual ExecStatus prune(Space& home) = 0;
     /// Create copy
     virtual NGL* copy(Space& home, bool share) = 0;
+    /// Whether dispose must always be called (returns false)
+    GECODE_KERNEL_EXPORT
+    virtual bool notice(void) const;
+    /// Dispose
+    virtual size_t dispose(Space& home);
     /// \name Internal management routines
     //@{
     /// Test whether literal is a leaf
@@ -3087,7 +3092,10 @@ namespace Gecode {
   forceinline
   NGL::NGL(Space&, bool, NGL&) 
     : nl(NULL) {}
-
+  forceinline size_t
+  NGL::dispose(Space&) {
+    return sizeof(*this);
+  }
 
   /*
    * Advisor

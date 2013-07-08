@@ -118,14 +118,23 @@ namespace Gecode { namespace Search { namespace Meta {
     : Propagator(home), root(root0), n(0U) {
     // Create subscriptions
     root->subscribe(home,*this); n++;
+    bool notice = root->notice();
     NGL* l = root->next();
     while ((l != NULL) && l->leaf()) {
       l->subscribe(home,*this); n++;
+      notice = notice || l->notice();
       l = l->next();
     }
     if (l != NULL) {
       l->subscribe(home,*this); n++;
     }
+    if (!notice)
+      while (l != NULL) {
+        notice = notice || l->notice();
+        l = l->next();
+      }
+    if (notice)
+      home.notice(*this,AP_DISPOSE);
   }
 
   forceinline ExecStatus 

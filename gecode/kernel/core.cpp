@@ -676,6 +676,11 @@ namespace Gecode {
   }
 
 
+  bool
+  NGL::notice(void) const {
+    return false;
+  }
+
 }
 
 // STATISTICS: kernel-core
