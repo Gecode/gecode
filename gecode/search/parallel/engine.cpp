@@ -107,7 +107,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   Engine::Worker::~Worker(void) {
     delete cur;
-    path.reset();
+    path.reset(0);
   }
 
 }}}

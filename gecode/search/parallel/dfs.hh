@@ -57,7 +57,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Try to find some work
       void find(void);
       /// Reset worker to restart at space \a s
-      void reset(Space* s);
+      void reset(Space* s, int ngdl);
     };
     /// Array of worker references
     Worker** _worker;
@@ -128,9 +128,9 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Reset
    */
   forceinline void
-  DFS::Worker::reset(Space* s) {
+  DFS::Worker::reset(Space* s, int ngdl) {
     delete cur;
-    path.reset();
+    path.reset((s != NULL) ? ngdl : 0);
     d = 0;
     ws = (s == NULL) ? 0 : WS_ROOT;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {

@@ -163,9 +163,8 @@ namespace Gecode { namespace Search { namespace Meta {
 
     unsigned long int n_nogood = 0;
 
-    // Eliminate the alternatives which are not no-goods or have been stolen at the end
-    while ((n > s) && ((p.ds[n-1].truealt() == 0U) ||
-                       p.ds[n-1].stolen()))
+    // Eliminate the alternatives which are not no-goods at the end
+    while ((n > s) && (p.ds[n-1].truealt() == 0U))
       n--;
 
     // A sentinel element
@@ -175,10 +174,8 @@ namespace Gecode { namespace Search { namespace Meta {
 
     // Commit no-goods at the beginning
     while ((s < n) && (p.ds[s].truealt() > 0U))
-      if (p.ds[s].stolen()) {
-        return;
       // Try whether this is a rightmost alternative
-      } else if (p.ds[s].rightmost()) {
+      if (p.ds[s].rightmost()) {
         // No literal needed, directly commit
         home.commit(*p.ds[s].choice(),p.ds[s].truealt());
         s++;
@@ -210,38 +207,31 @@ namespace Gecode { namespace Search { namespace Meta {
     NGL* ll = NULL;
 
     // Create literals
-    for (int i=s; i<n; i++)
-      if (p.ds[i].stolen()) {
-        // Stop generating literals
-        if (ll == NULL)
-          return;
-        ll->next(NULL);
-        break;
-      } else {
-        // Add leaves
-        for (unsigned int a=0U; a<p.ds[i].truealt(); a++) {
-          NGL* l = home.ngl(*p.ds[i].choice(),a);
-          if (l == NULL) {
-            // The brancher does not support no-goods
-            if (ll == NULL)
-              return;
-            ll->next(NULL);
-            break;
-          }
-          c = c->add(l,true); ll = c;
-          n_nogood++;
-        }
-        // Check whether to add an additional subtree
-        if (NGL* l = home.ngl(*p.ds[i].choice(),p.ds[i].truealt())) {
-          c = c->add(l,false);
-        } else if (!p.ds[i].rightmost()) {
+    for (int i=s; i<n; i++) {
+      // Add leaves
+      for (unsigned int a=0U; a<p.ds[i].truealt(); a++) {
+        NGL* l = home.ngl(*p.ds[i].choice(),a);
+        if (l == NULL) {
           // The brancher does not support no-goods
           if (ll == NULL)
             return;
           ll->next(NULL);
           break;
         }
+        c = c->add(l,true); ll = c;
+        n_nogood++;
       }
+      // Check whether to add an additional subtree
+      if (NGL* l = home.ngl(*p.ds[i].choice(),p.ds[i].truealt())) {
+        c = c->add(l,false);
+      } else if (!p.ds[i].rightmost()) {
+        // The brancher does not support no-goods
+        if (ll == NULL)
+          return;
+        ll->next(NULL);
+        break;
+      }
+    }
 
     ng(n_nogood);
 

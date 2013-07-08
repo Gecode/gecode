@@ -64,7 +64,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Try to find some work
       void find(void);
       /// Reset engine to restart at space \a s
-      void reset(Space* s);
+      void reset(Space* s, int ngdl);
       /// Destructor
       virtual ~Worker(void);
     };
@@ -112,11 +112,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   forceinline void
-  BAB::Worker::reset(Space* s) {
+  BAB::Worker::reset(Space* s, int ngdl) {
     delete cur;
     delete best;
     best = NULL;
-    path.reset();
+    path.reset((s == NULL) ? 0 : ngdl);
     d = mark = 0;
     ws = (s == NULL) ? 0 : WS_ROOT;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {

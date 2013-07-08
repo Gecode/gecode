@@ -90,8 +90,6 @@ namespace Gecode { namespace Search { namespace Parallel {
       unsigned int alt(void) const;
       /// Return true number for alternatives (excluding lao optimization)
       unsigned int truealt(void) const;
-      /// Return whether alternatives have been stolen
-      bool stolen(void) const;
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
       /// Test whether current alternative was LAO
@@ -139,8 +137,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     int entries(void) const;
     /// Return size used
     size_t size(void) const;
-    /// Reset stack
-    void reset(void);
+    /// Reset stack and set no-good depth limit to \a ngdl
+    void reset(int ngdl);
     /// Make a quick check whether stealing might be feasible
     bool steal(void) const;
     /// Steal work at depth \a d
@@ -178,10 +176,6 @@ namespace Gecode { namespace Search { namespace Parallel {
   Path::Edge::truealt(void) const {
     assert(_alt < _choice->alternatives());
     return _alt;
-  }
-  forceinline bool
-  Path::Edge::stolen(void) const {
-    return _alt_max+1 < _choice->alternatives();
   }
   forceinline bool
   Path::Edge::rightmost(void) const {
@@ -306,10 +300,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   forceinline void
-  Path::reset(void) {
+  Path::reset(int ngdl0) {
     n_work = 0;
     while (!ds.empty())
       ds.pop().dispose();
+    ngdl = ngdl0;
   }
 
   forceinline bool
@@ -338,6 +333,8 @@ namespace Gecode { namespace Search { namespace Parallel {
         c->commit(*ds[n].choice(),ds[n].steal());
         if (!ds[n].work())
           n_work--;
+        // No no-goods can be extracted above n
+        ngdl = std::min(ngdl,n);
         d = stat.steal_depth(static_cast<unsigned long int>(n+1));
         return c;
       }

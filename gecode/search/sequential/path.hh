@@ -88,8 +88,6 @@ namespace Gecode { namespace Search { namespace Sequential {
       unsigned int alt(void) const;
       /// Return true number for alternatives (excluding lao optimization)
       unsigned int truealt(void) const;
-      /// Return whether alternatives have been stolen
-      bool stolen(void) const;
       /// Test whether current alternative is leftmost
       bool leftmost(void) const;
       /// Test whether current alternative is rightmost
@@ -166,10 +164,6 @@ namespace Gecode { namespace Search { namespace Sequential {
   Path::Edge::truealt(void) const {
     assert(_alt < _choice->alternatives());
     return _alt;
-  }
-  forceinline bool
-  Path::Edge::stolen(void) const {
-    return false;
   }
   forceinline bool
   Path::Edge::leftmost(void) const {
