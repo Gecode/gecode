@@ -63,7 +63,7 @@ public:
   };
   /// Actual model
   Donald(const Options& opt) :
-    Script(opt), le(*this,nl,0,9) {
+    le(*this,nl,0,9) {
     IntVar
       d(le[0]), o(le[1]), n(le[2]), a(le[3]), l(le[4]),
       g(le[5]), e(le[6]), r(le[7]), b(le[8]), t(le[9]);

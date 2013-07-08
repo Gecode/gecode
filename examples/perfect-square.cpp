@@ -200,8 +200,7 @@ public:
   };
   /// Actual model
   PerfectSquare(const SizeOptions& opt)
-    : Script(opt), 
-      x(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1),
+    : x(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1),
       y(*this,specs[opt.size()][0],0,specs[opt.size()][1]-1) {
 
     const int* s = specs[opt.size()];

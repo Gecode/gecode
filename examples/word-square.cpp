@@ -74,7 +74,7 @@ public:
   };
   /// Actual model
   WordSquare(const SizeOptions& opt)
-    : Script(opt), w_l(opt.size()), letters(*this, w_l*w_l) {
+    : w_l(opt.size()), letters(*this, w_l*w_l) {
 
     // Initialize letters
     Matrix<IntVarArray> ml(letters, w_l, w_l);

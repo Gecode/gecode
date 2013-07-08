@@ -159,13 +159,13 @@ namespace Gecode { namespace Search { namespace Meta {
   void
   PathNoGoods<Path>::post(Space& home) {
     int s = 0;
-    int n = std::min(p.ds.entries(),
-                     static_cast<int>(Config::nogood_cutoff));
+    int n = std::min(p.ds.entries(),p.ngdl);
 
     unsigned long int n_nogood = 0;
 
-    // Eliminate the alternatives which are not no-goods at the end
-    while ((n > s) && (p.ds[n-1].truealt() == 0U))
+    // Eliminate the alternatives which are not no-goods or have been stolen at the end
+    while ((n > s) && ((p.ds[n-1].truealt() == 0U) ||
+                       p.ds[n-1].stolen()))
       n--;
 
     // A sentinel element

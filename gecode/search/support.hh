@@ -50,6 +50,7 @@ namespace Gecode { namespace Search {
   template<class Worker>
   class WorkerToEngine : public Engine {
   protected:
+    /// The worker to wrap into an engine
     Worker w;
   public:
     /// Initialization

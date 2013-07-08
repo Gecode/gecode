@@ -81,7 +81,8 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline 
   BAB::BAB(Space* s, size_t sz, const Options& o)
-    : Worker(sz), opt(o), d(0), mark(0), best(NULL) {
+    : Worker(sz), opt(o), path(static_cast<int>(opt.nogoods_limit)), 
+      d(0), mark(0), best(NULL) {
     current(s);
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       fail++;

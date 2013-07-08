@@ -88,8 +88,7 @@ protected:
 public:
   /// The actual problem
   DominatingQueens(const SizeOptions& opt)
-    : IntMinimizeScript(opt), 
-      n(opt.size()), b(*this,n*n,0,n*n-1), q(*this,1,n) {
+    : n(opt.size()), b(*this,n*n,0,n*n-1), q(*this,1,n) {
 
     // Constrain field to the fields that can attack a field
     for (int i=0; i<n*n; i++)

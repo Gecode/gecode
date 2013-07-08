@@ -103,8 +103,8 @@ namespace Gecode { namespace Search {
     /// Initial delay in milliseconds for all but first worker thread
     const unsigned int initial_delay = 5;
 
-    /// Depth cutoff for no-good generation during search
-    const unsigned int nogood_cutoff = 128;
+    /// Depth limit for no-good generation during search
+    const unsigned int nogoods_limit = 128;
   }
 
 }}
@@ -213,6 +213,8 @@ namespace Gecode { namespace Search {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
+      /// Depth limit for extraction of no-goods
+      unsigned int nogoods_limit;
       /// Stop object for stopping search
       Stop* stop;
       /// Cutoff for restart-based search

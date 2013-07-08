@@ -97,8 +97,7 @@ private:
 public:
   /// Actual model
   MineSweeper(const SizeOptions& opt)
-    : Script(opt), 
-      spec(specs[opt.size()]),
+    : spec(specs[opt.size()]),
       size(spec_size(spec)),
       b(*this,size*size,0,1) {
     Matrix<BoolVarArray> m(b, size, size);

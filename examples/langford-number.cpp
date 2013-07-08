@@ -95,7 +95,7 @@ public:
   };
   /// Construct model
   LangfordNumber(const LangfordNumberOptions& opt)
-    : Script(opt), k(opt.k), n(opt.n), y(*this,k*n,1,n) {
+    : k(opt.k), n(opt.n), y(*this,k*n,1,n) {
 
     switch (opt.propagation()) {
     case PROP_REIFIED:

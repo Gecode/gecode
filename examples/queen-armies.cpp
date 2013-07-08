@@ -85,7 +85,6 @@ public:
 
   /// Constructor
   QueenArmies(const SizeOptions& opt) :
-    IntMaximizeScript(opt), 
     n(opt.size()),
     U(*this, IntSet::empty, IntSet(0, n*n)),
     W(*this, IntSet::empty, IntSet(0, n*n)),

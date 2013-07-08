@@ -61,7 +61,7 @@ private:
 public:
   /// Post constraints
   MagicSquare(const SizeOptions& opt)
-    : Script(opt), n(opt.size()), x(*this,n*n,1,n*n) {
+    : n(opt.size()), x(*this,n*n,1,n*n) {
     // Number of fields on square
     const int nn = n*n;
 

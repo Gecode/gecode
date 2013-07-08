@@ -245,8 +245,7 @@ protected:
 public:
   /// Initial model
   CarSequencing(const CarOptions& opt)
-    : Script(opt), 
-      problem(opt.size()),
+    : problem(opt.size()),
       ncars(problems[problem][0]), 
       noptions(problems[problem][1]), 
       nclasses(problems[problem][2]),

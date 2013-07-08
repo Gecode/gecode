@@ -338,6 +338,15 @@ namespace Gecode {
     return _nogoods.value();
   }
   
+  inline void
+  Options::nogoods_limit(unsigned int l) {
+    _nogoods_limit.value(l);
+  }
+  inline unsigned int
+  Options::nogoods_limit(void) const {
+    return _nogoods_limit.value();
+  }
+  
   
   
   inline void

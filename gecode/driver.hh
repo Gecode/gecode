@@ -337,19 +337,20 @@ namespace Gecode {
     
     /// \name Search options
     //@{
-    Driver::StringOption      _search;    ///< Search options
-    Driver::UnsignedIntOption _solutions; ///< How many solutions
-    Driver::DoubleOption      _threads;   ///< How many threads to use
-    Driver::UnsignedIntOption _c_d;       ///< Copy recomputation distance
-    Driver::UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
-    Driver::UnsignedIntOption _node;      ///< Cutoff for number of nodes
-    Driver::UnsignedIntOption _fail;      ///< Cutoff for number of failures
-    Driver::UnsignedIntOption _time;      ///< Cutoff for time
-    Driver::StringOption      _restart;   ///< Restart method option
-    Driver::DoubleOption      _r_base;    ///< Restart base
-    Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
-    Driver::BoolOption        _nogoods;   ///< Whether to use no-goods
-    Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
+    Driver::StringOption      _search;        ///< Search options
+    Driver::UnsignedIntOption _solutions;     ///< How many solutions
+    Driver::DoubleOption      _threads;       ///< How many threads to use
+    Driver::UnsignedIntOption _c_d;           ///< Copy recomputation distance
+    Driver::UnsignedIntOption _a_d;           ///< Adaptive recomputation distance
+    Driver::UnsignedIntOption _node;          ///< Cutoff for number of nodes
+    Driver::UnsignedIntOption _fail;          ///< Cutoff for number of failures
+    Driver::UnsignedIntOption _time;          ///< Cutoff for time
+    Driver::StringOption      _restart;       ///< Restart method option
+    Driver::DoubleOption      _r_base;        ///< Restart base
+    Driver::UnsignedIntOption _r_scale;       ///< Restart scale factor
+    Driver::BoolOption        _nogoods;       ///< Whether to use no-goods
+    Driver::UnsignedIntOption _nogoods_limit; ///< Limit for no-good extraction
+    Driver::BoolOption        _interrupt;     ///< Whether to catch SIGINT
     //@}
     
     /// \name Execution options
@@ -466,10 +467,15 @@ namespace Gecode {
     /// Return restart scale factor
     unsigned int restart_scale(void) const;
     
-    /// Set default nogood posting behavior
+    /// Set default nogoods posting behavior
     void nogoods(bool b);
     /// Return whether nogoods are used
     bool nogoods(void) const;
+    
+    /// Set default nogoods depth limit
+    void nogoods_limit(unsigned int l);
+    /// Return depth limit for nogoods
+    unsigned int nogoods_limit(void) const;
     
     /// Set default interrupt behavior
     void interrupt(bool b);
@@ -614,32 +620,17 @@ namespace Gecode {
      */
     template<class BaseSpace>
     class ScriptBase : public BaseSpace {
-    protected:
-      /// Whether to post no-goods
-      bool _nogoods;
     public:
-      /// Constructor that evaluates options
-      template<class Options>
-      ScriptBase(const Options& opt)
-        : _nogoods(opt.nogoods()) {}
+      /// Default constructor
+      ScriptBase(void) {}
       /// Constructor used for cloning
       ScriptBase(bool share, ScriptBase& e) 
-        : BaseSpace(share,e), _nogoods(e._nogoods) {}
+        : BaseSpace(share,e) {}
       /// Print a solution to \a os
       virtual void print(std::ostream& os) const { (void) os; }
       /// Compare with \a s
       virtual void compare(const Space&, std::ostream& os) const {
         (void) os;
-      }
-      /// Whether to post no-goods
-      bool nogoods(void) const {
-        return _nogoods;
-      }
-      /// Master configuration function for restart meta search engine
-      virtual void master(unsigned long int i, const Space* s,
-                          NoGoods& ng) {
-        if (nogoods())
-          ng.post(*this);
       }
       /// Choose output stream according to \a name
       static std::ostream& select_ostream(const char* name, std::ofstream& ofs);

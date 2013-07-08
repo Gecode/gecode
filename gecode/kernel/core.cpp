@@ -638,7 +638,8 @@ namespace Gecode {
   }
 
   void
-  Space::master(unsigned long int, const Space*, NoGoods&) {
+  Space::master(unsigned long int, const Space*, NoGoods& ng) {
+    ng.post(*this);
   }
 
   void

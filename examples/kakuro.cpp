@@ -539,8 +539,7 @@ public:
   }
   /// The actual problem
   Kakuro(const SizeOptions& opt)
-    : Script(opt), 
-      w(examples[opt.size()][0]),  h(examples[opt.size()][1]),
+    : w(examples[opt.size()][0]),  h(examples[opt.size()][1]),
       f(*this,w*h) {
     IntVar black(*this,0,0);
     // Initialize all fields as black (unused). Only if a field

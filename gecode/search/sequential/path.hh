@@ -105,9 +105,11 @@ namespace Gecode { namespace Search { namespace Sequential {
   protected:
     /// Stack to store edge information
     Support::DynamicStack<Edge,Heap> ds;
+    /// Depth limit for no-good generation
+    int ngdl;
   public:
     /// Initialize
-    Path(void);
+    Path(int ngdl);
     /// Push space \a c (a clone of \a s or NULL)
     const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
@@ -205,7 +207,8 @@ namespace Gecode { namespace Search { namespace Sequential {
    */
 
   forceinline
-  Path::Path(void) : ds(heap) {}
+  Path::Path(int ngdl0) 
+    : ds(heap), ngdl(ngdl0) {}
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
@@ -297,7 +300,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
       // Mark as reusable
-      if (ds.entries() > static_cast<int>(Config::nogood_cutoff))
+      if (ds.entries() > ngdl)
         ds.top().next();
       d = 0;
       return s;
@@ -368,7 +371,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       }
       ds.top().space(NULL);
       // Mark as reusable
-      if (ds.entries() > static_cast<int>(Config::nogood_cutoff))
+      if (ds.entries() > ngdl)
         ds.top().next();
       d = 0;
       return s;

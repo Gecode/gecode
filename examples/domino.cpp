@@ -90,7 +90,7 @@ public:
 
   /// Actual model
   Domino(const SizeOptions& opt)
-    : Script(opt), spec(specs[opt.size()]),
+    : spec(specs[opt.size()]),
       width(spec[0]), height(spec[1]),
       x(*this, (width+1)*height, 0, 28) {
     spec+=2; // skip board size information

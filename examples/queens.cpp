@@ -69,7 +69,7 @@ public:
   };
   /// The actual problem
   Queens(const SizeOptions& opt)
-    : Script(opt), q(*this,opt.size(),0,opt.size()-1) {
+    : q(*this,opt.size(),0,opt.size()-1) {
     const int n = q.size();
     switch (opt.propagation()) {
     case PROP_BINARY:

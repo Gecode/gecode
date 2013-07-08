@@ -244,7 +244,8 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   forceinline
   Engine::Worker::Worker(Space* s, size_t sz, Engine& e)
-    : Search::Worker(sz), _engine(e), d(0), 
+    : Search::Worker(sz), _engine(e), 
+      path(s == NULL ? 0 : static_cast<int>(e.opt().nogoods_limit)), d(0), 
       ws(s == NULL ? 0 : WS_ROOT) {
     current(s);
     if (s != NULL) {

@@ -52,11 +52,8 @@ namespace Gecode {
   RBS<E,T>::RBS(T* s, const Search::Options& m_opt) {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
-    Search::Options e_opt;
+    Search::Options e_opt(m_opt);
     e_opt.clone = true;
-    e_opt.threads = m_opt.threads;
-    e_opt.c_d = m_opt.c_d;
-    e_opt.a_d = m_opt.a_d;
     Search::MetaStop* ms = new Search::MetaStop(m_opt.stop);
     e_opt.stop = ms;
     Space* master;

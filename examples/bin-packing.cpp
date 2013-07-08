@@ -351,10 +351,6 @@ public:
     }
     return ES_OK;
   }
-  /// Return empty no-good literal
-  virtual NGL* ngl(Space&, const Gecode::Choice&, unsigned int) const {
-    return NULL;
-  }
   /// Print explanation
   virtual void print(const Space&, const Gecode::Choice& _c, 
                      unsigned int a,
@@ -417,7 +413,7 @@ public:
   };
   /// Actual model
   BinPacking(const InstanceOptions& opt) 
-    : IntMinimizeScript(opt), spec(opt.instance()),
+    : spec(opt.instance()),
       load(*this, spec.upper(), 0, spec.capacity()),
       bin(*this, spec.items(), 0, spec.upper()-1),
       bins(*this, spec.lower(), spec.upper()) {
