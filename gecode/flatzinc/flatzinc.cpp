@@ -1499,7 +1499,6 @@ namespace Gecode { namespace FlatZinc {
            << endl;
     }
     delete o.stop;
-    delete o.cutoff;
   }
 
 #ifdef GECODE_HAS_QT
