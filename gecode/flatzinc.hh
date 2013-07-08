@@ -221,6 +221,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::DoubleOption      _r_base;    ///< Restart base
       Gecode::Driver::UnsignedIntOption _r_scale;   ///< Restart scale factor
       Gecode::Driver::BoolOption        _nogoods;   ///< Whether to use no-goods
+      Gecode::Driver::UnsignedIntOption _nogoods_limit; ///< Depth limit for extracting no-goods
       Gecode::Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
       //@}
     
@@ -249,7 +250,9 @@ namespace Gecode { namespace FlatZinc {
       _restart("-restart","restart sequence type",RM_NONE),
       _r_base("-restart-base","base for geometric restart sequence",1.5),
       _r_scale("-restart-scale","scale factor for restart sequence",250),
-      _nogoods("-no-goods","whether to use no-goods from restarts",false),
+      _nogoods("-nogoods","whether to use no-goods from restarts",false),
+      _nogoods_limit("-nogoods-limit","depth limit for no-good extraction",
+                     Search::Config::nogoods_limit),
       _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
@@ -271,7 +274,8 @@ namespace Gecode { namespace FlatZinc {
       add(_decay);
       add(_node); add(_fail); add(_time); add(_interrupt);
       add(_seed);
-      add(_restart); add(_r_base); add(_r_scale); add(_nogoods);
+      add(_restart); add(_r_base); add(_r_scale); 
+      add(_nogoods); add(_nogoods_limit);
       add(_mode); add(_stat);
       add(_output);
     }
@@ -314,6 +318,7 @@ namespace Gecode { namespace FlatZinc {
     double restart_base(void) const { return _r_base.value(); }
     unsigned int restart_scale(void) const { return _r_scale.value(); }
     bool nogoods(void) const { return _nogoods.value(); }
+    unsigned int nogoods_limit(void) const { return _nogoods_limit.value(); }
     bool interrupt(void) const { return _interrupt.value(); }
 
   };
@@ -366,8 +371,6 @@ namespace Gecode { namespace FlatZinc {
     int _optVar;
     /// Whether variable to optimize is integer (or float)
     bool _optVarIsInt;
-    /// Whether to use nogoods
-    bool _nogoods;
   
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
@@ -513,10 +516,6 @@ namespace Gecode { namespace FlatZinc {
     virtual void constrain(const Space& s);
     /// Copy function
     virtual Gecode::Space* copy(bool share);
-    /// Master configuration function for restart meta search engine
-    virtual void master(unsigned long int, const Space*,
-                        NoGoods& ng);
-    
     
     /// \name AST to variable and value conversion
     //@{
