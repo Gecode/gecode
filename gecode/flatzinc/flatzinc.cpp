@@ -1438,8 +1438,7 @@ namespace Gecode { namespace FlatZinc {
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
     o.threads = opt.threads();
-    o.nogoods_limit = ((opt.restart() != RM_NONE) && opt.nogoods()) ?
-      opt.nogoods_limit() : 0;
+    o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
     o.cutoff  = Driver::createCutoff(opt);
     if (opt.interrupt())
       Driver::CombinedStop::installCtrlHandler(true);

@@ -240,6 +240,7 @@ namespace Test {
           Search::Options o;
           o.stop = &ns;
           o.threads = t;
+          o.nogoods_limit = 256U;
           DFS<Model> e(m,o);
           while (true) {
             Model* s = e.next();

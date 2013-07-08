@@ -299,8 +299,7 @@ namespace Gecode { namespace Driver {
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
           so.clone   = false;
-          so.nogoods_limit = ((o.restart() != RM_NONE) && o.nogoods()) ?
-            o.nogoods_limit() : 0U;
+          so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
           {
@@ -390,8 +389,7 @@ namespace Gecode { namespace Driver {
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
-          so.nogoods_limit = ((o.restart() != RM_NONE) && o.nogoods()) ?
-            o.nogoods_limit() : 0U;
+          so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
           {
@@ -445,8 +443,7 @@ namespace Gecode { namespace Driver {
               so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
                                                 false);
               so.cutoff  = createCutoff(o);
-              so.nogoods_limit = ((o.restart() != RM_NONE) && o.nogoods()) ?
-                o.nogoods_limit() : 0U;
+              so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
               {
                 Meta<Engine,Script> e(s,so);
                 do {
