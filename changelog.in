@@ -83,28 +83,25 @@ when reporting memory consumption.
 
 [ENTRY]
 Module: driver
-What:   change
-Rank:   major
-[DESCRIPTION]
-The constructor of a script inheriting from Script and its subclasses must now call a unary constructor from Script taking the command line options as argument.
-
-This will break all scripts!
-
-[ENTRY]
-Module: driver
 What:   new
 Rank:   minor
 [DESCRIPTION]
-When using restart-based search, the use of no-goods from restarts can be switched on/off with the -no-goods command line option.
+When using restart-based search, the use of no-goods from
+restarts can be switched on/off with the -nogoods command line
+option and the depth limit for extraction of no-goods with the
+-nogoods-limit command line option.
 
 [ENTRY]
 Module: search
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added support for no-goods from restarts, see Modeling and Programming with Gecode for details.
+Added support for no-goods from restarts, see Modeling and
+Programming with Gecode for details.
 
-Note that also entails that the statistics will report different a different peak depth than in previous releases of Gecode.
+Note that also entails that the statistics will report different
+a different peak depth than in previous releases of Gecode when
+using no-goods.
 
 [ENTRY]
 Module: flatzinc
@@ -138,6 +135,7 @@ Rank:   minor
 Thanks:	Victor Zverovich
 [DESCRIPTION]
 Fixes link error for CMake with MSVC.
+
 
 [RELEASE]
 Version: 4.1.0
