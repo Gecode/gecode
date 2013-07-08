@@ -41,7 +41,7 @@
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
-#include <gecode/search/meta/no-goods.hh>
+#include <gecode/search/meta/nogoods.hh>
 
 namespace Gecode { namespace Search { namespace Parallel {
 

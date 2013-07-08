@@ -42,7 +42,6 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
 #include <gecode/search/sequential/path.hh>
-#include <gecode/search/meta/no-goods.hh>
 
 namespace Gecode { namespace Search { namespace Sequential {
 

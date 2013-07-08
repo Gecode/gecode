@@ -35,7 +35,7 @@
  *
  */
 
-#include <gecode/search/meta/no-goods.hh>
+#include <gecode/search/meta/nogoods.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 

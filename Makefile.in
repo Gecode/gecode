@@ -244,14 +244,14 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
-	rbs meta/rbs meta/no-goods
+	rbs meta/rbs meta/nogoods
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
-	meta/rbs.hh meta/no-goods.hh \
+	meta/rbs.hh meta/nogoods.hh \
 	dfs.hpp bab.hpp rbs.hpp engine-base.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
@@ -1058,7 +1058,7 @@ BRANCHTESTSRC0 = \
 	test/assign/set.cpp test/assign/float.cpp
 
 SEARCHTESTSRC0 = \
-	test/search.cpp test/no-goods.cpp
+	test/search.cpp test/nogoods.cpp
 
 ARRAYTESTSRC0 = \
 	test/array.cpp

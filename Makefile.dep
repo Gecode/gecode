@@ -315,7 +315,7 @@ gecode/search/parallel/engine$(OBJSUFFIX) gecode/search/parallel/engine$(SBJSUFF
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/meta/no-goods.hh ./gecode/search/meta/rbs.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/nogoods.hh ./gecode/search/meta/rbs.hh \
 	./gecode/search/options.hpp ./gecode/search/parallel/engine.hh ./gecode/search/parallel/path.hh \
 	./gecode/search/rbs.hpp ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
 	./gecode/search/support.hh ./gecode/search/worker.hh ./gecode/support.hh \
@@ -342,7 +342,7 @@ gecode/search/dfs$(OBJSUFFIX) gecode/search/dfs$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/meta/no-goods.hh ./gecode/search/meta/rbs.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/nogoods.hh ./gecode/search/meta/rbs.hh \
 	./gecode/search/options.hpp ./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh \
 	./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp ./gecode/search/sequential/dfs.hh \
 	./gecode/search/sequential/path.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
@@ -370,7 +370,7 @@ gecode/search/parallel/dfs$(OBJSUFFIX) gecode/search/parallel/dfs$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/meta/no-goods.hh ./gecode/search/meta/rbs.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/nogoods.hh ./gecode/search/meta/rbs.hh \
 	./gecode/search/options.hpp ./gecode/search/parallel/dfs.hh ./gecode/search/parallel/engine.hh \
 	./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/search/worker.hh \
@@ -397,7 +397,7 @@ gecode/search/bab$(OBJSUFFIX) gecode/search/bab$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/meta/no-goods.hh ./gecode/search/meta/rbs.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/nogoods.hh ./gecode/search/meta/rbs.hh \
 	./gecode/search/options.hpp ./gecode/search/parallel/bab.hh ./gecode/search/parallel/engine.hh \
 	./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp ./gecode/search/sequential/bab.hh \
 	./gecode/search/sequential/path.hh ./gecode/search/statistics.hpp ./gecode/search/stop.hpp \
@@ -425,7 +425,7 @@ gecode/search/parallel/bab$(OBJSUFFIX) gecode/search/parallel/bab$(SBJSUFFIX): \
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/meta/no-goods.hh ./gecode/search/meta/rbs.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/nogoods.hh ./gecode/search/meta/rbs.hh \
 	./gecode/search/options.hpp ./gecode/search/parallel/bab.hh ./gecode/search/parallel/engine.hh \
 	./gecode/search/parallel/path.hh ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/search/worker.hh \
@@ -488,7 +488,7 @@ gecode/search/meta/rbs$(OBJSUFFIX) gecode/search/meta/rbs$(SBJSUFFIX): \
 	./gecode/support/random.hpp ./gecode/support/sort.hpp ./gecode/support/static-stack.hpp \
 	./gecode/support/thread.hpp ./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp \
 	./gecode/support/thread/thread.hpp ./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp 
-gecode/search/meta/no-goods$(OBJSUFFIX) gecode/search/meta/no-goods$(SBJSUFFIX): \
+gecode/search/meta/nogoods$(OBJSUFFIX) gecode/search/meta/nogoods$(SBJSUFFIX): \
 	./gecode/kernel.hh ./gecode/kernel/activity.hpp ./gecode/kernel/advisor.hpp \
 	./gecode/kernel/afc.hpp ./gecode/kernel/allocators.hpp ./gecode/kernel/archive.hpp \
 	./gecode/kernel/array.hpp ./gecode/kernel/branch-tiebreak.hpp ./gecode/kernel/branch-traits.hpp \
@@ -502,7 +502,7 @@ gecode/search/meta/no-goods$(OBJSUFFIX) gecode/search/meta/no-goods$(SBJSUFFIX):
 	./gecode/kernel/var-imp.hpp ./gecode/kernel/var-type.hpp ./gecode/kernel/var.hpp \
 	./gecode/kernel/view.hpp ./gecode/search.hh ./gecode/search/bab.hpp \
 	./gecode/search/cutoff.hpp ./gecode/search/dfs.hpp ./gecode/search/engine-base.hpp \
-	./gecode/search/exception.hpp ./gecode/search/meta/no-goods.hh ./gecode/search/meta/rbs.hh \
+	./gecode/search/exception.hpp ./gecode/search/meta/nogoods.hh ./gecode/search/meta/rbs.hh \
 	./gecode/search/options.hpp ./gecode/search/rbs.hpp ./gecode/search/statistics.hpp \
 	./gecode/search/stop.hpp ./gecode/search/support.hh ./gecode/support.hh \
 	./gecode/support/auto-link.hpp ./gecode/support/bitset-base.hpp ./gecode/support/bitset-offset.hpp \
@@ -16968,7 +16968,7 @@ test/search$(OBJSUFFIX) test/search$(SBJSUFFIX): \
 	./gecode/support/thread/none.hpp ./gecode/support/thread/pthreads.hpp ./gecode/support/thread/thread.hpp \
 	./gecode/support/thread/windows.hpp ./gecode/support/timer.hpp ./test/test.hh \
 	./test/test.hpp 
-test/no-goods$(OBJSUFFIX) test/no-goods$(SBJSUFFIX): \
+test/nogoods$(OBJSUFFIX) test/nogoods$(SBJSUFFIX): \
 	./gecode/float.hh ./gecode/float/array-traits.hpp ./gecode/float/array.hpp \
 	./gecode/float/branch/activity.hpp ./gecode/float/branch/afc.hpp ./gecode/float/branch/assign.hpp \
 	./gecode/float/branch/traits.hpp ./gecode/float/branch/val.hpp ./gecode/float/branch/var.hpp \
