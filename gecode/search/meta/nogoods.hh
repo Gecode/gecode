@@ -167,7 +167,7 @@ namespace Gecode { namespace Search { namespace Meta {
   void
   PathNoGoods<Path>::post(Space& home) {
     int s = 0;
-    int n = std::min(p.ds.entries(),p.ngdl);
+    int n = std::min(p.ds.entries(),p.ngdl());
 
     unsigned long int n_nogood = 0;
 

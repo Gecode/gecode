@@ -61,13 +61,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       Space* cur;
       /// Distance until next clone
       unsigned int d;
-      /// Worker state flags
-      enum {
-        WS_IDLE = 1 << 0, ///< Worker is idle
-        WS_ROOT = 1 << 1  ///< Worker is working on root of search tree
-      };
-      /// Worker state;
-      short int ws;
+      /// Whether the worker is idle
+      bool idle;
     public:
       /// Initialize for space \a s (of size \a sz) with engine \a e
       Worker(Space* s, size_t sz, Engine& e);
@@ -246,7 +241,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::Worker::Worker(Space* s, size_t sz, Engine& e)
     : Search::Worker(sz), _engine(e), 
       path(s == NULL ? 0 : static_cast<int>(e.opt().nogoods_limit)), d(0), 
-      ws(s == NULL ? 0 : WS_ROOT) {
+      idle(false) {
     current(s);
     if (s != NULL) {
       if (s->status(*this) == SS_FAILED) {
@@ -425,10 +420,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   forceinline NoGoods*
   Engine::Worker::nogoods(void) {
-    if (ws & WS_ROOT)
-      return new Gecode::Search::Meta::PathNoGoods<Path>(path);
-    else
-      return new NoGoods;
+    return new Gecode::Search::Meta::PathNoGoods<Path>(path);
   }
 
 }}}

@@ -89,7 +89,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         // Perform exploration work
         {
           m.acquire();
-          if (ws & WS_IDLE) {
+          if (idle) {
             m.release();
             // Try to find new work
             find();
@@ -152,7 +152,8 @@ namespace Gecode { namespace Search { namespace Parallel {
             Worker::current(cur);
             m.release();
           } else {
-            ws |= WS_IDLE;
+            idle = true;
+            path.ngdl(0);
             m.release();
             // Report that worker is idle
             engine().idle();

@@ -118,7 +118,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     best = NULL;
     path.reset((s == NULL) ? 0 : ngdl);
     d = mark = 0;
-    ws = (s == NULL) ? 0 : WS_ROOT;
+    idle = false;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = NULL;
@@ -207,7 +207,9 @@ namespace Gecode { namespace Search { namespace Parallel {
       if (Space* s = engine().worker(i)->steal(r_d)) {
         // Reset this guy
         m.acquire();
-        ws = 0; // Not idle but also does not have the root of the tree
+        idle = false;
+        // Not idle but also does not have the root of the tree
+        path.ngdl(0);
         d = 0;
         cur = s;
         mark = 0;

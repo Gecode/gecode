@@ -108,12 +108,16 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Stack to store edge information
     Support::DynamicStack<Edge,Heap> ds;
     /// Depth limit for no-good generation
-    int ngdl;
+    int _ngdl;
     /// Number of edges that have work for stealing
     unsigned int n_work;
   public:
-    /// Initialize
-    Path(int ngdl);
+    /// Initialize with no-good depth limit \a l
+    Path(int l);
+    /// Return no-good depth limit
+    int ngdl(void) const;
+    /// Set no-good depth limit to \a l
+    void ngdl(int l);
     /// Push space \a c (a clone of \a s or NULL)
     const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
@@ -137,8 +141,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     int entries(void) const;
     /// Return size used
     size_t size(void) const;
-    /// Reset stack and set no-good depth limit to \a ngdl
-    void reset(int ngdl);
+    /// Reset stack and set no-good depth limit to \a l
+    void reset(int l);
     /// Make a quick check whether stealing might be feasible
     bool steal(void) const;
     /// Steal work at depth \a d
@@ -218,8 +222,18 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
 
   forceinline
-  Path::Path(int ngdl0) 
-    : ds(heap), ngdl(ngdl0), n_work(0) {}
+  Path::Path(int l) 
+    : ds(heap), _ngdl(l), n_work(0) {}
+
+  forceinline int
+  Path::ngdl(void) const {
+    return _ngdl;
+  }
+
+  forceinline void
+  Path::ngdl(int l) {
+    _ngdl = l;
+  }
 
   forceinline const Choice*
   Path::push(Worker& stat, Space* s, Space* c) {
@@ -300,11 +314,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   forceinline void
-  Path::reset(int ngdl0) {
+  Path::reset(int l) {
     n_work = 0;
     while (!ds.empty())
       ds.pop().dispose();
-    ngdl = ngdl0;
+    _ngdl = l;
   }
 
   forceinline bool
@@ -334,7 +348,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         if (!ds[n].work())
           n_work--;
         // No no-goods can be extracted above n
-        ngdl = std::min(ngdl,n);
+        ngdl(std::min(ngdl(),n));
         d = stat.steal_depth(static_cast<unsigned long int>(n+1));
         return c;
       }
@@ -357,7 +371,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
       // Mark as reusable
-      if (ds.entries() > ngdl)
+      if (ds.entries() > ngdl())
         ds.top().next();
       d = 0;
       return s;
@@ -428,7 +442,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       }
       ds.top().space(NULL);
       // Mark as reusable
-      if (ds.entries() > ngdl)
+      if (ds.entries() > ngdl())
         ds.top().next();
       d = 0;
       return s;
