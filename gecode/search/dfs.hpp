@@ -66,7 +66,7 @@ namespace Gecode {
   }
 
   template<class T>
-  forceinline NoGoods*
+  forceinline NoGoods&
   DFS<T>::nogoods(void) {
     return e->nogoods();
   }

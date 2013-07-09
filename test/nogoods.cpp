@@ -248,9 +248,7 @@ namespace Test {
             if (!e.stopped())
               break;
             // Add no-goods
-            Gecode::NoGoods* ng = e.nogoods();
-            ng->post(*m);
-            delete ng;
+            e.nogoods().post(*m);
             ns.limit(ns.limit()+Model::nodeinc());
           }
         }

@@ -58,8 +58,8 @@ namespace Gecode { namespace Search { namespace Parallel {
    * clone is created.
    *
    */
-  class Path {
-    template<class Path> friend class Search::Meta::PathNoGoods;
+  class Path : public NoGoods {
+    friend class Search::Meta::NoGoodProp;
   public:
     /// %Search tree edge for recomputation
     class Edge {
@@ -147,6 +147,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     bool steal(void) const;
     /// Steal work at depth \a d
     Space* steal(Worker& stat, unsigned long int& d);
+    /// Post no-goods
+    void virtual post(Space& home);
   };
 
 

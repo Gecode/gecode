@@ -58,8 +58,8 @@ namespace Gecode { namespace Search { namespace Sequential {
    * clone is created.
    *
    */
-  class Path {
-    template<class Path> friend class Search::Meta::PathNoGoods;
+  class Path : public NoGoods {
+    friend class Search::Meta::NoGoodProp;
   public:
     /// %Search tree edge for recomputation
     class Edge {
@@ -137,6 +137,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     size_t size(void) const;
     /// Reset stack
     void reset(void);
+    /// Post no-goods
+    void virtual post(Space& home);
   };
 
 

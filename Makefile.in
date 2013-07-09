@@ -244,7 +244,8 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
-	rbs meta/rbs meta/nogoods
+	rbs meta/rbs \
+	meta/nogoods sequential/path parallel/path
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \

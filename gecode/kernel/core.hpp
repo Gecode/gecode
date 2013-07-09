@@ -1254,10 +1254,6 @@ namespace Gecode {
     void ng(unsigned long int n);
     /// Destructor
     virtual ~NoGoods(void);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
   };
 
 
@@ -2253,14 +2249,6 @@ namespace Gecode {
     return heap.ralloc(s);
   }
 
-  forceinline void*
-  NoGoods::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  NoGoods::operator delete(void* p) {
-    heap.rfree(p);
-  }
 
   // Space allocation: general space heaps and free lists
   forceinline void*

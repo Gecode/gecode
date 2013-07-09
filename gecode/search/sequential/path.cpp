@@ -3,12 +3,8 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *     Guido Tack <tack@gecode.org>
- *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Guido Tack, 2004
+ *     Christian Schulte, 2013
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,54 +35,15 @@
  *
  */
 
-namespace Gecode {
+#include <gecode/search/sequential/path.hh>
 
-  namespace Search {
-    /// Create branch and bound engine
-    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+namespace Gecode { namespace Search { namespace Sequential {
+
+  void
+  Path::post(Space& home) {
+    GECODE_ES_FAIL(Meta::NoGoodProp::post(home,*this));
   }
 
-  template<class T>
-  forceinline
-  BAB<T>::BAB(T* s, const Search::Options& o)
-    : EngineBase(Search::bab(s,sizeof(T),o)) {}
+}}}
 
-  template<class T>
-  forceinline T*
-  BAB<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-
-  template<class T>
-  forceinline Search::Statistics
-  BAB<T>::statistics(void) const {
-    return e->statistics();
-  }
-
-  template<class T>
-  forceinline bool
-  BAB<T>::stopped(void) const {
-    return e->stopped();
-  }
-
-  template<class T>
-  forceinline NoGoods&
-  BAB<T>::nogoods(void) {
-    return e->nogoods();
-  }
-
-
-  template<class T>
-  T*
-  bab(T* s, const Search::Options& o) {
-    BAB<T> b(s,o);
-    T* l = NULL;
-    while (T* n = b.next()) {
-      delete l; l = n;
-    }
-    return l;
-  }
-
-}
-
-// STATISTICS: search-other
+// STATISTICS: search-sequential

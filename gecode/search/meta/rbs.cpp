@@ -46,12 +46,11 @@ namespace Gecode { namespace Search { namespace Meta {
       Space* n = e->next();
       unsigned long int i = stop->m_stat.restart;
       if (n != NULL) {
-        NoGoods* ng = e->nogoods();
-        ng->ng(0);
+        NoGoods& ng = e->nogoods();
+        ng.ng(0);
         master->constrain(*n);
-        master->master(i,n,*ng);
-        stop->m_stat.nogood += ng->ng();
-        delete ng;
+        master->master(i,n,ng);
+        stop->m_stat.nogood += ng.ng();
         if (master->status(stop->m_stat) == SS_FAILED) {
           delete master;
           master = NULL;
@@ -64,11 +63,10 @@ namespace Gecode { namespace Search { namespace Meta {
         }
         return n;
       } else if (e->stopped() && stop->enginestopped()) {
-        NoGoods* ng = e->nogoods();
-        ng->ng(0);
-        master->master(i,NULL,*ng);
-        stop->m_stat.nogood += ng->ng();
-        delete ng;
+        NoGoods& ng = e->nogoods();
+        ng.ng(0);
+        master->master(i,NULL,ng);
+        stop->m_stat.nogood += ng.ng();
         long unsigned int nl = (*co)();
         stop->limit(e->statistics(),nl);
         if (master->status(stop->m_stat) == SS_FAILED)
@@ -109,9 +107,11 @@ namespace Gecode { namespace Search { namespace Meta {
   RBS::reset(Space*) { 
   }
   
-  NoGoods*
+  NoGoods RBS::eng;
+
+  NoGoods&
   RBS::nogoods(void) {
-    return NULL;
+    return eng;
   }
   
   RBS::~RBS(void) {

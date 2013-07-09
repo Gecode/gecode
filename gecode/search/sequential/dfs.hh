@@ -66,7 +66,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Reset engine to restart at space \a s
     void reset(Space* s);
     /// Return no-goods
-    NoGoods* nogoods(void);
+    NoGoods& nogoods(void);
     /// Destructor
     ~DFS(void);
   };
@@ -101,9 +101,9 @@ namespace Gecode { namespace Search { namespace Sequential {
     }
   }
 
-  forceinline NoGoods*
+  forceinline NoGoods&
   DFS::nogoods(void) {
-    return new Gecode::Search::Meta::PathNoGoods<Path>(path);
+    return path;
   }
 
   forceinline Space*

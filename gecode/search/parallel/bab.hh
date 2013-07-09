@@ -91,7 +91,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
     /// Return no-goods
-    virtual NoGoods* nogoods(void);
+    virtual NoGoods& nogoods(void);
     /// Destructor
     virtual ~BAB(void);
     //@}

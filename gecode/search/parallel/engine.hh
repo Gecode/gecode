@@ -73,7 +73,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Provide access to engine
       Engine& engine(void) const;
       /// Return no-goods
-      NoGoods* nogoods(void);
+      NoGoods& nogoods(void);
       /// Destructor
       virtual ~Worker(void);
     };
@@ -418,9 +418,9 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Return No-Goods
    */
-  forceinline NoGoods*
+  forceinline NoGoods&
   Engine::Worker::nogoods(void) {
-    return new Gecode::Search::Meta::PathNoGoods<Path>(path);
+    return path;
   }
 
 }}}

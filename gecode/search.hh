@@ -465,7 +465,7 @@ namespace Gecode { namespace Search {
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s) = 0;
     /// Return no-goods
-    virtual NoGoods* nogoods(void) = 0;
+    virtual NoGoods& nogoods(void) = 0;
     /// Destructor
     virtual ~Engine(void) {}
   };
@@ -514,7 +514,7 @@ namespace Gecode {
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// Return no-goods
-    NoGoods* nogoods(void);
+    NoGoods& nogoods(void);
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
@@ -550,7 +550,7 @@ namespace Gecode {
     /// Check whether engine has been stopped
     bool stopped(void) const;
     /// Return no-goods
-    NoGoods* nogoods(void);
+    NoGoods& nogoods(void);
   };
 
   /**

@@ -58,6 +58,9 @@ namespace Gecode { namespace Search { namespace Meta {
     bool shared;
     /// Space size for master
     size_t sz;
+    /// Empty no-goods
+    GECODE_SEARCH_EXPORT
+    static NoGoods eng;
   public:
     /// Constructor
     RBS(Space*, size_t, Cutoff* co0, MetaStop* stop0,
@@ -71,7 +74,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
     /// Return no-goods
-    virtual NoGoods* nogoods(void);
+    virtual NoGoods& nogoods(void);
     /// Destructor
     virtual ~RBS(void);
   };

@@ -42,19 +42,6 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  /// A class for wrapping a path from which the no-goods can be posted
-  template<class Path>
-  class PathNoGoods : public NoGoods {
-  private:
-    /// Reference to the path from which to extract no-goods
-    const Path& p;
-  public:
-    /// Initialize with path \a p
-    PathNoGoods(const Path& p);
-    /// Post no-goods based on path
-    virtual void post(Space& home);
-  };
-  
   /// Class for a sentinel no-good literal
   class NoNGL : public NGL {
   public:
@@ -94,8 +81,9 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator
-    static ExecStatus post(Space& home, NGL* root);
+    /// Post propagator for path \a p
+    template<class Path>
+    static ExecStatus post(Space& home, Path& p);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -136,12 +124,6 @@ namespace Gecode { namespace Search { namespace Meta {
       home.notice(*this,AP_DISPOSE);
   }
 
-  forceinline ExecStatus 
-  NoGoodProp::post(Space& home, NGL* root) {
-    (void) new (home) NoGoodProp(home,root);
-    return ES_OK;
-  }
-
   forceinline
   NoGoodProp::NoGoodProp(Space& home, bool shared, NoGoodProp& p) 
     : Propagator(home,shared,p), n(p.n) {
@@ -159,13 +141,8 @@ namespace Gecode { namespace Search { namespace Meta {
 
 
   template<class Path>
-  forceinline
-  PathNoGoods<Path>::PathNoGoods(const Path& p0) 
-    : p(p0) {}
-
-  template<class Path>
-  void
-  PathNoGoods<Path>::post(Space& home) {
+  forceinline ExecStatus 
+  NoGoodProp::post(Space& home, Path& p) {
     int s = 0;
     int n = std::min(p.ds.entries(),p.ngdl());
 
@@ -193,8 +170,8 @@ namespace Gecode { namespace Search { namespace Meta {
           NGL* l = home.ngl(*p.ds[s].choice(),a);
           // Does the brancher support no-good literals?
           if (l == NULL)
-            return;
-          GECODE_ES_FAIL(l->prune(home));
+            return ES_OK;
+          GECODE_ES_CHECK(l->prune(home));
         }
         // Add literal as root if needed and stop
         if (NGL* l = home.ngl(*p.ds[s].choice(),p.ds[s].truealt())) {
@@ -204,8 +181,10 @@ namespace Gecode { namespace Search { namespace Meta {
       }
 
     // There are no literals
-    if (home.failed() || (s >= n))
-      return;
+    if (home.failed()) 
+      return ES_FAILED;
+    if (s >= n)
+      return ES_OK;
 
     // There must be at least two literals
     assert((n-s > 1) || 
@@ -222,7 +201,7 @@ namespace Gecode { namespace Search { namespace Meta {
         if (l == NULL) {
           // The brancher does not support no-goods
           if (ll == NULL)
-            return;
+            return ES_OK;
           ll->next(NULL);
           break;
         }
@@ -235,15 +214,16 @@ namespace Gecode { namespace Search { namespace Meta {
       } else if (!p.ds[i].rightmost()) {
         // The brancher does not support no-goods
         if (ll == NULL)
-          return;
+          return ES_OK;
         ll->next(NULL);
         break;
       }
     }
 
-    ng(n_nogood);
+    p.ng(n_nogood);
 
-    GECODE_ES_FAIL(NoGoodProp::post(home,nn.next()));
+    (void) new (home) NoGoodProp(home,nn.next());
+    return ES_OK;
   }
 
 }}}
