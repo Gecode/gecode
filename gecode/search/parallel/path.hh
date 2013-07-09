@@ -59,7 +59,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    *
    */
   class Path : public NoGoods {
-    friend class Search::Meta::NoGoodProp;
+    friend class Search::Meta::NoGoodsProp;
   public:
     /// %Search tree edge for recomputation
     class Edge {

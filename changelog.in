@@ -75,6 +75,24 @@ No-goods baby!
 
 [ENTRY]
 Module: search
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Search options have an additional field nogoods_limit that
+defines too which depth a search tree is inspected for no-goods.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The master() member function used during restart-based search now
+takes an additional no-goods argument. The default master()
+function posts no-goods (only effective when enabled in
+Search::Options). See MPG for details.
+
+[ENTRY]
+Module: search
 What:   bug
 Rank:   minor
 [DESCRIPTION]

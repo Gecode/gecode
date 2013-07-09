@@ -64,16 +64,16 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
   /// No-good propagator
-  class NoGoodProp : public Propagator {
+  class NoGoodsProp : public Propagator {
   protected:
     /// Root of no-good literal tree
     NGL* root;
     /// Number of no-good literals with subscriptions
     unsigned int n;
     /// Constructor for creation
-    NoGoodProp(Home home, NGL* root);
+    NoGoodsProp(Home home, NGL* root);
     /// Constructor for cloning \a p
-    NoGoodProp(Space& home, bool shared, NoGoodProp& p);
+    NoGoodsProp(Space& home, bool shared, NoGoodsProp& p);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -102,7 +102,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
 
   forceinline
-  NoGoodProp::NoGoodProp(Home home, NGL* root0)
+  NoGoodsProp::NoGoodsProp(Home home, NGL* root0)
     : Propagator(home), root(root0), n(0U) {
     // Create subscriptions
     root->subscribe(home,*this); n++;
@@ -125,7 +125,7 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   forceinline
-  NoGoodProp::NoGoodProp(Space& home, bool shared, NoGoodProp& p) 
+  NoGoodsProp::NoGoodsProp(Space& home, bool shared, NoGoodsProp& p) 
     : Propagator(home,shared,p), n(p.n) {
     assert(p.root != NULL);
     NoNGL s;
@@ -142,7 +142,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
   template<class Path>
   forceinline ExecStatus 
-  NoGoodProp::post(Space& home, Path& p) {
+  NoGoodsProp::post(Space& home, Path& p) {
     int s = 0;
     int n = std::min(p.ds.entries(),p.ngdl());
 
@@ -222,7 +222,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
     p.ng(n_nogood);
 
-    (void) new (home) NoGoodProp(home,nn.next());
+    (void) new (home) NoGoodsProp(home,nn.next());
     return ES_OK;
   }
 

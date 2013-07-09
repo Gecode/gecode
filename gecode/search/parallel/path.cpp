@@ -41,7 +41,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   void
   Path::post(Space& home) {
-    GECODE_ES_FAIL(Meta::NoGoodProp::post(home,*this));
+    GECODE_ES_FAIL(Meta::NoGoodsProp::post(home,*this));
   }
 
 }}}

@@ -74,17 +74,17 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   Actor* 
-  NoGoodProp::copy(Space& home, bool share) {
-    return new (home) NoGoodProp(home,share,*this);
+  NoGoodsProp::copy(Space& home, bool share) {
+    return new (home) NoGoodsProp(home,share,*this);
   }
 
   PropCost 
-  NoGoodProp::cost(const Space&, const ModEventDelta&) const {
+  NoGoodsProp::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,n);
   }
 
   ExecStatus 
-  NoGoodProp::propagate(Space& home, const ModEventDelta&) {
+  NoGoodsProp::propagate(Space& home, const ModEventDelta&) {
   restart:
     // Start with checking the first literal
     switch (root->status(home)) {
@@ -180,7 +180,7 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   size_t 
-  NoGoodProp::dispose(Space& home) {
+  NoGoodsProp::dispose(Space& home) {
     if (home.failed()) {
       // This will be executed when one ngl returned true for notice()
       NGL* l = root;
