@@ -969,7 +969,7 @@ namespace Gecode {
    * \brief No-good literal recorded during search
    *
    */
-  class NGL {
+  class GECODE_VTABLE_EXPORT NGL {
   private:
     /// Combines pointer to next literal and mark whether it is a leaf
     void* nl;
