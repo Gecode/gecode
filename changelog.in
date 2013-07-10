@@ -74,6 +74,14 @@ No-goods baby!
 
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Low-level support for AFC is now public.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   minor

@@ -1516,14 +1516,6 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void _commit(const Choice& c, unsigned int a);
 
-    /// Set AFC decay factor to \a d
-    GECODE_KERNEL_EXPORT
-    void afc_decay(double d);
-    /// Return AFC decay factor
-    double afc_decay(void) const;
-    /// Reset AFC to \a a
-    GECODE_KERNEL_EXPORT
-    void afc_set(double a);
   public:
     /**
      * \brief Default constructor
@@ -2211,6 +2203,18 @@ namespace Gecode {
       /// Return propagator
       const Brancher& brancher(void) const;
     };    
+
+    /// \name Low-level support for AFC
+    //@{
+    /// Set AFC decay factor to \a d
+    GECODE_KERNEL_EXPORT
+    void afc_decay(double d);
+    /// Return AFC decay factor
+    double afc_decay(void) const;
+    /// Reset AFC to \a a
+    GECODE_KERNEL_EXPORT
+    void afc_set(double a);
+    //@}
   };
 
 
