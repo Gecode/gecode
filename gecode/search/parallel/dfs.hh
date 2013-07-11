@@ -48,8 +48,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// %Parallel depth-first search worker
     class Worker : public Engine::Worker {
     public:
-      /// Initialize for space \a s (of size \a sz) with engine \a e
-      Worker(Space* s, size_t sz, DFS& e);
+      /// Initialize for space \a s with engine \a e
+      Worker(Space* s, DFS& e);
       /// Provide access to engine
       DFS& engine(void) const;
       /// Start execution of worker
@@ -73,8 +73,8 @@ namespace Gecode { namespace Search { namespace Parallel {
 
     /// \name Engine interface
     //@{
-    /// Initialize for space \a s (of size \a sz) with options \a o
-    DFS(Space* s, size_t sz, const Options& o);
+    /// Initialize for space \a s with options \a o
+    DFS(Space* s, const Options& o);
     /// Return statistics
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
@@ -104,19 +104,19 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Engine: initialization
    */
   forceinline
-  DFS::Worker::Worker(Space* s, size_t sz, DFS& e)
-    : Engine::Worker(s,sz,e) {}
+  DFS::Worker::Worker(Space* s, DFS& e)
+    : Engine::Worker(s,e) {}
   forceinline
-  DFS::DFS(Space* s, size_t sz, const Options& o)
+  DFS::DFS(Space* s, const Options& o)
     : Engine(o) {
     // Create workers
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));
     // The first worker gets the entire search tree
-    _worker[0] = new Worker(s,sz,*this);
+    _worker[0] = new Worker(s,*this);
     // All other workers start with no work
     for (unsigned int i=1; i<workers(); i++)
-      _worker[i] = new Worker(NULL,sz,*this);
+      _worker[i] = new Worker(NULL,*this);
     // Block all workers
     block();
     // Create and start threads
@@ -136,11 +136,10 @@ namespace Gecode { namespace Search { namespace Parallel {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = NULL;
-      Search::Worker::reset();
     } else {
       cur = s;
-      Search::Worker::reset(cur);
     }
+    Search::Worker::reset();
   }
 
 
@@ -175,7 +174,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         path.ngdl(0);
         d = 0;
         cur = s;
-        Search::Worker::reset(cur,r_d);
+        Search::Worker::reset(r_d);
         m.release();
         return;
       }

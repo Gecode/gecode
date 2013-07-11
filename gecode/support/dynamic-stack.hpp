@@ -90,9 +90,6 @@ namespace Gecode { namespace Support {
      * element pushed last.
      */
     const T& operator [](int i) const;
-
-    /// Return size of stack
-    size_t size(void) const;
   private:
     /// Allocate memory from heap (disabled)
     static void* operator new(size_t s) throw() { (void) s; return NULL; }
@@ -172,13 +169,6 @@ namespace Gecode { namespace Support {
   forceinline const T&
   DynamicStack<T,A>::operator [](int i) const {
     return stack[i];
-  }
-
-  template<class T, class A>
-  forceinline size_t
-  DynamicStack<T,A>::size(void) const {
-    return (static_cast<size_t>(limit) * sizeof(T)) +
-      sizeof(DynamicStack<T,A>);
   }
 
 }}

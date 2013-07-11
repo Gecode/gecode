@@ -64,8 +64,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Whether the worker is idle
       bool idle;
     public:
-      /// Initialize for space \a s (of size \a sz) with engine \a e
-      Worker(Space* s, size_t sz, Engine& e);
+      /// Initialize for space \a s with engine \a e
+      Worker(Space* s, Engine& e);
       /// Hand over some work (NULL if no work available)
       Space* steal(unsigned long int& d);
       /// Return statistics
@@ -238,11 +238,10 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Engine: initialization
    */
   forceinline
-  Engine::Worker::Worker(Space* s, size_t sz, Engine& e)
-    : Search::Worker(sz), _engine(e), 
+  Engine::Worker::Worker(Space* s, Engine& e)
+    : _engine(e), 
       path(s == NULL ? 0 : static_cast<int>(e.opt().nogoods_limit)), d(0), 
       idle(false) {
-    current(s);
     if (s != NULL) {
       if (s->status(*this) == SS_FAILED) {
         fail++;
@@ -255,8 +254,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     } else {
       cur = NULL;
     }
-    current(NULL);
-    current(cur);
   }
 
   forceinline
@@ -280,7 +277,6 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::Worker::statistics(void) {
     m.acquire();
     Statistics s = *this;
-    s.memory += path.size();
     m.release();
     return s;
   }

@@ -95,7 +95,7 @@ namespace Gecode { namespace Search { namespace Parallel {
             find();
           } else if (cur != NULL) {
             start();
-            if (stop(engine().opt(),path.size())) {
+            if (stop(engine().opt())) {
               // Report stop
               m.release();
               engine().stop();
@@ -112,7 +112,6 @@ namespace Gecode { namespace Search { namespace Parallel {
                 fail++;
                 delete cur;
                 cur = NULL;
-                Worker::current(NULL);
                 m.release();
                 break;
               case SS_SOLVED:
@@ -122,7 +121,6 @@ namespace Gecode { namespace Search { namespace Parallel {
                   Space* s = cur->clone(false);
                   delete cur;
                   cur = NULL;
-                  Worker::current(NULL);
                   m.release();
                   engine().solution(s);
                 }
@@ -138,7 +136,6 @@ namespace Gecode { namespace Search { namespace Parallel {
                     d++;
                   }
                   const Choice* ch = path.push(*this,cur,c);
-                  Worker::push(c,ch);
                   cur->commit(*ch,0);
                   m.release();
                 }
@@ -149,7 +146,6 @@ namespace Gecode { namespace Search { namespace Parallel {
             }
           } else if (path.next(*this)) {
             cur = path.recompute(d,engine().opt().a_d,*this,best,mark);
-            Worker::current(cur);
             m.release();
           } else {
             idle = true;

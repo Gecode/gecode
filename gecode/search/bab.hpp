@@ -43,13 +43,13 @@ namespace Gecode {
 
   namespace Search {
     /// Create branch and bound engine
-    GECODE_SEARCH_EXPORT Engine* bab(Space* s, size_t sz, const Options& o);
+    GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
   }
 
   template<class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
-    : EngineBase(Search::bab(s,sizeof(T),o)) {}
+    : EngineBase(Search::bab(s,o)) {}
 
   template<class T>
   forceinline T*

@@ -54,11 +54,6 @@ namespace Gecode {
    * Actor
    *
    */
-  size_t
-  Actor::allocated(void) const {
-    return 0;
-  }
-
   Actor* Actor::sentinel;
 
 #ifdef __GNUC__

@@ -40,16 +40,6 @@
 namespace Gecode { namespace Search {
 
   /*
-   * Stopping for memory limit
-   *
-   */
-  bool
-  MemoryStop::stop(const Statistics& s, const Options&) {
-    return s.memory > l;
-  }
-
-
-  /*
    * Stopping for node limit
    *
    */

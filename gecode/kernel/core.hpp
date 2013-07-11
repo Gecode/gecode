@@ -685,9 +685,6 @@ namespace Gecode {
 
     /// \name Memory management
     //@{
-    /// Report size occupied by additionally datastructures
-    GECODE_KERNEL_EXPORT
-    virtual size_t allocated(void) const;
     /// Delete actor and return its size
     GECODE_KERNEL_EXPORT
     virtual size_t dispose(Space& home);
@@ -2096,13 +2093,6 @@ namespace Gecode {
      */
     template<size_t> void  fl_dispose(FreeList* f, FreeList* l);
     /**
-     * \brief Return how much heap memory is allocated
-     *
-     * Note that is includes both the memory allocated for the space heap
-     * as well as additional memory allocated by actors.
-     */
-    size_t allocated(void) const;
-    /**
      * \brief Flush cached memory blocks
      *
      * All spaces that are obtained as non-shared clones from some same space
@@ -2286,14 +2276,6 @@ namespace Gecode {
   forceinline void
   Space::fl_dispose(FreeList* f, FreeList* l) {
     mm.template fl_dispose<s>(f,l);
-  }
-
-  forceinline size_t
-  Space::allocated(void) const {
-    size_t s = mm.allocated();
-    for (Actor** a = d_fst; a < d_cur; a++)
-      s += (*a)->allocated();
-    return s;
   }
 
   /*

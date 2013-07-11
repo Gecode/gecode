@@ -41,7 +41,7 @@
 namespace Gecode {
 
   namespace Search {
-    GECODE_SEARCH_EXPORT Engine* rbs(Space* s, size_t sz,
+    GECODE_SEARCH_EXPORT Engine* rbs(Space* s,
                                      MetaStop* stop,
                                      Engine* e,
                                      const Options& o);
@@ -71,7 +71,7 @@ namespace Gecode {
     EngineBase* eb = &engine;
     Search::Engine* ee = eb->e;
     eb->e = NULL;
-    e = Search::rbs(master,sizeof(T),ms,ee,m_opt);
+    e = Search::rbs(master,ms,ee,m_opt);
   }
 
   template<template<class> class E, class T>

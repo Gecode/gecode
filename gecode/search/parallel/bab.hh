@@ -53,8 +53,8 @@ namespace Gecode { namespace Search { namespace Parallel {
       /// Best solution found so far
       Space* best;
     public:
-      /// Initialize for space \a s (of size \a sz) with engine \a e
-      Worker(Space* s, size_t sz, BAB& e);
+      /// Initialize for space \a s with engine \a e
+      Worker(Space* s, BAB& e);
       /// Provide access to engine
       BAB& engine(void) const;
       /// Start execution of worker
@@ -84,8 +84,8 @@ namespace Gecode { namespace Search { namespace Parallel {
 
     /// \name Engine interface
     //@{
-    /// Initialize for space \a s (of size \a sz) with options \a o
-    BAB(Space* s, size_t sz, const Options& o);
+    /// Initialize for space \a s with options \a o
+    BAB(Space* s, const Options& o);
     /// Return statistics
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
@@ -122,11 +122,10 @@ namespace Gecode { namespace Search { namespace Parallel {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       delete s;
       cur = NULL;
-      Search::Worker::reset();
     } else {
       cur = s;
-      Search::Worker::reset(cur);
     }
+    Search::Worker::reset();
   }
 
 
@@ -134,20 +133,20 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Engine: initialization
    */
   forceinline
-  BAB::Worker::Worker(Space* s, size_t sz, BAB& e)
-    : Engine::Worker(s,sz,e), mark(0), best(NULL) {}
+  BAB::Worker::Worker(Space* s, BAB& e)
+    : Engine::Worker(s,e), mark(0), best(NULL) {}
 
   forceinline
-  BAB::BAB(Space* s, size_t sz, const Options& o)
+  BAB::BAB(Space* s, const Options& o)
     : Engine(o), best(NULL) {
     // Create workers
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));
     // The first worker gets the entire search tree
-    _worker[0] = new Worker(s,sz,*this);
+    _worker[0] = new Worker(s,*this);
     // All other workers start with no work
     for (unsigned int i=1; i<workers(); i++)
-      _worker[i] = new Worker(NULL,sz,*this);
+      _worker[i] = new Worker(NULL,*this);
     // Block all workers
     block();
     // Create and start threads
@@ -215,7 +214,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         mark = 0;
         if (best != NULL)
           cur->constrain(*best);
-        Search::Worker::reset(cur,r_d);
+        Search::Worker::reset(r_d);
         m.release();
         return;
       }

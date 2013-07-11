@@ -164,8 +164,6 @@ namespace Gecode {
   public:
     /// Allocate memory of size \a s
     void* alloc(SharedMemory* sm, size_t s);
-    /// Return how much memory has been allocated
-    size_t allocated(void) const;
     /// Get the memory area for subscriptions
     void* subscriptions(void) const;
 
@@ -325,11 +323,6 @@ namespace Gecode {
    * The active memory manager
    *
    */
-
-  forceinline size_t
-  MemoryManager::allocated(void) const {
-    return requested;
-  }
 
   forceinline void*
   MemoryManager::alloc(SharedMemory* sm, size_t sz) {

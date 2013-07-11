@@ -133,8 +133,6 @@ namespace Gecode { namespace Search { namespace Sequential {
                      const Space* best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
-    /// Return size used
-    size_t size(void) const;
     /// Reset stack
     void reset(void);
     /// Post no-goods
@@ -224,7 +222,6 @@ namespace Gecode { namespace Search { namespace Sequential {
   Path::push(Worker& stat, Space* s, Space* c) {
     if (!ds.empty() && ds.top().lao()) {
       // Topmost stack entry was LAO -> reuse
-      stat.pop(ds.top().space(),ds.top().choice());
       ds.pop().dispose();
     }
     Edge sn(s,c);
@@ -237,7 +234,6 @@ namespace Gecode { namespace Search { namespace Sequential {
   Path::next(Worker& stat) {
     while (!ds.empty())
       if (ds.top().rightmost()) {
-        stat.pop(ds.top().space(),ds.top().choice());
         ds.pop().dispose();
       } else {
         ds.top().next();
@@ -276,11 +272,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     return ds.entries();
   }
 
-  forceinline size_t
-  Path::size(void) const {
-    return ds.size();
-  }
-
   forceinline void
   Path::unwind(int l) {
     assert((ds[l].space() == NULL) || ds[l].space()->failed());
@@ -305,7 +296,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      stat.lao(s);
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       ds.top().space(NULL);
@@ -352,7 +342,6 @@ namespace Gecode { namespace Search { namespace Sequential {
           return NULL;
         }
         ds[i].space(s->clone());
-        stat.adapt(ds[i].space());
         d = static_cast<unsigned int>(n-i);
       }
       // Finally do the remaining commits
@@ -372,7 +361,6 @@ namespace Gecode { namespace Search { namespace Sequential {
     // Check for LAO
     if ((ds.top().space() != NULL) && ds.top().rightmost()) {
       Space* s = ds.top().space();
-      stat.lao(s);
       s->commit(*ds.top().choice(),ds.top().alt());
       assert(ds.entries()-1 == lc());
       if (mark > ds.entries()-1) {
@@ -410,7 +398,6 @@ namespace Gecode { namespace Search { namespace Sequential {
       // of propagators
       Space* c = s->clone();
       ds[l].space(c);
-      stat.constrained(s,c);
     } else {
       s = s->clone();
     }
@@ -447,7 +434,6 @@ namespace Gecode { namespace Search { namespace Sequential {
           return NULL;
         }
         ds[i].space(s->clone());
-        stat.adapt(ds[i].space());
         d = static_cast<unsigned int>(n-i);
       }
       // Finally do the remaining commits

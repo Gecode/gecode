@@ -56,14 +56,12 @@ namespace Gecode { namespace Search { namespace Meta {
     MetaStop* stop;
     /// Whether the slave can be shared with the master
     bool shared;
-    /// Space size for master
-    size_t sz;
     /// Empty no-goods
     GECODE_SEARCH_EXPORT
     static NoGoods eng;
   public:
     /// Constructor
-    RBS(Space*, size_t, Cutoff* co0, MetaStop* stop0,
+    RBS(Space* s, Cutoff* co0, MetaStop* stop0,
         Engine* e0, const Options& o);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
@@ -80,10 +78,10 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
   forceinline
-  RBS::RBS(Space* s, size_t sz0, Cutoff* co0, MetaStop* stop0,
+  RBS::RBS(Space* s, Cutoff* co0, MetaStop* stop0,
            Engine* e0, const Options& opt)
     : e(e0), master(s), co(co0), stop(stop0), 
-      shared(opt.threads == 1), sz(sz0) {
+      shared(opt.threads == 1) {
     stop->limit(Statistics(),(*co)());
   }
 

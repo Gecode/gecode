@@ -141,8 +141,6 @@ namespace Gecode { namespace Search {
     unsigned long int node;
     /// Maximum depth of search stack
     unsigned long int depth;
-    /// Peak memory allocated
-    size_t memory;
     /// Number of restarts
     unsigned long int restart;
     /// Number of no-goods posted
@@ -273,26 +271,6 @@ namespace Gecode { namespace Search {
     static void* operator new(size_t s);
     /// Free memory allocated from heap
     static void  operator delete(void* p);
-  };
-  
-  /**
-   * \brief %Stop-object based on memory consumption
-   *
-   * \ingroup TaskModelSearchStop
-   */
-  class GECODE_SEARCH_EXPORT MemoryStop : public Stop {
-  protected:
-    /// Size limit
-    size_t l;
-  public:
-    /// Stop if memory limit \a l (in bytes) is exceeded
-    MemoryStop(size_t l);
-    /// Return current limit
-    size_t limit(void) const;
-    /// Set current limit to \a l (in bytes)
-    void limit(size_t l);
-    /// Return true if memory limit is exceeded
-    virtual bool stop(const Statistics& s, const Options& o);
   };
   
   /**

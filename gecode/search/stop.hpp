@@ -56,24 +56,6 @@ namespace Gecode { namespace Search {
 
 
 
-  /*
-   * Stopping for memory limit
-   *
-   */
-
-  forceinline
-  MemoryStop::MemoryStop(size_t l0) : l(l0) {}
-
-  forceinline size_t
-  MemoryStop::limit(void) const {
-    return l;
-  }
-
-  forceinline void
-  MemoryStop::limit(size_t l0) {
-    l=l0;
-  }
-
 
   /*
    * Stopping for node limit

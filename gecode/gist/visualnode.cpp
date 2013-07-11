@@ -540,19 +540,6 @@ namespace Gecode { namespace Gist {
     }
   }
 
-  size_t
-  VisualNode::size(void) const {
-    size_t s = sizeof(*this);
-    s += sizeof(Node*)*getNumberOfChildren();
-    if (shape && shape != Shape::leaf && shape != Shape::hidden) {
-      s += sizeof(Shape)+sizeof(Extent)*(shape->depth()-1);
-    }
-    if (copy)
-      s += static_cast<Space*>(Support::funmark(copy))->allocated();
-    s += (choice != NULL ? choice->size() : 0);
-    return s;
-  }
-
 }}
 
 // STATISTICS: gist-any

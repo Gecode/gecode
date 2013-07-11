@@ -41,13 +41,13 @@
 namespace Gecode { namespace Search {
     
   Engine* 
-  rbs(Space* s, size_t sz, MetaStop* stop,
+  rbs(Space* s, MetaStop* stop,
       Engine* e, const Options& o) {
 #ifdef GECODE_HAS_THREADS
     Options to = o.expand();
-    return new Meta::RBS(s,sz,o.cutoff,stop,e,to);
+    return new Meta::RBS(s,o.cutoff,stop,e,to);
 #else
-    return new Meta::RBS(s,sz,o.cutoff,stop,e,o);
+    return new Meta::RBS(s,o.cutoff,stop,e,o);
 #endif
   }
 

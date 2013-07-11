@@ -1493,8 +1493,6 @@ namespace Gecode { namespace FlatZinc {
            << "%%  failures:      " << stat.fail << endl
            << "%%  restarts:      " << stat.restart << endl
            << "%%  peak depth:    " << stat.depth << endl
-           << "%%  peak memory:   "
-           << static_cast<int>((stat.memory+1023) / 1024) << " KB"
            << endl;
     }
     delete o.stop;

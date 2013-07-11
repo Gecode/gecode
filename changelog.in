@@ -74,6 +74,17 @@ No-goods baby!
 
 
 [ENTRY]
+Module: search
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Removed memory statistics from the search engines. The reason is
+that the figures were too inaccurate (memory for shared data
+structure, caches, etc were not counted) and computing the
+figures was complicated. It is better to use an operating system
+tool to compute Gecode's memory requirements.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
@@ -98,14 +109,6 @@ The master() member function used during restart-based search now
 takes an additional no-goods argument. The default master()
 function posts no-goods (only effective when enabled in
 Search::Options). See MPG for details.
-
-[ENTRY]
-Module: search
-What:   bug
-Rank:   minor
-[DESCRIPTION]
-For restart-based search also take the master space into account
-when reporting memory consumption.
 
 [ENTRY]
 Module: driver

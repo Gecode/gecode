@@ -231,9 +231,6 @@ namespace Gecode { namespace Gist {
     std::string toolTip(NodeAllocator& na, BestNode* curBest,
                         int c_d, int a_d);
 
-    /// Return size information
-    size_t size(void) const;
-    
     /// Free allocated memory
     void dispose(void);
   };
