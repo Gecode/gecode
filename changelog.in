@@ -74,6 +74,14 @@ No-goods baby!
 
 
 [ENTRY]
+Module: iter
+What:   bug
+Rank:   minor
+Thanks: Farshid Hassani Bijarbooneh, Joseph Scott
+[DESCRIPTION]
+Fixed segfault in NaryUnion iterator.
+
+[ENTRY]
 Module: search
 What:   removed
 Rank:   major

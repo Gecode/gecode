@@ -276,7 +276,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
   forceinline
-  NaryUnion::NaryUnion(void) {}
+  NaryUnion::NaryUnion(void) 
+    : f(NULL) {}
 
   template<class I>
   forceinline void

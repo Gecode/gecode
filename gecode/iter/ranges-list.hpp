@@ -130,12 +130,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline
   RangeListIter::RangeListIter(void) 
-    : rlio(NULL) {}
+    : rlio(NULL), h(NULL), c(NULL) {}
 
   forceinline
   RangeListIter::RangeListIter(Region& r) 
-    : rlio(new (r.ralloc(sizeof(RLIO))) RLIO(r)), 
-      h(NULL), c(NULL) {}
+    : rlio(new (r.ralloc(sizeof(RLIO))) RLIO(r)), h(NULL), c(NULL) {}
 
   forceinline void
   RangeListIter::init(Region& r) {
@@ -146,19 +145,21 @@ namespace Gecode { namespace Iter { namespace Ranges {
   forceinline
   RangeListIter::RangeListIter(const RangeListIter& i) 
     : rlio(i.rlio), h(i.h), c(i.c)  {
-    rlio->use_cnt++;
+    if (rlio != NULL)
+      rlio->use_cnt++;
   }
 
   forceinline RangeListIter&
   RangeListIter::operator =(const RangeListIter& i) {
     if (&i != this) {
-      if (--rlio->use_cnt == 0) {
+      if ((rlio != NULL) && (--rlio->use_cnt == 0)) {
         Region& r = rlio->allocator();
         rlio->~RLIO();
         r.rfree(rlio,sizeof(RLIO));
       }
       rlio = i.rlio;
-      rlio->use_cnt++;
+      if (rlio != NULL)
+        rlio->use_cnt++;
       c=i.c; h=i.h;
     }
     return *this;
@@ -166,7 +167,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline
   RangeListIter::~RangeListIter(void) {
-    if (--rlio->use_cnt == 0) {
+    if ((rlio != NULL) && (--rlio->use_cnt == 0)) {
       Region& r = rlio->allocator();
       rlio->~RLIO();
       r.rfree(rlio,sizeof(RLIO));
