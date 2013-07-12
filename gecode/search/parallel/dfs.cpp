@@ -139,7 +139,7 @@ namespace Gecode { namespace Search { namespace Parallel {
                 GECODE_NEVER;
               }
             }
-          } else if (path.next(*this)) {
+          } else if (path.next()) {
             cur = path.recompute(d,engine().opt().a_d,*this);
             m.release();
           } else {

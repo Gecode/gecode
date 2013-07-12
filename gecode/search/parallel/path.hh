@@ -121,7 +121,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Push space \a c (a clone of \a s or NULL)
     const Choice* push(Worker& stat, Space* s, Space* c);
     /// Generate path for next node and return whether a next node exists
-    bool next(Worker& s);
+    bool next(void);
     /// Provide access to topmost edge
     Edge& top(void) const;
     /// Test whether path is empty
@@ -250,7 +250,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   }
 
   forceinline bool
-  Path::next(Worker& stat) {
+  Path::next(void) {
     while (!ds.empty())
       if (ds.top().rightmost()) {
         ds.pop().dispose();

@@ -143,7 +143,7 @@ namespace Gecode { namespace Search { namespace Sequential {
         }
       }
       do {
-        if (!path.next(*this))
+        if (!path.next())
           return NULL;
         cur = path.recompute(d,opt.a_d,*this);
       } while (cur == NULL);

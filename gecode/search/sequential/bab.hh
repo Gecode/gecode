@@ -145,7 +145,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       }
       // Recompute and add constraint if necessary
       do {
-        if (!path.next(*this))
+        if (!path.next())
           return NULL;
         cur = path.recompute(d,opt.a_d,*this,best,mark);
       } while (cur == NULL);
