@@ -102,6 +102,7 @@
 #include <gecode/support/macros.hpp>
 #include <gecode/support/exception.hpp>
 #include <gecode/support/cast.hpp>
+#include <gecode/support/thread.hpp>
 #include <gecode/support/heap.hpp>
 #include <gecode/support/marked-pointer.hpp>
 #include <gecode/support/int-type.hpp>
@@ -128,7 +129,18 @@
  *
  */
 
-#include <gecode/support/thread.hpp>
+#ifdef GECODE_THREADS_WINDOWS
+#include <gecode/support/thread/windows.hpp>
+#endif
+#ifdef GECODE_THREADS_PTHREADS
+#include <gecode/support/thread/pthreads.hpp>
+#endif
+#ifndef GECODE_HAS_THREADS
+#include <gecode/support/thread/none.hpp>
+#endif
+
+#include <gecode/support/thread/thread.hpp>
+
 #include <gecode/support/timer.hpp>
 #include <gecode/support/hw-rnd.hpp>
 

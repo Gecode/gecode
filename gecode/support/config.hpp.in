@@ -85,6 +85,18 @@
 /* Heap memory alignment */
 #undef GECODE_MEMORY_ALIGNMENT
 
+/* How to check allocation size */
+#undef GECODE_MSIZE
+
+/* Whether to track peak heap size */
+#undef GECODE_PEAKHEAP
+
+/* Whether we need malloc.h */
+#undef GECODE_PEAKHEAP_MALLOC_H
+
+/* Whether we need malloc/malloc.h */
+#undef GECODE_PEAKHEAP_MALLOC_MALLOC_H
+
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 

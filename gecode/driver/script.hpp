@@ -364,6 +364,11 @@ namespace Gecode { namespace Driver {
                   << "\trestarts:     " << stat.restart << endl
                   << "\tno-goods:     " << stat.nogood << endl
                   << "\tpeak depth:   " << stat.depth << endl
+#ifdef GECODE_PEAKHEAP
+                  << "\tpeak memory:  "
+                  << static_cast<int>((heap.peak()+1023) / 1024) << " KB"
+                  << endl
+#endif
                   << endl;
           }
           delete so.stop;
@@ -415,6 +420,11 @@ namespace Gecode { namespace Driver {
                   << "\trestarts:     " << stat.restart << endl
                   << "\tno-goods:     " << stat.nogood << endl
                   << "\tpeak depth:   " << stat.depth << endl
+#ifdef GECODE_PEAKHEAP
+                  << "\tpeak memory:  "
+                  << static_cast<int>((heap.peak()+1023) / 1024) << " KB"
+                  << endl
+#endif
                   << endl;
           }
           delete so.stop;

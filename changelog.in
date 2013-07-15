@@ -82,6 +82,16 @@ Thanks: Farshid Hassani Bijarbooneh, Joseph Scott
 Fixed segfault in NaryUnion iterator.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added configure switch --enable-peakheap that adds support for
+memory statistics to the kernel. This comes with a runtime overhead,
+but provides more accurate information than the previous search
+engine based statistics.
+
+[ENTRY]
 Module: search
 What:   removed
 Rank:   major
@@ -89,8 +99,9 @@ Rank:   major
 Removed memory statistics from the search engines. The reason is
 that the figures were too inaccurate (memory for shared data
 structure, caches, etc were not counted) and computing the
-figures was complicated. It is better to use an operating system
-tool to compute Gecode's memory requirements.
+figures was complicated. This feature is replaced by a configure
+switch that enables peak memory tracking based on operating system
+information.
 
 [ENTRY]
 Module: kernel

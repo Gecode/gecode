@@ -39,6 +39,14 @@
 #include <cstdlib>
 #include <algorithm>
 
+#ifdef GECODE_PEAKHEAP_MALLOC_H
+#include <malloc.h>
+#endif
+
+#ifdef GECODE_PEAKHEAP_MALLOC_MALLOC_H
+#include <malloc/malloc.h>
+#endif
+
 namespace Gecode {
 
   /**
@@ -310,6 +318,16 @@ namespace Gecode {
     Heap(const Heap&) {}
     /// Assignment operator (disabled)
     const Heap& operator =(const Heap&) { return *this; }
+#ifdef GECODE_PEAKHEAP
+    /// Mutex for accessing heap size
+    Support::FastMutex _m;
+    /// Peak heap size
+    size_t _peak;
+    /// Current heap size
+    size_t _cur;
+public:
+    size_t peak(void);
+#endif
   };
 
   /// The single global heap
@@ -322,6 +340,12 @@ namespace Gecode {
   forceinline void*
   Heap::ralloc(size_t s) {
     void* p = ::malloc(s);
+#ifdef GECODE_PEAKHEAP
+    _m.acquire();
+    _cur += GECODE_MSIZE(p);
+    _peak = std::max(_peak,_cur);
+    _m.release();
+#endif
     if (p != NULL)
       return p;
     throw MemoryExhausted();
@@ -329,17 +353,38 @@ namespace Gecode {
 
   forceinline void
   Heap::rfree(void* p) {
+#ifdef GECODE_PEAKHEAP
+    _m.acquire();
+    _cur -= GECODE_MSIZE(p);
+    _m.release();
+#endif
     ::free(p);
   }
 
   forceinline void
   Heap::rfree(void* p, size_t) {
+#ifdef GECODE_PEAKHEAP
+    _m.acquire();
+    _cur -= GECODE_MSIZE(p);
+    _m.release();
+#endif
     ::free(p);
   }
 
   forceinline void*
   Heap::rrealloc(void* p, size_t s) {
+#ifdef GECODE_PEAKHEAP
+    _m.acquire();
+    _cur -= GECODE_MSIZE(p);
+    _m.release();
+#endif
     p = ::realloc(p,s);
+#ifdef GECODE_PEAKHEAP
+    _m.acquire();
+    _cur += GECODE_MSIZE(p);
+    _peak = std::max(_peak,_cur);
+    _m.release();
+#endif
     if (p != NULL || s == 0)
       return p;
     throw MemoryExhausted();
@@ -587,6 +632,16 @@ namespace Gecode {
     assert(n >= 0);
     return copy<T*>(d,s,static_cast<long unsigned int>(n));
   }
+
+#ifdef GECODE_PEAKHEAP
+  forceinline size_t
+  Heap::peak(void) {
+    _m.acquire();
+    size_t ret = _peak;
+    _m.release();
+    return ret;
+  }
+#endif
 
 }
 

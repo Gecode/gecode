@@ -133,6 +133,9 @@ AC_GECODE_STATICLIBS
 dnl check whether we want to have assertions and debugging options
 AC_GECODE_DEBUG
 
+dnl check whether we want to have peak heap size tracking
+AC_GECODE_PEAKHEAP
+
 dnl check whether to optimize for code size
 AC_GECODE_CODESIZE
 
