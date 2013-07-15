@@ -280,7 +280,8 @@ namespace Test {
         return "Sol";
       }
       /// Rule out that solution is found more than once during restarts
-      virtual void master(unsigned long int i, const Space* _s) {
+      virtual void master(unsigned long int i, const Space* _s,
+                          NoGoods&) {
         const HasSolutions* s = static_cast<const HasSolutions*>(_s);
         if (s != NULL) {
           BoolVarArgs b;
