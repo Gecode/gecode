@@ -68,10 +68,11 @@
 
 [RELEASE]
 Version: 4.2.0
-Date: 2013-07-10
+Date: 2013-07-19
 [DESCRIPTION]
-No-goods baby!
-
+This release adds no-goods from restarts, removes memory
+statistics (but Gecode can be configured for more accurate
+statistics), and fixes a number of bugs.
 
 [ENTRY]
 Module: iter
