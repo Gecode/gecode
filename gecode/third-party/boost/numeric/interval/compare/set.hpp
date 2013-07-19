@@ -29,6 +29,7 @@ bool operator<(const interval<T, Policies1>& x, const interval<T, Policies2>& y)
 template<class T, class Policies> inline
 bool operator<(const interval<T, Policies>& x, const T& y)
 {
+  (void)x; (void)y;
   throw comparison_error();
 }
 
@@ -41,6 +42,7 @@ bool operator<=(const interval<T, Policies1>& x, const interval<T, Policies2>& y
 template<class T, class Policies> inline
 bool operator<=(const interval<T, Policies>& x, const T& y)
 {
+  (void)x; (void)y;
   throw comparison_error();
 }
 
@@ -53,6 +55,7 @@ bool operator>(const interval<T, Policies1>& x, const interval<T, Policies2>& y)
 template<class T, class Policies> inline
 bool operator>(const interval<T, Policies>& x, const T& y)
 {
+  (void)x; (void)y;
   throw comparison_error();
 }
 
@@ -65,6 +68,7 @@ bool operator>=(const interval<T, Policies1>& x, const interval<T, Policies2>& y
 template<class T, class Policies> inline
 bool operator>=(const interval<T, Policies>& x, const T& y)
 {
+  (void)x; (void)y;
   throw comparison_error();
 }
 
@@ -77,6 +81,7 @@ bool operator==(const interval<T, Policies1>& x, const interval<T, Policies2>& y
 template<class T, class Policies> inline
 bool operator==(const interval<T, Policies>& x, const T& y)
 {
+  (void)x; (void)y;
   throw comparison_error();
 }
 
@@ -89,6 +94,7 @@ bool operator!=(const interval<T, Policies1>& x, const interval<T, Policies2>& y
 template<class T, class Policies> inline
 bool operator!=(const interval<T, Policies>& x, const T& y)
 {
+  (void)x; (void)y;
   throw comparison_error();
 }
 
