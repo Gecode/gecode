@@ -58,8 +58,10 @@ namespace Gecode {
       int n;
       /// Decay factor
       double d;
-      /// Allocate for \a n0 activity values and decay factor \a d0
-      Storage(int n0, double d0);
+      /// Allocate activity values
+      template<class View>
+      Storage(Home home, ViewArray<View>& x, double d,
+              typename BranchTraits<typename View::VarType>::Merit bm);
       /// Delete object
       ~Storage(void);
       /// Allocate memory from heap
@@ -78,15 +80,6 @@ namespace Gecode {
     void acquire(void);
     /// Release mutex
     void release(void);
-    /**
-     * \brief Initialize for \a n views with decay factor \a d
-     *
-     * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
-     *
-     */
-    GECODE_KERNEL_EXPORT
-    void init(int n, double d);
   public:
     /// \name Constructors and initialization
     //@{
@@ -104,12 +97,14 @@ namespace Gecode {
     /// Assignment operator
     GECODE_KERNEL_EXPORT
     Activity& operator =(const Activity& a);
-    /// Initialize for views \a x and decay factor \a d
+    /// Initialize for views \a x and decay factor \a d and activity as defined by \a bm
     template<class View>
-    Activity(Home home, ViewArray<View>& x, double d);
-    /// Initialize for views \a x and decay factor \a d
+    Activity(Home home, ViewArray<View>& x, double d,
+             typename BranchTraits<typename View::VarType>::Merit bm);
+    /// Initialize for views \a x and decay factor \a d and activity as defined by \a bm
     template<class View>
-    void init(Home home, ViewArray<View>& x, double d);
+    void init(Home home, ViewArray<View>& x, double d,
+             typename BranchTraits<typename View::VarType>::Merit bm);
     /// Test whether already initialized
     bool initialized(void) const;
     /// Set activity to \a a
@@ -278,11 +273,20 @@ namespace Gecode {
   Activity::Storage::operator delete(void* p) {
     Gecode::heap.rfree(p);
   }
+  template<class View>
   forceinline
-  Activity::Storage::Storage(int n0, double d0)
-    : use_cnt(1), a(heap.alloc<double>(n0)), n(n0), d(d0) {
-    for (int i=n; i--; )
-      a[i] = 0.0;
+  Activity::Storage::Storage(Home home, ViewArray<View>& x, double d0,
+                             typename 
+                             BranchTraits<typename View::VarType>::Merit bm)
+    : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), d(d0) {
+    if (bm != NULL)
+      for (int i=n; i--; ) {
+        View::VarType xi(x[i].varimp());
+        a[i] = bm(home,xi,i);
+      }
+    else
+      for (int i=n; i--; )
+        a[i] = 0.0;
   }
   forceinline
   Activity::Storage::~Storage(void) {
@@ -337,14 +341,18 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  Activity::Activity(Home home, ViewArray<View>& x, double d) {
-    init(x.size(),d);
+  Activity::Activity(Home home, ViewArray<View>& x, double d,
+                     typename BranchTraits<typename View::VarType>::Merit bm) {
+    assert(storage == NULL);
+    storage = new Storage(home,x,d,bm);
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
   forceinline void
-  Activity::init(Home home, ViewArray<View>& x, double d) {
-    init(x.size(),d);
+  Activity::init(Home home, ViewArray<View>& x, double d,
+                 typename BranchTraits<typename View::VarType>::Merit bm) {
+    assert(storage == NULL);
+    storage = new Storage(home,x,d,bm);
     (void) Recorder<View>::post(home,x,*this);
   }
 

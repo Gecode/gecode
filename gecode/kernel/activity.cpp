@@ -41,12 +41,6 @@ namespace Gecode {
 
   const Activity Activity::def;
 
-  void
-  Activity::init(int n, double d) {
-    assert(storage == NULL);
-    storage = new Storage(n,d);
-  }
-  
   Activity::Activity(const Activity& a)
     : storage(a.storage) {
     if (storage != NULL) {

@@ -1465,18 +1465,31 @@ namespace Gecode {
     FloatActivity(const FloatActivity& a);
     /// Assignment operator
     FloatActivity& operator =(const FloatActivity& a);      
-    /// Initialize for float variables \a x with decay factor \a d
-    GECODE_FLOAT_EXPORT 
-    FloatActivity(Home home, const FloatVarArgs& x, double d=1.0);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * activity for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_FLOAT_EXPORT 
+    FloatActivity(Home home, const FloatVarArgs& x, double d=1.0,
+                  FloatBranchMerit bm=NULL);
+    /**
+     * \brief Initialize for float variables \a x with decay factor \a d
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * activity for each variable is initialized with the merit returned
+     * by \a bm.
      *
      * This member function can only be used once and only if the
      * activity storage has been constructed with the default constructor.
      *
      */
     GECODE_FLOAT_EXPORT void
-    init(Home, const FloatVarArgs& x, double d=1.0);
+    init(Home, const FloatVarArgs& x, double d=1.0,
+         FloatBranchMerit bm=NULL);
   };
 
 }

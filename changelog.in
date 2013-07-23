@@ -67,6 +67,46 @@
 #
 
 [RELEASE]
+Version: 4.2.1
+Date: 2013-99-99
+[DESCRIPTION]
+Bla!
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Activity information can now be initialized with a branch merit function.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Activity information can now be initialized with a branch merit function.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Activity information can now be initialized with a branch merit function.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Activity information can now be initialized with a branch merit function.
+
+
+
+[RELEASE]
 Version: 4.2.0
 Date: 2013-07-19
 [DESCRIPTION]

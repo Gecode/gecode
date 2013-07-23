@@ -39,15 +39,17 @@
 
 namespace Gecode {
 
-  FloatActivity::FloatActivity(Home home, const FloatVarArgs& x, double d) {
+  FloatActivity::FloatActivity(Home home, const FloatVarArgs& x, double d,
+                               FloatBranchMerit bm) {
     ViewArray<Float::FloatView> y(home,x);
-    Activity::init(home,y,d);
+    Activity::init(home,y,d,bm);
   }
 
   void
-  FloatActivity::init(Home home, const FloatVarArgs& x, double d) {
+  FloatActivity::init(Home home, const FloatVarArgs& x, double d,
+                      FloatBranchMerit bm) {
     ViewArray<Float::FloatView> y(home,x);
-    Activity::init(home,y,d);
+    Activity::init(home,y,d,bm);
   }
 
 }

@@ -1202,18 +1202,31 @@ namespace Gecode {
     SetActivity(const SetActivity& a);
     /// Assignment operator
     SetActivity& operator =(const SetActivity& a);      
-    /// Initialize for set variables \a x with decay factor \a d
-    GECODE_SET_EXPORT 
-    SetActivity(Home home, const SetVarArgs& x, double d=1.0);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * activity for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_SET_EXPORT 
+    SetActivity(Home home, const SetVarArgs& x, double d=1.0,
+                SetBranchMerit bm=NULL);
+    /**
+     * \brief Initialize for set variables \a x with decay factor \a d
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * activity for each variable is initialized with the merit returned
+     * by \a bm.
      *
      * This member function can only be used once and only if the
      * activity storage has been constructed with the default constructor.
      *
      */
     GECODE_SET_EXPORT void
-    init(Home, const SetVarArgs& x, double d=1.0);
+    init(Home, const SetVarArgs& x, double d=1.0,
+         SetBranchMerit bm=NULL);
   };
 
 }

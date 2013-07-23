@@ -39,15 +39,17 @@
 
 namespace Gecode {
 
-  SetActivity::SetActivity(Home home, const SetVarArgs& x, double d) {
+  SetActivity::SetActivity(Home home, const SetVarArgs& x, double d,
+                           SetBranchMerit bm) {
     ViewArray<Set::SetView> y(home,x);
-    Activity::init(home,y,d);
+    Activity::init(home,y,d,bm);
   }
 
   void
-  SetActivity::init(Home home, const SetVarArgs& x, double d) {
+  SetActivity::init(Home home, const SetVarArgs& x, double d,
+                    SetBranchMerit bm) {
     ViewArray<Set::SetView> y(home,x);
-    Activity::init(home,y,d);
+    Activity::init(home,y,d,bm);
   }
 
 }
