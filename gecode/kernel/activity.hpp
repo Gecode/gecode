@@ -281,7 +281,7 @@ namespace Gecode {
     : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), d(d0) {
     if (bm != NULL)
       for (int i=n; i--; ) {
-        View::VarType xi(x[i].varimp());
+        typename View::VarType xi(x[i].varimp());
         a[i] = bm(home,xi,i);
       }
     else
