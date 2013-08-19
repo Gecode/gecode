@@ -399,6 +399,9 @@ namespace Gecode {
   /// Construct linear expression as sum of Boolean variables with coefficients
   GECODE_MINIMODEL_EXPORT LinIntExpr
   sum(const IntArgs& a, const BoolVarArgs& x);
+  /// Construct linear expression as sum of \ref IntArgs
+  GECODE_MINIMODEL_EXPORT LinIntExpr
+  sum(const IntArgs& args);
 
   /// Construct linear equality relation
   GECODE_MINIMODEL_EXPORT LinIntRel
@@ -2170,6 +2173,20 @@ namespace Gecode {
 
 #include <gecode/minimodel/matrix.hpp>
 #include <gecode/minimodel/ldsb.hpp>
+
+/**
+ * \addtogroup TaskModelMiniModelLin
+ * @{
+ */ 
+namespace Gecode {
+  /// Construct linear expression as sum of \ref IntArgs \ref Slice elements
+  GECODE_MINIMODEL_EXPORT LinIntExpr 
+  sum(const Slice<IntArgs>& slice);
+  /// Construct linear expression as sum of \ref IntArgs \ref Matrix elements
+  GECODE_MINIMODEL_EXPORT LinIntExpr 
+  sum(const Matrix<IntArgs>& matrix);
+}
+/** @}*/
 
 namespace Gecode {
 

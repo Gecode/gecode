@@ -882,6 +882,28 @@ namespace Gecode {
   sum(const IntArgs& a, const BoolVarArgs& x) {
     return LinIntExpr(a,x);
   }
+  LinIntExpr 
+  sum(const Slice<IntArgs>& slice) {
+    const Slice<IntArgs>::ArgsType & args = slice;
+    return sum(args);
+  }
+  LinIntExpr 
+  sum(const Matrix<IntArgs>& matrix) {
+    const Matrix<IntArgs>::ArgsType & args = matrix.get_array();
+    return sum(args);
+  }
+  LinIntExpr
+  sum(const IntArgs& args) {
+    int i, sum = 0;
+    const int size = args.size();
+
+    for (i = 0 ; i < size ; ++i)    
+    {
+      sum += args[i];
+    }
+
+    return LinIntExpr(sum);
+  }
 
 
   IntVar
