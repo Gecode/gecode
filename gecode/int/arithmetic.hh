@@ -267,7 +267,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Return \f$x^2\f$
     template<class IntType>
     IntType pow(IntType x) const;
-    /// Return \f$\min(x^2,m+1)\f$ where \f$n>0\f$ and \f$m\f$ is Int::Limits::max
+    /// Return \f$x^2\f$ truncated to integer limits
     int tpow(int x) const;
     /// Return \f$\lfloor \sqrt{x}\rfloor\f$ where \a x must be non-negative and \f$n>0\f$
     int fnroot(int x) const;
@@ -303,7 +303,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Return \f$x^n\f$ where \f$n>0\f$
     template<class IntType>
     IntType pow(IntType x) const;
-    /// Return \f$\min(x^n,m+1)\f$ where \f$n>0\f$ and \f$m\f$ is Int::Limits::max
+    /// Return \f$x^n\f$ where \f$n>0\f$ truncated to integer limits
     int tpow(int x) const;
     /// Return \f$\lfloor \sqrt[n]{x}\rfloor\f$ where \a x must be non-negative and \f$n>0\f$
     int fnroot(int x) const;
