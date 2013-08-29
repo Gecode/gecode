@@ -286,11 +286,67 @@ namespace Test { namespace Int {
        }
      };
 
+     bool powgr(int n, long long int r, int x) {
+       assert(r >= 0);
+       long long int y = r;
+       long long int p = 1;
+       do {
+         p *= y; n--;
+         if (p > x)
+           return true;
+       } while (n > 0);
+       return false;
+     }
+
+     int fnroot(int n, int x) {
+       if (x < 2)
+         return x;
+       /*
+        * We look for l such that: l^n <= x < (l+1)^n
+        */
+       long long int l = 1;
+       long long int u = x;
+       do {
+         long long int m = (l + u) >> 1;
+         if (powgr(n,m,x)) u=m; else l=m;
+       } while (l+1 < u);
+       return static_cast<int>(l);
+     }
+
+     bool powle(int n, long long int r, int x) {
+       assert(r >= 0);
+       long long int y = r;
+       long long int p = 1;
+       do {
+         p *= y; n--;
+         if (p >= x)
+           return false;
+       } while (n > 0);
+       assert(y < x);
+       return true;
+     }
+
+     int cnroot(int n, int x) {
+       if (x < 2)
+         return x;
+       /*
+        * We look for u such that: (u-1)^n < x <= u^n
+        */
+       long long int l = 1;
+       long long int u = x;
+       do {
+         long long int m = (l + u) >> 1;
+         if (powle(n,m,x)) l=m; else u=m;
+       } while (l+1 < u);
+       return static_cast<int>(u);
+     }
+
      /// %Test for nroot constraint
      class NrootXY : public Test {
      protected:
        /// The root index
        int n;
+       /// Floor 
      public:
        /// Create and register test
        NrootXY(const std::string& s, int n0, const Gecode::IntSet& d,
@@ -299,16 +355,12 @@ namespace Test { namespace Int {
                 2,d,false,icl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         if ((x[0] < 0) || (x[1] < 0))
+         if (n == 1)
+           return x[0] == x[1];
+         if ((n % 2 == 0) && ((x[0] < 0) || (x[1] < 0)))
            return false;
-         long long int l = 1;
-         long long int u = 1;
-         for (int i=0; i<n; i++) {
-           l *= x[1]; u *= x[1]+1;
-           if (l > Gecode::Int::Limits::max)
-             return false;
-         }
-         return (x[0] >= l) && (x[0] < u);
+         int r = (x[0] < 0) ? -cnroot(n,-x[0]) : fnroot(n,x[0]);
+         return r == x[1]; 
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -333,16 +385,13 @@ namespace Test { namespace Int {
                 1,d,false,icl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         if (x[0] < 0)
-           return false;
-         long long int l = 1;
-         long long int u = 1;
-         for (int i=0; i<n; i++) {
-           l *= x[0]; u *= x[0]+1;
-           if (l > Gecode::Int::Limits::max)
-             return false;
+         if (n == 1)
+           return true;
+         if (n % 2 == 0) {
+           return (x[0] >= 0) && (x[0] <= 1);
+         } else {
+           return (x[0] >= -2) && (x[0] <= 1);
          }
-         return (x[0] >= l) && (x[0] < u);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {

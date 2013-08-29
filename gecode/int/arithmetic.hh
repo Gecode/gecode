@@ -442,6 +442,32 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /**
+   * \brief Positive bounds consistent n-th root propagator
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class Ops, bool minus>
+  class NrootPlusBnd : public BinaryPropagator<IntView,PC_INT_BND> {
+  protected:
+    using BinaryPropagator<IntView,PC_INT_BND>::x0;
+    using BinaryPropagator<IntView,PC_INT_BND>::x1;
+    /// Operations
+    Ops ops;
+    /// Constructor for cloning \a p
+    NrootPlusBnd(Space& home, bool share, NrootPlusBnd<Ops,minus>& p);
+    /// Constructor for posting
+    NrootPlusBnd(Home home, IntView x0, IntView x1, const Ops& ops);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
+  };
+
+  /**
    * \brief Bounds consistent n-th root propagator
    *
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
@@ -463,6 +489,40 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post propagator
+    static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
+  };
+
+  /**
+   * \brief Domain consistent n-th root propagator
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class Ops, bool minus>
+  class NrootPlusDom : public BinaryPropagator<IntView,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<IntView,PC_INT_DOM>::x0;
+    using BinaryPropagator<IntView,PC_INT_DOM>::x1;
+    /// Operations
+    Ops ops;
+    /// Constructor for cloning \a p
+    NrootPlusDom(Space& home, bool share, NrootPlusDom<Ops,minus>& p);
+    /// Constructor for posting
+    NrootPlusDom(Home home, IntView x0, IntView x1, const Ops& ops);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is low unary.
+     * If in stage for bounds propagation, the cost is
+     * low binary. Otherwise it is high binary.
+     */
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator
     static ExecStatus post(Home home, IntView x0, IntView x1, Ops ops);
   };

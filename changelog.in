@@ -73,6 +73,15 @@ Date: 2013-99-99
 Bla!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks: Kish Shen
+[DESCRIPTION]
+The nroot constraint now propagates correctly for negative
+numbers when the exponent is odd.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

@@ -43,6 +43,110 @@
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
+   * Positive bounds consistent nth root
+   *
+   */
+
+  template<class Ops, bool minus>
+  forceinline ExecStatus
+  prop_nroot_plus_bnd(Space& home, IntView x0, IntView x1, const Ops& ops) {
+    if (minus) {
+      bool mod;
+      do {
+        mod = false;
+        {
+          ModEvent me = x1.gq(home,-ops.cnroot(-x0.min()));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x1.lq(home,-ops.cnroot(-x0.max()));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x0.gq(home,-ops.tpow(-x1.min()));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x0.lq(home,-(ops.tpow(-x1.max()-1)+1));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+      } while (mod);
+    } else {
+      bool mod;
+      do {
+        mod = false;
+        {
+          ModEvent me = x1.lq(home,ops.fnroot(x0.max()));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x1.gq(home,ops.fnroot(x0.min()));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x0.le(home,ops.tpow(x1.max()+1));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+        {
+          ModEvent me = x0.gq(home,ops.tpow(x1.min()));
+          if (me_failed(me)) return ES_FAILED;
+          mod |= me_modified(me);
+        }
+      } while (mod);
+    }
+    return ES_OK;
+  }
+
+  template<class Ops, bool minus>
+  forceinline
+  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Home home, IntView x0, IntView x1, 
+                                        const Ops& o)
+    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1), 
+      ops(o) {}
+
+  template<class Ops, bool minus>
+  forceinline ExecStatus
+  NrootPlusBnd<Ops,minus>::post(Home home, IntView x0, IntView x1, Ops ops) {
+    if (minus) {
+      GECODE_ME_CHECK(x0.lq(home,0));
+      GECODE_ME_CHECK(x1.lq(home,0));
+    } else {
+      GECODE_ME_CHECK(x0.gq(home,0));
+      GECODE_ME_CHECK(x1.gq(home,0));
+    }
+    (void) new (home) NrootPlusBnd<Ops,minus>(home,x0,x1,ops);
+    return ES_OK;
+  }
+
+  template<class Ops, bool minus>
+  forceinline
+  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Space& home, bool share, 
+                                        NrootPlusBnd<Ops,minus>& p)
+    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p), 
+      ops(p.ops) {}
+
+  template<class Ops, bool minus>
+  Actor*
+  NrootPlusBnd<Ops,minus>::copy(Space& home, bool share) {
+    return new (home) NrootPlusBnd<Ops,minus>(home,share,*this);
+  }
+
+  template<class Ops, bool minus>
+  ExecStatus
+  NrootPlusBnd<Ops,minus>::propagate(Space& home, const ModEventDelta&) {
+    GECODE_ES_CHECK((prop_nroot_plus_bnd<Ops,minus>(home,x0,x1,ops)));
+    return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+  }
+
+
+  /*
    * Bounds consistent nth root
    *
    */
@@ -50,30 +154,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   forceinline ExecStatus
   prop_nroot_bnd(Space& home, IntView x0, IntView x1, const Ops& ops) {
-    bool mod;
-    do {
-      mod = false;
-      {
-        ModEvent me = x1.lq(home,ops.fnroot(x0.max()));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x1.gq(home,ops.fnroot(x0.min()));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x0.le(home,ops.tpow(x1.max()+1));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-      {
-        ModEvent me = x0.gq(home,ops.pow(x1.min()));
-        if (me_failed(me)) return ES_FAILED;
-        mod |= me_modified(me);
-      }
-    } while (mod);
+    assert((x0.min() < 0) && (x0.max() > 0));
+    assert((x1.min() < 0) && (x1.max() > 0));
+    
+    GECODE_ME_CHECK(x1.lq(home,ops.fnroot(x0.max())));
+    GECODE_ME_CHECK(x1.gq(home,-ops.cnroot(-x0.min())));
+    GECODE_ME_CHECK(x0.le(home,ops.tpow(x1.max()+1)));
+    GECODE_ME_CHECK(x0.gq(home,ops.tpow(x1.min()-1)+1));
+
     return ES_OK;
   }
 
@@ -81,18 +169,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline
   NrootBnd<Ops>::NrootBnd(Home home, IntView x0, IntView x1, const Ops& o)
     : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1), 
-      ops(o) {
-  }
+      ops(o) {}
 
   template<class Ops>
   forceinline ExecStatus
   NrootBnd<Ops>::post(Home home, IntView x0, IntView x1, Ops ops) {
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x1.gq(home,0));
-
     if (static_cast<unsigned int>(ops.exp()) >= sizeof(int) * CHAR_BIT) {
-      // The integer limits allow only 0 and 1 for x1
+      // The integer limits allow only -2, -1, 0, 1 for x1
       GECODE_ME_CHECK(x1.lq(home,1));
+      GECODE_ME_CHECK(x1.gq(home,-2));
+      // Just rewrite to values that can be handeled without overflow
+      ops.exp(ops.even() ? 30 : 31);
     }
 
     if (ops.exp() == 0) {
@@ -104,16 +191,30 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (same(x0,x1)) {
       assert(ops.exp() > 1);
-      GECODE_ME_CHECK(x1.lq(home,1));
+      GECODE_ME_CHECK(x0.lq(home,1));
+      GECODE_ME_CHECK(x0.gq(home,ops.even() ? 0 : -2));
       return ES_OK;
     } 
 
     // Limits values such that no overflow can occur
     GECODE_ME_CHECK(x1.lq(home,ops.fnroot(Limits::max)));
+    GECODE_ME_CHECK(x1.gq(home,-ops.cnroot(-Limits::min)));
 
+    if (ops.even()) {
+      GECODE_ME_CHECK(x0.gq(home,0));
+      GECODE_ME_CHECK(x1.gq(home,0));
+    }
+
+    if ((x0.min() >= 0) || (x1.min() >= 0))
+      return NrootPlusBnd<Ops,false>::post(home,x0,x1,ops);
+
+    if ((x0.max() <= 0) || (x1.max() <= 0))
+      return NrootPlusBnd<Ops,true>::post(home,x0,x1,ops);
+
+    assert((x0.min() < 0) && (x0.max() > 0));
+    assert((x1.min() < 0) && (x1.max() > 0));
     GECODE_ES_CHECK(prop_nroot_bnd<Ops>(home,x0,x1,ops));
     (void) new (home) NrootBnd(home,x0,x1,ops);
-
     return ES_OK;
   }
 
@@ -132,8 +233,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   ExecStatus
   NrootBnd<Ops>::propagate(Space& home, const ModEventDelta&) {
+    assert(!ops.even());
+    if ((x0.min() >= 0) || (x1.min() >= 0))
+      GECODE_REWRITE(*this,(NrootPlusBnd<Ops,false>::post(home,x0,x1,ops)));
+
+    if ((x0.max() <= 0) || (x1.max() <= 0))
+      GECODE_REWRITE(*this,(NrootPlusBnd<Ops,true>::post(home,x0,x1,ops)));
+
     GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
-    return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+
+    return x0.assigned() && x1.assigned() ? home.ES_SUBSUMED(*this) : ES_NOFIX;
   }
 
 
@@ -152,7 +261,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     forceinline RangesMapPow(const Ops& o) : ops(o) {}
     /// Perform mapping of minimum
     forceinline int min(int x) const {
-      return ops.pow(x);
+      return ops.tpow(x);
     }
     /// Perform mapping of maximum
     forceinline int max(int x) const {
@@ -171,13 +280,89 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     forceinline RangesMapNroot(const Ops& o) : ops(o) {}
     /// Perform mapping of minimum
     forceinline int min(int x) const {
-      return ops.fnroot(x);
+      return (x < 0) ? -ops.cnroot(-x) : ops.fnroot(x);
     }
     /// Perform mapping of maximum
     forceinline int max(int x) const {
-      return ops.fnroot(x);
+      return (x < 0) ? -ops.cnroot(-x) : ops.fnroot(x);
     }
  };
+
+  template<class Ops, bool minus>
+  forceinline
+  NrootPlusDom<Ops,minus>::NrootPlusDom(Home home, IntView x0, IntView x1, 
+                                        const Ops& o)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,x0,x1),
+      ops(o) {}
+
+  template<class Ops, bool minus>
+  forceinline ExecStatus
+  NrootPlusDom<Ops,minus>::post(Home home, IntView x0, IntView x1, Ops ops) {
+    if (minus) {
+      GECODE_ME_CHECK(x0.lq(home,0));
+      GECODE_ME_CHECK(x1.lq(home,0));
+    } else {
+      GECODE_ME_CHECK(x0.gq(home,0));
+      GECODE_ME_CHECK(x1.gq(home,0));
+    }
+    GECODE_ES_CHECK((prop_nroot_plus_bnd<Ops,minus>(home,x0,x1,ops)));
+    (void) new (home) NrootPlusDom<Ops,minus>(home,x0,x1,ops);
+    return ES_OK;
+  }
+
+  template<class Ops, bool minus>
+  forceinline
+  NrootPlusDom<Ops,minus>::NrootPlusDom(Space& home, bool share, 
+                                        NrootPlusDom<Ops,minus>& p)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p), 
+      ops(p.ops) {}
+
+  template<class Ops, bool minus>
+  Actor*
+  NrootPlusDom<Ops,minus>::copy(Space& home, bool share) {
+    return new (home) NrootPlusDom<Ops,minus>(home,share,*this);
+  }
+
+  template<class Ops, bool minus>
+  PropCost
+  NrootPlusDom<Ops,minus>::cost(const Space&, const ModEventDelta& med) const {
+    if (IntView::me(med) == ME_INT_VAL)
+      return PropCost::unary(PropCost::LO);
+    else if (IntView::me(med) == ME_INT_DOM)
+      return PropCost::binary(PropCost::HI);
+    else
+      return PropCost::binary(PropCost::LO);
+  }
+
+  template<class Ops, bool minus>
+  ExecStatus
+  NrootPlusDom<Ops,minus>::propagate(Space& home, const ModEventDelta& med) {
+    if (IntView::me(med) != ME_INT_DOM) {
+      GECODE_ES_CHECK((prop_nroot_plus_bnd<Ops,minus>(home,x0,x1,ops)));
+      return x1.assigned() ? home.ES_SUBSUMED(*this)
+        : home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
+    }
+
+    {
+      ViewRanges<IntView> r(x0);
+      RangesMapNroot<Ops> rmn(ops);
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapNroot<Ops>,false> 
+        m(r,rmn);
+      GECODE_ME_CHECK(x1.inter_r(home,m,false));
+    }
+
+    {
+      ViewRanges<IntView> r(x1);
+      RangesMapPow<Ops> rmp(ops);
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapPow<Ops>,true> 
+        m(r,rmp);
+      GECODE_ME_CHECK(x0.inter_r(home,m,false));
+    }
+
+    return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+  }
+
+
 
   template<class Ops>
   forceinline
@@ -188,12 +373,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   forceinline ExecStatus
   NrootDom<Ops>::post(Home home, IntView x0, IntView x1, Ops ops) {
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x1.gq(home,0));
-
     if (static_cast<unsigned int>(ops.exp()) >= sizeof(int) * CHAR_BIT) {
-      // The integer limits allow only 0 and 1 for x1
+      // The integer limits allow only -2, -1, 0, 1 for x1
       GECODE_ME_CHECK(x1.lq(home,1));
+      GECODE_ME_CHECK(x1.gq(home,-2));
+      // Just rewrite to values that can be handeled without overflow
+      ops.exp(ops.even() ? 30 : 31);
     }
 
     if (ops.exp() == 0) {
@@ -205,16 +390,30 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (same(x0,x1)) {
       assert(ops.exp() > 1);
-      GECODE_ME_CHECK(x1.lq(home,1));
+      GECODE_ME_CHECK(x0.lq(home,1));
+      GECODE_ME_CHECK(x0.gq(home,ops.even() ? 0 : -2));
       return ES_OK;
     } 
 
     // Limits values such that no overflow can occur
     GECODE_ME_CHECK(x1.lq(home,ops.fnroot(Limits::max)));
+    GECODE_ME_CHECK(x1.gq(home,-ops.cnroot(-Limits::min)));
 
-    GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
-    (void) new (home) NrootDom<Ops>(home,x0,x1,ops);
+    if (ops.even()) {
+      GECODE_ME_CHECK(x0.gq(home,0));
+      GECODE_ME_CHECK(x1.gq(home,0));
+    }
 
+    if ((x0.min() >= 0) || (x1.min() >= 0))
+      return NrootPlusDom<Ops,false>::post(home,x0,x1,ops);
+
+    if ((x0.max() <= 0) || (x1.max() <= 0))
+      return NrootPlusDom<Ops,true>::post(home,x0,x1,ops);
+
+    assert((x0.min() < 0) && (x0.max() > 0));
+    assert((x1.min() < 0) && (x1.max() > 0));
+    GECODE_ES_CHECK(prop_nroot_bnd<Ops>(home,x0,x1,ops));
+    (void) new (home) NrootDom(home,x0,x1,ops);
     return ES_OK;
   }
 
@@ -244,9 +443,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   ExecStatus
   NrootDom<Ops>::propagate(Space& home, const ModEventDelta& med) {
+    assert(!ops.even());
+    if ((x0.min() >= 0) || (x1.min() >= 0))
+      GECODE_REWRITE(*this,(NrootPlusDom<Ops,false>::post(home,x0,x1,ops)));
+
+    if ((x0.max() <= 0) || (x1.max() <= 0))
+      GECODE_REWRITE(*this,(NrootPlusDom<Ops,true>::post(home,x0,x1,ops)));
+
     if (IntView::me(med) != ME_INT_DOM) {
-      GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
-      return x1.assigned() ? home.ES_SUBSUMED(*this)
+      GECODE_ES_CHECK(prop_nroot_bnd<Ops>(home,x0,x1,ops));
+      return x0.assigned() && x1.assigned() ? home.ES_SUBSUMED(*this)
         : home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
     }
 
@@ -266,7 +472,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.inter_r(home,m,false));
     }
 
-    return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
+    return x0.assigned() && x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 
