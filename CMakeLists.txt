@@ -303,6 +303,8 @@ file(WRITE ${GECODE_BINARY_DIR}/gecode/support/config.hpp
 #define GECODE_BUILD_SET
 #define GECODE_BUILD_FLOAT
 #define GECODE_BUILD_MINIMODEL
+#define GECODE_BUILD_FLATZINC
+#define GECODE_BUILD_DRIVER
 
 ${CONFIG_OUT}")
 
@@ -350,7 +352,11 @@ foreach (lib support kernel search int set float
     string(TOUPPER ${lib} libupper)
   endif ()
   if (${libupper}SRC)
-    add_library(gecode${lib} ${${libupper}SRC} ${${libupper}HDR})
+    if (${libupper}_GENSRC)
+      add_library(gecode${lib} ${${libupper}SRC} ${${libupper}_GENSRC} ${${libupper}HDR})
+    else ()
+      add_library(gecode${lib} ${${libupper}SRC} ${${libupper}HDR})
+    endif ()
   endif ()
 endforeach ()
 
@@ -374,6 +380,9 @@ endif ()
 
 add_executable(gecode-test ${TESTSRC} ${TESTHDR})
 target_link_libraries(gecode-test gecodeminimodel)
+
+add_executable(fzn-gecode ${FLATZINCEXESRC})
+target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
 
 enable_testing()
 add_test(test gecode-test
