@@ -73,6 +73,20 @@ Date: 2013-99-99
 Bla!
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix CMake to also build FlatZinc and Driver correctly.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed bug in auxiliary variable branching.
+
+[ENTRY]
 Module: minimodel
 What:   new
 Rank:   minor
