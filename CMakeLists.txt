@@ -272,7 +272,7 @@ foreach (i RANGE ${length})
   if (line MATCHES "^#( *)undef (.*)\n")
     set(space "${CMAKE_MATCH_1}")
     set(var ${CMAKE_MATCH_2})
-    if (NOT DEFINED ${var} OR (var MATCHES "HAVE_.*_H" AND NOT ${var}))
+    if (NOT DEFINED ${var} OR (var MATCHES "HAVE_.*" AND NOT ${var}))
       set(line "/* #${space}undef ${var} */\n")
     else ()
       if ("${${var}}" STREQUAL "/**/" OR "${var}" STREQUAL "GECODE_VERSION_NUMBER" OR
