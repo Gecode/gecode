@@ -37,7 +37,7 @@
 # CMake build script for Gecode.
 #
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.8)
 
 project(GECODE)
 
@@ -207,13 +207,22 @@ else ()
   set(GECODE_THREADS_PTHREADS 1)
 endif ()
 
-find_package(Qt4)
-if (QT4_FOUND)
-  set(GECODE_HAS_QT "/**/")
-  set(GECODE_HAS_GIST "/**/")
-  set(EXTRA_LIBS gist)
-  include(${QT_USE_FILE})
-endif ()
+find_package(Qt5 QUIET COMPONENTS Core Gui Widgets PrintSupport)
+if (Qt5_FOUND)
+   set(GECODE_HAS_QT "/**/")
+   set(GECODE_HAS_GIST "/**/")
+   set(EXTRA_LIBS gist)
+   set(CMAKE_AUTOMOC TRUE)
+else()
+  find_package(Qt4)
+  if (QT4_FOUND)
+    set(GECODE_HAS_QT "/**/")
+    set(GECODE_HAS_GIST "/**/")
+    set(EXTRA_LIBS gist)
+    set(CMAKE_AUTOMOC TRUE)
+    include(${QT_USE_FILE})
+  endif()
+endif()
 
 include(CheckSymbolExists)
 check_symbol_exists(getpagesize unistd.h HAVE_GETPAGESIZE)
@@ -305,6 +314,7 @@ file(WRITE ${GECODE_BINARY_DIR}/gecode/support/config.hpp
 #define GECODE_BUILD_MINIMODEL
 #define GECODE_BUILD_FLATZINC
 #define GECODE_BUILD_DRIVER
+#define GECODE_BUILD_GIST
 
 ${CONFIG_OUT}")
 
@@ -352,11 +362,11 @@ foreach (lib support kernel search int set float
     string(TOUPPER ${lib} libupper)
   endif ()
   if (${libupper}SRC)
+    set(sources ${${libupper}SRC})
     if (${libupper}_GENSRC)
-      add_library(gecode${lib} ${${libupper}SRC} ${${libupper}_GENSRC} ${${libupper}HDR})
-    else ()
-      add_library(gecode${lib} ${${libupper}SRC} ${${libupper}HDR})
-    endif ()
+      set(sources ${sources} ${${libupper}_GENSRC})
+    endif()
+    add_library(gecode${lib} ${sources} ${${libupper}HDR})
   endif ()
 endforeach ()
 
@@ -369,8 +379,12 @@ target_link_libraries(gecodeset gecodekernel)
 target_link_libraries(gecodeminimodel gecodeint gecodeset gecodesearch)
 
 if (GECODE_HAS_QT)
-  target_link_libraries(gecodeflatzinc ${QT_LIBRARIES})
-  target_link_libraries(gecodegist ${QT_LIBRARIES})
+  if (Qt5_FOUND)
+    qt5_use_modules(gecodegist Widgets Gui PrintSupport)
+  else()
+    target_link_libraries(gecodeflatzinc ${QT_LIBRARIES})
+    target_link_libraries(gecodegist ${QT_LIBRARIES})
+  endif()
 endif ()
 
 if (FLOATSRC)
