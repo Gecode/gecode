@@ -495,11 +495,12 @@ namespace Test { namespace Int {
         IntArgs u1(4, 1,1,1,1);
         IntArgs u2(4, 2,2,2,2);
         IntArgs u3(4, 2,3,4,5);
+        IntArgs u4(4, 2,3,0,5);
 
         // Regression test: check correct detection of disjunctive case
         IntArgs p5(3, 1,1,1);
-        IntArgs u4(3, 1,3,2);
-        (void) new ManFixPCumulative(3,p5,u4,0);
+        IntArgs u5(3, 1,3,2);
+        (void) new ManFixPCumulative(3,p5,u5,0);
 
         for (int c=-7; c<8; c++) {
           int off = 0;
@@ -507,48 +508,62 @@ namespace Test { namespace Int {
             (void) new ManFixPCumulative(c,p1,u1,off);
             (void) new ManFixPCumulative(c,p1,u2,off);
             (void) new ManFixPCumulative(c,p1,u3,off);
+            (void) new ManFixPCumulative(c,p1,u4,off);
             (void) new ManFixPCumulative(c,p2,u1,off);
             (void) new ManFixPCumulative(c,p2,u2,off);
             (void) new ManFixPCumulative(c,p2,u3,off);
+            (void) new ManFixPCumulative(c,p2,u4,off);
             (void) new ManFixPCumulative(c,p3,u1,off);
             (void) new ManFixPCumulative(c,p3,u2,off);
             (void) new ManFixPCumulative(c,p3,u3,off);
+            (void) new ManFixPCumulative(c,p3,u4,off);
             (void) new ManFixPCumulative(c,p4,u1,off);
             (void) new ManFixPCumulative(c,p4,u2,off);
             (void) new ManFixPCumulative(c,p4,u3,off);
+            (void) new ManFixPCumulative(c,p4,u4,off);
 
             (void) new ManFlexCumulative(c,0,1,u1,off);
             (void) new ManFlexCumulative(c,0,1,u2,off);
             (void) new ManFlexCumulative(c,0,1,u3,off);
+            (void) new ManFlexCumulative(c,0,1,u4,off);
             (void) new ManFlexCumulative(c,0,2,u1,off);
             (void) new ManFlexCumulative(c,0,2,u2,off);
             (void) new ManFlexCumulative(c,0,2,u3,off);
+            (void) new ManFlexCumulative(c,0,2,u4,off);
             (void) new ManFlexCumulative(c,3,5,u1,off);
             (void) new ManFlexCumulative(c,3,5,u2,off);
             (void) new ManFlexCumulative(c,3,5,u3,off);
+            (void) new ManFlexCumulative(c,3,5,u4,off);
 
             (void) new OptFixPCumulative(c,p1,u1,off);
             (void) new OptFixPCumulative(c,p1,u2,off);
             (void) new OptFixPCumulative(c,p1,u3,off);
+            (void) new OptFixPCumulative(c,p1,u4,off);
             (void) new OptFixPCumulative(c,p2,u1,off);
             (void) new OptFixPCumulative(c,p2,u2,off);
             (void) new OptFixPCumulative(c,p2,u3,off);
+            (void) new OptFixPCumulative(c,p2,u4,off);
             (void) new OptFixPCumulative(c,p3,u1,off);
             (void) new OptFixPCumulative(c,p3,u2,off);
             (void) new OptFixPCumulative(c,p3,u3,off);
+            (void) new OptFixPCumulative(c,p3,u4,off);
             (void) new OptFixPCumulative(c,p4,u1,off);
             (void) new OptFixPCumulative(c,p4,u2,off);
             (void) new OptFixPCumulative(c,p4,u3,off);
+            (void) new OptFixPCumulative(c,p4,u4,off);
 
             (void) new OptFlexCumulative(c,0,1,u1,off);
             (void) new OptFlexCumulative(c,0,1,u2,off);
             (void) new OptFlexCumulative(c,0,1,u3,off);
+            (void) new OptFlexCumulative(c,0,1,u4,off);
             (void) new OptFlexCumulative(c,0,2,u1,off);
             (void) new OptFlexCumulative(c,0,2,u2,off);
             (void) new OptFlexCumulative(c,0,2,u3,off);
+            (void) new OptFlexCumulative(c,0,2,u4,off);
             (void) new OptFlexCumulative(c,3,5,u1,off);
             (void) new OptFlexCumulative(c,3,5,u2,off);
             (void) new OptFlexCumulative(c,3,5,u3,off);
+            (void) new OptFlexCumulative(c,3,5,u4,off);
 
             off = Gecode::Int::Limits::min;
           }

@@ -78,6 +78,14 @@ What:   bug
 Rank:   major
 Thanks: Duane Leslie
 [DESCRIPTION]
+Fixed cumulative constraint for 0-usage tasks.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks: Duane Leslie
+[DESCRIPTION]
 Fixed special case check for cumulative that would wrongly classify
 some instances as disjunctive.
 

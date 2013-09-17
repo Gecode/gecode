@@ -86,15 +86,22 @@ namespace Gecode {
         if (t[i] != TT_FIXP) {
           fixp = false; break;
         }
+      int nonOptionals = 0;
+      for (unsigned int i=u.size(); i--;)
+        if (u[i]>0) nonOptionals++;
       if (fixp) {
-        TaskArray<ManFixPTask> tasks(home,s.size());
+        TaskArray<ManFixPTask> tasks(home,nonOptionals);
+        int cur = 0;
         for (int i=0; i<s.size(); i++)
-          tasks[i].init(s[i],p[i],u[i]);
+          if (u[i] > 0)
+            tasks[cur++].init(s[i],p[i],u[i]);
         GECODE_ES_FAIL((ManProp<ManFixPTask,Cap>::post(home,c,tasks)));
       } else {
-        TaskArray<ManFixPSETask> tasks(home,s.size());
+        TaskArray<ManFixPSETask> tasks(home,nonOptionals);
+        int cur = 0;
         for (int i=s.size(); i--;)
-          tasks[i].init(t[i],s[i],p[i],u[i]);
+          if (u[i] > 0)
+            tasks[cur++].init(t[i],s[i],p[i],u[i]);
         GECODE_ES_FAIL((ManProp<ManFixPSETask,Cap>::post(home,c,tasks)));
       }
     }
@@ -154,15 +161,22 @@ namespace Gecode {
         if (t[i] != TT_FIXP) {
           fixp = false; break;
         }
+      int nonOptionals = 0;
+      for (unsigned int i=u.size(); i--;)
+        if (u[i]>0) nonOptionals++;
       if (fixp) {
-        TaskArray<OptFixPTask> tasks(home,s.size());
+        TaskArray<OptFixPTask> tasks(home,nonOptionals);
+        int cur = 0;
         for (int i=0; i<s.size(); i++)
-          tasks[i].init(s[i],p[i],u[i],m[i]);
+          if (u[i]>0)
+            tasks[cur++].init(s[i],p[i],u[i],m[i]);
         GECODE_ES_FAIL((OptProp<OptFixPTask,Cap>::post(home,c,tasks)));
       } else {
-        TaskArray<OptFixPSETask> tasks(home,s.size());
+        TaskArray<OptFixPSETask> tasks(home,nonOptionals);
+        int cur = 0;
         for (int i=s.size(); i--;)
-          tasks[i].init(t[i],s[i],p[i],u[i],m[i]);
+          if (u[i]>0)
+            tasks[cur++].init(t[i],s[i],p[i],u[i],m[i]);
         GECODE_ES_FAIL((OptProp<OptFixPSETask,Cap>::post(home,c,tasks)));
       }
     }
@@ -221,10 +235,14 @@ namespace Gecode {
       GECODE_ME_FAIL(c.gq(home,maxU));
       unary(home,s,p,icl);
     } else {
-      TaskArray<ManFixPTask> t(home,s.size());
-      for (int i=0; i<s.size(); i++) {
-        t[i].init(s[i],p[i],u[i]);
-      }
+      int nonOptionals = 0;
+      for (unsigned int i=u.size(); i--;)
+        if (u[i]>0) nonOptionals++;
+      TaskArray<ManFixPTask> t(home,nonOptionals);
+      int cur = 0;
+      for (int i=0; i<s.size(); i++)
+        if (u[i]>0)
+          t[cur++].init(s[i],p[i],u[i]);
       GECODE_ES_FAIL((ManProp<ManFixPTask,Cap>::post(home,c,t)));
     }
   }
@@ -275,10 +293,14 @@ namespace Gecode {
     if (allMandatory) {
       cumulative(home,c,s,p,u,icl);
     } else {
-      TaskArray<OptFixPTask> t(home,s.size());
-      for (int i=0; i<s.size(); i++) {
-        t[i].init(s[i],p[i],u[i],m[i]);
-      }
+      int nonOptionals = 0;
+      for (unsigned int i=u.size(); i--;)
+        if (u[i]>0) nonOptionals++;
+      TaskArray<OptFixPTask> t(home,nonOptionals);
+      int cur = 0;
+      for (int i=0; i<s.size(); i++)
+        if (u[i]>0)
+          t[cur++].init(s[i],p[i],u[i],m[i]);
       GECODE_ES_FAIL((OptProp<OptFixPTask,Cap>::post(home,c,t)));
     }
   }
@@ -335,9 +357,14 @@ namespace Gecode {
         pp[i] = p[i].val();
       cumulative(home,c,s,pp,u,icl);
     } else {
-      TaskArray<ManFlexTask> t(home,s.size());
-      for (int i=s.size(); i--; )
-        t[i].init(s[i],p[i],e[i],u[i]);
+      int nonOptionals = 0;
+      for (unsigned int i=u.size(); i--;)
+        if (u[i]>0) nonOptionals++;
+      TaskArray<ManFlexTask> t(home,nonOptionals);
+      int cur = 0;
+      for (int i=0; i<s.size(); i++)
+        if (u[i]>0)
+          t[cur++].init(s[i],p[i],e[i],u[i]);
       GECODE_ES_FAIL((ManProp<ManFlexTask,Cap>::post(home,c,t)));
     }
   }
@@ -393,9 +420,14 @@ namespace Gecode {
     if (allMandatory) {
       cumulative(home,c,s,p,e,u,icl);
     } else {
-      TaskArray<OptFlexTask> t(home,s.size());
+      int nonOptionals = 0;
+      for (unsigned int i=u.size(); i--;)
+        if (u[i]>0) nonOptionals++;
+      TaskArray<OptFlexTask> t(home,nonOptionals);
+      int cur = 0;
       for (int i=s.size(); i--; )
-        t[i].init(s[i],p[i],e[i],u[i],m[i]);
+        if (u[i]>0)
+          t[cur++].init(s[i],p[i],e[i],u[i],m[i]);
       GECODE_ES_FAIL((OptProp<OptFlexTask,Cap>::post(home,c,t)));
     }
   }
