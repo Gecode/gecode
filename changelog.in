@@ -76,6 +76,15 @@ Bla!
 Module: int
 What:   bug
 Rank:   major
+Thanks: Duane Leslie
+[DESCRIPTION]
+Fixed special case check for cumulative that would wrongly classify
+some instances as disjunctive.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
 Thanks: Kish Shen
 [DESCRIPTION]
 The nroot constraint now propagates correctly for negative

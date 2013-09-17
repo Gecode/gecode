@@ -67,9 +67,10 @@ namespace Gecode {
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
     for (int i=u.size(); i--;) {
-      if (u[i] < minU)
+      if (u[i] < minU) {
+        minU2 = minU;
         minU = u[i];
-      else if (u[i] < minU2)
+      } else if (u[i] < minU2)
         minU2 = u[i];
       if (u[i] > maxU)
         maxU = u[i];
@@ -206,9 +207,10 @@ namespace Gecode {
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
     for (int i=u.size(); i--;) {
-      if (u[i] < minU)
+      if (u[i] < minU) {
+        minU2 = minU;
         minU = u[i];
-      else if (u[i] < minU2)
+      } else if (u[i] < minU2)
         minU2 = u[i];
       if (u[i] > maxU)
         maxU = u[i];

@@ -496,6 +496,11 @@ namespace Test { namespace Int {
         IntArgs u2(4, 2,2,2,2);
         IntArgs u3(4, 2,3,4,5);
 
+        // Regression test: check correct detection of disjunctive case
+        IntArgs p5(3, 1,1,1);
+        IntArgs u4(3, 1,3,2);
+        (void) new ManFixPCumulative(3,p5,u4,0);
+
         for (int c=-7; c<8; c++) {
           int off = 0;
           for (int coff=0; coff<2; coff++) {
