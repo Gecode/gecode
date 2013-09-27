@@ -1655,35 +1655,29 @@ namespace Gecode { namespace FlatZinc {
                              AST::Node *) {
       p_set_rel_reif(s,SRT_SUP,ce);
     }
-    void p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
+    void p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann, ReifyMode rm) {
       if (!ce[1]->isSetVar()) {
-        IntSet d = s.arg2intset(ce[1]);
-        if (ce[0]->isBoolVar()) {
-          IntSetRanges dr(d);
-          Iter::Ranges::Singleton sr(0,1);
-          Iter::Ranges::Inter<IntSetRanges,Iter::Ranges::Singleton> i(dr,sr);
-          IntSet d01(i);
-          if (d01.size() == 0) {
-            rel(s, s.arg2BoolVar(ce[2]) == 0);
-          } else if (d01.max() == 0) {
-            rel(s, s.arg2BoolVar(ce[2]) == !s.arg2BoolVar(ce[0]));
-          } else if (d01.min() == 1) {
-            rel(s, s.arg2BoolVar(ce[2]) == s.arg2BoolVar(ce[0]));
-          } else {
-            rel(s, s.arg2BoolVar(ce[2]) == 1);
-          }
+        if (rm==RM_EQV) {
+          p_int_in_reif(s,ce,ann);
         } else {
-          dom(s, s.arg2IntVar(ce[0]), d, s.arg2BoolVar(ce[2]));
+          assert(rm==RM_IMP);
+          p_int_in_imp(s,ce,ann);
         }
       } else {
         if (!ce[0]->isIntVar()) {
           dom(s, s.arg2SetVar(ce[1]), SRT_SUP, ce[0]->getInt(),
-              s.arg2BoolVar(ce[2]));
+              Reify(s.arg2BoolVar(ce[2]),rm));
         } else {
           rel(s, s.arg2SetVar(ce[1]), SRT_SUP, s.arg2IntVar(ce[0]),
-              s.arg2BoolVar(ce[2]));
+              Reify(s.arg2BoolVar(ce[2]),rm));
         }
       }
+    }
+    void p_set_in_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_set_in_reif(s,ce,ann,RM_EQV);
+    }
+    void p_set_in_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_set_in_reif(s,ce,ann,RM_IMP);
     }
     void p_set_disjoint(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       rel(s, s.arg2SetVar(ce[0]), SRT_DISJ, s.arg2SetVar(ce[1]));
@@ -1855,6 +1849,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_subset_reif", &p_set_subset_reif);
         registry().add("set_superset_reif", &p_set_superset_reif);
         registry().add("set_in_reif", &p_set_in_reif);
+        registry().add("set_in_imp", &p_set_in_imp);
         registry().add("disjoint", &p_set_disjoint);
         registry().add("gecode_link_set_to_booleans", 
                        &p_link_set_to_booleans);
