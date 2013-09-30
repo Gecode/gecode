@@ -259,6 +259,14 @@ namespace Gecode { namespace Int { namespace Sorted {
         break;
       }
 
+    if (Perm) {
+      // check consistency of channeling after normalization
+      if (!channel(home,x,y,z,nofix))
+        return ES_FAILED;
+      if (nofix)
+        return ES_NOFIX;
+    }
+
     /*
      * STEP 4:
      *  Compute the strongly connected components in

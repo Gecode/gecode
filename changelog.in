@@ -76,6 +76,14 @@ Bla!
 Module: int
 What:   bug
 Rank:   major
+Thanks: Bauke Conijn
+[DESCRIPTION]
+Fixed incorrect propagation in sortedness with permutation variables.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
 Thanks: Duane Leslie
 [DESCRIPTION]
 Fixed cumulative constraint for 0-usage tasks.
