@@ -542,15 +542,23 @@ namespace Gecode { namespace Int { namespace Element {
       return es;
     }
     assert(iv.size() > 1);
-    Region r(home);
-    ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
-    for (int i = iv.size(); i--; )
-      i_view[i].init(iv[i].view);
-    Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
-    ModEvent me = x1.inter_r(home,i_val);
-    r.free<ViewRanges<VA> >(i_view,iv.size());
-    GECODE_ME_CHECK(me);
-    return (shared(x0,x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
+    
+    if (x1.assigned()) {
+      for (int i = iv.size(); i--; )
+        if (iv[i].view.in(x1.val()))
+          return shared(x0,x1) ? ES_NOFIX : ES_FIX;
+      return ES_FAILED;
+    } else {
+      Region r(home);
+      ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
+      for (int i = iv.size(); i--; )
+        i_view[i].init(iv[i].view);
+      Iter::Ranges::NaryUnion i_val(r, i_view, iv.size());
+      ModEvent me = x1.inter_r(home,i_val);
+      r.free<ViewRanges<VA> >(i_view,iv.size());
+      GECODE_ME_CHECK(me);
+      return (shared(x0,x1) || me_modified(me)) ? ES_NOFIX : ES_FIX;
+    }
   }
 
 }}}

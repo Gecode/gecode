@@ -74,6 +74,15 @@ Bla!
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   minor
+Thanks: Anne Meyer
+[DESCRIPTION]
+Fix performance of domain consistent element for the case that the result
+variable is assigned.
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   major
 Thanks: Bauke Conijn
