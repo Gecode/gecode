@@ -300,8 +300,8 @@ namespace Gecode {
 #else
     std::cerr << "disabled";
 #endif
-    std::cerr << std::endl;
 #endif
+    std::cerr << std::endl;
     std::cerr << " - Thread support: ";
 #ifdef GECODE_HAS_THREADS
     if (Support::Thread::npu() == 1)
