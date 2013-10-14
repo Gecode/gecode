@@ -1401,27 +1401,36 @@ AC_DEFUN([AC_GECODE_USER_SUFFIX],
 ])
 
 AC_DEFUN([AC_GECODE_THREADS],[
-  AC_CHECK_HEADER(unistd.h,
-  [AC_DEFINE(GECODE_HAS_UNISTD_H,1,[Whether unistd.h is available])]
-  )
-  AC_CHECK_HEADER(pthread.h,
-  [AC_DEFINE(GECODE_THREADS_PTHREADS,1,[Whether we have posix threads])
-   AC_GECODE_ADD_TO_COMPILERFLAGS([-pthread])
-   AC_GECODE_ADD_TO_DLLFLAGS([-pthread])
-   AC_CHECK_HEADER([libkern/OSAtomic.h],
-   [AC_DEFINE(GECODE_THREADS_OSX,1,[Whether we have Mac OS threads])],
-    AC_MSG_CHECKING([for spin locks])
-     AC_TRY_COMPILE([#include <pthread.h>],
-       [pthread_spinlock_t t;],
-       [AC_MSG_RESULT(yes)
-        AC_DEFINE(GECODE_THREADS_PTHREADS_SPINLOCK,1,Whether we have posix spinlocks)],
-[AC_MSG_RESULT(no)]
+  AC_ARG_ENABLE([thread],
+    AC_HELP_STRING([--enable-thread],
+      [build with multi-threading support @<:@default=yes@:>@]))
+  AC_MSG_CHECKING(whether to build with multi-threading support)
+  if test "${enable_thread:-yes}" = "yes"; then
+    AC_MSG_RESULT(yes)
+    AC_CHECK_HEADER(unistd.h,
+    [AC_DEFINE(GECODE_HAS_UNISTD_H,1,[Whether unistd.h is available])]
+    )
+    AC_CHECK_HEADER(pthread.h,
+    [AC_DEFINE(GECODE_THREADS_PTHREADS,1,[Whether we have posix threads])
+     AC_GECODE_ADD_TO_COMPILERFLAGS([-pthread])
+     AC_GECODE_ADD_TO_DLLFLAGS([-pthread])
+     AC_CHECK_HEADER([libkern/OSAtomic.h],
+     [AC_DEFINE(GECODE_THREADS_OSX,1,[Whether we have Mac OS threads])],
+      AC_MSG_CHECKING([for spin locks])
+       AC_TRY_COMPILE([#include <pthread.h>],
+         [pthread_spinlock_t t;],
+         [AC_MSG_RESULT(yes)
+          AC_DEFINE(GECODE_THREADS_PTHREADS_SPINLOCK,1,Whether we have posix spinlocks)],
+  [AC_MSG_RESULT(no)]
+       )
      )
-   )
-  ],
-  [AC_CHECK_HEADER(windows.h,
-    [AC_DEFINE(GECODE_THREADS_WINDOWS,1,[Whether we have windows threads])])]
-  )
+    ],
+    [AC_CHECK_HEADER(windows.h,
+      [AC_DEFINE(GECODE_THREADS_WINDOWS,1,[Whether we have windows threads])])]
+    )
+  else
+    AC_MSG_RESULT(no)
+  fi
 ])
 
 AC_DEFUN([AC_GECODE_TIMER],[

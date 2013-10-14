@@ -38,6 +38,8 @@
  *
  */
 
+#include <cstddef>
+
 #ifdef GECODE_THREADS_WINDOWS
 
 #ifndef NOMINMAX
@@ -126,7 +128,7 @@ namespace Gecode { namespace Support {
     void operator=(const Mutex&) {}
   };
 
-#ifdef GECODE_THREADS_WINDOWS
+#if defined(GECODE_THREADS_WINDOWS) || !defined(GECODE_THREADS_PTHREADS)
 
   typedef Mutex FastMutex;
 
