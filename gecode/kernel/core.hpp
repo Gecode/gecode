@@ -778,6 +778,8 @@ namespace Gecode {
     Propagator(Home home);
     /// Constructor for cloning \a p
     Propagator(Space& home, bool share, Propagator& p);
+    /// Return forwarding pointer during copying
+    Propagator* fwd(void) const;
 
   public:
     /// \name Propagation
@@ -2776,6 +2778,11 @@ namespace Gecode {
     GECODE_NOT_NULL(al);
     const ActorLink& t = *al;
     return static_cast<const Propagator*>(&t);
+  }
+
+  forceinline Propagator*
+  Propagator::fwd(void) const {
+    return static_cast<Propagator*>(prev());
   }
 
   forceinline
