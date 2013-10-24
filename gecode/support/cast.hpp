@@ -46,7 +46,7 @@ namespace Gecode {
 
   /// Cast function pointer
   template<class F1, class F2>
-  forceinline F1 function_cast(F2 f);
+  F1 function_cast(F2 f);
 
 
   template<class T>
@@ -58,7 +58,7 @@ namespace Gecode {
   template<class F1, class F2>
   forceinline F1
   function_cast(F2 f) {
-    return reinterpret_cast<F1>(f);
+    return F1(f);
   }
 
 }

@@ -172,9 +172,9 @@ namespace Gecode { namespace Search { namespace Parallel {
     e_reset_ack_start.wait();
     // All workers are marked as busy again
     n_busy = workers();
-    for (unsigned int i=1; i<workers(); i++)
+    for (unsigned int i=1U; i<workers(); i++)
       worker(i)->reset(NULL,0);
-    worker(0)->reset(s,opt().nogoods_limit);
+    worker(0U)->reset(s,opt().nogoods_limit);
     // Block workers again to ensure invariant
     block();
     // Release reset lock

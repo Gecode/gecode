@@ -164,7 +164,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     delete best;
     best = NULL;
     path.reset();
-    d = mark = 0;
+    d = mark = 0U;
     delete cur;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       cur = NULL;

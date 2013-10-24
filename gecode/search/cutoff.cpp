@@ -85,7 +85,7 @@ namespace Gecode { namespace Search {
         return start[i-1];
       unsigned long int l = log(i);
       if (i == (1U<<(l+1))-1)
-        return 1<<l;
+        return 1UL<<l;
       i=i-(1U<<l)+1;
     }
     GECODE_NEVER;
