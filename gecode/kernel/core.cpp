@@ -422,6 +422,19 @@ namespace Gecode {
     }
   }
 
+  void
+  Space::_trycommit(const Choice& c, unsigned int a) {
+    if (a >= c.alternatives())
+      throw SpaceIllegalAlternative("Space::commit");
+    if (failed())
+      return;
+    if (Brancher* b = brancher(c._id)) {
+      // There is a matching brancher
+      if (b->commit(*this,c,a) == ES_FAILED)
+        fail();
+    }
+  }
+
   NGL*
   Space::ngl(const Choice& c, unsigned int a) {
     if (a >= c.alternatives())
@@ -432,8 +445,7 @@ namespace Gecode {
       // There is a matching brancher
       return b->ngl(*this,c,a);
     } else {
-      // There is no matching brancher!
-      throw SpaceNoBrancher("Space::ngl");
+      return NULL;
     }
   }
 

@@ -161,8 +161,8 @@ namespace Gecode { namespace Search { namespace Meta {
     while ((s < n) && (p.ds[s].truealt() > 0U))
       // Try whether this is a rightmost alternative
       if (p.ds[s].rightmost()) {
-        // No literal needed, directly commit
-        home.commit(*p.ds[s].choice(),p.ds[s].truealt());
+        // No literal needed, directly try to commit
+        home.trycommit(*p.ds[s].choice(),p.ds[s].truealt());
         s++;
       } else {
         // Prune using no-good literals
