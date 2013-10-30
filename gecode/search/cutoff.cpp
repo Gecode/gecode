@@ -138,6 +138,27 @@ namespace Gecode { namespace Search {
   CutoffAppend::~CutoffAppend(void) {
     delete c1; delete c2;
   }
+
+
+  forceinline
+  CutoffRepeat::CutoffRepeat(Cutoff* c1, unsigned long int n0)
+    : c(c1), i(0), n(n0) {
+    cutoff = (*c)();
+  }
+  unsigned long int
+  CutoffRepeat::operator ()(void) {
+    unsigned long int current = cutoff;
+    i++;
+    if (i == n) {
+      cutoff = (*c)();
+      i = 0;
+    }
+    return current;
+  }
+  forceinline
+  CutoffRepeat::~CutoffRepeat(void) {
+    delete c;
+  }
   
   
   Cutoff*
@@ -167,7 +188,11 @@ namespace Gecode { namespace Search {
   Cutoff::append(Cutoff* c1, unsigned long int n, Cutoff* c2) {
     return new CutoffAppend(c1,n,c2);
   }
-  
+  Cutoff*
+  Cutoff::repeat(Cutoff* c, unsigned long int n) {
+  return new CutoffRepeat(c,n);
+  }
+
 }}
 
 // STATISTICS: search-other

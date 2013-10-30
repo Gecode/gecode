@@ -146,6 +146,27 @@ namespace Gecode { namespace Search {
     /// Destructor
     virtual ~CutoffAppend(void);
   };
+
+  /// Cutoff generator that repeats a cutoff from another cutoff generator
+  class CutoffRepeat : public Cutoff {
+    friend class Cutoff;
+  private:
+    /// Actual cutoff generator
+    Cutoff* c;
+    // Current cutoff
+    unsigned int cutoff;
+    // Iteration
+    unsigned long int i;
+    // Number of repetitions
+    unsigned long int n;
+    /// Constructor
+    CutoffRepeat(Cutoff* c, unsigned long int n);
+  public:
+    /// Return next cutoff value
+    virtual unsigned long int operator ()(void);
+    /// Destructor
+    virtual ~CutoffRepeat(void);
+  };
   
   forceinline
   Cutoff::Cutoff(void) {}

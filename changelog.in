@@ -73,6 +73,14 @@ Date: 2013-99-99
 Bla!
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   minor
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Added support for a repeat cutoff generator.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor

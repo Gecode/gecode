@@ -417,6 +417,9 @@ namespace Gecode { namespace Search {
     /// Append cutoff values from \a c2 after \a n values from \a c1
     static Cutoff*
     append(Cutoff* c1, unsigned long int n, Cutoff* c2);
+    /// Create generator that repeats \a n times each cutoff value from \a c
+    static Cutoff*
+    repeat(Cutoff* c, unsigned long int n);
     /// Allocate memory from heap
     static void* operator new(size_t s);
     /// Free memory allocated from heap
