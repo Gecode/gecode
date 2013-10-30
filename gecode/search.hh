@@ -365,6 +365,8 @@ namespace Gecode { namespace Search {
     virtual bool stop(const Statistics& s, const Options& o);
     /// Set current limit for the engine to \a l fails
     void limit(const Search::Statistics& s, unsigned long int l);
+    /// Update statistics
+    void update(const Search::Statistics& s);
     /// Return the stop object to control the engine
     Stop* enginestop(void) const;
     /// Return whether the engine has been stopped

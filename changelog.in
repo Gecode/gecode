@@ -74,6 +74,15 @@ Bla!
 
 [ENTRY]
 Module: search
+What:   bug
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Restart-based search did not work when the cutoff limit did not
+strictly increase.
+
+[ENTRY]
+Module: search
 What:   new
 Rank:   minor
 Thanks:	Roberto Castañeda Lozano

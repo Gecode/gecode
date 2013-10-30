@@ -138,6 +138,11 @@ namespace Gecode { namespace Search {
     e_stop->limit(l);
   }
 
+  forceinline void
+  MetaStop::update(const Search::Statistics& s) {
+    m_stat += s;
+  }
+
   forceinline Stop*
   MetaStop::enginestop(void) const { 
     return e_stop; 

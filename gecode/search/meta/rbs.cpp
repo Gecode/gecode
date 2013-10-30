@@ -51,6 +51,7 @@ namespace Gecode { namespace Search { namespace Meta {
         master->constrain(*n);
         master->master(i,n,ng);
         stop->m_stat.nogood += ng.ng();
+        stop->update(e->statistics());
         if (master->status(stop->m_stat) == SS_FAILED) {
           delete master;
           master = NULL;

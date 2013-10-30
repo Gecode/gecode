@@ -94,6 +94,7 @@ namespace Gecode { namespace Search {
 
   forceinline void
   Worker::reset(unsigned long int d) {
+    Statistics::reset();
     root_depth = d;
     if (depth < d)
       depth = d;
