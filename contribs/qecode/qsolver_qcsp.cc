@@ -56,7 +56,7 @@ Strategy QCSP_Solver::solve(unsigned long int& nodes, unsigned int limit) {
 	this->limit=limit;
 	MySpace* espace=sp->getSpace(0);
   Options o;
-  Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,sizeof(MySpace),o);	
+  Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,/*sizeof(MySpace),*/o);	
 	return rSolve(sp,0,solutions,nodes);
 }
 
@@ -121,7 +121,7 @@ Strategy QCSP_Solver::rSolve(Qcop* qs,int scope,Engine* L, unsigned long int& no
 				}
       }			
       Options o;
-      Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,sizeof(MySpace),o);
+      Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,/*sizeof(MySpace),*/o);
       delete espace;
       result=rSolve(qs,scope+1,solutions,nodes);
     }

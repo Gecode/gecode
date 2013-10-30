@@ -96,7 +96,7 @@ WorkManager::WorkManager(Qcop* p,WorkComparator* c) : Todos(c) {
   vector<int> v;
   MySpace* espace=p->getSpace(0);
   Options o;
-  Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,sizeof(MySpace),o);
+  Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,/*sizeof(MySpace),*/o);
   QWork first(0,v,solutions);
   Todos.push(first);
   finished=false;

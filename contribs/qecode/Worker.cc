@@ -199,7 +199,7 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
 				}
       }			
       Options o;
-      Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,sizeof(MySpace),o);
+      Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,/*sizeof(MySpace),*/o);
       delete espace;
 			
       access.acquire();
