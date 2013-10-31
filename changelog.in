@@ -74,6 +74,13 @@ This release fixes several major bugs and adds some minor
 improvements.
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Compiles with MSVC 2013.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major

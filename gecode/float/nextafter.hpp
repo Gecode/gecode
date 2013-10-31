@@ -36,7 +36,9 @@
  */
 
 
-#ifdef _MSC_VER
+// Needed for Microsoft Visual C++ prior to 2013
+
+#if defined(_MSC_VER) && (_MSC_VER < 1800)
 
 // Provide access to nextafter function
 
