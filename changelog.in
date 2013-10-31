@@ -68,9 +68,10 @@
 
 [RELEASE]
 Version: 4.2.1
-Date: 2013-99-99
+Date: 2013-11-01
 [DESCRIPTION]
-Bla!
+This release fixes several major bugs and adds some minor
+improvements.
 
 [ENTRY]
 Module: search
