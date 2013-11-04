@@ -46,6 +46,7 @@ annotation activity_min;
 annotation activity_size_min;
 annotation activity_max;
 annotation activity_size_max;
+annotation random;
 annotation int_assign(array[int] of var int: x, ann:a);
 
 annotation int_default_search(ann: varsel, ann: valsel);
