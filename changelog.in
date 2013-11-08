@@ -72,6 +72,15 @@ Date: 2013-11-05
 [DESCRIPTION]
 Gaga!
 
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Duane Leslie
+[DESCRIPTION]
+No-good literals for greater-or-equal did not prune as much as they should.
+
+
 [RELEASE]
 Version: 4.2.1
 Date: 2013-11-05
