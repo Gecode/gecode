@@ -73,6 +73,14 @@ Date: 2013-11-05
 Gaga!
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+The function brancher did not return a handle.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
