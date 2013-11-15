@@ -73,6 +73,17 @@ Date: 2013-11-05
 Gaga!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Roberto Castañeda Lozano, Gabriel Hjort Blindell
+[DESCRIPTION]
+In extremely rare cases, the bounds-consistent distinct (and
+hence all other distinct propagators as they use the
+bounds-consisten one internally) propagator could suffer from
+numerical overflow.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor
