@@ -1136,7 +1136,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post doamin consistent propagator for \f$ x_i \sim_{irt} y \f$ for all \f$0\leq i<|x|\f$
+  /** \brief Post domain consistent propagator for \f$ x_i \sim_{irt} y \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
