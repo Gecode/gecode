@@ -318,10 +318,7 @@ AC_SUBST(ALLVIS, ${ac_gecode_vis})
 
 VERSION_DASHES=`echo $PACKAGE_VERSION | sed -e s/\\\\./-/g`
 
-ARR=($(echo $PACKAGE_VERSION | sed 's/\./ /g'))
-changequote(,)
-PACKAGE_VERSION_NUMBER=$(expr $(expr $(expr ${ARR[0]} "*" 100000) + $(expr ${ARR[1]} "*" 100)) + ${ARR[2]})
-changequote([,])
+PACKAGE_VERSION_NUMBER=`echo $PACKAGE_VERSION | awk -F. '{print $1 * 100000 + $2 * 100 + $3}'`
 
 AC_DEFINE_UNQUOTED(GECODE_VERSION,
   "${PACKAGE_VERSION}",
