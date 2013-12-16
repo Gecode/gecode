@@ -72,6 +72,13 @@ Date: 2013-11-05
 [DESCRIPTION]
 Gaga!
 
+[ENRTY]
+Module: minimodel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed posting of set relations involving constants.
+
 [ENTRY]
 Module: int
 What:   bug
@@ -80,7 +87,7 @@ Thanks:	Roberto Castañeda Lozano, Gabriel Hjort Blindell
 [DESCRIPTION]
 In extremely rare cases, the bounds-consistent distinct (and
 hence all other distinct propagators as they use the
-bounds-consisten one internally) propagator could suffer from
+bounds-consistent one internally) propagator could suffer from
 numerical overflow.
 
 [ENTRY]
