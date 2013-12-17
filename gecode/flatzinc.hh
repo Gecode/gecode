@@ -558,7 +558,7 @@ namespace Gecode { namespace FlatZinc {
   };
 
   /// %Exception class for %FlatZinc errors
-  class Error {
+  class GECODE_VTABLE_EXPORT Error {
   private:
     const std::string msg;
   public:

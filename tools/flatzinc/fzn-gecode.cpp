@@ -60,33 +60,38 @@ int main(int argc, char** argv) {
   
   FlatZinc::Printer p;
   FlatZinc::FlatZincSpace* fg = NULL;
-  if (!strcmp(filename, "-")) {
-    fg = FlatZinc::parse(cin, p);
-  } else {
-    fg = FlatZinc::parse(filename, p);
-  }
-
-  if (fg) {
-    
-    fg->createBranchers(fg->solveAnnotations(), opt.seed(), opt.decay(),
-                        false, std::cerr);
-    fg->shrinkArrays(p);
-    if (opt.output()) {
-      std::ofstream os(opt.output());
-      if (!os.good()) {
-        std::cerr << "Could not open file " << opt.output() << " for output."
-                  << std::endl;
-        exit(EXIT_FAILURE);
-      }      
-      fg->run(os, p, opt, t_total);
-      os.close();
+  try {
+    if (!strcmp(filename, "-")) {
+      fg = FlatZinc::parse(cin, p);
     } else {
-      fg->run(std::cout, p, opt, t_total);
+      fg = FlatZinc::parse(filename, p);
     }
-  } else {
-    exit(EXIT_FAILURE);    
+
+    if (fg) {
+    
+      fg->createBranchers(fg->solveAnnotations(), opt.seed(), opt.decay(),
+                          false, std::cerr);
+      fg->shrinkArrays(p);
+      if (opt.output()) {
+        std::ofstream os(opt.output());
+        if (!os.good()) {
+          std::cerr << "Could not open file " << opt.output() << " for output."
+                    << std::endl;
+          exit(EXIT_FAILURE);
+        }      
+        fg->run(os, p, opt, t_total);
+        os.close();
+      } else {
+        fg->run(std::cout, p, opt, t_total);
+      }
+    } else {
+      exit(EXIT_FAILURE);    
+    }
+    delete fg;
+  } catch (FlatZinc::Error& e) {
+    std::cerr << "Error: " << e.toString() << std::endl;
+    return 1;
   }
-  delete fg;
   
   return 0;
 }
