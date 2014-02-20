@@ -73,6 +73,15 @@ Date: 2013-11-05
 Gaga!
 
 [ENRTY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Bauke Conijn
+[DESCRIPTION]
+Re-enabled parts of not-first-not-last propagation for unary with
+optional tasks.
+
+[ENRTY]
 Module: flatzinc
 What:   bug
 Rank:   minor

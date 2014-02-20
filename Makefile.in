@@ -1899,7 +1899,7 @@ distdoc: doc
 
 clean:
 	$(RMF) *.stackdump core gmon.out \
-		vc70.pdb vc80.pdb vc90.pdb vc100.pdb vc110.pdb
+		vc70.pdb vc80.pdb vc90.pdb vc100.pdb vc110.pdb vc120.pdb
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh \
 		 changelog.hh doxygen.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
