@@ -72,6 +72,14 @@ Date: 2013-11-05
 [DESCRIPTION]
 Gaga!
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Victor Zverovich
+[DESCRIPTION]
+Fixed FlatZinc interpreter to compile with clang in C++11 mode.
+
 [ENRTY]
 Module: int
 What:   bug

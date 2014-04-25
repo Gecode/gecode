@@ -277,7 +277,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   BranchInformation::init(void) {
-    assert(object() == false);
+    assert(object() == NULL);
     object(new BranchInformationO());
   }
 
