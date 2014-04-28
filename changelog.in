@@ -73,6 +73,22 @@ Date: 2013-11-05
 Gaga!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks: Victor Zverovich
+[DESCRIPTION]
+Removed compiler warning.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks: Victor Zverovich
+[DESCRIPTION]
+Removed compiler warning.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
