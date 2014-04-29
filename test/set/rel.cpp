@@ -61,7 +61,7 @@ namespace Test { namespace Set {
       /// Create and register test
       RelBin(Gecode::SetRelType srt0, bool shared0)
         : SetTest("Rel::Bin::"+str(srt0)+"::S"+(shared0 ? "1":"0"),
-                  shared ? 1 : 2,ds_33,true)
+                  shared0 ? 1 : 2,ds_33,true)
         , srt(srt0), shared(shared0){}
       int minSymDiff(const SetAssignment& x) const {
         int x1 = shared ? x[0] : x[1];
