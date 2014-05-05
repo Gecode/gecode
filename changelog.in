@@ -76,6 +76,14 @@ Gaga!
 Module: other
 What:   bug
 Rank:   minor
+Thanks: Roland Stigge
+[DESCRIPTION]
+Added patch for PowerPC (downstream patch from Debian).
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
 Thanks: David Rijsman
 [DESCRIPTION]
 Added missing boost header files.
