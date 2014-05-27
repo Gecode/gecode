@@ -73,6 +73,14 @@ Date: 2013-11-05
 Gaga!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Allow 0.0 as decay value.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor
