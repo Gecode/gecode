@@ -73,6 +73,24 @@ Date: 2013-11-05
 Gaga!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+Thanks: Stefano Gualandi, Brian Kell, Willem-Jan Van Hoeve
+[DESCRIPTION]
+Added example for multi-dimensional bin-packing
+constraint. Thanks to Brian and Willem-Jan for allowing us to use
+their data set.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+Author: Stefano Gualandi
+[DESCRIPTION]
+Added multi-dimensional bin-packing constraint.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
@@ -1257,7 +1275,7 @@ Rank:	major
 [DESCRIPTION]
 Added activity-based branching strategies for integer and Boolean
 variables: INT_VAR_ACTIVITY_MIN, INT_VAR_ACTIVITY_MAX,
-INT_VAR_ACTIVITY_SIZE__MIN, INT_VAR_ACTIVITY_SIZE_MAX. For
+INT_VAR_ACTIVITY_SIZE_MIN, INT_VAR_ACTIVITY_SIZE_MAX. For
 details, see "Modeling and Programming with Gecode".
 
 [ENTRY]

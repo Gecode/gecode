@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Mikael Lagerkvist, 2007
- *     Christian Schulte, 2007
+ *     Christian Schulte, 2014
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,43 +35,52 @@
  *
  */
 
-#include <climits>
-#include <cmath>
+#include <gecode/int/bin-packing.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode { namespace Int { namespace BinPacking {
 
-  /// Simple bitsets
-  template<class A>
-  class BitSet : public BitSetBase {
-  protected:
-    /// Allocator
-    A& a;
-  public:
-    /// Bit set with space for \a s bits
-    BitSet(A& a, unsigned int s, bool set=false);
-    /// Copy bit set \a bs
-    BitSet(A& a, const BitSet& bs);
-    /// Destructor
-    ~BitSet(void);
-  };
+  ExecStatus
+  ConflictGraph::bk(NodeSet& r, unsigned int cr, unsigned int wr,
+                    NodeSet& p, NodeSet& x) {
+    assert(!(p.none(nodes()) && x.none(nodes())));
+    // Iterate over neighbors of pivot node
+    int piv = pivot(p,x);
+    Neighbors n(*this,piv);
+    // Iterate over elements of p 
+    Nodes i(*this,p);
+    // The loop iterates over elements in i - n
+    while (i(*this,p)) {
+      int iv = i.val(*this,p);
+      int nv = n.val(*this,piv);
+      if (n(*this,piv) && (iv == nv)) {
+        i.inc(*this,p); n.inc(*this,piv);
+      } else if (n(*this,piv) && (iv > nv)) {
+        n.inc(*this,piv);
+      } else {
+        i.inc(*this,p); n.inc(*this,piv);
 
-  template<class A>
-  forceinline
-  BitSet<A>::BitSet(A& a0, unsigned int s, bool set)
-    : BitSetBase(a0,s,set), a(a0) {}
+        Region reg(home);
 
-  template<class A>
-  forceinline
-  BitSet<A>::BitSet(A& a0, const BitSet<A>& bs)
-    : BitSetBase(a0,bs), a(a0) {}
+        // Found i.val() to be in i - n
+        NodeSet np(reg,*this);
+        bool npe = iwn(np,p,iv); p.excl(iv);
+        NodeSet nx(reg,*this);
+        bool nxe = iwn(nx,x,iv); x.incl(iv);
 
-  template<class A>
-  forceinline
-  BitSet<A>::~BitSet(void) {
-    dispose(a);
+        r.incl(iv);
+        if (npe && nxe) {
+          // Found a max clique
+          GECODE_ES_CHECK(clique(r,cr+1,wr+w[iv]));
+        } else {
+          GECODE_ES_CHECK(bk(r,cr+1,wr+w[iv],np,nx));
+        }
+        r.excl(iv);
+      }
+    }
+    return ES_OK;
   }
+  
+}}}
 
-}}
-
-// STATISTICS: support-any
+// STATISTICS: int-prop
 

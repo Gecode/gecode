@@ -3,7 +3,11 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Stefano Gualandi <stefano.gualandi@gmail.com>
+ *
  *  Copyright:
+ *     Stefano Gualandi, 2013
  *     Christian Schulte, 2010
  *
  *  Last modified:
@@ -174,9 +178,140 @@ namespace Gecode { namespace Int { namespace BinPacking {
     virtual size_t dispose(Space& home);
   };
 
+
+  /// Graph containing conflict information
+  class ConflictGraph {
+  protected:
+    /// Home space
+    Space& home;
+    /// Bin variables
+    const IntVarArgs& b;
+    /// Number of bins
+    unsigned int bins;
+    /// Return number of nodes
+    int nodes(void) const;
+    /// Degree for each node
+    unsigned int* d;
+    /// Weight for each node (initlized with degree before graph is reduced)
+    unsigned int* w;
+    /// Bitset for adjacent nodes
+    Support::RawBitSetBase a;
+    /// Find position for edge between nodes \a i and \a j in adjacency bitset
+    unsigned int pos(int i, int j=0) const;
+
+    /// Iterator for neighbors of a node in the conflict graph
+    class Neighbors {
+    private:
+      /// Current neighbour
+      unsigned int c;
+    public:
+      /// Initialize for neighbors of node \a i in graph \a cg 
+      Neighbors(const ConflictGraph& cg, int i);
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a neighbor or done
+      bool operator ()(const ConflictGraph& cg, int i) const;
+      /// Move iterator to next neighbor (if possible)
+      void inc(const ConflictGraph& cg, int i);
+      //@}
+      
+      /// \name %Node access
+      //@{
+      /// Return current neighbor node
+      int val(const ConflictGraph& cg, int i) const;
+      //@}
+    };
+
+    /// Sets of graph nodes
+    class NodeSet : public Support::RawBitSetBase {
+    public:
+      /// Initialize node set
+      NodeSet(Region& r, const ConflictGraph& cg);
+      /// Initialize node set as copy of \a ns
+      NodeSet(Region& r, const ConflictGraph& cg, const NodeSet& ns);
+      /// Test whether node \a i is included
+      bool in(int i) const;
+      /// Include node \a i
+      void incl(int i);
+      /// Exclude node \a i
+      void excl(int i);
+      /// Copy elements from node set \a ns
+      void copy(const ConflictGraph& cg, const NodeSet& ns);
+      /// Clear the whole node set
+      void empty(const ConflictGraph& cg);
+    };
+    /// Iterator over node sets
+    class Nodes {
+    private:
+      /// Current node
+      unsigned int c;
+    public:
+      /// Initialize for nodes in graph \a cg 
+      Nodes(const ConflictGraph& cg, const NodeSet& ns);
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a neighbor or done
+      bool operator ()(const ConflictGraph& cg, const NodeSet& ns) const;
+      /// Move iterator to next node (if possible)
+      void inc(const ConflictGraph& cg, const NodeSet& ns);
+      //@}
+      
+      /// \name %Node access
+      //@{
+      /// Return current node
+      int val(const ConflictGraph& cg, const NodeSet& ns) const;
+      //@}
+    };
+    
+    /// \name Routines for Bosch-Kerbron algorithm
+    //@{
+    /// Initialize \a iwn as intersection of \a n and the neighbors of node \a i, return whether result is empty
+    bool iwn(NodeSet& iwn, const NodeSet& n, int i);
+    /// Find a pivot node with maximal degree from \a a or \a b
+    int pivot(const NodeSet& a, const NodeSet& b) const;
+    /// Run Bosch-Kerbron algorithm for finding max cliques
+    GECODE_INT_EXPORT
+    ExecStatus bk(NodeSet& r, unsigned int cr, unsigned int wr,
+                  NodeSet& p, NodeSet& x);
+    //@}
+
+    /// \name Managing maximal cliques
+    //@{
+    /// Largest clique so far
+    NodeSet m;
+    /// Size of largest clique
+    unsigned int cm;
+    /// Weight of largest clique
+    unsigned int wm;
+    /// Found a clique in \a r of size \a cr and weight \a wr
+    ExecStatus clique(const NodeSet& r, unsigned int cr, unsigned int wr);
+    /// Found a clique of node \a i
+    ExecStatus clique(int i);
+    /// Found a clique of nodes \a i and \a j with weight \a w
+    ExecStatus clique(int i, int j, unsigned int w);
+    /// Found a clique of nodes \a i, \a j, and \a k with weight \a w
+    ExecStatus clique(int i, int j, int k, unsigned int w);
+    //@}
+  public:
+    /// Initialize graph
+    ConflictGraph(Space& home, Region& r, const IntVarArgs& b,
+                  int m);
+    /// Add or remove an edge between nodes \a i and \a j (\a i must be less than \a j)
+    void edge(int i, int j, bool add=true);
+    /// Test whether nodes \a i and \a j are adjacent
+    bool adjacent(int i, int j) const;
+    /// Post additional constraints
+    ExecStatus post(void);
+    /// Return maximal clique found
+    IntSet maxclique(void) const;
+    /// Destructor
+    ~ConflictGraph(void);
+  };
+
 }}}
 
 #include <gecode/int/bin-packing/propagate.hpp>
+#include <gecode/int/bin-packing/conflict-graph.hpp>
 
 #endif
 

@@ -137,7 +137,7 @@ namespace Test { namespace Int {
       /// Total item sizes
       int t;
       /// Array of sufficient size for computing item loads
-      mutable int il[4];
+      mutable int il[8];
       /// Compute total size
       static int total(const Gecode::IntArgs& s) {
         int t = 0;
@@ -193,6 +193,122 @@ namespace Test { namespace Int {
       }
     };
     
+    /// %Test with different bin loads and items
+    class MBPT : public Test {
+    protected:
+      /// Dimension
+      int d;
+      /// Number of bins
+      int m;
+      /// Item sizes
+      Gecode::IntArgs s;
+      /// Bin capacities
+      Gecode::IntArgs c;
+      /// Array of sufficient size for computing item loads
+      mutable int il[4][8];
+    public:
+      /// Create and register test for \a d0 dimensions, \a m0 bins, item sizes \a s0, and capacities \a c0
+      MBPT(int d0, int m0, 
+           const Gecode::IntArgs& s0, const Gecode::IntArgs& c0) 
+        : Test("MultiBinPacking::"+str(d0)+"::"+str(m0)+"::"+
+               str(s0)+"::"+str(c0), s0.size() / d0, 0, m0-1), 
+          d(d0), m(m0), s(s0), c(c0) {
+        testsearch = false;
+        testfix = false;
+      }
+      /// %Test whether \a x is solution
+      virtual bool solution(const Assignment& x) const {
+        // x are the bin variables
+        for (int k=d; k--; )
+          for (int j=m; j--; )
+            il[k][j] = 0;
+        for (int k=d; k--; )
+          for (int i=x.size(); i--; )
+            il[k][x[i]] += s[i*d+k];
+        for (int k=d; k--; )
+          for (int j=m; j--; )
+            if (il[k][j] > c[k])
+              return false;
+        return true;
+      }
+      /// Post constraint on \a x
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+        using namespace Gecode;
+        IntVarArgs l(d*m);
+        for (int j=m*d; j--; )
+          l[j]=IntVar(home, 0, Gecode::Int::Limits::max);
+        binpacking(home, d, l, x, s, c);
+      }
+    };
+    
+    /// Test for testing the max-clique finding for multi bin-packing
+    class CliqueMBPT : public Base {
+    protected:
+      /// Number of items
+      int n_items;
+      /// Expected clique
+      Gecode::IntArgs clique;
+      /// Simple test space class
+      class TestSpace : public Gecode::Space {
+      public:
+        // Constructor
+        TestSpace(void) {}
+        // Copy function
+        virtual Gecode::Space* copy(bool share) {
+          return NULL;
+        }
+      };
+    public:
+      /// Test for number of items \a n expected clique \a c
+      CliqueMBPT(const Gecode::IntArgs& c)
+        : Base("Int::MultiBinPacking::Clique::"+Test::str(c)), clique(c) {}
+      /// Run the actual test
+      virtual bool run(void) {
+        using namespace Gecode;
+        TestSpace* home = new TestSpace;
+        /* 
+         * Set up a multi-dimensional bin packing problems of dimension 2
+         * where the item sizes in one dimension are all one but for some
+         * random items and two in the other dimension if the item is 
+         * included in the clique  and where the capacity in both dimensions 
+         * is 3.
+         */
+        // Number of items
+        int n_items = clique[clique.size()-1] + 1;
+        // Capacity
+        IntArgs c(2, 3,3);
+        // Item sizes
+        IntArgs s(2*n_items);
+        for (int i=2*n_items; i--; )
+          s[i]=1;
+        // Create some random conflicts
+        for (int i=clique.size()-1; i--; )
+          s[rand(n_items)*2+0]=2;
+        // Create conflicts corresponding to the clique
+        for (int i=clique.size(); i--; )
+          s[clique[i]*2+1]=2;
+        // Load and bin variables
+        IntVarArgs b(*home, n_items, 0, n_items-1);
+        IntVarArgs l(*home, 2*n_items, 0, 3);
+        IntSet mc = binpacking(*home, 2, l, b, s, c);
+        if (home->status() == SS_FAILED) {
+          delete home;
+          return false;
+        }
+        if (clique.size() != mc.size()) {
+          delete home;
+          return false;
+        }
+        for (int i=clique.size(); i--; )
+          if (!mc.in(clique[i])) {
+            delete home;
+            return false;
+          }
+        delete home;
+        return true;
+      }
+    };
+
     /// Help class to create and register tests
     class Create {
     public:
@@ -200,29 +316,62 @@ namespace Test { namespace Int {
       Create(void) {
         using namespace Gecode;
 
-        IntArgs s1(3, 2,1,1);
-        IntArgs s2(4, 1,2,3,4);
-        IntArgs s3(4, 4,3,2,1);
-        IntArgs s4(4, 1,2,4,8);
-        IntArgs s5(4, 1,1,1,1);
-        IntArgs s6(4, 1,1,2,2);
-        IntArgs s7(4, 1,3,3,4);
-        IntArgs s8(6, 1,3,3,0,4,0);
-        IntArgs s9(6, 1,2,4,8,16,32);
-
-        for (int m=1; m<4; m++) {
-          (void) new BPT(m, s1);
-          (void) new BPT(m, s2);
-          (void) new BPT(m, s3);
-          (void) new BPT(m, s4);
-          (void) new BPT(m, s5);
-          (void) new BPT(m, s6);
-          (void) new BPT(m, s7);
-          (void) new BPT(m, s8);
-          (void) new BPT(m, s9);
-          (void) new BPT(m, s1, false);
+        {
+          IntArgs s1(3, 2,1,1);
+          IntArgs s2(4, 1,2,3,4);
+          IntArgs s3(4, 4,3,2,1);
+          IntArgs s4(4, 1,2,4,8);
+          IntArgs s5(4, 1,1,1,1);
+          IntArgs s6(4, 1,1,2,2);
+          IntArgs s7(4, 1,3,3,4);
+          IntArgs s8(6, 1,3,3,0,4,0);
+          IntArgs s9(6, 1,2,4,8,16,32);
+          
+          for (int m=1; m<4; m++) {
+            (void) new BPT(m, s1);
+            (void) new BPT(m, s2);
+            (void) new BPT(m, s3);
+            (void) new BPT(m, s4);
+            (void) new BPT(m, s5);
+            (void) new BPT(m, s6);
+            (void) new BPT(m, s7);
+            (void) new BPT(m, s8);
+            (void) new BPT(m, s9);
+            (void) new BPT(m, s1, false);
+          }
         }
 
+        {
+          IntArgs s1(2*4, 1,2, 2,1, 1,2, 2,1);
+          IntArgs c1(2, 3,3);
+          (void) new MBPT(2, 4, s1, c1);
+          (void) new MBPT(2, 6, s1, c1);
+          IntArgs s2(2*3, 1,1, 1,1, 1,1);
+          IntArgs c21(2, 1,1);
+          IntArgs c22(2, 2,2);
+          (void) new MBPT(2, 6, s2, c21);
+          (void) new MBPT(2, 6, s2, c22);
+          IntArgs s3(3*4, 1,2,3, 3,2,1, 2,1,3, 1,3,2);
+          IntArgs c31(3, 3,3,3);
+          IntArgs c32(3, 4,4,4);
+          IntArgs c33(3, 6,6,6);
+          (void) new MBPT(3, 4, s3, c31);
+          (void) new MBPT(3, 4, s3, c32);
+          (void) new MBPT(3, 4, s3, c33);
+          (void) new MBPT(3, 5, s3, c31);
+          (void) new MBPT(3, 5, s3, c32);
+          (void) new MBPT(3, 5, s3, c33);
+        }
+
+        {
+          IntArgs c1(4, 0,2,4,6);
+          IntArgs c2(8, 1,2,3,4,5,6,7,8);
+          IntArgs c3(8, 1,3,7,10,15,22,27,97);
+
+          (void) new CliqueMBPT(c1);
+          (void) new CliqueMBPT(c2);
+          (void) new CliqueMBPT(c3);
+        }
       }
     };
     
