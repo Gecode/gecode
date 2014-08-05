@@ -808,8 +808,12 @@ vardecl_item:
                 for (int i=0; i<$5; i++) {
                   IntVarSpec* ivsv = static_cast<IntVarSpec*>((*vsv)[i]);
                   if (ivsv->alias) {
+                    if (print)
+                      static_cast<IntVarSpec*>(pp->intvars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
                   } else {
+                    if (print)
+                      ivsv->introduced = false;
                     vars[i] = pp->intvars.size();
                     pp->intvars.push_back(varspec($11, ivsv));
                   }
@@ -871,9 +875,13 @@ vardecl_item:
             if (!pp->hadError) {
               for (int i=0; i<$5; i++) {
                 BoolVarSpec* bvsv = static_cast<BoolVarSpec*>((*vsv)[i]);
-                if (bvsv->alias)
+                if (bvsv->alias) {
+                  if (print)
+                    static_cast<BoolVarSpec*>(pp->boolvars[bvsv->i].second)->introduced = false;
                   vars[i] = bvsv->i;
-                else {
+                } else {
+                  if (print)
+                    bvsv->introduced = false;
                   vars[i] = pp->boolvars.size();
                   pp->boolvars.push_back(varspec($11, (*vsv)[i]));
                 }
@@ -932,8 +940,12 @@ vardecl_item:
                 for (int i=0; i<$5; i++) {
                   FloatVarSpec* ivsv = static_cast<FloatVarSpec*>((*vsv)[i]);
                   if (ivsv->alias) {
+                    if (print)
+                      static_cast<FloatVarSpec*>(pp->floatvars[ivsv->i].second)->introduced = false;
                     vars[i] = ivsv->i;
                   } else {
+                    if (print)
+                      ivsv->introduced = false;
                     vars[i] = pp->floatvars.size();
                     pp->floatvars.push_back(varspec($11, ivsv));
                   }
@@ -999,9 +1011,13 @@ vardecl_item:
             if (!pp->hadError) {
               for (int i=0; i<$5; i++) {
                 SetVarSpec* svsv = static_cast<SetVarSpec*>((*vsv)[i]);
-                if (svsv->alias)
+                if (svsv->alias) {
+                  if (print)
+                    static_cast<SetVarSpec*>(pp->setvars[svsv->i].second)->introduced = false;
                   vars[i] = svsv->i;
-                else {
+                } else {
+                  if (print)
+                    svsv->introduced = false;
                   vars[i] = pp->setvars.size();
                   pp->setvars.push_back(varspec($13, (*vsv)[i]));
                 }
