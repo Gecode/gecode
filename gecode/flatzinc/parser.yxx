@@ -1494,6 +1494,12 @@ constraint_item :
                 ivs1->upperBound = Option<AST::SetLit*>::none();
               }
             }
+          } else if ( (cid=="int_le" || cid=="int_lt" || cid=="int_ge" || cid=="int_gt"  ||
+                       cid=="int_eq" || cid=="int_ne") &&
+                      ($4->a[0]->isInt() || $4->a[1]->isInt()) ) {
+            pp->domainConstraints.push_back(new ConExpr($2, $4, $6));
+          } else if ( cid=="set_in" && ($4->a[0]->isSet() || $4->a[1]->isSet()) ) {
+            pp->domainConstraints.push_back(new ConExpr($2, $4, $6));
           } else {
             pp->constraints.push_back(new ConExpr($2, $4, $6));
           }
