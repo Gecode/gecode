@@ -239,7 +239,7 @@ namespace Gecode { namespace FlatZinc {
       _allSolutions("-a", "return all solutions (equal to -solutions 0)"),
       _threads("-p","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
-      _free("--free", "no need to follow search-specification"),
+      _free("-f", "free search, no need to follow search-specification"),
       _decay("-decay","decay factor",0.99),
       _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
       _a_d("-a-d","recomputation adaption distance",Gecode::Search::Config::a_d),

@@ -74,6 +74,22 @@ Gaga!
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The --free command line option has been renamed to -f to comply with other
+FlatZinc solvers.
+
+[ENTRY]
+Module: flatzinc
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+The diffn constraint now posts additional implied cumulative constraints
+to strengthen propagation.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
@@ -87,7 +103,8 @@ What:   performance
 Rank:   minor
 [DESCRIPTION]
 Treat equality constraints in FlatZinc as aliases instead of posting 
-propagators.
+propagators, and post simple domain constraints before more complex
+propagators to help post the most efficient versions.
 
 [ENTRY]
 Module: example
