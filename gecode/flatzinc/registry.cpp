@@ -1316,6 +1316,27 @@ namespace Gecode { namespace FlatZinc {
         for (int i=h.size(); i--;)
           ih[i] = h[i].val();
         nooverlap(s,x0,iw,y0,ih,s.ann2icl(ann));
+        
+        int miny = y0[0].min();
+        int maxy = y0[0].max();
+        int maxdy = ih[0];
+        for (int i=1; i<y0.size(); i++) {
+          miny = std::min(miny,y0[i].min());
+          maxy = std::max(maxy,y0[i].max());
+          maxdy = std::max(maxdy,ih[i]);
+        }
+        int minx = x0[0].min();
+        int maxx = x0[0].max();
+        int maxdx = iw[0];
+        for (int i=1; i<x0.size(); i++) {
+          minx = std::min(minx,x0[i].min());
+          maxx = std::max(maxx,x0[i].max());
+          maxdx = std::max(maxdx,iw[i]);
+        }
+        if (miny > Int::Limits::min && maxy < Int::Limits::max) {
+          cumulative(s,maxdy+maxy-miny,x0,iw,ih);
+          cumulative(s,maxdx+maxx-minx,y0,ih,iw);
+        }
       } else {
         IntVarArgs x1(x0.size()), y1(y0.size());
         for (int i=x0.size(); i--; )
