@@ -73,6 +73,23 @@ Date: 2013-11-05
 Gaga!
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Added unshare constraints to all constraints that need them. Without unsharing,
+variables occurring multiply in the same FlatZinc arrays could lead to the
+FlatZinc interpreter aborting with an error.
+
+[ENTRY]
+Module: flatzinc
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Treat equality constraints in FlatZinc as aliases instead of posting 
+propagators.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
