@@ -450,7 +450,7 @@ namespace Gecode { namespace FlatZinc {
     void newFloatVar(FloatVarSpec* vs);
   
     /// Post a constraint specified by \a ce
-    void postConstraint(const ConExpr& ce, AST::Node* annotation);
+    void postConstraints(std::vector<ConExpr*>& ces);
   
     /// Post the solve item
     void solve(AST::Array* annotation);

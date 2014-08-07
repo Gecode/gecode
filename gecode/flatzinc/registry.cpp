@@ -60,13 +60,13 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  Registry::post(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+  Registry::post(FlatZincSpace& s, const ConExpr& ce) {
     std::map<std::string,poster>::iterator i = r.find(ce.id);
     if (i == r.end()) {
       throw FlatZinc::Error("Registry",
         std::string("Constraint ")+ce.id+" not found");
     }
-    i->second(s, ce, ann);
+    i->second(s, ce, ce.ann);
   }
 
   void

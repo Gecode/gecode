@@ -821,13 +821,18 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
   void
-  FlatZincSpace::postConstraint(const ConExpr& ce, AST::Node* ann) {
-    try {
-      registry().post(*this, ce, ann);
-    } catch (Gecode::Exception& e) {
-      throw FlatZinc::Error("Gecode", e.what());
-    } catch (AST::TypeError& e) {
-      throw FlatZinc::Error("Type error", e.what());
+  FlatZincSpace::postConstraints(std::vector<ConExpr*>& ces) {
+    for (unsigned int i=0; i<ces.size(); i++) {
+      const ConExpr& ce = *ces[i];
+      try {
+        registry().post(*this, ce);
+      } catch (Gecode::Exception& e) {
+        throw FlatZinc::Error("Gecode", e.what());
+      } catch (AST::TypeError& e) {
+        throw FlatZinc::Error("Type error", e.what());
+      }
+      delete ces[i];
+      ces[i] = NULL;
     }
   }
 
