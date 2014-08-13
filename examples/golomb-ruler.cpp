@@ -110,7 +110,7 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << "\tm[" << m.size() << "] = " << m << std::endl;
+    os << "m[" << m.size() << "] = " << m << std::endl;
   }
 
   /// Constructor for cloning \a s
