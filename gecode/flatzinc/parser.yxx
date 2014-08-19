@@ -1799,10 +1799,27 @@ solve_expr:
         ParserState *pp = static_cast<ParserState*>(parm);
         SymbolEntry e;
         bool haveSym = pp->symbols.get($1,e);
-        if (haveSym && e.t == ST_INTVAR) {
-          $$ = e.i;
-        } else if (haveSym && e.t == ST_FLOATVAR) {
-          $$ = -e.i-1;
+        if (haveSym) {
+          switch (e.t) {
+          case ST_INTVAR:
+            $$ = e.i;
+            break;
+          case ST_FLOATVAR:
+            $$ = -e.i-1;
+            break;
+          case ST_INT:
+          case ST_FLOAT:
+            pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+              new IntVarSpec(0,true,false)));
+            $$ = pp->intvars.size()-1;
+            break;
+          default:
+            pp->err << "Error: unknown int or float variable " << $1
+                    << " in line no. "
+                    << yyget_lineno(pp->yyscanner) << std::endl;
+            pp->hadError = true;
+            break;
+          }
         } else {
           pp->err << "Error: unknown int or float variable " << $1
                   << " in line no. "
@@ -1810,6 +1827,20 @@ solve_expr:
           pp->hadError = true;
         }
         free($1);
+      }
+    | FZ_INT_LIT
+      {
+        ParserState *pp = static_cast<ParserState*>(parm);
+        pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+          new IntVarSpec(0,true,false)));
+        $$ = pp->intvars.size()-1;
+      }
+    | FZ_FLOAT_LIT
+      {
+        ParserState *pp = static_cast<ParserState*>(parm);
+        pp->intvars.push_back(varspec("OBJ_CONST_INTRODUCED",
+          new IntVarSpec(0,true,false)));
+        $$ = pp->intvars.size()-1;
       }
     | var_par_id '[' FZ_INT_LIT ']'
       {
