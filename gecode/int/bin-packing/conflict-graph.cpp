@@ -64,19 +64,19 @@ namespace Gecode { namespace Int { namespace BinPacking {
     assert(!(p.none(nodes()) && x.none(nodes())));
     // Iterate over neighbors of pivot node
     int piv = pivot(p,x);
-    Neighbors n(*this,piv);
+    Nodes n(*this,node[piv].n);
     // Iterate over elements of p 
     Nodes i(*this,p);
     // The loop iterates over elements in i - n
     while (i(*this,p)) {
       int iv = i.val(*this,p);
-      int nv = n.val(*this,piv);
-      if (n(*this,piv) && (iv == nv)) {
-        i.inc(*this,p); n.inc(*this,piv);
-      } else if (n(*this,piv) && (iv > nv)) {
-        n.inc(*this,piv);
+      int nv = n.val(*this,node[piv].n);
+      if (n(*this,node[piv].n) && (iv == nv)) {
+        i.inc(*this,p); n.inc(*this,node[piv].n);
+      } else if (n(*this,node[piv].n) && (iv > nv)) {
+        n.inc(*this,node[piv].n);
       } else {
-        i.inc(*this,p); n.inc(*this,piv);
+        i.inc(*this,p); n.inc(*this,node[piv].n);
 
         Region reg(home);
 
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         x.incl(iv);
 
         // Update current clique
-        r.incl(iv); cr++; wr += w[iv];
+        r.incl(iv); cr++; wr += node[iv].w;
 
         if (npe && nxe) {
           // Found a max clique
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         }
 
         // Reset current clique
-        r.excl(iv); cr--; wr -= w[iv];
+        r.excl(iv); cr--; wr -= node[iv].w;
       }
     }
     return ES_OK;

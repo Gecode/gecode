@@ -46,29 +46,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
   ConflictGraph::nodes(void) const {
     return b.size();
   }
-  forceinline unsigned int
-  ConflictGraph::pos(int i, int j) const {
-    return static_cast<unsigned int>(i*(nodes()+1)+j);
-  }
-
 
   forceinline
-  ConflictGraph::Neighbors::Neighbors(const ConflictGraph& cg, int i)
-    : c(cg.a.next(cg.pos(i))) {}
-  forceinline bool
-  ConflictGraph::Neighbors::operator ()(const ConflictGraph& cg, int i) const {
-    return c<cg.pos(i,cg.nodes());
-  }
-  forceinline void
-  ConflictGraph::Neighbors::inc(const ConflictGraph& cg, int) {
-    c = cg.a.next(c+1);
-  }
-  forceinline int
-  ConflictGraph::Neighbors::val(const ConflictGraph& cg, int i) const {
-    return static_cast<int>(c - cg.pos(i));
-  }
-
-
+  ConflictGraph::NodeSet::NodeSet(void) {}
   forceinline
   ConflictGraph::NodeSet::NodeSet(Region& r, const ConflictGraph& cg)
     : Support::RawBitSetBase(r,cg.nodes()) {}
@@ -76,6 +56,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
   ConflictGraph::NodeSet::NodeSet(Region& r, const ConflictGraph& cg, 
                                   const NodeSet& ns)
     : Support::RawBitSetBase(r,cg.nodes(),ns) {}
+  forceinline void
+  ConflictGraph::NodeSet::init(Region& r, const ConflictGraph& cg) {
+    Support::RawBitSetBase::init(r,cg.nodes());
+  }
   forceinline bool
   ConflictGraph::NodeSet::in(int i) const {
     return RawBitSetBase::get(static_cast<unsigned int>(i));
@@ -97,6 +81,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     RawBitSetBase::clearall(static_cast<unsigned int>(cg.nodes()));
   }
 
+  forceinline
+  ConflictGraph::Node::Node(void) {}
 
   forceinline
   ConflictGraph::Nodes::Nodes(const ConflictGraph&, const NodeSet& ns)
@@ -122,56 +108,53 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline
   ConflictGraph::ConflictGraph(Space& h, Region& reg,
                                const IntVarArgs& b0, int m)
-    : home(h), b(b0), bins(static_cast<unsigned int>(m)),
-      d(heap.alloc<unsigned int>(nodes())),
-      w(heap.alloc<unsigned int>(nodes())), 
-      a(heap,(nodes()+1)*nodes()),
+    : home(h), b(b0), 
+      bins(static_cast<unsigned int>(m)),
+      node(heap.alloc<Node>(nodes())),
       r(reg,*this), cr(0), wr(0),
       m(reg,*this), cm(0), wm(0) {
     for (int i=nodes(); i--; ) {
-      d[i] = 0;
-      // Set bits for neighbor iteration sentinel
-      a.set(pos(i,nodes()));
+      node[i].n.init(reg,*this);
+      node[i].d=node[i].w=0;
     }
   }
 
   forceinline
   ConflictGraph::~ConflictGraph(void) {
-    heap.free<unsigned int>(d,nodes());
-    heap.free<unsigned int>(w,nodes()); 
-    a.dispose(heap,(nodes()+1)*nodes());
+    heap.free<Node>(node,nodes());
   }
 
   forceinline void
   ConflictGraph::edge(int i, int j, bool add) {
     if (add) {
-      assert(!a.get(pos(i,j)) && !a.get(pos(j,i)));
-      a.set(pos(i,j)); d[i]++;
-      a.set(pos(j,i)); d[j]++;
+      assert(!node[i].n.in(j) && !node[j].n.in(i));
+      node[i].n.incl(j); node[i].d++; node[i].w++;
+      node[j].n.incl(i); node[j].d++; node[j].w++;
     } else {
-      assert(a.get(pos(i,j)) && a.get(pos(j,i)));
-      a.clear(pos(i,j)); d[i]--;
-      a.clear(pos(j,i)); d[j]--;
+      assert(node[i].n.in(j) && node[j].n.in(i));
+      node[i].n.excl(j); node[i].d--;
+      node[j].n.excl(i); node[j].d--;
     }
   }
 
   forceinline bool
   ConflictGraph::adjacent(int i, int j) const {
-    return a.get(pos(i,j));
+    assert(node[i].n.in(j) == node[j].n.in(i));
+    return node[i].n.in(j);
   }
 
   forceinline bool 
   ConflictGraph::iwn(NodeSet& iwn, const NodeSet& n, int i) {
-    Neighbors ii(*this,i);
+    Nodes ii(*this,node[i].n);
     Nodes nn(*this,n);
     bool empty = true;
-    while (ii(*this,i) && nn(*this,n)) {
-      if (ii.val(*this,i) < nn.val(*this,n)) {
-        ii.inc(*this,i);
-      } else if (nn.val(*this,n) < ii.val(*this,i)) {
+    while (ii(*this,node[i].n) && nn(*this,n)) {
+      if (ii.val(*this,node[i].n) < nn.val(*this,n)) {
+        ii.inc(*this,node[i].n);
+      } else if (nn.val(*this,n) < ii.val(*this,node[i].n)) {
         nn.inc(*this,n);
       } else {
-        iwn.incl(nn.val(*this,n)); ii.inc(*this,i); nn.inc(*this,n);
+        iwn.incl(nn.val(*this,n)); ii.inc(*this,node[i].n); nn.inc(*this,n);
         empty = false;
       }
     }
@@ -188,16 +171,16 @@ namespace Gecode { namespace Int { namespace BinPacking {
     } else {
       p = j.val(*this,b); j.inc(*this,b);
     }
-    unsigned int m = d[p];
+    unsigned int m = node[p].d;
     while (i(*this,a)) {
-      if (d[i.val(*this,a)] > m) {
-        m = d[i.val(*this,a)]; p = i.val(*this,a);
+      if (node[i.val(*this,a)].d > m) {
+        m = node[i.val(*this,a)].d; p = i.val(*this,a);
       }
       i.inc(*this,a);
     }
     while (j(*this,b)) {
-      if (d[j.val(*this,b)] > m) {
-        m = d[j.val(*this,b)]; p = j.val(*this,b);
+      if (node[j.val(*this,b)].d > m) {
+        m = node[j.val(*this,b)].d; p = j.val(*this,b);
       }
       j.inc(*this,b);
     }
@@ -263,44 +246,44 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Make a copy of the degree information to be used as weights
       // and record all nodes of degree 1 and 2.
       for (int i=nodes(); i--; ) {
-        w[i]=d[i];
-        if ((d[i] == 1) || (d[i] == 2))
+        if ((node[i].d == 1) || (node[i].d == 2))
           n.push(i);
       }
       while (!n.empty()) {
         int i = n.pop();
-        switch (d[i]) {
+        switch (node[i].d) {
         case 0:
           // Might happen as the edges have already been removed
           break;
         case 1: {
-          Neighbors ii(*this,i);
-          int j=ii.val(*this,i);
-          GECODE_ES_CHECK(clique(i,j,w[i]+w[j]));
+          Nodes ii(*this,node[i].n);
+          int j=ii.val(*this,node[i].n);
+          GECODE_ES_CHECK(clique(i,j,node[i].w+node[j].w));
           // Remove edge
           edge(i,j,false);
-          if ((d[j] == 1) || (d[j] == 2))
+          if ((node[j].d == 1) || (node[j].d == 2))
             n.push(j);
           break;
         }
         case 2: {
-          Neighbors ii(*this,i);
-          int j=ii.val(*this,i); ii.inc(*this,i);
-          int k=ii.val(*this,i);
+          Nodes ii(*this,node[i].n);
+          int j=ii.val(*this,node[i].n); ii.inc(*this,node[i].n);
+          int k=ii.val(*this,node[i].n);
           if (adjacent(j,k)) {
-            GECODE_ES_CHECK(clique(i,j,k,w[i]+w[j]+w[k]));
+            GECODE_ES_CHECK(clique(i,j,k,
+                                   node[i].w+node[j].w+node[k].w));
             // Can the edge j-k still be member of another clique?
-            if ((d[j] == 2) || (d[k] == 2))
+            if ((node[j].d == 2) || (node[k].d == 2))
               edge(j,k,false);
           } else {
-            GECODE_ES_CHECK(clique(i,j,w[i]+w[j]));
-            GECODE_ES_CHECK(clique(i,k,w[i]+w[k]));
+            GECODE_ES_CHECK(clique(i,j,node[i].w+node[j].w));
+            GECODE_ES_CHECK(clique(i,k,node[i].w+node[k].w));
           }
           edge(i,j,false);
           edge(i,k,false);
-          if ((d[j] == 1) || (d[j] == 2))
+          if ((node[j].d == 1) || (node[j].d == 2))
             n.push(j);
-          if ((d[k] == 1) || (d[k] == 2))
+          if ((node[k].d == 1) || (node[k].d == 2))
             n.push(k);
           break;
         }
@@ -314,7 +297,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       NodeSet p(reg,*this), x(reg,*this);
       bool empty = true;
       for (int i=nodes(); i--; )
-        if (d[i] > 0) {
+        if (node[i].d > 0) {
           p.incl(i); empty = false;
         } else {
           // Report clique of size 1

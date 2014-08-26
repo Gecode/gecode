@@ -190,45 +190,18 @@ namespace Gecode { namespace Int { namespace BinPacking {
     unsigned int bins;
     /// Return number of nodes
     int nodes(void) const;
-    /// Degree for each node
-    unsigned int* d;
-    /// Weight for each node (initlized with degree before graph is reduced)
-    unsigned int* w;
-    /// Bitset for adjacent nodes
-    Support::RawBitSetBase a;
-    /// Find position for edge between nodes \a i and \a j in adjacency bitset
-    unsigned int pos(int i, int j=0) const;
-
-    /// Iterator for neighbors of a node in the conflict graph
-    class Neighbors {
-    private:
-      /// Current neighbour
-      unsigned int c;
-    public:
-      /// Initialize for neighbors of node \a i in graph \a cg 
-      Neighbors(const ConflictGraph& cg, int i);
-      /// \name Iteration control
-      //@{
-      /// Test whether iterator is still at a neighbor or done
-      bool operator ()(const ConflictGraph& cg, int i) const;
-      /// Move iterator to next neighbor (if possible)
-      void inc(const ConflictGraph& cg, int i);
-      //@}
-      
-      /// \name %Node access
-      //@{
-      /// Return current neighbor node
-      int val(const ConflictGraph& cg, int i) const;
-      //@}
-    };
 
     /// Sets of graph nodes
     class NodeSet : public Support::RawBitSetBase {
     public:
+      /// Keep uninitialized
+      NodeSet(void);
       /// Initialize node set
       NodeSet(Region& r, const ConflictGraph& cg);
       /// Initialize node set as copy of \a ns
       NodeSet(Region& r, const ConflictGraph& cg, const NodeSet& ns);
+      /// Initialize node set
+      void init(Region& r, const ConflictGraph& cg);
       /// Test whether node \a i is included
       bool in(int i) const;
       /// Include node \a i
@@ -240,6 +213,22 @@ namespace Gecode { namespace Int { namespace BinPacking {
       /// Clear the whole node set
       void empty(const ConflictGraph& cg);
     };
+
+    /// Class for node in graph
+    class Node {
+    public:
+      /// The neighbors
+      NodeSet n;
+      /// Degree
+      unsigned int d;
+      /// Weight (initialized with degree before graph is reduced)
+      unsigned int w;
+      /// Default constructor
+      Node(void);
+    };
+    /// The nodes in the graph
+    Node* node;
+
     /// Iterator over node sets
     class Nodes {
     private:
