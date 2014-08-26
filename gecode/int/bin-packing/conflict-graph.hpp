@@ -120,13 +120,14 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
 
   forceinline
-  ConflictGraph::ConflictGraph(Space& h, Region& r,
+  ConflictGraph::ConflictGraph(Space& h, Region& reg,
                                const IntVarArgs& b0, int m)
     : home(h), b(b0), bins(static_cast<unsigned int>(m)),
       d(heap.alloc<unsigned int>(nodes())),
       w(heap.alloc<unsigned int>(nodes())), 
       a(heap,(nodes()+1)*nodes()),
-      m(r,*this), cm(0), wm(0) {
+      r(reg,*this), cr(0), wr(0),
+      m(reg,*this), cm(0), wm(0) {
     for (int i=nodes(); i--; ) {
       d[i] = 0;
       // Set bits for neighbor iteration sentinel
@@ -204,7 +205,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   forceinline ExecStatus
-  ConflictGraph::clique(const NodeSet& r, unsigned int cr, unsigned int wr) {
+  ConflictGraph::clique(void) {
     // Remember clique
     if ((cr > cm) || ((cr == cm) && (wr > wm))) {
       m.copy(*this,r); cm=cr; wm=wr;
@@ -310,7 +311,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     // Initialize for Bron-Kerbosch
     {
       Region reg(home);
-      NodeSet r(reg,*this), p(reg,*this), x(reg,*this);
+      NodeSet p(reg,*this), x(reg,*this);
       bool empty = true;
       for (int i=nodes(); i--; )
         if (d[i] > 0) {
@@ -321,7 +322,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         }
       if (empty)
         return ES_OK;
-      GECODE_ES_CHECK(bk(r,0,0,p,x));
+      GECODE_ES_CHECK(bk(p,x));
     }
     return ES_OK;
   }

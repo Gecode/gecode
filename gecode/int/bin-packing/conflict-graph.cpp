@@ -39,9 +39,28 @@
 
 namespace Gecode { namespace Int { namespace BinPacking {
 
+  void ConflictGraph::print(const NodeSet& r) {
+    std::cout << "{";
+    Nodes n(*this,r);
+    if (n(*this,r)) {
+      std::cout << n.val(*this,r);
+      n.inc(*this,r);
+      while (n(*this,r)) {
+        std::cout << ", " << n.val(*this,r);
+        n.inc(*this,r);
+      }
+    }
+    std::cout << "}";
+  }
+
   ExecStatus
-  ConflictGraph::bk(NodeSet& r, unsigned int cr, unsigned int wr,
-                    NodeSet& p, NodeSet& x) {
+  ConflictGraph::bk(NodeSet& p, NodeSet& x) {
+    /*
+    std::cout << "bk(";
+    print(r); std::cout << ", ";
+    print(p); std::cout << ", ";
+    print(x); std::cout << ")" << std::endl;
+    */
     assert(!(p.none(nodes()) && x.none(nodes())));
     // Iterate over neighbors of pivot node
     int piv = pivot(p,x);
@@ -63,18 +82,32 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
         // Found i.val() to be in i - n
         NodeSet np(reg,*this);
-        bool npe = iwn(np,p,iv); p.excl(iv);
-        NodeSet nx(reg,*this);
-        bool nxe = iwn(nx,x,iv); x.incl(iv);
+        bool npe = iwn(np,p,iv); 
 
-        r.incl(iv);
+        NodeSet nx(reg,*this);
+        bool nxe = iwn(nx,x,iv); 
+
+        p.excl(iv);
+        x.incl(iv);
+
+        // Update current clique
+        r.incl(iv); cr++; wr += w[iv];
+
         if (npe && nxe) {
           // Found a max clique
-          GECODE_ES_CHECK(clique(r,cr+1,wr+w[iv]));
+          /*
+          std::cout << "Clique: ";
+          print(r);
+          std::cout << ", c=" << cr << ", w=" << wr
+                    << std::endl;
+          */
+          GECODE_ES_CHECK(clique());
         } else {
-          GECODE_ES_CHECK(bk(r,cr+1,wr+w[iv],np,nx));
+          GECODE_ES_CHECK(bk(np,nx));
         }
-        r.excl(iv);
+
+        // Reset current clique
+        r.excl(iv); cr--; wr -= w[iv];
       }
     }
     return ES_OK;

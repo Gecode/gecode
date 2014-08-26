@@ -269,22 +269,28 @@ namespace Gecode { namespace Int { namespace BinPacking {
     bool iwn(NodeSet& iwn, const NodeSet& n, int i);
     /// Find a pivot node with maximal degree from \a a or \a b
     int pivot(const NodeSet& a, const NodeSet& b) const;
+    void print(const NodeSet& r);
     /// Run Bosch-Kerbron algorithm for finding max cliques
     GECODE_INT_EXPORT
-    ExecStatus bk(NodeSet& r, unsigned int cr, unsigned int wr,
-                  NodeSet& p, NodeSet& x);
+    ExecStatus bk(NodeSet& p, NodeSet& x);
     //@}
 
-    /// \name Managing maximal cliques
+    /// \name Managing cliques
     //@{
+    /// Current clique
+    NodeSet r;
+    /// Size of current clique
+    unsigned int cr;
+    /// Weight of current clique
+    unsigned int wr;
     /// Largest clique so far
     NodeSet m;
     /// Size of largest clique
     unsigned int cm;
     /// Weight of largest clique
     unsigned int wm;
-    /// Found a clique in \a r of size \a cr and weight \a wr
-    ExecStatus clique(const NodeSet& r, unsigned int cr, unsigned int wr);
+    /// Reprot the current clique
+    ExecStatus clique(void);
     /// Found a clique of node \a i
     ExecStatus clique(int i);
     /// Found a clique of nodes \a i and \a j with weight \a w
