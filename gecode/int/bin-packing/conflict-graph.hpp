@@ -50,15 +50,15 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline
   ConflictGraph::NodeSet::NodeSet(void) {}
   forceinline
-  ConflictGraph::NodeSet::NodeSet(Region& r, const ConflictGraph& cg)
-    : Support::RawBitSetBase(r,cg.nodes()) {}
+  ConflictGraph::NodeSet::NodeSet(Region& r, int n)
+    : Support::RawBitSetBase(r,static_cast<unsigned int>(n)) {}
   forceinline
-  ConflictGraph::NodeSet::NodeSet(Region& r, const ConflictGraph& cg, 
+  ConflictGraph::NodeSet::NodeSet(Region& r, int n, 
                                   const NodeSet& ns)
-    : Support::RawBitSetBase(r,cg.nodes(),ns) {}
+    : Support::RawBitSetBase(r,static_cast<unsigned int>(n),ns) {}
   forceinline void
-  ConflictGraph::NodeSet::init(Region& r, const ConflictGraph& cg) {
-    Support::RawBitSetBase::init(r,cg.nodes());
+  ConflictGraph::NodeSet::init(Region& r, int n) {
+    Support::RawBitSetBase::init(r,static_cast<unsigned int>(n));
   }
   forceinline bool
   ConflictGraph::NodeSet::in(int i) const {
@@ -73,33 +73,26 @@ namespace Gecode { namespace Int { namespace BinPacking {
     RawBitSetBase::clear(static_cast<unsigned int>(i));
   }
   forceinline void
-  ConflictGraph::NodeSet::copy(const ConflictGraph& cg, const NodeSet& ns) {
-    RawBitSetBase::copy(static_cast<unsigned int>(cg.nodes()),ns);
+  ConflictGraph::NodeSet::copy(int n, const NodeSet& ns) {
+    RawBitSetBase::copy(static_cast<unsigned int>(n),ns);
   }
   forceinline void
-  ConflictGraph::NodeSet::empty(const ConflictGraph& cg) {
-    RawBitSetBase::clearall(static_cast<unsigned int>(cg.nodes()));
+  ConflictGraph::NodeSet::empty(int n) {
+    RawBitSetBase::clearall(static_cast<unsigned int>(n));
   }
 
   forceinline
   ConflictGraph::Node::Node(void) {}
 
   forceinline
-  ConflictGraph::Nodes::Nodes(const ConflictGraph&, const NodeSet& ns)
-    : c(ns.next(0)) {}
-  forceinline bool
-  ConflictGraph::Nodes::operator ()(const ConflictGraph& cg, 
-                                    const NodeSet&) const {
-    return c<static_cast<unsigned int>(cg.nodes());
-  }
+  ConflictGraph::Nodes::Nodes(const NodeSet& ns0)
+    : ns(ns0), c(ns.next(0)) {}
   forceinline void
-  ConflictGraph::Nodes::inc(const ConflictGraph&,
-                            const NodeSet& ns) {
+  ConflictGraph::Nodes::operator ++(void) {
     c = ns.next(c+1);
   }
   forceinline int
-  ConflictGraph::Nodes::val(const ConflictGraph&,
-                            const NodeSet&) const {
+  ConflictGraph::Nodes::operator ()(void) const {
     return static_cast<int>(c);
   }
 
@@ -111,10 +104,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
     : home(h), b(b0), 
       bins(static_cast<unsigned int>(m)),
       node(heap.alloc<Node>(nodes())),
-      r(reg,*this), cr(0), wr(0),
-      m(reg,*this), cm(0), wm(0) {
+      r(reg,nodes()), cr(0), wr(0),
+      m(reg,nodes()), cm(0), wm(0) {
     for (int i=nodes(); i--; ) {
-      node[i].n.init(reg,*this);
+      node[i].n.init(reg,nodes());
       node[i].d=node[i].w=0;
     }
   }
@@ -145,16 +138,15 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
   forceinline bool 
   ConflictGraph::iwn(NodeSet& iwn, const NodeSet& n, int i) {
-    Nodes ii(*this,node[i].n);
-    Nodes nn(*this,n);
+    Nodes ii(node[i].n), nn(n);
     bool empty = true;
-    while (ii(*this,node[i].n) && nn(*this,n)) {
-      if (ii.val(*this,node[i].n) < nn.val(*this,n)) {
-        ii.inc(*this,node[i].n);
-      } else if (nn.val(*this,n) < ii.val(*this,node[i].n)) {
-        nn.inc(*this,n);
+    while ((ii() < nodes()) && (nn() < nodes())) {
+      if (ii() < nn()) {
+        ++ii;
+      } else if (nn() < ii()) {
+        ++nn;
       } else {
-        iwn.incl(nn.val(*this,n)); ii.inc(*this,node[i].n); nn.inc(*this,n);
+        iwn.incl(nn()); ++ii; ++nn;
         empty = false;
       }
     }
@@ -163,26 +155,26 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
   forceinline int
   ConflictGraph::pivot(const NodeSet& a, const NodeSet& b) const {
-    Nodes i(*this,a), j(*this,b);
-    assert(i(*this,a) || j(*this,b));
+    Nodes i(a), j(b);
+    assert((i() < nodes()) || (j() < nodes()));
     int p;
-    if (i(*this,a)) {
-      p = i.val(*this,a); i.inc(*this,a);
+    if (i() < nodes()) {
+      p = i(); ++i;
     } else {
-      p = j.val(*this,b); j.inc(*this,b);
+      p = j(); ++j;
     }
     unsigned int m = node[p].d;
-    while (i(*this,a)) {
-      if (node[i.val(*this,a)].d > m) {
-        m = node[i.val(*this,a)].d; p = i.val(*this,a);
+    while (i() < nodes()) {
+      if (node[i()].d > m) {
+        p=i(); m=node[p].d; 
       }
-      i.inc(*this,a);
+      ++i;
     }
-    while (j(*this,b)) {
-      if (node[j.val(*this,b)].d > m) {
-        m = node[j.val(*this,b)].d; p = j.val(*this,b);
+    while (j() < nodes()) {
+      if (node[j()].d > m) {
+        p=j(); m=node[p].d; 
       }
-      j.inc(*this,b);
+      ++j;
     }
     return p;
   }
@@ -191,15 +183,15 @@ namespace Gecode { namespace Int { namespace BinPacking {
   ConflictGraph::clique(void) {
     // Remember clique
     if ((cr > cm) || ((cr == cm) && (wr > wm))) {
-      m.copy(*this,r); cm=cr; wm=wr;
+      m.copy(nodes(),r); cm=cr; wm=wr;
       if (cm > bins)
         return ES_FAILED;
     }
     // Compute corresponding variables
     ViewArray<IntView> bv(home,cr);
     int i=0;
-    for (Nodes c(*this,r); c(*this,r); c.inc(*this,r))
-      bv[i++] = b[c.val(*this,r)];
+    for (Nodes c(r); c() < nodes(); ++c)
+      bv[i++] = b[c()];
     assert(i == static_cast<int>(cr));
     return Distinct::Dom<IntView>::post(home,bv);
   }
@@ -216,7 +208,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline ExecStatus
   ConflictGraph::clique(int i, int j, unsigned int w) {
     if ((2 > cm) || ((2 == cm) && (w > wm))) {
-      m.empty(*this); m.incl(i); m.incl(j); cm=2; wm=w;
+      m.empty(nodes()); m.incl(i); m.incl(j); cm=2; wm=w;
       if (cm > bins)
         return ES_FAILED;
     }
@@ -226,7 +218,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline ExecStatus
   ConflictGraph::clique(int i, int j, int k, unsigned int w) {
     if ((3 > cm) || ((3 == cm) && (w > wm))) {
-      m.empty(*this); m.incl(i); m.incl(j); m.incl(k); cm=3; wm=w;
+      m.empty(nodes()); m.incl(i); m.incl(j); m.incl(k); cm=3; wm=w;
       if (cm > bins)
         return ES_FAILED;
     }
@@ -256,8 +248,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
           // Might happen as the edges have already been removed
           break;
         case 1: {
-          Nodes ii(*this,node[i].n);
-          int j=ii.val(*this,node[i].n);
+          Nodes ii(node[i].n);
+          int j=ii();
           GECODE_ES_CHECK(clique(i,j,node[i].w+node[j].w));
           // Remove edge
           edge(i,j,false);
@@ -266,9 +258,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
           break;
         }
         case 2: {
-          Nodes ii(*this,node[i].n);
-          int j=ii.val(*this,node[i].n); ii.inc(*this,node[i].n);
-          int k=ii.val(*this,node[i].n);
+          Nodes ii(node[i].n);
+          int j=ii(); ++ii;
+          int k=ii();
           if (adjacent(j,k)) {
             GECODE_ES_CHECK(clique(i,j,k,
                                    node[i].w+node[j].w+node[k].w));
@@ -294,7 +286,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     // Initialize for Bron-Kerbosch
     {
       Region reg(home);
-      NodeSet p(reg,*this), x(reg,*this);
+      NodeSet p(reg,nodes()), x(reg,nodes());
       bool empty = true;
       for (int i=nodes(); i--; )
         if (node[i].d > 0) {
@@ -315,8 +307,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     Region reg(home);
     int* n=reg.alloc<int>(cm);
     int j=0;
-    for (Nodes i(*this,m); i(*this,m); i.inc(*this,m))
-      n[j++]=i.val(*this,m);
+    for (Nodes i(m); i() < nodes(); ++i)
+      n[j++]=i();
     assert(j == static_cast<int>(cm));
     IntSet s(n,cm);
     return s;

@@ -41,13 +41,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
   void ConflictGraph::print(const NodeSet& r) {
     std::cout << "{";
-    Nodes n(*this,r);
-    if (n(*this,r)) {
-      std::cout << n.val(*this,r);
-      n.inc(*this,r);
-      while (n(*this,r)) {
-        std::cout << ", " << n.val(*this,r);
-        n.inc(*this,r);
+    Nodes n(r);
+    if (n() < nodes()) {
+      std::cout << n();
+      ++n;
+      while (n() < nodes()) {
+        std::cout << ", " << n();
+        ++n;
       }
     }
     std::cout << "}";
@@ -63,28 +63,26 @@ namespace Gecode { namespace Int { namespace BinPacking {
     */
     assert(!(p.none(nodes()) && x.none(nodes())));
     // Iterate over neighbors of pivot node
-    int piv = pivot(p,x);
-    Nodes n(*this,node[piv].n);
+    Nodes n(node[pivot(p,x)].n);
     // Iterate over elements of p 
-    Nodes i(*this,p);
+    Nodes i(p);
     // The loop iterates over elements in i - n
-    while (i(*this,p)) {
-      int iv = i.val(*this,p);
-      int nv = n.val(*this,node[piv].n);
-      if (n(*this,node[piv].n) && (iv == nv)) {
-        i.inc(*this,p); n.inc(*this,node[piv].n);
-      } else if (n(*this,node[piv].n) && (iv > nv)) {
-        n.inc(*this,node[piv].n);
+    while (i() < nodes()) {
+      int iv = i(), nv = n();
+      if ((n() < nodes()) && (iv == nv)) {
+        ++i; ++n;
+      } else if ((n() < nodes()) && (iv > nv)) {
+        ++n;
       } else {
-        i.inc(*this,p); n.inc(*this,node[piv].n);
+        ++i; ++n;
 
         Region reg(home);
 
         // Found i.val() to be in i - n
-        NodeSet np(reg,*this);
+        NodeSet np(reg,nodes());
         bool npe = iwn(np,p,iv); 
 
-        NodeSet nx(reg,*this);
+        NodeSet nx(reg,nodes());
         bool nxe = iwn(nx,x,iv); 
 
         p.excl(iv);
@@ -95,12 +93,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
 
         if (npe && nxe) {
           // Found a max clique
-          /*
           std::cout << "Clique: ";
           print(r);
           std::cout << ", c=" << cr << ", w=" << wr
                     << std::endl;
-          */
           GECODE_ES_CHECK(clique());
         } else {
           GECODE_ES_CHECK(bk(np,nx));

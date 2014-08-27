@@ -196,22 +196,22 @@ namespace Gecode { namespace Int { namespace BinPacking {
     public:
       /// Keep uninitialized
       NodeSet(void);
-      /// Initialize node set
-      NodeSet(Region& r, const ConflictGraph& cg);
-      /// Initialize node set as copy of \a ns
-      NodeSet(Region& r, const ConflictGraph& cg, const NodeSet& ns);
-      /// Initialize node set
-      void init(Region& r, const ConflictGraph& cg);
+      /// Initialize node set for \a n nodes
+      NodeSet(Region& r, int n);
+      /// Initialize node set as copy of \a ns with \a n nodes
+      NodeSet(Region& r, int n, const NodeSet& ns);
+      /// Initialize node set for \a n nodes
+      void init(Region& r, int n);
       /// Test whether node \a i is included
       bool in(int i) const;
       /// Include node \a i
       void incl(int i);
       /// Exclude node \a i
       void excl(int i);
-      /// Copy elements from node set \a ns
-      void copy(const ConflictGraph& cg, const NodeSet& ns);
-      /// Clear the whole node set
-      void empty(const ConflictGraph& cg);
+      /// Copy elements from node set \a ns with \a n nodes
+      void copy(int n, const NodeSet& ns);
+      /// Clear the whole node set for \a n nodes
+      void empty(int n);
     };
 
     /// Class for node in graph
@@ -232,23 +232,23 @@ namespace Gecode { namespace Int { namespace BinPacking {
     /// Iterator over node sets
     class Nodes {
     private:
+      /// The node set to iterate over
+      const NodeSet& ns;
       /// Current node
       unsigned int c;
     public:
-      /// Initialize for nodes in graph \a cg 
-      Nodes(const ConflictGraph& cg, const NodeSet& ns);
+      /// Initialize for nodes in \a ns
+      Nodes(const NodeSet& ns);
       /// \name Iteration control
       //@{
-      /// Test whether iterator is still at a neighbor or done
-      bool operator ()(const ConflictGraph& cg, const NodeSet& ns) const;
       /// Move iterator to next node (if possible)
-      void inc(const ConflictGraph& cg, const NodeSet& ns);
+      void operator ++(void);
       //@}
       
       /// \name %Node access
       //@{
       /// Return current node
-      int val(const ConflictGraph& cg, const NodeSet& ns) const;
+      int operator ()(void) const;
       //@}
     };
     
