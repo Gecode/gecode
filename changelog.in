@@ -67,10 +67,12 @@
 #
 
 [RELEASE]
-Version: 4.2.2
-Date: 2013-11-05
+Version: 4.3.0
+Date: 2014-08-28
 [DESCRIPTION]
-Gaga!
+This release fixes a large number of both minor and major bugs,
+has some improvements for FlatZinc, and adds multi-dimensional
+bin-packing.
 
 [ENTRY]
 Module: flatzinc
