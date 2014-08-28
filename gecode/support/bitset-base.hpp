@@ -100,6 +100,18 @@ namespace Gecode { namespace Support {
     bool none(void) const;
     /// Whether no bits from bit 0 to bit \a i are set
     bool none(unsigned int i) const;
+    /// Perform "and" with \a a
+    void a(BitSetData a);
+    /// Perform "and" with \a a for bits 0 to \a i
+    void a(BitSetData a, unsigned int i);
+    /// Return "and" of \a a and \a b
+    static BitSetData a(BitSetData a, BitSetData b);
+    /// Perform "or" with \a a
+    void o(BitSetData a);
+    /// Perform "or" with \a a for bits 0 to \a i
+    void o(BitSetData a, unsigned int i);
+    /// Return "or" of \a a and \a b
+    static BitSetData o(BitSetData a, BitSetData b);
   };
 
   /// Status of a bitset
@@ -130,6 +142,9 @@ namespace Gecode { namespace Support {
     /// Copy from bitset \a bs with allocator \a a
     template<class A>
     RawBitSetBase(A& a, unsigned int sz, const RawBitSetBase& bs);
+    /// Allocate for \a sz bits and allocator \a a (only after default constructor)
+    template<class A>
+    void allocate(A& a, unsigned int sz);
     /// Initialize for \a sz bits and allocator \a a (only after default constructor)
     template<class A>
     void init(A& a, unsigned int sz, bool setbits=false);
@@ -282,6 +297,37 @@ namespace Gecode { namespace Support {
     return (bits & mask) == static_cast<Base>(0U);
   }
 
+  forceinline void
+  BitSetData::a(BitSetData a) {
+    bits &= a.bits;
+  }
+  forceinline void
+  BitSetData::a(BitSetData a, unsigned int i) {
+    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+    bits &= (a.bits & mask);
+  }
+  forceinline BitSetData
+  BitSetData::a(BitSetData a, BitSetData b) {
+    BitSetData ab;
+    ab.bits = a.bits & b.bits;
+    return ab;
+  }
+
+  forceinline void
+  BitSetData::o(BitSetData a) {
+    bits |= a.bits;
+  }
+  forceinline void
+  BitSetData::o(BitSetData a, unsigned int i) {
+    const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
+    bits |= (a.bits & mask);
+  }
+  forceinline BitSetData
+  BitSetData::o(BitSetData a, BitSetData b) {
+    BitSetData ab;
+    ab.bits = a.bits | b.bits;
+    return ab;
+  }
 
 
   /*
@@ -349,6 +395,13 @@ namespace Gecode { namespace Support {
       data[i] = bs.data[i];
     // Set a bit at position sz as sentinel (for efficient next)
     set(sz);
+  }
+
+  template<class A>
+  forceinline void
+  RawBitSetBase::allocate(A& a, unsigned int sz) {
+    assert(data == NULL);
+    data=a.template alloc<BitSetData>(BitSetData::data(sz+1));
   }
 
   template<class A>

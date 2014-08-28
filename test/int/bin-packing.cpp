@@ -367,10 +367,28 @@ namespace Test { namespace Int {
           IntArgs c1(4, 0,2,4,6);
           IntArgs c2(8, 1,2,3,4,5,6,7,8);
           IntArgs c3(8, 1,3,7,10,15,22,27,97);
+          IntArgs c41(8, 1,2,3,4,5,6,7,14);
+          IntArgs c42(8, 1,2,3,4,5,6,7,15);
+          IntArgs c43(8, 1,2,3,4,5,6,7,16);
+          IntArgs c44(8, 1,2,3,4,5,6,7,30);
+          IntArgs c45(8, 1,2,3,4,5,6,7,31);
+          IntArgs c46(8, 1,2,3,4,5,6,7,32);
+          IntArgs c47(8, 1,2,3,4,5,6,7,62);
+          IntArgs c48(8, 1,2,3,4,5,6,7,63);
+          IntArgs c49(8, 1,2,3,4,5,6,7,64);
 
           (void) new CliqueMBPT(c1);
           (void) new CliqueMBPT(c2);
           (void) new CliqueMBPT(c3);
+          (void) new CliqueMBPT(c41);
+          (void) new CliqueMBPT(c42);
+          (void) new CliqueMBPT(c43);
+          (void) new CliqueMBPT(c44);
+          (void) new CliqueMBPT(c45);
+          (void) new CliqueMBPT(c46);
+          (void) new CliqueMBPT(c47);
+          (void) new CliqueMBPT(c48);
+          (void) new CliqueMBPT(c49);
         }
       }
     };

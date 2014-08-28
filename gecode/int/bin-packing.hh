@@ -200,6 +200,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
       NodeSet(Region& r, int n);
       /// Initialize node set as copy of \a ns with \a n nodes
       NodeSet(Region& r, int n, const NodeSet& ns);
+      /// Allocate node set for \a n nodes
+      void allocate(Region& r, int n);
       /// Initialize node set for \a n nodes
       void init(Region& r, int n);
       /// Test whether node \a i is included
@@ -212,6 +214,15 @@ namespace Gecode { namespace Int { namespace BinPacking {
       void copy(int n, const NodeSet& ns);
       /// Clear the whole node set for \a n nodes
       void empty(int n);
+      /**
+       * Initialize \a ac as intersection of \a a and \a c, 
+       * \a bc as intersection of \a b and \a c where \a n 
+       * is the maximal number of nodes. Return whether both \ac 
+       * and \a bc are empty.
+       */
+      static bool iwn(NodeSet& iwa, const NodeSet& a, 
+                      NodeSet& iwb, const NodeSet& b,
+                      const NodeSet& c, int n);
     };
 
     /// Class for node in graph
@@ -254,11 +265,25 @@ namespace Gecode { namespace Int { namespace BinPacking {
     
     /// \name Routines for Bosch-Kerbron algorithm
     //@{
-    /// Initialize \a iwn as intersection of \a n and the neighbors of node \a i, return whether result is empty
-    bool iwn(NodeSet& iwn, const NodeSet& n, int i);
+    /// Clique information
+    class Clique {
+    public:
+      /// Nodes in the clique
+      NodeSet n;
+      /// Cardinality of clique
+      unsigned int c;
+      /// Weight of clique
+      unsigned int w;
+      /// Constructor for \a m nodes
+      Clique(Region& r, int m);
+      /// Include node \a i with weight \a w
+      void incl(int i, unsigned int w);
+      /// Exclude node \a i with weight \a w
+      void excl(int i, unsigned int w);
+    };
+
     /// Find a pivot node with maximal degree from \a a or \a b
     int pivot(const NodeSet& a, const NodeSet& b) const;
-    void print(const NodeSet& r);
     /// Run Bosch-Kerbron algorithm for finding max cliques
     GECODE_INT_EXPORT
     ExecStatus bk(NodeSet& p, NodeSet& x);
@@ -267,25 +292,17 @@ namespace Gecode { namespace Int { namespace BinPacking {
     /// \name Managing cliques
     //@{
     /// Current clique
-    NodeSet r;
-    /// Size of current clique
-    unsigned int cr;
-    /// Weight of current clique
-    unsigned int wr;
+    Clique cur;
     /// Largest clique so far
-    NodeSet m;
-    /// Size of largest clique
-    unsigned int cm;
-    /// Weight of largest clique
-    unsigned int wm;
-    /// Reprot the current clique
+    Clique max;
+    /// Report the current clique
     ExecStatus clique(void);
     /// Found a clique of node \a i
     ExecStatus clique(int i);
-    /// Found a clique of nodes \a i and \a j with weight \a w
-    ExecStatus clique(int i, int j, unsigned int w);
-    /// Found a clique of nodes \a i, \a j, and \a k with weight \a w
-    ExecStatus clique(int i, int j, int k, unsigned int w);
+    /// Found a clique of nodes \a i and \a j
+    ExecStatus clique(int i, int j);
+    /// Found a clique of nodes \a i, \a j, and \a k
+    ExecStatus clique(int i, int j, int k);
     //@}
   public:
     /// Initialize graph
