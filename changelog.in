@@ -83,6 +83,20 @@ has some improvements for FlatZinc, and adds multi-dimensional
 bin-packing.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks:	Victor Zverovich, Tony Kelman
+[DESCRIPTION]
+Various fixes for CMake:
+ - Set the output directory for runtime target files (executables and DLLs) to bin/ subdirectory of the project's binary directory to avoid collisions when Gecode is used as a subproject.Improve suppression of warnings.
+ - Add GECODE_USE_QT variable which specifies whether to use Qt. Qt is used if GECODE_USE_QT is TRUE or unset.
+ - Prevent linker warnings on MSVC.
+ - Use per-target instead of global include directories. This simplifies use of Gecode as a subproject because add_target_libraries(<target> <gecode-lib>) now sets the necessary include directories for <target> in addition to link dependencies.
+ - Fix to fully link internal dependencies needed for creating DLLs: https://github.com/ampl/gecode/pull/2
+ .
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor
