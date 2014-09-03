@@ -182,7 +182,7 @@ Thanks: Victor Zverovich
 [DESCRIPTION]
 Fixed FlatZinc interpreter to compile with clang in C++11 mode.
 
-[ENRTY]
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
@@ -191,14 +191,14 @@ Thanks: Bauke Conijn
 Re-enabled parts of not-first-not-last propagation for unary with
 optional tasks.
 
-[ENRTY]
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
 [DESCRIPTION]
 Catch exceptions and print proper error message.
 
-[ENRTY]
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   major
