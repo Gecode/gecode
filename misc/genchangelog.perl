@@ -192,7 +192,7 @@ while ($l = <>) {
       $rb = $rb . ", thanks to $thanks";
     }
     if (!($author eq "")) {
-      $rb = $rb . " , contributed by $author";
+      $rb = $rb . ", contributed by $author";
     }
     if (!($more eq "")) {
 	$more =~ s/^        //;
