@@ -129,11 +129,6 @@ public:
         linear(*this, row, IRT_EQ, opt.lambda);
       }
 
-    // IntVarArray ints(*this, opt.v*opt.b, 0, 1);
-    // for (int i = 0 ; i < opt.v*opt.b ; i++)
-    //   rel(*this, ints[i] == _p[i]);
-    // Matrix<IntVarArray> intm(ints, opt.b, opt.v);
-
     if (opt.symmetry() == SYMMETRY_LDSB) {
       Symmetries s;
       s << rows_interchange(p);
