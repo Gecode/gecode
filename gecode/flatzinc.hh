@@ -206,7 +206,7 @@ namespace Gecode { namespace FlatZinc {
   protected:
       /// \name Search options
       //@{
-      Gecode::Driver::UnsignedIntOption _solutions; ///< How many solutions
+      Gecode::Driver::IntOption         _solutions; ///< How many solutions
       Gecode::Driver::BoolOption        _allSolutions; ///< Return all solutions
       Gecode::Driver::DoubleOption      _threads;   ///< How many threads to use
       Gecode::Driver::BoolOption        _free; ///< Use free search
@@ -235,7 +235,7 @@ namespace Gecode { namespace FlatZinc {
     /// Constructor
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
-      _solutions("-n","number of solutions (0 = all)",1),
+      _solutions("-n","number of solutions (0 = all, -1 = one/best)",-1),
       _allSolutions("-a", "return all solutions (equal to -solutions 0)"),
       _threads("-p","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
@@ -282,7 +282,7 @@ namespace Gecode { namespace FlatZinc {
 
     void parse(int& argc, char* argv[]) {
       Gecode::BaseOptions::parse(argc,argv);
-      if (_allSolutions.value()) {
+      if (_allSolutions.value() && _solutions.value()==0) {
         _solutions.value(0);
       }
       if (_stat.value())
@@ -296,7 +296,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::BaseOptions::help();
     }
   
-    unsigned int solutions(void) const { return _solutions.value(); }
+    int solutions(void) const { return _solutions.value(); }
     bool allSolutions(void) const { return _allSolutions.value(); }
     double threads(void) const { return _threads.value(); }
     bool free(void) const { return _free.value(); }

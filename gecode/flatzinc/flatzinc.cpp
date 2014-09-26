@@ -1228,15 +1228,27 @@ namespace Gecode { namespace FlatZinc {
     n_aux += fv_aux.size();
 #endif
     if (n_aux > 0) {
-      AuxVarBrancher::post(*this, def_int_varsel, def_int_valsel,
-                           def_bool_varsel, def_bool_valsel
+      if (_method == SAT) {
+        AuxVarBrancher::post(*this, def_int_varsel, def_int_valsel,
+                             def_bool_varsel, def_bool_valsel
 #ifdef GECODE_HAS_SET_VARS
-                           , def_set_varsel, def_set_valsel
+                             , def_set_varsel, def_set_valsel
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-                           , def_float_varsel, def_float_valsel
+                             , def_float_varsel, def_float_valsel
 #endif
-                           );
+                             );
+      } else {
+        branch(*this,iv_aux,def_int_varsel,def_int_valsel);
+        branch(*this,bv_aux,def_bool_varsel,def_bool_valsel);
+  #ifdef GECODE_HAS_SET_VARS
+        branch(*this,sv_aux,def_set_varsel,def_set_valsel);
+  #endif
+  #ifdef GECODE_HAS_FLOAT_VARS
+        branch(*this,fv_aux,def_float_varsel,def_float_valsel);
+  #endif
+        
+      }
     }
   }
 
@@ -1460,8 +1472,11 @@ namespace Gecode { namespace FlatZinc {
     if (opt.interrupt())
       Driver::CombinedStop::installCtrlHandler(true);
     Meta<Engine,FlatZincSpace> se(this,o);
-    int noOfSolutions = _method == SAT ? opt.solutions() : 0;
-    bool printAll = _method == SAT || opt.allSolutions();
+    int noOfSolutions = opt.solutions();
+    if (noOfSolutions == -1) {
+      noOfSolutions = (_method == SAT) ? 1 : 0;
+    }
+    bool printAll = _method == SAT || opt.allSolutions() || noOfSolutions != 0;
     int findSol = noOfSolutions;
     FlatZincSpace* sol = NULL;
     while (FlatZincSpace* next_sol = se.next()) {

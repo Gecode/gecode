@@ -72,7 +72,14 @@ Date: 2014-08-28
 [DESCRIPTION]
 GAGA!
 
-
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks:	Carleton Coffrin
+[DESCRIPTION]
+Fixed the behaviour for the -n and -a command line options for
+optimisation models.
 
 [RELEASE]
 Version: 4.3.0
