@@ -52,11 +52,24 @@
 void yyerror(void*, const char*);
 #define yyerror(s) yyerror(yyextra, s)
 
+#include <errno.h>
+#include <stdlib.h>
+
 #include <gecode/flatzinc/parser.hh>
 
 const char* stringbuf;
 int stringbuflen;
 int stringbufpos;
+
+bool parseInt(const char* text, int& value) {
+  long int result = strtol(text,NULL,0);
+  if ( (result == LONG_MAX || result == LONG_MIN) && errno == ERANGE )
+    return false;
+  if (result < Gecode::Int::Limits::min || result > Gecode::Int::Limits::max)
+    return false;
+  value = static_cast<int>(result);
+  return true;
+}
 
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 #define YY_INPUT(buf, result, max_size) \
@@ -71,9 +84,21 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 
 "true"            { yylval->iValue = 1; return FZ_BOOL_LIT; }
 "false"           { yylval->iValue = 0; return FZ_BOOL_LIT; }
--?[0-9]+          { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
--?0x[0-9A-Fa-f]+  { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
--?0o[0-7]+        { yylval->iValue = atoi(yytext); return FZ_INT_LIT; }
+-?[0-9]+          { if (parseInt(yytext,yylval->iValue))
+                      return FZ_INT_LIT;
+                    else
+                      yyerror("invalid integer literal");
+                  }
+-?0x[0-9A-Fa-f]+  {  if (parseInt(yytext,yylval->iValue))
+                      return FZ_INT_LIT;
+                    else
+                      yyerror("invalid integer literal");
+                  }
+-?0o[0-7]+        { if (parseInt(yytext,yylval->iValue))
+                      return FZ_INT_LIT;
+                    else
+                      yyerror("invalid integer literal");
+                  }
 -?[0-9]+\.[0-9]+  { yylval->dValue = strtod(yytext,NULL);
                     return FZ_FLOAT_LIT; }
 -?[0-9]+\.[0-9]+[Ee][+-]?[0-9]+  { yylval->dValue = strtod(yytext,NULL);
