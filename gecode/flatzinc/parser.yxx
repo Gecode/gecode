@@ -1904,6 +1904,8 @@ annotation_list:
 annotation_expr :
       ann_non_array_expr
       { $$ = $1; }
+    | '[' ']'
+      { $$ = new AST::Array(); }
     | '[' annotation_list annotation_list_tail ']'
       { $$ = $2; }
 

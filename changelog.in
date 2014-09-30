@@ -76,6 +76,15 @@ GAGA!
 Module: flatzinc
 What:   bug
 Rank:   minor
+Thanks:	Peter Nightingale
+[DESCRIPTION]
+Fixed the FlatZinc interpreter to accept empty arrays as arguments in
+annotations.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
 Thanks:	Carleton Coffrin
 [DESCRIPTION]
 Fixed the behaviour for the -n and -a command line options for
