@@ -248,7 +248,6 @@ bisect(const interval<T, Policies>& x)
 template<class T, class Policies> inline
 T norm(const interval<T, Policies>& x)
 {
-  typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x)) {
     typedef typename Policies::checking checking;
     return checking::nan();
