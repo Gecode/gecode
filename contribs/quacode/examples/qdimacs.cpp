@@ -1,11 +1,9 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
- *     Christian Schulte, 2006
  *     Vincent Barichard, 2013
  *
  *  Last modified:
@@ -14,6 +12,21 @@
  *
  *  This file is part of Quacode:
  *     http://quacode.barichard.com
+ *
+ * This file is based on gecode/examples/sat.cpp
+ * and is under the same license as given below:
+ *
+ *  Main authors:
+ *     Raphael Reischuk <reischuk@cs.uni-sb.de>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Raphael Reischuk, 2008
+ *     Guido Tack, 2008
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the

@@ -33,9 +33,4 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-TAG=$(git describe 2> /dev/null)
-if [ -n "$TAG" ]; then
-  git log -n1 --pretty="%h" $1
-else
-  git log -n1 --pretty="g%h" $1
-fi
+git log -n1 --pretty="rev %h" $1
