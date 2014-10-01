@@ -281,10 +281,8 @@ void initfg(ParserState* pp) {
         yyerror(pp, e.toString().c_str());
       }
     }
-    if (pp->intvars[i].first[0] != '[') {
-      delete pp->intvars[i].second;
-      pp->intvars[i].second = NULL;
-    }
+    delete pp->intvars[i].second;
+    pp->intvars[i].second = NULL;
   }
   for (unsigned int i=0; i<pp->boolvars.size(); i++) {
     if (!pp->hadError) {
@@ -295,10 +293,8 @@ void initfg(ParserState* pp) {
         yyerror(pp, e.toString().c_str());
       }
     }
-    if (pp->boolvars[i].first[0] != '[') {
-      delete pp->boolvars[i].second;
-      pp->boolvars[i].second = NULL;
-    }
+    delete pp->boolvars[i].second;
+    pp->boolvars[i].second = NULL;
   }
   for (unsigned int i=0; i<pp->setvars.size(); i++) {
     if (!pp->hadError) {
@@ -308,10 +304,8 @@ void initfg(ParserState* pp) {
         yyerror(pp, e.toString().c_str());
       }
     }      
-    if (pp->setvars[i].first[0] != '[') {
-      delete pp->setvars[i].second;
-      pp->setvars[i].second = NULL;
-    }
+    delete pp->setvars[i].second;
+    pp->setvars[i].second = NULL;
   }
   for (unsigned int i=0; i<pp->floatvars.size(); i++) {
     if (!pp->hadError) {
@@ -322,10 +316,8 @@ void initfg(ParserState* pp) {
         yyerror(pp, e.toString().c_str());
       }
     }      
-    if (pp->floatvars[i].first[0] != '[') {
-      delete pp->floatvars[i].second;
-      pp->floatvars[i].second = NULL;
-    }
+    delete pp->floatvars[i].second;
+    pp->floatvars[i].second = NULL;
   }
   pp->fg->postConstraints(pp->domainConstraints);
   pp->fg->postConstraints(pp->constraints);
@@ -855,14 +847,11 @@ vardecl_item:
               delete vsv;
             } else {
               if ($5>0) {
-                IntVarSpec* ispec = new IntVarSpec($9,!print,false);
-                string arrayname = "["; arrayname += $11;
-                for (int i=0; i<$5-1; i++) {
+                for (int i=0; i<$5; i++) {
+                  IntVarSpec* ispec = new IntVarSpec($9,!print,false);
                   vars[i] = pp->intvars.size();
-                  pp->intvars.push_back(varspec(arrayname, ispec));
+                  pp->intvars.push_back(varspec($11, ispec));
                 }
-                vars[$5-1] = pp->intvars.size();
-                pp->intvars.push_back(varspec($11, ispec));
               }
             }
           }
@@ -990,14 +979,11 @@ vardecl_item:
                 Option<std::pair<double,double> > dom =
                   $9() ? Option<std::pair<double,double> >::some(*$9.some())
                        : Option<std::pair<double,double> >::none();
-                FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
-                string arrayname = "["; arrayname += $11;
-                for (int i=0; i<$5-1; i++) {
+                for (int i=0; i<$5; i++) {
+                  FloatVarSpec* ispec = new FloatVarSpec(dom,!print,false);
                   vars[i] = pp->floatvars.size();
-                  pp->floatvars.push_back(varspec(arrayname, ispec));
+                  pp->floatvars.push_back(varspec($11, ispec));
                 }
-                vars[$5-1] = pp->floatvars.size();
-                pp->floatvars.push_back(varspec($11, ispec));
               }
             }
           }
@@ -1059,14 +1045,11 @@ vardecl_item:
             delete vsv;
           } else {
             if ($5>0) {
-              SetVarSpec* ispec = new SetVarSpec($11,!print,false);
-              string arrayname = "["; arrayname += $13;
-              for (int i=0; i<$5-1; i++) {
+              for (int i=0; i<$5; i++) {
+                SetVarSpec* ispec = new SetVarSpec($11,!print,false);
                 vars[i] = pp->setvars.size();
-                pp->setvars.push_back(varspec(arrayname, ispec));
+                pp->setvars.push_back(varspec($13, ispec));
               }
-              vars[$5-1] = pp->setvars.size();
-              pp->setvars.push_back(varspec($13, ispec));
             }
           }
           if (print) {
@@ -1432,12 +1415,15 @@ constraint_item :
             if (base0==base1) {
               // do nothing, already aliased
             } else {
+              IntVarSpec* ivs0 = static_cast<IntVarSpec*>(pp->intvars[base0].second);
               IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->intvars[base1].second);
               ivs1->alias = true;
               ivs1->i = base0;
               if (ivs1->domain()) {
+                AST::SetLit* sl = new AST::SetLit(ivs1->domain.some()->getSet());
+                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
                 addDomainConstraint(pp, "int_in",
-                                    new AST::IntVar(base0), ivs1->domain);
+                                    new AST::IntVar(base0), newdom);
                 ivs1->domain = Option<AST::SetLit*>::none();
               }
             }
@@ -1454,8 +1440,10 @@ constraint_item :
               ivs1->alias = true;
               ivs1->i = base0;
               if (ivs1->domain()) {
+                AST::SetLit* sl = new AST::SetLit(ivs1->domain.some()->getSet());
+                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
                 addDomainConstraint(pp, "bool_in",
-                                    new AST::BoolVar(base0), ivs1->domain);
+                                    new AST::BoolVar(base0), newdom);
                 ivs1->domain = Option<AST::SetLit*>::none();
               }
             }
@@ -1489,8 +1477,10 @@ constraint_item :
               ivs1->alias = true;
               ivs1->i = base0;
               if (ivs1->upperBound()) {
+                AST::SetLit* sl = new AST::SetLit(ivs1->upperBound.some()->getSet());
+                Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
                 addDomainConstraint(pp, "set_subset",
-                                    new AST::SetVar(base0), ivs1->upperBound);
+                                    new AST::SetVar(base0), newdom);
                 ivs1->upperBound = Option<AST::SetLit*>::none();
               }
             }

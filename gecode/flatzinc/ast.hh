@@ -180,6 +180,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     SetLit(void) {}
     SetLit(int min0, int max0) : interval(true), min(min0), max(max0) {}
     SetLit(const std::vector<int>& s0) : interval(false), s(s0) {}
+    explicit SetLit(SetLit* s0) : interval(s0->interval), min(s0->min), max(s0->max), s(s0->s) {}
     bool empty(void) const {
       return ( (interval && min>max) || (!interval && s.size() == 0));
     }

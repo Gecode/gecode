@@ -75,6 +75,15 @@ GAGA!
 [ENTRY]
 Module: flatzinc
 What:   bug
+Rank:   major
+Thanks:	Mats Carlsson
+[DESCRIPTION]
+Fixed FlatZinc aliasing detection on array variables that
+introduced incorrect aliases between variables.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
 Rank:   minor
 Thanks:	Frank Imeson
 [DESCRIPTION]
