@@ -73,6 +73,14 @@ Date: 2014-08-28
 GAGA!
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Lionard Benedetti
+[DESCRIPTION]
+Removed potentially undefined behavior for regular expressions. 
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   major
