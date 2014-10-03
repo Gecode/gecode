@@ -78,11 +78,15 @@ namespace Gecode {
       Exp* kids[2];
     } data;
 
+    /// Compute the follow positions
     MiniModel::PosSet*
     followpos(MiniModel::PosSetAllocator&,MiniModel::PosInfo*);
-    void inc(void);
-    void dec(void);
-    int n_pos(void) const;
+    /// Increment use counter of \a e
+    static void inc(Exp* e);
+    /// Decrement use counter of \a e
+    static void dec(Exp* e);
+    /// Return number of positions of \a e
+    static int n_pos(Exp* e);
     /// Print expression
     template<class Char, class Traits>
     std::basic_ostream<Char,Traits>&
@@ -91,6 +95,7 @@ namespace Gecode {
     static void* operator new(size_t);
     static void  operator delete(void*);
   private:
+    /// Deallocate memory
     void dispose(void);
   };
 
@@ -131,20 +136,20 @@ namespace Gecode {
   }
 
   forceinline void
-  REG::Exp::inc(void) {
-    if (this != NULL)
-      use_cnt++;
+  REG::Exp::inc(Exp* e) {
+    if (e != NULL)
+      e->use_cnt++;
   }
   forceinline void
-  REG::Exp::dec(void) {
-    if ((this != NULL) && (--use_cnt == 0))
-      dispose();
+  REG::Exp::dec(Exp* e) {
+    if ((e != NULL) && (--e->use_cnt == 0))
+      e->dispose();
   }
 
 
   forceinline int
-  REG::Exp::n_pos(void) const {
-    return (this != NULL) ? _n_pos : 0;
+  REG::Exp::n_pos(Exp* e) {
+    return (e != NULL) ? e->_n_pos : 0;
   }
 
 
@@ -159,21 +164,21 @@ namespace Gecode {
   REG::REG(void) : e(NULL) {}
 
   REG::REG(const REG& r) : e(r.e) {
-    e->inc();
+    REG::Exp::inc(e);
   }
 
   const REG&
   REG::operator =(const REG& r) {
     if (&r != this) {
-      r.e->inc();
-      e->dec();
+      REG::Exp::inc(r.e);
+      REG::Exp::dec(e);
       e = r.e;
     }
     return *this;
   }
 
   REG::~REG(void) {
-    e->dec();
+    REG::Exp::dec(e);
   }
 
   REG::REG(int s) : e(new Exp) {
@@ -204,7 +209,7 @@ namespace Gecode {
         Exp* e2 = a[0];
         a[0] = new Exp;
         a[0]->use_cnt      = 1;
-        a[0]->_n_pos       = e1->n_pos() + e2->n_pos();
+        a[0]->_n_pos       = REG::Exp::n_pos(e1) + REG::Exp::n_pos(e2);
         a[0]->type         = REG::Exp::ET_OR;
         a[0]->data.kids[0] = e1;
         a[0]->data.kids[1] = e2;
@@ -215,7 +220,7 @@ namespace Gecode {
           Exp* e2 = a[2*i+1];
           a[i] = new Exp;
           a[i]->use_cnt      = 1;
-          a[i]->_n_pos       = e1->n_pos() + e2->n_pos();
+          a[i]->_n_pos       = REG::Exp::n_pos(e1) + REG::Exp::n_pos(e2);
           a[i]->type         = REG::Exp::ET_OR;
           a[i]->data.kids[0] = e1;
           a[i]->data.kids[1] = e2;
@@ -232,10 +237,10 @@ namespace Gecode {
       return *this;
     Exp* f = new Exp();
     f->use_cnt      = 1;
-    f->_n_pos       = e->n_pos() + r2.e->n_pos();
+    f->_n_pos       = REG::Exp::n_pos(e) + REG::Exp::n_pos(r2.e);
     f->type         = REG::Exp::ET_OR;
-    f->data.kids[0] = e;    e->inc();
-    f->data.kids[1] = r2.e; r2.e->inc();
+    f->data.kids[0] = e;    REG::Exp::inc(e);
+    f->data.kids[1] = r2.e; REG::Exp::inc(r2.e);
     REG r(f);
     return r;
   }
@@ -246,10 +251,10 @@ namespace Gecode {
       return *this;
     Exp* f = new Exp();
     f->use_cnt      = 1;
-    f->_n_pos       = e->n_pos() + r2.e->n_pos();
+    f->_n_pos       = REG::Exp::n_pos(e) + REG::Exp::n_pos(r2.e);
     f->type         = REG::Exp::ET_OR;
     f->data.kids[0] = e;
-    f->data.kids[1] = r2.e; r2.e->inc();
+    f->data.kids[1] = r2.e; REG::Exp::inc(r2.e);
     e=f;
     return *this;
   }
@@ -260,10 +265,10 @@ namespace Gecode {
     if (r2.e == NULL) return *this;
     Exp* f = new Exp();
     f->use_cnt      = 1;
-    f->_n_pos       = e->n_pos() + r2.e->n_pos();
+    f->_n_pos       = REG::Exp::n_pos(e) + REG::Exp::n_pos(r2.e);
     f->type         = REG::Exp::ET_CONC;
-    f->data.kids[0] = e;    e->inc();
-    f->data.kids[1] = r2.e; r2.e->inc();
+    f->data.kids[0] = e;    REG::Exp::inc(e);
+    f->data.kids[1] = r2.e; REG::Exp::inc(r2.e);
     REG r(f);
     return r;
   }
@@ -273,14 +278,14 @@ namespace Gecode {
     if (r2.e == NULL)
       return *this;
     if (e == NULL) {
-      e=r2.e; e->inc();
+      e=r2.e; REG::Exp::inc(e);
     } else {
       Exp* f = new Exp();
       f->use_cnt      = 1;
-      f->_n_pos       = e->n_pos() + r2.e->n_pos();
+      f->_n_pos       = REG::Exp::n_pos(e) + REG::Exp::n_pos(r2.e);
       f->type         = REG::Exp::ET_CONC;
       f->data.kids[0] = e;
-      f->data.kids[1] = r2.e; r2.e->inc();
+      f->data.kids[1] = r2.e; REG::Exp::inc(r2.e);
       e=f;
     }
     return *this;
@@ -292,9 +297,9 @@ namespace Gecode {
       return *this;
     Exp* f = new Exp();
     f->use_cnt      = 1;
-    f->_n_pos       = e->n_pos();
+    f->_n_pos       = REG::Exp::n_pos(e);
     f->type         = REG::Exp::ET_STAR;
-    f->data.kids[0] = e; e->inc();
+    f->data.kids[0] = e; REG::Exp::inc(e);
     REG r(f);
     return r;
   }
@@ -764,7 +769,7 @@ namespace Gecode {
     PosSetAllocator    psm(heap);
     StatePoolAllocator spm(heap);
     REG r = *this + REG(Int::Limits::max+1);
-    int n_pos = r.e->n_pos();
+    int n_pos = REG::Exp::n_pos(r.e);
 
     PosInfo* pi = heap.alloc<PosInfo>(n_pos);
     for (int i=n_pos; i--; )
