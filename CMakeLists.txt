@@ -406,6 +406,11 @@ target_link_libraries(gecode-test gecodeminimodel)
 add_executable(fzn-gecode ${FLATZINCEXESRC})
 target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
 
+option(BUILD_EXAMPLES \"Build examples.\" OFF) 
+if (${BUILD_EXAMPLES})
+  add_subdirectory(examples)
+endif()
+
 enable_testing()
 add_test(test gecode-test
   -iter 2 -test Branch::Int::Dense::3
