@@ -14,13 +14,13 @@
 #endif
 
 #ifdef __FreeBSD__
-#define BOOST_PLATFORM "FreeBSD " BOOST_STRINGIZE(__FreeBSD__)
+#define GECODE_BOOST_PLATFORM "FreeBSD " GECODE_BOOST_STRINGIZE(__FreeBSD__)
 #elif defined(__NetBSD__)
-#define BOOST_PLATFORM "NetBSD " BOOST_STRINGIZE(__NetBSD__)
+#define GECODE_BOOST_PLATFORM "NetBSD " GECODE_BOOST_STRINGIZE(__NetBSD__)
 #elif defined(__OpenBSD__)
-#define BOOST_PLATFORM "OpenBSD " BOOST_STRINGIZE(__OpenBSD__)
+#define GECODE_BOOST_PLATFORM "OpenBSD " GECODE_BOOST_STRINGIZE(__OpenBSD__)
 #elif defined(__DragonFly__)
-#define BOOST_PLATFORM "DragonFly " BOOST_STRINGIZE(__DragonFly__)
+#define GECODE_BOOST_PLATFORM "DragonFly " GECODE_BOOST_STRINGIZE(__DragonFly__)
 #endif
 
 //
@@ -29,7 +29,7 @@
 // advertise the fact in <unistd.h>:
 //
 #if (defined(__FreeBSD__) && (__FreeBSD__ >= 3)) || defined(__DragonFly__)
-#  define BOOST_HAS_NL_TYPES_H
+#  define GECODE_BOOST_HAS_NL_TYPES_H
 #endif
 
 //
@@ -38,7 +38,7 @@
 //
 #if (defined(__FreeBSD__) && (__FreeBSD__ <= 3))\
    || defined(__OpenBSD__) || defined(__DragonFly__) 
-#  define BOOST_HAS_PTHREADS
+#  define GECODE_BOOST_HAS_PTHREADS
 #endif
 
 //
@@ -57,26 +57,26 @@
 
 #if !((defined(__FreeBSD__) && (__FreeBSD__ >= 5)) \
       || (defined(__NetBSD_GCC__) && (__NetBSD_GCC__ >= 2095003)) || defined(__DragonFly__))
-#  define BOOST_NO_CWCHAR
+#  define GECODE_BOOST_NO_CWCHAR
 #endif
 //
 // The BSD <ctype.h> has macros only, no functions:
 //
 #if !defined(__OpenBSD__) || defined(__DragonFly__)
-#  define BOOST_NO_CTYPE_FUNCTIONS
+#  define GECODE_BOOST_NO_CTYPE_FUNCTIONS
 #endif
 
 //
 // thread API's not auto detected:
 //
-#define BOOST_HAS_SCHED_YIELD
-#define BOOST_HAS_NANOSLEEP
-#define BOOST_HAS_GETTIMEOFDAY
-#define BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE
-#define BOOST_HAS_SIGACTION
+#define GECODE_BOOST_HAS_SCHED_YIELD
+#define GECODE_BOOST_HAS_NANOSLEEP
+#define GECODE_BOOST_HAS_GETTIMEOFDAY
+#define GECODE_BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE
+#define GECODE_BOOST_HAS_SIGACTION
 
 // boilerplate code:
-#define BOOST_HAS_UNISTD_H
+#define GECODE_BOOST_HAS_UNISTD_H
 #include <gecode/third-party/boost/config/posix_features.hpp>
 
 

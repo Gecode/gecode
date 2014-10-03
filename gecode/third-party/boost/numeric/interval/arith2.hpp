@@ -11,8 +11,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_ARITH2_HPP
-#define BOOST_NUMERIC_INTERVAL_ARITH2_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_ARITH2_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_ARITH2_HPP
 
 #include <gecode/third-party/boost/config.hpp>
 #include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
@@ -25,7 +25,7 @@
 #include <cassert>
 #include <gecode/third-party/boost/config/no_tr1/cmath.hpp>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 
 template<class T, class Policies> inline
@@ -157,7 +157,7 @@ T pow_up(const T& x_, int pwr, Rounding& rnd) // x and pwr are positive
 template<class T, class Policies> inline
 interval<T, Policies> pow(const interval<T, Policies>& x, int pwr)
 {
-  BOOST_USING_STD_MAX();
+  GECODE_BOOST_USING_STD_MAX();
   using interval_lib::detail::pow_dn;
   using interval_lib::detail::pow_up;
   typedef interval<T, Policies> I;
@@ -187,7 +187,7 @@ interval<T, Policies> pow(const interval<T, Policies>& x, int pwr)
     if (pwr & 1) {   // [-1,1]^1
       return I(-pow_up(static_cast<T>(-x.lower()), pwr, rnd), pow_up(x.upper(), pwr, rnd), true);
     } else {         // [-1,1]^2
-      return I(static_cast<T>(0), pow_up(max BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper()), pwr, rnd), true);
+      return I(static_cast<T>(0), pow_up(max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper()), pwr, rnd), true);
     }
   } else {                                // [1,2]
     return I(pow_dn(x.lower(), pwr, rnd), pow_up(x.upper(), pwr, rnd), true);
@@ -300,6 +300,6 @@ interval<T, Policies> nth_root(interval<T, Policies> const &x, int k)
 }
 
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_ARITH2_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_ARITH2_HPP

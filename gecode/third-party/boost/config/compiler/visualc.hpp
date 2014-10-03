@@ -12,12 +12,12 @@
 
 //  Microsoft Visual C++ compiler setup:
 
-#define BOOST_MSVC _MSC_VER
+#define GECODE_BOOST_MSVC _MSC_VER
 
 #if _MSC_FULL_VER > 100000000
-#  define BOOST_MSVC_FULL_VER _MSC_FULL_VER
+#  define GECODE_BOOST_MSVC_FULL_VER _MSC_FULL_VER
 #else
-#  define BOOST_MSVC_FULL_VER (_MSC_FULL_VER * 10)
+#  define GECODE_BOOST_MSVC_FULL_VER (_MSC_FULL_VER * 10)
 #endif
 
 // turn off the warnings before we #include anything
@@ -25,12 +25,12 @@
 
 #if _MSC_VER < 1300  // 1200 == VC++ 6.0, 1200-1202 == eVC++4
 #  pragma warning( disable : 4786 ) // ident trunc to '255' chars in debug info
-#  define BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
-#  define BOOST_NO_VOID_RETURNS
-#  define BOOST_NO_EXCEPTION_STD_NAMESPACE
+#  define GECODE_BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
+#  define GECODE_BOOST_NO_VOID_RETURNS
+#  define GECODE_BOOST_NO_EXCEPTION_STD_NAMESPACE
 
-#  if BOOST_MSVC == 1202
-#    define BOOST_NO_STD_TYPEINFO
+#  if GECODE_BOOST_MSVC == 1202
+#    define GECODE_BOOST_NO_STD_TYPEINFO
 #  endif
 
    // disable min/max macro defines on vc6:
@@ -38,42 +38,42 @@
 #endif
 
 /// Visual Studio has no fenv.h
-#define BOOST_NO_FENV_H
+#define GECODE_BOOST_NO_FENV_H
 
 #if (_MSC_VER <= 1300)  // 1300 == VC++ 7.0
 
-#  if !defined(_MSC_EXTENSIONS) && !defined(BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS)      // VC7 bug with /Za
-#    define BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
+#  if !defined(_MSC_EXTENSIONS) && !defined(GECODE_BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS)      // VC7 bug with /Za
+#    define GECODE_BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
 #  endif
 
-#  define BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
-#  define BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-#  define BOOST_NO_PRIVATE_IN_AGGREGATE
-#  define BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
-#  define BOOST_NO_INTEGRAL_INT64_T
-#  define BOOST_NO_DEDUCED_TYPENAME
-#  define BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
+#  define GECODE_BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
+#  define GECODE_BOOST_NO_INCLASS_MEMBER_INITIALIZATION
+#  define GECODE_BOOST_NO_PRIVATE_IN_AGGREGATE
+#  define GECODE_BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP
+#  define GECODE_BOOST_NO_INTEGRAL_INT64_T
+#  define GECODE_BOOST_NO_DEDUCED_TYPENAME
+#  define GECODE_BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
 
 //    VC++ 6/7 has member templates but they have numerous problems including
 //    cases of silent failure, so for safety we define:
-#  define BOOST_NO_MEMBER_TEMPLATES
+#  define GECODE_BOOST_NO_MEMBER_TEMPLATES
 //    For VC++ experts wishing to attempt workarounds, we define:
-#  define BOOST_MSVC6_MEMBER_TEMPLATES
+#  define GECODE_BOOST_MSVC6_MEMBER_TEMPLATES
 
-#  define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
-#  define BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
-#  define BOOST_NO_CV_VOID_SPECIALIZATIONS
-#  define BOOST_NO_FUNCTION_TEMPLATE_ORDERING
-#  define BOOST_NO_USING_TEMPLATE
-#  define BOOST_NO_SWPRINTF
-#  define BOOST_NO_TEMPLATE_TEMPLATES
-#  define BOOST_NO_SFINAE
-#  define BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
-#  define BOOST_NO_IS_ABSTRACT
-#  define BOOST_NO_FUNCTION_TYPE_SPECIALIZATIONS
+#  define GECODE_BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#  define GECODE_BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION
+#  define GECODE_BOOST_NO_CV_VOID_SPECIALIZATIONS
+#  define GECODE_BOOST_NO_FUNCTION_TEMPLATE_ORDERING
+#  define GECODE_BOOST_NO_USING_TEMPLATE
+#  define GECODE_BOOST_NO_SWPRINTF
+#  define GECODE_BOOST_NO_TEMPLATE_TEMPLATES
+#  define GECODE_BOOST_NO_SFINAE
+#  define GECODE_BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
+#  define GECODE_BOOST_NO_IS_ABSTRACT
+#  define GECODE_BOOST_NO_FUNCTION_TYPE_SPECIALIZATIONS
 // TODO: what version is meant here? Have there really been any fixes in cl 12.01 (as e.g. shipped with eVC4)?
 #  if (_MSC_VER > 1200)
-#     define BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS
+#     define GECODE_BOOST_NO_MEMBER_FUNCTION_SPECIALIZATIONS
 #  endif
 
 #endif
@@ -81,25 +81,25 @@
 #if _MSC_VER < 1400 
 // although a conforming signature for swprint exists in VC7.1
 // it appears not to actually work:
-#  define BOOST_NO_SWPRINTF
+#  define GECODE_BOOST_NO_SWPRINTF
 // Our extern template tests also fail for this compiler:
-#  define BOOST_NO_EXTERN_TEMPLATE
+#  define GECODE_BOOST_NO_EXTERN_TEMPLATE
 // Variadic macros do not exist for VC7.1 and lower
-#  define BOOST_NO_VARIADIC_MACROS
+#  define GECODE_BOOST_NO_VARIADIC_MACROS
 #endif
 
 #if defined(UNDER_CE)
 // Windows CE does not have a conforming signature for swprintf
-#  define BOOST_NO_SWPRINTF
+#  define GECODE_BOOST_NO_SWPRINTF
 #endif
 
 #if _MSC_VER <= 1400  // 1400 == VC++ 8.0
-#  define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#  define GECODE_BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 #endif
 
 #if _MSC_VER == 1500  // 1500 == VC++ 9.0
    // A bug in VC9:
-#  define BOOST_NO_ADL_BARRIER
+#  define GECODE_BOOST_NO_ADL_BARRIER
 #endif
 
 
@@ -117,105 +117,105 @@
 // https://connect.microsoft.com/VisualStudio/feedback/details/100744
 // See also: http://www.boost.org/libs/utility/value_init.htm#compiler_issues
 // (Niels Dekker, LKEB, May 2010)
-#define BOOST_NO_COMPLETE_VALUE_INITIALIZATION
+#define GECODE_BOOST_NO_COMPLETE_VALUE_INITIALIZATION
 #endif
 
-#if _MSC_VER <= 1500  || !defined(BOOST_STRICT_CONFIG) // 1500 == VC++ 9.0
-#  define BOOST_NO_INITIALIZER_LISTS
+#if _MSC_VER <= 1500  || !defined(GECODE_BOOST_STRICT_CONFIG) // 1500 == VC++ 9.0
+#  define GECODE_BOOST_NO_INITIALIZER_LISTS
 #endif
 
 #ifndef _NATIVE_WCHAR_T_DEFINED
-#  define BOOST_NO_INTRINSIC_WCHAR_T
+#  define GECODE_BOOST_NO_INTRINSIC_WCHAR_T
 #endif
 
 #if defined(_WIN32_WCE) || defined(UNDER_CE)
-#  define BOOST_NO_SWPRINTF
+#  define GECODE_BOOST_NO_SWPRINTF
 #endif
 
 // we have ThreadEx or GetSystemTimeAsFileTime unless we're running WindowsCE
 #if !defined(_WIN32_WCE) && !defined(UNDER_CE)
-#  define BOOST_HAS_THREADEX
-#  define BOOST_HAS_GETSYSTEMTIMEASFILETIME
+#  define GECODE_BOOST_HAS_THREADEX
+#  define GECODE_BOOST_HAS_GETSYSTEMTIMEASFILETIME
 #endif
 
 //   
 // check for exception handling support:   
-#if !defined(_CPPUNWIND) && !defined(BOOST_NO_EXCEPTIONS)
-#  define BOOST_NO_EXCEPTIONS   
+#if !defined(_CPPUNWIND) && !defined(GECODE_BOOST_NO_EXCEPTIONS)
+#  define GECODE_BOOST_NO_EXCEPTIONS   
 #endif 
 
 //
 // __int64 support:
 //
 #if (_MSC_VER >= 1200)
-#   define BOOST_HAS_MS_INT64
+#   define GECODE_BOOST_HAS_MS_INT64
 #endif
 #if (_MSC_VER >= 1310) && (defined(_MSC_EXTENSIONS) || (_MSC_VER >= 1400))
-#   define BOOST_HAS_LONG_LONG
+#   define GECODE_BOOST_HAS_LONG_LONG
 #else
-#   define BOOST_NO_LONG_LONG
+#   define GECODE_BOOST_NO_LONG_LONG
 #endif
 #if (_MSC_VER >= 1400) && !defined(_DEBUG)
-#   define BOOST_HAS_NRVO
+#   define GECODE_BOOST_HAS_NRVO
 #endif
 //
 // disable Win32 API's if compiler extentions are
 // turned off:
 //
-#if !defined(_MSC_EXTENSIONS) && !defined(BOOST_DISABLE_WIN32)
-#  define BOOST_DISABLE_WIN32
+#if !defined(_MSC_EXTENSIONS) && !defined(GECODE_BOOST_DISABLE_WIN32)
+#  define GECODE_BOOST_DISABLE_WIN32
 #endif
-#if !defined(_CPPRTTI) && !defined(BOOST_NO_RTTI)
-#  define BOOST_NO_RTTI
+#if !defined(_CPPRTTI) && !defined(GECODE_BOOST_NO_RTTI)
+#  define GECODE_BOOST_NO_RTTI
 #endif
 
 //
 // C++0x features
 //
-//   See above for BOOST_NO_LONG_LONG
+//   See above for GECODE_BOOST_NO_LONG_LONG
 
 // C++ features supported by VC++ 10 (aka 2010)
 //
 #if _MSC_VER < 1600
-#define BOOST_NO_AUTO_DECLARATIONS
-#define BOOST_NO_AUTO_MULTIDECLARATIONS
-#define BOOST_NO_LAMBDAS
-#define BOOST_NO_RVALUE_REFERENCES
-#define BOOST_NO_STATIC_ASSERT
-#define BOOST_NO_NULLPTR
-#define BOOST_NO_DECLTYPE
+#define GECODE_BOOST_NO_AUTO_DECLARATIONS
+#define GECODE_BOOST_NO_AUTO_MULTIDECLARATIONS
+#define GECODE_BOOST_NO_LAMBDAS
+#define GECODE_BOOST_NO_RVALUE_REFERENCES
+#define GECODE_BOOST_NO_STATIC_ASSERT
+#define GECODE_BOOST_NO_NULLPTR
+#define GECODE_BOOST_NO_DECLTYPE
 #endif // _MSC_VER < 1600
 
 #if _MSC_VER >= 1600
-#define BOOST_HAS_STDINT_H
+#define GECODE_BOOST_HAS_STDINT_H
 #endif
 
 // C++0x features not supported by any versions
-#define BOOST_NO_CHAR16_T
-#define BOOST_NO_CHAR32_T
-#define BOOST_NO_CONSTEXPR
-#define BOOST_NO_DEFAULTED_FUNCTIONS
-#define BOOST_NO_DELETED_FUNCTIONS
-#define BOOST_NO_EXPLICIT_CONVERSION_OPERATORS
-#define BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
-#define BOOST_NO_INITIALIZER_LISTS
-#define BOOST_NO_NOEXCEPT
-#define BOOST_NO_RAW_LITERALS
-#define BOOST_NO_SCOPED_ENUMS
-#define BOOST_NO_TEMPLATE_ALIASES
-#define BOOST_NO_UNICODE_LITERALS
-#define BOOST_NO_VARIADIC_TEMPLATES
-#define BOOST_NO_SFINAE_EXPR
-#define BOOST_NO_TWO_PHASE_NAME_LOOKUP
-#define BOOST_NO_UNIFIED_INITIALIZATION_SYNTAX
+#define GECODE_BOOST_NO_CHAR16_T
+#define GECODE_BOOST_NO_CHAR32_T
+#define GECODE_BOOST_NO_CONSTEXPR
+#define GECODE_BOOST_NO_DEFAULTED_FUNCTIONS
+#define GECODE_BOOST_NO_DELETED_FUNCTIONS
+#define GECODE_BOOST_NO_EXPLICIT_CONVERSION_OPERATORS
+#define GECODE_BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#define GECODE_BOOST_NO_INITIALIZER_LISTS
+#define GECODE_BOOST_NO_NOEXCEPT
+#define GECODE_BOOST_NO_RAW_LITERALS
+#define GECODE_BOOST_NO_SCOPED_ENUMS
+#define GECODE_BOOST_NO_TEMPLATE_ALIASES
+#define GECODE_BOOST_NO_UNICODE_LITERALS
+#define GECODE_BOOST_NO_VARIADIC_TEMPLATES
+#define GECODE_BOOST_NO_SFINAE_EXPR
+#define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#define GECODE_BOOST_NO_UNIFIED_INITIALIZATION_SYNTAX
 //
 // prefix and suffix headers:
 //
-#ifndef BOOST_ABI_PREFIX
-#  define BOOST_ABI_PREFIX "gecode/third-party/boost/config/abi/msvc_prefix.hpp"
+#ifndef GECODE_BOOST_ABI_PREFIX
+#  define GECODE_BOOST_ABI_PREFIX "gecode/third-party/boost/config/abi/msvc_prefix.hpp"
 #endif
-#ifndef BOOST_ABI_SUFFIX
-#  define BOOST_ABI_SUFFIX "gecode/third-party/boost/config/abi/msvc_suffix.hpp"
+#ifndef GECODE_BOOST_ABI_SUFFIX
+#  define GECODE_BOOST_ABI_SUFFIX "gecode/third-party/boost/config/abi/msvc_suffix.hpp"
 #endif
 
 // TODO:
@@ -228,15 +228,15 @@
 #   if _MSC_VER < 1200
       // Note: these are so far off, they are not really supported
 #   elif _MSC_VER < 1300 // eVC++ 4 comes with 1200-1202
-#     define BOOST_COMPILER_VERSION evc4.0
+#     define GECODE_BOOST_COMPILER_VERSION evc4.0
 #   elif _MSC_VER == 1400
-#     define BOOST_COMPILER_VERSION evc8
+#     define GECODE_BOOST_COMPILER_VERSION evc8
 #   elif _MSC_VER == 1500
-#     define BOOST_COMPILER_VERSION evc9
+#     define GECODE_BOOST_COMPILER_VERSION evc9
 #   elif _MSC_VER == 1600
-#     define BOOST_COMPILER_VERSION evc10
+#     define GECODE_BOOST_COMPILER_VERSION evc10
 #   else
-#      if defined(BOOST_ASSERT_CONFIG)
+#      if defined(GECODE_BOOST_ASSERT_CONFIG)
 #         error "Unknown EVC++ compiler version - please run the configure tests and report the results"
 #      else
 #         pragma message("Unknown EVC++ compiler version - please run the configure tests and report the results")
@@ -245,25 +245,25 @@
 # else
 #   if _MSC_VER < 1200
       // Note: these are so far off, they are not really supported
-#     define BOOST_COMPILER_VERSION 5.0
+#     define GECODE_BOOST_COMPILER_VERSION 5.0
 #   elif _MSC_VER < 1300
-#       define BOOST_COMPILER_VERSION 6.0
+#       define GECODE_BOOST_COMPILER_VERSION 6.0
 #   elif _MSC_VER == 1300
-#     define BOOST_COMPILER_VERSION 7.0
+#     define GECODE_BOOST_COMPILER_VERSION 7.0
 #   elif _MSC_VER == 1310
-#     define BOOST_COMPILER_VERSION 7.1
+#     define GECODE_BOOST_COMPILER_VERSION 7.1
 #   elif _MSC_VER == 1400
-#     define BOOST_COMPILER_VERSION 8.0
+#     define GECODE_BOOST_COMPILER_VERSION 8.0
 #   elif _MSC_VER == 1500
-#     define BOOST_COMPILER_VERSION 9.0
+#     define GECODE_BOOST_COMPILER_VERSION 9.0
 #   elif _MSC_VER == 1600
-#     define BOOST_COMPILER_VERSION 10.0
+#     define GECODE_BOOST_COMPILER_VERSION 10.0
 #   else
-#     define BOOST_COMPILER_VERSION _MSC_VER
+#     define GECODE_BOOST_COMPILER_VERSION _MSC_VER
 #   endif
 # endif
 
-#define BOOST_COMPILER "Microsoft Visual C++ version " BOOST_STRINGIZE(BOOST_COMPILER_VERSION)
+#define GECODE_BOOST_COMPILER "Microsoft Visual C++ version " GECODE_BOOST_STRINGIZE(GECODE_BOOST_COMPILER_VERSION)
 
 //
 // versions check:
@@ -275,7 +275,7 @@
 // last known and checked version is 1600 (VC10, aka 2010):
 // Changed to VC12, aka 2013
 #if (_MSC_VER > 1800)
-#  if defined(BOOST_ASSERT_CONFIG)
+#  if defined(GECODE_BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  else
 #     pragma message("Unknown compiler version - please run the configure tests and report the results")

@@ -74,6 +74,14 @@ GAGA!
 
 [ENTRY]
 Module: other
+What:   bug
+Rank:   minor
+Thanks:	Pierre Talbot
+[DESCRIPTION]
+Gecode can now be used together with boost without conflicts.
+
+[ENTRY]
+Module: other
 What:   new
 Rank:   minor
 Thanks:	Petter Strandmark

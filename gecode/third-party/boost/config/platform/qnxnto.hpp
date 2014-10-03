@@ -7,23 +7,23 @@
 
 //  QNX specific config options:
 
-#define BOOST_PLATFORM "QNX"
+#define GECODE_BOOST_PLATFORM "QNX"
 
-#define BOOST_HAS_UNISTD_H
+#define GECODE_BOOST_HAS_UNISTD_H
 #include <gecode/third-party/boost/config/posix_features.hpp>
 
 // QNX claims XOpen version 5 compatibility, but doesn't have an nl_types.h
 // or log1p and expm1:
-#undef  BOOST_HAS_NL_TYPES_H
-#undef  BOOST_HAS_LOG1P
-#undef  BOOST_HAS_EXPM1
+#undef  GECODE_BOOST_HAS_NL_TYPES_H
+#undef  GECODE_BOOST_HAS_LOG1P
+#undef  GECODE_BOOST_HAS_EXPM1
 
-#define BOOST_HAS_PTHREADS
-#define BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE
+#define GECODE_BOOST_HAS_PTHREADS
+#define GECODE_BOOST_HAS_PTHREAD_MUTEXATTR_SETTYPE
 
-#define BOOST_HAS_GETTIMEOFDAY
-#define BOOST_HAS_CLOCK_GETTIME
-#define BOOST_HAS_NANOSLEEP
+#define GECODE_BOOST_HAS_GETTIMEOFDAY
+#define GECODE_BOOST_HAS_CLOCK_GETTIME
+#define GECODE_BOOST_HAS_NANOSLEEP
 
 
 

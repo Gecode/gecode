@@ -7,14 +7,14 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
-#define BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
 
 #include <stdexcept>
 #include <string>
 #include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 
 namespace interval_lib {
@@ -24,7 +24,7 @@ class comparison_error
 {
 public:
   comparison_error()
-    : std::runtime_error("boost::interval: uncertain comparison")
+    : std::runtime_error("gecode_boost::interval: uncertain comparison")
   { }
 };
 
@@ -446,6 +446,6 @@ bool interval<T, Policies>::operator!= (const number_holder& r) const
 }
 
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_INTERVAL_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_INTERVAL_HPP

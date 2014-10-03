@@ -3,10 +3,10 @@
 // accompanying file LICENSE_1_0.txt or copy at
 // http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef BOOST_TYPE_DWA20010120_HPP
-# define BOOST_TYPE_DWA20010120_HPP
+#ifndef GECODE_BOOST_TYPE_DWA20010120_HPP
+# define GECODE_BOOST_TYPE_DWA20010120_HPP
 
-namespace boost {
+namespace gecode_boost {
 
   // Just a simple "type envelope". Useful in various contexts, mostly to work
   // around some MSVC deficiencies.
@@ -15,4 +15,4 @@ namespace boost {
 
 }
 
-#endif // BOOST_TYPE_DWA20010120_HPP
+#endif // GECODE_BOOST_TYPE_DWA20010120_HPP

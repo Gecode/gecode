@@ -8,7 +8,7 @@
 
 //  linux specific config options:
 
-#define BOOST_PLATFORM "linux"
+#define GECODE_BOOST_PLATFORM "linux"
 
 // make sure we have __GLIBC_PREREQ if available at all
 #ifdef __cplusplus
@@ -26,7 +26,7 @@
    // int64_t only if __GNUC__.  Thus, assume a fully usable <stdint.h>
    // only when using GCC.
 #  if defined __GNUC__
-#    define BOOST_HAS_STDINT_H
+#    define GECODE_BOOST_HAS_STDINT_H
 #  endif
 #endif
 
@@ -37,11 +37,11 @@
    // e.g. version 25 is 21 (dec)
    //
 #  if __LIBCOMO_VERSION__ <= 20
-#    define BOOST_NO_STDC_NAMESPACE
+#    define GECODE_BOOST_NO_STDC_NAMESPACE
 #  endif
 
 #  if __LIBCOMO_VERSION__ <= 21
-#    define BOOST_NO_SWPRINTF
+#    define GECODE_BOOST_NO_SWPRINTF
 #  endif
 
 #endif
@@ -51,11 +51,11 @@
 // gettimeofday, earlier versions may or may not have it:
 //
 #if defined(__GLIBC__) && (__GLIBC__ >= 2)
-#  define BOOST_HAS_GETTIMEOFDAY
+#  define GECODE_BOOST_HAS_GETTIMEOFDAY
 #endif
 
 #ifdef __USE_POSIX199309
-#  define BOOST_HAS_NANOSLEEP
+#  define GECODE_BOOST_HAS_NANOSLEEP
 #endif
 
 #if defined(__GLIBC__) && defined(__GLIBC_PREREQ)
@@ -63,16 +63,16 @@
 
    // swprintf is available since glibc 2.2.0
 #  if !__GLIBC_PREREQ(2,2) || (!defined(__USE_ISOC99) && !defined(__USE_UNIX98))
-#    define BOOST_NO_SWPRINTF
+#    define GECODE_BOOST_NO_SWPRINTF
 #  endif
 #else
-#  define BOOST_NO_SWPRINTF
+#  define GECODE_BOOST_NO_SWPRINTF
 #endif
 
 // boilerplate code:
-#define BOOST_HAS_UNISTD_H
+#define GECODE_BOOST_HAS_UNISTD_H
 #include <gecode/third-party/boost/config/posix_features.hpp>
-#define BOOST_HAS_PTHREAD_YIELD
+#define GECODE_BOOST_HAS_PTHREAD_YIELD
 
 #ifndef __GNUC__
 //

@@ -29,7 +29,7 @@
 /*
  * Revision history:
  * 21 Sep 2001:
- *    Only include <cwchar> if BOOST_NO_CWCHAR is defined. (Darin Adler)
+ *    Only include <cwchar> if GECODE_BOOST_NO_CWCHAR is defined. (Darin Adler)
  * 10 Aug 2001:
  *    Added MIPS (big endian) to the big endian family. (Jens Maurer)
  * 13 Apr 2001:
@@ -40,15 +40,15 @@
  *      Modified by Jens Maurer for gcc 2.95 on x86.
  */
 
-#ifndef BOOST_SGI_CPP_LIMITS
-#define BOOST_SGI_CPP_LIMITS
+#ifndef GECODE_BOOST_SGI_CPP_LIMITS
+#define GECODE_BOOST_SGI_CPP_LIMITS
 
 #include <climits>
 #include <cfloat>
 #include <gecode/third-party/boost/config.hpp>
 #include <gecode/third-party/boost/detail/endian.hpp>
 
-#ifndef BOOST_NO_CWCHAR
+#ifndef GECODE_BOOST_NO_CWCHAR
 #include <cwchar> // for WCHAR_MIN and WCHAR_MAX
 #endif
 
@@ -71,7 +71,7 @@ enum float_denorm_style {
 // The C++ standard (section 18.2.1) requires that some of the members of
 // numeric_limits be static const data members that are given constant-
 // initializers within the class declaration.  On compilers where the
-// BOOST_NO_INCLASS_MEMBER_INITIALIZATION macro is defined, it is impossible to write
+// GECODE_BOOST_NO_INCLASS_MEMBER_INITIALIZATION macro is defined, it is impossible to write
 // a standard-conforming numeric_limits class.
 //
 // There are two possible workarounds: either initialize the data
@@ -81,60 +81,60 @@ enum float_denorm_style {
 // latter means they have the wrong type and that it is impossible to
 // take their addresses.  We choose the former workaround.
 
-#ifdef BOOST_NO_INCLASS_MEMBER_INITIALIZATION
-# define BOOST_STL_DECLARE_LIMITS_MEMBER(__mem_type, __mem_name, __mem_value) \
+#ifdef GECODE_BOOST_NO_INCLASS_MEMBER_INITIALIZATION
+# define GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(__mem_type, __mem_name, __mem_value) \
   enum { __mem_name = __mem_value }
-#else /* BOOST_NO_INCLASS_MEMBER_INITIALIZATION */
-# define BOOST_STL_DECLARE_LIMITS_MEMBER(__mem_type, __mem_name, __mem_value) \
+#else /* GECODE_BOOST_NO_INCLASS_MEMBER_INITIALIZATION */
+# define GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(__mem_type, __mem_name, __mem_value) \
   static const __mem_type __mem_name = __mem_value
-#endif /* BOOST_NO_INCLASS_MEMBER_INITIALIZATION */
+#endif /* GECODE_BOOST_NO_INCLASS_MEMBER_INITIALIZATION */
 
 // Base class for all specializations of numeric_limits.
 template <class __number>
 class _Numeric_limits_base {
 public:
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_specialized, false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_specialized, false);
 
-  static __number min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __number(); }
-  static __number max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __number(); }
+  static __number min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __number(); }
+  static __number max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __number(); }
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits,   0);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits10, 0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits,   0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits10, 0);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_signed,  false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_integer, false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_exact,   false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_signed,  false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_integer, false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_exact,   false);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, radix, 0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, radix, 0);
 
   static __number epsilon() throw()     { return __number(); }
   static __number round_error() throw() { return __number(); }
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent,   0);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent10, 0);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent,   0);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent10, 0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent,   0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent10, 0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent,   0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent10, 0);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_infinity,      false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_quiet_NaN,     false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_signaling_NaN, false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(float_denorm_style,
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_infinity,      false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_quiet_NaN,     false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_signaling_NaN, false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(float_denorm_style,
                               has_denorm,
                               denorm_absent);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_denorm_loss,   false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_denorm_loss,   false);
 
   static __number infinity() throw()      { return __number(); }
   static __number quiet_NaN() throw()     { return __number(); }
   static __number signaling_NaN() throw() { return __number(); }
   static __number denorm_min() throw()    { return __number(); }
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_iec559,  false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_bounded, false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_modulo,  false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_iec559,  false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_bounded, false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_modulo,  false);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, traps,            false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, tinyness_before,  false);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(float_round_style,
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, traps,            false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, tinyness_before,  false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(float_round_style,
                               round_style,
                               round_toward_zero);
 };
@@ -148,29 +148,29 @@ template <class _Int,
 class _Integer_limits : public _Numeric_limits_base<_Int> 
 {
 public:
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_specialized, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_specialized, true);
 
-  static _Int min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __imin; }
-  static _Int max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __imax; }
+  static _Int min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __imin; }
+  static _Int max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return __imax; }
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int,
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int,
                               digits,
                               (__idigits < 0) ? (int)(sizeof(_Int) * CHAR_BIT)
                                                    - (__imin == 0 ? 0 : 1) 
                                               : __idigits);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits10, (digits * 301) / 1000); 
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits10, (digits * 301) / 1000); 
                                 // log 2 = 0.301029995664...
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_signed,  __imin != 0);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_integer, true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_exact,   true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int,  radix,      2);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_signed,  __imin != 0);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_integer, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_exact,   true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int,  radix,      2);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_bounded, true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_modulo, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_bounded, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_modulo, true);
 };
 
-#if defined(BOOST_BIG_ENDIAN)
+#if defined(GECODE_BOOST_BIG_ENDIAN)
 
  template<class Number, unsigned int Word>
  struct float_helper{
@@ -208,27 +208,27 @@ template <class __number,
 class _Floating_limits : public _Numeric_limits_base<__number>
 {
 public:
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_specialized, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_specialized, true);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits,   __Digits);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits10, __Digits10);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits,   __Digits);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, digits10, __Digits10);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_signed, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_signed, true);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, radix, 2);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, radix, 2);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent,   __MinExp);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent,   __MaxExp);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent10, __MinExp10);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent10, __MaxExp10);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent,   __MinExp);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent,   __MaxExp);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, min_exponent10, __MinExp10);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(int, max_exponent10, __MaxExp10);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_infinity,      true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_quiet_NaN,     true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_signaling_NaN, true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(float_denorm_style,
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_infinity,      true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_quiet_NaN,     true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_signaling_NaN, true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(float_denorm_style,
                               has_denorm,
                               denorm_indeterminate);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_denorm_loss,   false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, has_denorm_loss,   false);
 
  
   static __number infinity() throw() {
@@ -241,12 +241,12 @@ public:
     return float_helper<__number,__SNaNWord>::get_word();
   }
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_iec559,       __IsIEC559);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_bounded,      true);
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, traps,           false /* was: true */ );
-  BOOST_STL_DECLARE_LIMITS_MEMBER(bool, tinyness_before, false);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_iec559,       __IsIEC559);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, is_bounded,      true);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, traps,           false /* was: true */ );
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(bool, tinyness_before, false);
 
-  BOOST_STL_DECLARE_LIMITS_MEMBER(float_round_style, round_style, __RoundStyle);
+  GECODE_BOOST_STL_DECLARE_LIMITS_MEMBER(float_round_style, round_style, __RoundStyle);
 };
 
 // Class numeric_limits
@@ -278,7 +278,7 @@ class numeric_limits<unsigned char>
   : public _Integer_limits<unsigned char, 0, UCHAR_MAX>
 {};
 
-#ifndef BOOST_NO_INTRINSIC_WCHAR_T
+#ifndef GECODE_BOOST_NO_INTRINSIC_WCHAR_T
 template<>
 class numeric_limits<wchar_t>
 #if !defined(WCHAR_MAX) || !defined(WCHAR_MIN)
@@ -361,7 +361,7 @@ template<> class numeric_limits<float>
                             FLT_MAX_EXP,    // Maximum exponent
                             FLT_MIN_10_EXP, // Minimum base 10 exponent
                             FLT_MAX_10_EXP, // Maximum base 10 exponent
-#if defined(BOOST_BIG_ENDIAN)
+#if defined(GECODE_BOOST_BIG_ENDIAN)
                             0x7f80 << (sizeof(int)*CHAR_BIT-16),    // Last word of +infinity
                             0x7f81 << (sizeof(int)*CHAR_BIT-16),    // Last word of quiet NaN
                             0x7fc1 << (sizeof(int)*CHAR_BIT-16),    // Last word of signaling NaN
@@ -374,9 +374,9 @@ template<> class numeric_limits<float>
                             round_to_nearest>
 {
 public:
-  static float min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return FLT_MIN; }
+  static float min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return FLT_MIN; }
   static float denorm_min() throw() { return FLT_MIN; }
-  static float max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return FLT_MAX; }
+  static float max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return FLT_MAX; }
   static float epsilon() throw() { return FLT_EPSILON; }
   static float round_error() throw() { return 0.5f; } // Units: ulps.
 };
@@ -389,7 +389,7 @@ template<> class numeric_limits<double>
                             DBL_MAX_EXP,    // Maximum exponent
                             DBL_MIN_10_EXP, // Minimum base 10 exponent
                             DBL_MAX_10_EXP, // Maximum base 10 exponent
-#if defined(BOOST_BIG_ENDIAN)
+#if defined(GECODE_BOOST_BIG_ENDIAN)
                             0x7ff0 << (sizeof(int)*CHAR_BIT-16),    // Last word of +infinity
                             0x7ff1 << (sizeof(int)*CHAR_BIT-16),    // Last word of quiet NaN
                             0x7ff9 << (sizeof(int)*CHAR_BIT-16),    // Last word of signaling NaN
@@ -402,9 +402,9 @@ template<> class numeric_limits<double>
                             round_to_nearest>
 {
 public:
-  static double min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return DBL_MIN; }
+  static double min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return DBL_MIN; }
   static double denorm_min() throw() { return DBL_MIN; }
-  static double max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return DBL_MAX; }
+  static double max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return DBL_MAX; }
   static double epsilon() throw() { return DBL_EPSILON; }
   static double round_error() throw() { return 0.5; } // Units: ulps.
 };
@@ -417,7 +417,7 @@ template<> class numeric_limits<long double>
                             LDBL_MAX_EXP,   // Maximum exponent
                             LDBL_MIN_10_EXP,// Minimum base 10 exponent
                             LDBL_MAX_10_EXP,// Maximum base 10 exponent
-#if defined(BOOST_BIG_ENDIAN)
+#if defined(GECODE_BOOST_BIG_ENDIAN)
                             0x7ff0 << (sizeof(int)*CHAR_BIT-16),    // Last word of +infinity
                             0x7ff1 << (sizeof(int)*CHAR_BIT-16),    // Last word of quiet NaN
                             0x7ff9 << (sizeof(int)*CHAR_BIT-16),    // Last word of signaling NaN
@@ -430,16 +430,16 @@ template<> class numeric_limits<long double>
                             round_to_nearest>
 {
 public:
-  static long double min BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return LDBL_MIN; }
+  static long double min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return LDBL_MIN; }
   static long double denorm_min() throw() { return LDBL_MIN; }
-  static long double max BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return LDBL_MAX; }
+  static long double max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION () throw() { return LDBL_MAX; }
   static long double epsilon() throw() { return LDBL_EPSILON; }
   static long double round_error() throw() { return 4; } // Units: ulps.
 };
 
 } // namespace std
 
-#endif /* BOOST_SGI_CPP_LIMITS */
+#endif /* GECODE_BOOST_SGI_CPP_LIMITS */
 
 // Local Variables:
 // mode:C++

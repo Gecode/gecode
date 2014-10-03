@@ -23,43 +23,43 @@
    // full dinkumware 3.06 and above
    // fully conforming provided the compiler supports it:
 #  if !(defined(_GLOBAL_USING) && (_GLOBAL_USING+0 > 0)) && !defined(__BORLANDC__) && !defined(_STD) && !(defined(__ICC) && (__ICC >= 700))   // can be defined in yvals.h
-#     define BOOST_NO_STDC_NAMESPACE
+#     define GECODE_BOOST_NO_STDC_NAMESPACE
 #  endif
-#  if !(defined(_HAS_MEMBER_TEMPLATES_REBIND) && (_HAS_MEMBER_TEMPLATES_REBIND+0 > 0)) && !(defined(_MSC_VER) && (_MSC_VER > 1300)) && defined(BOOST_MSVC)
-#     define BOOST_NO_STD_ALLOCATOR
+#  if !(defined(_HAS_MEMBER_TEMPLATES_REBIND) && (_HAS_MEMBER_TEMPLATES_REBIND+0 > 0)) && !(defined(_MSC_VER) && (_MSC_VER > 1300)) && defined(GECODE_BOOST_MSVC)
+#     define GECODE_BOOST_NO_STD_ALLOCATOR
 #  endif
-#  define BOOST_HAS_PARTIAL_STD_ALLOCATOR
-#  if defined(BOOST_MSVC) && (BOOST_MSVC < 1300)
+#  define GECODE_BOOST_HAS_PARTIAL_STD_ALLOCATOR
+#  if defined(GECODE_BOOST_MSVC) && (GECODE_BOOST_MSVC < 1300)
       // if this lib version is set up for vc6 then there is no std::use_facet:
-#     define BOOST_NO_STD_USE_FACET
-#     define BOOST_HAS_TWO_ARG_USE_FACET
+#     define GECODE_BOOST_NO_STD_USE_FACET
+#     define GECODE_BOOST_HAS_TWO_ARG_USE_FACET
       // C lib functions aren't in namespace std either:
-#     define BOOST_NO_STDC_NAMESPACE
+#     define GECODE_BOOST_NO_STDC_NAMESPACE
       // and nor is <exception>
-#     define BOOST_NO_EXCEPTION_STD_NAMESPACE
+#     define GECODE_BOOST_NO_EXCEPTION_STD_NAMESPACE
 #  endif
 // There's no numeric_limits<long long> support unless _LONGLONG is defined:
 #  if !defined(_LONGLONG) && (_CPPLIB_VER <= 310)
-#     define BOOST_NO_MS_INT64_NUMERIC_LIMITS
+#     define GECODE_BOOST_NO_MS_INT64_NUMERIC_LIMITS
 #  endif
 // 3.06 appears to have (non-sgi versions of) <hash_set> & <hash_map>,
 // and no <slist> at all
 #else
-#  define BOOST_MSVC_STD_ITERATOR 1
-#  define BOOST_NO_STD_ITERATOR
-#  define BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
-#  define BOOST_NO_STD_ALLOCATOR
-#  define BOOST_NO_STDC_NAMESPACE
-#  define BOOST_NO_STD_USE_FACET
-#  define BOOST_NO_STD_OUTPUT_ITERATOR_ASSIGN
-#  define BOOST_HAS_MACRO_USE_FACET
+#  define GECODE_BOOST_MSVC_STD_ITERATOR 1
+#  define GECODE_BOOST_NO_STD_ITERATOR
+#  define GECODE_BOOST_NO_TEMPLATED_ITERATOR_CONSTRUCTORS
+#  define GECODE_BOOST_NO_STD_ALLOCATOR
+#  define GECODE_BOOST_NO_STDC_NAMESPACE
+#  define GECODE_BOOST_NO_STD_USE_FACET
+#  define GECODE_BOOST_NO_STD_OUTPUT_ITERATOR_ASSIGN
+#  define GECODE_BOOST_HAS_MACRO_USE_FACET
 #  ifndef _CPPLIB_VER
       // Updated Dinkum library defines this, and provides
       // its own min and max definitions, as does MTA version.
 #     ifndef __MTA__ 
-#        define BOOST_NO_STD_MIN_MAX
+#        define GECODE_BOOST_NO_STD_MIN_MAX
 #     endif
-#     define BOOST_NO_MS_INT64_NUMERIC_LIMITS
+#     define GECODE_BOOST_NO_MS_INT64_NUMERIC_LIMITS
 #  endif
 #endif
 
@@ -69,7 +69,7 @@
 // of vc7.1 (Intel and Comeau):
 //
 #if defined(_MSC_VER) && (_MSC_VER >= 1310) && !defined(__BORLANDC__)
-#  define BOOST_STD_EXTENSION_NAMESPACE stdext
+#  define GECODE_BOOST_STD_EXTENSION_NAMESPACE stdext
 #endif
 
 
@@ -77,62 +77,62 @@
    // if we're using a dinkum lib that's
    // been configured for VC6/7 then there is
    // no iterator traits (true even for icl)
-#  define BOOST_NO_STD_ITERATOR_TRAITS
+#  define GECODE_BOOST_NO_STD_ITERATOR_TRAITS
 #endif
 
 #if defined(__ICL) && (__ICL < 800) && defined(_CPPLIB_VER) && (_CPPLIB_VER <= 310)
 // Intel C++ chokes over any non-trivial use of <locale>
 // this may be an overly restrictive define, but regex fails without it:
-#  define BOOST_NO_STD_LOCALE
+#  define GECODE_BOOST_NO_STD_LOCALE
 #endif
 
 #include <typeinfo>
 #if ( (!_HAS_EXCEPTIONS && !defined(__ghs__)) || (!_HAS_NAMESPACE && defined(__ghs__)) ) 
-#  define BOOST_NO_STD_TYPEINFO    
+#  define GECODE_BOOST_NO_STD_TYPEINFO    
 #endif  
 
 //  C++0x headers implemented in 520 (as shipped by Microsoft)
 //
 #if !defined(_CPPLIB_VER) || _CPPLIB_VER < 520
-#  define BOOST_NO_0X_HDR_ARRAY
-#  define BOOST_NO_0X_HDR_CODECVT
-#  define BOOST_NO_0X_HDR_FORWARD_LIST
-#  define BOOST_NO_0X_HDR_INITIALIZER_LIST
-#  define BOOST_NO_0X_HDR_RANDOM
-#  define BOOST_NO_0X_HDR_REGEX
-#  define BOOST_NO_0X_HDR_SYSTEM_ERROR
-#  define BOOST_NO_STD_UNORDERED        // deprecated; see following
-#  define BOOST_NO_0X_HDR_UNORDERED_MAP
-#  define BOOST_NO_0X_HDR_UNORDERED_SET
-#  define BOOST_NO_0X_HDR_TUPLE
-#  define BOOST_NO_0X_HDR_TYPEINDEX
-#  define BOOST_NO_NUMERIC_LIMITS_LOWEST
+#  define GECODE_BOOST_NO_0X_HDR_ARRAY
+#  define GECODE_BOOST_NO_0X_HDR_CODECVT
+#  define GECODE_BOOST_NO_0X_HDR_FORWARD_LIST
+#  define GECODE_BOOST_NO_0X_HDR_INITIALIZER_LIST
+#  define GECODE_BOOST_NO_0X_HDR_RANDOM
+#  define GECODE_BOOST_NO_0X_HDR_REGEX
+#  define GECODE_BOOST_NO_0X_HDR_SYSTEM_ERROR
+#  define GECODE_BOOST_NO_STD_UNORDERED        // deprecated; see following
+#  define GECODE_BOOST_NO_0X_HDR_UNORDERED_MAP
+#  define GECODE_BOOST_NO_0X_HDR_UNORDERED_SET
+#  define GECODE_BOOST_NO_0X_HDR_TUPLE
+#  define GECODE_BOOST_NO_0X_HDR_TYPEINDEX
+#  define GECODE_BOOST_NO_NUMERIC_LIMITS_LOWEST
 #endif
 
-#if !defined(_HAS_TR1_IMPORTS) && !defined(BOOST_NO_0X_HDR_TUPLE)
-#  define BOOST_NO_0X_HDR_TUPLE
+#if !defined(_HAS_TR1_IMPORTS) && !defined(GECODE_BOOST_NO_0X_HDR_TUPLE)
+#  define GECODE_BOOST_NO_0X_HDR_TUPLE
 #endif
 //
 //  C++0x headers not yet (fully) implemented:
 //
-#  define BOOST_NO_0X_HDR_TYPE_TRAITS
-#  define BOOST_NO_0X_HDR_CHRONO
-#  define BOOST_NO_0X_HDR_CONDITION_VARIABLE
-#  define BOOST_NO_0X_HDR_FUTURE
-#  define BOOST_NO_0X_HDR_MUTEX
-#  define BOOST_NO_0X_HDR_RATIO
-#  define BOOST_NO_0X_HDR_THREAD
+#  define GECODE_BOOST_NO_0X_HDR_TYPE_TRAITS
+#  define GECODE_BOOST_NO_0X_HDR_CHRONO
+#  define GECODE_BOOST_NO_0X_HDR_CONDITION_VARIABLE
+#  define GECODE_BOOST_NO_0X_HDR_FUTURE
+#  define GECODE_BOOST_NO_0X_HDR_MUTEX
+#  define GECODE_BOOST_NO_0X_HDR_RATIO
+#  define GECODE_BOOST_NO_0X_HDR_THREAD
 
 #ifdef _CPPLIB_VER
-#  define BOOST_DINKUMWARE_STDLIB _CPPLIB_VER
+#  define GECODE_BOOST_DINKUMWARE_STDLIB _CPPLIB_VER
 #else
-#  define BOOST_DINKUMWARE_STDLIB 1
+#  define GECODE_BOOST_DINKUMWARE_STDLIB 1
 #endif
 
 #ifdef _CPPLIB_VER
-#  define BOOST_STDLIB "Dinkumware standard library version " BOOST_STRINGIZE(_CPPLIB_VER)
+#  define GECODE_BOOST_STDLIB "Dinkumware standard library version " GECODE_BOOST_STRINGIZE(_CPPLIB_VER)
 #else
-#  define BOOST_STDLIB "Dinkumware standard library version 1.x"
+#  define GECODE_BOOST_STDLIB "Dinkumware standard library version 1.x"
 #endif
 
 

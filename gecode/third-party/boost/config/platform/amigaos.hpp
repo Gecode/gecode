@@ -5,11 +5,11 @@
 
 //  See http://www.boost.org for most recent version.
 
-#define BOOST_PLATFORM "AmigaOS"
+#define GECODE_BOOST_PLATFORM "AmigaOS"
 
-#define BOOST_DISABLE_THREADS
-#define BOOST_NO_CWCHAR
-#define BOOST_NO_STD_WSTRING
-#define BOOST_NO_INTRINSIC_WCHAR_T
+#define GECODE_BOOST_DISABLE_THREADS
+#define GECODE_BOOST_NO_CWCHAR
+#define GECODE_BOOST_NO_STD_WSTRING
+#define GECODE_BOOST_NO_INTRINSIC_WCHAR_T
  
 

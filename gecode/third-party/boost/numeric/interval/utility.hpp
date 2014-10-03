@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_UTILITY_HPP
-#define BOOST_NUMERIC_INTERVAL_UTILITY_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_UTILITY_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_UTILITY_HPP
 
 #include <gecode/third-party/boost/config.hpp>
 #include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
@@ -22,7 +22,7 @@
  * Implementation of simple functions
  */
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 
 /*
@@ -165,12 +165,12 @@ template<class T, class Policies> inline
 interval<T, Policies> intersect(const interval<T, Policies>& x,
                                 const interval<T, Policies>& y)
 {
-  BOOST_USING_STD_MIN();
-  BOOST_USING_STD_MAX();
+  GECODE_BOOST_USING_STD_MIN();
+  GECODE_BOOST_USING_STD_MAX();
   if (interval_lib::detail::test_input(x, y))
     return interval<T, Policies>::empty();
-  const T& l = max BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower());
-  const T& u = min BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper());
+  const T& l = max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower());
+  const T& u = min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper());
   if (l <= u) return interval<T, Policies>(l, u, true);
   else        return interval<T, Policies>::empty();
 }
@@ -179,8 +179,8 @@ template<class T, class Policies> inline
 interval<T, Policies> hull(const interval<T, Policies>& x,
                            const interval<T, Policies>& y)
 {
-  BOOST_USING_STD_MIN();
-  BOOST_USING_STD_MAX();
+  GECODE_BOOST_USING_STD_MIN();
+  GECODE_BOOST_USING_STD_MAX();
   bool bad_x = interval_lib::detail::test_input(x);
   bool bad_y = interval_lib::detail::test_input(y);
   if (bad_x)
@@ -188,15 +188,15 @@ interval<T, Policies> hull(const interval<T, Policies>& x,
     else       return y;
   else
     if (bad_y) return x;
-  return interval<T, Policies>(min BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower()),
-                               max BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper()), true);
+  return interval<T, Policies>(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower()),
+                               max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper()), true);
 }
 
 template<class T, class Policies> inline
 interval<T, Policies> hull(const interval<T, Policies>& x, const T& y)
 {
-  BOOST_USING_STD_MIN();
-  BOOST_USING_STD_MAX();
+  GECODE_BOOST_USING_STD_MIN();
+  GECODE_BOOST_USING_STD_MAX();
   bool bad_x = interval_lib::detail::test_input(x);
   bool bad_y = interval_lib::detail::test_input<T, Policies>(y);
   if (bad_y)
@@ -204,15 +204,15 @@ interval<T, Policies> hull(const interval<T, Policies>& x, const T& y)
     else       return x;
   else
     if (bad_x) return interval<T, Policies>(y, y, true);
-  return interval<T, Policies>(min BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y),
-                               max BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y), true);
+  return interval<T, Policies>(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y),
+                               max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y), true);
 }
 
 template<class T, class Policies> inline
 interval<T, Policies> hull(const T& x, const interval<T, Policies>& y)
 {
-  BOOST_USING_STD_MIN();
-  BOOST_USING_STD_MAX();
+  GECODE_BOOST_USING_STD_MIN();
+  GECODE_BOOST_USING_STD_MAX();
   bool bad_x = interval_lib::detail::test_input<T, Policies>(x);
   bool bad_y = interval_lib::detail::test_input(y);
   if (bad_x)
@@ -220,8 +220,8 @@ interval<T, Policies> hull(const T& x, const interval<T, Policies>& y)
     else       return y;
   else
     if (bad_y) return interval<T, Policies>(x, x, true);
-  return interval<T, Policies>(min BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.lower()),
-                               max BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.upper()), true);
+  return interval<T, Policies>(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.lower()),
+                               max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.upper()), true);
 }
 
 template<class T> inline
@@ -252,8 +252,8 @@ T norm(const interval<T, Policies>& x)
     typedef typename Policies::checking checking;
     return checking::nan();
   }
-  BOOST_USING_STD_MAX();
-  return max BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper());
+  GECODE_BOOST_USING_STD_MAX();
+  return max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper());
 }
 
 template<class T, class Policies> inline
@@ -264,73 +264,73 @@ interval<T, Policies> abs(const interval<T, Policies>& x)
     return I::empty();
   if (!interval_lib::user::is_neg(x.lower())) return x;
   if (!interval_lib::user::is_pos(x.upper())) return -x;
-  BOOST_USING_STD_MAX();
-  return I(static_cast<T>(0), max BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper()), true);
+  GECODE_BOOST_USING_STD_MAX();
+  return I(static_cast<T>(0), max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(static_cast<T>(-x.lower()), x.upper()), true);
 }
 
 template<class T, class Policies> inline
-interval<T, Policies> max BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x,
+interval<T, Policies> max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x,
                                                             const interval<T, Policies>& y)
 {
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
-  BOOST_USING_STD_MAX();
-  return I(max BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower()), max BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper()), true);
+  GECODE_BOOST_USING_STD_MAX();
+  return I(max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower()), max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper()), true);
 }
 
 template<class T, class Policies> inline
-interval<T, Policies> max BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x, const T& y)
+interval<T, Policies> max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x, const T& y)
 {
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
-  BOOST_USING_STD_MAX();
-  return I(max BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y), max BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y), true);
+  GECODE_BOOST_USING_STD_MAX();
+  return I(max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y), max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y), true);
 }
 
 template<class T, class Policies> inline
-interval<T, Policies> max BOOST_PREVENT_MACRO_SUBSTITUTION (const T& x, const interval<T, Policies>& y)
+interval<T, Policies> max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION (const T& x, const interval<T, Policies>& y)
 {
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
-  BOOST_USING_STD_MAX();
-  return I(max BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.lower()), max BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.upper()), true);
+  GECODE_BOOST_USING_STD_MAX();
+  return I(max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.lower()), max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.upper()), true);
 }
 
 template<class T, class Policies> inline
-interval<T, Policies> min BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x,
+interval<T, Policies> min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x,
                                                             const interval<T, Policies>& y)
 {
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
-  BOOST_USING_STD_MIN();
-  return I(min BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower()), min BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper()), true);
+  GECODE_BOOST_USING_STD_MIN();
+  return I(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y.lower()), min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y.upper()), true);
 }
 
 template<class T, class Policies> inline
-interval<T, Policies> min BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x, const T& y)
+interval<T, Policies> min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION (const interval<T, Policies>& x, const T& y)
 {
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
-  BOOST_USING_STD_MIN();
-  return I(min BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y), min BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y), true);
+  GECODE_BOOST_USING_STD_MIN();
+  return I(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.lower(), y), min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x.upper(), y), true);
 }
 
 template<class T, class Policies> inline
-interval<T, Policies> min BOOST_PREVENT_MACRO_SUBSTITUTION (const T& x, const interval<T, Policies>& y)
+interval<T, Policies> min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION (const T& x, const interval<T, Policies>& y)
 {
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
-  BOOST_USING_STD_MIN();
-  return I(min BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.lower()), min BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.upper()), true);
+  GECODE_BOOST_USING_STD_MIN();
+  return I(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.lower()), min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(x, y.upper()), true);
 }
 
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_UTILITY_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_UTILITY_HPP

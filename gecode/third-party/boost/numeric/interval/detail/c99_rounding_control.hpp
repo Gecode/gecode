@@ -8,12 +8,12 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
-#define BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
 
 #include <gecode/third-party/boost/numeric/interval/detail/c99sub_rounding_control.hpp>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 
@@ -43,8 +43,8 @@ struct rounding_control<long double>:
 
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#undef BOOST_NUMERIC_INTERVAL_NO_HARDWARE
+#undef GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 
-#endif // BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_C99_ROUNDING_CONTROL_HPP

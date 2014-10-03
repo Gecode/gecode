@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_ARITH_HPP
-#define BOOST_NUMERIC_INTERVAL_ARITH_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_ARITH_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_ARITH_HPP
 
 #include <gecode/third-party/boost/config.hpp>
 #include <gecode/third-party/boost/numeric/interval/interval.hpp>
@@ -18,7 +18,7 @@
 #include <gecode/third-party/boost/numeric/interval/detail/division.hpp>
 #include <algorithm>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 
 /*
@@ -171,8 +171,8 @@ template<class T, class Policies> inline
 interval<T, Policies> operator*(const interval<T, Policies>& x,
                                 const interval<T, Policies>& y)
 {
-  BOOST_USING_STD_MIN();
-  BOOST_USING_STD_MAX();
+  GECODE_BOOST_USING_STD_MIN();
+  GECODE_BOOST_USING_STD_MAX();
   typedef interval<T, Policies> I;
   if (interval_lib::detail::test_input(x, y))
     return I::empty();
@@ -186,8 +186,8 @@ interval<T, Policies> operator*(const interval<T, Policies>& x,
     if (interval_lib::user::is_pos(xu))
       if (interval_lib::user::is_neg(yl))
         if (interval_lib::user::is_pos(yu)) // M * M
-          return I(min BOOST_PREVENT_MACRO_SUBSTITUTION(rnd.mul_down(xl, yu), rnd.mul_down(xu, yl)),
-                   max BOOST_PREVENT_MACRO_SUBSTITUTION(rnd.mul_up  (xl, yl), rnd.mul_up  (xu, yu)), true);
+          return I(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(rnd.mul_down(xl, yu), rnd.mul_down(xu, yl)),
+                   max GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(rnd.mul_up  (xl, yl), rnd.mul_up  (xu, yu)), true);
         else                    // M * N
           return I(rnd.mul_down(xu, yl), rnd.mul_up(xl, yl), true);
       else
@@ -300,6 +300,6 @@ interval<T, Policies> operator/(const interval<T, Policies>& x, const T& y)
 }
 
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_ARITH_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_ARITH_HPP

@@ -7,8 +7,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_COMPARE_HPP
-#define BOOST_NUMERIC_INTERVAL_COMPARE_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_COMPARE_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_COMPARE_HPP
 
 #include <gecode/third-party/boost/numeric/interval/compare/certain.hpp>
 #include <gecode/third-party/boost/numeric/interval/compare/possible.hpp>
@@ -16,4 +16,4 @@
 #include <gecode/third-party/boost/numeric/interval/compare/lexicographic.hpp>
 #include <gecode/third-party/boost/numeric/interval/compare/set.hpp>
 
-#endif // BOOST_NUMERIC_INTERVAL_COMPARE_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_COMPARE_HPP

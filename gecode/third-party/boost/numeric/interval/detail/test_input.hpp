@@ -7,12 +7,12 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
-#define BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
 
 #include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 namespace user {
@@ -71,6 +71,6 @@ bool test_input(const T& x, const T& y) {
 } // namespace detail
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_TEST_INPUT_HPP

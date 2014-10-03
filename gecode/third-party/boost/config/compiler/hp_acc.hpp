@@ -17,42 +17,42 @@
 #endif
 
 #if (__HP_aCC <= 33100)
-#    define BOOST_NO_INTEGRAL_INT64_T
-#    define BOOST_NO_OPERATORS_IN_NAMESPACE
+#    define GECODE_BOOST_NO_INTEGRAL_INT64_T
+#    define GECODE_BOOST_NO_OPERATORS_IN_NAMESPACE
 #  if !defined(_NAMESPACE_STD)
-#     define BOOST_NO_STD_LOCALE
-#     define BOOST_NO_STRINGSTREAM
+#     define GECODE_BOOST_NO_STD_LOCALE
+#     define GECODE_BOOST_NO_STRINGSTREAM
 #  endif
 #endif
 
 #if (__HP_aCC <= 33300)
 // member templates are sufficiently broken that we disable them for now
-#    define BOOST_NO_MEMBER_TEMPLATES
-#    define BOOST_NO_DEPENDENT_NESTED_DERIVATIONS
-#    define BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
+#    define GECODE_BOOST_NO_MEMBER_TEMPLATES
+#    define GECODE_BOOST_NO_DEPENDENT_NESTED_DERIVATIONS
+#    define GECODE_BOOST_NO_USING_DECLARATION_OVERLOADS_FROM_TYPENAME_BASE
 #endif
 
 #if (__HP_aCC <= 38000)
-#  define BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#  define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #endif
 
 #if (__HP_aCC > 50000) && (__HP_aCC < 60000)
-#    define BOOST_NO_UNREACHABLE_RETURN_DETECTION
-#    define BOOST_NO_TEMPLATE_TEMPLATES
-#    define BOOST_NO_SWPRINTF
-#    define BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
-#    define BOOST_NO_IS_ABSTRACT
-#    define BOOST_NO_MEMBER_TEMPLATE_FRIENDS
+#    define GECODE_BOOST_NO_UNREACHABLE_RETURN_DETECTION
+#    define GECODE_BOOST_NO_TEMPLATE_TEMPLATES
+#    define GECODE_BOOST_NO_SWPRINTF
+#    define GECODE_BOOST_NO_DEPENDENT_TYPES_IN_TEMPLATE_VALUE_PARAMETERS
+#    define GECODE_BOOST_NO_IS_ABSTRACT
+#    define GECODE_BOOST_NO_MEMBER_TEMPLATE_FRIENDS
 #endif 
 
 // optional features rather than defects:
 #if (__HP_aCC >= 33900)
-#    define BOOST_HAS_LONG_LONG
-#    define BOOST_HAS_PARTIAL_STD_ALLOCATOR
+#    define GECODE_BOOST_HAS_LONG_LONG
+#    define GECODE_BOOST_HAS_PARTIAL_STD_ALLOCATOR
 #endif
 
 #if (__HP_aCC >= 50000 ) && (__HP_aCC <= 53800 ) || (__HP_aCC < 31300 )
-#    define BOOST_NO_MEMBER_TEMPLATE_KEYWORD
+#    define GECODE_BOOST_NO_MEMBER_TEMPLATE_KEYWORD
 #endif
 
 // This macro should not be defined when compiling in strict ansi
@@ -61,10 +61,10 @@
 // of aCC6 compiler will provide predefined macros reflecting the
 // compilation options, including the standard mode.
 #if (__HP_aCC >= 60000) || ((__HP_aCC > 38000) && defined(__hpxstd98))
-#    define BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#    define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #endif
 
-#define BOOST_COMPILER "HP aCC version " BOOST_STRINGIZE(__HP_aCC)
+#define GECODE_BOOST_COMPILER "HP aCC version " GECODE_BOOST_STRINGIZE(__HP_aCC)
 
 //
 // versions check:
@@ -88,33 +88,33 @@
 //
 // C++0x features
 //
-//   See boost\config\suffix.hpp for BOOST_NO_LONG_LONG
+//   See boost\config\suffix.hpp for GECODE_BOOST_NO_LONG_LONG
 //
 #if !defined(__EDG__)
 
-#define BOOST_NO_AUTO_DECLARATIONS
-#define BOOST_NO_AUTO_MULTIDECLARATIONS
-#define BOOST_NO_CHAR16_T
-#define BOOST_NO_CHAR32_T
-#define BOOST_NO_CONSTEXPR
-#define BOOST_NO_DECLTYPE
-#define BOOST_NO_DEFAULTED_FUNCTIONS
-#define BOOST_NO_DELETED_FUNCTIONS
-#define BOOST_NO_EXPLICIT_CONVERSION_OPERATORS
-#define BOOST_NO_EXTERN_TEMPLATE
-#define BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
-#define BOOST_NO_INITIALIZER_LISTS
-#define BOOST_NO_LAMBDAS
-#define BOOST_NO_NOEXCEPT
-#define BOOST_NO_NULLPTR
-#define BOOST_NO_RAW_LITERALS
-#define BOOST_NO_RVALUE_REFERENCES
-#define BOOST_NO_SCOPED_ENUMS
-#define BOOST_NO_SFINAE_EXPR
-#define BOOST_NO_STATIC_ASSERT
-#define BOOST_NO_TEMPLATE_ALIASES
-#define BOOST_NO_UNICODE_LITERALS
-#define BOOST_NO_VARIADIC_TEMPLATES
+#define GECODE_BOOST_NO_AUTO_DECLARATIONS
+#define GECODE_BOOST_NO_AUTO_MULTIDECLARATIONS
+#define GECODE_BOOST_NO_CHAR16_T
+#define GECODE_BOOST_NO_CHAR32_T
+#define GECODE_BOOST_NO_CONSTEXPR
+#define GECODE_BOOST_NO_DECLTYPE
+#define GECODE_BOOST_NO_DEFAULTED_FUNCTIONS
+#define GECODE_BOOST_NO_DELETED_FUNCTIONS
+#define GECODE_BOOST_NO_EXPLICIT_CONVERSION_OPERATORS
+#define GECODE_BOOST_NO_EXTERN_TEMPLATE
+#define GECODE_BOOST_NO_FUNCTION_TEMPLATE_DEFAULT_ARGS
+#define GECODE_BOOST_NO_INITIALIZER_LISTS
+#define GECODE_BOOST_NO_LAMBDAS
+#define GECODE_BOOST_NO_NOEXCEPT
+#define GECODE_BOOST_NO_NULLPTR
+#define GECODE_BOOST_NO_RAW_LITERALS
+#define GECODE_BOOST_NO_RVALUE_REFERENCES
+#define GECODE_BOOST_NO_SCOPED_ENUMS
+#define GECODE_BOOST_NO_SFINAE_EXPR
+#define GECODE_BOOST_NO_STATIC_ASSERT
+#define GECODE_BOOST_NO_TEMPLATE_ALIASES
+#define GECODE_BOOST_NO_UNICODE_LITERALS
+#define GECODE_BOOST_NO_VARIADIC_TEMPLATES
 
 /* 
   See https://forums13.itrc.hp.com/service/forums/questionanswer.do?threadId=1443331 and
@@ -122,7 +122,7 @@
 */
 
 #if (__HP_aCC < 62500) || !defined(HP_CXX0x_SOURCE)
-  #define BOOST_NO_VARIADIC_MACROS
+  #define GECODE_BOOST_NO_VARIADIC_MACROS
 #endif
 
 #endif
@@ -131,7 +131,7 @@
 // last known and checked version for HP-UX/ia64 is 61300
 // last known and checked version for PA-RISC is 38000
 #if ((__HP_aCC > 61300) || ((__HP_aCC > 38000) && defined(__hpxstd98)))
-#  if defined(BOOST_ASSERT_CONFIG)
+#  if defined(GECODE_BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  endif
 #endif

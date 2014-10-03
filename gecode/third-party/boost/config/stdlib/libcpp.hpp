@@ -15,22 +15,22 @@
 #  endif
 #endif
 
-#define BOOST_STDLIB "libc++ version " BOOST_STRINGIZE(_LIBCPP_VERSION)
+#define GECODE_BOOST_STDLIB "libc++ version " GECODE_BOOST_STRINGIZE(_LIBCPP_VERSION)
 
-#define BOOST_HAS_THREADS
+#define GECODE_BOOST_HAS_THREADS
 
 #ifdef _LIBCPP_HAS_NO_VARIADICS
-#    define BOOST_NO_0X_HDR_TUPLE
+#    define GECODE_BOOST_NO_0X_HDR_TUPLE
 #endif
 
 //
 // These appear to be unusable/incomplete so far:
 //
-#  define BOOST_NO_0X_HDR_CHRONO
-#  define BOOST_NO_0X_HDR_FUTURE
-#  define BOOST_NO_0X_HDR_TYPE_TRAITS
+#  define GECODE_BOOST_NO_0X_HDR_CHRONO
+#  define GECODE_BOOST_NO_0X_HDR_FUTURE
+#  define GECODE_BOOST_NO_0X_HDR_TYPE_TRAITS
 
 // libc++ uses a non-standard messages_base
-#define BOOST_NO_STD_MESSAGES
+#define GECODE_BOOST_NO_STD_MESSAGES
 
 //  --- end ---

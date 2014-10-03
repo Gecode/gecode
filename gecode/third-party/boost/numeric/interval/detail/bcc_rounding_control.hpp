@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_DETAIL_BCC_ROUNDING_CONTROL_HPP
-#define BOOST_NUMERIC_INTERVAL_DETAIL_BCC_ROUNDING_CONTROL_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_BCC_ROUNDING_CONTROL_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_BCC_ROUNDING_CONTROL_HPP
 
 #ifndef __BORLANDC__
 #  error This header is only intended for Borland C++.
@@ -21,12 +21,12 @@
 
 #include <float.h>      // Borland C++ rounding control
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 namespace detail {
 
-#ifndef BOOST_NUMERIC_INTERVAL_KEEP_EXCEPTIONS_FOR_BCC
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_KEEP_EXCEPTIONS_FOR_BCC
 extern "C" { unsigned int _RTLENTRY _fm_init(void); }
 
 struct borland_workaround {
@@ -34,7 +34,7 @@ struct borland_workaround {
 };
 
 static borland_workaround borland_workaround_exec;
-#endif // BOOST_NUMERIC_INTERVAL_KEEP_EXCEPTIONS_FOR_BCC
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_KEEP_EXCEPTIONS_FOR_BCC
 
 __inline double rint(double)
 { __emit__(0xD9); __emit__(0xFC); /* asm FRNDINT */ }
@@ -52,6 +52,6 @@ struct x86_rounding
 } // namespace detail
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif /* BOOST_NUMERIC_INTERVAL_DETAIL_BCC_ROUNDING_CONTROL_HPP */
+#endif /* GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_BCC_ROUNDING_CONTROL_HPP */

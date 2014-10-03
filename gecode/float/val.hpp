@@ -80,29 +80,29 @@ namespace Gecode {
   }
   forceinline FloatNum
   FloatVal::size(void) const {
-    return boost::numeric::width(x);
+    return gecode_boost::numeric::width(x);
   }
   forceinline FloatNum
   FloatVal::med(void) const {
-    return boost::numeric::median(x);
+    return gecode_boost::numeric::median(x);
   }
 
   forceinline bool
   FloatVal::tight(void) const {
-    return (boost::numeric::singleton(x) || 
+    return (gecode_boost::numeric::singleton(x) || 
             (nextafter(x.lower(),x.upper()) == x.upper()));
   }
   forceinline bool
   FloatVal::singleton(void) const {
-    return boost::numeric::singleton(x);
+    return gecode_boost::numeric::singleton(x);
   }
   forceinline bool
   FloatVal::in(FloatNum n) const {
-    return boost::numeric::in(n,x);
+    return gecode_boost::numeric::in(n,x);
   }
   forceinline bool
   FloatVal::zero_in(void) const {
-    return boost::numeric::zero_in(x);
+    return gecode_boost::numeric::zero_in(x);
   }
     
   forceinline FloatVal
@@ -111,17 +111,17 @@ namespace Gecode {
   }
   forceinline FloatVal
   FloatVal::pi_half(void) {
-    FloatVal p(boost::numeric::interval_lib::pi_half<FloatValImpType>());
+    FloatVal p(gecode_boost::numeric::interval_lib::pi_half<FloatValImpType>());
     return p;
   }
   forceinline FloatVal
   FloatVal::pi(void) {
-    FloatVal p(boost::numeric::interval_lib::pi<FloatValImpType>());
+    FloatVal p(gecode_boost::numeric::interval_lib::pi<FloatValImpType>());
     return p;
   }
   forceinline FloatVal
   FloatVal::pi_twice(void) {
-    FloatVal p(boost::numeric::interval_lib::pi_twice<FloatValImpType>());
+    FloatVal p(gecode_boost::numeric::interval_lib::pi_twice<FloatValImpType>());
     return p;
   }
     
@@ -230,7 +230,7 @@ namespace Gecode {
   operator <(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x < y.x;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -238,7 +238,7 @@ namespace Gecode {
   operator <(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x < y;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -247,7 +247,7 @@ namespace Gecode {
   operator <=(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x <= y.x;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -255,7 +255,7 @@ namespace Gecode {
   operator <=(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x <= y;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -264,7 +264,7 @@ namespace Gecode {
   operator >(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x > y.x;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -272,7 +272,7 @@ namespace Gecode {
   operator >(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x > y;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -281,7 +281,7 @@ namespace Gecode {
   operator >=(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x >= y.x;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -289,7 +289,7 @@ namespace Gecode {
   operator >=(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x >= y;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -298,13 +298,13 @@ namespace Gecode {
   operator ==(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x == y.x;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
   forceinline bool
   operator ==(const FloatVal& x, const FloatNum& y) {
-    if (!boost::numeric::interval_lib::checking_strict<FloatNum>
+    if (!gecode_boost::numeric::interval_lib::checking_strict<FloatNum>
         ::is_empty(x.x.lower(), x.x.upper())) {
       if ((x.x.lower() == y) && (x.x.upper() == y))
         return true;
@@ -321,7 +321,7 @@ namespace Gecode {
   operator !=(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x != y.x;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }
@@ -329,7 +329,7 @@ namespace Gecode {
   operator !=(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x != y;
-    } catch (boost::numeric::interval_lib::comparison_error&) {
+    } catch (gecode_boost::numeric::interval_lib::comparison_error&) {
       return false;
     }         
   }

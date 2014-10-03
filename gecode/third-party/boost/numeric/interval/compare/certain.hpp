@@ -7,13 +7,13 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_COMPARE_CERTAIN_HPP
-#define BOOST_NUMERIC_INTERVAL_COMPARE_CERTAIN_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_COMPARE_CERTAIN_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_COMPARE_CERTAIN_HPP
 
 #include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
 #include <gecode/third-party/boost/numeric/interval/detail/test_input.hpp>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 namespace compare {
@@ -107,7 +107,7 @@ bool operator!=(const interval<T, Policies>& x, const T& y)
 } // namespace compare
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
 
-#endif // BOOST_NUMERIC_INTERVAL_COMPARE_CERTAIN_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_COMPARE_CERTAIN_HPP

@@ -17,42 +17,42 @@
 #include "gecode/third-party/boost/config/compiler/common_edg.hpp"
 
 #if defined(__INTEL_COMPILER)
-#  define BOOST_INTEL_CXX_VERSION __INTEL_COMPILER
+#  define GECODE_BOOST_INTEL_CXX_VERSION __INTEL_COMPILER
 #elif defined(__ICL)
-#  define BOOST_INTEL_CXX_VERSION __ICL
+#  define GECODE_BOOST_INTEL_CXX_VERSION __ICL
 #elif defined(__ICC)
-#  define BOOST_INTEL_CXX_VERSION __ICC
+#  define GECODE_BOOST_INTEL_CXX_VERSION __ICC
 #elif defined(__ECC)
-#  define BOOST_INTEL_CXX_VERSION __ECC
+#  define GECODE_BOOST_INTEL_CXX_VERSION __ECC
 #endif
 
 // Flags determined by comparing output of 'icpc -dM -E' with and without '-std=c++0x'
 #if (!(defined(_WIN32) || defined(_WIN64)) && defined(__STDC_HOSTED__) && __STDC_HOSTED__) || defined(__GXX_EXPERIMENTAL_CPP0X__)
-#  define BOOST_INTEL_STDCXX0X
+#  define GECODE_BOOST_INTEL_STDCXX0X
 #endif
 #if defined(_MSC_VER) && (_MSC_VER >= 1600)
-#  define BOOST_INTEL_STDCXX0X
+#  define GECODE_BOOST_INTEL_STDCXX0X
 #endif
 
-#ifdef BOOST_INTEL_STDCXX0X
-#define BOOST_COMPILER "Intel C++ C++0x mode version " BOOST_STRINGIZE(BOOST_INTEL_CXX_VERSION)
+#ifdef GECODE_BOOST_INTEL_STDCXX0X
+#define GECODE_BOOST_COMPILER "Intel C++ C++0x mode version " GECODE_BOOST_STRINGIZE(GECODE_BOOST_INTEL_CXX_VERSION)
 #else
-#define BOOST_COMPILER "Intel C++ version " BOOST_STRINGIZE(BOOST_INTEL_CXX_VERSION)
+#define GECODE_BOOST_COMPILER "Intel C++ version " GECODE_BOOST_STRINGIZE(GECODE_BOOST_INTEL_CXX_VERSION)
 #endif
-#define BOOST_INTEL BOOST_INTEL_CXX_VERSION
+#define GECODE_BOOST_INTEL GECODE_BOOST_INTEL_CXX_VERSION
 
 #if defined(_WIN32) || defined(_WIN64)
-#  define BOOST_INTEL_WIN BOOST_INTEL
+#  define GECODE_BOOST_INTEL_WIN GECODE_BOOST_INTEL
 #else
-#  define BOOST_INTEL_LINUX BOOST_INTEL
+#  define GECODE_BOOST_INTEL_LINUX GECODE_BOOST_INTEL
 #endif
 
-#if (BOOST_INTEL_CXX_VERSION <= 500) && defined(_MSC_VER)
-#  define BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
-#  define BOOST_NO_TEMPLATE_TEMPLATES
+#if (GECODE_BOOST_INTEL_CXX_VERSION <= 500) && defined(_MSC_VER)
+#  define GECODE_BOOST_NO_EXPLICIT_FUNCTION_TEMPLATE_ARGUMENTS
+#  define GECODE_BOOST_NO_TEMPLATE_TEMPLATES
 #endif
 
-#if (BOOST_INTEL_CXX_VERSION <= 600)
+#if (GECODE_BOOST_INTEL_CXX_VERSION <= 600)
 
 #  if defined(_MSC_VER) && (_MSC_VER <= 1300) // added check for <= VC 7 (Peter Dimov)
 
@@ -64,28 +64,28 @@
 // details as they apply to particular versions of the compiler. When the
 // compiler does not predefine a macro indicating if an option has been set,
 // this config file simply assumes the option has been set.
-// Thus BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP will not be defined, even if
+// Thus GECODE_BOOST_NO_ARGUMENT_DEPENDENT_LOOKUP will not be defined, even if
 // the compiler option is not enabled.
 
-#     define BOOST_NO_SWPRINTF
+#     define GECODE_BOOST_NO_SWPRINTF
 #  endif
 
 // Void returns, 64 bit integrals don't work when emulating VC 6 (Peter Dimov)
 
 #  if defined(_MSC_VER) && (_MSC_VER <= 1200)
-#     define BOOST_NO_VOID_RETURNS
-#     define BOOST_NO_INTEGRAL_INT64_T
+#     define GECODE_BOOST_NO_VOID_RETURNS
+#     define GECODE_BOOST_NO_INTEGRAL_INT64_T
 #  endif
 
 #endif
 
-#if (BOOST_INTEL_CXX_VERSION <= 710) && defined(_WIN32)
-#  define BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
+#if (GECODE_BOOST_INTEL_CXX_VERSION <= 710) && defined(_WIN32)
+#  define GECODE_BOOST_NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS
 #endif
 
 // See http://aspn.activestate.com/ASPN/Mail/Message/boost/1614864
-#if BOOST_INTEL_CXX_VERSION < 600
-#  define BOOST_NO_INTRINSIC_WCHAR_T
+#if GECODE_BOOST_INTEL_CXX_VERSION < 600
+#  define GECODE_BOOST_NO_INTRINSIC_WCHAR_T
 #else
 // We should test the macro _WCHAR_T_DEFINED to check if the compiler
 // supports wchar_t natively. *BUT* there is a problem here: the standard
@@ -96,79 +96,79 @@
 // Under UNIX, the situation is exactly the same, but the macro _WCHAR_T
 // is used instead.
 #  if ((_WCHAR_T_DEFINED + 0) == 0) && ((_WCHAR_T + 0) == 0)
-#    define BOOST_NO_INTRINSIC_WCHAR_T
+#    define GECODE_BOOST_NO_INTRINSIC_WCHAR_T
 #  endif
 #endif
 
-#if defined(__GNUC__) && !defined(BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL)
+#if defined(__GNUC__) && !defined(GECODE_BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL)
 //
 // Figure out when Intel is emulating this gcc bug
 // (All Intel versions prior to 9.0.26, and versions
 // later than that if they are set up to emulate gcc 3.2
 // or earlier):
 //
-#  if ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)) || (BOOST_INTEL < 900) || (__INTEL_COMPILER_BUILD_DATE < 20050912)
-#     define BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
+#  if ((__GNUC__ == 3) && (__GNUC_MINOR__ <= 2)) || (GECODE_BOOST_INTEL < 900) || (__INTEL_COMPILER_BUILD_DATE < 20050912)
+#     define GECODE_BOOST_FUNCTION_SCOPE_USING_DECLARATION_BREAKS_ADL
 #  endif
 #endif
-#if (defined(__GNUC__) && (__GNUC__ < 4)) || defined(_WIN32) || (BOOST_INTEL_CXX_VERSION <= 1200)
+#if (defined(__GNUC__) && (__GNUC__ < 4)) || defined(_WIN32) || (GECODE_BOOST_INTEL_CXX_VERSION <= 1200)
 // GCC or VC emulation:
-#define BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #endif
 //
-// Verify that we have actually got BOOST_NO_INTRINSIC_WCHAR_T
+// Verify that we have actually got GECODE_BOOST_NO_INTRINSIC_WCHAR_T
 // set correctly, if we don't do this now, we will get errors later
 // in type_traits code among other things, getting this correct
 // for the Intel compiler is actually remarkably fragile and tricky:
 //
 #ifdef __cplusplus
-#if defined(BOOST_NO_INTRINSIC_WCHAR_T)
+#if defined(GECODE_BOOST_NO_INTRINSIC_WCHAR_T)
 #include <cwchar>
 template< typename T > struct assert_no_intrinsic_wchar_t;
 template<> struct assert_no_intrinsic_wchar_t<wchar_t> { typedef void type; };
-// if you see an error here then you need to unset BOOST_NO_INTRINSIC_WCHAR_T
+// if you see an error here then you need to unset GECODE_BOOST_NO_INTRINSIC_WCHAR_T
 // where it is defined above:
 typedef assert_no_intrinsic_wchar_t<unsigned short>::type assert_no_intrinsic_wchar_t_;
 #else
 template< typename T > struct assert_intrinsic_wchar_t;
 template<> struct assert_intrinsic_wchar_t<wchar_t> {};
-// if you see an error here then define BOOST_NO_INTRINSIC_WCHAR_T on the command line:
+// if you see an error here then define GECODE_BOOST_NO_INTRINSIC_WCHAR_T on the command line:
 template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 #endif
 #endif
 
 #if defined(_MSC_VER) && (_MSC_VER+0 >= 1000)
 #  if _MSC_VER >= 1200
-#     define BOOST_HAS_MS_INT64
+#     define GECODE_BOOST_HAS_MS_INT64
 #  endif
-#  define BOOST_NO_SWPRINTF
-#  define BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#  define GECODE_BOOST_NO_SWPRINTF
+#  define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #elif defined(_WIN32)
-#  define BOOST_DISABLE_WIN32
+#  define GECODE_BOOST_DISABLE_WIN32
 #endif
 
 // I checked version 6.0 build 020312Z, it implements the NRVO.
 // Correct this as you find out which version of the compiler
 // implemented the NRVO first.  (Daniel Frey)
-#if (BOOST_INTEL_CXX_VERSION >= 600)
-#  define BOOST_HAS_NRVO
+#if (GECODE_BOOST_INTEL_CXX_VERSION >= 600)
+#  define GECODE_BOOST_HAS_NRVO
 #endif
 
 //
 // versions check:
 // we don't support Intel prior to version 5.0:
-#if BOOST_INTEL_CXX_VERSION < 500
+#if GECODE_BOOST_INTEL_CXX_VERSION < 500
 #  error "Compiler not supported or configured - please reconfigure"
 #endif
 
 // Intel on MacOS requires
 #if defined(__APPLE__) && defined(__INTEL_COMPILER)
-#  define BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#  define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #endif
 
 // Intel on Altix Itanium
 #if defined(__itanium__) && defined(__INTEL_COMPILER)
-#  define BOOST_NO_TWO_PHASE_NAME_LOOKUP
+#  define GECODE_BOOST_NO_TWO_PHASE_NAME_LOOKUP
 #endif
 
 //
@@ -181,7 +181,7 @@ template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 // (Niels Dekker, LKEB, May 2010)
 #if defined(__INTEL_COMPILER)
 #  if __INTEL_COMPILER <= 1110
-#    define BOOST_NO_COMPLETE_VALUE_INITIALIZATION
+#    define GECODE_BOOST_NO_COMPLETE_VALUE_INITIALIZATION
 #  endif
 #endif
 
@@ -189,48 +189,48 @@ template<> struct assert_intrinsic_wchar_t<unsigned short> {};
 // Dynamic shared object (DSO) and dynamic-link library (DLL) support
 //
 #if defined(__GNUC__) && (__GNUC__ >= 4)
-#  define BOOST_SYMBOL_EXPORT __attribute__((visibility("default")))
-#  define BOOST_SYMBOL_IMPORT
-#  define BOOST_SYMBOL_VISIBLE __attribute__((visibility("default")))
+#  define GECODE_BOOST_SYMBOL_EXPORT __attribute__((visibility("default")))
+#  define GECODE_BOOST_SYMBOL_IMPORT
+#  define GECODE_BOOST_SYMBOL_VISIBLE __attribute__((visibility("default")))
 #endif
 //
 // C++0x features
 //     - ICC added static_assert in 11.0 (first version with C++0x support)
 //
-#if defined(BOOST_INTEL_STDCXX0X)
-#  undef  BOOST_NO_STATIC_ASSERT
+#if defined(GECODE_BOOST_INTEL_STDCXX0X)
+#  undef  GECODE_BOOST_NO_STATIC_ASSERT
 //
 // These pass our test cases, but aren't officially supported according to:
 // http://software.intel.com/en-us/articles/c0x-features-supported-by-intel-c-compiler/
 //
-//#  undef  BOOST_NO_LAMBDAS
-//#  undef  BOOST_NO_DECLTYPE
-//#  undef  BOOST_NO_AUTO_DECLARATIONS
-//#  undef  BOOST_NO_AUTO_MULTIDECLARATIONS
+//#  undef  GECODE_BOOST_NO_LAMBDAS
+//#  undef  GECODE_BOOST_NO_DECLTYPE
+//#  undef  GECODE_BOOST_NO_AUTO_DECLARATIONS
+//#  undef  GECODE_BOOST_NO_AUTO_MULTIDECLARATIONS
 #endif
 
-#if defined(BOOST_INTEL_STDCXX0X) && (BOOST_INTEL_CXX_VERSION >= 1200)
-#  undef  BOOST_NO_RVALUE_REFERENCES
-//#  undef  BOOST_NO_SCOPED_ENUMS  // doesn't really work!!
-#  undef  BOOST_NO_DELETED_FUNCTIONS
-#  undef  BOOST_NO_DEFAULTED_FUNCTIONS
-#  undef  BOOST_NO_LAMBDAS
-#  undef  BOOST_NO_DECLTYPE
-#  undef  BOOST_NO_AUTO_DECLARATIONS
-#  undef  BOOST_NO_AUTO_MULTIDECLARATIONS
+#if defined(GECODE_BOOST_INTEL_STDCXX0X) && (GECODE_BOOST_INTEL_CXX_VERSION >= 1200)
+#  undef  GECODE_BOOST_NO_RVALUE_REFERENCES
+//#  undef  GECODE_BOOST_NO_SCOPED_ENUMS  // doesn't really work!!
+#  undef  GECODE_BOOST_NO_DELETED_FUNCTIONS
+#  undef  GECODE_BOOST_NO_DEFAULTED_FUNCTIONS
+#  undef  GECODE_BOOST_NO_LAMBDAS
+#  undef  GECODE_BOOST_NO_DECLTYPE
+#  undef  GECODE_BOOST_NO_AUTO_DECLARATIONS
+#  undef  GECODE_BOOST_NO_AUTO_MULTIDECLARATIONS
 #endif
 
-#if (BOOST_INTEL_CXX_VERSION < 1200)
+#if (GECODE_BOOST_INTEL_CXX_VERSION < 1200)
 //
 // fenv.h appears not to work with Intel prior to 12.0:
 //
-#  define BOOST_NO_FENV_H
+#  define GECODE_BOOST_NO_FENV_H
 #endif
 
 //
 // last known and checked version:
-#if (BOOST_INTEL_CXX_VERSION > 1200)
-#  if defined(BOOST_ASSERT_CONFIG)
+#if (GECODE_BOOST_INTEL_CXX_VERSION > 1200)
+#  if defined(GECODE_BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  elif defined(_MSC_VER)
 //

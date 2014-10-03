@@ -7,7 +7,7 @@
 
 //  Tru64 C++ compiler setup (now HP):
 
-#define BOOST_COMPILER "HP Tru64 C++ " BOOST_STRINGIZE(__DECCXX_VER)
+#define GECODE_BOOST_COMPILER "HP Tru64 C++ " GECODE_BOOST_STRINGIZE(__DECCXX_VER)
 
 #include "gecode/third-party/boost/config/compiler/common_edg.hpp"
 

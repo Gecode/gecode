@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP
-#define BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP
 
 #ifdef __GNUC__
 #  include <gecode/third-party/boost/numeric/interval/detail/x86gcc_rounding_control.hpp>
@@ -18,21 +18,21 @@
 #elif defined(_MSC_VER)
 #  include <gecode/third-party/boost/numeric/interval/detail/msvc_rounding_control.hpp>
 #elif defined(__MWERKS__) || defined(__ICC) || defined (__SUNPRO_CC)
-#  define BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
+#  define GECODE_BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
 #  include <gecode/third-party/boost/numeric/interval/detail/c99sub_rounding_control.hpp>
 #else
 #  error Unsupported C++ compiler.
 #endif
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 
 namespace detail {
 
-#ifdef BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
+#ifdef GECODE_BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
 typedef c99_rounding_control x86_rounding_control;
-#undef BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
+#undef GECODE_BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
 #else
 struct fpu_rounding_modes
 {
@@ -53,7 +53,7 @@ struct x86_rounding_control: x86_rounding
   static void upward()      { set_rounding_mode(rnd_mode.upward);      }
   static void toward_zero() { set_rounding_mode(rnd_mode.toward_zero); }
 };
-#endif // BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_USE_C99_SUBSYSTEM
 
 } // namespace detail
 
@@ -101,8 +101,8 @@ struct rounding_control<long double>:
 
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#undef BOOST_NUMERIC_INTERVAL_NO_HARDWARE
+#undef GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 
-#endif /* BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP */
+#endif /* GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_X86_ROUNDING_CONTROL_HPP */

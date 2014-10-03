@@ -8,13 +8,13 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_HW_ROUNDING_HPP
-#define BOOST_NUMERIC_INTERVAL_HW_ROUNDING_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_HW_ROUNDING_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_HW_ROUNDING_HPP
 
 #include <gecode/third-party/boost/numeric/interval/rounding.hpp>
 #include <gecode/third-party/boost/numeric/interval/rounded_arith.hpp>
 
-#define BOOST_NUMERIC_INTERVAL_NO_HARDWARE
+#define GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 
 // define appropriate specialization of rounding_control for built-in types
 #if defined(__x86_64__) && (defined(__USE_ISOC99) || defined(__APPLE__))
@@ -33,16 +33,16 @@
 #  include <gecode/third-party/boost/numeric/interval/detail/ia64_rounding_control.hpp>
 #endif
 
-#if defined(BOOST_NUMERIC_INTERVAL_NO_HARDWARE) && (defined(__USE_ISOC99) || defined(__MSL__))
+#if defined(GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE) && (defined(__USE_ISOC99) || defined(__MSL__))
 #  include <gecode/third-party/boost/numeric/interval/detail/c99_rounding_control.hpp>
 #endif
 
-#if defined(BOOST_NUMERIC_INTERVAL_NO_HARDWARE)
-#  undef BOOST_NUMERIC_INTERVAL_NO_HARDWARE
+#if defined(GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE)
+#  undef GECODE_BOOST_NUMERIC_INTERVAL_NO_HARDWARE
 #  error Boost.Numeric.Interval: Please specify rounding control mechanism.
 #endif
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 
@@ -67,6 +67,6 @@ struct rounded_math<long double>
 
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_HW_ROUNDING_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_HW_ROUNDING_HPP

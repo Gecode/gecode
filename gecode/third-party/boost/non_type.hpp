@@ -8,11 +8,11 @@
 //
 // ------------------------------------------------------
 
-#ifndef BOOST_NON_TYPE_HPP_GP_20030417
-#define BOOST_NON_TYPE_HPP_GP_20030417
+#ifndef GECODE_BOOST_NON_TYPE_HPP_GP_20030417
+#define GECODE_BOOST_NON_TYPE_HPP_GP_20030417
 
 
-namespace boost {
+namespace gecode_boost {
 
   // Just a simple "envelope" for non-type template parameters. Useful
   // to work around some MSVC deficiencies.

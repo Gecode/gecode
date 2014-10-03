@@ -135,10 +135,10 @@ namespace Gecode { namespace Float {
    * \ingroup TaskModelFloatVars
    */
   class Rounding : 
-    public boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
+    public gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
   protected:
     /// Base class
-    typedef boost::numeric::interval_lib::rounded_arith_opp<FloatNum> Base;
+    typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> Base;
   public:
     /// \name Constructor and destructor
     //@{
@@ -400,13 +400,13 @@ namespace Gecode {
     friend FloatVal Float::hull(const FloatNum& x, const FloatNum& y);
   protected:
     /// Used rounding policies
-    typedef boost::numeric::interval_lib::save_state<Float::Rounding> R;
+    typedef gecode_boost::numeric::interval_lib::save_state<Float::Rounding> R;
     /// Used checking policy
-    typedef boost::numeric::interval_lib::checking_strict<FloatNum> P;
+    typedef gecode_boost::numeric::interval_lib::checking_strict<FloatNum> P;
     /// Implementation type for float value
-    typedef boost::numeric::interval
+    typedef gecode_boost::numeric::interval
       <FloatNum,
-       boost::numeric::interval_lib::policies<R, P> >
+       gecode_boost::numeric::interval_lib::policies<R, P> >
     FloatValImpType;
     /// Implementation of float value
     FloatValImpType x;

@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_HPP
-#define BOOST_NUMERIC_INTERVAL_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_HPP
 
 #include <gecode/third-party/boost/limits.hpp>
 #include <gecode/third-party/boost/numeric/interval/interval.hpp>
@@ -29,4 +29,4 @@
 #include <gecode/third-party/boost/numeric/interval/arith3.hpp>
 #include <gecode/third-party/boost/numeric/interval/transc.hpp>
 
-#endif // BOOST_NUMERIC_INTERVAL_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_HPP

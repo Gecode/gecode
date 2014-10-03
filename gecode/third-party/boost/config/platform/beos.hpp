@@ -7,16 +7,16 @@
 
 //  BeOS specific config options:
 
-#define BOOST_PLATFORM "BeOS"
+#define GECODE_BOOST_PLATFORM "BeOS"
 
-#define BOOST_NO_CWCHAR
-#define BOOST_NO_CWCTYPE
-#define BOOST_HAS_UNISTD_H
+#define GECODE_BOOST_NO_CWCHAR
+#define GECODE_BOOST_NO_CWCTYPE
+#define GECODE_BOOST_HAS_UNISTD_H
 
-#define BOOST_HAS_BETHREADS
+#define GECODE_BOOST_HAS_BETHREADS
 
-#ifndef BOOST_DISABLE_THREADS
-#  define BOOST_HAS_THREADS
+#ifndef GECODE_BOOST_DISABLE_THREADS
+#  define GECODE_BOOST_HAS_THREADS
 #endif
 
 // boilerplate code:

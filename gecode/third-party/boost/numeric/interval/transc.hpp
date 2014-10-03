@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_TRANSC_HPP
-#define BOOST_NUMERIC_INTERVAL_TRANSC_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_TRANSC_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_TRANSC_HPP
 
 #include <gecode/third-party/boost/config.hpp>
 #include <gecode/third-party/boost/numeric/interval/detail/interval_prototype.hpp>
@@ -21,7 +21,7 @@
 #include <gecode/third-party/boost/numeric/interval/arith2.hpp>
 #include <algorithm>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 
 template<class T, class Policies> inline
@@ -67,12 +67,12 @@ interval<T, Policies> cos(const interval<T, Policies>& x)
   T l = tmp.lower();
   T u = tmp.upper();
 
-  BOOST_USING_STD_MIN();
+  GECODE_BOOST_USING_STD_MIN();
   // separate into monotone subintervals
   if (u <= interval_lib::constants::pi_lower<T>())
     return I(rnd.cos_down(u), rnd.cos_up(l), true);
   else if (u <= pi2.lower())
-    return I(static_cast<T>(-1), rnd.cos_up(min BOOST_PREVENT_MACRO_SUBSTITUTION(rnd.sub_down(pi2.lower(), u), l)), true);
+    return I(static_cast<T>(-1), rnd.cos_up(min GECODE_BOOST_PREVENT_MACRO_SUBSTITUTION(rnd.sub_down(pi2.lower(), u), l)), true);
   else
     return I(static_cast<T>(-1), static_cast<T>(1), true);
 }
@@ -227,6 +227,6 @@ interval<T, Policies> atanh(const interval<T, Policies>& x)
 }
 
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_TRANSC_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_TRANSC_HPP

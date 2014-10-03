@@ -64,7 +64,7 @@ while ($f = pop @todo) {
     } elsif ($l =~ /^\#( )*include (.*)/) {
       $k = $2; chop($k);
       $unresolved{$k} = 1;
-    } elsif ($l =~ /^\#( )*define (BOOST_[A-Z_]*) (.*)/) {
+    } elsif ($l =~ /^\#( )*define (GECODE_BOOST_[A-Z_]*) (.*)/) {
       $k = $2; $v = $3;
       chop($v);
       if ($v =~ /\"(.*)\"/) {

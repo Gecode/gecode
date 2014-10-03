@@ -11,20 +11,20 @@
 
 #include "gecode/third-party/boost/config/compiler/common_edg.hpp"
 
-#   if (__KCC_VERSION <= 4001) || !defined(BOOST_STRICT_CONFIG)
+#   if (__KCC_VERSION <= 4001) || !defined(GECODE_BOOST_STRICT_CONFIG)
       // at least on Sun, the contents of <cwchar> is not in namespace std
-#     define BOOST_NO_STDC_NAMESPACE
+#     define GECODE_BOOST_NO_STDC_NAMESPACE
 #   endif
 
 // see also common_edg.hpp which needs a special check for __KCC
-# if !defined(_EXCEPTIONS) && !defined(BOOST_NO_EXCEPTIONS)
-#     define BOOST_NO_EXCEPTIONS
+# if !defined(_EXCEPTIONS) && !defined(GECODE_BOOST_NO_EXCEPTIONS)
+#     define GECODE_BOOST_NO_EXCEPTIONS
 # endif
 
 //
 // last known and checked version is 4001:
 #if (__KCC_VERSION > 4001)
-#  if defined(BOOST_ASSERT_CONFIG)
+#  if defined(GECODE_BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  endif
 #endif

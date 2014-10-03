@@ -8,8 +8,8 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_DETAIL_MSVC_ROUNDING_CONTROL_HPP
-#define BOOST_NUMERIC_INTERVAL_DETAIL_MSVC_ROUNDING_CONTROL_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_MSVC_ROUNDING_CONTROL_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_MSVC_ROUNDING_CONTROL_HPP
 
 #ifndef _MSC_VER
 #  error This header is only intended for MSVC, but might work for Borland as well
@@ -20,12 +20,12 @@
 // Although the function is called _control87, it seems to work for
 // other FPUs too, so it does not have to be changed to _controlfp.
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 namespace detail {
 
-#if BOOST_MSVC < 1400 || defined(_WIN64)
+#if GECODE_BOOST_MSVC < 1400 || defined(_WIN64)
 extern "C" { double rint(double); }
 #else
 inline double rint(double x)
@@ -99,6 +99,6 @@ struct x86_rounding
 } // namespace detail
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif /* BOOST_NUMERIC_INTERVAL_DETAIL_MSVC_ROUNDING_CONTROL_HPP */
+#endif /* GECODE_BOOST_NUMERIC_INTERVAL_DETAIL_MSVC_ROUNDING_CONTROL_HPP */

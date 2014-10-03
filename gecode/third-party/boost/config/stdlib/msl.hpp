@@ -16,60 +16,60 @@
 #endif
 
 #if __MSL_CPP__ >= 0x6000  // Pro 6
-#  define BOOST_HAS_HASH
-#  define BOOST_STD_EXTENSION_NAMESPACE Metrowerks
+#  define GECODE_BOOST_HAS_HASH
+#  define GECODE_BOOST_STD_EXTENSION_NAMESPACE Metrowerks
 #endif
-#define BOOST_HAS_SLIST
+#define GECODE_BOOST_HAS_SLIST
 
 #if __MSL_CPP__ < 0x6209
-#  define BOOST_NO_STD_MESSAGES
+#  define GECODE_BOOST_NO_STD_MESSAGES
 #endif
 
 // check C lib version for <stdint.h>
 #include <cstddef>
 
 #if defined(__MSL__) && (__MSL__ >= 0x5000)
-#  define BOOST_HAS_STDINT_H
+#  define GECODE_BOOST_HAS_STDINT_H
 #  if !defined(__PALMOS_TRAPS__)
-#    define BOOST_HAS_UNISTD_H
+#    define GECODE_BOOST_HAS_UNISTD_H
 #  endif
    // boilerplate code:
 #  include <gecode/third-party/boost/config/posix_features.hpp>
 #endif
 
 #if defined(_MWMT) || _MSL_THREADSAFE
-#  define BOOST_HAS_THREADS
+#  define GECODE_BOOST_HAS_THREADS
 #endif
 
 #ifdef _MSL_NO_EXPLICIT_FUNC_TEMPLATE_ARG
-#  define BOOST_NO_STD_USE_FACET
-#  define BOOST_HAS_TWO_ARG_USE_FACET
+#  define GECODE_BOOST_NO_STD_USE_FACET
+#  define GECODE_BOOST_HAS_TWO_ARG_USE_FACET
 #endif
 
 //  C++0x headers not yet implemented
 //
-#  define BOOST_NO_0X_HDR_ARRAY
-#  define BOOST_NO_0X_HDR_CHRONO
-#  define BOOST_NO_0X_HDR_CODECVT
-#  define BOOST_NO_0X_HDR_CONDITION_VARIABLE
-#  define BOOST_NO_0X_HDR_FORWARD_LIST
-#  define BOOST_NO_0X_HDR_FUTURE
-#  define BOOST_NO_0X_HDR_INITIALIZER_LIST
-#  define BOOST_NO_0X_HDR_MUTEX
-#  define BOOST_NO_0X_HDR_RANDOM
-#  define BOOST_NO_0X_HDR_RATIO
-#  define BOOST_NO_0X_HDR_REGEX
-#  define BOOST_NO_0X_HDR_SYSTEM_ERROR
-#  define BOOST_NO_0X_HDR_THREAD
-#  define BOOST_NO_0X_HDR_TUPLE
-#  define BOOST_NO_0X_HDR_TYPE_TRAITS
-#  define BOOST_NO_0X_HDR_TYPEINDEX
-#  define BOOST_NO_STD_UNORDERED        // deprecated; see following
-#  define BOOST_NO_0X_HDR_UNORDERED_MAP
-#  define BOOST_NO_0X_HDR_UNORDERED_SET
-#  define BOOST_NO_NUMERIC_LIMITS_LOWEST
+#  define GECODE_BOOST_NO_0X_HDR_ARRAY
+#  define GECODE_BOOST_NO_0X_HDR_CHRONO
+#  define GECODE_BOOST_NO_0X_HDR_CODECVT
+#  define GECODE_BOOST_NO_0X_HDR_CONDITION_VARIABLE
+#  define GECODE_BOOST_NO_0X_HDR_FORWARD_LIST
+#  define GECODE_BOOST_NO_0X_HDR_FUTURE
+#  define GECODE_BOOST_NO_0X_HDR_INITIALIZER_LIST
+#  define GECODE_BOOST_NO_0X_HDR_MUTEX
+#  define GECODE_BOOST_NO_0X_HDR_RANDOM
+#  define GECODE_BOOST_NO_0X_HDR_RATIO
+#  define GECODE_BOOST_NO_0X_HDR_REGEX
+#  define GECODE_BOOST_NO_0X_HDR_SYSTEM_ERROR
+#  define GECODE_BOOST_NO_0X_HDR_THREAD
+#  define GECODE_BOOST_NO_0X_HDR_TUPLE
+#  define GECODE_BOOST_NO_0X_HDR_TYPE_TRAITS
+#  define GECODE_BOOST_NO_0X_HDR_TYPEINDEX
+#  define GECODE_BOOST_NO_STD_UNORDERED        // deprecated; see following
+#  define GECODE_BOOST_NO_0X_HDR_UNORDERED_MAP
+#  define GECODE_BOOST_NO_0X_HDR_UNORDERED_SET
+#  define GECODE_BOOST_NO_NUMERIC_LIMITS_LOWEST
 
-#define BOOST_STDLIB "Metrowerks Standard Library version " BOOST_STRINGIZE(__MSL_CPP__)
+#define GECODE_BOOST_STDLIB "Metrowerks Standard Library version " GECODE_BOOST_STRINGIZE(__MSL_CPP__)
 
 
 

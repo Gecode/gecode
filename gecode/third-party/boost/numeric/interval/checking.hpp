@@ -7,15 +7,15 @@
  * copy at http://www.boost.org/LICENSE_1_0.txt)
  */
 
-#ifndef BOOST_NUMERIC_INTERVAL_CHECKING_HPP
-#define BOOST_NUMERIC_INTERVAL_CHECKING_HPP
+#ifndef GECODE_BOOST_NUMERIC_INTERVAL_CHECKING_HPP
+#define GECODE_BOOST_NUMERIC_INTERVAL_CHECKING_HPP
 
 #include <stdexcept>
 #include <string>
 #include <cassert>
 #include <gecode/third-party/boost/limits.hpp>
 
-namespace boost {
+namespace gecode_boost {
 namespace numeric {
 namespace interval_lib {
 
@@ -23,7 +23,7 @@ struct exception_create_empty
 {
   void operator()()
   {
-    throw std::runtime_error("boost::interval: empty interval created");
+    throw std::runtime_error("gecode_boost::interval: empty interval created");
   }
 };
 
@@ -31,7 +31,7 @@ struct exception_invalid_number
 {
   void operator()()
   {
-    throw std::invalid_argument("boost::interval: invalid number");
+    throw std::invalid_argument("gecode_boost::interval: invalid number");
   }
 };
 
@@ -125,6 +125,6 @@ struct checking_strict:
 
 } // namespace interval_lib
 } // namespace numeric
-} // namespace boost
+} // namespace gecode_boost
 
-#endif // BOOST_NUMERIC_INTERVAL_CHECKING_HPP
+#endif // GECODE_BOOST_NUMERIC_INTERVAL_CHECKING_HPP

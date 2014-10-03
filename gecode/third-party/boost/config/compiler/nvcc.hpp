@@ -7,13 +7,13 @@
 
 //  NVIDIA CUDA C++ compiler setup
 
-#ifndef BOOST_COMPILER
-#  define BOOST_COMPILER "NVIDIA CUDA C++ Compiler"
+#ifndef GECODE_BOOST_COMPILER
+#  define GECODE_BOOST_COMPILER "NVIDIA CUDA C++ Compiler"
 #endif
 
 // NVIDIA Specific support
-// BOOST_GPU_ENABLED : Flag a function or a method as being enabled on the host and device
-#define BOOST_GPU_ENABLED __host__ __device__
+// GECODE_BOOST_GPU_ENABLED : Flag a function or a method as being enabled on the host and device
+#define GECODE_BOOST_GPU_ENABLED __host__ __device__
 
 // Boost support macro for NVCC 
 // NVCC Basically behaves like some flavor of MSVC6 + some specific quirks

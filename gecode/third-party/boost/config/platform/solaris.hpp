@@ -8,19 +8,19 @@
 
 //  sun specific config options:
 
-#define BOOST_PLATFORM "Sun Solaris"
+#define GECODE_BOOST_PLATFORM "Sun Solaris"
 
-#define BOOST_HAS_GETTIMEOFDAY
+#define GECODE_BOOST_HAS_GETTIMEOFDAY
 
 // boilerplate code:
-#define BOOST_HAS_UNISTD_H
+#define GECODE_BOOST_HAS_UNISTD_H
 #include <gecode/third-party/boost/config/posix_features.hpp>
 
 //
 // pthreads don't actually work with gcc unless _PTHREADS is defined:
 //
 #if defined(__GNUC__) && defined(_POSIX_THREADS) && !defined(_PTHREADS)
-# undef BOOST_HAS_PTHREADS
+# undef GECODE_BOOST_HAS_PTHREADS
 #endif
 
 
