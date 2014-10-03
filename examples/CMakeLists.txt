@@ -40,19 +40,19 @@
 if (MSVC)
 	# Needed for some examples to prevent
 	# C1128: number of sections exceeded object file format limit : compile with /bigobj
-	set(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} /bigobj\")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /bigobj")
 endif()
 
 macro (GECODE_EXAMPLE NAME)
 	add_executable(${NAME}${EXECUTABLE_EXTENSION}
 	               ${NAME}.cpp)
 	target_link_libraries(${NAME}${EXECUTABLE_EXTENSION} gecodeminimodel gecodedriver)
-	set_property(TARGET ${NAME}${EXECUTABLE_EXTENSION}         PROPERTY FOLDER \"Examples\")
+	set_property(TARGET ${NAME}${EXECUTABLE_EXTENSION}         PROPERTY FOLDER "Examples")
 endmacro ()
 
 file(GLOB EXAMPLE_FILES *.cpp)
 foreach (EXAMPLE_FILE ${EXAMPLE_FILES})
 	get_filename_component(EXAMPLE_NAME ${EXAMPLE_FILE} NAME_WE)
-	message(\"-- Adding example: \" ${EXAMPLE_NAME})
+	message("-- Adding example: " ${EXAMPLE_NAME})
 	gecode_example(${EXAMPLE_NAME})
 endforeach()
