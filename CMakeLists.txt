@@ -406,6 +406,8 @@ target_link_libraries(gecode-test gecodeminimodel)
 add_executable(fzn-gecode ${FLATZINCEXESRC})
 target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 option(BUILD_EXAMPLES "Build examples." OFF) 
 if (${BUILD_EXAMPLES})
   add_subdirectory(examples)
