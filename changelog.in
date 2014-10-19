@@ -92,7 +92,7 @@ Added support for building examples with CMake.
 Module: minimodel
 What:   bug
 Rank:   minor
-Thanks:	Lionard Benedetti
+Thanks:	Léonard Benedetti
 [DESCRIPTION]
 Removed potentially undefined behavior for regular expressions. 
 
