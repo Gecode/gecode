@@ -39,6 +39,7 @@
  *
  */
 
+#include <algorithm>
 #include <gecode/search.hh>
 
 namespace Gecode { namespace Search {
@@ -47,7 +48,11 @@ namespace Gecode { namespace Search {
   CutoffConstant::CutoffConstant(unsigned long int c0) 
     : c(c0) {}
   unsigned long int 
-  CutoffConstant::operator ()(void) {
+  CutoffConstant::operator ()(void) const {
+    return c;
+  }
+  unsigned long int 
+  CutoffConstant::operator ++(void) {
     return c;
   }
   
@@ -56,7 +61,11 @@ namespace Gecode { namespace Search {
   CutoffLinear::CutoffLinear(unsigned long int s) 
     : scale(s), n(0) {}
   unsigned long int 
-  CutoffLinear::operator ()(void) {
+  CutoffLinear::operator ()(void) const {
+    return n;
+  }
+  unsigned long int 
+  CutoffLinear::operator ++(void) {
     n += scale;
     return n;
   }
@@ -92,22 +101,34 @@ namespace Gecode { namespace Search {
     return 0;
   }
   unsigned long int 
-  CutoffLuby::operator() (void) {
+  CutoffLuby::operator ()(void) const {
+    return scale*luby(i);
+  }
+  unsigned long int 
+  CutoffLuby::operator ++(void) {
     return scale*luby(i++);
   }
 
 
   forceinline
-  CutoffGeometric::CutoffGeometric(unsigned long int scale, double base0) 
-    : n(static_cast<double>(scale)), base(base0) {}
+  CutoffGeometric::CutoffGeometric(unsigned long int scale0, double base0) 
+    : n(1.0), scale(static_cast<double>(scale0)), base(base0) {}
   unsigned long int 
-  CutoffGeometric::operator ()(void) {
-    unsigned long int oldn = static_cast<unsigned long int>(n);
+  CutoffGeometric::operator ()(void) const {
+    return scale * n;
+  }
+  unsigned long int 
+  CutoffGeometric::operator ++(void) {
     n *= base;
-    return oldn;
+    return scale * n;
   }
   
   
+  unsigned long int 
+  CutoffRandom::operator ++(void) {
+    cur = min+step*rnd(n);
+    return cur;
+  }
   forceinline
   CutoffRandom::CutoffRandom(unsigned int seed, 
                              unsigned long int min0, 
@@ -115,10 +136,12 @@ namespace Gecode { namespace Search {
                              unsigned long int n0)
       : rnd(seed), min(min0), n(n0 == 0 ? (max0-min+1U) : n0), 
         step(std::max(1UL,
-                      static_cast<unsigned long int>((max0-min0+1U)/n))) {}
+                      static_cast<unsigned long int>((max0-min0+1U)/n))) {
+    cur = ++(*this);
+  }
   unsigned long int 
-  CutoffRandom::operator ()(void) {
-    return min+step*rnd(n);
+  CutoffRandom::operator ()(void) const {
+    return cur;
   }
   
 
@@ -126,16 +149,43 @@ namespace Gecode { namespace Search {
   CutoffAppend::CutoffAppend(Cutoff* d1, unsigned long int n0, Cutoff* d2) 
     : c1(d1), c2(d2), n(n0) {}
   unsigned long int 
-  CutoffAppend::operator ()(void) {
+  CutoffAppend::operator ()(void) const {
     if (n > 0) {
-      n--;
       return (*c1)();
     } else {
       return (*c2)();
     }
   }
+  unsigned long int 
+  CutoffAppend::operator ++(void) {
+    if (n > 0) {
+      n--;
+      return ++(*c1);
+    } else {
+      return ++(*c2);
+    }
+  }
   forceinline
   CutoffAppend::~CutoffAppend(void) {
+    delete c1; delete c2;
+  }
+
+
+  forceinline
+  CutoffMerge::CutoffMerge(Cutoff* d1, Cutoff* d2) 
+    : c1(d1), c2(d2) {}
+  unsigned long int 
+  CutoffMerge::operator ()(void) const {
+    return (*c1)();
+  }
+  unsigned long int 
+  CutoffMerge::operator ++(void) {
+    (void) ++(*c1);
+    std::swap(c1,c2);
+    return (*c1)();
+  }
+  forceinline
+  CutoffMerge::~CutoffMerge(void) {
     delete c1; delete c2;
   }
 
@@ -146,14 +196,17 @@ namespace Gecode { namespace Search {
     cutoff = (*c)();
   }
   unsigned long int
-  CutoffRepeat::operator ()(void) {
-    unsigned long int current = cutoff;
+  CutoffRepeat::operator ()(void) const {
+    return cutoff;
+  }
+  unsigned long int
+  CutoffRepeat::operator ++(void) {
     i++;
     if (i == n) {
       cutoff = (*c)();
       i = 0;
     }
-    return current;
+    return cutoff;
   }
   forceinline
   CutoffRepeat::~CutoffRepeat(void) {
@@ -187,6 +240,10 @@ namespace Gecode { namespace Search {
   Cutoff*
   Cutoff::append(Cutoff* c1, unsigned long int n, Cutoff* c2) {
     return new CutoffAppend(c1,n,c2);
+  }
+  Cutoff*
+  Cutoff::merge(Cutoff* c1, Cutoff* c2) {
+    return new CutoffMerge(c1,c2);
   }
   Cutoff*
   Cutoff::repeat(Cutoff* c, unsigned long int n) {

@@ -136,7 +136,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Reset stack
     void reset(void);
     /// Post no-goods
-    void virtual post(Space& home);
+    void virtual post(Space& home) const;
   };
 
 

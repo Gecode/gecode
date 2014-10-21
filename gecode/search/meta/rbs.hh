@@ -45,20 +45,21 @@ namespace Gecode { namespace Search { namespace Meta {
 
   /// Engine for restart-based search
   class RBS : public Engine {
-  private:
+  protected:
     /// The actual engine
     Engine* e;
     /// The master space to restart from
     Space* master;
+    /// The last solution space (possibly NULL)
+    Space* last;
     /// The cutoff object
     Cutoff* co;
     /// The stop control object
     MetaStop* stop;
     /// Whether the slave can be shared with the master
     bool shared;
-    /// Empty no-goods
-    GECODE_SEARCH_EXPORT
-    static NoGoods eng;
+    /// How many solutions since the last restart
+    unsigned long int sslr;
   public:
     /// Constructor
     RBS(Space* s, Cutoff* co0, MetaStop* stop0,
@@ -75,13 +76,16 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual NoGoods& nogoods(void);
     /// Destructor
     virtual ~RBS(void);
+    /// Empty no-goods
+    GECODE_SEARCH_EXPORT
+    static NoGoods eng;
   };
 
   forceinline
   RBS::RBS(Space* s, Cutoff* co0, MetaStop* stop0,
            Engine* e0, const Options& opt)
-    : e(e0), master(s), co(co0), stop(stop0), 
-      shared(opt.threads == 1) {
+    : e(e0), master(s), last(NULL), co(co0), stop(stop0), 
+      shared(opt.threads == 1), sslr(0) {
     stop->limit(Statistics(),(*co)());
   }
 

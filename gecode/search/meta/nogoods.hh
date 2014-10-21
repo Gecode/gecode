@@ -83,7 +83,7 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for path \a p
     template<class Path>
-    static ExecStatus post(Space& home, Path& p);
+    static ExecStatus post(Space& home, const Path& p);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -142,7 +142,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
   template<class Path>
   forceinline ExecStatus 
-  NoGoodsProp::post(Space& home, Path& p) {
+  NoGoodsProp::post(Space& home, const Path& p) {
     int s = 0;
     int n = std::min(p.ds.entries(),p.ngdl());
 
@@ -220,7 +220,7 @@ namespace Gecode { namespace Search { namespace Meta {
       }
     }
 
-    p.ng(n_nogood);
+    const_cast<Path&>(p).ng(n_nogood);
 
     (void) new (home) NoGoodsProp(home,nn.next());
     return ES_OK;

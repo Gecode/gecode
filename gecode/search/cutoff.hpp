@@ -50,8 +50,10 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffConstant(unsigned long int c);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator() (void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
   };
 
   /// Cutoff generator for linear sequence
@@ -65,8 +67,10 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffLinear(unsigned long int scale);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator() (void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
   };
 
   /// Cutoff generator for the Luby sequence
@@ -88,8 +92,10 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffLuby(unsigned long int scale);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator() (void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
   };
 
   /// Cutoff generator for the geometric sequence
@@ -98,13 +104,17 @@ namespace Gecode { namespace Search {
   private:
     /// Current cutoff value
     double n;
+    /// Scale factor
+    double scale;
     /// Base
     double base;
     /// Constructor
     CutoffGeometric(unsigned long int scale, double base);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator ()(void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
   };
   
   /// Cutoff generator for the random sequence
@@ -119,13 +129,17 @@ namespace Gecode { namespace Search {
     unsigned long int n;
     /// Step size
     unsigned long int step;
+    /// Current value
+    unsigned long int cur;
     /// Constructor
     CutoffRandom(unsigned int seed, 
                  unsigned long int min, unsigned long int max, 
                  unsigned long int n);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator ()(void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
   };
   
   /// Cutoff generator appending two cutoff generators
@@ -141,10 +155,31 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffAppend(Cutoff* c1, unsigned long int n, Cutoff* c2);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator ()(void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
     /// Destructor
     virtual ~CutoffAppend(void);
+  };
+
+  /// Cutoff generator merging two cutoff generators
+  class CutoffMerge : public Cutoff {
+    friend class Cutoff;
+  private:
+    /// First cutoff generator
+    Cutoff* c1;
+    /// Second cutoff generator
+    Cutoff* c2;
+    /// Constructor
+    CutoffMerge(Cutoff* c1, Cutoff* c2);
+  public:
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+    /// Destructor
+    virtual ~CutoffMerge(void);
   };
 
   /// Cutoff generator that repeats a cutoff from another cutoff generator
@@ -162,8 +197,10 @@ namespace Gecode { namespace Search {
     /// Constructor
     CutoffRepeat(Cutoff* c, unsigned long int n);
   public:
-    /// Return next cutoff value
-    virtual unsigned long int operator ()(void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
     /// Destructor
     virtual ~CutoffRepeat(void);
   };

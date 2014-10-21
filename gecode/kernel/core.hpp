@@ -1246,7 +1246,7 @@ namespace Gecode {
     NoGoods(void);
     /// Post no-goods
     GECODE_KERNEL_EXPORT 
-    virtual void post(Space& home);
+    virtual void post(Space& home) const;
     /// Return number of no-goods posted
     unsigned long int ng(void) const;
     /// %Set number of no-goods posted to \a n
@@ -1255,6 +1255,40 @@ namespace Gecode {
     virtual ~NoGoods(void);
   };
 
+  /**
+   * \brief Current restart information during search
+   *
+   */
+  class GECODE_VTABLE_EXPORT CRI {
+  protected:
+    /// Number of restarts
+    const unsigned long int r;
+    /// Number of solutions since last restart
+    const unsigned long int s;
+    /// Number of failures since last restart
+    const unsigned long int f;
+    /// Last solution found
+    const Space* l;
+    /// No-goods from restart
+    const NoGoods& ng;
+  public:
+    /// Constructor
+    CRI(unsigned long int r,
+        unsigned long int s,
+        unsigned long int f,
+        const Space* l,
+        NoGoods& ng);
+    /// Return number of restarts
+    unsigned long int restart(void) const;
+    /// Return number of solutions since last restart
+    unsigned long int solution(void) const;
+    /// Return number of failures since last restart
+    unsigned long int fail(void) const;
+    /// Return last solution found (possibly NULL)
+    const Space* last(void) const;
+    /// Return no-goods recorded from restart
+    const NoGoods& nogoods(void) const;
+  };
 
   /**
    * \brief %Space status
@@ -1593,31 +1627,30 @@ namespace Gecode {
      *
      * A restart meta search engine calls this function on its
      * master space whenever it finds a solution or exploration
-     * restarts. \a i is the number of the restart. \a s is 
-     * either the solution space or NULL. \a ng are nogoods recorded
-     * from the last restart (only if \a s is not a solution).
+     * restarts. \a cri contains information about the current restart.
      *
-     * The default function does nothing.
+     * If a solution has been found, then search will continue with a restart
+     * when the function returns true, otherwise search will continue.
+     *
+     * The default function posts no-goods obtained from \a cri.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void master(unsigned long int i, const Space* s,
-                        NoGoods& ng);
+    virtual bool master(const CRI& cri);
     /**
      * \brief Slave configuration function for restart meta search engine
      *
      * A restart meta search engine calls this function on its
      * slave space whenever it finds a solution or exploration
-     * restarts. \a i is the number of the restart. \a s is 
-     * either the solution space or NULL.
+     * restarts.  \a cri contains information about the current restart.
      *
      * The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void slave(unsigned long int i, const Space* s);
+    virtual void slave(const CRI& cri);
     /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript
@@ -2649,6 +2682,40 @@ namespace Gecode {
   }
   forceinline
   NoGoods::~NoGoods(void) {}
+
+
+  /*
+   * Current restart information
+   */
+  forceinline
+  CRI::CRI(unsigned long int r0,
+           unsigned long int s0,
+           unsigned long int f0,
+           const Space* l0,
+           NoGoods& ng0)
+    : r(r0), s(s0), f(f0), l(l0), ng(ng0) {}
+
+  forceinline unsigned long int
+  CRI::restart(void) const {
+    return r;
+  }
+  forceinline unsigned long int
+  CRI::solution(void) const {
+    return s;
+  }
+  forceinline unsigned long int
+  CRI::fail(void) const {
+    return f;
+  }
+  forceinline const Space*
+  CRI::last(void) const {
+    return l;
+  }
+  forceinline const NoGoods&
+  CRI::nogoods(void) const {
+    return ng;
+  }
+
 
 
   /*

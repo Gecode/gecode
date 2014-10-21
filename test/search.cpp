@@ -83,6 +83,12 @@ namespace Test {
       virtual int solutions(void) const = 0;
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
+      /// Master configuration function that does not restart
+      virtual bool master(const CRI& cri) {
+        if (cri.last() != NULL)
+          constrain(*cri.last());
+        return false;
+      }
     };
 
     /// Space that immediately fails

@@ -146,7 +146,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     /// Steal work at depth \a d
     Space* steal(Worker& stat, unsigned long int& d);
     /// Post no-goods
-    void virtual post(Space& home);
+    void virtual post(Space& home) const;
   };
 
 

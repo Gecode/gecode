@@ -390,9 +390,11 @@ namespace Gecode { namespace Search {
   public:
     /// Default constructor
     Cutoff(void);
-    /// Return next cutoff value
-    virtual unsigned long int operator ()(void) = 0;
-      /// Destructor
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const = 0;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void) = 0;
+    /// Destructor
     virtual ~Cutoff(void);
     /// Create generator for constant sequence with constant \a s
     static Cutoff*
@@ -419,6 +421,9 @@ namespace Gecode { namespace Search {
     /// Append cutoff values from \a c2 after \a n values from \a c1
     static Cutoff*
     append(Cutoff* c1, unsigned long int n, Cutoff* c2);
+    /// Merge cutoff values from \a c1 with values from \a c2
+    static Cutoff*
+    merge(Cutoff* c1, Cutoff* c2);
     /// Create generator that repeats \a n times each cutoff value from \a c
     static Cutoff*
     repeat(Cutoff* c, unsigned long int n);

@@ -53,21 +53,25 @@ namespace Gecode {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt(m_opt);
-    e_opt.clone = true;
+    e_opt.clone = false;
     Search::MetaStop* ms = new Search::MetaStop(m_opt.stop);
     e_opt.stop = ms;
     Space* master;
-    if (m_opt.clone) {
-      if (s->status(ms->m_stat) == SS_FAILED) {
-        ms->m_stat.fail++;
-        master = NULL;
-      } else {
-        master = s->clone();
-      }
+    Space* slave;
+    if (s->status(ms->m_stat) == SS_FAILED) {
+      ms->m_stat.fail++;
+      master = NULL;
+      slave  = NULL;
     } else {
-      master = s;
+      if (m_opt.clone)
+        master = s->clone();
+      else
+        master = s;
+      slave = master->clone();
+      CRI cri(0,0,0,NULL,Search::Meta::RBS::eng);
+      slave->slave(cri);
     }
-    E<T> engine(dynamic_cast<T*>(master),e_opt);
+    E<T> engine(dynamic_cast<T*>(slave),e_opt);
     EngineBase* eb = &engine;
     Search::Engine* ee = eb->e;
     eb->e = NULL;

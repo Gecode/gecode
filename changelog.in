@@ -67,10 +67,40 @@
 #
 
 [RELEASE]
-Version: 4.3.1
-Date: 2014-08-28
+Version: 4.4.0
+Date: 2014-10-21
 [DESCRIPTION]
-GAGA!
+This release fixes some minor issues and a major bug for the
+FlatZinc interpreter. It considerably extends restart-based
+search so that it supports LNS (Large Neighborhood Search).
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+The restart-based search engine has been made more powerful: the
+master() and slave() configuration functions have been extended
+and get more information about each restart and the engine always
+maintains the last solution found. In particulae, the engine is
+now powerful enough to support LNS (Large Neighborhood
+Search). For details, please see MPG.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The interface of cutoff generators has been extended in that it
+now offers current value access (operator()()) as well as
+increment (operator++()).
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added a cutoff generator that merges the values of two cutoff generators.
 
 [ENTRY]
 Module: other
@@ -131,6 +161,7 @@ Thanks:	Carleton Coffrin
 [DESCRIPTION]
 Fixed the behaviour for the -n and -a command line options for
 optimisation models.
+
 
 [RELEASE]
 Version: 4.3.0

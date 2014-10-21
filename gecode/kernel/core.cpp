@@ -79,7 +79,7 @@ namespace Gecode {
    *
    */
   void
-  NoGoods::post(Space&) {
+  NoGoods::post(Space&) const {
   }
 
 
@@ -644,13 +644,17 @@ namespace Gecode {
   Space::constrain(const Space&) {
   }
 
-  void
-  Space::master(unsigned long int, const Space*, NoGoods& ng) {
-    ng.post(*this);
+  bool
+  Space::master(const CRI& cri) {
+    if (cri.last() != NULL)
+      constrain(*cri.last());
+    cri.nogoods().post(*this);
+    // Perform a restart even if a solution has been found
+    return true;
   }
 
   void
-  Space::slave(unsigned long int, const Space*) {
+  Space::slave(const CRI&) {
   }
 
   void
