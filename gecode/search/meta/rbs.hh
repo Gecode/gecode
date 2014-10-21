@@ -76,9 +76,6 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual NoGoods& nogoods(void);
     /// Destructor
     virtual ~RBS(void);
-    /// Empty no-goods
-    GECODE_SEARCH_EXPORT
-    static NoGoods eng;
   };
 
   forceinline

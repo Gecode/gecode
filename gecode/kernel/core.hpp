@@ -1253,6 +1253,9 @@ namespace Gecode {
     void ng(unsigned long int n);
     /// Destructor
     virtual ~NoGoods(void);
+    /// Empty no-goods
+    GECODE_KERNEL_EXPORT
+    static NoGoods eng;
   };
 
   /**

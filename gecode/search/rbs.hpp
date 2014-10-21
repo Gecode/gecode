@@ -68,7 +68,7 @@ namespace Gecode {
       else
         master = s;
       slave = master->clone();
-      CRI cri(0,0,0,NULL,Search::Meta::RBS::eng);
+      CRI cri(0,0,0,NULL,NoGoods::eng);
       slave->slave(cri);
     }
     E<T> engine(dynamic_cast<T*>(slave),e_opt);

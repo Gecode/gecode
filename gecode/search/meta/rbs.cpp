@@ -117,11 +117,9 @@ namespace Gecode { namespace Search { namespace Meta {
   RBS::reset(Space*) { 
   }
   
-  NoGoods RBS::eng;
-
   NoGoods&
   RBS::nogoods(void) {
-    return eng;
+    return NoGoods::eng;
   }
   
   RBS::~RBS(void) {

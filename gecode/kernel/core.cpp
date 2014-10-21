@@ -82,6 +82,7 @@ namespace Gecode {
   NoGoods::post(Space&) const {
   }
 
+  NoGoods NoGoods::eng;
 
   /*
    * Brancher
