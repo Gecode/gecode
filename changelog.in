@@ -67,8 +67,8 @@
 #
 
 [RELEASE]
-Version: 4.4.0
-Date: 2014-10-21
+Version: 4.3.1
+Date: 2014-10-22
 [DESCRIPTION]
 This release fixes some minor issues and a major bug for the
 FlatZinc interpreter. It considerably extends restart-based
