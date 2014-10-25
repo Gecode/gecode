@@ -72,6 +72,15 @@ Date: 2014-99-99
 [DESCRIPTION]
 GAGA!
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Jean-Noël Monette
+[DESCRIPTION]
+Fixed major bug that would cause the FlatZinc interpreter to crash
+on most models.
+
 [RELEASE]
 Version: 4.3.1
 Date: 2014-10-22

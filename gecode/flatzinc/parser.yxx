@@ -848,11 +848,15 @@ vardecl_item:
             } else {
               if ($5>0) {
                 for (int i=0; i<$5; i++) {
-                  IntVarSpec* ispec = new IntVarSpec($9,!print,false);
+                  Option<AST::SetLit*> dom =
+                    $9() ? Option<AST::SetLit*>::some(new AST::SetLit($9.some()))
+                         : Option<AST::SetLit*>::none();
+                  IntVarSpec* ispec = new IntVarSpec(dom,!print,false);
                   vars[i] = pp->intvars.size();
                   pp->intvars.push_back(varspec($11, ispec));
                 }
               }
+              if ($9()) delete $9.some();
             }
           }
           if (print) {
@@ -912,10 +916,14 @@ vardecl_item:
             delete vsv;
           } else {
             for (int i=0; i<$5; i++) {
+              Option<AST::SetLit*> dom =
+                $9() ? Option<AST::SetLit*>::some(new AST::SetLit($9.some()))
+                     : Option<AST::SetLit*>::none();
               vars[i] = pp->boolvars.size();
               pp->boolvars.push_back(varspec($11,
-                                       new BoolVarSpec($9,!print,false)));
-            }          
+                                       new BoolVarSpec(dom,!print,false)));
+            }
+            if ($9()) delete $9.some();
           }
           if (print) {
             AST::Array* a = new AST::Array();
@@ -985,6 +993,7 @@ vardecl_item:
                   pp->floatvars.push_back(varspec($11, ispec));
                 }
               }
+              if ($9()) delete $9.some();
             }
           }
           if (print) {
@@ -1046,10 +1055,14 @@ vardecl_item:
           } else {
             if ($5>0) {
               for (int i=0; i<$5; i++) {
-                SetVarSpec* ispec = new SetVarSpec($11,!print,false);
+                Option<AST::SetLit*> dom =
+                  $11() ? Option<AST::SetLit*>::some(new AST::SetLit($11.some()))
+                        : Option<AST::SetLit*>::none();
+                SetVarSpec* ispec = new SetVarSpec(dom,!print,false);
                 vars[i] = pp->setvars.size();
                 pp->setvars.push_back(varspec($13, ispec));
               }
+              if ($11()) delete $11.some();
             }
           }
           if (print) {
@@ -1415,7 +1428,6 @@ constraint_item :
             if (base0==base1) {
               // do nothing, already aliased
             } else {
-              IntVarSpec* ivs0 = static_cast<IntVarSpec*>(pp->intvars[base0].second);
               IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->intvars[base1].second);
               ivs1->alias = true;
               ivs1->i = base0;
