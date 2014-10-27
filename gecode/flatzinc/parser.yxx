@@ -993,7 +993,6 @@ vardecl_item:
                   pp->floatvars.push_back(varspec($11, ispec));
                 }
               }
-              if ($9()) delete $9.some();
             }
           }
           if (print) {
