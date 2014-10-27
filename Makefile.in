@@ -1065,21 +1065,25 @@ SEARCHTESTSRC0 = \
 ARRAYTESTSRC0 = \
 	test/array.cpp
 
+FLATZINCTESTSRC0 = \
+  test/flatzinc.cpp
+
 TESTSRC0 = test/test.cpp test/afc.cpp test/brancher-handle.cpp test/ldsb.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \
 	$(BRANCHTESTSRC0) $(SEARCHTESTSRC0) \
-	$(ARRAYTESTSRC0)
+	$(ARRAYTESTSRC0) $(FLATZINCTESTSRC0)
 
 TESTHDR0 = \
 	test.hh test.hpp int.hh int.hpp set.hh set.hpp float.hh float.hpp \
-	branch.hh assign.hh
+	branch.hh assign.hh flatzinc.hh
 TESTHDR = $(TESTHDR0:%=test/%)
 TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(ARRAYTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
+  $(FLATZINCTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)

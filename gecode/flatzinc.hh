@@ -321,6 +321,7 @@ namespace Gecode { namespace FlatZinc {
     unsigned int nogoods_limit(void) const { return _nogoods_limit.value(); }
     bool interrupt(void) const { return _interrupt.value(); }
 
+    void allSolutions(bool b) { _allSolutions.value(b); }
   };
 
   class BranchInformation : public SharedHandle {
