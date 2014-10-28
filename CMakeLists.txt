@@ -389,6 +389,7 @@ target_link_libraries(gecodeflatzinc gecodeminimodel gecodedriver)
 if (GECODE_HAS_QT)
   if (Qt5_FOUND)
     qt5_use_modules(gecodegist Widgets Gui PrintSupport)
+    qt5_use_modules(gecodeflatzinc Core)
   else()
     target_link_libraries(gecodegist ${QT_LIBRARIES})
     target_link_libraries(gecodeflatzinc gecodegist ${QT_LIBRARIES})
@@ -404,7 +405,7 @@ add_executable(gecode-test ${TESTSRC} ${TESTHDR})
 target_link_libraries(gecode-test gecodeminimodel)
 
 add_executable(fzn-gecode ${FLATZINCEXESRC})
-target_link_libraries(fzn-gecode gecodeflatzinc gecodeminimodel gecodedriver)
+target_link_libraries(fzn-gecode gecodeflatzinc gecodegist gecodeminimodel gecodedriver)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 

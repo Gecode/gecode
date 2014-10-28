@@ -73,6 +73,14 @@ Date: 2014-99-99
 GAGA!
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks:	Alex Elliott
+[DESCRIPTION]
+Fix cmake build file to work better when building with Qt.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   major
