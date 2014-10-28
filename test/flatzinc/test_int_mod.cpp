@@ -7,8 +7,8 @@
  *     Guido Tack, 2014
  *
  *  Last modified:
- *     $Date: 2012-04-05 20:00:11 +1000 (Thu, 05 Apr 2012) $ by $Author: vbarichard $
- *     $Revision: 12703 $
+ *     $Date: 2010-04-08 20:35:31 +1000 (Thu, 08 Apr 2010) $ by $Author: schulte $
+ *     $Revision: 10684 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,41 +35,49 @@
  *
  */
 
-#ifndef __GECODE_TEST_FLATZINC_HH__
-#define __GECODE_TEST_FLATZINC_HH__
+#include "test/flatzinc.hh"
 
-#include <gecode/kernel.hh>
-#include <gecode/flatzinc.hh>
+namespace Test { namespace FlatZinc {
 
-#include "test/test.hh"
-
-namespace Test {
-
-  /// Tests for FlatZinc
-  namespace FlatZinc {
-
-    /**
-     * \brief %Base class for tests for FlatZinc
-     *
-     */
-    class FlatZincTest : public Base {
-    protected:
-      std::string _name;
-      std::string _source;
-      std::string _expected;
-      bool _allSolutions;
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
     public:
-      /// Construct and register test
-      FlatZincTest(const std::string& name, const std::string& source,
-                   const std::string& expected, bool allSolutions = false);
-      /// Perform test
-      virtual bool run(void);
+
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("int_mod",
+"var int: a :: output_var;\n\
+var int: b :: output_var;\n\
+var int: c :: output_var;\n\
+var int: d :: output_var;\n\
+\n\
+var 0..10: x :: output_var;\n\
+var 0..10: y :: output_var;\n\
+\n\
+constraint int_mod(7, 4, a);\n\
+constraint int_mod(-7, 4, b);\n\
+constraint int_mod(7, -4, c);\n\
+constraint int_mod(-7, -4, d);\n\
+\n\
+constraint int_mod(x, y, 3);\n\
+\n\
+solve satisfy;\n\
+",
+"a = 3;\n\
+b = -3;\n\
+c = 3;\n\
+d = -3;\n\
+x = 3;\n\
+y = 4;\n\
+----------\n\
+");
+      }
     };
 
+    Create c;
   }
 
-}
-
-#endif
+}}
 
 // STATISTICS: test-other

@@ -7,8 +7,8 @@
  *     Guido Tack, 2014
  *
  *  Last modified:
- *     $Date: 2012-04-05 20:00:11 +1000 (Thu, 05 Apr 2012) $ by $Author: vbarichard $
- *     $Revision: 12703 $
+ *     $Date: 2010-04-08 20:35:31 +1000 (Thu, 08 Apr 2010) $ by $Author: schulte $
+ *     $Revision: 10684 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,41 +35,43 @@
  *
  */
 
-#ifndef __GECODE_TEST_FLATZINC_HH__
-#define __GECODE_TEST_FLATZINC_HH__
+#include "test/flatzinc.hh"
 
-#include <gecode/kernel.hh>
-#include <gecode/flatzinc.hh>
+namespace Test { namespace FlatZinc {
 
-#include "test/test.hh"
-
-namespace Test {
-
-  /// Tests for FlatZinc
-  namespace FlatZinc {
-
-    /**
-     * \brief %Base class for tests for FlatZinc
-     *
-     */
-    class FlatZincTest : public Base {
-    protected:
-      std::string _name;
-      std::string _source;
-      std::string _expected;
-      bool _allSolutions;
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
     public:
-      /// Construct and register test
-      FlatZincTest(const std::string& name, const std::string& source,
-                   const std::string& expected, bool allSolutions = false);
-      /// Perform test
-      virtual bool run(void);
+
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("seq_search",
+"var 1..3: x :: output_var;\n\
+var 1..3: y :: output_var;\n\
+var 1..3: z :: output_var;\n\
+constraint int_ne(x, y);\n\
+constraint int_ne(x, z);\n\
+constraint int_ne(y, z);\n\
+solve\n\
+	:: seq_search([\n\
+		int_search([z], input_order, indomain_min, complete),\n\
+		int_search([y], input_order, indomain_min, complete),\n\
+		int_search([x], input_order, indomain_min, complete)\n\
+	])\n\
+	satisfy;\n\
+",
+"x = 3;\n\
+y = 2;\n\
+z = 1;\n\
+----------\n\
+");
+      }
     };
 
+    Create c;
   }
 
-}
-
-#endif
+}}
 
 // STATISTICS: test-other

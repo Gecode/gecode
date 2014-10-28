@@ -39,8 +39,10 @@
 
 namespace Test { namespace FlatZinc {
 
-  FlatZincTest::FlatZincTest(const std::string& s, bool allSolutions)
-    : Base("FlatZinc::"+s), _filename(s), _allSolutions(allSolutions) {}
+  FlatZincTest::FlatZincTest(const std::string& name, const std::string& source,
+                             const std::string& expected, bool allSolutions)
+    : Base("FlatZinc::"+name), _name(name), _source(source), _expected(expected),
+      _allSolutions(allSolutions) {}
 
   bool
   FlatZincTest::run(void) {
@@ -52,7 +54,8 @@ namespace Test { namespace FlatZinc {
     Gecode::FlatZinc::Printer p;
     Gecode::FlatZinc::FlatZincSpace* fg = NULL;
     try {
-      fg = Gecode::FlatZinc::parse("test/flatzinc/"+_filename+".fzn", p, olog);
+      std::stringstream ss(_source);
+      fg = Gecode::FlatZinc::parse(ss, p, olog);
 
       if (fg) {
         fg->createBranchers(fg->solveAnnotations(), fznopt.seed(), fznopt.decay(),
@@ -61,10 +64,7 @@ namespace Test { namespace FlatZinc {
         std::ostringstream os;
         fg->run(os, p, fznopt, t_total);
         
-        std::ifstream expected_f("test/flatzinc/"+_filename+".exp");
-        std::string expected((std::istreambuf_iterator<char>(expected_f)),
-                              std::istreambuf_iterator<char>());
-        if (expected == os.str()) {
+        if (_expected == os.str()) {
           return true;
         } else {
           if (opt.log)
@@ -84,50 +84,6 @@ namespace Test { namespace FlatZinc {
     }
     
   }
-
-  /// Helper class to create and register tests
-  class Create {
-  public:
-
-    /// Perform creation and registration
-    Create(void) {
-      (void) new FlatZincTest("bool_clause");
-      (void) new FlatZincTest("bug232");
-      (void) new FlatZincTest("bug319");
-      (void) new FlatZincTest("bugfix_r6746");
-      (void) new FlatZincTest("bugfix_r7854");
-      (void) new FlatZincTest("empty_domain_1");
-      (void) new FlatZincTest("empty_domain_2");
-      (void) new FlatZincTest("int_set_as_type1");
-      (void) new FlatZincTest("int_set_as_type2");
-      (void) new FlatZincTest("jobshop");
-      (void) new FlatZincTest("no_warn_empty_domain");
-      (void) new FlatZincTest("output_test");
-      (void) new FlatZincTest("queens4");
-      (void) new FlatZincTest("sat_arith1");
-      (void) new FlatZincTest("sat_array_bool_and");
-      (void) new FlatZincTest("sat_array_bool_or");
-      (void) new FlatZincTest("sat_cmp_reif");
-      (void) new FlatZincTest("sat_eq_reif");
-      (void) new FlatZincTest("test_approx_bnb", true);
-      (void) new FlatZincTest("test_array_just_right");
-      (void) new FlatZincTest("test_assigned_var_bounds_bad");
-      (void) new FlatZincTest("test_flatzinc_output_anns");
-      (void) new FlatZincTest("test_fzn_arith");
-      (void) new FlatZincTest("test_fzn_arrays");
-      (void) new FlatZincTest("test_fzn_coercions");
-      (void) new FlatZincTest("test_fzn_comparison");
-      (void) new FlatZincTest("test_fzn_logic");
-      (void) new FlatZincTest("test_fzn_sets");
-      (void) new FlatZincTest("test_int_div");
-      (void) new FlatZincTest("test_int_mod");
-      (void) new FlatZincTest("test_int_ranges_as_values");
-      (void) new FlatZincTest("test_seq_search");      
-    }
-  };
-
-  Create c;
-  //@}
 
 }}
 

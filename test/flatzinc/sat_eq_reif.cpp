@@ -7,8 +7,8 @@
  *     Guido Tack, 2014
  *
  *  Last modified:
- *     $Date: 2012-04-05 20:00:11 +1000 (Thu, 05 Apr 2012) $ by $Author: vbarichard $
- *     $Revision: 12703 $
+ *     $Date: 2010-04-08 20:35:31 +1000 (Thu, 08 Apr 2010) $ by $Author: schulte $
+ *     $Revision: 10684 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,41 +35,47 @@
  *
  */
 
-#ifndef __GECODE_TEST_FLATZINC_HH__
-#define __GECODE_TEST_FLATZINC_HH__
+#include "test/flatzinc.hh"
 
-#include <gecode/kernel.hh>
-#include <gecode/flatzinc.hh>
+namespace Test { namespace FlatZinc {
 
-#include "test/test.hh"
-
-namespace Test {
-
-  /// Tests for FlatZinc
-  namespace FlatZinc {
-
-    /**
-     * \brief %Base class for tests for FlatZinc
-     *
-     */
-    class FlatZincTest : public Base {
-    protected:
-      std::string _name;
-      std::string _source;
-      std::string _expected;
-      bool _allSolutions;
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
     public:
-      /// Construct and register test
-      FlatZincTest(const std::string& name, const std::string& source,
-                   const std::string& expected, bool allSolutions = false);
-      /// Perform test
-      virtual bool run(void);
+
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("sat_eq_reif",
+"var bool: eq_a;\n\
+var bool: eq_b;\n\
+var bool: eq_c;\n\
+\n\
+var bool: ne_a;\n\
+var bool: ne_b;\n\
+\n\
+array [1..5] of var bool: result :: output_array([1..5]) =\n\
+	[eq_a, eq_b, eq_c, ne_a, ne_b];\n\
+\n\
+constraint bool_eq_reif(false, eq_a, true);\n\
+constraint bool_eq_reif(eq_b, true, true);\n\
+constraint bool_eq_reif(false, true, eq_c);\n\
+\n\
+constraint bool_xor(false, ne_a, true);\n\
+constraint bool_xor(ne_b, true, true);\n\
+constraint bool_xor(false, true, true);\n\
+\n\
+solve satisfy;\n\
+",
+"result = array1d(1..5, [false, true, false, true, false]);\n\
+----------\n\
+");
+      }
     };
 
+    Create c;
   }
 
-}
-
-#endif
+}}
 
 // STATISTICS: test-other

@@ -7,8 +7,8 @@
  *     Guido Tack, 2014
  *
  *  Last modified:
- *     $Date: 2012-04-05 20:00:11 +1000 (Thu, 05 Apr 2012) $ by $Author: vbarichard $
- *     $Revision: 12703 $
+ *     $Date: 2010-04-08 20:35:31 +1000 (Thu, 08 Apr 2010) $ by $Author: schulte $
+ *     $Revision: 10684 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,41 +35,43 @@
  *
  */
 
-#ifndef __GECODE_TEST_FLATZINC_HH__
-#define __GECODE_TEST_FLATZINC_HH__
+#include "test/flatzinc.hh"
 
-#include <gecode/kernel.hh>
-#include <gecode/flatzinc.hh>
+namespace Test { namespace FlatZinc {
 
-#include "test/test.hh"
-
-namespace Test {
-
-  /// Tests for FlatZinc
-  namespace FlatZinc {
-
-    /**
-     * \brief %Base class for tests for FlatZinc
-     *
-     */
-    class FlatZincTest : public Base {
-    protected:
-      std::string _name;
-      std::string _source;
-      std::string _expected;
-      bool _allSolutions;
+  namespace {
+    /// Helper class to create and register tests
+    class Create {
     public:
-      /// Construct and register test
-      FlatZincTest(const std::string& name, const std::string& source,
-                   const std::string& expected, bool allSolutions = false);
-      /// Perform test
-      virtual bool run(void);
+
+      /// Perform creation and registration
+      Create(void) {
+        (void) new FlatZincTest("bugfix_r6746","\
+array[1 .. 3] of var 0 .. 9: differences; \
+array[1 .. 3] of var 0 .. 9: mark :: output_array([1..3]); \
+constraint int_lt(mark[2], mark[3]); \
+constraint int_lt(0, mark[2]); \
+constraint int_eq(mark[1], 0); \
+constraint int_plus(differences[3], mark[2], mark[3]); \
+constraint int_lt(differences[1], differences[3]); \
+constraint int_eq(differences[2], mark[3]); \
+constraint int_eq(differences[1], mark[2]); \
+constraint int_ne(differences[1], differences[2]); \
+constraint int_ne(differences[1], differences[3]); \
+constraint int_ne(differences[2], differences[3]); \
+solve  \
+  ::int_search(mark, input_order, indomain, complete)  \
+  minimize mark[3]; \
+", "mark = array1d(1..3, [0, 1, 3]);\n\
+----------\n\
+==========\n\
+");
+      }
     };
 
+    Create c;
   }
 
-}
-
-#endif
+}}
 
 // STATISTICS: test-other

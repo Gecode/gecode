@@ -1066,7 +1066,39 @@ ARRAYTESTSRC0 = \
 	test/array.cpp
 
 FLATZINCTESTSRC0 = \
-  test/flatzinc.cpp
+  test/flatzinc.cpp \
+  test/flatzinc/bool_clause.cpp \
+  test/flatzinc/bug232.cpp \
+  test/flatzinc/bug319.cpp \
+  test/flatzinc/bugfix_r6746.cpp \
+  test/flatzinc/bugfix_r7854.cpp \
+  test/flatzinc/empty_domain_1.cpp \
+  test/flatzinc/empty_domain_2.cpp \
+  test/flatzinc/int_set_as_type1.cpp \
+  test/flatzinc/int_set_as_type2.cpp \
+  test/flatzinc/jobshop.cpp \
+  test/flatzinc/no_warn_empty_domain.cpp \
+  test/flatzinc/output_test.cpp \
+  test/flatzinc/queens4.cpp \
+  test/flatzinc/sat_arith1.cpp \
+  test/flatzinc/sat_array_bool_and.cpp \
+  test/flatzinc/sat_array_bool_or.cpp \
+  test/flatzinc/sat_cmp_reif.cpp \
+  test/flatzinc/sat_eq_reif.cpp \
+  test/flatzinc/test_approx_bnb.cpp \
+  test/flatzinc/test_array_just_right.cpp \
+  test/flatzinc/test_assigned_var_bounds_bad.cpp \
+  test/flatzinc/test_flatzinc_output_anns.cpp \
+  test/flatzinc/test_fzn_arith.cpp \
+  test/flatzinc/test_fzn_arrays.cpp \
+  test/flatzinc/test_fzn_coercions.cpp \
+  test/flatzinc/test_fzn_comparison.cpp \
+  test/flatzinc/test_fzn_logic.cpp \
+  test/flatzinc/test_fzn_sets.cpp \
+  test/flatzinc/test_int_div.cpp \
+  test/flatzinc/test_int_mod.cpp \
+  test/flatzinc/test_int_ranges_as_values.cpp \
+  test/flatzinc/test_seq_search.cpp
 
 TESTSRC0 = test/test.cpp test/afc.cpp test/brancher-handle.cpp test/ldsb.cpp
 
