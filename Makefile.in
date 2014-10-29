@@ -1143,7 +1143,14 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/warehouses.cpp \
   test/flatzinc/warehouses_small.cpp \
   test/flatzinc/wolf_goat_cabbage.cpp \
-  test/flatzinc/zebra.cpp
+  test/flatzinc/zebra.cpp \
+  test/flatzinc/magicsq_3.cpp \
+  test/flatzinc/magicsq_4.cpp \
+  test/flatzinc/magicsq_5.cpp \
+  test/flatzinc/oss.cpp \
+  test/flatzinc/steiner_triples.cpp \
+  test/flatzinc/timetabling.cpp \
+  test/flatzinc/trucking.cpp
 
 TESTSRC0 = test/test.cpp test/afc.cpp test/brancher-handle.cpp test/ldsb.cpp
 
