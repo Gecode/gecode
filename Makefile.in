@@ -1098,7 +1098,52 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/test_int_div.cpp \
   test/flatzinc/test_int_mod.cpp \
   test/flatzinc/test_int_ranges_as_values.cpp \
-  test/flatzinc/test_seq_search.cpp
+  test/flatzinc/test_seq_search.cpp \
+  test/flatzinc/2dpacking.cpp \
+  test/flatzinc/alpha.cpp \
+  test/flatzinc/battleships1.cpp \
+  test/flatzinc/battleships10.cpp \
+  test/flatzinc/battleships2.cpp \
+  test/flatzinc/battleships3.cpp \
+  test/flatzinc/battleships4.cpp \
+  test/flatzinc/battleships5.cpp \
+  test/flatzinc/battleships7.cpp \
+  test/flatzinc/battleships9.cpp \
+  test/flatzinc/blocksworld_instance_1.cpp \
+  test/flatzinc/blocksworld_instance_2.cpp \
+  test/flatzinc/cutstock.cpp \
+  test/flatzinc/eq20.cpp \
+  test/flatzinc/factory_planning_instance.cpp \
+  test/flatzinc/golomb.cpp \
+  test/flatzinc/jobshop2x2.cpp \
+  test/flatzinc/knights.cpp \
+  test/flatzinc/langford2.cpp \
+  test/flatzinc/latin_squares_fd.cpp \
+  test/flatzinc/multidim_knapsack_simple.cpp \
+  test/flatzinc/packing.cpp \
+  test/flatzinc/perfsq.cpp \
+  test/flatzinc/perfsq2.cpp \
+  test/flatzinc/photo.cpp \
+  test/flatzinc/product_fd.cpp \
+  test/flatzinc/product_lp.cpp \
+  test/flatzinc/quasigroup_qg5.cpp \
+  test/flatzinc/queen_cp2.cpp \
+  test/flatzinc/queen_ip.cpp \
+  test/flatzinc/radiation.cpp \
+  test/flatzinc/simple_sat.cpp \
+  test/flatzinc/singHoist2.cpp \
+  test/flatzinc/sudoku.cpp \
+  test/flatzinc/template_design.cpp \
+  test/flatzinc/tenpenki_1.cpp \
+  test/flatzinc/tenpenki_2.cpp \
+  test/flatzinc/tenpenki_3.cpp \
+  test/flatzinc/tenpenki_4.cpp \
+  test/flatzinc/tenpenki_5.cpp \
+  test/flatzinc/tenpenki_6.cpp \
+  test/flatzinc/warehouses.cpp \
+  test/flatzinc/warehouses_small.cpp \
+  test/flatzinc/wolf_goat_cabbage.cpp \
+  test/flatzinc/zebra.cpp
 
 TESTSRC0 = test/test.cpp test/afc.cpp test/brancher-handle.cpp test/ldsb.cpp
 
