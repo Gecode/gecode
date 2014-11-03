@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("factory_planning",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -267,8 +267,8 @@ constraint int_lin_eq([-1, 3], [INT____00035, step_prod_mach[6]], 0) :: defines_
 constraint int_lin_eq([-1, 3], [INT____00037, step_prod_mach[7]], 2) :: defines_var(INT____00037) :: domain;\n\
 constraint int_lin_eq([-1, 3], [INT____00039, step_prod_mach[7]], 1) :: defines_var(INT____00039) :: domain;\n\
 constraint int_lin_eq([-1, 3], [INT____00041, step_prod_mach[7]], 0) :: defines_var(INT____00041) :: domain;\n\
-constraint int_lin_eq([-1, 3], [INT____00043, step_prod_mach[8]], 2) :: defines_var(INT____00043) :: domain;\n\
-constraint int_lin_eq([-1, 3], [INT____00045, step_prod_mach[8]], 1) :: defines_var(INT____00045) :: domain;\n\
+constraint int_lin_eq([-1, 3], [INT____00043, step_prod_mach[8]], 2) :: defines_var(INT____00043) :: domain;\n")+
+"constraint int_lin_eq([-1, 3], [INT____00045, step_prod_mach[8]], 1) :: defines_var(INT____00045) :: domain;\n\
 constraint int_lin_eq([-1, 3], [INT____00047, step_prod_mach[8]], 0) :: defines_var(INT____00047) :: domain;\n\
 constraint int_lin_eq([-1, 5, 1], [INT____00049, step_prod_mach[1], step_prod_mach[3]], 5) :: defines_var(INT____00049) :: domain;\n\
 constraint int_lin_eq([-1, 5, 1], [INT____00051, step_prod_mach[2], step_prod_mach[4]], 5) :: defines_var(INT____00051) :: domain;\n\

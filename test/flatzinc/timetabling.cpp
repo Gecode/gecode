@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("timetabling",
-"predicate all_different_int(array [int] of var int: x);\n\
+std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -247,7 +247,7 @@ var 16..18: INT____00147 :: is_defined_var :: var_is_introduced;\n\
 var 1..6: INT____00148 :: is_defined_var :: var_is_introduced;\n\
 var 4..6: INT____00149 :: is_defined_var :: var_is_introduced;\n\
 var 1..6: INT____00150 :: is_defined_var :: var_is_introduced;\n\
-array [1..80] of var 1..3: x :: output_array([1..20, 1..4]);\n\
+array [1..80] of var 1..3: x :: output_array([1..20, 1..4]);\n")+"\
 array [1..18] of var 1..6: z :: output_array([1..6, 1..3]);\n\
 constraint all_different_int([INT____00002, INT____00004, INT____00006, INT____00008]);\n\
 constraint all_different_int([INT____00010, INT____00012, INT____00014, INT____00015]);\n\

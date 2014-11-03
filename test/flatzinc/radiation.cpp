@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("radiation",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -295,7 +295,7 @@ var -25..25: INT____00239 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00240 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00241 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00242 :: is_defined_var :: var_is_introduced;\n\
-var -25..25: INT____00243 :: is_defined_var :: var_is_introduced;\n\
+var -25..25: INT____00243 :: is_defined_var :: var_is_introduced;\n")+"\
 var 0..25: INT____00244 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00245 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00246 :: is_defined_var :: var_is_introduced;\n\
@@ -497,7 +497,7 @@ var -25..25: INT____00441 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00442 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00443 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00444 :: is_defined_var :: var_is_introduced;\n\
-var -25..25: INT____00445 :: is_defined_var :: var_is_introduced;\n\
+var -25..25: INT____00445 :: is_defined_var :: var_is_introduced;\n"+"\
 var 0..25: INT____00446 :: is_defined_var :: var_is_introduced;\n\
 var -25..25: INT____00447 :: is_defined_var :: var_is_introduced;\n\
 var 0..25: INT____00448 :: is_defined_var :: var_is_introduced;\n\
@@ -697,7 +697,7 @@ constraint int_lin_eq([-1, -1, 1], [INT____00151, Q[103], Q[117]], 0) :: defines
 constraint int_lin_eq([-1, -1, 1], [INT____00153, Q[117], Q[131]], 0) :: defines_var(INT____00153);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00155, Q[76], Q[90]], 0) :: defines_var(INT____00155);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00157, Q[90], Q[104]], 0) :: defines_var(INT____00157);\n\
-constraint int_lin_eq([-1, -1, 1], [INT____00159, Q[104], Q[118]], 0) :: defines_var(INT____00159);\n\
+constraint int_lin_eq([-1, -1, 1], [INT____00159, Q[104], Q[118]], 0) :: defines_var(INT____00159);\n"+"\
 constraint int_lin_eq([-1, -1, 1], [INT____00161, Q[118], Q[132]], 0) :: defines_var(INT____00161);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00163, Q[77], Q[91]], 0) :: defines_var(INT____00163);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00165, Q[91], Q[105]], 0) :: defines_var(INT____00165);\n\
@@ -847,7 +847,7 @@ constraint int_lin_eq([-1, -1, 1], [INT____00451, Q[281], Q[295]], 0) :: defines
 constraint int_lin_eq([-1, -1, 1], [INT____00453, Q[295], Q[309]], 0) :: defines_var(INT____00453);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00455, Q[309], Q[323]], 0) :: defines_var(INT____00455);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00457, Q[323], Q[337]], 0) :: defines_var(INT____00457);\n\
-constraint int_lin_eq([-1, -1, 1], [INT____00459, Q[282], Q[296]], 0) :: defines_var(INT____00459);\n\
+constraint int_lin_eq([-1, -1, 1], [INT____00459, Q[282], Q[296]], 0) :: defines_var(INT____00459);\n"+"\
 constraint int_lin_eq([-1, -1, 1], [INT____00461, Q[296], Q[310]], 0) :: defines_var(INT____00461);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00463, Q[310], Q[324]], 0) :: defines_var(INT____00463);\n\
 constraint int_lin_eq([-1, -1, 1], [INT____00465, Q[324], Q[338]], 0) :: defines_var(INT____00465);\n\
@@ -947,7 +947,7 @@ constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00132, INT____00134, INT____0
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00140, INT____00142, INT____00144, INT____00146, N[4], Q[74]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00148, INT____00150, INT____00152, INT____00154, N[5], Q[75]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00156, INT____00158, INT____00160, INT____00162, N[6], Q[76]], 0);\n\
-constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00164, INT____00166, INT____00168, INT____00170, N[7], Q[77]], 0);\n\
+constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00164, INT____00166, INT____00168, INT____00170, N[7], Q[77]], 0);\n"+"\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00172, INT____00174, INT____00176, INT____00178, N[8], Q[78]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00180, INT____00182, INT____00184, INT____00186, N[9], Q[79]], 0);\n\
 constraint int_lin_le([1, 1, 1, 1, -1, 1], [INT____00188, INT____00190, INT____00192, INT____00194, N[10], Q[80]], 0);\n\
@@ -1097,7 +1097,7 @@ constraint int_max(INT____00195, 0, INT____00196) :: defines_var(INT____00196);\
 constraint int_max(INT____00197, 0, INT____00198) :: defines_var(INT____00198);\n\
 constraint int_max(INT____00199, 0, INT____00200) :: defines_var(INT____00200);\n\
 constraint int_max(INT____00201, 0, INT____00202) :: defines_var(INT____00202);\n\
-constraint int_max(INT____00203, 0, INT____00204) :: defines_var(INT____00204);\n\
+constraint int_max(INT____00203, 0, INT____00204) :: defines_var(INT____00204);\n"+"\
 constraint int_max(INT____00205, 0, INT____00206) :: defines_var(INT____00206);\n\
 constraint int_max(INT____00207, 0, INT____00208) :: defines_var(INT____00208);\n\
 constraint int_max(INT____00209, 0, INT____00210) :: defines_var(INT____00210);\n\
@@ -1247,7 +1247,7 @@ constraint int_max(INT____00495, 0, INT____00496) :: defines_var(INT____00496);\
 constraint int_max(INT____00497, 0, INT____00498) :: defines_var(INT____00498);\n\
 constraint int_max(INT____00499, 0, INT____00500) :: defines_var(INT____00500);\n\
 constraint int_max(INT____00501, 0, INT____00502) :: defines_var(INT____00502);\n\
-constraint int_max(INT____00503, 0, INT____00504) :: defines_var(INT____00504);\n\
+constraint int_max(INT____00503, 0, INT____00504) :: defines_var(INT____00504);\n"+"\
 constraint int_max(INT____00505, 0, INT____00506) :: defines_var(INT____00506);\n\
 constraint int_max(INT____00507, 0, INT____00508) :: defines_var(INT____00508);\n\
 constraint int_max(INT____00509, 0, INT____00510) :: defines_var(INT____00510);\n\

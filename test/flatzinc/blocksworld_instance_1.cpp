@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("blocksworld::1",
-"predicate all_different_int(array [int] of var int: x);\n\
+std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -97,8 +97,8 @@ predicate sort(array [int] of var int: x, array [int] of var int: y);\n\
 predicate table_bool(array [int] of var bool: x, array [int, int] of bool: t);\n\
 predicate table_int(array [int] of var int: x, array [int, int] of int: t);\n\
 array [1..3] of int: final_loc = [2, 3, 0];\n\
-array [1..3] of int: initial_loc = [2, 0, 1];\n\
-var bool: BOOL____00001 :: is_defined_var :: var_is_introduced;\n\
+array [1..3] of int: initial_loc = [2, 0, 1];\n")+
+"var bool: BOOL____00001 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00002 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00003 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00004 :: is_defined_var :: var_is_introduced;\n\
@@ -187,8 +187,8 @@ var bool: BOOL____00086 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00087 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00088 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00089 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00090 :: is_defined_var :: var_is_introduced;\n\
-array [1..12] of var -3..3: on :: output_array([1..4, 1..3]);\n\
+var bool: BOOL____00090 :: is_defined_var :: var_is_introduced;\n"+
+"array [1..12] of var -3..3: on :: output_array([1..4, 1..3]);\n\
 constraint all_different_int([on[1], on[2], on[3]]);\n\
 constraint all_different_int([on[4], on[5], on[6]]);\n\
 constraint all_different_int([on[7], on[8], on[9]]);\n\
@@ -234,8 +234,8 @@ constraint int_eq(on[2], -2);\n\
 constraint int_eq(on[3], 1);\n\
 constraint int_eq(on[10], 2);\n\
 constraint int_eq(on[11], 3);\n\
-constraint int_eq(on[12], -3);\n\
-constraint int_lt_reif(on[4], 0, BOOL____00005) :: defines_var(BOOL____00005);\n\
+constraint int_eq(on[12], -3);\n"+
+"constraint int_lt_reif(on[4], 0, BOOL____00005) :: defines_var(BOOL____00005);\n\
 constraint int_lt_reif(on[5], 0, BOOL____00015) :: defines_var(BOOL____00015);\n\
 constraint int_lt_reif(on[6], 0, BOOL____00025) :: defines_var(BOOL____00025);\n\
 constraint int_lt_reif(on[7], 0, BOOL____00035) :: defines_var(BOOL____00035);\n\

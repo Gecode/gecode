@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("warehouses::small",
-"predicate all_different_int(array [int] of var int: x);\n\
+std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -251,7 +251,7 @@ constraint int_le(use____00081, 1);\n\
 constraint int_le(use____00082, 4);\n\
 constraint int_le(use____00083, 2);\n\
 constraint int_le(use____00084, 1);\n\
-constraint int_le(use____00085, 3);\n\
+constraint int_le(use____00085, 3);\n")+"\
 constraint int_lin_eq([-1, 1], [INT____00057, supplier[2]], -5) :: defines_var(INT____00057) :: domain;\n\
 constraint int_lin_eq([-1, 1], [INT____00059, supplier[3]], -10) :: defines_var(INT____00059) :: domain;\n\
 constraint int_lin_eq([-1, 1], [INT____00061, supplier[4]], -15) :: defines_var(INT____00061) :: domain;\n\

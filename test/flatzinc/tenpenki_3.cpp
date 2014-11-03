@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("tenpenki::3",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -247,7 +247,7 @@ constraint array_bool_or([BOOL____00089, BOOL____00088], a[22]);\n\
 constraint array_bool_or([BOOL____00113, BOOL____00112], a[16]);\n\
 constraint array_bool_or([BOOL____00119, BOOL____00120], a[17]);\n\
 constraint array_bool_or([BOOL____00126, BOOL____00127], a[18]);\n\
-constraint array_bool_or([BOOL____00133, BOOL____00134], a[19]);\n\
+constraint array_bool_or([BOOL____00133, BOOL____00134], a[19]);\n")+"\
 constraint array_bool_or([BOOL____00137, BOOL____00136], a[20]);\n\
 constraint array_bool_or([BOOL____00141, BOOL____00140], a[6]);\n\
 constraint array_bool_or([BOOL____00144, BOOL____00143], a[7]);\n\

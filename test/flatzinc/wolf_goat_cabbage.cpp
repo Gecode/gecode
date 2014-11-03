@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("wolf_goat_cabbage",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -297,7 +297,7 @@ var bool: BOOL____00359 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00360 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00361 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00362 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00363 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00363 :: is_defined_var :: var_is_introduced;\n")+"\
 var bool: BOOL____00364 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00365 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00366 :: is_defined_var :: var_is_introduced;\n\
@@ -497,7 +497,7 @@ var bool: BOOL____00617 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00618 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00619 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00620 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00621 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00621 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____00622 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00623 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00624 :: is_defined_var :: var_is_introduced;\n\
@@ -697,7 +697,7 @@ var bool: BOOL____00837 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00838 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00839 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00840 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00841 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00841 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____00842 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00843 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00844 :: is_defined_var :: var_is_introduced;\n\
@@ -797,7 +797,7 @@ constraint array_bool_and([cabbage[37], cabbage[42]], false);\n\
 constraint array_bool_and([cabbage[39], cabbage[40]], false);\n\
 constraint array_bool_and([cabbage[40], cabbage[45]], false);\n\
 constraint array_bool_and([cabbage[42], cabbage[43]], false);\n\
-constraint array_bool_and([cabbage[43], cabbage[48]], false);\n\
+constraint array_bool_and([cabbage[43], cabbage[48]], false);\n"+"\
 constraint array_bool_and([cabbage[45], cabbage[46]], false);\n\
 constraint array_bool_and([cabbage[46], cabbage[51]], false);\n\
 constraint array_bool_and([cabbage[48], cabbage[49]], false);\n\
@@ -997,7 +997,7 @@ constraint array_bool_and([wolf[31], goat[31]], BOOL____00849) :: defines_var(BO
 constraint array_bool_and([wolf[31], wolf[36]], false);\n\
 constraint array_bool_and([wolf[32], goat[32]], BOOL____00851) :: defines_var(BOOL____00851);\n\
 constraint array_bool_and([wolf[33], goat[33]], BOOL____00853) :: defines_var(BOOL____00853);\n\
-constraint array_bool_and([wolf[33], wolf[34]], false);\n\
+constraint array_bool_and([wolf[33], wolf[34]], false);\n"+"\
 constraint array_bool_and([wolf[34], goat[34]], BOOL____00855) :: defines_var(BOOL____00855);\n\
 constraint array_bool_and([wolf[34], wolf[39]], false);\n\
 constraint array_bool_and([wolf[35], goat[35]], BOOL____00857) :: defines_var(BOOL____00857);\n\
@@ -1147,7 +1147,7 @@ constraint array_bool_and([farmer[43], BOOL____00086, BOOL____00085], BOOL____00
 constraint array_bool_and([farmer[44], BOOL____00086, BOOL____00087], BOOL____00089) :: defines_var(BOOL____00089);\n\
 constraint array_bool_and([farmer[45], BOOL____00085, BOOL____00087], BOOL____00090) :: defines_var(BOOL____00090);\n\
 constraint array_bool_and([farmer[46], BOOL____00092, BOOL____00091], BOOL____00094) :: defines_var(BOOL____00094);\n\
-constraint array_bool_and([farmer[47], BOOL____00092, BOOL____00093], BOOL____00095) :: defines_var(BOOL____00095);\n\
+constraint array_bool_and([farmer[47], BOOL____00092, BOOL____00093], BOOL____00095) :: defines_var(BOOL____00095);\n"+"\
 constraint array_bool_and([farmer[48], BOOL____00091, BOOL____00093], BOOL____00096) :: defines_var(BOOL____00096);\n\
 constraint array_bool_and([farmer[49], BOOL____00098, BOOL____00097], BOOL____00100) :: defines_var(BOOL____00100);\n\
 constraint array_bool_and([farmer[50], BOOL____00098, BOOL____00099], BOOL____00101) :: defines_var(BOOL____00101);\n\
@@ -1247,7 +1247,7 @@ constraint array_bool_and([wolf[23], BOOL____00703, BOOL____00704], BOOL____0070
 constraint array_bool_and([wolf[24], BOOL____00585, BOOL____00704], BOOL____00707) :: defines_var(BOOL____00707);\n\
 constraint array_bool_and([wolf[25], BOOL____00708, BOOL____00592], BOOL____00710) :: defines_var(BOOL____00710);\n\
 constraint array_bool_and([wolf[26], BOOL____00708, BOOL____00709], BOOL____00711) :: defines_var(BOOL____00711);\n\
-constraint array_bool_and([wolf[27], BOOL____00592, BOOL____00709], BOOL____00712) :: defines_var(BOOL____00712);\n\
+constraint array_bool_and([wolf[27], BOOL____00592, BOOL____00709], BOOL____00712) :: defines_var(BOOL____00712);\n"+"\
 constraint array_bool_and([wolf[28], BOOL____00713, BOOL____00599], BOOL____00715) :: defines_var(BOOL____00715);\n\
 constraint array_bool_and([wolf[29], BOOL____00713, BOOL____00714], BOOL____00716) :: defines_var(BOOL____00716);\n\
 constraint array_bool_and([wolf[30], BOOL____00599, BOOL____00714], BOOL____00717) :: defines_var(BOOL____00717);\n\
@@ -1297,7 +1297,7 @@ constraint array_bool_and([BOOL____00037, BOOL____00569, BOOL____00025, BOOL____
 constraint array_bool_and([BOOL____00037, BOOL____00572, BOOL____00025, BOOL____00558, BOOL____00571, farmer[17], BOOL____00387], BOOL____00573) :: defines_var(BOOL____00573);\n\
 constraint array_bool_and([BOOL____00037, BOOL____00574, BOOL____00025, BOOL____00560, BOOL____00209, farmer[17], BOOL____00571], BOOL____00575) :: defines_var(BOOL____00575);\n\
 constraint array_bool_and([BOOL____00043, BOOL____00576, BOOL____00031, BOOL____00562, BOOL____00215, farmer[20], BOOL____00393], BOOL____00577) :: defines_var(BOOL____00577);\n\
-constraint array_bool_and([BOOL____00043, BOOL____00579, BOOL____00031, BOOL____00565, BOOL____00578, farmer[20], BOOL____00393], BOOL____00580) :: defines_var(BOOL____00580);\n\
+constraint array_bool_and([BOOL____00043, BOOL____00579, BOOL____00031, BOOL____00565, BOOL____00578, farmer[20], BOOL____00393], BOOL____00580) :: defines_var(BOOL____00580);\n"+"\
 constraint array_bool_and([BOOL____00043, BOOL____00581, BOOL____00031, BOOL____00567, BOOL____00215, farmer[20], BOOL____00578], BOOL____00582) :: defines_var(BOOL____00582);\n\
 constraint array_bool_and([BOOL____00049, BOOL____00583, BOOL____00037, BOOL____00569, BOOL____00221, farmer[23], BOOL____00399], BOOL____00584) :: defines_var(BOOL____00584);\n\
 constraint array_bool_and([BOOL____00049, BOOL____00586, BOOL____00037, BOOL____00572, BOOL____00585, farmer[23], BOOL____00399], BOOL____00587) :: defines_var(BOOL____00587);\n\
@@ -1447,7 +1447,7 @@ constraint bool_eq_reif(cabbage[18], false, BOOL____00210) :: defines_var(BOOL__
 constraint bool_eq_reif(cabbage[18], farmer[18], BOOL____00565) :: defines_var(BOOL____00565);\n\
 constraint bool_eq_reif(cabbage[19], false, BOOL____00217) :: defines_var(BOOL____00217);\n\
 constraint bool_eq_reif(cabbage[20], false, BOOL____00215) :: defines_var(BOOL____00215);\n\
-constraint bool_eq_reif(cabbage[21], false, BOOL____00216) :: defines_var(BOOL____00216);\n\
+constraint bool_eq_reif(cabbage[21], false, BOOL____00216) :: defines_var(BOOL____00216);\n"+"\
 constraint bool_eq_reif(cabbage[21], farmer[21], BOOL____00572) :: defines_var(BOOL____00572);\n\
 constraint bool_eq_reif(cabbage[22], false, BOOL____00223) :: defines_var(BOOL____00223);\n\
 constraint bool_eq_reif(cabbage[23], false, BOOL____00221) :: defines_var(BOOL____00221);\n\
@@ -1597,7 +1597,7 @@ constraint bool_eq_reif(goat[25], false, BOOL____00407) :: defines_var(BOOL____0
 constraint bool_eq_reif(goat[26], false, BOOL____00405) :: defines_var(BOOL____00405);\n\
 constraint bool_eq_reif(goat[27], false, BOOL____00406) :: defines_var(BOOL____00406);\n\
 constraint bool_eq_reif(goat[27], farmer[27], BOOL____00588) :: defines_var(BOOL____00588);\n\
-constraint bool_eq_reif(goat[28], false, BOOL____00413) :: defines_var(BOOL____00413);\n\
+constraint bool_eq_reif(goat[28], false, BOOL____00413) :: defines_var(BOOL____00413);\n"+"\
 constraint bool_eq_reif(goat[29], false, BOOL____00411) :: defines_var(BOOL____00411);\n\
 constraint bool_eq_reif(goat[30], false, BOOL____00412) :: defines_var(BOOL____00412);\n\
 constraint bool_eq_reif(goat[30], farmer[30], BOOL____00595) :: defines_var(BOOL____00595);\n\
@@ -1797,7 +1797,7 @@ constraint bool_le(BOOL____00861, farmer[37]);\n\
 constraint bool_le(BOOL____00862, farmer[37]);\n\
 constraint bool_le(BOOL____00863, farmer[38]);\n\
 constraint bool_le(BOOL____00864, farmer[38]);\n\
-constraint bool_le(BOOL____00865, farmer[39]);\n\
+constraint bool_le(BOOL____00865, farmer[39]);\n"+"\
 constraint bool_le(BOOL____00866, farmer[39]);\n\
 constraint bool_le(BOOL____00867, farmer[40]);\n\
 constraint bool_le(BOOL____00868, farmer[40]);\n\

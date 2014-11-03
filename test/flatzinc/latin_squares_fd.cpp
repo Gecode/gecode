@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("latin_squares_fd",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -176,8 +176,8 @@ constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[165], x[174], x[183], x[19
 constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[166], x[175], x[184], x[193], x[202], x[211], x[220], x[229], x[238]], 1);\n\
 constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[167], x[176], x[185], x[194], x[203], x[212], x[221], x[230], x[239]], 1);\n\
 constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[168], x[177], x[186], x[195], x[204], x[213], x[222], x[231], x[240]], 1);\n\
-constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[169], x[178], x[187], x[196], x[205], x[214], x[223], x[232], x[241]], 1);\n\
-constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[170], x[179], x[188], x[197], x[206], x[215], x[224], x[233], x[242]], 1);\n\
+constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[169], x[178], x[187], x[196], x[205], x[214], x[223], x[232], x[241]], 1);\n")+
+"constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[170], x[179], x[188], x[197], x[206], x[215], x[224], x[233], x[242]], 1);\n\
 constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[171], x[180], x[189], x[198], x[207], x[216], x[225], x[234], x[243]], 1);\n\
 constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[172], x[173], x[174], x[175], x[176], x[177], x[178], x[179], x[180]], 1);\n\
 constraint int_lin_eq([1, 1, 1, 1, 1, 1, 1, 1, 1], [x[181], x[182], x[183], x[184], x[185], x[186], x[187], x[188], x[189]], 1);\n\

@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("tenpenki::5",
-"predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
+std::string("predicate bool_lin_ge(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_gt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_lt(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
 predicate bool_lin_ne(array [int] of int: a, array [int] of var bool: x, var int: c);\n\
@@ -297,7 +297,7 @@ var bool: BOOL____00314 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00315 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00317 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00318 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00319 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00319 :: is_defined_var :: var_is_introduced;\n")+"\
 var bool: BOOL____00320 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00321 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00322 :: is_defined_var :: var_is_introduced;\n\
@@ -497,7 +497,7 @@ var bool: BOOL____00583 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00584 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00586 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00587 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00588 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00588 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____00589 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00590 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00591 :: is_defined_var :: var_is_introduced;\n\
@@ -697,7 +697,7 @@ var bool: BOOL____00854 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00855 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00857 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00858 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____00860 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____00860 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____00861 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00863 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____00864 :: is_defined_var :: var_is_introduced;\n\
@@ -897,7 +897,7 @@ var bool: BOOL____01111 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01112 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01113 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01114 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____01115 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____01115 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____01116 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01118 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01119 :: is_defined_var :: var_is_introduced;\n\
@@ -1097,7 +1097,7 @@ var bool: BOOL____01332 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01333 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01335 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01336 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____01337 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____01337 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____01338 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01339 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01340 :: is_defined_var :: var_is_introduced;\n\
@@ -1297,7 +1297,7 @@ var bool: BOOL____01553 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01554 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01556 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01557 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____01558 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____01558 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____01559 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01560 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01561 :: is_defined_var :: var_is_introduced;\n\
@@ -1497,7 +1497,7 @@ var bool: BOOL____01823 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01824 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01826 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01827 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____01829 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____01829 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____01830 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01834 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____01835 :: is_defined_var :: var_is_introduced;\n\
@@ -1697,7 +1697,7 @@ var bool: BOOL____02053 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02055 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02056 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02057 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____02058 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____02058 :: is_defined_var :: var_is_introduced;\n"+"\
 var bool: BOOL____02059 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02060 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02061 :: is_defined_var :: var_is_introduced;\n\
@@ -1802,7 +1802,7 @@ var bool: BOOL____02178 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02179 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02180 :: is_defined_var :: var_is_introduced;\n\
 var bool: BOOL____02182 :: is_defined_var :: var_is_introduced;\n\
-var bool: BOOL____02183 :: is_defined_var :: var_is_introduced;\n\
+var bool: BOOL____02183 :: is_defined_var :: var_is_introduced;\n"+"\
 array [1..225] of var bool: a :: output_array([1..15, 1..15]);\n\
 array [1..1] of var 1..15: s____00001;\n\
 array [1..2] of var 1..15: s____00023;\n\
@@ -1947,7 +1947,7 @@ constraint array_bool_and([BOOL____00468, BOOL____00469], a[157]);\n\
 constraint array_bool_and([BOOL____00471, BOOL____00472], a[172]);\n\
 constraint array_bool_and([BOOL____00474, BOOL____00475], a[187]);\n\
 constraint array_bool_and([BOOL____00477, BOOL____00478], a[202]);\n\
-constraint array_bool_and([BOOL____00486, BOOL____00487], BOOL____00490) :: defines_var(BOOL____00490);\n\
+constraint array_bool_and([BOOL____00486, BOOL____00487], BOOL____00490) :: defines_var(BOOL____00490);\n"+"\
 constraint array_bool_and([BOOL____00492, BOOL____00493], BOOL____00497) :: defines_var(BOOL____00497);\n\
 constraint array_bool_and([BOOL____00494, BOOL____00495], BOOL____00498) :: defines_var(BOOL____00498);\n\
 constraint array_bool_and([BOOL____00500, BOOL____00501], BOOL____00505) :: defines_var(BOOL____00505);\n\
@@ -2097,7 +2097,7 @@ constraint array_bool_and([BOOL____01007, BOOL____01008], BOOL____01012) :: defi
 constraint array_bool_and([BOOL____01014, BOOL____01015], BOOL____01022) :: defines_var(BOOL____01022);\n\
 constraint array_bool_and([BOOL____01016, BOOL____01017], BOOL____01023) :: defines_var(BOOL____01023);\n\
 constraint array_bool_and([BOOL____01018, BOOL____01019], BOOL____01024) :: defines_var(BOOL____01024);\n\
-constraint array_bool_and([BOOL____01020, BOOL____01021], BOOL____01025) :: defines_var(BOOL____01025);\n\
+constraint array_bool_and([BOOL____01020, BOOL____01021], BOOL____01025) :: defines_var(BOOL____01025);\n"+"\
 constraint array_bool_and([BOOL____01027, BOOL____01028], BOOL____01035) :: defines_var(BOOL____01035);\n\
 constraint array_bool_and([BOOL____01029, BOOL____01030], BOOL____01036) :: defines_var(BOOL____01036);\n\
 constraint array_bool_and([BOOL____01031, BOOL____01032], BOOL____01037) :: defines_var(BOOL____01037);\n\
@@ -2147,7 +2147,7 @@ constraint array_bool_and([BOOL____01183, BOOL____01184], BOOL____01190) :: defi
 constraint array_bool_and([BOOL____01185, BOOL____01186], BOOL____01191) :: defines_var(BOOL____01191);\n\
 constraint array_bool_and([BOOL____01187, BOOL____01188], BOOL____01192) :: defines_var(BOOL____01192);\n\
 constraint array_bool_and([BOOL____01194, BOOL____01195], BOOL____01202) :: defines_var(BOOL____01202);\n\
-constraint array_bool_and([BOOL____01196, BOOL____01197], BOOL____01203) :: defines_var(BOOL____01203);\n\
+constraint array_bool_and([BOOL____01196, BOOL____01197], BOOL____01203) :: defines_var(BOOL____01203);\n"+"\
 constraint array_bool_and([BOOL____01198, BOOL____01199], BOOL____01204) :: defines_var(BOOL____01204);\n\
 constraint array_bool_and([BOOL____01200, BOOL____01201], BOOL____01205) :: defines_var(BOOL____01205);\n\
 constraint array_bool_and([BOOL____01207, BOOL____01208], BOOL____01215) :: defines_var(BOOL____01215);\n\
@@ -2297,7 +2297,7 @@ constraint array_bool_and([BOOL____01729, BOOL____01730], BOOL____01734) :: defi
 constraint array_bool_and([BOOL____01731, BOOL____01732], BOOL____01735) :: defines_var(BOOL____01735);\n\
 constraint array_bool_and([BOOL____01737, BOOL____01738], BOOL____01743) :: defines_var(BOOL____01743);\n\
 constraint array_bool_and([BOOL____01739, BOOL____01740], BOOL____01744) :: defines_var(BOOL____01744);\n\
-constraint array_bool_and([BOOL____01741, BOOL____01742], BOOL____01745) :: defines_var(BOOL____01745);\n\
+constraint array_bool_and([BOOL____01741, BOOL____01742], BOOL____01745) :: defines_var(BOOL____01745);\n"+"\
 constraint array_bool_and([BOOL____01747, BOOL____01748], BOOL____01753) :: defines_var(BOOL____01753);\n\
 constraint array_bool_and([BOOL____01749, BOOL____01750], BOOL____01754) :: defines_var(BOOL____01754);\n\
 constraint array_bool_and([BOOL____01751, BOOL____01752], BOOL____01755) :: defines_var(BOOL____01755);\n\
@@ -2447,7 +2447,7 @@ constraint array_bool_or([BOOL____00186, BOOL____00184, BOOL____00185], a[101]);
 constraint array_bool_or([BOOL____00196, BOOL____00194, BOOL____00195], a[116]);\n\
 constraint array_bool_or([BOOL____00206, BOOL____00204, BOOL____00205], a[131]);\n\
 constraint array_bool_or([BOOL____00216, BOOL____00214, BOOL____00215], a[146]);\n\
-constraint array_bool_or([BOOL____00226, BOOL____00224, BOOL____00225], a[161]);\n\
+constraint array_bool_or([BOOL____00226, BOOL____00224, BOOL____00225], a[161]);\n"+"\
 constraint array_bool_or([BOOL____00236, BOOL____00234, BOOL____00235], a[176]);\n\
 constraint array_bool_or([BOOL____00246, BOOL____00244, BOOL____00245], a[191]);\n\
 constraint array_bool_or([BOOL____00256, BOOL____00254, BOOL____00255], a[206]);\n\
@@ -2647,7 +2647,7 @@ constraint bool_eq(a[210], false);\n\
 constraint bool_eq(a[211], false);\n\
 constraint bool_eq(a[212], false);\n\
 constraint bool_eq(a[225], false);\n\
-constraint int_le_reif(s____00001[1], 1, a[14]);\n\
+constraint int_le_reif(s____00001[1], 1, a[14]);\n"+"\
 constraint int_le_reif(s____00001[1], 2, a[29]);\n\
 constraint int_le_reif(s____00001[1], 3, a[44]);\n\
 constraint int_le_reif(s____00001[1], 4, a[59]);\n\
@@ -2847,7 +2847,7 @@ constraint int_le_reif(s____00481[2], 1, BOOL____00483) :: defines_var(BOOL____0
 constraint int_le_reif(s____00481[2], 2, BOOL____00488) :: defines_var(BOOL____00488);\n\
 constraint int_le_reif(s____00481[2], 3, BOOL____00494) :: defines_var(BOOL____00494);\n\
 constraint int_le_reif(s____00481[2], 4, BOOL____00502) :: defines_var(BOOL____00502);\n\
-constraint int_le_reif(s____00481[2], 5, BOOL____00510) :: defines_var(BOOL____00510);\n\
+constraint int_le_reif(s____00481[2], 5, BOOL____00510) :: defines_var(BOOL____00510);\n"+"\
 constraint int_le_reif(s____00481[2], 6, BOOL____00518) :: defines_var(BOOL____00518);\n\
 constraint int_le_reif(s____00481[2], 7, BOOL____00528) :: defines_var(BOOL____00528);\n\
 constraint int_le_reif(s____00481[2], 8, BOOL____00538) :: defines_var(BOOL____00538);\n\
@@ -2997,7 +2997,7 @@ constraint int_le_reif(s____00931[1], 11, BOOL____00956) :: defines_var(BOOL____
 constraint int_le_reif(s____00931[1], 12, BOOL____00959) :: defines_var(BOOL____00959);\n\
 constraint int_le_reif(s____00931[1], 13, BOOL____00962) :: defines_var(BOOL____00962);\n\
 constraint int_le_reif(s____00931[1], 14, BOOL____00965) :: defines_var(BOOL____00965);\n\
-constraint int_le_reif(s____00969[1], 1, BOOL____00970) :: defines_var(BOOL____00970);\n\
+constraint int_le_reif(s____00969[1], 1, BOOL____00970) :: defines_var(BOOL____00970);\n"+"\
 constraint int_le_reif(s____00969[1], 2, BOOL____00975) :: defines_var(BOOL____00975);\n\
 constraint int_le_reif(s____00969[1], 3, BOOL____00988) :: defines_var(BOOL____00988);\n\
 constraint int_le_reif(s____00969[1], 4, BOOL____01001) :: defines_var(BOOL____01001);\n\
@@ -3177,7 +3177,7 @@ constraint int_le_reif(s____01509[1], 9, BOOL____01576) :: defines_var(BOOL____0
 constraint int_le_reif(s____01509[1], 10, BOOL____01586) :: defines_var(BOOL____01586);\n\
 constraint int_le_reif(s____01509[1], 11, BOOL____01596) :: defines_var(BOOL____01596);\n\
 constraint int_le_reif(s____01509[1], 12, BOOL____01606) :: defines_var(BOOL____01606);\n\
-constraint int_le_reif(s____01509[1], 13, BOOL____01616) :: defines_var(BOOL____01616);\n\
+constraint int_le_reif(s____01509[1], 13, BOOL____01616) :: defines_var(BOOL____01616);\n"+"\
 constraint int_le_reif(s____01509[1], 14, BOOL____01626) :: defines_var(BOOL____01626);\n\
 constraint int_le_reif(s____01509[2], 1, BOOL____01511) :: defines_var(BOOL____01511);\n\
 constraint int_le_reif(s____01509[2], 2, BOOL____01515) :: defines_var(BOOL____01515);\n\
@@ -3197,7 +3197,7 @@ constraint int_le_reif(s____01509[3], 1, BOOL____01512) :: defines_var(BOOL____0
 constraint int_le_reif(s____01509[3], 2, BOOL____01516) :: defines_var(BOOL____01516);\n\
 constraint int_le_reif(s____01509[3], 3, BOOL____01522) :: defines_var(BOOL____01522);\n\
 constraint int_le_reif(s____01509[3], 4, BOOL____01530) :: defines_var(BOOL____01530);\n\
-constraint int_le_reif(s____01509[3], 5, BOOL____01540) :: defines_var(BOOL____01540);\n\
+constraint int_le_reif(s____01509[3], 5, BOOL____01540) :: defines_var(BOOL____01540);\n"+"\
 constraint int_le_reif(s____01509[3], 6, BOOL____01550) :: defines_var(BOOL____01550);\n\
 constraint int_le_reif(s____01509[3], 7, BOOL____01560) :: defines_var(BOOL____01560);\n\
 constraint int_le_reif(s____01509[3], 8, BOOL____01570) :: defines_var(BOOL____01570);\n\
@@ -3397,7 +3397,7 @@ constraint int_le_reif(s____02099[2], 5, BOOL____02114) :: defines_var(BOOL____0
 constraint int_le_reif(s____02099[2], 6, BOOL____02121) :: defines_var(BOOL____02121);\n\
 constraint int_le_reif(s____02099[2], 7, BOOL____02128) :: defines_var(BOOL____02128);\n\
 constraint int_le_reif(s____02099[2], 8, BOOL____02135) :: defines_var(BOOL____02135);\n\
-constraint int_le_reif(s____02099[2], 9, BOOL____02142) :: defines_var(BOOL____02142);\n\
+constraint int_le_reif(s____02099[2], 9, BOOL____02142) :: defines_var(BOOL____02142);\n"+"\
 constraint int_le_reif(s____02099[2], 10, BOOL____02149) :: defines_var(BOOL____02149);\n\
 constraint int_le_reif(s____02099[2], 11, BOOL____02156) :: defines_var(BOOL____02156);\n\
 constraint int_le_reif(s____02099[2], 12, BOOL____02163) :: defines_var(BOOL____02163);\n\
@@ -3547,7 +3547,7 @@ constraint int_lin_le_reif([-1], [s____00262[2]], -5, BOOL____00300) :: defines_
 constraint int_lin_le_reif([-1], [s____00262[2]], -4, BOOL____00292) :: defines_var(BOOL____00292);\n\
 constraint int_lin_le_reif([-1], [s____00262[2]], -3, BOOL____00284) :: defines_var(BOOL____00284);\n\
 constraint int_lin_le_reif([-1], [s____00262[2]], -2, BOOL____00276) :: defines_var(BOOL____00276);\n\
-constraint int_lin_le_reif([-1], [s____00262[3]], -11, BOOL____00389) :: defines_var(BOOL____00389);\n\
+constraint int_lin_le_reif([-1], [s____00262[3]], -11, BOOL____00389) :: defines_var(BOOL____00389);\n"+"\
 constraint int_lin_le_reif([-1], [s____00262[3]], -10, BOOL____00382) :: defines_var(BOOL____00382);\n\
 constraint int_lin_le_reif([-1], [s____00262[3]], -9, BOOL____00372) :: defines_var(BOOL____00372);\n\
 constraint int_lin_le_reif([-1], [s____00262[3]], -8, BOOL____00362) :: defines_var(BOOL____00362);\n\
@@ -3697,7 +3697,7 @@ constraint int_lin_le_reif([-1], [s____00851[1]], -11, BOOL____00882) :: defines
 constraint int_lin_le_reif([-1], [s____00851[1]], -10, BOOL____00879) :: defines_var(BOOL____00879);\n\
 constraint int_lin_le_reif([-1], [s____00851[1]], -9, BOOL____00876) :: defines_var(BOOL____00876);\n\
 constraint int_lin_le_reif([-1], [s____00851[1]], -8, BOOL____00873) :: defines_var(BOOL____00873);\n\
-constraint int_lin_le_reif([-1], [s____00851[1]], -7, BOOL____00870) :: defines_var(BOOL____00870);\n\
+constraint int_lin_le_reif([-1], [s____00851[1]], -7, BOOL____00870) :: defines_var(BOOL____00870);\n"+"\
 constraint int_lin_le_reif([-1], [s____00851[1]], -6, BOOL____00867) :: defines_var(BOOL____00867);\n\
 constraint int_lin_le_reif([-1], [s____00851[1]], -5, BOOL____00864) :: defines_var(BOOL____00864);\n\
 constraint int_lin_le_reif([-1], [s____00851[1]], -4, BOOL____00861) :: defines_var(BOOL____00861);\n\
@@ -3847,7 +3847,7 @@ constraint int_lin_le_reif([-1], [s____01329[1]], -12, BOOL____01466) :: defines
 constraint int_lin_le_reif([-1], [s____01329[1]], -11, BOOL____01453) :: defines_var(BOOL____01453);\n\
 constraint int_lin_le_reif([-1], [s____01329[1]], -10, BOOL____01440) :: defines_var(BOOL____01440);\n\
 constraint int_lin_le_reif([-1], [s____01329[1]], -9, BOOL____01427) :: defines_var(BOOL____01427);\n\
-constraint int_lin_le_reif([-1], [s____01329[1]], -8, BOOL____01414) :: defines_var(BOOL____01414);\n\
+constraint int_lin_le_reif([-1], [s____01329[1]], -8, BOOL____01414) :: defines_var(BOOL____01414);\n"+"\
 constraint int_lin_le_reif([-1], [s____01329[1]], -7, BOOL____01401) :: defines_var(BOOL____01401);\n\
 constraint int_lin_le_reif([-1], [s____01329[1]], -6, BOOL____01388) :: defines_var(BOOL____01388);\n\
 constraint int_lin_le_reif([-1], [s____01329[1]], -5, BOOL____01375) :: defines_var(BOOL____01375);\n\
@@ -3997,7 +3997,7 @@ constraint int_lin_le_reif([-1], [s____01833[1]], -3, BOOL____01851) :: defines_
 constraint int_lin_le_reif([-1], [s____01833[1]], -2, BOOL____01843) :: defines_var(BOOL____01843);\n\
 constraint int_lin_le_reif([-1], [s____01833[2]], -13, BOOL____01961) :: defines_var(BOOL____01961);\n\
 constraint int_lin_le_reif([-1], [s____01833[2]], -12, BOOL____01953) :: defines_var(BOOL____01953);\n\
-constraint int_lin_le_reif([-1], [s____01833[2]], -11, BOOL____01943) :: defines_var(BOOL____01943);\n\
+constraint int_lin_le_reif([-1], [s____01833[2]], -11, BOOL____01943) :: defines_var(BOOL____01943);\n"+"\
 constraint int_lin_le_reif([-1], [s____01833[2]], -10, BOOL____01933) :: defines_var(BOOL____01933);\n\
 constraint int_lin_le_reif([-1], [s____01833[2]], -9, BOOL____01923) :: defines_var(BOOL____01923);\n\
 constraint int_lin_le_reif([-1], [s____01833[2]], -8, BOOL____01913) :: defines_var(BOOL____01913);\n\

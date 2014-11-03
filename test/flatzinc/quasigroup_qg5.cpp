@@ -47,7 +47,7 @@ namespace Test { namespace FlatZinc {
       /// Perform creation and registration
       Create(void) {
         (void) new FlatZincTest("quasigroup",
-"predicate all_different_int(array [int] of var int: x);\n\
+std::string("predicate all_different_int(array [int] of var int: x);\n\
 predicate all_equal_int(array [int] of var int: x);\n\
 predicate among(var int: n, array [int] of var int: x, set of int: v);\n\
 predicate array_bool_lq(array [int] of var bool: x, array [int] of var bool: y);\n\
@@ -257,7 +257,7 @@ constraint int_lin_eq([-1, 5], [INT____00033, q[17]], 1) :: defines_var(INT____0
 constraint int_lin_eq([-1, 5], [INT____00035, INT____00034], 1) :: defines_var(INT____00035) :: domain;\n\
 constraint int_lin_eq([-1, 5], [INT____00037, q[22]], 0) :: defines_var(INT____00037) :: domain;\n\
 constraint int_lin_eq([-1, 5], [INT____00039, INT____00038], 0) :: defines_var(INT____00039) :: domain;\n\
-constraint int_lin_eq([-1, 5], [INT____00041, q[3]], 4) :: defines_var(INT____00041) :: domain;\n\
+constraint int_lin_eq([-1, 5], [INT____00041, q[3]], 4) :: defines_var(INT____00041) :: domain;\n")+"\
 constraint int_lin_eq([-1, 5], [INT____00043, INT____00042], 4) :: defines_var(INT____00043) :: domain;\n\
 constraint int_lin_eq([-1, 5], [INT____00045, q[8]], 3) :: defines_var(INT____00045) :: domain;\n\
 constraint int_lin_eq([-1, 5], [INT____00047, INT____00046], 3) :: defines_var(INT____00047) :: domain;\n\
