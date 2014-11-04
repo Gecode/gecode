@@ -2123,6 +2123,22 @@ namespace Gecode { namespace FlatZinc {
         }
       }
     }
+#else
+    (void) out;
+    (void) ai;
+    (void) iv1;
+    (void) iv2;
+    (void) bv1;
+    (void) bv2;
+#ifdef GECODE_HAS_SET_VARS
+    (void) sv1;
+    (void) sv2;
+#endif
+#ifdef GECODE_HAS_FLOAT_VARS
+    (void) fv1;
+    (void) fv2;
+#endif
+    
 #endif
   }
 
