@@ -99,31 +99,40 @@ namespace {
 class JobShop : public IntMinimizeScript {
 protected:
   /// The instance specification
-  const Spec& spec;
+  const Spec spec;
   /// Precedences
   //  BoolVarArray b;
   /// Makespan
   IntVar makespan;
   /// Start times
-  //  IntVarArray start;
+  IntVarArray start;
 
 public:
   /// The actual problem
   JobShop(const InstanceOptions& opt)
     : spec(opt.instance()),
       //      b(*this, (spec.n+spec.m-2)*spec.n*spec.m/2, 0,1),
-            makespan(*this, 0, Int::Limits::max)
-    //
-    //start(*this, spec.m*spec.n, 0, Int::Limits::max) 
-{
+      makespan(*this, 0, Int::Limits::max),
+      start(*this, spec.jobs() * spec.machines(), 0, Int::Limits::max) {
 
+    for (int j=0; j<spec.jobs(); j++)
+      for (int s=0; s<spec.machines()-1; s++)
+        rel(*this, 
+            start[j*spec.machines()+s] + spec.duration(j,s)
+            <= start[j*spec.machines()+s+1]);
+    IntVarArgs end(spec.jobs());
+    for (int j=0; j<spec.jobs(); j++)
+      end[j] = expr(*this, start[j*spec.machines()+spec.machines()-1] + 
+                    spec.duration(j,spec.machines()-1));
+    max(*this, end, makespan);
+    branch(*this, start, INT_VAR_MIN_MIN(), INT_VAL_MIN());
   }
 
   /// Constructor for cloning \a s
   JobShop(bool share, JobShop& s) : IntMinimizeScript(share,s), spec(s.spec) {
 //    b.update(*this, share, s.b);
     makespan.update(*this, share, s.makespan);
-//    _start.update(*this, share, s._start);
+    start.update(*this, share, s.start);
   }
 
   /// Perform copying during cloning
@@ -138,7 +147,13 @@ public:
 
   /// Print solution
   virtual void print(std::ostream& os) const {
-os << "Makespan: " << makespan << std::endl;
+    for (int j=0; j<spec.jobs(); j++) {
+      os << "job[" << j << "] = ";
+      for (int s=0; s<spec.machines(); s++)
+        os << start[j*spec.machines()+s] << " ";
+      os << std::endl;
+    }
+    os << "makespan = " << makespan << std::endl;
   }
   
 };
@@ -203,6 +218,12 @@ namespace {
    *   A genetic algorithm applicable to large-scale job-shop instances,
    *   R. Manner, B. Manderick (eds.), Parallel instance solving from nature 2,
    *   North-Holland, Amsterdam, 281-290.
+   *
+   * Each instance consists of a line of description, a line
+   * containing the number of jobs and the number of machines, 
+   * and then one line for each job, listing the machine number
+   * and processing time for each step of the job. 
+   * The machines are numbered starting with 0.
    *
    */
 
