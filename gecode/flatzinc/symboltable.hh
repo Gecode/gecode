@@ -40,7 +40,9 @@
 
 #include <vector>
 
-#ifdef GECODE_HAS_GNU_HASH_MAP
+#ifdef GECODE_HAS_UNORDERED_MAP
+#include <unordered_map>
+#elif defined(GECODE_HAS_GNU_HASH_MAP)
 #include <ext/hash_map>
 #else
 #include <map>
@@ -52,7 +54,9 @@ namespace Gecode { namespace FlatZinc {
   template<class Val>
   class SymbolTable {
   private:
-#ifdef GECODE_HAS_GNU_HASH_MAP
+#ifdef GECODE_HAS_UNORDERED_MAP
+    typedef std::unordered_map<std::string,Val> mymap;
+#elif defined(GECODE_HAS_GNU_HASH_MAP)
     class hashString {
     public:
       size_t operator ()(const std::string& x) const {

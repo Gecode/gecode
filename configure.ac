@@ -118,6 +118,11 @@ AC_CHECK_HEADER([ext/hash_map],
   [AC_DEFINE([GECODE_HAS_GNU_HASH_MAP],[],
              [Whether GNU hash_map is available])])
 
+dnl check whether we can use unordered_map
+AC_CHECK_HEADER([unordered_map],
+  [AC_DEFINE([GECODE_HAS_UNORDERED_MAP],[],
+             [Whether unordered_map is available])])
+
 dnl check whether we want to build universal binaries on Mac OS X
 AC_GECODE_UNIVERSAL
 
