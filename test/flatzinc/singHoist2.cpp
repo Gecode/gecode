@@ -145,4 +145,4 @@ Removal = array1d(0..3, [0, 14, 43, 57]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

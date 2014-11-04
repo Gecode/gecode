@@ -81,4 +81,4 @@ s = array1d(1..4, [0, 2, 2, 7]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

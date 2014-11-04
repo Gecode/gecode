@@ -64,4 +64,4 @@ b = true;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

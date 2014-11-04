@@ -110,4 +110,4 @@ s8 = 1..3;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

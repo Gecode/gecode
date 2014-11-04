@@ -87,4 +87,4 @@ x = array2d(1..4, 1..6, [0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

@@ -57,4 +57,4 @@ namespace Test { namespace FlatZinc {
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

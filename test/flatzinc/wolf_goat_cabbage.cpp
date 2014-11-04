@@ -1910,4 +1910,4 @@ wolf = array2d(1..20, -1..1, [false, false, true, false, false, true, false, fal
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

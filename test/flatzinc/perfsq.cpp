@@ -173,4 +173,4 @@ s = array1d(0..10, [7, 5, 4, 3, 1, 0, 0, 0, 0, 0, 0]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

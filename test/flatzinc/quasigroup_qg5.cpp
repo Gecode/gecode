@@ -302,4 +302,4 @@ solve  :: int_search(q, input_order, indomain, complete) satisfy;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

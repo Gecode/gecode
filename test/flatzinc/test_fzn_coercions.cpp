@@ -66,4 +66,4 @@ i1 = 1;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

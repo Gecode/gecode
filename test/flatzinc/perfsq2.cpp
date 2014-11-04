@@ -69,4 +69,4 @@ solve maximize INT____00001;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

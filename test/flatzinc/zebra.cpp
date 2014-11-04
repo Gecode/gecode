@@ -148,4 +148,4 @@ smoke = array1d(0..4, [3, 1, 2, 4, 5]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

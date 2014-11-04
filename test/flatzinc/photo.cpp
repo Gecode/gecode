@@ -229,4 +229,4 @@ satisfies = 8;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

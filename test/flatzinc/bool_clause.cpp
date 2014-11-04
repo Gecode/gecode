@@ -71,4 +71,4 @@ z = array1d(1..3, [false, false, false]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

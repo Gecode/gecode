@@ -81,4 +81,4 @@ solve minimize end;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

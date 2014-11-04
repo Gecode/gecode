@@ -374,4 +374,4 @@ b = array1d(1..8, [false, false, false, false, false, false, false, true]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

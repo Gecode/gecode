@@ -2150,4 +2150,4 @@ solve  :: int_search(a_flat, first_fail, indomain_max, complete) satisfy;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

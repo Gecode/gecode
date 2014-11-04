@@ -157,4 +157,4 @@ solve  :: int_search(Fst, first_fail, indomain_min, complete) satisfy;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

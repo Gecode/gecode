@@ -178,4 +178,4 @@ p = array2d(1..7, 1..2, [0, 1, 2, 0, 1, 1, 3, 0, 3, 0, 0, 3, 0, 4]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

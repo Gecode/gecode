@@ -1291,4 +1291,4 @@ K = 7;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

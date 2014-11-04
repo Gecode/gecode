@@ -67,4 +67,4 @@ ys = array2d(2..3, 0..1, [0, 1, 2, 3]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

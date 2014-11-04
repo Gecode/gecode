@@ -40,7 +40,7 @@
 
 @catorder = ("core","memory","var","prop","branch","post",
 	     "int","set","float","minimodel","stress","any",
-	     "sequential","parallel","search",
+	     "sequential","parallel","search","flatzinc",
 	     "other");
 
 $modclear{"kernel"} = "Kernel";
@@ -74,6 +74,7 @@ $catclear{"float"} = "Float variables and constraints";
 $catclear{"minimodel"} = "Minimal modeling support";
 $catclear{"stress"} = "System stress";
 $catclear{"search"} = "Search";
+$catclear{"flatzinc"} = "FlatZinc interpreter";
 $catclear{"ignore"} = "ignored";
 
 #

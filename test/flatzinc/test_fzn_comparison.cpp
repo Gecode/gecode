@@ -281,4 +281,4 @@ solve satisfy;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

@@ -96,4 +96,4 @@ q = array1d(1..4, [3, 1, 4, 2]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

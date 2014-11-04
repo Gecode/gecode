@@ -68,4 +68,4 @@ y = array1d(1..10, [false, false, false, false, false, false, false, false, fals
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

@@ -59,4 +59,4 @@ solve satisfy;\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

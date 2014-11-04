@@ -129,4 +129,4 @@ solve  :: int_search(mark, input_order, indomain, complete) minimize mark[4];\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

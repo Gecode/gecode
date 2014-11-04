@@ -219,4 +219,4 @@ solve  :: int_search(p, input_order, indomain_min, complete) satisfy;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

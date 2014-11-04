@@ -161,4 +161,4 @@ solve  :: set_search(sets, input_order, indomain_min, complete) satisfy;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

@@ -278,4 +278,4 @@ supplier = array1d(1..10, [5, 2, 5, 1, 5, 2, 2, 3, 2, 3]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

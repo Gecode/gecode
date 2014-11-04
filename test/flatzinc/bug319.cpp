@@ -59,4 +59,4 @@ solve minimize obj;", "obj = 3;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

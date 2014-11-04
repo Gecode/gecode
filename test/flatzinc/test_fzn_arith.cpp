@@ -131,4 +131,4 @@ i9 = 10;\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

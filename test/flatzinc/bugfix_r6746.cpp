@@ -74,4 +74,4 @@ solve  \
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

@@ -167,4 +167,4 @@ start = array2d(1..3, 1..3, [0, 1162, 829, 1000, 505, 0, 829, 0, 505]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

@@ -882,4 +882,4 @@ solve  :: int_search([on[1], on[2], on[3], on[4], on[5], on[6], on[7], on[8], on
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

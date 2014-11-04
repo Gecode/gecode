@@ -72,4 +72,4 @@ namespace Test {
 
 #endif
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc

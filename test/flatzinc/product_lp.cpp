@@ -85,4 +85,4 @@ outside = array1d(1..3, [60, 200, 300]);\n\
 
 }}
 
-// STATISTICS: test-other
+// STATISTICS: test-flatzinc
