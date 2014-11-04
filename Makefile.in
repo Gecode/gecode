@@ -1171,7 +1171,10 @@ TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/float test/branch test/assign
+TESTBUILDDIRS = \
+	test test/int test/set test/float \
+	test/branch test/assign \
+	test/flatzinc
 
 BUILDDIRS = \
 	tools \
