@@ -68,9 +68,18 @@
 
 [RELEASE]
 Version: 4.3.2
-Date: 2014-99-99
+Date: 2014-11-06
 [DESCRIPTION]
-GAGA!
+Fixed major bug in and added extensive tests for the FlatZinc
+interpreter. If you are using Gecode with FlatZinc you should
+definitely upgrade!
+
+[ENTRY]
+Module: test
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added long-overdues tests for the FlatZinc interpreter.
 
 [ENTRY]
 Module: other
