@@ -1164,6 +1164,17 @@ namespace Gecode { namespace FlatZinc {
       extensional(s,x,ts,EPK_DEF,s.ann2icl(ann));
     }
 
+    void p_cumulative_opt(FlatZincSpace& s, const ConExpr& ce,
+                      AST::Node* ann) {
+      IntVarArgs start = s.arg2intvarargs(ce[0]);
+      IntArgs duration = s.arg2intargs(ce[1]);
+      IntArgs height = s.arg2intargs(ce[2]);
+      BoolVarArgs opt = s.arg2boolvarargs(ce[3]);
+      int bound = ce[4]->getInt();
+      unshare(s,start);
+      cumulative(s,bound,start,duration,height,opt,s.ann2icl(ann));
+    }
+
     void p_cumulatives(FlatZincSpace& s, const ConExpr& ce,
                       AST::Node* ann) {
       IntVarArgs start = s.arg2intvarargs(ce[0]);
@@ -1556,6 +1567,7 @@ namespace Gecode { namespace FlatZinc {
         
         registry().add("gecode_schedule_unary", &p_schedule_unary);
         registry().add("gecode_schedule_unary_optional", &p_schedule_unary_optional);
+        registry().add("gecode_schedule_cumulative_optional", &p_cumulative_opt);
 
         registry().add("gecode_circuit", &p_circuit);
         registry().add("gecode_circuit_cost_array", &p_circuit_cost_array);

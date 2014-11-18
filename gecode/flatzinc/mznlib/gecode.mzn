@@ -101,3 +101,7 @@ predicate circuit_cost(array[int] of int: c, array[int] of var int: x,
 predicate gecode_schedule_unary(array[int] of var int: x, array[int] of int: p);
 predicate gecode_schedule_unary_optional(array[int] of var int: x,
     array[int] of int: p, array[int] of var bool: m);
+
+predicate gecode_schedule_cumulative_optional(array[int] of var int: start,
+  array[int] of int: duration, array[int] of int: usage,
+  array[int] of var bool: m, int: capacity);
