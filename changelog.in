@@ -74,6 +74,22 @@ Gaga!
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Chris Mears
+[DESCRIPTION]
+Fix default search annotation for float objectives.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Willem Van Onsem
+[DESCRIPTION]
+Install parser.tab.hh header.
+
+[ENTRY]
+Module: flatzinc
 What:   new
 Rank:   minor
 [DESCRIPTION]
