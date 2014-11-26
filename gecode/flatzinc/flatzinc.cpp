@@ -1312,7 +1312,7 @@ namespace Gecode { namespace FlatZinc {
       args->a[0] = new AST::Array(new AST::FloatVar(_optVar));
       args->a[1] = new AST::FloatLit(0.0);
       args->a[2] = new AST::Atom("input_order");
-      args->a[3] = new AST::Atom("indomain_split_reverse");
+      args->a[3] = new AST::Atom("indomain_reverse_split");
       args->a[4] = new AST::Atom("complete");
       c = new AST::Call("float_search", args);
     }
