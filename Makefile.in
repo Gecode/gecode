@@ -233,7 +233,11 @@ endif
 
 KERNELBUILDDIRS = kernel
 
+ifeq "@enable_flatzinc@" "yes"
+EXTRA_HEADERS   = gecode/support/config.hpp gecode/flatzinc/parser.tab.hh
+else
 EXTRA_HEADERS   = gecode/support/config.hpp
+endif
 
 #
 # SEARCH COMPONENTS
@@ -1900,7 +1904,7 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(VARIMPHDR)
 	    cp $$f $(DESTDIR)$(includedir)/gecode/kernel; done && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
-	    cp $$f $(DESTDIR)$(includedir)/gecode/support; done && \
+	    cp $$f $(DESTDIR)$(includedir)/$$f; done && \
 	for_mznlib="$(FLATZINCMZNLIB)" && \
 	  for f in $$for_mznlib; do \
 		mkdir -p $(DESTDIR)$(datadir)/gecode/mznlib; \
