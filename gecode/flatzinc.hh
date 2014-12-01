@@ -282,7 +282,7 @@ namespace Gecode { namespace FlatZinc {
 
     void parse(int& argc, char* argv[]) {
       Gecode::BaseOptions::parse(argc,argv);
-      if (_allSolutions.value() && _solutions.value()==0) {
+      if (_allSolutions.value() && _solutions.value()==-1) {
         _solutions.value(0);
       }
       if (_stat.value())

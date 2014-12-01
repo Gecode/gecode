@@ -76,6 +76,14 @@ Gaga!
 Module: flatzinc
 What:   bug
 Rank:   minor
+Thanks: Björn Böttcher
+[DESCRIPTION]
+Fix behaviour of -a command line option for satisfaction problems.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
 Thanks: Chris Mears
 [DESCRIPTION]
 Fix default search annotation for float objectives.
