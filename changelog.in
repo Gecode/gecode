@@ -76,6 +76,15 @@ Gaga!
 Module: flatzinc
 What:   bug
 Rank:   minor
+Thanks: Mats Carlsson
+[DESCRIPTION]
+Fix special case detection for cumulatives constraint, could sometimes
+incorrectly turn a cumulatives into a disjunctive constraint.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
 Thanks: Björn Böttcher
 [DESCRIPTION]
 Fix behaviour of -a command line option for satisfaction problems.

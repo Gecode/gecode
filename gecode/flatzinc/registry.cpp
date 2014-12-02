@@ -1183,12 +1183,24 @@ namespace Gecode { namespace FlatZinc {
       int n = start.size();
       IntVar bound = s.arg2IntVar(ce[3]);
 
-      int minHeight = INT_MAX; int minHeight2 = INT_MAX;
-      for (int i=n; i--;)
-        if (height[i].min() < minHeight)
+      if (n==0)
+        return;
+
+      if (n == 1) {
+        rel(s, height[0] <= bound);
+        return;
+      }
+      
+      int minHeight = std::min(height[0].min(),height[1].min());
+      int minHeight2 = std::max(height[0].min(),height[1].min());
+      for (int i=2; i<n; i++) {
+        if (height[i].min() < minHeight) {
+          minHeight2 = minHeight;
           minHeight = height[i].min();
-        else if (height[i].min() < minHeight2)
+        } else if (height[i].min() < minHeight2) {
           minHeight2 = height[i].min();
+        }
+      }
       bool disjunctive =
        (minHeight > bound.max()/2) ||
        (minHeight2 > bound.max()/2 && minHeight+minHeight2>bound.max());

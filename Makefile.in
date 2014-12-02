@@ -1115,6 +1115,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/battleships9.cpp \
   test/flatzinc/blocksworld_instance_1.cpp \
   test/flatzinc/blocksworld_instance_2.cpp \
+  test/flatzinc/cumulatives.cpp \
   test/flatzinc/cutstock.cpp \
   test/flatzinc/eq20.cpp \
   test/flatzinc/factory_planning_instance.cpp \
