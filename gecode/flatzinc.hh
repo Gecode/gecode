@@ -236,7 +236,7 @@ namespace Gecode { namespace FlatZinc {
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
       _solutions("-n","number of solutions (0 = all, -1 = one/best)",-1),
-      _allSolutions("-a", "return all solutions (equal to -solutions 0)"),
+      _allSolutions("-a", "return all solutions (equal to -n 0)"),
       _threads("-p","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
       _free("-f", "free search, no need to follow search-specification"),
