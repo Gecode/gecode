@@ -383,6 +383,9 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "random") {
         return TieBreak<IntVarBranch>(INT_VAR_RND(rnd));
       }
+      if (s->id == "dom_w_deg") {
+        return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MAX(decay));
+      }
       if (s->id == "afc_min")
         return TieBreak<IntVarBranch>(INT_VAR_AFC_MIN(decay));
       if (s->id == "afc_max")
@@ -1095,7 +1098,7 @@ namespace Gecode { namespace FlatZinc {
     int funcdep = 0;
     int searched = 0;
     for (int i=iv.size(); i--;) {
-      if (iv_searched[i]) {
+      if (iv_searched[i] || (_method != SAT && _optVarIsInt && _optVar==i)) {
         searched++;
       } else if (iv_introduced[2*i]) {
         if (iv_introduced[2*i+1]) {
@@ -1108,7 +1111,7 @@ namespace Gecode { namespace FlatZinc {
     IntVarArgs iv_sol(iv.size()-(introduced+funcdep+searched));
     IntVarArgs iv_tmp(introduced);
     for (int i=iv.size(), j=0, k=0; i--;) {
-      if (iv_searched[i])
+      if (iv_searched[i] || (_method != SAT && _optVarIsInt && _optVar==i))
         continue;
       if (iv_introduced[2*i]) {
         if (!iv_introduced[2*i+1]) {
@@ -1157,7 +1160,7 @@ namespace Gecode { namespace FlatZinc {
     funcdep = 0;
     searched = 0;
     for (int i=fv.size(); i--;) {
-      if (fv_searched[i]) {
+      if (fv_searched[i] || (_method != SAT && !_optVarIsInt && _optVar==i)) {
         searched++;
       } else if (fv_introduced[2*i]) {
         if (fv_introduced[2*i+1]) {
@@ -1170,7 +1173,7 @@ namespace Gecode { namespace FlatZinc {
     FloatVarArgs fv_sol(fv.size()-(introduced+funcdep+searched));
     FloatVarArgs fv_tmp(introduced);
     for (int i=fv.size(), j=0, k=0; i--;) {
-      if (fv_searched[i])
+      if (fv_searched[i] || (_method != SAT && !_optVarIsInt && _optVar==i))
         continue;
       if (fv_introduced[2*i]) {
         if (!fv_introduced[2*i+1]) {
@@ -1227,6 +1230,25 @@ namespace Gecode { namespace FlatZinc {
     fv_aux = FloatVarArray(*this, fv_tmp);
     n_aux += fv_aux.size();
 #endif
+
+    if (_method == MIN) {
+      if (_optVarIsInt) {
+        branch(*this, iv[_optVar], INT_VAL_MIN());
+      } else {
+#ifdef GECODE_HAS_FLOAT_VARS
+        branch(*this, fv[_optVar], FLOAT_VAL_SPLIT_MIN());
+#endif
+      }
+    } else if (_method == MAX) {
+      if (_optVarIsInt) {
+        branch(*this, iv[_optVar], INT_VAL_MAX());
+      } else {
+#ifdef GECODE_HAS_FLOAT_VARS
+        branch(*this, fv[_optVar], FLOAT_VAL_SPLIT_MAX());
+#endif
+      }
+    }
+
     if (n_aux > 0) {
       if (_method == SAT) {
         AuxVarBrancher::post(*this, def_int_varsel, def_int_valsel,
@@ -1268,28 +1290,6 @@ namespace Gecode { namespace FlatZinc {
     _method = MIN;
     _optVar = var;
     _optVarIsInt = isInt;
-    // Branch on optimization variable to ensure that it is given a value.
-    AST::Call* c;
-    if (isInt) {
-      AST::Array* args = new AST::Array(4);
-      args->a[0] = new AST::Array(new AST::IntVar(_optVar));
-      args->a[1] = new AST::Atom("input_order");
-      args->a[2] = new AST::Atom("indomain_min");
-      args->a[3] = new AST::Atom("complete");
-      c = new AST::Call("int_search", args);
-    } else {
-      AST::Array* args = new AST::Array(5);
-      args->a[0] = new AST::Array(new AST::FloatVar(_optVar));
-      args->a[1] = new AST::FloatLit(0.0);
-      args->a[2] = new AST::Atom("input_order");
-      args->a[3] = new AST::Atom("indomain_split");
-      args->a[4] = new AST::Atom("complete");
-      c = new AST::Call("float_search", args);
-    }
-    if (!ann)
-      ann = new AST::Array(c);
-    else
-      ann->a.push_back(c);
     _solveAnnotations = ann;
   }
 
@@ -1298,28 +1298,6 @@ namespace Gecode { namespace FlatZinc {
     _method = MAX;
     _optVar = var;
     _optVarIsInt = isInt;
-    // Branch on optimization variable to ensure that it is given a value.
-    AST::Call* c;
-    if (isInt) {
-      AST::Array* args = new AST::Array(4);
-      args->a[0] = new AST::Array(new AST::IntVar(_optVar));
-      args->a[1] = new AST::Atom("input_order");
-      args->a[2] = new AST::Atom("indomain_max");
-      args->a[3] = new AST::Atom("complete");
-      c = new AST::Call("int_search", args);
-    } else {
-      AST::Array* args = new AST::Array(5);
-      args->a[0] = new AST::Array(new AST::FloatVar(_optVar));
-      args->a[1] = new AST::FloatLit(0.0);
-      args->a[2] = new AST::Atom("input_order");
-      args->a[3] = new AST::Atom("indomain_reverse_split");
-      args->a[4] = new AST::Atom("complete");
-      c = new AST::Call("float_search", args);
-    }
-    if (!ann)
-      ann = new AST::Array(c);
-    else
-      ann->a.push_back(c);
     _solveAnnotations = ann;
   }
 

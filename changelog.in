@@ -74,6 +74,21 @@ Gaga!
 
 [ENTRY]
 Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Support dom_w_deg search annotation.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Search on objective function variable after all other variables (but
+still before introduced variables).
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   minor
 Thanks: Mats Carlsson
