@@ -101,6 +101,8 @@ namespace Gecode { namespace Set { namespace Channel {
       if (assigned)
         Gecode::Int::BoolView::schedule(home, *this, Gecode::Int::ME_BOOL_VAL);
       View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
+      if (y.assigned())
+        new (&delta) SetDelta(y.glbMin(),y.glbMax(),1,0);
       (void) new (home) IndexAdvisor(home,*this,co,-1);
     }
 

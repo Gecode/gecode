@@ -73,6 +73,15 @@ Date: 2014-11-06
 Gaga!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks: Farshid Hassani Bijarbooneh
+[DESCRIPTION]
+The channeling propagator between a SetVar and an array of BoolVars
+propagated incorrectly when posted on a fixed SetVar.
+
+[ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
