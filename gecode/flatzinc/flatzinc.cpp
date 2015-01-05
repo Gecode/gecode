@@ -317,6 +317,14 @@ namespace Gecode { namespace FlatZinc {
   }
 #endif
 
+  FznRnd::FznRnd(unsigned int s) : random(s) {}
+  
+  unsigned int
+  FznRnd::operator ()(unsigned int n) {
+    Support::Lock lock(mutex);
+    return random(n);
+  }
+
   IntSet vs2is(IntVarSpec* vs) {
     if (vs->assigned) {
       return IntSet(vs->i,vs->i);
@@ -613,13 +621,16 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
   FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
-    : Space(share, f), _solveAnnotations(NULL), iv_boolalias(NULL),
+    : Space(share, f), _random(f._random),
+      _solveAnnotations(NULL), iv_boolalias(NULL),
       needAuxVars(f.needAuxVars) {
       _optVar = f._optVar;
       _optVarIsInt = f._optVarIsInt;
       _method = f._method;
+      _lns = f._lns;
       branchInfo.update(*this, share, f.branchInfo);
       iv.update(*this, share, f.iv);
+      iv_lns.update(*this, share, f.iv_lns);
       intVarCount = f.intVarCount;
       
       if (needAuxVars) {
@@ -676,9 +687,9 @@ namespace Gecode { namespace FlatZinc {
 #endif
     }
   
-  FlatZincSpace::FlatZincSpace(void)
+  FlatZincSpace::FlatZincSpace(FznRnd* random)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
-    _optVar(-1), _optVarIsInt(true), 
+    _optVar(-1), _optVarIsInt(true), _lns(0), _random(random),
     _solveAnnotations(NULL), needAuxVars(true) {
     branchInfo.init();
   }
@@ -899,6 +910,7 @@ namespace Gecode { namespace FlatZinc {
       fv_searched[i] = false;
 #endif
 
+    _lns = 0;
     if (ann) {
       std::vector<AST::Node*> flatAnn;
       if (ann->isArray()) {
@@ -908,7 +920,26 @@ namespace Gecode { namespace FlatZinc {
       }
 
       for (unsigned int i=0; i<flatAnn.size(); i++) {
-        if (flatAnn[i]->isCall("gecode_search")) {
+        if (flatAnn[i]->isCall("relax_and_reconstruct")) {
+          if (_lns != 0)
+            throw FlatZinc::Error("FlatZinc",
+            "Only one relax_and_reconstruct annotation allowed");
+          AST::Call *call = flatAnn[i]->getCall("relax_and_reconstruct");
+          AST::Array *args = call->getArgs(2);
+          _lns = args->a[1]->getInt();
+          AST::Array *vars = args->a[0]->getArray();
+          int k=vars->a.size();
+          for (int i=vars->a.size(); i--;)
+            if (vars->a[i]->isInt())
+              k--;
+          iv_lns = IntVarArray(*this, k);
+          k = 0;
+          for (unsigned int i=0; i<vars->a.size(); i++) {
+            if (vars->a[i]->isInt())
+              continue;
+            iv_lns[k++] = iv[vars->a[i]->getIntVar()];
+          }
+        } else if (flatAnn[i]->isCall("gecode_search")) {
           AST::Call* c = flatAnn[i]->getCall();
           branchWithPlugin(c->args);
         } else if (flatAnn[i]->isCall("int_search")) {
@@ -1578,6 +1609,20 @@ namespace Gecode { namespace FlatZinc {
                    static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
 #endif
     }
+  }
+
+  bool
+  FlatZincSpace::slave(const CRI& cri) {
+    if (cri.restart() != 0 && _lns > 0) {
+      const FlatZincSpace& last = static_cast<const FlatZincSpace&>(*cri.last());
+      for (unsigned int i=iv_lns.size(); i--;) {
+        if ((*_random)(99) <= _lns) {
+          rel(*this, iv_lns[i], IRT_EQ, last.iv_lns[i]);
+        }
+      }
+      return false;
+    }
+    return true;
   }
 
   Space*

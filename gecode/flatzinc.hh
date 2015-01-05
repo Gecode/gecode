@@ -347,6 +347,23 @@ namespace Gecode { namespace FlatZinc {
 #endif
   };
 
+ /**
+  * \brief A thread-safe random number generator
+  *
+  */
+ class GECODE_FLATZINC_EXPORT FznRnd {
+ protected:
+   /// The actual random number generator
+   Gecode::Support::RandomGenerator random;
+   /// A mutex for the random number generator
+   Gecode::Support::Mutex mutex;
+ public:
+   /// Constructor
+   FznRnd(unsigned int s=1);
+   /// Returns a random integer from the interval [0..n)
+   unsigned int operator ()(unsigned int n);
+ };
+
   /**
    * \brief A space that can be initialized with a %FlatZinc model
    *
@@ -375,7 +392,13 @@ namespace Gecode { namespace FlatZinc {
   
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
+
+    /// Percentage of variables to keep in LNS (or 0 for no LNS)
+    unsigned int _lns;
     
+    /// Random number generator 
+    FznRnd* _random;
+
     /// Annotations on the solve item
     AST::Array* _solveAnnotations;
 
@@ -400,6 +423,10 @@ namespace Gecode { namespace FlatZinc {
     Gecode::IntVarArray iv;
     /// The introduced integer variables
     Gecode::IntVarArray iv_aux;
+    
+    /// The integer variables used in LNS
+    Gecode::IntVarArray iv_lns;
+
     /// Indicates whether an integer variable is introduced by mzn2fzn
     std::vector<bool> iv_introduced;
     /// Indicates whether an integer variable aliases a Boolean variable
@@ -429,7 +456,7 @@ namespace Gecode { namespace FlatZinc {
     /// Whether the introduced variables still need to be copied
     bool needAuxVars;
     /// Construct empty space
-    FlatZincSpace(void);
+    FlatZincSpace(FznRnd* random = NULL);
   
     /// Destructor
     ~FlatZincSpace(void);
@@ -517,6 +544,8 @@ namespace Gecode { namespace FlatZinc {
     virtual void constrain(const Space& s);
     /// Copy function
     virtual Gecode::Space* copy(bool share);
+
+    virtual bool slave(const CRI& cri);
     
     /// \name AST to variable and value conversion
     //@{
@@ -576,7 +605,7 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(const std::string& fileName,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL);
+                       FlatZincSpace* fzs=NULL, FznRnd* rnd=NULL);
 
   /**
    * \brief Parse FlatZinc from \a is into \a fzs and return it.
@@ -586,7 +615,7 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(std::istream& is,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL);
+                       FlatZincSpace* fzs=NULL, FznRnd* rnd=NULL);
 
 }}
 
