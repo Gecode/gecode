@@ -569,9 +569,9 @@ namespace Gecode {
    * periodically restart the search of engine \a E.
    *
    * The class \a T can implement member functions
-   * \code virtual void master(unsigned long int i, const Space* s) \endcode
+   * \code virtual bool master(const CRI& cri) \endcode
    * and
-   * \code virtual void slave(unsigned long int i, const Space* s) \endcode
+   * \code virtual bool slave(const CRI& cri) \endcode
    *
    * Whenever exploration restarts or a solution is found, the
    * engine executes the functions on the master and slave

@@ -60,6 +60,8 @@ namespace Gecode { namespace Search { namespace Meta {
     bool shared;
     /// How many solutions since the last restart
     unsigned long int sslr;
+    /// Whether search for the next solution will be complete
+    bool complete;
   public:
     /// Constructor
     RBS(Space* s, Cutoff* co0, MetaStop* stop0,
@@ -82,7 +84,7 @@ namespace Gecode { namespace Search { namespace Meta {
   RBS::RBS(Space* s, Cutoff* co0, MetaStop* stop0,
            Engine* e0, const Options& opt)
     : e(e0), master(s), last(NULL), co(co0), stop(stop0), 
-      shared(opt.threads == 1), sslr(0) {
+      shared(opt.threads == 1), sslr(0), complete(true) {
     stop->limit(Statistics(),(*co)());
   }
 

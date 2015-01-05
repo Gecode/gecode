@@ -654,8 +654,9 @@ namespace Gecode {
     return true;
   }
 
-  void
+  bool
   Space::slave(const CRI&) {
+    return true;
   }
 
   void

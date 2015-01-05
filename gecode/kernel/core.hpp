@@ -1648,12 +1648,19 @@ namespace Gecode {
      * slave space whenever it finds a solution or exploration
      * restarts.  \a cri contains information about the current restart.
      *
-     * The default function does nothing.
+     * If the function returns true, the search on the slave space is
+     * considered complete, i.e., if it fails or exhaustively explores the
+     * entire search space, the meta search engine finishes. If the function
+     * returns false, the search on the slave space is considered incomplete,
+     * and the meta engine will restart the search regardless of whether
+     * the search on the slave space finishes or times out.
+     *
+     * The default function does nothing and returns true.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual void slave(const CRI& cri);
+    virtual bool slave(const CRI& cri);
     /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskModelScript

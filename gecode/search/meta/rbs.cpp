@@ -64,7 +64,7 @@ namespace Gecode { namespace Search { namespace Meta {
           stop->update(e->statistics());
           Space* slave = master;
           master = master->clone(shared);
-          slave->slave(cri);
+          complete = slave->slave(cri);
           e->reset(slave);
           sslr = 0;
           stop->m_stat.restart++;
@@ -72,7 +72,8 @@ namespace Gecode { namespace Search { namespace Meta {
         delete last;
         last = n->clone();
         return n;
-      } else if (e->stopped() && stop->enginestopped()) {
+      } else if ( (!complete && !e->stopped()) ||
+                  (e->stopped() && stop->enginestopped()) ) {
         // The engine must perform a true restart
         sslr = 0;
         NoGoods& ng = e->nogoods();
@@ -86,7 +87,7 @@ namespace Gecode { namespace Search { namespace Meta {
           return NULL;
         Space* slave = master;
         master = master->clone(shared);
-        slave->slave(cri);
+        complete = slave->slave(cri);
         e->reset(slave);
       } else {
         return NULL;
