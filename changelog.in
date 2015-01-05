@@ -73,6 +73,14 @@ Date: 2014-11-06
 Gaga!
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add support for the MiniZinc 2 min/max builtins. The Gecode MiniZinc library
+is now compatible with both MiniZinc 1.6 and 2.0.
+
+[ENTRY]
 Module: search
 What:   change
 Rank:   minor

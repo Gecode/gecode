@@ -1542,8 +1542,8 @@ namespace Gecode { namespace FlatZinc {
           &p_global_cardinality_low_up);
         registry().add("global_cardinality_low_up_closed", 
           &p_global_cardinality_low_up_closed);
-        registry().add("minimum_int", &p_minimum);
-        registry().add("maximum_int", &p_maximum);
+        registry().add("array_int_minimum", &p_minimum);
+        registry().add("array_int_maximum", &p_maximum);
         registry().add("regular", &p_regular);
         registry().add("sort", &p_sort);
         registry().add("inverse_offsets", &p_inverse_offsets);
