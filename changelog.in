@@ -73,6 +73,25 @@ Date: 2014-11-06
 Gaga!
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Change the slave function for meta search engines to return whether the search
+in the slave is going to be complete. This is necessary for example in LNS,
+where completing the search in the slave does not mean that the overall search
+is finished.
+
+[ENTRY]
+Module: flatzinc
+What:   new
+Rank:   major
+[DESCRIPTION]
+Make a simple form of LNS accessible from FlatZinc. To use it, include
+gecode.mzn and add the relax_and_reconstruct search annotation defined in
+that file.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
