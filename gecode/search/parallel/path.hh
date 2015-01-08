@@ -120,8 +120,8 @@ namespace Gecode { namespace Search { namespace Parallel {
     void ngdl(int l);
     /// Push space \a c (a clone of \a s or NULL)
     const Choice* push(Worker& stat, Space* s, Space* c);
-    /// Generate path for next node and return whether a next node exists
-    bool next(void);
+    /// Generate path for next node
+    void next(void);
     /// Provide access to topmost edge
     Edge& top(void) const;
     /// Test whether path is empty
@@ -136,7 +136,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s);
     /// Recompute space according to path
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
-                     const Space* best, int& mark);
+                     const Space& best, int& mark);
     /// Return number of entries on stack
     int entries(void) const;
     /// Reset stack and set no-good depth limit to \a l
@@ -249,7 +249,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return sn.choice();
   }
 
-  forceinline bool
+  forceinline void
   Path::next(void) {
     while (!ds.empty())
       if (ds.top().rightmost()) {
@@ -259,9 +259,8 @@ namespace Gecode { namespace Search { namespace Parallel {
         ds.top().next();
         if (!ds.top().work())
           n_work--;
-        return true;
+        return;
       }
-    return false;
   }
 
   forceinline Path::Edge&
@@ -416,7 +415,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
   forceinline Space*
   Path::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
-                  const Space* best, int& mark) {
+                  const Space& best, int& mark) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -428,7 +427,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       assert(ds.entries()-1 == lc());
       if (mark > ds.entries()-1) {
         mark = ds.entries()-1;
-        s->constrain(*best);
+        s->constrain(best);
       }
       ds.top().space(NULL);
       // Mark as reusable
@@ -447,7 +446,7 @@ namespace Gecode { namespace Search { namespace Parallel {
 
     if (l < mark) {
       mark = l;
-      s->constrain(*best);
+      s->constrain(best);
       // The space on the stack could be failed now as an additional
       // constraint might have been added.
       if (s->status(stat) == SS_FAILED) {

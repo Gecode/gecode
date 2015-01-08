@@ -104,49 +104,63 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline Space*
   DFS::next(void) {
+    /*
+     * The engine maintains the following invariant:
+     *  - If the current space (cur) is not NULL, the path always points
+     *    to exactly that space.
+     *  - If the current space (cur) is NULL, the path always points
+     *    to the next space (if there is any).
+     *
+     * This invariant is needed so that no-goods can be extracted properly
+     * when the engine is stopped or has found a solution.
+     *
+     */
     start();
     while (true) {
-      while (cur) {
-        if (stop(opt))
-          return NULL;
-        node++;
-        switch (cur->status(*this)) {
-        case SS_FAILED:
-          fail++;
-          delete cur;
-          cur = NULL;
-          break;
-        case SS_SOLVED:
-          {
-            // Deletes all pending branchers
-            (void) cur->choice();
-            Space* s = cur;
-            cur = NULL;
-            return s;
-          }
-        case SS_BRANCH:
-          {
-            Space* c;
-            if ((d == 0) || (d >= opt.c_d)) {
-              c = cur->clone();
-              d = 1;
-            } else {
-              c = NULL;
-              d++;
-            }
-            const Choice* ch = path.push(*this,cur,c);
-            cur->commit(*ch,0);
-            break;
-          }
-        default:
-          GECODE_NEVER;
-        }
-      }
-      do {
-        if (!path.next())
+      if (stop(opt))
+        return NULL;
+      while (cur == NULL) {
+        if (path.empty())
           return NULL;
         cur = path.recompute(d,opt.a_d,*this);
-      } while (cur == NULL);
+        if (cur != NULL)
+          break;
+        path.next();
+      }
+      node++;
+      switch (cur->status(*this)) {
+      case SS_FAILED:
+        fail++;
+        delete cur;
+        cur = NULL;
+        path.next();
+        break;
+      case SS_SOLVED:
+        {
+          // Deletes all pending branchers
+          (void) cur->choice();
+          Space* s = cur;
+          cur = NULL;
+          path.next();
+          return s;
+        }
+      case SS_BRANCH:
+        {
+          Space* c;
+          if ((d == 0) || (d >= opt.c_d)) {
+            c = cur->clone();
+            d = 1;
+          } else {
+            c = NULL;
+            d++;
+          }
+          const Choice* ch = path.push(*this,cur,c);
+          cur->commit(*ch,0);
+          break;
+        }
+      default:
+        GECODE_NEVER;
+      }
     }
     GECODE_NEVER;
     return NULL;

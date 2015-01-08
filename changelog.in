@@ -73,6 +73,14 @@ Date: 2014-11-06
 Gaga!
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+Thanks: Zichen Zhu
+[DESCRIPTION]
+Now no-goods are extracted properly in case a solution is found.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor
