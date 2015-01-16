@@ -2185,6 +2185,31 @@ namespace Gecode {
   max(Home home, const IntVarArgs& x, IntVar y,
       IntConLevel icl=ICL_DEF);
 
+  /** \brief Post propagator for \f$ \operatorname{argmin} x=y\f$
+   *
+   * In case of ties, the smallest value for \a y is chosen 
+   * (provided \a tiebreak is true).
+   *
+   * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
+   * If \a y occurs in \a x, an exception of type Int::ArgumentSame 
+   * is thrown.
+   */
+  GECODE_INT_EXPORT void
+  argmin(Home home, const IntVarArgs& x, IntVar y, bool tiebreak=true,
+         IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$ \operatorname{argmax} x=y\f$
+   *
+   * In case of ties, the smallest value for \a y is chosen
+   * (provided \a tiebreak is true).
+   *
+   * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
+   * If \a y occurs in \a x, an exception of type Int::ArgumentSame 
+   * is thrown.
+   */
+  GECODE_INT_EXPORT void
+  argmax(Home home, const IntVarArgs& x, IntVar y, bool tiebreak=true,
+         IntConLevel icl=ICL_DEF);
+
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    *
    * Supports both bounds consistency (\a icl = ICL_BND, default)

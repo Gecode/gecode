@@ -750,6 +750,145 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for argument maximum constraint
+     class ArgMax : public Test {
+     protected:
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMax(int n, bool tb)
+         : Test("Arithmetic::ArgMax::"+str(tb)+"::"+str(n),n+1,0,n+1,
+                false,tb ? Gecode::ICL_DEF : Gecode::ICL_DOM),
+           tiebreak(tb) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < 0) || (x[n] >= n))
+           return false;
+         int m=x[0]; int p=0;
+         for (int i=1; i<n; i++)
+           if (x[i] > m) {
+             p=i; m=x[i];
+           }
+         return tiebreak ? (p == x[n]) : (m == x[x[n]]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::IntVarArgs m(n);
+         for (int i=0; i<n; i++)
+           m[i]=x[i];
+         Gecode::argmax(home, m, x[n], tiebreak);
+       }
+     };
+
+     /// %Test for argument maximum constraint with shared variables
+     class ArgMaxShared : public Test {
+     protected:
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMaxShared(int n, bool tb)
+         : Test("Arithmetic::ArgMax::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
+                false),
+           tiebreak(tb)  {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < 0) || (x[n] >= 2*n))
+           return false;
+         Gecode::IntArgs y(2*n);
+         for (int i=0; i<n; i++)
+           y[2*i+0]=y[2*i+1]=x[i];
+         int m=y[0]; int p=0;
+         for (int i=1; i<2*n; i++)
+           if (y[i] > m) {
+             p=i; m=y[i];
+           }
+         return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::IntVarArgs m(2*n);
+         for (int i=0; i<n; i++)
+           m[2*i+0]=m[2*i+1]=x[i];
+         Gecode::argmax(home, m, x[n], tiebreak);
+       }
+     };
+
+     /// %Test for argument minimum constraint
+     class ArgMin : public Test {
+     protected:
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMin(int n, bool tb)
+         : Test("Arithmetic::ArgMin::"+str(tb)+"::"+str(n),n+1,0,n+1,
+                false,tb ? Gecode::ICL_DEF : Gecode::ICL_DOM),
+           tiebreak(tb)  {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < 0) || (x[n] >= n))
+           return false;
+         int m=x[0]; int p=0;
+         for (int i=1; i<n; i++)
+           if (x[i] < m) {
+             p=i; m=x[i];
+           }
+         return tiebreak ? (p == x[n]) : (m == x[x[n]]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::IntVarArgs m(n);
+         for (int i=0; i<n; i++)
+           m[i]=x[i];
+         Gecode::argmin(home, m, x[n], tiebreak);
+       }
+     };
+
+     /// %Test for argument minimum constraint with shared variables
+     class ArgMinShared : public Test {
+     protected:
+       /// Whether to use tie-breaking
+       bool tiebreak;
+     public:
+       /// Create and register test
+       ArgMinShared(int n, bool tb)
+         : Test("Arithmetic::ArgMin::Shared::"+str(tb)+"::"+str(n),n+1,0,n+1,
+                false),
+           tiebreak(tb) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n=x.size()-1;
+         if ((x[n] < 0) || (x[n] >= 2*n))
+           return false;
+         Gecode::IntArgs y(2*n);
+         for (int i=0; i<n; i++)
+           y[2*i+0]=y[2*i+1]=x[i];
+         int m=y[0]; int p=0;
+         for (int i=1; i<2*n; i++)
+           if (y[i] < m) {
+             p=i; m=y[i];
+           }
+         return tiebreak ? (p == x[n]) : (m == y[x[n]]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         int n=x.size()-1;
+         Gecode::IntVarArgs m(2*n);
+         for (int i=0; i<n; i++)
+           m[2*i+0]=m[2*i+1]=x[i];
+         Gecode::argmin(home, m, x[n], tiebreak);
+       }
+     };
+
+
 
      /// Help class to create and register tests
      class Create {
@@ -910,6 +1049,16 @@ namespace Test { namespace Int {
              (void) new MaxNary(icls.icl());
              (void) new MaxNaryShared(icls.icl());
            }
+         for (int i=1; i<5; i++) {
+           (void) new ArgMax(i,true);
+           (void) new ArgMaxShared(i,true);
+           (void) new ArgMin(i,true);
+           (void) new ArgMinShared(i,true);
+           (void) new ArgMax(i,false);
+           (void) new ArgMaxShared(i,false);
+           (void) new ArgMin(i,false);
+           (void) new ArgMinShared(i,false);
+         }
        }
      };
 

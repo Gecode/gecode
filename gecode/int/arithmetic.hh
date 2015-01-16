@@ -42,6 +42,7 @@
 
 #include <gecode/int.hh>
 
+#include <gecode/int/idx-view.hh>
 #include <gecode/int/rel.hh>
 #include <gecode/int/linear.hh>
 
@@ -247,6 +248,50 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 }}}
 
 #include <gecode/int/arithmetic/max.hpp>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /**
+   * \brief Argument maximum propagator
+   *
+   * Tiebreaking is used if \a tiebreak is true and views can be shared
+   * if \a shread is true.
+   *
+   * Requires \code #include <gecode/int/arithmetic.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class VA, class VB, bool tiebreak>
+  class ArgMax : public Propagator { 
+  protected:
+    /// Map of index and views
+    IdxViewArray<VA> x;
+    /// Position of maximum view (maximal argument)
+    VB y;
+    /// Constructor for cloning \a p
+    ArgMax(Space& home, bool share, ArgMax& p);
+    /// Constructor for posting
+    ArgMax(Home home, IdxViewArray<VA>& x, VB y);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    // Cost function (defined as low linear)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+    /**
+     * \brief Post propagator \f$ \operatorname{argmax} x=y\f$
+     *
+     * Note that \a y must be constrained to be in the proper range
+     * for the index values in \a x.
+     */
+    static  ExecStatus post(Home home, IdxViewArray<VA>& x, VB y);
+  };
+
+}}}
+
+#include <gecode/int/arithmetic/argmax.hpp>
 
 namespace Gecode { namespace Int { namespace Arithmetic {
 

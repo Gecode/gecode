@@ -73,6 +73,13 @@ Date: 2014-11-06
 Gaga!
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added argmin and argmax constraints.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor

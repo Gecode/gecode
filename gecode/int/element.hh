@@ -42,6 +42,7 @@
 
 #include <gecode/int.hh>
 #include <gecode/int/rel.hh>
+#include <gecode/int/idx-view.hh>
 
 /**
  * \namespace Gecode::Int::Element
@@ -195,62 +196,6 @@ namespace Gecode { namespace Int { namespace Element {
   template<class V0, class V1>
   ExecStatus post_int(Home home, IntSharedArray& c, V0 x0, V1 x1);
 
-
-  /**
-   * \brief Class for index-view map
-   *
-   */
-  template<class ViewB> class IdxView;
-
-  /// Class to get VarArg type for view
-  template<class View>
-  class ViewToVarArg {};
-
-  /**
-   * \brief An array of IndexView pairs
-   *
-   */
-  template<class View>
-  class IdxViewArray {
-  private:
-    /// The actual array
-    IdxView<View>* xs;
-    /// The size of the array
-    int n;
-  public:
-    /// Default constructor
-    IdxViewArray(void);
-    /// Copy constructor
-    IdxViewArray(const IdxViewArray<View>&);
-    /// Construct an IdxViewArray from \a x
-    IdxViewArray(Space& home, const typename ViewToVarArg<View>::argtype& x);
-    /// Construct an IdxViewArray of size \a n
-    IdxViewArray(Space& home, int n);
-
-    /// Return the current size
-    int size(void) const;
-    /// Set the size to \a n
-    void size(int n);
-
-    /// Access element \a n
-    IdxView<View>& operator [](int n);
-    /// Access element \a n
-    const IdxView<View>& operator [](int) const;
-
-    /**
-     * Subscribe propagator \a p with propagation condition \a pc
-     * to all elements of the array.
-     */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
-    /**
-     * Cancel subscription of propagator \a p with propagation condition \a pc
-     * for all elements of the array.
-     */
-    void cancel(Space& home, Propagator& p, PropCond pc);
-
-    /// Cloning
-    void update(Space& home, bool share, IdxViewArray<View>& x);
-  };
 
   /**
    * \brief Base-class for element propagator for array of views

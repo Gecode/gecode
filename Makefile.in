@@ -319,10 +319,10 @@ INTSRC0 = \
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
-	div.hh div.hpp \
+	idx-view.hh idx-view.hpp div.hh div.hpp \
 	exec.hh exec/when.hpp \
-	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/mult.hpp \
-	arithmetic/divmod.hpp \
+	arithmetic/abs.hpp arithmetic/max.hpp arithmetic/argmax.hpp \
+	arithmetic/mult.hpp arithmetic/divmod.hpp \
 	arithmetic/pow-ops.hpp arithmetic/pow.hpp arithmetic/nroot.hpp \
 	bool/or.hpp bool/eq.hpp bool/lq.hpp bool/eqv.hpp bool/base.hpp \
 	bool/clause.hpp bool/ite.hpp \
@@ -1057,18 +1057,6 @@ else
 SETTESTOBJ=
 endif
 
-BRANCHTESTSRC0 = \
-	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
-	test/branch/set.cpp test/branch/float.cpp \
-	test/assign.cpp test/assign/int.cpp test/assign/bool.cpp \
-	test/assign/set.cpp test/assign/float.cpp
-
-SEARCHTESTSRC0 = \
-	test/search.cpp test/nogoods.cpp
-
-ARRAYTESTSRC0 = \
-	test/array.cpp
-
 FLATZINCTESTSRC0 = \
   test/flatzinc.cpp \
   test/flatzinc/bool_clause.cpp \
@@ -1157,6 +1145,24 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/timetabling.cpp \
   test/flatzinc/trucking.cpp
 
+ifeq "@enable_flatzinc@" "yes"
+FLATZINCTESTOBJ = $(FLATZINCTESTSRC0:%.cpp=%$(OBJSUFFIX))
+else
+FLATZINCTESTOBJ=
+endif
+
+BRANCHTESTSRC0 = \
+	test/branch.cpp test/branch/int.cpp test/branch/bool.cpp \
+	test/branch/set.cpp test/branch/float.cpp \
+	test/assign.cpp test/assign/int.cpp test/assign/bool.cpp \
+	test/assign/set.cpp test/assign/float.cpp
+
+SEARCHTESTSRC0 = \
+	test/search.cpp test/nogoods.cpp
+
+ARRAYTESTSRC0 = \
+	test/array.cpp
+
 TESTSRC0 = test/test.cpp test/afc.cpp test/brancher-handle.cpp test/ldsb.cpp
 
 TESTSRC = \
@@ -1169,10 +1175,10 @@ TESTHDR0 = \
 	branch.hh assign.hh flatzinc.hh
 TESTHDR = $(TESTHDR0:%=test/%)
 TESTOBJ	= $(INTTESTOBJ) $(SETTESTOBJ) $(FLOATTESTOBJ) \
+	$(FLATZINCTESTOBJ:%.cpp=%$(OBJSUFFIX)) \
 	$(BRANCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(SEARCHTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(ARRAYTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
-  $(FLATZINCTESTSRC0:%.cpp=%$(OBJSUFFIX)) \
 	$(TESTSRC0:%.cpp=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTOBJ:%$(OBJSUFFIX)=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)

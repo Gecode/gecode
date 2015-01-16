@@ -39,11 +39,10 @@
 
 namespace Gecode {
 
-  using namespace Int;
-
   void
   element(Home home, IntSharedArray c, IntVar x0, IntVar x1,
           IntConLevel) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
@@ -55,6 +54,7 @@ namespace Gecode {
   void
   element(Home home, IntSharedArray c, IntVar x0, BoolVar x1,
           IntConLevel) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
@@ -66,6 +66,7 @@ namespace Gecode {
   void
   element(Home home, IntSharedArray c, IntVar x0, int x1,
           IntConLevel) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
@@ -80,10 +81,11 @@ namespace Gecode {
   void
   element(Home home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
-    Element::IdxViewArray<IntView> iv(home,c);
+    IdxViewArray<IntView> iv(home,c);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,x0,x1)));
@@ -96,11 +98,12 @@ namespace Gecode {
   void
   element(Home home, const IntVarArgs& c, IntVar x0, int x1,
           IntConLevel icl) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
-    Element::IdxViewArray<IntView> iv(home,c);
+    IdxViewArray<IntView> iv(home,c);
     ConstIntView v1(x1);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
@@ -114,10 +117,11 @@ namespace Gecode {
   void
   element(Home home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
-    Element::IdxViewArray<BoolView> iv(home,c);
+    IdxViewArray<BoolView> iv(home,c);
     GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,BoolView>
                          ::post(home,iv,x0,x1)));
   }
@@ -125,11 +129,12 @@ namespace Gecode {
   void
   element(Home home, const BoolVarArgs& c, IntVar x0, int x1,
           IntConLevel) {
+    using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
     if (home.failed()) return;
-    Element::IdxViewArray<BoolView> iv(home,c);
+    IdxViewArray<BoolView> iv(home,c);
     ConstIntView v1(x1);
     GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,ConstIntView>
                          ::post(home,iv,x0,v1)));
@@ -139,7 +144,7 @@ namespace Gecode {
     IntVar
     pair(Home home, IntVar x, int w, IntVar y, int h) {
       IntVar xy(home,0,w*h-1);
-      if (Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
+      if (Int::Element::Pair::post(home,x,y,xy,w,h) != ES_OK)
         home.fail();
       return xy;
     }
@@ -149,6 +154,7 @@ namespace Gecode {
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl) {
+    using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
@@ -159,6 +165,7 @@ namespace Gecode {
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl) {
+    using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
@@ -169,6 +176,7 @@ namespace Gecode {
   element(Home home, const IntVarArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntConLevel icl) {
+    using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
@@ -179,6 +187,7 @@ namespace Gecode {
   element(Home home, const BoolVarArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntConLevel icl) {
+    using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
