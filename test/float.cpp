@@ -42,6 +42,7 @@
 #include "test/float.hh"
 
 #include <algorithm>
+#include <iomanip>
 
 namespace Test { namespace Float {
 
@@ -202,9 +203,9 @@ namespace Test { namespace Float {
   bool 
   TestSpace::matchAssignment(const Assignment& a) const {
     for (int i=x.size(); i--; )
-      if ((x[i].min() != a[i].min()) || (x[i].max() != a[i].max()))
+      if ((x[i].min() < a[i].min()) && (x[i].max() > a[i].max()))
         return false;
-      return true;
+    return true;
   }
   
   void 
