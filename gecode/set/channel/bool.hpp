@@ -101,8 +101,13 @@ namespace Gecode { namespace Set { namespace Channel {
       if (assigned)
         Gecode::Int::BoolView::schedule(home, *this, Gecode::Int::ME_BOOL_VAL);
       View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
-      if (y.assigned())
-        new (&delta) SetDelta(y.glbMin(),y.glbMax(),1,0);
+      if (y.assigned()) {
+        if (y.glbSize() == y.glbMax()-y.glbMin()+1) {
+          new (&delta) SetDelta(y.glbMin(),y.glbMax(),1,0);
+        } else {
+          new (&delta) SetDelta(2,0,1,0);
+        }
+      }
       (void) new (home) IndexAdvisor(home,*this,co,-1);
     }
 
@@ -197,7 +202,7 @@ namespace Gecode { namespace Set { namespace Channel {
   ChannelBool<View>::advise(Space& home, Advisor& _a, const Delta& _d) {
     IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);
     const SetDelta& d = static_cast<const SetDelta&>(_d);
-
+    
     ModEvent me = View::modevent(d);
     int index = a.index();
     if ( (running && index == -1 && me != ME_SET_VAL)
@@ -272,7 +277,6 @@ namespace Gecode { namespace Set { namespace Channel {
         }
       }
     }
-
     if (y.assigned())
       return home.ES_NOFIX_DISPOSE( co, a);
     else
