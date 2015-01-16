@@ -358,6 +358,8 @@ namespace Test { namespace Float {
     case 0:
       if (a[i].max() < x[i].max()) {
         Gecode::FloatNum v=randFValDown(a[i].max(),x[i].max());
+        if (v==x[i].max())
+          v = a[i].max();
         assert((v >= a[i].max()) && (v <= x[i].max()));
         rel(i, Gecode::FRT_LQ, v);
       }
@@ -365,6 +367,8 @@ namespace Test { namespace Float {
     case 1:
       if (a[i].min() > x[i].min()) {
         Gecode::FloatNum v=randFValUp(x[i].min(),a[i].min());
+        if (v==x[i].min())
+          v = a[i].min();
         assert((v <= a[i].min()) && (v >= x[i].min()));
         rel(i, Gecode::FRT_GQ, v);
       }
