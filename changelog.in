@@ -73,6 +73,13 @@ Date: 2014-11-06
 Gaga!
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add support for arg_min and arg_max constraints.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

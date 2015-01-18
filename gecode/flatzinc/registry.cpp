@@ -1026,6 +1026,16 @@ namespace Gecode { namespace FlatZinc {
       max(s, iv, s.arg2IntVar(ce[0]), s.ann2icl(ann));
     }
 
+    void p_minimum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      argmin(s, iv, s.arg2IntVar(ce[1]), true, s.ann2icl(ann));
+    }
+
+    void p_maximum_arg(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVarArgs iv = s.arg2intvarargs(ce[0]);
+      argmax(s, iv, s.arg2IntVar(ce[1]), true, s.ann2icl(ann));
+    }
+
     void p_regular(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = s.arg2intvarargs(ce[0]);
       int q = ce[1]->getInt();
@@ -1543,6 +1553,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("global_cardinality_low_up_closed", 
           &p_global_cardinality_low_up_closed);
         registry().add("array_int_minimum", &p_minimum);
+        registry().add("array_int_maximum", &p_maximum);
+        registry().add("gecode_minimum_arg_int", &p_minimum_arg);
+        registry().add("gecode_maximum_arg_int", &p_maximum_arg);
         registry().add("array_int_maximum", &p_maximum);
         registry().add("regular", &p_regular);
         registry().add("sort", &p_sort);
