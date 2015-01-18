@@ -41,14 +41,14 @@
 
 namespace Gecode {
 
-  namespace Int { namespace Element {
+  namespace Int {
     template<>
     /// VarArg type for constant %Set views
     class ViewToVarArg<Gecode::Set::ConstSetView> {
     public:
       typedef IntSetArgs argtype;
     };
-  }}
+  }
 
   using namespace Gecode::Set;
 
