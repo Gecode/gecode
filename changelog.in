@@ -68,16 +68,17 @@
 
 [RELEASE]
 Version: 4.3.3
-Date: 2014-11-06
+Date: 2015-01-20
 [DESCRIPTION]
-Gaga!
+This release adds support for LNS to FlatZinc, adds support for
+MiniZinc 2, fixes a number of bugs and some new constraints.
 
 [ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Add support for arg_min and arg_max constraints.
+Added support for arg_min and arg_max constraints.
 
 [ENTRY]
 Module: int
@@ -89,7 +90,7 @@ Added argmin and argmax constraints.
 [ENTRY]
 Module: search
 What:   bug
-Rank:   minor
+Rank:   major
 Thanks: Zichen Zhu
 [DESCRIPTION]
 Now no-goods are extracted properly in case a solution is found.
@@ -184,6 +185,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Add support for gecode_schedule_cumulative_optional constraint.
+
 
 [RELEASE]
 Version: 4.3.2
