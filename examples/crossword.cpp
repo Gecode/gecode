@@ -182,6 +182,14 @@ public:
       << ((a == 0) ? "<=" : ">") << " "
       << n;
   }
+  /// Do not perform a restart when a solution is found
+  bool master(const CRI& cri) {
+    // Post no-goods
+    cri.nogoods().post(*this);
+    // Do not perform a restart if a solution has been found
+    return false;
+  }
+
   /// Constructor for cloning \a s
   Crossword(bool share, Crossword& s) 
     : Script(share,s), w(s.w), h(s.h) {
