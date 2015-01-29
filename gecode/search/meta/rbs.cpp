@@ -42,43 +42,47 @@ namespace Gecode { namespace Search { namespace Meta {
 
   Space*
   RBS::next(void) {
+    if (restart) {
+      restart = false;
+      sslr++;
+      NoGoods& ng = e->nogoods();
+      // Reset number of no-goods found
+      ng.ng(0);
+      CRI cri(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
+      bool r = master->master(cri);
+      stop->m_stat.nogood += ng.ng();
+      if (master->status(stop->m_stat) == SS_FAILED) {
+        stop->update(e->statistics());
+        delete master;
+        master = NULL;
+        e->reset(NULL);
+        return NULL;
+      } else if (r) {
+        stop->update(e->statistics());
+        Space* slave = master;
+        master = master->clone(shared);
+        complete = slave->slave(cri);
+        e->reset(slave);
+        sslr = 0;
+        stop->m_stat.restart++;
+      }
+    }
     while (true) {
       Space* n = e->next();
-      // The number of the restart has been incremented in the stop object
-      unsigned long int i = stop->m_stat.restart;
       if (n != NULL) {
-        sslr++;
         // The engine found a solution
-        NoGoods& ng = e->nogoods();
-        // Reset number of no-goods found
-        ng.ng(0);
-        CRI cri(i,sslr,e->statistics().fail,n,ng);
-        bool restart = master->master(cri);
-        stop->m_stat.nogood += ng.ng();
-        if (master->status(stop->m_stat) == SS_FAILED) {
-          stop->update(e->statistics());
-          delete master;
-          master = NULL;
-          e->reset(NULL);
-        } else if (restart) {
-          stop->update(e->statistics());
-          Space* slave = master;
-          master = master->clone(shared);
-          complete = slave->slave(cri);
-          e->reset(slave);
-          sslr = 0;
-          stop->m_stat.restart++;
-        }
+        restart = true;
         delete last;
         last = n->clone();
         return n;
       } else if ( (!complete && !e->stopped()) ||
                   (e->stopped() && stop->enginestopped()) ) {
         // The engine must perform a true restart
+        // The number of the restart has been incremented in the stop object
         sslr = 0;
         NoGoods& ng = e->nogoods();
         ng.ng(0);
-        CRI cri(i,sslr,e->statistics().fail,last,ng);
+        CRI cri(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
         (void) master->master(cri);
         stop->m_stat.nogood += ng.ng();
         long unsigned int nl = ++(*co);

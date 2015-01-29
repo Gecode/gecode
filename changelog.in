@@ -72,6 +72,14 @@ Date: 2015-01-20
 [DESCRIPTION]
 Yada! Yada!
 
+[ENTRY]
+Module: search
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Delay efforts for restarting until it is really needed after a
+solution has been found.
+
 
 [RELEASE]
 Version: 4.3.3
