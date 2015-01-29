@@ -73,6 +73,13 @@ Date: 2015-01-20
 Yada! Yada!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added quasigroup completion benchmarks.
+
+[ENTRY]
 Module: search
 What:   performance
 Rank:   minor
