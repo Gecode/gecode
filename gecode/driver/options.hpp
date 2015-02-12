@@ -221,6 +221,15 @@ namespace Gecode {
     return _decay.value();
   }
   
+  inline void
+  Options::seed(unsigned int s) {
+    _seed.value(s);
+  }
+  inline unsigned int
+  Options::seed(void) const {
+    return _seed.value();
+  }
+  
   
   /*
    * Search options

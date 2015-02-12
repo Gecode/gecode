@@ -327,12 +327,13 @@ namespace Gecode {
   protected:    
     /// \name Model options
     //@{
-    Driver::StringOption _model;       ///< General model options
-    Driver::StringOption _symmetry;    ///< General symmetry options
-    Driver::StringOption _propagation; ///< Propagation options
-    Driver::StringOption _icl;         ///< Integer consistency level
-    Driver::StringOption _branching;   ///< Branching options
-    Driver::DoubleOption _decay;       ///< Decay option
+    Driver::StringOption      _model;       ///< General model options
+    Driver::StringOption      _symmetry;    ///< General symmetry options
+    Driver::StringOption      _propagation; ///< Propagation options
+    Driver::StringOption      _icl;         ///< Integer consistency level
+    Driver::StringOption      _branching;   ///< Branching options
+    Driver::DoubleOption      _decay;       ///< Decay option
+    Driver::UnsignedIntOption _seed;        ///< Seed option
     //@}
     
     /// \name Search options
@@ -406,6 +407,11 @@ namespace Gecode {
     void decay(double d);
     /// Return decay factor
     double decay(void) const;
+
+    /// Set default seed value
+    void seed(unsigned int s);
+    /// Return seed value
+    unsigned int seed(void) const;
     //@}
     
     /// \name Search options
