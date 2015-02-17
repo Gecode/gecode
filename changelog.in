@@ -73,6 +73,14 @@ Date: 2015-01-20
 Yada! Yada!
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+LNS could fail when the search was restarted before finding the first solution.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major
