@@ -90,6 +90,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     path.reset();
     d = 0;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+      delete s;
       cur = NULL;
     } else {
       cur = s;

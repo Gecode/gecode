@@ -73,6 +73,15 @@ Date: 2015-01-20
 Yada! Yada!
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+Thanks: Håkan Kjellerstrand
+[DESCRIPTION]
+Fix memory leak in the DFS and BAB search engines that could make restart-based
+search run out of memory very quickly.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor

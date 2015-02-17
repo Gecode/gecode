@@ -176,6 +176,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     d = mark = 0U;
     delete cur;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
+      delete s;
       cur = NULL;
     } else {
       cur = s;
