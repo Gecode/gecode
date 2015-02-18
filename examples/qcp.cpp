@@ -42,12 +42,37 @@
 
 using namespace Gecode;
 
-// Instance data
+/// Instance data
 namespace {
 
-  // Instances
+ 
+  /// %Options for %QCP problems
+  class QCPOptions : public InstanceOptions {
+  protected:
+    /// Tie-breaking factor
+    Driver::DoubleOption _tbf;
+  public:
+    /// Initialize options for example with name \a s
+    QCPOptions(const char* s)
+    : InstanceOptions(s),
+      _tbf("-tbf", "tie-breaking factor",0.0) {
+      // Add options
+      add(_tbf);
+    }
+    /// Return tie-breaking limit
+    double tbf(void) const { 
+      return _tbf.value(); 
+    }
+    /// Set tie-breaking limit
+    void tbf(double d) {
+      _tbf.value(d);
+    }
+  };
+
+
+  /// Instances
   extern const int* qcp[];
-  // Instance names
+  /// Instance names
   extern const char* name[];
 
   /// A wrapper class for instance data
@@ -106,6 +131,8 @@ protected:
   const Spec spec;
   /// Field elements e
   IntVarArray e;
+  /// Tie-breaking factor
+  double tbf;
 public:
   /// Propagation to use for model
   enum {
@@ -118,9 +145,10 @@ public:
     BRANCH_AFC_SIZE, ///< Use largest AFC divided by domain size
   };
   /// Actual model
-  QCP(const InstanceOptions& opt) 
+  QCP(const QCPOptions& opt) 
     : spec(opt.instance()),
-      e(*this, spec.size() * spec.size(), 0, spec.size()-1) {
+      e(*this, spec.size() * spec.size(), 0, spec.size()-1),
+      tbf(opt.tbf()) {
     // Problem size
     int n = spec.size();
     // Matrix for elements
@@ -150,18 +178,55 @@ public:
       break;
     }
 
-    switch (opt.branching()) {
-    case BRANCH_SIZE:
-      branch(*this, e, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-      break;
-    case BRANCH_AFC_SIZE:
-      branch(*this, e, INT_VAR_AFC_SIZE_MAX(), INT_VAL_MIN());
-      break;
+    if (tbf > 0.0) {
+      Rnd r(opt.seed());
+      switch (opt.branching()) {
+      case BRANCH_SIZE:
+        branch(*this, e, tiebreak(INT_VAR_SIZE_MIN(&tbl_min),
+                                  INT_VAR_RND(r)),
+               INT_VAL_MIN());
+        break;
+      case BRANCH_AFC_SIZE: 
+        {
+          IntAFC afc(*this, e, opt.decay());
+          branch(*this, e, tiebreak(INT_VAR_AFC_SIZE_MAX(afc, &tbl_max), 
+                                    INT_VAR_RND(r)),
+                 INT_VAL_MIN());
+          break;
+        }
+      }
+    } else {
+      switch (opt.branching()) {
+      case BRANCH_SIZE:
+        branch(*this, e, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+        break;
+      case BRANCH_AFC_SIZE:
+        branch(*this, e, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+        break;
+      }
     }
+  }
+  /// Tie-breaking minimum limit function
+  double _tbl_min(double w, double b) const {
+    assert(w >= b);
+    return b + (w - b) * tbf;
+  }
+  /// Tie-breaking minimum limit function
+  static double tbl_min(const Space& home, double w, double b) {
+    return static_cast<const QCP&>(home)._tbl_min(w,b);
+  }
+  /// Tie-breaking maximum limit function
+  double _tbl_max(double w, double b) const {
+    assert(b >= w);
+    return b - (b - w) * tbf;
+  }
+  /// Tie-breaking maximum limit function
+  static double tbl_max(const Space& home, double w, double b) {
+    return static_cast<const QCP&>(home)._tbl_max(w,b);
   }
   /// Constructor for cloning \a s
   QCP(bool share, QCP& s) 
-    : Script(share,s), spec(s.spec) {
+    : Script(share,s), spec(s.spec), tbf(s.tbf) {
     e.update(*this, share, s.e);
   }
   /// Copy during cloning
@@ -192,7 +257,7 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  InstanceOptions opt("QCP");
+ QCPOptions opt("QCP");
 
   opt.branching(QCP::BRANCH_AFC_SIZE);
   opt.branching(QCP::BRANCH_SIZE, "size");
@@ -211,7 +276,7 @@ main(int argc, char* argv[]) {
     std::cerr << "Error: unkown instance" << std::endl;
     return 1;
   }
-  Script::run<QCP,DFS,InstanceOptions>(opt);
+  Script::run<QCP,DFS,QCPOptions>(opt);
   return 0;
 }
 
