@@ -59,6 +59,11 @@ private:
   IntVarArray x;
 
 public:
+  /// Branching to use for model
+  enum {
+    BRANCH_SIZE,    ///< Branch by size
+    BRANCH_AFC_SIZE ///< Branch by size over AFC
+  };
   /// Post constraints
   MagicSquare(const SizeOptions& opt)
     : n(opt.size()), x(*this,n*n,1,n*n) {
@@ -94,7 +99,14 @@ public:
     rel(*this, m(0,0), IRT_GR, m(0,n-1));
     rel(*this, m(0,0), IRT_GR, m(n-1,0));
 
-    branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
+    switch (opt.branching()) {
+    case BRANCH_SIZE:
+      branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
+      break;
+    case BRANCH_AFC_SIZE:
+      branch(*this, x, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
+      break;
+    }
   }
 
   /// Constructor for cloning \a s
@@ -132,6 +144,9 @@ main(int argc, char* argv[]) {
   SizeOptions opt("MagicSquare");
   opt.iterations(1);
   opt.size(7);
+  opt.branching(MagicSquare::BRANCH_SIZE);
+  opt.branching(MagicSquare::BRANCH_SIZE, "size");
+  opt.branching(MagicSquare::BRANCH_AFC_SIZE, "afc-size");
   opt.parse(argc,argv);
   Script::run<MagicSquare,DFS,SizeOptions>(opt);
   return 0;
