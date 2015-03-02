@@ -58,7 +58,7 @@ namespace Gecode { namespace Search { namespace Sequential {
    * clone is created.
    *
    */
-  class Path : public NoGoods {
+  class GECODE_VTABLE_EXPORT Path : public NoGoods {
     friend class Search::Meta::NoGoodsProp;
   public:
     /// %Search tree edge for recomputation
@@ -136,7 +136,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Reset stack
     void reset(void);
     /// Post no-goods
-    void virtual post(Space& home) const;
+    GECODE_SEARCH_EXPORT virtual void post(Space& home) const;
   };
 
 

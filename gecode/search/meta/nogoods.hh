@@ -43,7 +43,7 @@
 namespace Gecode { namespace Search { namespace Meta {
 
   /// Class for a sentinel no-good literal
-  class NoNGL : public NGL {
+  class GECODE_VTABLE_EXPORT NoNGL : public NGL {
   public:
     /// Constructor for creation
     NoNGL(void);
@@ -64,7 +64,7 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
   /// No-good propagator
-  class NoGoodsProp : public Propagator {
+  class GECODE_SEARCH_EXPORT NoGoodsProp : public Propagator {
   protected:
     /// Root of no-good literal tree
     NGL* root;
