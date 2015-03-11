@@ -1,9 +1,11 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
+ *     Christian Schulte, 2014
  *     Guido Tack, 2012
  *
  *  Last modified:
@@ -69,24 +71,6 @@ namespace Gecode {
     Search::Engine* ee = eb->e;
     eb->e = NULL;
     e = new Search::Meta::RBS(master,rs,ee,m_opt);
-  }
-
-  template<template<class> class E, class T>
-  forceinline T*
-  RBS<E,T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-
-  template<template<class> class E, class T>
-  forceinline Search::Statistics
-  RBS<E,T>::statistics(void) const {
-    return e->statistics();
-  }
-
-  template<template<class> class E, class T>
-  forceinline bool
-  RBS<E,T>::stopped(void) const {
-    return e->stopped();
   }
 
 

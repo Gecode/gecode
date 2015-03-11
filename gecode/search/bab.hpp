@@ -52,31 +52,6 @@ namespace Gecode {
     : EngineBase(Search::bab(s,o)) {}
 
   template<class T>
-  forceinline T*
-  BAB<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-
-  template<class T>
-  forceinline Search::Statistics
-  BAB<T>::statistics(void) const {
-    return e->statistics();
-  }
-
-  template<class T>
-  forceinline bool
-  BAB<T>::stopped(void) const {
-    return e->stopped();
-  }
-
-  template<class T>
-  forceinline NoGoods&
-  BAB<T>::nogoods(void) {
-    return e->nogoods();
-  }
-
-
-  template<class T>
   T*
   bab(T* s, const Search::Options& o) {
     BAB<T> b(s,o);

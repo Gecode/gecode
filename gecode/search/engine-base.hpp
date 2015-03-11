@@ -41,12 +41,44 @@
 
 namespace Gecode { namespace Search {
 
+  template<class T>
   forceinline
-  EngineBase::EngineBase(Search::Engine* e0) 
+  EngineBase<T>::EngineBase(Engine* e0) 
     : e(e0) {}
+  template<class T>
+  forceinline T*
+  EngineBase<T>::next(void) {
+    return dynamic_cast<T*>(e->next());
+  }
+  template<class T>
+  forceinline Statistics
+  EngineBase<T>::statistics(void) const {
+    return e->statistics();
+  }
+  template<class T>
+  forceinline bool
+  EngineBase<T>::stopped(void) const {
+    return e->stopped();
+  }
+  template<class T>
+  forceinline NoGoods&
+  EngineBase<T>::nogoods(void) {
+    return e->nogoods();
+  }
+  template<class T>
   forceinline
-  EngineBase::~EngineBase(void) { 
+  EngineBase<T>::~EngineBase(void) { 
     delete e; 
+  }
+  template<class T>
+  forceinline void*
+  EngineBase<T>::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  template<class T>
+  forceinline void
+  EngineBase<T>::operator delete(void* p) {
+    heap.rfree(p);
   }
 
 }}

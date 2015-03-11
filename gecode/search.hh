@@ -635,16 +635,34 @@ namespace Gecode {
 namespace Gecode { namespace Search {
 
   /// Base-class for search engines
+  template<class T>
   class EngineBase {
     template<template<class>class,class> friend class ::Gecode::RBS;
   protected:
     /// The actual search engine
-    Search::Engine* e;
+    Engine* e;
     /// Constructor
-    EngineBase(Search::Engine* e = NULL);
+    EngineBase(Engine* e = NULL);
   public:
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual T* next(void);
+    /// Return statistics
+    virtual Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+    /// Reset engine to restart at space \a s (does nothing)
+    virtual void reset(Space* s);
+    /// Return no-goods (the no-goods are empty)
+    virtual NoGoods& nogoods(void);
     /// Destructor
-    ~EngineBase(void);
+    virtual ~EngineBase(void);
+    /// \name Memory management
+    //@{
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+    //@}
   };
 
 }}
@@ -662,18 +680,10 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class DFS : public Search::EngineBase {
+  class DFS : public Search::EngineBase<T> {
   public:
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
-    /// Return next solution (NULL, if none exists or search has been stopped)
-    T* next(void);
-    /// Return statistics
-    Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    bool stopped(void) const;
-    /// Return no-goods
-    NoGoods& nogoods(void);
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
@@ -698,7 +708,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class BAB : public Search::EngineBase {
+  class BAB : public Search::EngineBase<T> {
   public:
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
@@ -752,28 +762,22 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<template<class> class E, class T>
-  class RBS : public Search::EngineBase {
+  class RBS : public Search::EngineBase<T> {
   public:
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o);
-    /// Return next solution (NULL, if non exists or search has been stopped)
-    T* next(void);
-    /// Return statistics
-    Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    bool stopped(void) const;
   };
 
   /**
    * \brief Perform restart-based search
    *
    * The engine uses the Cutoff sequence supplied in the options \a o to
-   * periodically restart the search of an engine of type \a E.
+   * periodically restart the search of engine \a E.
    *
    * The class \a T can implement member functions
-   * \code virtual void master(unsigned long int i, const Space* s) \endcode
+   * \code virtual bool master(const CRI& cri) \endcode
    * and
-   * \code virtual void slave(unsigned long int i, const Space* s) \endcode
+   * \code virtual bool slave(const CRI& cri) \endcode
    *
    * Whenever exploration restarts or a solution is found, the
    * engine executes the functions on the master and slave
