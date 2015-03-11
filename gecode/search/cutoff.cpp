@@ -44,9 +44,6 @@
 
 namespace Gecode { namespace Search {
 
-  forceinline
-  CutoffConstant::CutoffConstant(unsigned long int c0) 
-    : c(c0) {}
   unsigned long int 
   CutoffConstant::operator ()(void) const {
     return c;
@@ -57,9 +54,6 @@ namespace Gecode { namespace Search {
   }
   
   
-  forceinline
-  CutoffLinear::CutoffLinear(unsigned long int s) 
-    : scale(s), n(0) {}
   unsigned long int 
   CutoffLinear::operator ()(void) const {
     return n;
@@ -76,30 +70,6 @@ namespace Gecode { namespace Search {
     1,1,2,1,1,2,4,1,1,2,1,1,2,4,8,1,1,2,1,1,2,4,1,1,2,1,1,2,4,8,16,
     1,1,2,1,1,2,4,1,1,2,1,1,2,4,8,1,1,2,1,1,2,4,1,1,2,1,1,2,4,8,16,32
   };
-  forceinline
-  CutoffLuby::CutoffLuby(unsigned long int scale0) 
-    : i(1U), scale(scale0) {}
-  forceinline unsigned long int 
-  CutoffLuby::log(unsigned long int i) {
-    if (i == 1U)
-      return 0U;
-    unsigned long int exp = 0U;
-    while ( (i >> (++exp)) > 1U ) {}
-    return exp;
-  }
-  forceinline unsigned long int 
-  CutoffLuby::luby(unsigned long int i) {
-    while (true) {
-      if (i <= n_start)
-        return start[i-1];
-      unsigned long int l = log(i);
-      if (i == (1U<<(l+1))-1)
-        return 1UL<<l;
-      i=i-(1U<<l)+1;
-    }
-    GECODE_NEVER;
-    return 0;
-  }
   unsigned long int 
   CutoffLuby::operator ()(void) const {
     return scale*luby(i);
@@ -110,9 +80,6 @@ namespace Gecode { namespace Search {
   }
 
 
-  forceinline
-  CutoffGeometric::CutoffGeometric(unsigned long int scale0, double base0) 
-    : n(1.0), scale(static_cast<double>(scale0)), base(base0) {}
   unsigned long int 
   CutoffGeometric::operator ()(void) const {
     return scale * n;
@@ -129,25 +96,12 @@ namespace Gecode { namespace Search {
     cur = min+step*rnd(n);
     return cur;
   }
-  forceinline
-  CutoffRandom::CutoffRandom(unsigned int seed, 
-                             unsigned long int min0, 
-                             unsigned long int max0, 
-                             unsigned long int n0)
-      : rnd(seed), min(min0), n(n0 == 0 ? (max0-min+1U) : n0), 
-        step(std::max(1UL,
-                      static_cast<unsigned long int>((max0-min0+1U)/n))) {
-    cur = ++(*this);
-  }
   unsigned long int 
   CutoffRandom::operator ()(void) const {
     return cur;
   }
   
 
-  forceinline
-  CutoffAppend::CutoffAppend(Cutoff* d1, unsigned long int n0, Cutoff* d2) 
-    : c1(d1), c2(d2), n(n0) {}
   unsigned long int 
   CutoffAppend::operator ()(void) const {
     if (n > 0) {
@@ -165,15 +119,8 @@ namespace Gecode { namespace Search {
       return ++(*c2);
     }
   }
-  forceinline
-  CutoffAppend::~CutoffAppend(void) {
-    delete c1; delete c2;
-  }
 
 
-  forceinline
-  CutoffMerge::CutoffMerge(Cutoff* d1, Cutoff* d2) 
-    : c1(d1), c2(d2) {}
   unsigned long int 
   CutoffMerge::operator ()(void) const {
     return (*c1)();
@@ -184,17 +131,8 @@ namespace Gecode { namespace Search {
     std::swap(c1,c2);
     return (*c1)();
   }
-  forceinline
-  CutoffMerge::~CutoffMerge(void) {
-    delete c1; delete c2;
-  }
 
 
-  forceinline
-  CutoffRepeat::CutoffRepeat(Cutoff* c1, unsigned long int n0)
-    : c(c1), i(0), n(n0) {
-    cutoff = (*c)();
-  }
   unsigned long int
   CutoffRepeat::operator ()(void) const {
     return cutoff;
@@ -207,10 +145,6 @@ namespace Gecode { namespace Search {
       i = 0;
     }
     return cutoff;
-  }
-  forceinline
-  CutoffRepeat::~CutoffRepeat(void) {
-    delete c;
   }
   
   

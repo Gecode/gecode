@@ -39,6 +39,24 @@
 
 namespace Gecode { namespace Search {
 
+   /*
+    * Creation functions for stop objects
+    *
+    */
+  Stop*
+  Stop::node(unsigned long int l) {
+    return new NodeStop(l);
+  }
+  Stop*
+  Stop::fail(unsigned long int l) {
+    return new FailStop(l);
+  }
+  Stop*
+  Stop::time(unsigned long int l) {
+    return new TimeStop(l);
+  }
+
+
   /*
    * Stopping for node limit
    *

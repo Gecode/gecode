@@ -161,8 +161,228 @@ namespace Gecode { namespace Search {
 
 namespace Gecode { namespace Search {
 
+  /**
+   * \brief Base class for cutoff generators for restart-based meta engine
+   */
+  class GECODE_SEARCH_EXPORT Cutoff {
+  public:
+    /// \name Constructors and member functions
+    //@{
+    /// Default constructor
+    Cutoff(void);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const = 0;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void) = 0;
+    /// Destructor
+    virtual ~Cutoff(void);
+    //@}
+    /// Memory management
+    //@{
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+    //@}
+    /// \name Predefined cutoff generators
+    //@{
+    /// Create generator for constant sequence with constant \a s
+    static Cutoff*
+    constant(unsigned long int scale=1U);
+    /// Create generator for linear sequence scaled by \a scale
+    static Cutoff*
+    linear(unsigned long int scale=1U);
+    /** Create generator for geometric sequence scaled by
+     *  \a scale using base \a base
+     */
+    static Cutoff*
+    geometric(unsigned long int scale=1U, double base=1.5);
+    /// Create generator for luby sequence with scale-factor \a scale
+    static Cutoff*
+    luby(unsigned long int scale=1U);
+    /** Create generator for random sequence with seed \a seed that
+     *  generates values between \a min and \a max with \a n steps
+     *  between the extreme values (use 0 for \a n to get step size 1).
+     */
+    static Cutoff*
+    rnd(unsigned int seed, 
+        unsigned long int min, unsigned long int max, 
+        unsigned long int n);
+    /// Append cutoff values from \a c2 after \a n values from \a c1
+    static Cutoff*
+    append(Cutoff* c1, unsigned long int n, Cutoff* c2);
+    /// Merge cutoff values from \a c1 with values from \a c2
+    static Cutoff*
+    merge(Cutoff* c1, Cutoff* c2);
+    /// Create generator that repeats \a n times each cutoff value from \a c
+    static Cutoff*
+    repeat(Cutoff* c, unsigned long int n);
+    //@}
+  };
+
+  /// Cutoff generator for constant sequence
+  class GECODE_SEARCH_EXPORT CutoffConstant : public Cutoff {
+  protected:
+    /// Constant
+    unsigned long int c;
+  public:
+    /// Constructor
+    CutoffConstant(unsigned long int c);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+  };
+
+  /// Cutoff generator for linear sequence
+  class GECODE_SEARCH_EXPORT CutoffLinear : public Cutoff {
+  protected:
+    /// Scale factor
+    unsigned long int scale;
+    /// Next number in sequence
+    unsigned long int n;
+  public:
+    /// Constructor
+    CutoffLinear(unsigned long int scale);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+  };
+
+  /// Cutoff generator for the Luby sequence
+  class GECODE_SEARCH_EXPORT CutoffLuby : public Cutoff {
+  protected:
+    /// Iteration number
+    unsigned long int i;
+    /// Scale factor
+    unsigned long int scale;
+    /// Number of pre-computed luby values
+    static const unsigned long int n_start = 63U;
+    /// Precomputed luby-values
+    static unsigned long int start[n_start];
+    /// Compute binary logarithm of \a i
+    static unsigned long int log(unsigned long int i);
+    /// Compute Luby number for step \a i
+    static unsigned long int luby(unsigned long int i);
+  public:
+    /// Constructor
+    CutoffLuby(unsigned long int scale);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+  };
+
+  /// Cutoff generator for the geometric sequence
+  class GECODE_SEARCH_EXPORT CutoffGeometric : public Cutoff {
+  protected:
+    /// Current cutoff value
+    double n;
+    /// Scale factor
+    double scale;
+    /// Base
+    double base;
+  public:
+    /// Constructor
+    CutoffGeometric(unsigned long int scale, double base);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+  };
+  
+  /// Cutoff generator for the random sequence
+  class GECODE_SEARCH_EXPORT CutoffRandom : public Cutoff {
+  protected:
+    /// Random number generator
+    Support::RandomGenerator rnd;
+    /// Minimum cutoff value
+    unsigned long int min;
+    /// Random values
+    unsigned long int n;
+    /// Step size
+    unsigned long int step;
+    /// Current value
+    unsigned long int cur;
+  public:
+    /// Constructor
+    CutoffRandom(unsigned int seed, 
+                 unsigned long int min, unsigned long int max, 
+                 unsigned long int n);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+  };
+  
+  /// Cutoff generator appending two cutoff generators
+  class GECODE_SEARCH_EXPORT CutoffAppend : public Cutoff {
+  protected:
+    /// First cutoff generators
+    Cutoff* c1;
+    /// Second cutoff generators
+    Cutoff* c2;
+    /// How many number to take from the first
+    unsigned long int n;
+  public:
+    /// Constructor
+    CutoffAppend(Cutoff* c1, unsigned long int n, Cutoff* c2);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+    /// Destructor
+    virtual ~CutoffAppend(void);
+  };
+
+  /// Cutoff generator merging two cutoff generators
+  class GECODE_SEARCH_EXPORT CutoffMerge : public Cutoff {
+  protected:
+    /// First cutoff generator
+    Cutoff* c1;
+    /// Second cutoff generator
+    Cutoff* c2;
+  public:
+    /// Constructor
+    CutoffMerge(Cutoff* c1, Cutoff* c2);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+    /// Destructor
+    virtual ~CutoffMerge(void);
+  };
+
+  /// Cutoff generator that repeats a cutoff from another cutoff generator
+  class GECODE_SEARCH_EXPORT CutoffRepeat : public Cutoff {
+  protected:
+    /// Actual cutoff generator
+    Cutoff* c;
+    // Current cutoff
+    unsigned int cutoff;
+    // Iteration
+    unsigned long int i;
+    // Number of repetitions
+    unsigned long int n;
+  public:
+    /// Constructor
+    CutoffRepeat(Cutoff* c, unsigned long int n);
+    /// Return the current cutoff value
+    virtual unsigned long int operator ()(void) const;
+    /// Increment and return the next cutoff value
+    virtual unsigned long int operator ++(void);
+    /// Destructor
+    virtual ~CutoffRepeat(void);
+  };
+  
+}}
+
+#include <gecode/search/cutoff.hpp>
+
+namespace Gecode { namespace Search {
+
     class Stop;
-    class Cutoff;
 
     /**
      * \brief %Search engine options
@@ -261,16 +481,31 @@ namespace Gecode { namespace Search {
    */
   class GECODE_SEARCH_EXPORT Stop {
   public:
+    /// \name Constructors and member functions
+    //@{
     /// Default constructor
     Stop(void);
     /// Stop search, if returns true
     virtual bool stop(const Statistics& s, const Options& o) = 0;
     /// Destructor
     virtual ~Stop(void);
+    //@}
+    /// \name Memory management
+    //@{
     /// Allocate memory from heap
     static void* operator new(size_t s);
     /// Free memory allocated from heap
     static void  operator delete(void* p);
+    //@}
+    /// \name Predefined stop objects
+    //@{
+    /// Stop if node limit \a l has been exceeded
+    static Stop* node(unsigned long int l);
+    /// Stop if failure limit \a l has been exceeded
+    static Stop* fail(unsigned long int l);
+    /// Stop if time limit \a l (in milliseconds) has been exceeded
+    static Stop* time(unsigned long int l);
+    //@}
   };
   
   /**
@@ -380,62 +615,6 @@ namespace Gecode { namespace Search {
 }}
 
 #include <gecode/search/stop.hpp>
-
-namespace Gecode { namespace Search {
-
-  /**
-   * \brief Base class for cutoff generators for restart-based meta engine
-   */
-  class GECODE_SEARCH_EXPORT Cutoff {
-  public:
-    /// Default constructor
-    Cutoff(void);
-    /// Return the current cutoff value
-    virtual unsigned long int operator ()(void) const = 0;
-    /// Increment and return the next cutoff value
-    virtual unsigned long int operator ++(void) = 0;
-    /// Destructor
-    virtual ~Cutoff(void);
-    /// Create generator for constant sequence with constant \a s
-    static Cutoff*
-    constant(unsigned long int scale=1U);
-    /// Create generator for linear sequence scaled by \a scale
-    static Cutoff*
-    linear(unsigned long int scale=1U);
-    /** Create generator for geometric sequence scaled by
-     *  \a scale using base \a base
-     */
-    static Cutoff*
-    geometric(unsigned long int scale=1U, double base=1.5);
-    /// Create generator for luby sequence with scale-factor \a scale
-    static Cutoff*
-    luby(unsigned long int scale=1U);
-    /** Create generator for random sequence with seed \a seed that
-     *  generates values between \a min and \a max with \a n steps
-     *  between the extreme values (use 0 for \a n to get step size 1).
-     */
-    static Cutoff*
-    rnd(unsigned int seed, 
-        unsigned long int min, unsigned long int max, 
-        unsigned long int n);
-    /// Append cutoff values from \a c2 after \a n values from \a c1
-    static Cutoff*
-    append(Cutoff* c1, unsigned long int n, Cutoff* c2);
-    /// Merge cutoff values from \a c1 with values from \a c2
-    static Cutoff*
-    merge(Cutoff* c1, Cutoff* c2);
-    /// Create generator that repeats \a n times each cutoff value from \a c
-    static Cutoff*
-    repeat(Cutoff* c, unsigned long int n);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-  };
-    
-}}
-
-#include <gecode/search/cutoff.hpp>
 
 namespace Gecode { namespace Search {
 

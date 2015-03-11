@@ -73,6 +73,20 @@ Date: 2015-01-20
 Yada! Yada!
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added functions to Stop class that can create common stop objects.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Exposed class definitions for common cutoff generators.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
