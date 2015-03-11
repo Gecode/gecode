@@ -598,7 +598,7 @@ namespace Gecode { namespace Search {
   /**
    * \brief %Search engine implementation interface
    */
-  class Engine {
+  class GECODE_SEARCH_EXPORT Engine {
   public:
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void) = 0;
@@ -606,15 +606,24 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
-    /// Reset engine to restart at space \a s
-    virtual void reset(Space* s) = 0;
-    /// Return no-goods
-    virtual NoGoods& nogoods(void) = 0;
+    /// Reset engine to restart at space \a s (does nothing)
+    virtual void reset(Space* s);
+    /// Return no-goods (the no-goods are empty)
+    virtual NoGoods& nogoods(void);
     /// Destructor
-    virtual ~Engine(void) {}
+    virtual ~Engine(void);
+    /// \name Memory management
+    //@{
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+    //@}
   };
 
 }}
+
+#include <gecode/search/engine.hpp>
 
 namespace Gecode {
 
@@ -623,23 +632,22 @@ namespace Gecode {
 
 }
 
-namespace Gecode {
+namespace Gecode { namespace Search {
 
-  /**
-   *  \brief Base-class for search engines
-   */
+  /// Base-class for search engines
   class EngineBase {
     template<template<class>class,class> friend class ::Gecode::RBS;
   protected:
     /// The actual search engine
     Search::Engine* e;
-    /// Destructor
-    ~EngineBase(void);
     /// Constructor
     EngineBase(Search::Engine* e = NULL);
+  public:
+    /// Destructor
+    ~EngineBase(void);
   };
 
-}
+}}
 
 #include <gecode/search/engine-base.hpp>
 
@@ -654,7 +662,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class DFS : public EngineBase {
+  class DFS : public Search::EngineBase {
   public:
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
@@ -690,7 +698,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class BAB : public EngineBase {
+  class BAB : public Search::EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
@@ -744,7 +752,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<template<class> class E, class T>
-  class RBS : public EngineBase {
+  class RBS : public Search::EngineBase {
   public:
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o);

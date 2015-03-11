@@ -140,15 +140,6 @@ namespace Gecode { namespace Search { namespace Meta {
     return e->stopped(); 
   }
   
-  void
-  RBS::reset(Space*) { 
-  }
-  
-  NoGoods&
-  RBS::nogoods(void) {
-    return NoGoods::eng;
-  }
-  
   RBS::~RBS(void) {
     // Deleting e also deletes stop
     delete e;

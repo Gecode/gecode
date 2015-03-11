@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2013
- *     Guido Tack, 2013
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -42,11 +38,14 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  EngineBase::EngineBase(Search::Engine* e0) 
-    : e(e0) {}
-  forceinline
-  EngineBase::~EngineBase(void) { 
-    delete e; 
+  Engine::~Engine(void) {}
+  forceinline void*
+  Engine::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  Engine::operator delete(void* p) {
+    heap.rfree(p);
   }
 
 }}

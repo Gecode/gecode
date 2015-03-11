@@ -76,6 +76,39 @@ namespace Gecode { namespace Search { namespace Meta {
     ~RestartStop(void);
   };
 
+  /// Engine for restart-based search
+  class GECODE_SEARCH_EXPORT RBS : public Engine {
+  protected:
+    /// The actual engine
+    Engine* e;
+    /// The master space to restart from
+    Space* master;
+    /// The last solution space (possibly NULL)
+    Space* last;
+    /// The cutoff object
+    Cutoff* co;
+    /// The stop control object
+    RestartStop* stop;
+    /// How many solutions since the last restart
+    unsigned long int sslr;
+    /// Whether the slave can be shared with the master
+    bool shared;
+    /// Whether search for the next solution will be complete
+    bool complete;
+    /// Whether a restart must be performed when next is called
+    bool restart;
+  public:
+    /// Constructor
+    RBS(Space* s, RestartStop* stop0, Engine* e0, const Options& o);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Search::Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+    /// Destructor
+    virtual ~RBS(void);
+  };
 
   /*
    * Stopping for meta search engines
@@ -120,43 +153,6 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
 
-  /// Engine for restart-based search
-  class GECODE_SEARCH_EXPORT RBS : public Engine {
-  protected:
-    /// The actual engine
-    Engine* e;
-    /// The master space to restart from
-    Space* master;
-    /// The last solution space (possibly NULL)
-    Space* last;
-    /// The cutoff object
-    Cutoff* co;
-    /// The stop control object
-    RestartStop* stop;
-    /// How many solutions since the last restart
-    unsigned long int sslr;
-    /// Whether the slave can be shared with the master
-    bool shared;
-    /// Whether search for the next solution will be complete
-    bool complete;
-    /// Whether a restart must be performed when next is called
-    bool restart;
-  public:
-    /// Constructor
-    RBS(Space* s, RestartStop* stop0, Engine* e0, const Options& o);
-    /// Return next solution (NULL, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-    /// Reset engine to restart at space \a s
-    virtual void reset(Space* s);
-    /// Return no-goods
-    virtual NoGoods& nogoods(void);
-    /// Destructor
-    virtual ~RBS(void);
-  };
 
   forceinline
   RBS::RBS(Space* s, RestartStop* stop0,

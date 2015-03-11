@@ -244,7 +244,7 @@ endif
 #
 
 SEARCHSRC0 = \
-	stop options cutoff \
+	stop options cutoff engine \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
@@ -256,7 +256,7 @@ SEARCHHDR0 = \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
 	meta/rbs.hh meta/nogoods.hh \
-	dfs.hpp bab.hpp rbs.hpp engine-base.hpp
+	dfs.hpp bab.hpp rbs.hpp engine.hpp engine-base.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
