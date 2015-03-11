@@ -650,8 +650,6 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
-    /// Reset engine to restart at space \a s (does nothing)
-    virtual void reset(Space* s);
     /// Return no-goods (the no-goods are empty)
     virtual NoGoods& nogoods(void);
     /// Destructor
@@ -712,14 +710,6 @@ namespace Gecode {
   public:
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
-    /// Return next better solution (NULL, if none exists or search has been stopped)
-    T* next(void);
-    /// Return statistics
-    Search::Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    bool stopped(void) const;
-    /// Return no-goods
-    NoGoods& nogoods(void);
   };
 
   /**
