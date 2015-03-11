@@ -40,26 +40,19 @@
 
 namespace Gecode {
 
-  namespace Search {
-    GECODE_SEARCH_EXPORT Engine* rbs(Space* s,
-                                     MetaStop* stop,
-                                     Engine* e,
-                                     const Options& o);
-  }
-
   template<template<class> class E, class T>
   forceinline
   RBS<E,T>::RBS(T* s, const Search::Options& m_opt) {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
-    Search::Options e_opt(m_opt);
+    Search::Options e_opt(m_opt.expand());
     e_opt.clone = false;
-    Search::MetaStop* ms = new Search::MetaStop(m_opt.stop);
-    e_opt.stop = ms;
+    Search::Meta::RestartStop* rs = new Search::Meta::RestartStop(m_opt.stop);
+    e_opt.stop = rs;
     Space* master;
     Space* slave;
-    if (s->status(ms->m_stat) == SS_FAILED) {
-      ms->m_stat.fail++;
+    if (s->status(rs->m_stat) == SS_FAILED) {
+      rs->m_stat.fail++;
       master = NULL;
       slave  = NULL;
     } else {
@@ -75,7 +68,7 @@ namespace Gecode {
     EngineBase* eb = &engine;
     Search::Engine* ee = eb->e;
     eb->e = NULL;
-    e = Search::rbs(master,ms,ee,m_opt);
+    e = new Search::Meta::RBS(master,rs,ee,m_opt);
   }
 
   template<template<class> class E, class T>

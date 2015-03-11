@@ -163,6 +163,7 @@ namespace Gecode { namespace Search {
 
   /**
    * \brief Base class for cutoff generators for restart-based meta engine
+   * \ingroup TaskModelSearch
    */
   class GECODE_SEARCH_EXPORT Cutoff {
   public:
@@ -220,7 +221,10 @@ namespace Gecode { namespace Search {
     //@}
   };
 
-  /// Cutoff generator for constant sequence
+  /**
+   * \brief Cutoff generator for constant sequence
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffConstant : public Cutoff {
   protected:
     /// Constant
@@ -234,7 +238,10 @@ namespace Gecode { namespace Search {
     virtual unsigned long int operator ++(void);
   };
 
-  /// Cutoff generator for linear sequence
+  /**
+   * \brief Cutoff generator for linear sequence
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffLinear : public Cutoff {
   protected:
     /// Scale factor
@@ -250,7 +257,10 @@ namespace Gecode { namespace Search {
     virtual unsigned long int operator ++(void);
   };
 
-  /// Cutoff generator for the Luby sequence
+  /**
+   * \brief Cutoff generator for the Luby sequence
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffLuby : public Cutoff {
   protected:
     /// Iteration number
@@ -274,7 +284,10 @@ namespace Gecode { namespace Search {
     virtual unsigned long int operator ++(void);
   };
 
-  /// Cutoff generator for the geometric sequence
+  /**
+   * \brief Cutoff generator for the geometric sequence
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffGeometric : public Cutoff {
   protected:
     /// Current cutoff value
@@ -292,7 +305,10 @@ namespace Gecode { namespace Search {
     virtual unsigned long int operator ++(void);
   };
   
-  /// Cutoff generator for the random sequence
+  /**
+   * \brief Cutoff generator for the random sequence
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffRandom : public Cutoff {
   protected:
     /// Random number generator
@@ -316,7 +332,10 @@ namespace Gecode { namespace Search {
     virtual unsigned long int operator ++(void);
   };
   
-  /// Cutoff generator appending two cutoff generators
+  /**
+   * \brief Cutoff generator appending two cutoff generators
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffAppend : public Cutoff {
   protected:
     /// First cutoff generators
@@ -336,7 +355,10 @@ namespace Gecode { namespace Search {
     virtual ~CutoffAppend(void);
   };
 
-  /// Cutoff generator merging two cutoff generators
+  /**
+   * \brief Cutoff generator merging two cutoff generators
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffMerge : public Cutoff {
   protected:
     /// First cutoff generator
@@ -354,7 +376,10 @@ namespace Gecode { namespace Search {
     virtual ~CutoffMerge(void);
   };
 
-  /// Cutoff generator that repeats a cutoff from another cutoff generator
+  /**
+   * \brief Cutoff generator that repeats a cutoff from another cutoff generator
+   * \ingroup TaskModelSearch
+   */
   class GECODE_SEARCH_EXPORT CutoffRepeat : public Cutoff {
   protected:
     /// Actual cutoff generator
@@ -449,19 +474,6 @@ namespace Gecode { namespace Search {
 }}
 
 #include <gecode/search/options.hpp>
-
-namespace Gecode {
-
-  template<template<class> class E, class T>
-  class RBS;
-
-}
-
-namespace Gecode { namespace Search { namespace Meta {
-
-  class RBS;
-
-}}}
 
 namespace Gecode { namespace Search {
 
@@ -577,41 +589,6 @@ namespace Gecode { namespace Search {
     virtual bool stop(const Statistics& s, const Options& o);
   };
 
-  /**
-   * \brief %Stop-object for meta engine
-   * \ingroup TaskModelSearchStop
-   */
-  class GECODE_SEARCH_EXPORT MetaStop : public Stop {
-    template<template<class>class,class> friend class ::Gecode::RBS;
-    friend class ::Gecode::Search::Meta::RBS;
-  private:
-    /// The failure stop object for the engine
-    FailStop* e_stop;
-    /// The stop object for the meta engine
-    Stop* m_stop;
-    /// Whether the engine was stopped
-    bool e_stopped;
-    /// Accumulated statistics for the meta engine
-    Statistics m_stat;
-  public:
-    /// Stop the meta engine if indicated by the stop object \a s
-    MetaStop(Stop* s);
-    /// Return true if meta engine must be stopped
-    virtual bool stop(const Statistics& s, const Options& o);
-    /// Set current limit for the engine to \a l fails
-    void limit(const Search::Statistics& s, unsigned long int l);
-    /// Update statistics
-    void update(const Search::Statistics& s);
-    /// Return the stop object to control the engine
-    Stop* enginestop(void) const;
-    /// Return whether the engine has been stopped
-    bool enginestopped(void) const;
-    /// Return statistics for the meta engine
-    Statistics metastatistics(void) const;
-    /// Delete object
-    ~MetaStop(void);
-  };
-
 }}
 
 #include <gecode/search/stop.hpp>
@@ -638,6 +615,13 @@ namespace Gecode { namespace Search {
   };
 
 }}
+
+namespace Gecode {
+
+  template<template<class> class E, class T>
+  class RBS;
+
+}
 
 namespace Gecode {
 

@@ -40,6 +40,28 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
+  /*
+   * Stopping for meta search engines
+   *
+   */
+
+  bool 
+  RestartStop::stop(const Statistics& s, const Options& o) {
+    // Stop if the fail stop object for the engine says so
+    if (e_stop->stop(s,o)) {
+      e_stopped = true;
+      m_stat.restart++;
+      return true;
+    }
+    // Stop if the stop object for the meta engine says so
+    if ((m_stop != NULL) && m_stop->stop(m_stat+s,o)) {
+      e_stopped = false;
+      return true;
+    }
+    return false;
+  }
+
+
   Space*
   RBS::next(void) {
     if (restart) {
