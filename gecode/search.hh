@@ -753,6 +753,7 @@ namespace Gecode {
    */
   template<template<class> class E, class T>
   class RBS : public Search::EngineBase<T> {
+      using Search::EngineBase<T>::e;
   public:
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o);
