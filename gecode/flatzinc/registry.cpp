@@ -1991,9 +1991,16 @@ namespace Gecode { namespace FlatZinc {
     void p_float_lin_le(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_float_lin_cmp(s,FRT_LQ,ce,ann);
     }
+    void p_float_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      p_float_lin_cmp(s,FRT_LE,ce,ann);
+    }
     void p_float_lin_le_reif(FlatZincSpace& s, const ConExpr& ce,
                              AST::Node* ann) {
       p_float_lin_cmp_reif(s,FRT_LQ,ce,ann);
+    }
+    void p_float_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce,
+                             AST::Node* ann) {
+      p_float_lin_cmp_reif(s,FRT_LE,ce,ann);
     }
 
     void p_float_times(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
@@ -2146,7 +2153,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("float_lin_eq",&p_float_lin_eq);
         registry().add("float_lin_eq_reif",&p_float_lin_eq_reif);
         registry().add("float_lin_le",&p_float_lin_le);
+        registry().add("float_lin_lt",&p_float_lin_lt);
         registry().add("float_lin_le_reif",&p_float_lin_le_reif);
+        registry().add("float_lin_lt_reif",&p_float_lin_lt_reif);
         
 #ifdef GECODE_HAS_MPFR
         registry().add("float_acos",&p_float_acos);

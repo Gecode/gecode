@@ -73,6 +73,15 @@ Date: 2015-01-20
 Yada! Yada!
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Ahmed Kamal
+[DESCRIPTION]
+Added support for missing builtins array_float_element
+(by decomposition), float_lin_lt and float_lin_lt_reif.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   minor

@@ -73,3 +73,11 @@ predicate float_tanh(var float: a, var float: b) =
 
 predicate float_ne_reif(var float: a, var float: b, var bool: c) =
     not c <-> a==b;
+
+predicate array_float_element(var int: b, array[int] of float: as, var float: c) =
+    b in index_set(as) /\
+    forall(d in index_set(as))( b = d -> as[d] = c );
+
+predicate array_var_float_element(var int: b, array[int] of var float: as, var float: c) =
+    b in index_set(as) /\
+    forall(d in index_set(as))( b = d -> as[d] = c );
