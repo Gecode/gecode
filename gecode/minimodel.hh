@@ -2220,9 +2220,12 @@ namespace Gecode {
     /// Baseclass for float-based cost-based optimization
     template<FloatRelType frt>
     class FloatOptimizeSpace : public Space {
+    protected:
+      /// Step to increment for next better solution
+      FloatNum step;
     public:
-      /// Default constructor
-      FloatOptimizeSpace(void);
+      /// Constructor with step \a s
+      FloatOptimizeSpace(FloatNum s=0.0);
       /// Constructor for cloning
       FloatOptimizeSpace(bool share, FloatOptimizeSpace& s);
       /// Member function constraining according to cost

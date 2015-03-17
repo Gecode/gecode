@@ -60,13 +60,14 @@ namespace Gecode { namespace MiniModel {
 
   template<FloatRelType frt>
   forceinline
-  FloatOptimizeSpace<frt>::FloatOptimizeSpace(void) {}
+  FloatOptimizeSpace<frt>::FloatOptimizeSpace(FloatNum s)
+    : step(s) {}
 
   template<FloatRelType frt>
   forceinline
   FloatOptimizeSpace<frt>::FloatOptimizeSpace(bool share, 
                                               FloatOptimizeSpace& s)
-    : Space(share,s) {}
+    : Space(share,s), step(s.step) {}
 
   template<FloatRelType frt>
   void
@@ -75,7 +76,18 @@ namespace Gecode { namespace MiniModel {
       dynamic_cast<const FloatOptimizeSpace<frt>*>(&_best);
     if (best == NULL)
       throw DynamicCastFailed("FloatOptimizeSpace::constrain");
-    rel(*this, cost(), frt, best->cost().val());
+    switch (frt) {
+    case FRT_LE:
+      // Minimize cost variable
+      rel(*this, cost(), FRT_LE, best->cost().val()-step);
+      break;
+    case FRT_GR:
+      // Maximize cost variable
+      rel(*this, cost(), FRT_GR, best->cost().val()+step);
+      break;
+    default:
+      GECODE_NEVER;
+    }
   }
 
 #endif
