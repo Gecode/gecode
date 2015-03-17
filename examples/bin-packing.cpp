@@ -413,7 +413,8 @@ public:
   };
   /// Actual model
   BinPacking(const InstanceOptions& opt) 
-    : spec(opt.instance()),
+    : IntMinimizeScript(opt), 
+      spec(opt.instance()),
       load(*this, spec.upper(), 0, spec.capacity()),
       bin(*this, spec.items(), 0, spec.upper()-1),
       bins(*this, spec.lower(), spec.upper()) {

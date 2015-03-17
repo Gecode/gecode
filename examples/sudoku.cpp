@@ -84,7 +84,9 @@ public:
   };
 
   /// Constructor
-  Sudoku(const SizeOptions& opt) : n(example_size(examples[opt.size()])) {}
+  Sudoku(const SizeOptions& opt) 
+    : Script(opt),
+      n(example_size(examples[opt.size()])) {}
 
   /// Constructor for cloning \a s
   Sudoku(bool share, Sudoku& s) : Script(share,s), n(s.n) {}

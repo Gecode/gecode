@@ -67,7 +67,7 @@ public:
 
   /// Actual model
   Steiner(const SizeOptions& opt)
-    : n(opt.size()), noOfTriples((n*(n-1))/6),
+    : Script(opt), n(opt.size()), noOfTriples((n*(n-1))/6),
       triples(*this, noOfTriples, IntSet::empty, 1, n, 3, 3) {
 
     for (int i=0; i<noOfTriples; i++) {

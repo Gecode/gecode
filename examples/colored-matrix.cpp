@@ -361,7 +361,8 @@ public:
 
   /// Actual model
   ColoredMatrix(const ColoredMatrixOptions& opt0)
-    : opt(opt0), height(opt.height()), width(opt.width()), colors(opt.colors()),
+    : IntMinimizeScript(opt0), 
+      opt(opt0), height(opt.height()), width(opt.width()), colors(opt.colors()),
       x(*this, height*width, 1, colors),
       max_color(*this, 1, colors)
   {

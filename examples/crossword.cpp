@@ -84,7 +84,8 @@ public:
   };
   /// Actual model
   Crossword(const SizeOptions& opt)
-    : w(grids[opt.size()][0]), h(grids[opt.size()][1]),
+    : Script(opt), 
+      w(grids[opt.size()][0]), h(grids[opt.size()][1]),
       letters(*this,w*h,'a','z') {
     // Pointer into the grid specification (width and height already skipped)
     const int* g = &grids[opt.size()][2];

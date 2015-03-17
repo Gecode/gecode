@@ -236,7 +236,8 @@ public:
 
   /// The model of the problem
   CrowdedChess(const SizeOptions& opt)
-    : n(opt.size()),
+    : Script(opt), 
+      n(opt.size()),
       s(*this, n*n, 0, PMAX-1),
       queens(*this, n, 0, n-1),
       rooks(*this, n, 0, n-1),

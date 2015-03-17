@@ -74,7 +74,7 @@ public:
   };
   /// The actual model
   MagicSequence(const SizeOptions& opt)
-    : n(opt.size()), s(*this,n,0,n-1) {
+    : Script(opt), n(opt.size()), s(*this,n,0,n-1) {
     switch (opt.propagation()) {
     case PROP_COUNT:
       for (int i=n; i--; )

@@ -109,7 +109,7 @@ public:
 
   /// Construction of the model.
   Nonogram(const SizeOptions& opt)
-    : spec(specs[opt.size()]), b(*this,width()*height(),0,1) {
+    : Script(opt), spec(specs[opt.size()]), b(*this,width()*height(),0,1) {
     Matrix<BoolVarArray> m(b, width(), height());
 
     {

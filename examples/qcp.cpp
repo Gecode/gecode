@@ -146,7 +146,8 @@ public:
   };
   /// Actual model
   QCP(const QCPOptions& opt) 
-    : spec(opt.instance()),
+    : Script(opt), 
+      spec(opt.instance()),
       e(*this, spec.size() * spec.size(), 0, spec.size()-1),
       tbf(opt.tbf()) {
     // Problem size

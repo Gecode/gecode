@@ -239,7 +239,8 @@ protected:
 public:
   /// Actual model
   TSP(const SizeOptions& opt)
-    : p(ps[opt.size()]),
+    : IntMinimizeScript(opt),
+      p(ps[opt.size()]),
       succ(*this, p.size(), 0, p.size()-1),
       total(*this, 0, p.max()) {
     int n = p.size();

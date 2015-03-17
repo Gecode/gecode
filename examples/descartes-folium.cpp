@@ -77,8 +77,8 @@ protected:
   double step;
 public:
   /// Actual model
-  DescartesFolium(const Options&) 
-    : f(*this,3,-20,20), step(0.1) {
+  DescartesFolium(const Options& opt) 
+    : Script(opt), f(*this,3,-20,20), step(0.1) {
     // Post equation
     FloatVar p = f[0];
     FloatVar x = f[1];

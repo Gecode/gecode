@@ -108,8 +108,9 @@ protected:
   IntVar c_total;
 public:
   /// Actual model
-  Warehouses(const Options&)
-    : supplier(*this, n_stores, 0, n_warehouses-1),
+  Warehouses(const Options& opt)
+    : IntMinimizeScript(opt),
+      supplier(*this, n_stores, 0, n_warehouses-1),
       open(*this, n_warehouses, 0, 1),
       c_store(*this, n_stores) {
 

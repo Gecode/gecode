@@ -92,8 +92,10 @@ public:
   SetVarArray groups;
 
   /// Actual model
-  Golf(const GolfOptions& opt) : g(opt.g()), s(opt.s()), w(opt.w()),
-    groups(*this,g*w,IntSet::empty,0,g*s-1,s,s) {
+  Golf(const GolfOptions& opt) 
+    : Script(opt), 
+      g(opt.g()), s(opt.s()), w(opt.w()),
+      groups(*this,g*w,IntSet::empty,0,g*s-1,s,s) {
     Matrix<SetVarArray> schedule(groups,g,w);
 
     // Groups in one week must be disjoint

@@ -120,7 +120,8 @@ public:
   };
 
   /// Actual model
-  BACP(const SizeOptions& opt) : curr(curriculum[opt.size()]) {
+  BACP(const SizeOptions& opt)
+    : IntMinimizeScript(opt), curr(curriculum[opt.size()]) {
     std::map<std::string, int> courseMap; // Map names to course numbers
     int maxCredit = 0;
     int numberOfCourses = 0;

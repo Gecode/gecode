@@ -94,6 +94,7 @@ public:
   };
   /// Actual model
   Photo(const SizeOptions& opt) :
+    IntMinimizeScript(opt),
     spec(opt.size() == 0 ? p_small : p_large),
     pos(*this,spec.n_names, 0, spec.n_names-1),
     violations(*this,0,spec.n_prefs)
@@ -157,7 +158,7 @@ main(int argc, char* argv[]) {
   opt.branching(Photo::BRANCH_NONE,   "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
-  IntMaximizeScript::run<Photo,BAB,SizeOptions>(opt);
+  IntMinimizeScript::run<Photo,BAB,SizeOptions>(opt);
   return 0;
 }
 

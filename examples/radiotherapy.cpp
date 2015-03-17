@@ -119,7 +119,7 @@ private:
 public:
   /// The actual problem
   Radiotherapy(const SizeOptions& opt)
-  : rd(rds[opt.size()]) {
+  : IntMinimizeScript(opt), rd(rds[opt.size()]) {
 
     // Initialize variables
     beamtime = IntVar(*this, rd.btMin, rd.intsSum);

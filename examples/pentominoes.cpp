@@ -340,7 +340,7 @@ private:
 public:
   /// Construction of the model.
   Pentominoes(const SizeOptions& opt)
-    : spec(examples[opt.size()]),
+    : Script(opt), spec(examples[opt.size()]),
       width(spec[0].width+1), // Add one for extra row at end.
       height(spec[0].height),
       filled(spec[0].amount),

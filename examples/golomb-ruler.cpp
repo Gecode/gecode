@@ -70,7 +70,8 @@ protected:
 public:
   /// Actual model
   GolombRuler(const SizeOptions& opt)
-    : m(*this,opt.size(),0,
+    : IntMinimizeScript(opt),
+      m(*this,opt.size(),0,
         (opt.size() < 31) ? (1 << (opt.size()-1))-1 : Int::Limits::max) {
 
     // Assume first mark to be zero

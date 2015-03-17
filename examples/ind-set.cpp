@@ -92,7 +92,8 @@ protected:
 public:
   /// Actual model
   IndSet(const SizeOptions& opt)
-    : g(opt.size() == 0 ?  g_20_10 : g_40_20),
+    : IntMaximizeScript(opt),
+      g(opt.size() == 0 ?  g_20_10 : g_40_20),
       v(*this,g.n_v,0,1), k(*this,0,g.n_v) {
     const int* e = g.e;
     for (int i = g.n_e; i--; ) {

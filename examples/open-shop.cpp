@@ -194,7 +194,8 @@ protected:
 public:
   /// The actual problem
   OpenShop(const SizeOptions& opt)
-    : spec(examples[opt.size()]),
+    : IntMinimizeScript(opt),
+      spec(examples[opt.size()]),
       b(*this, (spec.n+spec.m-2)*spec.n*spec.m/2, 0,1),
       makespan(*this, 0, Int::Limits::max),
       _start(*this, spec.m*spec.n, 0, Int::Limits::max) {

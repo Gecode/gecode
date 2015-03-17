@@ -74,7 +74,8 @@ public:
 
   /// Actual model
   OrthoLatinSquare(const SizeOptions& opt)
-    : n(opt.size()),
+    : Script(opt),
+      n(opt.size()),
       x1(*this,n*n,1,n), x2(*this,n*n,1,n) {
     const int nn = n*n;
     IntVarArgs z(*this,nn,0,n*n-1);

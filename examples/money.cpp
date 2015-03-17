@@ -63,7 +63,7 @@ public:
     MODEL_CARRY   ///< Use carries
   };
   /// Actual model
-  Money(const Options& opt) : le(*this,nl,0,9) {
+  Money(const Options& opt) : Script(opt), le(*this,nl,0,9) {
     IntVar
       s(le[0]), e(le[1]), n(le[2]), d(le[3]),
       m(le[4]), o(le[5]), r(le[6]), y(le[7]);

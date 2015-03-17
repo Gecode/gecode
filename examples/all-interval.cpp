@@ -72,6 +72,7 @@ private:
 public:
   /// Actual model
   AllInterval(const SizeOptions& opt) :
+    Script(opt),
     x(*this, opt.size(), 0, opt.size()-1),
     d(*this, opt.size()-1, 1, opt.size()-1) {
     const int n = x.size();

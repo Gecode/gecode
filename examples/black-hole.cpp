@@ -129,8 +129,7 @@ public:
   };
   /// Actual model
   BlackHole(const SizeOptions& opt)
-    : x(*this, 52, 0,51), y(*this, 52, 0,51)
-  {
+    : Script(opt), x(*this, 52, 0,51), y(*this, 52, 0,51) {
     // Black ace at bottom
     rel(*this, x[0], IRT_EQ, 0);
 

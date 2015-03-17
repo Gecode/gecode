@@ -194,6 +194,7 @@ public:
   /// Actual model
   SteelMill(const SteelMillOptions& opt)
     : // Initialize instance data
+      IntMinimizeScript(opt),
       capacities(opt.capacities()), ncapacities(opt.ncapacities()),
       maxcapacity(opt.maxcapacity()), loss(opt.loss()),
       ncolors(opt.ncolors()), orders(opt.orders()),

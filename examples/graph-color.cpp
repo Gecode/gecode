@@ -340,7 +340,8 @@ public:
   };
   /// The actual model
   GraphColor(const SizeOptions& opt)
-    : g(opt.size() == 1 ? g2 : g1),
+    : IntMinimizeScript(opt),
+      g(opt.size() == 1 ? g2 : g1),
       v(*this,g.n_v,0,g.n_v-1),
       m(*this,0,g.n_v-1) {
     rel(*this, v, IRT_LQ, m);

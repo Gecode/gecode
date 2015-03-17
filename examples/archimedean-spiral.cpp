@@ -68,16 +68,14 @@ using namespace Gecode;
  *
  * \ingroup Example
  */
-class ArchimedeanSpiral : public Script {
+class ArchimedeanSpiral : public FloatMaximizeScript {
 protected:
   /// The numbers
   FloatVarArray f;
-  /// Minimum distance between two solutions
-  FloatNum step;
 public:
   /// Actual model
-  ArchimedeanSpiral(const Options&) 
-    : f(*this,4,-20,20), step(0.1) {
+  ArchimedeanSpiral(const Options& opt) 
+    : FloatMaximizeScript(opt), f(*this,4,-20,20) {
     // Post equation
     FloatVar theta = f[0];
     FloatVar r = f[3];
@@ -95,17 +93,16 @@ public:
   }
   /// Constructor for cloning \a p
   ArchimedeanSpiral(bool share, ArchimedeanSpiral& p) 
-    : Script(share,p), step(p.step) {
+    : FloatMaximizeScript(share,p) {
     f.update(*this,share,p.f);
   }
   /// Copy during cloning
   virtual Space* copy(bool share) { 
     return new ArchimedeanSpiral(share,*this); 
   }
-  /// Add constraint to current model to get next solution (not too close)
-  virtual void constrain(const Space& _b) {
-    const ArchimedeanSpiral& b = static_cast<const ArchimedeanSpiral&>(_b);
-    rel(*this, f[0] >= (b.f[0].max()+step));
+  /// Cost function
+  virtual FloatVar cost(void) const {
+    return f[0];
   }
   /// Print solution coordinates
   virtual void print(std::ostream& os) const {
@@ -120,9 +117,10 @@ public:
  */
 int main(int argc, char* argv[]) {
   Options opt("ArchimedeanSpiral");
-  opt.parse(argc,argv);
   opt.solutions(0);
-  Script::run<ArchimedeanSpiral,BAB,Options>(opt);
+  opt.step(0.1);
+  opt.parse(argc,argv);
+  FloatMaximizeScript::run<ArchimedeanSpiral,BAB,Options>(opt);
   return 0;
 }
 

@@ -132,7 +132,7 @@ public:
   };
   /// Actual model
   MultiBinPacking(const InstanceOptions& opt) 
-    : spec(opt.instance()),
+    : Script(opt), spec(opt.instance()),
       bin(*this, spec.items(), 0, spec.bins()-1), 
       load(*this, spec.bins()*spec.dimension(), 0, Int::Limits::max) 
   { 
