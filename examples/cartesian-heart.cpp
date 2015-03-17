@@ -73,7 +73,7 @@ protected:
 public:
   /// Actual model
   CartesianHeart(const Options& opt) 
-    : Script(opt), f(*this,2,-20,20), step(0.01) {
+    : Script(opt), f(*this,2,-20,20), step(opt.step()) {
     int q = 2;
     FloatNum p = 0.5;
     // Post equation
@@ -111,8 +111,9 @@ public:
  */
 int main(int argc, char* argv[]) {
   Options opt("CartesianHeart");
-  opt.parse(argc,argv);
   opt.solutions(0);
+  opt.step(0.01);
+  opt.parse(argc,argv);
   Script::run<CartesianHeart,BAB,Options>(opt);
   return 0;
 }

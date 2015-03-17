@@ -73,6 +73,33 @@ Date: 2015-01-20
 Yada! Yada!
 
 [ENTRY]
+Module: driver
+What:   change
+Rank:   major
+[DESCRIPTION]
+All scripts now must call the constructor of their base class
+with an option argument. Note that you will have to change your
+models!
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+Thanks: Mark Manser 
+[DESCRIPTION]
+An option -step now can pass an improvement step to scripts of
+type FloatMinimizeScript and FloatMaximizeScript.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+Thanks: Mark Manser 
+[DESCRIPTION]
+The classes FloatMinimizeSpace and FloatMaximizeSpace can be
+created with an improvement step for optimization.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
