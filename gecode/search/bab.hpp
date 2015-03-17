@@ -49,7 +49,7 @@ namespace Gecode {
   template<class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
-    : EngineBase(Search::bab(s,o)) {}
+    : Search::EngineBase<T>(Search::bab(s,o)) {}
 
   template<class T>
   T*

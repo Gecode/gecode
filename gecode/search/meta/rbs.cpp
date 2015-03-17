@@ -36,7 +36,7 @@
  */
 
 
-#include <gecode/search/meta/rbs.hh>
+#include <gecode/search.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 

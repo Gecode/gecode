@@ -67,7 +67,7 @@ namespace Gecode {
       slave->slave(cri);
     }
     E<T> engine(dynamic_cast<T*>(slave),e_opt);
-    EngineBase* eb = &engine;
+    Search::EngineBase<T>* eb = &engine;
     Search::Engine* ee = eb->e;
     eb->e = NULL;
     e = new Search::Meta::RBS(master,rs,ee,m_opt);
