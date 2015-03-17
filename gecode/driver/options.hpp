@@ -230,6 +230,15 @@ namespace Gecode {
     return _seed.value();
   }
   
+  inline void
+  Options::step(double s) {
+    _step.value(s);
+  }
+  inline double
+  Options::step(void) const {
+    return _step.value();
+  }
+  
   
   /*
    * Search options

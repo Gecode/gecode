@@ -366,6 +366,7 @@ namespace Gecode {
       _branching("-branching","branching variants"),
       _decay("-decay","decay factor",1.0),
       _seed("-seed","random number generator seed",1U),
+      _step("-step","step distance for float optimization",0.0),
       
       _search("-search","search engine variants"),
       _solutions("-solutions","number of solutions (0 = all)",1),
@@ -412,7 +413,7 @@ namespace Gecode {
     _restart.add(RM_GEOMETRIC,"geometric");
     
     add(_model); add(_symmetry); add(_propagation); add(_icl); 
-    add(_branching); add(_decay); add(_seed);
+    add(_branching); add(_decay); add(_seed); add(_step);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
     add(_node); add(_fail); add(_time); add(_interrupt);
     add(_restart); add(_r_base); add(_r_scale); 

@@ -206,9 +206,27 @@ namespace Gecode { namespace Driver {
 #endif
 
 
-  template<class Space>
+  template<class BaseSpace>
+  forceinline
+  ScriptBase<BaseSpace>::ScriptBase(const Options& opt) 
+    : BaseSpace(opt) {}
+
+  template<class BaseSpace>
+  forceinline
+  ScriptBase<BaseSpace>::ScriptBase(bool share, ScriptBase& e) 
+    : BaseSpace(share,e) {}
+
+  template<class BaseSpace>
+  void
+  ScriptBase<BaseSpace>::print(std::ostream&) const {}
+
+  template<class BaseSpace>
+  void 
+  ScriptBase<BaseSpace>::compare(const Space&, std::ostream&) const {}
+
+  template<class BaseSpace>
   std::ostream&
-  ScriptBase<Space>::select_ostream(const char* name, std::ofstream& ofs) {
+  ScriptBase<BaseSpace>::select_ostream(const char* name, std::ofstream& ofs) {
     if (strcmp(name, "stdout") == 0) {
       return std::cout;
     } else if (strcmp(name, "stdlog") == 0) {
@@ -221,6 +239,7 @@ namespace Gecode { namespace Driver {
     }
   }
 
+
   /**
    * \brief Wrapper class to add engine template argument
    */
@@ -230,10 +249,10 @@ namespace Gecode { namespace Driver {
     EngineToMeta(T* s, const Search::Options& o) : E<T>(s,o) {}
   };
 
-  template<class Space>
+  template<class BaseSpace>
   template<class Script, template<class> class Engine, class Options>
   void
-  ScriptBase<Space>::run(const Options& o, Script* s) {
+  ScriptBase<BaseSpace>::run(const Options& o, Script* s) {
     if (o.restart()==RM_NONE) {
       runMeta<Script,Engine,Options,EngineToMeta>(o,s);
     } else {
@@ -241,11 +260,11 @@ namespace Gecode { namespace Driver {
     }
   }
 
-  template<class Space>
+  template<class BaseSpace>
   template<class Script, template<class> class Engine, class Options,
            template<template<class> class,class> class Meta>
   void
-  ScriptBase<Space>::runMeta(const Options& o, Script* s) {
+  ScriptBase<BaseSpace>::runMeta(const Options& o, Script* s) {
     using namespace std;
 
     ofstream sol_file, log_file;

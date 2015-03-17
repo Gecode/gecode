@@ -334,6 +334,7 @@ namespace Gecode {
     Driver::StringOption      _branching;   ///< Branching options
     Driver::DoubleOption      _decay;       ///< Decay option
     Driver::UnsignedIntOption _seed;        ///< Seed option
+    Driver::DoubleOption      _step;        ///< Step option
     //@}
     
     /// \name Search options
@@ -412,6 +413,11 @@ namespace Gecode {
     void seed(unsigned int s);
     /// Return seed value
     unsigned int seed(void) const;
+
+    /// Set default step value
+    void step(double s);
+    /// Return step value
+    double step(void) const;
     //@}
     
     /// \name Search options
@@ -614,51 +620,80 @@ namespace Gecode {
 
 #include <gecode/driver/options.hpp>
 
-namespace Gecode {
+namespace Gecode { namespace Driver {
 
-  namespace Driver {
-    /**
-     * \brief Parametric base-class for scripts
+  /**
+   * \brief Parametric base-class for scripts
+   *
+   * All scripts must inherit from this class
+   *  - adds printing and comparison for Gist to scripts
+   *  - run allows to execute scripts
+   */
+  template<class BaseSpace>
+  class ScriptBase : public BaseSpace {
+  public:
+    /// Constructor
+    ScriptBase(const Options& opt);
+    /// Constructor used for cloning
+    ScriptBase(bool share, ScriptBase& e);
+    /// Print a solution to \a os
+    virtual void print(std::ostream& os) const;
+    /// Compare with \a s
+    virtual void compare(const Space& home, std::ostream& os) const;
+    /// Choose output stream according to \a name
+    static std::ostream& select_ostream(const char* name, std::ofstream& ofs);
+    /** Run script with search engine \a Engine and options \a opt
      *
-     * All scripts must inherit from this class
-     *  - adds printing and comparison for Gist to scripts
-     *  - run allows to execute scripts
+     * In the solution and stat modes, search can be aborted by sending
+     * SIGINT to the process (i.e., pressing Ctrl-C on the command
+     * line).
+     *
+     * In case \a s is different from NULL, the search engine uses
+     * \a s as root of the search tree.
      */
-    template<class BaseSpace>
-    class ScriptBase : public BaseSpace {
-    public:
-      /// Default constructor
-      ScriptBase(void) {}
-      /// Constructor used for cloning
-      ScriptBase(bool share, ScriptBase& e) 
-        : BaseSpace(share,e) {}
-      /// Print a solution to \a os
-      virtual void print(std::ostream& os) const { (void) os; }
-      /// Compare with \a s
-      virtual void compare(const Space&, std::ostream& os) const {
-        (void) os;
-      }
-      /// Choose output stream according to \a name
-      static std::ostream& select_ostream(const char* name, std::ofstream& ofs);
-      /** Run script with search engine \a Engine and options \a opt
-       *
-       * In the solution and stat modes, search can be aborted by sending
-       * SIGINT to the process (i.e., pressing Ctrl-C on the command
-       * line).
-       *
-       * In case \a s is different from NULL, the search engine uses
-       * \a s as root of the search tree.
-       */
-      template<class Script, template<class> class Engine, class Options>
-      static void run(const Options& opt, Script* s=NULL);
-    private:
-      template<class Script, template<class> class Engine, class Options,
-               template<template<class> class,class> class Meta>
-      static void runMeta(const Options& opt, Script* s);
-      /// Catch wrong definitions of copy constructor
-      explicit ScriptBase(ScriptBase& e);
-    };
-  }
+    template<class Script, template<class> class Engine, class Options>
+    static void run(const Options& opt, Script* s=NULL);
+  private:
+    template<class Script, template<class> class Engine, class Options,
+             template<template<class> class,class> class Meta>
+             static void runMeta(const Options& opt, Script* s);
+    /// Catch wrong definitions of copy constructor
+    explicit ScriptBase(ScriptBase& e);
+  };
+
+#ifdef GECODE_HAS_FLOAT_VARS 
+
+  /// Class to extract the step option value
+  template<class BaseSpace>
+  class ExtractStepOption : public BaseSpace {
+  public:
+    /// Constructor that extracts the step value
+    ExtractStepOption(const Options& opt) 
+      : BaseSpace(opt.step()) {}
+    /// Constructor used for cloning
+    ExtractStepOption(bool share, BaseSpace& e) 
+      : BaseSpace(share,e) {}
+  };
+
+#endif
+
+  /// Class to ignore the step option value
+  template<class BaseSpace>
+  class IgnoreStepOption : public BaseSpace {
+  public:
+    /// Constructor
+    IgnoreStepOption(const Options& opt) {}
+    /// Constructor used for cloning
+    IgnoreStepOption(bool share, BaseSpace& e) 
+      : BaseSpace(share,e) {}
+  };
+
+
+}}
+
+#include <gecode/driver/script.hpp>
+
+namespace Gecode {
   
   /**
    * \defgroup TaskDriverScript Script classes
@@ -669,27 +704,32 @@ namespace Gecode {
    * \brief Base-class for scripts
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Space> Script;
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<Space> > 
+    Script;
   /**
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<MinimizeSpace> MinimizeScript;
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MinimizeSpace> > 
+    MinimizeScript;
   /**
    * \brief Base-class for scripts for finding solution of highest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<MaximizeSpace> MaximizeScript;
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MaximizeSpace> > 
+    MaximizeScript;
   /**
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<IntMinimizeSpace> IntMinimizeScript;
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMinimizeSpace> > 
+    IntMinimizeScript;
   /**
    * \brief Base-class for scripts for finding solution of highest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<IntMaximizeSpace> IntMaximizeScript;
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace> > 
+    IntMaximizeScript;
 
 #ifdef GECODE_HAS_FLOAT_VARS 
 
@@ -697,18 +737,18 @@ namespace Gecode {
    * \brief Base-class for scripts for finding solution of lowest float cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<FloatMinimizeSpace> FloatMinimizeScript;
+  typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMinimizeSpace> > 
+    FloatMinimizeScript;
   /**
    * \brief Base-class for scripts for finding solution of highest float cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<FloatMaximizeSpace> FloatMaximizeScript;
+  typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMaximizeSpace> > 
+    FloatMaximizeScript;
 
 #endif
 
 }
-
-#include <gecode/driver/script.hpp>
 
 #endif
 
