@@ -35,44 +35,50 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 namespace Gecode {
 
-  forceinline
-  IntMinimizeSpace::IntMinimizeSpace(void) {}
+  void
+  IntMinimizeSpace::constrain(const Space& _best) {
+    const IntMinimizeSpace* best =
+      dynamic_cast<const IntMinimizeSpace*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("IntMinimizeSpace::constrain");
+    rel(*this, cost(), IRT_LE, best->cost().val());
+  }
 
-  forceinline
-  IntMinimizeSpace::IntMinimizeSpace(bool share, IntMinimizeSpace& s)
-    : Space(share,s) {}
 
-
-  forceinline
-  IntMaximizeSpace::IntMaximizeSpace(void) {}
-
-  forceinline
-  IntMaximizeSpace::IntMaximizeSpace(bool share, IntMaximizeSpace& s)
-    : Space(share,s) {}
+  void
+  IntMaximizeSpace::constrain(const Space& _best) {
+    const IntMaximizeSpace* best =
+      dynamic_cast<const IntMaximizeSpace*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("IntMaximizeSpace::constrain");
+    rel(*this, cost(), IRT_GR, best->cost().val());
+  }
 
 
 #ifdef GECODE_HAS_FLOAT_VARS 
 
-  forceinline
-  FloatMinimizeSpace::FloatMinimizeSpace(FloatNum s)
-    : step(s) {}
+  void
+  FloatMinimizeSpace::constrain(const Space& _best) {
+    const FloatMinimizeSpace* best =
+      dynamic_cast<const FloatMinimizeSpace*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("FloatMinimizeSpace::constrain");
+    rel(*this, cost(), FRT_LE, best->cost().val()-step);
+  }
 
-  forceinline
-  FloatMinimizeSpace::FloatMinimizeSpace(bool share, 
-                                         FloatMinimizeSpace& s)
-    : Space(share,s), step(s.step) {}
 
-
-  forceinline
-  FloatMaximizeSpace::FloatMaximizeSpace(FloatNum s)
-    : step(s) {}
-
-  forceinline
-  FloatMaximizeSpace::FloatMaximizeSpace(bool share, 
-                                         FloatMaximizeSpace& s)
-    : Space(share,s), step(s.step) {}
+  void
+  FloatMaximizeSpace::constrain(const Space& _best) {
+    const FloatMaximizeSpace* best =
+      dynamic_cast<const FloatMaximizeSpace*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("FloatMaximizeSpace::constrain");
+    rel(*this, cost(), FRT_GR, best->cost().val()+step);
+  }
 
 #endif
 

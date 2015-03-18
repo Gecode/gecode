@@ -594,7 +594,7 @@ MMSRC0 = \
 	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
-	reg.cpp
+	reg.cpp optimize.cpp
 MMHDR0 = \
 	int-rel.hpp float-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \

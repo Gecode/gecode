@@ -2179,12 +2179,14 @@ namespace Gecode {
  * @{
  */ 
 namespace Gecode {
+
   /// Construct linear expression as sum of \ref IntArgs \ref Slice elements
   GECODE_MINIMODEL_EXPORT LinIntExpr 
   sum(const Slice<IntArgs>& slice);
   /// Construct linear expression as sum of \ref IntArgs \ref Matrix elements
   GECODE_MINIMODEL_EXPORT LinIntExpr 
   sum(const Matrix<IntArgs>& matrix);
+
 }
 /** @}*/
 
@@ -2198,65 +2200,106 @@ namespace Gecode {
    *
    * \ingroup TaskModelMiniModel
    */
-  //@{
-  namespace MiniModel {
 
-    /// Baseclass for integer-based cost-based optimization
-    template<IntRelType irt>
-    class IntOptimizeSpace : public Space {
-    public:
-      /// Default constructor
-      IntOptimizeSpace(void);
-      /// Constructor for cloning
-      IntOptimizeSpace(bool share, IntOptimizeSpace& s);
-      /// Member function constraining according to cost
-      virtual void constrain(const Space& best);
-      /// Return variable with current cost
-      virtual IntVar cost(void) const = 0;
-    };
+  /**
+   * \brief Class for minimizing integer cost
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  class IntMinimizeSpace : public Space {
+  public:
+    /// Default constructor
+    IntMinimizeSpace(void);
+    /// Constructor for cloning
+    IntMinimizeSpace(bool share, IntMinimizeSpace& s);
+    /// Member function constraining according to decreasing cost
+    GECODE_MINIMODEL_EXPORT
+    virtual void constrain(const Space& best);
+    /// Return variable with current cost
+    virtual IntVar cost(void) const = 0;
+  };
 
+  /**
+   * \brief Class for maximizing integer cost
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  class IntMaximizeSpace : public Space {
+  public:
+    /// Default constructor
+    IntMaximizeSpace(void);
+    /// Constructor for cloning
+    IntMaximizeSpace(bool share, IntMaximizeSpace& s);
+    /// Member function constraining according to increasing cost
+    GECODE_MINIMODEL_EXPORT
+    virtual void constrain(const Space& best);
+    /// Return variable with current cost
+    virtual IntVar cost(void) const = 0;
+  };
+
+  /**
+   * \brief Class for minimizing integer cost
+   * \deprecated Use IntMinimizeSpace instead.
+   */
+  typedef IntMinimizeSpace MinimizeSpace;
+  /**
+   * \brief Class for maximizing integer cost
+   * \deprecated Use IntMaximizeSpace instead.
+   */
+  typedef IntMaximizeSpace MaximizeSpace;
+
+  
 #ifdef GECODE_HAS_FLOAT_VARS 
 
-    /// Baseclass for float-based cost-based optimization
-    template<FloatRelType frt>
-    class FloatOptimizeSpace : public Space {
-    protected:
-      /// Step to increment for next better solution
-      FloatNum step;
-    public:
-      /// Constructor with step \a s
-      FloatOptimizeSpace(FloatNum s=0.0);
-      /// Constructor for cloning
-      FloatOptimizeSpace(bool share, FloatOptimizeSpace& s);
-      /// Member function constraining according to cost
-      virtual void constrain(const Space& best);
-      /// Return variable with current cost
-      virtual FloatVar cost(void) const = 0;
-    };
+  /**
+   * \brief Class for minimizing float cost
+   *
+   * The class supports using a step value \a step that will make sure
+   * that better solutions must be better by at least the value of 
+   * \a step.
+   *
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  class FloatMinimizeSpace : public Space {
+  protected:
+    /// Step by which a next solution has to have lower cost
+    FloatNum step;
+  public:
+    /// Constructor with step \a s
+    FloatMinimizeSpace(FloatNum s=0.0);
+    /// Constructor for cloning
+    FloatMinimizeSpace(bool share, FloatMinimizeSpace& s);
+    /// Member function constraining according to cost
+    GECODE_MINIMODEL_EXPORT
+    virtual void constrain(const Space& best);
+    /// Return variable with current cost
+    virtual FloatVar cost(void) const = 0;
+  };
+
+  /**
+   * \brief Class for maximizing float cost
+   *
+   * The class supports using a step value \a step that will make sure
+   * that better solutions must be better by at least the value of 
+   * \a step.
+   *
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  class FloatMaximizeSpace : public Space {
+  protected:
+    /// Step by which a next solution has to have lower cost
+    FloatNum step;
+  public:
+    /// Constructor with step \a s
+    FloatMaximizeSpace(FloatNum s=0.0);
+    /// Constructor for cloning
+    FloatMaximizeSpace(bool share, FloatMaximizeSpace& s);
+    /// Member function constraining according to cost
+    GECODE_MINIMODEL_EXPORT
+    virtual void constrain(const Space& best);
+    /// Return variable with current cost
+    virtual FloatVar cost(void) const = 0;
+  };
 
 #endif
-
-  }
-
-  /// Class for minimizing integer cost
-  typedef MiniModel::IntOptimizeSpace<IRT_LE> MinimizeSpace;
-  /// Class for maximizing integer cost
-  typedef MiniModel::IntOptimizeSpace<IRT_GR> MaximizeSpace;
-  /// Class for minimizing integer cost
-  typedef MiniModel::IntOptimizeSpace<IRT_LE> IntMinimizeSpace;
-  /// Class for maximizing integer cost
-  typedef MiniModel::IntOptimizeSpace<IRT_GR> IntMaximizeSpace;
-
-#ifdef GECODE_HAS_FLOAT_VARS 
-
-  /// Class for minimizing float cost
-  typedef MiniModel::FloatOptimizeSpace<FRT_LE> FloatMinimizeSpace;
-  /// Class for maximizing float cost
-  typedef MiniModel::FloatOptimizeSpace<FRT_GR> FloatMaximizeSpace;
-
-#endif
-
-  //@}
 
 }
 
