@@ -623,6 +623,9 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
     : Space(share, f), _random(f._random),
       _solveAnnotations(NULL), iv_boolalias(NULL),
+#ifdef GECODE_HAS_FLOAT_VARS
+      step(f.step),
+#endif
       needAuxVars(f.needAuxVars) {
       _optVar = f._optVar;
       _optVarIsInt = f._optVarIsInt;
@@ -1475,6 +1478,9 @@ namespace Gecode { namespace FlatZinc {
                                           true);
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
+#ifdef GECODE_HAS_FLOAT_VARS    
+    step = opt.step();
+#endif
     o.threads = opt.threads();
     o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
     o.cutoff  = Driver::createCutoff(opt);
@@ -1603,10 +1609,10 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_FLOAT_VARS
       if (_method == MIN)
         rel(*this, fv[_optVar], FRT_LE, 
-                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
+                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val()-step);
       else if (_method == MAX)
         rel(*this, fv[_optVar], FRT_GR,
-                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val());
+                   static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val()+step);
 #endif
     }
   }

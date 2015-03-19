@@ -73,6 +73,14 @@ Date: 2015-03-20
 Yada! Yada!
 
 [ENTRY]
+Module: flatzinc
+What:   new
+Rank:   minor
+[DESCRIPTION]
+An option -step now can pass an improvement step for
+optimization of float problems.
+
+[ENTRY]
 Module: driver
 What:   change
 Rank:   major

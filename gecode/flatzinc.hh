@@ -223,6 +223,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::BoolOption        _nogoods;   ///< Whether to use no-goods
       Gecode::Driver::UnsignedIntOption _nogoods_limit; ///< Depth limit for extracting no-goods
       Gecode::Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
+      Gecode::Driver::DoubleOption      _step;        ///< Step option
       //@}
     
       /// \name Execution options
@@ -255,6 +256,7 @@ namespace Gecode { namespace FlatZinc {
                      Search::Config::nogoods_limit),
       _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
+      _step("-step","step distance for float optimization",0.0),
       _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
       _stat("-s","emit statistics"),
       _output("-o","file to send output to") {
@@ -274,6 +276,7 @@ namespace Gecode { namespace FlatZinc {
       add(_decay);
       add(_node); add(_fail); add(_time); add(_interrupt);
       add(_seed);
+      add(_step);
       add(_restart); add(_r_base); add(_r_scale); 
       add(_nogoods); add(_nogoods_limit);
       add(_mode); add(_stat);
@@ -306,6 +309,7 @@ namespace Gecode { namespace FlatZinc {
     unsigned int fail(void) const { return _fail.value(); }
     unsigned int time(void) const { return _time.value(); }
     int seed(void) const { return _seed.value(); }
+    double step(void) const { return _step.value(); }
     const char* output(void) const { return _output.value(); }
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());
@@ -452,6 +456,8 @@ namespace Gecode { namespace FlatZinc {
     Gecode::FloatVarArray fv_aux;
     /// Indicates whether a float variable is introduced by mzn2fzn
     std::vector<bool> fv_introduced;
+    /// Step by which a next solution has to have lower cost
+    Gecode::FloatNum step;
 #endif
     /// Whether the introduced variables still need to be copied
     bool needAuxVars;
