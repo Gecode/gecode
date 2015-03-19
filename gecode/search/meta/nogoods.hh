@@ -230,4 +230,4 @@ namespace Gecode { namespace Search { namespace Meta {
 
 #endif
 
-// STATISTICS: search-other
+// STATISTICS: search-meta

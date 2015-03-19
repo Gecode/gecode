@@ -83,4 +83,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: search-other
+// STATISTICS: search-meta

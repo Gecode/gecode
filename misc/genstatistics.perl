@@ -40,7 +40,7 @@
 
 @catorder = ("core","memory","var","prop","branch","post",
 	     "int","set","float","minimodel","stress","any",
-	     "sequential","parallel","search","flatzinc",
+	     "sequential","parallel","meta","search","flatzinc",
 	     "other");
 
 $modclear{"kernel"} = "Kernel";
@@ -65,6 +65,7 @@ $catclear{"prop"} = "Propagators";
 $catclear{"branch"} = "Branchers";
 $catclear{"sequential"} = "Sequential search engines";
 $catclear{"parallel"} = "Parallel search engines";
+$catclear{"meta"} = "Meta-search engines";
 $catclear{"post"} = "Posting propagators for constraints";
 $catclear{"any"} = "All";
 $catclear{"other"} = "Miscellaneous";
