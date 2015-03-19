@@ -682,7 +682,7 @@ namespace Gecode { namespace Driver {
   class IgnoreStepOption : public BaseSpace {
   public:
     /// Constructor
-    IgnoreStepOption(const Options& opt) {}
+    IgnoreStepOption(const Options&) {}
     /// Constructor used for cloning
     IgnoreStepOption(bool share, BaseSpace& e) 
       : BaseSpace(share,e) {}

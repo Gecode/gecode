@@ -2205,7 +2205,7 @@ namespace Gecode {
    * \brief Class for minimizing integer cost
    * \ingroup TaskModelMiniModelOptimize
    */
-  class IntMinimizeSpace : public Space {
+  class GECODE_VTABLE_EXPORT IntMinimizeSpace : public Space {
   public:
     /// Default constructor
     IntMinimizeSpace(void);
@@ -2222,7 +2222,7 @@ namespace Gecode {
    * \brief Class for maximizing integer cost
    * \ingroup TaskModelMiniModelOptimize
    */
-  class IntMaximizeSpace : public Space {
+  class GECODE_VTABLE_EXPORT IntMaximizeSpace : public Space {
   public:
     /// Default constructor
     IntMaximizeSpace(void);
@@ -2258,7 +2258,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelMiniModelOptimize
    */
-  class FloatMinimizeSpace : public Space {
+  class GECODE_VTABLE_EXPORT FloatMinimizeSpace : public Space {
   protected:
     /// Step by which a next solution has to have lower cost
     FloatNum step;
@@ -2283,7 +2283,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelMiniModelOptimize
    */
-  class FloatMaximizeSpace : public Space {
+  class GECODE_VTABLE_EXPORT FloatMaximizeSpace : public Space {
   protected:
     /// Step by which a next solution has to have lower cost
     FloatNum step;
