@@ -70,12 +70,22 @@
 Version: 4.4.0
 Date: 2015-03-20
 [DESCRIPTION]
-Yada! Yada!
+This release fixes some bugs and improves some search-related aspects.
+
+Note that you will have to change all scripts that inherit from
+the pre-defined script classes (Script, IntMinimizeScript,
+IntMaximizeScript, FloatMinimizeScript, FloatMaximizeScript). The
+change is easy: in your constructor you have to add a call to the
+constructor of the pre-defined script class with the command line
+options as argument. Just check any of the Gecode example for how
+it is done.
+
 
 [ENTRY]
 Module: flatzinc
 What:   new
 Rank:   minor
+Thanks: Mark Manser 
 [DESCRIPTION]
 An option -step now can pass an improvement step for
 optimization of float problems.
