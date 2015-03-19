@@ -67,8 +67,8 @@
 #
 
 [RELEASE]
-Version: 4.3.4
-Date: 2015-01-20
+Version: 4.4.0
+Date: 2015-03-20
 [DESCRIPTION]
 Yada! Yada!
 
@@ -78,8 +78,10 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 All scripts now must call the constructor of their base class
-with an option argument. Note that you will have to change your
-models!
+with an option argument. 
+
+Note that you will have to change your models by a call to the
+constructor of the script class with an option argument!
 
 [ENTRY]
 Module: driver
