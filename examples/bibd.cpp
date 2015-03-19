@@ -109,7 +109,7 @@ public:
 
   /// Actual model
   BIBD(const BIBDOptions& o)
-    : Script(opt), opt(o), _p(*this,opt.v*opt.b,0,1) {
+    : Script(o), opt(o), _p(*this,opt.v*opt.b,0,1) {
     Matrix<BoolVarArray> p(_p,opt.b,opt.v);
 
     // r ones per row
