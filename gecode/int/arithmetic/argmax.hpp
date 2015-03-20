@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         }
       x.size(j);
 
-      if (n == y.size())
+      if (static_cast<unsigned int>(n) == y.size())
         return ES_FAILED;
       Iter::Values::Array id(d,n);
       GECODE_ME_CHECK(y.minus_v(home,id,false));

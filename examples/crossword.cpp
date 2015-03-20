@@ -164,7 +164,7 @@ public:
     }
   }
   /// Print brancher information when branching on letters
-  static void printletters(const Space& home, const BrancherHandle& bh,
+  static void printletters(const Space& home, const BrancherHandle&,
                            unsigned int a,
                            IntVar, int i, const int& n,
                            std::ostream& o) {
@@ -175,7 +175,7 @@ public:
       << static_cast<char>(n);
   }
   /// Print brancher information when branching on words
-  static void printwords(const Space&, const BrancherHandle& bh,
+  static void printwords(const Space&, const BrancherHandle&,
                          unsigned int a,
                          IntVar, int i, const int& n,
                          std::ostream& o) {

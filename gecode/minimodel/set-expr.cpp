@@ -363,6 +363,9 @@ namespace Gecode {
           case SRT_CMPL:
             invsrt = srt;
             break;
+          default: 
+            invsrt = srt;
+            GECODE_NEVER;
           }
           dom(home, s, invsrt, ss, b);
         }

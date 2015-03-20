@@ -82,12 +82,12 @@ namespace Gecode { namespace Search {
 
   unsigned long int 
   CutoffGeometric::operator ()(void) const {
-    return scale * n;
+    return static_cast<unsigned long int>(scale * n);
   }
   unsigned long int 
   CutoffGeometric::operator ++(void) {
     n *= base;
-    return scale * n;
+    return static_cast<unsigned long int>(scale * n);
   }
   
   

@@ -1869,7 +1869,7 @@ namespace Gecode {
   values(Home home, const IntVarArgs& x, IntSet y,
          IntConLevel icl=ICL_DEF) {
     dom(home,x,y,icl);
-    nvalues(home,x,IRT_EQ,y.size(),icl);
+    nvalues(home,x,IRT_EQ,static_cast<int>(y.size()),icl);
   }
 
   //@}

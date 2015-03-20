@@ -73,7 +73,7 @@ namespace Gecode { namespace Search { namespace Sequential {
 
   forceinline 
   DFS::DFS(Space* s, const Options& o)
-    : opt(o), path(static_cast<int>(opt.nogoods_limit)), d(0) {
+    : opt(o), path(opt.nogoods_limit), d(0) {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = NULL;

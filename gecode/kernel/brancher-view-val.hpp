@@ -234,7 +234,7 @@ namespace Gecode {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  forceinline BrancherHandle
+  inline BrancherHandle
   ViewValBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,

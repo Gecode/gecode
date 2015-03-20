@@ -240,7 +240,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   forceinline
   Engine::Worker::Worker(Space* s, Engine& e)
     : _engine(e), 
-      path(s == NULL ? 0 : static_cast<int>(e.opt().nogoods_limit)), d(0), 
+      path(s == NULL ? 0 : e.opt().nogoods_limit), d(0), 
       idle(false) {
     if (s != NULL) {
       if (s->status(*this) == SS_FAILED) {

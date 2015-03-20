@@ -3858,6 +3858,7 @@ namespace Gecode {
       case ES_NOFIX_FORCE:
         schedule(home,p,me,true);
         break;
+      case __ES_SUBSUMED:
       default:
         GECODE_NEVER;
       }

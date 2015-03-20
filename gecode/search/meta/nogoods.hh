@@ -144,7 +144,7 @@ namespace Gecode { namespace Search { namespace Meta {
   forceinline ExecStatus 
   NoGoodsProp::post(Space& home, const Path& p) {
     int s = 0;
-    int n = std::min(p.ds.entries(),p.ngdl());
+    int n = std::min(p.ds.entries(),static_cast<int>(p.ngdl()));
 
     unsigned long int n_nogood = 0;
 
