@@ -1179,7 +1179,7 @@ int_init :
         if (pp->symbols.get($1, e) && e.t == ST_INTVAR)
           $$ = new IntVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier " << $1
+          pp->err << "Error: undefined identifier for type int " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1200,7 +1200,7 @@ int_init :
           else
             $$ = new IntVarSpec(0,false,false); // keep things consistent
         } else {
-          pp->err << "Error: undefined array identifier " << $1
+          pp->err << "Error: undefined array identifier for type int " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1236,7 +1236,7 @@ float_init :
         if (pp->symbols.get($1, e) && e.t == ST_FLOATVAR)
           $$ = new FloatVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier " << $1
+          pp->err << "Error: undefined identifier for type float " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1256,7 +1256,7 @@ float_init :
           else
             $$ = new FloatVarSpec(0.0,false,false);
         } else {
-          pp->err << "Error: undefined array identifier " << $1
+          pp->err << "Error: undefined array identifier for type float " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1291,7 +1291,7 @@ bool_init :
         if (pp->symbols.get($1, e) && e.t == ST_BOOLVAR)
           $$ = new BoolVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier " << $1
+          pp->err << "Error: undefined identifier for type bool " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1311,7 +1311,7 @@ bool_init :
           else
             $$ = new BoolVarSpec(false,false,false);
         } else {
-          pp->err << "Error: undefined array identifier " << $1
+          pp->err << "Error: undefined array identifier for type bool " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1344,7 +1344,7 @@ set_init :
         if (pp->symbols.get($1, e) && e.t == ST_SETVAR)
           $$ = new SetVarSpec(Alias(e.i),false,false);
         else {
-          pp->err << "Error: undefined identifier " << $1
+          pp->err << "Error: undefined identifier for type set " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;
@@ -1364,7 +1364,7 @@ set_init :
           else
             $$ = new SetVarSpec(Alias(0),false,false);
         } else {
-          pp->err << "Error: undefined array identifier " << $1
+          pp->err << "Error: undefined array identifier for type set " << $1
                   << " in line no. "
                   << yyget_lineno(pp->yyscanner) << std::endl;
           pp->hadError = true;

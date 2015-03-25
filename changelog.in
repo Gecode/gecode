@@ -72,6 +72,13 @@ Date: 2015-?-?
 [DESCRIPTION]
 Gaga
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Jean-Noël Monette
+[DESCRIPTION]
+Improve error messages in FlatZinc for some type errors.
 
 [RELEASE]
 Version: 4.4.0
