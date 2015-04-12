@@ -1458,8 +1458,8 @@ AC_DEFUN([AC_GECODE_FLEXBISON],
           AC_MSG_RESULT(no)
           AC_SUBST(HAVE_FLEXBISON, "no")
         else
-          if bison --version | \
-            grep -e ' 2\.[[3-9]][[0-9]]*' >/dev/null 2>&1
+          if bison --version | grep -e ' 2\.[[3-9]][[0-9]]*' >/dev/null 2>&1 ||
+             bison --version | grep -e ' 3\.*' >/dev/null 2>&1
           then
             AC_MSG_RESULT(yes)
             AC_SUBST(HAVE_FLEXBISON, "yes")
