@@ -626,24 +626,21 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
-        bool introduced = $5->hasAtom("var_is_introduced");
         bool funcDep = $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_iv(pp->intvars.size())),
           "Duplicate symbol");
         if (print) {
           pp->output(std::string($4), new AST::IntVar(pp->intvars.size()));
-        } else {
-          introduced = true;
         }
         if ($6()) {
           AST::Node* arg = $6.some();
           if (arg->isInt()) {
             pp->intvars.push_back(varspec($4,
-              new IntVarSpec(arg->getInt(),introduced,funcDep)));
+              new IntVarSpec(arg->getInt(),!print,funcDep)));
           } else if (arg->isIntVar()) {
             pp->intvars.push_back(varspec($4,
-              new IntVarSpec(Alias(arg->getIntVar()),introduced,funcDep)));
+              new IntVarSpec(Alias(arg->getIntVar()),!print,funcDep)));
           } else {
             yyassert(pp, false, "Invalid var int initializer");
           }
@@ -653,7 +650,7 @@ vardecl_item:
           delete arg;
         } else {
           pp->intvars.push_back(varspec($4,
-            new IntVarSpec($2,introduced,funcDep)));
+            new IntVarSpec($2,!print,funcDep)));
         }
         delete $5; free($4);
       }
@@ -661,24 +658,21 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
-        bool introduced = $5->hasAtom("var_is_introduced");
         bool funcDep = $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_bv(pp->boolvars.size())),
           "Duplicate symbol");
         if (print) {
           pp->output(std::string($4), new AST::BoolVar(pp->boolvars.size()));
-        } else {
-          introduced = true;
         }
         if ($6()) {
           AST::Node* arg = $6.some();
           if (arg->isBool()) {
             pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(arg->getBool(),introduced,funcDep)));
+              new BoolVarSpec(arg->getBool(),!print,funcDep)));
           } else if (arg->isBoolVar()) {
             pp->boolvars.push_back(varspec($4,
-              new BoolVarSpec(Alias(arg->getBoolVar()),introduced,funcDep)));
+              new BoolVarSpec(Alias(arg->getBoolVar()),!print,funcDep)));
           } else {
             yyassert(pp, false, "Invalid var bool initializer");
           }
@@ -688,7 +682,7 @@ vardecl_item:
           delete arg;
         } else {
           pp->boolvars.push_back(varspec($4,
-            new BoolVarSpec($2,introduced,funcDep)));
+            new BoolVarSpec($2,!print,funcDep)));
         }
         delete $5; free($4);
       }
@@ -696,7 +690,6 @@ vardecl_item:
       {
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $5->hasAtom("output_var");
-        bool introduced = $5->hasAtom("var_is_introduced");
         bool funcDep = $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_fv(pp->floatvars.size())),
@@ -704,18 +697,16 @@ vardecl_item:
         if (print) {
           pp->output(std::string($4),
                      new AST::FloatVar(pp->floatvars.size()));
-        } else {
-          introduced = true;
         }
         if ($6()) {
           AST::Node* arg = $6.some();
           if (arg->isFloat()) {
             pp->floatvars.push_back(varspec($4,
-              new FloatVarSpec(arg->getFloat(),introduced,funcDep)));
+              new FloatVarSpec(arg->getFloat(),!print,funcDep)));
           } else if (arg->isFloatVar()) {
             pp->floatvars.push_back(varspec($4,
               new FloatVarSpec(
-                Alias(arg->getFloatVar()),introduced,funcDep)));
+                Alias(arg->getFloatVar()),!print,funcDep)));
           } else {
             yyassert(pp, false, "Invalid var float initializer");
           }
@@ -730,7 +721,7 @@ vardecl_item:
                  : Option<std::pair<double,double> >::none();
           if ($2()) delete $2.some();
           pp->floatvars.push_back(varspec($4,
-            new FloatVarSpec(dom,introduced,funcDep)));
+            new FloatVarSpec(dom,!print,funcDep)));
         }
         delete $5; free($4);
       }
@@ -738,24 +729,21 @@ vardecl_item:
       { 
         ParserState* pp = static_cast<ParserState*>(parm);
         bool print = $7->hasAtom("output_var");
-        bool introduced = $7->hasAtom("var_is_introduced");
         bool funcDep = $7->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($6, se_sv(pp->setvars.size())),
           "Duplicate symbol");
         if (print) {
           pp->output(std::string($6), new AST::SetVar(pp->setvars.size()));
-        } else {
-          introduced = true;
         }
         if ($8()) {
           AST::Node* arg = $8.some();
           if (arg->isSet()) {
             pp->setvars.push_back(varspec($6,
-              new SetVarSpec(arg->getSet(),introduced,funcDep)));
+              new SetVarSpec(arg->getSet(),!print,funcDep)));
           } else if (arg->isSetVar()) {
             pp->setvars.push_back(varspec($6,
-              new SetVarSpec(Alias(arg->getSetVar()),introduced,funcDep)));
+              new SetVarSpec(Alias(arg->getSetVar()),!print,funcDep)));
             delete arg;
           } else {
             yyassert(pp, false, "Invalid var set initializer");
@@ -766,7 +754,7 @@ vardecl_item:
                                 new AST::SetVar(pp->setvars.size()-1), $4);
         } else {
           pp->setvars.push_back(varspec($6,
-            new SetVarSpec($4,introduced,funcDep)));
+            new SetVarSpec($4,!print,funcDep)));
         }
         delete $7; free($6);
       }

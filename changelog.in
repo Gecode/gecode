@@ -75,6 +75,15 @@ Gaga
 [ENTRY]
 Module: flatzinc
 What:   bug
+Rank:   major
+Thanks: Andrea Rendl
+[DESCRIPTION]
+Fix branching on introduced variables, which could sometimes lead to
+unassigned variables appearing in the output.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
 Rank:   minor
 Thanks: Jean-Noël Monette
 [DESCRIPTION]
