@@ -74,6 +74,13 @@ Gaga
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add support for generating the FlatZinc parser using bison version 3.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   major
 Thanks: Andrea Rendl
