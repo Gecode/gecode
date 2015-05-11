@@ -90,6 +90,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = NULL;
+      if (s) dynamic_cast<QSpaceInfo*>(s)->strategyFailed();
       if (!opt.clone)
         delete s;
     } else {
@@ -104,8 +105,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     path.reset();
     d = 0;
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
-      delete s;
       cur = NULL;
+      if (s) dynamic_cast<QSpaceInfo*>(s)->strategyFailed();
     } else {
       cur = s;
       dynamic_cast<QSpaceInfo*>(cur)->strategyReset();
@@ -121,6 +122,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   forceinline Space*
   QDFS::next(void) {
     Space * solvedSpace = NULL;
+    Space * failedSpace = NULL;
     TQuantifier bckQuant = EXISTS;
     start();
     while (true) {
@@ -141,7 +143,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           // On devra dépiler jusqu'au dernier existentiel
           bckQuant = EXISTS;
           fail++;
-          delete cur;
+          failedSpace = cur;
           cur = NULL;
           break;
         case SS_SOLVED:
@@ -181,10 +183,15 @@ namespace Gecode { namespace Search { namespace Sequential {
           cur = NULL;
           if (solvedSpace)
           {
-            dynamic_cast<QSpaceInfo*>(cur)->strategySuccess();
+            dynamic_cast<QSpaceInfo*>(solvedSpace)->strategySuccess();
             return solvedSpace;
           } else {
-            dynamic_cast<QSpaceInfo*>(cur)->strategyFailed();
+            if (failedSpace)
+            {
+              // Can be NULL if failed space on construction
+              dynamic_cast<QSpaceInfo*>(failedSpace)->strategyFailed();
+              delete failedSpace;
+            }
             return NULL;
           }
         }
@@ -194,6 +201,11 @@ namespace Gecode { namespace Search { namespace Sequential {
       {
         delete solvedSpace;
         solvedSpace = NULL;
+      }
+      if (failedSpace)
+      {
+        delete failedSpace;
+        failedSpace = NULL;
       }
     }
     GECODE_NEVER;

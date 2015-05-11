@@ -63,6 +63,8 @@ namespace Gecode { namespace Driver {
  */
 class ConnectFourOptions : public Options {
 protected:
+  /// Print strategy or not
+  Gecode::Driver::BoolOption _printStrategy;
   /// Model name
   Gecode::Driver::StringOption _QCSPmodel;
   /// Heuristic in branching
@@ -76,7 +78,9 @@ protected:
 public:
   /// Initialize options for example with name \a s
   ConnectFourOptions(const char* s)
-    : Options(s), _QCSPmodel("-QCSPmodel","Name of the model used for modeling problem",3),
+    : Options(s),
+      _printStrategy("-printStrategy","Print strategy",false),
+      _QCSPmodel("-QCSPmodel","Name of the model used for modeling problem",3),
       _heuristic("-heuristic","Use heuristic when branching (only for model + and ++)",true),
       _file("-file","File name of recorded moves"),
       _row("-row","Number of rows (minimum 4)",6),
@@ -84,11 +88,16 @@ public:
     _QCSPmodel.add(1,"AllState","Model with all states as defined by P. Nightingale. Without Pure Value and heuristic setup.");
     _QCSPmodel.add(2,"AllState+","Model with all states as defined by P. Nightingale. With cut.");
     _QCSPmodel.add(3,"AllState++","Model with all states as defined by P. Nightingale. With cut and additional constraints.");
+    add(_printStrategy);
     add(_QCSPmodel);
     add(_heuristic);
     add(_file);
     add(_row);
     add(_col);
+  }
+  /// Return true if the strategy must be printed
+  bool printStrategy(void) const {
+    return _printStrategy.value();
   }
   /// Return model name
   int QCSPmodel(void) const {
@@ -175,9 +184,10 @@ class ConnectFourAllState : public Script, public QSpaceInfo {
   const ConnectFourOptions& opt;
 
 public:
-  ConnectFourAllState(const ConnectFourOptions& _opt) : Script(), QSpaceInfo(), opt(_opt)
+  ConnectFourAllState(const ConnectFourOptions& _opt) : Script(_opt), QSpaceInfo(), opt(_opt)
   {
     std::cout << "Loading problem" << std::endl;
+    if (!opt.printStrategy()) strategyMethod(0); // disable build and print strategy
     using namespace Int;
     // Define constants
     row = opt.row();

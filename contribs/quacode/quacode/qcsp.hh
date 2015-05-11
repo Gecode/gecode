@@ -241,7 +241,7 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class QDFS : public EngineBase {
+  class QDFS : public Search::EngineBase<T> {
   private:
     /// The actual search engine
     Search::Engine* e;

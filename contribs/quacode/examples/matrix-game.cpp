@@ -64,6 +64,8 @@ class MatrixGameOptions : public Options {
 protected:
   /// Optional file name
   Gecode::Driver::StringValueOption _file;
+  /// Print strategy or not
+  Gecode::Driver::BoolOption _printStrategy;
   /// Flag to known if we have to print initial board
   Driver::BoolOption _printBoard;
 public:
@@ -71,10 +73,12 @@ public:
   /// Initialize options for example with name \a s
   MatrixGameOptions(const char* s, int n0, bool pb0)
     : Options(s), _file("-file","File name for MatrixGameOptionsrix input"),
+      _printStrategy("-printStrategy","Print strategy",false),
       _printBoard("-printBoard",
                    "whether to print initial board",pb0),
       n(n0) {
     add(_file);
+    add(_printStrategy);
     add(_printBoard);
   }
   /// Parse options from arguments \a argv (number is \a argc)
@@ -94,6 +98,10 @@ public:
   const char* file(void) const {
     return _file.value();
   }
+  /// Return true if the strategy must be printed
+  bool printStrategy(void) const {
+    return _printStrategy.value();
+  }
   /// Return true if we have to print initial board
   bool printBoard(void) const {
     return _printBoard.value();
@@ -105,9 +113,10 @@ class QCSPMatrixGame : public Script, public QSpaceInfo {
 
 public:
 
-  QCSPMatrixGame(const MatrixGameOptions& opt) : Script(), QSpaceInfo()
+  QCSPMatrixGame(const MatrixGameOptions& opt) : Script(opt), QSpaceInfo()
   {
     std::cout << "Loading problem" << std::endl;
+    if (!opt.printStrategy()) strategyMethod(0); // disable build and print strategy
     using namespace Int;
     int depth = opt.n;// Size of the matrix is 2^depth. Large values may take long to solve...
     int boardSize = (int)pow((double)2,(double)depth);
