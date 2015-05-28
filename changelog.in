@@ -76,6 +76,15 @@ Gaga
 Module: flatzinc
 What:   change
 Rank:   minor
+Thanks: Pete Nightingale
+[DESCRIPTION]
+Make bounds propagation the default for global cardinality constraints
+in FlatZinc.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
 [DESCRIPTION]
 Add support for generating the FlatZinc parser using bison version 3.
 

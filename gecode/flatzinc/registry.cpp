@@ -952,15 +952,17 @@ namespace Gecode { namespace FlatZinc {
         iv1 << IntVar(s,0,iv0.size());
       }
       IntConLevel icl = s.ann2icl(ann);
+      if (icl==ICL_DEF)
+        icl=ICL_BND;
       if (icl==ICL_DOM) {
         IntVarArgs allvars = iv0+iv1;
         unshare(s, allvars);
         count(s, allvars.slice(0,1,iv0.size()), 
                  allvars.slice(iv0.size(),1,iv1.size()),
-                 cover, s.ann2icl(ann));
+                 cover, icl);
       } else {
         unshare(s, iv0);
-        count(s, iv0, iv1, cover, s.ann2icl(ann));
+        count(s, iv0, iv1, cover, icl);
       }
     }
 
