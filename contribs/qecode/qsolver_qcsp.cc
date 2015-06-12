@@ -101,8 +101,9 @@ Strategy QCSP_Solver::rSolve(Qcop* qs,int scope,Engine* L, unsigned long int& no
                 int vmin = ( (scope==0)? 0 : (qs->nbVarInScope(scope-1)) );
                 int vmax = (qs->nbVarInScope(scope))-1;
                 vector<int> zevalues=getTheValues(sol,vmin,vmax);
-                result=Strategy(qs->quantification(scope),vmin,vmax,scope,zevalues);
-                result.attach(Strategy::STrue());
+                result = Strategy::STrue();
+//                result=Strategy(qs->quantification(scope),vmin,vmax,scope,zevalues);
+//                result.attach(Strategy::STrue());
                 delete g;
                 //	delete sol;
                 delete goalsol;
@@ -146,23 +147,23 @@ Strategy QCSP_Solver::rSolve(Qcop* qs,int scope,Engine* L, unsigned long int& no
         } else { //current scope is existential
             if (!result.isFalse()) { // result is not the trivially false strategy...
                 atLeastOneExistential =true;
-                delete L;
                 Strategy toAttach;
-//                if (allStrategies) {
-//                    // We want to save every possible strategies. Each correct existential branch will be saved
-//                    if (scope >= limit) toAttach = Strategy::STrue();
-//                    else {
-//                        toAttach = Strategy(qs->quantification(scope),vmin,vmax,scope,zevalues);
-//                        toAttach.attach(result);
-//                    }
-//                    ret.attach(toAttach);
-//                } else {
+                if (allStrategies) {
+                    // We want to save every possible strategies. Each correct existential branch will be saved
+                    if (scope >= limit) toAttach = Strategy::STrue();
+                    else {
+                        toAttach = Strategy(qs->quantification(scope),vmin,vmax,scope,zevalues);
+                        toAttach.attach(result);
+                    }
+                    ret.attach(toAttach);
+                } else {
                     //We want only one possible strategy. We found an assignment which leads to a valid substrategy. So, we return it immediately
+                    delete L;
                     if (scope >= limit) return Strategy::STrue();
                     ret = Strategy(qs->quantification(scope),vmin,vmax,scope,zevalues);
                     ret.attach(result);
                     return ret; 
-//                }
+                }
             }
         }
         sol = static_cast<MySpace*>(L->next());

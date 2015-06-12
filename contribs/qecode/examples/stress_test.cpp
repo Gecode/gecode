@@ -26,6 +26,25 @@ THE SOFTWARE.
 #include <iostream>
 
 using namespace std;
+
+// This function prints a winning strategy.
+void printStr(Strategy s,int depth=0) {
+    StrategyNode plop = s.getTag();
+    for (int glou=0;glou<depth;glou++) cout<<" ";
+    if (s.isTrue()) cout<<"TRUE"<<endl;
+    else if (s.isFalse()) cout<<"FALSE"<<endl;
+    else cout<<"type "<<plop.type<<" qt "<<plop.quantifier<<" vmin "<<plop.Vmin<<" vmax "<<plop.Vmax<<" scope "<<plop.scope<<" - ";
+    for (int i=0;i<s.getTag().valeurs.size();i++) cout<<s.getTag().valeurs[i]<<" ";
+    cout<<endl;
+    for (int glou=0;glou<depth;glou++) cout<<" ";
+    cout<<s.degree()<<" child(ren)"<<endl;
+    for (int i=0;i<s.degree();i++) {
+        for (int glou=0;glou<depth;glou++) cout<<" ";
+        cout<<"Child "<<i<<" : "<<endl;
+        printStr(s.getChild(i),depth+1);
+    }
+}
+
 // This is a set of tiny problems which are used to dtect errors in QeCode.
 // This set is likely to progressively enlarge...
 
@@ -46,9 +65,10 @@ int main() {
     test1.makeStructure();
     QCSP_Solver s1(&test1);
     nodes=0;
-    Strategy ret1=s1.solve(nodes);
+    Strategy ret1=s1.solve(nodes,INT_MAX,true);
     cout<<"Problem 1 : result = "<<(ret1.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret1);
 
     //Ex in 1..3 [] st x=1
     int sc2[] = {1};
@@ -65,9 +85,10 @@ int main() {
     test2.makeStructure();
     QCSP_Solver s2(&test2);
     nodes=0;
-    Strategy ret2=s2.solve(nodes);
+    Strategy ret2=s2.solve(nodes,INT_MAX,true);
     cout<<"Problem 2 : result = "<<(ret2.isFalse()?"FALSE":"TRUE")<<", sould be TRUE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret2);
 
 
 
@@ -88,9 +109,10 @@ int main() {
     QCSP_Solver s3(&test3);
     nodes=0;
     steps=0;
-    Strategy ret3=s3.solve(nodes);
+    Strategy ret3=s3.solve(nodes,INT_MAX,true);
     cout<<"Problem 3 : result = "<<(ret3.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret3);
 
 
     // Ex in 1..3 [x=1] st x=2
@@ -109,9 +131,11 @@ int main() {
     test4.makeStructure();
     QCSP_Solver s4(&test4);
     nodes=0;
-    Strategy ret4=s4.solve(nodes);
+    Strategy ret4=s4.solve(nodes,INT_MAX,true);
     cout<<"Problem 4 : result = "<<(ret4.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret4);
+
 
 
     // Ax in 1..3 [x=1] -> Ey in 1..3 [x=2] -> y=1
@@ -140,9 +164,10 @@ int main() {
     QCSP_Solver s5(&test5);
     nodes=0;
     steps=0;
-    Strategy ret5=s5.solve(nodes);
+    Strategy ret5=s5.solve(nodes,INT_MAX,true);
     cout<<"Problem 5 : result = "<<(ret5.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret5);
 
 
     // Ax in 1..3 [x=1] -> Ey in 1..3 [x=1] -> x=2
@@ -171,9 +196,10 @@ int main() {
     QCSP_Solver s6(&test6);
     nodes=0;
     steps=0;
-    Strategy ret6=s6.solve(nodes);
+    Strategy ret6=s6.solve(nodes,INT_MAX,true);
     cout<<"Problem 6 : result = "<<(ret6.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret6);
 
 
     //Ex in 1..3 [] Ay in 0..3 [y<2] -> y=0
@@ -201,9 +227,10 @@ int main() {
     QCSP_Solver s7(&test7);
     nodes=0;
     steps=0;
-    Strategy ret7=s7.solve(nodes);
+    Strategy ret7=s7.solve(nodes,INT_MAX,true);
     cout<<"Problem 7 : result = "<<(ret7.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret7);
 
 
     //Ex in 1..3 [] Ay in 0..3 [y=0] -> y=0
@@ -231,9 +258,10 @@ int main() {
     QCSP_Solver s8(&test8);
     nodes=0;
     steps=0;
-    Strategy ret8=s8.solve(nodes);
+    Strategy ret8=s8.solve(nodes,INT_MAX,true);
     cout<<"Problem 8 : result = "<<(ret8.isFalse()?"FALSE":"TRUE")<<", sould be TRUE."<<endl;
     cout<<nodes<<" nodes."<<endl;
+    printStr(ret8);
 
 }
 
