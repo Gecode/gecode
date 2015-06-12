@@ -48,7 +48,7 @@ private:
     int n;
     Qcop* sp;
     int* nbRanges;
-	Strategy rSolve(Qcop* qs,int scope,Engine* L,unsigned long int& nodes);
+	Strategy rSolve(Qcop* qs,int scope,Engine* L,unsigned long int& nodes,bool allStrategies);
 public:
         /** Public constructor.
         @param sp The problem to solve
@@ -56,9 +56,11 @@ public:
     QECODE_EXPORT QCSP_Solver(Qcop* sp); 
     
     /** Solves the problem and returns a corresponding winning strategy. 
-        @param nodes A reference that is increased by the number of nodes encountered in the search tree.
+        @param nodes : A reference that is increased by the number of nodes encountered in the search tree.
+        @param limit : limit of the depth of the Strategy object returned. Any branch longer than this limit will be truncated. 
+        @param allStrategies : indicate if the solver should return only one winning strategy, or all of them (condensed in one Strategy object, where existential nodes will not be unique)
         */
-	QECODE_EXPORT Strategy solve(unsigned long int& nodes,unsigned int limit=INT_MAX);
+	QECODE_EXPORT Strategy solve(unsigned long int& nodes,unsigned int limit=INT_MAX,bool allStrategies=false);
 };
 
 #endif

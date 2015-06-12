@@ -22,6 +22,7 @@ THE SOFTWARE.
 
 #include "qsolver_qcop.hh"
 #include "QCOPPlus.hh"
+#include "qsolver_qcsp.hh"
 #include <iostream>
 
 using namespace std;
@@ -43,7 +44,7 @@ int main() {
     test1.nextScope();
     rel(*(test1.space()),test1.var(0) == 1);
     test1.makeStructure();
-    QCOP_solver s1(&test1);
+    QCSP_Solver s1(&test1);
     nodes=0;
     Strategy ret1=s1.solve(nodes);
     cout<<"Problem 1 : result = "<<(ret1.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
@@ -62,7 +63,7 @@ int main() {
     test2.nextScope();
     rel(*(test2.space()),test2.var(0) == 1);
     test2.makeStructure();
-    QCOP_solver s2(&test2);
+    QCSP_Solver s2(&test2);
     nodes=0;
     Strategy ret2=s2.solve(nodes);
     cout<<"Problem 2 : result = "<<(ret2.isFalse()?"FALSE":"TRUE")<<", sould be TRUE."<<endl;
@@ -84,7 +85,7 @@ int main() {
     test3.nextScope();
     rel(*(test3.space()),test3.var(0) == 2);
     test3.makeStructure();;
-    QCOP_solver s3(&test3);
+    QCSP_Solver s3(&test3);
     nodes=0;
     steps=0;
     Strategy ret3=s3.solve(nodes);
@@ -106,7 +107,7 @@ int main() {
     test4.nextScope();
     rel(*(test4.space()),test4.var(0) == 2);
     test4.makeStructure();
-    QCOP_solver s4(&test4);
+    QCSP_Solver s4(&test4);
     nodes=0;
     Strategy ret4=s4.solve(nodes);
     cout<<"Problem 4 : result = "<<(ret4.isFalse()?"FALSE":"TRUE")<<", sould be FALSE."<<endl;
@@ -136,7 +137,7 @@ int main() {
     test5.nextScope();
     rel(*(test5.space()),test5.var(1) == 1);
     test5.makeStructure();
-    QCOP_solver s5(&test5);
+    QCSP_Solver s5(&test5);
     nodes=0;
     steps=0;
     Strategy ret5=s5.solve(nodes);
@@ -167,7 +168,7 @@ int main() {
     test6.nextScope();
     rel(*(test6.space()),test6.var(0) == 2);
     test6.makeStructure();
-    QCOP_solver s6(&test6);
+    QCSP_Solver s6(&test6);
     nodes=0;
     steps=0;
     Strategy ret6=s6.solve(nodes);
@@ -197,7 +198,7 @@ int main() {
     test7.nextScope();
     rel(*(test7.space()),test7.var(1) == 0);
     test7.makeStructure();
-    QCOP_solver s7(&test7);
+    QCSP_Solver s7(&test7);
     nodes=0;
     steps=0;
     Strategy ret7=s7.solve(nodes);
@@ -227,7 +228,7 @@ int main() {
     test8.nextScope();
     rel(*(test8.space()),test8.var(1) == 0);
     test8.makeStructure();
-    QCOP_solver s8(&test8);
+    QCSP_Solver s8(&test8);
     nodes=0;
     steps=0;
     Strategy ret8=s8.solve(nodes);
