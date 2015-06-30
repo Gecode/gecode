@@ -753,25 +753,28 @@ namespace Test { namespace Int {
      /// %Test for argument maximum constraint
      class ArgMax : public Test {
      protected:
+       /// Offset to be used
+       int offset;
        /// Whether to use tie-breaking
        bool tiebreak;
      public:
        /// Create and register test
-       ArgMax(int n, bool tb)
-         : Test("Arithmetic::ArgMax::"+str(tb)+"::"+str(n),n+1,0,n+1,
+       ArgMax(int n, int o, bool tb)
+         : Test("Arithmetic::ArgMax::"+str(o)+"::"+str(tb)+"::"+str(n),
+                n+1,0,n+1,
                 false,tb ? Gecode::ICL_DEF : Gecode::ICL_DOM),
-           tiebreak(tb) {}
+           offset(o), tiebreak(tb) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
-         if ((x[n] < 0) || (x[n] >= n))
+         if ((x[n] < offset) || (x[n] >= n + offset))
            return false;
          int m=x[0]; int p=0;
          for (int i=1; i<n; i++)
            if (x[i] > m) {
              p=i; m=x[i];
            }
-         return tiebreak ? (p == x[n]) : (m == x[x[n]]);
+         return tiebreak ? (p + offset == x[n]) : (m == x[x[n]-offset]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -779,7 +782,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs m(n);
          for (int i=0; i<n; i++)
            m[i]=x[i];
-         Gecode::argmax(home, m, x[n], tiebreak);
+         Gecode::argmax(home, m, offset, x[n], tiebreak);
        }
      };
 
@@ -822,25 +825,28 @@ namespace Test { namespace Int {
      /// %Test for argument minimum constraint
      class ArgMin : public Test {
      protected:
+       /// Which offset to use
+       int offset;
        /// Whether to use tie-breaking
        bool tiebreak;
      public:
        /// Create and register test
-       ArgMin(int n, bool tb)
-         : Test("Arithmetic::ArgMin::"+str(tb)+"::"+str(n),n+1,0,n+1,
+       ArgMin(int n, int o, bool tb)
+         : Test("Arithmetic::ArgMin::"+str(o)+"::"+str(tb)+"::"+str(n),
+                n+1,0,n+1,
                 false,tb ? Gecode::ICL_DEF : Gecode::ICL_DOM),
-           tiebreak(tb)  {}
+           offset(o), tiebreak(tb)  {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
-         if ((x[n] < 0) || (x[n] >= n))
+         if ((x[n] < offset) || (x[n] >= n + offset))
            return false;
          int m=x[0]; int p=0;
          for (int i=1; i<n; i++)
            if (x[i] < m) {
              p=i; m=x[i];
            }
-         return tiebreak ? (p == x[n]) : (m == x[x[n]]);
+         return tiebreak ? (p+offset == x[n]) : (m == x[x[n]-offset]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -848,7 +854,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs m(n);
          for (int i=0; i<n; i++)
            m[i]=x[i];
-         Gecode::argmin(home, m, x[n], tiebreak);
+         Gecode::argmin(home, m, offset, x[n], tiebreak);
        }
      };
 
@@ -1050,13 +1056,17 @@ namespace Test { namespace Int {
              (void) new MaxNaryShared(icls.icl());
            }
          for (int i=1; i<5; i++) {
-           (void) new ArgMax(i,true);
+           (void) new ArgMax(i,0,true);
+           (void) new ArgMax(i,1,true);
            (void) new ArgMaxShared(i,true);
-           (void) new ArgMin(i,true);
+           (void) new ArgMin(i,0,true);
+           (void) new ArgMin(i,1,true);
            (void) new ArgMinShared(i,true);
-           (void) new ArgMax(i,false);
+           (void) new ArgMax(i,0,false);
+           (void) new ArgMax(i,1,false);
            (void) new ArgMaxShared(i,false);
-           (void) new ArgMin(i,false);
+           (void) new ArgMin(i,0,false);
+           (void) new ArgMin(i,1,false);
            (void) new ArgMinShared(i,false);
          }
        }

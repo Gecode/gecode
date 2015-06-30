@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Added variant of argmin and argmax with offset.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor
