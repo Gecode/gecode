@@ -73,6 +73,13 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix a bug in the parser when parsing float variable domains.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

@@ -1460,7 +1460,8 @@ constraint_item :
               ivs1->alias = true;
               ivs1->i = base0;
               if (ivs1->domain()) {
-                addDomainConstraint(pp, new AST::FloatVar(base0), Option<std::pair<double,double>* >::some(&ivs1->domain.some()));
+                std::pair<double,double>* dom = new std::pair<double,double>(ivs1->domain.some());
+                addDomainConstraint(pp, new AST::FloatVar(base0), Option<std::pair<double,double>* >::some(dom));
                 ivs1->domain = Option<std::pair<double,double> >::none();
               }
             }
