@@ -358,6 +358,14 @@ namespace Gecode { namespace Int { namespace BinPacking {
   Pack::post(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs) {
     // Sort according to size
     Support::quicksort(&bs[0], bs.size());
+    // Total size of items
+    int s = 0;
+    // Constrain bins 
+    for (int i=bs.size(); i--; ) {
+      s += bs[i].size();
+      GECODE_ME_CHECK(bs[i].bin().gq(home,0));
+      GECODE_ME_CHECK(bs[i].bin().le(home,l.size()));
+    }
     // Eliminate zero sized items (which are at the end as the size are sorted)
     {
       int n = bs.size();
@@ -374,13 +382,6 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // No bins available
       return ES_FAILED;
     } else {
-      int s = 0;
-      // Constrain bins 
-      for (int i=bs.size(); i--; ) {
-        s += bs[i].size();
-        GECODE_ME_CHECK(bs[i].bin().gq(home,0));
-        GECODE_ME_CHECK(bs[i].bin().le(home,l.size()));
-      }
       // Constrain load
       for (int j=l.size(); j--; ) {
         GECODE_ME_CHECK(l[j].gq(home,0));

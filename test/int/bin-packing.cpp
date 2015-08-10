@@ -170,6 +170,10 @@ namespace Test { namespace Int {
           l += x[j];
         if (l != t)
           return false;
+        // Check whether items are at possible bins
+        for (int j=m; j--; )
+          if ((x[m+j] < 0) || (x[m+j] >= m))
+            return false;
         // Compute whether items add up
         for (int j=m; j--; )
           il[j] = 0;

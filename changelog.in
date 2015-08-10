@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
+Constrain bin variables even for zero-sized items in binpacking constraint.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
