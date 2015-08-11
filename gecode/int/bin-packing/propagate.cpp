@@ -369,7 +369,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     // Eliminate zero sized items (which are at the end as the size are sorted)
     {
       int n = bs.size();
-      while (bs[n-1].size() == 0)
+      while ((n > 0) && (bs[n-1].size() == 0))
         n--;
       bs.size(n);
     }

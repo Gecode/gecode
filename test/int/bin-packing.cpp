@@ -321,6 +321,7 @@ namespace Test { namespace Int {
         using namespace Gecode;
 
         {
+          IntArgs s0(4, 0,0,0,0);
           IntArgs s1(3, 2,1,1);
           IntArgs s2(4, 1,2,3,4);
           IntArgs s3(4, 4,3,2,1);
@@ -332,6 +333,7 @@ namespace Test { namespace Int {
           IntArgs s9(6, 1,2,4,8,16,32);
           
           for (int m=1; m<4; m++) {
+            (void) new BPT(m, s0);
             (void) new BPT(m, s1);
             (void) new BPT(m, s2);
             (void) new BPT(m, s3);

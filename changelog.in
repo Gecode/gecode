@@ -78,6 +78,14 @@ What:   bug
 Rank:   minor
 Thanks:	Kish Shen
 [DESCRIPTION]
+The binpacking constraint works even if all items are of size zero.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
 Constrain bin variables even for zero-sized items in binpacking constraint.
 
 [ENTRY]
