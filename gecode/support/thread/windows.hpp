@@ -81,10 +81,14 @@ namespace Gecode { namespace Support {
     if (WaitForSingleObject(w_h,INFINITE) != 0)
       throw OperatingSystemError("Event::wait[Windows::WaitForSingleObject]");
   }
+
   forceinline
   Event::~Event(void) {
-    if (CloseHandle(w_h) == 0)
-      throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
+    if (CloseHandle(w_h) == 0) {
+      std::cerr << "Operating system error: "
+                << "Event::~Event[Windows::CloseHandle]";
+      std::terminate();
+    }
   }
 
 

@@ -73,6 +73,13 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Compiles with Visual Studio 2015.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
