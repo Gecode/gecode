@@ -1628,7 +1628,7 @@ namespace Gecode {
    * Performs domain propagation (\a icl = ICL_DOM, default)
    * and slightly less domain propagation (all other values for \a icl),
    * where \a y is not pruned. Note that in both cases propagation
-   * is not comain consistent.
+   * is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType irt, int m,
@@ -1662,7 +1662,7 @@ namespace Gecode {
    * Performs domain propagation (\a icl = ICL_DOM, default)
    * and slightly less domain propagation (all other values for \a icl),
    * where \a y is not pruned. Note that in both cases propagation
-   * is not comain consistent.
+   * is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType irt, IntVar z,
