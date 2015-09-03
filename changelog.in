@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
+Some count constraints are no optimized in case its arguments are
+assigned.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor

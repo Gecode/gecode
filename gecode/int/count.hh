@@ -54,16 +54,13 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   //@{
-  /// Description of view type
-  enum ViewTypeDesc {
-    VTD_CONSTVIEW, ///< Constant view
-    VTD_INTSET,    ///< Integer set
-    VTD_VARVIEW    ///< Variable view
-  };
-  /// Return the view type description of \a y
+  /// Return whether \a y is an integer set
   template<class VY>
-  ViewTypeDesc vtd(VY y);
-
+  bool isintset(VY y);
+  /// Return whether \a y is a value
+  template<class VY>
+  bool isval(VY y);
+  
   /// Subscribe propagator \a p to view \a y
   template<class VY>
   void subscribe(Space& home, Propagator& p, VY y);

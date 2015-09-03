@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Count {
   IntBase<VX,VY>::IntBase(Home home,
                           ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
-    if (vtd(y) == VTD_INTSET)
+    if (isintset(y))
       home.notice(*this,AP_DISPOSE);
     for (int i=n_s; i--; )
       x[i].subscribe(home,*this,PC_INT_DOM);
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   forceinline size_t
   IntBase<VX,VY>::dispose(Space& home) {
-    if (vtd(y) == VTD_INTSET)
+    if (isintset(y))
       home.ignore(*this,AP_DISPOSE);
     for (int i=n_s; i--; )
       x[i].cancel(home,*this,PC_INT_DOM);

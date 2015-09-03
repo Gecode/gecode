@@ -45,28 +45,29 @@ namespace Gecode { namespace Int { namespace Count {
    */
 
   template<class VY>
-  forceinline ViewTypeDesc
-  vtd(VY y) {
+  forceinline bool
+  isintset(VY y) {
     (void) y;
-    return VTD_VARVIEW;
+    return false;
   }
   template<>
-  forceinline ViewTypeDesc
-  vtd(const IntSet& y) {
+  forceinline bool
+  isintset(IntSet y) {
     (void) y;
-    return VTD_INTSET;
+    return true;
+  }
+
+
+  template<class VY>
+  forceinline bool
+  isval(VY y) {
+    return y.assigned();
   }
   template<>
-  forceinline ViewTypeDesc
-  vtd(ConstIntView y) {
+  forceinline bool
+  isval(IntSet y) {
     (void) y;
-    return VTD_CONSTVIEW;
-  }
-  template<>
-  forceinline ViewTypeDesc
-  vtd(ZeroIntView y) {
-    (void) y;
-    return VTD_CONSTVIEW;
+    return true;
   }
 
 
