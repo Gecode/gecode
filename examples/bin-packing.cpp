@@ -139,12 +139,25 @@ namespace {
       
       int u=0;
       for (int i=0; i<n; i++) {
-        // Skip bins with insufficient free space
         int j=0;
+        // Skip bins with insufficient free space
         while (f[j] < size(i))
           j++;
-        f[j] -= size(i);
-        u = std::max(u,j);
+        if (j > u) {
+          // A new bin is needed
+          u = j; f[u] -= size(i);
+        } else {
+          // The slack of the best-fit bin
+          int b = j++;
+          int s = f[b] - size(i);
+          while (j <= u) {
+            if ((f[j] >= size(i)) && (f[j] - size(i) < s)) {
+              b = j; s = f[b] - size(i);
+            }
+            j++;
+          }
+          f[b] -= size(i);
+        }
       }
       delete [] f;
       return u+1;

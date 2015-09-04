@@ -73,12 +73,21 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: example
+What:   bug
+Rank:   minor
+Thanks:	Ananja Muddukrishna
+[DESCRIPTION]
+The bin-packing model did not use a best-fit solution for the
+upper bound, but only a first-fit.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   minor
 Thanks:	Kish Shen
 [DESCRIPTION]
-Some count constraints are no optimized in case its arguments are
+Some count constraints are now optimized in case its arguments are
 assigned.
 
 [ENTRY]
