@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Kish Shen
+[DESCRIPTION]
+The count constraint with INT_GR relation was broken (off-by-one error).
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor

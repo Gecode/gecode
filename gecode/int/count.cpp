@@ -301,7 +301,7 @@ namespace Gecode {
                         ::post(home,xv,y,z,1)));
       else
         GECODE_ES_FAIL((Count::GqView<IntView,IntView,IntView,true,false>
-                        ::post(home,xv,y,z,0)));
+                        ::post(home,xv,y,z,1)));
       break;
     case IRT_GQ:
       if ((icl == ICL_DOM) || (icl == ICL_DEF))
