@@ -922,23 +922,26 @@ namespace Gecode {
   };
 
   /**
-   * \brief Consistency levels for integer propagators
+   * \brief Propagation levels for integer propagators
    *
-   * The descriptions are meant to be suggestions. It is not
+   * The descriptions are meant to be approximate. It is not
    * required that a propagator achieves full domain consistency or
    * full bounds consistency. It is more like: which level
-   * of consistency comes closest.
+   * of consistency comes closest to the level of propagation
+   * the propagator implements.
    *
-   * If in the description of a constraint below no consistency level
-   * is mentioned, the propagator for the constraint implements
-   * domain consistency.
+   * If in the description of a constraint below no propagation level
+   * is mentioned, the propagation level for the constraint is domain
+   * propagation and the implementation in fact enforces domain
+   * consistency.
+   *
    * \ingroup TaskModelInt
    */
-  enum IntConLevel {
-    ICL_VAL, ///< Value propagation or consistency (naive)
-    ICL_BND, ///< Bounds propagation or consistency
-    ICL_DOM, ///< Domain propagation or consistency
-    ICL_DEF  ///< The default consistency for a constraint
+  enum IntPropLevel {
+    IPL_VAL, ///< Value propagation
+    IPL_BND, ///< Bounds propagation
+    IPL_DOM, ///< Domain propagation
+    IPL_DEF  ///< The default propagation level for a constraint
   };
 
   /**
@@ -979,59 +982,59 @@ namespace Gecode {
   /// Propagates \f$x=n\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int n,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Propagates \f$ x_i=n\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Home home, const IntVarArgs& x, int n,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /// Propagates \f$ l\leq x\leq m\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int l, int m,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Propagates \f$ l\leq x_i\leq m\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Home home, const IntVarArgs& x, int l, int m,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /// Propagates \f$ x\in s \f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, const IntSet& s,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Propagates \f$ x_i\in s\f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Home home, const IntVarArgs& x, const IntSet& s,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /// Post domain consistent propagator for \f$ (x=n) \equiv r\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int n, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$ (l\leq x \leq m) \equiv r\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, int l, int m, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$ (x \in s) \equiv r\f$
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, const IntSet& s, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /// Constrain domain of \a x according to domain of \a d
   GECODE_INT_EXPORT void
   dom(Home home, IntVar x, IntVar d,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Constrain domain of \a x according to domain of \a d
   GECODE_INT_EXPORT void
   dom(Home home, BoolVar x, BoolVar d,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Constrain domain of \f$ x_i \f$ according to domain of \f$ d_i \f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Home home, const IntVarArgs& x, const IntVarArgs& d,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /// Constrain domain of \f$ x_i \f$ according to domain of \f$ d_i \f$ for all \f$0\leq i<|x|\f$
   GECODE_INT_EXPORT void
   dom(Home home, const BoolVarArgs& x, const BoolVarArgs& d,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -1041,76 +1044,76 @@ namespace Gecode {
    */
   /** \brief Post propagator for \f$ x_0 \sim_{irt} x_1\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ x_i \sim_{irt} y \f$ for all \f$0\leq i<|x|\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Propagates \f$ x \sim_{irt} c\f$
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, IntVar x, IntRelType irt, int c,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Propagates \f$ x_i \sim_{irt} c \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, const IntVarArgs& x, IntRelType irt, int c,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_{irt} x_1)\equiv r\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$(x \sim_{irt} c)\equiv r\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, IntVar x, IntRelType irt, int c, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for relation among elements in \a x.
    *
    * States that the elements of \a x are in the following relation:
    *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ,
    *    then the elements of \a x are ordered with respect to \a r.
-   *    Supports domain consistency (\a icl = ICL_DOM, default).
+   *    Supports domain consistency (\a ipl = IPL_DOM, default).
    *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
-   *    Supports both bounds (\a icl = ICL_BND) and
-   *    domain consistency (\a icl = ICL_DOM, default).
+   *    Supports both bounds (\a ipl = IPL_BND) and
+   *    domain consistency (\a ipl = IPL_DOM, default).
    *  - if \a r = IRT_NQ, then not all elements of \a x must be equal.
-   *    Supports domain consistency (\a icl = ICL_DOM, default).
+   *    Supports domain consistency (\a ipl = IPL_DOM, default).
    *
    * \ingroup TaskModelIntRelInt
    */
   GECODE_INT_EXPORT void
   rel(Home home, const IntVarArgs& x, IntRelType irt,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
    * Note that for the inequality relations this corresponds to
    * the lexical order between \a x and \a y.
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    *
    * Note that the constraint is also defined if \a x and \a y are of
    * different size. That means that if \a x and \a y are of different
@@ -1120,7 +1123,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /**
    * \defgroup TaskModelIntRelBool Simple relation constraints over Boolean variables
@@ -1131,19 +1134,19 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$(x_0 \sim_{irt} x_1)\equiv r\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ x_i \sim_{irt} y \f$ for all \f$0\leq i<|x|\f$
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, BoolVar y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /**
    * \brief Propagates \f$ x \sim_{irt} n\f$
    *
@@ -1153,7 +1156,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x, IntRelType irt, int n,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /**
    * \brief Post domain consistent propagator for \f$(x \sim_{irt} n)\equiv r\f$
    *
@@ -1163,7 +1166,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x, IntRelType irt, int n, Reify r,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /**
    * \brief Propagates \f$ x_i \sim_{irt} n \f$ for all \f$0\leq i<|x|\f$
    *
@@ -1173,7 +1176,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, int n,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for relation between \a x and \a y.
    *
    * Note that for the inequality relations this corresponds to
@@ -1185,7 +1188,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for relation between elements in \a x.
    *
    * States that the elements of \a x are in the following relation:
@@ -1198,7 +1201,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType irt,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = x_2\f$
@@ -1206,7 +1209,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for Boolean operation on \a x0 and \a x1
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = n\f$
@@ -1217,7 +1220,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
@@ -1229,7 +1232,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for Boolean operation on \a x
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
@@ -1244,7 +1247,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, int n,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
@@ -1257,7 +1260,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         BoolVar z, IntConLevel icl=ICL_DEF);
+         BoolVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for Boolean clause with positive variables \a x and negative variables \a y
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots
@@ -1273,7 +1276,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         int n, IntConLevel icl=ICL_DEF);
+         int n, IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for if-then-else constraint
    *
    * Posts propagator for \f$ z = b ? x : y \f$
@@ -1282,7 +1285,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   ite(Home home, BoolVar b, IntVar x, IntVar y, IntVar z,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
 
   /**
@@ -1298,7 +1301,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   precede(Home home, const IntVarArgs& x, int s, int t,
-          IntConLevel=ICL_DEF);
+          IntPropLevel=IPL_DEF);
   /** \brief Post propagator that successive values in \a c precede each other in \a x
    *
    * This constraint enforces that \f$x_0\neq c_k\f$ for \f$0<k<|c|\f$ and 
@@ -1308,7 +1311,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   precede(Home home, const IntVarArgs& x, const IntArgs& c,
-          IntConLevel=ICL_DEF);
+          IntPropLevel=IPL_DEF);
 
 
   /**
@@ -1319,19 +1322,19 @@ namespace Gecode {
   /// Post domain consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
   GECODE_INT_EXPORT void
   member(Home home, const IntVarArgs& x, IntVar y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$y\in \{x_0,\ldots,x_{|x|-1}\}\f$
   GECODE_INT_EXPORT void
   member(Home home, const BoolVarArgs& x, BoolVar y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\equiv r\f$
   GECODE_INT_EXPORT void
   member(Home home, const IntVarArgs& x, IntVar y, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$\left(y\in \{x_0,\ldots,x_{|x|-1}\}\right)\equiv r\f$
   GECODE_INT_EXPORT void
   member(Home home, const BoolVarArgs& x, BoolVar y, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -1350,7 +1353,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, IntVar x1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
@@ -1358,7 +1361,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, BoolVar x1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::OutOfLimits, if
@@ -1366,31 +1369,31 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray n, IntVar x0, int x1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    */
   GECODE_INT_EXPORT void
   element(Home home, const IntVarArgs& x, IntVar y0, IntVar y1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    */
   GECODE_INT_EXPORT void
   element(Home home, const IntVarArgs& x, IntVar y0, int y1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& x, IntVar y0, int y1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
@@ -1407,7 +1410,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
@@ -1423,15 +1426,15 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
    * order of width \a w and height \a h, then \a z is constrained
    * to be the element in column \a x and row \a y.
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain consistency (\a icl = ICL_DOM, default).
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
    *
    * Throws an exception of type Int::OutOfLimits, if
    * the integers in \a n exceed the limits in Int::Limits.
@@ -1442,7 +1445,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, const IntVarArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * If \a a is regarded as a two-dimensional array in row-major
@@ -1458,7 +1461,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Home home, const BoolVarArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -1470,19 +1473,19 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x|\f$
    *
-   * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+   * and domain consistency (\a ipl = IPL_DOM).
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
    * the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
   distinct(Home home, const IntVarArgs& x,
-           IntConLevel icl=ICL_DEF);
+           IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ x_i+n_i\neq x_j+n_j\f$ for all \f$0\leq i\neq j<|x|\f$
    *
-   * \li Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *     and domain consistency (\a icl = ICL_DOM).
+   * \li Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+   *     and domain consistency (\a ipl = IPL_DOM).
    * \li Throws an exception of type Int::OutOfLimits, if
    *     the integers in \a n exceed the limits in Int::Limits
    *     or if the sum of \a n and \a x exceed the limits.
@@ -1493,7 +1496,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   distinct(Home home, const IntArgs& n, const IntVarArgs& x,
-           IntConLevel icl=ICL_DEF);
+           IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -1505,8 +1508,8 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports domain consistency (\a icl = ICL_DOM) and value 
-   *     propagation (all other values for \a icl, default).
+   * \li Supports domain consistency (\a ipl = IPL_DOM) and value 
+   *     propagation (all other values for \a ipl, default).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
@@ -1516,12 +1519,12 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Home home, const IntVarArgs& x, const IntVarArgs& y,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports domain consistency (\a icl = ICL_DOM) and value 
-   *     propagation (all other values for \a icl, default).
+   * \li Supports domain consistency (\a ipl = IPL_DOM) and value 
+   *     propagation (all other values for \a ipl, default).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
@@ -1534,17 +1537,17 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   channel(Home home, const IntVarArgs& x, int xoff,
           const IntVarArgs& y, int yoff,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
 
   /// Post domain consistent propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
   GECODE_INT_EXPORT void
   channel(Home home, BoolVar x0, IntVar x1,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
   forceinline void
   channel(Home home, IntVar x0, BoolVar x1,
-          IntConLevel icl=ICL_DEF) {
-    channel(home,x1,x0,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    channel(home,x1,x0,ipl);
   }
   /** \brief Post domain consistent propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
    *
@@ -1553,7 +1556,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Home home, const BoolVarArgs& x, IntVar y, int o=0,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -1575,7 +1578,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post propagator that \a y is \a x sorted in increasing order
@@ -1591,7 +1594,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
          const IntVarArgs& z,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -1615,24 +1618,24 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, int n, IntRelType irt, int m,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_{irt} m\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType irt, int m,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_{irt} m\f$
    *
-   * Performs domain propagation (\a icl = ICL_DOM, default)
-   * and slightly less domain propagation (all other values for \a icl),
+   * Performs domain propagation (\a ipl = IPL_DOM, default)
+   * and slightly less domain propagation (all other values for \a ipl),
    * where \a y is not pruned. Note that in both cases propagation
    * is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType irt, int m,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_{irt} m\f$
    *
    * Performs domain propagation but is not domain consistent.
@@ -1642,31 +1645,31 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType irt, int m,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_{irt} z\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, int n, IntRelType irt, IntVar z,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i\in y\}\sim_{irt} z\f$
    *
    * Performs domain propagation but is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntSet& y, IntRelType irt, IntVar z,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_{irt} z\f$
    *
-   * Performs domain propagation (\a icl = ICL_DOM, default)
-   * and slightly less domain propagation (all other values for \a icl),
+   * Performs domain propagation (\a ipl = IPL_DOM, default)
+   * and slightly less domain propagation (all other values for \a ipl),
    * where \a y is not pruned. Note that in both cases propagation
    * is not domain consistent.
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, IntVar y, IntRelType irt, IntVar z,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_{irt} z\f$
    *
    * Performs domain propagation but is not domain consistent.
@@ -1676,7 +1679,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntArgs& y, IntRelType irt, IntVar z,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1685,15 +1688,15 @@ namespace Gecode {
     * \f$ \bigcup_i \{x_i\} \subseteq \{0,\ldots,|c|-1\}\f$
     * (no other value occurs).
     *
-    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-    * and domain consistency (\a icl = ICL_DOM).
+    * Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+    * and domain consistency (\a ipl = IPL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
     * the same unassigned variable multiply.
     */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntVarArgs& c,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1702,15 +1705,15 @@ namespace Gecode {
     * \f$ \bigcup_i \{x_i\} \subseteq \{0,\ldots,|c|-1\}\f$
     * (no other value occurs).
     *
-    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-    * and domain consistency (\a icl = ICL_DOM).
+    * Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+    * and domain consistency (\a ipl = IPL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
     * the same unassigned variable multiply.
     */
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x, const IntSetArgs& c,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1719,8 +1722,8 @@ namespace Gecode {
     * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
     * (no other value occurs).
     *
-    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-    * and domain consistency (\a icl = ICL_DOM).
+    * Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+    * and domain consistency (\a ipl = IPL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
     * the same unassigned variable multiply.
@@ -1731,7 +1734,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x,
         const IntVarArgs& c, const IntArgs& v,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1740,8 +1743,8 @@ namespace Gecode {
     * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
     * (no other value occurs).
     *
-    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-    * and domain consistency (\a icl = ICL_DOM).
+    * Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+    * and domain consistency (\a ipl = IPL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
     * the same unassigned variable multiply.
@@ -1752,7 +1755,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x,
         const IntSetArgs& c, const IntArgs& v,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   /** \brief Posts a global count (cardinality) constraint
     *
@@ -1761,8 +1764,8 @@ namespace Gecode {
     * \f$ \bigcup_i \{x_i\} \subseteq \bigcup_j \{v_j\}\f$
     * (no other value occurs).
     *
-    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-    * and domain consistency (\a icl = ICL_DOM).
+    * Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+    * and domain consistency (\a ipl = IPL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
     * the same unassigned variable multiply.
@@ -1773,7 +1776,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Home home, const IntVarArgs& x,
         const IntSet& c, const IntArgs& v,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   //@}
 
@@ -1793,25 +1796,25 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   nvalues(Home home, const IntVarArgs& x, IntRelType irt, int y,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
   nvalues(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
   nvalues(Home home, const BoolVarArgs& x, IntRelType irt, int y,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\sim_{irt} y\f$
    *
    */
   GECODE_INT_EXPORT void
   nvalues(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   //@}
 
   /**
@@ -1836,7 +1839,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const IntVarArgs& x, const IntSet& s, 
-           int q, int l, int u, IntConLevel icl=ICL_DEF); 
+           int q, int l, int u, IntPropLevel ipl=IPL_DEF); 
   
   /** \brief Post propagator for \f$\operatorname{sequence}(x,s,q,l,u)\f$
    *
@@ -1854,7 +1857,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
-           int q, int l, int u, IntConLevel icl=ICL_DEF); 
+           int q, int l, int u, IntPropLevel ipl=IPL_DEF); 
 
   //@}
 
@@ -1997,7 +2000,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, DFA d,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
 
   /**
    * \brief Post domain consistent propagator for extensional constraint described by a DFA
@@ -2011,7 +2014,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, DFA d,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
 
   /** \brief Class represeting a set of tuples.
    *
@@ -2102,7 +2105,7 @@ namespace Gecode {
    *
    * \li Supports implementations optimized for memory (\a epk = \a
    *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
-   * \li Supports domain consistency (\a icl = ICL_DOM, default) only.
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
@@ -2118,13 +2121,13 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
+              ExtensionalPropKind epk=EPK_DEF, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
    * \li Supports implementations optimized for memory (\a epk = \a
    *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
-   * \li Supports domain consistency (\a icl = ICL_DOM, default) only.
+   * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
@@ -2132,7 +2135,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk=EPK_DEF, IntConLevel icl=ICL_DEF);
+              ExtensionalPropKind epk=EPK_DEF, IntPropLevel ipl=IPL_DEF);
   //@}
 
 }
@@ -2150,40 +2153,40 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ \min\{x_0,x_1\}=x_2\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   min(Home home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \min x=y\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    *
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
   min(Home home, const IntVarArgs& x, IntVar y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   max(Home home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \max x=y\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    *
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
   max(Home home, const IntVarArgs& x, IntVar y,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$ \operatorname{argmin}(x)=y\f$
    *
@@ -2196,7 +2199,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   argmin(Home home, const IntVarArgs& x, IntVar y, bool tiebreak=true,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \operatorname{argmin}(x)-o=y\f$
    *
    * In case of ties, the smallest value for \a y is chosen 
@@ -2208,7 +2211,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   argmin(Home home, const IntVarArgs& x, int o, IntVar y, bool tiebreak=true,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \operatorname{argmax}(x)=y\f$
    *
    * In case of ties, the smallest value for \a y is chosen
@@ -2220,7 +2223,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   argmax(Home home, const IntVarArgs& x, IntVar y, bool tiebreak=true,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \operatorname{argmax}(x)-o=y\f$
    *
    * In case of ties, the smallest value for \a y is chosen
@@ -2232,91 +2235,91 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   argmax(Home home, const IntVarArgs& x, int o, IntVar y, bool tiebreak=true,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   abs(Home home, IntVar x0, IntVar x1,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   mult(Home home, IntVar x0, IntVar x1, IntVar x2,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2 \land x_0\ \mathrm{mod}\ x_1 = x_3\f$
    *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
+   * Supports bounds consistency (\a ipl = IPL_BND, default).
    */
   GECODE_INT_EXPORT void
   divmod(Home home, IntVar x0, IntVar x1, IntVar x2, IntVar x3,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{div}\ x_1=x_2\f$
    *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
+   * Supports bounds consistency (\a ipl = IPL_BND, default).
    */
   GECODE_INT_EXPORT void
   div(Home home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x_0\ \mathrm{mod}\ x_1=x_2\f$
    *
-   * Supports bounds consistency (\a icl = ICL_BND, default).
+   * Supports bounds consistency (\a ipl = IPL_BND, default).
    */
   GECODE_INT_EXPORT void
   mod(Home home, IntVar x0, IntVar x1, IntVar x2,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x_0^2=x_1\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   sqr(Home home, IntVar x0, IntVar x1,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$\lfloor\sqrt{x_0}\rfloor=x_1\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   sqrt(Home home, IntVar x0, IntVar x1,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x_0^n=x_1\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    *
    * Throws an exception of type Int::OutOfLimits, if \a n is
    * negative.
    */
   GECODE_INT_EXPORT void
   pow(Home home, IntVar x0, int n, IntVar x1,
-      IntConLevel icl=ICL_DEF);
+      IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$\lfloor\sqrt[n]{x_0}\rfloor=x_1\f$
    *
-   * Supports both bounds consistency (\a icl = ICL_BND, default)
-   * and domain consistency (\a icl = ICL_DOM).
+   * Supports both bounds consistency (\a ipl = IPL_BND, default)
+   * and domain consistency (\a ipl = IPL_DOM).
    *
    * Throws an exception of type Int::OutOfLimits, if \a n is
    * not strictly positive.
    */
   GECODE_INT_EXPORT void
   nroot(Home home, IntVar x0, int n, IntVar x1,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
 
   //@}
 
@@ -2354,28 +2357,28 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
          IntRelType irt, int c,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
          IntRelType irt, IntVar y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\equiv r\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
          IntRelType irt, int c, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\equiv r\f$
    * \ingroup TaskModelIntLI
    */
   GECODE_INT_EXPORT void
   linear(Home home, const IntVarArgs& x,
          IntRelType irt, IntVar y, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2385,7 +2388,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType irt, int c,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2395,7 +2398,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType irt, IntVar y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2405,7 +2408,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType irt, int c, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2415,7 +2418,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const IntVarArgs& x,
          IntRelType irt, IntVar y, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
 
 
   /**
@@ -2448,28 +2451,28 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
          IntRelType irt, int c,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} c\right)\equiv r\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
          IntRelType irt, int c, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
          IntRelType irt, IntVar y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{irt} y\right)\equiv r\f$
    * \ingroup TaskModelIntLB
    */
   GECODE_INT_EXPORT void
   linear(Home home, const BoolVarArgs& x,
          IntRelType irt, IntVar y, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2479,7 +2482,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType irt, int c,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} c\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2489,7 +2492,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType irt, int c, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2499,7 +2502,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType irt, IntVar y,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{irt} y\right)\equiv r\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2509,7 +2512,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   linear(Home home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType irt, IntVar y, Reify r,
-         IntConLevel icl=ICL_DEF);
+         IntPropLevel ipl=IPL_DEF);
 
 
   /**
@@ -2542,7 +2545,7 @@ namespace Gecode {
   binpacking(Home home, 
              const IntVarArgs& l, 
              const IntVarArgs& b, const IntArgs& s,
-             IntConLevel icl=ICL_DEF);
+             IntPropLevel ipl=IPL_DEF);
   /* \brief Post propagator for multi-dimensional bin packing
    *
    * In the following \a n refers to the number of items and \a m
@@ -2585,7 +2588,7 @@ namespace Gecode {
   binpacking(Home home, int d,
              const IntVarArgs& l, const IntVarArgs& b, 
              const IntArgs& s, const IntArgs& c,
-             IntConLevel icl=ICL_DEF);
+             IntPropLevel ipl=IPL_DEF);
 
 
   /**
@@ -2610,7 +2613,7 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x, const IntArgs& w,
             const IntVarArgs& y, const IntArgs& h,
-            IntConLevel icl=ICL_DEF);
+            IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for rectangle packing
    *
    * Propagate that no two rectangles as described by the coordinates
@@ -2629,7 +2632,7 @@ namespace Gecode {
             const IntVarArgs& x, const IntArgs& w,
             const IntVarArgs& y, const IntArgs& h,
             const BoolVarArgs& o,
-            IntConLevel icl=ICL_DEF);
+            IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for rectangle packing
    *
    * Propagate that no two rectangles as described by the start coordinates
@@ -2650,7 +2653,7 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
-            IntConLevel icl=ICL_DEF);
+            IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for rectangle packing
    *
    * Propagate that no two rectangles as described by the start coordinates
@@ -2673,7 +2676,7 @@ namespace Gecode {
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
             const BoolVarArgs& o,
-            IntConLevel icl=ICL_DEF);
+            IntPropLevel ipl=IPL_DEF);
 
 
   /**
@@ -2716,7 +2719,7 @@ namespace Gecode {
    * \param at_most \a at_most tells if the amount of resources used
    *                for a machine should be less than the limit (\a at_most
    *                = true) or greater than the limit (\a at_most = false)
-   * \param icl Supports value-consistency only (\a icl = ICL_VAL, default).
+   * \param ipl Supports value-consistency only (\a ipl = IPL_VAL, default).
    *
    * \exception Int::ArgumentSizeMismatch thrown if the sizes 
    *            of the arguments representing tasks does not match.
@@ -2729,7 +2732,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2739,7 +2742,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2749,7 +2752,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2759,7 +2762,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2769,7 +2772,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2779,7 +2782,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2789,7 +2792,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
@@ -2799,7 +2802,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel icl=ICL_DEF);
+              IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on unary resources
    *
@@ -2821,7 +2824,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntArgs& p,
-        IntConLevel icl=ICL_DEF);
+        IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on unary resources
    *
@@ -2845,7 +2848,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntArgs& p, 
-        const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+        const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on unary resources
    *
@@ -2877,7 +2880,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& flex, const IntArgs& fix, IntConLevel icl=ICL_DEF);
+        const IntVarArgs& flex, const IntArgs& fix, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on unary resources
    *
@@ -2912,7 +2915,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   unary(Home home, const TaskTypeArgs& t,
         const IntVarArgs& flex, const IntArgs& fix,
-        const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+        const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on unary resources
    *
@@ -2935,7 +2938,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
-        const IntVarArgs& e, IntConLevel icl=ICL_DEF);
+        const IntVarArgs& e, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on unary resources
    *
@@ -2960,7 +2963,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
-        const IntVarArgs& e, const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+        const IntVarArgs& e, const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
@@ -2999,17 +3002,17 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const TaskTypeArgs& t,
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
-             IntConLevel icl=ICL_DEF);
+             IntPropLevel ipl=IPL_DEF);
 
   
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
-   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,IntConLevel)
+   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const TaskTypeArgs& t,
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
-             IntConLevel icl=ICL_DEF);
+             IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
@@ -3050,15 +3053,15 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const TaskTypeArgs& t,
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
-             const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+             const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntConLevel)
+   * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const TaskTypeArgs& t,
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
-             const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+             const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
@@ -3086,14 +3089,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
-             const IntArgs& u, IntConLevel icl=ICL_DEF);
+             const IntArgs& u, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,IntConLevel)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p,
-             const IntArgs& u, IntConLevel icl=ICL_DEF);
+             const IntArgs& u, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
@@ -3123,14 +3126,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
-             const IntArgs& u, const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+             const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntConLevel)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
-             const IntArgs& u, const BoolVarArgs& m, IntConLevel icl=ICL_DEF);
+             const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
@@ -3162,14 +3165,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
-             const IntVarArgs& e, const IntArgs& u, IntConLevel icl=ICL_DEF);
+             const IntVarArgs& e, const IntArgs& u, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,IntConLevel)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
-             const IntVarArgs& e, const IntArgs& u, IntConLevel icl=ICL_DEF);
+             const IntVarArgs& e, const IntArgs& u, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
@@ -3204,15 +3207,15 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p, 
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
-             IntConLevel icl=ICL_DEF);
+             IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
-   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,const BoolVarArgs&,IntConLevel)
+   * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,const BoolVarArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p, 
              const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
-             IntConLevel icl=ICL_DEF);
+             IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -3226,8 +3229,8 @@ namespace Gecode {
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_i=j\f$ has a single cycle covering all nodes.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
@@ -3237,14 +3240,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   circuit(Home home, const IntVarArgs& x,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a circuit
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_{i-\text{offset}}=j\f$ has a single cycle covering all nodes.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
@@ -3255,7 +3258,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   circuit(Home home, int offset, const IntVarArgs& x,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a circuit with costs \a y and \a z
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
@@ -3266,8 +3269,8 @@ namespace Gecode {
    * the entire circuit. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3281,7 +3284,7 @@ namespace Gecode {
   circuit(Home home, 
           const IntArgs& c,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a circuit with costs \a y and \a z
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
@@ -3292,8 +3295,8 @@ namespace Gecode {
    * the entire circuit. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3308,7 +3311,7 @@ namespace Gecode {
   circuit(Home home, 
           const IntArgs& c, int offset,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a circuit with cost \a z
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
@@ -3317,8 +3320,8 @@ namespace Gecode {
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
    * the entire circuit.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3331,7 +3334,7 @@ namespace Gecode {
   circuit(Home home, 
           const IntArgs& c,
           const IntVarArgs& x, IntVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a circuit with cost \a z
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
@@ -3341,8 +3344,8 @@ namespace Gecode {
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
    * the entire circuit.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3356,15 +3359,15 @@ namespace Gecode {
   circuit(Home home, 
           const IntArgs& c, int offset,
           const IntVarArgs& x, IntVar z,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at
    * node \a s and the successor of the last node \a e is equal to \f$|x|\f$.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
@@ -3374,7 +3377,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   path(Home home, const IntVarArgs& x, IntVar s, IntVar e,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
@@ -3382,8 +3385,8 @@ namespace Gecode {
    * The path starts at node \a s and the successor of the last node \a e 
    * is equal to \f$|x|+\text{offset}\f$.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
@@ -3394,7 +3397,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   path(Home home, int offset, const IntVarArgs& x, IntVar s, IntVar e,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with costs \a y and \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
@@ -3406,8 +3409,8 @@ namespace Gecode {
    * the entire path. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3421,7 +3424,7 @@ namespace Gecode {
   path(Home home, 
        const IntArgs& c,
        const IntVarArgs& x, IntVar s, IntVar e, const IntVarArgs& y, IntVar z,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with costs \a y and \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
@@ -3434,8 +3437,8 @@ namespace Gecode {
    * the entire path. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3450,7 +3453,7 @@ namespace Gecode {
   path(Home home, 
        const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e, const IntVarArgs& y, IntVar z,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with cost \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
@@ -3461,8 +3464,8 @@ namespace Gecode {
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
    * the entire path.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3475,7 +3478,7 @@ namespace Gecode {
   path(Home home, 
        const IntArgs& c,
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with cost \a z
    *
    * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
@@ -3487,8 +3490,8 @@ namespace Gecode {
    * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
    * the entire circuit.
    *
-   * Supports domain (\a icl = ICL_DOM) and value propagation (all
-   * other values for \a icl), where this refers to whether value or
+   * Supports domain (\a ipl = IPL_DOM) and value propagation (all
+   * other values for \a ipl), where this refers to whether value or
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
@@ -3502,7 +3505,7 @@ namespace Gecode {
   path(Home home, 
        const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -3518,24 +3521,24 @@ namespace Gecode {
   /// Execute \a c when \a x becomes assigned
   GECODE_INT_EXPORT void
   wait(Home home, IntVar x, void (*c)(Space& home),
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /// Execute \a c when \a x becomes assigned
   GECODE_INT_EXPORT void
   wait(Home home, BoolVar x, void (*c)(Space& home),
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_INT_EXPORT void
   wait(Home home, const IntVarArgs& x, void (*c)(Space& home),
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_INT_EXPORT void
   wait(Home home, const BoolVarArgs& x, void (*c)(Space& home),
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
   GECODE_INT_EXPORT void
   when(Home home, BoolVar x, 
        void (*t)(Space& home), void (*e)(Space& home)= NULL,
-       IntConLevel icl=ICL_DEF);
+       IntPropLevel ipl=IPL_DEF);
   //@}
 
 
@@ -3559,17 +3562,17 @@ namespace Gecode {
   /**
    * \brief Replace multiple variable occurences in \a x by fresh variables
    *
-   * Supports domain consistency (\a icl = ICL_DOM, default) and
-   * bounds consistency (\a icl = ICL_BND).
+   * Supports domain consistency (\a ipl = IPL_DOM, default) and
+   * bounds consistency (\a ipl = IPL_BND).
    *
    */
   GECODE_INT_EXPORT void
   unshare(Home home, IntVarArgs& x,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   /// Replace multiple variable occurences in \a x by fresh variables
   GECODE_INT_EXPORT void
   unshare(Home home, BoolVarArgs& x,
-          IntConLevel icl=ICL_DEF);
+          IntPropLevel ipl=IPL_DEF);
   //@}
 
 }

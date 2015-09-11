@@ -158,8 +158,8 @@ namespace Test { namespace Int {
      class VarIntVar : public Test {
      public:
        /// Create and register test
-       VarIntVar(Gecode::IntConLevel icl)
-         : Test("Element::Var::Int::Var::"+str(icl),6,-1,3,false,icl) {}
+       VarIntVar(Gecode::IntPropLevel ipl)
+         : Test("Element::Var::Int::Var::"+str(ipl),6,-1,3,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return (x[0]>= 0) && (x[0]<x.size()-2) && x[2+x[0]]==x[1];
@@ -169,7 +169,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs c(x.size()-2);
          for (int i=0; i<x.size()-2; i++)
            c[i]=x[2+i];
-         Gecode::element(home, c, x[0], x[1], icl);
+         Gecode::element(home, c, x[0], x[1], ipl);
        }
      };
 
@@ -180,9 +180,9 @@ namespace Test { namespace Int {
        int r;
      public:
        /// Create and register test
-       VarIntInt(Gecode::IntConLevel icl, int r0)
-         : Test("Element::Var::Int::Int::"+str(icl)+"::"+str(r0),
-                5,-1,3,false,icl), r(r0) {
+       VarIntInt(Gecode::IntPropLevel ipl, int r0)
+         : Test("Element::Var::Int::Int::"+str(ipl)+"::"+str(r0),
+                5,-1,3,false,ipl), r(r0) {
          contest = CTL_NONE;
        }
        /// %Test whether \a x is solution
@@ -194,7 +194,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)
            c[i]=x[1+i];
-         Gecode::element(home, c, x[0], r, icl);
+         Gecode::element(home, c, x[0], r, ipl);
        }
      };
 
@@ -202,8 +202,8 @@ namespace Test { namespace Int {
      class VarIntShared : public Test {
      public:
        /// Create and register test
-       VarIntShared(Gecode::IntConLevel icl)
-         : Test("Element::Var::Int::Shared::"+str(icl),5,-1,3,false,icl) {
+       VarIntShared(Gecode::IntPropLevel ipl)
+         : Test("Element::Var::Int::Shared::"+str(ipl),5,-1,3,false,ipl) {
          contest = CTL_NONE;
        }
        /// %Test whether \a x is solution
@@ -215,7 +215,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)
            c[i]=x[1+i];
-         Gecode::element(home, c, x[0], x[0], icl);
+         Gecode::element(home, c, x[0], x[0], ipl);
        }
      };
 
@@ -565,16 +565,16 @@ namespace Test { namespace Int {
            (void) new IntBoolInt("C",bc3,i);
          }
 
-         (void) new VarIntVar(ICL_BND);
-         (void) new VarIntVar(ICL_DOM);
+         (void) new VarIntVar(IPL_BND);
+         (void) new VarIntVar(IPL_DOM);
 
          for (int i=-4; i<=4; i++) {
-           (void) new VarIntInt(ICL_BND,i);
-           (void) new VarIntInt(ICL_DOM,i);
+           (void) new VarIntInt(IPL_BND,i);
+           (void) new VarIntInt(IPL_DOM,i);
          }
 
-         (void) new VarIntShared(ICL_BND);
-         (void) new VarIntShared(ICL_DOM);
+         (void) new VarIntShared(IPL_BND);
+         (void) new VarIntShared(IPL_DOM);
 
          (void) new VarBoolVar();
          (void) new VarBoolInt(0);

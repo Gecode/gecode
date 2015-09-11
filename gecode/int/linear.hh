@@ -1362,7 +1362,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint
@@ -1395,7 +1395,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1426,7 +1426,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
@@ -1458,7 +1458,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1490,7 +1490,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y, int c=0,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
@@ -1522,7 +1522,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y,
-       Reify r, IntConLevel=ICL_DEF);
+       Reify r, IntPropLevel=IPL_DEF);
 
 }}}
 

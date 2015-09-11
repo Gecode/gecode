@@ -330,7 +330,7 @@ namespace Gecode {
     Driver::StringOption      _model;       ///< General model options
     Driver::StringOption      _symmetry;    ///< General symmetry options
     Driver::StringOption      _propagation; ///< Propagation options
-    Driver::StringOption      _icl;         ///< Integer consistency level
+    Driver::StringOption      _ipl;         ///< Integer propagation level
     Driver::StringOption      _branching;   ///< Branching options
     Driver::DoubleOption      _decay;       ///< Decay option
     Driver::UnsignedIntOption _seed;        ///< Seed option
@@ -392,10 +392,10 @@ namespace Gecode {
     /// Return propagation value
     int propagation(void) const;
     
-    /// Set default integer consistency level
-    void icl(IntConLevel i);
-    /// Return integer consistency level
-    IntConLevel icl(void) const;
+    /// Set default integer propagation level
+    void ipl(IntPropLevel i);
+    /// Return integer propagation level
+    IntPropLevel ipl(void) const;
     
     /// Set default branching value
     void branching(int v);

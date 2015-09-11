@@ -151,7 +151,7 @@ public:
       for (int i = q; i--; ) values[i] = i+1;
       IntSet cardinality(l, l);
       for (int i = v; i--; )
-        count(*this, cm.row(i), cardinality, values, opt.icl());
+        count(*this, cm.row(i), cardinality, values, opt.ipl());
     }
     
     // Difference variables
@@ -314,7 +314,7 @@ public:
 int
 main(int argc, char* argv[]) {
   EFPAOptions opt("Equidistant Frequency Permutation Arrays");
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.parse(argc,argv);
 
   Script::run<EFPA,DFS,EFPAOptions>(opt);

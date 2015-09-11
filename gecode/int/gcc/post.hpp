@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = k.size(); i--; ) {
         t[i].a=1; t[i].x=k[i].base();
       }
-      Linear::post(home,t,k.size(),IRT_EQ,x.size(),ICL_BND);
+      Linear::post(home,t,k.size(),IRT_EQ,x.size(),IPL_BND);
     }
 
     return ES_OK;

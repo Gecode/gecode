@@ -236,7 +236,7 @@ protected:
     }
     case DISTINCT_EXCEPT_0_COUNT: {
       static const IntSetArgs counts = distinct_except_0_counts(colors, std::max(width, height)); 
-      count(*this, v, counts, opt.icl());
+      count(*this, v, counts, opt.ipl());
       break;
     }
     }
@@ -275,7 +275,7 @@ protected:
       break;
     case NOT_ALL_EQUAL_COUNT:
       // No number in all positions
-      count(*this, v, IntSet(0, v.size()-1), IntArgs::create(colors, 1), opt.icl());
+      count(*this, v, IntSet(0, v.size()-1), IntArgs::create(colors, 1), opt.ipl());
       break;
     case NOT_ALL_EQUAL_DFA: {
       static const DFA automaton = not_all_equal_dfa(colors);

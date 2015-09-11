@@ -45,7 +45,7 @@ namespace Gecode {
   binpacking(Home home, 
              const IntVarArgs& l, 
              const IntVarArgs& b, const IntArgs& s,
-             IntConLevel) {
+             IntPropLevel) {
     using namespace Int;
     if (l.same(home,b))
       throw ArgumentSame("Int::binpacking");
@@ -70,7 +70,7 @@ namespace Gecode {
   binpacking(Home home, int d,
              const IntVarArgs& l, const IntVarArgs& b, 
              const IntArgs& s, const IntArgs& c,
-             IntConLevel) {
+             IntPropLevel) {
     using namespace Int;
 
     if (l.same(home,b))

@@ -44,7 +44,7 @@ namespace Gecode {
   void
   channel(Home home, const IntVarArgs& x, int xoff,
           const IntVarArgs& y, int yoff,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     using namespace Channel;
     int n = x.size();
@@ -61,7 +61,7 @@ namespace Gecode {
       return;
 
     if ((xoff < 2) && (yoff < 2) && (xoff == yoff)) {
-      if (icl == ICL_DOM) {
+      if (ipl == IPL_DOM) {
         DomInfo<IntView,NoOffset<IntView> >* di = 
           static_cast<Space&>(home).
             alloc<DomInfo<IntView,NoOffset<IntView> > >(2*(n+xoff));
@@ -106,7 +106,7 @@ namespace Gecode {
         }
       }
     } else {
-      if (icl == ICL_DOM) {
+      if (ipl == IPL_DOM) {
         DomInfo<IntView,Offset>* di = 
           static_cast<Space&>(home).alloc<DomInfo<IntView,Offset> >(2*n);
         for (int i=n; i--; ) {
@@ -145,11 +145,11 @@ namespace Gecode {
 
   void
   channel(Home home, const IntVarArgs& x, const IntVarArgs& y,
-          IntConLevel icl) {
-    channel(home, x, 0, y, 0, icl);
+          IntPropLevel ipl) {
+    channel(home, x, 0, y, 0, ipl);
   }
   void
-  channel(Home home, BoolVar x0, IntVar x1, IntConLevel) {
+  channel(Home home, BoolVar x0, IntVar x1, IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     GECODE_ES_FAIL(Channel::LinkSingle::post(home,x0,x1));
@@ -157,7 +157,7 @@ namespace Gecode {
 
   void
   channel(Home home, const BoolVarArgs& x, IntVar y, int o,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::channel");

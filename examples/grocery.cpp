@@ -72,10 +72,10 @@ public:
     IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
 
     // The sum of all variables is s
-    rel(*this, a+b+c+d == s, opt.icl());
+    rel(*this, a+b+c+d == s, opt.ipl());
 
     // The product of all variables is s (corrected by scale factor)
-    rel(*this, (a*b)*(c*d) == p, opt.icl());
+    rel(*this, (a*b)*(c*d) == p, opt.ipl());
 
     // Break symmetries: order the variables
     rel(*this, abcd, IRT_LQ);

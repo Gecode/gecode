@@ -107,13 +107,13 @@ namespace Gecode {
   class NonLinIntExpr {
   public:
     /// Return variable constrained to be equal to the expression
-    virtual IntVar post(Home home, IntVar* ret, IntConLevel icl) const = 0;
+    virtual IntVar post(Home home, IntVar* ret, IntPropLevel ipl) const = 0;
     /// Post expression to be in relation \a irt with \a c
     virtual void post(Home home, IntRelType irt, int c,
-                      IntConLevel icl) const = 0;
+                      IntPropLevel ipl) const = 0;
     /// Post reified expression to be in relation \a irt with \a c
     virtual void post(Home home, IntRelType irt, int c,
-                      BoolVar b, IntConLevel icl) const = 0;
+                      BoolVar b, IntPropLevel ipl) const = 0;
     /// Destructor
     virtual ~NonLinIntExpr(void) {}
     /// Return fresh variable if \a x is NULL, \a x otherwise
@@ -205,14 +205,14 @@ namespace Gecode {
     const LinIntExpr& operator =(const LinIntExpr& e);
     /// Post propagator
     GECODE_MINIMODEL_EXPORT
-    void post(Home home, IntRelType irt, IntConLevel icl) const;
+    void post(Home home, IntRelType irt, IntPropLevel ipl) const;
     /// Post reified propagator
     GECODE_MINIMODEL_EXPORT
     void post(Home home, IntRelType irt, const BoolVar& b,
-              IntConLevel icl) const;
+              IntPropLevel ipl) const;
     /// Post propagator and return variable for value
     GECODE_MINIMODEL_EXPORT
-    IntVar post(Home home, IntConLevel icl) const;
+    IntVar post(Home home, IntPropLevel ipl) const;
     /// Return non-linear expression inside, or NULL if not non-linear
     GECODE_MINIMODEL_EXPORT
     NonLinIntExpr* nle(void) const;
@@ -243,9 +243,9 @@ namespace Gecode {
     /// Create linear relation for integer \a l and expression \a r
     LinIntRel(int l, IntRelType irt, const LinIntExpr& r);
     /// Post propagator for relation (if \a t is false for negated relation)
-    void post(Home home, bool t,  IntConLevel icl) const;
+    void post(Home home, bool t,  IntPropLevel ipl) const;
     /// Post reified propagator for relation (if \a t is false for negated relation)
-    void post(Home home, const BoolVar& b, bool t, IntConLevel icl) const;
+    void post(Home home, const BoolVar& b, bool t, IntPropLevel ipl) const;
   };
 
   /**
@@ -1252,7 +1252,7 @@ namespace Gecode {
        *  (negated if \a neg)
        */
       virtual void post(Space& home, BoolVar b, bool neg,
-                        IntConLevel icl) = 0;
+                        IntPropLevel ipl) = 0;
       /// Destructor
       virtual GECODE_MINIMODEL_EXPORT ~MiscExpr(void);
       /// Memory management
@@ -1302,10 +1302,10 @@ namespace Gecode {
     explicit BoolExpr(MiscExpr* m);
     /// Post propagators for expression
     GECODE_MINIMODEL_EXPORT
-    BoolVar expr(Home home, IntConLevel icl) const;
+    BoolVar expr(Home home, IntPropLevel ipl) const;
     /// Post propagators for relation
     GECODE_MINIMODEL_EXPORT
-    void rel(Home home, IntConLevel icl) const;
+    void rel(Home home, IntPropLevel ipl) const;
     /// Assignment operator
     GECODE_MINIMODEL_EXPORT
     const BoolExpr& operator =(const BoolExpr& e);
@@ -1360,7 +1360,7 @@ namespace Gecode {
   //@{
   /// Post linear expression and return its value
   GECODE_MINIMODEL_EXPORT IntVar 
-  expr(Home home, const LinIntExpr& e, IntConLevel icl=ICL_DEF);
+  expr(Home home, const LinIntExpr& e, IntPropLevel ipl=IPL_DEF);
 #ifdef GECODE_HAS_FLOAT_VARS
   /// Post float expression and return its value
   GECODE_MINIMODEL_EXPORT FloatVar
@@ -1373,10 +1373,10 @@ namespace Gecode {
 #endif
   /// Post Boolean expression and return its value
   GECODE_MINIMODEL_EXPORT BoolVar
-  expr(Home home, const BoolExpr& e, IntConLevel icl=ICL_DEF);
+  expr(Home home, const BoolExpr& e, IntPropLevel ipl=IPL_DEF);
   /// Post Boolean relation
   GECODE_MINIMODEL_EXPORT void 
-  rel(Home home, const BoolExpr& e, IntConLevel icl=ICL_DEF);
+  rel(Home home, const BoolExpr& e, IntPropLevel ipl=IPL_DEF);
   //@}
 
 }
@@ -1614,16 +1614,16 @@ namespace Gecode {
   /// Return Boolean variable equal to \f$x\f$
   inline BoolVar
   channel(Home home, IntVar x,
-          IntConLevel icl=ICL_DEF) {
-    (void) icl;
+          IntPropLevel ipl=IPL_DEF) {
+    (void) ipl;
     BoolVar b(home,0,1); channel(home,b,x);
     return b;
   }
   /// Return integer variable equal to \f$b\f$
   inline IntVar
   channel(Home home, BoolVar b,
-          IntConLevel icl=ICL_DEF) {
-    (void) icl;
+          IntPropLevel ipl=IPL_DEF) {
+    (void) ipl;
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }
@@ -1643,8 +1643,8 @@ namespace Gecode {
 #ifdef GECODE_HAS_SET_VARS 
   /// Return set variable equal to \f$\{x_0,\dots,x_{n-1}\}\f$
   inline SetVar
-  channel(Home home, const IntVarArgs& x, IntConLevel icl=ICL_DEF) {
-    (void) icl;
+  channel(Home home, const IntVarArgs& x, IntPropLevel ipl=IPL_DEF) {
+    (void) ipl;
     SetVar s(home,IntSet::empty,Set::Limits::min,Set::Limits::max);
     rel(home,SOT_UNION,x,s);
     nvalues(home,x,IRT_EQ,expr(home,cardinality(s)));
@@ -1673,8 +1673,8 @@ namespace Gecode {
    */
   inline void
   atmost(Home home, const IntVarArgs& x, int n, int m,
-         IntConLevel icl=ICL_DEF) {
-    count(home,x,n,IRT_LQ,m,icl);
+         IntPropLevel ipl=IPL_DEF) {
+    count(home,x,n,IRT_LQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
    *
@@ -1682,8 +1682,8 @@ namespace Gecode {
    */
   inline void
   atmost(Home home, const IntVarArgs& x, IntVar y, int m,
-         IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_LQ,m,icl);
+         IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_LQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
    *
@@ -1694,8 +1694,8 @@ namespace Gecode {
    */
   inline void
   atmost(Home home, const IntVarArgs& x, const IntArgs& y, int m,
-         IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_LQ,m,icl);
+         IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_LQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
@@ -1703,8 +1703,8 @@ namespace Gecode {
    */
   inline void
   atmost(Home home, const IntVarArgs& x, int n, IntVar z,
-         IntConLevel icl=ICL_DEF) {
-    count(home,x,n,IRT_LQ,z,icl);
+         IntPropLevel ipl=IPL_DEF) {
+    count(home,x,n,IRT_LQ,z,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
    *
@@ -1712,8 +1712,8 @@ namespace Gecode {
    */
   inline void
   atmost(Home home, const IntVarArgs& x, IntVar y, IntVar z,
-         IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_LQ,z,icl);
+         IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_LQ,z,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
    *
@@ -1724,8 +1724,8 @@ namespace Gecode {
    */
   inline void
   atmost(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-         IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_LQ,z,icl);
+         IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_LQ,z,ipl);
   }
 
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
@@ -1734,8 +1734,8 @@ namespace Gecode {
    */
   inline void
   atleast(Home home, const IntVarArgs& x, int n, int m,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,n,IRT_GQ,m,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,n,IRT_GQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
    *
@@ -1743,8 +1743,8 @@ namespace Gecode {
    */
   inline void
   atleast(Home home, const IntVarArgs& x, IntVar y, int m,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_GQ,m,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_GQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
    *
@@ -1755,8 +1755,8 @@ namespace Gecode {
    */
   inline void
   atleast(Home home, const IntVarArgs& x, const IntArgs& y, int m,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_GQ,m,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_GQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
@@ -1764,8 +1764,8 @@ namespace Gecode {
    */
   inline void
   atleast(Home home, const IntVarArgs& x, int n, IntVar z,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,n,IRT_GQ,z,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,n,IRT_GQ,z,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
    *
@@ -1773,8 +1773,8 @@ namespace Gecode {
    */
   inline void
   atleast(Home home, const IntVarArgs& x, IntVar y, IntVar z,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_GQ,z,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_GQ,z,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
    *
@@ -1785,8 +1785,8 @@ namespace Gecode {
    */
   inline void
   atleast(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_GQ,z,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_GQ,z,ipl);
   }
 
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
@@ -1795,8 +1795,8 @@ namespace Gecode {
    */
   inline void
   exactly(Home home, const IntVarArgs& x, int n, int m,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,n,IRT_EQ,m,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,n,IRT_EQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
    *
@@ -1804,8 +1804,8 @@ namespace Gecode {
    */
   inline void
   exactly(Home home, const IntVarArgs& x, IntVar y, int m,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_EQ,m,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_EQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
    *
@@ -1816,8 +1816,8 @@ namespace Gecode {
    */
   inline void
   exactly(Home home, const IntVarArgs& x, const IntArgs& y, int m,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_EQ,m,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_EQ,m,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
@@ -1825,8 +1825,8 @@ namespace Gecode {
    */
   inline void
   exactly(Home home, const IntVarArgs& x, int n, IntVar z,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,n,IRT_EQ,z,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,n,IRT_EQ,z,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
    *
@@ -1834,8 +1834,8 @@ namespace Gecode {
    */
   inline void
   exactly(Home home, const IntVarArgs& x, IntVar y, IntVar z,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_EQ,z,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_EQ,z,ipl);
   }
   /** \brief Post constraint \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
    *
@@ -1846,30 +1846,30 @@ namespace Gecode {
    */
   inline void
   exactly(Home home, const IntVarArgs& x, const IntArgs& y, IntVar z,
-          IntConLevel icl=ICL_DEF) {
-    count(home,x,y,IRT_EQ,z,icl);
+          IntPropLevel ipl=IPL_DEF) {
+    count(home,x,y,IRT_EQ,z,ipl);
   }
   /** \brief Post lexical order between \a x and \a y.
    */
   inline void
   lex(Home home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntConLevel icl=ICL_DEF) {
-    rel(home,x,r,y,icl);
+      IntPropLevel ipl=IPL_DEF) {
+    rel(home,x,r,y,ipl);
   }
   /** \brief Post lexical order between \a x and \a y.
    */
   inline void
   lex(Home home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
-      IntConLevel icl=ICL_DEF) {
-    rel(home,x,r,y,icl);
+      IntPropLevel ipl=IPL_DEF) {
+    rel(home,x,r,y,ipl);
   }
   /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
    */
   inline void
   values(Home home, const IntVarArgs& x, IntSet y,
-         IntConLevel icl=ICL_DEF) {
-    dom(home,x,y,icl);
-    nvalues(home,x,IRT_EQ,static_cast<int>(y.size()),icl);
+         IntPropLevel ipl=IPL_DEF) {
+    dom(home,x,y,ipl);
+    nvalues(home,x,IRT_EQ,static_cast<int>(y.size()),ipl);
   }
 
   //@}
@@ -2098,7 +2098,7 @@ namespace Gecode {
    * \relates Gecode::Matrix
    */
   void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
-               IntVar z, IntConLevel icl=ICL_DEF);
+               IntVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Element constraint for matrix
    *
    * Here, \a x and \a y are the coordinates and \a z is the value
@@ -2106,7 +2106,7 @@ namespace Gecode {
    * \relates Gecode::Matrix
    */
   void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
-               BoolVar z, IntConLevel icl=ICL_DEF);
+               BoolVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Element constraint for matrix
    *
    * Here, \a x and \a y are the coordinates and \a z is the value
@@ -2114,7 +2114,7 @@ namespace Gecode {
    * \relates Gecode::Matrix
    */
   void element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
-               IntVar z, IntConLevel icl=ICL_DEF);
+               IntVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Element constraint for matrix
    *
    * Here, \a x and \a y are the coordinates and \a z is the value
@@ -2122,7 +2122,7 @@ namespace Gecode {
    * \relates Gecode::Matrix
    */
   void element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
-               BoolVar z, IntConLevel icl=ICL_DEF);
+               BoolVar z, IntPropLevel ipl=IPL_DEF);
 #ifdef GECODE_HAS_SET_VARS
   /** \brief Element constraint for matrix
    *

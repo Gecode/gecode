@@ -362,7 +362,7 @@ namespace Gecode {
       _model("-model","model variants"),
       _symmetry("-symmetry","symmetry variants"),
       _propagation("-propagation","propagation variants"),
-      _icl("-icl","integer consistency level",ICL_DEF),
+      _ipl("-ipl","integer propagation level",IPL_DEF),
       _branching("-branching","branching variants"),
       _decay("-decay","decay factor",1.0),
       _seed("-seed","random number generator seed",1U),
@@ -398,8 +398,8 @@ namespace Gecode {
                 "(supports stdout, stdlog, stderr)","stdout")
   {
     
-    _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
-    _icl.add(ICL_BND, "bnd"); _icl.add(ICL_DOM, "dom");
+    _ipl.add(IPL_DEF, "def"); _ipl.add(IPL_VAL, "val");
+    _ipl.add(IPL_BND, "bnd"); _ipl.add(IPL_DOM, "dom");
     
     _mode.add(SM_SOLUTION, "solution");
     _mode.add(SM_TIME, "time");
@@ -412,7 +412,7 @@ namespace Gecode {
     _restart.add(RM_LUBY,"luby");
     _restart.add(RM_GEOMETRIC,"geometric");
     
-    add(_model); add(_symmetry); add(_propagation); add(_icl); 
+    add(_model); add(_symmetry); add(_propagation); add(_ipl); 
     add(_branching); add(_decay); add(_seed); add(_step);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
     add(_node); add(_fail); add(_time); add(_interrupt);

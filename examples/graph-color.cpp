@@ -356,7 +356,7 @@ public:
       IntVarArgs x(n); c++;
       for (int i = n; i--; c++)
         x[i] = v[*c];
-      distinct(*this, x, opt.icl());
+      distinct(*this, x, opt.ipl());
       if (opt.model() == MODEL_CLIQUE)
         rel(*this, m, IRT_GQ, n-1);
     }
@@ -446,7 +446,7 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("GraphColor");
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.iterations(20);
   opt.solutions(0);
   opt.model(GraphColor::MODEL_NONE);

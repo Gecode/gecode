@@ -138,7 +138,7 @@ public:
         IntVarArgs qs(rd.btMax);
         for (int b=0; b<rd.btMax; b++)
           qs[b] = q[i*rd.n*rd.btMax+j*rd.btMax+b];
-        linear(*this, coeffs, qs, IRT_EQ, rd.intensity[i*rd.n+j], ICL_DOM);
+        linear(*this, coeffs, qs, IRT_EQ, rd.intensity[i*rd.n+j], IPL_DOM);
       }
     }
     
@@ -416,7 +416,7 @@ namespace {
    *     Engineering, University of Florida
    *   - Chunhua Men, Department of Industrial and Systems Engineering,
    *     University of Florida
-   * They are from the articles
+   * They are from the artiples
    *   - "Mixed-Integer Programming Techniques for Decomposing IMRT
    *     Fluence Maps Using Rectangular Apertures", Z. Caner Taskin,
    *     J. Cole Smith, H. Edwin Romeijn

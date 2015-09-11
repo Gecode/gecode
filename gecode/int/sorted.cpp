@@ -41,7 +41,7 @@ namespace Gecode {
 
   void
   sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
-         const IntVarArgs& z, IntConLevel) {
+         const IntVarArgs& z, IntPropLevel) {
     using namespace Int;
     if ((x.size() != y.size()) || (x.size() != z.size()))
       throw ArgumentSizeMismatch("Int::Sorted");
@@ -60,7 +60,7 @@ namespace Gecode {
 
   void
   sorted(Home home, const IntVarArgs& x, const IntVarArgs& y,
-         IntConLevel) {
+         IntPropLevel) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::Sorted");

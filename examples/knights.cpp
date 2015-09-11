@@ -273,8 +273,8 @@ public:
     rel(*this, jump[f(0,0)], IRT_EQ, 0);
     rel(*this, jump[f(1,2)], IRT_EQ, 1);
 
-    distinct(*this, jump, opt.icl());
-    channel(*this, succ, pred, opt.icl());
+    distinct(*this, jump, opt.ipl());
+    channel(*this, succ, pred, opt.ipl());
 
     for (int f = 0; f < nn; f++) {
       IntSet ds = neighbors(f);
@@ -314,7 +314,7 @@ public:
     // Fix the first move
     rel(*this, succ[0], IRT_EQ, f(1,2));
 
-    circuit(*this, succ, opt.icl());
+    circuit(*this, succ, opt.ipl());
 
     for (int f = 0; f < n*n; f++)
       dom(*this, succ[f], neighbors(f));

@@ -55,7 +55,7 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x, const IntArgs& w, 
             const IntVarArgs& y, const IntArgs& h,
-            IntConLevel) {
+            IntPropLevel) {
     using namespace Int;
     using namespace NoOverlap;
     if ((x.size() != w.size()) || (x.size() != y.size()) || 
@@ -87,7 +87,7 @@ namespace Gecode {
             const IntVarArgs& x, const IntArgs& w, 
             const IntVarArgs& y, const IntArgs& h,
             const BoolVarArgs& m,
-            IntConLevel) {
+            IntPropLevel) {
     using namespace Int;
     using namespace NoOverlap;
     if ((x.size() != w.size()) || (x.size() != y.size()) ||
@@ -131,7 +131,7 @@ namespace Gecode {
   nooverlap(Home home, 
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
-            IntConLevel) {
+            IntPropLevel) {
     using namespace Int;
     using namespace NoOverlap;
     if ((x0.size() != w.size())  || (x0.size() != x1.size()) || 
@@ -169,7 +169,7 @@ namespace Gecode {
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
             const BoolVarArgs& m,
-            IntConLevel) {
+            IntPropLevel) {
     using namespace Int;
     using namespace NoOverlap;
     if ((x0.size() != w.size())  || (x0.size() != x1.size()) || 

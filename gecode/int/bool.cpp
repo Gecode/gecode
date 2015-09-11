@@ -41,7 +41,7 @@
 namespace Gecode {
 
   void
-  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, IntConLevel) {
+  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     switch (irt) {
@@ -74,7 +74,7 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, BoolVar x0, IntRelType irt, int n, IntConLevel) {
+  rel(Home home, BoolVar x0, IntRelType irt, int n, IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     BoolView x(x0);
@@ -115,7 +115,7 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     switch (irt) {
@@ -210,7 +210,7 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, IntRelType irt, int n, Reify r,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     BoolView x(x0);
@@ -372,7 +372,7 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, BoolVar y,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     switch (irt) {
@@ -418,7 +418,7 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, int n,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     if (n == 0) {
@@ -469,7 +469,7 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const BoolVarArgs& x, IntRelType irt, IntConLevel) {
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, IntPropLevel) {
     using namespace Int;
     if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
       return;
@@ -524,7 +524,7 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
@@ -574,7 +574,7 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     switch (o) {
@@ -614,7 +614,7 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     if (n == 0) {
@@ -690,7 +690,7 @@ namespace Gecode {
 
   void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     int m = x.size();
@@ -753,7 +753,7 @@ namespace Gecode {
 
   void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, int n,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");
@@ -822,7 +822,7 @@ namespace Gecode {
 
   void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         int n, IntConLevel) {
+         int n, IntPropLevel) {
     using namespace Int;
     if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");
@@ -873,7 +873,7 @@ namespace Gecode {
 
   void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         BoolVar z, IntConLevel) {
+         BoolVar z, IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
     switch (o) {
@@ -909,10 +909,10 @@ namespace Gecode {
 
   void
   ite(Home home, BoolVar b, IntVar x, IntVar y, IntVar z,
-      IntConLevel icl) {
+      IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
-    if (icl == ICL_BND) {
+    if (ipl == IPL_BND) {
       GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
     } else {
       GECODE_ES_FAIL(Bool::IteDom<IntView>::post(home,b,x,y,z));

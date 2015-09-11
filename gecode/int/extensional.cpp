@@ -43,7 +43,7 @@ namespace Gecode {
 
   void
   extensional(Home home, const IntVarArgs& x, DFA dfa,
-              IntConLevel) {
+              IntPropLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
@@ -53,7 +53,7 @@ namespace Gecode {
 
   void
   extensional(Home home, const BoolVarArgs& x, DFA dfa,
-              IntConLevel) {
+              IntPropLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
@@ -63,7 +63,7 @@ namespace Gecode {
 
   void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk, IntConLevel) {
+              ExtensionalPropKind epk, IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
@@ -99,7 +99,7 @@ namespace Gecode {
 
   void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk, IntConLevel) {
+              ExtensionalPropKind epk, IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");

@@ -42,7 +42,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, int n,
-        IntRelType irt, int m, IntConLevel) {
+        IntRelType irt, int m, IntPropLevel) {
     using namespace Int;
     Limits::check(n,"Int::count");
     Limits::check(m,"Int::count");
@@ -84,7 +84,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, IntVar y,
-        IntRelType irt, int m, IntConLevel icl) {
+        IntRelType irt, int m, IntPropLevel ipl) {
     using namespace Int;
     Limits::check(m,"Int::count");
     if (home.failed()) return;
@@ -94,7 +94,7 @@ namespace Gecode {
     case IRT_EQ:
       {
         ConstIntView z(m);
-        if ((icl == ICL_DOM) || (icl == ICL_DEF))
+        if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
           GECODE_ES_FAIL((Count::EqView<IntView,IntView,ConstIntView,true,true>
                           ::post(home,xv,y,z,0)));
         else
@@ -121,7 +121,7 @@ namespace Gecode {
     case IRT_GQ:
       {
         ConstIntView z(m);
-        if ((icl == ICL_DOM) || (icl == ICL_DEF))
+        if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
           GECODE_ES_FAIL((Count::GqView<IntView,IntView,ConstIntView,true,true>
                           ::post(home,xv,y,z,0)));
         else
@@ -136,7 +136,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, const IntSet& y,
-        IntRelType irt, int m, IntConLevel) {
+        IntRelType irt, int m, IntPropLevel) {
     using namespace Int;
 
     if (y.size() == 1) {
@@ -180,7 +180,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, const IntArgs& y,
-        IntRelType irt, int m, IntConLevel) {
+        IntRelType irt, int m, IntPropLevel) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");
@@ -224,7 +224,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, int n,
-        IntRelType irt, IntVar z, IntConLevel) {
+        IntRelType irt, IntVar z, IntPropLevel) {
     using namespace Int;
     Limits::check(n,"Int::count");
     if (home.failed()) return;
@@ -266,13 +266,13 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, IntVar y,
-        IntRelType irt, IntVar z, IntConLevel icl) {
+        IntRelType irt, IntVar z, IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (irt) {
     case IRT_EQ:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF))
+      if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
         GECODE_ES_FAIL((Count::EqView<IntView,IntView,IntView,true,true>
                         ::post(home,xv,y,z,0)));
       else
@@ -296,7 +296,7 @@ namespace Gecode {
                       ::post(home,xv,y,z,0)));
       break;
     case IRT_GR:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF))
+      if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
         GECODE_ES_FAIL((Count::GqView<IntView,IntView,IntView,true,true>
                         ::post(home,xv,y,z,1)));
       else
@@ -304,7 +304,7 @@ namespace Gecode {
                         ::post(home,xv,y,z,1)));
       break;
     case IRT_GQ:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF))
+      if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
         GECODE_ES_FAIL((Count::GqView<IntView,IntView,IntView,true,true>
                         ::post(home,xv,y,z,0)));
       else
@@ -318,7 +318,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, const IntSet& y,
-        IntRelType irt, IntVar z, IntConLevel) {
+        IntRelType irt, IntVar z, IntPropLevel) {
     using namespace Int;
 
     if (y.size() == 1) {
@@ -367,7 +367,7 @@ namespace Gecode {
 
   void
   count(Home home, const IntVarArgs& x, const IntArgs& y,
-        IntRelType irt, IntVar z, IntConLevel) {
+        IntRelType irt, IntVar z, IntPropLevel) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");

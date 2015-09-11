@@ -44,16 +44,16 @@ namespace Gecode {
   using namespace Int;
 
   void
-  distinct(Home home, const IntVarArgs& x, IntConLevel icl) {
+  distinct(Home home, const IntVarArgs& x, IntPropLevel ipl) {
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    switch (icl) {
-    case ICL_BND:
+    switch (ipl) {
+    case IPL_BND:
       GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
       break;
-    case ICL_DOM:
+    case IPL_DOM:
       GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,xv));
       break;
     default:
@@ -63,7 +63,7 @@ namespace Gecode {
 
   void
   distinct(Home home, const IntArgs& c, const IntVarArgs& x,
-           IntConLevel icl) {
+           IntPropLevel ipl) {
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (c.size() != x.size())
@@ -80,11 +80,11 @@ namespace Gecode {
       Limits::check(cx_max,"Int::distinct");
       cx[i] = OffsetView(x[i],c[i]);
     }
-    switch (icl) {
-    case ICL_BND:
+    switch (ipl) {
+    case IPL_BND:
       GECODE_ES_FAIL(Distinct::Bnd<OffsetView>::post(home,cx));
       break;
-    case ICL_DOM:
+    case IPL_DOM:
       GECODE_ES_FAIL(Distinct::Dom<OffsetView>::post(home,cx));
       break;
     default:

@@ -94,7 +94,7 @@ public:
         rel(*this, d[k] = expr(*this, m[j]-m[i]),
                    IRT_GQ, (j-i)*(j-i+1)/2);
 
-    distinct(*this, d, opt.icl());
+    distinct(*this, d, opt.ipl());
 
     // Symmetry breaking
     if (n > 2)
@@ -134,7 +134,7 @@ main(int argc, char* argv[]) {
   SizeOptions opt("GolombRuler");
   opt.solutions(0);
   opt.size(10);
-  opt.icl(ICL_BND);
+  opt.ipl(IPL_BND);
   opt.parse(argc,argv);
   if (opt.size() > 0)
     IntMinimizeScript::run<GolombRuler,BAB,SizeOptions>(opt);

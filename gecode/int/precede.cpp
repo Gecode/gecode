@@ -44,7 +44,7 @@
 namespace Gecode {
 
   void
-  precede(Home home, const IntVarArgs& x, int s, int t, IntConLevel) {
+  precede(Home home, const IntVarArgs& x, int s, int t, IntPropLevel) {
     using namespace Int;
     Limits::check(s,"Int::precede");
     Limits::check(t,"Int::precede");
@@ -55,7 +55,7 @@ namespace Gecode {
   }
 
   void
-  precede(Home home, const IntVarArgs& x, const IntArgs& c, IntConLevel) {
+  precede(Home home, const IntVarArgs& x, const IntArgs& c, IntPropLevel) {
     using namespace Int;
     if (c.size() < 2)
       return;

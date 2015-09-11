@@ -108,7 +108,7 @@ public:
     }
     rel(*this, violations == sum(viol));
 
-    distinct(*this, pos, opt.icl());
+    distinct(*this, pos, opt.ipl());
 
     // Break some symmetries
     rel(*this, pos[0] < pos[1]);
@@ -153,7 +153,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.size(1);
   opt.iterations(10);
-  opt.icl(ICL_BND);
+  opt.ipl(IPL_BND);
   opt.branching(Photo::BRANCH_DEGREE);
   opt.branching(Photo::BRANCH_NONE,   "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");

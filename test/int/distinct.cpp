@@ -54,14 +54,14 @@ namespace Test { namespace Int {
      class Distinct : public Test {
      public:
        /// Create and register test
-       Distinct(const Gecode::IntSet& d0, Gecode::IntConLevel icl,
+       Distinct(const Gecode::IntSet& d0, Gecode::IntPropLevel ipl,
                 int n=6)
          : Test(std::string(useCount ? "Count::Distinct::" : "Distinct::")+
-                str(icl)+"::Sparse::"+str(n),n,d0,false,icl) {}
+                str(ipl)+"::Sparse::"+str(n),n,d0,false,ipl) {}
        /// Create and register test
-       Distinct(int min, int max, Gecode::IntConLevel icl)
+       Distinct(int min, int max, Gecode::IntPropLevel ipl)
          : Test(std::string(useCount ? "Count::Distinct::" : "Distinct::")+
-                str(icl)+"::Dense",6,min,max,false,icl) {}
+                str(ipl)+"::Dense",6,min,max,false,ipl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
@@ -73,14 +73,14 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          if (!useCount) {
-           Gecode::distinct(home, x, icl);
+           Gecode::distinct(home, x, ipl);
          } else {
            Gecode::IntSetRanges dr(dom);
            int i = 0;
            Gecode::IntArgs ia(Gecode::Iter::Ranges::size(dr));
            for (Gecode::IntSetValues dr2(dom); dr2(); ++dr2)
              ia[i++] = dr2.val();
-           Gecode::count(home, x, Gecode::IntSet(0,1), ia, icl);
+           Gecode::count(home, x, Gecode::IntSet(0,1), ia, ipl);
          }
        }
      };
@@ -89,11 +89,11 @@ namespace Test { namespace Int {
      class Offset : public Test {
      public:
        /// Create and register test
-       Offset(const Gecode::IntSet& d, Gecode::IntConLevel icl)
-         : Test("Distinct::Offset::Sparse::"+str(icl),6,d,false,icl) {}
+       Offset(const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
+         : Test("Distinct::Offset::Sparse::"+str(ipl),6,d,false,ipl) {}
        /// Create and register test
-       Offset(int min, int max, Gecode::IntConLevel icl)
-         : Test("Distinct::Offset::Dense::"+str(icl),6,min,max,false,icl) {}
+       Offset(int min, int max, Gecode::IntPropLevel ipl)
+         : Test("Distinct::Offset::Dense::"+str(ipl),6,min,max,false,ipl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=0; i<x.size(); i++)
@@ -107,7 +107,7 @@ namespace Test { namespace Int {
          Gecode::IntArgs c(x.size());
          for (int i=0; i<x.size(); i++)
            c[i]=i;
-         Gecode::distinct(home, c, x, icl);
+         Gecode::distinct(home, c, x, ipl);
        }
      };
 
@@ -115,8 +115,8 @@ namespace Test { namespace Int {
      class Random : public Test {
      public:
        /// Create and register test
-       Random(int n, int min, int max, Gecode::IntConLevel icl)
-         : Test("Distinct::Random::"+str(icl),n,min,max,false,icl) {
+       Random(int n, int min, int max, Gecode::IntPropLevel ipl)
+         : Test("Distinct::Random::"+str(ipl),n,min,max,false,ipl) {
          testsearch = false;
        }
        /// Create and register initial assignment
@@ -133,7 +133,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::distinct(home, x, icl);
+         Gecode::distinct(home, x, ipl);
        }
      };
 
@@ -143,7 +143,7 @@ namespace Test { namespace Int {
        /// Number of variables
        int n;
        /// Consistency level
-       Gecode::IntConLevel icl;
+       Gecode::IntPropLevel ipl;
        /// %Test space
        class TestSpace : public Gecode::Space {
        public:
@@ -159,9 +159,9 @@ namespace Test { namespace Int {
        };
      public:
        /// Create and register test
-       Pathological(int n0, Gecode::IntConLevel icl0)
+       Pathological(int n0, Gecode::IntPropLevel ipl0)
          : Base("Int::Distinct::Pathological::"+
-                Test::str(n0)+"::"+Test::str(icl0)), n(n0), icl(icl0) {}
+                Test::str(n0)+"::"+Test::str(ipl0)), n(n0), ipl(ipl0) {}
        /// Perform test
        virtual bool run(void) {
          using namespace Gecode;
@@ -170,7 +170,7 @@ namespace Test { namespace Int {
            IntVarArgs x(n);
            for (int i=0; i<n; i++)
              x[i] = IntVar(*s,0,i);
-           distinct(*s,x,icl);
+           distinct(*s,x,ipl);
            if (s->status() == SS_FAILED) {
              delete s; return false;
            }
@@ -190,7 +190,7 @@ namespace Test { namespace Int {
            }
            for (int i=n; i<2*n; i++)
              x[i] = IntVar(*s,n-1,i);
-           distinct(*s,x,icl);
+           distinct(*s,x,ipl);
            if (s->status() == SS_FAILED) {
              delete s; return false;
            }
@@ -214,42 +214,42 @@ namespace Test { namespace Int {
                         Gecode::Int::Limits::max-0};
      Gecode::IntSet dl(vl,6);
 
-     Distinct<false> dom_d(-3,3,Gecode::ICL_DOM);
-     Distinct<false> bnd_d(-3,3,Gecode::ICL_BND);
-     Distinct<false> val_d(-3,3,Gecode::ICL_VAL);
-     Distinct<false> dom_s(d,Gecode::ICL_DOM);
-     Distinct<false> bnd_s(d,Gecode::ICL_BND);
-     Distinct<false> val_s(d,Gecode::ICL_VAL);
+     Distinct<false> dom_d(-3,3,Gecode::IPL_DOM);
+     Distinct<false> bnd_d(-3,3,Gecode::IPL_BND);
+     Distinct<false> val_d(-3,3,Gecode::IPL_VAL);
+     Distinct<false> dom_s(d,Gecode::IPL_DOM);
+     Distinct<false> bnd_s(d,Gecode::IPL_BND);
+     Distinct<false> val_s(d,Gecode::IPL_VAL);
 
-     Distinct<false> dom_l(dl,Gecode::ICL_DOM,5);
-     Distinct<false> bnd_l(dl,Gecode::ICL_BND,5);
-     Distinct<false> val_l(dl,Gecode::ICL_VAL,5);
+     Distinct<false> dom_l(dl,Gecode::IPL_DOM,5);
+     Distinct<false> bnd_l(dl,Gecode::IPL_BND,5);
+     Distinct<false> val_l(dl,Gecode::IPL_VAL,5);
 
-     Distinct<true> count_dom_d(-3,3,Gecode::ICL_DOM);
-     Distinct<true> count_bnd_d(-3,3,Gecode::ICL_BND);
-     Distinct<true> count_val_d(-3,3,Gecode::ICL_VAL);
-     Distinct<true> count_dom_s(d,Gecode::ICL_DOM);
-     Distinct<true> count_bnd_s(d,Gecode::ICL_BND);
-     Distinct<true> count_val_s(d,Gecode::ICL_VAL);
+     Distinct<true> count_dom_d(-3,3,Gecode::IPL_DOM);
+     Distinct<true> count_bnd_d(-3,3,Gecode::IPL_BND);
+     Distinct<true> count_val_d(-3,3,Gecode::IPL_VAL);
+     Distinct<true> count_dom_s(d,Gecode::IPL_DOM);
+     Distinct<true> count_bnd_s(d,Gecode::IPL_BND);
+     Distinct<true> count_val_s(d,Gecode::IPL_VAL);
 
-     Offset dom_od(-3,3,Gecode::ICL_DOM);
-     Offset bnd_od(-3,3,Gecode::ICL_BND);
-     Offset val_od(-3,3,Gecode::ICL_VAL);
-     Offset dom_os(d,Gecode::ICL_DOM);
-     Offset bnd_os(d,Gecode::ICL_BND);
-     Offset val_os(d,Gecode::ICL_VAL);
+     Offset dom_od(-3,3,Gecode::IPL_DOM);
+     Offset bnd_od(-3,3,Gecode::IPL_BND);
+     Offset val_od(-3,3,Gecode::IPL_VAL);
+     Offset dom_os(d,Gecode::IPL_DOM);
+     Offset bnd_os(d,Gecode::IPL_BND);
+     Offset val_os(d,Gecode::IPL_VAL);
 
-     Random dom_r(20,-50,50,Gecode::ICL_DOM);
-     Random bnd_r(50,-500,500,Gecode::ICL_BND);
-     Random val_r(50,-500,500,Gecode::ICL_VAL);
+     Random dom_r(20,-50,50,Gecode::IPL_DOM);
+     Random bnd_r(50,-500,500,Gecode::IPL_BND);
+     Random val_r(50,-500,500,Gecode::IPL_VAL);
 
-     Pathological p_16_v(16,Gecode::ICL_VAL);
-     Pathological p_16_b(16,Gecode::ICL_BND);
-     Pathological p_16_d(16,Gecode::ICL_DOM);
+     Pathological p_16_v(16,Gecode::IPL_VAL);
+     Pathological p_16_b(16,Gecode::IPL_BND);
+     Pathological p_16_d(16,Gecode::IPL_DOM);
 
-     Pathological p_32_v(32,Gecode::ICL_VAL);
-     Pathological p_32_b(32,Gecode::ICL_BND);
-     Pathological p_32_d(32,Gecode::ICL_DOM);
+     Pathological p_32_v(32,Gecode::IPL_VAL);
+     Pathological p_32_b(32,Gecode::IPL_BND);
+     Pathological p_32_d(32,Gecode::IPL_DOM);
      //@}
 
    }

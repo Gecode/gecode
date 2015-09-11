@@ -222,8 +222,8 @@ namespace Test {
       bool reified;
       /// Which reification modes are supported
       int rms;
-      /// Consistency level
-      Gecode::IntConLevel icl;
+      /// Propagation level
+      Gecode::IntPropLevel ipl;
       /// Whether to test for certain consistency
       ConTestLevel contest;
       /// Whether to perform search test
@@ -245,45 +245,45 @@ namespace Test {
        *
        * Constructs a test with prefix \a p, name \a s, arity \a a,
        * and variable domain \a d. Also tests for a reified
-       * constraint, if \a r is true. The consistency level is
+       * constraint, if \a r is true. The propagation level is
        * maintained for convenience.
        */
       Test(const std::string& p, const std::string& s,
            int a, const Gecode::IntSet& d, bool r=false,
-           Gecode::IntConLevel i=Gecode::ICL_DEF);
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
        * \brief Constructor
        *
        * Constructs a test with name \a s, arity \a a, and variable
        * domain \a d. Also tests for a reified constraint,
-       * if \a r is true. The consistency level is
+       * if \a r is true. The propagation level is
        * maintained for convenience.
        */
       Test(const std::string& s,
            int a, const Gecode::IntSet& d, bool r=false,
-           Gecode::IntConLevel i=Gecode::ICL_DEF);
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
        * \brief Constructor
        *
        * Constructs a test with prefix \a p, name \a s, arity \a a,
        * and variable domain \a min ... \a max. Also tests for
-       * a reified constraint, if \a r is true. The consistency
+       * a reified constraint, if \a r is true. The propagation
        * level is maintained for convenience.
        */
       Test(const std::string& p, const std::string& s, 
            int a, int min, int max, bool r=false,
-           Gecode::IntConLevel i=Gecode::ICL_DEF);
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
        * \brief Constructor
        *
        * Constructs a test with name \a s, arity \a a, variable
        * domain \a min ... \a max. Also tests for a reified constraint,
-       * if \a r is true. The consistency level is
+       * if \a r is true. The propagation level is
        * maintained for convenience.
        */
       Test(const std::string& s, 
            int a, int min, int max, bool r=false,
-           Gecode::IntConLevel i=Gecode::ICL_DEF);
+           Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /// Create assignment
       virtual Assignment* assignment(void) const;
       /// Check for solution
@@ -301,8 +301,8 @@ namespace Test {
       //@{
       /// Map extensional propagation kind to string
       static std::string str(Gecode::ExtensionalPropKind epk);
-      /// Map integer consistency level to string
-      static std::string str(Gecode::IntConLevel icl);
+      /// Map integer propagation level to string
+      static std::string str(Gecode::IntPropLevel ipl);
       /// Map integer relation to string
       static std::string str(Gecode::IntRelType irl);
       /// Map Boolean operation to string
@@ -320,22 +320,22 @@ namespace Test {
     };
     //@}
 
-    /// Iterator for integer consistency levels
-    class IntConLevels {
+    /// Iterator for integer propagation levels
+    class IntPropLevels {
     private:
-      /// Array of consistency levels
-      static const Gecode::IntConLevel icls[3];
+      /// Array of propagation levels
+      static const Gecode::IntPropLevel ipls[3];
       /// Current position in level array
       int i;
     public:
       /// Initialize iterator
-      IntConLevels(void);
+      IntPropLevels(void);
       /// Test whether iterator is done
       bool operator()(void) const;
       /// Increment to next level
       void operator++(void);
       /// Return current level
-      Gecode::IntConLevel icl(void) const;
+      Gecode::IntPropLevel ipl(void) const;
     };
 
     /// Iterator for integer relation types

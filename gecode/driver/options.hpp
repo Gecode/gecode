@@ -191,12 +191,12 @@ namespace Gecode {
   }
   
   inline void
-  Options::icl(IntConLevel i) {
-    _icl.value(i);
+  Options::ipl(IntPropLevel i) {
+    _ipl.value(i);
   }
-  inline IntConLevel
-  Options::icl(void) const {
-    return static_cast<IntConLevel>(_icl.value());
+  inline IntPropLevel
+  Options::ipl(void) const {
+    return static_cast<IntPropLevel>(_ipl.value());
   }
   
   inline void

@@ -45,7 +45,7 @@
 namespace Gecode {
 
   void
-  unary(Home home, const IntVarArgs& s, const IntArgs& p, IntConLevel icl) {
+  unary(Home home, const IntVarArgs& s, const IntArgs& p, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if (s.same(home))
@@ -67,11 +67,11 @@ namespace Gecode {
     }
     if (allOne) {
       ViewArray<IntView> xv(home,s);
-      switch (icl) {
-      case ICL_BND:
+      switch (ipl) {
+      case IPL_BND:
         GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
         break;
-      case ICL_DOM:
+      case IPL_DOM:
         GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,xv));
         break;
       default:
@@ -87,7 +87,7 @@ namespace Gecode {
 
   void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& flex, const IntArgs& fix, IntConLevel icl) {
+        const IntVarArgs& flex, const IntArgs& fix, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((flex.size() != fix.size()) || (flex.size() != t.size()))
@@ -107,7 +107,7 @@ namespace Gecode {
         fixp = false; break;
       }
     if (fixp) {
-      unary(home, flex, fix, icl);
+      unary(home, flex, fix, ipl);
     } else {
       TaskArray<ManFixPSETask> tasks(home,flex.size());
       for (int i=flex.size(); i--;)
@@ -118,7 +118,7 @@ namespace Gecode {
 
   void
   unary(Home home, const IntVarArgs& s, const IntArgs& p, 
-        const BoolVarArgs& m, IntConLevel icl) {
+        const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if (s.same(home))
@@ -138,7 +138,7 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      unary(home,s,p,icl);
+      unary(home,s,p,ipl);
     } else {
       if (home.failed()) return;
       TaskArray<OptFixPTask> t(home,s.size());
@@ -151,7 +151,7 @@ namespace Gecode {
   void
   unary(Home home, const TaskTypeArgs& t,
         const IntVarArgs& flex, const IntArgs& fix, const BoolVarArgs& m, 
-        IntConLevel icl) {
+        IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((flex.size() != fix.size()) || (flex.size() != t.size()) ||
@@ -177,7 +177,7 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      unary(home,t,flex,fix,icl);
+      unary(home,t,flex,fix,ipl);
     } else {
       if (fixp) {
         TaskArray<OptFixPTask> tasks(home,flex.size());
@@ -195,7 +195,7 @@ namespace Gecode {
 
   void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
-        const IntVarArgs& e, IntConLevel icl) {
+        const IntVarArgs& e, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((s.size() != p.size()) || (s.size() != e.size()))
@@ -215,7 +215,7 @@ namespace Gecode {
       IntArgs pp(p.size());
       for (int i=p.size(); i--;)
         pp[i] = p[i].val();
-      unary(home,s,pp,icl);
+      unary(home,s,pp,ipl);
     } else {
       TaskArray<ManFlexTask> t(home,s.size());
       for (int i=s.size(); i--; )
@@ -226,7 +226,7 @@ namespace Gecode {
 
   void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
-        const IntVarArgs& e, const BoolVarArgs& m, IntConLevel icl) {
+        const IntVarArgs& e, const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((s.size() != p.size()) || (s.size() != m.size()) ||
@@ -244,7 +244,7 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      unary(home,s,p,e,icl);
+      unary(home,s,p,e,ipl);
     } else {
       TaskArray<OptFlexTask> t(home,s.size());
       for (int i=s.size(); i--; )

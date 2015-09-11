@@ -55,8 +55,8 @@ namespace Test { namespace Int {
      class IntAllMinMax : public Test {
      public:
        /// Create and register test
-       IntAllMinMax(Gecode::IntConLevel icl)
-         : Test("GCC::Int::All::MinMax::"+str(icl),4,-1,3,false,icl) {}
+       IntAllMinMax(Gecode::IntPropLevel ipl)
+         : Test("GCC::Int::All::MinMax::"+str(ipl),4,-1,3,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[5];
@@ -81,7 +81,7 @@ namespace Test { namespace Int {
            values[i] = i-1; cards[i] = fixed;
          }
          cards[2] = IntSet(0,0);
-         count(home, x, cards, values, icl);
+         count(home, x, cards, values, ipl);
        }
      };
 
@@ -89,8 +89,8 @@ namespace Test { namespace Int {
      class IntAllMinMaxDef : public Test {
      public:
        /// Create and register test
-       IntAllMinMaxDef(Gecode::IntConLevel icl)
-         : Test("GCC::Int::All::MinMaxDef::"+str(icl),4,0,3,false,icl) {}
+       IntAllMinMaxDef(Gecode::IntPropLevel ipl)
+         : Test("GCC::Int::All::MinMaxDef::"+str(ipl),4,0,3,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[4];
@@ -114,7 +114,7 @@ namespace Test { namespace Int {
            cards[i] = fixed;
          }
          cards[2] = IntSet(0,0);
-         count(home, x, cards, icl);
+         count(home, x, cards, ipl);
        }
      };
 
@@ -122,8 +122,8 @@ namespace Test { namespace Int {
      class IntAllMax : public Test {
      public:
        /// Create and register test
-       IntAllMax(Gecode::IntConLevel icl)
-         : Test("GCC::Int::All::Max::"+str(icl), 4, 1,2, false, icl) {}
+       IntAllMax(Gecode::IntPropLevel ipl)
+         : Test("GCC::Int::All::Max::"+str(ipl), 4, 1,2, false, ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[2];
@@ -138,7 +138,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntArgs values(2, 1,2);
-         Gecode::count(home, x, Gecode::IntSet(2,2), values, icl);
+         Gecode::count(home, x, Gecode::IntSet(2,2), values, ipl);
        }
      };
 
@@ -148,9 +148,9 @@ namespace Test { namespace Int {
      class IntSome : public Test {
      public:
        /// Create and register test
-       IntSome(Gecode::IntConLevel icl)
+       IntSome(Gecode::IntPropLevel ipl)
          : Test(std::string("GCC::Int::Some::")+
-                (hole ? "::Hole" : "::Full")+str(icl),4,1,4,false,icl) {}
+                (hole ? "::Hole" : "::Full")+str(ipl),4,1,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n[4];
@@ -175,7 +175,7 @@ namespace Test { namespace Int {
          }
          Gecode::IntSetArgs cards(2);
          cards[0]=fixed; cards[1]=fixed;
-         count(home, x, cards, values, icl);
+         count(home, x, cards, values, ipl);
        }
      };
 
@@ -186,8 +186,8 @@ namespace Test { namespace Int {
        static const int n = 4;
      public:
        /// Create and register test
-       VarAll(Gecode::IntConLevel icl)
-         : Test("GCC::Var::All::"+str(icl),7,0,2,false,icl) {}
+       VarAll(Gecode::IntPropLevel ipl)
+         : Test("GCC::Var::All::"+str(ipl),7,0,2,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // Number of cardinality variables
@@ -224,7 +224,7 @@ namespace Test { namespace Int {
            x[i]=xy[i];
          for (int i=0; i<m; i++)
            y[i]=xy[n+i];
-         count(home, x, y, icl);
+         count(home, x, y, ipl);
        }
      };
 
@@ -238,9 +238,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        VarSome(std::string s, int n0, int min, int max,
-               Gecode::IntConLevel icl)
-         : Test("GCC::Var::Some::"+s+"::"+str(icl),
-                n0+(max-min)+1,min,max,false,icl)
+               Gecode::IntPropLevel ipl)
+         : Test("GCC::Var::Some::"+s+"::"+str(ipl),
+                n0+(max-min)+1,min,max,false,ipl)
          , n(n0)
         {
           contest = CTL_NONE;
@@ -289,7 +289,7 @@ namespace Test { namespace Int {
          IntArgs values(m);
          for (int i=m; i--;)
            values[i] = i+dom.min();
-         count(home,x,y,values,icl);
+         count(home,x,y,values,ipl);
        }
      };
 
@@ -298,15 +298,15 @@ namespace Test { namespace Int {
      public:
        /// Perform creation and registration
        Create(void) {
-         for (IntConLevels icls; icls(); ++icls) {
-           (void) new IntAllMinMax(icls.icl());
-           (void) new IntAllMinMaxDef(icls.icl());
-           (void) new IntAllMax(icls.icl());
-           (void) new IntSome<false>(icls.icl());
-           (void) new IntSome<true>(icls.icl());
-           (void) new VarAll(icls.icl());
-           (void) new VarSome("Small",2,-1,3,icls.icl());
-           (void) new VarSome("Large",3,-1,4,icls.icl());
+         for (IntPropLevels ipls; ipls(); ++ipls) {
+           (void) new IntAllMinMax(ipls.ipl());
+           (void) new IntAllMinMaxDef(ipls.ipl());
+           (void) new IntAllMax(ipls.ipl());
+           (void) new IntSome<false>(ipls.ipl());
+           (void) new IntSome<true>(ipls.ipl());
+           (void) new VarAll(ipls.ipl());
+           (void) new VarSome("Small",2,-1,3,ipls.ipl());
+           (void) new VarSome("Large",3,-1,4,ipls.ipl());
          }
        }
      };

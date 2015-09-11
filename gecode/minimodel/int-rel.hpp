@@ -71,13 +71,13 @@ namespace Gecode {
   }
 
   forceinline void
-  LinIntRel::post(Home home, bool t, IntConLevel icl) const {
-    e.post(home,t ? irt : neg(irt),icl);
+  LinIntRel::post(Home home, bool t, IntPropLevel ipl) const {
+    e.post(home,t ? irt : neg(irt),ipl);
   }
 
   forceinline void
-  LinIntRel::post(Home home, const BoolVar& b, bool t, IntConLevel icl) const {
-    e.post(home,t ? irt : neg(irt),b,icl);
+  LinIntRel::post(Home home, const BoolVar& b, bool t, IntPropLevel ipl) const {
+    e.post(home,t ? irt : neg(irt),b,ipl);
   }
 
 }

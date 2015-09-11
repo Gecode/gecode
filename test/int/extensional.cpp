@@ -383,7 +383,7 @@ namespace Test { namespace Int {
        /// Create and register test
        TupleSetA(Gecode::ExtensionalPropKind epk0)
          : Test("Extensional::TupleSet::A::"+str(epk0),
-                4,1,5,false,Gecode::ICL_DOM), epk(epk0) {}
+                4,1,5,false,Gecode::IPL_DOM), epk(epk0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
@@ -420,7 +420,7 @@ namespace Test { namespace Int {
          t.add(t5);
          t.finalize();
 
-         extensional(home, x, t, epk, ICL_DEF);
+         extensional(home, x, t, epk, IPL_DEF);
        }
      };
 
@@ -434,7 +434,7 @@ namespace Test { namespace Int {
        /// Create and register test
        TupleSetB(Gecode::ExtensionalPropKind epk0)
          : Test("Extensional::TupleSet::B::"+str(epk0),
-                4,1,5,false,Gecode::ICL_DOM), epk(epk0) {
+                4,1,5,false,Gecode::IPL_DOM), epk(epk0) {
          using namespace Gecode;
          IntArgs t1 (4,  2, 1, 2, 4);
          IntArgs t2 (4,  2, 2, 1, 4);
@@ -473,7 +473,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         extensional(home, x, t, epk, ICL_DEF);
+         extensional(home, x, t, epk, IPL_DEF);
        }
      };
 
@@ -489,7 +489,7 @@ namespace Test { namespace Int {
        /// Create and register test
        TupleSetBool(Gecode::ExtensionalPropKind epk0, double prob)
          : Test("Extensional::TupleSet::Bool::"+str(epk0),
-                5,0,1,false,Gecode::ICL_DOM), epk(epk0) {
+                5,0,1,false,Gecode::IPL_DOM), epk(epk0) {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(0, 1));
@@ -520,7 +520,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
          BoolVarArgs y(x.size());
          for (int i = x.size(); i--; ) y[i] = channel(home, x[i]);
-         extensional(home, y, t, epk, ICL_DEF);
+         extensional(home, y, t, epk, IPL_DEF);
        }
      };
 

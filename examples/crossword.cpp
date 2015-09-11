@@ -120,7 +120,7 @@ public:
         allwords << words;
         
         // All words of same length must be different
-        distinct(*this, words, opt.icl());
+        distinct(*this, words, opt.ipl());
         
         for (int d=0; d<w_l; d++) {
           // Array that maps words to a letter at a certain position (shared among all element constraints)
@@ -230,7 +230,7 @@ int
 main(int argc, char* argv[]) {
   FileSizeOptions opt("Crossword");
   opt.size(10);
-  opt.icl(ICL_VAL);
+  opt.ipl(IPL_VAL);
   opt.branching(Crossword::BRANCH_WORDS);
   opt.branching(Crossword::BRANCH_WORDS, "words");
   opt.branching(Crossword::BRANCH_LETTERS, "letters");

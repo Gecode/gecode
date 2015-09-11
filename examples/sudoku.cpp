@@ -118,14 +118,14 @@ public:
 
     // Constraints for rows and columns
     for (int i=0; i<nn; i++) {
-      distinct(*this, m.row(i), opt.icl());
-      distinct(*this, m.col(i), opt.icl());
+      distinct(*this, m.row(i), opt.ipl());
+      distinct(*this, m.col(i), opt.ipl());
     }
 
     // Constraints for squares
     for (int i=0; i<nn; i+=n) {
       for (int j=0; j<nn; j+=n) {
-        distinct(*this, m.slice(i, i+n, j, j+n), opt.icl());
+        distinct(*this, m.slice(i, i+n, j, j+n), opt.ipl());
       }
     }
 
@@ -386,7 +386,7 @@ public:
     IntArgs values(nn);
     for (int i=nn; i--;)
       values[i] = i+1;
-    count(*this, x, IntSet(nn,nn), values, ICL_DOM);
+    count(*this, x, IntSet(nn,nn), values, IPL_DOM);
   }
 
   /// Constructor for cloning \a s
@@ -413,7 +413,7 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("Sudoku");
   opt.size(0);
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.solutions(1);
 #ifdef GECODE_HAS_SET_VARS
   opt.model(Sudoku::MODEL_INT);

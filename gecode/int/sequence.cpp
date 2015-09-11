@@ -49,7 +49,7 @@ namespace Gecode {
 
   void
   sequence(Home home, const IntVarArgs& x, const IntSet &s, 
-           int q, int l, int u, IntConLevel) {
+           int q, int l, int u, IntPropLevel) {
     Limits::check(s.min(),"Int::sequence");
     Limits::check(s.max(),"Int::sequence");
 
@@ -115,7 +115,7 @@ namespace Gecode {
 
   void
   sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
-           int q, int l, int u, IntConLevel) {
+           int q, int l, int u, IntPropLevel) {
     if ((s.min() < 0) || (s.max() > 1))
       throw NotZeroOne("Int::sequence");
 

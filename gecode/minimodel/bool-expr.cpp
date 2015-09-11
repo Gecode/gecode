@@ -261,13 +261,13 @@ namespace Gecode {
       void post(Home home, NodeType t,
                 BoolVarArgs& bp, BoolVarArgs& bn,
                 int& ip, int& in,
-                IntConLevel icl) const;
+                IntPropLevel ipl) const;
       /// Post propagators for expression
       GECODE_MINIMODEL_EXPORT
-      BoolVar expr(Home home, IntConLevel icl) const;
+      BoolVar expr(Home home, IntPropLevel ipl) const;
       /// Post propagators for relation
       GECODE_MINIMODEL_EXPORT
-      void rel(Home home, IntConLevel icl) const;
+      void rel(Home home, IntPropLevel ipl) const;
       /// Allocate memory from region
       static void* operator new(size_t s, Region& r);
       /// No-op (for exceptions)
@@ -292,7 +292,7 @@ namespace Gecode {
     }
 
     BoolVar
-    NNF::expr(Home home, IntConLevel icl) const {
+    NNF::expr(Home home, IntPropLevel ipl) const {
       if ((t == BoolExpr::NT_VAR) && !u.a.neg)
         return u.a.x->x;
       BoolVar b(home,0,1);
@@ -302,7 +302,7 @@ namespace Gecode {
         Gecode::rel(home, u.a.x->x, IRT_NQ, b);
         break;
       case BoolExpr::NT_RLIN:
-        u.a.x->rl.post(home, b, !u.a.neg, icl);
+        u.a.x->rl.post(home, b, !u.a.neg, ipl);
         break;
 #ifdef GECODE_HAS_FLOAT_VARS
       case BoolExpr::NT_RLINFLOAT:
@@ -315,13 +315,13 @@ namespace Gecode {
         break;
 #endif
       case BoolExpr::NT_MISC:
-        u.a.x->m->post(home, b, !u.a.neg, icl);
+        u.a.x->m->post(home, b, !u.a.neg, ipl);
         break;
       case BoolExpr::NT_AND:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_AND, bp, bn, ip, in, icl);
+          post(home, BoolExpr::NT_AND, bp, bn, ip, in, ipl);
           clause(home, BOT_AND, bp, bn, b);
         }
         break;
@@ -329,7 +329,7 @@ namespace Gecode {
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_OR, bp, bn, ip, in, icl);
+          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipl);
           clause(home, BOT_OR, bp, bn, b);
         }
         break;
@@ -341,16 +341,16 @@ namespace Gecode {
             l = u.b.l->u.a.x->x;
             if (u.b.l->u.a.neg) n = !n;
           } else {
-            l = u.b.l->expr(home,icl);
+            l = u.b.l->expr(home,ipl);
           }
           BoolVar r;
           if (u.b.r->t == BoolExpr::NT_VAR) {
             r = u.b.r->u.a.x->x;
             if (u.b.r->u.a.neg) n = !n;
           } else {
-            r = u.b.r->expr(home,icl);
+            r = u.b.r->expr(home,ipl);
           }
-          Gecode::rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, icl);
+          Gecode::rel(home, l, n ? BOT_XOR : BOT_EQV, r, b, ipl);
         }
         break;
       default:
@@ -363,7 +363,7 @@ namespace Gecode {
     NNF::post(Home home, NodeType t,
                         BoolVarArgs& bp, BoolVarArgs& bn,
                         int& ip, int& in,
-                        IntConLevel icl) const {
+                        IntPropLevel ipl) const {
       if (this->t != t) {
         switch (this->t) {
         case BoolExpr::NT_VAR:
@@ -376,7 +376,7 @@ namespace Gecode {
         case BoolExpr::NT_RLIN:
           {
             BoolVar b(home,0,1);
-            u.a.x->rl.post(home, b, !u.a.neg, icl);
+            u.a.x->rl.post(home, b, !u.a.neg, ipl);
             bp[ip++]=b;
           }
           break;
@@ -401,28 +401,28 @@ namespace Gecode {
         case BoolExpr::NT_MISC:
           {
             BoolVar b(home,0,1);
-            u.a.x->m->post(home, b, !u.a.neg, icl);
+            u.a.x->m->post(home, b, !u.a.neg, ipl);
             bp[ip++]=b;
           }
           break;      
         default:
-          bp[ip++] = expr(home, icl);
+          bp[ip++] = expr(home, ipl);
           break;
         }
       } else {
-        u.b.l->post(home, t, bp, bn, ip, in, icl);
-        u.b.r->post(home, t, bp, bn, ip, in, icl);
+        u.b.l->post(home, t, bp, bn, ip, in, ipl);
+        u.b.r->post(home, t, bp, bn, ip, in, ipl);
       }
     }
 
     void
-    NNF::rel(Home home, IntConLevel icl) const {
+    NNF::rel(Home home, IntPropLevel ipl) const {
       switch (t) {
       case BoolExpr::NT_VAR:
         Gecode::rel(home, u.a.x->x, IRT_EQ, u.a.neg ? 0 : 1);
         break;
       case BoolExpr::NT_RLIN:
-        u.a.x->rl.post(home, !u.a.neg, icl);
+        u.a.x->rl.post(home, !u.a.neg, ipl);
         break;
 #ifdef GECODE_HAS_FLOAT_VARS
       case BoolExpr::NT_RLINFLOAT:
@@ -437,18 +437,18 @@ namespace Gecode {
       case BoolExpr::NT_MISC:
         {
           BoolVar b(home,!u.a.neg,!u.a.neg);
-          u.a.x->m->post(home, b, false, icl);
+          u.a.x->m->post(home, b, false, ipl);
         }
         break;
       case BoolExpr::NT_AND:
-        u.b.l->rel(home, icl);
-        u.b.r->rel(home, icl);
+        u.b.l->rel(home, ipl);
+        u.b.r->rel(home, ipl);
         break;
       case BoolExpr::NT_OR:
         {
           BoolVarArgs bp(p), bn(n);
           int ip=0, in=0;
-          post(home, BoolExpr::NT_OR, bp, bn, ip, in, icl);
+          post(home, BoolExpr::NT_OR, bp, bn, ip, in, ipl);
           clause(home, BOT_OR, bp, bn, 1);
         }
         break;
@@ -456,17 +456,17 @@ namespace Gecode {
         if (u.b.l->t==BoolExpr::NT_VAR &&
             u.b.r->t==BoolExpr::NT_RLIN) {
           u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
+                                u.b.l->u.a.neg==u.b.r->u.a.neg, ipl);
         } else if (u.b.r->t==BoolExpr::NT_VAR && 
                    u.b.l->t==BoolExpr::NT_RLIN) {
           u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
-                                u.b.l->u.a.neg==u.b.r->u.a.neg, icl);
+                                u.b.l->u.a.neg==u.b.r->u.a.neg, ipl);
         } else if (u.b.l->t==BoolExpr::NT_RLIN) {
-          u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,icl),
-                                !u.b.l->u.a.neg,icl);
+          u.b.l->u.a.x->rl.post(home, u.b.r->expr(home,ipl),
+                                !u.b.l->u.a.neg,ipl);
         } else if (u.b.r->t==BoolExpr::NT_RLIN) {
-          u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,icl),
-                                !u.b.r->u.a.neg,icl);
+          u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,ipl),
+                                !u.b.r->u.a.neg,ipl);
 #ifdef GECODE_HAS_FLOAT_VARS
         } else if (u.b.l->t==BoolExpr::NT_VAR && 
                    u.b.r->t==BoolExpr::NT_RLINFLOAT) {
@@ -477,10 +477,10 @@ namespace Gecode {
           u.b.l->u.a.x->rfl.post(home, u.b.r->u.a.x->x,
                                  u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RLINFLOAT) {
-          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,icl),
+          u.b.l->u.a.x->rfl.post(home, u.b.r->expr(home,ipl),
                                  !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RLINFLOAT) {
-          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,icl),
+          u.b.r->u.a.x->rfl.post(home, u.b.l->expr(home,ipl),
                                  !u.b.r->u.a.neg);
 #endif
 #ifdef GECODE_HAS_SET_VARS
@@ -493,14 +493,14 @@ namespace Gecode {
           u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
         } else if (u.b.l->t==BoolExpr::NT_RSET) {
-          u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,icl),
+          u.b.l->u.a.x->rs.post(home, u.b.r->expr(home,ipl),
                                 !u.b.l->u.a.neg);
         } else if (u.b.r->t==BoolExpr::NT_RSET) {
-          u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,icl),
+          u.b.r->u.a.x->rs.post(home, u.b.l->expr(home,ipl),
                                 !u.b.r->u.a.neg);
 #endif
         } else {
-          Gecode::rel(home, expr(home, icl), IRT_EQ, 1);
+          Gecode::rel(home, expr(home, ipl), IRT_EQ, 1);
         }
         break;
       default:
@@ -576,15 +576,15 @@ namespace Gecode {
   }
   
   BoolVar
-  BoolExpr::expr(Home home, IntConLevel icl) const {
+  BoolExpr::expr(Home home, IntPropLevel ipl) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->expr(home,icl);
+    return NNF::nnf(r,n,false)->expr(home,ipl);
   }
 
   void
-  BoolExpr::rel(Home home, IntConLevel icl) const {
+  BoolExpr::rel(Home home, IntPropLevel ipl) const {
     Region r(home);
-    return NNF::nnf(r,n,false)->rel(home,icl);
+    return NNF::nnf(r,n,false)->rel(home,ipl);
   }
 
 
@@ -629,17 +629,17 @@ namespace Gecode {
    *
    */
   BoolVar
-  expr(Home home, const BoolExpr& e, IntConLevel icl) {
+  expr(Home home, const BoolExpr& e, IntPropLevel ipl) {
     if (!home.failed())
-      return e.expr(home,icl);
+      return e.expr(home,ipl);
     BoolVar x(home,0,1);
     return x;
   }
 
   void
-  rel(Home home, const BoolExpr& e, IntConLevel icl) {
+  rel(Home home, const BoolExpr& e, IntPropLevel ipl) {
     if (home.failed()) return;
-    e.rel(home,icl);
+    e.rel(home,ipl);
   }
 
   /*
@@ -661,7 +661,7 @@ namespace Gecode {
     /// Destructor
     virtual ~BElementExpr(void);
     /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-    virtual void post(Space& home, BoolVar b, bool neg, IntConLevel icl);
+    virtual void post(Space& home, BoolVar b, bool neg, IntPropLevel ipl);
   };
 
   BElementExpr::BElementExpr(int size)
@@ -672,17 +672,17 @@ namespace Gecode {
   }
   
   void
-  BElementExpr::post(Space& home, BoolVar b, bool pos, IntConLevel icl) {
-    IntVar z = idx.post(home, icl);
+  BElementExpr::post(Space& home, BoolVar b, bool pos, IntPropLevel ipl) {
+    IntVar z = idx.post(home, ipl);
     if (z.assigned() && z.val() >= 0 && z.val() < n) {
       BoolExpr be = pos ? (a[z.val()] == b) : (a[z.val()] == !b);
-      be.rel(home,icl);
+      be.rel(home,ipl);
     } else {
       BoolVarArgs x(n);
       for (int i=n; i--;)
-        x[i] = a[i].expr(home,icl);
-      BoolVar res = pos ? b : (!b).expr(home,icl);
-      element(home, x, z, res, icl);
+        x[i] = a[i].expr(home,ipl);
+      BoolVar res = pos ? b : (!b).expr(home,ipl);
+      element(home, x, z, res, ipl);
     }
   }
 

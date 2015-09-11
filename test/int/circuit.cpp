@@ -55,9 +55,9 @@ namespace Test { namespace Int {
        int offset;
      public:
        /// Create and register test
-       Circuit(int n, int min, int max, int off, Gecode::IntConLevel icl)
-         : Test("Circuit::" + str(icl) + "::" + str(n) + "::" + str(off),
-                   n,min,max,false,icl), offset(off) {
+       Circuit(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
+         : Test("Circuit::" + str(ipl) + "::" + str(n) + "::" + str(off),
+                   n,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -83,9 +83,9 @@ namespace Test { namespace Int {
            Gecode::IntVarArgs xx(x.size());
            for (int i=x.size(); i--;)
              xx[i] = Gecode::expr(home, x[i]+offset);
-           Gecode::circuit(home, offset, xx, icl);
+           Gecode::circuit(home, offset, xx, ipl);
          } else {
-           Gecode::circuit(home, x, icl);
+           Gecode::circuit(home, x, ipl);
          }
        }
      };
@@ -97,9 +97,9 @@ namespace Test { namespace Int {
        int offset;
      public:
        /// Create and register test
-       Path(int n, int min, int max, int off, Gecode::IntConLevel icl)
-         : Test("Path::" + str(icl) + "::" + str(n) + "::" + str(off),
-                n+2,min,max,false,icl), offset(off) {
+       Path(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
+         : Test("Path::" + str(ipl) + "::" + str(n) + "::" + str(off),
+                n+2,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -133,11 +133,11 @@ namespace Test { namespace Int {
              xx[i] = Gecode::expr(home, x[i]+offset);
            Gecode::path(home, offset, xx,
                         Gecode::expr(home, x[n]+offset),
-                        Gecode::expr(home, x[n+1]+offset),icl);
+                        Gecode::expr(home, x[n+1]+offset),ipl);
          } else {
            for (int i=n; i--;)
              xx[i] = x[i];
-           Gecode::path(home, xx, x[n], x[n+1], icl);
+           Gecode::path(home, xx, x[n], x[n+1], ipl);
          }
        }
      };
@@ -149,9 +149,9 @@ namespace Test { namespace Int {
        int offset;
      public:
        /// Create and register test
-       CircuitCost(int n, int min, int max, int off, Gecode::IntConLevel icl)
-         : Test("Circuit::Cost::"+str(icl)+"::"+str(n)+"::"+str(off),
-                n+1,min,max,false,icl), offset(off) {
+       CircuitCost(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
+         : Test("Circuit::Cost::"+str(ipl)+"::"+str(n)+"::"+str(off),
+                n+1,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -187,11 +187,11 @@ namespace Test { namespace Int {
          if (offset > 0) {
            for (int i=n; i--;)
              y[i] = Gecode::expr(home, x[i]+offset);
-           Gecode::circuit(home, c, offset, y, x[n], icl);
+           Gecode::circuit(home, c, offset, y, x[n], ipl);
          } else {
            for (int i=0; i<n; i++)
              y[i]=x[i];
-           circuit(home, c, y, x[n], icl);
+           circuit(home, c, y, x[n], ipl);
          }
        }
      };
@@ -203,9 +203,9 @@ namespace Test { namespace Int {
        int offset;
      public:
        /// Create and register test
-       PathCost(int n, int min, int max, int off, Gecode::IntConLevel icl)
-         : Test("Path::Cost::"+str(icl)+"::"+str(n)+"::"+str(off),
-                n+3,min,max,false,icl), offset(off) {
+       PathCost(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
+         : Test("Path::Cost::"+str(ipl)+"::"+str(n)+"::"+str(off),
+                n+3,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -248,11 +248,11 @@ namespace Test { namespace Int {
            path(home, c, offset, y, 
                 expr(home, x[n]+offset),
                 expr(home, x[n+1]+offset),
-                x[n+2], icl);
+                x[n+2], ipl);
          } else {
            for (int i=0; i<n; i++)
              y[i]=x[i];
-           path(home, c, y, x[n], x[n+1], x[n+2], icl);
+           path(home, c, y, x[n], x[n+1], x[n+2], ipl);
          }
        }
      };
@@ -265,9 +265,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        CircuitFullCost(int n, int min, int max, int off,
-                       Gecode::IntConLevel icl)
-         : Test("Circuit::FullCost::" + str(icl)+"::"+str(n)+"::"+str(off),
-                2*n+1,min,max,false,icl), offset(off) {
+                       Gecode::IntPropLevel ipl)
+         : Test("Circuit::FullCost::" + str(ipl)+"::"+str(n)+"::"+str(off),
+                2*n+1,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -309,11 +309,11 @@ namespace Test { namespace Int {
          if (offset > 0) {
            for (int i=n; i--;)
              y[i] = Gecode::expr(home, x[i]+offset);
-           Gecode::circuit(home, c, offset, y, z, x[2*n], icl);
+           Gecode::circuit(home, c, offset, y, z, x[2*n], ipl);
          } else {
            for (int i=0; i<n; i++)
              y[i]=x[i];
-           circuit(home, c, y, z, x[2*n], icl);
+           circuit(home, c, y, z, x[2*n], ipl);
          }
        }
      };
@@ -324,29 +324,29 @@ namespace Test { namespace Int {
        /// Perform creation and registration
        Create(void) {
          for (int i=1; i<=6; i++) {
-           (void) new Circuit(i,0,i-1,0,Gecode::ICL_VAL);
-           (void) new Circuit(i,0,i-1,0,Gecode::ICL_DOM);
-           (void) new Circuit(i,0,i-1,5,Gecode::ICL_VAL);
-           (void) new Circuit(i,0,i-1,5,Gecode::ICL_DOM);
+           (void) new Circuit(i,0,i-1,0,Gecode::IPL_VAL);
+           (void) new Circuit(i,0,i-1,0,Gecode::IPL_DOM);
+           (void) new Circuit(i,0,i-1,5,Gecode::IPL_VAL);
+           (void) new Circuit(i,0,i-1,5,Gecode::IPL_DOM);
          }
          for (int i=1; i<=4; i++) {
-           (void) new Path(i,0,i-1,0,Gecode::ICL_VAL);
-           (void) new Path(i,0,i-1,0,Gecode::ICL_DOM);
-           (void) new Path(i,0,i-1,5,Gecode::ICL_VAL);
-           (void) new Path(i,0,i-1,5,Gecode::ICL_DOM);
+           (void) new Path(i,0,i-1,0,Gecode::IPL_VAL);
+           (void) new Path(i,0,i-1,0,Gecode::IPL_DOM);
+           (void) new Path(i,0,i-1,5,Gecode::IPL_VAL);
+           (void) new Path(i,0,i-1,5,Gecode::IPL_DOM);
          }
-         (void) new CircuitCost(4,0,9,0,Gecode::ICL_VAL);
-         (void) new CircuitCost(4,0,9,0,Gecode::ICL_DOM);
-         (void) new CircuitFullCost(3,0,3,0,Gecode::ICL_VAL);
-         (void) new CircuitFullCost(3,0,3,0,Gecode::ICL_DOM);
-         (void) new CircuitCost(4,0,9,5,Gecode::ICL_VAL);
-         (void) new CircuitCost(4,0,9,5,Gecode::ICL_DOM);
-         (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_VAL);
-         (void) new CircuitFullCost(3,0,3,5,Gecode::ICL_DOM);
-         (void) new PathCost(3,0,5,0,Gecode::ICL_VAL);
-         (void) new PathCost(3,0,5,0,Gecode::ICL_DOM);
-         (void) new PathCost(3,0,5,5,Gecode::ICL_VAL);
-         (void) new PathCost(3,0,5,5,Gecode::ICL_DOM);
+         (void) new CircuitCost(4,0,9,0,Gecode::IPL_VAL);
+         (void) new CircuitCost(4,0,9,0,Gecode::IPL_DOM);
+         (void) new CircuitFullCost(3,0,3,0,Gecode::IPL_VAL);
+         (void) new CircuitFullCost(3,0,3,0,Gecode::IPL_DOM);
+         (void) new CircuitCost(4,0,9,5,Gecode::IPL_VAL);
+         (void) new CircuitCost(4,0,9,5,Gecode::IPL_DOM);
+         (void) new CircuitFullCost(3,0,3,5,Gecode::IPL_VAL);
+         (void) new CircuitFullCost(3,0,3,5,Gecode::IPL_DOM);
+         (void) new PathCost(3,0,5,0,Gecode::IPL_VAL);
+         (void) new PathCost(3,0,5,0,Gecode::IPL_DOM);
+         (void) new PathCost(3,0,5,5,Gecode::IPL_VAL);
+         (void) new PathCost(3,0,5,5,Gecode::IPL_DOM);
        }
      };
 

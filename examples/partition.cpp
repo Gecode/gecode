@@ -70,7 +70,7 @@ public:
     for (int i = n; i--; ) {
       xy[i] = x[i]; xy[n+i] = y[i];
     }
-    distinct(*this, xy, opt.icl());
+    distinct(*this, xy, opt.ipl());
 
     IntArgs c(2*n);
     for (int i = n; i--; ) {
@@ -136,7 +136,7 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("Partition");
   opt.size(32);
-  opt.icl(ICL_BND);
+  opt.ipl(IPL_BND);
   opt.parse(argc,argv);
   Script::run<Partition,DFS,SizeOptions>(opt);
   return 0;

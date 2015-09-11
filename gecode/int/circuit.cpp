@@ -42,7 +42,7 @@
 namespace Gecode {
 
   void
-  circuit(Home home, int offset, const IntVarArgs& x, IntConLevel icl) {
+  circuit(Home home, int offset, const IntVarArgs& x, IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
     if (x.size() == 0)
       throw Int::TooFewArguments("Int::circuit");
@@ -54,7 +54,7 @@ namespace Gecode {
     if (offset == 0) {
       typedef Int::NoOffset<Int::IntView> NOV;
       NOV no;
-      if (icl == ICL_DOM) {
+      if (ipl == IPL_DOM) {
         GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView,NOV>
                         ::post(home,xv,no)));
       } else {
@@ -64,7 +64,7 @@ namespace Gecode {
     } else {
       typedef Int::Offset OV;
       OV off(-offset);
-      if (icl == ICL_DOM) {
+      if (ipl == IPL_DOM) {
         GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView,OV>
                         ::post(home,xv,off)));
       } else {
@@ -74,14 +74,14 @@ namespace Gecode {
     }
   }
   void
-  circuit(Home home, const IntVarArgs& x, IntConLevel icl) {
-    circuit(home,0,x,icl);
+  circuit(Home home, const IntVarArgs& x, IntPropLevel ipl) {
+    circuit(home,0,x,ipl);
   }
   
   void
   circuit(Home home, const IntArgs& c, int offset,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
     int n = x.size();
     if (n == 0)
@@ -90,7 +90,7 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::circuit");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::circuit");
-    circuit(home, offset, x, icl);
+    circuit(home, offset, x, ipl);
     if (home.failed()) return;
     IntArgs cx(offset+n);
     for (int i=0; i<offset; i++)
@@ -105,28 +105,28 @@ namespace Gecode {
   void
   circuit(Home home, const IntArgs& c,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
-          IntConLevel icl) {
-    circuit(home,c,0,x,y,z,icl);
+          IntPropLevel ipl) {
+    circuit(home,c,0,x,y,z,ipl);
   }
   void
   circuit(Home home, const IntArgs& c, int offset,
           const IntVarArgs& x, IntVar z, 
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
     if (home.failed()) return;
     IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
-    circuit(home, c, offset, x, y, z, icl);
+    circuit(home, c, offset, x, y, z, ipl);
   }
   void
   circuit(Home home, const IntArgs& c,
           const IntVarArgs& x, IntVar z, 
-          IntConLevel icl) {
-    circuit(home,c,0,x,z,icl);
+          IntPropLevel ipl) {
+    circuit(home,c,0,x,z,ipl);
   }
 
   void
   path(Home home, int offset, const IntVarArgs& x, IntVar s, IntVar e,
-       IntConLevel icl) {
+       IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::path");
     int n=x.size();
     if (n == 0)
@@ -143,7 +143,7 @@ namespace Gecode {
       element(home, x, e, n);
       typedef Int::NoOffset<Int::IntView> NOV;
       NOV no;
-      if (icl == ICL_DOM) {
+      if (ipl == IPL_DOM) {
         GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView,NOV>
                         ::post(home,xv,no)));
       } else {
@@ -160,7 +160,7 @@ namespace Gecode {
       element(home, ox, e, offset+n);
       typedef Int::Offset OV;
       OV off(-offset);
-      if (icl == ICL_DOM) {
+      if (ipl == IPL_DOM) {
         GECODE_ES_FAIL((Int::Circuit::Dom<Int::IntView,OV>
                         ::post(home,xv,off)));
       } else {
@@ -171,15 +171,15 @@ namespace Gecode {
   }
   void
   path(Home home, const IntVarArgs& x, IntVar s, IntVar e,
-       IntConLevel icl) {
-    path(home,0,x,s,e,icl);
+       IntPropLevel ipl) {
+    path(home,0,x,s,e,ipl);
   }
   
   void
   path(Home home, const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e,
        const IntVarArgs& y, IntVar z,
-       IntConLevel icl) {
+       IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::path");
     int n = x.size();
     if (n == 0)
@@ -189,7 +189,7 @@ namespace Gecode {
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::path");
     if (home.failed()) return;
-    path(home, offset, x, s, e, icl);
+    path(home, offset, x, s, e, ipl);
     IntArgs cx(offset+n+1);
     for (int i=0; i<offset; i++)
       cx[i] = 0;
@@ -205,23 +205,23 @@ namespace Gecode {
   path(Home home, const IntArgs& c,
        const IntVarArgs& x, IntVar s, IntVar e,
        const IntVarArgs& y, IntVar z,
-       IntConLevel icl) {
-    path(home,c,0,x,s,e,y,z,icl);
+       IntPropLevel ipl) {
+    path(home,c,0,x,s,e,y,z,ipl);
   }
   void
   path(Home home, const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z, 
-       IntConLevel icl) {
+       IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::path");
     if (home.failed()) return;
     IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
-    path(home, c, offset, x, s, e, y, z, icl);
+    path(home, c, offset, x, s, e, y, z, ipl);
   }
   void
   path(Home home, const IntArgs& c,
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z, 
-       IntConLevel icl) {
-    path(home,c,0,x,s,e,z,icl);
+       IntPropLevel ipl) {
+    path(home,c,0,x,s,e,z,ipl);
   }
 
 }

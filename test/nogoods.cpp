@@ -65,9 +65,9 @@ namespace Test {
       /// The actual problem
       Queens(IntValBranch ivb, bool assign, bool null) 
         : q(*this,n,0,n-1) {
-        distinct(*this, IntArgs::create(n,0,1), q, ICL_VAL);
-        distinct(*this, IntArgs::create(n,0,-1), q, ICL_VAL);
-        distinct(*this, q, ICL_VAL);
+        distinct(*this, IntArgs::create(n,0,1), q, IPL_VAL);
+        distinct(*this, IntArgs::create(n,0,-1), q, IPL_VAL);
+        distinct(*this, q, IPL_VAL);
         if (assign) {
           IntVar x(*this,0,1); Gecode::assign(*this, x, INT_ASSIGN_MIN());
         }

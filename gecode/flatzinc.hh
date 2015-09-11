@@ -588,8 +588,8 @@ namespace Gecode { namespace FlatZinc {
     /// Convert \a n to FloatVarArgs
     FloatVarArgs arg2floatvarargs(AST::Node* arg, int offset = 0);
 #endif
-    /// Convert \a ann to IntConLevel
-    IntConLevel ann2icl(AST::Node* ann);
+    /// Convert \a ann to integer propagation level
+    IntPropLevel ann2ipl(AST::Node* ann);
     //@}
   };
 

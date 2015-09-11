@@ -41,7 +41,7 @@ namespace Gecode {
 
   void
   member(Home home, const IntVarArgs& x, IntVar y,
-         IntConLevel) {
+         IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
 
@@ -51,7 +51,7 @@ namespace Gecode {
 
   void
   member(Home home, const BoolVarArgs& x, BoolVar y,
-         IntConLevel) {
+         IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
 
@@ -61,7 +61,7 @@ namespace Gecode {
 
   void
   member(Home home, const IntVarArgs& x, IntVar y, Reify r,
-         IntConLevel) {
+         IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
 
@@ -86,7 +86,7 @@ namespace Gecode {
 
   void
   member(Home home, const BoolVarArgs& x, BoolVar y, Reify r,
-         IntConLevel) {
+         IntPropLevel) {
     using namespace Int;
     if (home.failed()) return;
 

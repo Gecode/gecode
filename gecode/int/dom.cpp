@@ -42,7 +42,7 @@
 namespace Gecode {
 
   void
-  dom(Home home, IntVar x, int n, IntConLevel) {
+  dom(Home home, IntVar x, int n, IntPropLevel) {
     using namespace Int;
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
@@ -51,7 +51,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, const IntVarArgs& x, int n, IntConLevel) {
+  dom(Home home, const IntVarArgs& x, int n, IntPropLevel) {
     using namespace Int;
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
@@ -62,7 +62,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, IntVar x, int min, int max, IntConLevel) {
+  dom(Home home, IntVar x, int min, int max, IntPropLevel) {
     using namespace Int;
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
@@ -73,7 +73,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, const IntVarArgs& x, int min, int max, IntConLevel) {
+  dom(Home home, const IntVarArgs& x, int min, int max, IntPropLevel) {
     using namespace Int;
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
@@ -86,7 +86,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, IntVar x, const IntSet& is, IntConLevel) {
+  dom(Home home, IntVar x, const IntSet& is, IntPropLevel) {
     using namespace Int;
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
@@ -97,7 +97,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, const IntVarArgs& x, const IntSet& is, IntConLevel) {
+  dom(Home home, const IntVarArgs& x, const IntSet& is, IntPropLevel) {
     using namespace Int;
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
@@ -110,7 +110,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, IntVar x, int n, Reify r, IntConLevel) {
+  dom(Home home, IntVar x, int n, Reify r, IntPropLevel) {
     using namespace Int;
     Limits::check(n,"Int::dom");
     if (home.failed()) return;
@@ -132,7 +132,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, IntVar x, int min, int max, Reify r, IntConLevel) {
+  dom(Home home, IntVar x, int min, int max, Reify r, IntPropLevel) {
     using namespace Int;
     Limits::check(min,"Int::dom");
     Limits::check(max,"Int::dom");
@@ -156,7 +156,7 @@ namespace Gecode {
 
 
   void
-  dom(Home home, IntVar x, const IntSet& is, Reify r, IntConLevel) {
+  dom(Home home, IntVar x, const IntSet& is, Reify r, IntPropLevel) {
     using namespace Int;
     Limits::check(is.min(),"Int::dom");
     Limits::check(is.max(),"Int::dom");
@@ -176,7 +176,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, IntVar x, IntVar d, IntConLevel) {
+  dom(Home home, IntVar x, IntVar d, IntPropLevel) {
     using namespace Int;    
     if (home.failed()) return;
     IntView xv(x), dv(d);
@@ -187,7 +187,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, BoolVar x, BoolVar d, IntConLevel) {
+  dom(Home home, BoolVar x, BoolVar d, IntPropLevel) {
     using namespace Int;    
     if (home.failed()) return;
     if (d.one())
@@ -197,7 +197,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, const IntVarArgs& x, const IntVarArgs& d, IntConLevel) {
+  dom(Home home, const IntVarArgs& x, const IntVarArgs& d, IntPropLevel) {
     using namespace Int;    
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Int::dom");
@@ -212,7 +212,7 @@ namespace Gecode {
   }
 
   void
-  dom(Home home, const BoolVarArgs& x, const BoolVarArgs& d, IntConLevel) {
+  dom(Home home, const BoolVarArgs& x, const BoolVarArgs& d, IntPropLevel) {
     using namespace Int;    
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Int::dom");

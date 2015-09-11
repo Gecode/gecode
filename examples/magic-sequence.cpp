@@ -82,7 +82,7 @@ public:
       linear(*this, s, IRT_EQ, n);
       break;
     case PROP_GCC:
-      count(*this, s, s, opt.icl());
+      count(*this, s, s, opt.ipl());
       break;
     }
     linear(*this, IntArgs::create(n,-1,1), s, IRT_EQ, 0);

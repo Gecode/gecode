@@ -86,12 +86,12 @@ public:
           rel(*this, q[i]+i != q[j]+j);
           rel(*this, q[i]-i != q[j]-j);
         }
-      distinct(*this, q, opt.icl());
+      distinct(*this, q, opt.ipl());
       break;
     case PROP_DISTINCT:
-      distinct(*this, IntArgs::create(n,0,1), q, opt.icl());
-      distinct(*this, IntArgs::create(n,0,-1), q, opt.icl());
-      distinct(*this, q, opt.icl());
+      distinct(*this, IntArgs::create(n,0,1), q, opt.ipl());
+      distinct(*this, IntArgs::create(n,0,-1), q, opt.ipl());
+      distinct(*this, q, opt.ipl());
       break;
     }
     branch(*this, q, INT_VAR_SIZE_MIN(), INT_VAL_MIN());

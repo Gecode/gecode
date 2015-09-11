@@ -130,7 +130,7 @@ public:
           // in the next row.
           IntVar diff(*this, possibleDiffs);
           abs(*this, expr(*this, p1[dominoCount]-p2[dominoCount]),
-              diff, ICL_DOM);
+              diff, IPL_DOM);
 
           // If the piece is symmetrical, order the locations
           if (i == j)

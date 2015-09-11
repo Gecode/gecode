@@ -137,7 +137,7 @@ namespace Test { namespace Int {
         } else {
           xx=Gecode::IntVarArgs(n);
           for (int i=n; i--;)
-            xx[i]=Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
+            xx[i]=Gecode::expr(home,x[i]+o,Gecode::IPL_DOM);
         }
         if (c >= 0) {
           Gecode::cumulative(home, c, xx, p, u);
@@ -242,7 +242,7 @@ namespace Test { namespace Int {
         Gecode::BoolVarArgs m(n);
 
         for (int i=0; i<n; i++) {
-          s[i]=(c >= 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
+          s[i]=(c >= 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::IPL_DOM);
           m[i]=Gecode::expr(home, x[n+i] > l);
         }
 
@@ -350,7 +350,7 @@ namespace Test { namespace Int {
                              Gecode::Int::Limits::min,
                              Gecode::Int::Limits::max);
         for (int i=s.size(); i--;) {
-          s[i] = expr(home, o+x[i], Gecode::ICL_DOM);
+          s[i] = expr(home, o+x[i], Gecode::IPL_DOM);
           rel(home, s[i]+px[i] == e[i]);
           rel(home, _minP <= px[i]);
           rel(home, _maxP >= px[i]);

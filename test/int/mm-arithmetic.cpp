@@ -67,7 +67,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, x[0] * x[1]), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, x[0] * x[1]), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -86,7 +86,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, x[0] / x[1]), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, x[0] / x[1]), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -105,7 +105,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, x[0] % x[1]), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, x[0] % x[1]), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -129,7 +129,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, x[0] + x[1]), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, x[0] + x[1]), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -153,7 +153,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, x[0] - x[1]), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, x[0] - x[1]), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -174,7 +174,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, sqr(x[0])), IRT_EQ, x[1], ICL_DOM);
+         rel(home, expr(home, sqr(x[0])), IRT_EQ, x[1], IPL_DOM);
        }
      };
 
@@ -195,7 +195,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, sqrt(x[0])), IRT_EQ, x[1], ICL_DOM);
+         rel(home, expr(home, sqrt(x[0])), IRT_EQ, x[1], IPL_DOM);
        }
      };
 
@@ -203,9 +203,9 @@ namespace Test { namespace Int {
      class Abs : public Test {
      public:
        /// Create and register test
-       Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
-         : Test("MiniModel::Abs::"+str(icl)+"::"+s,
-                   2,d,false,icl) {
+       Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntPropLevel ipl)
+         : Test("MiniModel::Abs::"+str(ipl)+"::"+s,
+                   2,d,false,ipl) {
          testfix = false;
        }
        /// %Test whether \a x is solution
@@ -217,7 +217,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, abs(x[0]), icl), IRT_EQ, x[1], ICL_DOM);
+         rel(home, expr(home, abs(x[0]), ipl), IRT_EQ, x[1], IPL_DOM);
        }
      };
 
@@ -236,7 +236,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, min(x[0], x[1])), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, min(x[0], x[1])), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -255,7 +255,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         rel(home, expr(home, max(x[0], x[1])), IRT_EQ, x[2], ICL_DOM);
+         rel(home, expr(home, max(x[0], x[1])), IRT_EQ, x[2], IPL_DOM);
        }
      };
 
@@ -275,7 +275,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
          IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         rel(home, expr(home, min(m)), IRT_EQ, x[3], ICL_DOM);
+         rel(home, expr(home, min(m)), IRT_EQ, x[3], IPL_DOM);
        }
      };
 
@@ -295,7 +295,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
          IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         rel(home, expr(home, max(m)), IRT_EQ, x[3], ICL_DOM);
+         rel(home, expr(home, max(m)), IRT_EQ, x[3], IPL_DOM);
        }
      };
 
@@ -342,12 +342,12 @@ namespace Test { namespace Int {
      Sqrt sqrt_med("B",d2);
      Sqrt sqrt_min("C",d3);
 
-     Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
-     Abs abs_bnd_med("B",d2,Gecode::ICL_BND);
-     Abs abs_bnd_min("C",d3,Gecode::ICL_BND);
-     Abs abs_dom_max("A",d1,Gecode::ICL_DOM);
-     Abs abs_dom_med("B",d2,Gecode::ICL_DOM);
-     Abs abs_dom_min("C",d3,Gecode::ICL_DOM);
+     Abs abs_bnd_max("A",d1,Gecode::IPL_BND);
+     Abs abs_bnd_med("B",d2,Gecode::IPL_BND);
+     Abs abs_bnd_min("C",d3,Gecode::IPL_BND);
+     Abs abs_dom_max("A",d1,Gecode::IPL_DOM);
+     Abs abs_dom_med("B",d2,Gecode::IPL_DOM);
+     Abs abs_dom_min("C",d3,Gecode::IPL_DOM);
 
      Min min_max("A",d1);
      Min min_med("B",d2);

@@ -1937,20 +1937,20 @@ namespace Gecode { namespace FlatZinc {
     return x0;
   }
 #endif
-  IntConLevel
-  FlatZincSpace::ann2icl(AST::Node* ann) {
+  IntPropLevel
+  FlatZincSpace::ann2ipl(AST::Node* ann) {
     if (ann) {
       if (ann->hasAtom("val"))
-        return ICL_VAL;
+        return IPL_VAL;
       if (ann->hasAtom("domain"))
-        return ICL_DOM;
+        return IPL_DOM;
       if (ann->hasAtom("bounds") ||
           ann->hasAtom("boundsR") ||
           ann->hasAtom("boundsD") ||
           ann->hasAtom("boundsZ"))
-        return ICL_BND;
+        return IPL_BND;
     }
-    return ICL_DEF;
+    return IPL_DEF;
   }
 
 

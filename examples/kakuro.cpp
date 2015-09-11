@@ -497,10 +497,10 @@ public:
     int n=x.size();
     if (opt.model() == MODEL_DECOMPOSE) {
       if (n < 8)
-        linear(*this, x, IRT_EQ, c, opt.icl());
+        linear(*this, x, IRT_EQ, c, opt.ipl());
       else if (n == 8)
         rel(*this, x, IRT_NQ, 9*(9+1)/2 - c);
-      distinct(*this, x, opt.icl());
+      distinct(*this, x, opt.ipl());
     } else {
       switch (n) {
       case 0:
@@ -534,7 +534,7 @@ public:
           return;
         }
       }
-      distinct(*this, x, opt.icl());
+      distinct(*this, x, opt.ipl());
     }
   }
   /// The actual problem
@@ -614,7 +614,7 @@ main(int argc, char* argv[]) {
                   "decompose","decompose distinct and linear constraints");
   opt.model(Kakuro::MODEL_COMBINE,
                   "combine","combine distinct and linear constraints");
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "

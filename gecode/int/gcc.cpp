@@ -102,7 +102,7 @@ namespace Gecode {
 
   void count(Home home, const IntVarArgs& x,
              const IntVarArgs& _c, const IntArgs& _v,
-             IntConLevel icl) {
+             IntPropLevel ipl) {
     using namespace Int;
     IntVarArgs c(_c);
     IntArgs v(_v);
@@ -120,12 +120,12 @@ namespace Gecode {
     // set the cardinality
     for (int i = v.size(); i--; )
       cv[i].init(c[i],v[i]);
-    switch (icl) {
-    case ICL_BND:
+    switch (ipl) {
+    case IPL_BND:
       GECODE_ES_FAIL( 
                      (GCC::Bnd<GCC::CardView>::post(home,xv,cv)));
       break;
-    case ICL_DOM:
+    case IPL_DOM:
       GECODE_ES_FAIL( 
                      (GCC::Dom<GCC::CardView>::post(home,xv,cv)));
       break;
@@ -137,17 +137,17 @@ namespace Gecode {
 
   // domain is 0..|cards|- 1
   void count(Home home, const IntVarArgs& x, const IntVarArgs& c,
-             IntConLevel icl) {
+             IntPropLevel ipl) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; )
       values[i] = i;
-    count(home, x, c, values, icl);
+    count(home, x, c, values, ipl);
   }
 
   // constant cards
   void count(Home home, const IntVarArgs& x,
              const IntSetArgs& _c, const IntArgs& _v,
-             IntConLevel icl) {
+             IntPropLevel ipl) {
     using namespace Int;
     IntSetArgs c(_c);
     IntArgs v(_v);
@@ -174,12 +174,12 @@ namespace Gecode {
         ViewArray<GCC::CardView> cv(home, v.size());
         for (int j = v.size(); j--; )
           cv[j].init(home,c[j],v[j]);
-        switch (icl) {
-        case ICL_BND:
+        switch (ipl) {
+        case IPL_BND:
           GECODE_ES_FAIL( 
                          (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
           break;
-        case ICL_DOM:
+        case IPL_DOM:
           GECODE_ES_FAIL( 
                          (GCC::Dom<GCC::CardView>::post(home, xv, cv)));
           break;
@@ -197,12 +197,12 @@ namespace Gecode {
     for (int i = c.size(); i--; )
       cv[i].init(home,c[i].min(),c[i].max(),v[i]);
 
-    switch (icl) {
-    case ICL_BND:
+    switch (ipl) {
+    case IPL_BND:
       GECODE_ES_FAIL(
                      (GCC::Bnd<GCC::CardConst>::post(home, xv, cv)));
       break;
-    case ICL_DOM:
+    case IPL_DOM:
       GECODE_ES_FAIL(
                      (GCC::Dom<GCC::CardConst>::post(home, xv, cv)));
       break;
@@ -214,20 +214,20 @@ namespace Gecode {
 
   // domain is 0..|cards|- 1
   void count(Home home, const IntVarArgs& x, const IntSetArgs& c,
-             IntConLevel icl) {
+             IntPropLevel ipl) {
     IntArgs values(c.size());
     for (int i = c.size(); i--; )
       values[i] = i;
-    count(home, x, c, values, icl);
+    count(home, x, c, values, ipl);
   }
 
   void count(Home home, const IntVarArgs& x,
              const IntSet& c, const IntArgs& v,
-             IntConLevel icl) {
+             IntPropLevel ipl) {
     IntSetArgs cards(v.size());
     for (int i = v.size(); i--; )
       cards[i] = c;
-    count(home, x, cards, v, icl);
+    count(home, x, cards, v, ipl);
   }
 
 }

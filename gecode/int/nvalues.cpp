@@ -42,7 +42,7 @@ namespace Gecode {
 
   void
   nvalues(Home home, const IntVarArgs& x, IntRelType irt, int y,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     Limits::check(y,"Int::nvalues");
     // Due to the quadratic Boolean matrix used in propagation
@@ -92,7 +92,7 @@ namespace Gecode {
 
   void
   nvalues(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     // Due to the quadratic Boolean matrix used in propagation
     long long int n = x.size();
@@ -143,7 +143,7 @@ namespace Gecode {
 
   void
   nvalues(Home home, const BoolVarArgs& x, IntRelType irt, int y,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     Limits::check(y,"Int::nvalues");
 
@@ -191,7 +191,7 @@ namespace Gecode {
 
   void
   nvalues(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
 
     if (home.failed()) return;

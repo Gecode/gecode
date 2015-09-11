@@ -232,7 +232,7 @@ public:
       IntArgs rh(periods()), ra(periods()), rg(periods());
       IntVarArgs n(*this,periods(),0,periods()-1);
 
-      distinct(*this, n, opt.icl());
+      distinct(*this, n, opt.ipl());
 
       r.hag(w,rh,ra,rg);
 
@@ -266,7 +266,7 @@ public:
       for (int p=0; p<periods(); p++) {
         c[2*p] = h(p,w); c[2*p+1] = a(p,w);
       }
-      distinct(*this, c, opt.icl());
+      distinct(*this, c, opt.ipl());
     }
 
     /// Row constraint: no team appears more than twice
@@ -279,7 +279,7 @@ public:
       IntArgs values(teams);
       for (int i=1; i<=teams; i++)
         values[i-1] = i;
-      count(*this, r, IntSet(2,2), values, opt.icl());
+      count(*this, r, IntSet(2,2), values, opt.ipl());
     }
 
     // Redundant constraint
@@ -287,7 +287,7 @@ public:
       for (int w=0; w<weeks(); w ++)
         rel(*this, teams * h(p,w) + a(p,w) - g(p,w) == teams);
 
-    distinct(*this, game, opt.icl());
+    distinct(*this, game, opt.ipl());
 
     branch(*this, game, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
   }
@@ -336,7 +336,7 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Sports League Scheduling");
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.size(18);
   opt.parse(argc,argv);
   if (opt.size() < 5) {

@@ -173,8 +173,8 @@ public:
       break;
     case PROP_DISTINCT:
       for (int i=0; i<n; i++) {
-        distinct(*this, m.row(i), opt.icl());
-        distinct(*this, m.col(i), opt.icl());
+        distinct(*this, m.row(i), opt.ipl());
+        distinct(*this, m.col(i), opt.ipl());
       }
       break;
     }

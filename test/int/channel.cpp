@@ -56,9 +56,9 @@ namespace Test { namespace Int {
        int yoff; //< Offset for the y variables
      public:
        /// Construct and register test
-       ChannelFull(int xoff0, int yoff0, Gecode::IntConLevel icl)
-         : Test("Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(icl),
-                8,0,3,false,icl),
+       ChannelFull(int xoff0, int yoff0, Gecode::IntPropLevel ipl)
+         : Test("Channel::Full::"+str(xoff0)+"::"+str(yoff0)+"::"+str(ipl),
+                8,0,3,false,ipl),
            xoff(xoff0), yoff(yoff0) {
          contest = CTL_NONE;
        }
@@ -89,7 +89,7 @@ namespace Test { namespace Int {
              ya[i] = x[4+i];
            }
          }
-         channel(home, xa, xoff, ya, yoff, icl);
+         channel(home, xa, xoff, ya, yoff, ipl);
        }
      };
 
@@ -97,8 +97,8 @@ namespace Test { namespace Int {
      class ChannelHalf : public Test {
      public:
        /// Construct and register test
-       ChannelHalf(Gecode::IntConLevel icl)
-         : Test("Channel::Half::"+str(icl),6,0,5,false,icl) {
+       ChannelHalf(Gecode::IntPropLevel ipl)
+         : Test("Channel::Half::"+str(ipl),6,0,5,false,ipl) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -119,7 +119,7 @@ namespace Test { namespace Int {
              rel(home, x[i], Gecode::IRT_EQ, j, b);
              rel(home, y[j], Gecode::IRT_EQ, i, b);
            }
-         channel(home, x, y, icl);
+         channel(home, x, y, ipl);
        }
      };
 
@@ -127,8 +127,8 @@ namespace Test { namespace Int {
      class ChannelShared : public Test {
      public:
        /// Construct and register test
-       ChannelShared(Gecode::IntConLevel icl)
-         : Test("Channel::Shared::"+str(icl),6,0,5,false,icl) {
+       ChannelShared(Gecode::IntPropLevel ipl)
+         : Test("Channel::Shared::"+str(ipl),6,0,5,false,ipl) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution
@@ -141,7 +141,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         channel(home, x, x, icl);
+         channel(home, x, x, ipl);
        }
      };
 
@@ -205,20 +205,20 @@ namespace Test { namespace Int {
 
 
 
-     ChannelFull cfd(0,0,Gecode::ICL_DOM);
-     ChannelFull cfv(0,0,Gecode::ICL_VAL);
+     ChannelFull cfd(0,0,Gecode::IPL_DOM);
+     ChannelFull cfv(0,0,Gecode::IPL_VAL);
 
-     ChannelFull cfd11(1,1,Gecode::ICL_DOM);
-     ChannelFull cfv11(1,1,Gecode::ICL_VAL);
+     ChannelFull cfd11(1,1,Gecode::IPL_DOM);
+     ChannelFull cfv11(1,1,Gecode::IPL_VAL);
 
-     ChannelFull cfd35(3,5,Gecode::ICL_DOM);
-     ChannelFull cfv35(3,5,Gecode::ICL_VAL);
+     ChannelFull cfd35(3,5,Gecode::IPL_DOM);
+     ChannelFull cfv35(3,5,Gecode::IPL_VAL);
 
-     ChannelHalf chd(Gecode::ICL_DOM);
-     ChannelHalf chv(Gecode::ICL_VAL);
+     ChannelHalf chd(Gecode::IPL_DOM);
+     ChannelHalf chv(Gecode::IPL_VAL);
 
-     ChannelShared csd(Gecode::ICL_DOM);
-     ChannelShared csv(Gecode::ICL_VAL);
+     ChannelShared csd(Gecode::IPL_DOM);
+     ChannelShared csv(Gecode::IPL_VAL);
 
      ChannelLinkSingle cls;
 

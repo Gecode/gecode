@@ -41,7 +41,7 @@ namespace Gecode {
 
   void
   element(Home home, IntSharedArray c, IntVar x0, IntVar x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -53,7 +53,7 @@ namespace Gecode {
 
   void
   element(Home home, IntSharedArray c, IntVar x0, BoolVar x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -65,7 +65,7 @@ namespace Gecode {
 
   void
   element(Home home, IntSharedArray c, IntVar x0, int x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -80,13 +80,13 @@ namespace Gecode {
 
   void
   element(Home home, const IntVarArgs& c, IntVar x0, IntVar x1,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
     IdxViewArray<IntView> iv(home,c);
-    if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+    if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,x0,x1)));
     } else {
@@ -97,7 +97,7 @@ namespace Gecode {
 
   void
   element(Home home, const IntVarArgs& c, IntVar x0, int x1,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -105,7 +105,7 @@ namespace Gecode {
     if (home.failed()) return;
     IdxViewArray<IntView> iv(home,c);
     ConstIntView v1(x1);
-    if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+    if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
                            ::post(home,iv,x0,v1)));
     } else {
@@ -116,7 +116,7 @@ namespace Gecode {
 
   void
   element(Home home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -128,7 +128,7 @@ namespace Gecode {
 
   void
   element(Home home, const BoolVarArgs& c, IntVar x0, int x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
@@ -153,45 +153,45 @@ namespace Gecode {
   void
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
   void
   element(Home home, IntSharedArray a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
   void
   element(Home home, const IntVarArgs& a, 
           IntVar x, int w, IntVar y, int h, IntVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
   void
   element(Home home, const BoolVarArgs& a, 
           IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
     if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
 }
