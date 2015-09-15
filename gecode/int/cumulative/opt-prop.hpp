@@ -126,10 +126,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
 
-    bool subsumed;
-    GECODE_ES_CHECK(timetabling(home,subsumed,c,t));
-    if (subsumed)
-      return home.ES_SUBSUMED(*this);
+    GECODE_ES_CHECK(timetabling(home,*this,c,t));
 
     // Partition into mandatory and optional activities
     int n = t.size();
