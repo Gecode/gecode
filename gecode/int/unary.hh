@@ -756,7 +756,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
   /// Perform time-tabling propagation
   template<class Task>
-  ExecStatus timetabling(Space& home, bool& subsumed, TaskArray<Task>& t);
+  ExecStatus timetabling(Space& home, Propagator& p, TaskArray<Task>& t);
 
   /// Check tasks \a t for subsumption
   template<class Task>

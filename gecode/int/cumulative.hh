@@ -684,7 +684,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   /// Perform time-tabling propagation
   template<class Task, class Cap>
-  ExecStatus timetabling(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t);
+  ExecStatus timetabling(Space& home, Propagator& p, Cap c, 
+                         TaskArray<Task>& t);
 
   /// Propagate by edge-finding
   template<class Task>

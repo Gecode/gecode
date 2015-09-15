@@ -938,11 +938,20 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   enum IntPropLevel {
-    IPL_VAL, ///< Value propagation
-    IPL_BND, ///< Bounds propagation
-    IPL_DOM, ///< Domain propagation
+    IPL_VAL = 1, ///< Value propagation
+    IPL_BND = 2, ///< Bounds propagation
+    IPL_DOM = 3, ///< Domain propagation
     IPL_DEF  ///< The default propagation level for a constraint
   };
+
+  /// Extract value, bounds, or domain propagation from propagation level
+  IntPropLevel vbd(IntPropLevel ipl);
+
+}
+
+#include <gecode/int/ipl.hpp>
+
+namespace Gecode {
 
   /**
    * \brief Type of task for scheduling constraints
