@@ -80,10 +80,7 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
-    if (ipl & IPL_SPEED) {
-      GECODE_ES_FAIL((Extensional::Incremental<IntView>
-                           ::post(home,xv,t)));
-    } else {
+    if (ipl & IPL_MEMORY) {
       if (x.same(home)) {
         GECODE_ES_FAIL((Extensional::Basic<IntView,true>
                              ::post(home,xv,t)));
@@ -91,6 +88,9 @@ namespace Gecode {
         GECODE_ES_FAIL((Extensional::Basic<IntView,false>
                              ::post(home,xv,t)));
       }
+    } else {
+      GECODE_ES_FAIL((Extensional::Incremental<IntView>
+                           ::post(home,xv,t)));
     }
   }
 
@@ -113,10 +113,7 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<BoolView> xv(home,x);
-    if (ipl & IPL_SPEED) {
-      GECODE_ES_FAIL((Extensional::Incremental<BoolView>
-                           ::post(home,xv,t)));
-    } else {
+    if (ipl & IPL_MEMORY) {
       if (x.same(home)) {
         GECODE_ES_FAIL((Extensional::Basic<BoolView,true>
                              ::post(home,xv,t)));
@@ -124,6 +121,9 @@ namespace Gecode {
         GECODE_ES_FAIL((Extensional::Basic<BoolView,false>
                              ::post(home,xv,t)));
       }
+    } else {
+      GECODE_ES_FAIL((Extensional::Incremental<BoolView>
+                           ::post(home,xv,t)));
     }
   }
 
