@@ -125,18 +125,18 @@ namespace Gecode { namespace Int { namespace Unary {
       Iter::Ranges::Singleton r(e-_p+1,l);
       return _s.minus_r(home,r,false);
     } else {
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     }
   }
 
 
   forceinline ModEvent
   ManFixPTask::mandatory(Space&) {
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPTask::excluded(Space&) {
-    return Int::ME_INT_FAILED;
+    return ME_INT_FAILED;
   }
 
   forceinline void
@@ -234,40 +234,40 @@ namespace Gecode { namespace Int { namespace Unary {
     switch (_t) {
     case TT_FIXE: // fall through
     case TT_FIXP: return _s.gq(home,n);
-    case TT_FIXS: return (n <= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXS: return (n <= _p) ? ME_INT_NONE : ME_INT_FAILED;
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::ect(Space& home, int n) {
     switch (_t) {
-    case TT_FIXE: return (n <= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXE: return (n <= _p) ? ME_INT_NONE : ME_INT_FAILED;
     case TT_FIXP: return _s.gq(home,n-_p);
     case TT_FIXS: return _s.gq(home,n);
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::lst(Space& home, int n) {
     switch (_t) {
     case TT_FIXE: // fall through
     case TT_FIXP: return _s.lq(home,n);
-    case TT_FIXS: return (n >= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXS: return (n >= _p) ? ME_INT_NONE : ME_INT_FAILED;
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::lct(Space& home, int n) {
     switch (_t) {
-    case TT_FIXE: return (n >= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXE: return (n >= _p) ? ME_INT_NONE : ME_INT_FAILED;
     case TT_FIXP: return _s.lq(home,n-_p);
     case TT_FIXS: return _s.lq(home,n);
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::norun(Space& home, int e, int l) {
@@ -289,9 +289,9 @@ namespace Gecode { namespace Int { namespace Unary {
       default:
         GECODE_NEVER;
       }
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     } else {
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     }
   }
 
@@ -403,22 +403,22 @@ namespace Gecode { namespace Int { namespace Unary {
     if (e <= l) {
       Iter::Ranges::Singleton sr(e-_p.min()+1,l);
       if (me_failed(_s.minus_r(home,sr,false)))
-        return Int::ME_INT_FAILED;
+        return ME_INT_FAILED;
       Iter::Ranges::Singleton er(e+1,_p.min()+l);
       return _e.minus_r(home,er,false);
     } else {
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     }
   }
 
 
   forceinline ModEvent
   ManFlexTask::mandatory(Space&) {
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFlexTask::excluded(Space&) {
-    return Int::ME_INT_FAILED;
+    return ME_INT_FAILED;
   }
 
   forceinline void

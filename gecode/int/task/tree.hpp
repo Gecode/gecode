@@ -41,14 +41,14 @@ namespace Gecode { namespace Int {
 
   forceinline int 
   plus(int x, int y) {
-    assert(y != -Int::Limits::infinity);
-    return (x == -Int::Limits::infinity) ? x : x+y;
+    assert(y != -Limits::infinity);
+    return (x == -Limits::infinity) ? x : x+y;
   }
 
   forceinline long long int 
   plus(long long int x, long long int y) {
-    assert(y != -Int::Limits::llinfinity);
-    return (x == -Int::Limits::llinfinity) ? x : x+y;
+    assert(y != -Limits::llinfinity);
+    return (x == -Limits::llinfinity) ? x : x+y;
   }
 
   template<class TaskView, class Node>

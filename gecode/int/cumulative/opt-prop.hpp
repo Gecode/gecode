@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class OptTask, class Cap>
   forceinline
   OptProp<OptTask,Cap>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,t), c(c0) {
+    : TaskProp<OptTask,PC_INT_DOM>(home,t), c(c0) {
     c.subscribe(home,*this,PC_INT_BND);
   }
 
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline
   OptProp<OptTask,Cap>::OptProp(Space& home, bool shared,
                                 OptProp<OptTask,Cap>& p) 
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,shared,p) {
+    : TaskProp<OptTask,PC_INT_DOM>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class OptTask, class Cap>  
   forceinline size_t 
   OptProp<OptTask,Cap>::dispose(Space& home) {
-    (void) TaskProp<OptTask,Int::PC_INT_DOM>::dispose(home);
+    (void) TaskProp<OptTask,PC_INT_DOM>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
@@ -120,10 +120,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ExecStatus 
   OptProp<OptTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
-    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_DOM>(home,*this,t,c)));
+    if (BoolView::me(med) == ME_BOOL_VAL)
+      GECODE_ES_CHECK((purge<OptTask,PC_INT_DOM>(home,*this,t,c)));
     // Only bounds changes?
-    if (Int::IntView::me(med) != Int::ME_INT_DOM)
+    if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
 
     bool subsumed;

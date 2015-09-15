@@ -125,12 +125,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     int* update = r.alloc<int>(t.size()*n_c);
     for (int i=t.size()*n_c; i--;)
-      update[i] = -Int::Limits::infinity;
+      update[i] = -Limits::infinity;
 
     ExtOmegaTree<TaskView> eo(r,c,ol);
     for (int i=0; i<n_c; i++) {
       eo.init(capacities[i]);
-      int u = -Int::Limits::infinity;
+      int u = -Limits::infinity;
       for (int j=t.size(); j--;) {
         long long int lctj = 
           static_cast<long long int>(c-capacities[i])*t[j].lct();

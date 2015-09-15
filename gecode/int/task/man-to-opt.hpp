@@ -86,12 +86,12 @@ namespace Gecode { namespace Int {
   forceinline void
   ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p, PropCond pc) {
     ManTask::subscribe(home, p, pc);
-    _m.subscribe(home, p, Int::PC_BOOL_VAL);
+    _m.subscribe(home, p, PC_BOOL_VAL);
   }
   template<class ManTask>
   forceinline void
   ManToOptTask<ManTask>::cancel(Space& home, Propagator& p, PropCond pc) {
-    _m.cancel(home, p, Int::PC_BOOL_VAL);
+    _m.cancel(home, p, PC_BOOL_VAL);
     ManTask::cancel(home, p, pc);
   }
 

@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       }
       
       // Write end marker
-      e[n++].init(Event::END,Int::Limits::infinity,-1);
+      e[n++].init(Event::END,Limits::infinity,-1);
       
       // Sort events
       Support::quicksort(e, n);

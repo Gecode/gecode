@@ -60,6 +60,11 @@ namespace Gecode { namespace Int { namespace Unary {
     bool operator <(const Event& e) const;
   };
 
+  /// Print event \a e on stream \a os
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e);
+
   forceinline void
   Event::init(Event::Type e0, int t0, int i0) {
     e=e0; t=t0; i=i0;
@@ -72,12 +77,34 @@ namespace Gecode { namespace Int { namespace Unary {
     return this->t < e.t;
   }
 
+  template<class Char, class Traits>
+  inline std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << '[';
+    switch (e.e) {
+    case Event::LRT: s << "LRT"; break;
+    case Event::LCT: s << "LCT"; break;
+    case Event::EST: s << "EST"; break;
+    case Event::ZRO: s << "ZRO"; break;
+    case Event::ERT: s << "ERT"; break;
+    default: GECODE_NEVER;
+    }
+    s << ',' << e.t << ',' << e.i << ']';
+    return os << s.str();
+  }
+
+
+
 
   // Basic propagation (timetabling)
   template<class Task>
   ExecStatus
   basic(Space& home, bool& subsumed, TaskArray<Task>& t) {
-    //    std::cout << "basic(" << t << ")" << std::endl;
+#ifdef PRINTIT
+    std::cout << "basic(" << t << ")" << std::endl;
+#endif
     subsumed = false;
 
     Region r(home);
@@ -92,6 +119,8 @@ namespace Gecode { namespace Int { namespace Unary {
       for (int i=t.size(); i--; ) 
         if (t[i].assigned()) {
           // Only add required part
+          //          e[n++].init(Event::EST,t[i].est(),i);
+          //          e[n++].init(Event::LCT,t[i].lct(),i);
           if (t[i].pmin() > 0) {
             required = true;
             e[n++].init(Event::ERT,t[i].lst(),i);
@@ -119,7 +148,7 @@ namespace Gecode { namespace Int { namespace Unary {
       }
       
       // Write end marker
-      e[n++].init(Event::END,Int::Limits::infinity,-1);
+      e[n++].init(Event::END,Limits::infinity,-1);
       
       // Sort events
       Support::quicksort(e, n);
@@ -132,34 +161,54 @@ namespace Gecode { namespace Int { namespace Unary {
 
     // Process events
     while (e->e != Event::END) {
-      /*
-      std::cout << "Event = <";
-      switch (e->e) {
-      case Event::LRT: std::cout << "LRT"; break;
-      case Event::LCT: std::cout << "LCT"; break;
-      case Event::EST: std::cout << "EST"; break;
-      case Event::ZRO: std::cout << "ZRO"; break;
-      case Event::ERT: std::cout << "ERT"; break;
-      }
-      std::cout << "," << e->t << "," << e->i << ">" << std::endl;
-      */
       // Current time
       int time = e->t;
 
       // Process events for completion of required part
-      for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
+      for ( ; (e->t == time) && (e->e == Event::LRT); e++) {
         if (t[e->i].mandatory()) {
           tasks.set(static_cast<unsigned int>(e->i)); 
           free = true;
         }
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
       // Process events for completion of task
-      for ( ; (e->t == time) && (e->e == Event::LCT); e++)
+      for ( ; (e->t == time) && (e->e == Event::LCT); e++) {
         tasks.clear(static_cast<unsigned int>(e->i));
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
       // Process events for start of task
-      for ( ; (e->t == time) && (e->e == Event::EST); e++)
+      for ( ; (e->t == time) && (e->e == Event::EST); e++) {
         tasks.set(static_cast<unsigned int>(e->i));
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
       // Process events for zero-length task
       for ( ; (e->t == time) && (e->e == Event::ZRO); e++) {
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
         if (!free)
           return ES_FAILED;
         assert(free);
@@ -168,15 +217,24 @@ namespace Gecode { namespace Int { namespace Unary {
       // norun start time for 0-length tasks
       int zltime = time;
       // Process events for start of required part
-      for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
+      for ( ; (e->t == time) && (e->e == Event::ERT); e++) {
         if (t[e->i].mandatory()) {
           tasks.clear(static_cast<unsigned int>(e->i)); 
           if (!free)
             return ES_FAILED;
+          free = false;
           zltime = time+1;
         } else if (t[e->i].optional() && !free) {
           GECODE_ME_CHECK(t[e->i].excluded(home));
         }
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
 
       if (!free)
         for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
@@ -184,18 +242,24 @@ namespace Gecode { namespace Int { namespace Unary {
           // Task j cannot run from time to next time - 1
           if (t[j.val()].mandatory()) {
             if (t[j.val()].pmin() > 0) {
-              /*
+
+#ifdef PRINTIT
               std::cout << "\tNorun (" << j.val() << ") = [" 
                         << time << ".." << e->t-1 << "]" << std::endl;
-              */
+#endif
               GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
             } else {
+#ifdef PRINTIT
+              std::cout << "\tNorun (" << j.val() << ") = [" 
+                        << zltime << ".." << e->t-1 << "]" << std::endl;
+#endif
               GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
             }
           }
 
     }
 
+    subsumed = assigned;
     return ES_NOFIX;
   }
 

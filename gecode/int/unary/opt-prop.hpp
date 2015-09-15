@@ -42,14 +42,14 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Home home, TaskArray<OptTask>& t)
-  //    : TaskProp<OptTask,Int::PC_INT_BND>(home,t) {}
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,t) {}
+  //    : TaskProp<OptTask,PC_INT_BND>(home,t) {}
+    : TaskProp<OptTask,PC_INT_DOM>(home,t) {}
 
   template<class OptTask>
   forceinline
   OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
-  //    : TaskProp<OptTask,Int::PC_INT_BND>(home,shared,p) {}
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,shared,p) {}
+  //    : TaskProp<OptTask,PC_INT_BND>(home,shared,p) {}
+    : TaskProp<OptTask,PC_INT_DOM>(home,shared,p) {}
 
   template<class OptTask>
   forceinline ExecStatus 
@@ -82,9 +82,9 @@ namespace Gecode { namespace Int { namespace Unary {
   ExecStatus 
   OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
-    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_DOM>(home,*this,t)));
-    //      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_BND>(home,*this,t)));
+    if (BoolView::me(med) == ME_BOOL_VAL)
+      GECODE_ES_CHECK((purge<OptTask,PC_INT_DOM>(home,*this,t)));
+    //      GECODE_ES_CHECK((purge<OptTask,PC_INT_BND>(home,*this,t)));
 
     GECODE_ES_CHECK(overload(home,*this,t));
 
@@ -115,7 +115,6 @@ namespace Gecode { namespace Int { namespace Unary {
       // Restore to also include optional tasks
       t.size(n);
     }
-
     GECODE_ES_CHECK(subsumed(home,*this,t));
 
     return ES_NOFIX;

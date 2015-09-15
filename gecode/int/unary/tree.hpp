@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
   forceinline void
   OmegaNode::init(const OmegaNode&, const OmegaNode&) {
-    p = 0; ect = -Int::Limits::infinity;
+    p = 0; ect = -Limits::infinity;
   }
 
   forceinline void
@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace Unary {
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t) {
     for (int i=tasks.size(); i--; ) {
-      leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
+      leaf(i).p = 0; leaf(i).ect = -Limits::infinity;
     }
     init();
   }
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class TaskView>
   forceinline void
   OmegaTree<TaskView>::remove(int i) {
-    leaf(i).p = 0; leaf(i).ect = -Int::Limits::infinity;
+    leaf(i).p = 0; leaf(i).ect = -Limits::infinity;
     update(i);
   }
 
@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Unary {
   OmegaTree<TaskView>::ect(int i) const {
     // Check whether task i is in?
     OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
-    if (o.leaf(i).ect != -Int::Limits::infinity) {
+    if (o.leaf(i).ect != -Limits::infinity) {
       o.remove(i);
       int ect = o.root().ect;
       o.insert(i);
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Unary {
       // Enter no tasks into tree (omega = empty, lambda = empty)
       for (int i=tasks.size(); i--; ) {
         leaf(i).p = leaf(i).lp = 0;
-        leaf(i).ect = leaf(i).lect = -Int::Limits::infinity;
+        leaf(i).ect = leaf(i).lect = -Limits::infinity;
         leaf(i).resEct = OmegaLambdaNode::undef;
         leaf(i).resLp = OmegaLambdaNode::undef;
       }
@@ -164,9 +164,9 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline void 
   OmegaLambdaTree<TaskView>::shift(int i) {
     // That means that i is in omega
-    assert(leaf(i).ect > -Int::Limits::infinity);
+    assert(leaf(i).ect > -Limits::infinity);
     leaf(i).p = 0;
-    leaf(i).ect = -Int::Limits::infinity;
+    leaf(i).ect = -Limits::infinity;
     leaf(i).resEct = i;
     leaf(i).resLp = i;
     update(i);
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline void
   OmegaLambdaTree<TaskView>::lremove(int i) {
     leaf(i).lp = 0; 
-    leaf(i).lect = -Int::Limits::infinity;
+    leaf(i).lect = -Limits::infinity;
     leaf(i).resEct = OmegaLambdaNode::undef;
     leaf(i).resLp = OmegaLambdaNode::undef;
     update(i);

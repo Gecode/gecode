@@ -42,15 +42,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class ManTask, class Cap>
   forceinline
   ManProp<ManTask,Cap>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
-    : TaskProp<ManTask,Int::PC_INT_DOM>(home,t), c(c0) {
-    c.subscribe(home,*this,Int::PC_INT_BND);
+    : TaskProp<ManTask,PC_INT_DOM>(home,t), c(c0) {
+    c.subscribe(home,*this,PC_INT_BND);
   }
 
   template<class ManTask, class Cap>
   forceinline
   ManProp<ManTask,Cap>::ManProp(Space& home, bool shared, 
                                 ManProp<ManTask,Cap>& p) 
-    : TaskProp<ManTask,Int::PC_INT_DOM>(home,shared,p) {
+    : TaskProp<ManTask,PC_INT_DOM>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class ManTask, class Cap>  
   forceinline size_t 
   ManProp<ManTask,Cap>::dispose(Space& home) {
-    (void) TaskProp<ManTask,Int::PC_INT_DOM>::dispose(home);
+    (void) TaskProp<ManTask,PC_INT_DOM>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ExecStatus 
   ManProp<ManTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
     // Only bounds changes?
-    if (Int::IntView::me(med) != Int::ME_INT_DOM)
+    if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
     GECODE_ES_CHECK(edgefinding(home,c.max(),t));
     bool subsumed;
