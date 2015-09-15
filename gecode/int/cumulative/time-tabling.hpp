@@ -39,27 +39,6 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  /// Event for task
-  class Event {
-  public:
-    /// Event type for task with order in which they are processed
-    enum Type {
-      LRT = 0, ///< Latest required time of task
-      LCT = 1, ///< Latest completion time of task
-      EST = 2, ///< Earliest start time of task
-      ZRO = 3, ///< Zero-length task start time
-      ERT = 4, ///< Earliest required time of task
-      END = 5  ///< End marker
-    };
-    Type e; ///< Type of event
-    int t;  ///< Time of event
-    int i;  ///< Number of task
-    /// Initialize event
-    void init(Type e, int t, int i);
-    /// Order among events
-    bool operator <(const Event& e) const;
-  };
-
   /// Sort order for tasks by decreasing capacity
   template<class Task>
   class TaskByDecCap {
@@ -68,24 +47,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     bool operator ()(const Task& t1, const Task& t2) const;
   };
 
-  forceinline void
-  Event::init(Event::Type e0, int t0, int i0) {
-    e=e0; t=t0; i=i0;
-  }
-
-  forceinline bool
-  Event::operator <(const Event& e) const {
-    if (this->t == e.t)
-      return this->e < e.e;
-    return this->t < e.t;
-  }
-
   template<class Task>
   forceinline bool
   TaskByDecCap<Task>::operator ()(const Task& t1, const Task& t2) const {
     return t1.c() > t2.c();
   }
-
 
   // Basic propagation (timetabling)
   template<class Task, class Cap>
@@ -101,90 +67,55 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     Region r(home);
 
-    Event* e = r.alloc<Event>(4*t.size()+1);
+    bool assigned;
+    Event* e = Event::events(r,t,assigned);
 
-    // Initialize events
-    bool assigned=true;
-    {
-      bool required=false;
-      int n=0;
-      for (int i=t.size(); i--; ) 
-        if (t[i].assigned()) {
-          // Only add required part
-          if (t[i].pmin() > 0) {
-            required = true;
-            e[n++].init(Event::ERT,t[i].lst(),i);
-            e[n++].init(Event::LRT,t[i].ect(),i);
-          } else if (t[i].pmax() == 0) {
-            required = true;
-            e[n++].init(Event::ZRO,t[i].lst(),i);
-          }
-        } else {
-          assigned = false;
-          e[n++].init(Event::EST,t[i].est(),i);
-          e[n++].init(Event::LCT,t[i].lct(),i);
-          // Check whether task has required part
-          if (t[i].lst() < t[i].ect()) {
-            required = true;
-            e[n++].init(Event::ERT,t[i].lst(),i);
-            e[n++].init(Event::LRT,t[i].ect(),i);
-          }
-        }
-      
-      // Check whether no task has a required part
-      if (!required) {
-        subsumed = assigned;
-        return ES_FIX;
-      }
-      
-      // Write end marker
-      e[n++].init(Event::END,Limits::infinity,-1);
-      
-      // Sort events
-      Support::quicksort(e, n);
+    if (e == NULL) {
+      subsumed = assigned;
+      return ES_FIX;
     }
-
+      
     // Set of current but not required tasks
     Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
 
     // Process events, use ccur as the capacity that is still free
-    while (e->e != Event::END) {
+    while (e->type() != Event::END) {
       // Current time
-      int time = e->t;
+      int time = e->time();
 
       // Process events for completion of required part
-      for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
-        if (t[e->i].mandatory()) {
-          tasks.set(static_cast<unsigned int>(e->i)); ccur += t[e->i].c();
+      for ( ; (e->time() == time) && (e->type() == Event::LRT); e++) 
+        if (t[e->idx()].mandatory()) {
+          tasks.set(static_cast<unsigned int>(e->idx())); ccur += t[e->idx()].c();
         }
       // Process events for completion of task
-      for ( ; (e->t == time) && (e->e == Event::LCT); e++)
-        tasks.clear(static_cast<unsigned int>(e->i));
+      for ( ; (e->time() == time) && (e->type() == Event::LCT); e++)
+        tasks.clear(static_cast<unsigned int>(e->idx()));
       // Process events for start of task
-      for ( ; (e->t == time) && (e->e == Event::EST); e++)
-        tasks.set(static_cast<unsigned int>(e->i));
+      for ( ; (e->time() == time) && (e->type() == Event::EST); e++)
+        tasks.set(static_cast<unsigned int>(e->idx()));
       // Process events for zero-length task
-      for ( ; (e->t == time) && (e->e == Event::ZRO); e++) {
-        ccur -= t[e->i].c();
+      for ( ; (e->time() == time) && (e->type() == Event::ZRO); e++) {
+        ccur -= t[e->idx()].c();
         if (ccur < cmin) cmin=ccur;
         if (ccur < 0)
           return ES_FAILED;
-        ccur += t[e->i].c();
+        ccur += t[e->idx()].c();
       }
 
       // norun start time for 0-length tasks
       int zltime = time;
       // Process events for start of required part
-      for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
-        if (t[e->i].mandatory()) {
-          tasks.clear(static_cast<unsigned int>(e->i)); 
-          ccur -= t[e->i].c();
+      for ( ; (e->time() == time) && (e->type() == Event::ERT); e++) 
+        if (t[e->idx()].mandatory()) {
+          tasks.clear(static_cast<unsigned int>(e->idx())); 
+          ccur -= t[e->idx()].c();
           if (ccur < cmin) cmin=ccur;
           zltime = time+1;
           if (ccur < 0)
             return ES_FAILED;
-        } else if (t[e->i].optional() && (t[e->i].c() > ccur)) {
-          GECODE_ME_CHECK(t[e->i].excluded(home));
+        } else if (t[e->idx()].optional() && (t[e->idx()].c() > ccur)) {
+          GECODE_ME_CHECK(t[e->idx()].excluded(home));
         }
       
       // Exploit that tasks are sorted according to capacity
@@ -193,9 +124,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         // Task j cannot run from time to next time - 1
         if (t[j.val()].mandatory()) {
           if (t[j.val()].pmin() > 0) {
-            GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
+            GECODE_ME_CHECK(t[j.val()].norun(home, time, e->time() - 1));
           } else {
-            GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
+            GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->time() - 1));
           }
         }
     }

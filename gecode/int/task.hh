@@ -449,6 +449,49 @@ namespace Gecode { namespace Int {
 #include <gecode/int/task/prop.hpp>
 #include <gecode/int/task/purge.hpp>
 
+namespace Gecode { namespace Int {
+
+  /// Time-tabling event for task
+  class Event {
+  public:
+    /// Event type for task with order in which they are processed
+    enum Type {
+      LRT = 0, ///< Latest required time of task
+      LCT = 1, ///< Latest completion time of task
+      EST = 2, ///< Earliest start time of task
+      ZRO = 3, ///< Zero-length task start time
+      ERT = 4, ///< Earliest required time of task
+      END = 5  ///< End marker
+    };
+  protected:
+    Type e; ///< Type of event
+    int t;  ///< Time of event
+    int i;  ///< Number of task
+  public:
+    /// Initialize event
+    void init(Type e, int t, int i);
+    /// Return event type
+    Type type(void) const;
+    /// Return event time
+    int time(void) const;
+    /// Return event index
+    int idx(void) const;
+    /// Order among events
+    bool operator <(const Event& e) const;
+    /// Allocate from \a r and initialize event array with tasks \a t
+    template<class Task>
+    static Event* events(Region& r, const TaskArray<Task>& t, bool& assigned);
+  };
+
+  /// Print event \a e on stream \a os
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e);
+
+}}
+
+#include <gecode/int/task/event.hpp>
+
 #endif
 
 // STATISTICS: int-prop

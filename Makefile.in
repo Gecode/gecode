@@ -373,7 +373,7 @@ INTHDR0 = \
 	bin-packing/conflict-graph.hpp \
 	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
 	task/iter.hpp task/tree.hpp task/purge.hpp task/prop.hpp \
-	task/man-to-opt.hpp \
+	task/man-to-opt.hpp task/event.hpp \
 	unary.hh unary/task.hpp unary/task-view.hpp \
 	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
 	unary/time-tabling.hpp unary/not-first-not-last.hpp \
