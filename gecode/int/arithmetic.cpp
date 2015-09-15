@@ -43,7 +43,7 @@ namespace Gecode {
   abs(Home home, IntVar x0, IntVar x1, IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::AbsDom<IntView>::post(home,x0,x1));
     } else {
       GECODE_ES_FAIL(Arithmetic::AbsBnd<IntView>::post(home,x0,x1));
@@ -56,7 +56,7 @@ namespace Gecode {
       IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::MaxDom<IntView>::post(home,x0,x1,x2));
     } else {
       GECODE_ES_FAIL(Arithmetic::MaxBnd<IntView>::post(home,x0,x1,x2));
@@ -71,7 +71,7 @@ namespace Gecode {
       throw TooFewArguments("Int::max");
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::NaryMaxDom<IntView>::post(home,xv,y));
     } else {
       GECODE_ES_FAIL(Arithmetic::NaryMaxBnd<IntView>::post(home,xv,y));
@@ -84,7 +84,7 @@ namespace Gecode {
     using namespace Int;
     if (home.failed()) return;
     MinusView m0(x0); MinusView m1(x1); MinusView m2(x2);
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::MaxDom<MinusView>::post(home,m0,m1,m2));
     } else {
       GECODE_ES_FAIL(Arithmetic::MaxBnd<MinusView>::post(home,m0,m1,m2));
@@ -102,7 +102,7 @@ namespace Gecode {
     for (int i=x.size(); i--; )
       m[i] = MinusView(x[i]);
     MinusView my(y);
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::NaryMaxDom<MinusView>::post(home,m,my));
     } else {
       GECODE_ES_FAIL(Arithmetic::NaryMaxBnd<MinusView>::post(home,m,my));
@@ -222,7 +222,7 @@ namespace Gecode {
        IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::MultDom::post(home,x0,x1,x2));
     } else {
       GECODE_ES_FAIL(Arithmetic::MultBnd::post(home,x0,x1,x2));
@@ -277,7 +277,7 @@ namespace Gecode {
     using namespace Int;
     if (home.failed()) return;
     Arithmetic::SqrOps ops;
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::PowDom<Arithmetic::SqrOps>
                      ::post(home,x0,x1,ops));
     } else {
@@ -291,7 +291,7 @@ namespace Gecode {
     using namespace Int;
     if (home.failed()) return;
     Arithmetic::SqrOps ops;
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::NrootDom<Arithmetic::SqrOps>
                      ::post(home,x0,x1,ops));
     } else {
@@ -310,7 +310,7 @@ namespace Gecode {
       return;
     }
     Arithmetic::PowOps ops(n);
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::PowDom<Arithmetic::PowOps>
                      ::post(home,x0,x1,ops));
     } else {
@@ -329,7 +329,7 @@ namespace Gecode {
       return;
     }
     Arithmetic::PowOps ops(n);
-    if (ipl == IPL_DOM) {
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::NrootDom<Arithmetic::PowOps>
                      ::post(home,x0,x1,ops));
     } else {

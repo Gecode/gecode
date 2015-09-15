@@ -61,7 +61,7 @@ namespace Gecode {
       return;
 
     if ((xoff < 2) && (yoff < 2) && (xoff == yoff)) {
-      if (ipl == IPL_DOM) {
+      if (vbd(ipl) == IPL_DOM) {
         DomInfo<IntView,NoOffset<IntView> >* di = 
           static_cast<Space&>(home).
             alloc<DomInfo<IntView,NoOffset<IntView> > >(2*(n+xoff));
@@ -106,7 +106,7 @@ namespace Gecode {
         }
       }
     } else {
-      if (ipl == IPL_DOM) {
+      if (vbd(ipl) == IPL_DOM) {
         DomInfo<IntView,Offset>* di = 
           static_cast<Space&>(home).alloc<DomInfo<IntView,Offset> >(2*n);
         for (int i=n; i--; ) {

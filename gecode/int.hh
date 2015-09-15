@@ -938,10 +938,18 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   enum IntPropLevel {
+    /// Simple propagation levels
     IPL_VAL = 1, ///< Value propagation
     IPL_BND = 2, ///< Bounds propagation
     IPL_DOM = 3, ///< Domain propagation
-    IPL_DEF  ///< The default propagation level for a constraint
+    /// Preferences: prefer speed or memory
+    IPL_SPEED = 4,  ///< Prefer speed
+    IPL_MEMORY = 8, ///< Prefer to save memory
+    /// Options: basic versus advanced propagation
+    IPL_BASIC = 16,    ///< Use basic propagation algorithm
+    IPL_ADVANCED = 32, ///< Use advanced propagation algorithm
+    /// The default propagation level for a constraint    
+    IPL_DEF = IPL_SPEED | IPL_BASIC
   };
 
   /// Extract value, bounds, or domain propagation from propagation level

@@ -86,7 +86,7 @@ namespace Gecode {
       throw TooFewArguments("Int::element");
     if (home.failed()) return;
     IdxViewArray<IntView> iv(home,c);
-    if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,x0,x1)));
     } else {
@@ -105,7 +105,7 @@ namespace Gecode {
     if (home.failed()) return;
     IdxViewArray<IntView> iv(home,c);
     ConstIntView v1(x1);
-    if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
                            ::post(home,iv,x0,v1)));
     } else {

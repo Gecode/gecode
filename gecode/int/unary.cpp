@@ -67,7 +67,7 @@ namespace Gecode {
     }
     if (allOne) {
       ViewArray<IntView> xv(home,s);
-      switch (ipl) {
+      switch (vbd(ipl)) {
       case IPL_BND:
         GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
         break;

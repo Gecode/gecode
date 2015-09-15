@@ -94,7 +94,7 @@ namespace Gecode {
     case IRT_EQ:
       {
         ConstIntView z(m);
-        if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
           GECODE_ES_FAIL((Count::EqView<IntView,IntView,ConstIntView,true,true>
                           ::post(home,xv,y,z,0)));
         else
@@ -121,7 +121,7 @@ namespace Gecode {
     case IRT_GQ:
       {
         ConstIntView z(m);
-        if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
           GECODE_ES_FAIL((Count::GqView<IntView,IntView,ConstIntView,true,true>
                           ::post(home,xv,y,z,0)));
         else
@@ -272,7 +272,7 @@ namespace Gecode {
     ViewArray<IntView> xv(home,x);
     switch (irt) {
     case IRT_EQ:
-      if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
         GECODE_ES_FAIL((Count::EqView<IntView,IntView,IntView,true,true>
                         ::post(home,xv,y,z,0)));
       else
@@ -296,7 +296,7 @@ namespace Gecode {
                       ::post(home,xv,y,z,0)));
       break;
     case IRT_GR:
-      if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
         GECODE_ES_FAIL((Count::GqView<IntView,IntView,IntView,true,true>
                         ::post(home,xv,y,z,1)));
       else
@@ -304,7 +304,7 @@ namespace Gecode {
                         ::post(home,xv,y,z,1)));
       break;
     case IRT_GQ:
-      if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
         GECODE_ES_FAIL((Count::GqView<IntView,IntView,IntView,true,true>
                         ::post(home,xv,y,z,0)));
       else

@@ -105,7 +105,7 @@ namespace Gecode {
     if (home.failed()) return;
     switch (irt) {
     case IRT_EQ:
-      if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
         GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
       } else {
         GECODE_ES_FAIL((Rel::EqBnd<IntView,IntView>::post(home,x0,x1)));
@@ -137,7 +137,7 @@ namespace Gecode {
         xv[x.size()]=y;
         for (int i=x.size(); i--; )
           xv[i]=x[i];
-        if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
           GECODE_ES_FAIL(Rel::NaryEqDom<IntView>::post(home,xv));
         } else {
           GECODE_ES_FAIL(Rel::NaryEqBnd<IntView>::post(home,xv));
@@ -181,7 +181,7 @@ namespace Gecode {
     if (home.failed()) return;
     switch (irt) {
     case IRT_EQ:
-      if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
         switch (r.mode()) {
         case RM_EQV:
           GECODE_ES_FAIL((Rel::ReEqDom<IntView,BoolView,RM_EQV>
@@ -218,7 +218,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         NegBoolView n(r.var());
-        if (ipl == IPL_BND) {
+        if (vbd(ipl) == IPL_BND) {
           switch (r.mode()) {
           case RM_EQV:
             GECODE_ES_FAIL((Rel::ReEqBnd<IntView,NegBoolView,RM_EQV>
@@ -306,7 +306,7 @@ namespace Gecode {
     if (home.failed()) return;
     switch (irt) {
     case IRT_EQ:
-      if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
         switch (r.mode()) {
         case RM_EQV:
           GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView,RM_EQV>
@@ -343,7 +343,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         NegBoolView nb(r.var());
-        if (ipl == IPL_BND) {
+        if (vbd(ipl) == IPL_BND) {
           switch (r.mode()) {
           case RM_EQV:
             GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_EQV>
@@ -433,7 +433,7 @@ namespace Gecode {
     case IRT_EQ:
       {
         ViewArray<IntView> xv(home,x);
-        if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
           GECODE_ES_FAIL(Rel::NaryEqDom<IntView>::post(home,xv));
         } else {
           GECODE_ES_FAIL(Rel::NaryEqBnd<IntView>::post(home,xv));
@@ -514,7 +514,7 @@ namespace Gecode {
     case IRT_EQ:
       if (x.size() != y.size()) {
         home.fail();
-      } else if ((ipl == IPL_DOM) || (ipl == IPL_DEF))
+      } else if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
         for (int i=x.size(); i--; ) {
           GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>
                           ::post(home,x[i],y[i])));

@@ -912,7 +912,7 @@ namespace Gecode {
       IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
-    if (ipl == IPL_BND) {
+    if (vbd(ipl) == IPL_BND) {
       GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
     } else {
       GECODE_ES_FAIL(Bool::IteDom<IntView>::post(home,b,x,y,z));

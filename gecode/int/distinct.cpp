@@ -49,7 +49,7 @@ namespace Gecode {
       throw ArgumentSame("Int::distinct");
     if (home.failed()) return;
     ViewArray<IntView> xv(home,x);
-    switch (ipl) {
+    switch (vbd(ipl)) {
     case IPL_BND:
       GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
       break;
@@ -80,7 +80,7 @@ namespace Gecode {
       Limits::check(cx_max,"Int::distinct");
       cx[i] = OffsetView(x[i],c[i]);
     }
-    switch (ipl) {
+    switch (vbd(ipl)) {
     case IPL_BND:
       GECODE_ES_FAIL(Distinct::Bnd<OffsetView>::post(home,cx));
       break;

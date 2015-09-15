@@ -120,7 +120,7 @@ namespace Gecode {
     // set the cardinality
     for (int i = v.size(); i--; )
       cv[i].init(c[i],v[i]);
-    switch (ipl) {
+    switch (vbd(ipl)) {
     case IPL_BND:
       GECODE_ES_FAIL( 
                      (GCC::Bnd<GCC::CardView>::post(home,xv,cv)));
@@ -174,7 +174,7 @@ namespace Gecode {
         ViewArray<GCC::CardView> cv(home, v.size());
         for (int j = v.size(); j--; )
           cv[j].init(home,c[j],v[j]);
-        switch (ipl) {
+        switch (vbd(ipl)) {
         case IPL_BND:
           GECODE_ES_FAIL( 
                          (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
@@ -197,7 +197,7 @@ namespace Gecode {
     for (int i = c.size(); i--; )
       cv[i].init(home,c[i].min(),c[i].max(),v[i]);
 
-    switch (ipl) {
+    switch (vbd(ipl)) {
     case IPL_BND:
       GECODE_ES_FAIL(
                      (GCC::Bnd<GCC::CardConst>::post(home, xv, cv)));
