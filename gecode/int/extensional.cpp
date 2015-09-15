@@ -63,29 +63,27 @@ namespace Gecode {
 
   void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk, IntPropLevel) {
+              IntPropLevel ipl) {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
+    if (t.arity() != x.size())
+      throw ArgumentSizeMismatch("Int::extensional");
+    if (home.failed()) return;
+
     if (t.tuples()==0) {
       if (x.size()!=0) {
         home.fail();
       }
       return;
     }
-    
-    if (t.arity() != x.size())
-      throw ArgumentSizeMismatch("Int::extensional");
-    if (home.failed()) return;
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
-    switch (epk) {
-    case EPK_SPEED:
+    if (ipl & IPL_SPEED) {
       GECODE_ES_FAIL((Extensional::Incremental<IntView>
                            ::post(home,xv,t)));
-      break;
-    default:
+    } else {
       if (x.same(home)) {
         GECODE_ES_FAIL((Extensional::Basic<IntView,true>
                              ::post(home,xv,t)));
@@ -93,16 +91,18 @@ namespace Gecode {
         GECODE_ES_FAIL((Extensional::Basic<IntView,false>
                              ::post(home,xv,t)));
       }
-      break;
     }
   }
 
   void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk, IntPropLevel) {
+              IntPropLevel ipl) {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
+    if (t.arity() != x.size())
+      throw ArgumentSizeMismatch("Int::extensional");
+    if (home.failed()) return;
 
     if (t.tuples()==0) {
       if (x.size()!=0) {
@@ -111,18 +111,12 @@ namespace Gecode {
       return;
     }
 
-    if (t.arity() != x.size())
-      throw ArgumentSizeMismatch("Int::extensional");
-    if (home.failed()) return;
-
     // Construct view array
     ViewArray<BoolView> xv(home,x);
-    switch (epk) {
-    case EPK_SPEED:
+    if (ipl & IPL_SPEED) {
       GECODE_ES_FAIL((Extensional::Incremental<BoolView>
                            ::post(home,xv,t)));
-      break;
-    default:
+    } else {
       if (x.same(home)) {
         GECODE_ES_FAIL((Extensional::Basic<BoolView,true>
                              ::post(home,xv,t)));
@@ -130,7 +124,6 @@ namespace Gecode {
         GECODE_ES_FAIL((Extensional::Basic<BoolView,false>
                              ::post(home,xv,t)));
       }
-      break;
     }
   }
 

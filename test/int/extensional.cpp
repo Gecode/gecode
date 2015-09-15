@@ -376,14 +376,11 @@ namespace Test { namespace Int {
 
      /// %Test with tuple set
      class TupleSetA : public Test {
-     protected:
-       /// Extensional propagation kind
-       Gecode::ExtensionalPropKind epk;
      public:
        /// Create and register test
-       TupleSetA(Gecode::ExtensionalPropKind epk0)
-         : Test("Extensional::TupleSet::A::"+str(epk0),
-                4,1,5,false,Gecode::IPL_DOM), epk(epk0) {}
+       TupleSetA(Gecode::IntPropLevel ipl0)
+         : Test("Extensional::TupleSet::A::"+str(ipl0),
+                4,1,5,false,ipl0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
@@ -420,21 +417,18 @@ namespace Test { namespace Int {
          t.add(t5);
          t.finalize();
 
-         extensional(home, x, t, epk, IPL_DEF);
+         extensional(home, x, t, ipl);
        }
      };
 
      /// %Test with tuple set
      class TupleSetB : public Test {
        mutable Gecode::TupleSet t;
-     protected:
-       /// Extensional propagation kind
-       Gecode::ExtensionalPropKind epk;
      public:
        /// Create and register test
-       TupleSetB(Gecode::ExtensionalPropKind epk0)
-         : Test("Extensional::TupleSet::B::"+str(epk0),
-                4,1,5,false,Gecode::IPL_DOM), epk(epk0) {
+       TupleSetB(Gecode::IntPropLevel ipl0)
+         : Test("Extensional::TupleSet::B::"+str(ipl0),
+                4,1,5,false,ipl0) {
          using namespace Gecode;
          IntArgs t1 (4,  2, 1, 2, 4);
          IntArgs t2 (4,  2, 2, 1, 4);
@@ -473,7 +467,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         extensional(home, x, t, epk, IPL_DEF);
+         extensional(home, x, t, ipl);
        }
      };
 
@@ -482,14 +476,11 @@ namespace Test { namespace Int {
      /// %Test with bool tuple set
      class TupleSetBool : public Test {
        mutable Gecode::TupleSet t;
-     protected:
-       /// Extensional propagation kind
-       Gecode::ExtensionalPropKind epk;
      public:
        /// Create and register test
-       TupleSetBool(Gecode::ExtensionalPropKind epk0, double prob)
-         : Test("Extensional::TupleSet::Bool::"+str(epk0),
-                5,0,1,false,Gecode::IPL_DOM), epk(epk0) {
+       TupleSetBool(Gecode::IntPropLevel ipl0, double prob)
+         : Test("Extensional::TupleSet::Bool::"+str(ipl0),
+                5,0,1,false,ipl0) {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(0, 1));
@@ -519,8 +510,9 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs y(x.size());
-         for (int i = x.size(); i--; ) y[i] = channel(home, x[i]);
-         extensional(home, y, t, epk, IPL_DEF);
+         for (int i = x.size(); i--; ) 
+           y[i] = channel(home, x[i]);
+         extensional(home, y, t, ipl);
        }
      };
 
@@ -553,14 +545,14 @@ namespace Test { namespace Int {
      RegOpt ro6(static_cast<int>(USHRT_MAX-1));
      RegOpt ro7(static_cast<int>(USHRT_MAX));
 
-     TupleSetA tsam(Gecode::EPK_MEMORY);
-     TupleSetA tsas(Gecode::EPK_SPEED);
+     TupleSetA tsam(Gecode::IPL_MEMORY);
+     TupleSetA tsas(Gecode::IPL_SPEED);
 
-     TupleSetB tsbm(Gecode::EPK_MEMORY);
-     TupleSetB tsbs(Gecode::EPK_SPEED);
+     TupleSetB tsbm(Gecode::IPL_MEMORY);
+     TupleSetB tsbs(Gecode::IPL_SPEED);
 
-     TupleSetBool tsboolm(Gecode::EPK_MEMORY, 0.3);
-     TupleSetBool tsbools(Gecode::EPK_SPEED, 0.3);
+     TupleSetBool tsboolm(Gecode::IPL_MEMORY, 0.3);
+     TupleSetBool tsbools(Gecode::IPL_SPEED, 0.3);
      //@}
 
    }

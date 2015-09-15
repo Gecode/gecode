@@ -1991,20 +1991,6 @@ namespace Gecode {
     int symbol_max(void) const;
   };
 
-
-  /**
-   * \brief Extensional propagation kind
-   *
-   * Signals that a particular kind is used in propagation for
-   * the implementation of a extensional constraint.
-   *
-   */
-  enum ExtensionalPropKind {
-    EPK_DEF,    ///< Make a default decision
-    EPK_SPEED,  ///< Prefer speed over memory consumption
-    EPK_MEMORY  ///< Prefer little memory over speed
-  };
-
   /**
    * \brief Post domain consistent propagator for extensional constraint described by a DFA
    *
@@ -2120,8 +2106,10 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
-   * \li Supports implementations optimized for memory (\a epk = \a
-   *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
+   * \li Supports implementations optimized for speed (with propagation
+   *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
+   *     consumption (with propagation level \a ipl or-ed with 
+   *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
@@ -2138,12 +2126,14 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk=EPK_DEF, IntPropLevel ipl=IPL_DEF);
+              IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
-   * \li Supports implementations optimized for memory (\a epk = \a
-   *     EPK_MEMORY, default) and speed (\a epk = \a EPK_SPEED).
+   * \li Supports implementations optimized for speed (with propagation
+   *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
+   *     consumption (with propagation level \a ipl or-ed with 
+   *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
@@ -2152,7 +2142,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              ExtensionalPropKind epk=EPK_DEF, IntPropLevel ipl=IPL_DEF);
+              IntPropLevel ipl=IPL_DEF);
   //@}
 
 }

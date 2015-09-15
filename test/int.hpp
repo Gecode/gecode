@@ -209,25 +209,20 @@ namespace Test { namespace Int {
 
   inline
   std::string
-  Test::str(Gecode::ExtensionalPropKind epk) {
-    using namespace Gecode;
-    switch (epk) {
-    case EPK_MEMORY: return "Memory";
-    case EPK_SPEED:  return "Speed";
-    default: return "Def";
-    }
-  }
-
-  inline
-  std::string
   Test::str(Gecode::IntPropLevel ipl) {
     using namespace Gecode;
-    switch (ipl) {
-    case IPL_VAL: return "Val";
-    case IPL_BND: return "Bnd";
-    case IPL_DOM: return "Dom";
-    default: return "Def";
+    std::stringstream s;
+    switch (vbd(ipl)) {
+    case IPL_VAL: s << "Val"; break;
+    case IPL_BND: s << "Bnd"; break;
+    case IPL_DOM: s << "Dom"; break;
+    default: s << "Def"; break;
     }
+    if (ipl & IPL_SPEED) s << ",Speed";
+    if (ipl & IPL_MEMORY) s << ",Memory";
+    if (ipl & IPL_BASIC) s << ",Basic";
+    if (ipl & IPL_ADVANCED) s << ",Advanced";
+    return s.str();
   }
 
   inline

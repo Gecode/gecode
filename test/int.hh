@@ -299,8 +299,6 @@ namespace Test {
       virtual bool run(void);
       /// \name Mapping scalar values to strings
       //@{
-      /// Map extensional propagation kind to string
-      static std::string str(Gecode::ExtensionalPropKind epk);
       /// Map integer propagation level to string
       static std::string str(Gecode::IntPropLevel ipl);
       /// Map integer relation to string
