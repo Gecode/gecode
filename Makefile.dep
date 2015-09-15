@@ -2454,10 +2454,10 @@ gecode/int/unary$(OBJSUFFIX) gecode/int/unary$(SBJSUFFIX): \
 	./gecode/int/rel/nq.hpp ./gecode/int/task.hh ./gecode/int/task/array.hpp \
 	./gecode/int/task/fwd-to-bwd.hpp ./gecode/int/task/iter.hpp ./gecode/int/task/man-to-opt.hpp \
 	./gecode/int/task/prop.hpp ./gecode/int/task/purge.hpp ./gecode/int/task/sort.hpp \
-	./gecode/int/task/tree.hpp ./gecode/int/unary.hh ./gecode/int/unary/basic.hpp \
-	./gecode/int/unary/detectable.hpp ./gecode/int/unary/edge-finding.hpp ./gecode/int/unary/man-prop.hpp \
-	./gecode/int/unary/not-first-not-last.hpp ./gecode/int/unary/opt-prop.hpp ./gecode/int/unary/overload.hpp \
-	./gecode/int/unary/subsumption.hpp ./gecode/int/unary/task-view.hpp ./gecode/int/unary/task.hpp \
+	./gecode/int/task/tree.hpp ./gecode/int/unary.hh ./gecode/int/unary/detectable.hpp \
+	./gecode/int/unary/edge-finding.hpp ./gecode/int/unary/man-prop.hpp ./gecode/int/unary/not-first-not-last.hpp \
+	./gecode/int/unary/opt-prop.hpp ./gecode/int/unary/overload.hpp ./gecode/int/unary/subsumption.hpp \
+	./gecode/int/unary/task-view.hpp ./gecode/int/unary/task.hpp ./gecode/int/unary/time-tabling.hpp \
 	./gecode/int/unary/tree.hpp ./gecode/int/var-imp.hpp ./gecode/int/var-imp/bool.hpp \
 	./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp ./gecode/int/var/bool.hpp \
 	./gecode/int/var/int.hpp ./gecode/int/var/print.hpp ./gecode/int/view-val-graph.hh \
@@ -2505,9 +2505,9 @@ gecode/int/cumulative$(OBJSUFFIX) gecode/int/cumulative$(SBJSUFFIX): \
 	./gecode/int.hh ./gecode/int/array-traits.hpp ./gecode/int/array.hpp \
 	./gecode/int/branch/activity.hpp ./gecode/int/branch/afc.hpp ./gecode/int/branch/assign.hpp \
 	./gecode/int/branch/traits.hpp ./gecode/int/branch/val.hpp ./gecode/int/branch/var.hpp \
-	./gecode/int/cumulative.hh ./gecode/int/cumulative/basic.hpp ./gecode/int/cumulative/edge-finding.hpp \
-	./gecode/int/cumulative/limits.hpp ./gecode/int/cumulative/man-prop.hpp ./gecode/int/cumulative/opt-prop.hpp \
-	./gecode/int/cumulative/overload.hpp ./gecode/int/cumulative/task-view.hpp ./gecode/int/cumulative/task.hpp \
+	./gecode/int/cumulative.hh ./gecode/int/cumulative/edge-finding.hpp ./gecode/int/cumulative/limits.hpp \
+	./gecode/int/cumulative/man-prop.hpp ./gecode/int/cumulative/opt-prop.hpp ./gecode/int/cumulative/overload.hpp \
+	./gecode/int/cumulative/task-view.hpp ./gecode/int/cumulative/task.hpp ./gecode/int/cumulative/time-tabling.hpp \
 	./gecode/int/cumulative/tree.hpp ./gecode/int/div.hh ./gecode/int/div.hpp \
 	./gecode/int/exception.hpp ./gecode/int/extensional/dfa.hpp ./gecode/int/extensional/tuple-set.hpp \
 	./gecode/int/int-set-1.hpp ./gecode/int/int-set-2.hpp ./gecode/int/limits.hpp \
@@ -2515,10 +2515,10 @@ gecode/int/cumulative$(OBJSUFFIX) gecode/int/cumulative$(SBJSUFFIX): \
 	./gecode/int/task/array.hpp ./gecode/int/task/fwd-to-bwd.hpp ./gecode/int/task/iter.hpp \
 	./gecode/int/task/man-to-opt.hpp ./gecode/int/task/prop.hpp ./gecode/int/task/purge.hpp \
 	./gecode/int/task/sort.hpp ./gecode/int/task/tree.hpp ./gecode/int/unary.hh \
-	./gecode/int/unary/basic.hpp ./gecode/int/unary/detectable.hpp ./gecode/int/unary/edge-finding.hpp \
-	./gecode/int/unary/man-prop.hpp ./gecode/int/unary/not-first-not-last.hpp ./gecode/int/unary/opt-prop.hpp \
-	./gecode/int/unary/overload.hpp ./gecode/int/unary/subsumption.hpp ./gecode/int/unary/task-view.hpp \
-	./gecode/int/unary/task.hpp ./gecode/int/unary/tree.hpp ./gecode/int/var-imp.hpp \
+	./gecode/int/unary/detectable.hpp ./gecode/int/unary/edge-finding.hpp ./gecode/int/unary/man-prop.hpp \
+	./gecode/int/unary/not-first-not-last.hpp ./gecode/int/unary/opt-prop.hpp ./gecode/int/unary/overload.hpp \
+	./gecode/int/unary/subsumption.hpp ./gecode/int/unary/task-view.hpp ./gecode/int/unary/task.hpp \
+	./gecode/int/unary/time-tabling.hpp ./gecode/int/unary/tree.hpp ./gecode/int/var-imp.hpp \
 	./gecode/int/var-imp/bool.hpp ./gecode/int/var-imp/delta.hpp ./gecode/int/var-imp/int.hpp \
 	./gecode/int/var/bool.hpp ./gecode/int/var/int.hpp ./gecode/int/var/print.hpp \
 	./gecode/int/view.hpp ./gecode/int/view/bool-test.hpp ./gecode/int/view/bool.hpp \

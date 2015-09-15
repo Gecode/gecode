@@ -754,9 +754,9 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class OptTask>
   ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Perform basic propagation (time-tabling)
+  /// Perform time-tabling propagation
   template<class Task>
-  ExecStatus basic(Space& home, bool& subsumed, TaskArray<Task>& t);
+  ExecStatus timetabling(Space& home, bool& subsumed, TaskArray<Task>& t);
 
   /// Check tasks \a t for subsumption
   template<class Task>
@@ -776,7 +776,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class OptTask>
   ExecStatus notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Propagate by edge finding
+  /// Propagate by edge-finding
   template<class Task>
   ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
 
@@ -834,7 +834,7 @@ namespace Gecode { namespace Int { namespace Unary {
 }}}
 
 #include <gecode/int/unary/overload.hpp>
-#include <gecode/int/unary/basic.hpp>
+#include <gecode/int/unary/time-tabling.hpp>
 #include <gecode/int/unary/subsumption.hpp>
 #include <gecode/int/unary/detectable.hpp>
 #include <gecode/int/unary/not-first-not-last.hpp>

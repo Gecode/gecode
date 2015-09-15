@@ -5,7 +5,7 @@
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2010
+ *     Christian Schulte, 2015
  *     Guido Tack, 2010
  *
  *  Last modified:
@@ -37,7 +37,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode { namespace Int { namespace Unary {
 
   /// Event for task
   class Event {
@@ -60,13 +60,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
     bool operator <(const Event& e) const;
   };
 
-  /// Sort order for tasks by decreasing capacity
-  template<class Task>
-  class TaskByDecCap {
-  public:
-    /// Sort order
-    bool operator ()(const Task& t1, const Task& t2) const;
-  };
+  /// Print event \a e on stream \a os
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e);
 
   forceinline void
   Event::init(Event::Type e0, int t0, int i0) {
@@ -80,24 +77,32 @@ namespace Gecode { namespace Int { namespace Cumulative {
     return this->t < e.t;
   }
 
-  template<class Task>
-  forceinline bool
-  TaskByDecCap<Task>::operator ()(const Task& t1, const Task& t2) const {
-    return t1.c() > t2.c();
+  template<class Char, class Traits>
+  inline std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e) {
+    std::basic_ostringstream<Char,Traits> s;
+    s.copyfmt(os); s.width(0);
+    s << '[';
+    switch (e.e) {
+    case Event::LRT: s << "LRT"; break;
+    case Event::LCT: s << "LCT"; break;
+    case Event::EST: s << "EST"; break;
+    case Event::ZRO: s << "ZRO"; break;
+    case Event::ERT: s << "ERT"; break;
+    default: GECODE_NEVER;
+    }
+    s << ',' << e.t << ',' << e.i << ']';
+    return os << s.str();
   }
 
 
-  // Basic propagation (timetabling)
-  template<class Task, class Cap>
+  template<class Task>
   ExecStatus
-  basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t) {
+  timetabling(Space& home, bool& subsumed, TaskArray<Task>& t) {
+#ifdef PRINTIT
+    std::cout << "basic(" << t << ")" << std::endl;
+#endif
     subsumed = false;
-    int ccur = c.max();
-    int cmax = ccur;
-    int cmin = ccur;
-    // Sort tasks by decreasing capacity
-    TaskByDecCap<Task> tbdc;
-    Support::quicksort(&t[0], t.size(), tbdc);
 
     Region r(home);
 
@@ -111,6 +116,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for (int i=t.size(); i--; ) 
         if (t[i].assigned()) {
           // Only add required part
+          //          e[n++].init(Event::EST,t[i].est(),i);
+          //          e[n++].init(Event::LCT,t[i].lct(),i);
           if (t[i].pmin() > 0) {
             required = true;
             e[n++].init(Event::ERT,t[i].lst(),i);
@@ -144,63 +151,110 @@ namespace Gecode { namespace Int { namespace Cumulative {
       Support::quicksort(e, n);
     }
 
+    // Whether resource is free
+    bool free = true;
     // Set of current but not required tasks
     Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
 
-    // Process events, use ccur as the capacity that is still free
+    // Process events
     while (e->e != Event::END) {
       // Current time
       int time = e->t;
 
       // Process events for completion of required part
-      for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
+      for ( ; (e->t == time) && (e->e == Event::LRT); e++) {
         if (t[e->i].mandatory()) {
-          tasks.set(static_cast<unsigned int>(e->i)); ccur += t[e->i].c();
+          tasks.set(static_cast<unsigned int>(e->i)); 
+          free = true;
         }
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
       // Process events for completion of task
-      for ( ; (e->t == time) && (e->e == Event::LCT); e++)
+      for ( ; (e->t == time) && (e->e == Event::LCT); e++) {
         tasks.clear(static_cast<unsigned int>(e->i));
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
       // Process events for start of task
-      for ( ; (e->t == time) && (e->e == Event::EST); e++)
+      for ( ; (e->t == time) && (e->e == Event::EST); e++) {
         tasks.set(static_cast<unsigned int>(e->i));
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
       // Process events for zero-length task
       for ( ; (e->t == time) && (e->e == Event::ZRO); e++) {
-        ccur -= t[e->i].c();
-        if (ccur < cmin) cmin=ccur;
-        if (ccur < 0)
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+        if (!free)
           return ES_FAILED;
-        ccur += t[e->i].c();
+        assert(free);
       }
 
       // norun start time for 0-length tasks
       int zltime = time;
       // Process events for start of required part
-      for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
+      for ( ; (e->t == time) && (e->e == Event::ERT); e++) {
         if (t[e->i].mandatory()) {
           tasks.clear(static_cast<unsigned int>(e->i)); 
-          ccur -= t[e->i].c();
-          if (ccur < cmin) cmin=ccur;
-          zltime = time+1;
-          if (ccur < 0)
+          if (!free)
             return ES_FAILED;
-        } else if (t[e->i].optional() && (t[e->i].c() > ccur)) {
+          free = false;
+          zltime = time+1;
+        } else if (t[e->i].optional() && !free) {
           GECODE_ME_CHECK(t[e->i].excluded(home));
         }
-      
-      // Exploit that tasks are sorted according to capacity
-      for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
-           j() && (t[j.val()].c() > ccur); ++j) 
-        // Task j cannot run from time to next time - 1
-        if (t[j.val()].mandatory()) {
-          if (t[j.val()].pmin() > 0) {
-            GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
-          } else {
-            GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
-          }
-        }
-    }
+#ifdef PRINTIT
+        std::cout << *e << " free=" << free << " tasks={";
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          std::cout << j.val() << ",";
+        std::cout << "}" << std::endl;
+#endif
+      }
 
-    GECODE_ME_CHECK(c.gq(home,cmax-cmin));
+      if (!free)
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          // Task j cannot run from time to next time - 1
+          if (t[j.val()].mandatory()) {
+            if (t[j.val()].pmin() > 0) {
+
+#ifdef PRINTIT
+              std::cout << "\tNorun (" << j.val() << ") = [" 
+                        << time << ".." << e->t-1 << "]" << std::endl;
+#endif
+              GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
+            } else {
+#ifdef PRINTIT
+              std::cout << "\tNorun (" << j.val() << ") = [" 
+                        << zltime << ".." << e->t-1 << "]" << std::endl;
+#endif
+              GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
+            }
+          }
+
+    }
 
     subsumed = assigned;
     return ES_NOFIX;

@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       GECODE_ES_CHECK(overload(home,c.max(),t));
     GECODE_ES_CHECK(edgefinding(home,c.max(),t));
     bool subsumed;
-    ExecStatus es = basic(home,subsumed,c,t);
+    ExecStatus es = timetabling(home,subsumed,c,t);
     GECODE_ES_CHECK(es);
     if (subsumed)
       return home.ES_SUBSUMED(*this);

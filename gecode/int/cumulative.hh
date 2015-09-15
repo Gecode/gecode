@@ -678,15 +678,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  /// Perform basic propagation (time-tabling)
-  template<class Task, class Cap>
-  ExecStatus basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t);
-
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
 
-  /// Propagate by edge finding
+  /// Perform time-tabling propagation
+  template<class Task, class Cap>
+  ExecStatus timetabling(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t);
+
+  /// Propagate by edge-finding
   template<class Task>
   ExecStatus edgefinding(Space& home, int c, TaskArray<Task>& t);
 
@@ -746,7 +746,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
 }}}
 
-#include <gecode/int/cumulative/basic.hpp>
+#include <gecode/int/cumulative/time-tabling.hpp>
 #include <gecode/int/cumulative/overload.hpp>
 #include <gecode/int/cumulative/edge-finding.hpp>
 #include <gecode/int/cumulative/man-prop.hpp>

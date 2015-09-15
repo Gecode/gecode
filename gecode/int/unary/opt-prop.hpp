@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     {
       bool subsumed;
-      GECODE_ES_CHECK(basic(home,subsumed,t));
+      GECODE_ES_CHECK(timetabling(home,subsumed,t));
       if (subsumed)
         return home.ES_SUBSUMED(*this);
     }
