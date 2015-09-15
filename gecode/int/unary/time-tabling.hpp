@@ -40,79 +40,73 @@
 namespace Gecode { namespace Int { namespace Unary {
 
   template<class Task>
-  ExecStatus
-  timetabling(Space& home, bool& subsumed, TaskArray<Task>& t) {
-    subsumed = false;
-
+  forceinline ExecStatus
+  timetabling(Space& home, Propagator& p, TaskArray<Task>& t) {
     Region r(home);
 
     bool assigned;
-    Event* e = Event::events(r,t,assigned);
-
-    if (e == NULL) {
-      subsumed = assigned;
-      return ES_FIX;
-    }
-
-    // Whether resource is free
-    bool free = true;
-    // Set of current but not required tasks
-    Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
-
-    // Process events
-    while (e->type() != Event::END) {
-      // Current time
-      int time = e->time();
-
-      // Process events for completion of required part
-      for ( ; (e->time() == time) && (e->type() == Event::LRT); e++)
-        if (t[e->idx()].mandatory()) {
-          tasks.set(static_cast<unsigned int>(e->idx())); 
-          free = true;
-        }
-
-      // Process events for completion of task
-      for ( ; (e->time() == time) && (e->type() == Event::LCT); e++)
-        tasks.clear(static_cast<unsigned int>(e->idx()));
-
-      // Process events for start of task
-      for ( ; (e->time() == time) && (e->type() == Event::EST); e++)
-        tasks.set(static_cast<unsigned int>(e->idx()));
-
-      // Process events for zero-length task
-      for ( ; (e->time() == time) && (e->type() == Event::ZRO); e++)
-        if (!free)
-          return ES_FAILED;
-
-      // norun start time for 0-length tasks
-      int zltime = time;
-      // Process events for start of required part
-      for ( ; (e->time() == time) && (e->type() == Event::ERT); e++)
-        if (t[e->idx()].mandatory()) {
-          tasks.clear(static_cast<unsigned int>(e->idx())); 
+    if (Event* e = Event::events(r,t,assigned)) {
+      // Whether resource is free
+      bool free = true;
+      // Set of current but not required tasks
+      Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
+      
+      // Process events
+      while (e->type() != Event::END) {
+        // Current time
+        int time = e->time();
+        
+        // Process events for completion of required part
+        for ( ; (e->time() == time) && (e->type() == Event::LRT); e++)
+          if (t[e->idx()].mandatory()) {
+            tasks.set(static_cast<unsigned int>(e->idx())); 
+            free = true;
+          }
+        
+        // Process events for completion of task
+        for ( ; (e->time() == time) && (e->type() == Event::LCT); e++)
+          tasks.clear(static_cast<unsigned int>(e->idx()));
+        
+        // Process events for start of task
+        for ( ; (e->time() == time) && (e->type() == Event::EST); e++)
+          tasks.set(static_cast<unsigned int>(e->idx()));
+        
+        // Process events for zero-length task
+        for ( ; (e->time() == time) && (e->type() == Event::ZRO); e++)
           if (!free)
             return ES_FAILED;
-          free = false;
-          zltime = time+1;
-        } else if (t[e->idx()].optional() && !free) {
-          GECODE_ME_CHECK(t[e->idx()].excluded(home));
-        }
-
-      if (!free)
-        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
-             j(); ++j) 
-          // Task j cannot run from time to next time - 1
-          if (t[j.val()].mandatory()) {
-            if (t[j.val()].pmin() > 0) {
-              GECODE_ME_CHECK(t[j.val()].norun(home, time, e->time() - 1));
-            } else {
-              GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->time() - 1));
-            }
+        
+        // norun start time for 0-length tasks
+        int zltime = time;
+        // Process events for start of required part
+        for ( ; (e->time() == time) && (e->type() == Event::ERT); e++)
+          if (t[e->idx()].mandatory()) {
+            tasks.clear(static_cast<unsigned int>(e->idx())); 
+            if (!free)
+              return ES_FAILED;
+            free = false;
+            zltime = time+1;
+          } else if (t[e->idx()].optional() && !free) {
+            GECODE_ME_CHECK(t[e->idx()].excluded(home));
           }
-
+        
+        if (!free)
+          for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+               j(); ++j) 
+            // Task j cannot run from time to next time - 1
+            if (t[j.val()].mandatory()) {
+              if (t[j.val()].pmin() > 0) {
+                GECODE_ME_CHECK(t[j.val()].norun(home, time, e->time() - 1));
+              } else {
+                GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->time() - 1));
+              }
+            }
+        
+      }
     }
 
-    subsumed = assigned;
+    if (assigned)
+      return home.ES_SUBSUMED(p);
     return ES_NOFIX;
   }
 

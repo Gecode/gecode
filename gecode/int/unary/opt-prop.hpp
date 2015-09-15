@@ -87,14 +87,7 @@ namespace Gecode { namespace Int { namespace Unary {
     //      GECODE_ES_CHECK((purge<OptTask,PC_INT_BND>(home,*this,t)));
 
     GECODE_ES_CHECK(overload(home,*this,t));
-
-    {
-      bool subsumed;
-      GECODE_ES_CHECK(timetabling(home,subsumed,t));
-      if (subsumed)
-        return home.ES_SUBSUMED(*this);
-    }
-
+    GECODE_ES_CHECK(timetabling(home,*this,t));
     GECODE_ES_CHECK(detectable(home,*this,t));
     GECODE_ES_CHECK(notfirstnotlast(home,*this,t));
 

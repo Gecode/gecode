@@ -69,13 +69,7 @@ namespace Gecode { namespace Int { namespace Unary {
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(overload(home,t));
 
-    {
-      bool subsumed;
-      GECODE_ES_CHECK(timetabling(home,subsumed,t));
-      if (subsumed)
-        return home.ES_SUBSUMED(*this);
-    }
-
+    GECODE_ES_CHECK(timetabling(home,*this,t));
     GECODE_ES_CHECK(detectable(home,t));
     GECODE_ES_CHECK(notfirstnotlast(home,t));
     GECODE_ES_CHECK(edgefinding(home,t));
