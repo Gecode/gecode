@@ -131,9 +131,9 @@ namespace Gecode { namespace Int { namespace Unary {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void subscribe(Space& home, Propagator& p, PropCond pc);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     //@}
 
   };
@@ -351,9 +351,9 @@ namespace Gecode { namespace Int { namespace Unary {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void subscribe(Space& home, Propagator& p, PropCond pc);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void cancel(Space& home, Propagator& p, PropCond pc);
     //@}
 
   };
@@ -754,6 +754,10 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class OptTask>
   ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
+  /// Perform basic propagation (time-tabling)
+  template<class Task>
+  ExecStatus basic(Space& home, bool& subsumed, TaskArray<Task>& t);
+
   /// Check tasks \a t for subsumption
   template<class Task>
   ExecStatus subsumed(Space& home, Propagator& p, TaskArray<Task>& t);
@@ -784,9 +788,11 @@ namespace Gecode { namespace Int { namespace Unary {
    * \ingroup FuncIntProp
    */
   template<class ManTask>
-  class ManProp : public TaskProp<ManTask,Int::PC_INT_BND> {
+  //  class ManProp : public TaskProp<ManTask,Int::PC_INT_BND> {
+  class ManProp : public TaskProp<ManTask,Int::PC_INT_DOM> {
   protected:
-    using TaskProp<ManTask,Int::PC_INT_BND>::t;
+    using TaskProp<ManTask,Int::PC_INT_DOM>::t;
+    //    using TaskProp<ManTask,Int::PC_INT_BND>::t;
     /// Constructor for creation
     ManProp(Home home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
@@ -807,9 +813,11 @@ namespace Gecode { namespace Int { namespace Unary {
    * \ingroup FuncIntProp
    */
   template<class OptTask>
-  class OptProp : public TaskProp<OptTask,Int::PC_INT_BND> {
+  //  class OptProp : public TaskProp<OptTask,Int::PC_INT_BND> {
+  class OptProp : public TaskProp<OptTask,Int::PC_INT_DOM> {
   protected:
-    using TaskProp<OptTask,Int::PC_INT_BND>::t;
+    //    using TaskProp<OptTask,Int::PC_INT_BND>::t;
+    using TaskProp<OptTask,Int::PC_INT_DOM>::t;
     /// Constructor for creation
     OptProp(Home home, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
@@ -826,6 +834,7 @@ namespace Gecode { namespace Int { namespace Unary {
 }}}
 
 #include <gecode/int/unary/overload.hpp>
+#include <gecode/int/unary/basic.hpp>
 #include <gecode/int/unary/subsumption.hpp>
 #include <gecode/int/unary/detectable.hpp>
 #include <gecode/int/unary/not-first-not-last.hpp>

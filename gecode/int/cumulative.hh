@@ -678,7 +678,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  /// Perform basic propagation
+  /// Perform basic propagation (time-tabling)
   template<class Task, class Cap>
   ExecStatus basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t);
 

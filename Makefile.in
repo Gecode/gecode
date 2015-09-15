@@ -376,7 +376,7 @@ INTHDR0 = \
 	task/man-to-opt.hpp \
 	unary.hh unary/task.hpp unary/task-view.hpp \
 	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
-	unary/not-first-not-last.hpp \
+	unary/basic.hpp unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
 	unary/man-prop.hpp unary/opt-prop.hpp \
 	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \

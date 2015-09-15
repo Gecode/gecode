@@ -5,7 +5,7 @@
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2010
+ *     Christian Schulte, 2015
  *     Guido Tack, 2010
  *
  *  Last modified:
@@ -37,7 +37,7 @@
  *
  */
 
-namespace Gecode { namespace Int { namespace Cumulative {
+namespace Gecode { namespace Int { namespace Unary {
 
   /// Event for task
   class Event {
@@ -60,14 +60,6 @@ namespace Gecode { namespace Int { namespace Cumulative {
     bool operator <(const Event& e) const;
   };
 
-  /// Sort order for tasks by decreasing capacity
-  template<class Task>
-  class TaskByDecCap {
-  public:
-    /// Sort order
-    bool operator ()(const Task& t1, const Task& t2) const;
-  };
-
   forceinline void
   Event::init(Event::Type e0, int t0, int i0) {
     e=e0; t=t0; i=i0;
@@ -80,24 +72,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
     return this->t < e.t;
   }
 
-  template<class Task>
-  forceinline bool
-  TaskByDecCap<Task>::operator ()(const Task& t1, const Task& t2) const {
-    return t1.c() > t2.c();
-  }
-
 
   // Basic propagation (timetabling)
-  template<class Task, class Cap>
+  template<class Task>
   ExecStatus
-  basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t) {
+  basic(Space& home, bool& subsumed, TaskArray<Task>& t) {
+    //    std::cout << "basic(" << t << ")" << std::endl;
     subsumed = false;
-    int ccur = c.max();
-    int cmax = ccur;
-    int cmin = ccur;
-    // Sort tasks by decreasing capacity
-    TaskByDecCap<Task> tbdc;
-    Support::quicksort(&t[0], t.size(), tbdc);
 
     Region r(home);
 
@@ -144,18 +125,32 @@ namespace Gecode { namespace Int { namespace Cumulative {
       Support::quicksort(e, n);
     }
 
+    // Whether resource is free
+    bool free = true;
     // Set of current but not required tasks
     Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
 
-    // Process events, use ccur as the capacity that is still free
+    // Process events
     while (e->e != Event::END) {
+      /*
+      std::cout << "Event = <";
+      switch (e->e) {
+      case Event::LRT: std::cout << "LRT"; break;
+      case Event::LCT: std::cout << "LCT"; break;
+      case Event::EST: std::cout << "EST"; break;
+      case Event::ZRO: std::cout << "ZRO"; break;
+      case Event::ERT: std::cout << "ERT"; break;
+      }
+      std::cout << "," << e->t << "," << e->i << ">" << std::endl;
+      */
       // Current time
       int time = e->t;
 
       // Process events for completion of required part
       for ( ; (e->t == time) && (e->e == Event::LRT); e++) 
         if (t[e->i].mandatory()) {
-          tasks.set(static_cast<unsigned int>(e->i)); ccur += t[e->i].c();
+          tasks.set(static_cast<unsigned int>(e->i)); 
+          free = true;
         }
       // Process events for completion of task
       for ( ; (e->t == time) && (e->e == Event::LCT); e++)
@@ -165,11 +160,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         tasks.set(static_cast<unsigned int>(e->i));
       // Process events for zero-length task
       for ( ; (e->t == time) && (e->e == Event::ZRO); e++) {
-        ccur -= t[e->i].c();
-        if (ccur < cmin) cmin=ccur;
-        if (ccur < 0)
+        if (!free)
           return ES_FAILED;
-        ccur += t[e->i].c();
+        assert(free);
       }
 
       // norun start time for 0-length tasks
@@ -178,31 +171,31 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for ( ; (e->t == time) && (e->e == Event::ERT); e++) 
         if (t[e->i].mandatory()) {
           tasks.clear(static_cast<unsigned int>(e->i)); 
-          ccur -= t[e->i].c();
-          if (ccur < cmin) cmin=ccur;
-          zltime = time+1;
-          if (ccur < 0)
+          if (!free)
             return ES_FAILED;
-        } else if (t[e->i].optional() && (t[e->i].c() > ccur)) {
+          zltime = time+1;
+        } else if (t[e->i].optional() && !free) {
           GECODE_ME_CHECK(t[e->i].excluded(home));
         }
-      
-      // Exploit that tasks are sorted according to capacity
-      for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
-           j() && (t[j.val()].c() > ccur); ++j) 
-        // Task j cannot run from time to next time - 1
-        if (t[j.val()].mandatory()) {
-          if (t[j.val()].pmin() > 0) {
-            GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
-          } else {
-            GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
+
+      if (!free)
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
+             j(); ++j) 
+          // Task j cannot run from time to next time - 1
+          if (t[j.val()].mandatory()) {
+            if (t[j.val()].pmin() > 0) {
+              /*
+              std::cout << "\tNorun (" << j.val() << ") = [" 
+                        << time << ".." << e->t-1 << "]" << std::endl;
+              */
+              GECODE_ME_CHECK(t[j.val()].norun(home, time, e->t - 1));
+            } else {
+              GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->t - 1));
+            }
           }
-        }
+
     }
 
-    GECODE_ME_CHECK(c.gq(home,cmax-cmin));
-
-    subsumed = assigned;
     return ES_NOFIX;
   }
 

@@ -95,7 +95,8 @@ namespace Gecode { namespace Int { namespace Unary {
         GECODE_ME_CHECK(t[i].est(home,est[i]));
       } else if (est[i] > t[i].lst()) {
         GECODE_ME_CHECK(t[i].excluded(home));
-        t[i].cancel(home,p,Int::PC_INT_BND); t[i]=t[--n];
+        //        t[i].cancel(home,p,PC_INT_BND); t[i]=t[--n];
+        t[i].cancel(home,p,PC_INT_DOM); t[i]=t[--n];
       }
     t.size(n);
 

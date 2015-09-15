@@ -40,13 +40,15 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Home home, TaskArray<ManTask>& t)
-    : TaskProp<ManTask,Int::PC_INT_BND>(home,t) {}
+  //    : TaskProp<ManTask,Int::PC_INT_BND>(home,t) {}
+    : TaskProp<ManTask,Int::PC_INT_DOM>(home,t) {}
 
   template<class ManTask>
   forceinline
   ManProp<ManTask>::ManProp(Space& home, bool shared, 
                                 ManProp<ManTask>& p) 
-    : TaskProp<ManTask,Int::PC_INT_BND>(home,shared,p) {}
+  //    : TaskProp<ManTask,Int::PC_INT_BND>(home,shared,p) {}
+    : TaskProp<ManTask,Int::PC_INT_DOM>(home,shared,p) {}
 
   template<class ManTask>
   forceinline ExecStatus 
@@ -66,6 +68,14 @@ namespace Gecode { namespace Int { namespace Unary {
   ExecStatus 
   ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(overload(home,t));
+
+    {
+      bool subsumed;
+      GECODE_ES_CHECK(basic(home,subsumed,t));
+      if (subsumed)
+        return home.ES_SUBSUMED(*this);
+    }
+
     GECODE_ES_CHECK(detectable(home,t));
     GECODE_ES_CHECK(notfirstnotlast(home,t));
     GECODE_ES_CHECK(edgefinding(home,t));
