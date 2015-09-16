@@ -1156,7 +1156,7 @@ namespace Gecode { namespace FlatZinc {
         ts.add(t);
       }
       ts.finalize();
-      extensional(s,x,ts,EPK_DEF,s.ann2ipl(ann));
+      extensional(s,x,ts,s.ann2ipl(ann));
     }
     void
     p_table_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -1173,7 +1173,7 @@ namespace Gecode { namespace FlatZinc {
         ts.add(t);
       }
       ts.finalize();
-      extensional(s,x,ts,EPK_DEF,s.ann2ipl(ann));
+      extensional(s,x,ts,s.ann2ipl(ann));
     }
 
     void p_cumulative_opt(FlatZincSpace& s, const ConExpr& ce,
