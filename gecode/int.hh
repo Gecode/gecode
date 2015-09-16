@@ -948,11 +948,18 @@ namespace Gecode {
     IPL_MEMORY = 8, ///< Prefer to save memory
     /// Options: basic versus advanced propagation
     IPL_BASIC = 16,    ///< Use basic propagation algorithm
-    IPL_ADVANCED = 32  ///< Use advanced propagation algorithm
+    IPL_ADVANCED = 32, ///< Use advanced propagation algorithm
+    IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED ///< Use both
   };
 
   /// Extract value, bounds, or domain propagation from propagation level
   IntPropLevel vbd(IntPropLevel ipl);
+
+  /// Extract speed or memory from propagation level
+  IntPropLevel sm(IntPropLevel ipl);
+
+  /// Extract basic or advanced from propagation level
+  IntPropLevel ba(IntPropLevel ipl);
 
 }
 
@@ -2817,9 +2824,17 @@ namespace Gecode {
    *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
    *
+   * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
    *    and \a p are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
@@ -2841,9 +2856,17 @@ namespace Gecode {
    *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
    *
+   * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, or \a m are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
@@ -2875,9 +2898,17 @@ namespace Gecode {
    *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
    *
+   * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
    *    and \a p are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a p contains
@@ -2909,9 +2940,17 @@ namespace Gecode {
    *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
    *
+   * Posting the constraint might throw the following exceptions:
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    *    \a p, or \a m are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a p contains
@@ -2934,8 +2973,15 @@ namespace Gecode {
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
    *
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
    *
    * The processing times are constrained to be non-negative.
    *
@@ -2956,13 +3002,20 @@ namespace Gecode {
    *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
    *   Charles University, Prague, Czech Republic, 2007.
    * 
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
+   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
    *
    * The processing times are constrained to be non-negative.
-   *
-   * The propagator performs overload checking, detectable precendence
-   * propagation, not-first-not-last propagation, and edge finding.
    *
    * Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
    * \a p, or \a m are of different size.
@@ -2970,6 +3023,8 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
         const IntVarArgs& e, const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
+
+
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *

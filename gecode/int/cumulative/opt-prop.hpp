@@ -41,24 +41,24 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
   
-  template<class OptTask, class Cap>
+  template<class OptTask, class PL, class Cap>
   forceinline
-  OptProp<OptTask,Cap>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
-    : TaskProp<OptTask,PC_INT_DOM>(home,t), c(c0) {
+  OptProp<OptTask,PL,Cap>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
+    : TaskProp<OptTask,PL>(home,t), c(c0) {
     c.subscribe(home,*this,PC_INT_BND);
   }
 
-  template<class OptTask, class Cap>
+  template<class OptTask, class PL, class Cap>
   forceinline
-  OptProp<OptTask,Cap>::OptProp(Space& home, bool shared,
-                                OptProp<OptTask,Cap>& p) 
-    : TaskProp<OptTask,PC_INT_DOM>(home,shared,p) {
+  OptProp<OptTask,PL,Cap>::OptProp(Space& home, bool shared,
+                                   OptProp<OptTask,PL,Cap>& p) 
+    : TaskProp<OptTask,PL>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
-  template<class OptTask, class Cap>
+  template<class OptTask, class PL, class Cap>
   forceinline ExecStatus 
-  OptProp<OptTask,Cap>::post(Home home, Cap c, TaskArray<OptTask>& t) {
+  OptProp<OptTask,PL,Cap>::post(Home home, Cap c, TaskArray<OptTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
     // Check for overload by single task and remove excluded tasks
@@ -84,44 +84,44 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_OK;
       }
     }
-    if (c.assigned() && c.val()==1) {
+    if (c.assigned() && (c.val() == 1)) {
       TaskArray<typename TaskTraits<OptTask>::UnaryTask> mt(home,t.size());
       for (int i=t.size(); i--; )
         mt[i]=t[i];
-      return Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask>
+      return Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>
         ::post(home,mt);
     }
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i]);
-      return ManProp<typename TaskTraits<OptTask>::ManTask,Cap>
+      return ManProp<typename TaskTraits<OptTask>::ManTask,PL,Cap>
         ::post(home,c,mt);
     }
-    (void) new (home) OptProp<OptTask,Cap>(home,c,t);
+    (void) new (home) OptProp<OptTask,PL,Cap>(home,c,t);
     return ES_OK;
   }
 
-  template<class OptTask, class Cap>
+  template<class OptTask, class PL, class Cap>
   Actor* 
-  OptProp<OptTask,Cap>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask,Cap>(home,share,*this);
+  OptProp<OptTask,PL,Cap>::copy(Space& home, bool share) {
+    return new (home) OptProp<OptTask,PL,Cap>(home,share,*this);
   }
 
-  template<class OptTask, class Cap>  
+  template<class OptTask, class PL, class Cap>  
   forceinline size_t 
-  OptProp<OptTask,Cap>::dispose(Space& home) {
-    (void) TaskProp<OptTask,PC_INT_DOM>::dispose(home);
+  OptProp<OptTask,PL,Cap>::dispose(Space& home) {
+    (void) TaskProp<OptTask,PL>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
 
-  template<class OptTask, class Cap>
+  template<class OptTask, class PL, class Cap>
   ExecStatus 
-  OptProp<OptTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
+  OptProp<OptTask,PL,Cap>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (BoolView::me(med) == ME_BOOL_VAL)
-      GECODE_ES_CHECK((purge<OptTask,PC_INT_DOM>(home,*this,t,c)));
+      GECODE_ES_CHECK((purge<OptTask,PL>(home,*this,t,c)));
     // Only bounds changes?
     if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
@@ -156,8 +156,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for (int i=t.size(); i--;)
         ut[i]=t[i];
       GECODE_REWRITE(*this,
-        (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask>
-          ::post(home(*this),ut)));
+                     (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>
+                      ::post(home(*this),ut)));
     } else {
       return ES_NOFIX;
     }

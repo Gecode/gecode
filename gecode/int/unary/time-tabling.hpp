@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Unary {
 
   template<class Task>
-  forceinline ExecStatus
+  ExecStatus
   timetabling(Space& home, Propagator& p, TaskArray<Task>& t) {
     Region r(home);
 

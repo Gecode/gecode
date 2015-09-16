@@ -751,7 +751,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class ManTask>
   ExecStatus overload(Space& home, TaskArray<ManTask>& t);
   /// Check optional tasks \a t for overload
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Perform time-tabling propagation
@@ -766,14 +766,14 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class ManTask>
   ExecStatus detectable(Space& home, TaskArray<ManTask>& t);
   /// Propagate detectable precedences
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus detectable(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate not-first and not-last
   template<class ManTask>
   ExecStatus notfirstnotlast(Space& home, TaskArray<ManTask>& t);
   /// Propagate not-first and not-last
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate by edge-finding
@@ -787,12 +787,10 @@ namespace Gecode { namespace Int { namespace Unary {
    * Requires \code #include <gecode/int/unary.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ManTask>
-  //  class ManProp : public TaskProp<ManTask,Int::PC_INT_BND> {
-  class ManProp : public TaskProp<ManTask,Int::PC_INT_DOM> {
+  template<class ManTask, class PL>
+  class ManProp : public TaskProp<ManTask,PL> {
   protected:
-    using TaskProp<ManTask,Int::PC_INT_DOM>::t;
-    //    using TaskProp<ManTask,Int::PC_INT_BND>::t;
+    using TaskProp<ManTask,PL>::t;
     /// Constructor for creation
     ManProp(Home home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
@@ -812,12 +810,10 @@ namespace Gecode { namespace Int { namespace Unary {
    * Requires \code #include <gecode/int/unary.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class OptTask>
-  //  class OptProp : public TaskProp<OptTask,Int::PC_INT_BND> {
-  class OptProp : public TaskProp<OptTask,Int::PC_INT_DOM> {
+  template<class OptTask, class PL>
+  class OptProp : public TaskProp<OptTask,PL> {
   protected:
-    //    using TaskProp<OptTask,Int::PC_INT_BND>::t;
-    using TaskProp<OptTask,Int::PC_INT_DOM>::t;
+    using TaskProp<OptTask,PL>::t;
     /// Constructor for creation
     OptProp(Home home, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
@@ -831,6 +827,16 @@ namespace Gecode { namespace Int { namespace Unary {
     static ExecStatus post(Home home, TaskArray<OptTask>& t);
   };
 
+  /// Post mandatory task propagator according to propagation level
+  template<class ManTask>
+  ExecStatus
+  manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl);
+
+  /// Post optional task propagator according to propagation level
+  template<class OptTask>
+  ExecStatus
+  optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
+
 }}}
 
 #include <gecode/int/unary/overload.hpp>
@@ -842,6 +848,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
 #include <gecode/int/unary/man-prop.hpp>
 #include <gecode/int/unary/opt-prop.hpp>
+#include <gecode/int/unary/post.hpp>
 
 #endif
 

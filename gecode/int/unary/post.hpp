@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,40 +35,38 @@
  *
  */
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Int { namespace Unary {
 
-  template<class OptTask, class PL>
-  ExecStatus
-  purge(Space& home, Propagator& p, TaskArray<OptTask>& t) {
-    int n=t.size();
-    for (int i=n; i--; )
-      if (t[i].excluded()) {
-        t[i].cancel(home,p,PL::pc); t[i]=t[--n];
-      }
-    t.size(n);
-
-    return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
-  }
-
-  template<class OptTask, class PL, class Cap>
-  ExecStatus
-  purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c) {
-    int n=t.size();
-    for (int i=n; i--; )
-      if (t[i].excluded()) {
-        t[i].cancel(home,p,PL::pc); t[i]=t[--n];
-      }
-    t.size(n);
-    if (t.size() == 1) {
-      if (t[0].mandatory())
-        GECODE_ME_CHECK(c.gq(home, t[0].c()));
-      else if (c.min() < t[0].c())
-        return ES_OK;
+  template<class ManTask>
+  forceinline ExecStatus
+  manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl) {
+    switch (ba(ipl)) {
+    case IPL_BASIC: default:
+      return ManProp<ManTask,PLB>::post(home,t);
+    case IPL_ADVANCED:
+      return ManProp<ManTask,PLA>::post(home,t);
+    case IPL_BASIC_ADVANCED:
+      return ManProp<ManTask,PLBA>::post(home,t);
     }
-
-    return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
+    GECODE_NEVER;
+    return ES_OK;
   }
-  
-}}
 
-// STATISTICS: int-prop
+  template<class OptTask>
+  forceinline ExecStatus
+  optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl) {
+    switch (ba(ipl)) {
+    case IPL_BASIC: default:
+      return OptProp<OptTask,PLB>::post(home,t);
+    case IPL_ADVANCED:
+      return OptProp<OptTask,PLA>::post(home,t);
+    case IPL_BASIC_ADVANCED:
+      return OptProp<OptTask,PLBA>::post(home,t);
+    }
+    GECODE_NEVER;
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-post

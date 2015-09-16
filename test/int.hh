@@ -318,7 +318,7 @@ namespace Test {
     };
     //@}
 
-    /// Iterator for integer propagation levels
+    /// Iterator for simple integer propagation levels
     class IntPropLevels {
     private:
       /// Array of propagation levels
@@ -328,6 +328,24 @@ namespace Test {
     public:
       /// Initialize iterator
       IntPropLevels(void);
+      /// Test whether iterator is done
+      bool operator()(void) const;
+      /// Increment to next level
+      void operator++(void);
+      /// Return current level
+      Gecode::IntPropLevel ipl(void) const;
+    };
+
+    /// Iterator for basic and advanced integer propagation levels
+    class IntPropBasicAdvanced {
+    private:
+      /// Array of propagation levels
+      static const Gecode::IntPropLevel ipls[3];
+      /// Current position in level array
+      int i;
+    public:
+      /// Initialize iterator
+      IntPropBasicAdvanced(void);
       /// Test whether iterator is done
       bool operator()(void) const;
       /// Increment to next level

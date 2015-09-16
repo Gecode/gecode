@@ -55,6 +55,7 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
   template<class TaskView>
+  forceinline
   OmegaTree<TaskView>::OmegaTree(Region& r, const TaskViewArray<TaskView>& t)
     : TaskTree<TaskView,OmegaNode>(r,t) {
     for (int i=tasks.size(); i--; ) {
@@ -102,7 +103,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
 
   /*
-   * Ome lambda tree
+   * Omega lambda tree
    */
 
   forceinline void
@@ -135,6 +136,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
 
   template<class TaskView>
+  forceinline
   OmegaLambdaTree<TaskView>::OmegaLambdaTree(Region& r, 
                                              const TaskViewArray<TaskView>& t,
                                              bool inc)

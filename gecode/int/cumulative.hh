@@ -697,10 +697,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ManTask, class Cap>
-  class ManProp : public TaskProp<ManTask,Int::PC_INT_DOM> {
+  template<class ManTask, class PL, class Cap>
+  class ManProp : public TaskProp<ManTask,PL> {
   protected:
-    using TaskProp<ManTask,Int::PC_INT_DOM>::t;
+    using TaskProp<ManTask,PL>::t;
     /// Resource capacity
     Cap c;
     /// Constructor for creation
@@ -724,10 +724,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class OptTask, class Cap>
-  class OptProp : public TaskProp<OptTask,Int::PC_INT_DOM> {
+  template<class OptTask, class PL, class Cap>
+  class OptProp : public TaskProp<OptTask,PL> {
   protected:
-    using TaskProp<OptTask,Int::PC_INT_DOM>::t;
+    using TaskProp<OptTask,PL>::t;
     /// Resource capacity
     Cap c;
     /// Constructor for creation

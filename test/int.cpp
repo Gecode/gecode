@@ -347,6 +347,9 @@ namespace Test { namespace Int {
   const Gecode::IntPropLevel IntPropLevels::ipls[] =
     {Gecode::IPL_DOM,Gecode::IPL_BND,Gecode::IPL_VAL};
 
+  const Gecode::IntPropLevel IntPropBasicAdvanced::ipls[] =
+    {Gecode::IPL_BASIC_ADVANCED,Gecode::IPL_ADVANCED,Gecode::IPL_BASIC};
+
   const Gecode::IntRelType IntRelTypes::irts[] =
     {Gecode::IRT_EQ,Gecode::IRT_NQ,Gecode::IRT_LQ,
      Gecode::IRT_LE,Gecode::IRT_GQ,Gecode::IRT_GR};

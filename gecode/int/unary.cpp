@@ -81,7 +81,7 @@ namespace Gecode {
       TaskArray<ManFixPTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i]);
-      GECODE_ES_FAIL(ManProp<ManFixPTask>::post(home,t));
+      GECODE_ES_FAIL(manpost(home,t,ipl));
     }
   }
 
@@ -112,7 +112,7 @@ namespace Gecode {
       TaskArray<ManFixPSETask> tasks(home,flex.size());
       for (int i=flex.size(); i--;)
         tasks[i].init(t[i],flex[i],fix[i]);
-      GECODE_ES_FAIL(ManProp<ManFixPSETask>::post(home,tasks));
+      GECODE_ES_FAIL(manpost(home,tasks,ipl));
     }
   }
 
@@ -144,7 +144,7 @@ namespace Gecode {
       TaskArray<OptFixPTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i],m[i]);
-      GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,t));
+      GECODE_ES_FAIL(optpost(home,t,ipl));
     }
   }
 
@@ -183,12 +183,12 @@ namespace Gecode {
         TaskArray<OptFixPTask> tasks(home,flex.size());
         for (int i=flex.size(); i--; )
           tasks[i].init(flex[i],fix[i],m[i]);
-        GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,tasks));
+        GECODE_ES_FAIL(optpost(home,tasks,ipl));
       } else {
         TaskArray<OptFixPSETask> tasks(home,flex.size());
         for (int i=flex.size(); i--;)
           tasks[i].init(t[i],flex[i],fix[i],m[i]);
-        GECODE_ES_FAIL(OptProp<OptFixPSETask>::post(home,tasks));
+        GECODE_ES_FAIL(optpost(home,tasks,ipl));
       }
     }
   }
@@ -220,7 +220,7 @@ namespace Gecode {
       TaskArray<ManFlexTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i],e[i]);
-      GECODE_ES_FAIL(ManProp<ManFlexTask>::post(home,t));
+      GECODE_ES_FAIL(manpost(home,t,ipl));
     }
   }
 
@@ -249,7 +249,7 @@ namespace Gecode {
       TaskArray<OptFlexTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i],e[i],m[i]);
-      GECODE_ES_FAIL(OptProp<OptFlexTask>::post(home,t));
+      GECODE_ES_FAIL(optpost(home,t,ipl));
     }
   }
 

@@ -218,10 +218,10 @@ namespace Test { namespace Int {
     case IPL_DOM: s << "Dom"; break;
     default: s << "Def"; break;
     }
-    if (ipl & IPL_SPEED) s << ",Speed";
-    if (ipl & IPL_MEMORY) s << ",Memory";
-    if (ipl & IPL_BASIC) s << ",Basic";
-    if (ipl & IPL_ADVANCED) s << ",Advanced";
+    if (ipl & IPL_SPEED) s << "+S";
+    if (ipl & IPL_MEMORY) s << "+M";
+    if (ipl & IPL_BASIC) s << "+B";
+    if (ipl & IPL_ADVANCED) s << "+A";
     return s.str();
   }
 
@@ -305,6 +305,23 @@ namespace Test { namespace Int {
   }
   inline Gecode::IntPropLevel
   IntPropLevels::ipl(void) const {
+    return ipls[i];
+  }
+
+
+  inline
+  IntPropBasicAdvanced::IntPropBasicAdvanced(void)
+    : i(sizeof(ipls)/sizeof(Gecode::IntPropLevel)-1) {}
+  inline bool
+  IntPropBasicAdvanced::operator()(void) const {
+    return i>=0;
+  }
+  inline void
+  IntPropBasicAdvanced::operator++(void) {
+    i--;
+  }
+  inline Gecode::IntPropLevel
+  IntPropBasicAdvanced::ipl(void) const {
     return ipls[i];
   }
 

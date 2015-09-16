@@ -378,7 +378,7 @@ INTHDR0 = \
 	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
 	unary/time-tabling.hpp unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/man-prop.hpp unary/opt-prop.hpp \
+	unary/man-prop.hpp unary/opt-prop.hpp unary/post.hpp \
 	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
 	cumulative/task-view.hpp cumulative/overload.hpp \
 	cumulative/time-tabling.hpp cumulative/task.hpp \
@@ -2004,7 +2004,8 @@ distdoc: doc
 
 clean:
 	$(RMF) *.stackdump core gmon.out \
-		vc70.pdb vc80.pdb vc90.pdb vc100.pdb vc110.pdb vc120.pdb
+		vc70.pdb vc80.pdb vc90.pdb vc100.pdb vc110.pdb \
+		vc120.pdb vc130.pdb vc140.pdb
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh \
 		 changelog.hh doxygen.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)

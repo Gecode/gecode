@@ -420,7 +420,7 @@ namespace Gecode { namespace Int {
    * Requires \code #include <gecode/int/task.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Task, PropCond pc>
+  template<class Task, class PL>
   class TaskProp : public Propagator {
   protected:
     /// Tasks
@@ -428,7 +428,7 @@ namespace Gecode { namespace Int {
     /// Constructor for creation
     TaskProp(Home home, TaskArray<Task>& t);
     /// Constructor for cloning \a p
-    TaskProp(Space& home, bool shared, TaskProp<Task,pc>& p);
+    TaskProp(Space& home, bool shared, TaskProp<Task,PL>& p);
   public:
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -437,12 +437,45 @@ namespace Gecode { namespace Int {
   };
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask,PropCond pc>
+  template<class OptTask, class PL>
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask,PropCond pc,class Cap>
+  template<class OptTask, class PL, class Cap>
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c);
+
+  /// Class for defining basic propagation level
+  class PLB {
+  public:
+    /// Perform basic propagation
+    static const bool basic = true;
+    /// Do not perform advanced propagation
+    static const bool advanced = false;
+    /// For basic propagation, domain operations are needed
+    static const PropCond pc = PC_INT_DOM;
+  };
+
+  /// Class for defining advanced propagation level
+  class PLA {
+  public:
+    /// Perform basic propagation
+    static const bool basic = false;
+    /// Do not perform advanced propagation
+    static const bool advanced = true;
+    /// For basic propagation, domain operations are needed
+    static const PropCond pc = PC_INT_BND;
+  };
+
+  /// Class for defining basic and advanced propagation level
+  class PLBA {
+  public:
+    /// Perform basic propagation
+    static const bool basic = true;
+    /// Do not perform advanced propagation
+    static const bool advanced = true;
+    /// For basic propagation, domain operations are needed
+    static const PropCond pc = PC_INT_DOM;
+  };
 
 }}
 
