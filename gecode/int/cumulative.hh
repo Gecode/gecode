@@ -697,7 +697,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ManTask, class PL, class Cap>
+  template<class ManTask, class Cap, class PL>
   class ManProp : public TaskProp<ManTask,PL> {
   protected:
     using TaskProp<ManTask,PL>::t;
@@ -724,7 +724,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class OptTask, class PL, class Cap>
+  template<class OptTask, class Cap, class PL>
   class OptProp : public TaskProp<OptTask,PL> {
   protected:
     using TaskProp<OptTask,PL>::t;
@@ -745,6 +745,16 @@ namespace Gecode { namespace Int { namespace Cumulative {
     virtual size_t dispose(Space& home);
   };
 
+  /// Post mandatory task propagator according to propagation level
+  template<class ManTask, class Cap>
+  ExecStatus
+  cmanpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl);
+
+  /// Post optional task propagator according to propagation level
+  template<class OptTask, class Cap>
+  ExecStatus
+  coptpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl);
+
 }}}
 
 #include <gecode/int/cumulative/time-tabling.hpp>
@@ -752,6 +762,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 #include <gecode/int/cumulative/edge-finding.hpp>
 #include <gecode/int/cumulative/man-prop.hpp>
 #include <gecode/int/cumulative/opt-prop.hpp>
+#include <gecode/int/cumulative/post.hpp>
 
 #endif
 

@@ -41,24 +41,24 @@
 
 namespace Gecode { namespace Int { namespace Cumulative {
   
-  template<class OptTask, class PL, class Cap>
+  template<class OptTask, class Cap, class PL>
   forceinline
-  OptProp<OptTask,PL,Cap>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
+  OptProp<OptTask,Cap,PL>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
     : TaskProp<OptTask,PL>(home,t), c(c0) {
     c.subscribe(home,*this,PC_INT_BND);
   }
 
-  template<class OptTask, class PL, class Cap>
+  template<class OptTask, class Cap, class PL>
   forceinline
-  OptProp<OptTask,PL,Cap>::OptProp(Space& home, bool shared,
-                                   OptProp<OptTask,PL,Cap>& p) 
+  OptProp<OptTask,Cap,PL>::OptProp(Space& home, bool shared,
+                                   OptProp<OptTask,Cap,PL>& p) 
     : TaskProp<OptTask,PL>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
-  template<class OptTask, class PL, class Cap>
+  template<class OptTask, class Cap, class PL>
   forceinline ExecStatus 
-  OptProp<OptTask,PL,Cap>::post(Home home, Cap c, TaskArray<OptTask>& t) {
+  OptProp<OptTask,Cap,PL>::post(Home home, Cap c, TaskArray<OptTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
     // Check for overload by single task and remove excluded tasks
@@ -95,30 +95,30 @@ namespace Gecode { namespace Int { namespace Cumulative {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i]);
-      return ManProp<typename TaskTraits<OptTask>::ManTask,PL,Cap>
+      return ManProp<typename TaskTraits<OptTask>::ManTask,Cap,PL>
         ::post(home,c,mt);
     }
-    (void) new (home) OptProp<OptTask,PL,Cap>(home,c,t);
+    (void) new (home) OptProp<OptTask,Cap,PL>(home,c,t);
     return ES_OK;
   }
 
-  template<class OptTask, class PL, class Cap>
+  template<class OptTask, class Cap, class PL>
   Actor* 
-  OptProp<OptTask,PL,Cap>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask,PL,Cap>(home,share,*this);
+  OptProp<OptTask,Cap,PL>::copy(Space& home, bool share) {
+    return new (home) OptProp<OptTask,Cap,PL>(home,share,*this);
   }
 
-  template<class OptTask, class PL, class Cap>  
+  template<class OptTask, class Cap, class PL>  
   forceinline size_t 
-  OptProp<OptTask,PL,Cap>::dispose(Space& home) {
+  OptProp<OptTask,Cap,PL>::dispose(Space& home) {
     (void) TaskProp<OptTask,PL>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
 
-  template<class OptTask, class PL, class Cap>
+  template<class OptTask, class Cap, class PL>
   ExecStatus 
-  OptProp<OptTask,PL,Cap>::propagate(Space& home, const ModEventDelta& med) {
+  OptProp<OptTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (BoolView::me(med) == ME_BOOL_VAL)
       GECODE_ES_CHECK((purge<OptTask,PL>(home,*this,t,c)));

@@ -382,7 +382,7 @@ INTHDR0 = \
 	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
 	cumulative/task-view.hpp cumulative/overload.hpp \
 	cumulative/time-tabling.hpp cumulative/task.hpp \
-	cumulative/edge-finding.hpp \
+	cumulative/edge-finding.hpp cumulative/post.hpp \
 	cumulative/tree.hpp cumulative/limits.hpp \
 	cumulatives.hh cumulatives/val.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
