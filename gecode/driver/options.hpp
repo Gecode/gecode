@@ -133,6 +133,18 @@ namespace Gecode {
       return cur;
     }
 
+    /*
+     * Integer propagation level option
+     *
+     */
+    inline void
+    IplOption::value(IntPropLevel ipl) {
+      cur = ipl;
+    }
+    inline IntPropLevel
+    IplOption::value(void) const {
+      return cur;
+    }
 
   }
   
@@ -196,7 +208,7 @@ namespace Gecode {
   }
   inline IntPropLevel
   Options::ipl(void) const {
-    return static_cast<IntPropLevel>(_ipl.value());
+    return _ipl.value();
   }
   
   inline void

@@ -227,6 +227,7 @@ namespace Gecode {
            << "\t\t" << exp << endl;
     }
 
+
     int
     BoolOption::parse(int argc, char* argv[]) {
       if ((argc < 2) || strcmp(argv[1],opt))
@@ -255,6 +256,70 @@ namespace Gecode {
       cerr << '\t' << opt << " (optional: false, 0, true, 1) default: " 
            << (cur ? "true" : "false") << endl 
            << "\t\t" << exp << endl;
+    }
+
+    /*
+     * Integer propagation level option
+     *
+     */
+    IplOption::IplOption(IntPropLevel ipl) 
+      : BaseOption("-ipl","integer propagation level (comma-separated list)"),
+        cur(ipl) {}
+
+    int
+    IplOption::parse(int argc, char* argv[]) {
+      if (char* a = argument(argc,argv)) {
+        int b = IPL_DEF;
+        int m = IPL_DEF;
+        do {
+          // Search for a comma
+          char* c = a;
+          while ((*c != ',') && (*c != 0))
+            c++;
+
+          if      (!strncmp("def",a,c-a))      { b = IPL_DEF; }
+          else if (!strncmp("val",a,c-a))      { b = IPL_VAL; }
+          else if (!strncmp("bnd",a,c-a))      { b = IPL_BND; }
+          else if (!strncmp("dom",a,c-a))      { b = IPL_DOM; }
+          else if (!strncmp("speed",a,c-a))    { m |= IPL_SPEED; }
+          else if (!strncmp("memory",a,c-a))   { m |= IPL_MEMORY; }
+          else if (!strncmp("basic",a,c-a))    { m |= IPL_BASIC; }
+          else if (!strncmp("advanced",a,c-a)) { m |= IPL_ADVANCED; }
+          else {
+            std::cerr << "Wrong argument \"" << a
+                      << "\" for option \"" << opt << "\""
+                      << std::endl;
+            exit(EXIT_FAILURE);
+          }
+
+          if (*c == ',') a = c+1; else a = c;
+          
+        } while (*a != 0);
+
+        cur = static_cast<IntPropLevel>(b | m);
+        return 2;
+      }
+      return 0;
+    }
+
+    void 
+    IplOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt 
+           << " (def,val,bnd,dom,speed,memory,basic,advanced)" << endl
+           << "\t\tdefault: ";
+      switch (vbd(cur)) {
+      case IPL_DEF: cerr << "def"; break;
+      case IPL_VAL: cerr << "val"; break;
+      case IPL_BND: cerr << "bnd"; break;
+      case IPL_DOM: cerr << "dom"; break;
+      default: GECODE_NEVER;
+      }
+      if (cur & IPL_SPEED)    cerr << ",speed";
+      if (cur & IPL_MEMORY)   cerr << ",memory";
+      if (cur & IPL_BASIC)    cerr << ",basic";
+      if (cur & IPL_ADVANCED) cerr << ",advanced";
+      cerr << endl << "\t\t" << exp << endl;
     }
 
   
@@ -362,7 +427,6 @@ namespace Gecode {
       _model("-model","model variants"),
       _symmetry("-symmetry","symmetry variants"),
       _propagation("-propagation","propagation variants"),
-      _ipl("-ipl","integer propagation level",IPL_DEF),
       _branching("-branching","branching variants"),
       _decay("-decay","decay factor",1.0),
       _seed("-seed","random number generator seed",1U),
@@ -397,9 +461,6 @@ namespace Gecode {
       _log_file("-file-stat", "where to print statistics "
                 "(supports stdout, stdlog, stderr)","stdout")
   {
-    
-    _ipl.add(IPL_DEF, "def"); _ipl.add(IPL_VAL, "val");
-    _ipl.add(IPL_BND, "bnd"); _ipl.add(IPL_DOM, "dom");
     
     _mode.add(SM_SOLUTION, "solution");
     _mode.add(SM_TIME, "time");

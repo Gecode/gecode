@@ -282,6 +282,26 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Integer propagation level option
+     *
+     */
+    class GECODE_DRIVER_EXPORT IplOption : public BaseOption {
+    protected:
+      IntPropLevel cur; ///< Current value
+    public:
+      /// Initialize with default value \a ipl
+      IplOption(IntPropLevel ipl=IPL_DEF);
+      /// Set default level to \a l
+      void value(IntPropLevel l);
+      /// Return current option value
+      IntPropLevel value(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
   }
   
   /**
@@ -330,7 +350,7 @@ namespace Gecode {
     Driver::StringOption      _model;       ///< General model options
     Driver::StringOption      _symmetry;    ///< General symmetry options
     Driver::StringOption      _propagation; ///< Propagation options
-    Driver::StringOption      _ipl;         ///< Integer propagation level
+    Driver::IplOption         _ipl;         ///< Integer propagation level
     Driver::StringOption      _branching;   ///< Branching options
     Driver::DoubleOption      _decay;       ///< Decay option
     Driver::UnsignedIntOption _seed;        ///< Seed option
