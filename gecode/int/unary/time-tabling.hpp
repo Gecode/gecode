@@ -57,35 +57,35 @@ namespace Gecode { namespace Int { namespace Unary {
         int time = e->time();
         
         // Process events for completion of required part
-        for ( ; (e->time() == time) && (e->type() == Event::LRT); e++)
+        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++)
           if (t[e->idx()].mandatory()) {
             tasks.set(static_cast<unsigned int>(e->idx())); 
             free = true;
           }
         
         // Process events for completion of task
-        for ( ; (e->time() == time) && (e->type() == Event::LCT); e++)
+        for ( ; (e->type() == Event::LCT) && (e->time() == time); e++)
           tasks.clear(static_cast<unsigned int>(e->idx()));
         
         // Process events for start of task
-        for ( ; (e->time() == time) && (e->type() == Event::EST); e++)
+        for ( ; (e->type() == Event::EST) && (e->time() == time); e++)
           tasks.set(static_cast<unsigned int>(e->idx()));
         
         // Process events for zero-length task
-        for ( ; (e->time() == time) && (e->type() == Event::ZRO); e++)
+        for ( ; (e->type() == Event::ZRO) && (e->time() == time); e++)
           if (!free)
             return ES_FAILED;
         
-        // norun start time for 0-length tasks
-        int zltime = time;
+        // Norun start time
+        int nrstime = time;
         // Process events for start of required part
-        for ( ; (e->time() == time) && (e->type() == Event::ERT); e++)
+        for ( ; (e->type() == Event::ERT) && (e->time() == time); e++)
           if (t[e->idx()].mandatory()) {
             tasks.clear(static_cast<unsigned int>(e->idx())); 
             if (!free)
               return ES_FAILED;
             free = false;
-            zltime = time+1;
+            nrstime = time+1;
           } else if (t[e->idx()].optional() && !free) {
             GECODE_ME_CHECK(t[e->idx()].excluded(home));
           }
@@ -94,19 +94,15 @@ namespace Gecode { namespace Int { namespace Unary {
           for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
                j(); ++j) 
             // Task j cannot run from time to next time - 1
-            if (t[j.val()].mandatory()) {
-              if (t[j.val()].pmin() > 0) {
-                GECODE_ME_CHECK(t[j.val()].norun(home, time, e->time() - 1));
-              } else {
-                GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->time() - 1));
-              }
-            }
+            if (t[j.val()].mandatory())
+              GECODE_ME_CHECK(t[j.val()].norun(home, nrstime, e->time() - 1));
         
       } while (e->type() != Event::END);
     }
 
     if (assigned)
       return home.ES_SUBSUMED(p);
+
     return ES_NOFIX;
   }
 

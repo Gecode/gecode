@@ -78,19 +78,19 @@ namespace Gecode { namespace Int { namespace Cumulative {
         int time = e->time();
         
         // Process events for completion of required part
-        for ( ; (e->time() == time) && (e->type() == Event::LRT); e++) 
+        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++) 
           if (t[e->idx()].mandatory()) {
             tasks.set(static_cast<unsigned int>(e->idx()));
             ccur += t[e->idx()].c();
           }
         // Process events for completion of task
-        for ( ; (e->time() == time) && (e->type() == Event::LCT); e++)
+        for ( ; (e->type() == Event::LCT) && (e->time() == time); e++)
           tasks.clear(static_cast<unsigned int>(e->idx()));
         // Process events for start of task
-        for ( ; (e->time() == time) && (e->type() == Event::EST); e++)
+        for ( ; (e->type() == Event::EST) && (e->time() == time); e++)
           tasks.set(static_cast<unsigned int>(e->idx()));
         // Process events for zero-length task
-        for ( ; (e->time() == time) && (e->type() == Event::ZRO); e++) {
+        for ( ; (e->type() == Event::ZRO) && (e->time() == time); e++) {
           ccur -= t[e->idx()].c();
           if (ccur < cmin) cmin=ccur;
           if (ccur < 0)
@@ -98,15 +98,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
           ccur += t[e->idx()].c();
         }
 
-        // norun start time for 0-length tasks
-        int zltime = time;
+        // norun start time
+        int nrstime = time;
         // Process events for start of required part
-        for ( ; (e->time() == time) && (e->type() == Event::ERT); e++) 
+        for ( ; (e->type() == Event::ERT) && (e->time() == time); e++) 
           if (t[e->idx()].mandatory()) {
             tasks.clear(static_cast<unsigned int>(e->idx())); 
             ccur -= t[e->idx()].c();
             if (ccur < cmin) cmin=ccur;
-            zltime = time+1;
+            nrstime = time+1;
             if (ccur < 0)
               return ES_FAILED;
           } else if (t[e->idx()].optional() && (t[e->idx()].c() > ccur)) {
@@ -116,14 +116,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         // Exploit that tasks are sorted according to capacity
         for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
              j() && (t[j.val()].c() > ccur); ++j) 
-          // Task j cannot run from time to next time - 1
-          if (t[j.val()].mandatory()) {
-            if (t[j.val()].pmin() > 0) {
-              GECODE_ME_CHECK(t[j.val()].norun(home, time, e->time() - 1));
-            } else {
-              GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->time() - 1));
-            }
-          }
+          // Task j cannot run from zltime to next time - 1
+          if (t[j.val()].mandatory())
+            GECODE_ME_CHECK(t[j.val()].norun(home, nrstime, e->time() - 1));
       } while (e->type() != Event::END);
 
       GECODE_ME_CHECK(c.gq(home,cmax-cmin));
