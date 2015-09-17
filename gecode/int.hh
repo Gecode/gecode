@@ -3041,8 +3041,16 @@ namespace Gecode {
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    end time.
    *
-   * The propagator performs time-tabling, overload checking, and 
-   * edge-finding. It uses algorithms taken from:
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
+   * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
@@ -3092,8 +3100,16 @@ namespace Gecode {
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    end time.
    *
-   * The propagator performs time-tabling, overload checking, and 
-   * edge-finding. It uses algorithms taken from:
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
+   * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
@@ -3129,8 +3145,16 @@ namespace Gecode {
    * Schedule tasks with start times \a s, processing times \a p, and
    * use capacity \a u on a cumulative resource with capacity \a c.
    *
-   * The propagator performs time-tabling, overload checking, and 
-   * edge-finding. It uses algorithms taken from:
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
+   * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
@@ -3166,8 +3190,16 @@ namespace Gecode {
    * mandatory if the Boolean variable is 1) on a cumulative resource 
    * with capacity \a c.
    * 
-   * The propagator performs time-tabling, overload checking, and 
-   * edge-finding. It uses algorithms taken from:
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
+   * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
@@ -3205,8 +3237,16 @@ namespace Gecode {
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
    *
-   * The propagator performs time-tabling, overload checking, and 
-   * edge-finding. It uses algorithms taken from:
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
+   * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
@@ -3246,8 +3286,16 @@ namespace Gecode {
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
    *
-   * The propagator performs time-tabling, overload checking, and 
-   * edge-finding. It uses algorithms taken from:
+   * The propagator performs propagation that depends on the integer
+   * propagation level \a ipl as follows:
+   *  - If \a IPL_BASIC is set, the propagator performs overload checking
+   *    and time-tabling propagation.
+   *  - If \a IPL_ADVANCED is set, the propagator performs overload checking
+   *    and edge finding.
+   *  - If both flags are combined, all the above listed propagation is
+   *    performed.
+   *
+   * The propagator uses algorithms taken from:
    *
    * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
    * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
