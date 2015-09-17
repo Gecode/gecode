@@ -514,6 +514,9 @@ namespace Gecode { namespace Int {
     /// Allocate from \a r and initialize event array with tasks \a t
     template<class Task>
     static Event* events(Region& r, const TaskArray<Task>& t, bool& assigned);
+    /// Allocate from \a r and initialize event array with assigned tasks \a t only
+    template<class Task>
+    static Event* events(Region& r, const TaskArray<Task>& t);
   };
 
   /// Print event \a e on stream \a os

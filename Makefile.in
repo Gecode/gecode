@@ -384,6 +384,7 @@ INTHDR0 = \
 	cumulative/time-tabling.hpp cumulative/task.hpp \
 	cumulative/edge-finding.hpp cumulative/post.hpp \
 	cumulative/tree.hpp cumulative/limits.hpp \
+	cumulative/subsumption.hpp \
 	cumulatives.hh cumulatives/val.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \

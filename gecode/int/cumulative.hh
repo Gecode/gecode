@@ -678,6 +678,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
+  /// Check for subsumption (all tasks must be assigned)
+  template<class Task>
+  ExecStatus
+  subsumed(Space& home, Propagator& p, int c, TaskArray<Task>& t);
+
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
@@ -758,6 +763,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 }}}
 
 #include <gecode/int/cumulative/time-tabling.hpp>
+#include <gecode/int/cumulative/subsumption.hpp>
 #include <gecode/int/cumulative/overload.hpp>
 #include <gecode/int/cumulative/edge-finding.hpp>
 #include <gecode/int/cumulative/man-prop.hpp>

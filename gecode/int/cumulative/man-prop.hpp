@@ -100,8 +100,11 @@ namespace Gecode { namespace Int { namespace Cumulative {
     if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
 
-    GECODE_ES_CHECK(edgefinding(home,c.max(),t));
-    GECODE_ES_CHECK(timetabling(home,*this,c,t));
+    if (PL::advanced)
+      GECODE_ES_CHECK(edgefinding(home,c.max(),t));
+
+    if (PL::basic)
+      GECODE_ES_CHECK(timetabling(home,*this,c,t));
 
     if (Cap::varderived() && c.assigned() && (c.val() == 1)) {
       // Check that tasks do not overload resource
@@ -115,9 +118,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
       GECODE_REWRITE(*this,
         (Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask,PL>
           ::post(home(*this),ut)));
-    } else {
-      return ES_NOFIX;
     }
+
+    if (!PL::basic && c.assigned())
+      GECODE_ES_CHECK(subsumed(home,*this,c.val(),t));
+
+    return ES_NOFIX;
   }
 
 }}}

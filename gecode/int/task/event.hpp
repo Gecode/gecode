@@ -127,6 +127,35 @@ namespace Gecode { namespace Int {
     return e;
   }
 
+  template<class Task>
+  forceinline Event* 
+  Event::events(Region& r, const TaskArray<Task>& t) {
+    Event* e = r.alloc<Event>(2*t.size()+1);
+    
+    // Only add assigned and mandatory tasks
+    int n=0;
+    for (int i=t.size(); i--; )
+      if (t[i].assigned() && t[i].mandatory()) {
+        if (t[i].pmin() > 0) {
+          e[n++].init(Event::ERT,t[i].lst(),i);
+          e[n++].init(Event::LRT,t[i].ect(),i);
+        } else if (t[i].pmax() == 0) {
+          e[n++].init(Event::ZRO,t[i].lst(),i);
+        }
+      } else {
+        assert(!t[i].excluded());
+        return NULL;
+      }
+    
+    // Write end marker
+    e[n++].init(Event::END,Limits::infinity,-1);
+    
+    // Sort events
+    Support::quicksort(e, n);
+    
+    return e;
+  }
+
 }}
 
 // STATISTICS: int-prop

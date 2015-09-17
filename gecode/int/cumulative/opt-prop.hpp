@@ -122,28 +122,32 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // Did one of the Boolean views change?
     if (BoolView::me(med) == ME_BOOL_VAL)
       GECODE_ES_CHECK((purge<OptTask,PL>(home,*this,t,c)));
+
     // Only bounds changes?
     if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
 
-    GECODE_ES_CHECK(timetabling(home,*this,c,t));
+    if (PL::basic)
+      GECODE_ES_CHECK(timetabling(home,*this,c,t));
 
-    // Partition into mandatory and optional activities
-    int n = t.size();
-    int i=0, j=n-1;
-    while (true) {
-      while ((i < n) && t[i].mandatory()) i++;
-      while ((j >= 0) && !t[j].mandatory()) j--;
-      if (i >= j) break;
-      std::swap(t[i],t[j]);
-    }
-
-    if (i > 1) {
-      // Truncate array to only contain mandatory tasks
-      t.size(i);
-      GECODE_ES_CHECK(edgefinding(home,c.max(),t));
-      // Restore to also include optional tasks
-      t.size(n);
+    if (PL::advanced) {
+      // Partition into mandatory and optional activities
+      int n = t.size();
+      int i=0, j=n-1;
+      while (true) {
+        while ((i < n) && t[i].mandatory()) i++;
+        while ((j >= 0) && !t[j].mandatory()) j--;
+        if (i >= j) break;
+        std::swap(t[i],t[j]);
+      }
+      
+      if (i > 1) {
+        // Truncate array to only contain mandatory tasks
+        t.size(i);
+        GECODE_ES_CHECK(edgefinding(home,c.max(),t));
+        // Restore to also include optional tasks
+        t.size(n);
+      }
     }
 
     if (Cap::varderived() && c.assigned() && c.val()==1) {
@@ -158,9 +162,12 @@ namespace Gecode { namespace Int { namespace Cumulative {
       GECODE_REWRITE(*this,
                      (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>
                       ::post(home(*this),ut)));
-    } else {
-      return ES_NOFIX;
     }
+
+    if (!PL::basic && c.assigned())
+      GECODE_ES_CHECK(subsumed(home,*this,c.val(),t));
+
+    return ES_NOFIX;
   }
 
 }}}
