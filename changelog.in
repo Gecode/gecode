@@ -74,6 +74,62 @@ Gaga
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+The unary constraint now can also perform time-tabling propagation.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+The level of propagation of the cumulative constraint can now be
+controlled via the integer propagation level argument. Please
+consult Modeling and Programming with Gecode for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+The level of propagation of the unary constraint can now be
+controlled via the integer propagation level argument. Please
+consult Modeling and Programming with Gecode for details.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The selection for extensional table constraints whether to
+optimize for speed or memory is now controlled by the integer
+propagation level argument. The old argument of type
+ExtensionalPropKind has been removed (the type has been removed
+as well).
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   major
+[DESCRIPTION]
+The commandline option -icl (for integer consistency level) has
+been replaced by -ipl (for integer propagation level). All new
+levels can be specified by a comma separated list as argument to
+-ipl.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+The integer consistency level (IntConLevel) has been renamed to
+integer propagation level (IntPropLevel). Additional levels for
+speed, memory, basic, and advanced propagation have been added.
+See Modeling and Programming with Gecode for details.
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   major
 Thanks:	Kish Shen
