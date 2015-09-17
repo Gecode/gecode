@@ -436,7 +436,7 @@ What:   bug
 Rank:   minor
 Thanks: Björn Böttcher
 [DESCRIPTION]
-Fix behaviour of -a command line option for satisfaction problems.
+Fix behavior of -a command line option for satisfaction problems.
 
 [ENTRY]
 Module: flatzinc
@@ -475,7 +475,7 @@ Module: test
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added long-overdues tests for the FlatZinc interpreter.
+Added long-overdue tests for the FlatZinc interpreter.
 
 [ENTRY]
 Module: other
