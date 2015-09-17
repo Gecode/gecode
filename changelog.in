@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+Thanks: Joseph Scott
+[DESCRIPTION]
+Missing = SUBSCRIBE annotations for modification events are
+properly reported.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

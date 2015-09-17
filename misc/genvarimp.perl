@@ -187,7 +187,7 @@ for ($f=0; $f<$n_files; $f++) {
 	      $me_assigned[$f] = "ME_$vti[$f]_$lhs";
 	    } elsif ($rhs eq "FAILED") {
 	      $me_failed[$f] = "ME_$vti[$f]_$lhs";
-	    } els
+	    }
 	  }
 	  $n = $lhs;
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
@@ -286,6 +286,10 @@ for ($f=0; $f<$n_files; $f++) {
   ## Check whether there is only one real event
   if ($me_n[$f] == 3) {
     $me_subscribe[$f] = $me_assigned[$f];
+  }
+
+  if (!$me_subscribe[$f]) {
+    die "Missing special event specification = SUBSCRIBE";
   }
 
   $o = 2;
