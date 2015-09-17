@@ -497,9 +497,10 @@ namespace Gecode { namespace Int {
       END = 5  ///< End marker
     };
   protected:
-    Type e; ///< Type of event
-    int t;  ///< Time of event
-    int i;  ///< Number of task
+    /// Combines type and number of task
+    unsigned int ei;
+    /// Time of event
+    int t;
   public:
     /// Initialize event
     void init(Type e, int t, int i);

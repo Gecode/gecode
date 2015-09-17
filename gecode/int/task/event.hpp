@@ -39,12 +39,12 @@ namespace Gecode { namespace Int {
 
   forceinline void
   Event::init(Event::Type e0, int t0, int i0) {
-    e=e0; t=t0; i=i0;
+    ei=static_cast<unsigned int>(e0 | (i0 << 3)); t=t0;
   }
 
   forceinline Event::Type
   Event::type(void) const {
-    return e;
+    return static_cast<Type>(ei & 7);
   }
   forceinline int
   Event::time(void) const {
@@ -52,14 +52,14 @@ namespace Gecode { namespace Int {
   }
   forceinline int
   Event::idx(void) const {
-    return i;
+    return static_cast<int>(ei >> 3);;
   }
 
   forceinline bool
   Event::operator <(const Event& e) const {
-    if (this->t == e.t)
-      return this->e < e.e;
-    return this->t < e.t;
+    if (time() == e.time())
+      return type() < e.type();
+    return time() < e.time();
   }
 
 

@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
 
       // Process events, use ccur as the capacity that is still free
-      while (e->type() != Event::END) {
+      do {
         // Current time
         int time = e->time();
         
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
               GECODE_ME_CHECK(t[j.val()].norun(home, zltime, e->time() - 1));
             }
           }
-      }
+      } while (e->type() != Event::END);
 
       GECODE_ME_CHECK(c.gq(home,cmax-cmin));
     }

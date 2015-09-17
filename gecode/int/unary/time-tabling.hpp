@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Unary {
       Support::BitSet<Region> tasks(r,static_cast<unsigned int>(t.size()));
       
       // Process events
-      while (e->type() != Event::END) {
+      do {
         // Current time
         int time = e->time();
         
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int { namespace Unary {
               }
             }
         
-      }
+      } while (e->type() != Event::END);
     }
 
     if (assigned)
