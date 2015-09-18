@@ -2043,7 +2043,7 @@ distclean: veryclean
 	$(RMF) config.log config.status Makefile.dep
 
 depend: mkcompiledirs
-	@$(MAKE) $(VARIMP)
+	@$(MAKE) $(VARIMP) gecode/flatzinc/parser.tab.hh
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
