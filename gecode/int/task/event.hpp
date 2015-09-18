@@ -118,12 +118,12 @@ namespace Gecode { namespace Int {
     if (!required)
       return NULL;
     
-    // Write end marker
-    e[n++].init(Event::END,Limits::infinity,-1);
-    
     // Sort events
     Support::quicksort(e, n);
-    
+
+    // Write end marker
+    e[n++].init(Event::END,Limits::infinity,0);
+        
     return e;
   }
 
@@ -147,11 +147,11 @@ namespace Gecode { namespace Int {
         return NULL;
       }
     
-    // Write end marker
-    e[n++].init(Event::END,Limits::infinity,-1);
-    
     // Sort events
     Support::quicksort(e, n);
+    
+    // Write end marker
+    e[n++].init(Event::END,Limits::infinity,0);
     
     return e;
   }

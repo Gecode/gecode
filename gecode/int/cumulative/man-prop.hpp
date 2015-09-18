@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class ManTask, class Cap, class PL>
-  forceinline ExecStatus 
+  ExecStatus 
   ManProp<ManTask,Cap,PL>::post(Home home, Cap c, TaskArray<ManTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));

@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Unary {
     : TaskProp<OptTask,PL>(home,shared,p) {}
 
   template<class OptTask, class PL>
-  forceinline ExecStatus 
+  ExecStatus 
   OptProp<OptTask,PL>::post(Home home, TaskArray<OptTask>& t) {
     int m=0, o=0;
     for (int i=t.size(); i--; ) {

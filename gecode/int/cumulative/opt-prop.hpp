@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class OptTask, class Cap, class PL>
-  forceinline ExecStatus 
+  ExecStatus 
   OptProp<OptTask,Cap,PL>::post(Home home, Cap c, TaskArray<OptTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
