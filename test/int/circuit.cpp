@@ -57,7 +57,7 @@ namespace Test { namespace Int {
        /// Create and register test
        Circuit(int n, int min, int max, int off, Gecode::IntPropLevel ipl)
          : Test("Circuit::" + str(ipl) + "::" + str(n) + "::" + str(off),
-                   n,min,max,false,ipl), offset(off) {
+                n,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
        }
        /// Check whether \a x is solution

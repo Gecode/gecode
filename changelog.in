@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added some additional propagation to circuit and path
+constraints, based on: Kathryn Glenn Francis, Peter Stuckey,
+Explaining Circuit Propagation, Constraints (2014) 19:1-29.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

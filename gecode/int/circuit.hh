@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     Base(Home home, ViewArray<View>& x, Offset& o);
     /// Check whether the view value graph is strongly connected
     ExecStatus connected(Space& home);
-    /// Ensure path property: prune edges that could give to small cycles
+    /// Ensure path property: prune edges that could give too small cycles
     ExecStatus path(Space& home);
   public:
     /// Delete propagator and return its size
