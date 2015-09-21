@@ -40,14 +40,15 @@ namespace Gecode { namespace Int { namespace Circuit {
   template<class View, class Offset>
   forceinline
   Base<View,Offset>::Base(Home home, ViewArray<View>& x, Offset& o0)
-    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x), o(o0) {
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), 
+      start(0), y(home,x), o(o0) {
     home.notice(*this,AP_WEAKLY);
   }
 
   template<class View, class Offset>
   forceinline
   Base<View,Offset>::Base(Space& home, bool share, Base<View,Offset>& p)
-    : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p) {
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p), start(p.start) {
     o.update(p.o);
     y.update(home,share,p.y);
   }
@@ -72,18 +73,19 @@ namespace Gecode { namespace Int { namespace Circuit {
   Base<View,Offset>::connected(Space& home) {
     int n = x.size();
 
-    /// First non-assigned node
-    int start = 0;
+    /// First non-assigned node reachable from start
     {
-      /// Number of nodes not visited
+      int v = start;
+      /// Number of nodes not yet visited
       int m = n;
-      while (x[start].assigned()) {
+      while (x[v].assigned()) {
         m--;
-        start = o(x[start]).val();
+        v = o(x[v]).val();
         // Reached start node again, check whether all nodes have been visited
-        if (start == 0)
+        if (start == v)
           return (m == 0) ? home.ES_SUBSUMED(*this) : ES_FAILED;
       }
+      start = v;
     }
 
     /// Information needed for checking scc's
@@ -225,6 +227,9 @@ namespace Gecode { namespace Int { namespace Circuit {
         if (me_modified(me))
           es = ES_NOFIX;
       }
+
+      // Move start to different node for next run
+      start = x[start].min();
 
       return es;
     }

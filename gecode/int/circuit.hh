@@ -59,6 +59,8 @@ namespace Gecode { namespace Int { namespace Circuit {
   class Base : public NaryPropagator<View,Int::PC_INT_DOM> {
   protected:
     using NaryPropagator<View,Int::PC_INT_DOM>::x;
+    /// Remember where to start the next time the propagator runs
+    int start;
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
     /// Offset transformation
