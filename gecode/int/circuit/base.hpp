@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       }
 
       // Move start to different node for next run
-      start = x[start].min();
+      start = o(x[start]).min();
 
       return es;
     }
