@@ -40,6 +40,10 @@
 namespace Gecode { namespace Search {
 
   void
+  Engine::constrain(const Space& b) {
+    (void) b;
+  }
+  void
   Engine::reset(Space* s) {
     (void) s;
   }

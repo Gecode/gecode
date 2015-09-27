@@ -41,10 +41,9 @@
 
 namespace Gecode {
 
-  using namespace Int;
-
   void
   distinct(Home home, const IntVarArgs& x, IntPropLevel ipl) {
+    using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (home.failed()) return;
@@ -64,6 +63,7 @@ namespace Gecode {
   void
   distinct(Home home, const IntArgs& c, const IntVarArgs& x,
            IntPropLevel ipl) {
+    using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
     if (c.size() != x.size())

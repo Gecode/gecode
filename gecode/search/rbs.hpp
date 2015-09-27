@@ -63,14 +63,10 @@ namespace Gecode {
       else
         master = s;
       slave = master->clone();
-      CRI cri(0,0,0,NULL,NoGoods::eng);
-      slave->slave(cri);
+      MetaInfo mi(0,0,0,NULL,NoGoods::eng);
+      slave->slave(mi);
     }
-    E<T> engine(dynamic_cast<T*>(slave),e_opt);
-    Search::EngineBase<T>* eb = &engine;
-    Search::Engine* ee = eb->e;
-    eb->e = NULL;
-    e = new Search::Meta::RBS(master,rs,ee,m_opt);
+    e = new Search::Meta::RBS(master,rs,Search::build<E,T>(slave,e_opt),m_opt);
   }
 
 

@@ -54,6 +54,24 @@ namespace Gecode { namespace Search { namespace Parallel {
     return s;
   }
 
+  void 
+  BAB::constrain(const Space& b) {
+    m_search.acquire();
+    if (best != NULL) {
+      best->constrain(b);
+      if (best->status() != SS_FAILED) {
+        m_search.release();
+        return;
+      }
+      delete best;
+    }
+    best = b.clone();
+    // Announce better solutions
+    for (unsigned int i=0; i<workers(); i++)
+      worker(i)->better(best);
+    m_search.release();
+  }
+
   /*
    * Actual work
    */

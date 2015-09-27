@@ -39,14 +39,6 @@ namespace Gecode { namespace Search {
 
   forceinline
   Engine::~Engine(void) {}
-  forceinline void*
-  Engine::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  Engine::operator delete(void* p) {
-    heap.rfree(p);
-  }
 
 }}
 

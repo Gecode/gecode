@@ -241,16 +241,17 @@ namespace Test {
           o.stop = &ns;
           o.threads = t;
           o.nogoods_limit = 256U;
-          DFS<Model> e(m,o);
+          Search::Engine* e = Search::dfs(m,o);
           while (true) {
-            Model* s = e.next();
+            Model* s = static_cast<Model*>(e->next());
             delete s;
-            if (!e.stopped())
+            if (!e->stopped())
               break;
             // Add no-goods
-            e.nogoods().post(*m);
+            e->nogoods().post(*m);
             ns.limit(ns.limit()+Model::nodeinc());
           }
+          delete e;
         }
         // Compare whether the a or the same solution is found with no-goods
         Model* s_nogoods = dfs(m);

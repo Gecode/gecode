@@ -39,17 +39,19 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Search {
 
-  namespace Search {
-    /// Create branch and bound engine
-    GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
-  }
+  /// Create branch and bound engine
+  GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
+  
+}}
+
+namespace Gecode {
 
   template<class T>
   forceinline
   BAB<T>::BAB(T* s, const Search::Options& o)
-    : Search::EngineBase<T>(Search::bab(s,o)) {}
+    : Search::Base<T>(Search::bab(s,o)) {}
 
   template<class T>
   T*

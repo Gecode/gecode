@@ -333,6 +333,24 @@ namespace Gecode {
   }
 
   inline void
+  Options::assets(unsigned int n) {
+    _assets.value(n);
+  }
+  inline unsigned int
+  Options::assets(void) const {
+    return _assets.value();
+  }
+
+  inline void
+  Options::slice(unsigned int n) {
+    _slice.value(n);
+  }
+  inline unsigned int
+  Options::slice(void) const {
+    return _slice.value();
+  }
+
+  inline void
   Options::restart(RestartMode rm) {
     _restart.value(rm);
   }

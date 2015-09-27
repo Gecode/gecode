@@ -97,11 +97,6 @@ namespace Gecode { namespace Search { namespace Parallel {
     return NULL;
   }
 
-  bool 
-  Engine::stopped(void) const {
-    return has_stopped;
-  }
-
   /*
    * Termination and deletion
    */

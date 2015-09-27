@@ -43,43 +43,40 @@ namespace Gecode { namespace Search {
 
   template<class T>
   forceinline
-  EngineBase<T>::EngineBase(Engine* e0) 
+  Base<T>::Base(Engine* e0) 
     : e(e0) {}
   template<class T>
   forceinline T*
-  EngineBase<T>::next(void) {
+  Base<T>::next(void) {
     return dynamic_cast<T*>(e->next());
   }
   template<class T>
   forceinline Statistics
-  EngineBase<T>::statistics(void) const {
+  Base<T>::statistics(void) const {
     return e->statistics();
   }
   template<class T>
   forceinline bool
-  EngineBase<T>::stopped(void) const {
+  Base<T>::stopped(void) const {
     return e->stopped();
   }
   template<class T>
-  forceinline NoGoods&
-  EngineBase<T>::nogoods(void) {
-    return e->nogoods();
-  }
-  template<class T>
   forceinline
-  EngineBase<T>::~EngineBase(void) { 
+  Base<T>::~Base(void) { 
     delete e; 
   }
-  template<class T>
-  forceinline void*
-  EngineBase<T>::operator new(size_t s) {
-    return heap.ralloc(s);
+
+
+  template<template<class> class E, class T>
+  forceinline Engine* 
+  build(Space* s, const Options& opt) {
+    E<T> engine(dynamic_cast<T*>(s),opt);
+    Base<T>* eb = &engine;
+    Engine* e = eb->e;
+    eb->e = NULL;
+    return e;
   }
-  template<class T>
-  forceinline void
-  EngineBase<T>::operator delete(void* p) {
-    heap.rfree(p);
-  }
+
 
 }}
 

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,44 +35,24 @@
  *
  */
 
-#include <gecode/support.hh>
+namespace Gecode { namespace Search { namespace Meta {
 
-namespace Gecode { namespace Support {
+  /// A dead engine (failed root)
+  class GECODE_SEARCH_EXPORT Dead : public Engine {
+  protected:
+    /// Statistics
+    Statistics stat;
+  public:
+    /// Initialize
+    Dead(const Statistics& stat0);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+  };
 
-  /*
-   * Threads
-   */
-  
-  Mutex* Thread::m(void) {
-    static Mutex* m = new Mutex;
-    return m;
-  }
-  
-  Thread::Run* Thread::idle = NULL;
+}}}
 
-  void
-  Thread::Run::exec(void) {
-    while (true) {
-      // Execute runnable
-      {
-        Runnable* e;
-        m.acquire();
-        e=r; r=NULL;
-        m.release();
-        assert(e != NULL);
-        e->run();
-        if (e->todelete())
-          delete e;
-      }
-      // Put into idle stack
-      Thread::m()->acquire();
-      n=Thread::idle; Thread::idle=this;
-      Thread::m()->release();
-      // Wait for next runnable
-      e.wait();
-    }
-  }
-
-}}
-
-// STATISTICS: support-any
+// STATISTICS: search-meta

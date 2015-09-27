@@ -85,7 +85,7 @@ namespace Gecode {
      *
      * \ingroup FuncSupportShared
      */
-    class Object {
+    class Object : public HeapAllocated {
       friend class Space;
       friend class SharedHandle;
     private:
@@ -102,10 +102,6 @@ namespace Gecode {
       virtual Object* copy(void) const = 0;
       /// Delete shared object
       virtual ~Object(void);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
     };
   private:
     /// The shared object
@@ -1033,7 +1029,7 @@ namespace Gecode {
    *
    * \ingroup TaskActor
    */
-  class GECODE_VTABLE_EXPORT Choice {
+  class GECODE_VTABLE_EXPORT Choice : public HeapAllocated {
     friend class Space;
   private:
     unsigned int _id;  ///< Identity to match creating brancher
@@ -1051,12 +1047,9 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT virtual ~Choice(void);
     /// Report size occupied by choice
     virtual size_t size(void) const = 0;
-    /// Allocate memory from heap
-    static void* operator new(size_t);
-    /// Return memory to heap
-    static void  operator delete(void*);
     /// Archive into \a e
-    GECODE_KERNEL_EXPORT virtual void archive(Archive& e) const;
+    GECODE_KERNEL_EXPORT 
+    virtual void archive(Archive& e) const;
   };
 
   /**
@@ -1259,11 +1252,23 @@ namespace Gecode {
   };
 
   /**
-   * \brief Current restart information during search
+   * \brief Information passed by meta search engines
    *
    */
-  class GECODE_VTABLE_EXPORT CRI {
+  class GECODE_VTABLE_EXPORT MetaInfo {
+  public:
+    /// Which type of information is provided
+    enum Type {
+      /// Information is provided by a restart-based engine
+      RESTART,
+      /// Information is provided by a portfolio-based engine
+      PORTFOLIO
+    };
   protected:
+    /// Type of information
+    const Type t;
+    /// \name Restart-based information
+    //@{
     /// Number of restarts
     const unsigned long int r;
     /// Number of solutions since last restart
@@ -1274,13 +1279,28 @@ namespace Gecode {
     const Space* l;
     /// No-goods from restart
     const NoGoods& ng;
+    //@}
+    /// \name Portfolio-based information
+    //@{
+    /// Number of asset in portfolio
+    const unsigned int a;
+    //@}
   public:
-    /// Constructor
-    CRI(unsigned long int r,
-        unsigned long int s,
-        unsigned long int f,
-        const Space* l,
-        NoGoods& ng);
+    /// \name Constructors depending on type of engine
+    //@{
+    /// Constructor for restart-based engine
+    MetaInfo(unsigned long int r,
+             unsigned long int s,
+             unsigned long int f,
+             const Space* l,
+             NoGoods& ng);
+    /// Constructor for portfolio-based engine
+    MetaInfo(unsigned int a);
+    //@}
+    /// Return type of information
+    Type type(void) const;
+    /// \name Restart-based information
+    //@{
     /// Return number of restarts
     unsigned long int restart(void) const;
     /// Return number of solutions since last restart
@@ -1291,6 +1311,12 @@ namespace Gecode {
     const Space* last(void) const;
     /// Return no-goods recorded from restart
     const NoGoods& nogoods(void) const;
+    //@}
+    /// \name Portfolio-based information
+    //@{
+    /// Return number of asset in portfolio
+    unsigned int asset(void) const;
+    //@}
   };
 
   /**
@@ -1359,7 +1385,7 @@ namespace Gecode {
   /**
    * \brief Computation spaces
    */
-  class GECODE_VTABLE_EXPORT Space {
+  class GECODE_VTABLE_EXPORT Space : public HeapAllocated {
     friend class Actor;
     friend class Propagator;
     friend class Brancher;
@@ -1626,52 +1652,57 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT virtual void constrain(const Space& best);
     /**
-     * \brief Master configuration function for restart meta search engine
+     * \brief Master configuration function for meta search engines
      *
-     * A restart meta search engine calls this function on its
-     * master space whenever it finds a solution or exploration
-     * restarts. \a cri contains information about the current restart.
+     * This configuration function is used by both restart and
+     * portfolio meta search engines.
      *
-     * If a solution has been found, then search will continue with a restart
-     * when the function returns true, otherwise search will continue.
+     * \li A restart meta search engine calls this function on its
+     *     master space whenever it finds a solution or exploration
+     *     restarts. \a mi contains information about the current restart.
      *
-     * The default function posts no-goods obtained from \a cri.
+     *     If a solution has been found, then search will continue with 
+     *     a restart id the function returns true, otherwise search
+     *     will continue.
+     *
+     *     The default function posts no-goods obtained from \a mi.
+     *
+     * \li A portfolio meta engine calls this function once on
+     *     the master space. The return value is ignored.
+     *
+     *     The default function does nothing.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual bool master(const CRI& cri);
+    virtual bool master(const MetaInfo& mi);
     /**
-     * \brief Slave configuration function for restart meta search engine
+     * \brief Slave configuration function for meta search engines
      *
-     * A restart meta search engine calls this function on its
-     * slave space whenever it finds a solution or exploration
-     * restarts.  \a cri contains information about the current restart.
+     * This configuration function is used by both restart and
+     * portfolio meta search engines.
      *
-     * If the function returns true, the search on the slave space is
-     * considered complete, i.e., if it fails or exhaustively explores the
-     * entire search space, the meta search engine finishes. If the function
-     * returns false, the search on the slave space is considered incomplete,
-     * and the meta engine will restart the search regardless of whether
-     * the search on the slave space finishes or times out.
+     * \li A restart meta search engine calls this function on its
+     *     slave space whenever it finds a solution or exploration
+     *     restarts.  \a mi contains information about the current restart.
+     *
+     *     If the function returns true, the search on the slave space is
+     *     considered complete, i.e., if it fails or exhaustively explores the
+     *     entire search space, the meta search engine finishes. If the 
+     *     function returns false, the search on the slave space is considered
+     *     incomplete, and the meta engine will restart the search regardless
+     *     of whether the search on the slave space finishes or times out.
+     *
+     * \li A portfolio meta engine calls this function once on each asset
+     *     (that is, on each slave) and passes the number of the asset,
+     *     starting from zero.
      *
      * The default function does nothing and returns true.
      *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT 
-    virtual bool slave(const CRI& cri);
-    /**
-     * \brief Allocate memory from heap for new space
-     * \ingroup TaskModelScript
-     */
-    static void* operator new(size_t);
-    /**
-     * \brief Free memory allocated from heap
-     * \ingroup TaskModelScript
-     */
-    static void  operator delete(void*);
-
+    virtual bool slave(const MetaInfo& mi);
 
     /*
      * Member functions for search engines
@@ -2325,35 +2356,6 @@ namespace Gecode {
    *
    */
 
-  // Heap allocated
-  forceinline void*
-  SharedHandle::Object::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  SharedHandle::Object::operator delete(void* p) {
-    heap.rfree(p);
-  }
-
-  forceinline void*
-  Space::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  Space::operator delete(void* p) {
-    heap.rfree(p);
-  }
-
-  forceinline void
-  Choice::operator delete(void* p) {
-    heap.rfree(p);
-  }
-  forceinline void*
-  Choice::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-
-
   // Space allocation: general space heaps and free lists
   forceinline void*
   Space::ralloc(size_t s) {
@@ -2695,35 +2697,53 @@ namespace Gecode {
 
 
   /*
-   * Current restart information
+   * Information from meta search engines
    */
   forceinline
-  CRI::CRI(unsigned long int r0,
-           unsigned long int s0,
-           unsigned long int f0,
-           const Space* l0,
-           NoGoods& ng0)
-    : r(r0), s(s0), f(f0), l(l0), ng(ng0) {}
+  MetaInfo::MetaInfo(unsigned long int r0,
+                     unsigned long int s0,
+                     unsigned long int f0,
+                     const Space* l0,
+                     NoGoods& ng0)
+    : t(RESTART), r(r0), s(s0), f(f0), l(l0), ng(ng0), a(0) {}
 
+  forceinline
+  MetaInfo::MetaInfo(unsigned int a0)
+    : t(PORTFOLIO), r(0), s(0), f(0), l(NULL), ng(NoGoods::eng), a(a0) {}
+
+  forceinline MetaInfo::Type
+  MetaInfo::type(void) const {
+    return t;
+  }
   forceinline unsigned long int
-  CRI::restart(void) const {
+  MetaInfo::restart(void) const {
+    assert(type() == RESTART);
     return r;
   }
   forceinline unsigned long int
-  CRI::solution(void) const {
+  MetaInfo::solution(void) const {
+    assert(type() == RESTART);
     return s;
   }
   forceinline unsigned long int
-  CRI::fail(void) const {
+  MetaInfo::fail(void) const {
+    assert(type() == RESTART);
     return f;
   }
   forceinline const Space*
-  CRI::last(void) const {
+  MetaInfo::last(void) const {
+    assert(type() == RESTART);
     return l;
   }
   forceinline const NoGoods&
-  CRI::nogoods(void) const {
+  MetaInfo::nogoods(void) const {
+    assert(type() == RESTART);
     return ng;
+  }
+  forceinline unsigned int
+  MetaInfo::asset(void) const {
+    assert(type() == PORTFOLIO);
+    return a;
   }
 
 

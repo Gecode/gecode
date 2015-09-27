@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,44 +35,50 @@
  *
  */
 
-#include <gecode/support.hh>
+#include <gecode/search/meta/sequential/pbs.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
-  /*
-   * Threads
-   */
-  
-  Mutex* Thread::m(void) {
-    static Mutex* m = new Mutex;
-    return m;
-  }
-  
-  Thread::Run* Thread::idle = NULL;
-
-  void
-  Thread::Run::exec(void) {
-    while (true) {
-      // Execute runnable
-      {
-        Runnable* e;
-        m.acquire();
-        e=r; r=NULL;
-        m.release();
-        assert(e != NULL);
-        e->run();
-        if (e->todelete())
-          delete e;
-      }
-      // Put into idle stack
-      Thread::m()->acquire();
-      n=Thread::idle; Thread::idle=this;
-      Thread::m()->release();
-      // Wait for next runnable
-      e.wait();
-    }
+  Stop* 
+  stop(const Options& opt) {
+    return new PortfolioStop(opt);
   }
 
-}}
+  Engine* 
+  engine(Engine** slaves, unsigned int n_slaves, 
+         const Statistics& stat, Stop* stop, bool best) {
+    if (best)
+      return new PBS<true>(slaves,n_slaves,stat,
+                           static_cast<PortfolioStop*>(stop));
+    else
+      return new PBS<false>(slaves,n_slaves,stat,
+                            static_cast<PortfolioStop*>(stop));
+  }
 
-// STATISTICS: support-any
+}}}}
+
+#ifdef GECODE_HAS_THREADS
+
+#include <gecode/search/meta/parallel/pbs.hh>
+
+namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
+
+  Stop* 
+  stop(Stop* so) {
+    return new PortfolioStop(so);
+  }
+
+  Engine* 
+  engine(Engine** slaves, Stop** stops, unsigned int n_slaves, 
+         const Statistics& stat, bool best) {
+    if (best)
+      return new PBS<CollectBest>(slaves,stops,n_slaves,stat);
+    else
+      return new PBS<CollectAll>(slaves,stops,n_slaves,stat);
+  }
+
+}}}}
+
+#endif
+
+// STATISTICS: search-meta

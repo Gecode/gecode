@@ -90,6 +90,9 @@ namespace Gecode { namespace Search { namespace Parallel {
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
+    /// Constrain future solutions to be better than \a b
+    virtual void constrain(const Space& b);
+    /// Constrain 
     /// Return no-goods
     virtual NoGoods& nogoods(void);
     /// Destructor

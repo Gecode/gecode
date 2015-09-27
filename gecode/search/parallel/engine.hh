@@ -78,7 +78,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       virtual ~Worker(void);
     };
     /// Search options
-    const Options _opt;
+    Options _opt;
   public:
     /// Provide access to search options
     const Options& opt(void) const;
@@ -209,6 +209,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::workers(void) const {
     return static_cast<unsigned int>(opt().threads);
   }
+  forceinline bool 
+  Engine::stopped(void) const {
+    return has_stopped;
+  }
+
 
 
   /*

@@ -253,10 +253,16 @@ namespace Gecode { namespace Driver {
   template<class Script, template<class> class Engine, class Options>
   void
   ScriptBase<BaseSpace>::run(const Options& o, Script* s) {
-    if (o.restart()==RM_NONE) {
-      runMeta<Script,Engine,Options,EngineToMeta>(o,s);
-    } else {
+    if ((o.restart() != RM_NONE) && (o.assets() > 0)) {
+      std::cerr << "Cannot use restarts and portfolio..." << std::endl;
+      exit(EXIT_FAILURE);
+    }
+    if (o.restart() != RM_NONE) {
       runMeta<Script,Engine,Options,RBS>(o,s);
+    } else if (o.assets() > 0) {
+      runMeta<Script,Engine,Options,PBS>(o,s);
+    } else {
+      runMeta<Script,Engine,Options,EngineToMeta>(o,s);
     }
   }
 
@@ -314,6 +320,7 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
+          so.assets  = o.assets();
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
@@ -406,6 +413,7 @@ namespace Gecode { namespace Driver {
           Search::Options so;
           so.clone   = false;
           so.threads = o.threads();
+          so.assets  = o.assets();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
@@ -463,6 +471,7 @@ namespace Gecode { namespace Driver {
               Search::Options so;
               so.clone   = false;
               so.threads = o.threads();
+              so.assets  = o.assets();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
               so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 

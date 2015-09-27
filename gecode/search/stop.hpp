@@ -45,16 +45,6 @@ namespace Gecode { namespace Search {
   Stop::Stop(void) {}
   forceinline
   Stop::~Stop(void) {}
-  forceinline void*
-  Stop::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  forceinline void
-  Stop::operator delete(void* p) {
-    heap.rfree(p);
-  }
-
-
 
 
   /*

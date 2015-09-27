@@ -1618,9 +1618,11 @@ namespace Gecode { namespace FlatZinc {
   }
 
   bool
-  FlatZincSpace::slave(const CRI& cri) {
-    if (cri.restart() != 0 && _lns > 0 && cri.last()) {
-      const FlatZincSpace& last = static_cast<const FlatZincSpace&>(*cri.last());
+  FlatZincSpace::slave(const MetaInfo& mi) {
+    if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) && 
+        (_lns > 0) && mi.last()) {
+      const FlatZincSpace& last = 
+        static_cast<const FlatZincSpace&>(*mi.last());
       for (unsigned int i=iv_lns.size(); i--;) {
         if ((*_random)(99) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, last.iv_lns[i]);

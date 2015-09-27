@@ -248,15 +248,21 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
-	meta/rbs meta/nogoods sequential/path parallel/path
+	sequential/path parallel/path \
+	meta/rbs meta/nogoods meta/dead \
+	meta/sequential/pbs meta/parallel/pbs \
+	pbs
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
+	engine.hpp base.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
-	meta/rbs.hh meta/nogoods.hh \
-	dfs.hpp bab.hpp rbs.hpp engine.hpp engine-base.hpp
+	meta/rbs.hh meta/nogoods.hh meta/dead.hh \
+	meta/sequential/pbs.hh meta/parallel/pbs.hh \
+	meta/sequential/pbs.hpp meta/parallel/pbs.hpp \
+	dfs.hpp bab.hpp rbs.hpp pbs.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -288,7 +294,10 @@ export LINKSEARCH       =
 export SEARCHRES	=
 export SEARCHRC		=
 endif
-SEARCHBUILDDIRS = search search/sequential search/parallel search/meta
+SEARCHBUILDDIRS = search \
+	search/sequential search/parallel \
+	search/meta \
+	search/meta/sequential search/meta/parallel
 
 #
 # INTEGER COMPONENTS

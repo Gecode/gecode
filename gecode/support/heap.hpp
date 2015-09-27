@@ -333,6 +333,19 @@ public:
   /// The single global heap
   extern GECODE_SUPPORT_EXPORT Heap heap;
 
+  /// Base class for heap allocate objects
+  class GECODE_SUPPORT_EXPORT HeapAllocated {
+  public:
+    /// Memory management
+    //@{
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+    //@}
+  };
+
+
   /*
    * Wrappers for raw allocation routines
    *
@@ -389,6 +402,21 @@ public:
       return p;
     throw MemoryExhausted();
   }
+
+
+  /*
+   * Heap allocated objects
+   *
+   */
+  forceinline void*
+  HeapAllocated::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  HeapAllocated::operator delete(void* p) {
+    heap.rfree(p);
+  }
+
 
 
   /*

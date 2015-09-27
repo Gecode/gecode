@@ -41,6 +41,10 @@ namespace Gecode { namespace Search {
   UninitializedCutoff::UninitializedCutoff(const char* l)
     : Exception(l,"Cutoff for restart-based search is missing") {}
 
+  inline
+  NoAssets::NoAssets(const char* l)
+    : Exception(l,"No assets requested in portfolio") {}
+
 }}
 
 // STATISTICS: search-other

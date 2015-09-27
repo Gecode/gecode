@@ -646,18 +646,26 @@ namespace Gecode {
   }
 
   bool
-  Space::master(const CRI& cri) {
-    if (cri.last() != NULL)
-      constrain(*cri.last());
-    cri.nogoods().post(*this);
-    // Perform a restart even if a solution has been found
-    return true;
+  Space::master(const MetaInfo& mi) {
+    switch (mi.type()) {
+    case MetaInfo::RESTART:
+      if (mi.last() != NULL)
+        constrain(*mi.last());
+      mi.nogoods().post(*this);
+      // Perform a restart even if a solution has been found
+      return true;
+    case MetaInfo::PORTFOLIO:
+      return true;
+    default: GECODE_NEVER;
+      return true;
+    }
   }
 
   bool
-  Space::slave(const CRI&) {
+  Space::slave(const MetaInfo&) {
     return true;
   }
+
 
   void
   LocalObject::fwdcopy(Space& home, bool share) {

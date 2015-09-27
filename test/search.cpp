@@ -84,10 +84,14 @@ namespace Test {
       /// Verify that this is best solution
       virtual bool best(void) const = 0;
       /// Master configuration function that does not restart
-      virtual bool master(const CRI& cri) {
-        if (cri.last() != NULL)
-          constrain(*cri.last());
-        return false;
+      virtual bool master(const MetaInfo& mi) {
+        if (mi.type() == MetaInfo::RESTART) {
+          if (mi.last() != NULL)
+            constrain(*mi.last());
+          return false;
+        } else {
+          return false;
+        }
       }
     };
 
@@ -286,15 +290,18 @@ namespace Test {
         return "Sol";
       }
       /// Rule out that solution is found more than once during restarts
-      virtual void master(unsigned long int i, const Space* _s,
-                          NoGoods&) {
-        const HasSolutions* s = static_cast<const HasSolutions*>(_s);
-        if (s != NULL) {
-          BoolVarArgs b;
-          for (int i=0; i<x.size(); i++)
-            b << expr(*this, x[i] == s->x[i]);
-          rel(*this, BOT_AND, b, 0);
+      virtual bool master(const MetaInfo& mi) {
+        if (mi.type() == MetaInfo::RESTART) {
+          if (mi.last() != NULL) {
+            const HasSolutions* s 
+              = static_cast<const HasSolutions*>(mi.last());
+            BoolVarArgs b;
+            for (int i=0; i<x.size(); i++)
+              b << expr(*this, x[i] == s->x[i]);
+            rel(*this, BOT_AND, b, 0);
+          }
         }
+        return false;
       }
     };
 
@@ -468,6 +475,61 @@ namespace Test {
       }
     };
 
+    /// %Test for portfolio-based search
+    template<class Model, template<class> class Engine>
+    class PBS : public Test {
+    private:
+      /// Whether best solution search is used
+      bool best;
+      /// Number of assets
+      unsigned int a;
+      /// Number of threads
+      unsigned int t;
+    public:
+      /// Initialize test
+      PBS(const std::string& e, bool b, unsigned int a0, unsigned int t0)
+        : Test("PBS::"+e+"::"+Model::name()+"::"+str(a0)+"::"+str(t0),
+               HTB_BINARY,HTB_BINARY,HTB_BINARY), best(b), a(a0), t(t0) {}
+      /// Run test
+      virtual bool run(void) {
+        Model* m = new Model(htb1,htb2,htb3);
+        Gecode::Search::FailStop f(2);
+        Gecode::Search::Options o;
+        o.assets = a;
+        o.threads = t;
+        o.stop = &f;
+        Gecode::PBS<Engine,Model> pbs(m,o);
+        if (best) {
+          Model* b = NULL;
+          while (true) {
+            Model* s = pbs.next();
+            if (s != NULL) {
+              delete b; b=s;
+            }
+            if ((s == NULL) && !pbs.stopped())
+              break;
+            f.limit(f.limit()+2);
+          }
+          bool ok = (b == NULL) || b->best();
+          delete b;
+          return ok;
+        } else {
+          int n = a * m->solutions();
+          delete m;
+          while (true) {
+            Model* s = pbs.next();
+            if (s != NULL) {
+              n--; delete s;
+            }
+            if ((s == NULL) && !pbs.stopped())
+              break;
+            f.limit(f.limit()+2);
+          }
+          return n == 0;
+        }
+      }
+    };
+
     /// Iterator for branching types
     class BranchTypes {
     private:
@@ -564,7 +626,7 @@ namespace Test {
                 (HTC_NONE,HTB_NONE,HTB_NONE,HTB_NONE,c_d,a_d,t);
             }
         // Restart-based search
-        for (unsigned int t = 1; t<=4; t++) {
+        for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
           (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t);
           (void) new RBS<FailImmediate,Gecode::DFS>("DFS",t);
@@ -572,6 +634,16 @@ namespace Test {
           (void) new RBS<SolveImmediate,Gecode::DFS>("DFS",t);
           (void) new RBS<SolveImmediate,Gecode::BAB>("BAB",t);
         }
+        // Portfolio-based search
+        for (unsigned int a=1; a<=4; a++)
+          for (unsigned int t=1; t<=2*a; t++) {
+            (void) new PBS<HasSolutions,Gecode::DFS>("DFS",false,a,t);
+            (void) new PBS<HasSolutions,Gecode::BAB>("BAB",true,a,t);
+            (void) new PBS<FailImmediate,Gecode::DFS>("DFS",false,a,t);
+            (void) new PBS<FailImmediate,Gecode::BAB>("BAB",true,a,t);
+            (void) new PBS<SolveImmediate,Gecode::DFS>("DFS",false,a,t);
+            (void) new PBS<SolveImmediate,Gecode::BAB>("BAB",true,a,t);
+          }
       }
     };
 

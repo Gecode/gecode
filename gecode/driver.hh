@@ -367,6 +367,8 @@ namespace Gecode {
     Driver::UnsignedIntOption _node;          ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;          ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;          ///< Cutoff for time
+    Driver::UnsignedIntOption _assets;        ///< Number of assets in a portfolio
+    Driver::UnsignedIntOption _slice;         ///< Size of a portfolio slice
     Driver::StringOption      _restart;       ///< Restart method option
     Driver::DoubleOption      _r_base;        ///< Restart base
     Driver::UnsignedIntOption _r_scale;       ///< Restart scale factor
@@ -483,6 +485,16 @@ namespace Gecode {
     void time(unsigned int t);
     /// Return time cutoff
     unsigned int time(void) const;
+    
+    /// Set default number of assets in a portfolio
+    void assets(unsigned int n);
+    /// Return slice size in a portfolio
+    unsigned int assets(void) const;
+    
+    /// Set default slice size in a portfolio
+    void slice(unsigned int n);
+    /// Return slice size in a portfolio
+    unsigned int slice(void) const;
     
     /// Set default restart mode
     void restart(RestartMode r);

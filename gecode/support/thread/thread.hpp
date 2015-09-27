@@ -40,6 +40,17 @@ namespace Gecode { namespace Support {
   /*
    * Runnable objects
    */
+  forceinline
+  Runnable::Runnable(bool d0)
+    : d(d0) {}
+  forceinline void
+  Runnable::todelete(bool d0) {
+    d=d0;
+  }
+  forceinline bool
+  Runnable::todelete(void) const {
+    return d;
+  }
   forceinline void
   Runnable::operator delete(void* p) {
     heap.rfree(p);

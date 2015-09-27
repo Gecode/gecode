@@ -83,6 +83,17 @@ namespace Gecode { namespace Search {
   /// %Meta search engine implementations
   namespace Meta {}
 
+  namespace Meta {
+
+    /// %Sequential meta search engine implementations
+    namespace Sequential {}
+  
+    /// %Parallel meta search engine implementations
+    namespace Parallel {}
+
+  }
+
+
   /**
    * \brief %Search configuration
    *
@@ -93,6 +104,7 @@ namespace Gecode { namespace Search {
     const bool clone = true;
     /// Number of threads to use
     const double threads = 1.0;
+
     /// Create a clone after every \a c_d commits (commit distance)
     const unsigned int c_d = 8;
     /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
@@ -102,6 +114,11 @@ namespace Gecode { namespace Search {
     const unsigned int steal_limit = 3;
     /// Initial delay in milliseconds for all but first worker thread
     const unsigned int initial_delay = 5;
+
+    /// Base for geometric restart sequence
+    const double base = 1.5;
+    /// Size of a slice in a portfolio and scale factor for restarts(in number of failures)
+    const unsigned int slice = 250;
 
     /// Depth limit for no-good generation during search
     const unsigned int nogoods_limit = 128;
@@ -121,6 +138,12 @@ namespace Gecode { namespace Search {
   public:
     /// Initialize with location \a l
     UninitializedCutoff(const char* l);
+  };
+  /// %Exception: No assets requested for portfolio-based search
+  class GECODE_VTABLE_EXPORT NoAssets : public Exception {
+  public:
+    /// Initialize with location \a l
+    NoAssets(const char* l);
   };
   //@}
 }}
@@ -165,7 +188,7 @@ namespace Gecode { namespace Search {
    * \brief Base class for cutoff generators for restart-based meta engine
    * \ingroup TaskModelSearch
    */
-  class GECODE_SEARCH_EXPORT Cutoff {
+  class GECODE_SEARCH_EXPORT Cutoff : public HeapAllocated {
   public:
     /// \name Constructors and member functions
     //@{
@@ -178,29 +201,22 @@ namespace Gecode { namespace Search {
     /// Destructor
     virtual ~Cutoff(void);
     //@}
-    /// Memory management
-    //@{
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-    //@}
     /// \name Predefined cutoff generators
     //@{
     /// Create generator for constant sequence with constant \a s
     static Cutoff*
-    constant(unsigned long int scale=1U);
+    constant(unsigned long int scale=Config::slice);
     /// Create generator for linear sequence scaled by \a scale
     static Cutoff*
-    linear(unsigned long int scale=1U);
+    linear(unsigned long int scale=Config::slice);
     /** Create generator for geometric sequence scaled by
      *  \a scale using base \a base
      */
     static Cutoff*
-    geometric(unsigned long int scale=1U, double base=1.5);
+    geometric(unsigned long int scale=Config::slice, double base=Config::base);
     /// Create generator for luby sequence with scale-factor \a scale
     static Cutoff*
-    luby(unsigned long int scale=1U);
+    luby(unsigned long int scale=Config::slice);
     /** Create generator for random sequence with seed \a seed that
      *  generates values between \a min and \a max with \a n steps
      *  between the extreme values (use 0 for \a n to get step size 1).
@@ -456,6 +472,10 @@ namespace Gecode { namespace Search {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
+      /// Number of assets (engines) in a portfolio
+      unsigned int assets;
+      /// Size of a slice in a portfolio (in number of failures)
+      unsigned int slice;
       /// Depth limit for extraction of no-goods
       unsigned int nogoods_limit;
       /// Stop object for stopping search
@@ -491,7 +511,7 @@ namespace Gecode { namespace Search {
    * \brief Base-class for %Stop-object
    * \ingroup TaskModelSearchStop
    */
-  class GECODE_SEARCH_EXPORT Stop {
+  class GECODE_SEARCH_EXPORT Stop : public HeapAllocated {
   public:
     /// \name Constructors and member functions
     //@{
@@ -501,13 +521,6 @@ namespace Gecode { namespace Search {
     virtual bool stop(const Statistics& s, const Options& o) = 0;
     /// Destructor
     virtual ~Stop(void);
-    //@}
-    /// \name Memory management
-    //@{
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
     //@}
     /// \name Predefined stop objects
     //@{
@@ -598,7 +611,7 @@ namespace Gecode { namespace Search {
   /**
    * \brief %Search engine implementation interface
    */
-  class GECODE_SEARCH_EXPORT Engine {
+  class GECODE_SEARCH_EXPORT Engine : public HeapAllocated {
   public:
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void) = 0;
@@ -606,43 +619,36 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
+    /// Constrain future solutions to be better than \a b (does nothing)
+    virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s (does nothing)
     virtual void reset(Space* s);
     /// Return no-goods (the no-goods are empty)
     virtual NoGoods& nogoods(void);
     /// Destructor
     virtual ~Engine(void);
-    /// \name Memory management
-    //@{
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-    //@}
   };
 
 }}
 
 #include <gecode/search/engine.hpp>
 
-namespace Gecode {
-
-  template<template<class> class E, class T>
-  class RBS;
-
-}
-
 namespace Gecode { namespace Search {
+
+  /// Build an engine of type \a E for a script \a T
+  template<template<class> class E, class T>
+  Engine* build(Space* s, const Options& opt);
 
   /// Base-class for search engines
   template<class T>
-  class EngineBase {
-    template<template<class>class,class> friend class ::Gecode::RBS;
+  class Base : public HeapAllocated {
+    template<template<class> class, class> 
+    friend Engine* build(Space*, const Options&);
   protected:
     /// The actual search engine
     Engine* e;
     /// Constructor
-    EngineBase(Engine* e = NULL);
+    Base(Engine* e = NULL);
   public:
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual T* next(void);
@@ -650,22 +656,13 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
-    /// Return no-goods (the no-goods are empty)
-    virtual NoGoods& nogoods(void);
     /// Destructor
-    virtual ~EngineBase(void);
-    /// \name Memory management
-    //@{
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-    //@}
+    virtual ~Base(void);
   };
 
 }}
 
-#include <gecode/search/engine-base.hpp>
+#include <gecode/search/base.hpp>
 
 namespace Gecode {
 
@@ -678,8 +675,10 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class DFS : public Search::EngineBase<T> {
+  class DFS : public Search::Base<T> {
   public:
+    /// Whether engine doe best solution search
+    static const bool best = false;
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
   };
@@ -706,8 +705,10 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class BAB : public Search::EngineBase<T> {
+  class BAB : public Search::Base<T> {
   public:
+    /// Whether engine doe best solution search
+    static const bool best = true;
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
   };
@@ -740,9 +741,9 @@ namespace Gecode {
    * periodically restart the search of engine \a E.
    *
    * The class \a T can implement member functions
-   * \code virtual bool master(const CRI& cri) \endcode
+   * \code virtual bool master(const MetaInfo& mi) \endcode
    * and
-   * \code virtual bool slave(const CRI& cri) \endcode
+   * \code virtual bool slave(const MetaInfo& mi) \endcode
    *
    * Whenever exploration restarts or a solution is found, the
    * engine executes the functions on the master and slave
@@ -752,8 +753,8 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<template<class> class E, class T>
-  class RBS : public Search::EngineBase<T> {
-      using Search::EngineBase<T>::e;
+  class RBS : public Search::Base<T> {
+    using Search::Base<T>::e;
   public:
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o);
@@ -766,9 +767,9 @@ namespace Gecode {
    * periodically restart the search of engine \a E.
    *
    * The class \a T can implement member functions
-   * \code virtual bool master(const CRI& cri) \endcode
+   * \code virtual bool master(const MetaInfo& mi) \endcode
    * and
-   * \code virtual bool slave(const CRI& cri) \endcode
+   * \code virtual bool slave(const MetaInfo& mi) \endcode
    *
    * Whenever exploration restarts or a solution is found, the
    * engine executes the functions on the master and slave
@@ -783,6 +784,73 @@ namespace Gecode {
 }
 
 #include <gecode/search/rbs.hpp>
+
+namespace Gecode { namespace Search { namespace Meta {
+
+  /// Build a sequential engine
+  template<template<class> class E, class T>
+  Engine* sequential(T* s, const Search::Statistics& stat, Options& opt);
+
+#ifdef GECODE_HAS_THREADS
+
+  /// Build a parallel engine
+  template<template<class> class E, class T>
+  Engine* parallel(T* s, const Search::Statistics& stat, Options& opt);
+
+#endif
+
+}}}
+
+namespace Gecode {
+
+  /**
+   * \brief Meta engine using a portfolio of search engines
+   *
+   * The engine will run a portfolio with a number of assets as defined
+   * by the options \a o. The engine supports parallel execution of
+   * assets by using the number of threads as defined by the options.
+   *
+   * The class \a T can implement member functions
+   * \code virtual bool master(const MetaInfo& mi) \endcode
+   * and
+   * \code virtual bool slave(const MetaInfo& mi) \endcode
+   *
+   * When the assets are created, these functions are executed.
+   * For more details, consult "Modeling and Programming with Gecode".
+   *
+   * \ingroup TaskModelSearch
+   */
+  template<template<class> class E, class T>
+  class PBS : public Search::Base<T> {
+    using Search::Base<T>::e;
+  public:
+    /// Initialize with engines running copies of \a s with options \a o
+    PBS(T* s, const Search::Options& o);
+  };
+
+  /**
+   * \brief Run a portfolio of search engines
+   *
+   * The engine will run a portfolio with a number of assets as defined
+   * by the options \a o. The engine supports parallel execution of
+   * assets by using the number of threads as defined by the options.
+   *
+   * The class \a T can implement member functions
+   * \code virtual bool master(const MetaInfo& mi) \endcode
+   * and
+   * \code virtual bool slave(const MetaInfo& mi) \endcode
+   *
+   * When the assets are created, these functions are executed.
+   * For more details, consult "Modeling and Programming with Gecode".
+   *
+   * \ingroup TaskModelSearch
+   */
+  template<template<class> class E, class T>
+  T* pbs(T* s, const Search::Options& o);
+
+}
+
+#include <gecode/search/pbs.hpp>
 
 #endif
 

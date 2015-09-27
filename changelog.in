@@ -67,10 +67,52 @@
 #
 
 [RELEASE]
-Version: 4.4.1
+Version: 5.0.0
 Date: 2015-?-?
 [DESCRIPTION]
 Gaga
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The number of assets to use for portfolio-based search can be
+passed on the commandline as -assets.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Portfolio-based search has been added (both sequential and
+parallel). Please see "Modeling and Programming with Gecode" for
+details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The master() and slave() configuration functions has been changed
+as they are now also used for portfolio-based search. Please see
+"Modeling and Programming with Gecode" for details.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Classes can now inherit from HeapAllocated when using the Gecode
+heap object for memory management.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The restart engine would not properly delete some data structures
+when being deleted.
 
 [ENTRY]
 Module: int
@@ -242,6 +284,7 @@ Rank:   minor
 Thanks: Jean-Noël Monette
 [DESCRIPTION]
 Improve error messages in FlatZinc for some type errors.
+
 
 [RELEASE]
 Version: 4.4.0

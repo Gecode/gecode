@@ -46,7 +46,7 @@ namespace Gecode {
     template<class View>
     class Recorder;
     /// Object for storing activity values
-    class Storage {
+    class Storage : public HeapAllocated {
     public:
       /// Mutex to synchronize globally shared access
       Support::Mutex m;
@@ -64,10 +64,6 @@ namespace Gecode {
               typename BranchTraits<typename View::VarType>::Merit bm);
       /// Delete object
       ~Storage(void);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
     };
 
     /// Pointer to storage object
@@ -265,14 +261,6 @@ namespace Gecode {
    * Activity value storage
    *
    */
-  forceinline void*
-  Activity::Storage::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-  forceinline void
-  Activity::Storage::operator delete(void* p) {
-    Gecode::heap.rfree(p);
-  }
   template<class View>
   forceinline
   Activity::Storage::Storage(Home home, ViewArray<View>& x, double d0,

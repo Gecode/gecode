@@ -256,7 +256,16 @@ namespace Gecode { namespace Support {
    * \ingroup FuncSupportThread
    */
   class Runnable {
+  private:
+    /// Whether to delete the object when terminated
+    bool d;
   public:
+    /// Initialize, \a d defines whether object is deleted when terminated
+    Runnable(bool d=true);
+    /// Set whether to delete upon termination
+    void todelete(bool d);
+    /// Return whether to be deleted upon termination
+    bool todelete(void) const;
     /// The function that is executed when the thread starts
     virtual void run(void) = 0;
     /// Destructor
@@ -311,7 +320,7 @@ namespace Gecode { namespace Support {
      * After \a r terminates, \a r is deleted. After that, the thread
      * terminates.
      *
-     * If the operatins system does not support any threads, throws an
+     * If the operating system does not support any threads, throws an
      * exception of type Support::OperatingSystemError.
      */
     static void run(Runnable* r);

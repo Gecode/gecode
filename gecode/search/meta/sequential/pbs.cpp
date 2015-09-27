@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,44 +35,19 @@
  *
  */
 
-#include <gecode/support.hh>
+#include <gecode/search/meta/sequential/pbs.hh>
 
-namespace Gecode { namespace Support {
+namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
-  /*
-   * Threads
-   */
-  
-  Mutex* Thread::m(void) {
-    static Mutex* m = new Mutex;
-    return m;
-  }
-  
-  Thread::Run* Thread::idle = NULL;
-
-  void
-  Thread::Run::exec(void) {
-    while (true) {
-      // Execute runnable
-      {
-        Runnable* e;
-        m.acquire();
-        e=r; r=NULL;
-        m.release();
-        assert(e != NULL);
-        e->run();
-        if (e->todelete())
-          delete e;
-      }
-      // Put into idle stack
-      Thread::m()->acquire();
-      n=Thread::idle; Thread::idle=this;
-      Thread::m()->release();
-      // Wait for next runnable
-      e.wait();
+  bool 
+  PortfolioStop::stop(const Statistics& s, const Options& o) {
+    if (s.fail >= l) {
+      done = true;
+      return true;
     }
+    return (so != NULL) && so->stop(s,o);
   }
 
-}}
+}}}}
 
-// STATISTICS: support-any
+// STATISTICS: search-meta

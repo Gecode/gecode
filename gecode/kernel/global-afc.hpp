@@ -64,7 +64,7 @@ namespace Gecode {
       static Block* allocate(unsigned int n, Block* p=NULL);
     };
     /// Class for managing timed-decay values
-    class DecayManager {
+    class DecayManager : public HeapAllocated {
     protected:
       /// The decay factor
       double d;
@@ -89,17 +89,13 @@ namespace Gecode {
       void set(Counter& c, double a);
       /// Return counter value 
       double val(Counter& c);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
     };
     /// Initial smallest number of entries per block
     static const unsigned int size_min = 32;
     /// Largest possible number of entries per block
     static const unsigned int size_max = 32 * 1024;
     /// The actual object to store the required information
-    class Object {
+    class Object : public HeapAllocated {
     public:
       /// Mutex to synchronize globally shared access
       Support::FastMutex* mutex;
@@ -117,10 +113,6 @@ namespace Gecode {
       Block* cur;
       /// Constructor
       Object(Support::FastMutex* m, Object* p=NULL);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
     };
     /// Pointer to object, possibly marked
     void* mo;
@@ -211,31 +203,12 @@ namespace Gecode {
   GlobalAFC::DecayManager::set(Counter& c, double a) {
     c.c = a;
   }
-  forceinline void*
-  GlobalAFC::DecayManager::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-  forceinline void
-  GlobalAFC::DecayManager::operator delete(void* p) {
-    Gecode::heap.rfree(p);
-  }
 
 
   /*
    * Global AFC information
    *
    */
-
-  forceinline void*
-  GlobalAFC::Object::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-
-  forceinline void
-  GlobalAFC::Object::operator delete(void* p) {
-    Gecode::heap.rfree(p);
-  }
-
   forceinline GlobalAFC::Block*
   GlobalAFC::Block::allocate(unsigned int n, GlobalAFC::Block* p) {
     Block* b = static_cast<Block*>(heap.ralloc(sizeof(Block)+

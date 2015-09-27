@@ -71,6 +71,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
+    /// Constrain future solutions to be better than \a b
+    void constrain(const Space& b);
     /// Reset engine to restart at space \a s
     void reset(Space* s);
     /// Return no-goods
@@ -165,6 +167,22 @@ namespace Gecode { namespace Search { namespace Sequential {
   forceinline Statistics
   BAB::statistics(void) const {
     return *this;
+  }
+
+  forceinline void
+  BAB::constrain(const Space& b) {
+    if (best != NULL) {
+      // Check whether b is in fact better than best
+      best->constrain(b);
+      if (best->status(*this) != SS_FAILED)
+        return;
+      else
+        delete best;
+    }
+    best = b.clone();
+    if (cur != NULL)
+      cur->constrain(b);
+    mark = path.entries();
   }
 
   forceinline void
