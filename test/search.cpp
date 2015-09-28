@@ -291,7 +291,8 @@ namespace Test {
       }
       /// Rule out that solution is found more than once during restarts
       virtual bool master(const MetaInfo& mi) {
-        if (mi.type() == MetaInfo::RESTART) {
+        switch (mi.type()) {
+        case MetaInfo::RESTART:
           if (mi.last() != NULL) {
             const HasSolutions* s 
               = static_cast<const HasSolutions*>(mi.last());
@@ -300,6 +301,12 @@ namespace Test {
               b << expr(*this, x[i] == s->x[i]);
             rel(*this, BOT_AND, b, 0);
           }
+          break;
+        case MetaInfo::PORTFOLIO:
+          // Do not kill the brancher!
+          break;
+        default:
+          break;
         }
         return false;
       }
