@@ -483,6 +483,20 @@ namespace Gecode {
       }
   }
 
+  void
+  Space::kill_branchers(void) {
+    if (failed())
+      return;
+    Brancher* b = Brancher::cast(bl.next());
+    while (b != Brancher::cast(&bl)) {
+      Brancher* d = b;
+      b = Brancher::cast(b->next());
+      rfree(d,d->dispose(*this));
+    }
+    bl.init();
+    b_status = b_commit = Brancher::cast(&bl);
+  }
+
 
 
 
@@ -669,6 +683,8 @@ namespace Gecode {
       // Perform a restart even if a solution has been found
       return true;
     case MetaInfo::PORTFOLIO:
+      // Kill all branchers
+      BrancherHandle::killall(*this);
       return true;
     default: GECODE_NEVER;
       return true;

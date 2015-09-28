@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+All branchers of a space can be killed by
+BrancherHandle::killall(). This is the default for the master()
+function when using portfolio search.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor

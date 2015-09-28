@@ -1164,6 +1164,8 @@ namespace Gecode {
     bool operator ()(const Space& home) const;
     /// Kill the brancher
     void kill(Space& home);
+    /// Kill all branchers
+    static void killall(Space& home);
   };
 
   /**
@@ -1431,6 +1433,9 @@ namespace Gecode {
     /// Kill brancher with identity \a id
     GECODE_KERNEL_EXPORT
     void kill_brancher(unsigned int id);
+    /// Kill all branchers
+    GECODE_KERNEL_EXPORT
+    void kill_branchers(void);
     /// Reserved brancher id (never created)
     static const unsigned reserved_branch_id = 0U;
     union {
@@ -3130,6 +3135,10 @@ namespace Gecode {
   forceinline void
   BrancherHandle::kill(Space& home) {
     home.kill_brancher(_id);
+  }
+  forceinline void
+  BrancherHandle::killall(Space& home) {
+    home.kill_branchers();
   }
 
   
