@@ -70,28 +70,20 @@ namespace Gecode { namespace Search { namespace Meta {
 
   template<template<class> class E, class T>
   Engine*
-  sequential(T* s, const Search::Statistics& stat, Options& opt) {
-    // Whether to clone
-    bool clone = opt.clone;
-    
+  sequential(T* master, const Search::Statistics& stat, Options& opt) {
     // Configure for slave creation
-    opt.clone   = false;
-    opt.stop    = Sequential::stop(opt);
+    opt.stop = Sequential::stop(opt);
     // In case there are more threads than assets requested
     opt.threads = ceil(opt.threads / static_cast<double>(opt.assets));
     
     unsigned int n_slaves = opt.assets;
     Engine** slaves = heap.alloc<Engine*>(n_slaves);
     
-    for (unsigned int i=1; i<n_slaves; i++) {
-      Space* slave = s->clone(opt.threads <= 1.0);
+    for (unsigned int i=0; i<n_slaves; i++) {
+      Space* slave = 
+        (i == n_slaves-1) ? master : master->clone(opt.threads <= 1.0);
       (void) slave->slave(i);
       slaves[i] = build<E,T>(slave,opt);
-    }
-    {
-      Space* slave = clone ? s->clone(opt.threads <= 1.0) : s;
-      (void) slave->slave(0);
-      slaves[0] = build<E,T>(slave,opt);
     }
     
     return Sequential::engine(slaves,n_slaves,stat,opt.stop,E<T>::best);
@@ -101,32 +93,24 @@ namespace Gecode { namespace Search { namespace Meta {
 
   template<template<class> class E, class T>
   Engine*
-  parallel(T* s, const Search::Statistics& stat, Options& opt) {
-    bool clone = opt.clone;
+  parallel(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
 
-    Region r(*s);
+    Region r(*master);
 
     // Is there at least one thread per asset?
     if (opt.threads >= static_cast<double>(opt.assets)) {
       opt.threads = std::max(opt.threads - static_cast<double>(opt.assets),
                              1.0);    
-      opt.clone = false;
       unsigned int n_slaves = opt.assets;
       Engine** slaves = r.alloc<Engine*>(n_slaves);
       Stop** stops = r.alloc<Stop*>(n_slaves);
         
-      for (unsigned int i=1; i<n_slaves; i++) {
+      for (unsigned int i=0; i<n_slaves; i++) {
         opt.stop = stops[i] = Parallel::stop(stop);
-        Space* slave = s->clone(false);
+        Space* slave = (i == n_slaves-1) ? master : master->clone(false);
         (void) slave->slave(i);
         slaves[i] = build<E,T>(slave,opt);
-      }
-      {
-        opt.stop = stops[0] = Parallel::stop(stop);
-        Space* slave = clone ? s->clone(false) : s;
-        (void) slave->slave(0);
-        slaves[0] = build<E,T>(slave,opt);
       }
         
       return Parallel::engine(slaves,stops,n_slaves,stat,E<T>::best);
@@ -137,7 +121,6 @@ namespace Gecode { namespace Search { namespace Meta {
       unsigned int apt = n_assets / n_threads;
       unsigned int apr = n_assets % n_threads;
       opt.threads = 1.0;
-      opt.clone   = false;
         
       unsigned int n_pslaves = n_threads;
       Engine** pslaves = r.alloc<Engine*>(n_pslaves);
@@ -155,24 +138,19 @@ namespace Gecode { namespace Search { namespace Meta {
           opt.stop = stop;
           Stop* sstop = Sequential::stop(opt);
           Engine** sslaves = heap.alloc<Engine*>(api);
-          Space* sroot = (!clone && (a == n_assets-api)) ? s : s->clone(false);
+          Space* sroot = (a == n_assets-api) ? master : master->clone(false);
           opt.stop = sstop;
-          for (int j=1; j<api; j++) {
-            Space* sslave = sroot->clone(true);
+          for (int j=0; j<api; j++) {
+            Space* sslave = (j == api-1) ? sroot : sroot->clone(true);
             (void) sslave->slave(a++);
             sslaves[j] = build<E,T>(sslave,opt);
-          }
-          {
-            Space* sslave = sroot;
-            (void) sslave->slave(a++);
-            sslaves[0] = build<E,T>(sslave,opt);
           }
           pslaves[i] = Sequential::engine(sslaves,api,sstat,sstop,
                                           E<T>::best);
           pstops[i] = Parallel::stop(sstop);
         } else {
           opt.stop = pstops[i] = Parallel::stop(stop);
-          Space* pslave = (!clone && (a == n_assets-1)) ? s : s->clone(false);
+          Space* pslave = (a == n_assets-1) ? master : master->clone(false);
           (void) pslave->slave(a++);
           pslaves[i] = build<E,T>(pslave,opt);
         }
@@ -195,33 +173,36 @@ namespace Gecode {
     if (opt.assets == 0)
       throw Search::NoAssets("PBS::PBS");
     
-    // Always execute master function
-    {
-      MetaInfo mi(0);
-      (void) s->master(mi);
-    }
-    // No need to create a portfolio engine but must run slave function
-    if (o.assets == 1) {
-      MetaInfo mi(0);
-      (void) s->slave(mi);
-      e = Search::build<E,T>(s,opt);
-      return;
-    }
-
     Search::Statistics stat;
 
     if (s->status(stat) == SS_FAILED) {
       stat.fail++;
+      if (!opt.clone)
+        delete s;
       e = new Search::Meta::Dead(stat);
+      return;
+    }
+
+    // Check whether a clone must be used
+    T* master = opt.clone ? static_cast<T*>(s->clone(opt.threads <= 1.0)) : s;
+    opt.clone = false;
+
+    // Always execute master function
+    (void) master->master(0);
+
+    // No need to create a portfolio engine but must run slave function
+    if (o.assets == 1) {
+      (void) master->slave(0);
+      e = Search::build<E,T>(master,opt);
       return;
     }
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::Meta::parallel<E,T>(s,stat,opt);
+      e = Search::Meta::parallel<E,T>(master,stat,opt);
     else
 #endif
-      e = Search::Meta::sequential<E,T>(s,stat,opt);
+      e = Search::Meta::sequential<E,T>(master,stat,opt);
   }
 
   template<template<class> class E, class T>

@@ -789,13 +789,13 @@ namespace Gecode { namespace Search { namespace Meta {
 
   /// Build a sequential engine
   template<template<class> class E, class T>
-  Engine* sequential(T* s, const Search::Statistics& stat, Options& opt);
+  Engine* sequential(T* master, const Search::Statistics& stat, Options& opt);
 
 #ifdef GECODE_HAS_THREADS
 
   /// Build a parallel engine
   template<template<class> class E, class T>
-  Engine* parallel(T* s, const Search::Statistics& stat, Options& opt);
+  Engine* parallel(T* master, const Search::Statistics& stat, Options& opt);
 
 #endif
 
