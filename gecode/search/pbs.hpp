@@ -190,7 +190,7 @@ namespace Gecode {
 
     // Check whether a clone must be used
     T* master = opt.clone ? 
-      static_cast<T*>(s->clone(opt.threads <= 1.0,opt.share)) : s;
+      dynamic_cast<T*>(s->clone(opt.threads <= 1.0,opt.share)) : s;
     opt.clone = false;
 
     // Always execute master function
