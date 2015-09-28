@@ -291,8 +291,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   Actor*
   LexNq<View>::copy(Space& home, bool share) {
-    /*
-    int n = x.size();
+       int n = x.size();
     if (n > 0) {
       // Eliminate all equal views and keep one disequal pair
       for (int i=n; i--; )
@@ -313,7 +312,6 @@ namespace Gecode { namespace Int { namespace Rel {
     done:
       x.size(n); y.size(n);
     }
-    */
     return new (home) LexNq<View>(home,share,*this);
   }
 
@@ -326,7 +324,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (n > 0) {
       // Eliminate all equal views
       for (int i=n; i--; )
-        switch (rtest_eq_bnd(x[i],y[i])) {
+        switch (rtest_eq_dom(x[i],y[i])) {
         case RT_TRUE:
           // Eliminate equal pair
           n--; x[i]=x[n]; y[i]=y[n];
@@ -370,7 +368,7 @@ namespace Gecode { namespace Int { namespace Rel {
       assert(x0.val() == y0.val());
       int n = x.size();
       for (int i=n; i--; )
-        switch (rtest_eq_bnd(x[i],y[i])) {
+        switch (rtest_eq_dom(x[i],y[i])) {
         case RT_TRUE:
           // Eliminate equal pair
           n--; x[i]=x[n]; y[i]=y[n];
@@ -397,10 +395,10 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   ExecStatus
   LexNq<View>::propagate(Space& home, const ModEventDelta&) {
-    RelTest rt0 = rtest_eq_bnd(x0,y0);
+    RelTest rt0 = rtest_eq_dom(x0,y0);
     if (rt0 == RT_FALSE)
       return home.ES_SUBSUMED(*this);
-    RelTest rt1 = rtest_eq_bnd(x1,y1);
+    RelTest rt1 = rtest_eq_dom(x1,y1);
     if (rt1 == RT_FALSE)
       return home.ES_SUBSUMED(*this);
     GECODE_ES_CHECK(resubscribe(home,rt0,x0,y0,x1,y1));
