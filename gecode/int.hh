@@ -1205,8 +1205,11 @@ namespace Gecode {
    * Note that for the inequality relations this corresponds to
    * the lexical order between \a x and \a y.
    *
-   * Throws an exception of type Int::ArgumentSizeMismatch, if
-   * \a x and \a y are of different size.
+   * Note that the constraint is also defined if \a x and \a y are of
+   * different size. That means that if \a x and \a y are of different
+   * size, then if \a r = IRT_EQ the constraint is false and if
+   * \a r = IRT_NQ the constraint is subsumed.
+   *
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
