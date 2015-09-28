@@ -77,6 +77,22 @@ Module: driver
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Whether AFC information is shared between restarts and assets of
+a portfolio can be defined by the commandline switch -share.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+The clone() function takes an additional argument that defines
+whether AFC information is shared among clones.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
 The number of assets to use for portfolio-based search can be
 passed on the commandline as -assets.
 

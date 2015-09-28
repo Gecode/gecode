@@ -1530,18 +1530,22 @@ namespace Gecode {
      * failed, an exception of type SpaceFailed is thrown. If the space
      * is not stable, an exception of SpaceNotStable is thrown.
      *
-     * Otherwise, a clone of the space is returned. If \a share is true,
+     * Otherwise, a clone of the space is returned. If \a share_data is true,
      * sharable datastructures are shared among the clone and the original
-     * space. If \a share is false, independent copies of the shared
+     * space. If \a share_data is false, independent copies of the shared
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
      * with the original space.
+     *
+     * If \a share_info is true, information about AFC is shared, otherwise
+     * it will be unshared.
      *
      * Throws an exception of type SpaceNotCloned when the copy constructor
      * of the Space class is not invoked during cloning.
      *
      */
-    GECODE_KERNEL_EXPORT Space* _clone(bool share=true);
+    GECODE_KERNEL_EXPORT Space* _clone(bool share_data=true,
+                                       bool share_info=true);
 
     /**
      * \brief Commit choice \a c for alternative \a a
@@ -1616,12 +1620,8 @@ namespace Gecode {
      * \brief Default constructor
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT Space(void);
-    /**
-     * \brief Destructor
-     * \ingroup TaskModelScript
-     */
-    GECODE_KERNEL_EXPORT virtual ~Space(void);
+    GECODE_KERNEL_EXPORT 
+    Space(void);
     /**
      * \brief Constructor for cloning
      *
@@ -1630,9 +1630,17 @@ namespace Gecode {
      *
      * If \a share is true, share all data structures among copies.
      * Otherwise, make independent copies.
+     *
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT Space(bool share, Space& s);
+    GECODE_KERNEL_EXPORT 
+    Space(bool share, Space& s);
+    /**
+     * \brief Destructor
+     * \ingroup TaskModelScript
+     */
+    GECODE_KERNEL_EXPORT
+    virtual ~Space(void);
     /**
      * \brief Copying member function
      *
@@ -1777,19 +1785,24 @@ namespace Gecode {
      * is not stable, an exception of SpaceNotStable is thrown.
      *
      * Otherwise, a clone of the space is returned and the statistics
-     * information \a stat is updated. If \a share is true,
+     * information \a stat is updated. If \a share_data is true,
      * sharable datastructures are shared among the clone and the original
-     * space. If \a share is false, independent copies of the shared
+     * space. If \a share_data is false, independent copies of the shared
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
      * with the original space.
+     *
+     * If \a share_info is true, information about AFC is shared, otherwise
+     * it will be unshared.
      *
      * Throws an exception of type SpaceNotCloned when the copy constructor
      * of the Space class is not invoked during cloning.
      *
      * \ingroup TaskSearch
      */
-    Space* clone(bool share=true, CloneStatistics& stat=unused_clone) const;
+    Space* clone(bool share_data=true, 
+                 bool share_info=true, 
+                 CloneStatistics& stat=unused_clone) const;
 
     /**
      * \brief Commit choice \a c for alternative \a a
@@ -2871,11 +2884,11 @@ namespace Gecode {
   }
 
   forceinline Space*
-  Space::clone(bool share, CloneStatistics&) const {
+  Space::clone(bool share_data, bool share_info, CloneStatistics&) const {
     // Clone is only const for search engines. During cloning, several data
     // structures are updated (e.g. forwarding pointers), so we have to
     // cast away the constness.
-    return const_cast<Space*>(this)->_clone(share);
+    return const_cast<Space*>(this)->_clone(share_data,share_info);
   }
 
   forceinline void

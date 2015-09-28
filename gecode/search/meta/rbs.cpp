@@ -91,7 +91,8 @@ namespace Gecode { namespace Search { namespace Meta {
            Engine* e0, const Options& opt)
     : e(e0), master(s), last(NULL), co(opt.cutoff), stop(stop0),
       sslr(0),
-      shared(opt.threads == 1), complete(true), restart(false) {
+      shared_data(opt.threads <= 1.0), shared_info(opt.share),
+      complete(true), restart(false) {
     stop->limit(Statistics(),(*co)());
   }
 
@@ -115,7 +116,7 @@ namespace Gecode { namespace Search { namespace Meta {
       } else if (r) {
         stop->update(e->statistics());
         Space* slave = master;
-        master = master->clone(shared);
+        master = master->clone(shared_data,shared_info);
         complete = slave->slave(mi);
         e->reset(slave);
         sslr = 0;
@@ -145,7 +146,7 @@ namespace Gecode { namespace Search { namespace Meta {
         if (master->status(stop->m_stat) == SS_FAILED)
           return NULL;
         Space* slave = master;
-        master = master->clone(shared);
+        master = master->clone(shared_data,shared_info);
         complete = slave->slave(mi);
         e->reset(slave);
       } else {

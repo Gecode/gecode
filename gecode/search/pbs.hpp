@@ -81,7 +81,8 @@ namespace Gecode { namespace Search { namespace Meta {
     
     for (unsigned int i=0; i<n_slaves; i++) {
       Space* slave = 
-        (i == n_slaves-1) ? master : master->clone(opt.threads <= 1.0);
+        (i == n_slaves-1) ? master : master->clone(opt.threads <= 1.0,
+                                                   opt.share);
       (void) slave->slave(i);
       slaves[i] = build<E,T>(slave,opt);
     }
@@ -108,7 +109,8 @@ namespace Gecode { namespace Search { namespace Meta {
         
       for (unsigned int i=0; i<n_slaves; i++) {
         opt.stop = stops[i] = Parallel::stop(stop);
-        Space* slave = (i == n_slaves-1) ? master : master->clone(false);
+        Space* slave = (i == n_slaves-1) ? master : master->clone(false,
+                                                                  opt.share);
         (void) slave->slave(i);
         slaves[i] = build<E,T>(slave,opt);
       }
@@ -138,10 +140,12 @@ namespace Gecode { namespace Search { namespace Meta {
           opt.stop = stop;
           Stop* sstop = Sequential::stop(opt);
           Engine** sslaves = heap.alloc<Engine*>(api);
-          Space* sroot = (a == n_assets-api) ? master : master->clone(false);
+          Space* sroot = (a == n_assets-api) ? 
+            master : master->clone(false,opt.share);
           opt.stop = sstop;
           for (int j=0; j<api; j++) {
-            Space* sslave = (j == api-1) ? sroot : sroot->clone(true);
+            Space* sslave = (j == api-1) ? 
+              sroot : sroot->clone(true,opt.share);
             (void) sslave->slave(a++);
             sslaves[j] = build<E,T>(sslave,opt);
           }
@@ -150,7 +154,8 @@ namespace Gecode { namespace Search { namespace Meta {
           pstops[i] = Parallel::stop(sstop);
         } else {
           opt.stop = pstops[i] = Parallel::stop(stop);
-          Space* pslave = (a == n_assets-1) ? master : master->clone(false);
+          Space* pslave = (a == n_assets-1) ? 
+            master : master->clone(false,opt.share);
           (void) pslave->slave(a++);
           pslaves[i] = build<E,T>(pslave,opt);
         }
@@ -184,7 +189,8 @@ namespace Gecode {
     }
 
     // Check whether a clone must be used
-    T* master = opt.clone ? static_cast<T*>(s->clone(opt.threads <= 1.0)) : s;
+    T* master = opt.clone ? 
+      static_cast<T*>(s->clone(opt.threads <= 1.0,opt.share)) : s;
     opt.clone = false;
 
     // Always execute master function

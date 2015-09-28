@@ -333,6 +333,15 @@ namespace Gecode {
   }
 
   inline void
+  Options::share(bool b) {
+    _share.value(b);
+  }
+  inline bool
+  Options::share(void) const {
+    return _share.value();
+  }
+
+  inline void
   Options::assets(unsigned int n) {
     _assets.value(n);
   }

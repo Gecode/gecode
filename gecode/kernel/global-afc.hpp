@@ -124,11 +124,15 @@ namespace Gecode {
     void local(Object* o);
     /// Set global pointer to possibly marked object
     void global(void* mo);
+    /// Perform disposal
+    void dispose(void);
   public:
     /// Initialize
     GlobalAFC(void);
     /// Copy during cloning
     GlobalAFC(const GlobalAFC& ga);
+    /// Unshare information (dispose and re-create)
+    void unshare(void);
     /// Destructor
     ~GlobalAFC(void);
     /// Set decay factor to \a d
@@ -261,8 +265,8 @@ namespace Gecode {
     o->mutex->release();
   }
 
-  forceinline
-  GlobalAFC::~GlobalAFC(void) {
+  forceinline void
+  GlobalAFC::dispose(void) {
     Support::FastMutex* m = object()->mutex;
     m->acquire();
     Object* c = object();
@@ -279,11 +283,23 @@ namespace Gecode {
       delete d; 
     }
     m->release();
-    // All objects are deleted, so also delete mutex and decya info
+    // All objects are deleted, so also delete mutex and decay info
     if (c == NULL) {
       delete decay;
       delete m;
     }
+  }
+
+  forceinline
+  GlobalAFC::~GlobalAFC(void) {
+    dispose();
+  }
+
+  forceinline void
+  GlobalAFC::unshare(void) {
+    dispose();
+    // No synchronization needed as single thread is creating this object
+    local(new Object(new Support::FastMutex));
   }
 
   forceinline void

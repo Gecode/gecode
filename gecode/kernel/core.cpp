@@ -554,14 +554,14 @@ namespace Gecode {
   }
 
   Space*
-  Space::_clone(bool share) {
+  Space::_clone(bool share_data, bool share_info) {
     if (failed())
       throw SpaceFailed("Space::clone");
     if (!stable())
       throw SpaceNotStable("Space::clone");
 
     // Copy all data structures (which in turn will invoke the constructor)
-    Space* c = copy(share);
+    Space* c = copy(share_data);
 
     if (c->d_fst != &Actor::sentinel)
       throw SpaceNotCloned("Space::clone");
@@ -638,6 +638,20 @@ namespace Gecode {
     // Copy propagation only data
     c->pc.p.n_sub = pc.p.n_sub;
     c->pc.p.branch_id = pc.p.branch_id;
+
+    if (!share_info) {
+      gafc.unshare();
+      // Unshare AFC information
+      ActorLink* p_a = &pl;
+      ActorLink* c_a = p_a->next();
+      // Re-allocate afc information
+      while (c_a != &pl) {
+        Propagator* p = Propagator::cast(c_a);
+        p->gafc = gafc.allocate();
+        p_a = c_a; c_a = c_a->next();
+      }
+    }
+
     return c;
   }
 

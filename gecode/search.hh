@@ -472,6 +472,8 @@ namespace Gecode { namespace Search {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
+      /// Whether to share AFC information between restarts and assets
+      bool share;
       /// Number of assets (engines) in a portfolio
       unsigned int assets;
       /// Size of a slice in a portfolio (in number of failures)

@@ -320,6 +320,7 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
+          so.share   = o.share();
           so.assets  = o.assets();
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
                                             o.interrupt());
@@ -413,6 +414,7 @@ namespace Gecode { namespace Driver {
           Search::Options so;
           so.clone   = false;
           so.threads = o.threads();
+          so.share   = o.share();
           so.assets  = o.assets();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
@@ -471,6 +473,7 @@ namespace Gecode { namespace Driver {
               Search::Options so;
               so.clone   = false;
               so.threads = o.threads();
+              so.share   = o.share();
               so.assets  = o.assets();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
