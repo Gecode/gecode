@@ -42,28 +42,53 @@
 
 namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
+  /// Shared stop information
+  class SharedStopInfo {
+  public:
+    /// Whether search stopped because the slice is done
+    bool done;
+    /// The current failure limit, incremented for each slice
+    unsigned long int l;
+  };
+
   /// Stop object used for controling slaves in a portfolio
   class GECODE_SEARCH_EXPORT PortfolioStop : public Stop {
   private:
     /// The stop object for the slaves
     Stop* so;
-    /// Whether search stopped because the slice is done
-    bool done;
-    /// Number of failures in a slice
-    const unsigned int slice;
-    /// The current failure limit, incremented for each slice
-    unsigned long int l;
+    /// Pointer to shared stop information
+    SharedStopInfo* ssi;
   public:
     /// Initialize
-    PortfolioStop(const Options& opt);
+    PortfolioStop(Stop* so);
+    /// Intialize shared stop information
+    void share(SharedStopInfo* ssi);
     /// Return true if portfolio engine must be stopped
     virtual bool stop(const Statistics& s, const Options& o);
-    /// Increment failure limit by slice
-    void inc(void);
-    /// Whether search was stopped because slice is exhausted
-    bool exhausted(void) const;
-    /// Disable stop object because a single slave is left
-    void disable(void);
+  };
+
+  /// Runnable slave of a portfolio master
+  class Slave {
+  protected:
+    /// The slave engine
+    Engine* slave;
+    /// Stop object
+    Stop* stop;
+  public:
+    /// Initialize with slave \a s and its stop object \a so
+    void init(Engine* s, Stop* so);
+    /// Return next solution
+    Space* next(void);
+    /// Return statistics of slave
+    Statistics statistics(void) const;
+    /// Check whether slave has been stopped
+    bool stopped(void) const;
+    /// Constrain with better solution \a b
+    void constrain(const Space& b);
+    /// Perform one run
+    void run(void);
+    /// Delete slave
+    ~Slave(void);
   };
 
   /// Sequential portfolio engine implementation
@@ -72,19 +97,22 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
   protected:
     /// Master statistics
     Statistics stat;
-    /// Slave engines
-    Engine** slaves;
+    /// Shared slave information
+    SharedStopInfo ssi;
+    /// Size of a slice
+    unsigned int slice;
+    /// Slaves
+    Slave* slaves;
     /// Number of slave engines
     unsigned int n_slaves;
     /// Current slave to run
     unsigned int cur;
     /// Whether a slave has been stopped
     bool slave_stop;
-    /// Stop object
-    PortfolioStop* stop;
   public:
     /// Initialize
-    PBS(Engine** s, unsigned int n, const Statistics& stat, PortfolioStop* so);
+    PBS(Engine** slaves, Stop** stops, unsigned int n, 
+        const Statistics& stat, const Search::Options& opt);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics

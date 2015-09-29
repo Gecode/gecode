@@ -41,29 +41,55 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
 
   forceinline
-  PortfolioStop::PortfolioStop(const Options& opt)
-    : so(opt.stop), done(false), slice(opt.slice), l(opt.slice) {}
-  forceinline void 
-  PortfolioStop::inc(void) {
-    done = false;
-    l += slice;
+  PortfolioStop::PortfolioStop(Stop* so0)
+    : so(so0) {}
+  forceinline void
+  PortfolioStop::share(SharedStopInfo* ssi0) {
+    ssi = ssi0;
   }
-  forceinline bool 
-  PortfolioStop::exhausted(void) const {
-    return done;
+
+
+  forceinline void
+  Slave::init(Engine* e, Stop* s) {
+    slave = e; stop = s;
+  }
+  forceinline Space*
+  Slave::next(void) {
+    return slave->next();
+  }
+  forceinline Statistics
+  Slave::statistics(void) const {
+    return slave->statistics();
+  }
+  forceinline bool
+  Slave::stopped(void) const {
+    return slave->stopped();
   }
   forceinline void
-  PortfolioStop::disable(void) {
-    l = ULONG_MAX;
+  Slave::constrain(const Space& b) {
+    slave->constrain(b);
+  }
+  forceinline
+  Slave::~Slave(void) {
+    delete slave;
+    delete stop;
   }
 
 
   template<bool best>
   forceinline
-  PBS<best>::PBS(Engine** s, unsigned int n, 
-           const Statistics& stat0, PortfolioStop* so)
-    : stat(stat0), slaves(s), n_slaves(n), cur(0),
-      slave_stop(false), stop(so) {
+  PBS<best>::PBS(Engine** e, Stop** s, unsigned int n, 
+                 const Statistics& stat0,
+                 const Search::Options& opt)
+    : stat(stat0), slice(opt.slice), 
+      slaves(heap.alloc<Slave>(n)), n_slaves(n), cur(0),
+      slave_stop(false) {
+    ssi.done = false;
+    ssi.l = opt.slice;
+    for (unsigned int i=n; i--; ) {
+      slaves[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
+      static_cast<PortfolioStop*>(s[i])->share(&ssi);
+    }
   }
 
   template<bool best>
@@ -72,18 +98,18 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
     slave_stop = false;
     unsigned int n_exhausted = 0;
     while (n_slaves > 0) {
-      if (Space* s = slaves[cur]->next()) {
+      if (Space* s = slaves[cur].next()) {
         // Constrain other slaves
         if (best) {
           for (unsigned int i=0; i<cur; i++)
-            slaves[i]->constrain(*s);
+            slaves[i].constrain(*s);
           for (unsigned int i=cur+1; i<n_slaves; i++)
-            slaves[i]->constrain(*s);
+            slaves[i].constrain(*s);
         }          
         return s;
       }
-      if (slaves[cur]->stopped()) {
-        if (stop->exhausted()) {
+      if (slaves[cur].stopped()) {
+        if (ssi.done) {
           cur++; n_exhausted++;
         } else {
           slave_stop = true;
@@ -91,17 +117,17 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
         }
       } else {
         // This slave is done, kill it after saving the statistics
-        stat += slaves[cur]->statistics();
-        delete slaves[cur];
+        stat += slaves[cur].statistics();
+        slaves[cur].~Slave();
         slaves[cur] = slaves[--n_slaves];
         if (n_slaves == 1)
-          // Disable stoping
-          stop->disable();
+          // Disable stoping by seeting a high limit
+          ssi.l = ULONG_MAX;
       }
       if (n_exhausted == n_slaves) {
         n_exhausted = 0;
         // Increment by one slice
-        stop->inc();
+        ssi.l += slice;
       }
       if (cur == n_slaves)
         cur = 0;
@@ -120,17 +146,16 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
   PBS<best>::statistics(void) const {
     Statistics s(stat);
     for (unsigned int i=n_slaves; i--; )
-      s += slaves[i]->statistics();
+      s += slaves[i].statistics();
     return s;
   }
 
   template<bool best>
   PBS<best>::~PBS(void) {
     for (unsigned int i=n_slaves; i--; )
-      delete slaves[i];
+      slaves[i].~Slave();
     // Note that n_slaves might be different now!
     heap.rfree(slaves);
-    delete stop;
   }
 
 }}}}

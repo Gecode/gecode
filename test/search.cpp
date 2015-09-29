@@ -521,7 +521,7 @@ namespace Test {
           delete b;
           return ok;
         } else {
-          int n = a * m->solutions();
+          int n = ((t > 1) ? std::min(a,t) : a) * m->solutions();
           delete m;
           while (true) {
             Model* s = pbs.next();

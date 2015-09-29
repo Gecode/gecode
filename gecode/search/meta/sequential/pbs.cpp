@@ -41,8 +41,8 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
   bool 
   PortfolioStop::stop(const Statistics& s, const Options& o) {
-    if (s.fail >= l) {
-      done = true;
+    if (s.fail >= ssi->l) {
+      ssi->done = true;
       return true;
     }
     return (so != NULL) && so->stop(s,o);

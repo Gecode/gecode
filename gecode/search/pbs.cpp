@@ -40,19 +40,17 @@
 namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
   Stop* 
-  stop(const Options& opt) {
-    return new PortfolioStop(opt);
+  stop(Stop* so) {
+    return new PortfolioStop(so);
   }
 
   Engine* 
-  engine(Engine** slaves, unsigned int n_slaves, 
-         const Statistics& stat, Stop* stop, bool best) {
+  engine(Engine** slaves, Stop** stops, unsigned int n_slaves, 
+         const Statistics& stat, const Search::Options& opt, bool best) {
     if (best)
-      return new PBS<true>(slaves,n_slaves,stat,
-                           static_cast<PortfolioStop*>(stop));
+      return new PBS<true>(slaves,stops,n_slaves,stat,opt);
     else
-      return new PBS<false>(slaves,n_slaves,stat,
-                            static_cast<PortfolioStop*>(stop));
+      return new PBS<false>(slaves,stops,n_slaves,stat,opt);
   }
 
 }}}}
