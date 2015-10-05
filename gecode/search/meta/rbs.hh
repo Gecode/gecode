@@ -46,7 +46,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
   /// %Stop-object for restart engine
   class GECODE_SEARCH_EXPORT RestartStop : public Stop {
-    template<template<class>class,class> friend class ::Gecode::RBS;
+    template<class,template<class>class> friend class ::Gecode::RBS;
     friend class ::Gecode::Search::Meta::RBS;
   private:
     /// The failure limit for the engine

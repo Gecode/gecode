@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+For meta search engines, the order of template arguments has been
+changed: the first is the script type, the second is the engine
+type.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

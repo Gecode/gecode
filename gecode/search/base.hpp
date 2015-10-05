@@ -67,7 +67,7 @@ namespace Gecode { namespace Search {
   }
 
 
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   forceinline Engine* 
   build(Space* s, const Options& opt) {
     E<T> engine(dynamic_cast<T*>(s),opt);

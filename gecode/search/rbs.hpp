@@ -42,9 +42,9 @@
 
 namespace Gecode {
 
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   forceinline
-  RBS<E,T>::RBS(T* s, const Search::Options& m_opt) {
+  RBS<T,E>::RBS(T* s, const Search::Options& m_opt) {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt(m_opt.expand());
@@ -66,14 +66,14 @@ namespace Gecode {
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
     }
-    e = new Search::Meta::RBS(master,rs,Search::build<E,T>(slave,e_opt),m_opt);
+    e = new Search::Meta::RBS(master,rs,Search::build<T,E>(slave,e_opt),m_opt);
   }
 
 
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   forceinline T*
   rbs(T* s, const Search::Options& o) {
-    RBS<E,T> r(s,o);
+    RBS<T,E> r(s,o);
     return r.next();
   }
 

@@ -466,7 +466,7 @@ namespace Test {
         o.threads = t;
         o.stop = &f;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
-        Gecode::RBS<Engine,Model> rbs(m,o);
+        Gecode::RBS<Model,Engine> rbs(m,o);
         int n = m->solutions();
         delete m;
         while (true) {
@@ -505,7 +505,7 @@ namespace Test {
         o.assets = a;
         o.threads = t;
         o.stop = &f;
-        Gecode::PBS<Engine,Model> pbs(m,o);
+        Gecode::PBS<Model,Engine> pbs(m,o);
         if (best) {
           Model* b = NULL;
           while (true) {

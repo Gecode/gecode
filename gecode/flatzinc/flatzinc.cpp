@@ -1454,7 +1454,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   template<template<class> class Engine,
-           template<template<class> class,class> class Meta>
+           template<class,template<class> class> class Meta>
   void
   FlatZincSpace::runMeta(std::ostream& out, const Printer& p,
                          const FlatZincOptions& opt, Support::Timer& t_total) {
@@ -1486,7 +1486,7 @@ namespace Gecode { namespace FlatZinc {
     o.cutoff  = Driver::createCutoff(opt);
     if (opt.interrupt())
       Driver::CombinedStop::installCtrlHandler(true);
-    Meta<Engine,FlatZincSpace> se(this,o);
+    Meta<FlatZincSpace,Engine> se(this,o);
     int noOfSolutions = opt.solutions();
     if (noOfSolutions == -1) {
       noOfSolutions = (_method == SAT) ? 1 : 0;

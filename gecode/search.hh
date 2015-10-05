@@ -638,13 +638,13 @@ namespace Gecode { namespace Search {
 namespace Gecode { namespace Search {
 
   /// Build an engine of type \a E for a script \a T
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   Engine* build(Space* s, const Options& opt);
 
   /// Base-class for search engines
   template<class T>
   class Base : public HeapAllocated {
-    template<template<class> class, class> 
+    template<class, template<class> class> 
     friend Engine* build(Space*, const Options&);
   protected:
     /// The actual search engine
@@ -754,7 +754,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template<template<class> class E, class T>
+  template<class T, template<class> class E = DFS>
   class RBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
@@ -780,7 +780,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template<template<class> class E, class T>
+  template<class T, template<class> class E = DFS>
   T* rbs(T* s, const Search::Options& o);
 
 }
@@ -790,13 +790,13 @@ namespace Gecode {
 namespace Gecode { namespace Search { namespace Meta {
 
   /// Build a sequential engine
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   Engine* sequential(T* master, const Search::Statistics& stat, Options& opt);
 
 #ifdef GECODE_HAS_THREADS
 
   /// Build a parallel engine
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   Engine* parallel(T* master, const Search::Statistics& stat, Options& opt);
 
 #endif
@@ -822,7 +822,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template<template<class> class E, class T>
+  template<class T, template<class> class E = DFS>
   class PBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
@@ -847,7 +847,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template<template<class> class E, class T>
+  template<class T, template<class> class E = DFS>
   T* pbs(T* s, const Search::Options& o);
 
 }

@@ -416,7 +416,7 @@ namespace Gecode { namespace FlatZinc {
               const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
     /// Run the meta search engine
     template<template<class> class Engine,
-             template<template<class> class,class> class Meta>
+             template<class, template<class> class> class Meta>
     void
     runMeta(std::ostream& out, const Printer& p, 
             const FlatZincOptions& opt, Gecode::Support::Timer& t_total);

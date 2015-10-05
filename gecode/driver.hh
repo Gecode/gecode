@@ -693,8 +693,8 @@ namespace Gecode { namespace Driver {
     static void run(const Options& opt, Script* s=NULL);
   private:
     template<class Script, template<class> class Engine, class Options,
-             template<template<class> class,class> class Meta>
-             static void runMeta(const Options& opt, Script* s);
+             template<class, template<class> class> class Meta>
+    static void runMeta(const Options& opt, Script* s);
     /// Catch wrong definitions of copy constructor
     explicit ScriptBase(ScriptBase& e);
   };

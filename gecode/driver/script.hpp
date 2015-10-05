@@ -243,7 +243,7 @@ namespace Gecode { namespace Driver {
   /**
    * \brief Wrapper class to add engine template argument
    */
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   class EngineToMeta : public E<T> {
   public:
     EngineToMeta(T* s, const Search::Options& o) : E<T>(s,o) {}
@@ -268,7 +268,7 @@ namespace Gecode { namespace Driver {
 
   template<class BaseSpace>
   template<class Script, template<class> class Engine, class Options,
-           template<template<class> class,class> class Meta>
+           template<class, template<class> class> class Meta>
   void
   ScriptBase<BaseSpace>::runMeta(const Options& o, Script* s) {
     using namespace std;
@@ -330,7 +330,7 @@ namespace Gecode { namespace Driver {
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
           {
-            Meta<Engine,Script> e(s,so);
+            Meta<Script,Engine> e(s,so);
             if (o.print_last()) {
               Script* px = NULL;
               do {
@@ -425,7 +425,7 @@ namespace Gecode { namespace Driver {
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
           {
-            Meta<Engine,Script> e(s,so);
+            Meta<Script,Engine> e(s,so);
             do {
               Script* ex = e.next();
               if (ex == NULL)
@@ -482,7 +482,7 @@ namespace Gecode { namespace Driver {
               so.cutoff  = createCutoff(o);
               so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
               {
-                Meta<Engine,Script> e(s,so);
+                Meta<Script,Engine> e(s,so);
                 do {
                   Script* ex = e.next();
                   if (ex == NULL)

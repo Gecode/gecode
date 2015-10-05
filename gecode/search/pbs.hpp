@@ -68,7 +68,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   Engine*
   sequential(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
@@ -86,7 +86,7 @@ namespace Gecode { namespace Search { namespace Meta {
       Space* slave = (i == n_slaves-1) ? 
         master : master->clone(opt.threads <= 1.0,opt.share);
       (void) slave->slave(i);
-      slaves[i] = build<E,T>(slave,opt);
+      slaves[i] = build<T,E>(slave,opt);
     }
     
     return Sequential::engine(slaves,stops,n_slaves,stat,opt,E<T>::best);
@@ -94,7 +94,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
 #ifdef GECODE_HAS_THREADS
 
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   Engine*
   parallel(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Search { namespace Meta {
       Space* slave = (i == n_slaves-1) ? 
         master : master->clone(false,opt.share);
       (void) slave->slave(i);
-      slaves[i] = build<E,T>(slave,opt);
+      slaves[i] = build<T,E>(slave,opt);
     }
         
     return Parallel::engine(slaves,stops,n_slaves,stat,E<T>::best);
@@ -126,8 +126,8 @@ namespace Gecode { namespace Search { namespace Meta {
 
 namespace Gecode {
 
-  template<template<class> class E, class T>
-  PBS<E,T>::PBS(T* s, const Search::Options& o) {
+  template<class T, template<class> class E>
+  PBS<T,E>::PBS(T* s, const Search::Options& o) {
     Search::Options opt(o.expand());
 
     if (opt.assets == 0)
@@ -154,19 +154,19 @@ namespace Gecode {
     // No need to create a portfolio engine but must run slave function
     if (o.assets == 1) {
       (void) master->slave(0);
-      e = Search::build<E,T>(master,opt);
+      e = Search::build<T,E>(master,opt);
       return;
     }
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::Meta::parallel<E,T>(master,stat,opt);
+      e = Search::Meta::parallel<T,E>(master,stat,opt);
     else
 #endif
-      e = Search::Meta::sequential<E,T>(master,stat,opt);
+      e = Search::Meta::sequential<T,E>(master,stat,opt);
   }
 
-  template<template<class> class E, class T>
+  template<class T, template<class> class E>
   forceinline T*
   pbs(T* s, const Search::Options& o) {
     PBS<E,T> r(s,o);
