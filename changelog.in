@@ -77,6 +77,14 @@ Module: search
 What:   change
 Rank:   minor
 [DESCRIPTION]
+The restart meta search engine must be used with the
+branch-and-bound engine for best solution search.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
 For meta search engines, the order of template arguments has been
 changed: the first is the script type, the second is the engine
 type.
