@@ -56,7 +56,7 @@ namespace Gecode { namespace Search {
   template<class T, template<class> class E>
   forceinline
   RbsBuilder<T,E>::RbsBuilder(const Options& opt)
-    : Builder(opt) {}
+    : Builder(opt,E<T>::best) {}
 
   template<class T, template<class> class E>
   Engine*

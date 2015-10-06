@@ -145,6 +145,18 @@ namespace Gecode { namespace Search {
     /// Initialize with location \a l
     NoAssets(const char* l);
   };
+  /// %Exception: Mixed non-best and best solution search requested
+  class GECODE_VTABLE_EXPORT MixedBest : public Exception {
+  public:
+    /// Initialize with location \a l
+    MixedBest(const char* l);
+  };
+  /// %Exception: Best solution search is not supported
+  class GECODE_VTABLE_EXPORT NoBest : public Exception {
+  public:
+    /// Initialize with location \a l
+    NoBest(const char* l);
+  };
   //@}
 }}
 
@@ -674,17 +686,21 @@ namespace Gecode { namespace Search {
   Engine* build(Space* s, const Options& opt);
 
   /// A class for building search engines
-  class Builder : public HeapAllocated {
+  class GECODE_SEARCH_EXPORT Builder : public HeapAllocated {
   protected:
     /// Stored and already expanded options
     Options opt;
+    /// Whether engine to be built is a best solution search engine
+    const bool b;
   public:
-    /// Initialize with options \a opt
-    Builder(const Options& opt);
+    /// Initialize with options \a opt and \a best solution search support
+    Builder(const Options& opt, bool best);
     /// Provide access to options
     Options& options(void);
     /// Provide access to options
     const Options& options(void) const;
+    /// Whether engine is a best solution search engine
+    bool best(void) const;
     /// Build an engine according to stored options for \a s
     virtual Engine* operator() (Space* s) const = 0;
     /// Destructor
@@ -865,11 +881,21 @@ namespace Gecode { namespace Search { namespace Meta {
   template<class T, template<class> class E>
   Engine* sequential(T* master, const Search::Statistics& stat, Options& opt);
 
+  /// Build a sequential engine
+  template<class T, template<class> class E>
+  Engine* sequential(T* master, SEBs& sebs,
+                     const Search::Statistics& stat, Options& opt, bool best);
+
 #ifdef GECODE_HAS_THREADS
 
   /// Build a parallel engine
   template<class T, template<class> class E>
   Engine* parallel(T* master, const Search::Statistics& stat, Options& opt);
+
+  /// Build a parallel engine
+  template<class T, template<class> class E>
+  Engine* parallel(T* master, SEBs& sebs,
+                   const Search::Statistics& stat, Options& opt, bool best);
 
 #endif
 

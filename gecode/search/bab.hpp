@@ -58,7 +58,7 @@ namespace Gecode { namespace Search {
   template<class T>
   forceinline
   BabBuilder<T>::BabBuilder(const Options& opt)
-    : Builder(opt) {}
+    : Builder(opt,BAB<T>::best) {}
 
   template<class T>
   Engine*

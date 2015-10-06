@@ -55,12 +55,11 @@ namespace Gecode { namespace Search {
   template<class T>
   forceinline
   DfsBuilder<T>::DfsBuilder(const Options& opt)
-    : Builder(opt) {}
+    : Builder(opt,DFS<T>::best) {}
 
   template<class T>
   Engine*
-  DfsBuilder<T>::operator() (Space* _s) const {
-    T* s = dynamic_cast<T*>(_s);
+  DfsBuilder<T>::operator() (Space* s) const {
     return build<T,DFS>(s,opt);
   }
 

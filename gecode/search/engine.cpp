@@ -42,6 +42,7 @@ namespace Gecode { namespace Search {
   void
   Engine::constrain(const Space& b) {
     (void) b;
+    throw NoBest("Engine::constrain");
   }
   void
   Engine::reset(Space* s) {

@@ -38,8 +38,8 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  Builder::Builder(const Options& opt0) 
-    : opt(opt0.expand()) {}
+  Builder::Builder(const Options& opt0, bool b0) 
+    : opt(opt0.expand()), b(b0) {}
   forceinline Options&
   Builder::options(void) {
     return opt;
@@ -47,6 +47,10 @@ namespace Gecode { namespace Search {
   forceinline const Options&
   Builder::options(void) const {
     return opt;
+  }
+  forceinline bool
+  Builder::best(void) const {
+    return b;
   }
   forceinline
   Builder::~Builder(void) {

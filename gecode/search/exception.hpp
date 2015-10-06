@@ -45,6 +45,15 @@ namespace Gecode { namespace Search {
   NoAssets::NoAssets(const char* l)
     : Exception(l,"No assets requested in portfolio") {}
 
+  inline
+  MixedBest::MixedBest(const char* l)
+    : Exception(l,"Illegal combination of best and non-best solution search")
+  {}
+
+  inline
+  NoBest::NoBest(const char* l)
+    : Exception(l,"Best solution search is not supported") {}
+
 }}
 
 // STATISTICS: search-other

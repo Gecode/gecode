@@ -54,7 +54,7 @@ namespace Gecode { namespace Search {
   template<class T, template<class> class E>
   forceinline
   PbsBuilder<T,E>::PbsBuilder(const Options& opt)
-    : Builder(opt) {}
+    : Builder(opt,E<T>::best) {}
 
   template<class T, template<class> class E>
   Engine*
@@ -121,7 +121,7 @@ namespace Gecode { namespace Search { namespace Meta {
   template<class T, template<class> class E>
   Engine*
   sequential(T* master, SEBs& sebs, 
-             const Search::Statistics& stat, Options& opt) {
+             const Search::Statistics& stat, Options& opt, bool best) {
     Region r(*master);
 
     int n_slaves = sebs.size();
@@ -141,7 +141,7 @@ namespace Gecode { namespace Search { namespace Meta {
       delete sebs[i];
     }
     
-    return Sequential::engine(slaves,stops,n_slaves,stat,opt,E<T>::best);
+    return Sequential::engine(slaves,stops,n_slaves,stat,opt,best);
   }
 
 #ifdef GECODE_HAS_THREADS
@@ -175,7 +175,7 @@ namespace Gecode { namespace Search { namespace Meta {
   template<class T, template<class> class E>
   Engine*
   parallel(T* master, SEBs& sebs, 
-           const Search::Statistics& stat, Options& opt) {
+           const Search::Statistics& stat, Options& opt, bool best) {
     Region r(*master);
 
     // Limit the number of slaves to the number of threads
@@ -200,7 +200,7 @@ namespace Gecode { namespace Search { namespace Meta {
     for (int i=n_slaves; i<sebs.size(); i++)
       delete sebs[i];
 
-    return Parallel::engine(slaves,stops,n_slaves,stat,E<T>::best);
+    return Parallel::engine(slaves,stops,n_slaves,stat,best);
   }
 
 #endif
@@ -251,6 +251,18 @@ namespace Gecode {
 
   template<class T, template<class> class E>
   PBS<T,E>::PBS(T* s, SEBs& sebs, const Search::Options& o) {
+
+    // Check whether all sebs do either best solution search or not
+    bool best;
+    {
+      int b = 0;
+      for (int i=sebs.size(); i--; )
+        b += sebs[i]->best() ? 1 : 0;
+      if ((b > 0) && (b < sebs.size()))
+        throw Search::MixedBest("PBS::PBS");
+      best = (b == sebs.size());
+    }
+
     Search::Options opt(o.expand());
     Search::Statistics stat;
 
@@ -272,10 +284,10 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::Meta::parallel<T,E>(master,sebs,stat,opt);
+      e = Search::Meta::parallel<T,E>(master,sebs,stat,opt,best);
     else
 #endif
-      e = Search::Meta::sequential<T,E>(master,sebs,stat,opt);
+      e = Search::Meta::sequential<T,E>(master,sebs,stat,opt,best);
   }
 
   template<class T, template<class> class E>
