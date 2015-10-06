@@ -737,7 +737,7 @@ namespace Gecode {
   template<class T>
   class DFS : public Search::Base<T> {
   public:
-    /// Whether engine doe best solution search
+    /// Whether engine does best solution search
     static const bool best = false;
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
@@ -771,7 +771,7 @@ namespace Gecode {
   template<class T>
   class BAB : public Search::Base<T> {
   public:
-    /// Whether engine doe best solution search
+    /// Whether engine does best solution search
     static const bool best = true;
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
@@ -824,6 +824,8 @@ namespace Gecode {
   class RBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
+    /// Whether engine does best solution search
+    static const bool best = E<T>::best;
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o);
   };
@@ -896,6 +898,8 @@ namespace Gecode {
   class PBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
+    /// Whether engine does best solution search
+    static const bool best = E<T>::best;
     /// Initialize with engines running copies of \a s with options \a o
     PBS(T* s, const Search::Options& o=Search::Options::def);
     /// Initialize with engines defined by engine builders \a sebs
