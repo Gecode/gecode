@@ -40,6 +40,32 @@
 #include <gecode/search/support.hh>
 #include <gecode/search/meta/rbs.hh>
 
+namespace Gecode { namespace Search {
+
+  /// A RBS engine builder
+  template<class T, template<class> class E>
+  class RbsBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    RbsBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T, template<class> class E>
+  forceinline
+  RbsBuilder<T,E>::RbsBuilder(const Options& opt)
+    : Builder(opt) {}
+
+  template<class T, template<class> class E>
+  Engine*
+  RbsBuilder<T,E>::operator() (Space* s) const {
+    return build<T,RBS<T,E> >(s,opt);
+  }
+
+}}
+
 namespace Gecode {
 
   template<class T, template<class> class E>
@@ -76,6 +102,13 @@ namespace Gecode {
     RBS<T,E> r(s,o);
     return r.next();
   }
+
+  template<class T, template<class> class E>
+  Search::Builder*
+  rbs(const Search::Options& o) {
+    return new Search::RbsBuilder<T,E>(o);
+  }
+
 
 }
 

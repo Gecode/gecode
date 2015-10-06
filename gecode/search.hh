@@ -637,13 +637,11 @@ namespace Gecode { namespace Search {
 
 namespace Gecode { namespace Search {
 
-  /// Build an engine of type \a E for a script \a T
-  template<class T, template<class> class E>
-  Engine* build(Space* s, const Options& opt);
-
   /// Base-class for search engines
   template<class T>
   class Base : public HeapAllocated {
+    template<class, class> 
+    friend Engine* build(Space*, const Options&);
     template<class, template<class> class> 
     friend Engine* build(Space*, const Options&);
   protected:
@@ -666,8 +664,68 @@ namespace Gecode { namespace Search {
 
 #include <gecode/search/base.hpp>
 
+namespace Gecode { namespace Search {
+
+  /// Build an engine of type \a E for a script \a T
+  template<class T, class E>
+  Engine* build(Space* s, const Options& opt);
+  /// Build a parametric engine of type \a E for a script \a T
+  template<class T, template<class> class E>
+  Engine* build(Space* s, const Options& opt);
+
+  /// A class for building search engines
+  class Builder : public HeapAllocated {
+  protected:
+    /// Stored and already expanded options
+    Options opt;
+  public:
+    /// Initialize with options \a opt
+    Builder(const Options& opt);
+    /// Provide access to options
+    Options& options(void);
+    /// Provide access to options
+    const Options& options(void) const;
+    /// Build an engine according to stored options for \a s
+    virtual Engine* operator() (Space* s) const = 0;
+    /// Destructor
+    virtual ~Builder(void);
+  };
+
+}}
+
+#include <gecode/search/build.hpp>
+
+#include <gecode/search/traits.hpp>
+
 namespace Gecode {
 
+  /// Passing search engine builder arguments
+  class SEBs : public PrimArgArray<Search::Builder*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Allocate empty array
+    SEBs(void);
+    /// Allocate array with \a n elements
+    explicit SEBs(int n);
+    /// Allocate array and copy elements from \a x
+    SEBs(const std::vector<Search::Builder*>& x);
+    /// Allocate array and copy elements from \a first to \a last
+    template<class InputIterator>
+    SEBs(InputIterator first, InputIterator last);
+    /// Initialize from primitive argument array \a a (copy elements)
+    SEBs(const PrimArgArray<Search::Builder*>& a);
+    /// Allocate array with \a n elements and initialize with \a b0, ...
+    GECODE_SEARCH_EXPORT
+    SEBs(int n, Search::Builder* b0, ...);
+    //@}    
+  };
+
+}
+
+#include <gecode/search/sebs.hpp>
+
+namespace Gecode {
 
   /**
    * \brief Depth-first search engine
@@ -688,6 +746,10 @@ namespace Gecode {
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
   template<class T>
   T* dfs(T* s, const Search::Options& o=Search::Options::def);
+
+  /// Return a depth-first search engine builder
+  template<class T>
+  Search::Builder* dfs(const Search::Options& o=Search::Options::def);
 
 }
 
@@ -729,6 +791,10 @@ namespace Gecode {
    */
   template<class T>
   T* bab(T* s, const Search::Options& o=Search::Options::def);
+
+  /// Return a depth-first branch-and-bound search engine builder
+  template<class T>
+  Search::Builder* bab(const Search::Options& o=Search::Options::def);
 
 }
 
@@ -783,6 +849,10 @@ namespace Gecode {
   template<class T, template<class> class E = DFS>
   T* rbs(T* s, const Search::Options& o);
 
+  /// Return a restart search engine builder
+  template<class T, template<class> class E = DFS>
+  Search::Builder* rbs(const Search::Options& o);
+
 }
 
 #include <gecode/search/rbs.hpp>
@@ -827,7 +897,9 @@ namespace Gecode {
     using Search::Base<T>::e;
   public:
     /// Initialize with engines running copies of \a s with options \a o
-    PBS(T* s, const Search::Options& o);
+    PBS(T* s, const Search::Options& o=Search::Options::def);
+    /// Initialize with engines defined by engine builders \a sebs
+    PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
   };
 
   /**
@@ -848,7 +920,11 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T, template<class> class E = DFS>
-  T* pbs(T* s, const Search::Options& o);
+  T* pbs(T* s, const Search::Options& o=Search::Options::def);
+
+  /// Return a portfolio search engine builder
+  template<class T, template<class> class E = DFS>
+  Search::Builder* pbs(const Search::Options& o=Search::Options::def);
 
 }
 

@@ -44,6 +44,28 @@ namespace Gecode { namespace Search {
   /// Create branch and bound engine
   GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
   
+  /// A BAB engine builder
+  template<class T>
+  class BabBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    BabBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T>
+  forceinline
+  BabBuilder<T>::BabBuilder(const Options& opt)
+    : Builder(opt) {}
+
+  template<class T>
+  Engine*
+  BabBuilder<T>::operator() (Space* s) const {
+    return build<T,BAB>(s,opt);
+  }
+
 }}
 
 namespace Gecode {
@@ -62,6 +84,12 @@ namespace Gecode {
       delete l; l = n;
     }
     return l;
+  }
+
+  template<class T>
+  Search::Builder*
+  bab(const Search::Options& o) {
+    return new Search::BabBuilder<T>(o);
   }
 
 }

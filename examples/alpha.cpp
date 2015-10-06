@@ -136,6 +136,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
+  Search::Options so;
+  Search::Builder* b = dfs<Alpha>(so);
+  so.cutoff = Search::Cutoff::luby();
+  Search::Builder* c = rbs<Alpha,DFS>(so);
+  SEBs bc(2, b, c);
   Options opt("Alpha");
   opt.solutions(0);
   opt.iterations(10);
@@ -144,7 +149,9 @@ main(int argc, char* argv[]) {
   opt.branching(Alpha::BRANCH_INVERSE, "inverse");
   opt.branching(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  Script::run<Alpha,DFS,Options>(opt);
+  PBS<Alpha> pbs(new Alpha(opt),bc);
+
+  //  Script::run<Alpha,DFS,Options>(opt);
   return 0;
 }
 

@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2013
- *     Guido Tack, 2013
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,33 +35,29 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode {
 
-  template<class T>
-  forceinline
-  Base<T>::Base(Engine* e0) 
-    : e(e0) {}
-  template<class T>
-  forceinline T*
-  Base<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-  template<class T>
-  forceinline Statistics
-  Base<T>::statistics(void) const {
-    return e->statistics();
-  }
-  template<class T>
-  forceinline bool
-  Base<T>::stopped(void) const {
-    return e->stopped();
-  }
-  template<class T>
-  forceinline
-  Base<T>::~Base(void) { 
-    delete e; 
-  }
+  // Forward declaration
+  class SEBs;
 
-}}
+  /// Traits of %SEBs
+  template<>
+  class ArrayTraits<PrimArgArray<Search::Builder*> > {
+  public:
+    typedef SEBs             StorageType;
+    typedef Search::Builder* ValueType;
+    typedef SEBs             ArgsType;
+  };
+
+  /// Traits of %SEBs
+  template<>
+  class ArrayTraits<SEBs> {
+  public:
+    typedef SEBs             StorageType;
+    typedef Search::Builder* ValueType;
+    typedef SEBs             ArgsType;
+  };
+  
+}
 
 // STATISTICS: search-other

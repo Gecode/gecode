@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2013
- *     Guido Tack, 2013
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,33 +35,20 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#include <gecode/search.hh>
 
-  template<class T>
-  forceinline
-  Base<T>::Base(Engine* e0) 
-    : e(e0) {}
-  template<class T>
-  forceinline T*
-  Base<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-  template<class T>
-  forceinline Statistics
-  Base<T>::statistics(void) const {
-    return e->statistics();
-  }
-  template<class T>
-  forceinline bool
-  Base<T>::stopped(void) const {
-    return e->stopped();
-  }
-  template<class T>
-  forceinline
-  Base<T>::~Base(void) { 
-    delete e; 
-  }
+namespace Gecode {
 
-}}
+  SEBs::SEBs(int n, Search::Builder* b0, ...) 
+    : PrimArgArray<Search::Builder*>(n) {
+    va_list args;
+    va_start(args, b0);
+    a[0] = b0;
+    for (int i = 1; i < n; i++)
+      a[i] = va_arg(args,Search::Builder*);
+    va_end(args);
+  }
+  
+}
 
 // STATISTICS: search-other

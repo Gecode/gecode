@@ -38,6 +38,32 @@
 #include <cmath>
 #include <algorithm>
 
+namespace Gecode { namespace Search {
+
+  /// A RBS engine builder
+  template<class T, template<class> class E>
+  class PbsBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    PbsBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T, template<class> class E>
+  forceinline
+  PbsBuilder<T,E>::PbsBuilder(const Options& opt)
+    : Builder(opt) {}
+
+  template<class T, template<class> class E>
+  Engine*
+  PbsBuilder<T,E>::operator() (Space* s) const {
+    return build<T,PBS<T,E> >(s,opt);
+  }
+
+}}
+
 #include <gecode/search/meta/dead.hh>
 
 namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
@@ -92,6 +118,32 @@ namespace Gecode { namespace Search { namespace Meta {
     return Sequential::engine(slaves,stops,n_slaves,stat,opt,E<T>::best);
   }
 
+  template<class T, template<class> class E>
+  Engine*
+  sequential(T* master, SEBs& sebs, 
+             const Search::Statistics& stat, Options& opt) {
+    Region r(*master);
+
+    int n_slaves = sebs.size();
+    Engine** slaves = r.alloc<Engine*>(n_slaves);
+    Stop** stops = r.alloc<Stop*>(n_slaves);
+    
+    for (int i=0; i<n_slaves; i++) {
+      // Re-configure slave options
+      stops[i] = Sequential::stop(sebs[i]->options().stop);
+      sebs[i]->options().stop  = stops[i];
+      sebs[i]->options().clone = false;
+      Space* slave = (i == n_slaves-1) ? 
+        master : master->clone(sebs[i]->options().threads <= 1.0,
+                               sebs[i]->options().share);
+      (void) slave->slave(i);
+      slaves[i] = (*sebs[i])(slave);
+      delete sebs[i];
+    }
+    
+    return Sequential::engine(slaves,stops,n_slaves,stat,opt,E<T>::best);
+  }
+
 #ifdef GECODE_HAS_THREADS
 
   template<class T, template<class> class E>
@@ -117,6 +169,37 @@ namespace Gecode { namespace Search { namespace Meta {
       slaves[i] = build<T,E>(slave,opt);
     }
         
+    return Parallel::engine(slaves,stops,n_slaves,stat,E<T>::best);
+  }
+
+  template<class T, template<class> class E>
+  Engine*
+  parallel(T* master, SEBs& sebs, 
+           const Search::Statistics& stat, Options& opt) {
+    Region r(*master);
+
+    // Limit the number of slaves to the number of threads
+    int n_slaves = std::min(static_cast<int>(opt.threads),
+                            sebs.size());
+    Engine** slaves = r.alloc<Engine*>(n_slaves);
+    Stop** stops = r.alloc<Stop*>(n_slaves);
+    
+    for (int i=0; i<n_slaves; i++) {
+      // Re-configure slave options
+      stops[i] = Parallel::stop(sebs[i]->options().stop);
+      sebs[i]->options().stop  = stops[i];
+      sebs[i]->options().clone = false;
+      Space* slave = (i == n_slaves-1) ? 
+        master : master->clone(sebs[i]->options().threads <= 1.0,
+                               sebs[i]->options().share);
+      (void) slave->slave(i);
+      slaves[i] = (*sebs[i])(slave);
+      delete sebs[i];
+    }
+    // Delete excess builders
+    for (int i=n_slaves; i<sebs.size(); i++)
+      delete sebs[i];
+
     return Parallel::engine(slaves,stops,n_slaves,stat,E<T>::best);
   }
 
@@ -167,10 +250,45 @@ namespace Gecode {
   }
 
   template<class T, template<class> class E>
+  PBS<T,E>::PBS(T* s, SEBs& sebs, const Search::Options& o) {
+    Search::Options opt(o.expand());
+    Search::Statistics stat;
+
+    if (s->status(stat) == SS_FAILED) {
+      stat.fail++;
+      if (!opt.clone)
+        delete s;
+      e = new Search::Meta::Dead(stat);
+      return;
+    }
+
+    // Check whether a clone must be used
+    T* master = opt.clone ? 
+      dynamic_cast<T*>(s->clone(opt.threads <= 1.0,opt.share)) : s;
+    opt.clone = false;
+
+    // Always execute master function
+    (void) master->master(0);
+
+#ifdef GECODE_HAS_THREADS
+    if (opt.threads > 1.0)
+      e = Search::Meta::parallel<T,E>(master,sebs,stat,opt);
+    else
+#endif
+      e = Search::Meta::sequential<T,E>(master,sebs,stat,opt);
+  }
+
+  template<class T, template<class> class E>
   forceinline T*
   pbs(T* s, const Search::Options& o) {
-    PBS<E,T> r(s,o);
+    PBS<T,E> r(s,o);
     return r.next();
+  }
+
+  template<class T, template<class> class E>
+  Search::Builder*
+  pbs(const Search::Options& o) {
+    return new Search::PbsBuilder<T,E>(o);
   }
 
 }

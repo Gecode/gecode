@@ -251,11 +251,11 @@ SEARCHSRC0 = \
 	sequential/path parallel/path \
 	meta/rbs meta/nogoods meta/dead \
 	meta/sequential/pbs meta/parallel/pbs \
-	pbs
+	pbs sebs
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
-	engine.hpp base.hpp \
+	engine.hpp base.hpp build.hpp traits.hpp sebs.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \

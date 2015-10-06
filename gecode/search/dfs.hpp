@@ -41,6 +41,29 @@ namespace Gecode { namespace Search {
   GECODE_SEARCH_EXPORT Engine* 
   dfs(Space* s, const Options& o);
 
+  /// A DFS engine builder
+  template<class T>
+  class DfsBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    DfsBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T>
+  forceinline
+  DfsBuilder<T>::DfsBuilder(const Options& opt)
+    : Builder(opt) {}
+
+  template<class T>
+  Engine*
+  DfsBuilder<T>::operator() (Space* _s) const {
+    T* s = dynamic_cast<T*>(_s);
+    return build<T,DFS>(s,opt);
+  }
+
 }}
 
 namespace Gecode {
@@ -55,6 +78,12 @@ namespace Gecode {
   dfs(T* s, const Search::Options& o) {
     DFS<T> d(s,o);
     return d.next();
+  }
+
+  template<class T>
+  Search::Builder*
+  dfs(const Search::Options& o) {
+    return new Search::DfsBuilder<T>(o);
   }
 
 }

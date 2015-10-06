@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2013
- *     Guido Tack, 2013
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -41,29 +37,40 @@
 
 namespace Gecode { namespace Search {
 
-  template<class T>
   forceinline
-  Base<T>::Base(Engine* e0) 
-    : e(e0) {}
-  template<class T>
-  forceinline T*
-  Base<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
+  Builder::Builder(const Options& opt0) 
+    : opt(opt0.expand()) {}
+  forceinline Options&
+  Builder::options(void) {
+    return opt;
   }
-  template<class T>
-  forceinline Statistics
-  Base<T>::statistics(void) const {
-    return e->statistics();
+  forceinline const Options&
+  Builder::options(void) const {
+    return opt;
   }
-  template<class T>
-  forceinline bool
-  Base<T>::stopped(void) const {
-    return e->stopped();
-  }
-  template<class T>
   forceinline
-  Base<T>::~Base(void) { 
-    delete e; 
+  Builder::~Builder(void) {
+  }
+
+
+  template<class T, class E>
+  forceinline Engine* 
+  build(Space* s, const Options& opt) {
+    E engine(dynamic_cast<T*>(s),opt);
+    Base<T>* eb = &engine;
+    Engine* e = eb->e;
+    eb->e = NULL;
+    return e;
+  }
+
+  template<class T, template<class> class E>
+  forceinline Engine* 
+  build(Space* s, const Options& opt) {
+    E<T> engine(dynamic_cast<T*>(s),opt);
+    Base<T>* eb = &engine;
+    Engine* e = eb->e;
+    eb->e = NULL;
+    return e;
   }
 
 }}
