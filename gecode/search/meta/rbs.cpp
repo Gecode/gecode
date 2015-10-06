@@ -91,7 +91,7 @@ namespace Gecode { namespace Search { namespace Meta {
            Engine* e0, const Options& opt)
     : e(e0), master(s), last(NULL), co(opt.cutoff), stop(stop0),
       sslr(0),
-      shared_data(opt.threads <= 1.0), shared_info(opt.share),
+      shared_data(opt.threads <= 1.0), shared_info(opt.share_rbs),
       complete(true), restart(false) {
     stop->limit(Statistics(),(*co)());
   }

@@ -367,7 +367,6 @@ namespace Gecode {
     Driver::UnsignedIntOption _node;          ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;          ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;          ///< Cutoff for time
-    Driver::BoolOption        _share;         ///< Whether to share AFC between restarts and assets
     Driver::UnsignedIntOption _assets;        ///< Number of assets in a portfolio
     Driver::UnsignedIntOption _slice;         ///< Size of a portfolio slice
     Driver::StringOption      _restart;       ///< Restart method option
@@ -486,11 +485,6 @@ namespace Gecode {
     void time(unsigned int t);
     /// Return time cutoff
     unsigned int time(void) const;
-    
-    /// Set default whether AFC is hared among restarts or assets
-    void share(bool b);
-    /// Return time cutoff
-    bool share(void) const;
     
     /// Set default number of assets in a portfolio
     void assets(unsigned int n);

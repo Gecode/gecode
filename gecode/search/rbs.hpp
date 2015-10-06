@@ -88,7 +88,7 @@ namespace Gecode {
         master = s->clone();
       else
         master = s;
-      slave = master->clone(true,m_opt.share);
+      slave = master->clone(true,m_opt.share_rbs);
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
     }

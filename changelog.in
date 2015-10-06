@@ -99,19 +99,11 @@ BrancherHandle::killall(). This is the default for the master()
 function when using portfolio search.
 
 [ENTRY]
-Module: driver
-What:   new
-Rank:   minor
-[DESCRIPTION]
-Whether AFC information is shared between restarts and assets of
-a portfolio can be defined by the commandline switch -share.
-
-[ENTRY]
 Module: kernel
 What:   new
 Rank:   major
 [DESCRIPTION]
-The clone() function takes an additional argument that defines
+The clone() function takes an additional optional argument that defines
 whether AFC information is shared among clones.
 
 [ENTRY]

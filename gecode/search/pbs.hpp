@@ -110,7 +110,7 @@ namespace Gecode { namespace Search { namespace Meta {
     for (unsigned int i=0; i<n_slaves; i++) {
       opt.stop = stops[i] = Sequential::stop(stop);
       Space* slave = (i == n_slaves-1) ? 
-        master : master->clone(opt.threads <= 1.0,opt.share);
+        master : master->clone(opt.threads <= 1.0,opt.share_pbs);
       (void) slave->slave(i);
       slaves[i] = build<T,E>(slave,opt);
     }
@@ -135,7 +135,7 @@ namespace Gecode { namespace Search { namespace Meta {
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ? 
         master : master->clone(sebs[i]->options().threads <= 1.0,
-                               sebs[i]->options().share);
+                               sebs[i]->options().share_pbs);
       (void) slave->slave(i);
       slaves[i] = (*sebs[i])(slave);
       delete sebs[i];
@@ -164,7 +164,7 @@ namespace Gecode { namespace Search { namespace Meta {
     for (unsigned int i=0; i<n_slaves; i++) {
       opt.stop = stops[i] = Parallel::stop(stop);
       Space* slave = (i == n_slaves-1) ? 
-        master : master->clone(false,opt.share);
+        master : master->clone(false,opt.share_pbs);
       (void) slave->slave(i);
       slaves[i] = build<T,E>(slave,opt);
     }
@@ -191,7 +191,7 @@ namespace Gecode { namespace Search { namespace Meta {
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ? 
         master : master->clone(sebs[i]->options().threads <= 1.0,
-                               sebs[i]->options().share);
+                               sebs[i]->options().share_pbs);
       (void) slave->slave(i);
       slaves[i] = (*sebs[i])(slave);
       delete sebs[i];
@@ -228,7 +228,7 @@ namespace Gecode {
 
     // Check whether a clone must be used
     T* master = opt.clone ? 
-      dynamic_cast<T*>(s->clone(opt.threads <= 1.0,opt.share)) : s;
+      dynamic_cast<T*>(s->clone(opt.threads <= 1.0,opt.share_pbs)) : s;
     opt.clone = false;
 
     // Always execute master function
@@ -276,7 +276,7 @@ namespace Gecode {
 
     // Check whether a clone must be used
     T* master = opt.clone ? 
-      dynamic_cast<T*>(s->clone(opt.threads <= 1.0,opt.share)) : s;
+      dynamic_cast<T*>(s->clone(opt.threads <= 1.0,opt.share_pbs)) : s;
     opt.clone = false;
 
     // Always execute master function
