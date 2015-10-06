@@ -109,22 +109,6 @@ public:
     }
   }
 
-  virtual bool slave(const MetaInfo& mi) {
-    if (mi.type() == MetaInfo::PORTFOLIO)
-      switch (mi.asset() & 3) {
-      case BRANCH_NONE:
-        branch(*this, le, INT_VAR_NONE(), INT_VAL_MIN());
-        break;
-      case BRANCH_INVERSE:
-        branch(*this, le.slice(le.size()-1,-1), INT_VAR_NONE(), INT_VAL_MIN());
-        break;
-      case BRANCH_SIZE:
-        branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-        break;
-      }
-    return false;
-  }
-
   /// Constructor for cloning \a s
   Alpha(bool share, Alpha& s) : Script(share,s) {
     le.update(*this, share, s.le);
@@ -152,14 +136,6 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Search::Options so;
-  Search::Builder* b = dfs<Alpha>(so);
-  so.cutoff = Search::Cutoff::luby();
-  so.nogoods_limit = 128;
-  Search::Builder* c = rbs<Alpha,DFS>(so);
-  //  Search::Builder* c = dfs<Alpha>(so);
-  Search::Builder* d = dfs<Alpha>(so);
-  SEBs bc(3, b, c, d);
   Options opt("Alpha");
   opt.solutions(0);
   opt.iterations(10);
@@ -168,14 +144,7 @@ main(int argc, char* argv[]) {
   opt.branching(Alpha::BRANCH_INVERSE, "inverse");
   opt.branching(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  PBS<Alpha> pbs(new Alpha(opt),bc);
-
-  while (Alpha* s = pbs.next()) {
-    s->print(std::cout);
-    delete s;
-  }
-
-  //  Script::run<Alpha,DFS,Options>(opt);
+  Script::run<Alpha,DFS,Options>(opt);
   return 0;
 }
 
