@@ -47,6 +47,11 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     return true;
   }
   forceinline bool
+  CollectAll::constrain(const Space& b) {
+    (void) b;
+    return false;
+  }
+  forceinline bool
   CollectAll::empty(void) const {
     return solutions.empty();
   }
@@ -75,6 +80,20 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     }
     b = s;
     reporter = r;
+    return true;
+  }
+  forceinline bool
+  CollectBest::constrain(const Space& s) {
+    if (b != NULL) {
+      b->constrain(s);
+      if (b->status() == SS_FAILED) {
+        delete b;
+      } else {
+        return false;
+      }
+    }
+    b = s.clone(false);
+    reporter = NULL;
     return true;
   }
   forceinline bool
@@ -244,6 +263,18 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     for (unsigned int i=n_slaves; i--; )
       s += slaves[i]->statistics();
     return s;
+  }
+
+  template<class Collect>
+  void
+  PBS<Collect>::constrain(const Space& b) {
+    if (!Collect::best)
+      throw NoBest("PBS::constrain");
+    if (solutions.constrain(b)) {
+      // The solution is better
+      for (unsigned int i=n_slaves; i--; )
+        slaves[i]->constrain(b);
+    }
   }
 
   template<class Collect>

@@ -635,7 +635,7 @@ namespace Gecode { namespace Search {
     virtual Statistics statistics(void) const = 0;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const = 0;
-    /// Constrain future solutions to be better than \a b (does nothing)
+    /// Constrain future solutions to be better than \a b (raises exception)
     virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s (does nothing)
     virtual void reset(Space* s);

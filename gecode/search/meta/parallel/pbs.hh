@@ -103,6 +103,8 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     CollectAll(void);
     /// Add a solution \a a reported by \a r and always return true
     bool add(Space* s, Slave<CollectAll>* r);
+    /// Dummy function
+    bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;
     /// Return solution reported by \a r
@@ -125,6 +127,8 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     CollectBest(void);
     /// Add a solution \a s by \a r and return whether is was better
     bool add(Space* s, Slave<CollectBest>* r);
+    /// Check whether \a b better and update accordingly 
+    bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;
     /// Return solution reported by \a r (only if a better one was found)
@@ -167,6 +171,8 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     virtual Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
+    /// Constrain future solutions to be better than \a b
+    virtual void constrain(const Space& b);
     /// Destructor
     virtual ~PBS(void);
   };

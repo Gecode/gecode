@@ -162,6 +162,21 @@ namespace Gecode { namespace Search { namespace Meta {
     return stop->metastatistics()+e->statistics();
   }
   
+  void
+  RBS::constrain(const Space& b) {
+    if (last != NULL) {
+      last->constrain(b);
+      if (last->status() == SS_FAILED) {
+        delete last;
+      } else {
+        return;
+      }
+    }
+    last = b.clone();
+    master->constrain(b);
+    e->constrain(b);
+  }
+  
   bool
   RBS::stopped(void) const {
     /*

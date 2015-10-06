@@ -151,6 +151,15 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
   }
 
   template<bool best>
+  void
+  PBS<best>::constrain(const Space& b) {
+    if (!best)
+      throw NoBest("PBS::constrain");
+    for (unsigned int i=0; i<n_slaves; i++)
+      slaves[i].constrain(b);
+  }
+
+  template<bool best>
   PBS<best>::~PBS(void) {
     for (unsigned int i=n_slaves; i--; )
       slaves[i].~Slave();

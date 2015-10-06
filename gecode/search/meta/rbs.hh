@@ -104,6 +104,8 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
+    /// Constrain future solutions to be better than \a b
+    virtual void constrain(const Space& b);
     /// Destructor
     virtual ~RBS(void);
   };
