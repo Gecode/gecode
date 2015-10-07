@@ -954,10 +954,6 @@ namespace Gecode {
   template<class T, template<class> class E = DFS>
   T* pbs(T* s, const Search::Options& o=Search::Options::def);
 
-  /// Return a portfolio search engine builder
-  template<class T, template<class> class E = DFS>
-  Search::Builder* pbs(const Search::Options& o=Search::Options::def);
-
 }
 
 #include <gecode/search/pbs.hpp>
