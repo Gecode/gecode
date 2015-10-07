@@ -38,7 +38,20 @@
  */
 
 #include <gecode/search/support.hh>
-#include <gecode/search/meta/rbs.hh>
+
+namespace Gecode { namespace Search { namespace Meta {
+
+  /// Create stop object
+  GECODE_SEARCH_EXPORT Stop* 
+  stop(Stop* so);
+
+  /// Create restart engine
+  GECODE_SEARCH_EXPORT Engine* 
+  engine(Space* master, Stop* stop, Engine* slave,
+         const Search::Statistics& stat, const Options& opt,
+         bool best);
+
+}}}
 
 namespace Gecode { namespace Search {
 
@@ -74,25 +87,23 @@ namespace Gecode {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt(m_opt.expand());
+    Search::Statistics stat;
     e_opt.clone = false;
-    Search::Meta::RestartStop* rs = new Search::Meta::RestartStop(m_opt.stop);
-    e_opt.stop = rs;
+    e_opt.stop  = Search::Meta::stop(m_opt.stop);
     Space* master;
     Space* slave;
-    if (s->status(rs->m_stat) == SS_FAILED) {
-      rs->m_stat.fail++;
+    if (s->status(stat) == SS_FAILED) {
+      stat.fail++;
       master = NULL;
       slave  = NULL;
     } else {
-      if (m_opt.clone)
-        master = s->clone();
-      else
-        master = s;
-      slave = master->clone(true,m_opt.share_rbs);
+      master = m_opt.clone ? s->clone() : s;
+      slave  = master->clone(true,m_opt.share_rbs);
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
     }
-    e = new Search::Meta::RBS(master,rs,Search::build<T,E>(slave,e_opt),m_opt);
+    e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),
+                             stat,m_opt,E<T>::best);
   }
 
 
@@ -106,6 +117,8 @@ namespace Gecode {
   template<class T, template<class> class E>
   Search::Builder*
   rbs(const Search::Options& o) {
+    if (o.cutoff == NULL)
+      throw Search::UninitializedCutoff("rbs");
     return new Search::RbsBuilder<T,E>(o);
   }
 

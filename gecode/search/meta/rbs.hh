@@ -95,9 +95,12 @@ namespace Gecode { namespace Search { namespace Meta {
     bool complete;
     /// Whether a restart must be performed when next is called
     bool restart;
+    /// Whether the engine performs best solution search
+    bool best;
   public:
     /// Constructor
-    RBS(Space* s, RestartStop* stop0, Engine* e0, const Options& o);
+    RBS(Space* s, RestartStop* stop0, Engine* e0, 
+        const Search::Statistics& stat, const Options& o, bool best);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);
     /// Return statistics
@@ -111,6 +114,8 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
 }}}
+
+#include <gecode/search/meta/rbs.hpp>
 
 #endif
 

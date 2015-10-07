@@ -36,43 +36,13 @@
  */
 
 
-#include <gecode/search.hh>
+#include <gecode/search/meta/rbs.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  /*
-   * Stopping for meta search engines
-   *
-   */
-
-  RestartStop::RestartStop(Stop* s) 
-    : l(0), m_stop(s), e_stopped(false) {}
-
-  forceinline void
-  RestartStop::limit(const Search::Statistics& s, unsigned long int l0) {
-    l = l0;
-    m_stat += s;
-    e_stopped = false;
-  }
-
-  forceinline void
-  RestartStop::update(const Search::Statistics& s) {
-    m_stat += s;
-  }
-
-  forceinline bool
-  RestartStop::enginestopped(void) const { 
-    return e_stopped; 
-  }
-
-  forceinline Statistics 
-  RestartStop::metastatistics(void) const { 
-    return m_stat; 
-  }
-
   bool 
   RestartStop::stop(const Statistics& s, const Options& o) {
-    // Stop if the fail stop object for the engine says so
+    // Stop if the fail limit for the engine says so
     if (s.fail > l) {
       e_stopped = true;
       m_stat.restart++;
@@ -86,14 +56,17 @@ namespace Gecode { namespace Search { namespace Meta {
     return false;
   }
 
+  Stop*
+  stop(Stop* stop) {
+    return new RestartStop(stop);
+  }
+  
 
-  RBS::RBS(Space* s, RestartStop* stop0,
-           Engine* e0, const Options& opt)
-    : e(e0), master(s), last(NULL), co(opt.cutoff), stop(stop0),
-      sslr(0),
-      shared_data(opt.threads <= 1.0), shared_info(opt.share_rbs),
-      complete(true), restart(false) {
-    stop->limit(Statistics(),(*co)());
+  Engine*
+  engine(Space* master, Stop* stop, Engine* slave, 
+         const Search::Statistics& stat, const Options& opt, bool best) {
+    return new RBS(master,static_cast<RestartStop*>(stop), slave,
+                   stat,opt,best);
   }
 
   Space*
@@ -164,6 +137,8 @@ namespace Gecode { namespace Search { namespace Meta {
   
   void
   RBS::constrain(const Space& b) {
+    if (!best)
+      throw NoBest("RBS::constrain");
     if (last != NULL) {
       last->constrain(b);
       if (last->status() == SS_FAILED) {

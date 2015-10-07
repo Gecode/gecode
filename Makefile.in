@@ -259,7 +259,7 @@ SEARCHHDR0 = \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
-	meta/rbs.hh meta/nogoods.hh meta/dead.hh \
+	meta/rbs.hh meta/rbs.hpp meta/nogoods.hh meta/dead.hh \
 	meta/sequential/pbs.hh meta/parallel/pbs.hh \
 	meta/sequential/pbs.hpp meta/parallel/pbs.hpp \
 	dfs.hpp bab.hpp rbs.hpp pbs.hpp
