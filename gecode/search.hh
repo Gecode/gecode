@@ -930,7 +930,7 @@ namespace Gecode {
     static const bool best = E<T>::best;
     /// Initialize with engines running copies of \a s with options \a o
     PBS(T* s, const Search::Options& o=Search::Options::def);
-    /// Initialize with engines defined by engine builders \a sebs
+    /// Initialize with engine builders \a sebs
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
   };
 
