@@ -772,7 +772,7 @@ namespace Gecode {
     explicit ArgArray(int n);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     ArgArray(int n, const T* e);
-    /// Initialize from primitive argument array \a a (copy elements)
+    /// Initialize from argument array \a a (copy elements)
     ArgArray(const ArgArray<T>& a);
     /// Initialize from vector \a a
     ArgArray(const std::vector<T>& a);
