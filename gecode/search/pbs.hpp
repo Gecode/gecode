@@ -298,7 +298,7 @@ namespace Gecode {
   }
 
   template<class T, template<class> class E>
-  Search::Builder*
+  SEB
   pbs(const Search::Options& o) {
     return new Search::PbsBuilder<T,E>(o);
   }

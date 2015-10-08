@@ -39,13 +39,13 @@
 
 namespace Gecode {
 
-  SEBs::SEBs(int n, Search::Builder* b0, ...) 
-    : PrimArgArray<Search::Builder*>(n) {
+  SEBs::SEBs(int n, SEB b0, ...) 
+    : PrimArgArray<SEB>(n) {
     va_list args;
     va_start(args, b0);
     a[0] = b0;
     for (int i = 1; i < n; i++)
-      a[i] = va_arg(args,Search::Builder*);
+      a[i] = va_arg(args,SEB);
     va_end(args);
   }
   

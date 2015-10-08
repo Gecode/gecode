@@ -42,20 +42,20 @@ namespace Gecode {
 
   /// Traits of %SEBs
   template<>
-  class ArrayTraits<PrimArgArray<Search::Builder*> > {
+  class ArrayTraits<PrimArgArray<SEB> > {
   public:
-    typedef SEBs             StorageType;
-    typedef Search::Builder* ValueType;
-    typedef SEBs             ArgsType;
+    typedef SEBs StorageType;
+    typedef SEB  ValueType;
+    typedef SEBs ArgsType;
   };
 
   /// Traits of %SEBs
   template<>
   class ArrayTraits<SEBs> {
   public:
-    typedef SEBs             StorageType;
-    typedef Search::Builder* ValueType;
-    typedef SEBs             ArgsType;
+    typedef SEBs StorageType;
+    typedef SEB  ValueType;
+    typedef SEBs ArgsType;
   };
   
 }

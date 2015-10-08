@@ -39,24 +39,24 @@ namespace Gecode {
 
   forceinline
   SEBs::SEBs(void) 
-    : PrimArgArray<Search::Builder*>(0) {}
+    : PrimArgArray<SEB>(0) {}
 
   forceinline
   SEBs::SEBs(int n) 
-    : PrimArgArray<Search::Builder*>(n) {}
+    : PrimArgArray<SEB>(n) {}
   
   forceinline
-  SEBs::SEBs(const std::vector<Search::Builder*>& x)
-    : PrimArgArray<Search::Builder*>(x) {}
+  SEBs::SEBs(const std::vector<SEB>& x)
+    : PrimArgArray<SEB>(x) {}
 
   template<class InputIterator>
   forceinline
   SEBs::SEBs(InputIterator first, InputIterator last)
-    : PrimArgArray<Search::Builder*>(first,last) {}
+    : PrimArgArray<SEB>(first,last) {}
   
   forceinline
-  SEBs::SEBs(const PrimArgArray<Search::Builder*>& a) 
-    : PrimArgArray<Search::Builder*>(a) {}
+  SEBs::SEBs(const PrimArgArray<SEB>& a) 
+    : PrimArgArray<SEB>(a) {}
 
 }
 

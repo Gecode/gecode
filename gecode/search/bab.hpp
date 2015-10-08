@@ -87,7 +87,7 @@ namespace Gecode {
   }
 
   template<class T>
-  Search::Builder*
+  SEB
   bab(const Search::Options& o) {
     return new Search::BabBuilder<T>(o);
   }

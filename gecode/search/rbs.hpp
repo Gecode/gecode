@@ -115,7 +115,7 @@ namespace Gecode {
   }
 
   template<class T, template<class> class E>
-  Search::Builder*
+  SEB
   rbs(const Search::Options& o) {
     if (o.cutoff == NULL)
       throw Search::UninitializedCutoff("rbs");

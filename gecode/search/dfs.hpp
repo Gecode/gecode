@@ -80,7 +80,7 @@ namespace Gecode {
   }
 
   template<class T>
-  Search::Builder*
+  SEB
   dfs(const Search::Options& o) {
     return new Search::DfsBuilder<T>(o);
   }

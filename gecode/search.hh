@@ -713,12 +713,19 @@ namespace Gecode { namespace Search {
 
 #include <gecode/search/build.hpp>
 
+namespace Gecode {
+
+  /// Type for a search engine builder
+  typedef Search::Builder* SEB;
+
+}
+
 #include <gecode/search/traits.hpp>
 
 namespace Gecode {
 
   /// Passing search engine builder arguments
-  class SEBs : public PrimArgArray<Search::Builder*> {
+  class SEBs : public PrimArgArray<SEB> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -727,15 +734,15 @@ namespace Gecode {
     /// Allocate array with \a n elements
     explicit SEBs(int n);
     /// Allocate array and copy elements from \a x
-    SEBs(const std::vector<Search::Builder*>& x);
+    SEBs(const std::vector<SEB>& x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     SEBs(InputIterator first, InputIterator last);
     /// Initialize from primitive argument array \a a (copy elements)
-    SEBs(const PrimArgArray<Search::Builder*>& a);
+    SEBs(const PrimArgArray<SEB>& a);
     /// Allocate array with \a n elements and initialize with \a b0, ...
     GECODE_SEARCH_EXPORT
-    SEBs(int n, Search::Builder* b0, ...);
+    SEBs(int n, SEB b0, ...);
     //@}    
   };
 
@@ -767,7 +774,7 @@ namespace Gecode {
 
   /// Return a depth-first search engine builder
   template<class T>
-  Search::Builder* dfs(const Search::Options& o=Search::Options::def);
+  SEB dfs(const Search::Options& o=Search::Options::def);
 
 }
 
@@ -812,7 +819,7 @@ namespace Gecode {
 
   /// Return a depth-first branch-and-bound search engine builder
   template<class T>
-  Search::Builder* bab(const Search::Options& o=Search::Options::def);
+  SEB bab(const Search::Options& o=Search::Options::def);
 
 }
 
@@ -871,7 +878,7 @@ namespace Gecode {
 
   /// Return a restart search engine builder
   template<class T, template<class> class E = DFS>
-  Search::Builder* rbs(const Search::Options& o);
+  SEB rbs(const Search::Options& o);
 
 }
 
@@ -956,7 +963,7 @@ namespace Gecode {
 
   /// Return a portfolio search engine builder
   template<class T, template<class> class E = DFS>
-  Search::Builder* pbs(const Search::Options& o=Search::Options::def);
+  SEB pbs(const Search::Options& o=Search::Options::def);
 
 }
 
