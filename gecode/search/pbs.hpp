@@ -38,6 +38,32 @@
 #include <cmath>
 #include <algorithm>
 
+namespace Gecode { namespace Search {
+
+  /// A PBS engine builder
+  template<class T, template<class> class E>
+  class PbsBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    PbsBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T, template<class> class E>
+  forceinline
+  PbsBuilder<T,E>::PbsBuilder(const Options& opt)
+    : Builder(opt,E<T>::best) {}
+
+  template<class T, template<class> class E>
+  Engine*
+  PbsBuilder<T,E>::operator() (Space* s) const {
+    return build<T,PBS<T,E> >(s,opt);
+  }
+
+}}
+
 #include <gecode/search/meta/dead.hh>
 
 namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
@@ -269,6 +295,12 @@ namespace Gecode {
   pbs(T* s, const Search::Options& o) {
     PBS<T,E> r(s,o);
     return r.next();
+  }
+
+  template<class T, template<class> class E>
+  Search::Builder*
+  pbs(const Search::Options& o) {
+    return new Search::PbsBuilder<T,E>(o);
   }
 
 }
