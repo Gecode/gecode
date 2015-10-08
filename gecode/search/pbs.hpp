@@ -52,7 +52,7 @@ namespace Gecode { namespace Search {
   };
 
   template<class T, template<class> class E>
-  forceinline
+  inline
   PbsBuilder<T,E>::PbsBuilder(const Options& opt)
     : Builder(opt,E<T>::best) {}
 
@@ -250,8 +250,8 @@ namespace Gecode {
   }
 
   template<class T, template<class> class E>
-  PBS<T,E>::PBS(T* s, SEBs& sebs, const Search::Options& o) {
-
+  void
+  PBS<T,E>::build(T* s, SEBs& sebs, const Search::Options& o) {
     // Check whether all sebs do either best solution search or not
     bool best;
     {
@@ -291,14 +291,41 @@ namespace Gecode {
   }
 
   template<class T, template<class> class E>
-  forceinline T*
+  inline
+  PBS<T,E>::PBS(T* s, SEBs& sebs, const Search::Options& o) {
+    build(s,sebs,o);
+  }
+  template<class T, template<class> class E>
+  inline
+  PBS<T,E>::PBS(T* s, SEB seb0, SEB seb1,
+                const Search::Options& o) {
+    SEBs sebs(2, seb0, seb1);
+    build(s,sebs,o);
+  }
+  template<class T, template<class> class E>
+  inline
+  PBS<T,E>::PBS(T* s, SEB seb0, SEB seb1, SEB seb2,
+                const Search::Options& o) {
+    SEBs sebs(3, seb0, seb1, seb2);
+    build(s,sebs,o);
+  }
+  template<class T, template<class> class E>
+  inline
+  PBS<T,E>::PBS(T* s, SEB seb0, SEB seb1, SEB seb2, SEB seb3,
+                const Search::Options& o) {
+    SEBs sebs(4, seb0, seb1, seb2, seb3);
+    build(s,sebs,o);
+  }
+
+  template<class T, template<class> class E>
+  inline T*
   pbs(T* s, const Search::Options& o) {
     PBS<T,E> r(s,o);
     return r.next();
   }
 
   template<class T, template<class> class E>
-  SEB
+  inline SEB
   pbs(const Search::Options& o) {
     return new Search::PbsBuilder<T,E>(o);
   }

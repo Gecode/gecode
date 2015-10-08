@@ -53,7 +53,7 @@ namespace Gecode { namespace Search {
   };
 
   template<class T>
-  forceinline
+  inline
   DfsBuilder<T>::DfsBuilder(const Options& opt)
     : Builder(opt,DFS<T>::best) {}
 
@@ -68,12 +68,12 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   template<class T>
-  forceinline
+  inline
   DFS<T>::DFS(T* s, const Search::Options& o)
     : Search::Base<T>(Search::dfs(s,o)) {}
 
   template<class T>
-  forceinline T*
+  inline T*
   dfs(T* s, const Search::Options& o) {
     DFS<T> d(s,o);
     return d.next();

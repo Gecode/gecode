@@ -56,7 +56,7 @@ namespace Gecode { namespace Search {
   };
 
   template<class T>
-  forceinline
+  inline
   BabBuilder<T>::BabBuilder(const Options& opt)
     : Builder(opt,BAB<T>::best) {}
 
@@ -71,12 +71,12 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   template<class T>
-  forceinline
+  inline
   BAB<T>::BAB(T* s, const Search::Options& o)
     : Search::Base<T>(Search::bab(s,o)) {}
 
   template<class T>
-  T*
+  inline T*
   bab(T* s, const Search::Options& o) {
     BAB<T> b(s,o);
     T* l = NULL;

@@ -67,7 +67,7 @@ namespace Gecode { namespace Search {
   };
 
   template<class T, template<class> class E>
-  forceinline
+  inline
   RbsBuilder<T,E>::RbsBuilder(const Options& opt)
     : Builder(opt,E<T>::best) {}
 
@@ -82,7 +82,7 @@ namespace Gecode { namespace Search {
 namespace Gecode {
 
   template<class T, template<class> class E>
-  forceinline
+  inline
   RBS<T,E>::RBS(T* s, const Search::Options& m_opt) {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
@@ -108,7 +108,7 @@ namespace Gecode {
 
 
   template<class T, template<class> class E>
-  forceinline T*
+  inline T*
   rbs(T* s, const Search::Options& o) {
     RBS<T,E> r(s,o);
     return r.next();

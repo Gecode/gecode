@@ -762,10 +762,10 @@ namespace Gecode {
   template<class T>
   class DFS : public Search::Base<T> {
   public:
-    /// Whether engine does best solution search
-    static const bool best = false;
     /// Initialize search engine for space \a s with options \a o
     DFS(T* s, const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = false;
   };
 
   /// Invoke depth-first search engine for subclass \a T of space \a s with options \a o
@@ -796,10 +796,10 @@ namespace Gecode {
   template<class T>
   class BAB : public Search::Base<T> {
   public:
-    /// Whether engine does best solution search
-    static const bool best = true;
     /// Initialize engine for space \a s and options \a o
     BAB(T* s, const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = true;
   };
 
   /**
@@ -849,10 +849,10 @@ namespace Gecode {
   class RBS : public Search::Base<T> {
     using Search::Base<T>::e;
   public:
-    /// Whether engine does best solution search
-    static const bool best = E<T>::best;
     /// Initialize engine for space \a s and options \a o
     RBS(T* s, const Search::Options& o);
+    /// Whether engine does best solution search
+    static const bool best = E<T>::best;
   };
 
   /**
@@ -932,13 +932,25 @@ namespace Gecode {
   template<class T, template<class> class E = DFS>
   class PBS : public Search::Base<T> {
     using Search::Base<T>::e;
+  protected:
+    /// The actual build function
+    void build(T* s, SEBs& sebs, const Search::Options& o);
   public:
-    /// Whether engine does best solution search
-    static const bool best = E<T>::best;
     /// Initialize with engines running copies of \a s with options \a o
     PBS(T* s, const Search::Options& o=Search::Options::def);
     /// Initialize with engine builders \a sebs
     PBS(T* s, SEBs& sebs, const Search::Options& o=Search::Options::def);
+    /// Initialize with engine builders \a seb0 and \a seb1
+    PBS(T* s, SEB seb0, SEB seb1,
+        const Search::Options& o=Search::Options::def);
+    /// Initialize with engine builders \a seb0, \a seb1, and \a seb2
+    PBS(T* s, SEB seb0, SEB seb1, SEB seb2,
+        const Search::Options& o=Search::Options::def);
+    /// Initialize with engine builders \a seb0, \a seb1, \a seb2, and \a seb3
+    PBS(T* s, SEB seb0, SEB seb1, SEB seb2, SEB seb3,
+        const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = E<T>::best;
   };
 
   /**
