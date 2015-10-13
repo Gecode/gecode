@@ -101,7 +101,7 @@ namespace Gecode { namespace Search { namespace Meta {
     Region r(*master);
 
     // In case there are more threads than assets requested
-    opt.threads = ceil(opt.threads / static_cast<double>(opt.assets));
+    opt.threads = floor(opt.threads / static_cast<double>(opt.assets));
     
     unsigned int n_slaves = opt.assets;
     Engine** slaves = r.alloc<Engine*>(n_slaves);
@@ -156,7 +156,7 @@ namespace Gecode { namespace Search { namespace Meta {
     unsigned int n_slaves = std::min(static_cast<unsigned int>(opt.threads),
                                      opt.assets);
     // Redistribute additional threads to slaves
-    opt.threads = ceil(opt.threads / static_cast<double>(n_slaves));
+    opt.threads = floor(opt.threads / static_cast<double>(n_slaves));
 
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
