@@ -400,6 +400,9 @@ namespace Gecode { namespace FlatZinc {
     /// Percentage of variables to keep in LNS (or 0 for no LNS)
     unsigned int _lns;
     
+    /// Initial solution to start the LNS (or NULL for no LNS)
+    IntSharedArray _lnsInitialSolution;
+    
     /// Random number generator 
     FznRnd* _random;
 

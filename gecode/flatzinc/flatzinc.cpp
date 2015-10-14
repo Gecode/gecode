@@ -631,6 +631,7 @@ namespace Gecode { namespace FlatZinc {
       _optVarIsInt = f._optVarIsInt;
       _method = f._method;
       _lns = f._lns;
+      _lnsInitialSolution.update(*this, share, f._lnsInitialSolution);
       branchInfo.update(*this, share, f.branchInfo);
       iv.update(*this, share, f.iv);
       iv_lns.update(*this, share, f.iv_lns);
@@ -692,7 +693,8 @@ namespace Gecode { namespace FlatZinc {
   
   FlatZincSpace::FlatZincSpace(FznRnd* random)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
-    _optVar(-1), _optVarIsInt(true), _lns(0), _random(random),
+    _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
+    _random(random),
     _solveAnnotations(NULL), needAuxVars(true) {
     branchInfo.init();
   }
@@ -928,7 +930,12 @@ namespace Gecode { namespace FlatZinc {
             throw FlatZinc::Error("FlatZinc",
             "Only one relax_and_reconstruct annotation allowed");
           AST::Call *call = flatAnn[i]->getCall("relax_and_reconstruct");
-          AST::Array *args = call->getArgs(2);
+          AST::Array* args;
+          if (call->args->getArray()->a.size()==2) {
+            args = call->getArgs(2);
+          } else {
+            args = call->getArgs(3);
+          }
           _lns = args->a[1]->getInt();
           AST::Array *vars = args->a[0]->getArray();
           int k=vars->a.size();
@@ -941,6 +948,12 @@ namespace Gecode { namespace FlatZinc {
             if (vars->a[i]->isInt())
               continue;
             iv_lns[k++] = iv[vars->a[i]->getIntVar()];
+          }
+          if (args->a.size()==3) {
+            AST::Array *initial = args->a[2]->getArray();
+            _lnsInitialSolution = IntSharedArray(initial->a.size());
+            for (unsigned int i=initial->a.size(); i--;)
+              _lnsInitialSolution[i] = initial->a[i]->getInt();
           }
         } else if (flatAnn[i]->isCall("gecode_search")) {
           AST::Call* c = flatAnn[i]->getCall();
@@ -1619,7 +1632,14 @@ namespace Gecode { namespace FlatZinc {
 
   bool
   FlatZincSpace::slave(const MetaInfo& mi) {
-    if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) && 
+    if ((mi.type() == MetaInfo::RESTART) &&
+        (_lns > 0) && (mi.last()==NULL) && (_lnsInitialSolution.size()>0)) {
+          for (unsigned int i=iv_lns.size(); i--;) {
+            if ((*_random)(99) <= _lns) {
+              rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
+            }
+          }
+    } else if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) && 
         (_lns > 0) && mi.last()) {
       const FlatZincSpace& last = 
         static_cast<const FlatZincSpace&>(*mi.last());
