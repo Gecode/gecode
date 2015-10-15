@@ -1634,13 +1634,14 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::slave(const MetaInfo& mi) {
     if ((mi.type() == MetaInfo::RESTART) &&
         (_lns > 0) && (mi.last()==NULL) && (_lnsInitialSolution.size()>0)) {
-          for (unsigned int i=iv_lns.size(); i--;) {
-            if ((*_random)(99) <= _lns) {
-              rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
-            }
-          }
+      for (unsigned int i=iv_lns.size(); i--;) {
+        if ((*_random)(99) <= _lns) {
+          rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
+        }
+      }
+      return false;
     } else if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) && 
-        (_lns > 0) && mi.last()) {
+               (_lns > 0) && mi.last()) {
       const FlatZincSpace& last = 
         static_cast<const FlatZincSpace&>(*mi.last());
       for (unsigned int i=iv_lns.size(); i--;) {
