@@ -1496,7 +1496,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
     o.threads = opt.threads();
     o.nogoods_limit = opt.nogoods() ? opt.nogoods_limit() : 0;
-    o.cutoff  = Driver::createCutoff(opt);
+    o.cutoff  = new Search::CutoffAppend(new Search::CutoffConstant(0), 1, Driver::createCutoff(opt));
     if (opt.interrupt())
       Driver::CombinedStop::installCtrlHandler(true);
     Meta<FlatZincSpace,Engine> se(this,o);
@@ -1632,7 +1632,7 @@ namespace Gecode { namespace FlatZinc {
 
   bool
   FlatZincSpace::slave(const MetaInfo& mi) {
-    if ((mi.type() == MetaInfo::RESTART) &&
+    if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
         (_lns > 0) && (mi.last()==NULL) && (_lnsInitialSolution.size()>0)) {
       for (unsigned int i=iv_lns.size(); i--;) {
         if ((*_random)(99) <= _lns) {
