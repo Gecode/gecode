@@ -111,7 +111,7 @@ namespace Test {
             }
             int j = space(s);
             (void) s[j]->status();
-            s[i] = static_cast<TestSpace*>(s[j]->clone());
+            s[i] = static_cast<TestSpace*>(s[j]->clone(true,rand(5) != 0));
             n_s++;
           }
           break;

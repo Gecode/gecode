@@ -131,8 +131,6 @@ namespace Gecode {
     GlobalAFC(void);
     /// Copy during cloning
     GlobalAFC(const GlobalAFC& ga);
-    /// Unshare information (dispose and re-create)
-    void unshare(void);
     /// Destructor
     ~GlobalAFC(void);
     /// Set decay factor to \a d
@@ -293,13 +291,6 @@ namespace Gecode {
   forceinline
   GlobalAFC::~GlobalAFC(void) {
     dispose();
-  }
-
-  forceinline void
-  GlobalAFC::unshare(void) {
-    dispose();
-    // No synchronization needed as single thread is creating this object
-    local(new Object(new Support::FastMutex));
   }
 
   forceinline void

@@ -654,16 +654,9 @@ namespace Gecode {
     c->pc.p.branch_id = pc.p.branch_id;
 
     if (!share_info) {
-      gafc.unshare();
-      // Unshare AFC information
-      ActorLink* p_a = &pl;
-      ActorLink* c_a = p_a->next();
       // Re-allocate afc information
-      while (c_a != &pl) {
-        Propagator* p = Propagator::cast(c_a);
-        p->gafc = gafc.allocate();
-        p_a = c_a; c_a = c_a->next();
-      }
+      for (ActorLink* c_a = c->pl.next(); c_a != &c->pl; c_a = c_a->next())
+        Propagator::cast(c_a)->gafc = c->gafc.allocate();
     }
 
     return c;
