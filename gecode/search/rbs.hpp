@@ -38,6 +38,7 @@
  */
 
 #include <gecode/search/support.hh>
+#include <gecode/search/meta/dead.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 
@@ -96,14 +97,15 @@ namespace Gecode {
       stat.fail++;
       master = NULL;
       slave  = NULL;
+      e = new Search::Meta::Dead(stat);
     } else {
       master = m_opt.clone ? s->clone() : s;
       slave  = master->clone(true,m_opt.share_rbs);
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
+      e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),
+                               stat,m_opt,E<T>::best);
     }
-    e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),
-                             stat,m_opt,E<T>::best);
   }
 
 

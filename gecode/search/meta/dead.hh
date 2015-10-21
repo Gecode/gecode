@@ -35,6 +35,9 @@
  *
  */
 
+#ifndef __GECODE_SEARCH_META_DEAD_HH__
+#define __GECODE_SEARCH_META_DEAD_HH__
+
 namespace Gecode { namespace Search { namespace Meta {
 
   /// A dead engine (failed root)
@@ -54,5 +57,7 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
 }}}
+
+#endif
 
 // STATISTICS: search-meta
