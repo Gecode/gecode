@@ -77,6 +77,14 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Add support for the alldifferent_except_0 constraint by rewriting to a
+global cardinality constraint.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The simple LNS using relax_and_reconstruct can now take an optional third
 argument that is used as an initial solution.
 
