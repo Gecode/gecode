@@ -913,9 +913,11 @@ namespace Gecode {
     using namespace Int;
     if (home.failed()) return;
     if (vbd(ipl) == IPL_BND) {
-      GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
+      GECODE_ES_FAIL((Bool::IteBnd<IntView,IntView,IntView>
+                      ::post(home,b,x,y,z)));
     } else {
-      GECODE_ES_FAIL(Bool::IteDom<IntView>::post(home,b,x,y,z));
+      GECODE_ES_FAIL((Bool::IteDom<IntView,IntView,IntView>
+                      ::post(home,b,x,y,z)));
     }
   }
 

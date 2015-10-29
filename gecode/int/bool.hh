@@ -572,17 +572,17 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, PropCond pc>
+  template<class V0, class V1, class V2, PropCond pc>
   class IteBase : public Propagator {
   protected:
     /// View for condition
     BoolView b;
     /// Views
-    View x0, x1, x2;
+    V0 x0; V1 x1; V2 x2;
     /// Constructor for cloning \a p
     IteBase(Space& home, bool share, IteBase& p);
     /// Constructor for creation
-    IteBase(Home home, BoolView b, View x0, View x1, View x2);
+    IteBase(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -596,24 +596,24 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class IteBnd : public IteBase<View,PC_INT_BND> {
+  template<class V0, class V1, class V2>
+  class IteBnd : public IteBase<V0,V1,V2,PC_INT_BND> {
   protected:
-    using IteBase<View,PC_INT_BND>::b;
-    using IteBase<View,PC_INT_BND>::x0;
-    using IteBase<View,PC_INT_BND>::x1;
-    using IteBase<View,PC_INT_BND>::x2;
+    using IteBase<V0,V1,V2,PC_INT_BND>::b;
+    using IteBase<V0,V1,V2,PC_INT_BND>::x0;
+    using IteBase<V0,V1,V2,PC_INT_BND>::x1;
+    using IteBase<V0,V1,V2,PC_INT_BND>::x2;
     /// Constructor for cloning \a p
     IteBnd(Space& home, bool share, IteBnd& p);
     /// Constructor for creation
-    IteBnd(Home home, BoolView b, View x0, View x1, View x2);
+    IteBnd(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post if-then-else propagator
-    static ExecStatus post(Home home, BoolView b, View x0, View x1, View x2);
+    static ExecStatus post(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   };
 
   /**
@@ -622,17 +622,17 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class IteDom : public IteBase<View,PC_INT_DOM> {
+  template<class V0, class V1, class V2>
+  class IteDom : public IteBase<V0,V1,V2,PC_INT_DOM> {
   protected:
-    using IteBase<View,PC_INT_DOM>::b;
-    using IteBase<View,PC_INT_DOM>::x0;
-    using IteBase<View,PC_INT_DOM>::x1;
-    using IteBase<View,PC_INT_DOM>::x2;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::b;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::x0;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::x1;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::x2;
     /// Constructor for cloning \a p
     IteDom(Space& home, bool share, IteDom& p);
     /// Constructor for creation
-    IteDom(Home home, BoolView b, View x0, View x1, View x2);
+    IteDom(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -641,7 +641,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post if-then-else propagator
-    static ExecStatus post(Home home, BoolView b, View x0, View x1, View x2);
+    static ExecStatus post(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   };
 
 }}}
