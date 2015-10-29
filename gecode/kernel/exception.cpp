@@ -35,54 +35,46 @@
  *
  */
 
-#include <exception>
+#include <gecode/kernel.hh>
 
 namespace Gecode {
 
-  /**
-   * \brief %Exception: Base-class for exceptions
-   * \ingroup FuncThrow
-   */
-  class GECODE_SUPPORT_EXPORT Exception : public std::exception {
-  private:
-    /// Maximal length of information string
-    static const int li_max = 127;
-    /// Information string
-    char li[li_max+1];
-  public:
-    /// Initialize with location \a l and information \a i
-    Exception(const char* l, const char* i) throw ();
-    /// Return information
-    virtual const char* what(void) const throw();
-  };
+  SpaceFailed::SpaceFailed(const char* l)
+    : Exception(l,"Attempt to invoke operation on failed space") {}
 
+  SpaceNotStable::SpaceNotStable(const char* l)
+    : Exception(l,"Attempt to invoke operation on not stable space") {}
 
-  /**
-   * \defgroup FuncThrowSupport Support exceptions
-   * \ingroup FuncThrow
-   */
+  SpaceNotCloned::SpaceNotCloned(const char* l)
+    : Exception(l,"Copy constructor of space did not call base class copy constructor") {}
 
-  //@{
-  /// %Exception: %Memory exhausted
-  class GECODE_SUPPORT_EXPORT MemoryExhausted : public Exception {
-  public:
-    /// Initialize
-    MemoryExhausted(void);
-  };
-  /// %Exception: dynamic cast failed
-  class GECODE_SUPPORT_EXPORT DynamicCastFailed : public Exception {
-  public:
-    /// Initialize with location \a l
-    DynamicCastFailed(const char* l);
-  };
-  /// %Exception: operating system error
-  class GECODE_SUPPORT_EXPORT OperatingSystemError : public Exception {
-  public:
-    /// Initialize with location \a l
-    OperatingSystemError(const char* l);
-  };
-  //@}
+  SpaceNoBrancher::SpaceNoBrancher(const char* l)
+    : Exception(l,"Attempt to commit with no brancher") {}
+
+  SpaceIllegalAlternative::SpaceIllegalAlternative(const char* l)
+    : Exception(l,"Attempt to commit with illegal alternative") {}
+
+  TooManyBranchers::TooManyBranchers(const char* l)
+    : Exception(l,"Too many branchers created") {}
+
+  UninitializedRnd::UninitializedRnd(const char* l)
+    : Exception(l,"Uninitialized random generator for branching") {}
+
+  IllegalDecay::IllegalDecay(const char* l)
+    : Exception(l,"Illegal decay factor") {}
+
+  UninitializedAFC::UninitializedAFC(const char* l)
+    : Exception(l,"Uninitialized AFC information for branching") {}
+
+  UninitializedActivity::UninitializedActivity(const char* l)
+    : Exception(l,"Uninitialized activity information for branching") {}
+
+  AFCWrongArity::AFCWrongArity(const char* l)
+    : Exception(l,"AFC has wrong number of variables") {}
+
+  ActivityWrongArity::ActivityWrongArity(const char* l)
+    : Exception(l,"Activity has wrong number of variables") {}
 
 }
 
-// STATISTICS: support-any
+// STATISTICS: kernel-other

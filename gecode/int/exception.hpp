@@ -45,14 +45,14 @@ namespace Gecode { namespace Int {
   //@{
 
   /// %Exception: Value out of limits
-  class GECODE_VTABLE_EXPORT OutOfLimits : public Exception {
+  class GECODE_INT_EXPORT OutOfLimits : public Exception {
   public:
     /// Initialize with location \a l
     OutOfLimits(const char* l);
   };
 
   /// %Exception: Not 0/1 integer
-  class GECODE_VTABLE_EXPORT NotZeroOne : public Exception {
+  class GECODE_INT_EXPORT NotZeroOne : public Exception {
   public:
     /// Initialize with location \a l
     NotZeroOne(const char* l);
@@ -60,168 +60,97 @@ namespace Gecode { namespace Int {
 
 
   /// %Exception: %Variable created with empty domain
-  class GECODE_VTABLE_EXPORT VariableEmptyDomain : public Exception {
+  class GECODE_INT_EXPORT VariableEmptyDomain : public Exception {
   public:
     /// Initialize with location \a l
     VariableEmptyDomain(const char* l);
   };
 
   /// %Exception: Too few arguments available in argument array
-  class GECODE_VTABLE_EXPORT TooFewArguments : public Exception  {
+  class GECODE_INT_EXPORT TooFewArguments : public Exception  {
   public:
     /// Initialize with location \a l
     TooFewArguments(const char* l);
   };
 
   /// %Exception: Arguments are of different size
-  class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
+  class GECODE_INT_EXPORT ArgumentSizeMismatch : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSizeMismatch(const char* l);
   };
 
   /// %Exception: Arguments contain same variable multiply
-  class GECODE_VTABLE_EXPORT ArgumentSame : public Exception  {
+  class GECODE_INT_EXPORT ArgumentSame : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSame(const char* l);
   };
 
   /// %Exception: Unknown relation passed as argument
-  class GECODE_VTABLE_EXPORT UnknownRelation : public Exception  {
+  class GECODE_INT_EXPORT UnknownRelation : public Exception  {
   public:
     /// Initialize with location \a l
     UnknownRelation(const char* l);
   };
 
   /// %Exception: Unknown operation passed as argument
-  class GECODE_VTABLE_EXPORT UnknownOperation : public Exception  {
+  class GECODE_INT_EXPORT UnknownOperation : public Exception  {
   public:
     /// Initialize with location \a l
     UnknownOperation(const char* l);
   };
 
   /// %Exception: Illegal operation passed as argument
-  class GECODE_VTABLE_EXPORT IllegalOperation : public Exception  {
+  class GECODE_INT_EXPORT IllegalOperation : public Exception  {
   public:
     /// Initialize with location \a l
     IllegalOperation(const char* l);
   };
 
   /// %Exception: Unknown value or variable selection passed as argument
-  class GECODE_VTABLE_EXPORT UnknownBranching : public Exception {
+  class GECODE_INT_EXPORT UnknownBranching : public Exception {
   public:
     /// Initialize with location \a l
     UnknownBranching(const char* l);
   };
 
   /// %Exception: Unknown reification mode passed as argument
-  class GECODE_VTABLE_EXPORT UnknownReifyMode : public Exception {
+  class GECODE_INT_EXPORT UnknownReifyMode : public Exception {
   public:
     /// Initialize with location \a l
     UnknownReifyMode(const char* l);
   };
 
   /// %Exception: Attempt to access value of unassigned variable
-  class GECODE_VTABLE_EXPORT ValOfUnassignedVar : public Exception {
+  class GECODE_INT_EXPORT ValOfUnassignedVar : public Exception {
   public:
     /// Initialize with location \a l
     ValOfUnassignedVar(const char* l);
   };
 
   /// %Exception: Tuple set not yet finalized
-  class GECODE_VTABLE_EXPORT NotYetFinalized : public Exception {
+  class GECODE_INT_EXPORT NotYetFinalized : public Exception {
   public:
     /// Initialize with location \a l
     NotYetFinalized(const char* l);
   };
 
   /// %Exception: Variable in symmetry not branched on
-  class GECODE_VTABLE_EXPORT LDSBUnbranchedVariable : public Exception {
+  class GECODE_INT_EXPORT LDSBUnbranchedVariable : public Exception {
   public:
     /// Initialize with location \a l
     LDSBUnbranchedVariable(const char* l);
   };
 
   /// %Exception: Value selection incompatible with LDSB
-  class GECODE_VTABLE_EXPORT LDSBBadValueSelection : public Exception {
+  class GECODE_INT_EXPORT LDSBBadValueSelection : public Exception {
   public:
     /// Initialize with location \a l
     LDSBBadValueSelection(const char* l);
   };
 
   //@}
-
-
-
-
-
-  /*
-   * Classes for exceptions raised by integer module
-   *
-   */
-
-  inline
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Number out of limits") {}
-
-  inline
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create variable with empty domain") {}
-
-  inline
-  NotZeroOne::NotZeroOne(const char* l)
-    : Exception(l,"Not a zero/one integer value") {}
-
-
-  inline
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Passed argument array has too few elements") {}
-
-  inline
-  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
-    : Exception(l,"Sizes of argument arrays mismatch") {}
-
-  inline
-  ArgumentSame::ArgumentSame(const char* l)
-    : Exception(l,"Argument array contains same variable multiply") {}
-
-
-  inline
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown relation type") {}
-
-  inline
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown operation type") {}
-
-  inline
-  IllegalOperation::IllegalOperation(const char* l)
-    : Exception(l,"Illegal operation type") {}
-
-  inline
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown branching type") {}
-
-  inline
-  UnknownReifyMode::UnknownReifyMode(const char* l)
-    : Exception(l,"Unknown reification mode") {}
-
-  inline
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned variable") {}
-
-  inline
-  NotYetFinalized::NotYetFinalized(const char* l)
-    : Exception(l,"Tuple set not yet finalized") {}
-
-  inline
-  LDSBUnbranchedVariable::LDSBUnbranchedVariable(const char* l)
-    : Exception(l,"Variable in symmetry not branched on") {}
-
-  inline
-  LDSBBadValueSelection::LDSBBadValueSelection(const char* l)
-    : Exception(l,"Value selection incomatible with LDSB") {}
 
 }}
 

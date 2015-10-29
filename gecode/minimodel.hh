@@ -53,8 +53,6 @@
 #include <gecode/float.hh>
 #endif
 
-#include <gecode/minimodel/exception.hpp>
-
 #include <iostream>
 
 /*
@@ -94,6 +92,12 @@ namespace Gecode {
 
   /// Minimalistic modeling support
   namespace MiniModel {}
+
+}
+
+#include <gecode/minimodel/exception.hpp>
+
+namespace Gecode {
 
   class LinIntRel;
 #ifdef GECODE_HAS_SET_VARS

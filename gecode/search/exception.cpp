@@ -2,11 +2,9 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2004
- *     Mikael Lagerkvist, 2005
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -37,36 +35,23 @@
  *
  */
 
-namespace Gecode { namespace MiniModel {
+#include <gecode/search.hh>
 
-  /**
-   * \defgroup FuncThrowMiniModel MiniModel exceptions
-   * \ingroup FuncThrow
-   */
+namespace Gecode { namespace Search {
 
-  //@{
-  /// %Exception: Too few arguments available in argument array
-  class GECODE_MINIMODEL_EXPORT TooFewArguments : public Exception  {
-  public:
-    /// Initialize with location \a l
-    TooFewArguments(const char* l);
-  };
+  UninitializedCutoff::UninitializedCutoff(const char* l)
+    : Exception(l,"Cutoff for restart-based search is missing") {}
 
-  /// %Exception: Sizes of arguments does not match
-  class GECODE_MINIMODEL_EXPORT ArgumentSizeMismatch : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSizeMismatch(const char* l);
-  };
+  NoAssets::NoAssets(const char* l)
+    : Exception(l,"No assets requested in portfolio") {}
 
-  /// %Exception: Argument out of range
-  class GECODE_MINIMODEL_EXPORT ArgumentOutOfRange : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentOutOfRange(const char* l);
-  };
-  //@}
+  MixedBest::MixedBest(const char* l)
+    : Exception(l,"Illegal combination of best and non-best solution search")
+  {}
+
+  NoBest::NoBest(const char* l)
+    : Exception(l,"Best solution search is not supported") {}
 
 }}
 
-// STATISTICS: minimodel-any
+// STATISTICS: search-other

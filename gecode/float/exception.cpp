@@ -2,11 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
- *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Mikael Lagerkvist, 2005
+ *     Christian Schulte, 2010
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -37,36 +37,41 @@
  *
  */
 
-namespace Gecode { namespace MiniModel {
+#include <gecode/float.hh>
 
-  /**
-   * \defgroup FuncThrowMiniModel MiniModel exceptions
-   * \ingroup FuncThrow
-   */
+namespace Gecode { namespace Float {
 
-  //@{
-  /// %Exception: Too few arguments available in argument array
-  class GECODE_MINIMODEL_EXPORT TooFewArguments : public Exception  {
-  public:
-    /// Initialize with location \a l
-    TooFewArguments(const char* l);
-  };
+  OutOfLimits::OutOfLimits(const char* l)
+    : Exception(l,"Number out of limits") {}
 
-  /// %Exception: Sizes of arguments does not match
-  class GECODE_MINIMODEL_EXPORT ArgumentSizeMismatch : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSizeMismatch(const char* l);
-  };
+  VariableEmptyDomain::VariableEmptyDomain(const char* l)
+    : Exception(l,"Attempt to create variable with empty domain") {}
 
-  /// %Exception: Argument out of range
-  class GECODE_MINIMODEL_EXPORT ArgumentOutOfRange : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentOutOfRange(const char* l);
-  };
-  //@}
+  TooFewArguments::TooFewArguments(const char* l)
+    : Exception(l,"Passed argument array has too few elements") {}
+
+  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
+    : Exception(l,"Sizes of argument arrays mismatch") {}
+
+  ArgumentSame::ArgumentSame(const char* l)
+    : Exception(l,"Argument array contains same variable multiply") {}
+
+  UnknownRelation::UnknownRelation(const char* l)
+    : Exception(l,"Unknown relation type") {}
+
+  UnknownOperation::UnknownOperation(const char* l)
+    : Exception(l,"Unknown operation type") {}
+
+  IllegalOperation::IllegalOperation(const char* l)
+    : Exception(l,"Illegal operation type") {}
+
+  UnknownBranching::UnknownBranching(const char* l)
+    : Exception(l,"Unknown branching type") {}
+
+  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
+    : Exception(l,"Attempt to access value of unassigned variable") {}
 
 }}
 
-// STATISTICS: minimodel-any
+// STATISTICS: float-other
+

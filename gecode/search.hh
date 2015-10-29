@@ -126,40 +126,6 @@ namespace Gecode { namespace Search {
 
 }}
 
-namespace Gecode { namespace Search {
-
-  /**
-   * \defgroup FuncThrowSearch %Search exceptions
-   * \ingroup FuncThrow
-   */
-  //@{
-  /// %Exception: Uninitialized cutoff for restart-based search
-  class GECODE_VTABLE_EXPORT UninitializedCutoff : public Exception {
-  public:
-    /// Initialize with location \a l
-    UninitializedCutoff(const char* l);
-  };
-  /// %Exception: No assets requested for portfolio-based search
-  class GECODE_VTABLE_EXPORT NoAssets : public Exception {
-  public:
-    /// Initialize with location \a l
-    NoAssets(const char* l);
-  };
-  /// %Exception: Mixed non-best and best solution search requested
-  class GECODE_VTABLE_EXPORT MixedBest : public Exception {
-  public:
-    /// Initialize with location \a l
-    MixedBest(const char* l);
-  };
-  /// %Exception: Best solution search is not supported
-  class GECODE_VTABLE_EXPORT NoBest : public Exception {
-  public:
-    /// Initialize with location \a l
-    NoBest(const char* l);
-  };
-  //@}
-}}
-
 #include <gecode/search/exception.hpp>
 
 namespace Gecode { namespace Search {

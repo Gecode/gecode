@@ -194,7 +194,7 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	afc activity rnd
+	afc activity rnd exception
 
 KERNELHDR0 = \
 	archive array shared-array core exception \
@@ -251,7 +251,7 @@ SEARCHSRC0 = \
 	sequential/path parallel/path \
 	meta/rbs meta/nogoods meta/dead \
 	meta/sequential/pbs meta/parallel/pbs \
-	rbs pbs sebs
+	rbs pbs sebs exception
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
@@ -323,7 +323,8 @@ INTSRC0 = \
 	arithmetic/mult.cpp  \
 	branch/view-sel.cpp branch/val-sel-commit.cpp \
 	branch/view-values.cpp \
-	ldsb.cpp ldsb/sym-imp.cpp ldsb/sym-obj.cpp
+	ldsb.cpp ldsb/sym-imp.cpp ldsb/sym-obj.cpp \
+	exception.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -453,7 +454,8 @@ INTBUILDDIRS	= \
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
-	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp
+	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \
+	exception.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -529,7 +531,8 @@ SETSRC0 =								 \
 	var-imp/integerset.cpp var/set.cpp \
 	exec.cpp branch/activity.cpp branch/view-sel.cpp \
 	branch/val-sel-commit.cpp  branch/ngl.cpp \
-	ldsb.cpp ldsb/sym-imp.cpp
+	ldsb.cpp ldsb/sym-imp.cpp \
+	exception.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -605,7 +608,7 @@ MMSRC0 = \
 	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
-	reg.cpp optimize.cpp
+	reg.cpp optimize.cpp exception.cpp
 MMHDR0 = \
 	int-rel.hpp float-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \

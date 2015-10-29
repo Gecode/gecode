@@ -37,35 +37,18 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 namespace Gecode { namespace MiniModel {
 
-  /**
-   * \defgroup FuncThrowMiniModel MiniModel exceptions
-   * \ingroup FuncThrow
-   */
+  TooFewArguments::TooFewArguments(const char* l)
+    : Exception(l,"Passed argument array has too few elements") {}
 
-  //@{
-  /// %Exception: Too few arguments available in argument array
-  class GECODE_MINIMODEL_EXPORT TooFewArguments : public Exception  {
-  public:
-    /// Initialize with location \a l
-    TooFewArguments(const char* l);
-  };
+  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
+    : Exception(l,"Sizes of argument arrays mismatch") {}
 
-  /// %Exception: Sizes of arguments does not match
-  class GECODE_MINIMODEL_EXPORT ArgumentSizeMismatch : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentSizeMismatch(const char* l);
-  };
-
-  /// %Exception: Argument out of range
-  class GECODE_MINIMODEL_EXPORT ArgumentOutOfRange : public Exception  {
-  public:
-    /// Initialize with location \a l
-    ArgumentOutOfRange(const char* l);
-  };
-  //@}
+  ArgumentOutOfRange::ArgumentOutOfRange(const char* l)
+    : Exception(l,"Argument out of range") {}
 
 }}
 
