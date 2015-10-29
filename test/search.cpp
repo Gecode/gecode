@@ -537,6 +537,79 @@ namespace Test {
       }
     };
 
+    /// %Test for portfolio-based search using SEBs
+    template<class Model>
+    class SEBPBS : public Test {
+    private:
+      /// Whether best solution search is used
+      bool best;
+      /// Number of master threads
+      unsigned int mt;
+      /// Number of slave threads
+      unsigned int st;
+    public:
+      /// Initialize test
+      SEBPBS(const std::string& e, bool b, unsigned int mt0, unsigned int st0)
+        : Test("PBS::SEB::"+e+"::"+Model::name()+"::"+str(mt0)+"::"+str(st0),
+               HTB_BINARY,HTB_BINARY,HTB_BINARY), best(b), mt(mt0), st(st0) {}
+      /// Run test
+      virtual bool run(void) {
+        using namespace Gecode;
+        Model* m = new Model(htb1,htb2,htb3);
+        Gecode::Search::FailStop f(2);
+
+        Gecode::Search::Options mo;
+        mo.threads = mt;
+        mo.stop = &f;
+
+        Gecode::Search::Options so;
+        so.threads = st;
+        so.cutoff = Gecode::Search::Cutoff::constant(1000000);
+        if (best) {
+          SEBs sebs(3);
+          sebs[0] = bab<Model>(so);
+          sebs[1] = bab<Model>(so);
+          sebs[2] = rbs<Model,Gecode::BAB>(so);
+          Gecode::PBS<Model,Gecode::BAB> pbs(m, sebs, mo);
+          delete m;
+
+          Model* b = NULL;
+          while (true) {
+            Model* s = pbs.next();
+            if (s != NULL) {
+              delete b; b=s;
+            }
+            if ((s == NULL) && !pbs.stopped())
+              break;
+            f.limit(f.limit()+2);
+          }
+          bool ok = (b == NULL) || b->best();
+          delete b;
+          return ok;
+        } else {
+          SEBs sebs(3);
+          sebs[0] = dfs<Model>(so);
+          sebs[1] = dfs<Model>(so);
+          sebs[2] = rbs<Model,Gecode::DFS>(so);
+          Gecode::PBS<Model,Gecode::DFS> pbs(m, sebs, mo);
+
+          int n = 3 * m->solutions();
+          delete m;
+
+          while (true) {
+            Model* s = pbs.next();
+            if (s != NULL) {
+              n--; delete s;
+            }
+            if ((s == NULL) && !pbs.stopped())
+              break;
+            f.limit(f.limit()+2);
+          }
+          return n == 0;
+        }
+      }
+    };
+
     /// Iterator for branching types
     class BranchTypes {
     private:
@@ -650,6 +723,16 @@ namespace Test {
             (void) new PBS<FailImmediate,Gecode::BAB>("BAB",true,a,t);
             (void) new PBS<SolveImmediate,Gecode::DFS>("DFS",false,a,t);
             (void) new PBS<SolveImmediate,Gecode::BAB>("BAB",true,a,t);
+          }
+        // Portfolio-based search using SEBs
+        for (unsigned int mt=1; mt<=3; mt += 2)
+          for (unsigned int st=1; st<=2; st++) {
+            (void) new SEBPBS<HasSolutions>("BAB",true,mt,st);
+            (void) new SEBPBS<FailImmediate>("BAB",true,mt,st);
+            (void) new SEBPBS<SolveImmediate>("BAB",true,mt,st);
+            (void) new SEBPBS<HasSolutions>("DFS",false,mt,st);
+            (void) new SEBPBS<FailImmediate>("DFS",false,mt,st);
+            (void) new SEBPBS<SolveImmediate>("DFS",false,mt,st);
           }
       }
     };

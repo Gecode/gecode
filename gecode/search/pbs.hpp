@@ -191,8 +191,7 @@ namespace Gecode { namespace Search { namespace Meta {
       sebs[i]->options().stop  = stops[i];
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ? 
-        master : master->clone(sebs[i]->options().threads <= 1.0,
-                               sebs[i]->options().share_pbs);
+        master : master->clone(false,sebs[i]->options().share_pbs);
       (void) slave->slave(i);
       slaves[i] = (*sebs[i])(slave);
       delete sebs[i];
