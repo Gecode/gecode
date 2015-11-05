@@ -1523,6 +1523,38 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   distinct(Home home, const IntArgs& n, const IntVarArgs& x,
            IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for \f$ b_i=1\wedge b_j=1\to x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x|\f$
+   *
+   * \li Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+   *     and domain consistency (\a ipl = IPL_DOM).
+   * \li Throws an exception of type Int::OutOfLimits, if
+   *     the variable domains in \a x are too large (it must hold that
+   *     one of the values \f$(\max_{i=0,\ldots,|x|-1} \max(x_i))+|x|\f$
+   *     and \f$(\min_{i=0,\ldots,|x|-1} \min(x_i))-|x|\f$
+   *     does not exceed the limits in Int::Limits.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a b and \a x are of different size.
+   * \li Throws an exception of type Int::ArgumentSame, if \a x
+   *     contains the same unassigned variable multiply.
+   */
+  GECODE_INT_EXPORT void
+  distinct(Home home, const BoolVarArgs& b, const IntVarArgs& x,
+           IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for \f$ x_i=c\vee x_j=c\vee x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x|\f$
+   *
+   * \li Supports value (\a ipl = IPL_VAL, default), bounds (\a ipl = IPL_BND),
+   *     and domain consistency (\a ipl = IPL_DOM).
+   * \li Throws an exception of type Int::OutOfLimits, if
+   *     the variable domains in \a x are too large (it must hold that
+   *     one of the values \f$(\max_{i=0,\ldots,|x|-1} \max(x_i))+|x|\f$
+   *     and \f$(\min_{i=0,\ldots,|x|-1} \min(x_i))-|x|\f$
+   *     does not exceed the limits in Int::Limits.
+   * \li Throws an exception of type Int::ArgumentSame, if \a x
+   *     contains the same unassigned variable multiply.
+   */
+  GECODE_INT_EXPORT void
+  distinct(Home home, const IntVarArgs& x, int c,
+           IntPropLevel ipl=IPL_DEF);
   //@}
 
 

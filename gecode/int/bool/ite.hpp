@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class V0, class V1, class V2>
   inline ExecStatus
   IteBnd<V0,V1,V2>::post(Home home, BoolView b, V0 x0, V1 x1, V2 x2) {
-    if (same(x0,x1) || b.one())
+    if (b.one())
       return Rel::EqBnd<V2,V0>::post(home,x2,x0);
     if (b.zero())
       return Rel::EqBnd<V2,V1>::post(home,x2,x1);
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class V0, class V1, class V2>
   inline ExecStatus
   IteDom<V0,V1,V2>::post(Home home, BoolView b, V0 x0, V1 x1, V2 x2) {
-    if (same(x0,x1) || b.one())
+    if (b.one())
       return Rel::EqDom<V2,V0>::post(home,x2,x0);
     if (b.zero())
       return Rel::EqDom<V2,V1>::post(home,x2,x1);
@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace Bool {
     ViewRanges<V1> r1(x1);
     Iter::Ranges::Union<ViewRanges<V0>,ViewRanges<V1> > u(r0,r1);
     
-    if (!same(x0,x2) && !same(x1,x2))
+    if (!shared<V0,V2>(x0,x2) && !shared<V1,V2>(x1,x2))
       GECODE_ME_CHECK(x2.inter_r(home,u,false));
     else
       GECODE_ME_CHECK(x2.inter_r(home,u,true));

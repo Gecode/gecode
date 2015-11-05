@@ -216,9 +216,9 @@ namespace Gecode {
     View x;
     /// Default constructor
     DerivedView(void);
+  public:
     /// Initialize with view \a y
     DerivedView(const View& y);
-  public:
     /// \name Generic view information
     //@{
     /// Return whether this view is derived from a VarImpView

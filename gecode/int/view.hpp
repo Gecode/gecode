@@ -1618,42 +1618,42 @@ namespace Gecode { namespace Int {
   };
   
   /// Test whether views \a x and \a y are equal (use bounds information)
-  template<class View> RelTest rtest_eq_bnd(View x, View y);
+  template<class VX, class VY> RelTest rtest_eq_bnd(VX x, VY y);
   /// Test whether views \a x and \a y are equal (use full domain information)
-  template<class View> RelTest rtest_eq_dom(View x, View y);
+  template<class VX, class VY> RelTest rtest_eq_dom(VX x, VY y);
   /// Test whether view \a x and integer \a n are equal (use bounds information)
-  template<class View> RelTest rtest_eq_bnd(View x, int n);
+  template<class VX> RelTest rtest_eq_bnd(VX x, int n);
   /// Test whether view \a x and integer \a n are equal (use full domain information)
-  template<class View> RelTest rtest_eq_dom(View x, int n);
+  template<class VX> RelTest rtest_eq_dom(VX x, int n);
   
   /// Test whether views \a x and \a y are different (use bounds information)
-  template<class View> RelTest rtest_nq_bnd(View x, View y);
+  template<class VX, class VY> RelTest rtest_nq_bnd(VX x, VY y);
   /// Test whether views \a x and \a y are different (use full domain information)
-  template<class View> RelTest rtest_nq_dom(View x, View y);
+  template<class VX, class VY> RelTest rtest_nq_dom(VX x, VY y);
   /// Test whether view \a x and integer \a n are different (use bounds information)
-  template<class View> RelTest rtest_nq_bnd(View x, int n);
+  template<class VX> RelTest rtest_nq_bnd(VX x, int n);
   /// Test whether view \a x and integer \a n are different (use full domain information)
-  template<class View> RelTest rtest_nq_dom(View x, int n);
+  template<class VX> RelTest rtest_nq_dom(VX x, int n);
 
   /// Test whether view \a x is less or equal than view \a y
-  template<class View> RelTest rtest_lq(View x, View y);
+  template<class VX, class VY> RelTest rtest_lq(VX x, VY y);
   /// Test whether view \a x is less or equal than integer \a n
-  template<class View> RelTest rtest_lq(View x, int n);
+  template<class VX> RelTest rtest_lq(VX x, int n);
   
   /// Test whether view \a x is less than view \a y
-  template<class View> RelTest rtest_le(View x, View y);
+  template<class VX, class VY> RelTest rtest_le(VX x, VY y);
   /// Test whether view \a x is less than integer \a n
-  template<class View> RelTest rtest_le(View x, int n);
+  template<class VX> RelTest rtest_le(VX x, int n);
   
   /// Test whether view \a x is greater or equal than view \a y
-  template<class View> RelTest rtest_gq(View x, View y);
+  template<class VX, class VY> RelTest rtest_gq(VX x, VY y);
   /// Test whether view \a x is greater or equal than integer \a n
-  template<class View> RelTest rtest_gq(View x, int n);
+  template<class VX> RelTest rtest_gq(VX x, int n);
   
   /// Test whether view \a x is greater than view \a y
-  template<class View> RelTest rtest_gr(View x, View y);
+  template<class VX, class VY> RelTest rtest_gr(VX x, VY y);
   /// Test whether view \a x is greater than integer \a n
-  template<class View> RelTest rtest_gr(View x, int n);
+  template<class VX> RelTest rtest_gr(VX x, int n);
   //@}
 
 

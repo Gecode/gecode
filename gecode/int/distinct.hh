@@ -299,6 +299,38 @@ namespace Gecode { namespace Int { namespace Distinct {
     static  ExecStatus post(Home home, View x0, View x1, View x2);
   };
 
+  /**
+   * \brief Equal-if-then-else domain-consistent propagator
+   *
+   * Implements the propagator \f$x_1=(x_0 = c_0) ? c_1 : x_0\f$.
+   *
+   * Requires \code #include <gecode/int/distinct.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  class EqIte : public BinaryPropagator<IntView,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<IntView,PC_INT_DOM>::x0;
+    using BinaryPropagator<IntView,PC_INT_DOM>::x1;
+    /// The integer constant
+    int c0, c1; 
+    /// Constructor for cloning \a p
+    EqIte(Space& home, bool share, EqIte& p);
+    /// Constructor for creation
+    EqIte(Home home, IntView x0, IntView x1, int c0, int c1);
+  public:
+    /// Copy propagator during cloning
+    GECODE_INT_EXPORT
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function (defined as high ternary)
+    GECODE_INT_EXPORT
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    GECODE_INT_EXPORT
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post if-then-else propagator
+    static ExecStatus post(Home home, IntView x0, IntView x1, int c0, int c1);
+  };
+
 }}}
 
 #include <gecode/int/distinct/val.hpp>
@@ -307,6 +339,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 #include <gecode/int/distinct/graph.hpp>
 #include <gecode/int/distinct/dom-ctrl.hpp>
 #include <gecode/int/distinct/dom.hpp>
+#include <gecode/int/distinct/eqite.hpp>
 
 #endif
 

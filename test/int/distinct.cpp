@@ -38,6 +38,7 @@
  */
 
 #include "test/int.hh"
+#include <gecode/minimodel.hh>
 
 namespace Test { namespace Int {
 
@@ -108,6 +109,38 @@ namespace Test { namespace Int {
          for (int i=0; i<x.size(); i++)
            c[i]=i;
          Gecode::distinct(home, c, x, ipl);
+       }
+     };
+
+     /// Simple test for optional distinct constraint
+     class Optional : public Test {
+     public:
+       /// Create and register test
+       Optional(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
+         : Test("Distinct::Optional::"+str(ipl)+"::"+str(d),
+                6,Gecode::IntSet(d),false,ipl) {}
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n = x.size() / 2;
+         for (int i=0; i<n; i++)
+           if ((x[i] < 0) || (x[i] > 1))
+             return false;
+         for (int i=0; i<n; i++)
+           for (int j=i+1; j<n; j++)
+             if ((x[i] == 1) && (x[j] == 1) && (x[n+i] == x[n+j]))
+               return false;
+         return true;
+       }
+       /// Post constraint on \a bx
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& bx) {
+         int n = bx.size() / 2;
+         Gecode::BoolVarArgs b(n);
+         Gecode::IntVarArgs x(n);
+         for (int i=0; i<n; i++) {
+           b[i] = Gecode::channel(home, bx[i]);
+           x[i] = bx[n+i];
+         }
+         Gecode::distinct(home, b, x, ipl);
        }
      };
 
@@ -213,32 +246,58 @@ namespace Test { namespace Int {
                         Gecode::Int::Limits::max-1,
                         Gecode::Int::Limits::max-0};
      Gecode::IntSet dl(vl,6);
-
+     
      Distinct<false> dom_d(-3,3,Gecode::IPL_DOM);
      Distinct<false> bnd_d(-3,3,Gecode::IPL_BND);
      Distinct<false> val_d(-3,3,Gecode::IPL_VAL);
      Distinct<false> dom_s(d,Gecode::IPL_DOM);
      Distinct<false> bnd_s(d,Gecode::IPL_BND);
      Distinct<false> val_s(d,Gecode::IPL_VAL);
-
+     
      Distinct<false> dom_l(dl,Gecode::IPL_DOM,5);
      Distinct<false> bnd_l(dl,Gecode::IPL_BND,5);
      Distinct<false> val_l(dl,Gecode::IPL_VAL,5);
-
+     
      Distinct<true> count_dom_d(-3,3,Gecode::IPL_DOM);
      Distinct<true> count_bnd_d(-3,3,Gecode::IPL_BND);
      Distinct<true> count_val_d(-3,3,Gecode::IPL_VAL);
      Distinct<true> count_dom_s(d,Gecode::IPL_DOM);
      Distinct<true> count_bnd_s(d,Gecode::IPL_BND);
      Distinct<true> count_val_s(d,Gecode::IPL_VAL);
-
+     
      Offset dom_od(-3,3,Gecode::IPL_DOM);
      Offset bnd_od(-3,3,Gecode::IPL_BND);
      Offset val_od(-3,3,Gecode::IPL_VAL);
      Offset dom_os(d,Gecode::IPL_DOM);
      Offset bnd_os(d,Gecode::IPL_BND);
      Offset val_os(d,Gecode::IPL_VAL);
+     
+     Gecode::IntArgs v1(4, Gecode::Int::Limits::min+4,
+                           0,1,
+                           Gecode::Int::Limits::max);
+     Gecode::IntArgs v2(4, Gecode::Int::Limits::min,
+                           0,1,
+                           Gecode::Int::Limits::max-4);
+     Gecode::IntArgs v3(4, 0,1,2,3);
+     Gecode::IntArgs v4(3, 0,1,2);
+     Gecode::IntArgs v5(2, 0,1);
 
+     Optional od1(v1,Gecode::IPL_DOM);
+     Optional ob1(v1,Gecode::IPL_BND);
+     Optional ov1(v1,Gecode::IPL_VAL);
+     Optional od2(v2,Gecode::IPL_DOM);
+     Optional ob2(v2,Gecode::IPL_BND);
+     Optional ov2(v2,Gecode::IPL_VAL);
+     Optional od3(v3,Gecode::IPL_DOM);
+     Optional ob3(v3,Gecode::IPL_BND);
+     Optional ov3(v3,Gecode::IPL_VAL);
+     Optional od4(v4,Gecode::IPL_DOM);
+     Optional ob4(v4,Gecode::IPL_BND);
+     Optional ov4(v4,Gecode::IPL_VAL);
+     Optional od5(v5,Gecode::IPL_DOM);
+     Optional ob5(v5,Gecode::IPL_BND);
+     Optional ov5(v5,Gecode::IPL_VAL);
+  
      Random dom_r(20,-50,50,Gecode::IPL_DOM);
      Random bnd_r(50,-500,500,Gecode::IPL_BND);
      Random val_r(50,-500,500,Gecode::IPL_VAL);

@@ -38,6 +38,7 @@
  */
 
 #include <gecode/int/distinct.hh>
+#include <gecode/int/bool.hh>
 
 namespace Gecode {
 
@@ -90,6 +91,68 @@ namespace Gecode {
     default:
       GECODE_ES_FAIL(Distinct::Val<OffsetView>::post(home,cx));
     }
+  }
+
+  void
+  distinct(Home home, const BoolVarArgs& b, const IntVarArgs& x,
+           IntPropLevel ipl) {
+    using namespace Int;
+    if (x.same(home))
+      throw ArgumentSame("Int::distinct");
+    if (b.size() != x.size())
+      throw ArgumentSizeMismatch("Int::distinct");
+    if (home.failed()) return;
+
+    int n = x.size();
+    int min = Limits::max;
+    int max = Limits::min;
+    int m = 0;
+    for (int i=n; i--; ) 
+      if (!b[i].zero()) {
+        min = std::min(min,x[i].min());
+        max = std::max(max,x[i].max());
+        m++;
+      }
+
+    if (m < 2)
+      return;
+
+    int start;
+    if (max < Limits::max-m)
+      start = max+1;
+    else if (min > Limits::min+m)
+      start = min-(m+1);
+    else
+      throw OutOfLimits("Int::distinct");
+
+    ViewArray<IntView> y(home,m);
+    int j = 0;
+    for (int i=n; i--; ) 
+      if (b[i].one()) {
+        y[j] = x[i]; j++;
+      } else if (b[i].none()) {
+        y[j] = IntVar(home, Limits::min, Limits::max);
+        GECODE_ES_FAIL((Bool::IteDom<IntView,ConstIntView,IntView>::post
+                        (home, b[i], x[i], start+j, y[j])));
+        j++;
+      }
+    assert(j == m);
+
+    switch (vbd(ipl)) {
+    case IPL_BND:
+      GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,y));
+      break;
+    case IPL_DOM:
+      GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,y));
+      break;
+    default:
+      GECODE_ES_FAIL(Distinct::Val<IntView>::post(home,y));
+    }
+  }
+
+  void
+  distinct(Home home, const IntVarArgs& x, int c,
+           IntPropLevel ipl) {
   }
 
 }
