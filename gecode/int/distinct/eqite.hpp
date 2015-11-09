@@ -52,6 +52,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   inline ExecStatus
   EqIte::post(Home home, IntView x0, IntView x1, int c0, int c1) {
     assert(!(x0.assigned() && (x0.val() == c0)) && x0.in(c0));
+    GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),c1)));
+    GECODE_ME_CHECK(x1.gq(home,std::min(x0.min(),c1)));
     (void) new (home) EqIte(home,x0,x1,c0,c1);
     return ES_OK;
   }

@@ -4,7 +4,11 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Gabor Szokoli <szokoli@gecode.org>
  *
+ *  Contributing authors:
+ *     Roberto Castañeda Lozano <rcas@kth.se>
+ *
  *  Copyright:
+ *     Roberto Castañeda Lozano, 2015
  *     Christian Schulte, 2002
  *     Gabor Szokoli, 2003
  *
