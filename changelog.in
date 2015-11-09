@@ -77,6 +77,13 @@ Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
+Added distinct-except-constant constraint.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
 Added distinct with optional variables.
 
 [ENTRY]

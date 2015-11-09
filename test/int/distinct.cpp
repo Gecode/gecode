@@ -144,6 +144,29 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Simple test for distinct except constant constraint
+     class Except : public Test {
+     public:
+       /// Create and register test
+       Except(const Gecode::IntArgs& d, Gecode::IntPropLevel ipl)
+         : Test("Distinct::Except::"+str(ipl)+"::"+str(d),
+                3,Gecode::IntSet(d),false,ipl) {
+         contest = CTL_NONE;
+       }
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=0; i<x.size(); i++)
+           for (int j=i+1; j<x.size(); j++)
+             if ((x[i] != 0) && (x[j] != 0) && (x[i] == x[j]))
+               return false;
+         return true;
+       }
+       /// Post constraint on \a bx
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         Gecode::distinct(home, x, 0, ipl);
+       }
+     };
+
      /// Randomized test for distinct constraint
      class Random : public Test {
      public:
@@ -298,6 +321,16 @@ namespace Test { namespace Int {
      Optional ob5(v5,Gecode::IPL_BND);
      Optional ov5(v5,Gecode::IPL_VAL);
   
+     Except ed1(v1,Gecode::IPL_DOM);
+     Except eb1(v1,Gecode::IPL_BND);
+     Except ev1(v1,Gecode::IPL_VAL);
+     Except ed2(v2,Gecode::IPL_DOM);
+     Except eb2(v2,Gecode::IPL_BND);
+     Except ev2(v2,Gecode::IPL_VAL);
+     Except ed5(v5,Gecode::IPL_DOM);
+     Except eb5(v5,Gecode::IPL_BND);
+     Except ev5(v5,Gecode::IPL_VAL);
+
      Random dom_r(20,-50,50,Gecode::IPL_DOM);
      Random bnd_r(50,-500,500,Gecode::IPL_BND);
      Random val_r(50,-500,500,Gecode::IPL_VAL);

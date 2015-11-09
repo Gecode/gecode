@@ -53,8 +53,6 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   ExecStatus
   EqIte::propagate(Space& home, const ModEventDelta& med) {
-    return ES_FAILED;
-    /*
     switch (rtest_eq_dom(x0,c0)) {
     case RT_TRUE:
       GECODE_ME_CHECK(x1.eq(home,c1));
@@ -71,44 +69,40 @@ namespace Gecode { namespace Int { namespace Distinct {
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),c1)));
     GECODE_ME_CHECK(x1.gq(home,std::min(x0.min(),c1)));
 
-    RelTest eq10 = rtest_eq_dom(x1,x0);
-    RelTest eq11 = rtest_eq_dom(x1,c1);
+    RelTest eq_then = rtest_eq_dom(x1,c1);
+    RelTest eq_else = rtest_eq_dom(x1,x0);
 
-    if ((eq10 == RT_FALSE) && (eq11 == RT_FALSE))
+    if ((eq_then == RT_FALSE) && (eq_else == RT_FALSE))
       return ES_FAILED;
 
-    if (eq10 == RT_FALSE) {
-      // x0 and x1 cannot be equal
-      GECODE_ME_CHECK(b.zero_none(home));
-      if (eq21 == RT_TRUE)
+    if (eq_then == RT_FALSE) {
+      // x1 and c1 are not equal
+      GECODE_ME_CHECK(x0.nq(home,c0));
+      if (eq_else == RT_TRUE)
         return home.ES_SUBSUMED(*this);
       else
         GECODE_REWRITE(*this,
-                       (Rel::EqDom<V2,V1>::post(home(*this),x2,x1)));
+                       (Rel::EqDom<IntView,IntView>::post(home(*this),x0,x1)));
+    }
+
+    if (eq_else == RT_FALSE) {
+      // x0 and x1 are not equal
+      GECODE_ME_CHECK(x0.eq(home,c0));
+      GECODE_ME_CHECK(x1.eq(home,c1));
+      return home.ES_SUBSUMED(*this);
     }
       
-    if (eq21 == RT_FALSE) {
-      GECODE_ME_CHECK(b.one_none(home));
-      if (eq20 == RT_TRUE)
-        return home.ES_SUBSUMED(*this);
-      else
-        GECODE_REWRITE(*this,
-                       (Rel::EqDom<V2,V0>::post(home(*this),x2,x0)));
-    }
     
-    assert((eq20 != RT_TRUE) || (eq21 != RT_TRUE));
+    assert((eq_then != RT_TRUE) || (eq_else != RT_TRUE));
 
-    ViewRanges<V0> r0(x0);
-    ViewRanges<V1> r1(x1);
-    Iter::Ranges::Union<ViewRanges<V0>,ViewRanges<V1> > u(r0,r1);
+    ViewRanges<IntView> r0(x0);
+    Iter::Ranges::Singleton r1(c1,c1);
+    Iter::Ranges::Union<ViewRanges<IntView>,
+      Iter::Ranges::Singleton > u(r0,r1);
     
-    if (!shared<V0,V2>(x0,x2) && !shared<V1,V2>(x1,x2))
-      GECODE_ME_CHECK(x2.inter_r(home,u,false));
-    else
-      GECODE_ME_CHECK(x2.inter_r(home,u,true));
+    GECODE_ME_CHECK(x1.inter_r(home,u,true));
 
     return ES_FIX;
-    */
   }
 
 }}}
