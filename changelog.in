@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Joseph Scott
+[DESCRIPTION]
+Fix printing of regular expressions.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

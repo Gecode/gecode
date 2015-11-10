@@ -1411,6 +1411,8 @@ namespace Gecode {
     Exp* e;
     /// Initialize with given expression tree \a
     REG(Exp* e);
+    /// Return string representatinon of expression tree
+    std::string toString(void) const;
   public:
     /// Initialize as empty sequence (epsilon)
     REG(void);
@@ -1462,6 +1464,11 @@ namespace Gecode {
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const REG& r);
 
+}
+
+#include <gecode/minimodel/reg.hpp>
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelMiniModelArith Arithmetic functions
