@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   ExecStatus
-  EqIte::propagate(Space& home, const ModEventDelta& med) {
+  EqIte::propagate(Space& home, const ModEventDelta&) {
     switch (rtest_eq_dom(x0,c0)) {
     case RT_TRUE:
       GECODE_ME_CHECK(x1.eq(home,c1));

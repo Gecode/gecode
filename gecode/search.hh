@@ -839,11 +839,11 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template<class T, template<class> class E = DFS>
+  template<class T, template<class> class E>
   T* rbs(T* s, const Search::Options& o);
 
   /// Return a restart search engine builder
-  template<class T, template<class> class E = DFS>
+  template<class T, template<class> class E>
   SEB rbs(const Search::Options& o);
 
 }
@@ -936,11 +936,11 @@ namespace Gecode {
    *
    * \ingroup TaskModelSearch
    */
-  template<class T, template<class> class E = DFS>
+  template<class T, template<class> class E>
   T* pbs(T* s, const Search::Options& o=Search::Options::def);
 
   /// Return a portfolio search engine builder
-  template<class T, template<class> class E = DFS>
+  template<class T>
   SEB pbs(const Search::Options& o=Search::Options::def);
 
 }

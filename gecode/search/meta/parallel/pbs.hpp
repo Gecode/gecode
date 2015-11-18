@@ -56,7 +56,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     return solutions.empty();
   }
   forceinline Space*
-  CollectAll::get(Slave<CollectAll>*& r) {
+  CollectAll::get(Slave<CollectAll>*&) {
     return solutions.pop();
   }
   forceinline
