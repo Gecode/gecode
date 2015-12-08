@@ -76,6 +76,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
+    /// Constrain future solutions to be better than \a b (should never be called)
+    void constrain(const Space& b);
     /// Reset engine to restart at space \a s
     void reset(Space* s);
     /// Return no-goods
@@ -217,7 +219,13 @@ namespace Gecode { namespace Search { namespace Sequential {
     return *this;
   }
 
-  forceinline 
+  forceinline void
+  QDFS::constrain(const Space& b) {
+    (void) b;
+    assert(false);
+  }
+
+  forceinline
   QDFS::~QDFS(void) {
     delete cur;
     path.reset();

@@ -241,13 +241,15 @@ namespace Gecode {
    * \ingroup TaskModelSearch
    */
   template<class T>
-  class QDFS : public Search::EngineBase<T> {
+  class QDFS : public Search::Base<T> {
   private:
     /// The actual search engine
     Search::Engine* e;
   public:
     /// Initialize search engine for space \a s with options \a o
     QDFS(T* s, const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = false;
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
     /// Return statistics

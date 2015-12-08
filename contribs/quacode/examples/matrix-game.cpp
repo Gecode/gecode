@@ -176,8 +176,8 @@ public:
     // Goal constaints
     IntVar cstUn(*this,1,1);
     IntVar boardIdx(*this,0,boardSize*boardSize);
-    linear(*this, access, x, IRT_EQ, boardIdx, ICL_DOM);
-    element(*this, board, boardIdx, cstUn, ICL_DOM);
+    linear(*this, access, x, IRT_EQ, boardIdx, IPL_DOM);
+    element(*this, board, boardIdx, cstUn, IPL_DOM);
 
     branch(*this, X, INT_VAR_NONE(), INT_VAL_MIN());
   }
