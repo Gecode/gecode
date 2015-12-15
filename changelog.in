@@ -76,6 +76,14 @@ Gaga
 Module: minimodel
 What:   bug
 Rank:   minor
+Thanks: Roberto Castañeda Lozano
+[DESCRIPTION]
+Fixed posting of Boolean element expressions and relations.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
 Thanks: Joseph Scott
 [DESCRIPTION]
 Fix printing of regular expressions.

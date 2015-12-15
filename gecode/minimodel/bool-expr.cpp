@@ -315,7 +315,7 @@ namespace Gecode {
         break;
 #endif
       case BoolExpr::NT_MISC:
-        u.a.x->m->post(home, b, !u.a.neg, ipl);
+        u.a.x->m->post(home, b, u.a.neg, ipl);
         break;
       case BoolExpr::NT_AND:
         {
@@ -672,16 +672,16 @@ namespace Gecode {
   }
   
   void
-  BElementExpr::post(Space& home, BoolVar b, bool pos, IntPropLevel ipl) {
+  BElementExpr::post(Space& home, BoolVar b, bool neg, IntPropLevel ipl) {
     IntVar z = idx.post(home, ipl);
-    if (z.assigned() && z.val() >= 0 && z.val() < n) {
-      BoolExpr be = pos ? (a[z.val()] == b) : (a[z.val()] == !b);
+    if (z.assigned() && (z.val() >= 0) && (z.val() < n)) {
+      BoolExpr be = neg ? (a[z.val()] == !b) : (a[z.val()] == b);
       be.rel(home,ipl);
     } else {
       BoolVarArgs x(n);
       for (int i=n; i--;)
         x[i] = a[i].expr(home,ipl);
-      BoolVar res = pos ? b : (!b).expr(home,ipl);
+      BoolVar res = neg ? (!b).expr(home,ipl) : b;
       element(home, x, z, res, ipl);
     }
   }

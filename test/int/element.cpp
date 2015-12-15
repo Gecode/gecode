@@ -264,7 +264,25 @@ namespace Test { namespace Int {
          BoolVarArgs c(x.size()-1);
          for (int i=0; i<x.size()-1; i++)
            c[i]=channel(home,x[1+i]);
-         element(home, c, x[0], r);
+         if (r == 1) {
+           switch (Base::rand(3)) {
+           case 0: 
+             element(home, c, x[0], 1); 
+             break;
+           case 1: 
+             {
+               BoolVar one(home,1,1);
+               rel(home, element(c,x[0]) == one); 
+             }
+             break;
+           case 2: 
+             rel(home, element(c,x[0])); 
+             break;
+           default: GECODE_NEVER;
+           }
+         } else {
+           element(home, c, x[0], r);
+         }
        }
      };
 
