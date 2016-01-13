@@ -320,8 +320,10 @@ void initfg(ParserState* pp) {
     delete pp->floatvars[i].second;
     pp->floatvars[i].second = NULL;
   }
-  pp->fg->postConstraints(pp->domainConstraints);
-  pp->fg->postConstraints(pp->constraints);
+  if (!pp->hadError) {
+    pp->fg->postConstraints(pp->domainConstraints);
+    pp->fg->postConstraints(pp->constraints);
+  }
 }
 
 void fillPrinter(ParserState& pp, Gecode::FlatZinc::Printer& p) {
