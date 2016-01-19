@@ -76,6 +76,13 @@ Gaga
 Module: flatzinc
 What:   bug
 Rank:   minor
+[DESCRIPTION]
+Add missing declaration for bool_clause_reif builtin.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
 Thanks: Tommy Persson
 [DESCRIPTION]
 FlatZinc interpreter now does not try to post constraints if there was a
