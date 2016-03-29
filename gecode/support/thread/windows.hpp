@@ -83,8 +83,11 @@ namespace Gecode { namespace Support {
   }
   forceinline
   Event::~Event(void) {
-    if (CloseHandle(w_h) == 0)
-      throw OperatingSystemError("Event::~Event[Windows::CloseHandle]");
+    if (CloseHandle(w_h) == 0) {
+      std::cerr << "Operating system error: "
+                << "Event::~Event[Windows::CloseHandle]";
+      std::terminate();
+    }
   }
 
 
