@@ -521,7 +521,7 @@ namespace Gecode { namespace Float {
   }
   forceinline FloatVal
   hull(const FloatNum& x, const FloatNum& y) {
-    return FloatVal(hull(x,y));
+    return FloatVal(x,y);
   }
 
 }}

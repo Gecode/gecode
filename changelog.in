@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Fixed infinite recursion bug in hull() member function.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor
