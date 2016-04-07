@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Fixed wrong type declaration in region_allocator::deallocate().
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor

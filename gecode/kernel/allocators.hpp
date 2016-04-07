@@ -426,7 +426,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * actually deallocates memory (so this function does nothing);
      * the memory is released when the region is destroyed.
      */
-    void deallocate(pointer* p, size_type count) {
+    void deallocate(pointer p, size_type count) {
       region.rfree(static_cast<void*>(p), count);
     }
 
