@@ -98,6 +98,36 @@ namespace Gecode { namespace Int { namespace Rel {
   };
 
   /**
+   * \brief Binary value propagation equality propagator
+   *
+   * Requires \code #include <gecode/int/rel.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View0, class View1>
+  class EqVal :
+    public MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL> {
+  protected:
+    using MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>::x0;
+    using MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>::x1;
+
+    /// Constructor for cloning \a p
+    EqVal(Space& home, bool share, EqVal<View0,View1>& p);
+  public:
+    /// Constructor for posting
+    EqVal(Home home, View0 x0, View1 x1);
+    /// Constructor for rewriting \a p during cloning
+    EqVal(Space& home, bool share, Propagator& p, View0 x0, View1 x1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function: low unary.
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post value propagation propagator \f$ x_0 = x_1\f$
+    static  ExecStatus post(Home home, View0 x0, View1 x1);
+  };
+
+  /**
    * \brief Binary bounds consistent equality propagator
    *
    * Requires \code #include <gecode/int/rel.hh> \endcode

@@ -2287,8 +2287,8 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    *
-   * Supports both bounds consistency (\a ipl = IPL_BND, default)
-   * and domain consistency (\a ipl = IPL_DOM).
+   * Supports value propagation (\a ipl = IPL_VAL), bounds consistency 
+   * (\a ipl = IPL_BND, default), and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
   abs(Home home, IntVar x0, IntVar x1,

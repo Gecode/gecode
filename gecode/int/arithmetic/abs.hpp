@@ -79,18 +79,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_NOFIX;
   }
 
-  template<class View>
+  template<class View, PropCond pc>
   forceinline
-  AbsBnd<View>::AbsBnd(Home home, View x0, View x1)
-    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+  AbsBnd<View,pc>::AbsBnd(Home home, View x0, View x1)
+    : BinaryPropagator<View,pc>(home,x0,x1) {}
 
-  template<class View>
+  template<class View, PropCond pc>
   ExecStatus
-  AbsBnd<View>::post(Home home, View x0, View x1) {
+  AbsBnd<View,pc>::post(Home home, View x0, View x1) {
     if (x0.min() >= 0) {
-      return Rel::EqBnd<View,View>::post(home,x0,x1);
+      if (pc == PC_INT_VAL)
+        return Rel::EqVal<View,View>::post(home,x0,x1);
+      else
+        return Rel::EqBnd<View,View>::post(home,x0,x1);
     } else if (x0.max() <= 0) {
-      return Rel::EqBnd<MinusView,View>::post(home,MinusView(x0),x1);
+      if (pc == PC_INT_VAL)
+        return Rel::EqVal<MinusView,View>::post(home,MinusView(x0),x1);
+      else
+        return Rel::EqBnd<MinusView,View>::post(home,MinusView(x0),x1);
     } else {
       assert(!x0.assigned());
       GECODE_ME_CHECK(x1.gq(home,0));
@@ -99,38 +105,41 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         Iter::Values::Array i(mp,2);
         GECODE_ME_CHECK(x0.inter_v(home,i,false));
       } else if (!same(x0,x1)) {
-        GECODE_ME_CHECK(x1.lq(home,std::max(-x0.min(),x0.max())));
-        (void) new (home) AbsBnd<View>(home,x0,x1);
+        if (pc != PC_INT_VAL)
+          GECODE_ME_CHECK(x1.lq(home,std::max(-x0.min(),x0.max())));
+        (void) new (home) AbsBnd<View,pc>(home,x0,x1);
       }
     }
     return ES_OK;
   }
 
-  template<class View>
+  template<class View, PropCond pc>
   forceinline
-  AbsBnd<View>::AbsBnd(Space& home, bool share, AbsBnd<View>& p)
-    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  AbsBnd<View,pc>::AbsBnd(Space& home, bool share, AbsBnd<View,pc>& p)
+    : BinaryPropagator<View,pc>(home,share,p) {}
 
-  template<class View>
+  template<class View, PropCond pc>
   Actor*
-  AbsBnd<View>::copy(Space& home,bool share) {
-    return new (home) AbsBnd<View>(home,share,*this);
+  AbsBnd<View,pc>::copy(Space& home,bool share) {
+    return new (home) AbsBnd<View,pc>(home,share,*this);
   }
 
-  template<class View>
+  template<class View, PropCond pc>
   PropCost
-  AbsBnd<View>::cost(const Space&, const ModEventDelta& med) const {
-    if (View::me(med) == ME_INT_VAL)
+  AbsBnd<View,pc>::cost(const Space&, const ModEventDelta& med) const {
+    if ((pc == PC_INT_VAL) || (View::me(med) == ME_INT_VAL))
       return PropCost::unary(PropCost::LO);
     else
       return PropCost::binary(PropCost::LO);
   }
 
-  template<class View>
+  template<class View, PropCond pc>
   ExecStatus
-  AbsBnd<View>::propagate(Space& home, const ModEventDelta&) {
+  AbsBnd<View,pc>::propagate(Space& home, const ModEventDelta&) {
     return prop_abs_bnd<View,Rel::EqBnd>(home, *this, x0, x1);
   }
+
+
 
   template<class View>
   forceinline

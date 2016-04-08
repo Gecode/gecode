@@ -38,6 +38,66 @@
 namespace Gecode { namespace Int { namespace Rel {
 
   /*
+   * Binary value propagation equality
+   *
+   */
+
+  template<class View0, class View1>
+  forceinline
+  EqVal<View0,View1>::EqVal(Home home, View0 x0, View1 x1)
+    : MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>(home,x0,x1) {}
+
+  template<class View0, class View1>
+  ExecStatus
+  EqVal<View0,View1>::post(Home home, View0 x0, View1 x1){
+    if (x0.assigned()) {
+      GECODE_ME_CHECK(x1.eq(home,x0.val()));
+    } else if (x1.assigned()) {
+      GECODE_ME_CHECK(x0.eq(home,x1.val()));
+    } else if (!same(x0,x1)) {
+      (void) new (home) EqVal<View0,View1>(home,x0,x1);
+    }
+    return ES_OK;
+  }
+
+  template<class View0, class View1>
+  forceinline
+  EqVal<View0,View1>::EqVal(Space& home, bool share, EqVal<View0,View1>& p)
+    : MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>(home,share,p) {}
+
+  template<class View0, class View1>
+  forceinline
+  EqVal<View0,View1>::EqVal(Space& home, bool share, Propagator& p,
+                            View0 x0, View1 x1)
+    : MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>(home,share,p,
+                                                             x0,x1) {}
+
+  template<class View0, class View1>
+  Actor*
+  EqVal<View0,View1>::copy(Space& home, bool share) {
+    return new (home) EqVal<View0,View1>(home,share,*this);
+  }
+
+  template<class View0, class View1>
+  PropCost
+  EqVal<View0,View1>::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::unary(PropCost::LO);
+  }
+
+  template<class View0, class View1>
+  ExecStatus
+  EqVal<View0,View1>::propagate(Space& home, const ModEventDelta&) {
+    if (x0.assigned()) {
+      GECODE_ME_CHECK(x1.eq(home,x0.val()));
+    } else {
+      assert(x1.assigned());
+      GECODE_ME_CHECK(x0.eq(home,x1.val()));
+    }
+    return home.ES_SUBSUMED(*this);
+  }
+
+
+  /*
    * Binary bounds consistent equality
    *
    */
