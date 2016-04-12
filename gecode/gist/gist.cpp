@@ -35,6 +35,7 @@
  *
  */
 
+#include <cstdlib>
 #include <QtGui>
 
 #include <gecode/gist.hh>
@@ -103,9 +104,25 @@ namespace Gecode { namespace Gist {
   
   int
   explore(Space* root, bool bab, const Options& opt) {
+
+#ifdef _MSC_VER
+    // Set the plugin search path on Windows when in default installation
+    if (char* gd = getenv("GECODEDIR")) {
+      unsigned int gdl = static_cast<unsigned int>(strlen(gd) + 32U);
+      char* gdb = heap.alloc<char>(gdl);
+      strcpy(gdb, gd);
+      strcat(gdb, "/bin/");
+      QCoreApplication::addLibraryPath(gdb);
+      heap.free(gdb,gdl);
+    }
+#endif
+
     char argv0='\0'; char* argv1=&argv0;
     int argc=0;
+
+
     QApplication app(argc, &argv1);
+
     GistMainWindow mw(root, bab, opt);
     return app.exec();
   }
