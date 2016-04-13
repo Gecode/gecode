@@ -56,11 +56,9 @@ namespace Gecode {
    */
   Actor* Actor::sentinel;
 
-#ifdef __GNUC__
-  /// To avoid warnings from GCC
-  Actor::~Actor(void) {}
-#endif
-
+  Actor::~Actor(void) {
+    GECODE_NEVER;
+  }
 
 
   /*
@@ -723,6 +721,10 @@ namespace Gecode {
   bool
   NGL::notice(void) const {
     return false;
+  }
+
+  NGL::~NGL(void) {
+    GECODE_NEVER;
   }
 
 }

@@ -74,6 +74,14 @@ Gaga
 
 [ENTRY]
 Module: kernel
+What:   change
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Added destructor to NGL class to avoid warnings.
+
+[ENTRY]
+Module: kernel
 What:   bug
 Rank:   minor
 Thanks: Matthias Balzer

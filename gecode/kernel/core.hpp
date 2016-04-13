@@ -688,21 +688,14 @@ namespace Gecode {
     static void* operator new(size_t s, Space& home);
     /// No-op for exceptions
     static void  operator delete(void* p, Space& home);
-  private:
-#ifndef __GNUC__
-    /// Not used (uses dispose instead)
-    static void  operator delete(void* p);
-#endif
+    //@}
+  public:
+    /// To avoid warnings
+    GECODE_KERNEL_EXPORT virtual ~Actor(void);
     /// Not used
     static void* operator new(size_t s);
-    //@}
-#ifdef __GNUC__
-  public:
-    /// To avoid warnings from GCC
-    GECODE_KERNEL_EXPORT virtual ~Actor(void);
-    /// Not used (uses dispose instead)
+    /// Not used
     static void  operator delete(void* p);
-#endif
   };
 
 
@@ -1018,6 +1011,11 @@ namespace Gecode {
     /// Needed for exceptions
     static void  operator delete(void* p);
     //@}
+  public:
+    /// To avoid warnings
+    GECODE_KERNEL_EXPORT virtual ~NGL(void);
+    /// Not used
+    static void* operator new(size_t s);
   };
 
   /**
