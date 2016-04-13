@@ -107,7 +107,7 @@ namespace Gecode {
     
   forceinline FloatVal
   FloatVal::hull(FloatNum x, FloatNum y) {
-    FloatVal h(FloatVal::hull(x,y)); return h;
+    FloatVal h(x,y); return h;
   }
   forceinline FloatVal
   FloatVal::pi_half(void) {

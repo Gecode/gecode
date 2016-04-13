@@ -92,9 +92,9 @@ Fixed wrong type declaration in region_allocator::deallocate().
 Module: float
 What:   bug
 Rank:   minor
-Thanks: Conrad Drescher
+Thanks: Conrad Drescher, Patrick Berg
 [DESCRIPTION]
-Fixed infinite recursion bug in hull() member function.
+Fixed two infinite recursion bugs in related to use of hull().
 
 [ENTRY]
 Module: flatzinc
