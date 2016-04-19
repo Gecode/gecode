@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: support
+What:   new
+Rank:   major
+[DESCRIPTION]
+Gecode supports no arbitrary memory allocators (the behavior can
+be controlled by the commandline options -enable-allocator and
+-disable-allocator). For more details, please see MPG.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
