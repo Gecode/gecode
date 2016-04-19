@@ -95,13 +95,13 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   ViewValuesBrancher<n,min>::
   ViewValuesBrancher(Home home, ViewArray<IntView>& x,
-                     ViewSel<IntView>* vs[n], 
+                     ViewSel<IntView>* vs[n],
                      BranchFilter bf, IntVarValPrint vvp0)
     : ViewBrancher<IntView,n>(home,x,vs,bf), vvp(vvp0) {}
 
   template<int n, bool min>
   BrancherHandle
-  ViewValuesBrancher<n,min>::post(Home home, ViewArray<IntView>& x, 
+  ViewValuesBrancher<n,min>::post(Home home, ViewArray<IntView>& x,
                                   ViewSel<IntView>* vs[n],
                                   BranchFilter bf, IntVarValPrint vvp) {
     return *new (home) ViewValuesBrancher<n,min>(home,x,vs,bf,vvp);
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<int n, bool min>
   ExecStatus
-  ViewValuesBrancher<n,min>::commit(Space& home, const Choice& c, 
+  ViewValuesBrancher<n,min>::commit(Space& home, const Choice& c,
                                     unsigned int a) {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<int n, bool min>
   NGL*
-  ViewValuesBrancher<n,min>::ngl(Space& home, const Choice& c, 
+  ViewValuesBrancher<n,min>::ngl(Space& home, const Choice& c,
                                  unsigned int a) const {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<int n, bool min>
   void
-  ViewValuesBrancher<n,min>::print(const Space& home, const Choice& c, 
+  ViewValuesBrancher<n,min>::print(const Space& home, const Choice& c,
                                    unsigned int a, std::ostream& o) const {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);

@@ -73,8 +73,8 @@ namespace Gecode { namespace Gist {
     return ES_OK;
   }
 
-  void 
-  StopBrancher::print(const Space&, const Gecode::Choice&, 
+  void
+  StopBrancher::print(const Space&, const Gecode::Choice&,
                       unsigned int, std::ostream&) const {
   }
 
@@ -90,7 +90,7 @@ namespace Gecode { namespace Gist {
   StopBrancher::dispose(Space&) {
     return sizeof(*this);
   }
-  
+
 }}
 
 // STATISTICS: gist-any

@@ -45,7 +45,7 @@ namespace Gecode {
   FloatAssign::FloatAssign(Rnd r)
     : ValBranch(r), s(SEL_RND) {}
 
-  forceinline 
+  forceinline
   FloatAssign::FloatAssign(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 

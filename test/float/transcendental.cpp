@@ -49,7 +49,7 @@ namespace Test { namespace Float {
 
    /// %Tests for transcendental constraints
    namespace Transcendental {
-     
+
      /// %Test for exponent constraint
      class ExpXY : public Test {
      public:
@@ -94,7 +94,7 @@ namespace Test { namespace Float {
          Gecode::exp(home, x[0], x[1]);
        }
      };
-     
+
      /// %Test for exponent constraint with shared variables
      class ExpXX : public Test {
      public:
@@ -110,7 +110,7 @@ namespace Test { namespace Float {
          Gecode::exp(home, x[0], x[0]);
        }
      };
-     
+
      /// %Test for logarithm constraint
      class LogXY : public Test {
      public:
@@ -119,7 +119,7 @@ namespace Test { namespace Float {
          : Test("Transcendental::Log::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0) 
+         if (x[0].max() < 0.0)
            return MT_FALSE;
          return eq(log(x[0]), x[1]);
        }
@@ -131,7 +131,7 @@ namespace Test { namespace Float {
            Gecode::rel(home, log(x[0]) == x[1]);
        }
      };
-     
+
      /// %Test for logarithm constraint where solution is ensured
      class LogXYSol : public Test {
      public:
@@ -140,7 +140,7 @@ namespace Test { namespace Float {
        : Test("Transcendental::Log::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0) 
+         if (x[0].max() < 0.0)
            return MT_FALSE;
          return eq(log(x[0]), x[1]);
        }
@@ -160,7 +160,7 @@ namespace Test { namespace Float {
          Gecode::log(home, x[0], x[1]);
        }
      };
-     
+
      /// %Test for logarithm constraint with shared variables
      class LogXX : public Test {
      public:
@@ -169,7 +169,7 @@ namespace Test { namespace Float {
        : Test("Transcendental::Log::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (x[0].max() < 0.0) 
+         if (x[0].max() < 0.0)
            return MT_FALSE;
          return eq(log(x[0]), x[0]);
        }
@@ -178,7 +178,7 @@ namespace Test { namespace Float {
          Gecode::log(home, x[0], x[0]);
        }
      };
-     
+
      /// %Test for logarithm base n constraint
      class LogNXY : public Test {
        Gecode::FloatNum base;
@@ -188,7 +188,7 @@ namespace Test { namespace Float {
        : Test("Transcendental::Log::N::"+str(_base)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0)) 
+         if ((x[0].max() <= 0.0) || (base <= 0.0))
            return MT_FALSE;
          return eq(log(x[0]) / log(base), x[1]);
        }
@@ -197,7 +197,7 @@ namespace Test { namespace Float {
          Gecode::log(home, base, x[0], x[1]);
        }
      };
-     
+
      /// %Test for logarithm base n constraint where solution is ensured
      class LogNXYSol : public Test {
        Gecode::FloatNum base;
@@ -207,7 +207,7 @@ namespace Test { namespace Float {
        : Test("Transcendental::Log::N::"+str(_base)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if ((x[0].max() <= 0.0) || (base <= 0.0)) 
+         if ((x[0].max() <= 0.0) || (base <= 0.0))
            return MT_FALSE;
          return eq(log(x[0]) / log(base), x[1]);
        }
@@ -228,7 +228,7 @@ namespace Test { namespace Float {
          Gecode::log(home, base, x[0], x[1]);
        }
      };
-     
+
      /// %Test for logarithm base n constraint with shared variables
      class LogNXX : public Test {
        Gecode::FloatNum base;
@@ -247,7 +247,7 @@ namespace Test { namespace Float {
          Gecode::log(home, base, x[0], x[0]);
        }
      };
-     
+
      /// %Test for pow exponent n constraint
      class PowXY : public Test {
        Gecode::FloatNum base;
@@ -257,7 +257,7 @@ namespace Test { namespace Float {
        : Test("Transcendental::Pow::N::"+str(_base)+"::XY::"+s,2,d,st,CPLT_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (base <= 0.0) 
+         if (base <= 0.0)
            return MT_FALSE;
          return eq(exp(x[0] * log(base)), x[1]);
        }
@@ -266,7 +266,7 @@ namespace Test { namespace Float {
          Gecode::pow(home, base, x[0], x[1]);
        }
      };
-     
+
      /// %Test for pow exponent n constraint where solution is ensured
      class PowXYSol : public Test {
        Gecode::FloatNum base;
@@ -276,7 +276,7 @@ namespace Test { namespace Float {
        : Test("Transcendental::Pow::N::"+str(_base)+"::XY::Sol::"+s,2,d,st,EXTEND_ASSIGNMENT,false), base(_base) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if (base <= 0.0) 
+         if (base <= 0.0)
            return MT_FALSE;
          return eq(exp(x[0] * log(base)), x[1]);
        }
@@ -296,7 +296,7 @@ namespace Test { namespace Float {
          Gecode::pow(home, base, x[0], x[1]);
        }
      };
-     
+
      /// %Test for pow exponent n constraint with shared variables
      class PowXX : public Test {
        Gecode::FloatNum base;
@@ -315,13 +315,13 @@ namespace Test { namespace Float {
          Gecode::pow(home, base, x[0], x[0]);
        }
      };
-     
+
      const Gecode::FloatNum step = 0.15;
      const Gecode::FloatNum step2 = 2*step;
      Gecode::FloatVal a(-8,5);
      Gecode::FloatVal b(9,12);
      Gecode::FloatVal c(-8,8);
-     
+
      ExpXY exp_xy_a("A",a,step);
      ExpXY exp_xy_b("B",b,step);
      ExpXY exp_xy_c("C",c,step);
@@ -329,7 +329,7 @@ namespace Test { namespace Float {
      ExpXYSol exp_xy_sol_a("A",a,step);
      ExpXYSol exp_xy_sol_b("B",b,step);
      ExpXYSol exp_xy_sol_c("C",c,step);
-     
+
      ExpXX exp_xx_a("A",a,step);
      ExpXX exp_xx_b("B",b,step);
      ExpXX exp_xx_c("C",c,step);
@@ -337,87 +337,87 @@ namespace Test { namespace Float {
      LogXY log_xy_a("A",a,step);
      LogXY log_xy_b("B",b,step);
      LogXY log_xy_c("C",c,step);
-     
+
      LogXYSol log_xy_sol_a("A",a,step);
      LogXYSol log_xy_sol_b("B",b,step);
      LogXYSol log_xy_sol_c("C",c,step);
-     
+
      LogXX log_xx_a("A",a,step);
      LogXX log_xx_b("B",b,step);
      LogXX log_xx_c("C",c,step);
-     
+
      LogNXY logn_xy_a_1("A",a,-1.5,step);
      LogNXY logn_xy_b_1("B",b,-1.5,step);
      LogNXY logn_xy_c_1("C",c,-1.5,step);
-     
+
      LogNXYSol logn_xy_sol_a_1("A",a,-1.5,step);
      LogNXYSol logn_xy_sol_b_1("B",b,-1.5,step);
      LogNXYSol logn_xy_sol_c_1("C",c,-1.5,step);
-     
+
      LogNXX logn_xx_a_1("A",a,-1.5,step);
      LogNXX logn_xx_b_1("B",b,-1.5,step);
      LogNXX logn_xx_c_1("C",c,-1.5,step);
-     
+
      LogNXY logn_xy_a_2("A",a,1.5,step);
      LogNXY logn_xy_b_2("B",b,1.5,step);
      LogNXY logn_xy_c_2("C",c,1.5,step);
-     
+
      LogNXYSol logn_xy_sol_a_2("A",a,1.5,step);
      LogNXYSol logn_xy_sol_b_2("B",b,1.5,step);
      LogNXYSol logn_xy_sol_c_2("C",c,1.5,step);
-     
+
      LogNXX logn_xx_a_2("A",a,1.5,step);
      LogNXX logn_xx_b_2("B",b,1.5,step);
      LogNXX logn_xx_c_2("C",c,1.5,step);
-     
+
      LogNXY logn_xy_a_3("A",a,0,step);
      LogNXY logn_xy_b_3("B",b,0,step);
      LogNXY logn_xy_c_3("C",c,0,step);
-     
+
      LogNXYSol logn_xy_sol_a_3("A",a,0,step);
      LogNXYSol logn_xy_sol_b_3("B",b,0,step);
      LogNXYSol logn_xy_sol_c_3("C",c,0,step);
-     
+
      LogNXX logn_xx_a_3("A",a,0,step);
      LogNXX logn_xx_b_3("B",b,0,step);
      LogNXX logn_xx_c_3("C",c,0,step);
-     
+
      PowXY pow_xy_a_1("A",a,-1.5,step);
      PowXY pow_xy_b_1("B",b,-1.5,step);
      PowXY pow_xy_c_1("C",c,-1.5,step);
-     
+
      PowXYSol pow_xy_sol_a_1("A",a,-1.5,step);
      PowXYSol pow_xy_sol_b_1("B",b,-1.5,step);
      PowXYSol pow_xy_sol_c_1("C",c,-1.5,step);
-     
+
      PowXX pow_xx_a_1("A",a,-1.5,step);
      PowXX pow_xx_b_1("B",b,-1.5,step);
      PowXX pow_xx_c_1("C",c,-1.5,step);
-     
+
      PowXY pow_xy_a_2("A",a,1.5,step);
      PowXY pow_xy_b_2("B",b,1.5,step);
      PowXY pow_xy_c_2("C",c,1.5,step);
-     
+
      PowXYSol pow_xy_sol_a_2("A",a,1.5,step);
      PowXYSol pow_xy_sol_b_2("B",b,1.5,step);
      PowXYSol pow_xy_sol_c_2("C",c,1.5,step);
-     
+
      PowXX pow_xx_a_2("A",a,1.5,step);
      PowXX pow_xx_b_2("B",b,1.5,step);
      PowXX pow_xx_c_2("C",c,1.5,step);
-     
+
      PowXY pow_xy_a_3("A",a,0,step);
      PowXY pow_xy_b_3("B",b,0,step);
      PowXY pow_xy_c_3("C",c,0,step);
-      
+
      PowXYSol pow_xy_sol_a_3("A",a,0,step);
      PowXYSol pow_xy_sol_b_3("B",b,0,step);
      PowXYSol pow_xy_sol_c_3("C",c,0,step);
-      
+
      PowXX pow_xx_a_3("A",a,0,step);
      PowXX pow_xx_b_3("B",b,0,step);
      PowXX pow_xx_c_3("C",c,0,step);
-      
+
      //@}
 
    }

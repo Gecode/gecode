@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Unary {
     _s=t._s; _p=t._p;
   }
 
-  forceinline int 
+  forceinline int
   ManFixPTask::est(void) const {
     return _s.min();
   }
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Unary {
     return _s.assigned();
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   ManFixPTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline
   ManFixPSETask::ManFixPSETask(void) {}
   forceinline
-  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p) 
+  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p)
     : ManFixPTask(s,p), _t(t) {}
   forceinline void
   ManFixPSETask::init(TaskType t, IntVar s, int p) {
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Unary {
     ManFixPTask::init(t0); _t = t0._t;
   }
 
-  forceinline int 
+  forceinline int
   ManFixPSETask::est(void) const {
     return (_t == TT_FIXS) ? _p : _s.min();
   }
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Unary {
     return 0;
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   ManFixPSETask::est(Space& home, int n) {
     switch (_t) {
     case TT_FIXE: // fall through
@@ -327,7 +327,7 @@ namespace Gecode { namespace Int { namespace Unary {
     _s=t._s; _p=t._p; _e=t._e;
   }
 
-  forceinline int 
+  forceinline int
   ManFlexTask::est(void) const {
     return _s.min();
   }
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace Unary {
     return _s.assigned() && _p.assigned() && _e.assigned();
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   ManFlexTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
@@ -526,7 +526,7 @@ namespace Gecode { namespace Int { namespace Unary {
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
-    
+
 }}}
 
 // STATISTICS: int-var

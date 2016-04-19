@@ -46,7 +46,7 @@
  * \namespace Gecode::Int::Unary
  *
  * The algorithms and data structures follow (mostly):
- *   Petr Vilím, Global Constraints in Int, PhD thesis, 
+ *   Petr Vilím, Global Constraints in Int, PhD thesis,
  *   Charles University, Prague, Czech Republic, 2007.
  *
  * \brief %Int for unary resources
@@ -474,7 +474,7 @@ namespace Gecode { namespace Int { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTaskBwd& t);
 
   /**
-   * \brief Print optional backward task view in format 
+   * \brief Print optional backward task view in format
    * est:lst:pmin:pmax:ect:lct:m
    *
    * \relates OptFlexTaskBwd
@@ -721,7 +721,7 @@ namespace Gecode { namespace Int { namespace Unary {
     using TaskTree<TaskView,OmegaLambdaNode>::update;
   public:
     /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
-    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, 
+    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t,
                     bool inc=true);
     /// Shift task with index \a i from omega to lambda
     void shift(int i);

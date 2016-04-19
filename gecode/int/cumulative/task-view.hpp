@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     s << t.est() << ":[" << t.pmin() << ',' << t.c() << "]:" << t.lct();
     return os << s.str();
   }
-    
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTaskBwd& t) {
@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
-    
+
 }}}
 
 // STATISTICS: int-var

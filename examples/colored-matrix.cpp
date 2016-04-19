@@ -76,18 +76,18 @@ public:
   }
 
   /// Return height
-  unsigned int height(void) const { 
+  unsigned int height(void) const {
     if (_size.value() == 0)
-      return _height.value(); 
+      return _height.value();
     else
-      return _size.value(); 
+      return _size.value();
   }
   /// Return width
-  unsigned int width(void)  const { 
+  unsigned int width(void)  const {
     if (_size.value() == 0)
-      return _width.value(); 
+      return _width.value();
     else
-      return _size.value(); 
+      return _size.value();
   }
   /// Return number of colors
   unsigned int colors(void) const { return _colors.value(); }
@@ -98,8 +98,8 @@ public:
   /// Return how to implement distinct except 0
   int distinct_except_0(void) const { return _distinct_except_0.value(); }
   /// Return how to implement distinct except 0
-  int no_monochrome_rectangle(void) const { 
-    return _no_monochrome_rectangle.value(); 
+  int no_monochrome_rectangle(void) const {
+    return _no_monochrome_rectangle.value();
   }
 };
 
@@ -112,7 +112,7 @@ namespace {
    * \relates ColoredMatrix
    */
   //@{
-  
+
   /** Return DFA for the same_or_0 constraint.
    *
    * Constraint models the expression \f$(x = y \land z = y) \lor (x
@@ -120,7 +120,7 @@ namespace {
    * zq\rangle\f$.
    */
   DFA same_or_0_dfa(unsigned int colors);
-  
+
   /** Return tuple set for the same_or_0 constraint.
    *
    * Constraint models the expression \f$(x = y \land z = y) \lor (x
@@ -128,38 +128,38 @@ namespace {
    * zq\rangle\f$.
    */
   TupleSet same_or_0_tuple_set(unsigned int colors);
-  
+
   /** Return DFA for the distinct_except_0 constraint.
    */
   DFA distinct_except_0_dfa(unsigned int colors);
-  
+
   /** Return DFA for the no monochrome rectangle constraint.
    */
   DFA no_monochrome_rectangle_dfa(unsigned int colors);
-  
+
   /** Return counts for using a global cardninality constraint for the distinct exept 0 constraint.
    */
   IntSetArgs distinct_except_0_counts(unsigned int colors, unsigned int size);
-  
+
   /** Return DFA for the not all equals constraint.
    */
   DFA not_all_equal_dfa(unsigned int colors);
-  
+
   //@}
 }
 
 /**
  * \brief %Example: Colored matrix example.
- * 
+ *
  * An n by m matrix is to be filled with k colors. It is a valid colored matrix iff
  * the corners of each rectangle do not have the same color.
  *
  * An example 5 by 4 matrix with three colors:
  * \code
- *   1 1 1 1 1 
- *   1 2 2 3 3 
- *   1 2 3 2 3 
- *   1 2 3 3 2 
+ *   1 1 1 1 1
+ *   1 2 2 3 3
+ *   1 2 3 2 3
+ *   1 2 3 3 2
  * \endcode
  *
  * \ingroup Example
@@ -195,7 +195,7 @@ protected:
       BoolVar same = expr(*this, (a == b));
       rel(*this, result, IRT_EQ, a, same);
       // Redundant (implied by previous), but improves efficiency
-      rel(*this, result, IRT_NQ, 0, same);      
+      rel(*this, result, IRT_NQ, 0, same);
       return result;
     }
     case SAME_OR_0_TUPLE_SET: {
@@ -235,7 +235,7 @@ protected:
       break;
     }
     case DISTINCT_EXCEPT_0_COUNT: {
-      static const IntSetArgs counts = distinct_except_0_counts(colors, std::max(width, height)); 
+      static const IntSetArgs counts = distinct_except_0_counts(colors, std::max(width, height));
       count(*this, v, counts, opt.ipl());
       break;
     }
@@ -328,8 +328,8 @@ public:
   /// Model variants
   enum {
     MODEL_CORNERS = 1,   ///< Use model on corner combinations
-    MODEL_ROWS    = 2,      ///< Use model on pairs of rows 
-    MODEL_COLUMNS = 4,   ///< Use model on pairs of columns 
+    MODEL_ROWS    = 2,      ///< Use model on pairs of rows
+    MODEL_COLUMNS = 4,   ///< Use model on pairs of columns
   };
   /// Not all equal variants
   enum {
@@ -361,7 +361,7 @@ public:
 
   /// Actual model
   ColoredMatrix(const ColoredMatrixOptions& opt0)
-    : IntMinimizeScript(opt0), 
+    : IntMinimizeScript(opt0),
       opt(opt0), height(opt.height()), width(opt.width()), colors(opt.colors()),
       x(*this, height*width, 1, colors),
       max_color(*this, 1, colors)
@@ -370,7 +370,7 @@ public:
     max(*this, x, max_color);
 
     Matrix<IntVarArray> m(x, width, height);
-    
+
     // For each pair of columns and rows, the intersections may not be equal.
     if (opt.model() & MODEL_CORNERS) {
       for (unsigned int c1 = 0; c1 < width; ++c1) {
@@ -417,7 +417,7 @@ public:
       // Value precedence. Compatible with row/column ordering
       if (opt.symmetry() & SYMMETRY_VALUES) {
         precede(*this, x, IntArgs::create(colors, 1));
-      }      
+      }
     }
 
     branch(*this, x, tiebreak(INT_VAR_MIN_MIN(), INT_VAR_SIZE_MIN()), INT_VAL_MIN());
@@ -438,7 +438,7 @@ public:
         os << m(c, r) << " ";
       }
       os << std::endl;
-    }    
+    }
     os << std::endl;
     os << "\tmax color: " << max_color << std::endl;
     os << std::endl;
@@ -464,13 +464,13 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
     _width("-width", "Width of matrix", 8),
     _size("-size", "If different from 0, used as both width and height", 0),
     _colors("-colors", "Maximum number of colors", 4),
-    _not_all_equal("-not-all-equal", "How to implement the not all equals constraint (used in corners model)", 
+    _not_all_equal("-not-all-equal", "How to implement the not all equals constraint (used in corners model)",
                    ColoredMatrix::NOT_ALL_EQUAL_NQ),
-    _same_or_0("-same-or-0", "How to implement the same or 0 constraint (used in the decomposed no monochrome rectangle constraint)", 
+    _same_or_0("-same-or-0", "How to implement the same or 0 constraint (used in the decomposed no monochrome rectangle constraint)",
                ColoredMatrix::SAME_OR_0_DFA),
-    _distinct_except_0("-distinct-except-0", "How to implement the distinct except 0 constraint (used in the decomposed no monochrome rectangle constraint)", 
+    _distinct_except_0("-distinct-except-0", "How to implement the distinct except 0 constraint (used in the decomposed no monochrome rectangle constraint)",
                        ColoredMatrix::DISTINCT_EXCEPT_0_DFA),
-    _no_monochrome_rectangle("-no-monochrome-rectangle", "How to implement no monochrome rectangle (used in the rows model)", 
+    _no_monochrome_rectangle("-no-monochrome-rectangle", "How to implement no monochrome rectangle (used in the rows model)",
                              ColoredMatrix::NO_MONOCHROME_DFA)
 {
   add(_height);
@@ -486,7 +486,7 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   _search.add(ColoredMatrix::SEARCH_DFS,  "dfs", "Find a solution.");
   _search.add(ColoredMatrix::SEARCH_BAB,  "bab", "Find an optimal solution.");
   _search.value(ColoredMatrix::SEARCH_DFS);
-  
+
   // Add symmetry options
   _symmetry.add(ColoredMatrix::SYMMETRY_NONE,  "none", "Don't use symmetry breaking.");
   _symmetry.add(ColoredMatrix::SYMMETRY_MATRIX,  "matrix", "Order matrix rows and columns");
@@ -524,11 +524,11 @@ ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   _distinct_except_0.add(ColoredMatrix::DISTINCT_EXCEPT_0_COUNT, "count", "Use global cardinality.");
 
   // Add no monochrome rectangle variants
-  _no_monochrome_rectangle.add(ColoredMatrix::NO_MONOCHROME_DECOMPOSITION, 
-                               "decompositions", 
+  _no_monochrome_rectangle.add(ColoredMatrix::NO_MONOCHROME_DECOMPOSITION,
+                               "decompositions",
                                "Use decompositions into same_or_0 and distinct_except_0.");
-  _no_monochrome_rectangle.add(ColoredMatrix::NO_MONOCHROME_DFA, 
-                               "dfa", 
+  _no_monochrome_rectangle.add(ColoredMatrix::NO_MONOCHROME_DFA,
+                               "dfa",
                                "Use DFA as direct implementation.");
 }
 
@@ -553,10 +553,10 @@ namespace {
   {
     /* DFA over variable sequences (x,y,z) where z equals x/y if x and
      * y are equal, and z equals 0 otherwise.
-     * 
-     * DFA is constructed to contain paths 
+     *
+     * DFA is constructed to contain paths
      *   start -- c --> node -- c --> node' -- c --> end
-     * for all colors c representing the case when x and y 
+     * for all colors c representing the case when x and y
      * are equal.
      *
      * For the cases where x and y are non-equal (c and c'), paths
@@ -571,7 +571,7 @@ namespace {
     int n_transitions = colors*colors + 2*colors + 2;
     DFA::Transition* trans = new DFA::Transition[n_transitions];
     int current_transition = 0;
-    
+
     // From start state
     for (unsigned int color = 1; color <= colors; ++color) {
       trans[current_transition++] =
@@ -585,7 +585,7 @@ namespace {
         if (color == state) {
           trans[current_transition++] =
             DFA::Transition(state, color, colors+state);
-        } else {          
+        } else {
           trans[current_transition++] =
             DFA::Transition(state, color, not_equal_state);
         }
@@ -602,20 +602,20 @@ namespace {
     // From not equal state to final state
     trans[current_transition++] =
       DFA::Transition(not_equal_state, 0, final_state);
-    
+
     // End sentinel
     trans[current_transition++] =
       DFA::Transition(-1, 0, -1);
-    
+
     int final_states[] = {final_state, -1};
-    
+
     DFA result(start_state, trans, final_states, true);
 
     delete[] trans;
 
     return result;
   }
-  
+
   TupleSet same_or_0_tuple_set(unsigned int colors)
   {
     TupleSet result;
@@ -630,16 +630,16 @@ namespace {
     }
     result.finalize();
     return result;
-  }  
+  }
 
   DFA distinct_except_0_dfa(unsigned int colors)
   {
     /* DFA for a sequence that may use each color only once (and all
      * others are zero).
-     * 
-     * For n colors, 2^n nodes are used. For each node, if bit b is one, then 
-     * that color has not been used yet. All nodes have self-loops for zero, and 
-     * edges for still usable colors to the node with the corresponding bit un-set. 
+     *
+     * For n colors, 2^n nodes are used. For each node, if bit b is one, then
+     * that color has not been used yet. All nodes have self-loops for zero, and
+     * edges for still usable colors to the node with the corresponding bit un-set.
      * All nodes are final nodes.
      */
 
@@ -655,7 +655,7 @@ namespace {
       for (unsigned int color = 1; color <= colors; ++color) {
         const unsigned int color_bit = (1 << (color-1));
         if (state & color_bit) {
-          trans[current_transition++] = 
+          trans[current_transition++] =
             DFA::Transition(state, color, state & ~color_bit);
         }
       }
@@ -680,7 +680,7 @@ namespace {
   {
     /* DFA for a sequence of pairs, where each monochromatic pair may
      * only appear once.
-     * 
+     *
      * For n colors, there are 2^n base states representing which
      * monochromatic pairs are still available. For each base state s,
      * the color seen goes to a new intermediate state. A different
@@ -703,19 +703,19 @@ namespace {
       for (unsigned int color = 1; color <= colors; ++color) {
         const unsigned int color_bit = (1 << (color-1));
         const int color_remembered_state = state + color*base_states;
-        
-        trans[current_transition++] = 
+
+        trans[current_transition++] =
           DFA::Transition(state, color, color_remembered_state);
-        
+
         for (unsigned int next_color = 1; next_color <= colors; ++next_color) {
           if (next_color == color) {
             // Two equal adjacent, only transition if color still allowed
             if (state & color_bit) {
-              trans[current_transition++] = 
+              trans[current_transition++] =
                 DFA::Transition(color_remembered_state, color, state & ~color_bit);
             }
           } else {
-            trans[current_transition++] = 
+            trans[current_transition++] =
               DFA::Transition(color_remembered_state, next_color, state);
           }
         }
@@ -754,7 +754,7 @@ namespace {
 
   DFA not_all_equal_dfa(unsigned int colors)
   {
-    /* DFA for not all equal. 
+    /* DFA for not all equal.
      *
      * From the start state, there is a transition for each color to
      * that colors state.  As long as the same color is seen, the

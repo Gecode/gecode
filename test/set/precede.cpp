@@ -49,22 +49,22 @@ namespace Test { namespace Set {
 
    /// %Tests for value precedence constraints
    namespace Precede {
-            
+
      static IntSet ds(-1,3);
-    
+
      /// %Test for single value precedence constraint
      class Single : public SetTest {
      private:
        /// The values for precedence
        int s, t;
-       
+
        /// Check if \a i is a member of set \a x
        bool in(int i, int x) const {
          CountableSetRanges xr(ds,x);
          Iter::Ranges::Singleton ir(i,i);
          return Iter::Ranges::subset(ir,xr);
        }
-       
+
      public:
        /// Create and register test
        Single(int s0, int t0)
@@ -87,7 +87,7 @@ namespace Test { namespace Set {
          Gecode::precede(home, x, s, t);
        }
      };
-     
+
      /// %Test for multiple value precedence constraint
      class Multi : public SetTest {
      private:
@@ -121,7 +121,7 @@ namespace Test { namespace Set {
          Gecode::precede(home, x, c);
        }
      };
-     
+
      Single _a(2, 3);
      Single _b(0, 3);
 

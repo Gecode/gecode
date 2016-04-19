@@ -36,7 +36,7 @@
  */
 
 namespace Gecode {
-  
+
   /** \brief Interchangeable rows symmetry specification.
    */
   template<class A>
@@ -82,7 +82,7 @@ namespace Gecode {
     }
     return VariableSequenceSymmetry(xs, length);
   }
-  
+
   /** \brief Reflect columns symmetry specification.
    */
   template<class A>

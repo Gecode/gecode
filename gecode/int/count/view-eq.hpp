@@ -90,13 +90,13 @@ namespace Gecode { namespace Int { namespace Count {
       if (!dom || isval(y)) {
         VY yc(y);
         GECODE_REWRITE(*this,(EqInt<VX,VY>
-                              ::post(home(*this),x,yc,z.val()+c)));    
+                              ::post(home(*this),x,yc,z.val()+c)));
       }
     }
 
 
     if (dom && !isval(y) && (z.min() > 0)) {
-      /* 
+      /*
        * Only if the propagator is at fixpoint here, continue
        * when things are shared: the reason is that prune
        * requires that the views in x overlap with y!
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Count {
 
       return ES_NOFIX;
     }
-    
+
     return shr ? ES_NOFIX : ES_FIX;
   }
 

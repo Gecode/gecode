@@ -536,17 +536,17 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
     }
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
       if (rm != RM_IMP)
-        GECODE_ME_CHECK(b.one_none(home)); 
+        GECODE_ME_CHECK(b.one_none(home));
       break;
     case RT_FALSE:
       if (rm != RM_PMI)
-        GECODE_ME_CHECK(b.zero_none(home)); 
+        GECODE_ME_CHECK(b.zero_none(home));
       break;
     case RT_MAYBE:
       return ES_FIX;
@@ -770,11 +770,11 @@ namespace Gecode { namespace Int { namespace Rel {
       switch (rtest_eq_bnd(x0,c)) {
       case RT_TRUE:
         if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one_none(home)); 
+          GECODE_ME_CHECK(b.one_none(home));
         break;
       case RT_FALSE:
         if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home)); 
+          GECODE_ME_CHECK(b.zero_none(home));
         break;
       case RT_MAYBE:
         return ES_FIX;

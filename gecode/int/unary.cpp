@@ -117,7 +117,7 @@ namespace Gecode {
   }
 
   void
-  unary(Home home, const IntVarArgs& s, const IntArgs& p, 
+  unary(Home home, const IntVarArgs& s, const IntArgs& p,
         const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
@@ -150,7 +150,7 @@ namespace Gecode {
 
   void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& flex, const IntArgs& fix, const BoolVarArgs& m, 
+        const IntVarArgs& flex, const IntArgs& fix, const BoolVarArgs& m,
         IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
@@ -225,7 +225,7 @@ namespace Gecode {
   }
 
   void
-  unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
         const IntVarArgs& e, const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;

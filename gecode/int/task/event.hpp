@@ -83,16 +83,16 @@ namespace Gecode { namespace Int {
 
 
   template<class Task>
-  forceinline Event* 
+  forceinline Event*
   Event::events(Region& r, const TaskArray<Task>& t, bool& assigned) {
     Event* e = r.alloc<Event>(4*t.size()+1);
-    
+
     // Initialize events
     assigned=true;
     bool required=false;
-    
+
     int n=0;
-    for (int i=t.size(); i--; ) 
+    for (int i=t.size(); i--; )
       if (t[i].assigned()) {
         // Only add required part
         if (t[i].pmin() > 0) {
@@ -114,24 +114,24 @@ namespace Gecode { namespace Int {
           e[n++].init(Event::LRT,t[i].ect(),i);
         }
       }
-    
+
     if (!required)
       return NULL;
-    
+
     // Sort events
     Support::quicksort(e, n);
 
     // Write end marker
     e[n++].init(Event::END,Limits::infinity,0);
-        
+
     return e;
   }
 
   template<class Task>
-  forceinline Event* 
+  forceinline Event*
   Event::events(Region& r, const TaskArray<Task>& t) {
     Event* e = r.alloc<Event>(2*t.size()+1);
-    
+
     // Only add assigned and mandatory tasks
     int n=0;
     for (int i=t.size(); i--; )
@@ -146,13 +146,13 @@ namespace Gecode { namespace Int {
         assert(!t[i].excluded());
         return NULL;
       }
-    
+
     // Sort events
     Support::quicksort(e, n);
-    
+
     // Write end marker
     e[n++].init(Event::END,Limits::infinity,0);
-    
+
     return e;
   }
 

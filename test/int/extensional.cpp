@@ -342,7 +342,7 @@ namespace Test { namespace Int {
        int n;
      public:
        /// Create and register test
-       RegOpt(int n0) 
+       RegOpt(int n0)
          : Test("Extensional::Reg::Opt::"+str(n0),1,0,15), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -371,7 +371,7 @@ namespace Test { namespace Int {
          delete [] f;
          extensional(home, x, d);
        }
-       
+
      };
 
      /// %Test with tuple set
@@ -510,7 +510,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          BoolVarArgs y(x.size());
-         for (int i = x.size(); i--; ) 
+         for (int i = x.size(); i--; )
            y[i] = channel(home, x[i]);
          extensional(home, y, t, ipl);
        }

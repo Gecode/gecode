@@ -87,7 +87,7 @@ namespace Gecode {
       void inc(Counter& c);
       /// Set failure count to \a a
       void set(Counter& c, double a);
-      /// Return counter value 
+      /// Return counter value
       double val(Counter& c);
     };
     /// Initial smallest number of entries per block
@@ -278,7 +278,7 @@ namespace Gecode {
       }
       // Delete object
       Object* d = c; c = c->parent;
-      delete d; 
+      delete d;
     }
     m->release();
     // All objects are deleted, so also delete mutex and decay info

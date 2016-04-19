@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   template<class VY>
-  PropCost 
+  PropCost
   IntBase<VY>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI, x.size());
   }
@@ -92,10 +92,10 @@ namespace Gecode { namespace Int { namespace NValues {
       case Iter::Ranges::CS_SUBSET:
         // All values are already contained in vs, eliminate x[i]
         x[i].cancel(home, *this, PC_INT_DOM);
-        x[i] = x[--n]; 
+        x[i] = x[--n];
         break;
       case Iter::Ranges::CS_DISJOINT:
-        dis[n_dis++] = i++; 
+        dis[n_dis++] = i++;
         break;
       case Iter::Ranges::CS_NONE:
         i++;
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace NValues {
       if (vs.subset(x[i])) {
         // All values are already contained in vs, eliminate x[i]
         x[i].cancel(home, *this, PC_INT_DOM);
-        x[i] = x[--n]; 
+        x[i] = x[--n];
       }
     x.size(n);
   }
@@ -198,11 +198,11 @@ namespace Gecode { namespace Int { namespace NValues {
       // For each i there can be at most n_dis-1 entries in ovl_i[i]
       int* m = r.alloc<int>(n_dis*(n_dis-1));
       for (int i=n_dis; i--; ) {
-        deg[dis[i]] = 0; 
+        deg[dis[i]] = 0;
         ovl_i[dis[i]] = m; m += n_dis-1;
       }
     }
-    
+
     // Initialize overlap matrix by analyzing the view ranges
     {
       // Compute how many events are needed
@@ -236,13 +236,13 @@ namespace Gecode { namespace Int { namespace NValues {
         switch (re[i].ret) {
         case RET_FST:
           // Process all overlapping views
-          for (Iter::Values::BitSet<Support::BitSet<Region> > j(cur); 
+          for (Iter::Values::BitSet<Support::BitSet<Region> > j(cur);
                j(); ++j) {
             int di = re[i].view, dj = j.val();
             if (!ovl.get(di,dj))  {
               ovl.set(di,dj);
-              ovl_i[di][deg[di]++] = dj; 
-              ovl_i[dj][deg[dj]++] = di; 
+              ovl_i[di][deg[di]++] = dj;
+              ovl_i[dj][deg[dj]++] = di;
             }
           }
           cur.set(static_cast<unsigned int>(re[i].view));
@@ -264,7 +264,7 @@ namespace Gecode { namespace Int { namespace NValues {
       assert(deg[dis[i]] < n_dis);
       n_ovl_i[dis[i]] = deg[dis[i]];
     }
-    
+
     // Views in the independent set
     int* ind = r.alloc<int>(n_dis);
     int n_ind = 0;
@@ -272,11 +272,11 @@ namespace Gecode { namespace Int { namespace NValues {
     while (n_dis > 0) {
       int i_min = n_dis-1;
       int d_min = deg[dis[i_min]];
-      unsigned int s_min = x[dis[i_min]].size(); 
+      unsigned int s_min = x[dis[i_min]].size();
 
       // Find view with smallest (degree,size)
       for (int i=n_dis-1; i--; )
-        if ((d_min > deg[dis[i]]) || 
+        if ((d_min > deg[dis[i]]) ||
             ((d_min == deg[dis[i]]) && (s_min > x[dis[i]].size()))) {
           i_min = i;
           d_min = deg[dis[i]];
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
       // i_min refers to view with smallest (degree,size)
       ind[n_ind++] = dis[i_min]; dis[i_min] = dis[--n_dis];
-      
+
       // Filter out non disjoint views
       for (int i=n_dis; i--; )
         if (ovl.get(dis[i],ind[n_ind-1])) {
@@ -312,7 +312,7 @@ namespace Gecode { namespace Int { namespace NValues {
         v_ind.reset();
         GECODE_ME_CHECK(x[i].inter_r(home,v_ind,false));
       }
-    } 
+    }
     return ES_OK;
   }
 

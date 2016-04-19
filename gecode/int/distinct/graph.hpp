@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
       Support::StaticStack<ValNode<View>*,Region> visit(r,n_val);
-      
+
       // Insert all free nodes: they can be only value nodes as we
       // have a maximum matching covering all view nodes
       count++;
@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace Distinct {
             v = (*v)->next_val_ref();
           }
       }
-      
+
       // Invariant: only value nodes are on the stack!
       while (!visit.empty()) {
         ValNode<View>* n = visit.pop();

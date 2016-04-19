@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class VC>
   forceinline
-  DivPlusBnd<VA,VB,VC>::DivPlusBnd(Space& home, bool share, 
+  DivPlusBnd<VA,VB,VC>::DivPlusBnd(Space& home, bool share,
                                    DivPlusBnd<VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
   (home,share,p) {}

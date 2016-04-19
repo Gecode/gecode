@@ -49,7 +49,7 @@ namespace Gecode {
 
   forceinline
   FloatValArgs::FloatValArgs(int n) : PrimArgArray<FloatVal>(n) {}
-  
+
   forceinline
   FloatValArgs::FloatValArgs(const SharedArray<FloatVal>& x)
     : PrimArgArray<FloatVal>(x.size()) {
@@ -63,11 +63,11 @@ namespace Gecode {
   forceinline
   FloatValArgs::FloatValArgs(InputIterator first, InputIterator last)
     : PrimArgArray<FloatVal>(first,last) {}
-  
+
   forceinline
   FloatValArgs::FloatValArgs(int n, const FloatVal* e)
   : PrimArgArray<FloatVal>(n, e) {}
-  
+
   forceinline
   FloatValArgs::FloatValArgs(const PrimArgArray<FloatVal>& a) : PrimArgArray<FloatVal>(a) {}
 

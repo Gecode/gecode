@@ -83,8 +83,8 @@ namespace Test { namespace Float {
       dsv[i--] = FloatVal(d.min(),nextafter(d.min(),d.max()));
     }
   }
-  
-  
+
+
   /*
    * Random assignments
    *
@@ -113,7 +113,7 @@ namespace Test { namespace Float {
     using namespace Gecode;
     using namespace Gecode::Float;
     Rounding r;
-    return 
+    return
       r.add_down(
         l,
         r.mul_down(
@@ -130,7 +130,7 @@ namespace Test { namespace Float {
     using namespace Gecode;
     using namespace Gecode::Float;
     Rounding r;
-    return 
+    return
       r.sub_up(
         u,
         r.mul_down(
@@ -144,10 +144,10 @@ namespace Test { namespace Float {
   }
 
 
-  TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s, 
+  TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s,
                        Test* t)
-    : d(d0), step(s), 
-      x(*this,n,Gecode::Float::Limits::min,Gecode::Float::Limits::max), 
+    : d(d0), step(s),
+      x(*this,n,Gecode::Float::Limits::min,Gecode::Float::Limits::max),
       test(t), reified(false) {
     Gecode::FloatVarArgs _x(*this,n,d.min(),d.max());
     if (x.size() == 1)
@@ -161,14 +161,14 @@ namespace Test { namespace Float {
            << std::endl;
   }
 
-  TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s, 
+  TestSpace::TestSpace(int n, Gecode::FloatVal& d0, Gecode::FloatNum s,
                        Test* t, Gecode::ReifyMode rm)
     : d(d0), step(s), x(*this,n,d.min(),d.max()), test(t), reified(true) {
     Gecode::BoolVar b(*this,0,1);
     r = Gecode::Reify(b,rm);
     if (opt.log)
       olog << ind(2) << "Initial: x[]=" << x
-           << " b=" << r.var() 
+           << " b=" << r.var()
            << std::endl;
   }
 
@@ -181,34 +181,34 @@ namespace Test { namespace Float {
     r.var(b); r.mode(s.r.mode());
   }
 
-  Gecode::Space* 
+  Gecode::Space*
   TestSpace::copy(bool share) {
     return new TestSpace(share,*this);
   }
 
-  void 
+  void
   TestSpace::dropUntil(const Assignment& a) {
     for (int i = x.size(); i--; )
       Gecode::rel(*this, x[i], Gecode::FRT_GQ, a[i].min());
   }
-  
-  bool 
+
+  bool
   TestSpace::assigned(void) const {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
         return false;
     return true;
   }
-  
-  bool 
+
+  bool
   TestSpace::matchAssignment(const Assignment& a) const {
     for (int i=x.size(); i--; )
       if ((x[i].min() < a[i].min()) && (x[i].max() > a[i].max()))
         return false;
     return true;
   }
-  
-  void 
+
+  void
   TestSpace::post(void) {
     if (reified){
       test->post(*this,x,r);
@@ -221,7 +221,7 @@ namespace Test { namespace Float {
     }
   }
 
-  bool 
+  bool
   TestSpace::failed(void) {
     if (opt.log) {
       olog << ind(3) << "Fixpoint: " << x;
@@ -233,7 +233,7 @@ namespace Test { namespace Float {
     }
   }
 
-  void 
+  void
   TestSpace::rel(int i, Gecode::FloatRelType frt, Gecode::FloatVal n) {
     if (opt.log) {
       olog << ind(4) << "x[" << i << "] ";
@@ -250,7 +250,7 @@ namespace Test { namespace Float {
     Gecode::rel(*this, x[i], frt, n);
   }
 
-  void 
+  void
   TestSpace::rel(bool sol) {
     int n = sol ? 1 : 0;
     assert(reified);
@@ -259,7 +259,7 @@ namespace Test { namespace Float {
     Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
   }
 
-  void 
+  void
   TestSpace::assign(const Assignment& a, MaybeType& sol, bool skip) {
     using namespace Gecode;
     int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
@@ -277,7 +277,7 @@ namespace Test { namespace Float {
       }
   }
 
-  void 
+  void
   TestSpace::bound(void) {
     using namespace Gecode;
     // Select variable to be assigned
@@ -320,8 +320,8 @@ namespace Test { namespace Float {
     }
     return x[i].size();
   }
-  
-  void 
+
+  void
   TestSpace::prune(int i) {
     using namespace Gecode;
     // Prune values
@@ -337,7 +337,7 @@ namespace Test { namespace Float {
     }
   }
 
-  void 
+  void
   TestSpace::prune(void) {
     using namespace Gecode;
     // Select variable to be pruned
@@ -348,7 +348,7 @@ namespace Test { namespace Float {
     prune(i);
   }
 
-  bool 
+  bool
   TestSpace::prune(const Assignment& a, bool testfix) {
     // Select variable to be pruned
     int i = Base::rand(x.size());
@@ -424,7 +424,7 @@ namespace Test { namespace Float {
     GECODE_NEVER;
     return false;
   }
-  
+
   bool
   Test::subsumed(const TestSpace& ts) const {
     if (!testsubsumed) return true;
@@ -432,7 +432,7 @@ namespace Test { namespace Float {
     if (assigmentType == EXTEND_ASSIGNMENT) return true;
     return false;
   }
-  
+
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
 if (opt.log)                                                    \
@@ -467,7 +467,7 @@ if (!(T)) {                                                     \
     // Set up assignments
     Assignment* ap = assignment();
     Assignment& a = *ap;
-    
+
     // Set up space for all solution search
     TestSpace* search_s = new TestSpace(arity,dom,step,this);
     post(*search_s,search_s->x);
@@ -691,7 +691,7 @@ if (!(T)) {                                                     \
           if (sol == MT_TRUE) {
             if (s->r.var().assigned()) {
               CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-            } 
+            }
           } else if (sol == MT_FALSE) {
             CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
           }
@@ -737,7 +737,7 @@ if (!(T)) {                                                     \
           if (sol == MT_TRUE) {
             if (s->r.var().assigned()) {
               CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-            } 
+            }
           } else if (sol == MT_FALSE) {
             CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
           }
@@ -770,7 +770,7 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_IMP);
           s->post();
           while (!s->failed() && !s->matchAssignment(a) &&
-                 (!s->assigned() || ((sol == MT_FALSE) && 
+                 (!s->assigned() || ((sol == MT_FALSE) &&
                                      !s->r.var().assigned())))
             if (!s->prune(a,testfix)) {
               problem = "No fixpoint";
@@ -791,7 +791,7 @@ if (!(T)) {                                                     \
           TestSpace* s = new TestSpace(arity,dom,step,this,RM_PMI);
           s->post();
           while (!s->failed() && !s->matchAssignment(a) &&
-                 (!s->assigned() || ((sol == MT_TRUE) && 
+                 (!s->assigned() || ((sol == MT_TRUE) &&
                                      !s->r.var().assigned())))
             if (!s->prune(a,testfix)) {
               problem = "No fixpoint";

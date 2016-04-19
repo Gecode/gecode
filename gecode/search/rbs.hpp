@@ -43,11 +43,11 @@
 namespace Gecode { namespace Search { namespace Meta {
 
   /// Create stop object
-  GECODE_SEARCH_EXPORT Stop* 
+  GECODE_SEARCH_EXPORT Stop*
   stop(Stop* so);
 
   /// Create restart engine
-  GECODE_SEARCH_EXPORT Engine* 
+  GECODE_SEARCH_EXPORT Engine*
   engine(Space* master, Stop* stop, Engine* slave,
          const Search::Statistics& stat, const Options& opt,
          bool best);

@@ -45,7 +45,7 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   Engine*
-  engine(Space* master, Stop* stop, Engine* slave, 
+  engine(Space* master, Stop* stop, Engine* slave,
          const Search::Statistics& stat, const Options& opt, bool best) {
     return new RBS(master,static_cast<RestartStop*>(stop), slave,
                    stat,opt,best);

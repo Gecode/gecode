@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Count {
   /// Return whether \a y is a value
   template<class VY>
   bool isval(VY y);
-  
+
   /// Subscribe propagator \a p to view \a y
   template<class VY>
   void subscribe(Space& home, Propagator& p, VY y);
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (greater or equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (less or equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -328,7 +328,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (less or equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (greater or equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode

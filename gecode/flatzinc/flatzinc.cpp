@@ -56,12 +56,12 @@ namespace Gecode { namespace FlatZinc {
   /**
    * \brief Branching on the introduced variables
    *
-   * This brancher makes sure that when a solution is found for the model 
+   * This brancher makes sure that when a solution is found for the model
    * variables, all introduced variables are either assigned, or the solution
    * can be extended to a solution of the introduced variables.
    *
-   * The advantage over simply branching over the introduced variables is that 
-   * only one such extension will be searched for, instead of enumerating all 
+   * The advantage over simply branching over the introduced variables is that
+   * only one such extension will be searched for, instead of enumerating all
    * possible (equivalent) extensions.
    *
    */
@@ -183,10 +183,10 @@ namespace Gecode { namespace FlatZinc {
       return static_cast<const Choice&>(c).fail ? ES_FAILED : ES_OK;
     }
     /// Print explanation
-    virtual void print(const Space&, const Gecode::Choice& c, 
+    virtual void print(const Space&, const Gecode::Choice& c,
                        unsigned int,
                        std::ostream& o) const {
-      o << "FlatZinc(" 
+      o << "FlatZinc("
         << (static_cast<const Choice&>(c).fail ? "fail" : "ok")
         << ")";
     }
@@ -224,7 +224,7 @@ namespace Gecode { namespace FlatZinc {
     /// Delete brancher and return its size
     virtual size_t dispose(Space&) {
       return sizeof(*this);
-    }      
+    }
   };
 
   class BranchInformationO : public SharedHandle::Object {
@@ -268,7 +268,7 @@ namespace Gecode { namespace FlatZinc {
     }
 #endif
   };
-  
+
   BranchInformation::BranchInformation(void)
     : SharedHandle(NULL) {}
 
@@ -318,7 +318,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
 
   FznRnd::FznRnd(unsigned int s) : random(s) {}
-  
+
   unsigned int
   FznRnd::operator ()(unsigned int n) {
     Support::Lock lock(mutex);
@@ -636,7 +636,7 @@ namespace Gecode { namespace FlatZinc {
       iv.update(*this, share, f.iv);
       iv_lns.update(*this, share, f.iv_lns);
       intVarCount = f.intVarCount;
-      
+
       if (needAuxVars) {
         IntVarArgs iva;
         for (int i=0; i<f.iv_aux.size(); i++) {
@@ -647,7 +647,7 @@ namespace Gecode { namespace FlatZinc {
         }
         iv_aux = IntVarArray(*this, iva);
       }
-      
+
       bv.update(*this, share, f.bv);
       boolVarCount = f.boolVarCount;
       if (needAuxVars) {
@@ -690,7 +690,7 @@ namespace Gecode { namespace FlatZinc {
       }
 #endif
     }
-  
+
   FlatZincSpace::FlatZincSpace(FznRnd* random)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
@@ -796,7 +796,7 @@ namespace Gecode { namespace FlatZinc {
       }
     } else {
       sv[setVarCount++] = SetVar(*this, IntSet::empty,
-                                 IntSet(Set::Limits::min, 
+                                 IntSet(Set::Limits::min,
                                         Set::Limits::max));
     }
     sv_introduced[2*(setVarCount-1)] = vs->introduced;
@@ -851,7 +851,7 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::postConstraints(std::vector<ConExpr*>& ces) {
     ConExprOrder ceo;
     std::sort(ces.begin(), ces.end(), ceo);
-    
+
     for (unsigned int i=0; i<ces.size(); i++) {
       const ConExpr& ce = *ces[i];
       try {
@@ -977,8 +977,8 @@ namespace Gecode { namespace FlatZinc {
             names.push_back(vars->a[i]->getVarName());
           }
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va, 
-            ann2ivarsel(args->a[1],rnd,decay), 
+          BrancherHandle bh = branch(*this, va,
+            ann2ivarsel(args->a[1],rnd,decay),
             ann2ivalsel(args->a[2],r0,r1,rnd),
             NULL,
             &varValPrint<IntVar>);
@@ -1019,10 +1019,10 @@ namespace Gecode { namespace FlatZinc {
             bv_searched[vars->a[i]->getBoolVar()] = true;
             names.push_back(vars->a[i]->getVarName());
           }
-          
+
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va, 
-            ann2ivarsel(args->a[1],rnd,decay), 
+          BrancherHandle bh = branch(*this, va,
+            ann2ivarsel(args->a[1],rnd,decay),
             ann2ivalsel(args->a[2],r0,r1,rnd), NULL,
             &varValPrint<BoolVar>);
           branchInfo.add(bh,r0,r1,names);
@@ -1058,8 +1058,8 @@ namespace Gecode { namespace FlatZinc {
             names.push_back(vars->a[i]->getVarName());
           }
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va, 
-            ann2svarsel(args->a[1],rnd,decay), 
+          BrancherHandle bh = branch(*this, va,
+            ann2svarsel(args->a[1],rnd,decay),
             ann2svalsel(args->a[2],r0,r1,rnd),
             NULL,
             &varValPrint<SetVar>);
@@ -1120,7 +1120,7 @@ namespace Gecode { namespace FlatZinc {
           }
           std::string r0, r1;
           BrancherHandle bh = branch(*this, va,
-            ann2fvarsel(args->a[2],rnd,decay), 
+            ann2fvarsel(args->a[2],rnd,decay),
             ann2fvalsel(args->a[3],r0,r1),
             NULL,
             &varValPrintF);
@@ -1316,7 +1316,7 @@ namespace Gecode { namespace FlatZinc {
   #ifdef GECODE_HAS_FLOAT_VARS
         branch(*this,fv_aux,def_float_varsel,def_float_valsel);
   #endif
-        
+
       }
     }
   }
@@ -1487,11 +1487,11 @@ namespace Gecode { namespace FlatZinc {
       n_p = propagators();
     }
     Search::Options o;
-    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(), 
+    o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),
                                           true);
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
-#ifdef GECODE_HAS_FLOAT_VARS    
+#ifdef GECODE_HAS_FLOAT_VARS
     step = opt.step();
 #endif
     o.threads = opt.threads();
@@ -1543,9 +1543,9 @@ namespace Gecode { namespace FlatZinc {
            << "%%  solvetime:     ";
       Driver::stop(t_solve,out);
       out << endl
-           << "%%  solutions:     " 
+           << "%%  solutions:     "
            << std::abs(noOfSolutions - findSol) << endl
-           << "%%  variables:     " 
+           << "%%  variables:     "
            << (intVarCount + boolVarCount + setVarCount) << endl
            << "%%  propagators:   " << n_p << endl
            << "%%  propagations:  " << sstat.propagate+stat.propagate << endl
@@ -1613,7 +1613,7 @@ namespace Gecode { namespace FlatZinc {
   FlatZincSpace::constrain(const Space& s) {
     if (_optVarIsInt) {
       if (_method == MIN)
-        rel(*this, iv[_optVar], IRT_LE, 
+        rel(*this, iv[_optVar], IRT_LE,
                    static_cast<const FlatZincSpace*>(&s)->iv[_optVar].val());
       else if (_method == MAX)
         rel(*this, iv[_optVar], IRT_GR,
@@ -1621,7 +1621,7 @@ namespace Gecode { namespace FlatZinc {
     } else {
 #ifdef GECODE_HAS_FLOAT_VARS
       if (_method == MIN)
-        rel(*this, fv[_optVar], FRT_LE, 
+        rel(*this, fv[_optVar], FRT_LE,
                    static_cast<const FlatZincSpace*>(&s)->fv[_optVar].val()-step);
       else if (_method == MAX)
         rel(*this, fv[_optVar], FRT_GR,
@@ -1640,9 +1640,9 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       return false;
-    } else if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) && 
+    } else if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
                (_lns > 0) && mi.last()) {
-      const FlatZincSpace& last = 
+      const FlatZincSpace& last =
         static_cast<const FlatZincSpace&>(*mi.last());
       for (unsigned int i=iv_lns.size(); i--;) {
         if ((*_random)(99) <= _lns) {
@@ -1793,7 +1793,7 @@ namespace Gecode { namespace FlatZinc {
       IntSetArgs emptyIa(0);
       return emptyIa;
     }
-    IntSetArgs ia(a->a.size()+offset);      
+    IntSetArgs ia(a->a.size()+offset);
     for (int i=offset; i--;)
       ia[i] = IntSet::empty;
     for (int i=a->a.size(); i--;) {
@@ -1813,11 +1813,11 @@ namespace Gecode { namespace FlatZinc {
       ia[i] = IntVar(*this, 0, 0);
     for (int i=a->a.size(); i--;) {
       if (a->a[i]->isIntVar()) {
-        ia[i+offset] = iv[a->a[i]->getIntVar()];        
+        ia[i+offset] = iv[a->a[i]->getIntVar()];
       } else {
         int value = a->a[i]->getInt();
         IntVar iv(*this, value, value);
-        ia[i+offset] = iv;        
+        ia[i+offset] = iv;
       }
     }
     return ia;
@@ -1865,7 +1865,7 @@ namespace Gecode { namespace FlatZinc {
     if (n->isIntVar()) {
       x0 = iv[n->getIntVar()];
     } else {
-      x0 = IntVar(*this, n->getInt(), n->getInt());            
+      x0 = IntVar(*this, n->getInt(), n->getInt());
     }
     return x0;
   }
@@ -1940,7 +1940,7 @@ namespace Gecode { namespace FlatZinc {
       fa[i] = FloatVar(*this, 0.0, 0.0);
     for (int i=a->a.size(); i--;) {
       if (a->a[i]->isFloatVar()) {
-        fa[i+offset] = fv[a->a[i]->getFloatVar()];        
+        fa[i+offset] = fv[a->a[i]->getFloatVar()];
       } else {
         double value = a->a[i]->getFloat();
         FloatVar fv(*this, value, value);
@@ -2190,7 +2190,7 @@ namespace Gecode { namespace FlatZinc {
     (void) fv1;
     (void) fv2;
 #endif
-    
+
 #endif
   }
 
@@ -2294,7 +2294,7 @@ namespace Gecode { namespace FlatZinc {
 
   void
   Printer::shrinkElement(AST::Node* node,
-                         std::map<int,int>& iv, std::map<int,int>& bv, 
+                         std::map<int,int>& iv, std::map<int,int>& bv,
                          std::map<int,int>& sv, std::map<int,int>& fv) {
     if (node->isIntVar()) {
       AST::IntVar* x = static_cast<AST::IntVar*>(node);
@@ -2316,14 +2316,14 @@ namespace Gecode { namespace FlatZinc {
         int newi = sv.size();
         sv[x->i] = newi;
       }
-      x->i = sv[x->i];      
+      x->i = sv[x->i];
     } else if (node->isFloatVar()) {
       AST::FloatVar* x = static_cast<AST::FloatVar*>(node);
       if (fv.find(x->i) == fv.end()) {
         int newi = fv.size();
         fv[x->i] = newi;
       }
-      x->i = fv[x->i];      
+      x->i = fv[x->i];
     }
   }
 

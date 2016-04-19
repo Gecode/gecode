@@ -540,7 +540,7 @@ namespace Gecode {
       bool open;
       ExpInfo(REG::Exp* e=NULL);
     };
-    
+
     /**
      * \brief Information on positions collected during traversal
      *
@@ -618,9 +618,9 @@ namespace Gecode {
               pi[ps->pos].followpos =
                 PosSet::cup(psm,pi[ps->pos].followpos,ni1.firstpos);
             done.push(NodeInfo(ni0.nullable & ni1.nullable,
-                               ni0.nullable ? 
+                               ni0.nullable ?
                                PosSet::cup(psm,ni0.firstpos,ni1.firstpos) : ni0.firstpos,
-                               ni1.nullable ? 
+                               ni1.nullable ?
                                PosSet::cup(psm,ni0.lastpos,ni1.lastpos) : ni1.lastpos));
           }
           break;
@@ -647,7 +647,7 @@ namespace Gecode {
     return done.top().firstpos;
   }
 
-    
+
   namespace MiniModel {
 
     class StateNode;

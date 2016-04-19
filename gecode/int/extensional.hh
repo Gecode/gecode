@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     void audit(void);
     /// Initialize layered graph
     template<class Var>
-    ExecStatus initialize(Space& home, 
+    ExecStatus initialize(Space& home,
                           const VarArgArray<Var>& x, const DFA& dfa);
     /// Constructor for cloning \a p
     LayeredGraph(Space& home, bool share,
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   public:
     /// Constructor for posting
     template<class Var>
-    LayeredGraph(Home home, 
+    LayeredGraph(Home home,
                  const VarArgArray<Var>& x, const DFA& dfa);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -208,13 +208,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a dfa
     template<class Var>
-    static ExecStatus post(Home home, 
+    static ExecStatus post(Home home,
                            const VarArgArray<Var>& x, const DFA& dfa);
   };
 
   /// Select small types for the layered graph propagator
   template<class Var>
-  ExecStatus post_lgp(Home home, 
+  ExecStatus post_lgp(Home home,
                       const VarArgArray<Var>& x, const DFA& dfa);
 
 }}}

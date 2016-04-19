@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   }
 
   template<class Box>
-  forceinline size_t 
+  forceinline size_t
   ManProp<Box>::dispose(Space& home) {
     (void) Base<Box>::dispose(home);
     return sizeof(*this);
@@ -60,17 +60,17 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Box>
   forceinline
-  ManProp<Box>::ManProp(Space& home, bool shared, ManProp<Box>& p) 
+  ManProp<Box>::ManProp(Space& home, bool shared, ManProp<Box>& p)
     : Base<Box>(home, shared, p, p.n) {}
 
   template<class Box>
-  Actor* 
+  Actor*
   ManProp<Box>::copy(Space& home, bool share) {
     return new (home) ManProp<Box>(home,share,*this);
   }
 
   template<class Box>
-  ExecStatus 
+  ExecStatus
   ManProp<Box>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
 
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     int e = 0;
 
     for (int i=n; i--; )
-      for (int j=i; j--; ) 
+      for (int j=i; j--; )
         if (b[i].nooverlap(b[j])) {
           assert(db[i] > 0); assert(db[j] > 0);
           if (--db[i] == 0) e++;

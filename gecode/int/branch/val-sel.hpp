@@ -39,63 +39,63 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValSelMin<View>::ValSelMin(Space& home, const ValBranch& vb) 
+  ValSelMin<View>::ValSelMin(Space& home, const ValBranch& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
   ValSelMin<View>::ValSelMin(Space& home, bool shared, ValSelMin& vs)
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
-  forceinline int 
+  forceinline int
   ValSelMin<View>::val(const Space&, View x, int) {
     return x.min();
   }
 
   template<class View>
   forceinline
-  ValSelMax<View>::ValSelMax(Space& home, const ValBranch& vb) 
+  ValSelMax<View>::ValSelMax(Space& home, const ValBranch& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
   ValSelMax<View>::ValSelMax(Space& home, bool shared, ValSelMax& vs)
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
-  forceinline int 
+  forceinline int
   ValSelMax<View>::val(const Space&, View x, int) {
     return x.max();
   }
 
   template<class View>
   forceinline
-  ValSelMed<View>::ValSelMed(Space& home, const ValBranch& vb) 
+  ValSelMed<View>::ValSelMed(Space& home, const ValBranch& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
   ValSelMed<View>::ValSelMed(Space& home, bool shared, ValSelMed& vs)
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
-  forceinline int 
+  forceinline int
   ValSelMed<View>::val(const Space&, View x, int) {
     return x.med();
   }
 
   template<class View>
   forceinline
-  ValSelAvg<View>::ValSelAvg(Space& home, const ValBranch& vb) 
+  ValSelAvg<View>::ValSelAvg(Space& home, const ValBranch& vb)
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
   ValSelAvg<View>::ValSelAvg(Space& home, bool shared, ValSelAvg& vs)
     : ValSel<View,int>(home,shared,vs) {}
   template<class View>
-  forceinline int 
+  forceinline int
   ValSelAvg<View>::val(const Space&, View x, int) {
     return (x.width() == 2U) ? x.min() : ((x.min()+x.max()) / 2);
   }
 
   template<class View>
   forceinline
-  ValSelRnd<View>::ValSelRnd(Space& home, const ValBranch& vb) 
+  ValSelRnd<View>::ValSelRnd(Space& home, const ValBranch& vb)
     : ValSel<View,int>(home,vb), r(vb.rnd()) {}
   template<class View>
   forceinline
@@ -164,13 +164,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View, bool min>
   forceinline
-  ValSelNearMinMax<View,min>::ValSelNearMinMax(Space& home, 
-                                               const ValBranch& vb) 
-    : ValSel<View,int>(home,vb), 
+  ValSelNearMinMax<View,min>::ValSelNearMinMax(Space& home,
+                                               const ValBranch& vb)
+    : ValSel<View,int>(home,vb),
       c(static_cast<const IntValBranch&>(vb).values()) {}
   template<class View, bool min>
   forceinline
-  ValSelNearMinMax<View,min>::ValSelNearMinMax(Space& home, bool shared, 
+  ValSelNearMinMax<View,min>::ValSelNearMinMax(Space& home, bool shared,
                                                ValSelNearMinMax& vs)
     : ValSel<View,int>(home,shared,vs) {
     c.update(home,shared,vs.c);
@@ -213,13 +213,13 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View, bool inc>
   forceinline
-  ValSelNearIncDec<View,inc>::ValSelNearIncDec(Space& home, 
-                                               const ValBranch& vb) 
-    : ValSel<View,int>(home,vb), 
+  ValSelNearIncDec<View,inc>::ValSelNearIncDec(Space& home,
+                                               const ValBranch& vb)
+    : ValSel<View,int>(home,vb),
       c(static_cast<const IntValBranch&>(vb).values()) {}
   template<class View, bool inc>
   forceinline
-  ValSelNearIncDec<View,inc>::ValSelNearIncDec(Space& home, bool shared, 
+  ValSelNearIncDec<View,inc>::ValSelNearIncDec(Space& home, bool shared,
                                                ValSelNearIncDec& vs)
     : ValSel<View,int>(home,shared,vs) {
     c.update(home,shared,vs.c);

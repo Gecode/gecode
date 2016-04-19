@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline
-  Val<Card>::Val(Home home, 
+  Val<Card>::Val(Home home,
                  ViewArray<IntView>& x0, ViewArray<Card>& k0)
     : Propagator(home), x(x0), k(k0){
     x.subscribe(home, *this, PC_INT_VAL);
@@ -86,10 +86,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   ExecStatus
-  prop_val(Space& home, Propagator& p, 
+  prop_val(Space& home, Propagator& p,
            ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
-    
+
     Region r(home);
     // count[i] denotes how often value k[i].card() occurs in x
     int* count = r.alloc<int>(k.size());
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace GCC {
         if (ci > k[i].max()) {
           return ES_FAILED;
         }
-        
+
         // in case of variable cardinalities
         if (Card::propagate) {
           GECODE_ME_CHECK(k[i].gq(home, ci));
@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace GCC {
           all_assigned = false;
         }
       }
-      
+
       if (all_assigned) {
         for (int i = k.size(); i--; )
           GECODE_ME_CHECK((k[i].eq(home, count[i] + k[i].counter())));
@@ -264,7 +264,7 @@ namespace Gecode { namespace Int { namespace GCC {
           reqmin += k[i].min() - k[i].counter();
         GECODE_ME_CHECK((k[i].lq(home, x.size()+k[i].counter())));
       }
-    
+
       if ((x.size() < reqmin) || (allmax < x.size())) {
         return ES_FAILED;
       }
@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (isDistinct<Card>(home,x,k))
       return Distinct::Val<IntView>::post(home,x);
-   
+
     (void) new (home) Val<Card>(home,x,k);
     return ES_OK;
   }

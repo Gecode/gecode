@@ -38,7 +38,7 @@
  */
 
 namespace Gecode { namespace Int { namespace Cumulative {
-  
+
   template<class ManTask, class Cap, class PL>
   forceinline
   ManProp<ManTask,Cap,PL>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
@@ -48,14 +48,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   template<class ManTask, class Cap, class PL>
   forceinline
-  ManProp<ManTask,Cap,PL>::ManProp(Space& home, bool shared, 
-                                   ManProp<ManTask,Cap,PL>& p) 
+  ManProp<ManTask,Cap,PL>::ManProp(Space& home, bool shared,
+                                   ManProp<ManTask,Cap,PL>& p)
     : TaskProp<ManTask,PL>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
   template<class ManTask, class Cap, class PL>
-  ExecStatus 
+  ExecStatus
   ManProp<ManTask,Cap,PL>::post(Home home, Cap c, TaskArray<ManTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
@@ -80,13 +80,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class ManTask, class Cap, class PL>
-  Actor* 
+  Actor*
   ManProp<ManTask,Cap,PL>::copy(Space& home, bool share) {
     return new (home) ManProp<ManTask,Cap,PL>(home,share,*this);
   }
 
-  template<class ManTask, class Cap, class PL>  
-  forceinline size_t 
+  template<class ManTask, class Cap, class PL>
+  forceinline size_t
   ManProp<ManTask,Cap,PL>::dispose(Space& home) {
     (void) TaskProp<ManTask,PL>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class ManTask, class Cap, class PL>
-  ExecStatus 
+  ExecStatus
   ManProp<ManTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Only bounds changes?
     if (IntView::me(med) != ME_INT_DOM)

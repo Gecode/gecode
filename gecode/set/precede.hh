@@ -52,7 +52,7 @@
  */
 
 namespace Gecode { namespace Set { namespace Precede {
-    
+
   /**
    * \brief Single value precedence propagator
    *

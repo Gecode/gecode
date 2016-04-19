@@ -413,7 +413,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class P, class N, class Ctrl, ReifyMode rm>
   forceinline
-  ReEq<Val,P,N,Ctrl,rm>::ReEq(Space& home, bool share, 
+  ReEq<Val,P,N,Ctrl,rm>::ReEq(Space& home, bool share,
                               ReEq<Val,P,N,Ctrl,rm>& p)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,share,p) {}
 
@@ -428,12 +428,12 @@ namespace Gecode { namespace Int { namespace Linear {
   ReEq<Val,P,N,Ctrl,rm>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Nq<Val,P,N>::post(home(*this),x,y,c)));
     }
     if (b.one()) {
       if (rm == RM_PMI)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Eq<Val,P,N>::post(home(*this),x,y,c)));
     }
 
@@ -809,13 +809,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class P, class N, ReifyMode rm>
   forceinline
-  ReLq<Val,P,N,rm>::ReLq(Home home, 
+  ReLq<Val,P,N,rm>::ReLq(Home home,
                       ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b)
     : ReLin<Val,P,N,PC_INT_BND,BoolView>(home,x,y,c,b) {}
 
   template<class Val, class P, class N, ReifyMode rm>
   ExecStatus
-  ReLq<Val,P,N,rm>::post(Home home, 
+  ReLq<Val,P,N,rm>::post(Home home,
                          ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
@@ -845,12 +845,12 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLq<Val,P,N,rm>::propagate(Space& home, const ModEventDelta& med) {
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);              
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Lq<Val,N,P>::post(home(*this),y,x,-c-1)));
     }
     if (b.one()) {
       if (rm == RM_PMI)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Lq<Val,P,N>::post(home(*this),x,y,c)));
     }
 

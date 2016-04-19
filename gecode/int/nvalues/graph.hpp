@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace NValues {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free value node by depth-first-search
       Support::StaticStack<ValNode<IntView>*,Region> visit(r,n_val);
-      
+
       // Insert all free value nodes
       count++;
       {
@@ -182,11 +182,11 @@ namespace Gecode { namespace Int { namespace NValues {
             v = (*v)->next_val_ref();
           }
       }
-      
+
       // Invariant: only value nodes are on the stack!
       while (!visit.empty()) {
         ValNode<IntView>* n = visit.pop();
-        for (Edge<IntView>* e = n->edge_fst(); e != n->edge_lst(); 
+        for (Edge<IntView>* e = n->edge_fst(); e != n->edge_lst();
              e = e->next()) {
           // Is the view node is matched: the path must be alternating!
           ViewNode<IntView>* x = e->view(n);
@@ -207,14 +207,14 @@ namespace Gecode { namespace Int { namespace NValues {
           }
         }
       }
-      
+
     }
 
     if (n_view_visited < n_view) {
       // Mark all edges as used starting from a free view node on
       // an alternating path by depth-first search.
       Support::StaticStack<ViewNode<IntView>*,Region> visit(r,n_view);
-      
+
       // Insert all free view nodes
       count++;
       for (int i = n_view; i--; )

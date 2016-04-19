@@ -427,7 +427,7 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt,
       IntPropLevel ipl) {
-    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
+    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2)))
       return;
     switch (irt) {
     case IRT_EQ:

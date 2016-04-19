@@ -496,7 +496,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   forceinline
-  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, bool share, 
+  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, bool share,
                                     ReLinBoolInt<VX,VB>& p)
     : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
     p.normalize();
@@ -550,7 +550,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /*
    * Reified greater or equal propagator (integer rhs)
-   * 
+   *
    */
   template<class VX, class VB, ReifyMode rm>
   forceinline
@@ -559,7 +559,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, bool share, 
+  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, bool share,
                                      ReGqBoolInt<VX,VB,rm>& p)
     : ReLinBoolInt<VX,VB>(home,share,p) {}
 
@@ -652,7 +652,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /*
    * Reified equal propagator (integer rhs)
-   * 
+   *
    */
   template<class VX, class VB, ReifyMode rm>
   forceinline
@@ -661,7 +661,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, bool share, 
+  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, bool share,
                                      ReEqBoolInt<VX,VB,rm>& p)
     : ReLinBoolInt<VX,VB>(home,share,p) {}
 

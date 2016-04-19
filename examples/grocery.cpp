@@ -67,7 +67,7 @@ protected:
   static const int p = 711 * 100 * 100 * 100;
 public:
   /// The actual model
-  Grocery(const Options& opt) 
+  Grocery(const Options& opt)
     : Script(opt), abcd(*this,4,0,s) {
     IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
 

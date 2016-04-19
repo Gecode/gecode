@@ -42,7 +42,7 @@
  */
 
 namespace Gecode { namespace Set { namespace Precede {
-    
+
   template<class View>
   forceinline
   Single<View>::Index::Index(Space& home, Propagator& p,
@@ -54,9 +54,9 @@ namespace Gecode { namespace Set { namespace Precede {
   Single<View>::Index::Index(Space& home, bool share, Index& a)
     : Advisor(home,share,a), i(a.i) {}
 
-  
+
   template<class View>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   Single<View>::updateAlpha(Space& home) {
     int n = x.size();
     while (alpha < n) {
@@ -86,12 +86,12 @@ namespace Gecode { namespace Set { namespace Precede {
     }
     return ES_OK;
   }
-  
+
   template<class View>
   forceinline
-  Single<View>::Single(Home home, ViewArray<View>& x0, 
+  Single<View>::Single(Home home, ViewArray<View>& x0,
                        int s0, int t0, int b, int g)
-    : NaryPropagator<View, PC_SET_NONE>(home,x0), 
+    : NaryPropagator<View, PC_SET_NONE>(home,x0),
       c(home), s(s0), t(t0), alpha(0), beta(b), gamma(g) {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
@@ -138,7 +138,7 @@ namespace Gecode { namespace Set { namespace Precede {
     (void) new (home) Single<View>(home, x, s, t, beta, gamma);
     return ES_OK;
   }
-    
+
 
 
   template<class View>
@@ -185,7 +185,7 @@ namespace Gecode { namespace Set { namespace Precede {
   }
 
   template<class View>
-  PropCost 
+  PropCost
   Single<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
   }
@@ -196,7 +196,7 @@ namespace Gecode { namespace Set { namespace Precede {
     Index& a(static_cast<Index&>(a0));
     int i = a.i;
     // Check for gamma
-    if ((beta <= gamma) && (i < gamma) && 
+    if ((beta <= gamma) && (i < gamma) &&
         x[i].notContains(s) && x[i].contains(t))
       gamma = i;
     if (x[i].assigned()) {
@@ -214,7 +214,7 @@ namespace Gecode { namespace Set { namespace Precede {
       return ES_NOFIX;
     return ES_FIX;
   }
-  
+
   template<class View>
   ExecStatus
   Single<View>::propagate(Space& home, const ModEventDelta&) {
@@ -246,10 +246,10 @@ namespace Gecode { namespace Set { namespace Precede {
     } else if ((beta < n) && (x[beta].notContains(s) || x[beta].contains(t))) {
       GECODE_ES_CHECK(updateBeta(home));
     }
-    
+
     return (c.empty()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
-  
+
 }}}
 
 // STATISTICS: set-prop

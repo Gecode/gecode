@@ -91,15 +91,15 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_ME_CHECK(x1.eq(home,c1));
       return home.ES_SUBSUMED(*this);
     }
-      
-    
+
+
     assert((eq_then != RT_TRUE) || (eq_else != RT_TRUE));
 
     ViewRanges<IntView> r0(x0);
     Iter::Ranges::Singleton r1(c1,c1);
     Iter::Ranges::Union<ViewRanges<IntView>,
       Iter::Ranges::Singleton > u(r0,r1);
-    
+
     GECODE_ME_CHECK(x1.inter_r(home,u,true));
 
     return ES_FIX;

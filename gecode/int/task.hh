@@ -224,7 +224,7 @@ namespace Gecode { namespace Int {
    */
   template<class Char, class Traits, class Task>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os,
               const TaskArray<Task>& t);
 
 
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int {
    */
   template<class Char, class Traits, class TaskView>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os,
               const TaskViewArray<TaskView>& t);
 
 }}
@@ -359,7 +359,7 @@ namespace Gecode { namespace Int {
 
   /// Safe addition in case \a x is -Int::Limits::double_infinity
   double plus(double x, double y);
-  
+
   /// Task trees for task views with node type \a Node
   template<class TaskView, class Node>
   class TaskTree {

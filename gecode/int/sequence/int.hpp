@@ -43,14 +43,14 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val>
   forceinline
-  Sequence<View,Val>::Sequence(Home home, ViewArray<View>& x0, Val s0, 
-                               int q0, int l0, int u0)    
-    : Propagator(home), x(x0), s(s0), q(q0), l(l0), u(u0), 
+  Sequence<View,Val>::Sequence(Home home, ViewArray<View>& x0, Val s0,
+                               int q0, int l0, int u0)
+    : Propagator(home), x(x0), s(s0), q(q0), l(l0), u(u0),
       vvsamax(home,x,s0,q0), vvsamin(home,x,s0,q0), ac(home) {
     home.notice(*this,AP_DISPOSE);
     for (int i=x.size(); i--; ) {
       if (undecided(x[i],s)) {
-        x[i].subscribe(home,*new (home) SupportAdvisor<View>(home,*this,ac,i));   
+        x[i].subscribe(home,*new (home) SupportAdvisor<View>(home,*this,ac,i));
       } else {
         x[i].schedule(home,*this,x[i].assigned() ? ME_INT_VAL : ME_INT_BND);
       }
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   template<class View, class Val>
-  ExecStatus 
+  ExecStatus
   Sequence<View,Val>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(vvsamax.propagate(home,x,s,q,l,u));
     GECODE_ES_CHECK(vvsamin.propagate(home,x,s,q,l,u));

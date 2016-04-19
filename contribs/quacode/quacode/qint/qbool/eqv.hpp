@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,NONE,ONE):
       return ES_FIX;
     case GECODE_INT_STATUS(NONE,ZERO,NONE):
-      if (q0 == FORALL) 
+      if (q0 == FORALL)
       {
         GECODE_ME_CHECK(x2.zero_none(home)); break;
       }
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Bool {
       if (q0 == FORALL) return ES_FAILED;
       GECODE_ME_CHECK(x0.zero_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE,NONE):
-      if (q0 == FORALL) 
+      if (q0 == FORALL)
       {
         GECODE_ME_CHECK(x2.zero_none(home)); break;
       }
@@ -154,7 +154,7 @@ namespace Gecode { namespace Int { namespace Bool {
       if (q0 == FORALL) return ES_FAILED;
       GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
-      if (q1 == FORALL) 
+      if (q1 == FORALL)
       {
         GECODE_ME_CHECK(x2.zero_none(home)); break;
       }
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ZERO,ONE,ONE):
       return ES_FAILED;
     case GECODE_INT_STATUS(ONE,NONE,NONE):
-      if (q1 == FORALL) 
+      if (q1 == FORALL)
       {
         GECODE_ME_CHECK(x2.zero_none(home)); break;
       }

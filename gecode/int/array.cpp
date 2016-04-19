@@ -47,7 +47,7 @@ namespace Gecode {
       a[i] = va_arg(args,int);
     va_end(args);
   }
-  
+
   IntVarArray::IntVarArray(Space& home, int n, int min, int max)
     : VarArray<IntVar>(home,n) {
     Int::Limits::check(min,"IntVarArray::IntVarArray");

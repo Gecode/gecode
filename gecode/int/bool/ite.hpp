@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class V0, class V1, class V2, PropCond pc>
   forceinline
-  IteBase<V0,V1,V2,pc>::IteBase(Space& home, bool share, 
+  IteBase<V0,V1,V2,pc>::IteBase(Space& home, bool share,
                                 IteBase<V0,V1,V2,pc>& p)
     : Propagator(home,share,p) {
     b.update(home,share,p.b);
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,std::min(x0.min(),x1.min())));
-    
+
     RelTest eq20 = rtest_eq_bnd(x2,x0);
     RelTest eq21 = rtest_eq_bnd(x2,x1);
 
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Bool {
       else
         GECODE_REWRITE(*this,(Rel::EqBnd<V2,V0>::post(home(*this),x2,x0)));
     }
-    
+
     if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))
       return home.ES_SUBSUMED(*this);
 
@@ -215,7 +215,7 @@ namespace Gecode { namespace Int { namespace Bool {
           GECODE_REWRITE(*this,
                          (Rel::EqDom<V2,V1>::post(home(*this),x2,x1)));
       }
-      
+
       if (eq21 == RT_FALSE) {
         GECODE_ME_CHECK(b.one_none(home));
         if (eq20 == RT_TRUE)
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Bool {
           GECODE_REWRITE(*this,
                          (Rel::EqDom<V2,V0>::post(home(*this),x2,x0)));
       }
-    
+
       if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))
         return home.ES_SUBSUMED(*this);
 
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace Bool {
         GECODE_REWRITE(*this,
                        (Rel::EqDom<V2,V1>::post(home(*this),x2,x1)));
     }
-      
+
     if (eq21 == RT_FALSE) {
       GECODE_ME_CHECK(b.one_none(home));
       if (eq20 == RT_TRUE)
@@ -254,13 +254,13 @@ namespace Gecode { namespace Int { namespace Bool {
         GECODE_REWRITE(*this,
                        (Rel::EqDom<V2,V0>::post(home(*this),x2,x0)));
     }
-    
+
     assert((eq20 != RT_TRUE) || (eq21 != RT_TRUE));
 
     ViewRanges<V0> r0(x0);
     ViewRanges<V1> r1(x1);
     Iter::Ranges::Union<ViewRanges<V0>,ViewRanges<V1> > u(r0,r1);
-    
+
     if (!shared<V0,V2>(x0,x2) && !shared<V1,V2>(x1,x2))
       GECODE_ME_CHECK(x2.inter_r(home,u,false));
     else

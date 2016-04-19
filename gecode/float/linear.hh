@@ -187,7 +187,7 @@ namespace Gecode { namespace Float { namespace Linear {
    * \param u upper bound
    *
    */
-  GECODE_FLOAT_EXPORT void 
+  GECODE_FLOAT_EXPORT void
   estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum& u);
 
   /**

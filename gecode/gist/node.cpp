@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
       setTag(LEAF);
       break;
     case 1:
-      childrenOrFirstChild = 
+      childrenOrFirstChild =
         reinterpret_cast<void*>(na.allocate(getIndex(na)) << 2);
       noOfChildren = 1;
       setTag(TWO_CHILDREN);

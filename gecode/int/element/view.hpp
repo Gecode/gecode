@@ -428,7 +428,7 @@ namespace Gecode { namespace Int { namespace Element {
       return es;
     }
     assert(iv.size() > 1);
-    
+
     if (x1.assigned()) {
       for (int i = iv.size(); i--; )
         if (iv[i].view.in(x1.val()))

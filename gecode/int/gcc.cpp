@@ -46,14 +46,14 @@
 namespace Gecode {
 
   namespace {
-    
+
     /// Comparison operator
     template<class X>
     struct LessP {
       bool operator ()(const std::pair<X,int>& lhs,
                        const std::pair<X,int>& rhs) {
         return lhs.second < rhs.second;
-      }      
+      }
     };
 
     /// Make \a x and \a y equal
@@ -69,7 +69,7 @@ namespace Gecode {
       IntSet z(i);
       return z;
     }
-    
+
     /// Remove dupliate entries in \a v from both \a v and \a c
     template<class A>
     void removeDuplicates(Home home, A& c, IntArgs& v) {
@@ -97,7 +97,7 @@ namespace Gecode {
       c = cc;
       v = vv;
     }
-    
+
   }
 
   void count(Home home, const IntVarArgs& x,
@@ -122,15 +122,15 @@ namespace Gecode {
       cv[i].init(c[i],v[i]);
     switch (vbd(ipl)) {
     case IPL_BND:
-      GECODE_ES_FAIL( 
+      GECODE_ES_FAIL(
                      (GCC::Bnd<GCC::CardView>::post(home,xv,cv)));
       break;
     case IPL_DOM:
-      GECODE_ES_FAIL( 
+      GECODE_ES_FAIL(
                      (GCC::Dom<GCC::CardView>::post(home,xv,cv)));
       break;
     default:
-      GECODE_ES_FAIL( 
+      GECODE_ES_FAIL(
                      (GCC::Val<GCC::CardView>::post(home,xv,cv)));
     }
   }
@@ -164,7 +164,7 @@ namespace Gecode {
     if (home.failed())
       return;
 
-    removeDuplicates(home,c,v);    
+    removeDuplicates(home,c,v);
 
     ViewArray<IntView> xv(home, x);
 
@@ -176,21 +176,21 @@ namespace Gecode {
           cv[j].init(home,c[j],v[j]);
         switch (vbd(ipl)) {
         case IPL_BND:
-          GECODE_ES_FAIL( 
+          GECODE_ES_FAIL(
                          (GCC::Bnd<GCC::CardView>::post(home, xv, cv)));
           break;
         case IPL_DOM:
-          GECODE_ES_FAIL( 
+          GECODE_ES_FAIL(
                          (GCC::Dom<GCC::CardView>::post(home, xv, cv)));
           break;
         default:
-          GECODE_ES_FAIL( 
+          GECODE_ES_FAIL(
                          (GCC::Val<GCC::CardView>::post(home, xv, cv)));
         }
         return;
       }
     }
-    
+
     // No holes: create CardConsts
     ViewArray<GCC::CardConst> cv(home, c.size());
 

@@ -143,7 +143,7 @@ namespace Gecode {
       count(home,x,y.min(),irt,m);
       return;
     }
-      
+
     Limits::check(y.min(),"Int::count");
     Limits::check(y.max(),"Int::count");
     Limits::check(m,"Int::count");
@@ -325,7 +325,7 @@ namespace Gecode {
       count(home,x,y.min(),irt,z);
       return;
     }
-      
+
     Limits::check(y.min(),"Int::count");
     Limits::check(y.max(),"Int::count");
 

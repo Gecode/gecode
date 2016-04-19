@@ -59,7 +59,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntIntVar(const std::string& s, const Gecode::IntArgs& c0,
                  int min, int max)
-         : Test("Element::Int::Int::Var::"+s,2,min,max), 
+         : Test("Element::Int::Int::Var::"+s,2,min,max),
            c(c0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -266,17 +266,17 @@ namespace Test { namespace Int {
            c[i]=channel(home,x[1+i]);
          if (r == 1) {
            switch (Base::rand(3)) {
-           case 0: 
-             element(home, c, x[0], 1); 
+           case 0:
+             element(home, c, x[0], 1);
              break;
-           case 1: 
+           case 1:
              {
                BoolVar one(home,1,1);
-               rel(home, element(c,x[0]) == one); 
+               rel(home, element(c,x[0]) == one);
              }
              break;
-           case 2: 
-             rel(home, element(c,x[0])); 
+           case 2:
+             rel(home, element(c,x[0]));
              break;
            default: GECODE_NEVER;
            }
@@ -295,7 +295,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MatrixIntIntVarXY(void)
-         : Test("Element::Matrix::Int::IntVar::XY",3,0,5,false), 
+         : Test("Element::Matrix::Int::IntVar::XY",3,0,5,false),
            tm(6, 0,1,2,3,4,5) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -323,7 +323,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MatrixIntIntVarXX(void)
-         : Test("Element::Matrix::Int::IntVar::XX",2,0,3,false), 
+         : Test("Element::Matrix::Int::IntVar::XX",2,0,3,false),
            tm(4, 0,1,2,3) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -351,7 +351,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MatrixIntBoolVarXY(void)
-         : Test("Element::Matrix::Int::BoolVar::XY",3,0,3,false), 
+         : Test("Element::Matrix::Int::BoolVar::XY",3,0,3,false),
            tm(4, 0,1,1,0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -379,7 +379,7 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MatrixIntBoolVarXX(void)
-         : Test("Element::Matrix::Int::BoolVar::XX",2,0,3,false), 
+         : Test("Element::Matrix::Int::BoolVar::XX",2,0,3,false),
            tm(4, 0,1,1,0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -478,7 +478,7 @@ namespace Test { namespace Int {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
          using namespace Gecode;
          BoolVarArgs tm(4);
-         tm[0]=channel(home,x[3]); tm[1]=channel(home,x[4]); 
+         tm[0]=channel(home,x[3]); tm[1]=channel(home,x[4]);
          tm[2]=channel(home,x[5]); tm[3]=channel(home,x[6]);
          Matrix<BoolVarArgs> m(tm,2,2);
          element(home, m, x[0], x[1], channel(home,x[2]));
@@ -506,7 +506,7 @@ namespace Test { namespace Int {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[1]
          using namespace Gecode;
          BoolVarArgs tm(4);
-         tm[0]=channel(home,x[2]); tm[1]=channel(home,x[3]); 
+         tm[0]=channel(home,x[2]); tm[1]=channel(home,x[3]);
          tm[2]=channel(home,x[4]); tm[3]=channel(home,x[5]);
          Matrix<BoolVarArgs> m(tm,2,2);
          element(home, m, x[0], x[0], channel(home,x[1]));

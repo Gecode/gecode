@@ -128,7 +128,7 @@ namespace Gecode {
 
   void
   dom(Home home, FloatVar x, FloatVar d) {
-    using namespace Float;    
+    using namespace Float;
     if (home.failed()) return;
     FloatView xv(x), dv(d);
     if (!same(xv,dv)) {
@@ -139,7 +139,7 @@ namespace Gecode {
 
   void
   dom(Home home, const FloatVarArgs& x, const FloatVarArgs& d) {
-    using namespace Float;    
+    using namespace Float;
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Float::dom");
     for (int i=x.size(); i--; ) {

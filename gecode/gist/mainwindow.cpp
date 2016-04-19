@@ -108,7 +108,7 @@ namespace Gecode { namespace Gist {
     connect(prefAction, SIGNAL(triggered()), this, SLOT(preferences()));
 
     QMenu* nodeMenu = menuBar->addMenu(tr("&Node"));
-    
+
     inspectNodeMenu = new QMenu("Inspect");
     inspectNodeMenu->addAction(c->inspect);
     connect(inspectNodeMenu, SIGNAL(aboutToShow()),
@@ -119,7 +119,7 @@ namespace Gecode { namespace Gist {
     connect(inspectNodeBeforeFPMenu, SIGNAL(aboutToShow()),
             this, SLOT(populateInspectors()));
     populateInspectors();
-    
+
     nodeMenu->addMenu(inspectNodeMenu);
     nodeMenu->addMenu(inspectNodeBeforeFPMenu);
     nodeMenu->addAction(c->compareNode);

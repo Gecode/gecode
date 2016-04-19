@@ -70,7 +70,7 @@ namespace Gecode {
     switch (r.mode()) {
     case RM_EQV:
       GECODE_ES_FAIL((Member::ReProp<IntView,RM_EQV>
-                      ::post(home,xv,y,r.var()))); 
+                      ::post(home,xv,y,r.var())));
       break;
     case RM_IMP:
       GECODE_ES_FAIL((Member::ReProp<IntView,RM_IMP>
@@ -95,7 +95,7 @@ namespace Gecode {
     switch (r.mode()) {
     case RM_EQV:
       GECODE_ES_FAIL((Member::ReProp<BoolView,RM_EQV>
-                      ::post(home,xv,y,r.var()))); 
+                      ::post(home,xv,y,r.var())));
       break;
     case RM_IMP:
       GECODE_ES_FAIL((Member::ReProp<BoolView,RM_IMP>

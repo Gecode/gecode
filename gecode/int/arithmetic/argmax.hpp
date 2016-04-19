@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, bool tiebreak>
   forceinline
-  ArgMax<VA,VB,tiebreak>::ArgMax(Space& home, bool share, 
+  ArgMax<VA,VB,tiebreak>::ArgMax(Space& home, bool share,
                                         ArgMax<VA,VB,tiebreak>& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, bool tiebreak>
   PropCost
-  ArgMax<VA,VB,tiebreak>::cost(const Space&, 
+  ArgMax<VA,VB,tiebreak>::cost(const Space&,
                                       const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size()+1);
   }
@@ -116,11 +116,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (u < x[i].view.max())
         u = x[i].view.max();
     }
-      
+
     // Eliminate elements from x and y that are too small
     {
       Region r(home);
-   
+
       // Values to delete from y
       int* d=r.alloc<int>(y.size());
       // Number of values to delete
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       while ((i < x.size()) && iy()) {
         if (x[i].idx == iy.val()) {
           if (x[i].view.max() < l) {
-            x[i].view.cancel(home,*this,PC_INT_BND); 
+            x[i].view.cancel(home,*this,PC_INT_BND);
             d[n++]=x[i].idx;
           } else {
             x[j++]=x[i];

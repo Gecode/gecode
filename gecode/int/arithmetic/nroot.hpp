@@ -106,9 +106,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops, bool minus>
   forceinline
-  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Home home, IntView x0, IntView x1, 
+  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Home home, IntView x0, IntView x1,
                                         const Ops& o)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1), 
+    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1),
       ops(o) {}
 
   template<class Ops, bool minus>
@@ -127,9 +127,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops, bool minus>
   forceinline
-  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Space& home, bool share, 
+  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Space& home, bool share,
                                         NrootPlusBnd<Ops,minus>& p)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p), 
+    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p),
       ops(p.ops) {}
 
   template<class Ops, bool minus>
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   prop_nroot_bnd(Space& home, IntView x0, IntView x1, const Ops& ops) {
     assert((x0.min() < 0) && (x0.max() > 0));
     assert((x1.min() < 0) && (x1.max() > 0));
-    
+
     GECODE_ME_CHECK(x1.lq(home,ops.fnroot(x0.max())));
     GECODE_ME_CHECK(x1.gq(home,-ops.cnroot(-x0.min())));
     GECODE_ME_CHECK(x0.le(home,ops.tpow(x1.max()+1)));
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   forceinline
   NrootBnd<Ops>::NrootBnd(Home home, IntView x0, IntView x1, const Ops& o)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1), 
+    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1),
       ops(o) {}
 
   template<class Ops>
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x1.eq(home,1));
       return ES_OK;
     } else if (ops.exp() == 1) {
-      return Rel::EqBnd<IntView,IntView>::post(home,x0,x1);      
+      return Rel::EqBnd<IntView,IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.lq(home,1));
       GECODE_ME_CHECK(x0.gq(home,ops.even() ? 0 : -2));
       return ES_OK;
-    } 
+    }
 
     // Limits values such that no overflow can occur
     GECODE_ME_CHECK(x1.lq(home,ops.fnroot(Limits::max)));
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   forceinline
   NrootBnd<Ops>::NrootBnd(Space& home, bool share, NrootBnd<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p), 
+    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p),
       ops(p.ops) {}
 
   template<class Ops>
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops, bool minus>
   forceinline
-  NrootPlusDom<Ops,minus>::NrootPlusDom(Home home, IntView x0, IntView x1, 
+  NrootPlusDom<Ops,minus>::NrootPlusDom(Home home, IntView x0, IntView x1,
                                         const Ops& o)
     : BinaryPropagator<IntView,PC_INT_DOM>(home,x0,x1),
       ops(o) {}
@@ -312,9 +312,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops, bool minus>
   forceinline
-  NrootPlusDom<Ops,minus>::NrootPlusDom(Space& home, bool share, 
+  NrootPlusDom<Ops,minus>::NrootPlusDom(Space& home, bool share,
                                         NrootPlusDom<Ops,minus>& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p), 
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
       ops(p.ops) {}
 
   template<class Ops, bool minus>
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     {
       ViewRanges<IntView> r(x0);
       RangesMapNroot<Ops> rmn(ops);
-      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapNroot<Ops>,false> 
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapNroot<Ops>,false>
         m(r,rmn);
       GECODE_ME_CHECK(x1.inter_r(home,m,false));
     }
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     {
       ViewRanges<IntView> r(x1);
       RangesMapPow<Ops> rmp(ops);
-      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapPow<Ops>,true> 
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapPow<Ops>,true>
         m(r,rmp);
       GECODE_ME_CHECK(x0.inter_r(home,m,false));
     }
@@ -385,7 +385,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x1.eq(home,1));
       return ES_OK;
     } else if (ops.exp() == 1) {
-      return Rel::EqDom<IntView,IntView>::post(home,x0,x1);      
+      return Rel::EqDom<IntView,IntView>::post(home,x0,x1);
     }
 
     if (same(x0,x1)) {
@@ -393,7 +393,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.lq(home,1));
       GECODE_ME_CHECK(x0.gq(home,ops.even() ? 0 : -2));
       return ES_OK;
-    } 
+    }
 
     // Limits values such that no overflow can occur
     GECODE_ME_CHECK(x1.lq(home,ops.fnroot(Limits::max)));
@@ -420,7 +420,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   forceinline
   NrootDom<Ops>::NrootDom(Space& home, bool share, NrootDom<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p), 
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
       ops(p.ops) {}
 
   template<class Ops>
@@ -459,7 +459,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     {
       ViewRanges<IntView> r(x0);
       RangesMapNroot<Ops> rmn(ops);
-      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapNroot<Ops>,false> 
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapNroot<Ops>,false>
         m(r,rmn);
       GECODE_ME_CHECK(x1.inter_r(home,m,false));
     }
@@ -467,7 +467,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     {
       ViewRanges<IntView> r(x1);
       RangesMapPow<Ops> rmp(ops);
-      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapPow<Ops>,true> 
+      Iter::Ranges::Map<ViewRanges<IntView>,RangesMapPow<Ops>,true>
         m(r,rmp);
       GECODE_ME_CHECK(x0.inter_r(home,m,false));
     }

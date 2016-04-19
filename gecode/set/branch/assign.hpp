@@ -37,15 +37,15 @@
 
 namespace Gecode {
 
-  forceinline 
+  forceinline
   SetAssign::SetAssign(Select s0)
     : s(s0) {}
 
-  forceinline 
+  forceinline
   SetAssign::SetAssign(Select s0, Rnd r)
     : ValBranch(r), s(s0) {}
 
-  forceinline 
+  forceinline
   SetAssign::SetAssign(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 

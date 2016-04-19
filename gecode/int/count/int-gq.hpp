@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Count {
       return home.ES_SUBSUMED(*this);
     if (c == n_x) {
       // All views must be equal
-      GECODE_ES_CHECK(post_true(home,x,y)); 
+      GECODE_ES_CHECK(post_true(home,x,y));
       return home.ES_SUBSUMED(*this);
     }
     // Now, there must be new subscriptions from x[n_s] up to x[c+1]

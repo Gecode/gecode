@@ -86,7 +86,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     ~QDFS(void);
   };
 
-  forceinline 
+  forceinline
   QDFS::QDFS(Space* s, const Options& o)
     : opt(o), path(static_cast<int>(opt.nogoods_limit)), d(0) {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {

@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline
   ManFixPTask::ManFixPTask(void) {}
   forceinline
-  ManFixPTask::ManFixPTask(IntVar s, int p, int c) 
+  ManFixPTask::ManFixPTask(IntVar s, int p, int c)
     : Unary::ManFixPTask(s,p), _c(c) {}
   forceinline void
   ManFixPTask::init(IntVar s, int p, int c) {
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline
   ManFixPSETask::ManFixPSETask(void) {}
   forceinline
-  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p, int c) 
+  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p, int c)
     : Unary::ManFixPSETask(t,s,p), _c(c) {}
   forceinline void
   ManFixPSETask::init(TaskType t, IntVar s, int p, int c) {
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     s << t.est() << ":[" << t.pmin() << ',' << t.c() << "]:" << t.lct();
     return os << s.str();
   }
- 
+
   /*
    * Mandatory flexible task
    */
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
-    
+
 }}}
 
 // STATISTICS: int-var

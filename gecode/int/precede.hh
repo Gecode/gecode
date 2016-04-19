@@ -50,7 +50,7 @@
  */
 
 namespace Gecode { namespace Int { namespace Precede {
-    
+
   /**
    * \brief Single value precedence propagator
    *

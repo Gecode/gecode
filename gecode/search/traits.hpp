@@ -57,7 +57,7 @@ namespace Gecode {
     typedef SEB  ValueType;
     typedef SEBs ArgsType;
   };
-  
+
 }
 
 // STATISTICS: search-other

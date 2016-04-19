@@ -107,7 +107,7 @@ namespace Gecode { namespace Gist {
       path.moveTo(myx,myy);
       path.lineTo(parentX,parentY);
       painter.drawPath(path);
-      
+
       QFontMetrics fm = painter.fontMetrics();
       QString label = na.getLabel(n);
       int alt = n->getAlternative(na);
@@ -205,7 +205,7 @@ namespace Gecode { namespace Gist {
           gradient.setColorAt(1, green);
         } else if (n->hasFailedChildren()) {
           gradient.setColorAt(0, white);
-          gradient.setColorAt(1, red);          
+          gradient.setColorAt(1, red);
         } else {
           gradient.setColorAt(0, white);
           gradient.setColorAt(1, QColor(0,0,0));
@@ -217,7 +217,7 @@ namespace Gecode { namespace Gist {
         else
           painter.setBrush(QBrush(red));
       }
-      
+
       QPointF points[3] = {QPointF(myx,myy),
                            QPointF(myx+nodeWidth,myy+hiddenDepth),
                            QPointF(myx-nodeWidth,myy+hiddenDepth),
@@ -247,7 +247,7 @@ namespace Gecode { namespace Gist {
       case Gist::UNSTOP:
       case Gist::STOP:
         {
-          painter.setBrush(n->getStatus() == STOP ? 
+          painter.setBrush(n->getStatus() == STOP ?
                            QBrush(red) : QBrush(green));
           QPointF points[8] = {QPointF(myx-quarterFailedWidthF,myy),
                                QPointF(myx+quarterFailedWidthF,myy),
@@ -270,7 +270,7 @@ namespace Gecode { namespace Gist {
         }
         break;
       case Gist::BRANCH:
-        painter.setBrush(n->childrenLayoutIsDone() ? QBrush(blue) : 
+        painter.setBrush(n->childrenLayoutIsDone() ? QBrush(blue) :
                                                      QBrush(white));
         painter.drawEllipse(myx-halfNodeWidth, myy, nodeWidth, nodeWidth);
         break;

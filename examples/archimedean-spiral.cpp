@@ -49,16 +49,16 @@ using namespace Gecode;
  * corresponding to the locations over time of a point moving
  * away from a fixed point with a constant speed along a line
  * which rotates with constant angular velocity.  It is defined
- * by the polar equation: 
+ * by the polar equation:
  *   \f[ r = a+b\theta \f]
- * 
+ *
  * To get cartesian coordinates, it can be solved for \f$x\f$
  * and \f$y\f$ in terms of \f$r\f$ and \f$\theta\f$.
  * By setting \f$a=1\f$ and \f$b=1\f$, it yields to the equation:
- * 
+ *
  * \f[ r = \theta \f] with \f[ x=r\operatorname{cos}(\theta),
  * \quad y=r\operatorname{sin}(\theta) \f]
- * 
+ *
  * The tuple \f$(r,\theta)\f$ is related to the position for
  * \f$x\f$ and \f$y\f$ on the curve.  \f$r\f$ and \f$\theta\f$
  * are positive numbers.
@@ -74,7 +74,7 @@ protected:
   FloatVarArray f;
 public:
   /// Actual model
-  ArchimedeanSpiral(const Options& opt) 
+  ArchimedeanSpiral(const Options& opt)
     : FloatMaximizeScript(opt), f(*this,4,-20,20) {
     // Post equation
     FloatVar theta = f[0];
@@ -92,13 +92,13 @@ public:
     branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  ArchimedeanSpiral(bool share, ArchimedeanSpiral& p) 
+  ArchimedeanSpiral(bool share, ArchimedeanSpiral& p)
     : FloatMaximizeScript(share,p) {
     f.update(*this,share,p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) { 
-    return new ArchimedeanSpiral(share,*this); 
+  virtual Space* copy(bool share) {
+    return new ArchimedeanSpiral(share,*this);
   }
   /// Cost function
   virtual FloatVar cost(void) const {
@@ -109,7 +109,7 @@ public:
     os << "XY " << f[1].med() << " " << f[2].med()
        << std::endl;
   }
-  
+
 };
 
 /** \brief Main-function

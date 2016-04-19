@@ -64,19 +64,19 @@ namespace Gecode { namespace Int {
   }
 
   template<class ManTask>
-  forceinline ModEvent 
+  forceinline ModEvent
   ManToOptTask<ManTask>::mandatory(Space& home) {
     return _m.one(home);
   }
   template<class ManTask>
-  forceinline ModEvent 
+  forceinline ModEvent
   ManToOptTask<ManTask>::excluded(Space& home) {
     return _m.zero(home);
   }
 
   template<class ManTask>
   forceinline void
-  ManToOptTask<ManTask>::update(Space& home, bool share, 
+  ManToOptTask<ManTask>::update(Space& home, bool share,
                                 ManToOptTask<ManTask>& t) {
     ManTask::update(home, share, t);
     _m.update(home,share,t._m);

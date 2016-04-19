@@ -623,7 +623,7 @@ namespace Gecode {
 
   void
   dom(Home home, SetVar x, SetVar d) {
-    using namespace Set;    
+    using namespace Set;
     if (home.failed()) return;
     SetView xv(x), dv(d);
     if (!same(xv,dv)) {
@@ -638,7 +638,7 @@ namespace Gecode {
 
   void
   dom(Home home, const SetVarArgs& x, const SetVarArgs& d) {
-    using namespace Set;    
+    using namespace Set;
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Set::dom");
     for (int i=x.size(); i--; ) {
@@ -654,7 +654,7 @@ namespace Gecode {
       }
     }
   }
-  
+
 }
 
 // STATISTICS: set-post

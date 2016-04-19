@@ -42,12 +42,12 @@ namespace Gecode { namespace Support {
   /*
    * Threads
    */
-  
+
   Mutex* Thread::m(void) {
     static Mutex* m = new Mutex;
     return m;
   }
-  
+
   Thread::Run* Thread::idle = NULL;
 
   void

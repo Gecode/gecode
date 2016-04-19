@@ -237,7 +237,7 @@ namespace Gecode { namespace Gist {
         static_cast<int>(2*Layout::extent+
           root->getShape()->depth()*Layout::dist_y*scale);
       xtrans = -bb.left+(Layout::extent / 2);
-      
+
       QSize viewport_size = size();
       QAbstractScrollArea* sa =
         static_cast<QAbstractScrollArea*>(parentWidget()->parentWidget());
@@ -285,11 +285,11 @@ namespace Gecode { namespace Gist {
   void
   SearcherThread::search(VisualNode* n, bool all, TreeCanvas* ti) {
     node = n;
-    
+
     depth = -1;
     for (VisualNode* p = n; p != NULL; p = p->getParent(*ti->na))
       depth++;
-    
+
     a = all;
     t = ti;
     start();
@@ -312,7 +312,7 @@ namespace Gecode { namespace Gist {
         break;
       }
     }
-    
+
     t->root->layout(*t->na);
     BoundingBox bb = t->root->getBoundingBox();
 
@@ -372,7 +372,7 @@ namespace Gecode { namespace Gist {
       t->mutex.lock();
       emit statusChanged(false);
 
-      unsigned int kids = 
+      unsigned int kids =
         node->getNumberOfChildNodes(*t->na, t->curBest, t->stats,
                                     t->c_d, t->a_d);
       if (kids == 0 || node->getStatus() == STOP) {
@@ -385,7 +385,7 @@ namespace Gecode { namespace Gist {
       std::stack<SearchItem> stck;
       stck.push(SearchItem(node,kids));
       t->stats.maxDepth =
-        std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
+        std::max(static_cast<long unsigned int>(t->stats.maxDepth),
                  static_cast<long unsigned int>(depth+stck.size()));
 
       VisualNode* sol = NULL;
@@ -428,7 +428,7 @@ namespace Gecode { namespace Gist {
               else if (!a)
                 break;
               t->stats.maxDepth =
-                std::max(static_cast<long unsigned int>(t->stats.maxDepth), 
+                std::max(static_cast<long unsigned int>(t->stats.maxDepth),
                          static_cast<long unsigned int>(depth+stck.size()));
             }
           }
@@ -505,7 +505,7 @@ namespace Gecode { namespace Gist {
     currentNode->unstopAll(*na);
     update();
     centerCurrentNode();
-    emit statusChanged(currentNode, stats, true);    
+    emit statusChanged(currentNode, stats, true);
   }
 
   void
@@ -540,7 +540,7 @@ namespace Gecode { namespace Gist {
           static_cast<double>(p->width()) / (bb.right - bb.left +
                                              Layout::extent);
         double newYScale =
-          static_cast<double>(p->height()) / (root->getShape()->depth() * 
+          static_cast<double>(p->height()) / (root->getShape()->depth() *
                                               Layout::dist_y +
                                               2*Layout::extent);
         int scale0 = static_cast<int>(std::min(newXScale, newYScale)*100);
@@ -634,7 +634,7 @@ namespace Gecode { namespace Gist {
       switch (currentNode->getStatus()) {
       case UNDETERMINED:
           {
-            unsigned int kids =  
+            unsigned int kids =
               currentNode->getNumberOfChildNodes(*na,curBest,stats,c_d,a_d);
             int depth = -1;
             for (VisualNode* p = currentNode; p != NULL; p=p->getParent(*na))
@@ -691,7 +691,7 @@ namespace Gecode { namespace Gist {
           //           << std::endl;
 
           Space* curSpace;
-        
+
           if (fix) {
             if (currentNode->isRoot() && currentNode->getStatus() == FAILED)
               break;
@@ -705,7 +705,7 @@ namespace Gecode { namespace Gist {
               Space* dfsSpace = Gecode::dfs(curSpace);
               delete curSpace;
               curSpace = dfsSpace;
-            }          
+            }
           } else {
             if (currentNode->isRoot())
               break;
@@ -716,7 +716,7 @@ namespace Gecode { namespace Gist {
             case SS_FAILED:
               break;
             case SS_BRANCH:
-              curSpace->commit(*p->getChoice(), 
+              curSpace->commit(*p->getChoice(),
                                currentNode->getAlternative(*na));
               break;
             default:
@@ -764,7 +764,7 @@ namespace Gecode { namespace Gist {
     if (needCentering)
       centerCurrentNode();
   }
-  
+
   void
   TreeCanvas::inspectBeforeFP(void) {
     inspectCurrentNode(false);
@@ -831,7 +831,7 @@ namespace Gecode { namespace Gist {
   TreeCanvas::reset(void) {
     QMutexLocker locker(&mutex);
     Space* rootSpace =
-      root->getStatus() == FAILED ? NULL : 
+      root->getStatus() == FAILED ? NULL :
                            root->getSpace(*na,curBest,c_d,a_d);
     if (curBest != NULL) {
       delete curBest;
@@ -866,7 +866,7 @@ namespace Gecode { namespace Gist {
     if (!currentNode->isBookmarked()) {
       bool ok;
       QString text =
-        QInputDialog::getText(this, "Add bookmark", "Name:", 
+        QInputDialog::getText(this, "Add bookmark", "Name:",
                               QLineEdit::Normal,"",&ok);
       if (ok) {
         currentNode->setBookmarked(true);
@@ -884,7 +884,7 @@ namespace Gecode { namespace Gist {
     currentNode->dirtyUp(*na);
     update();
   }
-  
+
   void
   TreeCanvas::setPath(void) {
     QMutexLocker locker(&mutex);
@@ -1156,7 +1156,7 @@ namespace Gecode { namespace Gist {
       static_cast<int>((bb.right-bb.left+Layout::extent)*scale);
     if (w < sa->viewport()->width())
       xoff -= (sa->viewport()->width()-w)/2;
-    
+
     VisualNode* n;
     n = root->findNode(*na,
                        static_cast<int>(x/scale-xtrans+xoff),
@@ -1365,7 +1365,7 @@ namespace Gecode { namespace Gist {
                     case SS_FAILED:
                       break;
                     case SS_BRANCH:
-                      compareSpace->commit(*p->getChoice(), 
+                      compareSpace->commit(*p->getChoice(),
                                            n->getAlternative(*na));
                       break;
                     default:

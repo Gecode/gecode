@@ -327,7 +327,7 @@ namespace Test { namespace Int {
          using namespace Gecode;
          int n = x.size();
          IntVarArgs y(2*n);
-         for (int i=n; i--; ) 
+         for (int i=n; i--; )
            y[i] = y[n+i] = x[i];
          rel(home, y, irt, ipl);
        }
@@ -452,7 +452,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntArrayDiff(Gecode::IntRelType irt0, int m)
          : Test("Rel::Int::Array::"+str(irt0)+"::"+str(m)+"::"+str(n-m),
-                n,-2,2), 
+                n,-2,2),
            irt(irt0), n_fst(m) {
          assert(n_fst <= n);
        }

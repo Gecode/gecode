@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
   forceinline void
   OmegaNode::update(const OmegaNode& l, const OmegaNode& r) {
-    p = l.p + r.p; 
+    p = l.p + r.p;
     ect = std::max(plus(l.ect,r.p), r.ect);
   }
 
@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
   template<class TaskView>
-  forceinline void 
+  forceinline void
   OmegaTree<TaskView>::insert(int i) {
     leaf(i).p = tasks[i].pmin();
     leaf(i).ect = tasks[i].est()+tasks[i].pmin();
@@ -80,13 +80,13 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
   template<class TaskView>
-  forceinline int 
+  forceinline int
   OmegaTree<TaskView>::ect(void) const {
     return root().ect;
   }
-  
+
   template<class TaskView>
-  forceinline int 
+  forceinline int
   OmegaTree<TaskView>::ect(int i) const {
     // Check whether task i is in?
     OmegaTree<TaskView>& o = const_cast<OmegaTree<TaskView>&>(*this);
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Unary {
       return root().ect;
     }
   }
-  
+
 
 
   /*
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Unary {
       lp = l.lp + r.p;
     } else {
       resLp = r.resLp;
-      lp = l.p + r.lp;      
+      lp = l.p + r.lp;
     }
     if ((r.lect >= plus(l.ect,r.lp)) && (r.lect >= plus(l.lect,r.p))) {
       lect = r.lect; resEct = r.resEct;
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int { namespace Unary {
       assert(plus(l.ect,r.lp) > r.lect);
       lect = plus(l.ect,r.lp); resEct = r.resLp;
     } else {
-      assert((plus(l.lect,r.p) > r.lect) && 
+      assert((plus(l.lect,r.p) > r.lect) &&
              (plus(l.lect,r.p) > plus(l.ect,r.lp)));
       lect = plus(l.lect,r.p); resEct = l.resEct;
     }
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
   template<class TaskView>
   forceinline
-  OmegaLambdaTree<TaskView>::OmegaLambdaTree(Region& r, 
+  OmegaLambdaTree<TaskView>::OmegaLambdaTree(Region& r,
                                              const TaskViewArray<TaskView>& t,
                                              bool inc)
     : TaskTree<TaskView,OmegaLambdaNode>(r,t) {
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
   template<class TaskView>
-  forceinline void 
+  forceinline void
   OmegaLambdaTree<TaskView>::shift(int i) {
     // That means that i is in omega
     assert(leaf(i).ect > -Limits::infinity);
@@ -177,7 +177,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::oinsert(int i) {
-    leaf(i).p = tasks[i].pmin(); 
+    leaf(i).p = tasks[i].pmin();
     leaf(i).ect = tasks[i].est()+tasks[i].pmin();
     update(i);
   }
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::linsert(int i) {
-    leaf(i).lp = tasks[i].pmin(); 
+    leaf(i).lp = tasks[i].pmin();
     leaf(i).lect = tasks[i].est()+tasks[i].pmin();
     leaf(i).resEct = i;
     leaf(i).resLp = i;
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class TaskView>
   forceinline void
   OmegaLambdaTree<TaskView>::lremove(int i) {
-    leaf(i).lp = 0; 
+    leaf(i).lp = 0;
     leaf(i).lect = -Limits::infinity;
     leaf(i).resEct = OmegaLambdaNode::undef;
     leaf(i).resLp = OmegaLambdaNode::undef;
@@ -207,25 +207,25 @@ namespace Gecode { namespace Int { namespace Unary {
   OmegaLambdaTree<TaskView>::lempty(void) const {
     return root().resEct < 0;
   }
-  
+
   template<class TaskView>
-  forceinline int 
+  forceinline int
   OmegaLambdaTree<TaskView>::responsible(void) const {
     return root().resEct;
   }
-  
+
   template<class TaskView>
-  forceinline int 
+  forceinline int
   OmegaLambdaTree<TaskView>::ect(void) const {
     return root().ect;
   }
-  
+
   template<class TaskView>
-  forceinline int 
+  forceinline int
   OmegaLambdaTree<TaskView>::lect(void) const {
     return root().lect;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

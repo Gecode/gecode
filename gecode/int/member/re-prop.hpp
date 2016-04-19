@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace Member {
 
   template<class View, ReifyMode rm>
   forceinline
-  ReProp<View,rm>::ReProp(Home home, ValSet& vs, ViewArray<View>& x, View y, 
+  ReProp<View,rm>::ReProp(Home home, ValSet& vs, ViewArray<View>& x, View y,
                           BoolView b0)
     : Prop<View>(home,vs,x,y), b(b0) {
     b.subscribe(home,*this,PC_BOOL_VAL);
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Member {
         GECODE_ME_CHECK(b.one(home));
       return ES_OK;
     }
-    
+
     // Eliminate assigned views and store them into the value set
     ValSet vs;
     add(home, vs, x);
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Member {
     (void) new (home) ReProp<View,rm>(home, vs, x, y, b);
     return ES_OK;
   }
-    
+
   template<class View, ReifyMode rm>
   forceinline
   ReProp<View,rm>::ReProp(Space& home, bool share, ReProp<View,rm>& p)
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Member {
 
     // Eliminate views from x
     eliminate(home);
-    
+
     switch (vs.compare(y)) {
     case Iter::Ranges::CS_SUBSET:
       if (rm != RM_IMP)
@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Member {
       }
 
       ViewRanges<View> yr(y);
-      
+
       if (Iter::Ranges::disjoint(u,yr)) {
         if (rm != RM_PMI)
           GECODE_ME_CHECK(b.zero(home));

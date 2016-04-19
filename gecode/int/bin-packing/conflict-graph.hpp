@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   ConflictGraph::NodeSet::NodeSet(Region& r, int n)
     : Support::RawBitSetBase(r,static_cast<unsigned int>(n)) {}
   forceinline
-  ConflictGraph::NodeSet::NodeSet(Region& r, int n, 
+  ConflictGraph::NodeSet::NodeSet(Region& r, int n,
                                   const NodeSet& ns)
     : Support::RawBitSetBase(r,static_cast<unsigned int>(n),ns) {}
   forceinline void
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     RawBitSetBase::clearall(static_cast<unsigned int>(n));
   }
   forceinline bool
-  ConflictGraph::NodeSet::iwn(NodeSet& cwa, const NodeSet& a, 
+  ConflictGraph::NodeSet::iwn(NodeSet& cwa, const NodeSet& a,
                               NodeSet& cwb, const NodeSet& b,
                               const NodeSet& c, int _n) {
     unsigned int n = static_cast<unsigned int>(_n);
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     for (unsigned int i=0; i<pos; i++) {
       cwa.data[i] = Support::BitSetData::a(a.data[i],c.data[i]);
       cwb.data[i] = Support::BitSetData::a(b.data[i],c.data[i]);
-      abc.o(cwa.data[i]); 
+      abc.o(cwa.data[i]);
       abc.o(cwb.data[i]);
     }
     // Note that the sentinel bit is copied as well
@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline
   ConflictGraph::ConflictGraph(Space& h, Region& reg,
                                const IntVarArgs& b0, int m)
-    : home(h), b(b0), 
+    : home(h), b(b0),
       bins(static_cast<unsigned int>(m)),
       node(reg.alloc<Node>(nodes())),
       cur(reg,nodes()), max(reg,nodes()) {
@@ -188,13 +188,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
     unsigned int m = node[p].d;
     while (i() < nodes()) {
       if (node[i()].d > m) {
-        p=i(); m=node[p].d; 
+        p=i(); m=node[p].d;
       }
       ++i;
     }
     while (j() < nodes()) {
       if (node[j()].d > m) {
-        p=j(); m=node[p].d; 
+        p=j(); m=node[p].d;
       }
       ++j;
     }
@@ -231,8 +231,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
   ConflictGraph::clique(int i, int j) {
     unsigned int w = node[i].w + node[j].w;
     if ((2 > max.c) || ((2 == max.c) && (cur.w > max.w))) {
-      max.n.empty(nodes()); 
-      max.n.incl(i); max.n.incl(j); 
+      max.n.empty(nodes());
+      max.n.incl(i); max.n.incl(j);
       max.c=2; max.w=w;
       if (max.c > bins)
         return ES_FAILED;
@@ -244,8 +244,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
   ConflictGraph::clique(int i, int j, int k) {
     unsigned int w = node[i].w + node[j].w + node[k].w;
     if ((3 > max.c) || ((3 == max.c) && (cur.w > max.w))) {
-      max.n.empty(nodes()); 
-      max.n.incl(i); max.n.incl(j); max.n.incl(k); 
+      max.n.empty(nodes());
+      max.n.incl(i); max.n.incl(j); max.n.incl(k);
       max.c=3; max.w=w;
       if (max.c > bins)
         return ES_FAILED;

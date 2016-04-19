@@ -227,7 +227,7 @@ public:
     }
     // Redundant packing constraint
     int totalweight = 0;
-    for (unsigned int i = norders; i-- ; ) 
+    for (unsigned int i = norders; i-- ; )
        totalweight += orders[i][order_weight] ;
     linear(*this, slabload, IRT_EQ, totalweight);
 
@@ -409,7 +409,7 @@ public:
       unsigned int pos = start;
       for (unsigned int i = start; i<sm.norders; ++i) {
         if (!sm.slab[i].assigned()) {
-          if (sm.slab[i].size() == size && 
+          if (sm.slab[i].size() == size &&
               sm.orders[i][order_weight] > weight) {
             weight = sm.orders[i][order_weight];
             pos = i;
@@ -447,7 +447,7 @@ public:
           ? ES_FAILED : ES_OK;
     }
     /// Print explanation
-    virtual void print(const Space&, const Gecode::Choice& _c, 
+    virtual void print(const Space&, const Gecode::Choice& _c,
                        unsigned int a,
                        std::ostream& o) const {
       const Choice& c = static_cast<const Choice&>(_c);

@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template<class View, class Offset>
   forceinline
   Base<View,Offset>::Base(Home home, ViewArray<View>& x, Offset& o0)
-    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), 
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,x),
       start(0), y(home,x), o(o0) {
     home.notice(*this,AP_WEAKLY);
   }
@@ -195,8 +195,8 @@ namespace Gecode { namespace Int { namespace Circuit {
       /*
        * Whether there is more than one subtree
        *
-       * This propagation rule is taken from: Kathryn Glenn Francis, 
-       * Peter Stuckey, Explaining Circuit Propagation, 
+       * This propagation rule is taken from: Kathryn Glenn Francis,
+       * Peter Stuckey, Explaining Circuit Propagation,
        * Constraints (2014) 19:1-29.
        *
        */

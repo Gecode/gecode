@@ -1363,7 +1363,7 @@ namespace Gecode {
    */
   //@{
   /// Post linear expression and return its value
-  GECODE_MINIMODEL_EXPORT IntVar 
+  GECODE_MINIMODEL_EXPORT IntVar
   expr(Home home, const LinIntExpr& e, IntPropLevel ipl=IPL_DEF);
 #ifdef GECODE_HAS_FLOAT_VARS
   /// Post float expression and return its value
@@ -1379,7 +1379,7 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT BoolVar
   expr(Home home, const BoolExpr& e, IntPropLevel ipl=IPL_DEF);
   /// Post Boolean relation
-  GECODE_MINIMODEL_EXPORT void 
+  GECODE_MINIMODEL_EXPORT void
   rel(Home home, const BoolExpr& e, IntPropLevel ipl=IPL_DEF);
   //@}
 
@@ -1638,7 +1638,7 @@ namespace Gecode {
     IntVar x(home,0,1); channel(home,b,x);
     return x;
   }
-#ifdef GECODE_HAS_FLOAT_VARS 
+#ifdef GECODE_HAS_FLOAT_VARS
   /// Return integer variable equal to \f$f\f$
   inline IntVar
   channel(Home home, FloatVar f) {
@@ -1651,7 +1651,7 @@ namespace Gecode {
     return x;
   }
 #endif
-#ifdef GECODE_HAS_SET_VARS 
+#ifdef GECODE_HAS_SET_VARS
   /// Return set variable equal to \f$\{x_0,\dots,x_{n-1}\}\f$
   inline SetVar
   channel(Home home, const IntVarArgs& x, IntPropLevel ipl=IPL_DEF) {
@@ -1897,7 +1897,7 @@ namespace Gecode {
 
   //@{
   /** \brief Post constraint \f$\{x_0,\dots,x_{n-1}\}=y\f$
-   * 
+   *
    * In addition to constraining \a y to the union of the \a x, this
    * also posts an nvalue constraint for additional cardinality propagation.
    */
@@ -1906,7 +1906,7 @@ namespace Gecode {
     rel(home,SOT_UNION,x,y);
     nvalues(home,x,IRT_EQ,expr(home,cardinality(y)));
   }
-  
+
   /** \brief Post constraint \f$\bigcup_{i\in y}\{x_i\}=z\f$
    */
   inline void
@@ -1925,7 +1925,7 @@ namespace Gecode {
     channel(home,x,xiv);
     element(home,SOT_UNION,xiv,z,y);
   }
-  
+
   //@}
 #endif
 }
@@ -1969,7 +1969,7 @@ namespace Gecode {
     /// Cast to matrix type
     operator const Matrix<ArgsType>(void) const;
   };
-  
+
   /// Concatenate \a x and \a y
   template<class A>
   typename Slice<A>::ArgsType
@@ -2108,7 +2108,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,
                IntVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Element constraint for matrix
    *
@@ -2116,7 +2116,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,
                BoolVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Element constraint for matrix
    *
@@ -2124,7 +2124,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,
                IntVar z, IntPropLevel ipl=IPL_DEF);
   /** \brief Element constraint for matrix
    *
@@ -2132,7 +2132,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,
                BoolVar z, IntPropLevel ipl=IPL_DEF);
 #ifdef GECODE_HAS_SET_VARS
   /** \brief Element constraint for matrix
@@ -2141,7 +2141,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Home home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,
                SetVar z);
   /** \brief Element constraint for matrix
    *
@@ -2149,7 +2149,7 @@ namespace Gecode {
    * at position \a m(x,y).
    * \relates Gecode::Matrix
    */
-  void element(Home home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
+  void element(Home home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,
                SetVar z);
 #endif
 
@@ -2175,7 +2175,7 @@ namespace Gecode {
   SymmetryHandle columns_reflect(const Matrix<A>& m);
   /** \brief Reflect around main diagonal symmetry specification.
    *
-   * The matrix \m must be square.  
+   * The matrix \m must be square.
    * \relates Gecode::Matrix
    */
   template<class A>
@@ -2188,14 +2188,14 @@ namespace Gecode {
 /**
  * \addtogroup TaskModelMiniModelLin
  * @{
- */ 
+ */
 namespace Gecode {
 
   /// Construct linear expression as sum of \ref IntArgs \ref Slice elements
-  GECODE_MINIMODEL_EXPORT LinIntExpr 
+  GECODE_MINIMODEL_EXPORT LinIntExpr
   sum(const Slice<IntArgs>& slice);
   /// Construct linear expression as sum of \ref IntArgs \ref Matrix elements
-  GECODE_MINIMODEL_EXPORT LinIntExpr 
+  GECODE_MINIMODEL_EXPORT LinIntExpr
   sum(const Matrix<IntArgs>& matrix);
 
 }
@@ -2257,14 +2257,14 @@ namespace Gecode {
    */
   typedef IntMaximizeSpace MaximizeSpace;
 
-  
-#ifdef GECODE_HAS_FLOAT_VARS 
+
+#ifdef GECODE_HAS_FLOAT_VARS
 
   /**
    * \brief Class for minimizing float cost
    *
    * The class supports using a step value \a step that will make sure
-   * that better solutions must be better by at least the value of 
+   * that better solutions must be better by at least the value of
    * \a step.
    *
    * \ingroup TaskModelMiniModelOptimize
@@ -2289,7 +2289,7 @@ namespace Gecode {
    * \brief Class for maximizing float cost
    *
    * The class supports using a step value \a step that will make sure
-   * that better solutions must be better by at least the value of 
+   * that better solutions must be better by at least the value of
    * \a step.
    *
    * \ingroup TaskModelMiniModelOptimize

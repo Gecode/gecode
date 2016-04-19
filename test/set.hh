@@ -193,7 +193,7 @@ namespace Test {
 
 
     class SetTest;
-    
+
     /// Space for executing set tests
     class SetTestSpace : public Gecode::Space {
     public:
@@ -211,7 +211,7 @@ namespace Test {
       bool reified;
       /// The test currently run
       SetTest* test;
-      
+
       /**
        * \brief Create test space without reification
        *

@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class View, class Offset, bool shared>
   forceinline
-  Val<View,Offset,shared>::Val(Space& home, bool share, 
+  Val<View,Offset,shared>::Val(Space& home, bool share,
                                Val<View,Offset,shared>& p)
     : Base<ValInfo<View>,Offset,PC_INT_VAL>(home,share,p) {}
 

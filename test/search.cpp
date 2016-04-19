@@ -294,7 +294,7 @@ namespace Test {
         switch (mi.type()) {
         case MetaInfo::RESTART:
           if (mi.last() != NULL) {
-            const HasSolutions* s 
+            const HasSolutions* s
               = static_cast<const HasSolutions*>(mi.last());
             BoolVarArgs b;
             for (int i=0; i<x.size(); i++)
@@ -678,11 +678,11 @@ namespace Test {
                   for (BranchTypes htb3; htb3(); ++htb3)
                     (void) new DFS<HasSolutions>
                       (htb1.htb(),htb2.htb(),htb3.htb(),c_d, a_d, t);
-              new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, 
+              new DFS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE,
                                      c_d, a_d, t);
-              new DFS<SolveImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, 
+              new DFS<SolveImmediate>(HTB_NONE, HTB_NONE, HTB_NONE,
                                       c_d, a_d, t);
-              new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, 
+              new DFS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE,
                                     c_d, a_d, t);
             }
 

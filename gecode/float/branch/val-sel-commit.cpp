@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Float { namespace Branch {
 
-  ValSelCommitBase<FloatView,FloatNumBranch>* 
+  ValSelCommitBase<FloatView,FloatNumBranch>*
   valselcommit(Space& home, const FloatValBranch& fvb) {
     switch (fvb.select()) {
     case FloatValBranch::SEL_SPLIT_MIN:
@@ -61,7 +61,7 @@ namespace Gecode { namespace Float { namespace Branch {
     }
   }
 
-  ValSelCommitBase<FloatView,FloatNumBranch>* 
+  ValSelCommitBase<FloatView,FloatNumBranch>*
   valselcommit(Space& home, const FloatAssign& fa) {
     switch (fa.select()) {
     case FloatAssign::SEL_MIN:

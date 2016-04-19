@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  BoolBase<VY>::BoolBase(Home home, 
+  BoolBase<VY>::BoolBase(Home home,
                          int status0, ViewArray<BoolView>& x, VY y0)
     : Propagator(home), status(status0), c(home), y(y0) {
     y.subscribe(home,*this,PC_INT_BND);

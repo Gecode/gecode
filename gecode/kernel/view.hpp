@@ -368,7 +368,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ConstView<View>::subscribe(Space& home, Propagator& p, PropCond, 
+  ConstView<View>::subscribe(Space& home, Propagator& p, PropCond,
                              bool schedule) {
     if (schedule)
       View::schedule(home,p,ME_GEN_ASSIGNED);
@@ -599,31 +599,31 @@ namespace Gecode {
 
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  forceinline bool 
+  forceinline bool
   same(const ConstView<ViewA>&, const ConstView<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class Var, class View>
-  forceinline bool 
+  forceinline bool
   same(const VarImpView<Var>&, const ConstView<View>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  forceinline bool 
+  forceinline bool
   same(const ConstView<ViewA>&, const DerivedView<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class Var, class View>
-  forceinline bool 
+  forceinline bool
   same(const VarImpView<Var>&, const DerivedView<View>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class View, class Var>
-  forceinline bool 
+  forceinline bool
   same(const DerivedView<View>&, const VarImpView<Var>&) {
     return false;
   }
@@ -635,7 +635,7 @@ namespace Gecode {
   }
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  forceinline bool 
+  forceinline bool
   same(const DerivedView<ViewA>& x, const DerivedView<ViewB>& y) {
     return same(x.base(),y.base());
   }

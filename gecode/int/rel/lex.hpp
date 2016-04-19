@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   forceinline
   LexNq<View>::LexNq(Home home, ViewArray<View>& xv, ViewArray<View>& yv)
-    : Propagator(home), 
+    : Propagator(home),
       x0(xv[xv.size()-2]), y0(yv[xv.size()-2]),
       x1(xv[xv.size()-1]), y1(yv[xv.size()-1]),
       x(xv), y(yv) {
@@ -361,7 +361,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   forceinline ExecStatus
-  LexNq<View>::resubscribe(Space& home, 
+  LexNq<View>::resubscribe(Space& home,
                            RelTest rt, View& x0, View& y0, View x1, View y1) {
     if (rt == RT_TRUE) {
       assert(x0.assigned() && y0.assigned());

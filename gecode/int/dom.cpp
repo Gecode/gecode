@@ -177,7 +177,7 @@ namespace Gecode {
 
   void
   dom(Home home, IntVar x, IntVar d, IntPropLevel) {
-    using namespace Int;    
+    using namespace Int;
     if (home.failed()) return;
     IntView xv(x), dv(d);
     if (!same(xv,dv)) {
@@ -188,7 +188,7 @@ namespace Gecode {
 
   void
   dom(Home home, BoolVar x, BoolVar d, IntPropLevel) {
-    using namespace Int;    
+    using namespace Int;
     if (home.failed()) return;
     if (d.one())
       GECODE_ME_FAIL(BoolView(x).one(home));
@@ -198,7 +198,7 @@ namespace Gecode {
 
   void
   dom(Home home, const IntVarArgs& x, const IntVarArgs& d, IntPropLevel) {
-    using namespace Int;    
+    using namespace Int;
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Int::dom");
     for (int i=x.size(); i--; ) {
@@ -213,7 +213,7 @@ namespace Gecode {
 
   void
   dom(Home home, const BoolVarArgs& x, const BoolVarArgs& d, IntPropLevel) {
-    using namespace Int;    
+    using namespace Int;
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Int::dom");
     for (int i=x.size(); i--; ) {

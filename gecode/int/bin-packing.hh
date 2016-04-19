@@ -156,8 +156,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
     Pack(Space& home, bool share, Pack& p);
   public:
     /// Post propagator for loads \a l and items \a bs
-    GECODE_INT_EXPORT 
-    static ExecStatus post(Home home, 
+    GECODE_INT_EXPORT
+    static ExecStatus post(Home home,
                            ViewArray<OffsetView>& l, ViewArray<Item>& bs);
     /// Detect non-existence of sums in \a a .. \a b
     template<class SizeSet>
@@ -166,13 +166,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
     template<class SizeSet>
     bool nosum(const SizeSet& s, int a, int b);
     /// Perform propagation
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Cost function
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Destructor
     virtual size_t dispose(Space& home);
@@ -215,12 +215,12 @@ namespace Gecode { namespace Int { namespace BinPacking {
       /// Clear the whole node set for \a n nodes
       void empty(int n);
       /**
-       * Initialize \a ac as intersection of \a a and \a c, 
-       * \a bc as intersection of \a b and \a c where \a n 
-       * is the maximal number of nodes. Return whether both \ac 
+       * Initialize \a ac as intersection of \a a and \a c,
+       * \a bc as intersection of \a b and \a c where \a n
+       * is the maximal number of nodes. Return whether both \ac
        * and \a bc are empty.
        */
-      static bool iwn(NodeSet& iwa, const NodeSet& a, 
+      static bool iwn(NodeSet& iwa, const NodeSet& a,
                       NodeSet& iwb, const NodeSet& b,
                       const NodeSet& c, int n);
     };
@@ -255,14 +255,14 @@ namespace Gecode { namespace Int { namespace BinPacking {
       /// Move iterator to next node (if possible)
       void operator ++(void);
       //@}
-      
+
       /// \name %Node access
       //@{
       /// Return current node
       int operator ()(void) const;
       //@}
     };
-    
+
     /// \name Routines for Bosch-Kerbron algorithm
     //@{
     /// Clique information

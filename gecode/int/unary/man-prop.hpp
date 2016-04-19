@@ -36,7 +36,7 @@
  */
 
 namespace Gecode { namespace Int { namespace Unary {
-  
+
   template<class ManTask, class PL>
   forceinline
   ManProp<ManTask,PL>::ManProp(Home home, TaskArray<ManTask>& t)
@@ -44,12 +44,12 @@ namespace Gecode { namespace Int { namespace Unary {
 
   template<class ManTask, class PL>
   forceinline
-  ManProp<ManTask,PL>::ManProp(Space& home, bool shared, 
-                                      ManProp<ManTask,PL>& p) 
+  ManProp<ManTask,PL>::ManProp(Space& home, bool shared,
+                                      ManProp<ManTask,PL>& p)
     : TaskProp<ManTask,PL>(home,shared,p) {}
 
   template<class ManTask, class PL>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   ManProp<ManTask,PL>::post(Home home, TaskArray<ManTask>& t) {
     if (t.size() > 1)
       (void) new (home) ManProp<ManTask,PL>(home,t);
@@ -57,13 +57,13 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
   template<class ManTask, class PL>
-  Actor* 
+  Actor*
   ManProp<ManTask,PL>::copy(Space& home, bool share) {
     return new (home) ManProp<ManTask,PL>(home,share,*this);
   }
 
   template<class ManTask, class PL>
-  ExecStatus 
+  ExecStatus
   ManProp<ManTask,PL>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(overload(home,t));
 

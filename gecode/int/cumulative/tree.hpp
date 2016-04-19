@@ -67,10 +67,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class TaskView>
-  forceinline void 
+  forceinline void
   OmegaTree<TaskView>::insert(int i) {
-    leaf(i).e = tasks[i].e(); 
-    leaf(i).env = 
+    leaf(i).e = tasks[i].e();
+    leaf(i).env =
       static_cast<long long int>(c)*tasks[i].est()+tasks[i].e();
     update(i);
   }
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   OmegaTree<TaskView>::env(void) const {
     return root().env;
   }
-  
+
   /*
    * Extended Omega tree
    */
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   ExtOmegaTree<TaskView>::init(int ci0) {
     ci = ci0;
     for (int i=tasks.size(); i--; ) {
-      leaf(i).e = 0; 
+      leaf(i).e = 0;
       leaf(i).env = leaf(i).cenv = -Limits::llinfinity;
     }
     init();
@@ -123,10 +123,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
   forceinline long long int
   ExtOmegaTree<TaskView>::env(int i) {
     // Enter task i
-    leaf(i).e = tasks[i].e(); 
-    leaf(i).env = 
+    leaf(i).e = tasks[i].e();
+    leaf(i).env =
       static_cast<long long int>(c)*tasks[i].est()+tasks[i].e();
-    leaf(i).cenv = 
+    leaf(i).cenv =
       static_cast<long long int>(c-ci)*tasks[i].est()+tasks[i].e();
     TaskTree<TaskView,ExtOmegaNode>::update(i);
 
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     {
       long long int e = 0;
       while (!n_leaf(met)) {
-        if (plus(node[n_right(met)].cenv,e) > 
+        if (plus(node[n_right(met)].cenv,e) >
             static_cast<long long int>(c-ci) * tasks[i].lct()) {
           met = n_right(met);
         } else {
@@ -146,7 +146,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     /*
      * The following idea to compute the cut in one go is taken from:
-     * Joseph Scott, Filtering Algorithms for Discrete Resources, 
+     * Joseph Scott, Filtering Algorithms for Discrete Resources,
      * Master Thesis, Uppsala University, 2010 (in preparation).
      */
 
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     return plus(a_env,b_e);
   }
 
-  
+
 
   /*
    * Omega lambda tree
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class TaskView>
-  forceinline void 
+  forceinline void
   OmegaLambdaTree<TaskView>::shift(int i) {
     // i is in omega
     assert(leaf(i).env > -Limits::llinfinity);
@@ -240,7 +240,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     // i not in omega but in lambda
     assert(leaf(i).env == -Limits::llinfinity);
     assert(leaf(i).lenv > -Limits::llinfinity);
-    leaf(i).le = 0; 
+    leaf(i).le = 0;
     leaf(i).lenv = -Limits::llinfinity;
     leaf(i).resLe = OmegaLambdaNode::undef;
     leaf(i).resLenv = OmegaLambdaNode::undef;
@@ -252,25 +252,25 @@ namespace Gecode { namespace Int { namespace Cumulative {
   OmegaLambdaTree<TaskView>::lempty(void) const {
     return root().resLenv < 0;
   }
-  
+
   template<class TaskView>
-  forceinline int 
+  forceinline int
   OmegaLambdaTree<TaskView>::responsible(void) const {
     return root().resLenv;
   }
-  
+
   template<class TaskView>
   forceinline long long int
   OmegaLambdaTree<TaskView>::env(void) const {
     return root().env;
   }
-  
+
   template<class TaskView>
   forceinline long long int
   OmegaLambdaTree<TaskView>::lenv(void) const {
     return root().lenv;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

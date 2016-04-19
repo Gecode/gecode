@@ -522,7 +522,7 @@ namespace Gecode {
     ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
     ES_OK               =  0, ///< Execution is okay
     ES_FIX              =  1, ///< Propagation has computed fixpoint
-    ES_NOFIX_FORCE      =  2, ///< Advisor forces rescheduling of propagator 
+    ES_NOFIX_FORCE      =  2, ///< Advisor forces rescheduling of propagator
     __ES_PARTIAL        =  2  ///< Internal: propagator has computed partial fixpoint, do not use
   };
 
@@ -801,7 +801,7 @@ namespace Gecode {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const = 0;
     /**
      * \brief Return the modification event delta
-     * 
+     *
      * This function returns the modification event delta of the currently
      * executing propagator and hence can only be called within the
      * propagate function of a propagator.
@@ -830,8 +830,8 @@ namespace Gecode {
      *    and the advisor will be disposed.
      *  - ES_NOFIX_DISPOSE: the advisor's propagator must be run and the
      *    advisor will be disposed.
-     *  - ES_NOFIX_FORCE_DISPOSE: the advisor's propagator must be run 
-     *    , it must forcefully be rescheduled (including recomputation 
+     *  - ES_NOFIX_FORCE_DISPOSE: the advisor's propagator must be run
+     *    , it must forcefully be rescheduled (including recomputation
      *    of cost), and the adviser will be disposed.
      * For more details, see the function documentation.
      *
@@ -1046,7 +1046,7 @@ namespace Gecode {
     /// Report size occupied by choice
     virtual size_t size(void) const = 0;
     /// Archive into \a e
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual void archive(Archive& e) const;
   };
 
@@ -1105,7 +1105,7 @@ namespace Gecode {
      * The current brancher in the space \a home performs a commit from
      * the information provided by the choice \a c and the alternative \a a.
      */
-    virtual ExecStatus commit(Space& home, const Choice& c, 
+    virtual ExecStatus commit(Space& home, const Choice& c,
                               unsigned int a) = 0;
     /**
      * \brief Create no-good literal for choice \a c and alternative \a a
@@ -1120,7 +1120,7 @@ namespace Gecode {
      *    of all other alternatives.
      *
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual NGL* ngl(Space& home, const Choice& c, unsigned int a) const;
     /**
      * \brief Print branch for choice \a c and alternative \a a
@@ -1131,7 +1131,7 @@ namespace Gecode {
      * The default function prints nothing.
      *
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual void print(const Space& home, const Choice& c, unsigned int a,
                        std::ostream& o) const;
     //@}
@@ -1238,7 +1238,7 @@ namespace Gecode {
     /// Initialize
     NoGoods(void);
     /// Post no-goods
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual void post(Space& home) const;
     /// Return number of no-goods posted
     unsigned long int ng(void) const;
@@ -1623,7 +1623,7 @@ namespace Gecode {
      * \brief Default constructor
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     Space(void);
     /**
      * \brief Constructor for cloning
@@ -1636,7 +1636,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     Space(bool share, Space& s);
     /**
      * \brief Destructor
@@ -1672,7 +1672,7 @@ namespace Gecode {
      *     master space whenever it finds a solution or exploration
      *     restarts. \a mi contains information about the current restart.
      *
-     *     If a solution has been found, then search will continue with 
+     *     If a solution has been found, then search will continue with
      *     a restart id the function returns true, otherwise search
      *     will continue.
      *
@@ -1685,7 +1685,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual bool master(const MetaInfo& mi);
     /**
      * \brief Slave configuration function for meta search engines
@@ -1699,7 +1699,7 @@ namespace Gecode {
      *
      *     If the function returns true, the search on the slave space is
      *     considered complete, i.e., if it fails or exhaustively explores the
-     *     entire search space, the meta search engine finishes. If the 
+     *     entire search space, the meta search engine finishes. If the
      *     function returns false, the search on the slave space is considered
      *     incomplete, and the meta engine will restart the search regardless
      *     of whether the search on the slave space finishes or times out.
@@ -1712,7 +1712,7 @@ namespace Gecode {
      *
      * \ingroup TaskModelScript
      */
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual bool slave(const MetaInfo& mi);
 
     /*
@@ -1779,7 +1779,7 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     const Choice* choice(Archive& e) const;
-  
+
     /**
      * \brief Clone space
      *
@@ -1803,8 +1803,8 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    Space* clone(bool share_data=true, 
-                 bool share_info=true, 
+    Space* clone(bool share_data=true,
+                 bool share_info=true,
                  CloneStatistics& stat=unused_clone) const;
 
     /**
@@ -1919,7 +1919,7 @@ namespace Gecode {
      * \brief Notice actor property
      *
      * Make the space notice that the actor \a a has the property \a p.
-     * Note that the same property can only be noticed once for an actor 
+     * Note that the same property can only be noticed once for an actor
      * unless \a duplicate is true.
      * \ingroup TaskActor
      */
@@ -1984,11 +1984,11 @@ namespace Gecode {
      * \ingroup TaskActorStatus
      */
     ExecStatus ES_NOFIX_PARTIAL(Propagator& p, const ModEventDelta& med);
-    
+
     /**
      * \brief %Advisor \a a must be disposed
      *
-     * Disposes the advisor and returns that the propagator of \a a 
+     * Disposes the advisor and returns that the propagator of \a a
      * need not be run.
      *
      * \warning Has a side-effect on the advisor. Use only directly when
@@ -2000,7 +2000,7 @@ namespace Gecode {
     /**
      * \brief %Advisor \a a must be disposed and its propagator must be run
      *
-     * Disposes the advisor and returns that the propagator of \a a 
+     * Disposes the advisor and returns that the propagator of \a a
      * must be run.
      *
      * \warning Has a side-effect on the advisor. Use only directly when
@@ -2012,8 +2012,8 @@ namespace Gecode {
     /**
      * \brief %Advisor \a a must be disposed and its propagator must be forcefully rescheduled
      *
-     * Disposes the advisor and returns that the propagator of \a a 
-     * must be run and must be forcefully rescheduled (including 
+     * Disposes the advisor and returns that the propagator of \a a
+     * must be run and must be forcefully rescheduled (including
      * recomputation of cost).
      *
      * \warning Has a side-effect on the advisor. Use only directly when
@@ -2022,7 +2022,7 @@ namespace Gecode {
      */
     template<class A>
     ExecStatus ES_NOFIX_DISPOSE_FORCE(Council<A>& c, A& a);
-    
+
     /**
      * \brief Fail space
      *
@@ -2264,21 +2264,21 @@ namespace Gecode {
     /**
      * \brief Constructs a single object of type \a T from space heap using the default constructor.
      */
-    template<class T> 
+    template<class T>
     T& construct(void);
     /**
      * \brief Constructs a single object of type \a T from space heap using a unary constructor.
      *
      * The parameter is passed as a const reference.
      */
-    template<class T, typename A1> 
+    template<class T, typename A1>
     T& construct(A1 const& a1);
     /**
      * \brief Constructs a single object of type \a T from space heap using a binary constructor.
      *
      * The parameters are passed as const references.
      */
-    template<class T, typename A1, typename A2> 
+    template<class T, typename A1, typename A2>
     T& construct(A1 const& a1, A2 const& a2);
     /**
      * \brief Constructs a single object of type \a T from space heap using a ternary constructor.
@@ -2305,7 +2305,7 @@ namespace Gecode {
 
     /**
      * \brief Class to iterate over propagators of a space
-     * 
+     *
      * Note that the iterator cannot be used during cloning.
      */
     class Propagators {
@@ -2331,7 +2331,7 @@ namespace Gecode {
 
     /**
      * \brief Class to iterate over branchers of a space
-     * 
+     *
      * Note that the iterator cannot be used during cloning.
      */
     class Branchers {
@@ -2349,7 +2349,7 @@ namespace Gecode {
       void operator ++(void);
       /// Return propagator
       const Brancher& brancher(void) const;
-    };    
+    };
 
     /// \name Low-level support for AFC
     //@{
@@ -2698,7 +2698,7 @@ namespace Gecode {
    *
    */
   forceinline
-  NoGoods::NoGoods(void) 
+  NoGoods::NoGoods(void)
     : n(0) {}
   forceinline unsigned long int
   NoGoods::ng(void) const {
@@ -2927,8 +2927,8 @@ namespace Gecode {
     return *this;
   }
   forceinline
-  Home::operator Space&(void) { 
-    return s; 
+  Home::operator Space&(void) {
+    return s;
   }
   forceinline Home
   Home::operator ()(Propagator& p) {
@@ -2969,7 +2969,7 @@ namespace Gecode {
   }
 
   forceinline
-  Propagator::Propagator(Home home) 
+  Propagator::Propagator(Home home)
     : gafc((home.propagator() != NULL) ?
            // Inherit time counter information
            home.propagator()->gafc :
@@ -2981,7 +2981,7 @@ namespace Gecode {
   }
 
   forceinline
-  Propagator::Propagator(Space&, bool, Propagator& p) 
+  Propagator::Propagator(Space&, bool, Propagator& p)
     : gafc(p.gafc) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
@@ -3081,7 +3081,7 @@ namespace Gecode {
      * choices. Then, propagation determines less information
      * than before and the brancher now will create new choices.
      * Later, during recomputation, all of these choices
-     * can be used together, possibly interleaved with 
+     * can be used together, possibly interleaved with
      * choices for other branchers. That means all branchers
      * must be scanned to find the matching brancher for the choice.
      *
@@ -3107,7 +3107,7 @@ namespace Gecode {
     }
     return NULL;
   }
-  
+
   /*
    * Brancher handle
    *
@@ -3139,7 +3139,7 @@ namespace Gecode {
     home.kill_branchers();
   }
 
-  
+
   /*
    * Local objects
    *
@@ -3252,13 +3252,13 @@ namespace Gecode {
   }
 
   forceinline
-  NGL::NGL(void) 
+  NGL::NGL(void)
     : nl(NULL) {}
   forceinline
-  NGL::NGL(Space&) 
+  NGL::NGL(Space&)
     : nl(NULL) {}
   forceinline
-  NGL::NGL(Space&, bool, NGL&) 
+  NGL::NGL(Space&, bool, NGL&)
     : nl(NULL) {}
   forceinline size_t
   NGL::dispose(Space&) {
@@ -3984,7 +3984,7 @@ namespace Gecode {
     reset();
   }
   forceinline StatusStatistics&
-  StatusStatistics::operator +=(const StatusStatistics& s) { 
+  StatusStatistics::operator +=(const StatusStatistics& s) {
     propagate += s.propagate;
     wmp |= s.wmp;
     return *this;
@@ -4008,7 +4008,7 @@ namespace Gecode {
     return s;
   }
   forceinline CloneStatistics&
-  CloneStatistics::operator +=(const CloneStatistics&) { 
+  CloneStatistics::operator +=(const CloneStatistics&) {
     return *this;
   }
 
@@ -4025,7 +4025,7 @@ namespace Gecode {
     return s;
   }
   forceinline CommitStatistics&
-  CommitStatistics::operator +=(const CommitStatistics&) { 
+  CommitStatistics::operator +=(const CommitStatistics&) {
     return *this;
   }
 
@@ -4105,7 +4105,7 @@ namespace Gecode {
    *
    */
   forceinline
-  Space::Propagators::Propagators(const Space& home0) 
+  Space::Propagators::Propagators(const Space& home0)
     : home(home0), q(home.pc.p.active) {
     while (q >= &home.pc.p.queue[0]) {
       if (q->next() != q) {
@@ -4122,11 +4122,11 @@ namespace Gecode {
       c = e = NULL;
     }
   }
-  forceinline bool 
+  forceinline bool
   Space::Propagators::operator ()(void) const {
     return c != NULL;
   }
-  forceinline void 
+  forceinline void
   Space::Propagators::operator ++(void) {
     c = c->next();
     if (c == e) {
@@ -4150,23 +4150,23 @@ namespace Gecode {
       }
     }
   }
-  forceinline const Propagator& 
+  forceinline const Propagator&
   Space::Propagators::propagator(void) const {
     return *Propagator::cast(c);
   }
 
   forceinline
-  Space::Branchers::Branchers(const Space& home) 
+  Space::Branchers::Branchers(const Space& home)
     : c(Brancher::cast(home.bl.next())), e(&home.bl) {}
-  forceinline bool 
+  forceinline bool
   Space::Branchers::operator ()(void) const {
     return c != e;
   }
-  forceinline void 
+  forceinline void
   Space::Branchers::operator ++(void) {
     c = c->next();
   }
-  forceinline const Brancher& 
+  forceinline const Brancher&
   Space::Branchers::brancher(void) const {
     return *Brancher::cast(c);
   }
@@ -4175,41 +4175,41 @@ namespace Gecode {
    * Space construction support
    *
    */
-  template<class T> 
-  forceinline T& 
+  template<class T>
+  forceinline T&
   Space::construct(void) {
     return alloc<T>(1);
   }
-  template<class T, typename A1> 
-  forceinline T& 
+  template<class T, typename A1>
+  forceinline T&
   Space::construct(A1 const& a1) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1);
     return t;
   }
-  template<class T, typename A1, typename A2> 
-  forceinline T& 
+  template<class T, typename A1, typename A2>
+  forceinline T&
   Space::construct(A1 const& a1, A2 const& a2) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3>
-  forceinline T& 
+  forceinline T&
   Space::construct(A1 const& a1, A2 const& a2, A3 const& a3) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3, typename A4>
-  forceinline T& 
+  forceinline T&
   Space::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3,a4);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3, typename A4, typename A5>
-  forceinline T& 
+  forceinline T&
   Space::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3,a4,a5);

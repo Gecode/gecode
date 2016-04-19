@@ -63,19 +63,19 @@ namespace Gecode {
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s) = 0;
     /// Select a view from \a x starting from \a s and return its position
-    virtual int select(Space& home, ViewArray<View>& x, int s, 
+    virtual int select(Space& home, ViewArray<View>& x, int s,
                        BranchFilter bf) = 0;
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n) = 0;
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n, BranchFilter bf) = 0;
     /// Break ties in \a x and update to new ties
-    virtual void brk(Space& home, ViewArray<View>& x, 
+    virtual void brk(Space& home, ViewArray<View>& x,
                      int* ties, int& n) = 0;
     /// Select a view from \a x considering views with positions in \a ties
-    virtual int select(Space& home, ViewArray<View>& x, 
+    virtual int select(Space& home, ViewArray<View>& x,
                        int* ties, int n) = 0;
     //@}
     /// \name Resource management and cloning
@@ -115,17 +115,17 @@ namespace Gecode {
     /// Select a view from \a x starting at \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s);
     /// Select a view from \a x starting at \a s and return its position
-    virtual int select(Space& home, ViewArray<View>& x, int s, 
+    virtual int select(Space& home, ViewArray<View>& x, int s,
                        BranchFilter bf);
     /// Select ties from \a x starting at \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
     /// Select ties from \a x starting at \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n,
                       BranchFilter bf);
     /// Break ties in \a x and update to new ties
-    virtual void brk(Space& home, ViewArray<View>& x, 
+    virtual void brk(Space& home, ViewArray<View>& x,
                      int* ties, int& n);
     /// Select a view from \a x considering view with positions in \a ties
     virtual int select(Space& home, ViewArray<View>& x, int* ties, int n);
@@ -160,10 +160,10 @@ namespace Gecode {
     virtual int select(Space& home, ViewArray<View>& x, int s,
                        BranchFilter bf);
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n, BranchFilter bf);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
@@ -218,13 +218,13 @@ namespace Gecode {
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s);
     /// Select a view from \a x starting from \a s and return its position
-    virtual int select(Space& home, ViewArray<View>& x, int s, 
+    virtual int select(Space& home, ViewArray<View>& x, int s,
                        BranchFilter bf);
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n, BranchFilter bf);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
@@ -258,16 +258,16 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelChooseTbl(Space& home, const VarBranch& vb);
     /// Constructor for copying during cloning
-    ViewSelChooseTbl(Space& home, bool shared, 
-                     ViewSelChooseTbl<Choose,Merit>& vs); 
+    ViewSelChooseTbl(Space& home, bool shared,
+                     ViewSelChooseTbl<Choose,Merit>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
     /// Select ties from \a x starting from \a s
-    virtual void ties(Space& home, ViewArray<View>& x, int s, 
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n, BranchFilter bf);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
@@ -385,11 +385,11 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  ViewSelNone<View>::ViewSelNone(Space& home, const VarBranch& vb) 
+  ViewSelNone<View>::ViewSelNone(Space& home, const VarBranch& vb)
       : ViewSel<View>(home,vb) {}
   template<class View>
   forceinline
-  ViewSelNone<View>::ViewSelNone(Space& home, bool shared, 
+  ViewSelNone<View>::ViewSelNone(Space& home, bool shared,
                                  ViewSelNone<View>& vs)
     : ViewSel<View>(home,shared,vs) {}
   template<class View>
@@ -403,8 +403,8 @@ namespace Gecode {
     return s;
   }
   template<class View>
-  void 
-  ViewSelNone<View>::ties(Space&, ViewArray<View>& x, int s, 
+  void
+  ViewSelNone<View>::ties(Space&, ViewArray<View>& x, int s,
                           int* ties, int& n) {
     int j=0; ties[j++]=s;
     for (int i=s+1; i<x.size(); i++)
@@ -414,8 +414,8 @@ namespace Gecode {
     assert(n > 0);
   }
   template<class View>
-  void 
-  ViewSelNone<View>::ties(Space& home, ViewArray<View>& x, int s, 
+  void
+  ViewSelNone<View>::ties(Space& home, ViewArray<View>& x, int s,
                           int* ties, int& n, BranchFilter bf) {
     int j=0; ties[j++]=s;
     for (int i=s+1; i<x.size(); i++) {
@@ -445,7 +445,7 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space& home, const VarBranch& vb) 
+  ViewSelRnd<View>::ViewSelRnd(Space& home, const VarBranch& vb)
       : ViewSel<View>(home,vb), r(vb.rnd()) {}
   template<class View>
   forceinline
@@ -480,19 +480,19 @@ namespace Gecode {
     return j;
   }
   template<class View>
-  void 
-  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s, 
+  void
+  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
                          int* ties, int& n) {
     n=1; ties[0] = select(home,x,s);
   }
   template<class View>
   void
-  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s, 
+  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
                          int* ties, int& n, BranchFilter bf) {
     n=1; ties[0] = select(home,x,s,bf);
   }
   template<class View>
-  void 
+  void
   ViewSelRnd<View>::brk(Space&, ViewArray<View>&, int* ties, int& n) {
     ties[0] = ties[static_cast<int>(r(static_cast<unsigned int>(n)))];
     n=1;
@@ -523,13 +523,13 @@ namespace Gecode {
 
   template<class Choose, class Merit>
   forceinline
-  ViewSelChoose<Choose,Merit>::ViewSelChoose(Space& home, const VarBranch& vb) 
+  ViewSelChoose<Choose,Merit>::ViewSelChoose(Space& home, const VarBranch& vb)
     : ViewSel<View>(home,vb), m(home,vb) {}
 
   template<class Choose, class Merit>
   forceinline
-  ViewSelChoose<Choose,Merit>::ViewSelChoose(Space& home, bool shared, 
-                                             ViewSelChoose<Choose,Merit>& vs) 
+  ViewSelChoose<Choose,Merit>::ViewSelChoose(Space& home, bool shared,
+                                             ViewSelChoose<Choose,Merit>& vs)
     : ViewSel<View>(home,shared,vs), m(home,shared,vs.m) {}
 
   template<class Choose, class Merit>
@@ -550,8 +550,8 @@ namespace Gecode {
   }
 
   template<class Choose, class Merit>
-  int 
-  ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x, int s, 
+  int
+  ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x, int s,
                                       BranchFilter bf) {
     // Consider x[s] as the so-far best view
     int b_i = s;
@@ -570,8 +570,8 @@ namespace Gecode {
   }
 
   template<class Choose, class Merit>
-  void 
-  ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
+  void
+  ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
                                     int* ties, int& n) {
     // Consider x[s] as the so-far best view and record as tie
     Val b = m(home,x[s],s);
@@ -593,8 +593,8 @@ namespace Gecode {
   }
 
   template<class Choose, class Merit>
-  void 
-  ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
+  void
+  ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
                                     int* ties, int& n, BranchFilter bf) {
     // Consider x[s] as the so-far best view and record as tie
     Val b = m(home,x[s],s);
@@ -618,8 +618,8 @@ namespace Gecode {
   }
 
   template<class Choose, class Merit>
-  void 
-  ViewSelChoose<Choose,Merit>::brk(Space& home, ViewArray<View>& x, 
+  void
+  ViewSelChoose<Choose,Merit>::brk(Space& home, ViewArray<View>& x,
                                    int* ties, int& n) {
     // Keep first tie in place
     Val b = m(home,x[ties[0]],ties[0]);
@@ -636,13 +636,13 @@ namespace Gecode {
       }
     }
     n=j;
-    // There must be at least one tie, of course!      
+    // There must be at least one tie, of course!
     assert(n > 0);
   }
 
   template<class Choose, class Merit>
-  int 
-  ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x, 
+  int
+  ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x,
                                       int* ties, int n) {
     int b_i = ties[0];
     Val b_m = m(home,x[ties[0]],ties[0]);
@@ -654,15 +654,15 @@ namespace Gecode {
     }
     return b_i;
   }
-  
+
   template<class Choose, class Merit>
-  bool 
+  bool
   ViewSelChoose<Choose,Merit>::notice(void) const {
     return m.notice();
   }
 
   template<class Choose, class Merit>
-  void 
+  void
   ViewSelChoose<Choose,Merit>::dispose(Space& home) {
     m.dispose(home);
   }
@@ -670,20 +670,20 @@ namespace Gecode {
 
   template<class Choose, class Merit>
   forceinline
-  ViewSelChooseTbl<Choose,Merit>::ViewSelChooseTbl(Space& home, 
-                                                   const VarBranch& vb) 
+  ViewSelChooseTbl<Choose,Merit>::ViewSelChooseTbl(Space& home,
+                                                   const VarBranch& vb)
     : ViewSelChoose<Choose,Merit>(home,vb), tbl(vb.tbl()) {}
 
   template<class Choose, class Merit>
   forceinline
   ViewSelChooseTbl<Choose,Merit>::ViewSelChooseTbl
-  (Space& home, bool shared, 
-   ViewSelChooseTbl<Choose,Merit>& vs) 
+  (Space& home, bool shared,
+   ViewSelChooseTbl<Choose,Merit>& vs)
     : ViewSelChoose<Choose,Merit>(home,shared,vs), tbl(vs.tbl) {}
 
   template<class Choose, class Merit>
-  void 
-  ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
+  void
+  ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
                                        int* ties, int& n) {
     // Find the worst and best merit value
     Val w = m(home,x[s],s);
@@ -722,7 +722,7 @@ namespace Gecode {
 
   template<class Choose, class Merit>
   void
-  ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s, 
+  ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
                                        int* ties, int& n, BranchFilter bf) {
     // Find the worst and best merit value
     Val w = m(home,x[s],s);
@@ -744,7 +744,7 @@ namespace Gecode {
       int j=0;
       for (int i=s; i<x.size(); i++) {
         typename View::VarType y(x[i].varimp());
-        if (!x[i].assigned() && bf(home,y,i)) 
+        if (!x[i].assigned() && bf(home,y,i))
           ties[j++]=i;
       }
       n=j;
@@ -756,7 +756,7 @@ namespace Gecode {
       int j=0;
       for (int i=s; i<x.size(); i++) {
         typename View::VarType y(x[i].varimp());
-        if (!x[i].assigned() && bf(home,y,i) && 
+        if (!x[i].assigned() && bf(home,y,i) &&
             !c(l,static_cast<double>(m(home,x[i],i))))
           ties[j++]=i;
       }
@@ -803,17 +803,17 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMin<Merit>::ViewSelMin(Space& home, const VarBranch& vb) 
+  ViewSelMin<Merit>::ViewSelMin(Space& home, const VarBranch& vb)
     : ViewSelChoose<ChooseMin,Merit>(home,vb) {}
 
   template<class Merit>
   forceinline
-  ViewSelMin<Merit>::ViewSelMin(Space& home, bool shared, 
-                                ViewSelMin<Merit>& vs) 
+  ViewSelMin<Merit>::ViewSelMin(Space& home, bool shared,
+                                ViewSelMin<Merit>& vs)
     : ViewSelChoose<ChooseMin,Merit>(home,shared,vs) {}
 
   template<class Merit>
-  ViewSel<typename ViewSelMin<Merit>::View>* 
+  ViewSel<typename ViewSelMin<Merit>::View>*
   ViewSelMin<Merit>::copy(Space& home, bool shared) {
     return new (home) ViewSelMin<Merit>(home,shared,*this);
   }
@@ -821,17 +821,17 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMinTbl<Merit>::ViewSelMinTbl(Space& home, const VarBranch& vb) 
+  ViewSelMinTbl<Merit>::ViewSelMinTbl(Space& home, const VarBranch& vb)
     : ViewSelChooseTbl<ChooseMin,Merit>(home,vb) {}
 
   template<class Merit>
   forceinline
-  ViewSelMinTbl<Merit>::ViewSelMinTbl(Space& home, bool shared, 
-                                      ViewSelMinTbl<Merit>& vs) 
+  ViewSelMinTbl<Merit>::ViewSelMinTbl(Space& home, bool shared,
+                                      ViewSelMinTbl<Merit>& vs)
     : ViewSelChooseTbl<ChooseMin,Merit>(home,shared,vs) {}
 
   template<class Merit>
-  ViewSel<typename ViewSelMinTbl<Merit>::View>* 
+  ViewSel<typename ViewSelMinTbl<Merit>::View>*
   ViewSelMinTbl<Merit>::copy(Space& home, bool shared) {
     return new (home) ViewSelMinTbl<Merit>(home,shared,*this);
   }
@@ -840,17 +840,17 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMax<Merit>::ViewSelMax(Space& home, const VarBranch& vb) 
+  ViewSelMax<Merit>::ViewSelMax(Space& home, const VarBranch& vb)
     : ViewSelChoose<ChooseMax,Merit>(home,vb) {}
 
   template<class Merit>
   forceinline
-  ViewSelMax<Merit>::ViewSelMax(Space& home, bool shared, 
-                                ViewSelMax<Merit>& vs) 
+  ViewSelMax<Merit>::ViewSelMax(Space& home, bool shared,
+                                ViewSelMax<Merit>& vs)
     : ViewSelChoose<ChooseMax,Merit>(home,shared,vs) {}
 
   template<class Merit>
-  ViewSel<typename ViewSelMax<Merit>::View>* 
+  ViewSel<typename ViewSelMax<Merit>::View>*
   ViewSelMax<Merit>::copy(Space& home, bool shared) {
     return new (home) ViewSelMax<Merit>(home,shared,*this);
   }
@@ -859,17 +859,17 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMaxTbl<Merit>::ViewSelMaxTbl(Space& home, const VarBranch& vb) 
+  ViewSelMaxTbl<Merit>::ViewSelMaxTbl(Space& home, const VarBranch& vb)
     : ViewSelChooseTbl<ChooseMax,Merit>(home,vb) {}
 
   template<class Merit>
   forceinline
-  ViewSelMaxTbl<Merit>::ViewSelMaxTbl(Space& home, bool shared, 
-                                      ViewSelMaxTbl<Merit>& vs) 
+  ViewSelMaxTbl<Merit>::ViewSelMaxTbl(Space& home, bool shared,
+                                      ViewSelMaxTbl<Merit>& vs)
     : ViewSelChooseTbl<ChooseMax,Merit>(home,shared,vs) {}
 
   template<class Merit>
-  ViewSel<typename ViewSelMaxTbl<Merit>::View>* 
+  ViewSel<typename ViewSelMaxTbl<Merit>::View>*
   ViewSelMaxTbl<Merit>::copy(Space& home, bool shared) {
     return new (home) ViewSelMaxTbl<Merit>(home,shared,*this);
   }

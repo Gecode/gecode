@@ -84,7 +84,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const IntArgs& a, const IntVarArgs& x, IntRelType irt, int c, 
+         const IntArgs& a, const IntVarArgs& x, IntRelType irt, int c,
          Reify r, IntPropLevel) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");

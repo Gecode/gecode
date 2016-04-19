@@ -196,7 +196,7 @@ namespace Test { namespace LDSB {
     virtual IntSetArgs* expectedSolutions(void) { return NULL; }
   };
 #endif
-  
+
   /// %Test for %LDSB infrastructure
   template <class T>
   class LDSB : public Base {
@@ -250,7 +250,7 @@ namespace Test { namespace LDSB {
     }
   };
 #endif
-  
+
   // Test cases
 
   /// %Test for variable symmetry
@@ -731,7 +731,7 @@ namespace Test { namespace LDSB {
         linear(h, m.row(i), IRT_EQ, 3);
 
       Symmetries s;
-    
+
       IntArgs a = IntArgs::create(n, 0);
       // Rows are interchangeable.
       s << VariableSequenceSymmetry(xs, 3);
@@ -809,7 +809,7 @@ namespace Test { namespace LDSB {
       tuples.add(IntArgs(3, 6,7,5));
       tuples.finalize();
       extensional(h, xs, tuples);
-        
+
       // Values 0,1,2 are symmetric with 3,4,5, and with 6,7,8.
       IntArgs values(9, 0,1,2, 3,4,5, 6,7,8);
       Symmetries s;
@@ -1262,11 +1262,11 @@ namespace Test { namespace LDSB {
       // we know that symmetry is active and we can post x[3]!=0.  If
       // it doesn't, we don't use the symmetry and we find a solution
       // where x[3]=0.
-      
-      // expected.push_back(IntArgs(4, 0,1,0,0)); 
-      
+
+      // expected.push_back(IntArgs(4, 0,1,0,0));
+
       expected.push_back(IntArgs(4, 0,1,0,1));
-      
+
       expected.push_back(IntArgs(4, 1,0,1,0));
       expected.push_back(IntArgs(4, 1,0,1,1));
       expected.push_back(IntArgs(4, 1,1,1,1));
@@ -1525,7 +1525,7 @@ namespace Test { namespace LDSB {
       // expected.push_back(ISA(4,    -1,  -1,0,-1,  -1));
       // expected.push_back(ISA(4,    -1,  -1,  -1,0,-1));
       expected.push_back(ISA(4,    -1,  -1,  -1,  -1));
-      
+
       return expected;
     }
   };

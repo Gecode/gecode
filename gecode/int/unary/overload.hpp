@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Unary {
     }
     return ES_OK;
   }
-  
+
   // Overload checking for optional tasks
   template<class OptTask, class PL>
   ExecStatus
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Unary {
       GECODE_ES_CHECK((purge<OptTask,PL>(home,p,t)));
     return ES_OK;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

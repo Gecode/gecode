@@ -384,7 +384,7 @@ namespace Gecode { namespace Float {
     /// Initialize as \f$b\cdot y\f$
     ScaleView(FloatVal b, const FloatView& y);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return domain
@@ -497,22 +497,22 @@ namespace Gecode { namespace Float {
     RT_MAYBE = 1, ///< Relation may hold or not
     RT_TRUE  = 2  ///< Relation does hold
   };
-  
+
   /// Test whether views \a x and \a y are equal
   template<class View> RelTest rtest_eq(View x, View y);
   /// Test whether view \a x and Float \a n are equal
   template<class View> RelTest rtest_eq(View x, FloatVal n);
-  
+
   /// Test whether view \a x is less or equal than view \a y
   template<class View> RelTest rtest_lq(View x, View y);
   /// Test whether view \a x is less or equal than float \a n
   template<class View> RelTest rtest_lq(View x, FloatVal n);
-  
+
   /// Test whether view \a x is less than view \a y
   template<class View> RelTest rtest_le(View x, View y);
   /// Test whether view \a x is less or equal than float \a n
   template<class View> RelTest rtest_le(View x, FloatVal n);
-  
+
   //@}
 
 }}

@@ -442,7 +442,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Graph-interface
     //@{
     /// Check whether minimum requirements shrink variable domains
-    ExecStatus min_require(Space& home, 
+    ExecStatus min_require(Space& home,
                            ViewArray<IntView>& x, ViewArray<Card>& k);
 
     /**
@@ -511,8 +511,8 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   Node::Node(void) {}
   forceinline
-  Node::Node(NodeFlag nf0, int i) 
-    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i), 
+  Node::Node(NodeFlag nf0, int i)
+    : e(NULL), fst(NULL), lst(NULL), ie(NULL), idx(i),
       nf(static_cast<unsigned char>(nf0)), noe(0) {}
 
   forceinline Edge**
@@ -1080,7 +1080,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline ExecStatus
-  VarValGraph<Card>::min_require(Space& home, 
+  VarValGraph<Card>::min_require(Space& home,
                                  ViewArray<IntView>& x,
                                  ViewArray<Card>& k) {
     for (int i = n_val; i--; ) {
@@ -1325,7 +1325,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card> template<BC bc>
   inline ExecStatus
-  VarValGraph<Card>::narrow(Space& home, 
+  VarValGraph<Card>::narrow(Space& home,
                             ViewArray<IntView>& x, ViewArray<Card>& k) {
     for (int i = n_var; i--; )
       if (vars[i]->noe == 1) {
@@ -1464,7 +1464,7 @@ namespace Gecode { namespace Int { namespace GCC {
         Node* w = e->getMate(v->type());
         if (!visited.get(static_cast<unsigned int>(w->index()))) {
           // unexplored path
-          bool m = w->type() ? 
+          bool m = w->type() ?
             static_cast<ValNode*>(w)->matched(bc) :
             static_cast<VarNode*>(w)->matched(bc);
           if (!m && w->type() != sp) {
@@ -1523,7 +1523,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     Region r(home);
     switch (bc) {
-    case LBC: 
+    case LBC:
       if (card_match < sum_min) {
         Support::StaticStack<ValNode*,Region> free(r,n_val);
 
@@ -1531,7 +1531,7 @@ namespace Gecode { namespace Int { namespace GCC {
         for (int i = n_val; i--; )
           if (!vals[i]->matched(LBC))
             free.push(vals[i]);
-        
+
         while (!free.empty()) {
           ValNode* v = free.pop();
           while (!v->matched(LBC))
@@ -1587,12 +1587,12 @@ namespace Gecode { namespace Int { namespace GCC {
       // they are the starting point of an even alternating path in G
       for (int i = n_var; i--; )
         if (!vars[i]->matched(LBC)) {
-          ns.push(vars[i]); 
+          ns.push(vars[i]);
           visited.set(static_cast<unsigned int>(vars[i]->index()));
         }
       for (int i = n_val; i--; )
         if (!vals[i]->matched(LBC)) {
-          ns.push(vals[i]); 
+          ns.push(vals[i]);
           visited.set(static_cast<unsigned int>(vals[i]->index()));
         }
       break;
@@ -1601,7 +1601,7 @@ namespace Gecode { namespace Int { namespace GCC {
       // corresponding to a set cover on x there are NO free var nodes
       for (int i = n_val; i--; )
         if (!vals[i]->matched(UBC)) {
-          ns.push(vals[i]); 
+          ns.push(vals[i]);
           visited.set(static_cast<unsigned int>(vals[i]->index()));
         }
       break;
@@ -1622,7 +1622,7 @@ namespace Gecode { namespace Int { namespace GCC {
               // mark the edge
               cur->use(LBC);
               if (!visited.get(static_cast<unsigned int>(mate->index()))) {
-                ns.push(mate); 
+                ns.push(mate);
                 visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
@@ -1632,7 +1632,7 @@ namespace Gecode { namespace Int { namespace GCC {
               // mark the edge
               cur->use(UBC);
               if (!visited.get(static_cast<unsigned int>(mate->index()))) {
-                ns.push(mate); 
+                ns.push(mate);
                 visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
@@ -1646,20 +1646,20 @@ namespace Gecode { namespace Int { namespace GCC {
         VarNode* vrn = static_cast<VarNode*>(node);
 
         switch (bc) {
-        case LBC: 
+        case LBC:
           // after LBC-matching we can follow every unmatched edge
           for (Edge* cur = vrn->first(); cur != NULL; cur = cur->next()) {
             ValNode* mate = cur->getVal();
             if (!cur->matched(LBC)) {
               cur->use(LBC);
               if (!visited.get(static_cast<unsigned int>(mate->index()))) {
-                ns.push(mate); 
+                ns.push(mate);
                 visited.set(static_cast<unsigned int>(mate->index()));
               }
             }
           }
           break;
-        case UBC: 
+        case UBC:
           // after UBC-matching we can only follow a matched edge
           {
             Edge* cur = vrn->get_match(UBC);
@@ -1667,7 +1667,7 @@ namespace Gecode { namespace Int { namespace GCC {
               cur->use(UBC);
               ValNode* mate = cur->getVal();
               if (!visited.get(static_cast<unsigned int>(mate->index()))) {
-                ns.push(mate); 
+                ns.push(mate);
                 visited.set(static_cast<unsigned int>(mate->index()));
               }
             }

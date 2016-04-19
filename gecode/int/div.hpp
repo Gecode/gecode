@@ -56,26 +56,26 @@ namespace Gecode { namespace Int {
   }
 
   template<class IntType>
-  forceinline IntType 
+  forceinline IntType
   ceil_div_px(IntType x, IntType y) {
     assert(x >= 0);
     return (y >= 0) ? ceil_div_pp(x,y) : -floor_div_pp(x,-y);
   }
   template<class IntType>
-  forceinline IntType 
+  forceinline IntType
   floor_div_px(IntType x, IntType y) {
     assert(x >= 0);
     return (y >= 0) ? floor_div_pp(x,y) : -ceil_div_pp(x,-y);
   }
 
   template<class IntType>
-  forceinline IntType 
+  forceinline IntType
   ceil_div_xp(IntType x, IntType y) {
     assert(y >= 0);
     return (x >= 0) ? ceil_div_pp(x,y) : -floor_div_pp(-x,y);
   }
   template<class IntType>
-  forceinline IntType 
+  forceinline IntType
   floor_div_xp(IntType x, IntType y) {
     assert(y >= 0);
     return (x >= 0) ? floor_div_pp(x,y) : -ceil_div_pp(-x,y);

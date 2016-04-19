@@ -42,7 +42,7 @@ namespace Gecode { namespace Set {
   template<class View>
   forceinline
   CachedView<View>::CachedView(void) {}
-  
+
   template<class View>
   forceinline
   CachedView<View>::CachedView(const View& y)
@@ -53,69 +53,69 @@ namespace Gecode { namespace Set {
   CachedView<View>::glbSize(void) const {
     return x.glbSize();
   }
-  
+
   template<class View>
   forceinline unsigned int
   CachedView<View>::lubSize(void) const {
     return x.lubSize();
   }
-  
+
   template<class View>
   forceinline unsigned int
   CachedView<View>::unknownSize(void) const {
     return x.unknownSize();
   }
-  
+
   template<class View>
   forceinline bool
   CachedView<View>::contains(int n) const { return x.contains(n); }
-  
+
   template<class View>
   forceinline bool
   CachedView<View>::notContains(int n) const { return x.notContains(n); }
-  
+
   template<class View>
   forceinline unsigned int
   CachedView<View>::cardMin(void) const {
     return x.cardMin();
   }
-  
+
   template<class View>
   forceinline unsigned int
   CachedView<View>::cardMax(void) const {
     return x.cardMax();
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::lubMin(void) const {
     return x.lubMin();
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::lubMax(void) const {
     return x.lubMax();
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::glbMin(void) const {
     return x.glbMin();
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::glbMax(void) const {
     return x.glbMax();
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::cardMin(Space& home, unsigned int m) {
     return x.cardMin(home,m);
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::cardMax(Space& home, unsigned int m) {
@@ -127,37 +127,37 @@ namespace Gecode { namespace Set {
   CachedView<View>::include(Space& home, int i) {
     return x.include(home,i);
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::exclude(Space& home, int i) {
     return x.exclude(home,i);
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::intersect(Space& home, int i) {
     return x.intersect(home,i);
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::intersect(Space& home, int i, int j) {
     return x.intersect(home,i,j);
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::include(Space& home, int i, int j) {
     return x.include(home,i,j);
   }
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::exclude(Space& home, int i, int j) {
     return x.exclude(home,i,j);
   }
-  
+
   template<class View>
   template<class I> ModEvent
   CachedView<View>::excludeI(Space& home,I& iter) {
@@ -169,38 +169,38 @@ namespace Gecode { namespace Set {
   CachedView<View>::includeI(Space& home,I& iter) {
     return x.includeI(home,iter);
   }
-  
+
   template<class View>
   template<class I> ModEvent
   CachedView<View>::intersectI(Space& home,I& iter) {
     return x.intersectI(home,iter);
   }
-  
+
   template<class View>
   forceinline void
   CachedView<View>::subscribe(Space& home, Propagator& p, PropCond pc,
                                   bool schedule) {
     x.subscribe(home,p,pc,schedule);
   }
-  
+
   template<class View>
   forceinline void
   CachedView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     x.cancel(home,p,pc);
   }
-  
+
   template<class View>
   forceinline void
   CachedView<View>::subscribe(Space& home, Advisor& a) {
     x.subscribe(home,a);
   }
-  
+
   template<class View>
   forceinline void
   CachedView<View>::cancel(Space& home, Advisor& a) {
     x.cancel(home,a);
   }
-  
+
   template<class View>
   forceinline void
   CachedView<View>::schedule(Space& home, Propagator& p, ModEvent me) {
@@ -211,48 +211,48 @@ namespace Gecode { namespace Set {
   CachedView<View>::me(const ModEventDelta& med) {
     return View::me(med);
   }
-  
+
   template<class View>
   forceinline ModEventDelta
   CachedView<View>::med(ModEvent me) {
     return View::med(me);
   }
-  
+
   /*
    * Delta information for advisors
    *
    */
-  
+
   template<class View>
   forceinline ModEvent
   CachedView<View>::modevent(const Delta& d) {
     return View::modevent(d);
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::glbMin(const Delta& d) const {
     return x.glbMin(d);
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::glbMax(const Delta& d) const {
     return x.glbMax(d);
   }
-  
+
   template<class View>
   forceinline bool
   CachedView<View>::glbAny(const Delta& d) const {
     return x.glbAny(d);
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::lubMin(const Delta& d) const {
     return x.lubMin(d);
   }
-  
+
   template<class View>
   forceinline int
   CachedView<View>::lubMax(const Delta& d) const {

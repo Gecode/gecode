@@ -468,7 +468,7 @@ namespace Gecode {
         int i=0;
         while (i < m_trans) {
           int j=i++;
-          while ((i < m_trans) && 
+          while ((i < m_trans) &&
                  (d->trans[j].symbol == d->trans[i].symbol))
             i++;
           max_degree = std::max(max_degree,static_cast<unsigned int>(i-j));

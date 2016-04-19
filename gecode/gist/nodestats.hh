@@ -76,7 +76,7 @@ namespace Gecode { namespace Gist {
     /// Show this window and bring it to the front
     void showStats(void);
   };
-  
+
 }}
 
 #endif

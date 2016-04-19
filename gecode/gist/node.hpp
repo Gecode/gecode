@@ -112,7 +112,7 @@ namespace Gecode { namespace Gist {
     assert(i/NodeBlockSize < cur_b || i%NodeBlockSize <= cur_t);
     b[i/NodeBlockSize]->best[i%NodeBlockSize] = best;
   }
-  
+
   template<class T>
   forceinline bool
   NodeAllocatorBase<T>::bab(void) const {
@@ -130,7 +130,7 @@ namespace Gecode { namespace Gist {
   NodeAllocatorBase<T>::hasLabel(T* n) const {
     return labels.contains(n);
   }
-  
+
   template<class T>
   void
   NodeAllocatorBase<T>::setLabel(T* n, const QString& l) {
@@ -148,7 +148,7 @@ namespace Gecode { namespace Gist {
   NodeAllocatorBase<T>::getLabel(T* n) const {
     return labels.value(n);
   }
-  
+
   forceinline unsigned int
   Node::getTag(void) const {
     return static_cast<unsigned int>

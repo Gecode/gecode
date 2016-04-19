@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
   template<class VX, class VY, class VZ>
   forceinline bool
-  ViewBase<VX,VY,VZ>::sharing(const ViewArray<VX>& x, 
+  ViewBase<VX,VY,VZ>::sharing(const ViewArray<VX>& x,
                               const VY& y, const VZ& z) {
     if (shared(y,z))
       return true;

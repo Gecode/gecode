@@ -151,7 +151,7 @@ namespace Gecode {
   }
 
   void
-  element(Home home, IntSharedArray a, 
+  element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntPropLevel ipl) {
     using namespace Int;
@@ -162,7 +162,7 @@ namespace Gecode {
   }
 
   void
-  element(Home home, IntSharedArray a, 
+  element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntPropLevel ipl) {
     using namespace Int;
@@ -173,7 +173,7 @@ namespace Gecode {
   }
 
   void
-  element(Home home, const IntVarArgs& a, 
+  element(Home home, const IntVarArgs& a,
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntPropLevel ipl) {
     using namespace Int;
@@ -184,7 +184,7 @@ namespace Gecode {
   }
 
   void
-  element(Home home, const BoolVarArgs& a, 
+  element(Home home, const BoolVarArgs& a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntPropLevel ipl) {
     using namespace Int;

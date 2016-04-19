@@ -53,8 +53,8 @@ public:
   TestSpace(bool share, TestSpace& t) : Space(share, t) {
     x.update(*this, share, t.x);
   }
-  virtual Space* copy(bool share) { 
-    return new TestSpace(share,*this); 
+  virtual Space* copy(bool share) {
+    return new TestSpace(share,*this);
   }
   virtual void print(std::ostream& os) const {
     os << x << std::endl;

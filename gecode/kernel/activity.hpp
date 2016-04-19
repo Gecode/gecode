@@ -119,7 +119,7 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     ~Activity(void);
     //@}
-    
+
     /// \name Information access
     //@{
     /// Return activity value at position \a i
@@ -185,7 +185,7 @@ namespace Gecode {
     /// Post activity recorder propagator
     static ExecStatus post(Home home, ViewArray<View>& x, Activity& a);
   };
-    
+
   /**
    * \brief Print activity values enclosed in curly brackets
    * \relates Activity
@@ -202,7 +202,7 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Idx::Idx(Space& home, Propagator& p, 
+  Activity::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
                                      Council<Idx>& c, int i)
     : Advisor(home,p,c), _info(i << 1) {}
   template<class View>
@@ -239,7 +239,7 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Recorder(Home home, ViewArray<View>& x, 
+  Activity::Recorder<View>::Recorder(Home home, ViewArray<View>& x,
                                      Activity& a0)
     : NaryPropagator<View,PC_GEN_NONE>(home,x), a(a0), c(home) {
     home.notice(*this,AP_DISPOSE);
@@ -250,7 +250,7 @@ namespace Gecode {
 
   template<class View>
   forceinline ExecStatus
-  Activity::Recorder<View>::post(Home home, ViewArray<View>& x, 
+  Activity::Recorder<View>::post(Home home, ViewArray<View>& x,
                                  Activity& a) {
     (void) new (home) Recorder<View>(home,x,a);
     return ES_OK;
@@ -264,7 +264,7 @@ namespace Gecode {
   template<class View>
   forceinline
   Activity::Storage::Storage(Home home, ViewArray<View>& x, double d0,
-                             typename 
+                             typename
                              BranchTraits<typename View::VarType>::Merit bm)
     : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), d(d0) {
     if (bm != NULL)
@@ -359,7 +359,7 @@ namespace Gecode {
     s << '}';
     return os << s.str();
   }
-  
+
 
   /*
    * Propagation for activity recorder
@@ -368,7 +368,7 @@ namespace Gecode {
   template<class View>
   forceinline
   Activity::Recorder<View>::Recorder(Space& home, bool share,
-                                     Recorder<View>& p) 
+                                     Recorder<View>& p)
     : NaryPropagator<View,PC_GEN_NONE>(home,share,p) {
     a.update(home, share, p.a);
     c.update(home, share, p.c);
@@ -395,7 +395,7 @@ namespace Gecode {
   }
 
   template<class View>
-  PropCost 
+  PropCost
   Activity::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::crazy(PropCost::HI,1000);
   }
@@ -427,7 +427,7 @@ namespace Gecode {
     a.release();
     return c.empty() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
-  
+
 }
 
 // STATISTICS: kernel-branch

@@ -438,7 +438,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
    * \ingroup FuncFloatProp
    */
   template<class A, class B>
-  class Channel : 
+  class Channel :
     public MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND> {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x0;

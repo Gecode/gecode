@@ -50,15 +50,15 @@ namespace Gecode { namespace Int { namespace Sequence {
    * This namespace contains a propagator for the
    * cumulatives constraint as presented in
    * Willem Jan van Hoeve, Gilles Pesant, Louis-Martin Rousseau, and
-   * Ashish Sabharwal, New filtering algorithms for combinations of 
+   * Ashish Sabharwal, New filtering algorithms for combinations of
    * among constraints. Constraints, 14(2), 273-292, 2009.
    *
    */
 
-  template<class View> 
+  template<class View>
   class SupportAdvisor;
 
-  template<class View,class Val,bool iss> 
+  template<class View,class Val,bool iss>
   class ViewValSupport;
 
   /**
@@ -113,13 +113,13 @@ namespace Gecode { namespace Int { namespace Sequence {
     virtual Actor* copy(Space& home, bool share);
     /// Advise function
     ExecStatus advise(Space& home, Advisor& _a, const Delta& d);
-    /// Cost function 
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for 
+    /// Post propagator for
     static  ExecStatus post(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
-    /// Check for consistency 
+    /// Check for consistency
     static  ExecStatus check(Space& home, ViewArray<View>& x, Val s, int q, int l, int u);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);

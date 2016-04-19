@@ -148,7 +148,7 @@ namespace Gecode {
 
   int
   LinIntExpr::Node::fill(Home home, IntPropLevel ipl,
-                      Int::Linear::Term<Int::IntView>* ti, 
+                      Int::Linear::Term<Int::IntView>* ti,
                       Int::Linear::Term<Int::BoolView>* tb) const {
     long long int d=0;
     fill(home,ipl,ti,tb,1,d);
@@ -509,7 +509,7 @@ namespace Gecode {
 
   void
   LinIntExpr::Node::fill(Home home, IntPropLevel ipl,
-                      Int::Linear::Term<Int::IntView>*& ti, 
+                      Int::Linear::Term<Int::IntView>*& ti,
                       Int::Linear::Term<Int::BoolView>*& tb,
                       long long int m, long long int& d) const {
     switch (this->t) {
@@ -576,7 +576,7 @@ namespace Gecode {
    */
   LinIntExpr
   operator +(int c, const IntVar& x) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(static_cast<long long int>(c)+x.val()))
       return LinIntExpr(c+x.val());
     else
@@ -584,7 +584,7 @@ namespace Gecode {
   }
   LinIntExpr
   operator +(int c, const BoolVar& x) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(static_cast<long long int>(c)+x.val()))
       return LinIntExpr(c+x.val());
     else
@@ -596,7 +596,7 @@ namespace Gecode {
   }
   LinIntExpr
   operator +(const IntVar& x, int c) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(static_cast<long long int>(c)+x.val()))
       return LinIntExpr(c+x.val());
     else
@@ -604,7 +604,7 @@ namespace Gecode {
   }
   LinIntExpr
   operator +(const BoolVar& x, int c) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(static_cast<long long int>(c)+x.val()))
       return LinIntExpr(c+x.val());
     else
@@ -685,7 +685,7 @@ namespace Gecode {
 
   LinIntExpr
   operator -(int c, const IntVar& x) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(static_cast<long long int>(c)-x.val()))
       return LinIntExpr(c-x.val());
     else
@@ -693,7 +693,7 @@ namespace Gecode {
   }
   LinIntExpr
   operator -(int c, const BoolVar& x) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(static_cast<long long int>(c)-x.val()))
       return LinIntExpr(c-x.val());
     else
@@ -705,7 +705,7 @@ namespace Gecode {
   }
   LinIntExpr
   operator -(const IntVar& x, int c) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(x.val()-static_cast<long long int>(c)))
       return LinIntExpr(x.val()-c);
     else
@@ -713,7 +713,7 @@ namespace Gecode {
   }
   LinIntExpr
   operator -(const BoolVar& x, int c) {
-    if (x.assigned() && 
+    if (x.assigned() &&
         Int::Limits::valid(x.val()-static_cast<long long int>(c)))
       return LinIntExpr(x.val()-c);
     else
@@ -815,7 +815,7 @@ namespace Gecode {
   operator *(int a, const IntVar& x) {
     if (a == 0)
       return LinIntExpr(0.0);
-    else if (x.assigned() && 
+    else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
     else
@@ -825,7 +825,7 @@ namespace Gecode {
   operator *(int a, const BoolVar& x) {
     if (a == 0)
       return LinIntExpr(0.0);
-    else if (x.assigned() && 
+    else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
     else
@@ -835,7 +835,7 @@ namespace Gecode {
   operator *(const IntVar& x, int a) {
     if (a == 0)
       return LinIntExpr(0.0);
-    else if (x.assigned() && 
+    else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
     else
@@ -845,7 +845,7 @@ namespace Gecode {
   operator *(const BoolVar& x, int a) {
     if (a == 0)
       return LinIntExpr(0.0);
-    else if (x.assigned() && 
+    else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
     else
@@ -882,12 +882,12 @@ namespace Gecode {
   sum(const IntArgs& a, const BoolVarArgs& x) {
     return LinIntExpr(a,x);
   }
-  LinIntExpr 
+  LinIntExpr
   sum(const Slice<IntArgs>& slice) {
     const Slice<IntArgs>::ArgsType & args = slice;
     return sum(args);
   }
-  LinIntExpr 
+  LinIntExpr
   sum(const Matrix<IntArgs>& matrix) {
     const Matrix<IntArgs>::ArgsType & args = matrix.get_array();
     return sum(args);
@@ -897,7 +897,7 @@ namespace Gecode {
     int i, sum = 0;
     const int size = args.size();
 
-    for (i = 0 ; i < size ; ++i)    
+    for (i = 0 ; i < size ; ++i)
     {
       sum += args[i];
     }

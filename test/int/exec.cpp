@@ -53,7 +53,7 @@ namespace Test { namespace Int {
      class IntWait : public Test {
      public:
        /// Create and register test
-       IntWait(int n) 
+       IntWait(int n)
          : Test("Wait::Int::"+str(n),n,0,n,false) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -84,7 +84,7 @@ namespace Test { namespace Int {
      class BoolWait : public Test {
      public:
        /// Create and register test
-       BoolWait(int n) 
+       BoolWait(int n)
          : Test("Wait::Bool::"+str(n),n,0,1,false) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {

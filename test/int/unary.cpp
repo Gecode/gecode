@@ -67,7 +67,7 @@ namespace Test { namespace Int { namespace Unary {
     /// Create and register test
     ManFixPUnary(const Gecode::IntArgs& p0, int o, Gecode::IntPropLevel ipl0)
       : Test("Unary::Man::Fix::"+str(o)+"::"+str(p0)+"::"+str(ipl0),
-             p0.size(),o,o+st(p0),false,ipl0), 
+             p0.size(),o,o+st(p0),false,ipl0),
         p(p0) {
       testsearch = false;
       contest = CTL_NONE;
@@ -89,7 +89,7 @@ namespace Test { namespace Int { namespace Unary {
       Gecode::unary(home, x, p, ipl);
     }
   };
-  
+
   /// %Test for unary constraint with optional tasks
   class OptFixPUnary : public Test {
   protected:
@@ -139,7 +139,7 @@ namespace Test { namespace Int { namespace Unary {
       Gecode::unary(home, s, p, m, ipl);
     }
   };
-  
+
   /// %Test for unary constraint
   class ManFlexUnary : public Test {
   protected:
@@ -189,7 +189,7 @@ namespace Test { namespace Int { namespace Unary {
       Gecode::unary(home, s, px, e, ipl);
     }
   };
-  
+
   /// %Test for unary constraint with optional tasks
   class OptFlexUnary : public Test {
   protected:
@@ -238,7 +238,7 @@ namespace Test { namespace Int { namespace Unary {
     /// Post constraint on \a x
     virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
       int n=x.size() / 3;
-      
+
       Gecode::IntVarArgs s(n);
       Gecode::IntVarArgs px(n);
       Gecode::IntVarArgs e(home,n,
@@ -282,7 +282,7 @@ namespace Test { namespace Int { namespace Unary {
         (void) new ManFlexUnary(4,1,3,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFlexUnary(4,0,2,0,ipba.ipl());
         (void) new OptFlexUnary(4,0,2,Gecode::Int::Limits::min,ipba.ipl());
-        
+
         (void) new ManFixPUnary(p10,0,ipba.ipl());
         (void) new ManFixPUnary(p10,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFixPUnary(p10,0,ipba.ipl());
@@ -291,7 +291,7 @@ namespace Test { namespace Int { namespace Unary {
         (void) new ManFlexUnary(5,0,2,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFlexUnary(5,0,2,0,ipba.ipl());
         (void) new OptFlexUnary(5,0,2,Gecode::Int::Limits::min,ipba.ipl());
-        
+
         (void) new ManFixPUnary(p2,0,ipba.ipl());
         (void) new ManFixPUnary(p2,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFixPUnary(p2,0,ipba.ipl());
@@ -300,7 +300,7 @@ namespace Test { namespace Int { namespace Unary {
         (void) new ManFlexUnary(4,3,5,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFlexUnary(4,3,5,0,ipba.ipl());
         (void) new OptFlexUnary(4,3,5,Gecode::Int::Limits::min,ipba.ipl());
-        
+
         (void) new ManFixPUnary(p20,0,ipba.ipl());
         (void) new ManFixPUnary(p20,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFixPUnary(p20,0,ipba.ipl());
@@ -309,7 +309,7 @@ namespace Test { namespace Int { namespace Unary {
         (void) new ManFlexUnary(6,0,5,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFlexUnary(6,0,5,0,ipba.ipl());
         (void) new OptFlexUnary(6,0,5,Gecode::Int::Limits::min,ipba.ipl());
-        
+
         (void) new ManFixPUnary(p3,0,ipba.ipl());
         (void) new ManFixPUnary(p3,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFixPUnary(p3,0,ipba.ipl());
@@ -318,7 +318,7 @@ namespace Test { namespace Int { namespace Unary {
         (void) new ManFlexUnary(6,2,7,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFlexUnary(6,2,7,0,ipba.ipl());
         (void) new OptFlexUnary(6,2,7,Gecode::Int::Limits::min,ipba.ipl());
-        
+
         (void) new ManFixPUnary(p30,0,ipba.ipl());
         (void) new ManFixPUnary(p30,Gecode::Int::Limits::min,ipba.ipl());
         (void) new OptFixPUnary(p30,0,ipba.ipl());
@@ -334,7 +334,7 @@ namespace Test { namespace Int { namespace Unary {
   Create c;
   //@}
 
-   
+
 }}}
 
 // STATISTICS: test-int

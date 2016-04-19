@@ -471,7 +471,7 @@ namespace Gecode {
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, IntPropLevel) {
     using namespace Int;
-    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
+    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2)))
       return;
 
     switch (irt) {
@@ -589,7 +589,7 @@ namespace Gecode {
       GECODE_ES_FAIL((Bool::Or<BoolView,BoolView,BoolView>
                       ::post(home,x0,x1,x2)));
       break;
-    case BOT_IMP: 
+    case BOT_IMP:
       {
         NegBoolView n0(x0);
         GECODE_ES_FAIL((Bool::Or<NegBoolView,BoolView,BoolView>

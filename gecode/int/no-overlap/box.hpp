@@ -103,11 +103,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   forceinline ExecStatus
   ManBox<Dim,n>::nooverlap(Space& home, ManBox<Dim,n>& box) {
     for (int i=0; i<n; i++)
-      if ((d[i].sec() <= box.d[i].lsc()) || 
+      if ((d[i].sec() <= box.d[i].lsc()) ||
           (box.d[i].sec() <= d[i].lsc())) {
         // Does not overlap for dimension i
         for (int j=i+1; j<n; j++)
-          if ((d[j].sec() <= box.d[j].lsc()) || 
+          if ((d[j].sec() <= box.d[j].lsc()) ||
               (box.d[j].sec() <= d[j].lsc()))
             return ES_OK;
         // Does not overlap for only dimension i, hence propagate

@@ -273,7 +273,7 @@ namespace Test { namespace Int {
        virtual Assignment* assignment(void) const {
          if (arity > randomArity)
            return new RandomAssignment(arity,dom,4000);
-         else 
+         else
            return new CpltAssignment(arity,dom);
        }
        /// Post constraint on \a xy

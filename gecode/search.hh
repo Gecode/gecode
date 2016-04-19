@@ -76,7 +76,7 @@ namespace Gecode { namespace Search {
 
   /// %Sequential search engine implementations
   namespace Sequential {}
-  
+
   /// %Parallel search engine implementations
   namespace Parallel {}
 
@@ -87,7 +87,7 @@ namespace Gecode { namespace Search {
 
     /// %Sequential meta search engine implementations
     namespace Sequential {}
-  
+
     /// %Parallel meta search engine implementations
     namespace Parallel {}
 
@@ -109,7 +109,7 @@ namespace Gecode { namespace Search {
     const unsigned int c_d = 8;
     /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
     const unsigned int a_d = 2;
-    
+
     /// Minimal number of open nodes for stealing
     const unsigned int steal_limit = 3;
     /// Initial delay in milliseconds for all but first worker thread
@@ -200,8 +200,8 @@ namespace Gecode { namespace Search {
      *  between the extreme values (use 0 for \a n to get step size 1).
      */
     static Cutoff*
-    rnd(unsigned int seed, 
-        unsigned long int min, unsigned long int max, 
+    rnd(unsigned int seed,
+        unsigned long int min, unsigned long int max,
         unsigned long int n);
     /// Append cutoff values from \a c2 after \a n values from \a c1
     static Cutoff*
@@ -298,7 +298,7 @@ namespace Gecode { namespace Search {
     /// Increment and return the next cutoff value
     virtual unsigned long int operator ++(void);
   };
-  
+
   /**
    * \brief Cutoff generator for the random sequence
    * \ingroup TaskModelSearch
@@ -317,15 +317,15 @@ namespace Gecode { namespace Search {
     unsigned long int cur;
   public:
     /// Constructor
-    CutoffRandom(unsigned int seed, 
-                 unsigned long int min, unsigned long int max, 
+    CutoffRandom(unsigned int seed,
+                 unsigned long int min, unsigned long int max,
                  unsigned long int n);
     /// Return the current cutoff value
     virtual unsigned long int operator ()(void) const;
     /// Increment and return the next cutoff value
     virtual unsigned long int operator ++(void);
   };
-  
+
   /**
    * \brief Cutoff generator appending two cutoff generators
    * \ingroup TaskModelSearch
@@ -394,7 +394,7 @@ namespace Gecode { namespace Search {
     /// Destructor
     virtual ~CutoffRepeat(void);
   };
-  
+
 }}
 
 #include <gecode/search/cutoff.hpp>
@@ -432,12 +432,12 @@ namespace Gecode { namespace Search {
      * The number of threads to be used is controlled by a double \f$n\f$
      * (assume that \f$m\f$ is the number of processing units available). If
      * \f$1 \leq n\f$, \f$n\f$ threads are chosen (of course with rounding).
-     * If \f$n \leq -1\f$, then \f$m + n\f$ threads are 
+     * If \f$n \leq -1\f$, then \f$m + n\f$ threads are
      * chosen (all but \f$-n\f$ processing units get a thread). If \f$n\f$
      * is zero, \f$m\f$ threads are chosen. If \f$0<n<1\f$,
-     * \f$n \times m\f$ threads are chosen. If \f$-1 <n<0\f$, 
+     * \f$n \times m\f$ threads are chosen. If \f$-1 <n<0\f$,
      * \f$(1+n)\times m\f$ threads are chosen.
-     * 
+     *
      * \ingroup TaskModelSearch
      */
     class Options {
@@ -514,7 +514,7 @@ namespace Gecode { namespace Search {
     static Stop* time(unsigned long int l);
     //@}
   };
-  
+
   /**
    * \brief %Stop-object based on number of nodes
    *
@@ -560,7 +560,7 @@ namespace Gecode { namespace Search {
     /// Return true if failure limit is exceeded
     virtual bool stop(const Statistics& s, const Options& o);
   };
-  
+
   /**
    * \brief %Stop-object based on time
    * \ingroup TaskModelSearchStop
@@ -620,9 +620,9 @@ namespace Gecode { namespace Search {
   /// Base-class for search engines
   template<class T>
   class Base : public HeapAllocated {
-    template<class, class> 
+    template<class, class>
     friend Engine* build(Space*, const Options&);
-    template<class, template<class> class> 
+    template<class, template<class> class>
     friend Engine* build(Space*, const Options&);
   protected:
     /// The actual search engine
@@ -709,7 +709,7 @@ namespace Gecode {
     /// Allocate array with \a n elements and initialize with \a b0, ...
     GECODE_SEARCH_EXPORT
     SEBs(int n, SEB b0, ...);
-    //@}    
+    //@}
   };
 
 }

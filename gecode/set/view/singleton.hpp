@@ -95,8 +95,8 @@ namespace Gecode { namespace Set {
   }
 
   forceinline unsigned int
-  SingletonView::glbSize(void) const { 
-    return x.assigned() ? 1U : 0U; 
+  SingletonView::glbSize(void) const {
+    return x.assigned() ? 1U : 0U;
   }
 
   forceinline unsigned int

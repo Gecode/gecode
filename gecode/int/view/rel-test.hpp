@@ -52,7 +52,7 @@ namespace Gecode { namespace Int {
   template<class VX, class VY>
   RelTest
   rtest_eq_dom_check(VX x, VY y) {
-    ViewRanges<VX> rx(x); 
+    ViewRanges<VX> rx(x);
     ViewRanges<VY> ry(y);
     while (rx() && ry()) {
       if (rx.max() < ry.min()) {
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int {
   template<class VX, class VY>
   forceinline RelTest
   rtest_nq_dom_check(VX x, VY y) {
-    ViewRanges<VX> rx(x); 
+    ViewRanges<VX> rx(x);
     ViewRanges<VY> ry(y);
     while (rx() && ry()) {
       if (rx.max() < ry.min()) {

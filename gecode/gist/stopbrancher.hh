@@ -39,7 +39,7 @@
 #include <gecode/gist.hh>
 
 namespace Gecode { namespace Gist {
-  
+
   /// %Choice for %StopBrancher
   class GECODE_GIST_EXPORT StopChoice : public Choice {
   public:
@@ -50,7 +50,7 @@ namespace Gecode { namespace Gist {
     /// Archive into \a e
     virtual void archive(Archive& e) const;
   };
-  
+
   /// %Brancher that stops exploration in %Gist
   class StopBrancher : public Brancher {
   protected:
@@ -70,7 +70,7 @@ namespace Gecode { namespace Gist {
     /// Perform commit for choice \a _c and alternative \a a
     virtual ExecStatus commit(Space&, const Choice&, unsigned int);
     /// Print explanation
-    virtual void print(const Space& home, const Gecode::Choice& c, 
+    virtual void print(const Space& home, const Gecode::Choice& c,
                        unsigned int,
                        std::ostream& o) const;
     /// Copy brancher
@@ -80,7 +80,7 @@ namespace Gecode { namespace Gist {
     /// Delete brancher and return its size
     virtual size_t dispose(Space&);
   };
-  
+
 }}
 
 // STATISTICS: gist-any

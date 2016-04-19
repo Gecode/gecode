@@ -91,7 +91,7 @@ namespace Test {
       TestSpace* s[n];
       // How many spaces exist in s
       int n_s = 1;
-      
+
       for (int i=n; i--; )
         s[i] = NULL;
       s[0] = new TestSpace;

@@ -43,7 +43,7 @@ namespace Gecode { namespace Search {
 
   template<class T>
   forceinline
-  Base<T>::Base(Engine* e0) 
+  Base<T>::Base(Engine* e0)
     : e(e0) {}
   template<class T>
   forceinline T*
@@ -62,8 +62,8 @@ namespace Gecode { namespace Search {
   }
   template<class T>
   forceinline
-  Base<T>::~Base(void) { 
-    delete e; 
+  Base<T>::~Base(void) {
+    delete e;
   }
 
 }}

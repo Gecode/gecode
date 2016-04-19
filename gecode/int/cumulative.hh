@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 #include <gecode/int/cumulative/limits.hpp>
 
 namespace Gecode { namespace Int { namespace Cumulative {
-  
+
   /// Cumulative (mandatory) task with fixed processing time
   class ManFixPTask : public Unary::ManFixPTask {
   protected:
@@ -689,7 +689,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   /// Perform time-tabling propagation
   template<class Task, class Cap>
-  ExecStatus timetabling(Space& home, Propagator& p, Cap c, 
+  ExecStatus timetabling(Space& home, Propagator& p, Cap c,
                          TaskArray<Task>& t);
 
   /// Propagate by edge-finding

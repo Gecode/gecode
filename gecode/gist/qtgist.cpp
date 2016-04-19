@@ -460,7 +460,7 @@ namespace Gecode { namespace Gist {
     moveInspectorMenu->clear();
     moveInspectorMenu->addActions(
       moveInspectorGroup->actions());
-    
+
     QAction* ia = new QAction(i0->name().c_str(), this);
     inspectGroup->addAction(ia);
     QAction* ibfpa = new QAction(i0->name().c_str(), this);
@@ -586,10 +586,10 @@ namespace Gecode { namespace Gist {
       unhideAll->setEnabled(false);
       labelBranches->setEnabled(false);
       labelPath->setEnabled(false);
-      
+
       toggleStop->setEnabled(false);
       unstopAll->setEnabled(false);
-      
+
       center->setEnabled(false);
       exportPDF->setEnabled(false);
       exportWholeTreePDF->setEnabled(false);
@@ -623,7 +623,7 @@ namespace Gecode { namespace Gist {
         unhideAll->setEnabled(false);
         unstopAll->setEnabled(false);
       }
-      
+
       toggleStop->setEnabled(n->getStatus() == STOP ||
         n->getStatus() == UNSTOP);
 
@@ -753,7 +753,7 @@ namespace Gecode { namespace Gist {
       bookmarksGroup->addAction(nullBookmark);
     }
   }
-  
+
   void
   Gist::populateBookmarksMenu(void) {
     bookmarksMenu->clear();
@@ -773,7 +773,7 @@ namespace Gecode { namespace Gist {
     inspectNodeBeforeFPMenu->addSeparator();
     inspectNodeBeforeFPMenu->addActions(inspectBeforeFPGroup->actions());
   }
-  
+
   void
   Gist::setAutoHideFailed(bool b) { canvas->setAutoHideFailed(b); }
   void

@@ -60,7 +60,7 @@ namespace Gecode { namespace FlatZinc {
     /// The actual registry
     std::map<std::string,poster> r;
   };
-  
+
   /// Return global registry object
   GECODE_FLATZINC_EXPORT Registry& registry(void);
 

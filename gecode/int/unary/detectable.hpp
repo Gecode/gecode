@@ -57,10 +57,10 @@ namespace Gecode { namespace Int { namespace Unary {
 
     for (int i=t.size(); i--; )
       GECODE_ME_CHECK(t[i].est(home,est[i]));
-      
+
     return ES_OK;
   }
-  
+
   template<class ManTask>
   ExecStatus
   detectable(Space& home, TaskArray<ManTask>& t) {
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
-  
+
   template<class OptTask, class PL>
   ExecStatus
   detectable(Space& home, Propagator& p, TaskArray<OptTask>& t) {

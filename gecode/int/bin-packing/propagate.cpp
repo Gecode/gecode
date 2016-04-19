@@ -44,12 +44,12 @@ namespace Gecode { namespace Int { namespace BinPacking {
    *
    */
 
-  PropCost 
+  PropCost
   Pack::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,bs.size());
   }
 
-  Actor* 
+  Actor*
   Pack::copy(Space& home, bool share) {
     return new (home) Pack(home,share,*this);
   }
@@ -75,9 +75,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
   };
 
   forceinline
-  TellCache::TellCache(Region& region, int m) 
+  TellCache::TellCache(Region& region, int m)
     : _nq(region.alloc<int>(m)), _n_nq(0), _eq(-1) {}
-  forceinline void 
+  forceinline void
   TellCache::nq(int j) {
     _nq[_n_nq++] = j;
   }
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
    * Propagation proper
    *
    */
-  ExecStatus 
+  ExecStatus
   Pack::propagate(Space& home, const ModEventDelta& med) {
     // Number of items
     int n = bs.size();
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         return home.ES_SUBSUMED(*this);
       }
 
-    
+
       {
         TellCache tc(region,m);
 
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
           for (ViewValues<IntView> j(bs[i].bin()); j(); ++j) {
             if (bs[i].size() > l[j.val()].max())
               tc.nq(j.val());
-            if (s[j.val()] - bs[i].size() < l[j.val()].min()) 
+            if (s[j.val()] - bs[i].size() < l[j.val()].min())
               tc.eq(j.val());
           }
           GECODE_ES_CHECK(tc.tell(home,bs[i].bin()));
@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Set up size information
       for (int i=0; i<n; i++) {
         assert(!bs[i].assigned());
-        for (ViewValues<IntView> j(bs[i].bin()); j(); ++j) 
+        for (ViewValues<IntView> j(bs[i].bin()); j(); ++j)
           s[j.val()].add(bs[i].size());
       }
 
@@ -235,11 +235,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
           return ES_FAILED;
         int ap, bp;
         // Must there be packed more items into bin?
-        if (nosum(static_cast<SizeSet&>(s[j]), l[j].min(), l[j].min(), 
+        if (nosum(static_cast<SizeSet&>(s[j]), l[j].min(), l[j].min(),
                   ap, bp))
           GECODE_ME_CHECK(l[j].gq(home,bp));
         // Must there be packed less items into bin?
-        if (nosum(static_cast<SizeSet&>(s[j]), l[j].max(), l[j].max(), 
+        if (nosum(static_cast<SizeSet&>(s[j]), l[j].max(), l[j].max(),
                   ap, bp))
           GECODE_ME_CHECK(l[j].lq(home,ap));
       }
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
           // Items must be removed in decreasing size!
           s[j.val()].minus(bs[i].size());
           // Can item i still be packed into bin j?
-          if (nosum(s[j.val()], 
+          if (nosum(s[j.val()],
                     l[j.val()].min() - bs[i].size(),
                     l[j.val()].max() - bs[i].size()))
             tc.nq(j.val());
@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       int nm = n;
 
       // Only count positive remaining bin loads
-      for (int j=m; j--; ) 
+      for (int j=m; j--; )
         if (l[j].max() < 0) {
           return ES_FAILED;
         } else if (c > l[j].max()) {
@@ -320,7 +320,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       int n1 = 0;
       // Items in N2 are from n1 ... n12 - 1, we count elements in N1 and N2
       int n12 = 0;
-      // Items in N3 are from n12 ... n3 - 1 
+      // Items in N3 are from n12 ... n3 - 1
       int n3 = 0;
       // Free space in N2
       int f2 = 0;
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       // Initialize n3 and s3
       for (n3 = n12; n3 < nm; n3++)
         s3 += s[n3];
-        
+
       // Compute lower bounds
       for (int k=0; k<=c/2; k++) {
         // Make N1 larger by adding elements and N2 smaller
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     Support::quicksort(&bs[0], bs.size());
     // Total size of items
     int s = 0;
-    // Constrain bins 
+    // Constrain bins
     for (int i=bs.size(); i--; ) {
       s += bs[i].size();
       GECODE_ME_CHECK(bs[i].bin().gq(home,0));

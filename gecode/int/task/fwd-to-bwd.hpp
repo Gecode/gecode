@@ -41,7 +41,7 @@ namespace Gecode { namespace Int {
    * Task mapper: map forward task to view to backward task View
    */
   template<class TaskView>
-  forceinline int 
+  forceinline int
   FwdToBwd<TaskView>::est(void) const {
     return -TaskView::lct();
   }
@@ -72,7 +72,7 @@ namespace Gecode { namespace Int {
   }
 
   template<class TaskView>
-  forceinline ModEvent 
+  forceinline ModEvent
   FwdToBwd<TaskView>::est(Space& home, int n) {
     return TaskView::lct(home,-n);
   }

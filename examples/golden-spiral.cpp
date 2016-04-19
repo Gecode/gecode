@@ -56,11 +56,11 @@ using namespace Gecode;
  * \f[
  * \operatorname{abs}(b) = \frac{\operatorname{ln}(\phi)}{\frac{\pi}{2}}
  * \f]
- * 
+ *
  * To get cartesian coordinates, it can be solved for \f$x\f$
  * and \f$y\f$ in terms of \f$r\f$ and \f$\theta\f$.
  * By setting \f$a=1\f$, it yields to the equation:
- * 
+ *
  * \f[
  * r = e^{0.30649\times\theta}
  * \f]
@@ -68,10 +68,10 @@ using namespace Gecode;
  * \f[
  * x=r\operatorname{cos}(\theta), \quad y=r\operatorname{sin}(\theta)
  * \f]
- * 
+ *
  * The tuple \f$(r,\theta)\f$ is related to the position for
  * \f$x\f$ and \f$y\f$ on the curve.  \f$r\f$ and \f$\theta\f$
- * are positive numbers.  
+ * are positive numbers.
  *
  * To get reasonable interval starting sizes, \f$x\f$ and \f$y\f$
  * are restricted to \f$[-20;20]\f$.
@@ -84,7 +84,7 @@ protected:
   FloatVarArray f;
 public:
   /// Actual model
-  GoldenSpiral(const Options& opt) 
+  GoldenSpiral(const Options& opt)
     : FloatMaximizeScript(opt), f(*this,4,-20,20) {
     // Post equation
     FloatVar theta = f[0];
@@ -100,13 +100,13 @@ public:
     branch(*this,theta,FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  GoldenSpiral(bool share, GoldenSpiral& p) 
+  GoldenSpiral(bool share, GoldenSpiral& p)
     : FloatMaximizeScript(share,p) {
     f.update(*this,share,p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) { 
-    return new GoldenSpiral(share,*this); 
+  virtual Space* copy(bool share) {
+    return new GoldenSpiral(share,*this);
   }
   /// Cost function
   virtual FloatVar cost(void) const {

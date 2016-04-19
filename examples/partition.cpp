@@ -55,7 +55,7 @@ protected:
 public:
   /// Actual model
   Partition(const SizeOptions& opt)
-    : Script(opt), 
+    : Script(opt),
       x(*this,opt.size(),1,2*opt.size()),
       y(*this,opt.size(),1,2*opt.size()) {
     const int n = opt.size();

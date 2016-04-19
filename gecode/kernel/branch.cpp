@@ -81,7 +81,7 @@ namespace Gecode {
       return new Description(*this,1);
     }
     /// Perform commit
-    virtual ExecStatus 
+    virtual ExecStatus
     commit(Space& home, const Choice&, unsigned int) {
       done = true;
       f(home);
@@ -89,7 +89,7 @@ namespace Gecode {
     }
     /// Print explanation
     virtual void
-    print(const Space&, const Choice&, unsigned int, 
+    print(const Space&, const Choice&, unsigned int,
           std::ostream& o) const {
       o << "FunctionBranch(" << f << ")";
     }

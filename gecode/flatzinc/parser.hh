@@ -196,7 +196,7 @@ namespace Gecode { namespace FlatZinc {
                 Gecode::FlatZinc::FlatZincSpace* fg0)
     : buf(buf0), pos(0), length(length0), fg(fg0),
       hadError(false), err(err0) {}
-  
+
     void* yyscanner;
     const char* buf;
     unsigned int pos, length;
@@ -218,20 +218,20 @@ namespace Gecode { namespace FlatZinc {
 
     bool hadError;
     std::ostream& err;
-  
+
     int fillBuffer(char* lexBuf, unsigned int lexBufSize) {
       if (pos >= length)
         return 0;
       int num = std::min(length - pos, lexBufSize);
       memcpy(lexBuf,buf+pos,num);
       pos += num;
-      return num;    
+      return num;
     }
 
     void output(std::string x, AST::Node* n) {
       _output.push_back(std::pair<std::string,AST::Node*>(x,n));
     }
-    
+
     AST::Array* getOutput(void) {
       OutputOrder oo;
       std::sort(_output.begin(),_output.end(),oo);
@@ -252,7 +252,7 @@ namespace Gecode { namespace FlatZinc {
       }
       return a;
     }
-  
+
   };
 
 }}

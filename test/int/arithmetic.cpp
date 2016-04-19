@@ -170,7 +170,7 @@ namespace Test { namespace Int {
          Gecode::sqr(home, x[0], x[1], ipl);
        }
      };
-     
+
      /// %Test for squaring constraint with shared variables
      class SqrXX : public Test {
      public:
@@ -242,7 +242,7 @@ namespace Test { namespace Int {
          long long int p = 1;
          for (int i=0; i<n; i++) {
            p *= x[0];
-           if ((p < Gecode::Int::Limits::min) || 
+           if ((p < Gecode::Int::Limits::min) ||
                (p > Gecode::Int::Limits::max))
              return false;
          }
@@ -274,7 +274,7 @@ namespace Test { namespace Int {
          long long int p = 1;
          for (int i=0; i<n; i++) {
            p *= x[0];
-           if ((p < Gecode::Int::Limits::min) || 
+           if ((p < Gecode::Int::Limits::min) ||
                (p > Gecode::Int::Limits::max))
              return false;
          }
@@ -346,7 +346,7 @@ namespace Test { namespace Int {
      protected:
        /// The root index
        int n;
-       /// Floor 
+       /// Floor
      public:
        /// Create and register test
        NrootXY(const std::string& s, int n0, const Gecode::IntSet& d,
@@ -360,7 +360,7 @@ namespace Test { namespace Int {
          if ((n % 2 == 0) && ((x[0] < 0) || (x[1] < 0)))
            return false;
          int r = (x[0] < 0) ? -cnroot(n,-x[0]) : fnroot(n,x[0]);
-         return r == x[1]; 
+         return r == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -914,7 +914,7 @@ namespace Test { namespace Int {
            static_cast<int>(sqrt(static_cast<double>
                                  (Gecode::Int::Limits::max)))
          };
-         
+
          Gecode::IntSet a(va,7);
          Gecode::IntSet b(vb,9);
          Gecode::IntSet c(-8,8);
@@ -923,11 +923,11 @@ namespace Test { namespace Int {
          (void) new DivMod("A",a);
          (void) new DivMod("B",b);
          (void) new DivMod("C",c);
-         
+
          (void) new Div("A",a);
          (void) new Div("B",b);
          (void) new Div("C",c);
-         
+
          (void) new Mod("A",a);
          (void) new Mod("B",b);
          (void) new Mod("C",c);
@@ -937,118 +937,118 @@ namespace Test { namespace Int {
            (void) new MultXYZ("A",a,ipls.ipl());
            (void) new MultXYZ("B",b,ipls.ipl());
            (void) new MultXYZ("C",c,ipls.ipl());
-           
+
            (void) new MultXXY("A",a,ipls.ipl());
            (void) new MultXXY("B",b,ipls.ipl());
            (void) new MultXXY("C",c,ipls.ipl());
-           
+
            (void) new MultXYX("A",a,ipls.ipl());
            (void) new MultXYX("B",b,ipls.ipl());
            (void) new MultXYX("C",c,ipls.ipl());
-           
+
            (void) new MultXYY("A",a,ipls.ipl());
            (void) new MultXYY("B",b,ipls.ipl());
            (void) new MultXYY("C",c,ipls.ipl());
-           
+
            (void) new MultXXX("A",a,ipls.ipl());
            (void) new MultXXX("B",b,ipls.ipl());
            (void) new MultXXX("C",c,ipls.ipl());
-           
+
            (void) new SqrXY("A",a,ipls.ipl());
            (void) new SqrXY("B",b,ipls.ipl());
            (void) new SqrXY("C",c,ipls.ipl());
-           
+
            (void) new SqrXX("A",a,ipls.ipl());
            (void) new SqrXX("B",b,ipls.ipl());
            (void) new SqrXX("C",c,ipls.ipl());
-           
+
            for (int n=0; n<=6; n++) {
              (void) new PowXY("A",n,a,ipls.ipl());
              (void) new PowXY("B",n,b,ipls.ipl());
              (void) new PowXY("C",n,c,ipls.ipl());
              (void) new PowXY("D",n,d,ipls.ipl());
-             
+
              (void) new PowXX("A",n,a,ipls.ipl());
              (void) new PowXX("B",n,b,ipls.ipl());
              (void) new PowXX("C",n,c,ipls.ipl());
              (void) new PowXX("D",n,d,ipls.ipl());
            }
-           
+
            for (int n=1; n<=6; n++) {
              (void) new NrootXY("A",n,a,ipls.ipl());
              (void) new NrootXY("B",n,b,ipls.ipl());
              (void) new NrootXY("C",n,c,ipls.ipl());
              (void) new NrootXY("D",n,d,ipls.ipl());
-             
+
              (void) new NrootXX("A",n,a,ipls.ipl());
              (void) new NrootXX("B",n,b,ipls.ipl());
              (void) new NrootXX("C",n,c,ipls.ipl());
              (void) new NrootXX("D",n,d,ipls.ipl());
            }
-           
+
            for (int n=30; n<=34; n++) {
              (void) new PowXY("C",n,c,ipls.ipl());
              (void) new PowXX("C",n,c,ipls.ipl());
              (void) new NrootXY("C",n,c,ipls.ipl());
              (void) new NrootXX("C",n,c,ipls.ipl());
            }
-           
+
            (void) new SqrtXY("A",a,ipls.ipl());
            (void) new SqrtXY("B",b,ipls.ipl());
            (void) new SqrtXY("C",c,ipls.ipl());
-           
+
            (void) new SqrtXX("A",a,ipls.ipl());
            (void) new SqrtXX("B",b,ipls.ipl());
            (void) new SqrtXX("C",c,ipls.ipl());
-           
+
            (void) new AbsXY("A",a,ipls.ipl());
            (void) new AbsXY("B",b,ipls.ipl());
            (void) new AbsXY("C",c,ipls.ipl());
-           
+
            (void) new AbsXX("A",a,ipls.ipl());
            (void) new AbsXX("B",b,ipls.ipl());
            (void) new AbsXX("C",c,ipls.ipl());
-           
+
            (void) new MinXYZ("A",a,ipls.ipl());
            (void) new MinXYZ("B",b,ipls.ipl());
            (void) new MinXYZ("C",c,ipls.ipl());
-           
+
            (void) new MinXXY("A",a,ipls.ipl());
            (void) new MinXXY("B",b,ipls.ipl());
            (void) new MinXXY("C",c,ipls.ipl());
-           
+
            (void) new MinXYX("A",a,ipls.ipl());
            (void) new MinXYX("B",b,ipls.ipl());
            (void) new MinXYX("C",c,ipls.ipl());
-           
+
            (void) new MinXYY("A",a,ipls.ipl());
            (void) new MinXYY("B",b,ipls.ipl());
            (void) new MinXYY("C",c,ipls.ipl());
-           
+
            (void) new MinXXX("A",a,ipls.ipl());
            (void) new MinXXX("B",b,ipls.ipl());
            (void) new MinXXX("C",c,ipls.ipl());
-           
+
            (void) new MaxXYZ("A",a,ipls.ipl());
            (void) new MaxXYZ("B",b,ipls.ipl());
            (void) new MaxXYZ("C",c,ipls.ipl());
-           
+
            (void) new MaxXXY("A",a,ipls.ipl());
            (void) new MaxXXY("B",b,ipls.ipl());
            (void) new MaxXXY("C",c,ipls.ipl());
-           
+
            (void) new MaxXYX("A",a,ipls.ipl());
            (void) new MaxXYX("B",b,ipls.ipl());
            (void) new MaxXYX("C",c,ipls.ipl());
-           
+
            (void) new MaxXYY("A",a,ipls.ipl());
            (void) new MaxXYY("B",b,ipls.ipl());
            (void) new MaxXYY("C",c,ipls.ipl());
-           
+
            (void) new MaxXXX("A",a,ipls.ipl());
            (void) new MaxXXX("B",b,ipls.ipl());
            (void) new MaxXXX("C",c,ipls.ipl());
-           
+
            (void) new MinNary(ipls.ipl());
            (void) new MinNaryShared(ipls.ipl());
            (void) new MaxNary(ipls.ipl());

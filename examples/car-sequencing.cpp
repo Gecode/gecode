@@ -94,8 +94,8 @@ namespace {
    * example, it relies on the fact that the value will be equal to
    * the upper bound to speed up computation. For example, it can
    * safely rely on only subscribing to bound events.
-   * 
-   * \relates CarSequence 
+   *
+   * \relates CarSequence
    */
   template <class View>
   class PushToEnd : public NaryOnePropagator<View,Int::PC_INT_BND> {
@@ -110,26 +110,26 @@ namespace {
     PushToEnd(Space& home, ViewArray<View>& x0, View y0, int val0);
   public:
     /// Constructor for rewriting \a p during cloning
-    PushToEnd(Space& home, bool share, Propagator& p, 
+    PushToEnd(Space& home, bool share, Propagator& p,
               ViewArray<View>& x0, View y0, int val0);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    static  ExecStatus post(Space& home, 
+    static  ExecStatus post(Space& home,
                             ViewArray<View>& x0, View y0, int val0);
   };
 
   template <class View>
   inline
-  PushToEnd<View>::PushToEnd(Space& home, 
+  PushToEnd<View>::PushToEnd(Space& home,
                              ViewArray<View>& x0, View y0, int val0)
     : NaryOnePropagator<View,Int::PC_INT_BND>(home,x0,y0), val(val0) {}
 
   template <class View>
   ExecStatus
-  PushToEnd<View>::post(Space& home, 
+  PushToEnd<View>::post(Space& home,
                         ViewArray<View>& x0, View y0, int val0) {
     (void) new (home) PushToEnd<View>(home,x0,y0,val0);
     return ES_OK;
@@ -183,7 +183,7 @@ namespace {
     for (int i = 0, pos = x.size()-1; i < y.min(); ++i, --pos) {
       GECODE_ME_CHECK(x[pos].eq(home, val));
     }
-    
+
     return y.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -227,7 +227,7 @@ protected:
   /// Number of cars
   const int ncars;
   /// Number of options
-  const int noptions; 
+  const int noptions;
   /// Number of classes
   const int nclasses;
   /// Maximum number of stalls
@@ -247,8 +247,8 @@ public:
   CarSequencing(const CarOptions& opt)
     : Script(opt),
       problem(opt.size()),
-      ncars(problems[problem][0]), 
-      noptions(problems[problem][1]), 
+      ncars(problems[problem][0]),
+      noptions(problems[problem][1]),
       nclasses(problems[problem][2]),
       maxstall(opt.maxstall()),
       stallval(nclasses),
@@ -272,7 +272,7 @@ public:
     IntArgs ncc(nclasses);
     // What classes require an option
     IntSetArgs classes(noptions);
-    int** cdata = new int*[noptions]; 
+    int** cdata = new int*[noptions];
     for (int i = noptions; i--; ) cdata[i] = new int[nclasses];
     int* n = new int[noptions];
     for (int i = noptions; i--; ) n[i] = 0;
@@ -342,7 +342,7 @@ public:
       pushtoend(*this, s, nend, endval);
     } break;
     }
-    
+
 
     // Branching
     switch (opt.branching()) {
@@ -366,7 +366,7 @@ public:
     }
     }
   }
-        
+
   /// Return cost
   virtual void constrain(const Space& _best) {
     const CarSequencing& best = static_cast<const CarSequencing&>(_best);
@@ -378,7 +378,7 @@ public:
   print(std::ostream& os) const {
     int width = nclasses > 9 ? 2 : 1;
     const char* space = nclasses > 9 ? " " : "";
-    os << "Stall slots=" << nstall 
+    os << "Stall slots=" << nstall
        << ", End slots=" << nend << std::endl;
     int i = 0;
     for (; i < s.size(); ++i) {
@@ -388,7 +388,7 @@ public:
         if (v == stallval) os << space << "_ ";
         else               os << std::setw(width) << v << " ";
       } else {
-        os << space << "? ";    
+        os << space << "? ";
       }
       if ((i+1)%20 == 0) os << std::endl;
     }
@@ -399,7 +399,7 @@ public:
 
   /// Constructor for cloning \a s
   CarSequencing(bool share, CarSequencing& cs)
-    : Script(share,cs), 
+    : Script(share,cs),
       problem(cs.problem),
       ncars(cs.ncars),
       noptions(cs.noptions),
@@ -453,11 +453,11 @@ namespace {
     10, 5, 6,
     1, 2, 1, 2, 1,
     2, 3, 3, 5, 5,
-    0, 1, 1, 0, 1, 1, 0, 
-    1, 1, 0, 0, 0, 1, 0, 
-    2, 2, 0, 1, 0, 0, 1, 
-    3, 2, 0, 1, 0, 1, 0, 
-    4, 2, 1, 0, 1, 0, 0, 
+    0, 1, 1, 0, 1, 1, 0,
+    1, 1, 0, 0, 0, 1, 0,
+    2, 2, 0, 1, 0, 0, 1,
+    3, 2, 0, 1, 0, 1, 0,
+    4, 2, 1, 0, 1, 0, 0,
     5, 2, 1, 1, 0, 0, 0
   };
 
@@ -468,28 +468,28 @@ namespace {
     100, 5, 22,
     1, 2, 1, 2, 1,
     2, 3, 3, 5, 5,
-    0, 6, 1, 0, 0, 1, 0, 
-    1, 10, 1, 1, 1, 0, 0, 
-    2, 2, 1, 1, 0, 0, 1, 
-    3, 2, 0, 1, 1, 0, 0, 
-    4, 8, 0, 0, 0, 1, 0, 
-    5, 15, 0, 1, 0, 0, 0, 
-    6, 1, 0, 1, 1, 1, 0, 
-    7, 5, 0, 0, 1, 1, 0, 
-    8, 2, 1, 0, 1, 1, 0, 
-    9, 3, 0, 0, 1, 0, 0, 
-    10, 2, 1, 0, 1, 0, 0, 
-    11, 1, 1, 1, 1, 0, 1, 
-    12, 8, 0, 1, 0, 1, 0, 
-    13, 3, 1, 0, 0, 1, 1, 
-    14, 10, 1, 0, 0, 0, 0, 
-    15, 4, 0, 1, 0, 0, 1, 
-    16, 4, 0, 0, 0, 0, 1, 
-    17, 2, 1, 0, 0, 0, 1, 
-    18, 4, 1, 1, 0, 0, 0, 
-    19, 6, 1, 1, 0, 1, 0, 
-    20, 1, 1, 0, 1, 0, 1, 
-    21, 1, 1, 1, 1, 1, 1, 
+    0, 6, 1, 0, 0, 1, 0,
+    1, 10, 1, 1, 1, 0, 0,
+    2, 2, 1, 1, 0, 0, 1,
+    3, 2, 0, 1, 1, 0, 0,
+    4, 8, 0, 0, 0, 1, 0,
+    5, 15, 0, 1, 0, 0, 0,
+    6, 1, 0, 1, 1, 1, 0,
+    7, 5, 0, 0, 1, 1, 0,
+    8, 2, 1, 0, 1, 1, 0,
+    9, 3, 0, 0, 1, 0, 0,
+    10, 2, 1, 0, 1, 0, 0,
+    11, 1, 1, 1, 1, 0, 1,
+    12, 8, 0, 1, 0, 1, 0,
+    13, 3, 1, 0, 0, 1, 1,
+    14, 10, 1, 0, 0, 0, 0,
+    15, 4, 0, 1, 0, 0, 1,
+    16, 4, 0, 0, 0, 0, 1,
+    17, 2, 1, 0, 0, 0, 1,
+    18, 4, 1, 1, 0, 0, 0,
+    19, 6, 1, 1, 0, 1, 0,
+    20, 1, 1, 0, 1, 0, 1,
+    21, 1, 1, 1, 1, 1, 1,
   };
 
   // --------------------------------
@@ -499,28 +499,28 @@ namespace {
     100, 5, 22,
     1, 2, 1, 2, 1,
     2, 3, 3, 5, 5,
-    0, 13, 1, 0, 0, 0, 0, 
-    1, 8, 0, 0, 0, 1, 0, 
-    2, 7, 0, 1, 0, 0, 0, 
-    3, 1, 1, 0, 0, 1, 0, 
-    4, 12, 0, 0, 1, 0, 0, 
-    5, 5, 0, 1, 0, 1, 0, 
-    6, 5, 0, 0, 1, 1, 0, 
-    7, 6, 0, 1, 1, 0, 0, 
-    8, 3, 1, 0, 0, 0, 1, 
-    9, 12, 1, 1, 0, 0, 0, 
-    10, 8, 1, 1, 0, 1, 0, 
-    11, 2, 1, 0, 0, 1, 1, 
-    12, 2, 1, 1, 1, 0, 0, 
-    13, 1, 0, 1, 0, 1, 1, 
-    14, 4, 1, 0, 1, 0, 0, 
-    15, 4, 0, 1, 0, 0, 1, 
-    16, 1, 1, 1, 0, 1, 1, 
-    17, 2, 1, 0, 1, 1, 0, 
-    18, 1, 0, 0, 0, 0, 1, 
-    19, 1, 1, 1, 1, 1, 0, 
-    20, 1, 1, 1, 0, 0, 1, 
-    21, 1, 0, 1, 1, 1, 0, 
+    0, 13, 1, 0, 0, 0, 0,
+    1, 8, 0, 0, 0, 1, 0,
+    2, 7, 0, 1, 0, 0, 0,
+    3, 1, 1, 0, 0, 1, 0,
+    4, 12, 0, 0, 1, 0, 0,
+    5, 5, 0, 1, 0, 1, 0,
+    6, 5, 0, 0, 1, 1, 0,
+    7, 6, 0, 1, 1, 0, 0,
+    8, 3, 1, 0, 0, 0, 1,
+    9, 12, 1, 1, 0, 0, 0,
+    10, 8, 1, 1, 0, 1, 0,
+    11, 2, 1, 0, 0, 1, 1,
+    12, 2, 1, 1, 1, 0, 0,
+    13, 1, 0, 1, 0, 1, 1,
+    14, 4, 1, 0, 1, 0, 0,
+    15, 4, 0, 1, 0, 0, 1,
+    16, 1, 1, 1, 0, 1, 1,
+    17, 2, 1, 0, 1, 1, 0,
+    18, 1, 0, 0, 0, 0, 1,
+    19, 1, 1, 1, 1, 1, 0,
+    20, 1, 1, 1, 0, 0, 1,
+    21, 1, 0, 1, 1, 1, 0,
   };
 
   // ---------------------------------

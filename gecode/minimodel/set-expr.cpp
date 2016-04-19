@@ -50,7 +50,7 @@ namespace Gecode {
              (t1==SetExpr::NT_CONST) || (t1==SetExpr::NT_LEXP);
     }
   }
-  
+
   /// %Node for set expression
   class SetExpr::Node {
   public:
@@ -363,7 +363,7 @@ namespace Gecode {
           case SRT_CMPL:
             invsrt = srt;
             break;
-          default: 
+          default:
             invsrt = srt;
             GECODE_NEVER;
           }
@@ -599,7 +599,7 @@ namespace Gecode {
     n->r    = NULL;
     n->e    = e;
   }
-  
+
   SetExpr::SetExpr(const SetExpr& l, NodeType t, const SetExpr& r)
     : n(new Node) {
     int ls = same(t,l.n->t) ? l.n->same : 1;
@@ -711,7 +711,7 @@ namespace Gecode {
     SetExpr r(x[0]);
     for (int i=1; i<x.size(); i++)
       r = (r | x[i]);
-    return r;    
+    return r;
   }
   SetExpr
   setdunion(const SetVarArgs& x) {
@@ -720,7 +720,7 @@ namespace Gecode {
     SetExpr r(x[0]);
     for (int i=1; i<x.size(); i++)
       r = (r + x[i]);
-    return r;    
+    return r;
   }
 
   namespace MiniModel {
@@ -762,27 +762,27 @@ namespace Gecode {
         if (t==SNLE_CARD && irt!=IRT_NQ) {
           switch (irt) {
           case IRT_LQ:
-            cardinality(home, e.post(home), 
-                        0U, 
+            cardinality(home, e.post(home),
+                        0U,
                         static_cast<unsigned int>(c));
             break;
           case IRT_LE:
-            cardinality(home, e.post(home), 
-                        0U, 
+            cardinality(home, e.post(home),
+                        0U,
                         static_cast<unsigned int>(c-1));
             break;
           case IRT_GQ:
-            cardinality(home, e.post(home), 
-                        static_cast<unsigned int>(c), 
+            cardinality(home, e.post(home),
+                        static_cast<unsigned int>(c),
                         Set::Limits::card);
             break;
           case IRT_GR:
-            cardinality(home, e.post(home), 
-                        static_cast<unsigned int>(c+1), 
+            cardinality(home, e.post(home),
+                        static_cast<unsigned int>(c+1),
                         Set::Limits::card);
             break;
           case IRT_EQ:
-            cardinality(home, e.post(home), 
+            cardinality(home, e.post(home),
                         static_cast<unsigned int>(c),
                         static_cast<unsigned int>(c));
             break;

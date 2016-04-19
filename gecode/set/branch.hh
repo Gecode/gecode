@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * views that can be used together with the generic view/value
    * brancher classes.
    *
-   * All merit-based set view selection classes require 
+   * All merit-based set view selection classes require
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup Other
    */
@@ -196,7 +196,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * views that can be used together with the generic view/value
    * branchers.
    *
-   * All value selection classes require 
+   * All value selection classes require
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup Other
    */
@@ -327,7 +327,7 @@ namespace Gecode { namespace Set { namespace Branch {
    * views that can be used together with the generic view/value
    * branchers.
    *
-   * All value commit classes require 
+   * All value commit classes require
    * \code #include <gecode/set/branch.hh> \endcode
    * \ingroup Other
    */
@@ -382,12 +382,12 @@ namespace Gecode { namespace Set { namespace Branch {
 
   /// Return value and commit for set views
   GECODE_SET_EXPORT
-  ValSelCommitBase<SetView,int>* 
+  ValSelCommitBase<SetView,int>*
   valselcommit(Space& home, const SetValBranch& svb);
 
   /// Return value and commit for set views
   GECODE_SET_EXPORT
-  ValSelCommitBase<SetView,int>* 
+  ValSelCommitBase<SetView,int>*
   valselcommit(Space& home, const SetAssign& ia);
 
 }}}

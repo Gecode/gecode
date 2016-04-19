@@ -75,8 +75,8 @@ namespace Gecode { namespace MiniModel {
     ArithNonLinIntExpr(ArithNonLinIntExprType t0, int n0, const BoolExpr& b0)
       : t(t0), a(heap.alloc<LinIntExpr>(n0)), n(n0), b(b0) {}
     /// Destructor
-    ~ArithNonLinIntExpr(void) { 
-      heap.free<LinIntExpr>(a,n); 
+    ~ArithNonLinIntExpr(void) {
+      heap.free<LinIntExpr>(a,n);
     }
     /// Post expression
     virtual IntVar post(Home home, IntVar* ret, IntPropLevel ipl) const {
@@ -209,7 +209,7 @@ namespace Gecode { namespace MiniModel {
         {
           assert(n == 1);
           IntVar x = a[0].post(home, ipl);
-          if (x.assigned() && (aInt > 0) && 
+          if (x.assigned() && (aInt > 0) &&
               ((x.val() == 0) || (x.val() == 1)))
             y = x;
           else {
@@ -222,7 +222,7 @@ namespace Gecode { namespace MiniModel {
         {
           assert(n == 1);
           IntVar x = a[0].post(home, ipl);
-          if (x.assigned() && (aInt > 0) && 
+          if (x.assigned() && (aInt > 0) &&
               ((x.val() == 0) || (x.val() == 1)))
             y = result(home,ret,x);
           else {
@@ -259,7 +259,7 @@ namespace Gecode { namespace MiniModel {
       case ANLE_ITE:
         {
           assert(n == 2);
-          BoolVar c = b.expr(home, ipl); 
+          BoolVar c = b.expr(home, ipl);
           IntVar x0 = a[0].post(home, ipl);
           IntVar x1 = a[1].post(home, ipl);
           y = result(home,ret);

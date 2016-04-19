@@ -47,7 +47,7 @@ namespace Gecode { namespace Gist {
     : QWidget(parent) {
     setWindowFlags(Qt::Tool);
     QGraphicsScene* scene = new QGraphicsScene();
-    
+
     scene->addEllipse(70,10,16,16,QPen(),QBrush(DrawingCursor::white));
     scene->addEllipse(70,60,16,16,QPen(),QBrush(DrawingCursor::blue));
     scene->addRect(32,100,12,12,QPen(),QBrush(DrawingCursor::red));
@@ -58,7 +58,7 @@ namespace Gecode { namespace Gist {
     scene->addPolygon(poly,QPen(),QBrush(DrawingCursor::green));
 
     scene->addEllipse(110,100,16,16,QPen(),QBrush(DrawingCursor::white));
-    
+
     QPen pen;
     pen.setStyle(Qt::DotLine);
     pen.setWidth(0);
@@ -66,12 +66,12 @@ namespace Gecode { namespace Gist {
     scene->addLine(78,76,38,100,pen);
     scene->addLine(78,76,78,100,pen);
     scene->addLine(78,76,118,100,pen);
-    
+
     scene->addLine(135,10,145,10);
     scene->addLine(145,10,145,110);
     scene->addLine(145,60,135,60);
     scene->addLine(145,110,135,110);
-    
+
     nodeDepthLabel = scene->addText("0");
     nodeDepthLabel->setPos(150,20);
     subtreeDepthLabel = scene->addText("0");
@@ -114,7 +114,7 @@ namespace Gecode { namespace Gist {
       StatCursor sc(n,na);
       PreorderNodeVisitor<StatCursor> pnv(sc);
       pnv.run();
-      
+
       subtreeDepthLabel->setPlainText(
         QString("%1").arg(pnv.getCursor().depth));
       solvedLabel->setPlainText(QString("%1").arg(pnv.getCursor().solved));
@@ -126,13 +126,13 @@ namespace Gecode { namespace Gist {
       openLabel->setPlainText(QString("%1").arg(pnv.getCursor().open));
     }
   }
-  
+
   void
   NodeStatInspector::showStats(void) {
     show();
     activateWindow();
   }
-  
+
 }}
 
 // STATISTICS: gist-any

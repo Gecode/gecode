@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_FAILED;
     if (n == 2) {
       GECODE_ME_CHECK(x[1].nq(home,v));
-      return home.ES_SUBSUMED(*this);        
+      return home.ES_SUBSUMED(*this);
     }
     return ES_FIX;
   }

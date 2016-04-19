@@ -137,7 +137,7 @@ public:
   /// Inspect space \a s
   virtual void inspect(const Space& s) {
     const Queens& q = static_cast<const Queens&>(s);
-    
+
     if (!scene)
       initialize();
     QList <QGraphicsItem*> itemList = scene->items();
@@ -155,11 +155,11 @@ public:
       for (IntVarValues xv(q.q[i]); xv(); ++xv) {
         scene->addEllipse(QRectF(i*unit+unit/4,xv.val()*unit+unit/4,
                                  unit/2,unit/2), p, b);
-      } 
+      }
     }
-    mw->show();    
+    mw->show();
   }
-    
+
   /// Set up main window
   void initialize(void) {
     mw = new QMainWindow();
@@ -175,7 +175,7 @@ public:
                 mw, SLOT(close()));
     mw->addAction(closeWindow);
   }
-  
+
   /// Name of the inspector
   virtual std::string name(void) { return "Board"; }
   /// Finalize inspector

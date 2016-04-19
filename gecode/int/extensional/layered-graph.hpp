@@ -80,40 +80,40 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   forceinline void
   LayeredGraph<View,Val,Degree,StateIdx>::State::init(void) {
-    i_deg=o_deg=0; 
+    i_deg=o_deg=0;
   }
 
-  
+
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State&
   LayeredGraph<View,Val,Degree,StateIdx>::i_state(int i, StateIdx is) {
     return layers[i].states[is];
   }
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State&
   LayeredGraph<View,Val,Degree,StateIdx>::i_state
   (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
     return i_state(i,e.i_state);
   }
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline bool 
+  forceinline bool
   LayeredGraph<View,Val,Degree,StateIdx>::i_dec
   (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
     return --i_state(i,e).o_deg == 0;
   }
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State&
   LayeredGraph<View,Val,Degree,StateIdx>::o_state(int i, StateIdx os) {
     return layers[i+1].states[os];
   }
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State& 
+  forceinline typename LayeredGraph<View,Val,Degree,StateIdx>::State&
   LayeredGraph<View,Val,Degree,StateIdx>::o_state
   (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
     return o_state(i,e.o_state);
   }
   template<class View, class Val, class Degree, class StateIdx>
-  forceinline bool 
+  forceinline bool
   LayeredGraph<View,Val,Degree,StateIdx>::o_dec
   (int i, const typename LayeredGraph<View,Val,Degree,StateIdx>::Edge& e) {
     return --o_state(i,e).i_deg == 0;
@@ -235,9 +235,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class Var>
   forceinline
   LayeredGraph<View,Val,Degree,StateIdx>::LayeredGraph(Home home,
-                                                       const VarArgArray<Var>& x, 
+                                                       const VarArgArray<Var>& x,
                                                        const DFA& dfa)
-    : Propagator(home), c(home), n(x.size()), 
+    : Propagator(home), c(home), n(x.size()),
       max_states(static_cast<StateIdx>(dfa.n_states())) {
     assert(n > 0);
   }
@@ -268,7 +268,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class Var>
   forceinline ExecStatus
   LayeredGraph<View,Val,Degree,StateIdx>::initialize(Space& home,
-                                                     const VarArgArray<Var>& x, 
+                                                     const VarArgArray<Var>& x,
                                                      const DFA& dfa) {
 
     Region r(home);
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (StateIdx j=max_states; j--; )
         d += static_cast<unsigned int>(layers[n].states[j].i_deg);
       // Check whether all final states can be joined to a single state
-      if (d > 
+      if (d >
           static_cast<unsigned int>
           (Gecode::Support::IntTypeTraits<Degree>::max)) {
         // Initialize map for in-states
@@ -381,7 +381,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[n].states[0].o_deg = 1;
       }
       layers[n].n_states = i_n;
-      
+
       // Total number of states
       n_states = i_n;
       // Total number of edges
@@ -424,7 +424,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].states = a_states;
         a_states += layers[i].n_states;
       }
-      
+
       // Update maximal number of states
       max_states = max_s;
     }
@@ -460,7 +460,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         }
       }
     }
-    
+
     Index& a = static_cast<Index&>(_a);
     const int i = a.i;
 
@@ -678,7 +678,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   template<class Var>
   ExecStatus
-  LayeredGraph<View,Val,Degree,StateIdx>::post(Home home, 
+  LayeredGraph<View,Val,Degree,StateIdx>::post(Home home,
                                                const VarArgArray<Var>& x,
                                                const DFA& dfa) {
     if (x.size() == 0) {
@@ -703,7 +703,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   LayeredGraph<View,Val,Degree,StateIdx>
   ::LayeredGraph(Space& home, bool share,
                  LayeredGraph<View,Val,Degree,StateIdx>& p)
-    : Propagator(home,share,p), 
+    : Propagator(home,share,p),
       n(p.n), layers(home.alloc<Layer>(n+1)),
       max_states(p.max_states), n_states(p.n_states), n_edges(p.n_edges) {
     c.update(home,share,p.c);
@@ -722,7 +722,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         layers[i].support[j].val = p.layers[i].support[j].val;
         layers[i].support[j].n_edges = p.layers[i].support[j].n_edges;
         assert(layers[i].support[j].n_edges > 0);
-        layers[i].support[j].edges = 
+        layers[i].support[j].edges =
           Heap::copy(edges,p.layers[i].support[j].edges,
                      layers[i].support[j].n_edges);
         edges += layers[i].support[j].n_edges;
@@ -854,7 +854,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       Gecode::Support::u_type(static_cast<unsigned int>(dfa.n_states()));
     Gecode::Support::IntType t_degree =
       Gecode::Support::u_type(dfa.max_degree());
-    Gecode::Support::IntType t_val = 
+    Gecode::Support::IntType t_val =
       std::max(Support::s_type(dfa.symbol_min()),
                Support::s_type(dfa.symbol_max()));
     switch (t_val) {

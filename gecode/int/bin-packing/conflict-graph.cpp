@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     assert(!(p.none(nodes()) && x.none(nodes())));
     // Iterate over neighbors of pivot node
     Nodes n(node[pivot(p,x)].n);
-    // Iterate over elements of p 
+    // Iterate over elements of p
     Nodes i(p);
     // The loop iterates over elements in i - n
     while (i() < nodes()) {
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
         Region reg(home);
 
         // Found i.val() to be in i - n
-       
+
         NodeSet np, nx;
         np.allocate(reg,nodes());
         nx.allocate(reg,nodes());
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     }
     return ES_OK;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

@@ -1088,7 +1088,7 @@ namespace Gecode {
         return false;
     return true;
   }
-  
+
   template<class Var>
   forceinline void*
   VarArray<Var>::operator new(size_t) throw() {
@@ -1140,7 +1140,7 @@ namespace Gecode {
     for (int i=x.size(); i--;)
       r[i] = x[i];
     r[x.size()] = y;
-    return r;    
+    return r;
   }
 
   template<class Var>
@@ -1887,14 +1887,14 @@ namespace Gecode {
   typename ArrayTraits<PrimArgArray<T> >::ArgsType
   operator +(const PrimArgArray<T>& x, const T& y) {
     return x.template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
   }
 
   template<class T>
   typename ArrayTraits<PrimArgArray<T> >::ArgsType
   operator +(const T& x, const PrimArgArray<T>& y) {
     return PrimArgArray<T>(1,x).template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
   }
 
 
@@ -1969,7 +1969,7 @@ namespace Gecode {
   typename ArrayTraits<ArgArray<T> >::ArgsType
   operator +(const ArgArray<T>& x, const T& y) {
     return x.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
   }
 
   template<class T>
@@ -1978,7 +1978,7 @@ namespace Gecode {
     ArgArray<T> xa(1);
     xa[0] = x;
     return xa.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
   }
 
   /*
@@ -2053,7 +2053,7 @@ namespace Gecode {
   typename ArrayTraits<VarArgArray<Var> >::ArgsType
   operator +(const VarArgArray<Var>& x, const Var& y) {
     return x.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);    
+      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
   }
 
   template<class Var>
@@ -2062,7 +2062,7 @@ namespace Gecode {
     VarArgArray<Var> xa(1);
     xa[0] = x;
     return xa.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);    
+      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
   }
 
   template<class Var>

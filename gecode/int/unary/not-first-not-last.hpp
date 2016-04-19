@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     for (int i=t.size(); i--; )
       GECODE_ME_CHECK(t[i].lct(home,lct[i]));
-      
+
     return ES_OK;
   }
 
@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewBwd> b(t);
     return notlast(home,b);
   }
-  
+
   template<class OptTaskView, class PL>
   forceinline ExecStatus
   notlast(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
     return notlast<typename TaskTraits<OptTask>::TaskViewBwd,PL>(home,p,b);
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

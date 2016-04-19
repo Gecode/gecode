@@ -699,7 +699,7 @@ namespace Gecode { namespace Int {
 
     if ((i_min > dom.min()) && (i_max >= dom.max()))
       return lq(home,i_min-1);
-    
+
     if ((i_min <= dom.min()) && (i_max < dom.max()) &&
         (!i() || (i.min() > dom.max())))
       return gq(home,i_max+1);

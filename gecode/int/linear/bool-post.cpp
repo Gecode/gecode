@@ -43,7 +43,7 @@
 namespace Gecode { namespace Int { namespace Linear {
 
   /// Inverse the relation
-  forceinline IntRelType 
+  forceinline IntRelType
   inverse(const IntRelType irt) {
     switch (irt) {
       case IRT_EQ: return IRT_NQ; break;
@@ -669,7 +669,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         d /= gcd;
         break;
-      case IRT_NQ: 
+      case IRT_NQ:
         if ((d % gcd) == 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));

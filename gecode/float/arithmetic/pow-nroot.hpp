@@ -62,7 +62,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       GECODE_ME_CHECK(x1.eq(home,0.0));
       return ES_OK;
     }
-    
+
     if ((n % 2) == 0)
     {
       if (x0.min() >= 0)
@@ -104,7 +104,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       GECODE_ME_CHECK(x1.eq(home,0.0));
       return home.ES_SUBSUMED(*this);
     }
-    
+
     if ((m_n % 2) == 0)
     {
       if (x0.min() >= 0)

@@ -334,7 +334,7 @@ public:
    * \brief The single global heap
    * \ingroup FuncMemHeap
    */
-  extern GECODE_SUPPORT_EXPORT 
+  extern GECODE_SUPPORT_EXPORT
   Heap heap;
 
   /**

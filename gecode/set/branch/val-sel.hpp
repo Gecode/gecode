@@ -44,24 +44,24 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   forceinline
-  ValSelMin::ValSelMin(Space& home, const ValBranch& vb) 
+  ValSelMin::ValSelMin(Space& home, const ValBranch& vb)
     : ValSel<SetView,int>(home,vb) {}
   forceinline
   ValSelMin::ValSelMin(Space& home, bool shared, ValSelMin& vs)
     : ValSel<SetView,int>(home,shared,vs) {}
-  forceinline int 
+  forceinline int
   ValSelMin::val(const Space&, SetView x, int) {
     UnknownRanges<SetView> u(x);
     return u.min();
   }
 
   forceinline
-  ValSelMax::ValSelMax(Space& home, const ValBranch& vb) 
+  ValSelMax::ValSelMax(Space& home, const ValBranch& vb)
     : ValSel<SetView,int>(home,vb) {}
   forceinline
   ValSelMax::ValSelMax(Space& home, bool shared, ValSelMax& vs)
     : ValSel<SetView,int>(home,shared,vs) {}
-  forceinline int 
+  forceinline int
   ValSelMax::val(const Space&, SetView x, int) {
     int max = 0;
     for (UnknownRanges<SetView> u(x); u(); ++u)
@@ -70,12 +70,12 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline
-  ValSelMed::ValSelMed(Space& home, const ValBranch& vb) 
+  ValSelMed::ValSelMed(Space& home, const ValBranch& vb)
     : ValSel<SetView,int>(home,vb) {}
   forceinline
   ValSelMed::ValSelMed(Space& home, bool shared, ValSelMed& vs)
     : ValSel<SetView,int>(home,shared,vs) {}
-  forceinline int 
+  forceinline int
   ValSelMed::val(const Space&, SetView x, int) {
     UnknownRanges<SetView> u1(x);
     unsigned int i = Iter::Ranges::size(u1) / 2;
@@ -94,7 +94,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline
-  ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb) 
+  ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb)
     : ValSel<SetView,int>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, bool shared, ValSelRnd& vs)

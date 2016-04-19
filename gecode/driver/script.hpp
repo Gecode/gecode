@@ -83,7 +83,7 @@ namespace Gecode { namespace Driver {
     }
     /// Report reason why search has been stopped
     int reason(const Search::Statistics& s, const Search::Options& o) {
-      return 
+      return
         (((ns != NULL) && ns->stop(s,o)) ? SR_NODE : 0) |
         (((fs != NULL) && fs->stop(s,o)) ? SR_FAIL : 0) |
         (((ts != NULL) && ts->stop(s,o)) ? SR_TIME : 0) |
@@ -136,7 +136,7 @@ namespace Gecode { namespace Driver {
    * \brief Get time since start of timer and print user friendly time
    * information.
    */
-  GECODE_DRIVER_EXPORT void 
+  GECODE_DRIVER_EXPORT void
   stop(Support::Timer& t, std::ostream& os);
 
   /**
@@ -144,36 +144,36 @@ namespace Gecode { namespace Driver {
    */
   GECODE_DRIVER_EXPORT double
   am(double t[], int n);
-  
+
   /**
    * \brief Compute deviation of \a n elements in \a t
    */
   GECODE_DRIVER_EXPORT double
   dev(double t[], int n);
-  
+
   /// Create cutoff object from options
   template<class Options>
-  inline Search::Cutoff* 
+  inline Search::Cutoff*
   createCutoff(const Options& o) {
     switch (o.restart()) {
-    case RM_NONE: 
+    case RM_NONE:
       return NULL;
-    case RM_CONSTANT: 
+    case RM_CONSTANT:
       return Search::Cutoff::constant(o.restart_scale());
-    case RM_LINEAR: 
+    case RM_LINEAR:
       return Search::Cutoff::linear(o.restart_scale());
-    case RM_LUBY: 
+    case RM_LUBY:
       return Search::Cutoff::luby(o.restart_scale());
-    case RM_GEOMETRIC: 
+    case RM_GEOMETRIC:
       return Search::Cutoff::geometric(o.restart_scale(),o.restart_base());
     default: GECODE_NEVER;
     }
     return NULL;
   }
-  
-  
+
+
 #ifdef GECODE_HAS_GIST
-  
+
   /**
    * \brief Traits class for search engines
    */
@@ -184,7 +184,7 @@ namespace Gecode { namespace Driver {
       (void) Gist::dfs(root, opt);
     }
   };
-  
+
   /// Specialization for DFS
   template<typename S>
   class GistEngine<DFS<S> > {
@@ -193,7 +193,7 @@ namespace Gecode { namespace Driver {
       (void) Gist::dfs(root, opt);
     }
   };
-  
+
   /// Specialization for BAB
   template<typename S>
   class GistEngine<BAB<S> > {
@@ -202,18 +202,18 @@ namespace Gecode { namespace Driver {
       (void) Gist::bab(root, opt);
     }
   };
-  
+
 #endif
 
 
   template<class BaseSpace>
   forceinline
-  ScriptBase<BaseSpace>::ScriptBase(const Options& opt) 
+  ScriptBase<BaseSpace>::ScriptBase(const Options& opt)
     : BaseSpace(opt) {}
 
   template<class BaseSpace>
   forceinline
-  ScriptBase<BaseSpace>::ScriptBase(bool share, ScriptBase& e) 
+  ScriptBase<BaseSpace>::ScriptBase(bool share, ScriptBase& e)
     : BaseSpace(share,e) {}
 
   template<class BaseSpace>
@@ -221,7 +221,7 @@ namespace Gecode { namespace Driver {
   ScriptBase<BaseSpace>::print(std::ostream&) const {}
 
   template<class BaseSpace>
-  void 
+  void
   ScriptBase<BaseSpace>::compare(const Space&, std::ostream&) const {}
 
   template<class BaseSpace>
@@ -321,7 +321,7 @@ namespace Gecode { namespace Driver {
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
           so.assets  = o.assets();
-          so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
+          so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
           so.clone   = false;
@@ -474,7 +474,7 @@ namespace Gecode { namespace Driver {
               so.assets  = o.assets();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
-              so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(), 
+              so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                                 false);
               so.cutoff  = createCutoff(o);
               so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;

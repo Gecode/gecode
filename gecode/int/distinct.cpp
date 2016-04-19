@@ -111,7 +111,7 @@ namespace Gecode {
     int min = Limits::max;
     int max = Limits::min;
     int m = 0;
-    for (int i=n; i--; ) 
+    for (int i=n; i--; )
       if (!b[i].zero()) {
         min = std::min(min,x[i].min());
         max = std::max(max,x[i].max());
@@ -131,7 +131,7 @@ namespace Gecode {
 
     ViewArray<IntView> y(home,m);
     int j = 0;
-    for (int i=n; i--; ) 
+    for (int i=n; i--; )
       if (b[i].one()) {
         y[j] = x[i]; j++;
       } else if (b[i].none()) {
@@ -166,7 +166,7 @@ namespace Gecode {
     int min = Limits::max;
     int max = Limits::min;
     int m = 0;
-    for (int i=n; i--; ) 
+    for (int i=n; i--; )
       if (!(x[i].assigned() && (x[i].val() == c))) {
         min = std::min(min,x[i].min());
         max = std::max(max,x[i].max());
@@ -186,7 +186,7 @@ namespace Gecode {
 
     ViewArray<IntView> y(home,m);
     int j = 0;
-    for (int i=n; i--; ) 
+    for (int i=n; i--; )
       if (!x[i].in(c)) {
         y[j] = x[i]; j++;
       } else if (!(x[i].assigned() && (x[i].val() == c))) {

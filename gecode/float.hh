@@ -134,7 +134,7 @@ namespace Gecode { namespace Float {
    *
    * \ingroup TaskModelFloatVars
    */
-  class Rounding : 
+  class Rounding :
     public gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
   protected:
     /// Base class
@@ -147,7 +147,7 @@ namespace Gecode { namespace Float {
     /// Destructor (restores previous rounding mode)
     ~Rounding(void);
     //@}
-  
+
     /// \name Arithmetic operations
     //@{
     /// Return lower bound of \a x plus \a y (domain: \f$ [-\infty;+\infty][-\infty;+\infty]\f$)
@@ -428,7 +428,7 @@ namespace Gecode {
     FloatVal& operator =(const FloatNum& n);
     /// Assignment operator
     FloatVal& operator =(const FloatVal& v);
-    
+
     /// Assign lower bound \a l and upper bound \a u
     void assign(FloatNum const &l, FloatNum const &u);
     //@}
@@ -456,7 +456,7 @@ namespace Gecode {
     /// Test whether zero is included
     bool zero_in(void) const;
     //@}
-    
+
     /// \name Float value construction
     //@{
     /// Return hull of \a x and \a y
@@ -468,7 +468,7 @@ namespace Gecode {
     /// Return \f$2\pi\f$
     static FloatVal pi_twice(void);
     //@}
-    
+
     /// \name Update operators
     //@{
     /// Increment by \a n
@@ -1381,8 +1381,8 @@ namespace Gecode {
    * \brief Branch value function type for float variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponding branch commit function. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher.
    *
    * \ingroup TaskModelFloatBranch
@@ -1393,8 +1393,8 @@ namespace Gecode {
    * \brief Branch commit function type for float variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a.  The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponds to the alternative \a a.  The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher. The value \a nl is the value description
    * computed by the corresponding branch value function.
    *
@@ -1427,7 +1427,7 @@ namespace Gecode {
     /// Copy constructor
     FloatAFC(const FloatAFC& a);
     /// Assignment operator
-    FloatAFC& operator =(const FloatAFC& a);      
+    FloatAFC& operator =(const FloatAFC& a);
     /// Initialize for float variables \a x with decay factor \a d
     FloatAFC(Home home, const FloatVarArgs& x, double d=1.0);
     /**
@@ -1464,7 +1464,7 @@ namespace Gecode {
     /// Copy constructor
     FloatActivity(const FloatActivity& a);
     /// Assignment operator
-    FloatActivity& operator =(const FloatActivity& a);      
+    FloatActivity& operator =(const FloatActivity& a);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
@@ -1473,7 +1473,7 @@ namespace Gecode {
      * by \a bm.
      *
      */
-    GECODE_FLOAT_EXPORT 
+    GECODE_FLOAT_EXPORT
     FloatActivity(Home home, const FloatVarArgs& x, double d=1.0,
                   FloatBranchMerit bm=NULL);
     /**
@@ -1564,7 +1564,7 @@ namespace Gecode {
     void expand(Home home, const FloatVarArgs& x);
   };
 
-  
+
   /**
    * \defgroup TaskModelFloatBranchVar Variable selection for float variables
    * \ingroup TaskModelFloatBranch
@@ -1588,7 +1588,7 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_AFC_MIN(FloatAFC a, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count with decay factor \a d
   FloatVarBranch FLOAT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest accumulated failure count    
+  /// Select variable with largest accumulated failure count
   FloatVarBranch FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl=NULL);
   /// Select variable with lowest activity with decay factor \a d
   FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
@@ -1599,11 +1599,11 @@ namespace Gecode {
   /// Select variable with highest activity
   FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);
   /// Select variable with smallest min
-  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);         
+  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
   FloatVarBranch FLOAT_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest max
-  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=NULL); 
+  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest max
   FloatVarBranch FLOAT_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size
@@ -1752,7 +1752,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT BrancherHandle
   branch(Home home, const FloatVarArgs& x,
-         FloatVarBranch vars, FloatValBranch vals, 
+         FloatVarBranch vars, FloatValBranch vals,
          FloatBranchFilter bf=NULL,
          FloatVarValPrint vvp=NULL);
   /**

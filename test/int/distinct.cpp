@@ -269,32 +269,32 @@ namespace Test { namespace Int {
                         Gecode::Int::Limits::max-1,
                         Gecode::Int::Limits::max-0};
      Gecode::IntSet dl(vl,6);
-     
+
      Distinct<false> dom_d(-3,3,Gecode::IPL_DOM);
      Distinct<false> bnd_d(-3,3,Gecode::IPL_BND);
      Distinct<false> val_d(-3,3,Gecode::IPL_VAL);
      Distinct<false> dom_s(d,Gecode::IPL_DOM);
      Distinct<false> bnd_s(d,Gecode::IPL_BND);
      Distinct<false> val_s(d,Gecode::IPL_VAL);
-     
+
      Distinct<false> dom_l(dl,Gecode::IPL_DOM,5);
      Distinct<false> bnd_l(dl,Gecode::IPL_BND,5);
      Distinct<false> val_l(dl,Gecode::IPL_VAL,5);
-     
+
      Distinct<true> count_dom_d(-3,3,Gecode::IPL_DOM);
      Distinct<true> count_bnd_d(-3,3,Gecode::IPL_BND);
      Distinct<true> count_val_d(-3,3,Gecode::IPL_VAL);
      Distinct<true> count_dom_s(d,Gecode::IPL_DOM);
      Distinct<true> count_bnd_s(d,Gecode::IPL_BND);
      Distinct<true> count_val_s(d,Gecode::IPL_VAL);
-     
+
      Offset dom_od(-3,3,Gecode::IPL_DOM);
      Offset bnd_od(-3,3,Gecode::IPL_BND);
      Offset val_od(-3,3,Gecode::IPL_VAL);
      Offset dom_os(d,Gecode::IPL_DOM);
      Offset bnd_os(d,Gecode::IPL_BND);
      Offset val_os(d,Gecode::IPL_VAL);
-     
+
      Gecode::IntArgs v1(4, Gecode::Int::Limits::min+4,
                            0,1,
                            Gecode::Int::Limits::max);
@@ -320,7 +320,7 @@ namespace Test { namespace Int {
      Optional od5(v5,Gecode::IPL_DOM);
      Optional ob5(v5,Gecode::IPL_BND);
      Optional ov5(v5,Gecode::IPL_VAL);
-  
+
      Except ed1(v1,Gecode::IPL_DOM);
      Except eb1(v1,Gecode::IPL_BND);
      Except ev1(v1,Gecode::IPL_VAL);

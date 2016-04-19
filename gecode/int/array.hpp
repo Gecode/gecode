@@ -47,7 +47,7 @@ namespace Gecode {
 
   forceinline
   IntArgs::IntArgs(int n) : PrimArgArray<int>(n) {}
-  
+
   forceinline
   IntArgs::IntArgs(const SharedArray<int>& x)
     : PrimArgArray<int>(x.size()) {
@@ -61,10 +61,10 @@ namespace Gecode {
   forceinline
   IntArgs::IntArgs(InputIterator first, InputIterator last)
   : PrimArgArray<int>(first,last) {}
-  
+
   forceinline
   IntArgs::IntArgs(int n, const int* e) : PrimArgArray<int>(n, e) {}
-  
+
   forceinline
   IntArgs::IntArgs(const PrimArgArray<int>& a) : PrimArgArray<int>(a) {}
 

@@ -52,7 +52,7 @@ namespace Gecode { namespace Int {
   class IdxView {
   public:
     /// The index
-    int idx; 
+    int idx;
     /// Thhe view
     View view;
     /// Allocate memory for \a n index-view pairs

@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     ViewArray<View> x;
   public:
-    forceinline 
+    forceinline
     MinIncIdx(const ViewArray<View>& x0) : x(x0) {}
     forceinline bool
     operator ()(const int i, const int j) {
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class IntType>
   forceinline void
-  pathset_t(HallInfo<IntType> hall[], 
+  pathset_t(HallInfo<IntType> hall[],
             IntType start, IntType end, IntType to) {
     IntType k, l;
     for (l=start; (k=l) != end; hall[k].t=to) {
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class IntType>
   forceinline void
-  pathset_h(HallInfo<IntType> hall[], 
+  pathset_h(HallInfo<IntType> hall[],
             IntType start, IntType end, IntType to) {
     IntType k, l;
     for (l=start; (k=l) != end; hall[k].h=to) {
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View, class IntType>
   forceinline ExecStatus
-  prop_bnd(Space& home, ViewArray<View>& x, 
+  prop_bnd(Space& home, ViewArray<View>& x,
             int* minsorted, int* maxsorted) {
     const int n = x.size();
 

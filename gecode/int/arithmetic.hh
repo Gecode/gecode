@@ -261,7 +261,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template<class VA, class VB, bool tiebreak>
-  class ArgMax : public Propagator { 
+  class ArgMax : public Propagator {
   protected:
     /// Map of index and views
     IdxViewArray<VA> x;
@@ -690,7 +690,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 
@@ -746,10 +746,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     MultDom(Home home, IntView x0, IntView x1, IntView x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
     /// Copy propagator during cloning
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /**
      * \brief Cost function
@@ -757,10 +757,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
      * If in stage for bounds propagation, the cost is
      * low ternary. Otherwise it is high ternary.
      */
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
 

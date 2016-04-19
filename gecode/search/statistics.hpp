@@ -63,7 +63,7 @@ namespace Gecode { namespace Search {
 
   forceinline Statistics
   Statistics::operator +(const Statistics& s) {
-    Statistics t(s); 
+    Statistics t(s);
     return t += *this;
   }
 

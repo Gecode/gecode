@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   forceinline
-  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home, bool share,  
+  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home, bool share,
                                                 ElementDisjoint& p)
     : Propagator(home,share,p) {
     x1.update(home,share,p.x1);

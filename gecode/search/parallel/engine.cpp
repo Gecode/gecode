@@ -46,7 +46,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Engine: search control
    */
-  Space* 
+  Space*
   Engine::next(void) {
     // Invariant: the worker holds the wait mutex
     m_search.acquire();

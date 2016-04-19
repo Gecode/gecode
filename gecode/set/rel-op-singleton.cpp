@@ -78,7 +78,7 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z, 
+  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z,
       SetVar y) {
     if (home.failed()) return;
     Set::Limits::check(z, "Set::rel");

@@ -39,7 +39,7 @@
 
 namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
 
-  bool 
+  bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
     return *tostop || ((so != NULL) && so->stop(s,o));
   }

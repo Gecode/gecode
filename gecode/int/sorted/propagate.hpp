@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Sorted {
           }
         }
       }
-      
+
       for (int i = n; i--; ) {
         // minimum reachable y-variable
         int minr = allbnd[i].min;

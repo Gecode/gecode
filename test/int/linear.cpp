@@ -337,7 +337,7 @@ namespace Test { namespace Int {
            }
          }
          {
-           const int av1[10] = { 
+           const int av1[10] = {
              1, 1, 1, 1, 1, 1, 1, 1, 1, 1
            };
            const int av2[10] = {

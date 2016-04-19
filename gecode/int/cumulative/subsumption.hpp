@@ -48,10 +48,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
         // Current time
         int time = e->time();
         // Process events for completion of required part
-        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++) 
+        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++)
           c += t[e->idx()].c();
         // Process events for zero-length task
-        for ( ; (e->type() == Event::ZRO) && (e->time() == time); e++) 
+        for ( ; (e->type() == Event::ZRO) && (e->time() == time); e++)
           if (c < t[e->idx()].c())
             return ES_FAILED;
         // Process events for start of required part
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     return home.ES_SUBSUMED(p);
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

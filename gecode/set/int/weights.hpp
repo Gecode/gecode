@@ -305,7 +305,7 @@ namespace Gecode { namespace Set { namespace Int {
         for (unsigned int i=0; i<x.cardMin() - x.glbSize(); i++) {
           lowestPosWeight += currentWeights[i];
         }
-        lowestWeight = std::max(lowestWeight, lowestPosWeight);        
+        lowestWeight = std::max(lowestWeight, lowestPosWeight);
       }
 
       // Compute the highest possible weight of x as the weight of the lower

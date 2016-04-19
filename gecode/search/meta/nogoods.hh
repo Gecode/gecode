@@ -89,14 +89,14 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
   forceinline
-  NoNGL::NoNGL(void) {} 
+  NoNGL::NoNGL(void) {}
 
   forceinline
-  NoNGL::NoNGL(Space& home) 
+  NoNGL::NoNGL(Space& home)
     : NGL(home) {}
 
   forceinline
-  NoNGL::NoNGL(Space& home, bool share, NoNGL& ngl) 
+  NoNGL::NoNGL(Space& home, bool share, NoNGL& ngl)
     : NGL(home,share,ngl) {}
 
 
@@ -125,7 +125,7 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   forceinline
-  NoGoodsProp::NoGoodsProp(Space& home, bool shared, NoGoodsProp& p) 
+  NoGoodsProp::NoGoodsProp(Space& home, bool shared, NoGoodsProp& p)
     : Propagator(home,shared,p), n(p.n) {
     assert(p.root != NULL);
     NoNGL s;
@@ -137,11 +137,11 @@ namespace Gecode { namespace Search { namespace Meta {
     }
     root = s.next();
   }
-  
+
 
 
   template<class Path>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   NoGoodsProp::post(Space& home, const Path& p) {
     int s = 0;
     int n = std::min(p.ds.entries(),static_cast<int>(p.ngdl()));
@@ -181,13 +181,13 @@ namespace Gecode { namespace Search { namespace Meta {
       }
 
     // There are no literals
-    if (home.failed()) 
+    if (home.failed())
       return ES_FAILED;
     if (s >= n)
       return ES_OK;
 
     // There must be at least two literals
-    assert((n-s > 1) || 
+    assert((n-s > 1) ||
            ((n-s == 1) && (c != &nn)));
 
     // Remember the last leaf

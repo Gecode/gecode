@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Element {
   ExecStatus
   Pair::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
-    
+
     if (x0.assigned()) {
       // Bitset for supported div and mod values
       Support::BitSet<Region> d(r,static_cast<unsigned int>((x2.max() / w)+1));
@@ -111,11 +111,11 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK(x1.inter_v(home,id,false));
     } else {
       // Bitset for supported div and mod values
-      Support::BitSet<Region> 
-        d(r,static_cast<unsigned int>((x2.max() / w)+1)), 
+      Support::BitSet<Region>
+        d(r,static_cast<unsigned int>((x2.max() / w)+1)),
         m(r,static_cast<unsigned int>(w));
       for (ViewValues<IntView> i(x2); i(); ++i) {
-        d.set(static_cast<unsigned int>(i.val() / w)); 
+        d.set(static_cast<unsigned int>(i.val() / w));
         m.set(static_cast<unsigned int>(i.val() % w));
       }
       Iter::Values::BitSet<Support::BitSet<Region> > im(m,x0.min(),x0.max());

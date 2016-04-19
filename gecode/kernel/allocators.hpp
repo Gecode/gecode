@@ -40,7 +40,7 @@ namespace Gecode {
   template<class T> struct space_allocator;
 
 /**
- 
+
 \defgroup FuncMemAllocator Using allocators with Gecode
 \ingroup FuncMem
 
@@ -48,7 +48,7 @@ namespace Gecode {
 generic data structures such as those of the STL
 (e.g. <tt>std::set</tt>). Memory can be allocated from the space heap
 (see Space) or from a region (see Region).
- 
+
 \section FuncMemAllocatorA Using allocators with dynamic data structures
 
 There are two possible scenarios for allocator usage. One is to
@@ -65,8 +65,8 @@ struct MySpace : public Space {
   {}
 
   MySpace(bool share, MySpace& other)
-    : Space(share, other), 
-      safe_set(other.safe_set.begin(), other.safe_set.end(), 
+    : Space(share, other),
+      safe_set(other.safe_set.begin(), other.safe_set.end(),
                S::key_compare(), S::allocator_type(*this))
   {}
 
@@ -108,8 +108,8 @@ struct MySpace : public Space {
   {}
 
   MySpace(bool share, MySpace& other)
-    : Space(share, other), 
-	fast_set(construct<S>(other.safe_set.begin(), other.safe_set.end(), 
+    : Space(share, other),
+	fast_set(construct<S>(other.safe_set.begin(), other.safe_set.end(),
 	S::key_compare(), S::allocator_type(*this)))
   {}
 
@@ -150,10 +150,10 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   /**
    * \brief %Space allocator - specialization for \c void.
    *
-   * The specialization is needed as the default instantiation fails 
+   * The specialization is needed as the default instantiation fails
    * for \c void.
    */
-  template<> 
+  template<>
   struct space_allocator<void> {
     typedef void*       pointer;
     typedef const void* const_pointer;
@@ -167,13 +167,13 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   /**
    * \brief Allocator that allocates memory from a space heap
    *
-   * Note that this allocator may be used to construct dynamic 
+   * Note that this allocator may be used to construct dynamic
    * data structures that allocate memory from the space heap,
    * or even reside in the space heap as a whole.
    *
    * \ingroup FuncMemAllocator
    */
-  template<class T> 
+  template<class T>
   struct space_allocator {
     /// Type of objects the allocator creates. This is identical to \a T.
     typedef T value_type;
@@ -190,7 +190,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     /// Const reference to \a T.
     typedef T const&  const_reference;
     /// Rebinding helper (returns the type of a similar allocator for type \a U).
-    template<class U> struct rebind { 
+    template<class U> struct rebind {
       /// The allocator type for \a U
       typedef space_allocator<U> other;
     };
@@ -221,7 +221,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * \brief Copy from other instantiation
      * @param al The source allocator.
      */
-    template<class U> 
+    template<class U>
     space_allocator(space_allocator<U> const& al) throw() : space(al.space) {}
 
     /// Convert a reference \a x to a pointer
@@ -230,15 +230,15 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     const_pointer address(const_reference x) const { return &x; }
     /// Returns the largest size for which a call to allocate might succeed.
     size_type max_size(void) const throw() {
-      return std::numeric_limits<size_type>::max() / 
+      return std::numeric_limits<size_type>::max() /
         (sizeof(T)>0 ? sizeof(T) : 1);
     }
     /**
-     * \brief Allocates storage 
+     * \brief Allocates storage
      *
      * Returns a pointer to the first element in a block of storage
-     * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
-     * appropriately for objects of type \a T. Throws the exception 
+     * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned
+     * appropriately for objects of type \a T. Throws the exception
      * \a bad_alloc if the storage is unavailable.
      */
     pointer allocate(size_type count) {
@@ -246,13 +246,13 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     }
 
     /**
-     * \brief Allocates storage 
+     * \brief Allocates storage
      *
      * Returns a pointer to the first element in a block of storage
-     * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
-     * appropriately for objects of type \a T. Throws the exception 
+     * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned
+     * appropriately for objects of type \a T. Throws the exception
      * \a bad_alloc if the storage is unavailable.
-     * The (unused) parameter could be used as an allocation hint, 
+     * The (unused) parameter could be used as an allocation hint,
      * but this allocator ignores it.
      */
     pointer allocate(size_type count, const void * const hint) {
@@ -266,10 +266,10 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     }
 
     /*
-     * \brief Constructs an object 
+     * \brief Constructs an object
      *
-     * Constructs an object of type \a T with the initial value of \a t 
-     * at the location specified by \a element. This function calls 
+     * Constructs an object of type \a T with the initial value of \a t
+     * at the location specified by \a element. This function calls
      * the <i>placement new()</i> operator.
      */
     void construct(pointer element, const_reference t) {
@@ -285,11 +285,11 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   /**
    * \brief Tests two space allocators for equality
    *
-   * Two allocators are equal when each can release storage allocated 
+   * Two allocators are equal when each can release storage allocated
    * from the other.
    */
   template<class T1, class T2>
-  bool operator==(space_allocator<T1> const& al1, 
+  bool operator==(space_allocator<T1> const& al1,
                   space_allocator<T2> const& al2) throw() {
     return &al1.space == &al2.space;
   }
@@ -297,11 +297,11 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   /**
    * \brief Tests two space allocators for inequality
    *
-   * Two allocators are equal when each can release storage allocated 
+   * Two allocators are equal when each can release storage allocated
    * from the other.
    */
   template<class T1, class T2>
-  bool operator!=(space_allocator<T1> const& al1, 
+  bool operator!=(space_allocator<T1> const& al1,
                   space_allocator<T2> const& al2) throw() {
     return &al1.space != &al2.space;
   }
@@ -312,10 +312,10 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   /**
    * \brief %Region allocator - specialization for \c void.
    *
-   * The specialization is needed as the default instantiation fails 
+   * The specialization is needed as the default instantiation fails
    * for \c void.
    */
-  template<> 
+  template<>
   struct region_allocator<void> {
     typedef void* pointer;
     typedef const void* const_pointer;
@@ -334,7 +334,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
    *
    * \ingroup FuncMemAllocator
    */
-  template<class T> 
+  template<class T>
   struct region_allocator {
     /// Type of objects the allocator creates. This is identical to \a T.
     typedef T value_type;
@@ -352,7 +352,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     typedef T const& const_reference;
 
     /// Rebinding helper (returns the type of a similar allocator for type \a U).
-    template<class U> struct rebind { 
+    template<class U> struct rebind {
       /// The allocator type for \a U
      typedef region_allocator<U> other;
     };
@@ -364,20 +364,20 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
      * \brief Construction
      * @param region The region to allocate objects from.
      */
-    region_allocator(Region& region) throw() 
+    region_allocator(Region& region) throw()
       : region(region) {}
     /**
      * \brief Copy construction
      * @param al The allocator to copy.
      */
-    region_allocator(region_allocator const& al) throw() 
+    region_allocator(region_allocator const& al) throw()
       : region(al.region) {}
     /**
      * \brief Copy from other instantiation.
      * @param al The source allocator.
      */
-    template<class U> 
-    region_allocator(region_allocator<U> const& al) throw() 
+    template<class U>
+    region_allocator(region_allocator<U> const& al) throw()
       : region(al.region) {}
 
     /// Convert a reference \a x to a pointer
@@ -386,16 +386,16 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     const_pointer address(const_reference x) const { return &x; }
     /// Returns the largest size for which a call to allocate might succeed.
     size_type max_size(void) const throw() {
-      return std::numeric_limits<size_type>::max() 
+      return std::numeric_limits<size_type>::max()
         / (sizeof(T)>0 ? sizeof(T) : 1);
     }
 
      /**
-      * \brief Allocates storage 
+      * \brief Allocates storage
       *
       * Returns a pointer to the first element in a block of storage
-      * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
-      * appropriately for objects of type \a T. Throws the exception 
+      * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned
+      * appropriately for objects of type \a T. Throws the exception
       * \a bad_alloc if the storage is unavailable.
       */
     pointer allocate(size_type count) {
@@ -403,26 +403,26 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     }
 
      /**
-      * \brief Allocates storage 
+      * \brief Allocates storage
       *
       * Returns a pointer to the first element in a block of storage
-      * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned 
-      * appropriately for objects of type \a T. Throws the exception 
+      * <tt>count*sizeof(T)</tt> bytes in size. The block is aligned
+      * appropriately for objects of type \a T. Throws the exception
       * \a bad_alloc if the storage is unavailable.
       *
-      * The (unused) parameter could be used as an allocation hint, 
+      * The (unused) parameter could be used as an allocation hint,
       * but this allocator ignores it.
       */
     pointer allocate(size_type count, const void * const hint) {
       (void) hint;
       return allocate(count);
     }
-    
+
     /**
      * \brief Deallocates storage
      *
-     * Deallocates storage obtained by a call to allocate() with 
-     * arguments \a count and \a p. Note that region allocator never 
+     * Deallocates storage obtained by a call to allocate() with
+     * arguments \a count and \a p. Note that region allocator never
      * actually deallocates memory (so this function does nothing);
      * the memory is released when the region is destroyed.
      */
@@ -433,8 +433,8 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
     /**
      * \brief Constructs an object
      *
-     * Constructs an object of type \a T with the initial value 
-     * of \a t at the location specified by \a element. This function 
+     * Constructs an object of type \a T with the initial value
+     * of \a t at the location specified by \a element. This function
      * calls the <i>placement new()</i> operator.
      */
      void construct(pointer element, const_reference t) {
@@ -450,11 +450,11 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
   /*
    * \brief Tests two region allocators for equality
    *
-   * Two allocators are equal when each can release storage allocated 
+   * Two allocators are equal when each can release storage allocated
    * from the other.
    */
   template<class T1, class T2>
-  bool operator==(region_allocator<T1> const& al1, 
+  bool operator==(region_allocator<T1> const& al1,
                   region_allocator<T2> const& al2) throw() {
     return &al1.region == &al2.region;
   }
@@ -466,7 +466,7 @@ typedef std::set<int, std::less<int>, Gecode::region_allocator<int> > SR;
    * from the other.
    */
   template<class T1, class T2>
-  bool operator!=(region_allocator<T1> const& al1, 
+  bool operator!=(region_allocator<T1> const& al1,
                   region_allocator<T2> const& al2) throw() {
     return &al1.region != &al2.region;
   }

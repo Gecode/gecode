@@ -67,7 +67,7 @@ namespace Gecode { namespace Support {
     Allocator(void);
     /// Allocate memory block of size \a n
     void* alloc(size_t n);
-    /// Return address of reallocated memory block \a p of size \a n 
+    /// Return address of reallocated memory block \a p of size \a n
     void* realloc(void* p, size_t n);
     /// Free memory block \a p
     void free(void* p);
@@ -79,19 +79,19 @@ namespace Gecode { namespace Support {
   forceinline
   Allocator::Allocator(void) {
   }
-  forceinline void* 
+  forceinline void*
   Allocator::alloc(size_t n) {
     return ::malloc(n);
   }
-  forceinline void* 
+  forceinline void*
   Allocator::realloc(void* p, size_t n) {
     return ::realloc(p,n);
   }
-  forceinline void 
+  forceinline void
   Allocator::free(void* p) {
     ::free(p);
   }
-  forceinline void* 
+  forceinline void*
   Allocator::memcpy(void *d, const void *s, size_t n) {
     return ::memcpy(d,s,n);
   }
@@ -106,9 +106,9 @@ namespace Gecode { namespace Support {
    * \brief The single global default memory allocator
    * \ingroup FuncMem
    */
-  extern GECODE_SUPPORT_EXPORT 
+  extern GECODE_SUPPORT_EXPORT
   Allocator allocator;
-  
+
 }}
 
 // STATISTICS: support-any

@@ -38,7 +38,7 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  Builder::Builder(const Options& opt0, bool b0) 
+  Builder::Builder(const Options& opt0, bool b0)
     : opt(opt0.expand()), b(b0) {}
   forceinline Options&
   Builder::options(void) {
@@ -58,7 +58,7 @@ namespace Gecode { namespace Search {
 
 
   template<class T, class E>
-  forceinline Engine* 
+  forceinline Engine*
   build(Space* s, const Options& opt) {
     E engine(dynamic_cast<T*>(s),opt);
     Base<T>* eb = &engine;
@@ -68,7 +68,7 @@ namespace Gecode { namespace Search {
   }
 
   template<class T, template<class> class E>
-  forceinline Engine* 
+  forceinline Engine*
   build(Space* s, const Options& opt) {
     E<T> engine(dynamic_cast<T*>(s),opt);
     Base<T>* eb = &engine;

@@ -78,9 +78,9 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /// Compute the greatest common divisor of \a a and \a b
-  inline int 
+  inline int
   gcd(int a, int b) {
-    if (b > a) 
+    if (b > a)
       std::swap(a,b);
     while (b > 0) {
       int t = b; b = a % b; a = t;
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Linear {
   inline bool
   normalize(Term<View>* t, int &n,
             Term<View>* &t_p, int &n_p,
-            Term<View>* &t_n, int &n_n, 
+            Term<View>* &t_n, int &n_n,
             int& g) {
     /*
      * Join coefficients for aliased variables:

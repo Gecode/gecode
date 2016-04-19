@@ -91,7 +91,7 @@ namespace Gecode {
     return NULL;
   }
 
-  void 
+  void
   Brancher::print(const Space&, const Choice&, unsigned int,
                   std::ostream&) const {
   }
@@ -354,7 +354,7 @@ namespace Gecode {
     s = SS_SOLVED;
   exit:
     stat.wmp = (wmp() > 0U);
-    if (wmp() == 1U) 
+    if (wmp() == 1U)
       wmp(0U);
     return s;
   }
@@ -367,7 +367,7 @@ namespace Gecode {
     if (failed() || (b_status == Brancher::cast(&bl))) {
       // There are no more choices to be generated
       // Delete all branchers
-      Brancher* b = Brancher::cast(bl.next()); 
+      Brancher* b = Brancher::cast(bl.next());
       while (b != Brancher::cast(&bl)) {
         Brancher* d = b;
         b = Brancher::cast(b->next());
@@ -467,7 +467,7 @@ namespace Gecode {
   Space::kill_brancher(unsigned int id) {
     if (failed())
       return;
-    for (Brancher* b = Brancher::cast(bl.next()); 
+    for (Brancher* b = Brancher::cast(bl.next());
          b != Brancher::cast(&bl); b = Brancher::cast(b->next()))
       if (b->id() == id) {
         // Make sure that neither b_status nor b_commit does not point to b
@@ -510,7 +510,7 @@ namespace Gecode {
    *
    */
   Space::Space(bool share, Space& s)
-    : sm(s.sm->copy(share)), 
+    : sm(s.sm->copy(share)),
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       gafc(s.gafc),
       d_fst(&Actor::sentinel),

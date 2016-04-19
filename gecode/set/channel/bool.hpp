@@ -202,7 +202,7 @@ namespace Gecode { namespace Set { namespace Channel {
   ChannelBool<View>::advise(Space& home, Advisor& _a, const Delta& _d) {
     IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);
     const SetDelta& d = static_cast<const SetDelta&>(_d);
-    
+
     ModEvent me = View::modevent(d);
     int index = a.index();
     if ( (running && index == -1 && me != ME_SET_VAL)

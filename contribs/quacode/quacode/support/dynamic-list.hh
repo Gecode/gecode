@@ -160,19 +160,19 @@ namespace Gecode { namespace Support {
   DynamicList<T,A>::size(void) const {
     return _size;
   }
- 
+
   template<class T, class A>
   forceinline bool
   DynamicList<T,A>::empty(void) const {
     return fst == NULL;
   }
- 
+
   template<class T, class A>
   forceinline bool
   DynamicList<T,A>::end(void) const {
     return cur == NULL;
   }
- 
+
   template<class T, class A>
   forceinline T
   DynamicList<T,A>::operator ()(void) {

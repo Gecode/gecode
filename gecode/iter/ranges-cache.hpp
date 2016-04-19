@@ -70,7 +70,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Cache::Cache(void) {}
 
   forceinline
-  Cache::Cache(const Cache& m) 
+  Cache::Cache(const Cache& m)
     : RangeListIter(m) {}
 
   template<class I>

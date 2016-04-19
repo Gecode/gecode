@@ -169,7 +169,7 @@ namespace Test {
        * Creates \a n variables with domain \a d for test \a t.
        *
        */
-      TestSpace(int n, Gecode::IntSet& d, Test* t); 
+      TestSpace(int n, Gecode::IntSet& d, Test* t);
       /**
        * \brief Create test space with reification
        *
@@ -270,7 +270,7 @@ namespace Test {
        * a reified constraint, if \a r is true. The propagation
        * level is maintained for convenience.
        */
-      Test(const std::string& p, const std::string& s, 
+      Test(const std::string& p, const std::string& s,
            int a, int min, int max, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /**
@@ -281,7 +281,7 @@ namespace Test {
        * if \a r is true. The propagation level is
        * maintained for convenience.
        */
-      Test(const std::string& s, 
+      Test(const std::string& s,
            int a, int min, int max, bool r=false,
            Gecode::IntPropLevel i=Gecode::IPL_DEF);
       /// Create assignment

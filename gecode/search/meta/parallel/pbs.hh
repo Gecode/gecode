@@ -127,7 +127,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     CollectBest(void);
     /// Add a solution \a s by \a r and return whether is was better
     bool add(Space* s, Slave<CollectBest>* r);
-    /// Check whether \a b better and update accordingly 
+    /// Check whether \a b better and update accordingly
     bool constrain(const Space& b);
     /// Check whether there is any solution left
     bool empty(void) const;

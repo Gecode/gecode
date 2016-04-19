@@ -38,7 +38,7 @@
 namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
 
 
-  forceinline 
+  forceinline
   CollectAll::CollectAll(void)
     : solutions(heap) {}
   forceinline bool
@@ -122,10 +122,10 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     tostop = ts;
   }
 
-  
+
   template<class Collect>
   forceinline
-  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so) 
+  Slave<Collect>::Slave(PBS<Collect>* m, Engine* s, Stop* so)
     : Support::Runnable(false), master(m), slave(s), stop(so) {}
   template<class Collect>
   forceinline Statistics
@@ -154,7 +154,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   forceinline
   PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
                     const Statistics& stat0)
-    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)), n_slaves(n), 
+    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)), n_slaves(n),
       slave_stop(false), tostop(false), n_busy(0) {
     // Initialize slaves
     for (unsigned int i=n_slaves; i--; ) {
@@ -196,7 +196,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   }
 
   template<class Collect>
-  void 
+  void
   Slave<Collect>::run(void) {
     Space* s;
     do {
@@ -205,18 +205,18 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   }
 
   template<class Collect>
-  Space* 
+  Space*
   PBS<Collect>::next(void) {
     m.acquire();
     if (solutions.empty()) {
       // Clear all
       tostop = false;
-      slave_stop = false; 
-      
+      slave_stop = false;
+
       // Invariant: all slaves are idle!
       assert(n_busy == 0);
       assert(!tostop);
-      
+
       if (n_slaves > 0) {
         // Run all slaves
         n_busy = n_slaves;
@@ -251,13 +251,13 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   }
 
   template<class Collect>
-  bool 
+  bool
   PBS<Collect>::stopped(void) const {
     return slave_stop;
   }
 
   template<class Collect>
-  Statistics 
+  Statistics
   PBS<Collect>::statistics(void) const {
     Statistics s(stat);
     for (unsigned int i=n_slaves; i--; )

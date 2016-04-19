@@ -63,7 +63,7 @@ public:
       _q("-q", "number of symbols",                          q0     ),
       _l("-l", "sets of symbols per sequence (lambda)",      lambda0),
       _d("-d", "Hamming distance between sequences",         d0     ),
-      _permutation("-permutation", "use permutation constraints if d=4", 
+      _permutation("-permutation", "use permutation constraints if d=4",
                    false)
   {
     // Add options
@@ -129,7 +129,7 @@ protected:
 public:
   /// Actual model
   EFPA(const EFPAOptions& opt)
-    : Script(opt), 
+    : Script(opt),
       v(opt.v()),
       q(opt.q()),
       l(opt.l()),
@@ -153,7 +153,7 @@ public:
       for (int i = v; i--; )
         count(*this, cm.row(i), cardinality, values, opt.ipl());
     }
-    
+
     // Difference variables
     {
       int nseqi = 0;
@@ -210,13 +210,13 @@ public:
         for (int r2 = r1+1; r2 < v; ++r2) {
           IntVarArgs row1 = cm.row(r1);
           IntVarArgs row2 = cm.row(r2);
-          // Perm is the 
+          // Perm is the
           IntVarArgs perm(d);
           for (int i = d; i--; ) perm[i] = IntVar(*this, 0, n-1);
           // cform is the cycle-form of the permutation
           IntVar  cform(*this, 0, 1);
           BoolVar cformb = channel(*this, cform);
-          
+
           /* Permutation mapping*/
           // Values from row1...
           IntVarArgs _p(2*d);
@@ -253,7 +253,7 @@ public:
             rel(*this, (!p1b[i] && !p2b[i] && !p3b[i] && !p4b[i]) ==
                        (row1[i] == row2[i]));
           }
-          
+
           /* Constraints for fixing the permutation */
           // Common non-equality constraints - derangements
           rel(*this, perm[0], IRT_NQ, perm[1]);
@@ -289,7 +289,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  EFPA(bool share, EFPA& s) 
+  EFPA(bool share, EFPA& s)
     : Script(share,s),
       v(s.v),
       q(s.q),

@@ -470,7 +470,7 @@ namespace Gecode {
    * with automatic memory management.
    * \ingroup TaskModelSet
    */
-  
+
   //@{
 
 }
@@ -574,7 +574,7 @@ namespace Gecode {
     //@{
     /// Default constructor (array of size 0)
     SetVarArray(void);
-    /// Initialize from set variable array \a a (share elements)    
+    /// Initialize from set variable array \a a (share elements)
     SetVarArray(const SetVarArray&);
     /// Initialize from set variable argument array \a a (copy elements)
     SetVarArray(Space& home, const SetVarArgs&);
@@ -1052,7 +1052,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_SET_EXPORT void
-  element(Home home, const IntSetArgs& a, 
+  element(Home home, const IntSetArgs& a,
           IntVar x, int w, IntVar y, int h, SetVar z);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
@@ -1060,7 +1060,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_SET_EXPORT void
-  element(Home home, const SetVarArgs& a, 
+  element(Home home, const SetVarArgs& a,
           IntVar x, int w, IntVar y, int h, SetVar z);
   //@}
 
@@ -1117,8 +1117,8 @@ namespace Gecode {
    * \brief Branch value function type for set variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponding branch commit function. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher.
    *
    * \ingroup TaskModelSetBranch
@@ -1129,8 +1129,8 @@ namespace Gecode {
    * \brief Branch commit function type for set variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponds to the alternative \a a. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
@@ -1163,7 +1163,7 @@ namespace Gecode {
     /// Copy constructor
     SetAFC(const SetAFC& a);
     /// Assignment operator
-    SetAFC& operator =(const SetAFC& a);      
+    SetAFC& operator =(const SetAFC& a);
     /// Initialize for set variables \a x with decay factor \a d
     SetAFC(Home home, const SetVarArgs& x, double d=1.0);
     /**
@@ -1201,7 +1201,7 @@ namespace Gecode {
     /// Copy constructor
     SetActivity(const SetActivity& a);
     /// Assignment operator
-    SetActivity& operator =(const SetActivity& a);      
+    SetActivity& operator =(const SetActivity& a);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
@@ -1210,7 +1210,7 @@ namespace Gecode {
      * by \a bm.
      *
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetActivity(Home home, const SetVarArgs& x, double d=1.0,
                 SetBranchMerit bm=NULL);
     /**
@@ -1324,22 +1324,22 @@ namespace Gecode {
   SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count with decay factor \a d
   SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest accumulated failure count    
+  /// Select variable with largest accumulated failure count
   SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
   /// Select variable with lowest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);    
+  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with lowest activity
-  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);    
+  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
   /// Select variable with highest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);     
+  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest activity
-  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);     
+  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
   /// Select variable with smallest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);         
+  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest minimum unknown element
   SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL); 
+  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest maximum unknown element
   SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest unknown set
@@ -1520,7 +1520,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT BrancherHandle
   branch(Home home, const SetVarArgs& x,
-         SetVarBranch vars, SetValBranch vals, 
+         SetVarBranch vars, SetValBranch vals,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
   /**
@@ -1568,7 +1568,7 @@ namespace Gecode {
   /**
    * \brief Variable sequences in \a x of size \a ss are interchangeable
    *
-   * The size of \a x must be a multiple of \a ss. 
+   * The size of \a x must be a multiple of \a ss.
    */
   GECODE_SET_EXPORT
   SymmetryHandle VariableSequenceSymmetry(const SetVarArgs& x, int ss);
@@ -1593,7 +1593,7 @@ namespace Gecode {
   GECODE_SET_EXPORT BrancherHandle
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
 }

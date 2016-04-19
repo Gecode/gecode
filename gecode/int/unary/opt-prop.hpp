@@ -38,7 +38,7 @@
 #include <algorithm>
 
 namespace Gecode { namespace Int { namespace Unary {
-  
+
   template<class OptTask, class PL>
   forceinline
   OptProp<OptTask,PL>::OptProp(Home home, TaskArray<OptTask>& t)
@@ -46,12 +46,12 @@ namespace Gecode { namespace Int { namespace Unary {
 
   template<class OptTask, class PL>
   forceinline
-  OptProp<OptTask,PL>::OptProp(Space& home, bool shared, 
-                               OptProp<OptTask,PL>& p) 
+  OptProp<OptTask,PL>::OptProp(Space& home, bool shared,
+                               OptProp<OptTask,PL>& p)
     : TaskProp<OptTask,PL>(home,shared,p) {}
 
   template<class OptTask, class PL>
-  ExecStatus 
+  ExecStatus
   OptProp<OptTask,PL>::post(Home home, TaskArray<OptTask>& t) {
     int m=0, o=0;
     for (int i=t.size(); i--; ) {
@@ -72,18 +72,18 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
   template<class OptTask, class PL>
-  Actor* 
+  Actor*
   OptProp<OptTask,PL>::copy(Space& home, bool share) {
     return new (home) OptProp<OptTask,PL>(home,share,*this);
   }
 
   template<class OptTask, class PL>
-  ExecStatus 
+  ExecStatus
   OptProp<OptTask,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (BoolView::me(med) == ME_BOOL_VAL)
       GECODE_ES_CHECK((purge<OptTask,PL>(home,*this,t)));
-    
+
     GECODE_ES_CHECK((overload<OptTask,PL>(home,*this,t)));
 
     if (PL::basic)

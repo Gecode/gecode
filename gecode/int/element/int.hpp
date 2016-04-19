@@ -232,8 +232,8 @@ namespace Gecode { namespace Int { namespace Element {
       }
     }
     iv[p].idx_next = 0;
-    while (i != 0) { 
-      iv[i].mark(); i=iv[i].idx_next; 
+    while (i != 0) {
+      iv[i].mark(); i=iv[i].idx_next;
     }
   }
 
@@ -255,14 +255,14 @@ namespace Gecode { namespace Int { namespace Element {
       }
     }
     iv[p].val_next = 0;
-    while (i != 0) { 
-      iv[i].mark(); i=iv[i].val_next; 
+    while (i != 0) {
+      iv[i].mark(); i=iv[i].val_next;
     }
   }
 
   template<class V0, class V1, class Idx, class Val>
   ExecStatus
-  Int<V0,V1,Idx,Val>::assigned_val(Space& home, IntSharedArray& c, 
+  Int<V0,V1,Idx,Val>::assigned_val(Space& home, IntSharedArray& c,
                                    V0 x0, V1 x1) {
     Region r(home);
     int* v = r.alloc<int>(x0.size());
@@ -297,9 +297,9 @@ namespace Gecode { namespace Int { namespace Element {
 
       IterValUnmark v(iv);
       GECODE_ME_CHECK(x1.narrow_v(home,v,false));
-      
+
       s1=static_cast<ValSize>(x1.size());
-      
+
       assert(!x0.assigned());
       return x1.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
     }
@@ -313,9 +313,9 @@ namespace Gecode { namespace Int { namespace Element {
 
       IterIdxUnmark i(iv);
       GECODE_ME_CHECK(x0.narrow_v(home,i,false));
-      
-      s0=static_cast<IdxSize>(x0.size()); 
-      
+
+      s0=static_cast<IdxSize>(x0.size());
+
       return (x0.assigned() || x1.assigned()) ?
           home.ES_SUBSUMED(*this) : ES_FIX;
     }
@@ -324,7 +324,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (iv == NULL) {
       // Initialize data structure
       iv = home.alloc<IdxVal>(x0.size() + 1);
-      
+
       // The first element in iv[0] is used as sentinel
       // Enter information sorted by idx
       IdxVal* by_idx = &iv[1];
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Element {
       if (x1.width() <= 128) {
         int n_buckets = static_cast<int>(x1.width());
         int* pos = r.alloc<int>(n_buckets);
-        int* buckets = pos - x1.min(); 
+        int* buckets = pos - x1.min();
         for (int i=n_buckets; i--; )
           pos[i]=0;
         for (Idx i=size; i--; )
@@ -374,10 +374,10 @@ namespace Gecode { namespace Int { namespace Element {
     } else {
       prune_idx();
     }
-      
+
     // Prune values
     prune_val();
-    
+
     // Peform tell
     {
       IterIdxUnmark i(iv);
@@ -385,12 +385,12 @@ namespace Gecode { namespace Int { namespace Element {
       IterVal v(iv);
       if (shared(x0,x1)) {
         GECODE_ME_CHECK(x1.inter_v(home,v,false));
-        s0=static_cast<IdxSize>(x0.size()); 
+        s0=static_cast<IdxSize>(x0.size());
         s1=static_cast<ValSize>(x1.size());
         return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
       } else {
         GECODE_ME_CHECK(x1.narrow_v(home,v,false));
-        s0=static_cast<IdxSize>(x0.size()); 
+        s0=static_cast<IdxSize>(x0.size());
         s1=static_cast<ValSize>(x1.size());
         return (x0.assigned() || x1.assigned()) ?
           home.ES_SUBSUMED(*this) : ES_FIX;
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Element {
     }
     GECODE_ME_CHECK(x1.gq(home,min));
     GECODE_ME_CHECK(x1.lq(home,max));
-    Support::IntType val_type = 
+    Support::IntType val_type =
       std::max(Support::s_type(min),Support::s_type(max));
     switch (idx_type) {
     case Support::IT_CHAR:

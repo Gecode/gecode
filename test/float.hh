@@ -57,7 +57,7 @@ namespace Test {
       MT_TRUE,      //< Does not hold
       MT_MAYBE      //< Might or might not hold
     };
-    
+
     /// Three-valued conjunction of MaybeType
     MaybeType operator &(MaybeType a, MaybeType b);
 
@@ -67,9 +67,9 @@ namespace Test {
       RANDOM_ASSIGNMENT,
       EXTEND_ASSIGNMENT
     };
-    
+
     class Test;
-    
+
     /**
      * \defgroup TaskTestFloat Testing domain floats
      * \ingroup TaskTest
@@ -142,8 +142,8 @@ namespace Test {
       /// Destructor
       virtual ~ExtAssignment(void);
     };
-    
-    
+
+
     /// Generate random selection of assignments
     class RandomAssignment : public Assignment {
     protected:
@@ -185,7 +185,7 @@ namespace Test {
       /**
        * \brief Create test space
        *
-       * Creates \a n variables with domain \a d and step \a s for 
+       * Creates \a n variables with domain \a d and step \a s for
        * test \a t.
        *
        */
@@ -197,7 +197,7 @@ namespace Test {
        * test \a t annd reification mode \a rm.
        *
        */
-      TestSpace(int n, Gecode::FloatVal& d, Gecode::FloatNum s, Test* t, 
+      TestSpace(int n, Gecode::FloatVal& d, Gecode::FloatNum s, Test* t,
                 Gecode::ReifyMode rm);
       /// Constructor for cloning \a s
       TestSpace(bool share, TestSpace& s);
@@ -276,7 +276,7 @@ namespace Test {
        * domain \a d and step \a st and assignment type \a at. Also
        * tests for a reified constraint, if \a r is true.
        */
-      Test(const std::string& s, int a, const Gecode::FloatVal& d, 
+      Test(const std::string& s, int a, const Gecode::FloatVal& d,
            Gecode::FloatNum st, AssignmentType at,
            bool r);
       /**
@@ -286,8 +286,8 @@ namespace Test {
        * domain \a min ... \a max and step \a st and assignment type \a at. Also
        * tests for a reified constraint, if \a r is true.
        */
-      Test(const std::string& s, int a, 
-           Gecode::FloatNum min, Gecode::FloatNum max, 
+      Test(const std::string& s, int a,
+           Gecode::FloatNum min, Gecode::FloatNum max,
            Gecode::FloatNum st, AssignmentType at,
            bool r);
       /// Create assignment
@@ -323,7 +323,7 @@ namespace Test {
       /// \name General support
       //@{
       /// Compare \a x and \a y with respect to \a r
-      static MaybeType cmp(Gecode::FloatVal x, Gecode::FloatRelType r, 
+      static MaybeType cmp(Gecode::FloatVal x, Gecode::FloatRelType r,
                            Gecode::FloatVal y);
       /// Whether \a x and \a y are equal
       static MaybeType eq(Gecode::FloatVal x, Gecode::FloatVal y);

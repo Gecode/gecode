@@ -39,7 +39,7 @@
 
 namespace Gecode {
 
-  SEBs::SEBs(int n, SEB b0, ...) 
+  SEBs::SEBs(int n, SEB b0, ...)
     : PrimArgArray<SEB>(n) {
     va_list args;
     va_start(args, b0);
@@ -48,7 +48,7 @@ namespace Gecode {
       a[i] = va_arg(args,SEB);
     va_end(args);
   }
-  
+
 }
 
 // STATISTICS: search-other

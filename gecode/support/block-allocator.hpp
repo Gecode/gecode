@@ -150,7 +150,7 @@ namespace Gecode { namespace Support {
 
   template<class T, class A, int blocksize>
   forceinline void
-  BlockClient<T,A,blocksize>::operator 
+  BlockClient<T,A,blocksize>::operator
   delete(void*,BlockAllocator<T,A,blocksize>&) {
   }
   template<class T, class A, int blocksize>

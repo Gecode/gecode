@@ -123,7 +123,7 @@ namespace Test { namespace Int {
 
   inline
   RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0,
-                                           int n1, const Gecode::IntSet& d1, 
+                                           int n1, const Gecode::IntSet& d1,
                                            int a0)
     : Assignment(n0+n1,d0),vals(new int[n0+n1]),a(a0),_n1(n1),_d1(d1) {
     for (int i=n0; i--; )
@@ -165,44 +165,44 @@ namespace Test { namespace Int {
     return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
   }
   inline
-  Test::Test(const std::string& p, const std::string& s, 
-             int a, const Gecode::IntSet& d, bool r, 
+  Test::Test(const std::string& p, const std::string& s,
+             int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
-    : Base(p+s), arity(a), dom(d), 
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+    : Base(p+s), arity(a), dom(d),
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
-  Test::Test(const std::string& s, 
-             int a, const Gecode::IntSet& d, bool r, 
+  Test::Test(const std::string& s,
+             int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
-    : Base("Int::"+s), arity(a), dom(d), 
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+    : Base("Int::"+s), arity(a), dom(d),
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
   Test::Test(const std::string& p, const std::string& s,
-             int a, int min, int max, bool r, 
+             int a, int min, int max, bool r,
              Gecode::IntPropLevel i)
     : Base(p+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
-  Test::Test(const std::string& s, 
+  Test::Test(const std::string& s,
              int a, int min, int max, bool r, Gecode::IntPropLevel i)
     : Base("Int::"+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}

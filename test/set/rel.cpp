@@ -89,12 +89,12 @@ namespace Test { namespace Set {
         switch (srt) {
         case SRT_EQ: return Iter::Ranges::equal(xr0, xr1);
         case SRT_NQ: return !Iter::Ranges::equal(xr0, xr1);
-        
+
         case SRT_LQ: return (!xr0()) || in(minSymDiff(x),xr1,true);
         case SRT_LE: return xr0() ? in(minSymDiff(x),xr1) : xr1();
         case SRT_GQ: return (!xr1()) || in(minSymDiff(x),xr0,true);
         case SRT_GR: return xr1() ? in(minSymDiff(x),xr0) : xr0();
-        
+
         case SRT_SUB: return Iter::Ranges::subset(xr0, xr1);
         case SRT_SUP: return Iter::Ranges::subset(xr1, xr0);
         case SRT_DISJ:

@@ -913,7 +913,7 @@ namespace Gecode { namespace Set {
    * for cacheing the current domain of \f$t\f$ and comparing the current
    * domain to the cached domain. Cached views make it easy to implement
    * incremental propagation algorithms.
-   * 
+   *
    * \ingroup TaskActorSetView
    */
 

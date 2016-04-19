@@ -37,19 +37,19 @@
 
 namespace Gecode {
 
-  forceinline 
+  forceinline
   IntValBranch::IntValBranch(Select s0)
     : s(s0) {}
 
-  forceinline 
+  forceinline
   IntValBranch::IntValBranch(Rnd r)
     : ValBranch(r), s(SEL_RND) {}
 
-  forceinline 
+  forceinline
   IntValBranch::IntValBranch(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 
-  forceinline 
+  forceinline
   IntValBranch::IntValBranch(Select s0, IntSharedArray n0)
     : n(n0), s(s0) {}
 

@@ -37,15 +37,15 @@
 
 namespace Gecode {
 
-  forceinline 
+  forceinline
   FloatValBranch::FloatValBranch(Select s0)
     : s(s0) {}
 
-  forceinline 
+  forceinline
   FloatValBranch::FloatValBranch(Rnd r)
     : ValBranch(r), s(SEL_SPLIT_RND) {}
 
-  forceinline 
+  forceinline
   FloatValBranch::FloatValBranch(VoidFunction v, VoidFunction c)
     : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
 

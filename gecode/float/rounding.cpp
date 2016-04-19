@@ -52,7 +52,7 @@ namespace Gecode { namespace Float {
   typedef int mpfr_func(mpfr_t, const __mpfr_struct*, mp_rnd_t);
 
   /// Routine to call mpfr function with proper rounding
-  forceinline double 
+  forceinline double
   invoke_mpfr(FloatNum x, mpfr_func f, mp_rnd_t r) {
     mpfr_t xx;
     mpfr_init_set_d(xx, x, GMP_RNDN);

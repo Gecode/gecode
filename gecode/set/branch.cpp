@@ -40,14 +40,14 @@
 namespace Gecode {
   BrancherHandle
   branch(Home home, const SetVarArgs& x,
-         SetVarBranch vars, SetValBranch vals, 
+         SetVarBranch vars, SetValBranch vals,
          SetBranchFilter bf, SetVarValPrint vvp) {
     using namespace Set;
     if (home.failed()) return BrancherHandle();
     vars.expand(home,x);
     ViewArray<SetView> xv(home,x);
-    ViewSel<SetView>* vs[1] = { 
-      Branch::viewsel(home,vars) 
+    ViewSel<SetView>* vs[1] = {
+      Branch::viewsel(home,vars)
     };
     return ViewValBrancher<SetView,1,int,2>::post
       (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
@@ -55,7 +55,7 @@ namespace Gecode {
 
   BrancherHandle
   branch(Home home, const SetVarArgs& x,
-         TieBreak<SetVarBranch> vars, SetValBranch vals, 
+         TieBreak<SetVarBranch> vars, SetValBranch vals,
          SetBranchFilter bf, SetVarValPrint vvp) {
     using namespace Set;
     if (home.failed()) return BrancherHandle();
@@ -76,20 +76,20 @@ namespace Gecode {
       return branch(home,x,vars.a,vals,bf,vvp);
     } else {
       ViewArray<SetView> xv(home,x);
-      ValSelCommitBase<SetView,int>* vsc = Branch::valselcommit(home,vals); 
+      ValSelCommitBase<SetView,int>* vsc = Branch::valselcommit(home,vals);
       if (vars.c.select() == SetVarBranch::SEL_NONE) {
-        ViewSel<SetView>* vs[2] = { 
+        ViewSel<SetView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
         return ViewValBrancher<SetView,2,int,2>::post(home,xv,vs,vsc,bf,vvp);
       } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
-        ViewSel<SetView>* vs[3] = { 
+        ViewSel<SetView>* vs[3] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
         return ViewValBrancher<SetView,3,int,2>::post(home,xv,vs,vsc,bf,vvp);
       } else {
-        ViewSel<SetView>* vs[4] = { 
+        ViewSel<SetView>* vs[4] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
@@ -103,14 +103,14 @@ namespace Gecode {
     SetVarArgs xv(1); xv[0]=x;
     return branch(home, xv, SET_VAR_NONE(), vals, NULL, vvp);
   }
-  
+
   BrancherHandle
   assign(Home home, const SetVarArgs& x, SetAssign sa,
          SetBranchFilter bf, SetVarValPrint vvp) {
     using namespace Set;
     if (home.failed()) return BrancherHandle();
     ViewArray<SetView> xv(home,x);
-    ViewSel<SetView>* vs[1] = { 
+    ViewSel<SetView>* vs[1] = {
       new (home) ViewSelNone<SetView>(home,SET_VAR_NONE())
     };
     return ViewValBrancher<SetView,1,int,1>::post
@@ -122,7 +122,7 @@ namespace Gecode {
     SetVarArgs xv(1); xv[0]=x;
     return assign(home, xv, sa, NULL, vvp);
   }
-  
+
 }
 
 // STATISTICS: set-post

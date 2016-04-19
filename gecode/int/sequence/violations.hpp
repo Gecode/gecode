@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     fst = next(fst);
     return fst >= size();
   }
-  
+
   forceinline void
   Violations::update(Space& home, bool, Violations& v) {
     assert(v.empty());
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   Violations::add(unsigned int i) {
     set(i); if (i < fst) fst = i;
   }
-  
+
   forceinline unsigned int
   Violations::get(void) {
     assert(!empty());
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     clear(fst); fst++;
     return fst-1;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

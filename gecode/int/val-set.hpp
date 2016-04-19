@@ -55,7 +55,7 @@ namespace Gecode { namespace Int {
           c->min(v); n++;
           return;
         } else {
-          *p = new (home) RangeList(v,v,c); n++; 
+          *p = new (home) RangeList(v,v,c); n++;
           return;
         }
       } else if (v <= c->max()) {
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int {
   }
 
   forceinline
-  ValSet::Ranges::Ranges(const ValSet& vs) 
+  ValSet::Ranges::Ranges(const ValSet& vs)
     : c(vs.fst) {}
 
   forceinline bool

@@ -46,7 +46,7 @@ namespace Test { namespace Float {
    /// %Tests for channel constraints
    namespace Channel {
 
-     /// %Test channel between float and integer 
+     /// %Test channel between float and integer
      class ChannelLinkSingle : public Test {
      public:
        /// Construct and register test
@@ -55,8 +55,8 @@ namespace Test { namespace Float {
        /// Check whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatNum tmp;
-         return (((modf(x[0].min(),&tmp)==0) || 
-                  (modf(x[0].max(),&tmp)==0)) 
+         return (((modf(x[0].min(),&tmp)==0) ||
+                  (modf(x[0].max(),&tmp)==0))
                  && (x[0]==x[1])) ? MT_TRUE : MT_FALSE;
        }
        /// Post constraint on \a x

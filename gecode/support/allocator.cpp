@@ -41,6 +41,6 @@ namespace Gecode { namespace Support {
 
   Allocator allocator;
 
-}}   
+}}
 
 // STATISTICS: support-any

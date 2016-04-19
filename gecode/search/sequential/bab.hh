@@ -81,7 +81,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     ~BAB(void);
   };
 
-  forceinline 
+  forceinline
   BAB::BAB(Space* s, const Options& o)
     : opt(o), path(opt.nogoods_limit), d(0), mark(0), best(NULL) {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
@@ -186,7 +186,7 @@ namespace Gecode { namespace Search { namespace Sequential {
   }
 
   forceinline void
-  BAB::reset(Space* s) { 
+  BAB::reset(Space* s) {
     delete best;
     best = NULL;
     path.reset();
@@ -207,7 +207,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     return path;
   }
 
-  forceinline 
+  forceinline
   BAB::~BAB(void) {
     path.reset();
     delete best;

@@ -75,7 +75,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   namespace {
-    
+
     inline IntRelType
     swap(IntRelType irt) {
       switch (irt) {
@@ -116,7 +116,7 @@ namespace Gecode { namespace FlatZinc {
       AST::Array* offs = ce.args->a[0]->getArray();
       IntArgs oa(offs->a.size());
       for (int i=offs->a.size(); i--; ) {
-        oa[i] = offs->a[i]->getInt();    
+        oa[i] = offs->a[i]->getInt();
       }
       IntPropLevel ipl = s.ann2ipl(ann);
       distinct(s, oa, va, ipl == IPL_DEF ? IPL_BND : ipl);
@@ -127,17 +127,17 @@ namespace Gecode { namespace FlatZinc {
       rel(s, va, IRT_EQ, s.ann2ipl(ann));
     }
 
-    void p_int_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
+    void p_int_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce,
                    AST::Node* ann) {
       if (ce[0]->isIntVar()) {
         if (ce[1]->isIntVar()) {
-          rel(s, s.arg2IntVar(ce[0]), irt, s.arg2IntVar(ce[1]), 
+          rel(s, s.arg2IntVar(ce[0]), irt, s.arg2IntVar(ce[1]),
               s.ann2ipl(ann));
         } else {
           rel(s, s.arg2IntVar(ce[0]), irt, ce[1]->getInt(), s.ann2ipl(ann));
         }
       } else {
-        rel(s, s.arg2IntVar(ce[1]), swap(irt), ce[0]->getInt(), 
+        rel(s, s.arg2IntVar(ce[1]), swap(irt), ce[0]->getInt(),
             s.ann2ipl(ann));
       }
     }
@@ -277,7 +277,7 @@ namespace Gecode { namespace FlatZinc {
                 ia_tmp[count++] = ia[singleIntVar] == -1 ? ia[i] : -ia[i];
             }
             IntRelType t = (ia[singleIntVar] == -1 ? irt : swap(irt));
-            linear(s, ia_tmp, iv, t, siv, Reify(s.arg2BoolVar(ce[3]), rm), 
+            linear(s, ia_tmp, iv, t, siv, Reify(s.arg2BoolVar(ce[3]), rm),
                    s.ann2ipl(ann));
           } else {
             IntVarArgs iv = s.arg2intvarargs(ce[1]);
@@ -292,7 +292,7 @@ namespace Gecode { namespace FlatZinc {
       } else {
         IntVarArgs iv = s.arg2intvarargs(ce[1]);
         linear(s, ia, iv, irt, ce[2]->getInt(),
-               Reify(s.arg2BoolVar(ce[3]), rm), 
+               Reify(s.arg2BoolVar(ce[3]), rm),
                s.ann2ipl(ann));
       }
     }
@@ -300,55 +300,55 @@ namespace Gecode { namespace FlatZinc {
       p_int_lin_CMP(s, IRT_EQ, ce, ann);
     }
     void p_int_lin_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_EQ, RM_EQV, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_EQ, RM_EQV, ce, ann);
     }
     void p_int_lin_eq_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_EQ, RM_IMP, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_EQ, RM_IMP, ce, ann);
     }
     void p_int_lin_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_int_lin_CMP(s, IRT_NQ, ce, ann);
     }
     void p_int_lin_ne_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_NQ, RM_EQV, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_NQ, RM_EQV, ce, ann);
     }
     void p_int_lin_ne_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_NQ, RM_IMP, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_NQ, RM_IMP, ce, ann);
     }
     void p_int_lin_le(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_int_lin_CMP(s, IRT_LQ, ce, ann);
     }
     void p_int_lin_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_LQ, RM_EQV, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_LQ, RM_EQV, ce, ann);
     }
     void p_int_lin_le_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_LQ, RM_IMP, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_LQ, RM_IMP, ce, ann);
     }
     void p_int_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_int_lin_CMP(s, IRT_LE, ce, ann);
     }
     void p_int_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_LE, RM_EQV, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_LE, RM_EQV, ce, ann);
     }
     void p_int_lin_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_LE, RM_IMP, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_LE, RM_IMP, ce, ann);
     }
     void p_int_lin_ge(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_int_lin_CMP(s, IRT_GQ, ce, ann);
     }
     void p_int_lin_ge_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_GQ, RM_EQV, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_GQ, RM_EQV, ce, ann);
     }
     void p_int_lin_ge_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_GQ, RM_IMP, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_GQ, RM_IMP, ce, ann);
     }
     void p_int_lin_gt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_int_lin_CMP(s, IRT_GR, ce, ann);
     }
     void p_int_lin_gt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_GR, RM_EQV, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_GR, RM_EQV, ce, ann);
     }
     void p_int_lin_gt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
-      p_int_lin_CMP_reif(s, IRT_GR, RM_IMP, ce, ann);    
+      p_int_lin_CMP_reif(s, IRT_GR, RM_IMP, ce, ann);
     }
 
     void p_bool_lin_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce,
@@ -374,83 +374,83 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs iv = s.arg2boolvarargs(ce[1]);
       if (ce[2]->isIntVar())
         linear(s, ia, iv, irt, s.iv[ce[2]->getIntVar()],
-               Reify(s.arg2BoolVar(ce[3]), rm), 
+               Reify(s.arg2BoolVar(ce[3]), rm),
                s.ann2ipl(ann));
       else
         linear(s, ia, iv, irt, ce[2]->getInt(),
-               Reify(s.arg2BoolVar(ce[3]), rm), 
+               Reify(s.arg2BoolVar(ce[3]), rm),
                s.ann2ipl(ann));
     }
     void p_bool_lin_eq(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_lin_CMP(s, IRT_EQ, ce, ann);
     }
-    void p_bool_lin_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_eq_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_EQ, RM_EQV, ce, ann);
     }
-    void p_bool_lin_eq_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_eq_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_EQ, RM_IMP, ce, ann);
     }
     void p_bool_lin_ne(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_lin_CMP(s, IRT_NQ, ce, ann);
     }
-    void p_bool_lin_ne_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_ne_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_NQ, RM_EQV, ce, ann);
     }
-    void p_bool_lin_ne_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_ne_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_NQ, RM_IMP, ce, ann);
     }
     void p_bool_lin_le(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_lin_CMP(s, IRT_LQ, ce, ann);
     }
-    void p_bool_lin_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_le_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_LQ, RM_EQV, ce, ann);
     }
-    void p_bool_lin_le_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_le_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_LQ, RM_IMP, ce, ann);
     }
-    void p_bool_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP(s, IRT_LE, ce, ann);
     }
-    void p_bool_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_lt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_LE, RM_EQV, ce, ann);
     }
-    void p_bool_lin_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_lt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_LE, RM_IMP, ce, ann);
     }
     void p_bool_lin_ge(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_lin_CMP(s, IRT_GQ, ce, ann);
     }
-    void p_bool_lin_ge_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_ge_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_GQ, RM_EQV, ce, ann);
     }
-    void p_bool_lin_ge_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_ge_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_GQ, RM_IMP, ce, ann);
     }
     void p_bool_lin_gt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       p_bool_lin_CMP(s, IRT_GR, ce, ann);
     }
-    void p_bool_lin_gt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_gt_reif(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_GR, RM_EQV, ce, ann);
     }
-    void p_bool_lin_gt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) 
+    void p_bool_lin_gt_imp(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann)
     {
       p_bool_lin_CMP_reif(s, IRT_GR, RM_IMP, ce, ann);
     }
 
     /* arithmetic constraints */
-  
+
     void p_int_plus(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       if (!ce[0]->isIntVar()) {
         rel(s, ce[0]->getInt() + s.arg2IntVar(ce[1])
@@ -459,10 +459,10 @@ namespace Gecode { namespace FlatZinc {
         rel(s, s.arg2IntVar(ce[0]) + ce[1]->getInt()
                 == s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       } else if (!ce[2]->isIntVar()) {
-        rel(s, s.arg2IntVar(ce[0]) + s.arg2IntVar(ce[1]) 
+        rel(s, s.arg2IntVar(ce[0]) + s.arg2IntVar(ce[1])
                 == ce[2]->getInt(), s.ann2ipl(ann));
       } else {
-        rel(s, s.arg2IntVar(ce[0]) + s.arg2IntVar(ce[1]) 
+        rel(s, s.arg2IntVar(ce[0]) + s.arg2IntVar(ce[1])
                 == s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       }
     }
@@ -475,10 +475,10 @@ namespace Gecode { namespace FlatZinc {
         rel(s, s.arg2IntVar(ce[0]) - ce[1]->getInt()
                 == s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       } else if (!ce[2]->isIntVar()) {
-        rel(s, s.arg2IntVar(ce[0]) - s.arg2IntVar(ce[1]) 
+        rel(s, s.arg2IntVar(ce[0]) - s.arg2IntVar(ce[1])
                 == ce[2]->getInt(), s.ann2ipl(ann));
       } else {
-        rel(s, s.arg2IntVar(ce[0]) - s.arg2IntVar(ce[1]) 
+        rel(s, s.arg2IntVar(ce[0]) - s.arg2IntVar(ce[1])
                 == s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       }
     }
@@ -487,7 +487,7 @@ namespace Gecode { namespace FlatZinc {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
       IntVar x2 = s.arg2IntVar(ce[2]);
-      mult(s, x0, x1, x2, s.ann2ipl(ann));    
+      mult(s, x0, x1, x2, s.ann2ipl(ann));
     }
     void p_int_div(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
@@ -521,9 +521,9 @@ namespace Gecode { namespace FlatZinc {
     }
 
     /* Boolean constraints */
-    void p_bool_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce, 
+    void p_bool_CMP(FlatZincSpace& s, IntRelType irt, const ConExpr& ce,
                    AST::Node* ann) {
-      rel(s, s.arg2BoolVar(ce[0]), irt, s.arg2BoolVar(ce[1]), 
+      rel(s, s.arg2BoolVar(ce[0]), irt, s.arg2BoolVar(ce[1]),
           s.ann2ipl(ann));
     }
     void p_bool_CMP_reif(FlatZincSpace& s, IntRelType irt, ReifyMode rm,
@@ -612,7 +612,7 @@ namespace Gecode { namespace FlatZinc {
       BoolVar b0 = s.arg2BoolVar(ce[0]);
       BoolVar b1 = s.arg2BoolVar(ce[1]);
       BoolVar b2 = s.arg2BoolVar(ce[2]);
-      clause(s, BOT_OR, BoolVarArgs()<<b0<<b1, BoolVarArgs()<<b2, 1, 
+      clause(s, BOT_OR, BoolVarArgs()<<b0<<b1, BoolVarArgs()<<b2, 1,
              s.ann2ipl(ann));
     }
     void p_bool_and(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -709,9 +709,9 @@ namespace Gecode { namespace FlatZinc {
       BoolVar x1 = s.arg2BoolVar(ce[1]);
       rel(s, x0, BOT_XOR, x1, 1, s.ann2ipl(ann));
     }
-  
+
     /* element constraints */
-    void p_array_int_element(FlatZincSpace& s, const ConExpr& ce, 
+    void p_array_int_element(FlatZincSpace& s, const ConExpr& ce,
                                  AST::Node* ann) {
       bool isConstant = true;
       AST::Array* a = ce[1]->getArray();
@@ -731,7 +731,7 @@ namespace Gecode { namespace FlatZinc {
         element(s, iv, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       }
     }
-    void p_array_bool_element(FlatZincSpace& s, const ConExpr& ce, 
+    void p_array_bool_element(FlatZincSpace& s, const ConExpr& ce,
                                   AST::Node* ann) {
       bool isConstant = true;
       AST::Array* a = ce[1]->getArray();
@@ -751,7 +751,7 @@ namespace Gecode { namespace FlatZinc {
         element(s, iv, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
       }
     }
-  
+
     /* coercion constraints */
     void p_bool2int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVar x0 = s.arg2BoolVar(ce[0]);
@@ -819,13 +819,13 @@ namespace Gecode { namespace FlatZinc {
     }
 
     /* constraints from the standard library */
-  
+
     void p_abs(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
       abs(s, x0, x1, s.ann2ipl(ann));
     }
-  
+
     void p_array_int_lt(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
       IntVarArgs iv1 = s.arg2intvarargs(ce[1]);
@@ -851,22 +851,22 @@ namespace Gecode { namespace FlatZinc {
       BoolVarArgs bv1 = s.arg2boolvarargs(ce[1]);
       rel(s, bv0, IRT_LQ, bv1, s.ann2ipl(ann));
     }
-  
+
     void p_count(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs iv = s.arg2intvarargs(ce[0]);
       if (!ce[1]->isIntVar()) {
         if (!ce[2]->isIntVar()) {
-          count(s, iv, ce[1]->getInt(), IRT_EQ, ce[2]->getInt(), 
+          count(s, iv, ce[1]->getInt(), IRT_EQ, ce[2]->getInt(),
                 s.ann2ipl(ann));
         } else {
-          count(s, iv, ce[1]->getInt(), IRT_EQ, s.arg2IntVar(ce[2]), 
+          count(s, iv, ce[1]->getInt(), IRT_EQ, s.arg2IntVar(ce[2]),
                 s.ann2ipl(ann));
         }
       } else if (!ce[2]->isIntVar()) {
-        count(s, iv, s.arg2IntVar(ce[1]), IRT_EQ, ce[2]->getInt(), 
+        count(s, iv, s.arg2IntVar(ce[1]), IRT_EQ, ce[2]->getInt(),
               s.ann2ipl(ann));
       } else {
-        count(s, iv, s.arg2IntVar(ce[1]), IRT_EQ, s.arg2IntVar(ce[2]), 
+        count(s, iv, s.arg2IntVar(ce[1]), IRT_EQ, s.arg2IntVar(ce[2]),
               s.ann2ipl(ann));
       }
     }
@@ -943,7 +943,7 @@ namespace Gecode { namespace FlatZinc {
       for (int i=iv0.size(); i--;)
         iv0_ri[i] = IntVarRanges(iv0[i]);
       Iter::Ranges::NaryUnion iv0_r(re,iv0_ri,iv0.size());
-      Iter::Ranges::Diff<Iter::Ranges::NaryUnion,IntSetRanges> 
+      Iter::Ranges::Diff<Iter::Ranges::NaryUnion,IntSetRanges>
         extra_r(iv0_r,cover_r);
       Iter::Ranges::ToValues<Iter::Ranges::Diff<
         Iter::Ranges::NaryUnion,IntSetRanges> > extra(extra_r);
@@ -957,7 +957,7 @@ namespace Gecode { namespace FlatZinc {
       if (ipl==IPL_DOM) {
         IntVarArgs allvars = iv0+iv1;
         unshare(s, allvars);
-        count(s, allvars.slice(0,1,iv0.size()), 
+        count(s, allvars.slice(0,1,iv0.size()),
                  allvars.slice(iv0.size(),1,iv1.size()),
                  cover, ipl);
       } else {
@@ -1052,7 +1052,7 @@ namespace Gecode { namespace FlatZinc {
             noOfTrans++;
         }
       }
-    
+
       Region re(s);
       DFA::Transition* t = re.alloc<DFA::Transition>(noOfTrans+1);
       noOfTrans = 0;
@@ -1067,7 +1067,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       t[noOfTrans].i_state = -1;
-    
+
       // Final states
       AST::SetLit* sl = ce[5]->getSet();
       int* f;
@@ -1082,7 +1082,7 @@ namespace Gecode { namespace FlatZinc {
           f[j] = sl->s[j];
         f[sl->s.size()] = -1;
       }
-        
+
       DFA dfa(q0,t,f);
       free(f);
       unshare(s, iv);
@@ -1202,7 +1202,7 @@ namespace Gecode { namespace FlatZinc {
         rel(s, height[0] <= bound);
         return;
       }
-      
+
       int minHeight = std::min(height[0].min(),height[1].min());
       int minHeight2 = std::max(height[0].min(),height[1].min());
       for (int i=2; i<n; i++) {
@@ -1267,7 +1267,7 @@ namespace Gecode { namespace FlatZinc {
         for (int time = min; time < max; ++time) {
           IntVarArgs x(start.size());
           for (int i = start.size(); i--; ) {
-            IntVar overlaps = channel(s, expr(s, (start[i] <= time) && 
+            IntVar overlaps = channel(s, expr(s, (start[i] <= time) &&
                                                  (time < end[i])));
             x[i] = expr(s, overlaps * height[i]);
           }
@@ -1351,7 +1351,7 @@ namespace Gecode { namespace FlatZinc {
         for (int i=h.size(); i--;)
           ih[i] = h[i].val();
         nooverlap(s,x0,iw,y0,ih,s.ann2ipl(ann));
-        
+
         int miny = y0[0].min();
         int maxy = y0[0].max();
         int maxdy = ih[0];
@@ -1536,7 +1536,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_in_reif", &p_int_in_reif);
         registry().add("set_in_imp", &p_int_in_imp);
 #endif
-      
+
         registry().add("array_int_lt", &p_array_int_lt);
         registry().add("array_int_lq", &p_array_int_lq);
         registry().add("array_bool_lt", &p_array_bool_lt);
@@ -1550,9 +1550,9 @@ namespace Gecode { namespace FlatZinc {
         registry().add("global_cardinality", &p_global_cardinality);
         registry().add("global_cardinality_closed",
           &p_global_cardinality_closed);
-        registry().add("global_cardinality_low_up", 
+        registry().add("global_cardinality_low_up",
           &p_global_cardinality_low_up);
-        registry().add("global_cardinality_low_up_closed", 
+        registry().add("global_cardinality_low_up_closed",
           &p_global_cardinality_low_up_closed);
         registry().add("array_int_minimum", &p_minimum);
         registry().add("array_int_maximum", &p_maximum);
@@ -1591,7 +1591,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("bool_lin_ge_imp", &p_bool_lin_ge_imp);
         registry().add("bool_lin_gt_reif", &p_bool_lin_gt_reif);
         registry().add("bool_lin_gt_imp", &p_bool_lin_gt_imp);
-        
+
         registry().add("gecode_schedule_unary", &p_schedule_unary);
         registry().add("gecode_schedule_unary_optional", &p_schedule_unary_optional);
         registry().add("gecode_schedule_cumulative_optional", &p_cumulative_opt);
@@ -1614,7 +1614,7 @@ namespace Gecode { namespace FlatZinc {
 #ifdef GECODE_HAS_SET_VARS
     void p_set_OP(FlatZincSpace& s, SetOpType op,
                   const ConExpr& ce, AST::Node *) {
-      rel(s, s.arg2SetVar(ce[0]), op, s.arg2SetVar(ce[1]), 
+      rel(s, s.arg2SetVar(ce[0]), op, s.arg2SetVar(ce[1]),
           SRT_EQ, s.arg2SetVar(ce[2]));
     }
     void p_set_union(FlatZincSpace& s, const ConExpr& ce, AST::Node *ann) {
@@ -1640,7 +1640,7 @@ namespace Gecode { namespace FlatZinc {
       IntSet yubs(yub);
       SetVar y_x(s,IntSet::empty,yubs);
       rel(s, y, SOT_MINUS, x, SRT_EQ, y_x);
-    
+
       rel(s, x_y, SOT_UNION, y_x, SRT_EQ, s.arg2SetVar(ce[2]));
     }
 
@@ -1681,7 +1681,7 @@ namespace Gecode { namespace FlatZinc {
     }
     void p_set_card(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       if (!ce[1]->isIntVar()) {
-        cardinality(s, s.arg2SetVar(ce[0]), ce[1]->getInt(), 
+        cardinality(s, s.arg2SetVar(ce[0]), ce[1]->getInt(),
                     ce[1]->getInt());
       } else {
         cardinality(s, s.arg2SetVar(ce[0]), s.arg2IntVar(ce[1]));
@@ -1764,7 +1764,7 @@ namespace Gecode { namespace FlatZinc {
     void p_set_disjoint(FlatZincSpace& s, const ConExpr& ce, AST::Node *) {
       rel(s, s.arg2SetVar(ce[0]), SRT_DISJ, s.arg2SetVar(ce[1]));
     }
-    
+
     void p_link_set_to_booleans(FlatZincSpace& s, const ConExpr& ce,
                                 AST::Node *) {
       SetVar x = s.arg2SetVar(ce[0]);
@@ -1799,7 +1799,7 @@ namespace Gecode { namespace FlatZinc {
 
     void p_array_set_element_op(FlatZincSpace& s, const ConExpr& ce,
                                 AST::Node*, SetOpType op,
-                                const IntSet& universe = 
+                                const IntSet& universe =
                                 IntSet(Set::Limits::min,Set::Limits::max)) {
       bool isConstant = true;
       AST::Array* a = ce[1]->getArray();
@@ -1875,14 +1875,14 @@ namespace Gecode { namespace FlatZinc {
       }
       channel(s,xv,yv);
     }
-    
+
     void p_range(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       int xoff=ce[1]->getInt();
       assert(xoff >= 0);
       IntVarArgs xv = s.arg2intvarargs(ce[0],xoff);
       element(s, SOT_UNION, xv, s.arg2SetVar(ce[2]), s.arg2SetVar(ce[3]));
     }
-    
+
     void p_weights(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       IntArgs e = s.arg2intargs(ce[0]);
       IntArgs w = s.arg2intargs(ce[1]);
@@ -1890,7 +1890,7 @@ namespace Gecode { namespace FlatZinc {
       IntVar y = s.arg2IntVar(ce[3]);
       weights(s,e,w,x,y);
     }
-    
+
     void p_inverse_set(FlatZincSpace& s, const ConExpr& ce, AST::Node*) {
       int xoff = ce[2]->getInt();
       int yoff = ce[3]->getInt();
@@ -1905,7 +1905,7 @@ namespace Gecode { namespace FlatZinc {
       int p_t = ce[2]->getInt();
       precede(s,x,p_s,p_t);
     }
-    
+
     class SetPoster {
     public:
       SetPoster(void) {
@@ -1934,7 +1934,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_in_reif", &p_set_in_reif);
         registry().add("set_in_imp", &p_set_in_imp);
         registry().add("disjoint", &p_set_disjoint);
-        registry().add("gecode_link_set_to_booleans", 
+        registry().add("gecode_link_set_to_booleans",
                        &p_link_set_to_booleans);
 
         registry().add("array_set_union", &p_array_set_union);
@@ -1942,15 +1942,15 @@ namespace Gecode { namespace FlatZinc {
         registry().add("set_convex", &p_set_convex);
         registry().add("array_set_seq", &p_array_set_seq);
         registry().add("array_set_seq_union", &p_array_set_seq_union);
-        registry().add("gecode_array_set_element_union", 
+        registry().add("gecode_array_set_element_union",
                        &p_array_set_element_union);
-        registry().add("gecode_array_set_element_intersect", 
+        registry().add("gecode_array_set_element_intersect",
                        &p_array_set_element_intersect);
-        registry().add("gecode_array_set_element_intersect_in", 
+        registry().add("gecode_array_set_element_intersect_in",
                        &p_array_set_element_intersect_in);
-        registry().add("gecode_array_set_element_partition", 
+        registry().add("gecode_array_set_element_partition",
                        &p_array_set_element_partition);
-        registry().add("gecode_int_set_channel", 
+        registry().add("gecode_int_set_channel",
                        &p_int_set_channel);
         registry().add("gecode_range",
                        &p_range);
@@ -2151,14 +2151,14 @@ namespace Gecode { namespace FlatZinc {
         registry().add("float_plus",&p_float_plus);
         registry().add("float_max",&p_float_max);
         registry().add("float_min",&p_float_min);
-        
+
         registry().add("float_lin_eq",&p_float_lin_eq);
         registry().add("float_lin_eq_reif",&p_float_lin_eq_reif);
         registry().add("float_lin_le",&p_float_lin_le);
         registry().add("float_lin_lt",&p_float_lin_lt);
         registry().add("float_lin_le_reif",&p_float_lin_le_reif);
         registry().add("float_lin_lt_reif",&p_float_lin_lt_reif);
-        
+
 #ifdef GECODE_HAS_MPFR
         registry().add("float_acos",&p_float_acos);
         registry().add("float_asin",&p_float_asin);

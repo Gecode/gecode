@@ -43,7 +43,7 @@ namespace Gecode { namespace Search {
 
   /// Create branch and bound engine
   GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
-  
+
   /// A BAB engine builder
   template<class T>
   class BabBuilder : public Builder {

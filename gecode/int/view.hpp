@@ -121,7 +121,7 @@ namespace Gecode { namespace Int {
    * views.
    * \ingroup TaskActorInt
    */
-  
+
   /**
    * \brief Integer view for integer variables
    * \ingroup TaskActorIntView
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int {
     /// Initialize from integer variable \a y
     IntView(IntVarImp* y);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -160,35 +160,35 @@ namespace Gecode { namespace Int {
     /// Return regret of domain maximum (distance to next smaller value)
     unsigned int regret_max(void) const;
     //@}
-    
+
     /// \name Domain tests
     //@{
     /// Test whether domain is a range
     bool range(void) const;
-    
+
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     /// Test whether \a n is contained in domain
     bool in(long long int n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
     ModEvent lq(Space& home, int n);
     /// Restrict domain values to be less or equal than \a n
     ModEvent lq(Space& home, long long int n);
-    
+
     /// Restrict domain values to be less than \a n
     ModEvent le(Space& home, int n);
     /// Restrict domain values to be less than \a n
     ModEvent le(Space& home, long long int n);
-    
+
     /// Restrict domain values to be greater or equal than \a n
     ModEvent gq(Space& home, int n);
     /// Restrict domain values to be greater or equal than \a n
     ModEvent gq(Space& home, long long int n);
-    
+
     /// Restrict domain values to be greater than \a n
     ModEvent gr(Space& home, int n);
     /// Restrict domain values to be greater than \a n
@@ -264,7 +264,7 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const IntView& x);
-  
+
 
   /**
    * \brief Minus integer view
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int {
     /// Initialize with integer view \a y
     explicit MinusView(const IntView& y);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -295,7 +295,7 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    
+
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -305,18 +305,18 @@ namespace Gecode { namespace Int {
     /// Return regret of domain maximum (distance to next smaller value)
     unsigned int regret_max(void) const;
     //@}
-    
+
     /// \name Domain tests
     //@{
     /// Test whether domain is a range
     bool range(void) const;
-    
+
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     /// Test whether \a n is contained in domain
     bool in(long long int n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
@@ -384,13 +384,13 @@ namespace Gecode { namespace Int {
     template<class I>
     ModEvent minus_v(Space& home, I& i, bool depends=true);
     //@}
-    
+
     /// \name View-dependent propagator support
     //@{
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     //@}
-    
+
     /// \name Delta information for advisors
     //@{
     /// Return minimum value just pruned
@@ -432,7 +432,7 @@ namespace Gecode { namespace Int {
     /// Initialize with integer view \a y and offset \a c
     OffsetView(const IntView& y, int c);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return offset
@@ -447,7 +447,7 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    
+
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -457,18 +457,18 @@ namespace Gecode { namespace Int {
     /// Return regret of domain maximum (distance to next smaller value)
     unsigned int regret_max(void) const;
     //@}
-    
+
     /// \name Domain tests
     //@{
     /// Test whether domain is a range
     bool range(void) const;
-    
+
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     /// Test whether \a n is contained in domain
     bool in(long long int n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
@@ -501,7 +501,7 @@ namespace Gecode { namespace Int {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, long long int n);
     //@}
-    
+
     /**
      * \name Domain update by iterator
      *
@@ -552,7 +552,7 @@ namespace Gecode { namespace Int {
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
-    
+
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
@@ -567,7 +567,7 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OffsetView& x);
-  
+
   /** \name View comparison
    *  \relates Gecode::Int::OffsetView
    */
@@ -609,7 +609,7 @@ namespace Gecode { namespace Int {
   NoOffset<View>::offset(void) const {
     return 0;
   }
-  
+
 
   /**
    * \brief Converter with fixed offset
@@ -652,8 +652,8 @@ namespace Gecode { namespace Int {
    * behaves as \f$a\cdot x\f$.
    *
    * The precision of a scale integer view is defined by the value types
-   * \a Val and \a UnsVal. \a Val can be either \c int or \c long \c long 
-   * \c int where \a UnsVal must be the unsigned variant of \a Val. The 
+   * \a Val and \a UnsVal. \a Val can be either \c int or \c long \c long
+   * \c int where \a UnsVal must be the unsigned variant of \a Val. The
    * range which is allowed for the two types is defined by the values in
    * Gecode::Limits.
    *
@@ -681,7 +681,7 @@ namespace Gecode { namespace Int {
     /// Initialize as \f$b\cdot y\f$
     ScaleView(int b, const IntView& y);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return scale factor of scale view
@@ -694,7 +694,7 @@ namespace Gecode { namespace Int {
     Val med(void) const;
     /// Return assigned value (only if assigned)
     Val val(void) const;
-    
+
     /// Return size (cardinality) of domain
     UnsVal size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -712,7 +712,7 @@ namespace Gecode { namespace Int {
     /// Test whether \a n is contained in domain
     bool in(Val n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
@@ -728,7 +728,7 @@ namespace Gecode { namespace Int {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, Val n);
     //@}
-    
+
     /// \name View-dependent propagator support
     //@{
     /// Translate modification event \a me to modification event delta for view
@@ -744,7 +744,7 @@ namespace Gecode { namespace Int {
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
-    
+
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
@@ -763,7 +763,7 @@ namespace Gecode { namespace Int {
    * \ingroup TaskActorIntView
    */
   typedef ScaleView<long long int,unsigned long long int> LLongScaleView;
-  
+
   /**
    * \brief Print integer-precision integer scale view
    * \relates Gecode::Int::ScaleView
@@ -771,7 +771,7 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const IntScaleView& x);
-  
+
   /**
    * \brief Print long long-precision integer scale view
    * \relates Gecode::Int::ScaleView
@@ -812,7 +812,7 @@ namespace Gecode { namespace Int {
     /// Initialize with integer value \a n
     ConstIntView(int n);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -823,7 +823,7 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    
+
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -843,7 +843,7 @@ namespace Gecode { namespace Int {
     /// Test whether \a n is contained in domain
     bool in(long long int n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
@@ -963,7 +963,7 @@ namespace Gecode { namespace Int {
     /// Default constructor
     ZeroIntView(void);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -974,7 +974,7 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    
+
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -994,7 +994,7 @@ namespace Gecode { namespace Int {
     /// Test whether \a n is contained in domain
     bool in(long long int n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
@@ -1122,7 +1122,7 @@ namespace Gecode { namespace Int {
     /// Initialize with integer view \a y
     explicit CachedView(const View& y);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -1133,7 +1133,7 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    
+
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -1143,18 +1143,18 @@ namespace Gecode { namespace Int {
     /// Return regret of domain maximum (distance to next smaller value)
     unsigned int regret_max(void) const;
     //@}
-    
+
     /// \name Domain tests
     //@{
     /// Test whether domain is a range
     bool range(void) const;
-    
+
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     /// Test whether \a n is contained in domain
     bool in(long long int n) const;
     //@}
-    
+
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
@@ -1187,7 +1187,7 @@ namespace Gecode { namespace Int {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, long long int n);
     //@}
-    
+
     /**
      * \name Domain update by iterator
      *
@@ -1248,7 +1248,7 @@ namespace Gecode { namespace Int {
     /// Check whether cache differs from current domain
     bool modified(void) const;
     //@}
-    
+
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
@@ -1263,7 +1263,7 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits, class View>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const CachedView<View>& x);
-  
+
   /** \name View comparison
    *  \relates Gecode::Int::CachedView
    */
@@ -1287,7 +1287,7 @@ namespace Gecode { namespace Int {
   template<class View>
   class ViewDiffRanges
     : public Iter::Ranges::Diff<Iter::Ranges::RangeList,ViewRanges<View> > {
-    typedef Iter::Ranges::Diff<Iter::Ranges::RangeList,ViewRanges<View> > 
+    typedef Iter::Ranges::Diff<Iter::Ranges::RangeList,ViewRanges<View> >
       Super;
   protected:
     /// Cached domain iterator
@@ -1325,7 +1325,7 @@ namespace Gecode { namespace Int {
     /// Initialize from Boolean variable implementation \a y
     BoolView(BoolVarImp* y);
     //@}
-    
+
     /// \name Domain status access
     //@{
     /// How many bits does the status have
@@ -1339,7 +1339,7 @@ namespace Gecode { namespace Int {
     /// Return current domain status
     BoolStatus status(void) const;
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -1350,7 +1350,7 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-    
+
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -1360,7 +1360,7 @@ namespace Gecode { namespace Int {
     /// Return regret of domain maximum (distance to next smaller value)
     unsigned int regret_max(void) const;
     //@}
-    
+
     /// \name Domain tests
     //@{
     /// Test whether domain is a range
@@ -1380,7 +1380,7 @@ namespace Gecode { namespace Int {
     /// Test whether view is not yet assigned
     bool none(void) const;
     //@}
-    
+
     /// \name Boolean assignment operations
     //@{
     /// Try to assign view to one
@@ -1404,7 +1404,7 @@ namespace Gecode { namespace Int {
     ModEvent le(Space& home, int n);
     /// Restrict domain values to be less than \a n
     ModEvent le(Space& home, long long int n);
-    
+
     /// Restrict domain values to be greater or equal than \a n
     ModEvent gq(Space& home, int n);
     /// Restrict domain values to be greater or equal than \a n
@@ -1414,7 +1414,7 @@ namespace Gecode { namespace Int {
     ModEvent gr(Space& home, int n);
     /// Restrict domain values to be greater than \a n
     ModEvent gr(Space& home, long long int n);
-    
+
     /// Restrict domain values to be different from \a n
     ModEvent nq(Space& home, int n);
     /// Restrict domain values to be different from \a n
@@ -1425,7 +1425,7 @@ namespace Gecode { namespace Int {
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space& home, long long int n);
     //@}
-    
+
     /**
      * \name Domain update by iterator
      *
@@ -1474,7 +1474,7 @@ namespace Gecode { namespace Int {
     /// Test whether a view has been assigned to one
     static bool one(const Delta& d);
     //@}
-    
+
     /// \name View-dependent propagator support
     //@{
     /// Translate modification event \a me to modification event delta for view
@@ -1489,7 +1489,7 @@ namespace Gecode { namespace Int {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const BoolView& x);
-  
+
 
 
   /**
@@ -1511,7 +1511,7 @@ namespace Gecode { namespace Int {
     /// Initialize with Boolean view \a y
     explicit NegBoolView(const BoolView& y);
     //@}
-    
+
     /// \name Domain status access
     //@{
     /// How many bits does the status have
@@ -1525,7 +1525,7 @@ namespace Gecode { namespace Int {
     /// Return current domain status
     BoolStatus status(void) const;
     //@}
-    
+
     /// \name Boolean domain tests
     //@{
     /// Test whether view is assigned to be zero
@@ -1535,7 +1535,7 @@ namespace Gecode { namespace Int {
     /// Test whether view is not yet assigned
     bool none(void) const;
     //@}
-    
+
     /// \name Boolean assignment operations
     //@{
     /// Try to assign view to one
@@ -1547,7 +1547,7 @@ namespace Gecode { namespace Int {
     /// Assign not yet assigned view to zero
     ModEvent zero_none(Space& home);
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -1557,7 +1557,7 @@ namespace Gecode { namespace Int {
     /// Return assigned value (only if assigned)
     int val(void) const;
     //@}
-    
+
     /// \name Delta information for advisors
     //@{
     /// Return minimum value just pruned
@@ -1616,7 +1616,7 @@ namespace Gecode { namespace Int {
     RT_MAYBE = 1, ///< Relation may hold or not
     RT_TRUE  = 2  ///< Relation does hold
   };
-  
+
   /// Test whether views \a x and \a y are equal (use bounds information)
   template<class VX, class VY> RelTest rtest_eq_bnd(VX x, VY y);
   /// Test whether views \a x and \a y are equal (use full domain information)
@@ -1625,7 +1625,7 @@ namespace Gecode { namespace Int {
   template<class VX> RelTest rtest_eq_bnd(VX x, int n);
   /// Test whether view \a x and integer \a n are equal (use full domain information)
   template<class VX> RelTest rtest_eq_dom(VX x, int n);
-  
+
   /// Test whether views \a x and \a y are different (use bounds information)
   template<class VX, class VY> RelTest rtest_nq_bnd(VX x, VY y);
   /// Test whether views \a x and \a y are different (use full domain information)
@@ -1639,17 +1639,17 @@ namespace Gecode { namespace Int {
   template<class VX, class VY> RelTest rtest_lq(VX x, VY y);
   /// Test whether view \a x is less or equal than integer \a n
   template<class VX> RelTest rtest_lq(VX x, int n);
-  
+
   /// Test whether view \a x is less than view \a y
   template<class VX, class VY> RelTest rtest_le(VX x, VY y);
   /// Test whether view \a x is less than integer \a n
   template<class VX> RelTest rtest_le(VX x, int n);
-  
+
   /// Test whether view \a x is greater or equal than view \a y
   template<class VX, class VY> RelTest rtest_gq(VX x, VY y);
   /// Test whether view \a x is greater or equal than integer \a n
   template<class VX> RelTest rtest_gq(VX x, int n);
-  
+
   /// Test whether view \a x is greater than view \a y
   template<class VX, class VY> RelTest rtest_gr(VX x, VY y);
   /// Test whether view \a x is greater than integer \a n
@@ -1666,7 +1666,7 @@ namespace Gecode { namespace Int {
     BT_SAME, ///< Same variable
     BT_COMP  ///< Same variable but complement
   };
-  
+
   /**
    * \name Test sharing between Boolean and negated Boolean views
    * \relates BoolView NegBoolView
@@ -1681,7 +1681,7 @@ namespace Gecode { namespace Int {
   /// Test whether views \a b0 and \a b1 are the same
   BoolTest bool_test(const NegBoolView& b0, const NegBoolView& b1);
   //@}
-  
+
 }}
 
 #include <gecode/int/view/rel-test.hpp>

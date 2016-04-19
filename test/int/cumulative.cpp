@@ -59,7 +59,7 @@ namespace Test { namespace Int {
       /// The resource usage
       Gecode::IntArgs u;
       /// Get a reasonable maximal start time
-      static int st(int c, 
+      static int st(int c,
                     const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
         double e = 0;
         for (int i=p.size(); i--; )
@@ -70,14 +70,14 @@ namespace Test { namespace Int {
       int o;
     public:
       /// Create and register test
-      ManFixPCumulative(int c0, 
+      ManFixPCumulative(int c0,
                         const Gecode::IntArgs& p0,
                         const Gecode::IntArgs& u0,
                         int o0,
                         Gecode::IntPropLevel ipl0)
         : Test("Cumulative::Man::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0)+"::"+str(ipl0),
-               (c0 >= 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0),false,ipl0), 
+               (c0 >= 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0),false,ipl0),
           c(c0), p(p0), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -91,10 +91,10 @@ namespace Test { namespace Int {
       virtual bool solution(const Assignment& x) const {
         int cmax = (c >= 0) ? c : x[x.size()-1];
         int n = (c >= 0) ? x.size() : x.size()-1;
-        
+
         if (c < 0 && x[n] > -c)
           return false;
-        
+
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++)
@@ -164,7 +164,7 @@ namespace Test { namespace Int {
       /// Offset
       int o;
       /// Get a reasonable maximal start time
-      static int st(int c, 
+      static int st(int c,
                     const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
         double e = 0;
         for (int i=p.size(); i--; )
@@ -173,7 +173,7 @@ namespace Test { namespace Int {
       }
     public:
       /// Create and register test
-      OptFixPCumulative(int c0, 
+      OptFixPCumulative(int c0,
                         const Gecode::IntArgs& p0,
                         const Gecode::IntArgs& u0,
                         int o0,
@@ -181,7 +181,7 @@ namespace Test { namespace Int {
         : Test("Cumulative::Opt::Fix::"+str(o0)+"::"+
                str(c0)+"::"+str(p0)+"::"+str(u0)+"::"+str(ipl0),
                (c0 >= 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0),
-               false,ipl0), 
+               false,ipl0),
           c(c0), p(p0), u(u0), l(st(c,p,u)/2), o(o0) {
         testsearch = false;
         testfix = false;
@@ -288,7 +288,7 @@ namespace Test { namespace Int {
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0)+
                "::"+str(ipl0),
                (c0 >= 0) ? 2*u0.size() : 2*u0.size()+1,
-               0,std::max(maxP,st(c0,maxP,u0)),false,ipl0), 
+               0,std::max(maxP,st(c0,maxP,u0)),false,ipl0),
           c(c0), _minP(minP), _maxP(maxP), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -401,8 +401,8 @@ namespace Test { namespace Int {
                str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0)+
                "::"+str(ipl0),
                (c0 >= 0) ? 3*u0.size() : 3*u0.size()+1,
-               0,std::max(maxP,st(c0,maxP,u0)), false,ipl0), 
-          c(c0), _minP(minP), _maxP(maxP), u(u0), 
+               0,std::max(maxP,st(c0,maxP,u0)), false,ipl0),
+          c(c0), _minP(minP), _maxP(maxP), u(u0),
           l(std::max(maxP,st(c0,maxP,u0))/2), o(o0) {
         testsearch = false;
         testfix = false;
@@ -420,10 +420,10 @@ namespace Test { namespace Int {
         int n = nn / 3;
         int cmax = (c >= 0) ? c : x[2*n];
         int pstart = (c >= 0) ? 2*n : 2*n+1;
-        
+
         if (c < 0 && cmax > -c)
           return false;
-        
+
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++)
@@ -529,7 +529,7 @@ namespace Test { namespace Int {
               (void) new ManFixPCumulative(c,p4,u2,off,ipba.ipl());
               (void) new ManFixPCumulative(c,p4,u3,off,ipba.ipl());
               (void) new ManFixPCumulative(c,p4,u4,off,ipba.ipl());
-              
+
               (void) new ManFlexCumulative(c,0,1,u1,off,ipba.ipl());
               (void) new ManFlexCumulative(c,0,1,u2,off,ipba.ipl());
               (void) new ManFlexCumulative(c,0,1,u3,off,ipba.ipl());
@@ -542,7 +542,7 @@ namespace Test { namespace Int {
               (void) new ManFlexCumulative(c,3,5,u2,off,ipba.ipl());
               (void) new ManFlexCumulative(c,3,5,u3,off,ipba.ipl());
               (void) new ManFlexCumulative(c,3,5,u4,off,ipba.ipl());
-              
+
               (void) new OptFixPCumulative(c,p1,u1,off,ipba.ipl());
               (void) new OptFixPCumulative(c,p1,u2,off,ipba.ipl());
               (void) new OptFixPCumulative(c,p1,u3,off,ipba.ipl());
@@ -559,7 +559,7 @@ namespace Test { namespace Int {
               (void) new OptFixPCumulative(c,p4,u2,off,ipba.ipl());
               (void) new OptFixPCumulative(c,p4,u3,off,ipba.ipl());
               (void) new OptFixPCumulative(c,p4,u4,off,ipba.ipl());
-              
+
               (void) new OptFlexCumulative(c,0,1,u1,off,ipba.ipl());
               (void) new OptFlexCumulative(c,0,1,u2,off,ipba.ipl());
               (void) new OptFlexCumulative(c,0,1,u3,off,ipba.ipl());

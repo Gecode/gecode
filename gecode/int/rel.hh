@@ -662,7 +662,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Views not yet subscribed to
     ViewArray<View> x, y;
     /// Update subscription
-    ExecStatus resubscribe(Space& home, 
+    ExecStatus resubscribe(Space& home,
                            RelTest rt, View& x0, View& y0, View x1, View y1);
     /// Constructor for posting
     LexNq(Home home, ViewArray<View>& x, ViewArray<View>& y);

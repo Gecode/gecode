@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Rel {
       else
         b.clear(i);
     }
-    
+
     /// \brief Value iterator for characteristic function
     class CSIter {
     public:
@@ -85,7 +85,7 @@ namespace Gecode { namespace Set { namespace Rel {
       CSIter(void) {}
       /// Constructor
       CSIter(CharacteristicSets& cs0, int xoff0, int yoff0)
-        : cs(&cs0), i(static_cast<unsigned int>(-1)), 
+        : cs(&cs0), i(static_cast<unsigned int>(-1)),
           xoff(xoff0), yoff(yoff0) {
         ++(*this);
       }
@@ -94,12 +94,12 @@ namespace Gecode { namespace Set { namespace Rel {
       /// Value of current iterator position
       int val(void) const { return cs->ub[i]; }
     };
-    
+
   public:
     /// Constructor
     template<class View0, class View1>
     CharacteristicSets(Region& re, View0 x, View1 y);
-    
+
     /// Return minimum of element \a i for variable x
     bool xmin(int i) const { return b.get(2*i); }
     /// Return maximum of element \a i for variable x
@@ -165,7 +165,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     /// Return size of combined upper bounds
     int size(void) const { return xsize; }
-    
+
     /// Prune \a x and \a y using computed bounds
     template<class View0, class View1>
     ExecStatus prune(Space& home, View0 x, View1 y) {
@@ -191,7 +191,7 @@ namespace Gecode { namespace Set { namespace Rel {
       }
       return ES_OK;
     }
-    
+
   };
 
   template<class View0, class View1>
@@ -275,9 +275,9 @@ namespace Gecode { namespace Set { namespace Rel {
       return ES_FAILED;
     if (x1.glbMin() < x0.lubMin())
       return home.ES_SUBSUMED(*this);
-    
+
     bool assigned = x0.assigned() && x1.assigned();
-    
+
     Region re(home);
     CharacteristicSets cs(re,x0,x1);
 
@@ -294,7 +294,7 @@ namespace Gecode { namespace Set { namespace Rel {
       GECODE_ME_CHECK(cs.ygq(i,cs.xmin(i)));
       i++;
     }
-    
+
     if (i == n) {// case: $
       if (strict) {
         return ES_FAILED;
@@ -303,7 +303,7 @@ namespace Gecode { namespace Set { namespace Rel {
         return home.ES_SUBSUMED(*this);
       }
     }
-    
+
     // Possible cases left: <, <=, > (yields failure), ?
     GECODE_ME_CHECK(cs.xlq(i,cs.ymax(i)));
     GECODE_ME_CHECK(cs.ygq(i,cs.xmin(i)));
@@ -340,7 +340,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     if (cs.xmin(i) > cs.ymax(i)) // case: >
       goto rewrite_le;
-    
+
     if (cs.xmax(i) <= cs.ymin(i)) {
       // case: <= (invariant: not =, <)
       /*
@@ -398,7 +398,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
       GECODE_ES_CHECK(cs.prune(home,x0,x1));
       return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;
-    }    
+    }
 
     GECODE_ES_CHECK(cs.prune(home,x0,x1));
     return assigned ? home.ES_SUBSUMED(*this) : ES_NOFIX;

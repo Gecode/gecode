@@ -73,7 +73,7 @@ namespace Gecode {
       if ((argc < 2) || strcmp(argv[1],opt))
         return NULL;
       if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\"" 
+        std::cerr << "Missing argument for option \"" << opt << "\""
                   << std::endl;
         exit(EXIT_FAILURE);
       }
@@ -89,7 +89,7 @@ namespace Gecode {
     }
 
 
-    StringValueOption::StringValueOption(const char* o, const char* e, 
+    StringValueOption::StringValueOption(const char* o, const char* e,
                                          const char* v)
       : BaseOption(o,e), cur(strdup(v)) {}
     void
@@ -107,14 +107,14 @@ namespace Gecode {
     }
     void
     StringValueOption::help(void) {
-      std::cerr << '\t' << opt << " (string) default: " 
+      std::cerr << '\t' << opt << " (string) default: "
                 << ((cur == NULL) ? "NONE" : cur) << std::endl
                 << "\t\t" << exp << std::endl;
     }
     StringValueOption::~StringValueOption(void) {
       strdel(cur);
     }
-  
+
 
 
     void
@@ -165,7 +165,7 @@ namespace Gecode {
         if (v->help != NULL)
           std::cerr << "\t\t  " << v->opt << ": " << v->help << std::endl;
     }
-    
+
     StringOption::~StringOption(void) {
       Value* v = fst;
       while (v != NULL) {
@@ -176,8 +176,8 @@ namespace Gecode {
         v = n;
       }
     }
-    
-    
+
+
     int
     IntOption::parse(int argc, char* argv[]) {
       if (char* a = argument(argc,argv)) {
@@ -186,13 +186,13 @@ namespace Gecode {
       }
       return 0;
     }
-    
+
     void
     IntOption::help(void) {
       std::cerr << '\t' << opt << " (int) default: " << cur << std::endl
                 << "\t\t" << exp << std::endl;
     }
-  
+
 
     int
     UnsignedIntOption::parse(int argc, char* argv[]) {
@@ -202,14 +202,14 @@ namespace Gecode {
       }
       return 0;
     }
-    
+
     void
     UnsignedIntOption::help(void) {
-      std::cerr << '\t' << opt << " (unsigned int) default: " 
+      std::cerr << '\t' << opt << " (unsigned int) default: "
                 << cur << std::endl
                 << "\t\t" << exp << std::endl;
     }
-  
+
 
     int
     DoubleOption::parse(int argc, char* argv[]) {
@@ -219,7 +219,7 @@ namespace Gecode {
       }
       return 0;
     }
-    
+
     void
     DoubleOption::help(void) {
       using namespace std;
@@ -250,11 +250,11 @@ namespace Gecode {
       return 0;
     }
 
-    void 
+    void
     BoolOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt << " (optional: false, 0, true, 1) default: " 
-           << (cur ? "true" : "false") << endl 
+      cerr << '\t' << opt << " (optional: false, 0, true, 1) default: "
+           << (cur ? "true" : "false") << endl
            << "\t\t" << exp << endl;
     }
 
@@ -262,7 +262,7 @@ namespace Gecode {
      * Integer propagation level option
      *
      */
-    IplOption::IplOption(IntPropLevel ipl) 
+    IplOption::IplOption(IntPropLevel ipl)
       : BaseOption("-ipl","integer propagation level (comma-separated list)"),
         cur(ipl) {}
 
@@ -293,7 +293,7 @@ namespace Gecode {
           }
 
           if (*c == ',') a = c+1; else a = c;
-          
+
         } while (*a != 0);
 
         cur = static_cast<IntPropLevel>(b | m);
@@ -302,10 +302,10 @@ namespace Gecode {
       return 0;
     }
 
-    void 
+    void
     IplOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt 
+      cerr << '\t' << opt
            << " (def,val,bnd,dom,speed,memory,basic,advanced)" << endl
            << "\t\tdefault: ";
       switch (vbd(cur)) {
@@ -322,7 +322,7 @@ namespace Gecode {
       cerr << endl << "\t\t" << exp << endl;
     }
 
-  
+
   }
 
   void
@@ -336,7 +336,7 @@ namespace Gecode {
     lst=&o;
   }
   BaseOptions::BaseOptions(const char* n)
-    : fst(NULL), lst(NULL), 
+    : fst(NULL), lst(NULL),
       _name(Driver::BaseOption::strdup(n)) {}
 
   void
@@ -372,7 +372,7 @@ namespace Gecode {
     if (Support::Thread::npu() == 1)
       std::cerr << "enabled (1 processing unit)";
     else
-      std::cerr << "enabled (" << Support::Thread::npu() 
+      std::cerr << "enabled (" << Support::Thread::npu()
                 << " processing units)";
 #else
     std::cerr << "disabled";
@@ -415,7 +415,7 @@ namespace Gecode {
       argv[i] = v[i];
     return;
   }
-  
+
   BaseOptions::~BaseOptions(void) {
     Driver::BaseOption::strdel(_name);
   }
@@ -423,7 +423,7 @@ namespace Gecode {
 
   Options::Options(const char* n)
     : BaseOptions(n),
-      
+
       _model("-model","model variants"),
       _symmetry("-symmetry","symmetry variants"),
       _propagation("-propagation","propagation variants"),
@@ -431,7 +431,7 @@ namespace Gecode {
       _decay("-decay","decay factor",1.0),
       _seed("-seed","random number generator seed",1U),
       _step("-step","step distance for float optimization",0.0),
-      
+
       _search("-search","search engine variants"),
       _solutions("-solutions","number of solutions (0 = all)",1),
       _threads("-threads","number of threads (0 = #processing units)",
@@ -453,7 +453,7 @@ namespace Gecode {
                      Search::Config::nogoods_limit),
       _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
-      
+
       _mode("-mode","how to execute script",SM_SOLUTION),
       _samples("-samples","how many samples (time mode)",1),
       _iterations("-iterations","iterations per sample (time mode)",1),
@@ -465,33 +465,33 @@ namespace Gecode {
       _log_file("-file-stat", "where to print statistics "
                 "(supports stdout, stdlog, stderr)","stdout")
   {
-    
+
     _mode.add(SM_SOLUTION, "solution");
     _mode.add(SM_TIME, "time");
     _mode.add(SM_STAT, "stat");
     _mode.add(SM_GIST, "gist");
-    
+
     _restart.add(RM_NONE,"none");
     _restart.add(RM_CONSTANT,"constant");
     _restart.add(RM_LINEAR,"linear");
     _restart.add(RM_LUBY,"luby");
     _restart.add(RM_GEOMETRIC,"geometric");
-    
-    add(_model); add(_symmetry); add(_propagation); add(_ipl); 
+
+    add(_model); add(_symmetry); add(_propagation); add(_ipl);
     add(_branching); add(_decay); add(_seed); add(_step);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
-    add(_node); add(_fail); add(_time); add(_interrupt); 
+    add(_node); add(_fail); add(_time); add(_interrupt);
     add(_assets); add(_slice);
-    add(_restart); add(_r_base); add(_r_scale); 
+    add(_restart); add(_r_base); add(_r_scale);
     add(_nogoods); add(_nogoods_limit);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
     add(_out_file); add(_log_file);
   }
 
-  
+
   SizeOptions::SizeOptions(const char* e)
     : Options(e), _size(0) {}
-  
+
   void
   SizeOptions::help(void) {
     Options::help();
@@ -511,7 +511,7 @@ namespace Gecode {
 
   InstanceOptions::InstanceOptions(const char* e)
     : Options(e), _inst(NULL) {}
-  
+
   void
   InstanceOptions::instance(const char* s) {
     Driver::BaseOption::strdel(_inst);

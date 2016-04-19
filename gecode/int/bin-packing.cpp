@@ -42,15 +42,15 @@
 namespace Gecode {
 
   void
-  binpacking(Home home, 
-             const IntVarArgs& l, 
+  binpacking(Home home,
+             const IntVarArgs& l,
              const IntVarArgs& b, const IntArgs& s,
              IntPropLevel) {
     using namespace Int;
     if (l.same(home,b))
       throw ArgumentSame("Int::binpacking");
     if (b.size() != s.size())
-      throw ArgumentSizeMismatch("Int::binpacking");      
+      throw ArgumentSizeMismatch("Int::binpacking");
     for (int i=s.size(); i--; )
       Limits::nonnegative(s[i],"Int::binpacking");
     if (home.failed()) return;
@@ -68,7 +68,7 @@ namespace Gecode {
 
   IntSet
   binpacking(Home home, int d,
-             const IntVarArgs& l, const IntVarArgs& b, 
+             const IntVarArgs& l, const IntVarArgs& b,
              const IntArgs& s, const IntArgs& c,
              IntPropLevel) {
     using namespace Int;
@@ -83,13 +83,13 @@ namespace Gecode {
 
     // Check input sizes
     if ((n*d != s.size()) || (m*d != l.size()) || (d != c.size()))
-      throw ArgumentSizeMismatch("Int::binpacking");      
+      throw ArgumentSizeMismatch("Int::binpacking");
     for (int i=s.size(); i--; )
       Limits::nonnegative(s[i],"Int::binpacking");
     for (int i=c.size(); i--; )
       Limits::nonnegative(c[i],"Int::binpacking");
 
-    if (home.failed()) 
+    if (home.failed())
       return IntSet::empty;
 
     // Capacity constraint for each dimension
@@ -107,11 +107,11 @@ namespace Gecode {
       ViewArray<OffsetView> lv(home,m);
       for (int j=m; j--; )
         lv[j] = OffsetView(l[j*d+k],0);
-      
+
       ViewArray<BinPacking::Item> bv(home,n);
       for (int i=n; i--; )
         bv[i] = BinPacking::Item(b[i],s[i*d+k]);
-      
+
       if (Int::BinPacking::Pack::post(home,lv,bv) == ES_FAILED) {
         home.fail();
         return IntSet::empty;
@@ -157,7 +157,7 @@ namespace Gecode {
       return cg.maxclique();
     }
   }
-  
+
 }
 
 // STATISTICS: int-post

@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// connection to dropped view
     int reachable;
     /// Constructor for posting
-    Sorted(Home home, 
+    Sorted(Home home,
            ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
     /// Constructor for cloning
     Sorted(Space& home, bool share, Sorted<View,Perm>& p);

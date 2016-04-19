@@ -65,18 +65,18 @@ namespace Gecode {
   };
 
 
-  forceinline 
-  ValBranch::ValBranch(void) 
+  forceinline
+  ValBranch::ValBranch(void)
     : vf(NULL), cf(NULL) {}
-  
-  forceinline 
+
+  forceinline
   ValBranch::ValBranch(Rnd r0)
     : r(r0), vf(NULL), cf(NULL) {
     if (!r.initialized())
       throw UninitializedRnd("ValBranch::ValBranch");
   }
 
-  forceinline 
+  forceinline
   ValBranch::ValBranch(VoidFunction v, VoidFunction c)
     : vf(v), cf(c) {}
 

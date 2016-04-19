@@ -68,7 +68,7 @@ namespace Gecode { namespace Int {
 
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
-  
+
 }}
 
 // STATISTICS: int-prop

@@ -43,7 +43,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * This iterator in effect changes the order of how ranges
    * are iterated: the first range of the input iterator defines
    * the last range of the Minus iterator. Upon initialization
-   * all ranges of the input iterator are stored 
+   * all ranges of the input iterator are stored
    * which later allows iteration in inverse direction.
    *
    * \ingroup FuncIterRanges
@@ -72,7 +72,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Minus::Minus(void) {}
 
   forceinline
-  Minus::Minus(const Minus& m) 
+  Minus::Minus(const Minus& m)
     : RangeListIter(m) {}
 
   template<class I>

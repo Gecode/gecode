@@ -49,7 +49,7 @@ namespace Gecode {
       a[i] = va_arg(args,FloatNum);
     va_end(args);
   }
-  
+
   FloatVarArray::FloatVarArray(Space& home, int n, FloatNum min, FloatNum max)
     : VarArray<FloatVar>(home,n) {
     Float::Limits::check(min,"FloatVarArray::FloatVarArray");

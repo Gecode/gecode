@@ -64,7 +64,7 @@ public:
     BRANCH_SIZE     ///< Choose variable with smallest size
   };
   /// Actual model
-  Alpha(const Options& opt) 
+  Alpha(const Options& opt)
     : Script(opt), le(*this,n,1,n) {
     IntVar
       a(le[ 0]), b(le[ 1]), c(le[ 2]), e(le[ 4]), f(le[ 5]),

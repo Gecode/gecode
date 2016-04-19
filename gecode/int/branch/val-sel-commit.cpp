@@ -39,41 +39,41 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  ValSelCommitBase<IntView,int>* 
+  ValSelCommitBase<IntView,int>*
   valselcommitint(Space& home, int n, const IntValBranch& ivb) {
     assert((ivb.select() != IntValBranch::SEL_VALUES_MIN) &&
            (ivb.select() != IntValBranch::SEL_VALUES_MAX));
     switch (ivb.select()) {
     case IntValBranch::SEL_MIN:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMin<IntView>,ValCommitEq<IntView> >(home,ivb);
     case IntValBranch::SEL_MED:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMed<IntView>,ValCommitEq<IntView> >(home,ivb);
     case IntValBranch::SEL_MAX:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMax<IntView>,ValCommitEq<IntView> >(home,ivb);
     case IntValBranch::SEL_RND:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelRnd<IntView>,ValCommitEq<IntView> >(home,ivb);
     case IntValBranch::SEL_SPLIT_MIN:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelAvg<IntView>,ValCommitLq<IntView> >(home,ivb);
     case IntValBranch::SEL_SPLIT_MAX:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelAvg<IntView>,ValCommitGr<IntView> >(home,ivb);
     case IntValBranch::SEL_RANGE_MIN:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelRangeMin,ValCommitLq<IntView> >(home,ivb);
     case IntValBranch::SEL_RANGE_MAX:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelRangeMax,ValCommitGq<IntView> >(home,ivb);
     case IntValBranch::SEL_VAL_COMMIT:
       if (ivb.commit() == NULL) {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<IntView>,ValCommitEq<IntView> >(home,ivb);
       } else {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<IntView>,ValCommitFunction<IntView> >(home,ivb);
       }
     case IntValBranch::SEL_NEAR_MIN:
@@ -88,19 +88,19 @@ namespace Gecode { namespace Int { namespace Branch {
           Limits::check(v[i],"Int::branch");
         switch (ivb.select()) {
         case IntValBranch::SEL_NEAR_MIN:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearMinMax<IntView,true>,
              ValCommitEq<IntView> >(home,ivb);
         case IntValBranch::SEL_NEAR_MAX:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearMinMax<IntView,false>,
              ValCommitEq<IntView> >(home,ivb);
         case IntValBranch::SEL_NEAR_INC:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearIncDec<IntView,true>,
              ValCommitEq<IntView> >(home,ivb);
         case IntValBranch::SEL_NEAR_DEC:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearIncDec<IntView,false>,
              ValCommitEq<IntView> >(home,ivb);
         default: GECODE_NEVER;
@@ -111,27 +111,27 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  ValSelCommitBase<IntView,int>* 
+  ValSelCommitBase<IntView,int>*
   valselcommitint(Space& home, const IntAssign& ia) {
     switch (ia.select()) {
     case IntAssign::SEL_MIN:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMin<IntView>,ValCommitEq<IntView> >(home,ia);
     case IntAssign::SEL_MED:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMed<IntView>,ValCommitEq<IntView> >(home,ia);
     case IntAssign::SEL_MAX:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMax<IntView>,ValCommitEq<IntView> >(home,ia);
     case IntAssign::SEL_RND:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelRnd<IntView>,ValCommitEq<IntView> >(home,ia);
     case IntAssign::SEL_VAL_COMMIT:
       if (ia.commit() == NULL) {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<IntView>,ValCommitEq<IntView> >(home,ia);
       } else {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<IntView>,ValCommitFunction<IntView> >(home,ia);
       }
     default:
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  ValSelCommitBase<BoolView,int>* 
+  ValSelCommitBase<BoolView,int>*
   valselcommitbool(Space& home, int n, const IntValBranch& ivb) {
     switch (ivb.select()) {
     case IntValBranch::SEL_MIN:
@@ -147,23 +147,23 @@ namespace Gecode { namespace Int { namespace Branch {
     case IntValBranch::SEL_SPLIT_MIN:
     case IntValBranch::SEL_RANGE_MIN:
     case IntValBranch::SEL_VALUES_MIN:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMin<BoolView>,ValCommitEq<BoolView> >(home,ivb);
     case IntValBranch::SEL_MAX:
     case IntValBranch::SEL_SPLIT_MAX:
     case IntValBranch::SEL_RANGE_MAX:
     case IntValBranch::SEL_VALUES_MAX:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMax<BoolView>,ValCommitEq<BoolView> >(home,ivb);
     case IntValBranch::SEL_RND:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelRnd<BoolView>,ValCommitEq<BoolView> >(home,ivb);
     case IntValBranch::SEL_VAL_COMMIT:
       if (ivb.commit() == NULL) {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<BoolView>,ValCommitEq<BoolView> >(home,ivb);
       } else {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<BoolView>,ValCommitFunction<BoolView> >(home,ivb);
       }
     case IntValBranch::SEL_NEAR_MIN:
@@ -179,19 +179,19 @@ namespace Gecode { namespace Int { namespace Branch {
             throw OutOfLimits("Int::branch");
         switch (ivb.select()) {
         case IntValBranch::SEL_NEAR_MIN:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearMinMax<BoolView,true>,
              ValCommitEq<BoolView> >(home,ivb);
         case IntValBranch::SEL_NEAR_MAX:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearMinMax<BoolView,false>,
              ValCommitEq<BoolView> >(home,ivb);
         case IntValBranch::SEL_NEAR_INC:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearIncDec<BoolView,true>,
              ValCommitEq<BoolView> >(home,ivb);
         case IntValBranch::SEL_NEAR_DEC:
-          return new (home) 
+          return new (home)
             ValSelCommit<ValSelNearIncDec<BoolView,false>,
              ValCommitEq<BoolView> >(home,ivb);
         default: GECODE_NEVER;
@@ -202,27 +202,27 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  ValSelCommitBase<BoolView,int>* 
+  ValSelCommitBase<BoolView,int>*
   valselcommitbool(Space& home, const IntAssign& ia) {
     switch (ia.select()) {
     case IntAssign::SEL_MIN:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMin<BoolView>,ValCommitEq<BoolView> >(home,ia);
     case IntAssign::SEL_MED:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMed<BoolView>,ValCommitEq<BoolView> >(home,ia);
     case IntAssign::SEL_MAX:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelMax<BoolView>,ValCommitEq<BoolView> >(home,ia);
     case IntAssign::SEL_RND:
-      return new (home) 
+      return new (home)
         ValSelCommit<ValSelRnd<BoolView>,ValCommitEq<BoolView> >(home,ia);
     case IntAssign::SEL_VAL_COMMIT:
       if (ia.commit() == NULL) {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<BoolView>,ValCommitEq<BoolView> >(home,ia);
       } else {
-        return new (home) 
+        return new (home)
           ValSelCommit<ValSelFunction<BoolView>,ValCommitFunction<BoolView> >(home,ia);
       }
     default:

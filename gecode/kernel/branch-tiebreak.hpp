@@ -50,9 +50,9 @@ namespace Gecode {
              VarBranch d0 = VarBranch());
   };
 
-  /** 
+  /**
    * \defgroup TaskModelBranchTieBreak Tie-breaking for variable selection
-   * 
+   *
    * \ingroup TaskModelBranch
    */
   //@{

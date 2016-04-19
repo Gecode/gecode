@@ -63,52 +63,52 @@ namespace Gecode { namespace Set {
    */
 
   forceinline unsigned int
-  SetView::glbSize(void) const { 
-    return x->glbSize(); 
+  SetView::glbSize(void) const {
+    return x->glbSize();
   }
   forceinline unsigned int
-  SetView::lubSize(void) const { 
-    return x->lubSize(); 
+  SetView::lubSize(void) const {
+    return x->lubSize();
   }
   forceinline unsigned int
-  SetView::unknownSize(void) const { 
-    return x->lubSize() - x->glbSize(); 
+  SetView::unknownSize(void) const {
+    return x->lubSize() - x->glbSize();
   }
   forceinline bool
-  SetView::contains(int i) const { 
-    return x->knownIn(i); 
+  SetView::contains(int i) const {
+    return x->knownIn(i);
   }
   forceinline bool
-  SetView::notContains(int i) const { 
-    return x->knownOut(i); 
+  SetView::notContains(int i) const {
+    return x->knownOut(i);
   }
   forceinline unsigned int
-  SetView::cardMin(void) const { 
-    return x->cardMin(); 
+  SetView::cardMin(void) const {
+    return x->cardMin();
   }
   forceinline unsigned int
-  SetView::cardMax(void) const { 
-    return x->cardMax(); 
+  SetView::cardMax(void) const {
+    return x->cardMax();
   }
   forceinline int
-  SetView::lubMin(void) const { 
-    return x->lubMin(); 
+  SetView::lubMin(void) const {
+    return x->lubMin();
   }
   forceinline int
-  SetView::lubMax(void) const { 
-    return x->lubMax(); 
+  SetView::lubMax(void) const {
+    return x->lubMax();
   }
   forceinline int
-  SetView::lubMinN(unsigned int n) const { 
-    return x->lubMinN(n); 
+  SetView::lubMinN(unsigned int n) const {
+    return x->lubMinN(n);
   }
   forceinline int
-  SetView::glbMin(void) const { 
-    return x->glbMin(); 
+  SetView::glbMin(void) const {
+    return x->glbMin();
   }
   forceinline int
-  SetView::glbMax(void) const { 
-    return x->glbMax(); 
+  SetView::glbMax(void) const {
+    return x->glbMax();
   }
 
   /*
@@ -157,8 +157,8 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetView::exclude (Space& home, int from, int to) { 
-    return x->exclude(home,from,to); 
+  SetView::exclude (Space& home, int from, int to) {
+    return x->exclude(home,from,to);
   }
   template<class I> ModEvent
   SetView::excludeI(Space& home, I& iter) {

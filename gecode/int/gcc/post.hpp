@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace GCC {
         int n_k = 0;
         for (int i=0; i<k.size(); i++)
           if (k[i].max() == 0) {
-            z[n_z++] = k[i].card();            
+            z[n_z++] = k[i].card();
           } else {
             k[n_k++] = k[i];
           }

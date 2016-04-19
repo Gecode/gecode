@@ -49,18 +49,18 @@ using namespace Gecode;
  * \f[
  * x^3 + y^3 - 3axy = 0
  * \f]
- * 
+ *
  * A technique to solve it, is to write \f$y=px\f$ and solve for
  * \f$x\f$ and \f$y\f$ in terms of \f$p\f$.  By setting
  * \f$a=1\f$, it yields to the paramatric equation:
- * 
+ *
  * \f[
  * x^3 + y^3 - 3xy = 0
  * \f]
  * \f[
  * x=\frac{3p}{1+p^3},\quad y=\frac{3p^2}{1+p^3}
  * \f]
- * 
+ *
  * The parameter \f$p\f$ is related to the position on the curve
  * and is constrained to get different solutions for \f$x\f$ and
  * \f$y\f$. To get reasonable interval starting sizes, \f$p\f$
@@ -77,7 +77,7 @@ protected:
   double step;
 public:
   /// Actual model
-  DescartesFolium(const Options& opt) 
+  DescartesFolium(const Options& opt)
     : FloatMaximizeScript(opt), f(*this,3,-20,20) {
     // Post equation
     FloatVar p = f[0];
@@ -91,13 +91,13 @@ public:
     branch(*this,p,FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  DescartesFolium(bool share, DescartesFolium& p) 
+  DescartesFolium(bool share, DescartesFolium& p)
     : FloatMaximizeScript(share,p) {
     f.update(*this,share,p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) { 
-    return new DescartesFolium(share,*this); 
+  virtual Space* copy(bool share) {
+    return new DescartesFolium(share,*this);
   }
   /// Cost function
   virtual FloatVar cost(void) const {

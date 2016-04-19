@@ -40,7 +40,7 @@
 #include <algorithm>
 
 namespace Gecode { namespace Int { namespace Cumulative {
-  
+
   template<class OptTask, class Cap, class PL>
   forceinline
   OptProp<OptTask,Cap,PL>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
@@ -51,20 +51,20 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class OptTask, class Cap, class PL>
   forceinline
   OptProp<OptTask,Cap,PL>::OptProp(Space& home, bool shared,
-                                   OptProp<OptTask,Cap,PL>& p) 
+                                   OptProp<OptTask,Cap,PL>& p)
     : TaskProp<OptTask,PL>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
   template<class OptTask, class Cap, class PL>
-  ExecStatus 
+  ExecStatus
   OptProp<OptTask,Cap,PL>::post(Home home, Cap c, TaskArray<OptTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
     // Check for overload by single task and remove excluded tasks
     int n=t.size(), m=0;
     for (int i=n; i--; ) {
-      if (t[i].c() > c.max()) 
+      if (t[i].c() > c.max())
         GECODE_ME_CHECK(t[i].excluded(home));
       if (t[i].excluded())
         t[i]=t[--n];
@@ -103,13 +103,13 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class OptTask, class Cap, class PL>
-  Actor* 
+  Actor*
   OptProp<OptTask,Cap,PL>::copy(Space& home, bool share) {
     return new (home) OptProp<OptTask,Cap,PL>(home,share,*this);
   }
 
-  template<class OptTask, class Cap, class PL>  
-  forceinline size_t 
+  template<class OptTask, class Cap, class PL>
+  forceinline size_t
   OptProp<OptTask,Cap,PL>::dispose(Space& home) {
     (void) TaskProp<OptTask,PL>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
@@ -117,7 +117,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   }
 
   template<class OptTask, class Cap, class PL>
-  ExecStatus 
+  ExecStatus
   OptProp<OptTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
     if (BoolView::me(med) == ME_BOOL_VAL)
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
         if (i >= j) break;
         std::swap(t[i],t[j]);
       }
-      
+
       if (i > 1) {
         // Truncate array to only contain mandatory tasks
         t.size(i);

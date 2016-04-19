@@ -279,7 +279,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
                            std::min(i.max(),j->max),f);
       *c = t; c = &t->next;
       if (i.max() < j->max) {
-        ++i; 
+        ++i;
       } else {
         RangeList* t = j->next;
         j->next = f; f = j;

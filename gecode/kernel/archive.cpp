@@ -45,12 +45,12 @@ namespace Gecode {
     _a = heap.realloc<unsigned int>(_a,_n,m);
     _size = m;
   }
-  
+
   Archive::Archive(const Archive& e) : _size(e._n), _n(e._n), _pos(e._pos) {
     _a = heap.alloc<unsigned int>(_n);
     heap.copy<unsigned int>(_a,e._a,_n);
   }
-  
+
   Archive&
   Archive::operator =(const Archive& e) {
     if (this!=&e) {
@@ -60,7 +60,7 @@ namespace Gecode {
     }
     return *this;
   }
-  
+
   Archive::~Archive(void) {
     heap.free<unsigned int>(_a,_size);
   }

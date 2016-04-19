@@ -40,7 +40,7 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  bool 
+  bool
   RestartStop::stop(const Statistics& s, const Options& o) {
     // Stop if the fail limit for the engine says so
     if (s.fail > l) {
@@ -117,12 +117,12 @@ namespace Gecode { namespace Search { namespace Meta {
     GECODE_NEVER;
     return NULL;
   }
-  
+
   Search::Statistics
   RBS::statistics(void) const {
     return stop->metastatistics()+e->statistics();
   }
-  
+
   void
   RBS::constrain(const Space& b) {
     if (!best)
@@ -139,7 +139,7 @@ namespace Gecode { namespace Search { namespace Meta {
     master->constrain(b);
     e->constrain(b);
   }
-  
+
   bool
   RBS::stopped(void) const {
     /*
@@ -149,7 +149,7 @@ namespace Gecode { namespace Search { namespace Meta {
      * invocation of next will do so and no restart will be
      * missed.
      */
-    return e->stopped(); 
+    return e->stopped();
   }
 
   RBS::~RBS(void) {

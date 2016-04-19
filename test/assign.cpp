@@ -310,7 +310,7 @@ namespace Test { namespace Assign {
       case 7: sa = SET_ASSIGN_RND_EXC(r); break;
       case 8: sa = SET_ASSIGN(&set_val); break;
       }
-          
+
       assign(*clone, clone->x, sa);
       Gecode::DFS<SetTestSpace> e_s(clone, o);
       delete clone;
@@ -352,7 +352,7 @@ namespace Test { namespace Assign {
   const int n_float_assign =
     sizeof(float_assign_name)/sizeof(const char*);
   /// Test function for branch value function
-  Gecode::FloatNumBranch float_val(const Gecode::Space&, 
+  Gecode::FloatNumBranch float_val(const Gecode::Space&,
                                    Gecode::FloatVar x, int) {
     Gecode::FloatNumBranch nl; nl.n=x.med(); nl.l=true;
     return nl;
@@ -385,7 +385,7 @@ namespace Test { namespace Assign {
       case 2: fa = FLOAT_ASSIGN_RND(r); break;
       case 3: fa = FLOAT_ASSIGN(&float_val); break;
       }
-          
+
       assign(*clone, clone->x, fa);
       Gecode::DFS<FloatTestSpace> e_s(clone, o);
       delete clone;

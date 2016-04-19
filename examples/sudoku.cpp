@@ -84,7 +84,7 @@ public:
   };
 
   /// Constructor
-  Sudoku(const SizeOptions& opt) 
+  Sudoku(const SizeOptions& opt)
     : Script(opt),
       n(example_size(examples[opt.size()])) {}
 

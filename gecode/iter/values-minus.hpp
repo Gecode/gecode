@@ -72,7 +72,7 @@ namespace Gecode { namespace Iter { namespace Values {
   Minus::Minus(void) {}
 
   forceinline
-  Minus::Minus(const Minus& m) 
+  Minus::Minus(const Minus& m)
     : ValueListIter(m) {}
 
   template<class I>

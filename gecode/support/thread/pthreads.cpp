@@ -58,7 +58,7 @@ namespace Gecode { namespace Support {
     if (pthread_create(&p_t, NULL, bootstrap, this) != 0)
       throw OperatingSystemError("Thread::run[pthread_create]");
   }
-  
+
 }}
 
 #endif

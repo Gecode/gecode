@@ -38,7 +38,7 @@
 namespace Gecode { namespace Search {
 
   /// Create depth-first engine
-  GECODE_SEARCH_EXPORT Engine* 
+  GECODE_SEARCH_EXPORT Engine*
   dfs(Space* s, const Options& o);
 
   /// A DFS engine builder

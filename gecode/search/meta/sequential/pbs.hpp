@@ -78,10 +78,10 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
   template<bool best>
   forceinline
-  PBS<best>::PBS(Engine** e, Stop** s, unsigned int n, 
+  PBS<best>::PBS(Engine** e, Stop** s, unsigned int n,
                  const Statistics& stat0,
                  const Search::Options& opt)
-    : stat(stat0), slice(opt.slice), 
+    : stat(stat0), slice(opt.slice),
       slaves(heap.alloc<Slave>(n)), n_slaves(n), cur(0),
       slave_stop(false) {
     ssi.done = false;
@@ -93,7 +93,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
   }
 
   template<bool best>
-  Space* 
+  Space*
   PBS<best>::next(void) {
     slave_stop = false;
     unsigned int n_exhausted = 0;
@@ -105,7 +105,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
             slaves[i].constrain(*s);
           for (unsigned int i=cur+1; i<n_slaves; i++)
             slaves[i].constrain(*s);
-        }          
+        }
         return s;
       }
       if (slaves[cur].stopped()) {
@@ -136,13 +136,13 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
   }
 
   template<bool best>
-  bool 
+  bool
   PBS<best>::stopped(void) const {
     return slave_stop;
   }
 
   template<bool best>
-  Statistics 
+  Statistics
   PBS<best>::statistics(void) const {
     Statistics s(stat);
     for (unsigned int i=n_slaves; i--; )

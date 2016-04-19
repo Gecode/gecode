@@ -41,7 +41,7 @@
 #include <climits>
 
 namespace Test { namespace Int {
-  
+
   /// %Tests for no-overlap constraint
   namespace NoOverlap {
 
@@ -59,9 +59,9 @@ namespace Test { namespace Int {
       Gecode::IntArgs h;
     public:
       /// Create and register test with maximal coordinate value \a m
-      Int2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0) 
+      Int2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
         : Test("NoOverlap::Int::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
-               2*w0.size(), 0, m-1), 
+               2*w0.size(), 0, m-1),
           w(w0), h(h0) {
       }
       /// %Test whether \a xy is solution
@@ -98,8 +98,8 @@ namespace Test { namespace Int {
       Gecode::IntArgs h;
     public:
       /// Create and register test with maximal value \a m and \a n rectangles
-      IntOpt2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0) 
-        : Test("NoOverlap::Int::Opt::2::"+str(m)+"::"+str(w0)+"::"+str(h0), 
+      IntOpt2(int m, const Gecode::IntArgs& w0, const Gecode::IntArgs& h0)
+        : Test("NoOverlap::Int::Opt::2::"+str(m)+"::"+str(w0)+"::"+str(h0),
                3*w0.size(), 0, m-1), w(w0), h(h0) {}
       /// %Test whether \a xyo is solution
       virtual bool solution(const Assignment& xyo) const {
@@ -131,7 +131,7 @@ namespace Test { namespace Int {
         nooverlap(home, x, w, y, h, o);
       }
     };
-    
+
     /// %Test for no-overlap with variable dimensions (rectangles)
     class Var2 : public Test {
     public:
@@ -168,7 +168,7 @@ namespace Test { namespace Int {
         nooverlap(home, x0, w, x1, y0, h, y1);
       }
     };
-    
+
     /// %Test for no-overlap with optional rectangles
     class VarOpt2 : public Test {
     public:
@@ -212,7 +212,7 @@ namespace Test { namespace Int {
         nooverlap(home, x0, w, x1, y0, h, y1, o);
       }
     };
-    
+
      /// %Test for no-overlap with optional rectangles and shared variables
     class VarOptShared2 : public Test {
     public:
@@ -257,8 +257,8 @@ namespace Test { namespace Int {
         nooverlap(home, x0, w, x1, y0, h, y1, o);
       }
     };
-    
-    
+
+
     /// Help class to create and register tests
     class Create {
     public:
@@ -293,11 +293,11 @@ namespace Test { namespace Int {
 
       }
     };
-    
+
     Create c;
-    
+
     //@}
-    
+
   }
 
 }}

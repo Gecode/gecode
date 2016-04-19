@@ -76,20 +76,20 @@
  * This is very simplistic, just enough for parallel search engines. Do
  * not mistake it for a full-fledged thread package.
  *
- * If the platform supports threads, the macro GECODE_HAS_THREADS is 
+ * If the platform supports threads, the macro GECODE_HAS_THREADS is
  * defined. If threads are not supported, all classes are
  * still available, but are noops with the exception of trying to
  * create a new thread which will throw an exception.
  *
  *
  * \ingroup FuncSupport
- */  
+ */
 
 namespace Gecode { namespace Support {
 
   /**
    * \brief A mutex for mutual exclausion among several threads
-   * 
+   *
    * It is not specified whether the mutex is recursive or not.
    * Likewise, there is no guarantee of fairness among the
    * blocking threads.
@@ -140,10 +140,10 @@ namespace Gecode { namespace Support {
 
   /**
    * \brief A fast mutex for mutual exclausion among several threads
-   * 
+   *
    * This mutex is implemeneted using spin locks on some platforms
    * and is not guaranteed to be compatible with events. It should be used
-   * for low-contention locks that are only acquired for short periods of 
+   * for low-contention locks that are only acquired for short periods of
    * time.
    *
    * It is not specified whether the mutex is recursive or not.
@@ -214,7 +214,7 @@ namespace Gecode { namespace Support {
 
   /**
    * \brief An event for synchronization
-   * 
+   *
    * An event can be waited on by a single thread until the event is
    * signalled.
    *
@@ -224,7 +224,7 @@ namespace Gecode { namespace Support {
   private:
 #ifdef GECODE_THREADS_WINDOWS
     /// The Windows specific handle to an event
-    HANDLE w_h;    
+    HANDLE w_h;
 #endif
 #ifdef GECODE_THREADS_PTHREADS
     /// The Pthread mutex

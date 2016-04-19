@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     }
     return ES_OK;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

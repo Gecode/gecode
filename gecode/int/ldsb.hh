@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace LDSB {
    * \brief Find the location of an integer in a collection of
    * sequences.
    *
-   * 
+   *
    * Given an array \a indices of integers (of length \a n_values),
    * which represents a collection of sequences each of size \a
    * seq_size, find the location of the first occurrence of the value
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Constructor for creation
     VariableSequenceSymmetryObject(ArgArray<VarImpBase*> vars, int ss);
     /// Destructor
-    ~VariableSequenceSymmetryObject(); 
+    ~VariableSequenceSymmetryObject();
   };
   /// Implementation of a value sequence symmetry at the modelling level
   class GECODE_INT_EXPORT ValueSequenceSymmetryObject : public SymmetryObject {
@@ -309,7 +309,7 @@ namespace Gecode { namespace Int { namespace LDSB {
   public:
     /// Initialize choice for brancher \a b, position \a p, value \a
     /// n, and set of literals \a literals (of size \a nliterals)
-    LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n, 
+    LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n,
                const Literal* literals, int nliterals);
     /// Destructor
     ~LDSBChoice(void);
@@ -351,9 +351,9 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Constructor for cloning \a b
     LDSBBrancher(Space& home, bool share, LDSBBrancher& b);
     /// Constructor for creation
-    LDSBBrancher(Home home, 
+    LDSBBrancher(Home home,
                  ViewArray<View>& x,
-                 ViewSel<View>* vs[n], 
+                 ViewSel<View>* vs[n],
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
                  BranchFilter bf,

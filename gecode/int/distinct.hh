@@ -312,7 +312,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     using BinaryPropagator<IntView,PC_INT_DOM>::x0;
     using BinaryPropagator<IntView,PC_INT_DOM>::x1;
     /// The integer constant
-    int c0, c1; 
+    int c0, c1;
     /// Constructor for cloning \a p
     EqIte(Space& home, bool share, EqIte& p);
     /// Constructor for creation

@@ -63,17 +63,17 @@ namespace Test { namespace FlatZinc {
         fg->shrinkArrays(p);
         std::ostringstream os;
         fg->run(os, p, fznopt, t_total);
-        
+
         if (_expected == os.str()) {
           return true;
         } else {
           if (opt.log)
-            olog << "FlatZinc produced the following output:\n" << os.str() << "\n";          
+            olog << "FlatZinc produced the following output:\n" << os.str() << "\n";
           return false;
         }
       } else {
         if (opt.log)
-          olog << "Could not parse input\n";          
+          olog << "Could not parse input\n";
         return false;
       }
       delete fg;
@@ -82,7 +82,7 @@ namespace Test { namespace FlatZinc {
         olog << ind(2) << "FlatZinc error : " << e.toString() << std::endl;
       return false;
     }
-    
+
   }
 
 }}

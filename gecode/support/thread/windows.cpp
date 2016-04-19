@@ -42,7 +42,7 @@
 namespace Gecode { namespace Support {
 
   /// Function to start execution
-  DWORD WINAPI 
+  DWORD WINAPI
   bootstrap(LPVOID p) {
     static_cast<Thread::Run*>(p)->exec();
     return 0;

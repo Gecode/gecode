@@ -184,13 +184,13 @@ namespace Gecode {
    *
    * \ingroup TaskModel
    */
-  
-  /** 
+
+  /**
    * \defgroup TaskModelBranchExec Branch with a function
-   * 
+   *
    * This does not really branch (it just offers a single alternative) but
    * executes a single function during branching. A typical
-   * application is to post more constraints after another brancher 
+   * application is to post more constraints after another brancher
    * has finished.
    *
    * \ingroup TaskModelBranch

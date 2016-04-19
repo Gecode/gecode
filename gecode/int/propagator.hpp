@@ -112,7 +112,7 @@ namespace Gecode { namespace Int {
    * \brief Reified mixed binary propagator
    *
    * Stores two views of type \a View0 and \a View1 with propagation
-   * conditions \a pc0 and \a pc1 and a Boolean control view of type 
+   * conditions \a pc0 and \a pc1 and a Boolean control view of type
    * \a CtrlView.
    *
    * If the propagation conditions \a pc0 or \a pc1 have the values
@@ -264,7 +264,7 @@ namespace Gecode { namespace Int {
             class CtrlView>
   forceinline
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::ReMixBinaryPropagator
-  (Space& home, bool share, 
+  (Space& home, bool share,
    ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);

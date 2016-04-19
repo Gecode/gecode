@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace NValues {
         x[i] = x[--n];
         status |= VS_ONE;
       }
-    
+
     assert(status != (VS_ZERO | VS_ONE));
     if (n == 0) {
       assert((status != 0) && (y.min() >= 1));

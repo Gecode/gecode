@@ -155,7 +155,7 @@ public:
         // the sequence on the value.
         REG r0(0), r1(1);
         for (int v=1; v<=n; v++)
-          extensional(*this, b.row(v-1), 
+          extensional(*this, b.row(v-1),
                       *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0);
       }
       break;

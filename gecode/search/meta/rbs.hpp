@@ -39,7 +39,7 @@
 namespace Gecode { namespace Search { namespace Meta {
 
   forceinline
-  RestartStop::RestartStop(Stop* s) 
+  RestartStop::RestartStop(Stop* s)
     : l(0), m_stop(s), e_stopped(false) {}
 
   forceinline void
@@ -55,16 +55,16 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   forceinline bool
-  RestartStop::enginestopped(void) const { 
-    return e_stopped; 
+  RestartStop::enginestopped(void) const {
+    return e_stopped;
   }
 
-  forceinline Statistics 
-  RestartStop::metastatistics(void) const { 
-    return m_stat; 
+  forceinline Statistics
+  RestartStop::metastatistics(void) const {
+    return m_stat;
   }
 
-  
+
   forceinline
   RBS::RBS(Space* s, RestartStop* stop0,
            Engine* e0, const Search::Statistics& stat, const Options& opt,

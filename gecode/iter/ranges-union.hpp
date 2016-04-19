@@ -184,7 +184,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   NaryUnion::two(I& i, J& j) {
     RangeList*  h;
     RangeList** c = &h;
-    
+
     while (i() && j())
       if (i.max()+1 < j.min()) {
         RangeList* t = range(i); ++i;
@@ -206,7 +206,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
           max = std::max(max,j.max()); ++j;
           goto nexta;
         }
- 
+
         RangeList* t = range(min,max);
         *c = t; c = &t->next;
       }
@@ -227,7 +227,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   NaryUnion::insert(I& i, RangeList*& u) {
     // The current rangelist
     RangeList** c = &u;
-        
+
     while ((*c != NULL) && i())
       if ((*c)->max+1 < i.min()) {
         // Keep range from union
@@ -243,11 +243,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
         (*c)->min = std::min((*c)->min,i.min());
         // Compute new maximum
         int max = std::max((*c)->max,i.max());
-        
+
         // Scan from the next range in the union
-        RangeList* s = (*c)->next; 
+        RangeList* s = (*c)->next;
         ++i;
-        
+
       nextb:
         if ((s != NULL) && (s->min <= max+1)) {
           max = std::max(max,s->max);
@@ -276,7 +276,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
 
   forceinline
-  NaryUnion::NaryUnion(void) 
+  NaryUnion::NaryUnion(void)
     : f(NULL) {}
 
   template<class I>

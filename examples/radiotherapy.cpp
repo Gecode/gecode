@@ -103,7 +103,7 @@ class Radiotherapy : public IntMinimizeScript {
 private:
   /// Instance data
   const RadiotherapyData rd;
-  
+
   /// Total beam-on time
   IntVar beamtime;
   /// Number of shape matrices
@@ -132,7 +132,7 @@ public:
       coeffs[i] = i+1;
     linear(*this, coeffs, N, IRT_EQ, beamtime);
     linear(*this, N, IRT_EQ, K);
-    
+
     for (int i=0; i<rd.m; i++) {
       for (int j=0; j<rd.n; j++) {
         IntVarArgs qs(rd.btMax);
@@ -141,7 +141,7 @@ public:
         linear(*this, coeffs, qs, IRT_EQ, rd.intensity[i*rd.n+j], IPL_DOM);
       }
     }
-    
+
     for (int i=0; i<rd.m; i++) {
       for (int b=0; b<rd.btMax; b++) {
         IntVarArgs qs(rd.n);
@@ -164,7 +164,7 @@ public:
 
   }
 
-  /// Post incremental sum constraint 
+  /// Post incremental sum constraint
   void incr_sum(IntVar& x, IntVarArgs& y, int mn) {
     IntVarArgs s(*this, y.size()-1, 0, mn);
     IntVarArgs t(y.size());
@@ -182,7 +182,7 @@ public:
     beamtime.update(*this, share, s.beamtime);
     N.update(*this, share, s.N);
     K.update(*this, share, s.K);
-    _cost.update(*this, share, s._cost);      
+    _cost.update(*this, share, s._cost);
     q.update(*this, share, s.q);
   }
 
@@ -195,11 +195,11 @@ public:
   /// Cost to be minimized
   virtual IntVar
   cost(void) const { return _cost; }
-  
+
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    os << std::endl 
+    os << std::endl
        << "B / K = " << beamtime << " / " << K << ",\nN = " << N << std::endl;
   }
 
@@ -209,7 +209,7 @@ public:
     /// Flag that the brancher is done after one commit
     bool done;
     /// Mapping of index to weight
-    struct Idx { 
+    struct Idx {
       int idx;    ///< Index
       int weight; ///< Weight
       /// Sort order (higher weights go first)
@@ -268,7 +268,7 @@ public:
       IntVarArgs ri(row->rd.n*row->rd.btMax);
       for (int j=0; j<row->rd.n; j++) {
         for (int b=0; b<row->rd.btMax; b++) {
-          ri[j*row->rd.btMax+b] = 
+          ri[j*row->rd.btMax+b] =
             row->q[i*row->rd.n*row->rd.btMax+j*row->rd.btMax+b];
         }
       }
@@ -280,7 +280,7 @@ public:
       Radiotherapy& rt = static_cast<Radiotherapy&>(home);
 
       std::cout << "*";
-      
+
       // Perform nested search for each row
       bool fail = false;
       for (int i=0; i<rt.rd.m; i++) {
@@ -288,7 +288,7 @@ public:
         Radiotherapy* row = static_cast<Radiotherapy*>(rt.clone());
 
         // Branch over row i
-        branch(*row, getRow(row, index[i].idx), 
+        branch(*row, getRow(row, index[i].idx),
                INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
         Search::Options o; o.clone = false;
         if (Radiotherapy* newSol = dfs(row, o) ) {
@@ -302,7 +302,7 @@ public:
           if (i && index[i] < index[i-1])
             std::swap(index[i], index[i-1]);
           break;
-        }      
+        }
       }
 
       return new Choice(*this, fail);
@@ -317,7 +317,7 @@ public:
       return static_cast<const Choice&>(_c).fail ? ES_FAILED : ES_OK;
     }
     /// Print explanation
-    virtual void print(const Space&, const Gecode::Choice& _c, 
+    virtual void print(const Space&, const Gecode::Choice& _c,
                        unsigned int,
                        std::ostream& o) const {
       const Choice& c = static_cast<const Choice&>(_c);
@@ -370,11 +370,11 @@ main(int argc, char* argv[]) {
 
 namespace {
   /** \brief Radiotherapy specifications.
-   *  
+   *
    *  \relates Radiotherapy
    */
   //@{
-  
+
   // Small instance
   static const int intensity0[] = {
     7,  2, 14,  8,  9,
@@ -406,7 +406,7 @@ namespace {
   RadiotherapyData rd1(15,15,intensity1);
 
   /*
-   * The following 25 clinical instances were provided by 
+   * The following 25 clinical instances were provided by
    *   - James F. Dempsey, ViewRay, Inc.
    *   - H. Edwin Romeijn, Department of Industrial and Operations
    *     Engineering, The University of Michigan
@@ -919,7 +919,7 @@ namespace {
   //@}
 
   /// Radiotherapy instances
-  RadiotherapyData rds[] = {rd0, rd1, 
+  RadiotherapyData rds[] = {rd0, rd1,
                                    case1_beam1,
                                    case1_beam2,
                                    case1_beam3,

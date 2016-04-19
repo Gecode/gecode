@@ -39,13 +39,13 @@
 
 namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
-  Stop* 
+  Stop*
   stop(Stop* so) {
     return new PortfolioStop(so);
   }
 
-  Engine* 
-  engine(Engine** slaves, Stop** stops, unsigned int n_slaves, 
+  Engine*
+  engine(Engine** slaves, Stop** stops, unsigned int n_slaves,
          const Statistics& stat, const Search::Options& opt, bool best) {
     if (best)
       return new PBS<true>(slaves,stops,n_slaves,stat,opt);
@@ -61,13 +61,13 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
 
 namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
 
-  Stop* 
+  Stop*
   stop(Stop* so) {
     return new PortfolioStop(so);
   }
 
-  Engine* 
-  engine(Engine** slaves, Stop** stops, unsigned int n_slaves, 
+  Engine*
+  engine(Engine** slaves, Stop** stops, unsigned int n_slaves,
          const Statistics& stat, bool best) {
     if (best)
       return new PBS<CollectBest>(slaves,stops,n_slaves,stat);

@@ -93,7 +93,7 @@ operator<<(std::ostream& os, const Test::Int::Assignment& a) {
 namespace Test { namespace Int {
 
   TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t)
-    : d(d0), x(*this,n,Gecode::Int::Limits::min,Gecode::Int::Limits::max), 
+    : d(d0), x(*this,n,Gecode::Int::Limits::min,Gecode::Int::Limits::max),
       test(t), reified(false) {
     Gecode::IntVarArgs _x(*this,n,d);
     if (x.size() == 1)
@@ -109,13 +109,13 @@ namespace Test { namespace Int {
 
   TestSpace::TestSpace(int n, Gecode::IntSet& d0, Test* t,
                        Gecode::ReifyMode rm)
-    : d(d0), x(*this,n,Gecode::Int::Limits::min,Gecode::Int::Limits::max), 
+    : d(d0), x(*this,n,Gecode::Int::Limits::min,Gecode::Int::Limits::max),
       test(t), reified(true) {
     Gecode::IntVarArgs _x(*this,n,d);
     if (x.size() == 1)
       Gecode::dom(*this,x[0],_x[0]);
     else
-      Gecode::dom(*this,x,_x);    
+      Gecode::dom(*this,x,_x);
     Gecode::BoolVar b(*this,0,1);
     r = Gecode::Reify(b,rm);
     if (opt.log)
@@ -132,12 +132,12 @@ namespace Test { namespace Int {
     r.var(b); r.mode(s.r.mode());
   }
 
-  Gecode::Space* 
+  Gecode::Space*
   TestSpace::copy(bool share) {
     return new TestSpace(share,*this);
   }
 
-  bool 
+  bool
   TestSpace::assigned(void) const {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
@@ -145,7 +145,7 @@ namespace Test { namespace Int {
     return true;
   }
 
-  void 
+  void
   TestSpace::post(void) {
     if (reified){
       test->post(*this,x,r);
@@ -158,7 +158,7 @@ namespace Test { namespace Int {
     }
   }
 
-  bool 
+  bool
   TestSpace::failed(void) {
     if (opt.log) {
       olog << ind(3) << "Fixpoint: " << x;
@@ -170,7 +170,7 @@ namespace Test { namespace Int {
     }
   }
 
-  void 
+  void
   TestSpace::rel(int i, Gecode::IntRelType irt, int n) {
     if (opt.log) {
       olog << ind(4) << "x[" << i << "] ";
@@ -187,7 +187,7 @@ namespace Test { namespace Int {
     Gecode::rel(*this, x[i], irt, n);
   }
 
-  void 
+  void
   TestSpace::rel(bool sol) {
     int n = sol ? 1 : 0;
     assert(reified);
@@ -196,7 +196,7 @@ namespace Test { namespace Int {
     Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
   }
 
-  void 
+  void
   TestSpace::assign(const Assignment& a, bool skip) {
     using namespace Gecode;
     int i = skip ? static_cast<int>(Base::rand(a.size())) : -1;
@@ -208,7 +208,7 @@ namespace Test { namespace Int {
       }
   }
 
-  void 
+  void
   TestSpace::bound(void) {
     using namespace Gecode;
     // Select variable to be assigned
@@ -220,7 +220,7 @@ namespace Test { namespace Int {
     rel(i, IRT_EQ, min ? x[i].min() : x[i].max());
   }
 
-  void 
+  void
   TestSpace::prune(int i, bool bounds_only) {
     using namespace Gecode;
     // Prune values
@@ -253,7 +253,7 @@ namespace Test { namespace Int {
     }
   }
 
-  void 
+  void
   TestSpace::prune(void) {
     using namespace Gecode;
     // Select variable to be pruned
@@ -264,7 +264,7 @@ namespace Test { namespace Int {
     prune(i, false);
   }
 
-  bool 
+  bool
   TestSpace::prune(const Assignment& a, bool testfix) {
     // Select variable to be pruned
     int i = Base::rand(x.size());
@@ -749,7 +749,7 @@ if (!(T)) {                                                     \
           START_TEST("Prune reified, <=>");
           TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
           s->post();
-          while (!s->failed() && 
+          while (!s->failed() &&
                  (!s->assigned() || !s->r.var().assigned()))
             if (!s->prune(a,testfix)) {
               problem = "No fixpoint";
@@ -770,7 +770,7 @@ if (!(T)) {                                                     \
           START_TEST("Prune reified, =>");
           TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
           s->post();
-          while (!s->failed() && 
+          while (!s->failed() &&
                  (!s->assigned() || (!sol && !s->r.var().assigned())))
             if (!s->prune(a,testfix)) {
               problem = "No fixpoint";
@@ -791,7 +791,7 @@ if (!(T)) {                                                     \
           START_TEST("Prune reified, <=");
           TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
           s->post();
-          while (!s->failed() && 
+          while (!s->failed() &&
                  (!s->assigned() || (sol && !s->r.var().assigned())))
             if (!s->prune(a,testfix)) {
               problem = "No fixpoint";

@@ -98,7 +98,7 @@ namespace Gecode { namespace Set { namespace Rel {
     }
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(NoSubset<View0,View1>::post(home(*this),x0,x1)));
     }
 

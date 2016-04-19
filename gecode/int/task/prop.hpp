@@ -37,28 +37,28 @@
 
 namespace Gecode { namespace Int {
 
-  template<class Task, class PL>  
+  template<class Task, class PL>
   forceinline
   TaskProp<Task,PL>::TaskProp(Home home, TaskArray<Task>& t0)
     : Propagator(home), t(t0) {
     t.subscribe(home,*this,PL::pc);
   }
 
-  template<class Task, class PL>  
+  template<class Task, class PL>
   forceinline
-  TaskProp<Task,PL>::TaskProp(Space& home, bool shared, TaskProp<Task,PL>& p) 
+  TaskProp<Task,PL>::TaskProp(Space& home, bool shared, TaskProp<Task,PL>& p)
     : Propagator(home,shared,p) {
     t.update(home,shared,p.t);
   }
 
   template<class Task, class PL>
-  PropCost 
+  PropCost
   TaskProp<Task,PL>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI,t.size());
   }
 
-  template<class Task, class PL>  
-  forceinline size_t 
+  template<class Task, class PL>
+  forceinline size_t
   TaskProp<Task,PL>::dispose(Space& home) {
     t.cancel(home,*this,PL::pc);
     (void) Propagator::dispose(home);

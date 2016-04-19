@@ -160,7 +160,7 @@ namespace Gecode {
   class IntSetRanges;
 
   template<class I> class IntSetInit;
-  
+
   /**
    * \brief Integer sets
    *
@@ -629,7 +629,7 @@ namespace Gecode {
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
     static IntArgs create(int n, int start, int inc=1);
-    //@}    
+    //@}
   };
 
   /// \brief Passing integer variables
@@ -877,13 +877,13 @@ namespace Gecode {
    * \ingroup TaskModelInt
    */
   Reify eqv(BoolVar x);
-  
+
   /**
    * \brief Use implication for reification
    * \ingroup TaskModelInt
    */
   Reify imp(BoolVar x);
-  
+
   /**
    * \brief Use reverse implication for reification
    * \ingroup TaskModelInt
@@ -891,7 +891,7 @@ namespace Gecode {
   Reify pmi(BoolVar x);
 
 }
-  
+
 #include <gecode/int/reify.hpp>
 
 namespace Gecode {
@@ -1222,7 +1222,7 @@ namespace Gecode {
    *    then the elements of \a x are ordered with respect to \a r.
    *  - if \a r = IRT_EQ, then all elements of \a x must be equal.
    *  - if \a r = IRT_NQ, then not all elements of \a x must be equal.
-   *   
+   *
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
@@ -1320,7 +1320,7 @@ namespace Gecode {
    */
   /** \brief Post propagator that \a s precedes \a t in \a x
    *
-   * This constraint enforces that \f$x_0\neq t\f$ and 
+   * This constraint enforces that \f$x_0\neq t\f$ and
    * \f$x_j=t \to \bigvee_{0\leq i<j} x_i=s\f$ for \f$0\leq j<|x|\f$.
    * The propagator is domain consistent.
    * \ingroup TaskModelIntPrecede
@@ -1330,8 +1330,8 @@ namespace Gecode {
           IntPropLevel=IPL_DEF);
   /** \brief Post propagator that successive values in \a c precede each other in \a x
    *
-   * This constraint enforces that \f$x_0\neq c_k\f$ for \f$0<k<|c|\f$ and 
-   * \f$x_j=c_{k} \to \bigvee_{0\leq i<j} x_i=c_{k-1}\f$ for \f$0\leq j<|x|\f$ 
+   * This constraint enforces that \f$x_0\neq c_k\f$ for \f$0<k<|c|\f$ and
+   * \f$x_j=c_{k} \to \bigvee_{0\leq i<j} x_i=c_{k-1}\f$ for \f$0\leq j<|x|\f$
    * and \f$0< k<|c|\f$.
    * \ingroup TaskModelIntPrecede
    */
@@ -1434,7 +1434,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Home home, IntSharedArray a, 
+  element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1450,7 +1450,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Home home, IntSharedArray a, 
+  element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1469,7 +1469,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const IntVarArgs& a, 
+  element(Home home, const IntVarArgs& a,
           IntVar x, int w, IntVar y, int h, IntVar z,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for \f$ a_{x+w\cdot y}=z\f$
@@ -1485,7 +1485,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_INT_EXPORT void
-  element(Home home, const BoolVarArgs& a, 
+  element(Home home, const BoolVarArgs& a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
           IntPropLevel ipl=IPL_DEF);
   //@}
@@ -1566,7 +1566,7 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports domain consistency (\a ipl = IPL_DOM) and value 
+   * \li Supports domain consistency (\a ipl = IPL_DOM) and value
    *     propagation (all other values for \a ipl, default).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
@@ -1581,7 +1581,7 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ x_i - \mathit{xoff} = j\leftrightarrow y_j - \mathit{yoff} = i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports domain consistency (\a ipl = IPL_DOM) and value 
+   * \li Supports domain consistency (\a ipl = IPL_DOM) and value
    *     propagation (all other values for \a ipl, default).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
@@ -1884,7 +1884,7 @@ namespace Gecode {
   /** \brief Post propagator for \f$\operatorname{sequence}(x,s,q,l,u)\f$
    *
    * Posts a domain consistent propagator for the constraint
-   * \f$\bigwedge_{i=0}^{|x|-q} 
+   * \f$\bigwedge_{i=0}^{|x|-q}
    *      \operatorname{among}(\langle x_i,\ldots,x_{i+q-1}\rangle,s,l,u)\f$
    * where the among constraint is defined as
    * \f$l\leq\#\{j\in\{i,\ldots,i+q-1\}\;|\;x_j\in s\} \leq u\f$.
@@ -1896,13 +1896,13 @@ namespace Gecode {
    *  - Of type Int::OutOfRange, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
-  sequence(Home home, const IntVarArgs& x, const IntSet& s, 
-           int q, int l, int u, IntPropLevel ipl=IPL_DEF); 
-  
+  sequence(Home home, const IntVarArgs& x, const IntSet& s,
+           int q, int l, int u, IntPropLevel ipl=IPL_DEF);
+
   /** \brief Post propagator for \f$\operatorname{sequence}(x,s,q,l,u)\f$
    *
    * Posts a domain consistent propagator for the constraint
-   * \f$\bigwedge_{i=0}^{|x|-q} 
+   * \f$\bigwedge_{i=0}^{|x|-q}
    *      \operatorname{among}(\langle x_i,\ldots,x_{i+q-1}\rangle,s,l,u)\f$
    * where the among constraint is defined as
    * \f$l\leq\#\{j\in\{i,\ldots,i+q-1\}\;|\;x_j\in s\} \leq u\f$.
@@ -1914,8 +1914,8 @@ namespace Gecode {
    *  - Of type Int::OutOfRange, if \f$q < 1 \vee q > |x|\f$.
    */
   GECODE_INT_EXPORT void
-  sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
-           int q, int l, int u, IntPropLevel ipl=IPL_DEF); 
+  sequence(Home home, const BoolVarArgs& x, const IntSet& s,
+           int q, int l, int u, IntPropLevel ipl=IPL_DEF);
 
   //@}
 
@@ -2118,7 +2118,7 @@ namespace Gecode {
       /// Create a copy
       GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
     };
-    
+
     /// Get implementation
     TupleSetI* implementation(void);
 
@@ -2149,7 +2149,7 @@ namespace Gecode {
    *
    * \li Supports implementations optimized for speed (with propagation
    *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
-   *     consumption (with propagation level \a ipl or-ed with 
+   *     consumption (with propagation level \a ipl or-ed with
    *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2173,7 +2173,7 @@ namespace Gecode {
    *
    * \li Supports implementations optimized for speed (with propagation
    *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
-   *     consumption (with propagation level \a ipl or-ed with 
+   *     consumption (with propagation level \a ipl or-ed with
    *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -2238,11 +2238,11 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ \operatorname{argmin}(x)=y\f$
    *
-   * In case of ties, the smallest value for \a y is chosen 
+   * In case of ties, the smallest value for \a y is chosen
    * (provided \a tiebreak is true).
    *
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
-   * If \a y occurs in \a x, an exception of type Int::ArgumentSame 
+   * If \a y occurs in \a x, an exception of type Int::ArgumentSame
    * is thrown.
    */
   GECODE_INT_EXPORT void
@@ -2250,11 +2250,11 @@ namespace Gecode {
          IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator for \f$ \operatorname{argmin}(x)-o=y\f$
    *
-   * In case of ties, the smallest value for \a y is chosen 
+   * In case of ties, the smallest value for \a y is chosen
    * (provided \a tiebreak is true).
    *
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
-   * If \a y occurs in \a x, an exception of type Int::ArgumentSame 
+   * If \a y occurs in \a x, an exception of type Int::ArgumentSame
    * is thrown.
    */
   GECODE_INT_EXPORT void
@@ -2266,7 +2266,7 @@ namespace Gecode {
    * (provided \a tiebreak is true).
    *
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
-   * If \a y occurs in \a x, an exception of type Int::ArgumentSame 
+   * If \a y occurs in \a x, an exception of type Int::ArgumentSame
    * is thrown.
    */
   GECODE_INT_EXPORT void
@@ -2278,7 +2278,7 @@ namespace Gecode {
    * (provided \a tiebreak is true).
    *
    * If \a x is empty, an exception of type Int::TooFewArguments is thrown.
-   * If \a y occurs in \a x, an exception of type Int::ArgumentSame 
+   * If \a y occurs in \a x, an exception of type Int::ArgumentSame
    * is thrown.
    */
   GECODE_INT_EXPORT void
@@ -2287,7 +2287,7 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$ |x_0|=x_1\f$
    *
-   * Supports value propagation (\a ipl = IPL_VAL), bounds consistency 
+   * Supports value propagation (\a ipl = IPL_VAL), bounds consistency
    * (\a ipl = IPL_BND, default), and domain consistency (\a ipl = IPL_DOM).
    */
   GECODE_INT_EXPORT void
@@ -2586,12 +2586,12 @@ namespace Gecode {
    *    the same size.
    *  - Of type Int::ArgumentSame if \a l and \a b share unassigned variables.
    *  - Of type Int::OutOfLimits if \a s contains a negative number.
-   * 
+   *
    * \ingroup TaskModelIntBinPacking
    */
   GECODE_INT_EXPORT void
-  binpacking(Home home, 
-             const IntVarArgs& l, 
+  binpacking(Home home,
+             const IntVarArgs& l,
              const IntVarArgs& b, const IntArgs& s,
              IntPropLevel ipl=IPL_DEF);
   /* \brief Post propagator for multi-dimensional bin packing
@@ -2616,7 +2616,7 @@ namespace Gecode {
    * simple and effective decomposition for the multidimensional
    * binpacking constraint. CP 2013, pages 356--364.
    *
-   * Posting the constraint returns a maximal set containing conflicting 
+   * Posting the constraint returns a maximal set containing conflicting
    * items that require pairwise different bins.
    *
    * Note that posting the constraint has exponential complexity in the
@@ -2629,12 +2629,12 @@ namespace Gecode {
    *    and \f$|c|=d\f$.
    *  - Of type Int::ArgumentSame if \a l and \a b share unassigned variables.
    *  - Of type Int::OutOfLimits if \a s or \a c contains a negative number.
-   * 
+   *
    * \ingroup TaskModelIntBinPacking
    */
   GECODE_INT_EXPORT IntSet
   binpacking(Home home, int d,
-             const IntVarArgs& l, const IntVarArgs& b, 
+             const IntVarArgs& l, const IntVarArgs& b,
              const IntArgs& s, const IntArgs& c,
              IntPropLevel ipl=IPL_DEF);
 
@@ -2649,16 +2649,16 @@ namespace Gecode {
    *
    * Propagate that no two rectangles as described by the coordinates
    * \a x, and \a y, widths \a w, and heights \a h overlap.
-   * 
+   *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, or \a h
    *    are not of the same size.
    *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
-   * 
+   *
    * \ingroup TaskModelIntGeoPacking
    */
   GECODE_INT_EXPORT void
-  nooverlap(Home home, 
+  nooverlap(Home home,
             const IntVarArgs& x, const IntArgs& w,
             const IntVarArgs& y, const IntArgs& h,
             IntPropLevel ipl=IPL_DEF);
@@ -2667,16 +2667,16 @@ namespace Gecode {
    * Propagate that no two rectangles as described by the coordinates
    * \a x, and \a y, widths \a w, and heights \a h overlap. The rectangles
    * can be optional, as described by the Boolean variables \a o.
-   * 
+   *
    * Throws the following exceptions:
    *  - Of type Int::ArgumentSizeMismatch if \a x, \a w, \a y, \a h, or \a o
    *    are not of the same size.
    *  - Of type Int::OutOfLimits if \a w or \a h contain a negative number.
-   * 
+   *
    * \ingroup TaskModelIntGeoPacking
    */
   GECODE_INT_EXPORT void
-  nooverlap(Home home, 
+  nooverlap(Home home,
             const IntVarArgs& x, const IntArgs& w,
             const IntVarArgs& y, const IntArgs& h,
             const BoolVarArgs& o,
@@ -2686,19 +2686,19 @@ namespace Gecode {
    * Propagate that no two rectangles as described by the start coordinates
    * \a x0 and \a y0, widths \a w and heights \a h, and end coordinates
    * \a x1 and \a y1 overlap.
-   * 
+   *
    * Note that the relations \f$x0_i+w_i=x1_i\f$ and \f$y0_i+h_i=y1_i\f$ are
    * not propagated (for \f$0\leq i<|x0|\f$). That is, additional constraints
    * must be posted to enforce that relation.
    *
    * Throws the following exceptions:
-   *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
+   *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w,
    *    \a y0, \a y1, or \a h are not of the same size.
-   * 
+   *
    * \ingroup TaskModelIntGeoPacking
    */
   GECODE_INT_EXPORT void
-  nooverlap(Home home, 
+  nooverlap(Home home,
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
             IntPropLevel ipl=IPL_DEF);
@@ -2706,21 +2706,21 @@ namespace Gecode {
    *
    * Propagate that no two rectangles as described by the start coordinates
    * \a x0 and \a y0, widths \a w and heights \a h, and end coordinates
-   * \a x1 and \a y1 overlap. The rectangles can be optional, as described 
+   * \a x1 and \a y1 overlap. The rectangles can be optional, as described
    * by the Boolean variables \a o.
-   * 
+   *
    * Note that the relations \f$x0_i+w_i=x1_i\f$ and \f$y0_i+h_i=y1_i\f$ are
    * not propagated (for \f$0\leq i<|x0|\f$). That is, additional constraints
    * must be posted to enforce that relation.
    *
    * Throws the following exceptions:
-   *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w, 
+   *  - Of type Int::ArgumentSizeMismatch if \a x0, \a x1, \a w,
    *    \a y0, \a y1, or \a h are not of the same size.
-   * 
+   *
    * \ingroup TaskModelIntGeoPacking
    */
   GECODE_INT_EXPORT void
-  nooverlap(Home home, 
+  nooverlap(Home home,
             const IntVarArgs& x0, const IntVarArgs& w, const IntVarArgs& x1,
             const IntVarArgs& y0, const IntVarArgs& h, const IntVarArgs& y1,
             const BoolVarArgs& o,
@@ -2769,7 +2769,7 @@ namespace Gecode {
    *                = true) or greater than the limit (\a at_most = false)
    * \param ipl Supports value-consistency only (\a ipl = IPL_VAL, default).
    *
-   * \exception Int::ArgumentSizeMismatch thrown if the sizes 
+   * \exception Int::ArgumentSizeMismatch thrown if the sizes
    *            of the arguments representing tasks does not match.
    * \exception Int::OutOfLimits thrown if any numerical argument is
    *            larger than Int::Limits::max or less than
@@ -2856,21 +2856,21 @@ namespace Gecode {
    *
    * Schedule tasks with start times \a s and processing times \a p
    * on a unary resource. The propagator uses the algorithms from:
-   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis,
    *   Charles University, Prague, Czech Republic, 2007.
-   * 
+   *
    * The propagator performs propagation that depends on the integer
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
    *
    * Posting the constraint might throw the following exceptions:
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    *    and \a p are of different size.
    *  - Throws an exception of type Int::ArgumentSame, if \a s contains
    *    the same unassigned variable multiply.
@@ -2886,17 +2886,17 @@ namespace Gecode {
    *
    * Schedule optional tasks with start times \a s, processing times \a p,
    * and whether a task is mandatory \a m (a task is mandatory if the
-   * Boolean variable is 1) on a unary resource. The propagator uses the 
+   * Boolean variable is 1) on a unary resource. The propagator uses the
    * algorithms from:
-   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis,
    *   Charles University, Prague, Czech Republic, 2007.
-   * 
+   *
    * The propagator performs propagation that depends on the integer
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
@@ -2911,7 +2911,7 @@ namespace Gecode {
    *    an overflow.
    */
   GECODE_INT_EXPORT void
-  unary(Home home, const IntVarArgs& s, const IntArgs& p, 
+  unary(Home home, const IntVarArgs& s, const IntArgs& p,
         const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on unary resources
@@ -2919,32 +2919,32 @@ namespace Gecode {
    * Schedule tasks with flexible times \a flex and fixed times \a fix
    * on a unary resource. For each
    * task, it depends on \a t how the flexible and fix times are interpreted:
-   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    processing time.
-   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
    *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
    *    start time.
-   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    end time.
    *
    * The propagator uses the algorithms from:
-   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis,
    *   Charles University, Prague, Czech Republic, 2007.
-   * 
+   *
    * The propagator performs propagation that depends on the integer
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
    *
    * Posting the constraint might throw the following exceptions:
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    *    and \a p are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a p contains
    *    an integer that is negative for a task with type <code>TT_FIXP</code>
@@ -2960,27 +2960,27 @@ namespace Gecode {
    * and whether a task is mandatory \a m (a task is mandatory if the
    * Boolean variable is 1) on a unary resource. For each
    * task, it depends on \a t how the flexible and fix times are interpreted:
-   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    processing time.
-   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
    *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
    *    start time.
-   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    end time.
    *
-   * The propagator uses the 
+   * The propagator uses the
    * algorithms from:
-   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis,
    *   Charles University, Prague, Czech Republic, 2007.
-   * 
+   *
    * The propagator performs propagation that depends on the integer
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
@@ -3002,9 +3002,9 @@ namespace Gecode {
    * Schedule tasks with start times \a s, processing times \a p, and
    * end times \a e
    * on a unary resource. The propagator uses the algorithms from:
-   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis,
    *   Charles University, Prague, Czech Republic, 2007.
-   * 
+   *
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
    *
@@ -3013,18 +3013,18 @@ namespace Gecode {
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
    *
    * The processing times are constrained to be non-negative.
    *
-   * Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   * Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    * and \a p are of different size.
    */
   GECODE_INT_EXPORT void
-  unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
         const IntVarArgs& e, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on unary resources
@@ -3032,17 +3032,17 @@ namespace Gecode {
    * Schedule optional tasks with start times \a s, processing times \a p,
    * end times \a e,
    * and whether a task is mandatory \a m (a task is mandatory if the
-   * Boolean variable is 1) on a unary resource. The propagator uses the 
+   * Boolean variable is 1) on a unary resource. The propagator uses the
    * algorithms from:
-   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis, 
+   *   Petr Vilím, Global Constraints in Scheduling, PhD thesis,
    *   Charles University, Prague, Czech Republic, 2007.
-   * 
+   *
    * The propagator performs propagation that depends on the integer
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
    *    and time-tabling propagation.
    *  - If \a IPL_ADVANCED is set, the propagator performs overload checking,
-   *    detectable precendence propagation, not-first-not-last propagation, 
+   *    detectable precendence propagation, not-first-not-last propagation,
    *    and edge finding.
    *  - If both flags are combined, all the above listed propagation is
    *    performed.
@@ -3066,13 +3066,13 @@ namespace Gecode {
    * Schedule tasks with flexible times \a flex, fixed times \a fix, and
    * use capacity \a u on a cumulative resource with capacity \a c. For each
    * task, it depends on \a t how the flexible and fix times are interpreted:
-   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    processing time.
-   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
    *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
    *    start time.
-   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    end time.
    *
@@ -3087,17 +3087,17 @@ namespace Gecode {
    *
    * The propagator uses algorithms taken from:
    *
-   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
-   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
-   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
    *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s
    *    \a p, or \a u are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
    *    contain an integer that is not nonnegative, or that could generate
@@ -3108,7 +3108,7 @@ namespace Gecode {
              const IntVarArgs& flex, const IntArgs& fix, const IntArgs& u,
              IntPropLevel ipl=IPL_DEF);
 
-  
+
   /** \brief Post propagators for scheduling tasks on cumulative resources
    *
    * \copydoc cumulative(Home,int,const TaskTypeArgs&,const IntVarArgs&,const IntArgs&,const IntArgs&,IntPropLevel)
@@ -3121,17 +3121,17 @@ namespace Gecode {
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
    * Schedule tasks with flexible times \a flex, fixed times \a fix,
-   * use capacity \a u, and whether a task is mandatory \a m (a task is 
-   * mandatory if the Boolean variable is 1) on a cumulative resource with 
+   * use capacity \a u, and whether a task is mandatory \a m (a task is
+   * mandatory if the Boolean variable is 1) on a cumulative resource with
    * capacity \a c. For each
    * task, it depends on \a t how the flexible and fix times are interpreted:
-   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXP</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    processing time.
-   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXS</code>, then
    *    <code>flex[i]</code> is the end time and <code>fix[i]</code> is the
    *    start time.
-   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then 
+   *  - If <code>t[i]</code> is <code>TT_FIXE</code>, then
    *    <code>flex[i]</code> is the start time and <code>fix[i]</code> is the
    *    end time.
    *
@@ -3146,17 +3146,17 @@ namespace Gecode {
    *
    * The propagator uses algorithms taken from:
    *
-   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
-   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
-   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
    *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a t, \a s
    *    \a p, or \a u are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
    *    contain an integer that is not nonnegative, or that could generate
@@ -3191,17 +3191,17 @@ namespace Gecode {
    *
    * The propagator uses algorithms taken from:
    *
-   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
-   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
-   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
    *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    *    \a p, or \a u are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a p, \a u, or \a c
    *    contain an integer that is not nonnegative, or that could generate
@@ -3221,10 +3221,10 @@ namespace Gecode {
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    *
    * Schedule optional tasks with start times \a s, processing times \a p,
-   * used capacity \a u, and whether a task is mandatory \a m (a task is 
-   * mandatory if the Boolean variable is 1) on a cumulative resource 
+   * used capacity \a u, and whether a task is mandatory \a m (a task is
+   * mandatory if the Boolean variable is 1) on a cumulative resource
    * with capacity \a c.
-   * 
+   *
    * The propagator performs propagation that depends on the integer
    * propagation level \a ipl as follows:
    *  - If \a IPL_BASIC is set, the propagator performs overload checking
@@ -3236,14 +3236,14 @@ namespace Gecode {
    *
    * The propagator uses algorithms taken from:
    *
-   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
-   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
-   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
@@ -3253,14 +3253,14 @@ namespace Gecode {
    *    an overflow.
    */
   GECODE_INT_EXPORT void
-  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
              const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    * \copydoc cumulative(Home,int,const IntVarArgs&,const IntArgs&,const IntArgs&,const BoolVarArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
-  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p,
              const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling tasks on cumulative resources
@@ -3283,17 +3283,17 @@ namespace Gecode {
    *
    * The propagator uses algorithms taken from:
    *
-   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
-   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
-   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
    *
-   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s 
+   *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s
    *    \a p, or \a u are of different size.
    *  - Throws an exception of type Int::OutOfLimits, if \a u or \a c
    *    contain an integer that is not nonnegative, or that could generate
@@ -3314,10 +3314,10 @@ namespace Gecode {
    *
    * Schedule optional tasks with start times \a s, processing times \a p,
    * end times \a e,
-   * used capacity \a u, and whether a task is mandatory \a m (a task is 
-   * mandatory if the Boolean variable is 1) on a cumulative resource 
+   * used capacity \a u, and whether a task is mandatory \a m (a task is
+   * mandatory if the Boolean variable is 1) on a cumulative resource
    * with capacity \a c.
-   * 
+   *
    * The propagator does not enforce \f$s_i+p_i=e_i\f$, this constraint
    * has to be posted in addition to ensure consistency of the task bounds.
    *
@@ -3332,14 +3332,14 @@ namespace Gecode {
    *
    * The propagator uses algorithms taken from:
    *
-   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative 
-   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume 
+   * Petr Vilím, Max Energy Filtering Algorithm for Discrete Cumulative
+   * Resources, in W. J. van Hoeve and J. N. Hooker, editors, CPAIOR, volume
    * 5547 of LNCS, pages 294-308. Springer, 2009.
    *
    * and
    *
-   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative 
-   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS, 
+   * Petr Vilím, Edge finding filtering algorithm for discrete cumulative
+   * resources in O(kn log n). In I. P. Gent, editor, CP, volume 5732 of LNCS,
    * pages 802-816. Springer, 2009.
    *
    *  - Throws an exception of type Int::ArgumentSizeMismatch, if \a s,
@@ -3349,16 +3349,16 @@ namespace Gecode {
    *    an overflow.
    */
   GECODE_INT_EXPORT void
-  cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p, 
-             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
+  cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m,
              IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagators for scheduling optional tasks on cumulative resources
    * \copydoc cumulative(Home,int,const IntVarArgs&,const IntVarArgs&,const IntVarArgs&,const IntArgs&,const BoolVarArgs&,IntPropLevel)
    */
   GECODE_INT_EXPORT void
-  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p, 
-             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m,
              IntPropLevel ipl=IPL_DEF);
   //@}
 
@@ -3378,7 +3378,7 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    */
@@ -3395,7 +3395,7 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::OutOfLimits, if \a offset is negative.
@@ -3408,8 +3408,8 @@ namespace Gecode {
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_i=j\f$ has a single cycle covering all nodes.
    * The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire circuit. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
@@ -3418,14 +3418,14 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
    *    size or if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_INT_EXPORT void
-  circuit(Home home, 
+  circuit(Home home,
           const IntArgs& c,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
           IntPropLevel ipl=IPL_DEF);
@@ -3434,8 +3434,8 @@ namespace Gecode {
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_{i-\text{offset}}=j\f$ has a single cycle covering all nodes.
    * The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire circuit. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
@@ -3444,7 +3444,7 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
@@ -3452,7 +3452,7 @@ namespace Gecode {
    *  - Int::OutOfLimits, if \a offset is negative.
    */
   GECODE_INT_EXPORT void
-  circuit(Home home, 
+  circuit(Home home,
           const IntArgs& c, int offset,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
           IntPropLevel ipl=IPL_DEF);
@@ -3460,8 +3460,8 @@ namespace Gecode {
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_i=j\f$ has a single cycle covering all nodes. The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire circuit.
    *
    * Supports domain (\a ipl = IPL_DOM) and value propagation (all
@@ -3469,13 +3469,13 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_INT_EXPORT void
-  circuit(Home home, 
+  circuit(Home home,
           const IntArgs& c,
           const IntVarArgs& x, IntVar z,
           IntPropLevel ipl=IPL_DEF);
@@ -3484,8 +3484,8 @@ namespace Gecode {
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_{i-\text{offset}}=j\f$ has a single cycle covering all nodes.
    * The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire circuit.
    *
    * Supports domain (\a ipl = IPL_DOM) and value propagation (all
@@ -3493,20 +3493,20 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
    *  - Int::OutOfLimits, if \a offset is negative.
    */
   GECODE_INT_EXPORT void
-  circuit(Home home, 
+  circuit(Home home,
           const IntArgs& c, int offset,
           const IntVarArgs& x, IntVar z,
           IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path
    *
-   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
+   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at
    * node \a s and the successor of the last node \a e is equal to \f$|x|\f$.
    *
@@ -3515,7 +3515,7 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    */
@@ -3524,9 +3524,9 @@ namespace Gecode {
        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path
    *
-   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
-   * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once. 
-   * The path starts at node \a s and the successor of the last node \a e 
+   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$
+   * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once.
+   * The path starts at node \a s and the successor of the last node \a e
    * is equal to \f$|x|+\text{offset}\f$.
    *
    * Supports domain (\a ipl = IPL_DOM) and value propagation (all
@@ -3534,7 +3534,7 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::OutOfLimits, if \a offset is negative.
@@ -3544,12 +3544,12 @@ namespace Gecode {
        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with costs \a y and \a z
    *
-   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
+   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at node
-   * \a s and the successor of 
+   * \a s and the successor of
    * the last node \a e is equal to \f$|x|\f$. The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire path. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
@@ -3558,26 +3558,26 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
    *    size or if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_INT_EXPORT void
-  path(Home home, 
+  path(Home home,
        const IntArgs& c,
        const IntVarArgs& x, IntVar s, IntVar e, const IntVarArgs& y, IntVar z,
        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with costs \a y and \a z
    *
-   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
-   * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once. 
-   * The path starts at node \a s and the successor of 
+   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$
+   * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once.
+   * The path starts at node \a s and the successor of
    * the last node \a e is equal to \f$|x|+\text{offset}\f$.
    * The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire path. The variables \a y define the cost
    * of the edge in \a x: that is, if \f$x_i=j\f$ then \f$y_i=c_{i*n+j}\f$.
    *
@@ -3586,7 +3586,7 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \a x and \a y do not have the same
@@ -3594,18 +3594,18 @@ namespace Gecode {
    *  - Int::OutOfLimits, if \a offset is negative.
    */
   GECODE_INT_EXPORT void
-  path(Home home, 
+  path(Home home,
        const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e, const IntVarArgs& y, IntVar z,
        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with cost \a z
    *
-   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
+   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$
    * where \f$x_i=j\f$ visits all nodes exactly once. The path starts at node
-   * \a s and the successor of 
+   * \a s and the successor of
    * the last node \a e is equal to \f$|x|\f$. The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire path.
    *
    * Supports domain (\a ipl = IPL_DOM) and value propagation (all
@@ -3613,25 +3613,25 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
    */
   GECODE_INT_EXPORT void
-  path(Home home, 
+  path(Home home,
        const IntArgs& c,
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntPropLevel ipl=IPL_DEF);
   /** \brief Post propagator such that \a x forms a Hamiltonian path with cost \a z
    *
-   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$ 
-   * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once. 
-   * The path starts at node \a s and the successor of 
+   * \a x forms a Hamiltonian path if the graph with edges \f$i\to j\f$
+   * where \f$x_{i-\text{offset}}=j\f$ visits all nodes exactly once.
+   * The path starts at node \a s and the successor of
    * the last node \a e is equal to \f$|x|+\text{offset}\f$.
    * The integer array
-   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is 
-   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of 
+   * \a c gives the costs of all possible edges where \f$c_{i*|x|+j}\f$ is
+   * the cost of the edge \f$i\to j\f$. The variable \a z is the cost of
    * the entire circuit.
    *
    * Supports domain (\a ipl = IPL_DOM) and value propagation (all
@@ -3639,14 +3639,14 @@ namespace Gecode {
    * domain consistent distinct in enforced on \a x for circuit.
    *
    * Throws the following exceptions:
-   *  - Int::ArgumentSame, if \a x contains the same unassigned variable 
+   *  - Int::ArgumentSame, if \a x contains the same unassigned variable
    *    multiply.
    *  - Int::TooFewArguments, if \a x has no elements.
    *  - Int::ArgumentSizeMismacth, if \f$|x|\times|x|\neq|c|\f$.
    *  - Int::OutOfLimits, if \a offset is negative.
    */
   GECODE_INT_EXPORT void
-  path(Home home, 
+  path(Home home,
        const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntPropLevel ipl=IPL_DEF);
@@ -3680,7 +3680,7 @@ namespace Gecode {
        IntPropLevel ipl=IPL_DEF);
   /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
   GECODE_INT_EXPORT void
-  when(Home home, BoolVar x, 
+  when(Home home, BoolVar x,
        void (*t)(Space& home), void (*e)(Space& home)= NULL,
        IntPropLevel ipl=IPL_DEF);
   //@}
@@ -3772,8 +3772,8 @@ namespace Gecode {
    * \brief Branch value function type for integer variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponding branch commit function. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher.
    *
    * \ingroup TaskModelIntBranch
@@ -3783,8 +3783,8 @@ namespace Gecode {
    * \brief Branch value function type for Boolean variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponding branch commit function. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher.
    *
    * \ingroup TaskModelIntBranch
@@ -3795,8 +3795,8 @@ namespace Gecode {
    * \brief Branch commit function type for integer variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponds to the alternative \a a. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
@@ -3808,8 +3808,8 @@ namespace Gecode {
    * \brief Branch commit function type for Boolean variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a.  The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponds to the alternative \a a.  The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
@@ -3841,7 +3841,7 @@ namespace Gecode {
     /// Copy constructor
     IntAFC(const IntAFC& a);
     /// Assignment operator
-    IntAFC& operator =(const IntAFC& a);      
+    IntAFC& operator =(const IntAFC& a);
     /// Initialize for integer variables \a x with decay factor \a d
     IntAFC(Home home, const IntVarArgs& x, double d=1.0);
     /// Initialize for Boolean variables \a x with decay factor \a d
@@ -3888,7 +3888,7 @@ namespace Gecode {
     /// Copy constructor
     IntActivity(const IntActivity& a);
     /// Assignment operator
-    IntActivity& operator =(const IntActivity& a);      
+    IntActivity& operator =(const IntActivity& a);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
@@ -3896,7 +3896,7 @@ namespace Gecode {
      * activity for each variable is initialized with the merit returned
      * by \a bm.
      */
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     IntActivity(Home home, const IntVarArgs& x, double d=1.0,
                 IntBranchMerit bm=NULL);
     /**
@@ -3906,7 +3906,7 @@ namespace Gecode {
      * activity for each variable is initialized with the merit returned
      * by \a bm.
      */
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     IntActivity(Home home, const BoolVarArgs& x, double d=1.0,
                 BoolBranchMerit bm=NULL);
     /**
@@ -4073,19 +4073,19 @@ namespace Gecode {
   /// Select variable with largest accumulated failure count
   IntVarBranch INT_VAR_AFC_MAX(IntAFC a, BranchTbl tbl=NULL);
   /// Select variable with lowest activity with decay factor \a d
-  IntVarBranch INT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);    
+  IntVarBranch INT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with lowest activity
-  IntVarBranch INT_VAR_ACTIVITY_MIN(IntActivity a, BranchTbl tbl=NULL);    
+  IntVarBranch INT_VAR_ACTIVITY_MIN(IntActivity a, BranchTbl tbl=NULL);
   /// Select variable with highest activity with decay factor \a d
-  IntVarBranch INT_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);     
+  IntVarBranch INT_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest activity
-  IntVarBranch INT_VAR_ACTIVITY_MAX(IntActivity a, BranchTbl tbl=NULL);     
+  IntVarBranch INT_VAR_ACTIVITY_MAX(IntActivity a, BranchTbl tbl=NULL);
   /// Select variable with smallest min
-  IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=NULL);         
+  IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
   IntVarBranch INT_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest max
-  IntVarBranch INT_VAR_MAX_MIN(BranchTbl tbl=NULL); 
+  IntVarBranch INT_VAR_MAX_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest max
   IntVarBranch INT_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size
@@ -4098,7 +4098,7 @@ namespace Gecode {
   IntVarBranch INT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest accumulated failure count divided by domain size with decay factor \a d
   IntVarBranch INT_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest accumulated failure count divided by domain size 
+  /// Select variable with smallest accumulated failure count divided by domain size
   IntVarBranch INT_VAR_AFC_SIZE_MIN(IntAFC a, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count divided by domain size with decay factor \a d
   IntVarBranch INT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
@@ -4106,11 +4106,11 @@ namespace Gecode {
   IntVarBranch INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl=NULL);
   /// Select variable with smallest activity divided by domain size with decay factor \a d
   IntVarBranch INT_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size 
+  /// Select variable with smallest activity divided by domain size
   IntVarBranch INT_VAR_ACTIVITY_SIZE_MIN(IntActivity a, BranchTbl tbl=NULL);
   /// Select variable with largest activity divided by domain size with decay factor \a d
   IntVarBranch INT_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size 
+  /// Select variable with largest activity divided by domain size
   IntVarBranch INT_VAR_ACTIVITY_SIZE_MAX(IntActivity a, BranchTbl tbl=NULL);
   /** \brief Select variable with smallest min-regret
    *
@@ -4165,7 +4165,7 @@ namespace Gecode {
       SEL_VALUES_MIN, ///< Select all values starting from smallest
       SEL_VALUES_MAX, ///< Select all values starting from largest
       SEL_NEAR_MIN,   ///< Select value nearest to a given value, use smaller one in case of ties
-      SEL_NEAR_MAX,   ///< Select value nearest to a given value, use larger one in case of ties 
+      SEL_NEAR_MAX,   ///< Select value nearest to a given value, use larger one in case of ties
       SEL_NEAR_INC,   ///< Select value near to a given value, increment values first
       SEL_NEAR_DEC    ///< Select value near to a given value, decrement values first
    };
@@ -4212,20 +4212,20 @@ namespace Gecode {
   IntValBranch INT_VAL_RANGE_MAX(void);
   /**
    * \brief Select value as defined by the value function \a v and commit function \a c
-   * Uses a commit function as default that posts the constraints that 
+   * Uses a commit function as default that posts the constraints that
    * a variable \a x must be equal to a value \a n for the first alternative
    * and that \a x must be different from \a n for the second alternative.
    */
   IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c=NULL);
   /**
    * \brief Select value as defined by the value function \a v and commit function \a c
-   * Uses a commit function as default that posts the constraints that 
+   * Uses a commit function as default that posts the constraints that
    * a variable \a x must be equal to a value \a n for the first alternative
    * and that \a x must be different from \a n for the second alternative.
    */
   IntValBranch INT_VAL(BoolBranchVal v, BoolBranchCommit c=NULL);
   /// Try all values starting from smallest
-  IntValBranch INT_VALUES_MIN(void); 
+  IntValBranch INT_VALUES_MIN(void);
   /// Try all values starting from largest
   IntValBranch INT_VALUES_MAX(void);
   /// Try value nearest to a given value for a variable, in case of ties use the smaller value
@@ -4289,14 +4289,14 @@ namespace Gecode {
   /**
    * \brief Select value as defined by the value function \a v and commit function \a c
    *
-   * Uses a commit function as default that posts the constraint that 
+   * Uses a commit function as default that posts the constraint that
    * a variable \a x must be equal to the value \a n.
    */
   IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=NULL);
   /**
    * \brief Select value as defined by the value function \a v and commit function \a c
    *
-   * Uses a commit function as default that posts the constraint that 
+   * Uses a commit function as default that posts the constraint that
    * a variable \a x must be equal to the value \a n.
    */
   IntAssign INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c=NULL);
@@ -4314,7 +4314,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const IntVarArgs& x,
-         IntVarBranch vars, IntValBranch vals, 
+         IntVarBranch vars, IntValBranch vals,
          IntBranchFilter bf=NULL,
          IntVarValPrint vvp=NULL);
   /**
@@ -4477,7 +4477,7 @@ namespace Gecode {
   /// Variables in \a x are interchangeable
   GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const BoolVarArgs& x);
   /// Specified variables in \a x are interchangeable
-  GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x, 
+  GECODE_INT_EXPORT SymmetryHandle VariableSymmetry(const IntVarArgs& x,
                                                     const IntArgs& indices);
   /// Values in \a v are interchangeable
   GECODE_INT_EXPORT SymmetryHandle ValueSymmetry(const IntArgs& v);
@@ -4488,21 +4488,21 @@ namespace Gecode {
   /**
    * \brief Variable sequences in \a x of size \a ss are interchangeable
    *
-   * The size of \a x must be a multiple of \a ss. 
+   * The size of \a x must be a multiple of \a ss.
    */
   GECODE_INT_EXPORT
   SymmetryHandle VariableSequenceSymmetry(const IntVarArgs& x, int ss);
   /**
    * \brief Variable sequences in \a x of size \a ss are interchangeable
    *
-   * The size of \a x must be a multiple of \a ss. 
+   * The size of \a x must be a multiple of \a ss.
    */
   GECODE_INT_EXPORT
   SymmetryHandle VariableSequenceSymmetry(const BoolVarArgs& x, int ss);
   /**
    * \brief Value sequences in \a v of size \a ss are interchangeable
    *
-   * The size of \a v must be a multiple of \a ss. 
+   * The size of \a v must be a multiple of \a ss.
    */
   GECODE_INT_EXPORT
   SymmetryHandle ValueSequenceSymmetry(const IntArgs& v, int ss);
@@ -4527,7 +4527,7 @@ namespace Gecode {
   GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          IntBranchFilter bf=NULL, IntVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
@@ -4543,7 +4543,7 @@ namespace Gecode {
   GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          IntBranchFilter bf=NULL, IntVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with variable selection \a vars and value
@@ -4559,7 +4559,7 @@ namespace Gecode {
   GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          BoolBranchFilter bf=NULL, BoolVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
@@ -4575,7 +4575,7 @@ namespace Gecode {
   GECODE_INT_EXPORT BrancherHandle
   branch(Home home, const BoolVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          BoolBranchFilter bf=NULL, BoolVarValPrint vvp=NULL);
 }
 

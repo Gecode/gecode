@@ -99,7 +99,7 @@ namespace Gecode { namespace Search { namespace Meta {
     bool best;
   public:
     /// Constructor
-    RBS(Space* s, RestartStop* stop0, Engine* e0, 
+    RBS(Space* s, RestartStop* stop0, Engine* e0,
         const Search::Statistics& stat, const Options& o, bool best);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);

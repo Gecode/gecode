@@ -77,7 +77,7 @@ namespace Test { namespace Branch {
     Gecode::IntValBranch val;
     /// Initialize test space
     IntTestSpace(int n, Gecode::IntSet& d)
-      : x(*this, n, d), 
+      : x(*this, n, d),
         vara(Gecode::INT_VAR_NONE()), varb(Gecode::INT_VAR_NONE()),
         val(Gecode::INT_VAL_MIN()) {}
     /// Constructor for cloning \a s
@@ -341,7 +341,7 @@ namespace Test { namespace Branch {
   const int n_float_val_branch =
     sizeof(float_val_branch_name)/sizeof(const char*);
   /// Test function for branch value function
-  Gecode::FloatNumBranch float_val(const Gecode::Space&, 
+  Gecode::FloatNumBranch float_val(const Gecode::Space&,
                                    Gecode::FloatVar x, int) {
     Gecode::FloatNumBranch nl; nl.n=x.med(); nl.l=true;
     return nl;
@@ -440,7 +440,7 @@ namespace Test { namespace Branch {
           case 13: ivb = INT_VAL_NEAR_INC(d); break;
           case 14: ivb = INT_VAL_NEAR_DEC(d); break;
           }
-          
+
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
 
           if ((vara == 0) && (val < 11)) {
@@ -609,7 +609,7 @@ namespace Test { namespace Branch {
           case 13: ivb = INT_VAL_NEAR_INC(d); break;
           case 14: ivb = INT_VAL_NEAR_DEC(d); break;
           }
-          
+
           BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
 
           if ((vara == 0) && (val < 11)) {
@@ -771,7 +771,7 @@ namespace Test { namespace Branch {
           case 7: svb = SET_VAL_RND_EXC(r); break;
           case 8: svb = SET_VAL(&set_val); break;
           }
-          
+
           SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
 
           if (vara == 0) {
@@ -782,7 +782,7 @@ namespace Test { namespace Branch {
             SetVarBranch svba;
             SetActivity saa(*c, c->x, 0.9);
             switch (vara) {
-            case  0: break; 
+            case  0: break;
             case  1: svba = SET_VAR_NONE(); break;
             case  2: svba = SET_VAR_RND(ra); break;
             case  3: svba = SET_VAR_MERIT_MIN(&set_merit); break;
@@ -811,7 +811,7 @@ namespace Test { namespace Branch {
             SetVarBranch svbb;
             SetActivity sab(*c, c->x, 0.9, &set_merit);
             switch (varb) {
-            case  0: break; 
+            case  0: break;
             case  1: svbb = SET_VAR_NONE(); break;
             case  2: svbb = SET_VAR_RND(rb); break;
             case  3: svbb = SET_VAR_MERIT_MIN(&set_merit,&tbl); break;
@@ -919,7 +919,7 @@ namespace Test { namespace Branch {
           case 2: fvb = FLOAT_VAL_SPLIT_RND(r); break;
           case 3: fvb = FLOAT_VAL(&float_val); break;
           }
-          
+
           FloatTestSpace* c = static_cast<FloatTestSpace*>(root->clone(false));
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
@@ -929,7 +929,7 @@ namespace Test { namespace Branch {
             FloatVarBranch fvba;
             FloatActivity faa(*c, c->x, 0.9);
             switch (vara) {
-            case  0: break; 
+            case  0: break;
             case  1: fvba = FLOAT_VAR_NONE(); break;
             case  2: fvba = FLOAT_VAR_RND(ra); break;
             case  3: fvba = FLOAT_VAR_MERIT_MIN(&float_merit); break;
@@ -958,7 +958,7 @@ namespace Test { namespace Branch {
             FloatVarBranch fvbb;
             FloatActivity fab(*c, c->x, 0.9, &float_merit);
             switch (varb) {
-            case  0: break; 
+            case  0: break;
             case  1: fvbb = FLOAT_VAR_NONE(); break;
             case  2: fvbb = FLOAT_VAR_RND(rb); break;
             case  3: fvbb = FLOAT_VAR_MERIT_MIN(&float_merit,&tbl); break;

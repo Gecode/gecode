@@ -76,22 +76,22 @@ namespace Gecode { namespace Search {
     return o.clone ? s->clone(share) : s;
   }
 
-  
+
   template<class Worker>
-  WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o) 
+  WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
     : w(s,o) {}
   template<class Worker>
-  Space* 
+  Space*
   WorkerToEngine<Worker>::next(void) {
     return w.next();
   }
   template<class Worker>
-  Search::Statistics 
+  Search::Statistics
   WorkerToEngine<Worker>::statistics(void) const {
     return w.statistics();
   }
   template<class Worker>
-  bool 
+  bool
   WorkerToEngine<Worker>::stopped(void) const {
     return w.stopped();
   }

@@ -148,9 +148,9 @@ namespace Gecode { namespace Float { namespace Linear {
     }
   }
 
-  forceinline bool 
+  forceinline bool
   infty(const FloatNum& n) {
-    return ((n == std::numeric_limits<FloatNum>::infinity()) || 
+    return ((n == std::numeric_limits<FloatNum>::infinity()) ||
             (n == -std::numeric_limits<FloatNum>::infinity()));
   }
 
@@ -242,7 +242,7 @@ namespace Gecode { namespace Float { namespace Linear {
       if (me_modified(me))
         es = ES_NOFIX;
     }
-   
+
     // Propagate min bound for positive variables
     for (int i = x.size(); i--; ) {
       // Compute bound

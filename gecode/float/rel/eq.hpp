@@ -289,7 +289,7 @@ namespace Gecode { namespace Float { namespace Rel {
   ReEqFloat<View,CtrlView,rm>::post(Home home, View x, FloatVal c, CtrlView b) {
     if (b.one()) {
       if (rm != RM_PMI)
-        GECODE_ME_CHECK(x.eq(home,c));      
+        GECODE_ME_CHECK(x.eq(home,c));
     } else if (x.assigned()) {
       if (overlap(x.val(),c)) {
         if (rm != RM_IMP)
@@ -326,11 +326,11 @@ namespace Gecode { namespace Float { namespace Rel {
       switch (rtest_eq(x0,c)) {
       case RT_TRUE:
         if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one(home)); 
+          GECODE_ME_CHECK(b.one(home));
         break;
       case RT_FALSE:
         if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero(home)); 
+          GECODE_ME_CHECK(b.zero(home));
         break;
       case RT_MAYBE:
         return ES_FIX;

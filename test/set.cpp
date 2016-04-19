@@ -124,7 +124,7 @@ namespace Test { namespace Set {
   SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i,
                              SetTest* t, bool log)
     : d(d0), y(*this, i, d),
-      withInt(i), r(Gecode::BoolVar(*this, 0, 1),Gecode::RM_EQV), 
+      withInt(i), r(Gecode::BoolVar(*this, 0, 1),Gecode::RM_EQV),
       reified(false), test(t) {
     using namespace Gecode;
     IntSet u(Gecode::Set::Limits::min,Gecode::Set::Limits::max);
@@ -144,7 +144,7 @@ namespace Test { namespace Set {
   SetTestSpace::SetTestSpace(int n, Gecode::IntSet& d0, int i,
                              SetTest* t, Gecode::ReifyMode rm, bool log)
     : d(d0), x(*this, n, Gecode::IntSet::empty, d), y(*this, i, d),
-      withInt(i), r(Gecode::BoolVar(*this, 0, 1),rm), 
+      withInt(i), r(Gecode::BoolVar(*this, 0, 1),rm),
       reified(true), test(t) {
     if (opt.log && log) {
       olog << ind(2) << "Initial: x[]=" << x;
@@ -153,7 +153,7 @@ namespace Test { namespace Set {
       olog << std::endl;
     }
   }
-  
+
   SetTestSpace::SetTestSpace(bool share, SetTestSpace& s)
     : Gecode::Space(share,s), d(s.d), withInt(s.withInt),
       reified(s.reified), test(s.test) {
@@ -164,13 +164,13 @@ namespace Test { namespace Set {
     b.update(*this, share, sr);
     r.var(b); r.mode(s.r.mode());
   }
-  
-  Gecode::Space* 
+
+  Gecode::Space*
   SetTestSpace::copy(bool share) {
     return new SetTestSpace(share,*this);
   }
-  
-  void 
+
+  void
   SetTestSpace::post(void) {
     if (reified){
       test->post(*this,x,y,r);
@@ -183,7 +183,7 @@ namespace Test { namespace Set {
     }
   }
 
-  bool 
+  bool
   SetTestSpace::failed(void) {
     if (opt.log) {
       olog << ind(3) << "Fixpoint: x[]=" << x
@@ -197,7 +197,7 @@ namespace Test { namespace Set {
     }
   }
 
-  void 
+  void
   SetTestSpace::rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is) {
     if (opt.log) {
       olog << ind(4) << "x[" << i << "] ";
@@ -218,7 +218,7 @@ namespace Test { namespace Set {
     Gecode::dom(*this, x[i], srt, is);
   }
 
-  void 
+  void
   SetTestSpace::cardinality(int i, int cmin, int cmax) {
     if (opt.log) {
       olog << ind(4) << cmin << " <= #(x[" << i << "]) <= " << cmax
@@ -227,7 +227,7 @@ namespace Test { namespace Set {
     Gecode::cardinality(*this, x[i], cmin, cmax);
   }
 
-  void 
+  void
   SetTestSpace::rel(int i, Gecode::IntRelType irt, int n) {
     if (opt.log) {
       olog << ind(4) << "y[" << i << "] ";
@@ -244,7 +244,7 @@ namespace Test { namespace Set {
     Gecode::rel(*this, y[i], irt, n);
   }
 
-  void 
+  void
   SetTestSpace::rel(bool sol) {
     int n = sol ? 1 : 0;
     assert(reified);
@@ -252,8 +252,8 @@ namespace Test { namespace Set {
       olog << ind(4) << "b = " << n << std::endl;
     Gecode::rel(*this, r.var(), Gecode::IRT_EQ, n);
   }
-  
-  void 
+
+  void
   SetTestSpace::assign(const SetAssignment& a) {
     for (int i=a.size(); i--; ) {
       CountableSetRanges csv(a.lub, a[i]);
@@ -268,8 +268,8 @@ namespace Test { namespace Set {
         return;
     }
   }
-  
-  bool 
+
+  bool
   SetTestSpace::assigned(void) const {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
@@ -280,7 +280,7 @@ namespace Test { namespace Set {
     return true;
   }
 
-  void 
+  void
   SetTestSpace::removeFromLub(int v, int i, const SetAssignment& a) {
     using namespace Gecode;
     SetVarUnknownRanges ur(x[i]);
@@ -293,7 +293,7 @@ namespace Test { namespace Set {
     rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
   }
 
-  void 
+  void
   SetTestSpace::addToGlb(int v, int i, const SetAssignment& a) {
     using namespace Gecode;
     SetVarUnknownRanges ur(x[i]);
@@ -306,7 +306,7 @@ namespace Test { namespace Set {
     rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
   }
 
-  bool 
+  bool
   SetTestSpace::fixprob(void) {
     if (failed())
       return true;
@@ -317,7 +317,7 @@ namespace Test { namespace Set {
     if (c->failed()) {
       delete c; return false;
     }
-    
+
     for (int i=x.size(); i--; )
       if (x[i].glbSize() != c->x[i].glbSize() ||
           x[i].lubSize() != c->x[i].lubSize() ||
@@ -339,7 +339,7 @@ namespace Test { namespace Set {
     return true;
   }
 
-  bool 
+  bool
   SetTestSpace::prune(const SetAssignment& a) {
     using namespace Gecode;
     bool setsAssigned = true;
@@ -354,7 +354,7 @@ namespace Test { namespace Set {
         intsAssigned = false;
         break;
       }
-    
+
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
@@ -364,7 +364,7 @@ namespace Test { namespace Set {
     } else {
       i = Base::rand(x.size()+y.size());
     }
-    
+
     if (setsAssigned || i>=x.size()) {
       if (i>=x.size())
         i = i-x.size();
@@ -372,7 +372,7 @@ namespace Test { namespace Set {
         i = (i+1) % y.size();
       }
       // Prune int var
-      
+
       // Select mode for pruning
       switch (Base::rand(3)) {
       case 0:
@@ -427,10 +427,10 @@ namespace Test { namespace Set {
     CountableSetRanges air2(a.lub, a[i]);
     Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges,
       CountableSetRanges> inter(ur2, air2);
-    
+
     CountableSetRanges aisizer(a.lub, a[i]);
     unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
-    
+
     // Select mode for pruning
     switch (Base::rand(5)) {
     case 0:
@@ -810,7 +810,7 @@ if (!(T)) {                                                     \
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
           s->post();
-          while (!s->failed() && 
+          while (!s->failed() &&
                  (!s->assigned() || !s->r.var().assigned()))
             if (!s->prune(a)) {
               problem = "No fixpoint";
@@ -831,7 +831,7 @@ if (!(T)) {                                                     \
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->post();
-          while (!s->failed() && 
+          while (!s->failed() &&
                  (!s->assigned() || (!is_sol && !s->r.var().assigned())))
             if (!s->prune(a)) {
               problem = "No fixpoint";
@@ -852,7 +852,7 @@ if (!(T)) {                                                     \
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->post();
-          while (!s->failed() && 
+          while (!s->failed() &&
                  (!s->assigned() || (is_sol && !s->r.var().assigned())))
             if (!s->prune(a)) {
               problem = "No fixpoint";

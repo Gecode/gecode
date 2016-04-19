@@ -44,7 +44,7 @@
 namespace Gecode { namespace MiniModel {
 
   /// Non-linear float arithmetic expressions
-  class GECODE_MINIMODEL_EXPORT ArithNonLinFloatExpr : 
+  class GECODE_MINIMODEL_EXPORT ArithNonLinFloatExpr :
     public NonLinFloatExpr {
   public:
     /// The expression type
@@ -65,7 +65,7 @@ namespace Gecode { namespace MiniModel {
       ANLFE_COS,   ///< expression
       ANLFE_ATAN,  ///< expression
       ANLFE_TAN,   ///< expression
-#endif          
+#endif
       ANLFE_POW,   ///< Pow expression
       ANLFE_NROOT  ///< Nth root expression
     } t;
@@ -320,7 +320,7 @@ namespace Gecode { namespace MiniModel {
       dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe()) != NULL &&
       dynamic_cast<ArithNonLinFloatExpr*>(e.nlfe())->t == t;
   }
-  
+
 }}
 
 namespace Gecode {

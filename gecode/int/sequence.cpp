@@ -48,7 +48,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  sequence(Home home, const IntVarArgs& x, const IntSet &s, 
+  sequence(Home home, const IntVarArgs& x, const IntSet &s,
            int q, int l, int u, IntPropLevel) {
     Limits::check(s.min(),"Int::sequence");
     Limits::check(s.max(),"Int::sequence");
@@ -78,7 +78,7 @@ namespace Gecode {
     }
 
     // Already subsumed as any number of values taken is okay
-    if ((0 == l) && (q == u)) 
+    if ((0 == l) && (q == u))
       return;
 
     // All variables must take a value in s
@@ -114,7 +114,7 @@ namespace Gecode {
   }
 
   void
-  sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
+  sequence(Home home, const BoolVarArgs& x, const IntSet& s,
            int q, int l, int u, IntPropLevel) {
     if ((s.min() < 0) || (s.max() > 1))
       throw NotZeroOne("Int::sequence");
@@ -144,7 +144,7 @@ namespace Gecode {
     }
 
     // Already subsumed as any number of values taken is okay
-    if ((0 == l) && (q == u)) 
+    if ((0 == l) && (q == u))
       return;
 
     // Check whether the set is {0,1}, then the number of values taken is q

@@ -76,9 +76,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
       do {
         // Current time
         int time = e->time();
-        
+
         // Process events for completion of required part
-        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++) 
+        for ( ; (e->type() == Event::LRT) && (e->time() == time); e++)
           if (t[e->idx()].mandatory()) {
             tasks.set(static_cast<unsigned int>(e->idx()));
             ccur += t[e->idx()].c();
@@ -101,9 +101,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
         // norun start time
         int nrstime = time;
         // Process events for start of required part
-        for ( ; (e->type() == Event::ERT) && (e->time() == time); e++) 
+        for ( ; (e->type() == Event::ERT) && (e->time() == time); e++)
           if (t[e->idx()].mandatory()) {
-            tasks.clear(static_cast<unsigned int>(e->idx())); 
+            tasks.clear(static_cast<unsigned int>(e->idx()));
             ccur -= t[e->idx()].c();
             if (ccur < cmin) cmin=ccur;
             nrstime = time+1;
@@ -112,10 +112,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
           } else if (t[e->idx()].optional() && (t[e->idx()].c() > ccur)) {
             GECODE_ME_CHECK(t[e->idx()].excluded(home));
           }
-      
+
         // Exploit that tasks are sorted according to capacity
-        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks); 
-             j() && (t[j.val()].c() > ccur); ++j) 
+        for (Iter::Values::BitSet<Support::BitSet<Region> > j(tasks);
+             j() && (t[j.val()].c() > ccur); ++j)
           // Task j cannot run from zltime to next time - 1
           if (t[j.val()].mandatory())
             GECODE_ME_CHECK(t[j.val()].norun(home, nrstime, e->time() - 1));

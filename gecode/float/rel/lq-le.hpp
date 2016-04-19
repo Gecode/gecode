@@ -123,7 +123,7 @@ namespace Gecode { namespace Float { namespace Rel {
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
     if (x0.assigned() && x1.assigned()) {
       return (x0.max() >= x1.min()) ? ES_FAILED : home.ES_SUBSUMED(*this);
-    } 
+    }
     return (x0.max() < x1.min()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -157,18 +157,18 @@ namespace Gecode { namespace Float { namespace Rel {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
         if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one_none(home)); 
+          GECODE_ME_CHECK(b.one_none(home));
         break;
       case RT_FALSE:
         if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home)); 
+          GECODE_ME_CHECK(b.zero_none(home));
         break;
       case RT_MAYBE:
         if (!x0.assigned() || !x1.assigned())
           (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b);
         else {
           if (rm != RM_IMP)
-            GECODE_ME_CHECK(b.one_none(home)); 
+            GECODE_ME_CHECK(b.one_none(home));
         }
         break;
       default: GECODE_NEVER;
@@ -207,7 +207,7 @@ namespace Gecode { namespace Float { namespace Rel {
         break;
       case RT_FALSE:
         if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home)); 
+          GECODE_ME_CHECK(b.zero_none(home));
         break;
       case RT_MAYBE:
         if (!x0.assigned() || !x1.assigned())
@@ -289,7 +289,7 @@ namespace Gecode { namespace Float { namespace Rel {
         GECODE_ME_CHECK(x0.gq(home,c.min()));
         if (x0.assigned()) {
           return (x0.min() <= c.max()) ? ES_FAILED : home.ES_SUBSUMED(*this);
-        } 
+        }
       }
     } else {
       switch (rtest_lq(x0,c)) {
@@ -374,7 +374,7 @@ namespace Gecode { namespace Float { namespace Rel {
         GECODE_ME_CHECK(x0.lq(home,c.max()));
         if (x0.assigned()) {
           return (x0.max() >= c.min()) ? ES_FAILED : home.ES_SUBSUMED(*this);
-        } 
+        }
       }
     } else if (b.zero()) {
       if (rm != RM_IMP)

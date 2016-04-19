@@ -218,7 +218,7 @@ protected:
 public:
   /// Setup model
   SportsLeague(const SizeOptions& opt) :
-    Script(opt), 
+    Script(opt),
     teams(opt.size()),
     home(*this, periods() * teams, 1, weeks()),
     away(*this, periods() * teams, 2, weeks()+1),

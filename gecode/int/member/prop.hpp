@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Member {
       if ((rtest_eq_dom(x[i],y) == RT_FALSE) || vs.subset(x[i])) {
         // x[i] is different from y or values are contained in vs
         x[i].cancel(home, *this, PC_INT_DOM);
-        x[i] = x[--n]; 
+        x[i] = x[--n];
       }
     x.size(n);
   }
@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Member {
 
     if (x.size() == 1)
       return Rel::EqDom<View,View>::post(home,x[0],y);
-    
+
     if (x.same(home,y))
       return ES_OK;
 
@@ -97,14 +97,14 @@ namespace Gecode { namespace Int { namespace Member {
     (void) new (home) Prop<View>(home, vs, x, y);
     return ES_OK;
   }
-    
+
   template<class View>
   forceinline ExecStatus
   Prop<View>::post(Home home, ValSet& vs, ViewArray<View>& x, View y) {
     (void) new (home) Prop<View>(home, vs, x, y);
     return ES_OK;
   }
-    
+
   template<class View>
   forceinline
   Prop<View>::Prop(Space& home, bool share, Prop<View>& p)
@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Member {
   }
 
   template<class View>
-  PropCost 
+  PropCost
   Prop<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::HI, x.size()+1);
   }
@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Member {
 
     // Eliminate views from x
     eliminate(home);
-    
+
     if (x.size() == 0) {
       // y must have values in the value set
       ValSet::Ranges vsr(vs);

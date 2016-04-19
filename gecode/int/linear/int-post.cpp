@@ -87,24 +87,24 @@ namespace Gecode { namespace Int { namespace Linear {
     long long int su = 0;
 
     for (int i = n_p; i--; ) {
-      long long int axmin = 
+      long long int axmin =
         t_p[i].a * static_cast<long long int>(t_p[i].x.min());
       if (Limits::overflow_add(sl,axmin))
         throw OutOfLimits("Int::linear");
       sl = sl + axmin;
-      long long int axmax = 
+      long long int axmax =
         t_p[i].a * static_cast<long long int>(t_p[i].x.max());
       if (Limits::overflow_add(sl,axmax))
         throw OutOfLimits("Int::linear");
       su = su + axmax;
     }
     for (int i = n_n; i--; ) {
-      long long int axmax = 
+      long long int axmax =
         t_n[i].a * static_cast<long long int>(t_n[i].x.max());
       if (Limits::overflow_sub(sl,axmax))
         throw OutOfLimits("Int::linear");
       sl = sl - axmax;
-      long long int axmin = 
+      long long int axmin =
         t_n[i].a * static_cast<long long int>(t_n[i].x.min());
       if (Limits::overflow_sub(su,axmin))
         throw OutOfLimits("Int::linear");
@@ -123,13 +123,13 @@ namespace Gecode { namespace Int { namespace Linear {
     is_ip = is_ip && (sl >= Limits::min) && (su <= Limits::max);
 
     for (int i = n_p; i--; ) {
-      long long int axmin = 
+      long long int axmin =
         t_p[i].a * static_cast<long long int>(t_p[i].x.min());
       if (Limits::overflow_sub(sl,axmin))
         throw OutOfLimits("Int::linear");
       if (sl - axmin < Limits::min)
         is_ip = false;
-      long long int axmax = 
+      long long int axmax =
         t_p[i].a * static_cast<long long int>(t_p[i].x.max());
       if (Limits::overflow_sub(su,axmax))
         throw OutOfLimits("Int::linear");
@@ -137,13 +137,13 @@ namespace Gecode { namespace Int { namespace Linear {
         is_ip = false;
     }
     for (int i = n_n; i--; ) {
-      long long int axmin = 
+      long long int axmin =
         t_n[i].a * static_cast<long long int>(t_n[i].x.min());
       if (Limits::overflow_add(sl,axmin))
         throw OutOfLimits("Int::linear");
       if (sl + axmin < Limits::min)
         is_ip = false;
-      long long int axmax = 
+      long long int axmax =
         t_n[i].a * static_cast<long long int>(t_n[i].x.max());
       if (Limits::overflow_add(su,axmax))
         throw OutOfLimits("Int::linear");
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         d /= gcd;
         break;
-      case IRT_NQ: 
+      case IRT_NQ:
         if ((d % gcd) != 0)
           return;
         d /= gcd;
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Linear {
           }
           default:
             GECODE_NEVER;
-          }          
+          }
         }
       } else {
         // Arbitrary coefficients with integer precision
@@ -542,7 +542,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         d /= gcd;
         break;
-      case IRT_NQ: 
+      case IRT_NQ:
         if ((d % gcd) != 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));

@@ -103,7 +103,7 @@ namespace Test { namespace Float {
      public:
        /// Create and register test
        LinExpr(const LinInstr* lis0, const std::string& s)
-         : Test("Float::","MiniModel::LinExpr::"+s,4,-3,3), 
+         : Test("Float::","MiniModel::LinExpr::"+s,4,-3,3),
            lis(lis0) {
          testfix = false;
        }
@@ -151,12 +151,12 @@ namespace Test { namespace Float {
          int r_reg[3] = {x[0],x[1],x[2]};
          int r = eval(r_lis,r_reg);
          switch (frt) {
-         case FRT_EQ: return l == r; 
-         case FRT_NQ: return l != r; 
-         case FRT_LE: return l < r; 
-         case FRT_GR: return l > r; 
-         case FRT_LQ: return l <= r; 
-         case FRT_GQ: return l >= r; 
+         case FRT_EQ: return l == r;
+         case FRT_NQ: return l != r;
+         case FRT_LE: return l < r;
+         case FRT_GR: return l > r;
+         case FRT_LQ: return l <= r;
+         case FRT_GQ: return l >= r;
          default: GECODE_NEVER;
          }
          return false;

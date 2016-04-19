@@ -41,8 +41,8 @@
 #include <cmath>
 
 namespace Gecode { namespace Driver {
-    
-  void 
+
+  void
   stop(Support::Timer& timer, std::ostream& os) {
     double t = timer.stop();
     unsigned int sec = static_cast<unsigned int>(floor(t / 1000.0));
@@ -72,8 +72,8 @@ namespace Gecode { namespace Driver {
        << std::showpoint << std::fixed
        << std::setprecision(3) << t << " ms)";
   }
-  
-  
+
+
   double
   am(double t[], int n) {
     if (n < 1)
@@ -83,7 +83,7 @@ namespace Gecode { namespace Driver {
       s += t[i];
     return s / n;
   }
-  
+
   double
   dev(double t[], int n) {
     if (n < 2)

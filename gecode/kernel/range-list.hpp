@@ -45,7 +45,7 @@ namespace Gecode {
    * \brief Lists of ranges (intervals)
    *
    * This class implements a simple datastructure for storing sets of
-   * integers as lists of ranges (intervals). Memory is managed as 
+   * integers as lists of ranges (intervals). Memory is managed as
    * space-allocated free lists.
    *
    * \ingroup FuncMemSpace

@@ -245,7 +245,7 @@ namespace Test { namespace Int {
          if (offset > 0) {
            for (int i=n; i--;)
              y[i] = Gecode::expr(home, x[i]+offset);
-           path(home, c, offset, y, 
+           path(home, c, offset, y,
                 expr(home, x[n]+offset),
                 expr(home, x[n+1]+offset),
                 x[n+2], ipl);

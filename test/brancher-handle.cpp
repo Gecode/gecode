@@ -81,7 +81,7 @@ namespace Test {
     bool run(void) {
       using namespace Gecode;
       TestSpace* s = new TestSpace;
-      
+
       // Create and immediately delete
       for (int i=0; i<n_b; i++) {
         Gecode::BrancherHandle b(s->post());
@@ -121,7 +121,7 @@ namespace Test {
       }
       if (s->status() != SS_SOLVED)
         return false;
-      
+
       // Create and delete randomly
       for (int i=0; i<n_b; i++) {
         Gecode::BrancherHandle b(s->post());

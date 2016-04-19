@@ -50,7 +50,7 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::circuit");
     if (home.failed()) return;
     ViewArray<Int::IntView> xv(home,x);
-    
+
     if (offset == 0) {
       typedef Int::NoOffset<Int::IntView> NOV;
       NOV no;
@@ -77,7 +77,7 @@ namespace Gecode {
   circuit(Home home, const IntVarArgs& x, IntPropLevel ipl) {
     circuit(home,0,x,ipl);
   }
-  
+
   void
   circuit(Home home, const IntArgs& c, int offset,
           const IntVarArgs& x, const IntVarArgs& y, IntVar z,
@@ -110,7 +110,7 @@ namespace Gecode {
   }
   void
   circuit(Home home, const IntArgs& c, int offset,
-          const IntVarArgs& x, IntVar z, 
+          const IntVarArgs& x, IntVar z,
           IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
     if (home.failed()) return;
@@ -119,7 +119,7 @@ namespace Gecode {
   }
   void
   circuit(Home home, const IntArgs& c,
-          const IntVarArgs& x, IntVar z, 
+          const IntVarArgs& x, IntVar z,
           IntPropLevel ipl) {
     circuit(home,c,0,x,z,ipl);
   }
@@ -174,7 +174,7 @@ namespace Gecode {
        IntPropLevel ipl) {
     path(home,0,x,s,e,ipl);
   }
-  
+
   void
   path(Home home, const IntArgs& c, int offset,
        const IntVarArgs& x, IntVar s, IntVar e,
@@ -210,7 +210,7 @@ namespace Gecode {
   }
   void
   path(Home home, const IntArgs& c, int offset,
-       const IntVarArgs& x, IntVar s, IntVar e, IntVar z, 
+       const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::path");
     if (home.failed()) return;
@@ -219,7 +219,7 @@ namespace Gecode {
   }
   void
   path(Home home, const IntArgs& c,
-       const IntVarArgs& x, IntVar s, IntVar e, IntVar z, 
+       const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntPropLevel ipl) {
     path(home,c,0,x,s,e,z,ipl);
   }

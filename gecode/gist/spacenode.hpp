@@ -83,7 +83,7 @@ namespace Gecode { namespace Gist {
     nstatus &= ~( DISTANCEMASK );
     nstatus |= d;
   }
-  
+
   forceinline unsigned int
   SpaceNode::getDistance(void) const {
     return nstatus & DISTANCEMASK;

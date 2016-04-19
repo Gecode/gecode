@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace NValues {
    * \ingroup FuncIntProp
    */
   template<class VY>
-  class IntBase 
+  class IntBase
     : public MixNaryOnePropagator<IntView,PC_INT_DOM,VY,PC_INT_BND> {
   protected:
     using MixNaryOnePropagator<IntView,PC_INT_DOM,VY,PC_INT_BND>::x;
@@ -147,7 +147,7 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Add values of assigned views to value set
     void add(Space& home);
     /**
-     * Compute position of disjoint views in \a dis (with length \a n_dis) 
+     * Compute position of disjoint views in \a dis (with length \a n_dis)
      * and eliminate subsumed views (all values included in the value set
      * \a vs).
      */
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace NValues {
    * \ingroup FuncIntProp
    */
   template<class VY>
-  class BoolBase : public Propagator { 
+  class BoolBase : public Propagator {
   protected:
     /// View status: a zero has already been encountered
     static const int VS_ZERO = 1 << 0;

@@ -87,11 +87,11 @@ namespace Gecode {
    * Operations for nodes
    *
    */
-  BoolExpr::Node::Node(void) 
+  BoolExpr::Node::Node(void)
     : use(1), l(NULL), r(NULL), m(NULL) {}
 
-  BoolExpr::Node::~Node(void) {    
-    delete m;  
+  BoolExpr::Node::~Node(void) {
+    delete m;
   }
 
   void*
@@ -404,7 +404,7 @@ namespace Gecode {
             u.a.x->m->post(home, b, !u.a.neg, ipl);
             bp[ip++]=b;
           }
-          break;      
+          break;
         default:
           bp[ip++] = expr(home, ipl);
           break;
@@ -457,7 +457,7 @@ namespace Gecode {
             u.b.r->t==BoolExpr::NT_RLIN) {
           u.b.r->u.a.x->rl.post(home, u.b.l->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg, ipl);
-        } else if (u.b.r->t==BoolExpr::NT_VAR && 
+        } else if (u.b.r->t==BoolExpr::NT_VAR &&
                    u.b.l->t==BoolExpr::NT_RLIN) {
           u.b.l->u.a.x->rl.post(home, u.b.r->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg, ipl);
@@ -468,11 +468,11 @@ namespace Gecode {
           u.b.r->u.a.x->rl.post(home, u.b.l->expr(home,ipl),
                                 !u.b.r->u.a.neg,ipl);
 #ifdef GECODE_HAS_FLOAT_VARS
-        } else if (u.b.l->t==BoolExpr::NT_VAR && 
+        } else if (u.b.l->t==BoolExpr::NT_VAR &&
                    u.b.r->t==BoolExpr::NT_RLINFLOAT) {
           u.b.r->u.a.x->rfl.post(home, u.b.l->u.a.x->x,
                                  u.b.l->u.a.neg==u.b.r->u.a.neg);
-        } else if (u.b.r->t==BoolExpr::NT_VAR && 
+        } else if (u.b.r->t==BoolExpr::NT_VAR &&
                    u.b.l->t==BoolExpr::NT_RLINFLOAT) {
           u.b.l->u.a.x->rfl.post(home, u.b.r->u.a.x->x,
                                  u.b.l->u.a.neg==u.b.r->u.a.neg);
@@ -484,11 +484,11 @@ namespace Gecode {
                                  !u.b.r->u.a.neg);
 #endif
 #ifdef GECODE_HAS_SET_VARS
-        } else if (u.b.l->t==BoolExpr::NT_VAR && 
+        } else if (u.b.l->t==BoolExpr::NT_VAR &&
                    u.b.r->t==BoolExpr::NT_RSET) {
           u.b.r->u.a.x->rs.post(home, u.b.l->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
-        } else if (u.b.r->t==BoolExpr::NT_VAR && 
+        } else if (u.b.r->t==BoolExpr::NT_VAR &&
                    u.b.l->t==BoolExpr::NT_RSET) {
           u.b.l->u.a.x->rs.post(home, u.b.r->u.a.x->x,
                                 u.b.l->u.a.neg==u.b.r->u.a.neg);
@@ -534,7 +534,7 @@ namespace Gecode {
         return nnf(r,n->l,!neg);
       case BoolExpr::NT_AND: case BoolExpr::NT_OR:
         {
-          NodeType t = ((n->t == BoolExpr::NT_AND) == neg) ? 
+          NodeType t = ((n->t == BoolExpr::NT_AND) == neg) ?
             BoolExpr::NT_OR : BoolExpr::NT_AND;
           NNF* x = new (r) NNF;
           x->t = t;
@@ -574,7 +574,7 @@ namespace Gecode {
       return NULL;
     }
   }
-  
+
   BoolVar
   BoolExpr::expr(Home home, IntPropLevel ipl) const {
     Region r(home);
@@ -646,7 +646,7 @@ namespace Gecode {
    * Boolean element constraints
    *
    */
-  
+
   /// \brief Boolean element expressions
   class BElementExpr : public BoolExpr::MiscExpr {
   public:
@@ -670,7 +670,7 @@ namespace Gecode {
   BElementExpr::~BElementExpr(void) {
     heap.free<BoolExpr>(a,n);
   }
-  
+
   void
   BElementExpr::post(Space& home, BoolVar b, bool neg, IntPropLevel ipl) {
     IntVar z = idx.post(home, ipl);

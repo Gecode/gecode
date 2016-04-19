@@ -38,13 +38,13 @@
 namespace Gecode {
 
   forceinline
-  SEBs::SEBs(void) 
+  SEBs::SEBs(void)
     : PrimArgArray<SEB>(0) {}
 
   forceinline
-  SEBs::SEBs(int n) 
+  SEBs::SEBs(int n)
     : PrimArgArray<SEB>(n) {}
-  
+
   forceinline
   SEBs::SEBs(const std::vector<SEB>& x)
     : PrimArgArray<SEB>(x) {}
@@ -53,9 +53,9 @@ namespace Gecode {
   forceinline
   SEBs::SEBs(InputIterator first, InputIterator last)
     : PrimArgArray<SEB>(first,last) {}
-  
+
   forceinline
-  SEBs::SEBs(const PrimArgArray<SEB>& a) 
+  SEBs::SEBs(const PrimArgArray<SEB>& a)
     : PrimArgArray<SEB>(a) {}
 
 }

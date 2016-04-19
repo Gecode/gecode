@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     return home.ES_SUBSUMED(p);
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

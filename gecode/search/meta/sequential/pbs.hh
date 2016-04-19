@@ -111,7 +111,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
     bool slave_stop;
   public:
     /// Initialize
-    PBS(Engine** slaves, Stop** stops, unsigned int n, 
+    PBS(Engine** slaves, Stop** stops, unsigned int n,
         const Statistics& stat, const Search::Options& opt);
     /// Return next solution (NULL, if none exists or search has been stopped)
     virtual Space* next(void);

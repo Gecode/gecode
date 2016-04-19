@@ -81,7 +81,7 @@ public:
     for (int i=0; i<w_l; i++)
       for (int j=i; j<w_l; j++)
         ml(i,j) = ml(j,i) = IntVar(*this, 'a','z');
-    
+
     // Number of words with that length
     const int n_w = dict.words(w_l);
 
@@ -116,7 +116,7 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  WordSquare(bool share, WordSquare& s) 
+  WordSquare(bool share, WordSquare& s)
     : Script(share,s), w_l(s.w_l) {
     letters.update(*this, share, s.letters);
   }

@@ -42,17 +42,17 @@ namespace Gecode { namespace Search { namespace Meta {
   Dead::Dead(const Statistics& stat0)
     : stat(stat0) {}
 
-  Space* 
+  Space*
   Dead::next(void) {
     return NULL;
   }
 
-  bool 
+  bool
   Dead::stopped(void) const {
     return false;
   }
 
-  Statistics 
+  Statistics
   Dead::statistics(void) const {
     return stat;
   }

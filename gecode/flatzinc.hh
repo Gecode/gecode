@@ -172,11 +172,11 @@ namespace Gecode { namespace FlatZinc {
 #endif
                ) const;
 
-  
+
     ~Printer(void);
-    
+
     void shrinkElement(AST::Node* node,
-                       std::map<int,int>& iv, std::map<int,int>& bv, 
+                       std::map<int,int>& iv, std::map<int,int>& bv,
                        std::map<int,int>& sv, std::map<int,int>& fv);
 
     void shrinkArrays(Space& home,
@@ -192,7 +192,7 @@ namespace Gecode { namespace FlatZinc {
                       Gecode::FloatVarArray& fv
 #endif
                      );
-    
+
   private:
     Printer(const Printer&);
     Printer& operator=(const Printer&);
@@ -225,7 +225,7 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::BoolOption        _interrupt; ///< Whether to catch SIGINT
       Gecode::Driver::DoubleOption      _step;        ///< Step option
       //@}
-    
+
       /// \name Execution options
       //@{
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
@@ -277,7 +277,7 @@ namespace Gecode { namespace FlatZinc {
       add(_node); add(_fail); add(_time); add(_interrupt);
       add(_seed);
       add(_step);
-      add(_restart); add(_r_base); add(_r_scale); 
+      add(_restart); add(_r_base); add(_r_scale);
       add(_nogoods); add(_nogoods_limit);
       add(_mode); add(_stat);
       add(_output);
@@ -291,14 +291,14 @@ namespace Gecode { namespace FlatZinc {
       if (_stat.value())
         _mode.value(Gecode::SM_STAT);
     }
-  
+
     virtual void help(void) {
       std::cerr << "Gecode FlatZinc interpreter" << std::endl
                 << " - Supported FlatZinc version: " << GECODE_FLATZINC_VERSION
                 << std::endl << std::endl;
       Gecode::BaseOptions::help();
     }
-  
+
     int solutions(void) const { return _solutions.value(); }
     bool allSolutions(void) const { return _allSolutions.value(); }
     double threads(void) const { return _threads.value(); }
@@ -393,17 +393,17 @@ namespace Gecode { namespace FlatZinc {
     int _optVar;
     /// Whether variable to optimize is integer (or float)
     bool _optVarIsInt;
-  
+
     /// Whether to solve as satisfaction or optimization problem
     Meth _method;
 
     /// Percentage of variables to keep in LNS (or 0 for no LNS)
     unsigned int _lns;
-    
+
     /// Initial solution to start the LNS (or NULL for no LNS)
     IntSharedArray _lnsInitialSolution;
-    
-    /// Random number generator 
+
+    /// Random number generator
     FznRnd* _random;
 
     /// Annotations on the solve item
@@ -415,13 +415,13 @@ namespace Gecode { namespace FlatZinc {
     /// Run the search engine
     template<template<class> class Engine>
     void
-    runEngine(std::ostream& out, const Printer& p, 
+    runEngine(std::ostream& out, const Printer& p,
               const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
     /// Run the meta search engine
     template<template<class> class Engine,
              template<class, template<class> class> class Meta>
     void
-    runMeta(std::ostream& out, const Printer& p, 
+    runMeta(std::ostream& out, const Printer& p,
             const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
     void
     branchWithPlugin(AST::Node* ann);
@@ -430,7 +430,7 @@ namespace Gecode { namespace FlatZinc {
     Gecode::IntVarArray iv;
     /// The introduced integer variables
     Gecode::IntVarArray iv_aux;
-    
+
     /// The integer variables used in LNS
     Gecode::IntVarArray iv_lns;
 
@@ -466,10 +466,10 @@ namespace Gecode { namespace FlatZinc {
     bool needAuxVars;
     /// Construct empty space
     FlatZincSpace(FznRnd* random = NULL);
-  
+
     /// Destructor
     ~FlatZincSpace(void);
-  
+
     /// Initialize space with given number of variables
     void init(int intVars, int boolVars, int setVars, int floatVars);
 
@@ -485,10 +485,10 @@ namespace Gecode { namespace FlatZinc {
     void newSetVar(SetVarSpec* vs);
     /// Create new float variable from specification
     void newFloatVar(FloatVarSpec* vs);
-  
+
     /// Post a constraint specified by \a ce
     void postConstraints(std::vector<ConExpr*>& ces);
-  
+
     /// Post the solve item
     void solve(AST::Array* annotation);
     /// Post that integer variable \a var should be minimized
@@ -497,16 +497,16 @@ namespace Gecode { namespace FlatZinc {
     void maximize(int var, bool isInt, AST::Array* annotation);
 
     /// Run the search
-    void run(std::ostream& out, const Printer& p, 
+    void run(std::ostream& out, const Printer& p,
              const FlatZincOptions& opt, Gecode::Support::Timer& t_total);
-  
+
     /// Produce output on \a out using \a p
     void print(std::ostream& out, const Printer& p) const;
 
-    /// Compare this space with space \a s and print the differences on 
+    /// Compare this space with space \a s and print the differences on
     /// \a out
     void compare(const Space& s, std::ostream& out) const;
-    /// Compare this space with space \a s and print the differences on 
+    /// Compare this space with space \a s and print the differences on
     /// \a out using \a p
     void compare(const FlatZincSpace& s, std::ostream& out,
                  const Printer& p) const;
@@ -555,7 +555,7 @@ namespace Gecode { namespace FlatZinc {
     virtual Gecode::Space* copy(bool share);
     /// Slave function for restarts
     virtual bool slave(const MetaInfo& mi);
-    
+
     /// \name AST to variable and value conversion
     //@{
     /// Convert \a arg (array of integers) to IntArgs

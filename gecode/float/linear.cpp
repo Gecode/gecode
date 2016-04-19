@@ -69,7 +69,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
          FloatNum c) {
     using namespace Float;
     if (a.size() != x.size())
@@ -85,7 +85,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
          FloatNum c, Reify r) {
     using namespace Float;
     if (a.size() != x.size())
@@ -145,7 +145,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
          FloatVar y) {
     using namespace Float;
     if (a.size() != x.size())
@@ -178,7 +178,7 @@ namespace Gecode {
 
   void
   linear(Home home,
-         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt, 
+         const FloatValArgs& a, const FloatVarArgs& x, FloatRelType frt,
          FloatVar y, Reify r) {
     using namespace Float;
     if (a.size() != x.size())

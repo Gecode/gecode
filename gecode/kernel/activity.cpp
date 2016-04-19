@@ -49,7 +49,7 @@ namespace Gecode {
       release();
     }
   }
-  
+
   Activity&
   Activity::operator =(const Activity& a) {
     if (storage != a.storage) {

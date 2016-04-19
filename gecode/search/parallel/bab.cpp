@@ -46,7 +46,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Statistics
    */
-  Statistics 
+  Statistics
   BAB::statistics(void) const {
     Statistics s;
     for (unsigned int i=0; i<workers(); i++)
@@ -54,7 +54,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     return s;
   }
 
-  void 
+  void
   BAB::constrain(const Space& b) {
     m_search.acquire();
     if (best != NULL) {

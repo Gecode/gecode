@@ -98,8 +98,8 @@ namespace Test { namespace Set {
       IntSet is;
     public:
       /// Create and register test
-      DomRange(SetRelType srt0, int n) : 
-        SetTest("Dom::Range::"+str(srt0)+"::"+str(n),n,ds_33,(n == 1)), 
+      DomRange(SetRelType srt0, int n) :
+        SetTest("Dom::Range::"+str(srt0)+"::"+str(n),n,ds_33,(n == 1)),
         srt(srt0), is(srt == Gecode::SRT_CMPL ? ds_33c: ds_33) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -107,27 +107,27 @@ namespace Test { namespace Set {
           CountableSetRanges xr(x.lub, x[i]);
           IntSetRanges dr(is);
           switch (srt) {
-          case SRT_EQ: 
+          case SRT_EQ:
             if (!Iter::Ranges::equal(xr, dr))
               return false;
             break;
-          case SRT_LQ: 
+          case SRT_LQ:
             if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
               return false;
             break;
-          case SRT_LE: 
+          case SRT_LE:
             if (!(xr() ? in(minSymDiff(x,i,is),dr) : dr()))
               return false;
             break;
-          case SRT_GQ: 
+          case SRT_GQ:
             if (!((!dr()) || in(minSymDiff(x,i,is),xr,true)))
               return false;
             break;
-          case SRT_GR: 
+          case SRT_GR:
             if (!(dr() ? in(minSymDiff(x,i,is),xr) : xr()))
               return false;
             break;
-          case SRT_NQ: 
+          case SRT_NQ:
             if (Iter::Ranges::equal(xr, dr))
               return false;
             break;
@@ -135,7 +135,7 @@ namespace Test { namespace Set {
             if (!Iter::Ranges::subset(xr, dr))
               return false;
             break;
-          case SRT_SUP: 
+          case SRT_SUP:
             if (!Iter::Ranges::subset(dr, xr))
               return false;
             break;
@@ -178,8 +178,8 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      DomIntRange(Gecode::SetRelType srt0, int n) 
-        : SetTest("Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1), 
+      DomIntRange(Gecode::SetRelType srt0, int n)
+        : SetTest("Dom::IntRange::"+str(srt0)+"::"+str(n),1,ds_33,n==1),
           srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -188,11 +188,11 @@ namespace Test { namespace Set {
           IntSet is(-3,-1);
           IntSetRanges dr(is);
           switch (srt) {
-          case SRT_EQ: 
+          case SRT_EQ:
             if (!Iter::Ranges::equal(xr, dr))
               return false;
             break;
-          case SRT_LQ: 
+          case SRT_LQ:
             if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
               return false;
             break;
@@ -259,8 +259,8 @@ namespace Test { namespace Set {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      DomInt(Gecode::SetRelType srt0, int n) : 
-        SetTest("Dom::Int::"+str(srt0)+"::"+str(n),n,ds_33,n==1), 
+      DomInt(Gecode::SetRelType srt0, int n) :
+        SetTest("Dom::Int::"+str(srt0)+"::"+str(n),n,ds_33,n==1),
         srt(srt0) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -305,7 +305,7 @@ namespace Test { namespace Set {
             {
               Gecode::Iter::Ranges::Inter<CountableSetRanges,IntSetRanges>
                 inter(xr, dr);
-             
+
               if (inter())
                 return false;
               break;
@@ -313,7 +313,7 @@ namespace Test { namespace Set {
           case SRT_CMPL:
             {
               Gecode::Set::RangesCompl<IntSetRanges> drc(dr);
-             
+
               if (!Iter::Ranges::equal(xr,drc))
                 return false;
               break;
@@ -343,8 +343,8 @@ namespace Test { namespace Set {
       Gecode::IntSet is;
     public:
       /// Create and register test
-      DomDom(Gecode::SetRelType srt0, int n) : 
-        SetTest("Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)), 
+      DomDom(Gecode::SetRelType srt0, int n) :
+        SetTest("Dom::Dom::"+str(srt0)+"::"+str(n),n,d1,(n == 1)),
         srt(srt0), is(srt == Gecode::SRT_CMPL ? d1c: d1) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
@@ -352,7 +352,7 @@ namespace Test { namespace Set {
           CountableSetRanges xr(x.lub, x[i]);
           IntSetRanges dr(is);
           switch (srt) {
-          case SRT_EQ: 
+          case SRT_EQ:
             if (!Iter::Ranges::equal(xr, dr))
               return false;
             break;
@@ -360,27 +360,27 @@ namespace Test { namespace Set {
             if (!((!xr()) || in(minSymDiff(x,i,is),dr,true)))
               return false;
             break;
-          case SRT_LE: 
+          case SRT_LE:
             if (!(xr() ? in(minSymDiff(x,i,is),dr) : dr()))
               return false;
             break;
-          case SRT_GQ: 
+          case SRT_GQ:
             if (!((!dr()) || in(minSymDiff(x,i,is),xr,true)))
               return false;
             break;
-          case SRT_GR: 
+          case SRT_GR:
             if (!(dr() ? in(minSymDiff(x,i,is),xr) : xr()))
               return false;
             break;
-          case SRT_NQ: 
+          case SRT_NQ:
             if (Iter::Ranges::equal(xr, dr))
               return false;
             break;
-          case SRT_SUB: 
+          case SRT_SUB:
             if (!Iter::Ranges::subset(xr, dr))
               return false;
             break;
-          case SRT_SUP: 
+          case SRT_SUP:
             if (!Iter::Ranges::subset(dr, xr))
               return false;
             break;

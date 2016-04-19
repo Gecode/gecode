@@ -61,8 +61,8 @@ namespace Test { namespace Int {
        int q,l,u;
      public:
        /// Create and register test
-       SequenceTest(const std::string& s, 
-                    const Gecode::IntSet& s0, int q0, int l0, int u0, 
+       SequenceTest(const std::string& s,
+                    const Gecode::IntSet& s0, int q0, int l0, int u0,
                     int size, int min, int max)
          : Test("Sequence::"+s,size,min,max), s(s0), q(q0), l(l0), u(u0) {
        }
@@ -82,29 +82,29 @@ namespace Test { namespace Int {
          return true;
        }
      };
-     
-     
+
+
      /// %Test for sequence with boolean variables
      class SequenceBoolTest : public SequenceTest {
      public:
        /// Create and register test
-       SequenceBoolTest(const std::string& s, const Gecode::IntSet& s0, 
+       SequenceBoolTest(const std::string& s, const Gecode::IntSet& s0,
                         int q0, int l0, int u0, int size)
          : SequenceTest("Bool::"+s,s0,q0,l0,u0,size,0,1) {
        }
-       
+
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::BoolVarArgs c(x.size());
-         
+
          for (int i=0; i<x.size(); i++) {
            c[i]=Gecode::channel(home,x[i]);
          }
-         
+
          Gecode::sequence(home,c,s,q,l,u);
        }
      };
-     
+
      /// %Test for sequence with boolean variables
      class SequenceIntTest : public SequenceTest {
      public:
@@ -113,7 +113,7 @@ namespace Test { namespace Int {
                        int q0, int l0, int u0, int size, int min, int max)
          : SequenceTest("Int::"+s,s0,q0,l0,u0,size,min,max) {
        }
-       
+
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::sequence(home,x,s,q,l,u);

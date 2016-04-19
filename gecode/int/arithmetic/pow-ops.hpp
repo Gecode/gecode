@@ -40,28 +40,28 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline
   PowOps::PowOps(int n0) : n(n0) {}
 
-  forceinline bool 
+  forceinline bool
   PowOps::even(int m) {
     return (m & 1) == 0;
   }
 
-  forceinline bool 
+  forceinline bool
   PowOps::even(void) const {
     return even(n);
   }
 
-  forceinline int 
+  forceinline int
   PowOps::exp(void) const {
     return n;
   }
 
-  forceinline void 
+  forceinline void
   PowOps::exp(int m) {
     n=m;
   }
 
   template<class IntType>
-  inline IntType 
+  inline IntType
   PowOps::pow(IntType x) const {
     int m = n;
     IntType p = 1;
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return p;
   }
 
-  inline int 
+  inline int
   PowOps::tpow(int _x) const {
     int m = n;
     long long int p = 1;
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return static_cast<int>(p);
   }
 
-  forceinline bool 
+  forceinline bool
   PowOps::powgr(long long int r, int x) const {
     assert(r >= 0);
     int m = n;
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return false;
   }
 
-  inline int 
+  inline int
   PowOps::fnroot(int x) const {
     if (x < 2)
       return x;
@@ -132,7 +132,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return static_cast<int>(l);
   }
 
-  forceinline bool 
+  forceinline bool
   PowOps::powle(long long int r, int x) const {
     assert(r >= 0);
     int m = n;
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return true;
   }
 
-  inline int 
+  inline int
   PowOps::cnroot(int x) const {
     if (x < 2)
       return x;
@@ -172,28 +172,28 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
 
-  forceinline bool 
+  forceinline bool
   SqrOps::even(void) const {
     return true;
   }
 
-  forceinline int 
+  forceinline int
   SqrOps::exp(void) const {
     return 2;
   }
 
-  forceinline void 
+  forceinline void
   SqrOps::exp(int) {
     GECODE_NEVER;
   }
 
   template<class IntType>
-  inline IntType 
+  inline IntType
   SqrOps::pow(IntType x) const {
     return x * x;
   }
 
-  inline int 
+  inline int
   SqrOps::tpow(int _x) const {
     long long int x = _x;
     if (x*x > Limits::max)
@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return static_cast<int>(x*x);
   }
 
-  inline int 
+  inline int
   SqrOps::fnroot(int x) const {
     if (x < 2)
       return x;
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return static_cast<int>(l);
   }
 
-  inline int 
+  inline int
   SqrOps::cnroot(int x) const {
     if (x < 2)
       return x;
