@@ -798,6 +798,7 @@ enable_debug
 enable_peakheap
 enable_small_codesize
 enable_leak_debug
+enable_allocator
 enable_audit
 enable_profile
 enable_gcov
@@ -1456,6 +1457,7 @@ Optional Features:
   --enable-small-codesize optimize for code size [default=no]
   --enable-leak-debug     build with support for finding memory leaks
                           [default=no]
+  --enable-allocator      build with default memory allocator [default=yes]
   --enable-audit          build with auditing code [default=no]
   --enable-profile        build with profiling information [default=no]
   --enable-gcov           build with gcov support [default=no]
@@ -2625,6 +2627,9 @@ GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 # checks for programs
 
 : ${CXXFLAGS=""} : ${CFLAGS=""}   : ${DLLFLAGS=""}   : ${GLDFLAGS=""}
+
+
+
 
 
 
@@ -5643,6 +5648,24 @@ else
   as_fn_error $? "mtrace not available." "$LINENO" 5
 fi
 
+     else
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+     fi
+
+# Check whether --enable-allocator was given.
+if test "${enable_allocator+set}" = set; then :
+  enableval=$enable_allocator;
+fi
+
+     { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build with default memory allocator" >&5
+$as_echo_n "checking whether to build with default memory allocator... " >&6; }
+     if test "${enable_allocator:-yes}" = "yes"; then
+
+$as_echo "#define GECODE_ALLOCATOR /**/" >>confdefs.h
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
      else
         { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
 $as_echo "no" >&6; }

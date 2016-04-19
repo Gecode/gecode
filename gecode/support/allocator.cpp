@@ -1,4 +1,4 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil; show-trailing-whitespace: t; -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -39,8 +39,8 @@
 
 namespace Gecode { namespace Support {
 
-  Allocator::Allocator(void) {}
+  Allocator allocator;
 
-}}
+}}   
 
 // STATISTICS: support-any

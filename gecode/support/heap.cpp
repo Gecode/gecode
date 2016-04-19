@@ -39,7 +39,6 @@
 
 namespace Gecode {
 
-  forceinline
   Heap::Heap(void)
 #ifdef GECODE_PEAKHEAP
   : _peak(0), _cur(0)

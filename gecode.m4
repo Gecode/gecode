@@ -556,6 +556,20 @@ AC_DEFUN([AC_GECODE_PEAKHEAP],
         AC_MSG_RESULT(no)
      fi])
 
+AC_DEFUN([AC_GECODE_ALLOCATOR],
+    [AC_ARG_ENABLE([allocator],
+       AC_HELP_STRING([--enable-allocator],
+         [build with default memory allocator @<:@default=yes@:>@]))
+     AC_MSG_CHECKING(whether to build with default memory allocator)
+     if test "${enable_allocator:-yes}" = "yes"; then
+        AC_DEFINE([GECODE_ALLOCATOR],[],
+                  [Whether to build with default memory allocator])
+        AC_MSG_RESULT(yes)
+     else
+        AC_MSG_RESULT(no)
+     fi])
+
+
 AC_DEFUN([AC_GECODE_AUDIT],
     [AC_ARG_ENABLE([audit],
        AC_HELP_STRING([--enable-audit],

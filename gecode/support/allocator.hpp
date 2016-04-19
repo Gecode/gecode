@@ -63,6 +63,8 @@ namespace Gecode { namespace Support {
    */
   class Allocator {
   public:
+    /// Default constructor
+    Allocator(void);
     /// Allocate memory block of size \a n
     void* alloc(size_t n);
     /// Return address of reallocated memory block \a p of size \a n 
@@ -72,6 +74,27 @@ namespace Gecode { namespace Support {
     /// Copy \a n bytes from source \a s directly to \a d and returns \a d
     void* memcpy(void *d, const void *s, size_t n);
   };
+
+
+  forceinline
+  Allocator::Allocator(void) {
+  }
+  forceinline void* 
+  Allocator::alloc(size_t n) {
+    return ::malloc(n);
+  }
+  forceinline void* 
+  Allocator::realloc(void* p, size_t n) {
+    return ::realloc(p,n);
+  }
+  forceinline void 
+  Allocator::free(void* p) {
+    ::free(p);
+  }
+  forceinline void* 
+  Allocator::memcpy(void *d, const void *s, size_t n) {
+    return ::memcpy(d,s,n);
+  }
 
 }}
 

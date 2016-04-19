@@ -135,6 +135,9 @@ AC_GECODE_CODESIZE
 dnl check whether we want to have support for finding memory leaks
 AC_GECODE_LEAK_DEBUG
 
+dnl check whether we want to use default memory allocator
+AC_GECODE_ALLOCATOR
+
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
 
