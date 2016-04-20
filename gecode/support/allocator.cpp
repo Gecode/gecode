@@ -1,10 +1,10 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil; show-trailing-whitespace: t; -*- */
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil; -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2015
+ *     Christian Schulte, 2016
  *
  *  Last modified:
  *     $Date$ by $Author$

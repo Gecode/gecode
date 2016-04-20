@@ -648,7 +648,7 @@ public:
   template<class T>
   forceinline T**
   Heap::copy(T** d, const T** s, long unsigned int n) {
-    return static_cast<T**>(Support::allocator::memcpy(d,s,n*sizeof(T*)));
+    return static_cast<T**>(Support::allocator.memcpy(d,s,n*sizeof(T*)));
   }
   template<class T>
   forceinline T**
