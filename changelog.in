@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks:	Mirko Rahn
+[DESCRIPTION]
+Fixed some linking issues for static linking.
+
+[ENTRY]
 Module: support
 What:   new
 Rank:   major

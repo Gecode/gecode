@@ -1735,7 +1735,7 @@ TESTRES =
 endif
 $(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(TESTRES) $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS)
+	$(LINKALL) $(GLDFLAGS) $(LINKQT)
 	$(FIXMANIFEST) $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
