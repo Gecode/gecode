@@ -66,20 +66,10 @@ namespace Gecode {
       IntPropLevel ipl) {
     using namespace Int;
     if (home.failed()) return;
-    switch (vbd(ipl)) {
-    case IPL_VAL:
-      GECODE_ES_FAIL(Arithmetic::MaxBnd<IntView>
-                     ::post(home,x0,x1,x2));
-      break;
-    case IPL_BND:
-    case IPL_DEF:
-      GECODE_ES_FAIL(Arithmetic::MaxBnd<IntView>
-                     ::post(home,x0,x1,x2));
-      break;
-    case IPL_DOM:
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::MaxDom<IntView>::post(home,x0,x1,x2));
-      break;
-    default: GECODE_NEVER;
+    } else {
+      GECODE_ES_FAIL(Arithmetic::MaxBnd<IntView>::post(home,x0,x1,x2));
     }
   }
 
@@ -96,16 +86,6 @@ namespace Gecode {
     } else {
       GECODE_ES_FAIL(Arithmetic::NaryMaxBnd<IntView>::post(home,xv,y));
     }
-    switch (vbd(ipl)) {
-    case IPL_VAL:
-      break;
-    case IPL_BND:
-    case IPL_DEF:
-      break;
-    case IPL_DOM:
-      break;
-    default: GECODE_NEVER;
-    }
   }
 
   void
@@ -118,16 +98,6 @@ namespace Gecode {
       GECODE_ES_FAIL(Arithmetic::MaxDom<MinusView>::post(home,m0,m1,m2));
     } else {
       GECODE_ES_FAIL(Arithmetic::MaxBnd<MinusView>::post(home,m0,m1,m2));
-    }
-    switch (vbd(ipl)) {
-    case IPL_VAL:
-      break;
-    case IPL_BND:
-    case IPL_DEF:
-      break;
-    case IPL_DOM:
-      break;
-    default: GECODE_NEVER;
     }
   }
 
@@ -146,16 +116,6 @@ namespace Gecode {
       GECODE_ES_FAIL(Arithmetic::NaryMaxDom<MinusView>::post(home,m,my));
     } else {
       GECODE_ES_FAIL(Arithmetic::NaryMaxBnd<MinusView>::post(home,m,my));
-    }
-    switch (vbd(ipl)) {
-    case IPL_VAL:
-      break;
-    case IPL_BND:
-    case IPL_DEF:
-      break;
-    case IPL_DOM:
-      break;
-    default: GECODE_NEVER;
     }
   }
 
