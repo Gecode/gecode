@@ -133,7 +133,7 @@ syntax error during parsing.
 Module: minimodel
 What:   bug
 Rank:   minor
-Thanks: Roberto Castañeda Lozano
+Thanks: Roberto Castañeda Lozano, Matthias Balzer
 [DESCRIPTION]
 Fixed posting of Boolean element expressions and relations.
 

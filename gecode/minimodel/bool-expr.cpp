@@ -315,7 +315,7 @@ namespace Gecode {
         break;
 #endif
       case BoolExpr::NT_MISC:
-        u.a.x->m->post(home, b, u.a.neg, ipl);
+        u.a.x->m->post(home, b, !u.a.neg, ipl);
         break;
       case BoolExpr::NT_AND:
         {
@@ -361,9 +361,9 @@ namespace Gecode {
 
     void
     NNF::post(Home home, NodeType t,
-                        BoolVarArgs& bp, BoolVarArgs& bn,
-                        int& ip, int& in,
-                        IntPropLevel ipl) const {
+              BoolVarArgs& bp, BoolVarArgs& bn,
+              int& ip, int& in,
+              IntPropLevel ipl) const {
       if (this->t != t) {
         switch (this->t) {
         case BoolExpr::NT_VAR:
@@ -437,7 +437,7 @@ namespace Gecode {
       case BoolExpr::NT_MISC:
         {
           BoolVar b(home,!u.a.neg,!u.a.neg);
-          u.a.x->m->post(home, b, false, ipl);
+          u.a.x->m->post(home, b, true, ipl);
         }
         break;
       case BoolExpr::NT_AND:
@@ -675,13 +675,13 @@ namespace Gecode {
   BElementExpr::post(Space& home, BoolVar b, bool neg, IntPropLevel ipl) {
     IntVar z = idx.post(home, ipl);
     if (z.assigned() && (z.val() >= 0) && (z.val() < n)) {
-      BoolExpr be = neg ? (a[z.val()] == !b) : (a[z.val()] == b);
+      BoolExpr be = neg ? (a[z.val()] == b) : (a[z.val()] == !b);
       be.rel(home,ipl);
     } else {
       BoolVarArgs x(n);
       for (int i=n; i--;)
         x[i] = a[i].expr(home,ipl);
-      BoolVar res = neg ? (!b).expr(home,ipl) : b;
+      BoolVar res = neg ? b : (!b).expr(home,ipl);
       element(home, x, z, res, ipl);
     }
   }
