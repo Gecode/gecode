@@ -67,7 +67,7 @@ namespace Gecode {
     SetRel rs;
 #endif
     /// Possibly a misc Boolean expression
-    MiscExpr* m;
+    Misc* m;
 
     /// Default constructor
     Node(void);
@@ -197,7 +197,7 @@ namespace Gecode {
   }
 #endif
 
-  BoolExpr::BoolExpr(BoolExpr::MiscExpr* m)
+  BoolExpr::BoolExpr(BoolExpr::Misc* m)
     : n(new Node) {
     n->same = 1;
     n->t    = NT_MISC;
@@ -217,7 +217,7 @@ namespace Gecode {
     return *this;
   }
 
-  BoolExpr::MiscExpr::~MiscExpr(void) {}
+  BoolExpr::Misc::~Misc(void) {}
 
   BoolExpr::~BoolExpr(void) {
     if (n->decrement())
@@ -648,7 +648,7 @@ namespace Gecode {
    */
 
   /// \brief Boolean element expressions
-  class BElementExpr : public BoolExpr::MiscExpr {
+  class BElementExpr : public BoolExpr::Misc {
   protected:
     /// The Boolean expressions
     BoolExpr* a;

@@ -1250,19 +1250,18 @@ namespace Gecode {
       NT_MISC       ///< Other Boolean expression
     };
     /// Miscealloneous Boolean expressions
-    class MiscExpr {
+    class Misc : public HeapAllocated {
     public:
+      /// Default constructor
+      Misc(void);
       /** Constrain \a b to be equivalent to the expression
-       *  (negated if \a neg)
+       *  (negated if \a neg) with propagation level
+       *  \a ipl.
        */
       virtual void post(Space& home, BoolVar b, bool neg,
                         IntPropLevel ipl) = 0;
       /// Destructor
-      virtual GECODE_MINIMODEL_EXPORT ~MiscExpr(void);
-      /// Memory management
-      static void* operator new(size_t size);
-      /// Memory management
-      static void  operator delete(void* p, size_t size);
+      virtual GECODE_MINIMODEL_EXPORT ~Misc(void);
     };
     /// %Node for Boolean expression
     class Node;
@@ -1303,7 +1302,7 @@ namespace Gecode {
 #endif
     /// Construct expression for miscellaneous Boolean expression
     GECODE_MINIMODEL_EXPORT
-    explicit BoolExpr(MiscExpr* m);
+    explicit BoolExpr(Misc* m);
     /// Post propagators for expression
     GECODE_MINIMODEL_EXPORT
     BoolVar expr(Home home, IntPropLevel ipl) const;
