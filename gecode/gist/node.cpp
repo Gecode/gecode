@@ -51,7 +51,8 @@ namespace Gecode { namespace Gist {
       break;
     case 1:
       childrenOrFirstChild =
-        reinterpret_cast<void*>(na.allocate(getIndex(na)) << 2);
+        reinterpret_cast<void*>(
+          static_cast<ptrdiff_t>(na.allocate(getIndex(na)) << 2));
       noOfChildren = 1;
       setTag(TWO_CHILDREN);
       break;
@@ -59,7 +60,8 @@ namespace Gecode { namespace Gist {
       {
         int idx = getIndex(na);
         childrenOrFirstChild =
-          reinterpret_cast<void*>(na.allocate(idx) << 2);
+          reinterpret_cast<void*>(
+            static_cast<ptrdiff_t>(na.allocate(idx) << 2));
         noOfChildren = -na.allocate(idx);
         setTag(TWO_CHILDREN);
       }
