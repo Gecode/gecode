@@ -315,7 +315,7 @@ namespace Gecode {
         break;
 #endif
       case BoolExpr::NT_MISC:
-        u.a.x->m->post(home, b, !u.a.neg, ipl);
+        u.a.x->m->post(home, b, u.a.neg, ipl);
         break;
       case BoolExpr::NT_AND:
         {
@@ -401,7 +401,7 @@ namespace Gecode {
         case BoolExpr::NT_MISC:
           {
             BoolVar b(home,0,1);
-            u.a.x->m->post(home, b, !u.a.neg, ipl);
+            u.a.x->m->post(home, b, u.a.neg, ipl);
             bp[ip++]=b;
           }
           break;
@@ -437,7 +437,7 @@ namespace Gecode {
       case BoolExpr::NT_MISC:
         {
           BoolVar b(home,!u.a.neg,!u.a.neg);
-          u.a.x->m->post(home, b, true, ipl);
+          u.a.x->m->post(home, b, false, ipl);
         }
         break;
       case BoolExpr::NT_AND:
@@ -649,23 +649,27 @@ namespace Gecode {
 
   /// \brief Boolean element expressions
   class BElementExpr : public BoolExpr::MiscExpr {
-  public:
+  protected:
     /// The Boolean expressions
     BoolExpr* a;
     /// The number of Boolean expressions
     int n;
     /// The linear expression for the index
     LinIntExpr idx;
+  public:
     /// Constructor
-    BElementExpr(int size);
+    BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx);
     /// Destructor
     virtual ~BElementExpr(void);
     /// Constrain \a b to be equivalent to the expression (negated if \a neg)
     virtual void post(Space& home, BoolVar b, bool neg, IntPropLevel ipl);
   };
 
-  BElementExpr::BElementExpr(int size)
-    : a(heap.alloc<BoolExpr>(size)), n(size) {}
+  BElementExpr::BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx)
+    : a(heap.alloc<BoolExpr>(b.size())), n(b.size()), idx(idx) {
+    for (int i=b.size(); i--;)
+      new (&a[i]) BoolExpr(b[i]);
+  }
 
   BElementExpr::~BElementExpr(void) {
     heap.free<BoolExpr>(a,n);
@@ -675,24 +679,20 @@ namespace Gecode {
   BElementExpr::post(Space& home, BoolVar b, bool neg, IntPropLevel ipl) {
     IntVar z = idx.post(home, ipl);
     if (z.assigned() && (z.val() >= 0) && (z.val() < n)) {
-      BoolExpr be = neg ? (a[z.val()] == b) : (a[z.val()] == !b);
+      BoolExpr be = neg ? (a[z.val()] == !b) : (a[z.val()] == b);
       be.rel(home,ipl);
     } else {
       BoolVarArgs x(n);
       for (int i=n; i--;)
         x[i] = a[i].expr(home,ipl);
-      BoolVar res = neg ? b : (!b).expr(home,ipl);
+      BoolVar res = neg ? (!b).expr(home,ipl) : b;
       element(home, x, z, res, ipl);
     }
   }
 
   BoolExpr
   element(const BoolVarArgs& b, const LinIntExpr& idx) {
-    BElementExpr* be = new BElementExpr(b.size());
-    for (int i=b.size(); i--;)
-      new (&be->a[i]) BoolExpr(b[i]);
-    be->idx = idx;
-    return BoolExpr(be);
+    return BoolExpr(new BElementExpr(b,idx));
   }
 
 }
