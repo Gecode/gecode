@@ -57,7 +57,7 @@ namespace Gecode {
   Actor* Actor::sentinel;
 
   Actor::~Actor(void) {
-    GECODE_NEVER;
+    assert(false);
   }
 
 
@@ -724,7 +724,7 @@ namespace Gecode {
   }
 
   NGL::~NGL(void) {
-    GECODE_NEVER;
+    assert(false);
   }
 
 }
