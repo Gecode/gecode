@@ -250,9 +250,8 @@ namespace Gecode {
   Space::status(StatusStatistics& stat) {
     SpaceStatus s = SS_FAILED;
     // Check whether space is failed
-    if (failed()) {
-      s = SS_FAILED; goto exit;
-    }
+    if (failed())
+      goto exit;
     assert(pc.p.active <= &pc.p.queue[PropCost::AC_MAX+1]);
     // Check whether space is stable but not failed
     if (pc.p.active >= &pc.p.queue[0]) {
