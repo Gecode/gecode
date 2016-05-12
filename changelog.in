@@ -78,6 +78,15 @@ What:   bug
 Rank:   minor
 Thanks:	Mirko Rahn
 [DESCRIPTION]
+Made copy constructor for search engines private to trigger
+compiler error when trying to copy a search engine.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks:	Mirko Rahn
+[DESCRIPTION]
 Fixed some linking issues for static linking.
 
 [ENTRY]

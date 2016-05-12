@@ -638,6 +638,11 @@ namespace Gecode { namespace Search {
     virtual bool stopped(void) const;
     /// Destructor
     virtual ~Base(void);
+  private:
+    /// Disallow copy constructor
+    Base(const Base&);
+    /// Disallow assigment operator
+    Base& operator =(const Base&);
   };
 
 }}
