@@ -206,6 +206,8 @@ namespace Test {
       void prune(void);
       /// Prune values but not those in assignment \a a
       bool prune(const Assignment& a, bool testfix);
+      /// Return the number of propagators
+      unsigned int propagators(void);
     };
 
     /**

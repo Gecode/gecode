@@ -3853,7 +3853,7 @@ namespace Gecode {
      * AFC storage has been constructed with the default constructor.
      *
      */
-    void init(Home, const IntVarArgs& x, double d=1.0);
+    void init(Home home, const IntVarArgs& x, double d=1.0);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
@@ -3861,7 +3861,7 @@ namespace Gecode {
      * AFC storage has been constructed with the default constructor.
      *
      */
-    void init(Home, const BoolVarArgs& x, double d=1.0);
+    void init(Home home, const BoolVarArgs& x, double d=1.0);
   };
 
 }
@@ -4577,6 +4577,171 @@ namespace Gecode {
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          const Symmetries& syms,
          BoolBranchFilter bf=NULL, BoolVarValPrint vvp=NULL);
+}
+
+#include <gecode/int/trace/int-trace-view.hpp>
+#include <gecode/int/trace/bool-trace-view.hpp>
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskIntTrace Tracing for integer and Boolean variables
+   * \ingroup TaskTrace
+   */
+
+  /**
+   * \brief Trace delta information for integer variables
+   * \ingroup TaskIntTrace
+   */
+  class IntTraceDelta
+    : public Iter::Ranges::Diff<Iter::Ranges::RangeList,
+                                Int::ViewRanges<Int::IntView> > {
+  protected:
+    /// Iterator over the new values
+    Int::ViewRanges<Int::IntView> rn;
+    /// Iterator over the old values
+    Iter::Ranges::RangeList ro;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Initialize with old trace view \a o, new view \a n, and delta \a d
+    IntTraceDelta(Int::IntTraceView o, Int::IntView n, const Delta& d);
+    //@}
+  };
+
+  /**
+   * \brief Trace delta information for Boolean variables
+   * \ingroup TaskIntTrace
+   */
+  class BoolTraceDelta {
+  protected:
+    /// Delta information
+    int delta;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Initialize with old trace view \a o, new view \a n, and delta \a d
+    BoolTraceDelta(Int::BoolTraceView o, Int::BoolView n, const Delta& d);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator ()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator ++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+}
+
+#include <gecode/int/trace/int-delta.hpp>
+#include <gecode/int/trace/bool-delta.hpp>
+
+#include <gecode/int/trace/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Tracer for integer variables
+   * \ingroup TaskIntTrace
+   */
+  typedef Tracer<Int::IntView> IntTracer;
+  /**
+   * \brief TraceRecorder for integer variables
+   * \ingroup TaskIntTrace
+   */
+  typedef TraceRecorder<Int::IntView> IntTraceRecorder;
+
+  /**
+   * \brief Standard integer variable tracer
+   * \ingroup TaskIntTrace
+   */
+  class GECODE_INT_EXPORT StdIntTracer : public IntTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+  public:
+    /// Initialize with output stream \a os0 and events \ e
+    StdIntTracer(std::ostream& os0 = std::cerr,
+                 int e = (IntTracer::INIT | IntTracer::PRUNE |
+                          IntTracer::FIXPOINT | IntTracer::DONE));
+    /// Print init information
+    virtual void init(const Space& home, const IntTraceRecorder& t);
+    /// Print prune information
+    virtual void prune(const Space& home, const IntTraceRecorder& t,
+                       const ExecInfo& ei, int i, IntTraceDelta& d);
+    /// Print fixpoint information
+    virtual void fixpoint(const Space& home, const IntTraceRecorder& t);
+    /// Print that trace recorder is done
+    virtual void done(const Space& home, const IntTraceRecorder& t);
+    /// Default tracer (printing to std::cerr)
+    static StdIntTracer def;
+  };
+
+
+  /**
+   * \brief Tracer for Boolean variables
+   * \ingroup TaskIntTrace
+   */
+  typedef Tracer<Int::BoolView> BoolTracer;
+  /**
+   * \brief TraceRecorder for Boolean variables
+   * \ingroup TaskIntTrace
+   */
+  typedef TraceRecorder<Int::BoolView> BoolTraceRecorder;
+
+  /**
+   * \brief Standard Boolean variable tracer
+   * \ingroup TaskIntTrace
+   */
+  class GECODE_INT_EXPORT StdBoolTracer : public BoolTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+  public:
+    /// Initialize with output stream \a os0
+    StdBoolTracer(std::ostream& os0 = std::cerr,
+                  int e = (BoolTracer::INIT | BoolTracer::PRUNE |
+                           BoolTracer::FIXPOINT | BoolTracer::DONE));
+    /// Print init information
+    virtual void init(const Space& home, const BoolTraceRecorder& t);
+    /// Print prune information
+    virtual void prune(const Space& home, const BoolTraceRecorder& t,
+                       const ExecInfo& ei, int i, BoolTraceDelta& d);
+    /// Print fixpoint information
+    virtual void fixpoint(const Space& home, const BoolTraceRecorder& t);
+    /// Print that trace recorder is done
+    virtual void done(const Space& home, const BoolTraceRecorder& t);
+    /// Default tracer (printing to std::cerr)
+    static StdBoolTracer def;
+  };
+
+  /**
+   * \brief Create a tracer for integer variables
+   * \ingroup TaskIntTrace
+   */
+  GECODE_INT_EXPORT void
+  trace(Home home, const IntVarArgs& x,
+        TraceFilter tf = TraceFilter::all,
+        IntTracer& t = StdIntTracer::def);
+  /**
+   * \brief Create a tracer for Boolean Variables
+   * \ingroup TaskIntTrace
+   */
+  GECODE_INT_EXPORT void
+  trace(Home home, const BoolVarArgs& x,
+        TraceFilter tf = TraceFilter::all,
+        BoolTracer& t = StdBoolTracer::def);
 }
 
 #endif

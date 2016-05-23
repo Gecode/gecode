@@ -79,6 +79,13 @@ namespace Gecode {
     SpaceIllegalAlternative(const char* l);
   };
 
+  /// %Exception: too many groups
+  class GECODE_KERNEL_EXPORT TooManyGroups : public Exception {
+  public:
+    /// Initialize with location \a l
+    TooManyGroups(const char* l);
+  };
+
   /// %Exception: too many branchers
   class GECODE_KERNEL_EXPORT TooManyBranchers : public Exception {
   public:

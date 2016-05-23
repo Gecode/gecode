@@ -50,7 +50,7 @@ namespace Gecode {
   template<class View0, class View1>
   void
   rel_post(Home home, View0 x0, SetRelType r, View1 x1) {
-    if (home.failed()) return;
+    GECODE_POST;
     switch (r) {
     case SRT_EQ:
       GECODE_ES_FAIL((Eq<View0,View1>::post(home,x0,x1)));
@@ -98,7 +98,7 @@ namespace Gecode {
   template<class View0, class View1, ReifyMode rm>
   void
   rel_re(Home home, View0 x, SetRelType r, View1 y, BoolVar b) {
-    if (home.failed()) return;
+    GECODE_POST;
     switch (r) {
     case SRT_EQ:
       GECODE_ES_FAIL((ReEq<View0,View1,Gecode::Int::BoolView,rm>

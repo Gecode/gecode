@@ -1,5 +1,5 @@
 /************************************************************ Work.hh
-Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard 
+Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -40,17 +40,17 @@ private:
 	vector<int> theRoot;
   Gecode::Search::Engine* remaining;
 	int scope;
-public: 
+public:
   QECODE_EXPORT QWork(){wait=stop=0; remaining=NULL; scope=-1;} ///< creates a dummy work. Don't try to solve it.
   QECODE_EXPORT QWork(int scope,vector<int> root,Gecode::Search::Engine* todo);
   QECODE_EXPORT ~QWork();
-	
+
   QECODE_EXPORT static QWork Wait();
   QECODE_EXPORT static QWork Stop();
-	
+
   QECODE_EXPORT forceinline bool isWait() {return wait;}
   QECODE_EXPORT forceinline bool isStop() {return stop;}
-	
+
   QECODE_EXPORT forceinline Gecode::Search::Engine* getRemaining() {return this->remaining;}
   QECODE_EXPORT vector<int> root() {
     vector<int> ret=this->theRoot;

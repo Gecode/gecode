@@ -48,7 +48,7 @@ namespace Gecode {
     using namespace Int;
     Limits::check(s,"Int::precede");
     Limits::check(t,"Int::precede");
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> y(home, x);
     GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, s, t));
@@ -61,7 +61,7 @@ namespace Gecode {
       return;
     for (int i=c.size(); i--; )
       Limits::check(c[i],"Int::precede");
-    if (home.failed()) return;
+    GECODE_POST;
 
     for (int i=c.size()-1; i--; ) {
       ViewArray<IntView> y(home, x);

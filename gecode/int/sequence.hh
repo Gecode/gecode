@@ -115,6 +115,8 @@ namespace Gecode { namespace Int { namespace Sequence {
     ExecStatus advise(Space& home, Advisor& _a, const Delta& d);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for
@@ -140,6 +142,8 @@ namespace Gecode { namespace Int { namespace Sequence {
     ViewValSupportArray<View,Val,false> vvsamin;
     /// Council for advisors
     Council<SupportAdvisor<View> > ac;
+    /// Whether to fail when being rescheduled
+    bool tofail;
   };
 
 }}}

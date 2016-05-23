@@ -138,6 +138,12 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     for (int i=0; i<n; i++)
       d[i].cancel(home,p);
   }
+  template<class Dim, int n>
+  forceinline void
+  ManBox<Dim,n>::schedule(Space& home, Propagator& p) {
+    for (int i=0; i<n; i++)
+      d[i].schedule(home,p);
+  }
 
 
   /*
@@ -190,6 +196,12 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   OptBox<Dim,n>::cancel(Space& home, Propagator& p) {
     ManBox<Dim,n>::cancel(home,p);
     o.cancel(home, p, PC_BOOL_VAL);
+  }
+  template<class Dim, int n>
+  forceinline void
+  OptBox<Dim,n>::schedule(Space& home, Propagator& p) {
+    ManBox<Dim,n>::schedule(home,p);
+    o.schedule(home, p, PC_BOOL_VAL);
   }
 
 }}}

@@ -83,6 +83,13 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class Val, class P, class N, PropCond pc>
+  void
+  Lin<Val,P,N,pc>::schedule(Space& home) {
+    x.schedule(home,*this,pc);
+    y.schedule(home,*this,pc);
+  }
+
+  template<class Val, class P, class N, PropCond pc>
   forceinline size_t
   Lin<Val,P,N,pc>::dispose(Space& home) {
     x.cancel(home,*this,pc);
@@ -109,6 +116,14 @@ namespace Gecode { namespace Int { namespace Linear {
   (Space& home, bool share, ReLin<Val,P,N,pc,Ctrl>& p)
     : Lin<Val,P,N,pc>(home,share,p) {
     b.update(home,share,p.b);
+  }
+
+  template<class Val, class P, class N, PropCond pc, class Ctrl>
+  void
+  ReLin<Val,P,N,pc,Ctrl>::schedule(Space& home) {
+    x.schedule(home,*this,pc);
+    y.schedule(home,*this,pc);
+    b.schedule(home,*this,PC_INT_VAL);
   }
 
   template<class Val, class P, class N, PropCond pc, class Ctrl>

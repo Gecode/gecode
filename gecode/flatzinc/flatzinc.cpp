@@ -1484,7 +1484,7 @@ namespace Gecode { namespace FlatZinc {
     Support::Timer t_solve;
     t_solve.start();
     if (status(sstat) != SS_FAILED) {
-      n_p = propagators();
+      n_p = PropagatorGroup::all.size(*this);
     }
     Search::Options o;
     o.stop = Driver::CombinedStop::create(opt.node(), opt.fail(), opt.time(),

@@ -84,12 +84,12 @@ sub findFiles {
     my @dirs = split(/\//,$f);
     shift(@dirs);
     pop(@dirs);
-    
+
     my $treeP;
     if ($type =~ m/sourcecode\..*\.h/) {
       $treeP = \%headerTree;
     } else {
-      $treeP = \%sourceTree;      
+      $treeP = \%sourceTree;
     }
     foreach my $d (@dirs) {
       if (not exists $treeP->{$d}) {
@@ -137,7 +137,7 @@ sub printGroup {
   print "      sourceTree = \"<group>\";\n    };\n";
   foreach my $k (keys %{$treeP}) {
     if (exists $treeP->{$k}[0]) {
-      printGroup($k, $treeP->{$k}[0], $treeP->{$k}[1], 
+      printGroup($k, $treeP->{$k}[0], $treeP->{$k}[1],
                  $path.$k."/");
     }
   }

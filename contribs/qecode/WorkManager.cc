@@ -1,16 +1,16 @@
 /************************************************************ WorkManager.cc
- Copyright (c) 2010 Universite d'Orleans - Jeremie Vautard 
- 
+ Copyright (c) 2010 Universite d'Orleans - Jeremie Vautard
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,10 +25,10 @@ bool isPrefix(vector<int> prefix,vector<int> a) {
   if (a.size() < prefix.size())
     return false;
   else
-    for (unsigned int i=0;i<prefix.size();i++) 
+    for (unsigned int i=0;i<prefix.size();i++)
       if (prefix[i] != a[i])
 	return false;
-	
+
   return true;
 }
 
@@ -53,9 +53,9 @@ void WorkPool::trash(vector<int> prefix) {
   //if (prefix.empty()) cout<<"empty";
   //for (int i=0;i< prefix.size();i++) cout<<prefix[i]<<" ";
   //cout<<endl;
-  //  cout<<"debug "<<l.size()<<endl;  
+  //  cout<<"debug "<<l.size()<<endl;
 
-    list<QWork>::iterator i=l.begin(); 
+    list<QWork>::iterator i=l.begin();
    while (!(i == l.end())) {
   //  cout<<"| ";
      //   cout.flush();
@@ -118,7 +118,7 @@ QWork WorkManager::getWork(AQWorker* worker) {
     // cout<<"WM : Todos was empty"<<endl;
     if (actives.empty()) {
       // cout<<"WM : Actives was empty, stopping worker."<<endl;
-      ret = QWork::Stop();	
+      ret = QWork::Stop();
       finished=true;
     }
     else {
@@ -135,15 +135,15 @@ QWork WorkManager::getWork(AQWorker* worker) {
     // if (ret.root().empty()) cout<<"empty";
     // for (int i=0;i< ret.root().size();i++) cout<<ret.root()[i]<<" ";
     // cout<<endl;
-		
-    actives.push_back(worker); 
+
+    actives.push_back(worker);
   }
   // cout<<"WM getwork release"<<endl;
   mex.release();
   return ret;
 }
 
-void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vector<int> position) { 
+void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vector<int> position) {
   // If the worker is not among the actives ones, ignore his job. Else, withdraw it from the active workers
   // and process its result
 
@@ -180,11 +180,11 @@ void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vect
     mex.release();
     return;
   }
-	
+
   // processing results...
-	
+
   // adding todo to Todos
-	
+
   // going to father of substrategy
   bool acceptable = true;
   Strategy father = S.getSubStrategy(position);
@@ -193,13 +193,13 @@ void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vect
     acceptable=false;
   }
   // remove the Todo node that marked this work
-  if (acceptable) { 
+  if (acceptable) {
     // cout<<" RW Father position is ";
     // vector<int> checkPosition = father.getPosition();
     // if (checkPosition.empty()) cout<<"empty";
     // for (int i=0;i< checkPosition.size();i++) cout<<checkPosition[i]<<" ";
     // cout<<endl;
-		
+
     for (list<QWork>::iterator j = todo.begin();j != todo.end();j++) {
       //		cout<<"WM todo + 1"<<endl;
       if (!idles.empty()) {
@@ -212,10 +212,10 @@ void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vect
       // if ((*j).root().empty()) cout<<"empty";
       // for (int i=0;i< (*j).root().size();i++) cout<<(*j).root()[i]<<" ";
       // cout<<endl;
-			
+
       Todos.push(*j);
     }
-		
+
     for (unsigned int i=0;i<father.degree();i++) {
       if (father.getChild(i).isTodo()) {
 	// cout<<"RW deleting Todo node"<<endl;
@@ -223,8 +223,8 @@ void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vect
 	i--;
       }
     }
-		
-		
+
+
     if (!ret.isComplete()) { // still work to do...
       // attach the (incomplete) substrategy
       // cout<<"RW returned work was incomplete. Attaching"<<endl;
@@ -232,7 +232,7 @@ void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vect
     }
     else if (!ret.isFalse()) { // complete substrategy
       // attach the (complete) substrategy
-      // recursively update node	
+      // recursively update node
       // cout<<"RW returned work was true. Attaching and updating"<<endl;
       father.attach(ret);
       updateTrue(father);
@@ -258,7 +258,7 @@ void WorkManager::returnWork(AQWorker* worker,Strategy ret,list<QWork> todo,vect
       (*j).clean();
     }
   }
-	
+
   // cout<<"RW release"<<endl;
   mex.release();
 }
@@ -269,8 +269,8 @@ void WorkManager::updateTrue(Strategy s) { //called when s has a son who is a co
   // if (hihi.empty()) cout<<"empty";
   // for (int i=0;i< hihi.size();i++) cout<<hihi[i]<<" ";
   // cout<<endl;
-	
-	
+
+
   if (s.isComplete()) {
     // cout<<"  UT Complete ";
     if (s.quantifier()) {
@@ -297,7 +297,7 @@ void WorkManager::updateTrue(Strategy s) { //called when s has a son who is a co
       }
       else {
 	// cout<<" without father"<<endl;
-				
+
       }
     }
   }
@@ -312,13 +312,13 @@ void WorkManager::updateFalse(Strategy s) { // called when s is false
   // if (hihi.empty()) cout<<"empty";
   // for (int i=0;i< hihi.size();i++) cout<<hihi[i]<<" ";
   // cout<<endl;
-	
+
   trashWorks(s.getPosition());
   if (s.isDummy()) {
     return;
   }
   Strategy father=s.getFather();
-	
+
   if (s.quantifier()) { // if s is universal, its father is false
     // cout<<"  UF A";
     if (father.isDummy()) { // if father is dummy, it is the root of the strategy. We must cut all its children and ad a false node.
@@ -350,7 +350,7 @@ void WorkManager::trashWorks(vector<int> prefix) {
   // if (prefix.empty()) cout<<"empty";
   // for (int i=0;i< prefix.size();i++) cout<<prefix[i]<<" ";
   // cout<<endl;
-	
+
   Todos.trash(prefix);
   for (list<AQWorker*>::iterator i=actives.begin();i!=actives.end();i++) {
     if (isPrefix(prefix,(*i)->workPosition())) {

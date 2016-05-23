@@ -1,5 +1,5 @@
-/****   , [ qsolverunblockable.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ qsolverunblockable.hh ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,23 +34,23 @@ THE SOFTWARE.
 using namespace Gecode;
 
 /** Unblockable QCSP+ Solver.
-* This class is the search engine for unblockable QCSP+ defined with the qpecial QcspUnblockable class. 
+* This class is the search engine for unblockable QCSP+ defined with the qpecial QcspUnblockable class.
 */
 class QECODE_VTABLE_EXPORT QSolverUnblockable {
-    
+
 private:
     int n;
     QcspUnblockable* sp;
     int* nbRanges;
     Strategy rSolve(QcspUnblockable* qs,int scope,vector<int> assignments,unsigned long int& nodes);
-    
+
 public:
         /** Public constructor.
         @param sp The problem to solve
         */
         QECODE_EXPORT QSolverUnblockable(QcspUnblockable* sp);
 
-    /** Solves the problem and returns a corresponding winning strategy. 
+    /** Solves the problem and returns a corresponding winning strategy.
         @param nodes A reference that is increased by the number of nodes encountered in the search tree.
         */
     QECODE_EXPORT Strategy solve(unsigned long int& nodes);
@@ -58,23 +58,23 @@ public:
 
 
 /** Unblockable QCSP+ Solver.
-* This class is the search engine for unblockable QCSP+ defined with the general Qcop class. 
+* This class is the search engine for unblockable QCSP+ defined with the general Qcop class.
 */
 class QECODE_VTABLE_EXPORT QSolverUnblockable2 {
-    
+
 private:
     int n;
     Qcop* sp;
     int* nbRanges;
     Strategy rSolve(Qcop* qs,int scope,vector<int> assignments,unsigned long int& nodes);
-    
+
 public:
         /** Public constructor.
         @param sp The problem to solve
         */
         QECODE_EXPORT QSolverUnblockable2(Qcop* sp);
 
-    /** Solves the problem and returns a corresponding winning strategy. 
+    /** Solves the problem and returns a corresponding winning strategy.
         WARNING : Defined optimization conditions and aggregates are NOT taken into account.
         @param nodes A reference that is increased by the number of nodes encountered in the search tree.
         */

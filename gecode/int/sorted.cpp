@@ -48,7 +48,7 @@ namespace Gecode {
     if (x.same(home,y) || x.same(home,z) || y.same(home,z))
       throw ArgumentSame("Int::Sorted");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (x.size()==0) return;
 
@@ -67,7 +67,7 @@ namespace Gecode {
     if (x.same(home,y))
       throw ArgumentSame("Int::Sorted");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (x.size()==0) return;
 

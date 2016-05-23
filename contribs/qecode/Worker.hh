@@ -1,5 +1,5 @@
-/****   , [ Worker.hh ], 
-	Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard 
+/****   , [ Worker.hh ],
+	Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ class QECODE_VTABLE_EXPORT QWorker : public AQWorker {
   list<QWork> todo;
   bool finished;
   Strategy rsolve(int scope,/*vector<int> assignments,*/Engine* L);
-  
+
 
  public:
   QECODE_EXPORT QWorker(WorkManager* wm) {this->wm=wm; this->problem = wm->problem->clone();}

@@ -134,6 +134,13 @@ namespace Gecode { namespace Set { namespace Channel {
   }
 
   template<class View>
+  void
+  ChannelBool<View>::schedule(Space& home) {
+    x.schedule(home,*this,Gecode::Int::PC_BOOL_VAL);
+    View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
+  }
+
+  template<class View>
   forceinline size_t
   ChannelBool<View>::dispose(Space& home) {
     co.dispose(home);

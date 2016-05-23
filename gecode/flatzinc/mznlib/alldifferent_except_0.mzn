@@ -4,7 +4,7 @@ include "global_cardinality_low_up_closed.mzn";
   Constrain the array of integers \a vs to be all different except those
   elements that are assigned the value 0.
 */
-predicate alldifferent_except_0(array[int] of var int: vs) = 
+predicate alldifferent_except_0(array[int] of var int: vs) =
     if length(vs)==0 then true
     else
     let {

@@ -162,7 +162,7 @@ Strategy QCSP_Solver::rSolve(Qcop* qs,int scope,Engine* L, unsigned long int& no
                     if (scope >= limit) return Strategy::STrue();
                     ret = Strategy(qs->quantification(scope),vmin,vmax,scope,zevalues);
                     ret.attach(result);
-                    return ret; 
+                    return ret;
                 }
             }
         }

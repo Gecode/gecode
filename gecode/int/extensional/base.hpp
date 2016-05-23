@@ -87,6 +87,13 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, bool subscribe>
+  void
+  Base<View,subscribe>::schedule(Space& home) {
+    if (subscribe)
+      x.schedule(home, *this, PC_INT_DOM);
+  }
+
+  template<class View, bool subscribe>
   PropCost
   Base<View,subscribe>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,x.size());

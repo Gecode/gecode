@@ -87,17 +87,24 @@ namespace Gecode { namespace Int {
   }
 
   template<class Task>
-  inline void
+  forceinline void
   TaskArray<Task>::subscribe(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
       t[i].subscribe(home,p,pc);
   }
 
   template<class Task>
-  inline void
+  forceinline void
   TaskArray<Task>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
       t[i].cancel(home,p,pc);
+  }
+
+  template<class Task>
+  forceinline void
+  TaskArray<Task>::schedule(Space& home, Propagator& p, PropCond pc) {
+    for (int i=n; i--; )
+      t[i].schedule(home,p,pc);
   }
 
   template<class Task>

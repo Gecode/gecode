@@ -79,6 +79,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
@@ -195,6 +197,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
@@ -245,6 +249,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor

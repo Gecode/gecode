@@ -45,6 +45,14 @@ namespace Gecode { namespace Int { namespace Channel {
     // Propagator is scheduled because of the dependency subscription
   }
 
+  forceinline
+  LinkMulti::LinkMulti(Space& home, bool share, LinkMulti& p)
+    : MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>
+  (home,share,p), status(S_NONE), o(p.o) {
+    assert(p.status == S_NONE);
+    c.update(home,share,p.c);
+  }
+
   forceinline ExecStatus
   LinkMulti::post(Home home, ViewArray<BoolView>& x, IntView y, int o) {
     int n=x.size();

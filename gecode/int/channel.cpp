@@ -56,7 +56,7 @@ namespace Gecode {
     Limits::check(yoff,"Int::channel");
     if ((xoff < 0) || (yoff < 0))
       throw OutOfLimits("Int::channel");
-    if (home.failed()) return;
+    GECODE_POST;
     if (n == 0)
       return;
 
@@ -151,7 +151,7 @@ namespace Gecode {
   void
   channel(Home home, BoolVar x0, IntVar x1, IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Channel::LinkSingle::post(home,x0,x1));
   }
 
@@ -162,7 +162,7 @@ namespace Gecode {
     if (x.same(home))
       throw ArgumentSame("Int::channel");
     Limits::check(o,"Int::channel");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<BoolView> xv(home,x);
     GECODE_ES_FAIL(Channel::LinkMulti::post(home,xv,y,o));
   }

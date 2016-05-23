@@ -95,6 +95,13 @@ namespace Gecode { namespace Int {
     ManTask::cancel(home, p, pc);
   }
 
+  template<class ManTask>
+  forceinline void
+  ManToOptTask<ManTask>::schedule(Space& home, Propagator& p, PropCond pc) {
+    _m.schedule(home, p, PC_BOOL_VAL);
+    ManTask::schedule(home, p, pc);
+  }
+
 }}
 
 // STATISTICS: int-var

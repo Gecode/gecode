@@ -67,6 +67,9 @@ namespace Gecode { namespace Int { namespace Count {
   /// Cancel propagator \a p for view \a y
   template<class VY>
   void cancel(Space& home, Propagator& p, VY y);
+  /// Schedule propagator \a p for view \a y
+  template<class VY>
+  void schedule(Space& home, Propagator& p, VY y);
 
   /// Test whether \a x and \a y are equal
   template<class VX>
@@ -150,6 +153,8 @@ namespace Gecode { namespace Int { namespace Count {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -278,6 +283,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual size_t dispose(Space& home);
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
   protected:
     /// Count how many views are equal now
     void count(Space& home);

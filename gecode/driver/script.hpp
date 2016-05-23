@@ -314,8 +314,8 @@ namespace Gecode { namespace Driver {
           t.start();
           if (s == NULL)
             s = new Script(o);
-          unsigned int n_p = s->propagators();
-          unsigned int n_b = s->branchers();
+          unsigned int n_p = PropagatorGroup::all.size(*s);
+          unsigned int n_b = BrancherGroup::all.size(*s);
           Search::Options so;
           so.threads = o.threads();
           so.c_d     = o.c_d();
@@ -408,8 +408,8 @@ namespace Gecode { namespace Driver {
           t.start();
           if (s == NULL)
             s = new Script(o);
-          unsigned int n_p = s->propagators();
-          unsigned int n_b = s->branchers();
+          unsigned int n_p = PropagatorGroup::all.size(*s);
+          unsigned int n_b = BrancherGroup::all.size(*s);
           Search::Options so;
           so.clone   = false;
           so.threads = o.threads();

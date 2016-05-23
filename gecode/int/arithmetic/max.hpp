@@ -297,11 +297,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
     GECODE_ME_CHECK(x2.inter_r(home,u,false));
     if (rtest_nq_dom(x0,x2) == RT_TRUE) {
-      GECODE_ES_CHECK(Rel::Lq<View>::post(home,x0,x2));
+      GECODE_ES_CHECK(Rel::Lq<View>::post(Home(home),x0,x2));
       GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x1,x2)));
     }
     if (rtest_nq_dom(x1,x2) == RT_TRUE) {
-      GECODE_ES_CHECK(Rel::Lq<View>::post(home,x1,x2));
+      GECODE_ES_CHECK(Rel::Lq<View>::post(Home(home),x1,x2));
       GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x0,x2)));
     }
     return ES_FIX;
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(y.inter_r(home,u,false));
     for (int i = x.size(); i--; )
       if (rtest_nq_dom(x[i],y) == RT_TRUE) {
-        GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
+        GECODE_ES_CHECK(Rel::Lq<View>::post(Home(home),x[i],y));
         x.move_lst(i,home,*this,PC_INT_DOM);
       }
     assert(x.size() > 0);

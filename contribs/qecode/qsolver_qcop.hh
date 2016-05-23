@@ -1,5 +1,5 @@
-/****   , [ qsolver.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ qsolver.hh ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,10 +32,10 @@ THE SOFTWARE.
 
 using namespace Gecode;
 /** General QCSP+ / QCOP+ Solver.
-  * This class is the search engine for Qcop objects. 
+  * This class is the search engine for Qcop objects.
 */
 class QECODE_VTABLE_EXPORT QCOP_solver {
-    
+
 private:
     int n;
     Qcop* sp;
@@ -45,9 +45,9 @@ public:
         /** Public constructor.
         @param sp The problem to solve
         */
-    QECODE_EXPORT QCOP_solver(Qcop* sp); 
-    
-    /** Solves the problem and returns a corresponding winning strategy. 
+    QECODE_EXPORT QCOP_solver(Qcop* sp);
+
+    /** Solves the problem and returns a corresponding winning strategy.
         @param nodes A reference that is increased by the number of nodes encountered in the search tree.
         */
     QECODE_EXPORT Strategy solve(unsigned long int& nodes);

@@ -66,6 +66,13 @@ namespace Gecode { namespace Float { namespace Linear {
   }
 
   template<class P, class N, PropCond pc>
+  void
+  Lin<P,N,pc>::schedule(Space& home) {
+    x.schedule(home,*this,pc);
+    y.schedule(home,*this,pc);
+  }
+
+  template<class P, class N, PropCond pc>
   forceinline size_t
   Lin<P,N,pc>::dispose(Space& home) {
     x.cancel(home,*this,pc);

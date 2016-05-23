@@ -64,6 +64,12 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   template<class VY>
+  void
+  BoolBase<VY>::schedule(Space& home) {
+    y.schedule(home,*this,PC_INT_BND);
+  }
+
+  template<class VY>
   ExecStatus
   BoolBase<VY>::advise(Space& home, Advisor& _a, const Delta&) {
     ViewAdvisor<BoolView>& a(static_cast<ViewAdvisor<BoolView>&>(_a));

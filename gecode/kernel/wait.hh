@@ -64,10 +64,12 @@ namespace Gecode { namespace Kernel {
     virtual Actor* copy(Space& home, bool share);
     /// Const function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that waits until \a x becomes assigned and then executes \a c
-    static ExecStatus post(Space& home, View x, void (*c)(Space&));
+    static ExecStatus post(Home home, View x, void (*c)(Space&));
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -94,10 +96,12 @@ namespace Gecode { namespace Kernel {
     virtual Actor* copy(Space& home, bool share);
     /// Const function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that waits until \a x becomes assigned and then executes \a c
-    static ExecStatus post(Space& home, ViewArray<View>& x, void (*c)(Space&));
+    static ExecStatus post(Home home, ViewArray<View>& x, void (*c)(Space&));
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -130,6 +134,11 @@ namespace Gecode { namespace Kernel {
     return PropCost::unary(PropCost::LO);
   }
   template<class View>
+  void
+  UnaryWait<View>::schedule(Space& home) {
+    x.schedule(home,*this,PC_GEN_ASSIGNED);
+  }
+  template<class View>
   ExecStatus
   UnaryWait<View>::propagate(Space& home, const ModEventDelta&) {
     assert(x.assigned());
@@ -138,7 +147,7 @@ namespace Gecode { namespace Kernel {
   }
   template<class View>
   ExecStatus
-  UnaryWait<View>::post(Space& home, View x, void (*c)(Space&)) {
+  UnaryWait<View>::post(Home home, View x, void (*c)(Space&)) {
     if (x.assigned()) {
       c(home);
       return home.failed() ? ES_FAILED : ES_OK;
@@ -190,6 +199,11 @@ namespace Gecode { namespace Kernel {
     return PropCost::unary(PropCost::HI);
   }
   template<class View>
+  void
+  NaryWait<View>::schedule(Space& home) {
+    x[0].schedule(home,*this,PC_GEN_ASSIGNED);
+  }
+  template<class View>
   ExecStatus
   NaryWait<View>::propagate(Space& home, const ModEventDelta& ) {
     assert(x[0].assigned());
@@ -211,7 +225,7 @@ namespace Gecode { namespace Kernel {
   }
   template<class View>
   ExecStatus
-  NaryWait<View>::post(Space& home, ViewArray<View>& x, void (*c)(Space&)) {
+  NaryWait<View>::post(Home home, ViewArray<View>& x, void (*c)(Space&)) {
     for (int i=x.size(); i--; )
       if (x[i].assigned())
         x.move_lst(i);

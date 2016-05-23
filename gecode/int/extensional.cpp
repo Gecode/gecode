@@ -47,7 +47,7 @@ namespace Gecode {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
   }
 
@@ -57,7 +57,7 @@ namespace Gecode {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::extensional");
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
   }
 
@@ -69,7 +69,7 @@ namespace Gecode {
       throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (t.tuples()==0) {
       if (x.size()!=0) {
@@ -102,7 +102,7 @@ namespace Gecode {
       throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (t.tuples()==0) {
       if (x.size()!=0) {

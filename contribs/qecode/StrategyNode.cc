@@ -1,5 +1,5 @@
-/****   , [ StrategyNode.cc ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ StrategyNode.cc ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

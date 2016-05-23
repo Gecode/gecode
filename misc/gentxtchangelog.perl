@@ -45,7 +45,7 @@ EOF
 ;
 
 
-# 
+#
 # Compile changelog
 #
 
@@ -159,8 +159,8 @@ while ($l = <>) {
 	$thanks  = $1;
       }
     }
-    
-    while (($l = <>) && 
+
+    while (($l = <>) &&
 	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
        $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
@@ -183,7 +183,7 @@ while ($l = <>) {
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
     }
-    $text{"$mod-$what"} = 
+    $text{"$mod-$what"} =
       ($text{"$mod-$what"} . "    - $desc(" . $rb . ")\n");
     goto LINE;
   }

@@ -43,7 +43,7 @@ namespace Gecode {
   member(Home home, const IntVarArgs& x, IntVar y,
          IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
     GECODE_ES_FAIL(Member::Prop<IntView>::post(home,xv,y));
@@ -53,7 +53,7 @@ namespace Gecode {
   member(Home home, const BoolVarArgs& x, BoolVar y,
          IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<BoolView> xv(home,x);
     GECODE_ES_FAIL(Member::Prop<BoolView>::post(home,xv,y));
@@ -63,7 +63,7 @@ namespace Gecode {
   member(Home home, const IntVarArgs& x, IntVar y, Reify r,
          IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
 
@@ -88,7 +88,7 @@ namespace Gecode {
   member(Home home, const BoolVarArgs& x, BoolVar y, Reify r,
          IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<BoolView> xv(home,x);
 

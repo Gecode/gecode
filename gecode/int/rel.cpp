@@ -47,7 +47,7 @@ namespace Gecode {
   void
   rel(Home home, IntVar x0, IntRelType irt, int n, IntPropLevel) {
     Limits::check(n,"Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     IntView x(x0);
     switch (irt) {
     case IRT_EQ: GECODE_ME_FAIL(x.eq(home,n)); break;
@@ -63,7 +63,7 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, int n, IntPropLevel) {
     Limits::check(n,"Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
@@ -102,7 +102,7 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1, IntPropLevel ipl) {
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
@@ -129,7 +129,7 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
       IntPropLevel ipl) {
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       {
@@ -178,7 +178,7 @@ namespace Gecode {
   void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1, Reify r,
       IntPropLevel ipl) {
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
@@ -303,7 +303,7 @@ namespace Gecode {
   rel(Home home, IntVar x, IntRelType irt, int n, Reify r,
       IntPropLevel ipl) {
     Limits::check(n,"Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
@@ -427,7 +427,8 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt,
       IntPropLevel ipl) {
-    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2)))
+    GECODE_POST;
+    if ((irt != IRT_NQ) && (x.size() < 2))
       return;
     switch (irt) {
     case IRT_EQ:
@@ -484,7 +485,7 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
       IntPropLevel ipl) {
-    if (home.failed()) return;
+    GECODE_POST;
 
     switch (irt) {
     case IRT_GR:

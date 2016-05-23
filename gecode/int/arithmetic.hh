@@ -276,6 +276,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space& home, bool share);
     // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Delete propagator and return its size

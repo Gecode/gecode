@@ -76,6 +76,132 @@ Gaga
 Module: other
 What:   bug
 Rank:   minor
+[DESCRIPTION]
+Fixed many small quirks in propagator rewriting, where the
+information on which propagator is rewritten was omitted.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Trace flags can be passed on the commandline.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+All constraint post functions should now use the macro
+GECODE_POST at their start: it will check for failure but also
+will set group information useful for tracing.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Some Gecode macros made the assumption that they can only be used
+inside the Gecode namespace. Fixed.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added groups of branchers (class BrancherGroup) by which
+groups of branchers can be controlled. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added groups of propagators (class PropagatorGroup) by which
+groups of propagators can be controlled. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Propagators can now be disabled and enabled (though
+PropagatorGroups). See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+All propagators must implement a virtual member function
+schedule() that can be used to reschedule a propagator according
+to its subscriptions. See MPG for more details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+All variable implementation must implement an additional
+schedule() function that can be used to reschedule a propagator
+according to its subscriptions. See MPG for more details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The member function killall() of a BrancherHandle has been
+removed.  Please use brancher groups instead.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The iterators over all propagators and branchers of a space are
+not any longer accessible. Please use group iterators instead.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The member functions propagators() and branchers() of the class
+Space have been removed as they can be expressed with groups.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
 Thanks:	Mirko Rahn
 [DESCRIPTION]
 Made copy constructor for search engines private to trigger

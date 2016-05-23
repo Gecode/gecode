@@ -56,7 +56,7 @@ predicate roots(array[int] of var int: x, var set of int: s,
         else let {
             array[1..max(ub(t))] of var set of 0..max(index_set(x)): y,
         } in
-            int_set_channel(x,y) 
+            int_set_channel(x,y)
             /\
             gecode_array_set_element_union(t,y,s)
         endif

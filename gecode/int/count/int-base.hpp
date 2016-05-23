@@ -75,6 +75,14 @@ namespace Gecode { namespace Int { namespace Count {
     return PropCost::linear(PropCost::LO,x.size());
   }
 
+  template<class VX, class VY>
+  void
+  IntBase<VX,VY>::schedule(Space& home) {
+    for (int i=n_s; i--; )
+      x[i].schedule(home,*this,PC_INT_DOM);
+    Gecode::Int::Count::schedule(home,*this,y);
+  }
+
 }}}
 
 // STATISTICS: int-prop

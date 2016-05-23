@@ -219,6 +219,12 @@ namespace Gecode {
   class AFC;
   class Brancher;
   class BrancherHandle;
+  class Group;
+  class PropagatorGroup;
+  class BrancherGroup;
+  class PostInfo;
+  class ExecInfo;
+
   template<class A> class Council;
   template<class A> class Advisors;
   template<class VIC> class VarImp;
@@ -470,6 +476,15 @@ namespace Gecode {
      */
     static void schedule(Space& home, Propagator& p, ModEvent me,
                          bool force = false);
+    /**
+     * \brief Schedule propagator \a p
+     *
+     * Schedules a propagator for propagation condition \a pc and
+     * modification event \a me. If the variable is assigned,
+     * the appropriate modification event is used for scheduling.
+     */
+    static void schedule(Space& home, Propagator& p, PropCond pc,
+                         bool assigned, ModEvent me);
     /// Project modification event for this variable type from \a med
     static ModEvent me(const ModEventDelta& med);
     /// Translate modification event \a me into modification event delta
@@ -698,22 +713,166 @@ namespace Gecode {
     static void  operator delete(void* p);
   };
 
+  /**
+   * \brief Group baseclass for controlling actors
+   * \ingroup TaskGroup
+   */
+  class Group {
+    friend class Home;
+    friend class Propagator;
+    friend class Brancher;
+    friend class ExecInfo;
+  protected:
+    /// Fake id for group of all actors
+    static const unsigned int GID_ALL = 0U;
+    /// Pre-defined default group id
+    static const unsigned int GID_DEFAULT = 1U;
+    /// The maximal group number
+    static const unsigned int GID_MAX = UINT_MAX >> 2;
+    /// The group id
+    unsigned int gid;
+    /// Next group id
+    GECODE_KERNEL_EXPORT
+    static unsigned int next;
+    /// Mutex for protection
+    GECODE_KERNEL_EXPORT
+    static Support::Mutex m;
+    /// Construct with predefined group id \a gid0
+    Group(unsigned int gid0);
+  public:
+    /// \name Construction and access
+    //@{
+    /// Constructor
+    GECODE_KERNEL_EXPORT
+    Group(void);
+    /// Copy constructor
+    Group(const Group& g);
+    /// Assignment operator
+    Group& operator =(const Group& g);
+    /// Return a unique id for the group
+    unsigned int id(void) const;
+    /// Check whether actor group \a a is included in this group
+    bool in(Group a) const;
+    /// Check whether this is a real group (and not just default)
+    bool in(void) const;
+    //@}
+    /// Group of all actors
+    GECODE_KERNEL_EXPORT
+    static Group all;
+    /// Group of actors not in any user-defined group
+    GECODE_KERNEL_EXPORT
+    static Group default;
+  };
 
+  /**
+   * \brief Group of propagators
+   * \ingroup TaskGroup
+   */
+  class PropagatorGroup : public Group {
+    friend class Propagator;
+    friend class ExecInfo;
+  protected:
+    /// Initialize with group id \a gid
+    PropagatorGroup(unsigned int gid);
+  public:
+    /// \name Construction
+    //@{
+    /// Constructor
+    PropagatorGroup(void);
+    /// Copy constructor
+    PropagatorGroup(const PropagatorGroup& g);
+    /// Assignment operator
+    PropagatorGroup& operator =(const PropagatorGroup& g);
+    /// To augment a space argument
+    Home operator ()(Space& home);
+    //@}
+    /// \name Operations on groups
+    //@{
+    /// Return number of propagators in a group
+    GECODE_KERNEL_EXPORT
+    unsigned int size(Space& home) const;
+    /// Kill all propagators in a group
+    GECODE_KERNEL_EXPORT
+    void kill(Space& home);
+    /// Disable all propagators in a group
+    GECODE_KERNEL_EXPORT
+    void disable(Space& home);
+    /**
+     * \brief Enable all propagators in a group
+     *
+     * If \a s is true, the propagators will be scheduled for propagation
+     * if needed.
+     */
+    GECODE_KERNEL_EXPORT
+    void enable(Space& home, bool s=false);
+    //@}
+    /// Group of all propagators
+    GECODE_KERNEL_EXPORT
+    static PropagatorGroup all;
+    /// Group of propagators not in any user-defined group
+    GECODE_KERNEL_EXPORT
+    static PropagatorGroup default;
+  };
+
+  /**
+   * \brief Group of branchers
+   * \ingroup TaskGroup
+   */
+  class BrancherGroup : public Group {
+    friend class Brancher;
+  protected:
+    /// Initialize with group id \a gid
+    BrancherGroup(unsigned int gid);
+  public:
+    /// \name Construction
+    //@{
+    /// Constructor
+    BrancherGroup(void);
+    /// Copy constructor
+    BrancherGroup(const BrancherGroup& g);
+    /// Assignment operator
+    BrancherGroup& operator =(const BrancherGroup& g);
+    /// To augment a space argument
+    Home operator ()(Space& home);
+    //@}
+    /// \name Operations on groups
+    //@{
+    /// Return number of branchers in a group
+    GECODE_KERNEL_EXPORT
+    unsigned int size(Space& home) const;
+    /// Kill all branchers in a group
+    GECODE_KERNEL_EXPORT
+    void kill(Space& home);
+    //@}
+    /// Group of all branchers
+    GECODE_KERNEL_EXPORT
+    static BrancherGroup all;
+    /// Group of branchers not in any user-defined group
+    GECODE_KERNEL_EXPORT
+    static BrancherGroup default;
+  };
 
   /**
    * \brief %Home class for posting propagators
    */
   class Home {
+    friend class PostInfo;
   protected:
     /// The space where the propagator is to be posted
     Space& s;
     /// A propagator (possibly) that is currently being rewritten
     Propagator* p;
+    /// A propagator group
+    PropagatorGroup pg;
+    /// A brancher group
+    BrancherGroup bg;
   public:
     /// \name Conversion
     //@{
-    /// Initialize the home with space \a s and propagator \a p
-    Home(Space& s, Propagator* p=NULL);
+    /// Initialize the home with space \a s and propagator \a p and group \a g
+    Home(Space& s, Propagator* p=NULL,
+         PropagatorGroup pg=PropagatorGroup::default,
+         BrancherGroup bg=BrancherGroup::default);
     /// Assignment operator
     Home& operator =(const Home& h);
     /// Retrieve the space of the home
@@ -723,8 +882,16 @@ namespace Gecode {
     //@{
     /// Return a home extended by propagator to be rewritten
     Home operator ()(Propagator& p);
+    /// Return a home extended by a propagator group
+    Home operator ()(PropagatorGroup pg);
+    /// Return a home extended by a brancher group
+    Home operator ()(BrancherGroup bg);
     /// Return propagator (or NULL) for currently rewritten propagator
     Propagator* propagator(void) const;
+    /// Return propagator group
+    PropagatorGroup propagatorgroup(void) const;
+    /// Return brancher group
+    BrancherGroup branchergroup(void) const;
     //@}
     /// \name Forwarding of common space operations
     //@{
@@ -735,6 +902,60 @@ namespace Gecode {
     ///  Notice actor property
     void notice(Actor& a, ActorProperty p, bool duplicate=false);
     //@}
+  };
+
+  /**
+   * \brief Execution information
+   */
+  class ExecInfo {
+    friend class Space;
+    friend class PostInfo;
+  public:
+    /// What is currently executing
+    enum What {
+      /// A propagator is currently executing
+      PROPAGATOR = 0,
+      /// A brancher is executing
+      BRANCHER   = 1,
+      /// A post function is executing
+      POST       = 2,
+      /// Unknown
+      OTHER      = 3
+    };
+  protected:
+    /// Encoding a tagged pointer or a tagged group id
+    ptrdiff_t who;
+    /// Record that propagator \a p is executing
+    void propagator(Propagator& p);
+    /// Record that brancher \a b is executing
+    void brancher(Brancher& b);
+    /// Record that a post function with propagator group \a g is executing
+    void post(PropagatorGroup g);
+    /// Record that nothing is known at this point
+    void other(void);
+  public:
+    /// Return what is currently executing
+    What what(void) const;
+    /// Return currently executing propagator
+    const Propagator& propagator(void) const;
+    /// Return currently executing brancher
+    const Brancher& brancher(void) const;
+    /// Return propagator group of currently executing post function
+    PropagatorGroup post(void) const;
+  };
+
+  /**
+   * \brief Class to set group information when a post function is executed
+   */
+  class PostInfo {
+  protected:
+    /// The home space
+    Space& h;
+  public:
+    /// Set information
+    PostInfo(Home home);
+    /// Reset information
+    ~PostInfo(void);
   };
 
   /**
@@ -756,8 +977,8 @@ namespace Gecode {
       /// A list of advisors (used during cloning)
       Gecode::ActorLink* advisors;
     } u;
-    /// A reference to a counter for afc
-    GlobalAFC::Counter& gafc;
+    /// A tagged pointer combining a pointer to global propagator information and whether the propagator is disabled
+    void* gpi_disabled;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Propagator* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -769,10 +990,21 @@ namespace Gecode {
     Propagator(Space& home, bool share, Propagator& p);
     /// Return forwarding pointer during copying
     Propagator* fwd(void) const;
+    /// Provide access to global propagator information
+    GPI::Info& gpi(void);
 
   public:
     /// \name Propagation
     //@{
+    /**
+     * \brief Schedule function
+     *
+     * The function is executed when a propagator is enabled again.
+     * Note that a propagator should be scheduled with the right
+     * modification event delta and should only be scheduled if
+     * it is legal to execute the propagator.
+     */
+    virtual void schedule(Space& home) = 0;
     /**
      * \brief Propagation function
      *
@@ -849,6 +1081,21 @@ namespace Gecode {
     //@{
     /// Return the accumlated failure count
     double afc(const Space& home) const;
+    //@}
+    /// \name Id and group support
+    //@{
+    /// Return propagator id
+    unsigned int id(void) const;
+    /// Return group propagator belongs to
+    PropagatorGroup group(void) const;
+    /// Whether propagator is currently disabled
+    bool disabled(void) const;
+    /// Kill propagator
+    void kill(Space& home);
+    /// Disable propagator
+    void disable(void);
+    /// Enable propagator
+    void enable(void);
     //@}
   };
 
@@ -932,6 +1179,8 @@ namespace Gecode {
     Advisor(Space& home, Propagator& p, Council<A>& c);
     /// Copying constructor
     Advisor(Space& home, bool share, Advisor& a);
+    /// Provide access to execution information
+    const ExecInfo& operator ()(const Space& home) const;
 
     /// \name Memory management
     //@{
@@ -978,6 +1227,8 @@ namespace Gecode {
     virtual void subscribe(Space& home, Propagator& p) = 0;
     /// Cancel propagator \a p from all views of the no-good literal
     virtual void cancel(Space& home, Propagator& p) = 0;
+    /// Schedule propagator \a p for all views of the no-good literal
+    virtual void schedule(Space& home, Propagator& p) = 0;
     /// Test the status of the no-good literal
     virtual NGL::Status status(const Space& home) const = 0;
     /// Propagate the negation of the no-good literal
@@ -1030,8 +1281,8 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT Choice : public HeapAllocated {
     friend class Space;
   private:
-    unsigned int _id;  ///< Identity to match creating brancher
-    unsigned int _alt; ///< Number of alternatives
+    unsigned int bid; ///< Identity to match creating brancher
+    unsigned int alt; ///< Number of alternatives
 
     /// Return id of the creating brancher
     unsigned int id(void) const;
@@ -1064,8 +1315,10 @@ namespace Gecode {
     friend class Space;
     friend class Choice;
   private:
-    /// Unique identity
-    unsigned int _id;
+    /// Unique brancher identity
+    unsigned int bid;
+    /// Group id
+    unsigned int gid;
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static Brancher* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
@@ -1078,8 +1331,6 @@ namespace Gecode {
   public:
     /// \name Brancher
     //@{
-    /// Return unsigned brancher id
-    unsigned int id(void) const;
     /**
      * \brief Check status of brancher, return true if alternatives left
      *
@@ -1135,6 +1386,15 @@ namespace Gecode {
     virtual void print(const Space& home, const Choice& c, unsigned int a,
                        std::ostream& o) const;
     //@}
+    /// \name Id and group support
+    //@{
+    /// Return brancher id
+    unsigned int id(void) const;
+    /// Return group brancher belongs to
+    BrancherGroup group(void) const;
+    /// Kill brancher
+    void kill(Space& home);
+    //@}
   };
 
   /**
@@ -1148,22 +1408,18 @@ namespace Gecode {
   class BrancherHandle {
   private:
     /// Id of the brancher
-    unsigned int _id;
+    unsigned int bid;
   public:
     /// Create handle as unitialized
     BrancherHandle(void);
     /// Create handle for brancher \a b
     BrancherHandle(const Brancher& b);
-    /// Update during cloning
-    void update(Space& home, bool share, BrancherHandle& bh);
     /// Return brancher id
     unsigned int id(void) const;
     /// Check whether brancher is still active
     bool operator ()(const Space& home) const;
     /// Kill the brancher
     void kill(Space& home);
-    /// Kill all branchers
-    static void killall(Space& home);
   };
 
   /**
@@ -1388,8 +1644,13 @@ namespace Gecode {
   class GECODE_VTABLE_EXPORT Space : public HeapAllocated {
     friend class Actor;
     friend class Propagator;
+    friend class PropagatorGroup;
+    friend class Propagators;
     friend class Brancher;
+    friend class BrancherGroup;
+    friend class Branchers;
     friend class Advisor;
+    template <class A> friend class Council;
     template<class VIC> friend class VarImp;
     template<class VarImp> friend class VarImpDisposer;
     friend class SharedHandle;
@@ -1397,13 +1658,14 @@ namespace Gecode {
     friend class Region;
     friend class AFC;
     friend class BrancherHandle;
+    friend class PostInfo;
   private:
     /// Manager for shared memory areas
     SharedMemory* sm;
     /// Performs memory management for space
     MemoryManager mm;
     /// Global AFC information
-    GlobalAFC gafc;
+    GPI gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -1428,16 +1690,21 @@ namespace Gecode {
     Brancher* b_commit;
     /// Find brancher with identity \a id
     Brancher* brancher(unsigned int id);
+
+    /// Kill brancher \a b
+    void kill(Brancher& b);
+    /// Kill propagator \a p
+    void kill(Propagator& p);
+
     /// Kill brancher with identity \a id
     GECODE_KERNEL_EXPORT
     void kill_brancher(unsigned int id);
-    /// Kill all branchers
-    GECODE_KERNEL_EXPORT
-    void kill_branchers(void);
+
     /// Reserved brancher id (never created)
-    static const unsigned reserved_branch_id = 0U;
+    static const unsigned reserved_bid = 0U;
+
     union {
-      /// Data only available during propagation
+      /// Data only available during propagation or branching
       struct {
         /**
          * \brief Cost level with next propagator to be executed
@@ -1455,9 +1722,11 @@ namespace Gecode {
         /// Scheduled propagators according to cost
         ActorLink queue[PropCost::AC_MAX+1];
         /// Id of next brancher to be created
-        unsigned int branch_id;
+        unsigned int bid;
         /// Number of subscriptions
         unsigned int n_sub;
+        /// Execution information
+        ExecInfo ei;
       } p;
       /// Data available only during copying
       struct {
@@ -2045,25 +2314,15 @@ namespace Gecode {
      * \ingroup TaskActor
      */
     bool stable(void) const;
-    /**
-     * \brief Return number of propagators
-     *
-     * Note that this function takes linear time in the number of
-     * propagators.
-     */
-    GECODE_KERNEL_EXPORT unsigned int propagators(void) const;
-    /**
-     * \brief Return number of branchers
-     *
-     * Note that this function takes linear time in the number of
-     * branchers.
-     */
-    GECODE_KERNEL_EXPORT unsigned int branchers(void) const;
 
     /// \name Conversion from Space to Home
     //@{
     /// Return a home for this space with the information that \a p is being rewritten
     Home operator ()(Propagator& p);
+    /// Return a home for this space with propagator group information \a pg
+    Home operator ()(PropagatorGroup pg);
+    /// Return a home for this space with brancher group information \a bg
+    Home operator ()(BrancherGroup bg);
     //@}
 
     /**
@@ -2303,54 +2562,6 @@ namespace Gecode {
     T& construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5);
     //@}
 
-    /**
-     * \brief Class to iterate over propagators of a space
-     *
-     * Note that the iterator cannot be used during cloning.
-     */
-    class Propagators {
-    private:
-      /// current space
-      const Space& home;
-      /// current queue
-      const ActorLink* q;
-      /// current propagator
-      const ActorLink* c;
-      /// end mark
-      const ActorLink* e;
-    public:
-      /// Initialize
-      Propagators(const Space& home);
-      /// Test whether there are propagators left
-      bool operator ()(void) const;
-      /// Move iterator to next propagator
-      void operator ++(void);
-      /// Return propagator
-      const Propagator& propagator(void) const;
-    };
-
-    /**
-     * \brief Class to iterate over branchers of a space
-     *
-     * Note that the iterator cannot be used during cloning.
-     */
-    class Branchers {
-    private:
-      /// current brancher
-      const ActorLink* c;
-      /// end mark
-      const ActorLink* e;
-    public:
-      /// Initialize
-      Branchers(const Space& home);
-      /// Test whether there are branchers left
-      bool operator ()(void) const;
-      /// Move iterator to next brancher
-      void operator ++(void);
-      /// Return propagator
-      const Brancher& brancher(void) const;
-    };
-
     /// \name Low-level support for AFC
     //@{
     /// %Set AFC decay factor to \a d
@@ -2362,6 +2573,136 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void afc_set(double a);
     //@}
+
+  private:
+    /**
+     * \brief Class to iterate over propagators of a space
+     *
+     * Note that the iterator cannot be used during cloning.
+     */
+    class Propagators {
+    private:
+      /// Current space
+      Space& home;
+      /// Current queue
+      ActorLink* q;
+      /// Current propagator
+      ActorLink* c;
+      /// End mark
+      ActorLink* e;
+    public:
+      /// Initialize
+      Propagators(Space& home);
+      /// Test whether there are propagators left
+      bool operator ()(void) const;
+      /// Move iterator to next propagator
+      void operator ++(void);
+      /// Return propagator
+      Propagator& propagator(void) const;
+    };
+    /**
+     * \brief Class to iterate over scheduled propagators of a space
+     *
+     * Note that the iterator cannot be used during cloning.
+     */
+    class ScheduledPropagators {
+    private:
+      /// current space
+      Space& home;
+      /// current queue
+      ActorLink* q;
+      /// current propagator
+      ActorLink* c;
+      /// end mark
+      ActorLink* e;
+    public:
+      /// Initialize
+      ScheduledPropagators(Space& home);
+      /// Test whether there are propagators left
+      bool operator ()(void) const;
+      /// Move iterator to next propagator
+      void operator ++(void);
+      /// Return propagator
+      Propagator& propagator(void) const;
+    };
+    /**
+     * \brief Class to iterate over idle propagators of a space
+     *
+     * Note that the iterator cannot be used during cloning.
+     */
+    class IdlePropagators {
+    private:
+      /// Current propagator
+      ActorLink* c;
+      /// End mark
+      ActorLink* e;
+    public:
+      /// Initialize
+      IdlePropagators(Space& home);
+      /// Test whether there are propagators left
+      bool operator ()(void) const;
+      /// Move iterator to next propagator
+      void operator ++(void);
+      /// Return propagator
+      Propagator& propagator(void) const;
+    };
+    /**
+     * \brief Class to iterate over branchers of a space
+     *
+     * Note that the iterator cannot be used during cloning.
+     */
+    class Branchers {
+    private:
+      /// current brancher
+      ActorLink* c;
+      /// end mark
+      ActorLink* e;
+    public:
+      /// Initialize
+      Branchers(Space& home);
+      /// Test whether there are branchers left
+      bool operator ()(void) const;
+      /// Move iterator to next brancher
+      void operator ++(void);
+      /// Return propagator
+      Brancher& brancher(void) const;
+    };
+  };
+
+  /// Class to iterate over propagators in a group
+  class Propagators {
+  private:
+    /// Propagators
+    Space::Propagators ps;
+    /// Current group
+    PropagatorGroup g;
+  public:
+    /// Initialize
+    Propagators(Space& home, PropagatorGroup g);
+    /// Test whether there are propagators left
+    bool operator ()(void) const;
+    /// Move iterator to next propagator
+    void operator ++(void);
+    /// Return propagator
+    const Propagator& propagator(void) const;
+  };
+
+  /// Class to iterate over branchers in a group
+  class Branchers {
+  private:
+    /// Branchers
+    Space::Branchers bs;
+    /// Current group
+    BrancherGroup g;
+  public:
+    /// Initialize
+    Branchers(Space& home, BrancherGroup g);
+    /// Test whether there are branchers left
+    bool operator ()(void) const;
+    /// Move iterator to next brancher
+    void operator ++(void);
+    /// Return propagator
+    const Brancher& brancher(void) const;
   };
 
 
@@ -2906,7 +3247,7 @@ namespace Gecode {
 
   forceinline double
   Space::afc_decay(void) const {
-    return gafc.decay();
+    return gpi.decay();
   }
 
   forceinline size_t
@@ -2920,10 +3261,12 @@ namespace Gecode {
    *
    */
   forceinline
-  Home::Home(Space& s0, Propagator* p0) : s(s0), p(p0) {}
+  Home::Home(Space& s0, Propagator* p0,
+             PropagatorGroup pg0, BrancherGroup bg0)
+    : s(s0), p(p0), pg(pg0), bg(bg0) {}
   forceinline Home&
   Home::operator =(const Home& h) {
-    s=h.s; p=h.p;
+    s=h.s; p=h.p; pg=h.pg; bg=h.bg;
     return *this;
   }
   forceinline
@@ -2935,6 +3278,14 @@ namespace Gecode {
     return Home(s,&p);
   }
   forceinline Home
+  Home::operator ()(PropagatorGroup pg) {
+    return Home(s,NULL,pg,BrancherGroup::default);
+  }
+  forceinline Home
+  Home::operator ()(BrancherGroup bg) {
+    return Home(s,NULL,PropagatorGroup::default,bg);
+  }
+  forceinline Home
   Space::operator ()(Propagator& p) {
     return Home(*this,&p);
   }
@@ -2942,6 +3293,68 @@ namespace Gecode {
   Home::propagator(void) const {
     return p;
   }
+  forceinline PropagatorGroup
+  Home::propagatorgroup(void) const {
+    return pg;
+  }
+  forceinline BrancherGroup
+  Home::branchergroup(void) const {
+    return bg;
+  }
+
+  /*
+   * Execution information
+   *
+   */
+  forceinline void
+  ExecInfo::propagator(Propagator& p) {
+    who = reinterpret_cast<ptrdiff_t>(&p) | PROPAGATOR;
+  }
+  forceinline void
+  ExecInfo::brancher(Brancher& b) {
+    who = reinterpret_cast<ptrdiff_t>(&b) | BRANCHER;
+  }
+  forceinline void
+  ExecInfo::post(PropagatorGroup g) {
+    who = (g.id() << 2) | POST;
+  }
+  forceinline void
+  ExecInfo::other(void) {
+    who = OTHER;
+  }
+  forceinline ExecInfo::What
+  ExecInfo::what(void) const {
+    return static_cast<What>(who & 3);
+  }
+  forceinline const Propagator&
+  ExecInfo::propagator(void) const {
+    assert(what() == PROPAGATOR);
+    // Because PROPAGATOR == 0
+    return *reinterpret_cast<Propagator*>(who);
+  }
+  forceinline const Brancher&
+  ExecInfo::brancher(void) const {
+    assert(what() == BRANCHER);
+    return *reinterpret_cast<Brancher*>(who & ~3);
+  }
+  forceinline PropagatorGroup
+  ExecInfo::post(void) const {
+    assert(what() == POST);
+    return PropagatorGroup(who >> 2);
+  }
+
+  /*
+   * Post information
+   */
+  forceinline
+  PostInfo::PostInfo(Home home) : h(home) {
+    h.pc.p.ei.post(home.propagatorgroup());
+  }
+  forceinline
+  PostInfo::~PostInfo(void) {
+    h.pc.p.ei.other();
+  }
+
 
   /*
    * Propagator
@@ -2968,13 +3381,33 @@ namespace Gecode {
     return static_cast<Propagator*>(prev());
   }
 
+  forceinline bool
+  Propagator::disabled(void) const {
+    return Support::marked(gpi_disabled);
+  }
+
+  forceinline void
+  Propagator::disable(void) {
+    gpi_disabled = Support::mark(gpi_disabled);
+  }
+
+  forceinline void
+  Propagator::enable(void) {
+    gpi_disabled = Support::funmark(gpi_disabled);
+  }
+
+  forceinline GPI::Info&
+  Propagator::gpi(void) {
+    return *static_cast<GPI::Info*>(Support::funmark(gpi_disabled));
+  }
+
   forceinline
   Propagator::Propagator(Home home)
-    : gafc((home.propagator() != NULL) ?
-           // Inherit time counter information
-           home.propagator()->gafc :
-           // New propagator information
-           static_cast<Space&>(home).gafc.allocate()) {
+    : gpi_disabled((home.propagator() != NULL) ?
+                   // Inherit propagator information
+                   home.propagator()->gpi_disabled :
+                   // New propagator information
+                   static_cast<Space&>(home).gpi.allocate(home.propagatorgroup().gid)) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     static_cast<Space&>(home).pl.head(this);
@@ -2982,7 +3415,7 @@ namespace Gecode {
 
   forceinline
   Propagator::Propagator(Space&, bool, Propagator& p)
-    : gafc(p.gafc) {
+    : gpi_disabled(p.gpi_disabled) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     // Set forwarding pointer
@@ -2996,7 +3429,17 @@ namespace Gecode {
 
   forceinline double
   Propagator::afc(const Space& home) const {
-    return const_cast<Space&>(home).gafc.afc(gafc);
+    return const_cast<Space&>(home).gpi.afc(const_cast<Propagator&>(*this).gpi());
+  }
+
+  forceinline unsigned int
+  Propagator::id(void) const {
+    return const_cast<Propagator&>(*this).gpi().pid;
+  }
+
+  forceinline PropagatorGroup
+  Propagator::group(void) const {
+    return PropagatorGroup(const_cast<Propagator&>(*this).gpi().gid);
   }
 
   forceinline ExecStatus
@@ -3049,8 +3492,9 @@ namespace Gecode {
 
   forceinline
   Brancher::Brancher(Home home) :
-    _id(static_cast<Space&>(home).pc.p.branch_id++) {
-    if (static_cast<Space&>(home).pc.p.branch_id == 0U)
+    bid(static_cast<Space&>(home).pc.p.bid++),
+    gid(home.propagatorgroup().gid) {
+    if (static_cast<Space&>(home).pc.p.bid == 0U)
       throw TooManyBranchers("Brancher::Brancher");
     // If no brancher available, make it the first one
     if (static_cast<Space&>(home).b_status == &static_cast<Space&>(home).bl) {
@@ -3063,14 +3507,38 @@ namespace Gecode {
 
   forceinline
   Brancher::Brancher(Space&, bool, Brancher& b)
-    : _id(b._id) {
+    : bid(b.bid), gid(b.gid) {
     // Set forwarding pointer
     b.prev(this);
   }
 
   forceinline unsigned int
   Brancher::id(void) const {
-    return _id;
+    return bid;
+  }
+
+  forceinline BrancherGroup
+  Brancher::group(void) const {
+    return BrancherGroup(gid);
+  }
+
+  forceinline void
+  Space::kill(Brancher& b) {
+    assert(!failed());
+    // Make sure that neither b_status nor b_commit does not point to b!
+    if (b_commit == &b)
+      b_commit = Brancher::cast(b.next());
+    if (b_status == &b)
+      b_status = Brancher::cast(b.next());
+    b.unlink();
+    rfree(&b,b.dispose(*this));
+  }
+
+  forceinline void
+  Space::kill(Propagator& p) {
+    assert(!failed());
+    p.unlink();
+    rfree(&p,p.dispose(*this));
   }
 
   forceinline Brancher*
@@ -3114,29 +3582,21 @@ namespace Gecode {
    */
   forceinline
   BrancherHandle::BrancherHandle(void)
-    : _id(Space::reserved_branch_id) {}
+    : bid(Space::reserved_bid) {}
   forceinline
   BrancherHandle::BrancherHandle(const Brancher& b)
-    : _id(b.id()) {}
-  forceinline void
-  BrancherHandle::update(Space&, bool, BrancherHandle& bh) {
-    _id = bh._id;
-  }
+    : bid(b.id()) {}
   forceinline unsigned int
   BrancherHandle::id(void) const {
-    return _id;
+    return bid;
   }
   forceinline bool
   BrancherHandle::operator ()(const Space& home) const {
-    return const_cast<Space&>(home).brancher(_id) != NULL;
+    return const_cast<Space&>(home).brancher(bid) != NULL;
   }
   forceinline void
   BrancherHandle::kill(Space& home) {
-    home.kill_brancher(_id);
-  }
-  forceinline void
-  BrancherHandle::killall(Space& home) {
-    home.kill_branchers();
+    home.kill_brancher(bid);
   }
 
 
@@ -3162,7 +3622,8 @@ namespace Gecode {
   }
 
   forceinline
-  LocalObject::LocalObject(Home) {
+  LocalObject::LocalObject(Home home) {
+    (void) home;
     ActorLink::cast(this)->prev(NULL);
   }
 
@@ -3207,16 +3668,16 @@ namespace Gecode {
    */
   forceinline
   Choice::Choice(const Brancher& b, const unsigned int a)
-    : _id(b.id()), _alt(a) {}
+    : bid(b.id()), alt(a) {}
 
   forceinline unsigned int
   Choice::alternatives(void) const {
-    return _alt;
+    return alt;
   }
 
   forceinline unsigned int
   Choice::id(void) const {
-    return _id;
+    return bid;
   }
 
   forceinline
@@ -3311,6 +3772,11 @@ namespace Gecode {
     Advisor* n = Advisor::cast(next());
     if ((n != NULL) && n->disposed())
       next(n->next());
+  }
+
+  forceinline const ExecInfo&
+  Advisor::operator ()(const Space& home) const {
+    return home.pc.p.ei;
   }
 
   template<class A>
@@ -3786,6 +4252,16 @@ namespace Gecode {
   }
 
   template<class VIC>
+  void
+  VarImp<VIC>::schedule(Space& home, Propagator& p, PropCond pc,
+                        bool assigned, ModEvent me) {
+    if (assigned)
+      VarImp<VIC>::schedule(home,p,ME_GEN_ASSIGNED);
+    else if (pc != PC_GEN_ASSIGNED)
+      VarImp<VIC>::schedule(home,p,me);
+  }
+
+  template<class VIC>
   forceinline void
   VarImp<VIC>::remove(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
@@ -3890,7 +4366,7 @@ namespace Gecode {
         break;
       case ES_FAILED:
         if (home.afc_enabled())
-          home.gafc.fail(p.gafc);
+          home.gpi.fail(p.gpi());
         return false;
       case ES_NOFIX:
         schedule(home,p,me);
@@ -4105,7 +4581,7 @@ namespace Gecode {
    *
    */
   forceinline
-  Space::Propagators::Propagators(const Space& home0)
+  Space::Propagators::Propagators(Space& home0)
     : home(home0), q(home.pc.p.active) {
     while (q >= &home.pc.p.queue[0]) {
       if (q->next() != q) {
@@ -4150,13 +4626,73 @@ namespace Gecode {
       }
     }
   }
-  forceinline const Propagator&
+  forceinline Propagator&
   Space::Propagators::propagator(void) const {
     return *Propagator::cast(c);
   }
 
+
   forceinline
-  Space::Branchers::Branchers(const Space& home)
+  Space::ScheduledPropagators::ScheduledPropagators(Space& home0)
+    : home(home0), q(home.pc.p.active) {
+    while (q >= &home.pc.p.queue[0]) {
+      if (q->next() != q) {
+        c = q->next(); e = q; q--;
+        return;
+      }
+      q--;
+    }
+    q = c = e = NULL;
+  }
+  forceinline bool
+  Space::ScheduledPropagators::operator ()(void) const {
+    return c != NULL;
+  }
+  forceinline void
+  Space::ScheduledPropagators::operator ++(void) {
+    c = c->next();
+    if (c == e) {
+      if (q == NULL) {
+        c = NULL;
+      } else {
+        while (q >= &home.pc.p.queue[0]) {
+          if (q->next() != q) {
+            c = q->next(); e = q; q--;
+            return;
+          }
+          q--;
+        }
+        q = c = e = NULL;
+      }
+    }
+  }
+  forceinline Propagator&
+  Space::ScheduledPropagators::propagator(void) const {
+    return *Propagator::cast(c);
+  }
+
+
+  forceinline
+  Space::IdlePropagators::IdlePropagators(Space& home) {
+    c = Propagator::cast(home.pl.next());
+    e = Propagator::cast(&home.pl);
+  }
+  forceinline bool
+  Space::IdlePropagators::operator ()(void) const {
+    return c != e;
+  }
+  forceinline void
+  Space::IdlePropagators::operator ++(void) {
+    c = c->next();
+  }
+  forceinline Propagator&
+  Space::IdlePropagators::propagator(void) const {
+    return *Propagator::cast(c);
+  }
+
+
+  forceinline
+  Space::Branchers::Branchers(Space& home)
     : c(Brancher::cast(home.bl.next())), e(&home.bl) {}
   forceinline bool
   Space::Branchers::operator ()(void) const {
@@ -4166,10 +4702,132 @@ namespace Gecode {
   Space::Branchers::operator ++(void) {
     c = c->next();
   }
-  forceinline const Brancher&
+  forceinline Brancher&
   Space::Branchers::brancher(void) const {
     return *Brancher::cast(c);
   }
+
+
+  /*
+   * Groups of actors
+   */
+  forceinline
+  Group::Group(unsigned int gid0) : gid(gid0) {}
+
+  forceinline bool
+  Group::in(Group actor) const {
+    return (gid == GID_ALL) || (gid == actor.gid);
+  }
+
+  forceinline bool
+  Group::in(void) const {
+    return (gid != GID_ALL) && (gid != GID_DEFAULT);
+  }
+
+  forceinline
+  Group::Group(const Group& g) : gid(g.gid) {}
+
+  forceinline Group&
+  Group::operator =(const Group& g) {
+    gid=g.gid; return *this;
+  }
+
+  forceinline unsigned int
+  Group::id(void) const {
+    return gid;
+  }
+
+
+  forceinline
+  PropagatorGroup::PropagatorGroup(void) {}
+
+  forceinline
+  PropagatorGroup::PropagatorGroup(unsigned int gid)
+    : Group(gid) {}
+
+  forceinline
+  PropagatorGroup::PropagatorGroup(const PropagatorGroup& g)
+    : Group(g) {}
+
+  forceinline PropagatorGroup&
+  PropagatorGroup::operator =(const PropagatorGroup& g) {
+    return static_cast<PropagatorGroup&>(Group::operator =(g));
+  }
+
+  forceinline Home
+  PropagatorGroup::operator ()(Space& home) {
+    return Home(home,NULL,*this,BrancherGroup::default);
+  }
+
+
+  forceinline
+  BrancherGroup::BrancherGroup(void) {}
+
+  forceinline
+  BrancherGroup::BrancherGroup(unsigned int gid)
+    : Group(gid) {}
+
+  forceinline
+  BrancherGroup::BrancherGroup(const BrancherGroup& g)
+    : Group(g) {}
+
+  forceinline BrancherGroup&
+  BrancherGroup::operator =(const BrancherGroup& g) {
+    return static_cast<BrancherGroup&>(Group::operator =(g));
+  }
+
+  forceinline Home
+  BrancherGroup::operator ()(Space& home) {
+    return Home(home,NULL,PropagatorGroup::default,*this);
+  }
+
+
+  /*
+   * Iterators for propagators and branchers in a group
+   *
+   */
+  forceinline
+  Propagators::Propagators(Space& home, PropagatorGroup g0)
+    : ps(home), g(g0) {
+    while (ps() && !g.in(ps.propagator().group()))
+      ++ps;
+  }
+  forceinline bool
+  Propagators::operator ()(void) const {
+    return ps();
+  }
+  forceinline void
+  Propagators::operator ++(void) {
+    do
+      ++ps;
+    while (ps() && !g.in(ps.propagator().group()));
+  }
+  forceinline const Propagator&
+  Propagators::propagator(void) const {
+    return ps.propagator();
+  }
+
+  forceinline
+  Branchers::Branchers(Space& home, BrancherGroup g0)
+    : bs(home), g(g0) {
+    while (bs() && !g.in(bs.brancher().group()))
+      ++bs;
+  }
+  forceinline bool
+  Branchers::operator ()(void) const {
+    return bs();
+  }
+  forceinline void
+  Branchers::operator ++(void) {
+    do
+      ++bs;
+    while (bs() && !g.in(bs.brancher().group()));
+  }
+  forceinline const Brancher&
+  Branchers::brancher(void) const {
+    return bs.brancher();
+  }
+
 
   /*
    * Space construction support

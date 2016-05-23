@@ -58,6 +58,12 @@ namespace Gecode { namespace Int {
   }
 
   template<class Task, class PL>
+  void
+  TaskProp<Task,PL>::schedule(Space& home) {
+    t.schedule(home,*this,PL::pc);
+  }
+
+  template<class Task, class PL>
   forceinline size_t
   TaskProp<Task,PL>::dispose(Space& home) {
     t.cancel(home,*this,PL::pc);

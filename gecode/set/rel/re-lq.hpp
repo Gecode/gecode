@@ -64,6 +64,14 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template<class View0, class View1, ReifyMode rm, bool strict>
+  void
+  ReLq<View0,View1,rm,strict>::schedule(Space& home) {
+    b.schedule(home,*this, Gecode::Int::PC_INT_VAL);
+    x0.schedule(home,*this, PC_SET_ANY);
+    x1.schedule(home,*this, PC_SET_ANY);
+  }
+
+  template<class View0, class View1, ReifyMode rm, bool strict>
   forceinline size_t
   ReLq<View0,View1,rm,strict>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);

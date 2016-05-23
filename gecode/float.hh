@@ -1437,7 +1437,7 @@ namespace Gecode {
      * AFC storage has been constructed with the default constructor.
      *
      */
-    void init(Home, const FloatVarArgs& x, double d=1.0);
+    void init(Home home, const FloatVarArgs& x, double d=1.0);
   };
 
 }
@@ -1488,7 +1488,7 @@ namespace Gecode {
      *
      */
     GECODE_FLOAT_EXPORT void
-    init(Home, const FloatVarArgs& x, double d=1.0,
+    init(Home home, const FloatVarArgs& x, double d=1.0,
          FloatBranchMerit bm=NULL);
   };
 
@@ -1793,6 +1793,98 @@ namespace Gecode {
          FloatVarValPrint vvp=NULL);
   //@}
 
+}
+
+
+#include <gecode/float/trace/trace-view.hpp>
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskFloatTrace Tracing for float variables
+   * \ingroup TaskTrace
+   */
+
+  /**
+   * \brief Trace delta information for float variables
+   * \ingroup TaskFloatTrace
+   */
+  class FloatTraceDelta {
+  protected:
+    /// New view
+    Float::FloatView n;
+    /// Delta information
+    const Delta& d;
+  public:
+    /// \name Constructor
+    //@{
+    /// Initialize with old trace view \a o, new view \a n, and delta \a d
+    FloatTraceDelta(Float::FloatTraceView o, Float::FloatView n,
+                    const Delta& d);
+    //@}
+    /// \name Access
+    //@{
+    /// Return minimum
+    FloatNum min(void) const;
+    /// Return maximum
+    FloatNum max(void) const;
+    //@}
+  };
+
+}
+
+#include <gecode/float/trace/delta.hpp>
+
+#include <gecode/float/trace/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Tracer for float variables
+   * \ingroup TaskFloatTrace
+   */
+  typedef Tracer<Float::FloatView> FloatTracer;
+  /**
+   * \brief TraceRecorder for float variables
+   * \ingroup TaskFloatTrace
+   */
+  typedef TraceRecorder<Float::FloatView> FloatTraceRecorder;
+
+  /**
+   * \brief Standard float variable tracer
+   * \ingroup TaskFloatTrace
+   */
+  class GECODE_FLOAT_EXPORT StdFloatTracer : public FloatTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+  public:
+    /// Initialize with output stream \a os0
+    StdFloatTracer(std::ostream& os0 = std::cerr,
+                   int e = (FloatTracer::INIT | FloatTracer::PRUNE |
+                            FloatTracer::FIXPOINT | FloatTracer::DONE));
+    /// Print init information
+    virtual void init(const Space& home, const FloatTraceRecorder& t);
+    /// Print prune information
+    virtual void prune(const Space& home, const FloatTraceRecorder& t,
+                       const ExecInfo& ei, int i, FloatTraceDelta& d);
+    /// Print fixpoint information
+    virtual void fixpoint(const Space& home, const FloatTraceRecorder& t);
+    /// Print that trace recorder is done
+    virtual void done(const Space& home, const FloatTraceRecorder& t);
+    /// Default tracer (printing to std::cerr)
+    static StdFloatTracer def;
+  };
+
+
+  /**
+   * \brief Create a tracer for float variables
+   * \ingroup TaskFloatTrace
+   */
+  GECODE_FLOAT_EXPORT void
+  trace(Home home, const FloatVarArgs& x,
+        TraceFilter tf = TraceFilter::all,
+        FloatTracer& t = StdFloatTracer::def);
 }
 
 #endif

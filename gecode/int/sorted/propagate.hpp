@@ -382,6 +382,15 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
+  void
+  Sorted<View,Perm>::schedule(Space& home) {
+    x.schedule(home, *this, PC_INT_BND);
+    y.schedule(home, *this, PC_INT_BND);
+    if (Perm)
+      z.schedule(home, *this, PC_INT_BND);
+  }
+
+  template<class View, bool Perm>
   ExecStatus
   Sorted<View,Perm>::propagate(Space& home, const ModEventDelta&) {
     int  n           = x.size();

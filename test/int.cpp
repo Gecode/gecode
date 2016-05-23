@@ -343,6 +343,10 @@ namespace Test { namespace Int {
     return true;
   }
 
+  unsigned int
+  TestSpace::propagators(void) {
+    return Gecode::PropagatorGroup::all.size(*this);
+  }
 
   const Gecode::IntPropLevel IntPropLevels::ipls[] =
     {Gecode::IPL_DOM,Gecode::IPL_BND,Gecode::IPL_VAL};

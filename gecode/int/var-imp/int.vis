@@ -58,7 +58,7 @@ Combine:        VAL=VAL, BND=VAL, DOM=VAL
 [ModEvent]
 Name:           BND=SUBSCRIBE
 Combine:        VAL=VAL, BND=BND, DOM=BND
-  /** 
+  /**
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.
@@ -69,7 +69,7 @@ Combine:        VAL=VAL, BND=BND, DOM=BND
 [ModEvent]
 Name:           DOM
 Combine:        VAL=VAL, BND=BND, DOM=DOM
-  /** 
+  /**
    * \brief Domain operation has changed the domain
    *
    * Note that this implies that the domain has not resulted in a value

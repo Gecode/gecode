@@ -77,6 +77,14 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class Val, class A, class B, class C, PropCond pc>
+  void
+  LinTer<Val,A,B,C,pc>::schedule(Space& home) {
+    x0.schedule(home,*this,pc);
+    x1.schedule(home,*this,pc);
+    x2.schedule(home,*this,pc);
+  }
+
+  template<class Val, class A, class B, class C, PropCond pc>
   forceinline size_t
   LinTer<Val,A,B,C,pc>::dispose(Space& home) {
     x0.cancel(home,*this,pc);

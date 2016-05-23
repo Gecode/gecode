@@ -592,6 +592,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View, class Val, class Degree, class StateIdx>
+  void
+  LayeredGraph<View,Val,Degree,StateIdx>::schedule(Space& home) {
+    View::schedule(home,*this,c.empty() ? ME_INT_VAL : ME_INT_DOM);
+  }
+
+  template<class View, class Val, class Degree, class StateIdx>
   ExecStatus
   LayeredGraph<View,Val,Degree,StateIdx>::propagate(Space& home,
                                                     const ModEventDelta&) {

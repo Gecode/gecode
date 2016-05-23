@@ -327,6 +327,24 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
+  void
+  Clause<VX,VY>::schedule(Space& home) {
+    z.schedule(home,*this,PC_BOOL_VAL);
+    if (n_zero == x.size() + y.size())
+      VX::schedule(home,*this,ME_BOOL_VAL);
+    for (int i=x.size(); i--; )
+      if (x[i].one()) {
+        VX::schedule(home,*this,ME_BOOL_VAL);
+        return;
+      }
+    for (int i=y.size(); i--; )
+      if (y[i].one()) {
+        VX::schedule(home,*this,ME_BOOL_VAL);
+        return;
+      }
+  }
+
+  template<class VX, class VY>
   ExecStatus
   Clause<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     if (z.one())
@@ -341,7 +359,7 @@ namespace Gecode { namespace Int { namespace Bool {
       GECODE_ME_CHECK(z.zero_none(home));
       c.dispose(home);
     } else {
-      // There is exactly one view which is one
+      // There is at least one view which is one
       GECODE_ME_CHECK(z.one_none(home));
     }
     return home.ES_SUBSUMED(*this);

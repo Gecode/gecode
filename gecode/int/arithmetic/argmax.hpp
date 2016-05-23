@@ -98,6 +98,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template<class VA, class VB, bool tiebreak>
+  void
+  ArgMax<VA,VB,tiebreak>::schedule(Space& home) {
+    x.schedule(home,*this,PC_INT_BND);
+    y.schedule(home,*this,PC_INT_DOM);
+  }
+
+  template<class VA, class VB, bool tiebreak>
   ExecStatus
   ArgMax<VA,VB,tiebreak>::propagate(Space& home, const ModEventDelta&) {
     /*

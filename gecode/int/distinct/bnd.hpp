@@ -86,6 +86,12 @@ namespace Gecode { namespace Int { namespace Distinct {
       return PropCost::quadratic(PropCost::LO, x.size());
   }
 
+  template<class View>
+  void
+  Bnd<View>::schedule(Space& home) {
+    y.schedule(home,*this,PC_INT_BND);
+  }
+
 
   /// %Rank information
   class Rank {
@@ -193,7 +199,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View, class IntType>
   forceinline ExecStatus
   prop_bnd(Space& home, ViewArray<View>& x,
-            int* minsorted, int* maxsorted) {
+           int* minsorted, int* maxsorted) {
     const int n = x.size();
 
     Region r(home);

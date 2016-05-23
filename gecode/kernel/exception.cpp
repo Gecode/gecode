@@ -54,6 +54,9 @@ namespace Gecode {
   SpaceIllegalAlternative::SpaceIllegalAlternative(const char* l)
     : Exception(l,"Attempt to commit with illegal alternative") {}
 
+  TooManyGroups::TooManyGroups(const char* l)
+    : Exception(l,"Too many groups created") {}
+
   TooManyBranchers::TooManyBranchers(const char* l)
     : Exception(l,"Too many branchers created") {}
 

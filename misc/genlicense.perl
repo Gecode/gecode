@@ -35,7 +35,7 @@
 #
 #
 
-# 
+#
 # Get authors of all files
 #
 
@@ -59,7 +59,7 @@ print <<EOF
   \\page PageLic %Gecode license and authors
 
 \\section SectLicLic GECODE LICENSE AGREEMENT
-			 
+
 This software and its documentation are copyrighted by the
 individual authors as listed in each file. All files, unless explicitly disclaimed in individual files, may be used according to the terms of the
 <a href="http://www.opensource.org/licenses/mit-license.php">
@@ -112,7 +112,7 @@ foreach $n (sort(keys(%fix))) {
 
 print <<EOF
 
-We are also grateful for our users reporting bugs and suggesting 
+We are also grateful for our users reporting bugs and suggesting
 improvements.
 
 */

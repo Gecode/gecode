@@ -15,10 +15,10 @@ dnl in the Software without restriction, including without limitation the rights
 dnl to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 dnl copies of the Software, and to permit persons to whom the Software is
 dnl furnished to do so, subject to the following conditions:
-dnl 
+dnl
 dnl The above copyright notice and this permission notice shall be included in
 dnl all copies or substantial portions of the Software.
-dnl 
+dnl
 dnl THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 dnl IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 dnl FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -39,6 +39,6 @@ AC_SUBST(QECODE,     "qecode")
 
 ../../config.status --file Makefile.in:Makefile.in.in
 
-AC_CONFIG_COMMANDS([Makefile.in]) 
+AC_CONFIG_COMMANDS([Makefile.in])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

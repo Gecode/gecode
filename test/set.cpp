@@ -475,6 +475,11 @@ namespace Test { namespace Set {
     return (!Base::fixpoint() || fixprob());
   }
 
+  unsigned int
+  SetTestSpace::propagators(void) {
+    return Gecode::PropagatorGroup::all.size(*this);
+  }
+
 
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \

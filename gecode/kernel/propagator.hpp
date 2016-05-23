@@ -70,6 +70,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -98,6 +100,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -126,6 +130,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -154,6 +160,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -185,6 +193,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -216,6 +226,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -250,6 +262,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -281,6 +295,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -319,6 +335,13 @@ namespace Gecode {
   PropCost
   UnaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
+  }
+
+  template<class View, PropCond pc>
+  void
+  UnaryPropagator<View,pc>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE)
+      x0.schedule(home,*this,pc);
   }
 
   template<class View, PropCond pc>
@@ -367,6 +390,15 @@ namespace Gecode {
   PropCost
   BinaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
+  }
+
+  template<class View, PropCond pc>
+  void
+  BinaryPropagator<View,pc>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE) {
+      x0.schedule(home,*this,pc);
+      x1.schedule(home,*this,pc);
+    }
   }
 
   template<class View, PropCond pc>
@@ -423,6 +455,16 @@ namespace Gecode {
   }
 
   template<class View, PropCond pc>
+  void
+  TernaryPropagator<View,pc>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE) {
+      x0.schedule(home,*this,pc);
+      x1.schedule(home,*this,pc);
+      x2.schedule(home,*this,pc);
+    }
+  }
+
+  template<class View, PropCond pc>
   forceinline size_t
   TernaryPropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
@@ -467,6 +509,13 @@ namespace Gecode {
   PropCost
   NaryPropagator<View,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size());
+  }
+
+  template<class View, PropCond pc>
+  void
+  NaryPropagator<View,pc>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE)
+      x.schedule(home,*this,pc);
   }
 
   template<class View, PropCond pc>
@@ -518,6 +567,15 @@ namespace Gecode {
   }
 
   template<class View, PropCond pc>
+  void
+  NaryOnePropagator<View,pc>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE) {
+      x.schedule(home,*this,pc);
+      y.schedule(home,*this,pc);
+    }
+  }
+
+  template<class View, PropCond pc>
   forceinline size_t
   NaryOnePropagator<View,pc>::dispose(Space& home) {
     if (pc != PC_GEN_NONE) {
@@ -566,6 +624,15 @@ namespace Gecode {
   MixBinaryPropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                  const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
+  }
+
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
+  void
+  MixBinaryPropagator<View0,pc0,View1,pc1>::schedule(Space& home) {
+    if (pc0 != PC_GEN_NONE)
+      x0.schedule(home,*this,pc0);
+    if (pc1 != PC_GEN_NONE)
+      x1.schedule(home,*this,pc1);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>
@@ -631,6 +698,18 @@ namespace Gecode {
 
   template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
+  void
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::schedule(Space& home) {
+    if (pc0 != PC_GEN_NONE)
+      x0.schedule(home,*this,pc0);
+    if (pc1 != PC_GEN_NONE)
+      x1.schedule(home,*this,pc1);
+    if (pc2 != PC_GEN_NONE)
+      x2.schedule(home,*this,pc2);
+  }
+
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
+            class View2, PropCond pc2>
   forceinline size_t
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::dispose(Space& home) {
     if (pc0 != PC_GEN_NONE)
@@ -681,6 +760,15 @@ namespace Gecode {
   MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(const Space&,
                                                   const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size()+1);
+  }
+
+  template<class View0, PropCond pc0, class View1, PropCond pc1>
+  void
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::schedule(Space& home) {
+    if (pc0 != PC_GEN_NONE)
+      x.schedule(home,*this,pc0);
+    if (pc1 != PC_GEN_NONE)
+      y.schedule(home,*this,pc1);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>

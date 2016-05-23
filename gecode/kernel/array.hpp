@@ -364,16 +364,19 @@ namespace Gecode {
      * \brief Subscribe propagator \a p with propagation condition \a pc to variable
      *
      * In case \a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc,
+                   bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
+    /// Schedule propagator \a p with propagation condition \a pc
+    void schedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
     /// \name Cloning
@@ -1398,9 +1401,9 @@ namespace Gecode {
   template<class View>
   void
   ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                             bool process) {
+                             bool schedule) {
     for (int i = n; i--; )
-      x[i].subscribe(home,p,pc,process);
+      x[i].subscribe(home,p,pc,schedule);
   }
 
   template<class View>
@@ -1422,6 +1425,13 @@ namespace Gecode {
   ViewArray<View>::cancel(Space& home, Advisor& a) {
     for (int i = n; i--; )
       x[i].cancel(home,a);
+  }
+
+  template<class View>
+  void
+  ViewArray<View>::schedule(Space& home, Propagator& p, PropCond pc) {
+    for (int i = n; i--; )
+      x[i].schedule(home,p,pc);
   }
 
   template<class View>

@@ -47,7 +47,7 @@ namespace Gecode {
   rel(Home home, FloatVar x0, FloatRelType frt, FloatVal n) {
     using namespace Float;
     Limits::check(n,"Float::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     FloatView x(x0);
     switch (frt) {
     case FRT_EQ: GECODE_ME_FAIL(x.eq(home,n)); break;
@@ -71,7 +71,7 @@ namespace Gecode {
   void
   rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (frt) {
     case FRT_EQ:
       GECODE_ES_FAIL((Rel::Eq<FloatView,FloatView>::post(home,x0,x1)));
@@ -95,7 +95,7 @@ namespace Gecode {
   void
   rel(Home home, FloatVar x0, FloatRelType frt, FloatVar x1, Reify r) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (frt) {
     case FRT_EQ:
       switch (r.mode()) {
@@ -184,7 +184,7 @@ namespace Gecode {
   rel(Home home, FloatVar x, FloatRelType frt, FloatVal n, Reify r) {
     using namespace Float;
     Limits::check(n,"Float::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (frt) {
     case FRT_EQ:
       switch (r.mode()) {
@@ -306,7 +306,7 @@ namespace Gecode {
   rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
     using namespace Float;
     Limits::check(c,"Float::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (frt) {
     case FRT_EQ:
       for (int i=x.size(); i--; ) {
@@ -348,7 +348,7 @@ namespace Gecode {
   void
   rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (frt) {
     case FRT_EQ:
       for (int i=x.size(); i--; ) {

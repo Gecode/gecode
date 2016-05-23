@@ -83,6 +83,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -114,6 +116,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -362,6 +366,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -508,6 +514,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -531,6 +539,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     ReLin(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   public:
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -822,6 +832,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -851,6 +863,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -953,6 +967,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -983,6 +999,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -1017,6 +1035,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -1131,6 +1151,8 @@ namespace Gecode { namespace Int { namespace Linear {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void schedule(Space& home, Propagator& p);
     /// Update \a sba during copying
     void update(Space& home, bool share, ScaleBoolArray& sba);
     /// Return pointer to first element
@@ -1169,6 +1191,8 @@ namespace Gecode { namespace Int { namespace Linear {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void schedule(Space& home, Propagator& p);
     /// Update \a sba during copying
     void update(Space& home, bool share, EmptyScaleBoolArray& esba);
     /// Return pointer to first element
@@ -1211,6 +1235,8 @@ namespace Gecode { namespace Int { namespace Linear {
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

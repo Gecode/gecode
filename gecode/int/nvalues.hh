@@ -317,6 +317,8 @@ namespace Gecode { namespace Int { namespace NValues {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

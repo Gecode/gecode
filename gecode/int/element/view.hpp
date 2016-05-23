@@ -140,6 +140,14 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template<class VA, class VB, class VC, PropCond pc_ac>
+  void
+  View<VA,VB,VC,pc_ac>::schedule(Space& home) {
+    x0.schedule(home,*this,PC_INT_DOM);
+    x1.schedule(home,*this,pc_ac);
+    iv.schedule(home,*this,pc_ac);
+  }
+
+  template<class VA, class VB, class VC, PropCond pc_ac>
   forceinline size_t
   View<VA,VB,VC,pc_ac>::dispose(Space& home) {
     x0.cancel(home,*this,PC_INT_DOM);
@@ -312,7 +320,7 @@ namespace Gecode { namespace Int { namespace Element {
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
       ExecStatus es = home.ES_SUBSUMED(*this);
-      (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
+      (void) new (home) Rel::EqBnd<VA,VC>(home(*this),iv[0].view,x1);
       return es;
     }
     assert(iv.size() > 1);
@@ -403,7 +411,7 @@ namespace Gecode { namespace Int { namespace Element {
                        (home,iv,x0,x1,*this,rt)));
       if (iv.size() == 1) {
         ExecStatus es = home.ES_SUBSUMED(*this);
-        (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
+        (void) new (home) Rel::EqDom<VA,VC>(home(*this),iv[0].view,x1);
         return es;
       }
       // Compute new result
@@ -424,7 +432,7 @@ namespace Gecode { namespace Int { namespace Element {
                      (home,iv,x0,x1,*this,rt)));
     if (iv.size() == 1) {
       ExecStatus es = home.ES_SUBSUMED(*this);
-      (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
+      (void) new (home) Rel::EqDom<VA,VC>(home(*this),iv[0].view,x1);
       return es;
     }
     assert(iv.size() > 1);

@@ -51,7 +51,7 @@ namespace Gecode {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<IntView> xv(home,x);
     switch (vbd(ipl)) {
     case IPL_BND:
@@ -73,7 +73,7 @@ namespace Gecode {
       throw ArgumentSame("Int::distinct");
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::distinct");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<OffsetView> cx(home,x.size());
     for (int i = c.size(); i--; ) {
       long long int cx_min = (static_cast<long long int>(c[i]) +
@@ -105,7 +105,7 @@ namespace Gecode {
       throw ArgumentSame("Int::distinct");
     if (b.size() != x.size())
       throw ArgumentSizeMismatch("Int::distinct");
-    if (home.failed()) return;
+    GECODE_POST;
 
     int n = x.size();
     int min = Limits::max;
@@ -160,7 +160,7 @@ namespace Gecode {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::distinct");
-    if (home.failed()) return;
+    GECODE_POST;
 
     int n = x.size();
     int min = Limits::max;

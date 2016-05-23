@@ -49,6 +49,12 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return PropCost::quadratic(PropCost::HI,bs.size());
   }
 
+  void
+  Pack::schedule(Space& home) {
+    l.schedule(home,*this,PC_INT_BND);
+    bs.schedule(home,*this,PC_INT_DOM);
+  }
+
   Actor*
   Pack::copy(Space& home, bool share) {
     return new (home) Pack(home,share,*this);

@@ -47,7 +47,7 @@ namespace Gecode {
     Limits::check(n,"Int::count");
     Limits::check(m,"Int::count");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
     ConstIntView y(n);
@@ -87,7 +87,7 @@ namespace Gecode {
         IntRelType irt, int m, IntPropLevel ipl) {
     using namespace Int;
     Limits::check(m,"Int::count");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<IntView> xv(home,x);
 
     switch (irt) {
@@ -148,7 +148,7 @@ namespace Gecode {
     Limits::check(y.max(),"Int::count");
     Limits::check(m,"Int::count");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
     switch (irt) {
@@ -185,7 +185,7 @@ namespace Gecode {
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");
     Limits::check(m,"Int::count");
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<OffsetView> xy(home,x.size());
     for (int i=x.size(); i--; )
@@ -227,7 +227,7 @@ namespace Gecode {
         IntRelType irt, IntVar z, IntPropLevel) {
     using namespace Int;
     Limits::check(n,"Int::count");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<IntView> xv(home,x);
     ConstIntView yv(n);
     switch (irt) {
@@ -268,7 +268,7 @@ namespace Gecode {
   count(Home home, const IntVarArgs& x, IntVar y,
         IntRelType irt, IntVar z, IntPropLevel ipl) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<IntView> xv(home,x);
     switch (irt) {
     case IRT_EQ:
@@ -329,7 +329,7 @@ namespace Gecode {
     Limits::check(y.min(),"Int::count");
     Limits::check(y.max(),"Int::count");
 
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<IntView> xv(home,x);
     switch (irt) {
     case IRT_EQ:
@@ -371,7 +371,7 @@ namespace Gecode {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<OffsetView> xy(home,x.size());
     for (int i=x.size(); i--; )

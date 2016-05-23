@@ -45,7 +45,7 @@ namespace Gecode {
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatNum c) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
@@ -58,7 +58,7 @@ namespace Gecode {
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatNum c, Reify r) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
@@ -74,7 +74,7 @@ namespace Gecode {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
@@ -90,7 +90,7 @@ namespace Gecode {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term >(x.size());
     for (int i = x.size(); i--; ) {
@@ -103,7 +103,7 @@ namespace Gecode {
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -133,7 +133,7 @@ namespace Gecode {
   linear(Home home,
          const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -150,7 +150,7 @@ namespace Gecode {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -183,7 +183,7 @@ namespace Gecode {
     using namespace Float;
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
-    if (home.failed()) return;
+    GECODE_POST;
     Region re(home);
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {

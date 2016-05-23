@@ -35,7 +35,7 @@
 #
 #
 
-# 
+#
 # Print revision of file
 #
 

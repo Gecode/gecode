@@ -52,7 +52,7 @@ namespace Gecode {
       SetVar z) {
     Set::Limits::check(x, "Set::rel");
     ConstSetView xv(home, x);
-    if (home.failed()) return;
+    GECODE_POST;
     if (r == SRT_CMPL) {
       post_compl(home, xv, op, y, z);
     } else {

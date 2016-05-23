@@ -262,6 +262,8 @@ namespace Test {
       bool fixprob(void);
       /// Perform random pruning
       bool prune(const SetAssignment& a);
+      /// Return the number of propagators
+      unsigned int propagators(void);
     };
 
     /**

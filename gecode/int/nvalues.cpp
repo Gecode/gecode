@@ -49,7 +49,7 @@ namespace Gecode {
     long long int n = x.size();
     Limits::check(n*n,"Int::nvalues");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> xv(home,x);
 
@@ -98,7 +98,7 @@ namespace Gecode {
     long long int n = x.size();
     Limits::check(n*n,"Int::nvalues");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (y.assigned()) {
       nvalues(home, x, irt, y.val());
@@ -147,7 +147,7 @@ namespace Gecode {
     using namespace Int;
     Limits::check(y,"Int::nvalues");
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     Region region(home);
     ViewArray<BoolView> xv(region,x);
@@ -194,7 +194,7 @@ namespace Gecode {
           IntPropLevel) {
     using namespace Int;
 
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (y.assigned()) {
       nvalues(home, x, irt, y.val());

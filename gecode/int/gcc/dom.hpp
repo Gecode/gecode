@@ -109,6 +109,13 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card>
+  void
+  Dom<Card>::schedule(Space& home) {
+    x.schedule(home, *this, PC_INT_DOM);
+    k.schedule(home, *this, PC_INT_DOM);
+  }
+
+  template<class Card>
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);

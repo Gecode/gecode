@@ -146,6 +146,20 @@ namespace Gecode {
       return cur;
     }
 
+
+    /*
+     * Trace flag option
+     *
+     */
+    inline void
+    TraceOption::value(int f) {
+      cur = f;
+    }
+    inline int
+    TraceOption::value(void) const {
+      return cur;
+    }
+
   }
 
   /*
@@ -465,6 +479,16 @@ namespace Gecode {
   inline const char*
   Options::log_file(void) const {
     return _log_file.value();
+  }
+
+  inline void
+  Options::trace(int f) {
+    _trace.value(f);
+  }
+
+  inline int
+  Options::trace(void) const {
+    return _trace.value();
   }
 
 #ifdef GECODE_HAS_GIST

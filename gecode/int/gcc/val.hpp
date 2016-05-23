@@ -85,6 +85,13 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card>
+  void
+  Val<Card>::schedule(Space& home) {
+    x.schedule(home, *this, PC_INT_VAL);
+    k.schedule(home, *this, PC_INT_VAL);
+  }
+
+  template<class Card>
   ExecStatus
   prop_val(Space& home, Propagator& p,
            ViewArray<IntView>& x, ViewArray<Card>& k) {

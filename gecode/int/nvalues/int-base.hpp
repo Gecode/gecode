@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace NValues {
           ValSet::Ranges vsr(vs);
           GECODE_ME_CHECK(x[i].minus_r(home, vsr, false));
         }
-        GECODE_REWRITE(*this,Distinct::Dom<IntView>::post(home,x));
+        GECODE_REWRITE(*this,Distinct::Dom<IntView>::post(home(*this),x));
       }
       if (g.mark(home))
         GECODE_ES_CHECK(g.prune(home));

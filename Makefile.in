@@ -195,7 +195,7 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	afc activity rnd exception
+	afc activity rnd exception trace-filter tracer
 
 KERNELHDR0 = \
 	archive array shared-array core exception \
@@ -205,8 +205,9 @@ KERNELHDR0 = \
 	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit \
-	allocators global-afc \
-	afc activity rnd branch-traits
+	allocators print gpi \
+	afc activity rnd branch-traits \
+	trace-traits trace-filter tracer trace-recorder
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
@@ -325,6 +326,7 @@ INTSRC0 = \
 	branch/view-sel.cpp branch/val-sel-commit.cpp \
 	branch/view-values.cpp \
 	ldsb.cpp ldsb/sym-imp.cpp ldsb/sym-obj.cpp \
+	trace.cpp trace/tracer.cpp \
 	exception.cpp
 
 INTHDR0 = \
@@ -410,7 +412,9 @@ INTHDR0 = \
 	val-set.hh val-set.hpp \
 	member.hh member/prop.hpp member/re-prop.hpp \
 	branch/afc.hpp branch/activity.hpp \
-	ldsb.hh ldsb/brancher.hpp ldsb/sym-imp.hpp
+	ldsb.hh ldsb/brancher.hpp ldsb/sym-imp.hpp \
+	trace/bool-trace-view.hpp trace/int-trace-view.hpp \
+	trace/bool-delta.hpp trace/int-delta.hpp trace/traits.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
@@ -447,7 +451,7 @@ INTBUILDDIRS	= \
 	int/channel int/arithmetic int/linear int/bool int/branch int/exec \
 	int/element int/sequence int/bin-packing \
 	int/unary int/cumulative int/cumulatives int/task \
-	int/ldsb int/distinct
+	int/ldsb int/distinct int/trace
 
 #
 # FLOAT COMPONENTS
@@ -457,6 +461,7 @@ FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
 	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \
+	trace.cpp trace/tracer.cpp \
 	exception.cpp
 
 FLOATHDR0 = \
@@ -474,7 +479,8 @@ FLOATHDR0 = \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
-	num.hpp val.hpp rounding.hpp nextafter.hpp
+	num.hpp val.hpp rounding.hpp nextafter.hpp \
+	trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%)
 FLOATHDR	= gecode/float.hh $(FLOATHDR0:%=gecode/float/%)
@@ -509,7 +515,8 @@ endif
 FLOATBUILDDIRS	= \
 	float float/var float/var-imp float/view \
 	float/linear float/branch float/rel float/branch \
-	float/arithmetic float/transcendental float/trigonometric
+	float/arithmetic float/transcendental float/trigonometric \
+	float/trace
 
 #
 # SET COMPONENTS
@@ -534,6 +541,7 @@ SETSRC0 =								 \
 	exec.cpp branch/activity.cpp branch/view-sel.cpp \
 	branch/val-sel-commit.cpp  branch/ngl.cpp \
 	ldsb.cpp ldsb/sym-imp.cpp \
+	trace.cpp trace/tracer.cpp \
 	exception.cpp
 SETHDR0 =								     \
 	limits.hpp \
@@ -564,7 +572,9 @@ SETHDR0 =								     \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
 	branch/ngl.hpp \
-	ldsb.hh ldsb/brancher.hpp channel.hh
+	ldsb.hh ldsb/brancher.hpp channel.hh \
+	trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
+
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
@@ -599,7 +609,7 @@ endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
 	set/element set/sequence set/var set/var-imp set/view \
-	set/branch set/channel set/ldsb
+	set/branch set/channel set/ldsb set/trace
 
 
 #

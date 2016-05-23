@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
     for (int i=u.size(); i--;) {
@@ -125,7 +125,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool allMandatory = true;
     for (int i=m.size(); i--;) {
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
     for (int i=u.size(); i--;) {
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool allMandatory = true;
     for (int i=m.size(); i--;) {
@@ -276,7 +276,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool fixP = true;
     for (int i=p.size(); i--;) {
@@ -325,7 +325,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool allMandatory = true;
     for (int i=m.size(); i--;) {

@@ -48,7 +48,7 @@ namespace Gecode {
       throw Int::TooFewArguments("Int::circuit");
     if (x.same(home))
       throw Int::ArgumentSame("Int::circuit");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<Int::IntView> xv(home,x);
 
     if (offset == 0) {
@@ -91,7 +91,7 @@ namespace Gecode {
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::circuit");
     circuit(home, offset, x, ipl);
-    if (home.failed()) return;
+    GECODE_POST;
     IntArgs cx(offset+n);
     for (int i=0; i<offset; i++)
       cx[i] = 0;
@@ -113,7 +113,7 @@ namespace Gecode {
           const IntVarArgs& x, IntVar z,
           IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::circuit");
-    if (home.failed()) return;
+    GECODE_POST;
     IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
     circuit(home, c, offset, x, y, z, ipl);
   }
@@ -133,7 +133,7 @@ namespace Gecode {
       throw Int::TooFewArguments("Int::path");
     if (x.same(home))
       throw Int::ArgumentSame("Int::path");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<Int::IntView> xv(home,n+1);
     for (int i=n; i--; )
       xv[i] = Int::IntView(x[i]);
@@ -188,7 +188,7 @@ namespace Gecode {
       throw Int::ArgumentSame("Int::path");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::path");
-    if (home.failed()) return;
+    GECODE_POST;
     path(home, offset, x, s, e, ipl);
     IntArgs cx(offset+n+1);
     for (int i=0; i<offset; i++)
@@ -213,7 +213,7 @@ namespace Gecode {
        const IntVarArgs& x, IntVar s, IntVar e, IntVar z,
        IntPropLevel ipl) {
     Int::Limits::nonnegative(offset,"Int::path");
-    if (home.failed()) return;
+    GECODE_POST;
     IntVarArgs y(home, x.size(), Int::Limits::min, Int::Limits::max);
     path(home, c, offset, x, s, e, y, z, ipl);
   }

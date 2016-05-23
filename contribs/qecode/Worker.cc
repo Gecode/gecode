@@ -1,16 +1,16 @@
-/****   , [ Worker.cc ], 
- Copyright (c) 2010 Universite de Caen Basse Normandie- Jeremie Vautard 
- 
+/****   , [ Worker.cc ],
+ Copyright (c) 2010 Universite de Caen Basse Normandie- Jeremie Vautard
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,7 @@
  THE SOFTWARE.
  *************************************************************************/
 
-#include "Worker.hh" 
+#include "Worker.hh"
 
 
 inline vector<int> getTheValues(MySpace* sol,int vmin,int vmax){
@@ -31,10 +31,10 @@ inline vector<int> getTheValues(MySpace* sol,int vmin,int vmax){
 	//	cout<<i<<" ";
 	//	cout.flush();
     switch (sol->type_of_v[i]) {
-			case VTYPE_INT : 
+			case VTYPE_INT :
 				zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
 				break;
-			case VTYPE_BOOL : 
+			case VTYPE_BOOL :
 				zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
 				break;
 			default :
@@ -43,7 +43,7 @@ inline vector<int> getTheValues(MySpace* sol,int vmin,int vmax){
     }
   }
 //	cout<<endl;
-	
+
   return zevalues;
 }
 
@@ -81,7 +81,7 @@ vector<int> QWorker::workPosition() {
 }
 
 void QWorker::run() {
-	
+
   while(true) {
     access.acquire();
     stopandforget=0;
@@ -104,7 +104,7 @@ void QWorker::run() {
     else {
       access.acquire();
       currentWork = cur;
-      access.release();			
+      access.release();
       Strategy ret=solve();
       access.acquire();
       bool forget= (stopandforget == 2);
@@ -115,7 +115,7 @@ void QWorker::run() {
       }
       else {
 				//				cout<<"QWorker "<<this<<" forgetting work..."<<endl;
-				
+
 				for(list<QWork>::iterator i(todo.begin());i != todo.end();i++) {
 					(*i).clean();
 				}
@@ -137,23 +137,23 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
   if (forget) {
     delete L;
     return Strategy::Dummy();
-  }	
-	
+  }
+
   MySpace* sol = static_cast<MySpace*>(L->next());
   Strategy ret=Strategy::Dummy();
   bool LwasEmpty = true;
-	
-	
+
+
   while ((sol != NULL) ) {
     LwasEmpty=false;
     vector<int> assignments = getTheValues(sol,0,sol->nbVars()-1);
     Strategy result;
-		
+
     if (scope == (problem->spaces() - 1) ) { // last scope reached. Verify the goal...
       MySpace* g = problem->getGoal();
       for (int i=0;i<g->nbVars();i++) {
 				switch (g->type_of_v[i]) {
-					case VTYPE_INT : 
+					case VTYPE_INT :
 						rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
 						break;
 					case VTYPE_BOOL :
@@ -174,7 +174,7 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
       else {
 				int vmin = ( (scope==0)? 0 : (problem->nbVarInScope(scope-1)) );
 				int vmax = (problem->nbVarInScope(scope))-1;
-				vector<int> zevalues=getTheValues(sol,vmin,vmax);		
+				vector<int> zevalues=getTheValues(sol,vmin,vmax);
 				result=Strategy(problem->quantification(scope),vmin,vmax,scope,zevalues);
 				result.attach(Strategy::STrue());
 				delete g;
@@ -182,12 +182,12 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
 				delete goalsol;
       }
     }
-		
+
     else { // This is not the last scope...
       MySpace* espace = problem->getSpace(scope+1);
       for (int i=0;i<assignments.size();i++) {
 				switch (espace->type_of_v[i]) {
-					case VTYPE_INT : 
+					case VTYPE_INT :
 						rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
 						break;
 					case VTYPE_BOOL :
@@ -197,11 +197,11 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
 						cout<<"Unknown variable type"<<endl;
 						abort();
 				}
-      }			
+      }
       Options o;
       Engine* solutions = new WorkerToEngine<Gecode::Search::Sequential::DFS>(espace,/*sizeof(MySpace),*/o);
       delete espace;
-			
+
       access.acquire();
       forget=(stopandforget == 2);
       bool stop=(stopandforget==1);
@@ -228,13 +228,13 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
 				ret.attach(Strategy::Stodo());
 				return ret;
       }
-			
+
       result=rsolve(scope+1,solutions);
     }
-		
+
     int vmin = ( (scope == 0) ? 0 : (problem->nbVarInScope(scope-1)) );
     int vmax = (problem->nbVarInScope(scope))-1;
-    vector<int> zevalues=getTheValues(sol,vmin,vmax);		
+    vector<int> zevalues=getTheValues(sol,vmin,vmax);
     delete sol;
     access.acquire();
     forget=(stopandforget == 2);
@@ -251,7 +251,7 @@ Strategy QWorker::rsolve(int scope,/*vector<int> assignments,*/Engine* L) {
 			}
       else {
 				Strategy toAttach(true,vmin,vmax,scope,zevalues);
-				
+
 				toAttach.attach(result);
 				ret.attach(toAttach);
       }

@@ -302,6 +302,26 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Trace flag option
+     *
+     */
+    class GECODE_DRIVER_EXPORT TraceOption : public BaseOption {
+    protected:
+      int cur; ///< Current value
+    public:
+      /// Initialize with no tracing
+      TraceOption(int f=0);
+      /// Set default trace flags to \a f
+      void value(int f);
+      /// Return current option value
+      int value(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
   }
 
   /**
@@ -385,6 +405,7 @@ namespace Gecode {
     Driver::BoolOption        _print_last; ///< Print only last solution found
     Driver::StringValueOption _out_file;   ///< Where to print solutions
     Driver::StringValueOption _log_file;   ///< Where to print statistics
+    Driver::TraceOption       _trace;      ///< Trace flags for tracing
     //@}
 
   public:
@@ -558,6 +579,11 @@ namespace Gecode {
     void log_file(const char* f);
     /// Get file name for Gecode stats
     const char* log_file(void) const;
+
+    /// Set trace flags
+    void trace(int f);
+    /// Return trace flags
+    int trace(void) const;
     //@}
 
 #ifdef GECODE_HAS_GIST

@@ -73,6 +73,13 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class Val, class A, class B, PropCond pc>
+  void
+  LinBin<Val,A,B,pc>::schedule(Space& home) {
+    x0.schedule(home,*this,pc);
+    x1.schedule(home,*this,pc);
+  }
+
+  template<class Val, class A, class B, PropCond pc>
   forceinline size_t
   LinBin<Val,A,B,pc>::dispose(Space& home) {
     x0.cancel(home,*this,pc);
@@ -109,6 +116,14 @@ namespace Gecode { namespace Int { namespace Linear {
   PropCost
   ReLinBin<Val,A,B,pc,Ctrl>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
+  }
+
+  template<class Val, class A, class B, PropCond pc, class Ctrl>
+  void
+  ReLinBin<Val,A,B,pc,Ctrl>::schedule(Space& home) {
+    x0.schedule(home,*this,pc);
+    x1.schedule(home,*this,pc);
+    b.schedule(home,*this,PC_INT_VAL);
   }
 
   template<class Val, class A, class B, PropCond pc, class Ctrl>

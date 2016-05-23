@@ -182,8 +182,10 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Const function (defined as high binary)
+    /// Cost function (defined as high binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$i_{x_0}=x_1\f$
@@ -217,6 +219,8 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

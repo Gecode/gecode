@@ -674,6 +674,8 @@ namespace Gecode { namespace Int {
      * ME_INT_VAL (or ME_BOOL_VAL).
      */
     static void schedule(Space& home, Propagator& p, ModEvent me);
+    /// Schedule propagator \a p
+    void schedule(Space& home, Propagator& p, PropCond pc, bool assigned);
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     //@}

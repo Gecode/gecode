@@ -54,7 +54,7 @@ namespace Gecode { namespace Int {
   const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
-  /** 
+  /**
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.
@@ -63,7 +63,7 @@ namespace Gecode { namespace Int {
    * assuming a ME_INT_BND modification event.
    */
   const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
-  /** 
+  /**
    * \brief Domain operation has changed the domain
    *
    * Note that this implies that the domain has not resulted in a value
@@ -262,7 +262,7 @@ namespace Gecode { namespace Float {
   const Gecode::ModEvent ME_FLOAT_NONE = Gecode::ME_GEN_NONE;
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_FLOAT_VAL = Gecode::ME_GEN_ASSIGNED;
-  /** 
+  /**
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.

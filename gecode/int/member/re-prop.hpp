@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Member {
         return home.ES_SUBSUMED(*this);
       ValSet vsc(vs);
       vs.flush();
-      GECODE_REWRITE(*this,Prop<View>::post(home,vsc,x,y));
+      GECODE_REWRITE(*this,Prop<View>::post(home(*this),vsc,x,y));
     }
 
     if (b.zero()) {
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Member {
         ValSet::Ranges vsr(vs);
         GECODE_ME_CHECK(y.minus_r(home,vsr,false));
         for (int i=x.size(); i--; )
-          GECODE_ES_CHECK(Rel::Nq<View>::post(home,x[i],y));
+          GECODE_ES_CHECK(Rel::Nq<View>::post(Home(home),x[i],y));
       }
       return home.ES_SUBSUMED(*this);
     }

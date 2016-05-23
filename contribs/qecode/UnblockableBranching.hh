@@ -1,5 +1,5 @@
-/****   , [ UnblockableBranching.hh ], 
-Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
+/****   , [ UnblockableBranching.hh ],
+Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

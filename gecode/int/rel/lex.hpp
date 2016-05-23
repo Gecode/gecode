@@ -70,6 +70,13 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template<class View>
+  void
+  LexLqLe<View>::schedule(Space& home) {
+    x.schedule(home,*this,PC_INT_BND);
+    y.schedule(home,*this,PC_INT_BND);
+  }
+
+  template<class View>
   forceinline size_t
   LexLqLe<View>::dispose(Space& home) {
     assert(!home.failed());
@@ -280,6 +287,13 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template<class View>
+  void
+  LexNq<View>::schedule(Space& home) {
+    x0.schedule(home,*this,PC_INT_VAL); y0.schedule(home,*this,PC_INT_VAL);
+    x1.schedule(home,*this,PC_INT_VAL); y1.schedule(home,*this,PC_INT_VAL);
+  }
+
+  template<class View>
   forceinline
   LexNq<View>::LexNq(Space& home, bool share, LexNq<View>& p)
     : Propagator(home,share,p) {
@@ -387,7 +401,7 @@ namespace Gecode { namespace Int { namespace Rel {
           GECODE_NEVER;
         }
       // No more views to subscribe to left
-      GECODE_REWRITE(*this,Nq<View>::post(home,x1,y1));
+      GECODE_REWRITE(*this,Nq<View>::post(home(*this),x1,y1));
     }
     return ES_FIX;
   }

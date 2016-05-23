@@ -163,6 +163,7 @@ namespace Gecode {
   private:
     /// Nodes for linear expressions
     class Node;
+    /// The actual node
     Node* n;
   public:
     /// Default constructor
@@ -1258,7 +1259,7 @@ namespace Gecode {
        *  (negated if \a neg) with propagation level
        *  \a ipl.
        */
-      virtual void post(Space& home, BoolVar b, bool neg,
+      virtual void post(Home home, BoolVar b, bool neg,
                         IntPropLevel ipl) = 0;
       /// Destructor
       virtual GECODE_MINIMODEL_EXPORT ~Misc(void);

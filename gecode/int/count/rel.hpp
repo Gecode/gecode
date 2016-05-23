@@ -92,6 +92,16 @@ namespace Gecode { namespace Int { namespace Count {
     y.cancel(home, p, PC_INT_DOM);
   }
 
+  forceinline void
+  schedule(Space& home, Propagator& p, IntSet& y) {
+    (void) home; (void) p; (void) y;
+  }
+  template<class VY>
+  forceinline void
+  schedule(Space& home, Propagator& p, VY y) {
+    y.schedule(home, p, PC_INT_DOM);
+  }
+
   template<class VX>
   forceinline RelTest
   holds(VX x, ConstIntView y) {

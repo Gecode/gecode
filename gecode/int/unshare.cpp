@@ -131,13 +131,13 @@ namespace Gecode {
 
   void
   unshare(Home home, IntVarArgs& x, IntPropLevel ipl) {
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Int::Unshare::unshare<IntVar>(home,x,vbd(ipl)));
   }
 
   void
   unshare(Home home, BoolVarArgs& x, IntPropLevel) {
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Int::Unshare::unshare<BoolVar>(home,x,IPL_DEF));
   }
 

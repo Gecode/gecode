@@ -110,8 +110,8 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::count");
     if (x.same(home))
       throw ArgumentSame("Int::count");
-    if (home.failed())
-      return;
+
+    GECODE_POST;
 
     removeDuplicates(home,c,v);
 
@@ -161,8 +161,7 @@ namespace Gecode {
       Limits::check(c[i].max(),"Int::count");
     }
 
-    if (home.failed())
-      return;
+    GECODE_POST;
 
     removeDuplicates(home,c,v);
 

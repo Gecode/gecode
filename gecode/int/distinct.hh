@@ -152,6 +152,8 @@ namespace Gecode { namespace Int { namespace Distinct {
      * low linear. Otherwise it is low quadratic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Destructor

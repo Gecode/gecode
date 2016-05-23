@@ -200,6 +200,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -266,12 +268,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   public:
     /// Cost function (defined as high quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-  protected:
-    /// Unused destructor (to avoid warnings)
-    virtual ~Base(void) {}
   };
+
 }}}
 
 #include <gecode/int/extensional/base.hpp>
@@ -461,8 +463,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Creat support entry for view at position \a i and value \a n
     SupportEntry* support(int i, int n);
   public:
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
      * \brief Cost function
      *
@@ -470,6 +470,10 @@ namespace Gecode { namespace Int { namespace Extensional {
      * high quadratic. Otherwise it is high cubic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x

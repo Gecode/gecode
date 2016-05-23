@@ -53,7 +53,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::binpacking");
     for (int i=s.size(); i--; )
       Limits::nonnegative(s[i],"Int::binpacking");
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<OffsetView> lv(home,l.size());
     for (int i=l.size(); i--; )
@@ -91,6 +91,8 @@ namespace Gecode {
 
     if (home.failed())
       return IntSet::empty;
+
+    PostInfo pi(home);
 
     // Capacity constraint for each dimension
     for (int k=d; k--; )

@@ -171,6 +171,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
     /// Cost function
     GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    GECODE_INT_EXPORT
+    virtual void schedule(Space& home);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
@@ -183,7 +186,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   class ConflictGraph {
   protected:
     /// Home space
-    Space& home;
+    Home& home;
     /// Bin variables
     const IntVarArgs& b;
     /// Number of bins
@@ -306,7 +309,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     //@}
   public:
     /// Initialize graph
-    ConflictGraph(Space& home, Region& r, const IntVarArgs& b,
+    ConflictGraph(Home home, Region& r, const IntVarArgs& b,
                   int m);
     /// Add or remove an edge between nodes \a i and \a j (\a i must be less than \a j)
     void edge(int i, int j, bool add=true);

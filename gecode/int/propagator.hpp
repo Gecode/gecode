@@ -71,6 +71,8 @@ namespace Gecode { namespace Int {
   public:
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -102,6 +104,8 @@ namespace Gecode { namespace Int {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -139,6 +143,8 @@ namespace Gecode { namespace Int {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -179,6 +185,14 @@ namespace Gecode { namespace Int {
   PropCost
   ReUnaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
+  }
+
+  template<class View, PropCond pc, class CtrlView>
+  void
+  ReUnaryPropagator<View,pc,CtrlView>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE)
+      x0.schedule(home,*this,pc);
+    b.schedule(home,*this,Int::PC_INT_VAL);
   }
 
   template<class View, PropCond pc, class CtrlView>
@@ -230,6 +244,16 @@ namespace Gecode { namespace Int {
   PropCost
   ReBinaryPropagator<View,pc,CtrlView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
+  }
+
+  template<class View, PropCond pc, class CtrlView>
+  void
+  ReBinaryPropagator<View,pc,CtrlView>::schedule(Space& home) {
+    if (pc != PC_GEN_NONE) {
+      x0.schedule(home,*this,pc);
+      x1.schedule(home,*this,pc);
+    }
+    b.schedule(home,*this,Int::PC_INT_VAL);
   }
 
   template<class View, PropCond pc, class CtrlView>
@@ -290,6 +314,17 @@ namespace Gecode { namespace Int {
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
   ::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::LO);
+  }
+
+  template<class View0, PropCond pc0, class View1, PropCond pc1,
+            class CtrlView>
+  void
+  ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::schedule(Space& home) {
+    if (pc0 != PC_GEN_NONE)
+      x0.schedule(home,*this,pc0);
+    if (pc1 != PC_GEN_NONE)
+      x1.schedule(home,*this,pc1);
+    b.schedule(home,*this,Int::PC_INT_VAL);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1,

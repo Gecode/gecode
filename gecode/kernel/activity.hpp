@@ -176,6 +176,8 @@ namespace Gecode {
     virtual Propagator* copy(Space& home, bool share);
     /// Cost function (crazy so that propagator is likely to run last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -398,6 +400,12 @@ namespace Gecode {
   PropCost
   Activity::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::crazy(PropCost::HI,1000);
+  }
+
+  template<class View>
+  void
+  Activity::Recorder<View>::schedule(Space& home) {
+    View::schedule(home,*this,ME_GEN_ASSIGNED);
   }
 
   template<class View>

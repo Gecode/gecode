@@ -63,6 +63,11 @@ namespace Gecode { namespace Int { namespace Linear {
       f->x.cancel(home,p,PC_BOOL_VAL);
   }
   forceinline void
+  ScaleBoolArray::schedule(Space& home, Propagator& p) {
+    for (ScaleBool* f = _fst; f < _lst; f++)
+      f->x.schedule(home,p,PC_BOOL_VAL);
+  }
+  forceinline void
   ScaleBoolArray::update(Space& home, bool share, ScaleBoolArray& sba) {
     int n = static_cast<int>(sba._lst - sba._fst);
     if (n > 0) {
@@ -126,6 +131,8 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline void
   EmptyScaleBoolArray::cancel(Space&, Propagator&) {}
   forceinline void
+  EmptyScaleBoolArray::schedule(Space&, Propagator&) {}
+  forceinline void
   EmptyScaleBoolArray::update(Space&, bool, EmptyScaleBoolArray&) {}
   forceinline ScaleBool*
   EmptyScaleBoolArray::fst(void) const { return NULL; }
@@ -164,6 +171,14 @@ namespace Gecode { namespace Int { namespace Linear {
   LinBoolScale<SBAP,SBAN,VX,pcx>::cost(const Space&,
                                        const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, p.size() + n.size());
+  }
+
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
+  void
+  LinBoolScale<SBAP,SBAN,VX,pcx>::schedule(Space& home) {
+    x.schedule(home,*this,pcx);
+    p.schedule(home,*this);
+    n.schedule(home,*this);
   }
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>

@@ -64,6 +64,13 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template<class Info, class Offset, PropCond pc>
+  void
+  Base<Info,Offset,pc>::schedule(Space& home) {
+    for (int i=2*n; i--; )
+      xy[i].view.schedule(home,*this,pc);
+  }
+
+  template<class Info, class Offset, PropCond pc>
   forceinline size_t
   Base<Info,Offset,pc>::dispose(Space& home) {
     for (int i=2*n; i--; )

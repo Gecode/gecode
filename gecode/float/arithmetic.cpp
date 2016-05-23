@@ -48,7 +48,7 @@ namespace Gecode {
   void
   abs(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Abs<FloatView,FloatView>::post(home,x0,x1)));
   }
 
@@ -56,7 +56,7 @@ namespace Gecode {
   void
   max(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Max<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
   }
 
@@ -65,7 +65,7 @@ namespace Gecode {
     using namespace Float;
     if (x.size() == 0)
       throw TooFewArguments("Float::max");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<FloatView> xv(home,x);
     GECODE_ES_FAIL(Arithmetic::NaryMax<FloatView>::post(home,xv,y));
   }
@@ -74,7 +74,7 @@ namespace Gecode {
   void
   min(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Min<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
   }
 
@@ -83,7 +83,7 @@ namespace Gecode {
     using namespace Float;
     if (x.size() == 0)
       throw TooFewArguments("Float::min");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<MinusView> m(home,x.size());
     for (int i=x.size(); i--; )
       m[i] = MinusView(x[i]);
@@ -95,21 +95,21 @@ namespace Gecode {
   void
   mult(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Mult<FloatView>::post(home,x0,x1,x2)));
   }
 
   void
   sqr(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Sqr<FloatView>::post(home,x0,x1)));
   }
 
   void
   sqrt(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Sqrt<FloatView,FloatView>::post(home,x0,x1)));
   }
 
@@ -118,7 +118,7 @@ namespace Gecode {
     using namespace Float;
     if (n < 0)
       throw OutOfLimits("nroot");
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Pow<FloatView,FloatView>::post(home,x0,x1,n)));
   }
 
@@ -127,14 +127,14 @@ namespace Gecode {
     using namespace Float;
     if (n < 0)
       throw OutOfLimits("nroot");
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::NthRoot<FloatView,FloatView>::post(home,x0,x1,n)));
   }
 
   void
   div(Home home, FloatVar x0, FloatVar x1, FloatVar x2) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(
       (Arithmetic::Div<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
   }
@@ -143,14 +143,14 @@ namespace Gecode {
   void
   exp(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
   log(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>
       ::post(home,x1,x0)));
   }
@@ -158,7 +158,7 @@ namespace Gecode {
   void
   log(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
       ::post(home,base,x1,x0)));
   }
@@ -166,7 +166,7 @@ namespace Gecode {
   void
   pow(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
       ::post(home,base,x0,x1)));
   }
@@ -174,42 +174,42 @@ namespace Gecode {
   void
   asin(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Trigonometric::ASin<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
   sin(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Trigonometric::Sin<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
   acos(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Trigonometric::ACos<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
   cos(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Trigonometric::Cos<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
   atan(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Trigonometric::ATan<FloatView,FloatView>::post(home,x0,x1)));
   }
 
   void
   tan(Home home, FloatVar x0, FloatVar x1) {
     using namespace Float;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Trigonometric::Tan<FloatView,FloatView>::post(home,x0,x1)));
   }
 #endif
@@ -218,7 +218,7 @@ namespace Gecode {
   channel(Home home, FloatVar x0, IntVar x1) {
     using namespace Float;
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x0,x1)));
   }
 
@@ -226,7 +226,7 @@ namespace Gecode {
   channel(Home home, IntVar x0, FloatVar x1) {
     using namespace Float;
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x1,x0)));
   }
 

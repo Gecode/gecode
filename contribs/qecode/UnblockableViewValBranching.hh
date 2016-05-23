@@ -1,5 +1,5 @@
-/****   , [ UnblockableViewValBranching.hh ], 
-Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
+/****   , [ UnblockableViewValBranching.hh ],
+Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ private :
     IntValBranch ivlb;
     IntValBranch bvlb;
     bool before;
-    
+
 public :
     QECODE_EXPORT UnblockableViewValBranching(IntVarBranch vrb,IntValBranch vlb,bool booleans_before);
     QECODE_EXPORT UnblockableViewValBranching(IntVarBranch Ivrb,IntValBranch Ivlb,IntVarBranch Bvrb,IntValBranch Bvlb,bool booleans_before);

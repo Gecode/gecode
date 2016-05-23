@@ -70,6 +70,8 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -91,6 +93,8 @@ namespace Gecode { namespace Int { namespace Bool {
                 BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -372,6 +376,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i = y\f$
@@ -522,6 +528,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|x|-1} y_i = z\f$
@@ -586,6 +594,8 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

@@ -42,6 +42,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template<class XV, class YV>
+  forceinline
   LinBoolView<XV,YV>::LinBoolView(Home home,
                                   ViewArray<XV>& x0, YV y0, int c0)
     :  Propagator(home), x(x0), y(y0), c(c0) {
@@ -70,6 +71,13 @@ namespace Gecode { namespace Int { namespace Linear {
   PropCost
   LinBoolView<XV,YV>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
+  }
+
+  template<class XV, class YV>
+  void
+  LinBoolView<XV,YV>::schedule(Space& home) {
+    x.schedule(home,*this,PC_INT_VAL);
+    y.schedule(home,*this,PC_INT_BND);
   }
 
 

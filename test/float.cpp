@@ -399,6 +399,11 @@ namespace Test { namespace Float {
     return true;
   }
 
+  unsigned int
+  TestSpace::propagators(void) {
+    return Gecode::PropagatorGroup::all.size(*this);
+  }
+
 
   const Gecode::FloatRelType FloatRelTypes::frts[] =
     {Gecode::FRT_EQ,Gecode::FRT_NQ,Gecode::FRT_LQ,Gecode::FRT_LE,
@@ -428,7 +433,7 @@ namespace Test { namespace Float {
   bool
   Test::subsumed(const TestSpace& ts) const {
     if (!testsubsumed) return true;
-    if (ts.propagators()==0) return true;
+    if (const_cast<TestSpace&>(ts).propagators() == 0) return true;
     if (assigmentType == EXTEND_ASSIGNMENT) return true;
     return false;
   }

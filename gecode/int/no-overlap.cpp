@@ -69,7 +69,7 @@ namespace Gecode {
       Limits::check(static_cast<long long int>(y[i].max()) + h[i],
                     "Int::nooverlap");
     }
-    if (home.failed()) return;
+    GECODE_POST;
 
     ManBox<FixDim,2>* b
       = static_cast<Space&>(home).alloc<ManBox<FixDim,2> >(x.size());
@@ -101,7 +101,7 @@ namespace Gecode {
       Limits::check(static_cast<long long int>(y[i].max()) + h[i],
                     "Int::nooverlap");
     }
-    if (home.failed()) return;
+    GECODE_POST;
 
     if (optional(m)) {
       OptBox<FixDim,2>* b
@@ -138,7 +138,7 @@ namespace Gecode {
         (x0.size() != y0.size()) || (x0.size() != h.size()) ||
         (x0.size() != y1.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");
-    if (home.failed()) return;
+    GECODE_POST;
 
     for (int i=x0.size(); i--; ) {
       GECODE_ME_FAIL(IntView(w[i]).gq(home,0));
@@ -176,7 +176,7 @@ namespace Gecode {
         (x0.size() != y0.size()) || (x0.size() != h.size()) ||
         (x0.size() != y1.size()) || (x0.size() != m.size()))
       throw ArgumentSizeMismatch("Int::nooverlap");
-    if (home.failed()) return;
+    GECODE_POST;
 
     for (int i=x0.size(); i--; ) {
       GECODE_ME_FAIL(IntView(w[i]).gq(home,0));

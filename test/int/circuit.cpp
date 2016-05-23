@@ -59,6 +59,7 @@ namespace Test { namespace Int {
          : Test("Circuit::" + str(ipl) + "::" + str(n) + "::" + str(off),
                 n,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
+         testfix = false;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -101,6 +102,7 @@ namespace Test { namespace Int {
          : Test("Path::" + str(ipl) + "::" + str(n) + "::" + str(off),
                 n+2,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
+         testfix = false;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -153,6 +155,7 @@ namespace Test { namespace Int {
          : Test("Circuit::Cost::"+str(ipl)+"::"+str(n)+"::"+str(off),
                 n+1,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
+         testfix = false;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -207,6 +210,7 @@ namespace Test { namespace Int {
          : Test("Path::Cost::"+str(ipl)+"::"+str(n)+"::"+str(off),
                 n+3,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
+         testfix = false;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -269,6 +273,7 @@ namespace Test { namespace Int {
          : Test("Circuit::FullCost::" + str(ipl)+"::"+str(n)+"::"+str(off),
                 2*n+1,min,max,false,ipl), offset(off) {
          contest = CTL_NONE;
+         testfix = false;
        }
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {

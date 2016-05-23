@@ -66,7 +66,7 @@ namespace Gecode {
           using BinaryPropagator<View,PC_INT_DOM>::x1;
 
           /// Initial size of x0
-          unsigned int x0Size; 
+          unsigned int x0Size;
           /// Constructor for cloning \a p
           Watch(Space& home, bool share, Watch& p);
           /// Constructor for posting

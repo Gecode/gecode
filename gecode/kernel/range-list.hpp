@@ -61,6 +61,8 @@ namespace Gecode {
     //@{
     /// Default constructor (noop)
     RangeList(void);
+    /// Initialize with minimum \a min and maximum \a max
+    RangeList(int min, int max);
     /// Initialize with minimum \a min and maximum \a max and successor \a n
     RangeList(int min, int max, RangeList* n);
     //@}
@@ -76,6 +78,8 @@ namespace Gecode {
 
     /// Return next element
     RangeList* next(void) const;
+    /// Return pointer to next element
+    RangeList** nextRef(void);
     //@}
 
     /// \name Update
@@ -84,16 +88,29 @@ namespace Gecode {
     void min(int n);
     /// Set maximum to \a n
     void max(int n);
-    /// Set next rane to \a n
+    /// Set next range to \a n
     void next(RangeList* n);
+    //@}
+
+    /// \name Iterator operations
+    //@{
+    /// Create rangelist \a r from range iterator \a i
+    template<class Iter>
+    static void copy(Space& home, RangeList*& r, Iter& i);
+    /// Overwrite rangelist \a r with ranges from range iterator \a i
+    template<class Iter>
+    static void overwrite(Space& home, RangeList*& r, Iter& i);
+    /// Insert (as union) ranges from iterator \a i into \a r
+    template<class I>
+    static void insert(Space& home, RangeList*& r, I& i);
     //@}
 
     /// \name Memory management
     //@{
-    /**
-     * \brief Free memory for all elements between this and \a l (inclusive)
-     */
+    /// Free memory for all elements between this and \a l (inclusive)
     void dispose(Space& home, RangeList* l);
+    /// Free memory for all elements reachable from this
+    void dispose(Space& home);
 
     /// Allocate memory from space
     static void* operator new(size_t s, Space& home);
@@ -120,9 +137,18 @@ namespace Gecode {
   RangeList::RangeList(int min, int max, RangeList* n)
     : FreeList(n), _min(min), _max(max) {}
 
+  forceinline
+  RangeList::RangeList(int min, int max)
+    : _min(min), _max(max) {}
+
   forceinline RangeList*
-  RangeList::next() const {
+  RangeList::next(void) const {
     return static_cast<RangeList*>(FreeList::next());
+  }
+
+  forceinline RangeList**
+  RangeList::nextRef(void) {
+    return reinterpret_cast<RangeList**>(FreeList::nextRef());
   }
 
   forceinline void
@@ -178,6 +204,102 @@ namespace Gecode {
   forceinline void
   RangeList::dispose(Space& home, RangeList* l) {
     home.fl_dispose<sizeof(RangeList)>(this,l);
+  }
+
+  forceinline void
+  RangeList::dispose(Space& home) {
+    RangeList* l = this;
+    while (l->next() != NULL)
+      l=l->next();
+    dispose(home,l);
+  }
+
+  template<class Iter>
+  forceinline void
+  RangeList::copy(Space& home, RangeList*& r, Iter& i) {
+    RangeList sentinel; sentinel.next(r);
+    RangeList* p = &sentinel;
+    while (i()) {
+      RangeList* n = new (home) RangeList(i.min(),i.max());
+      p->next(n); p=n; ++i;
+    }
+    p->next(NULL);
+    r = sentinel.next();
+  }
+
+  template<class Iter>
+  forceinline void
+  RangeList::overwrite(Space& home, RangeList*& r, Iter& i) {
+    RangeList sentinel; sentinel.next(r);
+    RangeList* p = &sentinel;
+    RangeList* c = p->next();
+    while ((c != NULL) && i()) {
+      c->min(i.min()); c->max(i.max());
+      p=c; c=c->next(); ++i;
+    }
+    if ((c == NULL) && !i())
+      return;
+    if (c == NULL) {
+      assert(i());
+      // New elements needed
+      do {
+        RangeList* n = new (home) RangeList(i.min(),i.max());
+        p->next(n); p=n; ++i;
+      } while (i());
+    } else {
+      // Dispose excess elements
+      while (c->next() != NULL)
+        c=c->next();
+      p->next()->dispose(home,c);
+    }
+    p->next(NULL);
+    r = sentinel.next();
+  }
+
+  template<class I>
+  forceinline void
+  RangeList::insert(Space& home, RangeList*& r, I& i) {
+    RangeList sentinel;
+    sentinel.next(r);
+    RangeList* p = &sentinel;
+    RangeList* c = p->next();
+    while ((c != NULL) && i()) {
+      if ((c->max()+1 < i.min())) {
+        p=c; c=c->next();
+      } else if (i.max()+1 < c->min()) {
+        RangeList* n = new (home) RangeList(i.min(),i.max(),c);
+        p->next(n); p=n; ++i;
+      } else {
+        int min = std::min(c->min(),i.min());
+        int max = std::max(c->max(),i.max());
+        RangeList* f=c;
+        p=c; c=c->next(); ++i;
+      next:
+        if ((c != NULL) && (c->min() <= max+1)) {
+          max = std::max(max,c->max());
+          p=c; c=c->next();
+          goto next;
+        }
+        if (i() && (i.min() <= max+1)) {
+          max = std::max(max,i.max());
+          ++i;
+          goto next;
+        }
+        // Dispose now unused elements
+        if (f->next() != p)
+          f->next()->dispose(home,p);
+        f->min(min); f->max(max); f->next(c);
+      }
+    }
+    if (c == NULL) {
+      while (i()) {
+        RangeList* n = new (home) RangeList(i.min(),i.max());
+        p->next(n); p=n;
+        ++i;
+      }
+      p->next(NULL);
+    }
+    r = sentinel.next();
   }
 
 }

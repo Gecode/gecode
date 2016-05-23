@@ -126,7 +126,7 @@ namespace Gecode {
     // Initialize propagator queues
     for (int i=0; i<=PropCost::AC_MAX; i++)
       pc.p.queue[i].init();
-    pc.p.branch_id = reserved_branch_id+1;
+    pc.p.bid = reserved_bid+1;
     pc.p.n_sub = 0;
   }
 
@@ -190,22 +190,6 @@ namespace Gecode {
     }
   }
 
-  unsigned int
-  Space::propagators(void) const {
-    unsigned int n = 0;
-    for (Propagators p(*this); p(); ++p)
-      n++;
-    return n;
-  }
-
-  unsigned int
-  Space::branchers(void) const {
-    unsigned int n = 0;
-    for (Branchers b(*this); b(); ++b)
-      n++;
-    return n;
-  }
-
   void
   Space::flush(void) {
     // Flush malloc cache
@@ -260,6 +244,9 @@ namespace Gecode {
       goto unstable;
     execute:
       stat.propagate++;
+      if (p->disabled())
+        goto put_into_idle;
+      pc.p.ei.propagator(*p);
       // Keep old modification event delta
       med_o = p->u.med;
       // Clear med but leave propagator in queue
@@ -268,7 +255,7 @@ namespace Gecode {
       case ES_FAILED:
         // Count failure
         if (afc_enabled())
-          gafc.fail(p->gafc);
+          gpi.fail(p->gpi());
         // Mark as failed
         fail(); s = SS_FAILED; goto exit;
       case ES_NOFIX:
@@ -290,8 +277,11 @@ namespace Gecode {
         }
         // Fall through
       case ES_FIX:
-        // Clear med and put into idle queue
-        p->u.med = 0; p->unlink(); pl.head(p);
+      put_into_idle:
+        // Clear med
+        p->u.med = 0;
+        // Put into idle queue
+        p->unlink(); pl.head(p);
       stable_or_unstable:
         // There might be a propagator in the queue
         do {
@@ -318,6 +308,7 @@ namespace Gecode {
       }
     }
   stable:
+    pc.p.ei.other();
     /*
      * Find the next brancher that has still alternatives left
      *
@@ -410,9 +401,12 @@ namespace Gecode {
       throw SpaceIllegalAlternative("Space::commit");
     if (failed())
       return;
-    if (Brancher* b = brancher(c._id)) {
+    if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
-      if (b->commit(*this,c,a) == ES_FAILED)
+      pc.p.ei.brancher(*b);
+      ExecStatus es = b->commit(*this,c,a);
+      pc.p.ei.other();
+      if (es == ES_FAILED)
         fail();
     } else {
       // There is no matching brancher!
@@ -426,9 +420,12 @@ namespace Gecode {
       throw SpaceIllegalAlternative("Space::commit");
     if (failed())
       return;
-    if (Brancher* b = brancher(c._id)) {
+    if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
-      if (b->commit(*this,c,a) == ES_FAILED)
+      pc.p.ei.brancher(*b);
+      ExecStatus es = b->commit(*this,c,a);
+      pc.p.ei.other();
+      if (es == ES_FAILED)
         fail();
     }
   }
@@ -439,7 +436,7 @@ namespace Gecode {
       throw SpaceIllegalAlternative("Space::ngl");
     if (failed())
       return NULL;
-    if (Brancher* b = brancher(c._id)) {
+    if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
       return b->ngl(*this,c,a);
     } else {
@@ -453,7 +450,7 @@ namespace Gecode {
       throw SpaceIllegalAlternative("Space::print");
     if (failed())
       return;
-    if (Brancher* b = const_cast<Space&>(*this).brancher(c._id)) {
+    if (Brancher* b = const_cast<Space&>(*this).brancher(c.bid)) {
       // There is a matching brancher
       b->print(*this,c,a,o);
     } else {
@@ -469,32 +466,10 @@ namespace Gecode {
     for (Brancher* b = Brancher::cast(bl.next());
          b != Brancher::cast(&bl); b = Brancher::cast(b->next()))
       if (b->id() == id) {
-        // Make sure that neither b_status nor b_commit does not point to b
-        if (b_commit == b)
-          b_commit = Brancher::cast(b->next());
-        if (b_status == b)
-          b_status = Brancher::cast(b->next());
-        b->unlink();
-        rfree(b,b->dispose(*this));
+        kill(*b);
         return;
       }
   }
-
-  void
-  Space::kill_branchers(void) {
-    if (failed())
-      return;
-    Brancher* b = Brancher::cast(bl.next());
-    while (b != Brancher::cast(&bl)) {
-      Brancher* d = b;
-      b = Brancher::cast(b->next());
-      rfree(d,d->dispose(*this));
-    }
-    bl.init();
-    b_status = b_commit = Brancher::cast(&bl);
-  }
-
-
 
 
   /*
@@ -511,7 +486,7 @@ namespace Gecode {
   Space::Space(bool share, Space& s)
     : sm(s.sm->copy(share)),
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
-      gafc(s.gafc),
+      gpi(s.gpi),
       d_fst(&Actor::sentinel),
       _wmp_afc(s._wmp_afc) {
 #ifdef GECODE_HAS_VAR_DISPOSE
@@ -648,13 +623,21 @@ namespace Gecode {
       c->pc.p.queue[i].init();
     // Copy propagation only data
     c->pc.p.n_sub = pc.p.n_sub;
-    c->pc.p.branch_id = pc.p.branch_id;
+    c->pc.p.bid = pc.p.bid;
 
     if (!share_info) {
       // Re-allocate afc information
-      for (ActorLink* c_a = c->pl.next(); c_a != &c->pl; c_a = c_a->next())
-        Propagator::cast(c_a)->gafc = c->gafc.allocate();
+      for (ActorLink* c_a = c->pl.next(); c_a != &c->pl; c_a = c_a->next()) {
+        Propagator* p = Propagator::cast(c_a);
+        GPI::Info* gpi = c->gpi.allocate(p->gpi().gid);
+        if (p->disabled())
+          p->gpi_disabled = Support::mark(gpi);
+        else
+          p->gpi_disabled = gpi;
+      }
     }
+    // Reset execution information
+    c->pc.p.ei.other(); pc.p.ei.other();
 
     return c;
   }
@@ -674,7 +657,7 @@ namespace Gecode {
       return true;
     case MetaInfo::PORTFOLIO:
       // Kill all branchers
-      BrancherHandle::killall(*this);
+      BrancherGroup::all.kill(*this);
       return true;
     default: GECODE_NEVER;
       return true;
@@ -703,17 +686,17 @@ namespace Gecode {
   Space::afc_decay(double d) {
     afc_enable();
     // Commit outstanding decay operations
-    if (gafc.decay() != 1.0)
+    if (gpi.decay() != 1.0)
       for (Propagators p(*this); p(); ++p)
-        (void) gafc.afc(p.propagator().gafc);
-    gafc.decay(d);
+        (void) gpi.afc(p.propagator().gpi());
+    gpi.decay(d);
   }
 
   void
   Space::afc_set(double a) {
     afc_enable();
     for (Propagators p(*this); p(); ++p)
-      gafc.set(p.propagator().gafc,a);
+      gpi.set(p.propagator().gpi(),a);
   }
 
 
@@ -725,6 +708,117 @@ namespace Gecode {
   NGL::~NGL(void) {
     assert(false);
   }
+
+
+  /*
+   * Groups
+   */
+
+  Group Group::all(GID_ALL);
+  Group Group::default(GID_DEFAULT);
+
+  PropagatorGroup PropagatorGroup::all(GID_ALL);
+  PropagatorGroup PropagatorGroup::default(GID_DEFAULT);
+
+  BrancherGroup BrancherGroup::all(GID_ALL);
+  BrancherGroup BrancherGroup::default(GID_DEFAULT);
+
+  unsigned int Group::next = GID_DEFAULT+1;
+  Support::Mutex Group::m;
+
+
+  Group::Group(void) {
+    m.acquire();
+    gid = next++;
+    m.release();
+    if (gid == GID_MAX)
+      throw TooManyGroups("Group::Group");
+  }
+
+
+
+  unsigned int
+  PropagatorGroup::size(Space& home) const {
+    if (home.failed())
+      return 0;
+    unsigned int n=0;
+    for (Space::Propagators ps(home); ps(); ++ps)
+      if (in(ps.propagator().group()))
+        n++;
+    return n;
+  }
+
+  void
+  PropagatorGroup::kill(Space& home) {
+    if (home.failed())
+      return;
+    Space::Propagators ps(home);
+    while (ps()) {
+      Propagator& p = ps.propagator();
+      ++ps;
+      if (in(p.group()))
+        home.kill(p);
+    }
+  }
+
+  void
+  PropagatorGroup::disable(Space& home) {
+    if (home.failed())
+      return;
+    for (Space::Propagators ps(home); ps(); ++ps)
+      if (in(ps.propagator().group()))
+        ps.propagator().disable();
+  }
+
+  void
+  PropagatorGroup::enable(Space& home, bool s) {
+    if (home.failed())
+      return;
+    for (Space::ScheduledPropagators ps(home); ps(); ++ps)
+      if (in(ps.propagator().group()))
+        ps.propagator().enable();
+    if (s) {
+      Space::IdlePropagators ps(home);
+      while (ps()) {
+        Propagator& p = ps.propagator();
+        ++ps;
+        if (in(p.group())) {
+          p.enable();
+          p.schedule(home);
+        }
+      }
+    } else {
+      for (Space::IdlePropagators ps(home); ps(); ++ps)
+        if (in(ps.propagator().group()))
+          ps.propagator().enable();
+    }
+  }
+
+
+  unsigned int
+  BrancherGroup::size(Space& home) const {
+    if (home.failed())
+      return 0;
+    unsigned int n=0;
+    for (Space::Branchers bs(home); bs(); ++bs)
+      if (in(bs.brancher().group()))
+        n++;
+    return n;
+  }
+
+  void
+  BrancherGroup::kill(Space& home) {
+    if (home.failed())
+      return;
+    Space::Branchers bs(home);
+    while (bs()) {
+      Brancher& b = bs.brancher();
+      ++bs;
+      if (in(b.group()))
+        home.kill(b);
+    }
+  }
+
 
 }
 

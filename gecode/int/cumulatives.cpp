@@ -84,7 +84,7 @@ namespace Gecode {
           p.size() != e.size()   ||
           e.size() != u.size())
         throw Int::ArgumentSizeMismatch("Int::cumulatives");
-      if (home.failed()) return;
+      GECODE_POST;
 
       ViewArray<typename ViewType<Machine>::Result>
         vm  = make_view_array(home,  m);

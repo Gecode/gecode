@@ -44,7 +44,7 @@ namespace Gecode {
   void
   atmostOne(Home home, const SetVarArgs& xa, unsigned int c) {
     Set::Limits::check(c, "Set::atmostOne");
-    if (home.failed()) return;
+    GECODE_POST;
     if (xa.size() < 2)
       return;
     ViewArray<SetView> x(home,xa);

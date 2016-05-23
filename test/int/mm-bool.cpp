@@ -4343,7 +4343,7 @@ namespace Test { namespace Int {
          BoolVarArgs l(2);
          l[0]=channel(home,x[0]); l[1]=channel(home,x[1]);
          switch (mode) {
-         case 0: 
+         case 0:
            {
              BoolVar b0 = expr(home, !element(l,0));
              BoolVar b1 = expr(home, element(l,1));

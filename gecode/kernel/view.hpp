@@ -127,6 +127,8 @@ namespace Gecode {
     VarImpView(void);
     /// Initialize with variable implementation \a y
     VarImpView(VarImpType* y);
+    /// Set variable implementation to \a y
+    void varimp(VarImpType* y);
   public:
     /// \name Generic view information
     //@{
@@ -424,6 +426,11 @@ namespace Gecode {
   VarImpView<Var>::VarImpView(VarImpType* y)
     : x(y) {}
   template<class Var>
+  forceinline void
+  VarImpView<Var>::varimp(VarImpType* y) {
+    x=y;
+  }
+  template<class Var>
   forceinline bool
   VarImpView<Var>::varderived(void) {
     return true;
@@ -433,7 +440,7 @@ namespace Gecode {
   VarImpView<Var>::varimp(void) const {
     return x;
   }
-  template<class Var>
+ template<class Var>
   forceinline unsigned int
   VarImpView<Var>::degree(void) const {
     return x->degree();

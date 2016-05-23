@@ -77,6 +77,8 @@ namespace Gecode { namespace Set { namespace Channel {
     virtual Actor* copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete Propagator
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -119,9 +121,11 @@ namespace Gecode { namespace Set { namespace Channel {
                ViewArray<CachedView<View> >&);
   public:
     /// Copy propagator during cloning
-    virtual Actor*   copy(Space& home,bool);
+    virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as PC_QUADRATIC_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -196,6 +200,8 @@ namespace Gecode { namespace Set { namespace Channel {
     virtual Actor*   copy(Space& home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -239,6 +245,8 @@ namespace Gecode { namespace Set { namespace Channel {
     virtual Actor* copy(Space& home, bool);
     /// Cost function (defined as PC_QUADRATIC_HI)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation

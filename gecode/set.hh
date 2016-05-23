@@ -1173,7 +1173,7 @@ namespace Gecode {
      * AFC storage has been constructed with the default constructor.
      *
      */
-    void init(Home, const SetVarArgs& x, double d=1.0);
+    void init(Home home, const SetVarArgs& x, double d=1.0);
   };
 
 }
@@ -1225,7 +1225,7 @@ namespace Gecode {
      *
      */
     GECODE_SET_EXPORT void
-    init(Home, const SetVarArgs& x, double d=1.0,
+    init(Home home, const SetVarArgs& x, double d=1.0,
          SetBranchMerit bm=NULL);
   };
 
@@ -1596,6 +1596,127 @@ namespace Gecode {
          const Symmetries& syms,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
+}
+
+#include <gecode/set/trace/trace-view.hpp>
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskSetTrace Tracing for set variables
+   * \ingroup TaskTrace
+   */
+
+  /**
+   * \brief Trace delta information for set variables
+   * \ingroup TaskSetTrace
+   */
+  class SetTraceDelta {
+  protected:
+    ///
+  public:
+    /// Delta for the greatest lower bound
+    class Glb
+      : public Iter::Ranges::Diff<Set::GlbRanges<Set::SetView>,
+                                  Iter::Ranges::RangeList> {
+    protected:
+      /// Iterator over old glb
+      Iter::Ranges::RangeList o;
+      /// Iterator over new glb
+      Set::GlbRanges<Set::SetView> n;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize with old glb and new glb
+      Glb(RangeList* o, Set::SetView n);
+      //@}
+    };
+    Glb _glb;
+    /// Delta for the least upper bound
+    class Lub
+      : public Iter::Ranges::Diff<Iter::Ranges::RangeList,
+                                  Set::LubRanges<Set::SetView> > {
+    protected:
+      /// Iterator over old lub
+      Iter::Ranges::RangeList o;
+      /// Iterator over new lub
+      Set::LubRanges<Set::SetView> n;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize with old lub \a o and new lub \a n
+      Lub(RangeList* o, Set::SetView n);
+      //@}
+    };
+    Lub _lub;
+    /// \name Constructor
+    //@{
+    /// Initialize with old trace view \a o, new view \a n, and delta \a d
+    SetTraceDelta(Set::SetTraceView o, Set::SetView n, const Delta& d);
+    //@}
+    /// \name Access to delta iterators
+    //@{
+    /// Give access to iterator for delta in greatest lower bound (values that have been included)
+    Glb& glb(void);
+    /// Give access iterator for delta in leat bound (values that have been removed)
+    Lub& lub(void);
+    //@}
+  };
+
+}
+
+#include <gecode/set/trace/delta.hpp>
+
+#include <gecode/set/trace/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Tracer for set variables
+   * \ingroup TaskSetTrace
+   */
+  typedef Tracer<Set::SetView> SetTracer;
+  /**
+   * \brief TraceRecorder for set variables
+   * \ingroup TaskSetTrace
+   */
+  typedef TraceRecorder<Set::SetView> SetTraceRecorder;
+
+  /**
+   * \brief Standard set variable tracer
+   * \ingroup TaskSetTrace
+   */
+  class GECODE_SET_EXPORT StdSetTracer : public SetTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+  public:
+    /// Initialize with output stream \a os0
+    StdSetTracer(std::ostream& os0 = std::cerr,
+                 int e = (SetTracer::INIT | SetTracer::PRUNE |
+                          SetTracer::FIXPOINT | SetTracer::DONE));
+    /// Print init information
+    virtual void init(const Space& home, const SetTraceRecorder& t);
+    /// Print prune information
+    virtual void prune(const Space& home, const SetTraceRecorder& t,
+                       const ExecInfo& ei, int i, SetTraceDelta& d);
+    /// Print fixpoint information
+    virtual void fixpoint(const Space& home, const SetTraceRecorder& t);
+    /// Print that trace recorder is done
+    virtual void done(const Space& home, const SetTraceRecorder& t);
+    /// Default tracer (printing to std::cerr)
+    static StdSetTracer def;
+  };
+
+
+  /**
+   * \brief Create a tracer for set variables
+   * \ingroup TaskSetTrace
+   */
+  GECODE_SET_EXPORT void
+  trace(Home home, const SetVarArgs& x,
+        TraceFilter tf = TraceFilter::all,
+        SetTracer& t = StdSetTracer::def);
 }
 
 #endif

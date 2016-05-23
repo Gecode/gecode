@@ -111,6 +111,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void schedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator

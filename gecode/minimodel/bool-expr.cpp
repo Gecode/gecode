@@ -662,7 +662,7 @@ namespace Gecode {
     /// Destructor
     virtual ~BElementExpr(void);
     /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-    virtual void post(Space& home, BoolVar b, bool neg, IntPropLevel ipl);
+    virtual void post(Home home, BoolVar b, bool neg, IntPropLevel ipl);
   };
 
   BElementExpr::BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx)
@@ -676,7 +676,7 @@ namespace Gecode {
   }
 
   void
-  BElementExpr::post(Space& home, BoolVar b, bool neg, IntPropLevel ipl) {
+  BElementExpr::post(Home home, BoolVar b, bool neg, IntPropLevel ipl) {
     IntVar z = idx.post(home, ipl);
     if (z.assigned() && (z.val() >= 0) && (z.val() < n)) {
       BoolExpr be = neg ? (a[z.val()] == !b) : (a[z.val()] == b);

@@ -1,17 +1,17 @@
 /*****************************************************************[myspace.hh]
  Copyright (c) 2007, Universite d'Orleans - Jeremie Vautard, Marco Benedetti,
  Arnaud Lallouet.
- 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -37,19 +37,19 @@ using namespace Gecode::Int;
  */
 
 class QECODE_VTABLE_EXPORT MySpace : public Space {
-	
+
 	protected :
 	unsigned int n;
-	
+
 public:
 	/** \brief This array contains all the variables this space contains.
 	 */
 	void** v;
-	
+
 	/** \brief This array indicates the type of each variable
 	 */
 	VarType* type_of_v;
-	
+
 	/** \brief Constructor of a space with a fixed number of variables
 	 *
 	 * Builds a space which will contain  nv variables (the variables themselves are however not declared).
@@ -61,19 +61,19 @@ public:
 	QECODE_EXPORT virtual MySpace* copy(bool share);
 	QECODE_EXPORT virtual ~MySpace();
 	QECODE_EXPORT int getValue(unsigned int i); ///< returns the value of variable i. If boolean : 0 or 1 (false / true).
-	
+
 	/** \brief Returns the integer variables before idMax
 	 *
 	 * Returns an IntVarArgs containing all the integer variables of index inferior than parameter idMax
 	 */
 	QECODE_EXPORT IntVarArgs getIntVars(unsigned int idMax);
-	
+
 	/** \brief Returns the boolean variables before idMax
 	 *
 	 * Returns a BoolVarArgs containing all the boolean variables of index inferior than parameter idMax
 	 */
 	QECODE_EXPORT BoolVarArgs getBoolVars(unsigned int idMax);
-	
+
 };
 
 #endif

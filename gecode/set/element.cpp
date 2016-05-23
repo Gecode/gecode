@@ -55,7 +55,7 @@ namespace Gecode {
   void
   element(Home home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
           const IntSet& universe) {
-    if (home.failed()) return;
+    GECODE_POST;
 
     switch (op) {
     case SOT_DUNION:
@@ -95,7 +95,7 @@ namespace Gecode {
   void
   element(Home home, SetOpType op, const IntVarArgs& x, SetVar y, SetVar z,
           const IntSet& universe) {
-    if (home.failed()) return;
+    GECODE_POST;
 
     switch (op) {
     case SOT_DUNION:
@@ -135,7 +135,7 @@ namespace Gecode {
   void
   element(Home home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
     const IntSet& universe) {
-    if (home.failed()) return;
+    GECODE_POST;
 
     switch (op) {
     case SOT_DUNION:
@@ -190,7 +190,7 @@ namespace Gecode {
   element(Home home, const SetVarArgs& x, IntVar y, SetVar z) {
     if (x.size() == 0)
       throw Set::TooFewArguments("Set::element");
-    if (home.failed()) return;
+    GECODE_POST;
     Set::Element::ElementUnion<SetView,SingletonView,SetView>::IdxViewArray
       iv(home, x);
     SetView zv(z);
@@ -207,7 +207,7 @@ namespace Gecode {
       throw Set::TooFewArguments("Set::element");
     for (int i=x.size(); i--;)
       Set::Limits::check(x[i], "Set::element");
-    if (home.failed()) return;
+    GECODE_POST;
     SetView zv(z);
 
     Int::IntView yv(y);
@@ -234,7 +234,7 @@ namespace Gecode {
       throw Set::TooFewArguments("Set::element");
     if (a.size() != w*h)
       throw Set::ArgumentSizeMismatch("Set::element");
-    if (home.failed()) return;
+    GECODE_POST;
     element(home, a, pair(home,x,w,y,h), z);
   }
 
@@ -245,7 +245,7 @@ namespace Gecode {
       throw Set::TooFewArguments("Set::element");
     if (a.size() != w*h)
       throw Set::ArgumentSizeMismatch("Set::element");
-    if (home.failed()) return;
+    GECODE_POST;
     element(home, a, pair(home,x,w,y,h), z);
   }
 

@@ -3,7 +3,7 @@
 //  Copyright (c) 2001-2003 John Maddock
 //  Copyright (c) 2001 Darin Adler
 //  Copyright (c) 2001 Peter Dimov
-//  Copyright (c) 2002 Bill Kempf 
+//  Copyright (c) 2002 Bill Kempf
 //  Copyright (c) 2002 Jens Maurer
 //  Copyright (c) 2002-2003 David Abrahams
 //  Copyright (c) 2003 Gennaro Prota
@@ -152,7 +152,7 @@
 #  endif
 
 //
-// Without partial specialization, partial 
+// Without partial specialization, partial
 // specialization with default args won't work either:
 //
 #  if defined(GECODE_BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION) \
@@ -651,12 +651,12 @@ namespace std{ using ::type_info; }
 // Set some default values GPU support
 //
 #  ifndef GECODE_BOOST_GPU_ENABLED
-#  define GECODE_BOOST_GPU_ENABLED 
+#  define GECODE_BOOST_GPU_ENABLED
 #  endif
 
 //
 // constexpr workarounds
-// 
+//
 #if defined(GECODE_BOOST_NO_CONSTEXPR)
 #define GECODE_BOOST_CONSTEXPR
 #define GECODE_BOOST_CONSTEXPR_OR_CONST const

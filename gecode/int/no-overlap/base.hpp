@@ -82,6 +82,13 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     return PropCost::quadratic(PropCost::HI,Box::dim()*n);
   }
 
+  template<class Box>
+  void
+  Base<Box>::schedule(Space& home) {
+    for (int i=n; i--; )
+      b[i].schedule(home,*this);
+  }
+
 }}}
 
 // STATISTICS: int-prop

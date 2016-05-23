@@ -235,10 +235,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   NrootBnd<Ops>::propagate(Space& home, const ModEventDelta&) {
     assert(!ops.even());
     if ((x0.min() >= 0) || (x1.min() >= 0))
-      GECODE_REWRITE(*this,(NrootPlusBnd<Ops,false>::post(home,x0,x1,ops)));
+      GECODE_REWRITE(*this,(NrootPlusBnd<Ops,false>::post(home(*this),x0,x1,ops)));
 
     if ((x0.max() <= 0) || (x1.max() <= 0))
-      GECODE_REWRITE(*this,(NrootPlusBnd<Ops,true>::post(home,x0,x1,ops)));
+      GECODE_REWRITE(*this,(NrootPlusBnd<Ops,true>::post(home(*this),x0,x1,ops)));
 
     GECODE_ES_CHECK(prop_nroot_bnd(home,x0,x1,ops));
 
@@ -445,10 +445,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   NrootDom<Ops>::propagate(Space& home, const ModEventDelta& med) {
     assert(!ops.even());
     if ((x0.min() >= 0) || (x1.min() >= 0))
-      GECODE_REWRITE(*this,(NrootPlusDom<Ops,false>::post(home,x0,x1,ops)));
+      GECODE_REWRITE(*this,(NrootPlusDom<Ops,false>::post(home(*this),x0,x1,ops)));
 
     if ((x0.max() <= 0) || (x1.max() <= 0))
-      GECODE_REWRITE(*this,(NrootPlusDom<Ops,true>::post(home,x0,x1,ops)));
+      GECODE_REWRITE(*this,(NrootPlusDom<Ops,true>::post(home(*this),x0,x1,ops)));
 
     if (IntView::me(med) != ME_INT_DOM) {
       GECODE_ES_CHECK(prop_nroot_bnd<Ops>(home,x0,x1,ops));

@@ -93,6 +93,13 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   template<class Card>
+  void
+  Bnd<Card>::schedule(Space& home) {
+    y.schedule(home, *this, PC_INT_BND);
+    k.schedule(home, *this, PC_INT_BND);
+  }
+
+  template<class Card>
   forceinline ExecStatus
   Bnd<Card>::lbc(Space& home, int& nb,
                            HallInfo hall[], Rank rank[], int mu[], int nu[]) {

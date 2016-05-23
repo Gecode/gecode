@@ -152,6 +152,10 @@ namespace Gecode { namespace Int { namespace Unary {
   ManFixPTask::cancel(Space& home, Propagator& p, PropCond pc) {
     _s.cancel(home, p, pc);
   }
+  forceinline void
+  ManFixPTask::schedule(Space& home, Propagator& p, PropCond pc) {
+    _s.schedule(home, p, pc);
+  }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
@@ -439,6 +443,12 @@ namespace Gecode { namespace Int { namespace Unary {
     _s.cancel(home, p, pc);
     _p.cancel(home, p, pc);
     _e.cancel(home, p, pc);
+  }
+  forceinline void
+  ManFlexTask::schedule(Space& home, Propagator& p, PropCond pc) {
+    _s.schedule(home, p, pc);
+    _p.schedule(home, p, pc);
+    _e.schedule(home, p, pc);
   }
 
   template<class Char, class Traits>

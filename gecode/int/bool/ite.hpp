@@ -69,6 +69,15 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class V0, class V1, class V2, PropCond pc>
+  void
+  IteBase<V0,V1,V2,pc>::schedule(Space& home) {
+    b.schedule(home,*this,PC_BOOL_VAL);
+    x0.schedule(home,*this,pc);
+    x1.schedule(home,*this,pc);
+    x2.schedule(home,*this,pc);
+  }
+
+  template<class V0, class V1, class V2, PropCond pc>
   forceinline size_t
   IteBase<V0,V1,V2,pc>::dispose(Space& home) {
     b.cancel(home,*this,PC_BOOL_VAL);

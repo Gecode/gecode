@@ -323,6 +323,88 @@ namespace Gecode {
     }
 
 
+    /*
+     * Trace flag option
+     *
+     */
+    TraceOption::TraceOption(int f)
+      : BaseOption("-trace","trace flags (comma-separated list)"),
+        cur(f) {}
+
+    int
+    TraceOption::parse(int argc, char* argv[]) {
+      if (char* a = argument(argc,argv)) {
+        cur = 0;
+        do {
+          // Search for a comma
+          char* c = a;
+          while ((*c != ',') && (*c != 0))
+            c++;
+
+          if      (!strncmp("init",a,c-a))     { cur |= TracerBase::INIT; }
+          else if (!strncmp("prune",a,c-a))    { cur |= TracerBase::PRUNE; }
+          else if (!strncmp("fixpoint",a,c-a)) { cur |= TracerBase::FIXPOINT; }
+          else if (!strncmp("done",a,c-a))     { cur |= TracerBase::DONE ; }
+          else if (!strncmp("none",a,c-a) ||
+                   !strncmp("false",a,c-a) ||
+                   !strncmp("0",a,c-a))        { cur = 0; }
+          else if (!strncmp("all",a,c-a) ||
+                   !strncmp("1",a,c-a))        { cur = (TracerBase::INIT |
+                                                        TracerBase::PRUNE |
+                                                        TracerBase::FIXPOINT |
+                                                        TracerBase::DONE); }
+          else {
+            std::cerr << "Wrong argument \"" << a
+                      << "\" for option \"" << opt << "\""
+                      << std::endl;
+            exit(EXIT_FAILURE);
+          }
+
+          if (*c == ',') a = c+1; else a = c;
+
+        } while (*a != 0);
+
+        return 2;
+      }
+      return 0;
+    }
+
+    void
+    TraceOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt
+           << " (init,prune,fixpoint,done,none,all)"
+           << " default: ";
+      if (cur == 0) {
+        cerr << "none";
+      } else if (cur == (TracerBase::INIT | TracerBase::PRUNE |
+                         TracerBase::FIXPOINT | TracerBase::DONE)) {
+        cerr << "all";
+      } else {
+        int f = cur;
+        if ((f & TracerBase::INIT) != 0) {
+          cerr << "init";
+          f -= TracerBase::INIT;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TracerBase::PRUNE) != 0) {
+          cerr << "prune";
+          f -= TracerBase::PRUNE;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TracerBase::FIXPOINT) != 0) {
+          cerr << "fixpoint";
+          f -= TracerBase::FIXPOINT;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TracerBase::DONE) != 0) {
+          cerr << "done";
+        }
+      }
+      cerr << endl << "\t\t" << exp << endl;
+    }
+
+
   }
 
   void
@@ -463,7 +545,8 @@ namespace Gecode {
       _out_file("-file-sol", "where to print solutions "
                 "(supports stdout, stdlog, stderr)","stdout"),
       _log_file("-file-stat", "where to print statistics "
-                "(supports stdout, stdlog, stderr)","stdout")
+                "(supports stdout, stdlog, stderr)","stdout"),
+      _trace(0)
   {
 
     _mode.add(SM_SOLUTION, "solution");
@@ -485,7 +568,7 @@ namespace Gecode {
     add(_restart); add(_r_base); add(_r_scale);
     add(_nogoods); add(_nogoods_limit);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
-    add(_out_file); add(_log_file);
+    add(_out_file); add(_log_file); add(_trace);
   }
 
 

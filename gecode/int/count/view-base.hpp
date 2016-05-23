@@ -65,6 +65,14 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template<class VX, class VY, class VZ>
+  void
+  ViewBase<VX,VY,VZ>::schedule(Space& home) {
+    x.schedule(home,*this,PC_INT_DOM);
+    Gecode::Int::Count::schedule(home,*this,y);
+    z.schedule(home,*this,PC_INT_BND);
+  }
+
+  template<class VX, class VY, class VZ>
   forceinline size_t
   ViewBase<VX,VY,VZ>::dispose(Space& home) {
     if (isintset(y))

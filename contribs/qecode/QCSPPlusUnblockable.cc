@@ -1,5 +1,5 @@
-/****   , [ QCSPPlusUnblockable.cc ], 
-Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
+/****   , [ QCSPPlusUnblockable.cc ],
+Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ QcspUnblockable::QcspUnblockable(int ns,bool* quant,int* nv) {
         arul=new MySpace(n);
     goal = new MySpace(n);
 
-    
+
     for(unsigned int i=0;i<n;i++) {
         int lespace=0;
         while (nbVarBySpace[lespace]<=i) lespace++;
@@ -55,7 +55,7 @@ QcspUnblockable::QcspUnblockable(int ns,bool* quant,int* nv) {
     varInitialised=new bool[n];
     for (unsigned int i=0;i<n;i++) varInitialised[i]=false;
     currentDeclareSpace=0;
-    
+
     vars = new vector<int>[nbSpaces];
     bvars = new vector<int>[nbSpaces];
 }
@@ -76,7 +76,7 @@ void QcspUnblockable::QIntVar(int var,int min,int max) {
         abort();
     }
     //    cout<<"Qintvar : arul = "<<arul<<endl;
-    
+
     arul->v[var] = new IntVar(*arul,min,max);
     arul->type_of_v[var] = VTYPE_INT;
 
@@ -91,7 +91,7 @@ void QcspUnblockable::QIntVar(int var,IntSet dom) {
         cout<<"Variable "<<var<<"  Already created !!"<<endl;
         abort();
     }
-    
+
     arul->v[var] = new IntVar(*arul,dom);
     arul->type_of_v[var] = VTYPE_INT;
     goal->v[var] = new IntVar(*goal,dom);
@@ -106,7 +106,7 @@ void QcspUnblockable::QBoolVar(int var) {
         cout<<"Variable "<<var<<" Already created !!"<<endl;
         abort();
     }
-    
+
     arul->v[var] = new BoolVar(*arul,0,1);
     arul->type_of_v[var]=VTYPE_BOOL;
     goal->v[var] = new BoolVar(*goal,0,1);
@@ -171,7 +171,7 @@ void QcspUnblockable::makeStructure() {
         unsigned int nbint=0;
         unsigned int nbbool=0;
         for (unsigned int j=0;j<nbVarBySpace[i];j++) {
-            if (type_of_v[j] == VTYPE_INT) 
+            if (type_of_v[j] == VTYPE_INT)
                 nbint++;
             else
                 nbbool++;
@@ -223,7 +223,7 @@ MySpace* QcspUnblockable::getSpace(int scope) {
         bva[i]=*( static_cast<BoolVar*>(ret->v[idx]) );
     }
     br->branch(ret,iva,bva);
-    
+
     return ret;
 }
 

@@ -57,6 +57,10 @@ namespace Gecode { namespace Search { namespace Meta {
   NoNGL::cancel(Space&, Propagator&) {
     GECODE_NEVER;
   }
+  void
+  NoNGL::schedule(Space&, Propagator&) {
+    GECODE_NEVER;
+  }
   NGL::Status
   NoNGL::status(const Space&) const {
     GECODE_NEVER;
@@ -82,6 +86,19 @@ namespace Gecode { namespace Search { namespace Meta {
   NoGoodsProp::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,n);
   }
+
+  void
+  NoGoodsProp::schedule(Space& home) {
+    root->schedule(home,*this);
+    NGL* l = root->next();
+    while ((l != NULL) && l->leaf()) {
+      l->schedule(home,*this);
+      l = l->next();
+    }
+    if (l != NULL)
+      l->schedule(home,*this);
+  }
+
 
   ExecStatus
   NoGoodsProp::propagate(Space& home, const ModEventDelta&) {

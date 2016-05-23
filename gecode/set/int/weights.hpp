@@ -148,9 +148,9 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   forceinline
   Weights<View>::Weights(Home home,
-                   const SharedArray<int>& elements0,
-                   const SharedArray<int>& weights0,
-                   View x0, Gecode::Int::IntView y0)
+                         const SharedArray<int>& elements0,
+                         const SharedArray<int>& weights0,
+                         View x0, Gecode::Int::IntView y0)
     : Propagator(home), elements(elements0), weights(weights0),
       x(x0), y(y0) {
     home.notice(*this,AP_DISPOSE);
@@ -190,6 +190,13 @@ namespace Gecode { namespace Set { namespace Int {
   PropCost
   Weights<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, y.size()+1);
+  }
+
+  template<class View>
+  void
+  Weights<View>::schedule(Space& home) {
+    x.schedule(home,*this, PC_SET_ANY);
+    y.schedule(home,*this, Gecode::Int::PC_INT_BND);
   }
 
   template<class View>
