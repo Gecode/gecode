@@ -1021,8 +1021,6 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_KERNEL_EXPORT=" \
                          "GECODE_SEARCH_EXPORT=" \
                          "GECODE_MINIMODEL_EXPORT=" \
-                         "GECODE_GRAPH_EXPORT=" \
-                         "GECODE_SCHEDULING_EXPORT=" \
                          "GECODE_DRIVER_EXPORT=" \
                          "GECODE_GIST_EXPORT=" \
                          "GECODE_SUPPORT_EXPORT=" \
@@ -1030,9 +1028,11 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_HAS_INT_VARS=1" \
                          "GECODE_HAS_SET_VARS=1" \
                          "GECODE_HAS_FLOAT_VARS=1" \
+                         "GECODE_HAS_GIST=1" \
                          "GECODE_THREADS_PTHREADS=1" \
                          "GECODE_HAS_THREADS=1" \
                          "GECODE_HAS_MPFR=1" \
+                         "GECODE_ALLOCATOR=1" \
                          "forceinline=inline"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
