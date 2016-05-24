@@ -413,6 +413,7 @@ INTHDR0 = \
 	member.hh member/prop.hpp member/re-prop.hpp \
 	branch/afc.hpp branch/activity.hpp \
 	ldsb.hh ldsb/brancher.hpp ldsb/sym-imp.hpp \
+	trace.hpp \
 	trace/bool-trace-view.hpp trace/int-trace-view.hpp \
 	trace/bool-delta.hpp trace/int-delta.hpp trace/traits.hpp
 
@@ -480,7 +481,7 @@ FLOATHDR0 = \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
 	num.hpp val.hpp rounding.hpp nextafter.hpp \
-	trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
+	trace.hpp trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%)
 FLOATHDR	= gecode/float.hh $(FLOATHDR0:%=gecode/float/%)
@@ -573,7 +574,7 @@ SETHDR0 =								     \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
 	branch/ngl.hpp \
 	ldsb.hh ldsb/brancher.hpp channel.hh \
-	trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
+	trace.hpp trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
 
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)

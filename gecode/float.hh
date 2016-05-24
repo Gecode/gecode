@@ -1860,9 +1860,7 @@ namespace Gecode {
     std::ostream& os;
   public:
     /// Initialize with output stream \a os0
-    StdFloatTracer(std::ostream& os0 = std::cerr,
-                   int e = (FloatTracer::INIT | FloatTracer::PRUNE |
-                            FloatTracer::FIXPOINT | FloatTracer::DONE));
+    StdFloatTracer(std::ostream& os0 = std::cerr);
     /// Print init information
     virtual void init(const Space& home, const FloatTraceRecorder& t);
     /// Print prune information
@@ -1884,8 +1882,20 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   trace(Home home, const FloatVarArgs& x,
         TraceFilter tf = TraceFilter::all,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
         FloatTracer& t = StdFloatTracer::def);
+  /**
+   * \brief Create a tracer for float variables
+   * \ingroup TaskFloatTrace
+   */
+  void
+  trace(Home home, const FloatVarArgs& x,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        FloatTracer& t = StdFloatTracer::def);
+
 }
+
+#include <gecode/float/trace.hpp>
 
 #endif
 

@@ -1692,9 +1692,7 @@ namespace Gecode {
     std::ostream& os;
   public:
     /// Initialize with output stream \a os0
-    StdSetTracer(std::ostream& os0 = std::cerr,
-                 int e = (SetTracer::INIT | SetTracer::PRUNE |
-                          SetTracer::FIXPOINT | SetTracer::DONE));
+    StdSetTracer(std::ostream& os0 = std::cerr);
     /// Print init information
     virtual void init(const Space& home, const SetTraceRecorder& t);
     /// Print prune information
@@ -1716,8 +1714,20 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   trace(Home home, const SetVarArgs& x,
         TraceFilter tf = TraceFilter::all,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
         SetTracer& t = StdSetTracer::def);
+  /**
+   * \brief Create a tracer for set variables
+   * \ingroup TaskSetTrace
+   */
+  void
+  trace(Home home, const SetVarArgs& x,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        SetTracer& t = StdSetTracer::def);
+
 }
+
+#include <gecode/set/trace.hpp>
 
 #endif
 

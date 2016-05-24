@@ -41,20 +41,20 @@ namespace Gecode {
 
   void
   trace(Home home, const IntVarArgs& x,
-        TraceFilter tf, IntTracer& t) {
+        TraceFilter tf, int te, IntTracer& t) {
     using namespace Gecode::Int;
     GECODE_POST;
     ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<IntView>::post(home,xv,tf,t));
+    GECODE_ES_FAIL(TraceRecorder<IntView>::post(home,xv,tf,te,t));
   }
 
   void
   trace(Home home, const BoolVarArgs& x,
-        TraceFilter tf, BoolTracer& t) {
+        TraceFilter tf, int te, BoolTracer& t) {
     using namespace Gecode::Int;
     GECODE_POST;
     ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<BoolView>::post(home,xv,tf,t));
+    GECODE_ES_FAIL(TraceRecorder<BoolView>::post(home,xv,tf,te,t));
   }
 
 }

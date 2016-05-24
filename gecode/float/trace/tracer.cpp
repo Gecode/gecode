@@ -40,8 +40,8 @@
 
 namespace Gecode {
 
-  StdFloatTracer::StdFloatTracer(std::ostream& os0, int e)
-    : FloatTracer(e), os(os0) {}
+  StdFloatTracer::StdFloatTracer(std::ostream& os0)
+    : os(os0) {}
 
   void
   StdFloatTracer::init(const Space& home, const FloatTraceRecorder& t) {

@@ -40,8 +40,8 @@
 
 namespace Gecode {
 
-  StdIntTracer::StdIntTracer(std::ostream& os0, int e)
-    : IntTracer(e), os(os0) {}
+  StdIntTracer::StdIntTracer(std::ostream& os0)
+    : os(os0) {}
 
   void
   StdIntTracer::init(const Space& home, const IntTraceRecorder& t) {
@@ -102,8 +102,8 @@ namespace Gecode {
 
 
 
-  StdBoolTracer::StdBoolTracer(std::ostream& os0, int e)
-    : BoolTracer(e), os(os0) {}
+  StdBoolTracer::StdBoolTracer(std::ostream& os0)
+    : os(os0) {}
 
   void
   StdBoolTracer::init(const Space& home, const BoolTraceRecorder& t) {

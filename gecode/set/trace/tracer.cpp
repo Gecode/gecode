@@ -40,8 +40,8 @@
 
 namespace Gecode {
 
-  StdSetTracer::StdSetTracer(std::ostream& os0, int e)
-    : SetTracer(e), os(os0) {}
+  StdSetTracer::StdSetTracer(std::ostream& os0)
+    : os(os0) {}
 
   void
   StdSetTracer::init(const Space& home, const SetTraceRecorder& t) {

@@ -68,6 +68,9 @@ public:
       s(le[0]), e(le[1]), n(le[2]), d(le[3]),
       m(le[4]), o(le[5]), r(le[6]), y(le[7]);
 
+    if (opt.trace() != 0)
+      trace(*this, le, opt.trace());
+
     rel(*this, s, IRT_NQ, 0);
     rel(*this, m, IRT_NQ, 0);
 

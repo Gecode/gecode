@@ -35,17 +35,18 @@
  *
  */
 
-#include <gecode/float.hh>
-
 namespace Gecode {
 
-  void
-  trace(Home home, const FloatVarArgs& x,
-        TraceFilter tf, int te, FloatTracer& t) {
-    using namespace Gecode::Float;
-    GECODE_POST;
-    ViewArray<FloatView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<FloatView>::post(home,xv,tf,te,t));
+  inline void
+  trace(Home home, const IntVarArgs& x,
+        int te, IntTracer& t) {
+    trace(home,x,TraceFilter::all,te,t);
+  }
+
+  inline void
+  trace(Home home, const BoolVarArgs& x,
+        int te, BoolTracer& t) {
+    trace(home,x,TraceFilter::all,te,t);
   }
 
 }

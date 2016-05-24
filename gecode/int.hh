@@ -4672,9 +4672,7 @@ namespace Gecode {
     std::ostream& os;
   public:
     /// Initialize with output stream \a os0 and events \ e
-    StdIntTracer(std::ostream& os0 = std::cerr,
-                 int e = (IntTracer::INIT | IntTracer::PRUNE |
-                          IntTracer::FIXPOINT | IntTracer::DONE));
+    StdIntTracer(std::ostream& os0 = std::cerr);
     /// Print init information
     virtual void init(const Space& home, const IntTraceRecorder& t);
     /// Print prune information
@@ -4710,9 +4708,7 @@ namespace Gecode {
     std::ostream& os;
   public:
     /// Initialize with output stream \a os0
-    StdBoolTracer(std::ostream& os0 = std::cerr,
-                  int e = (BoolTracer::INIT | BoolTracer::PRUNE |
-                           BoolTracer::FIXPOINT | BoolTracer::DONE));
+    StdBoolTracer(std::ostream& os0 = std::cerr);
     /// Print init information
     virtual void init(const Space& home, const BoolTraceRecorder& t);
     /// Print prune information
@@ -4733,7 +4729,17 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   trace(Home home, const IntVarArgs& x,
         TraceFilter tf = TraceFilter::all,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
         IntTracer& t = StdIntTracer::def);
+  /**
+   * \brief Create a tracer for integer variables
+   * \ingroup TaskIntTrace
+   */
+  void
+  trace(Home home, const IntVarArgs& x,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        IntTracer& t = StdIntTracer::def);
+
   /**
    * \brief Create a tracer for Boolean Variables
    * \ingroup TaskIntTrace
@@ -4741,8 +4747,20 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   trace(Home home, const BoolVarArgs& x,
         TraceFilter tf = TraceFilter::all,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
         BoolTracer& t = StdBoolTracer::def);
+  /**
+   * \brief Create a tracer for Boolean Variables
+   * \ingroup TaskIntTrace
+   */
+  void
+  trace(Home home, const BoolVarArgs& x,
+        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        BoolTracer& t = StdBoolTracer::def);
+
 }
+
+#include <gecode/int/trace.hpp>
 
 #endif
 

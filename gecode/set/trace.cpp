@@ -41,11 +41,11 @@ namespace Gecode {
 
   void
   trace(Home home, const SetVarArgs& x,
-        TraceFilter tf, SetTracer& t) {
+        TraceFilter tf, int te, SetTracer& t) {
     using namespace Gecode::Set;
     GECODE_POST;
     ViewArray<SetView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<SetView>::post(home,xv,tf,t));
+    GECODE_ES_FAIL(TraceRecorder<SetView>::post(home,xv,tf,te,t));
   }
 
 }

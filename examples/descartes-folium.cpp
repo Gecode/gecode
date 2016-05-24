@@ -79,6 +79,10 @@ public:
   /// Actual model
   DescartesFolium(const Options& opt)
     : FloatMaximizeScript(opt), f(*this,3,-20,20) {
+
+    if (opt.trace() != 0)
+      trace(*this, f, opt.trace());
+
     // Post equation
     FloatVar p = f[0];
     FloatVar x = f[1];

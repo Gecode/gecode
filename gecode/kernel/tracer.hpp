@@ -39,22 +39,10 @@ namespace Gecode {
 
   /// Class to provide synchronization
   class TracerBase : public HeapAllocated {
-  public:
-    /// Which events to trace
-    enum TraceEvent {
-      INIT     = 1 << 0, ///< Trace init events
-      PRUNE    = 1 << 1, ///< Trace prune events
-      FIXPOINT = 1 << 2, ///< Trace fixpoint events
-      DONE     = 1 << 3  ///< Trace done events
-    };
   protected:
     /// Mutex to provide synchronization
     GECODE_KERNEL_EXPORT
     static Support::Mutex m;
-    /// Flags that determine which events to trace
-    const int events;
-    /// Initialize with flags \a f
-    TracerBase(int f);
   };
 
   template<class View> class TraceRecorder;
@@ -96,8 +84,8 @@ namespace Gecode {
      */
     void _done(const Space& home, const TraceRecorder<View>& t);
   public:
-    /// Constructor where is a disjunction of trace events
-    Tracer(int e = INIT | PRUNE | FIXPOINT | DONE);
+    /// Constructor
+    Tracer(void);
     /**
      * \brief Init function
      *
@@ -141,50 +129,39 @@ namespace Gecode {
   };
 
 
-  forceinline
-  TracerBase::TracerBase(int f) : events(f) {}
-
   template<class View>
   forceinline
-  Tracer<View>::Tracer(int e) : TracerBase(e) {}
+  Tracer<View>::Tracer(void) {}
 
   template<class View>
   forceinline void
   Tracer<View>::_init(const Space& home, const TraceRecorder<View>& t) {
-    if (events & INIT) {
-      m.acquire();
-      init(home,t);
-      m.release();
-    }
+    m.acquire();
+    init(home,t);
+    m.release();
   }
   template<class View>
   forceinline void
   Tracer<View>::_prune(const Space& home, const TraceRecorder<View>& t,
                        const ExecInfo& ei,
                        int i, typename TraceTraits<View>::TraceDelta& d) {
-    if (events & PRUNE) {
-      m.acquire();
-      prune(home,t,ei,i,d);
-      m.release();
-    }
+    m.acquire();
+    prune(home,t,ei,i,d);
+    m.release();
   }
   template<class View>
   forceinline void
   Tracer<View>::_fixpoint(const Space& home, const TraceRecorder<View>& t) {
-    if (events & FIXPOINT) {
-      m.acquire();
-      fixpoint(home,t);
-      m.release();
-    }
+    m.acquire();
+    fixpoint(home,t);
+    m.release();
   }
   template<class View>
   forceinline void
   Tracer<View>::_done(const Space& home, const TraceRecorder<View>& t) {
-    if (events & DONE) {
-      m.acquire();
-      done(home,t);
-      m.release();
-    }
+    m.acquire();
+    done(home,t);
+    m.release();
   }
   template<class View>
   forceinline

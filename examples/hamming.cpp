@@ -96,7 +96,12 @@ public:
   Hamming(const HammingOptions& opt) :
     Script(opt),
     x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
+
+    if (opt.trace() != 0)
+      trace(*this, x, opt.trace());
+
     SetVarArgs cx(x.size());
+
     for (int i=x.size(); i--;)
       cx[i] = expr(*this, -x[i]);
 
