@@ -61,8 +61,8 @@ namespace Gecode { namespace Set { namespace LDSB {
   class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a> {
   public:
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
-                                unsigned int b,
+    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
+                                unsigned int a,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
@@ -106,14 +106,14 @@ namespace Gecode { namespace Set { namespace LDSB {
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Brancher post function
-    static BrancherHandle post(Home home,
-                               ViewArray<View>& x,
-                               ViewSel<View>* vs[n],
-                               ValSelCommitBase<View,Val>* vsc,
-                               SymmetryImp<View>** _syms,
-                               int _nsyms,
-                               SetBranchFilter bf,
-                               VarValPrint vvp);
+    static void post(Home home,
+                     ViewArray<View>& x,
+                     ViewSel<View>* vs[n],
+                     ValSelCommitBase<View,Val>* vsc,
+                     SymmetryImp<View>** _syms,
+                     int _nsyms,
+                     SetBranchFilter bf,
+                     VarValPrint vvp);
 
     /**
      * \brief Part one of the update phase

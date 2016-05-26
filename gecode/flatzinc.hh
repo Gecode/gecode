@@ -337,17 +337,18 @@ namespace Gecode { namespace FlatZinc {
     /// Initialise for use
     void init(void);
     /// Add new brancher information
-    void add(const BrancherHandle& bh,
+    void add(BrancherGroup bg,
              const std::string& rel0,
              const std::string& rel1,
              const std::vector<std::string>& n);
     /// Output branch information
-    void print(const BrancherHandle& bh,
-               int a, int i, int n, std::ostream& o) const;
+    void print(const Brancher& b,
+               unsigned int a, int i, int n, std::ostream& o) const;
 #ifdef GECODE_HAS_FLOAT_VARS
     /// Output branch information
-    void print(const BrancherHandle& bh,
-               int a, int i, const FloatNumBranch& nl, std::ostream& o) const;
+    void print(const Brancher& b,
+               unsigned int a, int i, const FloatNumBranch& nl, 
+               std::ostream& o) const;
 #endif
   };
 

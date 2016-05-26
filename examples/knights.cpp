@@ -153,9 +153,9 @@ public:
     return new (home) Warnsdorff(home, share, *this);
   }
   /// Post brancher
-  static BrancherHandle post(Home home, const IntVarArgs& x) {
+  static void post(Home home, const IntVarArgs& x) {
     ViewArray<Int::IntView> xv(home, x);
-    return *new (home) Warnsdorff(home, xv);
+    (void) new (home) Warnsdorff(home, xv);
   }
   /// Delete brancher and return its size
   virtual size_t dispose(Space&) {

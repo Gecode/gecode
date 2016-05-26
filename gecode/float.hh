@@ -1499,7 +1499,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for explaining branching alternatives for set variables
-  typedef void (*FloatVarValPrint)(const Space &home, const BrancherHandle& bh,
+  typedef void (*FloatVarValPrint)(const Space &home, const Brancher& b,
                                    unsigned int a,
                                    FloatVar x, int i, const FloatNumBranch& n,
                                    std::ostream& o);
@@ -1750,7 +1750,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          FloatVarBranch vars, FloatValBranch vals,
          FloatBranchFilter bf=NULL,
@@ -1760,7 +1760,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals,
          FloatBranchFilter bf=NULL,
@@ -1770,7 +1770,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   branch(Home home, FloatVar x, FloatValBranch vals,
          FloatVarValPrint vvp=NULL);
 
@@ -1779,7 +1779,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
          FloatBranchFilter fbf=NULL,
          FloatVarValPrint vvp=NULL);
@@ -1788,7 +1788,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   assign(Home home, FloatVar x, FloatAssign vals,
          FloatVarValPrint vvp=NULL);
   //@}

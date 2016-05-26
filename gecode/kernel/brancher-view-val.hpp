@@ -102,8 +102,8 @@ namespace Gecode {
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
-                                unsigned int b,
+    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
+                                unsigned int a,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
@@ -141,12 +141,12 @@ namespace Gecode {
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function
-    static BrancherHandle post(Home home,
-                               ViewArray<View>& x,
-                               ViewSel<View>* vs[n],
-                               ValSelCommitBase<View,Val>* vsc,
-                               BranchFilter bf,
-                               VarValPrint vvp);
+    static void post(Home home,
+                     ViewArray<View>& x,
+                     ViewSel<View>* vs[n],
+                     ValSelCommitBase<View,Val>* vsc,
+                     BranchFilter bf,
+                     VarValPrint vvp);
   };
   //@}
 
@@ -242,13 +242,13 @@ namespace Gecode {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  inline BrancherHandle
+  inline void
   ViewValBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        BranchFilter bf,
        VarValPrint vvp) {
-    return *new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf,vvp);
+    (void) new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf,vvp);
   }
 
   template<class View, int n, class Val, unsigned int a>

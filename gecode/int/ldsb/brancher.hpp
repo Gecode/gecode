@@ -115,13 +115,13 @@ namespace Gecode { namespace Int { namespace LDSB {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  forceinline BrancherHandle
+  forceinline void
   LDSBBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
        BranchFilter bf, VarValPrint vvp) {
-    return *new (home) LDSBBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
+    (void) new (home) LDSBBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
   }
 
   template<class View, int n, class Val, unsigned int a>

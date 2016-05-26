@@ -1236,7 +1236,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for printing branching alternatives for set variables
-  typedef void (*SetVarValPrint)(const Space &home, const BrancherHandle& bh,
+  typedef void (*SetVarValPrint)(const Space &home, const Brancher& b,
                                  unsigned int a,
                                  SetVar x, int i, const int& n,
                                  std::ostream& o);
@@ -1518,7 +1518,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          SetBranchFilter bf=NULL,
@@ -1528,7 +1528,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          SetBranchFilter bf=NULL,
@@ -1538,7 +1538,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, SetVar x, SetValBranch vals,
          SetVarValPrint vvp=NULL);
   /**
@@ -1546,7 +1546,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
@@ -1555,7 +1555,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   assign(Home home, SetVar x, SetAssign vals,
          SetVarValPrint vvp=NULL);
 
@@ -1578,7 +1578,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
@@ -1590,7 +1590,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,

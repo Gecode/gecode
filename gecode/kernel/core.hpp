@@ -218,7 +218,6 @@ namespace Gecode {
   class Advisor;
   class AFC;
   class Brancher;
-  class BrancherHandle;
   class Group;
   class PropagatorGroup;
   class BrancherGroup;
@@ -1398,31 +1397,6 @@ namespace Gecode {
   };
 
   /**
-   * \brief Handle for brancher
-   *
-   * Supports few operations on a brancher, in particular to kill
-   * a brancher.
-   *
-   * \ingroup TaskActor
-   */
-  class BrancherHandle {
-  private:
-    /// Id of the brancher
-    unsigned int bid;
-  public:
-    /// Create handle as unitialized
-    BrancherHandle(void);
-    /// Create handle for brancher \a b
-    BrancherHandle(const Brancher& b);
-    /// Return brancher id
-    unsigned int id(void) const;
-    /// Check whether brancher is still active
-    bool operator ()(const Space& home) const;
-    /// Kill the brancher
-    void kill(Space& home);
-  };
-
-  /**
    * \brief Local (space-shared) object
    *
    * Local objects must inherit from this base class.
@@ -1657,7 +1631,6 @@ namespace Gecode {
     friend class LocalObject;
     friend class Region;
     friend class AFC;
-    friend class BrancherHandle;
     friend class PostInfo;
   private:
     /// Manager for shared memory areas
@@ -3574,29 +3547,6 @@ namespace Gecode {
           return b_commit;
     }
     return NULL;
-  }
-
-  /*
-   * Brancher handle
-   *
-   */
-  forceinline
-  BrancherHandle::BrancherHandle(void)
-    : bid(Space::reserved_bid) {}
-  forceinline
-  BrancherHandle::BrancherHandle(const Brancher& b)
-    : bid(b.id()) {}
-  forceinline unsigned int
-  BrancherHandle::id(void) const {
-    return bid;
-  }
-  forceinline bool
-  BrancherHandle::operator ()(const Space& home) const {
-    return const_cast<Space&>(home).brancher(bid) != NULL;
-  }
-  forceinline void
-  BrancherHandle::kill(Space& home) {
-    home.kill_brancher(bid);
   }
 
 

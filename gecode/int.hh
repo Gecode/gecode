@@ -3946,13 +3946,13 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for printing branching alternatives for integer variables
-  typedef void (*IntVarValPrint)(const Space &home, const BrancherHandle& bh,
+  typedef void (*IntVarValPrint)(const Space &home, const Brancher& b,
                                  unsigned int a,
                                  IntVar x, int i, const int& n,
                                  std::ostream& o);
 
   /// Function type for printing branching alternatives for Boolean variables
-  typedef void (*BoolVarValPrint)(const Space &home, const BrancherHandle& bh,
+  typedef void (*BoolVarValPrint)(const Space &home, const Brancher& b,
                                   unsigned int a,
                                   BoolVar x, int i, const int& n,
                                   std::ostream& o);
@@ -4312,7 +4312,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          IntBranchFilter bf=NULL,
@@ -4322,7 +4322,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          IntBranchFilter bf=NULL,
@@ -4332,7 +4332,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, IntVar x, IntValBranch vals,
          IntVarValPrint vvp=NULL);
   /**
@@ -4340,7 +4340,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          BoolBranchFilter bf=NULL,
@@ -4350,7 +4350,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          BoolBranchFilter bf=NULL,
@@ -4360,7 +4360,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, BoolVar x, IntValBranch vals,
          BoolVarValPrint vvp=NULL);
 
@@ -4369,7 +4369,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   assign(Home home, const IntVarArgs& x, IntAssign vals,
          IntBranchFilter ibf=NULL,
          IntVarValPrint vvp=NULL);
@@ -4378,7 +4378,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   assign(Home home, IntVar x, IntAssign vals,
          IntVarValPrint vvp=NULL);
   /**
@@ -4386,7 +4386,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   assign(Home home, const BoolVarArgs& x, IntAssign vals,
          BoolBranchFilter bbf=NULL,
          BoolVarValPrint vvp=NULL);
@@ -4395,7 +4395,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   assign(Home home, BoolVar x, IntAssign vals,
          BoolVarValPrint vvp=NULL);
 
@@ -4524,7 +4524,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Symmetries& syms,
@@ -4540,7 +4540,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          const Symmetries& syms,
@@ -4556,7 +4556,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Symmetries& syms,
@@ -4572,7 +4572,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelIntBranch
    */
-  GECODE_INT_EXPORT BrancherHandle
+  GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          const Symmetries& syms,

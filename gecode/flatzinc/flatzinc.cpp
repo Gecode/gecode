@@ -246,23 +246,24 @@ namespace Gecode { namespace FlatZinc {
       return new BranchInformationO(v);
     }
     /// Add new brancher information
-    void add(const BrancherHandle& bh,
+    void add(BrancherGroup bg,
              const string& rel0,
              const string& rel1,
              const vector<string>& n) {
-      v.resize(std::max(static_cast<unsigned int>(v.size()),bh.id()+1));
-      v[bh.id()] = BI(rel0,rel1,n);
+      v.resize(std::max(static_cast<unsigned int>(v.size()),bg.id()+1));
+      v[bg.id()] = BI(rel0,rel1,n);
     }
     /// Output branch information
-    void print(const BrancherHandle& bh,
-               int a, int i, int n, ostream& o) const {
-      const BI& bi = v[bh.id()];
+    void print(const Brancher& b,
+               unsigned int a, int i, int n, ostream& o) const {
+      const BI& bi = v[b.group().id()];
       o << bi.n[i] << " " << (a==0 ? bi.r0 : bi.r1) << " " << n;
     }
 #ifdef GECODE_HAS_FLOAT_VARS
-    void print(const BrancherHandle& bh,
-               int a, int i, const FloatNumBranch& nl, ostream& o) const {
-      const BI& bi = v[bh.id()];
+    void print(const Brancher& b,
+               unsigned int a, int i, const FloatNumBranch& nl,
+               ostream& o) const {
+      const BI& bi = v[b.group().id()];
       o << bi.n[i] << " "
         << (((a == 0) == nl.l) ? "<=" : ">=") << nl.n;
     }
@@ -282,38 +283,38 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  BranchInformation::add(const BrancherHandle& bh,
+  BranchInformation::add(BrancherGroup bg,
                          const std::string& rel0,
                          const std::string& rel1,
                          const std::vector<std::string>& n) {
-    static_cast<BranchInformationO*>(object())->add(bh,rel0,rel1,n);
+    static_cast<BranchInformationO*>(object())->add(bg,rel0,rel1,n);
   }
   void
-  BranchInformation::print(const BrancherHandle& bh, int a, int i,
+  BranchInformation::print(const Brancher& b, unsigned int a, int i,
                            int n, std::ostream& o) const {
-    static_cast<const BranchInformationO*>(object())->print(bh,a,i,n,o);
+    static_cast<const BranchInformationO*>(object())->print(b,a,i,n,o);
   }
 #ifdef GECODE_HAS_FLOAT_VARS
   void
-  BranchInformation::print(const BrancherHandle& bh, int a, int i,
+  BranchInformation::print(const Brancher& b, unsigned int a, int i,
                            const FloatNumBranch& nl, std::ostream& o) const {
-    static_cast<const BranchInformationO*>(object())->print(bh,a,i,nl,o);
+    static_cast<const BranchInformationO*>(object())->print(b,a,i,nl,o);
   }
 #endif
   template<class Var>
-  void varValPrint(const Space &home, const BrancherHandle& bh,
+  void varValPrint(const Space &home, const Brancher& b,
                    unsigned int a,
                    Var, int i, const int& n,
                    std::ostream& o) {
-    static_cast<const FlatZincSpace&>(home).branchInfo.print(bh,a,i,n,o);
+    static_cast<const FlatZincSpace&>(home).branchInfo.print(b,a,i,n,o);
   }
 
 #ifdef GECODE_HAS_FLOAT_VARS
-  void varValPrintF(const Space &home, const BrancherHandle& bh,
+  void varValPrintF(const Space &home, const Brancher& b,
                     unsigned int a,
                     FloatVar, int i, const FloatNumBranch& nl,
                     std::ostream& o) {
-    static_cast<const FlatZincSpace&>(home).branchInfo.print(bh,a,i,nl,o);
+    static_cast<const FlatZincSpace&>(home).branchInfo.print(b,a,i,nl,o);
   }
 #endif
 
@@ -977,12 +978,15 @@ namespace Gecode { namespace FlatZinc {
             names.push_back(vars->a[i]->getVarName());
           }
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va,
-            ann2ivarsel(args->a[1],rnd,decay),
-            ann2ivalsel(args->a[2],r0,r1,rnd),
-            NULL,
-            &varValPrint<IntVar>);
-          branchInfo.add(bh,r0,r1,names);
+          {
+            BrancherGroup bg;
+            branch(bg(*this), va,
+                   ann2ivarsel(args->a[1],rnd,decay),
+                   ann2ivalsel(args->a[2],r0,r1,rnd),
+                   NULL,
+                   &varValPrint<IntVar>);
+            branchInfo.add(bg,r0,r1,names);
+          }
         } else if (flatAnn[i]->isCall("int_assign")) {
           AST::Call *call = flatAnn[i]->getCall("int_assign");
           AST::Array *args = call->getArgs(2);
@@ -1021,11 +1025,14 @@ namespace Gecode { namespace FlatZinc {
           }
 
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va,
-            ann2ivarsel(args->a[1],rnd,decay),
-            ann2ivalsel(args->a[2],r0,r1,rnd), NULL,
-            &varValPrint<BoolVar>);
-          branchInfo.add(bh,r0,r1,names);
+          {
+            BrancherGroup bg;
+            branch(bg(*this), va,
+                   ann2ivarsel(args->a[1],rnd,decay),
+                   ann2ivalsel(args->a[2],r0,r1,rnd), NULL,
+                   &varValPrint<BoolVar>);
+            branchInfo.add(bg,r0,r1,names);
+          }
         } else if (flatAnn[i]->isCall("int_default_search")) {
           AST::Call *call = flatAnn[i]->getCall("int_default_search");
           AST::Array *args = call->getArgs(2);
@@ -1058,12 +1065,15 @@ namespace Gecode { namespace FlatZinc {
             names.push_back(vars->a[i]->getVarName());
           }
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va,
-            ann2svarsel(args->a[1],rnd,decay),
-            ann2svalsel(args->a[2],r0,r1,rnd),
-            NULL,
-            &varValPrint<SetVar>);
-          branchInfo.add(bh,r0,r1,names);
+          {
+            BrancherGroup bg;
+            branch(bg(*this), va,
+                   ann2svarsel(args->a[1],rnd,decay),
+                   ann2svalsel(args->a[2],r0,r1,rnd),
+                   NULL,
+                   &varValPrint<SetVar>);
+            branchInfo.add(bg,r0,r1,names);
+          }
 #else
           if (!ignoreUnknown) {
             err << "Warning, ignored search annotation: ";
@@ -1119,12 +1129,15 @@ namespace Gecode { namespace FlatZinc {
             names.push_back(vars->a[i]->getVarName());
           }
           std::string r0, r1;
-          BrancherHandle bh = branch(*this, va,
-            ann2fvarsel(args->a[2],rnd,decay),
-            ann2fvalsel(args->a[3],r0,r1),
-            NULL,
-            &varValPrintF);
-          branchInfo.add(bh,r0,r1,names);
+          {
+            BrancherGroup bg;
+            branch(bg(*this), va,
+                   ann2fvarsel(args->a[2],rnd,decay),
+                   ann2fvalsel(args->a[3],r0,r1),
+                   NULL,
+                   &varValPrintF);
+            branchInfo.add(bg,r0,r1,names);
+          }
 #else
           if (!ignoreUnknown) {
             err << "Warning, ignored search annotation: ";

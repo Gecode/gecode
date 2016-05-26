@@ -343,8 +343,8 @@ namespace Gecode { namespace Int { namespace LDSB {
     int _prevPos;
   protected:
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
-                                unsigned int b,
+    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
+                                unsigned int a,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
@@ -370,14 +370,14 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function
-    static BrancherHandle post(Home home,
-                               ViewArray<View>& x,
-                               ViewSel<View>* vs[n],
-                               ValSelCommitBase<View,Val>* vsc,
-                               SymmetryImp<View>** syms,
-                               int nsyms,
-                               BranchFilter bf,
-                               VarValPrint vvp);
+    static void post(Home home,
+                     ViewArray<View>& x,
+                     ViewSel<View>* vs[n],
+                     ValSelCommitBase<View,Val>* vsc,
+                     SymmetryImp<View>** syms,
+                     int nsyms,
+                     BranchFilter bf,
+                     VarValPrint vvp);
   };
 
   /// Exclude value \v from variable view \x

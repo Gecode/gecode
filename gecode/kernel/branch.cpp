@@ -98,17 +98,15 @@ namespace Gecode {
       return new (home) FunctionBranch(home,share,*this);
     }
     /// Post brancher
-    static BrancherHandle post(Home home, void (*f)(Space&)) {
-      return *new (home) FunctionBranch(home,f);
+    static void post(Home home, void (*f)(Space&)) {
+      (void) new (home) FunctionBranch(home,f);
     }
   };
 
 
-  BrancherHandle
+  void
   branch(Home home, void (*f)(Space& home)) {
-    if (home.failed())
-      return BrancherHandle();
-    return FunctionBranch::post(home,f);
+    FunctionBranch::post(home,f);
   }
 
 }

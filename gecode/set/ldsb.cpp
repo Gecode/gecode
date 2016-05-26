@@ -138,13 +138,13 @@ namespace Gecode {
 
   using namespace Set::LDSB;
 
-  BrancherHandle
+  void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
          SetBranchFilter bf, SetVarValPrint vvp) {
     using namespace Set;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<SetView> xv(home,x);
     ViewSel<SetView>* vs[1] = {
@@ -166,17 +166,17 @@ namespace Gecode {
       array[i] = createSetSym(home, syms[i], variableMap);
     }
 
-    return LDSBSetBrancher<SetView,1,int,2>::post
+    LDSBSetBrancher<SetView,1,int,2>::post
       (home,xv,vs,Branch::valselcommit(home,vals),array,n,bf,vvp);
   }
 
-  BrancherHandle
+  void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,
          SetBranchFilter bf, SetVarValPrint vvp) {
     using namespace Set;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.a.expand(home,x);
     if ((vars.a.select() == SetVarBranch::SEL_NONE) ||
         (vars.a.select() == SetVarBranch::SEL_RND))
@@ -191,7 +191,7 @@ namespace Gecode {
       vars.d = SET_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == SetVarBranch::SEL_NONE) {
-      return branch(home,x,vars.a,vals,syms,bf,vvp);
+      branch(home,x,vars.a,vals,syms,bf,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -214,22 +214,19 @@ namespace Gecode {
         ViewSel<SetView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        return
-          LDSBSetBrancher<SetView,2,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        LDSBSetBrancher<SetView,2,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
       } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
         ViewSel<SetView>* vs[3] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        return
-          LDSBSetBrancher<SetView,3,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        LDSBSetBrancher<SetView,3,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
       } else {
         ViewSel<SetView>* vs[4] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        return
-          LDSBSetBrancher<SetView,4,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        LDSBSetBrancher<SetView,4,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
       }
     }
   }

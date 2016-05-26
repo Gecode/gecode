@@ -243,14 +243,14 @@ namespace Gecode { namespace Set { namespace LDSB {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  forceinline BrancherHandle
+  forceinline void
   LDSBSetBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
        SetBranchFilter bf,
        VarValPrint vvp) {
-    return *new (home) LDSBSetBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
+    (void) new (home) LDSBSetBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
   }
 
 }}}
