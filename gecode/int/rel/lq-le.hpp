@@ -233,6 +233,7 @@ namespace Gecode { namespace Int { namespace Rel {
             for (int k=0; k<n-1-j-1+1; k++)
               x[i+1+k]=x[j+1+k];
             n -= j-i;
+            break;
           }
       x.size(n);
     }

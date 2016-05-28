@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix n-ary lq/le propagator when used on arrays with variables occurring
+multiply.
+
+[ENTRY]
 Module: kernel
 What:   removed
 Rank:   major
