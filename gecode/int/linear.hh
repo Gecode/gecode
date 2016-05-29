@@ -532,6 +532,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N, PropCond pc, class Ctrl>
   class ReLin : public Lin<Val,P,N,pc> {
   protected:
+    using Lin<Val,P,N,pc>::x;
+    using Lin<Val,P,N,pc>::y;
     /// Control view for reification
     Ctrl b;
     /// Constructor for cloning \a p
@@ -825,6 +827,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolInt<VX>::n_as;
     using LinBoolInt<VX>::n_hs;
     using LinBoolInt<VX>::c;
+    using LinBoolInt<VX>::disabled;
     /// Constructor for cloning \a p
     EqBoolInt(Space& home, bool share, EqBoolInt& p);
     /// Constructor for creation
@@ -856,6 +859,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolInt<VX>::n_as;
     using LinBoolInt<VX>::n_hs;
     using LinBoolInt<VX>::c;
+    using LinBoolInt<VX>::disabled;
     /// Constructor for cloning \a p
     GqBoolInt(Space& home, bool share, GqBoolInt& p);
     /// Constructor for creation

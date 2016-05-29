@@ -63,7 +63,7 @@ namespace Gecode {
     typedef typename TraceTraits<View>::SlackValue SlackValue;
     /// Collection of slack values
     class Slack {
-      template<class View> friend class TraceRecorder;
+      template<class ViewForTraceRecorder> friend class TraceRecorder;
     protected:
       /// The initial slack value
       SlackValue i;

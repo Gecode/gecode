@@ -40,7 +40,9 @@ namespace Gecode {
   forceinline
   FloatTraceDelta::FloatTraceDelta(Float::FloatTraceView o,
                                    Float::FloatView n0,
-                                   const Delta& d0) : n(n0), d(d0) {}
+                                   const Delta& d0) : n(n0), d(d0) {
+    (void)o;
+  }
 
   forceinline FloatNum
   FloatTraceDelta::min(void) const {

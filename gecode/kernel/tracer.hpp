@@ -53,7 +53,7 @@ namespace Gecode {
    */
   template<class View>
   class Tracer : public TracerBase {
-    template<class View> friend class TraceRecorder;
+    template<class ViewForTraceRecorder> friend class TraceRecorder;
   private:
     /**
      * \brief Init function synchronization

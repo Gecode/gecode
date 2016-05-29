@@ -62,7 +62,7 @@ namespace Gecode { namespace Set { namespace LDSB {
   public:
     /// Function type for printing variable and value selection
     typedef void (*VarValPrint)(const Space& home, const Brancher& b,
-                                unsigned int a,
+                                unsigned int alt,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);

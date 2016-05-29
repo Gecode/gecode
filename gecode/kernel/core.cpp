@@ -714,16 +714,16 @@ namespace Gecode {
    * Groups
    */
 
-  Group Group::all(GID_ALL);
-  Group Group::default(GID_DEFAULT);
+  Group Group::all(GROUPID_ALL);
+  Group Group::defaultgroup(GROUPID_DEFAULT);
 
-  PropagatorGroup PropagatorGroup::all(GID_ALL);
-  PropagatorGroup PropagatorGroup::default(GID_DEFAULT);
+  PropagatorGroup PropagatorGroup::all(GROUPID_ALL);
+  PropagatorGroup PropagatorGroup::defaultgroup(GROUPID_DEFAULT);
 
-  BrancherGroup BrancherGroup::all(GID_ALL);
-  BrancherGroup BrancherGroup::default(GID_DEFAULT);
+  BrancherGroup BrancherGroup::all(GROUPID_ALL);
+  BrancherGroup BrancherGroup::defaultgroup(GROUPID_DEFAULT);
 
-  unsigned int Group::next = GID_DEFAULT+1;
+  unsigned int Group::next = GROUPID_DEFAULT+1;
   Support::Mutex Group::m;
 
 
@@ -731,7 +731,7 @@ namespace Gecode {
     m.acquire();
     gid = next++;
     m.release();
-    if (gid == GID_MAX)
+    if (gid == GROUPID_MAX)
       throw TooManyGroups("Group::Group");
   }
 
