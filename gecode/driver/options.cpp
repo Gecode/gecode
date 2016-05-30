@@ -341,18 +341,18 @@ namespace Gecode {
           while ((*c != ',') && (*c != 0))
             c++;
 
-          if      (!strncmp("init",a,c-a))     { cur |= TE_INIT; }
-          else if (!strncmp("prune",a,c-a))    { cur |= TE_PRUNE; }
-          else if (!strncmp("fixpoint",a,c-a)) { cur |= TE_FIXPOINT; }
-          else if (!strncmp("done",a,c-a))     { cur |= TE_DONE ; }
+          if      (!strncmp("init",a,c-a))    { cur |= TE_INIT; }
+          else if (!strncmp("prune",a,c-a))   { cur |= TE_PRUNE; }
+          else if (!strncmp("fix",a,c-a))     { cur |= TE_FIX; }
+          else if (!strncmp("done",a,c-a))    { cur |= TE_DONE ; }
           else if (!strncmp("none",a,c-a) ||
                    !strncmp("false",a,c-a) ||
-                   !strncmp("0",a,c-a))        { cur = 0; }
+                   !strncmp("0",a,c-a))       { cur = 0; }
           else if (!strncmp("all",a,c-a) ||
-                   !strncmp("1",a,c-a))        { cur = (TE_INIT |
-                                                        TE_PRUNE |
-                                                        TE_FIXPOINT |
-                                                        TE_DONE); }
+                   !strncmp("1",a,c-a))       { cur = (TE_INIT |
+                                                       TE_PRUNE |
+                                                       TE_FIX |
+                                                       TE_DONE); }
           else {
             std::cerr << "Wrong argument \"" << a
                       << "\" for option \"" << opt << "\""
@@ -373,11 +373,11 @@ namespace Gecode {
     TraceOption::help(void) {
       using namespace std;
       cerr << '\t' << opt
-           << " (init,prune,fixpoint,done,none,all)"
+           << " (init,prune,fix,done,none,all)"
            << " default: ";
       if (cur == 0) {
         cerr << "none";
-      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE)) {
+      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE)) {
         cerr << "all";
       } else {
         int f = cur;
@@ -391,9 +391,9 @@ namespace Gecode {
           f -= TE_PRUNE;
           if (f != 0) cerr << ',';
         }
-        if ((f & TE_FIXPOINT) != 0) {
-          cerr << "fixpoint";
-          f -= TE_FIXPOINT;
+        if ((f & TE_FIX) != 0) {
+          cerr << "fix";
+          f -= TE_FIX;
           if (f != 0) cerr << ',';
         }
         if ((f & TE_DONE) != 0) {

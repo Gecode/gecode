@@ -1867,7 +1867,7 @@ namespace Gecode {
     virtual void prune(const Space& home, const FloatTraceRecorder& t,
                        const ExecInfo& ei, int i, FloatTraceDelta& d);
     /// Print fixpoint information
-    virtual void fixpoint(const Space& home, const FloatTraceRecorder& t);
+    virtual void fix(const Space& home, const FloatTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const FloatTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -1882,7 +1882,7 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   trace(Home home, const FloatVarArgs& x,
         TraceFilter tf = TraceFilter::all,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         FloatTracer& t = StdFloatTracer::def);
   /**
    * \brief Create a tracer for float variables
@@ -1890,7 +1890,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const FloatVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         FloatTracer& t = StdFloatTracer::def);
 
 }

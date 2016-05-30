@@ -76,7 +76,7 @@ namespace Gecode {
      *
      * Just calls the actual fixpoint function protected by a mutex.
      */
-    void _fixpoint(const Space& home, const TraceRecorder<View>& t);
+    void _fix(const Space& home, const TraceRecorder<View>& t);
     /**
      * \brief Done function synchronization
      *
@@ -114,8 +114,8 @@ namespace Gecode {
      * the trace collector \a t reaches a fixpoint (and fixpoint
      * tracing is enabled).
      */
-    virtual void fixpoint(const Space& home,
-                          const TraceRecorder<View>& t) = 0;
+    virtual void fix(const Space& home,
+                     const TraceRecorder<View>& t) = 0;
     /**
      * \brief Done function
      *
@@ -151,9 +151,9 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  Tracer<View>::_fixpoint(const Space& home, const TraceRecorder<View>& t) {
+  Tracer<View>::_fix(const Space& home, const TraceRecorder<View>& t) {
     m.acquire();
-    fixpoint(home,t);
+    fix(home,t);
     m.release();
   }
   template<class View>

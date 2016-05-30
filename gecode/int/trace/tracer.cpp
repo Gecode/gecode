@@ -73,8 +73,8 @@ namespace Gecode {
   }
 
   void
-  StdIntTracer::fixpoint(const Space& home, const IntTraceRecorder& t) {
-    os << "trace<Int>::fixpoint(id:" << t.id();
+  StdIntTracer::fix(const Space& home, const IntTraceRecorder& t) {
+    os << "trace<Int>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
     os << ") slack: ";
@@ -135,8 +135,8 @@ namespace Gecode {
   }
 
   void
-  StdBoolTracer::fixpoint(const Space& home, const BoolTraceRecorder& t) {
-    os << "trace<Bool>::fixpoint(id:" << t.id();
+  StdBoolTracer::fix(const Space& home, const BoolTraceRecorder& t) {
+    os << "trace<Bool>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
     os << ") slack: ";

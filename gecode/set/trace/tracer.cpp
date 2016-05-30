@@ -86,8 +86,8 @@ namespace Gecode {
   }
 
   void
-  StdSetTracer::fixpoint(const Space& home, const SetTraceRecorder& t) {
-    os << "trace<Set>::fixpoint(id:" << t.id();
+  StdSetTracer::fix(const Space& home, const SetTraceRecorder& t) {
+    os << "trace<Set>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
     os << ") slack: ";

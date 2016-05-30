@@ -64,8 +64,8 @@ namespace Gecode {
   }
 
   void
-  StdFloatTracer::fixpoint(const Space& home, const FloatTraceRecorder& t) {
-    os << "trace<Float>::fixpoint(id:" << t.id();
+  StdFloatTracer::fix(const Space& home, const FloatTraceRecorder& t) {
+    os << "trace<Float>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
     os << ") slack: ";

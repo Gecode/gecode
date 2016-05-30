@@ -4679,7 +4679,7 @@ namespace Gecode {
     virtual void prune(const Space& home, const IntTraceRecorder& t,
                        const ExecInfo& ei, int i, IntTraceDelta& d);
     /// Print fixpoint information
-    virtual void fixpoint(const Space& home, const IntTraceRecorder& t);
+    virtual void fix(const Space& home, const IntTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const IntTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -4715,7 +4715,7 @@ namespace Gecode {
     virtual void prune(const Space& home, const BoolTraceRecorder& t,
                        const ExecInfo& ei, int i, BoolTraceDelta& d);
     /// Print fixpoint information
-    virtual void fixpoint(const Space& home, const BoolTraceRecorder& t);
+    virtual void fix(const Space& home, const BoolTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const BoolTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -4729,7 +4729,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   trace(Home home, const IntVarArgs& x,
         TraceFilter tf = TraceFilter::all,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         IntTracer& t = StdIntTracer::def);
   /**
    * \brief Create a tracer for integer variables
@@ -4737,7 +4737,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const IntVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         IntTracer& t = StdIntTracer::def);
 
   /**
@@ -4747,7 +4747,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   trace(Home home, const BoolVarArgs& x,
         TraceFilter tf = TraceFilter::all,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         BoolTracer& t = StdBoolTracer::def);
   /**
    * \brief Create a tracer for Boolean Variables
@@ -4755,7 +4755,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const BoolVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         BoolTracer& t = StdBoolTracer::def);
 
 }

@@ -1699,7 +1699,7 @@ namespace Gecode {
     virtual void prune(const Space& home, const SetTraceRecorder& t,
                        const ExecInfo& ei, int i, SetTraceDelta& d);
     /// Print fixpoint information
-    virtual void fixpoint(const Space& home, const SetTraceRecorder& t);
+    virtual void fix(const Space& home, const SetTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const SetTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -1714,7 +1714,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   trace(Home home, const SetVarArgs& x,
         TraceFilter tf = TraceFilter::all,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         SetTracer& t = StdSetTracer::def);
   /**
    * \brief Create a tracer for set variables
@@ -1722,7 +1722,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const SetVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIXPOINT | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         SetTracer& t = StdSetTracer::def);
 
 }
