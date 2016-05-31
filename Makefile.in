@@ -207,7 +207,8 @@ KERNELHDR0 = \
 	brancher-val-sel-commit \
 	allocators print gpi \
 	afc activity rnd branch-traits \
-	trace-traits trace-filter tracer trace-recorder
+	trace-traits trace-filter tracer trace-recorder \
+	subscribed-propagators
 
 KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR	= \
