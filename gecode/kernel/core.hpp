@@ -214,6 +214,7 @@ namespace Gecode {
   class ActorLink;
   class Actor;
   class Propagator;
+  class SubscribedPropagators;
   class LocalObject;
   class Advisor;
   class AFC;
@@ -292,6 +293,7 @@ namespace Gecode {
     friend class Space;
     friend class Propagator;
     template<class VarImp> friend class VarImpDisposer;
+    friend class SubscribedPropagators;
   private:
     union {
       /**
@@ -521,6 +523,7 @@ namespace Gecode {
     static void  operator delete(void*);
     //@}
   };
+
 
   /**
    * \defgroup TaskActorStatus Status of constraint propagation and branching commit
@@ -969,6 +972,7 @@ namespace Gecode {
     template<class VIC> friend class VarImp;
     friend class Advisor;
     template<class A> friend class Council;
+    friend class SubscribedPropagators;
   private:
     union {
       /// A set of modification events (used during propagation)
@@ -1164,6 +1168,7 @@ namespace Gecode {
     template<class VIC> friend class VarImp;
     template<class A> friend class Council;
     template<class A> friend class Advisors;
+    friend class SubscribedPropagators;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
