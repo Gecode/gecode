@@ -74,6 +74,15 @@ Gaga
 
 [ENTRY]
 Module: kernel
+What:   new
+Rank:   minor
+Thanks: Gilles Pesant
+[DESCRIPTION]
+Added an iterator SubscribedPropagators that iterates over the
+subscribed propagators of views and variable implementations.
+
+[ENTRY]
+Module: kernel
 What:   change
 Rank:   minor
 Thanks: Mirko Rahn
