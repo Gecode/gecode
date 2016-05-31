@@ -134,19 +134,15 @@ namespace Gecode {
    *
    */
 
+  
+  forceinline
+  TraceFilter::TFO::StackFrame::StackFrame(void) {}
+  forceinline
+  TraceFilter::TFO::StackFrame::StackFrame(TFE::Node* n0, bool neg0) 
+    : n(n0), neg(neg0) {}
+
   void
   TraceFilter::TFO::fill(TFE::Node* n) {
-    class StackFrame {
-    public:
-      /// The node
-      TFE::Node* n;
-      /// Whether it is negated
-      bool neg;
-      /// Default constructor
-      StackFrame(void) {}
-      /// Initialize
-      StackFrame(TFE::Node* n0, bool neg0) : n(n0), neg(neg0) {}
-    };
     Support::DynamicStack<StackFrame,Heap> next(heap);
     int i=0;
     next.push(StackFrame(n,false));

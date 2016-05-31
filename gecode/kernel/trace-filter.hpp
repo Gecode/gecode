@@ -148,6 +148,17 @@ namespace Gecode {
         /// One bit set for each operation type
         char what;
       };
+      class StackFrame {
+      public:
+        /// The node
+        TFE::Node* n;
+        /// Whether it is negated
+        bool neg;
+        /// Default constructor
+        StackFrame(void);
+        /// Initialize
+        StackFrame(TFE::Node* n, bool neg);
+      };
       /// The number of filters
       int n;
       /// The filters

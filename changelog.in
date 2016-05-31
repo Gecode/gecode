@@ -73,6 +73,14 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Mirko Rahn
+[DESCRIPTION]
+Do not use local classes as this would requite C++-11.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
