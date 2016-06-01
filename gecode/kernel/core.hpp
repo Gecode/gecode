@@ -790,8 +790,28 @@ namespace Gecode {
     /// To augment a space argument
     Home operator ()(Space& home);
     //@}
+    /// \name Move propagators between groups
+    //@{
+    /// Move propagators from group \a g to this group
+    GECODE_KERNEL_EXPORT
+    PropagatorGroup& move(Space& home, PropagatorGroup g);
+    /// Move propagator \a p to this group
+    PropagatorGroup& move(Space& home, Propagator& p);
+    /**
+     * \brief Move propagator with id \a id to this group
+     *
+     * Throws an exception of type UnknownPropagator, if no propagator
+     * with id \a id exists.
+     */
+    GECODE_KERNEL_EXPORT
+    PropagatorGroup& move(Space& home, unsigned int id);
+    //@}
     /// \name Operations on groups
     //@{
+    /// Test whether this group is equal to group \a g
+    bool operator ==(PropagatorGroup g) const;
+    /// Test whether this group is different from group \a g
+    bool operator !=(PropagatorGroup g) const;
     /// Return number of propagators in a group
     GECODE_KERNEL_EXPORT
     unsigned int size(Space& home) const;
@@ -839,8 +859,28 @@ namespace Gecode {
     /// To augment a space argument
     Home operator ()(Space& home);
     //@}
+    /// \name Move branchers between groups
+    //@{
+    /// Move branchers from group \a g to this group
+    GECODE_KERNEL_EXPORT
+    BrancherGroup& move(Space& home, BrancherGroup g);
+    /// Move brancher \a b to this group
+    BrancherGroup& move(Space& home, Brancher& b);
+    /**
+     * \brief Move brancher with id \a id to this group
+     *
+     * Throws an exception of type UnknownBrancher, if no brancher
+     * with id \a id exists.
+     */
+    GECODE_KERNEL_EXPORT
+    BrancherGroup& move(Space& home, unsigned int id);
+    //@}
     /// \name Operations on groups
     //@{
+    /// Test whether this group is equal to group \a g
+    bool operator ==(BrancherGroup g) const;
+    /// Test whether this group is different from group \a g
+    bool operator !=(BrancherGroup g) const;
     /// Return number of branchers in a group
     GECODE_KERNEL_EXPORT
     unsigned int size(Space& home) const;
@@ -1093,6 +1133,8 @@ namespace Gecode {
     unsigned int id(void) const;
     /// Return group propagator belongs to
     PropagatorGroup group(void) const;
+    /// Add propagator to group \a g
+    void group(PropagatorGroup g);
     /// Whether propagator is currently disabled
     bool disabled(void) const;
     /// Kill propagator
@@ -1398,6 +1440,8 @@ namespace Gecode {
     unsigned int id(void) const;
     /// Return group brancher belongs to
     BrancherGroup group(void) const;
+    /// Add brancher to group \a g
+    void group(BrancherGroup g);
     /// Kill brancher
     void kill(Space& home);
     //@}
@@ -3422,6 +3466,11 @@ namespace Gecode {
     return PropagatorGroup(const_cast<Propagator&>(*this).gpi().gid);
   }
 
+  forceinline void
+  Propagator::group(PropagatorGroup g) {
+    gpi().gid = g.id();
+  }
+
   forceinline ExecStatus
   Space::ES_SUBSUMED_DISPOSED(Propagator& p, size_t s) {
     p.u.size = s;
@@ -3501,6 +3550,12 @@ namespace Gecode {
   Brancher::group(void) const {
     return BrancherGroup(gid);
   }
+
+  forceinline void
+  Brancher::group(BrancherGroup g) {
+    gid = g.id();
+  }
+
 
   forceinline void
   Space::kill(Brancher& b) {
@@ -4716,6 +4771,22 @@ namespace Gecode {
     return Home(home,NULL,*this,BrancherGroup::def);
   }
 
+  forceinline bool
+  PropagatorGroup::operator ==(PropagatorGroup g) const {
+    return id() == g.id();
+  }
+  forceinline bool
+  PropagatorGroup::operator !=(PropagatorGroup g) const {
+    return id() != g.id();
+  }
+
+  forceinline PropagatorGroup&
+  PropagatorGroup::move(Space& , Propagator& p) {
+    if (id() != GROUPID_ALL)
+      p.group(*this);
+    return *this;
+  }
+
 
   forceinline
   BrancherGroup::BrancherGroup(void) {}
@@ -4736,6 +4807,22 @@ namespace Gecode {
   forceinline Home
   BrancherGroup::operator ()(Space& home) {
     return Home(home,NULL,PropagatorGroup::def,*this);
+  }
+
+  forceinline bool
+  BrancherGroup::operator ==(BrancherGroup g) const {
+    return id() == g.id();
+  }
+  forceinline bool
+  BrancherGroup::operator !=(BrancherGroup g) const {
+    return id() != g.id();
+  }
+
+  forceinline BrancherGroup&
+  BrancherGroup::move(Space& , Brancher& p) {
+    if (id() != GROUPID_ALL)
+      p.group(*this);
+    return *this;
   }
 
 

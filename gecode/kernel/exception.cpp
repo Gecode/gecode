@@ -57,8 +57,14 @@ namespace Gecode {
   TooManyGroups::TooManyGroups(const char* l)
     : Exception(l,"Too many groups created") {}
 
+  UnknownPropagator::UnknownPropagator(const char* l)
+    : Exception(l,"Unknown propagator (illegal id)") {}
+
   TooManyBranchers::TooManyBranchers(const char* l)
     : Exception(l,"Too many branchers created") {}
+
+  UnknownBrancher::UnknownBrancher(const char* l)
+    : Exception(l,"Unknown brancher (illegal id)") {}
 
   UninitializedRnd::UninitializedRnd(const char* l)
     : Exception(l,"Uninitialized random generator for branching") {}

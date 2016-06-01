@@ -86,11 +86,25 @@ namespace Gecode {
     TooManyGroups(const char* l);
   };
 
+  /// %Exception: unknown propagator
+  class GECODE_KERNEL_EXPORT UnknownPropagator : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownPropagator(const char* l);
+  };
+
   /// %Exception: too many branchers
   class GECODE_KERNEL_EXPORT TooManyBranchers : public Exception {
   public:
     /// Initialize with location \a l
     TooManyBranchers(const char* l);
+  };
+
+  /// %Exception: unknown brancher
+  class GECODE_KERNEL_EXPORT UnknownBrancher : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownBrancher(const char* l);
   };
 
   /// %Exception: illegal decay factor

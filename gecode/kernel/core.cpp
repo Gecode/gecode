@@ -736,6 +736,28 @@ namespace Gecode {
   }
 
 
+  PropagatorGroup&
+  PropagatorGroup::move(Space& home, PropagatorGroup g) {
+    if ((id() != GROUPID_ALL) && (id() != g.id()))
+      for (Space::Propagators ps(home); ps(); ++ps)
+        if (g.in(ps.propagator().group()))
+          ps.propagator().group(*this);
+    return *this;
+  }
+
+  PropagatorGroup&
+  PropagatorGroup::move(Space& home, unsigned int pid) {
+    if (id() == GROUPID_ALL)
+      return *this;
+    for (Space::Propagators ps(home); ps(); ++ps)
+      if (ps.propagator().id() == pid) {
+        ps.propagator().group(*this);
+        return *this;
+      }
+    throw UnknownPropagator("PropagatorGroup::move");
+    GECODE_NEVER;
+    return *this;
+  }
 
   unsigned int
   PropagatorGroup::size(Space& home) const {
@@ -794,6 +816,29 @@ namespace Gecode {
     }
   }
 
+
+  BrancherGroup&
+  BrancherGroup::move(Space& home, BrancherGroup g) {
+    if ((id() != GROUPID_ALL) && (id() != g.id()))
+      for (Space::Branchers bs(home); bs(); ++bs)
+        if (g.in(bs.brancher().group()))
+          bs.brancher().group(*this);
+    return *this;
+  }
+
+  BrancherGroup&
+  BrancherGroup::move(Space& home, unsigned int bid) {
+    if (id() == GROUPID_ALL)
+      return *this;
+    for (Space::Branchers bs(home); bs(); ++bs)
+      if (bs.brancher().id() == bid) {
+        bs.brancher().group(*this);
+        return *this;
+      }
+    throw UnknownBrancher("BrancherGroup::move");
+    GECODE_NEVER;
+    return *this;
+  }
 
   unsigned int
   BrancherGroup::size(Space& home) const {
