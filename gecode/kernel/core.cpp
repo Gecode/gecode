@@ -715,15 +715,15 @@ namespace Gecode {
    */
 
   Group Group::all(GROUPID_ALL);
-  Group Group::defaultgroup(GROUPID_DEFAULT);
+  Group Group::def(GROUPID_DEF);
 
   PropagatorGroup PropagatorGroup::all(GROUPID_ALL);
-  PropagatorGroup PropagatorGroup::defaultgroup(GROUPID_DEFAULT);
+  PropagatorGroup PropagatorGroup::def(GROUPID_DEF);
 
   BrancherGroup BrancherGroup::all(GROUPID_ALL);
-  BrancherGroup BrancherGroup::defaultgroup(GROUPID_DEFAULT);
+  BrancherGroup BrancherGroup::def(GROUPID_DEF);
 
-  unsigned int Group::next = GROUPID_DEFAULT+1;
+  unsigned int Group::next = GROUPID_DEF+1;
   Support::Mutex Group::m;
 
 

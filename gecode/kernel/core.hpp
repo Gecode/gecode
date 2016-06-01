@@ -730,7 +730,7 @@ namespace Gecode {
     /// Fake id for group of all actors
     static const unsigned int GROUPID_ALL = 0U;
     /// Pre-defined default group id
-    static const unsigned int GROUPID_DEFAULT = 1U;
+    static const unsigned int GROUPID_DEF = 1U;
     /// The maximal group number
     static const unsigned int GROUPID_MAX = UINT_MAX >> 2;
     /// The group id
@@ -765,7 +765,7 @@ namespace Gecode {
     static Group all;
     /// Group of actors not in any user-defined group
     GECODE_KERNEL_EXPORT
-    static Group defaultgroup;
+    static Group def;
   };
 
   /**
@@ -815,7 +815,7 @@ namespace Gecode {
     static PropagatorGroup all;
     /// Group of propagators not in any user-defined group
     GECODE_KERNEL_EXPORT
-    static PropagatorGroup defaultgroup;
+    static PropagatorGroup def;
   };
 
   /**
@@ -853,7 +853,7 @@ namespace Gecode {
     static BrancherGroup all;
     /// Group of branchers not in any user-defined group
     GECODE_KERNEL_EXPORT
-    static BrancherGroup defaultgroup;
+    static BrancherGroup def;
   };
 
   /**
@@ -875,8 +875,8 @@ namespace Gecode {
     //@{
     /// Initialize the home with space \a s and propagator \a p and group \a g
     Home(Space& s, Propagator* p=NULL,
-         PropagatorGroup pg=PropagatorGroup::defaultgroup,
-         BrancherGroup bg=BrancherGroup::defaultgroup);
+         PropagatorGroup pg=PropagatorGroup::def,
+         BrancherGroup bg=BrancherGroup::def);
     /// Assignment operator
     Home& operator =(const Home& h);
     /// Retrieve the space of the home
@@ -3259,11 +3259,11 @@ namespace Gecode {
   }
   forceinline Home
   Home::operator ()(PropagatorGroup pg) {
-    return Home(s,NULL,pg,BrancherGroup::defaultgroup);
+    return Home(s,NULL,pg,BrancherGroup::def);
   }
   forceinline Home
   Home::operator ()(BrancherGroup bg) {
-    return Home(s,NULL,PropagatorGroup::defaultgroup,bg);
+    return Home(s,NULL,PropagatorGroup::def,bg);
   }
   forceinline Home
   Space::operator ()(Propagator& p) {
@@ -4678,7 +4678,7 @@ namespace Gecode {
 
   forceinline bool
   Group::in(void) const {
-    return (gid != GROUPID_ALL) && (gid != GROUPID_DEFAULT);
+    return (gid != GROUPID_ALL) && (gid != GROUPID_DEF);
   }
 
   forceinline
@@ -4713,7 +4713,7 @@ namespace Gecode {
 
   forceinline Home
   PropagatorGroup::operator ()(Space& home) {
-    return Home(home,NULL,*this,BrancherGroup::defaultgroup);
+    return Home(home,NULL,*this,BrancherGroup::def);
   }
 
 
@@ -4735,7 +4735,7 @@ namespace Gecode {
 
   forceinline Home
   BrancherGroup::operator ()(Space& home) {
-    return Home(home,NULL,PropagatorGroup::defaultgroup,*this);
+    return Home(home,NULL,PropagatorGroup::def,*this);
   }
 
 
