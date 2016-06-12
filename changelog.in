@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
+Removed bogus declarations of comparison operators between
+Boolean variables and float expressions.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

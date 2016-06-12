@@ -922,16 +922,10 @@ namespace Gecode {
   operator ==(const FloatVar& l, const FloatVar& r);
   /// Construct linear float equality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
-  operator ==(const FloatVar& l, const BoolVar& r);
-  /// Construct linear float equality relation
-  GECODE_MINIMODEL_EXPORT LinFloatRel
   operator ==(const FloatVar& l, const LinFloatExpr& r);
   /// Construct linear float equality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
   operator ==(const LinFloatExpr& l, const FloatVar& r);
-  /// Construct linear float equality relation
-  GECODE_MINIMODEL_EXPORT LinFloatRel
-  operator ==(const LinFloatExpr& l, const BoolVar& r);
   /// Construct linear float equality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
   operator ==(const LinFloatExpr& l, const LinFloatExpr& r);
@@ -953,16 +947,10 @@ namespace Gecode {
   operator !=(const FloatVar& l, const FloatVar& r);
   /// Construct linear float disequality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
-  operator !=(const FloatVar& l, const BoolVar& r);
-  /// Construct linear float disequality relation
-  GECODE_MINIMODEL_EXPORT LinFloatRel
   operator !=(const FloatVar& l, const LinFloatExpr& r);
   /// Construct linear float disequality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
   operator !=(const LinFloatExpr& l, const FloatVar& r);
-  /// Construct linear float disequality relation
-  GECODE_MINIMODEL_EXPORT LinFloatRel
-  operator !=(const LinFloatExpr& l, const BoolVar& r);
   /// Construct linear float disequality relation
   GECODE_MINIMODEL_EXPORT LinFloatRel
   operator !=(const LinFloatExpr& l, const LinFloatExpr& r);
