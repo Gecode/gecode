@@ -76,6 +76,14 @@ Gaga
 Module: kernel
 What:   new
 Rank:   minor
+[DESCRIPTION]
+Propagators and branchers now have a fixed identity available by
+id() member functions.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
 Thanks: Gilles Pesant
 [DESCRIPTION]
 Added an iterator SubscribedPropagators that iterates over the
@@ -185,7 +193,7 @@ Module: kernel
 What:   new
 Rank:   major
 [DESCRIPTION]
-Propagators can now be disabled and enabled (though
+Propagators can now be disabled and enabled (through
 PropagatorGroups). See MPG for details.
 
 [ENTRY]
@@ -244,7 +252,7 @@ Module: support
 What:   new
 Rank:   major
 [DESCRIPTION]
-Gecode supports no arbitrary memory allocators (the behavior can
+Gecode supports now arbitrary memory allocators (the behavior can
 be controlled by the commandline options -enable-allocator and
 -disable-allocator). For more details, please see MPG.
 

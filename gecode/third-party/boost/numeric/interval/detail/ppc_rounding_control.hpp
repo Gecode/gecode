@@ -29,16 +29,16 @@ typedef union {
 } rounding_mode_struct;
 
 static const rounding_mode_struct mode_upward      = { 
-  static_cast<::gecode_boost::long_long_type>(0xFFF8000000000002LL) 
+  static_cast< ::gecode_boost::long_long_type >(0xFFF8000000000002LL) 
 };
 static const rounding_mode_struct mode_downward    = { 
-  static_cast<::gecode_boost::long_long_type>(0xFFF8000000000003LL) 
+  static_cast< ::gecode_boost::long_long_type >(0xFFF8000000000003LL) 
 };
 static const rounding_mode_struct mode_to_nearest  = { 
-  static_cast<::gecode_boost::long_long_type>(0xFFF8000000000000LL) 
+  static_cast< ::gecode_boost::long_long_type >(0xFFF8000000000000LL) 
 };
 static const rounding_mode_struct mode_toward_zero = { 
-  static_cast<::gecode_boost::long_long_type>(0xFFF8000000000001LL) 
+  static_cast< ::gecode_boost::long_long_type >(0xFFF8000000000001LL) 
 };
 
 struct ppc_rounding_control
