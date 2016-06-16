@@ -45,7 +45,7 @@ namespace Gecode {
     using namespace Gecode::Set;
     GECODE_POST;
     ViewArray<SetView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<SetView>::post(home,xv,tf,te,t));
+    GECODE_ES_FAIL(SetTraceRecorder::post(home,xv,tf,te,t));
   }
 
 }

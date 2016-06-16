@@ -45,7 +45,7 @@ namespace Gecode {
     using namespace Gecode::Int;
     GECODE_POST;
     ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<IntView>::post(home,xv,tf,te,t));
+    GECODE_ES_FAIL(IntTraceRecorder::post(home,xv,tf,te,t));
   }
 
   void
@@ -54,7 +54,7 @@ namespace Gecode {
     using namespace Gecode::Int;
     GECODE_POST;
     ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<BoolView>::post(home,xv,tf,te,t));
+    GECODE_ES_FAIL(BoolTraceRecorder::post(home,xv,tf,te,t));
   }
 
 }

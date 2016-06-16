@@ -45,7 +45,7 @@ namespace Gecode {
     using namespace Gecode::Float;
     GECODE_POST;
     ViewArray<FloatView> xv(home,x);
-    GECODE_ES_FAIL(TraceRecorder<FloatView>::post(home,xv,tf,te,t));
+    GECODE_ES_FAIL(FloatTraceRecorder::post(home,xv,tf,te,t));
   }
 
 }

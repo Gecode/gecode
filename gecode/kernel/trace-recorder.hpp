@@ -146,7 +146,7 @@ namespace Gecode {
   template<class View>
   forceinline const typename View::VarType
   TraceRecorder<View>::operator [](int i) const {
-    return n[i];
+    return n[i].varimp();
   }
   template<class View>
   forceinline int
