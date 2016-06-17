@@ -56,6 +56,24 @@ namespace Gecode {
   }
 
 
+  forceinline void
+  TFE::init(Group g, char what) {
+    n = new Node;
+    n->t = NT_GROUP;
+    n->g = g;
+    n->n = 1;
+    n->w = what;
+  }
+
+  forceinline TFE
+  TFE::negate(void) const {
+    Node* m = new Node;
+    m->t = NT_NEGATE;
+    m->n = n->n;
+    m->l = n; n->use++;
+    return TFE(m);
+  }
+
   TFE::TFE(PropagatorGroup g) {
     init(g,(1 << ExecInfo::PROPAGATOR) | (1 << ExecInfo::POST));
   }

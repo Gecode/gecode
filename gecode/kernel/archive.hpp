@@ -275,7 +275,7 @@ namespace Gecode {
   }
   forceinline Archive&
   operator >>(Archive& e, bool& i) {
-    i = static_cast<bool>(e.get());
+    i = (e.get() != 0);
     return e;
   }
   forceinline Archive&

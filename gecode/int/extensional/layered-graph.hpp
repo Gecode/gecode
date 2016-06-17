@@ -453,9 +453,9 @@ namespace Gecode { namespace Int { namespace Extensional {
         states += layers[i].n_states;
         for (ValSize j=layers[i].size; j--; ) {
           Support& s = layers[i].support[j];
-          for (Degree d=s.n_edges; d--; ) {
-            i_state(i,s.edges[d]).o_deg++;
-            o_state(i,s.edges[d]).i_deg++;
+          for (Degree deg=s.n_edges; deg--; ) {
+            i_state(i,s.edges[deg]).o_deg++;
+            o_state(i,s.edges[deg]).i_deg++;
           }
         }
       }
@@ -484,10 +484,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         Support& s = layers[i].support[j];
         n_edges -= s.n_edges;
         // Supported value not any longer in view
-        for (Degree d=s.n_edges; d--; ) {
+        for (Degree deg=s.n_edges; deg--; ) {
           // Adapt states
-          o_mod |= i_dec(i,s.edges[d]);
-          i_mod |= o_dec(i,s.edges[d]);
+          o_mod |= i_dec(i,s.edges[deg]);
+          i_mod |= o_dec(i,s.edges[deg]);
         }
       }
       assert(layers[i].support[j].val == n);
@@ -497,10 +497,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (; j<s; j++) {
         Support& s = layers[i].support[j];
         n_edges -= s.n_edges;
-        for (Degree d=s.n_edges; d--; ) {
+        for (Degree deg=s.n_edges; deg--; ) {
           // Adapt states
-          o_mod |= i_dec(i,s.edges[d]);
-          i_mod |= o_dec(i,s.edges[d]);
+          o_mod |= i_dec(i,s.edges[deg]);
+          i_mod |= o_dec(i,s.edges[deg]);
         }
       }
     } else if (layers[i].x.any(d)) {
@@ -512,10 +512,10 @@ namespace Gecode { namespace Int { namespace Extensional {
         if (s.val < static_cast<Val>(rx.min())) {
           // Supported value not any longer in view
           n_edges -= s.n_edges;
-          for (Degree d=s.n_edges; d--; ) {
+          for (Degree deg=s.n_edges; deg--; ) {
             // Adapt states
-            o_mod |= i_dec(i,s.edges[d]);
-            i_mod |= o_dec(i,s.edges[d]);
+            o_mod |= i_dec(i,s.edges[deg]);
+            i_mod |= o_dec(i,s.edges[deg]);
           }
           ++j;
         } else if (s.val > static_cast<Val>(rx.max())) {
@@ -531,10 +531,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (; j<s; j++) {
         Support& s=layers[i].support[j];
         n_edges -= s.n_edges;
-        for (Degree d=s.n_edges; d--; ) {
+        for (Degree deg=s.n_edges; deg--; ) {
           // Adapt states
-          o_mod |= i_dec(i,s.edges[d]);
-          i_mod |= o_dec(i,s.edges[d]);
+          o_mod |= i_dec(i,s.edges[deg]);
+          i_mod |= o_dec(i,s.edges[deg]);
         }
       }
     } else {
@@ -549,10 +549,10 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (; (j<s) && (layers[i].support[j].val <= max); j++) {
         Support& s=layers[i].support[j];
         n_edges -= s.n_edges;
-        for (Degree d=s.n_edges; d--; ) {
+        for (Degree deg=s.n_edges; deg--; ) {
           // Adapt states
-          o_mod |= i_dec(i,s.edges[d]);
-          i_mod |= o_dec(i,s.edges[d]);
+          o_mod |= i_dec(i,s.edges[deg]);
+          i_mod |= o_dec(i,s.edges[deg]);
         }
       }
       // Keep remaining values
@@ -607,7 +607,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       bool o_mod = false;
       ValSize j=0;
       ValSize k=0;
-      ValSize s=layers[i].size;
+      ValSize ls=layers[i].size;
       do {
         Support& s=layers[i].support[j];
         n_edges -= s.n_edges;
@@ -627,7 +627,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         } else {
           layers[i].support[k++]=s;
         }
-      } while (++j<s);
+      } while (++j<ls);
       assert(k > 0);
       // Update modification information
       if (o_mod && (i > 0))
@@ -641,7 +641,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       bool o_mod = false;
       ValSize j=0;
       ValSize k=0;
-      ValSize s=layers[i].size;
+      ValSize ls=layers[i].size;
       do {
         Support& s=layers[i].support[j];
         n_edges -= s.n_edges;
@@ -661,7 +661,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         } else {
           layers[i].support[k++]=s;
         }
-      } while (++j<s);
+      } while (++j<ls);
       assert(k > 0);
       // Update modification information
       if (o_mod && (i > 0))

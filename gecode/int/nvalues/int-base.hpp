@@ -215,17 +215,19 @@ namespace Gecode { namespace Int { namespace NValues {
 
       // Allocate and initialize events
       RangeEvent* re = r.alloc<RangeEvent>(n_re);
-      int j=0;
-      for (int i=n_dis; i--; )
-        for (ViewRanges<IntView> rx(x[dis[i]]); rx(); ++rx) {
-          // Event when a range starts
-          re[j].ret=RET_FST; re[j].val=rx.min(); re[j].view=dis[i]; j++;
-          // Event when a range ends
-          re[j].ret=RET_LST; re[j].val=rx.max(); re[j].view=dis[i]; j++;
-        }
-      // Make this the last event
-      re[j].ret=RET_END; re[j].val=Int::Limits::infinity;
-      assert(j+1 == n_re);
+      {
+        int j=0;
+        for (int i=n_dis; i--; )
+          for (ViewRanges<IntView> rx(x[dis[i]]); rx(); ++rx) {
+            // Event when a range starts
+            re[j].ret=RET_FST; re[j].val=rx.min(); re[j].view=dis[i]; j++;
+            // Event when a range ends
+            re[j].ret=RET_LST; re[j].val=rx.max(); re[j].view=dis[i]; j++;
+          }
+        // Make this the last event
+        re[j].ret=RET_END; re[j].val=Int::Limits::infinity;
+        assert(j+1 == n_re);
+      }
       // Sort and process events
       Support::quicksort(re,n_re);
 

@@ -44,7 +44,7 @@ namespace Gecode {
     : os(os0) {}
 
   void
-  StdFloatTracer::init(const Space& home, const FloatTraceRecorder& t) {
+  StdFloatTracer::init(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::init(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  StdFloatTracer::prune(const Space& home, const FloatTraceRecorder& t,
+  StdFloatTracer::prune(const Space&, const FloatTraceRecorder& t,
                         const ExecInfo& ei, int i, FloatTraceDelta& d) {
     os << "trace<Float>::prune(id:" << t.id();
     if (t.group().in())
@@ -64,7 +64,7 @@ namespace Gecode {
   }
 
   void
-  StdFloatTracer::fix(const Space& home, const FloatTraceRecorder& t) {
+  StdFloatTracer::fix(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -82,7 +82,7 @@ namespace Gecode {
   }
 
   void
-  StdFloatTracer::done(const Space& home, const FloatTraceRecorder& t) {
+  StdFloatTracer::done(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::done(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();

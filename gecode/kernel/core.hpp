@@ -3364,7 +3364,7 @@ namespace Gecode {
   forceinline PropagatorGroup
   ExecInfo::post(void) const {
     assert(what() == POST);
-    return PropagatorGroup(who >> 2);
+    return PropagatorGroup(static_cast<unsigned int>(who >> 2));
   }
 
   /*

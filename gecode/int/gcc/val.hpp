@@ -224,14 +224,14 @@ namespace Gecode { namespace Int { namespace GCC {
     // remove values
     {
       // Values to prune
-      int* p = r.alloc<int>(k.size());
+      int* pr = r.alloc<int>(k.size());
       // Number of values to prune
-      int n_p = 0;
+      int n_pr = 0;
       for (Iter::Values::BitSet<Support::BitSet<Region> > i(rem); i(); ++i)
-        p[n_p++] = k[i.val()].card();
-      Support::quicksort(p,n_p);
+        pr[n_pr++] = k[i.val()].card();
+      Support::quicksort(pr,n_pr);
       for (int i = x.size(); i--;) {
-        Iter::Values::Array pi(p,n_p);
+        Iter::Values::Array pi(pr,n_pr);
         GECODE_ME_CHECK(x[i].minus_v(home, pi, false));
       }
     }

@@ -72,8 +72,8 @@ namespace Gecode { namespace Int { namespace Bool {
       if (pm2 == 1) {
         return Bool::Eq<BoolView,BoolView>::post(home,x[0],x[1]);
       } else {
-        NegBoolView n(x[1]);
-        return Bool::Eq<BoolView,NegBoolView>::post(home,x[0],n);
+        NegBoolView nx(x[1]);
+        return Bool::Eq<BoolView,NegBoolView>::post(home,x[0],nx);
       }
     }
     x.size(n);

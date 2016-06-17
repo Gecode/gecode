@@ -63,7 +63,7 @@ namespace Gecode {
       /// Type of expression
       NodeType t;
       /// Number of leaf groups
-      unsigned int n;
+      int n;
       /// Group
       Group g;
       /// Which operations to consider for propagator groups
@@ -225,23 +225,6 @@ namespace Gecode {
   TFE::TFE(void) : n(NULL) {}
   forceinline
   TFE::TFE(TFE::Node* n0) : n(n0) {}
-  forceinline void
-  TFE::init(Group g, char what) {
-    n = new Node;
-    n->t = NT_GROUP;
-    n->g = g;
-    n->n = 1;
-    n->w = what;
-  }
-  forceinline TFE
-  TFE::negate(void) const {
-    Node* m = new Node;
-    m->t = NT_NEGATE;
-    m->n = n->n;
-    m->l = n; n->use++;
-    return TFE(m);
-  }
-
 
   forceinline TFE
   operator +(TFE l, const TFE& r) {

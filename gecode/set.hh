@@ -1713,7 +1713,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   trace(Home home, const SetVarArgs& x,
-        TraceFilter tf = TraceFilter::all,
+        TraceFilter tf,
         int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         SetTracer& t = StdSetTracer::def);
   /**

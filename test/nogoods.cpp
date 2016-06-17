@@ -52,7 +52,7 @@ namespace Test {
     using namespace Gecode;
 
     /// A dummy function for branching
-    void dummy(Space& home) {
+    void dummy(Space&) {
     }
 
     /// Example for testing integer no-goods

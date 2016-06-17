@@ -127,26 +127,26 @@ namespace Gecode { namespace Int { namespace Distinct {
           e->unlink();
         view[i] = view[--n_view];
       } else if (x->changed()) {
-        ViewRanges<View> r(x->view());
+        ViewRanges<View> rx(x->view());
         Edge<View>*  m = x->edge_fst();      // Matching edge
         Edge<View>** p = x->val_edges_ref();
         Edge<View>*  e = *p;
         do {
-          while (e->val(x)->val() < r.min()) {
+          while (e->val(x)->val() < rx.min()) {
             // Skip edge
             e->unlink(); e->mark();
             e = e->next_edge();
           }
           *p = e;
-          assert(r.min() == e->val(x)->val());
+          assert(rx.min() == e->val(x)->val());
           // This edges must be kept
-          for (unsigned int j=r.width(); j--; ) {
+          for (unsigned int j=rx.width(); j--; ) {
             e->free();
             p = e->next_edge_ref();
             e = e->next_edge();
           }
-          ++r;
-        } while (r());
+          ++rx;
+        } while (rx());
         *p = NULL;
         while (e != NULL) {
           e->unlink(); e->mark();

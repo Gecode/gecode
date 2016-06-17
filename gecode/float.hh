@@ -1881,7 +1881,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   trace(Home home, const FloatVarArgs& x,
-        TraceFilter tf = TraceFilter::all,
+        TraceFilter tf,
         int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         FloatTracer& t = StdFloatTracer::def);
   /**

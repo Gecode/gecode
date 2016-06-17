@@ -127,6 +127,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View, PropCond pc>
   PropCost
   AbsBnd<View,pc>::cost(const Space&, const ModEventDelta& med) const {
+    (void) med;
     if ((pc == PC_INT_VAL) || (View::me(med) == ME_INT_VAL))
       return PropCost::unary(PropCost::LO);
     else

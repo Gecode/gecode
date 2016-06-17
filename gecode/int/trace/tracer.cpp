@@ -44,7 +44,7 @@ namespace Gecode {
     : os(os0) {}
 
   void
-  StdIntTracer::init(const Space& home, const IntTraceRecorder& t) {
+  StdIntTracer::init(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::init(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  StdIntTracer::prune(const Space& home, const IntTraceRecorder& t,
+  StdIntTracer::prune(const Space&, const IntTraceRecorder& t,
                       const ExecInfo& ei, int i, IntTraceDelta& d) {
     os << "trace<Int>::prune(id:" << t.id();
     if (t.group().in())
@@ -73,7 +73,7 @@ namespace Gecode {
   }
 
   void
-  StdIntTracer::fix(const Space& home, const IntTraceRecorder& t) {
+  StdIntTracer::fix(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -91,7 +91,7 @@ namespace Gecode {
   }
 
   void
-  StdIntTracer::done(const Space& home, const IntTraceRecorder& t) {
+  StdIntTracer::done(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::done(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -106,7 +106,7 @@ namespace Gecode {
     : os(os0) {}
 
   void
-  StdBoolTracer::init(const Space& home, const BoolTraceRecorder& t) {
+  StdBoolTracer::init(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::init(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -115,7 +115,7 @@ namespace Gecode {
   }
 
   void
-  StdBoolTracer::prune(const Space& home, const BoolTraceRecorder& t,
+  StdBoolTracer::prune(const Space&, const BoolTraceRecorder& t,
                        const ExecInfo& ei, int i, BoolTraceDelta& d) {
     os << "trace<Bool>::prune(id:" << t.id();
     if (t.group().in())
@@ -135,7 +135,7 @@ namespace Gecode {
   }
 
   void
-  StdBoolTracer::fix(const Space& home, const BoolTraceRecorder& t) {
+  StdBoolTracer::fix(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -153,7 +153,7 @@ namespace Gecode {
   }
 
   void
-  StdBoolTracer::done(const Space& home, const BoolTraceRecorder& t) {
+  StdBoolTracer::done(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::done(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();

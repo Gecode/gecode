@@ -833,7 +833,7 @@ namespace Gecode {
       if (n == 0) {
         ViewArray<NegBoolView> xv(home,x.size());
         for (int i=x.size(); i--; ) {
-          NegBoolView n(x[i]); xv[i]=n;
+          NegBoolView nxi(x[i]); xv[i]=nxi;
         }
         ViewArray<BoolView> yv(home,y);
         xv.unique(home); yv.unique(home);
@@ -860,7 +860,7 @@ namespace Gecode {
         ViewArray<BoolView> xv(home,x);
         ViewArray<NegBoolView> yv(home,y.size());
         for (int i=y.size(); i--; ) {
-          NegBoolView n(y[i]); yv[i]=n;
+          NegBoolView nyi(y[i]); yv[i]=nyi;
         }
         xv.unique(home); yv.unique(home);
         GECODE_ES_FAIL((Bool::ClauseTrue<BoolView,NegBoolView>

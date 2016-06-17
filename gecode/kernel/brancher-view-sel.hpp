@@ -86,6 +86,8 @@ namespace Gecode {
     virtual bool notice(void) const;
     /// Dispose view selection
     virtual void dispose(Space& home);
+    /// Unused destructor
+    virtual ~ViewSel(void);
     //@}
     /// \name Memory management
     //@{
@@ -370,6 +372,8 @@ namespace Gecode {
   template<class View>
   void
   ViewSel<View>::dispose(Space&) {}
+  template<class View>
+  ViewSel<View>::~ViewSel(void) {}
   template<class View>
   forceinline void
   ViewSel<View>::operator delete(void*) {}

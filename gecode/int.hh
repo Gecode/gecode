@@ -4728,7 +4728,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   trace(Home home, const IntVarArgs& x,
-        TraceFilter tf = TraceFilter::all,
+        TraceFilter tf,
         int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         IntTracer& t = StdIntTracer::def);
   /**
@@ -4746,7 +4746,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   trace(Home home, const BoolVarArgs& x,
-        TraceFilter tf = TraceFilter::all,
+        TraceFilter tf,
         int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
         BoolTracer& t = StdBoolTracer::def);
   /**

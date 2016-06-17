@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       {
         int k=0;
         for (int i=c+1; i--; )
-          for (int n=n_s[i]; n--; )
+          for (int j=n_s[i]; j--; )
             s[k++]=i;
         assert(k == nm);
       }

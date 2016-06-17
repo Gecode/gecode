@@ -44,7 +44,7 @@ namespace Gecode {
     : os(os0) {}
 
   void
-  StdSetTracer::init(const Space& home, const SetTraceRecorder& t) {
+  StdSetTracer::init(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::init(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   void
-  StdSetTracer::prune(const Space& home, const SetTraceRecorder& t,
+  StdSetTracer::prune(const Space&, const SetTraceRecorder& t,
                       const ExecInfo& ei, int i, SetTraceDelta& d) {
     os << "trace<Set>::prune(id:" << t.id();
     if (t.group().in())
@@ -86,7 +86,7 @@ namespace Gecode {
   }
 
   void
-  StdSetTracer::fix(const Space& home, const SetTraceRecorder& t) {
+  StdSetTracer::fix(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::fix(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -104,7 +104,7 @@ namespace Gecode {
   }
 
   void
-  StdSetTracer::done(const Space& home, const SetTraceRecorder& t) {
+  StdSetTracer::done(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::done(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
