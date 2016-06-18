@@ -329,7 +329,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return ES_OK;
   }
 
-  forceinline IntSet
+  inline IntSet
   ConflictGraph::maxclique(void) const {
     Region reg(home);
     int* n=reg.alloc<int>(max.c);

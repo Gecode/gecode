@@ -75,6 +75,8 @@ namespace Gecode {
     virtual bool notice(void) const = 0;
     /// Delete value selection
     virtual void dispose(Space& home) = 0;
+    /// Unused destructor
+    virtual ~ValSelCommitBase(void);
     /// \name Memory management
     //@{
     /// Allocate memory from space
@@ -133,6 +135,8 @@ namespace Gecode {
   forceinline
   ValSelCommitBase<View,Val>::
     ValSelCommitBase(Space&, bool, ValSelCommitBase<View,Val>&) {}
+  template<class View, class Val>
+  ValSelCommitBase<View,Val>::~ValSelCommitBase(void) {}
 
   template<class View, class Val>
   forceinline void

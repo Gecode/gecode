@@ -143,13 +143,13 @@ namespace Gecode { namespace Driver {
    * \brief Compute arithmetic mean of \a n elements in \a t
    */
   GECODE_DRIVER_EXPORT double
-  am(double t[], int n);
+  am(double t[], unsigned int n);
 
   /**
    * \brief Compute deviation of \a n elements in \a t
    */
   GECODE_DRIVER_EXPORT double
-  dev(double t[], int n);
+  dev(double t[], unsigned int n);
 
   /// Create cutoff object from options
   template<class Options>
@@ -226,15 +226,15 @@ namespace Gecode { namespace Driver {
 
   template<class BaseSpace>
   std::ostream&
-  ScriptBase<BaseSpace>::select_ostream(const char* name, std::ofstream& ofs) {
-    if (strcmp(name, "stdout") == 0) {
+  ScriptBase<BaseSpace>::select_ostream(const char* sn, std::ofstream& ofs) {
+    if (strcmp(sn, "stdout") == 0) {
       return std::cout;
-    } else if (strcmp(name, "stdlog") == 0) {
+    } else if (strcmp(sn, "stdlog") == 0) {
       return std::clog;
-    } else if (strcmp(name, "stderr") == 0) {
+    } else if (strcmp(sn, "stderr") == 0) {
       return std::cerr;
     } else {
-      ofs.open(name);
+      ofs.open(sn);
       return ofs;
     }
   }
@@ -291,13 +291,13 @@ namespace Gecode { namespace Driver {
           opt.clone = false;
           opt.c_d   = o.c_d();
           opt.a_d   = o.a_d();
-          for (int i=0; o.inspect.click(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.click(i) != NULL; i++)
             opt.inspect.click(o.inspect.click(i));
-          for (int i=0; o.inspect.solution(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.solution(i) != NULL; i++)
             opt.inspect.solution(o.inspect.solution(i));
-          for (int i=0; o.inspect.move(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.move(i) != NULL; i++)
             opt.inspect.move(o.inspect.move(i));
-          for (int i=0; o.inspect.compare(i) != NULL; i++)
+          for (unsigned int i=0; o.inspect.compare(i) != NULL; i++)
             opt.inspect.compare(o.inspect.compare(i));
           if (s == NULL)
             s = new Script(o);
@@ -310,7 +310,7 @@ namespace Gecode { namespace Driver {
         {
           l_out << o.name() << endl;
           Support::Timer t;
-          int i = o.solutions();
+          int i = static_cast<int>(o.solutions());
           t.start();
           if (s == NULL)
             s = new Script(o);
@@ -404,7 +404,7 @@ namespace Gecode { namespace Driver {
         {
           l_out << o.name() << endl;
           Support::Timer t;
-          int i = o.solutions();
+          int i = static_cast<int>(o.solutions());
           t.start();
           if (s == NULL)
             s = new Script(o);
@@ -463,11 +463,11 @@ namespace Gecode { namespace Driver {
           Support::Timer t;
           double* ts = new double[o.samples()];
           bool stopped = false;
-          for (unsigned int s = o.samples(); !stopped && s--; ) {
+          for (unsigned int ns = o.samples(); !stopped && ns--; ) {
             t.start();
             for (unsigned int k = o.iterations(); !stopped && k--; ) {
               unsigned int i = o.solutions();
-              Script* s = new Script(o);
+              Script* s1 = new Script(o);
               Search::Options so;
               so.clone   = false;
               so.threads = o.threads();
@@ -479,7 +479,7 @@ namespace Gecode { namespace Driver {
               so.cutoff  = createCutoff(o);
               so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
               {
-                Meta<Script,Engine> e(s,so);
+                Meta<Script,Engine> e(s1,so);
                 do {
                   Script* ex = e.next();
                   if (ex == NULL)
@@ -491,7 +491,7 @@ namespace Gecode { namespace Driver {
               }
               delete so.stop;
             }
-            ts[s] = t.stop() / o.iterations();
+            ts[ns] = t.stop() / o.iterations();
           }
           if (stopped) {
             l_out << "\tSTOPPED" << endl;

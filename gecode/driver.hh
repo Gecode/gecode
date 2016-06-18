@@ -698,8 +698,8 @@ namespace Gecode { namespace Driver {
     virtual void print(std::ostream& os) const;
     /// Compare with \a s
     virtual void compare(const Space& home, std::ostream& os) const;
-    /// Choose output stream according to \a name
-    static std::ostream& select_ostream(const char* name, std::ofstream& ofs);
+    /// Choose output stream according to \a sn
+    static std::ostream& select_ostream(const char* sn, std::ofstream& ofs);
     /** Run script with search engine \a Engine and options \a opt
      *
      * In the solution and stat modes, search can be aborted by sending

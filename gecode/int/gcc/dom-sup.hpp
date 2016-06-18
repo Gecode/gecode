@@ -1447,28 +1447,28 @@ namespace Gecode { namespace Int { namespace GCC {
     ns.push(v);
     visited.set(static_cast<unsigned int>(v->index()));
     while (!ns.empty()) {
-      Node* v = ns.top();
+      Node* vv = ns.top();
       Edge* e = NULL;
-      if (v->type() == sp) {
-        e = start[v->index()];
+      if (vv->type() == sp) {
+        e = start[vv->index()];
         while ((e != NULL) && e->matched(bc))
-          e = e->next(v->type());
+          e = e->next(vv->type());
       } else {
-        e = start[v->index()];
+        e = start[vv->index()];
         while ((e != NULL) && !e->matched(bc))
-          e = e->next(v->type());
-        start[v->index()] = e;
+          e = e->next(vv->type());
+        start[vv->index()] = e;
       }
       if (e != NULL) {
-        start[v->index()] = e->next(v->type());
-        Node* w = e->getMate(v->type());
+        start[vv->index()] = e->next(vv->type());
+        Node* w = e->getMate(vv->type());
         if (!visited.get(static_cast<unsigned int>(w->index()))) {
           // unexplored path
           bool m = w->type() ?
             static_cast<ValNode*>(w)->matched(bc) :
             static_cast<VarNode*>(w)->matched(bc);
           if (!m && w->type() != sp) {
-            if (v->inedge() != NULL) {
+            if (vv->inedge() != NULL) {
               // augmenting path of length l > 1
               e->match(bc);
               break;

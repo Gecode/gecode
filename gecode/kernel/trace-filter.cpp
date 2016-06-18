@@ -65,7 +65,7 @@ namespace Gecode {
     n->w = what;
   }
 
-  forceinline TFE
+  inline TFE
   TFE::negate(void) const {
     Node* m = new Node;
     m->t = NT_NEGATE;
