@@ -155,11 +155,11 @@ SUPPORTHDR0 = \
 	dynamic-queue bitset-base bitset bitset-offset \
 	hw-rnd
 
-SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
-SUPPORTHDR  =  gecode/support.hh \
+SUPPORTSRC1	=  $(SUPPORTSRC0:%=gecode/support/%.cpp)
+SUPPORTHDR 	=  gecode/support.hh \
 	$(SUPPORTHDR0:%=gecode/support/%.hpp)
-SUPPORTOBJ  =  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX))
-SUPPORTSRC  =  $(SUPPORTSRC1)
+SUPPORTOBJ	=  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX))
+SUPPORTSRC	=  $(SUPPORTSRC1)
 
 export SUPPORTDLL	= $(LIBPREFIX)@SUPPORT@$(DLLSUFFIX)
 export SUPPORTLIB	= $(LIBPREFIX)@SUPPORT@$(LIBSUFFIX)
@@ -210,8 +210,8 @@ KERNELHDR0 = \
 	trace-traits trace-filter tracer trace-recorder \
 	subscribed-propagators
 
-KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
-KERNELHDR	= \
+KERNELSRC 	= $(KERNELSRC0:%=gecode/kernel/%.cpp)
+KERNELHDR 	= \
 	gecode/kernel.hh gecode/kernel/wait.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.hpp)
 KERNELOBJ	= $(KERNELSRC:%.cpp=%$(OBJSUFFIX))

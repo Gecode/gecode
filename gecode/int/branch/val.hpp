@@ -58,7 +58,7 @@ namespace Gecode {
     return s;
   }
 
-  forceinline IntSharedArray
+  inline IntSharedArray
   IntValBranch::values(void) const {
     return n;
   }

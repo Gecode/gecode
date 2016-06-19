@@ -80,7 +80,7 @@ namespace Gecode {
   ValBranch::ValBranch(VoidFunction v, VoidFunction c)
     : vf(v), cf(c) {}
 
-  forceinline Rnd
+  inline Rnd
   ValBranch::rnd(void) const {
     return r;
   }
