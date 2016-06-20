@@ -79,7 +79,7 @@ namespace Gecode { namespace Driver {
     if (n < 1)
       return 0.0;
     double s = 0;
-    for (int i=0; i<n; i++)
+    for (unsigned int i=0; i<n; i++)
       s += t[i];
     return s / n;
   }
@@ -90,7 +90,7 @@ namespace Gecode { namespace Driver {
       return 0.0;
     double m = am(t,n);
     double s = 0.0;
-    for (int i=0; i<n; i++) {
+    for (unsigned int i=0; i<n; i++) {
       double d = t[i]-m;
       s += d*d;
     }

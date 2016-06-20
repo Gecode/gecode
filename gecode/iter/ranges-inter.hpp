@@ -281,9 +281,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
       if (i.max() < j->max) {
         ++i;
       } else {
-        RangeList* t = j->next;
+        RangeList* tn = j->next;
         j->next = f; f = j;
-        j = t;
+        j = tn;
       }
     }
   done:

@@ -49,6 +49,9 @@ namespace Gecode { namespace Int { namespace LDSB {
   }
 
   template<class View>
+  SymmetryImp<View>::~SymmetryImp(void) {}
+
+  template<class View>
   void*
   SymmetryImp<View>::operator new(size_t s, Space& home) {
     return home.ralloc(s);

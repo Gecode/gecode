@@ -174,7 +174,7 @@ namespace Gecode { namespace Gist {
     SpaceNode* p = getParent(na);
     if (p == NULL)
       return -1;
-    for (int i=p->getNumberOfChildren(); i--;)
+    for (int i=static_cast<int>(p->getNumberOfChildren()); i--;)
       if (p->getChild(na,i) == this)
         return i;
     GECODE_NEVER;

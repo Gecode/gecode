@@ -814,7 +814,7 @@ namespace Gecode {
   LinIntExpr
   operator *(int a, const IntVar& x) {
     if (a == 0)
-      return LinIntExpr(0.0);
+      return LinIntExpr(0);
     else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
@@ -824,7 +824,7 @@ namespace Gecode {
   LinIntExpr
   operator *(int a, const BoolVar& x) {
     if (a == 0)
-      return LinIntExpr(0.0);
+      return LinIntExpr(0);
     else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
@@ -834,7 +834,7 @@ namespace Gecode {
   LinIntExpr
   operator *(const IntVar& x, int a) {
     if (a == 0)
-      return LinIntExpr(0.0);
+      return LinIntExpr(0);
     else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
@@ -844,7 +844,7 @@ namespace Gecode {
   LinIntExpr
   operator *(const BoolVar& x, int a) {
     if (a == 0)
-      return LinIntExpr(0.0);
+      return LinIntExpr(0);
     else if (x.assigned() &&
              Int::Limits::valid(static_cast<long long int>(a)*x.val()))
       return LinIntExpr(a*x.val());
@@ -854,14 +854,14 @@ namespace Gecode {
   LinIntExpr
   operator *(const LinIntExpr& e, int a) {
     if (a == 0)
-      return LinIntExpr(0.0);
+      return LinIntExpr(0);
     else
       return LinIntExpr(a,e);
   }
   LinIntExpr
   operator *(int a, const LinIntExpr& e) {
     if (a == 0)
-      return LinIntExpr(0.0);
+      return LinIntExpr(0);
     else
       return LinIntExpr(a,e);
   }

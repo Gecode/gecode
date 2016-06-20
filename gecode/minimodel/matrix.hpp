@@ -80,7 +80,7 @@ namespace Gecode {
     return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
   template<class A>
-  forceinline
+  inline
   Slice<A>::operator const typename Slice<A>::ArgsType(void) const {
     return _r;
   }

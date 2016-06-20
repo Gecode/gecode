@@ -56,13 +56,10 @@ namespace Gecode { namespace Set { namespace Rel {
     bool ylm;
     /// Whether upper bound of y was updated
     bool yum;
+    /// Get bit \a i
+    bool get(unsigned int i) const;
     /// Set bit \a i to value \a j
-    void set(int i, bool j) {
-      if (j)
-        b.set(i);
-      else
-        b.clear(i);
-    }
+    void set(unsigned int i, bool j);
 
     /// \brief Value iterator for characteristic function
     class CSIter {
@@ -72,27 +69,19 @@ namespace Gecode { namespace Set { namespace Rel {
       /// Current position
       unsigned int i;
       /// Offset from start of bitset
-      int xoff;
+      unsigned int xoff;
       /// Offset for each element (0=lower bound, 1=upper bound)
-      int yoff;
+      unsigned int yoff;
       /// Move iterator to next element
-      void operator++ (void) {
-        i++;
-        while (i<cs->xsize && !cs->b.get(xoff+2*i+yoff))
-          i++;
-      }
+      void operator++ (void);
       /// Default constructor
-      CSIter(void) {}
+      CSIter(void);
       /// Constructor
-      CSIter(CharacteristicSets& cs0, int xoff0, int yoff0)
-        : cs(&cs0), i(static_cast<unsigned int>(-1)),
-          xoff(xoff0), yoff(yoff0) {
-        ++(*this);
-      }
+      CSIter(CharacteristicSets& cs0, unsigned int xoff0, unsigned int yoff0);
       /// Test if iterator is finished
-      bool operator() (void) const { return i<cs->xsize; }
+      bool operator() (void) const;
       /// Value of current iterator position
-      int val(void) const { return cs->ub[i]; }
+      int val(void) const;
     };
 
   public:
@@ -101,100 +90,190 @@ namespace Gecode { namespace Set { namespace Rel {
     CharacteristicSets(Region& re, View0 x, View1 y);
 
     /// Return minimum of element \a i for variable x
-    bool xmin(int i) const { return b.get(2*i); }
+    bool xmin(unsigned int i) const;
     /// Return maximum of element \a i for variable x
-    bool xmax(int i) const { return b.get(2*i+1); }
+    bool xmax(unsigned int i) const;
     /// Return minimum of element \a i for variable y
-    bool ymin(int i) const { return b.get(2*xsize+2*i); }
+    bool ymin(unsigned int i) const;
     /// Return maximum of element \a i for variable y
-    bool ymax(int i) const { return b.get(2*xsize+2*i+1); }
+    bool ymax(unsigned int i) const;
 
     /// Set minimum of element \a i for variable x to \a j
-    void xmin(int i, bool j) { set(2*i,j); }
+    void xmin(unsigned int i, bool j);
     /// Set maximum of element \a i for variable x to \a j
-    void xmax(int i, bool j) { set(2*i+1,j); }
+    void xmax(unsigned int i, bool j);
     /// Set minimum of element \a i for variable y to \a j
-    void ymin(int i, bool j) { set(2*xsize+2*i,j); }
+    void ymin(unsigned int i, bool j);
     /// Set maximum of element \a i for variable y to \a j
-    void ymax(int i, bool j) { set(2*xsize+2*i+1,j); }
+    void ymax(unsigned int i, bool j);
 
     /// Update upper bound of \f$x_i\f$ to \a j
-    ModEvent xlq(int i, bool j) {
-      if (!j) {
-        if (xmin(i)) return ME_SET_FAILED;
-        if (xmax(i)) {
-          xmax(i,false);
-          xum=true;
-        }
-      }
-      return ME_SET_NONE;
-    }
+    ModEvent xlq(unsigned int i, bool j);
     /// Update lower bound of \f$x_i\f$ to \a j
-    ModEvent xgq(int i, bool j) {
-      if (j) {
-        if (!xmax(i)) return ME_SET_FAILED;
-        if (!xmin(i)) {
-          xmin(i,true);
-          xlm=true;
-        }
-      }
-      return ME_SET_NONE;
-    }
+    ModEvent xgq(unsigned int i, bool j);
     /// Update upper bound of \f$y_i\f$ to \a j
-    ModEvent ylq(int i, bool j) {
-      if (!j) {
-        if (ymin(i)) return ME_SET_FAILED;
-        if (ymax(i)) {
-          ymax(i,false);
-          yum=true;
-        }
-      }
-      return ME_SET_NONE;
-    }
+    ModEvent ylq(unsigned int i, bool j);
     /// Update lower bound of \f$y_i\f$ to \a j
-    ModEvent ygq(int i, bool j) {
-      if (j) {
-        if (!ymax(i)) return ME_SET_FAILED;
-        if (!ymin(i)) {
-          ymin(i,true);
-          ylm=true;
-        }
-      }
-      return ME_SET_NONE;
-    }
+    ModEvent ygq(unsigned int i, bool j);
 
     /// Return size of combined upper bounds
-    int size(void) const { return xsize; }
+    unsigned int size(void) const;
 
     /// Prune \a x and \a y using computed bounds
     template<class View0, class View1>
-    ExecStatus prune(Space& home, View0 x, View1 y) {
-      if (xlm) {
-        CSIter i(*this,0,0);
-        Iter::Values::ToRanges<CSIter> ir(i);
-        GECODE_ME_CHECK(x.includeI(home,ir));
-      }
-      if (xum) {
-        CSIter i(*this,0,1);
-        Iter::Values::ToRanges<CSIter> ir(i);
-        GECODE_ME_CHECK(x.intersectI(home,ir));
-      }
-      if (ylm) {
-        CSIter i(*this,2*xsize,0);
-        Iter::Values::ToRanges<CSIter> ir(i);
-        GECODE_ME_CHECK(y.includeI(home,ir));
-      }
-      if (yum) {
-        CSIter i(*this,2*xsize,1);
-        Iter::Values::ToRanges<CSIter> ir(i);
-        GECODE_ME_CHECK(y.intersectI(home,ir));
-      }
-      return ES_OK;
-    }
+    ExecStatus prune(Space& home, View0 x, View1 y);
 
   };
 
+
+  forceinline bool 
+  CharacteristicSets::get(unsigned int i) const {
+    return b.get(i);
+  }
+  forceinline void
+  CharacteristicSets::set(unsigned int i, bool j) {
+    if (j)
+      b.set(i);
+    else
+      b.clear(i);
+  }
+  forceinline unsigned int
+  CharacteristicSets::size(void) const { 
+    return xsize; 
+  }
+
+  forceinline
+  CharacteristicSets::CSIter::CSIter(void) {}
+  forceinline
+  CharacteristicSets::CSIter::CSIter(CharacteristicSets& cs0, 
+                                     unsigned int xoff0, unsigned int yoff0)
+    : cs(&cs0), i(0), xoff(xoff0), yoff(yoff0) {
+    while ((i < cs->xsize) && !cs->get(xoff+2*i+yoff))
+      i++;
+  }
+  forceinline void 
+  CharacteristicSets::CSIter::operator++ (void) {
+    i++;
+    while ((i < cs->xsize) && !cs->get(xoff+2*i+yoff))
+      i++;
+  }
+  forceinline bool 
+  CharacteristicSets::CSIter::operator() (void) const { 
+    return i<cs->xsize; 
+  }
+  forceinline int
+  CharacteristicSets::CSIter::val(void) const { 
+    return cs->ub[i]; 
+  }
+
+
+  forceinline bool 
+  CharacteristicSets::xmin(unsigned int i) const { 
+    return get(2*i); 
+  }
+  forceinline bool 
+  CharacteristicSets::xmax(unsigned int i) const { 
+    return get(2*i+1); 
+  }
+  forceinline bool 
+  CharacteristicSets::ymin(unsigned int i) const { 
+    return get(2*xsize+2*i); 
+  }
+  forceinline bool
+  CharacteristicSets::ymax(unsigned int i) const { 
+    return get(2*xsize+2*i+1); 
+  }
+
+  forceinline void 
+  CharacteristicSets::xmin(unsigned int i, bool j) { 
+    set(2*i,j); 
+  }
+  forceinline void 
+  CharacteristicSets::xmax(unsigned int i, bool j) { 
+    set(2*i+1,j); 
+  }
+  forceinline void 
+  CharacteristicSets::ymin(unsigned int i, bool j) { 
+    set(2*xsize+2*i,j); 
+  }
+  forceinline void
+  CharacteristicSets::ymax(unsigned int i, bool j) { 
+    set(2*xsize+2*i+1,j); 
+  }
+
+  forceinline ModEvent
+  CharacteristicSets::xlq(unsigned int i, bool j) {
+    if (!j) {
+      if (xmin(i)) return ME_SET_FAILED;
+      if (xmax(i)) {
+        xmax(i,false);
+        xum=true;
+      }
+    }
+    return ME_SET_NONE;
+  }
+  forceinline ModEvent
+  CharacteristicSets::xgq(unsigned int i, bool j) {
+    if (j) {
+      if (!xmax(i)) return ME_SET_FAILED;
+      if (!xmin(i)) {
+        xmin(i,true);
+        xlm=true;
+      }
+    }
+    return ME_SET_NONE;
+  }
+  forceinline ModEvent
+  CharacteristicSets::ylq(unsigned int i, bool j) {
+    if (!j) {
+      if (ymin(i)) return ME_SET_FAILED;
+      if (ymax(i)) {
+        ymax(i,false);
+        yum=true;
+      }
+    }
+    return ME_SET_NONE;
+  }
+  forceinline ModEvent
+  CharacteristicSets::ygq(unsigned int i, bool j) {
+    if (j) {
+      if (!ymax(i)) return ME_SET_FAILED;
+      if (!ymin(i)) {
+        ymin(i,true);
+        ylm=true;
+      }
+    }
+    return ME_SET_NONE;
+  }
+
   template<class View0, class View1>
+  forceinline ExecStatus
+  CharacteristicSets::prune(Space& home, View0 x, View1 y) {
+    if (xlm) {
+      CSIter i(*this,0,0);
+      Iter::Values::ToRanges<CSIter> ir(i);
+      GECODE_ME_CHECK(x.includeI(home,ir));
+    }
+    if (xum) {
+      CSIter i(*this,0,1);
+      Iter::Values::ToRanges<CSIter> ir(i);
+      GECODE_ME_CHECK(x.intersectI(home,ir));
+    }
+    if (ylm) {
+      CSIter i(*this,2*xsize,0);
+      Iter::Values::ToRanges<CSIter> ir(i);
+      GECODE_ME_CHECK(y.includeI(home,ir));
+    }
+    if (yum) {
+      CSIter i(*this,2*xsize,1);
+      Iter::Values::ToRanges<CSIter> ir(i);
+      GECODE_ME_CHECK(y.intersectI(home,ir));
+    }
+    return ES_OK;
+  }
+  
+  template<class View0, class View1>
+  forceinline
   CharacteristicSets::CharacteristicSets(Region& re,View0 x, View1 y)
     : xlm(false), xum(false), ylm(false), yum(false) {
     LubRanges<View0> xlub(x);
@@ -214,7 +293,7 @@ namespace Gecode { namespace Set { namespace Rel {
     Iter::Ranges::ToValues<GlbRanges<View0> > xlv(xlr);
     Iter::Ranges::ToValues<LubRanges<View1> > yuv(yur);
     Iter::Ranges::ToValues<GlbRanges<View1> > ylv(ylr);
-    for (int i=0; xylubv(); ++xylubv, ++i) {
+    for (unsigned int i=0; xylubv(); ++xylubv, ++i) {
       ub[i] = xylubv.val();
       if (xlv() && xylubv.val()==xlv.val()) {
         b.set(2*i);
@@ -285,10 +364,10 @@ namespace Gecode { namespace Set { namespace Rel {
      * State 1
      *
      */
-    int i=0;
-    int firsti=0;
-    int n=cs.size();
-    while ((i<n) && cs.xmin(i) == cs.ymax(i)) {
+    unsigned int i=0;
+    unsigned int firsti=0;
+    unsigned int n=cs.size();
+    while ((i<n) && (cs.xmin(i) == cs.ymax(i))) {
       // case: =, >=
       GECODE_ME_CHECK(cs.xlq(i,cs.ymax(i)));
       GECODE_ME_CHECK(cs.ygq(i,cs.xmin(i)));

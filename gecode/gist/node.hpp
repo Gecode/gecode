@@ -217,14 +217,17 @@ namespace Gecode { namespace Gist {
   forceinline unsigned int
   Node::getNumberOfChildren(void) const {
     switch (getTag()) {
-    case UNDET: return 0;
-    case LEAF:  return 0;
-    case TWO_CHILDREN: return 1+(noOfChildren <= 0);
-    default: return noOfChildren;
+    case UNDET:
+    case LEAF:
+      return 0;
+    case TWO_CHILDREN: 
+      return (noOfChildren <= 0) ? 2 : 1;
+    default: 
+      return static_cast<unsigned int>(noOfChildren);
     }
   }
 
-  inline int
+  forceinline int
   Node::getIndex(const NodeAllocator& na) const {
     if (parent==-1)
       return 0;

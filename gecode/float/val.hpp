@@ -226,7 +226,7 @@ namespace Gecode {
     return FloatVal(x/y.x);
   }
 
-  forceinline bool
+  inline bool
   operator <(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x < y.x;
@@ -234,7 +234,7 @@ namespace Gecode {
       return false;
     }
   }
-  forceinline bool
+  inline bool
   operator <(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x < y;
@@ -243,7 +243,7 @@ namespace Gecode {
     }
   }
 
-  forceinline bool
+  inline bool
   operator <=(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x <= y.x;
@@ -251,7 +251,7 @@ namespace Gecode {
       return false;
     }
   }
-  forceinline bool
+  inline bool
   operator <=(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x <= y;
@@ -260,7 +260,7 @@ namespace Gecode {
     }
   }
 
-  forceinline bool
+  inline bool
   operator >(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x > y.x;
@@ -268,7 +268,7 @@ namespace Gecode {
       return false;
     }
   }
-  forceinline bool
+  inline bool
   operator >(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x > y;
@@ -277,7 +277,7 @@ namespace Gecode {
     }
   }
 
-  forceinline bool
+  inline bool
   operator >=(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x >= y.x;
@@ -285,7 +285,7 @@ namespace Gecode {
       return false;
     }
   }
-  forceinline bool
+  inline bool
   operator >=(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x >= y;
@@ -294,7 +294,7 @@ namespace Gecode {
     }
   }
 
-  forceinline bool
+  inline bool
   operator ==(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x == y.x;
@@ -302,7 +302,7 @@ namespace Gecode {
       return false;
     }
   }
-  forceinline bool
+  inline bool
   operator ==(const FloatVal& x, const FloatNum& y) {
     if (!gecode_boost::numeric::interval_lib::checking_strict<FloatNum>
         ::is_empty(x.x.lower(), x.x.upper())) {
@@ -317,7 +317,7 @@ namespace Gecode {
     return false;
   }
 
-  forceinline bool
+  inline bool
   operator !=(const FloatVal& x, const FloatVal& y) {
     try {
       return x.x != y.x;
@@ -325,7 +325,7 @@ namespace Gecode {
       return false;
     }
   }
-  forceinline bool
+  inline bool
   operator !=(const FloatVal& x, const FloatNum& y) {
     try {
       return x.x != y;

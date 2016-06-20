@@ -276,15 +276,15 @@ namespace Gecode {
           char* c = a;
           while ((*c != ',') && (*c != 0))
             c++;
-
-          if      (!strncmp("def",a,c-a))      { b = IPL_DEF; }
-          else if (!strncmp("val",a,c-a))      { b = IPL_VAL; }
-          else if (!strncmp("bnd",a,c-a))      { b = IPL_BND; }
-          else if (!strncmp("dom",a,c-a))      { b = IPL_DOM; }
-          else if (!strncmp("speed",a,c-a))    { m |= IPL_SPEED; }
-          else if (!strncmp("memory",a,c-a))   { m |= IPL_MEMORY; }
-          else if (!strncmp("basic",a,c-a))    { m |= IPL_BASIC; }
-          else if (!strncmp("advanced",a,c-a)) { m |= IPL_ADVANCED; }
+          unsigned int e = static_cast<unsigned int>(c-a);
+          if      (!strncmp("def",a,e))      { b = IPL_DEF; }
+          else if (!strncmp("val",a,e))      { b = IPL_VAL; }
+          else if (!strncmp("bnd",a,e))      { b = IPL_BND; }
+          else if (!strncmp("dom",a,e))      { b = IPL_DOM; }
+          else if (!strncmp("speed",a,e))    { m |= IPL_SPEED; }
+          else if (!strncmp("memory",a,e))   { m |= IPL_MEMORY; }
+          else if (!strncmp("basic",a,e))    { m |= IPL_BASIC; }
+          else if (!strncmp("advanced",a,e)) { m |= IPL_ADVANCED; }
           else {
             std::cerr << "Wrong argument \"" << a
                       << "\" for option \"" << opt << "\""
@@ -340,19 +340,19 @@ namespace Gecode {
           char* c = a;
           while ((*c != ',') && (*c != 0))
             c++;
-
-          if      (!strncmp("init",a,c-a))    { cur |= TE_INIT; }
-          else if (!strncmp("prune",a,c-a))   { cur |= TE_PRUNE; }
-          else if (!strncmp("fix",a,c-a))     { cur |= TE_FIX; }
-          else if (!strncmp("done",a,c-a))    { cur |= TE_DONE ; }
-          else if (!strncmp("none",a,c-a) ||
-                   !strncmp("false",a,c-a) ||
-                   !strncmp("0",a,c-a))       { cur = 0; }
-          else if (!strncmp("all",a,c-a) ||
-                   !strncmp("1",a,c-a))       { cur = (TE_INIT |
-                                                       TE_PRUNE |
-                                                       TE_FIX |
-                                                       TE_DONE); }
+          unsigned int e = static_cast<unsigned int>(c-a);
+          if      (!strncmp("init",a,e))    { cur |= TE_INIT; }
+          else if (!strncmp("prune",a,e))   { cur |= TE_PRUNE; }
+          else if (!strncmp("fix",a,e))     { cur |= TE_FIX; }
+          else if (!strncmp("done",a,e))    { cur |= TE_DONE ; }
+          else if (!strncmp("none",a,e) ||
+                   !strncmp("false",a,e) ||
+                   !strncmp("0",a,e))       { cur = 0; }
+          else if (!strncmp("all",a,e) ||
+                   !strncmp("1",a,e))       { cur = (TE_INIT |
+                                                     TE_PRUNE |
+                                                     TE_FIX |
+                                                     TE_DONE); }
           else {
             std::cerr << "Wrong argument \"" << a
                       << "\" for option \"" << opt << "\""

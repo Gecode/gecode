@@ -173,6 +173,8 @@ namespace Gecode { namespace Int { namespace LDSB {
     virtual SymmetryImp<View>* copy(Space& home, bool share) const = 0;
     /// Disposal
     virtual size_t dispose(Space& home) = 0;
+    /// Unused destructor
+    virtual ~SymmetryImp(void);
     /// Placement new operator
     static void* operator new(size_t s, Space& home);
     /// Return memory to space

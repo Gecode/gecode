@@ -567,8 +567,8 @@ namespace Set { namespace RelOp {
                 GLBndSet& unionOfDets) {
     assert(unionOfDets.isConsistent());
     int xsize = x.size();
-    Region r(home);
-    GlbRanges<View0>* xLBs = r.alloc<GlbRanges<View0> >(xsize);
+    Region reg(home);
+    GlbRanges<View0>* xLBs = reg.alloc<GlbRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       GlbRanges<View0> r(x[i]);
@@ -578,7 +578,7 @@ namespace Set { namespace RelOp {
       }
     }
     if (nonEmptyCounter !=0) {
-      Iter::Ranges::NaryUnion xLBUnion(r,xLBs,nonEmptyCounter);
+      Iter::Ranges::NaryUnion xLBUnion(reg,xLBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
       xLBUnion |= dets;
       GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home,xLBUnion));
@@ -593,8 +593,8 @@ namespace Set { namespace RelOp {
                 bool& modified, ViewArray<View0>& x, View1& y,
                 GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Region r(home);
-    LubRanges<View0>* xUBs = r.alloc<LubRanges<View0> >(xsize);
+    Region reg(home);
+    LubRanges<View0>* xUBs = reg.alloc<LubRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       LubRanges<View0> r(x[i]);
@@ -604,7 +604,7 @@ namespace Set { namespace RelOp {
       }
     }
     if (nonEmptyCounter != 0) {
-      Iter::Ranges::NaryUnion xUBUnion(r,xUBs,nonEmptyCounter);
+      Iter::Ranges::NaryUnion xUBUnion(reg,xUBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
       xUBUnion |= dets;
       GECODE_ME_CHECK_MODIFIED(modified, y.intersectI(home,xUBUnion));
