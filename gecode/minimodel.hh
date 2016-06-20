@@ -1936,10 +1936,10 @@ namespace Gecode {
     typedef typename ArrayTraits<A>::ArgsType ArgsType;
   private:
     ArgsType _r;     ///< The elements of the slice
-    unsigned int _fc, ///< From column
-      _tc,            ///< To column
-      _fr,            ///< From row
-      _tr;            ///< To row
+    int _fc, ///< From column
+      _tc,   ///< To column
+      _fr,   ///< From row
+      _tr;   ///< To row
   public:
     /// Construct slice
     Slice(const Matrix<A>& a, int fc, int tc, int fr, int tr);

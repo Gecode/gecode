@@ -80,21 +80,21 @@ namespace Gecode {
     : a(a0), b(b0), c(c0), d(d0) {}
 
   template<class VarBranch>
-  forceinline TieBreak<VarBranch>
+  TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b) {
     TieBreak<VarBranch> ab(a,b);
     return ab;
   }
 
   template<class VarBranch>
-  forceinline TieBreak<VarBranch>
+  TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c) {
     TieBreak<VarBranch> abc(a,b,c);
     return abc;
   }
 
   template<class VarBranch>
-  forceinline TieBreak<VarBranch>
+  TieBreak<VarBranch>
   tiebreak(VarBranch a, VarBranch b, VarBranch c, VarBranch d) {
     TieBreak<VarBranch> abcd(a,b,c,d);
     return abcd;
