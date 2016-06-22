@@ -186,7 +186,7 @@ namespace Gecode { namespace MiniModel {
           assert(n == 1);
           IntVar x = a[0].post(home, ipl);
           if (x.assigned() && ((x.val() == 0) || (x.val() == 1)))
-            y = x;
+            y = result(home,ret,x);
           else {
             y = result(home,ret);
             sqr(home, x, y, ipl);
@@ -211,7 +211,7 @@ namespace Gecode { namespace MiniModel {
           IntVar x = a[0].post(home, ipl);
           if (x.assigned() && (aInt > 0) &&
               ((x.val() == 0) || (x.val() == 1)))
-            y = x;
+            y = result(home,ret,x);
           else {
             y = result(home,ret);
             pow(home, x, aInt, y, ipl);

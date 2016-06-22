@@ -78,6 +78,14 @@ What:   bug
 Rank:   minor
 Thanks:	Matthias Balzer
 [DESCRIPTION]
+Fixed special case handling for sqr and pow functions.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
 Removed bogus declarations of comparison operators between
 Boolean variables and float expressions.
 
