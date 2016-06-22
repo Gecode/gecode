@@ -666,7 +666,7 @@ namespace Gecode {
   };
 
   BElementExpr::BElementExpr(const BoolVarArgs& b, const LinIntExpr& idx)
-    : a(heap.alloc<BoolExpr>(b.size())), n(b.size()), idx(idx) {
+    : a(static_cast<BoolExpr*>(heap.ralloc(sizeof(BoolExpr)*b.size()))), n(b.size()), idx(idx) {
     for (int i=b.size(); i--;)
       new (&a[i]) BoolExpr(b[i]);
   }

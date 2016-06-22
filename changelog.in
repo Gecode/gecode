@@ -78,6 +78,14 @@ What:   bug
 Rank:   minor
 Thanks:	Matthias Balzer
 [DESCRIPTION]
+Fixed memory leak in constructor for Boolean element expression.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
 Fixed special case handling for sqr and pow functions.
 
 [ENTRY]
