@@ -41,13 +41,12 @@
 
 namespace Gecode {
 
-  FloatValArgs::FloatValArgs(int n, int e0, ...) : PrimArgArray<FloatVal>(n) {
-    va_list args;
-    va_start(args, e0);
-    a[0] = e0;
-    for (int i = 1; i < n; i++)
-      a[i] = va_arg(args,FloatNum);
-    va_end(args);
+  FloatValArgs
+  FloatValArgs::create(int n, FloatVal start, int inc) {
+    FloatValArgs r(n);
+    for (int i=0; i<n; i++, start+=inc)
+      r[i] = start;
+    return r;
   }
 
   FloatVarArray::FloatVarArray(Space& home, int n, FloatNum min, FloatNum max)

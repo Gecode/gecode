@@ -934,7 +934,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing float arguments
-  class FloatValArgs : public PrimArgArray<FloatVal> {
+  class FloatValArgs : public ArgArray<FloatVal> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -949,15 +949,13 @@ namespace Gecode {
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     FloatValArgs(InputIterator first, InputIterator last);
-    /// Allocate array with \a n elements and initialize with \a e0, ...
-    GECODE_FLOAT_EXPORT
-    FloatValArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     FloatValArgs(int n, const FloatVal* e);
     /// Initialize from primitive argument array \a a (copy elements)
-    FloatValArgs(const PrimArgArray<FloatVal>& a);
+    FloatValArgs(const ArgArray<FloatVal>& a);
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
+    GECODE_FLOAT_EXPORT
     static FloatValArgs create(int n, FloatVal start, int inc=1);
     //@}
   };

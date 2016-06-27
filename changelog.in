@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
+FloatValArgs erroneously inherited from PrimArgArray, now it
+inherits from ArgArray.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor
