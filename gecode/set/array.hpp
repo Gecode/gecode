@@ -49,6 +49,31 @@ namespace Gecode {
    */
 
   forceinline
+  SetVarArgs::SetVarArgs(void) {}
+
+  forceinline
+  SetVarArgs::SetVarArgs(int n) 
+    : VarArgArray<SetVar>(n) {}
+
+  forceinline
+  SetVarArgs::SetVarArgs(const SetVarArgs& a) 
+    : VarArgArray<SetVar>(a) {}
+
+  forceinline
+  SetVarArgs::SetVarArgs(const VarArray<SetVar>& a) 
+    : VarArgArray<SetVar>(a) {}
+
+  forceinline
+  SetVarArgs::SetVarArgs(const std::vector<SetVar>& a) 
+    : VarArgArray<SetVar>(a) {}
+
+  template<class InputIterator>
+  forceinline
+  SetVarArgs::SetVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<SetVar>(first,last) {}
+
+
+  forceinline
   SetVarArray::SetVarArray(void) {}
 
   forceinline

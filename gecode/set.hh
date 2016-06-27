@@ -492,19 +492,18 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    SetVarArgs(void) {}
+    SetVarArgs(void);
     /// Allocate array with \a n elements
-    explicit SetVarArgs(int n) : VarArgArray<SetVar>(n) {}
+    explicit SetVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    SetVarArgs(const SetVarArgs& a) : VarArgArray<SetVar>(a) {}
+    SetVarArgs(const SetVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    SetVarArgs(const VarArray<SetVar>& a) : VarArgArray<SetVar>(a) {}
+    SetVarArgs(const VarArray<SetVar>& a);
     /// Initialize from vector \a a
-    SetVarArgs(const std::vector<SetVar>& a) : VarArgArray<SetVar>(a) {}
+    SetVarArgs(const std::vector<SetVar>& a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    SetVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<SetVar>(first,last) {}
+    SetVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Create an array of size \a n.
      *
