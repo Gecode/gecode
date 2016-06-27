@@ -152,11 +152,11 @@ namespace Gecode {
    *
    */
 
-  
+
   forceinline
   TraceFilter::TFO::StackFrame::StackFrame(void) {}
   forceinline
-  TraceFilter::TFO::StackFrame::StackFrame(TFE::Node* n0, bool neg0) 
+  TraceFilter::TFO::StackFrame::StackFrame(TFE::Node* n0, bool neg0)
     : n(n0), neg(neg0) {}
 
   void

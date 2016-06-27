@@ -126,7 +126,7 @@ namespace Gecode { namespace Set { namespace Rel {
   };
 
 
-  forceinline bool 
+  forceinline bool
   CharacteristicSets::get(unsigned int i) const {
     return b.get(i);
   }
@@ -138,67 +138,67 @@ namespace Gecode { namespace Set { namespace Rel {
       b.clear(i);
   }
   forceinline unsigned int
-  CharacteristicSets::size(void) const { 
-    return xsize; 
+  CharacteristicSets::size(void) const {
+    return xsize;
   }
 
   forceinline
   CharacteristicSets::CSIter::CSIter(void) {}
   forceinline
-  CharacteristicSets::CSIter::CSIter(CharacteristicSets& cs0, 
+  CharacteristicSets::CSIter::CSIter(CharacteristicSets& cs0,
                                      unsigned int xoff0, unsigned int yoff0)
     : cs(&cs0), i(0), xoff(xoff0), yoff(yoff0) {
     while ((i < cs->xsize) && !cs->get(xoff+2*i+yoff))
       i++;
   }
-  forceinline void 
+  forceinline void
   CharacteristicSets::CSIter::operator++ (void) {
     i++;
     while ((i < cs->xsize) && !cs->get(xoff+2*i+yoff))
       i++;
   }
-  forceinline bool 
-  CharacteristicSets::CSIter::operator() (void) const { 
-    return i<cs->xsize; 
+  forceinline bool
+  CharacteristicSets::CSIter::operator() (void) const {
+    return i<cs->xsize;
   }
   forceinline int
-  CharacteristicSets::CSIter::val(void) const { 
-    return cs->ub[i]; 
+  CharacteristicSets::CSIter::val(void) const {
+    return cs->ub[i];
   }
 
 
-  forceinline bool 
-  CharacteristicSets::xmin(unsigned int i) const { 
-    return get(2*i); 
-  }
-  forceinline bool 
-  CharacteristicSets::xmax(unsigned int i) const { 
-    return get(2*i+1); 
-  }
-  forceinline bool 
-  CharacteristicSets::ymin(unsigned int i) const { 
-    return get(2*xsize+2*i); 
+  forceinline bool
+  CharacteristicSets::xmin(unsigned int i) const {
+    return get(2*i);
   }
   forceinline bool
-  CharacteristicSets::ymax(unsigned int i) const { 
-    return get(2*xsize+2*i+1); 
+  CharacteristicSets::xmax(unsigned int i) const {
+    return get(2*i+1);
+  }
+  forceinline bool
+  CharacteristicSets::ymin(unsigned int i) const {
+    return get(2*xsize+2*i);
+  }
+  forceinline bool
+  CharacteristicSets::ymax(unsigned int i) const {
+    return get(2*xsize+2*i+1);
   }
 
-  forceinline void 
-  CharacteristicSets::xmin(unsigned int i, bool j) { 
-    set(2*i,j); 
-  }
-  forceinline void 
-  CharacteristicSets::xmax(unsigned int i, bool j) { 
-    set(2*i+1,j); 
-  }
-  forceinline void 
-  CharacteristicSets::ymin(unsigned int i, bool j) { 
-    set(2*xsize+2*i,j); 
+  forceinline void
+  CharacteristicSets::xmin(unsigned int i, bool j) {
+    set(2*i,j);
   }
   forceinline void
-  CharacteristicSets::ymax(unsigned int i, bool j) { 
-    set(2*xsize+2*i+1,j); 
+  CharacteristicSets::xmax(unsigned int i, bool j) {
+    set(2*i+1,j);
+  }
+  forceinline void
+  CharacteristicSets::ymin(unsigned int i, bool j) {
+    set(2*xsize+2*i,j);
+  }
+  forceinline void
+  CharacteristicSets::ymax(unsigned int i, bool j) {
+    set(2*xsize+2*i+1,j);
   }
 
   forceinline ModEvent
@@ -271,7 +271,7 @@ namespace Gecode { namespace Set { namespace Rel {
     }
     return ES_OK;
   }
-  
+
   template<class View0, class View1>
   forceinline
   CharacteristicSets::CharacteristicSets(Region& re,View0 x, View1 y)

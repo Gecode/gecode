@@ -213,7 +213,7 @@ namespace Gecode {
   TraceRecorder<View>::TraceRecorder(Home home, ViewArray<View>& x,
                                      TraceFilter tf0, int te0,
                                      Tracer<View>& t0)
-    : Propagator(home), o(home,x.size()), n(x), c(home), 
+    : Propagator(home), o(home,x.size()), n(x), c(home),
       tf(tf0), te(te0), t(t0) {
     home.notice(*this, AP_DISPOSE);
     for (int i=n.size(); i--; ) {

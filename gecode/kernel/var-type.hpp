@@ -42,7 +42,7 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
    * \ingroup TaskActorSet
@@ -250,7 +250,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /**
    * \defgroup TaskActorFloatMEPC Float modification events and propagation conditions
    * \ingroup TaskActorFloat
@@ -294,7 +294,7 @@ namespace Gecode { namespace Float {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Configuration for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #else
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Dummy configuration for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -333,7 +333,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Configuration for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #else
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Dummy configuration for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /// Configuration for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -397,7 +397,7 @@ namespace Gecode { namespace Set {
   };
 }}
 #else
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /// Dummy configuration for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -411,7 +411,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /// Configuration for Float-variable implementations
   class FloatVarImpConf {
   public:
@@ -436,7 +436,7 @@ namespace Gecode { namespace Float {
   };
 }}
 #else
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /// Dummy configuration for Float-variable implementations
   class FloatVarImpConf {
   public:
@@ -466,7 +466,7 @@ namespace Gecode {
 }
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   forceinline Gecode::ModEvent
   IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c = (
@@ -542,7 +542,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   forceinline Gecode::ModEvent
   BoolVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     return me1 | me2;
@@ -565,7 +565,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   forceinline Gecode::ModEvent
   SetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c[ME_SET_CBB+1][ME_SET_CBB+1] = {
@@ -833,7 +833,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   forceinline Gecode::ModEvent
   FloatVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c = (

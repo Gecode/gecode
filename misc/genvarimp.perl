@@ -280,6 +280,7 @@ for ($f=0; $f<$n_files; $f++) {
     $hdr[$f] = "$hdr[$f]namespace $ns { ";
     $ftr[$f] = "$ftr[$f]}";
   }
+  $hdr[$f] =~ s| $||g;
   $hdr[$f] = "$hdr[$f]\n";
   $ftr[$f] = "$ftr[$f]\n";
 

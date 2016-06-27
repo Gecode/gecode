@@ -42,7 +42,7 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Base-class for Int-variable implementations
   class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
   protected:
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Base-class for Bool-variable implementations
   class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
   protected:
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /// Base-class for Set-variable implementations
   class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
   protected:
@@ -180,7 +180,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /// Base-class for Float-variable implementations
   class FloatVarImpBase : public Gecode::VarImp<Gecode::Float::FloatVarImpConf> {
   protected:
@@ -226,7 +226,7 @@ namespace Gecode { namespace Float {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
 
   forceinline
   IntVarImpBase::IntVarImpBase(void) {}
@@ -287,7 +287,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(void) {}
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
 
   forceinline
   SetVarImpBase::SetVarImpBase(void) {}
@@ -422,7 +422,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
 
   forceinline
   FloatVarImpBase::FloatVarImpBase(void) {}

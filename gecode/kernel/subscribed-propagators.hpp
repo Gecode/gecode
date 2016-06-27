@@ -71,13 +71,13 @@ namespace Gecode {
     /// Move iterator to next propagator
     void operator ++(void);
     /// Return propagator
-    Propagator& propagator(void) const;    
+    Propagator& propagator(void) const;
   };
 
   template<class VIC>
   forceinline void
   SubscribedPropagators::init(VarImp<VIC>& x) {
-    c = x.actor(0); 
+    c = x.actor(0);
     ep = x.actorNonZero(x.pc_max+1); ea = x.b.base+x.entries;
   }
   template<class VIC>

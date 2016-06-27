@@ -69,7 +69,7 @@ namespace Gecode {
     : ArgArray<FloatVal>(n, e) {}
 
   forceinline
-  FloatValArgs::FloatValArgs(const ArgArray<FloatVal>& a) 
+  FloatValArgs::FloatValArgs(const ArgArray<FloatVal>& a)
     : ArgArray<FloatVal>(a) {}
 
   forceinline

@@ -220,9 +220,9 @@ namespace Gecode { namespace Gist {
     case UNDET:
     case LEAF:
       return 0;
-    case TWO_CHILDREN: 
+    case TWO_CHILDREN:
       return (noOfChildren <= 0) ? 2 : 1;
-    default: 
+    default:
       return static_cast<unsigned int>(noOfChildren);
     }
   }
