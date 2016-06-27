@@ -1312,6 +1312,12 @@ namespace Gecode {
   /// Post propagator for channeling a float and an integer variable \f$ x_0 = x_1\f$
   GECODE_FLOAT_EXPORT void
   channel(Home home, IntVar x0, FloatVar x1);
+  /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
+  GECODE_FLOAT_EXPORT void
+  channel(Home home, FloatVar x0, BoolVar x1);
+  /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
+  GECODE_FLOAT_EXPORT void
+  channel(Home home, BoolVar x0, FloatVar x1);
   //@}
 
 

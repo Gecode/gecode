@@ -74,6 +74,13 @@ Gaga
 
 [ENTRY]
 Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added channeling constraint between float and Boolean variable.
+
+[ENTRY]
+Module: float
 What:   bug
 Rank:   minor
 Thanks:	Matthias Balzer

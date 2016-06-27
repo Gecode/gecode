@@ -230,6 +230,22 @@ namespace Gecode {
     GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x1,x0)));
   }
 
+  void
+  channel(Home home, FloatVar x0, BoolVar x1) {
+    using namespace Float;
+    using namespace Int;
+    GECODE_POST;
+    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,BoolView>::post(home,x0,x1)));
+  }
+
+  void
+  channel(Home home, BoolVar x0, FloatVar x1) {
+    using namespace Float;
+    using namespace Int;
+    GECODE_POST;
+    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,BoolView>::post(home,x1,x0)));
+  }
+
 }
 
 // STATISTICS: float-post
