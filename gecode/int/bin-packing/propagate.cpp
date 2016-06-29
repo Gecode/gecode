@@ -50,9 +50,9 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   void
-  Pack::schedule(Space& home) {
-    l.schedule(home,*this,PC_INT_BND);
-    bs.schedule(home,*this,PC_INT_DOM);
+  Pack::reschedule(Space& home) {
+    l.reschedule(home,*this,PC_INT_BND);
+    bs.reschedule(home,*this,PC_INT_DOM);
   }
 
   Actor*

@@ -242,6 +242,10 @@ namespace Gecode { namespace Float {
   }
 
   forceinline void
+  FloatVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+    FloatVarImpBase::reschedule(home,p,pc,assigned());
+  }
+  forceinline void
   FloatVarImp::subscribe(Space& home, Advisor& a) {
     FloatVarImpBase::subscribe(home,a,assigned());
   }

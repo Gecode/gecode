@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val>
   void
-  Sequence<View,Val>::schedule(Space& home) {
+  Sequence<View,Val>::reschedule(Space& home) {
     for (int i=x.size(); i--; )
       if (!undecided(x[i],s))
         x[i].schedule(home,*this,x[i].assigned() ? ME_INT_VAL : ME_INT_BND);

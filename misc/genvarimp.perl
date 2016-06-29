@@ -689,7 +689,7 @@ EOF
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \\brief Schedule propagator \\a p
     static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \\brief Schedule propagator \\a p
+    /** \\brief Re-schedule propagator \\a p
      *
      * In case the variable is assigned (that is, \\a assigned is
      * true), the propagator is scheduled for execution.
@@ -697,7 +697,7 @@ EOF
      * with modification event \\a me provided that \\a pc is different
      * from \\a $pc_assigned[$f].
      */
-    void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //\@}
 EOF
 ;
@@ -782,8 +782,8 @@ EOF
     $base[$f]::schedule(home,p,me);
   }
   forceinline void
-  $class[$f]::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    $base[$f]::schedule(home,p,pc,assigned,$me_subscribe[$f]);
+  $class[$f]::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    $base[$f]::reschedule(home,p,pc,assigned,$me_subscribe[$f]);
   }
 
 EOF

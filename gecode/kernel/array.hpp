@@ -375,8 +375,8 @@ namespace Gecode {
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
-    /// Schedule propagator \a p with propagation condition \a pc
-    void schedule(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p with propagation condition \a pc
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
     /// \name Cloning
@@ -1429,9 +1429,9 @@ namespace Gecode {
 
   template<class View>
   void
-  ViewArray<View>::schedule(Space& home, Propagator& p, PropCond pc) {
+  ViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
     for (int i = n; i--; )
-      x[i].schedule(home,p,pc);
+      x[i].reschedule(home,p,pc);
   }
 
   template<class View>

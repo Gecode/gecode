@@ -54,7 +54,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Subscribe propagator \a p to all views of the no-good literal
     virtual void subscribe(Space& home, Propagator& p);
     /// Schedule propagator \a p for all views of the no-good literal
-    virtual void schedule(Space& home, Propagator& p);
+    virtual void reschedule(Space& home, Propagator& p);
     /// Cancel propagator \a p from all views of the no-good literal
     virtual void cancel(Space& home, Propagator& p);
     /// Test the status of the no-good literal
@@ -82,7 +82,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Const function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for path \a p

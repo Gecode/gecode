@@ -75,9 +75,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class XV, class YV>
   void
-  LinBoolView<XV,YV>::schedule(Space& home) {
-    x.schedule(home,*this,PC_INT_VAL);
-    y.schedule(home,*this,PC_INT_BND);
+  LinBoolView<XV,YV>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_INT_VAL);
+    y.reschedule(home,*this,PC_INT_BND);
   }
 
 

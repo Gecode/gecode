@@ -217,9 +217,9 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class V0, class V1, class Idx, class Val>
   void
-  Int<V0,V1,Idx,Val>::schedule(Space& home) {
-    x0.schedule(home,*this,PC_INT_DOM);
-    x1.schedule(home,*this,PC_INT_DOM);
+  Int<V0,V1,Idx,Val>::reschedule(Space& home) {
+    x0.reschedule(home,*this,PC_INT_DOM);
+    x1.reschedule(home,*this,PC_INT_DOM);
   }
 
   template<class V0, class V1, class Idx, class Val>

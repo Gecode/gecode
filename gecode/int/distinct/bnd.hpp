@@ -88,8 +88,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   void
-  Bnd<View>::schedule(Space& home) {
-    y.schedule(home,*this,PC_INT_BND);
+  Bnd<View>::reschedule(Space& home) {
+    y.reschedule(home,*this,PC_INT_BND);
   }
 
 

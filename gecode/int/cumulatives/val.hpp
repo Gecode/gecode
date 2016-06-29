@@ -115,12 +115,12 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template<class ViewM, class ViewP, class ViewU, class View>
   void
-  Val<ViewM,ViewP,ViewU,View>::schedule(Space& home) {
-    m.schedule(home,*this,Int::PC_INT_DOM);
-    s.schedule(home,*this,Int::PC_INT_BND);
-    p.schedule(home,*this,Int::PC_INT_BND);
-    e.schedule(home,*this,Int::PC_INT_BND);
-    u.schedule(home,*this,Int::PC_INT_BND);
+  Val<ViewM,ViewP,ViewU,View>::reschedule(Space& home) {
+    m.reschedule(home,*this,Int::PC_INT_DOM);
+    s.reschedule(home,*this,Int::PC_INT_BND);
+    p.reschedule(home,*this,Int::PC_INT_BND);
+    e.reschedule(home,*this,Int::PC_INT_BND);
+    u.reschedule(home,*this,Int::PC_INT_BND);
   }
 
   template<class ViewM, class ViewP, class ViewU, class View>

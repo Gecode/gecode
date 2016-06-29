@@ -84,9 +84,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Box>
   void
-  Base<Box>::schedule(Space& home) {
+  Base<Box>::reschedule(Space& home) {
     for (int i=n; i--; )
-      b[i].schedule(home,*this);
+      b[i].reschedule(home,*this);
   }
 
 }}}

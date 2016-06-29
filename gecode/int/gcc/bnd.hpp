@@ -94,9 +94,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   void
-  Bnd<Card>::schedule(Space& home) {
-    y.schedule(home, *this, PC_INT_BND);
-    k.schedule(home, *this, PC_INT_BND);
+  Bnd<Card>::reschedule(Space& home) {
+    y.reschedule(home, *this, PC_INT_BND);
+    k.reschedule(home, *this, PC_INT_BND);
   }
 
   template<class Card>

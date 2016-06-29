@@ -65,10 +65,10 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, ReifyMode rm, bool strict>
   void
-  ReLq<View0,View1,rm,strict>::schedule(Space& home) {
-    b.schedule(home,*this, Gecode::Int::PC_INT_VAL);
-    x0.schedule(home,*this, PC_SET_ANY);
-    x1.schedule(home,*this, PC_SET_ANY);
+  ReLq<View0,View1,rm,strict>::reschedule(Space& home) {
+    b.reschedule(home,*this, Gecode::Int::PC_INT_VAL);
+    x0.reschedule(home,*this, PC_SET_ANY);
+    x1.reschedule(home,*this, PC_SET_ANY);
   }
 
   template<class View0, class View1, ReifyMode rm, bool strict>

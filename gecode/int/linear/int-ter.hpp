@@ -78,10 +78,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C, PropCond pc>
   void
-  LinTer<Val,A,B,C,pc>::schedule(Space& home) {
-    x0.schedule(home,*this,pc);
-    x1.schedule(home,*this,pc);
-    x2.schedule(home,*this,pc);
+  LinTer<Val,A,B,C,pc>::reschedule(Space& home) {
+    x0.reschedule(home,*this,pc);
+    x1.reschedule(home,*this,pc);
+    x2.reschedule(home,*this,pc);
   }
 
   template<class Val, class A, class B, class C, PropCond pc>

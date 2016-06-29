@@ -806,7 +806,7 @@ namespace Gecode {
         ++ps;
         if (in(p.group())) {
           p.enable();
-          p.schedule(home);
+          p.reschedule(home);
         }
       }
     } else {

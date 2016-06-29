@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   void
-  GqBoolInt<VX>::schedule(Space& home) {
+  GqBoolInt<VX>::reschedule(Space& home) {
     int n = x.size()-n_hs+n_as;
     if ((c <= 0) || (c >= n))
       VX::schedule(home,*this,ME_INT_VAL);
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   void
-  EqBoolInt<VX>::schedule(Space& home) {
+  EqBoolInt<VX>::reschedule(Space& home) {
     int n = x.size()-n_hs+n_as;
     if ((c <= 0) || (c >= n))
       VX::schedule(home,*this,ME_INT_VAL);
@@ -605,8 +605,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   void
-  ReGqBoolInt<VX,VB,rm>::schedule(Space& home) {
-    b.schedule(home,*this,PC_BOOL_VAL);
+  ReGqBoolInt<VX,VB,rm>::reschedule(Space& home) {
+    b.reschedule(home,*this,PC_BOOL_VAL);
     if ((n_s < c) || (c <= 0))
       VX::schedule(home,*this,ME_BOOL_VAL);
   }
@@ -716,8 +716,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   void
-  ReEqBoolInt<VX,VB,rm>::schedule(Space& home) {
-    b.schedule(home,*this,PC_BOOL_VAL);
+  ReEqBoolInt<VX,VB,rm>::reschedule(Space& home) {
+    b.reschedule(home,*this,PC_BOOL_VAL);
     if ((c < 0) || (c > n_s) || (n_s == 0))
       VX::schedule(home,*this,ME_BOOL_VAL);
   }

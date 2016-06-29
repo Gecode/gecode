@@ -102,9 +102,9 @@ namespace Gecode { namespace Int {
 
   template<class Task>
   forceinline void
-  TaskArray<Task>::schedule(Space& home, Propagator& p, PropCond pc) {
+  TaskArray<Task>::reschedule(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
-      t[i].schedule(home,p,pc);
+      t[i].reschedule(home,p,pc);
   }
 
   template<class Task>

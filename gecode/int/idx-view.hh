@@ -105,7 +105,7 @@ namespace Gecode { namespace Int {
      */
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc);
+    void reschedule(Space& home, Propagator& p, PropCond pc);
 
     /// Cloning
     void update(Space& home, bool share, IdxViewArray<View>& x);

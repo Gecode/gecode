@@ -816,8 +816,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   void
-  NaryOr<VX,VY>::schedule(Space& home) {
-    y.schedule(home,*this,PC_BOOL_VAL);
+  NaryOr<VX,VY>::reschedule(Space& home) {
+    y.reschedule(home,*this,PC_BOOL_VAL);
     if (n_zero == x.size())
       VX::schedule(home,*this,ME_BOOL_VAL);
     for (int i=x.size(); i--; )

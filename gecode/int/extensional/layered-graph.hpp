@@ -593,7 +593,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Val, class Degree, class StateIdx>
   void
-  LayeredGraph<View,Val,Degree,StateIdx>::schedule(Space& home) {
+  LayeredGraph<View,Val,Degree,StateIdx>::reschedule(Space& home) {
     View::schedule(home,*this,c.empty() ? ME_INT_VAL : ME_INT_DOM);
   }
 

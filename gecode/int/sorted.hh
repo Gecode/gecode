@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// Cost function returning low linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x, \a y, and \a z

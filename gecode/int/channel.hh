@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Propagation cost (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     GECODE_INT_EXPORT
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     GECODE_INT_EXPORT
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);

@@ -106,10 +106,10 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   void
-  LinkMulti::schedule(Space& home) {
+  LinkMulti::reschedule(Space& home) {
     if (status == S_ONE)
       BoolView::schedule(home,*this,ME_BOOL_VAL);
-    y.schedule(home,*this,PC_INT_DOM);
+    y.reschedule(home,*this,PC_INT_DOM);
   }
 
   ExecStatus

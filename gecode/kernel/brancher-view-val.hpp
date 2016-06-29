@@ -81,7 +81,7 @@ namespace Gecode {
     /// Cancel subscription for no-good literal
     virtual void cancel(Space& home, Propagator& p);
     /// Schedule propagator \a p
-    virtual void schedule(Space& home, Propagator& p);
+    virtual void reschedule(Space& home, Propagator& p);
     /// Dispose
     virtual size_t dispose(Space& home);
   };
@@ -210,8 +210,8 @@ namespace Gecode {
 
   template<class View, class Val, PropCond pc>
   void
-  ViewValNGL<View,Val,pc>::schedule(Space& home, Propagator& p) {
-    x.schedule(home,p,pc);
+  ViewValNGL<View,Val,pc>::reschedule(Space& home, Propagator& p) {
+    x.reschedule(home,p,pc);
   }
 
   template<class View, class Val, PropCond pc>

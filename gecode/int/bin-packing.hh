@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     GECODE_INT_EXPORT
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);

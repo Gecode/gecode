@@ -74,7 +74,7 @@ namespace Gecode { namespace Int {
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
     static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Schedule propagator \a p
+    /** \brief Re-schedule propagator \a p
      *
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
@@ -82,7 +82,7 @@ namespace Gecode { namespace Int {
      * with modification event \a me provided that \a pc is different
      * from \a PC_INT_VAL.
      */
-    void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //@}
   };
 }}
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int {
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
     static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Schedule propagator \a p
+    /** \brief Re-schedule propagator \a p
      *
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int {
      * with modification event \a me provided that \a pc is different
      * from \a PC_BOOL_VAL.
      */
-    void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //@}
   };
 }}
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set {
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
     static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Schedule propagator \a p
+    /** \brief Re-schedule propagator \a p
      *
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
@@ -174,7 +174,7 @@ namespace Gecode { namespace Set {
      * with modification event \a me provided that \a pc is different
      * from \a PC_SET_VAL.
      */
-    void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //@}
   };
 }}
@@ -212,7 +212,7 @@ namespace Gecode { namespace Float {
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
     static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
-    /** \brief Schedule propagator \a p
+    /** \brief Re-schedule propagator \a p
      *
      * In case the variable is assigned (that is, \a assigned is
      * true), the propagator is scheduled for execution.
@@ -220,7 +220,7 @@ namespace Gecode { namespace Float {
      * with modification event \a me provided that \a pc is different
      * from \a PC_FLOAT_VAL.
      */
-    void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //@}
   };
 }}
@@ -253,8 +253,8 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home,p,me);
   }
   forceinline void
-  IntVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::schedule(home,p,pc,assigned,ME_INT_BND);
+  IntVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::reschedule(home,p,pc,assigned,ME_INT_BND);
   }
 
   forceinline Gecode::ModEvent
@@ -314,8 +314,8 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::schedule(home,p,me);
   }
   forceinline void
-  BoolVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::schedule(home,p,pc,assigned,ME_BOOL_VAL);
+  BoolVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::reschedule(home,p,pc,assigned,ME_BOOL_VAL);
   }
 
   forceinline Gecode::ModEvent
@@ -357,8 +357,8 @@ namespace Gecode { namespace Set {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,p,me);
   }
   forceinline void
-  SetVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::schedule(home,p,pc,assigned,ME_SET_CBB);
+  SetVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::reschedule(home,p,pc,assigned,ME_SET_CBB);
   }
 
   forceinline Gecode::ModEvent
@@ -449,8 +449,8 @@ namespace Gecode { namespace Float {
     Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home,p,me);
   }
   forceinline void
-  FloatVarImpBase::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::schedule(home,p,pc,assigned,ME_FLOAT_BND);
+  FloatVarImpBase::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::reschedule(home,p,pc,assigned,ME_FLOAT_BND);
   }
 
   forceinline Gecode::ModEvent

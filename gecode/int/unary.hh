@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Unary {
     /// Cancel subscription of propagator \a p for task
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc);
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
   };
@@ -357,7 +357,7 @@ namespace Gecode { namespace Int { namespace Unary {
     /// Cancel subscription of propagator \a p for task
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc);
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
   };

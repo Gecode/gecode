@@ -77,10 +77,10 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   void
-  IntBase<VX,VY>::schedule(Space& home) {
+  IntBase<VX,VY>::reschedule(Space& home) {
     for (int i=n_s; i--; )
-      x[i].schedule(home,*this,PC_INT_DOM);
-    Gecode::Int::Count::schedule(home,*this,y);
+      x[i].reschedule(home,*this,PC_INT_DOM);
+    Gecode::Int::Count::reschedule(home,*this,y);
   }
 
 }}}

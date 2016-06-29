@@ -130,7 +130,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Cost function (defined as ternary low)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -186,7 +186,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation
@@ -246,7 +246,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation

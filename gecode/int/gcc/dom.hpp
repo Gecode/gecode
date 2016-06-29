@@ -110,9 +110,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   void
-  Dom<Card>::schedule(Space& home) {
-    x.schedule(home, *this, PC_INT_DOM);
-    k.schedule(home, *this, PC_INT_DOM);
+  Dom<Card>::reschedule(Space& home) {
+    x.reschedule(home, *this, PC_INT_DOM);
+    k.reschedule(home, *this, PC_INT_DOM);
   }
 
   template<class Card>

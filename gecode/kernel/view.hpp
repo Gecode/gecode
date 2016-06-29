@@ -88,6 +88,8 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -170,6 +172,8 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -263,6 +267,8 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -381,6 +387,11 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
+  ConstView<View>::reschedule(Space& home, Propagator& p, PropCond) {
+    View::schedule(home,p,ME_GEN_ASSIGNED);
+  }
+  template<class View>
+  forceinline void
   ConstView<View>::subscribe(Space&, Advisor&) {
   }
   template<class View>
@@ -465,6 +476,11 @@ namespace Gecode {
   forceinline void
   VarImpView<Var>::cancel(Space& home, Propagator& p, PropCond pc) {
     x->cancel(home,p,pc);
+  }
+  template<class Var>
+  forceinline void
+  VarImpView<Var>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    x->reschedule(home,p,pc);
   }
   template<class Var>
   forceinline void
@@ -576,6 +592,11 @@ namespace Gecode {
   forceinline void
   DerivedView<View>::cancel(Space& home, Propagator& p, PropCond pc) {
     x.cancel(home,p,pc);
+  }
+  template<class View>
+  forceinline void
+  DerivedView<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    x.reschedule(home,p,pc);
   }
   template<class View>
   forceinline void

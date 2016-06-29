@@ -65,9 +65,9 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class Info, class Offset, PropCond pc>
   void
-  Base<Info,Offset,pc>::schedule(Space& home) {
+  Base<Info,Offset,pc>::reschedule(Space& home) {
     for (int i=2*n; i--; )
-      xy[i].view.schedule(home,*this,pc);
+      xy[i].view.reschedule(home,*this,pc);
   }
 
   template<class Info, class Offset, PropCond pc>

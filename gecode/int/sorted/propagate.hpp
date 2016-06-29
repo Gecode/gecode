@@ -383,11 +383,11 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   void
-  Sorted<View,Perm>::schedule(Space& home) {
-    x.schedule(home, *this, PC_INT_BND);
-    y.schedule(home, *this, PC_INT_BND);
+  Sorted<View,Perm>::reschedule(Space& home) {
+    x.reschedule(home, *this, PC_INT_BND);
+    y.reschedule(home, *this, PC_INT_BND);
     if (Perm)
-      z.schedule(home, *this, PC_INT_BND);
+      z.reschedule(home, *this, PC_INT_BND);
   }
 
   template<class View, bool Perm>

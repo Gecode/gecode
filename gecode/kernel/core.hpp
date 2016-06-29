@@ -484,8 +484,8 @@ namespace Gecode {
      * modification event \a me. If the variable is assigned,
      * the appropriate modification event is used for scheduling.
      */
-    static void schedule(Space& home, Propagator& p, PropCond pc,
-                         bool assigned, ModEvent me);
+    static void reschedule(Space& home, Propagator& p, PropCond pc,
+                           bool assigned, ModEvent me);
     /// Project modification event for this variable type from \a med
     static ModEvent me(const ModEventDelta& med);
     /// Translate modification event \a me into modification event delta
@@ -828,7 +828,7 @@ namespace Gecode {
      * if needed.
      */
     GECODE_KERNEL_EXPORT
-    void enable(Space& home, bool s=false);
+    void enable(Space& home, bool s=true);
     //@}
     /// Group of all propagators
     GECODE_KERNEL_EXPORT
@@ -1049,7 +1049,7 @@ namespace Gecode {
      * modification event delta and should only be scheduled if
      * it is legal to execute the propagator.
      */
-    virtual void schedule(Space& home) = 0;
+    virtual void reschedule(Space& home) = 0;
     /**
      * \brief Propagation function
      *
@@ -1276,7 +1276,7 @@ namespace Gecode {
     /// Cancel propagator \a p from all views of the no-good literal
     virtual void cancel(Space& home, Propagator& p) = 0;
     /// Schedule propagator \a p for all views of the no-good literal
-    virtual void schedule(Space& home, Propagator& p) = 0;
+    virtual void reschedule(Space& home, Propagator& p) = 0;
     /// Test the status of the no-good literal
     virtual NGL::Status status(const Space& home) const = 0;
     /// Propagate the negation of the no-good literal
@@ -4265,8 +4265,8 @@ namespace Gecode {
 
   template<class VIC>
   void
-  VarImp<VIC>::schedule(Space& home, Propagator& p, PropCond pc,
-                        bool assigned, ModEvent me) {
+  VarImp<VIC>::reschedule(Space& home, Propagator& p, PropCond pc,
+                          bool assigned, ModEvent me) {
     if (assigned)
       VarImp<VIC>::schedule(home,p,ME_GEN_ASSIGNED);
     else if (pc != PC_GEN_ASSIGNED)

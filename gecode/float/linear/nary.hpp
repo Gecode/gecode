@@ -67,9 +67,9 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class P, class N, PropCond pc>
   void
-  Lin<P,N,pc>::schedule(Space& home) {
-    x.schedule(home,*this,pc);
-    y.schedule(home,*this,pc);
+  Lin<P,N,pc>::reschedule(Space& home) {
+    x.reschedule(home,*this,pc);
+    y.reschedule(home,*this,pc);
   }
 
   template<class P, class N, PropCond pc>

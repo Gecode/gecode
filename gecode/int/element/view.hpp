@@ -141,10 +141,10 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class VA, class VB, class VC, PropCond pc_ac>
   void
-  View<VA,VB,VC,pc_ac>::schedule(Space& home) {
-    x0.schedule(home,*this,PC_INT_DOM);
-    x1.schedule(home,*this,pc_ac);
-    iv.schedule(home,*this,pc_ac);
+  View<VA,VB,VC,pc_ac>::reschedule(Space& home) {
+    x0.reschedule(home,*this,PC_INT_DOM);
+    x1.reschedule(home,*this,pc_ac);
+    iv.reschedule(home,*this,pc_ac);
   }
 
   template<class VA, class VB, class VC, PropCond pc_ac>

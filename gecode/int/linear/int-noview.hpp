@@ -217,7 +217,7 @@ namespace Gecode {
       (void) home; (void) p; (void) pc;
     }
     /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc) {
+    void reschedule(Space& home, Propagator& p, PropCond pc) {
       (void) home; (void) p; (void) pc;
     }
     //@}

@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Cost funtion
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor

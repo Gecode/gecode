@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Distinct {
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Destructor

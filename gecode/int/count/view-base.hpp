@@ -66,10 +66,10 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ>
   void
-  ViewBase<VX,VY,VZ>::schedule(Space& home) {
-    x.schedule(home,*this,PC_INT_DOM);
-    Gecode::Int::Count::schedule(home,*this,y);
-    z.schedule(home,*this,PC_INT_BND);
+  ViewBase<VX,VY,VZ>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_INT_DOM);
+    Gecode::Int::Count::reschedule(home,*this,y);
+    z.reschedule(home,*this,PC_INT_BND);
   }
 
   template<class VX, class VY, class VZ>

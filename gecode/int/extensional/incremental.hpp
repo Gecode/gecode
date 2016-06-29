@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View>
   void
-  Incremental<View>::schedule(Space& home) {
+  Incremental<View>::reschedule(Space& home) {
     // Work to be done or subsumption
     if (!w_support.empty() || !w_remove.empty() || (unassigned == 0))
       View::schedule(home,*this,

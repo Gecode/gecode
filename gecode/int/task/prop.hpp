@@ -59,8 +59,8 @@ namespace Gecode { namespace Int {
 
   template<class Task, class PL>
   void
-  TaskProp<Task,PL>::schedule(Space& home) {
-    t.schedule(home,*this,PL::pc);
+  TaskProp<Task,PL>::reschedule(Space& home) {
+    t.reschedule(home,*this,PL::pc);
   }
 
   template<class Task, class PL>

@@ -345,6 +345,8 @@ namespace Gecode { namespace Int {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -674,8 +676,8 @@ namespace Gecode { namespace Int {
      * ME_INT_VAL (or ME_BOOL_VAL).
      */
     static void schedule(Space& home, Propagator& p, ModEvent me);
-    /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc, bool assigned);
+    /// Re-schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     //@}

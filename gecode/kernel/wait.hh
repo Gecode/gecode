@@ -65,7 +65,7 @@ namespace Gecode { namespace Kernel {
     /// Const function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that waits until \a x becomes assigned and then executes \a c
@@ -97,7 +97,7 @@ namespace Gecode { namespace Kernel {
     /// Const function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that waits until \a x becomes assigned and then executes \a c
@@ -135,8 +135,8 @@ namespace Gecode { namespace Kernel {
   }
   template<class View>
   void
-  UnaryWait<View>::schedule(Space& home) {
-    x.schedule(home,*this,PC_GEN_ASSIGNED);
+  UnaryWait<View>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_GEN_ASSIGNED);
   }
   template<class View>
   ExecStatus
@@ -200,8 +200,8 @@ namespace Gecode { namespace Kernel {
   }
   template<class View>
   void
-  NaryWait<View>::schedule(Space& home) {
-    x[0].schedule(home,*this,PC_GEN_ASSIGNED);
+  NaryWait<View>::reschedule(Space& home) {
+    x[0].reschedule(home,*this,PC_GEN_ASSIGNED);
   }
   template<class View>
   ExecStatus

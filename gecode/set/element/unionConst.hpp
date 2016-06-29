@@ -75,9 +75,9 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   void
-  ElementUnionConst<SView,RView>::schedule(Space& home) {
-    x0.schedule(home,*this, PC_SET_ANY);
-    x1.schedule(home,*this, PC_SET_ANY);
+  ElementUnionConst<SView,RView>::reschedule(Space& home) {
+    x0.reschedule(home,*this, PC_SET_ANY);
+    x1.reschedule(home,*this, PC_SET_ANY);
   }
 
   template<class SView, class RView>

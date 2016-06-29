@@ -65,8 +65,8 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   void
-  BoolBase<VY>::schedule(Space& home) {
-    y.schedule(home,*this,PC_INT_BND);
+  BoolBase<VY>::reschedule(Space& home) {
+    y.reschedule(home,*this,PC_INT_BND);
   }
 
   template<class VY>

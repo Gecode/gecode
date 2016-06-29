@@ -97,9 +97,9 @@ namespace Gecode { namespace Int {
 
   template<class ManTask>
   forceinline void
-  ManToOptTask<ManTask>::schedule(Space& home, Propagator& p, PropCond pc) {
-    _m.schedule(home, p, PC_BOOL_VAL);
-    ManTask::schedule(home, p, pc);
+  ManToOptTask<ManTask>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    _m.reschedule(home, p, PC_BOOL_VAL);
+    ManTask::reschedule(home, p, pc);
   }
 
 }}

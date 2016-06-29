@@ -71,9 +71,9 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   void
-  LexLqLe<View>::schedule(Space& home) {
-    x.schedule(home,*this,PC_INT_BND);
-    y.schedule(home,*this,PC_INT_BND);
+  LexLqLe<View>::reschedule(Space& home) {
+    x.reschedule(home,*this,PC_INT_BND);
+    y.reschedule(home,*this,PC_INT_BND);
   }
 
   template<class View>
@@ -288,9 +288,11 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   void
-  LexNq<View>::schedule(Space& home) {
-    x0.schedule(home,*this,PC_INT_VAL); y0.schedule(home,*this,PC_INT_VAL);
-    x1.schedule(home,*this,PC_INT_VAL); y1.schedule(home,*this,PC_INT_VAL);
+  LexNq<View>::reschedule(Space& home) {
+    x0.reschedule(home,*this,PC_INT_VAL); 
+    y0.reschedule(home,*this,PC_INT_VAL);
+    x1.reschedule(home,*this,PC_INT_VAL); 
+    y1.reschedule(home,*this,PC_INT_VAL);
   }
 
   template<class View>

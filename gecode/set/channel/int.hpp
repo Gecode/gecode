@@ -100,9 +100,9 @@ namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   void
-  ChannelInt<View>::schedule(Space& home) {
-    xs.schedule(home,*this, Gecode::Int::PC_INT_DOM);
-    ys.schedule(home,*this, PC_SET_ANY);
+  ChannelInt<View>::reschedule(Space& home) {
+    xs.reschedule(home,*this, Gecode::Int::PC_INT_DOM);
+    ys.reschedule(home,*this, PC_SET_ANY);
   }
 
   template<class View>

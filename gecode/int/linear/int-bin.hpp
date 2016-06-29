@@ -74,9 +74,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, PropCond pc>
   void
-  LinBin<Val,A,B,pc>::schedule(Space& home) {
-    x0.schedule(home,*this,pc);
-    x1.schedule(home,*this,pc);
+  LinBin<Val,A,B,pc>::reschedule(Space& home) {
+    x0.reschedule(home,*this,pc);
+    x1.reschedule(home,*this,pc);
   }
 
   template<class Val, class A, class B, PropCond pc>
@@ -120,10 +120,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, PropCond pc, class Ctrl>
   void
-  ReLinBin<Val,A,B,pc,Ctrl>::schedule(Space& home) {
-    x0.schedule(home,*this,pc);
-    x1.schedule(home,*this,pc);
-    b.schedule(home,*this,PC_INT_VAL);
+  ReLinBin<Val,A,B,pc,Ctrl>::reschedule(Space& home) {
+    x0.reschedule(home,*this,pc);
+    x1.reschedule(home,*this,pc);
+    b.reschedule(home,*this,PC_INT_VAL);
   }
 
   template<class Val, class A, class B, PropCond pc, class Ctrl>

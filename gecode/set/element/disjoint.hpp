@@ -81,9 +81,9 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   void
-  ElementDisjoint<SView,RView>::schedule(Space& home) {
-    x1.schedule(home,*this, PC_SET_ANY);
-    iv.schedule(home,*this, PC_SET_ANY);
+  ElementDisjoint<SView,RView>::reschedule(Space& home) {
+    x1.reschedule(home,*this, PC_SET_ANY);
+    iv.reschedule(home,*this, PC_SET_ANY);
   }
 
   template<class SView, class RView>

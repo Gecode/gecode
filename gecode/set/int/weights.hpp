@@ -194,9 +194,9 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   void
-  Weights<View>::schedule(Space& home) {
-    x.schedule(home,*this, PC_SET_ANY);
-    y.schedule(home,*this, Gecode::Int::PC_INT_BND);
+  Weights<View>::reschedule(Space& home) {
+    x.reschedule(home,*this, PC_SET_ANY);
+    y.reschedule(home,*this, Gecode::Int::PC_INT_BND);
   }
 
   template<class View>

@@ -110,8 +110,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     c.cancel(home,p,PC_INT_DOM);
   }
   forceinline void
-  FixDim::schedule(Space& home, Propagator& p) {
-    c.schedule(home,p,PC_INT_DOM);
+  FixDim::reschedule(Space& home, Propagator& p) {
+    c.reschedule(home,p,PC_INT_DOM);
   }
 
 
@@ -195,10 +195,10 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     c1.cancel(home,p,PC_INT_DOM);
   }
   forceinline void
-  FlexDim::schedule(Space& home, Propagator& p) {
-    c0.schedule(home,p,PC_INT_DOM);
-    s.schedule(home,p,PC_INT_BND);
-    c1.schedule(home,p,PC_INT_DOM);
+  FlexDim::reschedule(Space& home, Propagator& p) {
+    c0.reschedule(home,p,PC_INT_DOM);
+    s.reschedule(home,p,PC_INT_BND);
+    c1.reschedule(home,p,PC_INT_DOM);
   }
 
 }}}

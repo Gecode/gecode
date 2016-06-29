@@ -75,9 +75,9 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   void
-  BoolBinary<BVA,BVB>::schedule(Space& home) {
-    x0.schedule(home,*this,PC_BOOL_VAL);
-    x1.schedule(home,*this,PC_BOOL_VAL);
+  BoolBinary<BVA,BVB>::reschedule(Space& home) {
+    x0.reschedule(home,*this,PC_BOOL_VAL);
+    x1.reschedule(home,*this,PC_BOOL_VAL);
   }
 
   template<class BVA, class BVB>
@@ -131,10 +131,10 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   void
-  BoolTernary<BVA,BVB,BVC>::schedule(Space& home) {
-    x0.schedule(home,*this,PC_BOOL_VAL);
-    x1.schedule(home,*this,PC_BOOL_VAL);
-    x2.schedule(home,*this,PC_BOOL_VAL);
+  BoolTernary<BVA,BVB,BVC>::reschedule(Space& home) {
+    x0.reschedule(home,*this,PC_BOOL_VAL);
+    x1.reschedule(home,*this,PC_BOOL_VAL);
+    x2.reschedule(home,*this,PC_BOOL_VAL);
   }
 
   template<class BVA, class BVB, class BVC>

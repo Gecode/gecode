@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Cost function (defined as high binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$i_{x_0}=x_1\f$
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Element {
     // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

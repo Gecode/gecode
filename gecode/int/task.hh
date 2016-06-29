@@ -91,7 +91,7 @@ namespace Gecode { namespace Int {
     /// Cancel subscription of propagator \a p for task
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc);
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
   };
 
@@ -208,7 +208,7 @@ namespace Gecode { namespace Int {
     /// Cancel subscription of propagator \a p for all tasks
     void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     /// Schedule propagator \a p
-    void schedule(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void reschedule(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     //@}
 
     /// \name Cloning
@@ -437,7 +437,7 @@ namespace Gecode { namespace Int {
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
-    virtual void schedule(Space& home);
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };

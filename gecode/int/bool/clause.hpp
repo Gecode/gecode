@@ -328,8 +328,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   void
-  Clause<VX,VY>::schedule(Space& home) {
-    z.schedule(home,*this,PC_BOOL_VAL);
+  Clause<VX,VY>::reschedule(Space& home) {
+    z.reschedule(home,*this,PC_BOOL_VAL);
     if (n_zero == x.size() + y.size())
       VX::schedule(home,*this,ME_BOOL_VAL);
     for (int i=x.size(); i--; )
