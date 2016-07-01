@@ -399,7 +399,7 @@ namespace Gecode {
   template<class View>
   PropCost
   Activity::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::crazy(PropCost::HI,1000);
+    return PropCost::record();
   }
 
   template<class View>
