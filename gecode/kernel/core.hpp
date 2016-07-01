@@ -552,8 +552,9 @@ namespace Gecode {
   public:
     /// The actual cost values that are used
     enum ActualCost {
-      AC_CRAZY_LO     = 0, ///< Exponential complexity, cheap
-      AC_CRAZY_HI     = 0, ///< Exponential complexity, expensive
+      AC_RECORD       = 0, ///< Reserved for recording information
+      AC_CRAZY_LO     = 1, ///< Exponential complexity, cheap
+      AC_CRAZY_HI     = 1, ///< Exponential complexity, expensive
       AC_CUBIC_LO     = 1, ///< Cubic complexity, cheap
       AC_CUBIC_HI     = 1, ///< Cubic complexity, expensive
       AC_QUADRATIC_LO = 2, ///< Quadratic complexity, cheap
@@ -582,6 +583,8 @@ namespace Gecode {
     /// Constructor for automatic coercion of \a ac
     PropCost(ActualCost ac);
   public:
+    /// For recording information (no propagation allowed)
+    static PropCost record(void);
     /// Exponential complexity for modifier \a m and size measure \a n
     static PropCost crazy(PropCost::Mod m, unsigned int n);
     /// Exponential complexity for modifier \a m and size measure \a n
@@ -4539,6 +4542,10 @@ namespace Gecode {
       return (m == LO) ? lo : hi;
   }
 
+  forceinline PropCost
+  PropCost::record(void) {
+    return AC_RECORD;
+  }
   forceinline PropCost
   PropCost::crazy(PropCost::Mod m, unsigned int n) {
     return cost(m,AC_CRAZY_LO,AC_CRAZY_HI,n);

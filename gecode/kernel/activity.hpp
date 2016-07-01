@@ -174,7 +174,7 @@ namespace Gecode {
     Recorder(Home home, ViewArray<View>& x, Activity& a);
     /// Copy propagator during cloning
     virtual Propagator* copy(Space& home, bool share);
-    /// Cost function (crazy so that propagator is likely to run last)
+    /// Cost function (record so that propagator runs last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);

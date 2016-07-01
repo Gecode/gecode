@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added additional propagation cost level record() which is
+reserved for propagators that record information but do not
+propagate.
+
+[ENTRY]
 Module: float
 What:   new
 Rank:   minor

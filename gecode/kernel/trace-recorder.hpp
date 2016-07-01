@@ -115,7 +115,7 @@ namespace Gecode {
                   TraceFilter tf, int te, Tracer<View>& t);
     /// Copy propagator during cloning
     virtual Propagator* copy(Space& home, bool share);
-    /// Cost function (crazy so that propagator is likely to run last)
+    /// Cost function (record so that propagator runs last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);
@@ -278,7 +278,7 @@ namespace Gecode {
   template<class View>
   PropCost
   TraceRecorder<View>::cost(const Space&, const ModEventDelta&) const {
-    return PropCost::crazy(PropCost::HI,n.size());
+    return PropCost::record();
   }
 
   template<class View>
