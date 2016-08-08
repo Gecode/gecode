@@ -548,6 +548,7 @@ namespace Gecode {
   sum(const FloatVarArgs& x) {
     return LinFloatExpr(x);
   }
+
   LinFloatExpr
   sum(const FloatValArgs& a, const FloatVarArgs& x) {
     return LinFloatExpr(a,x);
@@ -555,6 +556,7 @@ namespace Gecode {
 
   FloatVar
   expr(Home home, const LinFloatExpr& e) {
+    PostInfo pi(home);
     if (!home.failed())
       return e.post(home);
     FloatVar x(home,Float::Limits::min,Float::Limits::max);

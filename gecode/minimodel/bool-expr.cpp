@@ -630,6 +630,7 @@ namespace Gecode {
    */
   BoolVar
   expr(Home home, const BoolExpr& e, IntPropLevel ipl) {
+    PostInfo pi(home);
     if (!home.failed())
       return e.expr(home,ipl);
     BoolVar x(home,0,1);
@@ -638,6 +639,7 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolExpr& e, IntPropLevel ipl) {
+    GECODE_POST;
     if (home.failed()) return;
     e.rel(home,ipl);
   }

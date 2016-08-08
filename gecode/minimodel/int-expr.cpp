@@ -908,6 +908,7 @@ namespace Gecode {
 
   IntVar
   expr(Home home, const LinIntExpr& e, IntPropLevel ipl) {
+    PostInfo pi(home);
     if (!home.failed())
       return e.post(home,ipl);
     IntVar x(home,Int::Limits::min,Int::Limits::max);
