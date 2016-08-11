@@ -129,16 +129,31 @@ namespace Gecode {
 
 namespace Gecode { namespace Float {
 
+
+#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
+
+  /*
+   * This is used for the MSVC compiler for x64 or x86 with SSE enabled.
+   *
+   */
+  /// Rounding Base class (safe version)
+  typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum> 
+    RoundingBase;
+
+#else
+
+  /// Rounding Base class (optimized version)
+  typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> 
+    RoundingBase;
+
+#endif
+
   /**
    * \brief Floating point rounding policy
    *
    * \ingroup TaskModelFloatVars
    */
-  class Rounding :
-    public gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
-  protected:
-    /// Base class
-    typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> Base;
+  class Rounding : public RoundingBase {
   public:
     /// \name Constructor and destructor
     //@{

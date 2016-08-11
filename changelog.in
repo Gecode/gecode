@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   major
+Thanks: Filip Konvicka
+[DESCRIPTION]
+Enable optimized rounding only if MSVC does not use SSE,
+otherwise things really go wrong (necessary for MSVC 2015).
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
