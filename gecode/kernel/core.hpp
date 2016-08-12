@@ -3525,7 +3525,7 @@ namespace Gecode {
   forceinline
   Brancher::Brancher(Home home) :
     bid(static_cast<Space&>(home).pc.p.bid++),
-    gid(home.propagatorgroup().gid) {
+    gid(home.branchergroup().gid) {
     if (static_cast<Space&>(home).pc.p.bid == 0U)
       throw TooManyBranchers("Brancher::Brancher");
     // If no brancher available, make it the first one
