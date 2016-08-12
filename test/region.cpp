@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2009
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -36,51 +36,51 @@
  */
 
 #include <gecode/kernel.hh>
+#include <gecode/int.hh>
 
-namespace Gecode {
+#include "test/test.hh"
 
-  void*
-  Region::heap_alloc(size_t s) {
-    void* p = heap.ralloc(s);
-    if (hi == NULL) {
-      hi = p;
-      assert(!Support::marked(hi));
-    } else if (!Support::marked(hi)) {
-      HeapInfo* h = static_cast<HeapInfo*>
-        (heap.ralloc(sizeof(HeapInfo)+(4-1)*sizeof(void*)));
-      h->n=2; h->size=4;
-      h->blocks[0]=hi; h->blocks[1]=p;
-      hi = Support::mark(h);
-    } else {
-      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      if (h->n == h->size) {
-        HeapInfo* n = static_cast<HeapInfo*>
-          (heap.ralloc(sizeof(HeapInfo)+(2*h->n-1)*sizeof(void*)));
-        n->size = 2*h->n;
-        n->n = h->n;
-        memcpy(&n->blocks[0], &h->blocks[0], h->n*sizeof(void*));
-        hi = Support::mark(n);
-        heap.rfree(h);
-        h = n;
+namespace Test {
+
+  /// %Test for %Region memory area
+  class Region : public Test::Base {
+  protected:
+    /// Test space
+    class TestSpace : public Gecode::Space {
+    public:
+      /// Constructor for creation
+      TestSpace(void) {}
+      /// Constructor for cloning \a s
+      TestSpace(bool share, TestSpace& s) : Space(share,s) {}
+      /// Copy during cloning
+      virtual Space* copy(bool share) {
+        return new TestSpace(share,*this);
       }
-      h->blocks[h->n++] = p;
+    };
+    /// How often to repeat
+    static const int n_repeat = 16;
+    /// How many blocks to allocate
+    static const int n_blocks = 64;
+    /// The size of a block
+    static const size_t size = Gecode::MemoryConfig::region_area_size * 4;
+  public:
+    /// Initialize test
+    Region(void) : Test::Base("Region") {}
+    /// Perform actual tests
+    bool run(void) {
+      TestSpace* s = new TestSpace;
+      for (int i=n_repeat; i--; ) {
+        Gecode::Region r(*s);
+        for (int j=n_blocks; j--; )
+          (void) r.alloc<char>(static_cast<unsigned long int>(size));
+      }
+      delete s;
+      return true;
     }
-    return p;
-  }
+  };
 
-  void
-  Region::heap_free(void) {
-    assert(hi != NULL);
-    if (Support::marked(hi)) {
-      HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
-      for (unsigned int i=h->n; i--; )
-        heap.rfree(h->blocks[i]);
-      heap.rfree(h);
-    } else {
-      heap.rfree(hi);
-    }
-  }
+  Region r;
 
 }
 
-// STATISTICS: kernel-memory
+// STATISTICS: test-core

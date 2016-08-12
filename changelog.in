@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Fixed memory leak for regions (occured for many large allocation
+requests).
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   major

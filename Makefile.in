@@ -1191,7 +1191,7 @@ SEARCHTESTSRC0 = \
 ARRAYTESTSRC0 = \
 	test/array.cpp
 
-TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp
+TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \
