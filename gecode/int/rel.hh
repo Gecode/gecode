@@ -300,6 +300,8 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation

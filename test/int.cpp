@@ -476,6 +476,38 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
+      START_TEST("Assignment (after posting, disabled)");
+      {
+        TestSpace* s = new TestSpace(arity,dom,this);
+        s->post();
+        PropagatorGroup::all.disable(*s);
+        s->assign(a);
+        PropagatorGroup::all.enable(*s);
+        if (sol) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumption");
+        } else {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
+      START_TEST("Partial assignment (after posting, disabled)");
+      {
+        TestSpace* s = new TestSpace(arity,dom,this);
+        s->post();
+        s->assign(a,true);
+        PropagatorGroup::all.disable(*s);
+        (void) s->failed();
+        s->assign(a);
+        PropagatorGroup::all.enable(*s);
+        if (sol) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumption");
+        } else {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
       START_TEST("Assignment (before posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,this);
@@ -523,7 +555,6 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-
       if (!ignore(a)) {
         if (eqv()) {
           START_TEST("Assignment reified (rewrite after post, <=>)");

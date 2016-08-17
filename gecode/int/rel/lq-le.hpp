@@ -368,6 +368,12 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template<class View, int o>
+  void
+  NaryLqLe<View,o>::reschedule(Space& home) {
+    View::schedule(home, *this, ME_INT_BND);
+  }
+
+  template<class View, int o>
   ExecStatus
   NaryLqLe<View,o>::propagate(Space& home, const ModEventDelta&) {
     run = true;
