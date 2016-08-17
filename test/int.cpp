@@ -476,7 +476,7 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-      START_TEST("Assignment (after posting, disabled)");
+      START_TEST("Assignment (after posting, disable)");
       {
         TestSpace* s = new TestSpace(arity,dom,this);
         s->post();
@@ -491,7 +491,7 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-      START_TEST("Partial assignment (after posting, disabled)");
+      START_TEST("Partial assignment (after posting, disable)");
       {
         TestSpace* s = new TestSpace(arity,dom,this);
         s->post();

@@ -191,6 +191,12 @@ namespace Gecode { namespace Set { namespace Precede {
   }
 
   template<class View>
+  void
+  Single<View>::reschedule(Space& home) {
+    View::schedule(home, *this, ME_SET_BB);
+  }
+
+  template<class View>
   ExecStatus
   Single<View>::advise(Space& home, Advisor& a0, const Delta&) {
     Index& a(static_cast<Index&>(a0));

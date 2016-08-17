@@ -553,6 +553,21 @@ if (!(T)) {                                                     \
         }
         delete s; delete sc;
       }
+      START_TEST("Assignment (after posting, disable)");
+      {
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
+        s->post();
+        PropagatorGroup::all.disable(*s);
+        s->assign(a);
+        PropagatorGroup::all.enable(*s);
+        if (is_sol) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(s->propagators()==0, "No subsumption");
+        } else {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
       START_TEST("Assignment (before posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
@@ -585,7 +600,6 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-
       if (reified) {
         START_TEST("Assignment reified (rewrite after post, <=>)");
         {

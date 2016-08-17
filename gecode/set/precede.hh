@@ -96,6 +96,8 @@ namespace Gecode { namespace Set { namespace Precede {
     virtual Propagator* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space&, const ModEventDelta&) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Give advice to propagator
