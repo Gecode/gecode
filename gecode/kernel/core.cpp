@@ -796,11 +796,8 @@ namespace Gecode {
   PropagatorGroup::enable(Space& home, bool s) {
     if (home.failed())
       return;
-    for (Space::ScheduledPropagators ps(home); ps(); ++ps)
-      if (in(ps.propagator().group()))
-        ps.propagator().enable();
     if (s) {
-      Space::IdlePropagators ps(home);
+      Space::Propagators ps(home);
       while (ps()) {
         Propagator& p = ps.propagator();
         ++ps;
@@ -810,7 +807,7 @@ namespace Gecode {
         }
       }
     } else {
-      for (Space::IdlePropagators ps(home); ps(); ++ps)
+      for (Space::Propagators ps(home); ps(); ++ps)
         if (in(ps.propagator().group()))
           ps.propagator().enable();
     }
