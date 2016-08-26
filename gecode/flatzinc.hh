@@ -110,6 +110,18 @@ namespace Gecode { namespace FlatZinc {
    */
   class GECODE_FLATZINC_EXPORT Printer {
   private:
+    /// Names of integer variables
+    std::vector<std::string> iv_names;
+    /// Names of Boolean variables
+    std::vector<std::string> bv_names;
+#ifdef GECODE_HAS_FLOAT_VARS
+    /// Names of float variables
+    std::vector<std::string> fv_names;
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    /// Names of set variables
+    std::vector<std::string> sv_names;
+#endif
     AST::Array* _output;
     void printElem(std::ostream& out,
                    AST::Node* ai,
@@ -174,6 +186,19 @@ namespace Gecode { namespace FlatZinc {
 
 
     ~Printer(void);
+
+    void addIntVarName(const std::string& n);
+    const std::string& intVarName(int i) const { return iv_names[i]; }
+    void addBoolVarName(const std::string& n);
+    const std::string& boolVarName(int i) const { return bv_names[i]; }
+#ifdef GECODE_HAS_FLOAT_VARS
+    void addFloatVarName(const std::string& n);
+    const std::string& floatVarName(int i) const { return fv_names[i]; }
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    void addSetVarName(const std::string& n);
+    const std::string& setVarName(int i) const { return sv_names[i]; }
+#endif
 
     void shrinkElement(AST::Node* node,
                        std::map<int,int>& iv, std::map<int,int>& bv,
@@ -539,7 +564,7 @@ namespace Gecode { namespace FlatZinc {
      * The seed for random branchers is given by the \a seed parameter.
      *
      */
-    void createBranchers(AST::Node* ann,
+    void createBranchers(Printer& p, AST::Node* ann,
                          int seed, double decay,
                          bool ignoreUnknown,
                          std::ostream& err = std::cerr);

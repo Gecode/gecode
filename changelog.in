@@ -74,6 +74,14 @@ Gaga
 
 [ENTRY]
 Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Enable printing of correct FlatZinc variable names for all variables
+when using Gist.
+
+[ENTRY]
+Module: flatzinc
 What:   bug
 Rank:   major
 Thanks: Mats Carlsson

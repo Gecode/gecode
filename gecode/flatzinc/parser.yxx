@@ -328,6 +328,30 @@ void initfg(ParserState* pp) {
 
 void fillPrinter(ParserState& pp, Gecode::FlatZinc::Printer& p) {
   p.init(pp.getOutput());
+  for (unsigned int i=0; i<pp.intvars.size(); i++) {
+    if (!pp.hadError) {
+      p.addIntVarName(pp.intvars[i].first);
+    }
+  }
+  for (unsigned int i=0; i<pp.boolvars.size(); i++) {
+    if (!pp.hadError) {
+      p.addBoolVarName(pp.boolvars[i].first);
+    }
+  }
+#ifdef GECODE_HAS_FLOAT_VARS
+  for (unsigned int i=0; i<pp.floatvars.size(); i++) {
+    if (!pp.hadError) {
+      p.addFloatVarName(pp.floatvars[i].first);
+    }
+  }
+#endif
+#ifdef GECODE_HAS_SET_VARS
+  for (unsigned int i=0; i<pp.setvars.size(); i++) {
+    if (!pp.hadError) {
+      p.addSetVarName(pp.setvars[i].first);
+    }
+  }
+#endif  
 }
 
 AST::Node* arrayOutput(AST::Call* ann) {
