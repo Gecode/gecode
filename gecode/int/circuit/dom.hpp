@@ -67,6 +67,17 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template<class View, class Offset>
+  void
+  Dom<View,Offset>::reschedule(Space& home) {
+    for (int i=y.size(); i--; )
+      if (y[i].assigned()) {
+        View::schedule(home, *this, ME_INT_VAL);
+        return;
+      }
+    View::schedule(home, *this, ME_INT_DOM);
+  }
+
+  template<class View, class Offset>
   ExecStatus
   Dom<View,Offset>::propagate(Space& home, const ModEventDelta& med) {
     if (View::me(med) == Int::ME_INT_VAL) {

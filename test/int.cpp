@@ -170,6 +170,66 @@ namespace Test { namespace Int {
     }
   }
 
+  int
+  TestSpace::rndvar(void) {
+    assert(!assigned());
+    // Select variable to be pruned
+    int i = Base::rand(x.size());
+    while (x[i].assigned()) {
+      i = (i+1) % x.size();
+    }
+    return i;
+  }
+
+  void
+  TestSpace::rndrel(const Assignment& a, int i,
+                    Gecode::IntRelType& irt, int& v) {
+    using namespace Gecode;
+    // Select mode for pruning
+    irt = IRT_EQ; // Means do nothing!
+    switch (Base::rand(3)) {
+    case 0:
+      if (a[i] < x[i].max()) {
+        v=a[i]+1+Base::rand(static_cast
+                            <unsigned int>(x[i].max()-a[i]));
+        assert((v > a[i]) && (v <= x[i].max()));
+        irt = IRT_LE;
+      }
+      break;
+    case 1:
+      if (a[i] > x[i].min()) {
+        v=x[i].min()+Base::rand(static_cast
+                                <unsigned int>(a[i]-x[i].min()));
+        assert((v < a[i]) && (v >= x[i].min()));
+        irt = IRT_GR;
+      }
+      break;
+    default:
+      {
+        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
+        unsigned int skip = Base::rand(x[i].size()-1);
+        while (true) {
+          if (it.width() > skip) {
+            v = it.min() + skip;
+            if (v == a[i]) {
+              if (it.width() == 1) {
+                ++it; v = it.min();
+              } else if (v < it.max()) {
+                ++v;
+              } else {
+                --v;
+              }
+            }
+            break;
+          }
+          skip -= it.width(); ++it;
+        }
+        irt = IRT_NQ;
+        break;
+      }
+    }
+  }
+
   void
   TestSpace::rel(int i, Gecode::IntRelType irt, int n) {
     if (opt.log) {
@@ -211,11 +271,7 @@ namespace Test { namespace Int {
   void
   TestSpace::bound(void) {
     using namespace Gecode;
-    // Select variable to be assigned
-    int i = Base::rand(x.size());
-    while (x[i].assigned()) {
-      i = (i+1) % x.size();
-    }
+    int i = rndvar();
     bool min = Base::rand(2);
     rel(i, IRT_EQ, min ? x[i].min() : x[i].max());
   }
@@ -255,64 +311,20 @@ namespace Test { namespace Int {
 
   void
   TestSpace::prune(void) {
-    using namespace Gecode;
-    // Select variable to be pruned
-    int i = Base::rand(x.size());
-    while (x[i].assigned()) {
-      i = (i+1) % x.size();
-    }
-    prune(i, false);
+    prune(rndvar(), false);
   }
 
   bool
   TestSpace::prune(const Assignment& a, bool testfix) {
+    using namespace Gecode;
     // Select variable to be pruned
-    int i = Base::rand(x.size());
-    while (x[i].assigned())
-      i = (i+1) % x.size();
+    int i = rndvar();
     // Select mode for pruning
-    switch (Base::rand(3)) {
-    case 0:
-      if (a[i] < x[i].max()) {
-        int v=a[i]+1+Base::rand(static_cast
-                                <unsigned int>(x[i].max()-a[i]));
-        assert((v > a[i]) && (v <= x[i].max()));
-        rel(i, Gecode::IRT_LE, v);
-      }
-      break;
-    case 1:
-      if (a[i] > x[i].min()) {
-        int v=x[i].min()+Base::rand(static_cast
-                                    <unsigned int>(a[i]-x[i].min()));
-        assert((v < a[i]) && (v >= x[i].min()));
-        rel(i, Gecode::IRT_GR, v);
-      }
-      break;
-    default:
-      {
-        int v;
-        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
-        unsigned int skip = Base::rand(x[i].size()-1);
-        while (true) {
-          if (it.width() > skip) {
-            v = it.min() + skip;
-            if (v == a[i]) {
-              if (it.width() == 1) {
-                ++it; v = it.min();
-              } else if (v < it.max()) {
-                ++v;
-              } else {
-                --v;
-              }
-            }
-            break;
-          }
-          skip -= it.width(); ++it;
-        }
-        rel(i, Gecode::IRT_NQ, v);
-        break;
-      }
-    }
+    IntRelType irt;
+    int v;
+    rndrel(a,i,irt,v);
+    if (irt != IRT_EQ)
+      rel(i, irt, v);
     if (Base::fixpoint()) {
       if (failed() || !testfix)
         return true;
@@ -339,6 +351,65 @@ namespace Test { namespace Int {
       if (opt.log)
         olog << ind(3) << "Finished testing fixpoint on copy" << std::endl;
       delete c;
+    }
+    return true;
+  }
+
+  void
+  TestSpace::enable(void) {
+    Gecode::PropagatorGroup::all.enable(*this);
+  }
+
+  void
+  TestSpace::disable(void) {
+    Gecode::PropagatorGroup::all.disable(*this);
+    (void) status();
+  }
+
+  bool
+  TestSpace::disabled(const Assignment& a, TestSpace& c,
+                      bool testfix) {
+    using namespace Gecode;
+    // Disable propagators
+    c.disable();
+    // Select variable to be pruned
+    int i = rndvar();
+    // Select mode for pruning
+    IntRelType irt;
+    int v;
+    rndrel(a,i,irt,v);
+    if (irt != IRT_EQ) {
+      rel(i, irt, v);
+      c.rel(i, irt, v);
+    }
+    // Enable propagators
+    c.enable();
+    if (!testfix)
+      return true;
+    if (failed()) {
+      if (!c.failed()) {
+        if (opt.log)
+          olog << ind(3) << "No failure on disabled copy" << std::endl;
+        return false;
+      }
+      return true;
+    }
+    if (c.failed()) {
+      if (opt.log)
+        olog << ind(3) << "Failure on disabled copy" << std::endl;
+      return false;
+    }      
+    for (int i=x.size(); i--; ) {
+      if (x[i].size() != c.x[i].size()) {
+        if (opt.log)
+          olog << ind(4) << "Different domain size" << std::endl;
+        return false;
+      }
+      if (reified && (r.var().size() != c.r.var().size())) {
+        if (opt.log)
+          olog << ind(4) << "Different control variable" << std::endl;
+        return false;
+      }
     }
     return true;
   }
@@ -480,9 +551,9 @@ if (!(T)) {                                                     \
       {
         TestSpace* s = new TestSpace(arity,dom,this);
         s->post();
-        PropagatorGroup::all.disable(*s);
+        s->disable();
         s->assign(a);
-        PropagatorGroup::all.enable(*s);
+        s->enable();
         if (sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(s->propagators()==0, "No subsumption");
@@ -496,10 +567,10 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,this);
         s->post();
         s->assign(a,true);
-        PropagatorGroup::all.disable(*s);
+        s->disable();
         (void) s->failed();
         s->assign(a);
-        PropagatorGroup::all.enable(*s);
+        s->enable();
         if (sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(s->propagators()==0, "No subsumption");
@@ -555,293 +626,445 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
+      START_TEST("Prune (disable)");
+      {
+        TestSpace* s = new TestSpace(arity,dom,this);
+        TestSpace* c = static_cast<TestSpace*>(s->clone());
+        s->post(); c->post();
+        while (!s->failed() && !s->assigned())
+          if (!s->disabled(a,*c,testfix)) {
+            problem = "Different result after re-enable";
+            delete s;
+            delete c;
+            goto failed;
+          }
+        if (testfix && (s->failed() != c->failed())) {
+            problem = "Different failure after re-enable";
+            delete s;
+            delete c;
+            goto failed;
+        }
+        delete s;
+        delete c;
+      }
       if (!ignore(a)) {
         if (eqv()) {
-          START_TEST("Assignment reified (rewrite after post, <=>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->post();
-          s->rel(sol);
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          delete s;
-        }
-        if (imp()) {
-          START_TEST("Assignment reified (rewrite after post, =>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->post();
-          s->rel(sol);
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          delete s;
-        }
-        if (pmi()) {
-          START_TEST("Assignment reified (rewrite after post, <=)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->post();
-          s->rel(sol);
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          delete s;
-        }
-        if (eqv()) {
-          START_TEST("Assignment reified (rewrite failure, <=>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->post();
-          s->rel(!sol);
-          s->assign(a);
-          CHECK_TEST(s->failed(), "Not failed");
-          delete s;
-        }
-        if (imp()) {
-          START_TEST("Assignment reified (rewrite failure, =>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->post();
-          s->rel(!sol);
-          s->assign(a);
-          if (sol) {
+          {
+            START_TEST("Assignment reified (rewrite after post, <=>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->post();
+            s->rel(sol);
+            s->assign(a);
             CHECK_TEST(!s->failed(), "Failed");
             CHECK_TEST(s->propagators()==0, "No subsumption");
-          } else {
-            CHECK_TEST(s->failed(), "Not failed");
+            delete s;
           }
-          delete s;
-        }
-        if (pmi()) {
-          START_TEST("Assignment reified (rewrite failure, <=)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->post();
-          s->rel(!sol);
-          s->assign(a);
-          if (sol) {
+          {
+            START_TEST("Assignment reified (rewrite failure, <=>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->post();
+            s->rel(!sol);
+            s->assign(a);
             CHECK_TEST(s->failed(), "Not failed");
-          } else {
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (immediate rewrite, <=>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->rel(sol);
+            s->post();
+            s->assign(a);
             CHECK_TEST(!s->failed(), "Failed");
             CHECK_TEST(s->propagators()==0, "No subsumption");
+            delete s;
           }
-          delete s;
-        }
-        if (eqv()) {
-          START_TEST("Assignment reified (immediate rewrite, <=>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->rel(sol);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          delete s;
-        }
-        if (imp()) {
-          START_TEST("Assignment reified (immediate rewrite, =>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->rel(sol);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          delete s;
-        }
-        if (pmi()) {
-          START_TEST("Assignment reified (immediate rewrite, <=)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->rel(sol);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          delete s;
-        }
-        if (eqv()) {
-          START_TEST("Assignment reified (immediate failure, <=>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->rel(!sol);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(s->failed(), "Not failed");
-          delete s;
-        }
-        if (imp()) {
-          START_TEST("Assignment reified (immediate failure, =>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->rel(!sol);
-          s->post();
-          s->assign(a);
-          if (sol) {
+          {
+            START_TEST("Assignment reified (immediate failure, <=>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->rel(!sol);
+            s->post();
+            s->assign(a);
+            CHECK_TEST(s->failed(), "Not failed");
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (before posting, <=>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->assign(a);
+            s->post();
             CHECK_TEST(!s->failed(), "Failed");
             CHECK_TEST(s->propagators()==0, "No subsumption");
-          } else {
-            CHECK_TEST(s->failed(), "Not failed");
-          }
-          delete s;
-        }
-        if (pmi()) {
-          START_TEST("Assignment reified (immediate failure, <=)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->rel(!sol);
-          s->post();
-          s->assign(a);
-          if (sol) {
-            CHECK_TEST(s->failed(), "Not failed");
-          } else {
-            CHECK_TEST(!s->failed(), "Failed");
-            CHECK_TEST(s->propagators()==0, "No subsumption");
-          }
-          delete s;
-        }
-        if (eqv()) {
-          START_TEST("Assignment reified (before posting, <=>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->assign(a);
-          s->post();
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol) {
-            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
-            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
-          }
-          delete s;
-        }
-        if (imp()) {
-          START_TEST("Assignment reified (before posting, =>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->assign(a);
-          s->post();
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          if (sol) {
-            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
-          } else {
             CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
-          }
-          delete s;
-        }
-        if (pmi()) {
-          START_TEST("Assignment reified (before posting, <=)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->assign(a);
-          s->post();
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          if (sol) {
-            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
-            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
-          }
-          delete s;
-        }
-        if (eqv()) {
-          START_TEST("Assignment reified (after posting, <=>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol) {
-            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
-            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
-          }
-          delete s;
-        }
-        if (imp()) {
-          START_TEST("Assignment reified (after posting, =>)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          if (sol) {
-            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
-          } else {
-            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
-          }
-          delete s;
-        }
-        if (pmi()) {
-          START_TEST("Assignment reified (after posting, <=)");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->post();
-          s->assign(a);
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          if (sol) {
-            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
-            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
-          }
-          delete s;
-        }
-        if (eqv()) {
-          START_TEST("Prune reified, <=>");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
-          s->post();
-          while (!s->failed() &&
-                 (!s->assigned() || !s->r.var().assigned()))
-            if (!s->prune(a,testfix)) {
-              problem = "No fixpoint";
-              delete s;
-              goto failed;
+            if (sol) {
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
             }
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-          if (sol) {
-            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
-            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            delete s;
           }
-          delete s;
+          {
+            START_TEST("Assignment reified (after posting, <=>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->post();
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+            if (sol) {
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (after posting, <=>, disable)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->post();
+            s->disable();
+            s->assign(a);
+            s->enable();
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+            if (sol) {
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Prune reified, <=>");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            s->post();
+            while (!s->failed() &&
+                   (!s->assigned() || !s->r.var().assigned()))
+              if (!s->prune(a,testfix)) {
+                problem = "No fixpoint";
+                delete s;
+                goto failed;
+              }
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+            if (sol) {
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Prune reified, <=>, disable");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_EQV);
+            TestSpace* c = static_cast<TestSpace*>(s->clone());
+            s->post(); c->post();
+            while (!s->failed() &&
+                   (!s->assigned() || !s->r.var().assigned()))
+              if (!s->disabled(a,*c,testfix)) {
+                problem = "No fixpoint";
+                delete s;
+                delete c;
+                goto failed;
+              }
+            CHECK_TEST(!c->failed(), "Failed");
+            CHECK_TEST(c->propagators()==0, "No subsumption");
+            CHECK_TEST(c->r.var().assigned(), "Control variable unassigned");
+            if (sol) {
+              CHECK_TEST(c->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(c->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+            delete c;
+          }
         }
+
         if (imp()) {
-          START_TEST("Prune reified, =>");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
-          s->post();
-          while (!s->failed() &&
-                 (!s->assigned() || (!sol && !s->r.var().assigned())))
-            if (!s->prune(a,testfix)) {
-              problem = "No fixpoint";
-              delete s;
-              goto failed;
-            }
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          if (sol) {
-            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
-          } else {
-            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+          {
+            START_TEST("Assignment reified (rewrite after post, =>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->post();
+            s->rel(sol);
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            delete s;
           }
-          delete s;
+          {
+            START_TEST("Assignment reified (rewrite failure, =>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->post();
+            s->rel(!sol);
+            s->assign(a);
+            if (sol) {
+              CHECK_TEST(!s->failed(), "Failed");
+              CHECK_TEST(s->propagators()==0, "No subsumption");
+            } else {
+              CHECK_TEST(s->failed(), "Not failed");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (immediate rewrite, =>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->rel(sol);
+            s->post();
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (immediate failure, =>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->rel(!sol);
+            s->post();
+            s->assign(a);
+            if (sol) {
+              CHECK_TEST(!s->failed(), "Failed");
+              CHECK_TEST(s->propagators()==0, "No subsumption");
+            } else {
+              CHECK_TEST(s->failed(), "Not failed");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (before posting, =>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->assign(a);
+            s->post();
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            } else {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (after posting, =>)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->post();
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            } else {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (after posting, =>, disable)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->post();
+            s->disable();
+            s->assign(a);
+            s->enable();
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            } else {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Prune reified, =>");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            s->post();
+            while (!s->failed() &&
+                   (!s->assigned() || (!sol && !s->r.var().assigned())))
+              if (!s->prune(a,testfix)) {
+                problem = "No fixpoint";
+                delete s;
+                goto failed;
+              }
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            } else {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Prune reified, =>, disable");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_IMP);
+            TestSpace* c = static_cast<TestSpace*>(s->clone());
+            s->post(); c->post();
+            while (!s->failed() &&
+                   (!s->assigned() || (!sol && !s->r.var().assigned())))
+              if (!s->disabled(a,*c,testfix)) {
+                problem = "No fixpoint";
+                delete s;
+                delete c;
+                goto failed;
+              }
+            CHECK_TEST(!c->failed(), "Failed");
+            CHECK_TEST(c->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(!c->r.var().assigned(), "Control variable assigned");
+            } else {
+              CHECK_TEST(c->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(c->r.var().val()==0, "One on non-solution");
+            }
+            delete s;
+            delete c;
+          }
         }
+
         if (pmi()) {
-          START_TEST("Prune reified, <=");
-          TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
-          s->post();
-          while (!s->failed() &&
-                 (!s->assigned() || (sol && !s->r.var().assigned())))
-            if (!s->prune(a,testfix)) {
-              problem = "No fixpoint";
-              delete s;
-              goto failed;
-            }
-          CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
-          if (sol) {
-            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
-            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
-          } else {
-            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+          {
+            START_TEST("Assignment reified (rewrite after post, <=)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->post();
+            s->rel(sol);
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            delete s;
           }
-          delete s;
+          {
+            START_TEST("Assignment reified (rewrite failure, <=)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->post();
+            s->rel(!sol);
+            s->assign(a);
+            if (sol) {
+              CHECK_TEST(s->failed(), "Not failed");
+            } else {
+              CHECK_TEST(!s->failed(), "Failed");
+              CHECK_TEST(s->propagators()==0, "No subsumption");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (immediate rewrite, <=)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->rel(sol);
+            s->post();
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (immediate failure, <=)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->rel(!sol);
+            s->post();
+            s->assign(a);
+            if (sol) {
+              CHECK_TEST(s->failed(), "Not failed");
+            } else {
+              CHECK_TEST(!s->failed(), "Failed");
+              CHECK_TEST(s->propagators()==0, "No subsumption");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (before posting, <=)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->assign(a);
+            s->post();
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (after posting, <=)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->post();
+            s->assign(a);
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Assignment reified (after posting, <=, disable)");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->post();
+            s->disable();
+            s->assign(a);
+            s->enable();
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Prune reified, <=");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            s->post();
+            while (!s->failed() &&
+                   (!s->assigned() || (sol && !s->r.var().assigned())))
+              if (!s->prune(a,testfix)) {
+                problem = "No fixpoint";
+                delete s;
+                goto failed;
+              }
+            CHECK_TEST(!s->failed(), "Failed");
+            CHECK_TEST(s->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+            }
+            delete s;
+          }
+          {
+            START_TEST("Prune reified, <=, disable");
+            TestSpace* s = new TestSpace(arity,dom,this,RM_PMI);
+            TestSpace* c = static_cast<TestSpace*>(s->clone());
+            s->post(); c->post();
+            while (!s->failed() &&
+                   (!s->assigned() || (sol && !s->r.var().assigned())))
+              if (!s->disabled(a,*c,testfix)) {
+                problem = "No fixpoint";
+                delete s;
+                delete c;
+                goto failed;
+              }
+            CHECK_TEST(!c->failed(), "Failed");
+            CHECK_TEST(c->propagators()==0, "No subsumption");
+            if (sol) {
+              CHECK_TEST(c->r.var().assigned(), "Control variable unassigned");
+              CHECK_TEST(c->r.var().val()==1, "Zero on solution");
+            } else {
+              CHECK_TEST(!c->r.var().assigned(), "Control variable assigned");
+            }
+            delete s;
+            delete c;
+          }
         }
       }
 

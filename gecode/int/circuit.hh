@@ -145,6 +145,8 @@ namespace Gecode { namespace Int { namespace Circuit {
      * low linear. Otherwise it is high quadratic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for circuit on \a x

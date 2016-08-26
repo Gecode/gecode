@@ -188,6 +188,10 @@ namespace Test {
       void post(void);
       /// Compute a fixpoint and check for failure
       bool failed(void);
+      /// Randomly select an unassigned variable
+      int rndvar(void);
+      /// Randomly select a pruning rel for variable \a i
+      void rndrel(const Assignment& a, int i, Gecode::IntRelType& irt, int& v);
       /// Perform integer tell operation on \a x[i]
       void rel(int i, Gecode::IntRelType irt, int n);
       /// Perform Boolean tell on \a b
@@ -206,6 +210,12 @@ namespace Test {
       void prune(void);
       /// Prune values but not those in assignment \a a
       bool prune(const Assignment& a, bool testfix);
+      /// Disable propagators in space and compute fixpoint (make all idle)
+      void disable(void);
+      /// Enable propagators in space
+      void enable(void);
+      /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
+      bool disabled(const Assignment& a, TestSpace& c, bool testfix);
       /// Return the number of propagators
       unsigned int propagators(void);
     };
