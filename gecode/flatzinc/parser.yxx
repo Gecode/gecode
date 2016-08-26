@@ -1419,15 +1419,20 @@ constraint_item :
               // do nothing, already aliased
             } else {
               IntVarSpec* ivs1 = static_cast<IntVarSpec*>(pp->intvars[base1].second);
-              ivs1->alias = true;
-              ivs1->i = base0;
-              if (ivs1->domain()) {
-                AST::SetLit* sl = new AST::SetLit(ivs1->domain.some()->getSet());
+              AST::SetLit* sl = NULL;
+              if (ivs1->assigned) {
+                sl = new AST::SetLit(ivs1->i,ivs1->i);
+              } else if (ivs1->domain()) {
+                sl = new AST::SetLit(ivs1->domain.some()->getSet());
+              }
+              if (sl) {
                 Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
                 addDomainConstraint(pp, "int_in",
                                     new AST::IntVar(base0), newdom);
                 ivs1->domain = Option<AST::SetLit*>::none();
               }
+              ivs1->alias = true;
+              ivs1->i = base0;
             }
           } else if (cid=="bool_eq" && $4->a[0]->isBoolVar() && $4->a[1]->isBoolVar()) {
             int base0 = getBaseBoolVar(pp,$4->a[0]->getBoolVar());
@@ -1439,15 +1444,20 @@ constraint_item :
               // do nothing, already aliased
             } else {
               BoolVarSpec* ivs1 = static_cast<BoolVarSpec*>(pp->boolvars[base1].second);
-              ivs1->alias = true;
-              ivs1->i = base0;
-              if (ivs1->domain()) {
-                AST::SetLit* sl = new AST::SetLit(ivs1->domain.some()->getSet());
+              AST::SetLit* sl = NULL;
+              if (ivs1->assigned) {
+                sl = new AST::SetLit(ivs1->i,ivs1->i);
+              } else if (ivs1->domain()) {
+                sl = new AST::SetLit(ivs1->domain.some()->getSet());
+              }
+              if (sl) {
                 Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
-                addDomainConstraint(pp, "bool_in",
+                addDomainConstraint(pp, "int_in",
                                     new AST::BoolVar(base0), newdom);
                 ivs1->domain = Option<AST::SetLit*>::none();
               }
+              ivs1->alias = true;
+              ivs1->i = base0;
             }
           } else if (cid=="float_eq" && $4->a[0]->isFloatVar() && $4->a[1]->isFloatVar()) {
             int base0 = getBaseFloatVar(pp,$4->a[0]->getFloatVar());
@@ -1482,8 +1492,13 @@ constraint_item :
               if (ivs1->upperBound()) {
                 AST::SetLit* sl = new AST::SetLit(ivs1->upperBound.some()->getSet());
                 Option<AST::SetLit*> newdom = Option<AST::SetLit*>::some(sl);
-                addDomainConstraint(pp, "set_subset",
-                                    new AST::SetVar(base0), newdom);
+                if (ivs1->assigned) {
+                  addDomainConstraint(pp, "set_eq",
+                                      new AST::SetVar(base0), newdom);
+                } else {
+                  addDomainConstraint(pp, "set_subset",
+                                      new AST::SetVar(base0), newdom);
+                }
                 ivs1->upperBound = Option<AST::SetLit*>::none();
               }
             }

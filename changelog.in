@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Mats Carlsson
+[DESCRIPTION]
+Fix the FlatZinc parser for cases where variables were aliased to a fixed
+variable.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major
