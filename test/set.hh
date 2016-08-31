@@ -264,6 +264,10 @@ namespace Test {
       bool prune(const SetAssignment& a);
       /// Return the number of propagators
       unsigned int propagators(void);
+      /// Disable propagators in space and compute fixpoint (make all idle)
+      void disable(void);
+      /// Enable propagators in space
+      void enable(void);
     };
 
     /**

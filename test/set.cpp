@@ -480,6 +480,17 @@ namespace Test { namespace Set {
     return Gecode::PropagatorGroup::all.size(*this);
   }
 
+  void
+  SetTestSpace::enable(void) {
+    Gecode::PropagatorGroup::all.enable(*this);
+  }
+
+  void
+  SetTestSpace::disable(void) {
+    Gecode::PropagatorGroup::all.disable(*this);
+    (void) status();
+  }
+
 
   /// Check the test result and handle failed test
 #define CHECK_TEST(T,M)                                         \
@@ -511,7 +522,6 @@ if (!(T)) {                                                     \
         olog << ind(1) << "Assignment: " << a
              << (is_sol ? " (solution)" : " (no solution)")
              << std::endl;
-
       START_TEST("Assignment (after posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
@@ -557,9 +567,9 @@ if (!(T)) {                                                     \
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
         s->post();
-        PropagatorGroup::all.disable(*s);
+        s->disable();
         s->assign(a);
-        PropagatorGroup::all.enable(*s);
+        s->enable();
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
           CHECK_TEST(s->propagators()==0, "No subsumption");
@@ -815,6 +825,57 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
           s->post();
           s->assign(a);
+          CHECK_TEST(!s->failed(), "Failed");
+          CHECK_TEST(s->propagators()==0, "No subsumption");
+          if (is_sol) {
+            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+          } else {
+            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+          }
+          delete s;
+        }
+        START_TEST("Assignment reified (after posting, <=>, disable)");
+        {
+          SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
+          s->post();
+          s->disable();
+          s->assign(a);
+          s->enable();
+          CHECK_TEST(!s->failed(), "Failed");
+          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+          if (is_sol) {
+            CHECK_TEST(s->r.var().val()==1, "Zero on solution");
+          } else {
+            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+          }
+          delete s;
+        }
+        START_TEST("Assignment reified (after posting, =>, disable)");
+        {
+          SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
+          s->post();
+          s->disable();
+          s->assign(a);
+          s->enable();
+          CHECK_TEST(!s->failed(), "Failed");
+          CHECK_TEST(s->propagators()==0, "No subsumption");
+          if (is_sol) {
+            CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
+          } else {
+            CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
+            CHECK_TEST(s->r.var().val()==0, "One on non-solution");
+          }
+          delete s;
+        }
+        START_TEST("Assignment reified (after posting, <=, disable)");
+        {
+          SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_PMI);
+          s->post();
+          s->disable();
+          s->assign(a);
+          s->enable();
           CHECK_TEST(!s->failed(), "Failed");
           CHECK_TEST(s->propagators()==0, "No subsumption");
           if (is_sol) {
