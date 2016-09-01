@@ -634,18 +634,15 @@ if (!(T)) {                                                     \
         while (!s->failed() && !s->assigned())
           if (!s->disabled(a,*c,testfix)) {
             problem = "Different result after re-enable";
-            delete s;
-            delete c;
+            delete s; delete c;
             goto failed;
           }
         if (testfix && (s->failed() != c->failed())) {
             problem = "Different failure after re-enable";
-            delete s;
-            delete c;
+            delete s; delete c;
             goto failed;
         }
-        delete s;
-        delete c;
+        delete s; delete c;
       }
       if (!ignore(a)) {
         if (eqv()) {

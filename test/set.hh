@@ -268,6 +268,10 @@ namespace Test {
       void disable(void);
       /// Enable propagators in space
       void enable(void);
+      /// Prune values also in a space \a c with disabled propagators, but not those in assignment \a a
+      bool disabled(const SetAssignment& a, SetTestSpace& c);
+      /// Check whether propagation is the same as in \a c
+      bool same(SetTestSpace& c);
     };
 
     /**

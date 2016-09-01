@@ -340,6 +340,35 @@ namespace Test { namespace Set {
   }
 
   bool
+  SetTestSpace::same(SetTestSpace& c) {
+    if (opt.log)
+      olog << ind(3) << "Testing whether enabled space is the same" 
+           << std::endl;
+    if (failed() != c.failed())
+      return false;
+    if (failed())
+      return true;
+
+    for (int i=x.size(); i--; )
+      if (x[i].glbSize() != c.x[i].glbSize() ||
+          x[i].lubSize() != c.x[i].lubSize() ||
+          x[i].cardMin() != c.x[i].cardMin() ||
+          x[i].cardMax() != c.x[i].cardMax())
+        return false;
+
+    for (int i=y.size(); i--; )
+      if (y[i].size() != c.y[i].size())
+        return false;
+
+    if (reified && (r.var().size() != c.r.var().size()))
+      return false;
+    if (opt.log)
+      olog << ind(3) << "Finished testing whether enabled space is the same" 
+           << std::endl;
+    return true;
+  }
+
+  bool
   SetTestSpace::prune(const SetAssignment& a) {
     using namespace Gecode;
     bool setsAssigned = true;
@@ -475,6 +504,154 @@ namespace Test { namespace Set {
     return (!Base::fixpoint() || fixprob());
   }
 
+  bool
+  SetTestSpace::disabled(const SetAssignment& a, SetTestSpace& c) {
+    c.disable();
+    using namespace Gecode;
+    bool setsAssigned = true;
+    for (int j=x.size(); j--; )
+      if (!x[j].assigned()) {
+        setsAssigned = false;
+        break;
+      }
+    bool intsAssigned = true;
+    for (int j=y.size(); j--; )
+      if (!y[j].assigned()) {
+        intsAssigned = false;
+        break;
+      }
+
+    // Select variable to be pruned
+    int i;
+    if (intsAssigned) {
+      i = Base::rand(x.size());
+    } else if (setsAssigned) {
+      i = Base::rand(y.size());
+    } else {
+      i = Base::rand(x.size()+y.size());
+    }
+
+    if (setsAssigned || i>=x.size()) {
+      if (i>=x.size())
+        i = i-x.size();
+      while (y[i].assigned()) {
+        i = (i+1) % y.size();
+      }
+      // Prune int var
+
+      // Select mode for pruning
+      switch (Base::rand(3)) {
+      case 0:
+        if (a.ints()[i] < y[i].max()) {
+          int v=a.ints()[i]+1+
+            Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+          assert((v > a.ints()[i]) && (v <= y[i].max()));
+          rel(i, Gecode::IRT_LE, v);
+          c.rel(i, Gecode::IRT_LE, v);
+        }
+        break;
+      case 1:
+        if (a.ints()[i] > y[i].min()) {
+          int v=y[i].min()+
+            Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+          assert((v < a.ints()[i]) && (v >= y[i].min()));
+          rel(i, Gecode::IRT_GR, v);
+          c.rel(i, Gecode::IRT_GR, v);
+        }
+        break;
+      default:
+        int v;
+        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(y[i]);
+        unsigned int skip = Base::rand(y[i].size()-1);
+        while (true) {
+          if (it.width() > skip) {
+            v = it.min() + skip;
+            if (v == a.ints()[i]) {
+              if (it.width() == 1) {
+                ++it; v = it.min();
+              } else if (v < it.max()) {
+                ++v;
+              } else {
+                --v;
+              }
+            }
+            break;
+          }
+          skip -= it.width();
+          ++it;
+        }
+        rel(i, Gecode::IRT_NQ, v);
+        c.rel(i, Gecode::IRT_NQ, v);
+      }
+      c.enable();
+      return same(c);
+    }
+    while (x[i].assigned()) {
+      i = (i+1) % x.size();
+    }
+    Gecode::SetVarUnknownRanges ur1(x[i]);
+    CountableSetRanges air1(a.lub, a[i]);
+    Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges,
+      CountableSetRanges> diff(ur1, air1);
+    Gecode::SetVarUnknownRanges ur2(x[i]);
+    CountableSetRanges air2(a.lub, a[i]);
+    Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges,
+      CountableSetRanges> inter(ur2, air2);
+
+    CountableSetRanges aisizer(a.lub, a[i]);
+    unsigned int aisize = Gecode::Iter::Ranges::size(aisizer);
+
+    // Select mode for pruning
+    switch (Base::rand(5)) {
+    case 0:
+      if (inter()) {
+        int v = Base::rand(Gecode::Iter::Ranges::size(inter));
+        addToGlb(v, i, a);
+        c.addToGlb(v, i, a);
+      }
+      break;
+    case 1:
+      if (diff()) {
+        int v = Base::rand(Gecode::Iter::Ranges::size(diff));
+        removeFromLub(v, i, a);
+        c.removeFromLub(v, i, a);
+      }
+      break;
+    case 2:
+      if (x[i].cardMin() < aisize) {
+        unsigned int newc = x[i].cardMin() + 1 +
+          Base::rand(aisize - x[i].cardMin());
+        assert( newc > x[i].cardMin() );
+        assert( newc <= aisize );
+        cardinality(i, newc, Gecode::Set::Limits::card);
+        c.cardinality(i, newc, Gecode::Set::Limits::card);
+      }
+      break;
+    case 3:
+      if (x[i].cardMax() > aisize) {
+        unsigned int newc = x[i].cardMax() - 1 -
+          Base::rand(x[i].cardMax() - aisize);
+        assert( newc < x[i].cardMax() );
+        assert( newc >= aisize );
+        cardinality(i, 0, newc);
+        c.cardinality(i, 0, newc);
+      }
+      break;
+    default:
+      if (inter()) {
+        int v = Base::rand(Gecode::Iter::Ranges::size(inter));
+        addToGlb(v, i, a);
+        c.addToGlb(v, i, a);
+      } else {
+        int v = Base::rand(Gecode::Iter::Ranges::size(diff));
+        removeFromLub(v, i, a);
+        c.removeFromLub(v, i, a);
+      }
+    }
+    c.enable();
+    return same(c);
+  }
+
   unsigned int
   SetTestSpace::propagators(void) {
     return Gecode::PropagatorGroup::all.size(*this);
@@ -522,6 +699,7 @@ if (!(T)) {                                                     \
         olog << ind(1) << "Assignment: " << a
              << (is_sol ? " (solution)" : " (no solution)")
              << std::endl;
+
       START_TEST("Assignment (after posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
@@ -610,6 +788,27 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
+#ifdef FAILING_TEST
+      START_TEST("Prune (disable)");
+      {
+        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
+        SetTestSpace* c = new SetTestSpace(arity,lub,withInt,this);
+        s->post(); c->post();
+        while (!s->failed() && !s->assigned())
+          if (!s->disabled(a,*c)) {
+            problem = "Different result after re-enable";
+            delete s; delete c;
+            goto failed;
+          }
+        s->assign(a); c->assign(a);
+        if (s->failed() != c->failed()) {
+          problem = "Different failure after re-enable";
+          delete s; delete c;
+          goto failed;
+        }
+        delete s; delete c;
+      }
+#endif
       if (reified) {
         START_TEST("Assignment reified (rewrite after post, <=>)");
         {
