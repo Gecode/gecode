@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   forceinline
-  ConflictGraph::ConflictGraph(Home h, Region& reg,
+  ConflictGraph::ConflictGraph(Home& h, Region& reg,
                                const IntVarArgs& b0, int m)
     : home(h), b(b0),
       bins(static_cast<unsigned int>(m)),

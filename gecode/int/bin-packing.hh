@@ -309,7 +309,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     //@}
   public:
     /// Initialize graph
-    ConflictGraph(Home home, Region& r, const IntVarArgs& b,
+    ConflictGraph(Home& home, Region& r, const IntVarArgs& b,
                   int m);
     /// Add or remove an edge between nodes \a i and \a j (\a i must be less than \a j)
     void edge(int i, int j, bool add=true);
