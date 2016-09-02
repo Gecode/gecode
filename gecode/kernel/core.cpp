@@ -706,7 +706,6 @@ namespace Gecode {
   }
 
   NGL::~NGL(void) {
-    assert(false);
   }
 
 
