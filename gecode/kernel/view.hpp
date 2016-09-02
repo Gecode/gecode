@@ -88,7 +88,7 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Re-schedule propagator \a p
+    /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
@@ -172,7 +172,7 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Re-schedule propagator \a p
+    /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
@@ -267,7 +267,7 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Re-schedule propagator \a p
+    /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);

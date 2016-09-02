@@ -294,6 +294,21 @@ namespace Test { namespace Set {
   }
 
   void
+  SetTestSpace::removeFromLub(int v, int i, const SetAssignment& a,
+                              SetTestSpace& c) {
+    using namespace Gecode;
+    SetVarUnknownRanges ur(x[i]);
+    CountableSetRanges air(a.lub, a[i]);
+    Gecode::Iter::Ranges::Diff<Gecode::SetVarUnknownRanges,
+      CountableSetRanges> diff(ur, air);
+    Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Diff
+      <Gecode::SetVarUnknownRanges, CountableSetRanges> > diffV(diff);
+    for (int j=0; j<v; j++, ++diffV) {}
+    rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
+    c.rel(i, Gecode::SRT_DISJ, Gecode::IntSet(diffV.val(), diffV.val()));
+  }
+
+  void
   SetTestSpace::addToGlb(int v, int i, const SetAssignment& a) {
     using namespace Gecode;
     SetVarUnknownRanges ur(x[i]);
@@ -304,6 +319,21 @@ namespace Test { namespace Set {
       <Gecode::SetVarUnknownRanges, CountableSetRanges> > interV(inter);
     for (int j=0; j<v; j++, ++interV) {}
     rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
+  }
+
+  void
+  SetTestSpace::addToGlb(int v, int i, const SetAssignment& a,
+                         SetTestSpace& c) {
+    using namespace Gecode;
+    SetVarUnknownRanges ur(x[i]);
+    CountableSetRanges air(a.lub, a[i]);
+    Gecode::Iter::Ranges::Inter<Gecode::SetVarUnknownRanges,
+      CountableSetRanges> inter(ur, air);
+    Gecode::Iter::Ranges::ToValues<Gecode::Iter::Ranges::Inter
+      <Gecode::SetVarUnknownRanges, CountableSetRanges> > interV(inter);
+    for (int j=0; j<v; j++, ++interV) {}
+    rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
+    c.rel(i, Gecode::SRT_SUP, Gecode::IntSet(interV.val(), interV.val()));
   }
 
   bool
@@ -344,9 +374,11 @@ namespace Test { namespace Set {
     if (opt.log)
       olog << ind(3) << "Testing whether enabled space is the same" 
            << std::endl;
-    if (failed() != c.failed())
+    bool f = failed();
+    bool cf = c.failed();
+    if (f != cf)
       return false;
-    if (failed())
+    if (f)
       return true;
 
     for (int i=x.size(); i--; )
@@ -606,15 +638,13 @@ namespace Test { namespace Set {
     case 0:
       if (inter()) {
         int v = Base::rand(Gecode::Iter::Ranges::size(inter));
-        addToGlb(v, i, a);
-        c.addToGlb(v, i, a);
+        addToGlb(v, i, a, c);
       }
       break;
     case 1:
       if (diff()) {
         int v = Base::rand(Gecode::Iter::Ranges::size(diff));
-        removeFromLub(v, i, a);
-        c.removeFromLub(v, i, a);
+        removeFromLub(v, i, a, c);
       }
       break;
     case 2:
@@ -640,12 +670,10 @@ namespace Test { namespace Set {
     default:
       if (inter()) {
         int v = Base::rand(Gecode::Iter::Ranges::size(inter));
-        addToGlb(v, i, a);
-        c.addToGlb(v, i, a);
+        addToGlb(v, i, a, c);
       } else {
         int v = Base::rand(Gecode::Iter::Ranges::size(diff));
-        removeFromLub(v, i, a);
-        c.removeFromLub(v, i, a);
+        removeFromLub(v, i, a, c);
       }
     }
     c.enable();

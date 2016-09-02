@@ -235,6 +235,10 @@ namespace Gecode { namespace Set {
   SingletonView::cancel(Space& home, Propagator& p, PropCond pc) {
     x.cancel(home,p,pc_settoint(pc));
   }
+  forceinline void
+  SingletonView::reschedule(Space& home, Propagator& p, PropCond pc) {
+    x.reschedule(home,p,pc_settoint(pc));
+  }
 
   forceinline void
   SingletonView::subscribe(Space& home, Advisor& a) {

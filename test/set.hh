@@ -256,8 +256,14 @@ namespace Test {
       bool assigned(void) const;
       /// Remove value \a v from the upper bound of \a x[i]
       void removeFromLub(int v, int i, const SetAssignment& a);
+      /// Remove value \a v from the upper bound of \a x[i]
+      void removeFromLub(int v, int i, const SetAssignment& a,
+                         SetTestSpace& c);
       /// Remove value \a v from the lower bound of \a x[i]
       void addToGlb(int v, int i, const SetAssignment& a);
+      /// Remove value \a v from the lower bound of \a x[i]
+      void addToGlb(int v, int i, const SetAssignment& a,
+                    SetTestSpace& c);
       /// Perform fixpoint computation
       bool fixprob(void);
       /// Perform random pruning
