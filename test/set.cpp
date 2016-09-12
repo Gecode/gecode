@@ -727,7 +727,7 @@ if (!(T)) {                                                     \
         olog << ind(1) << "Assignment: " << a
              << (is_sol ? " (solution)" : " (no solution)")
              << std::endl;
-      /*
+
       START_TEST("Assignment (after posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
@@ -816,8 +816,6 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-*/
-#define FAILING_TEST 1
 #ifdef FAILING_TEST
       START_TEST("Prune (disable)");
       {
@@ -839,7 +837,7 @@ if (!(T)) {                                                     \
         delete s; delete c;
       }
 #endif
-      if (false && reified) {
+      if (reified) {
         START_TEST("Assignment reified (rewrite after post, <=>)");
         {
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_EQV);
