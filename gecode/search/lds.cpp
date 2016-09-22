@@ -4,7 +4,10 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2004, 2016
+ *
+ *  Bugfixes provided by:
+ *     Stefano Gualandi
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,17 +38,16 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#include <gecode/search.hh>
+#include <gecode/search/sequential/lds.hh>
+#include <gecode/search/support.hh>
 
-  forceinline
-  Options::Options(void)
-    : clone(Config::clone),
-      threads(Config::threads),
-      c_d(Config::c_d), a_d(Config::a_d),
-      d_l(Config::d_l),
-      share_rbs(true), share_pbs(false),
-      assets(0), slice(Config::slice), nogoods_limit(0),
-      stop(NULL), cutoff(NULL) {}
+namespace Gecode { namespace Search {
+    
+  Engine* 
+  lds(Space* s, const Options& o) {
+    return new Sequential::LDS(s,o);
+  }
 
 }}
 

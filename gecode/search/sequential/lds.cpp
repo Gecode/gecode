@@ -4,7 +4,10 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2004, 2016
+ *
+ *  Bugfixes provided by:
+ *     Stefano Gualandi
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,18 +38,49 @@
  *
  */
 
-namespace Gecode { namespace Search {
+#include <gecode/search/sequential/lds.hh>
 
-  forceinline
-  Options::Options(void)
-    : clone(Config::clone),
-      threads(Config::threads),
-      c_d(Config::c_d), a_d(Config::a_d),
-      d_l(Config::d_l),
-      share_rbs(true), share_pbs(false),
-      assets(0), slice(Config::slice), nogoods_limit(0),
-      stop(NULL), cutoff(NULL) {}
+namespace Gecode { namespace Search { namespace Sequential {
 
-}}
+  /*
+   * The probing engine: computes all solutions with
+   * exact number of discrepancies (solutions with
+   * fewer discrepancies are discarded)
+   *
+   */
+  Space*
+  LDS::next(void) {
+    while (true) {
+      Space* s = e.next(opt);
+      if (s != NULL)
+        return s;
+      if (((s == NULL) && e.stopped()) || (++d > opt.d_l) || e.done())
+        break;
+      if (d == opt.d_l) {
+        if (root != NULL)
+          e.reset(root,d);
+        root = NULL;
+      } else if (root != NULL) {
+        e.reset(root->clone(),d);
+      }
+    }
+    return NULL;
+  }
 
-// STATISTICS: search-other
+  bool
+  LDS::stopped(void) const {
+    return e.stopped();
+  }
+
+  Statistics
+  LDS::statistics(void) const {
+    return e.statistics();
+  }
+
+  LDS::~LDS(void) {
+    delete root;
+  }
+
+}}}
+
+// STATISTICS: search-sequential

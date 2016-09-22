@@ -74,9 +74,9 @@
 /**
  * \defgroup TaskModelSearch Search engines
  *
- * Defines search engines. All search engines support recomputation.
- * The behaviour of recomputation
- * is controlled by a passing a search option object (see the class
+ * Defines search engines. All search engines (but Gecode::LDS, where
+ * it is not needed) support recomputation. The behaviour of recomputation
+ * is controlled by a passing a search option object (see the class 
  * Gecode::Search::Options).
  *
  * Requires \code #include <gecode/search.hh> \endcode

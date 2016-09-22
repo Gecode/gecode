@@ -320,6 +320,15 @@ namespace Gecode {
   }
 
   inline void
+  Options::d_l(unsigned int d) {
+    _d_l.value(d);
+  }
+  inline unsigned int
+  Options::d_l(void) const {
+    return _d_l.value();
+  }
+
+  inline void
   Options::node(unsigned int n) {
     _node.value(n);
   }

@@ -194,6 +194,15 @@ namespace Gecode { namespace Driver {
     }
   };
 
+  /// Specialization for LDS
+  template<typename S>
+  class GistEngine<LDS<S> > {
+  public:
+    static void explore(S* root, const Gist::Options& opt) {
+      (void) Gist::dfs(root, opt);
+    }
+  };
+  
   /// Specialization for BAB
   template<typename S>
   class GistEngine<BAB<S> > {
@@ -320,6 +329,7 @@ namespace Gecode { namespace Driver {
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
+          so.d_l     = o.d_l();
           so.assets  = o.assets();
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                             o.interrupt());
@@ -416,6 +426,7 @@ namespace Gecode { namespace Driver {
           so.assets  = o.assets();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
+          so.d_l     = o.d_l();
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
@@ -474,6 +485,7 @@ namespace Gecode { namespace Driver {
               so.assets  = o.assets();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
+              so.d_l     = o.d_l();
               so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                                 false);
               so.cutoff  = createCutoff(o);

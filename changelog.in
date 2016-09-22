@@ -73,12 +73,20 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
-Module: flatzinc
-What:   change
+Module: driver
+What:   new
 Rank:   minor
 [DESCRIPTION]
-Enable printing of correct FlatZinc variable names for all variables
-when using Gist.
+The discrepancy limit for Limited Discrepancy Search (LDS) can be
+passed with the -d-l commandline option.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Limited Discrepancy Search (LDS) added. Please see MPG for
+details.
 
 [ENTRY]
 Module: flatzinc

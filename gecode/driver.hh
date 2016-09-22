@@ -384,6 +384,7 @@ namespace Gecode {
     Driver::DoubleOption      _threads;       ///< How many threads to use
     Driver::UnsignedIntOption _c_d;           ///< Copy recomputation distance
     Driver::UnsignedIntOption _a_d;           ///< Adaptive recomputation distance
+    Driver::UnsignedIntOption _d_l;           ///< Discrepancy limit for LDS
     Driver::UnsignedIntOption _node;          ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;          ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;          ///< Cutoff for time
@@ -491,6 +492,11 @@ namespace Gecode {
     void a_d(unsigned int d);
     /// Return adaptive recomputation distance
     unsigned int a_d(void) const;
+
+    /// Set default discrepancy limit for LDS
+    void d_l(unsigned int d);
+    /// Return discrepancy limit for LDS
+    unsigned int d_l(void) const;
 
     /// Set default node cutoff
     void node(unsigned int n);

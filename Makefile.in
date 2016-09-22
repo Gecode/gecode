@@ -251,6 +251,7 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
+	lds sequential/lds \
 	sequential/path parallel/path \
 	meta/rbs meta/nogoods meta/dead \
 	meta/sequential/pbs meta/parallel/pbs \
@@ -260,12 +261,13 @@ SEARCHHDR0 = \
 	support.hh worker.hh exception.hpp \
 	engine.hpp base.hpp build.hpp traits.hpp sebs.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
+	sequential/lds.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
 	meta/rbs.hh meta/rbs.hpp meta/nogoods.hh meta/dead.hh \
 	meta/sequential/pbs.hh meta/parallel/pbs.hh \
 	meta/sequential/pbs.hpp meta/parallel/pbs.hpp \
-	dfs.hpp bab.hpp rbs.hpp pbs.hpp
+	dfs.hpp bab.hpp lds.hpp rbs.hpp pbs.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)

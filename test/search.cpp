@@ -401,6 +401,43 @@ namespace Test {
       }
     };
 
+    /// %Test for limited discrepancy search
+    template<class Model>
+    class LDS : public Test {
+    private:
+      /// Number of threads
+      unsigned int t;
+    public:
+      /// Initialize test
+      LDS(HowToBranch htb1, HowToBranch htb2, HowToBranch htb3,
+          unsigned int t0)
+        : Test("LDS::"+Model::name()+"::"+
+               str(htb1)+"::"+str(htb2)+"::"+str(htb3)+"::"+str(t0),
+               htb1,htb2,htb3), t(t0) {}
+      /// Run test
+      virtual bool run(void) {
+        Model* m = new Model(htb1,htb2,htb3);
+        Gecode::Search::FailStop f(2);
+        Gecode::Search::Options o;
+        o.threads = t;
+        o.d_l = 50;
+        o.stop = &f;
+        Gecode::LDS<Model> lds(m,o);
+        int n = m->solutions();
+        delete m;
+        while (true) {
+          Model* s = lds.next();
+          if (s != NULL) {
+            n--; delete s;
+          }
+          if ((s == NULL) && !lds.stopped())
+            break;
+          f.limit(f.limit()+2);
+        }
+        return n == 0;
+      }
+    };
+
     /// %Test for best solution search
     template<class Model>
     class BAB : public Test {
@@ -465,6 +502,7 @@ namespace Test {
         Gecode::Search::Options o;
         o.threads = t;
         o.stop = &f;
+        o.d_l = 100;
         o.cutoff = Gecode::Search::Cutoff::geometric(1,2);
         Gecode::RBS<Model,Engine> rbs(m,o);
         int n = m->solutions();
@@ -504,6 +542,7 @@ namespace Test {
         Gecode::Search::Options o;
         o.assets = a;
         o.threads = t;
+        o.d_l = 100;
         o.stop = &f;
         Gecode::PBS<Model,Engine> pbs(m,o);
         if (best) {
@@ -560,10 +599,12 @@ namespace Test {
 
         Gecode::Search::Options mo;
         mo.threads = mt;
+        mo.d_l = 100;
         mo.stop = &f;
 
         Gecode::Search::Options so;
         so.threads = st;
+        so.d_l = 100;
         so.cutoff = Gecode::Search::Cutoff::constant(1000000);
         if (best) {
           SEBs sebs(3);
@@ -589,7 +630,7 @@ namespace Test {
         } else {
           SEBs sebs(3);
           sebs[0] = dfs<Model>(so);
-          sebs[1] = dfs<Model>(so);
+          sebs[1] = lds<Model>(so);
           sebs[2] = rbs<Model,Gecode::DFS>(so);
           Gecode::PBS<Model,Gecode::DFS> pbs(m, sebs, mo);
 
@@ -686,6 +727,17 @@ namespace Test {
                                     c_d, a_d, t);
             }
 
+        // Limited discrepancy search
+        for (unsigned int t = 1; t<=4; t++) {
+          for (BranchTypes htb1; htb1(); ++htb1)
+            for (BranchTypes htb2; htb2(); ++htb2)
+              for (BranchTypes htb3; htb3(); ++htb3)
+                (void) new LDS<HasSolutions>(htb1.htb(),htb2.htb(),htb3.htb()
+                                             ,t);
+          new LDS<FailImmediate>(HTB_NONE, HTB_NONE, HTB_NONE, t);
+          new LDS<HasSolutions>(HTB_NONE, HTB_NONE, HTB_NONE, t);
+        }
+
         // Best solution search
         for (unsigned int t = 1; t<=4; t++)
           for (unsigned int c_d = 1; c_d<10; c_d++)
@@ -708,20 +760,26 @@ namespace Test {
         // Restart-based search
         for (unsigned int t=1; t<=4; t++) {
           (void) new RBS<HasSolutions,Gecode::DFS>("DFS",t);
+          (void) new RBS<HasSolutions,Gecode::LDS>("LDS",t);
           (void) new RBS<HasSolutions,Gecode::BAB>("BAB",t);
           (void) new RBS<FailImmediate,Gecode::DFS>("DFS",t);
+          (void) new RBS<FailImmediate,Gecode::LDS>("LDS",t);
           (void) new RBS<FailImmediate,Gecode::BAB>("BAB",t);
           (void) new RBS<SolveImmediate,Gecode::DFS>("DFS",t);
+          (void) new RBS<SolveImmediate,Gecode::LDS>("LDS",t);
           (void) new RBS<SolveImmediate,Gecode::BAB>("BAB",t);
         }
         // Portfolio-based search
         for (unsigned int a=1; a<=4; a++)
           for (unsigned int t=1; t<=2*a; t++) {
             (void) new PBS<HasSolutions,Gecode::DFS>("DFS",false,a,t);
+            (void) new PBS<HasSolutions,Gecode::LDS>("LDS",false,a,t);
             (void) new PBS<HasSolutions,Gecode::BAB>("BAB",true,a,t);
             (void) new PBS<FailImmediate,Gecode::DFS>("DFS",false,a,t);
+            (void) new PBS<FailImmediate,Gecode::LDS>("LDS",false,a,t);
             (void) new PBS<FailImmediate,Gecode::BAB>("BAB",true,a,t);
             (void) new PBS<SolveImmediate,Gecode::DFS>("DFS",false,a,t);
+            (void) new PBS<SolveImmediate,Gecode::LDS>("LDS",false,a,t);
             (void) new PBS<SolveImmediate,Gecode::BAB>("BAB",true,a,t);
           }
         // Portfolio-based search using SEBs
@@ -730,9 +788,9 @@ namespace Test {
             (void) new SEBPBS<HasSolutions>("BAB",true,mt,st);
             (void) new SEBPBS<FailImmediate>("BAB",true,mt,st);
             (void) new SEBPBS<SolveImmediate>("BAB",true,mt,st);
-            (void) new SEBPBS<HasSolutions>("DFS",false,mt,st);
-            (void) new SEBPBS<FailImmediate>("DFS",false,mt,st);
-            (void) new SEBPBS<SolveImmediate>("DFS",false,mt,st);
+            (void) new SEBPBS<HasSolutions>("DFS+LDS",false,mt,st);
+            (void) new SEBPBS<FailImmediate>("DFS+LDS",false,mt,st);
+            (void) new SEBPBS<SolveImmediate>("DFS+LDS",false,mt,st);
           }
       }
     };

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2008
+ *     Christian Schulte, 2004, 2016
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -37,16 +37,55 @@
 
 namespace Gecode { namespace Search {
 
-  forceinline
-  Options::Options(void)
-    : clone(Config::clone),
-      threads(Config::threads),
-      c_d(Config::c_d), a_d(Config::a_d),
-      d_l(Config::d_l),
-      share_rbs(true), share_pbs(false),
-      assets(0), slice(Config::slice), nogoods_limit(0),
-      stop(NULL), cutoff(NULL) {}
+  /// Create lds engine
+  GECODE_SEARCH_EXPORT Engine*
+  lds(Space* s, const Options& o);
+
+  /// A DFS engine builder
+  template<class T>
+  class LdsBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    LdsBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T>
+  inline
+  LdsBuilder<T>::LdsBuilder(const Options& opt)
+    : Builder(opt,LDS<T>::best) {}
+
+  template<class T>
+  Engine*
+  LdsBuilder<T>::operator() (Space* s) const {
+    return build<T,LDS>(s,opt);
+  }
+
 
 }}
+
+namespace Gecode {
+
+  template<class T>
+  forceinline
+  LDS<T>::LDS(T* s, const Search::Options& o)
+    : Search::Base<T>(Search::lds(s,o)) {}
+
+  template<class T>
+  T*
+  lds(T* s, const Search::Options& o) {
+    LDS<T> lds(s,o);
+    return lds.next();
+  }
+
+  template<class T>
+  SEB
+  lds(const Search::Options& o) {
+    return new Search::LdsBuilder<T>(o);
+  }
+
+}
 
 // STATISTICS: search-other

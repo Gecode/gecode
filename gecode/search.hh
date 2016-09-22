@@ -115,6 +115,9 @@ namespace Gecode { namespace Search {
     /// Initial delay in milliseconds for all but first worker thread
     const unsigned int initial_delay = 5;
 
+    /// Default discrepancy limit for LDS
+    const unsigned int d_l = 5;
+
     /// Base for geometric restart sequence
     const double base = 1.5;
     /// Size of a slice in a portfolio and scale factor for restarts(in number of failures)
@@ -450,6 +453,8 @@ namespace Gecode { namespace Search {
       unsigned int c_d;
       /// Create a clone during recomputation if distance is greater than \a a_d (adaptive distance)
       unsigned int a_d;
+      /// Discrepancy limit (for LDS)
+      unsigned int d_l;
       /// Whether to share AFC information between restarts
       bool share_rbs;
       /// Whether to share AFC information among assets in a portfolio
@@ -795,6 +800,36 @@ namespace Gecode {
 }
 
 #include <gecode/search/bab.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Limited discrepancy search engine
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  class LDS : public Search::Base<T> {
+  public:
+    /// Initialize engine for space \a s and options \a o
+    LDS(T* s, const Search::Options& o=Search::Options::def);
+    /// Whether engine does best solution search
+    static const bool best = false;
+  };
+
+  /**
+   * \brief Invoke limited-discrepancy search for \a s as root node and options\a o
+   * \ingroup TaskModelSearch
+   */
+  template<class T>
+  T* lds(T* s, const Search::Options& o=Search::Options::def);
+  
+  /// Return a limited discrepancy search engine builder
+  template<class T>
+  SEB lds(const Search::Options& o=Search::Options::def);
+
+}
+ 
+#include <gecode/search/lds.hpp>
 
 namespace Gecode {
 

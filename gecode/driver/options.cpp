@@ -519,6 +519,7 @@ namespace Gecode {
                Search::Config::threads),
       _c_d("-c-d","recomputation commit distance",Search::Config::c_d),
       _a_d("-a-d","recomputation adaptation distance",Search::Config::a_d),
+      _d_l("-d-l","discrepancy limit for LDS",Search::Config::d_l),
       _node("-node","node cutoff (0 = none, solution mode)"),
       _fail("-fail","failure cutoff (0 = none, solution mode)"),
       _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
@@ -562,6 +563,7 @@ namespace Gecode {
     add(_model); add(_symmetry); add(_propagation); add(_ipl);
     add(_branching); add(_decay); add(_seed); add(_step);
     add(_search); add(_solutions); add(_threads); add(_c_d); add(_a_d);
+    add(_d_l);
     add(_node); add(_fail); add(_time); add(_interrupt);
     add(_assets); add(_slice);
     add(_restart); add(_r_base); add(_r_scale);
