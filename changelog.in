@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: kerel
+What:   change
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Do not declare new and delete of ArgArrayBase as private to
+support the use of placement new.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   minor

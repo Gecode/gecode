@@ -635,9 +635,6 @@ namespace Gecode {
     /// Destructor
     ~ArgArrayBase(void);
     //@}
-  private:
-    static void* operator new(size_t) throw();
-    static void  operator delete(void*,size_t);
   };
 
   template<class> class PrimArgArray;
@@ -1802,17 +1799,6 @@ namespace Gecode {
       new (&r[i]) T(a[i]);
     new (&r[n]) T(x);
     return r;
-  }
-
-  template<class T>
-  forceinline void*
-  ArgArrayBase<T>::operator new(size_t) throw () {
-    return NULL;
-  }
-
-  template<class T>
-  forceinline void
-  ArgArrayBase<T>::operator delete(void*,size_t) {
   }
 
   /*
