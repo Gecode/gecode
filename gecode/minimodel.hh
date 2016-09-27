@@ -1239,7 +1239,7 @@ namespace Gecode {
       NT_MISC       ///< Other Boolean expression
     };
     /// Miscealloneous Boolean expressions
-    class Misc : public HeapAllocated {
+    class GECODE_VTABLE_EXPORT Misc : public HeapAllocated {
     public:
       /// Default constructor
       Misc(void);
