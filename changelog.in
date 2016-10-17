@@ -73,6 +73,15 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+The domain consistent dom() constraint for integer ranges was
+only bounds consistent...
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor

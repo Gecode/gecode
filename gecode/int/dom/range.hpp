@@ -95,23 +95,41 @@ namespace Gecode { namespace Int { namespace Dom {
         GECODE_ME_CHECK(x0.gq(home,min));
         GECODE_ME_CHECK(x0.lq(home,max));
       }
+      return home.ES_SUBSUMED(*this);
     } else if (b.zero()) {
       if (rm != RM_IMP) {
         Iter::Ranges::Singleton r(min,max);
         GECODE_ME_CHECK(x0.minus_r(home,r,false));
       }
+      return home.ES_SUBSUMED(*this);
     } else if ((x0.max() <= max) && (x0.min() >= min)) {
       if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one_none(home));
+      return home.ES_SUBSUMED(*this);
     } else if ((x0.max() < min) || (x0.min() > max)) {
       if (rm != RM_PMI)
         GECODE_ME_CHECK(b.zero_none(home));
-    } else {
-      return ES_FIX;
-    }
-    return home.ES_SUBSUMED(*this);
-  }
+      return home.ES_SUBSUMED(*this);
+    } 
 
+    ViewRanges<View> i_x(x0);
+    Iter::Ranges::Singleton r(min,max);
+
+    switch (Iter::Ranges::compare(i_x,r)) {
+    case Iter::Ranges::CS_SUBSET:
+      if (rm != RM_IMP)
+        GECODE_ME_CHECK(b.one_none(home));
+      return home.ES_SUBSUMED(*this);
+    case Iter::Ranges::CS_DISJOINT:
+      if (rm != RM_PMI)
+        GECODE_ME_CHECK(b.zero_none(home));
+      return home.ES_SUBSUMED(*this);
+    case Iter::Ranges::CS_NONE:
+      break;
+    default: GECODE_NEVER;
+    }
+    return ES_FIX;
+  }
 
 }}}
 
