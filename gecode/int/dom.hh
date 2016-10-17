@@ -57,10 +57,10 @@ namespace Gecode { namespace Int { namespace Dom {
    * \ingroup FuncIntProp
    */
   template<class View, ReifyMode rm>
-  class ReRange : public ReUnaryPropagator<View,PC_INT_BND,BoolView> {
+  class ReRange : public ReUnaryPropagator<View,PC_INT_DOM,BoolView> {
   protected:
-    using ReUnaryPropagator<View,PC_INT_BND,BoolView>::x0;
-    using ReUnaryPropagator<View,PC_INT_BND,BoolView>::b;
+    using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::x0;
+    using ReUnaryPropagator<View,PC_INT_DOM,BoolView>::b;
     /// Minimum of range
     int min;
     /// Maximum of range
