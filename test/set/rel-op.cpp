@@ -186,7 +186,10 @@ namespace Test { namespace Set {
                   "::C"+str(withConst0 ? 1 : 0),
                   shared0 == 0 ? n0+1 : (shared0 <= 2 ? 3 : 2),ds_12,false)
         , sot(sot0), n(n0), shared(shared0), withConst(withConst0)
-        , is(0,1) {}
+        , is(0,1) {
+        if (sot == Gecode::SOT_UNION)
+          disabled = false;
+      }
       /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int realN = shared == 0 ? n : 3;
@@ -378,7 +381,10 @@ namespace Test { namespace Set {
                   "::C"+str(withConst0 ? 1 : 0),
                   1,ds_12,false,n0)
         , sot(sot0), n(n0), withConst(withConst0)
-        , is(0,1) {}
+        , is(0,1) {
+        if (sot == Gecode::SOT_UNION)
+          disabled = false;
+      }
       /// %Test whether \a x is solution
       bool solution(const SetAssignment& x) const {
         int* isrs = new int[n];

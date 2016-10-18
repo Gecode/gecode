@@ -727,7 +727,6 @@ if (!(T)) {                                                     \
         olog << ind(1) << "Assignment: " << a
              << (is_sol ? " (solution)" : " (no solution)")
              << std::endl;
-
       START_TEST("Assignment (after posting)");
       {
         SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
@@ -816,27 +815,27 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-#ifdef FAILING_TEST
-      START_TEST("Prune (disable)");
-      {
-        SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
-        SetTestSpace* c = new SetTestSpace(arity,lub,withInt,this);
-        s->post(); c->post();
-        while (!s->failed() && !s->assigned())
-          if (!s->disabled(a,*c)) {
-            problem = "Different result after re-enable";
+      if (disabled) {
+        START_TEST("Prune (disable)");
+        {
+          SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this);
+          SetTestSpace* c = new SetTestSpace(arity,lub,withInt,this);
+          s->post(); c->post();
+          while (!s->failed() && !s->assigned())
+            if (!s->disabled(a,*c)) {
+              problem = "Different result after re-enable";
+              delete s; delete c;
+              goto failed;
+            }
+          s->assign(a); c->assign(a);
+          if (s->failed() != c->failed()) {
+            problem = "Different failure after re-enable";
             delete s; delete c;
             goto failed;
           }
-        s->assign(a); c->assign(a);
-        if (s->failed() != c->failed()) {
-          problem = "Different failure after re-enable";
           delete s; delete c;
-          goto failed;
         }
-        delete s; delete c;
       }
-#endif
       if (reified) {
         START_TEST("Assignment reified (rewrite after post, <=>)");
         {

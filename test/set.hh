@@ -291,16 +291,20 @@ namespace Test {
       /// Domain of variables (least upper bound)
       Gecode::IntSet  lub;
       /// Does the constraint also exist as reified constraint
-      bool    reified;
+      bool reified;
       /// Number of additional integer variables
-      int    withInt;
+      int withInt;
 
       /// Remove \a v values from the least upper bound of \a x, but not those in \f$\mathrm{a}_i\f$
       void removeFromLub(int v, Gecode::SetVar& x, int i,
                          const Gecode::IntSet& a);
       /// Add \a v values to the greatest lower bound of \a x, but not those in \f$\mathrm{a}_i\f$
       void addToGlb(int v, Gecode::SetVar& x, int i, const Gecode::IntSet& a);
+      /// Generate a set assignment
       SetAssignment* make_assignment(void);
+    protected:
+      /// Whether to perform full tests for disabled propagators
+      bool disabled;
     public:
       /**
        * \brief Constructor
@@ -311,7 +315,8 @@ namespace Test {
        */
       SetTest(const std::string& s,
               int a, const Gecode::IntSet& d, bool r=false, int w=0)
-        : Base("Set::"+s), arity(a), lub(d), reified(r), withInt(w)  {}
+        : Base("Set::"+s), arity(a), lub(d), reified(r), withInt(w),
+          disabled(true) {}
       /// Check for solution
       virtual bool solution(const SetAssignment&) const = 0;
       /// Post propagator
