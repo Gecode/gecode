@@ -187,6 +187,17 @@ namespace Test { namespace Float {
   }
 
   void
+  TestSpace::enable(void) {
+    Gecode::PropagatorGroup::all.enable(*this);
+  }
+
+  void
+  TestSpace::disable(void) {
+    Gecode::PropagatorGroup::all.disable(*this);
+    (void) status();
+  }
+
+  void
   TestSpace::dropUntil(const Assignment& a) {
     for (int i = x.size(); i--; )
       Gecode::rel(*this, x[i], Gecode::FRT_GQ, a[i].min());
@@ -547,6 +558,38 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
+      START_TEST("Assignment (after posting, disable)");
+      {
+        TestSpace* s = new TestSpace(arity,dom,step,this);
+        s->post();
+        s->disable();
+        s->enable();
+        s->assign(a,sol);
+        if (sol == MT_TRUE) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(subsumed(*s), "No subsumption");
+        } else if (sol == MT_FALSE) {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
+      START_TEST("Partial assignment (after posting, disable)");
+      {
+        TestSpace* s = new TestSpace(arity,dom,step,this);
+        s->post();
+        s->disable();
+        s->enable();
+        s->assign(a,sol,true);
+        (void) s->failed();
+        s->assign(a,sol);
+        if (sol == MT_TRUE) {
+          CHECK_TEST(!s->failed(), "Failed on solution");
+          CHECK_TEST(subsumed(*s), "No subsumption");
+        } else if (sol == MT_FALSE) {
+          CHECK_TEST(s->failed(), "Solved on non-solution");
+        }
+        delete s;
+      }
       START_TEST("Assignment (before posting)");
       {
         TestSpace* s = new TestSpace(arity,dom,step,this);
@@ -594,7 +637,6 @@ if (!(T)) {                                                     \
         }
         delete s;
       }
-
       if (reified && !ignore(a) && (sol != MT_MAYBE)) {
         if (eqv()) {
           START_TEST("Assignment reified (rewrite after post, <=>)");

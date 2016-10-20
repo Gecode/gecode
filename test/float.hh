@@ -233,6 +233,10 @@ namespace Test {
       void prune(void);
       /// Prune values but not those in assignment \a a
       bool prune(const Assignment& a, bool testfix);
+      /// Disable propagators in space and compute fixpoint (make all idle)
+      void disable(void);
+      /// Enable propagators in space
+      void enable(void);
       /// Return the number of propagators
       unsigned int propagators(void);
     };
