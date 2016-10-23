@@ -41,31 +41,49 @@
 
 using namespace Gecode;
 
-
-/// Specifications for the photo example
+/// Specifications for photo example
 class PhotoSpec {
+protected:
+  /// Array of data
+  const int* data;
 public:
-  const int  n_names; ///< Number of people on picture
-  const int  n_prefs; ///< Number of preferences
-  const int* prefs;   ///< Array of preferences
-  PhotoSpec(const int n_n, const int n_p, const int* p)
-    : n_names(n_n), n_prefs(n_p), prefs(p) {}
+  /// Initialize
+  PhotoSpec(const int* d) : data(d) {}
+  /// Return number of people
+  int people(void) const {
+    return data[0];
+  }
+  /// Return number of preferences
+  int preferences(void) const {
+    return data[1];
+  }
+  /// Access preference \a p with position \a i
+  int preference(int p, int i) const {
+    return data[2+2*p+i];
+  }
 };
 
-/// Preferences for small example
-const int s_prefs[] = {
+/// Small Photo example
+const int small[] = {
+  /// Number of people on picture
+  5,  
+  /// Number of preferences
+  8,
+  /// Array of preferences
   0,2, 1,4, 2,3, 2,4, 3,0, 4,3, 4,0, 4,1
 };
-/// Small Photo example
-const PhotoSpec p_small(5, 8, s_prefs);
 
-/// Preferences for large example
-const int l_prefs[] = {
+/// Large Photo example
+const int large[] = {
+  /// Number of people on picture
+  9,  
+  /// Number of preferences
+  17,
+  /// Array of preferences
   0,2, 0,4, 0,7, 1,4, 1,8, 2,3, 2,4, 3,0, 3,4,
   4,5, 4,0, 5,0, 5,8, 6,2, 6,7, 7,8, 7,6
 };
-/// Large Photo example
-const PhotoSpec p_large(9,17, l_prefs);
+
 
 /**
  * \brief %Example: Placing people on a photo
@@ -93,22 +111,23 @@ protected:
 public:
   /// Branching to use for model
   enum {
-    BRANCH_NONE,  ///< Choose variables from left to right
-    BRANCH_DEGREE ///< Choose variable with largest degree
+    BRANCH_NONE,    ///< Choose variables from left to right
+    BRANCH_DEGREE,  ///< Choose variable with largest degree
+    BRANCH_AFC_SIZE ///< Choose variable with largest afc over size
   };
   /// Actual model
   Photo(const SizeOptions& opt) :
     IntMinimizeScript(opt),
-    spec(opt.size() == 0 ? p_small : p_large),
-    pos(*this,spec.n_names, 0, spec.n_names-1),
-    violations(*this,0,spec.n_prefs),
+    spec(opt.size() == 0 ? small : large),
+    pos(*this,spec.people(), 0, spec.people()-1),
+    violations(*this,0,spec.preferences()),
     rnd(opt.seed()), p(opt.relax())
   {
     // Map preferences to violation
-    BoolVarArgs viol(spec.n_prefs);
-    for (int i=0; i<spec.n_prefs; i++) {
-      int pa = spec.prefs[2*i+0];
-      int pb = spec.prefs[2*i+1];
+    BoolVarArgs viol(spec.preferences());
+    for (int i=0; i<spec.preferences(); i++) {
+      int pa = spec.preference(i,0);
+      int pb = spec.preference(i,1);
       viol[i] = expr(*this, abs(pos[pa]-pos[pb]) > 1);
     }
     rel(*this, violations == sum(viol));
@@ -118,11 +137,17 @@ public:
     // Break some symmetries
     rel(*this, pos[0] < pos[1]);
 
-    if (opt.branching() == BRANCH_NONE) {
+    switch (opt.branching()) {
+    case BRANCH_NONE:
       branch(*this, pos, INT_VAR_NONE(), INT_VAL_MIN());
-    } else {
+      break;
+    case BRANCH_DEGREE:
       branch(*this, pos, tiebreak(INT_VAR_DEGREE_MAX(),INT_VAR_SIZE_MIN()),
              INT_VAL_MIN());
+      break;
+    case BRANCH_AFC_SIZE:
+      branch(*this, pos, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+      break;
     }
   }
   /// Slave function for restarts
@@ -171,8 +196,9 @@ main(int argc, char* argv[]) {
   opt.ipl(IPL_BND);
   opt.relax(0.7);
   opt.branching(Photo::BRANCH_DEGREE);
-  opt.branching(Photo::BRANCH_NONE,   "none");
+  opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
+  opt.branching(Photo::BRANCH_AFC_SIZE, "afc");
   opt.parse(argc,argv);
   IntMinimizeScript::run<Photo,BAB,SizeOptions>(opt);
   return 0;
