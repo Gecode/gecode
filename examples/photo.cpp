@@ -171,62 +171,6 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  /*
-  Rnd r(0);
-  for (int n=10; n<=100; n += 10) {
-    for (int k=0; k<20; k++) {
-      int p=r(n*n / 4)+1;
-      int* m = new int[n*n];
-      for (int i=n*n; i--; )
-        m[i]=0;
-      std::cout << "const int p_" << n << "_" << k << "[] = {" << std::endl
-                << "  /// Number of people on picture" << std::endl
-                << "  " << n << "," << std::endl
-                << "  /// Number of preferences" << std::endl
-                << "  " << p << "," << std::endl
-                << "  /// Array of preferences" << std::endl
-                << "  ";
-      int l=0;
-      for (int j=0; j<p; j++) {
-        l++;
-        int a, b;
-        do {
-          a = r(n); b = r(n);
-        } while (m[a*n+b] != 0);
-        m[a*n+b]=1;
-        if ((a < 10) && (n > 10)) std::cout << " "; std::cout << a << ",";
-        if ((b < 10) && (n > 10)) std::cout << " "; 
-        if (j != p-1) {
-          std::cout << b << ", ";
-          if (l == 8) {
-            l=0;
-            std::cout << std::endl << "  ";
-          }
-        } else {
-          std::cout << b << std::endl;
-        }
-      }
-      delete [] m;
-      std::cout << "};" << std::endl;
-    }
-    std::cout << std::endl;
-  }
-  for (int n=10; n<=100; n += 10) {
-    int l=0;
-    for (int k=0; k<20; k++) {
-      ++l;
-      std::cout << "&p_" << n << "_" << k << "[0], ";
-      if (n < 100)
-        std::cout << " ";
-      if (k < 10)
-        std::cout << " ";
-      if (l == 5) {
-        l=0;
-        std::cout << std::endl;
-      }
-    }
-  }
-  */
   SizeOptions opt("Photo");
   opt.solutions(0);
   opt.size(1);
