@@ -60,9 +60,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       ElementUnion(const char* t)
-        : SetTest(t,5,ds_12,false) {
-        disabled = false;
-      }
+        : SetTest(t,5,ds_12,false) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         int selected = 0;

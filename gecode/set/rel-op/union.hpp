@@ -267,7 +267,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
+  UnionN<View0,View1>::propagate(Space& home, const ModEventDelta& med) {    
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
     bool ubevent = Rel::testSetEventUB(me0, me1);
@@ -279,28 +279,33 @@ namespace Gecode { namespace Set { namespace RelOp {
     bool oldModified = false;
 
     do {
-      oldModified = modified;
-      modified = false;
-      if (modified || oldModified || ubevent)
-        GECODE_ES_CHECK(unionNXiUB(home, modified, x, y,unionOfDets));
-      if (modified || oldModified || ubevent)
-        GECODE_ES_CHECK(partitionNYUB(home, modified, x, y,unionOfDets));
-      if (modified || oldModified || anybevent)
-        GECODE_ES_CHECK(partitionNXiLB(home, modified, x, y,unionOfDets));
-      if (modified || oldModified || lbevent)
-        GECODE_ES_CHECK(partitionNYLB(home, modified, x, y,unionOfDets));
-      if (modified || oldModified || cardevent || ubevent)
-        GECODE_ES_CHECK(unionNCard(home, modified, x, y, unionOfDets));
-    } while (modified);
+      do {
+        oldModified = modified;
+        modified = false;
+        if (modified || oldModified || ubevent)
+          GECODE_ES_CHECK(unionNXiUB(home, modified, x, y,unionOfDets));
+        if (modified || oldModified || ubevent)
+          GECODE_ES_CHECK(partitionNYUB(home, modified, x, y,unionOfDets));
+        if (modified || oldModified || anybevent)
+          GECODE_ES_CHECK(partitionNXiLB(home, modified, x, y,unionOfDets));
+        if (modified || oldModified || lbevent)
+          GECODE_ES_CHECK(partitionNYLB(home, modified, x, y,unionOfDets));
+        if (modified || oldModified || cardevent || ubevent) {
+          GECODE_ES_CHECK(unionNCard(home, modified, x, y, unionOfDets));
+        }
+      } while (modified);
 
-    for(int i=0;i<x.size();i++){
-      //Do not reverse! Eats away the end of the array!
-      while (i<x.size() && x[i].assigned()) {
-        GlbRanges<View0> det(x[i]);
-        unionOfDets.includeI(home,det);
-        x.move_lst(i);
+      for(int i=0;i<x.size();i++){
+        //Do not reverse! Eats away the end of the array!
+        while (i<x.size() && x[i].assigned()) {
+          GlbRanges<View0> det(x[i]);
+          unionOfDets.includeI(home,det);
+          x.move_lst(i);
+          modified = true;
+        }
       }
-    }
+      
+    } while (modified);
     // When we run out of variables, make a final check and disolve:
     if (x.size()==0) {
       BndSetRanges all1(unionOfDets);
