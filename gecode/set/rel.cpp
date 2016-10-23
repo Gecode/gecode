@@ -42,14 +42,13 @@
 #include <gecode/set/rel-op.hh>
 #include <gecode/set/int.hh>
 
-namespace Gecode {
-  using namespace Set;
-  using namespace Set::Rel;
-  using namespace Set::RelOp;
+namespace Gecode { namespace Set {
 
   template<class View0, class View1>
   void
   rel_post(Home home, View0 x0, SetRelType r, View1 x1) {
+    using namespace Set::Rel;
+    using namespace Set::RelOp;
     GECODE_POST;
     switch (r) {
     case SRT_EQ:
@@ -98,6 +97,8 @@ namespace Gecode {
   template<class View0, class View1, ReifyMode rm>
   void
   rel_re(Home home, View0 x, SetRelType r, View1 y, BoolVar b) {
+    using namespace Set::Rel;
+    using namespace Set::RelOp;
     GECODE_POST;
     switch (r) {
     case SRT_EQ:
@@ -165,13 +166,19 @@ namespace Gecode {
     }
   }
 
+}}
+
+namespace Gecode {
+
   void
   rel(Home home, SetVar x, SetRelType r, SetVar y) {
+    using namespace Set;
     rel_post<SetView,SetView>(home,x,r,y);
   }
 
   void
   rel(Home home, SetVar s, SetRelType r, IntVar x) {
+    using namespace Set;
     Gecode::Int::IntView xv(x);
     SingletonView xsingle(xv);
     rel_post<SetView,SingletonView>(home,s,r,xv);
@@ -179,6 +186,7 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x, SetRelType r, SetVar s) {
+    using namespace Set;
     switch (r) {
     case SRT_SUB:
       rel(home, s, SRT_SUP, x);
@@ -193,6 +201,7 @@ namespace Gecode {
 
   void
   rel(Home home, SetVar x, SetRelType rt, SetVar y, Reify r) {
+    using namespace Set;
     switch (r.mode()) {
     case RM_EQV:
       rel_re<SetView,SetView,RM_EQV>(home,x,rt,y,r.var());
@@ -209,6 +218,7 @@ namespace Gecode {
 
   void
   rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r) {
+    using namespace Set;
     Gecode::Int::IntView xv(x);
     SingletonView xsingle(xv);
     switch (r.mode()) {
@@ -227,6 +237,7 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x, SetRelType rt, SetVar s, Reify r) {
+    using namespace Set;
     switch (rt) {
     case SRT_SUB:
       rel(home, s, SRT_SUP, x, r);

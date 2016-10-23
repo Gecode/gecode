@@ -418,6 +418,15 @@ namespace Gecode {
     return _nogoods_limit.value();
   }
 
+  inline void
+  Options::relax(double d) {
+    _relax.value(d);
+  }
+  inline double
+  Options::relax(void) const {
+    return _relax.value();
+  }
+
 
 
   inline void

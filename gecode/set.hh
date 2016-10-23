@@ -1597,6 +1597,35 @@ namespace Gecode {
          SetVarValPrint vvp=NULL);
 }
 
+namespace Gecode {
+
+  /*
+   * \brief Relaxed assignment of variables in \a x from values in \a sx
+   *
+   * The variables in \a x are assigned values from the assigned variables
+   * in the solution \a sx with a relaxation probability \a p. That is, 
+   * if \$fp=0.1\f$ approximately 10% of the variables in \a x will be 
+   * assigned a value from \a sx.
+   *
+   * The random numbers are generated from the generator \a r. At least
+   * one variable will not be assigned: in case the relaxation attempt 
+   * would suggest that all variables should be assigned, a single
+   * variable will be selected randomly to remain unassigned.
+   *
+   * Throws an exception of type Set::ArgumentSizeMismatch, if \a x and
+   * \a sx are of different size.
+   *
+   * Throws an exception of type Set::OutOfLimits, if \a p is not between
+   * \a 0.0 and \a 1.0.
+   *
+   * \ingroup TaskModeSet
+   */
+  GECODE_SET_EXPORT void 
+  relax(Home home, const SetVarArgs& x, const SetVarArgs& sx,
+        Rnd r, double p);
+
+}
+
 #include <gecode/set/trace/trace-view.hpp>
 
 namespace Gecode {

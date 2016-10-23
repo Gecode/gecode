@@ -41,6 +41,7 @@
 
 using namespace Gecode;
 
+
 /// Specifications for the photo example
 class PhotoSpec {
 public:
@@ -82,10 +83,13 @@ protected:
   /// Photo specification
   const PhotoSpec& spec;
   /// Person's position on photo
-  IntVarArray      pos;
+  IntVarArray pos;
   /// Number of violated preferences
-  IntVar           violations;
-
+  IntVar violations;
+  /// Random number generator for LNS
+  Rnd rnd;
+  /// Relaxation probability
+  double p;
 public:
   /// Branching to use for model
   enum {
@@ -97,7 +101,8 @@ public:
     IntMinimizeScript(opt),
     spec(opt.size() == 0 ? p_small : p_large),
     pos(*this,spec.n_names, 0, spec.n_names-1),
-    violations(*this,0,spec.n_prefs)
+    violations(*this,0,spec.n_prefs),
+    rnd(opt.seed()), p(opt.relax())
   {
     // Map preferences to violation
     BoolVarArgs viol(spec.n_prefs);
@@ -120,10 +125,20 @@ public:
              INT_VAL_MIN());
     }
   }
-
+  /// Slave function for restarts
+  bool slave(const MetaInfo& mi) {
+    if ((mi.type() == MetaInfo::RESTART) &&
+        (mi.restart() > 0) && (p > 0.0)) {
+      const Photo& l = static_cast<const Photo&>(*mi.last());
+      relax(*this, pos, l.pos, rnd, p);
+      return false;
+    } else {
+      return true;
+    }
+  }
   /// Constructor for cloning \a s
   Photo(bool share, Photo& s) :
-    IntMinimizeScript(share,s), spec(s.spec) {
+    IntMinimizeScript(share,s), spec(s.spec), rnd(s.rnd), p(s.p) {
     pos.update(*this, share, s.pos);
     violations.update(*this, share, s.violations);
   }
@@ -154,6 +169,7 @@ main(int argc, char* argv[]) {
   opt.size(1);
   opt.iterations(10);
   opt.ipl(IPL_BND);
+  opt.relax(0.7);
   opt.branching(Photo::BRANCH_DEGREE);
   opt.branching(Photo::BRANCH_NONE,   "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
@@ -161,7 +177,6 @@ main(int argc, char* argv[]) {
   IntMinimizeScript::run<Photo,BAB,SizeOptions>(opt);
   return 0;
 }
-
 
 // STATISTICS: example-any
 

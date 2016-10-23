@@ -533,6 +533,7 @@ namespace Gecode {
       _nogoods("-nogoods","whether to use no-goods from restarts",false),
       _nogoods_limit("-nogoods-limit","depth limit for no-good extraction",
                      Search::Config::nogoods_limit),
+      _relax("-relax","probability for relaxing variable", 0.0),
       _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
 
@@ -568,6 +569,7 @@ namespace Gecode {
     add(_assets); add(_slice);
     add(_restart); add(_r_base); add(_r_scale);
     add(_nogoods); add(_nogoods_limit);
+    add(_relax);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
     add(_out_file); add(_log_file); add(_trace);
   }

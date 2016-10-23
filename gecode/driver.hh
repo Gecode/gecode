@@ -395,6 +395,7 @@ namespace Gecode {
     Driver::UnsignedIntOption _r_scale;       ///< Restart scale factor
     Driver::BoolOption        _nogoods;       ///< Whether to use no-goods
     Driver::UnsignedIntOption _nogoods_limit; ///< Limit for no-good extraction
+    Driver::DoubleOption      _relax;         ///< Probability to relax variable
     Driver::BoolOption        _interrupt;     ///< Whether to catch SIGINT
     //@}
 
@@ -547,6 +548,11 @@ namespace Gecode {
     void nogoods_limit(unsigned int l);
     /// Return depth limit for nogoods
     unsigned int nogoods_limit(void) const;
+
+    /// Set default relax probability
+    void relax(double d);
+    /// Return default relax probability
+    double relax(void) const;
 
     /// Set default interrupt behavior
     void interrupt(bool b);

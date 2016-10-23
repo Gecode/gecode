@@ -73,6 +73,38 @@ Date: 2015-?-?
 Gaga
 
 [ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added relax() function for relaxed assignment of float variables
+from a previous solution, see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added relax() function for relaxed assignment of set variables
+from a previous solution, see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added relax() function for relaxed assignment of integer and
+Boolean variables from a previous solution, see MPG for details.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The probability for relaxing variables in LNS can be passed with
+the -relax commandline option.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   major
