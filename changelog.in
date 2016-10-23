@@ -68,9 +68,25 @@
 
 [RELEASE]
 Version: 5.0.0
-Date: 2015-?-?
+Date: 2016-10-31
 [DESCRIPTION]
-Gaga
+
+This release adds a number of new features and fixes many bugs
+(some rather serious), so it is recommended to switch as soon as
+possible to this release. Some highlights are: re-added limited
+discrepancy search (LDS); added sequential and parallel
+portfolio-based search (PBS); added support for groups of
+propagators and branchers; added extensive tracing functionality
+based on groups; propagators can be disabled and re-enabled;
+support for arbitrary memory allocators; changed the notion of
+"integer consistency level" to the more expressive concept
+"integer propagation level".
+
+It is recommended to read the new Chapter in MPG on groups and
+tracing.
+
+As the interfaces has changed, please consult
+\ref PageHowToChange_5 "How to Change to Gecode 5.0.0".
 
 [ENTRY]
 Module: float

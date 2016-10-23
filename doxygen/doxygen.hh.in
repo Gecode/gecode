@@ -621,4 +621,32 @@ have run into division by zero issues. And just changing the
 implementation is not good enough because the values of these
 measures can now be exposed during tie-breaking.
 
+
+/**
+ * \page PageHowToChange_5 How to Change from %Gecode 4.4.0 to %Gecode 5.0.0
+ *
+
+As %Gecode 5.0.0 is a major revision, your programs that
+are written for %Gecode 4.4.0 are likely to require some
+modifications, yet very few, before they work again.
+
+\section SecChange5Handle Removed Brancher Handles
+
+Brancher handles have been removed as they can be expressed
+easily by brancher groups, please consult MPG for details.
+
+\section SecChange5IPL New Integer Propagation Levels
+
+The concept of integer consistency level "IntConLevel" has been
+replaced by integer propagation level "IntPropLevel". In most cases
+it should be sufficient to:
+ - search and replace ICL_ by IPL_.
+ - search and replace IntConLevel by IntPropLevel.
+ - use the commandline option -ipl rather than -icl.
+
+Integer propagation levels are more expressive than integer
+consistency levels. They can also express other propagation
+preferences such as speed, memory, basic, or advanced. Please
+consult MPG for details.
+
 */
