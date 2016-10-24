@@ -384,9 +384,7 @@ namespace Test { namespace Set {
       Weights(const char* t, IntArgs& el, IntArgs& w,
               int min = -10000, int max = 10000)
         : SetTest(t,1,ds_33,false,1),
-          elements(el), weights(w), minWeight(min), maxWeight(max) {
-        disabled = false;
-      }
+          elements(el), weights(w), minWeight(min), maxWeight(max) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges x0(x.lub, x[0]);

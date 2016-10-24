@@ -251,34 +251,37 @@ namespace Gecode { namespace Set { namespace Int {
   template<class View>
   ExecStatus
   Weights<View>::propagate(Space& home, const ModEventDelta&) {
-
     ModEvent me = ME_SET_NONE;
 
     if (!x.assigned()) {
       // Collect the weights of the elements in the unknown set in an array
       int size = elements.size();
       Region r(home);
-      int* currentWeights = r.alloc<int>(size);
+      int* minWeights = r.alloc<int>(size);
+      int* maxWeights = r.alloc<int>(size);
 
       UnknownRanges<View> ur(x);
       Iter::Ranges::ToValues<UnknownRanges<View> > urv(ur);
       for (int i=0; i<size; i++) {
         if (!urv() || elements[i]<urv.val()) {
-          currentWeights[i] = 0;
+          minWeights[i] = INT_MAX;
+          maxWeights[i] = INT_MIN;
         } else {
           assert(elements[i] == urv.val());
-          currentWeights[i] = weights[i];
+          minWeights[i] = weights[i];
+          maxWeights[i] = weights[i];
           ++urv;
         }
       }
 
       // Sort the weights of the unknown elements
       IntLess il;
-      Support::quicksort<int>(currentWeights, size, il);
+      Support::quicksort<int>(minWeights, size, il);
+      Support::quicksort<int>(maxWeights, size, il);
 
       // The maximum number of elements that can still be added to x
       int delta = static_cast<int>(std::min(x.unknownSize(), x.cardMax() - x.glbSize()));
-
+      
       // The weight of the elements already in x
       GlbRanges<View> glb(x);
       int glbWeight = weightI<GlbRanges<View> >(elements, weights, glb);
@@ -290,27 +293,27 @@ namespace Gecode { namespace Set { namespace Int {
       // all other elements are minimal)
       int lowWeight = glbWeight;
       for (int i=0; i<delta-1; i++) {
-        if (currentWeights[i] >= 0)
+        if (minWeights[i] >= 0)
           break;
-        lowWeight+=currentWeights[i];
+        lowWeight+=minWeights[i];
       }
 
       // Compute the lowest possible weight of x. If there is another element
       // with negative weight left, then add its weight to lowWeight.
       // Otherwise lowWeight is already the lowest possible weight.
       int lowestWeight = lowWeight;
-      if (delta>0 && currentWeights[delta-1]<0)
-        lowestWeight+=currentWeights[delta-1];
+      if (delta>0 && minWeights[delta-1]<0)
+        lowestWeight+=minWeights[delta-1];
 
       // If after including the minimal number of required elements,
       // no more element with negative weight is available, then
       // a tighter lower bound can be computed.
       if ( (x.cardMin() - x.glbSize() > 0 &&
-            currentWeights[x.cardMin() - x.glbSize() - 1] >= 0) ||
-           currentWeights[0] >= 0 ) {
+            minWeights[x.cardMin() - x.glbSize() - 1] >= 0) ||
+           minWeights[0] >= 0 ) {
         int lowestPosWeight = glbWeight;
         for (unsigned int i=0; i<x.cardMin() - x.glbSize(); i++) {
-          lowestPosWeight += currentWeights[i];
+          lowestPosWeight += minWeights[i];
         }
         lowestWeight = std::max(lowestWeight, lowestPosWeight);
       }
@@ -320,9 +323,9 @@ namespace Gecode { namespace Set { namespace Int {
       // upper bound.
       int highestWeight = glbWeight;
       for (int i=0; i<delta; i++) {
-        if (currentWeights[size-i-1]<=0)
+        if (maxWeights[size-i-1]<=0)
           break;
-        highestWeight += currentWeights[size-i-1];
+        highestWeight += maxWeights[size-i-1];
       }
 
       // Prune the weight using the computed bounds
@@ -352,7 +355,8 @@ namespace Gecode { namespace Set { namespace Int {
       return home.ES_SUBSUMED(*this);
     }
 
-    return me_modified(me) ? ES_NOFIX : ES_FIX;
+    // return me_modified(me) ? ES_NOFIX : ES_FIX;
+    return ES_NOFIX;
   }
 
 }}}
