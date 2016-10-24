@@ -89,6 +89,13 @@ As the interfaces has changed, please consult
 \ref PageHowToChange_5 "How to Change to Gecode 5.0.0".
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed some idempotency problems in the n-ary union and weight propagators.
+
+[ENTRY]
 Module: float
 What:   new
 Rank:   minor
