@@ -57,7 +57,7 @@ namespace Gecode { namespace Float {
 
 namespace Gecode {
 
-  void 
+  void
   relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx,
         Rnd r, double p) {
     if (x.size() != sx.size())
