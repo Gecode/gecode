@@ -36,19 +36,14 @@
  */
 
 
-#include <gecode/search.hh>
+#include <gecode/search/meta/rbs.hh>
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  /*
-   * Stopping for meta search engines
-   *
-   */
-
-  bool 
+  bool
   RestartStop::stop(const Statistics& s, const Options& o) {
-    // Stop if the fail stop object for the engine says so
-    if (e_stop->stop(s,o)) {
+    // Stop if the fail limit for the engine says so
+    if (s.fail > l) {
       e_stopped = true;
       m_stat.restart++;
       return true;
@@ -70,8 +65,8 @@ namespace Gecode { namespace Search { namespace Meta {
       NoGoods& ng = e->nogoods();
       // Reset number of no-goods found
       ng.ng(0);
-      CRI cri(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
-      bool r = master->master(cri);
+      MetaInfo mi(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
+      bool r = master->master(mi);
       stop->m_stat.nogood += ng.ng();
       if (master->status(stop->m_stat) == SS_FAILED) {
         stop->update(e->statistics());
@@ -82,8 +77,8 @@ namespace Gecode { namespace Search { namespace Meta {
       } else if (r) {
         stop->update(e->statistics());
         Space* slave = master;
-        master = master->clone(shared);
-        complete = slave->slave(cri);
+        master = master->clone(shared_data,shared_info);
+        complete = slave->slave(mi);
         e->reset(slave);
         sslr = 0;
         stop->m_stat.restart++;
@@ -104,16 +99,16 @@ namespace Gecode { namespace Search { namespace Meta {
         sslr = 0;
         NoGoods& ng = e->nogoods();
         ng.ng(0);
-        CRI cri(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
-        (void) master->master(cri);
+        MetaInfo mi(stop->m_stat.restart,sslr,e->statistics().fail,last,ng);
+        (void) master->master(mi);
         stop->m_stat.nogood += ng.ng();
         long unsigned int nl = ++(*co);
         stop->limit(e->statistics(),nl);
         if (master->status(stop->m_stat) == SS_FAILED)
           return NULL;
         Space* slave = master;
-        master = master->clone(shared);
-        complete = slave->slave(cri);
+        master = master->clone(shared_data,shared_info);
+        complete = slave->slave(mi);
         e->reset(slave);
       } else {
         return NULL;
@@ -122,12 +117,29 @@ namespace Gecode { namespace Search { namespace Meta {
     GECODE_NEVER;
     return NULL;
   }
-  
+
   Search::Statistics
   RBS::statistics(void) const {
     return stop->metastatistics()+e->statistics();
   }
-  
+
+  void
+  RBS::constrain(const Space& b) {
+    if (!best)
+      throw NoBest("RBS::constrain");
+    if (last != NULL) {
+      last->constrain(b);
+      if (last->status() == SS_FAILED) {
+        delete last;
+      } else {
+        return;
+      }
+    }
+    last = b.clone();
+    master->constrain(b);
+    e->constrain(b);
+  }
+
   bool
   RBS::stopped(void) const {
     /*
@@ -137,15 +149,15 @@ namespace Gecode { namespace Search { namespace Meta {
      * invocation of next will do so and no restart will be
      * missed.
      */
-    return e->stopped(); 
+    return e->stopped();
   }
-  
+
   RBS::~RBS(void) {
-    // Deleting e also deletes stop
     delete e;
     delete master;
     delete last;
     delete co;
+    delete stop;
   }
 
 }}}

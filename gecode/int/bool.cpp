@@ -41,9 +41,9 @@
 namespace Gecode {
 
   void
-  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, IntConLevel) {
+  rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
@@ -74,9 +74,9 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, BoolVar x0, IntRelType irt, int n, IntConLevel) {
+  rel(Home home, BoolVar x0, IntRelType irt, int n, IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     BoolView x(x0);
     if (n == 0) {
       switch (irt) {
@@ -115,9 +115,9 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, IntRelType irt, BoolVar x1, Reify r,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       switch (r.mode()) {
@@ -210,9 +210,9 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, IntRelType irt, int n, Reify r,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     BoolView x(x0);
     BoolView y(r.var());
     if (n == 0) {
@@ -372,9 +372,9 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, BoolVar y,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
@@ -418,9 +418,9 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, int n,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     if (n == 0) {
       switch (irt) {
       case IRT_LQ:
@@ -469,9 +469,10 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const BoolVarArgs& x, IntRelType irt, IntConLevel) {
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, IntPropLevel) {
     using namespace Int;
-    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
+    GECODE_POST;
+    if ((irt != IRT_NQ) && (x.size() < 2))
       return;
 
     switch (irt) {
@@ -524,11 +525,11 @@ namespace Gecode {
 
   void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
 
     switch (irt) {
     case IRT_GR:
@@ -574,9 +575,9 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (o) {
     case BOT_AND:
       {
@@ -589,7 +590,7 @@ namespace Gecode {
       GECODE_ES_FAIL((Bool::Or<BoolView,BoolView,BoolView>
                       ::post(home,x0,x1,x2)));
       break;
-    case BOT_IMP: 
+    case BOT_IMP:
       {
         NegBoolView n0(x0);
         GECODE_ES_FAIL((Bool::Or<NegBoolView,BoolView,BoolView>
@@ -614,9 +615,9 @@ namespace Gecode {
 
   void
   rel(Home home, BoolVar x0, BoolOpType o, BoolVar x1, int n,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     if (n == 0) {
       switch (o) {
       case BOT_AND:
@@ -690,9 +691,9 @@ namespace Gecode {
 
   void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, BoolVar y,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     int m = x.size();
     Region r(home);
     switch (o) {
@@ -753,11 +754,11 @@ namespace Gecode {
 
   void
   rel(Home home, BoolOpType o, const BoolVarArgs& x, int n,
-      IntConLevel) {
+      IntPropLevel) {
     using namespace Int;
     if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     int m = x.size();
     Region r(home);
     switch (o) {
@@ -822,17 +823,17 @@ namespace Gecode {
 
   void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         int n, IntConLevel) {
+         int n, IntPropLevel) {
     using namespace Int;
     if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (o) {
     case BOT_AND:
       if (n == 0) {
         ViewArray<NegBoolView> xv(home,x.size());
         for (int i=x.size(); i--; ) {
-          NegBoolView n(x[i]); xv[i]=n;
+          NegBoolView nxi(x[i]); xv[i]=nxi;
         }
         ViewArray<BoolView> yv(home,y);
         xv.unique(home); yv.unique(home);
@@ -859,7 +860,7 @@ namespace Gecode {
         ViewArray<BoolView> xv(home,x);
         ViewArray<NegBoolView> yv(home,y.size());
         for (int i=y.size(); i--; ) {
-          NegBoolView n(y[i]); yv[i]=n;
+          NegBoolView nyi(y[i]); yv[i]=nyi;
         }
         xv.unique(home); yv.unique(home);
         GECODE_ES_FAIL((Bool::ClauseTrue<BoolView,NegBoolView>
@@ -873,9 +874,9 @@ namespace Gecode {
 
   void
   clause(Home home, BoolOpType o, const BoolVarArgs& x, const BoolVarArgs& y,
-         BoolVar z, IntConLevel) {
+         BoolVar z, IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     switch (o) {
     case BOT_AND:
       {
@@ -909,13 +910,15 @@ namespace Gecode {
 
   void
   ite(Home home, BoolVar b, IntVar x, IntVar y, IntVar z,
-      IntConLevel icl) {
+      IntPropLevel ipl) {
     using namespace Int;
-    if (home.failed()) return;
-    if (icl == ICL_BND) {
-      GECODE_ES_FAIL(Bool::IteBnd<IntView>::post(home,b,x,y,z));
+    GECODE_POST;
+    if (vbd(ipl) == IPL_BND) {
+      GECODE_ES_FAIL((Bool::IteBnd<IntView,IntView,IntView>
+                      ::post(home,b,x,y,z)));
     } else {
-      GECODE_ES_FAIL(Bool::IteDom<IntView>::post(home,b,x,y,z));
+      GECODE_ES_FAIL((Bool::IteDom<IntView,IntView,IntView>
+                      ::post(home,b,x,y,z)));
     }
   }
 

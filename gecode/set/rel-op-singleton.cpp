@@ -47,7 +47,7 @@ namespace Gecode {
 
   void
   rel(Home home, SetOpType op, const IntVarArgs& x, SetVar y) {
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<SingletonView> xa(home,x.size());
     for (int i=x.size(); i--;) {
       Int::IntView iv(x[i]);
@@ -78,9 +78,9 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z, 
+  rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z,
       SetVar y) {
-    if (home.failed()) return;
+    GECODE_POST;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SingletonView> xa(home,x.size());
     for (int i=x.size(); i--;) {

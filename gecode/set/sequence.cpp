@@ -47,14 +47,14 @@ namespace Gecode {
   sequence(Home home, const SetVarArgs& xa) {
     if (xa.size()==0)
       throw TooFewArguments("Set::seq");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<SetView> x(home,xa);
     GECODE_ES_FAIL(Sequence::Seq::post(home, x));
   }
 
   void
   sequence(Home home, const SetVarArgs& xa, SetVar y) {
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<SetView> x(home,xa);
     GECODE_ES_FAIL(Sequence::SeqU::post(home, x,y));
   }

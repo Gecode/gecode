@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Home home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_NONE>(home,x), 
+    : NaryPropagator<View,PC_INT_NONE>(home,x),
       c(home), pos(NULL), run(false), n_subsumed(0) {
     for (int i=x.size(); i--; )
       x[i].subscribe(home, *new (home) Index(home,*this,c,i));
@@ -233,10 +233,11 @@ namespace Gecode { namespace Int { namespace Rel {
             for (int k=0; k<n-1-j-1+1; k++)
               x[i+1+k]=x[j+1+k];
             n -= j-i;
+            break;
           }
       x.size(n);
     }
-        
+
     // Propagate one round
     for (int i=1; i<x.size(); i++)
       GECODE_ME_CHECK(x[i].gq(home,x[i-1].min()+o));
@@ -283,7 +284,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View, int o>
   forceinline
   NaryLqLe<View,o>::NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p)
-    : NaryPropagator<View,PC_INT_NONE>(home,share,p), 
+    : NaryPropagator<View,PC_INT_NONE>(home,share,p),
       pos(NULL), run(false), n_subsumed(p.n_subsumed) {
     assert(p.pos == NULL);
     c.update(home, share, p.c);
@@ -309,7 +310,7 @@ namespace Gecode { namespace Int { namespace Rel {
       // Remap advisors
       for (Advisors<Index> as(c); as(); ++as)
         as.advisor().i = m[as.advisor().i];
-      
+
       n_subsumed = 0;
     }
     return new (home) NaryLqLe<View,o>(home,share,*this);
@@ -364,6 +365,12 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_NOFIX;
     }
     return (n_subsumed+1 >= x.size()) ? ES_NOFIX : ES_FIX;
+  }
+
+  template<class View, int o>
+  void
+  NaryLqLe<View,o>::reschedule(Space& home) {
+    View::schedule(home, *this, ME_INT_BND);
   }
 
   template<class View, int o>
@@ -429,14 +436,14 @@ namespace Gecode { namespace Int { namespace Rel {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
         if (rm != RM_IMP)
-          GECODE_ME_CHECK(b.one_none(home)); 
+          GECODE_ME_CHECK(b.one_none(home));
         break;
       case RT_FALSE:
         if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home)); 
+          GECODE_ME_CHECK(b.zero_none(home));
         break;
       case RT_MAYBE:
-        (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b); 
+        (void) new (home) ReLq<View,CtrlView,rm>(home,x0,x1,b);
         break;
       default: GECODE_NEVER;
       }
@@ -474,7 +481,7 @@ namespace Gecode { namespace Int { namespace Rel {
         break;
       case RT_FALSE:
         if (rm != RM_PMI)
-          GECODE_ME_CHECK(b.zero_none(home)); 
+          GECODE_ME_CHECK(b.zero_none(home));
         break;
       case RT_MAYBE:
         return ES_FIX;

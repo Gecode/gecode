@@ -111,13 +111,13 @@ namespace Test { namespace Float {
   ExtAssignment::~ExtAssignment(void) {
     delete [] dsv;
   }
-  
+
   forceinline Gecode::FloatNum
   RandomAssignment::randval(void) {
     using namespace Gecode;
     using namespace Gecode::Float;
     Rounding r;
-    return 
+    return
       r.add_down(
         d.min(),
         r.mul_down(
@@ -173,23 +173,23 @@ namespace Test { namespace Float {
     return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
   }
   inline
-  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d, 
+  Test::Test(const std::string& s, int a, const Gecode::FloatVal& d,
              Gecode::FloatNum st, AssignmentType at,
              bool r)
-    : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at), 
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+    : Base("Float::"+s), arity(a), dom(d), step(st), assigmentType(at),
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
       testsearch(true), testfix(true), testsubsumed(true) {}
 
   inline
-  Test::Test(const std::string& s, int a, Gecode::FloatNum min, 
+  Test::Test(const std::string& s, int a, Gecode::FloatNum min,
              Gecode::FloatNum max, Gecode::FloatNum st, AssignmentType at,
              bool r)
-      : Base("Float::"+s), arity(a), dom(min,max), step(st), 
+      : Base("Float::"+s), arity(a), dom(min,max), step(st),
         assigmentType(at), reified(r),
-        rms((1 << Gecode::RM_EQV) || 
-            (1 << Gecode::RM_IMP) || 
+        rms((1 << Gecode::RM_EQV) ||
+            (1 << Gecode::RM_IMP) ||
             (1 << Gecode::RM_PMI)),
         testsearch(true), testfix(true), testsubsumed(true) {}
 
@@ -278,7 +278,7 @@ namespace Test { namespace Float {
     return Base::rand(2U) == 0U;
   }
 
-  inline MaybeType 
+  inline MaybeType
   operator &(MaybeType a, MaybeType b) {
     switch (a) {
     case MT_TRUE:  return b;

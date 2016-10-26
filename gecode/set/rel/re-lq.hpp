@@ -58,9 +58,17 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, ReifyMode rm, bool strict>
   PropCost
-  ReLq<View0,View1,rm,strict>::cost(const Space&, const ModEventDelta&) const 
+  ReLq<View0,View1,rm,strict>::cost(const Space&, const ModEventDelta&) const
   {
     return PropCost::ternary(PropCost::LO);
+  }
+
+  template<class View0, class View1, ReifyMode rm, bool strict>
+  void
+  ReLq<View0,View1,rm,strict>::reschedule(Space& home) {
+    b.reschedule(home,*this, Gecode::Int::PC_INT_VAL);
+    x0.reschedule(home,*this, PC_SET_ANY);
+    x1.reschedule(home,*this, PC_SET_ANY);
   }
 
   template<class View0, class View1, ReifyMode rm, bool strict>

@@ -109,6 +109,13 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template<class Card>
+  void
+  Dom<Card>::reschedule(Space& home) {
+    x.reschedule(home, *this, PC_INT_DOM);
+    k.reschedule(home, *this, PC_INT_DOM);
+  }
+
+  template<class Card>
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
     Region r(home);
@@ -217,11 +224,11 @@ namespace Gecode { namespace Int { namespace GCC {
         GECODE_ES_CHECK(prop_card<Card>(home, y, k));
         card_assigned = k.assigned();
       }
-      
+
       if (card_assigned) {
         if (x.size() == 0) {
           for (int j=k.size(); j--; )
-            if ((k[j].min() > k[j].counter()) || 
+            if ((k[j].min() > k[j].counter()) ||
                 (k[j].max() < k[j].counter()))
               return ES_FAILED;
           return home.ES_SUBSUMED(*this);
@@ -230,9 +237,9 @@ namespace Gecode { namespace Int { namespace GCC {
           if (!lookupValue(k,x[0].val(),idx))
             return ES_FAILED;
           GECODE_ME_CHECK(k[idx].inc());
-          
+
           for (int j = k.size(); j--; )
-            if ((k[j].min() > k[j].counter()) || 
+            if ((k[j].min() > k[j].counter()) ||
                 (k[j].max() < k[j].counter()))
               return ES_FAILED;
           return home.ES_SUBSUMED(*this);
@@ -293,7 +300,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   inline ExecStatus
-  Dom<Card>::post(Home home, 
+  Dom<Card>::post(Home home,
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 

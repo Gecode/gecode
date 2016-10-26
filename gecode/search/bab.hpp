@@ -39,20 +39,44 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Search {
 
-  namespace Search {
-    /// Create branch and bound engine
-    GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
+  /// Create branch and bound engine
+  GECODE_SEARCH_EXPORT Engine* bab(Space* s, const Options& o);
+
+  /// A BAB engine builder
+  template<class T>
+  class BabBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    BabBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T>
+  inline
+  BabBuilder<T>::BabBuilder(const Options& opt)
+    : Builder(opt,BAB<T>::best) {}
+
+  template<class T>
+  Engine*
+  BabBuilder<T>::operator() (Space* s) const {
+    return build<T,BAB>(s,opt);
   }
 
-  template<class T>
-  forceinline
-  BAB<T>::BAB(T* s, const Search::Options& o)
-    : Search::EngineBase<T>(Search::bab(s,o)) {}
+}}
+
+namespace Gecode {
 
   template<class T>
-  T*
+  inline
+  BAB<T>::BAB(T* s, const Search::Options& o)
+    : Search::Base<T>(Search::bab(s,o)) {}
+
+  template<class T>
+  inline T*
   bab(T* s, const Search::Options& o) {
     BAB<T> b(s,o);
     T* l = NULL;
@@ -60,6 +84,12 @@ namespace Gecode {
       delete l; l = n;
     }
     return l;
+  }
+
+  template<class T>
+  SEB
+  bab(const Search::Options& o) {
+    return new Search::BabBuilder<T>(o);
   }
 
 }

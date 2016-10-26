@@ -96,7 +96,7 @@ namespace Gecode {  namespace Gist {
 
   public:
     /// Constructor
-    TreeCanvas(Space* rootSpace, bool bab, QWidget* parent, 
+    TreeCanvas(Space* rootSpace, bool bab, QWidget* parent,
                const Options& opt);
     /// Destructor
     ~TreeCanvas(void);
@@ -192,7 +192,7 @@ namespace Gecode {  namespace Gist {
     void startCompareNodes(void);
     /// Wait for click on node to compare with current node before fixpoint
     void startCompareNodesBeforeFP(void);
-    
+
     /// Re-emit status change information for current node
     void emitStatusChanged(void);
 
@@ -308,7 +308,7 @@ namespace Gecode {  namespace Gist {
     bool smoothScrollAndZoom;
     /// Whether to move cursor during search
     bool moveDuringSearch;
-    
+
     /// The recomputation distance
     int c_d;
     /// The adaptive recomputation distance

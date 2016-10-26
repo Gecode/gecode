@@ -67,7 +67,7 @@ int main (int argc, char * const argv[]) {
     access[nbDecisionVar-2]=boardSize;
     for (int i=nbDecisionVar-3; i>=0; i--)
         access[i]=access[i+2]*2;
-	
+
     // debug
     for (int i=0; i<boardSize; i++)
     {
@@ -98,7 +98,7 @@ int main (int argc, char * const argv[]) {
         branch(*(p.space()),b,INT_VAR_SIZE_MIN(),INT_VAL_MIN());
         p.nextScope();
     }
-	
+
     // Declaring last scope variables ...
 
     p.QIntVar(nbDecisionVar, 0, 1);
@@ -122,7 +122,7 @@ int main (int argc, char * const argv[]) {
     element(*(p.space()), board, p.var(nbDecisionVar+1), p.var(nbDecisionVar));
 
 	  // Note : declaring a brancher for the goal is not mandatory, as the goal will be tested only when all variables are assigned.
-	 
+
     // When every variables and constraints have been declared, the makeStructure method
     // must be called in order to lead the problem ready for solving.
     p.makeStructure();

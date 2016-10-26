@@ -54,7 +54,7 @@ namespace Gecode {
 namespace Gecode { namespace Float { namespace Branch {
 
   forceinline
-  ValSelLq::ValSelLq(Space& home, const ValBranch& vb) 
+  ValSelLq::ValSelLq(Space& home, const ValBranch& vb)
     : ValSel<FloatView,FloatNumBranch>(home,vb) {}
   forceinline
   ValSelLq::ValSelLq(Space& home, bool shared, ValSelLq& vs)
@@ -67,7 +67,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
 
   forceinline
-  ValSelGq::ValSelGq(Space& home, const ValBranch& vb) 
+  ValSelGq::ValSelGq(Space& home, const ValBranch& vb)
     : ValSel<FloatView,FloatNumBranch>(home,vb) {}
   forceinline
   ValSelGq::ValSelGq(Space& home, bool shared, ValSelGq& vs)
@@ -80,7 +80,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
 
   forceinline
-  ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb) 
+  ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb)
     : ValSel<FloatView,FloatNumBranch>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, bool shared, ValSelRnd& vs)

@@ -1,5 +1,5 @@
-/****   , [ StrategyNode.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ StrategyNode.hh ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ public:
     int Vmax;
     int scope;
     vector<int> valeurs;
-    
+
     QECODE_EXPORT StrategyNode();
     QECODE_EXPORT StrategyNode(int type,bool qt,int Vmin, int Vmax, int scope);
     QECODE_EXPORT ~StrategyNode();

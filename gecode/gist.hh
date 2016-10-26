@@ -124,7 +124,7 @@ namespace Gecode {
     public:
       //@{
       ///\name Comparator interface
-      
+
       /// Call-back function
       virtual void compare(const Space& s0, const Space& s1) = 0;
       /// Name of the comparator
@@ -138,7 +138,7 @@ namespace Gecode {
 
       //@{
       ///\name Helper methods
-      
+
       /// Return string representation of difference between arrays \a x and \a y, which are called \a x_n
       template<class Var>
       static std::string compare(std::string x_n, const VarArgArray<Var>& x,
@@ -157,9 +157,9 @@ namespace Gecode {
 #endif
       //@}
     };
-        
+
     class TextOutputI;
-    
+
     /// An window for simple text output
     class GECODE_GIST_EXPORT TextOutput {
     private:
@@ -186,7 +186,7 @@ namespace Gecode {
       /// Name of the inspector
       virtual std::string name(void);
     };
-    
+
     /// An inspector for printing simple text output
     template<class S>
     class Print : public TextOutput, public Inspector {
@@ -223,11 +223,11 @@ namespace Gecode {
       /// Finalize when Gist exits
       virtual void finalize(void);
     };
-    
+
     /// A branching that stops exploration
     GECODE_GIST_EXPORT
     void stopBranch(Space& home);
-    
+
     /**
      * \brief %Options for %Gist
      *
@@ -259,7 +259,7 @@ namespace Gecode {
         void move(Inspector* i);
         /// Add comparator
         void compare(Comparator* c);
-        
+
         /// Return click inspector number \a i, or NULL if it does not exist
         Inspector* click(unsigned int i) const;
         /// Return solution inspector number \a i, or NULL if it does not exist
@@ -275,26 +275,26 @@ namespace Gecode {
       Options(void);
     };
 
-    
+
     /// Create a new stand-alone Gist for \a root using \a bab
-    GECODE_GIST_EXPORT int 
+    GECODE_GIST_EXPORT int
     explore(Space* root, bool bab, const Options& opt);
-    
+
     /**
      * \brief Create a new stand-alone Gist for \a root
      * \ingroup TaskGist
      */
-    int 
+    int
     dfs(Space* root, const Gist::Options& opt = Gist::Options::def);
-    
+
     /**
      * \brief Create a new stand-alone Gist for branch-and-bound search of \a root
      * \ingroup TaskGist
      */
-    int 
+    int
     bab(Space* root, const Gist::Options& opt = Gist::Options::def);
-    
-  }	
+
+  }
 
 }
 

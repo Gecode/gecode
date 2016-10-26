@@ -70,6 +70,8 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -91,6 +93,8 @@ namespace Gecode { namespace Int { namespace Bool {
                 BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -372,6 +376,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i = y\f$
@@ -464,16 +470,16 @@ namespace Gecode { namespace Int { namespace Bool {
     NaryEqv(Space& home, bool share, NaryEqv& p);
   public:
     /// Copy propagator during cloning
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as low binary)
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 \Leftrightarrow x_1 \Leftrightarrow \cdots \Leftrightarrow x_{|x|-1}=p\f$
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     static ExecStatus post(Home home, ViewArray<BoolView>& x, int pm2);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
@@ -522,6 +528,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \bigvee_{i=0}^{|x|-1} x_i \vee \bigvee_{i=0}^{|x|-1} y_i = z\f$
@@ -572,20 +580,22 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, PropCond pc>
+  template<class V0, class V1, class V2, PropCond pc>
   class IteBase : public Propagator {
   protected:
     /// View for condition
     BoolView b;
     /// Views
-    View x0, x1, x2;
+    V0 x0; V1 x1; V2 x2;
     /// Constructor for cloning \a p
     IteBase(Space& home, bool share, IteBase& p);
     /// Constructor for creation
-    IteBase(Home home, BoolView b, View x0, View x1, View x2);
+    IteBase(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -596,24 +606,24 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class IteBnd : public IteBase<View,PC_INT_BND> {
+  template<class V0, class V1, class V2>
+  class IteBnd : public IteBase<V0,V1,V2,PC_INT_BND> {
   protected:
-    using IteBase<View,PC_INT_BND>::b;
-    using IteBase<View,PC_INT_BND>::x0;
-    using IteBase<View,PC_INT_BND>::x1;
-    using IteBase<View,PC_INT_BND>::x2;
+    using IteBase<V0,V1,V2,PC_INT_BND>::b;
+    using IteBase<V0,V1,V2,PC_INT_BND>::x0;
+    using IteBase<V0,V1,V2,PC_INT_BND>::x1;
+    using IteBase<V0,V1,V2,PC_INT_BND>::x2;
     /// Constructor for cloning \a p
     IteBnd(Space& home, bool share, IteBnd& p);
     /// Constructor for creation
-    IteBnd(Home home, BoolView b, View x0, View x1, View x2);
+    IteBnd(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post if-then-else propagator
-    static ExecStatus post(Home home, BoolView b, View x0, View x1, View x2);
+    static ExecStatus post(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   };
 
   /**
@@ -622,17 +632,17 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include <gecode/int/bool.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class IteDom : public IteBase<View,PC_INT_DOM> {
+  template<class V0, class V1, class V2>
+  class IteDom : public IteBase<V0,V1,V2,PC_INT_DOM> {
   protected:
-    using IteBase<View,PC_INT_DOM>::b;
-    using IteBase<View,PC_INT_DOM>::x0;
-    using IteBase<View,PC_INT_DOM>::x1;
-    using IteBase<View,PC_INT_DOM>::x2;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::b;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::x0;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::x1;
+    using IteBase<V0,V1,V2,PC_INT_DOM>::x2;
     /// Constructor for cloning \a p
     IteDom(Space& home, bool share, IteDom& p);
     /// Constructor for creation
-    IteDom(Home home, BoolView b, View x0, View x1, View x2);
+    IteDom(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -641,7 +651,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post if-then-else propagator
-    static ExecStatus post(Home home, BoolView b, View x0, View x1, View x2);
+    static ExecStatus post(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   };
 
 }}}

@@ -236,7 +236,7 @@ public:
 
   /// The model of the problem
   CrowdedChess(const SizeOptions& opt)
-    : Script(opt), 
+    : Script(opt),
       n(opt.size()),
       s(*this, n*n, 0, PMAX-1),
       queens(*this, n, 0, n-1),
@@ -255,33 +255,33 @@ public:
     // Basic model
     // ***********************
 
-    count(*this, s, E, IRT_EQ, e, opt.icl());
-    count(*this, s, Q, IRT_EQ, q, opt.icl());
-    count(*this, s, R, IRT_EQ, r, opt.icl());
-    count(*this, s, B, IRT_EQ, b, opt.icl());
-    count(*this, s, K, IRT_EQ, k, opt.icl());
+    count(*this, s, E, IRT_EQ, e, opt.ipl());
+    count(*this, s, Q, IRT_EQ, q, opt.ipl());
+    count(*this, s, R, IRT_EQ, r, opt.ipl());
+    count(*this, s, B, IRT_EQ, b, opt.ipl());
+    count(*this, s, K, IRT_EQ, k, opt.ipl());
 
     // Collect rows and columns for handling rooks and queens
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
 
-      count(*this, aa, Q, IRT_EQ, 1, opt.icl());
-      count(*this, bb, Q, IRT_EQ, 1, opt.icl());
-      count(*this, aa, R, IRT_EQ, 1, opt.icl());
-      count(*this, bb, R, IRT_EQ, 1, opt.icl());
+      count(*this, aa, Q, IRT_EQ, 1, opt.ipl());
+      count(*this, bb, Q, IRT_EQ, 1, opt.ipl());
+      count(*this, aa, R, IRT_EQ, 1, opt.ipl());
+      count(*this, bb, R, IRT_EQ, 1, opt.ipl());
 
       // Connect (queens|rooks)[i] to the row it is in
-      element(*this, aa, queens[i], Q, ICL_DOM);
-      element(*this, aa,  rooks[i], R, ICL_DOM);
+      element(*this, aa, queens[i], Q, IPL_DOM);
+      element(*this, aa,  rooks[i], R, IPL_DOM);
     }
 
     // N-queens constraints
-    distinct(*this, queens, ICL_DOM);
-    distinct(*this, IntArgs::create(n,0,1), queens, ICL_DOM);
-    distinct(*this, IntArgs::create(n,0,-1), queens, ICL_DOM);
+    distinct(*this, queens, IPL_DOM);
+    distinct(*this, IntArgs::create(n,0,1), queens, IPL_DOM);
+    distinct(*this, IntArgs::create(n,0,-1), queens, IPL_DOM);
 
     // N-rooks constraints
-    distinct(*this,  rooks, ICL_DOM);
+    distinct(*this,  rooks, IPL_DOM);
 
     // Collect diagonals for handling queens and bishops
     for (int l = n; l--; ) {
@@ -294,22 +294,22 @@ public:
         d4[i] = m((n-1)-i, i+il);
       }
 
-      count(*this, d1, Q, IRT_LQ, 1, opt.icl());
-      count(*this, d2, Q, IRT_LQ, 1, opt.icl());
-      count(*this, d3, Q, IRT_LQ, 1, opt.icl());
-      count(*this, d4, Q, IRT_LQ, 1, opt.icl());
+      count(*this, d1, Q, IRT_LQ, 1, opt.ipl());
+      count(*this, d2, Q, IRT_LQ, 1, opt.ipl());
+      count(*this, d3, Q, IRT_LQ, 1, opt.ipl());
+      count(*this, d4, Q, IRT_LQ, 1, opt.ipl());
       if (opt.propagation() == PROP_DECOMPOSE) {
-        count(*this, d1, B, IRT_LQ, 1, opt.icl());
-        count(*this, d2, B, IRT_LQ, 1, opt.icl());
-        count(*this, d3, B, IRT_LQ, 1, opt.icl());
-        count(*this, d4, B, IRT_LQ, 1, opt.icl());
+        count(*this, d1, B, IRT_LQ, 1, opt.ipl());
+        count(*this, d2, B, IRT_LQ, 1, opt.ipl());
+        count(*this, d3, B, IRT_LQ, 1, opt.ipl());
+        count(*this, d4, B, IRT_LQ, 1, opt.ipl());
       }
     }
     if (opt.propagation() == PROP_TUPLE_SET) {
       IntVarArgs b(s.size());
       for (int i = s.size(); i--; )
         b[i] = channel(*this, expr(*this, (s[i] == B)));
-      extensional(*this, b, bishops, EPK_DEF, opt.icl());
+      extensional(*this, b, bishops, opt.ipl());
     }
 
     // Handle knigths
@@ -409,7 +409,7 @@ main(int argc, char* argv[]) {
   opt.propagation(CrowdedChess::PROP_DECOMPOSE,
                   "decompose",
                   "Use decomposed propagation for bishops-placement");
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.size(8);
   opt.parse(argc,argv);
   if (opt.size() < 5) {

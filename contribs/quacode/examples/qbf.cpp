@@ -64,17 +64,21 @@ namespace Gecode { namespace Driver {
  * \brief Options taking one additional parameter
  */
 class QBFOptions : public Options {
+  /// Print strategy or not
+  Gecode::Driver::BoolOption _printStrategy;
   Driver::BoolOption _qConstraint; /// Parameter to decide between optimized quantified constraints or usual ones
 public:
   int n; /// Parameter to be given on the command line
   /// Initialize options for example with name \a s
   QBFOptions(const char* s, int n0, bool _qConstraint0)
     : Options(s),
+      _printStrategy("-printStrategy","Print strategy",false),
       _qConstraint("-quantifiedConstraints",
                    "whether to use quantified optimized constraints",
                    _qConstraint0),
       n(n0)
   {
+    add(_printStrategy);
     add(_qConstraint);
   }
   /// Parse options from arguments \a argv (number is \a argc)
@@ -83,6 +87,10 @@ public:
     if (argc < 2)
       return;
     n = atoi(argv[1]);
+  }
+  /// Return true if the strategy must be printed
+  bool printStrategy(void) const {
+    return _printStrategy.value();
   }
   bool qConstraint(void) const {
     return _qConstraint.value();
@@ -98,9 +106,10 @@ public:
 class QBFProblem : public Script, public QSpaceInfo {
   BoolVarArray X;
 public:
-  QBFProblem(const QBFOptions& opt) : Script(), QSpaceInfo()
+  QBFProblem(const QBFOptions& opt) : Script(opt), QSpaceInfo()
   {
     std::cout << "Loading problem" << std::endl;
+    if (!opt.printStrategy()) strategyMethod(0); // disable build and print strategy
     using namespace Int;
 
     X = BoolVarArray(*this,4,0,1);

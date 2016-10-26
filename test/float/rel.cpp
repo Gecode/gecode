@@ -105,7 +105,7 @@ namespace Test { namespace Float {
        FloatVarXX(Gecode::FloatRelType frt0, Gecode::FloatNum st)
          : Test("Rel::Float::Var::XX::"+str(frt0),
                 1,-3,3,st,CPLT_ASSIGNMENT,true),
-           frt(frt0) { 
+           frt(frt0) {
          testsubsumed = false;
        }
        /// %Test whether \a x is solution
@@ -132,7 +132,7 @@ namespace Test { namespace Float {
        Gecode::FloatVal c;
      public:
        /// Create and register test
-       FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0, 
+       FloatFloat(Gecode::FloatRelType frt0, int n, Gecode::FloatNum c0,
                   Gecode::FloatNum st)
          : Test("Rel::Float::Float::"+str(frt0)+"::"+str(n)+"::"+str(c0),
                 n,-3,3,st,CPLT_ASSIGNMENT,n==1),

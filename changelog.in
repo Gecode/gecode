@@ -67,6 +67,704 @@
 #
 
 [RELEASE]
+Version: 5.0.0
+Date: 2016-10-31
+[DESCRIPTION]
+
+This release adds a number of new features and fixes many bugs
+(some rather serious), so it is recommended to switch as soon as
+possible to this release. Some highlights are: re-added limited
+discrepancy search (LDS); added sequential and parallel
+portfolio-based search (PBS); added support for groups of
+propagators and branchers; added extensive tracing functionality
+based on groups; propagators can be disabled and re-enabled;
+support for arbitrary memory allocators; changed the notion of
+"integer consistency level" to the more expressive concept
+"integer propagation level".
+
+It is recommended to read the new Chapter in MPG on groups and
+tracing.
+
+As the interfaces has changed, please consult
+\ref PageHowToChange_5 "How to Change to Gecode 5.0.0".
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed some idempotency problems in the n-ary union and weight propagators.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added relax() function for relaxed assignment of float variables
+from a previous solution, see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added relax() function for relaxed assignment of set variables
+from a previous solution, see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added relax() function for relaxed assignment of integer and
+Boolean variables from a previous solution, see MPG for details.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The probability for relaxing variables in LNS can be passed with
+the -relax commandline option.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+The domain consistent dom() constraint for integer ranges was
+only bounds consistent...
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Export BoolExpr::Misc for linking.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Do not declare new and delete of ArgArrayBase as private to
+support the use of placement new.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The discrepancy limit for Limited Discrepancy Search (LDS) can be
+passed with the -d-l commandline option.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Limited Discrepancy Search (LDS) added. Please see MPG for
+details.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Mats Carlsson
+[DESCRIPTION]
+Fix the FlatZinc parser for cases where variables were aliased to a fixed
+variable.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Fixed memory leak for regions (occured for many large allocation
+requests).
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   major
+Thanks: Filip Konvicka
+[DESCRIPTION]
+Enable optimized rounding only if MSVC does not use SSE,
+otherwise things really go wrong (necessary for MSVC 2015).
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added additional propagation cost level record() which is
+reserved for propagators that record information but do not
+propagate.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added channeling constraint between float and Boolean variable.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
+FloatValArgs erroneously inherited from PrimArgArray, now it
+inherits from ArgArray.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
+Fixed memory leak in constructor for Boolean element expression.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
+Fixed special case handling for sqr and pow functions.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks:	Matthias Balzer
+[DESCRIPTION]
+Removed bogus declarations of comparison operators between
+Boolean variables and float expressions.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Propagators and branchers now have a fixed identity available by
+id() member functions.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+Thanks: Gilles Pesant
+[DESCRIPTION]
+Added an iterator SubscribedPropagators that iterates over the
+subscribed propagators of views and variable implementations.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Mirko Rahn
+[DESCRIPTION]
+Do not use local classes as this would requite C++-11.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix n-ary lq/le propagator when used on arrays with variables occurring
+multiply.
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Removed brancher handles, they are subsumed by brancher groups.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed many small quirks in propagator rewriting, where the
+information on which propagator is rewritten was omitted.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Trace flags can be passed on the commandline.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for tracing propagation, please see MPG for details.
+
+ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+All constraint post functions should now use the macro
+GECODE_POST at their start: it will check for failure but also
+will set group information useful for tracing.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Some Gecode macros made the assumption that they can only be used
+inside the Gecode namespace. Fixed.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added groups of branchers (class BrancherGroup) by which
+groups of branchers can be controlled. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added groups of propagators (class PropagatorGroup) by which
+groups of propagators can be controlled. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Propagators can now be disabled and enabled (through
+PropagatorGroups). See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+All propagators must implement a virtual member function
+reschedule() that can be used to reschedule a propagator according
+to its subscriptions. See MPG for more details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+All variable implementation must implement an additional
+reschedule() function that can be used to reschedule a propagator
+according to its subscriptions. See MPG for more details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The iterators over all propagators and branchers of a space are
+not any longer accessible. Please use group iterators instead.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The member functions propagators() and branchers() of the class
+Space have been removed as they can be expressed with groups.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks:	Mirko Rahn
+[DESCRIPTION]
+Made copy constructor for search engines private to trigger
+compiler error when trying to copy a search engine.
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Thanks:	Mirko Rahn
+[DESCRIPTION]
+Fixed some linking issues for static linking.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   major
+[DESCRIPTION]
+Gecode supports now arbitrary memory allocators (the behavior can
+be controlled by the commandline options -enable-allocator and
+-disable-allocator). For more details, please see MPG.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Added destructor to NGL class to avoid warnings.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Fixed wrong type declaration in region_allocator::deallocate().
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks: Conrad Drescher, Patrick Berg
+[DESCRIPTION]
+Fixed two infinite recursion bugs in related to use of hull().
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Add missing declaration for bool_clause_reif builtin.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Tommy Persson
+[DESCRIPTION]
+FlatZinc interpreter now does not try to post constraints if there was a
+syntax error during parsing.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Roberto Castañeda Lozano, Matthias Balzer
+[DESCRIPTION]
+Fixed posting of Boolean element expressions and relations.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Joseph Scott
+[DESCRIPTION]
+Fix printing of regular expressions.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added distinct-except-constant constraint.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added distinct with optional variables.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add support for the alldifferent_except_0 constraint by rewriting to a
+global cardinality constraint.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The simple LNS using relax_and_reconstruct can now take an optional third
+argument that is used as an initial solution.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The restart meta search engine must be used with the
+branch-and-bound engine for best solution search.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+For meta search engines, the order of template arguments has been
+changed: the first is the script type, the second is the engine
+type.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+All branchers of a space can be killed by
+BrancherGroup::all.kill(home). This is the default for the master()
+function when using portfolio search.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+The clone() function takes an additional optional argument that defines
+whether AFC information is shared among clones.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The number of assets to use for portfolio-based search can be
+passed on the commandline as -assets.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+[DESCRIPTION]
+Portfolio-based search has been added (both sequential and
+parallel). Please see "Modeling and Programming with Gecode" for
+details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The master() and slave() configuration functions has been changed
+as they are now also used for portfolio-based search. Please see
+"Modeling and Programming with Gecode" for details.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Classes can now inherit from HeapAllocated when using the Gecode
+heap object for memory management.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The restart engine would not properly delete some data structures
+when being deleted.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added some additional propagation to circuit and path
+constraints, based on: Kathryn Glenn Francis, Peter Stuckey,
+Explaining Circuit Propagation, Constraints (2014) 19:1-29.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+Thanks: Joseph Scott
+[DESCRIPTION]
+Missing = SUBSCRIBE annotations for modification events are
+properly reported.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+The unary constraint now can also perform time-tabling propagation.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+The level of propagation of the cumulative constraint can now be
+controlled via the integer propagation level argument. Please
+consult Modeling and Programming with Gecode for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+The level of propagation of the unary constraint can now be
+controlled via the integer propagation level argument. Please
+consult Modeling and Programming with Gecode for details.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The selection for extensional table constraints whether to
+optimize for speed or memory is now controlled by the integer
+propagation level argument. The old argument of type
+ExtensionalPropKind has been removed (the type has been removed
+as well).
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   major
+[DESCRIPTION]
+The commandline option -icl (for integer consistency level) has
+been replaced by -ipl (for integer propagation level). All new
+levels can be specified by a comma separated list as argument to
+-ipl.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+The integer consistency level (IntConLevel) has been renamed to
+integer propagation level (IntPropLevel). Additional levels for
+speed, memory, basic, and advanced propagation have been added.
+See Modeling and Programming with Gecode for details.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks:	Kish Shen
+[DESCRIPTION]
+The count constraint with INT_GR relation was broken (off-by-one error).
+
+[ENTRY]
+Module: example
+What:   change
+Rank:   minor
+Thanks:	Ananja Muddukrishna
+[DESCRIPTION]
+The bin-packing model did not use a best-fit solution for the
+upper bound, but only a first-fit.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
+Some count constraints are now optimized in case its arguments are
+assigned.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Compiles with Visual Studio 2015.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
+The binpacking constraint works even if all items are of size zero.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Kish Shen
+[DESCRIPTION]
+Constrain bin variables even for zero-sized items in binpacking constraint.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fix a bug in the parser when parsing float variable domains.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+Thanks: Kish Shen
+[DESCRIPTION]
+Added variant of argmin and argmax with offset.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+Thanks: Pete Nightingale
+[DESCRIPTION]
+Make bounds propagation the default for global cardinality constraints
+in FlatZinc.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add support for generating the FlatZinc parser using bison version 3.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Andrea Rendl
+[DESCRIPTION]
+Fix branching on introduced variables, which could sometimes lead to
+unassigned variables appearing in the output.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Jean-Noël Monette
+[DESCRIPTION]
+Improve error messages in FlatZinc for some type errors.
+
+
+[RELEASE]
 Version: 4.4.0
 Date: 2015-03-20
 [DESCRIPTION]
@@ -277,7 +975,7 @@ What:   bug
 Rank:   minor
 Thanks: Björn Böttcher
 [DESCRIPTION]
-Fix behaviour of -a command line option for satisfaction problems.
+Fix behavior of -a command line option for satisfaction problems.
 
 [ENTRY]
 Module: flatzinc
@@ -316,7 +1014,7 @@ Module: test
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added long-overdues tests for the FlatZinc interpreter.
+Added long-overdue tests for the FlatZinc interpreter.
 
 [ENTRY]
 Module: other

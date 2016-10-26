@@ -74,6 +74,8 @@ namespace Gecode { namespace Float { namespace Linear {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -187,7 +189,7 @@ namespace Gecode { namespace Float { namespace Linear {
    * \param u upper bound
    *
    */
-  GECODE_FLOAT_EXPORT void 
+  GECODE_FLOAT_EXPORT void
   estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum& u);
 
   /**

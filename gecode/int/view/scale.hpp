@@ -136,27 +136,27 @@ namespace Gecode { namespace Int {
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::lq(Space& home, Val n) {
-    return (n >= max()) ? ME_INT_NONE : 
+    return (n >= max()) ? ME_INT_NONE :
       x.lq(home,floor_div_xp(n,static_cast<Val>(a)));
   }
 
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::le(Space& home, Val n) {
-    return (n > max()) ? ME_INT_NONE : 
+    return (n > max()) ? ME_INT_NONE :
       x.le(home,floor_div_xp(n,static_cast<Val>(a)));
   }
 
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::gq(Space& home, Val n) {
-    return (n <= min()) ? ME_INT_NONE : 
+    return (n <= min()) ? ME_INT_NONE :
       x.gq(home,ceil_div_xp(n,static_cast<Val>(a)));
   }
   template<class Val, class UnsVal>
   forceinline ModEvent
   ScaleView<Val,UnsVal>::gr(Space& home, Val n) {
-    return (n < min()) ? ME_INT_NONE : 
+    return (n < min()) ? ME_INT_NONE :
       x.gr(home,ceil_div_xp(n,static_cast<Val>(a)));
   }
 

@@ -77,8 +77,8 @@ public:
     Matrix<IntVarArray> m(x, n, n);
 
     for (int i = n; i--; ) {
-      linear(*this, m.row(i), IRT_EQ, s, opt.icl());
-      linear(*this, m.col(i), IRT_EQ, s, opt.icl());
+      linear(*this, m.row(i), IRT_EQ, s, opt.ipl());
+      linear(*this, m.col(i), IRT_EQ, s, opt.ipl());
     }
     // Both diagonals must have sum s
     {
@@ -88,12 +88,12 @@ public:
         d1y[i] = m(i,i);
         d2y[i] = m(n-i-1,i);
       }
-      linear(*this, d1y, IRT_EQ, s, opt.icl());
-      linear(*this, d2y, IRT_EQ, s, opt.icl());
+      linear(*this, d1y, IRT_EQ, s, opt.ipl());
+      linear(*this, d2y, IRT_EQ, s, opt.ipl());
     }
 
     // All fields must be distinct
-    distinct(*this, x, opt.icl());
+    distinct(*this, x, opt.ipl());
 
     // Break some (few) symmetries
     rel(*this, m(0,0), IRT_GR, m(0,n-1));

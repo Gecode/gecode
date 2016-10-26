@@ -52,7 +52,7 @@ namespace Test {
     using namespace Gecode;
 
     /// A dummy function for branching
-    void dummy(Space& home) {
+    void dummy(Space&) {
     }
 
     /// Example for testing integer no-goods
@@ -63,11 +63,11 @@ namespace Test {
       /// Position of queens on boards
       IntVarArray q;
       /// The actual problem
-      Queens(IntValBranch ivb, bool assign, bool null) 
+      Queens(IntValBranch ivb, bool assign, bool null)
         : q(*this,n,0,n-1) {
-        distinct(*this, IntArgs::create(n,0,1), q, ICL_VAL);
-        distinct(*this, IntArgs::create(n,0,-1), q, ICL_VAL);
-        distinct(*this, q, ICL_VAL);
+        distinct(*this, IntArgs::create(n,0,1), q, IPL_VAL);
+        distinct(*this, IntArgs::create(n,0,-1), q, IPL_VAL);
+        distinct(*this, q, IPL_VAL);
         if (assign) {
           IntVar x(*this,0,1); Gecode::assign(*this, x, INT_ASSIGN_MIN());
         }
@@ -142,7 +142,7 @@ namespace Test {
         SetVarArgs cx(x.size());
         for (int i=x.size(); i--;)
           cx[i] = expr(*this, -x[i]);
-        
+
         for (int i=0; i<x.size(); i++)
           for (int j=i+1; j<x.size(); j++)
             rel(*this,
@@ -241,27 +241,28 @@ namespace Test {
           o.stop = &ns;
           o.threads = t;
           o.nogoods_limit = 256U;
-          DFS<Model> e(m,o);
+          Search::Engine* e = Search::dfs(m,o);
           while (true) {
-            Model* s = e.next();
+            Model* s = static_cast<Model*>(e->next());
             delete s;
-            if (!e.stopped())
+            if (!e->stopped())
               break;
             // Add no-goods
-            e.nogoods().post(*m);
+            e->nogoods().post(*m);
             ns.limit(ns.limit()+Model::nodeinc());
           }
+          delete e;
         }
         // Compare whether the a or the same solution is found with no-goods
         Model* s_nogoods = dfs(m);
 
-        bool ok = ((s_nogoods != NULL) && 
+        bool ok = ((s_nogoods != NULL) &&
                    ((t != 1) || s_plain->same(*s_nogoods)));
 
         delete m;
-        delete s_nogoods; 
+        delete s_nogoods;
         delete s_plain;
-        
+
         return ok;
       }
     };

@@ -66,13 +66,13 @@ namespace Gecode { namespace Int { namespace Exec {
     When(Home home, BoolView x, void (*t0)(Space&), void (*e0)(Space&));
   public:
     /// Copy propagator during cloning
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     static ExecStatus post(Home home, BoolView x,
                            void (*t)(Space&), void (*e)(Space&));
   };

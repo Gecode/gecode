@@ -43,8 +43,8 @@
 #include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search {
-    
-  Engine* 
+
+  Engine*
   bab(Space* s, const Options& o) {
 #ifdef GECODE_HAS_THREADS
     Options to = o.expand();

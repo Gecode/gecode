@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
     if (y.min() >= x.size())
       return ES_OK;
-    
+
     // Eliminate assigned views and store them into the value set
     ValSet vs;
     int n = x.size();
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace NValues {
     (void) new (home) LqInt<VY>(home, vs, x, y);
     return ES_OK;
   }
-    
+
   template<class VY>
   forceinline
   LqInt<VY>::LqInt(Space& home, bool share, LqInt<VY>& p)
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
     if (x.size() + vs.size() <= y.min())
       return home.ES_SUBSUMED(*this);
-      
+
     // Compute positions of disjoint views
     Region r(home);
     int* dis; int n_dis;
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
     return ES_NOFIX;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

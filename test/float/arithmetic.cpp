@@ -98,7 +98,7 @@ namespace Test { namespace Float {
          Gecode::mult(home, x[0], x[1], x[2]);
        }
      };
-     
+
      /// %Test for multiplication constraint with shared variables
      class MultXXY : public Test {
      public:
@@ -140,7 +140,7 @@ namespace Test { namespace Float {
          Gecode::mult(home, x[0], x[0], x[1]);
        }
      };
-     
+
      /// %Test for multiplication constraint with shared variables
      class MultXYX : public Test {
      public:
@@ -188,7 +188,7 @@ namespace Test { namespace Float {
          Gecode::mult(home, x[0], x[0], x[0]);
        }
      };
-     
+
      /// %Test for division constraint
      class Div : public Test {
      public:
@@ -207,7 +207,7 @@ namespace Test { namespace Float {
            Gecode::rel(home, x[0] / x[1] == x[2]);
        }
      };
-     
+
      /// %Test for division constraint when solution is ensured
      class DivSol : public Test {
      public:
@@ -233,7 +233,7 @@ namespace Test { namespace Float {
          Gecode::div(home, x[0], x[1], x[2]);
        }
      };
-     
+
      /// %Test for squaring constraint
      class SqrXY : public Test {
      public:
@@ -278,7 +278,7 @@ namespace Test { namespace Float {
          Gecode::sqr(home, x[0], x[1]);
        }
      };
-     
+
      /// %Test for squaring constraint with shared variables
      class SqrXX : public Test {
      public:
@@ -349,7 +349,7 @@ namespace Test { namespace Float {
          Gecode::sqrt(home, x[0], x[1]);
        }
      };
-     
+
      /// %Test for square root constraint with shared variables
      class SqrtXX : public Test {
      public:
@@ -390,7 +390,7 @@ namespace Test { namespace Float {
            Gecode::rel(home, pow(x[0],n) == x[1]);
        }
      };
-     
+
      /// %Test for pow  constraint where solution is ensured
      class PowXYSol : public Test {
        unsigned int n;
@@ -417,7 +417,7 @@ namespace Test { namespace Float {
          Gecode::pow(home, x[0], n, x[1]);
        }
      };
-     
+
      /// %Test for pow  constraint with shared variables
      class PowXX : public Test {
        unsigned int n;
@@ -434,7 +434,7 @@ namespace Test { namespace Float {
          Gecode::pow(home, x[0], n, x[0]);
        }
      };
-     
+
      /// %Test for nroot  constraint
      class NRootXY : public Test {
        unsigned int n;
@@ -456,7 +456,7 @@ namespace Test { namespace Float {
            Gecode::rel(home, nroot(x[0],n) == x[1]);
        }
      };
-     
+
      /// %Test for nroot  constraint where solution is ensured
      class NRootXYSol : public Test {
        unsigned int n;
@@ -472,7 +472,7 @@ namespace Test { namespace Float {
        }
        /// Extend assignment \a x
        virtual bool extendAssignement(Assignment& x) const {
-         if ((n == 0) || (x[0].max() < 0)) 
+         if ((n == 0) || (x[0].max() < 0))
            return false;
          Gecode::FloatVal d = nroot(x[0],n);
          if (Gecode::Float::subset(d, dom)) {
@@ -487,7 +487,7 @@ namespace Test { namespace Float {
          Gecode::nroot(home, x[0], n, x[1]);
        }
      };
-     
+
      /// %Test for nroot  constraint with shared variables
      class NRootXX : public Test {
        unsigned int n;
@@ -497,7 +497,7 @@ namespace Test { namespace Float {
        : Test("Arithmetic::NRoot::N::"+str(_n)+"::XX::"+s,1,d,st,CPLT_ASSIGNMENT,false) {}
        /// %Test whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
-         if ((n == 0) || (x[0].max() < 0)) 
+         if ((n == 0) || (x[0].max() < 0))
            return MT_FALSE;
          return eq(nroot(x[0],n), x[0]);
        }
@@ -506,7 +506,7 @@ namespace Test { namespace Float {
          Gecode::nroot(home, x[0], n, x[0]);
        }
      };
-     
+
      /// %Test for absolute value constraint
      class AbsXY : public Test {
      public:
@@ -799,7 +799,7 @@ namespace Test { namespace Float {
      MultXXYSol mult_xxy_sol_a("A",a,step);
      MultXXYSol mult_xxy_sol_b("B",b,step);
      MultXXYSol mult_xxy_sol_c("C",c,step);
-     
+
      MultXYX mult_xyx_a("A",a,step);
      MultXYX mult_xyx_b("B",b,step);
      MultXYX mult_xyx_c("C",c,step);
@@ -819,15 +819,15 @@ namespace Test { namespace Float {
      MultXYZSol mult_xyz_sol_a("A",a,step);
      MultXYZSol mult_xyz_sol_b("B",b,step);
      MultXYZSol mult_xyz_sol_c("C",c,step);
-     
+
      Div div_a("A",a,step);
      Div div_b("B",b,step);
      Div div_c("C",c,step);
-     
+
      DivSol div_sol_a("A",a,step);
      DivSol div_sol_b("B",b,step);
      DivSol div_sol_c("C",c,step);
-     
+
      SqrXY sqr_xy_a("A",a,step);
      SqrXY sqr_xy_b("B",b,step);
      SqrXY sqr_xy_c("C",c,step);
@@ -835,7 +835,7 @@ namespace Test { namespace Float {
      SqrXYSol sqr_xy_sol_a("A",a,step);
      SqrXYSol sqr_xy_sol_b("B",b,step);
      SqrXYSol sqr_xy_sol_c("C",c,step);
-     
+
      SqrXX sqr_xx_a("A",a,step);
      SqrXX sqr_xx_b("B",b,step);
      SqrXX sqr_xx_c("C",c,step);
@@ -847,7 +847,7 @@ namespace Test { namespace Float {
      SqrtXYSol sqrt_xy_sol_a("A",a,step);
      SqrtXYSol sqrt_xy_sol_b("B",b,step);
      SqrtXYSol sqrt_xy_sol_c("C",c,step);
-     
+
      SqrtXX sqrt_xx_a("A",a,step);
      SqrtXX sqrt_xx_b("B",b,step);
      SqrtXX sqrt_xx_c("C",c,step);
@@ -855,75 +855,75 @@ namespace Test { namespace Float {
      PowXY pow_xy_a_1("A",a,2,step);
      PowXY pow_xy_b_1("B",b,2,step);
      PowXY pow_xy_c_1("C",c,2,step);
-     
+
      PowXYSol pow_xy_sol_a_1("A",a,2,step);
      PowXYSol pow_xy_sol_b_1("B",b,2,step);
      PowXYSol pow_xy_sol_c_1("C",c,2,step);
-     
+
      PowXX pow_xx_a_1("A",a,2,step);
      PowXX pow_xx_b_1("B",b,2,step);
      PowXX pow_xx_c_1("C",c,2,step);
-     
+
      PowXY pow_xy_a_2("A",a,3,step);
      PowXY pow_xy_b_2("B",b,3,step);
      PowXY pow_xy_c_2("C",c,3,step);
-     
+
      PowXYSol pow_xy_sol_a_2("A",a,3,step);
      PowXYSol pow_xy_sol_b_2("B",b,3,step);
      PowXYSol pow_xy_sol_c_2("C",c,3,step);
-     
+
      PowXX pow_xx_a_2("A",a,3,step);
      PowXX pow_xx_b_2("B",b,3,step);
      PowXX pow_xx_c_2("C",c,3,step);
-     
+
      PowXY pow_xy_a_3("A",a,0,step);
      PowXY pow_xy_b_3("B",b,0,step);
      PowXY pow_xy_c_3("C",c,0,step);
-     
+
      PowXYSol pow_xy_sol_a_3("A",a,0,step);
      PowXYSol pow_xy_sol_b_3("B",b,0,step);
      PowXYSol pow_xy_sol_c_3("C",c,0,step);
-     
+
      PowXX pow_xx_a_3("A",a,0,step);
      PowXX pow_xx_b_3("B",b,0,step);
      PowXX pow_xx_c_3("C",c,0,step);
-     
+
      NRootXY nroot_xy_a_1("A",a,2,step);
      NRootXY nroot_xy_b_1("B",b,2,step);
      NRootXY nroot_xy_c_1("C",c,2,step);
-     
+
      NRootXYSol nroot_xy_sol_a_1("A",a,2,step);
      NRootXYSol nroot_xy_sol_b_1("B",b,2,step);
      NRootXYSol nroot_xy_sol_c_1("C",c,2,step);
-     
+
      NRootXX nroot_xx_a_1("A",a,2,step);
      NRootXX nroot_xx_b_1("B",b,2,step);
      NRootXX nroot_xx_c_1("C",c,2,step);
-     
+
      NRootXY nroot_xy_a_2("A",a,3,step);
      NRootXY nroot_xy_b_2("B",b,3,step);
      NRootXY nroot_xy_c_2("C",c,3,step);
-     
+
      NRootXYSol nroot_xy_sol_a_2("A",a,3,step);
      NRootXYSol nroot_xy_sol_b_2("B",b,3,step);
      NRootXYSol nroot_xy_sol_c_2("C",c,3,step);
-     
+
      NRootXX nroot_xx_a_2("A",a,3,step);
      NRootXX nroot_xx_b_2("B",b,3,step);
      NRootXX nroot_xx_c_2("C",c,3,step);
-     
+
      NRootXY nroot_xy_a_3("A",a,0,step);
      NRootXY nroot_xy_b_3("B",b,0,step);
      NRootXY nroot_xy_c_3("C",c,0,step);
-     
+
      NRootXYSol nroot_xy_sol_a_3("A",a,0,step);
      NRootXYSol nroot_xy_sol_b_3("B",b,0,step);
      NRootXYSol nroot_xy_sol_c_3("C",c,0,step);
-     
+
      NRootXX nroot_xx_a_3("A",a,0,step);
      NRootXX nroot_xx_b_3("B",b,0,step);
      NRootXX nroot_xx_c_3("C",c,0,step);
-     
+
      AbsXY abs_xy_a("A",a,step);
      AbsXY abs_xy_b("B",b,step);
      AbsXY abs_xy_c("C",c,step);

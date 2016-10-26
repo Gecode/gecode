@@ -45,9 +45,9 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY, class VZ, bool shr, bool dom>
   ExecStatus
   GqView<VX,VY,VZ,shr,dom>::post(Home home,
-                             ViewArray<VX>& x, VY y, VZ z, int c) {
+                                 ViewArray<VX>& x, VY y, VZ z, int c) {
     GECODE_ME_CHECK(z.lq(home,x.size()-c));
-    if ((vtd(y) != VTD_VARVIEW) && z.assigned())
+    if (isval(y) && z.assigned())
       return GqInt<VX,VY>::post(home,x,y,z.val()+c);
     if (sharing(x,y,z))
       (void) new (home) GqView<VX,VY,VZ,true,dom>(home,x,y,z,c);
@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY, class VZ, bool shr, bool dom>
   forceinline
   GqView<VX,VY,VZ,shr,dom>::GqView(Space& home, bool share,
-                               GqView<VX,VY,VZ,shr,dom>& p)
+                                   GqView<VX,VY,VZ,shr,dom>& p)
     : ViewBase<VX,VY,VZ>(home,share,p) {}
 
   template<class VX, class VY, class VZ, bool shr, bool dom>
@@ -76,19 +76,19 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.min() == atmost()) {
-      GECODE_ES_CHECK(post_true(home,x,y)); 
+      GECODE_ES_CHECK(post_true(home,x,y));
       return home.ES_SUBSUMED(*this);
     }
     if (x.size() == 0)
       return home.ES_SUBSUMED(*this);
 
-    if (z.assigned() && (!dom || (vtd(y) != VTD_VARVIEW))) {
+    if (z.assigned() && (!dom ||isval(y))) {
       VY yc(y);
       GECODE_REWRITE(*this,(GqInt<VX,VY>::post(home(*this),x,yc,z.val()+c)));
     }
 
-    if (dom && (vtd(y) == VTD_VARVIEW) && (z.min() > 0)) {
-      /* 
+    if (dom && !isval(y) && (z.min() > 0)) {
+      /*
        * Only if the propagator is at fixpoint here, continue
        * when things are shared: the reason is that prune
        * requires that the views in x overlap with y!
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Count {
 
       return ES_NOFIX;
     }
-    
+
     return shr ? ES_NOFIX : ES_FIX;
   }
 

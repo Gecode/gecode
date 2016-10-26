@@ -1,5 +1,5 @@
-/****   , [ QSolverUnblockable.cc ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ QSolverUnblockable.cc ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,7 +47,7 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
     if (g == NULL) {return Strategy(StrategyNode::SFalse());}
     for (int i=0;i<assignments.size();i++) {
         switch (g->type_of_v[i]) {
-            case VTYPE_INT : 
+            case VTYPE_INT :
                 rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                 break;
             case VTYPE_BOOL :
@@ -63,11 +63,11 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
         return Strategy(StrategyNode::SFalse());
     }
     delete g;
-    
+
     if (scope == qs->spaces()) {
         return Strategy(StrategyNode::STrue());
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////
     // Second case : we are in the middle of the problem...                                //
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
         if (espace == NULL) cout<<"I caught a NULL for scope "<<scope<<". I will crash..."<<endl;
         for (int i=0;i<assignments.size();i++) {
             switch (espace->type_of_v[i]) {
-                case VTYPE_INT : 
+                case VTYPE_INT :
                     rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
@@ -87,7 +87,7 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                     abort();
             }
         }
-        
+
         // Second case, first subcase : current scope is universal
         /////////////////////////////////////////////////////////
         if (qs->quantification(scope)) {
@@ -95,23 +95,23 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                 delete espace;
                 return Strategy(StrategyNode::STrue());
             }
-            
+
             DFS<MySpace> solutions(espace);
             MySpace* sol = solutions.next();
             if (sol == NULL) {
                 delete espace;
                 return Strategy(StrategyNode::STrue());
             }
-            
+
             Strategy retour = StrategyNode::Dummy();
             while (sol != NULL) {
                 vector<int> assign;
                 for (int i = 0; i<sp->nbVarInScope(scope);i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -119,16 +119,16 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                             abort();
                     }
                 }
-                
+
                 int vmin = ( (scope==0)? 0 : (qs->nbVarInScope(scope-1)) );
                 int vmax = (qs->nbVarInScope(scope))-1;
                 vector<int> zevalues;
                 for (int i = vmin; i<=vmax;i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -137,7 +137,7 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                     }
                 }
                 Strategy toAttach(true,vmin,vmax,scope,zevalues);
-                
+
                 Strategy son = rSolve(qs,scope+1,assign,nodes);
                 if (son.isFalse()) {
                     delete sol;
@@ -152,7 +152,7 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
             delete espace;
             return retour;
         } // end of if(universal)
-        
+
         // Second case, second subcase : current scope is existential
         ////////////////////////////////////////////////////////////
         else {
@@ -160,7 +160,7 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                 delete espace;
                 return Strategy(StrategyNode::SFalse());
             }
-            
+
             DFS<MySpace> solutions(espace);
             MySpace* sol =solutions.next();
             if (sol == NULL) {
@@ -172,10 +172,10 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                 for (int i = 0; i<sp->nbVarInScope(scope);i++) {
 		  //                    cout << "i = "<<i<<endl;
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -183,29 +183,29 @@ Strategy QSolverUnblockable::rSolve(QcspUnblockable* qs,int scope, vector<int> a
                             abort();
                     }
                 } // end for
-                
+
                 int vmin = ( (scope==0)?0 : qs->nbVarInScope(scope-1) );
                 int vmax = qs->nbVarInScope(scope)-1;
                 vector<int> zevalues;
                 for (int i = vmin; i<=vmax;i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
-                        default : 
+                        default :
                             cout<<"6unknown Variable type"<<endl;
                             abort();
                     }
                 }
                 Strategy candidate(false,vmin,vmax,scope,zevalues);
-                
+
                 Strategy son_of_candidate = rSolve(qs,scope+1,assign,nodes);
                 if (son_of_candidate.isFalse()) candidate = Strategy::SFalse();
                 else candidate.attach(son_of_candidate);
-                
+
                 if (!candidate.isFalse()) {
                     delete sol;
                     delete espace;
@@ -249,7 +249,7 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
     if (g == NULL) {return Strategy(StrategyNode::SFalse());}
     for (int i=0;i<assignments.size();i++) {
         switch (g->type_of_v[i]) {
-            case VTYPE_INT : 
+            case VTYPE_INT :
                 rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                 break;
             case VTYPE_BOOL :
@@ -265,11 +265,11 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
         return Strategy(StrategyNode::SFalse());
     }
     delete g;
-    
+
     if (scope == qs->spaces()) {
         return Strategy(StrategyNode::STrue());
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////
     // Second case : we are in the middle of the problem...                                //
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -278,7 +278,7 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
         if (espace == NULL) cout<<"I caught a NULL for scope "<<scope<<". I will crash..."<<endl;
         for (int i=0;i<assignments.size();i++) {
             switch (espace->type_of_v[i]) {
-                case VTYPE_INT : 
+                case VTYPE_INT :
                     rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
@@ -289,7 +289,7 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                     abort();
             }
         }
-        
+
         // Second case, first subcase : current scope is universal
         /////////////////////////////////////////////////////////
         if (qs->quantification(scope)) {
@@ -297,23 +297,23 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                 delete espace;
                 return Strategy(StrategyNode::STrue());
             }
-            
+
             DFS<MySpace> solutions(espace);
             MySpace* sol = solutions.next();
             if (sol == NULL) {
                 delete espace;
                 return Strategy(StrategyNode::STrue());
             }
-            
+
             Strategy retour = StrategyNode::Dummy();
             while (sol != NULL) {
                 vector<int> assign;
                 for (int i = 0; i<sp->nbVarInScope(scope);i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -321,16 +321,16 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                             abort();
                     }
                 }
-                
+
                 int vmin = ( (scope==0)? 0 : (qs->nbVarInScope(scope-1)) );
                 int vmax = (qs->nbVarInScope(scope))-1;
                 vector<int> zevalues;
                 for (int i = vmin; i<=vmax;i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -339,7 +339,7 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                     }
                 }
                 Strategy toAttach(true,vmin,vmax,scope,zevalues);
-                
+
                 Strategy son = rSolve(qs,scope+1,assign,nodes);
                 if (son.isFalse()) {
                     delete sol;
@@ -354,7 +354,7 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
             delete espace;
             return retour;
         } // end of if(universal)
-        
+
         // Second case, second subcase : current scope is existential
         ////////////////////////////////////////////////////////////
         else {
@@ -362,7 +362,7 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                 delete espace;
                 return Strategy(StrategyNode::SFalse());
             }
-            
+
             DFS<MySpace> solutions(espace);
             MySpace* sol =solutions.next();
             if (sol == NULL) {
@@ -374,10 +374,10 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                 for (int i = 0; i<sp->nbVarInScope(scope);i++) {
 		  //                    cout << "i = "<<i<<endl;
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -385,29 +385,29 @@ Strategy QSolverUnblockable2::rSolve(Qcop* qs,int scope, vector<int> assignments
                             abort();
                     }
                 } // end for
-                
+
                 int vmin = ( (scope==0)?0 : qs->nbVarInScope(scope-1) );
                 int vmax = qs->nbVarInScope(scope)-1;
                 vector<int> zevalues;
                 for (int i = vmin; i<=vmax;i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
-                        default : 
+                        default :
                             cout<<"6unknown Variable type"<<endl;
                             abort();
                     }
                 }
                 Strategy candidate(false,vmin,vmax,scope,zevalues);
-                
+
                 Strategy son_of_candidate = rSolve(qs,scope+1,assign,nodes);
                 if (son_of_candidate.isFalse()) candidate = Strategy::SFalse();
                 else candidate.attach(son_of_candidate);
-                
+
                 if (!candidate.isFalse()) {
                     delete sol;
                     delete espace;

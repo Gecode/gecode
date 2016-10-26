@@ -46,7 +46,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Statistics
    */
-  Statistics 
+  Statistics
   DFS::statistics(void) const {
     Statistics s;
     for (unsigned int i=0; i<workers(); i++)

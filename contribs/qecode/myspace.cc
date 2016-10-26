@@ -37,17 +37,17 @@ MySpace::MySpace(unsigned int nv) : Space() {
 MySpace::~MySpace() {
     for (int i=0;i<n;i++)
         switch (type_of_v[i]) {
-            case VTYPE_INT : 
+            case VTYPE_INT :
                 delete static_cast<IntVar*>(v[i]);
                 break;
-            case VTYPE_BOOL : 
+            case VTYPE_BOOL :
                 delete static_cast<BoolVar*>(v[i]);
                 break;
             default :
                 cout<<"Unsupported variable type"<<endl;
                 abort();
         }
-    
+
     delete[] v;
     delete[] type_of_v;
 }
@@ -82,7 +82,7 @@ IntVarArgs MySpace::getIntVars(unsigned int idMax) {
     int cpt=0;
     int i=0;
     if (n<idMax) idMax=n;
-    
+
     for (int i=0;i<idMax;i++) {
         if (type_of_v[i]==VTYPE_INT) cpt++;
     }
@@ -94,7 +94,7 @@ IntVarArgs MySpace::getIntVars(unsigned int idMax) {
             cpt++;
         }
     }
-    
+
     return ret;
 }
 
@@ -102,7 +102,7 @@ BoolVarArgs MySpace::getBoolVars(unsigned int idMax) {
     int cpt=0;
     int i=0;
     if (n<idMax) idMax=n;
-    
+
     for (int i=0;i<idMax;i++) {
         if (type_of_v[i]==VTYPE_BOOL) cpt++;
     }
@@ -114,6 +114,6 @@ BoolVarArgs MySpace::getBoolVars(unsigned int idMax) {
             cpt++;
         }
     }
-    
+
     return ret;
 }

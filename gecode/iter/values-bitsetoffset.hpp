@@ -83,15 +83,15 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template<class BS>
   forceinline
-  BitSetOffset<BS>::BitSetOffset(const BS& bs0) 
+  BitSetOffset<BS>::BitSetOffset(const BS& bs0)
     : bs(bs0), cur(bs.next(bs0.offset())), limit(bs.offset()+bs.size()) {
   }
 
   template<class BS>
   forceinline
-  BitSetOffset<BS>::BitSetOffset(const BS& bs0, int n, int m) 
-    : bs(bs0), 
-      cur(bs.next(n)), 
+  BitSetOffset<BS>::BitSetOffset(const BS& bs0, int n, int m)
+    : bs(bs0),
+      cur(bs.next(n)),
       limit(std::min(bs.offset()+bs.size(),m+1)) {
   }
 

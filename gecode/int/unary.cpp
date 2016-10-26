@@ -45,7 +45,7 @@
 namespace Gecode {
 
   void
-  unary(Home home, const IntVarArgs& s, const IntArgs& p, IntConLevel icl) {
+  unary(Home home, const IntVarArgs& s, const IntArgs& p, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if (s.same(home))
@@ -57,7 +57,7 @@ namespace Gecode {
       Int::Limits::check(static_cast<long long int>(s[i].max()) + p[i],
                          "Int::unary");
     }
-    if (home.failed()) return;
+    GECODE_POST;
     bool allOne = true;
     for (int i=p.size(); i--;) {
       if (p[i] != 1) {
@@ -67,11 +67,11 @@ namespace Gecode {
     }
     if (allOne) {
       ViewArray<IntView> xv(home,s);
-      switch (icl) {
-      case ICL_BND:
+      switch (vbd(ipl)) {
+      case IPL_BND:
         GECODE_ES_FAIL(Distinct::Bnd<IntView>::post(home,xv));
         break;
-      case ICL_DOM:
+      case IPL_DOM:
         GECODE_ES_FAIL(Distinct::Dom<IntView>::post(home,xv));
         break;
       default:
@@ -81,13 +81,13 @@ namespace Gecode {
       TaskArray<ManFixPTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i]);
-      GECODE_ES_FAIL(ManProp<ManFixPTask>::post(home,t));
+      GECODE_ES_FAIL(manpost(home,t,ipl));
     }
   }
 
   void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& flex, const IntArgs& fix, IntConLevel icl) {
+        const IntVarArgs& flex, const IntArgs& fix, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((flex.size() != fix.size()) || (flex.size() != t.size()))
@@ -100,25 +100,25 @@ namespace Gecode {
       Int::Limits::check(static_cast<long long int>(flex[i].max()) + fix[i],
                          "Int::unary");
     }
-    if (home.failed()) return;
+    GECODE_POST;
     bool fixp = true;
     for (int i=t.size(); i--;)
       if (t[i] != TT_FIXP) {
         fixp = false; break;
       }
     if (fixp) {
-      unary(home, flex, fix, icl);
+      unary(home, flex, fix, ipl);
     } else {
       TaskArray<ManFixPSETask> tasks(home,flex.size());
       for (int i=flex.size(); i--;)
         tasks[i].init(t[i],flex[i],fix[i]);
-      GECODE_ES_FAIL(ManProp<ManFixPSETask>::post(home,tasks));
+      GECODE_ES_FAIL(manpost(home,tasks,ipl));
     }
   }
 
   void
-  unary(Home home, const IntVarArgs& s, const IntArgs& p, 
-        const BoolVarArgs& m, IntConLevel icl) {
+  unary(Home home, const IntVarArgs& s, const IntArgs& p,
+        const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if (s.same(home))
@@ -138,20 +138,20 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      unary(home,s,p,icl);
+      unary(home,s,p,ipl);
     } else {
-      if (home.failed()) return;
+      GECODE_POST;
       TaskArray<OptFixPTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i],m[i]);
-      GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,t));
+      GECODE_ES_FAIL(optpost(home,t,ipl));
     }
   }
 
   void
   unary(Home home, const TaskTypeArgs& t,
-        const IntVarArgs& flex, const IntArgs& fix, const BoolVarArgs& m, 
-        IntConLevel icl) {
+        const IntVarArgs& flex, const IntArgs& fix, const BoolVarArgs& m,
+        IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((flex.size() != fix.size()) || (flex.size() != t.size()) ||
@@ -168,7 +168,7 @@ namespace Gecode {
       Int::Limits::check(static_cast<long long int>(flex[i].max()) + fix[i],
                          "Int::unary");
     }
-    if (home.failed()) return;
+    GECODE_POST;
     bool allMandatory = true;
     for (int i=m.size(); i--;) {
       if (!m[i].one()) {
@@ -177,30 +177,30 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      unary(home,t,flex,fix,icl);
+      unary(home,t,flex,fix,ipl);
     } else {
       if (fixp) {
         TaskArray<OptFixPTask> tasks(home,flex.size());
         for (int i=flex.size(); i--; )
           tasks[i].init(flex[i],fix[i],m[i]);
-        GECODE_ES_FAIL(OptProp<OptFixPTask>::post(home,tasks));
+        GECODE_ES_FAIL(optpost(home,tasks,ipl));
       } else {
         TaskArray<OptFixPSETask> tasks(home,flex.size());
         for (int i=flex.size(); i--;)
           tasks[i].init(t[i],flex[i],fix[i],m[i]);
-        GECODE_ES_FAIL(OptProp<OptFixPSETask>::post(home,tasks));
+        GECODE_ES_FAIL(optpost(home,tasks,ipl));
       }
     }
   }
 
   void
   unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
-        const IntVarArgs& e, IntConLevel icl) {
+        const IntVarArgs& e, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((s.size() != p.size()) || (s.size() != e.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i=p.size(); i--; ) {
       rel(home, p[i], IRT_GQ, 0);
     }
@@ -215,24 +215,24 @@ namespace Gecode {
       IntArgs pp(p.size());
       for (int i=p.size(); i--;)
         pp[i] = p[i].val();
-      unary(home,s,pp,icl);
+      unary(home,s,pp,ipl);
     } else {
       TaskArray<ManFlexTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i],e[i]);
-      GECODE_ES_FAIL(ManProp<ManFlexTask>::post(home,t));
+      GECODE_ES_FAIL(manpost(home,t,ipl));
     }
   }
 
   void
-  unary(Home home, const IntVarArgs& s, const IntVarArgs& p, 
-        const IntVarArgs& e, const BoolVarArgs& m, IntConLevel icl) {
+  unary(Home home, const IntVarArgs& s, const IntVarArgs& p,
+        const IntVarArgs& e, const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Unary;
     if ((s.size() != p.size()) || (s.size() != m.size()) ||
         (s.size() != e.size()))
       throw Int::ArgumentSizeMismatch("Int::unary");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i=p.size(); i--; ) {
       rel(home, p[i], IRT_GQ, 0);
     }
@@ -244,12 +244,12 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      unary(home,s,p,e,icl);
+      unary(home,s,p,e,ipl);
     } else {
       TaskArray<OptFlexTask> t(home,s.size());
       for (int i=s.size(); i--; )
         t[i].init(s[i],p[i],e[i],m[i]);
-      GECODE_ES_FAIL(OptProp<OptFlexTask>::post(home,t));
+      GECODE_ES_FAIL(optpost(home,t,ipl));
     }
   }
 

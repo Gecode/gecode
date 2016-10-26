@@ -1,9 +1,9 @@
 //  Boost compiler configuration selection header file
 
-//  (C) Copyright John Maddock 2001 - 2003. 
-//  (C) Copyright Jens Maurer 2001 - 2002. 
-//  Use, modification and distribution are subject to the 
-//  Boost Software License, Version 1.0. (See accompanying file 
+//  (C) Copyright John Maddock 2001 - 2003.
+//  (C) Copyright Jens Maurer 2001 - 2002.
+//  Use, modification and distribution are subject to the
+//  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 
@@ -12,7 +12,7 @@
 // locate which std lib we are using and define GECODE_BOOST_STDLIB_CONFIG as needed:
 
 // First include <cstddef> to determine if some version of STLport is in use as the std lib
-// (do not rely on this header being included since users can short-circuit this header 
+// (do not rely on this header being included since users can short-circuit this header
 //  if they know whose std lib they are using.)
 #ifdef __cplusplus
 #  include <cstddef>
@@ -28,11 +28,11 @@
 
 #else
 
-// If our std lib was not some version of STLport, then include <utility> as it is about 
+// If our std lib was not some version of STLport, then include <utility> as it is about
 // the smallest of the std lib headers that includes real C++ stuff.  (Some std libs do not
 // include their C++-related macros in <cstddef> so this additional include makes sure
 // we get those definitions)
-// (again do not rely on this header being included since users can short-circuit this 
+// (again do not rely on this header being included since users can short-circuit this
 //  header if they know whose std lib they are using.)
 #include <gecode/third-party/boost/config/no_tr1/utility.hpp>
 

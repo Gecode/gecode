@@ -90,6 +90,13 @@ namespace Gecode { namespace Set { namespace Channel {
   }
 
   template<class View>
+  void
+  ChannelSorted<View>::reschedule(Space& home) {
+    x0.reschedule(home,*this, PC_SET_ANY);
+    xs.reschedule(home,*this, Gecode::Int::PC_INT_BND);
+  }
+
+  template<class View>
   forceinline size_t
   ChannelSorted<View>::dispose(Space& home) {
     x0.cancel(home,*this, PC_SET_ANY);

@@ -41,7 +41,7 @@
 #include <climits>
 
 namespace Test { namespace Int {
-  
+
   /// %Tests for bin-packing constraint
   namespace BinPacking {
 
@@ -64,7 +64,7 @@ namespace Test { namespace Int {
       /// Load to generate (unless -1)
       int load;
       /// Iterator for each variable
-      Gecode::IntSetValues* dsv; 
+      Gecode::IntSetValues* dsv;
     public:
       /// Initialize assignments for load and bin variables
       LoadBinAssignment(int m, const Gecode::IntSet& d_m,
@@ -147,9 +147,9 @@ namespace Test { namespace Int {
       }
     public:
       /// Create and register test for \a m bins and item sizes \a s
-      BPT(int m0, const Gecode::IntArgs& s0, bool v=true) 
+      BPT(int m0, const Gecode::IntArgs& s0, bool v=true)
         : Test("BinPacking::"+str(m0)+"::"+str(s0)+"::"+(v ? "+" : "-"),
-               m0+s0.size(), 0, 100), 
+               m0+s0.size(), 0, 100),
           m(m0), s(s0), valid(v), t(total(s)) {
         testsearch = false;
       }
@@ -170,6 +170,10 @@ namespace Test { namespace Int {
           l += x[j];
         if (l != t)
           return false;
+        // Check whether items are at possible bins
+        for (int j=m; j--; )
+          if ((x[m+j] < 0) || (x[m+j] >= m))
+            return false;
         // Compute whether items add up
         for (int j=m; j--; )
           il[j] = 0;
@@ -192,7 +196,7 @@ namespace Test { namespace Int {
         binpacking(home, l, b, s);
       }
     };
-    
+
     /// %Test with different bin loads and items
     class MBPT : public Test {
     protected:
@@ -208,10 +212,10 @@ namespace Test { namespace Int {
       mutable int il[4][8];
     public:
       /// Create and register test for \a d0 dimensions, \a m0 bins, item sizes \a s0, and capacities \a c0
-      MBPT(int d0, int m0, 
-           const Gecode::IntArgs& s0, const Gecode::IntArgs& c0) 
+      MBPT(int d0, int m0,
+           const Gecode::IntArgs& s0, const Gecode::IntArgs& c0)
         : Test("MultiBinPacking::"+str(d0)+"::"+str(m0)+"::"+
-               str(s0)+"::"+str(c0), s0.size() / d0, 0, m0-1), 
+               str(s0)+"::"+str(c0), s0.size() / d0, 0, m0-1),
           d(d0), m(m0), s(s0), c(c0) {
         testsearch = false;
         testfix = false;
@@ -240,7 +244,7 @@ namespace Test { namespace Int {
         binpacking(home, d, l, x, s, c);
       }
     };
-    
+
     /// Test for testing the max-clique finding for multi bin-packing
     class CliqueMBPT : public Base {
     protected:
@@ -254,7 +258,7 @@ namespace Test { namespace Int {
         // Constructor
         TestSpace(void) {}
         // Copy function
-        virtual Gecode::Space* copy(bool share) {
+        virtual Gecode::Space* copy(bool) {
           return NULL;
         }
       };
@@ -266,11 +270,11 @@ namespace Test { namespace Int {
       virtual bool run(void) {
         using namespace Gecode;
         TestSpace* home = new TestSpace;
-        /* 
+        /*
          * Set up a multi-dimensional bin packing problems of dimension 2
          * where the item sizes in one dimension are all one but for some
-         * random items and two in the other dimension if the item is 
-         * included in the clique  and where the capacity in both dimensions 
+         * random items and two in the other dimension if the item is
+         * included in the clique  and where the capacity in both dimensions
          * is 3.
          */
         // Number of items
@@ -317,6 +321,7 @@ namespace Test { namespace Int {
         using namespace Gecode;
 
         {
+          IntArgs s0(4, 0,0,0,0);
           IntArgs s1(3, 2,1,1);
           IntArgs s2(4, 1,2,3,4);
           IntArgs s3(4, 4,3,2,1);
@@ -326,8 +331,9 @@ namespace Test { namespace Int {
           IntArgs s7(4, 1,3,3,4);
           IntArgs s8(6, 1,3,3,0,4,0);
           IntArgs s9(6, 1,2,4,8,16,32);
-          
+
           for (int m=1; m<4; m++) {
+            (void) new BPT(m, s0);
             (void) new BPT(m, s1);
             (void) new BPT(m, s2);
             (void) new BPT(m, s3);
@@ -392,11 +398,11 @@ namespace Test { namespace Int {
         }
       }
     };
-    
+
     Create c;
-    
+
     //@}
-    
+
   }
 
 }}

@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   }
 
   template<class Box>
-  forceinline size_t 
+  forceinline size_t
   Base<Box>::dispose(Space& home) {
     for (int i=n; i--; )
       b[i].cancel(home,*this);
@@ -70,16 +70,23 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Box>
   forceinline
-  Base<Box>::Base(Space& home, bool shared, Base<Box>& p, int m) 
+  Base<Box>::Base(Space& home, bool shared, Base<Box>& p, int m)
     : Propagator(home,shared,p), b(home.alloc<Box>(m)), n(p.n) {
     for (int i=m; i--; )
       b[i].update(home,shared,p.b[i]);
   }
 
   template<class Box>
-  PropCost 
+  PropCost
   Base<Box>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::HI,Box::dim()*n);
+  }
+
+  template<class Box>
+  void
+  Base<Box>::reschedule(Space& home) {
+    for (int i=n; i--; )
+      b[i].reschedule(home,*this);
   }
 
 }}}

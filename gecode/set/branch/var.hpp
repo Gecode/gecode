@@ -37,31 +37,31 @@
 
 namespace Gecode {
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(void)
     : VarBranch(NULL), s(SEL_NONE) {}
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(Select s0, BranchTbl t)
     : VarBranch(t), s(s0) {}
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(Rnd r)
     : VarBranch(r), s(SEL_RND) {}
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(Select s0, double d, BranchTbl t)
     : VarBranch(d,t), s(s0) {}
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(Select s0, AFC a, BranchTbl t)
     : VarBranch(a,t), s(s0) {}
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(Select s0, Activity a, BranchTbl t)
     : VarBranch(a,t), s(s0) {}
 
-  forceinline 
+  forceinline
   SetVarBranch::SetVarBranch(Select s0, VoidFunction mf, BranchTbl t)
     : VarBranch(mf,t), s(s0) {}
 

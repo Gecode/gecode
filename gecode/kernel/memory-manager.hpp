@@ -384,7 +384,7 @@ namespace Gecode {
   }
 
   forceinline
-  MemoryManager::MemoryManager(SharedMemory* sm, MemoryManager& mm, 
+  MemoryManager::MemoryManager(SharedMemory* sm, MemoryManager& mm,
                                size_t s_sub)
     : cur_hcsz(mm.cur_hcsz), requested(0), slack(NULL) {
     MemoryConfig::align(s_sub);

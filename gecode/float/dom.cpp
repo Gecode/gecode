@@ -44,7 +44,7 @@ namespace Gecode {
   dom(Home home, FloatVar x, FloatVal n) {
     using namespace Float;
     Limits::check(n,"Float::dom");
-    if (home.failed()) return;
+    GECODE_POST;
     FloatView xv(x);
     GECODE_ME_FAIL(xv.eq(home,n));
   }
@@ -53,7 +53,7 @@ namespace Gecode {
   dom(Home home, const FloatVarArgs& x, FloatVal n) {
     using namespace Float;
     Limits::check(n,"Float::dom");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i=x.size(); i--; ) {
       FloatView xv(x[i]);
       GECODE_ME_FAIL(xv.eq(home,n));
@@ -65,7 +65,7 @@ namespace Gecode {
     using namespace Float;
     Limits::check(min,"Float::dom");
     Limits::check(max,"Float::dom");
-    if (home.failed()) return;
+    GECODE_POST;
     FloatView xv(x);
     GECODE_ME_FAIL(xv.gq(home,min));
     GECODE_ME_FAIL(xv.lq(home,max));
@@ -76,7 +76,7 @@ namespace Gecode {
     using namespace Float;
     Limits::check(min,"Float::dom");
     Limits::check(max,"Float::dom");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i=x.size(); i--; ) {
       FloatView xv(x[i]);
       GECODE_ME_FAIL(xv.gq(home,min));
@@ -88,7 +88,7 @@ namespace Gecode {
   dom(Home home, FloatVar x, FloatVal n, Reify r) {
     using namespace Float;
     Limits::check(n,"Float::dom");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (r.mode()) {
     case RM_EQV:
       GECODE_ES_FAIL((Rel::ReEqFloat<FloatView,Int::BoolView,RM_EQV>
@@ -128,8 +128,8 @@ namespace Gecode {
 
   void
   dom(Home home, FloatVar x, FloatVar d) {
-    using namespace Float;    
-    if (home.failed()) return;
+    using namespace Float;
+    GECODE_POST;
     FloatView xv(x), dv(d);
     if (!same(xv,dv)) {
       GECODE_ME_FAIL(xv.lq(home,dv.max()));
@@ -139,11 +139,11 @@ namespace Gecode {
 
   void
   dom(Home home, const FloatVarArgs& x, const FloatVarArgs& d) {
-    using namespace Float;    
+    using namespace Float;
     if (x.size() != d.size())
       throw ArgumentSizeMismatch("Float::dom");
     for (int i=x.size(); i--; ) {
-      if (home.failed()) return;
+      GECODE_POST;
       FloatView xv(x[i]), dv(d[i]);
       if (!same(xv,dv)) {
         GECODE_ME_FAIL(xv.lq(home,dv.max()));

@@ -84,22 +84,22 @@ namespace Gecode { namespace Int { namespace Cumulative {
     OmegaLambdaTree<TaskView> ol(r,c,t);
 
     for (int j=0; j<t.size(); j++) {
-      while (!ol.lempty() && 
+      while (!ol.lempty() &&
              (ol.lenv() > static_cast<long long int>(c)*t[j].lct())) {
         int i = ol.responsible();
         prec[i] = std::max(prec[i], t[j].lct());
         ol.lremove(i);
       }
       ol.shift(j);
-    }      
+    }
 
     ///////////////////////
     // Propagation
-    
+
     // Compute array of unique capacities and a mapping
     // from the task array to the corresponding entry in
     // the capacity array
-    
+
     int* cap = r.alloc<int>(t.size());
     for (int i=t.size(); i--;)
       cap[i] = i;
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       capacities[cap[i]] = t[i].c();
       capInv[cap[i]] = i;
     }
-    
+
     int n_c = 0;
     for (int i=0, cur_c=INT_MIN; i<t.size(); i++) {
       if (capacities[i] != cur_c)
@@ -125,23 +125,23 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
     int* update = r.alloc<int>(t.size()*n_c);
     for (int i=t.size()*n_c; i--;)
-      update[i] = -Int::Limits::infinity;
+      update[i] = -Limits::infinity;
 
     ExtOmegaTree<TaskView> eo(r,c,ol);
     for (int i=0; i<n_c; i++) {
       eo.init(capacities[i]);
-      int u = -Int::Limits::infinity;
+      int u = -Limits::infinity;
       for (int j=t.size(); j--;) {
-        long long int lctj = 
+        long long int lctj =
           static_cast<long long int>(c-capacities[i])*t[j].lct();
         long long int eml = plus(eo.env(j), -lctj);
         long long int diff_l;
         if (eml == -Limits::llinfinity)
           diff_l = -Limits::llinfinity;
         else
-          diff_l = ceil_div_xx(eml, 
+          diff_l = ceil_div_xx(eml,
                                static_cast<long long int>(capacities[i]));
-        int diff = (diff_l <= -Limits::infinity) ? 
+        int diff = (diff_l <= -Limits::infinity) ?
           -Limits::infinity : static_cast<int>(diff_l);
         u = std::max(u,diff);
         update[i*t.size()+j] = u;
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
       precMap[i] = i;
     PrecOrder po(prec);
     Support::quicksort(precMap, t.size(), po);
-    
+
     int curJ = 0;
     for (int i=0; i<t.size(); i++) {
       // discard any curJ with lct > prec[i]:
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     GECODE_ES_CHECK(edgefinding(home,c,b));
     return ES_OK;
   }
-    
+
 }}}
 
 // STATISTICS: int-prop

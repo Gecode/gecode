@@ -146,7 +146,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     void unwind(int l);
     /// Commit space \a s as described by stack entry at position \a i
     void commit(Space* s, int i) const;
-    /// Recompute space according to path 
+    /// Recompute space according to path
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s);
     /// Recompute space according to path
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
@@ -236,7 +236,7 @@ namespace Gecode { namespace Search { namespace Sequential {
    */
 
   forceinline
-  QPath::QPath(int l) 
+  QPath::QPath(int l)
     : ds(heap), _ngdl(l) {}
 
   forceinline int

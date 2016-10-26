@@ -75,6 +75,8 @@ namespace Gecode { namespace Int { namespace Channel {
   public:
     /// Propagation cost (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -219,18 +221,25 @@ namespace Gecode { namespace Int { namespace Channel {
     LinkMulti(Home home, ViewArray<BoolView>& x, IntView y, int o0);
   public:
     /// Copy propagator during cloning
+    GECODE_INT_EXPORT
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (low unary if \a y is assigned, low linear otherwise)
+    GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    GECODE_INT_EXPORT
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
+    GECODE_INT_EXPORT
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
+    GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
-    GECODE_INT_EXPORT
     static  ExecStatus post(Home home,
                             ViewArray<BoolView>& x, IntView y, int o);
     /// Delete propagator and return its size
+    GECODE_INT_EXPORT
     virtual size_t dispose(Space& home);
   };
 

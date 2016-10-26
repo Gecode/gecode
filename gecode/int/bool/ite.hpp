@@ -41,9 +41,9 @@
 
 namespace Gecode { namespace Int { namespace Bool {
 
-  template<class View, PropCond pc>
+  template<class V0, class V1, class V2, PropCond pc>
   forceinline
-  IteBase<View,pc>::IteBase(Home home, BoolView b0, View y0, View y1, View y2)
+  IteBase<V0,V1,V2,pc>::IteBase(Home home, BoolView b0, V0 y0, V1 y1, V2 y2)
     : Propagator(home), b(b0), x0(y0), x1(y1), x2(y2) {
     b.subscribe(home,*this,PC_BOOL_VAL);
     x0.subscribe(home,*this,pc);
@@ -51,9 +51,10 @@ namespace Gecode { namespace Int { namespace Bool {
     x2.subscribe(home,*this,pc);
   }
 
-  template<class View, PropCond pc>
+  template<class V0, class V1, class V2, PropCond pc>
   forceinline
-  IteBase<View,pc>::IteBase(Space& home, bool share, IteBase<View,pc>& p)
+  IteBase<V0,V1,V2,pc>::IteBase(Space& home, bool share,
+                                IteBase<V0,V1,V2,pc>& p)
     : Propagator(home,share,p) {
     b.update(home,share,p.b);
     x0.update(home,share,p.x0);
@@ -61,15 +62,24 @@ namespace Gecode { namespace Int { namespace Bool {
     x2.update(home,share,p.x2);
   }
 
-  template<class View, PropCond pc>
+  template<class V0, class V1, class V2, PropCond pc>
   PropCost
-  IteBase<View,pc>::cost(const Space&, const ModEventDelta&) const {
+  IteBase<V0,V1,V2,pc>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template<class View, PropCond pc>
+  template<class V0, class V1, class V2, PropCond pc>
+  void
+  IteBase<V0,V1,V2,pc>::reschedule(Space& home) {
+    b.reschedule(home,*this,PC_BOOL_VAL);
+    x0.reschedule(home,*this,pc);
+    x1.reschedule(home,*this,pc);
+    x2.reschedule(home,*this,pc);
+  }
+
+  template<class V0, class V1, class V2, PropCond pc>
   forceinline size_t
-  IteBase<View,pc>::dispose(Space& home) {
+  IteBase<V0,V1,V2,pc>::dispose(Space& home) {
     b.cancel(home,*this,PC_BOOL_VAL);
     x0.cancel(home,*this,pc);
     x1.cancel(home,*this,pc);
@@ -80,46 +90,46 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
 
-  template<class View>
+  template<class V0, class V1, class V2>
   forceinline
-  IteBnd<View>::IteBnd(Home home, BoolView b, View x0, View x1, View x2)
-    : IteBase<View,PC_INT_BND>(home,b,x0,x1,x2) {}
+  IteBnd<V0,V1,V2>::IteBnd(Home home, BoolView b, V0 x0, V1 x1, V2 x2)
+    : IteBase<V0,V1,V2,PC_INT_BND>(home,b,x0,x1,x2) {}
 
-  template<class View>
+  template<class V0, class V1, class V2>
   forceinline
-  IteBnd<View>::IteBnd(Space& home, bool share, IteBnd<View>& p)
-    : IteBase<View,PC_INT_BND>(home,share,p) {}
+  IteBnd<V0,V1,V2>::IteBnd(Space& home, bool share, IteBnd<V0,V1,V2>& p)
+    : IteBase<V0,V1,V2,PC_INT_BND>(home,share,p) {}
 
-  template<class View>
+  template<class V0, class V1, class V2>
   Actor*
-  IteBnd<View>::copy(Space& home, bool share) {
-    return new (home) IteBnd<View>(home,share,*this);
+  IteBnd<V0,V1,V2>::copy(Space& home, bool share) {
+    return new (home) IteBnd<V0,V1,V2>(home,share,*this);
   }
 
-  template<class View>
+  template<class V0, class V1, class V2>
   inline ExecStatus
-  IteBnd<View>::post(Home home, BoolView b, View x0, View x1, View x2) {
-    if (same(x0,x1) || b.one())
-      return Rel::EqBnd<View,View>::post(home,x2,x0);
+  IteBnd<V0,V1,V2>::post(Home home, BoolView b, V0 x0, V1 x1, V2 x2) {
+    if (b.one())
+      return Rel::EqBnd<V2,V0>::post(home,x2,x0);
     if (b.zero())
-      return Rel::EqBnd<View,View>::post(home,x2,x1);
+      return Rel::EqBnd<V2,V1>::post(home,x2,x1);
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,std::min(x0.min(),x1.min())));
-    (void) new (home) IteBnd<View>(home,b,x0,x1,x2);
+    (void) new (home) IteBnd<V0,V1,V2>(home,b,x0,x1,x2);
     return ES_OK;
   }
 
-  template<class View>
+  template<class V0, class V1, class V2>
   ExecStatus
-  IteBnd<View>::propagate(Space& home, const ModEventDelta&) {
+  IteBnd<V0,V1,V2>::propagate(Space& home, const ModEventDelta&) {
     if (b.one())
-      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x2,x0)));
+      GECODE_REWRITE(*this,(Rel::EqBnd<V2,V0>::post(home(*this),x2,x0)));
     if (b.zero())
-      GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x2,x1)));
+      GECODE_REWRITE(*this,(Rel::EqBnd<V2,V1>::post(home(*this),x2,x1)));
 
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,std::min(x0.min(),x1.min())));
-    
+
     RelTest eq20 = rtest_eq_bnd(x2,x0);
     RelTest eq21 = rtest_eq_bnd(x2,x1);
 
@@ -131,7 +141,7 @@ namespace Gecode { namespace Int { namespace Bool {
       if (eq21 == RT_TRUE)
         return home.ES_SUBSUMED(*this);
       else
-        GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x2,x1)));
+        GECODE_REWRITE(*this,(Rel::EqBnd<V2,V1>::post(home(*this),x2,x1)));
     }
 
     if (eq21 == RT_FALSE) {
@@ -139,9 +149,9 @@ namespace Gecode { namespace Int { namespace Bool {
       if (eq20 == RT_TRUE)
         return home.ES_SUBSUMED(*this);
       else
-        GECODE_REWRITE(*this,(Rel::EqBnd<View,View>::post(home(*this),x2,x0)));
+        GECODE_REWRITE(*this,(Rel::EqBnd<V2,V0>::post(home(*this),x2,x0)));
     }
-    
+
     if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))
       return home.ES_SUBSUMED(*this);
 
@@ -150,56 +160,56 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
 
-  template<class View>
+  template<class V0, class V1, class V2>
   forceinline
-  IteDom<View>::IteDom(Home home, BoolView b, View x0, View x1, View x2)
-    : IteBase<View,PC_INT_DOM>(home,b,x0,x1,x2) {}
+  IteDom<V0,V1,V2>::IteDom(Home home, BoolView b, V0 x0, V1 x1, V2 x2)
+    : IteBase<V0,V1,V2,PC_INT_DOM>(home,b,x0,x1,x2) {}
 
-  template<class View>
+  template<class V0, class V1, class V2>
   forceinline
-  IteDom<View>::IteDom(Space& home, bool share, IteDom<View>& p)
-    : IteBase<View,PC_INT_DOM>(home,share,p) {}
+  IteDom<V0,V1,V2>::IteDom(Space& home, bool share, IteDom<V0,V1,V2>& p)
+    : IteBase<V0,V1,V2,PC_INT_DOM>(home,share,p) {}
 
-  template<class View>
+  template<class V0, class V1, class V2>
   Actor*
-  IteDom<View>::copy(Space& home, bool share) {
-    return new (home) IteDom<View>(home,share,*this);
+  IteDom<V0,V1,V2>::copy(Space& home, bool share) {
+    return new (home) IteDom<V0,V1,V2>(home,share,*this);
   }
 
-  template<class View>
+  template<class V0, class V1, class V2>
   inline ExecStatus
-  IteDom<View>::post(Home home, BoolView b, View x0, View x1, View x2) {
-    if (same(x0,x1) || b.one())
-      return Rel::EqDom<View,View>::post(home,x2,x0);
+  IteDom<V0,V1,V2>::post(Home home, BoolView b, V0 x0, V1 x1, V2 x2) {
+    if (b.one())
+      return Rel::EqDom<V2,V0>::post(home,x2,x0);
     if (b.zero())
-      return Rel::EqDom<View,View>::post(home,x2,x1);
+      return Rel::EqDom<V2,V1>::post(home,x2,x1);
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,std::min(x0.min(),x1.min())));
-    (void) new (home) IteDom<View>(home,b,x0,x1,x2);
+    (void) new (home) IteDom<V0,V1,V2>(home,b,x0,x1,x2);
     return ES_OK;
   }
 
-  template<class View>
+  template<class V0, class V1, class V2>
   PropCost
-  IteDom<View>::cost(const Space&, const ModEventDelta& med) const {
-    if (View::me(med) == ME_INT_DOM)
+  IteDom<V0,V1,V2>::cost(const Space&, const ModEventDelta& med) const {
+    if (V0::me(med) == ME_INT_DOM)
       return PropCost::ternary(PropCost::HI);
     else
       return PropCost::ternary(PropCost::LO);
   }
 
-  template<class View>
+  template<class V0, class V1, class V2>
   ExecStatus
-  IteDom<View>::propagate(Space& home, const ModEventDelta& med) {
+  IteDom<V0,V1,V2>::propagate(Space& home, const ModEventDelta& med) {
     if (b.one())
-      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x2,x0)));
+      GECODE_REWRITE(*this,(Rel::EqDom<V2,V0>::post(home(*this),x2,x0)));
     if (b.zero())
-      GECODE_REWRITE(*this,(Rel::EqDom<View,View>::post(home(*this),x2,x1)));
+      GECODE_REWRITE(*this,(Rel::EqDom<V2,V1>::post(home(*this),x2,x1)));
 
     GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,std::min(x0.min(),x1.min())));
 
-    if (View::me(med) != ME_INT_DOM) {
+    if (V0::me(med) != ME_INT_DOM) {
       RelTest eq20 = rtest_eq_bnd(x2,x0);
       RelTest eq21 = rtest_eq_bnd(x2,x1);
 
@@ -212,22 +222,22 @@ namespace Gecode { namespace Int { namespace Bool {
           return home.ES_SUBSUMED(*this);
         else
           GECODE_REWRITE(*this,
-                         (Rel::EqDom<View,View>::post(home(*this),x2,x1)));
+                         (Rel::EqDom<V2,V1>::post(home(*this),x2,x1)));
       }
-      
+
       if (eq21 == RT_FALSE) {
         GECODE_ME_CHECK(b.one_none(home));
         if (eq20 == RT_TRUE)
           return home.ES_SUBSUMED(*this);
         else
           GECODE_REWRITE(*this,
-                         (Rel::EqDom<View,View>::post(home(*this),x2,x0)));
+                         (Rel::EqDom<V2,V0>::post(home(*this),x2,x0)));
       }
-    
+
       if ((eq20 == RT_TRUE) && (eq21 == RT_TRUE))
         return home.ES_SUBSUMED(*this);
 
-      return home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM));
+      return home.ES_FIX_PARTIAL(*this,V0::med(ME_INT_DOM));
     }
 
     RelTest eq20 = rtest_eq_dom(x2,x0);
@@ -242,24 +252,25 @@ namespace Gecode { namespace Int { namespace Bool {
         return home.ES_SUBSUMED(*this);
       else
         GECODE_REWRITE(*this,
-                       (Rel::EqDom<View,View>::post(home(*this),x2,x1)));
+                       (Rel::EqDom<V2,V1>::post(home(*this),x2,x1)));
     }
-      
+
     if (eq21 == RT_FALSE) {
       GECODE_ME_CHECK(b.one_none(home));
       if (eq20 == RT_TRUE)
         return home.ES_SUBSUMED(*this);
       else
         GECODE_REWRITE(*this,
-                       (Rel::EqDom<View,View>::post(home(*this),x2,x0)));
+                       (Rel::EqDom<V2,V0>::post(home(*this),x2,x0)));
     }
-    
+
     assert((eq20 != RT_TRUE) || (eq21 != RT_TRUE));
 
-    ViewRanges<View> r0(x0), r1(x1);
-    Iter::Ranges::Union<ViewRanges<View>,ViewRanges<View> > u(r0,r1);
-    
-    if (!same(x0,x2) && !same(x1,x2))
+    ViewRanges<V0> r0(x0);
+    ViewRanges<V1> r1(x1);
+    Iter::Ranges::Union<ViewRanges<V0>,ViewRanges<V1> > u(r0,r1);
+
+    if (!shared<V0,V2>(x0,x2) && !shared<V1,V2>(x1,x2))
       GECODE_ME_CHECK(x2.inter_r(home,u,false));
     else
       GECODE_ME_CHECK(x2.inter_r(home,u,true));

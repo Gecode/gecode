@@ -141,6 +141,13 @@ namespace Gecode { namespace Int {
 
   template<class View>
   forceinline void
+  IdxViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    for (int i = n; i--; )
+      xs[i].view.reschedule(home,p,pc);
+  }
+
+  template<class View>
+  forceinline void
   IdxViewArray<View>::update(Space& home, bool share, IdxViewArray<View>& a) {
     n = a.size();
     if (n>0) {

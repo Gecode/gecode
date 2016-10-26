@@ -79,6 +79,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
@@ -90,11 +92,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Bounds consistent global cardinality propagator
-   * 
+   *
    * The algorithm is taken from:
    *    Claude-Guy Quimper, Peter van Beek, Alejandro López-Ortiz,
-   *    Alexander Golynski, and Sayyed Bashir Sadjad. An Efficient 
-   *    Bounds Consistency Algorithm for the Global Cardinality 
+   *    Alexander Golynski, and Sayyed Bashir Sadjad. An Efficient
+   *    Bounds Consistency Algorithm for the Global Cardinality
    *    Constraint, CP 2003, pages 600-614.
    *
    * This implementation uses the code that is provided
@@ -195,6 +197,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space& home, bool share);
     /// Cost funtion
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor
@@ -206,7 +210,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Domain consistent global cardinality propagator
-   * 
+   *
    * The algorithm is taken from:
    *   Claude-Guy Quimper, Peter van Beek, Alejandro López-Ortiz,
    *   and Alexander Golynski. Improved Algorithms for the
@@ -245,6 +249,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Destructor

@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
 namespace Gecode {
   using namespace Int::LDSB;
-  
+
   SymmetryHandle VariableSymmetry(const IntVarArgs& vars) {
     ArgArray<VarImpBase*> a(vars.size());
     for (int i = 0 ; i < vars.size() ; i++)
@@ -143,13 +143,13 @@ namespace Gecode { namespace Int { namespace LDSB {
   SymmetryImp<IntView>*
   createIntSym(Space& home, const SymmetryHandle& s,
                VariableMap variableMap) {
-    VariableSymmetryObject* varref    = 
+    VariableSymmetryObject* varref    =
       dynamic_cast<VariableSymmetryObject*>(s.ref);
-    ValueSymmetryObject* valref    =  
+    ValueSymmetryObject* valref    =
       dynamic_cast<ValueSymmetryObject*>(s.ref);
-    VariableSequenceSymmetryObject* varseqref = 
+    VariableSequenceSymmetryObject* varseqref =
       dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
-    ValueSequenceSymmetryObject* valseqref =  
+    ValueSequenceSymmetryObject* valseqref =
       dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
     if (varref) {
       int n = varref->nxs;
@@ -176,13 +176,13 @@ namespace Gecode { namespace Int { namespace LDSB {
       int n = varseqref->nxs;
       int* indices = home.alloc<int>(n);
       for (int i = 0 ; i < n ; i++) {
-        VariableMap::const_iterator index = 
+        VariableMap::const_iterator index =
           variableMap.find(varseqref->xs[i]);
         if (index == variableMap.end())
           throw LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createInt");
         indices[i] = index->second;
       }
-      return new (home) VariableSequenceSymmetryImp<IntView>(home, indices, n, 
+      return new (home) VariableSequenceSymmetryImp<IntView>(home, indices, n,
         varseqref->seq_size);
     }
     if (valseqref) {
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace LDSB {
       int *vs = home.alloc<int>(n);
       for (unsigned int i = 0 ; i < n ; i++)
         vs[i] = valseqref->values[i];
-      return new (home) ValueSequenceSymmetryImp<IntView>(home, vs, n, 
+      return new (home) ValueSequenceSymmetryImp<IntView>(home, vs, n,
         valseqref->seq_size);
     }
     GECODE_NEVER;
@@ -200,13 +200,13 @@ namespace Gecode { namespace Int { namespace LDSB {
   /// Create a boolean symmetry implementation from a symmetry handle
   SymmetryImp<BoolView>* createBoolSym(Space& home, const SymmetryHandle& s,
                                        VariableMap variableMap) {
-    VariableSymmetryObject* varref    = 
+    VariableSymmetryObject* varref    =
       dynamic_cast<VariableSymmetryObject*>(s.ref);
-    ValueSymmetryObject* valref    = 
+    ValueSymmetryObject* valref    =
       dynamic_cast<ValueSymmetryObject*>(s.ref);
-    VariableSequenceSymmetryObject* varseqref = 
+    VariableSequenceSymmetryObject* varseqref =
       dynamic_cast<VariableSequenceSymmetryObject*>(s.ref);
-    ValueSequenceSymmetryObject* valseqref =  
+    ValueSequenceSymmetryObject* valseqref =
       dynamic_cast<ValueSequenceSymmetryObject*>(s.ref);
     if (varref) {
       int n = varref->nxs;
@@ -233,13 +233,13 @@ namespace Gecode { namespace Int { namespace LDSB {
       int n = varseqref->nxs;
       int* indices = home.alloc<int>(n);
       for (int i = 0 ; i < n ; i++) {
-        VariableMap::const_iterator index = 
+        VariableMap::const_iterator index =
           variableMap.find(varseqref->xs[i]);
         if (index == variableMap.end())
           throw LDSBUnbranchedVariable("VariableSequenceSymmetryObject::createBool");
         indices[i] = index->second;
       }
-      return new (home) VariableSequenceSymmetryImp<BoolView>(home, indices, 
+      return new (home) VariableSequenceSymmetryImp<BoolView>(home, indices,
         n, varseqref->seq_size);
     }
     if (valseqref) {
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace LDSB {
       int *vs = home.alloc<int>(n);
       for (unsigned int i = 0 ; i < n ; i++)
         vs[i] = valseqref->values[i];
-      return new (home) ValueSequenceSymmetryImp<BoolView>(home, vs, n, 
+      return new (home) ValueSequenceSymmetryImp<BoolView>(home, vs, n,
         valseqref->seq_size);
     }
     GECODE_NEVER;
@@ -259,17 +259,17 @@ namespace Gecode {
 
   using namespace Int::LDSB;
 
-  BrancherHandle
+  void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          IntBranchFilter bf, IntVarValPrint vvp) {
     using namespace Int;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<IntView> xv(home,x);
-    ViewSel<IntView>* vs[1] = { 
-      Branch::viewselint(home,vars) 
+    ViewSel<IntView>* vs[1] = {
+      Branch::viewselint(home,vars)
     };
     switch (vals.select()) {
     case IntValBranch::SEL_SPLIT_MIN:
@@ -301,19 +301,19 @@ namespace Gecode {
         array[i] = createIntSym(home, syms[i], variableMap);
       }
 
-      return LDSBBrancher<IntView,1,int,2>::post
+      LDSBBrancher<IntView,1,int,2>::post
         (home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
          array,n,bf,vvp);
     }
   }
 
-  BrancherHandle
+  void
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          IntBranchFilter bf, IntVarValPrint vvp) {
     using namespace Int;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.a.expand(home,x);
     if ((vars.a.select() == IntVarBranch::SEL_NONE) ||
         (vars.a.select() == IntVarBranch::SEL_RND))
@@ -328,7 +328,7 @@ namespace Gecode {
       vars.d = INT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
-      return branch(home,x,vars.a,vals,syms,bf,vvp);
+      branch(home,x,vars.a,vals,syms,bf,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -365,7 +365,7 @@ namespace Gecode {
           // If vals.commit() returns NULL, it means it will commit with
           // binary branching, which is OK for LDSB, so we fall through.
         default:
-          return LDSBBrancher<IntView,2,int,2>
+          LDSBBrancher<IntView,2,int,2>
             ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
                    array,n,bf,vvp);
         }
@@ -389,7 +389,7 @@ namespace Gecode {
           // If vals.commit() returns NULL, it means it will commit with
           // binary branching, which is OK for LDSB, so we fall through.
         default:
-          return LDSBBrancher<IntView,3,int,2>
+          LDSBBrancher<IntView,3,int,2>
             ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
                    array,n,bf,vvp);
         }
@@ -413,27 +413,25 @@ namespace Gecode {
           // If vals.commit() returns NULL, it means it will commit with
           // binary branching, which is OK for LDSB, so we fall through.
         default:
-          return LDSBBrancher<IntView,4,int,2>
+          LDSBBrancher<IntView,4,int,2>
             ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
                    array,n,bf,vvp);
         }
       }
     }
-    GECODE_NEVER;
-    return BrancherHandle();
   }
 
-  BrancherHandle
+  void
   branch(Home home, const BoolVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
     using namespace Int;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<BoolView> xv(home,x);
-    ViewSel<BoolView>* vs[1] = { 
-      Branch::viewselbool(home,vars) 
+    ViewSel<BoolView>* vs[1] = {
+      Branch::viewselbool(home,vars)
     };
 
     // Construct mapping from each variable in the array to its index
@@ -470,21 +468,19 @@ namespace Gecode {
       // If vals.commit() returns NULL, it means it will commit with
       // binary branching, which is OK for LDSB, so we fall through.
     default:
-      return LDSBBrancher<BoolView,1,int,2>::post
+      LDSBBrancher<BoolView,1,int,2>::post
         (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),array,n,bf,vvp);
     }
-    GECODE_NEVER;
-    return BrancherHandle();
   }
 
 
-  BrancherHandle
+  void
   branch(Home home, const BoolVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          BoolBranchFilter bf, BoolVarValPrint vvp) {
     using namespace Int;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.a.expand(home,x);
     if ((vars.a.select() == IntVarBranch::SEL_NONE) ||
         (vars.a.select() == IntVarBranch::SEL_RND))
@@ -499,7 +495,7 @@ namespace Gecode {
       vars.d = INT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
-      return branch(home,x,vars.a,vals,syms,bf,vvp);
+      branch(home,x,vars.a,vals,syms,bf,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -540,32 +536,27 @@ namespace Gecode {
       }
 
       ViewArray<BoolView> xv(home,x);
-      ValSelCommitBase<BoolView,int>* 
-        vsc = Branch::valselcommitbool(home,x.size(),vals); 
+      ValSelCommitBase<BoolView,int>*
+        vsc = Branch::valselcommitbool(home,x.size(),vals);
       if (vars.c.select() == IntVarBranch::SEL_NONE) {
-        ViewSel<BoolView>* vs[2] = { 
+        ViewSel<BoolView>* vs[2] = {
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b)
         };
-        return 
-          LDSBBrancher<BoolView,2,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        LDSBBrancher<BoolView,2,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
       } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
-        ViewSel<BoolView>* vs[3] = { 
+        ViewSel<BoolView>* vs[3] = {
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b),
           Branch::viewselbool(home,vars.c)
         };
-        return 
-          LDSBBrancher<BoolView,3,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        LDSBBrancher<BoolView,3,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
       } else {
-        ViewSel<BoolView>* vs[4] = { 
+        ViewSel<BoolView>* vs[4] = {
           Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b),
           Branch::viewselbool(home,vars.c),Branch::viewselbool(home,vars.d)
         };
-        return 
-          LDSBBrancher<BoolView,4,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        LDSBBrancher<BoolView,4,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
       }
     }
-    GECODE_NEVER;
-    return BrancherHandle();
   }
 
 }

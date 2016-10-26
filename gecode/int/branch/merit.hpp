@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : MeritBase<View,double>(home,vb) {}
   template<class View>
   forceinline
-  MeritDegreeSize<View>::MeritDegreeSize(Space& home, bool shared, 
+  MeritDegreeSize<View>::MeritDegreeSize(Space& home, bool shared,
                                          MeritDegreeSize& m)
     : MeritBase<View,double>(home,shared,m) {}
   template<class View>
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Branch {
     : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
   template<class View>
   forceinline
-  MeritActivitySize<View>::MeritActivitySize(Space& home, bool shared, 
+  MeritActivitySize<View>::MeritActivitySize(Space& home, bool shared,
                                              MeritActivitySize& m)
     : MeritBase<View,double>(home,shared,m) {
     activity.update(home, shared, m.activity);

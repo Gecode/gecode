@@ -111,7 +111,7 @@ namespace Gecode { namespace Gist {
 
     /// Set distance from copy
     void setDistance(unsigned int d);
-    
+
     /// Return distance from copy
     unsigned int getDistance(void) const;
 

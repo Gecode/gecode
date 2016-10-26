@@ -41,16 +41,19 @@
 
 namespace Gecode {
 
+  forceinline
+  Rnd::IMP::IMP(unsigned int s)
+    : rg(s) {}
+
+  Rnd::IMP::~IMP(void) {}
+
   SharedHandle::Object*
   Rnd::IMP::copy(void) const {
     return new IMP(rg.seed());
   }
 
-  Rnd::Rnd(unsigned int s) {
-    object(new IMP(s));
-  }
-  void
-  Rnd::seed(unsigned int s) {
+  forceinline void
+  Rnd::_seed(unsigned int s) {
     if (object() == NULL) {
       object(new IMP(s));
     } else {
@@ -58,6 +61,31 @@ namespace Gecode {
     }
   }
 
+  Rnd::Rnd(void) {}
+  Rnd::Rnd(unsigned int s) {
+    object(new IMP(s));
+  }
+  Rnd::Rnd(const Rnd& r)
+    : SharedHandle(r) {}
+  Rnd&
+  Rnd::operator =(const Rnd& r) {
+    (void) SharedHandle::operator =(r);
+    return *this;
+  }
+  Rnd::~Rnd(void) {}
+
+  void
+  Rnd::seed(unsigned int s) {
+    _seed(s);
+  }
+  void
+  Rnd::time(void) {
+    _seed(static_cast<unsigned int>(::time(NULL)));
+  }
+  void
+  Rnd::hw(void) {
+    seed(Support::hwrnd());
+  }
 }
 
 // STATISTICS: kernel-other

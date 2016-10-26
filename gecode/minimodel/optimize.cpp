@@ -59,7 +59,7 @@ namespace Gecode {
   }
 
 
-#ifdef GECODE_HAS_FLOAT_VARS 
+#ifdef GECODE_HAS_FLOAT_VARS
 
   void
   FloatMinimizeSpace::constrain(const Space& _best) {

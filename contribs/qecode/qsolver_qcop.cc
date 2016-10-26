@@ -1,5 +1,5 @@
-/****   , [ qsolver_qcop.cc ], 
-Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard 
+/****   , [ qsolver_qcop.cc ],
+Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,7 @@ QCOP_solver::QCOP_solver(Qcop* sp) {
 
 Strategy QCOP_solver::solve(unsigned long int& nodes) {
     vector<int> plop;
-    plop.clear(); 
+    plop.clear();
     return rSolve(sp,0,plop,nodes);
 }
 
@@ -48,7 +48,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
         if (g == NULL) {/*cout<<"the goal was null"<<endl;*/return Strategy::SFalse();}
         for (int i=0;i<g->nbVars();i++) {
             switch (g->type_of_v[i]) {
-                case VTYPE_INT : 
+                case VTYPE_INT :
                     rel(*g,*(static_cast<IntVar*>(g->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
@@ -68,7 +68,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
         delete g;
         return Strategy(StrategyNode::STrue());
     }
-    
+
     /////////////////////////////////////////////////////////////////////////////////////////
     // Second case : we are in the middle of the problem...                                //
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
         for (int i=0;i<assignments.size();i++) {
 //            cout<<"I assign variable "<<i<<" with value "<<assignments[i]<<endl; cout.flush();
             switch (espace->type_of_v[i]) {
-                case VTYPE_INT : 
+                case VTYPE_INT :
                     rel(*espace,*(static_cast<IntVar*>(espace->v[i])) == assignments[i]);
                     break;
                 case VTYPE_BOOL :
@@ -91,18 +91,18 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                     abort();
             }
         }
-        
+
         // Second case, first subcase : current scope is universal
         /////////////////////////////////////////////////////////
         if (qs->quantification(scope)) {
 //            cout<<"universal"<<endl;
-            
+
             if (espace->status() == SS_FAILED) {
 //                cout<<"the scope is failed"<<endl;
                 delete espace;
                 return Strategy::STrue();
             }
-            
+
             DFS<MySpace> solutions(espace);
             MySpace* sol = solutions.next();
             if (sol == NULL) {
@@ -110,17 +110,17 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                 delete espace;
                 return Strategy::STrue();
             }
-            
+
             Strategy retour = Strategy::Dummy();
             while (sol != NULL) {
 //                cout<<"a solution"<<endl;
                 vector<int> assign;
                 for (int i = 0; i<sol->nbVars();i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -128,16 +128,16 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                             abort();
                     }
                 }
-                
+
                 int vmin = ( (scope==0)? 0 : (qs->nbVarInScope(scope-1)) );
                 int vmax = (qs->nbVarInScope(scope))-1;
                 vector<int> zevalues;
                 for (int i = vmin; i<=vmax;i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -146,7 +146,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                     }
                 }
                 Strategy toAttach(true,vmin,vmax,scope,zevalues);
-                
+
                 Strategy son = rSolve(qs,scope+1,assign,nodes);
                 if (son.isFalse()) {
 //                    cout<<"the son is false"<<endl;
@@ -163,7 +163,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
             delete espace;
             return retour;
         } // end of if(universal)
-        
+
         // Second case, second subcase : current scope is existential
         ////////////////////////////////////////////////////////////
         else {
@@ -173,7 +173,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                 delete espace;
                 return Strategy::SFalse();
             }
-            
+
             DFS<MySpace> solutions(espace);
             MySpace* sol =solutions.next();
             if (sol == NULL) {
@@ -181,7 +181,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                 delete espace;
                 return Strategy::SFalse();
             }
-            
+
             OptVar* opt = qs->getOptVar(scope);
             int opttype = qs->getOptType(scope);
             Strategy retour(StrategyNode::SFalse());
@@ -191,10 +191,10 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                 vector<int> assign;
                 for (int i = 0; i<sol->nbVars();i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             assign.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             assign.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
                         default :
@@ -208,13 +208,13 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                 vector<int> zevalues;
                 for (int i = vmin; i<=vmax;i++) {
                     switch (sol->type_of_v[i]) {
-                        case VTYPE_INT : 
+                        case VTYPE_INT :
                             zevalues.push_back( (static_cast<IntVar*>(sol->v[i]))->val() );
                             break;
-                        case VTYPE_BOOL : 
+                        case VTYPE_BOOL :
                             zevalues.push_back( (static_cast<BoolVar*>(sol->v[i]))->val() );
                             break;
-                        default : 
+                        default :
                             cout<<"6unknown Variable type"<<endl;
                             abort();
                     }
@@ -224,7 +224,7 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                 Strategy son_of_candidate = rSolve(qs,scope+1,assign,nodes);
                 if (son_of_candidate.isFalse()) candidate = Strategy::SFalse();
                 else candidate.attach(son_of_candidate);
-                
+
                 int score_of_candidate;
                 if (candidate.isFalse()) score_of_candidate = ( (opttype == 1) ? INT_MAX : INT_MIN );
                 else score_of_candidate = opt->getVal(candidate);
@@ -253,14 +253,14 @@ Strategy QCOP_solver::rSolve(Qcop* qs,int scope, vector<int> assignments, unsign
                             score=score_of_candidate;
                         }
                         break;
-                    default : 
+                    default :
                         cout<<"Unknown opt type : "<<opttype<<endl;
                         abort();
                         break;
                 } // end switch
                 delete sol;
                 sol=solutions.next();
-            } // end while 
+            } // end while
             delete espace;
             return retour;
         } // end if..else (existential)

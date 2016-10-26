@@ -135,10 +135,10 @@ print <<EOF
   \\page PageCodeStat Gecode code statistics
 
 The following approximate breakdown into the different parts of %Gecode
-gives some statistics about the amount of code and documentation 
-contained in the code (as comments) where blank lines are excluded. 
+gives some statistics about the amount of code and documentation
+contained in the code (as comments) where blank lines are excluded.
 
-The abbreviation "loc" means "lines of code" and "lod" means "lines of 
+The abbreviation "loc" means "lines of code" and "lod" means "lines of
 documentation".
 
 EOF
@@ -186,4 +186,4 @@ The grand total: $an_class classes, $an_code loc, $an_comment lod
 */
 EOF
 ;
-			 
+

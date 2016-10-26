@@ -183,7 +183,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     * \ingroup FuncSetProp
     */
   template<class View0, class View1>
-  class IntersectionN : 
+  class IntersectionN :
     public MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
     using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;

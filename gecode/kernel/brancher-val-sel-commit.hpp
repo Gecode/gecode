@@ -55,12 +55,12 @@ namespace Gecode {
     /// Constructor for initialization
     ValSelCommitBase(Space& home, const ValBranch& vb);
     /// Constructor for cloning
-    ValSelCommitBase(Space& home, bool shared, 
+    ValSelCommitBase(Space& home, bool shared,
                      ValSelCommitBase<View,Val>& vsc);
     /// Return value of view \a x at position \a i
     virtual Val val(const Space& home, View x, int i) = 0;
     /// Commit view \a x at position \a i to value \a n for alternative \a a
-    virtual ModEvent commit(Space& home, unsigned int a, 
+    virtual ModEvent commit(Space& home, unsigned int a,
                             View x, int i, Val n) = 0;
     /// Create no-good literal for choice \a c and alternative \a a
     virtual NGL* ngl(Space& home, unsigned int a,
@@ -75,6 +75,8 @@ namespace Gecode {
     virtual bool notice(void) const = 0;
     /// Delete value selection
     virtual void dispose(Space& home) = 0;
+    /// Unused destructor
+    virtual ~ValSelCommitBase(void);
     /// \name Memory management
     //@{
     /// Allocate memory from space
@@ -88,7 +90,7 @@ namespace Gecode {
 
   /// Class for value selection and commit
   template<class ValSel, class ValCommit>
-  class ValSelCommit 
+  class ValSelCommit
     : public ValSelCommitBase<typename ValSel::View,typename ValSel::Val> {
   protected:
     typedef typename ValSelCommitBase<typename ValSel::View,
@@ -103,7 +105,7 @@ namespace Gecode {
     /// Constructor for initialization
     ValSelCommit(Space& home, const ValBranch& vb);
     /// Constructor for cloning
-    ValSelCommit(Space& home, bool shared, 
+    ValSelCommit(Space& home, bool shared,
                  ValSelCommit<ValSel,ValCommit>& vsc);
     /// Return value of view \a x at position \a i
     virtual Val val(const Space& home, View x, int i);
@@ -133,6 +135,8 @@ namespace Gecode {
   forceinline
   ValSelCommitBase<View,Val>::
     ValSelCommitBase(Space&, bool, ValSelCommitBase<View,Val>&) {}
+  template<class View, class Val>
+  ValSelCommitBase<View,Val>::~ValSelCommitBase(void) {}
 
   template<class View, class Val>
   forceinline void
@@ -151,13 +155,13 @@ namespace Gecode {
 
   template<class ValSel, class ValCommit>
   forceinline
-  ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home, 
-                                               const ValBranch& vb) 
+  ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home,
+                                               const ValBranch& vb)
     : ValSelCommitBase<View,Val>(home,vb), s(home,vb), c(home,vb) {}
 
   template<class ValSel, class ValCommit>
   forceinline
-  ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home, bool shared, 
+  ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home, bool shared,
                                                ValSelCommit<ValSel,ValCommit>& vsc)
     : ValSelCommitBase<View,Val>(home,shared,vsc),
       s(home,shared,vsc.s), c(home,shared,vsc.c) {}
@@ -170,13 +174,13 @@ namespace Gecode {
 
   template<class ValSel, class ValCommit>
   ModEvent
-  ValSelCommit<ValSel,ValCommit>::commit(Space& home, unsigned int a, 
+  ValSelCommit<ValSel,ValCommit>::commit(Space& home, unsigned int a,
                                          View x, int i, Val n) {
     return c.commit(home,a,x,i,n);
   }
 
   template<class ValSel, class ValCommit>
-  NGL* 
+  NGL*
   ValSelCommit<ValSel,ValCommit>::ngl(Space& home, unsigned int a,
                                       View x, Val n) const {
     return c.ngl(home, a, x, n);
@@ -184,7 +188,7 @@ namespace Gecode {
 
   template<class ValSel, class ValCommit>
   void
-  ValSelCommit<ValSel,ValCommit>::print(const Space& home, unsigned int a, 
+  ValSelCommit<ValSel,ValCommit>::print(const Space& home, unsigned int a,
                                         View x, int i, const Val& n,
                                         std::ostream& o) const {
     c.print(home,a,x,i,n,o);

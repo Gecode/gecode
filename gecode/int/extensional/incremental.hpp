@@ -303,6 +303,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template<class View>
+  void
+  Incremental<View>::reschedule(Space& home) {
+    // Work to be done or subsumption
+    if (!w_support.empty() || !w_remove.empty() || (unassigned == 0))
+      View::schedule(home,*this,
+                     (unassigned != x.size()) ? ME_INT_VAL : ME_INT_DOM);
+  }
+
+  template<class View>
   forceinline ExecStatus
   Incremental<View>::post(Home home, ViewArray<View>& x, const TupleSet& t) {
     // All variables in the correct domain

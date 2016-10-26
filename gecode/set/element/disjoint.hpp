@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   forceinline
-  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home, bool share,  
+  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home, bool share,
                                                 ElementDisjoint& p)
     : Propagator(home,share,p) {
     x1.update(home,share,p.x1);
@@ -77,6 +77,13 @@ namespace Gecode { namespace Set { namespace Element {
   PropCost
   ElementDisjoint<SView,RView>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, iv.size()+2);
+  }
+
+  template<class SView, class RView>
+  void
+  ElementDisjoint<SView,RView>::reschedule(Space& home) {
+    x1.reschedule(home,*this, PC_SET_ANY);
+    iv.reschedule(home,*this, PC_SET_ANY);
   }
 
   template<class SView, class RView>

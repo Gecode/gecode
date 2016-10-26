@@ -54,15 +54,12 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   //@{
-  /// Description of view type
-  enum ViewTypeDesc {
-    VTD_CONSTVIEW, ///< Constant view
-    VTD_INTSET,    ///< Integer set
-    VTD_VARVIEW    ///< Variable view
-  };
-  /// Return the view type description of \a y
+  /// Return whether \a y is an integer set
   template<class VY>
-  ViewTypeDesc vtd(VY y);
+  bool isintset(VY y);
+  /// Return whether \a y is a value
+  template<class VY>
+  bool isval(VY y);
 
   /// Subscribe propagator \a p to view \a y
   template<class VY>
@@ -70,6 +67,9 @@ namespace Gecode { namespace Int { namespace Count {
   /// Cancel propagator \a p for view \a y
   template<class VY>
   void cancel(Space& home, Propagator& p, VY y);
+  /// Schedule propagator \a p for view \a y
+  template<class VY>
+  void reschedule(Space& home, Propagator& p, VY y);
 
   /// Test whether \a x and \a y are equal
   template<class VX>
@@ -153,6 +153,8 @@ namespace Gecode { namespace Int { namespace Count {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -161,7 +163,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -191,7 +193,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (greater or equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -221,7 +223,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (less or equal integer to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -281,6 +283,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual size_t dispose(Space& home);
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
   protected:
     /// Count how many views are equal now
     void count(Space& home);
@@ -296,7 +300,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -331,7 +335,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (less or equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode
@@ -366,7 +370,7 @@ namespace Gecode { namespace Int { namespace Count {
    * \brief %Propagator for counting views (greater or equal to number of equal views)
    *
    * Not all combinations of views are possible. The types \a VX
-   * and \a VY must be either equal, or \a VY must be ConstIntView, 
+   * and \a VY must be either equal, or \a VY must be ConstIntView,
    * ZeroIntView, or IntSet.
    *
    * Requires \code #include <gecode/int/count.hh> \endcode

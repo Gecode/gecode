@@ -56,7 +56,7 @@ if (!(T)) {                                                     \
   }                                                             \
   test = (T);
 
-namespace Test { 
+namespace Test {
 
   /// Tests for arrays
   namespace Array {

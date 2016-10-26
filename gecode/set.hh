@@ -470,7 +470,7 @@ namespace Gecode {
    * with automatic memory management.
    * \ingroup TaskModelSet
    */
-  
+
   //@{
 
 }
@@ -492,19 +492,18 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    SetVarArgs(void) {}
+    SetVarArgs(void);
     /// Allocate array with \a n elements
-    explicit SetVarArgs(int n) : VarArgArray<SetVar>(n) {}
+    explicit SetVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    SetVarArgs(const SetVarArgs& a) : VarArgArray<SetVar>(a) {}
+    SetVarArgs(const SetVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    SetVarArgs(const VarArray<SetVar>& a) : VarArgArray<SetVar>(a) {}
+    SetVarArgs(const VarArray<SetVar>& a);
     /// Initialize from vector \a a
-    SetVarArgs(const std::vector<SetVar>& a) : VarArgArray<SetVar>(a) {}
+    SetVarArgs(const std::vector<SetVar>& a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    SetVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<SetVar>(first,last) {}
+    SetVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Create an array of size \a n.
      *
@@ -574,7 +573,7 @@ namespace Gecode {
     //@{
     /// Default constructor (array of size 0)
     SetVarArray(void);
-    /// Initialize from set variable array \a a (share elements)    
+    /// Initialize from set variable array \a a (share elements)
     SetVarArray(const SetVarArray&);
     /// Initialize from set variable argument array \a a (copy elements)
     SetVarArray(Space& home, const SetVarArgs&);
@@ -1052,7 +1051,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_SET_EXPORT void
-  element(Home home, const IntSetArgs& a, 
+  element(Home home, const IntSetArgs& a,
           IntVar x, int w, IntVar y, int h, SetVar z);
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
@@ -1060,7 +1059,7 @@ namespace Gecode {
    * \f$ w\cdot h\neq|a|\f$.
    */
   GECODE_SET_EXPORT void
-  element(Home home, const SetVarArgs& a, 
+  element(Home home, const SetVarArgs& a,
           IntVar x, int w, IntVar y, int h, SetVar z);
   //@}
 
@@ -1117,8 +1116,8 @@ namespace Gecode {
    * \brief Branch value function type for set variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponding branch commit function. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher.
    *
    * \ingroup TaskModelSetBranch
@@ -1129,8 +1128,8 @@ namespace Gecode {
    * \brief Branch commit function type for set variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponds to the alternative \a a. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher. The value \a n is the value
    * computed by the corresponding branch value function.
    *
@@ -1163,7 +1162,7 @@ namespace Gecode {
     /// Copy constructor
     SetAFC(const SetAFC& a);
     /// Assignment operator
-    SetAFC& operator =(const SetAFC& a);      
+    SetAFC& operator =(const SetAFC& a);
     /// Initialize for set variables \a x with decay factor \a d
     SetAFC(Home home, const SetVarArgs& x, double d=1.0);
     /**
@@ -1173,7 +1172,7 @@ namespace Gecode {
      * AFC storage has been constructed with the default constructor.
      *
      */
-    void init(Home, const SetVarArgs& x, double d=1.0);
+    void init(Home home, const SetVarArgs& x, double d=1.0);
   };
 
 }
@@ -1201,7 +1200,7 @@ namespace Gecode {
     /// Copy constructor
     SetActivity(const SetActivity& a);
     /// Assignment operator
-    SetActivity& operator =(const SetActivity& a);      
+    SetActivity& operator =(const SetActivity& a);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
@@ -1210,7 +1209,7 @@ namespace Gecode {
      * by \a bm.
      *
      */
-    GECODE_SET_EXPORT 
+    GECODE_SET_EXPORT
     SetActivity(Home home, const SetVarArgs& x, double d=1.0,
                 SetBranchMerit bm=NULL);
     /**
@@ -1225,7 +1224,7 @@ namespace Gecode {
      *
      */
     GECODE_SET_EXPORT void
-    init(Home, const SetVarArgs& x, double d=1.0,
+    init(Home home, const SetVarArgs& x, double d=1.0,
          SetBranchMerit bm=NULL);
   };
 
@@ -1236,7 +1235,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for printing branching alternatives for set variables
-  typedef void (*SetVarValPrint)(const Space &home, const BrancherHandle& bh,
+  typedef void (*SetVarValPrint)(const Space &home, const Brancher& b,
                                  unsigned int a,
                                  SetVar x, int i, const int& n,
                                  std::ostream& o);
@@ -1324,22 +1323,22 @@ namespace Gecode {
   SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count with decay factor \a d
   SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest accumulated failure count    
+  /// Select variable with largest accumulated failure count
   SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
   /// Select variable with lowest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);    
+  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with lowest activity
-  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);    
+  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
   /// Select variable with highest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);     
+  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest activity
-  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);     
+  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
   /// Select variable with smallest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);         
+  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest minimum unknown element
   SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL); 
+  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest maximum unknown element
   SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest unknown set
@@ -1518,9 +1517,9 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
-         SetVarBranch vars, SetValBranch vals, 
+         SetVarBranch vars, SetValBranch vals,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
   /**
@@ -1528,7 +1527,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          SetBranchFilter bf=NULL,
@@ -1538,7 +1537,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, SetVar x, SetValBranch vals,
          SetVarValPrint vvp=NULL);
   /**
@@ -1546,7 +1545,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
@@ -1555,7 +1554,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   assign(Home home, SetVar x, SetAssign vals,
          SetVarValPrint vvp=NULL);
 
@@ -1568,7 +1567,7 @@ namespace Gecode {
   /**
    * \brief Variable sequences in \a x of size \a ss are interchangeable
    *
-   * The size of \a x must be a multiple of \a ss. 
+   * The size of \a x must be a multiple of \a ss.
    */
   GECODE_SET_EXPORT
   SymmetryHandle VariableSequenceSymmetry(const SetVarArgs& x, int ss);
@@ -1578,7 +1577,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
@@ -1590,13 +1589,173 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  GECODE_SET_EXPORT BrancherHandle
+  GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
-         const Symmetries& syms, 
+         const Symmetries& syms,
          SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
 }
+
+namespace Gecode {
+
+  /*
+   * \brief Relaxed assignment of variables in \a x from values in \a sx
+   *
+   * The variables in \a x are assigned values from the assigned variables
+   * in the solution \a sx with a relaxation probability \a p. That is, 
+   * if \$fp=0.1\f$ approximately 10% of the variables in \a x will be 
+   * assigned a value from \a sx.
+   *
+   * The random numbers are generated from the generator \a r. At least
+   * one variable will not be assigned: in case the relaxation attempt 
+   * would suggest that all variables should be assigned, a single
+   * variable will be selected randomly to remain unassigned.
+   *
+   * Throws an exception of type Set::ArgumentSizeMismatch, if \a x and
+   * \a sx are of different size.
+   *
+   * Throws an exception of type Set::OutOfLimits, if \a p is not between
+   * \a 0.0 and \a 1.0.
+   *
+   * \ingroup TaskModeSet
+   */
+  GECODE_SET_EXPORT void 
+  relax(Home home, const SetVarArgs& x, const SetVarArgs& sx,
+        Rnd r, double p);
+
+}
+
+#include <gecode/set/trace/trace-view.hpp>
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskSetTrace Tracing for set variables
+   * \ingroup TaskTrace
+   */
+
+  /**
+   * \brief Trace delta information for set variables
+   * \ingroup TaskSetTrace
+   */
+  class SetTraceDelta {
+  protected:
+    ///
+  public:
+    /// Delta for the greatest lower bound
+    class Glb
+      : public Iter::Ranges::Diff<Set::GlbRanges<Set::SetView>,
+                                  Iter::Ranges::RangeList> {
+    protected:
+      /// Iterator over old glb
+      Iter::Ranges::RangeList o;
+      /// Iterator over new glb
+      Set::GlbRanges<Set::SetView> n;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize with old glb and new glb
+      Glb(RangeList* o, Set::SetView n);
+      //@}
+    };
+    Glb _glb;
+    /// Delta for the least upper bound
+    class Lub
+      : public Iter::Ranges::Diff<Iter::Ranges::RangeList,
+                                  Set::LubRanges<Set::SetView> > {
+    protected:
+      /// Iterator over old lub
+      Iter::Ranges::RangeList o;
+      /// Iterator over new lub
+      Set::LubRanges<Set::SetView> n;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize with old lub \a o and new lub \a n
+      Lub(RangeList* o, Set::SetView n);
+      //@}
+    };
+    Lub _lub;
+    /// \name Constructor
+    //@{
+    /// Initialize with old trace view \a o, new view \a n, and delta \a d
+    SetTraceDelta(Set::SetTraceView o, Set::SetView n, const Delta& d);
+    //@}
+    /// \name Access to delta iterators
+    //@{
+    /// Give access to iterator for delta in greatest lower bound (values that have been included)
+    Glb& glb(void);
+    /// Give access iterator for delta in leat bound (values that have been removed)
+    Lub& lub(void);
+    //@}
+  };
+
+}
+
+#include <gecode/set/trace/delta.hpp>
+
+#include <gecode/set/trace/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Tracer for set variables
+   * \ingroup TaskSetTrace
+   */
+  typedef Tracer<Set::SetView> SetTracer;
+  /**
+   * \brief TraceRecorder for set variables
+   * \ingroup TaskSetTrace
+   */
+  typedef TraceRecorder<Set::SetView> SetTraceRecorder;
+
+  /**
+   * \brief Standard set variable tracer
+   * \ingroup TaskSetTrace
+   */
+  class GECODE_SET_EXPORT StdSetTracer : public SetTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+  public:
+    /// Initialize with output stream \a os0
+    StdSetTracer(std::ostream& os0 = std::cerr);
+    /// Print init information
+    virtual void init(const Space& home, const SetTraceRecorder& t);
+    /// Print prune information
+    virtual void prune(const Space& home, const SetTraceRecorder& t,
+                       const ExecInfo& ei, int i, SetTraceDelta& d);
+    /// Print fixpoint information
+    virtual void fix(const Space& home, const SetTraceRecorder& t);
+    /// Print that trace recorder is done
+    virtual void done(const Space& home, const SetTraceRecorder& t);
+    /// Default tracer (printing to std::cerr)
+    static StdSetTracer def;
+  };
+
+
+  /**
+   * \brief Create a tracer for set variables
+   * \ingroup TaskSetTrace
+   */
+  GECODE_SET_EXPORT void
+  trace(Home home, const SetVarArgs& x,
+        TraceFilter tf,
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        SetTracer& t = StdSetTracer::def);
+  /**
+   * \brief Create a tracer for set variables
+   * \ingroup TaskSetTrace
+   */
+  void
+  trace(Home home, const SetVarArgs& x,
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        SetTracer& t = StdSetTracer::def);
+
+}
+
+#include <gecode/set/trace.hpp>
 
 #endif
 

@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace NValues {
       assert(y.assigned());
       return Distinct::Dom<IntView>::post(home,x);
     }
-    
+
     // Eliminate assigned views and store them into the value set
     ValSet vs;
     int n = x.size();
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace NValues {
     (void) new (home) GqInt<VY>(home, vs, x, y);
     return ES_OK;
   }
-    
+
   template<class VY>
   forceinline
   GqInt<VY>::GqInt(Space& home, bool share, GqInt<VY>& p)
@@ -119,12 +119,12 @@ namespace Gecode { namespace Int { namespace NValues {
 
     if (vs.size() >= y.max())
       return home.ES_SUBSUMED(*this);
-      
+
     GECODE_ES_CHECK(prune_upper(home,g));
 
     return ES_NOFIX;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

@@ -1,5 +1,5 @@
-/****   , [ OptVar.cc ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ OptVar.cc ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,11 +33,11 @@ int ExistOptVar::getVal(Strategy s) {
     if (s.isFalse()) {cout<<"EOV "<<varId<<" scope "<<scopeId<<"Try to get opt value on FALSE"<<endl;abort();} // (sub)Strategy must neither be false
     if (s.isDummy()) {cout<<"EOV "<<varId<<" scope "<<scopeId<<"Try to get opt value on Dummy"<<endl;abort();} // nor begin with a universal scope
     if (s.scope() > scopeId) {cout<<"EOV "<<varId<<" scope "<<scopeId<<"Try to get opt value on  asubstrategy not containing opt variable"<<endl;abort();} // nor begin at a scope after the one we want ^^
-    
+
     if (s.scope() == scopeId) return s.value(varId-s.VMin());
     // s.getTag() < scope
     Strategy nextScope = s.getChild(0);
-    
+
     return getVal(nextScope);
 }
 
@@ -53,7 +53,7 @@ int UnivOptVar::getVal(Strategy s) {
 //    cout<<"getVal sur univoptvar "<<scopeId<<endl;
     vector<int> values; values.clear();
     if (s.isFalse()) {cout<<"UOV Try to get opt value on FALSE"<<endl;abort();}
-    if (s.isTrue()) return fct->eval(values); 
+    if (s.isTrue()) return fct->eval(values);
     if (s.isDummy()) {
         for (int i=0;i<s.degree();i++) {
             values.push_back(var->getVal(s.getChild(i)));
@@ -67,7 +67,7 @@ int UnivOptVar::getVal(Strategy s) {
         }
         return fct->eval(values);
     }
-    
+
     if (s.scope() < (scopeId-1) ) {
         if (s.quantifier()) {cout<<"UOV universal scope too soon"<<endl;abort();} // universal quantifier too soon
         return getVal(s.getChild(0));
@@ -76,7 +76,7 @@ int UnivOptVar::getVal(Strategy s) {
     cout<<"UOV try to get aggregate on a substrategy not containing required scope"<<endl;
     abort();
     return 0; // dummy return to avoid a compiler complain...
-}    
-        
+}
+
 
 int UnivOptVar::getScope() {return scopeId;}

@@ -53,14 +53,14 @@ namespace Test { namespace Int {
       SO_MINUS,  ///< Difference
       SO_HLT     ///< Stop execution
     };
-    
+
     /// Type for representing a set instruction
     class SetInstr {
     public:
       SetOpcode o; ///< Which instruction to execute
       unsigned char x, y, z;  ///< Instruction arguments, \a z is destination (or \a y for complement)
     };
-    
+
     /// Executes set instruction for evaluation (checking)
     int
     eval(const SetInstr* pc, int reg[], bool& failed) {
@@ -70,7 +70,7 @@ namespace Test { namespace Int {
         case SO_CMPL: reg[pc->y] = !reg[pc->x]; break;
         case SO_INTER: reg[pc->z] = reg[pc->x] & reg[pc->y]; break;
         case SO_UNION:  reg[pc->z] = reg[pc->x] | reg[pc->y]; break;
-        case SO_DUNION: 
+        case SO_DUNION:
           if (reg[pc->x] && reg[pc->y])
             failed = true;
           reg[pc->z] = reg[pc->x] | reg[pc->y]; break;
@@ -82,7 +82,7 @@ namespace Test { namespace Int {
       }
       GECODE_NEVER;
     }
-    
+
     /// Executes set instruction for constructing set expressions
     Gecode::SetExpr
     eval(const SetInstr* pc, Gecode::SetExpr reg[]) {
@@ -101,7 +101,7 @@ namespace Test { namespace Int {
       }
       GECODE_NEVER;
     }
-    
+
     bool
     simpleReifiedSemantics(const SetInstr* pc) {
       while (pc->o != SO_HLT) {
@@ -111,7 +111,7 @@ namespace Test { namespace Int {
       }
       return true;
     }
-    
+
     /**
      * \defgroup TaskTestSetMiniModelSet Minimal modelling constraints (%Set constraints)
      * \ingroup TaskTestSet
@@ -128,7 +128,7 @@ namespace Test { namespace Int {
       Gecode::SetRelType srt;
     public:
       /// Create and register test
-      SetExprConst(const SetInstr* bis0, const std::string& s, 
+      SetExprConst(const SetInstr* bis0, const std::string& s,
                    Gecode::SetRelType srt0, int c0)
         : Test("MiniModel::SetExpr::Const::"+s+"::"+str(srt0)+"::"+str(c0),
                4,0,1,simpleReifiedSemantics(bis0)),
@@ -173,7 +173,7 @@ namespace Test { namespace Int {
         }
       }
       /// Post reified constraint on \a x
-      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x, 
+      virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                         Gecode::Reify r) {
         using namespace Gecode;
         SetVarArgs s(home,4,IntSet::empty,1,1);
@@ -200,7 +200,7 @@ namespace Test { namespace Int {
         }
       }
     };
-    
+
     /// %Test set expressions with expression result
     class SetExprExpr : public Test {
     protected:
@@ -216,7 +216,7 @@ namespace Test { namespace Int {
                   const std::string& s, Gecode::SetRelType srt0)
         : Test("MiniModel::SetExpr::Expr::"+s+"::"+str(srt0),
                8,0,1,
-               simpleReifiedSemantics(bis00) && 
+               simpleReifiedSemantics(bis00) &&
                simpleReifiedSemantics(bis10)),
           bis0(bis00), bis1(bis10), srt(srt0) {}
       /// %Test whether \a x is solution
@@ -227,15 +227,15 @@ namespace Test { namespace Int {
         int ret0 = eval(bis0, reg0, failed0);
         if (failed0)
           return false;
-    
+
         int reg1[4] = {(x[4] != x[6]), x[5],
                        (x[6] > 0), x[7]};
         bool failed1;
         int ret1 = eval(bis1, reg1, failed1);
-    
+
         if (failed1)
           return false;
-    
+
         switch (srt) {
           case Gecode::SRT_EQ: return ret0 == ret1;
           case Gecode::SRT_NQ: return ret0 != ret1;
@@ -255,18 +255,18 @@ namespace Test { namespace Int {
         Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
         Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
         Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
-    
+
         Gecode::rel(home, (singleton(1) == s[4]) == (x[4] != x[6]));
         Gecode::rel(home, (singleton(1) == s[5]) == (x[5] == 1));
         Gecode::rel(home, (singleton(1) == s[6]) == (x[6] > 0));
         Gecode::rel(home, (singleton(1) == s[7]) == (x[7] == 1));
-    
+
         Gecode::SetExpr reg0[4] = {s[0],s[1],s[2],s[3]};
         Gecode::SetExpr e0 = eval(bis0,reg0);
-    
+
         Gecode::SetExpr reg1[4] = {s[4],s[5],s[6],s[7]};
         Gecode::SetExpr e1 = eval(bis1,reg1);
-    
+
         switch (srt) {
           case Gecode::SRT_EQ: Gecode::rel(home, e0 == e1); break;
           case Gecode::SRT_NQ: Gecode::rel(home, e0 != e1); break;
@@ -285,18 +285,18 @@ namespace Test { namespace Int {
         Gecode::rel(home, (singleton(1) == s[1]) == (x[1] == 1));
         Gecode::rel(home, (singleton(1) == s[2]) == (x[2] > 0));
         Gecode::rel(home, (singleton(1) == s[3]) == (x[3] == 1));
-    
+
         Gecode::rel(home, (singleton(1) == s[4]) == (x[4] != x[6]));
         Gecode::rel(home, (singleton(1) == s[5]) == (x[5] == 1));
         Gecode::rel(home, (singleton(1) == s[6]) == (x[6] > 0));
         Gecode::rel(home, (singleton(1) == s[7]) == (x[7] == 1));
-    
+
         Gecode::SetExpr reg0[4] = {s[0],s[1],s[2],s[3]};
         Gecode::SetExpr e0 = eval(bis0,reg0);
-    
+
         Gecode::SetExpr reg1[4] = {s[4],s[5],s[6],s[7]};
         Gecode::SetExpr e1 = eval(bis1,reg1);
-    
+
         Gecode::SetRel srel;
         switch (srt) {
           case Gecode::SRT_EQ: srel = (e0 == e1); break;
@@ -4334,9 +4334,9 @@ namespace Test { namespace Int {
       {SO_MINUS,0,1,0},
       {SO_HLT,0,0,0}
     };
-    
-    
-    
+
+
+
     const SetInstr* si[] = {
       &si000[0],&si001[0],&si002[0],&si003[0],&si004[0],&si005[0],
       &si006[0],&si007[0],&si008[0],&si009[0],&si010[0],&si011[0],
@@ -4487,7 +4487,7 @@ namespace Test { namespace Int {
       &si876[0],&si877[0],&si878[0],&si879[0]
     };
 
-    
+
     /// Help class to create and register tests
     class Create {
     public:
@@ -4511,9 +4511,9 @@ namespace Test { namespace Int {
           (void) new SetExprConst(si[i],s,Gecode::SRT_SUP,1);
           (void) new SetExprConst(si[i],s,Gecode::SRT_DISJ,0);
           (void) new SetExprConst(si[i],s,Gecode::SRT_DISJ,1);
-          
+
           if ( (i % 31) == 0) {
-          
+
             for (int j=0; j<n; j++) {
               if ( (j % 37) == 0) {
                 std::string ss = Test::str(j);

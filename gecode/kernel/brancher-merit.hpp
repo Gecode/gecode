@@ -106,7 +106,7 @@ namespace Gecode {
   class MeritAFC : public MeritBase<View,double> {
   protected:
     /// AFC information
-    AFC afc;    
+    AFC afc;
   public:
     /// Constructor for initialization
     MeritAFC(Space& home, const VarBranch& vb);
@@ -167,8 +167,8 @@ namespace Gecode {
       f(function_cast<Function>(vb.merit())) {}
   template<class View>
   forceinline
-  MeritFunction<View>::MeritFunction(Space& home, bool shared, 
-                                     MeritFunction& mf) 
+  MeritFunction<View>::MeritFunction(Space& home, bool shared,
+                                     MeritFunction& mf)
     : MeritBase<View,double>(home,shared,mf), f(mf.f) {}
   template<class View>
   forceinline double
@@ -184,7 +184,7 @@ namespace Gecode {
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
-  MeritDegree<View>::MeritDegree(Space& home, bool shared, 
+  MeritDegree<View>::MeritDegree(Space& home, bool shared,
                                  MeritDegree& md)
     : MeritBase<View,unsigned int>(home,shared,md) {}
   template<class View>
@@ -200,7 +200,7 @@ namespace Gecode {
     : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
-  MeritAFC<View>::MeritAFC(Space& home, bool shared, 
+  MeritAFC<View>::MeritAFC(Space& home, bool shared,
                            MeritAFC& ma)
     : MeritBase<View,double>(home,shared,ma) {
     afc.update(home,shared,ma.afc);
@@ -229,7 +229,7 @@ namespace Gecode {
     : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
   template<class View>
   forceinline
-  MeritActivity<View>::MeritActivity(Space& home, bool shared, 
+  MeritActivity<View>::MeritActivity(Space& home, bool shared,
                                      MeritActivity& ma)
     : MeritBase<View,double>(home,shared,ma) {
     activity.update(home, shared, ma.activity);

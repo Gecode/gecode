@@ -149,12 +149,12 @@ int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 _[_]*[A-Za-z][A-Za-z0-9_]* { yylval->sValue = strdup(yytext); return FZ_U_ID; }
 \"[^"\n]*\"       {
                     yylval->sValue = strdup(yytext+1);
-                    yylval->sValue[strlen(yytext)-2] = 0; 
+                    yylval->sValue[strlen(yytext)-2] = 0;
                     return FZ_STRING_LIT; }
 .                 { yyerror("Unknown character"); }
 %%
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
-  Gecode::FlatZinc::ParserState* parm = 
+  Gecode::FlatZinc::ParserState* parm =
     static_cast<Gecode::FlatZinc::ParserState*>(yyget_extra(yyscanner));
   return parm->fillBuffer(buf, size);
   // work around warning that yyunput is unused

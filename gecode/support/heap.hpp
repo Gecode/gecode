@@ -330,8 +330,28 @@ public:
 #endif
   };
 
-  /// The single global heap
-  extern GECODE_SUPPORT_EXPORT Heap heap;
+  /**
+   * \brief The single global heap
+   * \ingroup FuncMemHeap
+   */
+  extern GECODE_SUPPORT_EXPORT
+  Heap heap;
+
+  /**
+   * \brief Base class for heap allocated objects
+   * \ingroup FuncMemHeap
+   */
+  class GECODE_SUPPORT_EXPORT HeapAllocated {
+  public:
+    /// Memory management
+    //@{
+    /// Allocate memory from heap
+    static void* operator new(size_t s);
+    /// Free memory allocated from heap
+    static void  operator delete(void* p);
+    //@}
+  };
+
 
   /*
    * Wrappers for raw allocation routines
@@ -339,7 +359,7 @@ public:
    */
   forceinline void*
   Heap::ralloc(size_t s) {
-    void* p = ::malloc(s);
+    void* p = Support::allocator.alloc(s);
 #ifdef GECODE_PEAKHEAP
     _m.acquire();
     _cur += GECODE_MSIZE(p);
@@ -358,7 +378,7 @@ public:
     _cur -= GECODE_MSIZE(p);
     _m.release();
 #endif
-    ::free(p);
+    Support::allocator.free(p);
   }
 
   forceinline void
@@ -368,7 +388,7 @@ public:
     _cur -= GECODE_MSIZE(p);
     _m.release();
 #endif
-    ::free(p);
+    Support::allocator.free(p);
   }
 
   forceinline void*
@@ -378,7 +398,7 @@ public:
     _cur -= GECODE_MSIZE(p);
     _m.release();
 #endif
-    p = ::realloc(p,s);
+    p = Support::allocator.realloc(p,s);
 #ifdef GECODE_PEAKHEAP
     _m.acquire();
     _cur += GECODE_MSIZE(p);
@@ -389,6 +409,21 @@ public:
       return p;
     throw MemoryExhausted();
   }
+
+
+  /*
+   * Heap allocated objects
+   *
+   */
+  forceinline void*
+  HeapAllocated::operator new(size_t s) {
+    return heap.ralloc(s);
+  }
+  forceinline void
+  HeapAllocated::operator delete(void* p) {
+    heap.rfree(p);
+  }
+
 
 
   /*
@@ -572,28 +607,28 @@ public:
     return copy<T>(d,s,static_cast<long unsigned int>(n));
   }
 
-#define GECODE_SUPPORT_COPY(T)                                  \
-  template<>                                                    \
-  forceinline T*                                                \
-  Heap::copy(T* d, const T* s, long unsigned int n) {           \
-    return static_cast<T*>(memcpy(d,s,n*sizeof(T)));            \
-  }                                                             \
-  template<>                                                    \
-  forceinline T*                                                \
-  Heap::copy(T* d, const T* s, long int n) {                    \
-    assert(n >= 0);                                             \
-    return copy<T>(d,s,static_cast<long unsigned int>(n));      \
-  }                                                             \
-  template<>                                                    \
-  forceinline T*                                                \
-  Heap::copy(T* d, const T* s, unsigned int n) {                \
-    return copy<T>(d,s,static_cast<long unsigned int>(n));      \
-  }                                                             \
-  template<>                                                    \
-  forceinline T*                                                \
-  Heap::copy(T* d, const T* s, int n) {                         \
-    assert(n >= 0);                                             \
-    return copy<T>(d,s,static_cast<long unsigned int>(n));      \
+#define GECODE_SUPPORT_COPY(T)                                          \
+  template<>                                                            \
+  forceinline T*                                                        \
+  Heap::copy(T* d, const T* s, long unsigned int n) {                   \
+    return static_cast<T*>(Support::allocator.memcpy(d,s,n*sizeof(T))); \
+  }                                                                     \
+  template<>                                                            \
+  forceinline T*                                                        \
+  Heap::copy(T* d, const T* s, long int n) {                            \
+    assert(n >= 0);                                                     \
+    return copy<T>(d,s,static_cast<long unsigned int>(n));              \
+  }                                                                     \
+  template<>                                                            \
+  forceinline T*                                                        \
+  Heap::copy(T* d, const T* s, unsigned int n) {                        \
+    return copy<T>(d,s,static_cast<long unsigned int>(n));              \
+  }                                                                     \
+  template<>                                                            \
+  forceinline T*                                                        \
+  Heap::copy(T* d, const T* s, int n) {                                 \
+    assert(n >= 0);                                                     \
+    return copy<T>(d,s,static_cast<long unsigned int>(n));              \
   }
 
   GECODE_SUPPORT_COPY(bool)
@@ -613,7 +648,7 @@ public:
   template<class T>
   forceinline T**
   Heap::copy(T** d, const T** s, long unsigned int n) {
-    return static_cast<T**>(memcpy(d,s,n*sizeof(T*)));
+    return static_cast<T**>(Support::allocator.memcpy(d,s,n*sizeof(T*)));
   }
   template<class T>
   forceinline T**

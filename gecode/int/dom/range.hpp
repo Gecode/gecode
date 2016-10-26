@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Dom {
   template<class View, ReifyMode rm>
   forceinline
   ReRange<View,rm>::ReRange(Home home, View x, int min0, int max0, BoolView b)
-    : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,x,b),
+    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b),
       min(min0), max(max0) {}
 
   template<class View, ReifyMode rm>
@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Dom {
   template<class View, ReifyMode rm>
   forceinline
   ReRange<View,rm>::ReRange(Space& home, bool share, ReRange& p)
-    : ReUnaryPropagator<View,PC_INT_BND,BoolView>(home,share,p),
+    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p),
       min(p.min), max(p.max) {}
 
   template<class View, ReifyMode rm>
@@ -95,23 +95,42 @@ namespace Gecode { namespace Int { namespace Dom {
         GECODE_ME_CHECK(x0.gq(home,min));
         GECODE_ME_CHECK(x0.lq(home,max));
       }
+      return home.ES_SUBSUMED(*this);
     } else if (b.zero()) {
       if (rm != RM_IMP) {
         Iter::Ranges::Singleton r(min,max);
         GECODE_ME_CHECK(x0.minus_r(home,r,false));
       }
+      return home.ES_SUBSUMED(*this);
     } else if ((x0.max() <= max) && (x0.min() >= min)) {
       if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one_none(home));
+      return home.ES_SUBSUMED(*this);
     } else if ((x0.max() < min) || (x0.min() > max)) {
       if (rm != RM_PMI)
         GECODE_ME_CHECK(b.zero_none(home));
-    } else {
+      return home.ES_SUBSUMED(*this);
+    } else if (!x0.range()) {
+      ViewRanges<View> i_x(x0);
+      Iter::Ranges::Singleton i_mm(min,max);
+
+      switch (Iter::Ranges::compare(i_x,i_mm)) {
+      case Iter::Ranges::CS_SUBSET:
+        if (rm != RM_IMP)
+          GECODE_ME_CHECK(b.one_none(home));
+        return home.ES_SUBSUMED(*this);
+      case Iter::Ranges::CS_DISJOINT:
+        if (rm != RM_PMI)
+          GECODE_ME_CHECK(b.zero_none(home));
+        return home.ES_SUBSUMED(*this);
+      case Iter::Ranges::CS_NONE:
+        break;
+      default: GECODE_NEVER;
+      }
       return ES_FIX;
     }
-    return home.ES_SUBSUMED(*this);
+    return ES_FIX;
   }
-
 
 }}}
 

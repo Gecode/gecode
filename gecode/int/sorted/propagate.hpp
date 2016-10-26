@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Sorted {
           }
         }
       }
-      
+
       for (int i = n; i--; ) {
         // minimum reachable y-variable
         int minr = allbnd[i].min;
@@ -379,6 +379,15 @@ namespace Gecode { namespace Int { namespace Sorted {
   template<class View, bool Perm>
   PropCost Sorted<View,Perm>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
+  }
+
+  template<class View, bool Perm>
+  void
+  Sorted<View,Perm>::reschedule(Space& home) {
+    x.reschedule(home, *this, PC_INT_BND);
+    y.reschedule(home, *this, PC_INT_BND);
+    if (Perm)
+      z.reschedule(home, *this, PC_INT_BND);
   }
 
   template<class View, bool Perm>

@@ -97,7 +97,7 @@ public:
   SetVarArray flight;
 
   /// The actual model
-  Crew(const Options& opt) 
+  Crew(const Options& opt)
     : Script(opt), flight(*this,noOfFlights,IntSet::empty,0,noOfEmployees-1) {
     IntSet stewardsDS(stewards,noOfStewards);
     IntSet hostessesDS(hostesses,noOfHostesses);
@@ -110,7 +110,7 @@ public:
       rel(*this, cardinality(flight[i]) == requiredCrew[i].staff);
 
       // Enough members of different categories are on board
-      rel(*this, cardinality(flight[i] & stewardsDS) >= 
+      rel(*this, cardinality(flight[i] & stewardsDS) >=
           requiredCrew[i].stewards);
       rel(*this, cardinality(flight[i] & hostessesDS) >=
           requiredCrew[i].hostesses);

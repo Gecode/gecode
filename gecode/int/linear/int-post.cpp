@@ -87,24 +87,24 @@ namespace Gecode { namespace Int { namespace Linear {
     long long int su = 0;
 
     for (int i = n_p; i--; ) {
-      long long int axmin = 
+      long long int axmin =
         t_p[i].a * static_cast<long long int>(t_p[i].x.min());
       if (Limits::overflow_add(sl,axmin))
         throw OutOfLimits("Int::linear");
       sl = sl + axmin;
-      long long int axmax = 
+      long long int axmax =
         t_p[i].a * static_cast<long long int>(t_p[i].x.max());
       if (Limits::overflow_add(sl,axmax))
         throw OutOfLimits("Int::linear");
       su = su + axmax;
     }
     for (int i = n_n; i--; ) {
-      long long int axmax = 
+      long long int axmax =
         t_n[i].a * static_cast<long long int>(t_n[i].x.max());
       if (Limits::overflow_sub(sl,axmax))
         throw OutOfLimits("Int::linear");
       sl = sl - axmax;
-      long long int axmin = 
+      long long int axmin =
         t_n[i].a * static_cast<long long int>(t_n[i].x.min());
       if (Limits::overflow_sub(su,axmin))
         throw OutOfLimits("Int::linear");
@@ -123,13 +123,13 @@ namespace Gecode { namespace Int { namespace Linear {
     is_ip = is_ip && (sl >= Limits::min) && (su <= Limits::max);
 
     for (int i = n_p; i--; ) {
-      long long int axmin = 
+      long long int axmin =
         t_p[i].a * static_cast<long long int>(t_p[i].x.min());
       if (Limits::overflow_sub(sl,axmin))
         throw OutOfLimits("Int::linear");
       if (sl - axmin < Limits::min)
         is_ip = false;
-      long long int axmax = 
+      long long int axmax =
         t_p[i].a * static_cast<long long int>(t_p[i].x.max());
       if (Limits::overflow_sub(su,axmax))
         throw OutOfLimits("Int::linear");
@@ -137,13 +137,13 @@ namespace Gecode { namespace Int { namespace Linear {
         is_ip = false;
     }
     for (int i = n_n; i--; ) {
-      long long int axmin = 
+      long long int axmin =
         t_n[i].a * static_cast<long long int>(t_n[i].x.min());
       if (Limits::overflow_add(sl,axmin))
         throw OutOfLimits("Int::linear");
       if (sl + axmin < Limits::min)
         is_ip = false;
-      long long int axmax = 
+      long long int axmax =
         t_n[i].a * static_cast<long long int>(t_n[i].x.max());
       if (Limits::overflow_add(su,axmax))
         throw OutOfLimits("Int::linear");
@@ -221,7 +221,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c,
-       IntConLevel icl) {
+       IntPropLevel ipl) {
 
     Limits::check(c,"Int::linear");
 
@@ -245,7 +245,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         d /= gcd;
         break;
-      case IRT_NQ: 
+      case IRT_NQ:
         if ((d % gcd) != 0)
           return;
         d /= gcd;
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
     bool is_ip = precision(t_p,n_p,t_n,n_n,d);
 
-    if (is_unit && is_ip && (icl != ICL_DOM)) {
+    if (is_unit && is_ip && (vbd(ipl) != IPL_DOM)) {
       // Unit coefficients with integer precision
       c = static_cast<int>(d);
       if (n == 2) {
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Linear {
         post_nary<int,IntView>(home,x,y,irt,c);
       }
     } else if (is_ip) {
-      if ((n==2) && is_unit && (icl == ICL_DOM) && (irt == IRT_EQ)) {
+      if ((n==2) && is_unit && (vbd(ipl) == IPL_DOM) && (irt == IRT_EQ)) {
         // Binary domain-consistent equality
         c = static_cast<int>(d);
         if (c == 0) {
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Linear {
           }
           default:
             GECODE_NEVER;
-          }          
+          }
         }
       } else {
         // Arbitrary coefficients with integer precision
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<IntScaleView> y(home,n_n);
         for (int i = n_n; i--; )
           y[i] = IntScaleView(t_n[i].a,t_n[i].x);
-        if ((icl == ICL_DOM) && (irt == IRT_EQ)) {
+        if ((vbd(ipl) == IPL_DOM) && (irt == IRT_EQ)) {
           GECODE_ES_FAIL((DomEq<int,IntScaleView>::post(home,x,y,c)));
         } else {
           post_nary<int,IntScaleView>(home,x,y,irt,c);
@@ -396,7 +396,7 @@ namespace Gecode { namespace Int { namespace Linear {
       ViewArray<LLongScaleView> y(home,n_n);
       for (int i = n_n; i--; )
         y[i] = LLongScaleView(t_n[i].a,t_n[i].x);
-      if ((icl == ICL_DOM) && (irt == IRT_EQ)) {
+      if ((vbd(ipl) == IPL_DOM) && (irt == IRT_EQ)) {
         GECODE_ES_FAIL((DomEq<long long int,LLongScaleView>
                         ::post(home,x,y,d)));
       } else {
@@ -480,8 +480,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class CtrlView>
   forceinline void
   posteqint(Home home, IntView& x, int c, CtrlView b, ReifyMode rm,
-            IntConLevel icl) {
-    if (icl == ICL_DOM) {
+            IntPropLevel ipl) {
+    if (vbd(ipl) == IPL_DOM) {
       switch (rm) {
       case RM_EQV:
         GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,CtrlView,RM_EQV>::
@@ -519,7 +519,7 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post(Home home,
        Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel icl) {
+       IntPropLevel ipl) {
     Limits::check(c,"Int::linear");
     long long int d = c;
 
@@ -542,7 +542,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         d /= gcd;
         break;
-      case IRT_NQ: 
+      case IRT_NQ:
         if ((d % gcd) != 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));
@@ -583,9 +583,9 @@ namespace Gecode { namespace Int { namespace Linear {
         switch (irt) {
         case IRT_EQ:
           if (n_p == 1) {
-            posteqint<BoolView>(home,t_p[0].x,c,r.var(),r.mode(),icl);
+            posteqint<BoolView>(home,t_p[0].x,c,r.var(),r.mode(),ipl);
           } else {
-            posteqint<BoolView>(home,t_p[0].x,-c,r.var(),r.mode(),icl);
+            posteqint<BoolView>(home,t_p[0].x,-c,r.var(),r.mode(),ipl);
           }
           break;
         case IRT_NQ:
@@ -598,9 +598,9 @@ namespace Gecode { namespace Int { namespace Linear {
             default: ;
             }
             if (n_p == 1) {
-              posteqint<NegBoolView>(home,t_p[0].x,c,nb,rm,icl);
+              posteqint<NegBoolView>(home,t_p[0].x,c,nb,rm,ipl);
             } else {
-              posteqint<NegBoolView>(home,t_p[0].x,-c,nb,rm,icl);
+              posteqint<NegBoolView>(home,t_p[0].x,-c,nb,rm,ipl);
             }
           }
           break;

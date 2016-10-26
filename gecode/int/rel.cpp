@@ -45,9 +45,9 @@ namespace Gecode {
   using namespace Int;
 
   void
-  rel(Home home, IntVar x0, IntRelType irt, int n, IntConLevel) {
+  rel(Home home, IntVar x0, IntRelType irt, int n, IntPropLevel) {
     Limits::check(n,"Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     IntView x(x0);
     switch (irt) {
     case IRT_EQ: GECODE_ME_FAIL(x.eq(home,n)); break;
@@ -61,9 +61,9 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, const IntVarArgs& x, IntRelType irt, int n, IntConLevel) {
+  rel(Home home, const IntVarArgs& x, IntRelType irt, int n, IntPropLevel) {
     Limits::check(n,"Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
@@ -101,11 +101,11 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, IntVar x0, IntRelType irt, IntVar x1, IntConLevel icl) {
-    if (home.failed()) return;
+  rel(Home home, IntVar x0, IntRelType irt, IntVar x1, IntPropLevel ipl) {
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
         GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
       } else {
         GECODE_ES_FAIL((Rel::EqBnd<IntView,IntView>::post(home,x0,x1)));
@@ -128,8 +128,8 @@ namespace Gecode {
 
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
-      IntConLevel icl) {
-    if (home.failed()) return;
+      IntPropLevel ipl) {
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
       {
@@ -137,7 +137,7 @@ namespace Gecode {
         xv[x.size()]=y;
         for (int i=x.size(); i--; )
           xv[i]=x[i];
-        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
           GECODE_ES_FAIL(Rel::NaryEqDom<IntView>::post(home,xv));
         } else {
           GECODE_ES_FAIL(Rel::NaryEqBnd<IntView>::post(home,xv));
@@ -177,11 +177,11 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1, Reify r,
-      IntConLevel icl) {
-    if (home.failed()) return;
+      IntPropLevel ipl) {
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
         switch (r.mode()) {
         case RM_EQV:
           GECODE_ES_FAIL((Rel::ReEqDom<IntView,BoolView,RM_EQV>
@@ -218,7 +218,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         NegBoolView n(r.var());
-        if (icl == ICL_BND) {
+        if (vbd(ipl) == IPL_BND) {
           switch (r.mode()) {
           case RM_EQV:
             GECODE_ES_FAIL((Rel::ReEqBnd<IntView,NegBoolView,RM_EQV>
@@ -301,12 +301,12 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x, IntRelType irt, int n, Reify r,
-      IntConLevel icl) {
+      IntPropLevel ipl) {
     Limits::check(n,"Int::rel");
-    if (home.failed()) return;
+    GECODE_POST;
     switch (irt) {
     case IRT_EQ:
-      if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+      if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
         switch (r.mode()) {
         case RM_EQV:
           GECODE_ES_FAIL((Rel::ReEqDomInt<IntView,BoolView,RM_EQV>
@@ -343,7 +343,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         NegBoolView nb(r.var());
-        if (icl == ICL_BND) {
+        if (vbd(ipl) == IPL_BND) {
           switch (r.mode()) {
           case RM_EQV:
             GECODE_ES_FAIL((Rel::ReEqBndInt<IntView,NegBoolView,RM_EQV>
@@ -426,14 +426,15 @@ namespace Gecode {
 
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt,
-      IntConLevel icl) {
-    if (home.failed() || ((irt != IRT_NQ) && (x.size() < 2))) 
+      IntPropLevel ipl) {
+    GECODE_POST;
+    if ((irt != IRT_NQ) && (x.size() < 2))
       return;
     switch (irt) {
     case IRT_EQ:
       {
         ViewArray<IntView> xv(home,x);
-        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+        if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
           GECODE_ES_FAIL(Rel::NaryEqDom<IntView>::post(home,xv));
         } else {
           GECODE_ES_FAIL(Rel::NaryEqBnd<IntView>::post(home,xv));
@@ -483,8 +484,8 @@ namespace Gecode {
 
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
-      IntConLevel icl) {
-    if (home.failed()) return;
+      IntPropLevel ipl) {
+    GECODE_POST;
 
     switch (irt) {
     case IRT_GR:
@@ -514,7 +515,7 @@ namespace Gecode {
     case IRT_EQ:
       if (x.size() != y.size()) {
         home.fail();
-      } else if ((icl == ICL_DOM) || (icl == ICL_DEF))
+      } else if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF))
         for (int i=x.size(); i--; ) {
           GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>
                           ::post(home,x[i],y[i])));

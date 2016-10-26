@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     /// connection to dropped view
     int reachable;
     /// Constructor for posting
-    Sorted(Home home, 
+    Sorted(Home home,
            ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
     /// Constructor for cloning
     Sorted(Space& home, bool share, Sorted<View,Perm>& p);
@@ -84,6 +84,8 @@ namespace Gecode { namespace Int { namespace Sorted {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function returning low linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for views \a x, \a y, and \a z

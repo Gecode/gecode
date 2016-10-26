@@ -63,6 +63,8 @@ namespace Gecode { namespace Search { namespace Sequential {
     Space* next(void);
     /// Return statistics
     Statistics statistics(void) const;
+    /// Constrain future solutions to be better than \a b (should never be called)
+    void constrain(const Space& b);
     /// Reset engine to restart at space \a s
     void reset(Space* s);
     /// Return no-goods
@@ -71,7 +73,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     ~DFS(void);
   };
 
-  forceinline 
+  forceinline
   DFS::DFS(Space* s, const Options& o)
     : opt(o), path(opt.nogoods_limit), d(0) {
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
@@ -172,7 +174,13 @@ namespace Gecode { namespace Search { namespace Sequential {
     return *this;
   }
 
-  forceinline 
+  forceinline void
+  DFS::constrain(const Space& b) {
+    (void) b;
+    assert(false);
+  }
+
+  forceinline
   DFS::~DFS(void) {
     delete cur;
     path.reset();

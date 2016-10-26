@@ -48,7 +48,7 @@ namespace Gecode { namespace Float { namespace Linear {
   void
   estimate(Term* t, int n, FloatVal c, FloatNum& l, FloatNum &u) {
     FloatVal est = c;
-    for (int i=n; i--; ) 
+    for (int i=n; i--; )
       est += t[i].a * t[i].x.domain();
     FloatNum min = est.min();
     FloatNum max = est.max();
@@ -95,7 +95,7 @@ namespace Gecode { namespace Float { namespace Linear {
   template<class View>
   forceinline void
   post_nary(Home home,
-            ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt, 
+            ViewArray<View>& x, ViewArray<View>& y, FloatRelType frt,
             FloatVal c) {
     switch (frt) {
     case FRT_EQ:
@@ -202,7 +202,7 @@ namespace Gecode { namespace Float { namespace Linear {
         is_unit = false;
         break;
       }
-    
+
     if (is_unit) {
       // Unit coefficients
       ViewArray<FloatView> x(home,n_p);
@@ -213,7 +213,7 @@ namespace Gecode { namespace Float { namespace Linear {
         y[i] = t_n[i].x;
       post_nary<FloatView>(home,x,y,frt,c);
     } else {
-      // Arbitrary coefficients 
+      // Arbitrary coefficients
       ViewArray<ScaleView> x(home,n_p);
       for (int i = n_p; i--; )
         x[i] = ScaleView(t_p[i].a,t_p[i].x);
@@ -231,7 +231,7 @@ namespace Gecode { namespace Float { namespace Linear {
     case FRT_EQ: case FRT_LQ: case FRT_GQ:
       break;
     case FRT_NQ: case FRT_LE: case FRT_GR:
-      rel(home, extend(home,re,t,n), frt, c); 
+      rel(home, extend(home,re,t,n), frt, c);
       frt=FRT_EQ; c=0.0;
       break;
     default:
@@ -243,7 +243,7 @@ namespace Gecode { namespace Float { namespace Linear {
   void
   post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r) {
     Region re(home);
-    rel(home, extend(home,re,t,n), frt, c, r); 
+    rel(home, extend(home,re,t,n), frt, c, r);
     dopost(home, t, n, FRT_EQ, 0.0);
   }
 

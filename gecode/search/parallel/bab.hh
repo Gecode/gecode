@@ -90,6 +90,9 @@ namespace Gecode { namespace Search { namespace Parallel {
     virtual Statistics statistics(void) const;
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
+    /// Constrain future solutions to be better than \a b
+    virtual void constrain(const Space& b);
+    /// Constrain
     /// Return no-goods
     virtual NoGoods& nogoods(void);
     /// Destructor
@@ -169,7 +172,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       cur->constrain(*best);
     m.release();
   }
-  forceinline void 
+  forceinline void
   BAB::solution(Space* s) {
     m_search.acquire();
     if (best != NULL) {
@@ -194,7 +197,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       e_search.signal();
     m_search.release();
   }
-  
+
 
   /*
    * Worker: finding and stealing working

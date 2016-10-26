@@ -129,7 +129,7 @@ public:
       IntSetArgs c(n_warehouses);
       for (int w=0; w<n_warehouses; w++)
         c[w] = IntSet(0,capacity[w]);
-      count(*this, supplier, c, ICL_DOM);
+      count(*this, supplier, c, IPL_DOM);
     }
 
     // Compute total cost

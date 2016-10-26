@@ -57,10 +57,10 @@ namespace Gecode { namespace Int { namespace Unary {
 
     for (int i=t.size(); i--; )
       GECODE_ME_CHECK(t[i].est(home,est[i]));
-      
+
     return ES_OK;
   }
-  
+
   template<class ManTask>
   ExecStatus
   detectable(Space& home, TaskArray<ManTask>& t) {
@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Unary {
   }
 
 
-  template<class OptTaskView>
+  template<class OptTaskView, class PL>
   forceinline ExecStatus
   detectable(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
     sort<OptTaskView,STO_ECT,true>(t);
@@ -95,20 +95,22 @@ namespace Gecode { namespace Int { namespace Unary {
         GECODE_ME_CHECK(t[i].est(home,est[i]));
       } else if (est[i] > t[i].lst()) {
         GECODE_ME_CHECK(t[i].excluded(home));
-        t[i].cancel(home,p,Int::PC_INT_BND); t[i]=t[--n];
+        t[i].cancel(home,p,PL::pc); t[i]=t[--n];
       }
     t.size(n);
 
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
-  
-  template<class OptTask>
+
+  template<class OptTask, class PL>
   ExecStatus
   detectable(Space& home, Propagator& p, TaskArray<OptTask>& t) {
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
-    GECODE_ES_CHECK(detectable(home,p,f));
+    GECODE_ES_CHECK((detectable<typename TaskTraits<OptTask>::TaskViewFwd,PL>
+                     (home,p,f)));
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
-    return detectable(home,p,b);
+    return detectable<typename TaskTraits<OptTask>::TaskViewBwd,PL>
+      (home,p,b);
   }
 
 }}}

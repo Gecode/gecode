@@ -40,21 +40,22 @@ namespace Gecode { namespace Int { namespace Circuit {
   template<class View, class Offset>
   forceinline
   Base<View,Offset>::Base(Home home, ViewArray<View>& x, Offset& o0)
-    : NaryPropagator<View,Int::PC_INT_DOM>(home,x), y(home,x), o(o0) {
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,x),
+      start(0), y(home,x), o(o0) {
     home.notice(*this,AP_WEAKLY);
   }
 
   template<class View, class Offset>
   forceinline
   Base<View,Offset>::Base(Space& home, bool share, Base<View,Offset>& p)
-    : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p) {
+    : NaryPropagator<View,Int::PC_INT_DOM>(home,share,p), start(p.start) {
     o.update(p.o);
     y.update(home,share,p.y);
   }
 
   /// Information required for non-recursive checking for a single scc
   template<class View>
-  class SsccInfo {
+  class NodeInfo {
   public:
     int min, low, pre;
     Int::ViewValues<View> v;
@@ -72,17 +73,25 @@ namespace Gecode { namespace Int { namespace Circuit {
   Base<View,Offset>::connected(Space& home) {
     int n = x.size();
 
-    /// First non-assigned node.
-    int start = 0;
-    while (x[start].assigned()) {
-      start = o(x[start]).val();
-      if (start == 0) break;
+    /// First non-assigned node reachable from start
+    {
+      int v = start;
+      /// Number of nodes not yet visited
+      int m = n;
+      while (x[v].assigned()) {
+        m--;
+        v = o(x[v]).val();
+        // Reached start node again, check whether all nodes have been visited
+        if (start == v)
+          return (m == 0) ? home.ES_SUBSUMED(*this) : ES_FAILED;
+      }
+      start = v;
     }
 
     /// Information needed for checking scc's
     Region r(home);
     typedef typename Offset::ViewType OView;
-    SsccInfo<OView>* si = r.alloc<SsccInfo<OView> >(n);
+    NodeInfo<OView>* si = r.alloc<NodeInfo<OView> >(n);
     unsigned int n_edges = 0;
     for (int i=n; i--; ) {
       n_edges += x[i].size();
@@ -178,9 +187,28 @@ namespace Gecode { namespace Int { namespace Circuit {
         }
         goto cont;
       }
+
       // Whether all nodes have been visited
       if (cnt != n)
         return ES_FAILED;
+
+      /*
+       * Whether there is more than one subtree
+       *
+       * This propagation rule is taken from: Kathryn Glenn Francis,
+       * Peter Stuckey, Explaining Circuit Propagation,
+       * Constraints (2014) 19:1-29.
+       *
+       */
+      if (subtree_min > 1) {
+        for (Int::ViewValues<OView> v(o(x[start])); v(); ++v)
+          if (si[v.val()].pre < subtree_min) {
+            nq[n_nq].x = o(x[v.val()]);
+            nq[n_nq].n = v.val();
+            n_nq++;
+          }
+      }
+
       ExecStatus es = ES_FIX;
       // Assign all mandatory edges
       while (n_eq-- > 0) {
@@ -190,6 +218,7 @@ namespace Gecode { namespace Int { namespace Circuit {
         if (me_modified(me))
           es = ES_NOFIX;
       }
+
       // Remove all edges that would require a non-simple cycle
       while (n_nq-- > 0) {
         ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
@@ -198,6 +227,10 @@ namespace Gecode { namespace Int { namespace Circuit {
         if (me_modified(me))
           es = ES_NOFIX;
       }
+
+      // Move start to different node for next run
+      start = o(x[start]).min();
+
       return es;
     }
   }

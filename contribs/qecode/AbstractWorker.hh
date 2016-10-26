@@ -1,5 +1,5 @@
-  /****   , [ Worker.hh ], 
-Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard 
+  /****   , [ Worker.hh ],
+Copyright (c) 2010 Universite de Caen Basse Normandie - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

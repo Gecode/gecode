@@ -48,13 +48,17 @@ namespace Gecode { namespace Search { namespace Meta {
     home.rfree(ngl,ngl->dispose(home));
     return n;
   }
-    
+
   void
   NoNGL::subscribe(Space&, Propagator&) {
     GECODE_NEVER;
   }
   void
   NoNGL::cancel(Space&, Propagator&) {
+    GECODE_NEVER;
+  }
+  void
+  NoNGL::reschedule(Space&, Propagator&) {
     GECODE_NEVER;
   }
   NGL::Status
@@ -73,17 +77,30 @@ namespace Gecode { namespace Search { namespace Meta {
     return NULL;
   }
 
-  Actor* 
+  Actor*
   NoGoodsProp::copy(Space& home, bool share) {
     return new (home) NoGoodsProp(home,share,*this);
   }
 
-  PropCost 
+  PropCost
   NoGoodsProp::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,n);
   }
 
-  ExecStatus 
+  void
+  NoGoodsProp::reschedule(Space& home) {
+    root->reschedule(home,*this);
+    NGL* l = root->next();
+    while ((l != NULL) && l->leaf()) {
+      l->reschedule(home,*this);
+      l = l->next();
+    }
+    if (l != NULL)
+      l->reschedule(home,*this);
+  }
+
+
+  ExecStatus
   NoGoodsProp::propagate(Space& home, const ModEventDelta&) {
   restart:
     // Start with checking the first literal
@@ -179,7 +196,7 @@ namespace Gecode { namespace Search { namespace Meta {
     return ES_NOFIX;
   }
 
-  size_t 
+  size_t
   NoGoodsProp::dispose(Space& home) {
     if (home.failed()) {
       // This will be executed when one ngl returned true for notice()

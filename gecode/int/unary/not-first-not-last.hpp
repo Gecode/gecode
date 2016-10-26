@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
     for (int i=t.size(); i--; )
       GECODE_ME_CHECK(t[i].lct(home,lct[i]));
-      
+
     return ES_OK;
   }
 
@@ -79,8 +79,8 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewBwd> b(t);
     return notlast(home,b);
   }
-  
-  template<class OptTaskView>
+
+  template<class OptTaskView, class PL>
   forceinline ExecStatus
   notlast(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
     sort<OptTaskView,STO_LCT,true>(t);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Unary {
           GECODE_ME_CHECK(t[i].lct(home,lct[i]));
         } else if (lct[i] < t[i].ect()) {
           GECODE_ME_CHECK(t[i].excluded(home));
-          t[i].cancel(home,p,PC_INT_BND); t[i]=t[--n];
+          t[i].cancel(home,p,PL::pc); t[i]=t[--n];
         }
       t.size(n);
     }
@@ -121,15 +121,16 @@ namespace Gecode { namespace Int { namespace Unary {
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
 
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus
   notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t) {
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
-    GECODE_ES_CHECK(notlast(home,p,f));
+    GECODE_ES_CHECK((notlast<typename TaskTraits<OptTask>::TaskViewFwd,PL>
+                     (home,p,f)));
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewBwd> b(t);
-    return notlast(home,p,b);
+    return notlast<typename TaskTraits<OptTask>::TaskViewBwd,PL>(home,p,b);
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

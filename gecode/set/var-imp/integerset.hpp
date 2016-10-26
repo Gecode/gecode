@@ -113,9 +113,9 @@ namespace Gecode { namespace Set {
 
   forceinline int
   BndSet::max(void) const {
-    if (lst()==NULL) 
+    if (lst()==NULL)
       return MAX_OF_EMPTY;
-    else 
+    else
       return lst()->max();
   }
 

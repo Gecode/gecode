@@ -59,7 +59,7 @@ namespace Test { namespace Int {
       /// The resource usage
       Gecode::IntArgs u;
       /// Get a reasonable maximal start time
-      static int st(int c, 
+      static int st(int c,
                     const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
         double e = 0;
         for (int i=p.size(); i--; )
@@ -70,13 +70,14 @@ namespace Test { namespace Int {
       int o;
     public:
       /// Create and register test
-      ManFixPCumulative(int c0, 
-                       const Gecode::IntArgs& p0,
-                       const Gecode::IntArgs& u0,
-                       int o0)
+      ManFixPCumulative(int c0,
+                        const Gecode::IntArgs& p0,
+                        const Gecode::IntArgs& u0,
+                        int o0,
+                        Gecode::IntPropLevel ipl0)
         : Test("Cumulative::Man::Fix::"+str(o0)+"::"+
-               str(c0)+"::"+str(p0)+"::"+str(u0),
-               (c0 >= 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0)), 
+               str(c0)+"::"+str(p0)+"::"+str(u0)+"::"+str(ipl0),
+               (c0 >= 0) ? p0.size():p0.size()+1,0,st(c0,p0,u0),false,ipl0),
           c(c0), p(p0), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -90,10 +91,10 @@ namespace Test { namespace Int {
       virtual bool solution(const Assignment& x) const {
         int cmax = (c >= 0) ? c : x[x.size()-1];
         int n = (c >= 0) ? x.size() : x.size()-1;
-        
+
         if (c < 0 && x[n] > -c)
           return false;
-        
+
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++)
@@ -137,13 +138,13 @@ namespace Test { namespace Int {
         } else {
           xx=Gecode::IntVarArgs(n);
           for (int i=n; i--;)
-            xx[i]=Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
+            xx[i]=Gecode::expr(home,x[i]+o,Gecode::IPL_DOM);
         }
         if (c >= 0) {
-          Gecode::cumulative(home, c, xx, p, u);
+          Gecode::cumulative(home, c, xx, p, u, ipl);
         } else {
           Gecode::rel(home, x[n] <= -c);
-          Gecode::cumulative(home, x[n], xx, p, u);
+          Gecode::cumulative(home, x[n], xx, p, u, ipl);
         }
       }
     };
@@ -163,7 +164,7 @@ namespace Test { namespace Int {
       /// Offset
       int o;
       /// Get a reasonable maximal start time
-      static int st(int c, 
+      static int st(int c,
                     const Gecode::IntArgs& p, const Gecode::IntArgs& u) {
         double e = 0;
         for (int i=p.size(); i--; )
@@ -172,13 +173,15 @@ namespace Test { namespace Int {
       }
     public:
       /// Create and register test
-      OptFixPCumulative(int c0, 
+      OptFixPCumulative(int c0,
                         const Gecode::IntArgs& p0,
                         const Gecode::IntArgs& u0,
-                        int o0)
+                        int o0,
+                        Gecode::IntPropLevel ipl0)
         : Test("Cumulative::Opt::Fix::"+str(o0)+"::"+
-               str(c0)+"::"+str(p0)+"::"+str(u0),
-               (c0 >= 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0)), 
+               str(c0)+"::"+str(p0)+"::"+str(u0)+"::"+str(ipl0),
+               (c0 >= 0) ? 2*p0.size() : 2*p0.size()+1,0,st(c0,p0,u0),
+               false,ipl0),
           c(c0), p(p0), u(u0), l(st(c,p,u)/2), o(o0) {
         testsearch = false;
         testfix = false;
@@ -242,15 +245,15 @@ namespace Test { namespace Int {
         Gecode::BoolVarArgs m(n);
 
         for (int i=0; i<n; i++) {
-          s[i]=(c >= 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::ICL_DOM);
+          s[i]=(c >= 0) ? x[i] : Gecode::expr(home,x[i]+o,Gecode::IPL_DOM);
           m[i]=Gecode::expr(home, x[n+i] > l);
         }
 
         if (c >= 0) {
-          Gecode::cumulative(home, c, s, p, u, m);
+          Gecode::cumulative(home, c, s, p, u, m, ipl);
         } else {
           Gecode::rel(home, x[nn] <= -c);
-          Gecode::cumulative(home, x[nn], s, p, u, m);
+          Gecode::cumulative(home, x[nn], s, p, u, m, ipl);
         }
       }
     };
@@ -279,11 +282,13 @@ namespace Test { namespace Int {
       /// Create and register test
       ManFlexCumulative(int c0, int minP, int maxP,
                         const Gecode::IntArgs& u0,
-                        int o0)
+                        int o0,
+                        Gecode::IntPropLevel ipl0)
         : Test("Cumulative::Man::Flex::"+str(o0)+"::"+
-               str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0),
+               str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0)+
+               "::"+str(ipl0),
                (c0 >= 0) ? 2*u0.size() : 2*u0.size()+1,
-               0,std::max(maxP,st(c0,maxP,u0))), 
+               0,std::max(maxP,st(c0,maxP,u0)),false,ipl0),
           c(c0), _minP(minP), _maxP(maxP), u(u0), o(o0) {
         testsearch = false;
         testfix = false;
@@ -350,16 +355,16 @@ namespace Test { namespace Int {
                              Gecode::Int::Limits::min,
                              Gecode::Int::Limits::max);
         for (int i=s.size(); i--;) {
-          s[i] = expr(home, o+x[i], Gecode::ICL_DOM);
+          s[i] = expr(home, o+x[i], Gecode::IPL_DOM);
           rel(home, s[i]+px[i] == e[i]);
           rel(home, _minP <= px[i]);
           rel(home, _maxP >= px[i]);
         }
         if (c >= 0) {
-          Gecode::cumulative(home, c, s, px, e, u);
+          Gecode::cumulative(home, c, s, px, e, u, ipl);
         } else {
           rel(home, x[n] <= -c);
-          Gecode::cumulative(home, x[n], s, px, e, u);
+          Gecode::cumulative(home, x[n], s, px, e, u, ipl);
         }
       }
     };
@@ -390,12 +395,14 @@ namespace Test { namespace Int {
       /// Create and register test
       OptFlexCumulative(int c0, int minP, int maxP,
                         const Gecode::IntArgs& u0,
-                        int o0)
+                        int o0,
+                        Gecode::IntPropLevel ipl0)
         : Test("Cumulative::Opt::Flex::"+str(o0)+"::"+
-               str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0),
+               str(c0)+"::"+str(minP)+"::"+str(maxP)+"::"+str(u0)+
+               "::"+str(ipl0),
                (c0 >= 0) ? 3*u0.size() : 3*u0.size()+1,
-               0,std::max(maxP,st(c0,maxP,u0))), 
-          c(c0), _minP(minP), _maxP(maxP), u(u0), 
+               0,std::max(maxP,st(c0,maxP,u0)), false,ipl0),
+          c(c0), _minP(minP), _maxP(maxP), u(u0),
           l(std::max(maxP,st(c0,maxP,u0))/2), o(o0) {
         testsearch = false;
         testfix = false;
@@ -413,10 +420,10 @@ namespace Test { namespace Int {
         int n = nn / 3;
         int cmax = (c >= 0) ? c : x[2*n];
         int pstart = (c >= 0) ? 2*n : 2*n+1;
-        
+
         if (c < 0 && cmax > -c)
           return false;
-        
+
         // Compute maximal time
         int t = 0;
         for (int i=0; i<n; i++)
@@ -473,10 +480,10 @@ namespace Test { namespace Int {
         for (int i=0; i<n; i++)
           m[i]=Gecode::expr(home, (x[n+i] > l));
         if (c >= 0) {
-          Gecode::cumulative(home, c, s, px, e, u, m);
+          Gecode::cumulative(home, c, s, px, e, u, m, ipl);
         } else {
           Gecode::rel(home, x[2*n] <= -c);
-          Gecode::cumulative(home, x[2*n], s, px, e, u, m);
+          Gecode::cumulative(home, x[2*n], s, px, e, u, m, ipl);
         }
       }
     };
@@ -491,81 +498,83 @@ namespace Test { namespace Int {
         IntArgs p2(4, 2,2,2,2);
         IntArgs p3(4, 4,3,3,5);
         IntArgs p4(4, 4,0,3,5);
+        IntArgs p5(3, 1,1,1);
 
         IntArgs u1(4, 1,1,1,1);
         IntArgs u2(4, 2,2,2,2);
         IntArgs u3(4, 2,3,4,5);
         IntArgs u4(4, 2,3,0,5);
-
-        // Regression test: check correct detection of disjunctive case
-        IntArgs p5(3, 1,1,1);
         IntArgs u5(3, 1,3,2);
-        (void) new ManFixPCumulative(3,p5,u5,0);
 
-        for (int c=-7; c<8; c++) {
-          int off = 0;
-          for (int coff=0; coff<2; coff++) {
-            (void) new ManFixPCumulative(c,p1,u1,off);
-            (void) new ManFixPCumulative(c,p1,u2,off);
-            (void) new ManFixPCumulative(c,p1,u3,off);
-            (void) new ManFixPCumulative(c,p1,u4,off);
-            (void) new ManFixPCumulative(c,p2,u1,off);
-            (void) new ManFixPCumulative(c,p2,u2,off);
-            (void) new ManFixPCumulative(c,p2,u3,off);
-            (void) new ManFixPCumulative(c,p2,u4,off);
-            (void) new ManFixPCumulative(c,p3,u1,off);
-            (void) new ManFixPCumulative(c,p3,u2,off);
-            (void) new ManFixPCumulative(c,p3,u3,off);
-            (void) new ManFixPCumulative(c,p3,u4,off);
-            (void) new ManFixPCumulative(c,p4,u1,off);
-            (void) new ManFixPCumulative(c,p4,u2,off);
-            (void) new ManFixPCumulative(c,p4,u3,off);
-            (void) new ManFixPCumulative(c,p4,u4,off);
+        for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
+          // Regression test: check correct detection of disjunctive case
+          (void) new ManFixPCumulative(3,p5,u5,0,ipba.ipl());
 
-            (void) new ManFlexCumulative(c,0,1,u1,off);
-            (void) new ManFlexCumulative(c,0,1,u2,off);
-            (void) new ManFlexCumulative(c,0,1,u3,off);
-            (void) new ManFlexCumulative(c,0,1,u4,off);
-            (void) new ManFlexCumulative(c,0,2,u1,off);
-            (void) new ManFlexCumulative(c,0,2,u2,off);
-            (void) new ManFlexCumulative(c,0,2,u3,off);
-            (void) new ManFlexCumulative(c,0,2,u4,off);
-            (void) new ManFlexCumulative(c,3,5,u1,off);
-            (void) new ManFlexCumulative(c,3,5,u2,off);
-            (void) new ManFlexCumulative(c,3,5,u3,off);
-            (void) new ManFlexCumulative(c,3,5,u4,off);
+          for (int c=-7; c<8; c++) {
+            int off = 0;
+            for (int coff=0; coff<2; coff++) {
+              (void) new ManFixPCumulative(c,p1,u1,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p1,u2,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p1,u3,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p1,u4,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p2,u1,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p2,u2,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p2,u3,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p2,u4,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p3,u1,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p3,u2,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p3,u3,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p3,u4,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p4,u1,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p4,u2,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p4,u3,off,ipba.ipl());
+              (void) new ManFixPCumulative(c,p4,u4,off,ipba.ipl());
 
-            (void) new OptFixPCumulative(c,p1,u1,off);
-            (void) new OptFixPCumulative(c,p1,u2,off);
-            (void) new OptFixPCumulative(c,p1,u3,off);
-            (void) new OptFixPCumulative(c,p1,u4,off);
-            (void) new OptFixPCumulative(c,p2,u1,off);
-            (void) new OptFixPCumulative(c,p2,u2,off);
-            (void) new OptFixPCumulative(c,p2,u3,off);
-            (void) new OptFixPCumulative(c,p2,u4,off);
-            (void) new OptFixPCumulative(c,p3,u1,off);
-            (void) new OptFixPCumulative(c,p3,u2,off);
-            (void) new OptFixPCumulative(c,p3,u3,off);
-            (void) new OptFixPCumulative(c,p3,u4,off);
-            (void) new OptFixPCumulative(c,p4,u1,off);
-            (void) new OptFixPCumulative(c,p4,u2,off);
-            (void) new OptFixPCumulative(c,p4,u3,off);
-            (void) new OptFixPCumulative(c,p4,u4,off);
+              (void) new ManFlexCumulative(c,0,1,u1,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,1,u2,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,1,u3,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,1,u4,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,2,u1,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,2,u2,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,2,u3,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,0,2,u4,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,3,5,u1,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,3,5,u2,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,3,5,u3,off,ipba.ipl());
+              (void) new ManFlexCumulative(c,3,5,u4,off,ipba.ipl());
 
-            (void) new OptFlexCumulative(c,0,1,u1,off);
-            (void) new OptFlexCumulative(c,0,1,u2,off);
-            (void) new OptFlexCumulative(c,0,1,u3,off);
-            (void) new OptFlexCumulative(c,0,1,u4,off);
-            (void) new OptFlexCumulative(c,0,2,u1,off);
-            (void) new OptFlexCumulative(c,0,2,u2,off);
-            (void) new OptFlexCumulative(c,0,2,u3,off);
-            (void) new OptFlexCumulative(c,0,2,u4,off);
-            (void) new OptFlexCumulative(c,3,5,u1,off);
-            (void) new OptFlexCumulative(c,3,5,u2,off);
-            (void) new OptFlexCumulative(c,3,5,u3,off);
-            (void) new OptFlexCumulative(c,3,5,u4,off);
+              (void) new OptFixPCumulative(c,p1,u1,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p1,u2,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p1,u3,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p1,u4,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p2,u1,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p2,u2,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p2,u3,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p2,u4,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p3,u1,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p3,u2,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p3,u3,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p3,u4,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p4,u1,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p4,u2,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p4,u3,off,ipba.ipl());
+              (void) new OptFixPCumulative(c,p4,u4,off,ipba.ipl());
 
-            off = Gecode::Int::Limits::min;
+              (void) new OptFlexCumulative(c,0,1,u1,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,1,u2,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,1,u3,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,1,u4,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,2,u1,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,2,u2,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,2,u3,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,0,2,u4,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,3,5,u1,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,3,5,u2,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,3,5,u3,off,ipba.ipl());
+              (void) new OptFlexCumulative(c,3,5,u4,off,ipba.ipl());
+
+              off = Gecode::Int::Limits::min;
+            }
           }
         }
       }

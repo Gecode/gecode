@@ -203,7 +203,8 @@ namespace Test { namespace Float {
            FloatVal f2(-3,-1);
            FloatVal f3(3,8);
 
-           FloatValArgs a1(1, 0.0);
+           FloatValArgs a1(1);
+           a1[0] = 0.0;
 
            for (FloatRelTypes frts; frts(); ++frts) {
              (void) new FloatFloat("11",f1,a1,frts.frt(),0.0,step);

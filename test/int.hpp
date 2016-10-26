@@ -123,7 +123,7 @@ namespace Test { namespace Int {
 
   inline
   RandomMixAssignment::RandomMixAssignment(int n0, const Gecode::IntSet& d0,
-                                           int n1, const Gecode::IntSet& d1, 
+                                           int n1, const Gecode::IntSet& d1,
                                            int a0)
     : Assignment(n0+n1,d0),vals(new int[n0+n1]),a(a0),_n1(n1),_d1(d1) {
     for (int i=n0; i--; )
@@ -165,69 +165,64 @@ namespace Test { namespace Int {
     return reified && ((rms & (1 << Gecode::RM_PMI)) != 0);
   }
   inline
-  Test::Test(const std::string& p, const std::string& s, 
-             int a, const Gecode::IntSet& d, bool r, 
-             Gecode::IntConLevel i)
-    : Base(p+s), arity(a), dom(d), 
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+  Test::Test(const std::string& p, const std::string& s,
+             int a, const Gecode::IntSet& d, bool r,
+             Gecode::IntPropLevel i)
+    : Base(p+s), arity(a), dom(d),
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
-      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
-  Test::Test(const std::string& s, 
-             int a, const Gecode::IntSet& d, bool r, 
-             Gecode::IntConLevel i)
-    : Base("Int::"+s), arity(a), dom(d), 
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+  Test::Test(const std::string& s,
+             int a, const Gecode::IntSet& d, bool r,
+             Gecode::IntPropLevel i)
+    : Base("Int::"+s), arity(a), dom(d),
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
-      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
   Test::Test(const std::string& p, const std::string& s,
-             int a, int min, int max, bool r, 
-             Gecode::IntConLevel i)
+             int a, int min, int max, bool r,
+             Gecode::IntPropLevel i)
     : Base(p+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
-      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
-  Test::Test(const std::string& s, 
-             int a, int min, int max, bool r, Gecode::IntConLevel i)
+  Test::Test(const std::string& s,
+             int a, int min, int max, bool r, Gecode::IntPropLevel i)
     : Base("Int::"+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) || 
-                      (1 << Gecode::RM_IMP) || 
+      reified(r), rms((1 << Gecode::RM_EQV) ||
+                      (1 << Gecode::RM_IMP) ||
                       (1 << Gecode::RM_PMI)),
-      icl(i), contest(icl == Gecode::ICL_DOM ? CTL_DOMAIN : CTL_NONE),
+      ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
 
   inline
   std::string
-  Test::str(Gecode::ExtensionalPropKind epk) {
+  Test::str(Gecode::IntPropLevel ipl) {
     using namespace Gecode;
-    switch (epk) {
-    case EPK_MEMORY: return "Memory";
-    case EPK_SPEED:  return "Speed";
-    default: return "Def";
+    std::stringstream s;
+    switch (vbd(ipl)) {
+    case IPL_VAL: s << "Val"; break;
+    case IPL_BND: s << "Bnd"; break;
+    case IPL_DOM: s << "Dom"; break;
+    default: s << "Def"; break;
     }
-  }
-
-  inline
-  std::string
-  Test::str(Gecode::IntConLevel icl) {
-    using namespace Gecode;
-    switch (icl) {
-    case ICL_VAL: return "Val";
-    case ICL_BND: return "Bnd";
-    case ICL_DOM: return "Dom";
-    default: return "Def";
-    }
+    if (ipl & IPL_SPEED) s << "+S";
+    if (ipl & IPL_MEMORY) s << "+M";
+    if (ipl & IPL_BASIC) s << "+B";
+    if (ipl & IPL_ADVANCED) s << "+A";
+    return s.str();
   }
 
   inline
@@ -298,19 +293,36 @@ namespace Test { namespace Int {
 
 
   inline
-  IntConLevels::IntConLevels(void)
-    : i(sizeof(icls)/sizeof(Gecode::IntConLevel)-1) {}
+  IntPropLevels::IntPropLevels(void)
+    : i(sizeof(ipls)/sizeof(Gecode::IntPropLevel)-1) {}
   inline bool
-  IntConLevels::operator()(void) const {
+  IntPropLevels::operator()(void) const {
     return i>=0;
   }
   inline void
-  IntConLevels::operator++(void) {
+  IntPropLevels::operator++(void) {
     i--;
   }
-  inline Gecode::IntConLevel
-  IntConLevels::icl(void) const {
-    return icls[i];
+  inline Gecode::IntPropLevel
+  IntPropLevels::ipl(void) const {
+    return ipls[i];
+  }
+
+
+  inline
+  IntPropBasicAdvanced::IntPropBasicAdvanced(void)
+    : i(sizeof(ipls)/sizeof(Gecode::IntPropLevel)-1) {}
+  inline bool
+  IntPropBasicAdvanced::operator()(void) const {
+    return i>=0;
+  }
+  inline void
+  IntPropBasicAdvanced::operator++(void) {
+    i--;
+  }
+  inline Gecode::IntPropLevel
+  IntPropBasicAdvanced::ipl(void) const {
+    return ipls[i];
   }
 
 

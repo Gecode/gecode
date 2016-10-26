@@ -61,6 +61,8 @@ namespace Gecode { namespace Search {
     virtual Search::Statistics statistics(void) const;
     /// Check whether engine has been stopped
     virtual bool stopped(void) const;
+    /// Constrain future solutions to be better than \a b
+    virtual void constrain(const Space& b);
     /// Reset engine to restart at space \a s
     virtual void reset(Space* s);
     /// Return no-goods
@@ -74,22 +76,22 @@ namespace Gecode { namespace Search {
     return o.clone ? s->clone(share) : s;
   }
 
-  
+
   template<class Worker>
-  WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o) 
+  WorkerToEngine<Worker>::WorkerToEngine(Space* s, const Options& o)
     : w(s,o) {}
   template<class Worker>
-  Space* 
+  Space*
   WorkerToEngine<Worker>::next(void) {
     return w.next();
   }
   template<class Worker>
-  Search::Statistics 
+  Search::Statistics
   WorkerToEngine<Worker>::statistics(void) const {
     return w.statistics();
   }
   template<class Worker>
-  bool 
+  bool
   WorkerToEngine<Worker>::stopped(void) const {
     return w.stopped();
   }
@@ -98,7 +100,11 @@ namespace Gecode { namespace Search {
   WorkerToEngine<Worker>::reset(Space* s) {
     w.reset(s);
   }
-
+  template<class Worker>
+  void
+  WorkerToEngine<Worker>::constrain(const Space& b) {
+    w.constrain(b);
+  }
   template<class Worker>
   NoGoods&
   WorkerToEngine<Worker>::nogoods(void) {

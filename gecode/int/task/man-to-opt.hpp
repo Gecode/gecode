@@ -64,19 +64,19 @@ namespace Gecode { namespace Int {
   }
 
   template<class ManTask>
-  forceinline ModEvent 
+  forceinline ModEvent
   ManToOptTask<ManTask>::mandatory(Space& home) {
     return _m.one(home);
   }
   template<class ManTask>
-  forceinline ModEvent 
+  forceinline ModEvent
   ManToOptTask<ManTask>::excluded(Space& home) {
     return _m.zero(home);
   }
 
   template<class ManTask>
   forceinline void
-  ManToOptTask<ManTask>::update(Space& home, bool share, 
+  ManToOptTask<ManTask>::update(Space& home, bool share,
                                 ManToOptTask<ManTask>& t) {
     ManTask::update(home, share, t);
     _m.update(home,share,t._m);
@@ -86,13 +86,20 @@ namespace Gecode { namespace Int {
   forceinline void
   ManToOptTask<ManTask>::subscribe(Space& home, Propagator& p, PropCond pc) {
     ManTask::subscribe(home, p, pc);
-    _m.subscribe(home, p, Int::PC_BOOL_VAL);
+    _m.subscribe(home, p, PC_BOOL_VAL);
   }
   template<class ManTask>
   forceinline void
   ManToOptTask<ManTask>::cancel(Space& home, Propagator& p, PropCond pc) {
-    _m.cancel(home, p, Int::PC_BOOL_VAL);
+    _m.cancel(home, p, PC_BOOL_VAL);
     ManTask::cancel(home, p, pc);
+  }
+
+  template<class ManTask>
+  forceinline void
+  ManToOptTask<ManTask>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    _m.reschedule(home, p, PC_BOOL_VAL);
+    ManTask::reschedule(home, p, pc);
   }
 
 }}

@@ -38,25 +38,25 @@
  */
 
 namespace Gecode { namespace Int { namespace Cumulative {
-  
-  template<class ManTask, class Cap>
+
+  template<class ManTask, class Cap, class PL>
   forceinline
-  ManProp<ManTask,Cap>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
-    : TaskProp<ManTask,Int::PC_INT_DOM>(home,t), c(c0) {
-    c.subscribe(home,*this,Int::PC_INT_BND);
+  ManProp<ManTask,Cap,PL>::ManProp(Home home, Cap c0, TaskArray<ManTask>& t)
+    : TaskProp<ManTask,PL>(home,t), c(c0) {
+    c.subscribe(home,*this,PC_INT_BND);
   }
 
-  template<class ManTask, class Cap>
+  template<class ManTask, class Cap, class PL>
   forceinline
-  ManProp<ManTask,Cap>::ManProp(Space& home, bool shared, 
-                                ManProp<ManTask,Cap>& p) 
-    : TaskProp<ManTask,Int::PC_INT_DOM>(home,shared,p) {
+  ManProp<ManTask,Cap,PL>::ManProp(Space& home, bool shared,
+                                   ManProp<ManTask,Cap,PL>& p)
+    : TaskProp<ManTask,PL>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
-  template<class ManTask, class Cap>
-  forceinline ExecStatus 
-  ManProp<ManTask,Cap>::post(Home home, Cap c, TaskArray<ManTask>& t) {
+  template<class ManTask, class Cap, class PL>
+  ExecStatus
+  ManProp<ManTask,Cap,PL>::post(Home home, Cap c, TaskArray<ManTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
     // Check that tasks do not overload resource
@@ -70,42 +70,43 @@ namespace Gecode { namespace Int { namespace Cumulative {
         TaskArray<typename TaskTraits<ManTask>::UnaryTask> mt(home,t.size());
         for (int i=t.size(); i--; )
           mt[i]=t[i];
-        return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask>
+        return Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask,PL>
           ::post(home,mt);
       } else {
-        (void) new (home) ManProp<ManTask,Cap>(home,c,t);
+        (void) new (home) ManProp<ManTask,Cap,PL>(home,c,t);
       }
     }
     return ES_OK;
   }
 
-  template<class ManTask, class Cap>
-  Actor* 
-  ManProp<ManTask,Cap>::copy(Space& home, bool share) {
-    return new (home) ManProp<ManTask,Cap>(home,share,*this);
+  template<class ManTask, class Cap, class PL>
+  Actor*
+  ManProp<ManTask,Cap,PL>::copy(Space& home, bool share) {
+    return new (home) ManProp<ManTask,Cap,PL>(home,share,*this);
   }
 
-  template<class ManTask, class Cap>  
-  forceinline size_t 
-  ManProp<ManTask,Cap>::dispose(Space& home) {
-    (void) TaskProp<ManTask,Int::PC_INT_DOM>::dispose(home);
+  template<class ManTask, class Cap, class PL>
+  forceinline size_t
+  ManProp<ManTask,Cap,PL>::dispose(Space& home) {
+    (void) TaskProp<ManTask,PL>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
 
-  template<class ManTask, class Cap>
-  ExecStatus 
-  ManProp<ManTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
+  template<class ManTask, class Cap, class PL>
+  ExecStatus
+  ManProp<ManTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Only bounds changes?
-    if (Int::IntView::me(med) != Int::ME_INT_DOM)
+    if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
-    GECODE_ES_CHECK(edgefinding(home,c.max(),t));
-    bool subsumed;
-    ExecStatus es = basic(home,subsumed,c,t);
-    GECODE_ES_CHECK(es);
-    if (subsumed)
-      return home.ES_SUBSUMED(*this);
-    if (Cap::varderived() && c.assigned() && c.val()==1) {
+
+    if (PL::advanced)
+      GECODE_ES_CHECK(edgefinding(home,c.max(),t));
+
+    if (PL::basic)
+      GECODE_ES_CHECK(timetabling(home,*this,c,t));
+
+    if (Cap::varderived() && c.assigned() && (c.val() == 1)) {
       // Check that tasks do not overload resource
       for (int i=t.size(); i--; )
         if (t[i].c() > 1)
@@ -115,11 +116,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for (int i=t.size(); i--;)
         ut[i]=t[i];
       GECODE_REWRITE(*this,
-        (Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask>
+        (Unary::ManProp<typename TaskTraits<ManTask>::UnaryTask,PL>
           ::post(home(*this),ut)));
-    } else {
-      return es;
     }
+
+    if (!PL::basic && c.assigned())
+      GECODE_ES_CHECK(subsumed(home,*this,c.val(),t));
+
+    return ES_NOFIX;
   }
 
 }}}

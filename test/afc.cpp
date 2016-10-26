@@ -91,7 +91,7 @@ namespace Test {
       TestSpace* s[n];
       // How many spaces exist in s
       int n_s = 1;
-      
+
       for (int i=n; i--; )
         s[i] = NULL;
       s[0] = new TestSpace;
@@ -111,7 +111,7 @@ namespace Test {
             }
             int j = space(s);
             (void) s[j]->status();
-            s[i] = static_cast<TestSpace*>(s[j]->clone());
+            s[i] = static_cast<TestSpace*>(s[j]->clone(true,rand(5) != 0));
             n_s++;
           }
           break;

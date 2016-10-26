@@ -63,16 +63,26 @@ namespace Gecode { namespace Driver {
  */
 class BakerOptions : public Options {
 public:
+  /// Print strategy or not
+  Gecode::Driver::BoolOption _printStrategy;
   int n; /// Parameter to be given on the command line
   /// Initialize options for example with name \a s
   BakerOptions(const char* s, int n0)
-    : Options(s), n(n0) {}
+    : Options(s),
+      _printStrategy("-printStrategy","Print strategy",false),
+      n(n0) {
+        add(_printStrategy);
+      }
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int& argc, char* argv[]) {
     Options::parse(argc,argv);
     if (argc < 2)
       return;
     n = atoi(argv[1]);
+  }
+  /// Return true if the strategy must be printed
+  bool printStrategy(void) const {
+    return _printStrategy.value();
   }
   /// Print help message
   virtual void help(void) {
@@ -86,27 +96,27 @@ class QCSPBaker : public Script, public QSpaceInfo {
   IntVarArray X;
 
 public:
-  QCSPBaker(const BakerOptions& opt) : Script(), QSpaceInfo()
+  QCSPBaker(const BakerOptions& opt) : Script(opt), QSpaceInfo()
   {
     std::cout << "Loading problem" << std::endl;
+    if (!opt.printStrategy()) strategyMethod(0); // disable build and print strategy
     using namespace Int;
 
-    IntVarArgs w(*this,4,1,40);
-    IntVar f(*this,1,40);
+    IntVarArgs w(*this,5,1,opt.n);
+    IntVar f(*this,1,opt.n);
     setForAll(*this, f);
-    IntVarArgs c(*this,4,-1,1);
+    IntVarArgs c(*this,5,-1,1);
     IntVarArgs vaX;
     vaX << w << f << c;
     X = IntVarArray(*this, vaX);
 
-    IntVar o1(*this,-40,40), o2(*this,-40,40), o3(*this,-40,40), o4(*this,-40,40);
-    rel(*this, w[0], IRT_GR, opt.n);
+    IntVar o1(*this,-opt.n,opt.n), o2(*this,-opt.n,opt.n), o3(*this,-opt.n,opt.n), o4(*this,-opt.n,opt.n), o5(*this,-opt.n,opt.n);
     rel(*this, w[0] * c[0] == o1);
     rel(*this, w[1] * c[1] == o2);
     rel(*this, w[2] * c[2] == o3);
     rel(*this, w[3] * c[3] == o4);
-    rel(*this, o1 + o2 + o3 + o4 == f);
-
+    rel(*this, w[4] * c[4] == o5);
+    rel(*this, o1 + o2 + o3 + o4 + o5 == f);
 
     branch(*this, X, INT_VAR_NONE(), INT_VALUES_MIN());
   }
@@ -127,7 +137,7 @@ public:
 int main(int argc, char* argv[])
 {
 
-  BakerOptions opt("Baker Problem",0);
+  BakerOptions opt("Baker Problem",40);
   opt.parse(argc,argv);
   Script::run<QCSPBaker,QDFS,BakerOptions>(opt);
 

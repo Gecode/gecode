@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Unary {
     _s=t._s; _p=t._p;
   }
 
-  forceinline int 
+  forceinline int
   ManFixPTask::est(void) const {
     return _s.min();
   }
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Unary {
     return _s.assigned();
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   ManFixPTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
@@ -125,18 +125,18 @@ namespace Gecode { namespace Int { namespace Unary {
       Iter::Ranges::Singleton r(e-_p+1,l);
       return _s.minus_r(home,r,false);
     } else {
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     }
   }
 
 
   forceinline ModEvent
   ManFixPTask::mandatory(Space&) {
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPTask::excluded(Space&) {
-    return Int::ME_INT_FAILED;
+    return ME_INT_FAILED;
   }
 
   forceinline void
@@ -151,6 +151,10 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline void
   ManFixPTask::cancel(Space& home, Propagator& p, PropCond pc) {
     _s.cancel(home, p, pc);
+  }
+  forceinline void
+  ManFixPTask::reschedule(Space& home, Propagator& p, PropCond pc) {
+    _s.reschedule(home, p, pc);
   }
 
   template<class Char, class Traits>
@@ -169,7 +173,7 @@ namespace Gecode { namespace Int { namespace Unary {
   forceinline
   ManFixPSETask::ManFixPSETask(void) {}
   forceinline
-  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p) 
+  ManFixPSETask::ManFixPSETask(TaskType t, IntVar s, int p)
     : ManFixPTask(s,p), _t(t) {}
   forceinline void
   ManFixPSETask::init(TaskType t, IntVar s, int p) {
@@ -180,7 +184,7 @@ namespace Gecode { namespace Int { namespace Unary {
     ManFixPTask::init(t0); _t = t0._t;
   }
 
-  forceinline int 
+  forceinline int
   ManFixPSETask::est(void) const {
     return (_t == TT_FIXS) ? _p : _s.min();
   }
@@ -229,45 +233,45 @@ namespace Gecode { namespace Int { namespace Unary {
     return 0;
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   ManFixPSETask::est(Space& home, int n) {
     switch (_t) {
     case TT_FIXE: // fall through
     case TT_FIXP: return _s.gq(home,n);
-    case TT_FIXS: return (n <= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXS: return (n <= _p) ? ME_INT_NONE : ME_INT_FAILED;
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::ect(Space& home, int n) {
     switch (_t) {
-    case TT_FIXE: return (n <= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXE: return (n <= _p) ? ME_INT_NONE : ME_INT_FAILED;
     case TT_FIXP: return _s.gq(home,n-_p);
     case TT_FIXS: return _s.gq(home,n);
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::lst(Space& home, int n) {
     switch (_t) {
     case TT_FIXE: // fall through
     case TT_FIXP: return _s.lq(home,n);
-    case TT_FIXS: return (n >= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXS: return (n >= _p) ? ME_INT_NONE : ME_INT_FAILED;
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::lct(Space& home, int n) {
     switch (_t) {
-    case TT_FIXE: return (n >= _p) ? Int::ME_INT_NONE : Int::ME_INT_FAILED;
+    case TT_FIXE: return (n >= _p) ? ME_INT_NONE : ME_INT_FAILED;
     case TT_FIXP: return _s.lq(home,n-_p);
     case TT_FIXS: return _s.lq(home,n);
     default: GECODE_NEVER;
     }
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFixPSETask::norun(Space& home, int e, int l) {
@@ -289,9 +293,9 @@ namespace Gecode { namespace Int { namespace Unary {
       default:
         GECODE_NEVER;
       }
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     } else {
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     }
   }
 
@@ -327,7 +331,7 @@ namespace Gecode { namespace Int { namespace Unary {
     _s=t._s; _p=t._p; _e=t._e;
   }
 
-  forceinline int 
+  forceinline int
   ManFlexTask::est(void) const {
     return _s.min();
   }
@@ -382,7 +386,7 @@ namespace Gecode { namespace Int { namespace Unary {
     return _s.assigned() && _p.assigned() && _e.assigned();
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   ManFlexTask::est(Space& home, int n) {
     return _s.gq(home,n);
   }
@@ -403,22 +407,22 @@ namespace Gecode { namespace Int { namespace Unary {
     if (e <= l) {
       Iter::Ranges::Singleton sr(e-_p.min()+1,l);
       if (me_failed(_s.minus_r(home,sr,false)))
-        return Int::ME_INT_FAILED;
+        return ME_INT_FAILED;
       Iter::Ranges::Singleton er(e+1,_p.min()+l);
       return _e.minus_r(home,er,false);
     } else {
-      return Int::ME_INT_NONE;
+      return ME_INT_NONE;
     }
   }
 
 
   forceinline ModEvent
   ManFlexTask::mandatory(Space&) {
-    return Int::ME_INT_NONE;
+    return ME_INT_NONE;
   }
   forceinline ModEvent
   ManFlexTask::excluded(Space&) {
-    return Int::ME_INT_FAILED;
+    return ME_INT_FAILED;
   }
 
   forceinline void
@@ -439,6 +443,12 @@ namespace Gecode { namespace Int { namespace Unary {
     _s.cancel(home, p, pc);
     _p.cancel(home, p, pc);
     _e.cancel(home, p, pc);
+  }
+  forceinline void
+  ManFlexTask::reschedule(Space& home, Propagator& p, PropCond pc) {
+    _s.reschedule(home, p, pc);
+    _p.reschedule(home, p, pc);
+    _e.reschedule(home, p, pc);
   }
 
   template<class Char, class Traits>
@@ -526,7 +536,7 @@ namespace Gecode { namespace Int { namespace Unary {
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
-    
+
 }}}
 
 // STATISTICS: int-var

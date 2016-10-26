@@ -37,26 +37,26 @@
 
 namespace Gecode { namespace Int {
 
-  template<class OptTask, PropCond pc>
+  template<class OptTask, class PL>
   ExecStatus
   purge(Space& home, Propagator& p, TaskArray<OptTask>& t) {
     int n=t.size();
     for (int i=n; i--; )
       if (t[i].excluded()) {
-        t[i].cancel(home,p,pc); t[i]=t[--n];
+        t[i].cancel(home,p,PL::pc); t[i]=t[--n];
       }
     t.size(n);
 
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
 
-  template<class OptTask, PropCond pc, class Cap>
+  template<class OptTask, class PL, class Cap>
   ExecStatus
   purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c) {
     int n=t.size();
     for (int i=n; i--; )
       if (t[i].excluded()) {
-        t[i].cancel(home,p,pc); t[i]=t[--n];
+        t[i].cancel(home,p,PL::pc); t[i]=t[--n];
       }
     t.size(n);
     if (t.size() == 1) {
@@ -68,7 +68,7 @@ namespace Gecode { namespace Int {
 
     return (t.size() < 2) ? home.ES_SUBSUMED(p) : ES_OK;
   }
-  
+
 }}
 
 // STATISTICS: int-prop

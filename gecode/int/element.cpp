@@ -41,11 +41,11 @@ namespace Gecode {
 
   void
   element(Home home, IntSharedArray c, IntVar x0, IntVar x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
     GECODE_ES_FAIL((Element::post_int<IntView,IntView>(home,c,x0,x1)));
@@ -53,11 +53,11 @@ namespace Gecode {
 
   void
   element(Home home, IntSharedArray c, IntVar x0, BoolVar x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
     GECODE_ES_FAIL((Element::post_int<IntView,BoolView>(home,c,x0,x1)));
@@ -65,12 +65,12 @@ namespace Gecode {
 
   void
   element(Home home, IntSharedArray c, IntVar x0, int x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int i = c.size(); i--; )
       Limits::check(c[i],"Int::element");
     ConstIntView cx1(x1);
@@ -80,13 +80,13 @@ namespace Gecode {
 
   void
   element(Home home, const IntVarArgs& c, IntVar x0, IntVar x1,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     IdxViewArray<IntView> iv(home,c);
-    if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,x0,x1)));
     } else {
@@ -97,15 +97,15 @@ namespace Gecode {
 
   void
   element(Home home, const IntVarArgs& c, IntVar x0, int x1,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     IdxViewArray<IntView> iv(home,c);
     ConstIntView v1(x1);
-    if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+    if ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) {
       GECODE_ES_FAIL((Element::ViewDom<IntView,IntView,ConstIntView>
                            ::post(home,iv,x0,v1)));
     } else {
@@ -116,11 +116,11 @@ namespace Gecode {
 
   void
   element(Home home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     IdxViewArray<BoolView> iv(home,c);
     GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,BoolView>
                          ::post(home,iv,x0,x1)));
@@ -128,12 +128,12 @@ namespace Gecode {
 
   void
   element(Home home, const BoolVarArgs& c, IntVar x0, int x1,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (c.size() == 0)
       throw TooFewArguments("Int::element");
     Limits::check(x1,"Int::element");
-    if (home.failed()) return;
+    GECODE_POST;
     IdxViewArray<BoolView> iv(home,c);
     ConstIntView v1(x1);
     GECODE_ES_FAIL((Element::ViewBnd<BoolView,IntView,ConstIntView>
@@ -151,47 +151,47 @@ namespace Gecode {
   }
 
   void
-  element(Home home, IntSharedArray a, 
+  element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, IntVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
-    if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    GECODE_POST;
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
   void
-  element(Home home, IntSharedArray a, 
+  element(Home home, IntSharedArray a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
-    if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    GECODE_POST;
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
   void
-  element(Home home, const IntVarArgs& a, 
+  element(Home home, const IntVarArgs& a,
           IntVar x, int w, IntVar y, int h, IntVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
-    if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    GECODE_POST;
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
   void
-  element(Home home, const BoolVarArgs& a, 
+  element(Home home, const BoolVarArgs& a,
           IntVar x, int w, IntVar y, int h, BoolVar z,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     if (a.size() != w*h)
       throw Int::ArgumentSizeMismatch("Int::element");
-    if (home.failed()) return;
-    element(home, a, pair(home,x,w,y,h), z, icl);
+    GECODE_POST;
+    element(home, a, pair(home,x,w,y,h), z, ipl);
   }
 
 }

@@ -298,7 +298,7 @@ namespace Gecode { namespace Set { namespace Int {
     }
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this, (NotMinElement<View>::post(home(*this),x0,x1)));
     }
     // cheap tests for => b=0

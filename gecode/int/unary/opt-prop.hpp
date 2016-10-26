@@ -38,20 +38,21 @@
 #include <algorithm>
 
 namespace Gecode { namespace Int { namespace Unary {
-  
-  template<class OptTask>
-  forceinline
-  OptProp<OptTask>::OptProp(Home home, TaskArray<OptTask>& t)
-    : TaskProp<OptTask,Int::PC_INT_BND>(home,t) {}
 
-  template<class OptTask>
+  template<class OptTask, class PL>
   forceinline
-  OptProp<OptTask>::OptProp(Space& home, bool shared, OptProp<OptTask>& p) 
-    : TaskProp<OptTask,Int::PC_INT_BND>(home,shared,p) {}
+  OptProp<OptTask,PL>::OptProp(Home home, TaskArray<OptTask>& t)
+    : TaskProp<OptTask,PL>(home,t) {}
 
-  template<class OptTask>
-  forceinline ExecStatus 
-  OptProp<OptTask>::post(Home home, TaskArray<OptTask>& t) {
+  template<class OptTask, class PL>
+  forceinline
+  OptProp<OptTask,PL>::OptProp(Space& home, bool shared,
+                               OptProp<OptTask,PL>& p)
+    : TaskProp<OptTask,PL>(home,shared,p) {}
+
+  template<class OptTask, class PL>
+  ExecStatus
+  OptProp<OptTask,PL>::post(Home home, TaskArray<OptTask>& t) {
     int m=0, o=0;
     for (int i=t.size(); i--; ) {
       if (t[i].mandatory())
@@ -63,50 +64,56 @@ namespace Gecode { namespace Int { namespace Unary {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i]);
-      return ManProp<typename TaskTraits<OptTask>::ManTask>::post(home,mt);
+      return ManProp<typename TaskTraits<OptTask>::ManTask,PL>::post(home,mt);
     }
     if (o+m > 1)
-      (void) new (home) OptProp<OptTask>(home,t);
+      (void) new (home) OptProp<OptTask,PL>(home,t);
     return ES_OK;
   }
 
-  template<class OptTask>
-  Actor* 
-  OptProp<OptTask>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask>(home,share,*this);
+  template<class OptTask, class PL>
+  Actor*
+  OptProp<OptTask,PL>::copy(Space& home, bool share) {
+    return new (home) OptProp<OptTask,PL>(home,share,*this);
   }
 
-  template<class OptTask>
-  ExecStatus 
-  OptProp<OptTask>::propagate(Space& home, const ModEventDelta& med) {
+  template<class OptTask, class PL>
+  ExecStatus
+  OptProp<OptTask,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
-    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_BND>(home,*this,t)));
+    if (BoolView::me(med) == ME_BOOL_VAL)
+      GECODE_ES_CHECK((purge<OptTask,PL>(home,*this,t)));
 
-    GECODE_ES_CHECK(overload(home,*this,t));
+    GECODE_ES_CHECK((overload<OptTask,PL>(home,*this,t)));
 
-    GECODE_ES_CHECK(detectable(home,*this,t));
-    GECODE_ES_CHECK(notfirstnotlast(home,*this,t));
+    if (PL::basic)
+      GECODE_ES_CHECK(timetabling(home,*this,t));
 
-    // Partition into mandatory and optional activities
-    int n = t.size();
-    int i=0, j=n-1;
-    while (true) {
-      while ((i < n) && t[i].mandatory()) i++;
-      while ((j >= 0) && !t[j].mandatory()) j--;
-      if (i >= j) break;
-      std::swap(t[i],t[j]);
+    if (PL::advanced) {
+      GECODE_ES_CHECK((detectable<OptTask,PL>(home,*this,t)));
+      GECODE_ES_CHECK((notfirstnotlast<OptTask,PL>(home,*this,t)));
+
+      // Partition into mandatory and optional activities
+      int n = t.size();
+      int i=0, j=n-1;
+      while (true) {
+        while ((i < n) && t[i].mandatory()) i++;
+        while ((j >= 0) && !t[j].mandatory()) j--;
+        if (i >= j) break;
+        std::swap(t[i],t[j]);
+      }
+
+      if (i > 1) {
+        // Truncate array to only contain mandatory tasks
+        t.size(i);
+        GECODE_ES_CHECK(edgefinding(home,t));
+        // Restore to also include optional tasks
+        t.size(n);
+      }
     }
 
-    if (i > 1) {
-      // Truncate array to only contain mandatory tasks
-      t.size(i);
-      GECODE_ES_CHECK(edgefinding(home,t));
-      // Restore to also include optional tasks
-      t.size(n);
-    }
-
-    GECODE_ES_CHECK(subsumed(home,*this,t));
+    if (!PL::basic)
+      GECODE_ES_CHECK(subsumed(home,*this,t));
 
     return ES_NOFIX;
   }

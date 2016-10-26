@@ -39,41 +39,41 @@
 
 namespace Gecode { namespace Int {
 
-  forceinline int 
+  forceinline int
   plus(int x, int y) {
-    assert(y != -Int::Limits::infinity);
-    return (x == -Int::Limits::infinity) ? x : x+y;
+    assert(y != -Limits::infinity);
+    return (x == -Limits::infinity) ? x : x+y;
   }
 
-  forceinline long long int 
+  forceinline long long int
   plus(long long int x, long long int y) {
-    assert(y != -Int::Limits::llinfinity);
-    return (x == -Int::Limits::llinfinity) ? x : x+y;
+    assert(y != -Limits::llinfinity);
+    return (x == -Limits::llinfinity) ? x : x+y;
   }
 
   template<class TaskView, class Node>
-  forceinline int 
+  forceinline int
   TaskTree<TaskView,Node>::n_inner(void) const {
     return tasks.size()-1;
   }
   template<class TaskView, class Node>
-  forceinline int 
+  forceinline int
   TaskTree<TaskView,Node>::n_nodes(void) const {
     return 2*tasks.size() - 1;
   }
 
   template<class TaskView, class Node>
-  forceinline bool 
+  forceinline bool
   TaskTree<TaskView,Node>::n_root(int i) {
     return i == 0;
   }
   template<class TaskView, class Node>
-  forceinline bool 
+  forceinline bool
   TaskTree<TaskView,Node>::n_leaf(int i) const {
     return i >= n_inner();
   }
   template<class TaskView, class Node>
-  forceinline int 
+  forceinline int
   TaskTree<TaskView,Node>::n_left(int i) {
     return 2*(i+1) - 1;
   }
@@ -142,9 +142,9 @@ namespace Gecode { namespace Int {
 
   template<class TaskView, class Node>
   forceinline
-  TaskTree<TaskView,Node>::TaskTree(Region& r, 
+  TaskTree<TaskView,Node>::TaskTree(Region& r,
                                     const TaskViewArray<TaskView>& t)
-    : tasks(t), 
+    : tasks(t),
       node(r.alloc<Node>(n_nodes())),
       _leaf(r.alloc<int>(tasks.size())) {
     // Compute a sorting map to order by non decreasing est
@@ -169,9 +169,9 @@ namespace Gecode { namespace Int {
 
   template<class TaskView, class Node> template<class Node2>
   forceinline
-  TaskTree<TaskView,Node>::TaskTree(Region& r, 
+  TaskTree<TaskView,Node>::TaskTree(Region& r,
                                     const TaskTree<TaskView,Node2>& t)
-    : tasks(t.tasks), 
+    : tasks(t.tasks),
       node(r.alloc<Node>(n_nodes())),
       _leaf(r.alloc<int>(tasks.size())) {
     for (int i=tasks.size(); i--; )

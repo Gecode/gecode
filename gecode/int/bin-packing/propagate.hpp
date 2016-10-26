@@ -42,13 +42,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
    *
    */
   forceinline
-  Item::Item(void) 
+  Item::Item(void)
     : s(0) {}
   forceinline
   Item::Item(IntView b, int s0)
     : DerivedView<IntView>(b), s(s0) {}
 
-  forceinline IntView 
+  forceinline IntView
   Item::bin(void) const {
     return x;
   }
@@ -56,11 +56,11 @@ namespace Gecode { namespace Int { namespace BinPacking {
   void Item::bin(IntView b) {
     x = b;
   }
-  forceinline int 
+  forceinline int
   Item::size(void) const {
     return s;
   }
-  forceinline void 
+  forceinline void
   Item::size(int s0) {
     s = s0;
   }
@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
 
-  forceinline bool 
+  forceinline bool
   same(const Item& i, const Item& j) {
     return same(i.bin(),j.bin()) && (i.size() == j.size());
   }
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   /// For sorting according to size
-  forceinline bool 
+  forceinline bool
   operator <(const Item& i, const Item& j) {
     return i.size() > j.size();
   }
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline
   SizeSet::SizeSet(void) {}
   forceinline
-  SizeSet::SizeSet(Region& region, int n_max) 
+  SizeSet::SizeSet(Region& region, int n_max)
     : n(0), t(0), s(region.alloc<int>(n_max)) {}
   forceinline void
   SizeSet::add(int s0) {
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline
   SizeSetMinusOne::SizeSetMinusOne(void) {}
   forceinline
-  SizeSetMinusOne::SizeSetMinusOne(Region& region, int n_max) 
+  SizeSetMinusOne::SizeSetMinusOne(Region& region, int n_max)
     : SizeSet(region,n_max), p(-1) {}
   forceinline void
   SizeSetMinusOne::minus(int s0) {
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     return s[(i < p) ? i : i+1];
   }
 
-  
+
 
   /*
    * Packing propagator
@@ -161,13 +161,13 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   forceinline
-  Pack::Pack(Space& home, bool shared, Pack& p) 
+  Pack::Pack(Space& home, bool shared, Pack& p)
     : Propagator(home,shared,p), t(p.t) {
     l.update(home,shared,p.l);
     bs.update(home,shared,p.bs);
   }
 
-  forceinline size_t 
+  forceinline size_t
   Pack::dispose(Space& home) {
     l.cancel(home,*this,PC_INT_BND);
     bs.cancel(home,*this,PC_INT_DOM);

@@ -146,7 +146,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Engine: search control
    */
-  forceinline void 
+  forceinline void
   DFS::solution(Space* s) {
     m_search.acquire();
     bool bs = signal();
@@ -155,7 +155,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       e_search.signal();
     m_search.release();
   }
-  
+
 
 
   /*

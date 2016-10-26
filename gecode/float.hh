@@ -129,16 +129,31 @@ namespace Gecode {
 
 namespace Gecode { namespace Float {
 
+
+#if defined(_MSC_VER) && (defined(_M_X64) || (defined(_M_IX86_FP) && (_M_IX86_FP > 0)))
+
+  /*
+   * This is used for the MSVC compiler for x64 or x86 with SSE enabled.
+   *
+   */
+  /// Rounding Base class (safe version)
+  typedef gecode_boost::numeric::interval_lib::rounded_arith_std<FloatNum> 
+    RoundingBase;
+
+#else
+
+  /// Rounding Base class (optimized version)
+  typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> 
+    RoundingBase;
+
+#endif
+
   /**
    * \brief Floating point rounding policy
    *
    * \ingroup TaskModelFloatVars
    */
-  class Rounding : 
-    public gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> {
-  protected:
-    /// Base class
-    typedef gecode_boost::numeric::interval_lib::rounded_arith_opp<FloatNum> Base;
+  class Rounding : public RoundingBase {
   public:
     /// \name Constructor and destructor
     //@{
@@ -147,7 +162,7 @@ namespace Gecode { namespace Float {
     /// Destructor (restores previous rounding mode)
     ~Rounding(void);
     //@}
-  
+
     /// \name Arithmetic operations
     //@{
     /// Return lower bound of \a x plus \a y (domain: \f$ [-\infty;+\infty][-\infty;+\infty]\f$)
@@ -428,7 +443,7 @@ namespace Gecode {
     FloatVal& operator =(const FloatNum& n);
     /// Assignment operator
     FloatVal& operator =(const FloatVal& v);
-    
+
     /// Assign lower bound \a l and upper bound \a u
     void assign(FloatNum const &l, FloatNum const &u);
     //@}
@@ -456,7 +471,7 @@ namespace Gecode {
     /// Test whether zero is included
     bool zero_in(void) const;
     //@}
-    
+
     /// \name Float value construction
     //@{
     /// Return hull of \a x and \a y
@@ -468,7 +483,7 @@ namespace Gecode {
     /// Return \f$2\pi\f$
     static FloatVal pi_twice(void);
     //@}
-    
+
     /// \name Update operators
     //@{
     /// Increment by \a n
@@ -934,7 +949,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing float arguments
-  class FloatValArgs : public PrimArgArray<FloatVal> {
+  class FloatValArgs : public ArgArray<FloatVal> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -949,15 +964,13 @@ namespace Gecode {
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     FloatValArgs(InputIterator first, InputIterator last);
-    /// Allocate array with \a n elements and initialize with \a e0, ...
-    GECODE_FLOAT_EXPORT
-    FloatValArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     FloatValArgs(int n, const FloatVal* e);
     /// Initialize from primitive argument array \a a (copy elements)
-    FloatValArgs(const PrimArgArray<FloatVal>& a);
+    FloatValArgs(const ArgArray<FloatVal>& a);
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
+    GECODE_FLOAT_EXPORT
     static FloatValArgs create(int n, FloatVal start, int inc=1);
     //@}
   };
@@ -1314,6 +1327,12 @@ namespace Gecode {
   /// Post propagator for channeling a float and an integer variable \f$ x_0 = x_1\f$
   GECODE_FLOAT_EXPORT void
   channel(Home home, IntVar x0, FloatVar x1);
+  /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
+  GECODE_FLOAT_EXPORT void
+  channel(Home home, FloatVar x0, BoolVar x1);
+  /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
+  GECODE_FLOAT_EXPORT void
+  channel(Home home, BoolVar x0, FloatVar x1);
   //@}
 
 
@@ -1381,8 +1400,8 @@ namespace Gecode {
    * \brief Branch value function type for float variables
    *
    * Returns a value for the variable \a x that is to be used in the
-   * corresponding branch commit function. The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponding branch commit function. The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher.
    *
    * \ingroup TaskModelFloatBranch
@@ -1393,8 +1412,8 @@ namespace Gecode {
    * \brief Branch commit function type for float variables
    *
    * The function must post a constraint on the variable \a x which
-   * corresponds to the alternative \a a.  The integer \a i refers 
-   * to the variable's position in the original array passed to the 
+   * corresponds to the alternative \a a.  The integer \a i refers
+   * to the variable's position in the original array passed to the
    * brancher. The value \a nl is the value description
    * computed by the corresponding branch value function.
    *
@@ -1427,7 +1446,7 @@ namespace Gecode {
     /// Copy constructor
     FloatAFC(const FloatAFC& a);
     /// Assignment operator
-    FloatAFC& operator =(const FloatAFC& a);      
+    FloatAFC& operator =(const FloatAFC& a);
     /// Initialize for float variables \a x with decay factor \a d
     FloatAFC(Home home, const FloatVarArgs& x, double d=1.0);
     /**
@@ -1437,7 +1456,7 @@ namespace Gecode {
      * AFC storage has been constructed with the default constructor.
      *
      */
-    void init(Home, const FloatVarArgs& x, double d=1.0);
+    void init(Home home, const FloatVarArgs& x, double d=1.0);
   };
 
 }
@@ -1464,7 +1483,7 @@ namespace Gecode {
     /// Copy constructor
     FloatActivity(const FloatActivity& a);
     /// Assignment operator
-    FloatActivity& operator =(const FloatActivity& a);      
+    FloatActivity& operator =(const FloatActivity& a);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
@@ -1473,7 +1492,7 @@ namespace Gecode {
      * by \a bm.
      *
      */
-    GECODE_FLOAT_EXPORT 
+    GECODE_FLOAT_EXPORT
     FloatActivity(Home home, const FloatVarArgs& x, double d=1.0,
                   FloatBranchMerit bm=NULL);
     /**
@@ -1488,7 +1507,7 @@ namespace Gecode {
      *
      */
     GECODE_FLOAT_EXPORT void
-    init(Home, const FloatVarArgs& x, double d=1.0,
+    init(Home home, const FloatVarArgs& x, double d=1.0,
          FloatBranchMerit bm=NULL);
   };
 
@@ -1499,7 +1518,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for explaining branching alternatives for set variables
-  typedef void (*FloatVarValPrint)(const Space &home, const BrancherHandle& bh,
+  typedef void (*FloatVarValPrint)(const Space &home, const Brancher& b,
                                    unsigned int a,
                                    FloatVar x, int i, const FloatNumBranch& n,
                                    std::ostream& o);
@@ -1564,7 +1583,7 @@ namespace Gecode {
     void expand(Home home, const FloatVarArgs& x);
   };
 
-  
+
   /**
    * \defgroup TaskModelFloatBranchVar Variable selection for float variables
    * \ingroup TaskModelFloatBranch
@@ -1588,7 +1607,7 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_AFC_MIN(FloatAFC a, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count with decay factor \a d
   FloatVarBranch FLOAT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest accumulated failure count    
+  /// Select variable with largest accumulated failure count
   FloatVarBranch FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl=NULL);
   /// Select variable with lowest activity with decay factor \a d
   FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
@@ -1599,11 +1618,11 @@ namespace Gecode {
   /// Select variable with highest activity
   FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);
   /// Select variable with smallest min
-  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);         
+  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
   FloatVarBranch FLOAT_VAR_MIN_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest max
-  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=NULL); 
+  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest max
   FloatVarBranch FLOAT_VAR_MAX_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest domain size
@@ -1750,9 +1769,9 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
-         FloatVarBranch vars, FloatValBranch vals, 
+         FloatVarBranch vars, FloatValBranch vals,
          FloatBranchFilter bf=NULL,
          FloatVarValPrint vvp=NULL);
   /**
@@ -1760,7 +1779,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals,
          FloatBranchFilter bf=NULL,
@@ -1770,7 +1789,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   branch(Home home, FloatVar x, FloatValBranch vals,
          FloatVarValPrint vvp=NULL);
 
@@ -1779,7 +1798,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
          FloatBranchFilter fbf=NULL,
          FloatVarValPrint vvp=NULL);
@@ -1788,12 +1807,142 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  GECODE_FLOAT_EXPORT BrancherHandle
+  GECODE_FLOAT_EXPORT void
   assign(Home home, FloatVar x, FloatAssign vals,
          FloatVarValPrint vvp=NULL);
   //@}
 
 }
+
+namespace Gecode {
+
+  /*
+   * \brief Relaxed assignment of variables in \a x from values in \a sx
+   *
+   * The variables in \a x are assigned values from the assigned variables
+   * in the solution \a sx with a relaxation probability \a p. That is, 
+   * if \$fp=0.1\f$ approximately 10% of the variables in \a x will be 
+   * assigned a value from \a sx.
+   *
+   * The random numbers are generated from the generator \a r. At least
+   * one variable will not be assigned: in case the relaxation attempt 
+   * would suggest that all variables should be assigned, a single
+   * variable will be selected randomly to remain unassigned.
+   *
+   * Throws an exception of type Float::ArgumentSizeMismatch, if \a x and
+   * \a sx are of different size.
+   *
+   * Throws an exception of type Float::OutOfLimits, if \a p is not between
+   * \a 0.0 and \a 1.0.
+   *
+   * \ingroup TaskModeFloat
+   */
+  GECODE_FLOAT_EXPORT void 
+  relax(Home home, const FloatVarArgs& x, const FloatVarArgs& sx,
+        Rnd r, double p);
+
+}
+
+#include <gecode/float/trace/trace-view.hpp>
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskFloatTrace Tracing for float variables
+   * \ingroup TaskTrace
+   */
+
+  /**
+   * \brief Trace delta information for float variables
+   * \ingroup TaskFloatTrace
+   */
+  class FloatTraceDelta {
+  protected:
+    /// New view
+    Float::FloatView n;
+    /// Delta information
+    const Delta& d;
+  public:
+    /// \name Constructor
+    //@{
+    /// Initialize with old trace view \a o, new view \a n, and delta \a d
+    FloatTraceDelta(Float::FloatTraceView o, Float::FloatView n,
+                    const Delta& d);
+    //@}
+    /// \name Access
+    //@{
+    /// Return minimum
+    FloatNum min(void) const;
+    /// Return maximum
+    FloatNum max(void) const;
+    //@}
+  };
+
+}
+
+#include <gecode/float/trace/delta.hpp>
+
+#include <gecode/float/trace/traits.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Tracer for float variables
+   * \ingroup TaskFloatTrace
+   */
+  typedef Tracer<Float::FloatView> FloatTracer;
+  /**
+   * \brief TraceRecorder for float variables
+   * \ingroup TaskFloatTrace
+   */
+  typedef TraceRecorder<Float::FloatView> FloatTraceRecorder;
+
+  /**
+   * \brief Standard float variable tracer
+   * \ingroup TaskFloatTrace
+   */
+  class GECODE_FLOAT_EXPORT StdFloatTracer : public FloatTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+  public:
+    /// Initialize with output stream \a os0
+    StdFloatTracer(std::ostream& os0 = std::cerr);
+    /// Print init information
+    virtual void init(const Space& home, const FloatTraceRecorder& t);
+    /// Print prune information
+    virtual void prune(const Space& home, const FloatTraceRecorder& t,
+                       const ExecInfo& ei, int i, FloatTraceDelta& d);
+    /// Print fixpoint information
+    virtual void fix(const Space& home, const FloatTraceRecorder& t);
+    /// Print that trace recorder is done
+    virtual void done(const Space& home, const FloatTraceRecorder& t);
+    /// Default tracer (printing to std::cerr)
+    static StdFloatTracer def;
+  };
+
+
+  /**
+   * \brief Create a tracer for float variables
+   * \ingroup TaskFloatTrace
+   */
+  GECODE_FLOAT_EXPORT void
+  trace(Home home, const FloatVarArgs& x,
+        TraceFilter tf,
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        FloatTracer& t = StdFloatTracer::def);
+  /**
+   * \brief Create a tracer for float variables
+   * \ingroup TaskFloatTrace
+   */
+  void
+  trace(Home home, const FloatVarArgs& x,
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        FloatTracer& t = StdFloatTracer::def);
+
+}
+
+#include <gecode/float/trace.hpp>
 
 #endif
 

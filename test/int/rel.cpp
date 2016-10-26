@@ -56,9 +56,9 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntVarXY(Gecode::IntRelType irt0, int n, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Var::XY::"+str(irt0)+"::"+str(icl)+"::"+str(n),
-                n+1,-3,3,n==1,icl),
+       IntVarXY(Gecode::IntRelType irt0, int n, Gecode::IntPropLevel ipl)
+         : Test("Rel::Int::Var::XY::"+str(irt0)+"::"+str(ipl)+"::"+str(n),
+                n+1,-3,3,n==1,ipl),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -72,18 +72,18 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (x.size() == 2) {
-           rel(home, x[0], irt, x[1], icl);
+           rel(home, x[0], irt, x[1], ipl);
          } else {
            IntVarArgs y(2);
            y[0]=x[0]; y[1]=x[1];
-           rel(home, y, irt, x[2], icl);
+           rel(home, y, irt, x[2], ipl);
          }
        }
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 2);
-         Gecode::rel(home, x[0], irt, x[1], r, icl);
+         Gecode::rel(home, x[0], irt, x[1], r, ipl);
        }
      };
 
@@ -94,9 +94,9 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntVarXX(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Var::XX::"+str(irt0)+"::"+str(icl),
-                1,-3,3,true,icl),
+       IntVarXX(Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
+         : Test("Rel::Int::Var::XX::"+str(irt0)+"::"+str(ipl),
+                1,-3,3,true,ipl),
            irt(irt0) {
          contest = ((irt != Gecode::IRT_LE) &&
                     (irt != Gecode::IRT_GR) &&
@@ -109,12 +109,12 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::rel(home, x[0], irt, x[0], icl);
+         Gecode::rel(home, x[0], irt, x[0], ipl);
        }
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
-         Gecode::rel(home, x[0], irt, x[0], r, icl);
+         Gecode::rel(home, x[0], irt, x[0], r, ipl);
        }
      };
 
@@ -268,9 +268,9 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntSeq(int n, Gecode::IntRelType irt0, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Seq::"+str(n)+"::"+str(irt0)+"::"+str(icl),
-                n,-3,3,false,icl),
+       IntSeq(int n, Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
+         : Test("Rel::Int::Seq::"+str(n)+"::"+str(irt0)+"::"+str(ipl),
+                n,-3,3,false,ipl),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -290,7 +290,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::rel(home, x, irt, icl);
+         Gecode::rel(home, x, irt, ipl);
        }
      };
 
@@ -301,9 +301,9 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntSharedSeq(int n, Gecode::IntRelType irt0, Gecode::IntConLevel icl)
-         : Test("Rel::Int::Seq::Shared::"+str(n)+"::"+str(irt0)+"::"+str(icl),
-                n,-3,3,false,icl),
+       IntSharedSeq(int n, Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
+         : Test("Rel::Int::Seq::Shared::"+str(n)+"::"+str(irt0)+"::"+str(ipl),
+                n,-3,3,false,ipl),
            irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
@@ -327,9 +327,9 @@ namespace Test { namespace Int {
          using namespace Gecode;
          int n = x.size();
          IntVarArgs y(2*n);
-         for (int i=n; i--; ) 
+         for (int i=n; i--; )
            y[i] = y[n+i] = x[i];
-         rel(home, y, irt, icl);
+         rel(home, y, irt, ipl);
        }
      };
 
@@ -452,7 +452,7 @@ namespace Test { namespace Int {
        /// Create and register test
        IntArrayDiff(Gecode::IntRelType irt0, int m)
          : Test("Rel::Int::Array::"+str(irt0)+"::"+str(m)+"::"+str(n-m),
-                n,-2,2), 
+                n,-2,2),
            irt(irt0), n_fst(m) {
          assert(n_fst <= n);
        }
@@ -518,18 +518,18 @@ namespace Test { namespace Int {
        Create(void) {
          using namespace Gecode;
          for (IntRelTypes irts; irts(); ++irts) {
-           for (IntConLevels icls; icls(); ++icls) {
-             (void) new IntVarXY(irts.irt(),1,icls.icl());
-             (void) new IntVarXY(irts.irt(),2,icls.icl());
-             (void) new IntVarXX(irts.irt(),icls.icl());
-             (void) new IntSeq(1,irts.irt(),icls.icl());
-             (void) new IntSeq(2,irts.irt(),icls.icl());
-             (void) new IntSeq(3,irts.irt(),icls.icl());
-             (void) new IntSeq(5,irts.irt(),icls.icl());
-             (void) new IntSharedSeq(1,irts.irt(),icls.icl());
-             (void) new IntSharedSeq(2,irts.irt(),icls.icl());
-             (void) new IntSharedSeq(3,irts.irt(),icls.icl());
-             (void) new IntSharedSeq(4,irts.irt(),icls.icl());
+           for (IntPropLevels ipls; ipls(); ++ipls) {
+             (void) new IntVarXY(irts.irt(),1,ipls.ipl());
+             (void) new IntVarXY(irts.irt(),2,ipls.ipl());
+             (void) new IntVarXX(irts.irt(),ipls.ipl());
+             (void) new IntSeq(1,irts.irt(),ipls.ipl());
+             (void) new IntSeq(2,irts.irt(),ipls.ipl());
+             (void) new IntSeq(3,irts.irt(),ipls.ipl());
+             (void) new IntSeq(5,irts.irt(),ipls.ipl());
+             (void) new IntSharedSeq(1,irts.irt(),ipls.ipl());
+             (void) new IntSharedSeq(2,irts.irt(),ipls.ipl());
+             (void) new IntSharedSeq(3,irts.irt(),ipls.ipl());
+             (void) new IntSharedSeq(4,irts.irt(),ipls.ipl());
            }
            (void) new BoolVarXY(irts.irt(),1);
            (void) new BoolVarXY(irts.irt(),2);

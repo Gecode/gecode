@@ -1,6 +1,6 @@
 /*
  *  WorkComparators.hh
- *  
+ *
  *
  *  Created by Jérémie Vautard on 31/03/10.
  *  Copyright 2010 Université d'Orléans. All rights reserved.
@@ -11,14 +11,14 @@
 #include "QCOPPlus.hh"
 
 class BidonComparator : public WorkComparator {
-	public : 
+	public :
   virtual bool cmp(QWork a,QWork b) {
     return false;
   }
 };
 
 class DeepFirstComparator : public WorkComparator {
-	public : 
+	public :
   virtual bool cmp(QWork a,QWork b) {
     if (a.root().size() > b.root().size()) return true;
     if (a.root().size() < b.root().size()) return false;
@@ -31,13 +31,13 @@ class QuantifierThenDepthComparator : public WorkComparator {
 	Qcop* problem;
 	bool existsFirst;
 	bool deepestFirst;
-	
-	public : 
-	QuantifierThenDepthComparator(Qcop* p,bool existsFirst,bool deepestFirst) { 
+
+	public :
+	QuantifierThenDepthComparator(Qcop* p,bool existsFirst,bool deepestFirst) {
 		this->problem = p;
 		this->existsFirst = existsFirst;
 		this->deepestFirst = deepestFirst;
-	}	
+	}
 	virtual bool cmp(QWork a,QWork b) {
 		bool q1 = (problem->qt_of_var(a.root().size()) != existsFirst);
 		bool q2 = (problem->qt_of_var(b.root().size()) != existsFirst);
@@ -51,13 +51,13 @@ class QuantifierThenDepthComparator : public WorkComparator {
 };
 
 class DepthComparator : public WorkComparator {
-	private : 
+	private :
 	bool deepestFirst;
-	public : 
+	public :
 	DepthComparator(bool deepestFirst) {
 		this->deepestfirst = deepestFirst;
 	}
-	
+
 	virtual bool cmp(QWork a,QWork b) {
 		int d1 = a.root().size();
 		int d2 = b.root().size();

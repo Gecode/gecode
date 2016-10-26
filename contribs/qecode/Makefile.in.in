@@ -34,7 +34,7 @@ endif
 #
 
 QECODESRC0 = QCOPPlus.cc myspace.cc OptVar.cc qsolver_qcop.cc qsolver_qcsp.cc Strategy.cc StrategyNode.cc QCSPPlusUnblockable.cc qsolver_unblockable.cc UnblockableViewValBranching.cc Work.cc Worker.cc WorkManager.cc qsolver_parallel.cc
-QECODEHDR0 = 
+QECODEHDR0 =
 
 
 QECODESRC	= $(QECODESRC0)
@@ -51,13 +51,13 @@ LINKQECODE	= $(LINKPREFIX)@QECODE@$(LINKSUFFIX)
 
 LINKALL := $(LINKALL) $(LINKQECODE)
 
-ALLLIB :=  $(ALLLIB) $(QECODELIB) 
+ALLLIB :=  $(ALLLIB) $(QECODELIB)
 
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS = $(QECODEDLL)
 else
-DLTARGETS= 
+DLTARGETS=
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
@@ -70,7 +70,7 @@ endif
 LIBTARGETS= $(DLLTARGETS) $(STATICTARGETS)
 
 
-all : $(LIBTARGETS) 
+all : $(LIBTARGETS)
 
 #
 # Object targets
@@ -115,31 +115,31 @@ $(QECODESTATICLIB): $(QECODEOBJ)
 	$(AR) $(ARFLAGS) $@ $(QECODEOBJ)
 	$(RANLIB) $@
 
-# 
+#
 # EXE targets
 #
 #
 
 
 #for linux: ?
-CXXFLAGS := $(CXXFLAGS) $(QECODEFLAGS) 
+CXXFLAGS := $(CXXFLAGS) $(QECODEFLAGS)
 
 #
 # Autoconf
 #
 
-$(qecode_top_srcdir)/configure: $(qecode_top_srcdir)/configure.ac 
+$(qecode_top_srcdir)/configure: $(qecode_top_srcdir)/configure.ac
 	(cd $(qecode_top_srcdir) && autoconf)
 config.status: $(qecode_top_srcdir)/configure
 	../../config.status --recheck
 	./config.status --recheck
 # use the sustitutions from gecode to generate the Makefile.in
-Makefile.in: $(qecode_top_srcdir)/Makefile.in.in ../../config.status 
+Makefile.in: $(qecode_top_srcdir)/Makefile.in.in ../../config.status
 	../../config.status \
 	  --file Makefile.in:$(qecode_top_srcdir)/Makefile.in.in
 
 # use the sustitutions from configure to generate the Makefile
-Makefile: Makefile.in ./config.status 
+Makefile: Makefile.in ./config.status
 	./config.status --file ./Makefile:./Makefile.in
 
 
@@ -157,6 +157,6 @@ distclean: veryclean
 	$(RMF) config.log config.status
 
 .PHONY: doc
-doc: $(QECODEHDR) $(QECODESRC) 
+doc: $(QECODEHDR) $(QECODESRC)
 	mkdir -p doc/html
 	doxygen doxygen.conf

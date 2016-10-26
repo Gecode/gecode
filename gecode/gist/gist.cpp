@@ -47,36 +47,36 @@ namespace Gecode { namespace Gist {
 
   std::string
   Inspector::name(void) { return "Inspector"; }
-  
+
   void
   Inspector::finalize(void) {}
-  
+
   Inspector::~Inspector(void) {}
 
   std::string
   Comparator::name(void) { return "Comparator"; }
-  
+
   void
   Comparator::finalize(void) {}
-  
+
   Comparator::~Comparator(void) {}
-    
+
   TextOutput::TextOutput(const std::string& name)
     : t(NULL), n(name) {}
-  
+
   void
   TextOutput::finalize(void) {
     delete t;
     t = NULL;
   }
-  
+
   TextOutput::~TextOutput(void) {
     delete t;
   }
 
   std::string
   TextOutput::name(void) { return n; }
-  
+
   void
   TextOutput::init(void) {
     if (t == NULL) {
@@ -89,19 +89,19 @@ namespace Gecode { namespace Gist {
   TextOutput::getStream(void) {
     return t->getStream();
   }
-  
+
   void
   TextOutput::flush(void) {
     t->flush();
   }
-  
+
   void
   TextOutput::addHtml(const char* s) {
     t->insertHtml(s);
   }
 
   const Options Options::def;
-  
+
   int
   explore(Space* root, bool bab, const Options& opt) {
 

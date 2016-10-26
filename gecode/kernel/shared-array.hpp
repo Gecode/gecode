@@ -79,7 +79,7 @@ namespace Gecode {
 
       /// Return number of elements
       int size(void) const;
-      
+
       /// Return beginning of array (for iterators)
       T* begin(void);
       /// Return beginning of array (for iterators)

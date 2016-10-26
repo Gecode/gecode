@@ -88,6 +88,8 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p with propagation condition \a pc
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -127,6 +129,8 @@ namespace Gecode {
     VarImpView(void);
     /// Initialize with variable implementation \a y
     VarImpView(VarImpType* y);
+    /// Set variable implementation to \a y
+    void varimp(VarImpType* y);
   public:
     /// \name Generic view information
     //@{
@@ -168,6 +172,8 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p with propagation condition \a pc
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -216,9 +222,9 @@ namespace Gecode {
     View x;
     /// Default constructor
     DerivedView(void);
+  public:
     /// Initialize with view \a y
     DerivedView(const View& y);
-  public:
     /// \name Generic view information
     //@{
     /// Return whether this view is derived from a VarImpView
@@ -261,6 +267,8 @@ namespace Gecode {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Re-schedule propagator \a p with propagation condition \a pc
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to view
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
@@ -368,7 +376,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ConstView<View>::subscribe(Space& home, Propagator& p, PropCond, 
+  ConstView<View>::subscribe(Space& home, Propagator& p, PropCond,
                              bool schedule) {
     if (schedule)
       View::schedule(home,p,ME_GEN_ASSIGNED);
@@ -376,6 +384,11 @@ namespace Gecode {
   template<class View>
   forceinline void
   ConstView<View>::cancel(Space&, Propagator&, PropCond) {
+  }
+  template<class View>
+  forceinline void
+  ConstView<View>::reschedule(Space& home, Propagator& p, PropCond) {
+    View::schedule(home,p,ME_GEN_ASSIGNED);
   }
   template<class View>
   forceinline void
@@ -424,6 +437,11 @@ namespace Gecode {
   VarImpView<Var>::VarImpView(VarImpType* y)
     : x(y) {}
   template<class Var>
+  forceinline void
+  VarImpView<Var>::varimp(VarImpType* y) {
+    x=y;
+  }
+  template<class Var>
   forceinline bool
   VarImpView<Var>::varderived(void) {
     return true;
@@ -433,7 +451,7 @@ namespace Gecode {
   VarImpView<Var>::varimp(void) const {
     return x;
   }
-  template<class Var>
+ template<class Var>
   forceinline unsigned int
   VarImpView<Var>::degree(void) const {
     return x->degree();
@@ -458,6 +476,11 @@ namespace Gecode {
   forceinline void
   VarImpView<Var>::cancel(Space& home, Propagator& p, PropCond pc) {
     x->cancel(home,p,pc);
+  }
+  template<class Var>
+  forceinline void
+  VarImpView<Var>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    x->reschedule(home,p,pc);
   }
   template<class Var>
   forceinline void
@@ -572,6 +595,11 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
+  DerivedView<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    x.reschedule(home,p,pc);
+  }
+  template<class View>
+  forceinline void
   DerivedView<View>::subscribe(Space& home, Advisor& a) {
     x.subscribe(home,a);
   }
@@ -599,31 +627,31 @@ namespace Gecode {
 
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  forceinline bool 
+  forceinline bool
   same(const ConstView<ViewA>&, const ConstView<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class Var, class View>
-  forceinline bool 
+  forceinline bool
   same(const VarImpView<Var>&, const ConstView<View>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  forceinline bool 
+  forceinline bool
   same(const ConstView<ViewA>&, const DerivedView<ViewB>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class Var, class View>
-  forceinline bool 
+  forceinline bool
   same(const VarImpView<Var>&, const DerivedView<View>&) {
     return false;
   }
   /// Test whether two views are the same
   template<class View, class Var>
-  forceinline bool 
+  forceinline bool
   same(const DerivedView<View>&, const VarImpView<Var>&) {
     return false;
   }
@@ -635,7 +663,7 @@ namespace Gecode {
   }
   /// Test whether two views are the same
   template<class ViewA, class ViewB>
-  forceinline bool 
+  forceinline bool
   same(const DerivedView<ViewA>& x, const DerivedView<ViewB>& y) {
     return same(x.base(),y.base());
   }

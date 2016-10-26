@@ -78,13 +78,13 @@ namespace Gecode { namespace Search { namespace Parallel {
       virtual ~Worker(void);
     };
     /// Search options
-    const Options _opt;
+    Options _opt;
   public:
     /// Provide access to search options
     const Options& opt(void) const;
     /// Return number of workers
     unsigned int workers(void) const;
-    
+
     /// \name Commands from engine to workers and wait management
     //@{
     /// Commands from engine to workers
@@ -209,6 +209,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::workers(void) const {
     return static_cast<unsigned int>(opt().threads);
   }
+  forceinline bool
+  Engine::stopped(void) const {
+    return has_stopped;
+  }
+
 
 
   /*
@@ -218,17 +223,17 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::cmd(void) const {
     return _cmd;
   }
-  forceinline void 
+  forceinline void
   Engine::block(void) {
     _cmd = C_WAIT;
     _m_wait.acquire();
   }
-  forceinline void 
+  forceinline void
   Engine::release(Cmd c) {
     _cmd = c;
     _m_wait.release();
   }
-  forceinline void 
+  forceinline void
   Engine::wait(void) {
     _m_wait.acquire(); _m_wait.release();
   }
@@ -239,8 +244,8 @@ namespace Gecode { namespace Search { namespace Parallel {
    */
   forceinline
   Engine::Worker::Worker(Space* s, Engine& e)
-    : _engine(e), 
-      path(s == NULL ? 0 : e.opt().nogoods_limit), d(0), 
+    : _engine(e),
+      path(s == NULL ? 0 : e.opt().nogoods_limit), d(0),
       idle(false) {
     if (s != NULL) {
       if (s->status(*this) == SS_FAILED) {
@@ -289,7 +294,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   Engine::signal(void) const {
     return solutions.empty() && (n_busy > 0) && !has_stopped;
   }
-  forceinline void 
+  forceinline void
   Engine::idle(void) {
     m_search.acquire();
     bool bs = signal();
@@ -298,14 +303,14 @@ namespace Gecode { namespace Search { namespace Parallel {
       e_search.signal();
     m_search.release();
   }
-  forceinline void 
+  forceinline void
   Engine::busy(void) {
     m_search.acquire();
     assert(n_busy > 0);
     n_busy++;
     m_search.release();
   }
-  forceinline void 
+  forceinline void
   Engine::stop(void) {
     m_search.acquire();
     bool bs = signal();
@@ -314,24 +319,24 @@ namespace Gecode { namespace Search { namespace Parallel {
       e_search.signal();
     m_search.release();
   }
-  
+
 
   /*
    * Engine: termination control
    */
-  forceinline void 
+  forceinline void
   Engine::terminated(void) {
     unsigned int n;
     _m_term.acquire();
     n = --_n_not_terminated;
     _m_term.release();
-    // The signal must be outside of the look, otherwise a thread might be 
+    // The signal must be outside of the look, otherwise a thread might be
     // terminated that still holds a mutex.
     if (n == 0)
       _e_terminate.signal();
   }
 
-  forceinline void 
+  forceinline void
   Engine::ack_terminate(void) {
     _m_term.acquire();
     if (--_n_term_not_ack == 0)
@@ -339,7 +344,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     _m_term.release();
   }
 
-  forceinline void 
+  forceinline void
   Engine::wait_terminate(void) {
     _m_wait_terminate.acquire();
     _m_wait_terminate.release();
@@ -354,7 +359,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Wait until all threads have acknowledged termination request
     _e_term_ack.wait();
     // Release waiting threads
-    _m_wait_terminate.release();    
+    _m_wait_terminate.release();
     // Wait until all threads have in fact terminated
     _e_terminate.wait();
     // Now all threads are terminated!
@@ -365,7 +370,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Engine: reset control
    */
-  forceinline void 
+  forceinline void
   Engine::ack_reset_start(void) {
     _m_reset.acquire();
     if (--_n_reset_not_ack == 0)
@@ -373,7 +378,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     _m_reset.release();
   }
 
-  forceinline void 
+  forceinline void
   Engine::ack_reset_stop(void) {
     _m_reset.acquire();
     if (++_n_reset_not_ack == workers())
@@ -381,7 +386,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     _m_reset.release();
   }
 
-  forceinline void 
+  forceinline void
   Engine::wait_reset(void) {
     m_wait_reset.acquire();
     m_wait_reset.release();
@@ -406,7 +411,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     Space* s = path.steal(*this,d);
     m.release();
     // Tell that there will be one more busy worker
-    if (s != NULL) 
+    if (s != NULL)
       engine().busy();
     return s;
   }

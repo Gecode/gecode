@@ -46,31 +46,55 @@ namespace Test { namespace Float {
    /// %Tests for channel constraints
    namespace Channel {
 
-     /// %Test channel between float and integer 
-     class ChannelLinkSingle : public Test {
+     /// %Test channel between float and integer
+     class Int : public Test {
      public:
        /// Construct and register test
-       ChannelLinkSingle(Gecode::FloatNum st)
-         : Test("Channel",2,-1,2,st,CPLT_ASSIGNMENT,false) {}
+       Int(Gecode::FloatNum st)
+         : Test("Channel::Int",2,-1,2,st,CPLT_ASSIGNMENT,false) {}
        /// Check whether \a x is solution
        virtual MaybeType solution(const Assignment& x) const {
          Gecode::FloatNum tmp;
-         return (((modf(x[0].min(),&tmp)==0) || 
-                  (modf(x[0].max(),&tmp)==0)) 
+         return (((modf(x[0].min(),&tmp)==0) ||
+                  (modf(x[0].max(),&tmp)==0))
                  && (x[0]==x[1])) ? MT_TRUE : MT_FALSE;
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
          using namespace Gecode;
-         Gecode::IntVar iv(home,-1000,1000);
+         IntVar iv(home,-1000,1000);
          channel(home, x[0], iv);
-         channel(home, x[1], iv);
+         channel(home, iv, x[1]);
        }
      };
 
-     Gecode::FloatNum step = 0.7;
+     /// %Test channel between float and Boolean
+     class Bool : public Test {
+     public:
+       /// Construct and register test
+       Bool(Gecode::FloatNum st)
+         : Test("Channel::Bool",2,0,1,st,CPLT_ASSIGNMENT,false) {}
+       /// Check whether \a x is solution
+       virtual MaybeType solution(const Assignment& x) const {
+         Gecode::FloatNum tmp;
+         return (((modf(x[0].min(),&tmp)==0) ||
+                  (modf(x[0].max(),&tmp)==0))
+                 && (x[0]==x[1])) ? MT_TRUE : MT_FALSE;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::FloatVarArray& x) {
+         using namespace Gecode;
+         BoolVar bv(home,0,1);
+         channel(home, x[0], bv);
+         channel(home, bv, x[1]);
+       }
+     };
 
-     ChannelLinkSingle cls(step);
+     Gecode::FloatNum step1 = 0.7;
+     Gecode::FloatNum step2 = 0.1;
+
+     Int ci(step1);
+     Bool cb(step2);
      //@}
 
    }

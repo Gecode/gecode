@@ -45,7 +45,7 @@ namespace Gecode { namespace Int {
   Limits::valid(long long int n) {
     return ((n >= min) && (n <= max));
   }
-  
+
   inline void
   Limits::check(int n, const char* l) {
     if ((n < min) || (n > max))
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
     if ((n < min) || (n > max))
       throw OutOfLimits(l);
   }
-  
+
   inline void
   Limits::positive(int n, const char* l) {
     if ((n <= 0) || (n > max))
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int {
     if ((n <= 0.0) || (n > max))
       throw OutOfLimits(l);
   }
-  
+
   inline void
   Limits::nonnegative(int n, const char* l) {
     if ((n < 0) || (n > max))
@@ -78,10 +78,10 @@ namespace Gecode { namespace Int {
     if ((n < 0.0) || (n > max))
       throw OutOfLimits(l);
   }
-  
+
   forceinline bool
   Limits::overflow_add(int n, int m) {
-    long long int nm = 
+    long long int nm =
       static_cast<long long int>(n) + static_cast<long long int>(m);
     return (nm > INT_MAX) || (nm < INT_MIN+1);
   }
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int {
 
   forceinline bool
   Limits::overflow_sub(int n, int m) {
-    long long int nm = 
+    long long int nm =
       static_cast<long long int>(n) - static_cast<long long int>(m);
     return (nm > INT_MAX) || (nm < INT_MIN+1);
   }
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int {
 
   inline bool
   Limits::overflow_mul(int n, int m) {
-    long long int nm = 
+    long long int nm =
       static_cast<long long int>(n) * static_cast<long long int>(m);
     return (nm > INT_MAX) || (nm < INT_MIN+1);
   }
@@ -120,16 +120,16 @@ namespace Gecode { namespace Int {
     if ((n == LLONG_MIN) || (m == LLONG_MIN))
       return false;
 
-    unsigned long long int un = 
+    unsigned long long int un =
       static_cast<unsigned long long int>(n < 0 ? -n : n);
-    unsigned long long int um = 
+    unsigned long long int um =
       static_cast<unsigned long long int>(m < 0 ? -m : m);
 
     const unsigned int k = CHAR_BIT * sizeof(int);
 
-    unsigned long long int un_hi = un >> k; 
+    unsigned long long int un_hi = un >> k;
     unsigned long long int un_lo = un & ((1ULL << k) - 1ULL);
-    unsigned long long int um_hi = um >> k; 
+    unsigned long long int um_hi = um >> k;
     unsigned long long int um_lo = um & ((1ULL << k) - 1ULL);
 
     // This would mean that there is something larger than 2^64
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int {
       unm_hi = um_hi * un_lo;
     else
       return false;
-    
+
     // Again, something larger than 2^64
     if ((unm_hi >> k) != 0ULL)
       return true;

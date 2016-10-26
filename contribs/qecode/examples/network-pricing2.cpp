@@ -25,6 +25,7 @@ THE SOFTWARE.
 #include "QCOPPlus.hh"
 #include "qsolver_qcop.hh"
 #include <iostream>
+#include <vector>
 
 using namespace std;
 using namespace Gecode;
@@ -45,6 +46,25 @@ void printStr(Strategy s,int depth) {
         cout<<"Child "<<i<<" : "<<endl;
         printStr(s.getChild(i),depth+1);
     }
+}
+
+vector<int> assignment;
+void listAssignments(Strategy s) {
+  StrategyNode tag = s.getTag();
+  if (s.isTrue()) {
+    // We are at the end of a branch : we print the assignment)
+    for (int i=0;i<assignment.size();++i) cout<<assignment[i]<<" ";
+    cout<<endl;
+    return;
+  }
+  if (assignment.size()<= tag.Vmax) assignment.resize(tag.Vmax + 1);
+  for (int i=tag.Vmin;i<=tag.Vmax;++i) {
+    assignment[i] = tag.valeurs[i-(tag.Vmin)];
+  }
+  // recursively extracting each child
+  for (int i=0;i<s.degree();++i) {
+    listAssignments(s.getChild(i));
+  }
 }
 
 int main() {
@@ -143,6 +163,8 @@ int main() {
 
     cout<<"STRATEGY DESCRIPTION : "<<endl;
     printStr(outcome,0);
+    cout<<endl<<"____________________"<<endl;
+    listAssignments(outcome);
     return 0;
 }
 

@@ -90,6 +90,8 @@ namespace Gecode { namespace Int {
     void subscribe(Space& home, Propagator& p, PropCond pc);
     /// Cancel subscription of propagator \a p for task
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
   };
 
@@ -205,6 +207,8 @@ namespace Gecode { namespace Int {
     void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     /// Cancel subscription of propagator \a p for all tasks
     void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
     //@}
 
     /// \name Cloning
@@ -224,7 +228,7 @@ namespace Gecode { namespace Int {
    */
   template<class Char, class Traits, class Task>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os,
               const TaskArray<Task>& t);
 
 
@@ -269,7 +273,7 @@ namespace Gecode { namespace Int {
    */
   template<class Char, class Traits, class TaskView>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os,
               const TaskViewArray<TaskView>& t);
 
 }}
@@ -359,7 +363,7 @@ namespace Gecode { namespace Int {
 
   /// Safe addition in case \a x is -Int::Limits::double_infinity
   double plus(double x, double y);
-  
+
   /// Task trees for task views with node type \a Node
   template<class TaskView, class Node>
   class TaskTree {
@@ -420,7 +424,7 @@ namespace Gecode { namespace Int {
    * Requires \code #include <gecode/int/task.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class Task, PropCond pc>
+  template<class Task, class PL>
   class TaskProp : public Propagator {
   protected:
     /// Tasks
@@ -428,26 +432,108 @@ namespace Gecode { namespace Int {
     /// Constructor for creation
     TaskProp(Home home, TaskArray<Task>& t);
     /// Constructor for cloning \a p
-    TaskProp(Space& home, bool shared, TaskProp<Task,pc>& p);
+    TaskProp(Space& home, bool shared, TaskProp<Task,PL>& p);
   public:
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask,PropCond pc>
+  template<class OptTask, class PL>
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Purge optional tasks that are excluded and possibly rewrite propagator
-  template<class OptTask,PropCond pc,class Cap>
+  template<class OptTask, class PL, class Cap>
   ExecStatus purge(Space& home, Propagator& p, TaskArray<OptTask>& t, Cap c);
+
+  /// Class for defining basic propagation level
+  class PLB {
+  public:
+    /// Perform basic propagation
+    static const bool basic = true;
+    /// Do not perform advanced propagation
+    static const bool advanced = false;
+    /// For basic propagation, domain operations are needed
+    static const PropCond pc = PC_INT_DOM;
+  };
+
+  /// Class for defining advanced propagation level
+  class PLA {
+  public:
+    /// Perform basic propagation
+    static const bool basic = false;
+    /// Do not perform advanced propagation
+    static const bool advanced = true;
+    /// For basic propagation, domain operations are needed
+    static const PropCond pc = PC_INT_BND;
+  };
+
+  /// Class for defining basic and advanced propagation level
+  class PLBA {
+  public:
+    /// Perform basic propagation
+    static const bool basic = true;
+    /// Do not perform advanced propagation
+    static const bool advanced = true;
+    /// For basic propagation, domain operations are needed
+    static const PropCond pc = PC_INT_DOM;
+  };
 
 }}
 
 #include <gecode/int/task/prop.hpp>
 #include <gecode/int/task/purge.hpp>
+
+namespace Gecode { namespace Int {
+
+  /// Time-tabling event for task
+  class Event {
+  public:
+    /// Event type for task with order in which they are processed
+    enum Type {
+      LRT = 0, ///< Latest required time of task
+      LCT = 1, ///< Latest completion time of task
+      EST = 2, ///< Earliest start time of task
+      ZRO = 3, ///< Zero-length task start time
+      ERT = 4, ///< Earliest required time of task
+      END = 5  ///< End marker
+    };
+  protected:
+    /// Combines type and number of task
+    unsigned int ei;
+    /// Time of event
+    int t;
+  public:
+    /// Initialize event
+    void init(Type e, int t, int i);
+    /// Return event type
+    Type type(void) const;
+    /// Return event time
+    int time(void) const;
+    /// Return event index
+    int idx(void) const;
+    /// Order among events
+    bool operator <(const Event& e) const;
+    /// Allocate from \a r and initialize event array with tasks \a t
+    template<class Task>
+    static Event* events(Region& r, const TaskArray<Task>& t, bool& assigned);
+    /// Allocate from \a r and initialize event array with assigned tasks \a t only
+    template<class Task>
+    static Event* events(Region& r, const TaskArray<Task>& t);
+  };
+
+  /// Print event \a e on stream \a os
+  template<class Char, class Traits>
+  std::basic_ostream<Char,Traits>&
+  operator <<(std::basic_ostream<Char,Traits>& os, const Event& e);
+
+}}
+
+#include <gecode/int/task/event.hpp>
 
 #endif
 

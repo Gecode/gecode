@@ -64,7 +64,7 @@ public:
     BRANCH_SIZE     ///< Choose variable with smallest size
   };
   /// Actual model
-  Alpha(const Options& opt) 
+  Alpha(const Options& opt)
     : Script(opt), le(*this,n,1,n) {
     IntVar
       a(le[ 0]), b(le[ 1]), c(le[ 2]), e(le[ 4]), f(le[ 5]),
@@ -73,28 +73,28 @@ public:
       q(le[16]), r(le[17]), s(le[18]), t(le[19]), u(le[20]),
       v(le[21]), w(le[22]), x(le[23]), y(le[24]), z(le[25]);
 
-    rel(*this, b+a+l+l+e+t       == 45,  opt.icl());
-    rel(*this, c+e+l+l+o         == 43,  opt.icl());
-    rel(*this, c+o+n+c+e+r+t     == 74,  opt.icl());
-    rel(*this, f+l+u+t+e         == 30,  opt.icl());
-    rel(*this, f+u+g+u+e         == 50,  opt.icl());
-    rel(*this, g+l+e+e           == 66,  opt.icl());
-    rel(*this, j+a+z+z           == 58,  opt.icl());
-    rel(*this, l+y+r+e           == 47,  opt.icl());
-    rel(*this, o+b+o+e           == 53,  opt.icl());
-    rel(*this, o+p+e+r+a         == 65,  opt.icl());
-    rel(*this, p+o+l+k+a         == 59,  opt.icl());
-    rel(*this, q+u+a+r+t+e+t     == 50,  opt.icl());
-    rel(*this, s+a+x+o+p+h+o+n+e == 134, opt.icl());
-    rel(*this, s+c+a+l+e         == 51,  opt.icl());
-    rel(*this, s+o+l+o           == 37,  opt.icl());
-    rel(*this, s+o+n+g           == 61,  opt.icl());
-    rel(*this, s+o+p+r+a+n+o     == 82,  opt.icl());
-    rel(*this, t+h+e+m+e         == 72,  opt.icl());
-    rel(*this, v+i+o+l+i+n       == 100, opt.icl());
-    rel(*this, w+a+l+t+z         == 34,  opt.icl());
+    rel(*this, b+a+l+l+e+t       == 45,  opt.ipl());
+    rel(*this, c+e+l+l+o         == 43,  opt.ipl());
+    rel(*this, c+o+n+c+e+r+t     == 74,  opt.ipl());
+    rel(*this, f+l+u+t+e         == 30,  opt.ipl());
+    rel(*this, f+u+g+u+e         == 50,  opt.ipl());
+    rel(*this, g+l+e+e           == 66,  opt.ipl());
+    rel(*this, j+a+z+z           == 58,  opt.ipl());
+    rel(*this, l+y+r+e           == 47,  opt.ipl());
+    rel(*this, o+b+o+e           == 53,  opt.ipl());
+    rel(*this, o+p+e+r+a         == 65,  opt.ipl());
+    rel(*this, p+o+l+k+a         == 59,  opt.ipl());
+    rel(*this, q+u+a+r+t+e+t     == 50,  opt.ipl());
+    rel(*this, s+a+x+o+p+h+o+n+e == 134, opt.ipl());
+    rel(*this, s+c+a+l+e         == 51,  opt.ipl());
+    rel(*this, s+o+l+o           == 37,  opt.ipl());
+    rel(*this, s+o+n+g           == 61,  opt.ipl());
+    rel(*this, s+o+p+r+a+n+o     == 82,  opt.ipl());
+    rel(*this, t+h+e+m+e         == 72,  opt.ipl());
+    rel(*this, v+i+o+l+i+n       == 100, opt.ipl());
+    rel(*this, w+a+l+t+z         == 34,  opt.ipl());
 
-    distinct(*this, le, opt.icl());
+    distinct(*this, le, opt.ipl());
 
     switch (opt.branching()) {
     case BRANCH_NONE:

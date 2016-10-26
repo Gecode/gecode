@@ -46,7 +46,7 @@
  * \namespace Gecode::Int::Unary
  *
  * The algorithms and data structures follow (mostly):
- *   Petr Vilím, Global Constraints in Int, PhD thesis, 
+ *   Petr Vilím, Global Constraints in Int, PhD thesis,
  *   Charles University, Prague, Czech Republic, 2007.
  *
  * \brief %Int for unary resources
@@ -131,9 +131,11 @@ namespace Gecode { namespace Int { namespace Unary {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void subscribe(Space& home, Propagator& p, PropCond pc);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
   };
@@ -351,9 +353,11 @@ namespace Gecode { namespace Int { namespace Unary {
     /// \name Dependencies
     //@{
     /// Subscribe propagator \a p to task
-    void subscribe(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void subscribe(Space& home, Propagator& p, PropCond pc);
     /// Cancel subscription of propagator \a p for task
-    void cancel(Space& home, Propagator& p, PropCond pc=Int::PC_INT_BND);
+    void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
   };
@@ -474,7 +478,7 @@ namespace Gecode { namespace Int { namespace Unary {
   operator <<(std::basic_ostream<Char,Traits>& os, const ManFlexTaskBwd& t);
 
   /**
-   * \brief Print optional backward task view in format 
+   * \brief Print optional backward task view in format
    * est:lst:pmin:pmax:ect:lct:m
    *
    * \relates OptFlexTaskBwd
@@ -721,7 +725,7 @@ namespace Gecode { namespace Int { namespace Unary {
     using TaskTree<TaskView,OmegaLambdaNode>::update;
   public:
     /// Initialize tree for tasks \a t with all tasks included, if \a inc is true
-    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t, 
+    OmegaLambdaTree(Region& r, const TaskViewArray<TaskView>& t,
                     bool inc=true);
     /// Shift task with index \a i from omega to lambda
     void shift(int i);
@@ -751,8 +755,12 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class ManTask>
   ExecStatus overload(Space& home, TaskArray<ManTask>& t);
   /// Check optional tasks \a t for overload
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);
+
+  /// Perform time-tabling propagation
+  template<class Task>
+  ExecStatus timetabling(Space& home, Propagator& p, TaskArray<Task>& t);
 
   /// Check tasks \a t for subsumption
   template<class Task>
@@ -762,17 +770,17 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class ManTask>
   ExecStatus detectable(Space& home, TaskArray<ManTask>& t);
   /// Propagate detectable precedences
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus detectable(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
   /// Propagate not-first and not-last
   template<class ManTask>
   ExecStatus notfirstnotlast(Space& home, TaskArray<ManTask>& t);
   /// Propagate not-first and not-last
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus notfirstnotlast(Space& home, Propagator& p, TaskArray<OptTask>& t);
 
-  /// Propagate by edge finding
+  /// Propagate by edge-finding
   template<class Task>
   ExecStatus edgefinding(Space& home, TaskArray<Task>& t);
 
@@ -783,10 +791,10 @@ namespace Gecode { namespace Int { namespace Unary {
    * Requires \code #include <gecode/int/unary.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ManTask>
-  class ManProp : public TaskProp<ManTask,Int::PC_INT_BND> {
+  template<class ManTask, class PL>
+  class ManProp : public TaskProp<ManTask,PL> {
   protected:
-    using TaskProp<ManTask,Int::PC_INT_BND>::t;
+    using TaskProp<ManTask,PL>::t;
     /// Constructor for creation
     ManProp(Home home, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
@@ -806,10 +814,10 @@ namespace Gecode { namespace Int { namespace Unary {
    * Requires \code #include <gecode/int/unary.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class OptTask>
-  class OptProp : public TaskProp<OptTask,Int::PC_INT_BND> {
+  template<class OptTask, class PL>
+  class OptProp : public TaskProp<OptTask,PL> {
   protected:
-    using TaskProp<OptTask,Int::PC_INT_BND>::t;
+    using TaskProp<OptTask,PL>::t;
     /// Constructor for creation
     OptProp(Home home, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
@@ -823,9 +831,20 @@ namespace Gecode { namespace Int { namespace Unary {
     static ExecStatus post(Home home, TaskArray<OptTask>& t);
   };
 
+  /// Post mandatory task propagator according to propagation level
+  template<class ManTask>
+  ExecStatus
+  manpost(Home home, TaskArray<ManTask>& t, IntPropLevel ipl);
+
+  /// Post optional task propagator according to propagation level
+  template<class OptTask>
+  ExecStatus
+  optpost(Home home, TaskArray<OptTask>& t, IntPropLevel ipl);
+
 }}}
 
 #include <gecode/int/unary/overload.hpp>
+#include <gecode/int/unary/time-tabling.hpp>
 #include <gecode/int/unary/subsumption.hpp>
 #include <gecode/int/unary/detectable.hpp>
 #include <gecode/int/unary/not-first-not-last.hpp>
@@ -833,6 +852,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
 #include <gecode/int/unary/man-prop.hpp>
 #include <gecode/int/unary/opt-prop.hpp>
+#include <gecode/int/unary/post.hpp>
 
 #endif
 

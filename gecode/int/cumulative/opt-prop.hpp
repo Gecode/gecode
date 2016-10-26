@@ -40,31 +40,31 @@
 #include <algorithm>
 
 namespace Gecode { namespace Int { namespace Cumulative {
-  
-  template<class OptTask, class Cap>
+
+  template<class OptTask, class Cap, class PL>
   forceinline
-  OptProp<OptTask,Cap>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,t), c(c0) {
+  OptProp<OptTask,Cap,PL>::OptProp(Home home, Cap c0, TaskArray<OptTask>& t)
+    : TaskProp<OptTask,PL>(home,t), c(c0) {
     c.subscribe(home,*this,PC_INT_BND);
   }
 
-  template<class OptTask, class Cap>
+  template<class OptTask, class Cap, class PL>
   forceinline
-  OptProp<OptTask,Cap>::OptProp(Space& home, bool shared,
-                                OptProp<OptTask,Cap>& p) 
-    : TaskProp<OptTask,Int::PC_INT_DOM>(home,shared,p) {
+  OptProp<OptTask,Cap,PL>::OptProp(Space& home, bool shared,
+                                   OptProp<OptTask,Cap,PL>& p)
+    : TaskProp<OptTask,PL>(home,shared,p) {
     c.update(home,shared,p.c);
   }
 
-  template<class OptTask, class Cap>
-  forceinline ExecStatus 
-  OptProp<OptTask,Cap>::post(Home home, Cap c, TaskArray<OptTask>& t) {
+  template<class OptTask, class Cap, class PL>
+  ExecStatus
+  OptProp<OptTask,Cap,PL>::post(Home home, Cap c, TaskArray<OptTask>& t) {
     // Capacity must be nonnegative
     GECODE_ME_CHECK(c.gq(home, 0));
     // Check for overload by single task and remove excluded tasks
     int n=t.size(), m=0;
     for (int i=n; i--; ) {
-      if (t[i].c() > c.max()) 
+      if (t[i].c() > c.max())
         GECODE_ME_CHECK(t[i].excluded(home));
       if (t[i].excluded())
         t[i]=t[--n];
@@ -84,69 +84,70 @@ namespace Gecode { namespace Int { namespace Cumulative {
         return ES_OK;
       }
     }
-    if (c.assigned() && c.val()==1) {
+    if (c.assigned() && (c.val() == 1)) {
       TaskArray<typename TaskTraits<OptTask>::UnaryTask> mt(home,t.size());
       for (int i=t.size(); i--; )
         mt[i]=t[i];
-      return Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask>
+      return Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>
         ::post(home,mt);
     }
     if (m == t.size()) {
       TaskArray<typename TaskTraits<OptTask>::ManTask> mt(home,m);
       for (int i=m; i--; )
         mt[i].init(t[i]);
-      return ManProp<typename TaskTraits<OptTask>::ManTask,Cap>
+      return ManProp<typename TaskTraits<OptTask>::ManTask,Cap,PL>
         ::post(home,c,mt);
     }
-    (void) new (home) OptProp<OptTask,Cap>(home,c,t);
+    (void) new (home) OptProp<OptTask,Cap,PL>(home,c,t);
     return ES_OK;
   }
 
-  template<class OptTask, class Cap>
-  Actor* 
-  OptProp<OptTask,Cap>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask,Cap>(home,share,*this);
+  template<class OptTask, class Cap, class PL>
+  Actor*
+  OptProp<OptTask,Cap,PL>::copy(Space& home, bool share) {
+    return new (home) OptProp<OptTask,Cap,PL>(home,share,*this);
   }
 
-  template<class OptTask, class Cap>  
-  forceinline size_t 
-  OptProp<OptTask,Cap>::dispose(Space& home) {
-    (void) TaskProp<OptTask,Int::PC_INT_DOM>::dispose(home);
+  template<class OptTask, class Cap, class PL>
+  forceinline size_t
+  OptProp<OptTask,Cap,PL>::dispose(Space& home) {
+    (void) TaskProp<OptTask,PL>::dispose(home);
     c.cancel(home,*this,PC_INT_BND);
     return sizeof(*this);
   }
 
-  template<class OptTask, class Cap>
-  ExecStatus 
-  OptProp<OptTask,Cap>::propagate(Space& home, const ModEventDelta& med) {
+  template<class OptTask, class Cap, class PL>
+  ExecStatus
+  OptProp<OptTask,Cap,PL>::propagate(Space& home, const ModEventDelta& med) {
     // Did one of the Boolean views change?
-    if (Int::BoolView::me(med) == Int::ME_BOOL_VAL)
-      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_DOM>(home,*this,t,c)));
+    if (BoolView::me(med) == ME_BOOL_VAL)
+      GECODE_ES_CHECK((purge<OptTask,PL>(home,*this,t,c)));
+
     // Only bounds changes?
-    if (Int::IntView::me(med) != Int::ME_INT_DOM)
+    if (IntView::me(med) != ME_INT_DOM)
       GECODE_ES_CHECK(overload(home,c.max(),t));
 
-    bool subsumed;
-    GECODE_ES_CHECK(basic(home,subsumed,c,t));
-    if (subsumed)
-      return home.ES_SUBSUMED(*this);
+    if (PL::basic)
+      GECODE_ES_CHECK(timetabling(home,*this,c,t));
 
-    // Partition into mandatory and optional activities
-    int n = t.size();
-    int i=0, j=n-1;
-    while (true) {
-      while ((i < n) && t[i].mandatory()) i++;
-      while ((j >= 0) && !t[j].mandatory()) j--;
-      if (i >= j) break;
-      std::swap(t[i],t[j]);
-    }
+    if (PL::advanced) {
+      // Partition into mandatory and optional activities
+      int n = t.size();
+      int i=0, j=n-1;
+      while (true) {
+        while ((i < n) && t[i].mandatory()) i++;
+        while ((j >= 0) && !t[j].mandatory()) j--;
+        if (i >= j) break;
+        std::swap(t[i],t[j]);
+      }
 
-    if (i > 1) {
-      // Truncate array to only contain mandatory tasks
-      t.size(i);
-      GECODE_ES_CHECK(edgefinding(home,c.max(),t));
-      // Restore to also include optional tasks
-      t.size(n);
+      if (i > 1) {
+        // Truncate array to only contain mandatory tasks
+        t.size(i);
+        GECODE_ES_CHECK(edgefinding(home,c.max(),t));
+        // Restore to also include optional tasks
+        t.size(n);
+      }
     }
 
     if (Cap::varderived() && c.assigned() && c.val()==1) {
@@ -159,11 +160,14 @@ namespace Gecode { namespace Int { namespace Cumulative {
       for (int i=t.size(); i--;)
         ut[i]=t[i];
       GECODE_REWRITE(*this,
-        (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask>
-          ::post(home(*this),ut)));
-    } else {
-      return ES_NOFIX;
+                     (Unary::OptProp<typename TaskTraits<OptTask>::UnaryTask,PL>
+                      ::post(home(*this),ut)));
     }
+
+    if (!PL::basic && c.assigned())
+      GECODE_ES_CHECK(subsumed(home,*this,c.val(),t));
+
+    return ES_NOFIX;
   }
 
 }}}

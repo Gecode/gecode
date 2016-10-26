@@ -1,16 +1,16 @@
-/****   , [ QCOPPlus.cc ], 
- Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard 
- 
+/****   , [ QCOPPlus.cc ],
+ Copyright (c) 2009 Universite d'Orleans - Jeremie Vautard
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -47,14 +47,14 @@ Qcop::Qcop(int ns, bool* quant, int* nv) {
 		while (nbVarBySpace[lespace]<=i) lespace++;
 		whichSpaceOwns[i]=lespace;
 	}
-	
-	
+
+
 	varInitialised=new bool[n];
 	for (unsigned int i=0;i<n;i++) varInitialised[i]=false;
 	currentDeclareSpace=0;
-	
+
 	optim = new Opts[nbSpaces];
-	for (int i=0;i<nbSpaces;i++) 
+	for (int i=0;i<nbSpaces;i++)
 		optim[i].opt_type = 0;
 }
 
@@ -62,8 +62,8 @@ Qcop::Qcop(int ns, bool* quant, int* nv) {
 Qcop::~Qcop() {
 	for (int i=0;i<nbSpaces;i++) {
 		delete rules[i];
-	}    
-	
+	}
+
 	delete goal;
 	delete [] rules;
 }
@@ -79,7 +79,7 @@ void Qcop::QIntVar(int var,int min,int max) {
 		cout<<"Variable "<<var<<"  Already created !!"<<endl;
 		abort();
 	}
-	
+
 	for (int i=whichSpaceOwns[var];i<nbSpaces;i++) {
 		rules[i]->v[var] = new IntVar(*rules[i],min,max);
 		rules[i]->type_of_v[var] = VTYPE_INT;
@@ -96,7 +96,7 @@ void Qcop::QIntVar(int var,IntSet dom) {
 		cout<<"Variable "<<var<<"  Already created !!"<<endl;
 		abort();
 	}
-	
+
 	for (int i=whichSpaceOwns[var];i<nbSpaces;i++) {
 		rules[i]->v[var] = new IntVar(*rules[i],dom);
 		rules[i]->type_of_v[var] = VTYPE_INT;
@@ -113,7 +113,7 @@ void Qcop::QBoolVar(int var) {
 		cout<<"Variable "<<var<<" Already created !!"<<endl;
 		abort();
 	}
-	
+
 	for (int i=whichSpaceOwns[var];i<nbSpaces;i++) {
 		rules[i]->v[var] = new BoolVar(*rules[i],0,1);
 		rules[i]->type_of_v[var]=VTYPE_BOOL;
@@ -173,13 +173,13 @@ void Qcop::makeStructure() {
 			abort();
 		}
 	}
-	
+
 	for (int i=0;i<nbSpaces;i++) {
 		if (!Quantifiers[i])
 			if (optim[i].vars.empty())
 				optimize(i,0,getExistential( (i==0)?0:nbVarBySpace[i-1]));
 	}
-	
+
 	for (unsigned int i=0;i<this->nbSpaces;i++) {
 		if (rules[i]->status() == SS_FAILED) {
 			cout<<"MakeStructure : rule space "<<i<<" is already failed."<<endl;
@@ -188,7 +188,7 @@ void Qcop::makeStructure() {
 	if (goal->status() == SS_FAILED) {
 		cout<<"MakeStructure : goal space is already failed."<<endl;
 	}
-	
+
 }
 
 
@@ -196,9 +196,9 @@ OptVar* Qcop::getAggregate(int scope, OptVar* opt, Aggregator* agg) {
 	if (!Quantifiers[scope]) {cout<<"Try to get aggregate on existential scope"<<endl;abort();} // aggregateur sur existentiel
 	if (opt->getScope() < scope) {cout<<"aggregated variable out of aggregator scope"<<endl;abort();} // Variable aggrégée avant aggregateur
 	for (int i=scope+1; i<opt->getScope();i++) // Universelle entre aggregateur et variable aggrégée
-		if (Quantifiers[i]) 
+		if (Quantifiers[i])
 		{cout<<"Universal scope between variable and aggregator"<<endl;abort();}
-	
+
 	UnivOptVar* zeopt = new UnivOptVar(scope,opt,agg);
 	optim[scope].vars.push_back(zeopt);
 	return zeopt;
@@ -279,7 +279,7 @@ Qcop* Qcop::clone() {
 		opop[i] = this->optim[i];
 		nbvbs[i] = this->nbVarBySpace[i];
 	}
-	
+
 	//	void** v = new void*[this->n];
 	VarType* typeofv = new VarType[n];
 	int* wso = new int[n];
@@ -287,7 +287,7 @@ Qcop* Qcop::clone() {
 		typeofv[i] = this->type_of_v[i];
 		wso[i] = this->whichSpaceOwns[i];
 	}
-	
+
 	Qcop* ret = new Qcop();
 	ret->nvar = nvv;
 	ret->n = this->n;

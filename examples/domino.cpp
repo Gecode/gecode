@@ -90,7 +90,7 @@ public:
 
   /// Actual model
   Domino(const SizeOptions& opt)
-    : Script(opt), 
+    : Script(opt),
       spec(specs[opt.size()]),
       width(spec[0]), height(spec[1]),
       x(*this, (width+1)*height, 0, 28) {
@@ -130,7 +130,7 @@ public:
           // in the next row.
           IntVar diff(*this, possibleDiffs);
           abs(*this, expr(*this, p1[dominoCount]-p2[dominoCount]),
-              diff, ICL_DOM);
+              diff, IPL_DOM);
 
           // If the piece is symmetrical, order the locations
           if (i == j)

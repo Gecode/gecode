@@ -39,18 +39,25 @@
 
 namespace Gecode {
 
-  /// Globally shared object for propagator information
-  class GlobalAFC {
+  /// Global propagator information
+  class GPI {
   public:
     /// Class for storing timed-decay value
-    class Counter {
+    class Info {
     public:
+      /// Propagator identifier
+      unsigned int pid;
+      /// Group identifier
+      unsigned int gid;
+      /// \name AFC information specific to propagators
+      //@{
       /// The counter value
       double c;
       /// The time-stamp
       unsigned long int t;
+      //@}
       /// Initialize
-      void init(void);
+      void init(unsigned int pid, unsigned int gid);
     };
   private:
     /// Block of propagator information (of variable size)
@@ -59,13 +66,15 @@ namespace Gecode {
       /// Next block
       Block* next;
       /// Start of counter entries
-      Counter c[1];
+      Info c[1];
       /// Allocate block with \a n entries and previous block \a p
       static Block* allocate(unsigned int n, Block* p=NULL);
     };
-    /// Class for managing timed-decay values
-    class DecayManager {
+    /// Class for managing identifiers and timed-decay values
+    class Manager : public HeapAllocated {
     protected:
+      /// Next free propagator id
+      unsigned next;
       /// The decay factor
       double d;
       /// The number of precomputed decay powers
@@ -75,36 +84,34 @@ namespace Gecode {
       /// The global time-stamp
       unsigned long int t;
       /// Decay counter value
-      void decay(Counter& c);
+      void decay(Info& c);
     public:
       /// Initialize
-      DecayManager(void);
+      Manager(void);
+      /// Return propagator fresh propagator id
+      unsigned int pid(void);
       /// Set decay factor to \a d
       void decay(double d);
       /// Return current decay factor
       double decay(void) const;
       /// Increment counter and perform decay
-      void inc(Counter& c);
+      void inc(Info& c);
       /// Set failure count to \a a
-      void set(Counter& c, double a);
-      /// Return counter value 
-      double val(Counter& c);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
+      void set(Info& c, double a);
+      /// Return counter value
+      double val(Info& c);
     };
     /// Initial smallest number of entries per block
     static const unsigned int size_min = 32;
     /// Largest possible number of entries per block
     static const unsigned int size_max = 32 * 1024;
     /// The actual object to store the required information
-    class Object {
+    class Object : public HeapAllocated {
     public:
       /// Mutex to synchronize globally shared access
       Support::FastMutex* mutex;
       /// Pointer to timed decay manager
-      DecayManager* decay;
+      Manager* manager;
       /// Link to previous object (NULL if none)
       Object* parent;
       /// How many spaces or objects use this object
@@ -117,10 +124,6 @@ namespace Gecode {
       Block* cur;
       /// Constructor
       Object(Support::FastMutex* m, Object* p=NULL);
-      /// Allocate memory from heap
-      static void* operator new(size_t s);
-      /// Free memory allocated from heap
-      static void  operator delete(void* p);
     };
     /// Pointer to object, possibly marked
     void* mo;
@@ -132,36 +135,38 @@ namespace Gecode {
     void local(Object* o);
     /// Set global pointer to possibly marked object
     void global(void* mo);
+    /// Perform disposal
+    void dispose(void);
   public:
     /// Initialize
-    GlobalAFC(void);
+    GPI(void);
     /// Copy during cloning
-    GlobalAFC(const GlobalAFC& ga);
+    GPI(const GPI& ga);
     /// Destructor
-    ~GlobalAFC(void);
+    ~GPI(void);
     /// Set decay factor to \a d
     void decay(double d);
     /// Return decay factor
     double decay(void) const;
     /// Increment failure count
-    void fail(Counter& c);
+    void fail(Info& c);
     /// Set failure count to \a a
-    void set(Counter& c, double a);
+    void set(Info& c, double a);
     /// Return failure count
-    double afc(Counter& c);
-    /// Allocate new propagator info
-    Counter& allocate(void);
+    double afc(Info& c);
+    /// Allocate new actor info
+    Info* allocate(unsigned int gid);
   };
 
 
 
   forceinline void
-  GlobalAFC::Counter::init(void) {
-    c=1.0; t=0UL;
+  GPI::Info::init(unsigned int pid0, unsigned int gid0) {
+    pid=pid0; gid=gid0; c=1.0; t=0UL;
   }
 
   forceinline void
-  GlobalAFC::DecayManager::decay(double d0) {
+  GPI::Manager::decay(double d0) {
     d = d0;
     if (d != 1.0) {
       double p = d;
@@ -172,15 +177,19 @@ namespace Gecode {
     }
   }
   forceinline
-  GlobalAFC::DecayManager::DecayManager(void)
-    : d(1.0), t(0UL) {}
+  GPI::Manager::Manager(void)
+    : next(0), d(1.0), t(0UL) {}
 
+  forceinline unsigned int
+  GPI::Manager::pid(void) {
+    return next++;
+  }
   forceinline double
-  GlobalAFC::DecayManager::decay(void) const {
+  GPI::Manager::decay(void) const {
     return d;
   }
   forceinline void
-  GlobalAFC::DecayManager::decay(Counter& c) {
+  GPI::Manager::decay(Info& c) {
     assert((t >= c.t) && (d != 1.0));
     unsigned int n = t - c.t;
     if (n > 0) {
@@ -193,7 +202,7 @@ namespace Gecode {
     }
   }
   forceinline void
-  GlobalAFC::DecayManager::inc(Counter& c) {
+  GPI::Manager::inc(Info& c) {
     if (d == 1.0) {
       c.c += 1.0;
     } else {
@@ -202,22 +211,14 @@ namespace Gecode {
     }
   }
   forceinline double
-  GlobalAFC::DecayManager::val(Counter& c) {
+  GPI::Manager::val(Info& c) {
     if (d != 1.0)
       decay(c);
     return c.c;
   }
   forceinline void
-  GlobalAFC::DecayManager::set(Counter& c, double a) {
+  GPI::Manager::set(Info& c, double a) {
     c.c = a;
-  }
-  forceinline void*
-  GlobalAFC::DecayManager::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-  forceinline void
-  GlobalAFC::DecayManager::operator delete(void* p) {
-    Gecode::heap.rfree(p);
   }
 
 
@@ -225,62 +226,51 @@ namespace Gecode {
    * Global AFC information
    *
    */
-
-  forceinline void*
-  GlobalAFC::Object::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-
-  forceinline void
-  GlobalAFC::Object::operator delete(void* p) {
-    Gecode::heap.rfree(p);
-  }
-
-  forceinline GlobalAFC::Block*
-  GlobalAFC::Block::allocate(unsigned int n, GlobalAFC::Block* p) {
+  forceinline GPI::Block*
+  GPI::Block::allocate(unsigned int n, GPI::Block* p) {
     Block* b = static_cast<Block*>(heap.ralloc(sizeof(Block)+
-                                               (n-1)*sizeof(Counter)));
+                                               (n-1)*sizeof(Info)));
     b->next = p;
     return b;
   }
 
   forceinline
-  GlobalAFC::Object::Object(Support::FastMutex* m, Object* p)
+  GPI::Object::Object(Support::FastMutex* m, Object* p)
     : mutex(m), parent(p), use_cnt(1), size(size_min), free(size_min),
       cur(Block::allocate(size)) {
     if (parent == NULL) {
-      decay = new DecayManager;
+      manager = new Manager;
     } else {
-      decay = parent->decay;
+      manager = parent->manager;
     }
   }
 
-  forceinline GlobalAFC::Object*
-  GlobalAFC::object(void) const {
+  forceinline GPI::Object*
+  GPI::object(void) const {
     return static_cast<Object*>(Support::funmark(mo));
   }
   forceinline bool
-  GlobalAFC::local(void) const {
+  GPI::local(void) const {
     return !Support::marked(mo);
   }
   forceinline void
-  GlobalAFC::local(Object* o) {
+  GPI::local(Object* o) {
     assert(!Support::marked(o));
     mo = o;
   }
   forceinline void
-  GlobalAFC::global(void* o) {
+  GPI::global(void* o) {
     mo = Support::fmark(o);
   }
 
   forceinline
-  GlobalAFC::GlobalAFC(void) {
+  GPI::GPI(void) {
     // No synchronization needed as single thread is creating this object
     local(new Object(new Support::FastMutex));
   }
 
   forceinline
-  GlobalAFC::GlobalAFC(const GlobalAFC& gpi) {
+  GPI::GPI(const GPI& gpi) {
     global(gpi.mo);
     Object* o = object();
     o->mutex->acquire();
@@ -288,12 +278,12 @@ namespace Gecode {
     o->mutex->release();
   }
 
-  forceinline
-  GlobalAFC::~GlobalAFC(void) {
+  forceinline void
+  GPI::dispose(void) {
     Support::FastMutex* m = object()->mutex;
     m->acquire();
     Object* c = object();
-    DecayManager* decay = c->decay;
+    Manager* manager = c->manager;
     while ((c != NULL) && (--c->use_cnt == 0)) {
       // Delete all blocks for c
       Block* b = c->cur;
@@ -303,62 +293,67 @@ namespace Gecode {
       }
       // Delete object
       Object* d = c; c = c->parent;
-      delete d; 
+      delete d;
     }
     m->release();
-    // All objects are deleted, so also delete mutex and decya info
+    // All objects are deleted, so also delete mutex and manager
     if (c == NULL) {
-      delete decay;
+      delete manager;
       delete m;
     }
   }
 
+  forceinline
+  GPI::~GPI(void) {
+    dispose();
+  }
+
   forceinline void
-  GlobalAFC::fail(Counter& c) {
+  GPI::fail(Info& c) {
     Support::FastMutex& m = *object()->mutex;
     m.acquire();
-    object()->decay->inc(c);
+    object()->manager->inc(c);
     m.release();
   }
 
   forceinline void
-  GlobalAFC::set(Counter& c, double a) {
+  GPI::set(Info& c, double a) {
     Support::FastMutex& m = *object()->mutex;
     m.acquire();
-    object()->decay->set(c,a);
+    object()->manager->set(c,a);
     m.release();
   }
 
   forceinline double
-  GlobalAFC::afc(Counter& c) {
+  GPI::afc(Info& c) {
     Support::FastMutex& m = *object()->mutex;
     double d;
     m.acquire();
-    d = object()->decay->val(c);
+    d = object()->manager->val(c);
     m.release();
     return d;
   }
 
   forceinline double
-  GlobalAFC::decay(void) const {
+  GPI::decay(void) const {
     Support::FastMutex& m = *object()->mutex;
     double d;
     m.acquire();
-    d = object()->decay->decay();
+    d = object()->manager->decay();
     m.release();
     return d;
   }
 
   forceinline void
-  GlobalAFC::decay(double d) {
+  GPI::decay(double d) {
     Support::FastMutex& m = *object()->mutex;
     m.acquire();
-    object()->decay->decay(d);
+    object()->manager->decay(d);
     m.release();
   }
 
-  forceinline GlobalAFC::Counter&
-  GlobalAFC::allocate(void) {
+  forceinline GPI::Info*
+  GPI::allocate(unsigned int gid) {
     /*
      * If there is no local object, create one.
      *
@@ -379,10 +374,10 @@ namespace Gecode {
       o->cur  = Block::allocate(o->size,o->cur);
     }
 
-    Counter* c = &o->cur->c[--o->free];
-    c->init();
+    Info* c = &o->cur->c[--o->free];
+    c->init(o->manager->pid(),gid);
 
-    return *c;
+    return c;
   }
 
 }

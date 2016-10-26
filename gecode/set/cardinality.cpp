@@ -48,7 +48,7 @@ namespace Gecode {
   cardinality(Home home, SetVar x, unsigned int i, unsigned int j) {
     Set::Limits::check(i, "Set::cardinality");
     Set::Limits::check(j, "Set::cardinality");
-    if (home.failed()) return;
+    GECODE_POST;
     Set::SetView _x(x);
     GECODE_ME_FAIL(_x.cardMin(home, i));
     GECODE_ME_FAIL(_x.cardMax(home, j));
@@ -58,7 +58,7 @@ namespace Gecode {
   cardinality(Home home, const SetVarArgs& x, unsigned int i, unsigned int j) {
     Set::Limits::check(i, "Set::cardinality");
     Set::Limits::check(j, "Set::cardinality");
-    if (home.failed()) return;
+    GECODE_POST;
     for (int k=x.size(); k--; ) {
       Set::SetView _x(x[k]);
       GECODE_ME_FAIL(_x.cardMin(home, i));
@@ -68,7 +68,7 @@ namespace Gecode {
 
   void
   cardinality(Home home, SetVar s, IntVar x) {
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Set::Int::Card<Set::SetView>::post(home,s, x));
   }
 

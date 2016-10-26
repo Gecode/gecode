@@ -68,6 +68,14 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template<class View0, class View1, class CtrlView, ReifyMode rm>
+  void
+  ReEq<View0,View1,CtrlView,rm>::reschedule(Space& home) {
+    b.reschedule(home,*this, Gecode::Int::PC_INT_VAL);
+    x0.reschedule(home,*this, PC_SET_ANY);
+    x1.reschedule(home,*this, PC_SET_ANY);
+  }
+
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   forceinline size_t
   ReEq<View0,View1,CtrlView,rm>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
@@ -102,7 +110,7 @@ namespace Gecode { namespace Set { namespace Rel {
     }
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(Distinct<View0,View1>::post(home(*this),x0,x1)));
     }
 

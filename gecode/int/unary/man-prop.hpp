@@ -36,40 +36,49 @@
  */
 
 namespace Gecode { namespace Int { namespace Unary {
-  
-  template<class ManTask>
-  forceinline
-  ManProp<ManTask>::ManProp(Home home, TaskArray<ManTask>& t)
-    : TaskProp<ManTask,Int::PC_INT_BND>(home,t) {}
 
-  template<class ManTask>
+  template<class ManTask, class PL>
   forceinline
-  ManProp<ManTask>::ManProp(Space& home, bool shared, 
-                                ManProp<ManTask>& p) 
-    : TaskProp<ManTask,Int::PC_INT_BND>(home,shared,p) {}
+  ManProp<ManTask,PL>::ManProp(Home home, TaskArray<ManTask>& t)
+    : TaskProp<ManTask,PL>(home,t) {}
 
-  template<class ManTask>
-  forceinline ExecStatus 
-  ManProp<ManTask>::post(Home home, TaskArray<ManTask>& t) {
+  template<class ManTask, class PL>
+  forceinline
+  ManProp<ManTask,PL>::ManProp(Space& home, bool shared,
+                                      ManProp<ManTask,PL>& p)
+    : TaskProp<ManTask,PL>(home,shared,p) {}
+
+  template<class ManTask, class PL>
+  forceinline ExecStatus
+  ManProp<ManTask,PL>::post(Home home, TaskArray<ManTask>& t) {
     if (t.size() > 1)
-      (void) new (home) ManProp<ManTask>(home,t);
+      (void) new (home) ManProp<ManTask,PL>(home,t);
     return ES_OK;
   }
 
-  template<class ManTask>
-  Actor* 
-  ManProp<ManTask>::copy(Space& home, bool share) {
-    return new (home) ManProp<ManTask>(home,share,*this);
+  template<class ManTask, class PL>
+  Actor*
+  ManProp<ManTask,PL>::copy(Space& home, bool share) {
+    return new (home) ManProp<ManTask,PL>(home,share,*this);
   }
 
-  template<class ManTask>
-  ExecStatus 
-  ManProp<ManTask>::propagate(Space& home, const ModEventDelta&) {
+  template<class ManTask, class PL>
+  ExecStatus
+  ManProp<ManTask,PL>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ES_CHECK(overload(home,t));
-    GECODE_ES_CHECK(detectable(home,t));
-    GECODE_ES_CHECK(notfirstnotlast(home,t));
-    GECODE_ES_CHECK(edgefinding(home,t));
-    GECODE_ES_CHECK(subsumed(home,*this,t));
+
+    if (PL::basic)
+      GECODE_ES_CHECK(timetabling(home,*this,t));
+
+    if (PL::advanced) {
+      GECODE_ES_CHECK(detectable(home,t));
+      GECODE_ES_CHECK(notfirstnotlast(home,t));
+      GECODE_ES_CHECK(edgefinding(home,t));
+    }
+
+    if (!PL::basic)
+      GECODE_ES_CHECK(subsumed(home,*this,t));
+
     return ES_NOFIX;
   }
 

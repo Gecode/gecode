@@ -67,7 +67,7 @@ if (open (INMANIFEST, "<", $file)) {
   while ($l = <INMANIFEST>) {
     print OUTMANIFEST $l;
     if ($l =~ /\<assembly /) {
-      print OUTMANIFEST "  <assemblyIdentity type=\"win32\"\n"; 
+      print OUTMANIFEST "  <assemblyIdentity type=\"win32\"\n";
       print OUTMANIFEST "                    name=\"Gecode.$type.$name\"\n";
       print OUTMANIFEST "                    version=\"$revx.$revy.$revz.0\"\n";
       print OUTMANIFEST "                    processorArchitecture=\"$arch\"\n";

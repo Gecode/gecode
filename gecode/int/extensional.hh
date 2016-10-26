@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     void audit(void);
     /// Initialize layered graph
     template<class Var>
-    ExecStatus initialize(Space& home, 
+    ExecStatus initialize(Space& home,
                           const VarArgArray<Var>& x, const DFA& dfa);
     /// Constructor for cloning \a p
     LayeredGraph(Space& home, bool share,
@@ -194,12 +194,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   public:
     /// Constructor for posting
     template<class Var>
-    LayeredGraph(Home home, 
+    LayeredGraph(Home home,
                  const VarArgArray<Var>& x, const DFA& dfa);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -208,13 +210,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual size_t dispose(Space& home);
     /// Post propagator on views \a x and DFA \a dfa
     template<class Var>
-    static ExecStatus post(Home home, 
+    static ExecStatus post(Home home,
                            const VarArgArray<Var>& x, const DFA& dfa);
   };
 
   /// Select small types for the layered graph propagator
   template<class Var>
-  ExecStatus post_lgp(Home home, 
+  ExecStatus post_lgp(Home home,
                       const VarArgArray<Var>& x, const DFA& dfa);
 
 }}}
@@ -266,12 +268,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   public:
     /// Cost function (defined as high quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-  protected:
-    /// Unused destructor (to avoid warnings)
-    virtual ~Base(void) {}
   };
+
 }}}
 
 #include <gecode/int/extensional/base.hpp>
@@ -461,8 +463,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Creat support entry for view at position \a i and value \a n
     SupportEntry* support(int i, int n);
   public:
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
      * \brief Cost function
      *
@@ -470,6 +470,10 @@ namespace Gecode { namespace Int { namespace Extensional {
      * high quadratic. Otherwise it is high cubic.
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Post propagator for views \a x

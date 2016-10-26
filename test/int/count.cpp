@@ -257,8 +257,11 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       VarVar(Gecode::IntRelType irt0)
-         : Test("Count::Var::Var::"+str(irt0),5,-2,2), irt(irt0) {}
+       VarVar(Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
+         : Test("Count::Var::Var::"+str(irt0)+"::"+str(ipl),5,-2,2,false,ipl),
+           irt(irt0) {
+         contest = CTL_NONE;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
@@ -272,7 +275,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs y(3);
          for (int i=0; i<3; i++)
            y[i]=x[i];
-         Gecode::count(home, y, x[3], irt, x[4]);
+         Gecode::count(home, y, x[3], irt, x[4], ipl);
        }
      };
 
@@ -283,8 +286,11 @@ namespace Test { namespace Int {
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       VarInt(Gecode::IntRelType irt0)
-         : Test("Count::Var::Int::"+str(irt0),4,-2,2), irt(irt0) {}
+       VarInt(Gecode::IntRelType irt0, Gecode::IntPropLevel ipl)
+         : Test("Count::Var::Int::"+str(irt0)+"::"+str(ipl),4,-2,2,false,ipl),
+           irt(irt0) {
+         contest = CTL_NONE;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int m = 0;
@@ -298,7 +304,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs y(3);
          for (int i=0; i<3; i++)
            y[i]=x[i];
-         Gecode::count(home, y, x[3], irt, 2);
+         Gecode::count(home, y, x[3], irt, 2, ipl);
        }
      };
 
@@ -391,8 +397,10 @@ namespace Test { namespace Int {
            (void) new IntArrayInt(irts.irt());
            (void) new IntArrayVar(irts.irt());
            (void) new IntVarShared(irts.irt());
-           (void) new VarVar(irts.irt());
-           (void) new VarInt(irts.irt());
+           (void) new VarVar(irts.irt(), Gecode::IPL_BND);
+           (void) new VarVar(irts.irt(), Gecode::IPL_DOM);
+           (void) new VarInt(irts.irt(), Gecode::IPL_BND);
+           (void) new VarInt(irts.irt(), Gecode::IPL_DOM);
            (void) new VarVarSharedA(irts.irt());
            (void) new VarVarSharedB(irts.irt());
            (void) new VarVarSharedC(irts.irt());

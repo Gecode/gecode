@@ -699,7 +699,7 @@ namespace Gecode { namespace Int {
 
     if ((i_min > dom.min()) && (i_max >= dom.max()))
       return lq(home,i_min-1);
-    
+
     if ((i_min <= dom.min()) && (i_max < dom.max()) &&
         (!i() || (i.min() > dom.max())))
       return gq(home,i_max+1);
@@ -1005,6 +1005,11 @@ namespace Gecode { namespace Int {
   forceinline void
   IntVarImp::cancel(Space& home, Propagator& p, PropCond pc) {
     IntVarImpBase::cancel(home,p,pc,dom.min()==dom.max());
+  }
+
+  forceinline void
+  IntVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+    IntVarImpBase::reschedule(home,p,pc,dom.min()==dom.max());
   }
 
   forceinline void

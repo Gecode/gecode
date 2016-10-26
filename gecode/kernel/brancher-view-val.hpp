@@ -80,6 +80,8 @@ namespace Gecode {
     virtual void subscribe(Space& home, Propagator& p);
     /// Cancel subscription for no-good literal
     virtual void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    virtual void reschedule(Space& home, Propagator& p);
     /// Dispose
     virtual size_t dispose(Space& home);
   };
@@ -100,8 +102,8 @@ namespace Gecode {
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
-                                unsigned int b,
+    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
+                                unsigned int alt,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
@@ -110,9 +112,9 @@ namespace Gecode {
     /// Constructor for cloning \a b
     ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
     /// Constructor for creation
-    ViewValBrancher(Home home, 
+    ViewValBrancher(Home home,
                     ViewArray<View>& x,
-                    ViewSel<View>* vs[n], 
+                    ViewSel<View>* vs[n],
                     ValSelCommitBase<View,Val>* vsc,
                     BranchFilter bf,
                     VarValPrint vvp);
@@ -139,12 +141,12 @@ namespace Gecode {
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function
-    static BrancherHandle post(Home home, 
-                               ViewArray<View>& x,
-                               ViewSel<View>* vs[n], 
-                               ValSelCommitBase<View,Val>* vsc, 
-                               BranchFilter bf,
-                               VarValPrint vvp);
+    static void post(Home home,
+                     ViewArray<View>& x,
+                     ViewSel<View>* vs[n],
+                     ValSelCommitBase<View,Val>* vsc,
+                     BranchFilter bf,
+                     VarValPrint vvp);
   };
   //@}
 
@@ -193,26 +195,32 @@ namespace Gecode {
     : NGL(home,share,ngl), n(ngl.n) {
     x.update(home,share,ngl.x);
   }
-  
+
   template<class View, class Val, PropCond pc>
   void
   ViewValNGL<View,Val,pc>::subscribe(Space& home, Propagator& p) {
     x.subscribe(home,p,pc);
   }
-  
+
   template<class View, class Val, PropCond pc>
   void
   ViewValNGL<View,Val,pc>::cancel(Space& home, Propagator& p) {
     x.cancel(home,p,pc);
   }
-  
+
+  template<class View, class Val, PropCond pc>
+  void
+  ViewValNGL<View,Val,pc>::reschedule(Space& home, Propagator& p) {
+    x.reschedule(home,p,pc);
+  }
+
   template<class View, class Val, PropCond pc>
   size_t
   ViewValNGL<View,Val,pc>::dispose(Space& home) {
     (void) NGL::dispose(home);
     return sizeof(*this);
   }
-  
+
 
 
   /*
@@ -222,9 +230,9 @@ namespace Gecode {
   template<class View, int n, class Val, unsigned int a>
   forceinline
   ViewValBrancher<View,n,Val,a>::
-  ViewValBrancher(Home home, 
+  ViewValBrancher(Home home,
                   ViewArray<View>& x,
-                  ViewSel<View>* vs[n], 
+                  ViewSel<View>* vs[n],
                   ValSelCommitBase<View,Val>* vsc0,
                   BranchFilter bf,
                   VarValPrint vvp0)
@@ -234,22 +242,22 @@ namespace Gecode {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  inline BrancherHandle
+  inline void
   ViewValBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        BranchFilter bf,
        VarValPrint vvp) {
-    return *new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf,vvp);
+    (void) new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf,vvp);
   }
 
   template<class View, int n, class Val, unsigned int a>
   forceinline
   ViewValBrancher<View,n,Val,a>::
   ViewValBrancher(Space& home, bool shared, ViewValBrancher<View,n,Val,a>& b)
-    : ViewBrancher<View,n>(home,shared,b), 
+    : ViewBrancher<View,n>(home,shared,b),
       vsc(b.vsc->copy(home,shared)), vvp(b.vvp) {}
-  
+
   template<class View, int n, class Val, unsigned int a>
   Actor*
   ViewValBrancher<View,n,Val,a>::copy(Space& home, bool shared) {
@@ -282,7 +290,7 @@ namespace Gecode {
     return me_failed(vsc->commit(home,b,
                                  ViewBrancher<View,n>::view(pvc.pos()),
                                  pvc.pos().pos,
-                                 pvc.val())) 
+                                 pvc.val()))
       ? ES_FAILED : ES_OK;
   }
 

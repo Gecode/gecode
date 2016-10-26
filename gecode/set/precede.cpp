@@ -50,7 +50,7 @@ namespace Gecode {
     using namespace Set;
     Limits::check(s,"Set::precede");
     Limits::check(t,"Set::precede");
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<SetView> y(home, x);
     GECODE_ES_FAIL(Precede::Single<SetView>::post(home, y, s, t));
@@ -63,7 +63,7 @@ namespace Gecode {
       return;
     for (int i=c.size(); i--; )
       Limits::check(c[i],"Set::precede");
-    if (home.failed()) return;
+    GECODE_POST;
 
     for (int i=c.size()-1; i--; ) {
       ViewArray<SetView> y(home, x);

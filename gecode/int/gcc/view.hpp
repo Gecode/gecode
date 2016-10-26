@@ -125,6 +125,8 @@ namespace Gecode { namespace Int { namespace GCC {
     void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     ///@}
 
     /// \name Cloning
@@ -274,6 +276,8 @@ namespace Gecode { namespace Int { namespace GCC {
   CardConst::subscribe(Space&, Propagator&, PropCond, bool) {}
   forceinline void
   CardConst::cancel(Space&, Propagator&, PropCond) {}
+  forceinline void
+  CardConst::reschedule(Space&, Propagator&, PropCond) {}
 
   forceinline void
   CardConst::update(Space&, bool, CardConst& x) {

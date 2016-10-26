@@ -105,17 +105,17 @@ namespace Gecode { namespace Iter { namespace Values {
 
 
   forceinline
-  ValueListIter::VLIO::VLIO(Region& r) 
+  ValueListIter::VLIO::VLIO(Region& r)
     : Support::BlockAllocator<ValueList,Region>(r), use_cnt(1) {}
 
 
   forceinline
-  ValueListIter::ValueListIter(void) 
+  ValueListIter::ValueListIter(void)
     : vlio(NULL) {}
 
   forceinline
-  ValueListIter::ValueListIter(Region& r) 
-    : vlio(new (r.ralloc(sizeof(VLIO))) VLIO(r)), 
+  ValueListIter::ValueListIter(Region& r)
+    : vlio(new (r.ralloc(sizeof(VLIO))) VLIO(r)),
       h(NULL), c(NULL) {}
 
   forceinline void
@@ -125,7 +125,7 @@ namespace Gecode { namespace Iter { namespace Values {
   }
 
   forceinline
-  ValueListIter::ValueListIter(const ValueListIter& i) 
+  ValueListIter::ValueListIter(const ValueListIter& i)
     : vlio(i.vlio), h(i.h), c(i.c)  {
     vlio->use_cnt++;
   }

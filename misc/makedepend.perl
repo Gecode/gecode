@@ -34,7 +34,7 @@
 #
 #
 
-# 
+#
 # Ultra-simplistic makedepend: Just find existing files
 # Relies on:
 #  - all filenames are relative to root directory, which is the first argument
@@ -52,7 +52,7 @@ while ($target = $ARGV[$i++]) {
   while ($f = pop @todo) {
     open FILE, "$root/$f" or
       open FILE, "$f" or die "File missing: $root/$f\n";
-    
+
     while ($l = <FILE>) {
       if ($l =~ /^\#include <(gecode\/.*)>/ || $l =~ /^\#include "(.*)"/) {
 	$g = $1;

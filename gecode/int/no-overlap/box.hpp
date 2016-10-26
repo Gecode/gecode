@@ -103,11 +103,11 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   forceinline ExecStatus
   ManBox<Dim,n>::nooverlap(Space& home, ManBox<Dim,n>& box) {
     for (int i=0; i<n; i++)
-      if ((d[i].sec() <= box.d[i].lsc()) || 
+      if ((d[i].sec() <= box.d[i].lsc()) ||
           (box.d[i].sec() <= d[i].lsc())) {
         // Does not overlap for dimension i
         for (int j=i+1; j<n; j++)
-          if ((d[j].sec() <= box.d[j].lsc()) || 
+          if ((d[j].sec() <= box.d[j].lsc()) ||
               (box.d[j].sec() <= d[j].lsc()))
             return ES_OK;
         // Does not overlap for only dimension i, hence propagate
@@ -137,6 +137,12 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   ManBox<Dim,n>::cancel(Space& home, Propagator& p) {
     for (int i=0; i<n; i++)
       d[i].cancel(home,p);
+  }
+  template<class Dim, int n>
+  forceinline void
+  ManBox<Dim,n>::reschedule(Space& home, Propagator& p) {
+    for (int i=0; i<n; i++)
+      d[i].reschedule(home,p);
   }
 
 
@@ -190,6 +196,12 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   OptBox<Dim,n>::cancel(Space& home, Propagator& p) {
     ManBox<Dim,n>::cancel(home,p);
     o.cancel(home, p, PC_BOOL_VAL);
+  }
+  template<class Dim, int n>
+  forceinline void
+  OptBox<Dim,n>::reschedule(Space& home, Propagator& p) {
+    ManBox<Dim,n>::reschedule(home,p);
+    o.reschedule(home, p, PC_BOOL_VAL);
   }
 
 }}}

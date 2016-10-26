@@ -72,7 +72,7 @@ protected:
     int pos;
     /// Value of variable
     int val;
-    /** Initialize choice for brancher \a b, position \a pos0, 
+    /** Initialize choice for brancher \a b, position \a pos0,
      *  and value \a val0.
      */
     Choice(const Brancher& b, int pos0, int val0)
@@ -87,12 +87,12 @@ protected:
       e << pos << val;
     }
   };
- 
+
   /// Construct brancher
-  Warnsdorff(Home home, ViewArray<Int::IntView>& xv) 
+  Warnsdorff(Home home, ViewArray<Int::IntView>& xv)
     : Brancher(home), x(xv), start(0) {}
   /// Copy constructor
-  Warnsdorff(Space& home, bool share, Warnsdorff& b) 
+  Warnsdorff(Space& home, bool share, Warnsdorff& b)
     : Brancher(home, share, b), start(b.start) {
     x.update(home, share, b.x);
   }
@@ -101,7 +101,7 @@ public:
   virtual bool status(const Space&) const {
     // A path to follow can be at most x.size() long
     for (int n=x.size(); n--; ) {
-      if (!x[start].assigned()) 
+      if (!x[start].assigned())
         return true;
       // Follow path of assigned variables
       start = x[start].val();
@@ -131,16 +131,16 @@ public:
     return new Choice(*this, pos, val);
   }
   /// Perform commit for choice \a _c and alternative \a a
-  virtual ExecStatus commit(Space& home, const Gecode::Choice& _c, 
+  virtual ExecStatus commit(Space& home, const Gecode::Choice& _c,
                             unsigned int a) {
     const Choice& c = static_cast<const Choice&>(_c);
     if (a == 0)
       return me_failed(x[c.pos].eq(home, c.val)) ? ES_FAILED : ES_OK;
-    else 
+    else
       return me_failed(x[c.pos].nq(home, c.val)) ? ES_FAILED : ES_OK;
   }
   /// Print explanation
-  virtual void print(const Space&, const Gecode::Choice& _c, 
+  virtual void print(const Space&, const Gecode::Choice& _c,
                      unsigned int a,
                      std::ostream& o) const {
     const Choice& c = static_cast<const Choice&>(_c);
@@ -153,9 +153,9 @@ public:
     return new (home) Warnsdorff(home, share, *this);
   }
   /// Post brancher
-  static BrancherHandle post(Home home, const IntVarArgs& x) {
+  static void post(Home home, const IntVarArgs& x) {
     ViewArray<Int::IntView> xv(home, x);
-    return *new (home) Warnsdorff(home, xv);
+    (void) new (home) Warnsdorff(home, xv);
   }
   /// Delete brancher and return its size
   virtual size_t dispose(Space&) {
@@ -273,8 +273,8 @@ public:
     rel(*this, jump[f(0,0)], IRT_EQ, 0);
     rel(*this, jump[f(1,2)], IRT_EQ, 1);
 
-    distinct(*this, jump, opt.icl());
-    channel(*this, succ, pred, opt.icl());
+    distinct(*this, jump, opt.ipl());
+    channel(*this, succ, pred, opt.ipl());
 
     for (int f = 0; f < nn; f++) {
       IntSet ds = neighbors(f);
@@ -314,7 +314,7 @@ public:
     // Fix the first move
     rel(*this, succ[0], IRT_EQ, f(1,2));
 
-    circuit(*this, succ, opt.icl());
+    circuit(*this, succ, opt.ipl());
 
     for (int f = 0; f < n*n; f++)
       dom(*this, succ[f], neighbors(f));
@@ -350,7 +350,7 @@ public:
   /// Inspect space \a s
   virtual void inspect(const Space& s) {
     const Knights& k = static_cast<const Knights&>(s);
-    
+
     if (!scene)
       initialize();
     QList <QGraphicsItem*> itemList = scene->items();
@@ -362,7 +362,7 @@ public:
     for (int i=0; i<k.n; i++) {
       for (int j=0; j<k.n; j++) {
         scene->addRect(i*unit,j*unit,unit,unit);
-        
+
         QPen pen(Qt::black, 2);
         if (!k.succ[i*k.n+j].assigned()) {
           pen.setColor(Qt::red);
@@ -376,12 +376,12 @@ public:
                          kx*unit+unit/2,ky*unit+unit/2,
                          pen);
         }
-        
+
       }
     }
-    mw->show();    
+    mw->show();
   }
-  
+
   /// Set up main window
   void initialize(void) {
     mw = new QMainWindow();
@@ -397,7 +397,7 @@ public:
                 mw, SLOT(close()));
     mw->addAction(closeWindow);
   }
-  
+
   /// Name of the inspector
   virtual std::string name(void) { return "Board"; }
   /// Finalize inspector

@@ -41,7 +41,7 @@ namespace Gecode { namespace Gist {
   forceinline
   NodeCursor<Node>::NodeCursor(Node* theNode,
                                const typename Node::NodeAllocator& na0)
-   : _startNode(theNode), _node(theNode), 
+   : _startNode(theNode), _node(theNode),
      _alternative(theNode->getAlternative(na0)),
      na(na0) {}
 
@@ -111,7 +111,7 @@ namespace Gecode { namespace Gist {
   template<class Node>
   forceinline void
   NodeCursor<Node>::moveSidewards(void) {
-    _node = 
+    _node =
       static_cast<Node*>(_node->getParent(na)->getChild(na,++_alternative));
   }
 
@@ -246,7 +246,7 @@ namespace Gecode { namespace Gist {
   forceinline void
   StatCursor::moveDownwards(void) {
     curDepth++;
-    depth = std::max(depth,curDepth); 
+    depth = std::max(depth,curDepth);
     NodeCursor<VisualNode>::moveDownwards();
   }
 

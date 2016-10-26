@@ -83,6 +83,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -114,6 +116,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -362,6 +366,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -508,6 +514,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -524,6 +532,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class Val, class P, class N, PropCond pc, class Ctrl>
   class ReLin : public Lin<Val,P,N,pc> {
   protected:
+    using Lin<Val,P,N,pc>::x;
+    using Lin<Val,P,N,pc>::y;
     /// Control view for reification
     Ctrl b;
     /// Constructor for cloning \a p
@@ -531,6 +541,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     ReLin(Home home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   public:
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -815,6 +827,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolInt<VX>::n_as;
     using LinBoolInt<VX>::n_hs;
     using LinBoolInt<VX>::c;
+    using LinBoolInt<VX>::disabled;
     /// Constructor for cloning \a p
     EqBoolInt(Space& home, bool share, EqBoolInt& p);
     /// Constructor for creation
@@ -822,6 +835,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -844,6 +859,7 @@ namespace Gecode { namespace Int { namespace Linear {
     using LinBoolInt<VX>::n_as;
     using LinBoolInt<VX>::n_hs;
     using LinBoolInt<VX>::c;
+    using LinBoolInt<VX>::disabled;
     /// Constructor for cloning \a p
     GqBoolInt(Space& home, bool share, GqBoolInt& p);
     /// Constructor for creation
@@ -851,6 +867,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -953,6 +971,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -983,6 +1003,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -1017,6 +1039,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -1131,6 +1155,8 @@ namespace Gecode { namespace Int { namespace Linear {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p);
     /// Update \a sba during copying
     void update(Space& home, bool share, ScaleBoolArray& sba);
     /// Return pointer to first element
@@ -1169,6 +1195,8 @@ namespace Gecode { namespace Int { namespace Linear {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p);
     /// Update \a sba during copying
     void update(Space& home, bool share, EmptyScaleBoolArray& esba);
     /// Return pointer to first element
@@ -1211,6 +1239,8 @@ namespace Gecode { namespace Int { namespace Linear {
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -1362,7 +1392,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint
@@ -1395,7 +1425,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<IntView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1426,7 +1456,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
@@ -1458,7 +1488,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1490,7 +1520,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y, int c=0,
-       IntConLevel=ICL_DEF);
+       IntPropLevel=IPL_DEF);
 
   /**
    * \brief Post propagator for reified linear constraint over Booleans
@@ -1522,7 +1552,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Home home, Term<BoolView>* t, int n, IntRelType irt, IntView y,
-       Reify r, IntConLevel=ICL_DEF);
+       Reify r, IntPropLevel=IPL_DEF);
 
 }}}
 

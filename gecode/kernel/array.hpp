@@ -364,16 +364,19 @@ namespace Gecode {
      * \brief Subscribe propagator \a p with propagation condition \a pc to variable
      *
      * In case \a process is false, the propagator is just subscribed but
-     * not processed for execution (this must be used when creating
+     * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool process=true);
+    void subscribe(Space& home, Propagator& p, PropCond pc,
+                   bool schedule=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Subscribe advisor \a a to variable
     void subscribe(Space& home, Advisor& a);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
+    /// Re-schedule propagator \a p with propagation condition \a pc
+    void reschedule(Space& home, Propagator& p, PropCond pc);
     //@}
 
     /// \name Cloning
@@ -632,9 +635,6 @@ namespace Gecode {
     /// Destructor
     ~ArgArrayBase(void);
     //@}
-  private:
-    static void* operator new(size_t) throw();
-    static void  operator delete(void*,size_t);
   };
 
   template<class> class PrimArgArray;
@@ -772,7 +772,7 @@ namespace Gecode {
     explicit ArgArray(int n);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     ArgArray(int n, const T* e);
-    /// Initialize from primitive argument array \a a (copy elements)
+    /// Initialize from argument array \a a (copy elements)
     ArgArray(const ArgArray<T>& a);
     /// Initialize from vector \a a
     ArgArray(const std::vector<T>& a);
@@ -1088,7 +1088,7 @@ namespace Gecode {
         return false;
     return true;
   }
-  
+
   template<class Var>
   forceinline void*
   VarArray<Var>::operator new(size_t) throw() {
@@ -1140,7 +1140,7 @@ namespace Gecode {
     for (int i=x.size(); i--;)
       r[i] = x[i];
     r[x.size()] = y;
-    return r;    
+    return r;
   }
 
   template<class Var>
@@ -1398,9 +1398,9 @@ namespace Gecode {
   template<class View>
   void
   ViewArray<View>::subscribe(Space& home, Propagator& p, PropCond pc,
-                             bool process) {
+                             bool schedule) {
     for (int i = n; i--; )
-      x[i].subscribe(home,p,pc,process);
+      x[i].subscribe(home,p,pc,schedule);
   }
 
   template<class View>
@@ -1422,6 +1422,13 @@ namespace Gecode {
   ViewArray<View>::cancel(Space& home, Advisor& a) {
     for (int i = n; i--; )
       x[i].cancel(home,a);
+  }
+
+  template<class View>
+  void
+  ViewArray<View>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    for (int i = n; i--; )
+      x[i].reschedule(home,p,pc);
   }
 
   template<class View>
@@ -1794,17 +1801,6 @@ namespace Gecode {
     return r;
   }
 
-  template<class T>
-  forceinline void*
-  ArgArrayBase<T>::operator new(size_t) throw () {
-    return NULL;
-  }
-
-  template<class T>
-  forceinline void
-  ArgArrayBase<T>::operator delete(void*,size_t) {
-  }
-
   /*
    * Argument arrays for primitive types
    *
@@ -1887,14 +1883,14 @@ namespace Gecode {
   typename ArrayTraits<PrimArgArray<T> >::ArgsType
   operator +(const PrimArgArray<T>& x, const T& y) {
     return x.template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
   }
 
   template<class T>
   typename ArrayTraits<PrimArgArray<T> >::ArgsType
   operator +(const T& x, const PrimArgArray<T>& y) {
     return PrimArgArray<T>(1,x).template concat
-      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<PrimArgArray<T> >::ArgsType>(y);
   }
 
 
@@ -1969,7 +1965,7 @@ namespace Gecode {
   typename ArrayTraits<ArgArray<T> >::ArgsType
   operator +(const ArgArray<T>& x, const T& y) {
     return x.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
   }
 
   template<class T>
@@ -1978,7 +1974,7 @@ namespace Gecode {
     ArgArray<T> xa(1);
     xa[0] = x;
     return xa.template concat
-      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);    
+      <typename ArrayTraits<ArgArray<T> >::ArgsType>(y);
   }
 
   /*
@@ -2053,7 +2049,7 @@ namespace Gecode {
   typename ArrayTraits<VarArgArray<Var> >::ArgsType
   operator +(const VarArgArray<Var>& x, const Var& y) {
     return x.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);    
+      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
   }
 
   template<class Var>
@@ -2062,7 +2058,7 @@ namespace Gecode {
     VarArgArray<Var> xa(1);
     xa[0] = x;
     return xa.template concat
-      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);    
+      <typename ArrayTraits<VarArgArray<Var> >::ArgsType>(y);
   }
 
   template<class Var>

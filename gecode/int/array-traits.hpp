@@ -42,7 +42,7 @@ namespace Gecode {
   class BoolVarArgs;
   class BoolVarArray;
   class IntArgs;
-  
+
   /// Traits of %IntVarArgs
   template<>
   class ArrayTraits<VarArgArray<IntVar> > {
@@ -105,7 +105,7 @@ namespace Gecode {
     typedef IntVar       ValueType;
     typedef IntVarArgs   ArgsType;
   };
-  
+
   /// Traits of %IntVarArgs
   template<>
   class ArrayTraits<IntVarArgs> {
@@ -123,7 +123,7 @@ namespace Gecode {
     typedef int     ValueType;
     typedef IntArgs ArgsType;
   };
-  
+
   /// Traits of %BoolVarArray
   template<>
   class ArrayTraits<BoolVarArray> {
@@ -132,7 +132,7 @@ namespace Gecode {
     typedef BoolVar       ValueType;
     typedef BoolVarArgs   ArgsType;
   };
-  
+
   /// Traits of %BoolVarArgs
   template<>
   class ArrayTraits<BoolVarArgs> {

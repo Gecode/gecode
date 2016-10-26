@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Unary {
     s << t.est() << ':' << t.pmin() << ':' << t.lct();
     return os << s.str();
   }
-    
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFixPTaskBwd& t) {
@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Unary {
       << t.pmax() << ':' << t.ect() << ':' << t.lct();
     return os << s.str();
   }
-    
+
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const OptFlexTaskBwd& t) {
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Unary {
       << (t.mandatory() ? '1' : (t.optional() ? '?' : '0'));
     return os << s.str();
   }
-    
+
 }}}
 
 // STATISTICS: int-var

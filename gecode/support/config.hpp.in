@@ -88,6 +88,9 @@
 /* Heap memory alignment */
 #undef GECODE_MEMORY_ALIGNMENT
 
+/* Whether to use default memory allocator */
+#undef GECODE_ALLOCATOR
+
 /* How to check allocation size */
 #undef GECODE_MSIZE
 

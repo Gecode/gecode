@@ -53,6 +53,8 @@ namespace Gecode { namespace Search { namespace Meta {
     NoNGL(Space& home, bool share, NoNGL& ngl);
     /// Subscribe propagator \a p to all views of the no-good literal
     virtual void subscribe(Space& home, Propagator& p);
+    /// Schedule propagator \a p for all views of the no-good literal
+    virtual void reschedule(Space& home, Propagator& p);
     /// Cancel propagator \a p from all views of the no-good literal
     virtual void cancel(Space& home, Propagator& p);
     /// Test the status of the no-good literal
@@ -71,7 +73,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Number of no-good literals with subscriptions
     unsigned int n;
     /// Constructor for creation
-    NoGoodsProp(Home home, NGL* root);
+    NoGoodsProp(Space& home, NGL* root);
     /// Constructor for cloning \a p
     NoGoodsProp(Space& home, bool shared, NoGoodsProp& p);
   public:
@@ -79,6 +81,8 @@ namespace Gecode { namespace Search { namespace Meta {
     virtual Actor* copy(Space& home, bool share);
     /// Const function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for path \a p
@@ -89,21 +93,21 @@ namespace Gecode { namespace Search { namespace Meta {
   };
 
   forceinline
-  NoNGL::NoNGL(void) {} 
+  NoNGL::NoNGL(void) {}
 
   forceinline
-  NoNGL::NoNGL(Space& home) 
+  NoNGL::NoNGL(Space& home)
     : NGL(home) {}
 
   forceinline
-  NoNGL::NoNGL(Space& home, bool share, NoNGL& ngl) 
+  NoNGL::NoNGL(Space& home, bool share, NoNGL& ngl)
     : NGL(home,share,ngl) {}
 
 
 
   forceinline
-  NoGoodsProp::NoGoodsProp(Home home, NGL* root0)
-    : Propagator(home), root(root0), n(0U) {
+  NoGoodsProp::NoGoodsProp(Space& home, NGL* root0)
+    : Propagator(Home(home)), root(root0), n(0U) {
     // Create subscriptions
     root->subscribe(home,*this); n++;
     bool notice = root->notice();
@@ -125,7 +129,7 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   forceinline
-  NoGoodsProp::NoGoodsProp(Space& home, bool shared, NoGoodsProp& p) 
+  NoGoodsProp::NoGoodsProp(Space& home, bool shared, NoGoodsProp& p)
     : Propagator(home,shared,p), n(p.n) {
     assert(p.root != NULL);
     NoNGL s;
@@ -137,11 +141,11 @@ namespace Gecode { namespace Search { namespace Meta {
     }
     root = s.next();
   }
-  
+
 
 
   template<class Path>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   NoGoodsProp::post(Space& home, const Path& p) {
     int s = 0;
     int n = std::min(p.ds.entries(),static_cast<int>(p.ngdl()));
@@ -181,13 +185,13 @@ namespace Gecode { namespace Search { namespace Meta {
       }
 
     // There are no literals
-    if (home.failed()) 
+    if (home.failed())
       return ES_FAILED;
     if (s >= n)
       return ES_OK;
 
     // There must be at least two literals
-    assert((n-s > 1) || 
+    assert((n-s > 1) ||
            ((n-s == 1) && (c != &nn)));
 
     // Remember the last leaf

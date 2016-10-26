@@ -67,15 +67,15 @@ protected:
   static const int p = 711 * 100 * 100 * 100;
 public:
   /// The actual model
-  Grocery(const Options& opt) 
+  Grocery(const Options& opt)
     : Script(opt), abcd(*this,4,0,s) {
     IntVar a(abcd[0]), b(abcd[1]), c(abcd[2]), d(abcd[3]);
 
     // The sum of all variables is s
-    rel(*this, a+b+c+d == s, opt.icl());
+    rel(*this, a+b+c+d == s, opt.ipl());
 
     // The product of all variables is s (corrected by scale factor)
-    rel(*this, (a*b)*(c*d) == p, opt.icl());
+    rel(*this, (a*b)*(c*d) == p, opt.ipl());
 
     // Break symmetries: order the variables
     rel(*this, abcd, IRT_LQ);

@@ -60,6 +60,19 @@ namespace Gecode {
     return &li[0];
   }
 
+  /*
+   * Classes for exceptions
+   *
+   */
+  MemoryExhausted::MemoryExhausted(void)
+    : Exception("Memory","Heap memory exhausted") {}
+
+  DynamicCastFailed::DynamicCastFailed(const char* l)
+    : Exception(l,"Attempt to perform dynamic_cast failed") {}
+
+  OperatingSystemError::OperatingSystemError(const char* l)
+    : Exception(l,"Operating system error") {}
+
 }
 
 // STATISTICS: support-any

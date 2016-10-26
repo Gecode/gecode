@@ -63,12 +63,16 @@ namespace Gecode { namespace Driver {
 class NimFiboOptions : public Options {
 public:
   int n; /// Parameter to be given on the command line
+  /// Print strategy or not
+  Gecode::Driver::BoolOption _printStrategy;
   /// Use cut or not
   Gecode::Driver::BoolOption _cut;
   /// Initialize options for example with name \a s
   NimFiboOptions(const char* s, int n0)
     : Options(s), n(n0),
+      _printStrategy("-printStrategy","Print strategy",false),
       _cut("-cut","Use cut in problem model",true) {
+        add(_printStrategy);
         add(_cut);
       }
   /// Parse options from arguments \a argv (number is \a argc)
@@ -83,6 +87,10 @@ public:
     Options::help();
     std::cerr << "\t(unsigned int) default: " << n << std::endl
               << "\t\tnumber of initial matchs" << std::endl;
+  }
+  /// Return true if the strategy must be printed
+  bool printStrategy(void) const {
+    return _printStrategy.value();
   }
   /// Return true if cut must be used
   bool cut(void) const {
@@ -115,9 +123,10 @@ class QCSPNimFibo : public Script, public QSpaceInfo {
 
 public:
 
-  QCSPNimFibo(const NimFiboOptions& opt) : Script(), QSpaceInfo()
+  QCSPNimFibo(const NimFiboOptions& opt) : Script(opt), QSpaceInfo()
   {
     std::cout << "Loading problem" << std::endl;
+    if (!opt.printStrategy()) strategyMethod(0); // disable build and print strategy
     using namespace Int;
     // Number of matches
     int NMatchs = opt.n;

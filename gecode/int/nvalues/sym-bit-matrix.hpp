@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace NValues {
     : Support::BitSet<Region>(r,static_cast<unsigned int>((n0*n0-n0)/2)),
       n(n0) {}
 
-  forceinline bool 
+  forceinline bool
   SymBitMatrix::get(int x, int y) const {
     assert(x != y);
     if (x > y) std::swap(x,y);

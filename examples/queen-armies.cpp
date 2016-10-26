@@ -170,7 +170,7 @@ public:
       int pos;
       /// Value of variable
       bool val;
-      /** Initialize choice for brancher \a b, position \a pos0, 
+      /** Initialize choice for brancher \a b, position \a pos0,
        *  and value \a val0.
        */
       Choice(const Brancher& b, int pos0, bool val0)
@@ -245,7 +245,7 @@ public:
         : ES_OK;
     }
     /// Print explanation
-    virtual void print(const Space&, const Gecode::Choice& _c, 
+    virtual void print(const Space&, const Gecode::Choice& _c,
                        unsigned int a,
                        std::ostream& o) const {
       const Choice& c = static_cast<const Choice&>(_c);
@@ -257,8 +257,8 @@ public:
       return new (home) QueenBranch(home, share, *this);
     }
     /// Post brancher
-    static BrancherHandle post(QueenArmies& home) {
-      return *new (home) QueenBranch(home);
+    static void post(QueenArmies& home) {
+      (void) new (home) QueenBranch(home);
     }
     /// Delete brancher and return its size
     virtual size_t dispose(Space&) {

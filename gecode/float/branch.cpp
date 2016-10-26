@@ -39,27 +39,27 @@
 
 namespace Gecode {
 
-  BrancherHandle
+  void
   branch(Home home, const FloatVarArgs& x,
-         FloatVarBranch vars, FloatValBranch vals, 
+         FloatVarBranch vars, FloatValBranch vals,
          FloatBranchFilter bf, FloatVarValPrint vvp) {
     using namespace Float;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<FloatView> xv(home,x);
-    ViewSel<FloatView>* vs[1] = { 
-      Branch::viewsel(home,vars) 
+    ViewSel<FloatView>* vs[1] = {
+      Branch::viewsel(home,vars)
     };
-    return ViewValBrancher<FloatView,1,FloatNumBranch,2>::post
+    ViewValBrancher<FloatView,1,FloatNumBranch,2>::post
       (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
   }
 
-  BrancherHandle
+  void
   branch(Home home, const FloatVarArgs& x,
-         TieBreak<FloatVarBranch> vars, FloatValBranch vals, 
+         TieBreak<FloatVarBranch> vars, FloatValBranch vals,
          FloatBranchFilter bf, FloatVarValPrint vvp) {
     using namespace Float;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     vars.a.expand(home,x);
     if ((vars.a.select() == FloatVarBranch::SEL_NONE) ||
         (vars.a.select() == FloatVarBranch::SEL_RND))
@@ -74,60 +74,60 @@ namespace Gecode {
       vars.d = FLOAT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == FloatVarBranch::SEL_NONE) {
-      return branch(home,x,vars.a,vals,bf,vvp);
+      branch(home,x,vars.a,vals,bf,vvp);
     } else {
       ViewArray<FloatView> xv(home,x);
-      ValSelCommitBase<FloatView,FloatNumBranch>* 
-        vsc = Branch::valselcommit(home,vals); 
+      ValSelCommitBase<FloatView,FloatNumBranch>*
+        vsc = Branch::valselcommit(home,vals);
       if (vars.c.select() == FloatVarBranch::SEL_NONE) {
-        ViewSel<FloatView>* vs[2] = { 
+        ViewSel<FloatView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        return ViewValBrancher<FloatView,2,FloatNumBranch,2>
+        ViewValBrancher<FloatView,2,FloatNumBranch,2>
           ::post(home,xv,vs,vsc,bf,vvp);
       } else if (vars.d.select() == FloatVarBranch::SEL_NONE) {
-        ViewSel<FloatView>* vs[3] = { 
+        ViewSel<FloatView>* vs[3] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        return ViewValBrancher<FloatView,3,FloatNumBranch,2>
+        ViewValBrancher<FloatView,3,FloatNumBranch,2>
           ::post(home,xv,vs,vsc,bf,vvp);
       } else {
-        ViewSel<FloatView>* vs[4] = { 
+        ViewSel<FloatView>* vs[4] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        return ViewValBrancher<FloatView,4,FloatNumBranch,2>
+        ViewValBrancher<FloatView,4,FloatNumBranch,2>
           ::post(home,xv,vs,vsc,bf,vvp);
       }
     }
   }
 
-  BrancherHandle
+  void
   branch(Home home, FloatVar x, FloatValBranch vals, FloatVarValPrint vvp) {
     FloatVarArgs xv(1); xv[0]=x;
-    return branch(home, xv, FLOAT_VAR_NONE(), vals, NULL, vvp);
+    branch(home, xv, FLOAT_VAR_NONE(), vals, NULL, vvp);
   }
-  
-  BrancherHandle
+
+  void
   assign(Home home, const FloatVarArgs& x, FloatAssign fa,
          FloatBranchFilter bf, FloatVarValPrint vvp) {
     using namespace Float;
-    if (home.failed()) return BrancherHandle();
+    if (home.failed()) return;
     ViewArray<FloatView> xv(home,x);
-    ViewSel<FloatView>* vs[1] = { 
+    ViewSel<FloatView>* vs[1] = {
       new (home) ViewSelNone<FloatView>(home,FLOAT_VAR_NONE())
     };
-    return ViewValBrancher<FloatView,1,FloatNumBranch,1>::post
+    ViewValBrancher<FloatView,1,FloatNumBranch,1>::post
       (home,xv,vs,Branch::valselcommit(home,fa),bf,vvp);
   }
 
-  BrancherHandle
+  void
   assign(Home home, FloatVar x, FloatAssign fa, FloatVarValPrint vvp) {
     FloatVarArgs xv(1); xv[0]=x;
-    return assign(home, xv, fa, NULL, vvp);
+    assign(home, xv, fa, NULL, vvp);
   }
-  
+
 }
 
 // STATISTICS: float-post

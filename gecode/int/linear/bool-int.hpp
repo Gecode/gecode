@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // Do not update subscription
     n_as--;
     int n = x.size()-n_hs+n_as;
-    if (n < c)
+    if ((n < c) && !disabled())
       return ES_FAILED;
     if ((c <= 0) || (c == n))
       return ES_NOFIX;
@@ -172,8 +172,19 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
+  void
+  GqBoolInt<VX>::reschedule(Space& home) {
+    int n = x.size()-n_hs+n_as;
+    if ((c <= 0) || (c >= n))
+      VX::schedule(home,*this,ME_INT_VAL);
+  }
+
+  template<class VX>
   ExecStatus
   GqBoolInt<VX>::propagate(Space& home, const ModEventDelta&) {
+    // Check for failure due to a disabled propagator
+    if (x.size() - n_hs + n_as < c)
+      return ES_FAILED;
     if (c > 0) {
       assert((n_as == c) && (x.size() == n_hs));
       // Signal that propagator is running
@@ -269,7 +280,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // Do not update subscription
     n_as--;
     int n = x.size()-n_hs+n_as;
-    if ((c < 0) || (c > n))
+    if (((c < 0) || (c > n)) && !disabled())
       return ES_FAILED;
     if ((c == 0) || (c == n))
       return ES_NOFIX;
@@ -278,8 +289,20 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
+  void
+  EqBoolInt<VX>::reschedule(Space& home) {
+    int n = x.size()-n_hs+n_as;
+    if ((c <= 0) || (c >= n))
+      VX::schedule(home,*this,ME_INT_VAL);
+  }
+
+  template<class VX>
   ExecStatus
   EqBoolInt<VX>::propagate(Space& home, const ModEventDelta&) {
+    // Check for failure due to being disabled before
+    if ((c < 0) || (c > x.size()-n_hs+n_as))
+      return ES_FAILED;
+
     assert(x.size() == n_hs);
     // Signal that propagator is running
     n_as = 0;
@@ -496,7 +519,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   forceinline
-  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, bool share, 
+  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, bool share,
                                     ReLinBoolInt<VX,VB>& p)
     : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
     p.normalize();
@@ -521,7 +544,6 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLinBoolInt<VX,VB>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::HI);
   }
-
 
   template<>
   /// Traits for Boolean negation view
@@ -550,7 +572,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /*
    * Reified greater or equal propagator (integer rhs)
-   * 
+   *
    */
   template<class VX, class VB, ReifyMode rm>
   forceinline
@@ -559,7 +581,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, bool share, 
+  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, bool share,
                                      ReGqBoolInt<VX,VB,rm>& p)
     : ReLinBoolInt<VX,VB>(home,share,p) {}
 
@@ -579,6 +601,14 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_NOFIX;
     else
       return ES_FIX;
+  }
+
+  template<class VX, class VB, ReifyMode rm>
+  void
+  ReGqBoolInt<VX,VB,rm>::reschedule(Space& home) {
+    b.reschedule(home,*this,PC_BOOL_VAL);
+    if ((n_s < c) || (c <= 0))
+      VX::schedule(home,*this,ME_BOOL_VAL);
   }
 
   template<class VX, class VB, ReifyMode rm>
@@ -652,7 +682,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /*
    * Reified equal propagator (integer rhs)
-   * 
+   *
    */
   template<class VX, class VB, ReifyMode rm>
   forceinline
@@ -661,7 +691,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, bool share, 
+  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, bool share,
                                      ReEqBoolInt<VX,VB,rm>& p)
     : ReLinBoolInt<VX,VB>(home,share,p) {}
 
@@ -682,6 +712,14 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_NOFIX;
     else
       return ES_FIX;
+  }
+
+  template<class VX, class VB, ReifyMode rm>
+  void
+  ReEqBoolInt<VX,VB,rm>::reschedule(Space& home) {
+    b.reschedule(home,*this,PC_BOOL_VAL);
+    if ((c < 0) || (c > n_s) || (n_s == 0))
+      VX::schedule(home,*this,ME_BOOL_VAL);
   }
 
   template<class VX, class VB, ReifyMode rm>

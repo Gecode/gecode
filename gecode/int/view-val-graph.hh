@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
   class BiLink {
   private:
     /// Link to previous element
-    BiLink* _prev; 
+    BiLink* _prev;
     /// Link to next element
     BiLink* _next;
   public:
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     /// Return previous element
     BiLink* prev(void) const;
     /// Return next element
-    BiLink* next(void) const; 
+    BiLink* next(void) const;
     /// Set previous element to \a l
     void prev(BiLink* l);
     /// Set next element to \a l
@@ -293,7 +293,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
 namespace Gecode { namespace Int { namespace ViewValGraph {
 
-  /// View-value graph base class 
+  /// View-value graph base class
   template<class View>
   class Graph {
   protected:

@@ -70,22 +70,22 @@ namespace Gecode {
   }
 
   template<class A>
-  forceinline
+  inline
   Slice<A>::operator ArgsType(void) {
     return _r;
   }
   template<class A>
-  forceinline
+  inline
   Slice<A>::operator Matrix<typename Slice<A>::ArgsType>(void) {
     return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
   template<class A>
-  forceinline
+  inline
   Slice<A>::operator const typename Slice<A>::ArgsType(void) const {
     return _r;
   }
   template<class A>
-  forceinline
+  inline
   Slice<A>::operator const Matrix<typename Slice<A>::ArgsType>(void) const {
     return Matrix<ArgsType>(_r, _tc-_fc, _tr-_fr);
   }
@@ -171,19 +171,19 @@ namespace Gecode {
   }
 
   template<class A>
-  forceinline Slice<A>
+  inline Slice<A>
   Matrix<A>::slice(int fc, int tc, int fr, int tr) const {
     return Slice<A>(*this, fc, tc, fr, tr);
   }
 
   template<class A>
-  forceinline Slice<A>
+  inline Slice<A>
   Matrix<A>::row(int r) const {
     return slice(0, width(), r, r+1);
   }
 
   template<class A>
-  forceinline Slice<A>
+  inline Slice<A>
   Matrix<A>::col(int c) const {
     return slice(c, c+1, 0, height());
   }
@@ -209,34 +209,34 @@ namespace Gecode {
   }
 
   forceinline void
-  element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
-          IntVar z, IntConLevel icl) {
-    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,
+          IntVar z, IntPropLevel ipl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, ipl);
   }
   forceinline void
-  element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,  
-          BoolVar z, IntConLevel icl) {
-    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  element(Home home, const Matrix<IntArgs>& m, IntVar x, IntVar y,
+          BoolVar z, IntPropLevel ipl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, ipl);
   }
   forceinline void
-  element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,  
-          IntVar z, IntConLevel icl) {
-    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  element(Home home, const Matrix<IntVarArgs>& m, IntVar x, IntVar y,
+          IntVar z, IntPropLevel ipl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, ipl);
   }
   forceinline void
-  element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,  
-          BoolVar z, IntConLevel icl) {
-    element(home, m.get_array(), x, m.width(), y, m.height(), z, icl);
+  element(Home home, const Matrix<BoolVarArgs>& m, IntVar x, IntVar y,
+          BoolVar z, IntPropLevel ipl) {
+    element(home, m.get_array(), x, m.width(), y, m.height(), z, ipl);
   }
 
 #ifdef GECODE_HAS_SET_VARS
   forceinline void
-  element(Home home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<IntSetArgs>& m, IntVar x, IntVar y,
           SetVar z) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z);
   }
   forceinline void
-  element(Home home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,  
+  element(Home home, const Matrix<SetVarArgs>& m, IntVar x, IntVar y,
           SetVar z) {
     element(home, m.get_array(), x, m.width(), y, m.height(), z);
   }

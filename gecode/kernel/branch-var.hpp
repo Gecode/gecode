@@ -39,7 +39,7 @@ namespace Gecode {
 
   /**
    * \brief Tie-break limit function
-   * 
+   *
    * Here the value \a w is the worst and \b is the best merit value
    * found. The function must return the merit value that is considered
    * the limit for breaking ties.
@@ -98,36 +98,36 @@ namespace Gecode {
   };
 
   // Variable branching
-  forceinline 
+  forceinline
   VarBranch::VarBranch(BranchTbl t)
     : _tbl(t), _decay(1.0) {}
 
-  forceinline 
+  forceinline
   VarBranch::VarBranch(double d, BranchTbl t)
     : _tbl(t), _decay(d) {}
 
-  forceinline 
+  forceinline
   VarBranch::VarBranch(AFC a, BranchTbl t)
     : _tbl(t), _decay(1.0), _afc(a) {
     if (!_afc.initialized())
       throw UninitializedAFC("VarBranch::VarBranch");
   }
 
-  forceinline 
+  forceinline
   VarBranch::VarBranch(Activity a, BranchTbl t)
     : _tbl(t), _decay(1.0), _act(a) {
     if (!_act.initialized())
       throw UninitializedActivity("VarBranch::VarBranch");
   }
 
-  forceinline 
+  forceinline
   VarBranch::VarBranch(Rnd r)
     : _tbl(NULL), _rnd(r), _decay(1.0) {
     if (!_rnd.initialized())
       throw UninitializedRnd("VarBranch::VarBranch");
   }
 
-  forceinline 
+  forceinline
   VarBranch::VarBranch(VoidFunction f, BranchTbl t)
     : _tbl(t), _decay(1.0), _mf(f) {}
 

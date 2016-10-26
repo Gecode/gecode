@@ -80,7 +80,7 @@ public:
     const int nn = n*n;
     IntVarArgs z(*this,nn,0,n*n-1);
 
-    distinct(*this, z, opt.icl());
+    distinct(*this, z, opt.ipl());
     // Connect
     {
       IntArgs mod(n*n);
@@ -101,19 +101,19 @@ public:
       IntVarArgs ry(n);
       for (int j = n; j--; )
         ry[j] = y1(i,j);
-      distinct(*this, ry, opt.icl());
+      distinct(*this, ry, opt.ipl());
       for (int j = n; j--; )
         ry[j] = y2(i,j);
-      distinct(*this, ry, opt.icl());
+      distinct(*this, ry, opt.ipl());
     }
     for (int j = n; j--; ) {
       IntVarArgs cy(n);
       for (int i = n; i--; )
         cy[i] = y1(i,j);
-      distinct(*this, cy, opt.icl());
+      distinct(*this, cy, opt.ipl());
       for (int i = n; i--; )
         cy[i] = y2(i,j);
-      distinct(*this, cy, opt.icl());
+      distinct(*this, cy, opt.ipl());
     }
 
     for (int i = 1; i<n; i++) {
@@ -174,7 +174,7 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("OrthoLatinSquare");
   opt.size(7);
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.parse(argc,argv);
   Script::run<OrthoLatinSquare,DFS,SizeOptions>(opt);
   return 0;

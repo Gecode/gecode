@@ -64,7 +64,7 @@ namespace Gecode {
 
   /// Class for user-defined value commit
   template<class View>
-  class ValCommitFunction : public 
+  class ValCommitFunction : public
   ValCommit<View,
             typename BranchTraits<typename View::VarType>::ValType> {
     typedef typename ValCommit<View,
@@ -88,7 +88,7 @@ namespace Gecode {
     /// Create no-good literal for alternative \a a
     NGL* ngl(Space& home, unsigned int a, View x, Val n) const;
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
-    void print(const Space& home, unsigned int a, View x, int i, 
+    void print(const Space& home, unsigned int a, View x, int i,
                const Val& n, std::ostream& o) const;
   };
   //@}
@@ -113,18 +113,18 @@ namespace Gecode {
   // User-defined value selection
   template<class View>
   forceinline
-  ValCommitFunction<View>::ValCommitFunction(Space& home, 
-                                             const ValBranch& vb) 
+  ValCommitFunction<View>::ValCommitFunction(Space& home,
+                                             const ValBranch& vb)
     : ValCommit<View,Val>(home,vb),
       c(function_cast<CommitFunction>(vb.commit())) {}
   template<class View>
   forceinline
-  ValCommitFunction<View>::ValCommitFunction(Space& home, bool shared, 
-                                             ValCommitFunction<View>& vc) 
+  ValCommitFunction<View>::ValCommitFunction(Space& home, bool shared,
+                                             ValCommitFunction<View>& vc)
     : ValCommit<View,Val>(home,shared,vc), c(vc.c) {}
   template<class View>
   forceinline ModEvent
-  ValCommitFunction<View>::commit(Space& home, unsigned int a, View x, int i, 
+  ValCommitFunction<View>::commit(Space& home, unsigned int a, View x, int i,
                                   Val n) {
     typename View::VarType y(x.varimp());
     c(home,a,y,i,n);
@@ -137,7 +137,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ValCommitFunction<View>::print(const Space&, unsigned int, 
+  ValCommitFunction<View>::print(const Space&, unsigned int,
                                  View, int i, const Val&,
                                  std::ostream& o) const {
     o << "var[" << i << "] is user-defined.";

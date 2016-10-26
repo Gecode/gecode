@@ -1,16 +1,16 @@
-/****   , [ bobocheTree.cc ], 
- Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
- 
+/****   , [ bobocheTree.cc ],
+ Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  copies of the Software, and to permit persons to whom the Software is
  furnished to do so, subject to the following conditions:
- 
+
  The above copyright notice and this permission notice shall be included in
  all copies or substantial portions of the Software.
- 
+
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -28,8 +28,8 @@ StrategyImp::StrategyImp() {
 	zetag=StrategyNode::Dummy();
 	todos=0;
 	father=NULL;
-}	
-	
+}
+
 void StrategyImp::todosUpdate(int i) {
 	todos += i;
 	if (father != NULL) father->todosUpdate(i);
@@ -76,7 +76,7 @@ Strategy::Strategy(bool qt,int VMin, int VMax, int scope, vector<int> values) {
 	StrategyNode tag(2,qt,VMin,VMax,scope);
 	tag.valeurs=values;
 	imp = new StrategyImp(tag);
-	
+
 }
 
 
@@ -177,7 +177,7 @@ void Strategy::attach(Strategy child) {
 }
 
 void Strategy::detach(Strategy son) {
-	
+
 	vector<Strategy>::iterator it = imp->nodes.begin();
 	while (it != (imp->nodes.end()) && ( (*it).id() != son.id())) {
 	it++;}
@@ -191,7 +191,7 @@ void Strategy::detach(Strategy son) {
 
 void Strategy::detach(unsigned int i) {
 	if (imp->nodes.size() < i) return;
-	
+
 	vector<Strategy>::iterator it = imp->nodes.begin()+i;
 	todosUpdate(0-((*it).imp->todos));
 	(*it).imp->father=NULL;
@@ -200,7 +200,7 @@ void Strategy::detach(unsigned int i) {
 
 Strategy Strategy::STrue() {
 	Strategy ret(StrategyNode::STrue());
-	return ret; 
+	return ret;
 }
 
 Strategy Strategy::SFalse() {
@@ -249,5 +249,5 @@ int Strategy::checkIntegrity() {
 	}
 	return ret;
 }
-		
+
 

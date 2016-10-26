@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace NValues {
       ViewArray<BoolView> xc(home,x);
       return Bool::NaryEq<BoolView>::post(home,xc);
     }
-    
+
     if (y.min() == 2) {
       assert(y.assigned());
       ViewArray<BoolView> xc(home,x);
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace NValues {
         x[i] = x[--n];
         status |= VS_ONE;
       }
-    
+
     assert(status != (VS_ZERO | VS_ONE));
     if (n == 0) {
       assert(status != 0);

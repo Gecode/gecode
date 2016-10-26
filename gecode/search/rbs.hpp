@@ -38,48 +38,92 @@
  */
 
 #include <gecode/search/support.hh>
-#include <gecode/search/meta/rbs.hh>
+#include <gecode/search/meta/dead.hh>
+
+namespace Gecode { namespace Search { namespace Meta {
+
+  /// Create stop object
+  GECODE_SEARCH_EXPORT Stop*
+  stop(Stop* so);
+
+  /// Create restart engine
+  GECODE_SEARCH_EXPORT Engine*
+  engine(Space* master, Stop* stop, Engine* slave,
+         const Search::Statistics& stat, const Options& opt,
+         bool best);
+
+}}}
+
+namespace Gecode { namespace Search {
+
+  /// A RBS engine builder
+  template<class T, template<class> class E>
+  class RbsBuilder : public Builder {
+    using Builder::opt;
+  public:
+    /// The constructor
+    RbsBuilder(const Options& opt);
+    /// The actual build function
+    virtual Engine* operator() (Space* s) const;
+  };
+
+  template<class T, template<class> class E>
+  inline
+  RbsBuilder<T,E>::RbsBuilder(const Options& opt)
+    : Builder(opt,E<T>::best) {}
+
+  template<class T, template<class> class E>
+  Engine*
+  RbsBuilder<T,E>::operator() (Space* s) const {
+    return build<T,RBS<T,E> >(s,opt);
+  }
+
+}}
 
 namespace Gecode {
 
-  template<template<class> class E, class T>
-  forceinline
-  RBS<E,T>::RBS(T* s, const Search::Options& m_opt) {
+  template<class T, template<class> class E>
+  inline
+  RBS<T,E>::RBS(T* s, const Search::Options& m_opt) {
     if (m_opt.cutoff == NULL)
       throw Search::UninitializedCutoff("RBS::RBS");
     Search::Options e_opt(m_opt.expand());
+    Search::Statistics stat;
     e_opt.clone = false;
-    Search::Meta::RestartStop* rs = new Search::Meta::RestartStop(m_opt.stop);
-    e_opt.stop = rs;
+    e_opt.stop  = Search::Meta::stop(m_opt.stop);
     Space* master;
     Space* slave;
-    if (s->status(rs->m_stat) == SS_FAILED) {
-      rs->m_stat.fail++;
+    if (s->status(stat) == SS_FAILED) {
+      stat.fail++;
       master = NULL;
       slave  = NULL;
+      e = new Search::Meta::Dead(stat);
     } else {
-      if (m_opt.clone)
-        master = s->clone();
-      else
-        master = s;
-      slave = master->clone();
-      CRI cri(0,0,0,NULL,NoGoods::eng);
-      slave->slave(cri);
+      master = m_opt.clone ? s->clone() : s;
+      slave  = master->clone(true,m_opt.share_rbs);
+      MetaInfo mi(0,0,0,NULL,NoGoods::eng);
+      slave->slave(mi);
+      e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),
+                               stat,m_opt,E<T>::best);
     }
-    E<T> engine(dynamic_cast<T*>(slave),e_opt);
-    Search::EngineBase<T>* eb = &engine;
-    Search::Engine* ee = eb->e;
-    eb->e = NULL;
-    e = new Search::Meta::RBS(master,rs,ee,m_opt);
   }
 
 
-  template<template<class> class E, class T>
-  forceinline T*
+  template<class T, template<class> class E>
+  inline T*
   rbs(T* s, const Search::Options& o) {
-    RBS<E,T> r(s,o);
+    RBS<T,E> r(s,o);
     return r.next();
   }
+
+  template<class T, template<class> class E>
+  SEB
+  rbs(const Search::Options& o) {
+    if (o.cutoff == NULL)
+      throw Search::UninitializedCutoff("rbs");
+    return new Search::RbsBuilder<T,E>(o);
+  }
+
 
 }
 

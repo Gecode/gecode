@@ -418,6 +418,11 @@ namespace Gecode { namespace Int {
       BoolVarImpBase::schedule(home,p,me);
   }
 
+  forceinline void
+  BoolVarImp::reschedule(Space& home, Propagator& p, PropCond) {
+    BoolVarImpBase::reschedule(home,p,PC_BOOL_VAL,assigned());
+  }
+
   forceinline ModEventDelta
   BoolVarImp::med(ModEvent me) {
     return BoolVarImpBase::med(me);

@@ -518,6 +518,10 @@ namespace Gecode { namespace Set {
     SetVarImpBase::cancel(home,p,pc,assigned());
   }
   forceinline void
+  SetVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+    SetVarImpBase::reschedule(home,p,pc,assigned());
+  }
+  forceinline void
   SetVarImp::subscribe(Space& home, Advisor& a) {
     SetVarImpBase::subscribe(home,a,assigned());
   }

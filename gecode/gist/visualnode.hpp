@@ -85,7 +85,7 @@ namespace Gecode { namespace Gist {
   Shape::allocate(int d) {
     assert(d >= 1);
     Shape* ret;
-    ret = 
+    ret =
       static_cast<Shape*>(heap.ralloc(sizeof(Shape)+(d-1)*sizeof(Extent)));
     ret->_depth = d;
     return ret;

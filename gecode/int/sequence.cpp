@@ -48,8 +48,8 @@ namespace Gecode {
   using namespace Int;
 
   void
-  sequence(Home home, const IntVarArgs& x, const IntSet &s, 
-           int q, int l, int u, IntConLevel) {
+  sequence(Home home, const IntVarArgs& x, const IntSet &s,
+           int q, int l, int u, IntPropLevel) {
     Limits::check(s.min(),"Int::sequence");
     Limits::check(s.max(),"Int::sequence");
 
@@ -66,8 +66,7 @@ namespace Gecode {
     if ((q < 1) || (q > x.size()))
       throw OutOfLimits("Int::sequence");
 
-    if (home.failed())
-      return;
+    GECODE_POST;
 
     // Normalize l and u
     l=std::max(0,l); u=std::min(q,u);
@@ -78,7 +77,7 @@ namespace Gecode {
     }
 
     // Already subsumed as any number of values taken is okay
-    if ((0 == l) && (q == u)) 
+    if ((0 == l) && (q == u))
       return;
 
     // All variables must take a value in s
@@ -114,8 +113,8 @@ namespace Gecode {
   }
 
   void
-  sequence(Home home, const BoolVarArgs& x, const IntSet& s, 
-           int q, int l, int u, IntConLevel) {
+  sequence(Home home, const BoolVarArgs& x, const IntSet& s,
+           int q, int l, int u, IntPropLevel) {
     if ((s.min() < 0) || (s.max() > 1))
       throw NotZeroOne("Int::sequence");
 
@@ -132,8 +131,7 @@ namespace Gecode {
     if ((q < 1) || (q > x.size()))
       throw OutOfLimits("Int::sequence");
 
-    if (home.failed())
-      return;
+    GECODE_POST;
 
     // Normalize l and u
     l=std::max(0,l); u=std::min(q,u);
@@ -144,13 +142,13 @@ namespace Gecode {
     }
 
     // Already subsumed as any number of values taken is okay
-    if ((0 == l) && (q == u)) 
+    if ((0 == l) && (q == u))
       return;
 
     // Check whether the set is {0,1}, then the number of values taken is q
     if ((s.min() == 0) && (s.max() == 1)) {
       if ((l > 0) || (u < q))
-        home.failed();
+        home.fail();
       return;
     }
     assert(s.min() == s.max());

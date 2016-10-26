@@ -70,11 +70,11 @@ namespace Test { namespace Int {
        /// Create and register test
        IntInt(const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
-              int c0, Gecode::IntConLevel icl=Gecode::ICL_BND)
+              int c0, Gecode::IntPropLevel ipl=Gecode::IPL_BND)
          : Test("Linear::Int::Int::"+
-                str(irt0)+"::"+str(icl)+"::"+s+"::"+str(c0)+"::"
+                str(irt0)+"::"+str(ipl)+"::"+s+"::"+str(c0)+"::"
                 +str(a0.size()),
-                a0.size(),d,icl != Gecode::ICL_DOM,icl),
+                a0.size(),d,ipl != Gecode::IPL_DOM,ipl),
          a(a0), irt(irt0), c(c0) {
          testfix=false;
        }
@@ -88,17 +88,17 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          if (one(a))
-           Gecode::linear(home, x, irt, c, icl);
+           Gecode::linear(home, x, irt, c, ipl);
          else
-           Gecode::linear(home, a, x, irt, c, icl);
+           Gecode::linear(home, a, x, irt, c, ipl);
        }
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          if (one(a))
-           Gecode::linear(home, x, irt, c, r, icl);
+           Gecode::linear(home, x, irt, c, r, ipl);
          else
-           Gecode::linear(home, a, x, irt, c, r, icl);
+           Gecode::linear(home, a, x, irt, c, r, ipl);
        }
      };
 
@@ -113,10 +113,10 @@ namespace Test { namespace Int {
        /// Create and register test
        IntVar(const std::string& s, const Gecode::IntSet& d,
               const Gecode::IntArgs& a0, Gecode::IntRelType irt0,
-              Gecode::IntConLevel icl=Gecode::ICL_BND)
+              Gecode::IntPropLevel ipl=Gecode::IPL_BND)
          : Test("Linear::Int::Var::"+
-                str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
-                a0.size()+1,d,icl != Gecode::ICL_DOM,icl),
+                str(irt0)+"::"+str(ipl)+"::"+s+"::"+str(a0.size()),
+                a0.size()+1,d,ipl != Gecode::IPL_DOM,ipl),
            a(a0), irt(irt0) {
          testfix=false;
        }
@@ -134,9 +134,9 @@ namespace Test { namespace Int {
          for (int i=n; i--; )
            y[i] = x[i];
          if (one(a))
-           Gecode::linear(home, y, irt, x[n], icl);
+           Gecode::linear(home, y, irt, x[n], ipl);
          else
-           Gecode::linear(home, a, y, irt, x[n], icl);
+           Gecode::linear(home, a, y, irt, x[n], ipl);
        }
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
@@ -146,9 +146,9 @@ namespace Test { namespace Int {
          for (int i=n; i--; )
            y[i] = x[i];
          if (one(a))
-           Gecode::linear(home, y, irt, x[n], r, icl);
+           Gecode::linear(home, y, irt, x[n], r, ipl);
          else
-           Gecode::linear(home, a, y, irt, x[n], r, icl);
+           Gecode::linear(home, a, y, irt, x[n], r, ipl);
        }
      };
 
@@ -167,7 +167,7 @@ namespace Test { namespace Int {
                Gecode::IntRelType irt0, int c0)
          : Test("Linear::Bool::Int::"+
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0),
-                a0.size(),0,1,true,Gecode::ICL_DEF),
+                a0.size(),0,1,true,Gecode::IPL_DEF),
            a(a0), irt(irt0), c(c0) {
          testfix=false;
        }
@@ -184,9 +184,9 @@ namespace Test { namespace Int {
          for (int i=x.size(); i--; )
            y[i]=Gecode::channel(home,x[i]);
          if (one(a))
-           Gecode::linear(home, y, irt, c, Gecode::ICL_DEF);
+           Gecode::linear(home, y, irt, c, Gecode::IPL_DEF);
          else
-           Gecode::linear(home, a, y, irt, c, Gecode::ICL_DEF);
+           Gecode::linear(home, a, y, irt, c, Gecode::IPL_DEF);
        }
        /// Post reified constraint on \a x for \a r
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
@@ -195,9 +195,9 @@ namespace Test { namespace Int {
          for (int i=x.size(); i--; )
            y[i]=Gecode::channel(home,x[i]);
          if (one(a))
-           Gecode::linear(home, y, irt, c, r, Gecode::ICL_DEF);
+           Gecode::linear(home, y, irt, c, r, Gecode::IPL_DEF);
          else
-           Gecode::linear(home, a, y, irt, c, r, Gecode::ICL_DEF);
+           Gecode::linear(home, a, y, irt, c, r, Gecode::IPL_DEF);
        }
      };
 
@@ -284,10 +284,10 @@ namespace Test { namespace Int {
              (void) new IntVar("21",d2,a1,irts.irt());
              (void) new IntInt("31",d3,a1,irts.irt(),150000000);
            }
-           (void) new IntInt("11",d1,a1,IRT_EQ,0,ICL_DOM);
-           (void) new IntVar("11",d1,a1,IRT_EQ,ICL_DOM);
-           (void) new IntInt("21",d2,a1,IRT_EQ,0,ICL_DOM);
-           (void) new IntVar("21",d2,a1,IRT_EQ,ICL_DOM);
+           (void) new IntInt("11",d1,a1,IRT_EQ,0,IPL_DOM);
+           (void) new IntVar("11",d1,a1,IRT_EQ,IPL_DOM);
+           (void) new IntInt("21",d2,a1,IRT_EQ,0,IPL_DOM);
+           (void) new IntVar("21",d2,a1,IRT_EQ,IPL_DOM);
 
            const int av2[5] = {1,1,1,1,1};
            const int av3[5] = {1,-1,-1,1,-1};
@@ -320,24 +320,24 @@ namespace Test { namespace Int {
                  (void) new IntVar("25",d2,a5,irts.irt());
                }
              }
-             (void) new IntInt("12",d1,a2,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("13",d1,a3,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("14",d1,a4,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("15",d1,a5,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("22",d2,a2,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("23",d2,a3,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("24",d2,a4,IRT_EQ,0,ICL_DOM);
-             (void) new IntInt("25",d2,a5,IRT_EQ,0,ICL_DOM);
+             (void) new IntInt("12",d1,a2,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("13",d1,a3,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("14",d1,a4,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("15",d1,a5,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("22",d2,a2,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("23",d2,a3,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("24",d2,a4,IRT_EQ,0,IPL_DOM);
+             (void) new IntInt("25",d2,a5,IRT_EQ,0,IPL_DOM);
              if (i < 4) {
-               (void) new IntVar("12",d1,a2,IRT_EQ,ICL_DOM);
-               (void) new IntVar("13",d1,a3,IRT_EQ,ICL_DOM);
-               (void) new IntVar("14",d1,a4,IRT_EQ,ICL_DOM);
-               (void) new IntVar("15",d1,a5,IRT_EQ,ICL_DOM);
+               (void) new IntVar("12",d1,a2,IRT_EQ,IPL_DOM);
+               (void) new IntVar("13",d1,a3,IRT_EQ,IPL_DOM);
+               (void) new IntVar("14",d1,a4,IRT_EQ,IPL_DOM);
+               (void) new IntVar("15",d1,a5,IRT_EQ,IPL_DOM);
              }
            }
          }
          {
-           const int av1[10] = { 
+           const int av1[10] = {
              1, 1, 1, 1, 1, 1, 1, 1, 1, 1
            };
            const int av2[10] = {

@@ -43,7 +43,7 @@
 namespace Gecode { namespace Int { namespace Linear {
 
   /// Inverse the relation
-  forceinline IntRelType 
+  forceinline IntRelType
   inverse(const IntRelType irt) {
     switch (irt) {
       case IRT_EQ: return IRT_NQ; break;
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Linear {
   post_pos_unit(Home home,
                 Term<BoolView>* t_p, int n_p,
                 IntRelType irt, int c, Reify r,
-                IntConLevel) {
+                IntPropLevel) {
     switch (irt) {
     case IRT_EQ:
       {
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Linear {
   post_neg_unit(Home home,
                 Term<BoolView>* t_n, int n_n,
                 IntRelType irt, int c, Reify r,
-                IntConLevel) {
+                IntPropLevel) {
     switch (irt) {
     case IRT_EQ:
       {
@@ -607,14 +607,14 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post(Home home,
        Term<BoolView>* t, int n, IntRelType irt, IntView x, int c,
-       IntConLevel) {
+       IntPropLevel) {
     post_all(home,t,n,irt,x,c);
   }
 
   void
   post(Home home,
        Term<BoolView>* t, int n, IntRelType irt, int c,
-       IntConLevel) {
+       IntPropLevel) {
     ZeroIntView x;
     post_all(home,t,n,irt,x,c);
   }
@@ -622,27 +622,27 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post(Home home,
        Term<BoolView>* t, int n, IntRelType irt, IntView x, Reify r,
-       IntConLevel icl) {
+       IntPropLevel ipl) {
     int l, u;
     estimate(t,n,0,l,u);
     IntVar z(home,l,u); IntView zv(z);
     post_all(home,t,n,IRT_EQ,zv,0);
-    rel(home,z,irt,x,r,icl);
+    rel(home,z,irt,x,r,ipl);
   }
 
   void
   post(Home home,
        Term<BoolView>* t, int n, IntRelType irt, int c, Reify r,
-       IntConLevel icl) {
+       IntPropLevel ipl) {
 
     if (r.var().one()) {
       if (r.mode() != RM_PMI)
-        post(home,t,n,irt,c,icl);
+        post(home,t,n,irt,c,ipl);
       return;
     }
     if (r.var().zero()) {
       if (r.mode() != RM_IMP)
-        post(home,t,n,inverse(irt),c,icl);
+        post(home,t,n,inverse(irt),c,ipl);
       return;
     }
 
@@ -669,7 +669,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         d /= gcd;
         break;
-      case IRT_NQ: 
+      case IRT_NQ:
         if ((d % gcd) == 0) {
           if (r.mode() != RM_IMP)
             GECODE_ME_FAIL(BoolView(r.var()).one(home));
@@ -722,10 +722,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (unit && (n_n == 0)) {
       /// All coefficients are 1
-      post_pos_unit(home,t_p,n_p,irt,c,r,icl);
+      post_pos_unit(home,t_p,n_p,irt,c,r,ipl);
     } else if (unit && (n_p == 0)) {
       // All coefficients are -1
-      post_neg_unit(home,t_n,n_n,irt,c,r,icl);
+      post_neg_unit(home,t_n,n_n,irt,c,r,ipl);
     } else {
       // Mixed coefficients
       /*
@@ -740,7 +740,7 @@ namespace Gecode { namespace Int { namespace Linear {
       estimate(t,n,0,l,u);
       IntVar z(home,l,u); IntView zv(z);
       post_all(home,t,n,IRT_EQ,zv,0);
-      rel(home,z,irt,c,r,icl);
+      rel(home,z,irt,c,r,ipl);
     }
   }
 

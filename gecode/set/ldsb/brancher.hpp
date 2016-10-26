@@ -94,7 +94,7 @@ namespace Gecode { namespace Set { namespace LDSB {
    * used values, and makes a new symmetry containing the intersection
    * values, if there are at least two.  Returns the new symmetry, or
    * NULL if the intersection has fewer than two elements.
-   */ 
+   */
   template <class View>
   ValueSymmetryImp<View>*
   specialUpdate(Space& home, ValueSymmetryImp<View>* s, IntSet usedValues) {
@@ -114,7 +114,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     for (IntSetValues v(usedValues) ; v() ; ++v) {
       s->update(Literal(0, v.val()));
     }
-    
+
     if (intersection.size() < 2)
       return NULL;
     int *a = new int[intersection.size()];
@@ -146,16 +146,16 @@ namespace Gecode { namespace Set { namespace LDSB {
             ValueSymmetryImp<View>* ns =
               specialUpdate(home, _copiedSyms[i], _leftBranchValues);
             if (ns) {
-              this->_syms = home.realloc<SymmetryImp<View>*>(this->_syms, 
-                                                             this->_nsyms, 
+              this->_syms = home.realloc<SymmetryImp<View>*>(this->_syms,
+                                                             this->_nsyms,
                                                              this->_nsyms+1);
               this->_syms[this->_nsyms] = ns;
               this->_nsyms++;
               this->_nValueSymmetries++;
-            }              
+            }
           }
         }
-        
+
         // Reset for current variable, make copy of value symmetries
         _leftBranchValues = IntSet::empty;
         _prevPos = choicePos;
@@ -164,9 +164,9 @@ namespace Gecode { namespace Set { namespace LDSB {
         _copiedSyms = home.alloc<ValueSymmetryImp<View>*>(_nCopiedSyms);
         int i = 0;
         for (int j = _nNonValueSymmetries ; j < this->_nsyms ; j++) {
-          ValueSymmetryImp<View>* vsi = 
+          ValueSymmetryImp<View>* vsi =
             static_cast<ValueSymmetryImp<View>*>(this->_syms[j]);
-          _copiedSyms[i] = 
+          _copiedSyms[i] =
             static_cast<ValueSymmetryImp<View>*>(vsi->copy(home, false));
           i++;
         }
@@ -181,7 +181,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     // Making the PVC here is not so nice, I think.
     const Choice* c = ViewValBrancher<View,n,Val,a>::choice(home);
     const PosValChoice<Val>* pvc = static_cast<const PosValChoice<Val>* >(c);
-    
+
     // Compute symmetries.
 
     int choicePos = pvc->pos().pos;
@@ -204,7 +204,7 @@ namespace Gecode { namespace Set { namespace LDSB {
 
     if (!_stable)
       updatePart1(home, choicePos);
-    
+
     if (b == 0) {
       IntArgs ia;
       for (IntSetValues v(_leftBranchValues) ; v() ; ++v) {
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set { namespace LDSB {
       }
       ia << choiceVal;
       _leftBranchValues = IntSet(ia);
-        
+
       // Post the branching constraint.
       ExecStatus fromBase = ViewValBrancher<View,n,Val,a>::commit(home, c, b);
       GECODE_ES_CHECK(fromBase);
@@ -232,10 +232,10 @@ namespace Gecode { namespace Set { namespace LDSB {
         GECODE_ME_CHECK(me);
       }
     }
-    
+
     return ES_OK;
   }
-    
+
   template<class View, int n, class Val, unsigned int a>
   Actor*
   LDSBSetBrancher<View,n,Val,a>::copy(Space& home, bool shared) {
@@ -243,14 +243,14 @@ namespace Gecode { namespace Set { namespace LDSB {
   }
 
   template<class View, int n, class Val, unsigned int a>
-  forceinline BrancherHandle
+  forceinline void
   LDSBSetBrancher<View,n,Val,a>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
        SetBranchFilter bf,
        VarValPrint vvp) {
-    return *new (home) LDSBSetBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
+    (void) new (home) LDSBSetBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
   }
 
 }}}

@@ -55,7 +55,7 @@ namespace Gecode { namespace Float { namespace Transcendental {
     } else {
       GECODE_ME_CHECK(x1.gq(home,0.0));
     }
-    
+
     (void) new (home) Exp<A,B>(home,x0,x1);
     return ES_OK;
   }

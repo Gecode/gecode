@@ -66,6 +66,13 @@ namespace Gecode { namespace Float { namespace Linear {
   }
 
   template<class P, class N, PropCond pc>
+  void
+  Lin<P,N,pc>::reschedule(Space& home) {
+    x.reschedule(home,*this,pc);
+    y.reschedule(home,*this,pc);
+  }
+
+  template<class P, class N, PropCond pc>
   forceinline size_t
   Lin<P,N,pc>::dispose(Space& home) {
     x.cancel(home,*this,pc);
@@ -148,9 +155,9 @@ namespace Gecode { namespace Float { namespace Linear {
     }
   }
 
-  forceinline bool 
+  forceinline bool
   infty(const FloatNum& n) {
-    return ((n == std::numeric_limits<FloatNum>::infinity()) || 
+    return ((n == std::numeric_limits<FloatNum>::infinity()) ||
             (n == -std::numeric_limits<FloatNum>::infinity()));
   }
 
@@ -242,7 +249,7 @@ namespace Gecode { namespace Float { namespace Linear {
       if (me_modified(me))
         es = ES_NOFIX;
     }
-   
+
     // Propagate min bound for positive variables
     for (int i = x.size(); i--; ) {
       // Compute bound

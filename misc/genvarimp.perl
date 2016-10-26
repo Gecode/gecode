@@ -187,7 +187,7 @@ for ($f=0; $f<$n_files; $f++) {
 	      $me_assigned[$f] = "ME_$vti[$f]_$lhs";
 	    } elsif ($rhs eq "FAILED") {
 	      $me_failed[$f] = "ME_$vti[$f]_$lhs";
-	    } els
+	    }
 	  }
 	  $n = $lhs;
 	} elsif ($l =~ /^Name:\s*(\w+)/io) {
@@ -280,12 +280,17 @@ for ($f=0; $f<$n_files; $f++) {
     $hdr[$f] = "$hdr[$f]namespace $ns { ";
     $ftr[$f] = "$ftr[$f]}";
   }
+  $hdr[$f] =~ s| $||g;
   $hdr[$f] = "$hdr[$f]\n";
   $ftr[$f] = "$ftr[$f]\n";
 
   ## Check whether there is only one real event
   if ($me_n[$f] == 3) {
     $me_subscribe[$f] = $me_assigned[$f];
+  }
+
+  if (!$me_subscribe[$f]) {
+    die "Missing special event specification = SUBSCRIBE";
   }
 
   $o = 2;
@@ -682,6 +687,17 @@ EOF
     void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me and delta information \\a d
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
+    /// \\brief Schedule propagator \\a p
+    static void schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me);
+    /** \\brief Re-schedule propagator \\a p
+     *
+     * In case the variable is assigned (that is, \\a assigned is
+     * true), the propagator is scheduled for execution.
+     * Otherwise, the propagator is scheduled for execution
+     * with modification event \\a me provided that \\a pc is different
+     * from \\a $pc_assigned[$f].
+     */
+    void reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned);
     //\@}
 EOF
 ;
@@ -761,6 +777,15 @@ EOF
     $base[$f]::subscribe(home,a,assigned);
   }
 
+  forceinline void
+  $class[$f]::schedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::ModEvent me) {
+    $base[$f]::schedule(home,p,me);
+  }
+  forceinline void
+  $class[$f]::reschedule(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned) {
+    $base[$f]::reschedule(home,p,pc,assigned,$me_subscribe[$f]);
+  }
+
 EOF
 ;
 
@@ -768,7 +793,7 @@ if ($me_max_n[$f] == 2) {
   print <<EOF
   forceinline Gecode::ModEvent
   $class[$f]::notify(Gecode::Space& home, Gecode::ModEvent, Gecode::Delta& d) {
-    schedule(home,$pc_assigned[$f],$pc_assigned[$f],$me_assigned[$f]);
+    $base[$f]::schedule(home,$pc_assigned[$f],$pc_assigned[$f],$me_assigned[$f]);
     if (!$base[$f]::advise(home,$me_assigned[$f],d))
       return $me_failed[$f];
     cancel(home);
@@ -818,7 +843,7 @@ EOF
       for ($j=0; $j<$pc_n[$f]; $j++) {
 	if ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j]}) {
 	  # Found initial entry (plus one for stopping)
-	  print "      schedule(home,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
+	  print "      $base[$f]::schedule(home,PC_$vti[$f]_" . $val2pc[$f][$j] . ",";
 	  # Look for all connected entries
 	  while ($mepc{$f}{$men[$f][$i]}{$val2pc[$f][$j+1]}) {
 	    $j++;

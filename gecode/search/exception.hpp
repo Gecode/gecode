@@ -37,10 +37,36 @@
 
 namespace Gecode { namespace Search {
 
-  inline
-  UninitializedCutoff::UninitializedCutoff(const char* l)
-    : Exception(l,"Cutoff for restart-based search is missing") {}
-
+  /**
+   * \defgroup FuncThrowSearch %Search exceptions
+   * \ingroup FuncThrow
+   */
+  //@{
+  /// %Exception: Uninitialized cutoff for restart-based search
+  class GECODE_SEARCH_EXPORT UninitializedCutoff : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedCutoff(const char* l);
+  };
+  /// %Exception: No assets requested for portfolio-based search
+  class GECODE_SEARCH_EXPORT NoAssets : public Exception {
+  public:
+    /// Initialize with location \a l
+    NoAssets(const char* l);
+  };
+  /// %Exception: Mixed non-best and best solution search requested
+  class GECODE_SEARCH_EXPORT MixedBest : public Exception {
+  public:
+    /// Initialize with location \a l
+    MixedBest(const char* l);
+  };
+  /// %Exception: Best solution search is not supported
+  class GECODE_SEARCH_EXPORT NoBest : public Exception {
+  public:
+    /// Initialize with location \a l
+    NoBest(const char* l);
+  };
+  //@}
 }}
 
 // STATISTICS: search-other

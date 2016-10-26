@@ -39,15 +39,15 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   inline void
   mul_check(long long int x, long long int y) {
-    if (Int::Limits::overflow_mul(x,y))
-      throw OutOfLimits("Int::cumulative");
+    if (Limits::overflow_mul(x,y))
+      throw OutOfLimits("cumulative");
   }
 
   inline void
   mul_check(long long int x, long long int y, long long int z) {
-    if (Int::Limits::overflow_mul(x,y) ||
-        Int::Limits::overflow_mul(x*y,z))
-      throw OutOfLimits("Int::cumulative");
+    if (Limits::overflow_mul(x,y) ||
+        Limits::overflow_mul(x*y,z))
+      throw OutOfLimits("cumulative");
   }
 
 }}}

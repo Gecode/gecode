@@ -87,10 +87,10 @@ namespace Gecode {
     static void dec(Exp* e);
     /// Return number of positions of \a e
     static int n_pos(Exp* e);
+    /// Print expression to \a os
+    void toString(std::ostringstream& os) const;
     /// Print expression
-    template<class Char, class Traits>
-    std::basic_ostream<Char,Traits>&
-    print(std::basic_ostream<Char,Traits>& os) const;
+    std::string toString(void) const;
 
     static void* operator new(size_t);
     static void  operator delete(void*);
@@ -150,6 +150,74 @@ namespace Gecode {
   forceinline int
   REG::Exp::n_pos(Exp* e) {
     return (e != NULL) ? e->_n_pos : 0;
+  }
+
+  void
+  REG::Exp::toString(std::ostringstream& os) const {
+    switch (type) {
+    case ET_SYMBOL:
+      os << "[" << data.symbol << "]";
+      return;
+    case ET_STAR:
+      {
+        bool par = ((data.kids[0] != NULL) &&
+                    ((data.kids[0]->type == ET_CONC) ||
+                     (data.kids[0]->type == ET_OR)));
+        os << (par ? "*(" : "*");
+        if (data.kids[0]==NULL) {
+          os << "[]";
+        } else {
+          data.kids[0]->toString(os);
+        }
+        os << (par ? ")" : "");
+        return;
+      }
+    case ET_CONC:
+      {
+        bool par0 = ((data.kids[0] != NULL) &&
+                     (data.kids[0]->type == ET_OR));
+        os << (par0 ? "(" : "");
+        if (data.kids[0]==NULL) {
+          os << "[]";
+        } else {
+          data.kids[0]->toString(os);
+        }
+        os << (par0 ? ")+" : "+");
+        bool par1 = ((data.kids[1] != NULL) &&
+                     (data.kids[1]->type == ET_OR));
+        os << (par1 ? "(" : "");
+        if (data.kids[1]==NULL) {
+          os << "[]";
+        } else {
+          data.kids[1]->toString(os);
+        }
+        os << (par1 ? ")" : "");
+        return;
+      }
+    case ET_OR:
+      if (data.kids[0]==NULL) {
+        os << "[]";
+      } else {
+        data.kids[0]->toString(os);
+      }
+      os << "|";
+      if (data.kids[1]==NULL) {
+        os << "[]";
+      } else {
+        data.kids[1]->toString(os);
+      }
+      return;
+    default: GECODE_NEVER;
+    }
+    GECODE_NEVER;
+    return;
+  }
+
+  std::string
+  REG::Exp::toString(void) const {
+    std::ostringstream os;
+    toString(os);
+    return os.str();
   }
 
 
@@ -356,6 +424,13 @@ namespace Gecode {
     return this->operator ()(1);
   }
 
+  std::string
+  REG::toString(void) const {
+    if (e==NULL) {
+      return "[]";
+    }
+    return e->toString();
+  }
 
   namespace MiniModel {
 
@@ -465,7 +540,7 @@ namespace Gecode {
       bool open;
       ExpInfo(REG::Exp* e=NULL);
     };
-    
+
     /**
      * \brief Information on positions collected during traversal
      *
@@ -543,9 +618,9 @@ namespace Gecode {
               pi[ps->pos].followpos =
                 PosSet::cup(psm,pi[ps->pos].followpos,ni1.firstpos);
             done.push(NodeInfo(ni0.nullable & ni1.nullable,
-                               ni0.nullable ? 
+                               ni0.nullable ?
                                PosSet::cup(psm,ni0.firstpos,ni1.firstpos) : ni0.firstpos,
-                               ni1.nullable ? 
+                               ni1.nullable ?
                                PosSet::cup(psm,ni0.lastpos,ni1.lastpos) : ni1.lastpos));
           }
           break;
@@ -572,7 +647,7 @@ namespace Gecode {
     return done.top().firstpos;
   }
 
-    
+
   namespace MiniModel {
 
     class StateNode;

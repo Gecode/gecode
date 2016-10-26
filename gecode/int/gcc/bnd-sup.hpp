@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \defgroup GCCBndSup Support for GCC bounds propagation
-   * 
+   *
    * \ingroup FuncIntProp
    */
 
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   ExecStatus
-  prop_card(Space& home, 
+  prop_card(Space& home,
             ViewArray<IntView>& x, ViewArray<Card>& k) {
     int n = x.size();
     int m = k.size();

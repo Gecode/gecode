@@ -148,11 +148,11 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
     Support::StaticStack<Node<View>*,Region> scc(r,n_val+n_view);
     Support::StaticStack<Node<View>*,Region> visit(r,n_val+n_view);
-      
+
     count++;
     unsigned int cnt0 = count;
     unsigned int cnt1 = count;
-    
+
     for (int i = n_view; i--; )
       /*
        * The following test is subtle: for scc, the test should be:
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
        * However, if view[i] < count-1, then the node has already been
        * reached on a path and all edges connected to the node have been
        * marked anyway! So just ignore this node altogether for scc.
-       */ 
+       */
       if (view[i]->min < count-1) {
         Node<View>* w = view[i];
       start:

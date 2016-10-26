@@ -51,7 +51,9 @@ namespace Test { namespace Int {
      class DomInt : public Test {
      public:
        /// Create and register test
-       DomInt(int n) : Test("Dom::Int::"+str(n),n,-4,4,n == 1) {}
+       DomInt(int n) 
+         : Test("Dom::Int::"+str(n),n,-4,4,n == 1,
+                Gecode::IPL_DOM) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=x.size(); i--; )
@@ -79,7 +81,9 @@ namespace Test { namespace Int {
      class DomRange : public Test {
      public:
        /// Create and register test
-       DomRange(int n) : Test("Dom::Range::"+str(n),n,-4,4,n == 1) {}
+       DomRange(int n) 
+         : Test("Dom::Range::"+str(n),n,-4,4,n == 1,
+                Gecode::IPL_DOM) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=x.size(); i--; )
@@ -132,7 +136,9 @@ namespace Test { namespace Int {
      class DomDom : public Test {
      public:
        /// Create and register test
-       DomDom(int n) : Test("Dom::Dom::"+str(n),n,-6,6,n == 1) {}
+       DomDom(int n) 
+         : Test("Dom::Dom::"+str(n),n,-6,6,n == 1,
+                Gecode::IPL_DOM) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          for (int i=x.size(); i--; )

@@ -41,13 +41,13 @@ namespace Gecode { namespace Float { namespace Trigonometric {
    *
    */
   template<class V>
-  void 
+  void
   aTanProject(Rounding& r, const V& aTanIv, FloatNum& iv_min, FloatNum& iv_max, int& n_min, int& n_max) {
     #define I0__PI_2I    FloatVal(0,pi_half_upper())
     #define POS(X) ((I0__PI_2I.in(X))?0:1)
     #define ATANINF_DOWN r.atan_down(aTanIv.min())
     #define ATANSUP_UP   r.atan_up(aTanIv.max())
-    
+
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
     switch ( POS(iv_min) )
@@ -64,7 +64,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         GECODE_NEVER;
         break;
     }
-    
+
     // 0 <=> in [0;PI/2]
     // 1 <=> in [PI/2;PI]
     switch ( POS(iv_max) )
@@ -134,7 +134,7 @@ namespace Gecode { namespace Float { namespace Trigonometric {
       if (I0__PI_2I.in(x0.max()))  GECODE_ME_CHECK(x0.lq(home,0));
       if (I0__PI_2I.in(-x0.min())) GECODE_ME_CHECK(x0.gq(home,0));
       #undef I0__PI_2I
-      
+
       n_min = static_cast<int>(r.div_up(x0.min(), pi_upper()));
       n_max = static_cast<int>(r.div_up(x0.max(), pi_upper()));
 
@@ -153,9 +153,9 @@ namespace Gecode { namespace Float { namespace Trigonometric {
         t = r.add_up(r.mul_up(n_max,pi_upper()),r.tan_up(x0_max));
       } while (t > x0_max);
       x0_max = r.sub_up(r.mul_up(2*n_max,pi_upper()),x0_max);
-      
+
       if (x0_min > x0_max) return ES_FAILED;
-      GECODE_ME_CHECK(x0.eq(home,FloatVal(x0_min,x0_max)));      
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(x0_min,x0_max)));
     } else {
       GECODE_ME_CHECK(x1.eq(home,tan(x0.val())));
       n_min = static_cast<int>(r.div_up(x0.min(), pi_upper()));

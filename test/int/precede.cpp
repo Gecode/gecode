@@ -45,7 +45,7 @@ namespace Test { namespace Int {
 
    /// %Tests for value precedence constraints
    namespace Precede {
-            
+
      /// %Test for single value precedence constraint
      class Single : public Test {
      private:
@@ -72,7 +72,7 @@ namespace Test { namespace Int {
          Gecode::precede(home, x, s, t);
        }
      };
-     
+
      /// %Test for multiple value precedence constraint
      class Multi : public Test {
      private:
@@ -100,7 +100,7 @@ namespace Test { namespace Int {
          Gecode::precede(home, x, c);
        }
      };
-     
+
      Single _a(2, 3);
      Single _b(1, 4);
 

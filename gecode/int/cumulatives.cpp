@@ -78,13 +78,13 @@ namespace Gecode {
                      const IntVarArgs& s, const Processing& p,
                      const IntVarArgs& e, const Usage& u,
                      const IntArgs& c, bool at_most,
-                     IntConLevel) {
+                     IntPropLevel) {
       if (m.size() != s.size()  ||
           s.size() != p.size() ||
           p.size() != e.size()   ||
           e.size() != u.size())
         throw Int::ArgumentSizeMismatch("Int::cumulatives");
-      if (home.failed()) return;
+      GECODE_POST;
 
       ViewArray<typename ViewType<Machine>::Result>
         vm  = make_view_array(home,  m);
@@ -115,7 +115,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -124,7 +124,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -133,7 +133,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -142,7 +142,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntVarArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -151,7 +151,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -160,7 +160,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntVarArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -169,7 +169,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 
@@ -178,7 +178,7 @@ namespace Gecode {
               const IntVarArgs& s, const IntArgs& p,
               const IntVarArgs& e, const IntArgs& u,
               const IntArgs& c, bool at_most,
-              IntConLevel cl) {
+              IntPropLevel cl) {
     post_cumulatives(home, m, s, p, e, u, c, at_most, cl);
   }
 

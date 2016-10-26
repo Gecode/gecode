@@ -41,29 +41,27 @@
 
 #include <algorithm>
 
-namespace Gecode {
+namespace Gecode { namespace Int { namespace Cumulative {
 
   template<class Cap>
   void
   cumulative(Home home, Cap c, const TaskTypeArgs& t,
-             const IntVarArgs& s, const IntArgs& p, const IntArgs& u, 
-             IntConLevel icl) {
-    using namespace Gecode::Int;
-    using namespace Gecode::Int::Cumulative;
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             IntPropLevel ipl) {
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
         (s.size() != t.size()))
-      throw Int::ArgumentSizeMismatch("Int::cumulative");
+      throw ArgumentSizeMismatch("Int::cumulative");
     long long int w = 0;
     for (int i=p.size(); i--; ) {
       Limits::nonnegative(p[i],"Int::cumulative");
       Limits::nonnegative(u[i],"Int::cumulative");
-      Limits::check(static_cast<long long int>(s[i].max()) + p[i], 
+      Limits::check(static_cast<long long int>(s[i].max()) + p[i],
                     "Int::cumulative");
       mul_check(p[i],u[i]);
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
     for (int i=u.size(); i--;) {
@@ -79,7 +77,7 @@ namespace Gecode {
       (minU > c.max()/2) || (minU2 > c.max()/2 && minU+minU2>c.max());
     if (disjunctive) {
       GECODE_ME_FAIL(c.gq(home,maxU));
-      unary(home,t,s,p,icl);
+      unary(home,t,s,p,ipl);
     } else {
       bool fixp = true;
       for (int i=t.size(); i--;)
@@ -95,40 +93,23 @@ namespace Gecode {
         for (int i=0; i<s.size(); i++)
           if (u[i] > 0)
             tasks[cur++].init(s[i],p[i],u[i]);
-        GECODE_ES_FAIL((ManProp<ManFixPTask,Cap>::post(home,c,tasks)));
+        GECODE_ES_FAIL(manpost(home,c,tasks,ipl));
       } else {
         TaskArray<ManFixPSETask> tasks(home,nonOptionals);
         int cur = 0;
         for (int i=s.size(); i--;)
           if (u[i] > 0)
             tasks[cur++].init(t[i],s[i],p[i],u[i]);
-        GECODE_ES_FAIL((ManProp<ManFixPSETask,Cap>::post(home,c,tasks)));
+        GECODE_ES_FAIL(manpost(home,c,tasks,ipl));
       }
     }
-  }
-
-  void
-  cumulative(Home home, int c, const TaskTypeArgs& t,
-             const IntVarArgs& s, const IntArgs& p, const IntArgs& u, 
-             IntConLevel icl) {
-    Int::Limits::nonnegative(c,"Int::cumulative");
-    cumulative(home,Int::ConstIntView(c),t,s,p,u,icl);
-  }
-  void
-  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
-             const IntVarArgs& s, const IntArgs& p, const IntArgs& u, 
-             IntConLevel icl) {
-    if (c.assigned())
-      cumulative(home,c.val(),t,s,p,u,icl);
-    else
-      cumulative(home,Int::IntView(c),t,s,p,u,icl);
   }
 
   template<class Cap>
   void
   cumulative(Home home, Cap c, const TaskTypeArgs& t,
              const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
-             const BoolVarArgs& m, IntConLevel icl) {
+             const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
@@ -144,8 +125,8 @@ namespace Gecode {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
-    
+    GECODE_POST;
+
     bool allMandatory = true;
     for (int i=m.size(); i--;) {
       if (!m[i].one()) {
@@ -154,7 +135,7 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      cumulative(home,c,t,s,p,u,icl);
+      cumulative(home,c,t,s,p,u,ipl);
     } else {
       bool fixp = true;
       for (int i=t.size(); i--;)
@@ -170,39 +151,22 @@ namespace Gecode {
         for (int i=0; i<s.size(); i++)
           if (u[i]>0)
             tasks[cur++].init(s[i],p[i],u[i],m[i]);
-        GECODE_ES_FAIL((OptProp<OptFixPTask,Cap>::post(home,c,tasks)));
+        GECODE_ES_FAIL(optpost(home,c,tasks,ipl));
       } else {
         TaskArray<OptFixPSETask> tasks(home,nonOptionals);
         int cur = 0;
         for (int i=s.size(); i--;)
           if (u[i]>0)
             tasks[cur++].init(t[i],s[i],p[i],u[i],m[i]);
-        GECODE_ES_FAIL((OptProp<OptFixPSETask,Cap>::post(home,c,tasks)));
+        GECODE_ES_FAIL(optpost(home,c,tasks,ipl));
       }
     }
   }
-  
-  void
-  cumulative(Home home, int c, const TaskTypeArgs& t,
-             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
-             const BoolVarArgs& m, IntConLevel icl) {
-    Int::Limits::nonnegative(c,"Int::cumulative");
-    cumulative(home,Int::ConstIntView(c),t,s,p,u,m,icl);
-  }
-  void
-  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
-             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
-             const BoolVarArgs& m, IntConLevel icl) {
-    if (c.assigned())
-      cumulative(home,c.val(),t,s,p,u,m,icl);
-    else
-      cumulative(home,Int::IntView(c),t,s,p,u,m,icl);
-  }
-  
+
   template<class Cap>
   void
-  cumulative(Home home, Cap c, const IntVarArgs& s, 
-             const IntArgs& p, const IntArgs& u, IntConLevel icl) {
+  cumulative(Home home, Cap c, const IntVarArgs& s,
+             const IntArgs& p, const IntArgs& u, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
     if ((s.size() != p.size()) || (s.size() != u.size()))
@@ -217,7 +181,7 @@ namespace Gecode {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     int minU = INT_MAX; int minU2 = INT_MAX; int maxU = INT_MIN;
     for (int i=u.size(); i--;) {
@@ -229,11 +193,11 @@ namespace Gecode {
       if (u[i] > maxU)
         maxU = u[i];
     }
-    bool disjunctive = 
+    bool disjunctive =
       (minU > c.max()/2) || (minU2 > c.max()/2 && minU+minU2>c.max());
     if (disjunctive) {
       GECODE_ME_FAIL(c.gq(home,maxU));
-      unary(home,s,p,icl);
+      unary(home,s,p,ipl);
     } else {
       int nonOptionals = 0;
       for (int i=u.size(); i--;)
@@ -243,29 +207,14 @@ namespace Gecode {
       for (int i=0; i<s.size(); i++)
         if (u[i]>0)
           t[cur++].init(s[i],p[i],u[i]);
-      GECODE_ES_FAIL((ManProp<ManFixPTask,Cap>::post(home,c,t)));
+      GECODE_ES_FAIL(manpost(home,c,t,ipl));
     }
   }
 
-  void
-  cumulative(Home home, int c, const IntVarArgs& s, 
-             const IntArgs& p, const IntArgs& u, IntConLevel icl) {
-    Int::Limits::nonnegative(c,"Int::cumulative");
-    cumulative(home,Int::ConstIntView(c),s,p,u,icl);
-  }
-  void
-  cumulative(Home home, IntVar c, const IntVarArgs& s, 
-             const IntArgs& p, const IntArgs& u, IntConLevel icl) {
-    if (c.assigned())
-      cumulative(home,c.val(),s,p,u,icl);
-    else
-      cumulative(home,Int::IntView(c),s,p,u,icl);
-  }
-  
   template<class Cap>
   void
-  cumulative(Home home, Cap c, const IntVarArgs& s, const IntArgs& p, 
-             const IntArgs& u, const BoolVarArgs& m, IntConLevel icl) {
+  cumulative(Home home, Cap c, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
@@ -281,7 +230,7 @@ namespace Gecode {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool allMandatory = true;
     for (int i=m.size(); i--;) {
@@ -291,7 +240,7 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      cumulative(home,c,s,p,u,icl);
+      cumulative(home,c,s,p,u,ipl);
     } else {
       int nonOptionals = 0;
       for (int i=u.size(); i--;)
@@ -301,30 +250,15 @@ namespace Gecode {
       for (int i=0; i<s.size(); i++)
         if (u[i]>0)
           t[cur++].init(s[i],p[i],u[i],m[i]);
-      GECODE_ES_FAIL((OptProp<OptFixPTask,Cap>::post(home,c,t)));
+      GECODE_ES_FAIL(optpost(home,c,t,ipl));
     }
-  }
-
-  void
-  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p, 
-             const IntArgs& u, const BoolVarArgs& m, IntConLevel icl) {
-    Int::Limits::nonnegative(c,"Int::cumulative");
-    cumulative(home,Int::ConstIntView(c),s,p,u,m,icl);
-  }
-  void
-  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p, 
-             const IntArgs& u, const BoolVarArgs& m, IntConLevel icl) {
-    if (c.assigned())
-      cumulative(home,c.val(),s,p,u,m,icl);
-    else
-      cumulative(home,Int::IntView(c),s,p,u,m,icl);
   }
 
   template<class Cap>
   void
-  cumulative(Home home, Cap c, const IntVarArgs& s, 
+  cumulative(Home home, Cap c, const IntVarArgs& s,
              const IntVarArgs& p, const IntVarArgs& e,
-             const IntArgs& u, IntConLevel icl) {
+             const IntArgs& u, IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
     if ((s.size() != p.size()) || (s.size() != e.size()) ||
@@ -342,7 +276,7 @@ namespace Gecode {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool fixP = true;
     for (int i=p.size(); i--;) {
@@ -355,7 +289,7 @@ namespace Gecode {
       IntArgs pp(p.size());
       for (int i=p.size(); i--;)
         pp[i] = p[i].val();
-      cumulative(home,c,s,pp,u,icl);
+      cumulative(home,c,s,pp,u,ipl);
     } else {
       int nonOptionals = 0;
       for (int i=u.size(); i--;)
@@ -365,32 +299,15 @@ namespace Gecode {
       for (int i=0; i<s.size(); i++)
         if (u[i]>0)
           t[cur++].init(s[i],p[i],e[i],u[i]);
-      GECODE_ES_FAIL((ManProp<ManFlexTask,Cap>::post(home,c,t)));
+      GECODE_ES_FAIL(manpost(home,c,t,ipl));
     }
-  }
-
-  void
-  cumulative(Home home, int c, const IntVarArgs& s, 
-             const IntVarArgs& p, const IntVarArgs& e,
-             const IntArgs& u, IntConLevel icl) {
-    Int::Limits::nonnegative(c,"Int::cumulative");
-    cumulative(home,Int::ConstIntView(c),s,p,e,u,icl);
-  }
-  void
-  cumulative(Home home, IntVar c, const IntVarArgs& s, 
-             const IntVarArgs& p, const IntVarArgs& e,
-             const IntArgs& u, IntConLevel icl) {
-    if (c.assigned())
-      cumulative(home,c.val(),s,p,e,u,icl);
-    else
-      cumulative(home,Int::IntView(c),s,p,e,u,icl);
   }
 
   template<class Cap>
   void
   cumulative(Home home, Cap c, const IntVarArgs& s, const IntVarArgs& p,
-             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
-             IntConLevel icl) {
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m,
+             IntPropLevel ipl) {
     using namespace Gecode::Int;
     using namespace Gecode::Int::Cumulative;
     if ((s.size() != p.size()) || (s.size() != u.size()) ||
@@ -408,7 +325,7 @@ namespace Gecode {
       w += s[i].width();
     }
     mul_check(c.max(),w,s.size());
-    if (home.failed()) return;
+    GECODE_POST;
 
     bool allMandatory = true;
     for (int i=m.size(); i--;) {
@@ -418,7 +335,7 @@ namespace Gecode {
       }
     }
     if (allMandatory) {
-      cumulative(home,c,s,p,e,u,icl);
+      cumulative(home,c,s,p,e,u,ipl);
     } else {
       int nonOptionals = 0;
       for (int i=u.size(); i--;)
@@ -428,27 +345,123 @@ namespace Gecode {
       for (int i=s.size(); i--; )
         if (u[i]>0)
           t[cur++].init(s[i],p[i],e[i],u[i],m[i]);
-      GECODE_ES_FAIL((OptProp<OptFlexTask,Cap>::post(home,c,t)));
+      GECODE_ES_FAIL(optpost(home,c,t,ipl));
     }
   }
 
+}}}
+
+namespace Gecode {
+
+  void
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             IntPropLevel ipl) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
+    Int::Cumulative::cumulative(home,Int::ConstIntView(c),t,s,p,u,ipl);
+  }
+
+  void
+  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             IntPropLevel ipl) {
+    if (c.assigned())
+      cumulative(home,c.val(),t,s,p,u,ipl);
+    else
+      Int::Cumulative::cumulative(home,Int::IntView(c),t,s,p,u,ipl);
+  }
+
+
+  void
+  cumulative(Home home, int c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const BoolVarArgs& m, IntPropLevel ipl) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
+    Int::Cumulative::cumulative(home,Int::ConstIntView(c),t,s,p,u,m,ipl);
+  }
+
+  void
+  cumulative(Home home, IntVar c, const TaskTypeArgs& t,
+             const IntVarArgs& s, const IntArgs& p, const IntArgs& u,
+             const BoolVarArgs& m, IntPropLevel ipl) {
+    if (c.assigned())
+      cumulative(home,c.val(),t,s,p,u,m,ipl);
+    else
+      Int::Cumulative::cumulative(home,Int::IntView(c),t,s,p,u,m,ipl);
+  }
+
+
+  void
+  cumulative(Home home, int c, const IntVarArgs& s,
+             const IntArgs& p, const IntArgs& u, IntPropLevel ipl) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
+    Int::Cumulative::cumulative(home,Int::ConstIntView(c),s,p,u,ipl);
+  }
+
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s,
+             const IntArgs& p, const IntArgs& u, IntPropLevel ipl) {
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,u,ipl);
+    else
+      Int::Cumulative::cumulative(home,Int::IntView(c),s,p,u,ipl);
+  }
+
+
+  void
+  cumulative(Home home, int c, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
+    Int::Cumulative::cumulative(home,Int::ConstIntView(c),s,p,u,m,ipl);
+  }
+
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s, const IntArgs& p,
+             const IntArgs& u, const BoolVarArgs& m, IntPropLevel ipl) {
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,u,m,ipl);
+    else
+      Int::Cumulative::cumulative(home,Int::IntView(c),s,p,u,m,ipl);
+  }
+
+
+  void
+  cumulative(Home home, int c, const IntVarArgs& s,
+             const IntVarArgs& p, const IntVarArgs& e,
+             const IntArgs& u, IntPropLevel ipl) {
+    Int::Limits::nonnegative(c,"Int::cumulative");
+    Int::Cumulative::cumulative(home,Int::ConstIntView(c),s,p,e,u,ipl);
+  }
+
+  void
+  cumulative(Home home, IntVar c, const IntVarArgs& s,
+             const IntVarArgs& p, const IntVarArgs& e,
+             const IntArgs& u, IntPropLevel ipl) {
+    if (c.assigned())
+      cumulative(home,c.val(),s,p,e,u,ipl);
+    else
+      Int::Cumulative::cumulative(home,Int::IntView(c),s,p,e,u,ipl);
+  }
+
+
   void
   cumulative(Home home, int c, const IntVarArgs& s, const IntVarArgs& p,
-             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
-             IntConLevel icl) {
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m,
+             IntPropLevel ipl) {
     Int::Limits::nonnegative(c,"Int::cumulative");
-    cumulative(home,Int::ConstIntView(c),s,p,e,u,m,icl);
+    Int::Cumulative::cumulative(home,Int::ConstIntView(c),s,p,e,u,m,ipl);
   }
+
   void
   cumulative(Home home, IntVar c, const IntVarArgs& s, const IntVarArgs& p,
-             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m, 
-             IntConLevel icl) {
+             const IntVarArgs& e, const IntArgs& u, const BoolVarArgs& m,
+             IntPropLevel ipl) {
     if (c.assigned())
-      cumulative(home,c.val(),s,p,e,u,m,icl);
+      cumulative(home,c.val(),s,p,e,u,m,ipl);
     else
-      cumulative(home,Int::IntView(c),s,p,e,u,m,icl);
+      Int::Cumulative::cumulative(home,Int::IntView(c),s,p,e,u,m,ipl);
   }
-  
+
 }
 
 // STATISTICS: int-post

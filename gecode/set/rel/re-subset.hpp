@@ -65,6 +65,14 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template<class View0, class View1, ReifyMode rm>
+  void
+  ReSubset<View0,View1,rm>::reschedule(Space& home) {
+    b.reschedule(home,*this, Gecode::Int::PC_INT_VAL);
+    x0.reschedule(home,*this, PC_SET_ANY);
+    x1.reschedule(home,*this, PC_SET_ANY);
+  }
+
+  template<class View0, class View1, ReifyMode rm>
   forceinline size_t
   ReSubset<View0,View1,rm>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
@@ -98,7 +106,7 @@ namespace Gecode { namespace Set { namespace Rel {
     }
     if (b.zero()) {
       if (rm == RM_IMP)
-        return home.ES_SUBSUMED(*this);        
+        return home.ES_SUBSUMED(*this);
       GECODE_REWRITE(*this,(NoSubset<View0,View1>::post(home(*this),x0,x1)));
     }
 

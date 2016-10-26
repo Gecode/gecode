@@ -48,7 +48,7 @@
 namespace Gecode { namespace Set { namespace LDSB {
 
   using namespace Int::LDSB;
-  
+
   /**
    * \brief Symmetry-breaking brancher with generic view and value
    * selection
@@ -61,8 +61,8 @@ namespace Gecode { namespace Set { namespace LDSB {
   class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a> {
   public:
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
-                                unsigned int b,
+    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
+                                unsigned int alt,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
@@ -81,20 +81,20 @@ namespace Gecode { namespace Set { namespace LDSB {
     IntSet _leftBranchValues;
     /**
      * \brief Is the state of the brancher "stable"?
-     * 
+     *
      * The brancher is unstable if we are about to run either "choice"
      * or "commit", but "updatePart1" has not been run.  After
      * "updatePart1" has been run the brancher is stable, until the
      * second part of the update is done (in commit).
      */
     bool _stable;
-    
+
     /// Constructor for cloning \a b
     LDSBSetBrancher(Space& home, bool share, LDSBSetBrancher& b);
     /// Constructor for creation
-    LDSBSetBrancher(Home home, 
+    LDSBSetBrancher(Home home,
                     ViewArray<View>& x,
-                    ViewSel<View>* vs[n], 
+                    ViewSel<View>* vs[n],
                     ValSelCommitBase<View,Val>* vsc,
                     SymmetryImp<View>** syms, int nsyms,
                     SetBranchFilter bf,
@@ -106,14 +106,14 @@ namespace Gecode { namespace Set { namespace LDSB {
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
     /// Brancher post function
-    static BrancherHandle post(Home home, 
-                               ViewArray<View>& x,
-                               ViewSel<View>* vs[n],
-                               ValSelCommitBase<View,Val>* vsc,
-                               SymmetryImp<View>** _syms,
-                               int _nsyms,
-                               SetBranchFilter bf,
-                               VarValPrint vvp);
+    static void post(Home home,
+                     ViewArray<View>& x,
+                     ViewSel<View>* vs[n],
+                     ValSelCommitBase<View,Val>* vsc,
+                     SymmetryImp<View>** _syms,
+                     int _nsyms,
+                     SetBranchFilter bf,
+                     VarValPrint vvp);
 
     /**
      * \brief Part one of the update phase

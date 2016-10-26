@@ -118,7 +118,7 @@ public:
           for (int j=0; j<k-1; j++)
             rel(*this, p(i,j)+i+2 == p(i,j+1));
 
-        distinct(*this, pv, opt.icl());
+        distinct(*this, pv, opt.ipl());
 
         // Channel positions <-> values
         for (int i=0; i<n; i++)
@@ -155,7 +155,7 @@ public:
         // the sequence on the value.
         REG r0(0), r1(1);
         for (int v=1; v<=n; v++)
-          extensional(*this, b.row(v-1), 
+          extensional(*this, b.row(v-1),
                       *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0);
       }
       break;
@@ -193,7 +193,7 @@ public:
 int
 main(int argc, char* argv[]) {
   LangfordNumberOptions opt("Langford Numbers",3,9);
-  opt.icl(ICL_DOM);
+  opt.ipl(IPL_DOM);
   opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL);
   opt.propagation(LangfordNumber::PROP_REIFIED,
                   "reified");

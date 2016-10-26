@@ -82,7 +82,7 @@ namespace Gecode { namespace Float { namespace Branch {
   MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
-  MeritDegreeSize::MeritDegreeSize(Space& home, bool shared, 
+  MeritDegreeSize::MeritDegreeSize(Space& home, bool shared,
                                    MeritDegreeSize& m)
     : MeritBase<FloatView,double>(home,shared,m) {}
   forceinline double
@@ -118,7 +118,7 @@ namespace Gecode { namespace Float { namespace Branch {
                                        const VarBranch& vb)
     : MeritBase<FloatView,double>(home,vb), activity(vb.activity()) {}
   forceinline
-  MeritActivitySize::MeritActivitySize(Space& home, bool shared, 
+  MeritActivitySize::MeritActivitySize(Space& home, bool shared,
                                        MeritActivitySize& m)
     : MeritBase<FloatView,double>(home,shared,m) {
     activity.update(home, shared, m.activity);

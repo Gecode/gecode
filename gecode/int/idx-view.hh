@@ -52,7 +52,7 @@ namespace Gecode { namespace Int {
   class IdxView {
   public:
     /// The index
-    int idx; 
+    int idx;
     /// Thhe view
     View view;
     /// Allocate memory for \a n index-view pairs
@@ -104,6 +104,8 @@ namespace Gecode { namespace Int {
      * for all elements of the array.
      */
     void cancel(Space& home, Propagator& p, PropCond pc);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p, PropCond pc);
 
     /// Cloning
     void update(Space& home, bool share, IdxViewArray<View>& x);

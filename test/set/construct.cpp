@@ -213,7 +213,7 @@ namespace Test { namespace Set {
         con(home, IntSet(1,4), 1,3);
         con(home, 1,4, IntSet(1,3));
         con(home, IntSet(1,4), IntSet(1,3));
-        
+
         con(home, IntSet::empty, 2, 4, 0, 10, false);
       }
     };

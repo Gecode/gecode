@@ -237,21 +237,21 @@ namespace Gecode {
     /**
      * \brief Constructs a single object of type \a T from region using the default constructor.
      */
-    template<class T> 
+    template<class T>
     T& construct(void);
     /**
      * \brief Constructs a single object of type \a T from region using a unary constructor.
      *
      * The parameter is passed as a const reference.
      */
-    template<class T, typename A1> 
+    template<class T, typename A1>
     T& construct(A1 const& a1);
     /**
      * \brief Constructs a single object of type \a T from region using a binary constructor.
      *
      * The parameters are passed as const references.
      */
-    template<class T, typename A1, typename A2> 
+    template<class T, typename A1, typename A2>
     T& construct(A1 const& a1, A2 const& a2);
     /**
      * \brief Constructs a single object of type \a T from region using a ternary constructor.
@@ -413,41 +413,41 @@ namespace Gecode {
    * Region construction support
    *
    */
-  template<class T> 
-  forceinline T& 
+  template<class T>
+  forceinline T&
   Region::construct(void) {
     return alloc<T>(1);
   }
-  template<class T, typename A1> 
-  forceinline T& 
+  template<class T, typename A1>
+  forceinline T&
   Region::construct(A1 const& a1) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1);
     return t;
   }
-  template<class T, typename A1, typename A2> 
-  forceinline T& 
+  template<class T, typename A1, typename A2>
+  forceinline T&
   Region::construct(A1 const& a1, A2 const& a2) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3>
-  forceinline T& 
+  forceinline T&
   Region::construct(A1 const& a1, A2 const& a2, A3 const& a3) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3, typename A4>
-  forceinline T& 
+  forceinline T&
   Region::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3,a4);
     return t;
   }
   template<class T, typename A1, typename A2, typename A3, typename A4, typename A5>
-  forceinline T& 
+  forceinline T&
   Region::construct(A1 const& a1, A2 const& a2, A3 const& a3, A4 const& a4, A5 const& a5) {
     T& t = *static_cast<T*>(ralloc(sizeof(T)));
     new (&t) T(a1,a2,a3,a4,a5);

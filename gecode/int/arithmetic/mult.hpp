@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   dll(int x) {
     return static_cast<long long int>(x) - 1;
   }
-    
+
   /// Test whether \a x is postive
   template<class View>
   forceinline bool

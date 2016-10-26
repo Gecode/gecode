@@ -44,24 +44,24 @@
 namespace Gecode {
 
   void
-  precede(Home home, const IntVarArgs& x, int s, int t, IntConLevel) {
+  precede(Home home, const IntVarArgs& x, int s, int t, IntPropLevel) {
     using namespace Int;
     Limits::check(s,"Int::precede");
     Limits::check(t,"Int::precede");
-    if (home.failed()) return;
+    GECODE_POST;
 
     ViewArray<IntView> y(home, x);
     GECODE_ES_FAIL(Precede::Single<IntView>::post(home, y, s, t));
   }
 
   void
-  precede(Home home, const IntVarArgs& x, const IntArgs& c, IntConLevel) {
+  precede(Home home, const IntVarArgs& x, const IntArgs& c, IntPropLevel) {
     using namespace Int;
     if (c.size() < 2)
       return;
     for (int i=c.size(); i--; )
       Limits::check(c[i],"Int::precede");
-    if (home.failed()) return;
+    GECODE_POST;
 
     for (int i=c.size()-1; i--; ) {
       ViewArray<IntView> y(home, x);

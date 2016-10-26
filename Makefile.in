@@ -143,22 +143,23 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	exception heap thread/thread thread/windows thread/pthreads \
+	exception allocator heap \
+	thread/thread thread/windows thread/pthreads \
 	hw-rnd
 SUPPORTHDR0 = \
 	block-allocator cast dynamic-array \
-	dynamic-stack exception heap \
+	dynamic-stack exception allocator heap \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \
 	thread thread/thread thread/windows thread/pthreads thread/none timer \
 	dynamic-queue bitset-base bitset bitset-offset \
 	hw-rnd
 
-SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cpp)
-SUPPORTHDR  =  gecode/support.hh \
+SUPPORTSRC1	=  $(SUPPORTSRC0:%=gecode/support/%.cpp)
+SUPPORTHDR 	=  gecode/support.hh \
 	$(SUPPORTHDR0:%=gecode/support/%.hpp)
-SUPPORTOBJ  =  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX))
-SUPPORTSRC  =  $(SUPPORTSRC1)
+SUPPORTOBJ	=  $(SUPPORTSRC1:%.cpp=%$(OBJSUFFIX))
+SUPPORTSRC	=  $(SUPPORTSRC1)
 
 export SUPPORTDLL	= $(LIBPREFIX)@SUPPORT@$(DLLSUFFIX)
 export SUPPORTLIB	= $(LIBPREFIX)@SUPPORT@$(LIBSUFFIX)
@@ -194,7 +195,7 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	afc activity rnd
+	afc activity rnd exception trace-filter tracer
 
 KERNELHDR0 = \
 	archive array shared-array core exception \
@@ -204,11 +205,13 @@ KERNELHDR0 = \
 	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit \
-	allocators global-afc \
-	afc activity rnd branch-traits
+	allocators print gpi \
+	afc activity rnd branch-traits \
+	trace-traits trace-filter tracer trace-recorder \
+	subscribed-propagators
 
-KERNELSRC = $(KERNELSRC0:%=gecode/kernel/%.cpp)
-KERNELHDR	= \
+KERNELSRC 	= $(KERNELSRC0:%=gecode/kernel/%.cpp)
+KERNELHDR 	= \
 	gecode/kernel.hh gecode/kernel/wait.hh \
 	$(KERNELHDR0:%=gecode/kernel/%.hpp)
 KERNELOBJ	= $(KERNELSRC:%.cpp=%$(OBJSUFFIX))
@@ -248,15 +251,24 @@ SEARCHSRC0 = \
 	parallel/engine \
 	dfs parallel/dfs \
 	bab parallel/bab \
-	meta/rbs meta/nogoods sequential/path parallel/path
+	lds sequential/lds \
+	sequential/path parallel/path \
+	meta/rbs meta/nogoods meta/dead \
+	meta/sequential/pbs meta/parallel/pbs \
+	rbs pbs sebs exception
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
+	engine.hpp base.hpp build.hpp traits.hpp sebs.hpp \
 	sequential/path.hh sequential/dfs.hh sequential/bab.hh \
+	sequential/lds.hh \
 	parallel/path.hh parallel/engine.hh \
 	parallel/dfs.hh parallel/bab.hh \
-	meta/rbs.hh meta/nogoods.hh \
-	dfs.hpp bab.hpp rbs.hpp engine.hpp engine-base.hpp
+	meta/rbs.hh meta/rbs.hpp meta/nogoods.hh meta/dead.hh \
+	meta/sequential/pbs.hh meta/parallel/pbs.hh \
+	meta/sequential/pbs.hpp meta/parallel/pbs.hpp \
+	dfs.hpp bab.hpp lds.hpp rbs.hpp pbs.hpp \
+	relax.hh
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -288,7 +300,10 @@ export LINKSEARCH       =
 export SEARCHRES	=
 export SEARCHRC		=
 endif
-SEARCHBUILDDIRS = search search/sequential search/parallel search/meta
+SEARCHBUILDDIRS = search \
+	search/sequential search/parallel \
+	search/meta \
+	search/meta/sequential search/meta/parallel
 
 #
 # INTEGER COMPONENTS
@@ -303,7 +318,7 @@ INTSRC0 = \
 	exec/when.cpp element/pair.cpp \
 	linear/int-post.cpp linear-int.cpp \
 	linear/bool-post.cpp linear-bool.cpp \
-	branch.cpp distinct.cpp sorted.cpp gcc.cpp \
+	branch.cpp distinct/eqite.cpp distinct.cpp sorted.cpp gcc.cpp \
 	channel.cpp channel/link-single.cpp channel/link-multi.cpp \
 	unshare.cpp sequence.cpp \
 	bin-packing.cpp bin-packing/propagate.cpp \
@@ -314,7 +329,10 @@ INTSRC0 = \
 	arithmetic/mult.cpp  \
 	branch/view-sel.cpp branch/val-sel-commit.cpp \
 	branch/view-values.cpp \
-	ldsb.cpp ldsb/sym-imp.cpp ldsb/sym-obj.cpp
+	relax.cpp \
+	ldsb.cpp ldsb/sym-imp.cpp ldsb/sym-obj.cpp \
+	trace.cpp trace/tracer.cpp \
+	exception.cpp
 
 INTHDR0 = \
 	limits.hpp support-values.hh support-values.hpp \
@@ -341,6 +359,7 @@ INTHDR0 = \
 	distinct/graph.hpp distinct/dom-ctrl.hpp \
 	distinct/bnd.hpp distinct/dom.hpp \
 	distinct/val.hpp distinct/ter-dom.hpp \
+	distinct/eqite.hpp \
 	dom/range.hpp dom/set.hpp \
 	element/int.hpp element/view.hpp element/pair.hpp \
 	gcc/bnd.hpp gcc/dom.hpp gcc/bnd-sup.hpp gcc/dom-sup.hpp \
@@ -364,7 +383,7 @@ INTHDR0 = \
 	distinct.hh dom.hh \
 	element.hh exception.hpp  gcc.hh linear.hh \
 	reify.hpp propagator.hpp extensional.hh rel.hh \
-	sorted.hh var-imp.hpp view.hpp \
+	sorted.hh var-imp.hpp view.hpp ipl.hpp \
 	channel.hh channel/dom.hpp channel/val.hpp \
 	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
 	sequence.hh sequence/int.hpp sequence/view.hpp \
@@ -373,16 +392,18 @@ INTHDR0 = \
 	bin-packing/conflict-graph.hpp \
 	task.hh task/fwd-to-bwd.hpp task/array.hpp task/sort.hpp \
 	task/iter.hpp task/tree.hpp task/purge.hpp task/prop.hpp \
-	task/man-to-opt.hpp \
+	task/man-to-opt.hpp task/event.hpp \
 	unary.hh unary/task.hpp unary/task-view.hpp \
 	unary/tree.hpp unary/overload.hpp unary/detectable.hpp \
-	unary/not-first-not-last.hpp \
+	unary/time-tabling.hpp unary/not-first-not-last.hpp \
 	unary/edge-finding.hpp unary/subsumption.hpp \
-	unary/man-prop.hpp unary/opt-prop.hpp \
+	unary/man-prop.hpp unary/opt-prop.hpp unary/post.hpp \
 	cumulative.hh cumulative/man-prop.hpp cumulative/opt-prop.hpp \
 	cumulative/task-view.hpp cumulative/overload.hpp \
-	cumulative/basic.hpp cumulative/task.hpp cumulative/edge-finding.hpp \
+	cumulative/time-tabling.hpp cumulative/task.hpp \
+	cumulative/edge-finding.hpp cumulative/post.hpp \
 	cumulative/tree.hpp cumulative/limits.hpp \
+	cumulative/subsumption.hpp \
 	cumulatives.hh cumulatives/val.hpp \
 	circuit.hh circuit/base.hpp circuit/val.hpp circuit/dom.hpp \
 	no-overlap.hh no-overlap/dim.hpp no-overlap/box.hpp \
@@ -396,7 +417,10 @@ INTHDR0 = \
 	val-set.hh val-set.hpp \
 	member.hh member/prop.hpp member/re-prop.hpp \
 	branch/afc.hpp branch/activity.hpp \
-	ldsb.hh ldsb/brancher.hpp ldsb/sym-imp.hpp
+	ldsb.hh ldsb/brancher.hpp ldsb/sym-imp.hpp \
+	trace.hpp \
+	trace/bool-trace-view.hpp trace/int-trace-view.hpp \
+	trace/bool-delta.hpp trace/int-delta.hpp trace/traits.hpp
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
@@ -433,7 +457,7 @@ INTBUILDDIRS	= \
 	int/channel int/arithmetic int/linear int/bool int/branch int/exec \
 	int/element int/sequence int/bin-packing \
 	int/unary int/cumulative int/cumulatives int/task \
-	int/ldsb
+	int/ldsb int/distinct int/trace
 
 #
 # FLOAT COMPONENTS
@@ -442,7 +466,10 @@ INTBUILDDIRS	= \
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
-	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp
+	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \
+	relax.cpp \
+	trace.cpp trace/tracer.cpp \
+	exception.cpp
 
 FLOATHDR0 = \
 	var-imp.hpp array.hpp array-traits.hpp limits.hpp exception.hpp \
@@ -459,7 +486,8 @@ FLOATHDR0 = \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
-	num.hpp val.hpp rounding.hpp nextafter.hpp
+	num.hpp val.hpp rounding.hpp nextafter.hpp \
+	trace.hpp trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
 
 FLOATSRC	= $(FLOATSRC0:%=gecode/float/%)
 FLOATHDR	= gecode/float.hh $(FLOATHDR0:%=gecode/float/%)
@@ -494,7 +522,8 @@ endif
 FLOATBUILDDIRS	= \
 	float float/var float/var-imp float/view \
 	float/linear float/branch float/rel float/branch \
-	float/arithmetic float/transcendental float/trigonometric
+	float/arithmetic float/transcendental float/trigonometric \
+	float/trace
 
 #
 # SET COMPONENTS
@@ -518,7 +547,10 @@ SETSRC0 =								 \
 	var-imp/integerset.cpp var/set.cpp \
 	exec.cpp branch/activity.cpp branch/view-sel.cpp \
 	branch/val-sel-commit.cpp  branch/ngl.cpp \
-	ldsb.cpp ldsb/sym-imp.cpp
+	ldsb.cpp ldsb/sym-imp.cpp \
+	relax.cpp \
+	trace.cpp trace/tracer.cpp \
+	exception.cpp
 SETHDR0 =								     \
 	limits.hpp \
 	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
@@ -548,7 +580,9 @@ SETHDR0 =								     \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
 	branch/ngl.hpp \
-	ldsb.hh ldsb/brancher.hpp channel.hh
+	ldsb.hh ldsb/brancher.hpp channel.hh \
+	trace.hpp trace/trace-view.hpp trace/delta.hpp trace/traits.hpp
+
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
@@ -583,7 +617,7 @@ endif
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
 	set/element set/sequence set/var set/var-imp set/view \
-	set/branch set/channel set/ldsb
+	set/branch set/channel set/ldsb set/trace
 
 
 #
@@ -594,7 +628,7 @@ MMSRC0 = \
 	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
 	set-expr.cpp set-rel.cpp \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
-	reg.cpp optimize.cpp
+	reg.cpp optimize.cpp exception.cpp
 MMHDR0 = \
 	int-rel.hpp float-rel.hpp exception.hpp matrix.hpp \
 	bool-expr.hpp set-expr.hpp set-rel.hpp \
@@ -1163,7 +1197,7 @@ SEARCHTESTSRC0 = \
 ARRAYTESTSRC0 = \
 	test/array.cpp
 
-TESTSRC0 = test/test.cpp test/afc.cpp test/brancher-handle.cpp test/ldsb.cpp
+TESTSRC0 = test/test.cpp test/afc.cpp test/ldsb.cpp test/region.cpp
 
 TESTSRC = \
 	$(TESTSRC0) $(INTTESTSRC0) $(SETTESTSRC0) $(FLOATTESTSRC0) \
@@ -1446,7 +1480,7 @@ export LINKALL = -F. -framework gecode
 else
 export LINKALL = \
 	$(LINKFLATZINC) $(LINKDRIVER) $(LINKGIST) \
-	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKFLOAT) $(LINKINT) \
+	$(LINKSEARCH) $(LINKMM) $(LINKSET) $(LINKFLOAT) $(LINKMPFR) $(LINKINT) \
 	$(LINKKERNEL) $(LINKSUPPORT)
 endif
 
@@ -1719,7 +1753,7 @@ TESTRES =
 endif
 $(TESTEXE): $(TESTOBJ) $(TESTRES) $(ALLLIB)
 	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(TESTRES) $(DLLPATH) $(CXXFLAGS) \
-	$(LINKALL) $(GLDFLAGS)
+	$(LINKALL) $(GLDFLAGS) $(LINKQT)
 	$(FIXMANIFEST) $@.manifest $(DLLSUFFIX)
 	$(MANIFEST) -manifest $@.manifest -outputresource:$@\;1
 
@@ -2003,7 +2037,8 @@ distdoc: doc
 
 clean:
 	$(RMF) *.stackdump core gmon.out \
-		vc70.pdb vc80.pdb vc90.pdb vc100.pdb vc110.pdb vc120.pdb
+		vc70.pdb vc80.pdb vc90.pdb vc100.pdb vc110.pdb \
+		vc120.pdb vc130.pdb vc140.pdb
 	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh \
 		 changelog.hh doxygen.hh license.hh header.html
 	$(RMF) $(ALLOBJ) $(ALLSBJ) $(ALLOBJ:%$(OBJSUFFIX)=%.pdb)
@@ -2040,7 +2075,7 @@ distclean: veryclean
 	$(RMF) config.log config.status Makefile.dep
 
 depend: mkcompiledirs
-	@$(MAKE) $(VARIMP)
+	@$(MAKE) $(VARIMP) gecode/flatzinc/parser.tab.hh
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \

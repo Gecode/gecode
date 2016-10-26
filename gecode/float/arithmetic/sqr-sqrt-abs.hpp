@@ -172,7 +172,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Sqrt<A,B>::post(Home home, A x0, B x1) {
-    GECODE_ME_CHECK(x0.gq(home,0));    
+    GECODE_ME_CHECK(x0.gq(home,0));
     if (same(x0,x1)) {
       if (x0.assigned())
         return ((x0.val() == 0) || (x0.val() == 1))? ES_OK : ES_FAILED;
@@ -209,7 +209,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       GECODE_ME_CHECK(x1.eq(home,sqrt(x0.val())));
       if (x0.assigned() || x1.assigned()) return home.ES_SUBSUMED(*this);
     }
-    
+
     return ES_FIX;
   }
 

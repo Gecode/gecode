@@ -71,25 +71,25 @@ public:
     rel(*this, g, IRT_NQ, 0);
     rel(*this, r, IRT_NQ, 0);
 
-    distinct(*this, le, opt.icl());
+    distinct(*this, le, opt.ipl());
 
     switch (opt.model()) {
     case MODEL_SINGLE:
       rel(*this,    100000*d+10000*o+1000*n+100*a+10*l+d
                   + 100000*g+10000*e+1000*r+100*a+10*l+d
                  == 100000*r+10000*o+1000*b+100*e+10*r+t,
-           opt.icl());
+           opt.ipl());
       break;
     case MODEL_CARRY:
       {
         IntVar c0(*this,0,1), c1(*this,0,1), c2(*this,0,1),
           c3(*this,0,1), c4(*this,0,1);
-        rel(*this,    d+d == t+10*c0, opt.icl());
-        rel(*this, c0+l+l == r+10*c1, opt.icl());
-        rel(*this, c1+a+a == e+10*c2, opt.icl());
-        rel(*this, c2+n+r == b+10*c3, opt.icl());
-        rel(*this, c3+o+e == o+10*c4, opt.icl());
-        rel(*this, c4+d+g == r,       opt.icl());
+        rel(*this,    d+d == t+10*c0, opt.ipl());
+        rel(*this, c0+l+l == r+10*c1, opt.ipl());
+        rel(*this, c1+a+a == e+10*c2, opt.ipl());
+        rel(*this, c2+n+r == b+10*c3, opt.ipl());
+        rel(*this, c3+o+e == o+10*c4, opt.ipl());
+        rel(*this, c4+d+g == r,       opt.ipl());
       }
       break;
     default: GECODE_NEVER;

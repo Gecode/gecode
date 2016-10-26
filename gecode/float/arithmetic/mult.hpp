@@ -160,12 +160,12 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class VA, class VB, class VC>
   ExecStatus
   MultPlus<VA,VB,VC>::propagate(Space& home, const ModEventDelta&) {
-    if (x1.min() != 0.0) 
+    if (x1.min() != 0.0)
       GECODE_ME_CHECK(x0.eq(home,x2.val() / x1.val()));
-    if (x0.min() != 0.0) 
+    if (x0.min() != 0.0)
       GECODE_ME_CHECK(x1.eq(home,x2.val() / x0.val()));
     GECODE_ME_CHECK(x2.eq(home,x0.val() * x1.val()));
-    if (x0.assigned() && x1.assigned() && x2.assigned()) 
+    if (x0.assigned() && x1.assigned() && x2.assigned())
       return home.ES_SUBSUMED(*this);
     return ES_NOFIX;
   }

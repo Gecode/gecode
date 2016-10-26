@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
 #include <gecode/int/cumulative/limits.hpp>
 
 namespace Gecode { namespace Int { namespace Cumulative {
-  
+
   /// Cumulative (mandatory) task with fixed processing time
   class ManFixPTask : public Unary::ManFixPTask {
   protected:
@@ -678,15 +678,21 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
 namespace Gecode { namespace Int { namespace Cumulative {
 
-  /// Perform basic propagation
-  template<class Task, class Cap>
-  ExecStatus basic(Space& home, bool& subsumed, Cap c, TaskArray<Task>& t);
+  /// Check for subsumption (all tasks must be assigned)
+  template<class Task>
+  ExecStatus
+  subsumed(Space& home, Propagator& p, int c, TaskArray<Task>& t);
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
   ExecStatus overload(Space& home, int c, TaskArray<ManTask>& t);
 
-  /// Propagate by edge finding
+  /// Perform time-tabling propagation
+  template<class Task, class Cap>
+  ExecStatus timetabling(Space& home, Propagator& p, Cap c,
+                         TaskArray<Task>& t);
+
+  /// Propagate by edge-finding
   template<class Task>
   ExecStatus edgefinding(Space& home, int c, TaskArray<Task>& t);
 
@@ -696,10 +702,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class ManTask, class Cap>
-  class ManProp : public TaskProp<ManTask,Int::PC_INT_DOM> {
+  template<class ManTask, class Cap, class PL>
+  class ManProp : public TaskProp<ManTask,PL> {
   protected:
-    using TaskProp<ManTask,Int::PC_INT_DOM>::t;
+    using TaskProp<ManTask,PL>::t;
     /// Resource capacity
     Cap c;
     /// Constructor for creation
@@ -723,10 +729,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
    * Requires \code #include <gecode/int/cumulative.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class OptTask, class Cap>
-  class OptProp : public TaskProp<OptTask,Int::PC_INT_DOM> {
+  template<class OptTask, class Cap, class PL>
+  class OptProp : public TaskProp<OptTask,PL> {
   protected:
-    using TaskProp<OptTask,Int::PC_INT_DOM>::t;
+    using TaskProp<OptTask,PL>::t;
     /// Resource capacity
     Cap c;
     /// Constructor for creation
@@ -744,13 +750,25 @@ namespace Gecode { namespace Int { namespace Cumulative {
     virtual size_t dispose(Space& home);
   };
 
+  /// Post mandatory task propagator according to propagation level
+  template<class ManTask, class Cap>
+  ExecStatus
+  cmanpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl);
+
+  /// Post optional task propagator according to propagation level
+  template<class OptTask, class Cap>
+  ExecStatus
+  coptpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl);
+
 }}}
 
-#include <gecode/int/cumulative/basic.hpp>
+#include <gecode/int/cumulative/time-tabling.hpp>
+#include <gecode/int/cumulative/subsumption.hpp>
 #include <gecode/int/cumulative/overload.hpp>
 #include <gecode/int/cumulative/edge-finding.hpp>
 #include <gecode/int/cumulative/man-prop.hpp>
 #include <gecode/int/cumulative/opt-prop.hpp>
+#include <gecode/int/cumulative/post.hpp>
 
 #endif
 

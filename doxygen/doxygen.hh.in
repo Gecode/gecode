@@ -74,8 +74,8 @@
 /**
  * \defgroup TaskModelSearch Search engines
  *
- * Defines search engines. All search engines support recomputation. 
- * The behaviour of recomputation
+ * Defines search engines. All search engines (but Gecode::LDS, where
+ * it is not needed) support recomputation. The behaviour of recomputation
  * is controlled by a passing a search option object (see the class 
  * Gecode::Search::Options).
  *
@@ -115,6 +115,16 @@
 
 /**
  * \defgroup TaskDriver Script commandline driver
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskGroup Propagator and brancher groups
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskTrace Tracing constraint propagation
  * \ingroup TaskModel
  */
 
@@ -165,7 +175,7 @@
 /**
  * \defgroup FuncMem Memory management
  * \ingroup Func
- */  
+ */
 
 /**
  * \defgroup FuncThrow Gecode exceptions
@@ -181,7 +191,7 @@
  * In order to use them, one needs to include the appropriate header-file
  * as described in the class and function documentation.
  * \ingroup Func
- */  
+ */
 
 /**
  * \defgroup FuncIter Range and value iterators
@@ -200,7 +210,7 @@
  * \c val(). Range iterators provide access to the smallest, largest, and
  * width of the current range by \c min(), \c max(), and \c width()
  * respectively.
- * 
+ *
  * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup Func
  */
@@ -231,7 +241,7 @@
  * \defgroup FuncIterValues Value iterators
  *
  * A value iterator provides incremental access to a sequence of increasing
- * values. 
+ * values.
  *
  * Requires \code #include <gecode/iter.hh> \endcode
  * \ingroup FuncIter
@@ -258,14 +268,14 @@
  * \defgroup FuncKernelProp Generic propagators
  *
  * This module contains a description of all predefined generic
- * propagators. 
+ * propagators.
  * \ingroup Other
  */
 
 /**
  * \defgroup FuncIntProp Integer propagators
  *
- * This module contains a description of all predefined integer 
+ * This module contains a description of all predefined integer
  * propagators. They can be reused, for example, for rewriting
  * newly defined integer propagators into already available
  * propagators.
@@ -328,8 +338,8 @@
  *
  * This document provides reference information about
  * <A HREF="http://www.gecode.org">%Gecode</A>.
- * The documentation is structured into three major groups: 
- * getting started, common programming tasks, and  
+ * The documentation is structured into three major groups:
+ * getting started, common programming tasks, and
  * available functionality.
  *
  * This document corresponds to %Gecode version @VERSION@, please consult
@@ -337,9 +347,9 @@
  *
  * \section SecStart Getting started
  *
- * For your fist steps with %Gecode, including detailed instructions on 
- * installing the library and compiling against it, please refer to the 
- * document <A HREF="http://www.gecode.org/doc-latest/MPG.pdf">Modeling and 
+ * For your fist steps with %Gecode, including detailed instructions on
+ * installing the library and compiling against it, please refer to the
+ * document <A HREF="http://www.gecode.org/doc-latest/MPG.pdf">Modeling and
  * Programming with Gecode</A>.
  *
  * You may also want to have a look at our \ref PageNotation as well as
@@ -362,7 +372,7 @@
  *
  * The complete functionality can be found \ref Func "here".
  *
- * The part \ref Other documents existing propagators, variable 
+ * The part \ref Other documents existing propagators, variable
  * implementations, and so on which serves as documentation of examples.
  *
  * \section SecIndex List and index content
@@ -373,7 +383,7 @@
  *
  * The following lists and indices are available
  *  - \ref PageCodeStat
- *  - <a class="el" href="modules.html">List of all modules</a> 
+ *  - <a class="el" href="modules.html">List of all modules</a>
  *  - <a class="el" href="annotated.html">List of all classes including brief documentation</a>
  *  - <a class="el" href="namespaces.html">List of all namespaces including brief documentation</a>
  *  - <a class="el" href="files.html">List of all files</a>
@@ -393,17 +403,17 @@
  *
  * \section NotationArray Array notation
  *
- * We allow ourselves to refer to the \f$i\f$-th element of an array \f$x\f$ 
- * by \f$x_i\f$. The size of an array \f$x\f$ (either provided by a member 
+ * We allow ourselves to refer to the \f$i\f$-th element of an array \f$x\f$
+ * by \f$x_i\f$. The size of an array \f$x\f$ (either provided by a member
  * function \c %size() or clear from context) is denoted \f$|x|\f$.
  *
  * \section NotationHome The home space
  *
- * Many functions and member functions take an argument \a home of 
+ * Many functions and member functions take an argument \a home of
  * type \c Space&. The home space serves as manager to many
  * operations used by variables, views, propagators, spaces, and so
  * on. It provides
- * services such as failure management, propagation control, 
+ * services such as failure management, propagation control,
  * memory management, and so on. To keep the documentation concise
  * the home space is not documented for functions
  * and member functions.
@@ -462,7 +472,7 @@ one for BoolVar).
 
 The regular constraint has been renamed to extensional (after
 all, it is an extensionally specified constraint). The old name
-is still available in the MiniModel module. 
+is still available in the MiniModel module.
 
 If you want to use regular expressions, you have to add
    \code #include <gecode/int/minimodel.hh> \endcode
@@ -484,7 +494,7 @@ More information is available \ref TaskModelIntRelBool "here".
 
 \section SecChange2Branching Branching
 
-Values and types for selecting how to branch have been made uniform. 
+Values and types for selecting how to branch have been made uniform.
 Replace BVAL_* by INT_VAL_*, BVAR_* by INT_VAR_*, and so on.
 
 \section SecChange2GCC Global cardinality constraint
@@ -520,7 +530,7 @@ propagator implementations, etc, please consult the changelog.
 \section SecChange3Param Passing parameters
 
 Now everything is passed as reference (Space, Propagator,
-ModEventDelta, Advisor, Branching, and BranchingDesc). 
+ModEventDelta, Advisor, Branching, and BranchingDesc).
 
 The reason for this massive change is to be more C++ compliant
 and make the interfaces more consistent (at some places things were passed as
@@ -548,7 +558,7 @@ uniform interface, and the match constrained has been renamed to
 channel.
 
 The values for variable and value selection for branching have
-been made consistent and extended. 
+been made consistent and extended.
 The following values have been renamed:
  - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
  - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
@@ -600,7 +610,7 @@ details.
 \section SecChange4SizeBranch Branchings treat SIZE differently
 
 Variable selection for branching used the quotient of size
-divided by degree, accumulated failure count, or activity. 
+divided by degree, accumulated failure count, or activity.
 Now the inverse is used. That is, for example, it is not any longer
 INT_VAR_SIZE_DEGREE_MIN() but INT_VAR_DEGREE_SIZE_MAX() (that is,
 largest degree divided by size).
@@ -610,5 +620,33 @@ strategies using accumulated failure count and activity now could
 have run into division by zero issues. And just changing the
 implementation is not good enough because the values of these
 measures can now be exposed during tie-breaking.
+
+
+/**
+ * \page PageHowToChange_5 How to Change from %Gecode 4.4.0 to %Gecode 5.0.0
+ *
+
+As %Gecode 5.0.0 is a major revision, your programs that
+are written for %Gecode 4.4.0 are likely to require some
+modifications, yet very few, before they work again.
+
+\section SecChange5Handle Removed Brancher Handles
+
+Brancher handles have been removed as they can be expressed
+easily by brancher groups, please consult MPG for details.
+
+\section SecChange5IPL New Integer Propagation Levels
+
+The concept of integer consistency level "IntConLevel" has been
+replaced by integer propagation level "IntPropLevel". In most cases
+it should be sufficient to:
+ - search and replace ICL_ by IPL_.
+ - search and replace IntConLevel by IntPropLevel.
+ - use the commandline option -ipl rather than -icl.
+
+Integer propagation levels are more expressive than integer
+consistency levels. They can also express other propagation
+preferences such as speed, memory, basic, or advanced. Please
+consult MPG for details.
 
 */

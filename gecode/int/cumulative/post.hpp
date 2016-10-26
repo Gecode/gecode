@@ -1,14 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
- *
- *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2013
- *     Guido Tack, 2013
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,48 +35,38 @@
  *
  */
 
-namespace Gecode { namespace Search {
+namespace Gecode { namespace Int { namespace Cumulative {
 
-  template<class T>
-  forceinline
-  EngineBase<T>::EngineBase(Engine* e0) 
-    : e(e0) {}
-  template<class T>
-  forceinline T*
-  EngineBase<T>::next(void) {
-    return dynamic_cast<T*>(e->next());
-  }
-  template<class T>
-  forceinline Statistics
-  EngineBase<T>::statistics(void) const {
-    return e->statistics();
-  }
-  template<class T>
-  forceinline bool
-  EngineBase<T>::stopped(void) const {
-    return e->stopped();
-  }
-  template<class T>
-  forceinline NoGoods&
-  EngineBase<T>::nogoods(void) {
-    return e->nogoods();
-  }
-  template<class T>
-  forceinline
-  EngineBase<T>::~EngineBase(void) { 
-    delete e; 
-  }
-  template<class T>
-  forceinline void*
-  EngineBase<T>::operator new(size_t s) {
-    return heap.ralloc(s);
-  }
-  template<class T>
-  forceinline void
-  EngineBase<T>::operator delete(void* p) {
-    heap.rfree(p);
+  template<class ManTask, class Cap>
+  forceinline ExecStatus
+  manpost(Home home, Cap c, TaskArray<ManTask>& t, IntPropLevel ipl) {
+    switch (ba(ipl)) {
+    case IPL_BASIC: default:
+      return ManProp<ManTask,Cap,PLB>::post(home,c,t);
+    case IPL_ADVANCED:
+      return ManProp<ManTask,Cap,PLA>::post(home,c,t);
+    case IPL_BASIC_ADVANCED:
+      return ManProp<ManTask,Cap,PLBA>::post(home,c,t);
+    }
+    GECODE_NEVER;
+    return ES_OK;
   }
 
-}}
+  template<class OptTask, class Cap>
+  forceinline ExecStatus
+  optpost(Home home, Cap c, TaskArray<OptTask>& t, IntPropLevel ipl) {
+    switch (ba(ipl)) {
+    case IPL_BASIC: default:
+      return OptProp<OptTask,Cap,PLB>::post(home,c,t);
+    case IPL_ADVANCED:
+      return OptProp<OptTask,Cap,PLA>::post(home,c,t);
+    case IPL_BASIC_ADVANCED:
+      return OptProp<OptTask,Cap,PLBA>::post(home,c,t);
+    }
+    GECODE_NEVER;
+    return ES_OK;
+  }
 
-// STATISTICS: search-other
+}}}
+
+// STATISTICS: int-post

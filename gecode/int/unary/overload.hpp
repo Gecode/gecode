@@ -54,9 +54,9 @@ namespace Gecode { namespace Int { namespace Unary {
     }
     return ES_OK;
   }
-  
+
   // Overload checking for optional tasks
-  template<class OptTask>
+  template<class OptTask, class PL>
   ExecStatus
   overload(Space& home, Propagator& p, TaskArray<OptTask>& t) {
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
@@ -84,10 +84,10 @@ namespace Gecode { namespace Int { namespace Unary {
     }
 
     if (to_purge)
-      GECODE_ES_CHECK((purge<OptTask,Int::PC_INT_BND>(home,p,t)));
+      GECODE_ES_CHECK((purge<OptTask,PL>(home,p,t)));
     return ES_OK;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

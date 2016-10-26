@@ -81,6 +81,7 @@ namespace Gecode { namespace Support {
     if (WaitForSingleObject(w_h,INFINITE) != 0)
       throw OperatingSystemError("Event::wait[Windows::WaitForSingleObject]");
   }
+
   forceinline
   Event::~Event(void) {
     if (CloseHandle(w_h) == 0) {

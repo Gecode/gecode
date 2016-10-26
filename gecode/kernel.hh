@@ -123,7 +123,7 @@
  */
 
 #include <gecode/kernel/archive.hpp>
-#include <gecode/kernel/global-afc.hpp>
+#include <gecode/kernel/gpi.hpp>
 #include <gecode/kernel/core.hpp>
 #include <gecode/kernel/modevent.hpp>
 #include <gecode/kernel/range-list.hpp>
@@ -184,26 +184,27 @@ namespace Gecode {
    *
    * \ingroup TaskModel
    */
-  
-  /** 
+
+  /**
    * \defgroup TaskModelBranchExec Branch with a function
-   * 
+   *
    * This does not really branch (it just offers a single alternative) but
    * executes a single function during branching. A typical
-   * application is to post more constraints after another brancher 
+   * application is to post more constraints after another brancher
    * has finished.
    *
    * \ingroup TaskModelBranch
    */
   //@{
   /// Call the function \a f (with the current space as argument) for branching
-  GECODE_KERNEL_EXPORT BrancherHandle
+  GECODE_KERNEL_EXPORT void
   branch(Home home, void (*f)(Space& home));
   //@}
 
 }
 
 #include <gecode/kernel/propagator.hpp>
+#include <gecode/kernel/subscribed-propagators.hpp>
 #include <gecode/kernel/advisor.hpp>
 #include <gecode/kernel/afc.hpp>
 #include <gecode/kernel/branch-traits.hpp>
@@ -227,12 +228,33 @@ namespace Gecode {
 
 #include <gecode/kernel/var-imp.hpp>
 
+
+/*
+ * Trace support
+ *
+ */
+
+#include <gecode/kernel/trace-traits.hpp>
+#include <gecode/kernel/trace-filter.hpp>
+#include <gecode/kernel/tracer.hpp>
+#include <gecode/kernel/trace-recorder.hpp>
+
+
 /*
  * Allocator support
  *
  */
 
 #include <gecode/kernel/allocators.hpp>
+
+
+/*
+ * Printing support
+ *
+ */
+
+#include <gecode/kernel/print.hpp>
+
 
 #endif
 

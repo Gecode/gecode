@@ -280,6 +280,8 @@ namespace Gecode { namespace Set { namespace Int {
     virtual Actor* copy(Space& home,bool);
     /// Cost function (defined as PC_LINEAR_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Perform propagation

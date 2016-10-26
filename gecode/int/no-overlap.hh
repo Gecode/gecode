@@ -87,6 +87,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p);
   };
 
   /**
@@ -131,6 +133,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from dimension
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p);
   };
 
 }}}
@@ -180,6 +184,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p);
   };
 
   /**
@@ -211,6 +217,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     void subscribe(Space& home, Propagator& p);
     /// Cancel propagator \a p from box
     void cancel(Space& home, Propagator& p);
+    /// Schedule propagator \a p
+    void reschedule(Space& home, Propagator& p);
   };
 
 }}}
@@ -246,6 +254,8 @@ namespace Gecode { namespace Int { namespace NoOverlap {
   public:
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Destructor
     virtual size_t dispose(Space& home);
   };

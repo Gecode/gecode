@@ -815,6 +815,19 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class VX, class VY>
+  void
+  NaryOr<VX,VY>::reschedule(Space& home) {
+    y.reschedule(home,*this,PC_BOOL_VAL);
+    if (n_zero == x.size())
+      VX::schedule(home,*this,ME_BOOL_VAL);
+    for (int i=x.size(); i--; )
+      if (x[i].one()) {
+        VX::schedule(home,*this,ME_BOOL_VAL);
+        break;
+      }
+  }
+
+  template<class VX, class VY>
   forceinline size_t
   NaryOr<VX,VY>::dispose(Space& home) {
     Advisors<Advisor> as(c);
@@ -838,7 +851,7 @@ namespace Gecode { namespace Int { namespace Bool {
       // All views are zero
       GECODE_ME_CHECK(y.zero_none(home));
     } else {
-      // There is exactly one view which is one
+      // There is at least one view which is one
       GECODE_ME_CHECK(y.one_none(home));
     }
     return home.ES_SUBSUMED(*this);

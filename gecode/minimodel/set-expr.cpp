@@ -50,7 +50,7 @@ namespace Gecode {
              (t1==SetExpr::NT_CONST) || (t1==SetExpr::NT_LEXP);
     }
   }
-  
+
   /// %Node for set expression
   class SetExpr::Node {
   public:
@@ -214,7 +214,7 @@ namespace Gecode {
         break;
       case SetExpr::NT_LEXP:
         {
-          IntVar iv = u.a.x->e.post(home,ICL_DEF);
+          IntVar iv = u.a.x->e.post(home,IPL_DEF);
           if (neg) {
             SetVar ic(home,IntSet::empty,
                       IntSet(Set::Limits::min,Set::Limits::max));
@@ -363,7 +363,7 @@ namespace Gecode {
           case SRT_CMPL:
             invsrt = srt;
             break;
-          default: 
+          default:
             invsrt = srt;
             GECODE_NEVER;
           }
@@ -372,7 +372,7 @@ namespace Gecode {
         break;
       case SetExpr::NT_LEXP:
         {
-          IntVar iv = u.a.x->e.post(home,ICL_DEF);
+          IntVar iv = u.a.x->e.post(home,IPL_DEF);
           if (neg) {
             SetVar ic(home,IntSet::empty,
                       IntSet(Set::Limits::min,Set::Limits::max));
@@ -599,7 +599,7 @@ namespace Gecode {
     n->r    = NULL;
     n->e    = e;
   }
-  
+
   SetExpr::SetExpr(const SetExpr& l, NodeType t, const SetExpr& r)
     : n(new Node) {
     int ls = same(t,l.n->t) ? l.n->same : 1;
@@ -711,7 +711,7 @@ namespace Gecode {
     SetExpr r(x[0]);
     for (int i=1; i<x.size(); i++)
       r = (r | x[i]);
-    return r;    
+    return r;
   }
   SetExpr
   setdunion(const SetVarArgs& x) {
@@ -720,7 +720,7 @@ namespace Gecode {
     SetExpr r(x[0]);
     for (int i=1; i<x.size(); i++)
       r = (r + x[i]);
-    return r;    
+    return r;
   }
 
   namespace MiniModel {
@@ -739,7 +739,7 @@ namespace Gecode {
       SetNonLinIntExpr(const SetExpr& e0, SetNonLinIntExprType t0)
         : t(t0), e(e0) {}
       /// Post expression
-      virtual IntVar post(Home home, IntVar* ret, IntConLevel) const {
+      virtual IntVar post(Home home, IntVar* ret, IntPropLevel) const {
         IntVar m = result(home,ret);
         switch (t) {
         case SNLE_CARD:
@@ -758,31 +758,31 @@ namespace Gecode {
         return m;
       }
       virtual void post(Home home, IntRelType irt, int c,
-                        IntConLevel icl) const {
+                        IntPropLevel ipl) const {
         if (t==SNLE_CARD && irt!=IRT_NQ) {
           switch (irt) {
           case IRT_LQ:
-            cardinality(home, e.post(home), 
-                        0U, 
+            cardinality(home, e.post(home),
+                        0U,
                         static_cast<unsigned int>(c));
             break;
           case IRT_LE:
-            cardinality(home, e.post(home), 
-                        0U, 
+            cardinality(home, e.post(home),
+                        0U,
                         static_cast<unsigned int>(c-1));
             break;
           case IRT_GQ:
-            cardinality(home, e.post(home), 
-                        static_cast<unsigned int>(c), 
+            cardinality(home, e.post(home),
+                        static_cast<unsigned int>(c),
                         Set::Limits::card);
             break;
           case IRT_GR:
-            cardinality(home, e.post(home), 
-                        static_cast<unsigned int>(c+1), 
+            cardinality(home, e.post(home),
+                        static_cast<unsigned int>(c+1),
                         Set::Limits::card);
             break;
           case IRT_EQ:
-            cardinality(home, e.post(home), 
+            cardinality(home, e.post(home),
                         static_cast<unsigned int>(c),
                         static_cast<unsigned int>(c));
             break;
@@ -796,11 +796,11 @@ namespace Gecode {
           c = (irt==IRT_LQ ? c : c-1);
           dom(home, e.post(home), SRT_SUB, Set::Limits::min, c);
         } else {
-          rel(home, post(home,NULL,icl), irt, c);
+          rel(home, post(home,NULL,ipl), irt, c);
         }
       }
       virtual void post(Home home, IntRelType irt, int c,
-                        BoolVar b, IntConLevel icl) const {
+                        BoolVar b, IntPropLevel ipl) const {
         if (t==SNLE_MIN && (irt==IRT_GR || irt==IRT_GQ)) {
           c = (irt==IRT_GQ ? c : c+1);
           dom(home, e.post(home), SRT_SUB, c, Set::Limits::max, b);
@@ -808,7 +808,7 @@ namespace Gecode {
           c = (irt==IRT_LQ ? c : c-1);
           dom(home, e.post(home), SRT_SUB, Set::Limits::min, c, b);
         } else {
-          rel(home, post(home,NULL,icl), irt, c, b);
+          rel(home, post(home,NULL,ipl), irt, c, b);
         }
       }
     };
@@ -836,6 +836,7 @@ namespace Gecode {
    */
   SetVar
   expr(Home home, const SetExpr& e) {
+    PostInfo pi(home);
     if (!home.failed())
       return e.post(home);
     SetVar x(home,IntSet::empty,IntSet::empty);

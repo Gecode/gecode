@@ -167,7 +167,7 @@ namespace Gecode { namespace Gist {
 
     /// Return the number of children
     unsigned int getNumberOfChildren(void) const;
-    
+
   };
 
 }}

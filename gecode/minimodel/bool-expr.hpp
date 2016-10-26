@@ -42,14 +42,8 @@ namespace Gecode {
    *
    */
 
-  forceinline void*
-  BoolExpr::MiscExpr::operator new(size_t size) {
-    return heap.ralloc(size);
-  }
-  forceinline void
-  BoolExpr::MiscExpr::operator delete(void* p, size_t) {
-    heap.rfree(p);
-  }
+  forceinline
+  BoolExpr::Misc::Misc(void) {}
 
 }
 

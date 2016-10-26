@@ -1,5 +1,5 @@
-/****   , [ OptVar.hh ], 
-Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard 
+/****   , [ OptVar.hh ],
+Copyright (c) 2008 Universite d'Orleans - Jeremie Vautard
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@ THE SOFTWARE.
 #include <vector>
 
 /** \brief Abstract class for an Aggregator
-*   
+*
 *   An aggregator is defined as a function Multiset_of_int -> int. From an implementation
 *   point of view, this multiset is a vector of int.
 */
@@ -44,7 +44,7 @@ class QECODE_VTABLE_EXPORT AggregatorSum : public Aggregator{
 public:
     QECODE_EXPORT virtual int eval(vector<int> values) {
         int cpt=0;
-        for (int i=0;i<values.size();i++) 
+        for (int i=0;i<values.size();i++)
             cpt += values[i];
         return cpt;
     }
@@ -98,7 +98,7 @@ public:
 /** \brief Universal optimization variable (aggregator result)
 *
 * This class defines a universal optimization variable. Such a variable represents the result of an aggregator on the set of values that an inner
-* optimization variable takes in every sub-strategy of the current scope. 
+* optimization variable takes in every sub-strategy of the current scope.
 */
 class QECODE_VTABLE_EXPORT UnivOptVar : public OptVar {
 private:
@@ -108,7 +108,7 @@ private:
 public:
         /** \brief constructor for an universal optimization variable
         *
-        * Builds a universal optimzation variable at a given (universal) scope, that will represent the result of the agg aggregator on the set of all values 
+        * Builds a universal optimzation variable at a given (universal) scope, that will represent the result of the agg aggregator on the set of all values
         * taken by the optimization variable zevar in each substrategy below the current point.
         * @param scope the scope where this optimization variable belong
         * @param zevar the inner optimization variable that will be aggregated
@@ -119,6 +119,6 @@ public:
     QECODE_EXPORT virtual int getScope();
     virtual ~UnivOptVar() {delete fct;}
 };
-    
+
 #endif
 

@@ -37,7 +37,7 @@
 #
 #
 
-# 
+#
 # Compile changelog
 #
 
@@ -152,8 +152,8 @@ while ($l = <STDIN>) {
     $thanks  = $1;
       }
     }
-    
-    while (($l = <STDIN>) && 
+
+    while (($l = <STDIN>) &&
        !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
        $l =~ s/%Gecode/Gecode/g;
 #      chop $l;
@@ -176,7 +176,7 @@ while ($l = <STDIN>) {
     if (!($thanks eq "")) {
       $rb = $rb . ", thanks to $thanks";
     }
-    $text{"$mod-$what"} = 
+    $text{"$mod-$what"} =
       ($text{"$mod-$what"} . "    <li> $desc(" . $rb . ")</li>\n");
     goto LINE;
   }

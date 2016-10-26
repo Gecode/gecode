@@ -47,7 +47,7 @@ namespace Gecode {
 
   void
   rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y) {
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<SetView> xa(home,x);
     switch (op) {
     case SOT_UNION:
@@ -74,7 +74,7 @@ namespace Gecode {
 
   void
   rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
-    if (home.failed()) return;
+    GECODE_POST;
     Set::Limits::check(z, "Set::rel");
     ViewArray<SetView> xa(home,x);
     switch (op) {

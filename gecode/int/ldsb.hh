@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace LDSB {
    * \brief Find the location of an integer in a collection of
    * sequences.
    *
-   * 
+   *
    * Given an array \a indices of integers (of length \a n_values),
    * which represents a collection of sequences each of size \a
    * seq_size, find the location of the first occurrence of the value
@@ -148,7 +148,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Constructor for creation
     VariableSequenceSymmetryObject(ArgArray<VarImpBase*> vars, int ss);
     /// Destructor
-    ~VariableSequenceSymmetryObject(); 
+    ~VariableSequenceSymmetryObject();
   };
   /// Implementation of a value sequence symmetry at the modelling level
   class GECODE_INT_EXPORT ValueSequenceSymmetryObject : public SymmetryObject {
@@ -173,6 +173,8 @@ namespace Gecode { namespace Int { namespace LDSB {
     virtual SymmetryImp<View>* copy(Space& home, bool share) const = 0;
     /// Disposal
     virtual size_t dispose(Space& home) = 0;
+    /// Unused destructor
+    virtual ~SymmetryImp(void);
     /// Placement new operator
     static void* operator new(size_t s, Space& home);
     /// Return memory to space
@@ -309,7 +311,7 @@ namespace Gecode { namespace Int { namespace LDSB {
   public:
     /// Initialize choice for brancher \a b, position \a p, value \a
     /// n, and set of literals \a literals (of size \a nliterals)
-    LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n, 
+    LDSBChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n,
                const Literal* literals, int nliterals);
     /// Destructor
     ~LDSBChoice(void);
@@ -343,17 +345,17 @@ namespace Gecode { namespace Int { namespace LDSB {
     int _prevPos;
   protected:
     /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const BrancherHandle& bh,
-                                unsigned int b,
+    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
+                                unsigned int alt,
                                 typename View::VarType x, int i,
                                 const Val& m,
                                 std::ostream& o);
     /// Constructor for cloning \a b
     LDSBBrancher(Space& home, bool share, LDSBBrancher& b);
     /// Constructor for creation
-    LDSBBrancher(Home home, 
+    LDSBBrancher(Home home,
                  ViewArray<View>& x,
-                 ViewSel<View>* vs[n], 
+                 ViewSel<View>* vs[n],
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
                  BranchFilter bf,
@@ -370,14 +372,14 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function
-    static BrancherHandle post(Home home,
-                               ViewArray<View>& x,
-                               ViewSel<View>* vs[n],
-                               ValSelCommitBase<View,Val>* vsc,
-                               SymmetryImp<View>** syms,
-                               int nsyms,
-                               BranchFilter bf,
-                               VarValPrint vvp);
+    static void post(Home home,
+                     ViewArray<View>& x,
+                     ViewSel<View>* vs[n],
+                     ValSelCommitBase<View,Val>* vsc,
+                     SymmetryImp<View>** syms,
+                     int nsyms,
+                     BranchFilter bf,
+                     VarValPrint vvp);
   };
 
   /// Exclude value \v from variable view \x

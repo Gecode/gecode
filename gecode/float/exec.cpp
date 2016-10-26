@@ -42,13 +42,13 @@ namespace Gecode {
 
   void
   wait(Home home, FloatVar x, void (*c)(Space& home)) {
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Kernel::UnaryWait<Float::FloatView>::post(home,x,c));
   }
 
   void
   wait(Home home, const FloatVarArgs& x, void (*c)(Space& home)) {
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<Float::FloatView> xv(home,x);
     GECODE_ES_FAIL(Kernel::NaryWait<Float::FloatView>::post(home,xv,c));
   }

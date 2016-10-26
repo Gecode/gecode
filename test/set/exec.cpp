@@ -51,7 +51,7 @@ namespace Test { namespace Set {
      class Wait : public SetTest {
      public:
        /// Create and register test
-       Wait(int n) 
+       Wait(int n)
          : SetTest("Wait::"+str(n),n,Gecode::IntSet(0,n),false) {}
        /// Check whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {

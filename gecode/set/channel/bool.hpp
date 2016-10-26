@@ -102,7 +102,7 @@ namespace Gecode { namespace Set { namespace Channel {
         Gecode::Int::BoolView::schedule(home, *this, Gecode::Int::ME_BOOL_VAL);
       View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
       if (y.assigned()) {
-        if (y.glbSize() == y.glbMax()-y.glbMin()+1) {
+        if (y.glbSize()==static_cast<unsigned int>(y.glbMax()-y.glbMin()+1)) {
           new (&delta) SetDelta(y.glbMin(),y.glbMax(),1,0);
         } else {
           new (&delta) SetDelta(2,0,1,0);
@@ -131,6 +131,13 @@ namespace Gecode { namespace Set { namespace Channel {
   PropCost
   ChannelBool<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::quadratic(PropCost::LO, x.size()+1);
+  }
+
+  template<class View>
+  void
+  ChannelBool<View>::reschedule(Space& home) {
+    x.reschedule(home,*this,Gecode::Int::PC_BOOL_VAL);
+    View::schedule(home, *this, y.assigned() ? ME_SET_VAL : ME_SET_BB);
   }
 
   template<class View>
@@ -202,7 +209,7 @@ namespace Gecode { namespace Set { namespace Channel {
   ChannelBool<View>::advise(Space& home, Advisor& _a, const Delta& _d) {
     IndexAdvisor& a = static_cast<IndexAdvisor&>(_a);
     const SetDelta& d = static_cast<const SetDelta&>(_d);
-    
+
     ModEvent me = View::modevent(d);
     int index = a.index();
     if ( (running && index == -1 && me != ME_SET_VAL)

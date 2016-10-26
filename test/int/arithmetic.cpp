@@ -57,8 +57,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MultXYZ(const std::string& s, const Gecode::IntSet& d,
-               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Mult::XYZ::"+str(icl)+"::"+s,3,d,false,icl) {}
+               Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Mult::XYZ::"+str(ipl)+"::"+s,3,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -68,7 +68,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[2], icl);
+         Gecode::mult(home, x[0], x[1], x[2], ipl);
        }
      };
 
@@ -77,8 +77,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MultXXY(const std::string& s, const Gecode::IntSet& d,
-               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Mult::XXY::"+str(icl)+"::"+s,2,d,false,icl) {}
+               Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Mult::XXY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -88,7 +88,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[0], x[1], icl);
+         Gecode::mult(home, x[0], x[0], x[1], ipl);
        }
      };
 
@@ -97,8 +97,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MultXYX(const std::string& s, const Gecode::IntSet& d,
-               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Mult::XYX::"+str(icl)+"::"+s,2,d,false,icl) {}
+               Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Mult::XYX::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -108,7 +108,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[0], icl);
+         Gecode::mult(home, x[0], x[1], x[0], ipl);
        }
      };
 
@@ -117,8 +117,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MultXYY(const std::string& s, const Gecode::IntSet& d,
-               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Mult::XYY::"+str(icl)+"::"+s,2,d,false,icl) {}
+               Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Mult::XYY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -128,7 +128,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[1], x[1], icl);
+         Gecode::mult(home, x[0], x[1], x[1], ipl);
        }
      };
 
@@ -137,8 +137,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MultXXX(const std::string& s, const Gecode::IntSet& d,
-               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Mult::XXX::"+str(icl)+"::"+s,1,d,false,icl) {}
+               Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Mult::XXX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -148,7 +148,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::mult(home, x[0], x[0], x[0], icl);
+         Gecode::mult(home, x[0], x[0], x[0], ipl);
        }
      };
 
@@ -157,8 +157,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        SqrXY(const std::string& s, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Sqr::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Sqr::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -167,17 +167,17 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::sqr(home, x[0], x[1], icl);
+         Gecode::sqr(home, x[0], x[1], ipl);
        }
      };
-     
+
      /// %Test for squaring constraint with shared variables
      class SqrXX : public Test {
      public:
        /// Create and register test
        SqrXX(const std::string& s, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Sqr::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Sqr::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -185,7 +185,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::sqr(home, x[0], x[0], icl);
+         Gecode::sqr(home, x[0], x[0], ipl);
        }
      };
 
@@ -194,8 +194,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        SqrtXY(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Sqrt::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Sqrt::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -204,7 +204,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::sqrt(home, x[0], x[1], icl);
+         Gecode::sqrt(home, x[0], x[1], ipl);
        }
      };
 
@@ -213,8 +213,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        SqrtXX(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Sqrt::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Sqrt::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -222,7 +222,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::sqrt(home, x[0], x[0], icl);
+         Gecode::sqrt(home, x[0], x[0], ipl);
        }
      };
 
@@ -234,15 +234,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        PowXY(const std::string& s, int n0, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Pow::XY::"+str(n0)+"::"+str(icl)+"::"+s,
-                2,d,false,icl), n(n0) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Pow::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
+                2,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          long long int p = 1;
          for (int i=0; i<n; i++) {
            p *= x[0];
-           if ((p < Gecode::Int::Limits::min) || 
+           if ((p < Gecode::Int::Limits::min) ||
                (p > Gecode::Int::Limits::max))
              return false;
          }
@@ -252,9 +252,9 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (n > 4)
-           pow(home, x[0], n, x[1], icl);
+           pow(home, x[0], n, x[1], ipl);
          else
-           rel(home, expr(home, pow(x[0],n), icl), IRT_EQ, x[1], icl);
+           rel(home, expr(home, pow(x[0],n), ipl), IRT_EQ, x[1], ipl);
        }
      };
 
@@ -266,15 +266,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        PowXX(const std::string& s, int n0, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Pow::XX::"+str(n0)+"::"+str(icl)+"::"+s,
-                1,d,false,icl), n(n0) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Pow::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
+                1,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          long long int p = 1;
          for (int i=0; i<n; i++) {
            p *= x[0];
-           if ((p < Gecode::Int::Limits::min) || 
+           if ((p < Gecode::Int::Limits::min) ||
                (p > Gecode::Int::Limits::max))
              return false;
          }
@@ -282,7 +282,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::pow(home, x[0], n, x[0], icl);
+         Gecode::pow(home, x[0], n, x[0], ipl);
        }
      };
 
@@ -346,13 +346,13 @@ namespace Test { namespace Int {
      protected:
        /// The root index
        int n;
-       /// Floor 
+       /// Floor
      public:
        /// Create and register test
        NrootXY(const std::string& s, int n0, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Nroot::XY::"+str(n0)+"::"+str(icl)+"::"+s,
-                2,d,false,icl), n(n0) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Nroot::XY::"+str(n0)+"::"+str(ipl)+"::"+s,
+                2,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (n == 1)
@@ -360,15 +360,15 @@ namespace Test { namespace Int {
          if ((n % 2 == 0) && ((x[0] < 0) || (x[1] < 0)))
            return false;
          int r = (x[0] < 0) ? -cnroot(n,-x[0]) : fnroot(n,x[0]);
-         return r == x[1]; 
+         return r == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
          if (n > 4)
-           nroot(home, x[0], n, x[1], icl);
+           nroot(home, x[0], n, x[1], ipl);
          else
-           rel(home, expr(home, nroot(x[0],n), icl), IRT_EQ, x[1], icl);
+           rel(home, expr(home, nroot(x[0],n), ipl), IRT_EQ, x[1], ipl);
        }
      };
 
@@ -380,9 +380,9 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        NrootXX(const std::string& s, int n0, const Gecode::IntSet& d,
-               Gecode::IntConLevel icl)
-         : Test("Arithmetic::Nroot::XX::"+str(n0)+"::"+str(icl)+"::"+s,
-                1,d,false,icl), n(n0) {}
+               Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Nroot::XX::"+str(n0)+"::"+str(ipl)+"::"+s,
+                1,d,false,ipl), n(n0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if (n == 1)
@@ -395,7 +395,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::nroot(home, x[0], n, x[0], icl);
+         Gecode::nroot(home, x[0], n, x[0], ipl);
        }
      };
 
@@ -473,8 +473,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        AbsXY(const std::string& s, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Abs::XY::"+str(icl)+"::"+s,2,d,false,icl) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Abs::XY::"+str(ipl)+"::"+s,2,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -483,7 +483,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::abs(home, x[0], x[1], icl);
+         Gecode::abs(home, x[0], x[1], ipl);
        }
      };
 
@@ -492,8 +492,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        AbsXX(const std::string& s, const Gecode::IntSet& d,
-             Gecode::IntConLevel icl)
-         : Test("Arithmetic::Abs::XX::"+str(icl)+"::"+s,1,d,false,icl) {}
+             Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Abs::XX::"+str(ipl)+"::"+s,1,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          double d0 = static_cast<double>(x[0]);
@@ -502,7 +502,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::abs(home, x[0], x[0], icl);
+         Gecode::abs(home, x[0], x[0], ipl);
        }
      };
 
@@ -511,15 +511,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MinXYZ(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Bin::XYZ::"+str(icl)+"::"+s,3,d,false,icl) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Bin::XYZ::"+str(ipl)+"::"+s,3,d,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[2];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[2], icl);
+         Gecode::min(home, x[0], x[1], x[2], ipl);
        }
      };
 
@@ -528,15 +528,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MinXXY(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Bin::XYX::"+str(ipl)+"::"+s,2,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[0]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[0], x[1], icl);
+         Gecode::min(home, x[0], x[0], x[1], ipl);
        }
      };
 
@@ -545,15 +545,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MinXYX(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Bin::XYX::"+str(ipl)+"::"+s,2,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[0], icl);
+         Gecode::min(home, x[0], x[1], x[0], ipl);
        }
      };
 
@@ -562,15 +562,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MinXYY(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Bin::XYY::"+str(icl)+"::"+s,2,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Bin::XYY::"+str(ipl)+"::"+s,2,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[1]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[1], x[1], icl);
+         Gecode::min(home, x[0], x[1], x[1], ipl);
        }
      };
 
@@ -579,15 +579,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MinXXX(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Bin::XXX::"+str(icl)+"::"+s,1,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Bin::XXX::"+str(ipl)+"::"+s,1,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(x[0],x[0]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::min(home, x[0], x[0], x[0], icl);
+         Gecode::min(home, x[0], x[0], x[0], ipl);
        }
      };
 
@@ -596,8 +596,8 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxXYZ(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Bin::XYZ::"+str(icl)+"::"+s,3,d) {
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Bin::XYZ::"+str(ipl)+"::"+s,3,d) {
          contest = CTL_BOUNDS_Z;
        }
        /// %Test whether \a x is solution
@@ -606,7 +606,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[2], icl);
+         Gecode::max(home, x[0], x[1], x[2], ipl);
        }
      };
 
@@ -615,15 +615,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxXXY(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Bin::XXY::"+str(icl)+"::"+s,2,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Bin::XXY::"+str(ipl)+"::"+s,2,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[0]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[0], x[1], icl);
+         Gecode::max(home, x[0], x[0], x[1], ipl);
        }
      };
 
@@ -632,15 +632,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxXYX(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Bin::XYX::"+str(icl)+"::"+s,2,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Bin::XYX::"+str(ipl)+"::"+s,2,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[0], icl);
+         Gecode::max(home, x[0], x[1], x[0], ipl);
        }
      };
 
@@ -649,15 +649,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxXYY(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Bin::XYY::"+str(icl)+"::"+s,2,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Bin::XYY::"+str(ipl)+"::"+s,2,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[1]) == x[1];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[1], x[1], icl);
+         Gecode::max(home, x[0], x[1], x[1], ipl);
        }
      };
 
@@ -666,15 +666,15 @@ namespace Test { namespace Int {
      public:
        /// Create and register test
        MaxXXX(const std::string& s, const Gecode::IntSet& d,
-              Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Bin::XXX::"+str(icl)+"::"+s,1,d) {}
+              Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Bin::XXX::"+str(ipl)+"::"+s,1,d) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(x[0],x[0]) == x[0];
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::max(home, x[0], x[0], x[0], icl);
+         Gecode::max(home, x[0], x[0], x[0], ipl);
        }
      };
 
@@ -682,8 +682,8 @@ namespace Test { namespace Int {
      class MinNary : public Test {
      public:
        /// Create and register test
-       MinNary(Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Nary::"+str(icl),4,-4,4,false,icl) {}
+       MinNary(Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Nary::"+str(ipl),4,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[3];
@@ -692,7 +692,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::min(home, m, x[3], icl);
+         Gecode::min(home, m, x[3], ipl);
        }
      };
 
@@ -700,8 +700,8 @@ namespace Test { namespace Int {
      class MinNaryShared : public Test {
      public:
        /// Create and register test
-       MinNaryShared(Gecode::IntConLevel icl)
-         : Test("Arithmetic::Min::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
+       MinNaryShared(Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Min::Nary::Shared::"+str(ipl),3,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::min(std::min(x[0],x[1]), x[2]) == x[1];
@@ -710,7 +710,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::min(home, m, x[1], icl);
+         Gecode::min(home, m, x[1], ipl);
        }
      };
 
@@ -718,8 +718,8 @@ namespace Test { namespace Int {
      class MaxNary : public Test {
      public:
        /// Create and register test
-       MaxNary(Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Nary::"+str(icl),4,-4,4,false,icl) {}
+       MaxNary(Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Nary::"+str(ipl),4,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[3];
@@ -728,7 +728,7 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::max(home, m, x[3], icl);
+         Gecode::max(home, m, x[3], ipl);
        }
      };
 
@@ -736,8 +736,8 @@ namespace Test { namespace Int {
      class MaxNaryShared : public Test {
      public:
        /// Create and register test
-       MaxNaryShared(Gecode::IntConLevel icl)
-         : Test("Arithmetic::Max::Nary::Shared::"+str(icl),3,-4,4,false,icl) {}
+       MaxNaryShared(Gecode::IntPropLevel ipl)
+         : Test("Arithmetic::Max::Nary::Shared::"+str(ipl),3,-4,4,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return std::max(std::max(x[0],x[1]), x[2]) == x[1];
@@ -746,32 +746,35 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          Gecode::IntVarArgs m(3);
          m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-         Gecode::max(home, m, x[1], icl);
+         Gecode::max(home, m, x[1], ipl);
        }
      };
 
      /// %Test for argument maximum constraint
      class ArgMax : public Test {
      protected:
+       /// Offset to be used
+       int offset;
        /// Whether to use tie-breaking
        bool tiebreak;
      public:
        /// Create and register test
-       ArgMax(int n, bool tb)
-         : Test("Arithmetic::ArgMax::"+str(tb)+"::"+str(n),n+1,0,n+1,
-                false,tb ? Gecode::ICL_DEF : Gecode::ICL_DOM),
-           tiebreak(tb) {}
+       ArgMax(int n, int o, bool tb)
+         : Test("Arithmetic::ArgMax::"+str(o)+"::"+str(tb)+"::"+str(n),
+                n+1,0,n+1,
+                false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
+           offset(o), tiebreak(tb) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
-         if ((x[n] < 0) || (x[n] >= n))
+         if ((x[n] < offset) || (x[n] >= n + offset))
            return false;
          int m=x[0]; int p=0;
          for (int i=1; i<n; i++)
            if (x[i] > m) {
              p=i; m=x[i];
            }
-         return tiebreak ? (p == x[n]) : (m == x[x[n]]);
+         return tiebreak ? (p + offset == x[n]) : (m == x[x[n]-offset]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -779,7 +782,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs m(n);
          for (int i=0; i<n; i++)
            m[i]=x[i];
-         Gecode::argmax(home, m, x[n], tiebreak);
+         Gecode::argmax(home, m, offset, x[n], tiebreak);
        }
      };
 
@@ -822,25 +825,28 @@ namespace Test { namespace Int {
      /// %Test for argument minimum constraint
      class ArgMin : public Test {
      protected:
+       /// Which offset to use
+       int offset;
        /// Whether to use tie-breaking
        bool tiebreak;
      public:
        /// Create and register test
-       ArgMin(int n, bool tb)
-         : Test("Arithmetic::ArgMin::"+str(tb)+"::"+str(n),n+1,0,n+1,
-                false,tb ? Gecode::ICL_DEF : Gecode::ICL_DOM),
-           tiebreak(tb)  {}
+       ArgMin(int n, int o, bool tb)
+         : Test("Arithmetic::ArgMin::"+str(o)+"::"+str(tb)+"::"+str(n),
+                n+1,0,n+1,
+                false,tb ? Gecode::IPL_DEF : Gecode::IPL_DOM),
+           offset(o), tiebreak(tb)  {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size()-1;
-         if ((x[n] < 0) || (x[n] >= n))
+         if ((x[n] < offset) || (x[n] >= n + offset))
            return false;
          int m=x[0]; int p=0;
          for (int i=1; i<n; i++)
            if (x[i] < m) {
              p=i; m=x[i];
            }
-         return tiebreak ? (p == x[n]) : (m == x[x[n]]);
+         return tiebreak ? (p+offset == x[n]) : (m == x[x[n]-offset]);
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
@@ -848,7 +854,7 @@ namespace Test { namespace Int {
          Gecode::IntVarArgs m(n);
          for (int i=0; i<n; i++)
            m[i]=x[i];
-         Gecode::argmin(home, m, x[n], tiebreak);
+         Gecode::argmin(home, m, offset, x[n], tiebreak);
        }
      };
 
@@ -908,7 +914,7 @@ namespace Test { namespace Int {
            static_cast<int>(sqrt(static_cast<double>
                                  (Gecode::Int::Limits::max)))
          };
-         
+
          Gecode::IntSet a(va,7);
          Gecode::IntSet b(vb,9);
          Gecode::IntSet c(-8,8);
@@ -917,146 +923,151 @@ namespace Test { namespace Int {
          (void) new DivMod("A",a);
          (void) new DivMod("B",b);
          (void) new DivMod("C",c);
-         
+
          (void) new Div("A",a);
          (void) new Div("B",b);
          (void) new Div("C",c);
-         
+
          (void) new Mod("A",a);
          (void) new Mod("B",b);
          (void) new Mod("C",c);
 
 
-         for (IntConLevels icls; icls(); ++icls) 
-           if (icls.icl() != Gecode::ICL_VAL) {
-             (void) new MultXYZ("A",a,icls.icl());
-             (void) new MultXYZ("B",b,icls.icl());
-             (void) new MultXYZ("C",c,icls.icl());
+         for (IntPropLevels ipls; ipls(); ++ipls) {
+           (void) new AbsXY("A",a,ipls.ipl());
+           (void) new AbsXY("B",b,ipls.ipl());
+           (void) new AbsXY("C",c,ipls.ipl());
 
-             (void) new MultXXY("A",a,icls.icl());
-             (void) new MultXXY("B",b,icls.icl());
-             (void) new MultXXY("C",c,icls.icl());
+           (void) new AbsXX("A",a,ipls.ipl());
+           (void) new AbsXX("B",b,ipls.ipl());
+           (void) new AbsXX("C",c,ipls.ipl());
+           if (ipls.ipl() != Gecode::IPL_VAL) {
+             (void) new MultXYZ("A",a,ipls.ipl());
+             (void) new MultXYZ("B",b,ipls.ipl());
+             (void) new MultXYZ("C",c,ipls.ipl());
 
-             (void) new MultXYX("A",a,icls.icl());
-             (void) new MultXYX("B",b,icls.icl());
-             (void) new MultXYX("C",c,icls.icl());
+             (void) new MultXXY("A",a,ipls.ipl());
+             (void) new MultXXY("B",b,ipls.ipl());
+             (void) new MultXXY("C",c,ipls.ipl());
 
-             (void) new MultXYY("A",a,icls.icl());
-             (void) new MultXYY("B",b,icls.icl());
-             (void) new MultXYY("C",c,icls.icl());
+             (void) new MultXYX("A",a,ipls.ipl());
+             (void) new MultXYX("B",b,ipls.ipl());
+             (void) new MultXYX("C",c,ipls.ipl());
 
-             (void) new MultXXX("A",a,icls.icl());
-             (void) new MultXXX("B",b,icls.icl());
-             (void) new MultXXX("C",c,icls.icl());
+             (void) new MultXYY("A",a,ipls.ipl());
+             (void) new MultXYY("B",b,ipls.ipl());
+             (void) new MultXYY("C",c,ipls.ipl());
 
-             (void) new SqrXY("A",a,icls.icl());
-             (void) new SqrXY("B",b,icls.icl());
-             (void) new SqrXY("C",c,icls.icl());
+             (void) new MultXXX("A",a,ipls.ipl());
+             (void) new MultXXX("B",b,ipls.ipl());
+             (void) new MultXXX("C",c,ipls.ipl());
 
-             (void) new SqrXX("A",a,icls.icl());
-             (void) new SqrXX("B",b,icls.icl());
-             (void) new SqrXX("C",c,icls.icl());
+             (void) new SqrXY("A",a,ipls.ipl());
+             (void) new SqrXY("B",b,ipls.ipl());
+             (void) new SqrXY("C",c,ipls.ipl());
+
+             (void) new SqrXX("A",a,ipls.ipl());
+             (void) new SqrXX("B",b,ipls.ipl());
+             (void) new SqrXX("C",c,ipls.ipl());
 
              for (int n=0; n<=6; n++) {
-               (void) new PowXY("A",n,a,icls.icl());
-               (void) new PowXY("B",n,b,icls.icl());
-               (void) new PowXY("C",n,c,icls.icl());
-               (void) new PowXY("D",n,d,icls.icl());
-  
-               (void) new PowXX("A",n,a,icls.icl());
-               (void) new PowXX("B",n,b,icls.icl());
-               (void) new PowXX("C",n,c,icls.icl());
-               (void) new PowXX("D",n,d,icls.icl());
+               (void) new PowXY("A",n,a,ipls.ipl());
+               (void) new PowXY("B",n,b,ipls.ipl());
+               (void) new PowXY("C",n,c,ipls.ipl());
+               (void) new PowXY("D",n,d,ipls.ipl());
+
+               (void) new PowXX("A",n,a,ipls.ipl());
+               (void) new PowXX("B",n,b,ipls.ipl());
+               (void) new PowXX("C",n,c,ipls.ipl());
+               (void) new PowXX("D",n,d,ipls.ipl());
              }
 
              for (int n=1; n<=6; n++) {
-               (void) new NrootXY("A",n,a,icls.icl());
-               (void) new NrootXY("B",n,b,icls.icl());
-               (void) new NrootXY("C",n,c,icls.icl());
-               (void) new NrootXY("D",n,d,icls.icl());
-  
-               (void) new NrootXX("A",n,a,icls.icl());
-               (void) new NrootXX("B",n,b,icls.icl());
-               (void) new NrootXX("C",n,c,icls.icl());
-               (void) new NrootXX("D",n,d,icls.icl());
+               (void) new NrootXY("A",n,a,ipls.ipl());
+               (void) new NrootXY("B",n,b,ipls.ipl());
+               (void) new NrootXY("C",n,c,ipls.ipl());
+               (void) new NrootXY("D",n,d,ipls.ipl());
+
+               (void) new NrootXX("A",n,a,ipls.ipl());
+               (void) new NrootXX("B",n,b,ipls.ipl());
+               (void) new NrootXX("C",n,c,ipls.ipl());
+               (void) new NrootXX("D",n,d,ipls.ipl());
              }
 
              for (int n=30; n<=34; n++) {
-               (void) new PowXY("C",n,c,icls.icl());
-               (void) new PowXX("C",n,c,icls.icl());
-               (void) new NrootXY("C",n,c,icls.icl());
-               (void) new NrootXX("C",n,c,icls.icl());
+               (void) new PowXY("C",n,c,ipls.ipl());
+               (void) new PowXX("C",n,c,ipls.ipl());
+               (void) new NrootXY("C",n,c,ipls.ipl());
+               (void) new NrootXX("C",n,c,ipls.ipl());
              }
 
-             (void) new SqrtXY("A",a,icls.icl());
-             (void) new SqrtXY("B",b,icls.icl());
-             (void) new SqrtXY("C",c,icls.icl());
+             (void) new SqrtXY("A",a,ipls.ipl());
+             (void) new SqrtXY("B",b,ipls.ipl());
+             (void) new SqrtXY("C",c,ipls.ipl());
 
-             (void) new SqrtXX("A",a,icls.icl());
-             (void) new SqrtXX("B",b,icls.icl());
-             (void) new SqrtXX("C",c,icls.icl());
+             (void) new SqrtXX("A",a,ipls.ipl());
+             (void) new SqrtXX("B",b,ipls.ipl());
+             (void) new SqrtXX("C",c,ipls.ipl());
 
-             (void) new AbsXY("A",a,icls.icl());
-             (void) new AbsXY("B",b,icls.icl());
-             (void) new AbsXY("C",c,icls.icl());
+             (void) new MinXYZ("A",a,ipls.ipl());
+             (void) new MinXYZ("B",b,ipls.ipl());
+             (void) new MinXYZ("C",c,ipls.ipl());
 
-             (void) new AbsXX("A",a,icls.icl());
-             (void) new AbsXX("B",b,icls.icl());
-             (void) new AbsXX("C",c,icls.icl());
+             (void) new MinXXY("A",a,ipls.ipl());
+             (void) new MinXXY("B",b,ipls.ipl());
+             (void) new MinXXY("C",c,ipls.ipl());
 
-             (void) new MinXYZ("A",a,icls.icl());
-             (void) new MinXYZ("B",b,icls.icl());
-             (void) new MinXYZ("C",c,icls.icl());
+             (void) new MinXYX("A",a,ipls.ipl());
+             (void) new MinXYX("B",b,ipls.ipl());
+             (void) new MinXYX("C",c,ipls.ipl());
 
-             (void) new MinXXY("A",a,icls.icl());
-             (void) new MinXXY("B",b,icls.icl());
-             (void) new MinXXY("C",c,icls.icl());
+             (void) new MinXYY("A",a,ipls.ipl());
+             (void) new MinXYY("B",b,ipls.ipl());
+             (void) new MinXYY("C",c,ipls.ipl());
 
-             (void) new MinXYX("A",a,icls.icl());
-             (void) new MinXYX("B",b,icls.icl());
-             (void) new MinXYX("C",c,icls.icl());
+             (void) new MinXXX("A",a,ipls.ipl());
+             (void) new MinXXX("B",b,ipls.ipl());
+             (void) new MinXXX("C",c,ipls.ipl());
 
-             (void) new MinXYY("A",a,icls.icl());
-             (void) new MinXYY("B",b,icls.icl());
-             (void) new MinXYY("C",c,icls.icl());
+             (void) new MaxXYZ("A",a,ipls.ipl());
+             (void) new MaxXYZ("B",b,ipls.ipl());
+             (void) new MaxXYZ("C",c,ipls.ipl());
 
-             (void) new MinXXX("A",a,icls.icl());
-             (void) new MinXXX("B",b,icls.icl());
-             (void) new MinXXX("C",c,icls.icl());
+             (void) new MaxXXY("A",a,ipls.ipl());
+             (void) new MaxXXY("B",b,ipls.ipl());
+             (void) new MaxXXY("C",c,ipls.ipl());
 
-             (void) new MaxXYZ("A",a,icls.icl());
-             (void) new MaxXYZ("B",b,icls.icl());
-             (void) new MaxXYZ("C",c,icls.icl());
+             (void) new MaxXYX("A",a,ipls.ipl());
+             (void) new MaxXYX("B",b,ipls.ipl());
+             (void) new MaxXYX("C",c,ipls.ipl());
 
-             (void) new MaxXXY("A",a,icls.icl());
-             (void) new MaxXXY("B",b,icls.icl());
-             (void) new MaxXXY("C",c,icls.icl());
+             (void) new MaxXYY("A",a,ipls.ipl());
+             (void) new MaxXYY("B",b,ipls.ipl());
+             (void) new MaxXYY("C",c,ipls.ipl());
 
-             (void) new MaxXYX("A",a,icls.icl());
-             (void) new MaxXYX("B",b,icls.icl());
-             (void) new MaxXYX("C",c,icls.icl());
+             (void) new MaxXXX("A",a,ipls.ipl());
+             (void) new MaxXXX("B",b,ipls.ipl());
+             (void) new MaxXXX("C",c,ipls.ipl());
 
-             (void) new MaxXYY("A",a,icls.icl());
-             (void) new MaxXYY("B",b,icls.icl());
-             (void) new MaxXYY("C",c,icls.icl());
-
-             (void) new MaxXXX("A",a,icls.icl());
-             (void) new MaxXXX("B",b,icls.icl());
-             (void) new MaxXXX("C",c,icls.icl());
-
-             (void) new MinNary(icls.icl());
-             (void) new MinNaryShared(icls.icl());
-             (void) new MaxNary(icls.icl());
-             (void) new MaxNaryShared(icls.icl());
+             (void) new MinNary(ipls.ipl());
+             (void) new MinNaryShared(ipls.ipl());
+             (void) new MaxNary(ipls.ipl());
+             (void) new MaxNaryShared(ipls.ipl());
            }
+         }
+
          for (int i=1; i<5; i++) {
-           (void) new ArgMax(i,true);
+           (void) new ArgMax(i,0,true);
+           (void) new ArgMax(i,1,true);
            (void) new ArgMaxShared(i,true);
-           (void) new ArgMin(i,true);
+           (void) new ArgMin(i,0,true);
+           (void) new ArgMin(i,1,true);
            (void) new ArgMinShared(i,true);
-           (void) new ArgMax(i,false);
+           (void) new ArgMax(i,0,false);
+           (void) new ArgMax(i,1,false);
            (void) new ArgMaxShared(i,false);
-           (void) new ArgMin(i,false);
+           (void) new ArgMin(i,0,false);
+           (void) new ArgMin(i,1,false);
            (void) new ArgMinShared(i,false);
          }
        }

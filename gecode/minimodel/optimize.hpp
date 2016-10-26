@@ -53,14 +53,14 @@ namespace Gecode {
     : Space(share,s) {}
 
 
-#ifdef GECODE_HAS_FLOAT_VARS 
+#ifdef GECODE_HAS_FLOAT_VARS
 
   forceinline
   FloatMinimizeSpace::FloatMinimizeSpace(FloatNum s)
     : step(s) {}
 
   forceinline
-  FloatMinimizeSpace::FloatMinimizeSpace(bool share, 
+  FloatMinimizeSpace::FloatMinimizeSpace(bool share,
                                          FloatMinimizeSpace& s)
     : Space(share,s), step(s.step) {}
 
@@ -70,7 +70,7 @@ namespace Gecode {
     : step(s) {}
 
   forceinline
-  FloatMaximizeSpace::FloatMaximizeSpace(bool share, 
+  FloatMaximizeSpace::FloatMaximizeSpace(bool share,
                                          FloatMaximizeSpace& s)
     : Space(share,s), step(s.step) {}
 

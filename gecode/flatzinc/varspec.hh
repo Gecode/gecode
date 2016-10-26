@@ -85,7 +85,7 @@ namespace Gecode { namespace FlatZinc {
     }
     IntVarSpec(int i0, bool introduced, bool funcDep)
     : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true; i = i0;
+      alias = false; assigned = true; i = i0; domain = Option<AST::SetLit* >::none();
     }
     IntVarSpec(const Alias& eq, bool introduced, bool funcDep)
     : VarSpec(introduced,funcDep) {
@@ -107,7 +107,7 @@ namespace Gecode { namespace FlatZinc {
     }
     BoolVarSpec(bool b, bool introduced, bool funcDep)
     : VarSpec(introduced,funcDep) {
-      alias = false; assigned = true; i = b;
+      alias = false; assigned = true; i = b; domain = Option<AST::SetLit* >::none();
     }
     BoolVarSpec(const Alias& eq, bool introduced, bool funcDep)
     : VarSpec(introduced,funcDep) {

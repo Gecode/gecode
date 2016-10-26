@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  BoolBase<VY>::BoolBase(Home home, 
+  BoolBase<VY>::BoolBase(Home home,
                          int status0, ViewArray<BoolView>& x, VY y0)
     : Propagator(home), status(status0), c(home), y(y0) {
     y.subscribe(home,*this,PC_INT_BND);
@@ -61,6 +61,12 @@ namespace Gecode { namespace Int { namespace NValues {
   PropCost
   BoolBase<VY>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::unary(PropCost::LO);
+  }
+
+  template<class VY>
+  void
+  BoolBase<VY>::reschedule(Space& home) {
+    y.reschedule(home,*this,PC_INT_BND);
   }
 
   template<class VY>

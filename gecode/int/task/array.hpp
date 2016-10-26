@@ -43,7 +43,7 @@ namespace Gecode { namespace Int {
 
   template<class Task>
   forceinline
-  TaskArray<Task>::TaskArray(void) 
+  TaskArray<Task>::TaskArray(void)
     : n(0), t(NULL) {}
   template<class Task>
   forceinline
@@ -56,14 +56,14 @@ namespace Gecode { namespace Int {
   TaskArray<Task>::TaskArray(const TaskArray<Task>& a)
     : n(a.n), t(a.t) {}
   template<class Task>
-  forceinline const TaskArray<Task>& 
+  forceinline const TaskArray<Task>&
   TaskArray<Task>::operator =(const TaskArray<Task>& a) {
     n=a.n; t=a.t;
     return *this;
   }
 
   template<class Task>
-  forceinline int 
+  forceinline int
   TaskArray<Task>::size(void) const {
     return n;
   }
@@ -74,34 +74,41 @@ namespace Gecode { namespace Int {
   }
 
   template<class Task>
-  forceinline Task& 
+  forceinline Task&
   TaskArray<Task>::operator [](int i) {
     assert((i >= 0) && (i < n));
     return t[i];
   }
   template<class Task>
-  forceinline const Task& 
+  forceinline const Task&
   TaskArray<Task>::operator [](int i) const {
     assert((i >= 0) && (i < n));
     return t[i];
   }
 
   template<class Task>
-  inline void 
+  forceinline void
   TaskArray<Task>::subscribe(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
       t[i].subscribe(home,p,pc);
   }
 
   template<class Task>
-  inline void 
+  forceinline void
   TaskArray<Task>::cancel(Space& home, Propagator& p, PropCond pc) {
     for (int i=n; i--; )
       t[i].cancel(home,p,pc);
   }
 
   template<class Task>
-  forceinline void 
+  forceinline void
+  TaskArray<Task>::reschedule(Space& home, Propagator& p, PropCond pc) {
+    for (int i=n; i--; )
+      t[i].reschedule(home,p,pc);
+  }
+
+  template<class Task>
+  forceinline void
   TaskArray<Task>::update(Space& home, bool share, TaskArray& a) {
     n=a.n; t=home.alloc<Task>(n);
     for (int i=n; i--; )
@@ -111,7 +118,7 @@ namespace Gecode { namespace Int {
 
   template<class Char, class Traits, class Task>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os,
               const TaskArray<Task>& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
@@ -135,7 +142,7 @@ namespace Gecode { namespace Int {
     : t(t0) {}
 
   template<class TaskView>
-  forceinline int 
+  forceinline int
   TaskViewArray<TaskView>::size(void) const {
     return t.size();
   }
@@ -159,7 +166,7 @@ namespace Gecode { namespace Int {
 
   template<class Char, class Traits, class TaskView>
   std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os, 
+  operator <<(std::basic_ostream<Char,Traits>& os,
               const TaskViewArray<TaskView>& t) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);

@@ -71,6 +71,14 @@ namespace Gecode { namespace Set { namespace Element {
   }
 
   template<class View, class View0, class View1>
+  void
+  ElementIntersection<View,View0,View1>::reschedule(Space& home) {
+    x0.reschedule(home,*this, PC_SET_ANY);
+    x1.reschedule(home,*this, PC_SET_ANY);
+    iv.reschedule(home,*this, PC_SET_ANY);
+  }
+
+  template<class View, class View0, class View1>
   forceinline size_t
   ElementIntersection<View,View0,View1>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);

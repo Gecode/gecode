@@ -222,7 +222,7 @@ namespace Gecode { namespace Gist {
       setStatus(STOP);
     dirtyUp(na);
   }
-  
+
   void
   VisualNode::unstopAll(const NodeAllocator& na) {
     UnstopAllCursor c(this,na);
@@ -494,7 +494,7 @@ namespace Gecode { namespace Gist {
                              *nextShapeL, nextShapeL->depth());
         Layouter::merge<Extent*,Shape>(&currentShapeL[0],
                                        &currentShapeL[0], ldepth,
-                                       *nextShapeL, nextShapeL->depth(), 
+                                       *nextShapeL, nextShapeL->depth(),
                                        nextAlphaL);
         ldepth = std::max(ldepth,nextShapeL->depth());
         alpha[i].first = nextAlphaL - width;

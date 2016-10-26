@@ -53,8 +53,8 @@ namespace Test { namespace Int {
      class Int : public Test {
      public:
        /// Create and register test
-       Int(Gecode::IntConLevel icl)
-         : Test("Unshare::Int::"+str(icl),9,-1,1,false,icl) {}
+       Int(Gecode::IntPropLevel ipl)
+         : Test("Unshare::Int::"+str(ipl),9,-1,1,false,ipl) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == x[3]) &&
@@ -66,9 +66,9 @@ namespace Test { namespace Int {
          using namespace Gecode;
          IntVarArgs y(6);
          y[0]=x[0]; y[1]=y[3]=x[1]; y[2]=y[4]=y[5]=x[2];
-         unshare(home, y, icl);
+         unshare(home, y, ipl);
          for (int i=0; i<6; i++)
-           rel(home, y[i], IRT_EQ, x[3+i], ICL_DOM);
+           rel(home, y[i], IRT_EQ, x[3+i], IPL_DOM);
        }
      };
 
@@ -97,8 +97,8 @@ namespace Test { namespace Int {
        }
      };
 
-     Int i_bnd(Gecode::ICL_BND);
-     Int i_dom(Gecode::ICL_DOM);
+     Int i_bnd(Gecode::IPL_BND);
+     Int i_dom(Gecode::IPL_DOM);
 
      Bool b;
      //@}

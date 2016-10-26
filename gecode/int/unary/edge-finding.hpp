@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewArray<typename TaskTraits<Task>::TaskViewBwd> b(t);
     return edgefinding(home,b);
   }
-    
+
 }}}
 
 // STATISTICS: int-prop

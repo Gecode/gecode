@@ -81,7 +81,7 @@ namespace Gecode {
     static void* operator new(size_t size);
     /// Memory management
     static void  operator delete(void* p,size_t size);
-    
+
   };
 
   /*
@@ -144,7 +144,7 @@ namespace Gecode {
   }
 
   FloatVal
-  LinFloatExpr::Node::fill(Home home, 
+  LinFloatExpr::Node::fill(Home home,
                            Float::Linear::Term* tf) const {
     FloatVal d=0;
     fill(home,tf,1.0,d);
@@ -204,7 +204,7 @@ namespace Gecode {
       FloatVal c = n->fill(home,fts);
       Float::Linear::post(home, fts, n->n_float, frt, -c, b);
     }
-    
+
   }
 
   FloatVar
@@ -222,7 +222,7 @@ namespace Gecode {
     fts[n->n_float].x = x; fts[n->n_float].a = -1;
     Float::Linear::post(home, fts, n->n_float+1, FRT_EQ, -c);
     return x;
-    
+
   }
 
   LinFloatExpr::LinFloatExpr(void) :
@@ -343,8 +343,8 @@ namespace Gecode {
 
 
   void
-  LinFloatExpr::Node::fill(Home home, 
-                           Float::Linear::Term*& tf, 
+  LinFloatExpr::Node::fill(Home home,
+                           Float::Linear::Term*& tf,
                            FloatVal m, FloatVal& d) const {
     switch (this->t) {
     case NT_CONST:
@@ -513,7 +513,7 @@ namespace Gecode {
   operator *(const FloatVal& a, const FloatVar& x) {
     if (a == 0)
       return LinFloatExpr(0.0);
-    else if (x.assigned() && 
+    else if (x.assigned() &&
              Float::Limits::valid(a*x.val()))
       return LinFloatExpr(a*x.val());
     else
@@ -523,7 +523,7 @@ namespace Gecode {
   operator *(const FloatVar& x, const FloatVal& a) {
     if (a == 0)
       return LinFloatExpr(0.0);
-    else if (x.assigned() && 
+    else if (x.assigned() &&
              Float::Limits::valid(a*x.val()))
       return LinFloatExpr(a*x.val());
     else
@@ -548,6 +548,7 @@ namespace Gecode {
   sum(const FloatVarArgs& x) {
     return LinFloatExpr(x);
   }
+
   LinFloatExpr
   sum(const FloatValArgs& a, const FloatVarArgs& x) {
     return LinFloatExpr(a,x);
@@ -555,6 +556,7 @@ namespace Gecode {
 
   FloatVar
   expr(Home home, const LinFloatExpr& e) {
+    PostInfo pi(home);
     if (!home.failed())
       return e.post(home);
     FloatVar x(home,Float::Limits::min,Float::Limits::max);

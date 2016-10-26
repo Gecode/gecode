@@ -98,6 +98,36 @@ namespace Gecode { namespace Int { namespace Rel {
   };
 
   /**
+   * \brief Binary value propagation equality propagator
+   *
+   * Requires \code #include <gecode/int/rel.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View0, class View1>
+  class EqVal :
+    public MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL> {
+  protected:
+    using MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>::x0;
+    using MixBinaryPropagator<View0,PC_INT_VAL,View1,PC_INT_VAL>::x1;
+
+    /// Constructor for cloning \a p
+    EqVal(Space& home, bool share, EqVal<View0,View1>& p);
+  public:
+    /// Constructor for posting
+    EqVal(Home home, View0 x0, View1 x1);
+    /// Constructor for rewriting \a p during cloning
+    EqVal(Space& home, bool share, Propagator& p, View0 x0, View1 x1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space& home, bool share);
+    /// Cost function: low unary.
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Post value propagation propagator \f$ x_0 = x_1\f$
+    static  ExecStatus post(Home home, View0 x0, View1 x1);
+  };
+
+  /**
    * \brief Binary bounds consistent equality propagator
    *
    * Requires \code #include <gecode/int/rel.hh> \endcode
@@ -270,6 +300,8 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Perform propagation
@@ -609,6 +641,8 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for lexical order between \a x and \a y
@@ -632,7 +666,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Views not yet subscribed to
     ViewArray<View> x, y;
     /// Update subscription
-    ExecStatus resubscribe(Space& home, 
+    ExecStatus resubscribe(Space& home,
                            RelTest rt, View& x0, View& y0, View x1, View y1);
     /// Constructor for posting
     LexNq(Home home, ViewArray<View>& x, ViewArray<View>& y);
@@ -643,6 +677,8 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual Actor* copy(Space& home, bool share);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x\neq y\f$

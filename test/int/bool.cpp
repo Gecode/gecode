@@ -445,8 +445,8 @@ namespace Test { namespace Int {
      class ITE : public Test {
      public:
        /// Construct and register test
-       ITE(Gecode::IntConLevel icl)
-         : Test("ITE::"+str(icl),4,-4,4,false,icl) {}
+       ITE(Gecode::IntPropLevel ipl)
+         : Test("ITE::"+str(ipl),4,-4,4,false,ipl) {}
        /// Check whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          if ((x[0] < 0) || (x[0] > 1))
@@ -516,8 +516,8 @@ namespace Test { namespace Int {
      };
 
      Create c;
-     ITE itebnd(Gecode::ICL_BND);
-     ITE itedom(Gecode::ICL_DOM);
+     ITE itebnd(Gecode::IPL_BND);
+     ITE itedom(Gecode::IPL_DOM);
 
      //@}
 

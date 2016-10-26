@@ -72,7 +72,7 @@ namespace Gecode {
   /**
    * \brief Generic brancher by view selection
    *
-   * Defined for views of type \a View and \a n view selectors for 
+   * Defined for views of type \a View and \a n view selectors for
    * tie-breaking.
    */
   template<class View, int n>

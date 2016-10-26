@@ -60,20 +60,20 @@ namespace Gecode {
 
     /// Return a fresh yet equal integer variable
     forceinline ExecStatus
-    link(Home home, IntVar** x, int n, IntConLevel icl) {
+    link(Home home, IntVar** x, int n, IntPropLevel ipl) {
       if (n > 2) {
         ViewArray<IntView> y(home,n);
         y[0]=*x[0];
         for (int i=1; i<n; i++)
           y[i]=*x[i]=IntVar(home,x[0]->min(),x[0]->max());
-        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+        if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
           GECODE_ES_CHECK(Rel::NaryEqDom<IntView>::post(home,y));
         } else {
           GECODE_ES_CHECK(Rel::NaryEqBnd<IntView>::post(home,y));
         }
       } else if (n == 2) {
         *x[1]=IntVar(home,x[0]->min(),x[0]->max());
-        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+        if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
           GECODE_ES_CHECK((Rel::EqDom<IntView,IntView>::post
                            (home,*x[0],*x[1])));
         } else {
@@ -86,7 +86,7 @@ namespace Gecode {
 
     /// Return a fresh yet equal Boolean variable
     forceinline ExecStatus
-    link(Home home, BoolVar** x, int n, IntConLevel) {
+    link(Home home, BoolVar** x, int n, IntPropLevel) {
       if (n > 2) {
         ViewArray<BoolView> y(home,n);
         y[0]=*x[0];
@@ -103,7 +103,7 @@ namespace Gecode {
     /// Replace unassigned shared variables by fresh, yet equal variables
     template<class Var>
     forceinline ExecStatus
-    unshare(Home home, VarArgArray<Var>& x, IntConLevel icl) {
+    unshare(Home home, VarArgArray<Var>& x, IntPropLevel ipl) {
       int n=x.size();
       if (n < 2)
         return ES_OK;
@@ -122,7 +122,7 @@ namespace Gecode {
         while ((i<n) && y[j]->same(*y[i]))
           i++;
         if (!y[j]->assigned())
-          link(home,&y[j],i-j,icl);
+          link(home,&y[j],i-j,ipl);
       }
       return ES_OK;
     }
@@ -130,15 +130,15 @@ namespace Gecode {
   }}
 
   void
-  unshare(Home home, IntVarArgs& x, IntConLevel icl) {
-    if (home.failed()) return;
-    GECODE_ES_FAIL(Int::Unshare::unshare<IntVar>(home,x,icl));
+  unshare(Home home, IntVarArgs& x, IntPropLevel ipl) {
+    GECODE_POST;
+    GECODE_ES_FAIL(Int::Unshare::unshare<IntVar>(home,x,vbd(ipl)));
   }
 
   void
-  unshare(Home home, BoolVarArgs& x, IntConLevel) {
-    if (home.failed()) return;
-    GECODE_ES_FAIL(Int::Unshare::unshare<BoolVar>(home,x,ICL_DEF));
+  unshare(Home home, BoolVarArgs& x, IntPropLevel) {
+    GECODE_POST;
+    GECODE_ES_FAIL(Int::Unshare::unshare<BoolVar>(home,x,IPL_DEF));
   }
 
 }

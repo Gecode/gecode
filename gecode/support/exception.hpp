@@ -45,7 +45,9 @@ namespace Gecode {
    */
   class GECODE_SUPPORT_EXPORT Exception : public std::exception {
   private:
+    /// Maximal length of information string
     static const int li_max = 127;
+    /// Information string
     char li[li_max+1];
   public:
     /// Initialize with location \a l and information \a i
@@ -62,40 +64,24 @@ namespace Gecode {
 
   //@{
   /// %Exception: %Memory exhausted
-  class GECODE_VTABLE_EXPORT MemoryExhausted : public Exception {
+  class GECODE_SUPPORT_EXPORT MemoryExhausted : public Exception {
   public:
     /// Initialize
     MemoryExhausted(void);
   };
   /// %Exception: dynamic cast failed
-  class GECODE_VTABLE_EXPORT DynamicCastFailed : public Exception {
+  class GECODE_SUPPORT_EXPORT DynamicCastFailed : public Exception {
   public:
     /// Initialize with location \a l
     DynamicCastFailed(const char* l);
   };
   /// %Exception: operating system error
-  class GECODE_VTABLE_EXPORT OperatingSystemError : public Exception {
+  class GECODE_SUPPORT_EXPORT OperatingSystemError : public Exception {
   public:
     /// Initialize with location \a l
     OperatingSystemError(const char* l);
   };
   //@}
-
-  /*
-   * Classes for exceptions
-   *
-   */
-  inline
-  MemoryExhausted::MemoryExhausted(void)
-    : Exception("Memory","Heap memory exhausted") {}
-
-  inline
-  DynamicCastFailed::DynamicCastFailed(const char* l)
-    : Exception(l,"Attempt to perform dynamic_cast failed") {}
-
-  inline
-  OperatingSystemError::OperatingSystemError(const char* l)
-    : Exception(l,"Operating system error") {}
 
 }
 

@@ -12,5 +12,5 @@ diff -u -r boost/numeric/interval/detail/msvc_rounding_control.hpp /cygdrive/c/U
 +#endif
    static double to_int(const double& x) { return rint(x); }
  };
- 
+
 

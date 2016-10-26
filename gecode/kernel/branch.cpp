@@ -81,7 +81,7 @@ namespace Gecode {
       return new Description(*this,1);
     }
     /// Perform commit
-    virtual ExecStatus 
+    virtual ExecStatus
     commit(Space& home, const Choice&, unsigned int) {
       done = true;
       f(home);
@@ -89,7 +89,7 @@ namespace Gecode {
     }
     /// Print explanation
     virtual void
-    print(const Space&, const Choice&, unsigned int, 
+    print(const Space&, const Choice&, unsigned int,
           std::ostream& o) const {
       o << "FunctionBranch(" << f << ")";
     }
@@ -98,17 +98,15 @@ namespace Gecode {
       return new (home) FunctionBranch(home,share,*this);
     }
     /// Post brancher
-    static BrancherHandle post(Home home, void (*f)(Space&)) {
-      return *new (home) FunctionBranch(home,f);
+    static void post(Home home, void (*f)(Space&)) {
+      (void) new (home) FunctionBranch(home,f);
     }
   };
 
 
-  BrancherHandle
+  void
   branch(Home home, void (*f)(Space& home)) {
-    if (home.failed())
-      return BrancherHandle();
-    return FunctionBranch::post(home,f);
+    FunctionBranch::post(home,f);
   }
 
 }

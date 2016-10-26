@@ -178,7 +178,7 @@ namespace Gecode { namespace Gist {
     /// Constructor
     StatCursor(VisualNode* theNode,
                const VisualNode::NodeAllocator& na);
-    
+
     /// \name Cursor interface
     //@{
     /// Collect statistics
@@ -188,7 +188,7 @@ namespace Gecode { namespace Gist {
     /// Move cursor to the parent node
     void moveUpwards(void);
     //@}
-    
+
   };
 
   /// \brief A cursor that labels branches
@@ -221,13 +221,13 @@ namespace Gecode { namespace Gist {
     /// Constructor
     DisposeCursor(VisualNode* theNode,
                   const VisualNode::NodeAllocator& na);
-    
+
     /// \name Cursor interface
     //@{
     /// Dispose node
     void processCurrentNode(void);
     //@}
-    
+
   };
 
 }}

@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ * Contributing authors:
+ *     Matthias Balzer <matthias.balzer@itwm.fraunhofer.de>
+ *
  *  Copyright:
  *     Christian Schulte, 2008
+ *     Matthias Balzer, 2016
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -4315,6 +4319,53 @@ namespace Test { namespace Int {
       &bi870[0],&bi871[0],&bi872[0],&bi873[0],&bi874[0]
     };
 
+
+    /**
+     * \brief %Test for Boolean element (regression)
+     *
+     * Contributed by Matthias Balzer <matthias.balzer@itwm.fraunhofer.de>
+     */
+     class BoolElement : public Test {
+     protected:
+       /// How to post
+       int mode;
+     public:
+       /// Create and register test
+       BoolElement(const std::string& s, int m)
+         : Test("MiniModel::BoolElement::"+s,2,0,1), mode(m) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0] == 0) && (x[1] == 1);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         BoolVarArgs l(2);
+         l[0]=channel(home,x[0]); l[1]=channel(home,x[1]);
+         switch (mode) {
+         case 0:
+           {
+             BoolVar b0 = expr(home, !element(l,0));
+             BoolVar b1 = expr(home, element(l,1));
+             rel(home, b0 && b1);
+           }
+           break;
+         case 1:
+           {
+             BoolVar b = expr(home, !element(l,0) && element(l,1));
+             rel(home, b);
+           }
+           break;
+         case 2:
+           rel(home, !element(l,0) && element(l,1));
+           break;
+         default:
+           GECODE_NEVER;
+         }
+       }
+     };
+
+
     /// Help class to create and register tests
     class Create {
     public:
@@ -4332,6 +4383,9 @@ namespace Test { namespace Int {
           (void) new BoolExprInt(bi[i],s,1);
           (void) new BoolExprVar(bi[i],s);
         }
+        (void) new BoolElement("Expr::A",0);
+        (void) new BoolElement("Expr::B",1);
+        (void) new BoolElement("Rel",2);
       }
     };
 

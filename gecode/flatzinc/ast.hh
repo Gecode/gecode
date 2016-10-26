@@ -49,12 +49,12 @@
  */
 
 namespace Gecode { namespace FlatZinc { namespace AST {
-  
+
   class Call;
   class Array;
   class Atom;
   class SetLit;
-  
+
   /// %Exception signaling type error
   class GECODE_VTABLE_EXPORT TypeError {
   private:
@@ -64,7 +64,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     TypeError(std::string what) : _what(what) {}
     std::string what(void) const { return _what; }
   };
-  
+
   /**
    * \brief A node in a %FlatZinc abstract syntax tree
    */
@@ -72,7 +72,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
   public:
     /// Destructor
     virtual ~Node(void);
-    
+
     /// Append \a n to an array node
     void append(Node* n);
 
@@ -104,7 +104,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     int getFloatVar(void);
     /// Cast this node to a set variable node
     int getSetVar(void);
-    
+
     /// Cast this node to an integer node
     int getInt(void);
     /// Cast this node to a Boolean node
@@ -113,10 +113,10 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     double getFloat(void);
     /// Cast this node to a set literal node
     SetLit *getSet(void);
-    
+
     /// Cast this node to a string node
     std::string getString(void);
-    
+
     /// Test if node is an integer variable node
     bool isIntVar(void);
     /// Test if node is a Boolean variable node
@@ -139,7 +139,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     bool isSet(void);
     /// Test if node is an atom node
     bool isAtom(void);
-    
+
     /// Output string representation
     virtual void print(std::ostream&) = 0;
   };
@@ -188,7 +188,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "s()";
     }
   };
-  
+
   /// Variable node base class
   class GECODE_VTABLE_EXPORT Var : public Node {
   public:
@@ -230,7 +230,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "xs("<<i<<")";
     }
   };
-  
+
   /// %Array node
   class GECODE_VTABLE_EXPORT Array : public Node {
   public:
@@ -309,10 +309,10 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       os << "s(\"" << s << "\")";
     }
   };
-  
+
   inline
   Node::~Node(void) {}
-  
+
   inline void
   Node::append(Node* newNode) {
     Array* a = dynamic_cast<Array*>(this);
@@ -395,7 +395,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
     }
     throw TypeError("call expected");
   }
-  
+
   inline Array*
   Node::getArray(void) {
     if (Array* a = dynamic_cast<Array*>(this))
@@ -409,7 +409,7 @@ namespace Gecode { namespace FlatZinc { namespace AST {
       return a;
     throw TypeError("atom expected");
   }
-  
+
   inline std::string
   Node::getVarName(void) {
     if (Var* a = dynamic_cast<Var*>(this))

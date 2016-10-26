@@ -64,6 +64,8 @@ using namespace Gecode;
  */
 class QDimacsOptions : public Options {
 public:
+  /// Print strategy or not
+  Gecode::Driver::BoolOption _printStrategy;
   /// Parameter to decide between optimized quantified constraints or usual ones
   Driver::BoolOption _qConstraint;
   /// Name of the QDIMACS file to parse
@@ -71,10 +73,12 @@ public:
   /// Initialize options with file name \a s
   QDimacsOptions(const char* s, bool _qConstraint0)
     : Options(s),
+      _printStrategy("-printStrategy","Print strategy",false),
       _qConstraint("-quantifiedConstraints",
                    "whether to use quantified optimized constraints",
                    _qConstraint0)
   {
+    add(_printStrategy);
     add(_qConstraint);
   }
   /// Parse options from arguments \a argv (number is \a argc)
@@ -88,6 +92,10 @@ public:
     }
     filename = argv[1];
     argc--;
+  }
+  /// Return true if the strategy must be printed
+  bool printStrategy(void) const {
+    return _printStrategy.value();
   }
   /// Print help message
   virtual void help(void) {
@@ -147,7 +155,8 @@ private:
   QBoolVarArray qx;
 public:
   /// The actual problem
-  QDimacs(const QDimacsOptions& opt) : QSpaceInfo() {
+  QDimacs(const QDimacsOptions& opt) : Script(opt), QSpaceInfo() {
+    if (!opt.printStrategy()) strategyMethod(0); // disable build and print strategy
     parseQDIMACS(opt.filename.c_str(),opt._qConstraint.value());
   }
 

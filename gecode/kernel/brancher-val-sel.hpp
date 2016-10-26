@@ -64,7 +64,7 @@ namespace Gecode {
 
   /// User-defined value selection
   template<class View>
-  class ValSelFunction : 
+  class ValSelFunction :
     public ValSel<View,
                   typename BranchTraits<typename View::VarType>::ValType> {
   public:
@@ -115,8 +115,8 @@ namespace Gecode {
       v(function_cast<ValFunction>(vb.val())) {}
   template<class View>
   forceinline
-  ValSelFunction<View>::ValSelFunction(Space& home, bool shared, 
-                                       ValSelFunction<View>& vs) 
+  ValSelFunction<View>::ValSelFunction(Space& home, bool shared,
+                                       ValSelFunction<View>& vs)
     : ValSel<View,Val>(home,shared,vs), v(vs.v) {}
   template<class View>
   forceinline typename ValSelFunction<View>::Val

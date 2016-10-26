@@ -80,15 +80,15 @@ namespace Gecode { namespace Iter { namespace Values {
 
   template<class BS>
   forceinline
-  BitSet<BS>::BitSet(const BS& bs0) 
+  BitSet<BS>::BitSet(const BS& bs0)
     : bs(bs0), cur(bs.next(0)), limit(bs.size()) {
   }
 
   template<class BS>
   forceinline
-  BitSet<BS>::BitSet(const BS& bs0, int n, int m) 
-    : bs(bs0), 
-      cur(bs.next(static_cast<unsigned int>(n))), 
+  BitSet<BS>::BitSet(const BS& bs0, int n, int m)
+    : bs(bs0),
+      cur(bs.next(static_cast<unsigned int>(n))),
       limit(std::min(bs.size(),static_cast<unsigned int>(m)+1)) {
   }
 

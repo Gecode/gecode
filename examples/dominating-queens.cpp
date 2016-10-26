@@ -49,7 +49,7 @@ using namespace Gecode;
  *
  * The model is taken from: C. Bessiere, E. Hebrard, B. Hnich,
  * Z. Kiziltan, and T. Walsh, Filtering Algorithms for the NValue
- * Constraint, Constraints, 11(4), 271-293, 2006. 
+ * Constraint, Constraints, 11(4), 271-293, 2006.
  *
  * \ingroup Example
  *
@@ -118,7 +118,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  DominatingQueens(bool share, DominatingQueens& s) 
+  DominatingQueens(bool share, DominatingQueens& s)
     : IntMinimizeScript(share,s), n(s.n) {
     b.update(*this, share, s.b);
     q.update(*this, share, s.q);

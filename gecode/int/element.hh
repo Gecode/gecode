@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Prune values according to \a x1
     void prune_val(void);
     /// Prune when \a x1 is assigned
-    static ExecStatus assigned_val(Space& home, IntSharedArray& c, 
+    static ExecStatus assigned_val(Space& home, IntSharedArray& c,
                                    V0 x0, V1 x1);
     /// Constructor for cloning \a p
     Int(Space& home, bool shared, Int& p);
@@ -182,8 +182,10 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Const function (defined as high binary)
+    /// Cost function (defined as high binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$i_{x_0}=x_1\f$
@@ -217,6 +219,8 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -294,7 +298,7 @@ namespace Gecode { namespace Int { namespace Element {
    *
    * \ingroup FuncIntProp
    */
-  class GECODE_VTABLE_EXPORT Pair 
+  class GECODE_VTABLE_EXPORT Pair
     : public TernaryPropagator<IntView,PC_INT_DOM> {
   protected:
     using TernaryPropagator<IntView,PC_INT_DOM>::x0;
@@ -308,7 +312,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Constructor for posting
     Pair(Home home, IntView x0, IntView x1, IntView x2, int w);
     /// Post propagator \f$x_0+x_1\cdot w=x_2\f$
-    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2, 
+    static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2,
                            int w, int h);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT virtual Actor* copy(Space& home, bool share);

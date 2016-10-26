@@ -70,7 +70,7 @@ namespace Gecode {
       GECODE_ES_FAIL((Bool::QOr<BoolView,BoolView,BoolView>
                       ::post(home,qx0.x,qx0.q,qx0.r,qx1.x,qx1.q,qx1.r,x2)));
       break;
-    case BOT_IMP: 
+    case BOT_IMP:
       {
         NegBoolView n0(qx0.x);
         GECODE_ES_FAIL((Bool::QOr<NegBoolView,BoolView,BoolView>
@@ -104,13 +104,13 @@ namespace Gecode {
         QuantArgs qx(x.size());
         IntArgs rx(x.size());
         for (int i=x.size(); i--; ) {
-          NegBoolView n(x[i].x); xv[i]=n; qx[i]=x[i].q; rx[i]=x[i].r; 
+          NegBoolView n(x[i].x); xv[i]=n; qx[i]=x[i].q; rx[i]=x[i].r;
         }
         ViewArray<BoolView> yv(home,y.size());
         QuantArgs qy(y.size());
         IntArgs ry(y.size());
         for (int i=y.size(); i--; ) {
-          yv[i]=y[i].x; qy[i]=y[i].q; ry[i]=y[i].r; 
+          yv[i]=y[i].x; qy[i]=y[i].q; ry[i]=y[i].r;
         }
         GECODE_ES_FAIL((Bool::QClauseTrue<NegBoolView,BoolView>
                         ::post(home,xv,qx,rx,yv,qy,ry)));
@@ -137,13 +137,13 @@ namespace Gecode {
         QuantArgs qx(x.size());
         IntArgs rx(x.size());
         for (int i=x.size(); i--; ) {
-          xv[i]=x[i].x; qx[i]=x[i].q; rx[i]=x[i].r; 
+          xv[i]=x[i].x; qx[i]=x[i].q; rx[i]=x[i].r;
         }
         ViewArray<NegBoolView> yv(home,y.size());
         QuantArgs qy(y.size());
         IntArgs ry(y.size());
         for (int i=y.size(); i--; ) {
-          NegBoolView n(y[i].x); yv[i]=n; qy[i]=y[i].q; ry[i]=y[i].r; 
+          NegBoolView n(y[i].x); yv[i]=n; qy[i]=y[i].q; ry[i]=y[i].r;
         }
         GECODE_ES_FAIL((Bool::QClauseTrue<BoolView,NegBoolView>
                         ::post(home,xv,qx,rx,yv,qy,ry)));
@@ -166,13 +166,13 @@ namespace Gecode {
         QuantArgs qx(x.size());
         IntArgs rx(x.size());
         for (int i=x.size(); i--; ) {
-          NegBoolView n(x[i].x); xv[i]=n; qx[i]=x[i].q; rx[i]=x[i].r; 
+          NegBoolView n(x[i].x); xv[i]=n; qx[i]=x[i].q; rx[i]=x[i].r;
         }
         ViewArray<BoolView> yv(home,y.size());
         QuantArgs qy(y.size());
         IntArgs ry(y.size());
         for (int i=y.size(); i--; ) {
-          yv[i]=y[i].x; qy[i]=y[i].q; ry[i]=y[i].r; 
+          yv[i]=y[i].x; qy[i]=y[i].q; ry[i]=y[i].r;
         }
         NegBoolView nz(z);
         GECODE_ES_FAIL((Bool::QClause<NegBoolView,BoolView>
@@ -186,13 +186,13 @@ namespace Gecode {
         QuantArgs qx(x.size());
         IntArgs rx(x.size());
         for (int i=x.size(); i--; ) {
-          xv[i]=x[i].x; qx[i]=x[i].q; rx[i]=x[i].r; 
+          xv[i]=x[i].x; qx[i]=x[i].q; rx[i]=x[i].r;
         }
         ViewArray<NegBoolView> yv(home,y.size());
         QuantArgs qy(y.size());
         IntArgs ry(y.size());
         for (int i=y.size(); i--; ) {
-          NegBoolView n(y[i].x); yv[i]=n; qy[i]=y[i].q; ry[i]=y[i].r; 
+          NegBoolView n(y[i].x); yv[i]=n; qy[i]=y[i].q; ry[i]=y[i].r;
         }
         GECODE_ES_FAIL((Bool::QClause<BoolView,NegBoolView>
                         ::post(home,xv,qx,rx,yv,qy,ry,z)));

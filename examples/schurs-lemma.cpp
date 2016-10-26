@@ -73,9 +73,9 @@ public:
 /**
  * \brief %Example: Schur's lemma
  *
- * Put \f$n\f$ balls labeled \f${1,\ldots,n}\f$ into \f$c\f$ boxes such 
+ * Put \f$n\f$ balls labeled \f${1,\ldots,n}\f$ into \f$c\f$ boxes such
  * that for any triple of balls \f$\langle x, y, z\rangle\f$ with
- * \f$x+y = z\f$, not all are in the same box. 
+ * \f$x+y = z\f$, not all are in the same box.
  *
  * This problem has a solution for \f$c=3\f$ if \f$n < 14\f$.
  *
@@ -90,7 +90,7 @@ protected:
   IntVarArray box;
 public:
   /// Actual model
-  Schur(const SchurOptions& opt) 
+  Schur(const SchurOptions& opt)
     : Script(opt), box(*this,opt.n,1,opt.c) {
     int n = opt.n;
 

@@ -68,26 +68,29 @@ public:
       s(le[0]), e(le[1]), n(le[2]), d(le[3]),
       m(le[4]), o(le[5]), r(le[6]), y(le[7]);
 
+    if (opt.trace() != 0)
+      trace(*this, le, opt.trace());
+
     rel(*this, s, IRT_NQ, 0);
     rel(*this, m, IRT_NQ, 0);
 
-    distinct(*this, le, opt.icl());
+    distinct(*this, le, opt.ipl());
 
     switch (opt.model()) {
     case MODEL_SINGLE:
       rel(*this,            1000*s+100*e+10*n+d
                   +         1000*m+100*o+10*r+e
                  == 10000*m+1000*o+100*n+10*e+y,
-           opt.icl());
+           opt.ipl());
       break;
     case MODEL_CARRY:
       {
         IntVar c0(*this,0,1), c1(*this,0,1), c2(*this,0,1), c3(*this,0,1);
-        rel(*this,    d+e == y+10*c0, opt.icl());
-        rel(*this, c0+n+r == e+10*c1, opt.icl());
-        rel(*this, c1+e+o == n+10*c2, opt.icl());
-        rel(*this, c2+s+m == o+10*c3, opt.icl());
-        rel(*this, c3     == m,       opt.icl());
+        rel(*this,    d+e == y+10*c0, opt.ipl());
+        rel(*this, c0+n+r == e+10*c1, opt.ipl());
+        rel(*this, c1+e+o == n+10*c2, opt.ipl());
+        rel(*this, c2+s+m == o+10*c3, opt.ipl());
+        rel(*this, c3     == m,       opt.ipl());
       }
       break;
     default: GECODE_NEVER;

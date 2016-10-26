@@ -82,14 +82,6 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
 
-  forceinline
-  LinkMulti::LinkMulti(Space& home, bool share, LinkMulti& p)
-    : MixNaryOnePropagator<BoolView,PC_BOOL_NONE,IntView,PC_INT_DOM>
-  (home,share,p), status(S_NONE), o(p.o) {
-    assert(p.status == S_NONE);
-    c.update(home,share,p.c);
-  }
-
   Actor*
   LinkMulti::copy(Space& home, bool share) {
     return new (home) LinkMulti(home,share,*this);
@@ -111,6 +103,13 @@ namespace Gecode { namespace Int { namespace Channel {
       return PropCost::unary(PropCost::LO);
     else
       return PropCost::linear(PropCost::LO, x.size());
+  }
+
+  void
+  LinkMulti::reschedule(Space& home) {
+    if (status == S_ONE)
+      BoolView::schedule(home,*this,ME_BOOL_VAL);
+    y.reschedule(home,*this,PC_INT_DOM);
   }
 
   ExecStatus

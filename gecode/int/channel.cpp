@@ -44,7 +44,7 @@ namespace Gecode {
   void
   channel(Home home, const IntVarArgs& x, int xoff,
           const IntVarArgs& y, int yoff,
-          IntConLevel icl) {
+          IntPropLevel ipl) {
     using namespace Int;
     using namespace Channel;
     int n = x.size();
@@ -56,13 +56,13 @@ namespace Gecode {
     Limits::check(yoff,"Int::channel");
     if ((xoff < 0) || (yoff < 0))
       throw OutOfLimits("Int::channel");
-    if (home.failed()) return;
+    GECODE_POST;
     if (n == 0)
       return;
 
     if ((xoff < 2) && (yoff < 2) && (xoff == yoff)) {
-      if (icl == ICL_DOM) {
-        DomInfo<IntView,NoOffset<IntView> >* di = 
+      if (vbd(ipl) == IPL_DOM) {
+        DomInfo<IntView,NoOffset<IntView> >* di =
           static_cast<Space&>(home).
             alloc<DomInfo<IntView,NoOffset<IntView> > >(2*(n+xoff));
         for (int i=n; i--; ) {
@@ -84,7 +84,7 @@ namespace Gecode {
             ::post(home,n+xoff,di,noff,noff)));
         }
       } else {
-        ValInfo<IntView>* vi = 
+        ValInfo<IntView>* vi =
           static_cast<Space&>(home).alloc<ValInfo<IntView> >(2*(n+xoff));
         for (int i=n; i--; ) {
           vi[xoff+i    ].init(x[i],n+xoff);
@@ -106,8 +106,8 @@ namespace Gecode {
         }
       }
     } else {
-      if (icl == ICL_DOM) {
-        DomInfo<IntView,Offset>* di = 
+      if (vbd(ipl) == IPL_DOM) {
+        DomInfo<IntView,Offset>* di =
           static_cast<Space&>(home).alloc<DomInfo<IntView,Offset> >(2*n);
         for (int i=n; i--; ) {
           di[i  ].init(x[i],n);
@@ -123,7 +123,7 @@ namespace Gecode {
                           ::post(home,n,di,ox,oy)));
         }
       } else {
-        ValInfo<IntView>* vi = 
+        ValInfo<IntView>* vi =
           static_cast<Space&>(home).alloc<ValInfo<IntView> >(2*n);
         for (int i=n; i--; ) {
           vi[i  ].init(x[i],n);
@@ -145,24 +145,24 @@ namespace Gecode {
 
   void
   channel(Home home, const IntVarArgs& x, const IntVarArgs& y,
-          IntConLevel icl) {
-    channel(home, x, 0, y, 0, icl);
+          IntPropLevel ipl) {
+    channel(home, x, 0, y, 0, ipl);
   }
   void
-  channel(Home home, BoolVar x0, IntVar x1, IntConLevel) {
+  channel(Home home, BoolVar x0, IntVar x1, IntPropLevel) {
     using namespace Int;
-    if (home.failed()) return;
+    GECODE_POST;
     GECODE_ES_FAIL(Channel::LinkSingle::post(home,x0,x1));
   }
 
   void
   channel(Home home, const BoolVarArgs& x, IntVar y, int o,
-          IntConLevel) {
+          IntPropLevel) {
     using namespace Int;
     if (x.same(home))
       throw ArgumentSame("Int::channel");
     Limits::check(o,"Int::channel");
-    if (home.failed()) return;
+    GECODE_POST;
     ViewArray<BoolView> xv(home,x);
     GECODE_ES_FAIL(Channel::LinkMulti::post(home,xv,y,o));
   }

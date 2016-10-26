@@ -128,10 +128,10 @@ namespace Gecode { namespace Int { namespace LDSB {
             break;
           }
         }
-        
+
         if (active) {
           s.push(Literal(secondSeq[seqPos], l._value));
-        } 
+        }
       }
     }
     return dynamicStackToArgArray(s);

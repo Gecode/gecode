@@ -60,7 +60,7 @@ namespace Gecode { namespace Gist {
         bf.setBottomMargin(0);
         editor->textCursor().setBlockFormat(bf);
         editor->append(buffer);
-        buffer.clear();        
+        buffer.clear();
       }
       virtual int overflow(int v = std::char_traits<char>::eof()) {
         if (v == '\n') {
@@ -98,7 +98,7 @@ namespace Gecode { namespace Gist {
     font.setFamily(fontFamily);
     font.setFixedPitch(true);
     font.setPointSize(12);
-    
+
 
     editor = new QTextEdit;
     editor->setFont(font);
@@ -167,7 +167,7 @@ namespace Gecode { namespace Gist {
     if (stayOnTop->isChecked()) {
       setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     } else {
-      setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);      
+      setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
     }
     move(p);
     show();

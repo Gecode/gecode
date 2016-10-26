@@ -60,6 +60,7 @@ namespace Gecode {
         n->n = h->n;
         memcpy(&n->blocks[0], &h->blocks[0], h->n*sizeof(void*));
         hi = Support::mark(n);
+        heap.rfree(h);
         h = n;
       }
       h->blocks[h->n++] = p;

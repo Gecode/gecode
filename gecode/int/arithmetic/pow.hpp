@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class VA, class VB, class Ops>
   forceinline
   PowPlusBnd<VA,VB,Ops>::PowPlusBnd(Home home, VA x0, VB x1, const Ops& o)
-    : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1), 
+    : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1),
       ops(o) {}
 
   template<class VA, class VB, class Ops>
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class Ops>
   forceinline
-  PowPlusBnd<VA,VB,Ops>::PowPlusBnd(Space& home, bool share, 
+  PowPlusBnd<VA,VB,Ops>::PowPlusBnd(Space& home, bool share,
                                     PowPlusBnd<VA,VB,Ops>& p)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p),
       ops(p.ops) {}
@@ -139,14 +139,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ME_CHECK(x0.gq(home,-ops.fnroot(-x1.min())));
       GECODE_ME_CHECK(x1.lq(home,ops.pow(x0.max())));
       GECODE_ME_CHECK(x1.gq(home,ops.pow(x0.min())));
-    }       
+    }
     return ES_OK;
   }
 
   template<class Ops>
   forceinline
   PowBnd<Ops>::PowBnd(Home home, IntView x0, IntView x1, const Ops& o)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1), 
+    : BinaryPropagator<IntView,PC_INT_BND>(home,x0,x1),
       ops(o) {}
 
   template<class Ops>
@@ -192,10 +192,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (!ops.even() && ((x0.max() <= 0) || (x1.max() <= 0)))
       return PowPlusBnd<MinusView,MinusView,Ops>
         ::post(home,MinusView(x0),MinusView(x1),ops);
-    
+
     if (ops.even())
       GECODE_ME_CHECK(x1.gq(home,0));
-    
+
     assert((x0.min() < 0) && (x0.max() > 0));
 
     if (ops.even()) {
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((x0.min() >= 0) || ((x1.min() >= 0) && !ops.even()))
       GECODE_REWRITE(*this,(PowPlusBnd<IntView,IntView,Ops>
                             ::post(home(*this),x0,x1,ops)));
-    
+
     if (ops.even() && (x0.max() <= 0))
       GECODE_REWRITE(*this,(PowPlusBnd<MinusView,IntView,Ops>
                             ::post(home(*this),MinusView(x0),x1,ops)));
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
                                    MinusView(x1),ops)));
 
     GECODE_ES_CHECK(prop_pow_bnd<Ops>(home,x0,x1,ops));
-    
+
     if (x0.assigned() && x1.assigned())
       return (ops.pow(x0.val()) == x1.val()) ?
         home.ES_SUBSUMED(*this) : ES_FAILED;
@@ -309,7 +309,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class VA, class VB, class Ops>
   forceinline
   PowPlusDom<VA,VB,Ops>::PowPlusDom(Home home, VA x0, VB x1, const Ops& o)
-    : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,x0,x1), 
+    : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,x0,x1),
       ops(o) {}
 
   template<class VA, class VB, class Ops>
@@ -327,7 +327,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class Ops>
   forceinline
-  PowPlusDom<VA,VB,Ops>::PowPlusDom(Space& home, bool share, 
+  PowPlusDom<VA,VB,Ops>::PowPlusDom(Space& home, bool share,
                                     PowPlusDom<VA,VB,Ops>& p)
     : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,share,p),
       ops(p.ops) {}
@@ -430,10 +430,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (!ops.even() && ((x0.max() <= 0) || (x1.max() <= 0)))
       return PowPlusDom<MinusView,MinusView,Ops>
         ::post(home,MinusView(x0),MinusView(x1),ops);
-    
+
     if (ops.even())
       GECODE_ME_CHECK(x1.gq(home,0));
-    
+
     assert((x0.min() < 0) && (x0.max() > 0));
 
     if (ops.even()) {
@@ -451,7 +451,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class Ops>
   forceinline
   PowDom<Ops>::PowDom(Space& home, bool share, PowDom<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p), 
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
       ops(p.ops) {}
 
   template<class Ops>
@@ -477,11 +477,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if ((x0.min() >= 0) || ((x1.min() >= 0) && !ops.even()))
       GECODE_REWRITE(*this,(PowPlusDom<IntView,IntView,Ops>
                             ::post(home(*this),x0,x1,ops)));
-    
+
     if (ops.even() && (x0.max() <= 0))
       GECODE_REWRITE(*this,(PowPlusDom<MinusView,IntView,Ops>
                             ::post(home(*this),MinusView(x0),x1,ops)));
-    
+
     if (!ops.even() && ((x0.max() <= 0) || (x1.max() <= 0)))
       GECODE_REWRITE(*this,(PowPlusDom<MinusView,MinusView,Ops>
                             ::post(home(*this),MinusView(x0),
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     } else {
       ViewValues<IntView> v1(x1);
       ValuesMapNrootSigned<Ops> vmn(ops);
-      Iter::Values::Map<ViewValues<IntView>,ValuesMapNrootSigned<Ops> > 
+      Iter::Values::Map<ViewValues<IntView>,ValuesMapNrootSigned<Ops> >
         s1(v1,vmn);
       GECODE_ME_CHECK(x0.inter_v(home,s1,false));
     }

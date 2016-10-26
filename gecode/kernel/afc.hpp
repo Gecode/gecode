@@ -81,7 +81,7 @@ namespace Gecode {
     /// Destructor
     ~AFC(void);
     //@}
-    
+
     /// \name Information access
     //@{
     /// Return number of AFC values
@@ -126,7 +126,7 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  AFC::AFC(Home home, const VarArgArray<Var>& x, double d) 
+  AFC::AFC(Home home, const VarArgArray<Var>& x, double d)
     : n(x.size()) {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
@@ -141,7 +141,7 @@ namespace Gecode {
     static_cast<Space&>(home).afc_decay(d);
   }
 
-  
+
   forceinline
   AFC::AFC(const AFC& a)
     : n(a.n) {}
@@ -183,7 +183,7 @@ namespace Gecode {
     (void)a;
     return os << "AFC(no information available)";
   }
-  
+
 }
 
 // STATISTICS: kernel-branch

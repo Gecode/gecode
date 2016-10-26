@@ -47,127 +47,76 @@ namespace Gecode { namespace Float {
   //@{
 
   /// %Exception: Value out of limits
-  class GECODE_VTABLE_EXPORT OutOfLimits : public Exception {
+  class GECODE_FLOAT_EXPORT OutOfLimits : public Exception {
   public:
     /// Initialize with location \a l
     OutOfLimits(const char* l);
   };
 
   /// %Exception: %Variable created with empty domain
-  class GECODE_VTABLE_EXPORT VariableEmptyDomain : public Exception {
+  class GECODE_FLOAT_EXPORT VariableEmptyDomain : public Exception {
   public:
     /// Initialize with location \a l
     VariableEmptyDomain(const char* l);
   };
 
   /// %Exception: Too few arguments available in argument array
-  class GECODE_VTABLE_EXPORT TooFewArguments : public Exception  {
+  class GECODE_FLOAT_EXPORT TooFewArguments : public Exception  {
   public:
     /// Initialize with location \a l
     TooFewArguments(const char* l);
   };
 
   /// %Exception: Arguments are of different size
-  class GECODE_VTABLE_EXPORT ArgumentSizeMismatch : public Exception  {
+  class GECODE_FLOAT_EXPORT ArgumentSizeMismatch : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSizeMismatch(const char* l);
   };
 
   /// %Exception: Arguments contain same variable multiply
-  class GECODE_VTABLE_EXPORT ArgumentSame : public Exception  {
+  class GECODE_FLOAT_EXPORT ArgumentSame : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSame(const char* l);
   };
 
   /// %Exception: Unknown relation passed as argument
-  class GECODE_VTABLE_EXPORT UnknownRelation : public Exception  {
+  class GECODE_FLOAT_EXPORT UnknownRelation : public Exception  {
   public:
     /// Initialize with location \a l
     UnknownRelation(const char* l);
   };
 
   /// %Exception: Unknown operation passed as argument
-  class GECODE_VTABLE_EXPORT UnknownOperation : public Exception  {
+  class GECODE_FLOAT_EXPORT UnknownOperation : public Exception  {
   public:
     /// Initialize with location \a l
     UnknownOperation(const char* l);
   };
 
   /// %Exception: Illegal operation passed as argument
-  class GECODE_VTABLE_EXPORT IllegalOperation : public Exception  {
+  class GECODE_FLOAT_EXPORT IllegalOperation : public Exception  {
   public:
     /// Initialize with location \a l
     IllegalOperation(const char* l);
   };
 
   /// %Exception: Unknown value or variable selection passed as argument
-  class GECODE_VTABLE_EXPORT UnknownBranching : public Exception {
+  class GECODE_FLOAT_EXPORT UnknownBranching : public Exception {
   public:
     /// Initialize with location \a l
     UnknownBranching(const char* l);
   };
 
   /// %Exception: Attempt to access value of unassigned variable
-  class GECODE_VTABLE_EXPORT ValOfUnassignedVar : public Exception {
+  class GECODE_FLOAT_EXPORT ValOfUnassignedVar : public Exception {
   public:
     /// Initialize with location \a l
     ValOfUnassignedVar(const char* l);
   };
 
   //@}
-
-
-
-
-
-  /*
-   * Classes for exceptions raised by integer module
-   *
-   */
-
-  inline
-  OutOfLimits::OutOfLimits(const char* l)
-    : Exception(l,"Number out of limits") {}
-
-  inline
-  VariableEmptyDomain::VariableEmptyDomain(const char* l)
-    : Exception(l,"Attempt to create variable with empty domain") {}
-
-
-  inline
-  TooFewArguments::TooFewArguments(const char* l)
-    : Exception(l,"Passed argument array has too few elements") {}
-
-  inline
-  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
-    : Exception(l,"Sizes of argument arrays mismatch") {}
-
-  inline
-  ArgumentSame::ArgumentSame(const char* l)
-    : Exception(l,"Argument array contains same variable multiply") {}
-
-
-  inline
-  UnknownRelation::UnknownRelation(const char* l)
-    : Exception(l,"Unknown relation type") {}
-
-  inline
-  UnknownOperation::UnknownOperation(const char* l)
-    : Exception(l,"Unknown operation type") {}
-
-  inline
-  IllegalOperation::IllegalOperation(const char* l)
-    : Exception(l,"Illegal operation type") {}
-
-  inline
-  UnknownBranching::UnknownBranching(const char* l)
-    : Exception(l,"Unknown branching type") {}
-
-  inline
-  ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
-    : Exception(l,"Attempt to access value of unassigned variable") {}
 
 }}
 

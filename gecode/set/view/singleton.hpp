@@ -95,8 +95,8 @@ namespace Gecode { namespace Set {
   }
 
   forceinline unsigned int
-  SingletonView::glbSize(void) const { 
-    return x.assigned() ? 1U : 0U; 
+  SingletonView::glbSize(void) const {
+    return x.assigned() ? 1U : 0U;
   }
 
   forceinline unsigned int
@@ -234,6 +234,10 @@ namespace Gecode { namespace Set {
   forceinline void
   SingletonView::cancel(Space& home, Propagator& p, PropCond pc) {
     x.cancel(home,p,pc_settoint(pc));
+  }
+  forceinline void
+  SingletonView::reschedule(Space& home, Propagator& p, PropCond pc) {
+    x.reschedule(home,p,pc_settoint(pc));
   }
 
   forceinline void

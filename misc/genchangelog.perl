@@ -163,8 +163,8 @@ while ($l = <>) {
 	$author  = $1;
       }
     }
-    
-    while (($l = <>) && 
+
+    while (($l = <>) &&
 	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/) || ($l =~ /\[MORE\]/))) {
 	$desc = $desc . "        " . $l;
     }
@@ -175,7 +175,7 @@ while ($l = <>) {
     $desc =~ s/&/\\&/g;
     $desc =~ s/\n([ \t]*)\n/\n\1<br>\n/g;
     if ($l =~ /^\[MORE\]/) {
-	while (($l = <>) && 
+	while (($l = <>) &&
 	       !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
 	    $more = $more . "        " . $l;
 	}
@@ -197,17 +197,17 @@ while ($l = <>) {
     if (!($more eq "")) {
 	$more =~ s/^        //;
 	$more =~ s/[ \t\n\r]*$//;
-	$more = 
+	$more =
 	    "        <span id=lesslink" . $moreinfocnt . " style=\"display: inline\">\n" .
-	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", true)\">Details</a></span>\n" . 
+	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", true)\">Details</a></span>\n" .
 	    "        <span id=morelink" . $moreinfocnt . " style=\"display: none\">\n" .
-	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", false)\">Hide details</a></span>\n" . 
+	    "        <a href=\"javascript:showInfo(" . $moreinfocnt . ", false)\">Hide details</a></span>\n" .
 	    "        <div id=moreinfo" . $moreinfocnt . " style=\"display: none\">\n" .
 	    "        ". $more . "\n</div>\n";
 	$moreinfocnt = $moreinfocnt + 1;
     }
-    
-    $text{"$mod-$what"} = 
+
+    $text{"$mod-$what"} =
       ($text{"$mod-$what"} . "      - $desc (" . $rb . ")\n"
        . $more);
     goto LINE;
@@ -229,7 +229,7 @@ $versions
 %Gecode version numbers <em>x</em>.<em>y</em>.<em>z</em> change
 according to the following rules (of thumb):
 
- - when \\e z changes, the programming interfaces for 
+ - when \\e z changes, the programming interfaces for
    \\ref TaskModel, and \\ref TaskSearch remain
    stable and only minor additions or improvements are included.
  - when \\e y changes, the above mentioned interfaces might have changed

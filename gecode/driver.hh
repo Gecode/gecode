@@ -143,7 +143,7 @@ namespace Gecode {
       /// Delete heap-allocated copy of string \a s
       static void strdel(const char* s);
     };
-    
+
     /**
      * \brief String-valued option
      *
@@ -165,7 +165,7 @@ namespace Gecode {
       /// Destructor
       virtual ~StringValueOption(void);
     };
-  
+
 
     /**
      * \brief String-valued option (integer value defined by strings)
@@ -200,7 +200,7 @@ namespace Gecode {
       /// Destructor
       virtual ~StringOption(void);
     };
-  
+
 
     /**
      * \brief Integer option
@@ -282,8 +282,48 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Integer propagation level option
+     *
+     */
+    class GECODE_DRIVER_EXPORT IplOption : public BaseOption {
+    protected:
+      IntPropLevel cur; ///< Current value
+    public:
+      /// Initialize with default value \a ipl
+      IplOption(IntPropLevel ipl=IPL_DEF);
+      /// Set default level to \a l
+      void value(IntPropLevel l);
+      /// Return current option value
+      IntPropLevel value(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
+    /**
+     * \brief Trace flag option
+     *
+     */
+    class GECODE_DRIVER_EXPORT TraceOption : public BaseOption {
+    protected:
+      int cur; ///< Current value
+    public:
+      /// Initialize with no tracing
+      TraceOption(int f=0);
+      /// Set default trace flags to \a f
+      void value(int f);
+      /// Return current option value
+      int value(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
   }
-  
+
   /**
    * \brief Base class for script options
    * \ingroup TaskDriverCmd
@@ -309,7 +349,7 @@ namespace Gecode {
      *
      */
     void parse(int& argc, char* argv[]);
-    
+
     /// Return name of script
     const char* name(void) const;
     /// Set name of script
@@ -318,25 +358,25 @@ namespace Gecode {
     /// Destructor
     virtual ~BaseOptions(void);
   };
-  
+
   /**
    * \brief %Options for scripts
    * \ingroup TaskDriverCmd
    */
   class GECODE_DRIVER_EXPORT Options : public BaseOptions {
-  protected:    
+  protected:
     /// \name Model options
     //@{
     Driver::StringOption      _model;       ///< General model options
     Driver::StringOption      _symmetry;    ///< General symmetry options
     Driver::StringOption      _propagation; ///< Propagation options
-    Driver::StringOption      _icl;         ///< Integer consistency level
+    Driver::IplOption         _ipl;         ///< Integer propagation level
     Driver::StringOption      _branching;   ///< Branching options
     Driver::DoubleOption      _decay;       ///< Decay option
     Driver::UnsignedIntOption _seed;        ///< Seed option
     Driver::DoubleOption      _step;        ///< Step option
     //@}
-    
+
     /// \name Search options
     //@{
     Driver::StringOption      _search;        ///< Search options
@@ -344,17 +384,21 @@ namespace Gecode {
     Driver::DoubleOption      _threads;       ///< How many threads to use
     Driver::UnsignedIntOption _c_d;           ///< Copy recomputation distance
     Driver::UnsignedIntOption _a_d;           ///< Adaptive recomputation distance
+    Driver::UnsignedIntOption _d_l;           ///< Discrepancy limit for LDS
     Driver::UnsignedIntOption _node;          ///< Cutoff for number of nodes
     Driver::UnsignedIntOption _fail;          ///< Cutoff for number of failures
     Driver::UnsignedIntOption _time;          ///< Cutoff for time
+    Driver::UnsignedIntOption _assets;        ///< Number of assets in a portfolio
+    Driver::UnsignedIntOption _slice;         ///< Size of a portfolio slice
     Driver::StringOption      _restart;       ///< Restart method option
     Driver::DoubleOption      _r_base;        ///< Restart base
     Driver::UnsignedIntOption _r_scale;       ///< Restart scale factor
     Driver::BoolOption        _nogoods;       ///< Whether to use no-goods
     Driver::UnsignedIntOption _nogoods_limit; ///< Limit for no-good extraction
+    Driver::DoubleOption      _relax;         ///< Probability to relax variable
     Driver::BoolOption        _interrupt;     ///< Whether to catch SIGINT
     //@}
-    
+
     /// \name Execution options
     //@{
     Driver::StringOption      _mode;       ///< Script mode to run
@@ -363,12 +407,13 @@ namespace Gecode {
     Driver::BoolOption        _print_last; ///< Print only last solution found
     Driver::StringValueOption _out_file;   ///< Where to print solutions
     Driver::StringValueOption _log_file;   ///< Where to print statistics
+    Driver::TraceOption       _trace;      ///< Trace flags for tracing
     //@}
 
   public:
     /// Initialize options for script with name \a s
     Options(const char* s);
-    
+
     /// \name Model options
     //@{
     /// Set default model value
@@ -377,26 +422,26 @@ namespace Gecode {
     void model(int v, const char* o, const char* h = NULL);
     /// Return model value
     int model(void) const;
-    
+
     /// Set default symmetry value
     void symmetry(int v);
     /// Add symmetry option value for value \a v, string \a o, and help \a h
     void symmetry(int v, const char* o, const char* h = NULL);
     /// Return symmetry value
     int symmetry(void) const;
-    
+
     /// Set default propagation value
     void propagation(int v);
     /// Add propagation option value for value \a v, string \a o, and help \a h
     void propagation(int v, const char* o, const char* h = NULL);
     /// Return propagation value
     int propagation(void) const;
-    
-    /// Set default integer consistency level
-    void icl(IntConLevel i);
-    /// Return integer consistency level
-    IntConLevel icl(void) const;
-    
+
+    /// Set default integer propagation level
+    void ipl(IntPropLevel i);
+    /// Return integer propagation level
+    IntPropLevel ipl(void) const;
+
     /// Set default branching value
     void branching(int v);
     /// Add branching option value for value \a v, string \a o, and help \a h
@@ -419,7 +464,7 @@ namespace Gecode {
     /// Return step value
     double step(void) const;
     //@}
-    
+
     /// \name Search options
     //@{
     /// Set default search value
@@ -428,7 +473,7 @@ namespace Gecode {
     void search(int v, const char* o, const char* h = NULL);
     /// Return search value
     int search(void) const;
-    
+
     /// Set default number of solutions to search for
     void solutions(unsigned int n);
     /// Return number of solutions to search for
@@ -438,57 +483,77 @@ namespace Gecode {
     void threads(double n);
     /// Return number of parallel threads
     double threads(void) const;
-    
+
     /// Set default copy recomputation distance
     void c_d(unsigned int d);
     /// Return copy recomputation distance
     unsigned int c_d(void) const;
-    
+
     /// Set default adaptive recomputation distance
     void a_d(unsigned int d);
     /// Return adaptive recomputation distance
     unsigned int a_d(void) const;
-    
+
+    /// Set default discrepancy limit for LDS
+    void d_l(unsigned int d);
+    /// Return discrepancy limit for LDS
+    unsigned int d_l(void) const;
+
     /// Set default node cutoff
     void node(unsigned int n);
     /// Return node cutoff
     unsigned int node(void) const;
-    
+
     /// Set default failure cutoff
     void fail(unsigned int n);
     /// Return failure cutoff
     unsigned int fail(void) const;
-    
+
     /// Set default time cutoff
     void time(unsigned int t);
     /// Return time cutoff
     unsigned int time(void) const;
-    
+
+    /// Set default number of assets in a portfolio
+    void assets(unsigned int n);
+    /// Return slice size in a portfolio
+    unsigned int assets(void) const;
+
+    /// Set default slice size in a portfolio
+    void slice(unsigned int n);
+    /// Return slice size in a portfolio
+    unsigned int slice(void) const;
+
     /// Set default restart mode
     void restart(RestartMode r);
     /// Return restart mode
     RestartMode restart(void) const;
-    
+
     /// Set default restart base
     void restart_base(double base);
     /// Return restart base
     double restart_base(void) const;
-    
+
     /// Set default restart scale factor
     void restart_scale(unsigned int scale);
     /// Return restart scale factor
     unsigned int restart_scale(void) const;
-    
+
     /// Set default nogoods posting behavior
     void nogoods(bool b);
     /// Return whether nogoods are used
     bool nogoods(void) const;
-    
+
     /// Set default nogoods depth limit
     void nogoods_limit(unsigned int l);
     /// Return depth limit for nogoods
     unsigned int nogoods_limit(void) const;
-    
+
+    /// Set default relax probability
+    void relax(double d);
+    /// Return default relax probability
+    double relax(void) const;
+
     /// Set default interrupt behavior
     void interrupt(bool b);
     /// Return interrupt behavior
@@ -501,7 +566,7 @@ namespace Gecode {
     void mode(ScriptMode em);
     /// Return mode
     ScriptMode mode(void) const;
-    
+
     /// Set default number of samples
     void samples(unsigned int s);
     /// Return number of samples
@@ -511,7 +576,7 @@ namespace Gecode {
     void iterations(unsigned int i);
     /// Return number of iterations
     unsigned int iterations(void) const;
-    
+
     /// Set whether to print only last solution found
     void print_last(bool p);
     /// Return whether to print only last solution found
@@ -526,6 +591,11 @@ namespace Gecode {
     void log_file(const char* f);
     /// Get file name for Gecode stats
     const char* log_file(void) const;
+
+    /// Set trace flags
+    void trace(int f);
+    /// Return trace flags
+    int trace(void) const;
     //@}
 
 #ifdef GECODE_HAS_GIST
@@ -559,7 +629,7 @@ namespace Gecode {
       void move(Gist::Inspector* i);
       /// Add comparator
       void compare(Gist::Comparator* i);
-      
+
       /// Return click inspector number \a i, or NULL if it does not exist
       Gist::Inspector* click(unsigned int i) const;
       /// Return solution inspector number \a i, or NULL if it does not exist
@@ -586,7 +656,7 @@ namespace Gecode {
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
     void parse(int& argc, char* argv[]);
-    
+
     /// Set default size
     void size(unsigned int s);
     /// Return size
@@ -607,7 +677,7 @@ namespace Gecode {
     virtual void help(void);
     /// Parse options from arguments \a argv (number is \a argc)
     void parse(int& argc, char* argv[]);
-    
+
     /// Set default instance name
     void instance(const char* s);
     /// Return instance name
@@ -640,8 +710,8 @@ namespace Gecode { namespace Driver {
     virtual void print(std::ostream& os) const;
     /// Compare with \a s
     virtual void compare(const Space& home, std::ostream& os) const;
-    /// Choose output stream according to \a name
-    static std::ostream& select_ostream(const char* name, std::ofstream& ofs);
+    /// Choose output stream according to \a sn
+    static std::ostream& select_ostream(const char* sn, std::ofstream& ofs);
     /** Run script with search engine \a Engine and options \a opt
      *
      * In the solution and stat modes, search can be aborted by sending
@@ -655,23 +725,23 @@ namespace Gecode { namespace Driver {
     static void run(const Options& opt, Script* s=NULL);
   private:
     template<class Script, template<class> class Engine, class Options,
-             template<template<class> class,class> class Meta>
-             static void runMeta(const Options& opt, Script* s);
+             template<class, template<class> class> class Meta>
+    static void runMeta(const Options& opt, Script* s);
     /// Catch wrong definitions of copy constructor
     explicit ScriptBase(ScriptBase& e);
   };
 
-#ifdef GECODE_HAS_FLOAT_VARS 
+#ifdef GECODE_HAS_FLOAT_VARS
 
   /// Class to extract the step option value
   template<class BaseSpace>
   class ExtractStepOption : public BaseSpace {
   public:
     /// Constructor that extracts the step value
-    ExtractStepOption(const Options& opt) 
+    ExtractStepOption(const Options& opt)
       : BaseSpace(opt.step()) {}
     /// Constructor used for cloning
-    ExtractStepOption(bool share, BaseSpace& e) 
+    ExtractStepOption(bool share, BaseSpace& e)
       : BaseSpace(share,e) {}
   };
 
@@ -684,7 +754,7 @@ namespace Gecode { namespace Driver {
     /// Constructor
     IgnoreStepOption(const Options&) {}
     /// Constructor used for cloning
-    IgnoreStepOption(bool share, BaseSpace& e) 
+    IgnoreStepOption(bool share, BaseSpace& e)
       : BaseSpace(share,e) {}
   };
 
@@ -694,7 +764,7 @@ namespace Gecode { namespace Driver {
 #include <gecode/driver/script.hpp>
 
 namespace Gecode {
-  
+
   /**
    * \defgroup TaskDriverScript Script classes
    * \ingroup TaskDriver
@@ -704,46 +774,46 @@ namespace Gecode {
    * \brief Base-class for scripts
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<Space> > 
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<Space> >
     Script;
   /**
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MinimizeSpace> > 
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MinimizeSpace> >
     MinimizeScript;
   /**
    * \brief Base-class for scripts for finding solution of highest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MaximizeSpace> > 
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MaximizeSpace> >
     MaximizeScript;
   /**
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMinimizeSpace> > 
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMinimizeSpace> >
     IntMinimizeScript;
   /**
    * \brief Base-class for scripts for finding solution of highest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace> > 
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace> >
     IntMaximizeScript;
 
-#ifdef GECODE_HAS_FLOAT_VARS 
+#ifdef GECODE_HAS_FLOAT_VARS
 
   /**
    * \brief Base-class for scripts for finding solution of lowest float cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMinimizeSpace> > 
+  typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMinimizeSpace> >
     FloatMinimizeScript;
   /**
    * \brief Base-class for scripts for finding solution of highest float cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMaximizeSpace> > 
+  typedef Driver::ScriptBase<Driver::ExtractStepOption<FloatMaximizeSpace> >
     FloatMaximizeScript;
 
 #endif

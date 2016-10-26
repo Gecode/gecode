@@ -82,7 +82,7 @@ namespace Gecode { namespace Int {
     for (int j=t.size(); j--; )
       if (t[j].mandatory())
         map[i++]=j;
-    sort<OptTaskView,sto,!inc>(map,i,t); 
+    sort<OptTaskView,sto,!inc>(map,i,t);
     i--;
   }
 

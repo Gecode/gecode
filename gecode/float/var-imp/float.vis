@@ -63,7 +63,7 @@ Combine:        VAL=VAL, BND=VAL
 [ModEvent]
 Name:           BND=SUBSCRIBE
 Combine:        VAL=VAL, BND=BND
-  /** 
+  /**
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.

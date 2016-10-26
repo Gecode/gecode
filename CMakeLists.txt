@@ -190,6 +190,7 @@ set(GECODE_HAS_INT_VARS "/**/")
 set(GECODE_HAS_SET_VARS "/**/")
 set(GECODE_HAS_FLOAT_VARS "/**/")
 set(GECODE_STATIC_LIBS 1)
+set(GECODE_ALLOCATOR "/**/")
 
 check_cxx_compiler_flag(-fvisibility=hidden HAVE_VISIBILITY_HIDDEN_FLAG)
 if (HAVE_VISIBILITY_HIDDEN_FLAG)
@@ -402,7 +403,7 @@ if (FLOATSRC)
 endif ()
 
 add_executable(gecode-test ${TESTSRC} ${TESTHDR})
-target_link_libraries(gecode-test gecodeminimodel)
+target_link_libraries(gecode-test gecodeflatzinc gecodeminimodel)
 
 add_executable(fzn-gecode ${FLATZINCEXESRC})
 target_link_libraries(fzn-gecode gecodeflatzinc gecodegist gecodeminimodel gecodedriver)

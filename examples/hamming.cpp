@@ -55,25 +55,25 @@ private:
   Driver::UnsignedIntOption _distance;
   /// Number of symbols
   Driver::UnsignedIntOption _size;
-  
+
 public:
   /// Initialize options for example with name \a s
   HammingOptions(const char* s, unsigned int bits0,
                  unsigned int distance0, unsigned int size0)
-  : Options(s), 
-    _bits("-bits","word size in bits",bits0), 
+  : Options(s),
+    _bits("-bits","word size in bits",bits0),
     _distance("-distance","minimum distance",distance0),
     _size("-size","number of symbols",size0) {
     add(_bits); add(_distance); add(_size);
   }
-  
+
   /// Return number of bits
   unsigned int bits(void) const { return _bits.value(); }
   /// Return minimum distance
   unsigned int distance(void) const { return _distance.value(); }
   /// Return number of symbols
   unsigned int size(void) const { return _size.value(); }
-  
+
 };
 
 /**
@@ -94,9 +94,14 @@ private:
 public:
   /// Actual model
   Hamming(const HammingOptions& opt) :
-    Script(opt), 
+    Script(opt),
     x(*this,opt.size(),IntSet::empty,1,opt.bits()) {
+
+    if (opt.trace() != 0)
+      trace(*this, x, opt.trace());
+
     SetVarArgs cx(x.size());
+
     for (int i=x.size(); i--;)
       cx[i] = expr(*this, -x[i]);
 

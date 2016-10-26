@@ -42,17 +42,18 @@ namespace Gecode { namespace Int {
    *
    */
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_eq_bnd(View x, View y) {
+  rtest_eq_bnd(VX x, VY y) {
     if ((x.min() > y.max()) || (x.max() < y.min())) return RT_FALSE;
     return (x.assigned() && y.assigned()) ? RT_TRUE : RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   RelTest
-  rtest_eq_dom_check(View x, View y) {
-    ViewRanges<View> rx(x), ry(y);
+  rtest_eq_dom_check(VX x, VY y) {
+    ViewRanges<VX> rx(x);
+    ViewRanges<VY> ry(y);
     while (rx() && ry()) {
       if (rx.max() < ry.min()) {
         ++rx;
@@ -63,33 +64,33 @@ namespace Gecode { namespace Int {
     return RT_FALSE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_eq_dom(View x, View y) {
+  rtest_eq_dom(VX x, VY y) {
     RelTest rt = rtest_eq_bnd(x,y);
     if (rt != RT_MAYBE) return rt;
     return (x.range() && y.range()) ? RT_MAYBE : rtest_eq_dom_check(x,y);
   }
 
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_eq_bnd(View x, int n) {
+  rtest_eq_bnd(VX x, int n) {
     if ((n > x.max()) || (n < x.min())) return RT_FALSE;
     return x.assigned() ? RT_TRUE : RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX>
   RelTest
-  rtest_eq_dom_check(View x, int n) {
-    ViewRanges<View> rx(x);
+  rtest_eq_dom_check(VX x, int n) {
+    ViewRanges<VX> rx(x);
     while (n > rx.max()) ++rx;
     return (n >= rx.min()) ? RT_MAYBE : RT_FALSE;
   }
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_eq_dom(View x, int n) {
+  rtest_eq_dom(VX x, int n) {
     RelTest rt = rtest_eq_bnd(x,n);
     if (rt != RT_MAYBE) return rt;
     return x.range() ? RT_MAYBE : rtest_eq_dom_check(x,n);
@@ -102,17 +103,18 @@ namespace Gecode { namespace Int {
    *
    */
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_nq_bnd(View x, View y) {
+  rtest_nq_bnd(VX x, VY y) {
     if ((x.min() > y.max()) || (x.max() < y.min())) return RT_TRUE;
     return (x.assigned() && y.assigned()) ? RT_FALSE : RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_nq_dom_check(View x, View y) {
-    ViewRanges<View> rx(x), ry(y);
+  rtest_nq_dom_check(VX x, VY y) {
+    ViewRanges<VX> rx(x);
+    ViewRanges<VY> ry(y);
     while (rx() && ry()) {
       if (rx.max() < ry.min()) {
         ++rx;
@@ -123,33 +125,33 @@ namespace Gecode { namespace Int {
     return RT_TRUE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_nq_dom(View x, View y) {
+  rtest_nq_dom(VX x, VY y) {
     RelTest rt = rtest_nq_bnd(x,y);
     if (rt != RT_MAYBE) return rt;
     return (x.range() && y.range()) ? RT_MAYBE : rtest_nq_dom_check(x,y);
   }
 
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_nq_bnd(View x, int n) {
+  rtest_nq_bnd(VX x, int n) {
     if ((n > x.max()) || (n < x.min())) return RT_TRUE;
     return (x.assigned()) ? RT_FALSE : RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_nq_dom_check(View x, int n) {
-    ViewRanges<View> rx(x);
+  rtest_nq_dom_check(VX x, int n) {
+    ViewRanges<VX> rx(x);
     while (n > rx.max()) ++rx;
     return (n >= rx.min()) ? RT_MAYBE : RT_TRUE;
   }
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_nq_dom(View x, int n) {
+  rtest_nq_dom(VX x, int n) {
     RelTest rt = rtest_nq_bnd(x,n);
     if (rt != RT_MAYBE) return rt;
     return x.range() ? RT_MAYBE : rtest_nq_dom_check(x,n);
@@ -161,67 +163,67 @@ namespace Gecode { namespace Int {
    *
    */
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_lq(View x, int n) {
-    if (x.max() <= n) return RT_TRUE;
-    if (x.min() > n)  return RT_FALSE;
-    return RT_MAYBE;
-  }
-
-  template<class View>
-  forceinline RelTest
-  rtest_lq(View x, View y) {
+  rtest_lq(VX x, VY y) {
     if (x.max() <= y.min()) return RT_TRUE;
     if (x.min() > y.max())  return RT_FALSE;
     return RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_le(View x, int n) {
-    if (x.max() <  n) return RT_TRUE;
-    if (x.min() >= n) return RT_FALSE;
+  rtest_lq(VX x, int n) {
+    if (x.max() <= n) return RT_TRUE;
+    if (x.min() > n)  return RT_FALSE;
     return RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_le(View x, View y) {
+  rtest_le(VX x, VY y) {
     if (x.max() <  y.min()) return RT_TRUE;
     if (x.min() >= y.max()) return RT_FALSE;
     return RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_gq(View x, int n) {
-    if (x.max() <  n) return RT_FALSE;
-    if (x.min() >= n) return RT_TRUE;
+  rtest_le(VX x, int n) {
+    if (x.max() <  n) return RT_TRUE;
+    if (x.min() >= n) return RT_FALSE;
     return RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_gq(View x, View y) {
+  rtest_gq(VX x, VY y) {
     if (x.max() <  y.min()) return RT_FALSE;
     if (x.min() >= y.max()) return RT_TRUE;
     return RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX>
   forceinline RelTest
-  rtest_gr(View x, int n) {
-    if (x.max() <= n) return RT_FALSE;
-    if (x.min() >  n) return RT_TRUE;
+  rtest_gq(VX x, int n) {
+    if (x.max() <  n) return RT_FALSE;
+    if (x.min() >= n) return RT_TRUE;
     return RT_MAYBE;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline RelTest
-  rtest_gr(View x, View y) {
+  rtest_gr(VX x, VY y) {
     if (x.max() <= y.min()) return RT_FALSE;
     if (x.min() >  y.max()) return RT_TRUE;
+    return RT_MAYBE;
+  }
+
+  template<class VX>
+  forceinline RelTest
+  rtest_gr(VX x, int n) {
+    if (x.max() <= n) return RT_FALSE;
+    if (x.min() >  n) return RT_TRUE;
     return RT_MAYBE;
   }
 

@@ -109,7 +109,14 @@ namespace Test {
       std::cout << olog.str();
   }
 
-  std::vector<std::pair<bool, const char*> > testpat;
+  /// How to match
+  enum MatchType {
+    MT_ANY,  //< Positive match anywhere in string
+    MT_NOT,  //< Negative match
+    MT_FIRST //< Positive match at beginning
+  };
+
+  std::vector<std::pair<MatchType, const char*> > testpat;
   const char* startFrom = NULL;
   bool list = false;
 
@@ -133,9 +140,10 @@ namespace Test {
                   << "\t\tthe number of iterations" << std::endl
                   << "\t-test (string) default: (none)" << std::endl
                   << "\t\tsimple pattern for the tests to run" << std::endl
-                  << "\t\tprefixing the pattern with \"-\" negates the pattern"
+                  << "\t\tprefixing with \"-\" negates the pattern" << std::endl
+                  << "\t\tprefixing with \"^\" requires a match at the beginning" << std::endl
+                  << "\t\tmultiple pattern-options may be given" 
                   << std::endl
-                  << "\t\tmultiple pattern-options may be given" << std::endl
                   << "\t-start (string) default: (none)" << std::endl
                   << "\t\tsimple pattern for the first test to run" << std::endl
                   << "\t-log"
@@ -168,10 +176,12 @@ namespace Test {
         fixprob = static_cast<unsigned int>(atoi(argv[i]));
       } else if (!strcmp(argv[i],"-test")) {
         if (++i == argc) goto missing;
-        if (argv[i][0] == '-')
-          testpat.push_back(std::make_pair(true, argv[i] + 1));
+        if (argv[i][0] == '^')
+          testpat.push_back(std::make_pair(MT_FIRST, argv[i] + 1));
+        else if (argv[i][0] == '-')
+          testpat.push_back(std::make_pair(MT_NOT, argv[i] + 1));
         else
-          testpat.push_back(std::make_pair(false, argv[i]));
+          testpat.push_back(std::make_pair(MT_ANY, argv[i]));
       } else if (!strcmp(argv[i],"-start")) {
         if (++i == argc) goto missing;
         startFrom = argv[i];
@@ -232,12 +242,15 @@ main(int argc, char* argv[]) {
         bool match_found   = false;
         bool some_positive = false;
         for (unsigned int i = 0; i < testpat.size(); ++i) {
-          if (testpat[i].first) { // Negative pattern
+          if (testpat[i].first == MT_NOT) { // Negative pattern
             if (t->name().find(testpat[i].second) != std::string::npos)
               goto next;
           } else {               // Positive pattern
             some_positive = true;
-            if (t->name().find(testpat[i].second) != std::string::npos)
+            if (((testpat[i].first == MT_ANY) &&
+                 (t->name().find(testpat[i].second) != std::string::npos)) ||
+                ((testpat[i].first == MT_FIRST) &&
+                 (t->name().find(testpat[i].second) == 0)))
               match_found = true;
           }
         }

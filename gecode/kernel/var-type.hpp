@@ -42,7 +42,7 @@
  */
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int {
   const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
-  /** 
+  /**
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.
@@ -63,7 +63,7 @@ namespace Gecode { namespace Int {
    * assuming a ME_INT_BND modification event.
    */
   const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
-  /** 
+  /**
    * \brief Domain operation has changed the domain
    *
    * Note that this implies that the domain has not resulted in a value
@@ -102,7 +102,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /**
    * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
    * \ingroup TaskActorInt
@@ -128,7 +128,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /**
    * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
    * \ingroup TaskActorSet
@@ -250,7 +250,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /**
    * \defgroup TaskActorFloatMEPC Float modification events and propagation conditions
    * \ingroup TaskActorFloat
@@ -262,7 +262,7 @@ namespace Gecode { namespace Float {
   const Gecode::ModEvent ME_FLOAT_NONE = Gecode::ME_GEN_NONE;
   /// Domain operation has resulted in a value (assigned variable)
   const Gecode::ModEvent ME_FLOAT_VAL = Gecode::ME_GEN_ASSIGNED;
-  /** 
+  /**
    * \brief Domain operation has changed the minimum or maximum of the domain
    *
    * Note that this implies that the domain has not resulted in a value.
@@ -294,7 +294,7 @@ namespace Gecode { namespace Float {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Configuration for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #else
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Dummy configuration for Int-variable implementations
   class IntVarImpConf {
   public:
@@ -333,7 +333,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Configuration for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -358,7 +358,7 @@ namespace Gecode { namespace Int {
   };
 }}
 #else
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   /// Dummy configuration for Bool-variable implementations
   class BoolVarImpConf {
   public:
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /// Configuration for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -397,7 +397,7 @@ namespace Gecode { namespace Set {
   };
 }}
 #else
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   /// Dummy configuration for Set-variable implementations
   class SetVarImpConf {
   public:
@@ -411,7 +411,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /// Configuration for Float-variable implementations
   class FloatVarImpConf {
   public:
@@ -436,7 +436,7 @@ namespace Gecode { namespace Float {
   };
 }}
 #else
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   /// Dummy configuration for Float-variable implementations
   class FloatVarImpConf {
   public:
@@ -466,7 +466,7 @@ namespace Gecode {
 }
 
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   forceinline Gecode::ModEvent
   IntVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c = (
@@ -542,7 +542,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_INT_VARS
-namespace Gecode { namespace Int { 
+namespace Gecode { namespace Int {
   forceinline Gecode::ModEvent
   BoolVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     return me1 | me2;
@@ -565,7 +565,7 @@ namespace Gecode { namespace Int {
 }}
 #endif
 #ifdef GECODE_HAS_SET_VARS
-namespace Gecode { namespace Set { 
+namespace Gecode { namespace Set {
   forceinline Gecode::ModEvent
   SetVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c[ME_SET_CBB+1][ME_SET_CBB+1] = {
@@ -833,7 +833,7 @@ namespace Gecode { namespace Set {
 }}
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-namespace Gecode { namespace Float { 
+namespace Gecode { namespace Float {
   forceinline Gecode::ModEvent
   FloatVarImpConf::me_combine(Gecode::ModEvent me1, Gecode::ModEvent me2) {
     static const Gecode::ModEvent me_c = (

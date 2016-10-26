@@ -43,8 +43,8 @@ namespace Gecode {
 
   void
   linear(Home home, const BoolVarArgs& x, IntRelType irt, int c,
-         IntConLevel icl) {
-    if (home.failed()) return;
+         IntPropLevel ipl) {
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -53,13 +53,13 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,c,icl);
+    Linear::post(home,t,n,irt,c,ipl);
   }
 
   void
   linear(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         IntConLevel icl) {
-    if (home.failed()) return;
+         IntPropLevel ipl) {
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -68,17 +68,17 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,y,0,icl);
+    Linear::post(home,t,n,irt,y,0,ipl);
   }
 
   void
   linear(Home home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType irt, int c,
-         IntConLevel icl) {
+         IntPropLevel ipl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home.failed())
-      return;
+
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -87,17 +87,17 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,c,icl);
+    Linear::post(home,t,n,irt,c,ipl);
   }
 
   void
   linear(Home home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         IntConLevel icl) {
+         IntPropLevel ipl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home.failed())
-      return;
+
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -122,13 +122,13 @@ namespace Gecode {
     default: ;
     }
     if (home.failed()) return;
-    Linear::post(home,t,n,irt,y,0,icl);
+    Linear::post(home,t,n,irt,y,0,ipl);
   }
 
   void
   linear(Home home, const BoolVarArgs& x, IntRelType irt, int c,
-         Reify r, IntConLevel icl) {
-    if (home.failed()) return;
+         Reify r, IntPropLevel ipl) {
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -137,13 +137,13 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,c,r,icl);
+    Linear::post(home,t,n,irt,c,r,ipl);
   }
 
   void
   linear(Home home, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         Reify r, IntConLevel icl) {
-    if (home.failed()) return;
+         Reify r, IntPropLevel ipl) {
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -152,16 +152,16 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,y,r,icl);
+    Linear::post(home,t,n,irt,y,r,ipl);
   }
 
   void
   linear(Home home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType irt, int c,
-         Reify r, IntConLevel icl) {
+         Reify r, IntPropLevel ipl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home.failed()) return;
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -170,16 +170,16 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,c,r,icl);
+    Linear::post(home,t,n,irt,c,r,ipl);
   }
 
   void
   linear(Home home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType irt, IntVar y,
-         Reify r, IntConLevel icl) {
+         Reify r, IntPropLevel ipl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
-    if (home.failed()) return;
+    GECODE_POST;
 
     int n=x.size();
     Region re(home);
@@ -188,7 +188,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,irt,y,r,icl);
+    Linear::post(home,t,n,irt,y,r,ipl);
   }
 
 }
