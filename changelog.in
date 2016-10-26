@@ -329,7 +329,7 @@ Rank:   major
 [DESCRIPTION]
 Added support for tracing propagation, please see MPG for details.
 
-ENTRY]
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   major
