@@ -67,6 +67,20 @@
 #
 
 [RELEASE]
+Version: 5.0.1
+Date: ???
+[DESCRIPTION]
+Minor release.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Enable C++11 standard on compilers that need an explicit switch. Can be
+switched off using --disable-cpp11 during configuration.
+
+[RELEASE]
 Version: 5.0.0
 Date: 2016-10-25
 [DESCRIPTION]
