@@ -408,14 +408,14 @@ namespace Test { namespace Int {
      };
 
      /// %Test for relation between same sized arrays of integer variables
-     class IntArray : public Test {
+     class IntArrayVar : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       IntArray(Gecode::IntRelType irt0)
-         : Test("Rel::Int::Array::"+str(irt0),6,-2,2), irt(irt0) {}
+       IntArrayVar(Gecode::IntRelType irt0)
+         : Test("Rel::Int::Array::Var::"+str(irt0),6,-2,2), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
@@ -436,6 +436,35 @@ namespace Test { namespace Int {
            y[i]=x[i]; z[i]=x[n+i];
          }
          rel(home, y, irt, z);
+       }
+     };
+
+     /// %Test for relation between same sized arrays of integer variables and integers
+     class IntArrayInt : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       IntArrayInt(Gecode::IntRelType irt0)
+         : Test("Rel::Int::Array::Int::"+str(irt0),3,-2,2), irt(irt0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         Gecode::IntArgs y(3, 0,0,0);
+         int n=x.size();
+         for (int i=0; i<n; i++)
+           if (x[i] != y[i])
+             return cmp(x[i],irt,y[i]);
+         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) ||
+                 (irt == Gecode::IRT_EQ));
+         GECODE_NEVER;
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         IntArgs y(3, 0,0,0);
+         rel(home, x, irt, y);
        }
      };
 
@@ -480,14 +509,14 @@ namespace Test { namespace Int {
      };
 
      /// %Test for relation between arrays of Boolean variables
-     class BoolArray : public Test {
+     class BoolArrayVar : public Test {
      protected:
        /// Integer relation type to propagate
        Gecode::IntRelType irt;
      public:
        /// Create and register test
-       BoolArray(Gecode::IntRelType irt0)
-         : Test("Rel::Bool::Array::"+str(irt0),10,0,1), irt(irt0) {}
+       BoolArrayVar(Gecode::IntRelType irt0)
+         : Test("Rel::Bool::Array::Var::"+str(irt0),10,0,1), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          int n=x.size() >> 1;
@@ -507,6 +536,38 @@ namespace Test { namespace Int {
          for (int i=0; i<n; i++) {
            y[i]=channel(home,x[i]); z[i]=channel(home,x[n+i]);
          }
+         rel(home, y, irt, z);
+       }
+     };
+
+     /// %Test for relation between arrays of Boolean variables and integers
+     class BoolArrayInt : public Test {
+     protected:
+       /// Integer relation type to propagate
+       Gecode::IntRelType irt;
+     public:
+       /// Create and register test
+       BoolArrayInt(Gecode::IntRelType irt0)
+         : Test("Rel::Bool::Array::Int::"+str(irt0),5,0,1), irt(irt0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         Gecode::IntArgs y(5, 0,0,1,0,0);
+         for (int i=0; i<5; i++)
+           if (x[i] != y[i])
+             return cmp(x[i],irt,y[i]);
+         return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) ||
+                 (irt == Gecode::IRT_EQ));
+         GECODE_NEVER;
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::IntArgs z(5, 0,0,1,0,0);
+         int n=x.size();
+         BoolVarArgs y(n);
+         for (int i=0; i<n; i++)
+           y[i]=channel(home,x[i]);
          rel(home, y, irt, z);
        }
      };
@@ -551,10 +612,12 @@ namespace Test { namespace Int {
              (void) new BoolInt(irts.irt(),1,c);
              (void) new BoolInt(irts.irt(),2,c);
            }
-           (void) new IntArray(irts.irt());
+           (void) new IntArrayVar(irts.irt());
+           (void) new IntArrayInt(irts.irt());
            for (int n_fst=0; n_fst<=4; n_fst++)
              (void) new IntArrayDiff(irts.irt(),n_fst);
-           (void) new BoolArray(irts.irt());
+           (void) new BoolArrayVar(irts.irt());
+           (void) new BoolArrayInt(irts.irt());
          }
        }
      };

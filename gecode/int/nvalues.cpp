@@ -114,7 +114,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         IntVar z(home,0,x.size());
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,y,z));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,y,z)));
         GECODE_ES_FAIL(NValues::EqInt<IntView>::post(home,xv,z));
       }
       break;
@@ -211,7 +211,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         IntVar z(home,0,2);
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,y,z));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,y,z)));
         GECODE_ES_FAIL(NValues::EqBool<IntView>::post(home,xv,z));
       }
       break;

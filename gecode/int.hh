@@ -1148,6 +1148,38 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
       IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for relation between \a x and \a y.
+   *
+   * Note that for the inequality relations this corresponds to
+   * the lexical order between \a x and \a y.
+   *
+   * Supports domain consistency.
+   *
+   * Note that the constraint is also defined if \a x and \a y are of
+   * different size. That means that if \a x and \a y are of different
+   * size, then if \a r = IRT_EQ the constraint is false and if
+   * \a r = IRT_NQ the constraint is subsumed.
+   * \ingroup TaskModelIntRelInt
+   */
+  GECODE_INT_EXPORT void
+  rel(Home home, const IntVarArgs& x, IntRelType irt, const IntArgs& y,
+      IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for relation between \a x and \a y.
+   *
+   * Note that for the inequality relations this corresponds to
+   * the lexical order between \a x and \a y.
+   *
+   * Supports domain consistency.
+   *
+   * Note that the constraint is also defined if \a x and \a y are of
+   * different size. That means that if \a x and \a y are of different
+   * size, then if \a r = IRT_EQ the constraint is false and if
+   * \a r = IRT_NQ the constraint is subsumed.
+   * \ingroup TaskModelIntRelInt
+   */
+  GECODE_INT_EXPORT void
+  rel(Home home, const IntArgs& x, IntRelType irt, const IntVarArgs& y,
+      IntPropLevel ipl=IPL_DEF);
 
   /**
    * \defgroup TaskModelIntRelBool Simple relation constraints over Boolean variables
@@ -1215,6 +1247,36 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
+      IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for relation between \a x and \a y.
+   *
+   * Note that for the inequality relations this corresponds to
+   * the lexical order between \a x and \a y.
+   *
+   * Note that the constraint is also defined if \a x and \a y are of
+   * different size. That means that if \a x and \a y are of different
+   * size, then if \a r = IRT_EQ the constraint is false and if
+   * \a r = IRT_NQ the constraint is subsumed.
+   *
+   * \ingroup TaskModelIntRelBool
+   */
+  GECODE_INT_EXPORT void
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, const IntArgs& y,
+      IntPropLevel ipl=IPL_DEF);
+  /** \brief Post domain consistent propagator for relation between \a x and \a y.
+   *
+   * Note that for the inequality relations this corresponds to
+   * the lexical order between \a x and \a y.
+   *
+   * Note that the constraint is also defined if \a x and \a y are of
+   * different size. That means that if \a x and \a y are of different
+   * size, then if \a r = IRT_EQ the constraint is false and if
+   * \a r = IRT_NQ the constraint is subsumed.
+   *
+   * \ingroup TaskModelIntRelBool
+   */
+  GECODE_INT_EXPORT void
+  rel(Home home, const IntArgs& x, IntRelType irt, const BoolVarArgs& y,
       IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for relation between elements in \a x.
    *

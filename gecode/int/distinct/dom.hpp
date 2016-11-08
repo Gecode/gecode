@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus
   Dom<View>::post(Home home, ViewArray<View>& x) {
     if (x.size() == 2)
-      return Rel::Nq<View>::post(home,x[0],x[1]);
+      return Rel::Nq<View,View>::post(home,x[0],x[1]);
     if (x.size() == 3)
       return TerDom<View>::post(home,x[0],x[1],x[2]);
     if (x.size() > 3) {
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     if (x.size() == 2)
-      GECODE_REWRITE(*this,Rel::Nq<View>::post(home(*this),x[0],x[1]));
+      GECODE_REWRITE(*this,(Rel::Nq<View,View>::post(home(*this),x[0],x[1])));
     if (x.size() == 3)
       GECODE_REWRITE(*this,TerDom<View>::post(home(*this),x[0],x[1],x[2]));
 

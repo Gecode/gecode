@@ -238,7 +238,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         IntVar nz(home,0,x.size());
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,z,nz));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,z,nz)));
         GECODE_ES_FAIL((Count::EqView<IntView,ConstIntView,IntView,true,false>
                         ::post(home,xv,yv,nz,0)));
       }
@@ -282,7 +282,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         IntVar nz(home,0,x.size());
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,z,nz));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,z,nz)));
         GECODE_ES_FAIL((Count::EqView<IntView,IntView,IntView,true,false>
                         ::post(home,xv,y,nz,0)));
       }
@@ -339,7 +339,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         IntVar nz(home,0,x.size());
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,z,nz));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,z,nz)));
         GECODE_ES_FAIL((Count::EqView<IntView,IntSet,IntView,true,false>
                         ::post(home,xv,y,nz,0)));
       }
@@ -386,7 +386,7 @@ namespace Gecode {
     case IRT_NQ:
       {
         IntVar nz(home,0,x.size());
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,z,nz));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,z,nz)));
         GECODE_ES_FAIL((Count::EqView<OffsetView,ZeroIntView,IntView,true,false>
                         ::post(home,xy,u,nz,0)));
       }

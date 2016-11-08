@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: inr
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Relations between arrays now support also a mix between integer
+(or Boolean) variable array and integer array.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor

@@ -527,50 +527,135 @@ namespace Gecode {
   rel(Home home, const BoolVarArgs& x, IntRelType irt, const BoolVarArgs& y,
       IntPropLevel) {
     using namespace Int;
-    if (x.size() != y.size())
-      throw ArgumentSizeMismatch("Int::rel");
     GECODE_POST;
 
     switch (irt) {
     case IRT_GR:
       {
         ViewArray<BoolView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<BoolView>::post(home,yv,xv,true));
+        GECODE_ES_FAIL((Rel::LexLqLe<BoolView,BoolView>
+                        ::post(home,yv,xv,true)));
       }
       break;
     case IRT_LE:
       {
         ViewArray<BoolView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<BoolView>::post(home,xv,yv,true));
+        GECODE_ES_FAIL((Rel::LexLqLe<BoolView,BoolView>
+                        ::post(home,xv,yv,true)));
       }
       break;
     case IRT_GQ:
       {
         ViewArray<BoolView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<BoolView>::post(home,yv,xv,false));
+        GECODE_ES_FAIL((Rel::LexLqLe<BoolView,BoolView>
+                        ::post(home,yv,xv,false)));
       }
       break;
     case IRT_LQ:
       {
         ViewArray<BoolView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<BoolView>::post(home,xv,yv,false));
+        GECODE_ES_FAIL((Rel::LexLqLe<BoolView,BoolView>
+                        ::post(home,xv,yv,false)));
       }
       break;
     case IRT_EQ:
       for (int i=x.size(); i--; ) {
         GECODE_ES_FAIL((Bool::Eq<BoolView,BoolView>
-                             ::post(home,x[i],y[i])));
+                        ::post(home,x[i],y[i])));
       }
       break;
     case IRT_NQ:
       {
         ViewArray<BoolView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexNq<BoolView>::post(home,xv,yv));
+        GECODE_ES_FAIL((Rel::LexNq<BoolView,BoolView>
+                        ::post(home,xv,yv)));
       }
       break;
     default:
       throw UnknownRelation("Int::rel");
     }
+  }
+
+  namespace {
+
+    /// Return view array
+    ViewArray<Int::ConstIntView>
+    viewarray(Space& home, const IntArgs& x) {
+      ViewArray<Int::ConstIntView> xv(home, x.size());
+      for (int i = x.size(); i--; ) {
+        if ((x[i] != 0) && (x[i] != 1))
+          throw Int::NotZeroOne("Int::rel");
+        xv[i] = Int::ConstIntView(x[i]);
+      }
+      return xv;
+    }
+
+  }
+
+  void
+  rel(Home home, const BoolVarArgs& x, IntRelType irt, const IntArgs& y,
+      IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+
+    switch (irt) {
+    case IRT_GR:
+      {
+        ViewArray<BoolView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView,BoolView>
+                        ::post(home,yv,xv,true)));
+      }
+      break;
+    case IRT_LE:
+      {
+        ViewArray<BoolView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<BoolView,ConstIntView>
+                        ::post(home,xv,yv,true)));
+      }
+      break;
+    case IRT_GQ:
+      {
+        ViewArray<BoolView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView,BoolView>
+                        ::post(home,yv,xv,false)));
+      }
+      break;
+    case IRT_LQ:
+      {
+        ViewArray<BoolView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<BoolView,ConstIntView>
+                        ::post(home,xv,yv,false)));
+      }
+      break;
+    case IRT_EQ:
+      if (x.size() != y.size()) {
+        home.fail();
+      } else {
+        for (int i=x.size(); i--; )
+          GECODE_ME_FAIL(BoolView(x[i]).eq(home,y[i]));
+      }
+      break;
+    case IRT_NQ:
+      {
+        ViewArray<BoolView> xv(home,x); 
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexNq<BoolView,ConstIntView>
+                        ::post(home,xv,yv)));
+      }
+      break;
+    default:
+      throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
+  rel(Home home, const IntArgs& x, IntRelType irt, const BoolVarArgs& y,
+      IntPropLevel ipl) {
+    rel(home,y,irt,x,ipl);
   }
 
   void

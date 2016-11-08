@@ -173,7 +173,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus
   Val<View>::post(Home home, ViewArray<View>& x) {
     if (x.size() == 2)
-      return Rel::Nq<View>::post(home,x[0],x[1]);
+      return Rel::Nq<View,View>::post(home,x[0],x[1]);
     if (x.size() > 2)
       (void) new (home) Val<View>(home,x);
     return ES_OK;

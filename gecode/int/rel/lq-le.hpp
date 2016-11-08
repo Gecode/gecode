@@ -44,35 +44,53 @@ namespace Gecode { namespace Int { namespace Rel {
    *
    */
 
-  template<class View>
+  template<class V0, class V1>
   forceinline
-  Lq<View>::Lq(Home home, View x0, View x1)
-    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+  Lq<V0,V1>::Lq(Home home, V0 x0, V1 x1)
+    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,x0,x1) {}
 
-  template<class View>
+  template<class V0, class V1>
+  forceinline bool
+  Lq<V0,V1>::same(V0 x0, V1 x1) {
+    return false;
+  }
+
+  template<>
+  forceinline bool
+  Lq<IntView,IntView>::same(IntView x0, IntView x1) {
+    return Gecode::same(x0,x1);
+  }
+
+  template<>
+  forceinline bool
+  Lq<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
+    return Gecode::same(x0,x1);
+  }
+
+  template<class V0, class V1>
   ExecStatus
-  Lq<View>::post(Home home, View x0, View x1) {
+  Lq<V0,V1>::post(Home home, V0 x0, V1 x1) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
     if (!same(x0,x1) && (x0.max() > x1.min()))
-      (void) new (home) Lq<View>(home,x0,x1);
+      (void) new (home) Lq<V0,V1>(home,x0,x1);
     return ES_OK;
   }
 
-  template<class View>
+  template<class V0, class V1>
   forceinline
-  Lq<View>::Lq(Space& home, bool share, Lq<View>& p)
-    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  Lq<V0,V1>::Lq(Space& home, bool share, Lq<V0,V1>& p)
+    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,share,p) {}
 
-  template<class View>
+  template<class V0, class V1>
   Actor*
-  Lq<View>::copy(Space& home, bool share) {
-    return new (home) Lq<View>(home,share,*this);
+  Lq<V0,V1>::copy(Space& home, bool share) {
+    return new (home) Lq<V0,V1>(home,share,*this);
   }
 
-  template<class View>
+  template<class V0, class V1>
   ExecStatus
-  Lq<View>::propagate(Space& home, const ModEventDelta&) {
+  Lq<V0,V1>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x1.gq(home,x0.min()));
     return (x0.max() <= x1.min()) ? home.ES_SUBSUMED(*this) : ES_FIX;
@@ -85,37 +103,55 @@ namespace Gecode { namespace Int { namespace Rel {
    * Less propagator
    *
    */
-  template<class View>
+  template<class V0, class V1>
   forceinline
-  Le<View>::Le(Home home, View x0, View x1)
-    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+  Le<V0,V1>::Le(Home home, V0 x0, V1 x1)
+    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,x0,x1) {}
 
-  template<class View>
+  template<class V0, class V1>
+  forceinline bool
+  Le<V0,V1>::same(V0 x0, V1 x1) {
+    return false;
+  }
+
+  template<>
+  forceinline bool
+  Le<IntView,IntView>::same(IntView x0, IntView x1) {
+    return Gecode::same(x0,x1);
+  }
+
+  template<>
+  forceinline bool
+  Le<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
+    return Gecode::same(x0,x1);
+  }
+
+  template<class V0, class V1>
   ExecStatus
-  Le<View>::post(Home home, View x0, View x1) {
+  Le<V0,V1>::post(Home home, V0 x0, V1 x1) {
     if (same(x0,x1))
       return ES_FAILED;
     GECODE_ME_CHECK(x0.le(home,x1.max()));
     GECODE_ME_CHECK(x1.gr(home,x0.min()));
     if (x0.max() >= x1.min())
-      (void) new (home) Le<View>(home,x0,x1);
+      (void) new (home) Le<V0,V1>(home,x0,x1);
     return ES_OK;
   }
 
-  template<class View>
+  template<class V0, class V1>
   forceinline
-  Le<View>::Le(Space& home, bool share, Le<View>& p)
-    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  Le<V0,V1>::Le(Space& home, bool share, Le<V0,V1>& p)
+    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,share,p) {}
 
-  template<class View>
+  template<class V0, class V1>
   Actor*
-  Le<View>::copy(Space& home, bool share) {
-    return new (home) Le<View>(home,share,*this);
+  Le<V0,V1>::copy(Space& home, bool share) {
+    return new (home) Le<V0,V1>(home,share,*this);
   }
 
-  template<class View>
+  template<class V0, class V1>
   ExecStatus
-  Le<View>::propagate(Space& home, const ModEventDelta&) {
+  Le<V0,V1>::propagate(Space& home, const ModEventDelta&) {
     GECODE_ME_CHECK(x0.le(home,x1.max()));
     GECODE_ME_CHECK(x1.gr(home,x0.min()));
     return (x0.max() < x1.min()) ? home.ES_SUBSUMED(*this) : ES_FIX;
@@ -272,9 +308,9 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     if (x.size() == 2) {
       if (o == 0)
-        return Lq<View>::post(home,x[0],x[1]);
+        return Lq<View,View>::post(home,x[0],x[1]);
       else
-        return Le<View>::post(home,x[0],x[1]);
+        return Le<View,View>::post(home,x[0],x[1]);
     } else if (x.size() >= 2) {
       (void) new (home) NaryLqLe<View,o>(home,x);
     }
@@ -425,12 +461,12 @@ namespace Gecode { namespace Int { namespace Rel {
     if (b.one()) {
       if (rm == RM_PMI)
         return ES_OK;
-      return Lq<View>::post(home,x0,x1);
+      return Lq<View,View>::post(home,x0,x1);
     }
     if (b.zero()) {
       if (rm == RM_IMP)
         return ES_OK;
-      return Le<View>::post(home,x1,x0);
+      return Le<View,View>::post(home,x1,x0);
     }
     if (!same(x0,x1)) {
       switch (rtest_lq(x0,x1)) {
@@ -469,10 +505,10 @@ namespace Gecode { namespace Int { namespace Rel {
   ReLq<View,CtrlView,rm>::propagate(Space& home, const ModEventDelta&) {
     if (b.one()) {
       if (rm != RM_PMI)
-        GECODE_REWRITE(*this,Lq<View>::post(home(*this),x0,x1));
+        GECODE_REWRITE(*this,(Lq<View,View>::post(home(*this),x0,x1)));
     } else if (b.zero()) {
       if (rm != RM_IMP)
-        GECODE_REWRITE(*this,Le<View>::post(home(*this),x1,x0));
+        GECODE_REWRITE(*this,(Le<View,View>::post(home(*this),x1,x0)));
     } else {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
