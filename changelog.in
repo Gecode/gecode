@@ -73,7 +73,31 @@ Date: ???
 Minor release.
 
 [ENTRY]
-Module: inr
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) also for float
+variables.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) also for set
+variables.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) also for Boolean
+variables.
+
+[ENTRY]
+Module: int
 What:   new
 Rank:   minor
 [DESCRIPTION]
@@ -87,6 +111,7 @@ Rank:   minor
 [DESCRIPTION]
 Enable C++11 standard on compilers that need an explicit switch. Can be
 switched off using --disable-cpp11 during configuration.
+
 
 [RELEASE]
 Version: 5.0.0

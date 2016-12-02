@@ -1141,6 +1141,14 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y);
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   *
+   * \ingroup TaskModelFloatRelFloat
+   */
+  GECODE_FLOAT_EXPORT void
+  ite(Home home, BoolVar b, FloatVar x, FloatVar y, FloatVar z);
 
 }
 

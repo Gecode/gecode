@@ -1007,6 +1007,15 @@ namespace Gecode {
     }
   }
 
+  void
+  ite(Home home, BoolVar b, BoolVar x, BoolVar y, BoolVar z,
+      IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+    GECODE_ES_FAIL((Bool::IteBnd<BoolView,BoolView,BoolView>
+                    ::post(home,b,x,y,z)));
+  }
+
 }
 
 // STATISTICS: int-post

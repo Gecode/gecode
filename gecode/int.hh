@@ -1370,10 +1370,22 @@ namespace Gecode {
    *
    * Posts propagator for \f$ z = b ? x : y \f$
    *
+   * Supports both bounds (\a ipl = IPL_BND) and
+   * domain consistency (\a ipl = IPL_DOM, default).
+   *
    * \ingroup TaskModelIntRelBool
    */
   GECODE_INT_EXPORT void
   ite(Home home, BoolVar b, IntVar x, IntVar y, IntVar z,
+      IntPropLevel ipl=IPL_DEF);
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   *
+   * \ingroup TaskModelIntRelBool
+   */
+  GECODE_INT_EXPORT void
+  ite(Home home, BoolVar b, BoolVar x, BoolVar y, BoolVar z,
       IntPropLevel ipl=IPL_DEF);
 
 

@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 #include "test/set.hh"
 
 using namespace Gecode;
@@ -51,6 +53,7 @@ namespace Test { namespace Set {
     //@{
 
     static IntSet ds_33(-3,3);
+    static IntSet ds_03(0,3);
 
     /// %Test for binary set relation constraint
     class RelBin : public SetTest {
@@ -129,6 +132,33 @@ namespace Test { namespace Set {
           Gecode::rel(home, x[0], srt, x[0], r);
       }
     };
+
+    /// %Test for if-then-else-constraint
+    class ITE : public SetTest {
+    public:
+      /// Construct and register test
+      ITE(void)
+        : SetTest("ITE",3,ds_03,false,1) {}
+      /// Check whether \a x is a solution
+      virtual bool solution(const SetAssignment& x) const {
+        if ((x.intval() < 0) || (x.intval() > 1))
+          return false;
+        if (x.intval() == 1) {
+          CountableSetRanges xr0(x.lub, x[0]);
+          CountableSetRanges xr2(x.lub, x[2]);
+          return Iter::Ranges::equal(xr0,xr2);
+        } else {
+          CountableSetRanges xr1(x.lub, x[1]);
+          CountableSetRanges xr2(x.lub, x[2]);
+          return Iter::Ranges::equal(xr1,xr2);
+        }
+      }
+      /// Post constraint on \a x and \a y
+      void post(Space& home, SetVarArray& x, IntVarArray& y) {
+        Gecode::ite(home, Gecode::channel(home,y[0]), x[0], x[1], x[2]);
+      }
+    };
+
     RelBin _relbin_eq(Gecode::SRT_EQ,false);
     RelBin _relbin_lq(Gecode::SRT_LQ,false);
     RelBin _relbin_le(Gecode::SRT_LE,false);
@@ -150,6 +180,7 @@ namespace Test { namespace Set {
     RelBin _relbin_shared_disj(Gecode::SRT_DISJ,true);
     RelBin _relbin_shared_cmpl(Gecode::SRT_CMPL,true);
 
+    ITE _ite;
     //@}
 
 }}}

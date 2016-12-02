@@ -465,7 +465,8 @@ INTBUILDDIRS	= \
 
 FLOATSRC0 = \
 	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
-	linear/post.cpp branch/activity.cpp rounding.cpp exec.cpp \
+	linear/post.cpp bool.cpp \
+	branch/activity.cpp rounding.cpp exec.cpp \
 	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \
 	relax.cpp \
 	trace.cpp trace/tracer.cpp \
@@ -483,6 +484,7 @@ FLOATHDR0 = \
 	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp \
+	bool.hh bool/ite.hpp \
 	branch.hh branch/afc.hpp branch/activity.hpp branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
@@ -539,7 +541,7 @@ SETSRC0 =								 \
 	rel-op/post-compl-cvc.cpp rel-op/post-nocompl-cvc.cpp \
 	rel-op-const-vvc.cpp rel-op-const-vcv.cpp rel-op-const-vcc.cpp \
 	rel-op-const-cvc.cpp rel-op-const-cvv.cpp \
-	int.cpp channel.cpp						 \
+	int.cpp channel.cpp bool.cpp \
 	element.cpp sequence.cpp			 \
 	distinct.cpp distinct/atmostOne.cpp				 \
 	precede.cpp \

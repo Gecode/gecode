@@ -809,6 +809,13 @@ namespace Gecode {
   rel(Home home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
       const IntSet& z);
 
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   */
+  GECODE_SET_EXPORT void
+  ite(Home home, BoolVar b, SetVar x, SetVar y, SetVar z);
+
   //@}
 
 
