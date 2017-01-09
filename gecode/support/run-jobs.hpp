@@ -146,7 +146,7 @@ namespace Gecode { namespace Support {
 
   template<class Jobs, class RetType>
   inline
-  RunJobs<Jobs,RetType>::RunJobs(Jobs& j, unsigned int m = 4U) 
+  RunJobs<Jobs,RetType>::RunJobs(Jobs& j, unsigned int m) 
       : m_threads(m), n_threads(0), jobs(j), idx(0), rs(heap) {
       this->m.acquire();
       workers();
