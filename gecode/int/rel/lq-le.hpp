@@ -52,6 +52,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class V0, class V1>
   forceinline bool
   Lq<V0,V1>::same(V0 x0, V1 x1) {
+    (void) x0; (void) x1;
     return false;
   }
 
@@ -111,6 +112,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class V0, class V1>
   forceinline bool
   Le<V0,V1>::same(V0 x0, V1 x1) {
+    (void) x0; (void) x1;
     return false;
   }
 

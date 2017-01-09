@@ -43,7 +43,7 @@ using namespace Gecode;
 
 // Instances
 extern const int* pi[];
-extern const int n_pi;
+extern const unsigned int n_pi;
 
 /// Specifications for photo example
 class PhotoSpec {
@@ -81,7 +81,7 @@ public:
 class Photo : public IntMinimizeScript {
 protected:
   /// Photo specification
-  const PhotoSpec& spec;
+  const PhotoSpec spec;
   /// Person's position on photo
   IntVarArray pos;
   /// Number of violated preferences
@@ -14307,6 +14307,6 @@ const int* pi[] = {
   &p_100_15[0], &p_100_16[0], &p_100_17[0], &p_100_18[0], &p_100_19[0]
 };
 
-const int n_pi = sizeof(pi) / sizeof(int*);
+const unsigned int n_pi = sizeof(pi) / sizeof(int*);
 
 // STATISTICS: example-any
