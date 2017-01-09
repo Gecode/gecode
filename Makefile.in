@@ -153,7 +153,7 @@ SUPPORTHDR0 = \
 	marked-pointer int-type auto-link \
 	thread thread/thread thread/windows thread/pthreads thread/none timer \
 	dynamic-queue bitset-base bitset bitset-offset \
-	hw-rnd
+	hw-rnd run-jobs
 
 SUPPORTSRC1	=  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR 	=  gecode/support.hh \

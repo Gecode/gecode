@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added an abstraction RunJobs for executing several jobs in
+parallel (not officially supported).
+
+[ENTRY]
 Module: float
 What:   new
 Rank:   minor
