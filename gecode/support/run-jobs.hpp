@@ -131,60 +131,60 @@ namespace Gecode { namespace Support {
   template<class Jobs, class RetType>
   forceinline void
   RunJobs<Jobs,RetType>::report(RetType r) {
-      m.acquire();
-      rs.push(r); n_threads--;
-      e.signal();
-      workers();
-      m.release();
-    }
+    m.acquire();
+    rs.push(r); n_threads--;
+    e.signal();
+    workers();
+    m.release();
+  }
 
   template<class Jobs, class RetType>
   forceinline bool
   RunJobs<Jobs,RetType>::done(void) const {
-      return (n_threads == 0) && !jobs() && rs.empty();
-    }
+    return (n_threads == 0) && !jobs() && rs.empty();
+  }
 
   template<class Jobs, class RetType>
   inline
   RunJobs<Jobs,RetType>::RunJobs(Jobs& j, unsigned int m) 
-      : m_threads(m), n_threads(0), jobs(j), idx(0), rs(heap) {
-      this->m.acquire();
-      workers();
-      this->m.release();
-    }
+    : m_threads(m), n_threads(0), jobs(j), idx(0), rs(heap) {
+    this->m.acquire();
+    workers();
+    this->m.release();
+  }
 
   template<class Jobs, class RetType>
   inline bool
   RunJobs<Jobs,RetType>::operator ()(void) {
-      m.acquire();
-      bool r = !done();
-      m.release();
-      return r;
-    }
+    m.acquire();
+    bool r = !done();
+    m.release();
+    return r;
+  }
 
   template<class Jobs, class RetType>
   inline RetType
   RunJobs<Jobs,RetType>::run(void) {
+    m.acquire();
+    assert(!done());
+    if (!rs.empty()) {
+      RetType r = rs.pop();
+      m.release();
+      return r;
+    }
+    m.release();
+    while (true) {
+      e.wait();
       m.acquire();
-      assert(!done());
       if (!rs.empty()) {
         RetType r = rs.pop();
         m.release();
         return r;
       }
       m.release();
-      while (true) {
-        e.wait();
-        m.acquire();
-        if (!rs.empty()) {
-          RetType r = rs.pop();
-          m.release();
-          return r;
-        }
-        m.release();
-      }
-      GECODE_NEVER;
     }
+    GECODE_NEVER;
+  }
 
 }}
 
