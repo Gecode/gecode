@@ -46,7 +46,17 @@ namespace Gecode { namespace Support {
   };
 
   /// Class to throw an exception to stop new jobs from being started
-  class JobStop {};
+  template<class RetType>
+  class JobStop {
+  protected:
+    /// The result stored
+    RetType r;
+  public:
+    /// Constructor
+    JobStop(RetType r0);
+    /// Return the passed result
+    RetType result(void) const;
+  };
 
   template<class Jobs, class RetType>
   /**
@@ -66,47 +76,79 @@ namespace Gecode { namespace Support {
    */
   class RunJobs {
   protected:
+    class Master;
     /// The actual worker using a thread to run a job
     class Worker : public Runnable {
     protected:
       /// The job to run
       Job<RetType>* job;
       /// The master to communicate with
-      RunJobs* master;
+      Master* master;
       /// Original iterator index of job
       int idx;
     public:
       /// Initialize worker
-      Worker(Job<RetType>* j, RunJobs* m, int i);
-      /// Run a job
+      Worker(Job<RetType>* j, Master* m, int i);
+      /// Run jobs
       virtual void run(void);
       /// Nothing to delete (done in run)
       virtual ~Worker(void);
     };
-    /// Mutex for synchronizing access
-    Mutex m;
-    /// Event is triggered if a the first job is added to queue
-    Event e;
-    /// Maximal number of threads to use
-    unsigned int m_threads;
-    /// Number of threads currently not in use
-    unsigned int n_threads;
-    /// Input jobs
-    Jobs& jobs;
-    /// Index of next job to be created
-    int idx;
-    /// Index of the first stop that has been stopped (-1 if none)
-    int sidx;
-    /// Queue of not yet requested results
-    DynamicQueue<RetType,Heap> rs;
-    /// Create new parallel workers if needed
-    void workers(void);
-    /// Report result \a r by a worker
-    void report(RetType r);
-    /// Report that a job with index \a i has been stopped
-    void stop(int i);
-    /// Test whether all jobs are done
-    bool done(void) const;
+    class Master {
+    protected:
+      /// Mutex for synchronizing access
+      Mutex m;
+      /// Event is triggered if a the first job is added to queue
+      Event e;
+      /// Number of threads currently not in use
+      unsigned int n_threads;
+      /// Input jobs
+      Jobs& jobs;
+      /// Index of next job to be created
+      int idx;
+      /// Result from a the first stopped job (passed in exception)
+      RetType sres; 
+      /// Index of the first stop that has been stopped (-1 if none)
+      int sidx;
+      /// Queue of not yet requested results
+      DynamicQueue<RetType,Heap> rs;
+    public:
+      /// Get next job witth index \a i, if possible
+      Job<RetType>* next(int& i);
+      /// Report result \a r by a worker
+      void report(RetType r);
+      /// Report that a job with index \a i has been stopped
+      void stop(RetType r, int i);
+      /// Test whether all jobs are done
+      bool done(void) const;
+      /// Initialize with job iterator \a j and maximal number of threads \a m
+      Master(Jobs& j, unsigned int m);
+      /// Test whether there are more jobs to run
+      bool operator ()(void);
+      /// Return result (and possibly run) next job
+      RetType run(void);
+      /// Whether a job has thrown a \a JobStop exception
+      bool stopped(void) const;
+      /// Return index of first job that has thrown a \a JobStop exception (-1 if none) with its result
+      int stoppedjob(RetType& r) const;
+      /// Whether a new thread is needed for deletion
+      bool needthread(void);
+      /// Destructor
+      ~Master(void);
+    };
+    /// A class to delete the master (running in parallel)
+    class Deleter : public Runnable {
+    protected:
+      /// The master to be deleted
+      Master* master;
+    public:
+      /// Initialize with master \a m
+      Deleter(Master* m);
+      /// Perform deletion
+      virtual void run(void);
+    };
+    /// The actual master
+    Master* master;
   public:
     /// Initialize with job iterator \a j and maximal number of threads \a m
     RunJobs(Jobs& j, unsigned int m);
@@ -114,20 +156,30 @@ namespace Gecode { namespace Support {
     bool operator ()(void);
     /// Return result (and possibly run) next job
     RetType run(void);
-    /// Whether a job has thrown a \a JobStop exception
-    bool stopped(void) const;
-    /// Return index of first job that has thrown a \a JobStop exception (-1 if none)
-    int stoppedjob(void) const;
+    /// Whether a job has thrown a \a JobStop exception with index \a i and result \a r
+    bool stopped(int& i, RetType& r) const;
     /// Destructor
     ~RunJobs(void);
   };
 
 
 
+  template<class RetType>
+  forceinline
+  JobStop<RetType>::JobStop(RetType r0) : r(r0) {}
+
+  template<class RetType>
+  forceinline RetType
+  JobStop<RetType>::result(void) const {
+    return r;
+  }
+
+
+
   template<class Jobs, class RetType>
   forceinline
   RunJobs<Jobs,RetType>::Worker::Worker(Job<RetType>* j, 
-                                        RunJobs<Jobs,RetType>* m,
+                                        Master* m,
                                         int i) 
     : Runnable(true), job(j), master(m), idx(i) {}
   
@@ -137,46 +189,49 @@ namespace Gecode { namespace Support {
 
   template<class Jobs, class RetType>
   inline int
-  RunJobs<Jobs,RetType>::stoppedjob(void) const {
+  RunJobs<Jobs,RetType>::Master::stoppedjob(RetType& r) const {
+    r = sres;
     return sidx;
   }
 
   template<class Jobs, class RetType>
   inline bool
-  RunJobs<Jobs,RetType>::stopped(void) const {
+  RunJobs<Jobs,RetType>::Master::stopped(void) const {
     return sidx >= 0;
   }
 
   template<class Jobs, class RetType>
-  inline void
-  RunJobs<Jobs,RetType>::workers(void) {
-    if (stopped())
-      return;
-    while ((n_threads < m_threads) && jobs()) {
-      Thread::run(new Worker(jobs.job(),this,idx));
-      n_threads++; idx++;
+  forceinline Job<RetType>*
+  RunJobs<Jobs,RetType>::Master::next(int& i) {
+    m.acquire();
+    Job<RetType>* j;
+    if (jobs() && !stopped()) {
+      j = jobs.job(); i=idx++;
+    } else {
+      j = NULL;
+      n_threads--;
     }
+    m.release();
+    return j;
   }
 
   template<class Jobs, class RetType>
   forceinline void
-  RunJobs<Jobs,RetType>::report(RetType r) {
+  RunJobs<Jobs,RetType>::Master::report(RetType r) {
     m.acquire();
     rs.push(r); 
-    n_threads--;
     e.signal();
-    workers();
     m.release();
   }
 
   template<class Jobs, class RetType>
   forceinline void
-  RunJobs<Jobs,RetType>::stop(int i) {
+  RunJobs<Jobs,RetType>::Master::stop(RetType r, int i) {
     m.acquire();
-    sidx = i;
-    RetType r;
+    if (!stopped()) {
+      sres=r; sidx = i;
+    }
     rs.push(r); 
-    n_threads--;
     e.signal();
     m.release();
   }
@@ -184,33 +239,41 @@ namespace Gecode { namespace Support {
   template<class Jobs, class RetType>
   void
   RunJobs<Jobs,RetType>::Worker::run(void) {
-    try {
-      RetType r = job->run(idx);
-      master->report(r);
-    } catch (JobStop&) {
-      master->stop(idx);
-    }
-    delete job;
+    do {
+      try {
+        RetType r = job->run(idx);
+        master->report(r);
+      } catch (JobStop<RetType>& js) {
+        master->stop(js.result(),idx);
+      }
+      delete job;
+      job = master->next(idx);
+    } while (job != NULL);
   }
 
   template<class Jobs, class RetType>
   forceinline bool
-  RunJobs<Jobs,RetType>::done(void) const {
+  RunJobs<Jobs,RetType>::Master::done(void) const {
     return (n_threads == 0) && (!jobs() || stopped()) && rs.empty();
   }
 
   template<class Jobs, class RetType>
   inline
-  RunJobs<Jobs,RetType>::RunJobs(Jobs& j, unsigned int m) 
-    : m_threads(m), n_threads(0), jobs(j), idx(0), sidx(-1), rs(heap) {
-    this->m.acquire();
-    workers();
-    this->m.release();
+  RunJobs<Jobs,RetType>::Master::Master(Jobs& j, unsigned int m_threads) 
+    : n_threads(0), jobs(j), idx(0), sidx(-1), rs(heap) {
+    m.acquire();
+    while ((n_threads < m_threads) && jobs()) {
+      if (stopped())
+        break;
+      Thread::run(new Worker(jobs.job(),this,idx));
+      n_threads++; idx++;
+    }
+    m.release();
   }
 
   template<class Jobs, class RetType>
   inline bool
-  RunJobs<Jobs,RetType>::operator ()(void) {
+  RunJobs<Jobs,RetType>::Master::operator ()(void) {
     m.acquire();
     bool r = !done();
     m.release();
@@ -219,7 +282,7 @@ namespace Gecode { namespace Support {
 
   template<class Jobs, class RetType>
   inline RetType
-  RunJobs<Jobs,RetType>::run(void) {
+  RunJobs<Jobs,RetType>::Master::run(void) {
     m.acquire();
     assert(!done());
     if (!rs.empty()) {
@@ -242,12 +305,73 @@ namespace Gecode { namespace Support {
   }
 
   template<class Jobs, class RetType>
+  inline bool
+  RunJobs<Jobs,RetType>::Master::needthread(void) {
+    bool n;
+    m.acquire();
+    while (!rs.empty())
+      rs.pop().~RetType();
+    n = !done();
+    m.release();
+    return n;
+  }
+
+  template<class Jobs, class RetType>
   inline
-  RunJobs<Jobs,RetType>::~RunJobs(void) {
+  RunJobs<Jobs,RetType>::Master::~Master(void) {
     sidx = 0;
     while ((*this)())
       this->run().~RetType();
   }
+
+  template<class Jobs, class RetType>
+  forceinline
+  RunJobs<Jobs,RetType>::Deleter::Deleter(Master* m) 
+    : Runnable(true), master(m) {}
+
+  template<class Jobs, class RetType>
+  void
+  RunJobs<Jobs,RetType>::Deleter::run(void) {
+    delete master;
+  }
+
+
+
+
+
+  template<class Jobs, class RetType>
+  inline bool
+  RunJobs<Jobs,RetType>::stopped(int& i, RetType& r) const {
+    i = master->stoppedjob(r);
+    return i >= 0;
+  }
+
+  template<class Jobs, class RetType>
+  inline
+  RunJobs<Jobs,RetType>::RunJobs(Jobs& j, unsigned int m) 
+    : master(new Master(j,m)) {}
+
+  template<class Jobs, class RetType>
+  inline bool
+  RunJobs<Jobs,RetType>::operator ()(void) {
+    return (*master)();
+  }
+
+  template<class Jobs, class RetType>
+  inline RetType
+  RunJobs<Jobs,RetType>::run(void) {
+    return master->run();
+  }
+
+  template<class Jobs, class RetType>
+  inline
+  RunJobs<Jobs,RetType>::~RunJobs(void) {
+    if (!master->needthread())
+      delete master;
+    else
+      Thread::run(new Deleter(master));
+  }
+
 
 }}
 
