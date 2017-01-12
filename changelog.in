@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: David Hotham
+[DESCRIPTION]
+Fix parser to work with newer versions of GCC compiler.
+
+[ENTRY]
 Module: support
 What:   new
 Rank:   minor
