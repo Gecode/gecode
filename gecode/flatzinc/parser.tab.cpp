@@ -2404,7 +2404,7 @@ yyreduce:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[(3) - (13)].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
+          bool print = (yyvsp[(12) - (13)].argVec) != NULL && (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
           vector<int> vars((yyvsp[(5) - (13)].iValue));
           if (!pp->hadError) {
             if ((yyvsp[(13) - (13)].oVarSpecVec)()) {
@@ -2474,7 +2474,7 @@ yyreduce:
 #line 899 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
+        bool print = (yyvsp[(12) - (13)].argVec) != NULL && (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
         yyassert(pp, (yyvsp[(3) - (13)].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars((yyvsp[(5) - (13)].iValue));
@@ -2544,7 +2544,7 @@ yyreduce:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[(3) - (13)].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
+          bool print = (yyvsp[(12) - (13)].argVec) != NULL && (yyvsp[(12) - (13)].argVec)->hasCall("output_array");
           vector<int> vars((yyvsp[(5) - (13)].iValue));
           if (!pp->hadError) {
             if ((yyvsp[(13) - (13)].oVarSpecVec)()) {
@@ -2614,7 +2614,7 @@ yyreduce:
 #line 1036 "gecode/flatzinc/parser.yxx"
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[(14) - (15)].argVec)->hasCall("output_array");
+        bool print = (yyvsp[(14) - (15)].argVec) != NULL && (yyvsp[(14) - (15)].argVec)->hasCall("output_array");
         yyassert(pp, (yyvsp[(3) - (15)].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars((yyvsp[(5) - (15)].iValue));

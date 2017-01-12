@@ -830,7 +830,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = $12->hasCall("output_array");
+          bool print = $12 != NULL && $12->hasCall("output_array");
           vector<int> vars($5);
           if (!pp->hadError) {
             if ($13()) {
@@ -898,7 +898,7 @@ vardecl_item:
         var_par_id annotations vardecl_bool_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $12->hasCall("output_array");
+        bool print = $12 != NULL && $12->hasCall("output_array");
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars($5);
@@ -967,7 +967,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = $12->hasCall("output_array");
+          bool print = $12 != NULL && $12->hasCall("output_array");
           vector<int> vars($5);
           if (!pp->hadError) {
             if ($13()) {
@@ -1035,7 +1035,7 @@ vardecl_item:
         var_par_id annotations vardecl_set_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $14->hasCall("output_array");
+        bool print = $14 != NULL && $14->hasCall("output_array");
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars($5);
