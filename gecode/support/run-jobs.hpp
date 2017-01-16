@@ -35,6 +35,7 @@
  *
  */
 
+
 namespace Gecode { namespace Support {
 
   /// Baseclass for jobs with return type \a RetType
@@ -123,10 +124,8 @@ namespace Gecode { namespace Support {
       bool done(void) const;
       /// Initialize with job iterator \a j and maximal number of threads \a m
       Master(Jobs& j, unsigned int m);
-      /// Test whether there are more jobs to run
-      bool operator ()(void);
-      /// Return result (and possibly run) next job
-      RetType run(void);
+      /// Run next job and return true if succesful and assign \a r to its result
+      bool run(RetType& r);
       /// Whether a job has thrown a \a JobStop exception
       bool stopped(void) const;
       /// Return index of first job that has thrown a \a JobStop exception (-1 if none) with its result
@@ -152,10 +151,8 @@ namespace Gecode { namespace Support {
   public:
     /// Initialize with job iterator \a j and maximal number of threads \a m
     RunJobs(Jobs& j, unsigned int m);
-    /// Test whether there are more jobs to run
-    bool operator ()(void);
-    /// Return result (and possibly run) next job
-    RetType run(void);
+    /// Run next job and return true if succesful and assign \a r to its result
+    bool run(RetType& r);
     /// Whether a job has thrown a \a JobStop exception with index \a i and result \a r
     bool stopped(int& i, RetType& r) const;
     /// Destructor
@@ -273,31 +270,29 @@ namespace Gecode { namespace Support {
 
   template<class Jobs, class RetType>
   inline bool
-  RunJobs<Jobs,RetType>::Master::operator ()(void) {
+  RunJobs<Jobs,RetType>::Master::run(RetType& r) {
     m.acquire();
-    bool r = !done();
-    m.release();
-    return r;
-  }
-
-  template<class Jobs, class RetType>
-  inline RetType
-  RunJobs<Jobs,RetType>::Master::run(void) {
-    m.acquire();
-    assert(!done());
-    if (!rs.empty()) {
-      RetType r = rs.pop();
+    if (done()) {
       m.release();
-      return r;
+      return false;
+    }
+    if (!rs.empty()) {
+      r = rs.pop();
+      m.release();
+      return true;
     }
     m.release();
     while (true) {
       e.wait();
       m.acquire();
-      if (!rs.empty()) {
-        RetType r = rs.pop();
+      if (done()) {
         m.release();
-        return r;
+        return false;
+      }
+      if (!rs.empty()) {
+        r = rs.pop();
+        m.release();
+        return true;
       }
       m.release();
     }
@@ -311,6 +306,7 @@ namespace Gecode { namespace Support {
     m.acquire();
     while (!rs.empty())
       rs.pop().~RetType();
+    sidx = 0;
     n = !done();
     m.release();
     return n;
@@ -320,8 +316,9 @@ namespace Gecode { namespace Support {
   inline
   RunJobs<Jobs,RetType>::Master::~Master(void) {
     sidx = 0;
-    while ((*this)())
-      this->run().~RetType();
+    RetType r;
+    while (run(r))
+      r.~RetType();
   }
 
   template<class Jobs, class RetType>
@@ -353,14 +350,8 @@ namespace Gecode { namespace Support {
 
   template<class Jobs, class RetType>
   inline bool
-  RunJobs<Jobs,RetType>::operator ()(void) {
-    return (*master)();
-  }
-
-  template<class Jobs, class RetType>
-  inline RetType
-  RunJobs<Jobs,RetType>::run(void) {
-    return master->run();
+  RunJobs<Jobs,RetType>::run(RetType& r) {
+    return master->run(r);
   }
 
   template<class Jobs, class RetType>
