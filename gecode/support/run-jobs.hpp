@@ -207,6 +207,7 @@ namespace Gecode { namespace Support {
     } else {
       j = NULL;
       n_threads--;
+      e.signal();
     }
     m.release();
     return j;
