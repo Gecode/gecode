@@ -76,6 +76,14 @@ Minor release.
 Module: flatzinc
 What:   bug
 Rank:   minor
+[DESCRIPTION]
+Add assertions to regular constraint definition to avoid posting with
+inavlid arguments.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
 Thanks: David Hotham
 [DESCRIPTION]
 Fix parser to work with newer versions of GCC compiler.

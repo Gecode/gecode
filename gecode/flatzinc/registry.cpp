@@ -1559,7 +1559,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_minimum_arg_int", &p_minimum_arg);
         registry().add("gecode_maximum_arg_int", &p_maximum_arg);
         registry().add("array_int_maximum", &p_maximum);
-        registry().add("regular", &p_regular);
+        registry().add("gecode_regular", &p_regular);
         registry().add("sort", &p_sort);
         registry().add("inverse_offsets", &p_inverse_offsets);
         registry().add("increasing_int", &p_increasing_int);
