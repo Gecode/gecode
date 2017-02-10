@@ -1082,10 +1082,11 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_SET_EXPORT void
-  wait(Home home, SetVar x, void (*c)(Space& home));
+  wait(Home home, SetVar x, const std::function<void(Space& home)>& c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_SET_EXPORT void
-  wait(Home home, const SetVarArgs& x, void (*c)(Space& home));
+  wait(Home home, const SetVarArgs& x,
+       const std::function<void(Space& home)>& c);
   //@}
 
 }

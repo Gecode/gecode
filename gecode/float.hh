@@ -1354,10 +1354,10 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_FLOAT_EXPORT void
-  wait(Home home, FloatVar x, void (*c)(Space& home));
+  wait(Home home, FloatVar x, const std::function<void(Space& home)>& c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_FLOAT_EXPORT void
-  wait(Home home, const FloatVarArgs& x, void (*c)(Space& home));
+  wait(Home home, const FloatVarArgs& x, const std::function<void(Space& home)>& c);
   //@}
 
 }

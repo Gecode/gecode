@@ -3739,24 +3739,31 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_INT_EXPORT void
-  wait(Home home, IntVar x, void (*c)(Space& home),
+  wait(Home home, IntVar x, const std::function<void(Space& home)>& c,
        IntPropLevel ipl=IPL_DEF);
   /// Execute \a c when \a x becomes assigned
   GECODE_INT_EXPORT void
-  wait(Home home, BoolVar x, void (*c)(Space& home),
+  wait(Home home, BoolVar x, const std::function<void(Space& home)>& c,
        IntPropLevel ipl=IPL_DEF);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_INT_EXPORT void
-  wait(Home home, const IntVarArgs& x, void (*c)(Space& home),
+  wait(Home home, const IntVarArgs& x, const std::function<void(Space& home)>& c,
        IntPropLevel ipl=IPL_DEF);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_INT_EXPORT void
-  wait(Home home, const BoolVarArgs& x, void (*c)(Space& home),
+  wait(Home home, const BoolVarArgs& x,
+       const std::function<void(Space& home)>& c,
        IntPropLevel ipl=IPL_DEF);
   /// Execute \a t (then) when \a x is assigned one, and \a e (else) otherwise
   GECODE_INT_EXPORT void
   when(Home home, BoolVar x,
-       void (*t)(Space& home), void (*e)(Space& home)= NULL,
+       const std::function<void(Space& home)>& t,
+       const std::function<void(Space& home)>& e,
+       IntPropLevel ipl=IPL_DEF);
+  /// Execute \a t (then) when \a x is assigned one
+  GECODE_INT_EXPORT void
+  when(Home home, BoolVar x,
+       const std::function<void(Space& home)>& t,
        IntPropLevel ipl=IPL_DEF);
   //@}
 

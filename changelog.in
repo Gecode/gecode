@@ -73,6 +73,27 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Functions passed to wait() and when() can now be of std::function type.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Functions passed to wait() can now be of std::function type.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+Functions passed to wait() can now be of std::function type.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor

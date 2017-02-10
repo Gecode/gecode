@@ -153,12 +153,13 @@
 
 
 /*
- * Arrays
+ * Arrays and other data
  *
  */
 
 #include <gecode/kernel/array.hpp>
 #include <gecode/kernel/shared-array.hpp>
+#include <gecode/kernel/shared-data.hpp>
 
 
 /*
@@ -173,6 +174,8 @@
  * Common propagator and branching patterns
  *
  */
+
+#include <gecode/kernel/space-function.hpp>
 
 namespace Gecode {
 
@@ -198,7 +201,7 @@ namespace Gecode {
   //@{
   /// Call the function \a f (with the current space as argument) for branching
   GECODE_KERNEL_EXPORT void
-  branch(Home home, void (*f)(Space& home));
+  branch(Home home, const std::function<void(Space& home)>& f);
   //@}
 
 }

@@ -42,10 +42,10 @@
 namespace Gecode {
 
   /// %Brancher for calling a function
-  class GECODE_KERNEL_EXPORT FunctionBranch : public Brancher {
+  class FunctionBranch : public Brancher {
   protected:
     /// Minimal brancher description storing no information
-    class GECODE_KERNEL_EXPORT Description : public Choice {
+    class Description : public Choice {
     public:
       /// Initialize description for brancher \a b, number of alternatives \a a.
       Description(const Brancher& b, unsigned int a) : Choice(b,a) {}
@@ -57,15 +57,19 @@ namespace Gecode {
       }
     };
     /// Function to call
-    void (*f)(Space&);
+    SpaceFunction f;
     /// Call function just once
     bool done;
     /// Construct brancher
-    FunctionBranch(Home home, void (*f0)(Space&))
-      : Brancher(home), f(f0), done(false) {}
+    FunctionBranch(Home home, const SpaceFunction& f0)
+      : Brancher(home), f(f0), done(false) {
+      home.notice(*this,AP_DISPOSE);
+    }
     /// Copy constructor
     FunctionBranch(Space& home, bool share, FunctionBranch& b)
-      : Brancher(home,share,b), f(b.f), done(b.done) {}
+      : Brancher(home,share,b), done(b.done) {
+      f.update(home,share,b.f);
+    }
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space&) const {
@@ -98,14 +102,21 @@ namespace Gecode {
       return new (home) FunctionBranch(home,share,*this);
     }
     /// Post brancher
-    static void post(Home home, void (*f)(Space&)) {
+    static void post(Home home, const SpaceFunction& f) {
       (void) new (home) FunctionBranch(home,f);
+    }
+    /// Dispose brancher
+    virtual size_t dispose(Space& home) {
+      home.ignore(*this,AP_DISPOSE);
+      f.~SpaceFunction();
+      (void) Brancher::dispose(home);
+      return sizeof(*this);
     }
   };
 
 
   void
-  branch(Home home, void (*f)(Space& home)) {
+  branch(Home home, const std::function<void(Space& home)>& f) {
     FunctionBranch::post(home,f);
   }
 

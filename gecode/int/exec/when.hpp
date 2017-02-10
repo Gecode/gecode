@@ -38,12 +38,33 @@
 namespace Gecode { namespace Int { namespace Exec {
 
   forceinline
-  When::When(Home home, BoolView x, void (*t0)(Space&), void (*e0)(Space&))
-    : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,x), t(t0), e(e0) {}
+  When::When(Home home, BoolView x,
+             const SpaceFunction& t0, const SpaceFunction& e0)
+    : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,x), t(t0), e(e0) {
+    home.notice(*this,AP_DISPOSE);
+  }
 
   forceinline
   When::When(Space& home, bool share, When& p)
-    : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,share,p), t(p.t), e(p.e) {}
+    : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,share,p) {
+    t.update(home, share, p.t);
+    e.update(home, share, p.e);
+  }
+
+  forceinline ExecStatus
+  When::post(Home home, BoolView x,
+             const SpaceFunction& t, const SpaceFunction& e) {
+    if (x.zero()) {
+      e(home);
+      return home.failed() ? ES_FAILED : ES_OK;
+    } else if (x.zero()) {
+      t(home);
+      return home.failed() ? ES_FAILED : ES_OK;
+    } else {
+      (void) new (home) When(home,x,t,e);
+      return ES_OK;
+    }
+  }
 
 }}}
 

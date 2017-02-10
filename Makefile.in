@@ -198,7 +198,7 @@ KERNELSRC0 = \
 	afc activity rnd exception trace-filter tracer
 
 KERNELHDR0 = \
-	archive array shared-array core exception \
+	archive array shared-array shared-data core exception \
 	macros memory-config memory-manager region modevent range-list \
 	propagator advisor view var \
 	branch-var branch-val branch-tiebreak \
@@ -208,7 +208,7 @@ KERNELHDR0 = \
 	allocators print gpi \
 	afc activity rnd branch-traits \
 	trace-traits trace-filter tracer trace-recorder \
-	subscribed-propagators
+	subscribed-propagators space-function
 
 KERNELSRC 	= $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR 	= \

@@ -41,13 +41,14 @@
 namespace Gecode {
 
   void
-  wait(Home home, SetVar x, void (*c)(Space& home)) {
+  wait(Home home, SetVar x, const std::function<void(Space& home)>& c) {
     GECODE_POST;
     GECODE_ES_FAIL(Kernel::UnaryWait<Set::SetView>::post(home,x,c));
   }
 
   void
-  wait(Home home, const SetVarArgs& x, void (*c)(Space& home)) {
+  wait(Home home, const SetVarArgs& x,
+       const std::function<void(Space& home)>& c) {
     GECODE_POST;
     ViewArray<Set::SetView> xv(home,x);
     GECODE_ES_FAIL(Kernel::NaryWait<Set::SetView>::post(home,xv,c));
