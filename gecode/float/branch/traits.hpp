@@ -41,8 +41,6 @@ namespace Gecode {
   template<>
   class BranchTraits<FloatVar> {
   public:
-    /// Type for the branching filter function
-    typedef FloatBranchFilter Filter;
     /// Type for the branching merit function
     typedef FloatBranchMerit Merit;
     /// Type for the branching value function

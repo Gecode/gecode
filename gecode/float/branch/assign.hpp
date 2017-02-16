@@ -43,11 +43,11 @@ namespace Gecode {
 
   forceinline
   FloatAssign::FloatAssign(Rnd r)
-    : ValBranch(r), s(SEL_RND) {}
+    : ValBranch<FloatVar>(r), s(SEL_RND) {}
 
   forceinline
-  FloatAssign::FloatAssign(VoidFunction v, VoidFunction c)
-    : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
+  FloatAssign::FloatAssign(FloatBranchVal v, FloatBranchCommit c)
+    : ValBranch<FloatVar>(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline FloatAssign::Select
   FloatAssign::select(void) const {
@@ -72,8 +72,7 @@ namespace Gecode {
 
   inline FloatAssign
   FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c) {
-    return FloatAssign(function_cast<VoidFunction>(v),
-                       function_cast<VoidFunction>(c));
+    return FloatAssign(v,c);
   }
 
 }

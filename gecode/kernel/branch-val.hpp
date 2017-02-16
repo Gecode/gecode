@@ -41,57 +41,69 @@ namespace Gecode {
    * \brief Value branching information
    * \ingroup TaskModelBranch
    */
+  template<class Var>
   class ValBranch {
+  public:
+    /// The corresponding branching value function
+    typedef typename BranchTraits<Var>::Val BranchVal;
+    /// The corresponding branching commit function
+    typedef typename BranchTraits<Var>::Commit BranchCommit;
   protected:
     /// Random number generator
     Rnd r;
     /// Value function
-    VoidFunction vf;
+    BranchVal vf;
     /// Commit function
-    VoidFunction cf;
+    BranchCommit cf;
   public:
     /// Initialize
     ValBranch(void);
     /// Initialize with random number generator \a r
     ValBranch(Rnd r);
     /// Initialize with value function \a v and commit function \a c
-    ValBranch(VoidFunction v, VoidFunction c);
+    ValBranch(BranchVal v, BranchCommit c);
     /// Return random number generator
     Rnd rnd(void) const;
     /// Return value function
-    VoidFunction val(void) const;
+    BranchVal val(void) const;
     /// Return commit function
-    VoidFunction commit(void) const;
+    BranchCommit commit(void) const;
   };
 
 
+  template<class Var>
   forceinline
-  ValBranch::ValBranch(void)
+  ValBranch<Var>::ValBranch(void)
     : vf(NULL), cf(NULL) {}
 
+  template<class Var>
   forceinline
-  ValBranch::ValBranch(Rnd r0)
+  ValBranch<Var>::ValBranch(Rnd r0)
     : r(r0), vf(NULL), cf(NULL) {
     if (!r.initialized())
       throw UninitializedRnd("ValBranch::ValBranch");
   }
 
+  template<class Var>
   forceinline
-  ValBranch::ValBranch(VoidFunction v, VoidFunction c)
+  ValBranch<Var>::ValBranch(BranchVal v, BranchCommit c)
     : vf(v), cf(c) {}
 
-  inline Rnd
-  ValBranch::rnd(void) const {
+  template<class Var>
+  forceinline Rnd
+  ValBranch<Var>::rnd(void) const {
     return r;
   }
 
-  forceinline VoidFunction
-  ValBranch::val(void) const {
+  template<class Var>
+  forceinline typename ValBranch<Var>::BranchVal
+  ValBranch<Var>::val(void) const {
     return vf;
   }
 
-  forceinline VoidFunction
-  ValBranch::commit(void) const {
+  template<class Var>
+  forceinline typename ValBranch<Var>::BranchCommit
+  ValBranch<Var>::commit(void) const {
     return cf;
   }
 

@@ -49,11 +49,13 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
+    /// Corresponding variable type
+    typedef typename View::VarType Var;
     /// Value type
     typedef _Val Val;
   public:
     /// Constructor for initialization
-    ValSelCommitBase(Space& home, const ValBranch& vb);
+    ValSelCommitBase(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelCommitBase(Space& home, bool shared,
                      ValSelCommitBase<View,Val>& vsc);
@@ -103,7 +105,7 @@ namespace Gecode {
     ValCommit c;
   public:
     /// Constructor for initialization
-    ValSelCommit(Space& home, const ValBranch& vb);
+    ValSelCommit(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelCommit(Space& home, bool shared,
                  ValSelCommit<ValSel,ValCommit>& vsc);
@@ -130,7 +132,8 @@ namespace Gecode {
 
   template<class View, class Val>
   forceinline
-  ValSelCommitBase<View,Val>::ValSelCommitBase(Space&, const ValBranch&) {}
+  ValSelCommitBase<View,Val>::ValSelCommitBase(Space&, 
+                                               const ValBranch<Var>&) {}
   template<class View, class Val>
   forceinline
   ValSelCommitBase<View,Val>::
@@ -156,7 +159,7 @@ namespace Gecode {
   template<class ValSel, class ValCommit>
   forceinline
   ValSelCommit<ValSel,ValCommit>::ValSelCommit(Space& home,
-                                               const ValBranch& vb)
+                                               const ValBranch<Var>& vb)
     : ValSelCommitBase<View,Val>(home,vb), s(home,vb), c(home,vb) {}
 
   template<class ValSel, class ValCommit>

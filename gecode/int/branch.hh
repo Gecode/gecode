@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class MeritMin : public MeritBase<View,int> {
   public:
     /// Constructor for initialization
-    MeritMin(Space& home, const VarBranch& vb);
+    MeritMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritMin(Space& home, bool shared, MeritMin& m);
     /// Return minimum as merit for view \a x at position \a i
@@ -86,7 +86,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class MeritMax : public MeritBase<View,int> {
   public:
     /// Constructor for initialization
-    MeritMax(Space& home, const VarBranch& vb);
+    MeritMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritMax(Space& home, bool shared, MeritMax& m);
     /// Return maximum as merit for view \a x at position \a i
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class MeritSize : public MeritBase<View,unsigned int> {
   public:
     /// Constructor for initialization
-    MeritSize(Space& home, const VarBranch& vb);
+    MeritSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritSize(Space& home, bool shared, MeritSize& m);
     /// Return size as merit for view \a x at position \a i
@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class MeritDegreeSize : public MeritBase<View,double> {
   public:
     /// Constructor for initialization
-    MeritDegreeSize(Space& home, const VarBranch& vb);
+    MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritDegreeSize(Space& home, bool shared, MeritDegreeSize& m);
     /// Return size over degree as merit for view \a x at position \a i
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Branch {
     AFC afc;
   public:
     /// Constructor for initialization
-    MeritAFCSize(Space& home, const VarBranch& vb);
+    MeritAFCSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritAFCSize(Space& home, bool shared, MeritAFCSize& m);
     /// Return size over AFC as merit for view \a x at position \a i
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Branch {
     Activity activity;
   public:
     /// Constructor for initialization
-    MeritActivitySize(Space& home, const VarBranch& vb);
+    MeritActivitySize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritActivitySize(Space& home, bool shared, MeritActivitySize& m);
     /// Return size over activity as merit for view \a x at position \a i
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class MeritRegretMin : public MeritBase<View,unsigned int> {
   public:
     /// Constructor for initialization
-    MeritRegretMin(Space& home, const VarBranch& vb);
+    MeritRegretMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritRegretMin(Space& home, bool shared, MeritRegretMin& m);
     /// Return minimum regret as merit for view \a x at position \a i
@@ -202,7 +202,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class MeritRegretMax : public MeritBase<View,unsigned int> {
   public:
     /// Constructor for initialization
-    MeritRegretMax(Space& home, const VarBranch& vb);
+    MeritRegretMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritRegretMax(Space& home, bool shared, MeritRegretMax& m);
     /// Return maximum regret as merit for view \a x at position \a i
@@ -217,10 +217,10 @@ namespace Gecode { namespace Int { namespace Branch {
 
   /// Return view selectors for integer views
   GECODE_INT_EXPORT
-  ViewSel<IntView>* viewselint(Space& home, const IntVarBranch& ivb);
+  ViewSel<IntView>* viewsel(Space& home, const IntVarBranch& ivb);
   /// Return view selectors for Boolean views
   GECODE_INT_EXPORT
-  ViewSel<BoolView>* viewselbool(Space& home, const IntVarBranch& ivb);
+  ViewSel<BoolView>* viewsel(Space& home, const BoolVarBranch& bvb);
 
 }}}
 
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSelMin : public ValSel<View,int> {
   public:
     /// Constructor for initialization
-    ValSelMin(Space& home, const ValBranch& vb);
+    ValSelMin(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelMin(Space& home, bool shared, ValSelMin& vs);
     /// Return value of view \a x at position \a i
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSelMax : public ValSel<View,int> {
   public:
     /// Constructor for initialization
-    ValSelMax(Space& home, const ValBranch& vb);
+    ValSelMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelMax(Space& home, bool shared, ValSelMax& vs);
     /// Return value of view \a x at position \a i
@@ -282,7 +282,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSelMed : public ValSel<View,int> {
   public:
     /// Constructor for initialization
-    ValSelMed(Space& home, const ValBranch& vb);
+    ValSelMed(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelMed(Space& home, bool shared, ValSelMed& vs);
     /// Return value of view \a x at position  i
@@ -299,7 +299,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSelAvg : public ValSel<View,int> {
   public:
     /// Constructor for initialization
-    ValSelAvg(Space& home, const ValBranch& vb);
+    ValSelAvg(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelAvg(Space& home, bool shared, ValSelAvg& vs);
     /// Return value of view \a x at position \a i
@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace Branch {
     Rnd r;
   public:
     /// Constructor for initialization
-    ValSelRnd(Space& home, const ValBranch& vb);
+    ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
     /// Return value of view \a x at position \a i
@@ -339,7 +339,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSelRangeMin : public ValSel<IntView,int> {
   public:
     /// Constructor for initialization
-    ValSelRangeMin(Space& home, const ValBranch& vb);
+    ValSelRangeMin(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelRangeMin(Space& home, bool shared, ValSelRangeMin& vs);
     /// Return value of integer view \a x at position \a i
@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSelRangeMax : public ValSel<IntView,int> {
   public:
     /// Constructor for initialization
-    ValSelRangeMax(Space& home, const ValBranch& vb);
+    ValSelRangeMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelRangeMax(Space& home, bool shared, ValSelRangeMax& vs);
     /// Return value of integer view \a x at position \a i
@@ -375,7 +375,7 @@ namespace Gecode { namespace Int { namespace Branch {
     IntSharedArray c;
   public:
     /// Constructor for initialization
-    ValSelNearMinMax(Space& home, const ValBranch& vb);
+    ValSelNearMinMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelNearMinMax(Space& home, bool shared, ValSelNearMinMax& vs);
     /// Return value of view \a x at position \a i
@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace Branch {
     IntSharedArray c;
   public:
     /// Constructor for initialization
-    ValSelNearIncDec(Space& home, const ValBranch& vb);
+    ValSelNearIncDec(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelNearIncDec(Space& home, bool shared, ValSelNearIncDec& vs);
     /// Return value of view \a x at position \a i
@@ -516,7 +516,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValCommitEq : public ValCommit<View,int> {
   public:
     /// Constructor for initialization
-    ValCommitEq(Space& home, const ValBranch& vb);
+    ValCommitEq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitEq(Space& home, bool shared, ValCommitEq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
@@ -538,7 +538,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValCommitLq : public ValCommit<View,int> {
   public:
     /// Constructor for initialization
-    ValCommitLq(Space& home, const ValBranch& vb);
+    ValCommitLq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitLq(Space& home, bool shared, ValCommitLq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
@@ -560,7 +560,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValCommitGq : public ValCommit<View,int> {
   public:
     /// Constructor for initialization
-    ValCommitGq(Space& home, const ValBranch& vb);
+    ValCommitGq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitGq(Space& home, bool shared, ValCommitGq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
@@ -582,7 +582,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValCommitGr : public ValCommit<View,int> {
   public:
     /// Constructor for initialization
-    ValCommitGr(Space& home, const ValBranch& vb);
+    ValCommitGr(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitGr(Space& home, bool shared, ValCommitGr& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
@@ -603,22 +603,22 @@ namespace Gecode { namespace Int { namespace Branch {
   /// Return value and commit for integer views
   GECODE_INT_EXPORT
   ValSelCommitBase<IntView,int>*
-  valselcommitint(Space& home, int n, const IntValBranch& ivb);
+  valselcommit(Space& home, int n, const IntValBranch& ivb);
 
   /// Return value and commit for Boolean views
   GECODE_INT_EXPORT
   ValSelCommitBase<BoolView,int>*
-  valselcommitbool(Space& home, int n, const IntValBranch& ivb);
+  valselcommit(Space& home, int n, const BoolValBranch& bvb);
 
   /// Return value and commit for integer views
   GECODE_INT_EXPORT
   ValSelCommitBase<IntView,int>*
-  valselcommitint(Space& home, const IntAssign& ia);
+  valselcommit(Space& home, const IntAssign& ia);
 
   /// Return value and commit for Boolean views
   GECODE_INT_EXPORT
   ValSelCommitBase<BoolView,int>*
-  valselcommitbool(Space& home, const IntAssign& ia);
+  valselcommit(Space& home, const BoolAssign& ba);
 
 }}}
 
@@ -628,19 +628,18 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief %Brancher by view and values selection
    *
    */
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   class ViewValuesBrancher : public ViewBrancher<IntView,n> {
-    typedef typename ViewBrancher<IntView,n>::BranchFilter BranchFilter;
   protected:
     using ViewBrancher<IntView,n>::x;
     /// Print function
-    IntVarValPrint vvp;
+    Print p;
     /// Constructor for cloning \a b
     ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b);
     /// Constructor for creation
     ViewValuesBrancher(Home home, ViewArray<IntView>& x,
                        ViewSel<IntView>* vs[n],
-                       BranchFilter bf, IntVarValPrint vvp);
+                       IntVarValPrint vvp);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -661,11 +660,19 @@ namespace Gecode { namespace Int { namespace Branch {
                        std::ostream& o) const;
     /// Perform cloning
     virtual Actor* copy(Space& home, bool share);
-    /// Constructor for creation
+    /// Post function for creation
     static void post(Home home, ViewArray<IntView>& x,
                      ViewSel<IntView>* vs[n],
-                     BranchFilter bf, IntVarValPrint vvp);
+                     IntVarValPrint vvp);
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space& home);
   };
+
+  /// Post brancher for view and values
+  template<int n, bool min>
+  void postviewvaluesbrancher(Home home, ViewArray<IntView>& x,
+                              ViewSel<IntView>* vs[n],
+                              IntVarValPrint vvp);
 
 }}}
 

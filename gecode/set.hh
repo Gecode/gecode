@@ -48,6 +48,8 @@
 #include <gecode/int.hh>
 #include <gecode/iter.hh>
 
+#include <functional>
+
 /*
  * Configure linking
  *
@@ -1082,11 +1084,11 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_SET_EXPORT void
-  wait(Home home, SetVar x, const std::function<void(Space& home)>& c);
+  wait(Home home, SetVar x, std::function<void(Space& home)> c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_SET_EXPORT void
   wait(Home home, const SetVarArgs& x,
-       const std::function<void(Space& home)>& c);
+       std::function<void(Space& home)> c);
   //@}
 
 }
@@ -1099,16 +1101,6 @@ namespace Gecode {
    */
 
   /**
-   * \brief Branch filter function type for set variables
-   *
-   * The variable \a x is considered for selection and \a i refers to the
-   * variable's position in the original array passed to the brancher.
-   *
-   * \ingroup TaskModelSetBranch
-   */
-  typedef bool (*SetBranchFilter)(const Space& home, SetVar x, int i);
-
-  /**
    * \brief Branch merit function type for set variables
    *
    * The function must return a merit value for the variable
@@ -1118,7 +1110,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef double (*SetBranchMerit)(const Space& home, SetVar x, int i);
+  typedef std::function<double(const Space& home, SetVar x, int i)>
+    SetBranchMerit;
 
   /**
    * \brief Branch value function type for set variables
@@ -1130,7 +1123,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef int (*SetBranchVal)(const Space& home, SetVar x, int i);
+  typedef std::function<int(const Space& home, SetVar x, int i)>
+    SetBranchVal;
 
   /**
    * \brief Branch commit function type for set variables
@@ -1143,8 +1137,9 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef void (*SetBranchCommit)(Space& home, unsigned int a,
-                                  SetVar x, int i, int n);
+  typedef std::function<void(Space& home, unsigned int a,
+                             SetVar x, int i, int n)>
+    SetBranchCommit;
 
 }
 
@@ -1243,10 +1238,11 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for printing branching alternatives for set variables
-  typedef void (*SetVarValPrint)(const Space &home, const Brancher& b,
-                                 unsigned int a,
-                                 SetVar x, int i, const int& n,
-                                 std::ostream& o);
+  typedef std::function<void(const Space &home, const Brancher& b,
+                             unsigned int a,
+                             SetVar x, int i, const int& n,
+                             std::ostream& o)>
+    SetVarValPrint;
 
 }
 
@@ -1257,7 +1253,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetVarBranch : public VarBranch {
+  class SetVarBranch : public VarBranch<SetVar> {
   public:
     /// Which variable selection
     enum Select {
@@ -1297,11 +1293,11 @@ namespace Gecode {
     /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
     SetVarBranch(Select s, double d, BranchTbl t);
     /// Initialize with selection strategy \a s, afc \a a, and tie-break limit function \a t
-    SetVarBranch(Select s, AFC a, BranchTbl t);
+    SetVarBranch(Select s, SetAFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    SetVarBranch(Select s, Activity a, BranchTbl t);
+    SetVarBranch(Select s, SetActivity a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
-    SetVarBranch(Select s, VoidFunction mf, BranchTbl t);
+    SetVarBranch(Select s, SetBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
     /// Expand decay factor into AFC or activity
@@ -1386,7 +1382,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetValBranch : public ValBranch {
+  class SetValBranch : public ValBranch<SetVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1409,7 +1405,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     SetValBranch(Select s, Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    SetValBranch(VoidFunction v, VoidFunction c);
+    SetValBranch(SetBranchVal v, SetBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1456,7 +1452,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetAssign : public ValBranch {
+  class SetAssign : public ValBranch<SetVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1479,7 +1475,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     SetAssign(Select s, Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    SetAssign(VoidFunction v, VoidFunction c);
+    SetAssign(SetBranchVal v, SetBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1528,7 +1524,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
-         SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -1538,7 +1533,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
-         SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with value selection \a vals
@@ -1555,7 +1549,6 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
-         SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
   /**
    * \brief Assign \a x with value selection \a vals
@@ -1589,7 +1582,6 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
-         SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
@@ -1601,7 +1593,6 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,
-         SetBranchFilter bf=NULL,
          SetVarValPrint vvp=NULL);
 }
 

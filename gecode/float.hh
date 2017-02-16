@@ -46,6 +46,8 @@
 #include <cfloat>
 #include <iostream>
 
+#include <functional>
+
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
 
@@ -1354,10 +1356,10 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_FLOAT_EXPORT void
-  wait(Home home, FloatVar x, const std::function<void(Space& home)>& c);
+  wait(Home home, FloatVar x, std::function<void(Space& home)> c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_FLOAT_EXPORT void
-  wait(Home home, const FloatVarArgs& x, const std::function<void(Space& home)>& c);
+  wait(Home home, const FloatVarArgs& x, std::function<void(Space& home)> c);
   //@}
 
 }
@@ -1370,16 +1372,6 @@ namespace Gecode {
    */
 
   /**
-   * \brief Branch filter function type for float variables
-   *
-   * The variable \a x is considered for selection and \a i refers to the
-   * variable's position in the original array passed to the brancher.
-   *
-   * \ingroup TaskModelFloatBranch
-   */
-  typedef bool (*FloatBranchFilter)(const Space& home, FloatVar x, int i);
-
-  /**
    * \brief Branch merit function type for float variables
    *
    * The function must return a merit value for the variable
@@ -1389,7 +1381,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef double (*FloatBranchMerit)(const Space& home, FloatVar x, int i);
+  typedef std::function<double(const Space& home, FloatVar x, int i)>
+    FloatBranchMerit;
 
   /**
    * \brief Value description class for branching
@@ -1414,7 +1407,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef FloatNumBranch (*FloatBranchVal)(const Space& home, FloatVar x, int i);
+  typedef std::function<FloatNumBranch(const Space& home, FloatVar x, int i)>
+    FloatBranchVal;
 
   /**
    * \brief Branch commit function type for float variables
@@ -1427,8 +1421,9 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef void (*FloatBranchCommit)(Space& home, unsigned int a,
-                                    FloatVar x, int i, FloatNumBranch nl);
+  typedef std::function<void(Space& home, unsigned int a,
+                             FloatVar x, int i, FloatNumBranch nl)>
+    FloatBranchCommit;
 
 }
 
@@ -1526,10 +1521,11 @@ namespace Gecode {
 namespace Gecode {
 
   /// Function type for explaining branching alternatives for set variables
-  typedef void (*FloatVarValPrint)(const Space &home, const Brancher& b,
-                                   unsigned int a,
-                                   FloatVar x, int i, const FloatNumBranch& n,
-                                   std::ostream& o);
+  typedef std::function<void(const Space &home, const Brancher& b,
+                             unsigned int a,
+                             FloatVar x, int i, const FloatNumBranch& n,
+                             std::ostream& o)>
+    FloatVarValPrint;
 
 }
 
@@ -1540,7 +1536,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatVarBranch : public VarBranch {
+  class FloatVarBranch : public VarBranch<FloatVar> {
   public:
     /// Which variable selection
     enum Select {
@@ -1580,11 +1576,11 @@ namespace Gecode {
     /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
     FloatVarBranch(Select s, double, BranchTbl t);
     /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
-    FloatVarBranch(Select s, AFC a, BranchTbl t);
+    FloatVarBranch(Select s, FloatAFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    FloatVarBranch(Select s, Activity a, BranchTbl t);
+    FloatVarBranch(Select s, FloatActivity a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
-    FloatVarBranch(Select s, VoidFunction mf, BranchTbl t);
+    FloatVarBranch(Select s, FloatBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
     /// Expand decay factor into AFC or activity
@@ -1670,7 +1666,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatValBranch : public ValBranch {
+  class FloatValBranch : public ValBranch<FloatVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1688,7 +1684,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     FloatValBranch(Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    FloatValBranch(VoidFunction v, VoidFunction c);
+    FloatValBranch(FloatBranchVal v, FloatBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1724,7 +1720,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatAssign : public ValBranch {
+  class FloatAssign : public ValBranch<FloatVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1742,7 +1738,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     FloatAssign(Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    FloatAssign(VoidFunction v, VoidFunction c);
+    FloatAssign(FloatBranchVal v, FloatBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1780,7 +1776,6 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          FloatVarBranch vars, FloatValBranch vals,
-         FloatBranchFilter bf=NULL,
          FloatVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -1790,7 +1785,6 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals,
-         FloatBranchFilter bf=NULL,
          FloatVarValPrint vvp=NULL);
   /**
    * \brief Branch over \a x with value selection \a vals
@@ -1808,7 +1802,6 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
-         FloatBranchFilter fbf=NULL,
          FloatVarValPrint vvp=NULL);
   /**
    * \brief Assign \a x with value selection \a vals

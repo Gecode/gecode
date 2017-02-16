@@ -72,6 +72,9 @@ namespace Gecode {
   IllegalDecay::IllegalDecay(const char* l)
     : Exception(l,"Illegal decay factor") {}
 
+  InvalidFunction::InvalidFunction(const char* l)
+    : Exception(l,"Invalid function") {}
+
   UninitializedAFC::UninitializedAFC(const char* l)
     : Exception(l,"Uninitialized AFC information for branching") {}
 

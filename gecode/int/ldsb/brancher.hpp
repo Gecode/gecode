@@ -98,15 +98,14 @@ namespace Gecode { namespace Int { namespace LDSB {
 
 
 
-  template<class View, int n, class Val, unsigned int a>
-  LDSBBrancher<View,n,Val,a>
+  template<class View, int n, class Val, unsigned int a, class Print>
+  LDSBBrancher<View,n,Val,a,Print>
   ::LDSBBrancher(Home home, ViewArray<View>& x,
                  ViewSel<View>* vs[n],
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
-                 BranchFilter bf,
-                 VarValPrint vvp)
-    : ViewValBrancher<View,n,Val,a>(home, x, vs, vsc, bf, vvp),
+                 VarValPrint<Var,Val> vvp)
+    : ViewValBrancher<View,n,Val,a,Print>(home, x, vs, vsc, vvp),
       _syms(syms),
       _nsyms(nsyms),
       _prevPos(-1)
@@ -114,21 +113,22 @@ namespace Gecode { namespace Int { namespace LDSB {
     home.notice(*this, AP_DISPOSE, true);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   forceinline void
-  LDSBBrancher<View,n,Val,a>::
+  LDSBBrancher<View,n,Val,a,Print>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
        SymmetryImp<View>** syms, int nsyms,
-       BranchFilter bf, VarValPrint vvp) {
-    (void) new (home) LDSBBrancher<View,n,Val,a>(home,x,vs,vsc,syms,nsyms,bf,vvp);
+       VarValPrint<Var,Val> vvp) {
+    (void) new (home) LDSBBrancher<View,n,Val,a,Print>
+      (home,x,vs,vsc,syms,nsyms,vvp);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   forceinline
-  LDSBBrancher<View,n,Val,a>::
-  LDSBBrancher(Space& home, bool shared, LDSBBrancher<View,n,Val,a>& b)
-    : ViewValBrancher<View,n,Val,a>(home,shared,b),
+  LDSBBrancher<View,n,Val,a,Print>::
+  LDSBBrancher(Space& home, bool shared, LDSBBrancher<View,n,Val,a,Print>& b)
+    : ViewValBrancher<View,n,Val,a,Print>(home,shared,b),
       _nsyms(b._nsyms),
       _prevPos(b._prevPos) {
     _syms = home.alloc<SymmetryImp<View>*>(_nsyms);
@@ -136,19 +136,19 @@ namespace Gecode { namespace Int { namespace LDSB {
       _syms[i] = b._syms[i]->copy(home, shared);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   Actor*
-  LDSBBrancher<View,n,Val,a>::copy(Space& home, bool shared) {
-    return new (home) LDSBBrancher<View,n,Val,a>(home,shared,*this);
+  LDSBBrancher<View,n,Val,a,Print>::copy(Space& home, bool shared) {
+    return new (home) LDSBBrancher<View,n,Val,a,Print>(home,shared,*this);
   }
 
 
   // Compute choice
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   const Choice*
-  LDSBBrancher<View,n,Val,a>::choice(Space& home) {
+  LDSBBrancher<View,n,Val,a,Print>::choice(Space& home) {
     // Making the PVC here is not so nice, I think.
-    const Choice* c = ViewValBrancher<View,n,Val,a>::choice(home);
+    const Choice* c = ViewValBrancher<View,n,Val,a,Print>::choice(home);
     const PosValChoice<Val>* pvc = static_cast<const PosValChoice<Val>* >(c);
 
     // Compute symmetries.
@@ -194,9 +194,9 @@ namespace Gecode { namespace Int { namespace LDSB {
   }
 
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   const Choice*
-  LDSBBrancher<View,n,Val,a>::choice(const Space& home, Archive& e) {
+  LDSBBrancher<View,n,Val,a,Print>::choice(const Space& home, Archive& e) {
     (void) home;
     int p; e >> p;
     Val v; e >> v;
@@ -224,9 +224,9 @@ namespace Gecode { namespace Int { namespace LDSB {
   }
 
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   ExecStatus
-  LDSBBrancher<View,n,Val,a>
+  LDSBBrancher<View,n,Val,a,Print>
   ::commit(Space& home, const Choice& c, unsigned int b) {
     const LDSBChoice<Val>& pvc
       = static_cast<const LDSBChoice<Val>&>(c);
@@ -235,13 +235,15 @@ namespace Gecode { namespace Int { namespace LDSB {
 
     if (b == 0) {
       // Post the branching constraint.
-      ExecStatus fromBase = ViewValBrancher<View,n,Val,a>::commit(home, c, b);
+      ExecStatus fromBase = ViewValBrancher<View,n,Val,a,Print>
+        ::commit(home, c, b);
       GECODE_ES_CHECK(fromBase);
       for (int i = 0 ; i < this->_nsyms ; i++)
         this->_syms[i]->update(Literal(choicePos, choiceVal));
     } else if (b == 1) {
       // Post the branching constraint.
-      ExecStatus fromBase = ViewValBrancher<View,n,Val,a>::commit(home, c, b);
+      ExecStatus fromBase = ViewValBrancher<View,n,Val,a,Print>
+        ::commit(home, c, b);
       GECODE_ES_CHECK(fromBase);
 
       // Post prunings.
@@ -257,13 +259,29 @@ namespace Gecode { namespace Int { namespace LDSB {
     return ES_OK;
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   size_t
-  LDSBBrancher<View,n,Val,a>::dispose(Space& home) {
+  LDSBBrancher<View,n,Val,a,Print>::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE,true);
-    (void) ViewValBrancher<View,n,Val,a>::dispose(home);
-    return sizeof(LDSBBrancher<View,n,Val,a>);
+    (void) ViewValBrancher<View,n,Val,a,Print>::dispose(home);
+    return sizeof(LDSBBrancher<View,n,Val,a,Print>);
   }
+
+  template<class View, int n, class Val, unsigned int a>
+  forceinline void
+  postldsbbrancher(Home home,
+                   ViewArray<View>& x,
+                   ViewSel<View>* vs[n],
+                   ValSelCommitBase<View,Val>* vsc,
+                   SymmetryImp<View>** syms, int nsyms,
+                   VarValPrint<typename View::VarType,Val> vvp) {
+    if (vvp)
+      LDSBBrancher<View,n,Val,a,BrancherPrint<View,Val> >
+        ::post(home,x,vs,vsc,syms,nsyms,vvp);
+    else
+      LDSBBrancher<View,n,Val,a,BrancherNoPrint<View,Val> >
+        ::post(home,x,vs,vsc,syms,nsyms,vvp);
+  }      
 
 }}}
 

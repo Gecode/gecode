@@ -72,8 +72,8 @@ namespace Gecode { namespace FlatZinc {
     /// Construct brancher
     AuxVarBrancher(Home home, TieBreak<IntVarBranch> int_varsel0,
                    IntValBranch int_valsel0,
-                   TieBreak<IntVarBranch> bool_varsel0,
-                   IntValBranch bool_valsel0
+                   TieBreak<BoolVarBranch> bool_varsel0,
+                   BoolValBranch bool_valsel0
 #ifdef GECODE_HAS_SET_VARS
                    ,
                    SetVarBranch set_varsel0,
@@ -120,8 +120,8 @@ namespace Gecode { namespace FlatZinc {
 
     TieBreak<IntVarBranch> int_varsel;
     IntValBranch int_valsel;
-    TieBreak<IntVarBranch> bool_varsel;
-    IntValBranch bool_valsel;
+    TieBreak<BoolVarBranch> bool_varsel;
+    BoolValBranch bool_valsel;
 #ifdef GECODE_HAS_SET_VARS
     SetVarBranch set_varsel;
     SetValBranch set_valsel;
@@ -198,8 +198,8 @@ namespace Gecode { namespace FlatZinc {
     static void post(Home home,
                      TieBreak<IntVarBranch> int_varsel,
                      IntValBranch int_valsel,
-                     TieBreak<IntVarBranch> bool_varsel,
-                     IntValBranch bool_valsel
+                     TieBreak<BoolVarBranch> bool_varsel,
+                     BoolValBranch bool_valsel
 #ifdef GECODE_HAS_SET_VARS
                      ,
                      SetVarBranch set_varsel,
@@ -486,6 +486,108 @@ namespace Gecode { namespace FlatZinc {
     ann->print(std::cerr);
     std::cerr << std::endl;
     return INT_ASSIGN_MIN();
+  }
+
+  TieBreak<BoolVarBranch> ann2bvarsel(AST::Node* ann, Rnd rnd, double decay) {
+    if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
+      if ((s->id == "input_order") ||
+          (s->id == "first_fail") ||
+          (s->id == "anti_first_fail") ||
+          (s->id == "smallest") ||
+          (s->id == "largest") ||
+          (s->id == "max_regret"))
+       return TieBreak<BoolVarBranch>(BOOL_VAR_NONE());
+      if ((s->id == "occurrence") ||
+          (s->id == "most_constrained"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_DEGREE_MAX());
+      if (s->id == "random")
+        return TieBreak<BoolVarBranch>(BOOL_VAR_RND(rnd));
+      if ((s->id == "afc_min") ||
+          (s->id == "afc_size_min"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_AFC_MIN(decay));
+      if ((s->id == "afc_max") ||
+          (s->id == "afc_size_max") ||
+          (s->id == "dom_w_deg"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_AFC_MAX(decay));
+      if ((s->id == "activity_min") &&
+          (s->id == "activity_size_min"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_ACTIVITY_MIN(decay));
+      if ((s->id == "activity_max") ||
+          (s->id == "activity_size_max"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_ACTIVITY_MAX(decay));
+    }
+    std::cerr << "Warning, ignored search annotation: ";
+    ann->print(std::cerr);
+    std::cerr << std::endl;
+    return TieBreak<BoolVarBranch>(BOOL_VAR_NONE());
+  }
+
+  BoolValBranch ann2bvalsel(AST::Node* ann, std::string& r0, std::string& r1,
+                           Rnd rnd) {
+    if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
+      if (s->id == "indomain_min") {
+        r0 = "="; r1 = "!=";
+        return BOOL_VAL_MIN();
+      }
+      if (s->id == "indomain_max") {
+        r0 = "="; r1 = "!=";
+        return BOOL_VAL_MAX();
+      }
+      if (s->id == "indomain_median") {
+        r0 = "="; r1 = "!=";
+        return BOOL_VAL_MIN();
+      }
+      if (s->id == "indomain_split") {
+        r0 = "<="; r1 = ">";
+        return BOOL_VAL_MIN();
+      }
+      if (s->id == "indomain_reverse_split") {
+        r0 = ">"; r1 = "<=";
+        return BOOL_VAL_MAX();
+      }
+      if (s->id == "indomain_random") {
+        r0 = "="; r1 = "!=";
+        return BOOL_VAL_RND(rnd);
+      }
+      if (s->id == "indomain") {
+        r0 = "="; r1 = "=";
+        return BOOL_VAL_MIN();
+      }
+      if (s->id == "indomain_middle") {
+        std::cerr << "Warning, replacing unsupported annotation "
+                  << "indomain_middle with indomain_median" << std::endl;
+        r0 = "="; r1 = "!=";
+        return BOOL_VAL_MIN();
+      }
+      if (s->id == "indomain_interval") {
+        std::cerr << "Warning, replacing unsupported annotation "
+                  << "indomain_interval with indomain_split" << std::endl;
+        r0 = "<="; r1 = ">";
+        return BOOL_VAL_MIN();
+      }
+    }
+    std::cerr << "Warning, ignored search annotation: ";
+    ann->print(std::cerr);
+    std::cerr << std::endl;
+    r0 = "="; r1 = "!=";
+    return BOOL_VAL_MIN();
+  }
+
+  BoolAssign ann2asnbvalsel(AST::Node* ann, Rnd rnd) {
+    if (AST::Atom* s = dynamic_cast<AST::Atom*>(ann)) {
+      if ((s->id == "indomain_min") ||
+          (s->id == "indomain_median"))
+        return BOOL_ASSIGN_MIN();
+      if (s->id == "indomain_max")
+        return BOOL_ASSIGN_MAX();
+      if (s->id == "indomain_random") {
+        return BOOL_ASSIGN_RND(rnd);
+      }
+    }
+    std::cerr << "Warning, ignored search annotation: ";
+    ann->print(std::cerr);
+    std::cerr << std::endl;
+    return BOOL_ASSIGN_MIN();
   }
 
 #ifdef GECODE_HAS_SET_VARS
@@ -891,8 +993,8 @@ namespace Gecode { namespace FlatZinc {
     IntValBranch def_int_valsel = INT_VAL_MIN();
     std::string def_int_rel_left = "=";
     std::string def_int_rel_right = "!=";
-    TieBreak<IntVarBranch> def_bool_varsel = INT_VAR_AFC_MAX(0.99);
-    IntValBranch def_bool_valsel = INT_VAL_MIN();
+    TieBreak<BoolVarBranch> def_bool_varsel = BOOL_VAR_AFC_MAX(0.99);
+    BoolValBranch def_bool_valsel = BOOL_VAL_MIN();
     std::string def_bool_rel_left = "=";
     std::string def_bool_rel_right = "!=";
 #ifdef GECODE_HAS_SET_VARS
@@ -992,7 +1094,6 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2ivarsel(args->a[1],rnd,decay),
                    ann2ivalsel(args->a[2],r0,r1,rnd),
-                   NULL,
                    &varValPrint<IntVar>);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1012,7 +1113,7 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = iv[vars->a[i]->getIntVar()];
             iv_searched[vars->a[i]->getIntVar()] = true;
           }
-          assign(*this, va, ann2asnivalsel(args->a[1],rnd), NULL,
+          assign(*this, va, ann2asnivalsel(args->a[1],rnd),
                 &varValPrint<IntVar>);
         } else if (flatAnn[i]->isCall("bool_search")) {
           AST::Call *call = flatAnn[i]->getCall("bool_search");
@@ -1037,8 +1138,8 @@ namespace Gecode { namespace FlatZinc {
           {
             BrancherGroup bg;
             branch(bg(*this), va,
-                   ann2ivarsel(args->a[1],rnd,decay),
-                   ann2ivalsel(args->a[2],r0,r1,rnd), NULL,
+                   ann2bvarsel(args->a[1],rnd,decay),
+                   ann2bvalsel(args->a[2],r0,r1,rnd),
                    &varValPrint<BoolVar>);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1051,8 +1152,8 @@ namespace Gecode { namespace FlatZinc {
         } else if (flatAnn[i]->isCall("bool_default_search")) {
           AST::Call *call = flatAnn[i]->getCall("bool_default_search");
           AST::Array *args = call->getArgs(2);
-          def_bool_varsel = ann2ivarsel(args->a[0],rnd,decay);
-          def_bool_valsel = ann2ivalsel(args->a[1],
+          def_bool_varsel = ann2bvarsel(args->a[0],rnd,decay);
+          def_bool_valsel = ann2bvalsel(args->a[1],
                                         def_bool_rel_left,def_bool_rel_right,
                                         rnd);
         } else if (flatAnn[i]->isCall("set_search")) {
@@ -1080,7 +1181,6 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2svarsel(args->a[1],rnd,decay),
                    ann2svalsel(args->a[2],r0,r1,rnd),
-                   NULL,
                    &varValPrint<SetVar>);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1144,7 +1244,6 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2fvarsel(args->a[2],rnd,decay),
                    ann2fvalsel(args->a[3],r0,r1),
-                   NULL,
                    &varValPrintF);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1231,13 +1330,13 @@ namespace Gecode { namespace FlatZinc {
     if (iv_sol.size() > 0) {
       BrancherGroup bg;
       branch(bg(*this), iv_sol, def_int_varsel, def_int_valsel,
-             NULL, &varValPrint<IntVar>);
+             &varValPrint<IntVar>);
       branchInfo.add(bg,def_int_rel_left,def_int_rel_right,iv_sol_names);
     }
     if (bv_sol.size() > 0) {
       BrancherGroup bg;
       branch(bg(*this), bv_sol, def_bool_varsel, def_bool_valsel,
-             NULL, &varValPrint<BoolVar>);
+             &varValPrint<BoolVar>);
       branchInfo.add(bg,def_bool_rel_left,def_bool_rel_right,bv_sol_names);
     }
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -1276,7 +1375,7 @@ namespace Gecode { namespace FlatZinc {
     if (fv_sol.size() > 0) {
       BrancherGroup bg;
       branch(bg(*this), fv_sol, def_float_varsel, def_float_valsel,
-             NULL, &varValPrintF);
+             &varValPrintF);
       branchInfo.add(bg,def_float_rel_left,def_float_rel_right,fv_sol_names);
     }
 #endif
@@ -1316,7 +1415,7 @@ namespace Gecode { namespace FlatZinc {
     if (sv_sol.size() > 0) {
       BrancherGroup bg;
       branch(bg(*this), sv_sol, def_set_varsel, def_set_valsel,
-             NULL, &varValPrint<SetVar>);
+             &varValPrint<SetVar>);
       branchInfo.add(bg,def_set_rel_left,def_set_rel_right,sv_sol_names);
       
     }
@@ -1382,20 +1481,20 @@ namespace Gecode { namespace FlatZinc {
         {
           BrancherGroup bg;
           branch(bg(*this),iv_aux,def_int_varsel,def_int_valsel,
-                 NULL, &varValPrint<IntVar>);
+                 &varValPrint<IntVar>);
           branchInfo.add(bg,def_int_rel_left,def_int_rel_right,iv_tmp_names);
         }
         {
           BrancherGroup bg;
           branch(bg(*this),bv_aux,def_bool_varsel,def_bool_valsel,
-                 NULL, &varValPrint<BoolVar>);
+                 &varValPrint<BoolVar>);
           branchInfo.add(bg,def_bool_rel_left,def_bool_rel_right,bv_tmp_names);
         }
   #ifdef GECODE_HAS_SET_VARS
         {
           BrancherGroup bg;
           branch(bg(*this),sv_aux,def_set_varsel,def_set_valsel,
-                 NULL, &varValPrint<SetVar>);
+                 &varValPrint<SetVar>);
           branchInfo.add(bg,def_set_rel_left,def_set_rel_right,sv_tmp_names);
         }
   #endif
@@ -1403,7 +1502,7 @@ namespace Gecode { namespace FlatZinc {
         {
           BrancherGroup bg;
           branch(bg(*this),fv_aux,def_float_varsel,def_float_valsel,
-                 NULL, &varValPrintF);
+                 &varValPrintF);
           branchInfo.add(bg,def_float_rel_left,def_float_rel_right,fv_tmp_names);
         }
   #endif

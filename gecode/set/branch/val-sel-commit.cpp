@@ -59,7 +59,7 @@ namespace Gecode { namespace Set { namespace Branch {
     case SetValBranch::SEL_RND_EXC:
       return new (home) ValSelCommit<ValSelRnd,ValCommitExc>(home,svb);
     case SetValBranch::SEL_VAL_COMMIT:
-      if (svb.commit() == NULL) {
+      if (!svb.commit()) {
         return new (home)
           ValSelCommit<ValSelFunction<SetView>,ValCommitInc>(home,svb);
       } else {
@@ -91,7 +91,7 @@ namespace Gecode { namespace Set { namespace Branch {
     case SetAssign::SEL_RND_EXC:
       return new (home) ValSelCommit<ValSelRnd,ValCommitExc>(home,sa);
     case SetAssign::SEL_VAL_COMMIT:
-      if (sa.commit() == NULL) {
+      if (!sa.commit()) {
         return new (home)
           ValSelCommit<ValSelFunction<SetView>,ValCommitInc>(home,sa);
       } else {

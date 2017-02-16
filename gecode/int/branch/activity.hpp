@@ -49,6 +49,19 @@ namespace Gecode {
     return static_cast<IntActivity&>(Activity::operator =(a));
   }
 
+
+  forceinline
+  BoolActivity::BoolActivity(void) {}
+
+  forceinline
+  BoolActivity::BoolActivity(const BoolActivity& a)
+    : Activity(a) {}
+
+  forceinline BoolActivity&
+  BoolActivity::operator =(const BoolActivity& a) {
+    return static_cast<BoolActivity&>(Activity::operator =(a));
+  }
+
 }
 
 // STATISTICS: int-branch

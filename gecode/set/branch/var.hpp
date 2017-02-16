@@ -39,31 +39,31 @@ namespace Gecode {
 
   forceinline
   SetVarBranch::SetVarBranch(void)
-    : VarBranch(NULL), s(SEL_NONE) {}
+    : s(SEL_NONE) {}
 
   forceinline
   SetVarBranch::SetVarBranch(Select s0, BranchTbl t)
-    : VarBranch(t), s(s0) {}
+    : VarBranch<SetVar>(t), s(s0) {}
 
   forceinline
   SetVarBranch::SetVarBranch(Rnd r)
-    : VarBranch(r), s(SEL_RND) {}
+    : VarBranch<SetVar>(r), s(SEL_RND) {}
 
   forceinline
   SetVarBranch::SetVarBranch(Select s0, double d, BranchTbl t)
-    : VarBranch(d,t), s(s0) {}
+    : VarBranch<SetVar>(d,t), s(s0) {}
 
   forceinline
-  SetVarBranch::SetVarBranch(Select s0, AFC a, BranchTbl t)
-    : VarBranch(a,t), s(s0) {}
+  SetVarBranch::SetVarBranch(Select s0, SetAFC a, BranchTbl t)
+    : VarBranch<SetVar>(a,t), s(s0) {}
 
   forceinline
-  SetVarBranch::SetVarBranch(Select s0, Activity a, BranchTbl t)
-    : VarBranch(a,t), s(s0) {}
+  SetVarBranch::SetVarBranch(Select s0, SetActivity a, BranchTbl t)
+    : VarBranch<SetVar>(a,t), s(s0) {}
 
   forceinline
-  SetVarBranch::SetVarBranch(Select s0, VoidFunction mf, BranchTbl t)
-    : VarBranch(mf,t), s(s0) {}
+  SetVarBranch::SetVarBranch(Select s0, SetBranchMerit mf, BranchTbl t)
+    : VarBranch<SetVar>(mf,t), s(s0) {}
 
   forceinline SetVarBranch::Select
   SetVarBranch::select(void) const {
@@ -99,14 +99,12 @@ namespace Gecode {
 
   inline SetVarBranch
   SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_MERIT_MIN,
-                        function_cast<VoidFunction>(bm),tbl);
+    return SetVarBranch(SetVarBranch::SEL_MERIT_MIN,bm,tbl);
   }
 
   inline SetVarBranch
   SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl) {
-    return SetVarBranch(SetVarBranch::SEL_MERIT_MAX,
-                        function_cast<VoidFunction>(bm),tbl);
+    return SetVarBranch(SetVarBranch::SEL_MERIT_MAX,bm,tbl);
   }
 
   inline SetVarBranch

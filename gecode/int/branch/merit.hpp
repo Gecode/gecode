@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Minimum merit
   template<class View>
   forceinline
-  MeritMin<View>::MeritMin(Space& home, const VarBranch& vb)
+  MeritMin<View>::MeritMin(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Maximum merit
   template<class View>
   forceinline
-  MeritMax<View>::MeritMax(Space& home, const VarBranch& vb)
+  MeritMax<View>::MeritMax(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Size merit
   template<class View>
   forceinline
-  MeritSize<View>::MeritSize(Space& home, const VarBranch& vb)
+  MeritSize<View>::MeritSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Degree over size merit
   template<class View>
   forceinline
-  MeritDegreeSize<View>::MeritDegreeSize(Space& home, const VarBranch& vb)
+  MeritDegreeSize<View>::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,double>(home,vb) {}
   template<class View>
   forceinline
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // AFC over size merit
   template<class View>
   forceinline
-  MeritAFCSize<View>::MeritAFCSize(Space& home, const VarBranch& vb)
+  MeritAFCSize<View>::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
@@ -129,7 +129,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline
   MeritActivitySize<View>::MeritActivitySize(Space& home,
-                                             const VarBranch& vb)
+                                             const VarBranch<Var>& vb)
     : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
   template<class View>
   forceinline
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Minimum regret merit
   template<class View>
   forceinline
-  MeritRegretMin<View>::MeritRegretMin(Space& home, const VarBranch& vb)
+  MeritRegretMin<View>::MeritRegretMin(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Maximum regret merit
   template<class View>
   forceinline
-  MeritRegretMax<View>::MeritRegretMax(Space& home, const VarBranch& vb)
+  MeritRegretMax<View>::MeritRegretMax(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline

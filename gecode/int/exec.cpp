@@ -41,22 +41,21 @@
 namespace Gecode {
 
   void
-  wait(Home home, IntVar x, const std::function<void(Space& home)>& c,
+  wait(Home home, IntVar x, std::function<void(Space& home)> c,
        IntPropLevel) {
     GECODE_POST;
     GECODE_ES_FAIL(Kernel::UnaryWait<Int::IntView>::post(home,x,c));
   }
 
   void
-  wait(Home home, BoolVar x, const std::function<void(Space& home)>& c,
+  wait(Home home, BoolVar x, std::function<void(Space& home)> c,
        IntPropLevel) {
     GECODE_POST;
     GECODE_ES_FAIL(Kernel::UnaryWait<Int::BoolView>::post(home,x,c));
   }
 
   void
-  wait(Home home, const IntVarArgs& x,
-       const std::function<void(Space& home)>& c,
+  wait(Home home, const IntVarArgs& x, std::function<void(Space& home)> c,
        IntPropLevel) {
     GECODE_POST;
     ViewArray<Int::IntView> xv(home,x);
@@ -64,8 +63,7 @@ namespace Gecode {
   }
 
   void
-  wait(Home home, const BoolVarArgs& x,
-       const std::function<void(Space& home)>& c,
+  wait(Home home, const BoolVarArgs& x, std::function<void(Space& home)> c,
        IntPropLevel) {
     GECODE_POST;
     ViewArray<Int::BoolView> xv(home,x);
@@ -75,8 +73,8 @@ namespace Gecode {
 
   void
   when(Home home, BoolVar x,
-       const std::function<void(Space& home)>& t,
-       const std::function<void(Space& home)>& e,
+       std::function<void(Space& home)> t,
+       std::function<void(Space& home)> e,
        IntPropLevel) {
     GECODE_POST;
     GECODE_ES_FAIL(Int::Exec::When::post(home,x,t,e));
@@ -84,7 +82,7 @@ namespace Gecode {
 
   void
   when(Home home, BoolVar x,
-       const std::function<void(Space& home)>& t,
+       std::function<void(Space& home)> t,
        IntPropLevel) {
     when(home, x, t, [](Space&) {});
   }

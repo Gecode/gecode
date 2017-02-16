@@ -147,19 +147,19 @@ public:
       // Branch by assigning words
       branch(*this, allwords,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(),
-             NULL, &printwords);
+             &printwords);
       break;
     case BRANCH_LETTERS:
       // Branch by assigning letters
       branch(*this, letters,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
-             NULL, &printletters);
+             &printletters);
       break;
     case BRANCH_LETTERS_ALL:
       // Branch by assigning letters (try all letters)
       branch(*this, letters,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
-             NULL, &printletters);
+             &printletters);
       break;
     }
   }
@@ -167,21 +167,21 @@ public:
   static void printletters(const Space& home, const Brancher&,
                            unsigned int a,
                            IntVar, int i, const int& n,
-                           std::ostream& o) {
+                           std::ostream& os) {
     const Crossword& c = static_cast<const Crossword&>(home);
     int x = i % c.w, y = i / c.w;
-    o << "letters[" << x << "," << y << "] "
-      << ((a == 0) ? "=" : "!=") << " "
-      << static_cast<char>(n);
+    os << "letters[" << x << "," << y << "] "
+       << ((a == 0) ? "=" : "!=") << " "
+       << static_cast<char>(n);
   }
   /// Print brancher information when branching on words
   static void printwords(const Space&, const Brancher&,
                          unsigned int a,
                          IntVar, int i, const int& n,
-                         std::ostream& o) {
-    o << "allwords[" << i << "] "
-      << ((a == 0) ? "<=" : ">") << " "
-      << n;
+                         std::ostream& os) {
+    os << "allwords[" << i << "] "
+       << ((a == 0) ? "<=" : ">") << " "
+       << n;
   }
   /// Do not perform a restart when a solution is found
   bool master(const MetaInfo& mi) {

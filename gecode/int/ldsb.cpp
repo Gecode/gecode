@@ -263,13 +263,13 @@ namespace Gecode {
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Symmetries& syms,
-         IntBranchFilter bf, IntVarValPrint vvp) {
+         IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<IntView> xv(home,x);
     ViewSel<IntView>* vs[1] = {
-      Branch::viewselint(home,vars)
+      Branch::viewsel(home,vars)
     };
     switch (vals.select()) {
     case IntValBranch::SEL_SPLIT_MIN:
@@ -281,9 +281,9 @@ namespace Gecode {
       throw LDSBBadValueSelection("Int::LDSB::branch");
       break;
     case IntValBranch::SEL_VAL_COMMIT:
-      if (vals.commit() != NULL)
+      if (vals.commit())
         throw LDSBBadValueSelection("Int::LDSB::branch");
-      // If vals.commit() returns NULL, it means it will commit with
+      // If vals.commit() is valid, it means it will commit with
       // binary branching, which is OK for LDSB, so we fall through.
     default:
       // Construct mapping from each variable in the array to its index
@@ -301,9 +301,9 @@ namespace Gecode {
         array[i] = createIntSym(home, syms[i], variableMap);
       }
 
-      LDSBBrancher<IntView,1,int,2>::post
-        (home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
-         array,n,bf,vvp);
+      postldsbbrancher<IntView,1,int,2>
+        (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
+         array,n,vvp);
     }
   }
 
@@ -311,7 +311,7 @@ namespace Gecode {
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          const Symmetries& syms,
-         IntBranchFilter bf, IntVarValPrint vvp) {
+         IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
     vars.a.expand(home,x);
@@ -328,7 +328,7 @@ namespace Gecode {
       vars.d = INT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
-      branch(home,x,vars.a,vals,syms,bf,vvp);
+      branch(home,x,vars.a,vals,syms,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -348,7 +348,7 @@ namespace Gecode {
       ViewArray<IntView> xv(home,x);
       if (vars.c.select() == IntVarBranch::SEL_NONE) {
         ViewSel<IntView>* vs[2] = {
-          Branch::viewselint(home,vars.a),Branch::viewselint(home,vars.b)
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
         switch (vals.select()) {
         case IntValBranch::SEL_SPLIT_MIN:
@@ -360,19 +360,19 @@ namespace Gecode {
           throw LDSBBadValueSelection("Int::LDSB::branch");
           break;
         case IntValBranch::SEL_VAL_COMMIT:
-          if (vals.commit() != NULL)
+          if (vals.commit())
             throw LDSBBadValueSelection("Int::LDSB::branch");
-          // If vals.commit() returns NULL, it means it will commit with
+          // If vals.commit() is valid, it means it will commit with
           // binary branching, which is OK for LDSB, so we fall through.
         default:
-          LDSBBrancher<IntView,2,int,2>
-            ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
-                   array,n,bf,vvp);
+          postldsbbrancher<IntView,2,int,2>
+            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
+             array,n,vvp);
         }
       } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
         ViewSel<IntView>* vs[3] = {
-          Branch::viewselint(home,vars.a),Branch::viewselint(home,vars.b),
-          Branch::viewselint(home,vars.c)
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
+          Branch::viewsel(home,vars.c)
         };
         switch (vals.select()) {
         case IntValBranch::SEL_SPLIT_MIN:
@@ -384,19 +384,19 @@ namespace Gecode {
           throw LDSBBadValueSelection("Int::LDSB::branch");
           break;
         case IntValBranch::SEL_VAL_COMMIT:
-          if (vals.commit() != NULL)
+          if (vals.commit())
             throw LDSBBadValueSelection("Int::LDSB::branch");
-          // If vals.commit() returns NULL, it means it will commit with
+          // If vals.commit() is valid, it means it will commit with
           // binary branching, which is OK for LDSB, so we fall through.
         default:
-          LDSBBrancher<IntView,3,int,2>
-            ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
-                   array,n,bf,vvp);
+          postldsbbrancher<IntView,3,int,2>
+            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
+             array,n,vvp);
         }
       } else {
         ViewSel<IntView>* vs[4] = {
-          Branch::viewselint(home,vars.a),Branch::viewselint(home,vars.b),
-          Branch::viewselint(home,vars.c),Branch::viewselint(home,vars.d)
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
+          Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
         switch (vals.select()) {
         case IntValBranch::SEL_SPLIT_MIN:
@@ -408,14 +408,14 @@ namespace Gecode {
           throw LDSBBadValueSelection("Int::LDSB::branch");
           break;
         case IntValBranch::SEL_VAL_COMMIT:
-          if (vals.commit() != NULL)
+          if (vals.commit())
             throw LDSBBadValueSelection("Int::LDSB::branch");
-          // If vals.commit() returns NULL, it means it will commit with
+          // If vals.commit() is valid, it means it will commit with
           // binary branching, which is OK for LDSB, so we fall through.
         default:
-          LDSBBrancher<IntView,4,int,2>
-            ::post(home,xv,vs,Branch::valselcommitint(home,x.size(),vals),
-                   array,n,bf,vvp);
+          postldsbbrancher<IntView,4,int,2>
+            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
+             array,n,vvp);
         }
       }
     }
@@ -423,15 +423,15 @@ namespace Gecode {
 
   void
   branch(Home home, const BoolVarArgs& x,
-         IntVarBranch vars, IntValBranch vals,
+         BoolVarBranch vars, BoolValBranch vals,
          const Symmetries& syms,
-         BoolBranchFilter bf, BoolVarValPrint vvp) {
+         BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
     vars.expand(home,x);
     ViewArray<BoolView> xv(home,x);
     ViewSel<BoolView>* vs[1] = {
-      Branch::viewselbool(home,vars)
+      Branch::viewsel(home,vars)
     };
 
     // Construct mapping from each variable in the array to its index
@@ -454,48 +454,40 @@ namespace Gecode {
     // Booleans.  Nonetheless, we explicitly forbid them for
     // consistency with the integer version.
     switch (vals.select()) {
-    case IntValBranch::SEL_SPLIT_MIN:
-    case IntValBranch::SEL_SPLIT_MAX:
-    case IntValBranch::SEL_RANGE_MIN:
-    case IntValBranch::SEL_RANGE_MAX:
-    case IntValBranch::SEL_VALUES_MIN:
-    case IntValBranch::SEL_VALUES_MAX:
-      throw LDSBBadValueSelection("Int::LDSB::branch");
-      break;
-    case IntValBranch::SEL_VAL_COMMIT:
-      if (vals.commit() != NULL)
+    case BoolValBranch::SEL_VAL_COMMIT:
+      if (vals.commit())
         throw LDSBBadValueSelection("Int::LDSB::branch");
-      // If vals.commit() returns NULL, it means it will commit with
+      // If vals.commit() is valid, it means it will commit with
       // binary branching, which is OK for LDSB, so we fall through.
     default:
-      LDSBBrancher<BoolView,1,int,2>::post
-        (home,xv,vs,Branch::valselcommitbool(home,x.size(),vals),array,n,bf,vvp);
+      postldsbbrancher<BoolView,1,int,2>
+        (home,xv,vs,Branch::valselcommit(home,x.size(),vals),array,n,vvp);
     }
   }
 
 
   void
   branch(Home home, const BoolVarArgs& x,
-         TieBreak<IntVarBranch> vars, IntValBranch vals,
+         TieBreak<BoolVarBranch> vars, BoolValBranch vals,
          const Symmetries& syms,
-         BoolBranchFilter bf, BoolVarValPrint vvp) {
+         BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
     vars.a.expand(home,x);
-    if ((vars.a.select() == IntVarBranch::SEL_NONE) ||
-        (vars.a.select() == IntVarBranch::SEL_RND))
-      vars.b = INT_VAR_NONE();
+    if ((vars.a.select() == BoolVarBranch::SEL_NONE) ||
+        (vars.a.select() == BoolVarBranch::SEL_RND))
+      vars.b = BOOL_VAR_NONE();
     vars.b.expand(home,x);
-    if ((vars.b.select() == IntVarBranch::SEL_NONE) ||
-        (vars.b.select() == IntVarBranch::SEL_RND))
-      vars.c = INT_VAR_NONE();
+    if ((vars.b.select() == BoolVarBranch::SEL_NONE) ||
+        (vars.b.select() == BoolVarBranch::SEL_RND))
+      vars.c = BOOL_VAR_NONE();
     vars.c.expand(home,x);
-    if ((vars.c.select() == IntVarBranch::SEL_NONE) ||
-        (vars.c.select() == IntVarBranch::SEL_RND))
-      vars.d = INT_VAR_NONE();
+    if ((vars.c.select() == BoolVarBranch::SEL_NONE) ||
+        (vars.c.select() == BoolVarBranch::SEL_RND))
+      vars.d = BOOL_VAR_NONE();
     vars.d.expand(home,x);
-    if (vars.b.select() == IntVarBranch::SEL_NONE) {
-      branch(home,x,vars.a,vals,syms,bf,vvp);
+    if (vars.b.select() == BoolVarBranch::SEL_NONE) {
+      branch(home,x,vars.a,vals,syms,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -517,18 +509,10 @@ namespace Gecode {
       // Booleans.  Nonetheless, we explicitly forbid them for
       // consistency with the integer version.
       switch (vals.select()) {
-      case IntValBranch::SEL_SPLIT_MIN:
-      case IntValBranch::SEL_SPLIT_MAX:
-      case IntValBranch::SEL_RANGE_MIN:
-      case IntValBranch::SEL_RANGE_MAX:
-      case IntValBranch::SEL_VALUES_MIN:
-      case IntValBranch::SEL_VALUES_MAX:
-        throw LDSBBadValueSelection("Int::LDSB::branch");
-        break;
-      case IntValBranch::SEL_VAL_COMMIT:
-        if (vals.commit() != NULL)
+      case BoolValBranch::SEL_VAL_COMMIT:
+        if (vals.commit())
           throw LDSBBadValueSelection("Int::LDSB::branch");
-        // If vals.commit() returns NULL, it means it will commit with
+        // If vals.commit() is valid, it means it will commit with
         // binary branching, which is OK for LDSB, so we fall through.
       default:
         ;
@@ -537,24 +521,24 @@ namespace Gecode {
 
       ViewArray<BoolView> xv(home,x);
       ValSelCommitBase<BoolView,int>*
-        vsc = Branch::valselcommitbool(home,x.size(),vals);
-      if (vars.c.select() == IntVarBranch::SEL_NONE) {
+        vsc = Branch::valselcommit(home,x.size(),vals);
+      if (vars.c.select() == BoolVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[2] = {
-          Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b)
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        LDSBBrancher<BoolView,2,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
-      } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
+        postldsbbrancher<BoolView,2,int,2>(home,xv,vs,vsc,array,n,vvp);
+      } else if (vars.d.select() == BoolVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[3] = {
-          Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b),
-          Branch::viewselbool(home,vars.c)
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
+          Branch::viewsel(home,vars.c)
         };
-        LDSBBrancher<BoolView,3,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        postldsbbrancher<BoolView,3,int,2>(home,xv,vs,vsc,array,n,vvp);
       } else {
         ViewSel<BoolView>* vs[4] = {
-          Branch::viewselbool(home,vars.a),Branch::viewselbool(home,vars.b),
-          Branch::viewselbool(home,vars.c),Branch::viewselbool(home,vars.d)
+          Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
+          Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        LDSBBrancher<BoolView,4,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        postldsbbrancher<BoolView,4,int,2>(home,xv,vs,vsc,array,n,vvp);
       }
     }
   }

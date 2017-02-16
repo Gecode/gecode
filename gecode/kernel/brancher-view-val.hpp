@@ -93,22 +93,17 @@ namespace Gecode {
    * \a View) and value (of type \a Val).
    *
    */
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   class ViewValBrancher : public ViewBrancher<View,n> {
-    typedef typename ViewBrancher<View,n>::BranchFilter BranchFilter;
   protected:
     using ViewBrancher<View,n>::vs;
     using ViewBrancher<View,n>::x;
+    /// The corresponding variable
+    typedef typename View::VarType Var;
     /// Value selection and commit object
     ValSelCommitBase<View,Val>* vsc;
-    /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
-                                unsigned int alt,
-                                typename View::VarType x, int i,
-                                const Val& m,
-                                std::ostream& o);
     /// Print function
-    VarValPrint vvp;
+    Print p;
     /// Constructor for cloning \a b
     ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
     /// Constructor for creation
@@ -116,8 +111,7 @@ namespace Gecode {
                     ViewArray<View>& x,
                     ViewSel<View>* vs[n],
                     ValSelCommitBase<View,Val>* vsc,
-                    BranchFilter bf,
-                    VarValPrint vvp);
+                    VarValPrint<Var,Val> vvp);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -145,9 +139,17 @@ namespace Gecode {
                      ViewArray<View>& x,
                      ViewSel<View>* vs[n],
                      ValSelCommitBase<View,Val>* vsc,
-                     BranchFilter bf,
-                     VarValPrint vvp);
+                     VarValPrint<Var,Val> vvp);
   };
+
+  /// Post view value brancher
+  template<class View, int n, class Val, unsigned int a>
+  void
+  postviewvalbrancher(Home home,
+                      ViewArray<View>& x,
+                      ViewSel<View>* vs[n],
+                      ValSelCommitBase<View,Val>* vsc,
+                      VarValPrint<typename View::VarType,Val> vvp);
   //@}
 
   /*
@@ -227,63 +229,62 @@ namespace Gecode {
    * Generic brancher based on variable/value selection
    *
    */
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   forceinline
-  ViewValBrancher<View,n,Val,a>::
+  ViewValBrancher<View,n,Val,a,Print>::
   ViewValBrancher(Home home,
                   ViewArray<View>& x,
                   ViewSel<View>* vs[n],
                   ValSelCommitBase<View,Val>* vsc0,
-                  BranchFilter bf,
-                  VarValPrint vvp0)
-    : ViewBrancher<View,n>(home,x,vs,bf), vsc(vsc0), vvp(vvp0) {
-    if (vsc->notice())
+                  VarValPrint<Var,Val> vvp)
+    : ViewBrancher<View,n>(home,x,vs), vsc(vsc0), p(vvp) {
+    if (vsc->notice() || p.notice())
       home.notice(*this,AP_DISPOSE,true);
   }
 
-  template<class View, int n, class Val, unsigned int a>
-  inline void
-  ViewValBrancher<View,n,Val,a>::
+  template<class View, int n, class Val, unsigned int a, class Print>
+  forceinline void
+  ViewValBrancher<View,n,Val,a,Print>::
   post(Home home, ViewArray<View>& x,
        ViewSel<View>* vs[n], ValSelCommitBase<View,Val>* vsc,
-       BranchFilter bf,
-       VarValPrint vvp) {
-    (void) new (home) ViewValBrancher<View,n,Val,a>(home,x,vs,vsc,bf,vvp);
+       VarValPrint<Var,Val> vvp) {
+    (void) new (home) ViewValBrancher<View,n,Val,a,Print>(home,x,vs,vsc,vvp);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   forceinline
-  ViewValBrancher<View,n,Val,a>::
-  ViewValBrancher(Space& home, bool shared, ViewValBrancher<View,n,Val,a>& b)
+  ViewValBrancher<View,n,Val,a,Print>::
+  ViewValBrancher(Space& home, bool shared,
+                  ViewValBrancher<View,n,Val,a,Print>& b)
     : ViewBrancher<View,n>(home,shared,b),
-      vsc(b.vsc->copy(home,shared)), vvp(b.vvp) {}
+      vsc(b.vsc->copy(home,shared)), p(home,shared,b.p) {}
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   Actor*
-  ViewValBrancher<View,n,Val,a>::copy(Space& home, bool shared) {
-    return new (home) ViewValBrancher<View,n,Val,a>(home,shared,*this);
+  ViewValBrancher<View,n,Val,a,Print>::copy(Space& home, bool shared) {
+    return new (home) ViewValBrancher<View,n,Val,a,Print>(home,shared,*this);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   const Choice*
-  ViewValBrancher<View,n,Val,a>::choice(Space& home) {
+  ViewValBrancher<View,n,Val,a,Print>::choice(Space& home) {
     Pos p = ViewBrancher<View,n>::pos(home);
     View v = ViewBrancher<View,n>::view(p);
     return new PosValChoice<Val>(*this,a,p,vsc->val(home,v,p.pos));
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   const Choice*
-  ViewValBrancher<View,n,Val,a>::choice(const Space& home, Archive& e) {
+  ViewValBrancher<View,n,Val,a,Print>::choice(const Space& home, Archive& e) {
     (void) home;
     int p; e >> p;
     Val v; e >> v;
     return new PosValChoice<Val>(*this,a,p,v);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   ExecStatus
-  ViewValBrancher<View,n,Val,a>
+  ViewValBrancher<View,n,Val,a,Print>
   ::commit(Space& home, const Choice& c, unsigned int b) {
     const PosValChoice<Val>& pvc
       = static_cast<const PosValChoice<Val>&>(c);
@@ -294,9 +295,9 @@ namespace Gecode {
       ? ES_FAILED : ES_OK;
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   NGL*
-  ViewValBrancher<View,n,Val,a>
+  ViewValBrancher<View,n,Val,a,Print>
   ::ngl(Space& home, const Choice& c, unsigned int b) const {
     const PosValChoice<Val>& pvc
       = static_cast<const PosValChoice<Val>&>(c);
@@ -304,30 +305,44 @@ namespace Gecode {
                     ViewBrancher<View,n>::view(pvc.pos()),pvc.val());
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   void
-  ViewValBrancher<View,n,Val,a>
+  ViewValBrancher<View,n,Val,a,Print>
   ::print(const Space& home, const Choice& c, unsigned int b,
           std::ostream& o) const {
     const PosValChoice<Val>& pvc
       = static_cast<const PosValChoice<Val>&>(c);
     View xi = ViewBrancher<View,n>::view(pvc.pos());
-    typename View::VarType y(ViewBrancher<View,n>::view(pvc.pos()).varimp());
-    if (vvp != NULL)
-      vvp(home,*this,b,y,pvc.pos().pos,pvc.val(),o);
+    if (p)
+      p(home,*this,b,xi,pvc.pos().pos,pvc.val(),o);
     else
       vsc->print(home,b,xi,pvc.pos().pos,pvc.val(),o);
   }
 
-  template<class View, int n, class Val, unsigned int a>
+  template<class View, int n, class Val, unsigned int a, class Print>
   forceinline size_t
-  ViewValBrancher<View,n,Val,a>::dispose(Space& home) {
-    if (vsc->notice())
+  ViewValBrancher<View,n,Val,a,Print>::dispose(Space& home) {
+    if (vsc->notice() || p.notice())
       home.ignore(*this,AP_DISPOSE,true);
     vsc->dispose(home);
     (void) ViewBrancher<View,n>::dispose(home);
-    return sizeof(ViewValBrancher<View,n,Val,a>);
+    return sizeof(ViewValBrancher<View,n,Val,a,Print>);
   }
+
+  template<class View, int n, class Val, unsigned int a>
+  forceinline void
+  postviewvalbrancher(Home home,
+                      ViewArray<View>& x,
+                      ViewSel<View>* vs[n],
+                      ValSelCommitBase<View,Val>* vsc,
+                      VarValPrint<typename View::VarType,Val> vvp) {
+    if (vvp)
+      ViewValBrancher<View,n,Val,a,BrancherPrint<View,Val> >
+        ::post(home,x,vs,vsc,vvp);
+    else
+      ViewValBrancher<View,n,Val,a,BrancherNoPrint<View,Val> >
+        ::post(home,x,vs,vsc,vvp);
+  }      
 
 }
 

@@ -73,6 +73,74 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module:	int
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, print) can now be of std::function type.
+
+[ENTRY]
+Module:	set
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, print) can now be of std::function type.
+
+[ENTRY]
+Module:	float
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, print) can now be of std::function type.
+
+[ENTRY]
+Module:	kernel
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, print) can now be of std::function type.
+
+[ENTRY]
+Module: int
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Branching filter functions have been removed.
+
+[ENTRY]
+Module: set
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Branching filter functions have been removed.
+
+[ENTRY]
+Module: float
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Branching filter functions have been removed.
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Branching filter functions have been removed.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Branching on Boolean variables now requires to use BOOL_VAR_...()
+and BOOL_VAL_...() functions instead of the INT_... variants.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   major

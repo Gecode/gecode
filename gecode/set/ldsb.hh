@@ -57,15 +57,9 @@ namespace Gecode { namespace Set { namespace LDSB {
    * \a View) on set variables and value (of type \a Val).
    *
    */
-  template<class View, int n, class Val, unsigned int a>
-  class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a> {
+  template<class View, int n, class Val, unsigned int a, class Print>
+  class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a,Print> {
   public:
-    /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
-                                unsigned int alt,
-                                typename View::VarType x, int i,
-                                const Val& m,
-                                std::ostream& o);
     /// Position of previous variable that was branched on
     int _prevPos;
     /// Number of non-value symmetries
@@ -97,8 +91,7 @@ namespace Gecode { namespace Set { namespace LDSB {
                     ViewSel<View>* vs[n],
                     ValSelCommitBase<View,Val>* vsc,
                     SymmetryImp<View>** syms, int nsyms,
-                    SetBranchFilter bf,
-                    VarValPrint vvp);
+                    VarValPrint<Var,Val> vvp);
     /// Return choice
     virtual const Choice* choice(Space& home);
     /// Perform commit for choice \a c and alternative \a b
@@ -112,8 +105,16 @@ namespace Gecode { namespace Set { namespace LDSB {
                      ValSelCommitBase<View,Val>* vsc,
                      SymmetryImp<View>** _syms,
                      int _nsyms,
-                     SetBranchFilter bf,
-                     VarValPrint vvp);
+                     VarValPrint<Var,Val> vvp);
+
+    /// Post LDSB brancher
+    template<class View, int n, class Val, unsigned int a>
+    void postldsbsetbrancher(Home home,
+                             ViewArray<View>& x,
+                             ViewSel<View>* vs[n],
+                             ValSelCommitBase<View,Val>* vsc,
+                             SymmetryImp<View>** syms, int nsyms,
+                             VarValPrint<typename View::VarType,Val> vvp);
 
     /**
      * \brief Part one of the update phase
@@ -129,10 +130,12 @@ namespace Gecode { namespace Set { namespace LDSB {
 }}}
 
 namespace Gecode { namespace Int { namespace LDSB {
+
   template <>
   ArgArray<Literal>
   VariableSequenceSymmetryImp<Set::SetView>
   ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const;
+
 }}}
 
 #include <gecode/set/ldsb/brancher.hpp>

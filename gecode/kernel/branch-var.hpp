@@ -35,6 +35,8 @@
  *
  */
 
+#include <functional>
+
 namespace Gecode {
 
   /**
@@ -46,13 +48,18 @@ namespace Gecode {
    *
    * \ingroup TaskModelBranch
    */
-  typedef double (*BranchTbl)(const Space& home, double w, double b);
+  typedef std::function<double(const Space& home, double w, double b)>
+    BranchTbl;
 
   /**
    * \brief Variable branching information
    * \ingroup TaskModelBranch
    */
+  template<class Var>
   class VarBranch {
+  public:
+    /// Corresponding merit function
+    typedef typename BranchTraits<Var>::Merit MeritFunction;
   protected:
     /// Tie-breaking limit function
     BranchTbl _tbl;
@@ -64,9 +71,11 @@ namespace Gecode {
     AFC _afc;
     /// Activity information
     Activity _act;
-    /// Merit function (generic function pointer)
-    VoidFunction _mf;
+    /// Merit function
+    MeritFunction _mf;
   public:
+    /// Initialize
+    VarBranch(void);
     /// Initialize with tie-break limit function \a t
     VarBranch(BranchTbl t);
     /// Initialize with random number generator \a r
@@ -78,7 +87,7 @@ namespace Gecode {
     /// Initialize with activity \a a and tie-break limit function \a t
     VarBranch(Activity a, BranchTbl t);
     /// Initialize with merit function \a f and tie-break limit function \a t
-    VarBranch(void (*f)(void), BranchTbl t);
+    VarBranch(MeritFunction f, BranchTbl t);
     /// Return tie-break limit function
     BranchTbl tbl(void) const;
     /// Return random number generator
@@ -94,80 +103,99 @@ namespace Gecode {
     /// Set activity to \a a
     void activity(Activity a);
     /// Return merit function
-    VoidFunction merit(void) const;
+    MeritFunction merit(void) const;
   };
 
   // Variable branching
+  template<class Var>
   forceinline
-  VarBranch::VarBranch(BranchTbl t)
+  VarBranch<Var>::VarBranch(void)
+    : _tbl(NULL), _decay(1.0) {}
+
+  template<class Var>
+  forceinline
+  VarBranch<Var>::VarBranch(BranchTbl t)
     : _tbl(t), _decay(1.0) {}
 
+  template<class Var>
   forceinline
-  VarBranch::VarBranch(double d, BranchTbl t)
+  VarBranch<Var>::VarBranch(double d, BranchTbl t)
     : _tbl(t), _decay(d) {}
 
+  template<class Var>
   forceinline
-  VarBranch::VarBranch(AFC a, BranchTbl t)
+  VarBranch<Var>::VarBranch(AFC a, BranchTbl t)
     : _tbl(t), _decay(1.0), _afc(a) {
     if (!_afc.initialized())
-      throw UninitializedAFC("VarBranch::VarBranch");
+      throw UninitializedAFC("VarBranch<Var>::VarBranch");
   }
 
+  template<class Var>
   forceinline
-  VarBranch::VarBranch(Activity a, BranchTbl t)
+  VarBranch<Var>::VarBranch(Activity a, BranchTbl t)
     : _tbl(t), _decay(1.0), _act(a) {
     if (!_act.initialized())
-      throw UninitializedActivity("VarBranch::VarBranch");
+      throw UninitializedActivity("VarBranch<Var>::VarBranch");
   }
 
+  template<class Var>
   forceinline
-  VarBranch::VarBranch(Rnd r)
+  VarBranch<Var>::VarBranch(Rnd r)
     : _tbl(NULL), _rnd(r), _decay(1.0) {
     if (!_rnd.initialized())
-      throw UninitializedRnd("VarBranch::VarBranch");
+      throw UninitializedRnd("VarBranch<Var>::VarBranch");
   }
 
+  template<class Var>
   forceinline
-  VarBranch::VarBranch(VoidFunction f, BranchTbl t)
+  VarBranch<Var>::VarBranch(MeritFunction f, BranchTbl t)
     : _tbl(t), _decay(1.0), _mf(f) {}
 
+  template<class Var>
   forceinline BranchTbl
-  VarBranch::tbl(void) const {
+  VarBranch<Var>::tbl(void) const {
     return _tbl;
   }
 
+  template<class Var>
   inline Rnd
-  VarBranch::rnd(void) const {
+  VarBranch<Var>::rnd(void) const {
     return _rnd;
   }
 
+  template<class Var>
   inline double
-  VarBranch::decay(void) const {
+  VarBranch<Var>::decay(void) const {
     return _decay;
   }
 
+  template<class Var>
   inline AFC
-  VarBranch::afc(void) const {
+  VarBranch<Var>::afc(void) const {
     return _afc;
   }
 
+  template<class Var>
   inline void
-  VarBranch::afc(AFC a) {
+  VarBranch<Var>::afc(AFC a) {
     _afc=a;
   }
 
+  template<class Var>
   inline Activity
-  VarBranch::activity(void) const {
+  VarBranch<Var>::activity(void) const {
     return _act;
   }
 
+  template<class Var>
   inline void
-  VarBranch::activity(Activity a) {
+  VarBranch<Var>::activity(Activity a) {
     _act=a;
   }
 
-  forceinline VoidFunction
-  VarBranch::merit(void) const {
+  template<class Var>
+  forceinline typename VarBranch<Var>::MeritFunction
+  VarBranch<Var>::merit(void) const {
     return _mf;
   }
 

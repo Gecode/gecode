@@ -43,7 +43,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Minimum merit
   forceinline
-  MeritMin::MeritMin(Space& home, const VarBranch& vb)
+  MeritMin::MeritMin(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritMin::MeritMin(Space& home, bool shared, MeritMin& m)
@@ -55,7 +55,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Maximum merit
   forceinline
-  MeritMax::MeritMax(Space& home, const VarBranch& vb)
+  MeritMax::MeritMax(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritMax::MeritMax(Space& home, bool shared, MeritMax& m)
@@ -67,7 +67,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Size merit
   forceinline
-  MeritSize::MeritSize(Space& home, const VarBranch& vb)
+  MeritSize::MeritSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritSize::MeritSize(Space& home, bool shared, MeritSize& m)
@@ -79,7 +79,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Size over degree merit
   forceinline
-  MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch& vb)
+  MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritDegreeSize::MeritDegreeSize(Space& home, bool shared,
@@ -92,7 +92,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Size over AFC merit
   forceinline
-  MeritAFCSize::MeritAFCSize(Space& home, const VarBranch& vb)
+  MeritAFCSize::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb), afc(vb.afc()) {}
   forceinline
   MeritAFCSize::MeritAFCSize(Space& home, bool shared, MeritAFCSize& m)
@@ -115,7 +115,7 @@ namespace Gecode { namespace Float { namespace Branch {
   // Size over activity merit
   forceinline
   MeritActivitySize::MeritActivitySize(Space& home,
-                                       const VarBranch& vb)
+                                       const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb), activity(vb.activity()) {}
   forceinline
   MeritActivitySize::MeritActivitySize(Space& home, bool shared,

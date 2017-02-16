@@ -45,12 +45,6 @@ namespace Gecode {
     Activity::init(home,y,d,bm);
   }
 
-  IntActivity::IntActivity(Home home, const BoolVarArgs& x, double d,
-                           BoolBranchMerit bm) {
-    ViewArray<Int::BoolView> y(home,x);
-    Activity::init(home,y,d,bm);
-  }
-
   void
   IntActivity::init(Home home, const IntVarArgs& x, double d,
                     IntBranchMerit bm) {
@@ -58,9 +52,16 @@ namespace Gecode {
     Activity::init(home,y,d,bm);
   }
 
+
+  BoolActivity::BoolActivity(Home home, const BoolVarArgs& x, double d,
+                             BoolBranchMerit bm) {
+    ViewArray<Int::BoolView> y(home,x);
+    Activity::init(home,y,d,bm);
+  }
+
   void
-  IntActivity::init(Home home, const BoolVarArgs& x, double d,
-                    BoolBranchMerit bm) {
+  BoolActivity::init(Home home, const BoolVarArgs& x, double d,
+                     BoolBranchMerit bm) {
     ViewArray<Int::BoolView> y(home,x);
     Activity::init(home,y,d,bm);
   }

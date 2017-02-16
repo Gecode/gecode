@@ -44,8 +44,6 @@ namespace Gecode {
    * variable type.
    *
    * The traits used concern various functions:
-   *     - <code>typedef Type Filter</code>  where \c Type is the type
-   *       of an appropriate branch filter function for the variable type.
    *     - <code>typedef Type Merit</code>  where \c Type is the type
    *       of an appropriate branch merit function for the variable type.
    *     - <code>typedef Type Val</code>  where \c Type is the type

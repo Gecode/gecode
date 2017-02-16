@@ -41,8 +41,6 @@ namespace Gecode {
   template<>
   class BranchTraits<SetVar> {
   public:
-    /// Type for the branching filter function
-    typedef SetBranchFilter Filter;
     /// Type for the branching merit function
     typedef SetBranchMerit Merit;
     /// Type for the branching value function

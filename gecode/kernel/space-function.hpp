@@ -45,7 +45,7 @@ namespace Gecode {
   class SpaceFunction : public SharedData<std::function<void(Space&)> > {
   public:
     /// Initialize with function \a f
-    SpaceFunction(const std::function<void(Space&)>& f);
+    SpaceFunction(std::function<void(Space&)> f);
     /// Create as uninitalized
     SpaceFunction(void);
     /// Copy constructor
@@ -69,8 +69,11 @@ namespace Gecode {
 
 
   forceinline
-  SpaceFunction::SpaceFunction(const std::function<void(Space&)>& f) 
-    : SharedData<std::function<void(Space&)> >(f) {}
+  SpaceFunction::SpaceFunction(std::function<void(Space&)> f) 
+    : SharedData<std::function<void(Space&)> >(f) {
+    if (!f)
+      throw InvalidFunction("SpaceFunction::SpaceFunction");
+  }
 
   forceinline
   SpaceFunction::SpaceFunction(void) {}
@@ -87,11 +90,13 @@ namespace Gecode {
 
   forceinline void
   SpaceFunction::operator ()(Space& home) const {
+    GECODE_ASSUME(SharedData<std::function<void(Space&)>>::operator ()());
     SharedData<std::function<void(Space&)> >::operator ()()(home);
   }
 
   forceinline const std::function<void(Space&)>&
   SpaceFunction::function(void) const {
+    GECODE_ASSUME(SharedData<std::function<void(Space&)>>::operator ()());
     return SharedData<std::function<void(Space&)>>::operator ()();
   }
 

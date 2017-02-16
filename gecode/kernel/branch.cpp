@@ -48,75 +48,104 @@ namespace Gecode {
     class Description : public Choice {
     public:
       /// Initialize description for brancher \a b, number of alternatives \a a.
-      Description(const Brancher& b, unsigned int a) : Choice(b,a) {}
+      Description(const Brancher& b, unsigned int a);
       /// Report size occupied
-      virtual size_t size(void) const { return sizeof(Description); }
+      virtual size_t size(void) const;
       /// Archive into \a e
-      virtual void archive(Archive& e) const {
-        Choice::archive(e);
-      }
+      virtual void archive(Archive& e) const;
     };
     /// Function to call
     SpaceFunction f;
     /// Call function just once
     bool done;
     /// Construct brancher
-    FunctionBranch(Home home, const SpaceFunction& f0)
-      : Brancher(home), f(f0), done(false) {
-      home.notice(*this,AP_DISPOSE);
-    }
+    FunctionBranch(Home home, SpaceFunction f0);
     /// Copy constructor
-    FunctionBranch(Space& home, bool share, FunctionBranch& b)
-      : Brancher(home,share,b), done(b.done) {
-      f.update(home,share,b.f);
-    }
+    FunctionBranch(Space& home, bool share, FunctionBranch& b);
   public:
     /// Check status of brancher, return true if alternatives left
-    virtual bool status(const Space&) const {
-      return !done;
-    }
+    virtual bool status(const Space& home) const;
     /// Return choice
-    virtual const Choice* choice(Space&) {
-      assert(!done);
-      return new Description(*this,1);
-    }
+    virtual const Choice* choice(Space& home);
     /// Return choice
-    virtual const Choice* choice(const Space&, Archive&) {
-      return new Description(*this,1);
-    }
+    virtual const Choice* choice(const Space& home, Archive& a);
     /// Perform commit
-    virtual ExecStatus
-    commit(Space& home, const Choice&, unsigned int) {
-      done = true;
-      f(home);
-      return home.failed() ? ES_FAILED : ES_OK;
-    }
+    virtual ExecStatus commit(Space& home, const Choice& ch, unsigned int a);
     /// Print explanation
-    virtual void
-    print(const Space&, const Choice&, unsigned int,
-          std::ostream& o) const {
-      o << "FunctionBranch(" << f << ")";
-    }
+    virtual void print(const Space&, const Choice&, unsigned int,
+                       std::ostream& o) const;
     /// Copy brancher
-    virtual Actor* copy(Space& home, bool share) {
-      return new (home) FunctionBranch(home,share,*this);
-    }
+    virtual Actor* copy(Space& home, bool share);
     /// Post brancher
-    static void post(Home home, const SpaceFunction& f) {
-      (void) new (home) FunctionBranch(home,f);
-    }
+    static void post(Home home, SpaceFunction f);
     /// Dispose brancher
-    virtual size_t dispose(Space& home) {
-      home.ignore(*this,AP_DISPOSE);
-      f.~SpaceFunction();
-      (void) Brancher::dispose(home);
-      return sizeof(*this);
-    }
+    virtual size_t dispose(Space& home);
   };
 
+  forceinline
+  FunctionBranch::Description::Description(const Brancher& b, unsigned int a)
+    : Choice(b,a) {}
+  size_t
+  FunctionBranch::Description::size(void) const { 
+    return sizeof(Description); 
+  }
+  void
+  FunctionBranch::Description::archive(Archive& e) const {
+    Choice::archive(e);
+  }
+
+  forceinline
+  FunctionBranch::FunctionBranch(Home home, SpaceFunction f0)
+    : Brancher(home), f(f0), done(false) {
+    home.notice(*this,AP_DISPOSE);
+  }
+  forceinline
+  FunctionBranch::FunctionBranch(Space& home, bool share, FunctionBranch& b)
+    : Brancher(home,share,b), done(b.done) {
+    f.update(home,share,b.f);
+  }
+  bool
+  FunctionBranch::status(const Space&) const {
+    return !done;
+  }
+  const Choice*
+  FunctionBranch::choice(Space&) {
+    assert(!done);
+    return new Description(*this,1);
+  }
+  const Choice*
+  FunctionBranch::choice(const Space&, Archive&) {
+    return new Description(*this,1);
+  }
+  ExecStatus
+  FunctionBranch::commit(Space& home, const Choice&, unsigned int) {
+    done = true;
+    f(home);
+    return home.failed() ? ES_FAILED : ES_OK;
+  }
+  void
+  FunctionBranch::print(const Space&, const Choice&, unsigned int,
+                        std::ostream& o) const {
+    o << "FunctionBranch(" << f << ")";
+  }
+  Actor*
+  FunctionBranch::copy(Space& home, bool share) {
+    return new (home) FunctionBranch(home,share,*this);
+  }
+  forceinline void
+  FunctionBranch::post(Home home, SpaceFunction f) {
+    (void) new (home) FunctionBranch(home,f);
+  }
+  size_t
+  FunctionBranch::dispose(Space& home) {
+    home.ignore(*this,AP_DISPOSE);
+    f.~SpaceFunction();
+    (void) Brancher::dispose(home);
+    return sizeof(*this);
+  }
 
   void
-  branch(Home home, const std::function<void(Space& home)>& f) {
+  branch(Home home, std::function<void(Space& home)> f) {
     FunctionBranch::post(home,f);
   }
 

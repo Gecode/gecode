@@ -201,7 +201,7 @@ namespace Gecode {
   //@{
   /// Call the function \a f (with the current space as argument) for branching
   GECODE_KERNEL_EXPORT void
-  branch(Home home, const std::function<void(Space& home)>& f);
+  branch(Home home, std::function<void(Space& home)> f);
   //@}
 
 }
@@ -218,6 +218,7 @@ namespace Gecode {
 #include <gecode/kernel/brancher-merit.hpp>
 #include <gecode/kernel/brancher-view-sel.hpp>
 #include <gecode/kernel/brancher-view.hpp>
+#include <gecode/kernel/brancher-print.hpp>
 #include <gecode/kernel/brancher-val-sel.hpp>
 #include <gecode/kernel/brancher-val-commit.hpp>
 #include <gecode/kernel/brancher-val-sel-commit.hpp>

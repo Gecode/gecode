@@ -114,6 +114,13 @@ namespace Gecode {
     IllegalDecay(const char* l);
   };
 
+  /// %Exception: invalid function
+  class GECODE_KERNEL_EXPORT InvalidFunction : public Exception {
+  public:
+    /// Initialize with location \a l
+    InvalidFunction(const char* l);
+  };
+
   /// %Exception: uninitialized AFC
   class GECODE_KERNEL_EXPORT UninitializedAFC : public Exception {
   public:

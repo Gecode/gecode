@@ -43,11 +43,11 @@ namespace Gecode {
 
   forceinline
   IntValBranch::IntValBranch(Rnd r)
-    : ValBranch(r), s(SEL_RND) {}
+    : ValBranch<IntVar>(r), s(SEL_RND) {}
 
   forceinline
-  IntValBranch::IntValBranch(VoidFunction v, VoidFunction c)
-    : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
+  IntValBranch::IntValBranch(IntBranchVal v, IntBranchCommit c)
+    : ValBranch<IntVar>(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline
   IntValBranch::IntValBranch(Select s0, IntSharedArray n0)
@@ -106,14 +106,7 @@ namespace Gecode {
 
   inline IntValBranch
   INT_VAL(IntBranchVal v, IntBranchCommit c) {
-    return IntValBranch(function_cast<VoidFunction>(v),
-                        function_cast<VoidFunction>(c));
-  }
-
-  inline IntValBranch
-  INT_VAL(BoolBranchVal v, BoolBranchCommit c) {
-    return IntValBranch(function_cast<VoidFunction>(v),
-                        function_cast<VoidFunction>(c));
+    return IntValBranch(v,c);
   }
 
   inline IntValBranch
@@ -144,6 +137,46 @@ namespace Gecode {
   inline IntValBranch
   INT_VAL_NEAR_DEC(IntSharedArray n) {
     return IntValBranch(IntValBranch::SEL_NEAR_DEC,n);
+  }
+
+
+
+  forceinline
+  BoolValBranch::BoolValBranch(Select s0)
+    : s(s0) {}
+
+  forceinline
+  BoolValBranch::BoolValBranch(Rnd r)
+    : ValBranch<BoolVar>(r), s(SEL_RND) {}
+
+  forceinline
+  BoolValBranch::BoolValBranch(BoolBranchVal v, BoolBranchCommit c)
+    : ValBranch<BoolVar>(v,c), s(SEL_VAL_COMMIT) {}
+
+  forceinline BoolValBranch::Select
+  BoolValBranch::select(void) const {
+    return s;
+  }
+
+
+  inline BoolValBranch
+  BOOL_VAL_MIN(void) {
+    return BoolValBranch(BoolValBranch::SEL_MIN);
+  }
+
+  inline BoolValBranch
+  BOOL_VAL_MAX(void) {
+    return BoolValBranch(BoolValBranch::SEL_MAX);
+  }
+
+  inline BoolValBranch
+  BOOL_VAL_RND(Rnd r) {
+    return BoolValBranch(r);
+  }
+
+  inline BoolValBranch
+  BOOL_VAL(BoolBranchVal v, BoolBranchCommit c) {
+    return BoolValBranch(v,c);
   }
 
 }

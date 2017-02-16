@@ -91,45 +91,48 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   forceinline
-  ViewValuesBrancher<n,min>::
+  ViewValuesBrancher<n,min,Print>::
   ViewValuesBrancher(Home home, ViewArray<IntView>& x,
                      ViewSel<IntView>* vs[n],
-                     BranchFilter bf, IntVarValPrint vvp0)
-    : ViewBrancher<IntView,n>(home,x,vs,bf), vvp(vvp0) {}
+                     IntVarValPrint vvp)
+    : ViewBrancher<IntView,n>(home,x,vs), p(vvp) {}
 
-  template<int n, bool min>
-  void
-  ViewValuesBrancher<n,min>::post(Home home, ViewArray<IntView>& x,
-                                  ViewSel<IntView>* vs[n],
-                                  BranchFilter bf, IntVarValPrint vvp) {
-    (void) new (home) ViewValuesBrancher<n,min>(home,x,vs,bf,vvp);
+  template<int n, bool min, class Print>
+  forceinline void
+  ViewValuesBrancher<n,min,Print>::post(Home home, ViewArray<IntView>& x,
+                                        ViewSel<IntView>* vs[n],
+                                        IntVarValPrint vvp) {
+    (void) new (home) ViewValuesBrancher<n,min,Print>(home,x,vs,vvp);
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   forceinline
-  ViewValuesBrancher<n,min>::
+  ViewValuesBrancher<n,min,Print>::
   ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b)
-    : ViewBrancher<IntView,n>(home,shared,b), vvp(b.vvp) {}
-
-  template<int n, bool min>
-  Actor*
-  ViewValuesBrancher<n,min>::copy(Space& home, bool shared) {
-    return new (home) ViewValuesBrancher<n,min>(home,shared,*this);
+    : ViewBrancher<IntView,n>(home,shared,b), p(home,shared,b.p) {
+    if (p.notice())
+      home.notice(*this,AP_DISPOSE,true);
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
+  Actor*
+  ViewValuesBrancher<n,min,Print>::copy(Space& home, bool shared) {
+    return new (home) ViewValuesBrancher<n,min,Print>(home,shared,*this);
+  }
+
+  template<int n, bool min, class Print>
   const Choice*
-  ViewValuesBrancher<n,min>::choice(Space& home) {
+  ViewValuesBrancher<n,min,Print>::choice(Space& home) {
     Pos p = ViewBrancher<IntView,n>::pos(home);
     return new PosValuesChoice(*this,p,
                                ViewBrancher<IntView,n>::view(p));
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   const Choice*
-  ViewValuesBrancher<n,min>::choice(const Space& home, Archive& e) {
+  ViewValuesBrancher<n,min,Print>::choice(const Space& home, Archive& e) {
     (void) home;
     int p;
     unsigned int a;
@@ -137,10 +140,10 @@ namespace Gecode { namespace Int { namespace Branch {
     return new PosValuesChoice(*this,a,p,e);
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   ExecStatus
-  ViewValuesBrancher<n,min>::commit(Space& home, const Choice& c,
-                                    unsigned int a) {
+  ViewValuesBrancher<n,min,Print>::commit(Space& home, const Choice& c,
+                                          unsigned int a) {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
     IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
@@ -148,10 +151,10 @@ namespace Gecode { namespace Int { namespace Branch {
     return me_failed(x.eq(home,pvc.val(b))) ? ES_FAILED : ES_OK;
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   NGL*
-  ViewValuesBrancher<n,min>::ngl(Space& home, const Choice& c,
-                                 unsigned int a) const {
+  ViewValuesBrancher<n,min,Print>::ngl(Space& home, const Choice& c,
+                                       unsigned int a) const {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
     IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
@@ -159,20 +162,44 @@ namespace Gecode { namespace Int { namespace Branch {
     return new (home) EqNGL<IntView>(home,x,pvc.val(b));
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Print>
   void
-  ViewValuesBrancher<n,min>::print(const Space& home, const Choice& c,
-                                   unsigned int a, std::ostream& o) const {
+  ViewValuesBrancher<n,min,Print>::print(const Space& home, const Choice& c,
+                                         unsigned int a, 
+                                         std::ostream& o) const {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
-    IntVar x(ViewBrancher<IntView,n>::view(pvc.pos()).varimp());
+    IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     int nn = pvc.val(b);
-    if (vvp != NULL)
-      vvp(home,*this,a,x,pvc.pos().pos,nn,o);
+    if (p)
+      p(home,*this,a,x,pvc.pos().pos,nn,o);
     else
       o << "var[" << pvc.pos().pos << "] = " << nn;
   }
+
+  template<int n, bool min, class Print>
+  forceinline size_t
+  ViewValuesBrancher<n,min,Print>::dispose(Space& home) {
+    if (p.notice())
+      home.ignore(*this,AP_DISPOSE,true);
+    (void) ViewBrancher<IntView,n>::dispose(home);
+    return sizeof(ViewValuesBrancher<n,min,Print>);
+  }
+
+  template<int n, bool min>
+  forceinline void
+  postviewvaluesbrancher(Home home, ViewArray<IntView>& x,
+                         ViewSel<IntView>* vs[n],
+                         IntVarValPrint vvp) {
+    if (vvp)
+      ViewValuesBrancher<n,min,BrancherPrint<IntView,int> >
+        ::post(home,x,vs,vvp);
+    else
+      ViewValuesBrancher<n,min,BrancherNoPrint<IntView,int> >
+        ::post(home,x,vs,vvp);
+  }
+
 
 }}}
 

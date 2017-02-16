@@ -220,13 +220,13 @@ namespace Test { namespace Assign {
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
       Rnd r(1);
-      IntAssign ia;
+      BoolAssign ia;
       switch (val) {
-      case 0: ia = INT_ASSIGN_MIN(); break;
-      case 1: ia = INT_ASSIGN_MED(); break;
-      case 2: ia = INT_ASSIGN_MAX(); break;
-      case 3: ia = INT_ASSIGN_RND(r); break;
-      case 4: ia = INT_ASSIGN(&bool_val); break;
+      case 0: ia = BOOL_ASSIGN_MIN(); break;
+      case 1: ia = BOOL_ASSIGN_MIN(); break;
+      case 2: ia = BOOL_ASSIGN_MAX(); break;
+      case 3: ia = BOOL_ASSIGN_RND(r); break;
+      case 4: ia = BOOL_ASSIGN(&bool_val); break;
       }
 
       assign(*clone, clone->x, ia);

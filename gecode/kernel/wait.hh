@@ -56,7 +56,7 @@ namespace Gecode { namespace Kernel {
     /// Continuation to execute
     SpaceFunction c;
     /// Constructor for creation
-    UnaryWait(Home home, View x, const SpaceFunction& c0);
+    UnaryWait(Home home, View x, SpaceFunction c0);
     /// Constructor for cloning \a p
     UnaryWait(Space& home, bool shared, UnaryWait& p);
   public:
@@ -69,7 +69,7 @@ namespace Gecode { namespace Kernel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that waits until \a x becomes assigned and then executes \a c
-    static ExecStatus post(Home home, View x, const SpaceFunction& c);
+    static ExecStatus post(Home home, View x, SpaceFunction c);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -88,7 +88,7 @@ namespace Gecode { namespace Kernel {
     /// Continuation to execute
     SpaceFunction c;
     /// Constructor for creation
-    NaryWait(Home home, ViewArray<View>& x, const SpaceFunction& c0);
+    NaryWait(Home home, ViewArray<View>& x, SpaceFunction c0);
     /// Constructor for cloning \a p
     NaryWait(Space& home, bool shared, NaryWait& p);
   public:
@@ -101,8 +101,7 @@ namespace Gecode { namespace Kernel {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that waits until \a x becomes assigned and then executes \a c
-    static ExecStatus post(Home home, ViewArray<View>& x,
-                           const SpaceFunction& c);
+    static ExecStatus post(Home home, ViewArray<View>& x, SpaceFunction c);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   };
@@ -114,7 +113,7 @@ namespace Gecode { namespace Kernel {
    */
   template<class View>
   forceinline
-  UnaryWait<View>::UnaryWait(Home home, View x0, const SpaceFunction& c0)
+  UnaryWait<View>::UnaryWait(Home home, View x0, SpaceFunction c0)
     : Propagator(home), x(x0), c(c0) {
     x.subscribe(home,*this,PC_GEN_ASSIGNED);
     home.notice(*this,AP_DISPOSE);
@@ -149,8 +148,8 @@ namespace Gecode { namespace Kernel {
     return home.failed() ? ES_FAILED : home.ES_SUBSUMED(*this);
   }
   template<class View>
-  ExecStatus
-  UnaryWait<View>::post(Home home, View x, const SpaceFunction& c) {
+  forceinline ExecStatus
+  UnaryWait<View>::post(Home home, View x, SpaceFunction c) {
     if (x.assigned()) {
       c(home);
       return home.failed() ? ES_FAILED : ES_OK;
@@ -176,8 +175,7 @@ namespace Gecode { namespace Kernel {
    */
   template<class View>
   forceinline
-  NaryWait<View>::NaryWait(Home home, ViewArray<View>& x0,
-                           const SpaceFunction& c0)
+  NaryWait<View>::NaryWait(Home home, ViewArray<View>& x0, SpaceFunction c0)
     : Propagator(home), x(x0), c(c0) {
     assert(!x[0].assigned());
     x[0].subscribe(home,*this,PC_GEN_ASSIGNED);
@@ -231,9 +229,8 @@ namespace Gecode { namespace Kernel {
     }
   }
   template<class View>
-  ExecStatus
-  NaryWait<View>::post(Home home, ViewArray<View>& x,
-                       const SpaceFunction& c) {
+  forceinline ExecStatus
+  NaryWait<View>::post(Home home, ViewArray<View>& x, SpaceFunction c) {
     for (int i=x.size(); i--; )
       if (x[i].assigned())
         x.move_lst(i);

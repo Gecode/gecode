@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValCommitEq<View>::ValCommitEq(Space& home, const ValBranch& vb)
+  ValCommitEq<View>::ValCommitEq(Space& home, const ValBranch<Var>& vb)
     : ValCommit<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValCommitLq<View>::ValCommitLq(Space& home, const ValBranch& vb)
+  ValCommitLq<View>::ValCommitLq(Space& home, const ValBranch<Var>& vb)
     : ValCommit<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValCommitGq<View>::ValCommitGq(Space& home, const ValBranch& vb)
+  ValCommitGq<View>::ValCommitGq(Space& home, const ValBranch<Var>& vb)
     : ValCommit<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View>
   forceinline
-  ValCommitGr<View>::ValCommitGr(Space& home, const ValBranch& vb)
+  ValCommitGr<View>::ValCommitGr(Space& home, const ValBranch<Var>& vb)
     : ValCommit<View,int>(home,vb) {}
   template<class View>
   forceinline
