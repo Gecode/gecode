@@ -111,7 +111,7 @@ namespace Test { namespace Branch {
   };
 
 #ifdef GECODE_HAS_SET_VARS
-  /// Space for executing Boolean tests
+  /// Space for executing Set tests
   class SetTestSpace : public Gecode::Space {
   public:
     /// Variables to be tested

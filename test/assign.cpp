@@ -131,7 +131,7 @@ namespace Test { namespace Assign {
 
   /** \name Collection of possible arguments for integer assignments
    *
-   * \relates IntTestSpace BoolTestSpace
+   * \relates IntTestSpace
    */
   //@{
   /// Names for integer assignments
@@ -149,6 +149,23 @@ namespace Test { namespace Assign {
   int int_val(const Gecode::Space&, Gecode::IntVar x, int) {
     return x.min();
   }
+  //@}
+
+  /** \name Collection of possible arguments for Boolean assignments
+   *
+   * \relates BoolTestSpace
+   */
+  //@{
+  /// Names for integer assignments
+  const char* bool_assign_name[] = {
+    "BOOL_ASSIGN_MIN",
+    "BOOL_ASSIGN_MAX",
+    "BOOL_ASSIGN_RND",
+    "BOOL_ASSIGN"
+  };
+  /// Number of integer value selections
+  const int n_bool_assign =
+    sizeof(bool_assign_name)/sizeof(const char*);
   /// Test function for branch value function
   int bool_val(const Gecode::Space&, Gecode::BoolVar x, int) {
     return x.min();
@@ -214,7 +231,7 @@ namespace Test { namespace Assign {
     post(*root, root->x);
     (void) root->status();
 
-    for (int val = n_int_assign; val--; ) {
+    for (int val = n_bool_assign; val--; ) {
       BoolTestSpace* clone = static_cast<BoolTestSpace*>(root->clone(false));
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
@@ -223,10 +240,9 @@ namespace Test { namespace Assign {
       BoolAssign ia;
       switch (val) {
       case 0: ia = BOOL_ASSIGN_MIN(); break;
-      case 1: ia = BOOL_ASSIGN_MIN(); break;
-      case 2: ia = BOOL_ASSIGN_MAX(); break;
-      case 3: ia = BOOL_ASSIGN_RND(r); break;
-      case 4: ia = BOOL_ASSIGN(&bool_val); break;
+      case 1: ia = BOOL_ASSIGN_MAX(); break;
+      case 2: ia = BOOL_ASSIGN_RND(r); break;
+      case 3: ia = BOOL_ASSIGN(&bool_val); break;
       }
 
       assign(*clone, clone->x, ia);

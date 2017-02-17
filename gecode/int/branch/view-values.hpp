@@ -97,7 +97,10 @@ namespace Gecode { namespace Int { namespace Branch {
   ViewValuesBrancher(Home home, ViewArray<IntView>& x,
                      ViewSel<IntView>* vs[n],
                      IntVarValPrint vvp)
-    : ViewBrancher<IntView,n>(home,x,vs), p(vvp) {}
+    : ViewBrancher<IntView,n>(home,x,vs), p(vvp) {
+    if (p.notice())
+      home.notice(*this,AP_DISPOSE,true);
+  }
 
   template<int n, bool min, class Print>
   forceinline void
@@ -111,10 +114,7 @@ namespace Gecode { namespace Int { namespace Branch {
   forceinline
   ViewValuesBrancher<n,min,Print>::
   ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b)
-    : ViewBrancher<IntView,n>(home,shared,b), p(home,shared,b.p) {
-    if (p.notice())
-      home.notice(*this,AP_DISPOSE,true);
-  }
+    : ViewBrancher<IntView,n>(home,shared,b), p(home,shared,b.p) {}
 
   template<int n, bool min, class Print>
   Actor*

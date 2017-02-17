@@ -139,7 +139,7 @@ namespace Gecode {
       vs[i] = vs0[i];
     for (int i=0; i<n; i++)
       if (vs[i]->notice()) {
-        home.notice(*this,AP_DISPOSE);
+        home.notice(*this,AP_DISPOSE,true);
         break;
       }
   }

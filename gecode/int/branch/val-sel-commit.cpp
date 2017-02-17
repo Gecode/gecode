@@ -167,16 +167,16 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSelCommitBase<BoolView,int>*
   valselcommit(Space& home, const BoolAssign& ba) {
     switch (ba.select()) {
-    case IntAssign::SEL_MIN:
+    case BoolAssign::SEL_MIN:
       return new (home)
         ValSelCommit<ValSelMin<BoolView>,ValCommitEq<BoolView> >(home,ba);
-    case IntAssign::SEL_MAX:
+    case BoolAssign::SEL_MAX:
       return new (home)
         ValSelCommit<ValSelMax<BoolView>,ValCommitEq<BoolView> >(home,ba);
-    case IntAssign::SEL_RND:
+    case BoolAssign::SEL_RND:
       return new (home)
         ValSelCommit<ValSelRnd<BoolView>,ValCommitEq<BoolView> >(home,ba);
-    case IntAssign::SEL_VAL_COMMIT:
+    case BoolAssign::SEL_VAL_COMMIT:
       if (!ba.commit()) {
         return new (home)
           ValSelCommit<ValSelFunction<BoolView>,ValCommitEq<BoolView> >(home,ba);
