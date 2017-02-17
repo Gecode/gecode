@@ -4380,8 +4380,6 @@ namespace Gecode {
       case ES_FIX:
         break;
       case ES_FAILED:
-        if (home.afc_enabled())
-          home.gpi.fail(p.gpi());
         return false;
       case ES_NOFIX:
         schedule(home,p,me);

@@ -73,6 +73,15 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module:	kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+In certain situations the AFC could be incremented twice (could
+only have happened for linear constraints with Boolean variables
+and sequence constraints).
+
+[ENTRY]
 Module:	int
 What:   changed
 Rank:   major
