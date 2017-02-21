@@ -343,7 +343,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntVarImp::gq(Space& home, int n) {
     if (n <= dom.min()) return ME_INT_NONE;
-    if (n > dom.max())  return ME_INT_FAILED;
+    if (n > dom.max())  return fail(home);
     ModEvent me = gq_full(home,n);
     GECODE_ASSUME((me == ME_INT_FAILED) |
                   (me == ME_INT_VAL) |
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntVarImp::gq(Space& home, long long int n) {
     if (n <= dom.min()) return ME_INT_NONE;
-    if (n > dom.max())  return ME_INT_FAILED;
+    if (n > dom.max())  return fail(home);
     ModEvent me = gq_full(home,static_cast<int>(n));
     GECODE_ASSUME((me == ME_INT_FAILED) |
                   (me == ME_INT_VAL) |
@@ -364,7 +364,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntVarImp::lq(Space& home, int n) {
     if (n >= dom.max()) return ME_INT_NONE;
-    if (n < dom.min())  return ME_INT_FAILED;
+    if (n < dom.min())  return fail(home);
     ModEvent me = lq_full(home,n);
     GECODE_ASSUME((me == ME_INT_FAILED) |
                   (me == ME_INT_VAL) |
@@ -374,7 +374,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntVarImp::lq(Space& home, long long int n) {
     if (n >= dom.max()) return ME_INT_NONE;
-    if (n < dom.min())  return ME_INT_FAILED;
+    if (n < dom.min())  return fail(home);
     ModEvent me = lq_full(home,static_cast<int>(n));
     GECODE_ASSUME((me == ME_INT_FAILED) |
                   (me == ME_INT_VAL) |
@@ -385,7 +385,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntVarImp::eq(Space& home, int n) {
     if ((n < dom.min()) || (n > dom.max()))
-      return ME_INT_FAILED;
+      return fail(home);
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     ModEvent me = eq_full(home,n);
@@ -395,7 +395,7 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   IntVarImp::eq(Space& home, long long int m) {
     if ((m < dom.min()) || (m > dom.max()))
-      return ME_INT_FAILED;
+      return fail(home);
     int n = static_cast<int>(m);
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
@@ -503,7 +503,7 @@ namespace Gecode { namespace Int {
   IntVarImp::narrow_r(Space& home, I& ri, bool depends) {
     // Is new domain empty?
     if (!ri())
-      return ME_INT_FAILED;
+      return fail(home);
 
     int min0 = ri.min();
     int max0 = ri.max();
@@ -695,7 +695,7 @@ namespace Gecode { namespace Int {
     ++i;
 
     if ((i_min <= dom.min()) && (i_max >= dom.max()))
-      return ME_INT_FAILED;
+      return fail(home);
 
     if ((i_min > dom.min()) && (i_max >= dom.max()))
       return lq(home,i_min-1);
@@ -785,7 +785,7 @@ namespace Gecode { namespace Int {
     // All ranges pruned?
     if (fn == &l) {
       fst(NULL); lst(NULL); holes=0;
-      return ME_INT_FAILED;
+      return fail(home);
     }
 
     ModEvent me;
@@ -938,7 +938,7 @@ namespace Gecode { namespace Int {
     // All ranges pruned?
     if (fn == &l) {
       fst(NULL); lst(NULL); holes=0;
-      return ME_INT_FAILED;
+      return fail(home);
     }
 
     IntDelta d;

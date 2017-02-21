@@ -371,7 +371,7 @@ namespace Gecode {
     /// Enter propagator to subscription array
     void enter(Space& home, Propagator* p, PropCond pc);
     /// Enter advisor to subscription array
-    void enter(Space& home, Advisor* a);
+    void enter(Space& home, Advisor* a, bool fail);
     /// Resize subscription array
     void resize(Space& home);
     /// Remove propagator from subscription array
@@ -389,6 +389,12 @@ namespace Gecode {
      * Returns false if an advisor has failed.
      */
     bool advise(Space& home, ModEvent me, Delta& d);
+  private:
+    /// Run advisors to be run on failure
+    void _fail(Space& home);
+  protected:
+    /// Run advisors to be run on failure and returns ME_GEN_FAILED
+    ModEvent fail(Space& home);
 #ifdef GECODE_HAS_VAR_DISPOSE
     /// Return reference to variables (dispose)
     static VarImp<VIC>* vars_d(Space& home);
@@ -424,8 +430,11 @@ namespace Gecode {
      *
      * The advisor \a a is only subscribed if \a assigned is false.
      *
+     * If \a fail is true, the advisor \a a is also run when a variable
+     * operation triggers failure. This feature is undocumented.
+     *
      */
-    void subscribe(Space& home, Advisor& a, bool assigned);
+    void subscribe(Space& home, Advisor& a, bool assigned, bool fail);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
 
@@ -1115,6 +1124,9 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Run advisor \a a to be run on failure in failed space
+    GECODE_KERNEL_EXPORT
+    virtual void advise(Space& home, Advisor& a);
     //@}
     /// \name Information
     //@{
@@ -4222,7 +4234,7 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::enter(Space& home, Advisor* a) {
+  VarImp<VIC>::enter(Space& home, Advisor* a, bool fail) {
     // Count one new subscription
     home.pc.p.n_sub += 1;
     if ((free_and_bits >> free_bits) == 0)
@@ -4231,7 +4243,8 @@ namespace Gecode {
 
     // Enter subscription
     b.base[entries++] = *actorNonZero(pc_max+1);
-    *actorNonZero(pc_max+1) = a;
+    *actorNonZero(pc_max+1) = static_cast<ActorLink*>
+      (Support::ptrjoin(a,fail ? 1 : 0));
   }
 
   template<class VIC>
@@ -4252,9 +4265,9 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned) {
+  VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned, bool fail) {
     if (!assigned)
-      enter(home,&a);
+      enter(home,&a,fail);
   }
 
   template<class VIC>
@@ -4350,6 +4363,7 @@ namespace Gecode {
   template<class VIC>
   forceinline bool
   VarImp<VIC>::advise(Space& home, ModEvent me, Delta& d) {
+    assert(!me_failed(me));
     /*
      * An advisor that is executed might remove itself due to subsumption.
      * As entries are removed from front to back, the advisors must
@@ -4364,26 +4378,63 @@ namespace Gecode {
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
     do {
-      Advisor* a = Advisor::cast(*la);
-      assert(!a->disposed());
-      Propagator& p = a->propagator();
-      switch (p.advise(home,*a,d)) {
-      case ES_FIX:
-        break;
-      case ES_FAILED:
-        return false;
-      case ES_NOFIX:
-        schedule(home,p,me);
-        break;
-      case ES_NOFIX_FORCE:
-        schedule(home,p,me,true);
-        break;
-      case __ES_SUBSUMED:
-      default:
-        GECODE_NEVER;
+      if (!Support::marked(*la)) {
+        Advisor* a = Advisor::cast(*la);
+        assert(!a->disposed());
+        Propagator& p = a->propagator();
+        switch (p.advise(home,*a,d)) {
+        case ES_FIX:
+          break;
+        case ES_FAILED:
+          return false;
+        case ES_NOFIX:
+          schedule(home,p,me);
+          break;
+        case ES_NOFIX_FORCE:
+          schedule(home,p,me,true);
+          break;
+        case __ES_SUBSUMED:
+        default:
+          GECODE_NEVER;
+        }
       }
     } while (++la < le);
     return true;
+  }
+
+  template<class VIC>
+  void
+  VarImp<VIC>::_fail(Space& home) {
+    if (b.base == NULL)
+      return;
+    /*
+     * An advisor that is executed might remove itself due to subsumption.
+     * As entries are removed from front to back, the advisors must
+     * be iterated in forward direction.
+     */
+    ActorLink** la = actorNonZero(pc_max+1);
+    ActorLink** le = b.base+entries;
+    if (la == le)
+      return;
+    // An advisor that is run, might be removed during execution.
+    // As removal is done from the back the advisors have to be executed
+    // in inverse order.
+    do {
+      if (Support::marked(*la)) {
+        Advisor* a = Advisor::cast(static_cast<ActorLink*>
+                                   (Support::unmark(*la)));
+        assert(!a->disposed());
+        Propagator& p = a->propagator();
+        p.advise(home,*a);
+      }
+    } while (++la < le);
+  }
+
+  template<class VIC>
+  ModEvent
+  VarImp<VIC>::fail(Space& home) {
+    _fail(home); 
+    return ME_GEN_FAILED;
   }
 
   template<class VIC>
@@ -4405,17 +4456,30 @@ namespace Gecode {
     // Set subscriptions using actor forwarding pointers
     while (n >= 4) {
       n -= 4;
-      t[0]=f[0]->prev(); t[1]=f[1]->prev();
-      t[2]=f[2]->prev(); t[3]=f[3]->prev();
+      ptrdiff_t m0, m1, m2, m3;
+      ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0],m0));
+      ActorLink* p1 = static_cast<ActorLink*>(Support::ptrsplit(f[1],m1));
+      ActorLink* p2 = static_cast<ActorLink*>(Support::ptrsplit(f[2],m2));
+      ActorLink* p3 = static_cast<ActorLink*>(Support::ptrsplit(f[3],m3));
+      t[0]=static_cast<ActorLink*>(Support::ptrjoin(p0->prev(),m0));
+      t[1]=static_cast<ActorLink*>(Support::ptrjoin(p1->prev(),m1));
+      t[2]=static_cast<ActorLink*>(Support::ptrjoin(p2->prev(),m2));
+      t[3]=static_cast<ActorLink*>(Support::ptrjoin(p3->prev(),m3));
       t += 4; f += 4;
     }
     if (n >= 2) {
       n -= 2;
-      t[0]=f[0]->prev(); t[1]=f[1]->prev();
+      ptrdiff_t m0, m1;
+      ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0],m0));
+      ActorLink* p1 = static_cast<ActorLink*>(Support::ptrsplit(f[1],m1));
+      t[0]=static_cast<ActorLink*>(Support::ptrjoin(p0->prev(),m0));
+      t[1]=static_cast<ActorLink*>(Support::ptrjoin(p1->prev(),m1));
       t += 2; f += 2;
     }
     if (n > 0) {
-      t[0]=f[0]->prev();
+      ptrdiff_t m0;
+      ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0],m0));
+      t[0]=static_cast<ActorLink*>(Support::ptrjoin(p0->prev(),m0));
     }
   }
 

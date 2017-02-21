@@ -166,7 +166,7 @@ namespace Gecode { namespace Set {
     if (cardMin() >= newMin)
       return ME_SET_NONE;
     if (newMin > cardMax())
-      return ME_SET_FAILED;
+      return fail(home);
     glb.card(newMin);
     return cardMin_full(home);
   }
@@ -176,7 +176,7 @@ namespace Gecode { namespace Set {
     if (cardMax() <= newMax)
       return ME_SET_NONE;
     if (cardMin() > newMax)
-      return ME_SET_FAILED;
+      return fail(home);
     lub.card(newMax);
     return cardMax_full(home);
   }
@@ -187,7 +187,7 @@ namespace Gecode { namespace Set {
     Iter::Ranges::Singleton s(i,j);
     Iter::Ranges::Diff<BndSetRanges, Iter::Ranges::Singleton> probe(lb, s);
     if (probe())
-      return ME_SET_FAILED;
+      return fail(home);
     if (assigned())
       return ME_SET_NONE;
     int oldMin = lub.min();
@@ -218,12 +218,12 @@ namespace Gecode { namespace Set {
       BndSetRanges lbi(glb);
       Iter::Ranges::Diff<BndSetRanges,I> probe(lbi,iterator);
       if (probe())
-        return ME_SET_FAILED;
+        return fail(home);
       return ME_SET_NONE;
     }
     if (!iterator()) {
       if (cardMin() > 0)
-        return ME_SET_FAILED;
+        return fail(home);
       lub.card(0);
       SetDelta d(1, 0, lub.min(), lub.max());
       lub.excludeAll(home);
@@ -249,7 +249,7 @@ namespace Gecode { namespace Set {
         glb.become(home, lub);
         glb.card(glb.size());
         lub.card(glb.size());
-        return ME_SET_FAILED;
+        return fail(home);
       }
       ModEvent me = ME_SET_LUB;
       if (cardMax() > lub.size()) {
@@ -258,7 +258,7 @@ namespace Gecode { namespace Set {
           glb.become(home, lub);
           glb.card(glb.size());
           lub.card(glb.size());
-          return ME_SET_FAILED;
+          return fail(home);
         }
         me = ME_SET_CLUB;
       }
@@ -279,7 +279,7 @@ namespace Gecode { namespace Set {
     BndSetRanges ub(lub);
     Iter::Ranges::Singleton sij(i,j);
     if (!Iter::Ranges::subset(sij,ub)) {
-      return ME_SET_FAILED;
+      return fail(home);
     }
     SetDelta d;
     if (glb.include(home, i, j, d))
@@ -301,7 +301,7 @@ namespace Gecode { namespace Set {
       BndSetRanges lbi(glb);
       Iter::Ranges::Diff<I,BndSetRanges>
         probe(iterator,lbi);
-      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+      return probe() ? fail(home) : ME_SET_NONE;
     }
     int mi=iterator.min();
     int ma=iterator.max();
@@ -323,7 +323,7 @@ namespace Gecode { namespace Set {
         glb.become(home, lub);
         glb.card(glb.size());
         lub.card(glb.size());
-        return ME_SET_FAILED;
+        return fail(home);
       }
       ModEvent me = ME_SET_GLB;
       if (cardMin() < glb.size()) {
@@ -332,7 +332,7 @@ namespace Gecode { namespace Set {
           glb.become(home, lub);
           glb.card(glb.size());
           lub.card(glb.size());
-          return ME_SET_FAILED;
+          return fail(home);
         }
         me = ME_SET_CGLB;
       }
@@ -354,7 +354,7 @@ namespace Gecode { namespace Set {
     BndSetRanges lb(glb);
     Iter::Ranges::Inter<Iter::Ranges::Singleton,BndSetRanges> probe(sij,lb);
     if (probe())
-      return ME_SET_FAILED;
+      return fail(home);
     SetDelta d;
     if (lub.exclude(home, i, j, d))
       return processLubChange(home, d);
@@ -374,7 +374,7 @@ namespace Gecode { namespace Set {
     if (assigned()) {
       BndSetRanges ubi(lub);
       Iter::Ranges::Inter<BndSetRanges,I> probe(ubi,iterator);
-      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+      return probe() ? fail(home) : ME_SET_NONE;
     }
     int mi=iterator.min();
     int ma=iterator.max();
@@ -396,7 +396,7 @@ namespace Gecode { namespace Set {
         glb.become(home, lub);
         glb.card(glb.size());
         lub.card(glb.size());
-        return ME_SET_FAILED;
+        return fail(home);
       }
       ModEvent me = ME_SET_LUB;
       if (cardMax() > lub.size()) {
@@ -405,7 +405,7 @@ namespace Gecode { namespace Set {
           glb.become(home, lub);
           glb.card(glb.size());
           lub.card(glb.size());
-          return ME_SET_FAILED;
+          return fail(home);
         }
         me = ME_SET_CLUB;
       }

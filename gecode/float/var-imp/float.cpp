@@ -62,8 +62,8 @@ namespace Gecode { namespace Float {
   }
 
   void
-  FloatVarImp::subscribe(Space& home, Advisor& a) {
-    FloatVarImpBase::subscribe(home,a,assigned());
+  FloatVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+    FloatVarImpBase::subscribe(home,a,assigned(),fail);
   }
 
 }}

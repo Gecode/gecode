@@ -67,8 +67,12 @@ namespace Gecode {
    */
   ExecStatus
   Propagator::advise(Space&, Advisor&, const Delta&) {
-    assert(false);
+    GECODE_NEVER;
     return ES_FAILED;
+  }
+  void
+  Propagator::advise(Space&, Advisor&) {
+    GECODE_NEVER;
   }
 
 
@@ -257,7 +261,27 @@ namespace Gecode {
         if (afc_enabled())
           gpi.fail(p->gpi());
         // Mark as failed
-        fail(); s = SS_FAILED; goto exit;
+        fail(); s = SS_FAILED;
+        {
+          // Propagate top priority propagators
+          ActorLink* e = &pc.p.queue[PropCost::AC_RECORD];
+          for (ActorLink* a = e->next(); a != e; a = a->next()) {
+            Propagator* p = Propagator::cast(a);
+            pc.p.ei.propagator(*p);
+            // Keep old modification event delta
+            ModEventDelta med_o = p->u.med;
+            // Clear med but leave propagator in queue
+            p->u.med = 0;
+            switch (p->propagate(*this,med_o)) {
+            case ES_FIX:
+            case __ES_SUBSUMED:
+              break;
+            default:
+              GECODE_NEVER;
+            }
+          }
+        }
+        goto exit;
       case ES_NOFIX:
         // Find next, if possible
         if (p->u.med != 0) {

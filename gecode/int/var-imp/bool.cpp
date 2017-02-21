@@ -74,8 +74,8 @@ namespace Gecode { namespace Int {
   }
 
   void
-  BoolVarImp::subscribe(Space& home, Advisor& a) {
-    BoolVarImpBase::subscribe(home,a,assigned());
+  BoolVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+    BoolVarImpBase::subscribe(home,a,assigned(),fail);
   }
 
 }}

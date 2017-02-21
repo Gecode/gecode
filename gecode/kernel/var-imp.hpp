@@ -69,7 +69,7 @@ namespace Gecode { namespace Int {
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int {
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
@@ -161,7 +161,7 @@ namespace Gecode { namespace Set {
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
@@ -207,7 +207,7 @@ namespace Gecode { namespace Float {
      */
     void subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule);
     /// Subscribe advisor \a a if \a assigned is false.
-    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned);
+    void subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
     Gecode::ModEvent notify(Gecode::Space& home, Gecode::ModEvent me, Gecode::Delta& d);
     /// \brief Schedule propagator \a p
@@ -244,8 +244,8 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,p,pc,assigned,ME_INT_BND,schedule);
   }
   forceinline void
-  IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
-    Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned);
+  IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+    Gecode::VarImp<Gecode::Int::IntVarImpConf>::subscribe(home,a,assigned,failed);
   }
 
   forceinline void
@@ -305,8 +305,8 @@ namespace Gecode { namespace Int {
     Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,schedule);
   }
   forceinline void
-  BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
-    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned);
+  BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+    Gecode::VarImp<Gecode::Int::BoolVarImpConf>::subscribe(home,a,assigned,failed);
   }
 
   forceinline void
@@ -348,8 +348,8 @@ namespace Gecode { namespace Set {
     Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,p,pc,assigned,ME_SET_CBB,schedule);
   }
   forceinline void
-  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
-    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned);
+  SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+    Gecode::VarImp<Gecode::Set::SetVarImpConf>::subscribe(home,a,assigned,failed);
   }
 
   forceinline void
@@ -440,8 +440,8 @@ namespace Gecode { namespace Float {
     Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,p,pc,assigned,ME_FLOAT_BND,schedule);
   }
   forceinline void
-  FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned) {
-    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,a,assigned);
+  FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Advisor& a, bool assigned, bool failed) {
+    Gecode::VarImp<Gecode::Float::FloatVarImpConf>::subscribe(home,a,assigned,failed);
   }
 
   forceinline void

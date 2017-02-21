@@ -90,8 +90,12 @@ namespace Gecode {
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to view
+     *
+     * If \a fail is true, run the advisor also on failure. This
+     * feature is undocumented.
+     */
+    void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
     //@}
@@ -174,8 +178,12 @@ namespace Gecode {
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to view
+     *
+     * If \a fail is true, run the advisor also on failure. This
+     * feature is undocumented.
+     */
+    void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
     //@}
@@ -269,8 +277,12 @@ namespace Gecode {
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to view
+     *
+     * If \a fail is true, run the advisor also on failure. This
+     * feature is undocumented.
+     */
+    void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
     void cancel(Space& home, Advisor& a);
     //@}
@@ -392,7 +404,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ConstView<View>::subscribe(Space&, Advisor&) {
+  ConstView<View>::subscribe(Space&, Advisor&, bool) {
   }
   template<class View>
   forceinline void
@@ -484,8 +496,8 @@ namespace Gecode {
   }
   template<class Var>
   forceinline void
-  VarImpView<Var>::subscribe(Space& home, Advisor& a) {
-    x->subscribe(home,a);
+  VarImpView<Var>::subscribe(Space& home, Advisor& a, bool fail) {
+    x->subscribe(home,a,fail);
   }
   template<class Var>
   forceinline void
@@ -600,8 +612,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  DerivedView<View>::subscribe(Space& home, Advisor& a) {
-    x.subscribe(home,a);
+  DerivedView<View>::subscribe(Space& home, Advisor& a, bool fail) {
+    x.subscribe(home,a,fail);
   }
   template<class View>
   forceinline void

@@ -180,6 +180,8 @@ namespace Gecode {
     virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Give advice to propagator when \a home has failed
+    virtual void advise(Space& home, Advisor& a);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Delete propagator and return its size
@@ -247,7 +249,7 @@ namespace Gecode {
     home.notice(*this,AP_DISPOSE);
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-        x[i].subscribe(home,*new (home) Idx(home,*this,c,i));
+        x[i].subscribe(home,*new (home) Idx(home,*this,c,i), true);
   }
 
   template<class View>
@@ -276,7 +278,7 @@ namespace Gecode {
       }
     else
       for (int i=n; i--; )
-        a[i] = 0.0;
+        a[i] = 1.0;
   }
   forceinline
   Activity::Storage::~Storage(void) {
@@ -416,6 +418,12 @@ namespace Gecode {
   }
 
   template<class View>
+  void
+  Activity::Recorder<View>::advise(Space& home, Advisor& a) {
+    static_cast<Idx&>(a).mark();
+  }
+
+  template<class View>
   ExecStatus
   Activity::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
     // Lock activity information
@@ -435,6 +443,7 @@ namespace Gecode {
     a.release();
     return c.empty() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
+
 
 }
 
