@@ -1,10 +1,17 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Filip Konvicka <filip.konvicka@logis.cz>
+ *     Lubomir Moric <lubomir.moric@logis.cz>
+ *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
+ *
+ *  Contributing authors:
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     LOGIS, s.r.o., 2008
+ *     Christian Schulte, 2010
+ *     Vincent Barichard, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,49 +42,30 @@
  *
  */
 
-#include <gecode/int.hh>
+#include <gecode/float.hh>
 
-namespace Gecode { namespace Int {
+namespace Gecode { namespace Float {
 
-  BoolVarImp BoolVarImp::s_one(1);
-  BoolVarImp BoolVarImp::s_zero(0);
-
-  ModEvent
-  BoolVarImp::one_none(Space& home) {
-    assert(none());
-    bits() ^= (NONE ^ ONE);
-    assert(one());
-    IntDelta d(0);
-    return notify(home,ME_BOOL_VAL,d);
-  }
-
-  ModEvent
-  BoolVarImp::zero_none(Space& home) {
-    assert(none());
-    bits() ^= (NONE ^ ZERO);
-    assert(zero());
-    IntDelta d(1);
-    return notify(home,ME_BOOL_VAL,d);
+  /*
+   * Dependencies
+   *
+   */
+  void
+  FloatVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
+                         bool schedule) {
+    FloatVarImpBase::subscribe(home,p,pc,assigned(),schedule);
   }
 
   void
-  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond,
-                        bool schedule) {
-    // Subscription can be used with integer propagation conditions,
-    // which must be remapped to the single Boolean propagation condition.
-    BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),schedule);
+  FloatVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+    FloatVarImpBase::reschedule(home,p,pc,assigned());
   }
 
   void
-  BoolVarImp::reschedule(Space& home, Propagator& p, PropCond) {
-    BoolVarImpBase::reschedule(home,p,PC_BOOL_VAL,assigned());
-  }
-
-  void
-  BoolVarImp::subscribe(Space& home, Advisor& a) {
-    BoolVarImpBase::subscribe(home,a,assigned());
+  FloatVarImp::subscribe(Space& home, Advisor& a) {
+    FloatVarImpBase::subscribe(home,a,assigned());
   }
 
 }}
 
-// STATISTICS: int-var
+// STATISTICS: float-var

@@ -994,33 +994,6 @@ namespace Gecode { namespace Int {
   }
 
 
-  /*
-   * Dependencies
-   *
-   */
-  forceinline void
-  IntVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
-    IntVarImpBase::subscribe(home,p,pc,dom.min()==dom.max(),schedule);
-  }
-  forceinline void
-  IntVarImp::cancel(Space& home, Propagator& p, PropCond pc) {
-    IntVarImpBase::cancel(home,p,pc,dom.min()==dom.max());
-  }
-
-  forceinline void
-  IntVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    IntVarImpBase::reschedule(home,p,pc,dom.min()==dom.max());
-  }
-
-  forceinline void
-  IntVarImp::subscribe(Space& home, Advisor& a) {
-    IntVarImpBase::subscribe(home,a,dom.min()==dom.max());
-  }
-  forceinline void
-  IntVarImp::cancel(Space& home, Advisor& a) {
-    IntVarImpBase::cancel(home,a,dom.min()==dom.max());
-  }
-
   forceinline ModEventDelta
   IntVarImp::med(ModEvent me) {
     return IntVarImpBase::med(me);

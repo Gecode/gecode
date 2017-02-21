@@ -464,7 +464,8 @@ INTBUILDDIRS	= \
 #
 
 FLOATSRC0 = \
-	var/float.cpp arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
+	var/float.cpp var-imp/float.cpp \
+	arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp bool.cpp \
 	branch/activity.cpp rounding.cpp exec.cpp \
 	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \

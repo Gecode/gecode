@@ -4202,7 +4202,7 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskModelIntBranchVar Variable selection for integer variables
+   * \defgroup TaskModelIntBranchVar Variable selection for integer and Boolean variables
    * \ingroup TaskModelIntBranch
    */
   //@{
@@ -4290,13 +4290,7 @@ namespace Gecode {
    * largest and second-largest value still in the domain.
    */
   IntVarBranch INT_VAR_REGRET_MAX_MAX(BranchTbl tbl=NULL);
-  //@}
 
-  /**
-   * \defgroup TaskModelBoolBranchVar Variable selection for Boolean variables
-   * \ingroup TaskModelIntBranch
-   */
-  //@{
   /// Select first unassigned variable
   BoolVarBranch BOOL_VAR_NONE(void);
   /// Select random variable (uniform distribution, for tie breaking)
@@ -4407,7 +4401,7 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskModelIntBranchValInt Value selection for integer variables
+   * \defgroup TaskModelIntBranchVal Value selection for integer and Boolean variables
    * \ingroup TaskModelIntBranch
    */
   //@{
@@ -4446,13 +4440,7 @@ namespace Gecode {
   IntValBranch INT_VAL_NEAR_INC(IntSharedArray n);
   /// Try value smaller than a given value for a variable first
   IntValBranch INT_VAL_NEAR_DEC(IntSharedArray n);
-  //@}
 
- /**
-   * \defgroup TaskModelIntBranchValBool Value selection for Boolean variables
-   * \ingroup TaskModelIntBranch
-   */
-  //@{
   /// Select smallest value
   BoolValBranch BOOL_VAL_MIN(void);
   /// Select largest value

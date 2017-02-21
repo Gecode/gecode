@@ -418,25 +418,16 @@ namespace Gecode {
      */
     void subscribe(Space& home, Propagator& p, PropCond pc,
                    bool assigned, ModEvent me, bool schedule);
-    /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
-     *
-     * If the variable is assigned, \a assigned must be true.
-     *
-     */
-    void cancel(Space& home, Propagator& p, PropCond pc,
-                bool assigned);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
+    void cancel(Space& home, Propagator& p, PropCond pc);
     /** \brief Subscribe advisor \a a to variable
      *
      * The advisor \a a is only subscribed if \a assigned is false.
      *
      */
     void subscribe(Space& home, Advisor& a, bool assigned);
-    /** \brief Cancel subscription of advisor \a a
-     *
-     * If the variable is assigned, \a assigned must be true.
-     *
-     */
-    void cancel(Space& home, Advisor& a, bool assigned);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a);
 
     /**
      * \brief Return degree (number of subscribed propagators and advisors)
@@ -4169,6 +4160,35 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
+  VarImp<VIC>::resize(Space& home) {
+    if (b.base == NULL) {
+      assert((free_and_bits >> free_bits) == 0);
+      // Create fresh dependency array with four entries
+      free_and_bits += 4 << free_bits;
+      b.base = home.alloc<ActorLink*>(4);
+      for (int i=0; i<pc_max+1; i++)
+        u.idx[i] = 0;
+    } else {
+      // Resize dependency array
+      unsigned int n = degree();
+      // Find out whether the area is most likely in the special area
+      // reserved for subscriptions. If yes, just resize mildly otherwise
+      // more agressively
+      ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
+      unsigned int m =
+        ((s <= b.base) && (b.base < s+home.pc.p.n_sub)) ?
+        (n+4) : ((n+1)*3>>1);
+      ActorLink** prop = home.alloc<ActorLink*>(m);
+      free_and_bits += (m-n) << free_bits;
+      // Copy entries
+      Heap::copy<ActorLink*>(prop, b.base, n);
+      home.free<ActorLink*>(b.base,n);
+      b.base = prop;
+    }
+  }
+
+  template<class VIC>
+  forceinline void
   VarImp<VIC>::enter(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
     // Count one new subscription
@@ -4215,36 +4235,7 @@ namespace Gecode {
   }
 
   template<class VIC>
-  void
-  VarImp<VIC>::resize(Space& home) {
-    if (b.base == NULL) {
-      assert((free_and_bits >> free_bits) == 0);
-      // Create fresh dependency array with four entries
-      free_and_bits += 4 << free_bits;
-      b.base = home.alloc<ActorLink*>(4);
-      for (int i=0; i<pc_max+1; i++)
-        u.idx[i] = 0;
-    } else {
-      // Resize dependency array
-      unsigned int n = degree();
-      // Find out whether the area is most likely in the special area
-      // reserved for subscriptions. If yes, just resize mildly otherwise
-      // more agressively
-      ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
-      unsigned int m =
-        ((s <= b.base) && (b.base < s+home.pc.p.n_sub)) ?
-        (n+4) : ((n+1)*3>>1);
-      ActorLink** prop = home.alloc<ActorLink*>(m);
-      free_and_bits += (m-n) << free_bits;
-      // Copy entries
-      Heap::copy<ActorLink*>(prop, b.base, n);
-      home.free<ActorLink*>(b.base,n);
-      b.base = prop;
-    }
-  }
-
-  template<class VIC>
-  void
+  forceinline void
   VarImp<VIC>::subscribe(Space& home, Propagator& p, PropCond pc,
                          bool assigned, ModEvent me, bool schedule) {
     if (assigned) {
@@ -4267,7 +4258,7 @@ namespace Gecode {
   }
 
   template<class VIC>
-  void
+  forceinline void
   VarImp<VIC>::reschedule(Space& home, Propagator& p, PropCond pc,
                           bool assigned, ModEvent me) {
     if (assigned)
@@ -4277,7 +4268,7 @@ namespace Gecode {
   }
 
   template<class VIC>
-  forceinline void
+  void
   VarImp<VIC>::remove(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
     ActorLink* a = ActorLink::cast(p);
@@ -4309,6 +4300,13 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
+  VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc) {
+    if (b.base != NULL)
+      remove(home,&p,pc);
+  }
+
+  template<class VIC>
+  void
   VarImp<VIC>::remove(Space& home, Advisor* a) {
     // Find actor in dependency array
     ActorLink** f = actorNonZero(pc_max+1);
@@ -4331,15 +4329,8 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc, bool assigned) {
-    if (!assigned)
-      remove(home,&p,pc);
-  }
-
-  template<class VIC>
-  forceinline void
-  VarImp<VIC>::cancel(Space& home, Advisor& a, bool assigned) {
-    if (!assigned)
+  VarImp<VIC>::cancel(Space& home, Advisor& a) {
+    if (b.base != NULL)
       remove(home,&a);
   }
 

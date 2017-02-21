@@ -136,6 +136,25 @@ namespace Gecode { namespace Set {
     return new (home) SetVarImp(home,share,*this);
   }
 
+  /*
+   * Dependencies
+   *
+   */
+  void
+  SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
+                       bool schedule) {
+    SetVarImpBase::subscribe(home,p,pc,assigned(),schedule);
+  }
+  void
+  SetVarImp::subscribe(Space& home, Advisor& a) {
+    SetVarImpBase::subscribe(home,a,assigned());
+  }
+  void
+  SetVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+    SetVarImpBase::reschedule(home,p,pc,assigned());
+  }
+
+
 }}
 
 // STATISTICS: set-var

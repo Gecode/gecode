@@ -74,11 +74,22 @@ Minor release.
 
 [ENTRY]
 Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variable implementations do not need to define cancel()
+functions, the kernel provides generic implementations (this only
+matters for users implementing their own variables). Also cleaned
+up some inlining mess which reduces object code size by around
+10%.
+
+[ENTRY]
+Module:	kernel
 What:   bug
 Rank:   major
 [DESCRIPTION]
 In certain situations the AFC could be incremented twice (could
-only have happened for linear constraints with Boolean variables
+only have occured for linear constraints with Boolean variables
 and sequence constraints).
 
 [ENTRY]

@@ -504,32 +504,6 @@ namespace Gecode { namespace Set {
     BndSetRanges::init(x->glb);
   }
 
-
-  /*
-   * Dependencies
-   *
-   */
-  forceinline void
-  SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
-    SetVarImpBase::subscribe(home,p,pc,assigned(),schedule);
-  }
-  forceinline void
-  SetVarImp::cancel(Space& home, Propagator& p, PropCond pc) {
-    SetVarImpBase::cancel(home,p,pc,assigned());
-  }
-  forceinline void
-  SetVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    SetVarImpBase::reschedule(home,p,pc,assigned());
-  }
-  forceinline void
-  SetVarImp::subscribe(Space& home, Advisor& a) {
-    SetVarImpBase::subscribe(home,a,assigned());
-  }
-  forceinline void
-  SetVarImp::cancel(Space& home, Advisor& a) {
-    SetVarImpBase::cancel(home,a,assigned());
-  }
-
 }}
 
 // STATISTICS: set-var

@@ -228,32 +228,6 @@ namespace Gecode { namespace Float {
     return new (home) FloatVarImp(home, share, *this);
   }
 
-  /*
-   * Dependencies
-   *
-   */
-  forceinline void
-  FloatVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
-    FloatVarImpBase::subscribe(home,p,pc,assigned(),schedule);
-  }
-  forceinline void
-  FloatVarImp::cancel(Space& home, Propagator& p, PropCond pc) {
-    FloatVarImpBase::cancel(home,p,pc,assigned());
-  }
-
-  forceinline void
-  FloatVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    FloatVarImpBase::reschedule(home,p,pc,assigned());
-  }
-  forceinline void
-  FloatVarImp::subscribe(Space& home, Advisor& a) {
-    FloatVarImpBase::subscribe(home,a,assigned());
-  }
-  forceinline void
-  FloatVarImp::cancel(Space& home, Advisor& a) {
-    FloatVarImpBase::cancel(home,a,assigned());
-  }
-
   forceinline ModEventDelta
   FloatVarImp::med(ModEvent me) {
     return FloatVarImpBase::med(me);
