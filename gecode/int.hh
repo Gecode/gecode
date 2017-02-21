@@ -4492,28 +4492,6 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskModelIntBranchAssignInt Value selection for assigning integer variables
-   * \ingroup TaskModelIntBranch
-   */
-  //@{
-  /// Select smallest value
-  IntAssign INT_ASSIGN_MIN(void);
-  /// Select greatest value not greater than the median
-  IntAssign INT_ASSIGN_MED(void);
-  /// Select largest value
-  IntAssign INT_ASSIGN_MAX(void);
-  /// Select random value
-  IntAssign INT_ASSIGN_RND(Rnd r);
-  /**
-   * \brief Select value as defined by the value function \a v and commit function \a c
-   *
-   * Uses a commit function as default that posts the constraint that
-   * a variable \a x must be equal to the value \a n.
-   */
-  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=NULL);
-  //@}
-
-  /**
    * \brief Which values to select for assignment
    *
    * \ingroup TaskModelIntBranch
@@ -4542,10 +4520,26 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskModelIntBranchAssignBool Value selection for assigning Boolean variables
+   * \defgroup TaskModelIntBranchAssign Value selection for assigning integer variables
    * \ingroup TaskModelIntBranch
    */
   //@{
+  /// Select smallest value
+  IntAssign INT_ASSIGN_MIN(void);
+  /// Select greatest value not greater than the median
+  IntAssign INT_ASSIGN_MED(void);
+  /// Select largest value
+  IntAssign INT_ASSIGN_MAX(void);
+  /// Select random value
+  IntAssign INT_ASSIGN_RND(Rnd r);
+  /**
+   * \brief Select value as defined by the value function \a v and commit function \a c
+   *
+   * Uses a commit function as default that posts the constraint that
+   * a variable \a x must be equal to the value \a n.
+   */
+  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=NULL);
+
   /// Select smallest value
   BoolAssign BOOL_ASSIGN_MIN(void);
   /// Select largest value
