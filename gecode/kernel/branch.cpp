@@ -55,11 +55,11 @@ namespace Gecode {
       virtual void archive(Archive& e) const;
     };
     /// Function to call
-    SpaceFunction f;
+    SharedData<std::function<void(Space& home)>> f;
     /// Call function just once
     bool done;
     /// Construct brancher
-    FunctionBranch(Home home, SpaceFunction f0);
+    FunctionBranch(Home home, std::function<void(Space& home)> f0);
     /// Copy constructor
     FunctionBranch(Space& home, bool share, FunctionBranch& b);
   public:
@@ -77,7 +77,7 @@ namespace Gecode {
     /// Copy brancher
     virtual Actor* copy(Space& home, bool share);
     /// Post brancher
-    static void post(Home home, SpaceFunction f);
+    static void post(Home home, std::function<void(Space& home)> f);
     /// Dispose brancher
     virtual size_t dispose(Space& home);
   };
@@ -95,9 +95,10 @@ namespace Gecode {
   }
 
   forceinline
-  FunctionBranch::FunctionBranch(Home home, SpaceFunction f0)
+  FunctionBranch::FunctionBranch(Home home,
+                                 std::function<void(Space& home)> f0)
     : Brancher(home), f(f0), done(false) {
-    home.notice(*this,AP_DISPOSE);
+   home.notice(*this,AP_DISPOSE);
   }
   forceinline
   FunctionBranch::FunctionBranch(Space& home, bool share, FunctionBranch& b)
@@ -120,26 +121,29 @@ namespace Gecode {
   ExecStatus
   FunctionBranch::commit(Space& home, const Choice&, unsigned int) {
     done = true;
-    f(home);
+    GECODE_ASSUME(f());
+    f()(home);
     return home.failed() ? ES_FAILED : ES_OK;
   }
   void
   FunctionBranch::print(const Space&, const Choice&, unsigned int,
                         std::ostream& o) const {
-    o << "FunctionBranch(" << f << ")";
+    o << "FunctionBranch()";
   }
   Actor*
   FunctionBranch::copy(Space& home, bool share) {
     return new (home) FunctionBranch(home,share,*this);
   }
   forceinline void
-  FunctionBranch::post(Home home, SpaceFunction f) {
+  FunctionBranch::post(Home home, std::function<void(Space& home)> f) {
+    if (!f)
+      throw InvalidFunction("FunctionBranch::post");
     (void) new (home) FunctionBranch(home,f);
   }
   size_t
   FunctionBranch::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
-    f.~SpaceFunction();
+    f.~SharedData<std::function<void(Space& home)>>();
     (void) Brancher::dispose(home);
     return sizeof(*this);
   }

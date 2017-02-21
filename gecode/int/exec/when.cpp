@@ -47,10 +47,12 @@ namespace Gecode { namespace Int { namespace Exec {
   ExecStatus
   When::propagate(Space& home, const ModEventDelta&) {
     if (x0.zero()) {
-      e(home);
+      GECODE_ASSUME(e());
+      e()(home);
     } else {
       assert(x0.one());
-      t(home);
+      GECODE_ASSUME(t());
+      t()(home);
     }
     if (home.failed())
       return ES_FAILED;
@@ -60,8 +62,8 @@ namespace Gecode { namespace Int { namespace Exec {
   size_t
   When::dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
-    t.~SpaceFunction();
-    e.~SpaceFunction();
+    t.~SharedData<std::function<void(Space& home)>>();
+    e.~SharedData<std::function<void(Space& home)>>();
     (void) UnaryPropagator<BoolView,PC_BOOL_VAL>::dispose(home);
     return sizeof(*this);
   }

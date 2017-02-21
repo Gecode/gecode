@@ -47,6 +47,8 @@
 #include <cstring>
 #include <cassert>
 
+#include <functional>
+
 #include <gecode/support.hh>
 
 /*
@@ -174,8 +176,6 @@
  * Common propagator and branching patterns
  *
  */
-
-#include <gecode/kernel/space-function.hpp>
 
 namespace Gecode {
 
