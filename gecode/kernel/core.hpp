@@ -4325,14 +4325,14 @@ namespace Gecode {
     ActorLink** f = actorNonZero(pc_max+1);
 #ifdef GECODE_AUDIT
     while (f < b.base+entries)
-      if (*f == a)
+      if (Support::funmark(*f) == a)
         goto found;
       else
         f++;
     GECODE_NEVER;
   found: ;
 #else
-    while (*f != a) f++;
+    while (Support::funmark(*f) != a) f++;
 #endif
     // Remove actor
     *f = b.base[--entries];
@@ -4378,25 +4378,24 @@ namespace Gecode {
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
     do {
-      if (!Support::marked(*la)) {
-        Advisor* a = Advisor::cast(*la);
-        assert(!a->disposed());
-        Propagator& p = a->propagator();
-        switch (p.advise(home,*a,d)) {
-        case ES_FIX:
-          break;
-        case ES_FAILED:
-          return false;
-        case ES_NOFIX:
-          schedule(home,p,me);
-          break;
-        case ES_NOFIX_FORCE:
-          schedule(home,p,me,true);
-          break;
-        case __ES_SUBSUMED:
-        default:
-          GECODE_NEVER;
-        }
+      Advisor* a = Advisor::cast
+        (static_cast<ActorLink*>(Support::funmark(*la)));
+      assert(!a->disposed());
+      Propagator& p = a->propagator();
+      switch (p.advise(home,*a,d)) {
+      case ES_FIX:
+        break;
+      case ES_FAILED:
+        return false;
+      case ES_NOFIX:
+        schedule(home,p,me);
+        break;
+      case ES_NOFIX_FORCE:
+        schedule(home,p,me,true);
+        break;
+      case __ES_SUBSUMED:
+      default:
+        GECODE_NEVER;
       }
     } while (++la < le);
     return true;

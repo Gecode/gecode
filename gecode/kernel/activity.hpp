@@ -35,6 +35,8 @@
  *
  */
 
+#include <cfloat>
+
 namespace Gecode {
 
   /**
@@ -56,8 +58,8 @@ namespace Gecode {
       double* a;
       /// Number of activity values
       int n;
-      /// Decay factor
-      double d;
+      /// Inverse decay factor
+      double id;
       /// Allocate activity values
       template<class View>
       Storage(Home home, ViewArray<View>& x, double d,
@@ -70,8 +72,6 @@ namespace Gecode {
     Storage* storage;
     /// Update activity value at position \a i
     void update(int i);
-    /// Decay activity value at position \a i
-    void decay(int i);
     /// Acquire mutex
     void acquire(void);
     /// Release mutex
@@ -236,7 +236,6 @@ namespace Gecode {
   }
 
 
-
   /*
    * Posting of activity recorder propagator
    *
@@ -267,10 +266,11 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  Activity::Storage::Storage(Home home, ViewArray<View>& x, double d0,
+  Activity::Storage::Storage(Home home, ViewArray<View>& x, double d,
                              typename
                              BranchTraits<typename View::VarType>::Merit bm)
-    : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), d(d0) {
+    : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), 
+      id(1.0 / d) {
     if (bm != NULL)
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -293,32 +293,35 @@ namespace Gecode {
 
   forceinline void
   Activity::update(int i) {
-    assert(storage != NULL);
+    static const double rf = 0.0000001;
+    static const double al = DBL_MAX * rf;
+    GECODE_ASSUME(storage != NULL);
     assert((i >= 0) && (i < storage->n));
-    storage->a[i] += 1.0;
-  }
-  forceinline void
-  Activity::decay(int i) {
-    assert(storage != NULL);
-    assert((i >= 0) && (i < storage->n));
-    storage->a[i] *= storage->d;
+    double nai = storage->id * (storage->a[i] + 1.0);
+    storage->a[i] = nai;
+    if (nai > al)
+      for (int j=storage->n; j--; )
+        storage->a[j] *= rf;
   }
   forceinline double
   Activity::operator [](int i) const {
-    assert(storage != NULL);
+    GECODE_ASSUME(storage != NULL);
     assert((i >= 0) && (i < storage->n));
     return storage->a[i];
   }
   forceinline int
   Activity::size(void) const {
+    GECODE_ASSUME(storage != NULL);
     return storage->n;
   }
   forceinline void
   Activity::acquire(void) {
+    GECODE_ASSUME(storage != NULL);
     storage->m.acquire();
   }
   forceinline void
   Activity::release(void) {
+    GECODE_ASSUME(storage != NULL);
     storage->m.release();
   }
 
@@ -419,7 +422,7 @@ namespace Gecode {
 
   template<class View>
   void
-  Activity::Recorder<View>::advise(Space& home, Advisor& a) {
+  Activity::Recorder<View>::advise(Space&, Advisor& a) {
     static_cast<Idx&>(a).mark();
   }
 
@@ -435,9 +438,6 @@ namespace Gecode {
         a.update(i);
         if (x[i].assigned())
           as.advisor().dispose(home,c);
-      } else {
-        assert(!x[i].assigned());
-        a.decay(i);
       }
     }
     a.release();
