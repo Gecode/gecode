@@ -47,6 +47,8 @@
 #include <cstring>
 #include <cassert>
 
+#include <cfloat>
+
 #include <functional>
 
 #include <gecode/support.hh>
@@ -92,6 +94,18 @@
  * directly in the Gecode namespace.
  *
  */
+
+namespace Gecode {
+
+  /// Kernel configuration parameters
+  namespace Config {
+    /// Rescale factor for action and afc values
+    const double rescale = 1e-50;
+    /// Rescale action and afc values when larger than this
+    const double rescale_limit = DBL_MAX * rescale;
+  }
+
+}
 
 /*
  * General exceptions and kernel exceptions

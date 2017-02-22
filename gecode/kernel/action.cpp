@@ -103,7 +103,7 @@ namespace Gecode {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("Action");
     acquire();
-    storage->id = 1.0 / d;
+    storage->invd = 1.0 / d;
     release();
   }
 
@@ -111,7 +111,7 @@ namespace Gecode {
   Action::decay(const Space&) const {
     double d;
     const_cast<Action*>(this)->acquire();
-    d = 1.0 / storage->id;
+    d = 1.0 / storage->invd;
     const_cast<Action*>(this)->release();
     return d;
   }

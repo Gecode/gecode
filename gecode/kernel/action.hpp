@@ -59,7 +59,9 @@ namespace Gecode {
       /// Number of action values
       int n;
       /// Inverse decay factor
-      double id;
+      double invd;
+      /// Increment value
+      double inc;
       /// Allocate action values
       template<class View>
       Storage(Home home, ViewArray<View>& x, double d,
@@ -72,6 +74,8 @@ namespace Gecode {
     Storage* storage;
     /// Update action value at position \a i
     void update(int i);
+    /// Update increment value
+    void update(void);
     /// Acquire mutex
     void acquire(void);
     /// Release mutex
@@ -269,7 +273,7 @@ namespace Gecode {
                            typename
                            BranchTraits<typename View::VarType>::Merit bm)
     : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), 
-      id(1.0 / d) {
+      invd(1.0 / d), inc(1.0) {
     if (bm != NULL)
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -291,16 +295,26 @@ namespace Gecode {
    */
 
   forceinline void
+  Action::update(void) {
+    GECODE_ASSUME(storage != NULL);
+    storage->inc *= storage->invd;
+  }
+  forceinline void
   Action::update(int i) {
-    static const double rf = 0.0000001;
-    static const double al = DBL_MAX * rf;
+    /*
+     * The trick to inverse decay and also to inverse decay the increment
+     * is from: An Extensible SAT-solver, Niklas Een, Niklas Sörensson, 
+     * SAT 2003.
+     */
     GECODE_ASSUME(storage != NULL);
     assert((i >= 0) && (i < storage->n));
-    double nai = storage->id * (storage->a[i] + 1.0);
+    double nai = storage->a[i] + storage->inc;
     storage->a[i] = nai;
-    if (nai > al)
+    if (nai > Config::rescale_limit) {
+      storage->inc *= Config::rescale;
       for (int j=storage->n; j--; )
-        storage->a[j] *= rf;
+        storage->a[j] *= Config::rescale;
+    }
   }
   forceinline double
   Action::operator [](int i) const {
@@ -429,6 +443,7 @@ namespace Gecode {
   Action::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
     // Lock action information
     a.acquire();
+    a.update();
     for (Advisors<Idx> as(c); as(); ++as) {
       int i = as.advisor().idx();
       if (as.advisor().marked()) {
