@@ -1186,44 +1186,44 @@ namespace Gecode {
 
 
   /**
-   * \brief Recording activities for set variables
+   * \brief Recording actions for set variables
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetActivity : public Activity {
+  class SetAction : public Action {
   public:
     /**
      * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init or the assignment operator.
+     * yet initialized action storage is init or the assignment operator.
      *
      */
-    SetActivity(void);
+    SetAction(void);
     /// Copy constructor
-    SetActivity(const SetActivity& a);
+    SetAction(const SetAction& a);
     /// Assignment operator
-    SetActivity& operator =(const SetActivity& a);
+    SetAction& operator =(const SetAction& a);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      */
     GECODE_SET_EXPORT
-    SetActivity(Home home, const SetVarArgs& x, double d=1.0,
+    SetAction(Home home, const SetVarArgs& x, double d=1.0,
                 SetBranchMerit bm=NULL);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
+     * action storage has been constructed with the default constructor.
      *
      */
     GECODE_SET_EXPORT void
@@ -1233,7 +1233,7 @@ namespace Gecode {
 
 }
 
-#include <gecode/set/branch/activity.hpp>
+#include <gecode/set/branch/action.hpp>
 
 namespace Gecode {
 
@@ -1265,8 +1265,8 @@ namespace Gecode {
       SEL_DEGREE_MAX,      ///< With largest degree
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
-      SEL_ACTIVITY_MIN,    ///< With lowest activity
-      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_ACTION_MIN,      ///< With lowest action
+      SEL_ACTION_MAX,      ///< With highest action
       SEL_MIN_MIN,         ///< With smallest minimum unknown element
       SEL_MIN_MAX,         ///< With largest minimum unknown element
       SEL_MAX_MIN,         ///< With smallest maximum unknown element
@@ -1277,8 +1277,8 @@ namespace Gecode {
       SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
-      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
-      SEL_ACTIVITY_SIZE_MAX  ///< With largest activity divided by domain size
+      SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
+      SEL_ACTION_SIZE_MAX  ///< With largest action divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1294,13 +1294,13 @@ namespace Gecode {
     SetVarBranch(Select s, double d, BranchTbl t);
     /// Initialize with selection strategy \a s, afc \a a, and tie-break limit function \a t
     SetVarBranch(Select s, SetAFC a, BranchTbl t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    SetVarBranch(Select s, SetActivity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
+    SetVarBranch(Select s, SetAction a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     SetVarBranch(Select s, SetBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or activity
+    /// Expand decay factor into AFC or action
     void expand(Home home, const SetVarArgs& x);
   };
 
@@ -1329,14 +1329,14 @@ namespace Gecode {
   SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count
   SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity
-  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
-  /// Select variable with highest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with highest activity
-  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
+  /// Select variable with lowest action with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with lowest action
+  SetVarBranch SET_VAR_ACTION_MIN(SetAction a, BranchTbl tbl=NULL);
+  /// Select variable with highest action with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with highest action
+  SetVarBranch SET_VAR_ACTION_MAX(SetAction a, BranchTbl tbl=NULL);
   /// Select variable with smallest minimum unknown element
   SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest minimum unknown element
@@ -1361,14 +1361,14 @@ namespace Gecode {
   SetVarBranch SET_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count divided by domain size
   SetVarBranch SET_VAR_AFC_SIZE_MAX(SetAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MIN(SetActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MAX(SetActivity a, BranchTbl tbl=NULL);
+  /// Select variable with smallest action divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest action divided by domain size
+  SetVarBranch SET_VAR_ACTION_SIZE_MIN(SetAction a, BranchTbl tbl=NULL);
+  /// Select variable with largest action divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest action divided by domain size
+  SetVarBranch SET_VAR_ACTION_SIZE_MAX(SetAction a, BranchTbl tbl=NULL);
   //@}
 
 }

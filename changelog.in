@@ -77,6 +77,34 @@ Module:	kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	set
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
 Variable implementations are not allowed to return a failed
 modification event directly (such as in return ME_INT_FAILED;),
 they need to cail the function fail() instead (such as in return

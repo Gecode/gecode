@@ -35,23 +35,23 @@
  *
  */
 
-#include <gecode/set.hh>
+#include <gecode/float.hh>
 
 namespace Gecode {
 
-  SetActivity::SetActivity(Home home, const SetVarArgs& x, double d,
-                           SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    Activity::init(home,y,d,bm);
+  FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d,
+                           FloatBranchMerit bm) {
+    ViewArray<Float::FloatView> y(home,x);
+    Action::init(home,y,d,bm);
   }
 
   void
-  SetActivity::init(Home home, const SetVarArgs& x, double d,
-                    SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    Activity::init(home,y,d,bm);
+  FloatAction::init(Home home, const FloatVarArgs& x, double d,
+                    FloatBranchMerit bm) {
+    ViewArray<Float::FloatView> y(home,x);
+    Action::init(home,y,d,bm);
   }
 
 }
 
-// STATISTICS: set-branch
+// STATISTICS: float-branch

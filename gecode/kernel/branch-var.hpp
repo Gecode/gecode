@@ -65,12 +65,12 @@ namespace Gecode {
     BranchTbl _tbl;
     /// Random number generator
     Rnd _rnd;
-    /// Decay information for AFC and activity
+    /// Decay information for AFC and action
     double _decay;
     /// AFC information
     AFC _afc;
-    /// Activity information
-    Activity _act;
+    /// Action information
+    Action _act;
     /// Merit function
     MeritFunction _mf;
   public:
@@ -84,8 +84,8 @@ namespace Gecode {
     VarBranch(double d, BranchTbl t);
     /// Initialize with AFC \a a and tie-break limit function \a t
     VarBranch(AFC a, BranchTbl t);
-    /// Initialize with activity \a a and tie-break limit function \a t
-    VarBranch(Activity a, BranchTbl t);
+    /// Initialize with action \a a and tie-break limit function \a t
+    VarBranch(Action a, BranchTbl t);
     /// Initialize with merit function \a f and tie-break limit function \a t
     VarBranch(MeritFunction f, BranchTbl t);
     /// Return tie-break limit function
@@ -98,10 +98,10 @@ namespace Gecode {
     AFC afc(void) const;
     /// Set AFC to \a a
     void afc(AFC a);
-    /// Return activity
-    Activity activity(void) const;
-    /// Set activity to \a a
-    void activity(Activity a);
+    /// Return action
+    Action action(void) const;
+    /// Set action to \a a
+    void action(Action a);
     /// Return merit function
     MeritFunction merit(void) const;
   };
@@ -132,10 +132,10 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  VarBranch<Var>::VarBranch(Activity a, BranchTbl t)
+  VarBranch<Var>::VarBranch(Action a, BranchTbl t)
     : _tbl(t), _decay(1.0), _act(a) {
     if (!_act.initialized())
-      throw UninitializedActivity("VarBranch<Var>::VarBranch");
+      throw UninitializedAction("VarBranch<Var>::VarBranch");
   }
 
   template<class Var>
@@ -182,14 +182,14 @@ namespace Gecode {
   }
 
   template<class Var>
-  inline Activity
-  VarBranch<Var>::activity(void) const {
+  inline Action
+  VarBranch<Var>::action(void) const {
     return _act;
   }
 
   template<class Var>
   inline void
-  VarBranch<Var>::activity(Activity a) {
+  VarBranch<Var>::action(Action a) {
     _act=a;
   }
 

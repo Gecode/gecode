@@ -125,33 +125,33 @@ namespace Gecode { namespace Int { namespace Branch {
     afc.~AFC();
   }
 
-  // Activity over size merit
+  // Action over size merit
   template<class View>
   forceinline
-  MeritActivitySize<View>::MeritActivitySize(Space& home,
-                                             const VarBranch<Var>& vb)
-    : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
+  MeritActionSize<View>::MeritActionSize(Space& home,
+                                         const VarBranch<Var>& vb)
+    : MeritBase<View,double>(home,vb), action(vb.action()) {}
   template<class View>
   forceinline
-  MeritActivitySize<View>::MeritActivitySize(Space& home, bool shared,
-                                             MeritActivitySize& m)
+  MeritActionSize<View>::MeritActionSize(Space& home, bool shared,
+                                         MeritActionSize& m)
     : MeritBase<View,double>(home,shared,m) {
-    activity.update(home, shared, m.activity);
+    action.update(home, shared, m.action);
   }
   template<class View>
   forceinline double
-  MeritActivitySize<View>::operator ()(const Space&, View x, int i) {
-    return activity[i] / static_cast<double>(x.size());
+  MeritActionSize<View>::operator ()(const Space&, View x, int i) {
+    return action[i] / static_cast<double>(x.size());
   }
   template<class View>
   forceinline bool
-  MeritActivitySize<View>::notice(void) const {
+  MeritActionSize<View>::notice(void) const {
     return true;
   }
   template<class View>
   forceinline void
-  MeritActivitySize<View>::dispose(Space&) {
-    activity.~Activity();
+  MeritActionSize<View>::dispose(Space&) {
+    action.~Action();
   }
 
   // Minimum regret merit

@@ -211,7 +211,7 @@ namespace Gecode {
 #include <gecode/kernel/advisor.hpp>
 #include <gecode/kernel/afc.hpp>
 #include <gecode/kernel/branch-traits.hpp>
-#include <gecode/kernel/activity.hpp>
+#include <gecode/kernel/action.hpp>
 #include <gecode/kernel/branch-var.hpp>
 #include <gecode/kernel/branch-tiebreak.hpp>
 #include <gecode/kernel/branch-val.hpp>

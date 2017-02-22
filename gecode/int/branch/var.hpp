@@ -58,7 +58,7 @@ namespace Gecode {
     : VarBranch<IntVar>(a,t), s(s0) {}
 
   forceinline
-  IntVarBranch::IntVarBranch(Select s0, IntActivity a, BranchTbl t)
+  IntVarBranch::IntVarBranch(Select s0, IntAction a, BranchTbl t)
     : VarBranch<IntVar>(a,t), s(s0) {}
 
   forceinline
@@ -78,10 +78,10 @@ namespace Gecode {
       if (!_afc.initialized())
         _afc = IntAFC(home,x,decay());
       break;
-    case SEL_ACTIVITY_MIN: case SEL_ACTIVITY_MAX:
-    case SEL_ACTIVITY_SIZE_MIN: case SEL_ACTIVITY_SIZE_MAX:
+    case SEL_ACTION_MIN: case SEL_ACTION_MAX:
+    case SEL_ACTION_SIZE_MIN: case SEL_ACTION_SIZE_MAX:
       if (!_act.initialized())
-        _act = IntActivity(home,x,decay());
+        _act = IntAction(home,x,decay());
       break;
     default: ;
     }
@@ -138,23 +138,23 @@ namespace Gecode {
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_MIN(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_MIN,d,tbl);
+  INT_VAR_ACTION_MIN(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_MIN,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_MIN(IntActivity a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_MIN,a,tbl);
+  INT_VAR_ACTION_MIN(IntAction a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_MIN,a,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_MAX(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_MAX,d,tbl);
+  INT_VAR_ACTION_MAX(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_MAX,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_MAX(IntActivity a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_MAX,a,tbl);
+  INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_MAX,a,tbl);
   }
 
   inline IntVarBranch
@@ -218,23 +218,23 @@ namespace Gecode {
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_SIZE_MIN(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MIN,d,tbl);
+  INT_VAR_ACTION_SIZE_MIN(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MIN,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_SIZE_MIN(IntActivity a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MIN,a,tbl);
+  INT_VAR_ACTION_SIZE_MIN(IntAction a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MIN,a,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_SIZE_MAX(double d, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MAX,d,tbl);
+  INT_VAR_ACTION_SIZE_MAX(double d, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MAX,d,tbl);
   }
 
   inline IntVarBranch
-  INT_VAR_ACTIVITY_SIZE_MAX(IntActivity a, BranchTbl tbl) {
-    return IntVarBranch(IntVarBranch::SEL_ACTIVITY_SIZE_MAX,a,tbl);
+  INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl) {
+    return IntVarBranch(IntVarBranch::SEL_ACTION_SIZE_MAX,a,tbl);
   }
 
   inline IntVarBranch
@@ -280,7 +280,7 @@ namespace Gecode {
     : VarBranch<BoolVar>(a,t), s(s0) {}
 
   forceinline
-  BoolVarBranch::BoolVarBranch(Select s0, BoolActivity a, BranchTbl t)
+  BoolVarBranch::BoolVarBranch(Select s0, BoolAction a, BranchTbl t)
     : VarBranch<BoolVar>(a,t), s(s0) {}
 
   forceinline
@@ -299,9 +299,9 @@ namespace Gecode {
       if (!_afc.initialized())
         _afc = BoolAFC(home,x,decay());
       break;
-    case SEL_ACTIVITY_MIN: case SEL_ACTIVITY_MAX:
+    case SEL_ACTION_MIN: case SEL_ACTION_MAX:
       if (!_act.initialized())
-        _act = BoolActivity(home,x,decay());
+        _act = BoolAction(home,x,decay());
       break;
     default: ;
     }
@@ -358,23 +358,23 @@ namespace Gecode {
   }
 
   inline BoolVarBranch
-  BOOL_VAR_ACTIVITY_MIN(double d, BranchTbl tbl) {
-    return BoolVarBranch(BoolVarBranch::SEL_ACTIVITY_MIN,d,tbl);
+  BOOL_VAR_ACTION_MIN(double d, BranchTbl tbl) {
+    return BoolVarBranch(BoolVarBranch::SEL_ACTION_MIN,d,tbl);
   }
 
   inline BoolVarBranch
-  BOOL_VAR_ACTIVITY_MIN(BoolActivity a, BranchTbl tbl) {
-    return BoolVarBranch(BoolVarBranch::SEL_ACTIVITY_MIN,a,tbl);
+  BOOL_VAR_ACTION_MIN(BoolAction a, BranchTbl tbl) {
+    return BoolVarBranch(BoolVarBranch::SEL_ACTION_MIN,a,tbl);
   }
 
   inline BoolVarBranch
-  BOOL_VAR_ACTIVITY_MAX(double d, BranchTbl tbl) {
-    return BoolVarBranch(BoolVarBranch::SEL_ACTIVITY_MAX,d,tbl);
+  BOOL_VAR_ACTION_MAX(double d, BranchTbl tbl) {
+    return BoolVarBranch(BoolVarBranch::SEL_ACTION_MAX,d,tbl);
   }
 
   inline BoolVarBranch
-  BOOL_VAR_ACTIVITY_MAX(BoolActivity a, BranchTbl tbl) {
-    return BoolVarBranch(BoolVarBranch::SEL_ACTIVITY_MAX,a,tbl);
+  BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl) {
+    return BoolVarBranch(BoolVarBranch::SEL_ACTION_MAX,a,tbl);
   }
 
 }

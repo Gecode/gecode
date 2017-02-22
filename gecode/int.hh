@@ -3964,43 +3964,43 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \brief Recording activities for integer variables
+   * \brief Recording actions for integer variables
    *
    * \ingroup TaskModelIntBranch
    */
-  class IntActivity : public Activity {
+  class IntAction : public Action {
   public:
     /**
      * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init or the assignment operator.
+     * yet initialized action storage is init or the assignment operator.
      *
      */
-    IntActivity(void);
+    IntAction(void);
     /// Copy constructor
-    IntActivity(const IntActivity& a);
+    IntAction(const IntAction& a);
     /// Assignment operator
-    IntActivity& operator =(const IntActivity& a);
+    IntAction& operator =(const IntAction& a);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      */
     GECODE_INT_EXPORT
-    IntActivity(Home home, const IntVarArgs& x, double d=1.0,
-                IntBranchMerit bm=NULL);
+    IntAction(Home home, const IntVarArgs& x, double d=1.0,
+              IntBranchMerit bm=NULL);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
+     * action storage has been constructed with the default constructor.
      *
      */
     GECODE_INT_EXPORT void
@@ -4009,43 +4009,43 @@ namespace Gecode {
   };
 
   /**
-   * \brief Recording activities for Boolean variables
+   * \brief Recording actions for Boolean variables
    *
    * \ingroup TaskModelIntBranch
    */
-  class BoolActivity : public Activity {
+  class BoolAction : public Action {
   public:
     /**
      * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init or the assignment operator.
+     * yet initialized action storage is init or the assignment operator.
      *
      */
-    BoolActivity(void);
+    BoolAction(void);
     /// Copy constructor
-    BoolActivity(const BoolActivity& a);
+    BoolAction(const BoolAction& a);
     /// Assignment operator
-    BoolActivity& operator =(const BoolActivity& a);
+    BoolAction& operator =(const BoolAction& a);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      */
     GECODE_INT_EXPORT
-    BoolActivity(Home home, const BoolVarArgs& x, double d=1.0,
-                 BoolBranchMerit bm=NULL);
+    BoolAction(Home home, const BoolVarArgs& x, double d=1.0,
+               BoolBranchMerit bm=NULL);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
+     * action storage has been constructed with the default constructor.
      *
      */
     GECODE_INT_EXPORT void
@@ -4055,7 +4055,7 @@ namespace Gecode {
 
 }
 
-#include <gecode/int/branch/activity.hpp>
+#include <gecode/int/branch/action.hpp>
 
 namespace Gecode {
 
@@ -4094,8 +4094,8 @@ namespace Gecode {
       SEL_DEGREE_MAX,      ///< With largest degree
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
-      SEL_ACTIVITY_MIN,    ///< With lowest activity
-      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_ACTION_MIN,      ///< With lowest action
+      SEL_ACTION_MAX,      ///< With highest action
       SEL_MIN_MIN,         ///< With smallest min
       SEL_MIN_MAX,         ///< With largest min
       SEL_MAX_MIN,         ///< With smallest max
@@ -4106,8 +4106,8 @@ namespace Gecode {
       SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
-      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
-      SEL_ACTIVITY_SIZE_MAX, ///< With largest activity divided by domain size
+      SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
+      SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
       /** \brief With smallest min-regret
        *
        * The min-regret of a variable is the difference between the
@@ -4147,13 +4147,13 @@ namespace Gecode {
     IntVarBranch(Select s, double d, BranchTbl t);
     /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
     IntVarBranch(Select s, IntAFC a, BranchTbl t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    IntVarBranch(Select s, IntActivity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
+    IntVarBranch(Select s, IntAction a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     IntVarBranch(Select s, IntBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or activity
+    /// Expand decay factor into AFC or action
     void expand(Home home, const IntVarArgs& x);
   };
 
@@ -4174,8 +4174,8 @@ namespace Gecode {
       SEL_DEGREE_MAX,      ///< With largest degree
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
-      SEL_ACTIVITY_MIN,    ///< With lowest activity
-      SEL_ACTIVITY_MAX     ///< With highest activity
+      SEL_ACTION_MIN,      ///< With lowest action
+      SEL_ACTION_MAX       ///< With highest action
     };
   protected:
     /// Which variable to select
@@ -4191,13 +4191,13 @@ namespace Gecode {
     BoolVarBranch(Select s, double d, BranchTbl t);
     /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
     BoolVarBranch(Select s, BoolAFC a, BranchTbl t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    BoolVarBranch(Select s, BoolActivity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
+    BoolVarBranch(Select s, BoolAction a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     BoolVarBranch(Select s, BoolBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or activity
+    /// Expand decay factor into AFC or action
     void expand(Home home, const BoolVarArgs& x);
   };
 
@@ -4226,14 +4226,14 @@ namespace Gecode {
   IntVarBranch INT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count
   IntVarBranch INT_VAR_AFC_MAX(IntAFC a, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity with decay factor \a d
-  IntVarBranch INT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity
-  IntVarBranch INT_VAR_ACTIVITY_MIN(IntActivity a, BranchTbl tbl=NULL);
-  /// Select variable with highest activity with decay factor \a d
-  IntVarBranch INT_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with highest activity
-  IntVarBranch INT_VAR_ACTIVITY_MAX(IntActivity a, BranchTbl tbl=NULL);
+  /// Select variable with lowest action with decay factor \a d
+  IntVarBranch INT_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with lowest action
+  IntVarBranch INT_VAR_ACTION_MIN(IntAction a, BranchTbl tbl=NULL);
+  /// Select variable with highest action with decay factor \a d
+  IntVarBranch INT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with highest action
+  IntVarBranch INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl=NULL);
   /// Select variable with smallest min
   IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
@@ -4258,14 +4258,14 @@ namespace Gecode {
   IntVarBranch INT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count divided by domain size
   IntVarBranch INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size with decay factor \a d
-  IntVarBranch INT_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size
-  IntVarBranch INT_VAR_ACTIVITY_SIZE_MIN(IntActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size with decay factor \a d
-  IntVarBranch INT_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size
-  IntVarBranch INT_VAR_ACTIVITY_SIZE_MAX(IntActivity a, BranchTbl tbl=NULL);
+  /// Select variable with smallest action divided by domain size with decay factor \a d
+  IntVarBranch INT_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest action divided by domain size
+  IntVarBranch INT_VAR_ACTION_SIZE_MIN(IntAction a, BranchTbl tbl=NULL);
+  /// Select variable with largest action divided by domain size with decay factor \a d
+  IntVarBranch INT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest action divided by domain size
+  IntVarBranch INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl=NULL);
   /** \brief Select variable with smallest min-regret
    *
    * The min-regret of a variable is the difference between the
@@ -4311,14 +4311,14 @@ namespace Gecode {
   BoolVarBranch BOOL_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count
   BoolVarBranch BOOL_VAR_AFC_MAX(BoolAFC a, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity with decay factor \a d
-  BoolVarBranch BOOL_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity
-  BoolVarBranch BOOL_VAR_ACTIVITY_MIN(BoolActivity a, BranchTbl tbl=NULL);
-  /// Select variable with highest activity with decay factor \a d
-  BoolVarBranch BOOL_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with highest activity
-  BoolVarBranch BOOL_VAR_ACTIVITY_MAX(BoolActivity a, BranchTbl tbl=NULL);
+  /// Select variable with lowest action with decay factor \a d
+  BoolVarBranch BOOL_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with lowest action
+  BoolVarBranch BOOL_VAR_ACTION_MIN(BoolAction a, BranchTbl tbl=NULL);
+  /// Select variable with highest action with decay factor \a d
+  BoolVarBranch BOOL_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with highest action
+  BoolVarBranch BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl=NULL);
   //@}
 
 }

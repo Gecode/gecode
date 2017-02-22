@@ -78,14 +78,14 @@ namespace Gecode {
   UninitializedAFC::UninitializedAFC(const char* l)
     : Exception(l,"Uninitialized AFC information for branching") {}
 
-  UninitializedActivity::UninitializedActivity(const char* l)
-    : Exception(l,"Uninitialized activity information for branching") {}
+  UninitializedAction::UninitializedAction(const char* l)
+    : Exception(l,"Uninitialized action information for branching") {}
 
   AFCWrongArity::AFCWrongArity(const char* l)
     : Exception(l,"AFC has wrong number of variables") {}
 
-  ActivityWrongArity::ActivityWrongArity(const char* l)
-    : Exception(l,"Activity has wrong number of variables") {}
+  ActionWrongArity::ActionWrongArity(const char* l)
+    : Exception(l,"Action has wrong number of variables") {}
 
 }
 

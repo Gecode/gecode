@@ -74,10 +74,10 @@ namespace Gecode { namespace Float { namespace Branch {
         return new (home) ViewSelMinTbl<MeritAFC<FloatView> >(home,fvb);
       case FloatVarBranch::SEL_AFC_MAX:
         return new (home) ViewSelMaxTbl<MeritAFC<FloatView> >(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_MIN:
-        return new (home) ViewSelMinTbl<MeritActivity<FloatView> >(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_MAX:
-        return new (home) ViewSelMaxTbl<MeritActivity<FloatView> >(home,fvb);
+      case FloatVarBranch::SEL_ACTION_MIN:
+        return new (home) ViewSelMinTbl<MeritAction<FloatView> >(home,fvb);
+      case FloatVarBranch::SEL_ACTION_MAX:
+        return new (home) ViewSelMaxTbl<MeritAction<FloatView> >(home,fvb);
       case FloatVarBranch::SEL_DEGREE_SIZE_MIN:
         return new (home) ViewSelMinTbl<MeritDegreeSize>(home,fvb);
       case FloatVarBranch::SEL_DEGREE_SIZE_MAX:
@@ -86,10 +86,10 @@ namespace Gecode { namespace Float { namespace Branch {
         return new (home) ViewSelMinTbl<MeritAFCSize>(home,fvb);
       case FloatVarBranch::SEL_AFC_SIZE_MAX:
         return new (home) ViewSelMaxTbl<MeritAFCSize>(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_SIZE_MIN:
-        return new (home) ViewSelMinTbl<MeritActivitySize>(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_SIZE_MAX:
-        return new (home) ViewSelMaxTbl<MeritActivitySize>(home,fvb);
+      case FloatVarBranch::SEL_ACTION_SIZE_MIN:
+        return new (home) ViewSelMinTbl<MeritActionSize>(home,fvb);
+      case FloatVarBranch::SEL_ACTION_SIZE_MAX:
+        return new (home) ViewSelMaxTbl<MeritActionSize>(home,fvb);
       default:
         throw UnknownBranching("Float::branch");
       }
@@ -119,10 +119,10 @@ namespace Gecode { namespace Float { namespace Branch {
         return new (home) ViewSelMin<MeritAFC<FloatView> >(home,fvb);
       case FloatVarBranch::SEL_AFC_MAX:
         return new (home) ViewSelMax<MeritAFC<FloatView> >(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_MIN:
-        return new (home) ViewSelMin<MeritActivity<FloatView> >(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_MAX:
-        return new (home) ViewSelMax<MeritActivity<FloatView> >(home,fvb);
+      case FloatVarBranch::SEL_ACTION_MIN:
+        return new (home) ViewSelMin<MeritAction<FloatView> >(home,fvb);
+      case FloatVarBranch::SEL_ACTION_MAX:
+        return new (home) ViewSelMax<MeritAction<FloatView> >(home,fvb);
       case FloatVarBranch::SEL_DEGREE_SIZE_MIN:
         return new (home) ViewSelMin<MeritDegreeSize>(home,fvb);
       case FloatVarBranch::SEL_DEGREE_SIZE_MAX:
@@ -131,10 +131,10 @@ namespace Gecode { namespace Float { namespace Branch {
         return new (home) ViewSelMin<MeritAFCSize>(home,fvb);
       case FloatVarBranch::SEL_AFC_SIZE_MAX:
         return new (home) ViewSelMax<MeritAFCSize>(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_SIZE_MIN:
-        return new (home) ViewSelMin<MeritActivitySize>(home,fvb);
-      case FloatVarBranch::SEL_ACTIVITY_SIZE_MAX:
-        return new (home) ViewSelMax<MeritActivitySize>(home,fvb);
+      case FloatVarBranch::SEL_ACTION_SIZE_MIN:
+        return new (home) ViewSelMin<MeritActionSize>(home,fvb);
+      case FloatVarBranch::SEL_ACTION_SIZE_MAX:
+        return new (home) ViewSelMax<MeritActionSize>(home,fvb);
       default:
         throw UnknownBranching("Float::branch");
       }

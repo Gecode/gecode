@@ -40,27 +40,27 @@
 namespace Gecode {
 
   /**
-   * \brief Class for activity management
+   * \brief Class for action management
    *
    */
-  class Activity {
+  class Action {
   protected:
     template<class View>
     class Recorder;
-    /// Object for storing activity values
+    /// Object for storing action values
     class Storage : public HeapAllocated {
     public:
       /// Mutex to synchronize globally shared access
       Support::Mutex m;
       /// How many references exist for this object
       unsigned int use_cnt;
-      /// Activity values
+      /// Action values
       double* a;
-      /// Number of activity values
+      /// Number of action values
       int n;
       /// Inverse decay factor
       double id;
-      /// Allocate activity values
+      /// Allocate action values
       template<class View>
       Storage(Home home, ViewArray<View>& x, double d,
               typename BranchTraits<typename View::VarType>::Merit bm);
@@ -70,7 +70,7 @@ namespace Gecode {
 
     /// Pointer to storage object
     Storage* storage;
-    /// Update activity value at position \a i
+    /// Update action value at position \a i
     void update(int i);
     /// Acquire mutex
     void acquire(void);
@@ -83,48 +83,48 @@ namespace Gecode {
      * \brief Construct as not yet intialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init and the assignment operator.
+     * yet initialized action storage is init and the assignment operator.
      *
      */
-    Activity(void);
+    Action(void);
     /// Copy constructor
     GECODE_KERNEL_EXPORT
-    Activity(const Activity& a);
+    Action(const Action& a);
     /// Assignment operator
     GECODE_KERNEL_EXPORT
-    Activity& operator =(const Activity& a);
-    /// Initialize for views \a x and decay factor \a d and activity as defined by \a bm
+    Action& operator =(const Action& a);
+    /// Initialize for views \a x and decay factor \a d and action as defined by \a bm
     template<class View>
-    Activity(Home home, ViewArray<View>& x, double d,
+    Action(Home home, ViewArray<View>& x, double d,
              typename BranchTraits<typename View::VarType>::Merit bm);
-    /// Initialize for views \a x and decay factor \a d and activity as defined by \a bm
+    /// Initialize for views \a x and decay factor \a d and action as defined by \a bm
     template<class View>
     void init(Home home, ViewArray<View>& x, double d,
              typename BranchTraits<typename View::VarType>::Merit bm);
     /// Test whether already initialized
     bool initialized(void) const;
-    /// Set activity to \a a
+    /// Set action to \a a
     GECODE_KERNEL_EXPORT
     void set(Space& home, double a=0.0);
-    /// Default (empty) activity information
-    GECODE_KERNEL_EXPORT static const Activity def;
+    /// Default (empty) action information
+    GECODE_KERNEL_EXPORT static const Action def;
     //@}
 
-    /// \name Update and delete activity information
+    /// \name Update and delete action information
     //@{
     /// Updating during cloning
     GECODE_KERNEL_EXPORT
-    void update(Space& home, bool share, Activity& a);
+    void update(Space& home, bool share, Action& a);
     /// Destructor
     GECODE_KERNEL_EXPORT
-    ~Activity(void);
+    ~Action(void);
     //@}
 
     /// \name Information access
     //@{
-    /// Return activity value at position \a i
+    /// Return action value at position \a i
     double operator [](int i) const;
-    /// Return number of activity values
+    /// Return number of action values
     int size(void) const;
     //@}
 
@@ -139,9 +139,9 @@ namespace Gecode {
     //@}
   };
 
-  /// Propagator for recording activity information
+  /// Propagator for recording action information
   template<class View>
-  class Activity::Recorder : public NaryPropagator<View,PC_GEN_NONE> {
+  class Action::Recorder : public NaryPropagator<View,PC_GEN_NONE> {
   protected:
     using NaryPropagator<View,PC_GEN_NONE>::x;
     /// Advisor with index and change information
@@ -163,15 +163,15 @@ namespace Gecode {
       /// Get index of view
       int idx(void) const;
     };
-    /// Access to activity information
-    Activity a;
+    /// Access to action information
+    Action a;
     /// The advisor council
     Council<Idx> c;
     /// Constructor for cloning \a p
     Recorder(Space& home, bool share, Recorder<View>& p);
   public:
     /// Constructor for creation
-    Recorder(Home home, ViewArray<View>& x, Activity& a);
+    Recorder(Home home, ViewArray<View>& x, Action& a);
     /// Copy propagator during cloning
     virtual Propagator* copy(Space& home, bool share);
     /// Cost function (record so that propagator runs last)
@@ -186,64 +186,64 @@ namespace Gecode {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Post activity recorder propagator
-    static ExecStatus post(Home home, ViewArray<View>& x, Activity& a);
+    /// Post action recorder propagator
+    static ExecStatus post(Home home, ViewArray<View>& x, Action& a);
   };
 
   /**
-   * \brief Print activity values enclosed in curly brackets
-   * \relates Activity
+   * \brief Print action values enclosed in curly brackets
+   * \relates Action
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
-             const Activity& a);
+             const Action& a);
 
 
   /*
-   * Advisor for activity recorder
+   * Advisor for action recorder
    *
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
+  Action::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
                                      Council<Idx>& c, int i)
     : Advisor(home,p,c), _info(i << 1) {}
   template<class View>
   forceinline
-  Activity::Recorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
+  Action::Recorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
     : Advisor(home,share,a), _info(a._info) {
   }
   template<class View>
   forceinline void
-  Activity::Recorder<View>::Idx::mark(void) {
+  Action::Recorder<View>::Idx::mark(void) {
     _info |= 1;
   }
   template<class View>
   forceinline void
-  Activity::Recorder<View>::Idx::unmark(void) {
+  Action::Recorder<View>::Idx::unmark(void) {
     _info &= ~1;
   }
   template<class View>
   forceinline bool
-  Activity::Recorder<View>::Idx::marked(void) const {
+  Action::Recorder<View>::Idx::marked(void) const {
     return (_info & 1) != 0;
   }
   template<class View>
   forceinline int
-  Activity::Recorder<View>::Idx::idx(void) const {
+  Action::Recorder<View>::Idx::idx(void) const {
     return _info >> 1;
   }
 
 
   /*
-   * Posting of activity recorder propagator
+   * Posting of action recorder propagator
    *
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Recorder(Home home, ViewArray<View>& x,
-                                     Activity& a0)
+  Action::Recorder<View>::Recorder(Home home, ViewArray<View>& x,
+                                   Action& a0)
     : NaryPropagator<View,PC_GEN_NONE>(home,x), a(a0), c(home) {
     home.notice(*this,AP_DISPOSE);
     for (int i=x.size(); i--; )
@@ -253,22 +253,21 @@ namespace Gecode {
 
   template<class View>
   forceinline ExecStatus
-  Activity::Recorder<View>::post(Home home, ViewArray<View>& x,
-                                 Activity& a) {
+  Action::Recorder<View>::post(Home home, ViewArray<View>& x, Action& a) {
     (void) new (home) Recorder<View>(home,x,a);
     return ES_OK;
   }
 
 
   /*
-   * Activity value storage
+   * Action value storage
    *
    */
   template<class View>
   forceinline
-  Activity::Storage::Storage(Home home, ViewArray<View>& x, double d,
-                             typename
-                             BranchTraits<typename View::VarType>::Merit bm)
+  Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
+                           typename
+                           BranchTraits<typename View::VarType>::Merit bm)
     : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), 
       id(1.0 / d) {
     if (bm != NULL)
@@ -281,18 +280,18 @@ namespace Gecode {
         a[i] = 1.0;
   }
   forceinline
-  Activity::Storage::~Storage(void) {
+  Action::Storage::~Storage(void) {
     heap.free<double>(a,n);
   }
 
 
   /*
-   * Activity
+   * Action
    *
    */
 
   forceinline void
-  Activity::update(int i) {
+  Action::update(int i) {
     static const double rf = 0.0000001;
     static const double al = DBL_MAX * rf;
     GECODE_ASSUME(storage != NULL);
@@ -304,48 +303,48 @@ namespace Gecode {
         storage->a[j] *= rf;
   }
   forceinline double
-  Activity::operator [](int i) const {
+  Action::operator [](int i) const {
     GECODE_ASSUME(storage != NULL);
     assert((i >= 0) && (i < storage->n));
     return storage->a[i];
   }
   forceinline int
-  Activity::size(void) const {
+  Action::size(void) const {
     GECODE_ASSUME(storage != NULL);
     return storage->n;
   }
   forceinline void
-  Activity::acquire(void) {
+  Action::acquire(void) {
     GECODE_ASSUME(storage != NULL);
     storage->m.acquire();
   }
   forceinline void
-  Activity::release(void) {
+  Action::release(void) {
     GECODE_ASSUME(storage != NULL);
     storage->m.release();
   }
 
 
   forceinline
-  Activity::Activity(void) : storage(NULL) {}
+  Action::Action(void) : storage(NULL) {}
 
   forceinline bool
-  Activity::initialized(void) const {
+  Action::initialized(void) const {
     return storage != NULL;
   }
 
   template<class View>
   forceinline
-  Activity::Activity(Home home, ViewArray<View>& x, double d,
-                     typename BranchTraits<typename View::VarType>::Merit bm) {
+  Action::Action(Home home, ViewArray<View>& x, double d,
+                 typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(storage == NULL);
     storage = new Storage(home,x,d,bm);
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
   forceinline void
-  Activity::init(Home home, ViewArray<View>& x, double d,
-                 typename BranchTraits<typename View::VarType>::Merit bm) {
+  Action::init(Home home, ViewArray<View>& x, double d,
+               typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(storage == NULL);
     storage = new Storage(home,x,d,bm);
     (void) Recorder<View>::post(home,x,*this);
@@ -354,7 +353,7 @@ namespace Gecode {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
-              const Activity& a) {
+              const Action& a) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << '{';
@@ -369,13 +368,12 @@ namespace Gecode {
 
 
   /*
-   * Propagation for activity recorder
+   * Propagation for action recorder
    *
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Recorder(Space& home, bool share,
-                                     Recorder<View>& p)
+  Action::Recorder<View>::Recorder(Space& home, bool share, Recorder<View>& p)
     : NaryPropagator<View,PC_GEN_NONE>(home,share,p) {
     a.update(home, share, p.a);
     c.update(home, share, p.c);
@@ -383,16 +381,16 @@ namespace Gecode {
 
   template<class View>
   Propagator*
-  Activity::Recorder<View>::copy(Space& home, bool share) {
+  Action::Recorder<View>::copy(Space& home, bool share) {
     return new (home) Recorder<View>(home, share, *this);
   }
 
   template<class View>
   inline size_t
-  Activity::Recorder<View>::dispose(Space& home) {
-    // Delete access to activity information
+  Action::Recorder<View>::dispose(Space& home) {
+    // Delete access to action information
     home.ignore(*this,AP_DISPOSE);
-    a.~Activity();
+    a.~Action();
     // Cancel remaining advisors
     for (Advisors<Idx> as(c); as(); ++as)
       x[as.advisor().idx()].cancel(home,as.advisor());
@@ -403,33 +401,33 @@ namespace Gecode {
 
   template<class View>
   PropCost
-  Activity::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
+  Action::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::record();
   }
 
   template<class View>
   void
-  Activity::Recorder<View>::reschedule(Space& home) {
+  Action::Recorder<View>::reschedule(Space& home) {
     View::schedule(home,*this,ME_GEN_ASSIGNED);
   }
 
   template<class View>
   ExecStatus
-  Activity::Recorder<View>::advise(Space&, Advisor& a, const Delta&) {
+  Action::Recorder<View>::advise(Space&, Advisor& a, const Delta&) {
     static_cast<Idx&>(a).mark();
     return ES_NOFIX;
   }
 
   template<class View>
   void
-  Activity::Recorder<View>::advise(Space&, Advisor& a) {
+  Action::Recorder<View>::advise(Space&, Advisor& a) {
     static_cast<Idx&>(a).mark();
   }
 
   template<class View>
   ExecStatus
-  Activity::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
-    // Lock activity information
+  Action::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
+    // Lock action information
     a.acquire();
     for (Advisors<Idx> as(c); as(); ++as) {
       int i = as.advisor().idx();

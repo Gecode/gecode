@@ -404,14 +404,14 @@ namespace Gecode { namespace FlatZinc {
       if (s->id == "afc_size_max") {
         return TieBreak<IntVarBranch>(INT_VAR_AFC_SIZE_MAX(decay));
       }
-      if (s->id == "activity_min")
-        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_MIN(decay));
-      if (s->id == "activity_max")
-        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_MAX(decay));
-      if (s->id == "activity_size_min")
-        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_SIZE_MIN(decay));
-      if (s->id == "activity_size_max")
-        return TieBreak<IntVarBranch>(INT_VAR_ACTIVITY_SIZE_MAX(decay));
+      if (s->id == "action_min")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTION_MIN(decay));
+      if (s->id == "action_max")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTION_MAX(decay));
+      if (s->id == "action_size_min")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTION_SIZE_MIN(decay));
+      if (s->id == "action_size_max")
+        return TieBreak<IntVarBranch>(INT_VAR_ACTION_SIZE_MAX(decay));
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -509,12 +509,12 @@ namespace Gecode { namespace FlatZinc {
           (s->id == "afc_size_max") ||
           (s->id == "dom_w_deg"))
         return TieBreak<BoolVarBranch>(BOOL_VAR_AFC_MAX(decay));
-      if ((s->id == "activity_min") &&
-          (s->id == "activity_size_min"))
-        return TieBreak<BoolVarBranch>(BOOL_VAR_ACTIVITY_MIN(decay));
-      if ((s->id == "activity_max") ||
-          (s->id == "activity_size_max"))
-        return TieBreak<BoolVarBranch>(BOOL_VAR_ACTIVITY_MAX(decay));
+      if ((s->id == "action_min") &&
+          (s->id == "action_size_min"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_ACTION_MIN(decay));
+      if ((s->id == "action_max") ||
+          (s->id == "action_size_max"))
+        return TieBreak<BoolVarBranch>(BOOL_VAR_ACTION_MAX(decay));
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);
@@ -611,14 +611,14 @@ namespace Gecode { namespace FlatZinc {
         return SET_VAR_AFC_SIZE_MIN(decay);
       if (s->id == "afc_size_max")
         return SET_VAR_AFC_SIZE_MAX(decay);
-      if (s->id == "activity_min")
-        return SET_VAR_ACTIVITY_MIN(decay);
-      if (s->id == "activity_max")
-        return SET_VAR_ACTIVITY_MAX(decay);
-      if (s->id == "activity_size_min")
-        return SET_VAR_ACTIVITY_SIZE_MIN(decay);
-      if (s->id == "activity_size_max")
-        return SET_VAR_ACTIVITY_SIZE_MAX(decay);
+      if (s->id == "action_min")
+        return SET_VAR_ACTION_MIN(decay);
+      if (s->id == "action_max")
+        return SET_VAR_ACTION_MAX(decay);
+      if (s->id == "action_size_min")
+        return SET_VAR_ACTION_SIZE_MIN(decay);
+      if (s->id == "action_size_max")
+        return SET_VAR_ACTION_SIZE_MAX(decay);
       if (s->id == "random") {
         return SET_VAR_RND(rnd);
       }
@@ -688,14 +688,14 @@ namespace Gecode { namespace FlatZinc {
         return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MIN(decay));
       if (s->id == "afc_size_max")
         return TieBreak<FloatVarBranch>(FLOAT_VAR_AFC_SIZE_MAX(decay));
-      if (s->id == "activity_min")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_MIN(decay));
-      if (s->id == "activity_max")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_MAX(decay));
-      if (s->id == "activity_size_min")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_SIZE_MIN(decay));
-      if (s->id == "activity_size_max")
-        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTIVITY_SIZE_MAX(decay));
+      if (s->id == "action_min")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTION_MIN(decay));
+      if (s->id == "action_max")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTION_MAX(decay));
+      if (s->id == "action_size_min")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTION_SIZE_MIN(decay));
+      if (s->id == "action_size_max")
+        return TieBreak<FloatVarBranch>(FLOAT_VAR_ACTION_SIZE_MAX(decay));
     }
     std::cerr << "Warning, ignored search annotation: ";
     ann->print(std::cerr);

@@ -149,21 +149,21 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over activity
+   * \brief Merit class for size over action
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatViewSel
    */
-  class MeritActivitySize : public MeritBase<FloatView,double> {
+  class MeritActionSize : public MeritBase<FloatView,double> {
   protected:
-    /// Activity information
-    Activity activity;
+    /// Action information
+    Action action;
   public:
     /// Constructor for initialization
-    MeritActivitySize(Space& home, const VarBranch<Var>& vb);
+    MeritActionSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritActivitySize(Space& home, bool shared, MeritActivitySize& m);
-    /// Return size over activity as merit for view \a x at position \a i
+    MeritActionSize(Space& home, bool shared, MeritActionSize& m);
+    /// Return size over action as merit for view \a x at position \a i
     double operator ()(const Space& home, FloatView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;

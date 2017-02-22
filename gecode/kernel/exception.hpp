@@ -128,11 +128,11 @@ namespace Gecode {
     UninitializedAFC(const char* l);
   };
 
-  /// %Exception: uninitialized activity
-  class GECODE_KERNEL_EXPORT UninitializedActivity : public Exception {
+  /// %Exception: uninitialized action
+  class GECODE_KERNEL_EXPORT UninitializedAction : public Exception {
   public:
     /// Initialize with location \a l
-    UninitializedActivity(const char* l);
+    UninitializedAction(const char* l);
   };
 
   /// %Exception: uninitialized random number generator
@@ -149,11 +149,11 @@ namespace Gecode {
     AFCWrongArity(const char* l);
   };
 
-  /// %Exception: activity has wrong arity
-  class GECODE_KERNEL_EXPORT ActivityWrongArity : public Exception {
+  /// %Exception: action has wrong arity
+  class GECODE_KERNEL_EXPORT ActionWrongArity : public Exception {
   public:
     /// Initialize with location \a l
-    ActivityWrongArity(const char* l);
+    ActionWrongArity(const char* l);
   };
 
   //@}

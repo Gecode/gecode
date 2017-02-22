@@ -125,19 +125,19 @@ namespace Gecode {
   };
 
   /**
-   * \brief Merit class for activity
+   * \brief Merit class for action
    */
   template<class View>
-  class MeritActivity : public MeritBase<View,double> {
+  class MeritAction : public MeritBase<View,double> {
   protected:
-    /// Activity information
-    Activity activity;
+    /// Action information
+    Action action;
   public:
     /// Constructor for initialization
-    MeritActivity(Space& home, const VarBranch<Var>& vb);
+    MeritAction(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritActivity(Space& home, bool shared, MeritActivity& ma);
-    /// Return activity as merit for view \a x at position \a i
+    MeritAction(Space& home, bool shared, MeritAction& ma);
+    /// Return action as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
@@ -245,29 +245,29 @@ namespace Gecode {
   // Acitivity merit
   template<class View>
   forceinline
-  MeritActivity<View>::MeritActivity(Space& home, const VarBranch<Var>& vb)
-    : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
+  MeritAction<View>::MeritAction(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<View,double>(home,vb), action(vb.action()) {}
   template<class View>
   forceinline
-  MeritActivity<View>::MeritActivity(Space& home, bool shared,
-                                     MeritActivity& ma)
+  MeritAction<View>::MeritAction(Space& home, bool shared,
+                                 MeritAction& ma)
     : MeritBase<View,double>(home,shared,ma) {
-    activity.update(home, shared, ma.activity);
+    action.update(home, shared, ma.action);
   }
   template<class View>
   forceinline double
-  MeritActivity<View>::operator ()(const Space&, View, int i) {
-    return activity[i];
+  MeritAction<View>::operator ()(const Space&, View, int i) {
+    return action[i];
   }
   template<class View>
   forceinline bool
-  MeritActivity<View>::notice(void) const {
+  MeritAction<View>::notice(void) const {
     return true;
   }
   template<class View>
   forceinline void
-  MeritActivity<View>::dispose(Space&) {
-    activity.~Activity();
+  MeritAction<View>::dispose(Space&) {
+    action.~Action();
   }
 
 }

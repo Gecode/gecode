@@ -1469,44 +1469,44 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \brief Recording activities for float variables
+   * \brief Recording actions for float variables
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatActivity : public Activity {
+  class FloatAction : public Action {
   public:
     /**
      * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init or the assignment operator.
+     * yet initialized action storage is init or the assignment operator.
      *
      */
-    FloatActivity(void);
+    FloatAction(void);
     /// Copy constructor
-    FloatActivity(const FloatActivity& a);
+    FloatAction(const FloatAction& a);
     /// Assignment operator
-    FloatActivity& operator =(const FloatActivity& a);
+    FloatAction& operator =(const FloatAction& a);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      */
     GECODE_FLOAT_EXPORT
-    FloatActivity(Home home, const FloatVarArgs& x, double d=1.0,
+    FloatAction(Home home, const FloatVarArgs& x, double d=1.0,
                   FloatBranchMerit bm=NULL);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
      * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
+     * action storage has been constructed with the default constructor.
      *
      */
     GECODE_FLOAT_EXPORT void
@@ -1516,7 +1516,7 @@ namespace Gecode {
 
 }
 
-#include <gecode/float/branch/activity.hpp>
+#include <gecode/float/branch/action.hpp>
 
 namespace Gecode {
 
@@ -1548,8 +1548,8 @@ namespace Gecode {
       SEL_DEGREE_MAX,      ///< With largest degree
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
-      SEL_ACTIVITY_MIN,    ///< With lowest activity
-      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_ACTION_MIN,      ///< With lowest action
+      SEL_ACTION_MAX,      ///< With highest action
       SEL_MIN_MIN,         ///< With smallest min
       SEL_MIN_MAX,         ///< With largest min
       SEL_MAX_MIN,         ///< With smallest max
@@ -1560,8 +1560,8 @@ namespace Gecode {
       SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
-      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
-      SEL_ACTIVITY_SIZE_MAX  ///< With largest activity divided by domain size
+      SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
+      SEL_ACTION_SIZE_MAX  ///< With largest action divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1577,13 +1577,13 @@ namespace Gecode {
     FloatVarBranch(Select s, double, BranchTbl t);
     /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
     FloatVarBranch(Select s, FloatAFC a, BranchTbl t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    FloatVarBranch(Select s, FloatActivity a, BranchTbl t);
+    /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
+    FloatVarBranch(Select s, FloatAction a, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     FloatVarBranch(Select s, FloatBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or activity
+    /// Expand decay factor into AFC or action
     void expand(Home home, const FloatVarArgs& x);
   };
 
@@ -1613,14 +1613,14 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count
   FloatVarBranch FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(FloatActivity a, BranchTbl tbl=NULL);
-  /// Select variable with highest activity with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with highest activity
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);
+  /// Select variable with lowest action with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with lowest action
+  FloatVarBranch FLOAT_VAR_ACTION_MIN(FloatAction a, BranchTbl tbl=NULL);
+  /// Select variable with highest action with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with highest action
+  FloatVarBranch FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl=NULL);
   /// Select variable with smallest min
   FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
@@ -1645,14 +1645,14 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest accumulated failure count divided by domain size
   FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(FloatAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MIN(FloatActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MAX(FloatActivity a, BranchTbl tbl=NULL);
+  /// Select variable with smallest action divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with smallest action divided by domain size
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(FloatAction a, BranchTbl tbl=NULL);
+  /// Select variable with largest action divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  /// Select variable with largest action divided by domain size
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl=NULL);
   //@}
 
 }

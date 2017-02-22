@@ -119,28 +119,28 @@ namespace Gecode { namespace Set { namespace Branch {
     afc.~AFC();
   }
 
-  // Size over activity merit
+  // Size over action merit
   forceinline
-  MeritActivitySize::MeritActivitySize(Space& home,
-                                       const VarBranch<Var>& vb)
-    : MeritBase<SetView,double>(home,vb), activity(vb.activity()) {}
+  MeritActionSize::MeritActionSize(Space& home,
+                                   const VarBranch<Var>& vb)
+    : MeritBase<SetView,double>(home,vb), action(vb.action()) {}
   forceinline
-  MeritActivitySize::MeritActivitySize(Space& home, bool shared,
-                                       MeritActivitySize& m)
+  MeritActionSize::MeritActionSize(Space& home, bool shared,
+                                   MeritActionSize& m)
     : MeritBase<SetView,double>(home,shared,m) {
-    activity.update(home, shared, m.activity);
+    action.update(home, shared, m.action);
   }
   forceinline double
-  MeritActivitySize::operator ()(const Space&, SetView x, int i) {
-    return activity[i] / static_cast<double>(x.unknownSize());
+  MeritActionSize::operator ()(const Space&, SetView x, int i) {
+    return action[i] / static_cast<double>(x.unknownSize());
   }
   forceinline bool
-  MeritActivitySize::notice(void) const {
+  MeritActionSize::notice(void) const {
     return true;
   }
   forceinline void
-  MeritActivitySize::dispose(Space&) {
-    activity.~Activity();
+  MeritActionSize::dispose(Space&) {
+    action.~Action();
   }
 
 }}}

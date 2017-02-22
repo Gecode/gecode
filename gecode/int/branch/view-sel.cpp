@@ -51,106 +51,106 @@ namespace Gecode { namespace Int { namespace Branch {
     if (ivb.tbl() != NULL) {
       switch (ivb.select()) {
       case IntVarBranch::SEL_MERIT_MIN:
-        return new (home) ViewSelMinTbl<MeritFunction<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritFunction<IntView>>(home,ivb);
       case IntVarBranch::SEL_MERIT_MAX:
-        return new (home) ViewSelMaxTbl<MeritFunction<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritFunction<IntView>>(home,ivb);
       case IntVarBranch::SEL_MIN_MIN:
-        return new (home) ViewSelMinTbl<MeritMin<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_MIN_MAX:
-        return new (home) ViewSelMaxTbl<MeritMin<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_MAX_MIN:
-        return new (home) ViewSelMinTbl<MeritMax<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritMax<IntView>>(home,ivb);
       case IntVarBranch::SEL_MAX_MAX:
-        return new (home) ViewSelMaxTbl<MeritMax<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritMax<IntView>>(home,ivb);
       case IntVarBranch::SEL_SIZE_MIN:
-        return new (home) ViewSelMinTbl<MeritSize<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_SIZE_MAX:
-        return new (home) ViewSelMaxTbl<MeritSize<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_MIN:
-        return new (home) ViewSelMinTbl<MeritDegree<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritDegree<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_MAX:
-        return new (home) ViewSelMaxTbl<MeritDegree<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritDegree<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_MIN:
-        return new (home) ViewSelMinTbl<MeritAFC<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritAFC<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_MAX:
-        return new (home) ViewSelMaxTbl<MeritAFC<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_MIN:
-        return new (home) ViewSelMinTbl<MeritActivity<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_MAX:
-        return new (home) ViewSelMaxTbl<MeritActivity<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritAFC<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_MIN:
+        return new (home) ViewSelMinTbl<MeritAction<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_MAX:
+        return new (home) ViewSelMaxTbl<MeritAction<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MIN:
-        return new (home) ViewSelMinTbl<MeritDegreeSize<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritDegreeSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MAX:
-        return new (home) ViewSelMaxTbl<MeritDegreeSize<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritDegreeSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_SIZE_MIN:
-        return new (home) ViewSelMinTbl<MeritAFCSize<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritAFCSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_SIZE_MAX:
-        return new (home) ViewSelMaxTbl<MeritAFCSize<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_SIZE_MIN:
-        return new (home) ViewSelMinTbl<MeritActivitySize<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_SIZE_MAX:
-        return new (home) ViewSelMaxTbl<MeritActivitySize<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritAFCSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_SIZE_MIN:
+        return new (home) ViewSelMinTbl<MeritActionSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_SIZE_MAX:
+        return new (home) ViewSelMaxTbl<MeritActionSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MIN:
-        return new (home) ViewSelMinTbl<MeritRegretMin<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritRegretMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MAX:
-        return new (home) ViewSelMaxTbl<MeritRegretMin<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritRegretMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MAX_MIN:
-        return new (home) ViewSelMinTbl<MeritRegretMax<IntView> >(home,ivb);
+        return new (home) ViewSelMinTbl<MeritRegretMax<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MAX_MAX:
-        return new (home) ViewSelMaxTbl<MeritRegretMax<IntView> >(home,ivb);
+        return new (home) ViewSelMaxTbl<MeritRegretMax<IntView>>(home,ivb);
       default:
         throw UnknownBranching("Int::branch");
       }
     } else {
       switch (ivb.select()) {
       case IntVarBranch::SEL_MERIT_MIN:
-        return new (home) ViewSelMin<MeritFunction<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritFunction<IntView>>(home,ivb);
       case IntVarBranch::SEL_MERIT_MAX:
-        return new (home) ViewSelMax<MeritFunction<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritFunction<IntView>>(home,ivb);
       case IntVarBranch::SEL_MIN_MIN:
-        return new (home) ViewSelMin<MeritMin<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_MIN_MAX:
-        return new (home) ViewSelMax<MeritMin<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_MAX_MIN:
-        return new (home) ViewSelMin<MeritMax<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritMax<IntView>>(home,ivb);
       case IntVarBranch::SEL_MAX_MAX:
-        return new (home) ViewSelMax<MeritMax<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritMax<IntView>>(home,ivb);
       case IntVarBranch::SEL_SIZE_MIN:
-        return new (home) ViewSelMin<MeritSize<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_SIZE_MAX:
-        return new (home) ViewSelMax<MeritSize<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_MIN:
-        return new (home) ViewSelMin<MeritDegree<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritDegree<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_MAX:
-        return new (home) ViewSelMax<MeritDegree<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritDegree<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_MIN:
-        return new (home) ViewSelMin<MeritAFC<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritAFC<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_MAX:
-        return new (home) ViewSelMax<MeritAFC<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_MIN:
-        return new (home) ViewSelMin<MeritActivity<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_MAX:
-        return new (home) ViewSelMax<MeritActivity<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritAFC<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_MIN:
+        return new (home) ViewSelMin<MeritAction<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_MAX:
+        return new (home) ViewSelMax<MeritAction<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MIN:
-        return new (home) ViewSelMin<MeritDegreeSize<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritDegreeSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MAX:
-        return new (home) ViewSelMax<MeritDegreeSize<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritDegreeSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_SIZE_MIN:
-        return new (home) ViewSelMin<MeritAFCSize<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritAFCSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_AFC_SIZE_MAX:
-        return new (home) ViewSelMax<MeritAFCSize<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_SIZE_MIN:
-        return new (home) ViewSelMin<MeritActivitySize<IntView> >(home,ivb);
-      case IntVarBranch::SEL_ACTIVITY_SIZE_MAX:
-        return new (home) ViewSelMax<MeritActivitySize<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritAFCSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_SIZE_MIN:
+        return new (home) ViewSelMin<MeritActionSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_ACTION_SIZE_MAX:
+        return new (home) ViewSelMax<MeritActionSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MIN:
-        return new (home) ViewSelMin<MeritRegretMin<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritRegretMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MAX:
-        return new (home) ViewSelMax<MeritRegretMin<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritRegretMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MAX_MIN:
-        return new (home) ViewSelMin<MeritRegretMax<IntView> >(home,ivb);
+        return new (home) ViewSelMin<MeritRegretMax<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MAX_MAX:
-        return new (home) ViewSelMax<MeritRegretMax<IntView> >(home,ivb);
+        return new (home) ViewSelMax<MeritRegretMax<IntView>>(home,ivb);
       default:
         throw UnknownBranching("Int::branch");
       }
@@ -171,42 +171,42 @@ namespace Gecode { namespace Int { namespace Branch {
     if (bvb.tbl() != NULL) {
       switch (bvb.select()) {
       case BoolVarBranch::SEL_MERIT_MIN:
-        return new (home) ViewSelMinTbl<MeritFunction<BoolView> >(home,bvb);
+        return new (home) ViewSelMinTbl<MeritFunction<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_MERIT_MAX:
-        return new (home) ViewSelMaxTbl<MeritFunction<BoolView> >(home,bvb);
+        return new (home) ViewSelMaxTbl<MeritFunction<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_DEGREE_MIN:
-        return new (home) ViewSelMinTbl<MeritDegree<BoolView> >(home,bvb);
+        return new (home) ViewSelMinTbl<MeritDegree<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_DEGREE_MAX:
-        return new (home) ViewSelMaxTbl<MeritDegree<BoolView> >(home,bvb);
+        return new (home) ViewSelMaxTbl<MeritDegree<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_AFC_MIN:
-        return new (home) ViewSelMinTbl<MeritAFC<BoolView> >(home,bvb);
+        return new (home) ViewSelMinTbl<MeritAFC<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_AFC_MAX:
-        return new (home) ViewSelMaxTbl<MeritAFC<BoolView> >(home,bvb);
-      case BoolVarBranch::SEL_ACTIVITY_MIN:
-        return new (home) ViewSelMinTbl<MeritActivity<BoolView> >(home,bvb);
-      case BoolVarBranch::SEL_ACTIVITY_MAX:
-        return new (home) ViewSelMaxTbl<MeritActivity<BoolView> >(home,bvb);
+        return new (home) ViewSelMaxTbl<MeritAFC<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_ACTION_MIN:
+        return new (home) ViewSelMinTbl<MeritAction<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_ACTION_MAX:
+        return new (home) ViewSelMaxTbl<MeritAction<BoolView>>(home,bvb);
       default:
         throw UnknownBranching("Int::branch");
       }
     } else {
       switch (bvb.select()) {
       case BoolVarBranch::SEL_MERIT_MIN:
-        return new (home) ViewSelMin<MeritFunction<BoolView> >(home,bvb);
+        return new (home) ViewSelMin<MeritFunction<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_MERIT_MAX:
-        return new (home) ViewSelMax<MeritFunction<BoolView> >(home,bvb);
+        return new (home) ViewSelMax<MeritFunction<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_DEGREE_MIN:
-        return new (home) ViewSelMin<MeritDegree<BoolView> >(home,bvb);
+        return new (home) ViewSelMin<MeritDegree<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_DEGREE_MAX:
-        return new (home) ViewSelMax<MeritDegree<BoolView> >(home,bvb);
+        return new (home) ViewSelMax<MeritDegree<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_AFC_MIN:
-        return new (home) ViewSelMin<MeritAFC<BoolView> >(home,bvb);
+        return new (home) ViewSelMin<MeritAFC<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_AFC_MAX:
-        return new (home) ViewSelMax<MeritAFC<BoolView> >(home,bvb);
-      case BoolVarBranch::SEL_ACTIVITY_MIN:
-        return new (home) ViewSelMin<MeritActivity<BoolView> >(home,bvb);
-      case BoolVarBranch::SEL_ACTIVITY_MAX:
-        return new (home) ViewSelMax<MeritActivity<BoolView> >(home,bvb);
+        return new (home) ViewSelMax<MeritAFC<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_ACTION_MIN:
+        return new (home) ViewSelMin<MeritAction<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_ACTION_MAX:
+        return new (home) ViewSelMax<MeritAction<BoolView>>(home,bvb);
       default:
         throw UnknownBranching("Int::branch");
       }

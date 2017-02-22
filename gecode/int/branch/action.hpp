@@ -35,23 +35,33 @@
  *
  */
 
-#include <gecode/float.hh>
-
 namespace Gecode {
 
-  FloatActivity::FloatActivity(Home home, const FloatVarArgs& x, double d,
-                               FloatBranchMerit bm) {
-    ViewArray<Float::FloatView> y(home,x);
-    Activity::init(home,y,d,bm);
+  forceinline
+  IntAction::IntAction(void) {}
+
+  forceinline
+  IntAction::IntAction(const IntAction& a)
+    : Action(a) {}
+
+  forceinline IntAction&
+  IntAction::operator =(const IntAction& a) {
+    return static_cast<IntAction&>(Action::operator =(a));
   }
 
-  void
-  FloatActivity::init(Home home, const FloatVarArgs& x, double d,
-                      FloatBranchMerit bm) {
-    ViewArray<Float::FloatView> y(home,x);
-    Activity::init(home,y,d,bm);
+
+  forceinline
+  BoolAction::BoolAction(void) {}
+
+  forceinline
+  BoolAction::BoolAction(const BoolAction& a)
+    : Action(a) {}
+
+  forceinline BoolAction&
+  BoolAction::operator =(const BoolAction& a) {
+    return static_cast<BoolAction&>(Action::operator =(a));
   }
 
 }
 
-// STATISTICS: float-branch
+// STATISTICS: int-branch

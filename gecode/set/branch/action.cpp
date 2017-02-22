@@ -35,18 +35,21 @@
  *
  */
 
+#include <gecode/set.hh>
+
 namespace Gecode {
 
-  forceinline
-  SetActivity::SetActivity(void) {}
+  SetAction::SetAction(Home home, const SetVarArgs& x, double d,
+                       SetBranchMerit bm) {
+    ViewArray<Set::SetView> y(home,x);
+    Action::init(home,y,d,bm);
+  }
 
-  forceinline
-  SetActivity::SetActivity(const SetActivity& a)
-    : Activity(a) {}
-
-  forceinline SetActivity&
-  SetActivity::operator =(const SetActivity& a) {
-    return static_cast<SetActivity&>(Activity::operator =(a));
+  void
+  SetAction::init(Home home, const SetVarArgs& x, double d,
+                  SetBranchMerit bm) {
+    ViewArray<Set::SetView> y(home,x);
+    Action::init(home,y,d,bm);
   }
 
 }
