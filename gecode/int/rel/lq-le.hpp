@@ -124,6 +124,12 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<>
   forceinline bool
+  Le<MinusView,MinusView>::same(MinusView x0, MinusView x1) {
+    return Gecode::same(x0,x1);
+  }
+
+  template<>
+  forceinline bool
   Le<BoolView,BoolView>::same(BoolView x0, BoolView x1) {
     return Gecode::same(x0,x1);
   }

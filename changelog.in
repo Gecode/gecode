@@ -469,7 +469,7 @@ What:   change
 Rank:   minor
 Thanks: Mirko Rahn
 [DESCRIPTION]
-Do not use local classes as this would requite C++-11.
+Do not use local classes as this would require C++-11.
 
 [ENTRY]
 Module: int
@@ -684,7 +684,7 @@ What:   bug
 Rank:   minor
 Thanks: Joseph Scott
 [DESCRIPTION]
-Fix printing of regular expressions.
+Fixed printing of regular expressions.
 
 [ENTRY]
 Module: int
