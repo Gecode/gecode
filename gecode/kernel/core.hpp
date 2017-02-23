@@ -4340,7 +4340,7 @@ namespace Gecode {
   VarImp<VIC>::cancel(Space& home) {
     unsigned int n_sub = degree();
     home.pc.p.n_sub -= n_sub;
-    unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
+    unsigned int n = (free_and_bits >> free_bits) + n_sub;
     home.free<ActorLink*>(b.base,n);
     // Must be NULL such that cloning works
     b.base = NULL;
@@ -4349,7 +4349,7 @@ namespace Gecode {
     // Must be NULL such that afc works
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
-    free_and_bits = 0;
+    free_and_bits &= (1 << free_bits) - 1;
   }
 
   template<class VIC>
