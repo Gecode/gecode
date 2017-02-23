@@ -101,7 +101,7 @@ namespace Gecode { namespace Float { namespace Branch {
   }
   forceinline double
   MeritAFCSize::operator ()(const Space& home, FloatView x, int) {
-    return x.size() / x.afc(home);
+    return x.afc() / static_cast<double>(x.size());
   }
   forceinline bool
   MeritAFCSize::notice(void) const {

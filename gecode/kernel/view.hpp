@@ -53,7 +53,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return accumulated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     /// Return whether this view is derived from a VarImpView
     static bool varderived(void);
     /// Return dummy variable implementation of view
@@ -145,7 +145,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return accumulated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
 
     /// \name Domain tests
@@ -244,7 +244,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     /// Return accumulated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
 
     /// \name Domain tests
@@ -368,7 +368,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline double
-  ConstView<View>::afc(const Space&) const {
+  ConstView<View>::afc(void) const {
     return 0.0;
   }
   template<class View>
@@ -470,8 +470,8 @@ namespace Gecode {
   }
   template<class Var>
   forceinline double
-  VarImpView<Var>::afc(const Space& home) const {
-    return x->afc(home);
+  VarImpView<Var>::afc(void) const {
+    return x->afc();
   }
   template<class Var>
   forceinline bool
@@ -569,8 +569,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline double
-  DerivedView<View>::afc(const Space& home) const {
-    return x.afc(home);
+  DerivedView<View>::afc(void) const {
+    return x.afc();
   }
   template<class View>
   forceinline bool

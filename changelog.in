@@ -77,6 +77,14 @@ Module:	kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
+Reimplemented the infrastructure to record AFC, much simpler and
+much faster.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
 Renamed Activity to Action to avoid confusion with activity in SAT.
 
 [ENTRY]

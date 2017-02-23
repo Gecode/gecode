@@ -68,8 +68,6 @@ namespace Gecode {
     void init(Home home, const VarArgArray<Var>& x, double d);
     /// Test whether already initialized
     bool initialized(void) const;
-    /// Set AFC information to \a a
-    void set(Space& home, double a=1.0);
     /// Default (empty) AFC information
     GECODE_KERNEL_EXPORT static const AFC def;
     //@}
@@ -163,11 +161,6 @@ namespace Gecode {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
     home.afc_decay(d);
-  }
-
-  forceinline void
-  AFC::set(Space& home, double a) {
-    home.afc_set(a);
   }
 
   forceinline double

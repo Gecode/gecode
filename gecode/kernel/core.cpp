@@ -114,7 +114,7 @@ namespace Gecode {
 #endif
 
   Space::Space(void)
-    : sm(new SharedMemory), mm(sm), _wmp_afc(0U) {
+    : sm(new SharedMemory), mm(sm), _wmp(0U) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -258,8 +258,7 @@ namespace Gecode {
       switch (p->propagate(*this,med_o)) {
       case ES_FAILED:
         // Count failure
-        if (afc_enabled())
-          gpi.fail(p->gpi());
+        gpi.fail(p->gpi());
         // Mark as failed
         fail(); s = SS_FAILED;
         {
@@ -512,7 +511,7 @@ namespace Gecode {
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       gpi(s.gpi),
       d_fst(&Actor::sentinel),
-      _wmp_afc(s._wmp_afc) {
+      _wmp(s._wmp) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -705,24 +704,6 @@ namespace Gecode {
   Choice::archive(Archive& e) const {
     e << id();
   }
-
-  void
-  Space::afc_decay(double d) {
-    afc_enable();
-    // Commit outstanding decay operations
-    if (gpi.decay() != 1.0)
-      for (Propagators p(*this); p(); ++p)
-        (void) gpi.afc(p.propagator().gpi());
-    gpi.decay(d);
-  }
-
-  void
-  Space::afc_set(double a) {
-    afc_enable();
-    for (Propagators p(*this); p(); ++p)
-      gpi.set(p.propagator().gpi(),a);
-  }
-
 
   bool
   NGL::notice(void) const {

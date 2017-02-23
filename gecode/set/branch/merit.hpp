@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline double
   MeritAFCSize::operator ()(const Space& home, SetView x, int) {
-    return static_cast<double>(x.unknownSize()) / x.afc(home);
+    return x.afc() / static_cast<double>(x.unknownSize());
   }
   forceinline bool
   MeritAFCSize::notice(void) const {

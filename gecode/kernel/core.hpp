@@ -451,7 +451,7 @@ namespace Gecode {
      * Note that the accumulated failure count of a variable implementation
      * is not available during cloning.
      */
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
 
     /// \name Cloning variables
@@ -1131,7 +1131,7 @@ namespace Gecode {
     /// \name Information
     //@{
     /// Return the accumlated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
     /// \name Id and group support
     //@{
@@ -1694,7 +1694,7 @@ namespace Gecode {
     SharedMemory* sm;
     /// Performs memory management for space
     MemoryManager mm;
-    /// Global AFC information
+    /// Global propagator information
     GPI gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
@@ -1798,21 +1798,16 @@ namespace Gecode {
     Actor** d_lst;
 
     /**
-     * \brief Number of weakly monotonic propagators and AFC flag
+     * \brief Number of weakly monotonic propagators
      *
-     * The least significant bit encodes whether AFC information
-     * must be collected, the remaining bits encode counting for
+     * The unsigned int encodes counting for
      * weakly monotonic propagators as follows. If zero, none
      * exists. If one, then none exists right now but there has
      * been one since the last fixpoint computed. Otherwise, it
      * gives the number of weakly monotoning propagators minus
      * one.
      */
-    unsigned int _wmp_afc;
-    /// %Set that AFC information must be recorded
-    void afc_enable(void);
-    /// Whether AFC information must be recorded
-    bool afc_enabled(void) const;
+    unsigned int _wmp;
     /// %Set number of wmp propagators to \a n
     void wmp(unsigned int n);
     /// Return number of wmp propagators
@@ -2595,13 +2590,9 @@ namespace Gecode {
     /// \name Low-level support for AFC
     //@{
     /// %Set AFC decay factor to \a d
-    GECODE_KERNEL_EXPORT
     void afc_decay(double d);
     /// Return AFC decay factor
     double afc_decay(void) const;
-    /// Reset AFC to \a a
-    GECODE_KERNEL_EXPORT
-    void afc_set(double a);
     //@}
 
   private:
@@ -3236,20 +3227,12 @@ namespace Gecode {
   }
 
   forceinline void
-  Space::afc_enable(void) {
-    _wmp_afc |= 1U;
-  }
-  forceinline bool
-  Space::afc_enabled(void) const {
-    return (_wmp_afc & 1U) != 0U;
-  }
-  forceinline void
   Space::wmp(unsigned int n) {
-    _wmp_afc = (_wmp_afc & 1U) | (n << 1);
+    _wmp = (_wmp & 1U) | (n << 1);
   }
   forceinline unsigned int
   Space::wmp(void) const {
-    return _wmp_afc >> 1U;
+    return _wmp >> 1U;
   }
 
   forceinline void
@@ -3278,6 +3261,11 @@ namespace Gecode {
   forceinline double
   Space::afc_decay(void) const {
     return gpi.decay();
+  }
+
+  forceinline void
+  Space::afc_decay(double d) {
+    gpi.decay(d);
   }
 
   forceinline size_t
@@ -3458,8 +3446,8 @@ namespace Gecode {
   }
 
   forceinline double
-  Propagator::afc(const Space& home) const {
-    return const_cast<Space&>(home).gpi.afc(const_cast<Propagator&>(*this).gpi());
+  Propagator::afc(void) const {
+    return const_cast<Propagator&>(*this).gpi().afc;
   }
 
   forceinline unsigned int
@@ -4038,14 +4026,14 @@ namespace Gecode {
 
   template<class VIC>
   forceinline double
-  VarImp<VIC>::afc(const Space& home) const {
+  VarImp<VIC>::afc(void) const {
     double d = 0.0;
     // Count the afc of each propagator
     {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor(0);
       ActorLink** e = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
       while (a < e) {
-        d += Propagator::cast(*a)->afc(home); a++;
+        d += Propagator::cast(*a)->afc(); a++;
       }
     }
     // Count the afc of each advisor's propagator
@@ -4053,7 +4041,9 @@ namespace Gecode {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
       ActorLink** e = const_cast<VarImp<VIC>*>(this)->b.base+entries;
       while (a < e) {
-        d += Advisor::cast(*a)->propagator().afc(home); a++;
+        d += Advisor::cast(static_cast<ActorLink*>(Support::funmark(*a)))
+          ->propagator().afc();
+        a++;
       }
     }
     return d;

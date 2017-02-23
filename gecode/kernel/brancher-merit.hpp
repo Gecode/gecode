@@ -231,8 +231,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline double
-  MeritAFC<View>::operator ()(const Space& home, View x, int) {
-    return x.afc(home);
+  MeritAFC<View>::operator ()(const Space&, View x, int) {
+    return x.afc();
   }
   template<class View>
   forceinline bool
