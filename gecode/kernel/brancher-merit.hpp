@@ -70,6 +70,7 @@ namespace Gecode {
    */
   template<class View>
   class MeritFunction : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
   public:
     /// Corresponding merit function type
     typedef typename BranchTraits<Var>::Merit Function;
@@ -94,6 +95,7 @@ namespace Gecode {
    */
   template<class View>
   class MeritDegree : public MeritBase<View,unsigned int> {
+    using typename MeritBase<View,unsigned int>::Var;
   public:
     /// Constructor for initialization
     MeritDegree(Space& home, const VarBranch<Var>& vb);
@@ -108,6 +110,7 @@ namespace Gecode {
    */
   template<class View>
   class MeritAFC : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
   protected:
     /// AFC information
     AFC afc;
@@ -129,6 +132,7 @@ namespace Gecode {
    */
   template<class View>
   class MeritAction : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
   protected:
     /// Action information
     Action action;

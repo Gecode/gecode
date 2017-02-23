@@ -96,6 +96,8 @@ namespace Gecode {
     : public ValSelCommitBase<typename ValSel::View,typename ValSel::Val> {
   protected:
     typedef typename ValSelCommitBase<typename ValSel::View,
+                                      typename ValSel::Val>::Var Var;
+    typedef typename ValSelCommitBase<typename ValSel::View,
                                       typename ValSel::Val>::Val Val;
     typedef typename ValSelCommitBase<typename ValSel::View,
                                       typename ValSel::Val>::View View;

@@ -4363,7 +4363,6 @@ namespace Gecode {
   template<class VIC>
   forceinline bool
   VarImp<VIC>::advise(Space& home, ModEvent me, Delta& d) {
-    assert(!me_failed(me));
     /*
      * An advisor that is executed might remove itself due to subsumption.
      * As entries are removed from front to back, the advisors must

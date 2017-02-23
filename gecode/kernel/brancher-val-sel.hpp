@@ -69,6 +69,8 @@ namespace Gecode {
   class ValSelFunction :
     public ValSel<View,
                   typename BranchTraits<typename View::VarType>::ValType> {
+    using typename ValSel<View,
+                          typename BranchTraits<typename View::VarType>::ValType>::Var;
   public:
     /// The corresponding value type
     typedef typename ValSel<View,

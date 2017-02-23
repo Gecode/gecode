@@ -336,6 +336,7 @@ namespace Gecode { namespace Int { namespace LDSB {
   template<class View, int n, class Val, unsigned int a, class Print>
   class LDSBBrancher : public ViewValBrancher<View,n,Val,a,Print> {
   public:
+    using typename ViewValBrancher<View,n,Val,a,Print>::Var;
     /// Array of symmetry implementations
     SymmetryImp<View>** _syms;
     /// Number of symmetry implementations

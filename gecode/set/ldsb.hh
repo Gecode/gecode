@@ -60,6 +60,7 @@ namespace Gecode { namespace Set { namespace LDSB {
   template<class View, int n, class Val, unsigned int a, class Print>
   class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a,Print> {
   public:
+    using typename LDSBBrancher<View,n,Val,a,Print>::Var;
     /// Position of previous variable that was branched on
     int _prevPos;
     /// Number of non-value symmetries
@@ -108,13 +109,13 @@ namespace Gecode { namespace Set { namespace LDSB {
                      VarValPrint<Var,Val> vvp);
 
     /// Post LDSB brancher
-    template<class View, int n, class Val, unsigned int a>
+    template<class View0, int n0, class Val0, unsigned int a0>
     void postldsbsetbrancher(Home home,
-                             ViewArray<View>& x,
-                             ViewSel<View>* vs[n],
-                             ValSelCommitBase<View,Val>* vsc,
-                             SymmetryImp<View>** syms, int nsyms,
-                             VarValPrint<typename View::VarType,Val> vvp);
+                             ViewArray<View0>& x,
+                             ViewSel<View0>* vs[n0],
+                             ValSelCommitBase<View0,Val0>* vsc,
+                             SymmetryImp<View0>** syms, int nsyms,
+                             VarValPrint<typename View0::VarType,Val0> vvp);
 
     /**
      * \brief Part one of the update phase

@@ -68,6 +68,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class MeritMin : public MeritBase<View,int> {
   public:
+    using typename MeritBase<View,int>::Var;
     /// Constructor for initialization
     MeritMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
@@ -85,6 +86,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class MeritMax : public MeritBase<View,int> {
   public:
+    using typename MeritBase<View,int>::Var;
     /// Constructor for initialization
     MeritMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
@@ -102,6 +104,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class MeritSize : public MeritBase<View,unsigned int> {
   public:
+    using typename MeritBase<View,unsigned int>::Var;
     /// Constructor for initialization
     MeritSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
@@ -119,6 +122,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class MeritDegreeSize : public MeritBase<View,double> {
   public:
+    using typename MeritBase<View,double>::Var;
     /// Constructor for initialization
     MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
@@ -135,6 +139,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class View>
   class MeritAFCSize : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
   protected:
     /// AFC information
     AFC afc;
@@ -159,6 +164,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class View>
   class MeritActionSize : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
   protected:
     /// Action information
     Action action;
@@ -184,6 +190,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class MeritRegretMin : public MeritBase<View,unsigned int> {
   public:
+    using typename MeritBase<View,unsigned int>::Var;
     /// Constructor for initialization
     MeritRegretMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
@@ -201,6 +208,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class MeritRegretMax : public MeritBase<View,unsigned int> {
   public:
+    using typename MeritBase<View,unsigned int>::Var;
     /// Constructor for initialization
     MeritRegretMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
@@ -247,6 +255,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSelMin : public ValSel<View,int> {
   public:
+    using typename ValSel<View,int>::Var;
     /// Constructor for initialization
     ValSelMin(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -264,6 +273,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSelMax : public ValSel<View,int> {
   public:
+    using typename ValSel<View,int>::Var;
     /// Constructor for initialization
     ValSelMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -281,6 +291,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSelMed : public ValSel<View,int> {
   public:
+    using typename ValSel<View,int>::Var;
     /// Constructor for initialization
     ValSelMed(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -298,6 +309,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValSelAvg : public ValSel<View,int> {
   public:
+    using typename ValSel<View,int>::Var;
     /// Constructor for initialization
     ValSelAvg(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -314,6 +326,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class View>
   class ValSelRnd : public ValSel<View,int> {
+    using typename ValSel<View,int>::Var;
   protected:
     /// The used random number generator
     Rnd r;
@@ -338,6 +351,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   class ValSelRangeMin : public ValSel<IntView,int> {
   public:
+    using typename ValSel<IntView,int>::Var;
     /// Constructor for initialization
     ValSelRangeMin(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -354,6 +368,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   class ValSelRangeMax : public ValSel<IntView,int> {
   public:
+    using typename ValSel<IntView,int>::Var;
     /// Constructor for initialization
     ValSelRangeMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -370,6 +385,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class View, bool min>
   class ValSelNearMinMax : public ValSel<View,int> {
+    using typename ValSel<View,int>::Var;
   protected:
     /// The used values
     IntSharedArray c;
@@ -394,6 +410,7 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   template<class View, bool inc>
   class ValSelNearIncDec : public ValSel<View,int> {
+    using typename ValSel<View,int>::Var;
   protected:
     /// The used values
     IntSharedArray c;
@@ -515,6 +532,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValCommitEq : public ValCommit<View,int> {
   public:
+    using typename ValCommit<View,int>::Var;
     /// Constructor for initialization
     ValCommitEq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -537,6 +555,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValCommitLq : public ValCommit<View,int> {
   public:
+    using typename ValCommit<View,int>::Var;
     /// Constructor for initialization
     ValCommitLq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -559,6 +578,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValCommitGq : public ValCommit<View,int> {
   public:
+    using typename ValCommit<View,int>::Var;
     /// Constructor for initialization
     ValCommitGq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
@@ -581,6 +601,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   class ValCommitGr : public ValCommit<View,int> {
   public:
+    using typename ValCommit<View,int>::Var;
     /// Constructor for initialization
     ValCommitGr(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
