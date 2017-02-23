@@ -54,28 +54,26 @@ namespace Gecode {
       Support::Mutex m;
       /// How many references exist for this object
       unsigned int use_cnt;
-      /// Action values
-      double* a;
       /// Number of action values
       int n;
+      /// Action values
+      double* a;
       /// Inverse decay factor
       double invd;
-      /// Increment value
-      double inc;
       /// Allocate action values
       template<class View>
       Storage(Home home, ViewArray<View>& x, double d,
               typename BranchTraits<typename View::VarType>::Merit bm);
       /// Delete object
       ~Storage(void);
+      /// Update action value at position \a i
+      void update(int i);
     };
 
     /// Pointer to storage object
     Storage* storage;
     /// Update action value at position \a i
     void update(int i);
-    /// Update increment value
-    void update(void);
     /// Acquire mutex
     void acquire(void);
     /// Release mutex
@@ -211,7 +209,7 @@ namespace Gecode {
   template<class View>
   forceinline
   Action::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
-                                     Council<Idx>& c, int i)
+                                   Council<Idx>& c, int i)
     : Advisor(home,p,c), _info(i << 1) {}
   template<class View>
   forceinline
@@ -224,14 +222,15 @@ namespace Gecode {
     _info |= 1;
   }
   template<class View>
-  forceinline void
-  Action::Recorder<View>::Idx::unmark(void) {
-    _info &= ~1;
-  }
-  template<class View>
   forceinline bool
   Action::Recorder<View>::Idx::marked(void) const {
     return (_info & 1) != 0;
+  }
+  template<class View>
+  forceinline void
+  Action::Recorder<View>::Idx::unmark(void) {
+    assert(marked());
+    _info -= 1;
   }
   template<class View>
   forceinline int
@@ -272,8 +271,8 @@ namespace Gecode {
   Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
                            typename
                            BranchTraits<typename View::VarType>::Merit bm)
-    : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), 
-      invd(1.0 / d), inc(1.0) {
+    : use_cnt(1), n(x.size()), a(heap.alloc<double>(x.size())),
+      invd(1.0 / d) {
     if (bm != NULL)
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -282,6 +281,18 @@ namespace Gecode {
     else
       for (int i=n; i--; )
         a[i] = 1.0;
+  }
+  forceinline void
+  Action::Storage::update(int i) {
+    /*
+     * The trick to inverse decay is from: An Extensible SAT-solver,
+     * Niklas Een, Niklas Sörensson, SAT 2003.
+     */
+    assert((i >= 0) && (i < n));
+    a[i] = invd * (a[i] + 1.0);
+    if (a[i] > Config::rescale_limit)
+      for (int j=n; j--; )
+        a[j] *= Config::rescale;
   }
   forceinline
   Action::Storage::~Storage(void) {
@@ -295,46 +306,24 @@ namespace Gecode {
    */
 
   forceinline void
-  Action::update(void) {
-    GECODE_ASSUME(storage != NULL);
-    storage->inc *= storage->invd;
-  }
-  forceinline void
   Action::update(int i) {
-    /*
-     * The trick to inverse decay and also to inverse decay the increment
-     * is from: An Extensible SAT-solver, Niklas Een, Niklas Sörensson, 
-     * SAT 2003.
-     */
-    GECODE_ASSUME(storage != NULL);
-    assert((i >= 0) && (i < storage->n));
-    double nai = storage->a[i] + storage->inc;
-    storage->a[i] = nai;
-    if (nai > Config::rescale_limit) {
-      storage->inc *= Config::rescale;
-      for (int j=storage->n; j--; )
-        storage->a[j] *= Config::rescale;
-    }
+    storage->update(i);
   }
   forceinline double
   Action::operator [](int i) const {
-    GECODE_ASSUME(storage != NULL);
     assert((i >= 0) && (i < storage->n));
     return storage->a[i];
   }
   forceinline int
   Action::size(void) const {
-    GECODE_ASSUME(storage != NULL);
     return storage->n;
   }
   forceinline void
   Action::acquire(void) {
-    GECODE_ASSUME(storage != NULL);
     storage->m.acquire();
   }
   forceinline void
   Action::release(void) {
-    GECODE_ASSUME(storage != NULL);
     storage->m.release();
   }
 
@@ -443,7 +432,6 @@ namespace Gecode {
   Action::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
     // Lock action information
     a.acquire();
-    a.update();
     for (Advisors<Idx> as(c); as(); ++as) {
       int i = as.advisor().idx();
       if (as.advisor().marked()) {
