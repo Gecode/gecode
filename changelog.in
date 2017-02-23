@@ -74,6 +74,14 @@ Minor release.
 
 [ENTRY]
 Module:	kernel
+What:   changed
+Rank:   minor
+[DESCRIPTION]
+Do not count number of weakly monotonic propagators, nobody used
+it anyway.
+
+[ENTRY]
+Module:	kernel
 What:   bug
 Rank:   major
 [DESCRIPTION]

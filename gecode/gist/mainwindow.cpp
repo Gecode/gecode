@@ -195,8 +195,6 @@ namespace Gecode { namespace Gist {
     QWidget* stw = new QWidget();
     QHBoxLayout* hbl = new QHBoxLayout();
     hbl->setContentsMargins(0,0,0,0);
-    wmpLabel = new QLabel("");
-    hbl->addWidget(wmpLabel);
     hbl->addWidget(new QLabel("Depth:"));
     depthLabel = new QLabel("0");
     hbl->addWidget(depthLabel);
@@ -276,10 +274,6 @@ namespace Gecode { namespace Gist {
     failedLabel->setNum(stats.failures);
     choicesLabel->setNum(stats.choices);
     openLabel->setNum(stats.undetermined);
-    if (stats.wmp)
-      wmpLabel->setText("WMP");
-    else
-      wmpLabel->setText("");
   }
 
   void

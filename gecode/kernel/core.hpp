@@ -1624,8 +1624,6 @@ namespace Gecode {
   public:
     /// Number of propagator executions
     unsigned long int propagate;
-    /// Whether a weakly monotonic propagator might have been executed
-    bool wmp;
     /// Initialize
     StatusStatistics(void);
     /// Reset information
@@ -1797,22 +1795,6 @@ namespace Gecode {
     /// Last actor for forced disposal
     Actor** d_lst;
 
-    /**
-     * \brief Number of weakly monotonic propagators
-     *
-     * The unsigned int encodes counting for
-     * weakly monotonic propagators as follows. If zero, none
-     * exists. If one, then none exists right now but there has
-     * been one since the last fixpoint computed. Otherwise, it
-     * gives the number of weakly monotoning propagators minus
-     * one.
-     */
-    unsigned int _wmp;
-    /// %Set number of wmp propagators to \a n
-    void wmp(unsigned int n);
-    /// Return number of wmp propagators
-    unsigned int wmp(void) const;
-
     /// Used for default argument
     GECODE_KERNEL_EXPORT static StatusStatistics unused_status;
     /// Used for default argument
@@ -1911,6 +1893,13 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     void _trycommit(const Choice& c, unsigned int a);
+
+    /// Notice that an actor must be disposed
+    GECODE_KERNEL_EXPORT
+    void ap_notice_dispose(Actor& a, bool duplicate);
+    /// Ignore that an actor must be disposed
+    GECODE_KERNEL_EXPORT
+    void ap_ignore_dispose(Actor& a, bool duplicate);
 
   public:
     /**
@@ -3227,15 +3216,6 @@ namespace Gecode {
   }
 
   forceinline void
-  Space::wmp(unsigned int n) {
-    _wmp = (_wmp & 1U) | (n << 1);
-  }
-  forceinline unsigned int
-  Space::wmp(void) const {
-    return _wmp >> 1U;
-  }
-
-  forceinline void
   Home::notice(Actor& a, ActorProperty p, bool duplicate) {
     s.notice(a,p,duplicate);
   }
@@ -3965,6 +3945,24 @@ namespace Gecode {
             (pc.p.active > &pc.p.queue[PropCost::AC_MAX+1]));
   }
 
+  forceinline void
+  Space::notice(Actor& a, ActorProperty p, bool duplicate) {
+    if (p & AP_DISPOSE)
+      ap_notice_dispose(a,duplicate);
+    // Currently unused
+    if (p & AP_WEAKLY) {}
+  }
+
+  forceinline void
+  Space::ignore(Actor& a, ActorProperty p, bool duplicate) {
+    // Check wether array has already been discarded as space
+    // deletion is already in progress
+    if ((p & AP_DISPOSE) && (d_fst != NULL))
+      ap_ignore_dispose(a,duplicate);
+    // Currently unused
+    if (p & AP_WEAKLY) {}
+  }
+
 
 
   /*
@@ -4511,7 +4509,6 @@ namespace Gecode {
   forceinline void
   StatusStatistics::reset(void) {
     propagate = 0;
-    wmp = false;
   }
   forceinline
   StatusStatistics::StatusStatistics(void) {
@@ -4520,7 +4517,6 @@ namespace Gecode {
   forceinline StatusStatistics&
   StatusStatistics::operator +=(const StatusStatistics& s) {
     propagate += s.propagate;
-    wmp |= s.wmp;
     return *this;
   }
   forceinline StatusStatistics

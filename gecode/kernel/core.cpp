@@ -113,8 +113,7 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void)
-    : sm(new SharedMemory), mm(sm), _wmp(0U) {
+  Space::Space(void) : sm(new SharedMemory), mm(sm) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -135,63 +134,48 @@ namespace Gecode {
   }
 
   void
-  Space::notice(Actor& a, ActorProperty p, bool duplicate) {
-    if (p & AP_DISPOSE) {
-      if (duplicate && (d_fst != NULL)) {
-        for (Actor** f = d_fst; f < d_cur; f++)
-          if (&a == *f)
-            return;
-      }
-      if (d_cur == d_lst) {
-        // Resize
-        if (d_fst == NULL) {
-          // Create new array
-          d_fst = alloc<Actor*>(4);
-          d_cur = d_fst;
-          d_lst = d_fst+4;
-        } else {
-          // Resize existing array
-          unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
-          assert(n != 0);
-          d_fst = realloc<Actor*>(d_fst,n,2*n);
-          d_cur = d_fst+n;
-          d_lst = d_fst+2*n;
-        }
-      }
-      *(d_cur++) = &a;
-    } else if (p & AP_WEAKLY) {
-      if (wmp() == 0)
-        wmp(2);
-      else
-        wmp(wmp()+1);
+  Space::ap_notice_dispose(Actor& a, bool duplicate) {
+    if (duplicate && (d_fst != NULL)) {
+      for (Actor** f = d_fst; f < d_cur; f++)
+        if (&a == *f)
+          return;
     }
+    if (d_cur == d_lst) {
+      // Resize
+      if (d_fst == NULL) {
+        // Create new array
+        d_fst = alloc<Actor*>(4);
+        d_cur = d_fst;
+        d_lst = d_fst+4;
+      } else {
+        // Resize existing array
+        unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
+        assert(n != 0);
+        d_fst = realloc<Actor*>(d_fst,n,2*n);
+        d_cur = d_fst+n;
+        d_lst = d_fst+2*n;
+      }
+    }
+    *(d_cur++) = &a;
   }
 
   void
-  Space::ignore(Actor& a, ActorProperty p, bool duplicate) {
-    if (p & AP_DISPOSE) {
-      // Check wether array has already been discarded as space
-      // deletion is already in progress
-      if (d_fst == NULL)
-        return;
-      Actor** f = d_fst;
-      if (duplicate) {
-        while (f < d_cur)
-          if (&a == *f)
-            break;
-          else
-            f++;
-        if (f == d_cur)
-          return;
-      } else {
-        while (&a != *f)
+  Space::ap_ignore_dispose(Actor& a, bool duplicate) {
+    assert(d_fst != NULL);
+    Actor** f = d_fst;
+    if (duplicate) {
+      while (f < d_cur)
+        if (&a == *f)
+          break;
+        else
           f++;
-      }
-      *f = *(--d_cur);
-    } else if (p & AP_WEAKLY) {
-      assert(wmp() > 1U);
-      wmp(wmp()-1);
+      if (f == d_cur)
+        return;
+    } else {
+      while (&a != *f)
+        f++;
     }
+    *f = *(--d_cur);
   }
 
   void
@@ -236,10 +220,9 @@ namespace Gecode {
 
   SpaceStatus
   Space::status(StatusStatistics& stat) {
-    SpaceStatus s = SS_FAILED;
     // Check whether space is failed
     if (failed())
-      goto exit;
+      return SS_FAILED;
     assert(pc.p.active <= &pc.p.queue[PropCost::AC_MAX+1]);
     // Check whether space is stable but not failed
     if (pc.p.active >= &pc.p.queue[0]) {
@@ -260,7 +243,7 @@ namespace Gecode {
         // Count failure
         gpi.fail(p->gpi());
         // Mark as failed
-        fail(); s = SS_FAILED;
+        fail();
         {
           // Propagate top priority propagators
           ActorLink* e = &pc.p.queue[PropCost::AC_RECORD];
@@ -280,7 +263,7 @@ namespace Gecode {
             }
           }
         }
-        goto exit;
+        return SS_FAILED;
       case ES_NOFIX:
         // Find next, if possible
         if (p->u.med != 0) {
@@ -358,18 +341,13 @@ namespace Gecode {
     while (b_status != Brancher::cast(&bl))
       if (b_status->status(*this)) {
         // Brancher still has choices to generate
-        s = SS_BRANCH; goto exit;
+        return SS_BRANCH;
       } else {
         // Brancher is exhausted
         b_status = Brancher::cast(b_status->next());
       }
     // No brancher with alternatives left, space is solved
-    s = SS_SOLVED;
-  exit:
-    stat.wmp = (wmp() > 0U);
-    if (wmp() == 1U)
-      wmp(0U);
-    return s;
+    return SS_SOLVED;
   }
 
 
@@ -510,8 +488,7 @@ namespace Gecode {
     : sm(s.sm->copy(share)),
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       gpi(s.gpi),
-      d_fst(&Actor::sentinel),
-      _wmp(s._wmp) {
+      d_fst(&Actor::sentinel) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
