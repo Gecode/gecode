@@ -74,8 +74,6 @@ namespace Gecode {
     /// The object containing the shared information
     class Object : public HeapAllocated {
     private:
-      /// One statically included Block
-      Block  fst;
       /// The current block
       Block* b;
       /// The inverse decay factor
@@ -141,7 +139,7 @@ namespace Gecode {
 
   forceinline
   GPI::Object::Object(void)
-    : b(&fst), invd(1.0), pid(0U), use_cnt(1U) {}
+    : b(new Block), invd(1.0), pid(0U), use_cnt(1U) {}
 
   forceinline void
   GPI::Object::inc(void) {
@@ -155,8 +153,8 @@ namespace Gecode {
     m.acquire();
     c.afc = invd * (c.afc + 1.0);
     if (c.afc > Config::rescale_limit)
-      for (Block* b = &fst; b != NULL; b = b->next)
-        b->rescale();
+      for (Block* i = b; i != NULL; i = i->next)
+        i->rescale();
     m.release();
   }
 
@@ -194,7 +192,7 @@ namespace Gecode {
   GPI::Object::dispose(void) {
     m.acquire();
     if (--use_cnt == 0) {
-      Block* n = fst.next;
+      Block* n = b;
       while (n != NULL) {
         Block* d = n;
         n = n->next;

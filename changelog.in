@@ -74,6 +74,13 @@ Minor release.
 
 [ENTRY]
 Module:	kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Computing the afc for an assigned variable would crash.
+
+[ENTRY]
+Module:	kernel
 What:   change
 Rank:   major
 [DESCRIPTION]

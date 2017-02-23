@@ -4348,6 +4348,10 @@ namespace Gecode {
     b.base = NULL;
     // Must be 0 such that degree works
     entries = 0;
+    // Must be NULL such that afc works
+    for (PropCond pc=1; pc<pc_max+2; pc++)
+      idx(pc) = 0;
+    free_and_bits = 0;
   }
 
   template<class VIC>
@@ -4393,8 +4397,6 @@ namespace Gecode {
   template<class VIC>
   void
   VarImp<VIC>::_fail(Space& home) {
-    if (b.base == NULL)
-      return;
     /*
      * An advisor that is executed might remove itself due to subsumption.
      * As entries are removed from front to back, the advisors must
