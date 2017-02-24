@@ -305,6 +305,8 @@ namespace Gecode {
   template<class View>
   ExecStatus
   TraceRecorder<View>::propagate(Space& home, const ModEventDelta&) {
+    if (home.failed())
+      return ES_FIX;
     s.c = TraceView::slack(n[n.size()-1]);
     for (int i=n.size()-1; i--; )
       s.c += TraceView::slack(n[i]);
