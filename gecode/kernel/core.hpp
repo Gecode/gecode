@@ -4497,6 +4497,7 @@ namespace Gecode {
       ActorLink* p0 = 
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
+      t += 1; f += 1;
     }
   }
 
