@@ -4448,10 +4448,10 @@ namespace Gecode {
     b.base = t;
     // Process propagator subscriptions
     while (np >= 4) {
+      ActorLink* p3 = f[3]->prev();
       ActorLink* p0 = f[0]->prev();
       ActorLink* p1 = f[1]->prev();
       ActorLink* p2 = f[2]->prev(); 
-      ActorLink* p3 = f[3]->prev();
       t[0] = p0; t[1] = p1; t[2] = p2; t[3] = p3;
       np -= 4; t += 4; f += 4;
     }
@@ -4464,18 +4464,19 @@ namespace Gecode {
     if (np > 0) {
       ActorLink* p0 = f[0]->prev();
       t[0] = p0;
+      t += 1; f += 1;
     }
     // Process advisor subscriptions
     while (na >= 4) {
       ptrdiff_t m0, m1, m2, m3;
+      ActorLink* p3 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[3],m3))->prev();
       ActorLink* p0 = 
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       ActorLink* p1 =
         static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
       ActorLink* p2 =
         static_cast<ActorLink*>(Support::ptrsplit(f[2],m2))->prev();
-      ActorLink* p3 =
-        static_cast<ActorLink*>(Support::ptrsplit(f[3],m3))->prev();
       t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
       t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1,m1));
       t[2] = static_cast<ActorLink*>(Support::ptrjoin(p2,m2));
@@ -4497,7 +4498,6 @@ namespace Gecode {
       ActorLink* p0 = 
         static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
       t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
-      t += 1; f += 1;
     }
   }
 
