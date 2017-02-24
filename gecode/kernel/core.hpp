@@ -4436,38 +4436,67 @@ namespace Gecode {
     if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
+    unsigned int np = x->actorNonZero(pc_max+1) - x->actor(0);
+    unsigned int na = x->b.base + x->entries - x->actorNonZero(pc_max+1);
+    unsigned int n  = na + np;
+    assert(n == x->degree());
+
     ActorLink** f = x->b.base;
-    unsigned int n = x->degree();
     ActorLink** t = sub;
+
     sub += n;
     b.base = t;
-    // Set subscriptions using actor forwarding pointers
-    while (n >= 4) {
-      n -= 4;
+    // Process propagator subscriptions
+    while (np >= 4) {
+      ActorLink* p0 = f[0]->prev();
+      ActorLink* p1 = f[1]->prev();
+      ActorLink* p2 = f[2]->prev(); 
+      ActorLink* p3 = f[3]->prev();
+      t[0] = p0; t[1] = p1; t[2] = p2; t[3] = p3;
+      np -= 4; t += 4; f += 4;
+    }
+    if (np >= 2) {
+      ActorLink* p0 = f[0]->prev();
+      ActorLink* p1 = f[1]->prev();
+      t[0] = p0; t[1] = p1;
+      np -= 2; t += 2; f += 2;
+    }
+    if (np > 0) {
+      ActorLink* p0 = f[0]->prev();
+      t[0] = p0;
+    }
+    // Process advisor subscriptions
+    while (na >= 4) {
       ptrdiff_t m0, m1, m2, m3;
-      ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0],m0));
-      ActorLink* p1 = static_cast<ActorLink*>(Support::ptrsplit(f[1],m1));
-      ActorLink* p2 = static_cast<ActorLink*>(Support::ptrsplit(f[2],m2));
-      ActorLink* p3 = static_cast<ActorLink*>(Support::ptrsplit(f[3],m3));
-      t[0]=static_cast<ActorLink*>(Support::ptrjoin(p0->prev(),m0));
-      t[1]=static_cast<ActorLink*>(Support::ptrjoin(p1->prev(),m1));
-      t[2]=static_cast<ActorLink*>(Support::ptrjoin(p2->prev(),m2));
-      t[3]=static_cast<ActorLink*>(Support::ptrjoin(p3->prev(),m3));
-      t += 4; f += 4;
+      ActorLink* p0 = 
+        static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
+      ActorLink* p1 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
+      ActorLink* p2 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[2],m2))->prev();
+      ActorLink* p3 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[3],m3))->prev();
+      t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
+      t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1,m1));
+      t[2] = static_cast<ActorLink*>(Support::ptrjoin(p2,m2));
+      t[3] = static_cast<ActorLink*>(Support::ptrjoin(p3,m3));
+      na -= 4; t += 4; f += 4;
     }
-    if (n >= 2) {
-      n -= 2;
+    if (na >= 2) {
       ptrdiff_t m0, m1;
-      ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0],m0));
-      ActorLink* p1 = static_cast<ActorLink*>(Support::ptrsplit(f[1],m1));
-      t[0]=static_cast<ActorLink*>(Support::ptrjoin(p0->prev(),m0));
-      t[1]=static_cast<ActorLink*>(Support::ptrjoin(p1->prev(),m1));
-      t += 2; f += 2;
+      ActorLink* p0 = 
+        static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
+      ActorLink* p1 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
+      t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
+      t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1,m1));
+      na -= 2; t += 2; f += 2;
     }
-    if (n > 0) {
+    if (na > 0) {
       ptrdiff_t m0;
-      ActorLink* p0 = static_cast<ActorLink*>(Support::ptrsplit(f[0],m0));
-      t[0]=static_cast<ActorLink*>(Support::ptrjoin(p0->prev(),m0));
+      ActorLink* p0 = 
+        static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
+      t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
     }
   }
 
