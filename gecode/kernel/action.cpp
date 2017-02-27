@@ -91,14 +91,6 @@ namespace Gecode {
   }
 
   void
-  Action::set(Space&, double a) {
-    acquire();
-    for (int i=storage->n; i--; )
-      storage->a[i] = a;
-    release();
-  }
-
-  void
   Action::decay(Space&, double d) {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("Action");

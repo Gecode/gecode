@@ -98,16 +98,13 @@ namespace Gecode {
     /// Initialize for views \a x and decay factor \a d and action as defined by \a bm
     template<class View>
     Action(Home home, ViewArray<View>& x, double d,
-             typename BranchTraits<typename View::VarType>::Merit bm);
+           typename BranchTraits<typename View::VarType>::Merit bm);
     /// Initialize for views \a x and decay factor \a d and action as defined by \a bm
     template<class View>
     void init(Home home, ViewArray<View>& x, double d,
-             typename BranchTraits<typename View::VarType>::Merit bm);
+              typename BranchTraits<typename View::VarType>::Merit bm);
     /// Test whether already initialized
     bool initialized(void) const;
-    /// Set action to \a a
-    GECODE_KERNEL_EXPORT
-    void set(Space& home, double a=0.0);
     /// Default (empty) action information
     GECODE_KERNEL_EXPORT static const Action def;
     //@}
@@ -273,7 +270,7 @@ namespace Gecode {
                            BranchTraits<typename View::VarType>::Merit bm)
     : use_cnt(1), n(x.size()), a(heap.alloc<double>(x.size())),
       invd(1.0 / d) {
-    if (bm != NULL)
+    if (bm)
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
         a[i] = bm(home,xi,i);
