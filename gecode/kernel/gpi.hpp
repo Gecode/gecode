@@ -229,7 +229,7 @@ namespace Gecode {
 
   forceinline void
   GPI::decay(double d) {
-    o->decay();
+    o->decay(d);
   }
 
   forceinline GPI::Info*
