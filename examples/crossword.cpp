@@ -78,12 +78,15 @@ protected:
 public:
   /// Branching to use for model
   enum {
-    BRANCH_WORDS_AFC,         ///< Branch on the words
-    BRANCH_LETTERS_AFC,       ///< Branch on the letters
-    BRANCH_LETTERS_AFC_ALL,   ///< Branch on the letters (try all values)
-    BRANCH_WORDS_ACTION,      ///< Branch on the words
-    BRANCH_LETTERS_ACTION,    ///< Branch on the letters
-    BRANCH_LETTERS_ACTION_ALL ///< Branch on the letters (try all values)
+    BRANCH_WORDS_AFC,          ///< Branch on the words
+    BRANCH_LETTERS_AFC,        ///< Branch on the letters
+    BRANCH_LETTERS_AFC_ALL,    ///< Branch on the letters (try all values)
+    BRANCH_WORDS_ACTION,       ///< Branch on the words
+    BRANCH_LETTERS_ACTION,     ///< Branch on the letters
+    BRANCH_LETTERS_ACTION_ALL, ///< Branch on the letters (try all values)
+    BRANCH_WORDS_CHB,          ///< Branch on the words
+    BRANCH_LETTERS_CHB,        ///< Branch on the letters
+    BRANCH_LETTERS_CHB_ALL     ///< Branch on the letters (try all values)
   };
   /// Actual model
   Crossword(const SizeOptions& opt)
@@ -182,6 +185,24 @@ public:
              INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
              &printletters);
       break;
+    case BRANCH_WORDS_CHB:
+      // Branch by assigning words
+      branch(*this, allwords,
+             INT_VAR_CHB_SIZE_MAX(), INT_VAL_SPLIT_MIN(),
+             &printwords);
+      break;
+    case BRANCH_LETTERS_CHB:
+      // Branch by assigning letters
+      branch(*this, letters,
+             INT_VAR_CHB_SIZE_MAX(), INT_VAL_MIN(),
+             &printletters);
+      break;
+    case BRANCH_LETTERS_CHB_ALL:
+      // Branch by assigning letters (try all letters)
+      branch(*this, letters,
+             INT_VAR_CHB_SIZE_MAX(), INT_VALUES_MIN(),
+             &printletters);
+      break;
     }
   }
   /// Print brancher information when branching on letters
@@ -266,6 +287,12 @@ main(int argc, char* argv[]) {
                 "letters-action");
   opt.branching(Crossword::BRANCH_LETTERS_ACTION_ALL,
                 "letters-action-all");
+  opt.branching(Crossword::BRANCH_WORDS_CHB,
+                "words-chb");
+  opt.branching(Crossword::BRANCH_LETTERS_CHB,
+                "letters-chb");
+  opt.branching(Crossword::BRANCH_LETTERS_CHB_ALL,
+                "letters-chb-all");
   opt.parse(argc,argv);
   dict.init(opt.file());
   if (opt.size() >= n_grids) {
