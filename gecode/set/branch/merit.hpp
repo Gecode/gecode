@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Branch {
     return x.unknownSize();
   }
 
-  // Size over degree merit
+  // Degree over size merit
   forceinline
   MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<SetView,double>(home,vb) {}
@@ -97,7 +97,7 @@ namespace Gecode { namespace Set { namespace Branch {
       static_cast<double>(x.degree());
   }
 
-  // Size over AFC merit
+  // AFC over size merit
   forceinline
   MeritAFCSize::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<SetView,double>(home,vb), afc(vb.afc()) {}
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Branch {
     afc.~AFC();
   }
 
-  // Size over action merit
+  // Action over size merit
   forceinline
   MeritActionSize::MeritActionSize(Space& home,
                                    const VarBranch<Var>& vb)

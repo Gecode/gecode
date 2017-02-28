@@ -77,7 +77,7 @@ namespace Gecode { namespace Float { namespace Branch {
     return x.size();
   }
 
-  // Size over degree merit
+  // Degree over size merit
   forceinline
   MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
@@ -90,7 +90,7 @@ namespace Gecode { namespace Float { namespace Branch {
     return x.size() / static_cast<double>(x.degree());
   }
 
-  // Size over AFC merit
+  // AFC over size merit
   forceinline
   MeritAFCSize::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb), afc(vb.afc()) {}
@@ -112,7 +112,7 @@ namespace Gecode { namespace Float { namespace Branch {
     afc.~AFC();
   }
 
-  // Size over action merit
+  // Action over size merit
   forceinline
   MeritActionSize::MeritActionSize(Space& home,
                                    const VarBranch<Var>& vb)

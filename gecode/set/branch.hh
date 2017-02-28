@@ -114,7 +114,7 @@ namespace Gecode { namespace Set { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over degree
+   * \brief Merit class for degree over size
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
@@ -125,12 +125,12 @@ namespace Gecode { namespace Set { namespace Branch {
     MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritDegreeSize(Space& home, bool shared, MeritDegreeSize& m);
-    /// Return size over degree as merit for view \a x at position \a i
+    /// Return degree over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
   };
 
   /**
-   * \brief Merit class for size over afc
+   * \brief Merit class for AFC over size
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
@@ -144,7 +144,7 @@ namespace Gecode { namespace Set { namespace Branch {
     MeritAFCSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritAFCSize(Space& home, bool shared, MeritAFCSize& m);
-    /// Return size over AFC as merit for view \a x at position \a i
+    /// Return AFC over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
@@ -153,7 +153,7 @@ namespace Gecode { namespace Set { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over action
+   * \brief Merit class for action over size
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
@@ -167,7 +167,7 @@ namespace Gecode { namespace Set { namespace Branch {
     MeritActionSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritActionSize(Space& home, bool shared, MeritActionSize& m);
-    /// Return size over action as merit for view \a x at position \a i
+    /// Return action over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
