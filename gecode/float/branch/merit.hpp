@@ -136,6 +136,31 @@ namespace Gecode { namespace Float { namespace Branch {
     action.~Action();
   }
 
+
+  // CHB Q-score over size merit
+  forceinline
+  MeritCHBSize::MeritCHBSize(Space& home,
+                             const VarBranch<Var>& vb)
+    : MeritBase<FloatView,double>(home,vb), chb(vb.chb()) {}
+  forceinline
+  MeritCHBSize::MeritCHBSize(Space& home, bool shared,
+                             MeritCHBSize& m)
+    : MeritBase<FloatView,double>(home,shared,m) {
+    chb.update(home, shared, m.chb);
+  }
+  forceinline double
+  MeritCHBSize::operator ()(const Space&, FloatView x, int i) {
+    return chb[i] / static_cast<double>(x.size());
+  }
+  forceinline bool
+  MeritCHBSize::notice(void) const {
+    return true;
+  }
+  forceinline void
+  MeritCHBSize::dispose(Space&) {
+    chb.~CHB();
+  }
+
 }}}
 
 // STATISTICS: float-branch

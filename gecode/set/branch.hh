@@ -175,6 +175,29 @@ namespace Gecode { namespace Set { namespace Branch {
     void dispose(Space& home);
   };
 
+  /**
+   * \brief Merit class for CHB Q-score over size
+   *
+   * Requires \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncSetViewSel
+   */
+  class MeritCHBSize : public MeritBase<SetView,double> {
+  protected:
+    /// CHB information
+    CHB chb;
+  public:
+    /// Constructor for initialization
+    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+    /// Constructor for cloning
+    MeritCHBSize(Space& home, bool shared, MeritCHBSize& m);
+    /// Return CHB Q-score over size as merit for view \a x at position \a i
+    double operator ()(const Space& home, SetView x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
 }}}
 
 #include <gecode/set/branch/merit.hpp>

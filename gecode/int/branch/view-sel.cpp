@@ -78,6 +78,10 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) ViewSelMinTbl<MeritAction<IntView>>(home,ivb);
       case IntVarBranch::SEL_ACTION_MAX:
         return new (home) ViewSelMaxTbl<MeritAction<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_MIN:
+        return new (home) ViewSelMinTbl<MeritCHB<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_MAX:
+        return new (home) ViewSelMaxTbl<MeritCHB<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MIN:
         return new (home) ViewSelMinTbl<MeritDegreeSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MAX:
@@ -90,6 +94,10 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) ViewSelMinTbl<MeritActionSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_ACTION_SIZE_MAX:
         return new (home) ViewSelMaxTbl<MeritActionSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_SIZE_MIN:
+        return new (home) ViewSelMinTbl<MeritCHBSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_SIZE_MAX:
+        return new (home) ViewSelMaxTbl<MeritCHBSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MIN:
         return new (home) ViewSelMinTbl<MeritRegretMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MAX:
@@ -131,6 +139,10 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) ViewSelMin<MeritAction<IntView>>(home,ivb);
       case IntVarBranch::SEL_ACTION_MAX:
         return new (home) ViewSelMax<MeritAction<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_MIN:
+        return new (home) ViewSelMin<MeritCHB<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_MAX:
+        return new (home) ViewSelMax<MeritCHB<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MIN:
         return new (home) ViewSelMin<MeritDegreeSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_DEGREE_SIZE_MAX:
@@ -143,6 +155,10 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) ViewSelMin<MeritActionSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_ACTION_SIZE_MAX:
         return new (home) ViewSelMax<MeritActionSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_SIZE_MIN:
+        return new (home) ViewSelMin<MeritCHBSize<IntView>>(home,ivb);
+      case IntVarBranch::SEL_CHB_SIZE_MAX:
+        return new (home) ViewSelMax<MeritCHBSize<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MIN:
         return new (home) ViewSelMin<MeritRegretMin<IntView>>(home,ivb);
       case IntVarBranch::SEL_REGRET_MIN_MAX:
@@ -186,6 +202,10 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) ViewSelMinTbl<MeritAction<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_ACTION_MAX:
         return new (home) ViewSelMaxTbl<MeritAction<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_CHB_MIN:
+        return new (home) ViewSelMinTbl<MeritCHB<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_CHB_MAX:
+        return new (home) ViewSelMaxTbl<MeritCHB<BoolView>>(home,bvb);
       default:
         throw UnknownBranching("Int::branch");
       }
@@ -207,6 +227,10 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home) ViewSelMin<MeritAction<BoolView>>(home,bvb);
       case BoolVarBranch::SEL_ACTION_MAX:
         return new (home) ViewSelMax<MeritAction<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_CHB_MIN:
+        return new (home) ViewSelMin<MeritCHB<BoolView>>(home,bvb);
+      case BoolVarBranch::SEL_CHB_MAX:
+        return new (home) ViewSelMax<MeritCHB<BoolView>>(home,bvb);
       default:
         throw UnknownBranching("Int::branch");
       }

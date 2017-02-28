@@ -71,6 +71,8 @@ namespace Gecode {
     AFC _afc;
     /// Action information
     Action _act;
+    /// CHB information
+    CHB _chb;
     /// Merit function
     MeritFunction _mf;
   public:
@@ -86,6 +88,8 @@ namespace Gecode {
     VarBranch(AFC a, BranchTbl t);
     /// Initialize with action \a a and tie-break limit function \a t
     VarBranch(Action a, BranchTbl t);
+    /// Initialize with CHB \a c and tie-break limit function \a t
+    VarBranch(CHB c, BranchTbl t);
     /// Initialize with merit function \a f and tie-break limit function \a t
     VarBranch(MeritFunction f, BranchTbl t);
     /// Return tie-break limit function
@@ -102,6 +106,10 @@ namespace Gecode {
     Action action(void) const;
     /// Set action to \a a
     void action(Action a);
+    /// Return CHB
+    CHB chb(void) const;
+    /// Set CHB to \a chb
+    void chb(CHB chb);
     /// Return merit function
     MeritFunction merit(void) const;
   };
@@ -136,6 +144,14 @@ namespace Gecode {
     : _tbl(t), _decay(1.0), _act(a) {
     if (!_act.initialized())
       throw UninitializedAction("VarBranch<Var>::VarBranch");
+  }
+
+  template<class Var>
+  forceinline
+  VarBranch<Var>::VarBranch(CHB c, BranchTbl t)
+    : _tbl(t), _decay(1.0), _chb(c) {
+    if (!_chb.initialized())
+      throw UninitializedCHB("VarBranch<Var>::VarBranch");
   }
 
   template<class Var>
@@ -191,6 +207,18 @@ namespace Gecode {
   inline void
   VarBranch<Var>::action(Action a) {
     _act=a;
+  }
+
+  template<class Var>
+  inline CHB
+  VarBranch<Var>::chb(void) const {
+    return _chb;
+  }
+
+  template<class Var>
+  inline void
+  VarBranch<Var>::chb(CHB chb) {
+    _chb=chb;
   }
 
   template<class Var>

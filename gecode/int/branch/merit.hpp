@@ -154,6 +154,35 @@ namespace Gecode { namespace Int { namespace Branch {
     action.~Action();
   }
 
+  // CHB over size merit
+  template<class View>
+  forceinline
+  MeritCHBSize<View>::MeritCHBSize(Space& home,
+                                   const VarBranch<Var>& vb)
+    : MeritBase<View,double>(home,vb), chb(vb.chb()) {}
+  template<class View>
+  forceinline
+  MeritCHBSize<View>::MeritCHBSize(Space& home, bool shared,
+                                   MeritCHBSize& m)
+    : MeritBase<View,double>(home,shared,m) {
+    chb.update(home, shared, m.chb);
+  }
+  template<class View>
+  forceinline double
+  MeritCHBSize<View>::operator ()(const Space&, View x, int i) {
+    return chb[i] / static_cast<double>(x.size());
+  }
+  template<class View>
+  forceinline bool
+  MeritCHBSize<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  MeritCHBSize<View>::dispose(Space&) {
+    chb.~CHB();
+  }
+
   // Minimum regret merit
   template<class View>
   forceinline

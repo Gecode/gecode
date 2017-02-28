@@ -62,6 +62,10 @@ namespace Gecode {
     : VarBranch<SetVar>(a,t), s(s0) {}
 
   forceinline
+  SetVarBranch::SetVarBranch(Select s0, SetCHB c, BranchTbl t)
+    : VarBranch<SetVar>(c,t), s(s0) {}
+
+  forceinline
   SetVarBranch::SetVarBranch(Select s0, SetBranchMerit mf, BranchTbl t)
     : VarBranch<SetVar>(mf,t), s(s0) {}
 
@@ -82,6 +86,11 @@ namespace Gecode {
     case SEL_ACTION_SIZE_MIN: case SEL_ACTION_SIZE_MAX:
       if (!_act.initialized())
         _act = SetAction(home,x,decay());
+      break;
+    case SEL_CHB_MIN: case SEL_CHB_MAX:
+    case SEL_CHB_SIZE_MIN: case SEL_CHB_SIZE_MAX:
+      if (!_chb.initialized())
+        _chb = SetCHB(home,x);
       break;
     default: ;
     }
@@ -155,6 +164,26 @@ namespace Gecode {
   inline SetVarBranch
   SET_VAR_ACTION_MAX(SetAction a, BranchTbl tbl) {
     return SetVarBranch(SetVarBranch::SEL_ACTION_MAX,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_MIN(BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_MIN,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_MIN(SetCHB c, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_MIN,c,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_MAX(BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_MAX,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_MAX(SetCHB c, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_MAX,c,tbl);
   }
 
   inline SetVarBranch
@@ -235,6 +264,26 @@ namespace Gecode {
   inline SetVarBranch
   SET_VAR_ACTION_SIZE_MAX(SetAction a, BranchTbl tbl) {
     return SetVarBranch(SetVarBranch::SEL_ACTION_SIZE_MAX,a,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_SIZE_MIN(BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_SIZE_MIN,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_SIZE_MIN(SetCHB c, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_SIZE_MIN,c,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_SIZE_MAX(BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_SIZE_MAX,tbl);
+  }
+
+  inline SetVarBranch
+  SET_VAR_CHB_SIZE_MAX(SetCHB c, BranchTbl tbl) {
+    return SetVarBranch(SetVarBranch::SEL_CHB_SIZE_MAX,c,tbl);
   }
 
 }

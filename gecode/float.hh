@@ -1520,7 +1520,57 @@ namespace Gecode {
 
 namespace Gecode {
 
-  /// Function type for explaining branching alternatives for set variables
+  /**
+   * \brief Recording CHB for float variables
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  class FloatCHB : public CHB {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized CHB storage is init or the assignment operator.
+     *
+     */
+    FloatCHB(void);
+    /// Copy constructor
+    FloatCHB(const FloatCHB& chb);
+    /// Assignment operator
+    FloatCHB& operator =(const FloatCHB& chb);
+   /**
+     * \brief Initialize for float variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_FLOAT_EXPORT
+    FloatCHB(Home home, const FloatVarArgs& x, FloatBranchMerit bm=NULL);
+   /**
+     * \brief Initialize for float variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     * This member function can only be used once and only if the
+     * action storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_FLOAT_EXPORT void
+    init(Home home, const FloatVarArgs& x, FloatBranchMerit bm=NULL);
+  };
+
+}
+
+#include <gecode/float/branch/chb.hpp>
+
+namespace Gecode {
+
+  /// Function type for explaining branching alternatives for float variables
   typedef std::function<void(const Space &home, const Brancher& b,
                              unsigned int a,
                              FloatVar x, int i, const FloatNumBranch& n,
@@ -1550,6 +1600,8 @@ namespace Gecode {
       SEL_AFC_MAX,         ///< With largest accumulated failure count
       SEL_ACTION_MIN,      ///< With lowest action
       SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MIN,         ///< With lowest CHB Q-score
+      SEL_CHB_MAX,         ///< With highest CHB Q-score
       SEL_MIN_MIN,         ///< With smallest min
       SEL_MIN_MAX,         ///< With largest min
       SEL_MAX_MIN,         ///< With smallest max
@@ -1561,7 +1613,9 @@ namespace Gecode {
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
       SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
-      SEL_ACTION_SIZE_MAX  ///< With largest action divided by domain size
+      SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
+      SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
+      SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1579,11 +1633,13 @@ namespace Gecode {
     FloatVarBranch(Select s, FloatAFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
     FloatVarBranch(Select s, FloatAction a, BranchTbl t);
+    /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
+    FloatVarBranch(Select s, FloatCHB c, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     FloatVarBranch(Select s, FloatBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or action
+    /// Expand AFC, action, and CHB
     void expand(Home home, const FloatVarArgs& x);
   };
 
@@ -1621,6 +1677,14 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest action
   FloatVarBranch FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MIN(FloatCHB a, BranchTbl tbl=NULL);
+  /// Select variable with highest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MAX(BranchTbl tbl=NULL);
+  /// Select variable with highest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MAX(FloatCHB a, BranchTbl tbl=NULL);
   /// Select variable with smallest min
   FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
@@ -1653,6 +1717,14 @@ namespace Gecode {
   FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest action divided by domain size
   FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl=NULL);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(BranchTbl tbl=NULL);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(FloatCHB c, BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(FloatCHB a, BranchTbl tbl=NULL);
   //@}
 
 }

@@ -195,7 +195,7 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	afc action rnd exception trace-filter tracer
+	afc action chb rnd exception trace-filter tracer
 
 KERNELHDR0 = \
 	archive array shared-array shared-data core exception \
@@ -206,7 +206,7 @@ KERNELHDR0 = \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit brancher-print \
 	allocators print gpi \
-	afc action rnd branch-traits \
+	afc action chb rnd branch-traits \
 	trace-traits trace-filter tracer trace-recorder \
 	subscribed-propagators
 
@@ -325,7 +325,7 @@ INTSRC0 = \
 	bin-packing/conflict-graph.cpp \
 	unary.cpp cumulative.cpp cumulatives.cpp \
 	circuit.cpp no-overlap.cpp nvalues.cpp \
-	member.cpp branch/action.cpp \
+	member.cpp branch/action.cpp branch/chb.cpp \
 	arithmetic/mult.cpp  \
 	branch/view-sel.cpp branch/val-sel-commit.cpp \
 	branch/view-values.cpp \
@@ -416,7 +416,7 @@ INTHDR0 = \
 	nvalues/int-lq.hpp nvalues/int-gq.hpp \
 	val-set.hh val-set.hpp \
 	member.hh member/prop.hpp member/re-prop.hpp \
-	branch/afc.hpp branch/action.hpp \
+	branch/afc.hpp branch/action.hpp branch/chb.hpp \
 	ldsb.hh ldsb/brancher.hpp ldsb/sym-imp.hpp \
 	trace.hpp \
 	trace/bool-trace-view.hpp trace/int-trace-view.hpp \
@@ -467,7 +467,7 @@ FLOATSRC0 = \
 	var/float.cpp var-imp/float.cpp \
 	arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
 	linear/post.cpp bool.cpp \
-	branch/action.cpp rounding.cpp exec.cpp \
+	branch/action.cpp branch/chb.cpp rounding.cpp exec.cpp \
 	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \
 	relax.cpp \
 	trace.cpp trace/tracer.cpp \
@@ -486,7 +486,8 @@ FLOATHDR0 = \
 	trigonometric/tanatan.hpp \
 	rel.hh rel/eq.hpp rel/lq-le.hpp rel/nq.hpp \
 	bool.hh bool/ite.hpp \
-	branch.hh branch/afc.hpp branch/action.hpp branch/traits.hpp \
+	branch.hh branch/afc.hpp branch/action.hpp branch/chb.hpp \
+	branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/val-commit.hpp branch/val-sel.hpp branch/merit.hpp \
 	num.hpp val.hpp rounding.hpp nextafter.hpp \
@@ -548,7 +549,7 @@ SETSRC0 =								 \
 	precede.cpp \
 	sequence/seq.cpp sequence/seq-u.cpp array.cpp var-imp/set.cpp	 \
 	var-imp/integerset.cpp var/set.cpp \
-	exec.cpp branch/action.cpp branch/view-sel.cpp \
+	exec.cpp branch/action.cpp branch/chb.cpp branch/view-sel.cpp \
 	branch/val-sel-commit.cpp  branch/ngl.cpp \
 	ldsb.cpp ldsb/sym-imp.cpp \
 	relax.cpp \
@@ -579,7 +580,8 @@ SETHDR0 =								     \
 	sequence/common.hpp convex/conv.hpp convex/hull.hpp convex.hh	     \
 	precede.hh precede/single.hpp \
 	rel-op.hh					     \
-	branch.hh branch/afc.hpp branch/action.hpp branch/traits.hpp \
+	branch.hh branch/afc.hpp branch/action.hpp branch/chb.hpp \
+	branch/traits.hpp \
 	branch/var.hpp branch/val.hpp branch/assign.hpp \
 	branch/merit.hpp branch/val-commit.hpp branch/val-sel.hpp \
 	branch/ngl.hpp \
@@ -867,6 +869,7 @@ INTEXAMPLESRC0 =						\
 	bin-packing knights tsp perfect-square schurs-lemma     \
 	dominating-queens colored-matrix multi-bin-packing	\
 	qcp
+
 
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%.hpp)
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cpp)

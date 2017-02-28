@@ -4059,6 +4059,100 @@ namespace Gecode {
 
 namespace Gecode {
 
+  /**
+   * \brief Recording CHB for integer variables
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  class IntCHB : public CHB {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized CHB storage is init or the assignment operator.
+     *
+     */
+    IntCHB(void);
+    /// Copy constructor
+    IntCHB(const IntCHB& chb);
+    /// Assignment operator
+    IntCHB& operator =(const IntCHB& chb);
+   /**
+     * \brief Initialize for integer variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_INT_EXPORT
+    IntCHB(Home home, const IntVarArgs& x, IntBranchMerit bm=NULL);
+   /**
+     * \brief Initialize for integer variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     * This member function can only be used once and only if the
+     * action storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_INT_EXPORT void
+    init(Home home, const IntVarArgs& x, IntBranchMerit bm=NULL);
+  };
+
+  /**
+   * \brief Recording CHB for Boolean variables
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  class BoolCHB : public CHB {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized action storage is init or the assignment operator.
+     *
+     */
+    BoolCHB(void);
+    /// Copy constructor
+    BoolCHB(const BoolCHB& chb);
+    /// Assignment operator
+    BoolCHB& operator =(const BoolCHB& chb);
+   /**
+     * \brief Initialize for Boolean variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_INT_EXPORT
+    BoolCHB(Home home, const BoolVarArgs& x, BoolBranchMerit bm=NULL);
+   /**
+     * \brief Initialize for Boolean variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     * This member function can only be used once and only if the
+     * action storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_INT_EXPORT void
+    init(Home home, const BoolVarArgs& x, BoolBranchMerit bm=NULL);
+  };
+
+}
+
+#include <gecode/int/branch/chb.hpp>
+
+namespace Gecode {
+
   /// Function type for printing branching alternatives for integer variables
   typedef std::function<void(const Space &home, const Brancher& b,
                              unsigned int a,
@@ -4096,6 +4190,8 @@ namespace Gecode {
       SEL_AFC_MAX,         ///< With largest accumulated failure count
       SEL_ACTION_MIN,      ///< With lowest action
       SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MIN,         ///< With lowest CHB Q-score
+      SEL_CHB_MAX,         ///< With highest CHB Q-score
       SEL_MIN_MIN,         ///< With smallest min
       SEL_MIN_MAX,         ///< With largest min
       SEL_MAX_MIN,         ///< With smallest max
@@ -4108,6 +4204,8 @@ namespace Gecode {
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
       SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
       SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
+      SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
+      SEL_CHB_SIZE_MAX,    ///< With largest CHB Q-score divided by domain size
       /** \brief With smallest min-regret
        *
        * The min-regret of a variable is the difference between the
@@ -4149,11 +4247,13 @@ namespace Gecode {
     IntVarBranch(Select s, IntAFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
     IntVarBranch(Select s, IntAction a, BranchTbl t);
+    /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
+    IntVarBranch(Select s, IntCHB c, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     IntVarBranch(Select s, IntBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or action
+    /// Expand AFC, action, and CHB
     void expand(Home home, const IntVarArgs& x);
   };
 
@@ -4175,7 +4275,9 @@ namespace Gecode {
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
       SEL_ACTION_MIN,      ///< With lowest action
-      SEL_ACTION_MAX       ///< With highest action
+      SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MIN,         ///< With lowest CHB
+      SEL_CHB_MAX          ///< With highest CHB
     };
   protected:
     /// Which variable to select
@@ -4193,6 +4295,8 @@ namespace Gecode {
     BoolVarBranch(Select s, BoolAFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
     BoolVarBranch(Select s, BoolAction a, BranchTbl t);
+    /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
+    BoolVarBranch(Select s, BoolCHB c, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     BoolVarBranch(Select s, BoolBranchMerit mf, BranchTbl t);
     /// Return selection strategy
@@ -4234,6 +4338,14 @@ namespace Gecode {
   IntVarBranch INT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest action
   IntVarBranch INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  IntVarBranch INT_VAR_CHB_MIN(IntCHB c, BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  IntVarBranch INT_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score
+  IntVarBranch INT_VAR_CHB_MAX(IntCHB c, BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score
+  IntVarBranch INT_VAR_CHB_MAX(BranchTbl tbl=NULL);
   /// Select variable with smallest min
   IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest min
@@ -4266,6 +4378,14 @@ namespace Gecode {
   IntVarBranch INT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest action divided by domain size
   IntVarBranch INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl=NULL);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  IntVarBranch INT_VAR_CHB_SIZE_MIN(IntCHB c, BranchTbl tbl=NULL);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  IntVarBranch INT_VAR_CHB_SIZE_MIN(BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score divided by domain size
+  IntVarBranch INT_VAR_CHB_SIZE_MAX(IntCHB c, BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score divided by domain size
+  IntVarBranch INT_VAR_CHB_SIZE_MAX(BranchTbl tbl=NULL);
   /** \brief Select variable with smallest min-regret
    *
    * The min-regret of a variable is the difference between the
@@ -4319,6 +4439,14 @@ namespace Gecode {
   BoolVarBranch BOOL_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest action
   BoolVarBranch BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  BoolVarBranch BOOL_VAR_CHB_MIN(BoolCHB c, BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  BoolVarBranch BOOL_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score
+  BoolVarBranch BOOL_VAR_CHB_MAX(BoolCHB c, BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score
+  BoolVarBranch BOOL_VAR_CHB_MAX(BranchTbl tbl=NULL);
   //@}
 
 }

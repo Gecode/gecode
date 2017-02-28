@@ -150,6 +150,29 @@ namespace Gecode {
   };
   //@}
 
+  /**
+   * \brief Merit class for CHB
+   */
+  template<class View>
+  class MeritCHB : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
+  protected:
+    /// CHB information
+    CHB chb;
+  public:
+    /// Constructor for initialization
+    MeritCHB(Space& home, const VarBranch<Var>& vb);
+    /// Constructor for cloning
+    MeritCHB(Space& home, bool shared, MeritCHB& ma);
+    /// Return action as merit for view \a x at position \a i
+    double operator ()(const Space& home, View x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+  //@}
+
 
   // Merit base class
   template<class View, class Val>
@@ -246,7 +269,7 @@ namespace Gecode {
   }
 
 
-  // Acitivity merit
+  // Action merit
   template<class View>
   forceinline
   MeritAction<View>::MeritAction(Space& home, const VarBranch<Var>& vb)
@@ -272,6 +295,34 @@ namespace Gecode {
   forceinline void
   MeritAction<View>::dispose(Space&) {
     action.~Action();
+  }
+
+  // CHB merit
+  template<class View>
+  forceinline
+  MeritCHB<View>::MeritCHB(Space& home, const VarBranch<Var>& vb)
+    : MeritBase<View,double>(home,vb), chb(vb.chb()) {}
+  template<class View>
+  forceinline
+  MeritCHB<View>::MeritCHB(Space& home, bool shared,
+                                 MeritCHB& ma)
+    : MeritBase<View,double>(home,shared,ma) {
+    chb.update(home, shared, ma.chb);
+  }
+  template<class View>
+  forceinline double
+  MeritCHB<View>::operator ()(const Space&, View, int i) {
+    return chb[i];
+  }
+  template<class View>
+  forceinline bool
+  MeritCHB<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  MeritCHB<View>::dispose(Space&) {
+    chb.~CHB();
   }
 
 }

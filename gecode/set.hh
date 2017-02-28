@@ -1237,6 +1237,56 @@ namespace Gecode {
 
 namespace Gecode {
 
+  /**
+   * \brief Recording CHB for set variables
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  class SetCHB : public CHB {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized CHB storage is init or the assignment operator.
+     *
+     */
+    SetCHB(void);
+    /// Copy constructor
+    SetCHB(const SetCHB& chb);
+    /// Assignment operator
+    SetCHB& operator =(const SetCHB& chb);
+   /**
+     * \brief Initialize for set variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_SET_EXPORT
+    SetCHB(Home home, const SetVarArgs& x, SetBranchMerit bm=NULL);
+   /**
+     * \brief Initialize for set variables \a x
+     *
+     * If the branch merit function \a bm is different from NULL, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     * This member function can only be used once and only if the
+     * action storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_SET_EXPORT void
+    init(Home home, const SetVarArgs& x, SetBranchMerit bm=NULL);
+  };
+
+}
+
+#include <gecode/set/branch/chb.hpp>
+
+namespace Gecode {
+
   /// Function type for printing branching alternatives for set variables
   typedef std::function<void(const Space &home, const Brancher& b,
                              unsigned int a,
@@ -1267,6 +1317,8 @@ namespace Gecode {
       SEL_AFC_MAX,         ///< With largest accumulated failure count
       SEL_ACTION_MIN,      ///< With lowest action
       SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MIN,         ///< With lowest CHB Q-score
+      SEL_CHB_MAX,         ///< With highest CHB Q-score
       SEL_MIN_MIN,         ///< With smallest minimum unknown element
       SEL_MIN_MAX,         ///< With largest minimum unknown element
       SEL_MAX_MIN,         ///< With smallest maximum unknown element
@@ -1278,7 +1330,9 @@ namespace Gecode {
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
       SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
-      SEL_ACTION_SIZE_MAX  ///< With largest action divided by domain size
+      SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
+      SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
+      SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1296,11 +1350,13 @@ namespace Gecode {
     SetVarBranch(Select s, SetAFC a, BranchTbl t);
     /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
     SetVarBranch(Select s, SetAction a, BranchTbl t);
+    /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
+    SetVarBranch(Select s, SetCHB c, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
     SetVarBranch(Select s, SetBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or action
+    /// Expand AFC, action, and CHB
     void expand(Home home, const SetVarArgs& x);
   };
 
@@ -1337,6 +1393,14 @@ namespace Gecode {
   SetVarBranch SET_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with highest action
   SetVarBranch SET_VAR_ACTION_MAX(SetAction a, BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  /// Select variable with lowest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MIN(SetCHB c, BranchTbl tbl=NULL);
+  /// Select variable with highest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MAX(BranchTbl tbl=NULL);
+  /// Select variable with highest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MAX(SetCHB c, BranchTbl tbl=NULL);
   /// Select variable with smallest minimum unknown element
   SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);
   /// Select variable with largest minimum unknown element
@@ -1369,6 +1433,14 @@ namespace Gecode {
   SetVarBranch SET_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
   /// Select variable with largest action divided by domain size
   SetVarBranch SET_VAR_ACTION_SIZE_MAX(SetAction a, BranchTbl tbl=NULL);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MIN(BranchTbl tbl=NULL);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MIN(SetCHB c, BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MAX(BranchTbl tbl=NULL);
+  /// Select variable with largest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MAX(SetCHB c, BranchTbl tbl=NULL);
   //@}
 
 }

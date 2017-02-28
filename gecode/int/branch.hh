@@ -182,6 +182,31 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
+   * \brief Merit class for CHB over size
+   *
+   * Requires \code #include <gecode/int/branch.hh> \endcode
+   * \ingroup FuncIntViewSel
+   */
+  template<class View>
+  class MeritCHBSize : public MeritBase<View,double> {
+    using typename MeritBase<View,double>::Var;
+  protected:
+    /// CHB information
+    CHB chb;
+  public:
+    /// Constructor for initialization
+    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+    /// Constructor for cloning
+    MeritCHBSize(Space& home, bool shared, MeritCHBSize& m);
+    /// Return size over action as merit for view \a x at position \a i
+    double operator ()(const Space& home, View x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
+  /**
    * \brief Merit class for minimum regret
    *
    * Requires \code #include <gecode/int/branch.hh> \endcode

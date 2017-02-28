@@ -66,6 +66,15 @@ namespace Gecode {
   UnknownBrancher::UnknownBrancher(const char* l)
     : Exception(l,"Unknown brancher (illegal id)") {}
 
+  UninitializedAFC::UninitializedAFC(const char* l)
+    : Exception(l,"Uninitialized AFC information for branching") {}
+
+  UninitializedAction::UninitializedAction(const char* l)
+    : Exception(l,"Uninitialized action information for branching") {}
+
+  UninitializedCHB::UninitializedCHB(const char* l)
+    : Exception(l,"Uninitialized CHB information for branching") {}
+
   UninitializedRnd::UninitializedRnd(const char* l)
     : Exception(l,"Uninitialized random generator for branching") {}
 
@@ -74,12 +83,6 @@ namespace Gecode {
 
   InvalidFunction::InvalidFunction(const char* l)
     : Exception(l,"Invalid function") {}
-
-  UninitializedAFC::UninitializedAFC(const char* l)
-    : Exception(l,"Uninitialized AFC information for branching") {}
-
-  UninitializedAction::UninitializedAction(const char* l)
-    : Exception(l,"Uninitialized action information for branching") {}
 
   AFCWrongArity::AFCWrongArity(const char* l)
     : Exception(l,"AFC has wrong number of variables") {}

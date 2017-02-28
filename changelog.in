@@ -74,6 +74,38 @@ Minor release.
 
 [ENTRY]
 Module:	kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching.
+
+[ENTRY]
+Module:	int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching. See MPG for details.
+
+[ENTRY]
+Module:	set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching. See MPG for details.
+
+[ENTRY]
+Module:	float
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching. See MPG for details.
+
+[ENTRY]
+Module:	kernel
 What:   changed
 Rank:   minor
 [DESCRIPTION]

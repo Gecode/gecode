@@ -62,6 +62,10 @@ namespace Gecode {
     : VarBranch<FloatVar>(a,t), s(s0) {}
 
   forceinline
+  FloatVarBranch::FloatVarBranch(Select s0, FloatCHB c, BranchTbl t)
+    : VarBranch<FloatVar>(c,t), s(s0) {}
+
+  forceinline
   FloatVarBranch::FloatVarBranch(Select s0, FloatBranchMerit mf, BranchTbl t)
     : VarBranch<FloatVar>(mf,t), s(s0) {}
 
@@ -82,6 +86,11 @@ namespace Gecode {
     case SEL_ACTION_SIZE_MIN: case SEL_ACTION_SIZE_MAX:
       if (!_act.initialized())
         _act = FloatAction(home,x,decay());
+      break;
+    case SEL_CHB_MIN: case SEL_CHB_MAX:
+    case SEL_CHB_SIZE_MIN: case SEL_CHB_SIZE_MAX:
+      if (!_chb.initialized())
+        _chb = FloatCHB(home,x);
       break;
     default: ;
     }
@@ -156,6 +165,26 @@ namespace Gecode {
   inline FloatVarBranch
   FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl) {
     return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX,a,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MIN(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MIN(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN,c,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MAX(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MAX(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX,c,tbl);
   }
 
   inline FloatVarBranch
@@ -236,6 +265,26 @@ namespace Gecode {
   inline FloatVarBranch
   FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl) {
     return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX,a,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MIN(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MIN(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN,c,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MAX(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX,c,tbl);
   }
 
 }
