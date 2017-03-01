@@ -116,22 +116,22 @@ namespace Gecode {
 
   // Variable branching
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(void)
     : _tbl(NULL), _decay(1.0) {}
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(BranchTbl t)
     : _tbl(t), _decay(1.0) {}
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(double d, BranchTbl t)
     : _tbl(t), _decay(d) {}
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(AFC a, BranchTbl t)
     : _tbl(t), _decay(1.0), _afc(a) {
     if (!_afc.initialized())
@@ -139,7 +139,7 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(Action a, BranchTbl t)
     : _tbl(t), _decay(1.0), _act(a) {
     if (!_act.initialized())
@@ -147,7 +147,7 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(CHB c, BranchTbl t)
     : _tbl(t), _decay(1.0), _chb(c) {
     if (!_chb.initialized())
@@ -155,7 +155,7 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(Rnd r)
     : _tbl(NULL), _rnd(r), _decay(1.0) {
     if (!_rnd.initialized())
@@ -163,12 +163,12 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline
+  inline
   VarBranch<Var>::VarBranch(MeritFunction f, BranchTbl t)
     : _tbl(t), _decay(1.0), _mf(f) {}
 
   template<class Var>
-  forceinline BranchTbl
+  inline BranchTbl
   VarBranch<Var>::tbl(void) const {
     return _tbl;
   }
@@ -222,7 +222,7 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline typename VarBranch<Var>::MeritFunction
+  inline typename VarBranch<Var>::MeritFunction
   VarBranch<Var>::merit(void) const {
     return _mf;
   }

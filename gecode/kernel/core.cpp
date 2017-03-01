@@ -248,13 +248,13 @@ namespace Gecode {
           // Propagate top priority propagators
           ActorLink* e = &pc.p.queue[PropCost::AC_RECORD];
           for (ActorLink* a = e->next(); a != e; a = a->next()) {
-            Propagator* p = Propagator::cast(a);
-            pc.p.ei.propagator(*p);
+            Propagator* top = Propagator::cast(a);
+            pc.p.ei.propagator(*top);
             // Keep old modification event delta
-            ModEventDelta med_o = p->u.med;
+            ModEventDelta top_med_o = top->u.med;
             // Clear med but leave propagator in queue
-            p->u.med = 0;
-            switch (p->propagate(*this,med_o)) {
+            top->u.med = 0;
+            switch (top->propagate(*this,top_med_o)) {
             case ES_FIX:
             case __ES_SUBSUMED:
               break;

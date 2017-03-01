@@ -176,7 +176,7 @@ namespace Gecode {
       Branch::viewsel(home,vars)
     };
     postviewvalbrancher<BoolView,1,int,2>
-      (home,xv,vs,Branch::valselcommit(home,x.size(),vals),vvp);
+      (home,xv,vs,Branch::valselcommit(home,vals),vvp);
   }
 
   void
@@ -203,7 +203,7 @@ namespace Gecode {
     } else {
       ViewArray<BoolView> xv(home,x);
       ValSelCommitBase<BoolView,int>*
-        vsc = Branch::valselcommit(home,x.size(),vals);
+        vsc = Branch::valselcommit(home,vals);
       if (vars.c.select() == BoolVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)

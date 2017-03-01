@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   ValSelCommitBase<BoolView,int>*
-  valselcommit(Space& home, int n, const BoolValBranch& bvb) {
+  valselcommit(Space& home, const BoolValBranch& bvb) {
     switch (bvb.select()) {
     case BoolValBranch::SEL_MIN:
       return new (home)

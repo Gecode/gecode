@@ -654,7 +654,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /// Return value and commit for Boolean views
   GECODE_INT_EXPORT
   ValSelCommitBase<BoolView,int>*
-  valselcommit(Space& home, int n, const BoolValBranch& bvb);
+  valselcommit(Space& home, const BoolValBranch& bvb);
 
   /// Return value and commit for integer views
   GECODE_INT_EXPORT

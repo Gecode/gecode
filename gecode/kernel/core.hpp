@@ -4436,8 +4436,11 @@ namespace Gecode {
     if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
-    unsigned int np = x->actorNonZero(pc_max+1) - x->actor(0);
-    unsigned int na = x->b.base + x->entries - x->actorNonZero(pc_max+1);
+    unsigned int np =
+      static_cast<unsigned int>(x->actorNonZero(pc_max+1) - x->actor(0));
+    unsigned int na = 
+      static_cast<unsigned int >(x->b.base + x->entries - 
+                                 x->actorNonZero(pc_max+1));
     unsigned int n  = na + np;
     assert(n == x->degree());
 

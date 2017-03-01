@@ -156,7 +156,7 @@ namespace Gecode {
 
   template<class View, int n>
   bool
-  ViewBrancher<View,n>::status(const Space& home) const {
+  ViewBrancher<View,n>::status(const Space&) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
         start = i;

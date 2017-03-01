@@ -72,12 +72,12 @@ namespace Gecode {
 
 
   template<class Var>
-  forceinline
+  inline
   ValBranch<Var>::ValBranch(void)
     : vf(NULL), cf(NULL) {}
 
   template<class Var>
-  forceinline
+  inline
   ValBranch<Var>::ValBranch(Rnd r0)
     : r(r0), vf(NULL), cf(NULL) {
     if (!r.initialized())
@@ -85,24 +85,24 @@ namespace Gecode {
   }
 
   template<class Var>
-  forceinline
+  inline
   ValBranch<Var>::ValBranch(BranchVal v, BranchCommit c)
     : vf(v), cf(c) {}
 
   template<class Var>
-  forceinline Rnd
+  inline Rnd
   ValBranch<Var>::rnd(void) const {
     return r;
   }
 
   template<class Var>
-  forceinline typename ValBranch<Var>::BranchVal
+  inline typename ValBranch<Var>::BranchVal
   ValBranch<Var>::val(void) const {
     return vf;
   }
 
   template<class Var>
-  forceinline typename ValBranch<Var>::BranchCommit
+  inline typename ValBranch<Var>::BranchCommit
   ValBranch<Var>::commit(void) const {
     return cf;
   }
