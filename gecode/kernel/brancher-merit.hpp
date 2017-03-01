@@ -209,7 +209,7 @@ namespace Gecode {
   forceinline double
   MeritFunction<View>::operator ()(const Space& home, View x, int i) {
     typename View::VarType y(x.varimp());
-    GECODE_ASSUME(f());
+    GECODE_VALID_FUNCTION(f());
     return f()(home,y,i);
   }
   template<class View>

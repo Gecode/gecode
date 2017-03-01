@@ -148,7 +148,7 @@ namespace Gecode { namespace Kernel {
   ExecStatus
   UnaryWait<View>::propagate(Space& home, const ModEventDelta&) {
     assert(x.assigned());
-    GECODE_ASSUME(c());
+    GECODE_VALID_FUNCTION(c());
     c()(home);
     return home.failed() ? ES_FAILED : home.ES_SUBSUMED(*this);
   }
@@ -227,7 +227,7 @@ namespace Gecode { namespace Kernel {
     assert(x.size() > 0);
     if (x.size() == 1) {
       x.size(0);
-      GECODE_ASSUME(c());
+      GECODE_VALID_FUNCTION(c());
       c()(home);
       return home.failed() ? ES_FAILED : home.ES_SUBSUMED(*this);
     } else {

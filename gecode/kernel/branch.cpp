@@ -98,6 +98,8 @@ namespace Gecode {
   FunctionBranch::FunctionBranch(Home home,
                                  std::function<void(Space& home)> f0)
     : Brancher(home), f(f0), done(false) {
+    if (!f())
+      throw InvalidFunction("FunctionBranch::FunctionBranch");
    home.notice(*this,AP_DISPOSE);
   }
   forceinline
@@ -121,7 +123,7 @@ namespace Gecode {
   ExecStatus
   FunctionBranch::commit(Space& home, const Choice&, unsigned int) {
     done = true;
-    GECODE_ASSUME(f());
+    GECODE_VALID_FUNCTION(f());
     f()(home);
     return home.failed() ? ES_FAILED : ES_OK;
   }

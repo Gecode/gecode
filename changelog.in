@@ -73,6 +73,13 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module:	other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Gecode requires now at least the Microsoft Visual Studio 2015 compiler.
+
+[ENTRY]
 Module:	kernel
 What:   new
 Rank:   major

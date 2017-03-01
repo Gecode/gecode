@@ -47,11 +47,11 @@ namespace Gecode { namespace Int { namespace Exec {
   ExecStatus
   When::propagate(Space& home, const ModEventDelta&) {
     if (x0.zero()) {
-      GECODE_ASSUME(e());
+      GECODE_VALID_FUNCTION(e());
       e()(home);
     } else {
       assert(x0.one());
-      GECODE_ASSUME(t());
+      GECODE_VALID_FUNCTION(t());
       t()(home);
     }
     if (home.failed())

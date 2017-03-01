@@ -602,7 +602,7 @@ namespace Gecode {
           w=mxi;
       }
     // Compute tie-break limit
-    GECODE_ASSUME(tbl());
+    GECODE_VALID_FUNCTION(tbl());
     double l = tbl()(home,static_cast<double>(w),static_cast<double>(b));
     // If the limit is not better than the worst merit, everything is a tie
     if (!c(l,static_cast<double>(w))) {
@@ -641,7 +641,7 @@ namespace Gecode {
         w=mxi;
     }
     // Compute tie-break limit
-    GECODE_ASSUME(tbl());
+    GECODE_VALID_FUNCTION(tbl());
     double l = tbl()(home,static_cast<double>(w),static_cast<double>(b));
     // If the limit is not better than the worst merit, everything is a tie
     // and no breaking is required

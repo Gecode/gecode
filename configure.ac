@@ -105,7 +105,7 @@ gnu)
 intel)
   ;;
 microsoft)
-  AC_CHECK_MSVC_VERSION(1400,2005)
+  AC_CHECK_MSVC_VERSION(1900,2015)
   ;;
 *)
   ;;

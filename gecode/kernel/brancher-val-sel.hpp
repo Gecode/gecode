@@ -132,7 +132,7 @@ namespace Gecode {
   forceinline typename ValSelFunction<View>::Val
   ValSelFunction<View>::val(const Space& home, View x, int i) {
     typename View::VarType y(x.varimp());
-    GECODE_ASSUME(v());
+    GECODE_VALID_FUNCTION(v());
     return v()(home,y,i);
   }
   template<class View>

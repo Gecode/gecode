@@ -124,7 +124,7 @@ namespace Gecode {
                                        unsigned int a,
                                        View x, int i, const Val& m,
                                        std::ostream& o) const {
-    GECODE_ASSUME(p());
+    GECODE_VALID_FUNCTION(p());
     Var xv(x.varimp());
     p()(home,b,a,xv,i,m,o);
   }
