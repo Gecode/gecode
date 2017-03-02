@@ -73,6 +73,13 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module:	kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Disable propagators can be disabled again (convenience).
+
+[ENTRY]
 Module:	other
 What:   change
 Rank:   major

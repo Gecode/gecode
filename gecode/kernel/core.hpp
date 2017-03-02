@@ -3386,7 +3386,7 @@ namespace Gecode {
 
   forceinline void
   Propagator::disable(void) {
-    gpi_disabled = Support::mark(gpi_disabled);
+    gpi_disabled = Support::fmark(gpi_disabled);
   }
 
   forceinline void
