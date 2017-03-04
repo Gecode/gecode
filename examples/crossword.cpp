@@ -267,7 +267,7 @@ public:
 
 
 /** \brief Main-function
- *  \relates WordSquare
+ *  \relates Crossword
  */
 int
 main(int argc, char* argv[]) {

@@ -13503,7 +13503,7 @@ Dictionary::init(const char* fn) {
     char* c = chunk;
     for (int l=max_len+1; l--; ) {
       s_words[l] = c;
-      for (int i=n_words[l]; i--; ) {
+      for (int i=0; i<n_words[l]; i++) {
         for (int j=0; j<l; j++)
           *c++ = ::s_words[l][i][j];
         *c++ = 0;
