@@ -911,6 +911,10 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar s, IntVar x);
 
+  /// Post reified propagator for \f$ |s|=x \equiv r\f$
+  GECODE_SET_EXPORT void
+  cardinality(Home home, SetVar s, IntVar x, Reify r);
+
   /**
    * \brief Post propagator for \f$y = \mathrm{weight}(x)\f$
    *

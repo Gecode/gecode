@@ -73,11 +73,18 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module:	set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added reified cardinality() constraint.
+
+[ENTRY]
 Module:	kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Disable propagators can be disabled again (convenience).
+Disabled propagators can be disabled again (convenience).
 
 [ENTRY]
 Module:	other

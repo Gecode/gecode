@@ -122,11 +122,13 @@ namespace Gecode {
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::MinElement<Set::SetView>::post(home,s,x));
   }
+
   void
   notMin(Home home, SetVar s, IntVar x){
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::NotMinElement<Set::SetView>::post(home,s,x));
   }
+
   void
   min(Home home, SetVar s, IntVar x, Reify r){
     GECODE_POST;
@@ -146,16 +148,19 @@ namespace Gecode {
     default: throw Gecode::Int::UnknownReifyMode("Set::min");
     }
   }
+
   void
   max(Home home, SetVar s, IntVar x){
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::MaxElement<Set::SetView>::post(home,s,x));
   }
+
   void
   notMax(Home home, SetVar s, IntVar x){
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::NotMaxElement<Set::SetView>::post(home,s,x));
   }
+
   void
   max(Home home, SetVar s, IntVar x, Reify r){
     GECODE_POST;

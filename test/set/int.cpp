@@ -69,7 +69,7 @@ namespace Test { namespace Set {
     public:
       /// Create and register test
       Card(const char* t)
-        : SetTest(t,1,ds_33,false,1) {}
+        : SetTest(t,1,ds_33,true,1) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         unsigned int s = 0;
@@ -81,6 +81,11 @@ namespace Test { namespace Set {
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
         Gecode::cardinality(home, x[0], y[0]);
+      }
+      /// Post reified constraint on \a x
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
+                        Reify r) {
+        Gecode::cardinality(home, x[0], y[0], r);
       }
     };
     Card _card("Int::Card");

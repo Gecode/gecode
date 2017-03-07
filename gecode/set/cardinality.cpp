@@ -72,6 +72,13 @@ namespace Gecode {
     GECODE_ES_FAIL(Set::Int::Card<Set::SetView>::post(home,s, x));
   }
 
+  void
+  cardinality(Home home, SetVar s, IntVar x, Reify r) {
+    IntVar y(home, 0, Set::Limits::card);
+    rel(home, x, IRT_EQ, y, r);
+    cardinality(home, s, y);
+  }
+
 }
 
 // STATISTICS: set-post
