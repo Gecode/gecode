@@ -76,40 +76,13 @@ namespace Gecode { namespace FlatZinc {
 
   namespace {
 
-    inline IntRelType
-    swap(IntRelType irt) {
-      switch (irt) {
-      case IRT_LQ: return IRT_GQ;
-      case IRT_LE: return IRT_GR;
-      case IRT_GQ: return IRT_LQ;
-      case IRT_GR: return IRT_LE;
-      default:     return irt;
-      }
-    }
-
-    inline IntRelType
-    neg(IntRelType irt) {
-      switch (irt) {
-      case IRT_EQ: return IRT_NQ;
-      case IRT_NQ: return IRT_EQ;
-      case IRT_LQ: return IRT_GR;
-      case IRT_LE: return IRT_GQ;
-      case IRT_GQ: return IRT_LE;
-      case IRT_GR:
-      default:
-        assert(irt == IRT_GR);
-      }
-      return IRT_LQ;
-    }
-
-
-
     void p_distinct(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs va = s.arg2intvarargs(ce[0]);
       IntPropLevel ipl = s.ann2ipl(ann);
       unshare(s, va);
       distinct(s, va, ipl == IPL_DEF ? IPL_BND : ipl);
     }
+
     void p_distinctOffset(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs va = s.arg2intvarargs(ce[1]);
       unshare(s, va);
@@ -165,7 +138,7 @@ namespace Gecode { namespace FlatZinc {
         if (ce[2]->getBool()) {
           p_int_CMP(s, irt, ce, ann);
         } else {
-          p_int_CMP(s, neg(irt), ce, ann);
+          p_int_CMP(s, inverse(irt), ce, ann);
         }
         return;
       }
@@ -259,7 +232,7 @@ namespace Gecode { namespace FlatZinc {
         if (ce[2]->getBool()) {
           p_int_lin_CMP(s, irt, ce, ann);
         } else {
-          p_int_lin_CMP(s, neg(irt), ce, ann);
+          p_int_lin_CMP(s, inverse(irt), ce, ann);
         }
         return;
       }
@@ -366,7 +339,7 @@ namespace Gecode { namespace FlatZinc {
         if (ce[2]->getBool()) {
           p_bool_lin_CMP(s, irt, ce, ann);
         } else {
-          p_bool_lin_CMP(s, neg(irt), ce, ann);
+          p_bool_lin_CMP(s, inverse(irt), ce, ann);
         }
         return;
       }

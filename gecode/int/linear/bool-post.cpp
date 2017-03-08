@@ -42,21 +42,6 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
-  /// Inverse the relation
-  forceinline IntRelType
-  inverse(const IntRelType irt) {
-    switch (irt) {
-      case IRT_EQ: return IRT_NQ; break;
-      case IRT_NQ: return IRT_EQ; break;
-      case IRT_GQ: return IRT_LE; break;
-      case IRT_LQ: return IRT_GR; break;
-      case IRT_LE: return IRT_GQ; break;
-      case IRT_GR: return IRT_LQ; break;
-      default: GECODE_NEVER;
-    }
-    return IRT_EQ; // Avoid compiler warnings
-  }
-
   /// Eliminate assigned views
   forceinline void
   eliminate(Term<BoolView>* t, int &n, long long int& d) {

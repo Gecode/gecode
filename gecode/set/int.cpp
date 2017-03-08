@@ -106,15 +106,7 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x, IntRelType r, SetVar s) {
-    IntRelType rr;
-    switch (r) {
-    case IRT_LE: rr=IRT_GR; break;
-    case IRT_LQ: rr=IRT_GQ; break;
-    case IRT_GR: rr=IRT_LE; break;
-    case IRT_GQ: rr=IRT_LQ; break;
-    default: rr=r;
-    }
-    rel(home, s, rr, x);
+    rel(home, s, swap(r), x);
   }
 
   void

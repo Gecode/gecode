@@ -383,7 +383,7 @@ INTHDR0 = \
 	distinct.hh dom.hh \
 	element.hh exception.hpp  gcc.hh linear.hh \
 	reify.hpp propagator.hpp extensional.hh rel.hh \
-	sorted.hh var-imp.hpp view.hpp ipl.hpp \
+	sorted.hh var-imp.hpp view.hpp ipl.hpp irt.hpp \
 	channel.hh channel/dom.hpp channel/val.hpp \
 	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
 	sequence.hh sequence/int.hpp sequence/view.hpp \
