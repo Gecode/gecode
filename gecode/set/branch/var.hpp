@@ -79,17 +79,17 @@ namespace Gecode {
     switch (select()) {
     case SEL_AFC_MIN: case SEL_AFC_MAX:
     case SEL_AFC_SIZE_MIN: case SEL_AFC_SIZE_MAX:
-      if (!_afc.initialized())
+      if (!_afc)
         _afc = SetAFC(home,x,decay());
       break;
     case SEL_ACTION_MIN: case SEL_ACTION_MAX:
     case SEL_ACTION_SIZE_MIN: case SEL_ACTION_SIZE_MAX:
-      if (!_act.initialized())
+      if (!_act)
         _act = SetAction(home,x,decay());
       break;
     case SEL_CHB_MIN: case SEL_CHB_MAX:
     case SEL_CHB_SIZE_MIN: case SEL_CHB_SIZE_MAX:
-      if (!_chb.initialized())
+      if (!_chb)
         _chb = SetCHB(home,x);
       break;
     default: ;

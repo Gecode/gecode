@@ -45,8 +45,8 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     : view(NULL), val(NULL), n_view(0), n_val(0), count(1U) {}
 
   template<class View>
-  forceinline bool
-  Graph<View>::initialized(void) const {
+  forceinline
+  Graph<View>::operator bool(void) const {
     return view != NULL;
   }
 

@@ -104,7 +104,7 @@ namespace Gecode {
     void init(Home home, ViewArray<View>& x, double d,
               typename BranchTraits<typename View::VarType>::Merit bm);
     /// Test whether already initialized
-    bool initialized(void) const;
+    operator bool(void) const;
     /// Default (empty) action information
     GECODE_KERNEL_EXPORT static const Action def;
     //@}
@@ -328,8 +328,8 @@ namespace Gecode {
   forceinline
   Action::Action(void) : storage(NULL) {}
 
-  forceinline bool
-  Action::initialized(void) const {
+  forceinline
+  Action::operator bool(void) const {
     return storage != NULL;
   }
 

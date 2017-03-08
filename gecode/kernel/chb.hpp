@@ -123,7 +123,7 @@ namespace Gecode {
     void init(Home home, ViewArray<View>& x,
               typename BranchTraits<typename View::VarType>::Merit bm);
     /// Test whether already initialized
-    bool initialized(void) const;
+    operator bool(void) const;
     /// Default (empty) chb information
     GECODE_KERNEL_EXPORT static const CHB def;
     //@}
@@ -350,8 +350,8 @@ namespace Gecode {
   forceinline
   CHB::CHB(void) : storage(NULL) {}
 
-  forceinline bool
-  CHB::initialized(void) const {
+  forceinline
+  CHB::operator bool(void) const {
     return storage != NULL;
   }
 

@@ -79,17 +79,17 @@ namespace Gecode {
     switch (select()) {
     case SEL_AFC_MIN: case SEL_AFC_MAX:
     case SEL_AFC_SIZE_MIN: case SEL_AFC_SIZE_MAX:
-      if (!_afc.initialized())
+      if (!_afc)
         _afc = IntAFC(home,x,decay());
       break;
     case SEL_ACTION_MIN: case SEL_ACTION_MAX:
     case SEL_ACTION_SIZE_MIN: case SEL_ACTION_SIZE_MAX:
-      if (!_act.initialized())
+      if (!_act)
         _act = IntAction(home,x,decay());
       break;
     case SEL_CHB_MIN: case SEL_CHB_MAX:
     case SEL_CHB_SIZE_MIN: case SEL_CHB_SIZE_MAX:
-      if (!_chb.initialized())
+      if (!_chb)
         _chb = IntCHB(home,x);
       break;
     default: ;
@@ -349,15 +349,15 @@ namespace Gecode {
   BoolVarBranch::expand(Home home, const BoolVarArgs& x) {
     switch (select()) {
     case SEL_AFC_MIN: case SEL_AFC_MAX:
-      if (!_afc.initialized())
+      if (!_afc)
         _afc = BoolAFC(home,x,decay());
       break;
     case SEL_ACTION_MIN: case SEL_ACTION_MAX:
-      if (!_act.initialized())
+      if (!_act)
         _act = BoolAction(home,x,decay());
       break;
     case SEL_CHB_MIN: case SEL_CHB_MAX:
-      if (!_chb.initialized())
+      if (!_chb)
         _chb = BoolCHB(home,x);
       break;
     default: ;

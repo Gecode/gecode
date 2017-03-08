@@ -80,7 +80,7 @@ namespace Gecode {
   inline
   ValBranch<Var>::ValBranch(Rnd r0)
     : r(r0), vf(nullptr), cf(nullptr) {
-    if (!r.initialized())
+    if (!r)
       throw UninitializedRnd("ValBranch::ValBranch");
   }
 

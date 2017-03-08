@@ -134,7 +134,7 @@ namespace Gecode {
   inline
   VarBranch<Var>::VarBranch(AFC a, BranchTbl t)
     : _tbl(t), _decay(1.0), _afc(a) {
-    if (!_afc.initialized())
+    if (!_afc)
       throw UninitializedAFC("VarBranch<Var>::VarBranch");
   }
 
@@ -142,7 +142,7 @@ namespace Gecode {
   inline
   VarBranch<Var>::VarBranch(Action a, BranchTbl t)
     : _tbl(t), _decay(1.0), _act(a) {
-    if (!_act.initialized())
+    if (!_act)
       throw UninitializedAction("VarBranch<Var>::VarBranch");
   }
 
@@ -150,7 +150,7 @@ namespace Gecode {
   inline
   VarBranch<Var>::VarBranch(CHB c, BranchTbl t)
     : _tbl(t), _decay(1.0), _chb(c) {
-    if (!_chb.initialized())
+    if (!_chb)
       throw UninitializedCHB("VarBranch<Var>::VarBranch");
   }
 
@@ -158,7 +158,7 @@ namespace Gecode {
   inline
   VarBranch<Var>::VarBranch(Rnd r)
     : _tbl(nullptr), _rnd(r), _decay(1.0) {
-    if (!_rnd.initialized())
+    if (!_rnd)
       throw UninitializedRnd("VarBranch<Var>::VarBranch");
   }
 

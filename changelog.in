@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module:	kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Replaced initialized() function by operator bool() for RND,
+Action, AFC, CHB.
+
+[ENTRY]
 Module:	set
 What:   new
 Rank:   minor

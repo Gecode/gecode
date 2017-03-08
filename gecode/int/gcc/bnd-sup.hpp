@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Mark datstructure as requiring reinitialization
     void reinit(void);
     /// Test whether already initialized
-    bool initialized(void) const;
+    operator bool(void) const;
     //@}
     /// \name Access
     //@{
@@ -298,8 +298,8 @@ namespace Gecode { namespace Int { namespace GCC {
   PartialSum<Card>::PartialSum(void) : sum(NULL), size(-1) {}
 
   template<class Card>
-  forceinline bool
-  PartialSum<Card>::initialized(void) const {
+  forceinline
+  PartialSum<Card>::operator bool(void) const {
     return size != -1;
   }
   template<class Card>

@@ -319,7 +319,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     /// Construct graph as not yet initialized
     Graph(void);
     /// Test whether graph has been initialized
-    bool initialized(void) const;
+    operator bool(void) const;
     /// Purge graph if necessary (reset information to avoid overflow)
     void purge(void);
   };
