@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Social golfers example now includes a model variant that uses
+integer distinct for ensuring all player-pairs are distinct.
+
+[ENTRY]
 Module:	kernel
 What:   change
 Rank:   minor

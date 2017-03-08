@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
  *  Copyright:
  *     Guido Tack, 2004
+ *     Mikael Lagerkivst, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -84,6 +88,12 @@ public:
     MODEL_PLAIN,   ///< A simple model
     MODEL_SYMMETRY ///< Model with symmetry breaking
   };
+  /// Propagation
+  enum {
+    PROP_SET,   ///< Propagation of pair play amount using set variables
+    PROP_INT,   ///< Propagation of pair play amount using int variables and distinct
+    PROP_MIXED, ///< Propagation of pair play amount using both set and int variables
+  };
   int g; ///< Number of groups in a week
   int s; ///< Number of players in a group
   int w; ///< Number of weeks
@@ -102,11 +112,51 @@ public:
     SetVar allPlayers(*this, 0,g*s-1, 0,g*s-1);
     for (int i=0; i<w; i++)
       rel(*this, setdunion(schedule.row(i)) == allPlayers);
-
+    
     // No two golfers play in the same group more than once
-    for (int i=0; i<groups.size()-1; i++)
-      for (int j=i+1; j<groups.size(); j++)
-        rel(*this, cardinality(groups[i] & groups[j]) <= 1);
+    if (opt.propagation() == PROP_SET || opt.propagation() == PROP_MIXED) {
+      // Cardinality of intersection between two groups is at most one
+      for (int i=0; i<groups.size()-1; i++)
+        for (int j=i+1; j<groups.size(); j++)
+          rel(*this, cardinality(groups[i] & groups[j]) <= 1);
+    }
+    if (opt.propagation() == PROP_INT || opt.propagation() == PROP_MIXED) {
+      // Set up table mapping from pairs (p1,p2) (where p1<p2) of players to
+      // unique integer identifiers
+      int playerCount = g * s;
+      TupleSet ts;
+      int pairCount=0;
+      for (int p1=0; p1<playerCount-1; ++p1) {
+        for (int p2=p1+1; p2<playerCount; ++p2) {
+          ts.add(IntArgs(3,  p1, p2, pairCount++));
+        }
+      }
+      ts.finalize();
+
+      // Collect pairs of golfers into pairs
+      IntVarArgs pairs;
+      for (int i=0; i<groups.size()-1; i++) {
+        // Channel sorted will ensure that for i<j, group[i]<group[j],
+        // ensuring that the tuple set has a valid mapping.
+        IntVarArgs group(*this, s, 0, playerCount-1);
+        channelSorted(*this, group, groups[i]);
+        // Collect all pairs in current group
+        for (int p1=0; p1<group.size()-1; ++p1) {
+          for (int p2=p1+1; p2<group.size(); ++p2) {
+            IntVar pair(*this, 0, pairCount);
+
+            IntVarArgs args;
+            args << group[p1] << group[p2] << pair;
+            extensional(*this, args, ts);
+
+            pairs << pair;
+          }
+        }
+      }
+
+      // All pairs of golfers (using the unique identifiers) must be different 
+      distinct(*this, pairs, opt.ipl());
+    }    
 
     if (opt.model() == MODEL_SYMMETRY) {
 
@@ -183,6 +233,11 @@ main(int argc, char* argv[]) {
   opt.model(Golf::MODEL_PLAIN);
   opt.model(Golf::MODEL_PLAIN, "none", "no symmetry breaking");
   opt.model(Golf::MODEL_SYMMETRY, "symmetry", "static symmetry breaking");
+  opt.propagation(Golf::PROP_SET);
+  opt.propagation(Golf::PROP_SET, "set", "Use set intersection cardinality for pair play constraints");
+  opt.propagation(Golf::PROP_INT, "int", "Use integer distinct for pair play constraints");
+  opt.propagation(Golf::PROP_MIXED, "mixed", "Use set interesection cardinality and integer distinct for pair play constraints");
+  opt.ipl(IPL_DOM);
   opt.solutions(1);
   opt.parse(argc,argv);
   Script::run<Golf,DFS,GolfOptions>(opt);
