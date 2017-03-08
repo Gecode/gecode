@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   forceinline
-  ValSelRangeMin::ValSelRangeMin(Space& home, const ValBranch<Var>& vb)
+  ValSelRangeMin::ValSelRangeMin(Space& home, const ValBranch<IntVar>& vb)
     : ValSel<IntView,int>(home,vb) {}
   forceinline
   ValSelRangeMin::ValSelRangeMin(Space& home, bool shared, ValSelRangeMin& vs)
@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   forceinline
-  ValSelRangeMax::ValSelRangeMax(Space& home, const ValBranch<Var>& vb)
+  ValSelRangeMax::ValSelRangeMax(Space& home, const ValBranch<IntVar>& vb)
     : ValSel<IntView,int>(home,vb) {}
   forceinline
   ValSelRangeMax::ValSelRangeMax(Space& home, bool shared, ValSelRangeMax& vs)

@@ -118,7 +118,7 @@ namespace Gecode {
   template<class Var>
   inline
   VarBranch<Var>::VarBranch(void)
-    : _tbl(NULL), _decay(1.0) {}
+    : _tbl(nullptr), _decay(1.0) {}
 
   template<class Var>
   inline
@@ -157,7 +157,7 @@ namespace Gecode {
   template<class Var>
   inline
   VarBranch<Var>::VarBranch(Rnd r)
-    : _tbl(NULL), _rnd(r), _decay(1.0) {
+    : _tbl(nullptr), _rnd(r), _decay(1.0) {
     if (!_rnd.initialized())
       throw UninitializedRnd("VarBranch<Var>::VarBranch");
   }

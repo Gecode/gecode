@@ -91,7 +91,7 @@ Module:	other
 What:   change
 Rank:   major
 [DESCRIPTION]
-Gecode requires now at least the Microsoft Visual Studio 2015 compiler.
+Gecode requires now at least the Microsoft Visual Studio 2013 compiler.
 
 [ENTRY]
 Module:	kernel

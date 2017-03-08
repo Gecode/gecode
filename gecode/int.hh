@@ -3991,7 +3991,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     IntAction(Home home, const IntVarArgs& x, double d=1.0,
-              IntBranchMerit bm=NULL);
+              IntBranchMerit bm=nullptr);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
@@ -4005,7 +4005,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT void
     init(Home home, const IntVarArgs& x, double d=1.0,
-         IntBranchMerit bm=NULL);
+         IntBranchMerit bm=nullptr);
   };
 
   /**
@@ -4036,7 +4036,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     BoolAction(Home home, const BoolVarArgs& x, double d=1.0,
-               BoolBranchMerit bm=NULL);
+               BoolBranchMerit bm=nullptr);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
@@ -4050,7 +4050,7 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT void
     init(Home home, const BoolVarArgs& x, double d=1.0,
-         BoolBranchMerit bm=NULL);
+         BoolBranchMerit bm=nullptr);
   };
 
 }
@@ -4087,7 +4087,7 @@ namespace Gecode {
      *
      */
     GECODE_INT_EXPORT
-    IntCHB(Home home, const IntVarArgs& x, IntBranchMerit bm=NULL);
+    IntCHB(Home home, const IntVarArgs& x, IntBranchMerit bm=nullptr);
    /**
      * \brief Initialize for integer variables \a x
      *
@@ -4100,7 +4100,7 @@ namespace Gecode {
      *
      */
     GECODE_INT_EXPORT void
-    init(Home home, const IntVarArgs& x, IntBranchMerit bm=NULL);
+    init(Home home, const IntVarArgs& x, IntBranchMerit bm=nullptr);
   };
 
   /**
@@ -4131,7 +4131,7 @@ namespace Gecode {
      *
      */
     GECODE_INT_EXPORT
-    BoolCHB(Home home, const BoolVarArgs& x, BoolBranchMerit bm=NULL);
+    BoolCHB(Home home, const BoolVarArgs& x, BoolBranchMerit bm=nullptr);
    /**
      * \brief Initialize for Boolean variables \a x
      *
@@ -4144,7 +4144,7 @@ namespace Gecode {
      *
      */
     GECODE_INT_EXPORT void
-    init(Home home, const BoolVarArgs& x, BoolBranchMerit bm=NULL);
+    init(Home home, const BoolVarArgs& x, BoolBranchMerit bm=nullptr);
   };
 
 }
@@ -4315,138 +4315,138 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   IntVarBranch INT_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  IntVarBranch INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_MERIT_MIN(IntBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with highest merit according to branch merit function \a bm
-  IntVarBranch INT_VAR_MERIT_MAX(IntBranchMerit bm, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_MERIT_MAX(IntBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with smallest degree
-  IntVarBranch INT_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_DEGREE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree
-  IntVarBranch INT_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_DEGREE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count with decay factor \a d
-  IntVarBranch INT_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count
-  IntVarBranch INT_VAR_AFC_MIN(IntAFC a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_MIN(IntAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count with decay factor \a d
-  IntVarBranch INT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count
-  IntVarBranch INT_VAR_AFC_MAX(IntAFC a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_MAX(IntAFC a, BranchTbl tbl=nullptr);
   /// Select variable with lowest action with decay factor \a d
-  IntVarBranch INT_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with lowest action
-  IntVarBranch INT_VAR_ACTION_MIN(IntAction a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_MIN(IntAction a, BranchTbl tbl=nullptr);
   /// Select variable with highest action with decay factor \a d
-  IntVarBranch INT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with highest action
-  IntVarBranch INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_MAX(IntAction a, BranchTbl tbl=nullptr);
   /// Select variable with lowest CHB Q-score
-  IntVarBranch INT_VAR_CHB_MIN(IntCHB c, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_MIN(IntCHB c, BranchTbl tbl=nullptr);
   /// Select variable with lowest CHB Q-score
-  IntVarBranch INT_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score
-  IntVarBranch INT_VAR_CHB_MAX(IntCHB c, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_MAX(IntCHB c, BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score
-  IntVarBranch INT_VAR_CHB_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest min
-  IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_MIN_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest min
-  IntVarBranch INT_VAR_MIN_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_MIN_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest max
-  IntVarBranch INT_VAR_MAX_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_MAX_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest max
-  IntVarBranch INT_VAR_MAX_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_MAX_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest domain size
-  IntVarBranch INT_VAR_SIZE_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest domain size
-  IntVarBranch INT_VAR_SIZE_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest degree divided by domain size
-  IntVarBranch INT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree divided by domain size
-  IntVarBranch INT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size with decay factor \a d
-  IntVarBranch INT_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size
-  IntVarBranch INT_VAR_AFC_SIZE_MIN(IntAFC a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_SIZE_MIN(IntAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size with decay factor \a d
-  IntVarBranch INT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size
-  IntVarBranch INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_AFC_SIZE_MAX(IntAFC a, BranchTbl tbl=nullptr);
   /// Select variable with smallest action divided by domain size with decay factor \a d
-  IntVarBranch INT_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest action divided by domain size
-  IntVarBranch INT_VAR_ACTION_SIZE_MIN(IntAction a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_SIZE_MIN(IntAction a, BranchTbl tbl=nullptr);
   /// Select variable with largest action divided by domain size with decay factor \a d
-  IntVarBranch INT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest action divided by domain size
-  IntVarBranch INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_ACTION_SIZE_MAX(IntAction a, BranchTbl tbl=nullptr);
   /// Select variable with smallest CHB Q-score divided by domain size
-  IntVarBranch INT_VAR_CHB_SIZE_MIN(IntCHB c, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_SIZE_MIN(IntCHB c, BranchTbl tbl=nullptr);
   /// Select variable with smallest CHB Q-score divided by domain size
-  IntVarBranch INT_VAR_CHB_SIZE_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score divided by domain size
-  IntVarBranch INT_VAR_CHB_SIZE_MAX(IntCHB c, BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_SIZE_MAX(IntCHB c, BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score divided by domain size
-  IntVarBranch INT_VAR_CHB_SIZE_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_CHB_SIZE_MAX(BranchTbl tbl=nullptr);
   /** \brief Select variable with smallest min-regret
    *
    * The min-regret of a variable is the difference between the
    * smallest and second-smallest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MIN_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_REGRET_MIN_MIN(BranchTbl tbl=nullptr);
   /** \brief Select variable with largest min-regret
    *
    * The min-regret of a variable is the difference between the
    * smallest and second-smallest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MIN_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_REGRET_MIN_MAX(BranchTbl tbl=nullptr);
   /** \brief Select variable with smallest max-regret
    *
    * The max-regret of a variable is the difference between the
    * largest and second-largest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MAX_MIN(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_REGRET_MAX_MIN(BranchTbl tbl=nullptr);
   /** \brief Select variable with largest max-regret
    *
    * The max-regret of a variable is the difference between the
    * largest and second-largest value still in the domain.
    */
-  IntVarBranch INT_VAR_REGRET_MAX_MAX(BranchTbl tbl=NULL);
+  IntVarBranch INT_VAR_REGRET_MAX_MAX(BranchTbl tbl=nullptr);
 
   /// Select first unassigned variable
   BoolVarBranch BOOL_VAR_NONE(void);
   /// Select random variable (uniform distribution, for tie breaking)
   BoolVarBranch BOOL_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  BoolVarBranch BOOL_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_MERIT_MIN(BoolBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with highest merit according to branch merit function \a bm
-  BoolVarBranch BOOL_VAR_MERIT_MAX(BoolBranchMerit bm, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_MERIT_MAX(BoolBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with smallest degree
-  BoolVarBranch BOOL_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_DEGREE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree
-  BoolVarBranch BOOL_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_DEGREE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count with decay factor \a d
-  BoolVarBranch BOOL_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count
-  BoolVarBranch BOOL_VAR_AFC_MIN(BoolAFC a, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_AFC_MIN(BoolAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count with decay factor \a d
-  BoolVarBranch BOOL_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count
-  BoolVarBranch BOOL_VAR_AFC_MAX(BoolAFC a, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_AFC_MAX(BoolAFC a, BranchTbl tbl=nullptr);
   /// Select variable with lowest action with decay factor \a d
-  BoolVarBranch BOOL_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with lowest action
-  BoolVarBranch BOOL_VAR_ACTION_MIN(BoolAction a, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_ACTION_MIN(BoolAction a, BranchTbl tbl=nullptr);
   /// Select variable with highest action with decay factor \a d
-  BoolVarBranch BOOL_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with highest action
-  BoolVarBranch BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_ACTION_MAX(BoolAction a, BranchTbl tbl=nullptr);
   /// Select variable with lowest CHB Q-score
-  BoolVarBranch BOOL_VAR_CHB_MIN(BoolCHB c, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_CHB_MIN(BoolCHB c, BranchTbl tbl=nullptr);
   /// Select variable with lowest CHB Q-score
-  BoolVarBranch BOOL_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_CHB_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score
-  BoolVarBranch BOOL_VAR_CHB_MAX(BoolCHB c, BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_CHB_MAX(BoolCHB c, BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score
-  BoolVarBranch BOOL_VAR_CHB_MAX(BranchTbl tbl=NULL);
+  BoolVarBranch BOOL_VAR_CHB_MAX(BranchTbl tbl=nullptr);
   //@}
 
 }
@@ -4555,7 +4555,7 @@ namespace Gecode {
    * a variable \a x must be equal to a value \a n for the first alternative
    * and that \a x must be different from \a n for the second alternative.
    */
-  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c=NULL);
+  IntValBranch INT_VAL(IntBranchVal v, IntBranchCommit c=nullptr);
   /// Try all values starting from smallest
   IntValBranch INT_VALUES_MIN(void);
   /// Try all values starting from largest
@@ -4581,7 +4581,7 @@ namespace Gecode {
    * a variable \a x must be equal to a value \a n for the first alternative
    * and that \a x must be different from \a n for the second alternative.
    */
-  BoolValBranch BOOL_VAL(BoolBranchVal v, BoolBranchCommit c=NULL);
+  BoolValBranch BOOL_VAL(BoolBranchVal v, BoolBranchCommit c=nullptr);
   //@}
 
 }
@@ -4666,7 +4666,7 @@ namespace Gecode {
    * Uses a commit function as default that posts the constraint that
    * a variable \a x must be equal to the value \a n.
    */
-  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=NULL);
+  IntAssign INT_ASSIGN(IntBranchVal v, IntBranchCommit c=nullptr);
 
   /// Select smallest value
   BoolAssign BOOL_ASSIGN_MIN(void);
@@ -4680,7 +4680,7 @@ namespace Gecode {
    * Uses a commit function as default that posts the constraint that
    * a variable \a x must be equal to the value \a n.
    */
-  BoolAssign BOOL_ASSIGN(BoolBranchVal v, BoolBranchCommit c=NULL);
+  BoolAssign BOOL_ASSIGN(BoolBranchVal v, BoolBranchCommit c=nullptr);
   //@}
 
 }
@@ -4696,7 +4696,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -4705,7 +4705,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
    *
@@ -4713,7 +4713,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Home home, IntVar x, IntValBranch vals,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with variable selection \a vars and value selection \a vals
    *
@@ -4722,7 +4722,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          BoolVarBranch vars, BoolValBranch vals,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -4731,7 +4731,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   branch(Home home, const BoolVarArgs& x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
    *
@@ -4739,7 +4739,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   branch(Home home, BoolVar x, BoolValBranch vals,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
 
   /**
    * \brief Assign all \a x with value selection \a vals
@@ -4748,7 +4748,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   assign(Home home, const IntVarArgs& x, IntAssign vals,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
    *
@@ -4756,7 +4756,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   assign(Home home, IntVar x, IntAssign vals,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Assign all \a x with value selection \a vals
    *
@@ -4764,7 +4764,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   assign(Home home, const BoolVarArgs& x, BoolAssign vals,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
    *
@@ -4772,7 +4772,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   assign(Home home, BoolVar x, BoolAssign vals,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
 
 }
 
@@ -4903,7 +4903,7 @@ namespace Gecode {
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Symmetries& syms,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
    * vars and value selection \a vals with symmetry breaking
@@ -4919,7 +4919,7 @@ namespace Gecode {
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          const Symmetries& syms,
-         IntVarValPrint vvp=NULL);
+         IntVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with variable selection \a vars and value
    * selection \a vals with symmetry breaking
@@ -4935,7 +4935,7 @@ namespace Gecode {
   branch(Home home, const BoolVarArgs& x,
          BoolVarBranch vars, BoolValBranch vals,
          const Symmetries& syms,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
    * vars and value selection \a vals with symmetry breaking
@@ -4951,7 +4951,7 @@ namespace Gecode {
   branch(Home home, const BoolVarArgs& x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
          const Symmetries& syms,
-         BoolVarValPrint vvp=NULL);
+         BoolVarValPrint vvp=nullptr);
 }
 
 namespace Gecode {

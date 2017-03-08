@@ -98,7 +98,7 @@ namespace Gecode {
 
   inline IntVarBranch
   INT_VAR_NONE(void) {
-    return IntVarBranch(IntVarBranch::SEL_NONE,NULL);
+    return IntVarBranch(IntVarBranch::SEL_NONE,nullptr);
   }
 
   inline IntVarBranch
@@ -366,7 +366,7 @@ namespace Gecode {
 
   inline BoolVarBranch
   BOOL_VAR_NONE(void) {
-    return BoolVarBranch(BoolVarBranch::SEL_NONE,NULL);
+    return BoolVarBranch(BoolVarBranch::SEL_NONE,nullptr);
   }
 
   inline BoolVarBranch

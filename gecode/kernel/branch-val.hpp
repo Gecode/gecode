@@ -74,12 +74,12 @@ namespace Gecode {
   template<class Var>
   inline
   ValBranch<Var>::ValBranch(void)
-    : vf(NULL), cf(NULL) {}
+    : vf(nullptr), cf(nullptr) {}
 
   template<class Var>
   inline
   ValBranch<Var>::ValBranch(Rnd r0)
-    : r(r0), vf(NULL), cf(NULL) {
+    : r(r0), vf(nullptr), cf(nullptr) {
     if (!r.initialized())
       throw UninitializedRnd("ValBranch::ValBranch");
   }

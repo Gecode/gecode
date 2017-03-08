@@ -98,7 +98,7 @@ namespace Gecode {
 
   inline SetVarBranch
   SET_VAR_NONE(void) {
-    return SetVarBranch(SetVarBranch::SEL_NONE,NULL);
+    return SetVarBranch(SetVarBranch::SEL_NONE,nullptr);
   }
 
   inline SetVarBranch

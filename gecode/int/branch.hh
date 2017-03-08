@@ -376,9 +376,8 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   class ValSelRangeMin : public ValSel<IntView,int> {
   public:
-    using typename ValSel<IntView,int>::Var;
     /// Constructor for initialization
-    ValSelRangeMin(Space& home, const ValBranch<Var>& vb);
+    ValSelRangeMin(Space& home, const ValBranch<IntVar>& vb);
     /// Constructor for cloning
     ValSelRangeMin(Space& home, bool shared, ValSelRangeMin& vs);
     /// Return value of integer view \a x at position \a i
@@ -393,9 +392,8 @@ namespace Gecode { namespace Int { namespace Branch {
    */
   class ValSelRangeMax : public ValSel<IntView,int> {
   public:
-    using typename ValSel<IntView,int>::Var;
     /// Constructor for initialization
-    ValSelRangeMax(Space& home, const ValBranch<Var>& vb);
+    ValSelRangeMax(Space& home, const ValBranch<IntVar>& vb);
     /// Constructor for cloning
     ValSelRangeMax(Space& home, bool shared, ValSelRangeMax& vs);
     /// Return value of integer view \a x at position \a i

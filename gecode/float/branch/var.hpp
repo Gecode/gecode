@@ -99,7 +99,7 @@ namespace Gecode {
 
   inline FloatVarBranch
   FLOAT_VAR_NONE(void) {
-    return FloatVarBranch(FloatVarBranch::SEL_NONE,NULL);
+    return FloatVarBranch(FloatVarBranch::SEL_NONE,nullptr);
   }
 
   inline FloatVarBranch

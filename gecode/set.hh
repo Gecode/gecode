@@ -1211,18 +1211,18 @@ namespace Gecode {
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
-     * If the branch merit function \a bm is different from NULL, the
+     * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      */
     GECODE_SET_EXPORT
     SetAction(Home home, const SetVarArgs& x, double d=1.0,
-                SetBranchMerit bm=NULL);
+                SetBranchMerit bm=nullptr);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
-     * If the branch merit function \a bm is different from NULL, the
+     * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
      *
@@ -1232,7 +1232,7 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT void
     init(Home home, const SetVarArgs& x, double d=1.0,
-         SetBranchMerit bm=NULL);
+         SetBranchMerit bm=nullptr);
   };
 
 }
@@ -1263,17 +1263,17 @@ namespace Gecode {
    /**
      * \brief Initialize for set variables \a x
      *
-     * If the branch merit function \a bm is different from NULL, the
+     * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      */
     GECODE_SET_EXPORT
-    SetCHB(Home home, const SetVarArgs& x, SetBranchMerit bm=NULL);
+    SetCHB(Home home, const SetVarArgs& x, SetBranchMerit bm=nullptr);
    /**
      * \brief Initialize for set variables \a x
      *
-     * If the branch merit function \a bm is different from NULL, the
+     * If the branch merit function \a bm is different from nullptr, the
      * action for each variable is initialized with the merit returned
      * by \a bm.
      *
@@ -1282,7 +1282,7 @@ namespace Gecode {
      *
      */
     GECODE_SET_EXPORT void
-    init(Home home, const SetVarArgs& x, SetBranchMerit bm=NULL);
+    init(Home home, const SetVarArgs& x, SetBranchMerit bm=nullptr);
   };
 
 }
@@ -1374,77 +1374,77 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   SetVarBranch SET_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  SetVarBranch SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with highest merit according to branch merit function \a bm
-  SetVarBranch SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with smallest degree
-  SetVarBranch SET_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree
-  SetVarBranch SET_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count with decay factor \a d
-  SetVarBranch SET_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count
-  SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count with decay factor \a d
-  SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count
-  SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=nullptr);
   /// Select variable with lowest action with decay factor \a d
-  SetVarBranch SET_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with lowest action
-  SetVarBranch SET_VAR_ACTION_MIN(SetAction a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_MIN(SetAction a, BranchTbl tbl=nullptr);
   /// Select variable with highest action with decay factor \a d
-  SetVarBranch SET_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with highest action
-  SetVarBranch SET_VAR_ACTION_MAX(SetAction a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_MAX(SetAction a, BranchTbl tbl=nullptr);
   /// Select variable with lowest CHB Q-score
-  SetVarBranch SET_VAR_CHB_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_MIN(BranchTbl tbl=nullptr);
   /// Select variable with lowest CHB Q-score
-  SetVarBranch SET_VAR_CHB_MIN(SetCHB c, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_MIN(SetCHB c, BranchTbl tbl=nullptr);
   /// Select variable with highest CHB Q-score
-  SetVarBranch SET_VAR_CHB_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_MAX(BranchTbl tbl=nullptr);
   /// Select variable with highest CHB Q-score
-  SetVarBranch SET_VAR_CHB_MAX(SetCHB c, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_MAX(SetCHB c, BranchTbl tbl=nullptr);
   /// Select variable with smallest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest unknown set
-  SetVarBranch SET_VAR_SIZE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest  unknown set
-  SetVarBranch SET_VAR_SIZE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest degree divided by domain size
-  SetVarBranch SET_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree divided by domain size
-  SetVarBranch SET_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size
-  SetVarBranch SET_VAR_AFC_SIZE_MIN(SetAFC a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MIN(SetAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size
-  SetVarBranch SET_VAR_AFC_SIZE_MAX(SetAFC a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MAX(SetAFC a, BranchTbl tbl=nullptr);
   /// Select variable with smallest action divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest action divided by domain size
-  SetVarBranch SET_VAR_ACTION_SIZE_MIN(SetAction a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_SIZE_MIN(SetAction a, BranchTbl tbl=nullptr);
   /// Select variable with largest action divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest action divided by domain size
-  SetVarBranch SET_VAR_ACTION_SIZE_MAX(SetAction a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_ACTION_SIZE_MAX(SetAction a, BranchTbl tbl=nullptr);
   /// Select variable with smallest CHB Q-score divided by domain size
-  SetVarBranch SET_VAR_CHB_SIZE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with smallest CHB Q-score divided by domain size
-  SetVarBranch SET_VAR_CHB_SIZE_MIN(SetCHB c, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_SIZE_MIN(SetCHB c, BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score divided by domain size
-  SetVarBranch SET_VAR_CHB_SIZE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with largest CHB Q-score divided by domain size
-  SetVarBranch SET_VAR_CHB_SIZE_MAX(SetCHB c, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_CHB_SIZE_MAX(SetCHB c, BranchTbl tbl=nullptr);
   //@}
 
 }
@@ -1514,7 +1514,7 @@ namespace Gecode {
    * must be included in the set variable \a x for the first alternative,
    * and that \a n must be excluded from \a x otherwise.
    */
-  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=NULL);
+  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=nullptr);
   //@}
 
 }
@@ -1583,7 +1583,7 @@ namespace Gecode {
    * The default commit function posts the constraint that the value \a n
    * must be included in the set variable \a x.
    */
-  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=NULL);
+  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=nullptr);
   //@}
 
 }
@@ -1600,7 +1600,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -1609,7 +1609,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
    *
@@ -1617,7 +1617,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   branch(Home home, SetVar x, SetValBranch vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Assign all \a x with value selection \a vals
    *
@@ -1625,7 +1625,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
    *
@@ -1633,7 +1633,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   assign(Home home, SetVar x, SetAssign vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
 
 }
 
@@ -1658,7 +1658,7 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
    * vars and value selection \a vals with symmetry breaking
@@ -1669,7 +1669,7 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
 }
 
 namespace Gecode {
