@@ -97,7 +97,7 @@ namespace Gecode {
      */
     void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail=false);
     //@}
 
     /// \name Delta information for advisors
@@ -185,7 +185,7 @@ namespace Gecode {
      */
     void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail=false);
     //@}
 
     /// \name Delta information for advisors
@@ -284,7 +284,7 @@ namespace Gecode {
      */
     void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail=false);
     //@}
 
     /// \name Delta information for advisors
@@ -408,7 +408,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ConstView<View>::cancel(Space&, Advisor&) {
+  ConstView<View>::cancel(Space&, Advisor&, bool) {
   }
   template<class View>
   forceinline void
@@ -501,8 +501,8 @@ namespace Gecode {
   }
   template<class Var>
   forceinline void
-  VarImpView<Var>::cancel(Space& home, Advisor& a) {
-    x->cancel(home,a);
+  VarImpView<Var>::cancel(Space& home, Advisor& a, bool fail) {
+    x->cancel(home,a,fail);
   }
   template<class Var>
   forceinline void
@@ -617,8 +617,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  DerivedView<View>::cancel(Space& home, Advisor& a) {
-    x.cancel(home,a);
+  DerivedView<View>::cancel(Space& home, Advisor& a, bool fail) {
+    x.cancel(home,a,fail);
   }
   template<class View>
   forceinline ModEvent

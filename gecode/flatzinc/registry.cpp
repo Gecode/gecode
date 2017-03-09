@@ -138,7 +138,7 @@ namespace Gecode { namespace FlatZinc {
         if (ce[2]->getBool()) {
           p_int_CMP(s, irt, ce, ann);
         } else {
-          p_int_CMP(s, inverse(irt), ce, ann);
+          p_int_CMP(s, neg(irt), ce, ann);
         }
         return;
       }
@@ -232,7 +232,7 @@ namespace Gecode { namespace FlatZinc {
         if (ce[2]->getBool()) {
           p_int_lin_CMP(s, irt, ce, ann);
         } else {
-          p_int_lin_CMP(s, inverse(irt), ce, ann);
+          p_int_lin_CMP(s, neg(irt), ce, ann);
         }
         return;
       }
@@ -339,7 +339,7 @@ namespace Gecode { namespace FlatZinc {
         if (ce[2]->getBool()) {
           p_bool_lin_CMP(s, irt, ce, ann);
         } else {
-          p_bool_lin_CMP(s, inverse(irt), ce, ann);
+          p_bool_lin_CMP(s, neg(irt), ce, ann);
         }
         return;
       }

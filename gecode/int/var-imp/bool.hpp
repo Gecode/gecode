@@ -397,8 +397,8 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void
-  BoolVarImp::cancel(Space& home, Advisor& a) {
-    BoolVarImpBase::cancel(home,a);
+  BoolVarImp::cancel(Space& home, Advisor& a, bool fail) {
+    BoolVarImpBase::cancel(home,a,fail);
   }
 
   forceinline void

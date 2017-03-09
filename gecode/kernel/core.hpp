@@ -371,7 +371,7 @@ namespace Gecode {
     /// Enter propagator to subscription array
     void enter(Space& home, Propagator* p, PropCond pc);
     /// Enter advisor to subscription array
-    void enter(Space& home, Advisor* a, bool fail);
+    void enter(Space& home, Advisor* a);
     /// Resize subscription array
     void resize(Space& home);
     /// Remove propagator from subscription array
@@ -436,7 +436,7 @@ namespace Gecode {
      */
     void subscribe(Space& home, Advisor& a, bool assigned, bool fail);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail);
 
     /**
      * \brief Return degree (number of subscribed propagators and advisors)
@@ -4222,7 +4222,8 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::enter(Space& home, Advisor* a, bool fail) {
+  VarImp<VIC>::enter(Space& home, Advisor* a) {
+    // Note that a might be a marked pointer
     // Count one new subscription
     home.pc.p.n_sub += 1;
     if ((free_and_bits >> free_bits) == 0)
@@ -4231,8 +4232,7 @@ namespace Gecode {
 
     // Enter subscription
     b.base[entries++] = *actorNonZero(pc_max+1);
-    *actorNonZero(pc_max+1) = static_cast<ActorLink*>
-      (Support::ptrjoin(a,fail ? 1 : 0));
+    *actorNonZero(pc_max+1) = a;
   }
 
   template<class VIC>
@@ -4254,8 +4254,10 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned, bool fail) {
-    if (!assigned)
-      enter(home,&a,fail);
+    if (!assigned) {
+      Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
+      enter(home,ma);
+    }
   }
 
   template<class VIC>
@@ -4309,18 +4311,19 @@ namespace Gecode {
   template<class VIC>
   void
   VarImp<VIC>::remove(Space& home, Advisor* a) {
+    // Note that a might be a marked pointer
     // Find actor in dependency array
     ActorLink** f = actorNonZero(pc_max+1);
 #ifdef GECODE_AUDIT
     while (f < b.base+entries)
-      if (Support::funmark(*f) == a)
+      if (*f == a)
         goto found;
       else
         f++;
     GECODE_NEVER;
   found: ;
 #else
-    while (Support::funmark(*f) != a) f++;
+    while (*f != a) f++;
 #endif
     // Remove actor
     *f = b.base[--entries];
@@ -4330,9 +4333,11 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space& home, Advisor& a) {
-    if (b.base != NULL)
-      remove(home,&a);
+  VarImp<VIC>::cancel(Space& home, Advisor& a, bool fail) {
+    if (b.base != NULL) {
+      Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
+      remove(home,ma);
+    }
   }
 
   template<class VIC>

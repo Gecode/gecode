@@ -673,7 +673,7 @@ namespace Gecode { namespace Int {
      */
     GECODE_INT_EXPORT void subscribe(Space& home, Advisor& a, bool fail);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail);
     //@}
 
     /// \name Variable implementation-dependent propagator support

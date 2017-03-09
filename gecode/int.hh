@@ -915,8 +915,8 @@ namespace Gecode {
   /// Return swapped relation type of \a irt
   IntRelType swap(IntRelType irt);
 
-  /// Return inverse relation type of \a irt
-  IntRelType inverse(IntRelType irt);
+  /// Return negated relation type of \a irt
+  IntRelType neg(IntRelType irt);
 
 }
 

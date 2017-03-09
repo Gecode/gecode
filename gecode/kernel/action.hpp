@@ -393,7 +393,7 @@ namespace Gecode {
     a.~Action();
     // Cancel remaining advisors
     for (Advisors<Idx> as(c); as(); ++as)
-      x[as.advisor().idx()].cancel(home,as.advisor());
+      x[as.advisor().idx()].cancel(home,as.advisor(),true);
     c.dispose(home);
     (void) NaryPropagator<View,PC_GEN_NONE>::dispose(home);
     return sizeof(*this);

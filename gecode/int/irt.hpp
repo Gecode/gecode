@@ -53,7 +53,7 @@ namespace Gecode {
   }
 
   forceinline IntRelType
-  inverse(IntRelType irt) {
+  neg(IntRelType irt) {
     switch (irt) {
       case IRT_EQ: return IRT_NQ;
       case IRT_NQ: return IRT_EQ;

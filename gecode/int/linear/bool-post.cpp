@@ -627,7 +627,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     if (r.var().zero()) {
       if (r.mode() != RM_IMP)
-        post(home,t,n,inverse(irt),c,ipl);
+        post(home,t,n,neg(irt),c,ipl);
       return;
     }
 
