@@ -230,16 +230,6 @@ namespace Gecode {
   }
 
   void
-  rel(Home home, IntVar x, IntRelType rt, SetVar s) {
-    rel(home, s, swap(rt), x);
-  }
-
-  void
-  rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r) {
-    rel(home, s, swap(rt), x, r);
-  }
-
-  void
   min(Home home, SetVar s, IntVar x){
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::MinElement<Set::SetView>::post(home,s,x));

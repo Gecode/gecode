@@ -1691,11 +1691,9 @@ namespace Gecode {
   channel(Home home, BoolVar x0, IntVar x1,
           IntPropLevel ipl=IPL_DEF);
   /// Post domain consistent propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
-  forceinline void
+  void
   channel(Home home, IntVar x0, BoolVar x1,
-          IntPropLevel ipl=IPL_DEF) {
-    channel(home,x1,x0,ipl);
-  }
+          IntPropLevel ipl=IPL_DEF);
   /** \brief Post domain consistent propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
    *
    * Throws an exception of type Int::ArgumentSame, if \a x
@@ -1706,6 +1704,11 @@ namespace Gecode {
           IntPropLevel ipl=IPL_DEF);
   //@}
 
+}
+
+#include <gecode/int/channel.hpp>
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelIntSorted Sorted constraints

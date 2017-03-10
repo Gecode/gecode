@@ -384,7 +384,7 @@ INTHDR0 = \
 	element.hh exception.hpp  gcc.hh linear.hh \
 	reify.hpp propagator.hpp extensional.hh rel.hh \
 	sorted.hh var-imp.hpp view.hpp ipl.hpp irt.hpp \
-	channel.hh channel/dom.hpp channel/val.hpp \
+	channel.hh channel.hpp channel/dom.hpp channel/val.hpp \
 	channel/base.hpp channel/link-single.hpp channel/link-multi.hpp \
 	sequence.hh sequence/int.hpp sequence/view.hpp \
 	sequence/set-op.hpp sequence/violations.hpp \
@@ -556,14 +556,14 @@ SETSRC0 =								 \
 	trace.cpp trace/tracer.cpp \
 	exception.cpp
 SETHDR0 =								     \
-	limits.hpp \
-	view.hpp exception.hpp int.hh element.hh var-imp.hpp                 \
+	limits.hpp                                                           \
+	view.hpp exception.hpp int.hh int.hpp element.hh var-imp.hpp         \
 	int/card.hpp     						     \
 	int/minmax.hpp int/weights.hpp                                       \
 	channel/sorted.hpp channel/int.hpp channel/bool.hpp channel/set.hpp  \
-	element/inter.hpp element/union.hpp             \
+	element/inter.hpp element/union.hpp                                  \
 	element/unionConst.hpp                                               \
-	element/disjoint.hpp array.hpp array-traits.hpp					     \
+	element/disjoint.hpp array.hpp array-traits.hpp		             \
 	var-imp/set.hpp var-imp/integerset.hpp	     			     \
 	var-imp/delta.hpp var-imp/iter.hpp 				     \
 	var/set.hpp var/print.hpp					     \

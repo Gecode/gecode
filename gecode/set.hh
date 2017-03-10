@@ -753,7 +753,7 @@ namespace Gecode {
   rel(Home home, SetVar s, IntRelType rt, IntVar x);
 
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\f$
-  GECODE_SET_EXPORT void
+  void
   rel(Home home, IntVar x, IntRelType rt, SetVar s);
 
   /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ i \sim_{rt} x\right)\equiv r\f$
@@ -761,10 +761,15 @@ namespace Gecode {
   rel(Home home, SetVar s, IntRelType rt, IntVar x, Reify r);
 
   /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\right)\f\equiv r$
-  GECODE_SET_EXPORT void
+  void
   rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r);
-
   //@}
+
+}
+
+#include <gecode/set/int.hpp>
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelSetRelOp Set operation/relation constraints
