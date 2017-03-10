@@ -233,11 +233,7 @@ namespace Test { namespace Branch {
     "INT_VAL_RANGE_MAX",
     "INT_VAL",
     "INT_VALUES_MIN",
-    "INT_VALUES_MAX",
-    "INT_VAL_NEAR_MIN",
-    "INT_VAL_NEAR_MAX",
-    "INT_VAL_NEAR_INC",
-    "INT_VAL_NEAR_DEC",
+    "INT_VALUES_MAX"
   };
   /// Number of integer value selections
   const int n_int_val_branch =
@@ -476,10 +472,6 @@ namespace Test { namespace Branch {
           case  8: ivb = INT_VAL(&int_val); break;
           case  9: ivb = INT_VALUES_MIN(); break;
           case 10: ivb = INT_VALUES_MAX(); break;
-          case 11: ivb = INT_VAL_NEAR_MIN(d); break;
-          case 12: ivb = INT_VAL_NEAR_MAX(d); break;
-          case 13: ivb = INT_VAL_NEAR_INC(d); break;
-          case 14: ivb = INT_VAL_NEAR_DEC(d); break;
           }
 
           IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
