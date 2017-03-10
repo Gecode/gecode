@@ -73,6 +73,16 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: int
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+The integer value selections INT_VAL_NEAR_MIN(),
+INT_VAL_NEAR_MAX(), INT_VAL_NEAR_INC(), and INT_VAL_NEAR_DEC()
+have been removed. It is much better to use LNS (large
+neighbourhood search), see MPG for details.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   minor

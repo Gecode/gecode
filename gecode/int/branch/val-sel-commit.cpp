@@ -76,36 +76,6 @@ namespace Gecode { namespace Int { namespace Branch {
         return new (home)
           ValSelCommit<ValSelFunction<IntView>,ValCommitFunction<IntView> >(home,ivb);
       }
-    case IntValBranch::SEL_NEAR_MIN:
-    case IntValBranch::SEL_NEAR_MAX:
-    case IntValBranch::SEL_NEAR_INC:
-    case IntValBranch::SEL_NEAR_DEC:
-      {
-        IntSharedArray v(ivb.values());
-        if (n != v.size())
-          throw ArgumentSizeMismatch("Int::branch");
-        for (int i=n; i--; )
-          Limits::check(v[i],"Int::branch");
-        switch (ivb.select()) {
-        case IntValBranch::SEL_NEAR_MIN:
-          return new (home)
-            ValSelCommit<ValSelNearMinMax<IntView,true>,
-             ValCommitEq<IntView> >(home,ivb);
-        case IntValBranch::SEL_NEAR_MAX:
-          return new (home)
-            ValSelCommit<ValSelNearMinMax<IntView,false>,
-             ValCommitEq<IntView> >(home,ivb);
-        case IntValBranch::SEL_NEAR_INC:
-          return new (home)
-            ValSelCommit<ValSelNearIncDec<IntView,true>,
-             ValCommitEq<IntView> >(home,ivb);
-        case IntValBranch::SEL_NEAR_DEC:
-          return new (home)
-            ValSelCommit<ValSelNearIncDec<IntView,false>,
-             ValCommitEq<IntView> >(home,ivb);
-        default: GECODE_NEVER;
-        }
-      }
     default:
       throw UnknownBranching("Int::branch");
     }

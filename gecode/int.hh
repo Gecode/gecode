@@ -4489,15 +4489,9 @@ namespace Gecode {
       SEL_RANGE_MAX,  ///< Select the largest range of the variable domain if it has several ranges, otherwise select values greater than mean of smallest and largest value
       SEL_VAL_COMMIT, ///< Select value according to user-defined functions
       SEL_VALUES_MIN, ///< Select all values starting from smallest
-      SEL_VALUES_MAX, ///< Select all values starting from largest
-      SEL_NEAR_MIN,   ///< Select value nearest to a given value, use smaller one in case of ties
-      SEL_NEAR_MAX,   ///< Select value nearest to a given value, use larger one in case of ties
-      SEL_NEAR_INC,   ///< Select value near to a given value, increment values first
-      SEL_NEAR_DEC    ///< Select value near to a given value, decrement values first
+      SEL_VALUES_MAX  ///< Select all values starting from largest
    };
   protected:
-    /// Array of values for near strategies
-    IntSharedArray n;
     /// Which value to select
     Select s;
   public:
@@ -4507,12 +4501,8 @@ namespace Gecode {
     IntValBranch(Rnd r);
     /// Initialize with value function \a f and commit function \a c
     IntValBranch(IntBranchVal v, IntBranchCommit c);
-    /// Initialize with selection startegy \a s and values \a n
-    IntValBranch(Select s, IntSharedArray n);
     /// Return selection strategy
     Select select(void) const;
-    /// Return shared array of values
-    IntSharedArray values(void) const;
   };
 
   /**
@@ -4575,14 +4565,6 @@ namespace Gecode {
   IntValBranch INT_VALUES_MIN(void);
   /// Try all values starting from largest
   IntValBranch INT_VALUES_MAX(void);
-  /// Try value nearest to a given value for a variable, in case of ties use the smaller value
-  IntValBranch INT_VAL_NEAR_MIN(IntSharedArray n);
-  /// Try value nearest to a given value for a variable, in case of ties use the larger value
-  IntValBranch INT_VAL_NEAR_MAX(IntSharedArray n);
-  /// Try value larger than a given value for a variable first
-  IntValBranch INT_VAL_NEAR_INC(IntSharedArray n);
-  /// Try value smaller than a given value for a variable first
-  IntValBranch INT_VAL_NEAR_DEC(IntSharedArray n);
 
   /// Select smallest value
   BoolValBranch BOOL_VAL_MIN(void);

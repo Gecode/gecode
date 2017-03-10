@@ -400,56 +400,6 @@ namespace Gecode { namespace Int { namespace Branch {
     int val(const Space& home, IntView x, int i);
   };
 
-  /**
-   * \brief Value selection class for nearest value
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntValSel
-   */
-  template<class View, bool min>
-  class ValSelNearMinMax : public ValSel<View,int> {
-    using typename ValSel<View,int>::Var;
-  protected:
-    /// The used values
-    IntSharedArray c;
-  public:
-    /// Constructor for initialization
-    ValSelNearMinMax(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelNearMinMax(Space& home, bool shared, ValSelNearMinMax& vs);
-    /// Return value of view \a x at position \a i
-    int val(const Space& home, View x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete value selection
-    void dispose(Space& home);
-  };
-
-  /**
-   * \brief Value selection class for nearest value
-   *
-   * Requires \code #include <gecode/int/branch.hh> \endcode
-   * \ingroup FuncIntValSel
-   */
-  template<class View, bool inc>
-  class ValSelNearIncDec : public ValSel<View,int> {
-    using typename ValSel<View,int>::Var;
-  protected:
-    /// The used values
-    IntSharedArray c;
-  public:
-    /// Constructor for initialization
-    ValSelNearIncDec(Space& home, const ValBranch<Var>& vb);
-    /// Constructor for cloning
-    ValSelNearIncDec(Space& home, bool shared, ValSelNearIncDec& vs);
-    /// Return value of view \a x at position \a i
-    int val(const Space& home, View x, int i);
-    /// Whether dispose must always be called (that is, notice is needed)
-    bool notice(void) const;
-    /// Delete value selection
-    void dispose(Space& home);
-  };
-
 }}}
 
 #include <gecode/int/branch/val-sel.hpp>
