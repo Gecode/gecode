@@ -43,20 +43,10 @@ namespace Gecode {
   abs(Home home, IntVar x0, IntVar x1, IntPropLevel ipl) {
     using namespace Int;
     GECODE_POST;
-    switch (vbd(ipl)) {
-    case IPL_VAL:
-      GECODE_ES_FAIL((Arithmetic::AbsBnd<IntView,PC_INT_VAL>
-                      ::post(home,x0,x1)));
-      break;
-    case IPL_BND:
-    case IPL_DEF:
-      GECODE_ES_FAIL((Arithmetic::AbsBnd<IntView,PC_INT_BND>
-                      ::post(home,x0,x1)));
-      break;
-    case IPL_DOM:
+    if (vbd(ipl) == IPL_DOM) {
       GECODE_ES_FAIL(Arithmetic::AbsDom<IntView>::post(home,x0,x1));
-      break;
-    default: GECODE_NEVER;
+    } else {
+      GECODE_ES_FAIL(Arithmetic::AbsBnd<IntView>::post(home,x0,x1));
     }
   }
 

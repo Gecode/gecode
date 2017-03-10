@@ -59,11 +59,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * Requires \code #include <gecode/int/arithmetic.hh> \endcode
    * \ingroup FuncIntProp
    */
-  template<class View, PropCond pc>
-  class AbsBnd : public BinaryPropagator<View,pc> {
+  template<class View>
+  class AbsBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
-    using BinaryPropagator<View,pc>::x0;
-    using BinaryPropagator<View,pc>::x1;
+    using BinaryPropagator<View,PC_INT_BND>::x0;
+    using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
     AbsBnd(Space& home, bool share, AbsBnd& p);
