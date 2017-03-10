@@ -45,9 +45,9 @@
 namespace Gecode {
 
   void
-  rel(Home home, SetVar s, IntRelType r, IntVar x) {
+  rel(Home home, SetVar s, IntRelType rt, IntVar x) {
     GECODE_POST;
-    switch (r) {
+    switch (rt) {
     case IRT_EQ:
       {
         Gecode::Int::IntView xv(x);
@@ -104,9 +104,139 @@ namespace Gecode {
 
   }
 
+}
+
+namespace Gecode { namespace Set { namespace Int {
+
+  /// Reify \a m to be the minimum of \a s
+  void remin(Home home, SetVar s, IntVar m, Reify r) {
+    IntVar c(home, 0, static_cast<int>(Set::Limits::card));
+    cardinality(home, s, c);
+    // Whether set is not empty
+    BoolVar ne(home, 0, 1);
+    rel(home, c, IRT_GR, 0, ne);
+    if (r.mode() != RM_PMI)
+      rel(home, r.var(), BOT_IMP, ne, 1);
+    min(home, s, m, ne);
+  }
+
+  /// Reify \a m to be the maximum of \a s
+  void remax(Home home, SetVar s, IntVar m, Reify r) {
+    IntVar c(home, 0, static_cast<int>(Set::Limits::card));
+    cardinality(home, s, c);
+    // Whether set is not empty
+    BoolVar ne(home, 0, 1);
+    rel(home, c, IRT_GR, 0, ne);
+    if (r.mode() != RM_PMI)
+      rel(home, r.var(), BOT_IMP, ne, 1);
+    max(home, s, m, ne);
+  }
+
+}}}
+
+namespace Gecode {
+
   void
-  rel(Home home, IntVar x, IntRelType r, SetVar s) {
-    rel(home, s, swap(r), x);
+  rel(Home home, SetVar s, IntRelType rt, IntVar x, Reify r) {
+    GECODE_POST;
+    switch (rt) {
+    case IRT_EQ:
+      {
+        Gecode::Int::IntView xv(x);
+        Set::SingletonView xs(xv);
+        switch (r.mode()) {
+        case RM_EQV:
+          GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView,Set::SingletonView,
+                          Gecode::Int::BoolView,RM_EQV>
+                          ::post(home,s,xs,r.var())));
+          break;
+        case RM_IMP:
+          GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView,Set::SingletonView,
+                          Gecode::Int::BoolView,RM_IMP>
+                          ::post(home,s,xs,r.var())));
+          break;
+        case RM_PMI:
+          GECODE_ES_FAIL((Set::Rel::ReEq<Set::SetView,Set::SingletonView,
+                          Gecode::Int::BoolView,RM_PMI>
+                          ::post(home,s,xs,r.var())));
+          break;
+        default:
+          throw Gecode::Int::UnknownReifyMode("Set::rel");
+        }
+      }
+      break;
+    case IRT_NQ:
+      {
+        IntVar c(home, 0, static_cast<int>(Set::Limits::card));
+        cardinality(home, s, c);
+        // Whether set is not empty
+        BoolVar ne(home, 0 , 1);
+        rel(home, c, IRT_GR, 0, ne);
+        // Whether {x} is a subset of s
+        BoolVar ss(home, 0 , 1);
+        rel(home, x, SRT_SUB, s, ss);
+        BoolVar b;
+        switch (r.mode()) {
+        case RM_EQV:
+          b=r.var();
+          break;
+        case RM_IMP:
+          b=BoolVar(home, 0, 1);
+          rel(home, r.var(), BOT_IMP, b, 1);
+          break;
+        case RM_PMI:
+          b=BoolVar(home, 0, 1);
+          rel(home, b, BOT_IMP, r.var(), 1);
+          break;
+        default:
+          throw Gecode::Int::UnknownReifyMode("Set::rel");
+        }
+        BoolVarArgs p(1); p[0]=ne;
+        BoolVarArgs n(1); n[0]=ss;
+        clause(home, BOT_AND, p, n, b);
+      }
+      break;
+    case IRT_LQ:
+      {
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
+        rel(home, tmp, IRT_LQ, x, r);
+        Gecode::Set::Int::remax(home, s, tmp, r);
+      }
+      break;
+    case IRT_LE:
+      {
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
+        rel(home, tmp, IRT_LE, x, r);
+        Gecode::Set::Int::remax(home, s, tmp, r);
+      }
+      break;
+    case IRT_GQ:
+      {
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
+        rel(home, tmp, IRT_GQ, x, r);
+        Gecode::Set::Int::remin(home, s, tmp, r);
+      }
+      break;
+    case IRT_GR:
+      {
+        IntVar tmp(home, Int::Limits::min, Int::Limits::max);
+        rel(home, tmp, IRT_GR, x, r);
+        Gecode::Set::Int::remin(home, s, tmp, r);
+      }
+      break;
+    default:
+      throw Int::UnknownRelation("Set::rel");
+    }
+  }
+
+  void
+  rel(Home home, IntVar x, IntRelType rt, SetVar s) {
+    rel(home, s, swap(rt), x);
+  }
+
+  void
+  rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r) {
+    rel(home, s, swap(rt), x, r);
   }
 
   void

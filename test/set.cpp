@@ -197,6 +197,11 @@ namespace Test { namespace Set {
     }
   }
 
+  bool
+  SetTestSpace::subsumed(bool b) {
+    return b ? (propagators() == 0) : true;
+  }
+
   void
   SetTestSpace::rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is) {
     if (opt.log) {
@@ -762,7 +767,7 @@ if (!(T)) {                                                     \
         sc->assign(a);
         if (is_sol) {
           CHECK_TEST(!sc->failed(), "Failed on solution");
-          CHECK_TEST(sc->propagators()==0, "No subsumption");
+          CHECK_TEST(sc->subsumed(testsubsumed), "No subsumption");
         } else {
           CHECK_TEST(sc->failed(), "Solved on non-solution");
         }
@@ -777,7 +782,7 @@ if (!(T)) {                                                     \
         s->enable();
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
         } else {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
@@ -790,7 +795,7 @@ if (!(T)) {                                                     \
         s->post();
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
         } else {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
@@ -809,7 +814,7 @@ if (!(T)) {                                                     \
         s->assign(a);
         if (is_sol) {
           CHECK_TEST(!s->failed(), "Failed on solution");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
         } else {
           CHECK_TEST(s->failed(), "Solved on non-solution");
         }
@@ -844,7 +849,7 @@ if (!(T)) {                                                     \
           s->rel(is_sol);
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (rewrite after post, =>)");
@@ -854,7 +859,7 @@ if (!(T)) {                                                     \
           s->rel(is_sol);
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (rewrite after post, <=)");
@@ -864,7 +869,7 @@ if (!(T)) {                                                     \
           s->rel(is_sol);
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
         }
         {
@@ -884,7 +889,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           if (is_sol) {
             CHECK_TEST(!s->failed(), "Failed");
-            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           } else {
             CHECK_TEST(s->failed(), "Not failed");
           }
@@ -900,7 +905,7 @@ if (!(T)) {                                                     \
             CHECK_TEST(s->failed(), "Not failed");
           } else {
             CHECK_TEST(!s->failed(), "Failed");
-            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           }
           delete s;
         }
@@ -911,7 +916,7 @@ if (!(T)) {                                                     \
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (immediate rewrite, =>)");
@@ -921,7 +926,7 @@ if (!(T)) {                                                     \
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (immediate rewrite, <=)");
@@ -931,7 +936,7 @@ if (!(T)) {                                                     \
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           delete s;
         }
         START_TEST("Assignment reified (immediate failure, <=>)");
@@ -951,7 +956,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           if (is_sol) {
             CHECK_TEST(!s->failed(), "Failed");
-            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           } else {
             CHECK_TEST(s->failed(), "Not failed");
           }
@@ -967,7 +972,7 @@ if (!(T)) {                                                     \
             CHECK_TEST(s->failed(), "Not failed");
           } else {
             CHECK_TEST(!s->failed(), "Failed");
-            CHECK_TEST(s->propagators()==0, "No subsumption");
+            CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           }
           delete s;
         }
@@ -977,7 +982,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (is_sol) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -992,7 +997,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
           } else {
@@ -1007,7 +1012,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           s->post();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -1022,7 +1027,7 @@ if (!(T)) {                                                     \
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (is_sol) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -1037,7 +1042,7 @@ if (!(T)) {                                                     \
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
           } else {
@@ -1052,7 +1057,7 @@ if (!(T)) {                                                     \
           s->post();
           s->assign(a);
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -1069,7 +1074,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           s->enable();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (is_sol) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -1086,7 +1091,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           s->enable();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
           } else {
@@ -1103,7 +1108,7 @@ if (!(T)) {                                                     \
           s->assign(a);
           s->enable();
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -1124,7 +1129,7 @@ if (!(T)) {                                                     \
               goto failed;
             }
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
           if (is_sol) {
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");
@@ -1138,14 +1143,15 @@ if (!(T)) {                                                     \
           SetTestSpace* s = new SetTestSpace(arity,lub,withInt,this,RM_IMP);
           s->post();
           while (!s->failed() &&
-                 (!s->assigned() || (!is_sol && !s->r.var().assigned())))
+                 (!s->assigned() || (!is_sol && !s->r.var().assigned()))) {
             if (!s->prune(a)) {
               problem = "No fixpoint";
               delete s;
               goto failed;
             }
+          }
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(!s->r.var().assigned(), "Control variable assigned");
           } else {
@@ -1166,7 +1172,7 @@ if (!(T)) {                                                     \
               goto failed;
             }
           CHECK_TEST(!s->failed(), "Failed");
-          CHECK_TEST(s->propagators()==0, "No subsumption");
+          CHECK_TEST(s->subsumed(testsubsumed), "No subsumption");
           if (is_sol) {
             CHECK_TEST(s->r.var().assigned(), "Control variable unassigned");
             CHECK_TEST(s->r.var().val()==1, "Zero on solution");

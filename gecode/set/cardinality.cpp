@@ -74,7 +74,7 @@ namespace Gecode {
 
   void
   cardinality(Home home, SetVar s, IntVar x, Reify r) {
-    IntVar y(home, 0, Set::Limits::card);
+    IntVar y(home, 0, static_cast<int>(Set::Limits::card));
     rel(home, x, IRT_EQ, y, r);
     cardinality(home, s, y);
   }

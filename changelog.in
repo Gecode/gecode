@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added reified versions of relation constraints between a set and
+an integer variable.
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor

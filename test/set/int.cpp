@@ -222,22 +222,23 @@ namespace Test { namespace Set {
     /// %Test for relation constraint
     class Rel : public SetTest {
     private:
+      /// The set relation type
       Gecode::SetRelType srt;
-      bool inverse;
+      /// Whether relation is swapped
+      bool swapped;
     public:
       /// Create and register test
-      Rel(Gecode::SetRelType srt0, bool inverse0)
-        : SetTest("Int::Rel::"+str(srt0)+(inverse0 ? "::i" : ""),
-                  1,ds_33,true,1)
-        , srt(srt0)
-        , inverse(inverse0) {}
+      Rel(Gecode::SetRelType srt0, bool s)
+        : SetTest("Int::Rel::"+str(srt0)+(s ? "::s" : ""),
+                  1,ds_33,true,1),
+          srt(srt0), swapped(s) {}
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr(x.lub, x[0]);
         IntSet is(x.intval(), x.intval());
         IntSetRanges dr(is);
         Gecode::SetRelType rsrt = srt;
-        if (inverse) {
+        if (swapped) {
           switch (srt) {
             case SRT_SUB: rsrt = SRT_SUP; break;
             case SRT_SUP: rsrt = SRT_SUB; break;
@@ -266,15 +267,15 @@ namespace Test { namespace Set {
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
-        if (!inverse)
+        if (!swapped)
           Gecode::rel(home, x[0], srt, y[0]);
         else
           Gecode::rel(home, y[0], srt, x[0]);
       }
-      /// Post reified constraint on \a x for \a b
+      /// Post reified constraint on \a x for \a r
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
                         Reify r) {
-        if (!inverse)
+        if (!swapped)
           Gecode::rel(home, x[0], srt, y[0], r);
         else
           Gecode::rel(home, y[0], srt, x[0], r);
@@ -286,31 +287,34 @@ namespace Test { namespace Set {
     Rel _rel_sup(Gecode::SRT_SUP,false);
     Rel _rel_disj(Gecode::SRT_DISJ,false);
     Rel _rel_cmpl(Gecode::SRT_CMPL,false);
-    Rel _rel_eqi(Gecode::SRT_EQ,true);
-    Rel _rel_nqi(Gecode::SRT_NQ,true);
-    Rel _rel_subi(Gecode::SRT_SUB,true);
-    Rel _rel_supi(Gecode::SRT_SUP,true);
-    Rel _rel_disji(Gecode::SRT_DISJ,true);
-    Rel _rel_cmpli(Gecode::SRT_CMPL,true);
+    Rel _rel_eqs(Gecode::SRT_EQ,true);
+    Rel _rel_nqs(Gecode::SRT_NQ,true);
+    Rel _rel_subs(Gecode::SRT_SUB,true);
+    Rel _rel_sups(Gecode::SRT_SUP,true);
+    Rel _rel_disjs(Gecode::SRT_DISJ,true);
+    Rel _rel_cmpls(Gecode::SRT_CMPL,true);
 
     /// %Test for integer relation constraint
     class IntRel : public SetTest {
     private:
+      /// The integer relation type
       Gecode::IntRelType irt;
-      bool inverse;
+      /// Whether the arguments are swapped
+      bool swapped;
     public:
       /// Create and register test
-      IntRel(Gecode::IntRelType irt0, bool inverse0)
+      IntRel(Gecode::IntRelType irt0, bool s)
         : SetTest("Int::IntRel::"+Test::Int::Test::str(irt0)+
-                  (inverse0 ? "::i" : ""),1,ds_33,false,1)
-        , irt(irt0)
-        , inverse(inverse0) {}
+                  (s ? "::s" : ""),1,ds_33,true,1),
+          irt(irt0), swapped(s) {
+        testsubsumed = false;
+      }
       /// %Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetValues xr(x.lub, x[0]);
         if (!xr())
           return false;
-        for (; xr(); ++xr) {
+        for (; xr(); ++xr)
           switch (irt) {
           case Gecode::IRT_EQ:
             if (xr.val() != x.intval()) return false;
@@ -319,34 +323,41 @@ namespace Test { namespace Set {
             if (xr.val() == x.intval()) return false;
             break;
           case Gecode::IRT_GR:
-            if (!inverse && xr.val() <= x.intval()) return false;
-            if (inverse && xr.val() >= x.intval()) return false;
+            if (!swapped && xr.val() <= x.intval()) return false;
+            if (swapped && xr.val() >= x.intval()) return false;
             break;
           case Gecode::IRT_GQ:
-            if (!inverse && xr.val() < x.intval()) return false;
-            if (inverse && xr.val() > x.intval()) return false;
+            if (!swapped && xr.val() < x.intval()) return false;
+            if (swapped && xr.val() > x.intval()) return false;
             break;
           case Gecode::IRT_LE:
-            if (!inverse && xr.val() >= x.intval()) return false;
-            if (inverse && xr.val() <= x.intval()) return false;
+            if (!swapped && xr.val() >= x.intval()) return false;
+            if (swapped && xr.val() <= x.intval()) return false;
             break;
           case Gecode::IRT_LQ:
-            if (!inverse && xr.val() > x.intval()) return false;
-            if (inverse && xr.val() < x.intval()) return false;
+            if (!swapped && xr.val() > x.intval()) return false;
+            if (swapped && xr.val() < x.intval()) return false;
             break;
           default:
             GECODE_NEVER;
             return false;
           }
-        }
         return true;
       }
       /// Post constraint on \a x
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y) {
-        if (!inverse)
+        if (!swapped)
           Gecode::rel(home, x[0], irt, y[0]);
         else
           Gecode::rel(home, y[0], irt, x[0]);
+      }
+      /// Post reified constraint on \a x for \a r
+      virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
+                        Reify r) {
+        if (!swapped)
+          Gecode::rel(home, x[0], irt, y[0], r);
+        else
+          Gecode::rel(home, y[0], irt, x[0], r);
       }
     };
     IntRel _intrel_eq(Gecode::IRT_EQ,false);
@@ -355,12 +366,12 @@ namespace Test { namespace Set {
     IntRel _intrel_gq(Gecode::IRT_GQ,false);
     IntRel _intrel_le(Gecode::IRT_LE,false);
     IntRel _intrel_lq(Gecode::IRT_LQ,false);
-    IntRel _intrel_eqi(Gecode::IRT_EQ,true);
-    IntRel _intrel_nqi(Gecode::IRT_NQ,true);
-    IntRel _intrel_gri(Gecode::IRT_GR,true);
-    IntRel _intrel_gqi(Gecode::IRT_GQ,true);
-    IntRel _intrel_lei(Gecode::IRT_LE,true);
-    IntRel _intrel_lqi(Gecode::IRT_LQ,true);
+    IntRel _intrel_eqs(Gecode::IRT_EQ,true);
+    IntRel _intrel_nqs(Gecode::IRT_NQ,true);
+    IntRel _intrel_grs(Gecode::IRT_GR,true);
+    IntRel _intrel_gqs(Gecode::IRT_GQ,true);
+    IntRel _intrel_les(Gecode::IRT_LE,true);
+    IntRel _intrel_lqs(Gecode::IRT_LQ,true);
 
 
     template<class I>

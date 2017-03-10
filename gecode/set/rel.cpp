@@ -126,10 +126,10 @@ namespace Gecode { namespace Set {
       }
       break;
     case SRT_SUB:
-      GECODE_ES_FAIL((ReSubset<View0,View1,rm>::post(home, x,y,b)));
+      GECODE_ES_FAIL((ReSubset<View0,View1,Gecode::Int::BoolView,rm>::post(home, x,y,b)));
       break;
     case SRT_SUP:
-      GECODE_ES_FAIL((ReSubset<View1,View0,rm>::post(home, y,x,b)));
+      GECODE_ES_FAIL((ReSubset<View1,View0,Gecode::Int::BoolView,rm>::post(home, y,x,b)));
       break;
     case SRT_DISJ:
       {
@@ -137,7 +137,8 @@ namespace Gecode { namespace Set {
         // ( y <= complement(x) ) <=> b
 
         ComplementView<View0> xc(x);
-        GECODE_ES_FAIL((ReSubset<View1,ComplementView<View0>,rm>
+        GECODE_ES_FAIL((ReSubset<View1,ComplementView<View0>,
+                        Gecode::Int::BoolView,rm>
                         ::post(home, y, xc, b)));
       }
       break;

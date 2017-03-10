@@ -515,17 +515,20 @@ namespace Gecode {
         case RM_EQV:
           GECODE_ES_FAIL(
             (Set::Rel::ReSubset<Set::SetView,
-             Set::ConstSetView,RM_EQV>::post(home, s, cv, r.var())));
+             Set::ConstSetView,Gecode::Int::BoolView,RM_EQV>
+             ::post(home, s, cv, r.var())));
           break;
         case RM_IMP:
           GECODE_ES_FAIL(
             (Set::Rel::ReSubset<Set::SetView,
-             Set::ConstSetView,RM_IMP>::post(home, s, cv, r.var())));
+             Set::ConstSetView,Gecode::Int::BoolView,RM_IMP>
+             ::post(home, s, cv, r.var())));
           break;
         case RM_PMI:
           GECODE_ES_FAIL(
             (Set::Rel::ReSubset<Set::SetView,
-             Set::ConstSetView,RM_PMI>::post(home, s, cv, r.var())));
+             Set::ConstSetView,Gecode::Int::BoolView,RM_PMI>
+             ::post(home, s, cv, r.var())));
           break;
         default: throw Gecode::Int::UnknownReifyMode("Set::dom");
         }
@@ -537,17 +540,20 @@ namespace Gecode {
         switch (r.mode()) {
         case RM_EQV:
           GECODE_ES_FAIL(
-            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,RM_EQV>
+            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,
+             Gecode::Int::BoolView,RM_EQV>
             ::post(home, cv, s, r.var())));
           break;
         case RM_IMP:
           GECODE_ES_FAIL(
-            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,RM_IMP>
+            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,
+             Gecode::Int::BoolView,RM_IMP>
             ::post(home, cv, s, r.var())));
           break;
         case RM_PMI:
           GECODE_ES_FAIL(
-            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,RM_PMI>
+            (Set::Rel::ReSubset<Set::ConstSetView,Set::SetView,
+             Gecode::Int::BoolView,RM_PMI>
             ::post(home, cv, s, r.var())));
           break;
         default: throw Gecode::Int::UnknownReifyMode("Set::dom");
@@ -568,17 +574,20 @@ namespace Gecode {
         case RM_EQV:
           GECODE_ES_FAIL(
             (Set::Rel::ReSubset<Set::SetView,
-             Set::ConstSetView,RM_EQV>::post(home, s, cvcompl, r.var())));
+             Set::ConstSetView,Gecode::Int::BoolView,RM_EQV>
+             ::post(home, s, cvcompl, r.var())));
           break;
         case RM_IMP:
           GECODE_ES_FAIL(
             (Set::Rel::ReSubset<Set::SetView,
-             Set::ConstSetView,RM_IMP>::post(home, s, cvcompl, r.var())));
+             Set::ConstSetView,Gecode::Int::BoolView,RM_IMP>
+             ::post(home, s, cvcompl, r.var())));
           break;
         case RM_PMI:
           GECODE_ES_FAIL(
             (Set::Rel::ReSubset<Set::SetView,
-             Set::ConstSetView,RM_PMI>::post(home, s, cvcompl, r.var())));
+             Set::ConstSetView,Gecode::Int::BoolView,RM_PMI>
+             ::post(home, s, cvcompl, r.var())));
           break;
         default: throw Gecode::Int::UnknownReifyMode("Set::dom");
         }
