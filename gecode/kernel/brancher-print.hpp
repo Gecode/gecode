@@ -138,7 +138,7 @@ namespace Gecode {
   template<class View, class Val>
   forceinline void
   BrancherPrint<View,Val>::dispose(Space&) {
-    p.~SharedData<VarValPrint>();
+    p.~SharedData<VarValPrint<Var,Val>>();
   }
 
 
