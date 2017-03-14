@@ -104,6 +104,24 @@ namespace Gecode {
   }
 
   void
+  StdSetTracer::fail(const Space&, const SetTraceRecorder& t) {
+    os << "trace<Set>::fail(id:" << t.id();
+    if (t.group().in())
+      os << ",g:";t.group().id();
+    os << ") slack: ";
+    double sl_i = static_cast<double>(t.slack().initial());
+    double sl_p = static_cast<double>(t.slack().previous());
+    double sl_c = static_cast<double>(t.slack().current());
+    double p_c = 100.0 * (sl_c / sl_i);
+    double p_d = 100.0 * (sl_p / sl_i) - p_c;
+    os << std::showpoint << std::setprecision(4)
+       << p_c << "% - "
+       << std::showpoint << std::setprecision(4)
+       << p_d << '%'
+       << std::endl;
+  }
+
+  void
   StdSetTracer::done(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::done(id:" << t.id();
     if (t.group().in())

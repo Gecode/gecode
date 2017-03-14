@@ -344,6 +344,7 @@ namespace Gecode {
           if      (!strncmp("init",a,e))    { cur |= TE_INIT; }
           else if (!strncmp("prune",a,e))   { cur |= TE_PRUNE; }
           else if (!strncmp("fix",a,e))     { cur |= TE_FIX; }
+          else if (!strncmp("fail",a,e))    { cur |= TE_FAIL; }
           else if (!strncmp("done",a,e))    { cur |= TE_DONE ; }
           else if (!strncmp("none",a,e) ||
                    !strncmp("false",a,e) ||
@@ -352,6 +353,7 @@ namespace Gecode {
                    !strncmp("1",a,e))       { cur = (TE_INIT |
                                                      TE_PRUNE |
                                                      TE_FIX |
+                                                     TE_FAIL |
                                                      TE_DONE); }
           else {
             std::cerr << "Wrong argument \"" << a
@@ -373,11 +375,11 @@ namespace Gecode {
     TraceOption::help(void) {
       using namespace std;
       cerr << '\t' << opt
-           << " (init,prune,fix,done,none,all)"
+           << " (init,prune,fix,fail,done,none,all)"
            << " default: ";
       if (cur == 0) {
         cerr << "none";
-      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE)) {
+      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE)) {
         cerr << "all";
       } else {
         int f = cur;
@@ -394,6 +396,11 @@ namespace Gecode {
         if ((f & TE_FIX) != 0) {
           cerr << "fix";
           f -= TE_FIX;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TE_FAIL) != 0) {
+          cerr << "fail";
+          f -= TE_FAIL;
           if (f != 0) cerr << ',';
         }
         if ((f & TE_DONE) != 0) {

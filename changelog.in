@@ -73,6 +73,34 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
 Module: int
 What:   changed
 Rank:   minor

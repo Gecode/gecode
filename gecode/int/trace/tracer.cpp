@@ -91,6 +91,24 @@ namespace Gecode {
   }
 
   void
+  StdIntTracer::fail(const Space&, const IntTraceRecorder& t) {
+    os << "trace<Int>::fail(id:" << t.id();
+    if (t.group().in())
+      os << ",g:";t.group().id();
+    os << ") slack: ";
+    double sl_i = static_cast<double>(t.slack().initial());
+    double sl_p = static_cast<double>(t.slack().previous());
+    double sl_c = static_cast<double>(t.slack().current());
+    double p_c = 100.0 * (sl_c / sl_i);
+    double p_d = 100.0 * (sl_p / sl_i) - p_c;
+    os << std::showpoint << std::setprecision(4)
+       << p_c << "% - "
+       << std::showpoint << std::setprecision(4)
+       << p_d << '%'
+       << std::endl;
+  }
+
+  void
   StdIntTracer::done(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::done(id:" << t.id();
     if (t.group().in())
@@ -137,6 +155,24 @@ namespace Gecode {
   void
   StdBoolTracer::fix(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::fix(id:" << t.id();
+    if (t.group().in())
+      os << ",g:";t.group().id();
+    os << ") slack: ";
+    double sl_i = static_cast<double>(t.slack().initial());
+    double sl_p = static_cast<double>(t.slack().previous());
+    double sl_c = static_cast<double>(t.slack().current());
+    double p_c = 100.0 * (sl_c / sl_i);
+    double p_d = 100.0 * (sl_p / sl_i) - p_c;
+    os << std::showpoint << std::setprecision(4)
+       << p_c << "% - "
+       << std::showpoint << std::setprecision(4)
+       << p_d << '%'
+       << std::endl;
+  }
+
+  void
+  StdBoolTracer::fail(const Space&, const BoolTraceRecorder& t) {
+    os << "trace<Bool>::fail(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
     os << ") slack: ";

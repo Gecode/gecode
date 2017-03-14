@@ -45,7 +45,8 @@ namespace Gecode {
     TE_INIT  = 1 << 0, ///< Trace init events
     TE_PRUNE = 1 << 1, ///< Trace prune events
     TE_FIX   = 1 << 2, ///< Trace fixpoint events
-    TE_DONE  = 1 << 3  ///< Trace done events
+    TE_FAIL  = 1 << 3, ///< Trace fail events
+    TE_DONE  = 1 << 4  ///< Trace done events
   };
 
   /**
@@ -190,7 +191,7 @@ namespace Gecode {
   template<class View>
   forceinline
   TraceRecorder<View>::Idx::Idx(Space& home, Propagator& p,
-                                 Council<Idx>& c, int i)
+                                Council<Idx>& c, int i)
     : Advisor(home,p,c), _idx(i) {}
   template<class View>
   forceinline
@@ -242,7 +243,7 @@ namespace Gecode {
 
 
   /*
-   * Propagation for trace collector
+   * Propagation for trace recorder
    *
    */
   template<class View>
@@ -305,11 +306,13 @@ namespace Gecode {
   template<class View>
   ExecStatus
   TraceRecorder<View>::propagate(Space& home, const ModEventDelta&) {
-    if (home.failed())
-      return ES_FIX;
     s.c = TraceView::slack(n[n.size()-1]);
     for (int i=n.size()-1; i--; )
       s.c += TraceView::slack(n[i]);
+    if (home.failed() && ((te & TE_FAIL) != 0) && !disabled()) {
+      t._fail(home,*this);
+      return ES_FIX;
+    }
     if ((te & TE_FIX) != 0)
       t._fix(home,*this);
     s.p = s.c;

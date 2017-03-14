@@ -72,6 +72,13 @@ namespace Gecode {
                 const ExecInfo& ei,
                 int i, typename TraceTraits<View>::TraceDelta& d);
     /**
+     * \brief Fail function synchronization
+     *
+     * Just calls the actual fail function protected by a mutex.
+     *
+     */
+    void _fail(const Space& home, const TraceRecorder<View>& t);
+    /**
      * \brief Fixpoint function synchronization
      *
      * Just calls the actual fixpoint function protected by a mutex.
@@ -107,6 +114,14 @@ namespace Gecode {
                        const TraceRecorder<View>& t,
                        const ExecInfo& ei,
                        int i, typename TraceTraits<View>::TraceDelta& d) = 0;
+    /**
+     * \brief Fail function
+     *
+     * The fail function is called whenever \a home containing the
+     * trace collector \a t has been failed.
+     */
+    virtual void fail(const Space& home,
+                      const TraceRecorder<View>& t) = 0;
     /**
      * \brief Fixpoint function
      *
@@ -147,6 +162,13 @@ namespace Gecode {
                        int i, typename TraceTraits<View>::TraceDelta& d) {
     m.acquire();
     prune(home,t,ei,i,d);
+    m.release();
+  }
+  template<class View>
+  forceinline void
+  Tracer<View>::_fail(const Space& home, const TraceRecorder<View>& t) {
+    m.acquire();
+    fail(home,t);
     m.release();
   }
   template<class View>

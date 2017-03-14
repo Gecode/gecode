@@ -5111,6 +5111,8 @@ namespace Gecode {
                        const ExecInfo& ei, int i, IntTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const IntTraceRecorder& t);
+    /// Print failure information
+    virtual void fail(const Space& home, const IntTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const IntTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -5147,6 +5149,8 @@ namespace Gecode {
                        const ExecInfo& ei, int i, BoolTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const BoolTraceRecorder& t);
+    /// Print failure information
+    virtual void fail(const Space& home, const BoolTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const BoolTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -5160,7 +5164,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   trace(Home home, const IntVarArgs& x,
         TraceFilter tf,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         IntTracer& t = StdIntTracer::def);
   /**
    * \brief Create a tracer for integer variables
@@ -5168,7 +5172,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const IntVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         IntTracer& t = StdIntTracer::def);
 
   /**
@@ -5178,7 +5182,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   trace(Home home, const BoolVarArgs& x,
         TraceFilter tf,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         BoolTracer& t = StdBoolTracer::def);
   /**
    * \brief Create a tracer for Boolean Variables
@@ -5186,7 +5190,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const BoolVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         BoolTracer& t = StdBoolTracer::def);
 
 }
