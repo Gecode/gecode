@@ -74,6 +74,16 @@ Minor release.
 
 [ENTRY]
 Module: int
+What:   changed
+Rank:   minor
+Thanks:	Conrad Drescher
+[DESCRIPTION]
+When posting a simple linear constraint (only two variables with
+unit coefficients) with default integer propagation level, a
+domain consistent propagator is posted.
+
+[ENTRY]
+Module: int
 What:   removed
 Rank:   minor
 [DESCRIPTION]

@@ -2476,6 +2476,10 @@ namespace Gecode {
    *    coincides with domain consistency, the only
    *    real variation is for linear equations. Domain consistent
    *    linear equations have exponential complexity, so use with care!
+   *  - If the integer propagation level IPL_DEF is used as argument
+   *    (hence, default propagation) and the linear constraint is sufficiently
+   *    simple (two variables with unit coefficients), the domain
+   *    consistent propagation is used.
    *  - Variables occurring multiply in the argument arrays are replaced
    *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
