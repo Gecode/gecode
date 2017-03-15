@@ -121,14 +121,14 @@ namespace Test { namespace Int {
            ([](Space& home) { c(home); });
          if (b.size() > 1) {
            if (sf)
-             wait(home, b, f);
+             Gecode::wait(home, b, f);
            else
-             wait(home, b, &c);
+             Gecode::wait(home, b, &c);
          } else {
            if (sf)
-             wait(home, b[0], f);
+             Gecode::wait(home, b[0], f);
            else
-             wait(home, b[0], &c);
+             Gecode::wait(home, b[0], &c);
          }
        }
        /// Continuation to be executed
