@@ -84,11 +84,8 @@ namespace Gecode {
   InvalidFunction::InvalidFunction(const char* l)
     : Exception(l,"Invalid function") {}
 
-  AFCWrongArity::AFCWrongArity(const char* l)
-    : Exception(l,"AFC has wrong number of variables") {}
-
-  ActionWrongArity::ActionWrongArity(const char* l)
-    : Exception(l,"Action has wrong number of variables") {}
+  MoreThanOneTracer::MoreThanOneTracer(const char* l)
+    : Exception(l,"Attempt create more than one non-variable tracer") {}
 
 }
 

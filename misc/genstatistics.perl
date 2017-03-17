@@ -39,7 +39,7 @@
 	     "iter","support","example","test","flatzinc");
 
 @catorder = ("core","memory","var","prop","branch","post",
-	     "int","set","float","minimodel","stress","any",
+	     "int","set","float","minimodel","stress","trace","any",
 	     "sequential","parallel","meta","search","flatzinc",
 	     "other");
 
@@ -60,6 +60,7 @@ $modclear{"flatzinc"} = "FlatZinc interpreter";
 
 $catclear{"core"} = "Core functionality";
 $catclear{"memory"} = "Memory management";
+$catclear{"trace"} = "Tracing support";
 $catclear{"var"} = "Variables, views, and variable implementations";
 $catclear{"prop"} = "Propagators";
 $catclear{"branch"} = "Branchers";

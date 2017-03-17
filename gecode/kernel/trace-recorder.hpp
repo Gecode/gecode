@@ -42,19 +42,25 @@ namespace Gecode {
    * \ingroup TaskTrace
    */
   enum TraceEvent {
+    /// \name Events for view tracers
+    //@{
     TE_INIT  = 1 << 0, ///< Trace init events
     TE_PRUNE = 1 << 1, ///< Trace prune events
     TE_FIX   = 1 << 2, ///< Trace fixpoint events
     TE_FAIL  = 1 << 3, ///< Trace fail events
-    TE_DONE  = 1 << 4  ///< Trace done events
+    TE_DONE  = 1 << 4, ///< Trace done events
+    //@}
+    /// \name Events for tracers
+    TE_PROPAGATE = 1 << 5, ///< Trace propagator executions
+    TE_COMMIT    = 1 << 6  ///< Trace commit operations by branchers
   };
 
   /**
-   * \brief Propagator for recording trace information
+   * \brief Propagator for recording view trace information
    * \ingroup TaskTrace
    */
   template<class View>
-  class TraceRecorder : public Propagator {
+  class ViewTraceRecorder : public Propagator {
   public:
     /// The corresponding duplicate view type
     typedef typename TraceTraits<View>::TraceView TraceView;
@@ -64,7 +70,7 @@ namespace Gecode {
     typedef typename TraceTraits<View>::SlackValue SlackValue;
     /// Collection of slack values
     class Slack {
-      template<class ViewForTraceRecorder> friend class TraceRecorder;
+      template<class ViewForTraceRecorder> friend class ViewTraceRecorder;
     protected:
       /// The initial slack value
       SlackValue i;
@@ -105,15 +111,15 @@ namespace Gecode {
     /// Which events to trace
     int te;
     /// The actual tracer
-    Tracer<View>& t;
+    ViewTracer<View>& t;
     /// Slack information
     Slack s;
     /// Constructor for cloning \a p
-    TraceRecorder(Space& home, bool share, TraceRecorder& p);
+    ViewTraceRecorder(Space& home, bool share, ViewTraceRecorder& p);
   public:
     /// Constructor for creation
-    TraceRecorder(Home home, ViewArray<View>& x,
-                  TraceFilter tf, int te, Tracer<View>& t);
+    ViewTraceRecorder(Home home, ViewArray<View>& x,
+                      TraceFilter tf, int te, ViewTracer<View>& t);
     /// Copy propagator during cloning
     virtual Propagator* copy(Space& home, bool share);
     /// Cost function (record so that propagator runs last)
@@ -126,9 +132,9 @@ namespace Gecode {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Post activity recorder propagator
+    /// Post recorder propagator
     static ExecStatus post(Home home, ViewArray<View>& x,
-                           TraceFilter tf, int te, Tracer<View>& t);
+                           TraceFilter tf, int te, ViewTracer<View>& t);
     /// \name Trace information
     //@{
     /// Return variable being traced at position \a i
@@ -140,24 +146,69 @@ namespace Gecode {
     //@}
   };
 
+  /**
+   * \brief Propagator for recording trace information
+   *
+   * This propagator is actually never run. It only provides access
+   * to information needed for tracing.
+   *
+   * \ingroup TaskTrace
+   */
+  class TraceRecorder : public Propagator {
+  public:
+    /// The trace filter
+    TraceFilter tf;
+    /// Which events to trace
+    int te;
+    /// The actual tracer
+    Tracer& t;
+    /// Constructor for cloning \a p
+    TraceRecorder(Space& home, bool share, TraceRecorder& p);
+  public:
+    /// Constructor for creation
+    TraceRecorder(Home home, TraceFilter tf, int te, Tracer& t);
+    /// Copy propagator during cloning
+    virtual Propagator* copy(Space& home, bool share);
+    /// Cost function (record so that propagator runs last)
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
+    /// Schedule function
+    virtual void reschedule(Space& home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space& home);
+    /// Post propagator
+    static ExecStatus post(Home home, TraceFilter tf, int te, Tracer& t);
+    /// \name Trace information
+    //@{
+    /// Return trace filter
+    const TraceFilter& filter(void) const;
+    /// Which events to trace
+    int events(void) const;
+    /// Return tracer
+    Tracer& tracer(void) const;
+    //@}
+  };
+
+
   /*
    * Functions for trace support
    *
    */
   template<class View>
   forceinline const typename View::VarType
-  TraceRecorder<View>::operator [](int i) const {
+  ViewTraceRecorder<View>::operator [](int i) const {
     const typename View::VarType x(n[i].varimp());
     return x;
   }
   template<class View>
   forceinline int
-  TraceRecorder<View>::size(void) const {
+  ViewTraceRecorder<View>::size(void) const {
     return n.size();
   }
   template<class View>
-  forceinline const typename TraceRecorder<View>::Slack&
-  TraceRecorder<View>::slack(void) const {
+  forceinline const typename ViewTraceRecorder<View>::Slack&
+  ViewTraceRecorder<View>::slack(void) const {
     return s;
   }
 
@@ -167,18 +218,18 @@ namespace Gecode {
    *
    */
   template<class View>
-  forceinline typename TraceRecorder<View>::SlackValue
-  TraceRecorder<View>::Slack::initial(void) const {
+  forceinline typename ViewTraceRecorder<View>::SlackValue
+  ViewTraceRecorder<View>::Slack::initial(void) const {
     return i;
   }
   template<class View>
-  forceinline typename TraceRecorder<View>::SlackValue
-  TraceRecorder<View>::Slack::previous(void) const {
+  forceinline typename ViewTraceRecorder<View>::SlackValue
+  ViewTraceRecorder<View>::Slack::previous(void) const {
     return p;
   }
   template<class View>
-  forceinline typename TraceRecorder<View>::SlackValue
-  TraceRecorder<View>::Slack::current(void) const {
+  forceinline typename ViewTraceRecorder<View>::SlackValue
+  ViewTraceRecorder<View>::Slack::current(void) const {
     return c;
   }
 
@@ -190,17 +241,17 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  TraceRecorder<View>::Idx::Idx(Space& home, Propagator& p,
-                                Council<Idx>& c, int i)
+  ViewTraceRecorder<View>::Idx::Idx(Space& home, Propagator& p,
+                                    Council<Idx>& c, int i)
     : Advisor(home,p,c), _idx(i) {}
   template<class View>
   forceinline
-  TraceRecorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
+  ViewTraceRecorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
     : Advisor(home,share,a), _idx(a._idx) {
   }
   template<class View>
   forceinline int
-  TraceRecorder<View>::Idx::idx(void) const {
+  ViewTraceRecorder<View>::Idx::idx(void) const {
     return _idx;
   }
 
@@ -211,11 +262,12 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  TraceRecorder<View>::TraceRecorder(Home home, ViewArray<View>& x,
-                                     TraceFilter tf0, int te0,
-                                     Tracer<View>& t0)
+  ViewTraceRecorder<View>::ViewTraceRecorder(Home home, ViewArray<View>& x,
+                                             TraceFilter tf0, int te0,
+                                             ViewTracer<View>& t0)
     : Propagator(home), o(home,x.size()), n(x), c(home),
       tf(tf0), te(te0), t(t0) {
+    home.notice(*this, AP_VIEW_TRACE);
     home.notice(*this, AP_DISPOSE);
     for (int i=n.size(); i--; ) {
       o[i] = TraceView(home,n[i]);
@@ -234,10 +286,11 @@ namespace Gecode {
 
   template<class View>
   forceinline ExecStatus
-  TraceRecorder<View>::post(Home home, ViewArray<View>& x,
-                            TraceFilter tf, int te, Tracer<View>& t) {
-    if (x.size() > 0)
-      (void) new (home) TraceRecorder(home,x,tf,te,t);
+  ViewTraceRecorder<View>::post(Home home, ViewArray<View>& x,
+                                TraceFilter tf, int te, ViewTracer<View>& t) {
+    if ((x.size() > 0) &&
+        (te & (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE)))
+      (void) new (home) ViewTraceRecorder(home,x,tf,te,t);
     return ES_OK;
   }
 
@@ -248,8 +301,8 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  TraceRecorder<View>::TraceRecorder(Space& home, bool share,
-                                     TraceRecorder& p)
+  ViewTraceRecorder<View>::ViewTraceRecorder(Space& home, bool share,
+                                             ViewTraceRecorder& p)
     : Propagator(home,share,p), te(p.te), t(p.t), s(p.s) {
     o.update(home, share, p.o);
     n.update(home, share, p.n);
@@ -259,14 +312,15 @@ namespace Gecode {
 
   template<class View>
   Propagator*
-  TraceRecorder<View>::copy(Space& home, bool share) {
-    return new (home) TraceRecorder(home, share, *this);
+  ViewTraceRecorder<View>::copy(Space& home, bool share) {
+    return new (home) ViewTraceRecorder(home, share, *this);
   }
 
   template<class View>
   inline size_t
-  TraceRecorder<View>::dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE);
+  ViewTraceRecorder<View>::dispose(Space& home) {
+    home.ignore(*this, AP_VIEW_TRACE);
+    home.ignore(*this, AP_DISPOSE);
     tf.~TraceFilter();
     // Cancel remaining advisors
     for (Advisors<Idx> as(c); as(); ++as)
@@ -278,19 +332,19 @@ namespace Gecode {
 
   template<class View>
   PropCost
-  TraceRecorder<View>::cost(const Space&, const ModEventDelta&) const {
+  ViewTraceRecorder<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::record();
   }
 
   template<class View>
   void
-  TraceRecorder<View>::reschedule(Space& home) {
+  ViewTraceRecorder<View>::reschedule(Space& home) {
     View::schedule(home,*this,ME_GEN_ASSIGNED);
   }
 
   template<class View>
   ExecStatus
-  TraceRecorder<View>::advise(Space& home, Advisor& _a, const Delta& d) {
+  ViewTraceRecorder<View>::advise(Space& home, Advisor& _a, const Delta& d) {
     Idx& a = static_cast<Idx&>(_a);
     int i = a.idx();
     if (((te & TE_PRUNE) != 0) && !disabled() && tf(a(home)) ) {
@@ -305,7 +359,7 @@ namespace Gecode {
 
   template<class View>
   ExecStatus
-  TraceRecorder<View>::propagate(Space& home, const ModEventDelta&) {
+  ViewTraceRecorder<View>::propagate(Space& home, const ModEventDelta&) {
     s.c = TraceView::slack(n[n.size()-1]);
     for (int i=n.size()-1; i--; )
       s.c += TraceView::slack(n[i]);
@@ -324,6 +378,52 @@ namespace Gecode {
     return ES_FIX;
   }
 
+
+
+  /*
+   * Functions for trace support
+   *
+   */
+  forceinline const TraceFilter&
+  TraceRecorder::filter(void) const {
+    return tf;
+  }
+  forceinline int
+  TraceRecorder::events(void) const {
+    return te;
+  }
+  forceinline Tracer&
+  TraceRecorder::tracer(void) const {
+    return t;
+  }
+
+
+  /*
+   * Trace recorder propagator
+   *
+   */
+  forceinline
+  TraceRecorder::TraceRecorder(Home home, TraceFilter tf0, int te0,
+                               Tracer& t0)
+    : Propagator(home), tf(tf0), te(te0), t(t0) {
+    home.notice(*this, AP_DISPOSE);
+    home.notice(*this, AP_TRACE);
+  }
+
+  forceinline ExecStatus
+  TraceRecorder::post(Home home, TraceFilter tf, int te, Tracer& t) {
+    if (te & (TE_PROPAGATE | TE_COMMIT))
+      (void) new (home) TraceRecorder(home,tf,te,t);
+    return ES_OK;
+  }
+
+  forceinline
+  TraceRecorder::TraceRecorder(Space& home, bool share,
+                               TraceRecorder& p)
+    : Propagator(home,share,p), te(p.te), t(p.t) {
+    tf.update(home, share, p.tf);
+  }
+
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-trace

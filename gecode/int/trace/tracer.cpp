@@ -54,7 +54,7 @@ namespace Gecode {
 
   void
   StdIntTracer::prune(const Space&, const IntTraceRecorder& t,
-                      const ExecInfo& ei, int i, IntTraceDelta& d) {
+                      const ViewTraceInfo& vti, int i, IntTraceDelta& d) {
     os << "trace<Int>::prune(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -69,7 +69,7 @@ namespace Gecode {
         os << ".." << d.max();
       ++d;
     }
-    os << "} by " << ei << std::endl;
+    os << "} by " << vti << std::endl;
   }
 
   void
@@ -134,7 +134,7 @@ namespace Gecode {
 
   void
   StdBoolTracer::prune(const Space&, const BoolTraceRecorder& t,
-                       const ExecInfo& ei, int i, BoolTraceDelta& d) {
+                       const ViewTraceInfo& vti, int i, BoolTraceDelta& d) {
     os << "trace<Bool>::prune(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -149,7 +149,7 @@ namespace Gecode {
         os << ".." << d.max();
       ++d;
     }
-    os << "} by " << ei << std::endl;
+    os << "} by " << vti << std::endl;
   }
 
   void
@@ -200,4 +200,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: int-other
+// STATISTICS: int-trace

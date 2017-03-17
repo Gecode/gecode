@@ -149,18 +149,11 @@ namespace Gecode {
     UninitializedRnd(const char* l);
   };
 
-  /// %Exception: AFC has wrong arity
-  class GECODE_KERNEL_EXPORT AFCWrongArity : public Exception {
-  public:
-    /// Initialize with location \a l
-    AFCWrongArity(const char* l);
-  };
-
   /// %Exception: action has wrong arity
-  class GECODE_KERNEL_EXPORT ActionWrongArity : public Exception {
+  class GECODE_KERNEL_EXPORT MoreThanOneTracer : public Exception {
   public:
     /// Initialize with location \a l
-    ActionWrongArity(const char* l);
+    MoreThanOneTracer(const char* l);
   };
 
   //@}

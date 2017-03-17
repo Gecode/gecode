@@ -41,6 +41,26 @@ namespace Gecode {
 
   Support::Mutex TracerBase::m;
 
+
+  StdTracer::StdTracer(std::ostream& os0) : os(os0) {}
+
+  void
+  StdTracer::propagate(const Space& home,
+                       const PropagateTraceInfo& pti) {
+    os << "trace::" << pti << std::endl;
+  }
+
+  void
+  StdTracer::commit(const Space& home,
+                    const CommitTraceInfo& cti) {
+    os << "trace::" << cti << std::endl
+       << '\t';
+    cti.brancher().print(home, cti.choice(), cti.alternative(), os);
+    os << std::endl;
+  }
+
+  StdTracer StdTracer::def;
+
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-trace

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2016
+ *     Christian Schulte, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,15 +35,38 @@
  *
  */
 
+#include <gecode/kernel.hh>
+
 namespace Gecode {
 
-  forceinline
-  IntTraceDelta::IntTraceDelta(Int::IntTraceView o, Int::IntView n,
-                               const Delta&)
-    : rn(n), ro(o.ranges()) {
-    init(ro,rn);
+  Propagator*
+  TraceRecorder::copy(Space& home, bool share) {
+    return new (home) TraceRecorder(home, share, *this);
+  }
+
+  size_t
+  TraceRecorder::dispose(Space& home) {
+    home.ignore(*this, AP_DISPOSE);
+    home.ignore(*this, AP_TRACE);
+    tf.~TraceFilter();
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  PropCost
+  TraceRecorder::cost(const Space&, const ModEventDelta&) const {
+    return PropCost::record();
+  }
+
+  void
+  TraceRecorder::reschedule(Space&) {
+  }
+
+  ExecStatus
+  TraceRecorder::propagate(Space&, const ModEventDelta&) {
+    return ES_FIX;
   }
 
 }
 
-// STATISTICS: int-trace
+// STATISTICS: kernel-trace

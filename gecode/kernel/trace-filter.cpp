@@ -75,17 +75,17 @@ namespace Gecode {
   }
 
   TFE::TFE(PropagatorGroup g) {
-    init(g,(1 << ExecInfo::PROPAGATOR) | (1 << ExecInfo::POST));
+    init(g,(1 << ViewTraceInfo::PROPAGATOR) | (1 << ViewTraceInfo::POST));
   }
 
   TFE::TFE(BrancherGroup g) {
-    init(g,(1 << ExecInfo::BRANCHER));
+    init(g,(1 << ViewTraceInfo::BRANCHER));
   }
 
   TFE
   TFE::other(void) {
     TFE e;
-    e.init(Group::all,(1 << ExecInfo::OTHER));
+    e.init(Group::all,(1 << ViewTraceInfo::OTHER));
     return e;
   }
 
@@ -134,14 +134,14 @@ namespace Gecode {
   TFE
   propagator(PropagatorGroup g) {
     TFE e;
-    e.init(g,(1 << ExecInfo::PROPAGATOR));
+    e.init(g,(1 << ViewTraceInfo::PROPAGATOR));
     return e;
   }
 
   TFE
   post(PropagatorGroup g) {
     TFE e;
-    e.init(g,(1 << ExecInfo::POST));
+    e.init(g,(1 << ViewTraceInfo::POST));
     return e;
   }
 
@@ -210,4 +210,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-trace

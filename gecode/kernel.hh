@@ -266,7 +266,30 @@ namespace Gecode {
 #include <gecode/kernel/trace-filter.hpp>
 #include <gecode/kernel/tracer.hpp>
 #include <gecode/kernel/trace-recorder.hpp>
+#include <gecode/kernel/trace-print.hpp>
 
+namespace Gecode {
+
+  /**
+   * \brief Create tracer
+   * \ingroup TaskTrace
+   */
+  GECODE_KERNEL_EXPORT void
+  trace(Home home, TraceFilter tf,
+        int te = (TE_PROPAGATE | TE_COMMIT),
+        Tracer& t = StdTracer::def);
+  /**
+   * \brief Create tracer
+   * \ingroup TaskTrace
+   */
+  void
+  trace(Home home,
+        int te = (TE_PROPAGATE | TE_COMMIT),
+        Tracer& t = StdTracer::def);
+
+}
+
+#include <gecode/kernel/trace.hpp>
 
 /*
  * Allocator support
@@ -274,14 +297,6 @@ namespace Gecode {
  */
 
 #include <gecode/kernel/allocators.hpp>
-
-
-/*
- * Printing support
- *
- */
-
-#include <gecode/kernel/print.hpp>
 
 
 #endif

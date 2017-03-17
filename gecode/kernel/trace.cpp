@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2016
+ *     Christian Schulte, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,49 +35,16 @@
  *
  */
 
-#include <iostream>
-#include <sstream>
+#include <gecode/kernel.hh>
 
 namespace Gecode {
 
-  /**
-   * \brief Print execution information
-   * \relates ExecInfo
-   */
-  template<class Char, class Traits>
-  std::basic_ostream<Char,Traits>&
-  operator <<(std::basic_ostream<Char,Traits>& os,
-              const ExecInfo& ei) {
-    std::basic_ostringstream<Char,Traits> s;
-    s.copyfmt(os); s.width(0);
-    switch (ei.what()) {
-    case ExecInfo::PROPAGATOR:
-      s << "propagator(id:" << ei.propagator().id();
-      if (ei.propagator().group().in())
-        s  << ",g:" << ei.propagator().group().id();
-      s << ')';
-      break;
-    case ExecInfo::BRANCHER:
-      s << "brancher(id:" << ei.brancher().id();
-      if (ei.brancher().group().in())
-        s  << ",g:" << ei.brancher().group().id();
-      s << ')';
-      break;
-    case ExecInfo::POST:
-      s << "post(";
-      if (ei.post().in())
-        s << "g:" << ei.post().id();
-      s << ')';
-      break;
-    case ExecInfo::OTHER:
-      s << '-';
-      break;
-    default:
-      GECODE_NEVER;
-    }
-    return os << s.str();
+  void
+  trace(Home home, TraceFilter tf, int te, Tracer& t) {
+    GECODE_POST;
+    GECODE_ES_FAIL(TraceRecorder::post(home,tf,te,t));
   }
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-trace

@@ -195,7 +195,8 @@ VARIMP = $(VARIMPHDR)
 
 KERNELSRC0 = \
 	archive core memory-manager branch region \
-	afc action chb rnd exception trace-filter tracer
+	afc action chb rnd exception \
+	trace-recorder trace-filter tracer trace
 
 KERNELHDR0 = \
 	archive array shared-array shared-data core exception \
@@ -205,9 +206,9 @@ KERNELHDR0 = \
 	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit brancher-print \
-	allocators print gpi \
+	allocators gpi \
 	afc action chb rnd branch-traits \
-	trace-traits trace-filter tracer trace-recorder \
+	trace-traits trace-filter tracer trace-recorder trace trace-print \
 	subscribed-propagators
 
 KERNELSRC 	= $(KERNELSRC0:%=gecode/kernel/%.cpp)

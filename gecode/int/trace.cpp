@@ -59,4 +59,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: int-other
+// STATISTICS: int-trace

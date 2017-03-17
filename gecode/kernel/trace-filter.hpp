@@ -176,8 +176,12 @@ namespace Gecode {
       TFO(BrancherGroup g);
       /// Copy constructor
       TFO(const TFO& o);
-      /// Check whether filter is true for execution information \a ei
-      bool operator ()(const ExecInfo& ei) const;
+      /// Check whether filter is true for view trace information \a vti
+      bool operator ()(const ViewTraceInfo& vti) const;
+      /// Check whether filter is true for propagator group \a pg
+      bool operator ()(PropagatorGroup pg) const;
+      /// Check whether filter is true for brancher group \a bg
+      bool operator ()(BrancherGroup bg) const;
       /// Create a copy
       GECODE_KERNEL_EXPORT
       virtual Object* copy(void) const;
@@ -204,8 +208,12 @@ namespace Gecode {
     /// Assignment operator
     GECODE_KERNEL_EXPORT
     TraceFilter& operator =(const TraceFilter& tf);
-    /// Check whether filter is true for execution information \a ei
-    bool operator ()(const ExecInfo& ei) const;
+    /// Check whether filter is true for view trace information \a vti
+    bool operator ()(const ViewTraceInfo& vti) const;
+    /// Check whether filter is true for propagator group \a pg
+    bool operator ()(PropagatorGroup pg) const;
+    /// Check whether filter is true for brancher group \a bg
+    bool operator ()(BrancherGroup bg) const;
     /// Default filter: without any filter
     GECODE_KERNEL_EXPORT
     static TraceFilter all;
@@ -257,14 +265,14 @@ namespace Gecode {
   TraceFilter::TFO::TFO(PropagatorGroup g) : n(1) {
     f = heap.alloc<Filter>(1);
     f[0].g = g; f[0].neg = false;
-    f[0].what = 1 << ExecInfo::PROPAGATOR;
+    f[0].what = 1 << ViewTraceInfo::PROPAGATOR;
 
   }
   forceinline
   TraceFilter::TFO::TFO(BrancherGroup g) : n(1) {
     f = heap.alloc<Filter>(1);
     f[0].g = g; f[0].neg = false;
-    f[0].what = 1 << ExecInfo::BRANCHER;
+    f[0].what = 1 << ViewTraceInfo::BRANCHER;
 
   }
   forceinline
@@ -278,26 +286,26 @@ namespace Gecode {
     }
   }
   forceinline bool
-  TraceFilter::TFO::operator ()(const ExecInfo& ei) const {
+  TraceFilter::TFO::operator ()(const ViewTraceInfo& vti) const {
     if (n == 0)
       return true;
     for (int i=n; i--; )
-      if (f[i].what & (1 << ei.what())) {
+      if (f[i].what & (1 << vti.what())) {
         // Group is of the right type
-        switch (ei.what()) {
-        case ExecInfo::PROPAGATOR:
-          if (f[i].g.in(ei.propagator().group()) != f[i].neg)
+        switch (vti.what()) {
+        case ViewTraceInfo::PROPAGATOR:
+          if (f[i].g.in(vti.propagator().group()) != f[i].neg)
             return true;
           break;
-        case ExecInfo::BRANCHER:
-          if (f[i].g.in(ei.brancher().group()) != f[i].neg)
+        case ViewTraceInfo::BRANCHER:
+          if (f[i].g.in(vti.brancher().group()) != f[i].neg)
             return true;
           break;
-        case ExecInfo::POST:
-          if (f[i].g.in(ei.post()) != f[i].neg)
+        case ViewTraceInfo::POST:
+          if (f[i].g.in(vti.post()) != f[i].neg)
             return true;
           break;
-        case ExecInfo::OTHER:
+        case ViewTraceInfo::OTHER:
           return true;
         default:
           GECODE_NEVER;
@@ -307,10 +315,42 @@ namespace Gecode {
   }
 
   forceinline bool
-  TraceFilter::operator ()(const ExecInfo& ei) const {
-    return static_cast<TFO*>(object())->operator ()(ei);
+  TraceFilter::operator ()(const ViewTraceInfo& vti) const {
+    return static_cast<TFO*>(object())->operator ()(vti);
+  }
+
+  forceinline bool
+  TraceFilter::TFO::operator ()(PropagatorGroup pg) const {
+    if (n == 0)
+      return true;
+    for (int i=n; i--; )
+      if ((f[i].what & (1 << ViewTraceInfo::PROPAGATOR)) &&
+          (f[i].g.in(pg) != f[i].neg))
+        return true;
+    return false;
+  }
+
+  forceinline bool
+  TraceFilter::operator ()(PropagatorGroup pg) const {
+    return static_cast<TFO*>(object())->operator ()(pg);
+  }
+
+  forceinline bool
+  TraceFilter::TFO::operator ()(BrancherGroup bg) const {
+    if (n == 0)
+      return true;
+    for (int i=n; i--; )
+      if ((f[i].what & (1 << ViewTraceInfo::BRANCHER)) &&
+          (f[i].g.in(bg) != f[i].neg))
+        return true;
+    return false;
+  }
+
+  forceinline bool
+  TraceFilter::operator ()(BrancherGroup bg) const {
+    return static_cast<TFO*>(object())->operator ()(bg);
   }
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: kernel-trace

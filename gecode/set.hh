@@ -1791,12 +1791,12 @@ namespace Gecode {
    * \brief Tracer for set variables
    * \ingroup TaskSetTrace
    */
-  typedef Tracer<Set::SetView> SetTracer;
+  typedef ViewTracer<Set::SetView> SetTracer;
   /**
-   * \brief TraceRecorder for set variables
+   * \brief Trace recorder for set variables
    * \ingroup TaskSetTrace
    */
-  typedef TraceRecorder<Set::SetView> SetTraceRecorder;
+  typedef ViewTraceRecorder<Set::SetView> SetTraceRecorder;
 
   /**
    * \brief Standard set variable tracer
@@ -1813,7 +1813,7 @@ namespace Gecode {
     virtual void init(const Space& home, const SetTraceRecorder& t);
     /// Print prune information
     virtual void prune(const Space& home, const SetTraceRecorder& t,
-                       const ExecInfo& ei, int i, SetTraceDelta& d);
+                       const ViewTraceInfo& vti, int i, SetTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const SetTraceRecorder& t);
     /// Print failure information

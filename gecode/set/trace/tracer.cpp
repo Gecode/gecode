@@ -54,7 +54,7 @@ namespace Gecode {
 
   void
   StdSetTracer::prune(const Space&, const SetTraceRecorder& t,
-                      const ExecInfo& ei, int i, SetTraceDelta& d) {
+                      const ViewTraceInfo& vti, int i, SetTraceDelta& d) {
     os << "trace<Set>::prune(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
@@ -82,7 +82,7 @@ namespace Gecode {
         }
       }
     }
-    os << "} by " << ei << std::endl;
+    os << "} by " << vti << std::endl;
   }
 
   void
@@ -133,4 +133,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: set-other
+// STATISTICS: set-trace

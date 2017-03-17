@@ -1963,12 +1963,12 @@ namespace Gecode {
    * \brief Tracer for float variables
    * \ingroup TaskFloatTrace
    */
-  typedef Tracer<Float::FloatView> FloatTracer;
+  typedef ViewTracer<Float::FloatView> FloatTracer;
   /**
-   * \brief TraceRecorder for float variables
+   * \brief Trace recorder for float variables
    * \ingroup TaskFloatTrace
    */
-  typedef TraceRecorder<Float::FloatView> FloatTraceRecorder;
+  typedef ViewTraceRecorder<Float::FloatView> FloatTraceRecorder;
 
   /**
    * \brief Standard float variable tracer
@@ -1985,7 +1985,7 @@ namespace Gecode {
     virtual void init(const Space& home, const FloatTraceRecorder& t);
     /// Print prune information
     virtual void prune(const Space& home, const FloatTraceRecorder& t,
-                       const ExecInfo& ei, int i, FloatTraceDelta& d);
+                       const ViewTraceInfo& vti, int i, FloatTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const FloatTraceRecorder& t);
     /// Print failure information

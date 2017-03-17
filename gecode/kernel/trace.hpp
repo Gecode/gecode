@@ -37,13 +37,11 @@
 
 namespace Gecode {
 
-  forceinline
-  IntTraceDelta::IntTraceDelta(Int::IntTraceView o, Int::IntView n,
-                               const Delta&)
-    : rn(n), ro(o.ranges()) {
-    init(ro,rn);
+  inline void
+  trace(Home home, int te, Tracer& t) {
+    trace(home,TraceFilter::all,te,t);
   }
 
 }
 
-// STATISTICS: int-trace
+// STATISTICS: kernel-trace

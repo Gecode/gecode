@@ -75,6 +75,15 @@ Minor release.
 [ENTRY]
 Module: kernel
 What:   new
+Rank:   major
+[DESCRIPTION]
+Trace recorders have been renamed to variable (or view) trace
+recorders. New trace recorders have been added that can trace
+all propagate and commit operations. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
 Rank:   minor
 [DESCRIPTION]
 Tracing now also records failure-events, see MPG for details.

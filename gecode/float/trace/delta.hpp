@@ -56,4 +56,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: float-other
+// STATISTICS: float-trace

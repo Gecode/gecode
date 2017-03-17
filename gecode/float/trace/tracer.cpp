@@ -54,13 +54,13 @@ namespace Gecode {
 
   void
   StdFloatTracer::prune(const Space&, const FloatTraceRecorder& t,
-                        const ExecInfo& ei, int i, FloatTraceDelta& d) {
+                        const ViewTraceInfo& vti, int i, FloatTraceDelta& d) {
     os << "trace<Float>::prune(id:" << t.id();
     if (t.group().in())
       os << ",g:";t.group().id();
     os << "): [" << i << "] = " << t[i] << " - ["
        << d.min() << ".." << d.max()
-       << "] by " << ei << std::endl;
+       << "] by " << vti << std::endl;
   }
 
   void
@@ -121,4 +121,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: float-other
+// STATISTICS: float-trace

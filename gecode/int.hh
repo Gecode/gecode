@@ -5086,12 +5086,12 @@ namespace Gecode {
    * \brief Tracer for integer variables
    * \ingroup TaskIntTrace
    */
-  typedef Tracer<Int::IntView> IntTracer;
+  typedef ViewTracer<Int::IntView> IntTracer;
   /**
-   * \brief TraceRecorder for integer variables
+   * \brief Trace recorder for integer variables
    * \ingroup TaskIntTrace
    */
-  typedef TraceRecorder<Int::IntView> IntTraceRecorder;
+  typedef ViewTraceRecorder<Int::IntView> IntTraceRecorder;
 
   /**
    * \brief Standard integer variable tracer
@@ -5108,7 +5108,7 @@ namespace Gecode {
     virtual void init(const Space& home, const IntTraceRecorder& t);
     /// Print prune information
     virtual void prune(const Space& home, const IntTraceRecorder& t,
-                       const ExecInfo& ei, int i, IntTraceDelta& d);
+                       const ViewTraceInfo& vti, int i, IntTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const IntTraceRecorder& t);
     /// Print failure information
@@ -5124,12 +5124,12 @@ namespace Gecode {
    * \brief Tracer for Boolean variables
    * \ingroup TaskIntTrace
    */
-  typedef Tracer<Int::BoolView> BoolTracer;
+  typedef ViewTracer<Int::BoolView> BoolTracer;
   /**
-   * \brief TraceRecorder for Boolean variables
+   * \brief Trace recorder for Boolean variables
    * \ingroup TaskIntTrace
    */
-  typedef TraceRecorder<Int::BoolView> BoolTraceRecorder;
+  typedef ViewTraceRecorder<Int::BoolView> BoolTraceRecorder;
 
   /**
    * \brief Standard Boolean variable tracer
@@ -5146,7 +5146,7 @@ namespace Gecode {
     virtual void init(const Space& home, const BoolTraceRecorder& t);
     /// Print prune information
     virtual void prune(const Space& home, const BoolTraceRecorder& t,
-                       const ExecInfo& ei, int i, BoolTraceDelta& d);
+                       const ViewTraceInfo& vti, int i, BoolTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const BoolTraceRecorder& t);
     /// Print failure information
