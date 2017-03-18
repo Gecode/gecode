@@ -198,7 +198,7 @@ namespace Gecode { namespace Float { namespace Linear {
      */
     bool is_unit = true;
     for (int i=n; i--; )
-      if (t[i].a != 1.0) {
+      if (!(t[i].a == 1.0)) {
         is_unit = false;
         break;
       }
