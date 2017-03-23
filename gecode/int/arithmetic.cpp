@@ -247,7 +247,7 @@ namespace Gecode {
     GECODE_ME_FAIL(x0v.gq(home,min));
     GECODE_ME_FAIL(x0v.lq(home,max));
     t[2].a=-1; t[2].x=x0;
-    Linear::post(home,t,3,IRT_EQ,0);
+    Linear::post(home,t,3,IRT_EQ,0,IPL_BND);
     if (home.failed()) return;
     IntView x1v(x1);
     GECODE_ES_FAIL(
