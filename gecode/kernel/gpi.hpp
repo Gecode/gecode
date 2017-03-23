@@ -74,12 +74,14 @@ namespace Gecode {
     /// The object containing the shared information
     class Object : public HeapAllocated {
     private:
+      /// The first block
+      Block fst;
       /// The current block
       Block* b;
-      /// The inverse decay factor
-      double invd;
       /// Mutex to synchronize globally shared access
       Support::Mutex m;
+      /// The inverse decay factor
+      double invd;
       /// Next free propagator id
       unsigned int pid;
       /// How many spaces use this object
@@ -139,7 +141,7 @@ namespace Gecode {
 
   forceinline
   GPI::Object::Object(void)
-    : b(new Block), invd(1.0), pid(0U), use_cnt(1U) {}
+    : b(&fst), invd(1.0), pid(0U), use_cnt(1U) {}
 
   forceinline void
   GPI::Object::inc(void) {
@@ -191,15 +193,20 @@ namespace Gecode {
   forceinline void
   GPI::Object::dispose(void) {
     m.acquire();
-    if (--use_cnt == 0) {
-      Block* n = b;
-      while (n != NULL) {
-        Block* d = n;
-        n = n->next;
-        delete d;
-      }
+    if (--use_cnt > 0) {
+      m.release();
+      return;
     }
+    // We are on our own here!
     m.release();
+    Block* n = b;
+    unsigned int i=0;
+    while (n != &fst) {
+      Block* d = n;
+      n = n->next;
+      delete d;
+    }
+    delete this;
   }
 
 
