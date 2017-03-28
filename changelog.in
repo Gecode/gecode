@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed crashes in sequential and parallel portfolios using
+parallel or restart-based best solution search engines as assets.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   major

@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       }
       delete best;
     }
-    best = b.clone();
+    best = b.clone(false);
     // Announce better solutions
     for (unsigned int i=0; i<workers(); i++)
       worker(i)->better(best);
