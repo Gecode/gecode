@@ -1372,6 +1372,17 @@ namespace Gecode {
    */
 
   /**
+   * \brief Branch filter function type for float variables
+   *
+   * The variable \a x is considered for selection and \a i refers to the
+   * variable's position in the original array passed to the brancher.
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  typedef std::function<bool(const Space& home, FloatVar x, int i)>
+    FloatBranchFilter;
+
+  /**
    * \brief Branch merit function type for float variables
    *
    * The function must return a merit value for the variable
@@ -1848,6 +1859,7 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          FloatVarBranch vars, FloatValBranch vals,
+         FloatBranchFilter bf=nullptr,
          FloatVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -1857,6 +1869,7 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals,
+         FloatBranchFilter bf=nullptr,
          FloatVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
@@ -1874,6 +1887,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
+         FloatBranchFilter bf=nullptr,
          FloatVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals

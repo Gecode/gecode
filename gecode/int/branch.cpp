@@ -42,6 +42,7 @@ namespace Gecode {
   void
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
+         IntBranchFilter bf,
          IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -52,14 +53,14 @@ namespace Gecode {
     };
     switch (vals.select()) {
     case IntValBranch::SEL_VALUES_MIN:
-      Branch::postviewvaluesbrancher<1,true>(home,xv,vs,vvp);
+      Branch::postviewvaluesbrancher<1,true>(home,xv,vs,bf,vvp);
       break;
     case IntValBranch::SEL_VALUES_MAX:
-      Branch::postviewvaluesbrancher<1,false>(home,xv,vs,vvp);
+      Branch::postviewvaluesbrancher<1,false>(home,xv,vs,bf,vvp);
       break;
     default:
       postviewvalbrancher<IntView,1,int,2>
-        (home,xv,vs,Branch::valselcommit(home,x.size(),vals),vvp);
+        (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
       break;
     }
   }
@@ -67,6 +68,7 @@ namespace Gecode {
   void
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
+         IntBranchFilter bf,
          IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -84,7 +86,7 @@ namespace Gecode {
       vars.d = INT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
-      branch(home,x,vars.a,vals,vvp);
+      branch(home,x,vars.a,vals,bf,vvp);
     } else {
       ViewArray<IntView> xv(home,x);
       if (vars.c.select() == IntVarBranch::SEL_NONE) {
@@ -93,14 +95,14 @@ namespace Gecode {
         };
         switch (vals.select()) {
         case IntValBranch::SEL_VALUES_MIN:
-          Branch::postviewvaluesbrancher<2,true>(home,xv,vs,vvp);
+          Branch::postviewvaluesbrancher<2,true>(home,xv,vs,bf,vvp);
           break;
         case IntValBranch::SEL_VALUES_MAX:
-          Branch::postviewvaluesbrancher<2,false>(home,xv,vs,vvp);
+          Branch::postviewvaluesbrancher<2,false>(home,xv,vs,bf,vvp);
           break;
         default:
           postviewvalbrancher<IntView,2,int,2>
-            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),vvp);
+            (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
         }
       } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
         ViewSel<IntView>* vs[3] = {
@@ -109,14 +111,14 @@ namespace Gecode {
         };
         switch (vals.select()) {
         case IntValBranch::SEL_VALUES_MIN:
-          Branch::postviewvaluesbrancher<3,true>(home,xv,vs,vvp);
+          Branch::postviewvaluesbrancher<3,true>(home,xv,vs,bf,vvp);
           break;
         case IntValBranch::SEL_VALUES_MAX:
-          Branch::postviewvaluesbrancher<3,false>(home,xv,vs,vvp);
+          Branch::postviewvaluesbrancher<3,false>(home,xv,vs,bf,vvp);
           break;
         default:
           postviewvalbrancher<IntView,3,int,2>
-            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),vvp);
+            (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
         }
       } else {
         ViewSel<IntView>* vs[4] = {
@@ -125,14 +127,14 @@ namespace Gecode {
         };
         switch (vals.select()) {
         case IntValBranch::SEL_VALUES_MIN:
-          Branch::postviewvaluesbrancher<4,true>(home,xv,vs,vvp);
+          Branch::postviewvaluesbrancher<4,true>(home,xv,vs,bf,vvp);
           break;
         case IntValBranch::SEL_VALUES_MAX:
-          Branch::postviewvaluesbrancher<4,false>(home,xv,vs,vvp);
+          Branch::postviewvaluesbrancher<4,false>(home,xv,vs,bf,vvp);
           break;
         default:
           postviewvalbrancher<IntView,4,int,2>
-            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),vvp);
+            (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
         }
       }
     }
@@ -141,11 +143,12 @@ namespace Gecode {
   void
   branch(Home home, IntVar x, IntValBranch vals, IntVarValPrint vvp) {
     IntVarArgs xv(1); xv[0]=x;
-    branch(home, xv, INT_VAR_NONE(), vals, vvp);
+    branch(home, xv, INT_VAR_NONE(), vals, nullptr, vvp);
   }
 
   void
   assign(Home home, const IntVarArgs& x, IntAssign ia,
+         IntBranchFilter bf,
          IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -154,19 +157,20 @@ namespace Gecode {
       new (home) ViewSelNone<IntView>(home,INT_VAR_NONE())
     };
     postviewvalbrancher<IntView,1,int,1>
-      (home,xv,vs,Branch::valselcommit(home,ia),vvp);
+      (home,xv,vs,Branch::valselcommit(home,ia),bf,vvp);
   }
 
   void
   assign(Home home, IntVar x, IntAssign ia, IntVarValPrint vvp) {
     IntVarArgs xv(1); xv[0]=x;
-    assign(home, xv, ia, vvp);
+    assign(home, xv, ia, nullptr, vvp);
   }
 
 
   void
   branch(Home home, const BoolVarArgs& x,
          BoolVarBranch vars, BoolValBranch vals,
+         BoolBranchFilter bf,
          BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -176,12 +180,13 @@ namespace Gecode {
       Branch::viewsel(home,vars)
     };
     postviewvalbrancher<BoolView,1,int,2>
-      (home,xv,vs,Branch::valselcommit(home,vals),vvp);
+      (home,xv,vs,Branch::valselcommit(home,vals),bf,vvp);
   }
 
   void
   branch(Home home, const BoolVarArgs& x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
+         BoolBranchFilter bf,
          BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -199,7 +204,7 @@ namespace Gecode {
       vars.d = BOOL_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == BoolVarBranch::SEL_NONE) {
-      branch(home,x,vars.a,vals,vvp);
+      branch(home,x,vars.a,vals,bf,vvp);
     } else {
       ViewArray<BoolView> xv(home,x);
       ValSelCommitBase<BoolView,int>*
@@ -208,19 +213,19 @@ namespace Gecode {
         ViewSel<BoolView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        postviewvalbrancher<BoolView,2,int,2>(home,xv,vs,vsc,vvp);
+        postviewvalbrancher<BoolView,2,int,2>(home,xv,vs,vsc,bf,vvp);
       } else if (vars.d.select() == BoolVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[3] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        postviewvalbrancher<BoolView,3,int,2>(home,xv,vs,vsc,vvp);
+        postviewvalbrancher<BoolView,3,int,2>(home,xv,vs,vsc,bf,vvp);
       } else {
         ViewSel<BoolView>* vs[4] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        postviewvalbrancher<BoolView,4,int,2>(home,xv,vs,vsc,vvp);
+        postviewvalbrancher<BoolView,4,int,2>(home,xv,vs,vsc,bf,vvp);
       }
     }
   }
@@ -228,11 +233,12 @@ namespace Gecode {
   void
   branch(Home home, BoolVar x, BoolValBranch vals, BoolVarValPrint vvp) {
     BoolVarArgs xv(1); xv[0]=x;
-    branch(home, xv, BOOL_VAR_NONE(), vals, vvp);
+    branch(home, xv, BOOL_VAR_NONE(), vals, nullptr, vvp);
   }
 
   void
   assign(Home home, const BoolVarArgs& x, BoolAssign ba,
+         BoolBranchFilter bf,
          BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -241,13 +247,13 @@ namespace Gecode {
       new (home) ViewSelNone<BoolView>(home,BOOL_VAR_NONE())
     };
     postviewvalbrancher<BoolView,1,int,1>
-      (home,xv,vs,Branch::valselcommit(home,ba),vvp);
+      (home,xv,vs,Branch::valselcommit(home,ba),bf,vvp);
   }
 
   void
   assign(Home home, BoolVar x, BoolAssign ba, BoolVarValPrint vvp) {
     BoolVarArgs xv(1); xv[0]=x;
-    assign(home, xv, ba, vvp);
+    assign(home, xv, ba, nullptr, vvp);
   }
 
 }

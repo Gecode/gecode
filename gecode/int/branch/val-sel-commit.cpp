@@ -40,7 +40,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   ValSelCommitBase<IntView,int>*
-  valselcommit(Space& home, int n, const IntValBranch& ivb) {
+  valselcommit(Space& home, const IntValBranch& ivb) {
     assert((ivb.select() != IntValBranch::SEL_VALUES_MIN) &&
            (ivb.select() != IntValBranch::SEL_VALUES_MAX));
     switch (ivb.select()) {

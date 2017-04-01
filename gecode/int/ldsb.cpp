@@ -263,6 +263,7 @@ namespace Gecode {
   branch(Home home, const IntVarArgs& x,
          IntVarBranch vars, IntValBranch vals,
          const Symmetries& syms,
+         IntBranchFilter bf,
          IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -302,8 +303,8 @@ namespace Gecode {
       }
 
       postldsbbrancher<IntView,1,int,2>
-        (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
-         array,n,vvp);
+        (home,xv,vs,Branch::valselcommit(home,vals),
+         array,n,bf,vvp);
     }
   }
 
@@ -311,6 +312,7 @@ namespace Gecode {
   branch(Home home, const IntVarArgs& x,
          TieBreak<IntVarBranch> vars, IntValBranch vals,
          const Symmetries& syms,
+         IntBranchFilter bf,
          IntVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -328,7 +330,7 @@ namespace Gecode {
       vars.d = INT_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == IntVarBranch::SEL_NONE) {
-      branch(home,x,vars.a,vals,syms,vvp);
+      branch(home,x,vars.a,vals,syms,bf,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -366,8 +368,8 @@ namespace Gecode {
           // binary branching, which is OK for LDSB, so we fall through.
         default:
           postldsbbrancher<IntView,2,int,2>
-            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
-             array,n,vvp);
+            (home,xv,vs,Branch::valselcommit(home,vals),
+             array,n,bf,vvp);
         }
       } else if (vars.d.select() == IntVarBranch::SEL_NONE) {
         ViewSel<IntView>* vs[3] = {
@@ -390,8 +392,8 @@ namespace Gecode {
           // binary branching, which is OK for LDSB, so we fall through.
         default:
           postldsbbrancher<IntView,3,int,2>
-            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
-             array,n,vvp);
+            (home,xv,vs,Branch::valselcommit(home,vals),
+             array,n,bf,vvp);
         }
       } else {
         ViewSel<IntView>* vs[4] = {
@@ -414,8 +416,8 @@ namespace Gecode {
           // binary branching, which is OK for LDSB, so we fall through.
         default:
           postldsbbrancher<IntView,4,int,2>
-            (home,xv,vs,Branch::valselcommit(home,x.size(),vals),
-             array,n,vvp);
+            (home,xv,vs,Branch::valselcommit(home,vals),
+             array,n,bf,vvp);
         }
       }
     }
@@ -425,6 +427,7 @@ namespace Gecode {
   branch(Home home, const BoolVarArgs& x,
          BoolVarBranch vars, BoolValBranch vals,
          const Symmetries& syms,
+         BoolBranchFilter bf,
          BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -461,7 +464,7 @@ namespace Gecode {
       // binary branching, which is OK for LDSB, so we fall through.
     default:
       postldsbbrancher<BoolView,1,int,2>
-        (home,xv,vs,Branch::valselcommit(home,vals),array,n,vvp);
+        (home,xv,vs,Branch::valselcommit(home,vals),array,n,bf,vvp);
     }
   }
 
@@ -470,6 +473,7 @@ namespace Gecode {
   branch(Home home, const BoolVarArgs& x,
          TieBreak<BoolVarBranch> vars, BoolValBranch vals,
          const Symmetries& syms,
+         BoolBranchFilter bf,
          BoolVarValPrint vvp) {
     using namespace Int;
     if (home.failed()) return;
@@ -487,7 +491,7 @@ namespace Gecode {
       vars.d = BOOL_VAR_NONE();
     vars.d.expand(home,x);
     if (vars.b.select() == BoolVarBranch::SEL_NONE) {
-      branch(home,x,vars.a,vals,syms,vvp);
+      branch(home,x,vars.a,vals,syms,bf,vvp);
     } else {
       // Construct mapping from each variable in the array to its index
       // in the array.
@@ -526,19 +530,19 @@ namespace Gecode {
         ViewSel<BoolView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        postldsbbrancher<BoolView,2,int,2>(home,xv,vs,vsc,array,n,vvp);
+        postldsbbrancher<BoolView,2,int,2>(home,xv,vs,vsc,array,n,bf,vvp);
       } else if (vars.d.select() == BoolVarBranch::SEL_NONE) {
         ViewSel<BoolView>* vs[3] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        postldsbbrancher<BoolView,3,int,2>(home,xv,vs,vsc,array,n,vvp);
+        postldsbbrancher<BoolView,3,int,2>(home,xv,vs,vsc,array,n,bf,vvp);
       } else {
         ViewSel<BoolView>* vs[4] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        postldsbbrancher<BoolView,4,int,2>(home,xv,vs,vsc,array,n,vvp);
+        postldsbbrancher<BoolView,4,int,2>(home,xv,vs,vsc,array,n,bf,vvp);
       }
     }
   }

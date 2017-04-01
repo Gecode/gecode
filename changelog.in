@@ -272,7 +272,7 @@ Rank:   major
 [DESCRIPTION]
 Variable implementations are not allowed to return a failed
 modification event directly (such as in return ME_INT_FAILED;),
-they need to cail the function fail() instead (such as in return
+they need to call the function fail() instead (such as in return
 fail(home);).
 
 [ENTRY]
@@ -281,7 +281,7 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 Activity for branching was not counted when propagation lead to a
-failed space, this is now done. The activity of a variable is now
+failed space, this is done now. The activity of a variable is now
 by default initialized to 1. That makes activity actually
 useful...
 
@@ -311,7 +311,7 @@ What:   changed
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
-limit, print) can now be of std::function type.
+limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module:	set
@@ -319,7 +319,7 @@ What:   changed
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
-limit, print) can now be of std::function type.
+limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module:	float
@@ -327,7 +327,7 @@ What:   changed
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
-limit, print) can now be of std::function type.
+limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module:	kernel
@@ -335,35 +335,7 @@ What:   changed
 Rank:   major
 [DESCRIPTION]
 All branching functions (merit, value, commit, tie-breaking
-limit, print) can now be of std::function type.
-
-[ENTRY]
-Module: int
-What:   removed
-Rank:   major
-[DESCRIPTION]
-Branching filter functions have been removed.
-
-[ENTRY]
-Module: set
-What:   removed
-Rank:   major
-[DESCRIPTION]
-Branching filter functions have been removed.
-
-[ENTRY]
-Module: float
-What:   removed
-Rank:   major
-[DESCRIPTION]
-Branching filter functions have been removed.
-
-[ENTRY]
-Module: kernel
-What:   removed
-Rank:   major
-[DESCRIPTION]
-Branching filter functions have been removed.
+limit, filter, print) can now be of std::function type.
 
 [ENTRY]
 Module: int
@@ -400,7 +372,7 @@ What:   bug
 Rank:   minor
 [DESCRIPTION]
 Add assertions to regular constraint definition to avoid posting with
-inavlid arguments.
+invalid arguments.
 
 [ENTRY]
 Module: flatzinc

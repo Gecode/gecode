@@ -100,10 +100,12 @@ namespace Gecode { namespace Set { namespace Int {
       for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++size) {}
       Region r(home);
       int* ub = r.alloc<int>(size*2);
-      int i=0;
-      for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++i) {
-        ub[2*i]   = ubr.min();
-        ub[2*i+1] = ubr.max();
+      {
+        int i=0;
+        for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++i) {
+          ub[2*i]   = ubr.min();
+          ub[2*i+1] = ubr.max();
+        }
       }
       unsigned int x0cm = x0.cardMin()-1;
       for (unsigned int i=size; i--;) {

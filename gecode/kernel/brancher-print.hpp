@@ -68,7 +68,7 @@ namespace Gecode {
                      std::ostream& o) const;
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
-    /// Delete view merit class
+    /// Delete
     void dispose(Space& home);
   };
 
@@ -92,7 +92,7 @@ namespace Gecode {
                      std::ostream& o) const;
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
-    /// Delete view merit class
+    /// Delete
     void dispose(Space& home);
   };
 

@@ -153,55 +153,55 @@ public:
       // Branch by assigning words
       branch(*this, allwords,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(),
-             &printwords);
+             nullptr, &printwords);
       break;
     case BRANCH_LETTERS_AFC:
       // Branch by assigning letters
       branch(*this, letters,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
-             &printletters);
+             nullptr, &printletters);
       break;
     case BRANCH_LETTERS_AFC_ALL:
       // Branch by assigning letters (try all letters)
       branch(*this, letters,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
-             &printletters);
+             nullptr, &printletters);
       break;
     case BRANCH_WORDS_ACTION:
       // Branch by assigning words
       branch(*this, allwords,
              INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(),
-             &printwords);
+             nullptr, &printwords);
       break;
     case BRANCH_LETTERS_ACTION:
       // Branch by assigning letters
       branch(*this, letters,
              INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
-             &printletters);
+             nullptr, &printletters);
       break;
     case BRANCH_LETTERS_ACTION_ALL:
       // Branch by assigning letters (try all letters)
       branch(*this, letters,
              INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
-             &printletters);
+             nullptr, &printletters);
       break;
     case BRANCH_WORDS_CHB:
       // Branch by assigning words
       branch(*this, allwords,
              INT_VAR_CHB_SIZE_MAX(), INT_VAL_SPLIT_MIN(),
-             &printwords);
+             nullptr, &printwords);
       break;
     case BRANCH_LETTERS_CHB:
       // Branch by assigning letters
       branch(*this, letters,
              INT_VAR_CHB_SIZE_MAX(), INT_VAL_MIN(),
-             &printletters);
+             nullptr, &printletters);
       break;
     case BRANCH_LETTERS_CHB_ALL:
       // Branch by assigning letters (try all letters)
       branch(*this, letters,
              INT_VAR_CHB_SIZE_MAX(), INT_VALUES_MIN(),
-             &printletters);
+             nullptr, &printletters);
       break;
     }
   }

@@ -45,7 +45,7 @@ namespace Gecode {
   StdTracer::StdTracer(std::ostream& os0) : os(os0) {}
 
   void
-  StdTracer::propagate(const Space& home,
+  StdTracer::propagate(const Space&,
                        const PropagateTraceInfo& pti) {
     os << "trace::" << pti << std::endl;
   }

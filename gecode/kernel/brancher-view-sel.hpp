@@ -62,9 +62,23 @@ namespace Gecode {
     //@{
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s) = 0;
+    /// Select a view from \a x starting from \a s and return its position
+    virtual int select(Space& home, ViewArray<View>& x, int s,
+                       BrancherFilter<View>& f) = 0;
+    /// Select a view from \a x starting from \a s and return its position
+    virtual int select(Space& home, ViewArray<View>& x, int s,
+                       BrancherNoFilter<View>& f);
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n) = 0;
+    /// Select ties from \a x starting from \a s
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
+                      int* ties, int& n,
+                      BrancherFilter<View>& f) = 0;
+    /// Select ties from \a x starting from \a s
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
+                      int* ties, int& n,
+                      BrancherNoFilter<View>& f);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x,
                      int* ties, int& n) = 0;
@@ -111,9 +125,16 @@ namespace Gecode {
     //@{
     /// Select a view from \a x starting at \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s);
+    /// Select a view from \a x starting at \a s and return its position
+    virtual int select(Space& home, ViewArray<View>& x, int s,
+                       BrancherFilter<View>& f);
     /// Select ties from \a x starting at \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
+    /// Select ties from \a x starting at \a s
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
+                      int* ties, int& n,
+                      BrancherFilter<View>& f);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x,
                      int* ties, int& n);
@@ -146,9 +167,16 @@ namespace Gecode {
     //@{
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s);
+    /// Select a view from \a x starting from \a s and return its position
+    virtual int select(Space& home, ViewArray<View>& x, int s,
+                       BrancherFilter<View>& f);
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
+    /// Select ties from \a x starting from \a s
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
+                      int* ties, int& n,
+                      BrancherFilter<View>& f);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
     /// Select a view from \a x considering view with positions in \a ties
@@ -201,9 +229,16 @@ namespace Gecode {
     //@{
     /// Select a view from \a x starting from \a s and return its position
     virtual int select(Space& home, ViewArray<View>& x, int s);
+    /// Select a view from \a x starting from \a s and return its position
+    virtual int select(Space& home, ViewArray<View>& x, int s,
+                       BrancherFilter<View>& f);
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
+    /// Select ties from \a x starting from \a s
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
+                      int* ties, int& n,
+                      BrancherFilter<View>& f);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
     /// Select a view from \a x considering views with positions in \a ties
@@ -244,6 +279,10 @@ namespace Gecode {
     /// Select ties from \a x starting from \a s
     virtual void ties(Space& home, ViewArray<View>& x, int s,
                       int* ties, int& n);
+    /// Select ties from \a x starting from \a s
+    virtual void ties(Space& home, ViewArray<View>& x, int s,
+                      int* ties, int& n,
+                      BrancherFilter<View>& f);
     /// Break ties in \a x and update to new ties
     virtual void brk(Space& home, ViewArray<View>& x, int* ties, int& n);
     //@}
@@ -345,6 +384,20 @@ namespace Gecode {
   forceinline
   ViewSel<View>::ViewSel(Space&, bool, ViewSel<View>&) {}
   template<class View>
+  int
+  ViewSel<View>::select(Space&, ViewArray<View>&, int,
+                        BrancherNoFilter<View>&) {
+    GECODE_NEVER;
+    return 0;
+  }
+  template<class View>
+  void
+  ViewSel<View>::ties(Space&, ViewArray<View>&, int,
+                      int*, int&,
+                      BrancherNoFilter<View>&) {
+    GECODE_NEVER;
+  }
+  template<class View>
   bool
   ViewSel<View>::notice(void) const {
     return false;
@@ -367,6 +420,7 @@ namespace Gecode {
   }
 
 
+
   template<class View>
   forceinline
   ViewSelNone<View>::ViewSelNone(Space& home, const VarBranch<Var>& vb)
@@ -382,12 +436,30 @@ namespace Gecode {
     return s;
   }
   template<class View>
+  int
+  ViewSelNone<View>::select(Space&, ViewArray<View>&, int s,
+                            BrancherFilter<View>&) {
+    return s;
+  }
+  template<class View>
   void
   ViewSelNone<View>::ties(Space&, ViewArray<View>& x, int s,
                           int* ties, int& n) {
     int j=0; ties[j++]=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned())
+        ties[j++]=i;
+    n=j;
+    assert(n > 0);
+  }
+  template<class View>
+  void
+  ViewSelNone<View>::ties(Space& home, ViewArray<View>& x, int s,
+                          int* ties, int& n,
+                          BrancherFilter<View>& f) {
+    int j=0; ties[j++]=s;
+    for (int i=s+1; i<x.size(); i++)
+      if (!x[i].assigned() && f(home,x[i],i))
         ties[j++]=i;
     n=j;
     assert(n > 0);
@@ -431,9 +503,30 @@ namespace Gecode {
     return j;
   }
   template<class View>
+  int
+  ViewSelRnd<View>::select(Space& home, ViewArray<View>& x, int s,
+                           BrancherFilter<View>& f) {
+    unsigned int n=1;
+    int j=s;
+    for (int i=s+1; i<x.size(); i++)
+      if (!x[i].assigned() && f(home,x[i],i)) {
+        n++;
+        if (r(n) == 0U)
+          j=i;
+      }
+    return j;
+  }
+  template<class View>
   void
   ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
                          int* ties, int& n) {
+    n=1; ties[0] = select(home,x,s);
+  }
+  template<class View>
+  void
+  ViewSelRnd<View>::ties(Space& home, ViewArray<View>& x, int s,
+                         int* ties, int& n,
+                         BrancherFilter<View>&) {
     n=1; ties[0] = select(home,x,s);
   }
   template<class View>
@@ -495,6 +588,24 @@ namespace Gecode {
   }
 
   template<class Choose, class Merit>
+  int
+  ViewSelChoose<Choose,Merit>::select(Space& home, ViewArray<View>& x, int s,
+                                      BrancherFilter<View>& f) {
+    // Consider x[s] as the so-far best view
+    int b_i = s;
+    Val b_m = m(home,x[s],s);
+    // Scan all non-assigned views from s+1 onwards
+    for (int i=s+1; i<x.size(); i++)
+      if (!x[i].assigned() && f(home,x[i],i)) {
+        Val mxi = m(home,x[i],i);
+        if (c(mxi,b_m)) {
+          b_i = i; b_m = mxi;
+        }
+      }
+    return b_i;
+  }
+
+  template<class Choose, class Merit>
   void
   ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
                                     int* ties, int& n) {
@@ -503,6 +614,30 @@ namespace Gecode {
     int j=0; ties[j++]=s;
     for (int i=s+1; i<x.size(); i++)
       if (!x[i].assigned()) {
+        Val mxi = m(home,x[i],i);
+        if (c(mxi,b)) {
+          // Found a better one, reset all ties and record
+          j=0; ties[j++]=i; b=mxi;
+        } else if (mxi == b) {
+          // Found a tie, record
+          ties[j++]=i;
+        }
+      }
+    n=j;
+    // There must be at least one tie, of course!
+    assert(n > 0);
+  }
+
+  template<class Choose, class Merit>
+  void
+  ViewSelChoose<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
+                                    int* ties, int& n,
+                                    BrancherFilter<View>& f) {
+    // Consider x[s] as the so-far best view and record as tie
+    Val b = m(home,x[s],s);
+    int j=0; ties[j++]=s;
+    for (int i=s+1; i<x.size(); i++)
+      if (!x[i].assigned() && f(home,x[i],i)) {
         Val mxi = m(home,x[i],i);
         if (c(mxi,b)) {
           // Found a better one, reset all ties and record
@@ -619,6 +754,49 @@ namespace Gecode {
       int j=0;
       for (int i=s; i<x.size(); i++)
         if (!x[i].assigned() && !c(l,static_cast<double>(m(home,x[i],i))))
+          ties[j++]=i;
+      n=j;
+    }
+    // There will be at least one tie (the best will qualify, of course)
+    assert(n > 0);
+  }
+
+  template<class Choose, class Merit>
+  void
+  ViewSelChooseTbl<Choose,Merit>::ties(Space& home, ViewArray<View>& x, int s,
+                                       int* ties, int& n,
+                                       BrancherFilter<View>& f) {
+    // Find the worst and best merit value
+    assert(f(home,x[s],s));
+    Val w = m(home,x[s],s);
+    Val b = w;
+    for (int i=s+1; i<x.size(); i++)
+      if (!x[i].assigned() && f(home,x[i],i)) {
+        Val mxi = m(home,x[i],i);
+        if (c(mxi,b))
+          b=mxi;
+        else if (c(w,mxi))
+          w=mxi;
+      }
+    // Compute tie-break limit
+    GECODE_VALID_FUNCTION(tbl());
+    double l = tbl()(home,static_cast<double>(w),static_cast<double>(b));
+    // If the limit is not better than the worst merit, everything is a tie
+    if (!c(l,static_cast<double>(w))) {
+      int j=0;
+      for (int i=s; i<x.size(); i++)
+        if (!x[i].assigned() && f(home,x[i],i))
+          ties[j++]=i;
+      n=j;
+    } else {
+      // The limit is not allowed to better than the best merit value
+      if (c(l,static_cast<double>(b)))
+        l = static_cast<double>(b);
+      // Record all ties that are not worse than the limit merit value
+      int j=0;
+      for (int i=s; i<x.size(); i++)
+        if (!x[i].assigned() && f(home,x[i],i) &&
+            !c(l,static_cast<double>(m(home,x[i],i))))
           ties[j++]=i;
       n=j;
     }

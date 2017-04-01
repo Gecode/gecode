@@ -200,7 +200,6 @@ namespace Gecode {
     // We are on our own here!
     m.release();
     Block* n = b;
-    unsigned int i=0;
     while (n != &fst) {
       Block* d = n;
       n = n->next;

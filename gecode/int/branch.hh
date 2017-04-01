@@ -597,7 +597,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /// Return value and commit for integer views
   GECODE_INT_EXPORT
   ValSelCommitBase<IntView,int>*
-  valselcommit(Space& home, int n, const IntValBranch& ivb);
+  valselcommit(Space& home, const IntValBranch& ivb);
 
   /// Return value and commit for Boolean views
   GECODE_INT_EXPORT
@@ -622,10 +622,11 @@ namespace Gecode { namespace Int { namespace Branch {
    * \brief %Brancher by view and values selection
    *
    */
-  template<int n, bool min, class Print>
-  class ViewValuesBrancher : public ViewBrancher<IntView,n> {
+  template<int n, bool min, class Filter, class Print>
+  class ViewValuesBrancher : public ViewBrancher<IntView,Filter,n> {
   protected:
-    using ViewBrancher<IntView,n>::x;
+    using ViewBrancher<IntView,Filter,n>::x;
+    using ViewBrancher<IntView,Filter,n>::f;
     /// Print function
     Print p;
     /// Constructor for cloning \a b
@@ -633,6 +634,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for creation
     ViewValuesBrancher(Home home, ViewArray<IntView>& x,
                        ViewSel<IntView>* vs[n],
+                       IntBranchFilter bf,
                        IntVarValPrint vvp);
   public:
     /// Return choice
@@ -657,6 +659,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Post function for creation
     static void post(Home home, ViewArray<IntView>& x,
                      ViewSel<IntView>* vs[n],
+                     IntBranchFilter bf,
                      IntVarValPrint vvp);
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
@@ -666,6 +669,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<int n, bool min>
   void postviewvaluesbrancher(Home home, ViewArray<IntView>& x,
                               ViewSel<IntView>* vs[n],
+                              IntBranchFilter bf,
                               IntVarValPrint vvp);
 
 }}}

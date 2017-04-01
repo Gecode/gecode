@@ -205,7 +205,7 @@ KERNELHDR0 = \
 	branch-var branch-val branch-tiebreak \
 	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
-	brancher-val-sel-commit brancher-print \
+	brancher-val-sel-commit brancher-print brancher-filter \
 	allocators gpi \
 	afc action chb rnd branch-traits \
 	trace-traits trace-filter tracer trace-recorder trace trace-print \

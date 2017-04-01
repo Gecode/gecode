@@ -1094,6 +1094,7 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2ivarsel(args->a[1],rnd,decay),
                    ann2ivalsel(args->a[2],r0,r1,rnd),
+                   nullptr,
                    &varValPrint<IntVar>);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1113,7 +1114,7 @@ namespace Gecode { namespace FlatZinc {
             va[k++] = iv[vars->a[i]->getIntVar()];
             iv_searched[vars->a[i]->getIntVar()] = true;
           }
-          assign(*this, va, ann2asnivalsel(args->a[1],rnd),
+          assign(*this, va, ann2asnivalsel(args->a[1],rnd), nullptr,
                 &varValPrint<IntVar>);
         } else if (flatAnn[i]->isCall("bool_search")) {
           AST::Call *call = flatAnn[i]->getCall("bool_search");
@@ -1140,6 +1141,7 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2bvarsel(args->a[1],rnd,decay),
                    ann2bvalsel(args->a[2],r0,r1,rnd),
+                   nullptr,
                    &varValPrint<BoolVar>);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1181,6 +1183,7 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2svarsel(args->a[1],rnd,decay),
                    ann2svalsel(args->a[2],r0,r1,rnd),
+                   nullptr,
                    &varValPrint<SetVar>);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1244,6 +1247,7 @@ namespace Gecode { namespace FlatZinc {
             branch(bg(*this), va,
                    ann2fvarsel(args->a[2],rnd,decay),
                    ann2fvalsel(args->a[3],r0,r1),
+                   nullptr,
                    &varValPrintF);
             branchInfo.add(bg,r0,r1,names);
           }
@@ -1329,13 +1333,13 @@ namespace Gecode { namespace FlatZinc {
 
     if (iv_sol.size() > 0) {
       BrancherGroup bg;
-      branch(bg(*this), iv_sol, def_int_varsel, def_int_valsel,
+      branch(bg(*this), iv_sol, def_int_varsel, def_int_valsel, nullptr,
              &varValPrint<IntVar>);
       branchInfo.add(bg,def_int_rel_left,def_int_rel_right,iv_sol_names);
     }
     if (bv_sol.size() > 0) {
       BrancherGroup bg;
-      branch(bg(*this), bv_sol, def_bool_varsel, def_bool_valsel,
+      branch(bg(*this), bv_sol, def_bool_varsel, def_bool_valsel, nullptr,
              &varValPrint<BoolVar>);
       branchInfo.add(bg,def_bool_rel_left,def_bool_rel_right,bv_sol_names);
     }
@@ -1374,7 +1378,7 @@ namespace Gecode { namespace FlatZinc {
 
     if (fv_sol.size() > 0) {
       BrancherGroup bg;
-      branch(bg(*this), fv_sol, def_float_varsel, def_float_valsel,
+      branch(bg(*this), fv_sol, def_float_varsel, def_float_valsel, nullptr,
              &varValPrintF);
       branchInfo.add(bg,def_float_rel_left,def_float_rel_right,fv_sol_names);
     }
@@ -1414,7 +1418,7 @@ namespace Gecode { namespace FlatZinc {
 
     if (sv_sol.size() > 0) {
       BrancherGroup bg;
-      branch(bg(*this), sv_sol, def_set_varsel, def_set_valsel,
+      branch(bg(*this), sv_sol, def_set_varsel, def_set_valsel, nullptr,
              &varValPrint<SetVar>);
       branchInfo.add(bg,def_set_rel_left,def_set_rel_right,sv_sol_names);
       
@@ -1437,14 +1441,16 @@ namespace Gecode { namespace FlatZinc {
         std::vector<std::string> names(1);
         names[0] = p.intVarName(_optVar);
         BrancherGroup bg;
-        branch(bg(*this), iv[_optVar], INT_VAL_MIN(), &varValPrint<IntVar>);
+        branch(bg(*this), iv[_optVar], INT_VAL_MIN(),
+               &varValPrint<IntVar>);
         branchInfo.add(bg,"=","!=",names);
       } else {
 #ifdef GECODE_HAS_FLOAT_VARS
         std::vector<std::string> names(1);
         names[0] = p.floatVarName(_optVar);
         BrancherGroup bg;
-        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MIN(), &varValPrintF);
+        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MIN(),
+               &varValPrintF);
         branchInfo.add(bg,"<=",">",names);
 #endif
       }
@@ -1453,14 +1459,16 @@ namespace Gecode { namespace FlatZinc {
         std::vector<std::string> names(1);
         names[0] = p.intVarName(_optVar);
         BrancherGroup bg;
-        branch(bg(*this), iv[_optVar], INT_VAL_MAX(), &varValPrint<IntVar>);
+        branch(bg(*this), iv[_optVar], INT_VAL_MAX(),
+               &varValPrint<IntVar>);
         branchInfo.add(bg,"=","!=",names);
       } else {
 #ifdef GECODE_HAS_FLOAT_VARS
         std::vector<std::string> names(1);
         names[0] = p.floatVarName(_optVar);
         BrancherGroup bg;
-        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MAX(), &varValPrintF);
+        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MAX(),
+               &varValPrintF);
         branchInfo.add(bg,"<=",">",names);
 #endif
       }
@@ -1480,20 +1488,20 @@ namespace Gecode { namespace FlatZinc {
       } else {
         {
           BrancherGroup bg;
-          branch(bg(*this),iv_aux,def_int_varsel,def_int_valsel,
+          branch(bg(*this),iv_aux,def_int_varsel,def_int_valsel, nullptr,
                  &varValPrint<IntVar>);
           branchInfo.add(bg,def_int_rel_left,def_int_rel_right,iv_tmp_names);
         }
         {
           BrancherGroup bg;
-          branch(bg(*this),bv_aux,def_bool_varsel,def_bool_valsel,
+          branch(bg(*this),bv_aux,def_bool_varsel,def_bool_valsel, nullptr,
                  &varValPrint<BoolVar>);
           branchInfo.add(bg,def_bool_rel_left,def_bool_rel_right,bv_tmp_names);
         }
   #ifdef GECODE_HAS_SET_VARS
         {
           BrancherGroup bg;
-          branch(bg(*this),sv_aux,def_set_varsel,def_set_valsel,
+          branch(bg(*this),sv_aux,def_set_varsel,def_set_valsel, nullptr,
                  &varValPrint<SetVar>);
           branchInfo.add(bg,def_set_rel_left,def_set_rel_right,sv_tmp_names);
         }
@@ -1501,7 +1509,7 @@ namespace Gecode { namespace FlatZinc {
   #ifdef GECODE_HAS_FLOAT_VARS
         {
           BrancherGroup bg;
-          branch(bg(*this),fv_aux,def_float_varsel,def_float_valsel,
+          branch(bg(*this),fv_aux,def_float_varsel,def_float_valsel, nullptr,
                  &varValPrintF);
           branchInfo.add(bg,def_float_rel_left,def_float_rel_right,fv_tmp_names);
         }

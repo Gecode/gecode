@@ -1118,6 +1118,16 @@ namespace Gecode {
    */
 
   /**
+   * \brief Branch filter function type for set variables
+   *
+   * The variable \a x is considered for selection and \a i refers to the
+   * variable's position in the original array passed to the brancher.
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  typedef std::function<bool(const Space& home, SetVar x, int i)>
+    SetBranchFilter;
+  /**
    * \brief Branch merit function type for set variables
    *
    * The function must return a merit value for the variable
@@ -1613,6 +1623,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
+         SetBranchFilter bf=nullptr,
          SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
@@ -1622,6 +1633,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
+         SetBranchFilter bf=nullptr,
          SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
@@ -1638,6 +1650,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
+         SetBranchFilter bf=nullptr,
          SetVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
@@ -1671,6 +1684,7 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
+         SetBranchFilter bf=nullptr,
          SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
@@ -1682,6 +1696,7 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,
+         SetBranchFilter bf=nullptr,
          SetVarValPrint vvp=nullptr);
 }
 

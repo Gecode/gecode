@@ -57,10 +57,11 @@ namespace Gecode { namespace Set { namespace LDSB {
    * \a View) on set variables and value (of type \a Val).
    *
    */
-  template<class View, int n, class Val, unsigned int a, class Print>
-  class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a,Print> {
+  template<class View, int n, class Val, unsigned int a,
+           class Filter, class Print>
+  class LDSBSetBrancher : public LDSBBrancher<View,n,Val,a,Filter,Print> {
   public:
-    using typename LDSBBrancher<View,n,Val,a,Print>::Var;
+    using typename LDSBBrancher<View,n,Val,a,Filter,Print>::Var;
     /// Position of previous variable that was branched on
     int _prevPos;
     /// Number of non-value symmetries
@@ -92,6 +93,7 @@ namespace Gecode { namespace Set { namespace LDSB {
                     ViewSel<View>* vs[n],
                     ValSelCommitBase<View,Val>* vsc,
                     SymmetryImp<View>** syms, int nsyms,
+                    BranchFilter<Var> bf,
                     VarValPrint<Var,Val> vvp);
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -106,6 +108,7 @@ namespace Gecode { namespace Set { namespace LDSB {
                      ValSelCommitBase<View,Val>* vsc,
                      SymmetryImp<View>** _syms,
                      int _nsyms,
+                     BranchFilter<Var> bf,
                      VarValPrint<Var,Val> vvp);
 
     /// Post LDSB brancher
@@ -115,6 +118,7 @@ namespace Gecode { namespace Set { namespace LDSB {
                              ViewSel<View0>* vs[n0],
                              ValSelCommitBase<View0,Val0>* vsc,
                              SymmetryImp<View0>** syms, int nsyms,
+                             BranchFilter<typename View0::VarType> bf,
                              VarValPrint<typename View0::VarType,Val0> vvp);
 
     /**

@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template<class View>
   forceinline double
-  MeritAFCSize<View>::operator ()(const Space& home, View x, int) {
+  MeritAFCSize<View>::operator ()(const Space&, View x, int) {
     return x.afc() / static_cast<double>(x.size());
   }
   template<class View>

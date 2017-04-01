@@ -41,6 +41,8 @@ namespace Gecode {
   template<>
   class BranchTraits<IntVar> {
   public:
+    /// Type for the branching filter function
+    typedef IntBranchFilter Filter;
     /// Type for the branching merit function
     typedef IntBranchMerit Merit;
     /// Type for the branching value function
@@ -55,6 +57,8 @@ namespace Gecode {
   template<>
   class BranchTraits<BoolVar> {
   public:
+    /// Type for the branching filter function
+    typedef BoolBranchFilter Filter;
     /// Type for the branching merit function
     typedef BoolBranchMerit Merit;
     /// Type for the branching value function
