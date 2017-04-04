@@ -1269,7 +1269,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c);
+         FloatRelType frt, FloatVal c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\f$
    * \ingroup TaskModelFloatLI
    */
@@ -1281,7 +1281,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c, Reify r);
+         FloatRelType frt, FloatVal c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\right)\equiv r\f$
    * \ingroup TaskModelFloatLI
    */
@@ -1296,7 +1296,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c);
+         FloatRelType frt, FloatVal c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
    *
    *  Throws an exception of type Float::ArgumentSizeMismatch, if
@@ -1314,7 +1314,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c, Reify r);
+         FloatRelType frt, FloatVal c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
    *
    *  Throws an exception of type Float::ArgumentSizeMismatch, if

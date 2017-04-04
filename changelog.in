@@ -73,6 +73,15 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   major
+[DESCRIPTION]
+The right-hand side of a linear constraint was a number rather
+than a value (FloatNum rather than FloatVal) leading to rounding
+errors.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major
