@@ -467,7 +467,8 @@ INTBUILDDIRS	= \
 FLOATSRC0 = \
 	var/float.cpp var-imp/float.cpp \
 	arithmetic.cpp array.cpp branch.cpp rel.cpp linear.cpp \
-	linear/post.cpp bool.cpp \
+	linear/post.cpp bool.cpp channel.cpp \
+	transcendental.cpp trigonometric.cpp \
 	branch/action.cpp branch/chb.cpp rounding.cpp exec.cpp \
 	branch/val-sel-commit.cpp branch/view-sel.cpp dom.cpp \
 	relax.cpp \
@@ -480,8 +481,10 @@ FLOATHDR0 = \
 	view/scale.hpp view/print.hpp view/rel-test.hpp \
 	var-imp/float.hpp var-imp/delta.hpp \
 	var/float.hpp var/print.hpp linear.hh linear/nary.hpp \
-	arithmetic.hh arithmetic/sqr-sqrt-abs.hpp arithmetic/pow-nroot.hpp \
-	arithmetic/mult.hpp arithmetic/div.hpp arithmetic/min-max-channel.hpp \
+	arithmetic.hh arithmetic/sqr-sqrt.hpp arithmetic/pow-nroot.hpp \
+	arithmetic/mult.hpp arithmetic/div.hpp arithmetic/min-max.hpp \
+	arithmetic/abs.hpp \
+	channel.hh channel.hpp channel/channel.hpp \
 	transcendental.hh transcendental/exp-log.hpp trigonometric.hh \
 	trigonometric/sincos.hpp trigonometric/asinacos.hpp \
 	trigonometric/tanatan.hpp \
@@ -528,7 +531,7 @@ FLOATBUILDDIRS	= \
 	float float/var float/var-imp float/view \
 	float/linear float/branch float/rel float/branch \
 	float/arithmetic float/transcendental float/trigonometric \
-	float/trace
+	float/trace float/channel
 
 #
 # SET COMPONENTS

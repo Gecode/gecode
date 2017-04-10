@@ -1335,16 +1335,21 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   channel(Home home, FloatVar x0, IntVar x1);
   /// Post propagator for channeling a float and an integer variable \f$ x_0 = x_1\f$
-  GECODE_FLOAT_EXPORT void
+  void
   channel(Home home, IntVar x0, FloatVar x1);
   /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
   GECODE_FLOAT_EXPORT void
   channel(Home home, FloatVar x0, BoolVar x1);
   /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
-  GECODE_FLOAT_EXPORT void
+  void
   channel(Home home, BoolVar x0, FloatVar x1);
   //@}
 
+}
+
+#include <gecode/float/channel.hpp>
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelFloatExec Synchronized execution

@@ -1,9 +1,13 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
  *     Vincent Barichard, 2012
  *
  *  Last modified:
@@ -35,77 +39,48 @@
  *
  */
 
-#ifndef __GECODE_FLOAT_TRANSCENDENTAL_HH__
-#define __GECODE_FLOAT_TRANSCENDENTAL_HH__
+#ifndef __GECODE_FLOAT_CHANNEL_HH__
+#define __GECODE_FLOAT_CHANNEL_HH__
 
+#include <gecode/int.hh>
 #include <gecode/float.hh>
 
 /**
- * \namespace Gecode::Float::Transcendental
- * \brief %Transcendental propagators
+ * \namespace Gecode::Float::Channel
+ * \brief %Channel propagators
  */
 
-namespace Gecode { namespace Float { namespace Transcendental {
+namespace Gecode { namespace Float { namespace Channel {
 
   /**
-   * \brief %Propagator for bounds consistent exp operator
+   * \brief %Propagator for bounds consistent integer part operator
    *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/transcendental.hh> \endcode
+   * Requires \code #include <gecode/float/arithmetic.hh> \endcode
    * \ingroup FuncFloatProp
    */
   template<class A, class B>
-  class Exp : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
+  class Channel :
+    public MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND> {
   protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
+    using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x0;
+    using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Exp(Space& home, bool share, Exp& p);
+    Channel(Space& home, bool share, Channel& p);
     /// Constructor for creation
-    Exp(Home home, A x0, B x1);
+    Channel(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space& home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$e^{x_0} = x_1\f$
+    /// Post propagator for \f$ int(x_0) = x_1\f$
     static ExecStatus post(Home home, A x0, B x1);
-  };
-
-
-  /**
-   * \brief %Propagator for bounds consistent pow operator
-   *
-   * The types \a A and \a B give the types of the views.
-   *
-   * Requires \code #include <gecode/float/transcendental.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Pow : public MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-    FloatNum base;
-
-    /// Constructor for cloning \a p
-    Pow(Space& home, bool share, Pow& p);
-    /// Constructor for creation
-    Pow(Home home, FloatNum base, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$\mathit{base}^{x_0} = x_1\f$
-    static ExecStatus post(Home home, FloatNum base, A x0, B x1);
   };
 
 }}}
 
-#include <gecode/float/transcendental/exp-log.hpp>
+#include <gecode/float/channel/channel.hpp>
 
 #endif
 

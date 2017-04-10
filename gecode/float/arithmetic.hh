@@ -293,35 +293,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
 
   /**
-   * \brief %Propagator for bounds multiplication operator
-   *
-   * The types \a A, \a B and \a C give the types of the views.
-   *
-   * Requires \code #include <gecode/float/arithmetic.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  /*
-  template<class A, class B, class C>
-  class Mult : public MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND> {
-  protected:
-    using MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>::x0;
-    using MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>::x1;
-    using MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>::x2;
-    /// Constructor for cloning \a p
-    Mult(Space& home, bool share, Mult& p);
-    /// Constructor for creation
-    Mult(Home home, A x0, B x1, C x2);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ x_0 * x_1 = x_2\f$
-    static ExecStatus post(Home home, A x0, B x1, C x2);
-  };
-  */
-
-  /**
    * \brief %Propagator for bounds division operator
    *
    * The types \a A, \a B and \a C give the types of the views.
@@ -431,39 +402,14 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     static  ExecStatus post(Home home, ViewArray<View>& x, View y);
   };
 
-  /**
-   * \brief %Propagator for bounds consistent integer part operator
-   *
-   * Requires \code #include <gecode/float/arithmetic.hh> \endcode
-   * \ingroup FuncFloatProp
-   */
-  template<class A, class B>
-  class Channel :
-    public MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND> {
-  protected:
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x0;
-    using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x1;
-
-    /// Constructor for cloning \a p
-    Channel(Space& home, bool share, Channel& p);
-    /// Constructor for creation
-    Channel(Home home, A x0, B x1);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /// Post propagator for \f$ int(x_0) = x_1\f$
-    static ExecStatus post(Home home, A x0, B x1);
-  };
-
 }}}
 
-#include <gecode/float/arithmetic/sqr-sqrt-abs.hpp>
+#include <gecode/float/arithmetic/sqr-sqrt.hpp>
+#include <gecode/float/arithmetic/abs.hpp>
 #include <gecode/float/arithmetic/pow-nroot.hpp>
 #include <gecode/float/arithmetic/mult.hpp>
 #include <gecode/float/arithmetic/div.hpp>
-#include <gecode/float/arithmetic/min-max-channel.hpp>
+#include <gecode/float/arithmetic/min-max.hpp>
 
 #endif
 
