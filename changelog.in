@@ -73,6 +73,14 @@ Date: ???
 Minor release.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Some FlatZinc constraints were not guarded with assertions, which could make
+Gecode crash on incorrect models.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   major

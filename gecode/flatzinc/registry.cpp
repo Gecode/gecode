@@ -1520,8 +1520,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
         registry().add("gecode_bin_packing_load", &p_bin_packing_load);
-        registry().add("global_cardinality", &p_global_cardinality);
-        registry().add("global_cardinality_closed",
+        registry().add("gecode_global_cardinality", &p_global_cardinality);
+        registry().add("gecode_global_cardinality_closed",
           &p_global_cardinality_closed);
         registry().add("global_cardinality_low_up",
           &p_global_cardinality_low_up);
@@ -1539,8 +1539,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("increasing_bool", &p_increasing_bool);
         registry().add("decreasing_int", &p_decreasing_int);
         registry().add("decreasing_bool", &p_decreasing_bool);
-        registry().add("table_int", &p_table_int);
-        registry().add("table_bool", &p_table_bool);
+        registry().add("gecode_table_int", &p_table_int);
+        registry().add("gecode_table_bool", &p_table_bool);
         registry().add("cumulatives", &p_cumulatives);
         registry().add("gecode_among_seq_int", &p_among_seq_int);
         registry().add("gecode_among_seq_bool", &p_among_seq_bool);
