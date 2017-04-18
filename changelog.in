@@ -68,9 +68,22 @@
 
 [RELEASE]
 Version: 5.1.0
-Date: ???
+Date: 2017-04-18
 [DESCRIPTION]
-Minor release.
+This is a rather major release, fixing a number of bugs and
+adding quite a number of new features. Some of the features
+require changes to your models. 
+
+In more detail: extended tracing so that all propagator
+executions and commit operations can be traced; renamed activity
+to action to avoid confusion with activity in SAT (and fixed that
+action information is also recorded during failure); added CHB
+(conflict-history based branching) heuristic; optimized AFC; all
+functions taken as arguments by Gecode are now based on
+std::function-types; instead of branching with INT_VAR_* and
+INT_VAL_* for Boolean variables, BOOL_VAR_* and BOOL_VAL_* must
+be used. There are a number of additional changes, so you might
+want to read the whole changelog.
 
 [ENTRY]
 Module: flatzinc
@@ -452,7 +465,6 @@ switched off using --disable-cpp11 during configuration.
 Version: 5.0.0
 Date: 2016-10-25
 [DESCRIPTION]
-
 This release adds a number of new features and fixes many bugs
 (some rather serious), so it is recommended to switch as soon as
 possible to this release. Some highlights are: re-added limited
