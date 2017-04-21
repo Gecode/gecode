@@ -44,6 +44,8 @@ namespace Gecode { namespace Support {
   public:
     /// Run a job with iterator index \a i
     virtual RetType run(int i) = 0;
+    /// Destructor
+    virtual ~Job(void) {}
   };
 
   /// Class to throw an exception to stop new jobs from being started
