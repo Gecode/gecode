@@ -72,6 +72,13 @@ Date: whenever
 [DESCRIPTION]
 Minor.
 
+[ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The -slice commandline option is not ignored any longer.
+
 [RELEASE]
 Version: 5.1.0
 Date: 2017-04-18

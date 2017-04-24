@@ -331,6 +331,7 @@ namespace Gecode { namespace Driver {
           so.a_d     = o.a_d();
           so.d_l     = o.d_l();
           so.assets  = o.assets();
+          so.slice   = o.slice();
           so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
@@ -424,6 +425,7 @@ namespace Gecode { namespace Driver {
           so.clone   = false;
           so.threads = o.threads();
           so.assets  = o.assets();
+          so.slice   = o.slice();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
           so.d_l     = o.d_l();
@@ -483,6 +485,7 @@ namespace Gecode { namespace Driver {
               so.clone   = false;
               so.threads = o.threads();
               so.assets  = o.assets();
+              so.slice   = o.slice();
               so.c_d     = o.c_d();
               so.a_d     = o.a_d();
               so.d_l     = o.d_l();
