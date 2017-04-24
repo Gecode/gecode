@@ -157,10 +157,12 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)), n_slaves(n),
       slave_stop(false), tostop(false), n_busy(0) {
     // Initialize slaves
+    m.acquire();
     for (unsigned int i=n_slaves; i--; ) {
       slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
+    m.release();
   }
 
   template<class Collect>
@@ -260,8 +262,10 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   Statistics
   PBS<Collect>::statistics(void) const {
     Statistics s(stat);
+    const_cast<PBS<Collect>&>(*this).m.acquire();
     for (unsigned int i=n_slaves; i--; )
       s += slaves[i]->statistics();
+    const_cast<PBS<Collect>&>(*this).m.release();
     return s;
   }
 
@@ -270,19 +274,23 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   PBS<Collect>::constrain(const Space& b) {
     if (!Collect::best)
       throw NoBest("PBS::constrain");
+    m.acquire();
     if (solutions.constrain(b)) {
       // The solution is better
       for (unsigned int i=n_slaves; i--; )
         slaves[i]->constrain(b);
     }
+    m.release();
   }
 
   template<class Collect>
   PBS<Collect>::~PBS(void) {
+    m.acquire();
     for (unsigned int i=n_slaves; i--; )
       delete slaves[i];
     // Note that n_slaves might be different now!
     heap.rfree(slaves);
+    m.release();
   }
 
 }}}}

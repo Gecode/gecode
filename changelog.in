@@ -73,6 +73,13 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a race condition in portfolio-based search.
+
+[ENTRY]
 Module: driver
 What:   bug
 Rank:   minor
