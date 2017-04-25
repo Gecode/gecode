@@ -61,6 +61,8 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   }
   forceinline
   CollectAll::~CollectAll(void) {
+    while (!solutions.empty())
+      delete solutions.pop();
   }
 
 
@@ -285,7 +287,16 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
 
   template<class Collect>
   PBS<Collect>::~PBS(void) {
+    tostop = true;
+    // Wait for all slaves to become idle
     m.acquire();
+    if (n_busy > 0) {
+      std::cout << "Waiting for idle..." << std::endl;
+      m.release();
+      idle.wait();
+      m.acquire();
+      std::cout << "Done Waiting for idle..." << std::endl;
+    }
     for (unsigned int i=n_slaves; i--; )
       delete slaves[i];
     // Note that n_slaves might be different now!
