@@ -162,7 +162,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
       n_slaves(n), n_active(n),
       slave_stop(false), tostop(false), n_busy(0) {
     // Initialize slaves
-    for (unsigned int i=n_active; i--; ) {
+    for (unsigned int i=n_slaves; i--; ) {
       slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
@@ -287,7 +287,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     assert(n_busy == 0);
     for (unsigned int i=n_slaves; i--; )
       delete slaves[i];
-    heap.free(slaves,n_active);
+    heap.free(slaves,n_slaves);
   }
 
 }}}}
