@@ -446,7 +446,7 @@ namespace Gecode {
 
   inline BoolVarBranch
   BOOL_VAR_CHB_MAX(BoolCHB c, BranchTbl tbl) {
-    return BoolVarBranch(BoolVarBranch::SEL_CHB_MAX,tbl);
+    return BoolVarBranch(BoolVarBranch::SEL_CHB_MAX,c,tbl);
   }
 
   inline BoolVarBranch

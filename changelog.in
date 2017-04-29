@@ -80,6 +80,13 @@ Rank:   major
 Fixed a race condition in portfolio-based search.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+For Boolean variables, an initiaized BoolCHB in branching was ignored.
+
+[ENTRY]
 Module: driver
 What:   bug
 Rank:   minor
