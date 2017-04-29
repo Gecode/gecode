@@ -35,6 +35,8 @@
  *
  */
 
+#include <algorithm>
+
 namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
 
 
@@ -156,15 +158,14 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   forceinline
   PBS<Collect>::PBS(Engine** engines, Stop** stops, unsigned int n,
                     const Statistics& stat0)
-    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)), n_slaves(n),
+    : stat(stat0), slaves(heap.alloc<Slave<Collect>*>(n)),
+      n_slaves(n), n_active(n),
       slave_stop(false), tostop(false), n_busy(0) {
     // Initialize slaves
-    m.acquire();
-    for (unsigned int i=n_slaves; i--; ) {
+    for (unsigned int i=n_active; i--; ) {
       slaves[i] = new Slave<Collect>(this,engines[i],stops[i]);
       static_cast<PortfolioStop*>(stops[i])->share(&tostop);
     }
-    m.release();
   }
 
   template<class Collect>
@@ -181,15 +182,13 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
       if (!tostop)
         slave_stop = true;
     } else {
-      // Delete slave from slaves
-      stat += slave->statistics();
-      // Do not actually delete, the thread should do that upon termination
-      slave->todelete(true);
+      // Move slave to inactive, as it has exhausted its engine
       unsigned int i=0;
       while (slaves[i] != slave)
         i++;
-      assert(i < n_slaves);
-      slaves[i] = slaves[--n_slaves];
+      assert(i < n_active);
+      assert(n_active > 0);
+      std::swap(slaves[i],slaves[--n_active]);
     }
     if (b) {
       if (--n_busy == 0)
@@ -221,10 +220,10 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
       assert(n_busy == 0);
       assert(!tostop);
 
-      if (n_slaves > 0) {
-        // Run all slaves
-        n_busy = n_slaves;
-        for (unsigned int i=n_slaves; i--; )
+      if (n_active > 0) {
+        // Run all active slaves
+        n_busy = n_active;
+        for (unsigned int i=n_active; i--; )
           Support::Thread::run(slaves[i]);
         m.release();
         // Wait for all slaves to become idle
@@ -245,7 +244,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
       Slave<Collect>* r;
       s = solutions.get(r);
       if (Collect::best)
-        for (unsigned int i=n_slaves; i--; )
+        for (unsigned int i=n_active; i--; )
           if (slaves[i] != r)
             slaves[i]->constrain(*s);
     }
@@ -263,45 +262,32 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
   template<class Collect>
   Statistics
   PBS<Collect>::statistics(void) const {
+    assert(n_busy == 0);
     Statistics s(stat);
-    const_cast<PBS<Collect>&>(*this).m.acquire();
     for (unsigned int i=n_slaves; i--; )
       s += slaves[i]->statistics();
-    const_cast<PBS<Collect>&>(*this).m.release();
     return s;
   }
 
   template<class Collect>
   void
   PBS<Collect>::constrain(const Space& b) {
+    assert(n_busy == 0);
     if (!Collect::best)
       throw NoBest("PBS::constrain");
-    m.acquire();
     if (solutions.constrain(b)) {
       // The solution is better
-      for (unsigned int i=n_slaves; i--; )
+      for (unsigned int i=n_active; i--; )
         slaves[i]->constrain(b);
     }
-    m.release();
   }
 
   template<class Collect>
   PBS<Collect>::~PBS(void) {
-    tostop = true;
-    // Wait for all slaves to become idle
-    m.acquire();
-    if (n_busy > 0) {
-      std::cout << "Waiting for idle..." << std::endl;
-      m.release();
-      idle.wait();
-      m.acquire();
-      std::cout << "Done Waiting for idle..." << std::endl;
-    }
+    assert(n_busy == 0);
     for (unsigned int i=n_slaves; i--; )
       delete slaves[i];
-    // Note that n_slaves might be different now!
-    heap.rfree(slaves);
-    m.release();
+    heap.free(slaves,n_active);
   }
 
 }}}}
