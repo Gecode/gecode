@@ -61,10 +61,9 @@ namespace Gecode {
     /// Single view
     View x0;
     /// Constructor for cloning \a p
-    UnaryPropagator(Space& home, bool share, UnaryPropagator& p);
+    UnaryPropagator(Space& home, UnaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    UnaryPropagator(Space& home, bool share, Propagator& p,
-                    View x0);
+    UnaryPropagator(Space& home, Propagator& p, View x0);
     /// Constructor for creation
     UnaryPropagator(Home home, View x0);
   public:
@@ -91,12 +90,11 @@ namespace Gecode {
     /// Two views
     View x0, x1;
     /// Constructor for cloning \a p
-    BinaryPropagator(Space& home, bool share, BinaryPropagator& p);
+    BinaryPropagator(Space& home, BinaryPropagator& p);
     /// Constructor for creation
     BinaryPropagator(Home home, View x0, View x1);
     /// Constructor for rewriting \a p during cloning
-    BinaryPropagator(Space& home, bool share, Propagator& p,
-                     View x0, View x1);
+    BinaryPropagator(Space& home, Propagator& p, View x0, View x1);
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -121,12 +119,11 @@ namespace Gecode {
     /// Three views
     View x0, x1, x2;
     /// Constructor for cloning \a p
-    TernaryPropagator(Space& home, bool share, TernaryPropagator& p);
+    TernaryPropagator(Space& home, TernaryPropagator& p);
     /// Constructor for creation
     TernaryPropagator(Home home, View x0, View x1, View x2);
     /// Constructor for rewriting \a p during cloning
-    TernaryPropagator(Space& home, bool share, Propagator& p,
-                      View x0, View x1, View x2);
+    TernaryPropagator(Space& home, Propagator& p, View x0, View x1, View x2);
   public:
     /// Cost function (defined as low ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -151,10 +148,9 @@ namespace Gecode {
     /// Array of views
     ViewArray<View> x;
     /// Constructor for cloning \a p
-    NaryPropagator(Space& home, bool share, NaryPropagator& p);
+    NaryPropagator(Space& home, NaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    NaryPropagator(Space& home, bool share, Propagator& p,
-                   ViewArray<View>& x);
+    NaryPropagator(Space& home, Propagator& p, ViewArray<View>& x);
     /// Constructor for creation
     NaryPropagator(Home home, ViewArray<View>& x);
   public:
@@ -184,10 +180,9 @@ namespace Gecode {
     /// Single view
     View y;
     /// Constructor for cloning \a p
-    NaryOnePropagator(Space& home, bool share, NaryOnePropagator& p);
+    NaryOnePropagator(Space& home, NaryOnePropagator& p);
     /// Constructor for rewriting \a p during cloning
-    NaryOnePropagator(Space& home, bool share, Propagator& p,
-                      ViewArray<View>& x, View y);
+    NaryOnePropagator(Space& home, Propagator& p, ViewArray<View>& x, View y);
     /// Constructor for creation
     NaryOnePropagator(Home home, ViewArray<View>& x, View y);
   public:
@@ -217,12 +212,11 @@ namespace Gecode {
     /// View of type \a View1
     View1 x1;
     /// Constructor for cloning
-    MixBinaryPropagator(Space& home,bool,MixBinaryPropagator&);
+    MixBinaryPropagator(Space& home, MixBinaryPropagator& p);
     /// Constructor for creation
-    MixBinaryPropagator(Home home,View0,View1);
+    MixBinaryPropagator(Home home, View0 x0, View1 x1);
     /// Constructor for rewriting \a p during cloning
-    MixBinaryPropagator(Space& home, bool share, Propagator& p,
-                        View0 x0, View1 x1);
+    MixBinaryPropagator(Space& home, Propagator& p, View0 x0, View1 x1);
   public:
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -253,11 +247,11 @@ namespace Gecode {
     /// View of type \a View2
     View2 x2;
     /// Constructor for cloning
-    MixTernaryPropagator(Space& home, bool share, MixTernaryPropagator& p);
+    MixTernaryPropagator(Space& home, MixTernaryPropagator& p);
     /// Constructor for creation
     MixTernaryPropagator(Home home, View0 x0, View1 x1, View2 x2);
     /// Constructor for rewriting \a p during cloning
-    MixTernaryPropagator(Space& home, bool share, Propagator& p,
+    MixTernaryPropagator(Space& home, Propagator& p,
                          View0 x0, View1 x1, View2 x2);
   public:
     /// Cost function (defined as low ternary)
@@ -286,11 +280,11 @@ namespace Gecode {
     /// Single view
     View1 y;
     /// Constructor for cloning \a p
-    MixNaryOnePropagator(Space& home, bool share, MixNaryOnePropagator& p);
+    MixNaryOnePropagator(Space& home, MixNaryOnePropagator& p);
     /// Constructor for creation
     MixNaryOnePropagator(Home home, ViewArray<View0>& x, View1 y);
     /// Constructor for rewriting \a p during cloning
-    MixNaryOnePropagator(Space& home, bool share, Propagator& p,
+    MixNaryOnePropagator(Space& home, Propagator& p,
                          ViewArray<View0>& x, View1 y);
   public:
     /// Cost function (defined as low linear)
@@ -318,17 +312,17 @@ namespace Gecode {
   template<class View, PropCond pc>
   forceinline
   UnaryPropagator<View,pc>::UnaryPropagator
-  (Space& home, bool share, UnaryPropagator<View,pc>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
+  (Space& home, UnaryPropagator<View,pc>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
   }
 
   template<class View, PropCond pc>
   forceinline
   UnaryPropagator<View,pc>::UnaryPropagator
-  (Space& home, bool share, Propagator& p, View y0)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
+  (Space& home, Propagator& p, View y0)
+    : Propagator(home,p) {
+    x0.update(home,y0);
   }
 
   template<class View, PropCond pc>
@@ -371,19 +365,19 @@ namespace Gecode {
   template<class View, PropCond pc>
   forceinline
   BinaryPropagator<View,pc>::BinaryPropagator
-  (Space& home, bool share, BinaryPropagator<View,pc>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
+  (Space& home, BinaryPropagator<View,pc>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
   }
 
   template<class View, PropCond pc>
   forceinline
   BinaryPropagator<View,pc>::BinaryPropagator
-  (Space& home, bool share, Propagator& p, View y0, View y1)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
+  (Space& home, Propagator& p, View y0, View y1)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    x1.update(home,y1);
   }
 
   template<class View, PropCond pc>
@@ -431,21 +425,21 @@ namespace Gecode {
   template<class View, PropCond pc>
   forceinline
   TernaryPropagator<View,pc>::TernaryPropagator
-  (Space& home, bool share, TernaryPropagator<View,pc>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
+  (Space& home, TernaryPropagator<View,pc>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
   }
 
   template<class View, PropCond pc>
   forceinline
   TernaryPropagator<View,pc>::TernaryPropagator
-  (Space& home, bool share, Propagator& p, View y0, View y1, View y2)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
-    x2.update(home,share,y2);
+  (Space& home, Propagator& p, View y0, View y1, View y2)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    x1.update(home,y1);
+    x2.update(home,y2);
   }
 
   template<class View, PropCond pc>
@@ -492,17 +486,17 @@ namespace Gecode {
   template<class View, PropCond pc>
   forceinline
   NaryPropagator<View,pc>::NaryPropagator
-  (Space& home, bool share, NaryPropagator<View,pc>& p)
-    : Propagator(home,share,p) {
-    x.update(home,share,p.x);
+  (Space& home, NaryPropagator<View,pc>& p)
+    : Propagator(home,p) {
+    x.update(home,p.x);
   }
 
   template<class View, PropCond pc>
   forceinline
   NaryPropagator<View,pc>::NaryPropagator
-  (Space& home, bool share, Propagator& p, ViewArray<View>& x0)
-    : Propagator(home,share,p) {
-    x.update(home,share,x0);
+  (Space& home, Propagator& p, ViewArray<View>& x0)
+    : Propagator(home,p) {
+    x.update(home,x0);
   }
 
   template<class View, PropCond pc>
@@ -545,19 +539,19 @@ namespace Gecode {
   template<class View, PropCond pc>
   forceinline
   NaryOnePropagator<View,pc>::NaryOnePropagator
-  (Space& home, bool share, NaryOnePropagator<View,pc>& p)
-    : Propagator(home,share,p) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  (Space& home, NaryOnePropagator<View,pc>& p)
+    : Propagator(home,p) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class View, PropCond pc>
   forceinline
   NaryOnePropagator<View,pc>::NaryOnePropagator
-  (Space& home, bool share, Propagator& p, ViewArray<View>& x0, View y0)
-    : Propagator(home,share,p) {
-    x.update(home,share,x0);
-    y.update(home,share,y0);
+  (Space& home, Propagator& p, ViewArray<View>& x0, View y0)
+    : Propagator(home,p) {
+    x.update(home,x0);
+    y.update(home,y0);
   }
 
   template<class View, PropCond pc>
@@ -604,19 +598,19 @@ namespace Gecode {
   template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
-  (Space& home, bool share, MixBinaryPropagator<View0,pc0,View1,pc1>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
+  (Space& home, MixBinaryPropagator<View0,pc0,View1,pc1>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
-  (Space& home, bool share, Propagator& p, View0 y0, View1 y1)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
+  (Space& home, Propagator& p, View0 y0, View1 y1)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    x1.update(home,y1);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>
@@ -668,24 +662,24 @@ namespace Gecode {
             class View2, PropCond pc2>
   forceinline
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  MixTernaryPropagator(Space& home, bool share,
+  MixTernaryPropagator(Space& home,
                          MixTernaryPropagator<View0,pc0,View1,pc1,
                          View2,pc2>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::MixTernaryPropagator
-  (Space& home, bool share, Propagator& p, View0 y0, View1 y1, View2 y2)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
-    x2.update(home,share,y2);
+  (Space& home, Propagator& p, View0 y0, View1 y1, View2 y2)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    x1.update(home,y1);
+    x2.update(home,y2);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1,
@@ -740,19 +734,19 @@ namespace Gecode {
   template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
-  (Space& home, bool share, MixNaryOnePropagator<View0,pc0,View1,pc1>& p)
-    : Propagator(home,share,p) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  (Space& home, MixNaryOnePropagator<View0,pc0,View1,pc1>& p)
+    : Propagator(home,p) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
   MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
-  (Space& home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0)
-    : Propagator(home,share,p) {
-    x.update(home,share,x0);
-    y.update(home,share,y0);
+  (Space& home, Propagator& p, ViewArray<View0>& x0, View1 y0)
+    : Propagator(home,p) {
+    x.update(home,x0);
+    y.update(home,y0);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1>

@@ -109,7 +109,7 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ConstView& y);
+    void update(Space& home, ConstView& y);
     //@}
   };
 
@@ -197,7 +197,7 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, VarImpView<Var>& y);
+    void update(Space& home, VarImpView<Var>& y);
     //@}
   };
 
@@ -296,7 +296,7 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, DerivedView<View>& y);
+    void update(Space& home, DerivedView<View>& y);
     //@}
   };
 
@@ -433,7 +433,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ConstView<View>::update(Space&, bool, ConstView<View>&) {
+  ConstView<View>::update(Space&, ConstView<View>&) {
   }
 
   /*
@@ -526,8 +526,8 @@ namespace Gecode {
   }
   template<class Var>
   forceinline void
-  VarImpView<Var>::update(Space& home, bool share, VarImpView<Var>& y) {
-    x = y.x->copy(home,share);
+  VarImpView<Var>::update(Space& home, VarImpView<Var>& y) {
+    x = y.x->copy(home);
   }
 
   /*
@@ -627,8 +627,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  DerivedView<View>::update(Space& home, bool share, DerivedView<View>& y) {
-    x.update(home,share,y.x);
+  DerivedView<View>::update(Space& home, DerivedView<View>& y) {
+    x.update(home,y.x);
   }
 
 

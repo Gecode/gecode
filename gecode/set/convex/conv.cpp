@@ -44,8 +44,8 @@
 namespace Gecode { namespace Set { namespace Convex {
 
   Actor*
-  Convex::copy(Space& home, bool share) {
-    return new (home) Convex(home,share,*this);
+  Convex::copy(Space& home) {
+    return new (home) Convex(home,*this);
   }
 
   ExecStatus
@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Convex {
 
     //I + III
 
-    Region r(home);
+    Region r;
     LubRanges<SetView> ubRangeIt(x0);
     Iter::Ranges::Cache ubRangeItC(r,ubRangeIt);
 

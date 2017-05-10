@@ -50,8 +50,8 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   Actor*
-  NaryEqv::copy(Space& home, bool share) {
-    return new (home) NaryEqv(home,share,*this);
+  NaryEqv::copy(Space& home) {
+    return new (home) NaryEqv(home,*this);
   }
 
   ExecStatus

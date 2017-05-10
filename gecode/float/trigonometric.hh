@@ -61,12 +61,12 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Sin(Space& home, bool share, Sin& p);
+    Sin(Space& home, Sin& p);
     /// Constructor for creation
     Sin(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$sin(x_0) = x_1\f$
@@ -89,12 +89,12 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Cos(Space& home, bool share, Cos& p);
+    Cos(Space& home, Cos& p);
     /// Constructor for creation
     Cos(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$cos(x_0) = x_1\f$
@@ -116,12 +116,12 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    ASin(Space& home, bool share, ASin& p);
+    ASin(Space& home, ASin& p);
     /// Constructor for creation
     ASin(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$asin(x_0) = x_1\f$
@@ -144,12 +144,12 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    ACos(Space& home, bool share, ACos& p);
+    ACos(Space& home, ACos& p);
     /// Constructor for creation
     ACos(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$acos(x_0) = x_1\f$
@@ -171,12 +171,12 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Tan(Space& home, bool share, Tan& p);
+    Tan(Space& home, Tan& p);
     /// Constructor for creation
     Tan(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$tan(x_0) = x_1\f$
@@ -198,12 +198,12 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    ATan(Space& home, bool share, ATan& p);
+    ATan(Space& home, ATan& p);
     /// Constructor for creation
     ATan(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$atan(x_0) = x_1\f$

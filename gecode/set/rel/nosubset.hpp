@@ -54,10 +54,9 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  NoSubset<View0,View1>::NoSubset(Space& home, bool share,
-                                  NoSubset<View0,View1>& p)
+  NoSubset<View0,View1>::NoSubset(Space& home, NoSubset<View0,View1>& p)
     : MixBinaryPropagator<View0,PC_SET_CLUB,
-                            View1,PC_SET_CGLB>(home,share,p) {}
+                            View1,PC_SET_CGLB>(home,p) {}
 
   template<class View0, class View1>
   ExecStatus
@@ -70,8 +69,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   Actor*
-  NoSubset<View0,View1>::copy(Space& home, bool share) {
-    return new (home) NoSubset<View0,View1>(home,share,*this);
+  NoSubset<View0,View1>::copy(Space& home) {
+    return new (home) NoSubset<View0,View1>(home,*this);
   }
 
   template<class View0, class View1>

@@ -159,7 +159,7 @@ namespace Gecode {
   void
   LinIntExpr::post(Home home, IntRelType irt, IntPropLevel ipl) const {
     if (home.failed()) return;
-    Region r(home);
+    Region r;
     if (n->n_bool == 0) {
       // Only integer variables
       if (n->t==NT_ADD && n->l == NULL && n->r->t==NT_NONLIN) {
@@ -227,7 +227,7 @@ namespace Gecode {
   LinIntExpr::post(Home home, IntRelType irt, const BoolVar& b,
                 IntPropLevel ipl) const {
     if (home.failed()) return;
-    Region r(home);
+    Region r;
     if (n->n_bool == 0) {
       // Only integer variables
       if (n->t==NT_ADD && n->l==NULL && n->r->t==NT_NONLIN) {
@@ -284,7 +284,7 @@ namespace Gecode {
   IntVar
   LinIntExpr::post(Home home, IntPropLevel ipl) const {
     if (home.failed()) return IntVar(home,0,0);
-    Region r(home);
+    Region r;
     if (n->n_bool == 0) {
       // Only integer variables
       Int::Linear::Term<Int::IntView>* its =

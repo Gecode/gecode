@@ -61,11 +61,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool subscribe>
   forceinline
-  Base<View,subscribe>::Base(Space& home, bool share, Base<View,subscribe>& p)
-    : Propagator(home,share,p), last_data(NULL) {
-    x.update(home, share, p.x);
-    tupleSet.update(home, share, p.tupleSet);
-
+  Base<View,subscribe>::Base(Space& home, Base<View,subscribe>& p)
+    : Propagator(home,p), tupleSet(p.tupleSet), last_data(NULL) {
+    x.update(home, p.x);
     init_last(home, p.last_data, p.ts()->tuple_data);
   }
 

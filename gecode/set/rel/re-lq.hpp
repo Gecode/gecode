@@ -49,11 +49,11 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, ReifyMode rm, bool strict>
   forceinline
-  ReLq<View0,View1,rm,strict>::ReLq(Space& home, bool share, ReLq& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    b.update(home,share,p.b);
+  ReLq<View0,View1,rm,strict>::ReLq(Space& home, ReLq& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    b.update(home,p.b);
   }
 
   template<class View0, class View1, ReifyMode rm, bool strict>
@@ -91,8 +91,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, ReifyMode rm, bool strict>
   Actor*
-  ReLq<View0,View1,rm,strict>::copy(Space& home, bool share) {
-    return new (home) ReLq<View0,View1,rm,strict>(home,share,*this);
+  ReLq<View0,View1,rm,strict>::copy(Space& home) {
+    return new (home) ReLq<View0,View1,rm,strict>(home,*this);
   }
 
   template<class View0, class View1, ReifyMode rm, bool strict>

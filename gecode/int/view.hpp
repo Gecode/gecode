@@ -556,7 +556,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, OffsetView& y);
+    void update(Space& home, OffsetView& y);
     //@}
   };
 
@@ -748,7 +748,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ScaleView<Val,UnsVal>& y);
+    void update(Space& home, ScaleView<Val,UnsVal>& y);
     //@}
   };
 
@@ -925,7 +925,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ConstIntView& y);
+    void update(Space& home, ConstIntView& y);
     //@}
   };
 
@@ -1252,7 +1252,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, CachedView<View>& y);
+    void update(Space& home, CachedView<View>& y);
     //@}
   };
 

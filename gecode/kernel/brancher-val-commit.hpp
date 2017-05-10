@@ -57,7 +57,7 @@ namespace Gecode {
     /// Constructor for initialization
     ValCommit(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValCommit(Space& home, bool shared, ValCommit<View,Val>& vs);
+    ValCommit(Space& home, ValCommit<View,Val>& vs);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value commit
@@ -84,7 +84,7 @@ namespace Gecode {
     /// Constructor for initialization
     ValCommitFunction(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning during copying
-    ValCommitFunction(Space& home, bool shared, ValCommitFunction& vc);
+    ValCommitFunction(Space& home, ValCommitFunction& vc);
     /// Perform user-defined commit
     ModEvent commit(Space& home, unsigned int a, View x, int i, Val n);
     /// Create no-good literal for alternative \a a
@@ -105,7 +105,7 @@ namespace Gecode {
   ValCommit<View,Val>::ValCommit(Space&, const ValBranch<Var>&) {}
   template<class View, class Val>
   forceinline
-  ValCommit<View,Val>::ValCommit(Space&, bool, ValCommit<View,Val>&) {}
+  ValCommit<View,Val>::ValCommit(Space&, ValCommit<View,Val>&) {}
   template<class View, class Val>
   forceinline bool
   ValCommit<View,Val>::notice(void) const {
@@ -127,10 +127,9 @@ namespace Gecode {
   }
   template<class View>
   forceinline
-  ValCommitFunction<View>::ValCommitFunction(Space& home, bool shared,
+  ValCommitFunction<View>::ValCommitFunction(Space& home,
                                              ValCommitFunction<View>& vc)
-    : ValCommit<View,Val>(home,shared,vc) {
-    c.update(home,shared,vc.c);
+    : ValCommit<View,Val>(home,vc), c(vc.c) {
   }
   template<class View>
   forceinline ModEvent

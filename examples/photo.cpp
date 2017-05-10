@@ -144,15 +144,15 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  Photo(bool share, Photo& s) :
-    IntMinimizeScript(share,s), spec(s.spec), rnd(s.rnd), p(s.p) {
-    pos.update(*this, share, s.pos);
-    violations.update(*this, share, s.violations);
+  Photo(Photo& s) :
+    IntMinimizeScript(s), spec(s.spec), rnd(s.rnd), p(s.p) {
+    pos.update(*this, s.pos);
+    violations.update(*this, s.violations);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Photo(share,*this);
+  copy(void) {
+    return new Photo(*this);
   }
   /// Print solution
   virtual void

@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     IntBase(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    IntBase(Space& home, bool share, IntBase<VY>& p);
+    IntBase(Space& home, IntBase<VY>& p);
     /// Add values of assigned views to value set
     void add(Space& home);
     /**
@@ -203,10 +203,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     EqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    EqInt(Space& home, bool share, EqInt<VY>& p);
+    EqInt(Space& home, EqInt<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}=y\f$
@@ -235,10 +235,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     LqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    LqInt(Space& home, bool share, LqInt<VY>& p);
+    LqInt(Space& home, LqInt<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\leq y\f$
@@ -270,10 +270,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     GqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    GqInt(Space& home, bool share, GqInt<VY>& p);
+    GqInt(Space& home, GqInt<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\geq y\f$
@@ -311,7 +311,7 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     BoolBase(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    BoolBase(Space& home, bool share, BoolBase<VY>& p);
+    BoolBase(Space& home, BoolBase<VY>& p);
   public:
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
@@ -340,10 +340,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     EqBool(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    EqBool(Space& home, bool share, EqBool<VY>& p);
+    EqBool(Space& home, EqBool<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -372,10 +372,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     LqBool(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    LqBool(Space& home, bool share, LqBool<VY>& p);
+    LqBool(Space& home, LqBool<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -404,10 +404,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     GqBool(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    GqBool(Space& home, bool share, GqBool<VY>& p);
+    GqBool(Space& home, GqBool<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**

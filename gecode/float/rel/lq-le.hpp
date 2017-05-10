@@ -63,13 +63,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View>
   forceinline
-  Lq<View>::Lq(Space& home, bool share, Lq<View>& p)
-    : BinaryPropagator<View,PC_FLOAT_BND>(home,share,p) {}
+  Lq<View>::Lq(Space& home, Lq<View>& p)
+    : BinaryPropagator<View,PC_FLOAT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  Lq<View>::copy(Space& home, bool share) {
-    return new (home) Lq<View>(home,share,*this);
+  Lq<View>::copy(Space& home) {
+    return new (home) Lq<View>(home,*this);
   }
 
   template<class View>
@@ -107,13 +107,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View>
   forceinline
-  Le<View>::Le(Space& home, bool share, Le<View>& p)
-    : BinaryPropagator<View,PC_FLOAT_BND>(home,share,p) {}
+  Le<View>::Le(Space& home, Le<View>& p)
+    : BinaryPropagator<View,PC_FLOAT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  Le<View>::copy(Space& home, bool share) {
-    return new (home) Le<View>(home,share,*this);
+  Le<View>::copy(Space& home) {
+    return new (home) Le<View>(home,*this);
   }
 
   template<class View>
@@ -181,13 +181,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReLq<View,CtrlView,rm>::ReLq(Space& home, bool share, ReLq& p)
-    : Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>(home,share,p) {}
+  ReLq<View,CtrlView,rm>::ReLq(Space& home, ReLq& p)
+    : Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>(home,p) {}
 
   template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReLq<View,CtrlView,rm>::copy(Space& home, bool share) {
-    return new (home) ReLq<View,CtrlView,rm>(home,share,*this);
+  ReLq<View,CtrlView,rm>::copy(Space& home) {
+    return new (home) ReLq<View,CtrlView,rm>(home,*this);
   }
 
   template<class View, class CtrlView, ReifyMode rm>
@@ -268,13 +268,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReLqFloat<View,CtrlView,rm>::ReLqFloat(Space& home, bool share, ReLqFloat& p)
-    : Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>(home,share,p), c(p.c) {}
+  ReLqFloat<View,CtrlView,rm>::ReLqFloat(Space& home, ReLqFloat& p)
+    : Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>(home,p), c(p.c) {}
 
   template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReLqFloat<View,CtrlView,rm>::copy(Space& home, bool share) {
-    return new (home) ReLqFloat<View,CtrlView,rm>(home,share,*this);
+  ReLqFloat<View,CtrlView,rm>::copy(Space& home) {
+    return new (home) ReLqFloat<View,CtrlView,rm>(home,*this);
   }
 
   template<class View, class CtrlView, ReifyMode rm>
@@ -356,13 +356,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReLeFloat<View,CtrlView,rm>::ReLeFloat(Space& home, bool share, ReLeFloat& p)
-    : Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>(home,share,p), c(p.c) {}
+  ReLeFloat<View,CtrlView,rm>::ReLeFloat(Space& home, ReLeFloat& p)
+    : Int::ReUnaryPropagator<View,PC_FLOAT_BND,CtrlView>(home,p), c(p.c) {}
 
   template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReLeFloat<View,CtrlView,rm>::copy(Space& home, bool share) {
-    return new (home) ReLeFloat<View,CtrlView,rm>(home,share,*this);
+  ReLeFloat<View,CtrlView,rm>::copy(Space& home) {
+    return new (home) ReLeFloat<View,CtrlView,rm>(home,*this);
   }
 
   template<class View, class CtrlView, ReifyMode rm>

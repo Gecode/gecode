@@ -258,7 +258,7 @@ namespace Test { namespace Int {
         // Constructor
         TestSpace(void) {}
         // Copy function
-        virtual Gecode::Space* copy(bool) {
+        virtual Gecode::Space* copy(void) {
           return NULL;
         }
       };

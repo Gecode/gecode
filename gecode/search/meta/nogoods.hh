@@ -50,7 +50,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Constructor for creation
     NoNGL(Space& home);
     /// Constructor for cloning \a ngl
-    NoNGL(Space& home, bool share, NoNGL& ngl);
+    NoNGL(Space& home, NoNGL& ngl);
     /// Subscribe propagator \a p to all views of the no-good literal
     virtual void subscribe(Space& home, Propagator& p);
     /// Schedule propagator \a p for all views of the no-good literal
@@ -62,7 +62,7 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Propagate the negation of the no-good literal
     virtual ExecStatus prune(Space& home);
     /// Create copy
-    virtual NGL* copy(Space& home, bool share);
+    virtual NGL* copy(Space& home);
   };
 
   /// No-good propagator
@@ -75,10 +75,10 @@ namespace Gecode { namespace Search { namespace Meta {
     /// Constructor for creation
     NoGoodsProp(Space& home, NGL* root);
     /// Constructor for cloning \a p
-    NoGoodsProp(Space& home, bool shared, NoGoodsProp& p);
+    NoGoodsProp(Space& home, NoGoodsProp& p);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Const function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -100,8 +100,8 @@ namespace Gecode { namespace Search { namespace Meta {
     : NGL(home) {}
 
   forceinline
-  NoNGL::NoNGL(Space& home, bool share, NoNGL& ngl)
-    : NGL(home,share,ngl) {}
+  NoNGL::NoNGL(Space& home, NoNGL& ngl)
+    : NGL(home,ngl) {}
 
 
 
@@ -129,13 +129,13 @@ namespace Gecode { namespace Search { namespace Meta {
   }
 
   forceinline
-  NoGoodsProp::NoGoodsProp(Space& home, bool shared, NoGoodsProp& p)
-    : Propagator(home,shared,p), n(p.n) {
+  NoGoodsProp::NoGoodsProp(Space& home, NoGoodsProp& p)
+    : Propagator(home,p), n(p.n) {
     assert(p.root != NULL);
     NoNGL s;
     NGL* c = &s;
     for (NGL* pc = p.root; pc != NULL; pc = pc->next()) {
-      NGL* n = pc->copy(home,shared);
+      NGL* n = pc->copy(home);
       n->leaf(pc->leaf());
       c->next(n); c=n;
     }

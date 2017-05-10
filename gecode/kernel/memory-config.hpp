@@ -38,7 +38,7 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Kernel {
 
   /**
    * \brief Parameters defining memory management policy for spaces
@@ -152,6 +152,7 @@ namespace Gecode {
     }
 
   }
-}
+
+}}
 
 // STATISTICS: kernel-memory

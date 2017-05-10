@@ -36,6 +36,7 @@
  */
 
 namespace Gecode {
+
   /**
    * \brief %Archive representation
    *

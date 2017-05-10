@@ -56,7 +56,7 @@ namespace Gecode {
     /// Constructor for creation
     ViewSel(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSel(Space& home, bool shared, ViewSel<View>& vs);
+    ViewSel(Space& home, ViewSel<View>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
@@ -89,7 +89,7 @@ namespace Gecode {
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared) = 0;
+    virtual ViewSel<View>* copy(Space& home) = 0;
     /// Whether dispose must always be called (that is, notice is needed)
     virtual bool notice(void) const;
     /// Dispose view selection
@@ -119,7 +119,7 @@ namespace Gecode {
     /// Constructor for creation
     ViewSelNone(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelNone(Space& home, bool shared, ViewSelNone<View>& vs);
+    ViewSelNone(Space& home, ViewSelNone<View>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
@@ -144,7 +144,7 @@ namespace Gecode {
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared);
+    virtual ViewSel<View>* copy(Space& home);
     //@}
   };
 
@@ -161,7 +161,7 @@ namespace Gecode {
     /// Constructor for creation
     ViewSelRnd(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelRnd(Space& home, bool shared, ViewSelRnd<View>& vs);
+    ViewSelRnd(Space& home, ViewSelRnd<View>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
@@ -185,7 +185,7 @@ namespace Gecode {
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared);
+    virtual ViewSel<View>* copy(Space& home);
     //@}
   };
 
@@ -223,7 +223,7 @@ namespace Gecode {
     /// Constructor for creation
     ViewSelChoose(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelChoose(Space& home, bool shared, ViewSelChoose<Choose,Merit>& vs);
+    ViewSelChoose(Space& home, ViewSelChoose<Choose,Merit>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
@@ -271,8 +271,7 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelChooseTbl(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelChooseTbl(Space& home, bool shared,
-                     ViewSelChooseTbl<Choose,Merit>& vs);
+    ViewSelChooseTbl(Space& home, ViewSelChooseTbl<Choose,Merit>& vs);
     //@}
     /// \name View selection and tie breaking
     //@{
@@ -306,12 +305,12 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelMin(Space& home, bool shared, ViewSelMin<Merit>& vs);
+    ViewSelMin(Space& home, ViewSelMin<Merit>& vs);
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared);
+    virtual ViewSel<View>* copy(Space& home);
     //@}
   };
 
@@ -326,12 +325,12 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelMinTbl(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelMinTbl(Space& home, bool shared, ViewSelMinTbl<Merit>& vs);
+    ViewSelMinTbl(Space& home, ViewSelMinTbl<Merit>& vs);
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared);
+    virtual ViewSel<View>* copy(Space& home);
     //@}
   };
 
@@ -346,12 +345,12 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelMax(Space& home, bool shared, ViewSelMax<Merit>& vs);
+    ViewSelMax(Space& home, ViewSelMax<Merit>& vs);
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared);
+    virtual ViewSel<View>* copy(Space& home);
     //@}
   };
 
@@ -366,12 +365,12 @@ namespace Gecode {
     /// Constructor for initialization
     ViewSelMaxTbl(Space& home, const VarBranch<Var>& vb);
     /// Constructor for copying during cloning
-    ViewSelMaxTbl(Space& home, bool shared, ViewSelMaxTbl<Merit>& vs);
+    ViewSelMaxTbl(Space& home, ViewSelMaxTbl<Merit>& vs);
     //@}
     /// \name Resource management and cloning
     //@{
     /// Create copy during cloning
-    virtual ViewSel<View>* copy(Space& home, bool shared);
+    virtual ViewSel<View>* copy(Space& home);
     //@}
   };
   //@}
@@ -382,7 +381,7 @@ namespace Gecode {
   ViewSel<View>::ViewSel(Space&, const VarBranch<Var>&) {}
   template<class View>
   forceinline
-  ViewSel<View>::ViewSel(Space&, bool, ViewSel<View>&) {}
+  ViewSel<View>::ViewSel(Space&, ViewSel<View>&) {}
   template<class View>
   int
   ViewSel<View>::select(Space&, ViewArray<View>&, int,
@@ -427,9 +426,8 @@ namespace Gecode {
       : ViewSel<View>(home,vb) {}
   template<class View>
   forceinline
-  ViewSelNone<View>::ViewSelNone(Space& home, bool shared,
-                                 ViewSelNone<View>& vs)
-    : ViewSel<View>(home,shared,vs) {}
+  ViewSelNone<View>::ViewSelNone(Space& home, ViewSelNone<View>& vs)
+    : ViewSel<View>(home,vs) {}
   template<class View>
   int
   ViewSelNone<View>::select(Space&, ViewArray<View>&, int s) {
@@ -476,8 +474,8 @@ namespace Gecode {
   }
   template<class View>
   ViewSel<View>*
-  ViewSelNone<View>::copy(Space& home, bool shared) {
-    return new (home) ViewSelNone<View>(home,shared,*this);
+  ViewSelNone<View>::copy(Space& home) {
+    return new (home) ViewSelNone<View>(home,*this);
   }
 
 
@@ -487,8 +485,8 @@ namespace Gecode {
       : ViewSel<View>(home,vb), r(vb.rnd()) {}
   template<class View>
   forceinline
-  ViewSelRnd<View>::ViewSelRnd(Space& home, bool shared, ViewSelRnd<View>& vs)
-      : ViewSel<View>(home,shared,vs), r(vs.r) {}
+  ViewSelRnd<View>::ViewSelRnd(Space& home, ViewSelRnd<View>& vs)
+      : ViewSel<View>(home,vs), r(vs.r) {}
   template<class View>
   int
   ViewSelRnd<View>::select(Space&, ViewArray<View>& x, int s) {
@@ -542,8 +540,8 @@ namespace Gecode {
   }
   template<class View>
   ViewSel<View>*
-  ViewSelRnd<View>::copy(Space& home, bool shared) {
-    return new (home) ViewSelRnd<View>(home,shared,*this);
+  ViewSelRnd<View>::copy(Space& home) {
+    return new (home) ViewSelRnd<View>(home,*this);
   }
 
 
@@ -566,9 +564,9 @@ namespace Gecode {
 
   template<class Choose, class Merit>
   forceinline
-  ViewSelChoose<Choose,Merit>::ViewSelChoose(Space& home, bool shared,
+  ViewSelChoose<Choose,Merit>::ViewSelChoose(Space& home,
                                              ViewSelChoose<Choose,Merit>& vs)
-    : ViewSel<View>(home,shared,vs), m(home,shared,vs.m) {}
+    : ViewSel<View>(home,vs), m(home,vs.m) {}
 
   template<class Choose, class Merit>
   int
@@ -715,10 +713,8 @@ namespace Gecode {
   template<class Choose, class Merit>
   forceinline
   ViewSelChooseTbl<Choose,Merit>::ViewSelChooseTbl
-  (Space& home, bool shared,
-   ViewSelChooseTbl<Choose,Merit>& vs)
-    : ViewSelChoose<Choose,Merit>(home,shared,vs) {
-    tbl.update(home,shared,vs.tbl);
+  (Space& home, ViewSelChooseTbl<Choose,Merit>& vs)
+    : ViewSelChoose<Choose,Merit>(home,vs), tbl(vs.tbl) {
   }
 
   template<class Choose, class Merit>
@@ -857,14 +853,13 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMin<Merit>::ViewSelMin(Space& home, bool shared,
-                                ViewSelMin<Merit>& vs)
-    : ViewSelChoose<ChooseMin,Merit>(home,shared,vs) {}
+  ViewSelMin<Merit>::ViewSelMin(Space& home, ViewSelMin<Merit>& vs)
+    : ViewSelChoose<ChooseMin,Merit>(home,vs) {}
 
   template<class Merit>
   ViewSel<typename ViewSelMin<Merit>::View>*
-  ViewSelMin<Merit>::copy(Space& home, bool shared) {
-    return new (home) ViewSelMin<Merit>(home,shared,*this);
+  ViewSelMin<Merit>::copy(Space& home) {
+    return new (home) ViewSelMin<Merit>(home,*this);
   }
 
 
@@ -875,14 +870,13 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMinTbl<Merit>::ViewSelMinTbl(Space& home, bool shared,
-                                      ViewSelMinTbl<Merit>& vs)
-    : ViewSelChooseTbl<ChooseMin,Merit>(home,shared,vs) {}
+  ViewSelMinTbl<Merit>::ViewSelMinTbl(Space& home, ViewSelMinTbl<Merit>& vs)
+    : ViewSelChooseTbl<ChooseMin,Merit>(home,vs) {}
 
   template<class Merit>
   ViewSel<typename ViewSelMinTbl<Merit>::View>*
-  ViewSelMinTbl<Merit>::copy(Space& home, bool shared) {
-    return new (home) ViewSelMinTbl<Merit>(home,shared,*this);
+  ViewSelMinTbl<Merit>::copy(Space& home) {
+    return new (home) ViewSelMinTbl<Merit>(home,*this);
   }
 
 
@@ -894,14 +888,13 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMax<Merit>::ViewSelMax(Space& home, bool shared,
-                                ViewSelMax<Merit>& vs)
-    : ViewSelChoose<ChooseMax,Merit>(home,shared,vs) {}
+  ViewSelMax<Merit>::ViewSelMax(Space& home, ViewSelMax<Merit>& vs)
+    : ViewSelChoose<ChooseMax,Merit>(home,vs) {}
 
   template<class Merit>
   ViewSel<typename ViewSelMax<Merit>::View>*
-  ViewSelMax<Merit>::copy(Space& home, bool shared) {
-    return new (home) ViewSelMax<Merit>(home,shared,*this);
+  ViewSelMax<Merit>::copy(Space& home) {
+    return new (home) ViewSelMax<Merit>(home,*this);
   }
 
 
@@ -913,14 +906,13 @@ namespace Gecode {
 
   template<class Merit>
   forceinline
-  ViewSelMaxTbl<Merit>::ViewSelMaxTbl(Space& home, bool shared,
-                                      ViewSelMaxTbl<Merit>& vs)
-    : ViewSelChooseTbl<ChooseMax,Merit>(home,shared,vs) {}
+  ViewSelMaxTbl<Merit>::ViewSelMaxTbl(Space& home, ViewSelMaxTbl<Merit>& vs)
+    : ViewSelChooseTbl<ChooseMax,Merit>(home,vs) {}
 
   template<class Merit>
   ViewSel<typename ViewSelMaxTbl<Merit>::View>*
-  ViewSelMaxTbl<Merit>::copy(Space& home, bool shared) {
-    return new (home) ViewSelMaxTbl<Merit>(home,shared,*this);
+  ViewSelMaxTbl<Merit>::copy(Space& home) {
+    return new (home) ViewSelMaxTbl<Merit>(home,*this);
   }
 
 

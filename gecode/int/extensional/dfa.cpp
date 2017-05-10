@@ -485,20 +485,6 @@ namespace Gecode {
     heap.free<Transition>(trans,n_trans);
   }
 
-  SharedHandle::Object*
-  DFA::DFAI::copy(void) const {
-    DFAI* d = new DFAI(n_trans);
-    d->n_states   = n_states;
-    d->n_symbols  = n_symbols;
-    d->n_trans    = n_trans;
-    d->max_degree = max_degree;
-    d->final_fst  = final_fst;
-    d->final_lst  = final_lst;
-    heap.copy<Transition>(&d->trans[0], &trans[0], n_trans);
-    d->fill();
-    return d;
-  }
-
   void
   DFA::DFAI::fill(void) {
     // Compute smallest logarithm larger than n_symbols

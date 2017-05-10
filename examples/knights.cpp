@@ -92,9 +92,9 @@ protected:
   Warnsdorff(Home home, ViewArray<Int::IntView>& xv)
     : Brancher(home), x(xv), start(0) {}
   /// Copy constructor
-  Warnsdorff(Space& home, bool share, Warnsdorff& b)
-    : Brancher(home, share, b), start(b.start) {
-    x.update(home, share, b.x);
+  Warnsdorff(Space& home, Warnsdorff& b)
+    : Brancher(home, b), start(b.start) {
+    x.update(home, b.x);
   }
 public:
   /// Check status of brancher, return true if alternatives left
@@ -149,8 +149,8 @@ public:
       << " " << c.val;
   }
   /// Copy brancher
-  virtual Actor* copy(Space& home, bool share) {
-    return new (home) Warnsdorff(home, share, *this);
+  virtual Actor* copy(Space& home) {
+    return new (home) Warnsdorff(home, *this);
   }
   /// Post brancher
   static void post(Home home, const IntVarArgs& x) {
@@ -219,8 +219,8 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  Knights(bool share, Knights& s) : Script(share,s), n(s.n) {
-    succ.update(*this, share, s.succ);
+  Knights(Knights& s) : Script(s), n(s.n) {
+    succ.update(*this, s.succ);
   }
   /// Print board
   virtual void
@@ -290,11 +290,11 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  KnightsReified(bool share, KnightsReified& s) : Knights(share,s) {}
+  KnightsReified(KnightsReified& s) : Knights(s) {}
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new KnightsReified(share,*this);
+  copy(void) {
+    return new KnightsReified(*this);
   }
 };
 
@@ -320,11 +320,11 @@ public:
       dom(*this, succ[f], neighbors(f));
   }
   /// Constructor for cloning \a s
-  KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}
+  KnightsCircuit(KnightsCircuit& s) : Knights(s) {}
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new KnightsCircuit(share,*this);
+  copy(void) {
+    return new KnightsCircuit(*this);
   }
 };
 

@@ -60,10 +60,10 @@ namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   forceinline
-  ChannelInt<View>::ChannelInt(Space& home, bool share, ChannelInt& p)
-    : Propagator(home,share,p) {
-    xs.update(home,share,p.xs);
-    ys.update(home,share,p.ys);
+  ChannelInt<View>::ChannelInt(Space& home, ChannelInt& p)
+    : Propagator(home,p) {
+    xs.update(home,p.xs);
+    ys.update(home,p.ys);
   }
 
   template<class View>
@@ -116,8 +116,8 @@ namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   Actor*
-  ChannelInt<View>::copy(Space& home, bool share) {
-    return new (home) ChannelInt(home,share,*this);
+  ChannelInt<View>::copy(Space& home) {
+    return new (home) ChannelInt(home,*this);
   }
 
   template<class View>

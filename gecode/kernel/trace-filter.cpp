@@ -183,10 +183,6 @@ namespace Gecode {
     } while (!next.empty());
   }
 
-  SharedHandle::Object*
-  TraceFilter::TFO::copy(void) const {
-    return new TFO(*this);
-  }
   TraceFilter::TFO::~TFO(void) {
     heap.free<Filter>(f,n);
   }

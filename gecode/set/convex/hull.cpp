@@ -46,8 +46,8 @@
 namespace Gecode { namespace Set { namespace Convex {
 
   Actor*
-  ConvexHull::copy(Space& home, bool share) {
-    return new (home) ConvexHull(home,share,*this);
+  ConvexHull::copy(Space& home) {
+    return new (home) ConvexHull(home,*this);
   }
 
   ExecStatus
@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Convex {
 
       unsigned int cardMin = x1.cardMin();
 
-      Region r(home);
+      Region r;
       LubRanges<SetView> ubRangeIt(x1);
       Iter::Ranges::Cache ubRangeItC(r,ubRangeIt);
       for (;ubRangeItC();++ubRangeItC){

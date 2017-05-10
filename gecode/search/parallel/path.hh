@@ -332,7 +332,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         // Find last copy
         while (ds[l].space() == NULL)
           l--;
-        Space* c = ds[l].space()->clone(false);
+        Space* c = ds[l].space()->clone();
         // Recompute, if necessary
         for (int i=l; i<n; i++)
           commit(c,i);

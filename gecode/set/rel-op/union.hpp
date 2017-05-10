@@ -56,10 +56,10 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   forceinline
-  Union<View0,View1,View2>::Union(Space& home, bool share,
-                               Union<View0,View1,View2>& p)
+  Union<View0,View1,View2>::Union(Space& home,
+                                  Union<View0,View1,View2>& p)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                             View2,PC_SET_ANY>(home,share,p) {}
+                             View2,PC_SET_ANY>(home,p) {}
 
   template<class View0, class View1, class View2>
   ExecStatus Union<View0,View1,View2>::post(Home home, View0 x0,
@@ -70,8 +70,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   Actor*
-  Union<View0,View1,View2>::copy(Space& home, bool share) {
-    return new (home) Union(home,share,*this);
+  Union<View0,View1,View2>::copy(Space& home) {
+    return new (home) Union(home,*this);
   }
 
   template<class View0, class View1, class View2>
@@ -207,7 +207,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   forceinline
   UnionN<View0,View1>::UnionN(Home home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
-    shared = x.shared(home) || viewarrayshared(home,x,y);
+    shared = x.shared() || viewarrayshared(x,y);
   }
 
   template<class View0, class View1>
@@ -215,23 +215,23 @@ namespace Gecode { namespace Set { namespace RelOp {
   UnionN<View0,View1>::UnionN(Home home, ViewArray<View0>& x,
                               const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
-    shared = x.shared(home) || viewarrayshared(home,x,y);
+    shared = x.shared() || viewarrayshared(x,y);
     IntSetRanges rz(z);
     unionOfDets.includeI(home, rz);
   }
 
   template<class View0, class View1>
   forceinline
-  UnionN<View0,View1>::UnionN(Space& home, bool share, UnionN& p)
-    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
+  UnionN<View0,View1>::UnionN(Space& home, UnionN& p)
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p),
       shared(p.shared) {
     unionOfDets.update(home,p.unionOfDets);
   }
 
   template<class View0, class View1>
   Actor*
-  UnionN<View0,View1>::copy(Space& home, bool share) {
-    return new (home) UnionN<View0,View1>(home,share,*this);
+  UnionN<View0,View1>::copy(Space& home) {
+    return new (home) UnionN<View0,View1>(home,*this);
   }
 
   template<class View0, class View1>

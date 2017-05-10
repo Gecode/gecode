@@ -70,10 +70,10 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Box>
   forceinline
-  Base<Box>::Base(Space& home, bool shared, Base<Box>& p, int m)
-    : Propagator(home,shared,p), b(home.alloc<Box>(m)), n(p.n) {
+  Base<Box>::Base(Space& home, Base<Box>& p, int m)
+    : Propagator(home,p), b(home.alloc<Box>(m)), n(p.n) {
     for (int i=m; i--; )
-      b[i].update(home,shared,p.b[i]);
+      b[i].update(home,p.b[i]);
   }
 
   template<class Box>

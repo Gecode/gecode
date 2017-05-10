@@ -81,13 +81,13 @@ namespace Test { namespace Branch {
         vara(Gecode::INT_VAR_NONE()), varb(Gecode::INT_VAR_NONE()),
         val(Gecode::INT_VAL_MIN()) {}
     /// Constructor for cloning \a s
-    IntTestSpace(bool share, IntTestSpace& s)
-      : Gecode::Space(share,s), vara(s.vara), varb(s.varb), val(s.val) {
-      x.update(*this, share, s.x);
+    IntTestSpace(IntTestSpace& s)
+      : Gecode::Space(s), vara(s.vara), varb(s.varb), val(s.val) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new IntTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new IntTestSpace(*this);
     }
   };
 
@@ -100,13 +100,13 @@ namespace Test { namespace Branch {
     BoolTestSpace(int n)
       : x(*this, n, 0, 1) {}
     /// Constructor for cloning \a s
-    BoolTestSpace(bool share, BoolTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    BoolTestSpace(BoolTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new BoolTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new BoolTestSpace(*this);
     }
   };
 
@@ -120,13 +120,13 @@ namespace Test { namespace Branch {
     SetTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, Gecode::IntSet::empty, d) {}
     /// Constructor for cloning \a s
-    SetTestSpace(bool share, SetTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    SetTestSpace(SetTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new SetTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new SetTestSpace(*this);
     }
   };
 #endif
@@ -141,13 +141,13 @@ namespace Test { namespace Branch {
     FloatTestSpace(int n, Gecode::FloatVal& d)
       : x(*this, n, d.min(), d.max()) {}
     /// Constructor for cloning \a s
-    FloatTestSpace(bool share, FloatTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    FloatTestSpace(FloatTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new FloatTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new FloatTestSpace(*this);
     }
   };
 #endif
@@ -474,7 +474,7 @@ namespace Test { namespace Branch {
           case 10: ivb = INT_VALUES_MAX(); break;
           }
 
-          IntTestSpace* c = static_cast<IntTestSpace*>(root->clone(false));
+          IntTestSpace* c = static_cast<IntTestSpace*>(root->clone());
 
           if ((vara == 0) && (val < 11)) {
             for (int i=0; i<c->x.size(); i++)
@@ -638,7 +638,7 @@ namespace Test { namespace Branch {
           case  3: bvb = BOOL_VAL(&bool_val); break;
           }
 
-          BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone(false));
+          BoolTestSpace* c = static_cast<BoolTestSpace*>(root->clone());
 
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
@@ -774,7 +774,7 @@ namespace Test { namespace Branch {
           case 8: svb = SET_VAL(&set_val); break;
           }
 
-          SetTestSpace* c = static_cast<SetTestSpace*>(root->clone(false));
+          SetTestSpace* c = static_cast<SetTestSpace*>(root->clone());
 
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
@@ -932,7 +932,7 @@ namespace Test { namespace Branch {
           case 3: fvb = FLOAT_VAL(&float_val); break;
           }
 
-          FloatTestSpace* c = static_cast<FloatTestSpace*>(root->clone(false));
+          FloatTestSpace* c = static_cast<FloatTestSpace*>(root->clone());
           if (vara == 0) {
             for (int i=0; i<c->x.size(); i++)
               branch(*c, c->x[i], fvb);

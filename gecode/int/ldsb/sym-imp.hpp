@@ -113,9 +113,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
   template <class View>
   SymmetryImp<View>*
-  VariableSymmetryImp<View>
-  ::copy(Space& home, bool share) const {
-    (void) share;
+  VariableSymmetryImp<View>::copy(Space& home) const {
     return new (home) VariableSymmetryImp<View>(home, *this);
   }
 
@@ -168,9 +166,7 @@ namespace Gecode { namespace Int { namespace LDSB {
 
   template <class View>
   SymmetryImp<View>*
-  ValueSymmetryImp<View>
-  ::copy(Space& home, bool share) const {
-    (void) share;
+  ValueSymmetryImp<View>::copy(Space& home) const {
     return new (home) ValueSymmetryImp(home, *this);
   }
 
@@ -208,11 +204,10 @@ namespace Gecode { namespace Int { namespace LDSB {
 
   template <class View>
   VariableSequenceSymmetryImp<View>
-  ::VariableSequenceSymmetryImp(Space& home, bool share,
+  ::VariableSequenceSymmetryImp(Space& home,
                                 const VariableSequenceSymmetryImp& s)
     : n_indices(s.n_indices), seq_size(s.seq_size), n_seqs(s.n_seqs),
       lookup_size(s.lookup_size) {
-    (void) share;
     indices = home.alloc<unsigned int>(n_indices);
     memcpy(indices, s.indices, n_indices * sizeof(int));
     lookup = home.alloc<int>(lookup_size);
@@ -283,8 +278,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   template <class View>
   SymmetryImp<View>*
   VariableSequenceSymmetryImp<View>
-  ::copy(Space& home, bool share) const {
-    return new (home) VariableSequenceSymmetryImp<View>(home, share, *this);
+  ::copy(Space& home) const {
+    return new (home) VariableSequenceSymmetryImp<View>(home, *this);
   }
 
 
@@ -354,8 +349,7 @@ namespace Gecode { namespace Int { namespace LDSB {
   template <class View>
   SymmetryImp<View>*
   ValueSequenceSymmetryImp<View>
-  ::copy(Space& home, bool share) const {
-    (void) share;
+  ::copy(Space& home) const {
     return new (home) ValueSequenceSymmetryImp<View>(home, *this);
   }
 

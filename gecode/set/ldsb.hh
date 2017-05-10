@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     bool _stable;
 
     /// Constructor for cloning \a b
-    LDSBSetBrancher(Space& home, bool share, LDSBSetBrancher& b);
+    LDSBSetBrancher(Space& home, LDSBSetBrancher& b);
     /// Constructor for creation
     LDSBSetBrancher(Home home,
                     ViewArray<View>& x,
@@ -100,7 +100,7 @@ namespace Gecode { namespace Set { namespace LDSB {
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
     /// Perform cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Brancher post function
     static void post(Home home,
                      ViewArray<View>& x,

@@ -48,13 +48,13 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class Info, class Offset, PropCond pc>
   forceinline
-  Base<Info,Offset,pc>::Base(Space& home, bool share, Base<Info,Offset,pc>& p)
-    : Propagator(home,share,p), n(p.n), n_na(p.n_na),
+  Base<Info,Offset,pc>::Base(Space& home, Base<Info,Offset,pc>& p)
+    : Propagator(home,p), n(p.n), n_na(p.n_na),
       xy(home.alloc<Info>(2*n)) {
     ox.update(p.ox);
     oy.update(p.oy);
     for (int i=2*n; i--; )
-      xy[i].update(home,share,p.xy[i]);
+      xy[i].update(home,p.xy[i]);
   }
 
   template<class Info, class Offset, PropCond pc>

@@ -74,14 +74,14 @@ namespace Gecode { namespace Float { namespace Rel {
     using MixBinaryPropagator<View0,PC_FLOAT_BND,View1,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Eq(Space& home, bool share, Eq<View0,View1>& p);
+    Eq(Space& home, Eq<View0,View1>& p);
   public:
     /// Constructor for posting
     Eq(Home home, View0 x0, View1 x1);
     /// Constructor for rewriting \a p during cloning
-    Eq(Space& home, bool share, Propagator& p, View0 x0, View1 x1);
+    Eq(Space& home, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post bounds consistent propagator \f$ x_0 = x_1\f$
@@ -100,12 +100,12 @@ namespace Gecode { namespace Float { namespace Rel {
     using NaryPropagator<View,PC_FLOAT_BND>::x;
 
     /// Constructor for cloning \a p
-    NaryEq(Space& home, bool share, NaryEq<View>& p);
+    NaryEq(Space& home, NaryEq<View>& p);
     /// Constructor for posting
     NaryEq(Home home, ViewArray<View>&);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -133,12 +133,12 @@ namespace Gecode { namespace Float { namespace Rel {
     using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
 
     /// Constructor for cloning \a p
-    ReEq(Space& home, bool share, ReEq& p);
+    ReEq(Space& home, ReEq& p);
     /// Constructor for posting
     ReEq(Home home, View x0, View x1, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home, bool share);
+    virtual Actor*     copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post bounds consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
@@ -160,12 +160,12 @@ namespace Gecode { namespace Float { namespace Rel {
     /// Float constant to check
     FloatVal c;
     /// Constructor for cloning \a p
-    ReEqFloat(Space& home, bool share, ReEqFloat& p);
+    ReEqFloat(Space& home, ReEqFloat& p);
     /// Constructor for posting
     ReEqFloat(Home home, View x, FloatVal c, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post bounds consistent propagator \f$ (x = c)\Leftrightarrow b\f$
@@ -187,14 +187,14 @@ namespace Gecode { namespace Float { namespace Rel {
     using MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>::x1;
 
     /// Constructor for cloning \a p
-    Nq(Space& home, bool share, Nq<View0,View1>& p);
+    Nq(Space& home, Nq<View0,View1>& p);
   public:
     /// Constructor for posting
     Nq(Home home, View0 x0, View1 x1);
     /// Constructor for rewriting \a p during cloning
-    Nq(Space& home, bool share, Propagator& p, View0 x0, View1 x1);
+    Nq(Space& home, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post bounds consistent propagator \f$ x_0 \neq x_1\f$
@@ -216,12 +216,12 @@ namespace Gecode { namespace Float { namespace Rel {
     /// Float constant to check
     FloatVal c;
     /// Constructor for cloning \a p
-    NqFloat(Space& home, bool share, NqFloat<View>& p);
+    NqFloat(Space& home, NqFloat<View>& p);
   public:
     /// Constructor for posting
     NqFloat(Home home, View x, FloatVal c);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post bounds consistent propagator \f$ x_0 \neq c\f$
@@ -248,12 +248,12 @@ namespace Gecode { namespace Float { namespace Rel {
     using BinaryPropagator<View,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Lq(Space& home, bool share, Lq& p);
+    Lq(Space& home, Lq& p);
     /// Constructor for posting
     Lq(Home home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home, bool share);
+    virtual Actor*     copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$x_0 \leq x_1\f$
@@ -274,12 +274,12 @@ namespace Gecode { namespace Float { namespace Rel {
     using BinaryPropagator<View,PC_FLOAT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Le(Space& home, bool share, Le& p);
+    Le(Space& home, Le& p);
     /// Constructor for posting
     Le(Home home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home, bool share);
+    virtual Actor*     copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$x_0 \le x_1\f$
@@ -307,12 +307,12 @@ namespace Gecode { namespace Float { namespace Rel {
     /// Float constant to check
     FloatVal c;
     /// Constructor for cloning \a p
-    ReLqFloat(Space& home, bool share, ReLqFloat& p);
+    ReLqFloat(Space& home, ReLqFloat& p);
     /// Constructor for posting
     ReLqFloat(Home home, View x, FloatVal c, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x \leq c)\Leftrightarrow b\f$
@@ -335,12 +335,12 @@ namespace Gecode { namespace Float { namespace Rel {
     /// Float constant to check
     FloatVal c;
     /// Constructor for cloning \a p
-    ReLeFloat(Space& home, bool share, ReLeFloat& p);
+    ReLeFloat(Space& home, ReLeFloat& p);
     /// Constructor for posting
     ReLeFloat(Home home, View x, FloatVal c, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x < c)\Leftrightarrow b\f$
@@ -362,12 +362,12 @@ namespace Gecode { namespace Float { namespace Rel {
     using Int::ReBinaryPropagator<View,PC_FLOAT_BND,CtrlView>::b;
 
     /// Constructor for cloning \a p
-    ReLq(Space& home, bool share, ReLq& p);
+    ReLq(Space& home, ReLq& p);
     /// Constructor for posting
     ReLq(Home home, View x0, View x1, CtrlView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x_0 \leq x_1)\Leftrightarrow b\f$

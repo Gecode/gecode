@@ -349,7 +349,7 @@ namespace Gecode { namespace Float {
 
     /// \name Cloning
     //@{
-    void update(Space& home, bool share, OffsetView& y);
+    void update(Space& home, OffsetView& y);
     //@}
   };
 
@@ -462,7 +462,7 @@ namespace Gecode { namespace Float {
 
     /// \name Cloning
     //@{
-    void update(Space& home, bool share, ScaleView& y);
+    void update(Space& home, ScaleView& y);
     //@}
   };
 

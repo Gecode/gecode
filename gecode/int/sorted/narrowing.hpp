@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     // number of sccs is bounded by xs (number of x-nodes)
     int xs = x.size();
-    Region r(home);
+    Region r;
     Support::StaticStack<int,Region> cs(r,xs);
 
     //select an y node from the graph

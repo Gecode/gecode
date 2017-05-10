@@ -153,7 +153,7 @@ SUPPORTHDR0 = \
 	marked-pointer int-type auto-link \
 	thread thread/thread thread/windows thread/pthreads thread/none timer \
 	dynamic-queue bitset-base bitset bitset-offset \
-	hw-rnd run-jobs
+	hw-rnd run-jobs ref-count
 
 SUPPORTSRC1	=  $(SUPPORTSRC0:%=gecode/support/%.cpp)
 SUPPORTHDR 	=  gecode/support.hh \
@@ -196,7 +196,8 @@ VARIMP = $(VARIMPHDR)
 KERNELSRC0 = \
 	archive core memory-manager branch region \
 	afc action chb rnd exception \
-	trace-recorder trace-filter tracer trace
+	trace-recorder trace-filter tracer trace \
+	gpi
 
 KERNELHDR0 = \
 	archive array shared-array shared-data core exception \
@@ -206,10 +207,10 @@ KERNELHDR0 = \
 	brancher-view-sel brancher-merit \
 	brancher-val-sel brancher-val-commit brancher-view brancher-view-val \
 	brancher-val-sel-commit brancher-print brancher-filter \
-	allocators gpi \
+	allocators gpi shared-space-data \
 	afc action chb rnd branch-traits \
 	trace-traits trace-filter tracer trace-recorder trace trace-print \
-	subscribed-propagators
+	subscribed-propagators shared-object
 
 KERNELSRC 	= $(KERNELSRC0:%=gecode/kernel/%.cpp)
 KERNELHDR 	= \

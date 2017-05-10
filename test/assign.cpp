@@ -54,13 +54,13 @@ namespace Test { namespace Assign {
     IntTestSpace(int n, Gecode::IntSet& d)
       : x(*this, n, d) {}
     /// Constructor for cloning \a s
-    IntTestSpace(bool share, IntTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    IntTestSpace(IntTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new IntTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new IntTestSpace(*this);
     }
   };
 
@@ -73,13 +73,13 @@ namespace Test { namespace Assign {
     BoolTestSpace(int n)
       : x(*this, n, 0, 1) {}
     /// Constructor for cloning \a s
-    BoolTestSpace(bool share, BoolTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    BoolTestSpace(BoolTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new BoolTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new BoolTestSpace(*this);
     }
   };
 
@@ -94,13 +94,13 @@ namespace Test { namespace Assign {
     SetTestSpace(int n, const Gecode::IntSet& d)
       : x(*this, n, Gecode::IntSet::empty, d) {}
     /// Constructor for cloning \a s
-    SetTestSpace(bool share, SetTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    SetTestSpace(SetTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new SetTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new SetTestSpace(*this);
     }
   };
 
@@ -117,13 +117,13 @@ namespace Test { namespace Assign {
     FloatTestSpace(int n, const Gecode::FloatVal& d)
       : x(*this, n, d.min(), d.max()) {}
     /// Constructor for cloning \a s
-    FloatTestSpace(bool share, FloatTestSpace& s)
-      : Gecode::Space(share,s) {
-      x.update(*this, share, s.x);
+    FloatTestSpace(FloatTestSpace& s)
+      : Gecode::Space(s) {
+      x.update(*this, s.x);
     }
     /// Copy space during cloning
-    virtual Gecode::Space* copy(bool share) {
-      return new FloatTestSpace(share,*this);
+    virtual Gecode::Space* copy(void) {
+      return new FloatTestSpace(*this);
     }
   };
 
@@ -184,7 +184,7 @@ namespace Test { namespace Assign {
     (void) root->status();
 
     for (int val = 0; val<n_int_assign; val++) {
-      IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone(false));
+      IntTestSpace* clone = static_cast<IntTestSpace*>(root->clone());
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
@@ -232,7 +232,7 @@ namespace Test { namespace Assign {
     (void) root->status();
 
     for (int val = n_bool_assign; val--; ) {
-      BoolTestSpace* clone = static_cast<BoolTestSpace*>(root->clone(false));
+      BoolTestSpace* clone = static_cast<BoolTestSpace*>(root->clone());
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
@@ -307,7 +307,7 @@ namespace Test { namespace Assign {
     (void) root->status();
 
     for (int val = n_int_assign; val--; ) {
-      SetTestSpace* clone = static_cast<SetTestSpace*>(root->clone(false));
+      SetTestSpace* clone = static_cast<SetTestSpace*>(root->clone());
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);
@@ -387,7 +387,7 @@ namespace Test { namespace Assign {
     (void) root->status();
 
     for (int val = n_float_assign; val--; ) {
-      FloatTestSpace* clone = static_cast<FloatTestSpace*>(root->clone(false));
+      FloatTestSpace* clone = static_cast<FloatTestSpace*>(root->clone());
       Gecode::Search::Options o;
       o.a_d = Base::rand(10);
       o.c_d = Base::rand(10);

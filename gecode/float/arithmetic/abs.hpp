@@ -55,13 +55,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B>
   forceinline
-  Abs<A,B>::Abs(Space& home, bool share, Abs<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  Abs<A,B>::Abs(Space& home, Abs<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  Abs<A,B>::copy(Space& home, bool share) {
-    return new (home) Abs<A,B>(home,share,*this);
+  Abs<A,B>::copy(Space& home) {
+    return new (home) Abs<A,B>(home,*this);
   }
 
   template<class A, class B>

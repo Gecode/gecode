@@ -66,13 +66,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    AbsBnd(Space& home, bool share, AbsBnd& p);
+    AbsBnd(Space& home, AbsBnd& p);
     /// Constructor for posting
     AbsBnd(Home home, View x0, View x1);
   public:
 
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -99,12 +99,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    AbsDom(Space& home, bool share, AbsDom& p);
+    AbsDom(Space& home, AbsDom& p);
     /// Constructor for posting
     AbsDom(Home home, View x0, View x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -139,14 +139,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    MaxBnd(Space& home, bool share, MaxBnd& p);
+    MaxBnd(Space& home, MaxBnd& p);
     /// Constructor for posting
     MaxBnd(Home home, View x0, View x1, View x2);
   public:
     /// Constructor for rewriting \a p during cloning
-    MaxBnd(Space& home, bool share, Propagator& p, View x0, View x1, View x2);
+    MaxBnd(Space& home, Propagator& p, View x0, View x1, View x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
@@ -166,12 +166,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using NaryOnePropagator<View,PC_INT_BND>::y;
 
     /// Constructor for cloning \a p
-    NaryMaxBnd(Space& home, bool share, NaryMaxBnd& p);
+    NaryMaxBnd(Space& home, NaryMaxBnd& p);
     /// Constructor for posting
     NaryMaxBnd(Home home, ViewArray<View>& x, View y);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ \max x=y\f$
@@ -192,14 +192,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_DOM>::x2;
 
     /// Constructor for cloning \a p
-    MaxDom(Space& home, bool share, MaxDom& p);
+    MaxDom(Space& home, MaxDom& p);
     /// Constructor for posting
     MaxDom(Home home, View x0, View x1, View x2);
   public:
     /// Constructor for rewriting \a p during cloning
-    MaxDom(Space& home, bool share, Propagator& p, View x0, View x1, View x2);
+    MaxDom(Space& home, Propagator& p, View x0, View x1, View x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -226,12 +226,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using NaryOnePropagator<View,PC_INT_DOM>::y;
 
     /// Constructor for cloning \a p
-    NaryMaxDom(Space& home, bool share, NaryMaxDom& p);
+    NaryMaxDom(Space& home, NaryMaxDom& p);
     /// Constructor for posting
     NaryMaxDom(Home home, ViewArray<View>& x, View y);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -268,12 +268,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Position of maximum view (maximal argument)
     VB y;
     /// Constructor for cloning \a p
-    ArgMax(Space& home, bool share, ArgMax& p);
+    ArgMax(Space& home, ArgMax& p);
     /// Constructor for posting
     ArgMax(Home home, IdxViewArray<VA>& x, VB y);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     // Cost function (defined as low linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -379,10 +379,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     PowPlusBnd(Home home, VA x0, VB x1, const Ops& ops);
     /// Constructor for cloning \a p
-    PowPlusBnd(Space& home, bool share, PowPlusBnd<VA,VB,Ops>& p);
+    PowPlusBnd(Space& home, PowPlusBnd<VA,VB,Ops>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
@@ -403,12 +403,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Operations
     Ops ops;
     /// Constructor for cloning \a p
-    PowBnd(Space& home, bool share, PowBnd& p);
+    PowBnd(Space& home, PowBnd& p);
     /// Constructor for posting
     PowBnd(Home home, IntView x0, IntView x1, const Ops& ops);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
@@ -430,10 +430,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     PowPlusDom(Home home, VA x0, VB x1, const Ops& ops);
     /// Constructor for cloning \a p
-    PowPlusDom(Space& home, bool share, PowPlusDom<VA,VB,Ops>& p);
+    PowPlusDom(Space& home, PowPlusDom<VA,VB,Ops>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -462,12 +462,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Operations
     Ops ops;
     /// Constructor for cloning \a p
-    PowDom(Space& home, bool share, PowDom<Ops>& p);
+    PowDom(Space& home, PowDom<Ops>& p);
     /// Constructor for posting
     PowDom(Home home, IntView x0, IntView x1, const Ops& ops);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -502,12 +502,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Operations
     Ops ops;
     /// Constructor for cloning \a p
-    NrootPlusBnd(Space& home, bool share, NrootPlusBnd<Ops,minus>& p);
+    NrootPlusBnd(Space& home, NrootPlusBnd<Ops,minus>& p);
     /// Constructor for posting
     NrootPlusBnd(Home home, IntView x0, IntView x1, const Ops& ops);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
@@ -528,12 +528,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Operations
     Ops ops;
     /// Constructor for cloning \a p
-    NrootBnd(Space& home, bool share, NrootBnd<Ops>& p);
+    NrootBnd(Space& home, NrootBnd<Ops>& p);
     /// Constructor for posting
     NrootBnd(Home home, IntView x0, IntView x1, const Ops& ops);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
@@ -554,12 +554,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Operations
     Ops ops;
     /// Constructor for cloning \a p
-    NrootPlusDom(Space& home, bool share, NrootPlusDom<Ops,minus>& p);
+    NrootPlusDom(Space& home, NrootPlusDom<Ops,minus>& p);
     /// Constructor for posting
     NrootPlusDom(Home home, IntView x0, IntView x1, const Ops& ops);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -588,12 +588,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Operations
     Ops ops;
     /// Constructor for cloning \a p
-    NrootDom(Space& home, bool share, NrootDom<Ops>& p);
+    NrootDom(Space& home, NrootDom<Ops>& p);
     /// Constructor for posting
     NrootDom(Home home, IntView x0, IntView x1, const Ops& ops);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -627,14 +627,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using BinaryPropagator<View,pc>::x1;
 
     /// Constructor for cloning \a p
-    MultZeroOne(Space& home, bool share, MultZeroOne<View,pc>& p);
+    MultZeroOne(Space& home, MultZeroOne<View,pc>& p);
     /// Constructor for posting
     MultZeroOne(Home home, View x0, View x1);
     /// Test whether \a x is equal to \a n
     static RelTest equal(View x, int n);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$x_0\cdot x_1=x_0\f$
@@ -659,11 +659,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     MultPlusBnd(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlusBnd(Space& home, bool share, MultPlusBnd<VA,VB,VC>& p);
+    MultPlusBnd(Space& home, MultPlusBnd<VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
@@ -681,7 +681,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<IntView,PC_INT_BND>::x1;
     using TernaryPropagator<IntView,PC_INT_BND>::x2;
     /// Constructor for cloning \a p
-    MultBnd(Space& home, bool share, MultBnd& p);
+    MultBnd(Space& home, MultBnd& p);
   public:
     /// Constructor for posting
     MultBnd(Home home, IntView x0, IntView x1, IntView x2);
@@ -690,7 +690,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
@@ -714,11 +714,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     MultPlusDom(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlusDom(Space& home, bool share, MultPlusDom<VA,VB,VC>& p);
+    MultPlusDom(Space& home, MultPlusDom<VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -743,7 +743,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<IntView,PC_INT_DOM>::x1;
     using TernaryPropagator<IntView,PC_INT_DOM>::x2;
     /// Constructor for cloning \a p
-    MultDom(Space& home, bool share, MultDom& p);
+    MultDom(Space& home, MultDom& p);
   public:
     /// Constructor for posting
     MultDom(Home home, IntView x0, IntView x1, IntView x2);
@@ -752,7 +752,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -788,11 +788,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     DivPlusBnd(Home home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    DivPlusBnd(Space& home, bool share, DivPlusBnd<VA,VB,VC>& p);
+    DivPlusBnd(Space& home, DivPlusBnd<VA,VB,VC>& p);
     /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
     static ExecStatus post(Home home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
@@ -812,14 +812,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    DivBnd(Space& home, bool share, DivBnd<View>& p);
+    DivBnd(Space& home, DivBnd<View>& p);
   public:
     /// Constructor for posting
     DivBnd(Home home, View x0, View x1, View x2);
     /// Post propagator \f$x_0\mathrm{div} x_1=x_2\f$ (rounding towards 0)
     static  ExecStatus post(Home home, View x0, View x1, View x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };
@@ -842,14 +842,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     using TernaryPropagator<View,PC_INT_BND>::x2;
 
     /// Constructor for cloning \a p
-    DivMod(Space& home, bool share, DivMod<View>& p);
+    DivMod(Space& home, DivMod<View>& p);
   public:
     /// Constructor for posting
     DivMod(Home home, View x0, View x1, View x2);
     /// Post propagator \f$x_1\neq 0 \land (x_2\neq 0\Rightarrow x_0\times x_2>0) \land \mathrm{abs}(x_2)<\mathrm{abs}(x_1)\f$
     static  ExecStatus post(Home home, View x0, View x1, View x2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };

@@ -705,7 +705,7 @@ namespace Gecode { namespace Driver {
     /// Constructor
     ScriptBase(const Options& opt);
     /// Constructor used for cloning
-    ScriptBase(bool share, ScriptBase& e);
+    ScriptBase(ScriptBase& e);
     /// Print a solution to \a os
     virtual void print(std::ostream& os) const;
     /// Compare with \a s
@@ -727,8 +727,6 @@ namespace Gecode { namespace Driver {
     template<class Script, template<class> class Engine, class Options,
              template<class, template<class> class> class Meta>
     static void runMeta(const Options& opt, Script* s);
-    /// Catch wrong definitions of copy constructor
-    explicit ScriptBase(ScriptBase& e);
   };
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -741,8 +739,8 @@ namespace Gecode { namespace Driver {
     ExtractStepOption(const Options& opt)
       : BaseSpace(opt.step()) {}
     /// Constructor used for cloning
-    ExtractStepOption(bool share, BaseSpace& e)
-      : BaseSpace(share,e) {}
+    ExtractStepOption(BaseSpace& e)
+      : BaseSpace(e) {}
   };
 
 #endif
@@ -754,8 +752,8 @@ namespace Gecode { namespace Driver {
     /// Constructor
     IgnoreStepOption(const Options&) {}
     /// Constructor used for cloning
-    IgnoreStepOption(bool share, BaseSpace& e)
-      : BaseSpace(share,e) {}
+    IgnoreStepOption(BaseSpace& e)
+      : BaseSpace(e) {}
   };
 
 

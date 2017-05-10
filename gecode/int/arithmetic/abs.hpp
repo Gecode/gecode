@@ -108,13 +108,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  AbsBnd<View>::AbsBnd(Space& home, bool share, AbsBnd<View>& p)
-    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  AbsBnd<View>::AbsBnd(Space& home, AbsBnd<View>& p)
+    : BinaryPropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  AbsBnd<View>::copy(Space& home,bool share) {
-    return new (home) AbsBnd<View>(home,share,*this);
+  AbsBnd<View>::copy(Space& home) {
+    return new (home) AbsBnd<View>(home,*this);
   }
 
   template<class View>
@@ -163,13 +163,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  AbsDom<View>::AbsDom(Space& home, bool share, AbsDom<View>& p)
-    : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+  AbsDom<View>::AbsDom(Space& home, AbsDom<View>& p)
+    : BinaryPropagator<View,PC_INT_DOM>(home,p) {}
 
   template<class View>
   Actor*
-  AbsDom<View>::copy(Space& home,bool share) {
-    return new (home) AbsDom<View>(home,share,*this);
+  AbsDom<View>::copy(Space& home) {
+    return new (home) AbsDom<View>(home,*this);
   }
 
   template<class View>
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
-    Region r(home);
+    Region r;
 
     {
       ViewRanges<View> i(x0), j(x0);

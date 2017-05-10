@@ -108,7 +108,7 @@ namespace Gecode { namespace Int {
     void reschedule(Space& home, Propagator& p, PropCond pc);
 
     /// Cloning
-    void update(Space& home, bool share, IdxViewArray<View>& x);
+    void update(Space& home, IdxViewArray<View>& x);
   };
 
   /**

@@ -190,8 +190,6 @@ namespace Gecode {
       Range* r;
       /// Allocate object with \a m elements
       GECODE_INT_EXPORT static IntSetObject* allocate(int m);
-      /// Return copy of object
-      GECODE_INT_EXPORT SharedHandle::Object* copy(void) const;
       /// Check whether \a n is included in the set
       GECODE_INT_EXPORT bool in(int n) const;
       /// Delete object
@@ -2043,7 +2041,7 @@ namespace Gecode {
       int symbol;  ///< symbol
       int o_state; ///< output state
       /// Default constructor
-      Transition();
+      Transition(void);
       /// Initialize members
       Transition(int i_state0, int symbol0, int o_state0);
     };
@@ -2207,8 +2205,6 @@ namespace Gecode {
       TupleSetI(void);
       /// Delete  implementation
       GECODE_INT_EXPORT virtual ~TupleSetI(void);
-      /// Create a copy
-      GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
     };
 
     /// Get implementation

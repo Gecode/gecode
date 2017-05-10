@@ -51,19 +51,19 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, PropCond pc>
   forceinline
-  LinBin<Val,A,B,pc>::LinBin(Space& home, bool share, LinBin<Val,A,B,pc>& p)
-    : Propagator(home,share,p), c(p.c) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
+  LinBin<Val,A,B,pc>::LinBin(Space& home, LinBin<Val,A,B,pc>& p)
+    : Propagator(home,p), c(p.c) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
   }
 
   template<class Val, class A, class B, PropCond pc>
   forceinline
-  LinBin<Val,A,B,pc>::LinBin(Space& home, bool share, Propagator& p,
+  LinBin<Val,A,B,pc>::LinBin(Space& home, Propagator& p,
                              A y0, B y1, Val c0)
-    : Propagator(home,share,p), c(c0) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
+    : Propagator(home,p), c(c0) {
+    x0.update(home,y0);
+    x1.update(home,y1);
   }
 
   template<class Val, class A, class B, PropCond pc>
@@ -104,12 +104,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, PropCond pc, class Ctrl>
   forceinline
-  ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space& home, bool share,
+  ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space& home,
                                       ReLinBin<Val,A,B,pc,Ctrl>& p)
-    : Propagator(home,share,p), c(p.c) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    b.update(home,share,p.b);
+    : Propagator(home,p), c(p.c) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    b.update(home,p.b);
   }
 
   template<class Val, class A, class B, PropCond pc, class Ctrl>
@@ -156,19 +156,19 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  EqBin<Val,A,B>::EqBin(Space& home, bool share, EqBin<Val,A,B>& p)
-    : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
+  EqBin<Val,A,B>::EqBin(Space& home, EqBin<Val,A,B>& p)
+    : LinBin<Val,A,B,PC_INT_BND>(home,p) {}
 
   template<class Val, class A, class B>
   forceinline
-  EqBin<Val,A,B>::EqBin(Space& home, bool share, Propagator& p,
+  EqBin<Val,A,B>::EqBin(Space& home, Propagator& p,
                         A x0, B x1, Val c)
-    : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
+    : LinBin<Val,A,B,PC_INT_BND>(home,p,x0,x1,c) {}
 
   template<class Val, class A, class B>
   Actor*
-  EqBin<Val,A,B>::copy(Space& home, bool share) {
-    return new (home) EqBin<Val,A,B>(home,share,*this);
+  EqBin<Val,A,B>::copy(Space& home) {
+    return new (home) EqBin<Val,A,B>(home,*this);
   }
 
   /// Describe which view has been modified how
@@ -226,14 +226,14 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class Ctrl, ReifyMode rm>
   forceinline
-  ReEqBin<Val,A,B,Ctrl,rm>::ReEqBin(Space& home, bool share,
+  ReEqBin<Val,A,B,Ctrl,rm>::ReEqBin(Space& home,
                                     ReEqBin<Val,A,B,Ctrl,rm>& p)
-    : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,share,p) {}
+    : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,p) {}
 
   template<class Val, class A, class B, class Ctrl, ReifyMode rm>
   Actor*
-  ReEqBin<Val,A,B,Ctrl,rm>::copy(Space& home, bool share) {
-    return new (home) ReEqBin<Val,A,B,Ctrl,rm>(home,share,*this);
+  ReEqBin<Val,A,B,Ctrl,rm>::copy(Space& home) {
+    return new (home) ReEqBin<Val,A,B,Ctrl,rm>(home,*this);
   }
 
   template<class Val, class A, class B, class Ctrl, ReifyMode rm>
@@ -285,20 +285,20 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  NqBin<Val,A,B>::NqBin(Space& home, bool share, NqBin<Val,A,B>& p)
-    : LinBin<Val,A,B,PC_INT_VAL>(home,share,p) {}
+  NqBin<Val,A,B>::NqBin(Space& home, NqBin<Val,A,B>& p)
+    : LinBin<Val,A,B,PC_INT_VAL>(home,p) {}
 
   template<class Val, class A, class B>
   Actor*
-  NqBin<Val,A,B>::copy(Space& home, bool share) {
-    return new (home) NqBin<Val,A,B>(home,share,*this);
+  NqBin<Val,A,B>::copy(Space& home) {
+    return new (home) NqBin<Val,A,B>(home,*this);
   }
 
   template<class Val, class A, class B>
   forceinline
-  NqBin<Val,A,B>::NqBin(Space& home, bool share, Propagator& p,
+  NqBin<Val,A,B>::NqBin(Space& home, Propagator& p,
                         A x0, B x1, Val c)
-    : LinBin<Val,A,B,PC_INT_VAL>(home,share,p,x0,x1,c) {}
+    : LinBin<Val,A,B,PC_INT_VAL>(home,p,x0,x1,c) {}
 
 
 
@@ -341,20 +341,20 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  LqBin<Val,A,B>::LqBin(Space& home, bool share, LqBin<Val,A,B>& p)
-    : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
+  LqBin<Val,A,B>::LqBin(Space& home, LqBin<Val,A,B>& p)
+    : LinBin<Val,A,B,PC_INT_BND>(home,p) {}
 
   template<class Val, class A, class B>
   Actor*
-  LqBin<Val,A,B>::copy(Space& home, bool share) {
-    return new (home) LqBin<Val,A,B>(home,share,*this);
+  LqBin<Val,A,B>::copy(Space& home) {
+    return new (home) LqBin<Val,A,B>(home,*this);
   }
 
   template<class Val, class A, class B>
   forceinline
-  LqBin<Val,A,B>::LqBin(Space& home, bool share, Propagator& p,
+  LqBin<Val,A,B>::LqBin(Space& home, Propagator& p,
                         A x0, B x1, Val c)
-    : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
+    : LinBin<Val,A,B,PC_INT_BND>(home,p,x0,x1,c) {}
 
   template<class Val, class A, class B>
   ExecStatus
@@ -387,20 +387,20 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B>
   forceinline
-  GqBin<Val,A,B>::GqBin(Space& home, bool share, GqBin<Val,A,B>& p)
-    : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
+  GqBin<Val,A,B>::GqBin(Space& home, GqBin<Val,A,B>& p)
+    : LinBin<Val,A,B,PC_INT_BND>(home,p) {}
 
   template<class Val, class A, class B>
   Actor*
-  GqBin<Val,A,B>::copy(Space& home, bool share) {
-    return new (home) GqBin<Val,A,B>(home,share,*this);
+  GqBin<Val,A,B>::copy(Space& home) {
+    return new (home) GqBin<Val,A,B>(home,*this);
   }
 
   template<class Val, class A, class B>
   forceinline
-  GqBin<Val,A,B>::GqBin(Space& home, bool share, Propagator& p,
+  GqBin<Val,A,B>::GqBin(Space& home, Propagator& p,
                         A x0, B x1, Val c)
-    : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
+    : LinBin<Val,A,B,PC_INT_BND>(home,p,x0,x1,c) {}
 
   template<class Val, class A, class B>
   ExecStatus
@@ -433,13 +433,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, ReifyMode rm>
   forceinline
-  ReLqBin<Val,A,B,rm>::ReLqBin(Space& home, bool share, ReLqBin<Val,A,B,rm>& p)
-    : ReLinBin<Val,A,B,PC_INT_BND,BoolView>(home,share,p) {}
+  ReLqBin<Val,A,B,rm>::ReLqBin(Space& home, ReLqBin<Val,A,B,rm>& p)
+    : ReLinBin<Val,A,B,PC_INT_BND,BoolView>(home,p) {}
 
   template<class Val, class A, class B, ReifyMode rm>
   Actor*
-  ReLqBin<Val,A,B,rm>::copy(Space& home, bool share) {
-    return new (home) ReLqBin<Val,A,B,rm>(home,share,*this);
+  ReLqBin<Val,A,B,rm>::copy(Space& home) {
+    return new (home) ReLqBin<Val,A,B,rm>(home,*this);
   }
 
   template<class Val, class A, class B, ReifyMode rm>

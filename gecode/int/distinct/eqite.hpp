@@ -44,8 +44,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     : BinaryPropagator<IntView,PC_INT_DOM>(home,x0,x1), c0(d0), c1(d1) {}
 
   forceinline
-  EqIte::EqIte(Space& home, bool share, EqIte& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
+  EqIte::EqIte(Space& home, EqIte& p)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,p),
       c0(p.c0), c1(p.c1) {}
 
 

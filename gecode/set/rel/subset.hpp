@@ -51,9 +51,9 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  Subset<View0,View1>::Subset(Space& home, bool share, Subset& p)
+  Subset<View0,View1>::Subset(Space& home, Subset& p)
     : MixBinaryPropagator<View0,PC_SET_CGLB,
-                            View1,PC_SET_CLUB>(home,share,p) {}
+                            View1,PC_SET_CLUB>(home,p) {}
 
   template<class View0, class View1>
   ExecStatus Subset<View0,View1>::post(Home home, View0 x, View1 y) {
@@ -63,8 +63,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   Actor*
-  Subset<View0,View1>::copy(Space& home, bool share) {
-    return new (home) Subset(home,share,*this);
+  Subset<View0,View1>::copy(Space& home) {
+    return new (home) Subset(home,*this);
   }
 
   template<class View0, class View1>

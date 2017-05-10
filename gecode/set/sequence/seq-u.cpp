@@ -51,15 +51,15 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   Actor*
-  SeqU::copy(Space& home, bool share) {
-    return new (home) SeqU(home,share,*this);
+  SeqU::copy(Space& home) {
+    return new (home) SeqU(home,*this);
   }
 
   ExecStatus
   SeqU::propagateSeqUnion(Space& home,
                           bool& modified, ViewArray<SetView>& x,
                           SetView& y) {
-    Region r(home);
+    Region r;
     GlbRanges<SetView>* XLBs = r.alloc<GlbRanges<SetView> >(x.size());
     for (int i=x.size(); i--; ){
       GlbRanges<SetView> lb(x[i]);

@@ -231,8 +231,8 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  ConstIntView::update(Space& home, bool share, ConstIntView& y) {
-    ConstView<IntView>::update(home,share,y);
+  ConstIntView::update(Space& home, ConstIntView& y) {
+    ConstView<IntView>::update(home,y);
     x = y.x;
   }
 

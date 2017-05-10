@@ -75,7 +75,7 @@ namespace Gecode {
     /// Initialize for propagator \a p with view \a x and value \a n
     ViewValNGL(Space& home, View x, Val n);
     /// Constructor for cloning \a ngl
-    ViewValNGL(Space& home, bool share, ViewValNGL& ngl);
+    ViewValNGL(Space& home, ViewValNGL& ngl);
     /// Create subscription for no-good literal
     virtual void subscribe(Space& home, Propagator& p);
     /// Cancel subscription for no-good literal
@@ -107,7 +107,7 @@ namespace Gecode {
     /// Print function
     Print p;
     /// Constructor for cloning \a b
-    ViewValBrancher(Space& home, bool share, ViewValBrancher& b);
+    ViewValBrancher(Space& home, ViewValBrancher& b);
     /// Constructor for creation
     ViewValBrancher(Home home,
                     ViewArray<View>& x,
@@ -134,7 +134,7 @@ namespace Gecode {
     virtual void print(const Space& home, const Choice& c, unsigned int b,
                        std::ostream& o) const;
     /// Perform cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function
@@ -198,9 +198,9 @@ namespace Gecode {
 
   template<class View, class Val, PropCond pc>
   forceinline
-  ViewValNGL<View,Val,pc>::ViewValNGL(Space& home, bool share, ViewValNGL& ngl)
-    : NGL(home,share,ngl), n(ngl.n) {
-    x.update(home,share,ngl.x);
+  ViewValNGL<View,Val,pc>::ViewValNGL(Space& home, ViewValNGL& ngl)
+    : NGL(home,ngl), n(ngl.n) {
+    x.update(home,ngl.x);
   }
 
   template<class View, class Val, PropCond pc>
@@ -265,17 +265,17 @@ namespace Gecode {
            class Filter, class Print>
   forceinline
   ViewValBrancher<View,n,Val,a,Filter,Print>::
-  ViewValBrancher(Space& home, bool shared,
+  ViewValBrancher(Space& home,
                   ViewValBrancher<View,n,Val,a,Filter,Print>& b)
-    : ViewBrancher<View,Filter,n>(home,shared,b),
-      vsc(b.vsc->copy(home,shared)), p(home,shared,b.p) {}
+    : ViewBrancher<View,Filter,n>(home,b),
+      vsc(b.vsc->copy(home)), p(b.p) {}
 
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>
   Actor*
-  ViewValBrancher<View,n,Val,a,Filter,Print>::copy(Space& home, bool shared) {
+  ViewValBrancher<View,n,Val,a,Filter,Print>::copy(Space& home) {
     return new (home) ViewValBrancher<View,n,Val,a,Filter,Print>
-      (home,shared,*this);
+      (home,*this);
   }
 
   template<class View, int n, class Val, unsigned int a,

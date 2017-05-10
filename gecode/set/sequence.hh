@@ -63,12 +63,12 @@ namespace Gecode { namespace Set { namespace Sequence {
   class Seq : public NaryPropagator<SetView, PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
-    Seq(Space& home, bool share,Seq& p);
+    Seq(Space& home, Seq& p);
     /// Constructor for posting
-    Seq(Home home,ViewArray<SetView>&);
+    Seq(Home home, ViewArray<SetView>&);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*      copy(Space& home, bool);
+    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
@@ -86,15 +86,15 @@ namespace Gecode { namespace Set { namespace Sequence {
   protected:
     GLBndSet unionOfDets; //Union of determined variables dropped form x.
     /// Constructor for cloning \a p
-    SeqU(Space& home, bool share,SeqU& p);
+    SeqU(Space& home, SeqU& p);
     /// Constructor for posting
-    SeqU(Home home,ViewArray<SetView>&, SetView);
+    SeqU(Home home, ViewArray<SetView>&, SetView);
     ExecStatus propagateSeqUnion(Space& home,
                                  bool& modified, ViewArray<SetView>& x,
                                  SetView& y);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*     copy(Space& home, bool);
+    GECODE_SET_EXPORT virtual Actor* copy(Space& home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$

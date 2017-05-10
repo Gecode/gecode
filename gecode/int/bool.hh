@@ -63,9 +63,9 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     BoolBinary(Home home, BVA b0, BVB b1);
     /// Constructor for cloning
-    BoolBinary(Space& home, bool share, BoolBinary& p);
+    BoolBinary(Space& home, BoolBinary& p);
     /// Constructor for rewriting \a p during cloning
-    BoolBinary(Space& home, bool share, Propagator& p,
+    BoolBinary(Space& home, Propagator& p,
                BVA b0, BVB b1);
   public:
     /// Cost function (defined as low unary)
@@ -86,10 +86,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     BoolTernary(Home home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning
-    BoolTernary(Space& home, bool share, BoolTernary& p);
+    BoolTernary(Space& home, BoolTernary& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    BoolTernary(Space& home, bool share, Propagator& p,
+    BoolTernary(Space& home, Propagator& p,
                 BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -113,13 +113,13 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     Eq(Home home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
-    Eq(Space& home, bool share, Eq& p);
+    Eq(Space& home, Eq& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    Eq(Space& home, bool share, Propagator& p,
+    Eq(Space& home, Propagator& p,
        BVA b0, BVB b1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x_0 = x_1\f$
@@ -140,10 +140,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     NaryEq(Home home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
-    NaryEq(Space& home, bool share, NaryEq& p);
+    NaryEq(Space& home, NaryEq& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -167,10 +167,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     Lq(Home home, BV b0, BV b1);
     /// Constructor for cloning \a p
-    Lq(Space& home, bool share, Lq& p);
+    Lq(Space& home, Lq& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \leq b_1\f$
@@ -198,10 +198,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     NaryLq(Home home,  ViewArray<VX>& x);
     /// Constructor for cloning \a p
-    NaryLq(Space& home, bool share, NaryLq<VX>& p);
+    NaryLq(Space& home, NaryLq<VX>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
@@ -245,13 +245,13 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     BinOrTrue(Home home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
-    BinOrTrue(Space& home, bool share, BinOrTrue& p);
+    BinOrTrue(Space& home, BinOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    BinOrTrue(Space& home, bool share, Propagator& p,
+    BinOrTrue(Space& home, Propagator& p,
               BVA b0, BVB b1);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
@@ -274,13 +274,13 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     TerOrTrue(Home home, BV b0, BV b1, BV b2);
     /// Constructor for cloning \a p
-    TerOrTrue(Space& home, bool share, TerOrTrue& p);
+    TerOrTrue(Space& home, TerOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    TerOrTrue(Space& home, bool share, Propagator& p,
+    TerOrTrue(Space& home, Propagator& p,
               BV b0, BV b1, BV b2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 = 1 \f$
@@ -307,13 +307,13 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     QuadOrTrue(Home home, BV b0, BV b1, BV b2, BV b3);
     /// Constructor for cloning \a p
-    QuadOrTrue(Space& home, bool share, QuadOrTrue& p);
+    QuadOrTrue(Space& home, QuadOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    QuadOrTrue(Space& home, bool share, Propagator& p,
+    QuadOrTrue(Space& home, Propagator& p,
                BV b0, BV b1, BV b2, BV b3);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 \lor b_2 \lor b_3 = 1 \f$
@@ -337,12 +337,12 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     Or(Home home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning \a p
-    Or(Space& home, bool share, Or& p);
+    Or(Space& home, Or& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    Or(Space& home, bool share, Propagator& p, BVA b0, BVB b1, BVC b2);
+    Or(Space& home, Propagator& p, BVA b0, BVB b1, BVC b2);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
@@ -368,10 +368,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     NaryOr(Home home,  ViewArray<VX>& x, VY y);
     /// Constructor for cloning \a p
-    NaryOr(Space& home, bool share, NaryOr<VX,VY>& p);
+    NaryOr(Space& home, NaryOr<VX,VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
@@ -405,10 +405,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     NaryOrTrue(Home home, ViewArray<BV>& x);
     /// Constructor for cloning \a p
-    NaryOrTrue(Space& home, bool share, NaryOrTrue<BV>& p);
+    NaryOrTrue(Space& home, NaryOrTrue<BV>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -433,12 +433,12 @@ namespace Gecode { namespace Int { namespace Bool {
     using BoolTernary<BVA,BVB,BVC>::x1;
     using BoolTernary<BVA,BVB,BVC>::x2;
     /// Constructor for cloning \a p
-    Eqv(Space& home, bool share, Eqv& p);
+    Eqv(Space& home, Eqv& p);
     /// Constructor for posting
     Eqv(Home home, BVA b0 ,BVB b1, BVC b2);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
@@ -467,11 +467,11 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     NaryEqv(Home home, ViewArray<BoolView>& x, int pm2);
     /// Constructor for cloning \a p
-    NaryEqv(Space& home, bool share, NaryEqv& p);
+    NaryEqv(Space& home, NaryEqv& p);
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as low binary)
     GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
@@ -511,7 +511,7 @@ namespace Gecode { namespace Int { namespace Bool {
       /// Create tagged advisor
       Tagged(Space& home, Propagator& p, Council<Tagged>& c, bool x);
       /// Clone tagged advisor \a a
-      Tagged(Space& home, bool share, Tagged& a);
+      Tagged(Space& home, Tagged& a);
     };
     /// The advisor council
     Council<Tagged> c;
@@ -520,10 +520,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     Clause(Home home,  ViewArray<VX>& x, ViewArray<VY>& y, VX z);
     /// Constructor for cloning \a p
-    Clause(Space& home, bool share, Clause<VX,VY>& p);
+    Clause(Space& home, Clause<VX,VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
     /// Cost function (defined as low unary)
@@ -559,10 +559,10 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for posting
     ClauseTrue(Home home, ViewArray<VX>& x, ViewArray<VY>& y);
     /// Constructor for cloning \a p
-    ClauseTrue(Space& home, bool share, ClauseTrue<VX,VY>& p);
+    ClauseTrue(Space& home, ClauseTrue<VX,VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as low binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -588,7 +588,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Views
     V0 x0; V1 x1; V2 x2;
     /// Constructor for cloning \a p
-    IteBase(Space& home, bool share, IteBase& p);
+    IteBase(Space& home, IteBase& p);
     /// Constructor for creation
     IteBase(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
@@ -614,12 +614,12 @@ namespace Gecode { namespace Int { namespace Bool {
     using IteBase<V0,V1,V2,PC_INT_BND>::x1;
     using IteBase<V0,V1,V2,PC_INT_BND>::x2;
     /// Constructor for cloning \a p
-    IteBnd(Space& home, bool share, IteBnd& p);
+    IteBnd(Space& home, IteBnd& p);
     /// Constructor for creation
     IteBnd(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post if-then-else propagator
@@ -640,12 +640,12 @@ namespace Gecode { namespace Int { namespace Bool {
     using IteBase<V0,V1,V2,PC_INT_DOM>::x1;
     using IteBase<V0,V1,V2,PC_INT_DOM>::x2;
     /// Constructor for cloning \a p
-    IteDom(Space& home, bool share, IteDom& p);
+    IteDom(Space& home, IteDom& p);
     /// Constructor for creation
     IteDom(Home home, BoolView b, V0 x0, V1 x1, V2 x2);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as high ternary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation

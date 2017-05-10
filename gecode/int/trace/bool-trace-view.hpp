@@ -47,7 +47,7 @@ namespace Gecode { namespace Int {
     /// Update duplicated view from view \a y and modification delta \a d
     void prune(Space& home, BoolView y, const Delta& d);
     /// Update duplicate view during copying
-    void update(Space&home, bool share, BoolTraceView x);
+    void update(Space&home, BoolTraceView x);
     /// Return slack of \a x
     static unsigned int slack(BoolView x);
   };
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int {
   forceinline void
   BoolTraceView::prune(Space&, BoolView, const Delta&) {}
   forceinline void
-  BoolTraceView::update(Space&, bool, BoolTraceView) {}
+  BoolTraceView::update(Space&, BoolTraceView) {}
   forceinline unsigned int
   BoolTraceView::slack(BoolView x) {
     return x.width()-1;

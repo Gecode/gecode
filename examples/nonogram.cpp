@@ -171,14 +171,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Nonogram(bool share, Nonogram& s) : Script(share,s), spec(s.spec) {
-    b.update(*this, share, s.b);
+  Nonogram(Nonogram& s) : Script(s), spec(s.spec) {
+    b.update(*this, s.b);
   }
 
   /// Copy space during cloning
   virtual Space*
-  copy(bool share) {
-    return new Nonogram(share,*this);
+  copy(void) {
+    return new Nonogram(*this);
   }
 
   /// Print solution

@@ -235,14 +235,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Crossword(bool share, Crossword& s)
-    : Script(share,s), w(s.w), h(s.h) {
-    letters.update(*this, share, s.letters);
+  Crossword(Crossword& s)
+    : Script(s), w(s.w), h(s.h) {
+    letters.update(*this, s.letters);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Crossword(share,*this);
+  copy(void) {
+    return new Crossword(*this);
   }
   /// Print solution
   virtual void

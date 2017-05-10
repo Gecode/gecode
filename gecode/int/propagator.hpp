@@ -62,9 +62,9 @@ namespace Gecode { namespace Int {
     /// Boolean control view
     CtrlView b;
     /// Constructor for cloning \a p
-    ReUnaryPropagator(Space& home, bool share, ReUnaryPropagator& p);
+    ReUnaryPropagator(Space& home, ReUnaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    ReUnaryPropagator(Space& home, bool share, Propagator& p,
+    ReUnaryPropagator(Space& home, Propagator& p,
                       View x0, CtrlView b);
     /// Constructor for creation
     ReUnaryPropagator(Home home, View x0, CtrlView b);
@@ -95,9 +95,9 @@ namespace Gecode { namespace Int {
     /// Boolean control view
     CtrlView b;
     /// Constructor for cloning \a p
-    ReBinaryPropagator(Space& home, bool share, ReBinaryPropagator& p);
+    ReBinaryPropagator(Space& home, ReBinaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
-    ReBinaryPropagator(Space& home, bool share, Propagator& p,
+    ReBinaryPropagator(Space& home, Propagator& p,
                        View x0, View x1, CtrlView b);
     /// Constructor for creation
     ReBinaryPropagator(Home home, View x0, View x1, CtrlView b);
@@ -134,11 +134,11 @@ namespace Gecode { namespace Int {
     /// Boolean control view
     CtrlView b;
     /// Constructor for cloning \a p
-    ReMixBinaryPropagator(Space& home, bool share, ReMixBinaryPropagator& p);
+    ReMixBinaryPropagator(Space& home, ReMixBinaryPropagator& p);
     /// Constructor for creation
     ReMixBinaryPropagator(Home home, View0 x0, View1 x1, CtrlView b);
     /// Constructor for rewriting \a p during cloning
-    ReMixBinaryPropagator(Space& home, bool share, Propagator& p,
+    ReMixBinaryPropagator(Space& home, Propagator& p,
                           View0 x0, View1 x1, CtrlView b);
   public:
     /// Cost function (defined as low binary)
@@ -166,19 +166,19 @@ namespace Gecode { namespace Int {
   template<class View, PropCond pc, class CtrlView>
   forceinline
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space& home, bool share, ReUnaryPropagator<View,pc,CtrlView>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    b.update(home,share,p.b);
+  (Space& home, ReUnaryPropagator<View,pc,CtrlView>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    b.update(home,p.b);
   }
 
   template<class View, PropCond pc, class CtrlView>
   forceinline
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space& home, bool share, Propagator& p, View y0, CtrlView b0)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    b.update(home,share,b0);
+  (Space& home, Propagator& p, View y0, CtrlView b0)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    b.update(home,b0);
   }
 
   template<class View, PropCond pc, class CtrlView>
@@ -223,21 +223,21 @@ namespace Gecode { namespace Int {
   template<class View, PropCond pc, class CtrlView>
   forceinline
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space& home, bool share, ReBinaryPropagator<View,pc,CtrlView>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    b.update(home,share,p.b);
+  (Space& home, ReBinaryPropagator<View,pc,CtrlView>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    b.update(home,p.b);
   }
 
   template<class View, PropCond pc, class CtrlView>
   forceinline
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space& home, bool share, Propagator& p, View y0, View y1, CtrlView b0)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
-    b.update(home,share,b0);
+  (Space& home, Propagator& p, View y0, View y1, CtrlView b0)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    x1.update(home,y1);
+    b.update(home,b0);
   }
 
   template<class View, PropCond pc, class CtrlView>
@@ -288,12 +288,12 @@ namespace Gecode { namespace Int {
             class CtrlView>
   forceinline
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>::ReMixBinaryPropagator
-  (Space& home, bool share,
+  (Space& home,
    ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    b.update(home,share,p.b);
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    b.update(home,p.b);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1,
@@ -301,11 +301,11 @@ namespace Gecode { namespace Int {
   forceinline
   ReMixBinaryPropagator<View0,pc0,View1,pc1,CtrlView>
   ::ReMixBinaryPropagator
-  (Space& home, bool share, Propagator& p, View0 y0, View1 y1, CtrlView b0)
-    : Propagator(home,share,p) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
-    b.update(home,share,b0);
+  (Space& home, Propagator& p, View0 y0, View1 y1, CtrlView b0)
+    : Propagator(home,p) {
+    x0.update(home,y0);
+    x1.update(home,y1);
+    b.update(home,b0);
   }
 
   template<class View0, PropCond pc0, class View1, PropCond pc1,

@@ -40,8 +40,8 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   NGL*
-  IncNGL::copy(Space& home, bool share) {
-    return new (home) IncNGL(home,share,*this);
+  IncNGL::copy(Space& home) {
+    return new (home) IncNGL(home,*this);
   }
   NGL::Status
   IncNGL::status(const Space&) const {
@@ -59,8 +59,8 @@ namespace Gecode { namespace Set { namespace Branch {
 
 
   NGL*
-  ExcNGL::copy(Space& home, bool share) {
-    return new (home) ExcNGL(home,share,*this);
+  ExcNGL::copy(Space& home) {
+    return new (home) ExcNGL(home,*this);
   }
   NGL::Status
   ExcNGL::status(const Space&) const {

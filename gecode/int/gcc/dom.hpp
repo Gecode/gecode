@@ -80,11 +80,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline
-  Dom<Card>::Dom(Space& home, bool share, Dom<Card>& p)
-    : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    k.update(home, share, p.k);
+  Dom<Card>::Dom(Space& home, Dom<Card>& p)
+    : Propagator(home, p), vvg(NULL), card_fixed(p.card_fixed) {
+    x.update(home, p.x);
+    y.update(home, p.y);
+    k.update(home, p.k);
   }
 
   template<class Card>
@@ -98,8 +98,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   Actor*
-  Dom<Card>::copy(Space& home, bool share) {
-    return new (home) Dom<Card>(home, share, *this);
+  Dom<Card>::copy(Space& home) {
+    return new (home) Dom<Card>(home, *this);
   }
 
   template<class Card>
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
 
     int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )

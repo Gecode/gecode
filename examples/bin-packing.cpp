@@ -258,15 +258,14 @@ public:
     (void) new (home) CDBF(home, l, b, s);
   }
   /// Copy constructor
-  CDBF(Space& home, bool share, CDBF& cdbf)
-    : Brancher(home, share, cdbf), item(cdbf.item) {
-    load.update(home, share, cdbf.load);
-    bin.update(home, share, cdbf.bin);
-    size.update(home, share, cdbf.size);
+  CDBF(Space& home, CDBF& cdbf)
+    : Brancher(home, cdbf), size(cdbf.size), item(cdbf.item) {
+    load.update(home, cdbf.load);
+    bin.update(home, cdbf.bin);
   }
   /// Copy brancher
-  virtual Actor* copy(Space& home, bool share) {
-    return new (home) CDBF(home, share, *this);
+  virtual Actor* copy(Space& home) {
+    return new (home) CDBF(home, *this);
   }
   /// Delete brancher and return its size
   virtual size_t dispose(Space& home) {
@@ -289,7 +288,7 @@ public:
 
     int n = bin.size(), m = load.size();
 
-    Region region(home);
+    Region region;
 
     // Free space in bins
     int* free = region.alloc<int>(m);
@@ -340,7 +339,7 @@ public:
   virtual const Gecode::Choice* choice(const Space& home, Archive& e) {
     int alt, item, n_same;
     e >> alt >> item >> n_same;
-    Region re(home);
+    Region re;
     int* same = re.alloc<int>(n_same);
     for (int i=n_same; i--;) e >> same[i];
     return new Choice(*this, alt, item, same, n_same);
@@ -505,16 +504,16 @@ public:
     return bins;
   }
   /// Constructor for cloning \a s
-  BinPacking(bool share, BinPacking& s)
-    : IntMinimizeScript(share,s), spec(s.spec) {
-    load.update(*this, share, s.load);
-    bin.update(*this, share, s.bin);
-    bins.update(*this, share, s.bins);
+  BinPacking(BinPacking& s)
+    : IntMinimizeScript(s), spec(s.spec) {
+    load.update(*this, s.load);
+    bin.update(*this, s.bin);
+    bins.update(*this, s.bins);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new BinPacking(share,*this);
+  copy(void) {
+    return new BinPacking(*this);
   }
   /// Print solution
   virtual void

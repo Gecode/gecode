@@ -125,7 +125,7 @@ namespace Gecode { namespace Search { namespace Parallel {
                 {
                   // Deletes all pending branchers
                   (void) cur->choice();
-                  Space* s = cur->clone(false);
+                  Space* s = cur->clone();
                   delete cur;
                   cur = NULL;
                   path.next();

@@ -56,7 +56,7 @@ namespace Gecode { namespace Search {
         double p, Post& post) {
     if (home.failed())
       return;
-    Region reg(home);
+    Region reg;
     // Which variables to assign
     Support::BitSet<Region> ax(reg, static_cast<unsigned int>(x.size()));
     // Select randomly with probability p to relax value

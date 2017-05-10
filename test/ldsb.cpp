@@ -148,12 +148,12 @@ namespace Test { namespace LDSB {
     OneArray(int n, int l, int u) : xs(*this,n,l,u) {
     }
     /// Constructor for cloning \a s
-    OneArray(bool share, OneArray& s) : Space(share,s) {
-      xs.update(*this,share,s.xs);
+    OneArray(OneArray& s) : Space(s) {
+      xs.update(*this,s.xs);
     }
     /// Copy during cloning
-    virtual Space* copy(bool share) {
-      return new OneArray(share,*this);
+    virtual Space* copy(void) {
+      return new OneArray(*this);
     }
     /// Return the solution as IntArgs
     IntArgs solution(void) {
@@ -176,12 +176,12 @@ namespace Test { namespace LDSB {
     OneArraySet(int n, int l, int u) : xs(*this,n, IntSet::empty, l,u) {
     }
     /// Constructor for cloning \a s
-    OneArraySet(bool share, OneArraySet& s) : Space(share,s) {
-      xs.update(*this,share,s.xs);
+    OneArraySet(OneArraySet& s) : Space(s) {
+      xs.update(*this,s.xs);
     }
     /// Copy during cloning
-    virtual Space* copy(bool share) {
-      return new OneArraySet(share,*this);
+    virtual Space* copy(void) {
+      return new OneArraySet(*this);
     }
     /// Return the solution as IntSetArgs
     IntSetArgs solution(void) {
@@ -1162,10 +1162,10 @@ namespace Test { namespace LDSB {
         branch(*this, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
       }
       // Search support.
-      Latin(bool share, Latin& s) : Space(share, s)
-      { xs.update(*this, share, s.xs); }
-      virtual Space* copy(bool share)
-      { return new Latin(share,*this); }
+      Latin(Latin& s) : Space(s)
+      { xs.update(*this, s.xs); }
+      virtual Space* copy(void)
+      { return new Latin(*this); }
       IntArgs solution(void) {
         IntArgs a(xs.size());
         for (int i = 0 ; i < a.size() ; ++i)

@@ -88,7 +88,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Access element \a n
     const ViewValSupport<View,Val,iss>& operator [](int) const;
     /// Cloning
-    void update(Space& home, bool share, ViewValSupportArray<View,Val,iss>& x);
+    void update(Space& home, ViewValSupportArray<View,Val,iss>& x);
     /// Propagate
     ExecStatus propagate(Space& home,ViewArray<View>& a,Val s,int q,int l,int u);
     /// Advise
@@ -105,12 +105,12 @@ namespace Gecode { namespace Int { namespace Sequence {
   class Sequence : public Propagator {
   protected:
     /// Constructor for cloning \a p
-    Sequence(Space& home, bool shared, Sequence& p);
+    Sequence(Space& home, Sequence& p);
     /// Constructor for creation
     Sequence(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Advise function
     ExecStatus advise(Space& home, Advisor& _a, const Delta& d);
     /// Cost function

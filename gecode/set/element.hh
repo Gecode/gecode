@@ -89,13 +89,13 @@ namespace Gecode { namespace Set { namespace Element {
     View1 x1;
 
     /// Constructor for cloning \a p
-    ElementIntersection(Space& home, bool share,ElementIntersection& p);
+    ElementIntersection(Space& home, ElementIntersection& p);
     /// Constructor for posting
-    ElementIntersection(Home home,IdxViewArray&,View0,View1,
+    ElementIntersection(Home home, IdxViewArray&,View0,View1,
                        const IntSet& universe);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -129,12 +129,12 @@ namespace Gecode { namespace Set { namespace Element {
     View1 x1;
 
     /// Constructor for cloning \a p
-    ElementUnion(Space& home, bool share,ElementUnion& p);
+    ElementUnion(Space& home, ElementUnion& p);
     /// Constructor for posting
     ElementUnion(Home home,IdxViewArray&,View0,View1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -166,12 +166,12 @@ namespace Gecode { namespace Set { namespace Element {
     RView x1;
 
     /// Constructor for cloning \a p
-    ElementUnionConst(Space& home, bool share,ElementUnionConst& p);
+    ElementUnionConst(Space& home, ElementUnionConst& p);
     /// Constructor for posting
-    ElementUnionConst(Home home,SView,const IntSetArgs&,RView);
+    ElementUnionConst(Home home, SView, const IntSetArgs&, RView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -203,12 +203,12 @@ namespace Gecode { namespace Set { namespace Element {
     RView x1;
 
     /// Constructor for cloning \a p
-    ElementDisjoint(Space& home, bool share,ElementDisjoint& p);
+    ElementDisjoint(Space& home, ElementDisjoint& p);
     /// Constructor for posting
     ElementDisjoint(Home home,IdxViewArray&,RView);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function

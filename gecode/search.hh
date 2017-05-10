@@ -455,10 +455,6 @@ namespace Gecode { namespace Search {
       unsigned int a_d;
       /// Discrepancy limit (for LDS)
       unsigned int d_l;
-      /// Whether to share AFC information between restarts
-      bool share_rbs;
-      /// Whether to share AFC information among assets in a portfolio
-      bool share_pbs;
       /// Number of assets (engines) in a portfolio
       unsigned int assets;
       /// Size of a slice in a portfolio (in number of failures)

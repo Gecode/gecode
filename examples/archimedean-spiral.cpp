@@ -92,13 +92,13 @@ public:
     branch(*this,f[0],FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  ArchimedeanSpiral(bool share, ArchimedeanSpiral& p)
-    : FloatMaximizeScript(share,p) {
-    f.update(*this,share,p.f);
+  ArchimedeanSpiral(ArchimedeanSpiral& p)
+    : FloatMaximizeScript(p) {
+    f.update(*this, p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) {
-    return new ArchimedeanSpiral(share,*this);
+  virtual Space* copy(void) {
+    return new ArchimedeanSpiral(*this);
   }
   /// Cost function
   virtual FloatVar cost(void) const {

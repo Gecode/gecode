@@ -98,14 +98,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Queens(bool share, Queens& s) : Script(share,s) {
-    q.update(*this, share, s.q);
+  Queens(Queens& s) : Script(s) {
+    q.update(*this, s.q);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new Queens(share,*this);
+  copy(void) {
+    return new Queens(*this);
   }
 
   /// Print solution

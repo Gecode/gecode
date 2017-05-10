@@ -54,8 +54,8 @@ namespace Gecode { namespace Float {
     : FloatVarImpBase(home), dom(d) {}
 
   forceinline
-  FloatVarImp::FloatVarImp(Space& home, bool share, FloatVarImp& x)
-    : FloatVarImpBase(home, share, x), dom(x.dom) {}
+  FloatVarImp::FloatVarImp(Space& home, FloatVarImp& x)
+    : FloatVarImpBase(home, x), dom(x.dom) {}
 
 
   /*
@@ -217,15 +217,15 @@ namespace Gecode { namespace Float {
    */
 
   forceinline FloatVarImp*
-  FloatVarImp::copy(Space& home, bool share) {
+  FloatVarImp::copy(Space& home) {
     return copied() ? static_cast<FloatVarImp*>(forward())
-      : perform_copy(home,share);
+      : perform_copy(home);
   }
 
   /// Return copy of not-yet copied variable
   forceinline FloatVarImp*
-  FloatVarImp::perform_copy(Space& home, bool share) {
-    return new (home) FloatVarImp(home, share, *this);
+  FloatVarImp::perform_copy(Space& home) {
+    return new (home) FloatVarImp(home, *this);
   }
 
   forceinline ModEventDelta

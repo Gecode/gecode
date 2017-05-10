@@ -210,16 +210,16 @@ public:
     return val;
   }
   /// Constructor for copying \a bacp
-  BACP(bool share, BACP& bacp) : IntMinimizeScript(share,bacp),
+  BACP(BACP& bacp) : IntMinimizeScript(bacp),
     curr(bacp.curr) {
-    l.update(*this, share, bacp.l);
-    u.update(*this, share, bacp.u);
-    x.update(*this, share, bacp.x);
+    l.update(*this, bacp.l);
+    u.update(*this, bacp.u);
+    x.update(*this, bacp.x);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new BACP(share,*this);
+  copy(void) {
+    return new BACP(*this);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {

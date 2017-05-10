@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     assert(x.size() > 1);
     int n = x.size();
 
-    Region r(home);
+    Region r;
     int* stack = r.alloc<int>(n);
     int* c_v = &stack[0];
     // c_n is the current number of values on stack
@@ -153,13 +153,13 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  Val<View>::Val(Space& home, bool share, Val<View>& p)
-    : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
+  Val<View>::Val(Space& home, Val<View>& p)
+    : NaryPropagator<View,PC_INT_VAL>(home,p) {}
 
   template<class View>
   Actor*
-  Val<View>::copy(Space& home, bool share) {
-    return new (home) Val<View>(home,share,*this);
+  Val<View>::copy(Space& home) {
+    return new (home) Val<View>(home,*this);
   }
 
   template<class View>

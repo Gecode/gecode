@@ -47,16 +47,22 @@ namespace Gecode {
   private:
     /// Implementation of generator
     class IMP : public SharedHandle::Object {
-    public:
+    protected:
+      /// Mutex for locking
+      GECODE_KERNEL_EXPORT static Support::Mutex m;
       /// The actual generator
       Support::RandomGenerator rg;
+    public:
       /// Initialize generator with seed \a s
       IMP(unsigned int s);
+      /// Return seed
+      unsigned int seed(void) const;
+      /// Set seed to \a s
+      void seed(unsigned int s);
+      /// Get number between zero and \a n
+      unsigned int operator ()(unsigned int n);
       /// Delete implemenentation
       virtual ~IMP(void);
-      /// Create a copy
-      GECODE_KERNEL_EXPORT
-      virtual SharedHandle::Object* copy(void) const;
     };
     /// Set the current seed to \a s (initializes if needed)
     void _seed(unsigned int s);
@@ -89,23 +95,40 @@ namespace Gecode {
     unsigned int seed(void) const;
     /// Return a random integer from the interval [0..n)
     unsigned int operator ()(unsigned int n);
-    /// Test whether generator has been properly initialized
-    operator bool(void) const;
   };
+
+  forceinline unsigned int
+  Rnd::IMP::seed(void) const {
+    unsigned int s;
+    const_cast<Rnd::IMP&>(*this).m.acquire();
+    s = rg.seed();
+    const_cast<Rnd::IMP&>(*this).m.release();
+    return s;
+  }
+  forceinline void
+  Rnd::IMP::seed(unsigned int s) {
+    m.acquire();
+    rg.seed(s);
+    m.release();
+  }
+  forceinline unsigned int
+  Rnd::IMP::operator ()(unsigned int n) {
+    unsigned int r;
+    m.acquire();
+    r=rg(n);
+    m.release();
+    return r;
+  }
 
   forceinline unsigned int
   Rnd::seed(void) const {
     const IMP* i = static_cast<const IMP*>(object());
-    return i->rg.seed();
+    return i->seed();
   }
   forceinline unsigned int
   Rnd::operator ()(unsigned int n) {
     IMP* i = static_cast<IMP*>(object());
-    return i->rg(n);
-  }
-  forceinline
-  Rnd::operator bool(void) const {
-    return object() != NULL;
+    return (*i)(n);
   }
 
 }

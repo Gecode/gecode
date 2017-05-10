@@ -174,17 +174,12 @@ namespace Gecode {
       TFO(PropagatorGroup g);
       /// Initialize with brancher group \a g
       TFO(BrancherGroup g);
-      /// Copy constructor
-      TFO(const TFO& o);
       /// Check whether filter is true for view trace information \a vti
       bool operator ()(const ViewTraceInfo& vti) const;
       /// Check whether filter is true for propagator group \a pg
       bool operator ()(PropagatorGroup pg) const;
       /// Check whether filter is true for brancher group \a bg
       bool operator ()(BrancherGroup bg) const;
-      /// Create a copy
-      GECODE_KERNEL_EXPORT
-      virtual Object* copy(void) const;
       /// Destructor
       GECODE_KERNEL_EXPORT
       virtual ~TFO(void);
@@ -274,16 +269,6 @@ namespace Gecode {
     f[0].g = g; f[0].neg = false;
     f[0].what = 1 << ViewTraceInfo::BRANCHER;
 
-  }
-  forceinline
-  TraceFilter::TFO::TFO(const TFO& o) : n(o.n) {
-    if (n > 0) {
-      f = heap.alloc<Filter>(n);
-      for (int i=n; i--; )
-        f[i] = o.f[i];
-    } else {
-      f = NULL;
-    }
   }
   forceinline bool
   TraceFilter::TFO::operator ()(const ViewTraceInfo& vti) const {

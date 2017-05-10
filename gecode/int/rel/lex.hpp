@@ -51,16 +51,16 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class VX, class VY>
   forceinline
-  LexLqLe<VX,VY>::LexLqLe(Space& home, bool share, LexLqLe<VX,VY>& p)
-    : Propagator(home,share,p), strict(p.strict) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  LexLqLe<VX,VY>::LexLqLe(Space& home, LexLqLe<VX,VY>& p)
+    : Propagator(home,p), strict(p.strict) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class VX, class VY>
   Actor*
-  LexLqLe<VX,VY>::copy(Space& home, bool share) {
-    return new (home) LexLqLe<VX,VY>(home,share,*this);
+  LexLqLe<VX,VY>::copy(Space& home) {
+    return new (home) LexLqLe<VX,VY>(home,*this);
   }
 
   template<class VX, class VY>
@@ -297,16 +297,16 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class VX, class VY>
   forceinline
-  LexNq<VX,VY>::LexNq(Space& home, bool share, LexNq<VX,VY>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0); y0.update(home,share,p.y0);
-    x1.update(home,share,p.x1); y1.update(home,share,p.y1);
-    x.update(home,share,p.x); y.update(home,share,p.y);
+  LexNq<VX,VY>::LexNq(Space& home, LexNq<VX,VY>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0); y0.update(home,p.y0);
+    x1.update(home,p.x1); y1.update(home,p.y1);
+    x.update(home,p.x); y.update(home,p.y);
   }
 
   template<class VX, class VY>
   Actor*
-  LexNq<VX,VY>::copy(Space& home, bool share) {
+  LexNq<VX,VY>::copy(Space& home) {
     int n = x.size();
     if (n > 0) {
       // Eliminate all equal views and keep one disequal pair
@@ -328,7 +328,7 @@ namespace Gecode { namespace Int { namespace Rel {
     done:
       x.size(n); y.size(n);
     }
-    return new (home) LexNq<VX,VY>(home,share,*this);
+    return new (home) LexNq<VX,VY>(home,*this);
   }
 
   template<class VX, class VY>

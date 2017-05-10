@@ -59,7 +59,7 @@ namespace Gecode { namespace Gist {
     /// Construct brancher
     StopBrancher(Home home);
     /// Copy constructor
-    StopBrancher(Space& home, bool share, StopBrancher& b);
+    StopBrancher(Space& home, StopBrancher& b);
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space&) const;
@@ -74,7 +74,7 @@ namespace Gecode { namespace Gist {
                        unsigned int,
                        std::ostream& o) const;
     /// Copy brancher
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Post brancher
     static void post(Home home);
     /// Delete brancher and return its size

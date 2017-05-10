@@ -42,7 +42,7 @@
  *
  */
 
-namespace Gecode {
+namespace Gecode { namespace Kernel {
 
   /// Memory chunk with size information
   class MemoryChunk {
@@ -60,21 +60,9 @@ namespace Gecode {
     double area[1];
   };
 
-  class Region;
-
   /// Shared object for several memory areas
   class SharedMemory {
-    friend class Region;
   private:
-    /// How many spaces use this shared memory object
-    unsigned int use_cnt;
-    /// The components for the shared region area
-    struct {
-      /// Amount of free memory
-      size_t free;
-      /// The actual memory area (allocated from top to bottom)
-      double area[MemoryConfig::region_area_size / sizeof(double)];
-    } region;
     /// The components for shared heap memory
     struct {
       /// How many heap chunks are available for caching
@@ -82,35 +70,26 @@ namespace Gecode {
       /// A list of cached heap chunks
       HeapChunk* hc;
     } heap;
+    /// A mutex for access
+    GECODE_KERNEL_EXPORT static Support::Mutex m;
   public:
     /// Initialize
     SharedMemory(void);
-    /// Flush all cached memory
-    void flush(void);
     /// Destructor
     ~SharedMemory(void);
-    /// \name Region management
-    //@
-    /// Return memory chunk if available
-    bool region_alloc(size_t s, void*& p);
-    //@}
     /// \name Heap management
     //@
     /// Return heap chunk, preferable of size \a s, but at least of size \a l
-    HeapChunk* heap_alloc(size_t s, size_t l);
+    HeapChunk* alloc(size_t s, size_t l);
     /// Free heap chunk (or cache for later)
-    void heap_free(HeapChunk* hc);
+    void free(HeapChunk* hc);
     //@}
-    /// Return copy during cloning
-    SharedMemory* copy(bool share);
-    /// Release by one space
-    bool release(void);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
   };
 
+
+}}
+
+namespace Gecode {
 
   /**
    * \brief Base-class for freelist-managed objects
@@ -137,15 +116,19 @@ namespace Gecode {
     void next(FreeList* n);
   };
 
+}
+
+namespace Gecode { namespace Kernel {
+
   /// Manage memory for space
   class MemoryManager {
   public:
     /// Constructor initialization
-    MemoryManager(SharedMemory* sm);
+    MemoryManager(SharedMemory& sm);
     /// Constructor during cloning \a mm with shared memory \a sm and for a memory area for subscriptions of size \a s_sub
-    MemoryManager(SharedMemory* sm, MemoryManager& mm, size_t s_sub);
+    MemoryManager(SharedMemory& sm, MemoryManager& mm, size_t s_sub);
     /// Release all allocated heap chunks
-    void release(SharedMemory* sm);
+    void release(SharedMemory& sm);
 
   private:
     size_t     cur_hcsz;  ///< Current heap chunk size
@@ -157,13 +140,13 @@ namespace Gecode {
 
     /// Refill current heap area (outlined) issued by request of size \a s
     GECODE_KERNEL_EXPORT
-    void alloc_refill(SharedMemory* sm, size_t s);
+    void alloc_refill(SharedMemory& sm, size_t s);
     /// Do the real work for refilling
-    void alloc_fill(SharedMemory* sm, size_t s, bool first);
+    void alloc_fill(SharedMemory& sm, size_t s, bool first);
 
   public:
     /// Allocate memory of size \a s
-    void* alloc(SharedMemory* sm, size_t s);
+    void* alloc(SharedMemory& sm, size_t s);
     /// Get the memory area for subscriptions
     void* subscriptions(void) const;
 
@@ -171,7 +154,7 @@ namespace Gecode {
     /// Start of free lists
     FreeList* fl[MemoryConfig::fl_size_max-MemoryConfig::fl_size_min+1];
     /// Refill free list
-    template<size_t> void fl_refill(SharedMemory* sm);
+    template<size_t> void fl_refill(SharedMemory& sm);
     /// Translate size to index in free list
     static size_t sz2i(size_t);
     /// Translate index in free list to size
@@ -180,7 +163,7 @@ namespace Gecode {
   public:
     /// Allocate free list element of size \a s
     template<size_t s>
-    void* fl_alloc(SharedMemory* sm);
+    void* fl_alloc(SharedMemory& sm);
     /// Release all free list elements of size \a s between f and l (inclusive)
     template<size_t> void  fl_dispose(FreeList* f, FreeList* l);
 
@@ -192,92 +175,67 @@ namespace Gecode {
     void reuse(void* p, size_t s);
   };
 
+}}
+
+namespace Gecode { namespace Kernel {
 
   /*
    * Shared memory area
    *
    */
 
-  forceinline void*
-  SharedMemory::operator new(size_t s) {
-    return Gecode::heap.ralloc(s);
-  }
-  forceinline void
-  SharedMemory::operator delete(void* p) {
-    Gecode::heap.rfree(p);
-  }
   forceinline
-  SharedMemory::SharedMemory(void)
-    : use_cnt(1) {
-    region.free = MemoryConfig::region_area_size;
+  SharedMemory::SharedMemory(void) {
     heap.n_hc = 0;
     heap.hc = NULL;
   }
-  forceinline void
-  SharedMemory::flush(void) {
-    heap.n_hc = 0;
+  forceinline
+  SharedMemory::~SharedMemory(void) {
     while (heap.hc != NULL) {
       HeapChunk* hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
       Gecode::heap.rfree(hc);
     }
   }
-  forceinline
-  SharedMemory::~SharedMemory(void) {
-    flush();
-  }
-  forceinline SharedMemory*
-  SharedMemory::copy(bool share) {
-    if (share) {
-      use_cnt++;
-      return this;
-    } else {
-      return new SharedMemory();
-    }
-  }
-  forceinline bool
-  SharedMemory::release(void) {
-    return --use_cnt == 0;
-  }
-  forceinline bool
-  SharedMemory::region_alloc(size_t s, void*& p) {
-    MemoryConfig::align(s);
-    if (s > region.free)
-      return false;
-    region.free -= s;
-    p = ptr_cast<char*>(&region.area[0]) + region.free;
-    return true;
-  }
+
   forceinline HeapChunk*
-  SharedMemory::heap_alloc(size_t s, size_t l) {
+  SharedMemory::alloc(size_t s, size_t l) {
+    m.acquire();
     while ((heap.hc != NULL) && (heap.hc->size < l)) {
       heap.n_hc--;
       HeapChunk* hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
       Gecode::heap.rfree(hc);
     }
+    HeapChunk* hc;
     if (heap.hc == NULL) {
       assert(heap.n_hc == 0);
-      HeapChunk* hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
+      hc = static_cast<HeapChunk*>(Gecode::heap.ralloc(s));
       hc->size = s;
-      return hc;
     } else {
       heap.n_hc--;
-      HeapChunk* hc = heap.hc;
+      hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
-      return hc;
     }
+    m.release();
+    return hc;
   }
   forceinline void
-  SharedMemory::heap_free(HeapChunk* hc) {
+  SharedMemory::free(HeapChunk* hc) {
+    m.acquire();
     if (heap.n_hc == MemoryConfig::n_hc_cache) {
       Gecode::heap.rfree(hc);
     } else {
       heap.n_hc++;
       hc->next = heap.hc; heap.hc = hc;
     }
+    m.release();
   }
 
+
+}}
+
+namespace Gecode {
 
   /*
    * Freelists
@@ -306,6 +264,15 @@ namespace Gecode {
     _next = n;
   }
 
+}
+
+namespace Gecode { namespace Kernel {
+
+  /*
+   * The active memory manager
+   *
+   */
+
   forceinline size_t
   MemoryManager::sz2i(size_t s) {
     assert(s >= (MemoryConfig::fl_size_min << MemoryConfig::fl_unit_size));
@@ -319,13 +286,8 @@ namespace Gecode {
   }
 
 
-  /*
-   * The active memory manager
-   *
-   */
-
   forceinline void*
-  MemoryManager::alloc(SharedMemory* sm, size_t sz) {
+  MemoryManager::alloc(SharedMemory& sm, size_t sz) {
     assert(sz > 0);
     // Perform alignment
     MemoryConfig::align(sz);
@@ -342,7 +304,7 @@ namespace Gecode {
   }
 
   forceinline void
-  MemoryManager::alloc_fill(SharedMemory* sm, size_t sz, bool first) {
+  MemoryManager::alloc_fill(SharedMemory& sm, size_t sz, bool first) {
     // Adjust current heap chunk size
     if (((requested > MemoryConfig::hcsz_inc_ratio*cur_hcsz) ||
          (sz > cur_hcsz)) &&
@@ -357,7 +319,7 @@ namespace Gecode {
     size_t allocate = ((sz > cur_hcsz) ?
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
     // Request a chunk of preferably size allocate, but at least size sz
-    HeapChunk* hc = sm->heap_alloc(allocate,sz);
+    HeapChunk* hc = sm.alloc(allocate,sz);
     start = ptr_cast<char*>(&hc->area[0]);
     lsz   = hc->size - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
@@ -375,7 +337,7 @@ namespace Gecode {
   }
 
   forceinline
-  MemoryManager::MemoryManager(SharedMemory* sm)
+  MemoryManager::MemoryManager(SharedMemory& sm)
     : cur_hcsz(MemoryConfig::hcsz_min), requested(0), slack(NULL) {
     alloc_fill(sm,cur_hcsz,true);
     for (size_t i = MemoryConfig::fl_size_max-MemoryConfig::fl_size_min+1;
@@ -384,7 +346,7 @@ namespace Gecode {
   }
 
   forceinline
-  MemoryManager::MemoryManager(SharedMemory* sm, MemoryManager& mm,
+  MemoryManager::MemoryManager(SharedMemory& sm, MemoryManager& mm,
                                size_t s_sub)
     : cur_hcsz(mm.cur_hcsz), requested(0), slack(NULL) {
     MemoryConfig::align(s_sub);
@@ -402,12 +364,12 @@ namespace Gecode {
   }
 
   forceinline void
-  MemoryManager::release(SharedMemory* sm) {
+  MemoryManager::release(SharedMemory& sm) {
     // Release all allocated heap chunks
     HeapChunk* hc = cur_hc;
     do {
       HeapChunk* t = hc; hc = static_cast<HeapChunk*>(hc->next);
-      sm->heap_free(t);
+      sm.free(t);
     } while (hc != NULL);
   }
 
@@ -450,7 +412,7 @@ namespace Gecode {
 
   template<size_t s>
   forceinline void*
-  MemoryManager::fl_alloc(SharedMemory* sm) {
+  MemoryManager::fl_alloc(SharedMemory& sm) {
     size_t i = sz2i(s);
     FreeList* f = fl[i];
     if (f == NULL) {
@@ -477,7 +439,7 @@ namespace Gecode {
 
   template<size_t sz>
   void
-  MemoryManager::fl_refill(SharedMemory* sm) {
+  MemoryManager::fl_refill(SharedMemory& sm) {
     // Try to acquire memory from slack
     if (slack != NULL) {
       MemoryChunk* m = slack;
@@ -508,6 +470,6 @@ namespace Gecode {
     }
   }
 
-}
+}}
 
 // STATISTICS: kernel-memory

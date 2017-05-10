@@ -47,9 +47,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  IntBase<VY>::IntBase(Space& home, bool share, IntBase<VY>& p)
-    : MixNaryOnePropagator<IntView,PC_INT_DOM,VY,PC_INT_BND>(home, share, p) {
-    vs.update(home, share, p.vs);
+  IntBase<VY>::IntBase(Space& home, IntBase<VY>& p)
+    : MixNaryOnePropagator<IntView,PC_INT_DOM,VY,PC_INT_BND>(home, p) {
+    vs.update(home, p.vs);
   }
 
   template<class VY>
@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace NValues {
   template<class VY>
   int
   IntBase<VY>::size(Space& home) const {
-    Region r(home);
+    Region r;
     assert(x.size() > 0);
     ValSet::Ranges vsr(vs);
     ViewRanges<IntView> xr(x[x.size()-1]);
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace NValues {
     // At least one more value will be needed
     GECODE_ME_CHECK(y.gq(home,vs.size() + 1));
 
-    Region r(home);
+    Region r;
 
     // Only one additional value is allowed
     if (y.max() == vs.size() + 1) {

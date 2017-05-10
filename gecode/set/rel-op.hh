@@ -73,12 +73,12 @@ namespace Gecode { namespace Set { namespace RelOp {
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                View2,PC_SET_CLUB>::x2;
     /// Constructor for cloning \a p
-    SuperOfInter(Space& home, bool share,SuperOfInter& p);
+    SuperOfInter(Space& home, SuperOfInter& p);
     /// Constructor for posting
-    SuperOfInter(Home home,View0, View1, View2);
+    SuperOfInter(Home home, View0, View1, View2);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z \supseteq x \cap y\f$
@@ -103,12 +103,12 @@ namespace Gecode { namespace Set { namespace RelOp {
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
-    SubOfUnion(Space& home, bool share,SubOfUnion& p);
+    SubOfUnion(Space& home, SubOfUnion& p);
     /// Constructor for posting
-    SubOfUnion(Home home,View0, View1, View2);
+    SubOfUnion(Home home, View0, View1, View2);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z \subseteq x \cap y\f$
@@ -134,12 +134,12 @@ namespace Gecode { namespace Set { namespace RelOp {
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
-    Intersection(Space& home, bool share,Intersection& p);
+    Intersection(Space& home, Intersection& p);
     /// Constructor for posting
     Intersection(Home home,View0,View1,View2);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z=x\cap y\f$
@@ -164,16 +164,16 @@ namespace Gecode { namespace Set { namespace RelOp {
     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
-    Union(Space& home, bool share,Union& p);
+    Union(Space& home, Union& p);
     /// Constructor for posting
-    Union(Home home,View0,View1,View2);
+    Union(Home home, View0, View1, View2);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ z=x\cup y\f$
-    static  ExecStatus  post(Home home,View0 x,View1 y,View2 z);
+    static  ExecStatus post(Home home,View0 x,View1 y,View2 z);
   };
 
    /**
@@ -193,22 +193,23 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Intersection of the determined \f$x_i\f$ (which are dropped)
     LUBndSet intOfDets;
     /// Constructor for cloning \a p
-    IntersectionN(Space& home, bool share,IntersectionN& p);
+    IntersectionN(Space& home, IntersectionN& p);
     /// Constructor for posting
-    IntersectionN(Home home,ViewArray<View0>&, View1);
+    IntersectionN(Home home, ViewArray<View0>&, View1);
     /// Constructor for posting
-    IntersectionN(Home home,ViewArray<View0>&, const IntSet&, View1);
+    IntersectionN(Home home, ViewArray<View0>&, const IntSet&, View1);
   public:
-    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Home home,ViewArray<View0>& y,View1 x);
+    static  ExecStatus post(Home home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\cap\bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Home home,ViewArray<View0>& y,
-                             const IntSet& z,View1 x);
+    static  ExecStatus post(Home home,ViewArray<View0>& y,
+                            const IntSet& z,View1 x);
   };
 
   /**
@@ -228,22 +229,23 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Union of the determined \f$x_i\f$ (which are dropped)
     GLBndSet unionOfDets;
     /// Constructor for cloning \a p
-    UnionN(Space& home, bool share,UnionN& p);
+    UnionN(Space& home, UnionN& p);
     /// Constructor for posting
     UnionN(Home home,ViewArray<View0>&,View1);
     /// Constructor for posting
     UnionN(Home home,ViewArray<View0>&,const IntSet&,View1);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home, bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Home home,ViewArray<View0>& y,View1 x);
+    static  ExecStatus post(Home home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Home home,ViewArray<View0>& y,
-                             const IntSet& z,View1 x);
+    static  ExecStatus post(Home home,ViewArray<View0>& y,
+                            const IntSet& z,View1 x);
   };
 
 
@@ -264,22 +266,23 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Union of the determined \f$x_i\f$ (which are dropped)
     GLBndSet unionOfDets;
     /// Constructor for cloning \a p
-    PartitionN(Space& home, bool share,PartitionN& p);
+    PartitionN(Space& home, PartitionN& p);
     /// Constructor for posting
-    PartitionN(Home home,ViewArray<View0>&, View1);
+    PartitionN(Home home, ViewArray<View0>&, View1);
     /// Constructor for posting
-    PartitionN(Home home,ViewArray<View0>&, const IntSet&, View1);
+    PartitionN(Home home, ViewArray<View0>&, const IntSet&, View1);
   public:
     /// Copy propagator during cloning
-    virtual Actor*      copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
-    virtual ExecStatus  propagate(Space& home, const ModEventDelta& med);
-    virtual PropCost    cost(const Space& home, const ModEventDelta& med) const;
+    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
+    /// Cost function
+    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Home home,ViewArray<View0>& y,View1 x);
+    static  ExecStatus post(Home home,ViewArray<View0>& y,View1 x);
     /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$
-    static  ExecStatus  post(Home home,ViewArray<View0>& y,
-                             const IntSet& z,View1 x);
+    static  ExecStatus post(Home home,ViewArray<View0>& y,
+                            const IntSet& z,View1 x);
   };
 
 }}}

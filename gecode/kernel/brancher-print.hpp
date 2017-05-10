@@ -58,7 +58,7 @@ namespace Gecode {
     /// Initialize
     BrancherPrint(VarValPrint<Var,Val> vvp);
     /// Initialize during cloning
-    BrancherPrint(Space& home, bool shared, BrancherPrint& bp);
+    BrancherPrint(BrancherPrint& bp);
     /// Whether printing is enabled
     operator bool(void) const;
     /// Invoke print function
@@ -82,7 +82,7 @@ namespace Gecode {
     /// Initialize
     BrancherNoPrint(VarValPrint<Var,Val> vvp);
     /// Initialize during cloning
-    BrancherNoPrint(Space& home, bool shared, BrancherNoPrint& bp);
+    BrancherNoPrint(BrancherNoPrint& bp);
     /// Whether printing is enabled
     operator bool(void) const;
     /// Invoke print function
@@ -107,9 +107,8 @@ namespace Gecode {
   
   template<class View, class Val>
   forceinline
-  BrancherPrint<View,Val>::BrancherPrint(Space& home, bool shared,
-                                         BrancherPrint<View,Val>& bp) {
-    p.update(home,shared,bp.p);
+  BrancherPrint<View,Val>::BrancherPrint(BrancherPrint<View,Val>& bp)
+    : p(bp.p) {
   }
 
   template<class View, class Val>
@@ -150,8 +149,7 @@ namespace Gecode {
   
   template<class View, class Val>
   forceinline
-  BrancherNoPrint<View,Val>::BrancherNoPrint(Space&, bool,
-                                             BrancherNoPrint<View,Val>&) {}
+  BrancherNoPrint<View,Val>::BrancherNoPrint(BrancherNoPrint<View,Val>&) {}
 
   template<class View, class Val>
   forceinline

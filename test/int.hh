@@ -179,9 +179,9 @@ namespace Test {
        */
       TestSpace(int n, Gecode::IntSet& d, Test* t, Gecode::ReifyMode rm);
       /// Constructor for cloning \a s
-      TestSpace(bool share, TestSpace& s);
+      TestSpace(TestSpace& s);
       /// Copy space during cloning
-      virtual Gecode::Space* copy(bool share);
+      virtual Gecode::Space* copy(void);
       /// Test whether all variables are assigned
       bool assigned(void) const;
       /// Post propagator

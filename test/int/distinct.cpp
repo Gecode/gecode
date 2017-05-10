@@ -206,11 +206,11 @@ namespace Test { namespace Int {
          /// Constructor
          TestSpace(void) {}
          /// Constructor for cloning \a s
-         TestSpace(bool share, TestSpace& s)
-           : Gecode::Space(share,s) {}
+         TestSpace(TestSpace& s)
+           : Gecode::Space(s) {}
          /// Copy space during cloning
-         virtual Gecode::Space* copy(bool share) {
-           return new TestSpace(share,*this);
+         virtual Gecode::Space* copy(void) {
+           return new TestSpace(*this);
          }
        };
      public:

@@ -436,7 +436,7 @@ namespace Gecode { namespace FlatZinc {
     AST::Array* _solveAnnotations;
 
     /// Copy constructor
-    FlatZincSpace(bool share, FlatZincSpace&);
+    FlatZincSpace(FlatZincSpace&);
   private:
     /// Run the search engine
     template<template<class> class Engine>
@@ -578,7 +578,7 @@ namespace Gecode { namespace FlatZinc {
     /// Implement optimization
     virtual void constrain(const Space& s);
     /// Copy function
-    virtual Gecode::Space* copy(bool share);
+    virtual Gecode::Space* copy(void);
     /// Slave function for restarts
     virtual bool slave(const MetaInfo& mi);
 

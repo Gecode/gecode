@@ -47,7 +47,7 @@ namespace Gecode {
    * Pascal Poupart, Krzysztof Czarnecki, AAAI 2016, pages 3434-3440.
    *
    */
-  class CHB {
+  class CHB : public SharedHandle {
   protected:
     template<class View>
     class Recorder;
@@ -60,33 +60,44 @@ namespace Gecode {
       double qs;
     };
     /// Object for storing chb information
-    class Storage : public HeapAllocated {
+    class Storage : public SharedHandle::Object {
     public:
       /// Mutex to synchronize globally shared access
-      Support::Mutex m;
-      /// How many references exist for this object
-      unsigned int use_cnt;
+      GECODE_KERNEL_EXPORT static Support::Mutex m;
       /// Number of chb values
       int n;
-      /// CHB information
-      Info* chb;
       /// Number of failures
-      unsigned long long int nf;
+      unsigned long int nf;
       /// Alpha value
       double alpha;
-      /// Allocate CHB info
+      /// CHB information
+      Info chb[1];
+      /// Allocate memory for \a n CHB infos
+      static void* allocate(int n);
+      /// Initialize CHB info
       template<class View>
       Storage(Home home, ViewArray<View>& x,
               typename BranchTraits<typename View::VarType>::Merit bm);
       /// Delete object
       ~Storage(void);
+      /// \name Memory management
+      //@{
+      /// Allocate memory
+      static void* operator new(size_t s, void* p);
+      /// Return memory
+      static void  operator delete(void* p, void* q);
+      /// Needed for exceptions
+      static void  operator delete(void* p);
+      //@}
       /// Bump failure count and alpha
       void bump(void);
       /// Update chb information at position \a i
       void update(int i, bool failed);
     };
-    /// Pointer to storage object
-    Storage* storage;
+    /// Return object of correct type
+    Storage& object(void) const;
+    /// Set object to \a o
+    void object(Storage& o);
     /// Update chb value at position \a i
     void update(int i);
     /// Acquire mutex
@@ -122,21 +133,13 @@ namespace Gecode {
     template<class View>
     void init(Home home, ViewArray<View>& x,
               typename BranchTraits<typename View::VarType>::Merit bm);
-    /// Test whether already initialized
-    operator bool(void) const;
     /// Default (empty) chb information
     GECODE_KERNEL_EXPORT static const CHB def;
     //@}
 
-    /// \name Update and delete chb information
-    //@{
-    /// Updating during cloning
-    GECODE_KERNEL_EXPORT
-    void update(Space& home, bool share, CHB& a);
     /// Destructor
     GECODE_KERNEL_EXPORT
     ~CHB(void);
-    //@}
 
     /// \name Information access
     //@{
@@ -161,7 +164,7 @@ namespace Gecode {
       /// Constructor for creation
       Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
       /// Constructor for cloning \a a
-      Idx(Space& home, bool share, Idx& a);
+      Idx(Space& home, Idx& a);
       /// Mark advisor as modified
       void mark(void);
       /// Mark advisor as unmodified
@@ -176,12 +179,12 @@ namespace Gecode {
     /// The advisor council
     Council<Idx> c;
     /// Constructor for cloning \a p
-    Recorder(Space& home, bool share, Recorder<View>& p);
+    Recorder(Space& home, Recorder<View>& p);
   public:
     /// Constructor for creation
     Recorder(Home home, ViewArray<View>& x, CHB& chb);
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Cost function (record so that propagator runs last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -219,8 +222,8 @@ namespace Gecode {
     : Advisor(home,p,c), _info(i << 1) {}
   template<class View>
   forceinline
-  CHB::Recorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
-    : Advisor(home,share,a), _info(a._info) {
+  CHB::Recorder<View>::Idx::Idx(Space& home, Idx& a)
+    : Advisor(home,a), _info(a._info) {
   }
   template<class View>
   forceinline void
@@ -272,13 +275,28 @@ namespace Gecode {
    * CHB value storage
    *
    */
+  forceinline void*
+  CHB::Storage::operator new(size_t, void* p) {
+    return p;
+  }
+  forceinline void
+  CHB::Storage::operator delete(void* p, void*) {
+    heap.rfree(p);
+  }
+  forceinline void
+  CHB::Storage::operator delete(void*) {}
+
+  forceinline void*
+  CHB::Storage::allocate(int n) {
+    return heap.ralloc(sizeof(Storage)+(n-1)*sizeof(Info));
+  }
+
   template<class View>
   forceinline
   CHB::Storage::Storage(Home home, ViewArray<View>& x,
                         typename 
                         BranchTraits<typename View::VarType>::Merit bm)
-    : use_cnt(1), n(x.size()), chb(heap.alloc<Info>(x.size())),
-      nf(0U), alpha(Kernel::Config::chb_alpha_init) {
+    : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init) {
     if (bm) {
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -311,9 +329,7 @@ namespace Gecode {
     }
   }
   forceinline
-  CHB::Storage::~Storage(void) {
-    heap.free<Info>(chb,n);
-  }
+  CHB::Storage::~Storage(void) {}
 
 
   /*
@@ -321,54 +337,61 @@ namespace Gecode {
    *
    */
 
+  forceinline CHB::Storage&
+  CHB::object(void) const {
+    return static_cast<CHB::Storage&>(*SharedHandle::object());
+  }
+
+  forceinline void
+  CHB::object(CHB::Storage& o) {
+    SharedHandle::object(&o);
+  }
+
   forceinline double
   CHB::operator [](int i) const {
-    assert((i >= 0) && (i < storage->n));
-    return storage->chb[i].qs;
+    assert((i >= 0) && (i < object().n));
+    return object().chb[i].qs;
   }
   forceinline int
   CHB::size(void) const {
-    return storage->n;
+    return object().n;
   }
   forceinline void
   CHB::acquire(void) {
-    storage->m.acquire();
+    object().m.acquire();
   }
   forceinline void
   CHB::release(void) {
-    storage->m.release();
+    object().m.release();
   }
   forceinline void
   CHB::bump(void) {
-    storage->bump();
+    object().bump();
   }
   forceinline void
   CHB::update(int i, bool failed) {
-    storage->update(i,failed);
+    object().update(i,failed);
   }
 
   forceinline
-  CHB::CHB(void) : storage(NULL) {}
-
-  forceinline
-  CHB::operator bool(void) const {
-    return storage != NULL;
-  }
+  CHB::CHB(void) {}
 
   template<class View>
   forceinline
   CHB::CHB(Home home, ViewArray<View>& x,
            typename BranchTraits<typename View::VarType>::Merit bm) {
-    assert(storage == NULL);
-    storage = new Storage(home,x,bm);
+    assert(!*this);
+    void* o = Storage::allocate(x.size());
+    object(*new (o) Storage(home,x,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
   forceinline void
   CHB::init(Home home, ViewArray<View>& x,
             typename BranchTraits<typename View::VarType>::Merit bm) {
-    assert(storage == NULL);
-    storage = new Storage(home,x,bm);
+    assert(!*this);
+    void* o = Storage::allocate(x.size());
+    object(*new (o) Storage(home,x,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
 
@@ -395,16 +418,15 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  CHB::Recorder<View>::Recorder(Space& home, bool share, Recorder<View>& p)
-    : NaryPropagator<View,PC_GEN_NONE>(home,share,p) {
-    chb.update(home, share, p.chb);
-    c.update(home, share, p.c);
+  CHB::Recorder<View>::Recorder(Space& home, Recorder<View>& p)
+    : NaryPropagator<View,PC_GEN_NONE>(home,p), chb(p.chb) {
+    c.update(home, p.c);
   }
 
   template<class View>
   Propagator*
-  CHB::Recorder<View>::copy(Space& home, bool share) {
-    return new (home) Recorder<View>(home, share, *this);
+  CHB::Recorder<View>::copy(Space& home) {
+    return new (home) Recorder<View>(home, *this);
   }
 
   template<class View>

@@ -68,7 +68,7 @@ namespace Gecode { namespace Float { namespace Linear {
     FloatVal c;
 
     /// Constructor for cloning \a p
-    Lin(Space& home, bool share, Lin<P,N,pc>& p);
+    Lin(Space& home, Lin<P,N,pc>& p);
     /// Constructor for creation
     Lin(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
   public:
@@ -114,12 +114,12 @@ namespace Gecode { namespace Float { namespace Linear {
     using Lin<P,N,PC_FLOAT_BND>::c;
 
     /// Constructor for cloning \a p
-    Eq(Space& home, bool share, Eq& p);
+    Eq(Space& home, Eq& p);
   public:
     /// Constructor for creation
     Eq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
@@ -144,12 +144,12 @@ namespace Gecode { namespace Float { namespace Linear {
     using Lin<P,N,PC_FLOAT_BND>::c;
 
     /// Constructor for cloning \a p
-    Lq(Space& home, bool share, Lq& p);
+    Lq(Space& home, Lq& p);
   public:
     /// Constructor for creation
     Lq(Home home, ViewArray<P>& x, ViewArray<N>& y, FloatVal c);
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$

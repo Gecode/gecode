@@ -132,22 +132,22 @@ namespace Gecode { namespace Int { namespace LDSB {
            class Filter, class Print>
   forceinline
   LDSBBrancher<View,n,Val,a,Filter,Print>::
-  LDSBBrancher(Space& home, bool shared,
+  LDSBBrancher(Space& home,
                LDSBBrancher<View,n,Val,a,Filter,Print>& b)
-    : ViewValBrancher<View,n,Val,a,Filter,Print>(home,shared,b),
+    : ViewValBrancher<View,n,Val,a,Filter,Print>(home,b),
       _nsyms(b._nsyms),
       _prevPos(b._prevPos) {
     _syms = home.alloc<SymmetryImp<View>*>(_nsyms);
     for (int i = 0 ; i < _nsyms ; i++)
-      _syms[i] = b._syms[i]->copy(home, shared);
+      _syms[i] = b._syms[i]->copy(home);
   }
 
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>
   Actor*
-  LDSBBrancher<View,n,Val,a,Filter,Print>::copy(Space& home, bool shared) {
+  LDSBBrancher<View,n,Val,a,Filter,Print>::copy(Space& home) {
     return new (home) LDSBBrancher<View,n,Val,a,Filter,Print>
-      (home,shared,*this);
+      (home,*this);
   }
 
 

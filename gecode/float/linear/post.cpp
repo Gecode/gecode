@@ -226,7 +226,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
   void
   post(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
-    Region re(home);
+    Region re;
     switch (frt) {
     case FRT_EQ: case FRT_LQ: case FRT_GQ:
       break;
@@ -242,7 +242,7 @@ namespace Gecode { namespace Float { namespace Linear {
 
   void
   post(Home home, Term* t, int n, FloatRelType frt, FloatVal c, Reify r) {
-    Region re(home);
+    Region re;
     rel(home, extend(home,re,t,n), frt, c, r);
     dopost(home, t, n, FRT_EQ, 0.0);
   }

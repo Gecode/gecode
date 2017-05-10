@@ -192,17 +192,16 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class V0, class V1, class Idx, class Val>
   forceinline
-  Int<V0,V1,Idx,Val>::Int(Space& home, bool share, Int& p)
-    : Propagator(home,share,p), s0(0), s1(0), iv(NULL) {
-    c.update(home,share,p.c);
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
+  Int<V0,V1,Idx,Val>::Int(Space& home, Int& p)
+    : Propagator(home,p), s0(0), s1(0), c(p.c), iv(NULL) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
   }
 
   template<class V0, class V1, class Idx, class Val>
   Actor*
-  Int<V0,V1,Idx,Val>::copy(Space& home, bool share) {
-    return new (home) Int<V0,V1,Idx,Val>(home,share,*this);
+  Int<V0,V1,Idx,Val>::copy(Space& home) {
+    return new (home) Int<V0,V1,Idx,Val>(home,*this);
   }
 
   template<class V0, class V1, class Idx, class Val>
@@ -271,7 +270,7 @@ namespace Gecode { namespace Int { namespace Element {
   ExecStatus
   Int<V0,V1,Idx,Val>::assigned_val(Space& home, IntSharedArray& c,
                                    V0 x0, V1 x1) {
-    Region r(home);
+    Region r;
     int* v = r.alloc<int>(x0.size());
     int n = 0;
     for (ViewValues<V0> i(x0); i(); ++i)
@@ -345,7 +344,7 @@ namespace Gecode { namespace Int { namespace Element {
       if (size == 0)
         return ES_FAILED;
       // Create val links sorted by val
-      Region r(home);
+      Region r;
       Idx* by_val = r.alloc<Idx>(size);
       if (x1.width() <= 128) {
         int n_buckets = static_cast<int>(x1.width());

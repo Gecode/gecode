@@ -105,7 +105,8 @@ public:
   Golf(const GolfOptions& opt)
     : Script(opt),
       g(opt.g()), s(opt.s()), w(opt.w()),
-      groups(*this,g*w,IntSet::empty,0,g*s-1,s,s) {
+      groups(*this,g*w,IntSet::empty,0,g*s-1,
+             static_cast<unsigned int>(s),static_cast<unsigned int>(s)) {
     Matrix<SetVarArray> schedule(groups,g,w);
 
     // Groups in one week must be disjoint
@@ -214,13 +215,13 @@ public:
   }
 
   /// Constructor for copying \a s
-  Golf(bool share, Golf& s) : Script(share,s), g(s.g), s(s.s), w(s.w) {
-    groups.update(*this, share, s.groups);
+  Golf(Golf& s) : Script(s), g(s.g), s(s.s), w(s.w) {
+    groups.update(*this, s.groups);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Golf(share,*this);
+  copy(void) {
+    return new Golf(*this);
   }
 };
 

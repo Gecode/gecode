@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   template<class Task>
   forceinline ExecStatus
   subsumed(Space& home, Propagator& p, int c, TaskArray<Task>& t) {
-    Region r(home);
+    Region r;
 
     if (Event* e = Event::events(r,t)) {
       // Process events, use ccur as the capacity that is still free

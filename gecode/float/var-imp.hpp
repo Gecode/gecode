@@ -82,7 +82,7 @@ namespace Gecode { namespace Float {
     /// Domain information
     FloatVal dom;
     /// Constructor for cloning \a x
-    FloatVarImp(Space& home, bool share, FloatVarImp& x);
+    FloatVarImp(Space& home, FloatVarImp& x);
   public:
     /// Initialize with interval \a d
     FloatVarImp(Space& home, const FloatVal& d);
@@ -166,12 +166,12 @@ namespace Gecode { namespace Float {
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_FLOAT_EXPORT FloatVarImp* perform_copy(Space& home, bool share);
+    GECODE_FLOAT_EXPORT FloatVarImp* perform_copy(Space& home);
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    FloatVarImp* copy(Space& home, bool share);
+    FloatVarImp* copy(Space& home);
     //@}
 
     /// \name Delta information for advisors

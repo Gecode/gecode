@@ -47,8 +47,8 @@ namespace Gecode { namespace Set { namespace Branch {
   ValCommitInc::ValCommitInc(Space& home, const ValBranch<Var>& vb)
     : ValCommit<SetView,int>(home,vb) {}
   forceinline
-  ValCommitInc::ValCommitInc(Space& home, bool shared, ValCommitInc& vc)
-    : ValCommit<SetView,int>(home,shared,vc) {}
+  ValCommitInc::ValCommitInc(Space& home, ValCommitInc& vc)
+    : ValCommit<SetView,int>(home,vc) {}
   forceinline ModEvent
   ValCommitInc::commit(Space& home, unsigned int a, SetView x, int, int n) {
     return (a == 0) ? x.include(home,n) : x.exclude(home,n);
@@ -71,8 +71,8 @@ namespace Gecode { namespace Set { namespace Branch {
   ValCommitExc::ValCommitExc(Space& home, const ValBranch<Var>& vb)
     : ValCommit<SetView,int>(home,vb) {}
   forceinline
-  ValCommitExc::ValCommitExc(Space& home, bool shared, ValCommitExc& vc)
-    : ValCommit<SetView,int>(home,shared,vc) {}
+  ValCommitExc::ValCommitExc(Space& home, ValCommitExc& vc)
+    : ValCommit<SetView,int>(home,vc) {}
   forceinline ModEvent
   ValCommitExc::commit(Space& home, unsigned int a, SetView x, int, int n) {
     return (a == 0) ? x.exclude(home,n) : x.include(home,n);

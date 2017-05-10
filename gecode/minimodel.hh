@@ -2209,7 +2209,7 @@ namespace Gecode {
     /// Default constructor
     IntMinimizeSpace(void);
     /// Constructor for cloning
-    IntMinimizeSpace(bool share, IntMinimizeSpace& s);
+    IntMinimizeSpace(IntMinimizeSpace& s);
     /// Member function constraining according to decreasing cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
@@ -2226,7 +2226,7 @@ namespace Gecode {
     /// Default constructor
     IntMaximizeSpace(void);
     /// Constructor for cloning
-    IntMaximizeSpace(bool share, IntMaximizeSpace& s);
+    IntMaximizeSpace(IntMaximizeSpace& s);
     /// Member function constraining according to increasing cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
@@ -2265,7 +2265,7 @@ namespace Gecode {
     /// Constructor with step \a s
     FloatMinimizeSpace(FloatNum s=0.0);
     /// Constructor for cloning
-    FloatMinimizeSpace(bool share, FloatMinimizeSpace& s);
+    FloatMinimizeSpace(FloatMinimizeSpace& s);
     /// Member function constraining according to cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);
@@ -2290,7 +2290,7 @@ namespace Gecode {
     /// Constructor with step \a s
     FloatMaximizeSpace(FloatNum s=0.0);
     /// Constructor for cloning
-    FloatMaximizeSpace(bool share, FloatMaximizeSpace& s);
+    FloatMaximizeSpace(FloatMaximizeSpace& s);
     /// Member function constraining according to cost
     GECODE_MINIMODEL_EXPORT
     virtual void constrain(const Space& best);

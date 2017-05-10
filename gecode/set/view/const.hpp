@@ -218,8 +218,8 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstSetView::update(Space& home, bool share, ConstSetView& p) {
-    ConstView<SetView>::update(home,share,p);
+  ConstSetView::update(Space& home, ConstSetView& p) {
+    ConstView<SetView>::update(home,p);
     // dispose old ranges
     if (size > 0)
       home.free<int>(ranges, 2);

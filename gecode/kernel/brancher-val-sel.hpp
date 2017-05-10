@@ -57,7 +57,7 @@ namespace Gecode {
     /// Constructor for initialization
     ValSel(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValSel(Space& home, bool shared, ValSel<View,Val>& vs);
+    ValSel(Space& home, ValSel<View,Val>& vs);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete value selection
@@ -85,7 +85,7 @@ namespace Gecode {
     /// Constructor for initialization
     ValSelFunction(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValSelFunction(Space& home, bool shared, ValSelFunction<View>& vs);
+    ValSelFunction(Space& home, ValSelFunction<View>& vs);
     /// Return user-defined value of view \a x at position \a i
     Val val(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -102,7 +102,7 @@ namespace Gecode {
   ValSel<View,Val>::ValSel(Space&, const ValBranch<Var>&) {}
   template<class View, class Val>
   forceinline
-  ValSel<View,Val>::ValSel(Space&, bool, ValSel<View,Val>&) {}
+  ValSel<View,Val>::ValSel(Space&, ValSel<View,Val>&) {}
   template<class View, class Val>
   forceinline bool
   ValSel<View,Val>::notice(void) const {
@@ -123,10 +123,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline
-  ValSelFunction<View>::ValSelFunction(Space& home, bool shared,
-                                       ValSelFunction<View>& vs)
-    : ValSel<View,Val>(home,shared,vs) {
-    v.update(home,shared,vs.v);
+  ValSelFunction<View>::ValSelFunction(Space& home, ValSelFunction<View>& vs)
+    : ValSel<View,Val>(home,vs), v(vs.v) {
   }
   template<class View>
   forceinline typename ValSelFunction<View>::Val

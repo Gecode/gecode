@@ -93,7 +93,7 @@ namespace Gecode {
     /// Return view according to position information \a p
     View view(const Pos& p) const;
     /// Constructor for cloning \a b
-    ViewBrancher(Space& home, bool shared, ViewBrancher<View,Filter,n>& b);
+    ViewBrancher(Space& home, ViewBrancher<View,Filter,n>& b);
     /// Constructor for creation
     ViewBrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n],
                  BranchFilter<Var> bf);
@@ -152,13 +152,12 @@ namespace Gecode {
 
   template<class View, class Filter, int n>
   forceinline
-  ViewBrancher<View,Filter,n>::ViewBrancher(Space& home, bool shared,
+  ViewBrancher<View,Filter,n>::ViewBrancher(Space& home,
                                             ViewBrancher<View,Filter,n>& vb)
-    : Brancher(home,shared,vb), start(vb.start),
-      f(home,shared,vb.f) {
-    x.update(home,shared,vb.x);
+    : Brancher(home,vb), start(vb.start), f(vb.f) {
+    x.update(home,vb.x);
     for (int i=0; i<n; i++)
-      vs[i] = vb.vs[i]->copy(home,shared);
+      vs[i] = vb.vs[i]->copy(home);
   }
 
   template<class View, class Filter, int n>
@@ -181,7 +180,7 @@ namespace Gecode {
       if (n == 1) {
         s = vs[0]->select(home,x,start,f);
       } else {
-        Region r(home);
+        Region r;
         int* ties = r.alloc<int>(x.size()-start+1);
         int n_ties;
         vs[0]->ties(home,x,start,ties,n_ties,f);
@@ -196,7 +195,7 @@ namespace Gecode {
       if (n == 1) {
         s = vs[0]->select(home,x,start);
       } else {
-        Region r(home);
+        Region r;
         int* ties = r.alloc<int>(x.size()-start+1);
         int n_ties;
         vs[0]->ties(home,x,start,ties,n_ties);

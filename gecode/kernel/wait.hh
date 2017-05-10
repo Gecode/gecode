@@ -58,10 +58,10 @@ namespace Gecode { namespace Kernel {
     /// Constructor for creation
     UnaryWait(Home home, View x, std::function<void(Space& home)> c0);
     /// Constructor for cloning \a p
-    UnaryWait(Space& home, bool shared, UnaryWait& p);
+    UnaryWait(Space& home, UnaryWait& p);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Const function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -92,10 +92,10 @@ namespace Gecode { namespace Kernel {
     NaryWait(Home home, ViewArray<View>& x,
              std::function<void(Space& home)> c0);
     /// Constructor for cloning \a p
-    NaryWait(Space& home, bool shared, NaryWait& p);
+    NaryWait(Space& home, NaryWait& p);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Const function (defined as high unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -124,15 +124,14 @@ namespace Gecode { namespace Kernel {
   }
   template<class View>
   forceinline
-  UnaryWait<View>::UnaryWait(Space& home, bool shared, UnaryWait& p)
-    : Propagator(home,shared,p) {
-    x.update(home,shared,p.x);
-    c.update(home,shared,p.c);
+  UnaryWait<View>::UnaryWait(Space& home, UnaryWait& p)
+    : Propagator(home,p), c(p.c) {
+    x.update(home,p.x);
   }
   template<class View>
   Actor*
-  UnaryWait<View>::copy(Space& home, bool share) {
-    return new (home) UnaryWait<View>(home,share,*this);
+  UnaryWait<View>::copy(Space& home) {
+    return new (home) UnaryWait<View>(home,*this);
   }
   template<class View>
   PropCost
@@ -192,20 +191,19 @@ namespace Gecode { namespace Kernel {
   }
   template<class View>
   forceinline
-  NaryWait<View>::NaryWait(Space& home, bool shared, NaryWait& p)
-    : Propagator(home,shared,p) {
-    x.update(home,shared,p.x);
-    c.update(home,shared,p.c);
+  NaryWait<View>::NaryWait(Space& home, NaryWait& p)
+    : Propagator(home,p), c(p.c) {
+    x.update(home,p.x);
   }
   template<class View>
   Actor*
-  NaryWait<View>::copy(Space& home, bool share) {
+  NaryWait<View>::copy(Space& home) {
     assert(!x[0].assigned());
     for (int i=x.size()-1; i>0; i--)
       if (x[i].assigned())
         x.move_lst(i);
     assert(x.size() > 0);
-    return new (home) NaryWait<View>(home,share,*this);
+    return new (home) NaryWait<View>(home,*this);
   }
   template<class View>
   PropCost
@@ -251,7 +249,7 @@ namespace Gecode { namespace Kernel {
       c(home);
       return home.failed() ? ES_FAILED : ES_OK;
     } else {
-      x.unique(home);
+      x.unique();
       if (x.size() == 1) {
         return UnaryWait<View>::post(home,x[0],c);
       } else {

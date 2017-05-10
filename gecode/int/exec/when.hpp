@@ -46,10 +46,8 @@ namespace Gecode { namespace Int { namespace Exec {
   }
 
   forceinline
-  When::When(Space& home, bool share, When& p)
-    : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,share,p) {
-    t.update(home, share, p.t);
-    e.update(home, share, p.e);
+  When::When(Space& home, When& p)
+    : UnaryPropagator<BoolView,PC_BOOL_VAL>(home,p), t(p.t), e(p.e) {
   }
 
   forceinline ExecStatus

@@ -46,9 +46,9 @@ namespace Gecode { namespace Int {
 
   template<class Task, class PL>
   forceinline
-  TaskProp<Task,PL>::TaskProp(Space& home, bool shared, TaskProp<Task,PL>& p)
-    : Propagator(home,shared,p) {
-    t.update(home,shared,p.t);
+  TaskProp<Task,PL>::TaskProp(Space& home, TaskProp<Task,PL>& p)
+    : Propagator(home,p) {
+    t.update(home,p.t);
   }
 
   template<class Task, class PL>

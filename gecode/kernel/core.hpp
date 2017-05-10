@@ -53,84 +53,6 @@ namespace Gecode {
   class Space;
 
   /**
-   * \defgroup FuncSupportShared Support for shared objects and handles
-   *
-   * Shared handles provide access to reference-counted objects. In
-   * particular, they support updates with and without sharing.
-   * An update with sharing just updates the handle, while a non-shared
-   * update creates a single copy per space.
-   *
-   * \ingroup FuncSupport
-   */
-
-  /**
-   * \brief The shared handle
-   *
-   * A shared handle provides access to an object that lives outside a space,
-   * and is shared between entities that possibly reside inside different
-   * spaces. The handle has an update mechanism that supports updates with and
-   * without sharing. An update without sharing makes sure that a
-   * single copy of the object is created when the space is copied.
-   *
-   * This is the base class that all shared handles must inherit from.
-   *
-   * \ingroup FuncSupportShared
-   */
-  class SharedHandle {
-  public:
-    /**
-     * \brief The shared object
-     *
-     * Shared objects must inherit from this base class.
-     *
-     * \ingroup FuncSupportShared
-     */
-    class Object : public HeapAllocated {
-      friend class Space;
-      friend class SharedHandle;
-    private:
-      /// The next object collected during copying
-      Object* next;
-      /// The forwarding pointer
-      Object* fwd;
-      /// The counter used for reference counting
-      unsigned int use_cnt;
-    public:
-      /// Initialize
-      Object(void);
-      /// Return fresh copy for update
-      virtual Object* copy(void) const = 0;
-      /// Delete shared object
-      virtual ~Object(void);
-    };
-  private:
-    /// The shared object
-    Object* o;
-    /// Subscribe handle to object
-    void subscribe(void);
-    /// Cancel subscription of handle to object
-    void cancel(void);
-  public:
-    /// Create shared handle with no object pointing to
-    SharedHandle(void);
-    /// Create shared handle that points to shared object \a so
-    SharedHandle(SharedHandle::Object* so);
-    /// Copy constructor maintaining reference count
-    SharedHandle(const SharedHandle& sh);
-    /// Assignment operator maintaining reference count
-    SharedHandle& operator =(const SharedHandle& sh);
-    /// Updating during cloning
-    void update(Space& home, bool share, SharedHandle& sh);
-    /// Destructor that maintains reference count
-    ~SharedHandle(void);
-  protected:
-    /// Access to the shared object
-    SharedHandle::Object* object(void) const;
-    /// Modify shared object
-    void object(SharedHandle::Object* n);
-  };
-
-  /**
    * \defgroup TaskVarMEPC Generic modification events and propagation conditions
    *
    * Predefined modification events must be taken into account
@@ -228,6 +150,8 @@ namespace Gecode {
   class PropagateTraceInfo;
   class CommitTraceInfo;
   class TraceRecorder;
+  class TraceFilter;
+  class Tracer;
 
   template<class A> class Council;
   template<class A> class Advisors;
@@ -461,7 +385,7 @@ namespace Gecode {
     /// \name Cloning variables
     //@{
     /// Constructor for cloning
-    VarImp(Space& home, bool share, VarImp& x);
+    VarImp(Space& home, VarImp& x);
     /// Is variable already copied
     bool copied(void) const;
     /// Use forward pointer if variable already copied
@@ -711,7 +635,7 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static Actor* sentinel;
   public:
     /// Create copy
-    virtual Actor* copy(Space& home, bool share) = 0;
+    virtual Actor* copy(Space& home) = 0;
 
     /// \name Memory management
     //@{
@@ -1120,11 +1044,11 @@ namespace Gecode {
     /// Constructor for posting
     Propagator(Home home);
     /// Constructor for cloning \a p
-    Propagator(Space& home, bool share, Propagator& p);
+    Propagator(Space& home, Propagator& p);
     /// Return forwarding pointer during copying
     Propagator* fwd(void) const;
     /// Provide access to global propagator information
-    GPI::Info& gpi(void);
+    Kernel::GPI::Info& gpi(void);
 
   public:
     /// \name Propagation
@@ -1254,7 +1178,7 @@ namespace Gecode {
     /// Test whether council has advisor left
     bool empty(void) const;
     /// Update during cloning (copies all advisors)
-    void update(Space& home, bool share, Council<A>& c);
+    void update(Space& home, Council<A>& c);
     /// Dispose council
     void dispose(Space& home);
   };
@@ -1311,7 +1235,7 @@ namespace Gecode {
     template<class A>
     Advisor(Space& home, Propagator& p, Council<A>& c);
     /// Copying constructor
-    Advisor(Space& home, bool share, Advisor& a);
+    Advisor(Space& home, Advisor& a);
     /// Provide access to view trace information
     const ViewTraceInfo& operator ()(const Space& home) const;
 
@@ -1355,7 +1279,7 @@ namespace Gecode {
     /// Constructor for creation
     NGL(Space& home);
     /// Constructor for cloning \a ngl
-    NGL(Space& home, bool share, NGL& ngl);
+    NGL(Space& home, NGL& ngl);
     /// Subscribe propagator \a p to all views of the no-good literal
     virtual void subscribe(Space& home, Propagator& p) = 0;
     /// Cancel propagator \a p from all views of the no-good literal
@@ -1367,7 +1291,7 @@ namespace Gecode {
     /// Propagate the negation of the no-good literal
     virtual ExecStatus prune(Space& home) = 0;
     /// Create copy
-    virtual NGL* copy(Space& home, bool share) = 0;
+    virtual NGL* copy(Space& home) = 0;
     /// Whether dispose must always be called (returns false)
     GECODE_KERNEL_EXPORT
     virtual bool notice(void) const;
@@ -1460,7 +1384,7 @@ namespace Gecode {
     /// Constructor for creation
     Brancher(Home home);
     /// Constructor for cloning \a b
-    Brancher(Space& home, bool share, Brancher& b);
+    Brancher(Space& home, Brancher& b);
   public:
     /// \name Brancher
     //@{
@@ -1533,7 +1457,6 @@ namespace Gecode {
    *
    * Local objects must inherit from this base class.
    *
-   * \ingroup FuncSupportShared
    */
   class LocalObject : public Actor {
     friend class ActorLink;
@@ -1543,23 +1466,21 @@ namespace Gecode {
     /// Constructor for creation
     LocalObject(Home home);
     /// Copy constructor
-    LocalObject(Space& home, bool share, LocalObject& l);
+    LocalObject(Space& home, LocalObject& l);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static LocalObject* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static const LocalObject* cast(const ActorLink* al);
   private:
     /// Make copy and set forwarding pointer
-    GECODE_KERNEL_EXPORT void fwdcopy(Space& home, bool share);
+    GECODE_KERNEL_EXPORT void fwdcopy(Space& home);
   public:
     /// Return forwarding pointer
-    LocalObject* fwd(Space& home, bool share);
+    LocalObject* fwd(Space& home);
   };
 
   /**
    * \brief Handles for local (space-shared) objects
-   *
-   * \ingroup FuncSupportShared
    *
    */
   class LocalHandle {
@@ -1577,7 +1498,7 @@ namespace Gecode {
     /// Assignment operator
     LocalHandle& operator =(const LocalHandle& lh);
     /// Updating during cloning
-    void update(Space& home, bool share, LocalHandle& lh);
+    void update(Space& home, LocalHandle& lh);
     /// Destructor
     ~LocalHandle(void);
   protected:
@@ -1742,6 +1663,7 @@ namespace Gecode {
   };
 
 
+
   /**
    * \brief Computation spaces
    */
@@ -1757,18 +1679,17 @@ namespace Gecode {
     template <class A> friend class Council;
     template<class VIC> friend class VarImp;
     template<class VarImp> friend class VarImpDisposer;
-    friend class SharedHandle;
     friend class LocalObject;
     friend class Region;
     friend class AFC;
     friend class PostInfo;
+    friend GECODE_KERNEL_EXPORT
+    void trace(Home home, TraceFilter tf, int te, Tracer& t);
   private:
-    /// Manager for shared memory areas
-    SharedMemory* sm;
+    /// Shared data for space
+    Kernel::SharedSpaceData ssd;
     /// Performs memory management for space
-    MemoryManager mm;
-    /// Global propagator information
-    GPI gpi;
+    Kernel::MemoryManager mm;
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -1851,8 +1772,6 @@ namespace Gecode {
         VarImpBase* vars_u[AllVarConf::idx_c];
         /// Keep variables during copying without index structure
         VarImpBase* vars_noidx;
-        /// Linked list of shared objects
-        SharedHandle::Object* shared;
         /// Linked list of local objects
         LocalObject* local;
       } c;
@@ -1877,9 +1796,6 @@ namespace Gecode {
     void update(ActorLink** sub);
     //@}
 
-    /// Find trace recorder if exists
-    TraceRecorder* findtr(void);
-
     /// First actor for forced disposal
     Actor** d_fst;
     /// Current actor for forced disposal
@@ -1901,22 +1817,13 @@ namespace Gecode {
      * failed, an exception of type SpaceFailed is thrown. If the space
      * is not stable, an exception of SpaceNotStable is thrown.
      *
-     * Otherwise, a clone of the space is returned. If \a share_data is true,
-     * sharable datastructures are shared among the clone and the original
-     * space. If \a share_data is false, independent copies of the shared
-     * datastructures must be created. This means that a clone with no
-     * sharing can be used in a different thread without any interaction
-     * with the original space.
-     *
-     * If \a share_info is true, information about AFC is shared, otherwise
-     * it will be unshared.
+     * Otherwise, a clone of the space is returned.
      *
      * Throws an exception of type SpaceNotCloned when the copy constructor
      * of the Space class is not invoked during cloning.
      *
      */
-    GECODE_KERNEL_EXPORT Space* _clone(bool share_data=true,
-                                       bool share_info=true);
+    GECODE_KERNEL_EXPORT Space* _clone(void);
 
     /**
      * \brief Commit choice \a c for alternative \a a
@@ -1986,6 +1893,10 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void _trycommit(const Choice& c, unsigned int a);
 
+    /// Find trace recorder if exists
+    GECODE_KERNEL_EXPORT
+    TraceRecorder* findtracerecorder(void);
+
     /**
      * \brief Notice that an actor must be disposed
      *
@@ -2016,13 +1927,10 @@ namespace Gecode {
      * Must copy and update all data structures (such as variables
      * and variable arrays) required by the subclass of Space.
      *
-     * If \a share is true, share all data structures among copies.
-     * Otherwise, make independent copies.
-     *
      * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT
-    Space(bool share, Space& s);
+    Space(Space& s);
     /**
      * \brief Destructor
      * \ingroup TaskModelScript
@@ -2035,7 +1943,7 @@ namespace Gecode {
      * Must create a new object using the constructor for cloning.
      * \ingroup TaskModelScript
      */
-    virtual Space* copy(bool share) = 0;
+    virtual Space* copy(void) = 0;
     /**
      * \brief Constrain function for best solution search
      *
@@ -2173,24 +2081,14 @@ namespace Gecode {
      * is not stable, an exception of SpaceNotStable is thrown.
      *
      * Otherwise, a clone of the space is returned and the statistics
-     * information \a stat is updated. If \a share_data is true,
-     * sharable datastructures are shared among the clone and the original
-     * space. If \a share_data is false, independent copies of the shared
-     * datastructures must be created. This means that a clone with no
-     * sharing can be used in a different thread without any interaction
-     * with the original space.
-     *
-     * If \a share_info is true, information about AFC is shared, otherwise
-     * it will be unshared.
+     * information \a stat is updated.
      *
      * Throws an exception of type SpaceNotCloned when the copy constructor
      * of the Space class is not invoked during cloning.
      *
      * \ingroup TaskSearch
      */
-    Space* clone(bool share_data=true,
-                 bool share_info=true,
-                 CloneStatistics& stat=unused_clone) const;
+    Space* clone(CloneStatistics& stat=unused_clone) const;
 
     /**
      * \brief Commit choice \a c for alternative \a a
@@ -2624,15 +2522,6 @@ namespace Gecode {
      * The first list element to be retuned is \a f, the last is \a l.
      */
     template<size_t> void  fl_dispose(FreeList* f, FreeList* l);
-    /**
-     * \brief Flush cached memory blocks
-     *
-     * All spaces that are obtained as non-shared clones from some same space
-     * try to cache memory blocks from failed spaces. To minimize memory
-     * consumption, these blocks can be flushed.
-     *
-     */
-    GECODE_KERNEL_EXPORT void flush(void);
     //@}
     /// Construction routines
     //@{
@@ -2684,9 +2573,11 @@ namespace Gecode {
     void afc_decay(double d);
     /// Return AFC decay factor
     double afc_decay(void) const;
+    /// Unshare AFC information for all propagators
+    GECODE_KERNEL_EXPORT void afc_unshare(void);
     //@}
 
-  private:
+  protected:
     /**
      * \brief Class to iterate over propagators of a space
      *
@@ -2828,7 +2719,7 @@ namespace Gecode {
   // Space allocation: general space heaps and free lists
   forceinline void*
   Space::ralloc(size_t s) {
-    return mm.alloc(sm,s);
+    return mm.alloc(ssd.data().sm,s);
   }
   forceinline void
   Space::rfree(void* p, size_t s) {
@@ -2851,7 +2742,7 @@ namespace Gecode {
   template<size_t s>
   forceinline void*
   Space::fl_alloc(void) {
-    return mm.template fl_alloc<s>(sm);
+    return mm.template fl_alloc<s>(ssd.data().sm);
   }
   template<size_t s>
   forceinline void
@@ -3074,77 +2965,6 @@ namespace Gecode {
     return home.ralloc(s);
   }
 
-  /*
-   * Shared objects and handles
-   *
-   */
-  forceinline
-  SharedHandle::Object::Object(void)
-    : next(NULL), fwd(NULL), use_cnt(0) {}
-  forceinline
-  SharedHandle::Object::~Object(void) {
-    assert(use_cnt == 0);
-  }
-
-  forceinline SharedHandle::Object*
-  SharedHandle::object(void) const {
-    return o;
-  }
-  forceinline void
-  SharedHandle::subscribe(void) {
-    if (o != NULL) o->use_cnt++;
-  }
-  forceinline void
-  SharedHandle::cancel(void) {
-    if ((o != NULL) && (--o->use_cnt == 0))
-      delete o;
-    o=NULL;
-  }
-  forceinline void
-  SharedHandle::object(SharedHandle::Object* n) {
-    if (n != o) {
-      cancel(); o=n; subscribe();
-    }
-  }
-  forceinline
-  SharedHandle::SharedHandle(void) : o(NULL) {}
-  forceinline
-  SharedHandle::SharedHandle(SharedHandle::Object* so) : o(so) {
-    subscribe();
-  }
-  forceinline
-  SharedHandle::SharedHandle(const SharedHandle& sh) : o(sh.o) {
-    subscribe();
-  }
-  forceinline SharedHandle&
-  SharedHandle::operator =(const SharedHandle& sh) {
-    if (&sh != this) {
-      cancel(); o=sh.o; subscribe();
-    }
-    return *this;
-  }
-  forceinline void
-  SharedHandle::update(Space& home, bool share, SharedHandle& sh) {
-    if (sh.o == NULL) {
-      o=NULL; return;
-    } else if (share) {
-      o=sh.o;
-    } else if (sh.o->fwd != NULL) {
-      o=sh.o->fwd;
-    } else {
-      o = sh.o->copy();
-      sh.o->fwd = o;
-      sh.o->next = home.pc.c.shared;
-      home.pc.c.shared = sh.o;
-    }
-    subscribe();
-  }
-  forceinline
-  SharedHandle::~SharedHandle(void) {
-    cancel();
-  }
-
-
 
   /*
    * No-goods
@@ -3323,11 +3143,11 @@ namespace Gecode {
   }
 
   forceinline Space*
-  Space::clone(bool share_data, bool share_info, CloneStatistics&) const {
+  Space::clone(CloneStatistics&) const {
     // Clone is only const for search engines. During cloning, several data
     // structures are updated (e.g. forwarding pointers), so we have to
     // cast away the constness.
-    return const_cast<Space*>(this)->_clone(share_data,share_info);
+    return const_cast<Space*>(this)->_clone();
   }
 
   forceinline void
@@ -3342,12 +3162,12 @@ namespace Gecode {
 
   forceinline double
   Space::afc_decay(void) const {
-    return gpi.decay();
+    return ssd.data().gpi.decay();
   }
 
   forceinline void
   Space::afc_decay(double d) {
-    gpi.decay(d);
+    ssd.data().gpi.decay(d);
   }
 
   forceinline size_t
@@ -3553,9 +3373,9 @@ namespace Gecode {
     gpi_disabled = Support::funmark(gpi_disabled);
   }
 
-  forceinline GPI::Info&
+  forceinline Kernel::GPI::Info&
   Propagator::gpi(void) {
-    return *static_cast<GPI::Info*>(Support::funmark(gpi_disabled));
+    return *static_cast<Kernel::GPI::Info*>(Support::funmark(gpi_disabled));
   }
 
   forceinline
@@ -3564,14 +3384,15 @@ namespace Gecode {
                    // Inherit propagator information
                    home.propagator()->gpi_disabled :
                    // New propagator information
-                   static_cast<Space&>(home).gpi.allocate(home.propagatorgroup().gid)) {
+                   static_cast<Space&>(home).ssd.data().gpi.allocate
+                   (home.propagatorgroup().gid)) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
     static_cast<Space&>(home).pl.head(this);
   }
 
   forceinline
-  Propagator::Propagator(Space&, bool, Propagator& p)
+  Propagator::Propagator(Space&, Propagator& p)
     : gpi_disabled(p.gpi_disabled) {
     u.advisors = NULL;
     assert((u.med == 0) && (u.size == 0));
@@ -3670,7 +3491,7 @@ namespace Gecode {
   }
 
   forceinline
-  Brancher::Brancher(Space&, bool, Brancher& b)
+  Brancher::Brancher(Space&, Brancher& b)
     : bid(b.bid), gid(b.gid) {
     // Set forwarding pointer
     b.prev(this);
@@ -3775,14 +3596,14 @@ namespace Gecode {
   }
 
   forceinline
-  LocalObject::LocalObject(Space&,bool,LocalObject&) {
+  LocalObject::LocalObject(Space&, LocalObject&) {
     ActorLink::cast(this)->prev(NULL);
   }
 
   forceinline LocalObject*
-  LocalObject::fwd(Space& home, bool share) {
+  LocalObject::fwd(Space& home) {
     if (prev() == NULL)
-      fwdcopy(home,share);
+      fwdcopy(home);
     return LocalObject::cast(prev());
   }
 
@@ -3804,8 +3625,8 @@ namespace Gecode {
   forceinline void
   LocalHandle::object(LocalObject* n) { o = n; }
   forceinline void
-  LocalHandle::update(Space& home, bool share, LocalHandle& lh) {
-    object(lh.object()->fwd(home,share));
+  LocalHandle::update(Space& home, LocalHandle& lh) {
+    object(lh.object()->fwd(home));
   }
 
 
@@ -3866,7 +3687,7 @@ namespace Gecode {
   NGL::NGL(Space&)
     : nl(NULL) {}
   forceinline
-  NGL::NGL(Space&, bool, NGL&)
+  NGL::NGL(Space&, NGL&)
     : nl(NULL) {}
   forceinline size_t
   NGL::dispose(Space&) {
@@ -3887,7 +3708,7 @@ namespace Gecode {
   }
 
   forceinline
-  Advisor::Advisor(Space&, bool, Advisor&) {}
+  Advisor::Advisor(Space&, Advisor&) {}
 
   forceinline bool
   Advisor::disposed(void) const {
@@ -3974,7 +3795,7 @@ namespace Gecode {
 
   template<class A>
   forceinline void
-  Council<A>::update(Space& home, bool share, Council<A>& c) {
+  Council<A>::update(Space& home, Council<A>& c) {
     // Skip all disposed advisors
     {
       ActorLink* a = c.advisors;
@@ -3997,7 +3818,7 @@ namespace Gecode {
           *a_f = (*a_f)->next();
         } else {
           // Run specific copying part
-          A* a = new (home) A(home,share,*static_cast<A*>(*a_f));
+          A* a = new (home) A(home,*static_cast<A*>(*a_f));
           // Set propagator pointer
           a->prev(p_t);
           // Set forwarding pointer
@@ -4106,19 +3927,6 @@ namespace Gecode {
             (pc.p.active > &pc.p.queue[PropCost::AC_MAX+1]));
   }
 
-  forceinline TraceRecorder*
-  Space::findtr(void) {
-    TraceRecorder* tr = NULL;
-    for (Actor** a=d_fst; a<d_cur; a++)
-      if (Support::marked(*a) &&
-          !static_cast<Propagator*>(Support::unmark(*a))->disabled()) {
-        tr = static_cast<TraceRecorder*>(Support::unmark(*a));
-        std::swap(*d_fst,*a);
-        break;
-      }
-    return tr;
-  }
-
   forceinline void
   Space::notice(Actor& a, ActorProperty p, bool d) {
     if (p & AP_DISPOSE) {
@@ -4129,9 +3937,6 @@ namespace Gecode {
     }
     if (p & AP_TRACE) {
       pc.p.bid_sc |= sc_trace;
-      if (findtr())
-        throw MoreThanOneTracer("Space::notice");
-      ap_notice_dispose(static_cast<Actor*>(Support::fmark(&a)),d);
     }
     // Currently unused
     if (p & AP_WEAKLY) {}
@@ -4144,8 +3949,7 @@ namespace Gecode {
     if ((p & AP_DISPOSE) && (d_fst != NULL))
       ap_ignore_dispose(&a,d);
     if (p & AP_VIEW_TRACE) {}
-    if ((p & AP_TRACE) && (d_fst != NULL))
-      ap_ignore_dispose(static_cast<Actor*>(Support::fmark(&a)),d);
+    if (p & AP_TRACE) {}
     // Currently unused
     if (p & AP_WEAKLY) {}
   }
@@ -4288,7 +4092,7 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space& home, bool, VarImp<VIC>& x) {
+  VarImp<VIC>::VarImp(Space& home, VarImp<VIC>& x) {
     VarImpBase** reg;
     free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
     if (x.b.base == NULL) {

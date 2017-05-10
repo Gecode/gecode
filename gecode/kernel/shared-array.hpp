@@ -67,8 +67,6 @@ namespace Gecode {
     public:
       /// Allocate for \a n elements
       SAO(int n);
-      /// Create copy of elements
-      virtual SharedHandle::Object* copy(void) const;
       /// Delete object
       virtual ~SAO(void);
 
@@ -187,15 +185,6 @@ namespace Gecode {
   forceinline
   SharedArray<T>::SAO::SAO(int n0) : n(n0) {
     a = (n>0) ? heap.alloc<T>(n) : NULL;
-  }
-
-  template<class T>
-  SharedHandle::Object*
-  SharedArray<T>::SAO::copy(void) const {
-    SAO* o = new SAO(n);
-    for (int i=n; i--;)
-      o->a[i] = a[i];
-    return o;
   }
 
   template<class T>

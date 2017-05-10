@@ -46,7 +46,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatVal c) {
     using namespace Float;
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1.0; t[i].x=x[i];
@@ -59,7 +59,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatVal c, Reify r) {
     using namespace Float;
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1.0; t[i].x=x[i];
@@ -75,7 +75,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
@@ -91,7 +91,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term >(x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
@@ -104,7 +104,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatVar y) {
     using namespace Float;
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1.0; t[i].x=x[i];
@@ -134,7 +134,7 @@ namespace Gecode {
          const FloatVarArgs& x, FloatRelType frt, FloatVar y, Reify r) {
     using namespace Float;
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1.0; t[i].x=x[i];
@@ -151,7 +151,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
@@ -184,7 +184,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Float::linear");
     GECODE_POST;
-    Region re(home);
+    Region re;
     Linear::Term* t = re.alloc<Linear::Term>(x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];

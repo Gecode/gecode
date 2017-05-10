@@ -173,14 +173,8 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /**
-     * \brief Update array to be a clone of array \a a
-     *
-     * If \a share is true, sharing is retained for all shared
-     * data structures. Otherwise, for each of them an independent
-     * copy is created.
-     */
-    void update(Space&, bool share, VarArray<Var>& a);
+    /// Update array to be a clone of array \a a
+    void update(Space& home, VarArray<Var>& a);
     //@}
   private:
     static void* operator new(size_t) throw();
@@ -381,14 +375,8 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /**
-     * \brief Update array to be a clone of array \a a
-     *
-     * If \a share is true, sharing is retained for all shared
-     * data structures. Otherwise, for each of them an independent
-     * copy is created.
-     */
-    void update(Space&, bool share, ViewArray<View>& a);
+    /// Update array to be a clone of array \a a
+    void update(Space& home, ViewArray<View>& a);
     //@}
 
 
@@ -467,15 +455,15 @@ namespace Gecode {
      *
      * Note that assigned views are ignored.
      */
-    bool same(const Space& home) const;
+    bool same(void) const;
     /**
      * \brief Test whether array contains a view being the same as \a y
      *
      * Note that assigned views are ignored.
      */
-    bool same(const Space& home, const View& y) const;
+    bool same(const View& y) const;
     /// Remove all duplicate views from array (changes element order)
-    void unique(const Space& home);
+    void unique(void);
     //@}
 
     /// \name View sharing
@@ -485,21 +473,21 @@ namespace Gecode {
      *
      * Note that assigned views are ignored.
      */
-    bool shared(const Space& home) const;
+    bool shared(void) const;
     /**
      * \brief Test whether array contains a view being shared with \a y
      *
      * Note that assigned views are ignored.
      */
     template<class ViewY>
-    bool shared(const Space& home, const ViewY& y) const;
+    bool shared(const ViewY& y) const;
     /**
      * \brief Test whether array together with array \a y contains shared views
      *
      * Note that assigned views are ignored.
      */
     template<class ViewY>
-    bool shared(const Space& home, const ViewArray<ViewY>& y) const;
+    bool shared(const ViewArray<ViewY>& y) const;
     //@}
 
   private:
@@ -901,19 +889,19 @@ namespace Gecode {
      *
      * Note that assigned variables are ignored.
      */
-    bool same(const Space& home) const;
+    bool same(void) const;
     /**
      * \brief Test whether array contains variable \a y
      *
      * Note that assigned variables are ignored.
      */
-    bool same(const Space& home, const Var& y) const;
+    bool same(const Var& y) const;
     /**
      * \brief Test whether all elements from array and \a y contains same variable multiply
      *
      * Note that assigned variables are ignored.
      */
-    bool same(const Space& home, const VarArgArray<Var>& y) const;
+    bool same(const VarArgArray<Var>& y) const;
     //@}
   };
 
@@ -1069,12 +1057,12 @@ namespace Gecode {
 
   template<class Var>
   forceinline void
-  VarArray<Var>::update(Space& home, bool share, VarArray<Var>& a) {
+  VarArray<Var>::update(Space& home, VarArray<Var>& a) {
     n = a.n;
     if (n > 0) {
       x = home.alloc<Var>(n);
       for (int i = n; i--;)
-        x[i].update(home, share, a.x[i]);
+        x[i].update(home, a.x[i]);
     } else {
       x = NULL;
     }
@@ -1384,12 +1372,12 @@ namespace Gecode {
 
   template<class View>
   void
-  ViewArray<View>::update(Space& home, bool share, ViewArray<View>& y) {
+  ViewArray<View>::update(Space& home, ViewArray<View>& y) {
     n = y.n;
     if (n > 0) {
       x = home.alloc<View>(n);
       for (int i = n; i--; )
-        x[i].update(home, share, y.x[i]);
+        x[i].update(home, y.x[i]);
     } else {
       x = NULL;
     }
@@ -1472,10 +1460,10 @@ namespace Gecode {
 
   template<class View>
   bool
-  ViewArray<View>::same(const Space& home) const {
+  ViewArray<View>::same(void) const {
     if (n < 2)
       return false;
-    Region r(home);
+    Region r;
     View* y = r.alloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
@@ -1491,7 +1479,7 @@ namespace Gecode {
 
   template<class View>
   bool
-  ViewArray<View>::same(const Space&, const View& y) const {
+  ViewArray<View>::same(const View& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
@@ -1502,7 +1490,7 @@ namespace Gecode {
 
   template<class View>
   void
-  ViewArray<View>::unique(const Space&) {
+  ViewArray<View>::unique(void) {
     if (n < 2)
       return;
     sort(x,n);
@@ -1515,10 +1503,10 @@ namespace Gecode {
 
   template<class View>
   bool
-  ViewArray<View>::shared(const Space& home) const {
+  ViewArray<View>::shared(void) const {
     if (n < 2)
       return false;
-    Region r(home);
+    Region r;
     View* y = r.alloc<View>(n);
     for (int i = n; i--; )
       y[i] = x[i];
@@ -1534,7 +1522,7 @@ namespace Gecode {
 
   template<class View> template<class ViewY>
   bool
-  ViewArray<View>::shared(const Space&, const ViewY& y) const {
+  ViewArray<View>::shared(const ViewY& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )
@@ -1545,10 +1533,10 @@ namespace Gecode {
 
   template<class View> template<class ViewY>
   bool
-  ViewArray<View>::shared(const Space& home, const ViewArray<ViewY>& y) const {
+  ViewArray<View>::shared(const ViewArray<ViewY>& y) const {
     if ((size() < 1) || (y.size() < 1))
       return false;
-    Region r(home);
+    Region r;
     View* xs = r.alloc<View>(size());
     for (int i=size(); i--; )
       xs[i] = x[i];
@@ -2078,10 +2066,10 @@ namespace Gecode {
 
   template<class Var>
   bool
-  VarArgArray<Var>::same(const Space& home) const {
+  VarArgArray<Var>::same(void) const {
     if (n < 2)
       return false;
-    Region r(home);
+    Region r;
     Var* y = r.alloc<Var>(n);
     for (int i = n; i--; )
       y[i] = a[i];
@@ -2098,11 +2086,11 @@ namespace Gecode {
 
   template<class Var>
   bool
-  VarArgArray<Var>::same(const Space& home, const VarArgArray<Var>& y) const {
+  VarArgArray<Var>::same(const VarArgArray<Var>& y) const {
     int m = n + y.n;
     if (m < 2)
       return false;
-    Region r(home);
+    Region r;
     Var* z = r.alloc<Var>(m);
     for (int i = n; i--; )
       z[i] = a[i];
@@ -2121,7 +2109,7 @@ namespace Gecode {
 
   template<class Var>
   bool
-  VarArgArray<Var>::same(const Space&, const Var& y) const {
+  VarArgArray<Var>::same(const Var& y) const {
     if (y.assigned())
       return false;
     for (int i = n; i--; )

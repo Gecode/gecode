@@ -96,19 +96,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  MaxBnd<View>::MaxBnd(Space& home, bool share, MaxBnd<View>& p)
-    : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  MaxBnd<View>::MaxBnd(Space& home, MaxBnd<View>& p)
+    : TernaryPropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   forceinline
-  MaxBnd<View>::MaxBnd(Space& home, bool share, Propagator& p,
+  MaxBnd<View>::MaxBnd(Space& home, Propagator& p,
                  View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_BND>(home,share,p,x0,x1,x2) {}
+    : TernaryPropagator<View,PC_INT_BND>(home,p,x0,x1,x2) {}
 
   template<class View>
   Actor*
-  MaxBnd<View>::copy(Space& home, bool share) {
-    return new (home) MaxBnd<View>(home,share,*this);
+  MaxBnd<View>::copy(Space& home) {
+    return new (home) MaxBnd<View>(home,*this);
   }
 
   template<class View>
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   NaryMaxBnd<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
-    x.unique(home);
+    x.unique();
     if (x.size() == 1)
       return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
@@ -150,7 +150,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     GECODE_ME_CHECK(y.gq(home,l));
     GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK((Rel::Lq<View,View>::post(home,x[i],y)));
@@ -162,17 +162,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  NaryMaxBnd<View>::NaryMaxBnd(Space& home, bool share, NaryMaxBnd<View>& p)
-    : NaryOnePropagator<View,PC_INT_BND>(home,share,p) {}
+  NaryMaxBnd<View>::NaryMaxBnd(Space& home, NaryMaxBnd<View>& p)
+    : NaryOnePropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  NaryMaxBnd<View>::copy(Space& home, bool share) {
+  NaryMaxBnd<View>::copy(Space& home) {
     if (x.size() == 1)
-      return new (home) Rel::EqBnd<View,View>(home,share,*this,x[0],y);
+      return new (home) Rel::EqBnd<View,View>(home,*this,x[0],y);
     if (x.size() == 2)
-      return new (home) MaxBnd<View>(home,share,*this,x[0],x[1],y);
-    return new (home) NaryMaxBnd<View>(home,share,*this);
+      return new (home) MaxBnd<View>(home,*this,x[0],x[1],y);
+    return new (home) NaryMaxBnd<View>(home,*this);
   }
 
   /// Status of propagation for nary max
@@ -258,19 +258,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  MaxDom<View>::MaxDom(Space& home, bool share, MaxDom<View>& p)
-    : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+  MaxDom<View>::MaxDom(Space& home, MaxDom<View>& p)
+    : TernaryPropagator<View,PC_INT_DOM>(home,p) {}
 
   template<class View>
   forceinline
-  MaxDom<View>::MaxDom(Space& home, bool share, Propagator& p,
+  MaxDom<View>::MaxDom(Space& home, Propagator& p,
                        View x0, View x1, View x2)
-    : TernaryPropagator<View,PC_INT_DOM>(home,share,p,x0,x1,x2) {}
+    : TernaryPropagator<View,PC_INT_DOM>(home,p,x0,x1,x2) {}
 
   template<class View>
   Actor*
-  MaxDom<View>::copy(Space& home, bool share) {
-    return new (home) MaxDom<View>(home,share,*this);
+  MaxDom<View>::copy(Space& home) {
+    return new (home) MaxDom<View>(home,*this);
   }
 
   template<class View>
@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   NaryMaxDom<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
-    x.unique(home);
+    x.unique();
     if (x.size() == 1)
       return Rel::EqDom<View,View>::post(home,x[0],y);
     if (x.size() == 2)
@@ -334,7 +334,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     GECODE_ME_CHECK(y.gq(home,l));
     GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK((Rel::Lq<View,View>::post(home,x[i],y)));
@@ -346,17 +346,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  NaryMaxDom<View>::NaryMaxDom(Space& home, bool share, NaryMaxDom<View>& p)
-    : NaryOnePropagator<View,PC_INT_DOM>(home,share,p) {}
+  NaryMaxDom<View>::NaryMaxDom(Space& home, NaryMaxDom<View>& p)
+    : NaryOnePropagator<View,PC_INT_DOM>(home,p) {}
 
   template<class View>
   Actor*
-  NaryMaxDom<View>::copy(Space& home, bool share) {
+  NaryMaxDom<View>::copy(Space& home) {
     if (x.size() == 1)
-      return new (home) Rel::EqDom<View,View>(home,share,*this,x[0],y);
+      return new (home) Rel::EqDom<View,View>(home,*this,x[0],y);
     if (x.size() == 2)
-      return new (home) MaxDom<View>(home,share,*this,x[0],x[1],y);
-    return new (home) NaryMaxDom<View>(home,share,*this);
+      return new (home) MaxDom<View>(home,*this,x[0],x[1],y);
+    return new (home) NaryMaxDom<View>(home,*this);
   }
 
   template<class View>
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         home.ES_FIX_PARTIAL(*this,View::med(ME_INT_DOM)) :
         home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
-    Region r(home);
+    Region r;
     ViewRanges<View>* i_x = r.alloc<ViewRanges<View> >(x.size());
     for (int i = x.size(); i--; ) {
       ViewRanges<View> i_xi(x[i]); i_x[i]=i_xi;

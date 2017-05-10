@@ -78,7 +78,7 @@ namespace Gecode {
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a y
-    void update(Space& home, bool share, VarImpVar<VarImp>& y);
+    void update(Space& home, VarImpVar<VarImp>& y);
     //@}
 
     /// \name Variable comparison
@@ -125,8 +125,8 @@ namespace Gecode {
   }
   template<class VarImp>
   forceinline void
-  VarImpVar<VarImp>::update(Space& home, bool share, VarImpVar<VarImp>& y) {
-    x = y.x->copy(home,share);
+  VarImpVar<VarImp>::update(Space& home, VarImpVar<VarImp>& y) {
+    x = y.x->copy(home);
   }
   template<class VarImp>
   forceinline bool

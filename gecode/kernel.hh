@@ -130,6 +130,7 @@ namespace Gecode {
  *
  */
 
+#include <gecode/kernel/shared-object.hpp>
 #include <gecode/kernel/memory-config.hpp>
 #include <gecode/kernel/memory-manager.hpp>
 
@@ -149,9 +150,11 @@ namespace Gecode {
 
 #include <gecode/kernel/archive.hpp>
 #include <gecode/kernel/gpi.hpp>
+#include <gecode/kernel/shared-space-data.hpp>
 #include <gecode/kernel/core.hpp>
 #include <gecode/kernel/modevent.hpp>
 #include <gecode/kernel/range-list.hpp>
+
 
 /*
  * Region memory management

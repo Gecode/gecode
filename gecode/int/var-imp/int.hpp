@@ -988,9 +988,9 @@ namespace Gecode { namespace Int {
    */
 
   forceinline IntVarImp*
-  IntVarImp::copy(Space& home, bool share) {
+  IntVarImp::copy(Space& home) {
     return copied() ? static_cast<IntVarImp*>(forward())
-      : perform_copy(home,share);
+      : perform_copy(home);
   }
 
 

@@ -58,42 +58,15 @@ namespace Gecode { namespace Int { namespace Sequence {
     }
   }
 
-  namespace {
-    /// Helper class for updating ints or IntSets
-    template<class Val>
-    class UpdateVal {
-    public:
-      static void update(Val& n, Space& home, bool share, Val& old);
-    };
-    /// Helper class for updating ints or IntSets, specialised for int
-    template<>
-    class UpdateVal<int> {
-    public:
-      static void update(int& n, Space&, bool, int& old) {
-        n = old;
-      }
-    };
-    /// Helper class for updating ints or IntSets, specialised for IntSet
-    template<>
-    class UpdateVal<IntSet> {
-    public:
-      static void update(IntSet& n, Space& home, bool share,
-                         IntSet& old) {
-        n.update(home,share,old);
-      }
-    };
-  }
-
   template<class View, class Val>
   forceinline
-  Sequence<View,Val>::Sequence(Space& home, bool share, Sequence& p)
-    : Propagator(home,share,p), q(p.q), l(p.l), u(p.u),
+  Sequence<View,Val>::Sequence(Space& home, Sequence& p)
+    : Propagator(home,p), s(p.s), q(p.q), l(p.l), u(p.u),
       vvsamax(), vvsamin(), tofail(p.tofail) {
-    UpdateVal<Val>::update(s,home,share,p.s);
-    x.update(home,share,p.x);
-    ac.update(home,share,p.ac);
-    vvsamax.update(home,share,p.vvsamax);
-    vvsamin.update(home,share,p.vvsamin);
+    x.update(home,p.x);
+    ac.update(home,p.ac);
+    vvsamax.update(home,p.vvsamax);
+    vvsamin.update(home,p.vvsamin);
   }
 
   template<class View,class Val>
@@ -137,7 +110,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val>
   forceinline ExecStatus
   Sequence<View,Val>::check(Space& home, ViewArray<View>& x, Val s, int q, int l, int u) {
-    Region r(home);
+    Region r;
     // could do this with an array of length q...
     int* upper = r.alloc<int>(x.size()+1);
     int* lower = r.alloc<int>(x.size()+1);
@@ -172,8 +145,8 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val>
   Actor*
-  Sequence<View,Val>::copy(Space& home, bool share) {
-    return new (home) Sequence<View,Val>(home,share,*this);
+  Sequence<View,Val>::copy(Space& home) {
+    return new (home) Sequence<View,Val>(home,*this);
   }
 
   template<class View, class Val>

@@ -73,6 +73,56 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Shared handles and objects used to implement most shared data
+structures in Gecode are thread safe now. In most cases they are
+lock free.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The Boolean share argument during cloning is not any longer needed.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+During unsharing of AFC information also the propagator
+identifiers were changed.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The unsharing of AFC information during cloning is not any longer
+needed as it happens automatically when a new AFC object is
+created.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Regions can be freed without destroying them. Consult MPG for
+details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Regions are now created independently of a space and the policy
+using several regions simultaneously has changed. Consult MPG for
+details.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major
@@ -84,7 +134,7 @@ Module: int
 What:   bug
 Rank:   major
 [DESCRIPTION]
-For Boolean variables, an initiaized BoolCHB in branching was ignored.
+For Boolean variables, an initialized BoolCHB in branching was ignored.
 
 [ENTRY]
 Module: driver
@@ -92,6 +142,7 @@ What:   bug
 Rank:   minor
 [DESCRIPTION]
 The -slice commandline option is not ignored any longer.
+
 
 [RELEASE]
 Version: 5.1.0

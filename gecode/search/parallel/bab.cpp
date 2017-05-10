@@ -65,7 +65,7 @@ namespace Gecode { namespace Search { namespace Parallel {
       }
       delete best;
     }
-    best = b.clone(false);
+    best = b.clone();
     // Announce better solutions
     for (unsigned int i=0; i<workers(); i++)
       worker(i)->better(best);
@@ -147,7 +147,7 @@ namespace Gecode { namespace Search { namespace Parallel {
                 {
                   // Deletes all pending branchers
                   (void) cur->choice();
-                  Space* s = cur->clone(false);
+                  Space* s = cur->clone();
                   delete cur;
                   cur = NULL;
                   path.next();

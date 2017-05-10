@@ -68,14 +68,14 @@ public:
   /// Actual model
   Steiner(const SizeOptions& opt)
     : Script(opt), n(opt.size()), noOfTriples((n*(n-1))/6),
-      triples(*this, noOfTriples, IntSet::empty, 1, n, 3, 3) {
+      triples(*this, noOfTriples, IntSet::empty, 1, n, 3U, 3U) {
 
     for (int i=0; i<noOfTriples; i++) {
       for (int j=i+1; j<noOfTriples; j++) {
         SetVar x = triples[i];
         SetVar y = triples[j];
 
-        SetVar atmostOne(*this,IntSet::empty,1,n,0,1);
+        SetVar atmostOne(*this,IntSet::empty,1,n,0U,1U);
         rel(*this, (x & y) == atmostOne);
 
         IntVar x1(*this,1,n);
@@ -138,13 +138,13 @@ public:
     }
   }
   /// Constructor for copying \a s
-  Steiner(bool share, Steiner& s) : Script(share,s), n(s.n), noOfTriples(s.noOfTriples) {
-    triples.update(*this, share, s.triples);
+  Steiner(Steiner& s) : Script(s), n(s.n), noOfTriples(s.noOfTriples) {
+    triples.update(*this, s.triples);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Steiner(share,*this);
+  copy(void) {
+    return new Steiner(*this);
   }
 };
 

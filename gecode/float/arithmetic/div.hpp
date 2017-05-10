@@ -50,13 +50,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B, class C>
   forceinline
-  Div<A,B,C>::Div(Space& home, bool share, Div<A,B,C>& p)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,share,p) {}
+  Div<A,B,C>::Div(Space& home, Div<A,B,C>& p)
+    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B, class C>
   Actor*
-  Div<A,B,C>::copy(Space& home, bool share) {
-    return new (home) Div<A,B,C>(home,share,*this);
+  Div<A,B,C>::copy(Space& home) {
+    return new (home) Div<A,B,C>(home,*this);
   }
 
   template<class A, class B, class C>

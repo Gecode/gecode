@@ -96,7 +96,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
         return false;
       }
     }
-    b = s.clone(false);
+    b = s.clone();
     reporter = NULL;
     return true;
   }
@@ -109,7 +109,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     assert(!empty());
     r = reporter;
     reporter = NULL;
-    return b->clone(false);
+    return b->clone();
   }
   forceinline
   CollectBest::~CollectBest(void) {

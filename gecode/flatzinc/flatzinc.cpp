@@ -96,8 +96,8 @@ namespace Gecode { namespace FlatZinc {
 #endif
         {}
     /// Copy constructor
-    AuxVarBrancher(Space& home, bool share, AuxVarBrancher& b)
-      : Brancher(home, share, b), done(b.done) {}
+    AuxVarBrancher(Space& home, AuxVarBrancher& b)
+      : Brancher(home, b), done(b.done) {}
 
     /// %Choice that only signals failure or success
     class Choice : public Gecode::Choice {
@@ -191,8 +191,8 @@ namespace Gecode { namespace FlatZinc {
         << ")";
     }
     /// Copy brancher
-    virtual Actor* copy(Space& home, bool share) {
-      return new (home) AuxVarBrancher(home, share, *this);
+    virtual Actor* copy(Space& home) {
+      return new (home) AuxVarBrancher(home, *this);
     }
     /// Post brancher
     static void post(Home home,
@@ -723,8 +723,9 @@ namespace Gecode { namespace FlatZinc {
 
 #endif
 
-  FlatZincSpace::FlatZincSpace(bool share, FlatZincSpace& f)
-    : Space(share, f), _random(f._random),
+  FlatZincSpace::FlatZincSpace(FlatZincSpace& f)
+    : Space(f), 
+      _random(f._random),
       _solveAnnotations(NULL), iv_boolalias(NULL),
 #ifdef GECODE_HAS_FLOAT_VARS
       step(f.step),
@@ -734,10 +735,10 @@ namespace Gecode { namespace FlatZinc {
       _optVarIsInt = f._optVarIsInt;
       _method = f._method;
       _lns = f._lns;
-      _lnsInitialSolution.update(*this, share, f._lnsInitialSolution);
-      branchInfo.update(*this, share, f.branchInfo);
-      iv.update(*this, share, f.iv);
-      iv_lns.update(*this, share, f.iv_lns);
+      _lnsInitialSolution = f._lnsInitialSolution;
+      branchInfo = f.branchInfo;
+      iv.update(*this, f.iv);
+      iv_lns.update(*this, f.iv_lns);
       intVarCount = f.intVarCount;
 
       if (needAuxVars) {
@@ -745,48 +746,48 @@ namespace Gecode { namespace FlatZinc {
         for (int i=0; i<f.iv_aux.size(); i++) {
           if (!f.iv_aux[i].assigned()) {
             iva << IntVar();
-            iva[iva.size()-1].update(*this, share, f.iv_aux[i]);
+            iva[iva.size()-1].update(*this, f.iv_aux[i]);
           }
         }
         iv_aux = IntVarArray(*this, iva);
       }
 
-      bv.update(*this, share, f.bv);
+      bv.update(*this, f.bv);
       boolVarCount = f.boolVarCount;
       if (needAuxVars) {
         BoolVarArgs bva;
         for (int i=0; i<f.bv_aux.size(); i++) {
           if (!f.bv_aux[i].assigned()) {
             bva << BoolVar();
-            bva[bva.size()-1].update(*this, share, f.bv_aux[i]);
+            bva[bva.size()-1].update(*this, f.bv_aux[i]);
           }
         }
         bv_aux = BoolVarArray(*this, bva);
       }
 
 #ifdef GECODE_HAS_SET_VARS
-      sv.update(*this, share, f.sv);
+      sv.update(*this, f.sv);
       setVarCount = f.setVarCount;
       if (needAuxVars) {
         SetVarArgs sva;
         for (int i=0; i<f.sv_aux.size(); i++) {
           if (!f.sv_aux[i].assigned()) {
             sva << SetVar();
-            sva[sva.size()-1].update(*this, share, f.sv_aux[i]);
+            sva[sva.size()-1].update(*this, f.sv_aux[i]);
           }
         }
         sv_aux = SetVarArray(*this, sva);
       }
 #endif
 #ifdef GECODE_HAS_FLOAT_VARS
-      fv.update(*this, share, f.fv);
+      fv.update(*this, f.fv);
       floatVarCount = f.floatVarCount;
       if (needAuxVars) {
         FloatVarArgs fva;
         for (int i=0; i<f.fv_aux.size(); i++) {
           if (!f.fv_aux[i].assigned()) {
             fva << FloatVar();
-            fva[fva.size()-1].update(*this, share, f.fv_aux[i]);
+            fva[fva.size()-1].update(*this, f.fv_aux[i]);
           }
         }
         fv_aux = FloatVarArray(*this, fva);
@@ -1853,8 +1854,8 @@ namespace Gecode { namespace FlatZinc {
   }
 
   Space*
-  FlatZincSpace::copy(bool share) {
-    return new FlatZincSpace(share, *this);
+  FlatZincSpace::copy(void) {
+    return new FlatZincSpace(*this);
   }
 
   FlatZincSpace::Meth
@@ -1976,7 +1977,7 @@ namespace Gecode { namespace FlatZinc {
     if (sl->interval) {
       d = IntSet(sl->min, sl->max);
     } else {
-      Region re(*this);
+      Region re;
       int* is = re.alloc<int>(static_cast<unsigned long int>(sl->s.size()));
       for (int i=sl->s.size(); i--; )
         is[i] = sl->s[i];

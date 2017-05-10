@@ -52,15 +52,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class VC>
   forceinline
-  DivPlusBnd<VA,VB,VC>::DivPlusBnd(Space& home, bool share,
-                                   DivPlusBnd<VA,VB,VC>& p)
+  DivPlusBnd<VA,VB,VC>::DivPlusBnd(Space& home, DivPlusBnd<VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
-  (home,share,p) {}
+  (home,p) {}
 
   template<class VA, class VB, class VC>
   Actor*
-  DivPlusBnd<VA,VB,VC>::copy(Space& home, bool share) {
-    return new (home) DivPlusBnd<VA,VB,VC>(home,share,*this);
+  DivPlusBnd<VA,VB,VC>::copy(Space& home) {
+    return new (home) DivPlusBnd<VA,VB,VC>(home,*this);
   }
 
   template<class VA, class VB, class VC>
@@ -109,13 +108,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  DivBnd<View>::DivBnd(Space& home, bool share, DivBnd<View>& p)
-    : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  DivBnd<View>::DivBnd(Space& home, DivBnd<View>& p)
+    : TernaryPropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  DivBnd<View>::copy(Space& home, bool share) {
-    return new (home) DivBnd<View>(home,share,*this);
+  DivBnd<View>::copy(Space& home) {
+    return new (home) DivBnd<View>(home,*this);
   }
 
   template<class View>
@@ -290,13 +289,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  DivMod<View>::DivMod(Space& home, bool share, DivMod<View>& p)
-  : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  DivMod<View>::DivMod(Space& home, DivMod<View>& p)
+  : TernaryPropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  DivMod<View>::copy(Space& home, bool share) {
-    return new (home) DivMod<View>(home,share,*this);
+  DivMod<View>::copy(Space& home) {
+    return new (home) DivMod<View>(home,*this);
   }
 
   template<class View>

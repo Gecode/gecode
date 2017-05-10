@@ -37,12 +37,12 @@
 
 #include <cmath>
 
-namespace Gecode {
+namespace Gecode { namespace Kernel {
 
   /// Global propagator information
   class GPI {
   public:
-    /// Class for storing timed-decay value
+    /// Class for storing propagator information
     class Info {
     public:
       /// Propagator identifier
@@ -71,54 +71,35 @@ namespace Gecode {
       /// Rescale used afc values in entries
       void rescale(void);
     };
-    /// The object containing the shared information
-    class Object : public HeapAllocated {
-    private:
-      /// The first block
-      Block fst;
-      /// The current block
-      Block* b;
-      /// Mutex to synchronize globally shared access
-      Support::Mutex m;
-      /// The inverse decay factor
-      double invd;
-      /// Next free propagator id
-      unsigned int pid;
-      /// How many spaces use this object
-      unsigned int use_cnt;
-    public:
-      /// Initialize
-      Object(void);
-      /// Increment use counter
-      void inc(void);
-      /// Set decay factor to \a d
-      void decay(double d);
-      /// Return decay factor
-      double decay(void) const;
-      /// Increment failure count
-      void fail(Info& c);
-      /// Allocate new actor info
-      Info* allocate(unsigned int gid);
-      /// Dispose if unused
-      void dispose(void);
-    };
-    /// Pointer to shared object
-    Object* o;
+    /// The current block
+    Block* b;
+    /// The inverse decay factor
+    double invd;
+    /// Next free propagator id
+    unsigned int pid;
+    /// Whether to unshare
+    bool us;
+    /// The first block
+    Block fst;
+    /// Mutex to synchronize globally shared access
+    GECODE_KERNEL_EXPORT static Support::Mutex m;
   public:
     /// Initialize
     GPI(void);
-    /// Copy during cloning
-    GPI(const GPI& ga);
-    /// Destructor
-    ~GPI(void);
     /// Set decay factor to \a d
     void decay(double d);
     /// Return decay factor
     double decay(void) const;
     /// Increment failure count
     void fail(Info& c);
+    /// Allocate info for existing propagator with pid \a p
+    Info* allocate(unsigned int p, unsigned int gid);
     /// Allocate new actor info
     Info* allocate(unsigned int gid);
+    /// Provide access to unshare info and set to true
+    bool unshare(void);
+    /// Delete
+    ~GPI(void);
   };
 
 
@@ -140,18 +121,11 @@ namespace Gecode {
 
 
   forceinline
-  GPI::Object::Object(void)
-    : b(&fst), invd(1.0), pid(0U), use_cnt(1U) {}
+  GPI::GPI(void)
+    : b(&fst), invd(1.0), pid(0U), us(false) {}
 
   forceinline void
-  GPI::Object::inc(void) {
-    m.acquire();
-    use_cnt++;
-    m.release();
-  }
-
-  forceinline void
-  GPI::Object::fail(Info& c) {
+  GPI::fail(Info& c) {
     m.acquire();
     c.afc = invd * (c.afc + 1.0);
     if (c.afc > Kernel::Config::rescale_limit)
@@ -161,23 +135,32 @@ namespace Gecode {
   }
 
   forceinline double
-  GPI::Object::decay(void) const {
+  GPI::decay(void) const {
     double d;
-    const_cast<GPI::Object&>(*this).m.acquire();
+    const_cast<GPI&>(*this).m.acquire();
     d = 1.0 / invd;
-    const_cast<GPI::Object&>(*this).m.release();
+    const_cast<GPI&>(*this).m.release();
     return d;
   }
 
+  forceinline bool
+  GPI::unshare(void) {
+    bool u;
+    m.acquire();
+    u = us; us = true;
+    m.release();
+    return u;
+  }
+
   forceinline void
-  GPI::Object::decay(double d) {
+  GPI::decay(double d) {
     m.acquire();
     invd = 1.0 / d;
     m.release();
   }
 
   forceinline GPI::Info*
-  GPI::Object::allocate(unsigned int gid) {
+  GPI::allocate(unsigned int p, unsigned int gid) {
     Info* c;
     m.acquire();
     if (b->free == 0) {
@@ -186,63 +169,34 @@ namespace Gecode {
     }
     c = &b->info[--b->free];
     m.release();
-    c->init(pid++,gid);
+    c->init(p,gid);
     return c;
   }
 
-  forceinline void
-  GPI::Object::dispose(void) {
+  forceinline GPI::Info*
+  GPI::allocate(unsigned int gid) {
+    Info* c;
     m.acquire();
-    if (--use_cnt > 0) {
-      m.release();
-      return;
+    if (b->free == 0) {
+      Block* n = new Block;
+      n->next = b; b = n;
     }
-    // We are on our own here!
+    c = &b->info[--b->free];
+    c->init(pid++,gid);
     m.release();
+    return c;
+  }
+
+  forceinline
+  GPI::~GPI(void) {
     Block* n = b;
     while (n != &fst) {
       Block* d = n;
       n = n->next;
       delete d;
     }
-    delete this;
   }
 
-
-
-  forceinline
-  GPI::GPI(void) : o(new Object) {}
-
-  forceinline
-  GPI::GPI(const GPI& gpi) : o(gpi.o) {
-    o->inc();
-  }
-
-  forceinline
-  GPI::~GPI(void) {
-    o->dispose();
-  }
-
-  forceinline void
-  GPI::fail(Info& c) {
-    o->fail(c);
-  }
-
-  forceinline double
-  GPI::decay(void) const {
-    return o->decay();
-  }
-
-  forceinline void
-  GPI::decay(double d) {
-    o->decay(d);
-  }
-
-  forceinline GPI::Info*
-  GPI::allocate(unsigned int gid) {
-    return o->allocate(gid);
-  }
-
-}
+}}
 
 // STATISTICS: kernel-prop

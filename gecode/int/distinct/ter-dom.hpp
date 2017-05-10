@@ -57,13 +57,13 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  TerDom<View>::TerDom(Space& home, bool share, TerDom<View>& p)
-    : TernaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+  TerDom<View>::TerDom(Space& home, TerDom<View>& p)
+    : TernaryPropagator<View,PC_INT_DOM>(home,p) {}
 
   template<class View>
   Actor*
-  TerDom<View>::copy(Space& home, bool share) {
-    return new (home) TerDom<View>(home,share,*this);
+  TerDom<View>::copy(Space& home) {
+    return new (home) TerDom<View>(home,*this);
   }
 
   /// Check whether x0 forms a Hall set of cardinality one

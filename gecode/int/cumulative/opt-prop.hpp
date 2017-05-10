@@ -50,10 +50,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   template<class OptTask, class Cap, class PL>
   forceinline
-  OptProp<OptTask,Cap,PL>::OptProp(Space& home, bool shared,
-                                   OptProp<OptTask,Cap,PL>& p)
-    : TaskProp<OptTask,PL>(home,shared,p) {
-    c.update(home,shared,p.c);
+  OptProp<OptTask,Cap,PL>::OptProp(Space& home, OptProp<OptTask,Cap,PL>& p)
+    : TaskProp<OptTask,PL>(home,p) {
+    c.update(home,p.c);
   }
 
   template<class OptTask, class Cap, class PL>
@@ -104,8 +103,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   template<class OptTask, class Cap, class PL>
   Actor*
-  OptProp<OptTask,Cap,PL>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask,Cap,PL>(home,share,*this);
+  OptProp<OptTask,Cap,PL>::copy(Space& home) {
+    return new (home) OptProp<OptTask,Cap,PL>(home,*this);
   }
 
   template<class OptTask, class Cap, class PL>

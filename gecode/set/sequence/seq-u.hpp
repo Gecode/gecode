@@ -53,8 +53,8 @@ namespace Gecode { namespace Set { namespace Sequence {
     : NaryOnePropagator<SetView,PC_SET_ANY>(home,x, y) {}
 
   forceinline
-  SeqU::SeqU(Space& home, bool share, SeqU& p)
-    : NaryOnePropagator<SetView,PC_SET_ANY>(home,share,p) {
+  SeqU::SeqU(Space& home, SeqU& p)
+    : NaryOnePropagator<SetView,PC_SET_ANY>(home,p) {
     unionOfDets.update(home, p.unionOfDets);
   }
 
@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     case 1:
       return Rel::Eq<SetView,SetView>::post(home, x[0], y);
     default:
-      if (x.shared(home) || x.shared(home,y))
+      if (x.shared() || x.shared(y))
         return ES_FAILED;
       (void) new (home) SeqU(home,x,y);
       return ES_OK;

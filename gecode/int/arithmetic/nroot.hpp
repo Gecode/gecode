@@ -127,15 +127,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops, bool minus>
   forceinline
-  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Space& home, bool share,
+  NrootPlusBnd<Ops,minus>::NrootPlusBnd(Space& home,
                                         NrootPlusBnd<Ops,minus>& p)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p),
+    : BinaryPropagator<IntView,PC_INT_BND>(home,p),
       ops(p.ops) {}
 
   template<class Ops, bool minus>
   Actor*
-  NrootPlusBnd<Ops,minus>::copy(Space& home, bool share) {
-    return new (home) NrootPlusBnd<Ops,minus>(home,share,*this);
+  NrootPlusBnd<Ops,minus>::copy(Space& home) {
+    return new (home) NrootPlusBnd<Ops,minus>(home,*this);
   }
 
   template<class Ops, bool minus>
@@ -220,14 +220,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops>
   forceinline
-  NrootBnd<Ops>::NrootBnd(Space& home, bool share, NrootBnd<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p),
+  NrootBnd<Ops>::NrootBnd(Space& home, NrootBnd<Ops>& p)
+    : BinaryPropagator<IntView,PC_INT_BND>(home,p),
       ops(p.ops) {}
 
   template<class Ops>
   Actor*
-  NrootBnd<Ops>::copy(Space& home, bool share) {
-    return new (home) NrootBnd<Ops>(home,share,*this);
+  NrootBnd<Ops>::copy(Space& home) {
+    return new (home) NrootBnd<Ops>(home,*this);
   }
 
   template<class Ops>
@@ -312,15 +312,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops, bool minus>
   forceinline
-  NrootPlusDom<Ops,minus>::NrootPlusDom(Space& home, bool share,
+  NrootPlusDom<Ops,minus>::NrootPlusDom(Space& home,
                                         NrootPlusDom<Ops,minus>& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,p),
       ops(p.ops) {}
 
   template<class Ops, bool minus>
   Actor*
-  NrootPlusDom<Ops,minus>::copy(Space& home, bool share) {
-    return new (home) NrootPlusDom<Ops,minus>(home,share,*this);
+  NrootPlusDom<Ops,minus>::copy(Space& home) {
+    return new (home) NrootPlusDom<Ops,minus>(home,*this);
   }
 
   template<class Ops, bool minus>
@@ -419,14 +419,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops>
   forceinline
-  NrootDom<Ops>::NrootDom(Space& home, bool share, NrootDom<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
+  NrootDom<Ops>::NrootDom(Space& home, NrootDom<Ops>& p)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,p),
       ops(p.ops) {}
 
   template<class Ops>
   Actor*
-  NrootDom<Ops>::copy(Space& home, bool share) {
-    return new (home) NrootDom<Ops>(home,share,*this);
+  NrootDom<Ops>::copy(Space& home) {
+    return new (home) NrootDom<Ops>(home,*this);
   }
 
   template<class Ops>

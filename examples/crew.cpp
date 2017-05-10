@@ -165,14 +165,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Crew(bool share, Crew& s)
-    : Script(share,s) {
-    flight.update(*this,share,s.flight);
+  Crew(Crew& s)
+    : Script(s) {
+    flight.update(*this, s.flight);
   }
   /// Copy during cloning
   virtual
-  Space *copy(bool share) {
-    return new Crew(share,*this);
+  Space *copy(void) {
+    return new Crew(*this);
   }
 
 };

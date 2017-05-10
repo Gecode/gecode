@@ -203,7 +203,7 @@ namespace Gecode { namespace Int {
 
   protected:
     /// Constructor for cloning \a x
-    IntVarImp(Space& home, bool share, IntVarImp& x);
+    IntVarImp(Space& home, IntVarImp& x);
   public:
     /// Initialize with range domain
     IntVarImp(Space& home, int min, int max);
@@ -365,12 +365,12 @@ namespace Gecode { namespace Int {
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_INT_EXPORT IntVarImp* perform_copy(Space& home, bool share);
+    GECODE_INT_EXPORT IntVarImp* perform_copy(Space& home);
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    IntVarImp* copy(Space& home, bool share);
+    IntVarImp* copy(Space& home);
     //@}
 
     /// \name Delta information for advisors
@@ -506,7 +506,7 @@ namespace Gecode { namespace Int {
     GECODE_INT_EXPORT static BoolVarImp s_zero;
 
     /// Constructor for cloning \a x
-    BoolVarImp(Space& home, bool share, BoolVarImp& x);
+    BoolVarImp(Space& home, BoolVarImp& x);
     /// Initialize static instance assigned to \a n
     BoolVarImp(int n);
   public:
@@ -711,7 +711,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    BoolVarImp* copy(Space& home, bool share);
+    BoolVarImp* copy(Space& home);
     //@}
 
   };

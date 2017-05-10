@@ -96,7 +96,7 @@ namespace Gecode {
       /// Constructor for creation
       Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
       /// Constructor for cloning \a a
-      Idx(Space& home, bool share, Idx& a);
+      Idx(Space& home, Idx& a);
       /// Get index of view
       int idx(void) const;
     };
@@ -115,13 +115,13 @@ namespace Gecode {
     /// Slack information
     Slack s;
     /// Constructor for cloning \a p
-    ViewTraceRecorder(Space& home, bool share, ViewTraceRecorder& p);
+    ViewTraceRecorder(Space& home, ViewTraceRecorder& p);
   public:
     /// Constructor for creation
     ViewTraceRecorder(Home home, ViewArray<View>& x,
                       TraceFilter tf, int te, ViewTracer<View>& t);
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Cost function (record so that propagator runs last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -163,12 +163,12 @@ namespace Gecode {
     /// The actual tracer
     Tracer& t;
     /// Constructor for cloning \a p
-    TraceRecorder(Space& home, bool share, TraceRecorder& p);
+    TraceRecorder(Space& home, TraceRecorder& p);
   public:
     /// Constructor for creation
     TraceRecorder(Home home, TraceFilter tf, int te, Tracer& t);
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Cost function (record so that propagator runs last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -246,8 +246,8 @@ namespace Gecode {
     : Advisor(home,p,c), _idx(i) {}
   template<class View>
   forceinline
-  ViewTraceRecorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
-    : Advisor(home,share,a), _idx(a._idx) {
+  ViewTraceRecorder<View>::Idx::Idx(Space& home, Idx& a)
+    : Advisor(home,a), _idx(a._idx) {
   }
   template<class View>
   forceinline int
@@ -301,19 +301,17 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  ViewTraceRecorder<View>::ViewTraceRecorder(Space& home, bool share,
-                                             ViewTraceRecorder& p)
-    : Propagator(home,share,p), te(p.te), t(p.t), s(p.s) {
-    o.update(home, share, p.o);
-    n.update(home, share, p.n);
-    c.update(home, share, p.c);
-    tf.update(home, share, p.tf);
+  ViewTraceRecorder<View>::ViewTraceRecorder(Space& home, ViewTraceRecorder& p)
+    : Propagator(home,p), tf(p.tf), te(p.te), t(p.t), s(p.s) {
+    o.update(home, p.o);
+    n.update(home, p.n);
+    c.update(home, p.c);
   }
 
   template<class View>
   Propagator*
-  ViewTraceRecorder<View>::copy(Space& home, bool share) {
-    return new (home) ViewTraceRecorder(home, share, *this);
+  ViewTraceRecorder<View>::copy(Space& home) {
+    return new (home) ViewTraceRecorder(home, *this);
   }
 
   template<class View>
@@ -418,10 +416,8 @@ namespace Gecode {
   }
 
   forceinline
-  TraceRecorder::TraceRecorder(Space& home, bool share,
-                               TraceRecorder& p)
-    : Propagator(home,share,p), te(p.te), t(p.t) {
-    tf.update(home, share, p.tf);
+  TraceRecorder::TraceRecorder(Space& home, TraceRecorder& p)
+    : Propagator(home,p), tf(p.tf), te(p.te), t(p.t) {
   }
 
 }

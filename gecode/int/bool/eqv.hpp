@@ -44,8 +44,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  Eqv<BVA,BVB,BVC>::Eqv(Space& home, bool share, Eqv<BVA,BVB,BVC>& p)
-    : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
+  Eqv<BVA,BVB,BVC>::Eqv(Space& home, Eqv<BVA,BVB,BVC>& p)
+    : BoolTernary<BVA,BVB,BVC>(home,p) {}
 
   template<class BVA, class BVB, class BVC>
   inline ExecStatus
@@ -82,8 +82,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   Actor*
-  Eqv<BVA,BVB,BVC>::copy(Space& home, bool share) {
-    return new (home) Eqv<BVA,BVB,BVC>(home,share,*this);
+  Eqv<BVA,BVB,BVC>::copy(Space& home) {
+    return new (home) Eqv<BVA,BVB,BVC>(home,*this);
   }
 
   template<class BVA, class BVB, class BVC>
@@ -167,9 +167,9 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   forceinline
-  NaryEqv::NaryEqv(Space& home, bool share, NaryEqv& p)
-    : BinaryPropagator<BoolView,PC_BOOL_VAL>(home,share,p), pm2(p.pm2) {
-    x.update(home,share,p.x);
+  NaryEqv::NaryEqv(Space& home, NaryEqv& p)
+    : BinaryPropagator<BoolView,PC_BOOL_VAL>(home,p), pm2(p.pm2) {
+    x.update(home,p.x);
   }
 
   forceinline size_t

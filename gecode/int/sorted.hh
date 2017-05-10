@@ -76,12 +76,12 @@ namespace Gecode { namespace Int { namespace Sorted {
     Sorted(Home home,
            ViewArray<View>& x, ViewArray<View>& y, ViewArray<View>& z);
     /// Constructor for cloning
-    Sorted(Space& home, bool share, Sorted<View,Perm>& p);
+    Sorted(Space& home, Sorted<View,Perm>& p);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function returning low linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function

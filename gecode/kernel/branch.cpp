@@ -61,7 +61,7 @@ namespace Gecode {
     /// Construct brancher
     FunctionBranch(Home home, std::function<void(Space& home)> f0);
     /// Copy constructor
-    FunctionBranch(Space& home, bool share, FunctionBranch& b);
+    FunctionBranch(Space& home, FunctionBranch& b);
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
@@ -75,7 +75,7 @@ namespace Gecode {
     virtual void print(const Space&, const Choice&, unsigned int,
                        std::ostream& o) const;
     /// Copy brancher
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Post brancher
     static void post(Home home, std::function<void(Space& home)> f);
     /// Dispose brancher
@@ -103,9 +103,8 @@ namespace Gecode {
    home.notice(*this,AP_DISPOSE);
   }
   forceinline
-  FunctionBranch::FunctionBranch(Space& home, bool share, FunctionBranch& b)
-    : Brancher(home,share,b), done(b.done) {
-    f.update(home,share,b.f);
+  FunctionBranch::FunctionBranch(Space& home, FunctionBranch& b)
+    : Brancher(home,b), f(b.f), done(b.done) {
   }
   bool
   FunctionBranch::status(const Space&) const {
@@ -133,8 +132,8 @@ namespace Gecode {
     o << "FunctionBranch()";
   }
   Actor*
-  FunctionBranch::copy(Space& home, bool share) {
-    return new (home) FunctionBranch(home,share,*this);
+  FunctionBranch::copy(Space& home) {
+    return new (home) FunctionBranch(home,*this);
   }
   forceinline void
   FunctionBranch::post(Home home, std::function<void(Space& home)> f) {

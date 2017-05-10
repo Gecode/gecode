@@ -53,12 +53,12 @@ namespace Gecode { namespace Set { namespace Sequence {
     : NaryPropagator<SetView, PC_SET_ANY>(home,x) {}
 
   forceinline
-  Seq::Seq(Space& home, bool share, Seq& p)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,share,p) {}
+  Seq::Seq(Space& home, Seq& p)
+    : NaryPropagator<SetView, PC_SET_ANY>(home,p) {}
 
   forceinline ExecStatus
   Seq::post(Home home, ViewArray<SetView> x) {
-    if (x.shared(home))
+    if (x.shared())
       return ES_FAILED;
     (void) new (home) Seq(home,x);
     return ES_OK;

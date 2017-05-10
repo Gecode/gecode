@@ -72,14 +72,14 @@ namespace Gecode { namespace Search { namespace Meta {
     return ES_OK;
   }
   NGL*
-  NoNGL::copy(Space&, bool) {
+  NoNGL::copy(Space&) {
     GECODE_NEVER;
     return NULL;
   }
 
   Actor*
-  NoGoodsProp::copy(Space& home, bool share) {
-    return new (home) NoGoodsProp(home,share,*this);
+  NoGoodsProp::copy(Space& home) {
+    return new (home) NoGoodsProp(home,*this);
   }
 
   PropCost

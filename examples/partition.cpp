@@ -97,14 +97,14 @@ public:
   }
 
   /// Constructor used during cloning \a s
-  Partition(bool share, Partition& s) : Script(share,s) {
-    x.update(*this, share, s.x);
-    y.update(*this, share, s.y);
+  Partition(Partition& s) : Script(s) {
+    x.update(*this, s.x);
+    y.update(*this, s.y);
   }
   /// Copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new Partition(share,*this);
+  copy(void) {
+    return new Partition(*this);
   }
   /// Print solution
   virtual void

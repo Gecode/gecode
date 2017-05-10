@@ -72,13 +72,8 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static const AFC def;
     //@}
 
-    /// \name Update and delete AFC information
-    //@{
-    /// Updating during cloning
-    void update(Space& home, bool share, AFC& a);
     /// Destructor
     ~AFC(void);
-    //@}
 
     /// \name Information access
     //@{
@@ -129,6 +124,7 @@ namespace Gecode {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
     static_cast<Space&>(home).afc_decay(d);
+    static_cast<Space&>(home).afc_unshare();
   }
   template<class Var>
   forceinline void
@@ -137,6 +133,7 @@ namespace Gecode {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
     static_cast<Space&>(home).afc_decay(d);
+    static_cast<Space&>(home).afc_unshare();
   }
 
 
@@ -150,11 +147,6 @@ namespace Gecode {
   }
   forceinline
   AFC::~AFC(void) {}
-
-  forceinline void
-  AFC::update(Space&, bool, AFC& a) {
-    n=a.n;
-  }
 
   forceinline void
   AFC::decay(Space& home, double d) {

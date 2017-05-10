@@ -66,8 +66,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   forceinline void
-  Item::update(Space& home, bool share, Item& i) {
-    x.update(home,share,i.x);
+  Item::update(Space& home, Item& i) {
+    x.update(home,i.x);
     s = i.s;
   }
 
@@ -161,10 +161,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
   }
 
   forceinline
-  Pack::Pack(Space& home, bool shared, Pack& p)
-    : Propagator(home,shared,p), t(p.t) {
-    l.update(home,shared,p.l);
-    bs.update(home,shared,p.bs);
+  Pack::Pack(Space& home, Pack& p)
+    : Propagator(home,p), t(p.t) {
+    l.update(home,p.l);
+    bs.update(home,p.bs);
   }
 
   forceinline size_t

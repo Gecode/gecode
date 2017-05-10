@@ -46,7 +46,7 @@ namespace Gecode {
     Int::Limits::nonnegative(offset,"Int::circuit");
     if (x.size() == 0)
       throw Int::TooFewArguments("Int::circuit");
-    if (x.same(home))
+    if (x.same())
       throw Int::ArgumentSame("Int::circuit");
     GECODE_POST;
     ViewArray<Int::IntView> xv(home,x);
@@ -86,7 +86,7 @@ namespace Gecode {
     int n = x.size();
     if (n == 0)
       throw Int::TooFewArguments("Int::circuit");
-    if (x.same(home))
+    if (x.same())
       throw Int::ArgumentSame("Int::circuit");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::circuit");
@@ -131,7 +131,7 @@ namespace Gecode {
     int n=x.size();
     if (n == 0)
       throw Int::TooFewArguments("Int::path");
-    if (x.same(home))
+    if (x.same())
       throw Int::ArgumentSame("Int::path");
     GECODE_POST;
     ViewArray<Int::IntView> xv(home,n+1);
@@ -184,7 +184,7 @@ namespace Gecode {
     int n = x.size();
     if (n == 0)
       throw Int::TooFewArguments("Int::path");
-    if (x.same(home))
+    if (x.same())
       throw Int::ArgumentSame("Int::path");
     if ((y.size() != n) || (c.size() != n*n))
       throw Int::ArgumentSizeMismatch("Int::path");

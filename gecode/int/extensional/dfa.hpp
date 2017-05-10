@@ -78,8 +78,6 @@ namespace Gecode {
     GECODE_INT_EXPORT DFAI(void);
     /// Delete automaton implemenentation
     virtual ~DFAI(void);
-    /// Create a copy
-    GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
   };
 
   forceinline

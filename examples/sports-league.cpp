@@ -292,16 +292,16 @@ public:
     branch(*this, game, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a s
-  SportsLeague(bool share, SportsLeague& s)
-    : Script(share, s), teams(s.teams) {
-    home.update(*this, share, s.home);
-    away.update(*this, share, s.away);
-    game.update(*this, share, s.game);
+  SportsLeague(SportsLeague& s)
+    : Script(s), teams(s.teams) {
+    home.update(*this, s.home);
+    away.update(*this, s.away);
+    game.update(*this, s.game);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new SportsLeague(share, *this);
+  copy(void) {
+    return new SportsLeague(*this);
   }
   /// Print solution
   virtual void print(std::ostream& os) const {

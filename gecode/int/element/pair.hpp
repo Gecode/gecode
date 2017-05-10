@@ -65,8 +65,8 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   forceinline
-  Pair::Pair(Space& home, bool share, Pair& p)
-    : TernaryPropagator<IntView,PC_INT_DOM>(home,share,p), w(p.w) {}
+  Pair::Pair(Space& home, Pair& p)
+    : TernaryPropagator<IntView,PC_INT_DOM>(home,p), w(p.w) {}
 
 }}}
 

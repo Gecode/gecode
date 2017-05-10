@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     TaskByDecCap<Task> tbdc;
     Support::quicksort(&t[0], t.size(), tbdc);
 
-    Region r(home);
+    Region r;
 
     bool assigned;
     if (Event* e = Event::events(r,t,assigned)) {

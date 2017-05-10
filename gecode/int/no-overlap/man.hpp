@@ -60,19 +60,19 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Box>
   forceinline
-  ManProp<Box>::ManProp(Space& home, bool shared, ManProp<Box>& p)
-    : Base<Box>(home, shared, p, p.n) {}
+  ManProp<Box>::ManProp(Space& home, ManProp<Box>& p)
+    : Base<Box>(home, p, p.n) {}
 
   template<class Box>
   Actor*
-  ManProp<Box>::copy(Space& home, bool share) {
-    return new (home) ManProp<Box>(home,share,*this);
+  ManProp<Box>::copy(Space& home) {
+    return new (home) ManProp<Box>(home,*this);
   }
 
   template<class Box>
   ExecStatus
   ManProp<Box>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
 
     // Number of disjoint boxes
     int* db = r.alloc<int>(n);

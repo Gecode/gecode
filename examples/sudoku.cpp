@@ -89,7 +89,7 @@ public:
       n(example_size(examples[opt.size()])) {}
 
   /// Constructor for cloning \a s
-  Sudoku(bool share, Sudoku& s) : Script(share,s), n(s.n) {}
+  Sudoku(Sudoku& s) : Script(s), n(s.n) {}
 
 };
 
@@ -188,14 +188,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  SudokuInt(bool share, SudokuInt& s) : Sudoku(share, s) {
-    x.update(*this, share, s.x);
+  SudokuInt(SudokuInt& s) : Sudoku(s) {
+    x.update(*this, s.x);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new SudokuInt(share,*this);
+  copy(void) {
+    return new SudokuInt(*this);
   }
 
   /// Print solution
@@ -254,11 +254,12 @@ public:
   /// Constructor
   SudokuSet(const SizeOptions& opt)
     : Sudoku(opt),
-      y(*this,n*n,IntSet::empty,1,n*n*n*n,n*n,n*n) {
+      y(*this,n*n,IntSet::empty,1,n*n*n*n,
+        static_cast<unsigned int>(n*n),static_cast<unsigned int>(n*n)) {
 
     const int nn = n*n;
 
-    Region r(*this);
+    Region r;
     IntSet* row = r.alloc<IntSet>(nn);
     IntSet* col = r.alloc<IntSet>(nn);
     IntSet* block = r.alloc<IntSet>(nn);
@@ -296,11 +297,11 @@ public:
     // row, column, and block
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++) {
-        SetVar inter_row(*this, IntSet::empty, full, 1, 1);
+        SetVar inter_row(*this, IntSet::empty, full, 1U, 1U);
         rel(*this, y[i], SOT_INTER, row[j], SRT_EQ, inter_row);
-        SetVar inter_col(*this, IntSet::empty, full, 1, 1);
+        SetVar inter_col(*this, IntSet::empty, full, 1U, 1U);
         rel(*this, y[i], SOT_INTER, col[j], SRT_EQ, inter_col);
-        SetVar inter_block(*this, IntSet::empty, full, 1, 1);
+        SetVar inter_block(*this, IntSet::empty, full, 1U, 1U);
         rel(*this, y[i], SOT_INTER, block[j], SRT_EQ, inter_block);
       }
 
@@ -324,14 +325,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  SudokuSet(bool share, SudokuSet& s) : Sudoku(share,s) {
-    y.update(*this, share, s.y);
+  SudokuSet(SudokuSet& s) : Sudoku(s) {
+    y.update(*this, s.y);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new SudokuSet(share,*this);
+  copy(void) {
+    return new SudokuSet(*this);
   }
 
   /// Print solution
@@ -390,13 +391,13 @@ public:
   }
 
   /// Constructor for cloning \a s
-  SudokuMixed(bool share, SudokuMixed& s)
-  : Sudoku(share, s), SudokuInt(share, s), SudokuSet(share, s) {}
+  SudokuMixed(SudokuMixed& s)
+  : Sudoku(s), SudokuInt(s), SudokuSet(s) {}
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new SudokuMixed(share,*this);
+  copy(void) {
+    return new SudokuMixed(*this);
   }
 
   /// Print solution

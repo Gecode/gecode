@@ -142,6 +142,8 @@
 
 #include <gecode/support/thread/thread.hpp>
 
+#include <gecode/support/ref-count.hpp>
+
 #include <gecode/support/timer.hpp>
 #include <gecode/support/hw-rnd.hpp>
 

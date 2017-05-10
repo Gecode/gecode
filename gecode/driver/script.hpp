@@ -222,8 +222,8 @@ namespace Gecode { namespace Driver {
 
   template<class BaseSpace>
   forceinline
-  ScriptBase<BaseSpace>::ScriptBase(bool share, ScriptBase& e)
-    : BaseSpace(share,e) {}
+  ScriptBase<BaseSpace>::ScriptBase(ScriptBase& e)
+    : BaseSpace(e) {}
 
   template<class BaseSpace>
   void

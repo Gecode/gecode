@@ -100,7 +100,7 @@ namespace Gecode {
       e = new Search::Meta::Dead(stat);
     } else {
       master = m_opt.clone ? s->clone() : s;
-      slave  = master->clone(true,m_opt.share_rbs);
+      slave  = master->clone();
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
       e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),

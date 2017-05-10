@@ -110,14 +110,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  MagicSquare(bool share, MagicSquare& s) : Script(share,s), n(s.n) {
-    x.update(*this, share, s.x);
+  MagicSquare(MagicSquare& s) : Script(s), n(s.n) {
+    x.update(*this, s.x);
   }
 
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new MagicSquare(share,*this);
+  copy(void) {
+    return new MagicSquare(*this);
   }
   /// Print solution
   virtual void

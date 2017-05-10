@@ -53,7 +53,7 @@ namespace Gecode {
     template<class A>
     ViewAdvisor(Space& home, Propagator& p, Council<A>& c, View x0);
     /// Constructor for cloning \a a
-    ViewAdvisor(Space& home, bool share, ViewAdvisor<View>& a);
+    ViewAdvisor(Space& home, ViewAdvisor<View>& a);
     /// Access view
     View view(void) const;
     /// Replace view (also replaces subscription to view)
@@ -74,10 +74,9 @@ namespace Gecode {
   }
   template<class View>
   forceinline
-  ViewAdvisor<View>::ViewAdvisor(Space& home, bool share,
-                                 ViewAdvisor<View>& a)
-    : Advisor(home,share,a) {
-    x.update(home,share,a.x);
+  ViewAdvisor<View>::ViewAdvisor(Space& home, ViewAdvisor<View>& a)
+    : Advisor(home,a) {
+    x.update(home,a.x);
   }
   template<class View>
   forceinline View

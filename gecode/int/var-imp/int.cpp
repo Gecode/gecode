@@ -316,8 +316,8 @@ namespace Gecode { namespace Int {
    */
 
   forceinline
-  IntVarImp::IntVarImp(Space& home, bool share, IntVarImp& x)
-    : IntVarImpBase(home,share,x), dom(x.dom.min(),x.dom.max()) {
+  IntVarImp::IntVarImp(Space& home, IntVarImp& x)
+    : IntVarImpBase(home,x), dom(x.dom.min(),x.dom.max()) {
     holes = x.holes;
     if (holes) {
       int m = 1;
@@ -352,8 +352,8 @@ namespace Gecode { namespace Int {
   }
 
   IntVarImp*
-  IntVarImp::perform_copy(Space& home, bool share) {
-    return new (home) IntVarImp(home,share,*this);
+  IntVarImp::perform_copy(Space& home) {
+    return new (home) IntVarImp(home,*this);
   }
 
   /*

@@ -63,10 +63,10 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline
-  IntBase<VX,VY>::IntBase(Space& home, bool share, IntBase<VX,VY>& p)
-    : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  IntBase<VX,VY>::IntBase(Space& home, IntBase<VX,VY>& p)
+    : Propagator(home,p), n_s(p.n_s), c(p.c) {
+    x.update(home,p.x);
+    update(y,home,p.y);
   }
 
   template<class VX, class VY>

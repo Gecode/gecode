@@ -56,8 +56,8 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View>
   forceinline
   Incremental<View>::SupportAdvisor::
-  SupportAdvisor(Space& home, bool share, SupportAdvisor& a)
-    : Advisor(home,share,a), i(a.i) {}
+  SupportAdvisor(Space& home, SupportAdvisor& a)
+    : Advisor(home,a), i(a.i) {}
 
   template<class View>
   forceinline void
@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         x[i].subscribe(home,*new (home) SupportAdvisor(home,*this,ac,i));
       }
 
-    Region r(home);
+    Region r;
 
     // Add initial supports
     BitSet* dom = r.alloc<BitSet>(x.size());
@@ -325,10 +325,10 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View>
   forceinline
-  Incremental<View>::Incremental(Space& home, bool share, Incremental<View>& p)
-    : Base<View,false>(home,share,p), support_data(NULL),
+  Incremental<View>::Incremental(Space& home, Incremental<View>& p)
+    : Base<View,false>(home,p), support_data(NULL),
       unassigned(p.unassigned) {
-    ac.update(home,share,p.ac);
+    ac.update(home,p.ac);
 
     init_support(home);
     for (int i = static_cast<int>(ts()->domsize*x.size()); i--; ) {
@@ -358,8 +358,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View>
   Actor*
-  Incremental<View>::copy(Space& home, bool share) {
-    return new (home) Incremental<View>(home,share,*this);
+  Incremental<View>::copy(Space& home) {
+    return new (home) Incremental<View>(home,*this);
   }
 
   template<class View>
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     assert(!w_support.empty() || !w_remove.empty() || unassigned==0);
     // Set up datastructures
     // Bit-sets for amortized O(1) access to domains
-    Region r(home);
+    Region r;
     // Add initial supports
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);

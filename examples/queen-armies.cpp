@@ -121,18 +121,18 @@ public:
     }
   }
   /// Constructor for cloning
-  QueenArmies(bool share, QueenArmies& s)
-    : IntMaximizeScript(share,s), n(s.n) {
-    U.update(*this, share, s.U);
-    W.update(*this, share, s.W);
-    w.update(*this, share, s.w);
-    b.update(*this, share, s.b);
-    q.update(*this, share, s.q);
+  QueenArmies(QueenArmies& s)
+    : IntMaximizeScript(s), n(s.n) {
+    U.update(*this, s.U);
+    W.update(*this, s.W);
+    w.update(*this, s.w);
+    b.update(*this, s.b);
+    q.update(*this, s.q);
   }
   /// Return copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new QueenArmies(share,*this);
+  copy(void) {
+    return new QueenArmies(*this);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
@@ -190,8 +190,8 @@ public:
     QueenBranch(Home home)
       : Brancher(home), start(0) {}
     /// Constructor for cloning
-    QueenBranch(Space& home, bool share, QueenBranch& b)
-      : Brancher(home, share, b), start(b.start) {}
+    QueenBranch(Space& home, QueenBranch& b)
+      : Brancher(home, b), start(b.start) {}
 
   public:
     /// Check status of brancher, return true if alternatives left.
@@ -253,8 +253,8 @@ public:
       o << "w[" << c.pos << "] = " << val;
     }
     /// Copy brancher during cloning
-    virtual Actor* copy(Space& home, bool share) {
-      return new (home) QueenBranch(home, share, *this);
+    virtual Actor* copy(Space& home) {
+      return new (home) QueenBranch(home, *this);
     }
     /// Post brancher
     static void post(QueenArmies& home) {

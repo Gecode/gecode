@@ -115,14 +115,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  GolombRuler(bool share, GolombRuler& s)
-    : IntMinimizeScript(share,s) {
-    m.update(*this, share, s.m);
+  GolombRuler(GolombRuler& s)
+    : IntMinimizeScript(s) {
+    m.update(*this, s.m);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new GolombRuler(share,*this);
+  copy(void) {
+    return new GolombRuler(*this);
   }
 };
 

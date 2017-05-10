@@ -70,6 +70,9 @@ namespace Gecode { namespace Int { namespace Count {
   /// Schedule propagator \a p for view \a y
   template<class VY>
   void reschedule(Space& home, Propagator& p, VY y);
+  /// Update view \a y from \a py
+  template<class VY>
+  void update(VY& y, Space& home, bool shared, VY py);
 
   /// Test whether \a x and \a y are equal
   template<class VX>
@@ -147,7 +150,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int c;
     /// Constructor for cloning \a p
-    IntBase(Space& home, bool share, IntBase& p);
+    IntBase(Space& home, IntBase& p);
     /// Constructor for creation
     IntBase(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
@@ -177,12 +180,12 @@ namespace Gecode { namespace Int { namespace Count {
     using IntBase<VX,VY>::y;
     using IntBase<VX,VY>::c;
     /// Constructor for cloning \a p
-    EqInt(Space& home, bool share, EqInt& p);
+    EqInt(Space& home, EqInt& p);
     /// Constructor for creation
     EqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
@@ -207,12 +210,12 @@ namespace Gecode { namespace Int { namespace Count {
     using IntBase<VX,VY>::y;
     using IntBase<VX,VY>::c;
     /// Constructor for cloning \a p
-    GqInt(Space& home, bool share, GqInt& p);
+    GqInt(Space& home, GqInt& p);
     /// Constructor for creation
     GqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
@@ -237,12 +240,12 @@ namespace Gecode { namespace Int { namespace Count {
     using IntBase<VX,VY>::y;
     using IntBase<VX,VY>::c;
     /// Constructor for cloning \a p
-    LqInt(Space& home, bool share, LqInt& p);
+    LqInt(Space& home, LqInt& p);
     /// Constructor for creation
     LqInt(Home home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq c\f$
@@ -275,7 +278,7 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int   c;
     /// Constructor for cloning \a p
-    ViewBase(Space& home, bool share, ViewBase& p);
+    ViewBase(Space& home, ViewBase& p);
     /// Constructor for creation
     ViewBase(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
   public:
@@ -319,12 +322,12 @@ namespace Gecode { namespace Int { namespace Count {
     using ViewBase<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
-    EqView(Space& home, bool share, EqView& p);
+    EqView(Space& home, EqView& p);
   public:
     /// Constructor for creation
     EqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
@@ -354,12 +357,12 @@ namespace Gecode { namespace Int { namespace Count {
     using ViewBase<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
-    LqView(Space& home, bool share, LqView& p);
+    LqView(Space& home, LqView& p);
   public:
     /// Constructor for creation
     LqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
@@ -389,12 +392,12 @@ namespace Gecode { namespace Int { namespace Count {
     using ViewBase<VX,VY,VZ>::sharing;
 
     /// Constructor for cloning \a p
-    GqView(Space& home, bool share, GqView& p);
+    GqView(Space& home, GqView& p);
   public:
     /// Constructor for creation
     GqView(Home home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$

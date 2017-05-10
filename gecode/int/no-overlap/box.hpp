@@ -121,9 +121,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Dim, int n>
   forceinline void
-  ManBox<Dim,n>::update(Space& home, bool share, ManBox<Dim,n>& b) {
+  ManBox<Dim,n>::update(Space& home, ManBox<Dim,n>& b) {
     for (int i=0; i<n; i++)
-      d[i].update(home,share,b.d[i]);
+      d[i].update(home,b.d[i]);
   }
 
   template<class Dim, int n>
@@ -180,9 +180,9 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Dim, int n>
   forceinline void
-  OptBox<Dim,n>::update(Space& home, bool share, OptBox<Dim,n>& b) {
-    ManBox<Dim,n>::update(home, share, b);
-    o.update(home, share, b.o);
+  OptBox<Dim,n>::update(Space& home, OptBox<Dim,n>& b) {
+    ManBox<Dim,n>::update(home, b);
+    o.update(home, b.o);
   }
 
   template<class Dim, int n>

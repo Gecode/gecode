@@ -50,8 +50,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  Eq<View0,View1>::Eq(Space& home, bool share, Eq& p)
-    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p) {}
+  Eq<View0,View1>::Eq(Space& home, Eq& p)
+    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p) {}
 
   template<class View0, class View1>
   ExecStatus
@@ -62,8 +62,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   Actor*
-  Eq<View0,View1>::copy(Space& home, bool share) {
-    return new (home) Eq(home,share,*this);
+  Eq<View0,View1>::copy(Space& home) {
+    return new (home) Eq(home,*this);
   }
 
   template<class View0, class View1>
@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Rel {
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
 
-    Region r(home);
+    Region r;
 
     if (testSetEventLB(me0,me1)) {
       GlbRanges<View0> x0lb(x0);

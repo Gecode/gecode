@@ -116,14 +116,14 @@ namespace Gecode { namespace Int { namespace Branch {
   template<int n, bool min, class Filter, class Print>
   forceinline
   ViewValuesBrancher<n,min,Filter,Print>::
-  ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b)
-    : ViewBrancher<IntView,Filter,n>(home,shared,b), p(home,shared,b.p) {}
+  ViewValuesBrancher(Space& home, ViewValuesBrancher& b)
+    : ViewBrancher<IntView,Filter,n>(home,b), p(b.p) {}
 
   template<int n, bool min, class Filter, class Print>
   Actor*
-  ViewValuesBrancher<n,min,Filter,Print>::copy(Space& home, bool shared) {
+  ViewValuesBrancher<n,min,Filter,Print>::copy(Space& home) {
     return new (home) ViewValuesBrancher<n,min,Filter,Print>
-      (home,shared,*this);
+      (home,*this);
   }
 
   template<int n, bool min, class Filter, class Print>

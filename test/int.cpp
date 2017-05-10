@@ -123,18 +123,18 @@ namespace Test { namespace Int {
            << " b=" << r.var() << std::endl;
   }
 
-  TestSpace::TestSpace(bool share, TestSpace& s)
-    : Gecode::Space(share,s), d(s.d), test(s.test), reified(s.reified) {
-    x.update(*this, share, s.x);
+  TestSpace::TestSpace(TestSpace& s)
+    : Gecode::Space(s), d(s.d), test(s.test), reified(s.reified) {
+    x.update(*this, s.x);
     Gecode::BoolVar b;
     Gecode::BoolVar sr(s.r.var());
-    b.update(*this, share, sr);
+    b.update(*this, sr);
     r.var(b); r.mode(s.r.mode());
   }
 
   Gecode::Space*
-  TestSpace::copy(bool share) {
-    return new TestSpace(share,*this);
+  TestSpace::copy(void) {
+    return new TestSpace(*this);
   }
 
   bool
@@ -496,7 +496,7 @@ if (!(T)) {                                                     \
         TestSpace* s = new TestSpace(arity,dom,this);
         TestSpace* sc = NULL;
         s->post();
-        switch (Base::rand(3)) {
+        switch (Base::rand(2)) {
           case 0:
             if (opt.log)
               olog << ind(3) << "No copy" << std::endl;
@@ -505,18 +505,9 @@ if (!(T)) {                                                     \
             break;
           case 1:
             if (opt.log)
-              olog << ind(3) << "Unshared copy" << std::endl;
+              olog << ind(3) << "Copy" << std::endl;
             if (s->status() != SS_FAILED) {
-              sc = static_cast<TestSpace*>(s->clone(false));
-            } else {
-              sc = s; s = NULL;
-            }
-            break;
-          case 2:
-            if (opt.log)
-              olog << ind(3) << "Shared copy" << std::endl;
-            if (s->status() != SS_FAILED) {
-              sc = static_cast<TestSpace*>(s->clone(true));
+              sc = static_cast<TestSpace*>(s->clone());
             } else {
               sc = s; s = NULL;
             }

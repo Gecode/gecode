@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Precede {
       /// Create index advisor
       Index(Space& home, Propagator& p, Council<Index>& c, int i);
       /// Clone index advisor \a a
-      Index(Space& home, bool share, Index& a);
+      Index(Space& home, Index& a);
     };
     /// The advisor council
     Council<Index> c;
@@ -88,10 +88,10 @@ namespace Gecode { namespace Int { namespace Precede {
     /// Constructor for posting
     Single(Home home, ViewArray<View>& x, int s, int t, int beta, int gamma);
     /// Constructor for cloning \a p
-    Single(Space& home, bool share, Single<View>& p);
+    Single(Space& home, Single<View>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Cost function
     virtual PropCost cost(const Space&, const ModEventDelta&) const;
     /// Schedule function

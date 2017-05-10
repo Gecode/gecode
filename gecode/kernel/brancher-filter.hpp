@@ -56,7 +56,7 @@ namespace Gecode {
     /// Initialize
     BrancherFilter(BranchFilter<Var> bf);
     /// Initialize during cloning
-    BrancherFilter(Space& home, bool shared, BrancherFilter& bf);
+    BrancherFilter(BrancherFilter& bf);
     /// Whether filtering is enabled
     operator bool(void) const;
     /// Invoke filter function
@@ -77,7 +77,7 @@ namespace Gecode {
     /// Initialize
     BrancherNoFilter(BranchFilter<Var> bf);
     /// Initialize during cloning
-    BrancherNoFilter(Space& home, bool shared, BrancherNoFilter& bf);
+    BrancherNoFilter(BrancherNoFilter& bf);
     /// Whether filtering is enabled
     operator bool(void) const;
     /// Invoke filter function
@@ -98,9 +98,8 @@ namespace Gecode {
   
   template<class View>
   forceinline
-  BrancherFilter<View>::BrancherFilter(Space& home, bool shared,
-                                       BrancherFilter<View>& bf) {
-    f.update(home,shared,bf.f);
+  BrancherFilter<View>::BrancherFilter(BrancherFilter<View>& bf)
+    : f(bf.f) {
   }
 
   template<class View>
@@ -138,8 +137,7 @@ namespace Gecode {
   
   template<class View>
   forceinline
-  BrancherNoFilter<View>::BrancherNoFilter(Space&, bool,
-                                           BrancherNoFilter<View>&) {}
+  BrancherNoFilter<View>::BrancherNoFilter(BrancherNoFilter<View>&) {}
 
   template<class View>
   forceinline

@@ -48,10 +48,6 @@ namespace Gecode {
       const Data d;
       /// Initialization
       SDO(const Data& d0);
-      /// Copy constructor
-      SDO(const SDO& sdo);
-      /// Create new non-shared copy
-      virtual Object* copy(void) const;
       /// Destructor
       virtual ~SDO(void);
     };
@@ -66,8 +62,6 @@ namespace Gecode {
     SharedData& operator =(const SharedData& sd);
     /// Provide access to data
     const Data& operator ()(void) const;
-    /// Update during cloning
-    void update(Space& home, bool share, SharedHandle& sh);
     /// Destructors
     ~SharedData(void);
   };
@@ -77,17 +71,6 @@ namespace Gecode {
   forceinline
   SharedData<Data>::SDO::SDO(const Data& d0)
     : d(d0) {}
-
-  template<class Data>
-  forceinline
-  SharedData<Data>::SDO::SDO(const SDO& sdo)
-    : d(sdo.d) {}
-
-  template<class Data>
-  forceinline SharedHandle::Object*
-  SharedData<Data>::SDO::copy(void) const {
-    return new SDO(*this);
-  }
 
   template<class Data>
   forceinline
@@ -118,12 +101,6 @@ namespace Gecode {
   forceinline const Data&
   SharedData<Data>::operator ()(void) const {
     return static_cast<SDO*>(object())->d;
-  }
-
-  template<class Data>
-  forceinline void
-  SharedData<Data>::update(Space& home, bool share, SharedHandle& sh) {
-    SharedHandle::update(home,share,sh);
   }
 
   template<class Data>

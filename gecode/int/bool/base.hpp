@@ -51,20 +51,19 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space& home, bool share,
-                                  BoolBinary<BVA,BVB>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
+  BoolBinary<BVA,BVB>::BoolBinary(Space& home, BoolBinary<BVA,BVB>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
   }
 
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space& home, bool share, Propagator& p,
+  BoolBinary<BVA,BVB>::BoolBinary(Space& home, Propagator& p,
                                   BVA b0, BVB b1)
-    : Propagator(home,share,p) {
-    x0.update(home,share,b0);
-    x1.update(home,share,b1);
+    : Propagator(home,p) {
+    x0.update(home,b0);
+    x1.update(home,b1);
   }
 
   template<class BVA, class BVB>
@@ -105,22 +104,22 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home, bool share,
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home,
                                         BoolTernary<BVA,BVB,BVC>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
   }
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home, bool share, Propagator& p,
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space& home, Propagator& p,
                                         BVA b0, BVB b1, BVC b2)
-    : Propagator(home,share,p) {
-    x0.update(home,share,b0);
-    x1.update(home,share,b1);
-    x2.update(home,share,b2);
+    : Propagator(home,p) {
+    x0.update(home,b0);
+    x1.update(home,b1);
+    x2.update(home,b2);
   }
 
   template<class BVA, class BVB, class BVC>

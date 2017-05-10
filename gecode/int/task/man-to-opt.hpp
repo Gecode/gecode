@@ -76,10 +76,9 @@ namespace Gecode { namespace Int {
 
   template<class ManTask>
   forceinline void
-  ManToOptTask<ManTask>::update(Space& home, bool share,
-                                ManToOptTask<ManTask>& t) {
-    ManTask::update(home, share, t);
-    _m.update(home,share,t._m);
+  ManToOptTask<ManTask>::update(Space& home, ManToOptTask<ManTask>& t) {
+    ManTask::update(home, t);
+    _m.update(home,t._m);
   }
 
   template<class ManTask>

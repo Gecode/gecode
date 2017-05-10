@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     SharedArray<int>  c;
     const bool        at_most;
 
-    Val(Space& home, bool share, Val<ViewM, ViewP, ViewU, View>& p);
+    Val(Space& home, Val<ViewM, ViewP, ViewU, View>& p);
     Val(Home home, const ViewArray<ViewM>&, const ViewArray<View>&,
         const ViewArray<ViewP>&, const ViewArray<View>&,
         const ViewArray<ViewU>&, const SharedArray<int>&, bool);
@@ -108,7 +108,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                      int* prune_tasks, int& prune_tasks_size);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as low quadratic)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function

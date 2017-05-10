@@ -123,11 +123,11 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class VA, class VB, class VC, PropCond pc_ac>
   forceinline
-  View<VA,VB,VC,pc_ac>::View(Space& home, bool share, View& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    iv.update(home,share,p.iv);
+  View<VA,VB,VC,pc_ac>::View(Space& home, View& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    iv.update(home,p.iv);
   }
 
   template<class VA, class VB, class VC, PropCond pc_ac>
@@ -302,13 +302,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class VA, class VB, class VC>
   forceinline
-  ViewBnd<VA,VB,VC>::ViewBnd(Space& home, bool share, ViewBnd& p)
-    : View<VA,VB,VC,PC_INT_BND>(home,share,p) {}
+  ViewBnd<VA,VB,VC>::ViewBnd(Space& home, ViewBnd& p)
+    : View<VA,VB,VC,PC_INT_BND>(home,p) {}
 
   template<class VA, class VB, class VC>
   Actor*
-  ViewBnd<VA,VB,VC>::copy(Space& home, bool share) {
-    return new (home) ViewBnd<VA,VB,VC>(home,share,*this);
+  ViewBnd<VA,VB,VC>::copy(Space& home) {
+    return new (home) ViewBnd<VA,VB,VC>(home,*this);
   }
 
   template<class VA, class VB, class VC>
@@ -384,13 +384,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template<class VA, class VB, class VC>
   forceinline
-  ViewDom<VA,VB,VC>::ViewDom(Space& home, bool share, ViewDom& p)
-    : View<VA,VB,VC,PC_INT_DOM>(home,share,p) {}
+  ViewDom<VA,VB,VC>::ViewDom(Space& home, ViewDom& p)
+    : View<VA,VB,VC,PC_INT_DOM>(home,p) {}
 
   template<class VA, class VB, class VC>
   Actor*
-  ViewDom<VA,VB,VC>::copy(Space& home, bool share) {
-    return new (home) ViewDom<VA,VB,VC>(home,share,*this);
+  ViewDom<VA,VB,VC>::copy(Space& home) {
+    return new (home) ViewDom<VA,VB,VC>(home,*this);
   }
 
 
@@ -443,7 +443,7 @@ namespace Gecode { namespace Int { namespace Element {
           return shared(x0,x1) ? ES_NOFIX : ES_FIX;
       return ES_FAILED;
     } else {
-      Region r(home);
+      Region r;
       ViewRanges<VA>* i_view = r.alloc<ViewRanges<VA> >(iv.size());
       for (int i = iv.size(); i--; )
         i_view[i].init(iv[i].view);

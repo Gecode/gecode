@@ -68,8 +68,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool shared>
   forceinline
-  Basic<View,shared>::Basic(Space& home, bool share, Basic<View,shared>& p)
-    : Base<View>(home,share,p) {
+  Basic<View,shared>::Basic(Space& home, Basic<View,shared>& p)
+    : Base<View>(home,p) {
   }
 
   template<class View, bool shared>
@@ -83,8 +83,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, bool shared>
   Actor*
-  Basic<View,shared>::copy(Space& home, bool share) {
-    return new (home) Basic<View,shared>(home,share,*this);
+  Basic<View,shared>::copy(Space& home) {
+    return new (home) Basic<View,shared>(home,*this);
   }
 
   template<class View, bool shared>
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Set up datastructures
 
     // Bit-sets for amortized O(1) access to domains
-    Region r(home);
+    Region r;
     BitSet* dom = r.alloc<BitSet>(x.size());
     init_dom(home, dom);
 

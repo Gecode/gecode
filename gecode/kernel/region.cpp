@@ -39,10 +39,53 @@
 
 namespace Gecode {
 
+  Region::Pool::Pool(void)
+    : c(new Chunk), n_c(2U) {
+    c->next = new Chunk; c->next->next = nullptr;
+  }
+  Region::Chunk*
+  Region::Pool::chunk(void) {
+    Chunk* n;
+    m.acquire();
+    if (c != nullptr) {
+      assert(n_c > 0U);
+      n = c; c = c->next; n_c--;
+    } else {
+      n = new Region::Chunk;
+    }
+    n->reset();
+    m.release();
+    return n;
+  }
+  void
+  Region::Pool::chunk(Chunk* u) {
+    m.acquire();
+    if (n_c == Kernel::MemoryConfig::n_hc_cache) {
+      delete u;
+    } else {
+      u->next = c; c = u;
+      n_c++;
+    }
+    m.release();
+  }
+  Region::Pool::~Pool(void) {
+    m.acquire();
+    // If that were the case there is a memory leak!
+    assert(c != nullptr);
+    do {
+      Chunk* n=c->next;
+      delete c;
+      c=n;
+    } while (c != nullptr);
+    m.release();
+  }
+
+  Region::Pool Region::pool;
+
   void*
   Region::heap_alloc(size_t s) {
     void* p = heap.ralloc(s);
-    if (hi == NULL) {
+    if (hi == nullptr) {
       hi = p;
       assert(!Support::marked(hi));
     } else if (!Support::marked(hi)) {
@@ -70,7 +113,7 @@ namespace Gecode {
 
   void
   Region::heap_free(void) {
-    assert(hi != NULL);
+    assert(hi != nullptr);
     if (Support::marked(hi)) {
       HeapInfo* h = static_cast<HeapInfo*>(Support::unmark(hi));
       for (unsigned int i=h->n; i--; )

@@ -198,14 +198,14 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  MultiBinPacking(bool share, MultiBinPacking& s)
-    : Script(share,s), spec(s.spec) {
-    bin.update(*this, share, s.bin);
-    load.update(*this, share, s.load);
+  MultiBinPacking(MultiBinPacking& s)
+    : Script(s), spec(s.spec) {
+    bin.update(*this, s.bin);
+    load.update(*this, s.load);
   }
   /// Perform copying during cloning
-  virtual Space* copy(bool share) {
-    return new MultiBinPacking(share, *this);
+  virtual Space* copy(void) {
+    return new MultiBinPacking(*this);
   }
   /// Print solution
   virtual void

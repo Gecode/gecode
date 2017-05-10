@@ -146,17 +146,17 @@ public:
     return c_total;
   }
   /// Constructor for cloning \a s
-  Warehouses(bool share, Warehouses& s) : IntMinimizeScript(share,s) {
-    supplier.update(*this, share, s.supplier);
-    open.update(*this, share, s.open);
-    c_store.update(*this, share, s.c_store);
-    c_total.update(*this, share, s.c_total);
+  Warehouses(Warehouses& s) : IntMinimizeScript(s) {
+    supplier.update(*this, s.supplier);
+    open.update(*this, s.open);
+    c_store.update(*this, s.c_store);
+    c_total.update(*this, s.c_total);
   }
 
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Warehouses(share,*this);
+  copy(void) {
+    return new Warehouses(*this);
   }
   /// Print solution
   virtual void

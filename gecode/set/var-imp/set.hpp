@@ -425,10 +425,10 @@ namespace Gecode { namespace Set {
    */
 
   forceinline SetVarImp*
-  SetVarImp::copy(Space& home, bool share) {
+  SetVarImp::copy(Space& home) {
     return copied() ?
       static_cast<SetVarImp*>(forward()) :
-      perform_copy(home,share);
+      perform_copy(home);
   }
 
   /*

@@ -118,13 +118,13 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Schur(bool share, Schur& s) : Script(share,s) {
-    box.update(*this, share, s.box);
+  Schur(Schur& s) : Script(s) {
+    box.update(*this, s.box);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Schur(share,*this);
+  copy(void) {
+    return new Schur(*this);
   }
 };
 

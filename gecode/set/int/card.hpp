@@ -61,14 +61,14 @@ namespace Gecode { namespace Set { namespace Int {
 
   template<class View>
   forceinline
-  Card<View>::Card(Space& home, bool share, Card& p)
+  Card<View>::Card(Space& home, Card& p)
     : MixBinaryPropagator<View,PC_SET_CARD,
-      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, share, p) {}
+      Gecode::Int::IntView,Gecode::Int::PC_INT_BND> (home, p) {}
 
   template<class View>
   Actor*
-  Card<View>::copy(Space& home, bool share) {
-   return new (home) Card(home,share,*this);
+  Card<View>::copy(Space& home) {
+   return new (home) Card(home,*this);
   }
 
   template<class View>

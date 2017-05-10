@@ -213,9 +213,8 @@ namespace Gecode { namespace Int {
    */
   template<class Val, class UnsVal>
   forceinline void
-  ScaleView<Val,UnsVal>::update(Space& home, bool share,
-                                ScaleView<Val,UnsVal>& y) {
-    DerivedView<IntView>::update(home,share,y);
+  ScaleView<Val,UnsVal>::update(Space& home, ScaleView<Val,UnsVal>& y) {
+    DerivedView<IntView>::update(home,y);
     a=y.a;
   }
 

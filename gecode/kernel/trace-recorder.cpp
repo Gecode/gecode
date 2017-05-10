@@ -40,8 +40,8 @@
 namespace Gecode {
 
   Propagator*
-  TraceRecorder::copy(Space& home, bool share) {
-    return new (home) TraceRecorder(home, share, *this);
+  TraceRecorder::copy(Space& home) {
+    return new (home) TraceRecorder(home, *this);
   }
 
   size_t

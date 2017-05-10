@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       /// Create index advisor
       Index(Space& home, Propagator& p, Council<Index>& c, int i);
       /// Clone index advisor \a a
-      Index(Space& home, bool share, Index& a);
+      Index(Space& home, Index& a);
     };
     /// Range approximation of which positions have changed
     class IndexRange {
@@ -189,15 +189,14 @@ namespace Gecode { namespace Int { namespace Extensional {
     ExecStatus initialize(Space& home,
                           const VarArgArray<Var>& x, const DFA& dfa);
     /// Constructor for cloning \a p
-    LayeredGraph(Space& home, bool share,
-                 LayeredGraph<View,Val,Degree,StateIdx>& p);
+    LayeredGraph(Space& home, LayeredGraph<View,Val,Degree,StateIdx>& p);
   public:
     /// Constructor for posting
     template<class Var>
     LayeredGraph(Home home,
                  const VarArgArray<Var>& x, const DFA& dfa);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -250,7 +249,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     TupleSet::TupleSetI* ts(void);
 
     /// Constructor for cloning \a p
-    Base(Space& home, bool share, Base<View,subscribe>& p);
+    Base(Space& home, Base<View,subscribe>& p);
     /// Constructor for posting
     Base(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize last support
@@ -306,7 +305,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Base<View>::find_support;
 
     /// Constructor for cloning \a p
-    Basic(Space& home, bool share, Basic<View,shared>& p);
+    Basic(Space& home, Basic<View,shared>& p);
     /// Constructor for posting
     Basic(Home home, ViewArray<View>& x, const TupleSet& t);
 
@@ -321,7 +320,7 @@ namespace Gecode { namespace Int { namespace Extensional {
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Post propagator for views \a x
     static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& t);
   };
@@ -449,7 +448,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     int unassigned;
 
     /// Constructor for cloning \a p
-    Incremental(Space& home, bool share, Incremental<View>& p);
+    Incremental(Space& home, Incremental<View>& p);
     /// Constructor for posting
     Incremental(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Initialize support
@@ -475,7 +474,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Post propagator for views \a x
     static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& t);
     /// Delete propagator and return its size
@@ -490,7 +489,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
                      int i);
       /// Clone support advisor \a a
-      SupportAdvisor(Space& home, bool share, SupportAdvisor& a);
+      SupportAdvisor(Space& home, SupportAdvisor& a);
       /// Dispose advisor
       void dispose(Space& home, Council<SupportAdvisor>& c);
     };

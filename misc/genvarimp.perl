@@ -662,7 +662,7 @@ EOF
   print <<EOF
   protected:
     /// Constructor for cloning \\a x
-    $class[$f](Gecode::Space& home, bool share, $class[$f]\& x);
+    $class[$f](Gecode::Space& home, $class[$f]\& x);
   public:
     /// Constructor for creating static instance of variable
     $class[$f](void);
@@ -738,8 +738,8 @@ if ($dispose[$f]) {
   }
 
   forceinline
-  $class[$f]::$class[$f](Gecode::Space& home, bool share, $class[$f]\& x)
-    : $base[$f](home,share,x) {
+  $class[$f]::$class[$f](Gecode::Space& home, $class[$f]\& x)
+    : $base[$f](home,x) {
      _next_d = static_cast<$class[$f]*>(vars_d(home)); vars_d(home,this);
   }
 
@@ -761,8 +761,8 @@ EOF
     : $base[$f](home) {}
 
   forceinline
-  $class[$f]::$class[$f](Gecode::Space& home, bool share, $class[$f]\& x)
-    : $base[$f](home,share,x) {}
+  $class[$f]::$class[$f](Gecode::Space& home, $class[$f]\& x)
+    : $base[$f](home,x) {}
 EOF
 ;
 }

@@ -87,8 +87,6 @@ namespace Gecode { namespace Search { namespace Meta {
     RestartStop* stop;
     /// How many solutions since the last restart
     unsigned long int sslr;
-    /// Whether the slave can share data with the master
-    bool shared_data;
     /// Whether the slave can share info (AFC) with the master
     bool shared_info;
     /// Whether search for the next solution will be complete

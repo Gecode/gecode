@@ -321,8 +321,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, bool strict>
   forceinline
-  Lq<View0,View1,strict>::Lq(Space& home, bool share, Lq& p)
-    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p) {}
+  Lq<View0,View1,strict>::Lq(Space& home, Lq& p)
+    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p) {}
 
   template<class View0, class View1, bool strict>
   ExecStatus
@@ -335,8 +335,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, bool strict>
   Actor*
-  Lq<View0,View1,strict>::copy(Space& home, bool share) {
-    return new (home) Lq(home,share,*this);
+  Lq<View0,View1,strict>::copy(Space& home) {
+    return new (home) Lq(home,*this);
   }
 
   template<class View0, class View1, bool strict>
@@ -357,7 +357,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     bool assigned = x0.assigned() && x1.assigned();
 
-    Region re(home);
+    Region re;
     CharacteristicSets cs(re,x0,x1);
 
     /*

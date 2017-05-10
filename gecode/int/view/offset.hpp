@@ -249,8 +249,8 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  OffsetView::update(Space& home, bool share, OffsetView& y) {
-    DerivedView<IntView>::update(home,share,y);
+  OffsetView::update(Space& home, OffsetView& y) {
+    DerivedView<IntView>::update(home,y);
     c=y.c;
   }
 

@@ -82,13 +82,13 @@ public:
     branch(*this, f[1], FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  CartesianHeart(bool share, CartesianHeart& p)
-    : Script(share,p), step(p.step) {
-    f.update(*this,share,p.f);
+  CartesianHeart(CartesianHeart& p)
+    : Script(p), step(p.step) {
+    f.update(*this, p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) {
-    return new CartesianHeart(share,*this);
+  virtual Space* copy(void) {
+    return new CartesianHeart(*this);
   }
   /// Add constraints to current model to get next solution (not too close)
   virtual void constrain(const Space& _b) {

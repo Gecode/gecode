@@ -95,13 +95,13 @@ public:
     branch(*this,p,FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  DescartesFolium(bool share, DescartesFolium& p)
-    : FloatMaximizeScript(share,p) {
-    f.update(*this,share,p.f);
+  DescartesFolium(DescartesFolium& p)
+    : FloatMaximizeScript(p) {
+    f.update(*this, p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) {
-    return new DescartesFolium(share,*this);
+  virtual Space* copy(void) {
+    return new DescartesFolium(*this);
   }
   /// Cost function
   virtual FloatVar cost(void) const {

@@ -57,12 +57,12 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   forceinline
   Bnd<Card>::
-  Bnd(Space& home, bool share, Bnd<Card>& p)
-    : Propagator(home, share, p),
+  Bnd(Space& home, Bnd<Card>& p)
+    : Propagator(home, p),
       card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    k.update(home, share, p.k);
+    x.update(home, p.x);
+    y.update(home, p.y);
+    k.update(home, p.k);
   }
 
   template<class Card>
@@ -76,8 +76,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   Actor*
-  Bnd<Card>::copy(Space& home, bool share) {
-    return new (home) Bnd<Card>(home,share,*this);
+  Bnd<Card>::copy(Space& home) {
+    return new (home) Bnd<Card>(home,*this);
   }
 
   template<class Card>
@@ -574,7 +574,7 @@ namespace Gecode { namespace Int { namespace GCC {
         n_z++;
 
     if (n_z > 0) {
-      Region r(home);
+      Region r;
       int* z = r.alloc<int>(n_z);
       n_z = 0;
       int n_k = 0;
@@ -606,7 +606,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (Card::propagate)
       GECODE_ES_CHECK(pruneCards(home));
 
-    Region r(home);
+    Region r;
     int* count = r.alloc<int>(k.size());
 
     for (int i = k.size(); i--; )

@@ -71,7 +71,6 @@ namespace Gecode { namespace Search { namespace Meta {
            bool best0)
     : e(e0), master(s), last(NULL), co(opt.cutoff), stop(stop0),
       sslr(0),
-      shared_data(opt.threads <= 1.0), shared_info(opt.share_rbs),
       complete(true), restart(false), best(best0) {
     stop->limit(stat,(*co)());
   }

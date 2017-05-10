@@ -56,12 +56,12 @@ namespace Gecode { namespace Int { namespace Member {
       return ES_OK;
     }
 
-    x.unique(home);
+    x.unique();
 
     if (x.size() == 1)
       return Rel::ReEqDom<View,BoolView,rm>::post(home,x[0],y,b);
 
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       if (rm != RM_IMP)
         GECODE_ME_CHECK(b.one(home));
       return ES_OK;
@@ -95,15 +95,15 @@ namespace Gecode { namespace Int { namespace Member {
 
   template<class View, ReifyMode rm>
   forceinline
-  ReProp<View,rm>::ReProp(Space& home, bool share, ReProp<View,rm>& p)
-    : Prop<View>(home, share, p) {
-    b.update(home, share, p.b);
+  ReProp<View,rm>::ReProp(Space& home, ReProp<View,rm>& p)
+    : Prop<View>(home, p) {
+    b.update(home, p.b);
   }
 
   template<class View, ReifyMode rm>
   Propagator*
-  ReProp<View,rm>::copy(Space& home, bool share) {
-    return new (home) ReProp<View,rm>(home, share, *this);
+  ReProp<View,rm>::copy(Space& home) {
+    return new (home) ReProp<View,rm>(home, *this);
   }
 
   template<class View, ReifyMode rm>
@@ -162,7 +162,7 @@ namespace Gecode { namespace Int { namespace Member {
 
     // Check whether y is in union of x and value set
     if (x.size() > 0) {
-      Region r(home);
+      Region r;
 
       ValSet::Ranges vsr(vs);
       ViewRanges<View> xsr(x[x.size()-1]);

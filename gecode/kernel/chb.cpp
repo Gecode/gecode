@@ -39,56 +39,20 @@
 
 namespace Gecode {
 
+  Support::Mutex CHB::Storage::m;
+
   const CHB CHB::def;
 
-  CHB::CHB(const CHB& a)
-    : storage(a.storage) {
-    if (storage != NULL) {
-      acquire();
-      storage->use_cnt++;
-      release();
-    }
-  }
+  CHB::CHB(const CHB& c)
+    : SharedHandle(c) {}
 
   CHB&
-  CHB::operator =(const CHB& a) {
-    if (storage != a.storage) {
-      if (storage != NULL) {
-        bool done;
-        acquire();
-        done = (--storage->use_cnt == 0);
-        release();
-        if (done)
-          delete storage;
-      }
-      storage = a.storage;
-      if (storage != NULL) {
-        acquire();
-        storage->use_cnt++;
-        release();
-      }
-    }
+  CHB::operator =(const CHB& c) {
+    (void) SharedHandle::operator =(c);
     return *this;
   }
 
-  CHB::~CHB(void) {
-    if (storage == NULL)
-      return;
-    bool done;
-    acquire();
-    done = (--storage->use_cnt == 0);
-    release();
-    if (done)
-      delete storage;
-  }
-
-  void
-  CHB::update(Space&, bool, CHB& a) {
-    const_cast<CHB&>(a).acquire();
-    storage = a.storage;
-    storage->use_cnt++;
-    const_cast<CHB&>(a).release();
-  }
+  CHB::~CHB(void) {}
 
 }
 

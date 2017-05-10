@@ -259,8 +259,8 @@ namespace Gecode { namespace Int { namespace BinPacking {
   forceinline ExecStatus
   ConflictGraph::post(void) {
     // Find some simple cliques of sizes 2 and 3.
+    Region reg;
     {
-      Region reg(home);
       // Nodes can be entered twice (for degree 2 and later for degree 1)
       Support::StaticStack<int,Region> n(reg,2*nodes());
       // Make a copy of the degree information to be used as weights
@@ -309,10 +309,10 @@ namespace Gecode { namespace Int { namespace BinPacking {
         default: GECODE_NEVER;
         }
       }
+      reg.free();
     }
     // Initialize for Bron-Kerbosch
     {
-      Region reg(home);
       NodeSet p(reg,nodes()), x(reg,nodes());
       bool empty = true;
       for (int i=nodes(); i--; )
@@ -325,13 +325,14 @@ namespace Gecode { namespace Int { namespace BinPacking {
       if (empty)
         return ES_OK;
       GECODE_ES_CHECK(bk(p,x));
+      reg.free();
     }
     return ES_OK;
   }
 
   inline IntSet
   ConflictGraph::maxclique(void) const {
-    Region reg(home);
+    Region reg;
     int* n=reg.alloc<int>(max.c);
     int j=0;
     for (Nodes i(max.n); i() < nodes(); ++i)

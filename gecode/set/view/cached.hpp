@@ -267,10 +267,10 @@ namespace Gecode { namespace Set {
 
   template<class View>
   forceinline void
-  CachedView<View>::update(Space& home, bool share, CachedView<View>& y) {
+  CachedView<View>::update(Space& home, CachedView<View>& y) {
     lubCache.update(home,y.lubCache);
     glbCache.update(home,y.glbCache);
-    DerivedView<View>::update(home,share,y);
+    DerivedView<View>::update(home,y);
   }
 
   /*

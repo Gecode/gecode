@@ -123,7 +123,7 @@ protected:
       minmakespan = std::max(minmakespan, ms);
     }
 
-    Region re(*this);
+    Region re;
     int* ct_j = re.alloc<int>(spec.n); // Job completion time
     int* ct_m = re.alloc<int>(spec.m); // Machine completion time
     Task* tasks = re.alloc<Task>(spec.n*spec.m); // Tasks
@@ -247,16 +247,16 @@ public:
   }
 
   /// Constructor for cloning \a s
-  OpenShop(bool share, OpenShop& s) : IntMinimizeScript(share,s), spec(s.spec) {
-    b.update(*this, share, s.b);
-    makespan.update(*this, share, s.makespan);
-    _start.update(*this, share, s._start);
+  OpenShop(OpenShop& s) : IntMinimizeScript(s), spec(s.spec) {
+    b.update(*this, s.b);
+    makespan.update(*this, s.makespan);
+    _start.update(*this, s._start);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new OpenShop(share,*this);
+  copy(void) {
+    return new OpenShop(*this);
   }
 
   /// Minimize the makespan
@@ -280,7 +280,7 @@ public:
   /// Print solution
   virtual void
   print(std::ostream& os) const {
-    Region re(*this);
+    Region re;
     PrintTask* m = re.alloc<PrintTask>(spec.n);
     for (int i=0; i<spec.m; i++) {
       int k=0;

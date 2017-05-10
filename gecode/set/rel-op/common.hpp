@@ -48,22 +48,21 @@ namespace Gecode {
 
   template<class View0, class View1>
   forceinline bool
-  viewarrayshared(const Space& home,
-                  const ViewArray<View0>& va, const View1& y) {
-    return va.shared(home,y);
+  viewarrayshared(const ViewArray<View0>& va, const View1& y) {
+    return va.shared(y);
   }
 
   template<>
   forceinline bool
   viewarrayshared<Set::SingletonView,Set::SetView>
-  (const Space&, const ViewArray<Set::SingletonView>&, const Set::SetView&) {
+  (const ViewArray<Set::SingletonView>&, const Set::SetView&) {
     return false;
   }
 
   template<>
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,Set::SetView>
-  (const Space&, const ViewArray<Set::ComplementView<Set::SingletonView> >&,
+  (const ViewArray<Set::ComplementView<Set::SingletonView> >&,
    const Set::SetView&) {
     return false;
   }
@@ -72,7 +71,7 @@ namespace Gecode {
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,
                        Set::ComplementView<Set::SetView> >
-  (const Space&, const ViewArray<Set::ComplementView<Set::SingletonView> >&,
+  (const ViewArray<Set::ComplementView<Set::SingletonView> >&,
    const Set::ComplementView<Set::SetView>&) {
     return false;
   }
@@ -216,7 +215,7 @@ namespace Set { namespace RelOp {
     if (x.size() == 0)
       return ES_NOFIX;
 
-    Region r(home);
+    Region r;
     //TODO: overflow management is a waste now.
     {
       unsigned int* rightSum = r.alloc<unsigned int>(xsize);
@@ -341,7 +340,7 @@ namespace Set { namespace RelOp {
     //Cardinality of each x[i] limited by cardinality of y minus all x[j]s:
 
     {
-      Region r(home);
+      Region r;
       unsigned int* rightMinSum = r.alloc<unsigned int>(xsize);
       unsigned int* rightMaxSum = r.alloc<unsigned int>(xsize);
       rightMinSum[xsize-1]=0;
@@ -402,7 +401,7 @@ namespace Set { namespace RelOp {
   partitionNXi(Space& home,
                bool& modified, ViewArray<View0>& x, View1& y) {
     int xsize = x.size();
-    Region r(home);
+    Region r;
     GLBndSet* afterUB =
       static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
     GLBndSet* afterLB =
@@ -473,7 +472,7 @@ namespace Set { namespace RelOp {
                  bool& modified, ViewArray<View0>& x, View1& y,
                  GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Region r(home);
+    Region r;
     GLBndSet* afterLB =
       static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
 
@@ -519,7 +518,7 @@ namespace Set { namespace RelOp {
                  bool& modified, ViewArray<View0>& x, View1& y,
                  GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Region r(home);
+    Region r;
     GLBndSet* afterUB =
       static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
 
@@ -567,7 +566,7 @@ namespace Set { namespace RelOp {
                 GLBndSet& unionOfDets) {
     assert(unionOfDets.isConsistent());
     int xsize = x.size();
-    Region reg(home);
+    Region reg;
     GlbRanges<View0>* xLBs = reg.alloc<GlbRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
@@ -593,7 +592,7 @@ namespace Set { namespace RelOp {
                 bool& modified, ViewArray<View0>& x, View1& y,
                 GLBndSet& unionOfDets) {
     int xsize = x.size();
-    Region reg(home);
+    Region reg;
     LubRanges<View0>* xUBs = reg.alloc<LubRanges<View0> >(xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {

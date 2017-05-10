@@ -51,12 +51,12 @@ namespace Gecode { namespace Float { namespace Bool {
 
   template<class View>
   forceinline
-  Ite<View>::Ite(Space& home, bool share, Ite<View>& p)
-    : Propagator(home,share,p) {
-    b.update(home,share,p.b);
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
+  Ite<View>::Ite(Space& home, Ite<View>& p)
+    : Propagator(home,p) {
+    b.update(home,p.b);
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
   }
 
   template<class View>
@@ -89,8 +89,8 @@ namespace Gecode { namespace Float { namespace Bool {
 
   template<class View>
   Actor*
-  Ite<View>::copy(Space& home, bool share) {
-    return new (home) Ite<View>(home,share,*this);
+  Ite<View>::copy(Space& home) {
+    return new (home) Ite<View>(home,*this);
   }
 
   template<class View>

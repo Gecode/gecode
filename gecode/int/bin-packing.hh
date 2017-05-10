@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     void size(int s);
 
     /// Update item during cloning
-    void update(Space& home, bool share, Item& i);
+    void update(Space& home, Item& i);
   };
 
   /// Whether two items are the same
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     /// Constructor for posting
     Pack(Home home, ViewArray<OffsetView>& l, ViewArray<Item>& bs);
     /// Constructor for cloning \a p
-    Pack(Space& home, bool share, Pack& p);
+    Pack(Space& home, Pack& p);
   public:
     /// Post propagator for loads \a l and items \a bs
     GECODE_INT_EXPORT
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
     virtual void reschedule(Space& home);
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Destructor
     virtual size_t dispose(Space& home);
   };

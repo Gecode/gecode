@@ -51,8 +51,8 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   Actor*
-  Seq::copy(Space& home, bool share) {
-    return new (home) Seq(home,share,*this);
+  Seq::copy(Space& home) {
+    return new (home) Seq(home,*this);
   }
 
   ExecStatus

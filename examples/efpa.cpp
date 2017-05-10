@@ -289,8 +289,8 @@ public:
   }
 
   /// Constructor for cloning \a s
-  EFPA(bool share, EFPA& s)
-    : Script(share,s),
+  EFPA(EFPA& s)
+    : Script(s),
       v(s.v),
       q(s.q),
       l(s.l),
@@ -298,13 +298,13 @@ public:
       n(s.n),
       nseqpair(s.nseqpair)
   {
-    c.update(*this, share, s.c);
-    diff.update(*this, share, s.diff);
+    c.update(*this, s.c);
+    diff.update(*this, s.diff);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new EFPA(share,*this);
+  copy(void) {
+    return new EFPA(*this);
   }
 };
 

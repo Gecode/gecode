@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Initialize
     void init(View x, int n);
     /// Update during cloning
-    void update(Space& home, bool share, DomInfo<View,Offset>& vcb);
+    void update(Space& home, DomInfo<View,Offset>& vcb);
     /// Check whether propagation for assignment is to be done
     bool doval(void) const;
     /// Check whether propagation for domain is to be done
@@ -83,9 +83,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class View, class Offset>
   forceinline void
-  DomInfo<View,Offset>::update(Space& home, bool share,
-                               DomInfo<View,Offset>& di) {
-    view.update(home,share,di.view);
+  DomInfo<View,Offset>::update(Space& home, DomInfo<View,Offset>& di) {
+    view.update(home,di.view);
     size = di.size;
     min  = di.min;
     max  = di.max;
@@ -177,14 +176,13 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class View, class Offset, bool shared>
   forceinline
-  Dom<View,Offset,shared>::Dom(Space& home, bool share,
-                               Dom<View,Offset,shared>& p)
-    : Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>(home,share,p) {}
+  Dom<View,Offset,shared>::Dom(Space& home, Dom<View,Offset,shared>& p)
+    : Base<DomInfo<View,Offset>,Offset,PC_INT_DOM>(home,p) {}
 
   template<class View, class Offset, bool shared>
   Actor*
-  Dom<View,Offset,shared>::copy(Space& home, bool share) {
-    return new (home) Dom<View,Offset,shared>(home,share,*this);
+  Dom<View,Offset,shared>::copy(Space& home) {
+    return new (home) Dom<View,Offset,shared>(home,*this);
   }
 
   template<class View, class Offset, bool shared>
@@ -200,7 +198,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template<class View, class Offset, bool shared>
   ExecStatus
   Dom<View,Offset,shared>::propagate(Space& home, const ModEventDelta& med) {
-    Region r(home);
+    Region r;
     ProcessStack xa(r,n);
     ProcessStack ya(r,n);
 

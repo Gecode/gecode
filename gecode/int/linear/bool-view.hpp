@@ -61,10 +61,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class XV, class YV>
   forceinline
-  LinBoolView<XV,YV>::LinBoolView(Space& home, bool share, LinBoolView& p)
-    : Propagator(home,share,p), c(p.c) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  LinBoolView<XV,YV>::LinBoolView(Space& home, LinBoolView& p)
+    : Propagator(home,p), c(p.c) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class XV, class YV>
@@ -125,13 +125,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class XV, class YV>
   forceinline
-  EqBoolView<XV,YV>::EqBoolView(Space& home, bool share, EqBoolView<XV,YV>& p)
-    : LinBoolView<XV,YV>(home,share,p) {}
+  EqBoolView<XV,YV>::EqBoolView(Space& home, EqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,p) {}
 
   template<class XV, class YV>
   Actor*
-  EqBoolView<XV,YV>::copy(Space& home, bool share) {
-    return new (home) EqBoolView<XV,YV>(home,share,*this);
+  EqBoolView<XV,YV>::copy(Space& home) {
+    return new (home) EqBoolView<XV,YV>(home,*this);
   }
 
   template<class XV, class YV>
@@ -211,13 +211,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class XV, class YV>
   forceinline
-  NqBoolView<XV,YV>::NqBoolView(Space& home, bool share, NqBoolView<XV,YV>& p)
-    : LinBoolView<XV,YV>(home,share,p) {}
+  NqBoolView<XV,YV>::NqBoolView(Space& home, NqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,p) {}
 
   template<class XV, class YV>
   Actor*
-  NqBoolView<XV,YV>::copy(Space& home, bool share) {
-    return new (home) NqBoolView<XV,YV>(home,share,*this);
+  NqBoolView<XV,YV>::copy(Space& home) {
+    return new (home) NqBoolView<XV,YV>(home,*this);
   }
 
   template<class XV, class YV>
@@ -288,13 +288,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class XV, class YV>
   forceinline
-  GqBoolView<XV,YV>::GqBoolView(Space& home, bool share, GqBoolView<XV,YV>& p)
-    : LinBoolView<XV,YV>(home,share,p) {}
+  GqBoolView<XV,YV>::GqBoolView(Space& home, GqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,p) {}
 
   template<class XV, class YV>
   Actor*
-  GqBoolView<XV,YV>::copy(Space& home, bool share) {
-    return new (home) GqBoolView<XV,YV>(home,share,*this);
+  GqBoolView<XV,YV>::copy(Space& home) {
+    return new (home) GqBoolView<XV,YV>(home,*this);
   }
 
   template<class XV, class YV>

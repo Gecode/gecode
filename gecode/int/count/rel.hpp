@@ -103,6 +103,17 @@ namespace Gecode { namespace Int { namespace Count {
     y.schedule(home, p, PC_INT_DOM);
   }
 
+  forceinline void
+  update(IntSet& y, Space& home, IntSet& py) {
+    (void) home;
+    y=py;
+  }
+  template<class VY>
+  forceinline void
+  update(VY& y, Space& home, VY py) {
+    y.update(home, py);
+  }
+
   template<class VX>
   forceinline RelTest
   holds(VX x, ConstIntView y) {
@@ -279,7 +290,7 @@ namespace Gecode { namespace Int { namespace Count {
   prune(Space& home, ViewArray<VX>& x, VX y) {
     if (x.size() == 0)
       return ES_OK;
-    Region r(home);
+    Region r;
     ViewRanges<VX>* rx = r.alloc<ViewRanges<VX> >(x.size());
     for (int i=x.size(); i--; )
       rx[i] = ViewRanges<VX>(x[i]);

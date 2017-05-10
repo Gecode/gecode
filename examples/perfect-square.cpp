@@ -274,14 +274,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  PerfectSquare(bool share, PerfectSquare& s) : Script(share,s) {
-    x.update(*this, share, s.x);
-    y.update(*this, share, s.y);
+  PerfectSquare(PerfectSquare& s) : Script(s) {
+    x.update(*this, s.x);
+    y.update(*this, s.y);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new PerfectSquare(share,*this);
+  copy(void) {
+    return new PerfectSquare(*this);
   }
   /// Print solution
   virtual void

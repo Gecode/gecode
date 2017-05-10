@@ -51,10 +51,10 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  BoolBase<VY>::BoolBase(Space& home, bool share, BoolBase<VY>& p)
-    : Propagator(home,share,p), status(p.status) {
-    c.update(home,share,p.c);
-    y.update(home,share,p.y);
+  BoolBase<VY>::BoolBase(Space& home, BoolBase<VY>& p)
+    : Propagator(home,p), status(p.status) {
+    c.update(home,p.c);
+    y.update(home,p.y);
   }
 
   template<class VY>

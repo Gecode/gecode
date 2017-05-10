@@ -55,10 +55,10 @@ namespace Test { namespace Set {
         return true;
       }
       void con(Space& home, int glbMin, int glbMax,
-                     int lubMin, int lubMax,
-                     unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card,
-                     bool fail=true) {
+               int lubMin, int lubMax,
+               unsigned int minCard = 0,
+               unsigned int maxCard = Gecode::Set::Limits::card,
+               bool fail=true) {
         bool ok = false;
         try {
           SetVar x(home, glbMin, glbMax, lubMin, lubMax, minCard, maxCard);
@@ -89,9 +89,9 @@ namespace Test { namespace Set {
         }
       }
       void con(Space& home, const IntSet& glb, int lubMin, int lubMax,
-                     unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card,
-                     bool fail=true) {
+               unsigned int minCard = 0,
+               unsigned int maxCard = Gecode::Set::Limits::card,
+               bool fail=true) {
         bool ok = false;
         try {
           SetVar x(home, glb, lubMin, lubMax, minCard, maxCard);
@@ -121,9 +121,9 @@ namespace Test { namespace Set {
         }
       }
       void con(Space& home, int glbMin, int glbMax, const IntSet& lub,
-                     unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card,
-                     bool fail=true) {
+               unsigned int minCard = 0,
+               unsigned int maxCard = Gecode::Set::Limits::card,
+               bool fail=true) {
         bool ok = false;
         try {
           SetVar x(home, glbMin, glbMax, lub, minCard, maxCard);
@@ -153,9 +153,9 @@ namespace Test { namespace Set {
         }
       }
       void con(Space& home, const IntSet& glb, const IntSet& lub,
-                     unsigned int minCard = 0,
-                     unsigned int maxCard = Gecode::Set::Limits::card,
-                     bool fail=true) {
+               unsigned int minCard = 0,
+               unsigned int maxCard = Gecode::Set::Limits::card,
+               bool fail=true) {
         bool ok = false;
         try {
           SetVar x(home, glb, lub, minCard, maxCard);
@@ -194,15 +194,15 @@ namespace Test { namespace Set {
 
         // Check min cardinality
         con(home, 1,0, 1,1, 2,3);
-        con(home, IntSet(1,0), 1,1, 2,3);
-        con(home, 1,0, IntSet(1,1), 2,3);
-        con(home, IntSet(1,0), IntSet(1,1), 2,3);
+        con(home, IntSet(1,0), 1,1, 2U,3U);
+        con(home, 1,0, IntSet(1,1), 2U,3U);
+        con(home, IntSet(1,0), IntSet(1,1), 2U,3U);
 
         // Check max cardinality
         con(home, 1,3, 1,4, 0,2);
-        con(home, IntSet(1,3), 1,4, 0,2);
-        con(home, 1,3, IntSet(1,4), 0,2);
-        con(home, IntSet(1,3), IntSet(1,4), 0,2);
+        con(home, IntSet(1,3), 1,4, 0U,2U);
+        con(home, 1,3, IntSet(1,4), 0U,2U);
+        con(home, IntSet(1,3), IntSet(1,4), 0U,2U);
 
         // Check non-subset bounds
         con(home, 1,3, 2,4);
@@ -214,7 +214,7 @@ namespace Test { namespace Set {
         con(home, 1,4, IntSet(1,3));
         con(home, IntSet(1,4), IntSet(1,3));
 
-        con(home, IntSet::empty, 2, 4, 0, 10, false);
+        con(home, IntSet::empty, 2, 4, 0U, 10U, false);
       }
     };
     Construct _con;

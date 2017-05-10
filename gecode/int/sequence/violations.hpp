@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Initialize violation set for \a n violations
     void init(Space& home, unsigned int n);
     /// Update violation set during cloning
-    void update(Space& home, bool shared, Violations& v);
+    void update(Space& home, Violations& v);
     /// Return whether set is empty
     bool empty(void) const;
     /// Add \a i to violation set
@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   }
 
   forceinline void
-  Violations::update(Space& home, bool, Violations& v) {
+  Violations::update(Space& home, Violations& v) {
     assert(v.empty());
     init(home,v.size());
   }

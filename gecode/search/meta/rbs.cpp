@@ -77,7 +77,7 @@ namespace Gecode { namespace Search { namespace Meta {
       } else if (r) {
         stop->update(e->statistics());
         Space* slave = master;
-        master = master->clone(shared_data,shared_info);
+        master = master->clone();
         complete = slave->slave(mi);
         e->reset(slave);
         sslr = 0;
@@ -90,7 +90,7 @@ namespace Gecode { namespace Search { namespace Meta {
         // The engine found a solution
         restart = true;
         delete last;
-        last = n->clone(shared_data);
+        last = n->clone();
         return n;
       } else if ( (!complete && !e->stopped()) ||
                   (e->stopped() && stop->enginestopped()) ) {
@@ -107,7 +107,7 @@ namespace Gecode { namespace Search { namespace Meta {
         if (master->status(stop->m_stat) == SS_FAILED)
           return NULL;
         Space* slave = master;
-        master = master->clone(shared_data,shared_info);
+        master = master->clone();
         complete = slave->slave(mi);
         e->reset(slave);
       } else {
@@ -135,7 +135,7 @@ namespace Gecode { namespace Search { namespace Meta {
         return;
       }
     }
-    last = b.clone(shared_data);
+    last = b.clone();
     master->constrain(b);
     e->constrain(b);
   }

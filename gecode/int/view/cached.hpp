@@ -266,8 +266,8 @@ namespace Gecode { namespace Int {
    */
   template<class View>
   void
-  CachedView<View>::update(Space& home, bool share, CachedView<View>& y) {
-    DerivedView<View>::update(home,share,y);
+  CachedView<View>::update(Space& home, CachedView<View>& y) {
+    DerivedView<View>::update(home,y);
     if (y._firstRange) {
       _firstRange = new (home) RangeList(y._firstRange->min(),
                                          y._firstRange->max(),NULL);

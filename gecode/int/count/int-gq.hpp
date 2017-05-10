@@ -74,13 +74,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY>
   forceinline
-  GqInt<VX,VY>::GqInt(Space& home, bool share, GqInt<VX,VY>& p)
-    : IntBase<VX,VY>(home,share,p) {}
+  GqInt<VX,VY>::GqInt(Space& home, GqInt<VX,VY>& p)
+    : IntBase<VX,VY>(home,p) {}
 
   template<class VX, class VY>
   Actor*
-  GqInt<VX,VY>::copy(Space& home, bool share) {
-    return new (home) GqInt<VX,VY>(home,share,*this);
+  GqInt<VX,VY>::copy(Space& home) {
+    return new (home) GqInt<VX,VY>(home,*this);
   }
 
   template<class VX, class VY>

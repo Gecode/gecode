@@ -441,16 +441,16 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Pentominoes(bool share, Pentominoes& s) :
-    Script(share,s), spec(s.spec), width(s.width), height(s.height),
+  Pentominoes(Pentominoes& s) :
+    Script(s), spec(s.spec), width(s.width), height(s.height),
     filled(s.filled), nspecs(s.nspecs) {
-    board.update(*this, share, s.board);
+    board.update(*this, s.board);
   }
 
   /// Copy space during cloning
   virtual Space*
-  copy(bool share) {
-    return new Pentominoes(share,*this);
+  copy(void) {
+    return new Pentominoes(*this);
   }
 
   /// Print solution

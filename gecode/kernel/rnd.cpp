@@ -41,23 +41,20 @@
 
 namespace Gecode {
 
+  Support::Mutex Rnd::IMP::m;
+
   forceinline
   Rnd::IMP::IMP(unsigned int s)
     : rg(s) {}
 
   Rnd::IMP::~IMP(void) {}
 
-  SharedHandle::Object*
-  Rnd::IMP::copy(void) const {
-    return new IMP(rg.seed());
-  }
-
   forceinline void
   Rnd::_seed(unsigned int s) {
     if (object() == NULL) {
       object(new IMP(s));
     } else {
-      static_cast<IMP*>(object())->rg.seed(s);
+      static_cast<IMP*>(object())->seed(s);
     }
   }
 
@@ -84,7 +81,7 @@ namespace Gecode {
   }
   void
   Rnd::hw(void) {
-    seed(Support::hwrnd());
+    _seed(Support::hwrnd());
   }
 }
 

@@ -81,12 +81,12 @@ namespace Test { namespace Int {
          }
        }
        /// Constructor for cloning \a s
-       Ass(bool share, Ass& s) : Gecode::Space(share,s) {
-         x.update(*this, share, s.x);
+       Ass(Ass& s) : Gecode::Space(s) {
+         x.update(*this, s.x);
        }
        /// Create copy during cloning
-       virtual Gecode::Space* copy(bool share) {
-         return new Ass(share,*this);
+       virtual Gecode::Space* copy(void) {
+         return new Ass(*this);
        }
      };
 

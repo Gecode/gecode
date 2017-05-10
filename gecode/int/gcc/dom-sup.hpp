@@ -1148,7 +1148,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline ExecStatus
   VarValGraph<Card>::sync(Space& home,
                           ViewArray<IntView>& x, ViewArray<Card>& k) {
-    Region r(home);
+    Region r;
     // A node can be pushed twice (once when checking cardinality and later again)
     NodeStack re(r,2*n_node);
 
@@ -1420,7 +1420,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card> template<BC bc>
   forceinline bool
   VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
-    Region r(home);
+    Region r;
     NodeStack ns(r,n_node);
     BitSet visited(r,static_cast<unsigned int>(n_node));
     Edge** start = r.alloc<Edge*>(n_node);
@@ -1521,7 +1521,7 @@ namespace Gecode { namespace Int { namespace GCC {
           e->match(bc); card_match++;
         }
 
-    Region r(home);
+    Region r;
     switch (bc) {
     case LBC:
       if (card_match < sum_min) {
@@ -1576,7 +1576,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card> template<BC bc>
   forceinline void
   VarValGraph<Card>::free_alternating_paths(Space& home) {
-    Region r(home);
+    Region r;
     NodeStack ns(r,n_node);
     BitSet visited(r,static_cast<unsigned int>(n_node));
 
@@ -1746,7 +1746,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card> template<BC bc>
   forceinline void
   VarValGraph<Card>::strongly_connected_components(Space& home) {
-    Region r(home);
+    Region r;
     BitSet inscc(r,static_cast<unsigned int>(n_node));
     BitSet in_unfinished(r,static_cast<unsigned int>(n_node));
     int* dfsnum = r.alloc<int>(n_node);

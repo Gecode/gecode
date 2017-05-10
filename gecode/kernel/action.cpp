@@ -39,63 +39,27 @@
 
 namespace Gecode {
 
+  Support::Mutex Action::Storage::m;
+
   const Action Action::def;
 
   Action::Action(const Action& a)
-    : storage(a.storage) {
-    if (storage != NULL) {
-      acquire();
-      storage->use_cnt++;
-      release();
-    }
-  }
+    : SharedHandle(a) {}
 
   Action&
   Action::operator =(const Action& a) {
-    if (storage != a.storage) {
-      if (storage != NULL) {
-        bool done;
-        acquire();
-        done = (--storage->use_cnt == 0);
-        release();
-        if (done)
-          delete storage;
-      }
-      storage = a.storage;
-      if (storage != NULL) {
-        acquire();
-        storage->use_cnt++;
-        release();
-      }
-    }
+    (void) SharedHandle::operator =(a);
     return *this;
   }
 
-  Action::~Action(void) {
-    if (storage == NULL)
-      return;
-    bool done;
-    acquire();
-    done = (--storage->use_cnt == 0);
-    release();
-    if (done)
-      delete storage;
-  }
-
-  void
-  Action::update(Space&, bool, Action& a) {
-    const_cast<Action&>(a).acquire();
-    storage = a.storage;
-    storage->use_cnt++;
-    const_cast<Action&>(a).release();
-  }
+  Action::~Action(void) {}
 
   void
   Action::decay(Space&, double d) {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("Action");
     acquire();
-    storage->invd = 1.0 / d;
+    object().invd = 1.0 / d;
     release();
   }
 
@@ -103,7 +67,7 @@ namespace Gecode {
   Action::decay(const Space&) const {
     double d;
     const_cast<Action*>(this)->acquire();
-    d = 1.0 / storage->invd;
+    d = 1.0 / object().invd;
     const_cast<Action*>(this)->release();
     return d;
   }

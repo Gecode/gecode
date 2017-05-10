@@ -169,45 +169,6 @@ namespace Gecode {
     excess = ndatasize - size;
   }
 
-  SharedHandle::Object*
-  TupleSet::TupleSetI::copy(void) const {
-    assert(finalized());
-    TupleSetI* d  = new TupleSetI;
-    d->arity      = arity;
-    d->size       = size;
-    d->excess     = excess;
-    d->min        = min;
-    d->max        = max;
-    d->domsize    = domsize;
-
-    // Table data
-    d->data = heap.alloc<int>(size*arity);
-    heap.copy(&d->data[0], &data[0], size*arity);
-
-    // Indexing data
-    d->tuples = heap.alloc<Tuple*>(arity);
-    d->tuple_data = heap.alloc<Tuple>(size*arity+1);
-    d->tuple_data[size*arity] = NULL;
-    d->nullpointer = d->tuple_data+(size*arity);
-
-    // Rearrange the tuples for faster comparisons.
-    for (int i = arity; i--; )
-      d->tuples[i] = d->tuple_data + (i * size);
-    for (int a = arity; a--; ) {
-      for (int i = size; i--; ) {
-        d->tuples[a][i] = d->data + (tuples[a][i]-data);
-      }
-    }
-
-    // Last data
-    d->last = heap.alloc<Tuple*>(domsize*arity);
-    for (int i = static_cast<int>(domsize)*arity; i--; ) {
-      d->last[i] = d->tuple_data + (last[i]-tuple_data);
-    }
-
-    return d;
-  }
-
   TupleSet::TupleSetI::~TupleSetI(void) {
     excess = -2;
     heap.rfree(tuples);

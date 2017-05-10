@@ -37,16 +37,18 @@
 
 #include <gecode/kernel.hh>
 
-namespace Gecode {
+namespace Gecode { namespace Kernel {
+
+  Support::Mutex SharedMemory::m;
 
   void
-  MemoryManager::alloc_refill(SharedMemory* sm, size_t sz) {
+  MemoryManager::alloc_refill(SharedMemory& sm, size_t sz) {
     // Try to reuse the not used memory
     reuse(start,lsz);
     alloc_fill(sm,sz,false);
   }
 
-}
+}}
 
 // STATISTICS: kernel-memory
 

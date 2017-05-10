@@ -47,7 +47,7 @@ namespace Gecode { namespace Int {
   class IntVarImpBase : public Gecode::VarImp<Gecode::Int::IntVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    IntVarImpBase(Gecode::Space& home, bool share, IntVarImpBase& x);
+    IntVarImpBase(Gecode::Space& home, IntVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     IntVarImpBase(void);
@@ -93,7 +93,7 @@ namespace Gecode { namespace Int {
   class BoolVarImpBase : public Gecode::VarImp<Gecode::Int::BoolVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    BoolVarImpBase(Gecode::Space& home, bool share, BoolVarImpBase& x);
+    BoolVarImpBase(Gecode::Space& home, BoolVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     BoolVarImpBase(void);
@@ -139,7 +139,7 @@ namespace Gecode { namespace Set {
   class SetVarImpBase : public Gecode::VarImp<Gecode::Set::SetVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    SetVarImpBase(Gecode::Space& home, bool share, SetVarImpBase& x);
+    SetVarImpBase(Gecode::Space& home, SetVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     SetVarImpBase(void);
@@ -185,7 +185,7 @@ namespace Gecode { namespace Float {
   class FloatVarImpBase : public Gecode::VarImp<Gecode::Float::FloatVarImpConf> {
   protected:
     /// Constructor for cloning \a x
-    FloatVarImpBase(Gecode::Space& home, bool share, FloatVarImpBase& x);
+    FloatVarImpBase(Gecode::Space& home, FloatVarImpBase& x);
   public:
     /// Constructor for creating static instance of variable
     FloatVarImpBase(void);
@@ -236,8 +236,8 @@ namespace Gecode { namespace Int {
     : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home) {}
 
   forceinline
-  IntVarImpBase::IntVarImpBase(Gecode::Space& home, bool share, IntVarImpBase& x)
-    : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home,share,x) {}
+  IntVarImpBase::IntVarImpBase(Gecode::Space& home, IntVarImpBase& x)
+    : Gecode::VarImp<Gecode::Int::IntVarImpConf>(home,x) {}
 
   forceinline void
   IntVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
@@ -297,8 +297,8 @@ namespace Gecode { namespace Int {
     : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home) {}
 
   forceinline
-  BoolVarImpBase::BoolVarImpBase(Gecode::Space& home, bool share, BoolVarImpBase& x)
-    : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home,share,x) {}
+  BoolVarImpBase::BoolVarImpBase(Gecode::Space& home, BoolVarImpBase& x)
+    : Gecode::VarImp<Gecode::Int::BoolVarImpConf>(home,x) {}
 
   forceinline void
   BoolVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
@@ -340,8 +340,8 @@ namespace Gecode { namespace Set {
     : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home) {}
 
   forceinline
-  SetVarImpBase::SetVarImpBase(Gecode::Space& home, bool share, SetVarImpBase& x)
-    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,share,x) {}
+  SetVarImpBase::SetVarImpBase(Gecode::Space& home, SetVarImpBase& x)
+    : Gecode::VarImp<Gecode::Set::SetVarImpConf>(home,x) {}
 
   forceinline void
   SetVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {
@@ -432,8 +432,8 @@ namespace Gecode { namespace Float {
     : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home) {}
 
   forceinline
-  FloatVarImpBase::FloatVarImpBase(Gecode::Space& home, bool share, FloatVarImpBase& x)
-    : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home,share,x) {}
+  FloatVarImpBase::FloatVarImpBase(Gecode::Space& home, FloatVarImpBase& x)
+    : Gecode::VarImp<Gecode::Float::FloatVarImpConf>(home,x) {}
 
   forceinline void
   FloatVarImpBase::subscribe(Gecode::Space& home, Gecode::Propagator& p, Gecode::PropCond pc, bool assigned, bool schedule) {

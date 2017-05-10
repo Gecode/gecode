@@ -167,9 +167,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Val, class Degree, class StateIdx>
   forceinline
-  LayeredGraph<View,Val,Degree,StateIdx>::Index::Index(Space& home, bool share,
-                                                       Index& a)
-    : Advisor(home,share,a), i(a.i) {}
+  LayeredGraph<View,Val,Degree,StateIdx>::Index::Index(Space& home, Index& a)
+    : Advisor(home,a), i(a.i) {}
 
 
   /*
@@ -271,7 +270,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                                                      const VarArgArray<Var>& x,
                                                      const DFA& dfa) {
 
-    Region r(home);
+    Region r;
 
     // Allocate memory for layers
     layers = home.alloc<Layer>(n+1);
@@ -707,12 +706,11 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class View, class Val, class Degree, class StateIdx>
   forceinline
   LayeredGraph<View,Val,Degree,StateIdx>
-  ::LayeredGraph(Space& home, bool share,
-                 LayeredGraph<View,Val,Degree,StateIdx>& p)
-    : Propagator(home,share,p),
+  ::LayeredGraph(Space& home, LayeredGraph<View,Val,Degree,StateIdx>& p)
+    : Propagator(home,p),
       n(p.n), layers(home.alloc<Layer>(n+1)),
       max_states(p.max_states), n_states(p.n_states), n_edges(p.n_edges) {
-    c.update(home,share,p.c);
+    c.update(home,p.c);
     // Do not allocate states, postpone to advise!
     layers[n].n_states = p.layers[n].n_states;
     layers[n].states = NULL;
@@ -720,7 +718,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     Edge* edges = home.alloc<Edge>(n_edges);
     // Copy layers
     for (int i=n; i--; ) {
-      layers[i].x.update(home,share,p.layers[i].x);
+      layers[i].x.update(home,p.layers[i].x);
       assert(layers[i].x.size() == p.layers[i].size);
       layers[i].size = p.layers[i].size;
       layers[i].support = home.alloc<Support>(layers[i].size);
@@ -748,7 +746,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template<class View, class Val, class Degree, class StateIdx>
   Actor*
-  LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home, bool share) {
+  LayeredGraph<View,Val,Degree,StateIdx>::copy(Space& home) {
     // Eliminate an assigned prefix
     {
       int k=0;
@@ -783,7 +781,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       int f = a_ch.fst();
       int l = a_ch.lst();
       assert((f >= 0) && (l <= n));
-      Region r(home);
+      Region r;
       // State map for in-states
       StateIdx* i_map = r.alloc<StateIdx>(max_states);
       // State map for out-states
@@ -849,7 +847,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
     audit();
 
-    return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,share,*this);
+    return new (home) LayeredGraph<View,Val,Degree,StateIdx>(home,*this);
   }
 
   /// Select small types for the layered graph propagator

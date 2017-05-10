@@ -177,19 +177,19 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Radiotherapy(bool share, Radiotherapy& s)
-  : IntMinimizeScript(share,s), rd(s.rd) {
-    beamtime.update(*this, share, s.beamtime);
-    N.update(*this, share, s.N);
-    K.update(*this, share, s.K);
-    _cost.update(*this, share, s._cost);
-    q.update(*this, share, s.q);
+  Radiotherapy(Radiotherapy& s)
+  : IntMinimizeScript(s), rd(s.rd) {
+    beamtime.update(*this, s.beamtime);
+    N.update(*this, s.N);
+    K.update(*this, s.K);
+    _cost.update(*this, s._cost);
+    q.update(*this, s.q);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new Radiotherapy(share,*this);
+  copy(void) {
+    return new Radiotherapy(*this);
   }
 
   /// Cost to be minimized
@@ -255,9 +255,8 @@ public:
       home.notice(*this, AP_DISPOSE);
     }
     /// Copy constructor
-    NestedSearch(Space& home, bool share, NestedSearch& b)
-      : Brancher(home, share, b), done(b.done) {
-      index.update(home, share, b.index);
+    NestedSearch(Space& home, NestedSearch& b)
+      : Brancher(home, b), done(b.done), index(b.index) {
     }
   public:
     virtual bool status(const Space&) const {
@@ -324,8 +323,8 @@ public:
       o << (c.fail ? "fail" : "ok");
     }
     /// Copy brancher
-    virtual Actor* copy(Space& home, bool share) {
-      return new (home) NestedSearch(home, share, *this);
+    virtual Actor* copy(Space& home) {
+      return new (home) NestedSearch(home, *this);
     }
     /// Post brancher
     static void post(Home home) {

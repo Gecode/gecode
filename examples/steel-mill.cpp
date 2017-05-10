@@ -322,21 +322,21 @@ public:
   }
 
   /// Constructor for cloning \a s
-  SteelMill(bool share, SteelMill& s)
-    : IntMinimizeScript(share,s),
+  SteelMill(SteelMill& s)
+    : IntMinimizeScript(s),
       capacities(s.capacities), ncapacities(s.ncapacities),
       maxcapacity(s.maxcapacity), loss(s.loss),
       ncolors(s.ncolors), orders(s.orders),
       norders(s.norders), nslabs(s.nslabs) {
-    slab.update(*this, share, s.slab);
-    slabload.update(*this, share, s.slabload);
-    slabcost.update(*this, share, s.slabcost);
-    total_cost.update(*this, share, s.total_cost);
+    slab.update(*this, s.slab);
+    slabload.update(*this, s.slabload);
+    slabcost.update(*this, s.slabcost);
+    total_cost.update(*this, s.total_cost);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new SteelMill(share,*this);
+  copy(void) {
+    return new SteelMill(*this);
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
@@ -383,8 +383,8 @@ public:
     SteelMillBranch(Home home)
       : Brancher(home), start(0) {}
     /// Copy constructor
-    SteelMillBranch(Space& home, bool share, SteelMillBranch& b)
-      : Brancher(home, share, b), start(b.start) {
+    SteelMillBranch(Space& home, SteelMillBranch& b)
+      : Brancher(home, b), start(b.start) {
     }
 
   public:
@@ -456,8 +456,8 @@ public:
         << " " << c.val;
     }
     /// Copy brancher
-    virtual Actor* copy(Space& home, bool share) {
-      return new (home) SteelMillBranch(home, share, *this);
+    virtual Actor* copy(Space& home) {
+      return new (home) SteelMillBranch(home, *this);
     }
     /// Post brancher
     static void post(Home home) {

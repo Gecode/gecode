@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Left-branch update
     virtual void update(Literal) = 0;
     /// Copy function
-    virtual SymmetryImp<View>* copy(Space& home, bool share) const = 0;
+    virtual SymmetryImp<View>* copy(Space& home) const = 0;
     /// Disposal
     virtual size_t dispose(Space& home) = 0;
     /// Unused destructor
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Compute symmetric literals
     virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
     /// Copy function
-    SymmetryImp<View>* copy(Space& home, bool share) const;
+    SymmetryImp<View>* copy(Space& home) const;
   };
   /// Implementation of a value symmetry.
   template <class View>
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Compute symmetric literals
     virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
     /// Copy function
-    SymmetryImp<View>* copy(Space& home, bool share) const;
+    SymmetryImp<View>* copy(Space& home) const;
   };
   /// Implementation of a variable sequence symmetry.
   template <class View>
@@ -254,7 +254,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Constructor for creation
     VariableSequenceSymmetryImp<View>(Space& home, int *_indices, unsigned int n, unsigned int seqsize);
     /// Copy constructor
-    VariableSequenceSymmetryImp<View>(Space& home, bool share, const VariableSequenceSymmetryImp<View>& s);
+    VariableSequenceSymmetryImp<View>(Space& home, const VariableSequenceSymmetryImp<View>& s);
     /// Disposal
     virtual size_t dispose(Space& home);
     /// Search left-branch update
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Compute symmetric literals
     virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
     /// Copy function
-    SymmetryImp<View>* copy(Space& home, bool share) const;
+    SymmetryImp<View>* copy(Space& home) const;
   };
   /// Implementation of a value sequence symmetry.
   template <class View>
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Compute symmetric literals
     virtual ArgArray<Literal> symmetric(Literal, const ViewArray<View>&) const;
     /// Copy function
-    SymmetryImp<View>* copy(Space& home, bool share) const;
+    SymmetryImp<View>* copy(Space& home) const;
   };
 
   /// %Choice storing position and value, and symmetric literals to be
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     int _prevPos;
   protected:
     /// Constructor for cloning \a b
-    LDSBBrancher(Space& home, bool share, LDSBBrancher& b);
+    LDSBBrancher(Space& home, LDSBBrancher& b);
     /// Constructor for creation
     LDSBBrancher(Home home,
                  ViewArray<View>& x,
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace LDSB {
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
     /// Perform cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
     /// Brancher post function

@@ -281,14 +281,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  BlackHole(bool share, BlackHole& s) : Script(share,s) {
-    x.update(*this, share, s.x);
-    y.update(*this, share, s.y);
+  BlackHole(BlackHole& s) : Script(s) {
+    x.update(*this, s.x);
+    y.update(*this, s.y);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new BlackHole(share,*this);
+  copy(void) {
+    return new BlackHole(*this);
   }
 };
 

@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     int n = x.size();
 
-    Region r(home);
+    Region r;
     int* tau = r.alloc<int>(n);
     int* phi = r.alloc<int>(n);
     int* phiprime = r.alloc<int>(n);
@@ -340,13 +340,13 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   forceinline Sorted<View,Perm>::
-  Sorted(Space& home, bool share, Sorted<View,Perm>& p):
-    Propagator(home, share, p),
+  Sorted(Space& home, Sorted<View,Perm>& p):
+    Propagator(home, p),
     reachable(p.reachable) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    z.update(home, share, p.z);
-    w.update(home, share, p.w);
+    x.update(home, p.x);
+    y.update(home, p.y);
+    z.update(home, p.z);
+    w.update(home, p.w);
   }
 
   template<class View, bool Perm>
@@ -372,8 +372,8 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  Actor* Sorted<View,Perm>::copy(Space& home, bool share) {
-    return new (home) Sorted<View,Perm>(home, share, *this);
+  Actor* Sorted<View,Perm>::copy(Space& home) {
+    return new (home) Sorted<View,Perm>(home, *this);
   }
 
   template<class View, bool Perm>
@@ -521,7 +521,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (!normalize(home, y, x, nofix))
       return ES_FAILED;
 
-    Region r(home);
+    Region r;
     int* tau = r.alloc<int>(n);
     if (match_fixed) {
       // sorting is determined

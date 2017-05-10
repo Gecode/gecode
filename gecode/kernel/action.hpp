@@ -43,35 +43,45 @@ namespace Gecode {
    * \brief Class for action management
    *
    */
-  class Action {
+  class Action : public SharedHandle {
   protected:
     template<class View>
     class Recorder;
     /// Object for storing action values
-    class Storage : public HeapAllocated {
+    class Storage : public SharedHandle::Object {
     public:
       /// Mutex to synchronize globally shared access
-      Support::Mutex m;
-      /// How many references exist for this object
-      unsigned int use_cnt;
+      GECODE_KERNEL_EXPORT static Support::Mutex m;
       /// Number of action values
       int n;
-      /// Action values
-      double* a;
       /// Inverse decay factor
       double invd;
-      /// Allocate action values
+      /// Action values (more follow)
+      double a[1];
+      /// Allocate memory for \a n values
+      static void* allocate(int n);
+      /// Initialize action values
       template<class View>
       Storage(Home home, ViewArray<View>& x, double d,
               typename BranchTraits<typename View::VarType>::Merit bm);
-      /// Delete object
-      ~Storage(void);
       /// Update action value at position \a i
       void update(int i);
+      /// Delete object
+      ~Storage(void);
+      /// \name Memory management
+      //@{
+      /// Allocate memory
+      static void* operator new(size_t s, void* p);
+      /// Return memory
+      static void  operator delete(void* p, void* q);
+      /// Needed for exceptions
+      static void  operator delete(void* p);
+      //@}
     };
-
-    /// Pointer to storage object
-    Storage* storage;
+    /// Return object of correct type
+    Storage& object(void) const;
+    /// Set object to \a o
+    void object(Storage& o);
     /// Update action value at position \a i
     void update(int i);
     /// Acquire mutex
@@ -103,21 +113,13 @@ namespace Gecode {
     template<class View>
     void init(Home home, ViewArray<View>& x, double d,
               typename BranchTraits<typename View::VarType>::Merit bm);
-    /// Test whether already initialized
-    operator bool(void) const;
     /// Default (empty) action information
     GECODE_KERNEL_EXPORT static const Action def;
     //@}
 
-    /// \name Update and delete action information
-    //@{
-    /// Updating during cloning
-    GECODE_KERNEL_EXPORT
-    void update(Space& home, bool share, Action& a);
     /// Destructor
     GECODE_KERNEL_EXPORT
     ~Action(void);
-    //@}
 
     /// \name Information access
     //@{
@@ -152,7 +154,7 @@ namespace Gecode {
       /// Constructor for creation
       Idx(Space& home, Propagator& p, Council<Idx>& c, int i);
       /// Constructor for cloning \a a
-      Idx(Space& home, bool share, Idx& a);
+      Idx(Space& home, Idx& a);
       /// Mark advisor as modified
       void mark(void);
       /// Mark advisor as unmodified
@@ -167,12 +169,12 @@ namespace Gecode {
     /// The advisor council
     Council<Idx> c;
     /// Constructor for cloning \a p
-    Recorder(Space& home, bool share, Recorder<View>& p);
+    Recorder(Space& home, Recorder<View>& p);
   public:
     /// Constructor for creation
     Recorder(Home home, ViewArray<View>& x, Action& a);
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Cost function (record so that propagator runs last)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -210,8 +212,8 @@ namespace Gecode {
     : Advisor(home,p,c), _info(i << 1) {}
   template<class View>
   forceinline
-  Action::Recorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
-    : Advisor(home,share,a), _info(a._info) {
+  Action::Recorder<View>::Idx::Idx(Space& home, Idx& a)
+    : Advisor(home,a), _info(a._info) {
   }
   template<class View>
   forceinline void
@@ -263,13 +265,29 @@ namespace Gecode {
    * Action value storage
    *
    */
+
+  forceinline void*
+  Action::Storage::operator new(size_t, void* p) {
+    return p;
+  }
+  forceinline void
+  Action::Storage::operator delete(void* p, void*) {
+    heap.rfree(p);
+  }
+  forceinline void
+  Action::Storage::operator delete(void*) {}
+
+  forceinline void*
+  Action::Storage::allocate(int n) {
+    return heap.ralloc(sizeof(Storage)+(n-1)*sizeof(double));
+  }
+
   template<class View>
   forceinline
   Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
                            typename
                            BranchTraits<typename View::VarType>::Merit bm)
-    : use_cnt(1), n(x.size()), a(heap.alloc<double>(x.size())),
-      invd(1.0 / d) {
+    : n(x.size()), invd(1.0 / d) {
     if (bm)
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -292,9 +310,7 @@ namespace Gecode {
         a[j] *= Kernel::Config::rescale;
   }
   forceinline
-  Action::Storage::~Storage(void) {
-    heap.free<double>(a,n);
-  }
+  Action::Storage::~Storage(void) {}
 
 
   /*
@@ -302,51 +318,58 @@ namespace Gecode {
    *
    */
 
+  forceinline Action::Storage&
+  Action::object(void) const {
+    return static_cast<Action::Storage&>(*SharedHandle::object());
+  }
+
+  forceinline void
+  Action::object(Action::Storage& o) {
+    SharedHandle::object(&o);
+  }
+
   forceinline void
   Action::update(int i) {
-    storage->update(i);
+    object().update(i);
   }
   forceinline double
   Action::operator [](int i) const {
-    assert((i >= 0) && (i < storage->n));
-    return storage->a[i];
+    assert((i >= 0) && (i < object().n));
+    return object().a[i];
   }
   forceinline int
   Action::size(void) const {
-    return storage->n;
+    return object().n;
   }
   forceinline void
   Action::acquire(void) {
-    storage->m.acquire();
+    object().m.acquire();
   }
   forceinline void
   Action::release(void) {
-    storage->m.release();
+    object().m.release();
   }
 
 
   forceinline
-  Action::Action(void) : storage(NULL) {}
-
-  forceinline
-  Action::operator bool(void) const {
-    return storage != NULL;
-  }
+  Action::Action(void) {}
 
   template<class View>
   forceinline
   Action::Action(Home home, ViewArray<View>& x, double d,
                  typename BranchTraits<typename View::VarType>::Merit bm) {
-    assert(storage == NULL);
-    storage = new Storage(home,x,d,bm);
+    assert(!*this);
+    void* o = Storage::allocate(x.size());
+    object(*new (o) Storage(home,x,d,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
   forceinline void
   Action::init(Home home, ViewArray<View>& x, double d,
                typename BranchTraits<typename View::VarType>::Merit bm) {
-    assert(storage == NULL);
-    storage = new Storage(home,x,d,bm);
+    assert(!*this);
+    void* o = Storage::allocate(x.size());
+    object(*new (o) Storage(home,x,d,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
 
@@ -373,16 +396,15 @@ namespace Gecode {
    */
   template<class View>
   forceinline
-  Action::Recorder<View>::Recorder(Space& home, bool share, Recorder<View>& p)
-    : NaryPropagator<View,PC_GEN_NONE>(home,share,p) {
-    a.update(home, share, p.a);
-    c.update(home, share, p.c);
+  Action::Recorder<View>::Recorder(Space& home, Recorder<View>& p)
+    : NaryPropagator<View,PC_GEN_NONE>(home,p), a(p.a) {
+    c.update(home, p.c);
   }
 
   template<class View>
   Propagator*
-  Action::Recorder<View>::copy(Space& home, bool share) {
-    return new (home) Recorder<View>(home, share, *this);
+  Action::Recorder<View>::copy(Space& home) {
+    return new (home) Recorder<View>(home, *this);
   }
 
   template<class View>

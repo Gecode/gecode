@@ -92,15 +92,15 @@ public:
     branch(*this, x, INT_VAR_SIZE_MIN(), INT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a e
-  AllInterval(bool share, AllInterval& s)
-    : Script(share, s) {
-    x.update(*this, share, s.x);
-    d.update(*this, share, s.d);
+  AllInterval(AllInterval& s)
+    : Script(s) {
+    x.update(*this, s.x);
+    d.update(*this, s.d);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new AllInterval(share, *this);
+  copy(void) {
+    return new AllInterval(*this);
   }
   /// Print solution
   virtual void

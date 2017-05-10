@@ -46,13 +46,13 @@ namespace Gecode { namespace Float { namespace Channel {
 
   template<class A, class B>
   forceinline
-  Channel<A,B>::Channel(Space& home, bool share, Channel<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,Int::PC_INT_BND>(home,share,p) {}
+  Channel<A,B>::Channel(Space& home, Channel<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,Int::PC_INT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  Channel<A,B>::copy(Space& home, bool share) {
-    return new (home) Channel<A,B>(home,share,*this);
+  Channel<A,B>::copy(Space& home) {
+    return new (home) Channel<A,B>(home,*this);
   }
 
   template<class A, class B>

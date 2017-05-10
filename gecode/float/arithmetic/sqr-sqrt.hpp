@@ -67,13 +67,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class VA, class VB>
   forceinline
-  SqrPlus<VA,VB>::SqrPlus(Space& home, bool share, SqrPlus<VA,VB>& p)
-    : MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND>(home,share,p) {}
+  SqrPlus<VA,VB>::SqrPlus(Space& home, SqrPlus<VA,VB>& p)
+    : MixBinaryPropagator<VA,PC_FLOAT_BND,VB,PC_FLOAT_BND>(home,p) {}
 
   template<class VA, class VB>
   Actor*
-  SqrPlus<VA,VB>::copy(Space& home, bool share) {
-    return new (home) SqrPlus<VA,VB>(home,share,*this);
+  SqrPlus<VA,VB>::copy(Space& home) {
+    return new (home) SqrPlus<VA,VB>(home,*this);
   }
 
   template<class VA, class VB>
@@ -126,13 +126,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class View>
   forceinline
-  Sqr<View>::Sqr(Space& home, bool share, Sqr<View>& p)
-    : BinaryPropagator<View,PC_FLOAT_BND>(home,share,p) {}
+  Sqr<View>::Sqr(Space& home, Sqr<View>& p)
+    : BinaryPropagator<View,PC_FLOAT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  Sqr<View>::copy(Space& home, bool share) {
-    return new (home) Sqr<View>(home,share,*this);
+  Sqr<View>::copy(Space& home) {
+    return new (home) Sqr<View>(home,*this);
   }
 
   template<class View>
@@ -187,13 +187,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B>
   forceinline
-  Sqrt<A,B>::Sqrt(Space& home, bool share, Sqrt<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  Sqrt<A,B>::Sqrt(Space& home, Sqrt<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  Sqrt<A,B>::copy(Space& home, bool share) {
-    return new (home) Sqrt<A,B>(home,share,*this);
+  Sqrt<A,B>::copy(Space& home) {
+    return new (home) Sqrt<A,B>(home,*this);
   }
 
   template<class A, class B>

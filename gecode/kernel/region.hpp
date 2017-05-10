@@ -60,10 +60,43 @@ namespace Gecode {
   /// Handle to region
   class Region {
   private:
-    /// Location to space
-    Space& home;
-    /// Free memory to reset
-    size_t free_reset;
+    /// Heap chunks used for regions
+    class Chunk : public HeapAllocated {
+    public:
+      /// Amount of free memory
+      size_t free;
+      /// The actual memory area (allocated from top to bottom)
+      double area[Kernel::MemoryConfig::region_area_size / sizeof(double)];
+      /// A pointer to another chunk
+      Chunk* next;
+      /// Return memory if available
+      bool alloc(size_t s, void*& p);
+      /// Free allocated memory (reset chunk)
+      void reset(void);
+    };
+    /// The heap chunk in use
+    Chunk* chunk;
+    /// A pool of heap chunks to be used for regions
+    class GECODE_KERNEL_EXPORT Pool {
+    protected:
+      /// The current chunk
+      Chunk* c;
+      /// Number of cached chunks
+      unsigned int n_c;
+      /// Mutex to synchronize globally shared access
+      Support::Mutex m;
+    public:
+      /// Initialize pool
+      Pool(void);
+      /// Get a new chunk
+      Chunk* chunk(void);
+      /// Return chunk and possible free unused chunk \a u
+      void chunk(Chunk* u);
+      /// Delete pool
+      ~Pool(void);
+    };
+    /// Just use a single static pool for heap chunks
+    GECODE_KERNEL_EXPORT static Pool pool;
     /// Heap information data structure
     class HeapInfo {
     public:
@@ -87,8 +120,15 @@ namespace Gecode {
     /// Free memory previously allocated from heap
     GECODE_KERNEL_EXPORT void heap_free(void);
   public:
-    /// Initialize region from space
-    Region(const Space& home);
+    /// Initialize region
+    Region(void);
+    /**
+     * \brief Free allocate memory
+     *
+     * Note that in fact not all memory is freed, memory that has been
+     * allocated for large allocation requests will not be freed.
+     */
+    void free(void);
     /// \name Typed allocation routines
     //@{
     /**
@@ -283,7 +323,7 @@ namespace Gecode {
     /// Free memory allocated from heap (disabled)
     static void  operator delete(void* p) { (void) p; };
     /// Copy constructor (disabled)
-    Region(const Region& r) : home(r.home) {}
+    Region(const Region&) {}
     /// Assignment operator (disabled)
     const Region& operator =(const Region&) { return *this; }
   };
@@ -294,16 +334,38 @@ namespace Gecode {
    * Implementation
    *
    */
+  forceinline bool
+  Region::Chunk::alloc(size_t s, void*& p) {
+    Kernel::MemoryConfig::align(s);
+    if (s > free)
+      return false;
+    free -= s;
+    p = ptr_cast<char*>(&area[0]) + free;
+    return true;
+  }
+
+  forceinline void
+  Region::Chunk::reset(void) {
+    free = Kernel::MemoryConfig::region_area_size;
+  }
+
+
   forceinline
-  Region::Region(const Space& h)
-    : home(const_cast<Space&>(h)), free_reset(home.sm->region.free), hi(0) {}
+  Region::Region(void)
+    : chunk(pool.chunk()), hi(0) {}
+
+  forceinline void
+  Region::free(void) {
+    chunk->reset();
+  }
 
   forceinline void*
   Region::ralloc(size_t s) {
     void* p;
-    if (home.sm->region_alloc(s,p))
+    if (chunk->alloc(s,p))
       return p;
-    return heap_alloc(s);
+    else
+      return heap_alloc(s);
   }
 
   forceinline void
@@ -311,7 +373,7 @@ namespace Gecode {
 
   forceinline
   Region::~Region(void) {
-    home.sm->region.free = free_reset;
+    pool.chunk(chunk);
     if (hi != NULL)
       heap_free();
   }

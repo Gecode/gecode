@@ -65,16 +65,16 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  Bnd<View>::Bnd(Space& home, bool share, Bnd<View>& p)
-    : Propagator(home,share,p), min_x(p.min_x), max_x(p.max_x) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  Bnd<View>::Bnd(Space& home, Bnd<View>& p)
+    : Propagator(home,p), min_x(p.min_x), max_x(p.max_x) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class View>
   Actor*
-  Bnd<View>::copy(Space& home, bool share) {
-    return new (home) Bnd<View>(home,share,*this);
+  Bnd<View>::copy(Space& home) {
+    return new (home) Bnd<View>(home,*this);
   }
 
   template<class View>
@@ -202,7 +202,7 @@ namespace Gecode { namespace Int { namespace Distinct {
            int* minsorted, int* maxsorted) {
     const int n = x.size();
 
-    Region r(home);
+    Region r;
 
     // Setup rank and bounds info
     HallInfo<IntType>* hall = r.alloc<HallInfo<IntType> >(2*n+2);
@@ -313,7 +313,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     const int n = x.size();
 
-    Region r(home);
+    Region r;
 
     int* minsorted = r.alloc<int>(n);
     int* maxsorted = r.alloc<int>(n);
@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         MinInc<View> min_inc;
         Support::quicksort<View,MinInc<View> >(&x[0], n, min_inc);
       } else {
-        Region r(home);
+        Region r;
         int* minbucket = r.alloc<int>(d);
         View* minsorted = r.alloc<View>(n);
 

@@ -53,10 +53,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline
-  Val<Card>::Val(Space& home, bool share, Val<Card>& p)
-    : Propagator(home,share,p) {
-    x.update(home,share, p.x);
-    k.update(home,share, p.k);
+  Val<Card>::Val(Space& home, Val<Card>& p)
+    : Propagator(home,p) {
+    x.update(home, p.x);
+    k.update(home, p.k);
   }
 
   template<class Card>
@@ -70,8 +70,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   Actor*
-  Val<Card>::copy(Space& home, bool share) {
-    return new (home) Val<Card>(home,share,*this);
+  Val<Card>::copy(Space& home) {
+    return new (home) Val<Card>(home,*this);
   }
 
   template<class Card>
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace GCC {
            ViewArray<IntView>& x, ViewArray<Card>& k) {
     assert(x.size() > 0);
 
-    Region r(home);
+    Region r;
     // count[i] denotes how often value k[i].card() occurs in x
     int* count = r.alloc<int>(k.size());
 

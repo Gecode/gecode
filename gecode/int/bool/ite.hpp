@@ -53,13 +53,12 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class V0, class V1, class V2, PropCond pc>
   forceinline
-  IteBase<V0,V1,V2,pc>::IteBase(Space& home, bool share,
-                                IteBase<V0,V1,V2,pc>& p)
-    : Propagator(home,share,p) {
-    b.update(home,share,p.b);
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
+  IteBase<V0,V1,V2,pc>::IteBase(Space& home, IteBase<V0,V1,V2,pc>& p)
+    : Propagator(home,p) {
+    b.update(home,p.b);
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
   }
 
   template<class V0, class V1, class V2, PropCond pc>
@@ -97,13 +96,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class V0, class V1, class V2>
   forceinline
-  IteBnd<V0,V1,V2>::IteBnd(Space& home, bool share, IteBnd<V0,V1,V2>& p)
-    : IteBase<V0,V1,V2,PC_INT_BND>(home,share,p) {}
+  IteBnd<V0,V1,V2>::IteBnd(Space& home, IteBnd<V0,V1,V2>& p)
+    : IteBase<V0,V1,V2,PC_INT_BND>(home,p) {}
 
   template<class V0, class V1, class V2>
   Actor*
-  IteBnd<V0,V1,V2>::copy(Space& home, bool share) {
-    return new (home) IteBnd<V0,V1,V2>(home,share,*this);
+  IteBnd<V0,V1,V2>::copy(Space& home) {
+    return new (home) IteBnd<V0,V1,V2>(home,*this);
   }
 
   template<class V0, class V1, class V2>
@@ -167,13 +166,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class V0, class V1, class V2>
   forceinline
-  IteDom<V0,V1,V2>::IteDom(Space& home, bool share, IteDom<V0,V1,V2>& p)
-    : IteBase<V0,V1,V2,PC_INT_DOM>(home,share,p) {}
+  IteDom<V0,V1,V2>::IteDom(Space& home, IteDom<V0,V1,V2>& p)
+    : IteBase<V0,V1,V2,PC_INT_DOM>(home,p) {}
 
   template<class V0, class V1, class V2>
   Actor*
-  IteDom<V0,V1,V2>::copy(Space& home, bool share) {
-    return new (home) IteDom<V0,V1,V2>(home,share,*this);
+  IteDom<V0,V1,V2>::copy(Space& home) {
+    return new (home) IteDom<V0,V1,V2>(home,*this);
   }
 
   template<class V0, class V1, class V2>

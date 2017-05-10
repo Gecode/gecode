@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, ManFixPTask& t);
+    void update(Space& home, ManFixPTask& t);
     //@}
 
   };
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, ManFixPSETask& t);
+    void update(Space& home, ManFixPSETask& t);
     //@}
 
   };
@@ -195,7 +195,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// \name Cloning
     //@{
     /// Update this task to be a clone of task \a t
-    void update(Space& home, bool share, ManFlexTask& t);
+    void update(Space& home, ManFlexTask& t);
     //@}
 
   };
@@ -711,10 +711,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Constructor for creation
     ManProp(Home home, Cap c, TaskArray<ManTask>& t);
     /// Constructor for cloning \a p
-    ManProp(Space& home, bool shared, ManProp& p);
+    ManProp(Space& home, ManProp& p);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on cumulative resource
@@ -738,10 +738,10 @@ namespace Gecode { namespace Int { namespace Cumulative {
     /// Constructor for creation
     OptProp(Home home, Cap c, TaskArray<OptTask>& t);
     /// Constructor for cloning \a p
-    OptProp(Space& home, bool shared, OptProp& p);
+    OptProp(Space& home, OptProp& p);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator that schedules tasks on cumulative resource

@@ -254,7 +254,7 @@ namespace Gecode { namespace Search { namespace Parallel {
         if (!engine().opt().clone)
           delete s;
       } else {
-        cur = snapshot(s,engine().opt(),false);
+        cur = snapshot(s,engine().opt());
       }
     } else {
       cur = NULL;

@@ -141,13 +141,13 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
 
   template<class A, class B>
   forceinline
-  Sin<A,B>::Sin(Space& home, bool share, Sin<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  Sin<A,B>::Sin(Space& home, Sin<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  Sin<A,B>::copy(Space& home, bool share) {
-    return new (home) Sin<A,B>(home,share,*this);
+  Sin<A,B>::copy(Space& home) {
+    return new (home) Sin<A,B>(home,*this);
   }
 
   template<class A, class B>
@@ -202,13 +202,13 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
 
   template<class A, class B>
   forceinline
-  Cos<A,B>::Cos(Space& home, bool share, Cos<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  Cos<A,B>::Cos(Space& home, Cos<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  Cos<A,B>::copy(Space& home, bool share) {
-    return new (home) Cos<A,B>(home,share,*this);
+  Cos<A,B>::copy(Space& home) {
+    return new (home) Cos<A,B>(home,*this);
   }
 
   template<class A, class B>

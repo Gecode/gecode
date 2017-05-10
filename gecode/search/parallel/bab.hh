@@ -166,7 +166,7 @@ namespace Gecode { namespace Search { namespace Parallel {
   BAB::Worker::better(Space* b) {
     m.acquire();
     delete best;
-    best = b->clone(false);
+    best = b->clone();
     mark = path.entries();
     if (cur != NULL)
       cur->constrain(*best);

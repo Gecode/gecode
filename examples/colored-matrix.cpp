@@ -445,16 +445,16 @@ public:
   }
 
   /// Constructor for cloning \a s
-  ColoredMatrix(bool share, ColoredMatrix& s)
-    : IntMinimizeScript(share,s), opt(s.opt),
+  ColoredMatrix(ColoredMatrix& s)
+    : IntMinimizeScript(s), opt(s.opt),
       height(s.height), width(s.width), colors(s.colors) {
-    x.update(*this, share, s.x);
-    max_color.update(*this, share, s.max_color);
+    x.update(*this, s.x);
+    max_color.update(*this, s.max_color);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new ColoredMatrix(share,*this);
+  copy(void) {
+    return new ColoredMatrix(*this);
   }
 };
 

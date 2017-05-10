@@ -58,7 +58,7 @@ namespace Gecode {
     /// Constructor for initialization
     MeritBase(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritBase(Space& home, bool share, MeritBase& mb);
+    MeritBase(Space& home, MeritBase& mb);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
     /// Delete view merit class
@@ -81,7 +81,7 @@ namespace Gecode {
     /// Constructor for initialization
     MeritFunction(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritFunction(Space& home, bool shared, MeritFunction& mf);
+    MeritFunction(Space& home, MeritFunction& mf);
     /// Return degree as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -100,7 +100,7 @@ namespace Gecode {
     /// Constructor for initialization
     MeritDegree(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritDegree(Space& home, bool shared, MeritDegree& md);
+    MeritDegree(Space& home, MeritDegree& md);
     /// Return degree as merit for view \a x at position \a i
     unsigned int operator ()(const Space& home, View x, int i);
   };
@@ -118,7 +118,7 @@ namespace Gecode {
     /// Constructor for initialization
     MeritAFC(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritAFC(Space& home, bool shared, MeritAFC& ma);
+    MeritAFC(Space& home, MeritAFC& ma);
     /// Return AFC as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -140,7 +140,7 @@ namespace Gecode {
     /// Constructor for initialization
     MeritAction(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritAction(Space& home, bool shared, MeritAction& ma);
+    MeritAction(Space& home, MeritAction& ma);
     /// Return action as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -163,7 +163,7 @@ namespace Gecode {
     /// Constructor for initialization
     MeritCHB(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritCHB(Space& home, bool shared, MeritCHB& ma);
+    MeritCHB(Space& home, MeritCHB& ma);
     /// Return action as merit for view \a x at position \a i
     double operator ()(const Space& home, View x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -180,7 +180,7 @@ namespace Gecode {
   MeritBase<View,Val>::MeritBase(Space&, const VarBranch<Var>&) {}
   template<class View, class Val>
   forceinline
-  MeritBase<View,Val>::MeritBase(Space&, bool, MeritBase&) {}
+  MeritBase<View,Val>::MeritBase(Space&, MeritBase&) {}
   template<class View, class Val>
   forceinline bool
   MeritBase<View,Val>::notice(void) const {
@@ -200,10 +200,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline
-  MeritFunction<View>::MeritFunction(Space& home, bool shared,
-                                     MeritFunction& mf)
-    : MeritBase<View,double>(home,shared,mf) {
-    f.update(home,shared,mf.f);
+  MeritFunction<View>::MeritFunction(Space& home, MeritFunction& mf)
+    : MeritBase<View,double>(home,mf), f(mf.f) {
   }
   template<class View>
   forceinline double
@@ -231,9 +229,8 @@ namespace Gecode {
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
-  MeritDegree<View>::MeritDegree(Space& home, bool shared,
-                                 MeritDegree& md)
-    : MeritBase<View,unsigned int>(home,shared,md) {}
+  MeritDegree<View>::MeritDegree(Space& home, MeritDegree& md)
+    : MeritBase<View,unsigned int>(home,md) {}
   template<class View>
   forceinline unsigned int
   MeritDegree<View>::operator ()(const Space&, View x, int) {
@@ -247,11 +244,8 @@ namespace Gecode {
     : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
-  MeritAFC<View>::MeritAFC(Space& home, bool shared,
-                           MeritAFC& ma)
-    : MeritBase<View,double>(home,shared,ma) {
-    afc.update(home,shared,ma.afc);
-  }
+  MeritAFC<View>::MeritAFC(Space& home, MeritAFC& ma)
+    : MeritBase<View,double>(home,ma), afc(ma.afc) {}
   template<class View>
   forceinline double
   MeritAFC<View>::operator ()(const Space&, View x, int) {
@@ -260,11 +254,13 @@ namespace Gecode {
   template<class View>
   forceinline bool
   MeritAFC<View>::notice(void) const {
-    return true;
+    // Given that AFC is just a fake, this not really necessary
+    return false;
   }
   template<class View>
   forceinline void
   MeritAFC<View>::dispose(Space&) {
+    // Given that AFC is just a fake, this not really necessary
     afc.~AFC();
   }
 
@@ -276,11 +272,8 @@ namespace Gecode {
     : MeritBase<View,double>(home,vb), action(vb.action()) {}
   template<class View>
   forceinline
-  MeritAction<View>::MeritAction(Space& home, bool shared,
-                                 MeritAction& ma)
-    : MeritBase<View,double>(home,shared,ma) {
-    action.update(home, shared, ma.action);
-  }
+  MeritAction<View>::MeritAction(Space& home, MeritAction& ma)
+    : MeritBase<View,double>(home,ma), action(ma.action) {}
   template<class View>
   forceinline double
   MeritAction<View>::operator ()(const Space&, View, int i) {
@@ -304,11 +297,8 @@ namespace Gecode {
     : MeritBase<View,double>(home,vb), chb(vb.chb()) {}
   template<class View>
   forceinline
-  MeritCHB<View>::MeritCHB(Space& home, bool shared,
-                                 MeritCHB& ma)
-    : MeritBase<View,double>(home,shared,ma) {
-    chb.update(home, shared, ma.chb);
-  }
+  MeritCHB<View>::MeritCHB(Space& home, MeritCHB& ma)
+    : MeritBase<View,double>(home,ma), chb(ma.chb) {}
   template<class View>
   forceinline double
   MeritCHB<View>::operator ()(const Space&, View, int i) {
