@@ -377,22 +377,9 @@ namespace Gecode { namespace FlatZinc {
 #endif
   };
 
- /**
-  * \brief A thread-safe random number generator
-  *
-  */
- class GECODE_FLATZINC_EXPORT FznRnd {
- protected:
-   /// The actual random number generator
-   Gecode::Support::RandomGenerator random;
-   /// A mutex for the random number generator
-   Gecode::Support::Mutex mutex;
- public:
-   /// Constructor
-   FznRnd(unsigned int s=1);
-   /// Returns a random integer from the interval [0..n)
-   unsigned int operator ()(unsigned int n);
- };
+  /// Uninitialized default random number generator
+  GECODE_FLATZINC_EXPORT
+  extern Rnd defrnd;
 
   /**
    * \brief A space that can be initialized with a %FlatZinc model
@@ -430,7 +417,7 @@ namespace Gecode { namespace FlatZinc {
     IntSharedArray _lnsInitialSolution;
 
     /// Random number generator
-    FznRnd* _random;
+    Rnd _random;
 
     /// Annotations on the solve item
     AST::Array* _solveAnnotations;
@@ -491,7 +478,7 @@ namespace Gecode { namespace FlatZinc {
     /// Whether the introduced variables still need to be copied
     bool needAuxVars;
     /// Construct empty space
-    FlatZincSpace(FznRnd* random = NULL);
+    FlatZincSpace(Rnd& random = defrnd);
 
     /// Destructor
     ~FlatZincSpace(void);
@@ -640,7 +627,7 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(const std::string& fileName,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL, FznRnd* rnd=NULL);
+                       FlatZincSpace* fzs=NULL, Rnd& rnd=defrnd);
 
   /**
    * \brief Parse FlatZinc from \a is into \a fzs and return it.
@@ -650,7 +637,7 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(std::istream& is,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL, FznRnd* rnd=NULL);
+                       FlatZincSpace* fzs=NULL, Rnd& rnd=defrnd);
 
 }}
 

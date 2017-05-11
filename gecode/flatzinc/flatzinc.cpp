@@ -53,6 +53,9 @@ using namespace std;
 
 namespace Gecode { namespace FlatZinc {
 
+  // Unitialized default random number generator
+  Rnd defrnd;
+
   /**
    * \brief Branching on the introduced variables
    *
@@ -317,14 +320,6 @@ namespace Gecode { namespace FlatZinc {
     static_cast<const FlatZincSpace&>(home).branchInfo.print(b,a,i,nl,o);
   }
 #endif
-
-  FznRnd::FznRnd(unsigned int s) : random(s) {}
-
-  unsigned int
-  FznRnd::operator ()(unsigned int n) {
-    Support::Lock lock(mutex);
-    return random(n);
-  }
 
   IntSet vs2is(IntVarSpec* vs) {
     if (vs->assigned) {
@@ -795,7 +790,7 @@ namespace Gecode { namespace FlatZinc {
 #endif
     }
 
-  FlatZincSpace::FlatZincSpace(FznRnd* random)
+  FlatZincSpace::FlatZincSpace(Rnd& random)
   : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
     _random(random),
@@ -1834,7 +1829,7 @@ namespace Gecode { namespace FlatZinc {
     if ((mi.type() == MetaInfo::RESTART) && (mi.restart() != 0) &&
         (_lns > 0) && (mi.last()==NULL) && (_lnsInitialSolution.size()>0)) {
       for (unsigned int i=iv_lns.size(); i--;) {
-        if ((*_random)(99) <= _lns) {
+        if (_random(99) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, _lnsInitialSolution[i]);
         }
       }
@@ -1844,7 +1839,7 @@ namespace Gecode { namespace FlatZinc {
       const FlatZincSpace& last =
         static_cast<const FlatZincSpace&>(*mi.last());
       for (unsigned int i=iv_lns.size(); i--;) {
-        if ((*_random)(99) <= _lns) {
+        if (_random(99) <= _lns) {
           rel(*this, iv_lns[i], IRT_EQ, last.iv_lns[i]);
         }
       }
