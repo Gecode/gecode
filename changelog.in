@@ -73,6 +73,14 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Andreas Schutt
+[DESCRIPTION]
+Fixed declarations of table_int and table_bool constraints.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
