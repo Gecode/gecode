@@ -43,10 +43,11 @@
 namespace Gecode { namespace Search { namespace Parallel {
 
   /// %Parallel depth-first search engine
-  class DFS : public Engine {
+  template<class Tracer>
+  class DFS : public Engine<Tracer> {
   protected:
     /// %Parallel depth-first search worker
-    class Worker : public Engine::Worker {
+    class Worker : public Engine<Tracer>::Worker {
     public:
       /// Initialize for space \a s with engine \a e
       Worker(Space* s, DFS& e);
@@ -90,12 +91,14 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Basic access routines
    */
-  forceinline DFS&
-  DFS::Worker::engine(void) const {
-    return static_cast<DFS&>(_engine);
+  template<class Tracer>
+  forceinline typename DFS<Tracer>&
+  DFS<Tracer>::Worker::engine(void) const {
+    return static_cast<DFS<Tracer>&>(_engine);
   }
-  forceinline DFS::Worker*
-  DFS::worker(unsigned int i) const {
+  template<class Tracer>
+  forceinline typename DFS<Tracer>::Worker*
+  DFS<Tracer>::worker(unsigned int i) const {
     return _worker[i];
   }
 
@@ -103,12 +106,16 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Engine: initialization
    */
+  template<class Tracer>
   forceinline
-  DFS::Worker::Worker(Space* s, DFS& e)
+  DFS<Tracer>::Worker::Worker(Space* s, DFS& e)
     : Engine::Worker(s,e) {}
+  template<class Tracer>
   forceinline
-  DFS::DFS(Space* s, const Options& o)
+  DFS<Tracer>::DFS(Space* s, const Options& o)
     : Engine(o) {
+    WrapTraceRecorder::engine(o.tracer, SearchTracer::EngineType::DFS,
+                              workers());
     // Create workers
     _worker = static_cast<Worker**>
       (heap.ralloc(workers() * sizeof(Worker*)));
@@ -124,12 +131,15 @@ namespace Gecode { namespace Search { namespace Parallel {
       Support::Thread::run(_worker[i]);
   }
 
+
   /*
    * Reset
    */
+  template<class Tracer>
   forceinline void
-  DFS::Worker::reset(Space* s, unsigned int ngdl) {
+  DFS<Tracer>::Worker::reset(Space* s, unsigned int ngdl) {
     delete cur;
+    tracer.round();
     path.reset((s != NULL) ? ngdl : 0);
     d = 0;
     idle = false;
@@ -146,8 +156,9 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Engine: search control
    */
+  template<class Tracer>
   forceinline void
-  DFS::solution(Space* s) {
+  DFS<Tracer>::solution(Space* s) {
     m_search.acquire();
     bool bs = signal();
     solutions.push(s);
@@ -161,12 +172,14 @@ namespace Gecode { namespace Search { namespace Parallel {
   /*
    * Worker: finding and stealing working
    */
+  template<class Tracer>
   forceinline void
-  DFS::Worker::find(void) {
+  DFS<Tracer>::Worker::find(void) {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine().workers(); i++) {
       unsigned long int r_d = 0ul;
-      if (Space* s = engine().worker(i)->steal(r_d)) {
+      Engine::Worker* wi = engine().worker(i);
+      if (Space* s = wi->steal(r_d,wi->tracer,tracer)) {
         // Reset this guy
         m.acquire();
         idle = false;
@@ -179,6 +192,227 @@ namespace Gecode { namespace Search { namespace Parallel {
         return;
       }
     }
+  }
+
+  /*
+   * Statistics
+   */
+  template<class Tracer>
+  Statistics
+  DFS<Tracer>::statistics(void) const {
+    Statistics s;
+    for (unsigned int i=0; i<workers(); i++)
+      s += worker(i)->statistics();
+    return s;
+  }
+
+
+  /*
+   * Engine: search control
+   */
+  template<class Tracer>
+  void
+  DFS<Tracer>::Worker::run(void) {
+    /*
+     * The engine maintains the following invariant:
+     *  - If the current space (cur) is not NULL, the path always points
+     *    to exactly that space.
+     *  - If the current space (cur) is NULL, the path always points
+     *    to the next space (if there is any).
+     *
+     * This invariant is needed so that no-goods can be extracted properly
+     * when the engine is stopped or has found a solution.
+     *
+     */
+    // Peform initial delay, if not first worker
+    if (this != engine().worker(0))
+      Support::Thread::sleep(Config::initial_delay);
+    // Okay, we are in business, start working
+    while (true) {
+      switch (engine().cmd()) {
+      case C_WAIT:
+        // Wait
+        engine().wait();
+        break;
+      case C_TERMINATE:
+        // Acknowledge termination request
+        engine().ack_terminate();
+        // Wait until termination can proceed
+        engine().wait_terminate();
+        // Terminate thread
+        engine().terminated();
+        return;
+      case C_RESET:
+        // Acknowledge reset request
+        engine().ack_reset_start();
+        // Wait until reset has been performed
+        engine().wait_reset();
+        // Acknowledge that reset cycle is over
+        engine().ack_reset_stop();
+        break;
+      case C_WORK:
+        // Perform exploration work
+        {
+          m.acquire();
+          if (idle) {
+            m.release();
+            // Try to find new work
+            find();
+          } else if (cur != NULL) {
+            start();
+            if (stop(engine().opt())) {
+              // Report stop
+              m.release();
+              engine().stop();
+            } else {
+              node++;
+              SearchTracer::EdgeInfo ei;
+              if (tracer) {
+                if (path.entries() > 0) {
+                  Path<Tracer>::Edge& top = path.top();
+                  ei.init(tracer.wid(), top.nid(), top.truealt(),
+                          *cur, *top.choice());
+                } else if (*tracer.ei()) {
+                  ei = *tracer.ei();
+                  tracer.invalidate();
+                }
+              }
+              unsigned int nid = tracer.nid();
+              switch (cur->status(*this)) {
+              case SS_FAILED:
+                if (tracer) {
+                  SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
+                                            tracer.wid(), nid, *cur);
+                  tracer.node(ei,ni);
+                }
+                fail++;
+                delete cur;
+                cur = NULL;
+                path.next();
+                m.release();
+                break;
+              case SS_SOLVED:
+                {
+                  if (tracer) {
+                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED,
+                                              tracer.wid(), nid, *cur);
+                    tracer.node(ei,ni);
+                  }
+                  // Deletes all pending branchers
+                  (void) cur->choice();
+                  Space* s = cur->clone();
+                  delete cur;
+                  cur = NULL;
+                  path.next();
+                  m.release();
+                  engine().solution(s);
+                }
+                break;
+              case SS_BRANCH:
+                {
+                  Space* c;
+                  if ((d == 0) || (d >= engine().opt().c_d)) {
+                    c = cur->clone();
+                    d = 1;
+                  } else {
+                    c = NULL;
+                    d++;
+                  }
+                  const Choice* ch = path.push(*this,cur,c,nid);
+                  if (tracer) {
+                    SearchTracer::NodeInfo ni(SearchTracer::NodeType::BRANCH,
+                                              tracer.wid(), nid, *cur, ch);
+                    tracer.node(ei,ni);
+                  }
+                  cur->commit(*ch,0);
+                  m.release();
+                }
+                break;
+              default:
+                GECODE_NEVER;
+              }
+            }
+          } else if (!path.empty()) {
+            cur = path.recompute(d,engine().opt().a_d,*this,tracer);
+            if (cur == NULL)
+              path.next();
+            m.release();
+          } else {
+            idle = true;
+            path.ngdl(0);
+            m.release();
+            // Report that worker is idle
+            engine().idle();
+          }
+        }
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    }
+  }
+
+
+  /*
+   * Perform reset
+   *
+   */
+  template<class Tracer>
+  void
+  DFS<Tracer>::reset(Space* s) {
+    // Grab wait lock for reset
+    m_wait_reset.acquire();
+    // Release workers for reset
+    release(C_RESET);
+    // Wait for reset cycle started
+    e_reset_ack_start.wait();
+    // All workers are marked as busy again
+    n_busy = workers();
+    for (unsigned int i=1U; i<workers(); i++)
+      worker(i)->reset(NULL,0);
+    worker(0U)->reset(s,opt().nogoods_limit);
+    // Block workers again to ensure invariant
+    block();
+    // Release reset lock
+    m_wait_reset.release();
+    // Wait for reset cycle stopped
+    e_reset_ack_stop.wait();
+  }
+
+
+
+  /*
+   * Create no-goods
+   *
+   */
+  template<class Tracer>
+  NoGoods&
+  DFS<Tracer>::nogoods(void) {
+    NoGoods* ng;
+    // Grab wait lock for reset
+    m_wait_reset.acquire();
+    // Release workers for reset
+    release(C_RESET);
+    // Wait for reset cycle started
+    e_reset_ack_start.wait();
+    ng = &worker(0)->nogoods();
+    // Block workers again to ensure invariant
+    block();
+    // Release reset lock
+    m_wait_reset.release();
+    // Wait for reset cycle stopped
+    e_reset_ack_stop.wait();
+    return *ng;
+  }
+
+
+  /*
+   * Termination and deletion
+   */
+  template<class Tracer>
+  DFS<Tracer>::~DFS(void) {
+    terminate();
+    heap.rfree(_worker);
   }
 
 }}}
