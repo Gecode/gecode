@@ -250,9 +250,7 @@ endif
 
 SEARCHSRC0 = \
 	stop options cutoff engine \
-	dfs bab \
-	lds sequential/lds \
-	sequential/path \
+	dfs bab lds \
 	meta/rbs meta/nogoods meta/dead \
 	meta/sequential/pbs meta/parallel/pbs \
 	rbs pbs sebs exception tracer
