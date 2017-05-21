@@ -97,7 +97,7 @@ namespace Gecode {
       stat.fail++;
       master = NULL;
       slave  = NULL;
-      e = new Search::Meta::Dead(stat);
+      e = Search::Meta::dead(e_opt, stat);
     } else {
       master = m_opt.clone ? s->clone() : s;
       slave  = master->clone();
