@@ -49,8 +49,6 @@ namespace Gecode {
     public:
       /// Initialize description for brancher \a b, number of alternatives \a a.
       Description(const Brancher& b, unsigned int a);
-      /// Report size occupied
-      virtual size_t size(void) const;
       /// Archive into \a e
       virtual void archive(Archive& e) const;
     };
@@ -85,10 +83,6 @@ namespace Gecode {
   forceinline
   FunctionBranch::Description::Description(const Brancher& b, unsigned int a)
     : Choice(b,a) {}
-  size_t
-  FunctionBranch::Description::size(void) const { 
-    return sizeof(Description); 
-  }
   void
   FunctionBranch::Description::archive(Archive& e) const {
     Choice::archive(e);

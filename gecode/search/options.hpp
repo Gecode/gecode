@@ -44,7 +44,7 @@ namespace Gecode { namespace Search {
       c_d(Config::c_d), a_d(Config::a_d),
       d_l(Config::d_l),
       assets(0), slice(Config::slice), nogoods_limit(0),
-      stop(NULL), cutoff(NULL) {}
+      tracer(NULL), stop(NULL), cutoff(NULL) {}
 
 }}
 

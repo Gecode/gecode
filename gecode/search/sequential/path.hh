@@ -38,6 +38,8 @@
 #ifndef __GECODE_SEARCH_SEQUENTIAL_PATH_HH__
 #define __GECODE_SEARCH_SEQUENTIAL_PATH_HH__
 
+#include <algorithm>
+
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
 #include <gecode/search/worker.hh>
@@ -58,9 +60,12 @@ namespace Gecode { namespace Search { namespace Sequential {
    * clone is created.
    *
    */
+  template<class Tracer>
   class GECODE_VTABLE_EXPORT Path : public NoGoods {
     friend class Search::Meta::NoGoodsProp;
   public:
+    /// Node identity type
+    typedef typename Tracer::ID ID;
     /// %Search tree edge for recomputation
     class Edge {
     protected:
@@ -70,11 +75,13 @@ namespace Gecode { namespace Search { namespace Sequential {
       unsigned int _alt;
       /// Choice
       const Choice* _choice;
+      /// Node identifier
+      ID _nid;
     public:
       /// Default constructor
       Edge(void);
       /// Edge for space \a s with clone \a c (possibly NULL)
-      Edge(Space* s, Space* c);
+      Edge(Space* s, Space* c, unsigned int nid);
 
       /// Return space for edge
       Space* space(void) const;
@@ -97,6 +104,9 @@ namespace Gecode { namespace Search { namespace Sequential {
       /// Test whether current alternative was LAO
       bool lao(void) const;
 
+      /// Return node identifier
+      unsigned int nid(void) const;
+
       /// Free memory for edge
       void dispose(void);
     };
@@ -113,7 +123,7 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Set no-good depth limit to \a l
     void ngdl(unsigned int l);
     /// Push space \a c (a clone of \a s or NULL)
-    const Choice* push(Worker& stat, Space* s, Space* c);
+    const Choice* push(Worker& stat, Space* s, Space* c, unsigned int nid);
     /// Generate path for next node
     void next(void);
     /// Provide access to topmost edge
@@ -123,20 +133,22 @@ namespace Gecode { namespace Search { namespace Sequential {
     /// Return position on stack of last copy
     int lc(void) const;
     /// Unwind the stack up to position \a l (after failure)
-    void unwind(int l);
+    void unwind(int l, Tracer& t);
     /// Commit space \a s as described by stack entry at position \a i
     void commit(Space* s, int i) const;
     /// Recompute space according to path
-    Space* recompute(unsigned int& d, unsigned int a_d, Worker& s);
+    Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
+                     Tracer& t);
     /// Recompute space according to path
     Space* recompute(unsigned int& d, unsigned int a_d, Worker& s,
-                     const Space& best, int& mark);
+                     const Space& best, int& mark,
+                     Tracer& t);
     /// Return number of entries on stack
     int entries(void) const;
     /// Reset stack
     void reset(void);
     /// Post no-goods
-    GECODE_SEARCH_EXPORT virtual void post(Space& home) const;
+    virtual void post(Space& home) const;
   };
 
 
@@ -144,55 +156,72 @@ namespace Gecode { namespace Search { namespace Sequential {
    * Edge for recomputation
    *
    */
+  template<class Tracer>
   forceinline
-  Path::Edge::Edge(void) {}
+  Path<Tracer>::Edge::Edge(void) {}
 
+  template<class Tracer>
   forceinline
-  Path::Edge::Edge(Space* s, Space* c)
-    : _space(c), _alt(0), _choice(s->choice()) {}
+  Path<Tracer>::Edge::Edge(Space* s, Space* c, unsigned int nid)
+    : _space(c), _alt(0), _choice(s->choice()), _nid(nid) {}
 
+  template<class Tracer>
   forceinline Space*
-  Path::Edge::space(void) const {
+  Path<Tracer>::Edge::space(void) const {
     return _space;
   }
+  template<class Tracer>
   forceinline void
-  Path::Edge::space(Space* s) {
+  Path<Tracer>::Edge::space(Space* s) {
     _space = s;
   }
 
+  template<class Tracer>
   forceinline unsigned int
-  Path::Edge::alt(void) const {
+  Path<Tracer>::Edge::alt(void) const {
     return _alt;
   }
+  template<class Tracer>
   forceinline unsigned int
-  Path::Edge::truealt(void) const {
-    assert(_alt < _choice->alternatives());
-    return _alt;
+  Path<Tracer>::Edge::truealt(void) const {
+    return std::min(_alt,_choice->alternatives()-1);
   }
+  template<class Tracer>
   forceinline bool
-  Path::Edge::leftmost(void) const {
+  Path<Tracer>::Edge::leftmost(void) const {
     return _alt == 0;
   }
+  template<class Tracer>
   forceinline bool
-  Path::Edge::rightmost(void) const {
+  Path<Tracer>::Edge::rightmost(void) const {
     return _alt+1 >= _choice->alternatives();
   }
+  template<class Tracer>
   forceinline bool
-  Path::Edge::lao(void) const {
+  Path<Tracer>::Edge::lao(void) const {
     return _alt >= _choice->alternatives();
   }
+  template<class Tracer>
   forceinline void
-  Path::Edge::next(void) {
+  Path<Tracer>::Edge::next(void) {
     _alt++;
   }
 
+  template<class Tracer>
   forceinline const Choice*
-  Path::Edge::choice(void) const {
+  Path<Tracer>::Edge::choice(void) const {
     return _choice;
   }
 
+  template<class Tracer>
+  forceinline unsigned int
+  Path<Tracer>::Edge::nid(void) const {
+    return _nid;
+  }
+
+  template<class Tracer>
   forceinline void
-  Path::Edge::dispose(void) {
+  Path<Tracer>::Edge::dispose(void) {
     delete _space;
     delete _choice;
   }
@@ -204,34 +233,39 @@ namespace Gecode { namespace Search { namespace Sequential {
    *
    */
 
+  template<class Tracer>
   forceinline
-  Path::Path(unsigned int l)
+  Path<Tracer>::Path(unsigned int l)
     : ds(heap), _ngdl(l) {}
 
+  template<class Tracer>
   forceinline unsigned int
-  Path::ngdl(void) const {
+  Path<Tracer>::ngdl(void) const {
     return _ngdl;
   }
 
+  template<class Tracer>
   forceinline void
-  Path::ngdl(unsigned int l) {
+  Path<Tracer>::ngdl(unsigned int l) {
     _ngdl = l;
   }
 
+  template<class Tracer>
   forceinline const Choice*
-  Path::push(Worker& stat, Space* s, Space* c) {
+  Path<Tracer>::push(Worker& stat, Space* s, Space* c, unsigned int nid) {
     if (!ds.empty() && ds.top().lao()) {
       // Topmost stack entry was LAO -> reuse
       ds.pop().dispose();
     }
-    Edge sn(s,c);
+    Edge sn(s,c,nid);
     ds.push(sn);
     stat.stack_depth(static_cast<unsigned long int>(ds.entries()));
     return sn.choice();
   }
 
+  template<class Tracer>
   forceinline void
-  Path::next(void) {
+  Path<Tracer>::next(void) {
     while (!ds.empty())
       if (ds.top().rightmost()) {
         ds.pop().dispose();
@@ -241,53 +275,74 @@ namespace Gecode { namespace Search { namespace Sequential {
       }
   }
 
-  forceinline Path::Edge&
-  Path::top(void) const {
+  template<class Tracer>
+  forceinline typename Path<Tracer>::Edge&
+  Path<Tracer>::top(void) const {
     assert(!ds.empty());
     return ds.top();
   }
 
+  template<class Tracer>
   forceinline bool
-  Path::empty(void) const {
+  Path<Tracer>::empty(void) const {
     return ds.empty();
   }
 
+  template<class Tracer>
   forceinline void
-  Path::commit(Space* s, int i) const {
+  Path<Tracer>::commit(Space* s, int i) const {
     const Edge& n = ds[i];
     s->commit(*n.choice(),n.alt());
   }
 
+  template<class Tracer>
   forceinline int
-  Path::lc(void) const {
+  Path<Tracer>::lc(void) const {
     int l = ds.entries()-1;
     while (ds[l].space() == NULL)
       l--;
     return l;
   }
 
+  template<class Tracer>
   forceinline int
-  Path::entries(void) const {
+  Path<Tracer>::entries(void) const {
     return ds.entries();
   }
 
+  template<class Tracer>
   forceinline void
-  Path::unwind(int l) {
+  Path<Tracer>::unwind(int l, Tracer& t) {
     assert((ds[l].space() == NULL) || ds[l].space()->failed());
     int n = ds.entries();
-    for (int i=l; i<n; i++)
-      ds.pop().dispose();
+    if (t) {
+      for (int i=l; i<n; i++) {
+        Path<Tracer>::Edge& top = ds.top();
+        unsigned int fa = (i != l) ? top.alt() + 1 : top.alt();
+        for (unsigned int a = fa; a < top.choice()->alternatives(); a++) {
+          SearchTracer::EdgeInfo ei(t.wid(),top.nid(),a);
+          t.skip(ei);
+        }
+        ds.pop().dispose();
+      }
+    } else {
+      for (int i=l; i<n; i++)
+        ds.pop().dispose();
+    }
     assert(ds.entries() == l);
   }
 
+  template<class Tracer>
   inline void
-  Path::reset(void) {
+  Path<Tracer>::reset(void) {
     while (!ds.empty())
       ds.pop().dispose();
   }
 
+  template<class Tracer>
   forceinline Space*
-  Path::recompute(unsigned int& d, unsigned int a_d, Worker& stat) {
+  Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
+                          Tracer& t) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -337,7 +392,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           // s must be deleted as it is not on the stack
           delete s;
           stat.fail++;
-          unwind(i);
+          unwind(i,t);
           return NULL;
         }
         ds[i].space(s->clone());
@@ -350,9 +405,11 @@ namespace Gecode { namespace Search { namespace Sequential {
     return s;
   }
 
+  template<class Tracer>
   forceinline Space*
-  Path::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
-                  const Space& best, int& mark) {
+  Path<Tracer>::recompute(unsigned int& d, unsigned int a_d, Worker& stat,
+                          const Space& best, int& mark,
+                          Tracer& t) {
     assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
@@ -389,7 +446,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       if (s->status(stat) == SS_FAILED) {
         // s does not need deletion as it is on the stack (unwind does this)
         stat.fail++;
-        unwind(l);
+        unwind(l,t);
         return NULL;
       }
       // It is important to replace the space on the stack with the
@@ -429,7 +486,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           // s must be deleted as it is not on the stack
           delete s;
           stat.fail++;
-          unwind(i);
+          unwind(i,t);
           return NULL;
         }
         ds[i].space(s->clone());
@@ -440,6 +497,12 @@ namespace Gecode { namespace Search { namespace Sequential {
         commit(s,i);
     }
     return s;
+  }
+
+  template<class Tracer>
+  void
+  Path<Tracer>::post(Space& home) const {
+    GECODE_ES_FAIL(Meta::NoGoodsProp::post(home,*this));
   }
 
 }}}

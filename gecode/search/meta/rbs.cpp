@@ -56,7 +56,6 @@ namespace Gecode { namespace Search { namespace Meta {
     return false;
   }
 
-
   Space*
   RBS::next(void) {
     if (restart) {

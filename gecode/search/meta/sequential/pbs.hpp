@@ -86,6 +86,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
       slave_stop(false) {
     ssi.done = false;
     ssi.l = opt.slice;
+
     for (unsigned int i=n; i--; ) {
       slaves[i].init(e[i],static_cast<PortfolioStop*>(s[i]));
       static_cast<PortfolioStop*>(s[i])->share(&ssi);

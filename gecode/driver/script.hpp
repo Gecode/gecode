@@ -315,6 +315,103 @@ namespace Gecode { namespace Driver {
         break;
         // If Gist is not available, fall through
 #endif
+      case SM_TRACE:
+        {
+          l_out << o.name() << endl;
+          Support::Timer t;
+          int i = static_cast<int>(o.solutions());
+          t.start();
+          if (s == NULL)
+            s = new Script(o);
+          unsigned int n_p = PropagatorGroup::all.size(*s);
+          unsigned int n_b = BrancherGroup::all.size(*s);
+          Search::Options so;
+          so.threads = o.threads();
+          so.c_d     = o.c_d();
+          so.a_d     = o.a_d();
+          so.d_l     = o.d_l();
+          so.assets  = o.assets();
+          so.slice   = o.slice();
+          so.stop    = CombinedStop::create(o.node(),o.fail(), o.time(),
+                                            o.interrupt());
+          so.tracer  = new StdSearchTracer;
+          so.cutoff  = createCutoff(o);
+          so.clone   = false;
+          so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
+          if (o.interrupt())
+            CombinedStop::installCtrlHandler(true);
+          {
+            Meta<Script,Engine> e(s,so);
+            if (o.print_last()) {
+              Script* px = NULL;
+              do {
+                Script* ex = e.next();
+                if (ex == NULL) {
+                  if (px != NULL) {
+                    px->print(s_out);
+                    delete px;
+                  }
+                  break;
+                } else {
+                  delete px;
+                  px = ex;
+                }
+              } while (--i != 0);
+            } else {
+              do {
+                Script* ex = e.next();
+                if (ex == NULL)
+                  break;
+                ex->print(s_out);
+                delete ex;
+              } while (--i != 0);
+            }
+            if (o.interrupt())
+              CombinedStop::installCtrlHandler(false);
+            Search::Statistics stat = e.statistics();
+            s_out << endl;
+            if (e.stopped()) {
+              l_out << "Search engine stopped..." << endl
+                    << "\treason: ";
+              int r = static_cast<CombinedStop*>(so.stop)->reason(stat,so);
+              if (r & CombinedStop::SR_INT)
+                l_out << "user interrupt " << endl;
+              else {
+                if (r & CombinedStop::SR_NODE)
+                  l_out << "node ";
+                if (r & CombinedStop::SR_FAIL)
+                  l_out << "fail ";
+                if (r & CombinedStop::SR_TIME)
+                  l_out << "time ";
+                l_out << "limit reached" << endl << endl;
+              }
+            }
+            l_out << "Initial" << endl
+                  << "\tpropagators: " << n_p << endl
+                  << "\tbranchers:   " << n_b << endl
+                  << endl
+                  << "Summary" << endl
+                  << "\truntime:      ";
+            stop(t, l_out);
+            l_out << endl
+                  << "\tsolutions:    "
+                  << ::abs(static_cast<int>(o.solutions()) - i) << endl
+                  << "\tpropagations: " << stat.propagate << endl
+                  << "\tnodes:        " << stat.node << endl
+                  << "\tfailures:     " << stat.fail << endl
+                  << "\trestarts:     " << stat.restart << endl
+                  << "\tno-goods:     " << stat.nogood << endl
+                  << "\tpeak depth:   " << stat.depth << endl
+#ifdef GECODE_PEAKHEAP
+                  << "\tpeak memory:  "
+                  << static_cast<int>((heap.peak()+1023) / 1024) << " KB"
+                  << endl
+#endif
+                  << endl;
+          }
+          delete so.stop;
+        }
+        break;
       case SM_SOLUTION:
         {
           l_out << o.name() << endl;

@@ -250,14 +250,12 @@ endif
 
 SEARCHSRC0 = \
 	stop options cutoff engine \
-	parallel/engine \
-	dfs parallel/dfs \
-	bab parallel/bab \
+	dfs bab \
 	lds sequential/lds \
-	sequential/path parallel/path \
+	sequential/path \
 	meta/rbs meta/nogoods meta/dead \
 	meta/sequential/pbs meta/parallel/pbs \
-	rbs pbs sebs exception
+	rbs pbs sebs exception tracer
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp \
@@ -270,7 +268,7 @@ SEARCHHDR0 = \
 	meta/sequential/pbs.hh meta/parallel/pbs.hh \
 	meta/sequential/pbs.hpp meta/parallel/pbs.hpp \
 	dfs.hpp bab.hpp lds.hpp rbs.hpp pbs.hpp \
-	relax.hh
+	relax.hh tracer.hpp trace-recorder.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)

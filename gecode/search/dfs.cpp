@@ -48,12 +48,22 @@ namespace Gecode { namespace Search {
   dfs(Space* s, const Options& o) {
 #ifdef GECODE_HAS_THREADS
     Options to = o.expand();
-    if (to.threads == 1.0)
-      return new WorkerToEngine<Sequential::DFS>(s,to);
-    else
-      return new Parallel::DFS(s,to);
+    if (to.threads == 1.0) {
+      if (to.tracer)
+        return new WorkerToEngine<Sequential::DFS<TraceRecorder>>(s,to);
+      else
+        return new WorkerToEngine<Sequential::DFS<NoTraceRecorder>>(s,to);
+    } else {
+      if (to.tracer)
+        return new Parallel::DFS<EdgeTraceRecorder>(s,to);
+      else
+        return new Parallel::DFS<NoTraceRecorder>(s,to);
+    }
 #else
-    return new WorkerToEngine<Sequential::DFS>(s,o);
+    if (to.tracer)
+      return new WorkerToEngine<Sequential::DFS<TraceRecorder>>(s,to);
+    else
+      return new WorkerToEngine<Sequential::DFS<NoTraceRecorder>>(s,to);
 #endif
   }
 

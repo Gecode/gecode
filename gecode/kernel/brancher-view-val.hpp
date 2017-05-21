@@ -54,10 +54,7 @@ namespace Gecode {
   public:
     /// Initialize choice for brancher \a b, number of alternatives \a a, position \a p, and value \a n
     PosValChoice(const Brancher& b, unsigned int a, const Pos& p, const Val& n);
-    /// Return value to branch with
     const Val& val(void) const;
-    /// Report size occupied
-    virtual size_t size(void) const;
     /// Archive into \a e
     virtual void archive(Archive& e) const;
   };
@@ -171,12 +168,6 @@ namespace Gecode {
   forceinline const Val&
   PosValChoice<Val>::val(void) const {
     return _val;
-  }
-
-  template<class Val>
-  forceinline size_t
-  PosValChoice<Val>::size(void) const {
-    return sizeof(PosValChoice<Val>);
   }
 
   template<class Val>

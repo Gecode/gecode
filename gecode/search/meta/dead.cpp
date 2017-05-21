@@ -39,23 +39,65 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  Dead::Dead(const Statistics& stat0)
-    : stat(stat0) {}
+  /// A dead engine (failed root)
+  template<class Tracer>
+  class GECODE_SEARCH_EXPORT Dead : public Engine {
+  protected:
+    /// Search tracer
+    Tracer tracer;
+    /// Statistics
+    Statistics stat;
+  public:
+    /// Initialize
+    Dead(const Options& o, const Statistics& stat0);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+    /// Delete
+    virtual ~Dead(void);
+  };
 
+  template<class Tracer>
+  Dead<Tracer>::Dead(const Options& o, const Statistics& stat0)
+    : tracer(o.tracer), stat(stat0) {
+    tracer.engine(SearchTracer::EngineType::AOE, 1U);
+    tracer.worker();
+  }
+
+  template<class Tracer>
   Space*
-  Dead::next(void) {
+  Dead<Tracer>::next(void) {
     return NULL;
   }
 
+  template<class Tracer>
   bool
-  Dead::stopped(void) const {
+  Dead<Tracer>::stopped(void) const {
     return false;
   }
 
+  template<class Tracer>
   Statistics
-  Dead::statistics(void) const {
+  Dead<Tracer>::statistics(void) const {
     return stat;
   }
+
+  template<class Tracer>
+  Dead<Tracer>::~Dead(void) {
+    tracer.done();
+  }
+
+  Engine*
+  dead(const Options& o, const Statistics& stat) {
+    if (o.tracer)
+      return new Dead<TraceRecorder>(o,stat);
+    else
+      return new Dead<NoTraceRecorder>(o,stat);
+  }
+
 
 }}}
 

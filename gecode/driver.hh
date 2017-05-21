@@ -99,7 +99,8 @@ namespace Gecode {
     SM_SOLUTION, ///< Print solution and some statistics
     SM_TIME,     ///< Measure average runtime
     SM_STAT,     ///< Print statistics for script
-    SM_GIST      ///< Run script in Gist
+    SM_GIST,     ///< Run script in Gist
+    SM_TRACE     ///< Run in search tracing mode
   };
 
   /**

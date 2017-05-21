@@ -319,8 +319,6 @@ namespace Gecode { namespace Int { namespace LDSB {
     const Literal* literals(void) const;
     /// Return number of literals
     int nliterals(void) const;
-    /// Report size occupied
-    virtual size_t size(void) const;
     /// Archive into \a e
     virtual void archive(Archive& e) const;
   };

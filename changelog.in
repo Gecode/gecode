@@ -180,6 +180,14 @@ Some FlatZinc constraints were not guarded with assertions, which could make
 Gecode crash on incorrect models.
 
 [ENTRY]
+Module: kernel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Choices do not need to implement a size() member function (unused
+since years).
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   major

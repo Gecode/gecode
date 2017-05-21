@@ -48,12 +48,22 @@ namespace Gecode { namespace Search {
   bab(Space* s, const Options& o) {
 #ifdef GECODE_HAS_THREADS
     Options to = o.expand();
-    if (to.threads == 1.0)
-      return new WorkerToEngine<Sequential::BAB>(s,to);
-    else
-      return new Parallel::BAB(s,to);
+    if (to.threads == 1.0) {
+      if (to.tracer)
+        return new WorkerToEngine<Sequential::BAB<TraceRecorder>>(s,to);
+      else
+        return new WorkerToEngine<Sequential::BAB<NoTraceRecorder>>(s,to);
+    } else {
+      if (to.tracer)
+        return new Parallel::BAB<EdgeTraceRecorder>(s,to);
+      else
+        return new Parallel::BAB<NoTraceRecorder>(s,to);
+    }
 #else
-    return new WorkerToEngine<Sequential::BAB>(s,o);
+    if (to.tracer)
+      return new WorkerToEngine<Sequential::BAB<TraceRecorder>>(s,to);
+    else
+      return new WorkerToEngine<Sequential::BAB<NoTraceRecorder>>(s,to);
 #endif
   }
 

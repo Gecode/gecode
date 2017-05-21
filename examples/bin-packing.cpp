@@ -227,10 +227,6 @@ protected:
       for (int k=n_same; k--; )
         same[k] = s[k];
     }
-    /// Report size occupied
-    virtual size_t size(void) const {
-      return sizeof(Choice) + sizeof(int) * n_same;
-    }
     /// Archive into \a e
     virtual void archive(Archive& e) const {
       Gecode::Choice::archive(e);

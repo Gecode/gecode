@@ -65,11 +65,6 @@ namespace Gecode { namespace Int { namespace Branch {
     }
   }
 
-  size_t
-  PosValuesChoice::size(void) const {
-    return sizeof(PosValuesChoice)+(n+1)*sizeof(PosMin);
-  }
-
   PosValuesChoice::~PosValuesChoice(void) {
     heap.free<PosMin>(pm,n+1);
   }

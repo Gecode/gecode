@@ -46,12 +46,15 @@
 namespace Gecode { namespace Search { namespace Sequential {
 
   /// Depth-first search engine implementation
+  template<class Tracer>
   class DFS : public Worker {
   private:
+    /// Search tracer
+    Tracer tracer;
     /// Search options
     Options opt;
     /// Current path ins search tree
-    Path path;
+    Path<Tracer> path;
     /// Current space being explored
     Space* cur;
     /// Distance until next clone
@@ -73,9 +76,14 @@ namespace Gecode { namespace Search { namespace Sequential {
     ~DFS(void);
   };
 
+  template<class Tracer>
   forceinline
-  DFS::DFS(Space* s, const Options& o)
-    : opt(o), path(opt.nogoods_limit), d(0) {
+  DFS<Tracer>::DFS(Space* s, const Options& o)
+    : tracer(o.tracer), opt(o), path(opt.nogoods_limit), d(0) {
+    if (tracer) {
+      tracer.engine(SearchTracer::EngineType::DFS, 1U);
+      tracer.worker();
+    }
     if ((s == NULL) || (s->status(*this) == SS_FAILED)) {
       fail++;
       cur = NULL;
@@ -86,8 +94,10 @@ namespace Gecode { namespace Search { namespace Sequential {
     }
   }
 
+  template<class Tracer>
   forceinline void
-  DFS::reset(Space* s) {
+  DFS<Tracer>::reset(Space* s) {
+    tracer.round();
     delete cur;
     path.reset();
     d = 0;
@@ -100,13 +110,15 @@ namespace Gecode { namespace Search { namespace Sequential {
     Worker::reset();
   }
 
+  template<class Tracer>
   forceinline NoGoods&
-  DFS::nogoods(void) {
+  DFS<Tracer>::nogoods(void) {
     return path;
   }
 
+  template<class Tracer>
   forceinline Space*
-  DFS::next(void) {
+  DFS<Tracer>::next(void) {
     /*
      * The engine maintains the following invariant:
      *  - If the current space (cur) is not NULL, the path always points
@@ -125,14 +137,25 @@ namespace Gecode { namespace Search { namespace Sequential {
       while (cur == NULL) {
         if (path.empty())
           return NULL;
-        cur = path.recompute(d,opt.a_d,*this);
+        cur = path.recompute(d,opt.a_d,*this,tracer);
         if (cur != NULL)
           break;
         path.next();
       }
       node++;
+      SearchTracer::EdgeInfo ei;
+      if (tracer && (path.entries() > 0)) {
+        Path<Tracer>::Edge& top = path.top();
+        ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
+      }
+      unsigned int nid = tracer.nid();
       switch (cur->status(*this)) {
       case SS_FAILED:
+        if (tracer) {
+          SearchTracer::NodeInfo ni(SearchTracer::NodeType::FAILED,
+                                    tracer.wid(), nid, *cur);
+          tracer.node(ei,ni);
+        }
         fail++;
         delete cur;
         cur = NULL;
@@ -140,6 +163,11 @@ namespace Gecode { namespace Search { namespace Sequential {
         break;
       case SS_SOLVED:
         {
+          if (tracer) {
+            SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED,
+                                      tracer.wid(), nid, *cur);
+            tracer.node(ei,ni);
+          }
           // Deletes all pending branchers
           (void) cur->choice();
           Space* s = cur;
@@ -157,7 +185,12 @@ namespace Gecode { namespace Search { namespace Sequential {
             c = NULL;
             d++;
           }
-          const Choice* ch = path.push(*this,cur,c);
+          const Choice* ch = path.push(*this,cur,c,nid);
+          if (tracer) {
+            SearchTracer::NodeInfo ni(SearchTracer::NodeType::BRANCH,
+                                      tracer.wid(), nid, *cur, ch);
+            tracer.node(ei,ni);
+          }
           cur->commit(*ch,0);
           break;
         }
@@ -169,20 +202,24 @@ namespace Gecode { namespace Search { namespace Sequential {
     return NULL;
   }
 
+  template<class Tracer>
   forceinline Statistics
-  DFS::statistics(void) const {
+  DFS<Tracer>::statistics(void) const {
     return *this;
   }
 
+  template<class Tracer>
   forceinline void
-  DFS::constrain(const Space& b) {
+  DFS<Tracer>::constrain(const Space& b) {
     (void) b;
     assert(false);
   }
 
+  template<class Tracer>
   forceinline
-  DFS::~DFS(void) {
+  DFS<Tracer>::~DFS(void) {
     delete cur;
+    tracer.done();
     path.reset();
   }
 

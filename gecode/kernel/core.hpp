@@ -1351,8 +1351,6 @@ namespace Gecode {
     unsigned int alternatives(void) const;
     /// Destructor
     GECODE_KERNEL_EXPORT virtual ~Choice(void);
-    /// Report size occupied by choice
-    virtual size_t size(void) const = 0;
     /// Archive into \a e
     GECODE_KERNEL_EXPORT
     virtual void archive(Archive& e) const;

@@ -51,6 +51,8 @@ namespace Gecode {
     const int pos;
     /// Create position information
     Pos(int p);
+    /// Create position information
+    Pos(const Pos& p);
   };
 
   /// %Choices storing position
@@ -58,13 +60,14 @@ namespace Gecode {
   private:
     /// Position information
     const Pos _pos;
+  protected:
+    /// Initialize
+    PosChoice(const PosChoice& c);
   public:
     /// Initialize choice for brancher \a b, number of alternatives \a a, and position \a p
     PosChoice(const Brancher& b, unsigned int a, const Pos& p);
     /// Return position in array
     const Pos& pos(void) const;
-    /// Report size occupied
-    virtual size_t size(void) const;
     /// Archive into \a e
     virtual void archive(Archive& e) const;
   };
@@ -113,6 +116,8 @@ namespace Gecode {
    */
   forceinline
   Pos::Pos(int p) : pos(p) {}
+  forceinline
+  Pos::Pos(const Pos& p) : pos(p.pos) {}
 
   /*
    * Choice with position
@@ -124,10 +129,6 @@ namespace Gecode {
   forceinline const Pos&
   PosChoice::pos(void) const {
     return _pos;
-  }
-  forceinline size_t
-  PosChoice::size(void) const {
-    return sizeof(PosChoice);
   }
   forceinline void
   PosChoice::archive(Archive& e) const {

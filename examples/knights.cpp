@@ -77,10 +77,6 @@ protected:
      */
     Choice(const Brancher& b, int pos0, int val0)
       : Gecode::Choice(b,2), pos(pos0), val(val0) {}
-    /// Report size occupied
-    virtual size_t size(void) const {
-      return sizeof(Choice);
-    }
     /// Archive into \a e
     virtual void archive(Archive& e) const {
       Gecode::Choice::archive(e);

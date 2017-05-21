@@ -168,6 +168,7 @@ namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
     }
   }
 
+
   template<class Collect>
   forceinline bool
   PBS<Collect>::report(Slave<Collect>* slave, Space* s) {

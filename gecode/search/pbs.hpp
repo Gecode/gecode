@@ -108,6 +108,9 @@ namespace Gecode { namespace Search { namespace Meta {
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
 
+    WrapTraceRecorder::engine(opt.tracer,
+                              SearchTracer::EngineType::PBS, n_slaves);
+
     for (unsigned int i=0; i<n_slaves; i++) {
       opt.stop = stops[i] = Sequential::stop(stop);
       Space* slave = (i == n_slaves-1) ?
@@ -128,6 +131,9 @@ namespace Gecode { namespace Search { namespace Meta {
     int n_slaves = sebs.size();
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
+
+    WrapTraceRecorder::engine(opt.tracer,
+                              SearchTracer::EngineType::PBS, n_slaves);
 
     for (int i=0; i<n_slaves; i++) {
       // Re-configure slave options
@@ -158,6 +164,9 @@ namespace Gecode { namespace Search { namespace Meta {
     // Redistribute additional threads to slaves
     opt.threads = floor(opt.threads / static_cast<double>(n_slaves));
 
+    WrapTraceRecorder::engine(opt.tracer,
+                              SearchTracer::EngineType::PBS, n_slaves);
+
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
 
@@ -181,6 +190,10 @@ namespace Gecode { namespace Search { namespace Meta {
     // Limit the number of slaves to the number of threads
     int n_slaves = std::min(static_cast<int>(opt.threads),
                             sebs.size());
+
+    WrapTraceRecorder::engine(opt.tracer,
+                              SearchTracer::EngineType::PBS, n_slaves);
+
     Engine** slaves = r.alloc<Engine*>(n_slaves);
     Stop** stops = r.alloc<Stop*>(n_slaves);
 
@@ -221,7 +234,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
-      e = new Search::Meta::Dead(stat);
+      e = Search::Meta::dead(opt,stat);
       return;
     }
 
@@ -269,7 +282,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
-      e = new Search::Meta::Dead(stat);
+      e = Search::Meta::dead(opt,stat);
       return;
     }
 

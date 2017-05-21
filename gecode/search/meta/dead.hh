@@ -40,21 +40,8 @@
 
 namespace Gecode { namespace Search { namespace Meta {
 
-  /// A dead engine (failed root)
-  class GECODE_SEARCH_EXPORT Dead : public Engine {
-  protected:
-    /// Statistics
-    Statistics stat;
-  public:
-    /// Initialize
-    Dead(const Statistics& stat0);
-    /// Return next solution (NULL, if none exists or search has been stopped)
-    virtual Space* next(void);
-    /// Return statistics
-    virtual Statistics statistics(void) const;
-    /// Check whether engine has been stopped
-    virtual bool stopped(void) const;
-  };
+  GECODE_SEARCH_EXPORT
+  Engine* dead(const Options& o, const Statistics& stat);
 
 }}}
 

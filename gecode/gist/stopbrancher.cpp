@@ -40,10 +40,6 @@
 namespace Gecode { namespace Gist {
 
   StopChoice::StopChoice(const Brancher& b) : Choice(b,1) {}
-  size_t
-  StopChoice::size(void) const {
-    return sizeof(StopChoice);
-  }
   void
   StopChoice::archive(Archive& e) const {
     Choice::archive(e);

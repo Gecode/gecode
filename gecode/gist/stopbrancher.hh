@@ -45,8 +45,6 @@ namespace Gecode { namespace Gist {
   public:
     /// Initialize choice for brancher \a b
     StopChoice(const Brancher& b);
-    /// Report size occupied
-    virtual size_t size(void) const;
     /// Archive into \a e
     virtual void archive(Archive& e) const;
   };

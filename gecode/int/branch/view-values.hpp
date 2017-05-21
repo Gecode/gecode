@@ -61,9 +61,6 @@ namespace Gecode { namespace Int { namespace Branch {
     PosValuesChoice(const Brancher& b, unsigned int alt, Pos p, Archive& e);
     /// Return value to branch with for alternative \a a
     int val(unsigned int a) const;
-    /// Report size occupied
-    GECODE_INT_EXPORT
-    virtual size_t size(void) const;
     /// Deallocate
     GECODE_INT_EXPORT
     virtual ~PosValuesChoice(void);

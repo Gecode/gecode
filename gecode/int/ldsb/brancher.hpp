@@ -80,12 +80,6 @@ namespace Gecode { namespace Int { namespace LDSB {
   LDSBChoice<Val>::nliterals(void) const { return _nliterals; }
 
   template<class Val>
-  size_t
-  LDSBChoice<Val>::size(void) const {
-    return sizeof(LDSBChoice<Val>);
-  }
-
-  template<class Val>
   void
   LDSBChoice<Val>::archive(Archive& e) const {
     PosValChoice<Val>::archive(e);

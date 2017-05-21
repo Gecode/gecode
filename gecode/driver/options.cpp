@@ -587,6 +587,7 @@ namespace Gecode {
     _mode.add(SM_TIME, "time");
     _mode.add(SM_STAT, "stat");
     _mode.add(SM_GIST, "gist");
+    _mode.add(SM_TRACE, "trace");
 
     _restart.add(RM_NONE,"none");
     _restart.add(RM_CONSTANT,"constant");

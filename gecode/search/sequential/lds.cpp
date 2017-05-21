@@ -42,45 +42,6 @@
 
 namespace Gecode { namespace Search { namespace Sequential {
 
-  /*
-   * The probing engine: computes all solutions with
-   * exact number of discrepancies (solutions with
-   * fewer discrepancies are discarded)
-   *
-   */
-  Space*
-  LDS::next(void) {
-    while (true) {
-      Space* s = e.next(opt);
-      if (s != NULL)
-        return s;
-      if (((s == NULL) && e.stopped()) || (++d > opt.d_l) || e.done())
-        break;
-      if (d == opt.d_l) {
-        if (root != NULL)
-          e.reset(root,d);
-        root = NULL;
-      } else if (root != NULL) {
-        e.reset(root->clone(),d);
-      }
-    }
-    return NULL;
-  }
-
-  bool
-  LDS::stopped(void) const {
-    return e.stopped();
-  }
-
-  Statistics
-  LDS::statistics(void) const {
-    return e.statistics();
-  }
-
-  LDS::~LDS(void) {
-    delete root;
-  }
-
 }}}
 
 // STATISTICS: search-sequential
