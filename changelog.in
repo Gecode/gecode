@@ -73,6 +73,14 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a potential memory leak for restart-based search when the
+root space was failed.
+
+[ENTRY]
 Module: kernel
 What:   removed
 Rank:   minor

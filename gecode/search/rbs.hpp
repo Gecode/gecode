@@ -91,16 +91,14 @@ namespace Gecode {
     Search::Statistics stat;
     e_opt.clone = false;
     e_opt.stop  = Search::Meta::stop(m_opt.stop);
-    Space* master;
-    Space* slave;
     if (s->status(stat) == SS_FAILED) {
       stat.fail++;
-      master = NULL;
-      slave  = NULL;
+      if (!m_opt.clone)
+        delete s;
       e = Search::Meta::dead(e_opt, stat);
     } else {
-      master = m_opt.clone ? s->clone() : s;
-      slave  = master->clone();
+      Space* master = m_opt.clone ? s->clone() : s;
+      Space* slave  = master->clone();
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
       e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),
