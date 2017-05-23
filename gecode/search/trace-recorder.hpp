@@ -84,9 +84,6 @@ namespace Gecode { namespace Search {
     void round(void);
     /// The engine skips an edge
     void skip(const SearchTracer::EdgeInfo& ei);
-    /// The engine skips a node
-    void skip(const SearchTracer::EdgeInfo& ei,
-              const SearchTracer::NodeInfo& ni);
     /// The engine creates a new node with information \a ei and \a ni
     void node(const SearchTracer::EdgeInfo& ei,
               const SearchTracer::NodeInfo& ni);
@@ -141,9 +138,6 @@ namespace Gecode { namespace Search {
     void round(void);
     /// The engine skips an edge
     void skip(const SearchTracer::EdgeInfo& ei);
-    /// The engine skips a node
-    void skip(const SearchTracer::EdgeInfo& ei,
-              const SearchTracer::NodeInfo& ni);
     /// The engine creates a new node with information \a ei and \a ni
     void node(const SearchTracer::EdgeInfo& ei,
               const SearchTracer::NodeInfo& ni);
@@ -212,12 +206,6 @@ namespace Gecode { namespace Search {
   forceinline void
   TraceRecorder::skip(const SearchTracer::EdgeInfo& ei) {
     tracer._skip(ei);
-  }
-
-  forceinline void
-  TraceRecorder::skip(const SearchTracer::EdgeInfo& ei,
-                      const SearchTracer::NodeInfo& ni) {
-    tracer._skip(ei,ni);
   }
 
   forceinline void
@@ -303,10 +291,6 @@ namespace Gecode { namespace Search {
 
   forceinline void
   NoTraceRecorder::skip(const SearchTracer::EdgeInfo&) {}
-
-  forceinline void
-  NoTraceRecorder::skip(const SearchTracer::EdgeInfo&,
-                        const SearchTracer::NodeInfo&) {}
 
   forceinline void
   NoTraceRecorder::node(const SearchTracer::EdgeInfo&,

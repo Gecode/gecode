@@ -321,8 +321,6 @@ namespace Gecode {
     void _round(unsigned int eid);
     /// The engine skips an edge
     void _skip(const EdgeInfo& ei);
-    /// The engine skips a node
-    void _skip(const EdgeInfo& ei, const NodeInfo& ni);
     /// The engine creates a new node with information \a ei and \a ni
     void _node(const EdgeInfo& ei, const NodeInfo& ni);
     //@}
@@ -348,8 +346,6 @@ namespace Gecode {
     virtual void round(unsigned int eid) = 0;
     /// The engine skips an edge
     virtual void skip(const EdgeInfo& ei) = 0;
-    /// The engine skips a node
-    virtual void skip(const EdgeInfo& ei, const NodeInfo& ni) = 0;
     /// The engine creates a new node with information \a ei and \a ni
     virtual void node(const EdgeInfo& ei, const NodeInfo& ni) = 0;
     /// All workers are done
@@ -372,8 +368,6 @@ namespace Gecode {
     virtual void round(unsigned int eid);
     /// The engine skips an edge
     virtual void skip(const EdgeInfo& ei);
-    /// The engine skips a node
-    virtual void skip(const EdgeInfo& ei, const NodeInfo& ni);
     /// The engine creates a new node with information \a ei and \a ni
     virtual void node(const EdgeInfo& ei, const NodeInfo& ni);
     /// All workers are done

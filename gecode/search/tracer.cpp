@@ -90,13 +90,6 @@ namespace Gecode {
               << ",a:" << ei.alternative() << ")" << std::endl;
   }
 
-  void
-  StdSearchTracer::skip(const EdgeInfo& ei, const NodeInfo& ni) {
-    std::cout << "trace<Search>Search::skip(w:" << ei.wid()
-              << ",n:" << ei.nid()
-              << ",a:" << ei.alternative() << ")" << std::endl;
-  }
-
   void 
   StdSearchTracer::node(const EdgeInfo& ei, const NodeInfo& ni) {
     std::cout << "trace<Search>::node(";

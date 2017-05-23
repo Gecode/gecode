@@ -217,13 +217,6 @@ namespace Gecode {
   }
 
   forceinline void
-  SearchTracer::_skip(const EdgeInfo& ei, const NodeInfo& ni) {
-    m.acquire();
-    skip(ei,ni);
-    m.release();
-  }
-
-  forceinline void
   SearchTracer::_node(const EdgeInfo& ei, const NodeInfo& ni) {
     m.acquire();
     node(ei,ni);

@@ -91,6 +91,8 @@ namespace Gecode {
     Search::Statistics stat;
     e_opt.clone = false;
     e_opt.stop  = Search::Meta::stop(m_opt.stop);
+    Search::WrapTraceRecorder::engine(e_opt.tracer,
+                                      SearchTracer::EngineType::RBS, 1U);
     if (s->status(stat) == SS_FAILED) {
       stat.fail++;
       if (!m_opt.clone)
