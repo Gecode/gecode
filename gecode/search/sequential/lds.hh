@@ -323,9 +323,7 @@ namespace Gecode { namespace Search { namespace Sequential {
           goto backtrack;
         case SS_SOLVED:
           if (tracer) {
-            SearchTracer::NodeInfo ni(SearchTracer::NodeType::SOLVED,
-                                      tracer.wid(), tracer.nid(), *cur);
-            tracer.skip(*tracer.ei(),ni);
+            tracer.skip(*tracer.ei());
           }
           delete cur;
           cur = NULL;
