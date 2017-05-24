@@ -624,7 +624,7 @@ namespace Gecode {
       _log_file("-file-stat", "where to print statistics "
                 "(supports stdout, stdlog, stderr)","stdout"),
       _trace(0),
-      _search_trace()
+      _search_tracer()
   {
 
     _mode.add(SM_SOLUTION, "solution");
@@ -648,7 +648,7 @@ namespace Gecode {
     add(_nogoods); add(_nogoods_limit);
     add(_relax);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
-    add(_out_file); add(_log_file); add(_trace); add(_search_trace);
+    add(_out_file); add(_log_file); add(_trace); add(_search_tracer);
   }
 
 

@@ -421,14 +421,14 @@ namespace Gecode {
 
     /// \name Execution options
     //@{
-    Driver::StringOption      _mode;         ///< Script mode to run
-    Driver::UnsignedIntOption _samples;      ///< How many samples
-    Driver::UnsignedIntOption _iterations;   ///< How many iterations per sample
-    Driver::BoolOption        _print_last;   ///< Print only last solution found
-    Driver::StringValueOption _out_file;     ///< Where to print solutions
-    Driver::StringValueOption _log_file;     ///< Where to print statistics
-    Driver::TraceOption       _trace;        ///< Trace flags for tracing
-    Driver::SearchTraceOption _search_trace; ///< Search tracer
+    Driver::StringOption      _mode;          ///< Script mode to run
+    Driver::UnsignedIntOption _samples;       ///< How many samples
+    Driver::UnsignedIntOption _iterations;    ///< How many iterations per sample
+    Driver::BoolOption        _print_last;    ///< Print only last solution found
+    Driver::StringValueOption _out_file;      ///< Where to print solutions
+    Driver::StringValueOption _log_file;      ///< Where to print statistics
+    Driver::TraceOption       _trace;         ///< Trace flags for tracing
+    Driver::SearchTraceOption _search_tracer; ///< Search tracer
     //@}
 
   public:
@@ -619,9 +619,9 @@ namespace Gecode {
     int trace(void) const;
 
     /// Set search tracer
-    void search_trace(SearchTracer* t);
+    void search_tracer(SearchTracer* t);
     /// Return search tracer
-    SearchTracer* search_trace(void) const;
+    SearchTracer* search_tracer(void) const;
     //@}
 
 #ifdef GECODE_HAS_GIST

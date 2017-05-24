@@ -523,13 +523,13 @@ namespace Gecode {
   }
 
   inline void
-  Options::search_trace(SearchTracer* t) {
-    _search_trace.value(t);
+  Options::search_tracer(SearchTracer* t) {
+    _search_tracer.value(t);
   }
 
   inline SearchTracer*
-  Options::search_trace(void) const {
-    return _search_trace.value();
+  Options::search_tracer(void) const {
+    return _search_tracer.value();
   }
 
 #ifdef GECODE_HAS_GIST
