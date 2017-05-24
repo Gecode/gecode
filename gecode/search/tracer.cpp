@@ -55,27 +55,18 @@ namespace Gecode {
       for (unsigned int e=0U; e<engines(); e++) {
         os << "\t" << e << ": " 
            << t2s[engine(e).type()];
-        switch (engine(e).type()) {
-        case EngineType::DFS: 
-        case EngineType::BAB:
-        case EngineType::LDS:
-        case EngineType::AOE:
-          os << ", workers: {";
-          for (unsigned int i=engine(e).wfst(); i<engine(e).wlst(); i++) {
-            os << i; if (i+1 < engine(e).wlst()) os << ",";
-          }
-          os << "}" << std::endl;
-          break;
-        case EngineType::RBS:
-        case EngineType::PBS:
+        if (engine(e).meta()) {
           os << ", engines: {";
           for (unsigned int i=engine(e).efst(); i<engine(e).elst(); i++) {
             os << i; if (i+1 < engine(e).elst()) os << ",";
           }
-          os << "}" << std::endl;
-          break;
-        default: GECODE_NEVER;
+        } else {
+          os << ", workers: {";
+          for (unsigned int i=engine(e).wfst(); i<engine(e).wlst(); i++) {
+            os << i; if (i+1 < engine(e).wlst()) os << ",";
+          }
         }
+        os << "}" << std::endl;
       }
     }
 

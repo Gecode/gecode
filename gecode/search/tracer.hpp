@@ -56,6 +56,11 @@ namespace Gecode {
     return _type;
   }
 
+  forceinline bool
+  SearchTracer::EngineInfo::meta(void) const {
+    return (type() == EngineType::RBS) || (type() == EngineType::PBS);
+  }
+
   forceinline unsigned int
   SearchTracer::EngineInfo::eid(void) const {
     return _eid;

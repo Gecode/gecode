@@ -210,6 +210,8 @@ namespace Gecode {
                  unsigned int fst, unsigned int lst);
       /// Return engine type
       EngineType type(void) const;
+      /// Return whether engine is a meta engine
+      bool meta(void) const;
       /// Return engine id
       unsigned int eid(void) const;
       /// Return id of first worker
