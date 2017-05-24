@@ -160,6 +160,19 @@ namespace Gecode {
       return cur;
     }
 
+    /*
+     * Search trace option
+     *
+     */
+    inline void
+    SearchTraceOption::value(SearchTracer* t) {
+      cur = t;
+    }
+    inline SearchTracer*
+    SearchTraceOption::value(void) const {
+      return cur;
+    }
+
   }
 
   /*
@@ -507,6 +520,16 @@ namespace Gecode {
   inline int
   Options::trace(void) const {
     return _trace.value();
+  }
+
+  inline void
+  Options::search_trace(SearchTracer* t) {
+    _search_trace.value(t);
+  }
+
+  inline SearchTracer*
+  Options::search_trace(void) const {
+    return _search_trace.value();
   }
 
 #ifdef GECODE_HAS_GIST

@@ -357,11 +357,13 @@ namespace Gecode {
 
   class GECODE_SEARCH_EXPORT StdSearchTracer : public SearchTracer {
   protected:
+    /// Output stream to use
+    std::ostream& os;
     /// Map engine type to string
     static const char* t2s[EngineType::AOE + 1];
   public:
-    /// Initialize
-    StdSearchTracer(void);
+    /// Initialize  with output stream \a os
+    StdSearchTracer(std::ostream& os = std::cerr);
     /// The search engine initializes
     virtual void init(void);
     /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
@@ -374,6 +376,8 @@ namespace Gecode {
     virtual void done(void);
     /// Delete
     virtual ~StdSearchTracer(void);
+    /// Default tracer (printing to std::cerr)
+    static StdSearchTracer def;
   };
 
 }

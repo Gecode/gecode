@@ -200,8 +200,8 @@ namespace Gecode {
     /// Output stream to use
     std::ostream& os;
   public:
-    /// Initialize with output stream \a os0
-    StdTracer(std::ostream& os0 = std::cerr);
+    /// Initialize with output stream \a os
+    StdTracer(std::ostream& os = std::cerr);
     /**
      * \brief Propagate function
      *

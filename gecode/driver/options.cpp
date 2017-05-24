@@ -437,6 +437,49 @@ namespace Gecode {
     }
 
 
+    /*
+     * Search trace option
+     *
+     */
+    SearchTraceOption::SearchTraceOption(void)
+      : BaseOption("-search-trace","search tracer (none, std)"),
+        cur(nullptr) {}
+
+    int
+    SearchTraceOption::parse(int argc, char* argv[]) {
+      if (char* a = argument(argc,argv)) {
+        if (!strcmp(a,"none") || !strcmp(a,"0")) {
+          cur = nullptr;
+          return 2;
+        } else if (!strcmp(a,"std")) {
+          cur = &StdSearchTracer::def;;
+          return 2;
+        } else {
+          std::cerr << "Wrong argument \"" << a
+                    << "\" for option \"" << opt << "\""
+                    << std::endl;
+          exit(EXIT_FAILURE);
+        }
+      }
+      return 0;
+    }
+
+    void
+    SearchTraceOption::help(void) {
+      using namespace std;
+      cerr << '\t' << opt
+           << " (none,std) default: ";
+      if (cur == nullptr) {
+        cerr << "none";
+      } else if (cur == &StdSearchTracer::def) {
+        cerr << "std";
+      } else {
+        cerr << "user defined";
+      }
+      cerr << endl;
+    }
+
+
   }
 
   void
@@ -580,14 +623,14 @@ namespace Gecode {
                 "(supports stdout, stdlog, stderr)","stdout"),
       _log_file("-file-stat", "where to print statistics "
                 "(supports stdout, stdlog, stderr)","stdout"),
-      _trace(0)
+      _trace(0),
+      _search_trace()
   {
 
     _mode.add(SM_SOLUTION, "solution");
     _mode.add(SM_TIME, "time");
     _mode.add(SM_STAT, "stat");
     _mode.add(SM_GIST, "gist");
-    _mode.add(SM_TRACE, "trace");
 
     _restart.add(RM_NONE,"none");
     _restart.add(RM_CONSTANT,"constant");
@@ -605,7 +648,7 @@ namespace Gecode {
     add(_nogoods); add(_nogoods_limit);
     add(_relax);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
-    add(_out_file); add(_log_file); add(_trace);
+    add(_out_file); add(_log_file); add(_trace); add(_search_trace);
   }
 
 

@@ -99,8 +99,7 @@ namespace Gecode {
     SM_SOLUTION, ///< Print solution and some statistics
     SM_TIME,     ///< Measure average runtime
     SM_STAT,     ///< Print statistics for script
-    SM_GIST,     ///< Run script in Gist
-    SM_TRACE     ///< Run in search tracing mode
+    SM_GIST      ///< Run script in Gist
   };
 
   /**
@@ -323,6 +322,26 @@ namespace Gecode {
       virtual void help(void);
     };
 
+    /**
+     * \brief Search trace option
+     *
+     */
+    class GECODE_DRIVER_EXPORT SearchTraceOption : public BaseOption {
+    protected:
+      SearchTracer* cur; ///< Current value
+    public:
+      /// Initialize with no tracing
+      SearchTraceOption(void);
+      /// Set default tracer
+      void value(SearchTracer* t);
+      /// Return current option value
+      SearchTracer* value(void) const;
+      /// Parse option at first position and return number of parsed arguments
+      virtual int parse(int argc, char* argv[]);
+      /// Print help text
+      virtual void help(void);
+    };
+
   }
 
   /**
@@ -402,13 +421,14 @@ namespace Gecode {
 
     /// \name Execution options
     //@{
-    Driver::StringOption      _mode;       ///< Script mode to run
-    Driver::UnsignedIntOption _samples;    ///< How many samples
-    Driver::UnsignedIntOption _iterations; ///< How many iterations per sample
-    Driver::BoolOption        _print_last; ///< Print only last solution found
-    Driver::StringValueOption _out_file;   ///< Where to print solutions
-    Driver::StringValueOption _log_file;   ///< Where to print statistics
-    Driver::TraceOption       _trace;      ///< Trace flags for tracing
+    Driver::StringOption      _mode;         ///< Script mode to run
+    Driver::UnsignedIntOption _samples;      ///< How many samples
+    Driver::UnsignedIntOption _iterations;   ///< How many iterations per sample
+    Driver::BoolOption        _print_last;   ///< Print only last solution found
+    Driver::StringValueOption _out_file;     ///< Where to print solutions
+    Driver::StringValueOption _log_file;     ///< Where to print statistics
+    Driver::TraceOption       _trace;        ///< Trace flags for tracing
+    Driver::SearchTraceOption _search_trace; ///< Search tracer
     //@}
 
   public:
@@ -597,6 +617,11 @@ namespace Gecode {
     void trace(int f);
     /// Return trace flags
     int trace(void) const;
+
+    /// Set search tracer
+    void search_trace(SearchTracer* t);
+    /// Return search tracer
+    SearchTracer* search_trace(void) const;
     //@}
 
 #ifdef GECODE_HAS_GIST

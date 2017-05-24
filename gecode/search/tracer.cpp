@@ -46,32 +46,33 @@ namespace Gecode {
     "AOE"
   };
 
-  StdSearchTracer::StdSearchTracer(void) {}
+  StdSearchTracer::StdSearchTracer(std::ostream& os0)
+    : os(os0) {}
 
   void
   StdSearchTracer::init(void) {
-    std::cout << "trace<Search>::init()" << std::endl;
+    os << "trace<Search>::init()" << std::endl;
       for (unsigned int e=0U; e<engines(); e++) {
-        std::cout << "\t" << e << ": " 
-                  << t2s[engine(e).type()];
+        os << "\t" << e << ": " 
+           << t2s[engine(e).type()];
         switch (engine(e).type()) {
         case EngineType::DFS: 
         case EngineType::BAB:
         case EngineType::LDS:
         case EngineType::AOE:
-          std::cout << ", workers: {";
+          os << ", workers: {";
           for (unsigned int i=engine(e).wfst(); i<engine(e).wlst(); i++) {
-            std::cout << i; if (i+1 < engine(e).wlst()) std::cout << ",";
+            os << i; if (i+1 < engine(e).wlst()) os << ",";
           }
-          std::cout << "}" << std::endl;
+          os << "}" << std::endl;
           break;
         case EngineType::RBS:
         case EngineType::PBS:
-          std::cout << ", engines: {";
+          os << ", engines: {";
           for (unsigned int i=engine(e).efst(); i<engine(e).elst(); i++) {
-            std::cout << i; if (i+1 < engine(e).elst()) std::cout << ",";
+            os << i; if (i+1 < engine(e).elst()) os << ",";
           }
-          std::cout << "}" << std::endl;
+          os << "}" << std::endl;
           break;
         default: GECODE_NEVER;
         }
@@ -80,53 +81,55 @@ namespace Gecode {
 
   void
   StdSearchTracer::round(unsigned int eid) {
-    std::cout << "trace<Search>::round(e:" << eid << ")" << std::endl;
+    os << "trace<Search>::round(e:" << eid << ")" << std::endl;
   }
 
   void
   StdSearchTracer::skip(const EdgeInfo& ei) {
-    std::cout << "trace<Search>Search::skip(w:" << ei.wid()
-              << ",n:" << ei.nid()
-              << ",a:" << ei.alternative() << ")" << std::endl;
+    os << "trace<Search>Search::skip(w:" << ei.wid()
+       << ",n:" << ei.nid()
+       << ",a:" << ei.alternative() << ")" << std::endl;
   }
 
   void 
   StdSearchTracer::node(const EdgeInfo& ei, const NodeInfo& ni) {
-    std::cout << "trace<Search>::node(";
+    os << "trace<Search>::node(";
     switch (ni.type()) {
     case NodeType::FAILED:
-      std::cout << "FAILED";
+      os << "FAILED";
       break;
     case NodeType::SOLVED:
-      std::cout << "SOLVED";
+      os << "SOLVED";
       break;
     case NodeType::BRANCH:
-      std::cout << "BRANCH(" << ni.choice().alternatives() << ")";
+      os << "BRANCH(" << ni.choice().alternatives() << ")";
       break;
     }
     if (!ei)
-      std::cout << ",root";
-    std::cout << ','
-              << "w:" << ni.wid() << ',';
+      os << ",root";
+    os << ",w:" << ni.wid() << ',';
     if (ei)
-      std::cout << "p:" << ei.nid() << ',';
-    std::cout << "n:" << ni.nid() << ')';
+      os << "p:" << ei.nid() << ',';
+    os << "n:" << ni.nid() << ')';
     if (ei) {
       if (ei.wid() != ni.wid())
-        std::cout << " [stolen from w:" << ei.wid() << "]";
-      std::cout << std::endl
-                << '\t' << ei.string()
-                << std::endl;
+        os << " [stolen from w:" << ei.wid() << "]";
+      os << std::endl
+         << '\t' << ei.string()
+         << std::endl;
     } else {
-      std::cout << std::endl;
+      os << std::endl;
     }
   }
   
-  void StdSearchTracer::done(void) {
-    std::cout << "trace<Search>::done()" << std::endl;
+  void
+  StdSearchTracer::done(void) {
+    os << "trace<Search>::done()" << std::endl;
   }
 
   StdSearchTracer::~StdSearchTracer(void) {}
+
+  StdSearchTracer StdSearchTracer::def;
 
 }
 
