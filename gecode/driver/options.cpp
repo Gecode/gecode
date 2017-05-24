@@ -442,7 +442,7 @@ namespace Gecode {
      *
      */
     SearchTraceOption::SearchTraceOption(void)
-      : BaseOption("-search-trace","search tracer (none, std)"),
+      : BaseOption("-search-tracer","search tracer (none, std)"),
         cur(nullptr) {}
 
     int
