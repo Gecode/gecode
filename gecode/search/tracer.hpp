@@ -47,9 +47,9 @@ namespace Gecode {
   SearchTracer::EngineInfo::EngineInfo(void) {}
 
   forceinline
-  SearchTracer::EngineInfo::EngineInfo(EngineType et, unsigned int eid,
+  SearchTracer::EngineInfo::EngineInfo(EngineType et,
                                        unsigned int fst, unsigned int lst)
-    : _type(et), _eid(eid), _fst(fst), _lst(lst) {}
+    : _type(et), _fst(fst), _lst(lst) {}
 
   forceinline SearchTracer::EngineType
   SearchTracer::EngineInfo::type(void) const {
@@ -59,11 +59,6 @@ namespace Gecode {
   forceinline bool
   SearchTracer::EngineInfo::meta(void) const {
     return (type() == EngineType::RBS) || (type() == EngineType::PBS);
-  }
-
-  forceinline unsigned int
-  SearchTracer::EngineInfo::eid(void) const {
-    return _eid;
   }
 
   forceinline unsigned int
@@ -238,11 +233,11 @@ namespace Gecode {
     pending += n-1;
     switch (t) {
     case EngineType::PBS: case EngineType::RBS:
-      es[n_e]=EngineInfo(t,n_e,n_e+1,n_e+1+n);
+      es[n_e]=EngineInfo(t,n_e+1,n_e+1+n);
       break;
     case EngineType::DFS: case EngineType::BAB:
     case EngineType::LDS: case EngineType::AOE:
-      es[n_e]=EngineInfo(t,n_e,n_w,n_w+n);
+      es[n_e]=EngineInfo(t,n_w,n_w+n);
       break;
     default: GECODE_NEVER;
     }

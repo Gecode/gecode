@@ -196,8 +196,6 @@ namespace Gecode {
     protected:
       /// The engine type
       EngineType _type;
-      /// Engine id
-      unsigned int _eid;
       /// First worker or engine
       unsigned int _fst;
       /// Last worker or engine
@@ -206,26 +204,32 @@ namespace Gecode {
       /// Do not initialize
       EngineInfo(void);
       /// Initialize
-      EngineInfo(EngineType et, unsigned int eid,
-                 unsigned int fst, unsigned int lst);
+      EngineInfo(EngineType et, unsigned int fst, unsigned int lst);
+      /// \name Engine type information
+      //@{
       /// Return engine type
       EngineType type(void) const;
       /// Return whether engine is a meta engine
       bool meta(void) const;
-      /// Return engine id
-      unsigned int eid(void) const;
+      //@}
+      /// \name Information for basic (non-meta) engines
+      //@{
       /// Return id of first worker
       unsigned int wfst(void) const;
       /// Return id of last worker plus one
       unsigned int wlst(void) const;
       /// Return number of workers
       unsigned int workers(void) const;
+      //@}
+      /// \name Information for meta engines
+      //@{
       /// Return id of first engine
       unsigned int efst(void) const;
       /// Return id of last engine
       unsigned int elst(void) const;
       /// Return number of engines
       unsigned int engines(void) const;
+      //@}
     };
     /// Edge information
     class EdgeInfo {
