@@ -329,6 +329,8 @@ namespace Gecode { namespace Set { namespace Rel {
   Lq<View0,View1,strict>::post(Home home, View0 x, View1 y) {
     if (strict)
       GECODE_ME_CHECK(y.cardMin(home,1));
+    if (same(x,y))
+      return strict ? ES_FAILED : ES_OK;
     (void) new (home) Lq(home,x,y);
     return ES_OK;
   }

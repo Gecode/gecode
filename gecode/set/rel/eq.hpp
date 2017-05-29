@@ -56,7 +56,8 @@ namespace Gecode { namespace Set { namespace Rel {
   template<class View0, class View1>
   ExecStatus
   Eq<View0,View1>::post(Home home, View0 x, View1 y) {
-    (void) new (home) Eq(home,x,y);
+    if (!same(x,y))
+      (void) new (home) Eq(home,x,y);
     return ES_OK;
   }
 

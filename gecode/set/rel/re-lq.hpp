@@ -84,8 +84,20 @@ namespace Gecode { namespace Set { namespace Rel {
   template<class View0, class View1, ReifyMode rm, bool strict>
   ExecStatus
   ReLq<View0,View1,rm,strict>::post(Home home, View0 x0, View1 x1,
-                            Gecode::Int::BoolView b) {
-    (void) new (home) ReLq<View0,View1,rm,strict>(home,x0,x1,b);
+                                    Gecode::Int::BoolView b) {
+    if (!same(x0,x1)) {
+      (void) new (home) ReLq<View0,View1,rm,strict>(home,x0,x1,b);
+    } else {
+      if (strict) {
+        if (rm != RM_PMI) {
+          GECODE_ME_CHECK(b.zero(home));
+        }
+      } else {
+        if (rm != RM_IMP) {
+          GECODE_ME_CHECK(b.one(home));
+        }
+      }
+    }
     return ES_OK;
   }
 

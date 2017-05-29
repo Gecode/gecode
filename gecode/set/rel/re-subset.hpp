@@ -88,7 +88,11 @@ namespace Gecode { namespace Set { namespace Rel {
   ExecStatus
   ReSubset<View0,View1,CtrlView,rm>::post(Home home, View0 x0, View1 x1,
                                           CtrlView b) {
-    (void) new (home) ReSubset<View0,View1,CtrlView,rm>(home,x0,x1,b);
+    if (!same(x0,x1)) {
+      (void) new (home) ReSubset<View0,View1,CtrlView,rm>(home,x0,x1,b);
+    } else if (rm != RM_IMP) {
+      GECODE_ME_CHECK(b.one(home));
+    }
     return ES_OK;
   }
 

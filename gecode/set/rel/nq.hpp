@@ -57,6 +57,8 @@ namespace Gecode { namespace Set { namespace Rel {
   template<class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::post(Home home, View0 x, View1 y) {
+    if (same(x,y))
+      return ES_FAILED;
     if (x.assigned()) {
       GlbRanges<View0> xr(x);
       IntSet xs(xr);

@@ -53,6 +53,10 @@ namespace Gecode { namespace Set { namespace Rel {
    * \brief Standard set relation propagators
    */
 
+  /// Test whether two views are in fact the same
+  template<class VX, class VY>
+  bool same(VX c, VY y);
+
   /**
    * \brief %Propagator for the subset constraint
    *

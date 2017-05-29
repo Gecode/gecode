@@ -73,6 +73,15 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Added checks to avoid posting set relation propagators in case
+their variables are in fact the same.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor
