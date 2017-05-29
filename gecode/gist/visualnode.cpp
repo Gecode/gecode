@@ -400,7 +400,7 @@ namespace Gecode { namespace Gist {
   }
 
   void
-  VisualNode::computeShape(const NodeAllocator& na, VisualNode* root) {
+  VisualNode::computeShape(const NodeAllocator& na) {
     int numberOfShapes = getNumberOfChildren();
     Extent extent;
     if (na.hasLabel(this)) {
@@ -459,7 +459,6 @@ namespace Gecode { namespace Gist {
       // are merged left-to-right; alpha[i].second gives the distance between
       // shape[i] and shape[i+1], when shape[i] and shape[i+1] are merged
       // right-to-left.
-      assert(root->copy != NULL);
       Region r;
       std::pair<int,int>* alpha =
         r.alloc<std::pair<int,int> >(numberOfShapes);

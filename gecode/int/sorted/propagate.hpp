@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     // if bounds have changed we have to recreate sigma to restore
     // optimized dropping of variables
 
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     bool subsumed   = true;
     bool array_subs = false;
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     for(int i = n; i--; )
       sinfo[i].left=sinfo[i].right=sinfo[i].rightmost=sinfo[i].leftmost= i;
 
-    computesccs(home,x,y,phi,sinfo,scclist);
+    computesccs(x,y,phi,sinfo,scclist);
 
     /*
      * STEP 5:
@@ -407,7 +407,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     // create sigma sorting
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     bool noperm_bc = false;
     if (!array_assigned<View,Perm>
@@ -417,7 +417,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (array_subs)
       return home.ES_SUBSUMED(*this);
 
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     // in this case check_subsumptions is guaranteed to find
     // the xs ordered by sigma
@@ -553,7 +553,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     noperm_bc  = false;
 
     // creating sorting anew
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     if (Perm) {
       for (int i = 0; i < x.size() - 1; i++) {

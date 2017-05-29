@@ -199,11 +199,11 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Initialize graph
     ExecStatus init(Space& home, ViewArray<View>& x);
     /// Mark edges in graph, return true if pruning is at all possible
-    bool mark(Space& home);
+    bool mark(void);
     /// Prune unmarked edges, \a assigned is true if a view got assigned
     ExecStatus prune(Space& home, bool& assigned);
     /// Synchronize graph with new view domains
-    bool sync(Space& home);
+    bool sync(void);
   };
 
   /**
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Initialize view-value graph for views \a x
     ExecStatus init(Space& home, ViewArray<View>& x);
     /// Synchronize available view-value graph
-    ExecStatus sync(Space& home);
+    ExecStatus sync(void);
     /// Perform propagation, \a assigned is true if a view gets assigned
     ExecStatus propagate(Space& home, bool& assigned);
   };

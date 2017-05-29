@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   inline bool
-  isDistinct(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+  isDistinct(ViewArray<IntView>& x, ViewArray<Card>& k) {
     if (Card::propagate) {
       Region r;
       ViewRanges<IntView>* xrange = r.alloc<ViewRanges<IntView> >(x.size());

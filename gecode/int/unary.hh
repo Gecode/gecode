@@ -753,7 +753,7 @@ namespace Gecode { namespace Int { namespace Unary {
 
   /// Check mandatory tasks \a t for overload
   template<class ManTask>
-  ExecStatus overload(Space& home, TaskArray<ManTask>& t);
+  ExecStatus overload(TaskArray<ManTask>& t);
   /// Check optional tasks \a t for overload
   template<class OptTask, class PL>
   ExecStatus overload(Space& home, Propagator& p, TaskArray<OptTask>& t);

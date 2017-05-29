@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
     // Perform domain consistent propagation for distinct on the x views
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync(home));
+      GECODE_ES_CHECK(dc.sync());
     } else {
       ViewArray<View> xv(r,n);
       for (int i=n; i--; )

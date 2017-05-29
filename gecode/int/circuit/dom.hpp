@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
 
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync(home));
+      GECODE_ES_CHECK(dc.sync());
     } else {
       GECODE_ES_CHECK(dc.init(home,y));
     }

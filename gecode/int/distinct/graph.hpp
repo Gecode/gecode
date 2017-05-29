@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline bool
-  Graph<View>::sync(Space& home) {
+  Graph<View>::sync(void) {
     using namespace ViewValGraph;
     Region r;
     // Stack for view nodes to be rematched
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline bool
-  Graph<View>::mark(Space& home) {
+  Graph<View>::mark(void) {
     using namespace ViewValGraph;
 
     Region r;
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     // If all view nodes have been visited, also all edges are used!
     if (n_view_visited < n_view) {
-      scc(home);
+      scc();
       return true;
     } else {
       return false;

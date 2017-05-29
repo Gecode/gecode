@@ -145,7 +145,7 @@ namespace Gecode { namespace Search { namespace Sequential {
       node++;
       SearchTracer::EdgeInfo ei;
       if (tracer && (path.entries() > 0)) {
-        Path<Tracer>::Edge& top = path.top();
+        typename Path<Tracer>::Edge& top = path.top();
         ei.init(tracer.wid(), top.nid(), top.truealt(), *cur, *top.choice());
       }
       unsigned int nid = tracer.nid();

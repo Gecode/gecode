@@ -133,6 +133,7 @@ namespace Gecode {
   forceinline
   BrancherNoFilter<View>::BrancherNoFilter(BranchFilter<Var> bf) {
     assert(!bf);
+    (void) bf;
   }
   
   template<class View>

@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   forceinline void
-  Graph::sync(Space& home) {
+  Graph::sync(void) {
     using namespace ViewValGraph;
     Region r;
 
@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   forceinline bool
-  Graph::mark(Space& home) {
+  Graph::mark(void) {
     using namespace ViewValGraph;
     Region r;
 
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace NValues {
     }
 
     if (n_view_visited < n_view) {
-      scc(home);
+      scc();
       return true;
     } else {
       return false;

@@ -325,7 +325,7 @@ namespace Gecode { namespace Int { namespace NValues {
       g.init(home,vs,x);
     } else {
       g.purge();
-      g.sync(home);
+      g.sync();
     }
     GECODE_ME_CHECK(y.lq(home, g.size()));
     if (y.min() == g.size()) {
@@ -338,7 +338,7 @@ namespace Gecode { namespace Int { namespace NValues {
         }
         GECODE_REWRITE(*this,Distinct::Dom<IntView>::post(home(*this),x));
       }
-      if (g.mark(home))
+      if (g.mark())
         GECODE_ES_CHECK(g.prune(home));
     }
     return ES_OK;

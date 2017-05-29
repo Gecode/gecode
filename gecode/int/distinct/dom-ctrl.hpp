@@ -62,15 +62,15 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   ExecStatus
-  DomCtrl<View>::sync(Space& home) {
+  DomCtrl<View>::sync(void) {
     g.purge();
-    return g.sync(home) ? ES_OK : ES_FAILED;
+    return g.sync() ? ES_OK : ES_FAILED;
   }
 
   template<class View>
   ExecStatus
   DomCtrl<View>::propagate(Space& home, bool& assigned) {
-    if (!g.mark(home))
+    if (!g.mark())
       return ES_OK;
     return g.prune(home,assigned);
   }

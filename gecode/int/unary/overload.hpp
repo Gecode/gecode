@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Unary {
   // Overload checking for mandatory tasks
   template<class ManTask>
   ExecStatus
-  overload(Space& home, TaskArray<ManTask>& t) {
+  overload(TaskArray<ManTask>& t) {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
 

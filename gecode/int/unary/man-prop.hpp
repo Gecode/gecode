@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class ManTask, class PL>
   ExecStatus
   ManProp<ManTask,PL>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ES_CHECK(overload(home,t));
+    GECODE_ES_CHECK(overload(t));
 
     if (PL::basic)
       GECODE_ES_CHECK(timetabling(home,*this,t));

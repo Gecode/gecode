@@ -109,13 +109,13 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Initialize graph including values in \a vs
     void init(Space& home, const ValSet& vs, const ViewArray<IntView>& x);
     /// Synchronize graph with new view domains
-    void sync(Space& home);
+    void sync(void);
     /*
      * \brief Mark all edges used that can appear in some maximal matching
      *
      * Return true, if any edge can be in fact pruned.
      */
-    bool mark(Space& home);
+    bool mark(void);
     /// Prune all values corresponding to unused edges
     ExecStatus prune(Space& home);
   };

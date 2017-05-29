@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Sequence {
 
   template<class View, class Val>
   forceinline ExecStatus
-  Sequence<View,Val>::check(Space& home, ViewArray<View>& x, Val s, int q, int l, int u) {
+  Sequence<View,Val>::check(ViewArray<View>& x, Val s, int q, int l, int u) {
     Region r;
     // could do this with an array of length q...
     int* upper = r.alloc<int>(x.size()+1);
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Sequence {
   template<class View, class Val>
   ExecStatus
   Sequence<View,Val>::post(Home home, ViewArray<View>& x, Val s, int q, int l, int u) {
-    GECODE_ES_CHECK(check(home,x,s,q,l,u));
+    GECODE_ES_CHECK(check(x,s,q,l,u));
     Sequence<View,Val>* p = new (home) Sequence<View,Val>(home,x,s,q,l,u);
 
     GECODE_ES_CHECK(p->vvsamax.propagate(home,x,s,q,l,u));

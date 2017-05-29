@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_REWRITE(*this,TerDom<View>::post(home(*this),x[0],x[1],x[2]));
 
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync(home));
+      GECODE_ES_CHECK(dc.sync());
     } else {
       GECODE_ES_CHECK(dc.init(home,x));
     }

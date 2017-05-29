@@ -145,6 +145,7 @@ namespace Gecode {
   forceinline
   BrancherNoPrint<View,Val>::BrancherNoPrint(VarValPrint<Var,Val> vvp) {
     assert(!vvp);
+    (void) vvp;
   }
   
   template<class View, class Val>

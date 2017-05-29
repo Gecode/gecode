@@ -824,7 +824,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     GECODE_ES_CHECK(postSideConstraints<Card>(home, x, k));
 
-    if (isDistinct<Card>(home,x,k))
+    if (isDistinct<Card>(x,k))
       return Distinct::Bnd<IntView>::post(home,x);
 
     (void) new (home) Bnd<Card>(home,x,k,cardfix,nolbc);

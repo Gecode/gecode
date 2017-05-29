@@ -196,24 +196,24 @@ namespace Gecode { namespace Int { namespace GCC {
 
       vvg = new (home) VarValGraph<Card>(home, x, k, smin, smax);
       GECODE_ES_CHECK(vvg->min_require(home,x,k));
-      GECODE_ES_CHECK(vvg->template maximum_matching<UBC>(home));
+      GECODE_ES_CHECK(vvg->template maximum_matching<UBC>());
       if (!card_fixed)
-        GECODE_ES_CHECK(vvg->template maximum_matching<LBC>(home));
+        GECODE_ES_CHECK(vvg->template maximum_matching<LBC>());
     } else {
-      GECODE_ES_CHECK(vvg->sync(home,x,k));
+      GECODE_ES_CHECK(vvg->sync(x,k));
     }
 
-    vvg->template free_alternating_paths<UBC>(home);
-    vvg->template strongly_connected_components<UBC>(home);
+    vvg->template free_alternating_paths<UBC>();
+    vvg->template strongly_connected_components<UBC>();
 
     GECODE_ES_CHECK(vvg->template narrow<UBC>(home,x,k));
 
     if (!card_fixed) {
       if (Card::propagate)
-        GECODE_ES_CHECK(vvg->sync(home,x,k));
+        GECODE_ES_CHECK(vvg->sync(x,k));
 
-      vvg->template free_alternating_paths<LBC>(home);
-      vvg->template strongly_connected_components<LBC>(home);
+      vvg->template free_alternating_paths<LBC>();
+      vvg->template strongly_connected_components<LBC>();
 
       GECODE_ES_CHECK(vvg->template narrow<LBC>(home,x,k));
     }
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 
-    if (isDistinct<Card>(home, x, k))
+    if (isDistinct<Card>(x,k))
       return Distinct::Dom<IntView>::post(home,x);
 
     bool cardfix = true;

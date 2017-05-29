@@ -46,9 +46,39 @@ namespace Gecode { namespace Search { namespace Parallel {
   template<class Tracer>
   class DFS : public Engine<Tracer> {
   protected:
+    using Engine<Tracer>::idle;
+    using Engine<Tracer>::busy;
+    using Engine<Tracer>::stop;
+    using Engine<Tracer>::block;
+    using Engine<Tracer>::e_search;
+    using Engine<Tracer>::e_reset_ack_start;
+    using Engine<Tracer>::e_reset_ack_stop;
+    using Engine<Tracer>::n_busy;
+    using Engine<Tracer>::m_search;
+    using Engine<Tracer>::m_wait_reset;
+    using Engine<Tracer>::opt;
+    using Engine<Tracer>::release;
+    using Engine<Tracer>::signal;
+    using Engine<Tracer>::solutions;
+    using Engine<Tracer>::terminate;
+    using Engine<Tracer>::workers;
+    using Engine<Tracer>::C_WAIT;
+    using Engine<Tracer>::C_RESET;
+    using Engine<Tracer>::C_TERMINATE;
+    using Engine<Tracer>::C_WORK;
     /// %Parallel depth-first search worker
     class Worker : public Engine<Tracer>::Worker {
     public:
+      using Engine<Tracer>::Worker::_engine;
+      using Engine<Tracer>::Worker::m;
+      using Engine<Tracer>::Worker::path;
+      using Engine<Tracer>::Worker::cur;
+      using Engine<Tracer>::Worker::d;
+      using Engine<Tracer>::Worker::idle;
+      using Engine<Tracer>::Worker::node;
+      using Engine<Tracer>::Worker::fail;
+      using Engine<Tracer>::Worker::start;
+      using Engine<Tracer>::Worker::tracer;
       /// Initialize for space \a s with engine \a e
       Worker(Space* s, DFS& e);
       /// Provide access to engine
@@ -92,7 +122,7 @@ namespace Gecode { namespace Search { namespace Parallel {
    * Basic access routines
    */
   template<class Tracer>
-  forceinline typename DFS<Tracer>&
+  forceinline DFS<Tracer>&
   DFS<Tracer>::Worker::engine(void) const {
     return static_cast<DFS<Tracer>&>(_engine);
   }
@@ -109,11 +139,11 @@ namespace Gecode { namespace Search { namespace Parallel {
   template<class Tracer>
   forceinline
   DFS<Tracer>::Worker::Worker(Space* s, DFS& e)
-    : Engine::Worker(s,e) {}
+    : Engine<Tracer>::Worker(s,e) {}
   template<class Tracer>
   forceinline
   DFS<Tracer>::DFS(Space* s, const Options& o)
-    : Engine(o) {
+    : Engine<Tracer>(o) {
     WrapTraceRecorder::engine(o.tracer, SearchTracer::EngineType::DFS,
                               workers());
     // Create workers
@@ -178,7 +208,7 @@ namespace Gecode { namespace Search { namespace Parallel {
     // Try to find new work (even if there is none)
     for (unsigned int i=0; i<engine().workers(); i++) {
       unsigned long int r_d = 0ul;
-      Engine::Worker* wi = engine().worker(i);
+      typename Engine<Tracer>::Worker* wi = engine().worker(i);
       if (Space* s = wi->steal(r_d,wi->tracer,tracer)) {
         // Reset this guy
         m.acquire();
@@ -269,7 +299,7 @@ namespace Gecode { namespace Search { namespace Parallel {
               SearchTracer::EdgeInfo ei;
               if (tracer) {
                 if (path.entries() > 0) {
-                  Path<Tracer>::Edge& top = path.top();
+                  typename Path<Tracer>::Edge& top = path.top();
                   ei.init(tracer.wid(), top.nid(), top.truealt(),
                           *cur, *top.choice());
                 } else if (*tracer.ei()) {

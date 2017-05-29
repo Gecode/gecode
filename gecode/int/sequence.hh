@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Sequence {
     /// Post propagator for
     static  ExecStatus post(Home home, ViewArray<View>& x, Val s, int q, int l, int u);
     /// Check for consistency
-    static  ExecStatus check(Space& home, ViewArray<View>& x, Val s, int q, int l, int u);
+    static  ExecStatus check(ViewArray<View>& x, Val s, int q, int l, int u);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
   private:
