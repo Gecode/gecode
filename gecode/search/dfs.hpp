@@ -39,7 +39,7 @@ namespace Gecode { namespace Search {
 
   /// Create depth-first engine
   GECODE_SEARCH_EXPORT Engine*
-  dfs(Space* s, const Options& o);
+  dfsengine(Space* s, const Options& o);
 
   /// A DFS engine builder
   template<class T>
@@ -70,7 +70,7 @@ namespace Gecode {
   template<class T>
   inline
   DFS<T>::DFS(T* s, const Search::Options& o)
-    : Search::Base<T>(Search::dfs(s,o)) {}
+    : Search::Base<T>(Search::dfsengine(s,o)) {}
 
   template<class T>
   inline T*

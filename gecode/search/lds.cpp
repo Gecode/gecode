@@ -46,7 +46,7 @@
 namespace Gecode { namespace Search {
 
   Engine*
-  lds(Space* s, const Options& o) {
+  ldsengine(Space* s, const Options& o) {
     if (o.tracer)
       return new Seq::LDS<EdgeTraceRecorder>(s,o);
     else
