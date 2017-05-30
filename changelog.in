@@ -73,6 +73,14 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+The bounds propagator for abs is now bounds consistent.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   minor
