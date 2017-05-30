@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,23 +35,18 @@
  *
  */
 
-#include <gecode/set.hh>
+#include <gecode/search.hh>
 
-namespace Gecode {
+#ifndef __GECODE_SEARCH_SEQ_DEAD_HH__
+#define __GECODE_SEARCH_SEQ_DEAD_HH__
 
-  void
-  wait(Home home, SetVar x, std::function<void(Space& home)> c) {
-    GECODE_POST;
-    GECODE_ES_FAIL(UnaryWait<Set::SetView>::post(home,x,c));
-  }
+namespace Gecode { namespace Search { namespace Seq {
 
-  void
-  wait(Home home, const SetVarArgs& x, std::function<void(Space& home)> c) {
-    GECODE_POST;
-    ViewArray<Set::SetView> xv(home,x);
-    GECODE_ES_FAIL(NaryWait<Set::SetView>::post(home,xv,c));
-  }
+  GECODE_SEARCH_EXPORT
+  Engine* dead(const Options& o, const Statistics& stat);
 
-}
+}}}
 
-// STATISTICS: set-post
+#endif
+
+// STATISTICS: search-seq

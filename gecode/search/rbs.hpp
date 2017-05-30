@@ -38,19 +38,19 @@
  */
 
 #include <gecode/search/support.hh>
-#include <gecode/search/meta/dead.hh>
+#include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Meta {
+namespace Gecode { namespace Search { namespace Seq {
 
   /// Create stop object
   GECODE_SEARCH_EXPORT Stop*
-  stop(Stop* so);
+  rbsstop(Stop* so);
 
   /// Create restart engine
   GECODE_SEARCH_EXPORT Engine*
-  engine(Space* master, Stop* stop, Engine* slave,
-         const Search::Statistics& stat, const Options& opt,
-         bool best);
+  rbsengine(Space* master, Stop* stop, Engine* slave,
+            const Search::Statistics& stat, const Options& opt,
+            bool best);
 
 }}}
 
@@ -90,21 +90,22 @@ namespace Gecode {
     Search::Options e_opt(m_opt.expand());
     Search::Statistics stat;
     e_opt.clone = false;
-    e_opt.stop  = Search::Meta::stop(m_opt.stop);
+    e_opt.stop  = Search::Seq::rbsstop(m_opt.stop);
     Search::WrapTraceRecorder::engine(e_opt.tracer,
                                       SearchTracer::EngineType::RBS, 1U);
     if (s->status(stat) == SS_FAILED) {
       stat.fail++;
       if (!m_opt.clone)
         delete s;
-      e = Search::Meta::dead(e_opt, stat);
+      e = Search::Seq::dead(e_opt, stat);
     } else {
       Space* master = m_opt.clone ? s->clone() : s;
       Space* slave  = master->clone();
       MetaInfo mi(0,0,0,NULL,NoGoods::eng);
       slave->slave(mi);
-      e = Search::Meta::engine(master,e_opt.stop,Search::build<T,E>(slave,e_opt),
-                               stat,m_opt,E<T>::best);
+      e = Search::Seq::rbsengine(master,e_opt.stop,
+                                 Search::build<T,E>(slave,e_opt),
+                                 stat,m_opt,E<T>::best);
     }
   }
 
@@ -127,4 +128,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: search-meta
+// STATISTICS: search-seq

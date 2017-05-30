@@ -35,18 +35,18 @@
  *
  */
 
-#include <gecode/search/meta/rbs.hh>
+#include <gecode/search/seq/rbs.hh>
 
-namespace Gecode { namespace Search { namespace Meta {
+namespace Gecode { namespace Search { namespace Seq {
 
   Stop*
-  stop(Stop* stop) {
+  rbsstop(Stop* stop) {
     return new RestartStop(stop);
   }
 
   Engine*
-  engine(Space* master, Stop* stop, Engine* slave,
-         const Search::Statistics& stat, const Options& opt, bool best) {
+  rbsengine(Space* master, Stop* stop, Engine* slave,
+            const Search::Statistics& stat, const Options& opt, bool best) {
     return new RBS(master,static_cast<RestartStop*>(stop), slave,
                    stat,opt,best);
   }
@@ -54,4 +54,4 @@ namespace Gecode { namespace Search { namespace Meta {
 
 }}}
 
-// STATISTICS: search-meta
+// STATISTICS: search-seq

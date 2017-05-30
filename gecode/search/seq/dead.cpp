@@ -4,10 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004, 2016
- *
- *  Bugfixes provided by:
- *     Stefano Gualandi
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,21 +35,70 @@
  *
  */
 
-#include <gecode/search.hh>
-#include <gecode/search/support.hh>
+#include <gecode/search/seq/dead.hh>
 
-#include <gecode/search/seq/lds.hh>
+namespace Gecode { namespace Search { namespace Seq {
 
-namespace Gecode { namespace Search {
+  /// A dead engine (failed root)
+  template<class Tracer>
+  class GECODE_SEARCH_EXPORT Dead : public Engine {
+  protected:
+    /// Search tracer
+    Tracer tracer;
+    /// Statistics
+    Statistics stat;
+  public:
+    /// Initialize
+    Dead(const Options& o, const Statistics& stat0);
+    /// Return next solution (NULL, if none exists or search has been stopped)
+    virtual Space* next(void);
+    /// Return statistics
+    virtual Statistics statistics(void) const;
+    /// Check whether engine has been stopped
+    virtual bool stopped(void) const;
+    /// Delete
+    virtual ~Dead(void);
+  };
 
-  Engine*
-  lds(Space* s, const Options& o) {
-    if (o.tracer)
-      return new Seq::LDS<EdgeTraceRecorder>(s,o);
-    else
-      return new Seq::LDS<NoTraceRecorder>(s,o);
+  template<class Tracer>
+  Dead<Tracer>::Dead(const Options& o, const Statistics& stat0)
+    : tracer(o.tracer), stat(stat0) {
+    tracer.engine(SearchTracer::EngineType::AOE, 1U);
+    tracer.worker();
   }
 
-}}
+  template<class Tracer>
+  Space*
+  Dead<Tracer>::next(void) {
+    return NULL;
+  }
 
-// STATISTICS: search-other
+  template<class Tracer>
+  bool
+  Dead<Tracer>::stopped(void) const {
+    return false;
+  }
+
+  template<class Tracer>
+  Statistics
+  Dead<Tracer>::statistics(void) const {
+    return stat;
+  }
+
+  template<class Tracer>
+  Dead<Tracer>::~Dead(void) {
+    tracer.done();
+  }
+
+  Engine*
+  dead(const Options& o, const Statistics& stat) {
+    if (o.tracer)
+      return new Dead<TraceRecorder>(o,stat);
+    else
+      return new Dead<NoTraceRecorder>(o,stat);
+  }
+
+
+}}}
+
+// STATISTICS: search-seq

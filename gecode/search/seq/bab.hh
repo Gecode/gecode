@@ -3,11 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Copyright:
- *     Christian Schulte, 2004, 2016
+ *  Contributing authors:
+ *     Guido Tack <tack@gecode.org>
  *
- *  Bugfixes provided by:
- *     Stefano Gualandi
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *     Guido Tack, 2004
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,21 +39,55 @@
  *
  */
 
+#ifndef __GECODE_SEARCH_SEQ_BAB_HH__
+#define __GECODE_SEARCH_SEQ_BAB_HH__
+
 #include <gecode/search.hh>
 #include <gecode/search/support.hh>
+#include <gecode/search/worker.hh>
+#include <gecode/search/seq/path.hh>
 
-#include <gecode/search/seq/lds.hh>
+namespace Gecode { namespace Search { namespace Seq {
 
-namespace Gecode { namespace Search {
+  /// Implementation of depth-first branch-and-bound search engine
+  template<class Tracer>
+  class BAB : public Worker {
+  private:
+    /// Search tracer
+    Tracer tracer;
+    /// Search options
+    Options opt;
+    /// Current path in search tree
+    Path<Tracer> path;
+    /// Current space being explored
+    Space* cur;
+    /// Distance until next clone
+    unsigned int d;
+    /// Number of entries not yet constrained to be better
+    int mark;
+    /// Best solution found so far
+    Space* best;
+  public:
+    /// Initialize with space \a s and search options \a o
+    BAB(Space* s, const Options& o);
+    /// %Search for next better solution
+    Space* next(void);
+    /// Return statistics
+    Statistics statistics(void) const;
+    /// Constrain future solutions to be better than \a b
+    void constrain(const Space& b);
+    /// Reset engine to restart at space \a s
+    void reset(Space* s);
+    /// Return no-goods
+    NoGoods& nogoods(void);
+    /// Destructor
+    ~BAB(void);
+  };
 
-  Engine*
-  lds(Space* s, const Options& o) {
-    if (o.tracer)
-      return new Seq::LDS<EdgeTraceRecorder>(s,o);
-    else
-      return new Seq::LDS<NoTraceRecorder>(s,o);
-  }
+}}}
 
-}}
+#include <gecode/search/seq/bab.hpp>
 
-// STATISTICS: search-other
+#endif
+
+// STATISTICS: search-seq

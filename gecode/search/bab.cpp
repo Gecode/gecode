@@ -36,11 +36,12 @@
  */
 
 #include <gecode/search.hh>
-#include <gecode/search/sequential/bab.hh>
-#ifdef GECODE_HAS_THREADS
-#include <gecode/search/parallel/bab.hh>
-#endif
 #include <gecode/search/support.hh>
+
+#include <gecode/search/seq/bab.hh>
+#ifdef GECODE_HAS_THREADS
+#include <gecode/search/par/bab.hh>
+#endif
 
 namespace Gecode { namespace Search {
 
@@ -50,20 +51,20 @@ namespace Gecode { namespace Search {
     Options to = o.expand();
     if (to.threads == 1.0) {
       if (to.tracer)
-        return new WorkerToEngine<Sequential::BAB<TraceRecorder>>(s,to);
+        return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s,to);
       else
-        return new WorkerToEngine<Sequential::BAB<NoTraceRecorder>>(s,to);
+        return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s,to);
     } else {
       if (to.tracer)
-        return new Parallel::BAB<EdgeTraceRecorder>(s,to);
+        return new Par::BAB<EdgeTraceRecorder>(s,to);
       else
-        return new Parallel::BAB<NoTraceRecorder>(s,to);
+        return new Par::BAB<NoTraceRecorder>(s,to);
     }
 #else
     if (to.tracer)
-      return new WorkerToEngine<Sequential::BAB<TraceRecorder>>(s,to);
+      return new WorkerToEngine<Seq::BAB<TraceRecorder>>(s,to);
     else
-      return new WorkerToEngine<Sequential::BAB<NoTraceRecorder>>(s,to);
+      return new WorkerToEngine<Seq::BAB<NoTraceRecorder>>(s,to);
 #endif
   }
 

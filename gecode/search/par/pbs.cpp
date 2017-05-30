@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Christian Schulte, 2015
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,23 +35,15 @@
  *
  */
 
-#include <gecode/set.hh>
+#include <gecode/search/par/pbs.hh>
 
-namespace Gecode {
+namespace Gecode { namespace Search { namespace Par {
 
-  void
-  wait(Home home, SetVar x, std::function<void(Space& home)> c) {
-    GECODE_POST;
-    GECODE_ES_FAIL(UnaryWait<Set::SetView>::post(home,x,c));
+  bool
+  PortfolioStop::stop(const Statistics& s, const Options& o) {
+    return *tostop || ((so != NULL) && so->stop(s,o));
   }
 
-  void
-  wait(Home home, const SetVarArgs& x, std::function<void(Space& home)> c) {
-    GECODE_POST;
-    ViewArray<Set::SetView> xv(home,x);
-    GECODE_ES_FAIL(NaryWait<Set::SetView>::post(home,xv,c));
-  }
+}}}
 
-}
-
-// STATISTICS: set-post
+// STATISTICS: search-par

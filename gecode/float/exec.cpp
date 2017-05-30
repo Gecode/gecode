@@ -36,21 +36,20 @@
  */
 
 #include <gecode/float.hh>
-#include <gecode/kernel/wait.hh>
 
 namespace Gecode {
 
   void
   wait(Home home, FloatVar x, std::function<void(Space& home)> c) {
     GECODE_POST;
-    GECODE_ES_FAIL(Kernel::UnaryWait<Float::FloatView>::post(home,x,c));
+    GECODE_ES_FAIL(UnaryWait<Float::FloatView>::post(home,x,c));
   }
 
   void
   wait(Home home, const FloatVarArgs& x, std::function<void(Space& home)> c) {
     GECODE_POST;
     ViewArray<Float::FloatView> xv(home,x);
-    GECODE_ES_FAIL(Kernel::NaryWait<Float::FloatView>::post(home,xv,c));
+    GECODE_ES_FAIL(NaryWait<Float::FloatView>::post(home,xv,c));
   }
 
 }

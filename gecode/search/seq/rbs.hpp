@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2009
+ *     Guido Tack, 2012
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,23 +35,46 @@
  *
  */
 
-#include <gecode/set.hh>
 
-namespace Gecode {
+namespace Gecode { namespace Search { namespace Seq {
 
-  void
-  wait(Home home, SetVar x, std::function<void(Space& home)> c) {
-    GECODE_POST;
-    GECODE_ES_FAIL(UnaryWait<Set::SetView>::post(home,x,c));
+  forceinline
+  RestartStop::RestartStop(Stop* s)
+    : l(0), m_stop(s), e_stopped(false) {}
+
+  forceinline void
+  RestartStop::limit(const Search::Statistics& s, unsigned long int l0) {
+    l = l0;
+    m_stat += s;
+    e_stopped = false;
   }
 
-  void
-  wait(Home home, const SetVarArgs& x, std::function<void(Space& home)> c) {
-    GECODE_POST;
-    ViewArray<Set::SetView> xv(home,x);
-    GECODE_ES_FAIL(NaryWait<Set::SetView>::post(home,xv,c));
+  forceinline void
+  RestartStop::update(const Search::Statistics& s) {
+    m_stat += s;
   }
 
-}
+  forceinline bool
+  RestartStop::enginestopped(void) const {
+    return e_stopped;
+  }
 
-// STATISTICS: set-post
+  forceinline Statistics
+  RestartStop::metastatistics(void) const {
+    return m_stat;
+  }
+
+
+  forceinline
+  RBS::RBS(Space* s, RestartStop* stop0,
+           Engine* e0, const Search::Statistics& stat, const Options& opt,
+           bool best0)
+    : e(e0), master(s), last(NULL), co(opt.cutoff), stop(stop0),
+      sslr(0),
+      complete(true), restart(false), best(best0) {
+    stop->limit(stat,(*co)());
+  }
+
+}}}
+
+// STATISTICS: search-seq

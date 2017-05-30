@@ -64,39 +64,39 @@ namespace Gecode { namespace Search {
 
 }}
 
-#include <gecode/search/meta/dead.hh>
+#include <gecode/search/seq/dead.hh>
 
-namespace Gecode { namespace Search { namespace Meta { namespace Sequential {
+namespace Gecode { namespace Search { namespace Seq {
 
   /// Create stop object
   GECODE_SEARCH_EXPORT Stop*
-  stop(Stop* so);
+  pbsstop(Stop* so);
 
   /// Create sequential portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  engine(Engine** slaves, Stop** stops, unsigned int n_slaves,
-         const Statistics& stat, const Search::Options& opt, bool best);
+  pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
+            const Statistics& stat, const Search::Options& opt, bool best);
 
-}}}}
+}}}
 
-namespace Gecode { namespace Search { namespace Meta { namespace Parallel {
+namespace Gecode { namespace Search { namespace Par {
 
   /// Create stop object
   GECODE_SEARCH_EXPORT Stop*
-  stop(Stop* so);
+  pbsstop(Stop* so);
 
   /// Create parallel portfolio engine
   GECODE_SEARCH_EXPORT Engine*
-  engine(Engine** slaves, Stop** stops, unsigned int n_slaves,
-         const Statistics& stat, bool best);
+  pbsengine(Engine** slaves, Stop** stops, unsigned int n_slaves,
+            const Statistics& stat, bool best);
 
-}}}}
+}}}
 
-namespace Gecode { namespace Search { namespace Meta {
+namespace Gecode { namespace Search {
 
   template<class T, template<class> class E>
   Engine*
-  sequential(T* master, const Search::Statistics& stat, Options& opt) {
+  pbsseq(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
     Region r;
 
@@ -112,19 +112,19 @@ namespace Gecode { namespace Search { namespace Meta {
                               SearchTracer::EngineType::PBS, n_slaves);
 
     for (unsigned int i=0; i<n_slaves; i++) {
-      opt.stop = stops[i] = Sequential::stop(stop);
+      opt.stop = stops[i] = Seq::pbsstop(stop);
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
       (void) slave->slave(i);
       slaves[i] = build<T,E>(slave,opt);
     }
 
-    return Sequential::engine(slaves,stops,n_slaves,stat,opt,E<T>::best);
+    return Seq::pbsengine(slaves,stops,n_slaves,stat,opt,E<T>::best);
   }
 
   template<class T, template<class> class E>
   Engine*
-  sequential(T* master, SEBs& sebs,
+  pbsseq(T* master, SEBs& sebs,
              const Search::Statistics& stat, Options& opt, bool best) {
     Region r;
 
@@ -137,7 +137,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
     for (int i=0; i<n_slaves; i++) {
       // Re-configure slave options
-      stops[i] = Sequential::stop(sebs[i]->options().stop);
+      stops[i] = Seq::pbsstop(sebs[i]->options().stop);
       sebs[i]->options().stop  = stops[i];
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ?
@@ -147,14 +147,14 @@ namespace Gecode { namespace Search { namespace Meta {
       delete sebs[i];
     }
 
-    return Sequential::engine(slaves,stops,n_slaves,stat,opt,best);
+    return Seq::pbsengine(slaves,stops,n_slaves,stat,opt,best);
   }
 
 #ifdef GECODE_HAS_THREADS
 
   template<class T, template<class> class E>
   Engine*
-  parallel(T* master, const Search::Statistics& stat, Options& opt) {
+  pbspar(T* master, const Search::Statistics& stat, Options& opt) {
     Stop* stop = opt.stop;
     Region r;
 
@@ -171,20 +171,20 @@ namespace Gecode { namespace Search { namespace Meta {
     Stop** stops = r.alloc<Stop*>(n_slaves);
 
     for (unsigned int i=0; i<n_slaves; i++) {
-      opt.stop = stops[i] = Parallel::stop(stop);
+      opt.stop = stops[i] = Par::pbsstop(stop);
       Space* slave = (i == n_slaves-1) ?
         master : master->clone();
       (void) slave->slave(i);
       slaves[i] = build<T,E>(slave,opt);
     }
 
-    return Parallel::engine(slaves,stops,n_slaves,stat,E<T>::best);
+    return Par::pbsengine(slaves,stops,n_slaves,stat,E<T>::best);
   }
 
   template<class T, template<class> class E>
   Engine*
-  parallel(T* master, SEBs& sebs,
-           const Search::Statistics& stat, Options& opt, bool best) {
+  pbspar(T* master, SEBs& sebs,
+         const Search::Statistics& stat, Options& opt, bool best) {
     Region r;
 
     // Limit the number of slaves to the number of threads
@@ -199,7 +199,7 @@ namespace Gecode { namespace Search { namespace Meta {
 
     for (int i=0; i<n_slaves; i++) {
       // Re-configure slave options
-      stops[i] = Parallel::stop(sebs[i]->options().stop);
+      stops[i] = Par::pbsstop(sebs[i]->options().stop);
       sebs[i]->options().stop  = stops[i];
       sebs[i]->options().clone = false;
       Space* slave = (i == n_slaves-1) ?
@@ -212,12 +212,12 @@ namespace Gecode { namespace Search { namespace Meta {
     for (int i=n_slaves; i<sebs.size(); i++)
       delete sebs[i];
 
-    return Parallel::engine(slaves,stops,n_slaves,stat,best);
+    return Par::pbsengine(slaves,stops,n_slaves,stat,best);
   }
 
 #endif
 
-}}}
+}}
 
 namespace Gecode {
 
@@ -234,7 +234,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
-      e = Search::Meta::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat);
       return;
     }
 
@@ -255,10 +255,10 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::Meta::parallel<T,E>(master,stat,opt);
+      e = Search::pbspar<T,E>(master,stat,opt);
     else
 #endif
-      e = Search::Meta::sequential<T,E>(master,stat,opt);
+      e = Search::pbsseq<T,E>(master,stat,opt);
   }
 
   template<class T, template<class> class E>
@@ -282,7 +282,7 @@ namespace Gecode {
       stat.fail++;
       if (!opt.clone)
         delete s;
-      e = Search::Meta::dead(opt,stat);
+      e = Search::Seq::dead(opt,stat);
       return;
     }
 
@@ -296,10 +296,10 @@ namespace Gecode {
 
 #ifdef GECODE_HAS_THREADS
     if (opt.threads > 1.0)
-      e = Search::Meta::parallel<T,E>(master,sebs,stat,opt,best);
+      e = Search::pbspar<T,E>(master,sebs,stat,opt,best);
     else
 #endif
-      e = Search::Meta::sequential<T,E>(master,sebs,stat,opt,best);
+      e = Search::pbsseq<T,E>(master,sebs,stat,opt,best);
   }
 
   template<class T, template<class> class E>
@@ -344,4 +344,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: search-meta
+// STATISTICS: search-other

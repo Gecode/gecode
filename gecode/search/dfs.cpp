@@ -36,11 +36,12 @@
  */
 
 #include <gecode/search.hh>
-#include <gecode/search/sequential/dfs.hh>
-#ifdef GECODE_HAS_THREADS
-#include <gecode/search/parallel/dfs.hh>
-#endif
 #include <gecode/search/support.hh>
+
+#include <gecode/search/seq/dfs.hh>
+#ifdef GECODE_HAS_THREADS
+#include <gecode/search/par/dfs.hh>
+#endif
 
 namespace Gecode { namespace Search {
 
@@ -50,20 +51,20 @@ namespace Gecode { namespace Search {
     Options to = o.expand();
     if (to.threads == 1.0) {
       if (to.tracer)
-        return new WorkerToEngine<Sequential::DFS<TraceRecorder>>(s,to);
+        return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s,to);
       else
-        return new WorkerToEngine<Sequential::DFS<NoTraceRecorder>>(s,to);
+        return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s,to);
     } else {
       if (to.tracer)
-        return new Parallel::DFS<EdgeTraceRecorder>(s,to);
+        return new Par::DFS<EdgeTraceRecorder>(s,to);
       else
-        return new Parallel::DFS<NoTraceRecorder>(s,to);
+        return new Par::DFS<NoTraceRecorder>(s,to);
     }
 #else
     if (to.tracer)
-      return new WorkerToEngine<Sequential::DFS<TraceRecorder>>(s,to);
+      return new WorkerToEngine<Seq::DFS<TraceRecorder>>(s,to);
     else
-      return new WorkerToEngine<Sequential::DFS<NoTraceRecorder>>(s,to);
+      return new WorkerToEngine<Seq::DFS<NoTraceRecorder>>(s,to);
 #endif
   }
 
