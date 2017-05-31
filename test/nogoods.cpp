@@ -241,7 +241,7 @@ namespace Test {
           o.stop = &ns;
           o.threads = t;
           o.nogoods_limit = 256U;
-          Search::Engine* e = Search::dfs(m,o);
+          Search::Engine* e = Search::dfsengine(m,o);
           while (true) {
             Model* s = static_cast<Model*>(e->next());
             delete s;
