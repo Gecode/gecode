@@ -60,10 +60,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template<class View>
-  class AbsBnd : public BinaryPropagator<View,PC_INT_DOM> {
+  class AbsBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
-    using BinaryPropagator<View,PC_INT_DOM>::x0;
-    using BinaryPropagator<View,PC_INT_DOM>::x1;
+    using BinaryPropagator<View,PC_INT_BND>::x0;
+    using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
     AbsBnd(Space& home, AbsBnd& p);

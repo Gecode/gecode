@@ -75,15 +75,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),-x0.min())));
+    GECODE_ME_CHECK(x0.gq(home,-x1.max()));
+    GECODE_ME_CHECK(x0.lq(home,x1.max()));
     if (x1.min() > 0) {
-      Iter::Ranges::Array::Range r[2];
-      r[0].min=-x1.max(); r[0].max=-x1.min();
-      r[1].min=x1.min();  r[1].max=x1.max();
-      Iter::Ranges::Array u(r,2);
-      GECODE_ME_CHECK(x0.inter_r(home,u,false));
-    } else {
-      GECODE_ME_CHECK(x0.gq(home,-x1.max()));
-      GECODE_ME_CHECK(x0.lq(home,x1.max()));
+      if (-x1.min() < x0.min()) {
+        GECODE_ME_CHECK(x0.gq(home,x1.min()));
+      } else if (x0.max() < x1.min()) {
+        GECODE_ME_CHECK(x0.lq(home,-x1.min()));
+      }
     }
     return ES_NOFIX;
   }
@@ -91,7 +90,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View>
   forceinline
   AbsBnd<View>::AbsBnd(Home home, View x0, View x1)
-    : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
+    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
 
   template<class View>
   ExecStatus
@@ -118,7 +117,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View>
   forceinline
   AbsBnd<View>::AbsBnd(Space& home, AbsBnd<View>& p)
-    : BinaryPropagator<View,PC_INT_DOM>(home,p) {}
+    : BinaryPropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   Actor*
