@@ -79,6 +79,7 @@ namespace Gecode { namespace Search { namespace Par {
       using Engine<Tracer>::Worker::fail;
       using Engine<Tracer>::Worker::start;
       using Engine<Tracer>::Worker::tracer;
+      using Engine<Tracer>::Worker::stop;
       /// Initialize for space \a s with engine \a e
       Worker(Space* s, DFS& e);
       /// Provide access to engine

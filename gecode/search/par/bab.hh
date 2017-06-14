@@ -79,6 +79,7 @@ namespace Gecode { namespace Search { namespace Par {
       using Engine<Tracer>::Worker::fail;
       using Engine<Tracer>::Worker::start;
       using Engine<Tracer>::Worker::tracer;
+      using Engine<Tracer>::Worker::stop;
       /// Number of entries not yet constrained to be better
       int mark;
       /// Best solution found so far
