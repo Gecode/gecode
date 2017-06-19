@@ -47,6 +47,79 @@ namespace Gecode { namespace FlatZinc {
     e << _val;
   }
 
+
+  bool
+  IntBoolBrancherBase::status(const Space& home) const {
+    if (start < x.size()) {
+      for (int i=start; i < x.size(); i++)
+        if (!x[i].assigned()) {
+          start = i;
+          return true;
+        }
+      start = x.size();
+    }
+    for (int i=start-x.size(); i < y.size(); i++)
+      if (!y[i].assigned()) {
+        start = x.size() + i;
+        return true;
+      }
+    return false;
+  }
+
+  ExecStatus
+  IntBoolBrancherBase::commit(Space& home, const Choice& _c,
+                              unsigned int b) {
+    const PosIntChoice& c
+      = static_cast<const PosIntChoice&>(_c);
+    int p=c.pos(); int n=c.val();
+    if (p < x.size()) {
+      return me_failed(xvsc->commit(home,b,x[p],p,n)) ?
+        ES_FAILED : ES_OK;
+    } else {
+      p -= x.size();
+      return me_failed(yvsc->commit(home,b,y[p],p,n)) ?
+        ES_FAILED : ES_OK;
+    }
+  }
+
+  NGL*
+  IntBoolBrancherBase::ngl(Space& home, const Choice& _c,
+                           unsigned int b) const {
+    const PosIntChoice& c
+      = static_cast<const PosIntChoice&>(_c);
+    int p=c.pos(); int n=c.val();
+    if (p < x.size()) {
+      return xvsc->ngl(home,b,x[p],n);
+    } else {
+      p -= x.size();
+      return yvsc->ngl(home,b,y[p],n);
+    }
+  }
+
+  void
+  IntBoolBrancherBase::print(const Space& home, const Choice& _c,
+                             unsigned int b,
+                             std::ostream& o) const {
+    const PosIntChoice& c
+      = static_cast<const PosIntChoice&>(_c);
+    int p=c.pos(); int n=c.val();
+    if (p < x.size()) {
+      xvsc->print(home,b,x[p],p,n,o);
+    } else {
+      p -= x.size();
+      yvsc->print(home,b,y[p],p,n,o);
+    }
+  }
+
+  const Choice*
+  IntBoolBrancherBase::choice(const Space& home, Archive& e) {
+    (void) home;
+    int p; e >> p;
+    int v; e >> v;
+    return new PosIntChoice(*this,2,p,v);
+  }
+
+
   void
   branch(Home home, const IntVarArgs& x, const BoolVarArgs& y,
          IntBoolVarBranch vars, IntValBranch vals) {

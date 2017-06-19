@@ -249,19 +249,46 @@ namespace Gecode { namespace FlatZinc {
   }
 
 
+  forceinline
+  IntBoolBrancherBase::
+  IntBoolBrancherBase(Home home,
+                  ViewArray<Int::IntView> x0,
+                  ViewArray<Int::BoolView> y0,
+                  ValSelCommitBase<Int::IntView,int>* xvsc0,
+                  ValSelCommitBase<Int::BoolView,int>* yvsc0)
+    : Brancher(home), x(x0), y(y0), start(0), xvsc(xvsc0), yvsc(yvsc0) {
+    home.notice(*this,AP_DISPOSE,true);
+  }
+
+  forceinline
+  IntBoolBrancherBase::
+  IntBoolBrancherBase(Space& home, IntBoolBrancherBase& b)
+    : Brancher(home,b), start(b.start),
+      xvsc(b.xvsc->copy(home)), yvsc(b.yvsc->copy(home)) {
+    x.update(home,b.x);
+    y.update(home,b.y);
+  }
+
+  forceinline size_t
+  IntBoolBrancherBase::dispose(Space& home) {
+    home.ignore(*this,AP_DISPOSE,true);
+    xvsc->dispose(home);
+    yvsc->dispose(home);
+    (void) Brancher::dispose(home);
+    return sizeof(IntBoolBrancherBase);
+  }
+
+
   template<class Merit>
   forceinline
   IntBoolBrancher<Merit>::
   IntBoolBrancher(Home home,
-                  ViewArray<Int::IntView> x0,
-                  ViewArray<Int::BoolView> y0,
+                  ViewArray<Int::IntView> x,
+                  ViewArray<Int::BoolView> y,
                   Merit& m,
-                  ValSelCommitBase<Int::IntView,int>* xvsc0,
-                  ValSelCommitBase<Int::BoolView,int>* yvsc0)
-    : Brancher(home), x(x0), y(y0), start(0),
-      merit(m), xvsc(xvsc0), yvsc(yvsc0) {
-    home.notice(*this,AP_DISPOSE,true);
-  }
+                  ValSelCommitBase<Int::IntView,int>* xvsc,
+                  ValSelCommitBase<Int::BoolView,int>* yvsc)
+    : IntBoolBrancherBase(home,x,y,xvsc,yvsc), merit(m) {}
 
   template<class Merit>
   forceinline void
@@ -279,36 +306,13 @@ namespace Gecode { namespace FlatZinc {
   forceinline
   IntBoolBrancher<Merit>::
   IntBoolBrancher(Space& home, IntBoolBrancher<Merit>& b)
-    : Brancher(home,b), start(b.start),
-      merit(home, b.merit),
-      xvsc(b.xvsc->copy(home)), yvsc(b.yvsc->copy(home)) {
-    x.update(home,b.x);
-    y.update(home,b.y);
+    : IntBoolBrancherBase(home,b), merit(home, b.merit) {
   }
 
   template<class Merit>
   Actor*
   IntBoolBrancher<Merit>::copy(Space& home) {
     return new (home) IntBoolBrancher<Merit>(home,*this);
-  }
-
-  template<class Merit>
-  bool
-  IntBoolBrancher<Merit>::status(const Space& home) const {
-    if (start < x.size()) {
-      for (int i=start; i < x.size(); i++)
-        if (!x[i].assigned()) {
-          start = i;
-          return true;
-        }
-      start = x.size();
-    }
-    for (int i=start-x.size(); i < y.size(); i++)
-      if (!y[i].assigned()) {
-        start = x.size() + i;
-        return true;
-      }
-    return false;
   }
 
   template<class Merit>
@@ -354,71 +358,11 @@ namespace Gecode { namespace FlatZinc {
   }
 
   template<class Merit>
-  ExecStatus
-  IntBoolBrancher<Merit>::commit(Space& home, const Choice& _c,
-                                 unsigned int b) {
-    const PosIntChoice& c
-      = static_cast<const PosIntChoice&>(_c);
-    int p=c.pos(); int n=c.val();
-    if (p < x.size()) {
-      return me_failed(xvsc->commit(home,b,x[p],p,n)) ?
-        ES_FAILED : ES_OK;
-    } else {
-      p -= x.size();
-      return me_failed(yvsc->commit(home,b,y[p],p,n)) ?
-        ES_FAILED : ES_OK;
-    }
-  }
-
-  template<class Merit>
-  NGL*
-  IntBoolBrancher<Merit>::ngl(Space& home, const Choice& _c,
-                              unsigned int b) const {
-    const PosIntChoice& c
-      = static_cast<const PosIntChoice&>(_c);
-    int p=c.pos(); int n=c.val();
-    if (p < x.size()) {
-      return xvsc->ngl(home,b,x[p],n);
-    } else {
-      p -= x.size();
-      return yvsc->ngl(home,b,y[p],n);
-    }
-  }
-
-  template<class Merit>
-  void
-  IntBoolBrancher<Merit>::print(const Space& home, const Choice& _c,
-                                unsigned int b,
-                                std::ostream& o) const {
-    const PosIntChoice& c
-      = static_cast<const PosIntChoice&>(_c);
-    int p=c.pos(); int n=c.val();
-    if (p < x.size()) {
-      xvsc->print(home,b,x[p],p,n,o);
-    } else {
-      p -= x.size();
-      yvsc->print(home,b,y[p],p,n,o);
-    }
-  }
-
-  template<class Merit>
-  const Choice*
-  IntBoolBrancher<Merit>::choice(const Space& home, Archive& e) {
-    (void) home;
-    int p; e >> p;
-    int v; e >> v;
-    return new PosIntChoice(*this,2,p,v);
-  }
-
-  template<class Merit>
   size_t
   IntBoolBrancher<Merit>::dispose(Space& home) {
-    home.ignore(*this,AP_DISPOSE,true);
     merit.dispose();
-    xvsc->dispose(home);
-    yvsc->dispose(home);
-    (void) Brancher::dispose(home);
-    return sizeof(IntBoolBrancher);
+    (void) IntBoolBrancherBase::dispose(home);
+    return sizeof(IntBoolBrancher<Merit>);
   }
 
 

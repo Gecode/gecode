@@ -230,56 +230,6 @@ namespace Gecode { namespace FlatZinc {
     void dispose(void);
   };
 
-  /// Brancher for integer and Boolean views
-  template<class Merit>
-  class IntBoolBrancher : public Brancher {
-  protected:
-    /// Integer views to branch on
-    ViewArray<Int::IntView> x;
-    /// Boolean views to branch on
-    ViewArray<Int::BoolView> y;
-    /// Unassigned views start here (might be in \a x or \a y)
-    mutable int start;
-    /// Selection by maximal merit
-    Merit merit;
-    /// Integer value selection and commit object
-    ValSelCommitBase<Int::IntView,int>* xvsc;
-    /// Boolean value selection and commit object
-    ValSelCommitBase<Int::BoolView,int>* yvsc;
-    /// Constructor for cloning \a b
-    IntBoolBrancher(Space& home, IntBoolBrancher& b);
-    /// Constructor for creation
-    IntBoolBrancher(Home home,
-                    ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
-                    Merit& m,
-                    ValSelCommitBase<Int::IntView,int>* xvsc,
-                    ValSelCommitBase<Int::BoolView,int>* yvsc);
-  public:
-    /// Check status of brancher, return true if alternatives left
-    virtual bool status(const Space& home) const;
-    /// Return choice
-    virtual const Choice* choice(Space& home);
-    /// Return choice
-    virtual const Choice* choice(const Space& home, Archive& e);
-    /// Perform commit for choice \a c and alternative \a b
-    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
-    /// Create no-good literal for choice \a c and alternative \a b
-    virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
-    /// Print branch for choice \a c and alternative \a b
-    virtual void print(const Space& home, const Choice& c, unsigned int b,
-                       std::ostream& o) const;
-    /// Perform cloning
-    virtual Actor* copy(Space& home);
-    /// Post barncher
-    static void post(Home home,
-                     ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
-                     Merit& m,
-                     ValSelCommitBase<Int::IntView,int>* xvsc,
-                     ValSelCommitBase<Int::BoolView,int>* yvsc);
-    /// Delete brancher and return its size
-    virtual size_t dispose(Space& home);
-  };
-
   /// %Choice storing position and value
   class GECODE_VTABLE_EXPORT PosIntChoice : public Choice {
   private:
@@ -296,6 +246,71 @@ namespace Gecode { namespace FlatZinc {
     int val(void) const;
     /// Archive into \a e
     virtual void archive(Archive& e) const;
+  };
+
+  /// Base-class for brancher for integer and Boolean views
+  class IntBoolBrancherBase : public Brancher {
+  protected:
+    /// Integer views to branch on
+    ViewArray<Int::IntView> x;
+    /// Boolean views to branch on
+    ViewArray<Int::BoolView> y;
+    /// Unassigned views start here (might be in \a x or \a y)
+    mutable int start;
+    /// Integer value selection and commit object
+    ValSelCommitBase<Int::IntView,int>* xvsc;
+    /// Boolean value selection and commit object
+    ValSelCommitBase<Int::BoolView,int>* yvsc;
+    /// Constructor for cloning \a b
+    IntBoolBrancherBase(Space& home, IntBoolBrancherBase& b);
+    /// Constructor for creation
+    IntBoolBrancherBase(Home home,
+                        ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
+                        ValSelCommitBase<Int::IntView,int>* xvsc,
+                        ValSelCommitBase<Int::BoolView,int>* yvsc);
+  public:
+    /// Check status of brancher, return true if alternatives left
+    virtual bool status(const Space& home) const;
+    /// Return choice
+    virtual const Choice* choice(const Space& home, Archive& e);
+    /// Perform commit for choice \a c and alternative \a b
+    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+    /// Create no-good literal for choice \a c and alternative \a b
+    virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
+    /// Print branch for choice \a c and alternative \a b
+    virtual void print(const Space& home, const Choice& c, unsigned int b,
+                       std::ostream& o) const;
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space& home);
+  };
+
+  /// Brancher for integer and Boolean views
+  template<class Merit>
+  class IntBoolBrancher : public IntBoolBrancherBase {
+  protected:
+    /// Selection by maximal merit
+    Merit merit;
+    /// Constructor for cloning \a b
+    IntBoolBrancher(Space& home, IntBoolBrancher& b);
+    /// Constructor for creation
+    IntBoolBrancher(Home home,
+                    ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
+                    Merit& m,
+                    ValSelCommitBase<Int::IntView,int>* xvsc,
+                    ValSelCommitBase<Int::BoolView,int>* yvsc);
+  public:
+    /// Return choice
+    virtual const Choice* choice(Space& home);
+    /// Perform cloning
+    virtual Actor* copy(Space& home);
+    /// Post brancher
+    static void post(Home home,
+                     ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
+                     Merit& m,
+                     ValSelCommitBase<Int::IntView,int>* xvsc,
+                     ValSelCommitBase<Int::BoolView,int>* yvsc);
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space& home);
   };
 
   /// Map respective integer value selection to Boolean value selection
