@@ -60,12 +60,22 @@ namespace Gecode {
     AFC(const AFC& a);
     /// Assignment operator
     AFC& operator =(const AFC& a);
-    /// Initialize for variables \a x and decay factor \a d
+    /** \brief Initialize for variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
     template<class Var>
-    AFC(Home home, const VarArgArray<Var>& x, double d);
-    /// Initialize for views \a x and decay factor \a d
+    AFC(Home home, const VarArgArray<Var>& x, double d, bool share=true);
+    /** \brief Initialize for variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
     template<class Var>
-    void init(Home home, const VarArgArray<Var>& x, double d);
+    void init(Home home, const VarArgArray<Var>& x, double d, bool share=true);
     /// Test whether already initialized
     operator bool(void) const;
     /// Default (empty) AFC information
@@ -119,21 +129,23 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  AFC::AFC(Home home, const VarArgArray<Var>& x, double d)
+  AFC::AFC(Home home, const VarArgArray<Var>& x, double d, bool share)
     : n(x.size()) {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
     static_cast<Space&>(home).afc_decay(d);
-    static_cast<Space&>(home).afc_unshare();
+    if (!share)
+      static_cast<Space&>(home).afc_unshare();
   }
   template<class Var>
   forceinline void
-  AFC::init(Home home, const VarArgArray<Var>& x, double d) {
+  AFC::init(Home home, const VarArgArray<Var>& x, double d, bool share) {
     n = x.size();
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
     static_cast<Space&>(home).afc_decay(d);
-    static_cast<Space&>(home).afc_unshare();
+    if (!share)
+      static_cast<Space&>(home).afc_unshare();
   }
 
 

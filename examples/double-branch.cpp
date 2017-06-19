@@ -45,7 +45,386 @@
 
 namespace Gecode { namespace FlatZinc {
 
+  /// Which integer or Boolean variable to select for branching
+  class IntBoolVarBranch : public VarBranch<IntVar> {
+  public:
+    /// Which variable selection
+    enum Select {
+      SEL_AFC_MAX,         ///< With largest accumulated failure count
+      SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MAX,         ///< With highest CHB Q-score
+      SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
+      SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
+      SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
+    };
+  protected:
+    /// Which variable to select
+    Select s;
+    /// Integer AFC
+    IntAFC iafc;
+    /// Boolean AFC
+    BoolAFC bafc;
+    /// Integer action
+    IntAction iaction;
+    /// Boolean action
+    BoolAction baction;
+    /// Integer CHB
+    IntCHB ichb;
+    /// Boolean CHB
+    BoolCHB bchb;
+  public:
+    /// Initialize with selection strategy \a s and AFC \a i and \a b
+    IntBoolVarBranch(Select s, IntAFC i, BoolAFC b);
+    /// Initialize with selection strategy \a s and action \a i and \a b
+    IntBoolVarBranch(Select s, IntAction i, BoolAction b);
+    /// Initialize with selection strategy \a s and CHB \a i and \a b
+    IntBoolVarBranch(Select s, IntCHB i, BoolCHB b);
+    /// Return selection strategy
+    Select select(void) const;
+    /// Return integer AFC
+    IntAFC intafc(void) const;
+    /// Return Boolean AFC
+    BoolAFC boolafc(void) const;
+    /// Return integer action
+    IntAction intaction(void) const;
+    /// Return Boolean action
+    BoolAction boolaction(void) const;
+    /// Return integer CHB
+    IntCHB intchb(void) const;
+    /// Return Boolean AFC
+    BoolCHB boolchb(void) const;
+  };
+
+  forceinline
+  IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAFC i, BoolAFC b)
+    : s(s0), iafc(i), bafc(b) {}
+
+  forceinline
+  IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAction i, BoolAction b)
+    : s(s0), iaction(i), baction(b) {}
+
+  forceinline
+  IntBoolVarBranch::IntBoolVarBranch(Select s0, IntCHB i, BoolCHB b)
+    : s(s0), ichb(i), bchb(b) {}
+
+  forceinline IntBoolVarBranch::Select
+  IntBoolVarBranch::select(void) const {
+    return s;
+  }
+
+  forceinline IntAFC
+  IntBoolVarBranch::intafc(void) const {
+    return iafc;
+  }
+  forceinline BoolAFC
+  IntBoolVarBranch::boolafc(void) const {
+    return bafc;
+  }
+
+  forceinline IntAction
+  IntBoolVarBranch::intaction(void) const {
+    return iaction;
+  }
+  forceinline BoolAction
+  IntBoolVarBranch::boolaction(void) const {
+    return baction;
+  }
+
+  forceinline IntCHB
+  IntBoolVarBranch::intchb(void) const {
+    return ichb;
+  }
+  forceinline BoolCHB
+  IntBoolVarBranch::boolchb(void) const {
+    return bchb;
+  }
+
+  /// Variable selection for both integer and Boolean variables
+  //@{
+  /// Select variable with largest accumulated failure count
+  IntBoolVarBranch INTBOOL_VAR_AFC_MAX(IntAFC ia, BoolAFC ba);
+  /// Select variable with highest action
+  IntBoolVarBranch INTBOOL_VAR_ACTION_MAX(IntAction ia, BoolAction ba);
+  /// Select variable with largest CHB Q-score
+  IntBoolVarBranch INTBOOL_VAR_CHB_MAX(IntCHB ic, BoolCHB bc);
+  /// Select variable with largest accumulated failure count divided by domain size
+  IntBoolVarBranch INTBOOL_VAR_AFC_SIZE_MAX(IntAFC ia, BoolAFC ba);
+  /// Select variable with largest action divided by domain size
+  IntBoolVarBranch INTBOOL_VAR_ACTION_SIZE_MAX(IntAction ia, BoolAction ba);
+  /// Select variable with largest CHB Q-score divided by domain size
+  IntBoolVarBranch INTBOOL_VAR_CHB_SIZE_MAX(IntCHB ic, BoolCHB bc);
+  //@}
+  
+  inline IntBoolVarBranch
+  INTBOOL_VAR_AFC_MAX(IntAFC ia, BoolAFC ba) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX,ia,ba);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_ACTION_MAX(IntAction ia, BoolAction ba) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX,ia,ba);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_CHB_MAX(IntCHB ic, BoolCHB bc) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX,ic,bc);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_AFC_SIZE_MAX(IntAFC ia, BoolAFC ba) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX,ia,ba);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_ACTION_SIZE_MAX(IntAction ia, BoolAction ba) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX,ia,ba);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_CHB_SIZE_MAX(IntCHB ic, BoolCHB bc) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_SIZE_MAX,ic,bc);
+  }
+
+  /// Select by maximal AFC
+  class MeritMaxAFC {
+  protected:
+    /// Integer AFC information
+    IntAFC iafc;
+    /// Boolean AFC information
+    BoolAFC bafc;
+  public:
+    /// Constructor for initialization
+    MeritMaxAFC(Space& home, const IntBoolVarBranch& ibvb);
+    /// Constructor for cloning
+    MeritMaxAFC(Space& home, MeritMaxAFC& m);
+    /// Return merit
+    double operator()(Int::IntView x, int i) const;
+    /// Return merit
+    double operator()(Int::BoolView x, int i) const;
+    /// Dispose
+    void dispose(void);
+  };
+
+  forceinline
+  MeritMaxAFC::MeritMaxAFC(Space& home, const IntBoolVarBranch& ibvb)
+    : iafc(ibvb.intafc()), bafc(ibvb.boolafc()) {}
+  forceinline
+  MeritMaxAFC::MeritMaxAFC(Space& home, MeritMaxAFC& m)
+    : iafc(m.iafc), bafc(m.bafc) {}
+  forceinline double
+  MeritMaxAFC::operator ()(Int::IntView x, int) const {
+    return x.afc();
+  }
+  forceinline double
+  MeritMaxAFC::operator ()(Int::BoolView x, int) const {
+    return x.afc();
+  }
+  forceinline void
+  MeritMaxAFC::dispose(void) {
+    iafc.~IntAFC();
+    bafc.~BoolAFC();
+  }
+
+  /// Select by maximal AFC over size
+  class MeritMaxAFCSize {
+  protected:
+    /// Integer AFC information
+    IntAFC iafc;
+    /// Boolean AFC information
+    BoolAFC bafc;
+  public:
+    /// Constructor for initialization
+    MeritMaxAFCSize(Space& home, const IntBoolVarBranch& ibvb);
+    /// Constructor for cloning
+    MeritMaxAFCSize(Space& home, MeritMaxAFCSize& m);
+    /// Return merit
+    double operator()(Int::IntView x, int i) const;
+    /// Return merit
+    double operator()(Int::BoolView x, int i) const;
+    /// Dispose
+    void dispose(void);
+  };
+
+  forceinline
+  MeritMaxAFCSize::MeritMaxAFCSize(Space& home, const IntBoolVarBranch& ibvb)
+    : iafc(ibvb.intafc()), bafc(ibvb.boolafc()) {}
+  forceinline
+  MeritMaxAFCSize::MeritMaxAFCSize(Space& home, MeritMaxAFCSize& m)
+    : iafc(m.iafc), bafc(m.bafc) {}
+  forceinline double
+  MeritMaxAFCSize::operator ()(Int::IntView x, int) const {
+    return x.afc() / x.size();
+  }
+  forceinline double
+  MeritMaxAFCSize::operator ()(Int::BoolView x, int) const {
+    return x.afc() / 2.0;
+  }
+  forceinline void
+  MeritMaxAFCSize::dispose(void) {
+    iafc.~IntAFC();
+    bafc.~BoolAFC();
+  }
+
+
+  /// Select by maximal Action
+  class MeritMaxAction {
+  protected:
+    /// Integer Action information
+    IntAction iaction;
+    /// Boolean Action information
+    BoolAction baction;
+  public:
+    /// Constructor for initialization
+    MeritMaxAction(Space& home, const IntBoolVarBranch& ibvb);
+    /// Constructor for cloning
+    MeritMaxAction(Space& home, MeritMaxAction& m);
+    /// Return merit
+    double operator()(Int::IntView x, int i) const;
+    /// Return merit
+    double operator()(Int::BoolView x, int i) const;
+    /// Dispose
+    void dispose(void);
+  };
+
+  forceinline
+  MeritMaxAction::MeritMaxAction(Space& home, const IntBoolVarBranch& ibvb)
+    : iaction(ibvb.intaction()), baction(ibvb.boolaction()) {}
+  forceinline
+  MeritMaxAction::MeritMaxAction(Space& home, MeritMaxAction& m)
+    : iaction(m.iaction), baction(m.baction) {}
+  forceinline double
+  MeritMaxAction::operator ()(Int::IntView, int i) const {
+    return iaction[i];
+  }
+  forceinline double
+  MeritMaxAction::operator ()(Int::BoolView, int i) const {
+    return baction[i];
+  }
+  forceinline void
+  MeritMaxAction::dispose(void) {
+    iaction.~IntAction();
+    baction.~BoolAction();
+  }
+
+  /// Select by maximal Action over size
+  class MeritMaxActionSize {
+  protected:
+    /// Integer Action information
+    IntAction iaction;
+    /// Boolean Action information
+    BoolAction baction;
+  public:
+    /// Constructor for initialization
+    MeritMaxActionSize(Space& home, const IntBoolVarBranch& ibvb);
+    /// Constructor for cloning
+    MeritMaxActionSize(Space& home, MeritMaxActionSize& m);
+    /// Return merit
+    double operator()(Int::IntView x, int i) const;
+    /// Return merit
+    double operator()(Int::BoolView x, int i) const;
+    /// Dispose
+    void dispose(void);
+  };
+
+  forceinline
+  MeritMaxActionSize::MeritMaxActionSize(Space& home, const IntBoolVarBranch& ibvb)
+    : iaction(ibvb.intaction()), baction(ibvb.boolaction()) {}
+  forceinline
+  MeritMaxActionSize::MeritMaxActionSize(Space& home, MeritMaxActionSize& m)
+    : iaction(m.iaction), baction(m.baction) {}
+  forceinline double
+  MeritMaxActionSize::operator ()(Int::IntView x, int i) const {
+    return iaction[i] / x.size();
+  }
+  forceinline double
+  MeritMaxActionSize::operator ()(Int::BoolView, int i) const {
+    return baction[i] / 2.0;
+  }
+  forceinline void
+  MeritMaxActionSize::dispose(void) {
+    iaction.~IntAction();
+    baction.~BoolAction();
+  }
+
+
+  /// Select by maximal CHB
+  class MeritMaxCHB {
+  protected:
+    /// Integer CHB information
+    IntCHB ichb;
+    /// Boolean CHB information
+    BoolCHB bchb;
+  public:
+    /// Constructor for initialization
+    MeritMaxCHB(Space& home, const IntBoolVarBranch& ibvb);
+    /// Constructor for cloning
+    MeritMaxCHB(Space& home, MeritMaxCHB& m);
+    /// Return merit
+    double operator()(Int::IntView x, int i) const;
+    /// Return merit
+    double operator()(Int::BoolView x, int i) const;
+    /// Dispose
+    void dispose(void);
+  };
+
+  forceinline
+  MeritMaxCHB::MeritMaxCHB(Space& home, const IntBoolVarBranch& ibvb)
+    : ichb(ibvb.intchb()), bchb(ibvb.boolchb()) {}
+  forceinline
+  MeritMaxCHB::MeritMaxCHB(Space& home, MeritMaxCHB& m)
+    : ichb(m.ichb), bchb(m.bchb) {}
+  forceinline double
+  MeritMaxCHB::operator ()(Int::IntView, int i) const {
+    return ichb[i];
+  }
+  forceinline double
+  MeritMaxCHB::operator ()(Int::BoolView, int i) const {
+    return bchb[i];
+  }
+  forceinline void
+  MeritMaxCHB::dispose(void) {
+    ichb.~IntCHB();
+    bchb.~BoolCHB();
+  }
+
+  /// Select by maximal CHB over size
+  class MeritMaxCHBSize {
+  protected:
+    /// Integer CHB information
+    IntCHB ichb;
+    /// Boolean CHB information
+    BoolCHB bchb;
+  public:
+    /// Constructor for initialization
+    MeritMaxCHBSize(Space& home, const IntBoolVarBranch& ibvb);
+    /// Constructor for cloning
+    MeritMaxCHBSize(Space& home, MeritMaxCHBSize& m);
+    /// Return merit
+    double operator()(Int::IntView x, int i) const;
+    /// Return merit
+    double operator()(Int::BoolView x, int i) const;
+    /// Dispose
+    void dispose(void);
+  };
+
+  forceinline
+  MeritMaxCHBSize::MeritMaxCHBSize(Space& home, const IntBoolVarBranch& ibvb)
+    : ichb(ibvb.intchb()), bchb(ibvb.boolchb()) {}
+  forceinline
+  MeritMaxCHBSize::MeritMaxCHBSize(Space& home, MeritMaxCHBSize& m)
+    : ichb(m.ichb), bchb(m.bchb) {}
+  forceinline double
+  MeritMaxCHBSize::operator ()(Int::IntView x, int i) const {
+    return ichb[i] / x.size();
+  }
+  forceinline double
+  MeritMaxCHBSize::operator ()(Int::BoolView, int i) const {
+    return bchb[i] / 2.0;
+  }
+  forceinline void
+  MeritMaxCHBSize::dispose(void) {
+    ichb.~IntCHB();
+    bchb.~BoolCHB();
+  }
+
+
   /// Brancher for integer and Boolean views
+  template<class Merit>
   class IntBoolBrancher : public Brancher {
   protected:
     /// Integer views to branch on
@@ -54,23 +433,129 @@ namespace Gecode { namespace FlatZinc {
     ViewArray<Int::BoolView> y;
     /// Unassigned views start here (might be in \a x or \a y)
     mutable int start;
-    /// Integer view selection object
-    ViewSel<Int::IntView>* xvs;
-    /// Boolean view selection object
-    ViewSel<Int::BoolView>* yvs;
+    /// Selection by maximal merit
+    Merit merit;
     /// Integer value selection and commit object
     ValSelCommitBase<Int::IntView,int>* xvsc;
     /// Boolean value selection and commit object
     ValSelCommitBase<Int::BoolView,int>* yvsc;
+    /// Constructor for cloning \a b
+    IntBoolBrancher(Space& home, IntBoolBrancher& b);
+    /// Constructor for creation
+    IntBoolBrancher(Home home,
+                    ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
+                    Merit& m,
+                    ValSelCommitBase<Int::IntView,int>* xvsc,
+                    ValSelCommitBase<Int::BoolView,int>* yvsc);
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
+    /// Return choice
+    virtual const Choice* choice(Space& home);
+    /// Return choice
+    virtual const Choice* choice(const Space& home, Archive& e);
+    /// Perform commit for choice \a c and alternative \a b
+    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);
+    /// Create no-good literal for choice \a c and alternative \a b
+    virtual NGL* ngl(Space& home, const Choice& c, unsigned int b) const;
+    /// Print branch for choice \a c and alternative \a b
+    virtual void print(const Space& home, const Choice& c, unsigned int b,
+                       std::ostream& o) const;
+    /// Perform cloning
+    virtual Actor* copy(Space& home);
+    /// Post barncher
+    static void post(Home home,
+                     ViewArray<Int::IntView> x, ViewArray<Int::BoolView> y,
+                     Merit& m,
+                     ValSelCommitBase<Int::IntView,int>* xvsc,
+                     ValSelCommitBase<Int::BoolView,int>* yvsc);
     /// Delete brancher and return its size
     virtual size_t dispose(Space& home);
   };
 
+  /// %Choice storing position and value
+  class GECODE_VTABLE_EXPORT PosIntChoice : public Choice {
+  private:
+    /// Position of view to assign
+    int _pos;
+    /// Value to assign to
+    int _val;
+  public:
+    /// Initialize choice for brancher \a b, number of alternatives \a a, position \a p, and value \a n
+    PosIntChoice(const Brancher& b, unsigned int a, int p, int n);
+    /// Return position of view to assign
+    int pos(void) const;
+    /// Return value to assign to
+    int val(void) const;
+    /// Archive into \a e
+    virtual void archive(Archive& e) const;
+  };
+
+  forceinline
+  PosIntChoice::PosIntChoice(const Brancher& b, unsigned int a, int p, int n)
+    : Choice(b,a), _pos(p), _val(n) {}
+  forceinline int
+  PosIntChoice::pos(void) const {
+    return _pos;
+  }
+  forceinline int
+  PosIntChoice::val(void) const {
+    return _val;
+  }
+  void
+  PosIntChoice::archive(Archive& e) const {
+    Choice::archive(e);
+    e << _pos;
+    e << _val;
+  }
+
+
+  template<class Merit>
+  forceinline
+  IntBoolBrancher<Merit>::
+  IntBoolBrancher(Home home,
+                  ViewArray<Int::IntView> x0,
+                  ViewArray<Int::BoolView> y0,
+                  Merit& m,
+                  ValSelCommitBase<Int::IntView,int>* xvsc0,
+                  ValSelCommitBase<Int::BoolView,int>* yvsc0)
+    : Brancher(home), x(x0), y(y0), start(0),
+      merit(m), xvsc(xvsc0), yvsc(yvsc0) {
+    home.notice(*this,AP_DISPOSE,true);
+  }
+
+  template<class Merit>
+  forceinline void
+  IntBoolBrancher<Merit>::
+  post(Home home,
+       ViewArray<Int::IntView> x,
+       ViewArray<Int::BoolView> y,
+       Merit& m,
+       ValSelCommitBase<Int::IntView,int>* xvsc,
+       ValSelCommitBase<Int::BoolView,int>* yvsc) {
+    (void) new (home) IntBoolBrancher<Merit>(home, x, y, m, xvsc, yvsc);
+  }
+
+  template<class Merit>
+  forceinline
+  IntBoolBrancher<Merit>::
+  IntBoolBrancher(Space& home, IntBoolBrancher<Merit>& b)
+    : Brancher(home,b), start(b.start),
+      merit(home, b.merit),
+      xvsc(b.xvsc->copy(home)), yvsc(b.yvsc->copy(home)) {
+    x.update(home,b.x);
+    y.update(home,b.y);
+  }
+
+  template<class Merit>
+  Actor*
+  IntBoolBrancher<Merit>::copy(Space& home) {
+    return new (home) IntBoolBrancher<Merit>(home,*this);
+  }
+
+  template<class Merit>
   bool
-  IntBoolBrancher::status(const Space& home) const {
+  IntBoolBrancher<Merit>::status(const Space& home) const {
     if (start < x.size()) {
       for (int i=start; i < x.size(); i++)
         if (!x[i].assigned()) {
@@ -87,13 +572,111 @@ namespace Gecode { namespace FlatZinc {
     return false;
   }
 
-  size_t
-  IntBoolBrancher::dispose(Space& home) {
-    if (xvs->notice() || yvs->notice()) {
-      home.ignore(*this,AP_DISPOSE,true);
+  template<class Merit>
+  const Choice*
+  IntBoolBrancher<Merit>::choice(Space& home) {
+    int p = start;
+    double m;
+    if (p < x.size()) {
+      assert(!x[p].assigned());
+      m=merit(x[p],p);
+      for (int i=p+1; i<x.size(); i++)
+        if (!x[i].assigned()) {
+          double mi = merit(x[i],i);
+          if (mi > m) {
+            m=mi; p=i;
+          }
+        }
+      for (int i=0; i<y.size(); i++)
+        if (!y[i].assigned()) {
+          double mi = merit(y[i],i);
+          if (mi > m) {
+            m=mi; p=i+x.size();
+          }
+        }
+    } else {
+      m=merit(y[p-x.size()],p-x.size());
+      for (int i=p-x.size()+1; i<y.size(); i++)
+        if (!y[i].assigned()) {
+          double mi = merit(y[i],i);
+          if (mi > m) {
+            m=mi; p=i+x.size();
+          }
+        }
     }
-    xvs->dispose(home);
-    yvs->dispose(home);
+    int v;
+    if (p < x.size()) {
+      v=xvsc->val(home,x[p],p);
+    } else {
+      v=yvsc->val(home,y[p-x.size()],p-x.size());
+    }
+    return new PosIntChoice(*this,2,p,v);
+  }
+
+  template<class Merit>
+  ExecStatus
+  IntBoolBrancher<Merit>::commit(Space& home, const Choice& _c,
+                                 unsigned int b) {
+    const PosIntChoice& c
+      = static_cast<const PosIntChoice&>(_c);
+    int p=c.pos(); int n=c.val();
+    if (p < x.size()) {
+      return me_failed(xvsc->commit(home,b,x[p],p,n)) ?
+        ES_FAILED : ES_OK;
+    } else {
+      p -= x.size();
+      return me_failed(yvsc->commit(home,b,y[p],p,n)) ?
+        ES_FAILED : ES_OK;
+    }
+  }
+
+  template<class Merit>
+  NGL*
+  IntBoolBrancher<Merit>::ngl(Space& home, const Choice& _c,
+                              unsigned int b) const {
+    const PosIntChoice& c
+      = static_cast<const PosIntChoice&>(_c);
+    int p=c.pos(); int n=c.val();
+    if (p < x.size()) {
+      return xvsc->ngl(home,b,x[p],n);
+    } else {
+      p -= x.size();
+      return yvsc->ngl(home,b,y[p],n);
+    }
+  }
+
+  template<class Merit>
+  void
+  IntBoolBrancher<Merit>::print(const Space& home, const Choice& _c,
+                                unsigned int b,
+                                std::ostream& o) const {
+    const PosIntChoice& c
+      = static_cast<const PosIntChoice&>(_c);
+    int p=c.pos(); int n=c.val();
+    if (p < x.size()) {
+      xvsc->print(home,b,x[p],p,n,o);
+    } else {
+      p -= x.size();
+      yvsc->print(home,b,y[p],p,n,o);
+    }
+  }
+
+  template<class Merit>
+  const Choice*
+  IntBoolBrancher<Merit>::choice(const Space& home, Archive& e) {
+    (void) home;
+    int p; e >> p;
+    int v; e >> v;
+    return new PosIntChoice(*this,2,p,v);
+  }
+
+  template<class Merit>
+  size_t
+  IntBoolBrancher<Merit>::dispose(Space& home) {
+    home.ignore(*this,AP_DISPOSE,true);
+    merit.dispose();
+    xvsc->dispose(home);
+    yvsc->dispose(home);
     (void) Brancher::dispose(home);
     return sizeof(IntBoolBrancher);
   }
@@ -117,24 +700,62 @@ namespace Gecode { namespace FlatZinc {
     default:
     GECODE_NEVER;
     }
+    GECODE_NEVER;
+    return BOOL_VAL_MIN();
   }
 
   /// Branch function for integer and Boolean variables
   void
   branch(Home home, const IntVarArgs& x, const BoolVarArgs& y,
-         IntVarBranch xvars, BoolVarBranch yvars,
-         IntValBranch vals) {
+         IntBoolVarBranch vars, IntValBranch vals) {
     using namespace Int;
     if (home.failed()) return;
-    xvars.expand(home,x); yvars.expand(home,y);
-    ViewArray<IntView>  xv(home,x);
+    ViewArray<IntView> xv(home,x);
     ViewArray<BoolView> yv(home,y);
-    ViewSel<IntView>*  xvs = Branch::viewsel(home,xvars);
-    ViewSel<BoolView>* yvs = Branch::viewsel(home,yvars);
     ValSelCommitBase<IntView,int>* xvsc =
       Branch::valselcommit(home,vals);
     ValSelCommitBase<BoolView,int>* yvsc =
       Branch::valselcommit(home,i2b(vals));
+    switch (vars.select()) {
+    case IntBoolVarBranch::SEL_AFC_MAX:
+      {
+        MeritMaxAFC m(home,vars);
+        IntBoolBrancher<MeritMaxAFC>::post(home,xv,yv,m,xvsc,yvsc);
+      }
+      break;
+    case IntBoolVarBranch::SEL_ACTION_MAX:
+      {
+        MeritMaxAction m(home,vars);
+        IntBoolBrancher<MeritMaxAction>::post(home,xv,yv,m,xvsc,yvsc);
+      }
+      break;
+    case IntBoolVarBranch::SEL_CHB_MAX:
+      {
+        MeritMaxCHB m(home,vars);
+        IntBoolBrancher<MeritMaxCHB>::post(home,xv,yv,m,xvsc,yvsc);
+      }
+      break;
+    case IntBoolVarBranch::SEL_AFC_SIZE_MAX:
+      {
+        MeritMaxAFCSize m(home,vars);
+        IntBoolBrancher<MeritMaxAFCSize>::post(home,xv,yv,m,xvsc,yvsc);
+      }
+      break;
+    case IntBoolVarBranch::SEL_ACTION_SIZE_MAX:
+      {
+        MeritMaxActionSize m(home,vars);
+        IntBoolBrancher<MeritMaxActionSize>::post(home,xv,yv,m,xvsc,yvsc);
+      }
+      break;
+    case IntBoolVarBranch::SEL_CHB_SIZE_MAX:
+      {
+        MeritMaxCHBSize m(home,vars);
+        IntBoolBrancher<MeritMaxCHBSize>::post(home,xv,yv,m,xvsc,yvsc);
+      }
+      break;
+    default:
+      GECODE_NEVER;
+    }
   }
 
 }}
@@ -435,7 +1056,14 @@ public:
     // Branching
     // ***********************
     // Place each piece in turn
-    branch(*this, s, INT_VAR_MIN_MIN(), INT_VAL_MIN());
+    //    branch(*this, s, INT_VAR_MIN_MIN(), INT_VAL_MIN());
+    IntAFC iafc(*this, s);
+    BoolAFC bafc(*this, knights);
+    IntAction iaction(*this, s);
+    BoolAction baction(*this, knights);
+    FlatZinc::branch(*this, s, knights, 
+                     FlatZinc::INTBOOL_VAR_ACTION_MAX(iaction,baction),
+                     INT_VAL_MIN());
   }
 
   /// Constructor for cloning e

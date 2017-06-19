@@ -1466,16 +1466,25 @@ namespace Gecode {
     FloatAFC(const FloatAFC& a);
     /// Assignment operator
     FloatAFC& operator =(const FloatAFC& a);
-    /// Initialize for float variables \a x with decay factor \a d
-    FloatAFC(Home home, const FloatVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for float variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
+    FloatAFC(Home home, const FloatVarArgs& x, double d=1.0, bool share=true);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * AFC storage has been constructed with the default constructor.
      *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
      */
-    void init(Home home, const FloatVarArgs& x, double d=1.0);
+    void init(Home home, const FloatVarArgs& x, double d=1.0, bool share=true);
   };
 
 }

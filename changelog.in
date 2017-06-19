@@ -73,6 +73,38 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

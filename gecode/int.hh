@@ -3950,16 +3950,25 @@ namespace Gecode {
     IntAFC(const IntAFC& a);
     /// Assignment operator
     IntAFC& operator =(const IntAFC& a);
-    /// Initialize for integer variables \a x with decay factor \a d
-    IntAFC(Home home, const IntVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for integer variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
+    IntAFC(Home home, const IntVarArgs& x, double d=1.0, bool share=true);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * AFC storage has been constructed with the default constructor.
      *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
      */
-    void init(Home home, const IntVarArgs& x, double d=1.0);
+    void init(Home home, const IntVarArgs& x, double d=1.0, bool share=true);
   };
 
   /**
@@ -3981,16 +3990,25 @@ namespace Gecode {
     BoolAFC(const BoolAFC& a);
     /// Assignment operator
     BoolAFC& operator =(const BoolAFC& a);
-    /// Initialize for Boolean variables \a x with decay factor \a d
-    BoolAFC(Home home, const BoolVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for Boolean variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
+    BoolAFC(Home home, const BoolVarArgs& x, double d=1.0, bool share=true);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * AFC storage has been constructed with the default constructor.
      *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
      */
-    void init(Home home, const BoolVarArgs& x, double d=1.0);
+    void init(Home home, const BoolVarArgs& x, double d=1.0, bool share=true);
   };
 
 }
