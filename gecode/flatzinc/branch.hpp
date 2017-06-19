@@ -334,6 +334,7 @@ namespace Gecode { namespace FlatZinc {
           }
         }
     } else {
+      assert(!y[p-x.size()].assigned());
       m=merit(y[p-x.size()],p-x.size());
       for (int i=p-x.size()+1; i<y.size(); i++)
         if (!y[i].assigned()) {
