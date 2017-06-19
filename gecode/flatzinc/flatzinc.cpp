@@ -42,6 +42,7 @@
 #include <gecode/flatzinc.hh>
 #include <gecode/flatzinc/registry.hh>
 #include <gecode/flatzinc/plugin.hh>
+#include <gecode/flatzinc/branch.hh>
 
 #include <gecode/search.hh>
 
