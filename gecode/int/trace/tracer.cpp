@@ -47,7 +47,7 @@ namespace Gecode {
   StdIntTracer::init(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::init(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 100.00% (" << t.slack().initial() << " values)"
        << std::endl;
   }
@@ -57,7 +57,7 @@ namespace Gecode {
                       const ViewTraceInfo& vti, int i, IntTraceDelta& d) {
     os << "trace<Int>::prune(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << "): [" << i << "] = " << t[i] << " - {";
     os << d.min();
     if (d.width() > 1)
@@ -76,7 +76,7 @@ namespace Gecode {
   StdIntTracer::fix(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::fix(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -94,7 +94,7 @@ namespace Gecode {
   StdIntTracer::fail(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::fail(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -112,7 +112,7 @@ namespace Gecode {
   StdIntTracer::done(const Space&, const IntTraceRecorder& t) {
     os << "trace<Int>::done(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 0%" << std::endl;
   }
 
@@ -127,7 +127,7 @@ namespace Gecode {
   StdBoolTracer::init(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::init(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 100% (" << t.slack().initial() << " values)"
        << std::endl;
   }
@@ -137,7 +137,7 @@ namespace Gecode {
                        const ViewTraceInfo& vti, int i, BoolTraceDelta& d) {
     os << "trace<Bool>::prune(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << "): [" << i << "] = " << t[i] << " - {";
     os << d.min();
     if (d.width() > 1)
@@ -156,7 +156,7 @@ namespace Gecode {
   StdBoolTracer::fix(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::fix(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -174,7 +174,7 @@ namespace Gecode {
   StdBoolTracer::fail(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::fail(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -192,7 +192,7 @@ namespace Gecode {
   StdBoolTracer::done(const Space&, const BoolTraceRecorder& t) {
     os << "trace<Bool>::done(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 0%" << std::endl;
   }
 

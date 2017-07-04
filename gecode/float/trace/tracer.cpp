@@ -47,7 +47,7 @@ namespace Gecode {
   StdFloatTracer::init(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::init(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 100.00% (" << t.slack().initial() << " width)"
        << std::endl;
   }
@@ -57,7 +57,7 @@ namespace Gecode {
                         const ViewTraceInfo& vti, int i, FloatTraceDelta& d) {
     os << "trace<Float>::prune(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << "): [" << i << "] = " << t[i] << " - ["
        << d.min() << ".." << d.max()
        << "] by " << vti << std::endl;
@@ -67,7 +67,7 @@ namespace Gecode {
   StdFloatTracer::fix(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::fix(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -85,7 +85,7 @@ namespace Gecode {
   StdFloatTracer::fail(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::fail(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -103,7 +103,7 @@ namespace Gecode {
   StdFloatTracer::done(const Space&, const FloatTraceRecorder& t) {
     os << "trace<Float>::done(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());

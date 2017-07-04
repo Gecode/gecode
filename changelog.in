@@ -73,6 +73,30 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Massimo Morara
+[DESCRIPTION]
+Fixed printing of group information for tracing.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks:	Massimo Morara
+[DESCRIPTION]
+Fixed printing of group information for tracing.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks:	Massimo Morara
+[DESCRIPTION]
+Fixed printing of group information for tracing.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor
