@@ -38,6 +38,10 @@
 namespace Gecode { namespace FlatZinc {
 
   forceinline
+  IntBoolVarBranch::IntBoolVarBranch(Select s0, double d)
+    : VarBranch<IntVar>(d), s(s0) {}
+
+  forceinline
   IntBoolVarBranch::IntBoolVarBranch(Select s0, IntAFC i, BoolAFC b)
     : s(s0), iafc(i), bafc(b) {}
 
@@ -80,28 +84,79 @@ namespace Gecode { namespace FlatZinc {
   IntBoolVarBranch::boolchb(void) const {
     return bchb;
   }
+  forceinline void
+  IntBoolVarBranch::expand(Home home, const IntVarArgs& x, const BoolVarArgs& y) {
+    switch (select()) {
+    case IntBoolVarBranch::SEL_AFC_MAX:
+    case IntBoolVarBranch::SEL_AFC_SIZE_MAX:
+      if (!iafc)
+        iafc = IntAFC(home,x,decay());
+      if (!bafc)
+        bafc = BoolAFC(home,y,decay());
+      break;
+    case IntBoolVarBranch::SEL_ACTION_MAX:
+    case IntBoolVarBranch::SEL_ACTION_SIZE_MAX:
+      if (!iaction)
+        iaction = IntAction(home,x,decay());
+      if (!baction)
+        baction = BoolAction(home,y,decay());
+      break;
+    case IntBoolVarBranch::SEL_CHB_MAX:
+    case IntBoolVarBranch::SEL_CHB_SIZE_MAX:
+      if (!ichb)
+        ichb = IntCHB(home,x);
+      if (!bchb)
+        bchb = BoolCHB(home,y);
+      break;
+    default: ;
+    }
+  }
 
 
 
   inline IntBoolVarBranch
+  INTBOOL_VAR_AFC_MAX(double d) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX,d);
+  }
+  inline IntBoolVarBranch
   INTBOOL_VAR_AFC_MAX(IntAFC ia, BoolAFC ba) {
     return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_MAX,ia,ba);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_ACTION_MAX(double d) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX,d);
   }
   inline IntBoolVarBranch
   INTBOOL_VAR_ACTION_MAX(IntAction ia, BoolAction ba) {
     return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_MAX,ia,ba);
   }
   inline IntBoolVarBranch
+  INTBOOL_VAR_CHB_MAX(double d) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX,d);
+  }
+  inline IntBoolVarBranch
   INTBOOL_VAR_CHB_MAX(IntCHB ic, BoolCHB bc) {
     return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_MAX,ic,bc);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_AFC_SIZE_MAX(double d) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX,d);
   }
   inline IntBoolVarBranch
   INTBOOL_VAR_AFC_SIZE_MAX(IntAFC ia, BoolAFC ba) {
     return IntBoolVarBranch(IntBoolVarBranch::SEL_AFC_SIZE_MAX,ia,ba);
   }
   inline IntBoolVarBranch
+  INTBOOL_VAR_ACTION_SIZE_MAX(double d) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX,d);
+  }
+  inline IntBoolVarBranch
   INTBOOL_VAR_ACTION_SIZE_MAX(IntAction ia, BoolAction ba) {
     return IntBoolVarBranch(IntBoolVarBranch::SEL_ACTION_SIZE_MAX,ia,ba);
+  }
+  inline IntBoolVarBranch
+  INTBOOL_VAR_CHB_SIZE_MAX(double d) {
+    return IntBoolVarBranch(IntBoolVarBranch::SEL_CHB_SIZE_MAX,d);
   }
   inline IntBoolVarBranch
   INTBOOL_VAR_CHB_SIZE_MAX(IntCHB ic, BoolCHB bc) {

@@ -72,6 +72,8 @@ namespace Gecode { namespace FlatZinc {
     /// Boolean CHB
     BoolCHB bchb;
   public:
+    /// Initialize with selection strategy \a s and decay factor \a d
+    IntBoolVarBranch(Select s, double d);
     /// Initialize with selection strategy \a s and AFC \a i and \a b
     IntBoolVarBranch(Select s, IntAFC i, BoolAFC b);
     /// Initialize with selection strategy \a s and action \a i and \a b
@@ -92,20 +94,34 @@ namespace Gecode { namespace FlatZinc {
     IntCHB intchb(void) const;
     /// Return Boolean AFC
     BoolCHB boolchb(void) const;
+    /// Expand AFC, action, and CHB
+    void expand(Home home, const IntVarArgs& x, const BoolVarArgs& y);
   };
 
   /// Variable selection for both integer and Boolean variables
   //@{
   /// Select variable with largest accumulated failure count
+  IntBoolVarBranch INTBOOL_VAR_AFC_MAX(double d=1.0);
+  /// Select variable with largest accumulated failure count
   IntBoolVarBranch INTBOOL_VAR_AFC_MAX(IntAFC ia, BoolAFC ba);
+  /// Select variable with highest action
+  IntBoolVarBranch INTBOOL_VAR_ACTION_MAX(double d=1.0);
   /// Select variable with highest action
   IntBoolVarBranch INTBOOL_VAR_ACTION_MAX(IntAction ia, BoolAction ba);
   /// Select variable with largest CHB Q-score
+  IntBoolVarBranch INTBOOL_VAR_CHB_MAX(double d=1.0);
+  /// Select variable with largest CHB Q-score
   IntBoolVarBranch INTBOOL_VAR_CHB_MAX(IntCHB ic, BoolCHB bc);
+  /// Select variable with largest accumulated failure count divided by domain size
+  IntBoolVarBranch INTBOOL_VAR_AFC_SIZE_MAX(double d=1.0);
   /// Select variable with largest accumulated failure count divided by domain size
   IntBoolVarBranch INTBOOL_VAR_AFC_SIZE_MAX(IntAFC ia, BoolAFC ba);
   /// Select variable with largest action divided by domain size
+  IntBoolVarBranch INTBOOL_VAR_ACTION_SIZE_MAX(double d=1.0);
+  /// Select variable with largest action divided by domain size
   IntBoolVarBranch INTBOOL_VAR_ACTION_SIZE_MAX(IntAction ia, BoolAction ba);
+  /// Select variable with largest CHB Q-score divided by domain size
+  IntBoolVarBranch INTBOOL_VAR_CHB_SIZE_MAX(double d=1.0);
   /// Select variable with largest CHB Q-score divided by domain size
   IntBoolVarBranch INTBOOL_VAR_CHB_SIZE_MAX(IntCHB ic, BoolCHB bc);
   //@}

@@ -987,6 +987,7 @@ namespace Gecode { namespace FlatZinc {
                                  std::ostream& err) {
     Rnd rnd(static_cast<unsigned int>(seed));
     TieBreak<IntVarBranch> def_int_varsel = INT_VAR_AFC_SIZE_MAX(0.99);
+    IntBoolVarBranch def_intbool_varsel = INTBOOL_VAR_AFC_SIZE_MAX(0.99);
     IntValBranch def_int_valsel = INT_VAL_MIN();
     std::string def_int_rel_left = "=";
     std::string def_int_rel_right = "!=";
@@ -1328,13 +1329,14 @@ namespace Gecode { namespace FlatZinc {
       }
     }
 
-    if (iv_sol.size() > 0) {
+    if (iv_sol.size() > 0 && bv_sol.size() > 0) {
+      branch(*this, iv_sol, bv_sol, def_intbool_varsel, def_int_valsel);
+    } else if (iv_sol.size() > 0) {
       BrancherGroup bg;
       branch(bg(*this), iv_sol, def_int_varsel, def_int_valsel, nullptr,
              &varValPrint<IntVar>);
       branchInfo.add(bg,def_int_rel_left,def_int_rel_right,iv_sol_names);
-    }
-    if (bv_sol.size() > 0) {
+    } else if (bv_sol.size() > 0) {
       BrancherGroup bg;
       branch(bg(*this), bv_sol, def_bool_varsel, def_bool_valsel, nullptr,
              &varValPrint<BoolVar>);
@@ -1433,44 +1435,6 @@ namespace Gecode { namespace FlatZinc {
     n_aux += fv_aux.size();
 #endif
 
-    if (_method == MIN) {
-      if (_optVarIsInt) {
-        std::vector<std::string> names(1);
-        names[0] = p.intVarName(_optVar);
-        BrancherGroup bg;
-        branch(bg(*this), iv[_optVar], INT_VAL_MIN(),
-               &varValPrint<IntVar>);
-        branchInfo.add(bg,"=","!=",names);
-      } else {
-#ifdef GECODE_HAS_FLOAT_VARS
-        std::vector<std::string> names(1);
-        names[0] = p.floatVarName(_optVar);
-        BrancherGroup bg;
-        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MIN(),
-               &varValPrintF);
-        branchInfo.add(bg,"<=",">",names);
-#endif
-      }
-    } else if (_method == MAX) {
-      if (_optVarIsInt) {
-        std::vector<std::string> names(1);
-        names[0] = p.intVarName(_optVar);
-        BrancherGroup bg;
-        branch(bg(*this), iv[_optVar], INT_VAL_MAX(),
-               &varValPrint<IntVar>);
-        branchInfo.add(bg,"=","!=",names);
-      } else {
-#ifdef GECODE_HAS_FLOAT_VARS
-        std::vector<std::string> names(1);
-        names[0] = p.floatVarName(_optVar);
-        BrancherGroup bg;
-        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MAX(),
-               &varValPrintF);
-        branchInfo.add(bg,"<=",">",names);
-#endif
-      }
-    }
-
     if (n_aux > 0) {
       if (_method == SAT) {
         AuxVarBrancher::post(*this, def_int_varsel, def_int_valsel,
@@ -1514,6 +1478,45 @@ namespace Gecode { namespace FlatZinc {
 
       }
     }
+
+    if (_method == MIN) {
+      if (_optVarIsInt) {
+        std::vector<std::string> names(1);
+        names[0] = p.intVarName(_optVar);
+        BrancherGroup bg;
+        branch(bg(*this), iv[_optVar], INT_VAL_MIN(),
+               &varValPrint<IntVar>);
+        branchInfo.add(bg,"=","!=",names);
+      } else {
+#ifdef GECODE_HAS_FLOAT_VARS
+        std::vector<std::string> names(1);
+        names[0] = p.floatVarName(_optVar);
+        BrancherGroup bg;
+        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MIN(),
+               &varValPrintF);
+        branchInfo.add(bg,"<=",">",names);
+#endif
+      }
+    } else if (_method == MAX) {
+      if (_optVarIsInt) {
+        std::vector<std::string> names(1);
+        names[0] = p.intVarName(_optVar);
+        BrancherGroup bg;
+        branch(bg(*this), iv[_optVar], INT_VAL_MAX(),
+               &varValPrint<IntVar>);
+        branchInfo.add(bg,"=","!=",names);
+      } else {
+#ifdef GECODE_HAS_FLOAT_VARS
+        std::vector<std::string> names(1);
+        names[0] = p.floatVarName(_optVar);
+        BrancherGroup bg;
+        branch(bg(*this), fv[_optVar], FLOAT_VAL_SPLIT_MAX(),
+               &varValPrintF);
+        branchInfo.add(bg,"<=",">",names);
+#endif
+      }
+    }
+
   }
 
   AST::Array*

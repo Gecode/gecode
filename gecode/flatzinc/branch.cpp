@@ -124,6 +124,7 @@ namespace Gecode { namespace FlatZinc {
   branch(Home home, const IntVarArgs& x, const BoolVarArgs& y,
          IntBoolVarBranch vars, IntValBranch vals) {
     if (home.failed()) return;
+    vars.expand(home,x,y);
     ViewArray<Int::IntView> xv(home,x);
     ViewArray<Int::BoolView> yv(home,y);
     ValSelCommitBase<Int::IntView,int>* xvsc =
