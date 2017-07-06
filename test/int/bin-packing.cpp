@@ -299,7 +299,7 @@ namespace Test { namespace Int {
           delete home;
           return false;
         }
-        if (clique.size() != mc.size()) {
+        if (static_cast<unsigned int>(clique.size()) != mc.size()) {
           delete home;
           return false;
         }

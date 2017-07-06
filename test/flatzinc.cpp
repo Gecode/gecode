@@ -82,7 +82,7 @@ namespace Test { namespace FlatZinc {
         olog << ind(2) << "FlatZinc error : " << e.toString() << std::endl;
       return false;
     }
-
+    return true;
   }
 
 }}
