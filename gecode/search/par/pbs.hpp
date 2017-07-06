@@ -286,9 +286,7 @@ namespace Gecode { namespace Search { namespace Par {
   template<class Collect>
   PBS<Collect>::~PBS(void) {
     assert(n_busy == 0);
-    for (unsigned int i=n_slaves; i--; )
-      delete slaves[i];
-    heap.free(slaves,n_slaves);
+    heap.free<Slave<Collect>*>(slaves,n_slaves);
   }
 
 }}}
