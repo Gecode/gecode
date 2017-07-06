@@ -1045,12 +1045,12 @@ namespace Gecode { namespace FlatZinc {
       AST::SetLit* sl = ce[5]->getSet();
       int* f;
       if (sl->interval) {
-        f = static_cast<int*>(malloc(sizeof(int)*(sl->max-sl->min+2)));
+        f = static_cast<int*>(heap.ralloc(sizeof(int)*(sl->max-sl->min+2)));
         for (int i=sl->min; i<=sl->max; i++)
           f[i-sl->min] = i;
         f[sl->max-sl->min+1] = -1;
       } else {
-        f = static_cast<int*>(malloc(sizeof(int)*(sl->s.size()+1)));
+        f = static_cast<int*>(heap.ralloc(sizeof(int)*(sl->s.size()+1)));
         for (int j=sl->s.size(); j--; )
           f[j] = sl->s[j];
         f[sl->s.size()] = -1;
