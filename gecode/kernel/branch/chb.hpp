@@ -71,24 +71,14 @@ namespace Gecode {
       /// Alpha value
       double alpha;
       /// CHB information
-      Info chb[1];
-      /// Allocate memory for \a n CHB infos
-      static void* allocate(int n);
+      Info* chb;
       /// Initialize CHB info
       template<class View>
       Storage(Home home, ViewArray<View>& x,
               typename BranchTraits<typename View::VarType>::Merit bm);
       /// Delete object
+      GECODE_KERNEL_EXPORT
       ~Storage(void);
-      /// \name Memory management
-      //@{
-      /// Allocate memory
-      static void* operator new(size_t s, void* p);
-      /// Return memory
-      static void  operator delete(void* p, void* q);
-      /// Needed for exceptions
-      static void  operator delete(void* p);
-      //@}
       /// Bump failure count and alpha
       void bump(void);
       /// Update chb information at position \a i
@@ -275,28 +265,13 @@ namespace Gecode {
    * CHB value storage
    *
    */
-  forceinline void*
-  CHB::Storage::operator new(size_t, void* p) {
-    return p;
-  }
-  forceinline void
-  CHB::Storage::operator delete(void* p, void*) {
-    heap.rfree(p);
-  }
-  forceinline void
-  CHB::Storage::operator delete(void*) {}
-
-  forceinline void*
-  CHB::Storage::allocate(int n) {
-    return heap.ralloc(sizeof(Storage)+(n-1)*sizeof(Info));
-  }
-
   template<class View>
   forceinline
   CHB::Storage::Storage(Home home, ViewArray<View>& x,
                         typename 
                         BranchTraits<typename View::VarType>::Merit bm)
-    : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init) {
+    : n(x.size()), nf(0U), alpha(Kernel::Config::chb_alpha_init),
+      chb(heap.alloc<Info>(x.size())) {
     if (bm) {
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -328,8 +303,6 @@ namespace Gecode {
       chb[i].qs = (1.0 - alpha) * chb[i].qs + alpha * reward;
     }
   }
-  forceinline
-  CHB::Storage::~Storage(void) {}
 
 
   /*
@@ -381,8 +354,7 @@ namespace Gecode {
   CHB::CHB(Home home, ViewArray<View>& x,
            typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(!*this);
-    void* o = Storage::allocate(x.size());
-    object(*new (o) Storage(home,x,bm));
+    object(*new Storage(home,x,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
@@ -390,8 +362,7 @@ namespace Gecode {
   CHB::init(Home home, ViewArray<View>& x,
             typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(!*this);
-    void* o = Storage::allocate(x.size());
-    object(*new (o) Storage(home,x,bm));
+    object(*new Storage(home,x,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
 

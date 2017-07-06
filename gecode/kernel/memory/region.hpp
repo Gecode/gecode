@@ -3,12 +3,8 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
- *  Contributing authors:
- *     Filip Konvicka <filip.konvicka@logis.cz>
- *
  *  Copyright:
  *     Christian Schulte, 2008
- *     LOGIS, s.r.o., 2009
  *
  *  Last modified:
  *     $Date$ by $Author$

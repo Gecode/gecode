@@ -57,9 +57,7 @@ namespace Gecode {
       /// Inverse decay factor
       double invd;
       /// Action values (more follow)
-      double a[1];
-      /// Allocate memory for \a n values
-      static void* allocate(int n);
+      double* a;
       /// Initialize action values
       template<class View>
       Storage(Home home, ViewArray<View>& x, double d,
@@ -67,16 +65,8 @@ namespace Gecode {
       /// Update action value at position \a i
       void update(int i);
       /// Delete object
+      GECODE_KERNEL_EXPORT
       ~Storage(void);
-      /// \name Memory management
-      //@{
-      /// Allocate memory
-      static void* operator new(size_t s, void* p);
-      /// Return memory
-      static void  operator delete(void* p, void* q);
-      /// Needed for exceptions
-      static void  operator delete(void* p);
-      //@}
     };
     /// Return object of correct type
     Storage& object(void) const;
@@ -266,28 +256,12 @@ namespace Gecode {
    *
    */
 
-  forceinline void*
-  Action::Storage::operator new(size_t, void* p) {
-    return p;
-  }
-  forceinline void
-  Action::Storage::operator delete(void* p, void*) {
-    heap.rfree(p);
-  }
-  forceinline void
-  Action::Storage::operator delete(void*) {}
-
-  forceinline void*
-  Action::Storage::allocate(int n) {
-    return heap.ralloc(sizeof(Storage)+(n-1)*sizeof(double));
-  }
-
   template<class View>
   forceinline
   Action::Storage::Storage(Home home, ViewArray<View>& x, double d,
                            typename
                            BranchTraits<typename View::VarType>::Merit bm)
-    : n(x.size()), invd(1.0 / d) {
+    : n(x.size()), invd(1.0 / d), a(heap.alloc<double>(x.size())) {
     if (bm)
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
@@ -309,8 +283,6 @@ namespace Gecode {
       for (int j=n; j--; )
         a[j] *= Kernel::Config::rescale;
   }
-  forceinline
-  Action::Storage::~Storage(void) {}
 
 
   /*
@@ -359,8 +331,7 @@ namespace Gecode {
   Action::Action(Home home, ViewArray<View>& x, double d,
                  typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(!*this);
-    void* o = Storage::allocate(x.size());
-    object(*new (o) Storage(home,x,d,bm));
+    object(*new Storage(home,x,d,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
@@ -368,8 +339,7 @@ namespace Gecode {
   Action::init(Home home, ViewArray<View>& x, double d,
                typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(!*this);
-    void* o = Storage::allocate(x.size());
-    object(*new (o) Storage(home,x,d,bm));
+    object(*new Storage(home,x,d,bm));
     (void) Recorder<View>::post(home,x,*this);
   }
 

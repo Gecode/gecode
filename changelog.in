@@ -73,6 +73,20 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed virtual method table overwrite bug for Action and CHB.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed double deletion bug in parallel portfolio-based search.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

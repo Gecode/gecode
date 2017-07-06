@@ -41,6 +41,10 @@ namespace Gecode {
 
   Support::Mutex CHB::Storage::m;
 
+  CHB::Storage::~Storage(void) {
+    heap.free<Info>(chb,n);
+  }
+
   const CHB CHB::def;
 
   CHB::CHB(const CHB& c)

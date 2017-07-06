@@ -41,6 +41,10 @@ namespace Gecode {
 
   Support::Mutex Action::Storage::m;
 
+  Action::Storage::~Storage(void) {
+    heap.free<double>(a,n);
+  }
+
   const Action Action::def;
 
   Action::Action(const Action& a)
