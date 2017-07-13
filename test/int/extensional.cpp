@@ -4,7 +4,11 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Linnea Ingmar <linnea.ingmar@hotmail.com>
+ *
  *  Copyright:
+ *     Linnea Ingmar, 2017
  *     Mikael Lagerkvist, 2007
  *     Christian Schulte, 2005
  *
@@ -373,14 +377,14 @@ namespace Test { namespace Int {
        }
 
      };
-
+     
      /// %Test with tuple set
-     class TupleSetA : public Test {
+     class TupleSetBase : public Test {
      public:
        /// Create and register test
-       TupleSetA(Gecode::IntPropLevel ipl0)
-         : Test("Extensional::TupleSet::A::"+str(ipl0),
-                4,1,5,false,ipl0) {}
+       TupleSetBase(void)
+         : Test("Extensional::TupleSet::Base",
+                4,1,5,false,Gecode::IPL_DOM) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          return ((x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
@@ -393,7 +397,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         TupleSet t;
+         TupleSet t(4);
          IntArgs t1(4,  2, 1, 2, 4);
          IntArgs t2(4,  2, 2, 1, 4);
          IntArgs t3(4,  4, 3, 4, 1);
@@ -422,34 +426,71 @@ namespace Test { namespace Int {
      };
 
      /// %Test with tuple set
-     class TupleSetB : public Test {
+     class TupleSetTest : public Test {
+     protected:
+       /// The tuple set to use
+       Gecode::TupleSet ts;
+     public:
+       /// Create and register test
+       TupleSetTest(const std::string& s,
+                    Gecode::IntSet d0, Gecode::TupleSet ts0)
+         : Test("Extensional::TupleSet::"+s,
+                ts0.arity(),d0,false,Gecode::IPL_DOM), ts(ts0) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         using namespace Gecode;
+         for (int i=ts.tuples(); i--; ) {
+           TupleSet::Tuple t = ts[i];
+           bool same = true;
+           for (int j=0; (j < ts.arity()) && same; j++)
+             if (t[j] != x[j])
+               same = false;
+           if (same)
+             return true;
+         }
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         extensional(home, x, ts, ipl);
+       }
+     };
+
+     class RandomTupleSetTest : TupleSetTest {
+     public:
+       /// Create and register test
+       RandomTupleSetTest(const std::string& s,
+                    Gecode::IntSet d0, Gecode::TupleSet ts0)
+         : TupleSetTest(s,d0,ts0) {
+         testsearch = false;
+       }
+       /// Create and register initial assignment
+       virtual Assignment* assignment(void) const {
+         using namespace Gecode;
+         return new RandomAssignment(arity,dom,1000);
+       }
+     };
+
+     /// %Test with large tuple set
+     class TupleSetLarge : public Test {
        mutable Gecode::TupleSet t;
      public:
        /// Create and register test
-       TupleSetB(Gecode::IntPropLevel ipl0)
-         : Test("Extensional::TupleSet::B::"+str(ipl0),
-                4,1,5,false,ipl0) {
+       TupleSetLarge(double prob)
+         : Test("Extensional::TupleSet::Large",
+                5,1,5,false,Gecode::IPL_DOM), t(5) {
          using namespace Gecode;
-         IntArgs t1 (4,  2, 1, 2, 4);
-         IntArgs t2 (4,  2, 2, 1, 4);
-         IntArgs t3 (4,  4, 3, 4, 1);
-         IntArgs t4 (4,  1, 3, 2, 3);
-         IntArgs t5 (4,  3, 3, 3, 2);
-         IntArgs t6 (4,  5, 1, 4, 4);
-         IntArgs t7 (4,  2, 5, 1, 5);
-         IntArgs t8 (4,  4, 3, 5, 1);
-         IntArgs t9 (4,  1, 5, 2, 5);
-         IntArgs t10(4,  5, 3, 3, 2);
-         t.add(t1);
-         t.add(t2);
-         t.add(t3);
-         t.add(t4);
-         t.add(t5);
-         t.add(t6);
-         t.add(t7);
-         t.add(t8);
-         t.add(t9);
-         t.add(t10);
+
+         CpltAssignment ass(5, IntSet(1, 5));
+         while (ass()) {
+           if (Base::rand(100) <= prob*100) {
+             IntArgs tuple(5);
+             for (int i = 5; i--; ) tuple[i] = ass[i];
+             t.add(tuple);
+           }
+           ++ass;
+         }
          t.finalize();
        }
        /// %Test whether \a x is solution
@@ -470,17 +511,15 @@ namespace Test { namespace Int {
          extensional(home, x, t, ipl);
        }
      };
-
-
-
+     
      /// %Test with bool tuple set
      class TupleSetBool : public Test {
        mutable Gecode::TupleSet t;
      public:
        /// Create and register test
-       TupleSetBool(Gecode::IntPropLevel ipl0, double prob)
-         : Test("Extensional::TupleSet::Bool::"+str(ipl0),
-                5,0,1,false,ipl0) {
+       TupleSetBool(double prob)
+         : Test("Extensional::TupleSet::Bool",
+                5,0,1,false), t(5) {
          using namespace Gecode;
 
          CpltAssignment ass(5, IntSet(0, 1));
@@ -516,6 +555,180 @@ namespace Test { namespace Int {
        }
      };
 
+     /// Help class to create and register tests with a fixed table size
+     class TupleSetTestSize {
+     public:
+       /// Perform creation and registration
+       TupleSetTestSize(int size) {
+         using namespace Gecode;
+         /// Find the arity needed for creating sufficient number of tuples
+         int arity = 2;
+         int n_tuples = 5*5;
+         while (n_tuples < size) {
+           arity++;
+           n_tuples*=5;
+         }
+         /// Build TupleSet
+         TupleSet ts(arity);
+         CpltAssignment ass(arity, IntSet(0, 4));
+         for (int i = size; i--; ) {
+           assert(ass());
+           IntArgs tuple(arity);
+           for (int j = arity; j--; ) tuple[j] = ass[j];
+           ts.add(tuple);
+           ++ass;
+         }
+         ts.finalize();
+         assert(ts.tuples() == size);
+         /// Create and register test
+         (void) new TupleSetTest(std::to_string(size),IntSet(0,4),ts);
+       }
+     };
+
+     Gecode::TupleSet randomTupleSet(int n, int min, int max, double prob) {
+       using namespace Gecode;
+       TupleSet t(n);
+       CpltAssignment ass(n, IntSet(min, max));
+       while (ass()) {
+         if (Base::rand(100) <= prob*100) {
+           IntArgs tuple(n);
+           for (int i = n; i--; ) tuple[i] = ass[i];
+           t.add(tuple);
+         }
+         ++ass;
+       }
+       t.finalize();
+       return t;
+     }
+     
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
+         using namespace Gecode;
+         {
+           TupleSet ts(4);
+           ts.add(2, 1, 2, 4).add(2, 2, 1, 4)
+             .add(4, 3, 4, 1).add(1, 3, 2, 3)
+             .add(3, 3, 3, 2).add(5, 1, 4, 4)
+             .add(2, 5, 1, 5).add(4, 3, 5, 1)
+             .add(1, 5, 2, 5).add(5, 3, 3, 2)
+             .finalize();
+           (void) new TupleSetTest("A",IntSet(0,6),ts);
+         }
+         {
+           TupleSet ts(4);
+           ts.finalize();
+           (void) new TupleSetTest("Empty",IntSet(1,2),ts);
+         }
+         {
+           TupleSet ts(4);
+           for (int n=1024*16; n--; )
+             ts.add(1,2,3,4);
+           ts.finalize();
+           (void) new TupleSetTest("Assigned",IntSet(1,4),ts);
+         }
+         {
+           TupleSet ts(1);
+           ts.add(1).add(2).add(3).finalize();
+           (void) new TupleSetTest("Single",IntSet(-4,4),ts);
+         }
+         {
+           int m = Gecode::Int::Limits::min;
+           TupleSet ts(3);
+           ts.add(m+0,m+1,m+2).add(m+4,m+1,m+3)
+             .add(m+2,m+3,m+0).add(m+2,m+3,m+0)
+             .add(m+1,m+2,m+5).add(m+2,m+3,m+0)
+             .add(m+3,m+6,m+5).finalize();
+           (void) new TupleSetTest("Min",IntSet(m,m+7),ts);
+         }
+         {
+           int M = Gecode::Int::Limits::max;
+           TupleSet ts(3);
+           ts.add(M-0,M-1,M-2).add(M-4,M-1,M-3)
+             .add(M-2,M-3,M-0).add(M-2,M-3,M-0)
+             .add(M-1,M-2,M-5).add(M-2,M-3,M-0)
+             .add(M-3,M-6,M-5).finalize();
+           (void) new TupleSetTest("Max",IntSet(M-7,M),ts);
+         }
+         {
+           int m = Gecode::Int::Limits::min;
+           int M = Gecode::Int::Limits::max;
+           TupleSet ts(3);
+           ts.add(M-0,m+1,M-2).add(m+4,M-1,M-3)
+             .add(m+2,M-3,m+0).add(M-2,M-3,M-0)
+             .finalize();
+           (void) new TupleSetTest("Blow",
+                                   IntSet(IntArgs(6, m,m+1,m+4,M-3,M-2,M)),
+                                   ts);
+         }
+         {
+           TupleSet ts(7);
+           for (int i = 0; i < 10000; i++) {
+             IntArgs tuple(7);
+             for (int j = 0; j < 7; j++) {
+               tuple[j] = Base::rand(j+1);
+             }
+             ts.add(tuple);
+           }
+           ts.finalize();
+           (void) new RandomTupleSetTest("Triangle",IntSet(0,6),ts);
+         }
+         {
+           for (int i = 0; i <= 64*6; i+=32)
+             (void) new TupleSetTestSize(i);
+         }
+         {
+           (void) new RandomTupleSetTest("Rand(10,-1,2)", IntSet(-1,2),randomTupleSet(10,-1,2,0.05));
+           (void) new RandomTupleSetTest("Rand(5,-10,10)", IntSet(-10,10),randomTupleSet(5,-10,10,0.05));
+         }
+         {
+           TupleSet t(5);
+           CpltAssignment ass(4, IntSet(1, 4));
+           while (ass()) {
+             IntArgs tuple(5);
+             tuple[4] = 1;
+             for (int i = 4; i--; ) tuple[i] = ass[i];
+             t.add(tuple);
+             ++ass;
+           }
+           t.add(2,2,4,3,4);
+           t.finalize();
+           (void) new TupleSetTest("FewLast",IntSet(1,4),t);
+         }
+         {
+           TupleSet t(4);
+           CpltAssignment ass(4, IntSet(1, 6));
+           while (ass()) {
+             t.add(ass[0],0,ass[1],ass[2]);
+             ++ass;
+           }
+           t.add(2,-1,3,4);
+           t.finalize();
+           (void) new TupleSetTest("FewMiddle",IntSet(-1,6),t);
+         }
+         {
+           TupleSet t(10);
+           CpltAssignment ass(9, IntSet(1, 4));
+           while (ass()) {
+             if (Base::rand(100) <= 0.25*100) {
+               IntArgs tuple(10);
+               tuple[0] = 2;
+               for (int i =9; i--; ) tuple[i] = ass[i];
+               t.add(tuple);
+             }
+             ++ass;
+           }
+           t.add(1,1,1,1,1,1,1,1,1,1);
+           t.add(1,2,3,4,4,2,1,2,3,3);
+           t.finalize();
+           (void) new RandomTupleSetTest("FewHuge",IntSet(1,4),t);
+         }
+       }
+     };
+     
+     Create c;
 
      RegSimpleA ra;
      RegSimpleB rb;
@@ -545,14 +758,11 @@ namespace Test { namespace Int {
      RegOpt ro6(static_cast<int>(USHRT_MAX-1));
      RegOpt ro7(static_cast<int>(USHRT_MAX));
 
-     TupleSetA tsam(Gecode::IPL_MEMORY);
-     TupleSetA tsas(Gecode::IPL_SPEED);
+     TupleSetBase tsb;
 
-     TupleSetB tsbm(Gecode::IPL_MEMORY);
-     TupleSetB tsbs(Gecode::IPL_SPEED);
+     TupleSetLarge tsl(0.05);
 
-     TupleSetBool tsboolm(Gecode::IPL_MEMORY, 0.3);
-     TupleSetBool tsbools(Gecode::IPL_SPEED, 0.3);
+     TupleSetBool tsbool(0.3);
      //@}
 
    }
@@ -560,4 +770,3 @@ namespace Test { namespace Int {
 
 
 // STATISTICS: test-int
-

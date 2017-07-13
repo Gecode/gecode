@@ -314,7 +314,7 @@ namespace Gecode {
     /// The engines
     Support::DynamicArray<EngineInfo,Heap> es;
     /// Mapping of workers to engines
-    Support::DynamicArray<int,Heap> w2e;
+    Support::DynamicArray<unsigned int,Heap> w2e;
     /// Register new engine
     void engine(EngineType t, unsigned int n);
     /// Register new worker

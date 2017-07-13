@@ -128,6 +128,10 @@ namespace Gecode { namespace Int {
   NegBoolView::max(const Delta& d) const {
     return x.min(d);
   }
+  forceinline unsigned int
+  NegBoolView::width(const Delta& d) const {
+    return x.width(d);
+  }
   forceinline bool
   NegBoolView::any(const Delta& d) const {
     return x.any(d);

@@ -253,6 +253,11 @@ namespace Gecode { namespace Int {
     return x.max(d);
   }
   template<class View>
+  forceinline unsigned int
+  CachedView<View>::width(const Delta& d) const {
+    return x.width(d);
+  }
+  template<class View>
   forceinline bool
   CachedView<View>::any(const Delta& d) const {
     return x.any(d);

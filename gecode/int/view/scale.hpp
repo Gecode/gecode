@@ -200,6 +200,11 @@ namespace Gecode { namespace Int {
     return static_cast<Val>(x.max(d)) * a;
   }
   template<class Val, class UnsVal>
+  forceinline UnsVal
+  ScaleView<Val,UnsVal>::width(const Delta& d) const {
+    return static_cast<UnsVal>(x.width(d)) * a;
+  }
+  template<class Val, class UnsVal>
   forceinline bool
   ScaleView<Val,UnsVal>::any(const Delta& d) const {
     return x.any(d);

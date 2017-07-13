@@ -278,14 +278,14 @@ namespace Gecode {
 
   forceinline const SearchTracer::EngineInfo&
   SearchTracer::engine(unsigned int eid) const {
-    assert((eid >= 0) && (eid < n_e));
+    assert(eid < n_e);
     return es[eid];
   }
 
 
   forceinline unsigned int
   SearchTracer::eid(unsigned int wid) const {
-    assert((wid >= 0) && (wid < n_w));
+    assert(wid < n_w);
     return w2e[wid];
   }
 

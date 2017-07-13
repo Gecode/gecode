@@ -73,6 +73,46 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Changed accuracy of delta information for integer views (now, all
+values between new and old lower/upper bound are reported as
+being discarded).
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Tuple sets used for Boolean variables are allowed to contain only
+zeros and ones as values.
+
+[ENTRY]
+Module: int
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Removed IPL_SPEED and IPL_MEMORY as they are not any longer needed.
+
+[ENTRY]
+Module: int
+What:   changed
+Rank:   major
+[DESCRIPTION]
+Re-implemented tuple sets for simplicity and ease of use. Please
+see MPG for details.
+
+[ENTRY]
+Module: int
+What:   changed
+Rank:   major
+Author: Linnea Ingmar
+[DESCRIPTION]
+Replaced extensional implementation by a single implementation based on the compact-table propagator described in: J. Demeulenaere et. al., Compact-Table: Efficiently filtering table constraints with reversible sparse bit-sets, CP 2016. Pages 207-223, LNCS, Springer, 2016. The extensional propagator runs up to ten times faster than the old implementations.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major

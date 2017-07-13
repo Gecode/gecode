@@ -218,8 +218,6 @@ namespace Test { namespace Int {
     case IPL_DOM: s << "Dom"; break;
     default: s << "Def"; break;
     }
-    if (ipl & IPL_SPEED) s << "+S";
-    if (ipl & IPL_MEMORY) s << "+M";
     if (ipl & IPL_BASIC) s << "+B";
     if (ipl & IPL_ADVANCED) s << "+A";
     return s.str();

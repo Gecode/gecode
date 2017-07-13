@@ -75,8 +75,14 @@ namespace Gecode { namespace Int {
   ValOfUnassignedVar::ValOfUnassignedVar(const char* l)
     : Exception(l,"Attempt to access value of unassigned variable") {}
 
+  UninitializedTupleSet::UninitializedTupleSet(const char* l)
+    : Exception(l,"Attempt to use uninitialized tuple set") {}
+
   NotYetFinalized::NotYetFinalized(const char* l)
     : Exception(l,"Tuple set not yet finalized") {}
+
+  AlreadyFinalized::AlreadyFinalized(const char* l)
+    : Exception(l,"Tuple set already finalized") {}
 
   LDSBUnbranchedVariable::LDSBUnbranchedVariable(const char* l)
     : Exception(l,"Variable in symmetry not branched on") {}

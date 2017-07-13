@@ -135,7 +135,7 @@ namespace Gecode {
     UninitializedAction(const char* l);
   };
 
-  /// %Exception: uninitialized action
+  /// %Exception: uninitialized CHB
   class GECODE_KERNEL_EXPORT UninitializedCHB : public Exception {
   public:
     /// Initialize with location \a l

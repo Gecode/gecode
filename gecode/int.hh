@@ -956,20 +956,14 @@ namespace Gecode {
     IPL_VAL = 1, ///< Value propagation
     IPL_BND = 2, ///< Bounds propagation
     IPL_DOM = 3, ///< Domain propagation
-    /// Preferences: prefer speed or memory
-    IPL_SPEED = 4,  ///< Prefer speed
-    IPL_MEMORY = 8, ///< Prefer to save memory
     /// Options: basic versus advanced propagation
-    IPL_BASIC = 16,    ///< Use basic propagation algorithm
-    IPL_ADVANCED = 32, ///< Use advanced propagation algorithm
+    IPL_BASIC = 4,    ///< Use basic propagation algorithm
+    IPL_ADVANCED = 8, ///< Use advanced propagation algorithm
     IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED ///< Use both
   };
 
   /// Extract value, bounds, or domain propagation from propagation level
   IntPropLevel vbd(IntPropLevel ipl);
-
-  /// Extract speed or memory from propagation level
-  IntPropLevel sm(IntPropLevel ipl);
 
   /// Extract basic or advanced from propagation level
   IntPropLevel ba(IntPropLevel ipl);
@@ -2163,60 +2157,124 @@ namespace Gecode {
      * The arity of the tuple is left implicit.
      */
     typedef int* Tuple;
-
+    /// Import bit set data type
+    typedef Gecode::Support::BitSetData BitSetData;
+    /// Range information
+    class Range {
+    public:
+      /// Minimum value
+      int min;
+      /// Maximum value
+      int max;
+      /// Begin of supports
+      BitSetData* s;
+      /// Return the width
+      unsigned int width(void) const;
+      /// Return the supports for value \a n
+      const BitSetData* supports(unsigned int n_words, int n) const;
+    };
+  protected:
+    /// Data about values in the table
+    class ValueData {
+    public:
+      /// Number of ranges
+      unsigned int n;
+      /// Ranges
+      Range* r;
+      /// Find start range for value \a n
+      unsigned int start(int n) const;
+    };
     /**
      * \brief Data stored for a Table
      *
      */
-    class GECODE_VTABLE_EXPORT TupleSetI
-      : public SharedHandle::Object {
+    class GECODE_VTABLE_EXPORT Data : public SharedHandle::Object {
+    protected:
+      /// Initial number of free tuples
+      static const int n_initial_free = 1024;
     public:
       /// Arity
       int arity;
+      /// Number of words for support
+      unsigned int n_words;
       /// Number of Tuples
-      int size;
-      /// Tuples index
-      Tuple** tuples;
-      /// Tuple index data
-      Tuple* tuple_data;
-      /// Tuples data
-      int* data;
-      /// Excess storage
-      int excess;
-      /// Minimum and maximum in domain-values
-      int min, max;
-      /// Domain size
-      unsigned int domsize;
-      /// Initial last structure
-      Tuple** last;
-      /// Pointer to nullptr-pointer
-      Tuple* nullpointer;
+      int n_tuples;
+      /// Number of free tuple entries of arity
+      int n_free;
+      /// Smallest value
+      int min;
+      /// Largest value
+      int max;
+      /// Tuple data
+      int* td;
+      /// Value data
+      ValueData* vd;
+      /// Pointer to all ranges
+      Range* range;
+      /// Pointer to all support data
+      BitSetData* support;
 
-      /// Add Tuple. Assumes that arity matches.
-      template<class T>
-      void add(T t);
+      /// Return newly added tuple
+      Tuple add(void);
+      /// Return tuple with number \a i
+      Tuple get(int i) const;
+      /// Set bit \a n in bitset data \a d
+      static void set(BitSetData* d, unsigned int n);
+      /// Get bit \a n in bitset data \a d
+      static bool get(const BitSetData* d, unsigned int n);
+      /// Map tuple address to index
+      unsigned int tuple2idx(Tuple t) const;
+      /// Return first range for position \a i
+      const Range* fst(int i) const;
+      /// Return last range for position \a i
+      const Range* lst(int i) const;
       /// Finalize datastructure (disallows additions of more Tuples)
-      GECODE_INT_EXPORT void finalize(void);
-      /// Resize data cache
-      GECODE_INT_EXPORT void resize(void);
+      GECODE_INT_EXPORT
+      void finalize(void);
+      /// Resize tuple data
+      GECODE_INT_EXPORT
+      void resize(void);
       /// Is datastructure finalized
       bool finalized(void) const;
-      /// Initialize as empty tuple set
-      TupleSetI(void);
-      /// Delete  implementation
-      GECODE_INT_EXPORT virtual ~TupleSetI(void);
+      /// Initialize as empty tuple set with arity \a a
+      Data(int a);
+      /// Delete implementation
+      GECODE_INT_EXPORT
+      virtual ~Data(void);
     };
 
-    /// Get implementation
-    TupleSetI* implementation(void);
-
-    /// Construct empty tuple set
+    /// Get data (must be initialized and finalized)
+    Data& data(void) const;
+    /// Get raw data (must be initialized)
+    Data& raw(void) const;
+    /// Add tuple \a t to tuple set
+    GECODE_INT_EXPORT
+    void _add(const IntArgs& t);
+  public:
+    /// Construct an unitialized tuple set
     TupleSet(void);
-    /// Initialize by TupleSet \a d (tuple set is shared)
-    TupleSet(const TupleSet& d);
+    /// Initialize for a tuple set with arity \a a
+    GECODE_INT_EXPORT
+    TupleSet(int a);
+    /// Initialize an uninitialized tuple set
+    GECODE_INT_EXPORT
+    void init(int a);
+    /// Initialize by TupleSet \a t (tuple set is shared)
+    GECODE_INT_EXPORT
+    TupleSet(const TupleSet& t);
+    /// Assignment operator
+    GECODE_INT_EXPORT
+    TupleSet& operator =(const TupleSet& t);
 
-    /// Add tuple to tuple set
-    void add(const IntArgs& tuple);
+    /// Test whether tuple set has been initialized
+    operator bool(void) const;
+
+    /// Add tuple \a t to tuple set
+    TupleSet& add(const IntArgs& t);
+    /// Add tuple with elements \a n, ... to tuple set
+    GECODE_INT_EXPORT
+    TupleSet& add(int n, ...);
+
     /// Finalize tuple set
     void finalize(void);
     /// Is tuple set finalized
@@ -2225,33 +2283,60 @@ namespace Gecode {
     int arity(void) const;
     /// Number of tuples
     int tuples(void) const;
-    /// Get tuple i
+    /// Return number of required bit set words
+    unsigned int words(void) const;
+    /// Get tuple \a i
     Tuple operator [](int i) const;
-    /// Minimum domain element
+    /// Return minimal value in all tuples
     int min(void) const;
-    /// Maximum domain element
+    /// Return maximal value in all tuples
     int max(void) const;
+    /// Return first range for position \a i
+    const Range* fst(int i) const;
+    /// Return last range for position \a i
+    const Range* lst(int i) const;
+
+    /// Iterator over ranges
+    class Ranges {
+    protected:
+      /// Current range
+      const Range* c;
+      /// Last range
+      const Range* l;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize for variable \a i
+      Ranges(const TupleSet& ts, int i);
+      //@}
+
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a range or done
+      bool operator ()(void) const;
+      /// Move iterator to next range (if possible)
+      void operator ++(void);
+      //@}
+
+      /// \name %Range access
+      //@{
+      /// Return smallest value of range
+      int min(void) const;
+      /// Return largest value of range
+      int max(void) const;
+      /// Return width of range (distance between minimum and maximum)
+      unsigned int width(void) const;
+      //@}
+    };
   };
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
-   * \li Supports implementations optimized for speed (with propagation
-   *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
-   *     consumption (with propagation level \a ipl or-ed with
-   *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
    *     set \a t has not been finalized.
-   *
-   * \warning If the domains for the \f$x_i\f$ are not dense and
-   * have similar bounds, lots of memory will be wasted (memory
-   * consumption is in \f$
-   * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the basic algorithm (\a epk = \a EPK_MEMORY) and additionally \f$
-   * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the incremental algorithm (\a epk = \a EPK_SPEED).
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
@@ -2259,10 +2344,6 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
-   * \li Supports implementations optimized for speed (with propagation
-   *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
-   *     consumption (with propagation level \a ipl or-ed with
-   *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.

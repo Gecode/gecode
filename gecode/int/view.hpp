@@ -246,6 +246,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -397,6 +399,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -549,6 +553,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -741,6 +747,8 @@ namespace Gecode { namespace Int {
     Val min(const Delta& d) const;
     /// Return maximum value just pruned
     Val max(const Delta& d) const;
+    /// Return width of values just pruned
+    UnsVal width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -918,6 +926,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -1069,6 +1079,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -1235,6 +1247,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -1467,6 +1481,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     /// Test whether a view has been assigned to zero
@@ -1564,6 +1580,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     /// Test whether a view has been assigned to zero

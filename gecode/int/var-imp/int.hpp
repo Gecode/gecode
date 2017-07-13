@@ -329,6 +329,10 @@ namespace Gecode { namespace Int {
   IntVarImp::max(const Delta& d) {
     return static_cast<const IntDelta&>(d).max();
   }
+  forceinline unsigned int
+  IntVarImp::width(const Delta& d) {
+    return static_cast<const IntDelta&>(d).width();
+  }
   forceinline bool
   IntVarImp::any(const Delta& d) {
     return static_cast<const IntDelta&>(d).any();

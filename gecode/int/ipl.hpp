@@ -44,12 +44,6 @@ namespace Gecode {
   }
 
   forceinline IntPropLevel
-  sm(IntPropLevel ipl) {
-    return static_cast<IntPropLevel>(ipl &
-                                     (IPL_SPEED | IPL_MEMORY));
-  }
-
-  forceinline IntPropLevel
   ba(IntPropLevel ipl) {
     return static_cast<IntPropLevel>(ipl & IPL_BASIC_ADVANCED);
   }

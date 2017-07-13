@@ -1120,7 +1120,8 @@ namespace Gecode { namespace FlatZinc {
       IntArgs tuples = s.arg2intargs(ce[1]);
       int noOfVars   = x.size();
       int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
-      TupleSet ts;
+      // Build TupleSet
+      TupleSet ts(noOfVars);
       for (int i=0; i<noOfTuples; i++) {
         IntArgs t(noOfVars);
         for (int j=0; j<x.size(); j++) {
@@ -1131,13 +1132,14 @@ namespace Gecode { namespace FlatZinc {
       ts.finalize();
       extensional(s,x,ts,s.ann2ipl(ann));
     }
+    
     void
     p_table_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       int noOfVars   = x.size();
       int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
-      TupleSet ts;
+      TupleSet ts(noOfVars);
       for (int i=0; i<noOfTuples; i++) {
         IntArgs t(noOfVars);
         for (int j=0; j<x.size(); j++) {

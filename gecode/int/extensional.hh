@@ -1,10 +1,12 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Linnea Ingmar <linnea.ingmar@hotmail.com>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Linnea Ingmar, 2017
  *     Mikael Lagerkvist, 2007
  *     Christian Schulte, 2004
  *
@@ -225,249 +227,412 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 namespace Gecode { namespace Int { namespace Extensional {
 
-  typedef TupleSet::Tuple Tuple;
-  typedef Support::BitSetBase BitSet;
-  typedef Support::BitSetBase* Domain;
+  /// Import type
+  typedef Gecode::Support::BitSetData BitSetData;
 
-  /**
-   * \brief %Base for domain consistent extensional propagation
-   *
-   * This class contains support for implementing domain consistent
-   * extensional propagation algorithms that use positive tuple sets and
-   * a \a last data structure.
-   *
-   * Requires \code #include <gecode/int/extensional.hh> \endcode
-   * \ingroup FuncIntProp
+  /*
+   * Forward declarations
    */
-  template<class View, bool subscribe = true>
-  class Base : public Propagator {
+  template<unsigned int size> class TinyBitSet;
+  template<unsigned int size> class SmallBitSet;
+
+  /// Sparse bit-set
+  class SparseBitSet {
   protected:
-    ViewArray<View> x; ///< Variables
-    TupleSet tupleSet; ///< Definition of constraint
-    Tuple** last_data; ///< Last tuple looked at
-    /// Access real tuple-set
-    TupleSet::TupleSetI* ts(void);
-
-    /// Constructor for cloning \a p
-    Base(Space& home, Base<View,subscribe>& p);
-    /// Constructor for posting
-    Base(Home home, ViewArray<View>& x, const TupleSet& t);
-    /// Initialize last support
-    void init_last(Space& home, Tuple** source, Tuple* base);
-    /// Find last support for view at position \a i and value \a n
-    Tuple last(int i, int n);
-    /// Find last support for view at position \a i and value \a n
-    Tuple last_next(int i, int n);
-    /// Initialize domain information
-    void init_dom(Space& home, Domain dom);
-    /// Check wether tuple is valid for domain
-    bool valid(Tuple t, Domain dom);
-    /// Find support for view at position \a i and value \a n
-    Tuple find_support(Domain dom, int i, int n);
-  public:
-    /// Cost function (defined as high quadratic)
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Schedule function
-    virtual void reschedule(Space& home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space& home);
-  };
-
-}}}
-
-#include <gecode/int/extensional/base.hpp>
-
-
-namespace Gecode { namespace Int { namespace Extensional {
-
-  /**
-   * \brief Domain consistent extensional propagator
-   *
-   * This propagator implements a basic extensional propagation
-   * algorithm. It is based on GAC2001, and as such it does not fully
-   * take into account multidirectionality.
-   *
-   * If \a shared is true, the same view can occur multiply.
-   *
-   * Requires \code #include <gecode/int/extensional.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View, bool shared>
-  class Basic : public Base<View> {
-  protected:
-    using Base<View>::x;
-    using Base<View>::tupleSet;
-    using Base<View>::ts;
-    using Base<View>::last;
-    using Base<View>::last_next;
-    using Base<View>::init_last;
-    using Base<View>::init_dom;
-    using Base<View>::find_support;
-
-    /// Constructor for cloning \a p
-    Basic(Space& home, Basic<View,shared>& p);
-    /// Constructor for posting
-    Basic(Home home, ViewArray<View>& x, const TupleSet& t);
-
-  public:
-    /// Perform propagation
-    virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
-    /**
-     * \brief Cost function
-     *
-     * If in stage for naive value propagation, the cost is
-     * high quadratic. Otherwise it is high cubic.
-     */
-    virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space& home);
-    /// Post propagator for views \a x
-    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& t);
-  };
-
-}}}
-
-#include <gecode/int/extensional/basic.hpp>
-
-
-namespace Gecode { namespace Int { namespace Extensional {
-  /**
-   * \brief Domain consistent extensional propagator
-   *
-   * This propagator implements an incremental propagation algorithm
-   * where supports are maintained explicitly.
-   *
-   * Requires \code #include <gecode/int/extensional.hh> \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class View>
-  class Incremental : public Base<View, false> {
-  protected:
-    using Base<View, false>::x;
-    using Base<View, false>::tupleSet;
-    using Base<View, false>::ts;
-    using Base<View, false>::last;
-    using Base<View, false>::last_next;
-    using Base<View, false>::init_last;
-    using Base<View, false>::init_dom;
-    /// Entry for storing support
-    class SupportEntry : public FreeList {
+    /// Entry for two words
+    class Entry {
     public:
-      /// Supporting Tuple
-      Tuple t;
+      /// Data
+      BitSetData bits[2];
+      /// Indices of the data
+      unsigned int index[2];
+    public:
+      /// Get number of entries needed for \a n words
+      static unsigned int data(unsigned int n);
+    };
+    /// Data in a sparse bit set
+    class Data {
+    public:
+      /// Limit
+      unsigned int limit;
+      /// Entries
+      Entry es[1];
+      /// Allocate for \a n entries
+      static Data* allocate(Space& home, unsigned int n);
+      /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
+      void replace_and_decrease(unsigned int i, BitSetData w);
+      /// Get index for the \a i th word
+      unsigned int index(unsigned int i) const;
+      /// Get the \a i th word
+      BitSetData word(unsigned int i) const;
+      /// Return the highest active index
+      unsigned int width(void) const;
+      /// Initialize with \a n words
+      void init(unsigned int n);
+      /// Clear the first \a limit words in \a mask
+      void clear_mask(BitSetData* mask);
+      /// Add \b to \a mask
+      void add_to_mask(const BitSetData* b, BitSetData* mask) const;
+      /// Intersect with \a mask, sparse mask if \a sparse is true
+      template<bool sparse>
+      void intersect_with_mask(const BitSetData* mask);
+      /// Intersect with the "or" of \a and \a b
+      void intersect_with_masks(const BitSetData* a, const BitSetData* b);
+      /// Check if \a has a non-empty intersection with the set
+      bool intersects(const BitSetData* b);
+      /// Perform "nand" with \a b
+      void nand_with_mask(const BitSetData* b);
+    };
+    /// Pointer to the actual data
+    Data* d;
+  public:
+    /// Initialize sparse bit set for a number of words \a n
+    SparseBitSet(Space& home, unsigned int n);
+    /// Initialize during cloning
+    SparseBitSet(Space& home, const SparseBitSet& sbs);
+    /// Initialize during cloning (not used)
+    template<unsigned int size>
+    SparseBitSet(Space& home, const TinyBitSet<size>& tbs);
+    /// Initialize during cloning (not used)
+    template<unsigned int size>
+    SparseBitSet(Space& home, const SmallBitSet<size>& sbs);
+    /// Return the highest active index
+    unsigned int width(void) const;
+    /// Check whether the set is empty
+    bool empty(void) const;
+    /// Clear the first \a limit words in \a mask
+    void clear_mask(BitSetData* mask);
+    /// Add \b to \a mask
+    void add_to_mask(const BitSetData* b, BitSetData* mask) const;
+    /// Intersect with \a mask, sparse mask if \a sparse is true
+    template<bool sparse>
+    void intersect_with_mask(const BitSetData* mask);
+    /// Intersect with the "or" of \a and \a b
+    void intersect_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Check if \a has a non-empty intersection with the set
+    bool intersects(const BitSetData* b);
+    /// Perform "nand" with \a b
+    void nand_with_mask(const BitSetData* b);
+    /// Return the number of required bit set words
+    unsigned int words(void) const;
+    /// Get index for the \a i th word
+    unsigned int index(unsigned int i) const;
+    /// Get the \a i th word
+    BitSetData word(unsigned int i) const;
+  };
 
-      /// \name Linkage access
-      //@{
-      /// Return next support entry
-      SupportEntry* next(void) const;
-      /// Return reference to field for next support entry
-      SupportEntry** nextRef(void);
-      //@}
+}}}
 
+#include <gecode/int/extensional/sparse-bit-set.hpp>
+
+namespace Gecode { namespace Int { namespace Extensional {
+
+  /// Small bit-set
+  template<unsigned int size>
+  class SmallBitSet {
+    template<unsigned int> friend class SmallBitSet;
+    template<unsigned int> friend class TinyBitSet;
+  protected:
+    /// Class for stoing limit and index information
+    class Index {
+    public:
+      /// Stored data
+      unsigned long long int data;
+    public:
+      /// Access index for the word at position \a p
+      unsigned int index(unsigned int p) const;
+      /// Set the index for the word at position \a p to \a i
+      void index(unsigned int p, unsigned int i);
+      /// Access the limit
+      unsigned int limit(void) const;
+      /// Set the limit to \a i
+      void limit(unsigned int i);
+    };
+    /// Indices
+    Index idx;
+    /// Words
+    BitSetData bits[size];
+    /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
+    void replace_and_decrease(unsigned int i, BitSetData w);
+  public:
+    /// Initialize sparse bit set for a number of supports \a n
+    SmallBitSet(Space& home, unsigned int n);
+    /// Initialize during cloning
+    SmallBitSet(Space& home, const SparseBitSet& sbs);
+    /// Initialize during cloning
+    template<unsigned int largersize>
+    SmallBitSet(Space& home, const SmallBitSet<largersize>& sbs);
+    /// Initialize during cloning (not used)
+    template<unsigned int tinysize>
+    SmallBitSet(Space& home, const TinyBitSet<tinysize>& tbs);
+    /// Get the word at position \a p
+    BitSetData word(unsigned int p) const;
+    /// Get the index for the word at position \a p
+    unsigned int index(unsigned int p) const;
+    /// Return the number of required bit set words
+    unsigned int words(void) const;
+    /// Check whether the set is empty
+    bool empty(void) const;
+    /// Return the highest active index
+    unsigned int width(void) const;
+    /// Clear the first \a limit words in \a mask
+    void clear_mask(BitSetData* mask) const;
+    /// Add \b to \a mask
+    void add_to_mask(const BitSetData* b, BitSetData* mask) const;
+    /// Intersect with \a mask, sparse mask if \a sparse is true
+    template<bool sparse>
+    void intersect_with_mask(const BitSetData* mask);
+    /// Intersect with the "or" of \a and \a b
+    void intersect_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Check if \a has a non-empty intersection with the set
+    bool intersects(const BitSetData* b);
+    /// Perform "nand" with \a b
+    void nand_with_mask(const BitSetData* b);
+    /// Perform "nand" with and the "or" of \a a and \a b
+    void nand_with_masks(const BitSetData* a, const BitSetData* b);
+  };
+
+}}}
+
+#include <gecode/int/extensional/small-bit-set.hpp>
+
+namespace Gecode { namespace Int { namespace Extensional {
+
+  /// Tiny bit-set
+  template<unsigned int size>
+  class TinyBitSet {
+    template<unsigned int> friend class SmallBitSet;
+    template<unsigned int> friend class TinyBitSet;
+  protected:
+    /// Words
+    BitSetData bits[size];
+  public:
+    /// Initialize sparse bit set for a number of words \a n
+    TinyBitSet(Space& home, unsigned int n);
+    /// Initialize during cloning
+    template<unsigned int largersize>
+    TinyBitSet(Space& home, const TinyBitSet<largersize>& sbs);
+    /// Initialize during cloning
+    TinyBitSet(Space& home, const SparseBitSet& bs);
+    /// Initialize during cloning
+    template <unsigned int smallsize>
+    TinyBitSet(Space& home, const SmallBitSet<smallsize>& bs);
+    /// Get the limit
+    int limit(void) const;
+    /// Check whether the set is empty
+    bool empty(void) const;
+    /// Return the highest active index
+    unsigned int width(void) const;
+    /// Clear the first \a limit words in \a mask
+    void clear_mask(BitSetData* mask);
+    /// Add \b to \a mask
+    void add_to_mask(const BitSetData* b, BitSetData* mask) const;
+    /// Intersect with \a mask, sparse mask if \a sparse is true
+    template<bool sparse>
+    void intersect_with_mask(const BitSetData* mask);
+    /// Intersect with the "or" of \a and \a b
+    void intersect_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Check if \a has a non-empty intersection with the set
+    bool intersects(const BitSetData* b);
+    /// Perform "nand" with \a b
+    void nand_with_mask(const BitSetData* b);
+    /// Perform "nand" with and the "or" of \a a and \a b
+    void nand_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Return the number of required bit set words
+    unsigned int words(void) const;
+  };
+      
+}}}
+
+#include <gecode/int/extensional/tiny-bit-set.hpp>
+
+namespace Gecode { namespace Int { namespace Extensional {
+
+  /// Tuple type
+  typedef TupleSet::Tuple Tuple;
+
+  /// Base class for compact table propagator
+  template<class View>
+  class Compact : public Propagator {
+  protected:
+    /// Range type for supports
+    typedef TupleSet::Range Range;
+    /// Advisor for updating current table
+    class CTAdvisor : public ViewAdvisor<View> {
+    public:
+      using ViewAdvisor<View>::view;
+    protected:
+      /// First range of support data structure
+      const Range* _fst;
+      /// Last range of support data structure
+      const Range* _lst;
+    public:
       /// \name Constructors
       //@{
-      /// Initialize with Tuple \a t
-      SupportEntry(Tuple t);
-      /// Initialize with Tuple \a t and next entry \a n
-      SupportEntry(Tuple t, SupportEntry* n);
+      /// Initialise from parameters
+      CTAdvisor(Space& home, Propagator& p, Council<CTAdvisor>& c,
+                const TupleSet& ts, View x0, int i);
+      /// Clone advisor \a a
+      CTAdvisor(Space& home, CTAdvisor& a);
       //@}
-
-      /// \name Memory management
-      //@{
-      /// Free memory for all elements between this and \a l (inclusive)
-      void dispose(Space& home, SupportEntry* l);
-      /// Free memory for this element
-      void dispose(Space& home);
-
-      /// Allocate memory from space
-      static void* operator new(size_t s, Space& home);
-      /// No-op (for exceptions)
-      static void operator delete(void* p);
-      /// No-op (use dispose instead)
-      static void operator delete(void* p, Space& home);
-      //@}
+      /// Adjust supports
+      void adjust(void);
+      /// Return first range of support data structure
+      const Range* fst(void) const;
+      /// Return lasst range of support data structure
+      const Range* lst(void) const;
+      /// Dispose advisor
+      void dispose(Space& home, Council<CTAdvisor>& c);
     };
-    /// Description of work to be done
-    class WorkEntry : public FreeList {
+    /// \name Status management
+    //@{ 
+    /// Type of status
+    enum StatusType {
+      SINGLE      = 0, ///< A single view has been touched
+      MULTIPLE    = 1, ///< Multiple view have been touched
+      NONE        = 2, ///< No view has been touched
+      PROPAGATING = 3  ///< The propagator is currently running
+    };
+    /// Status management
+    class Status {
+    protected:
+      /// A tagged pointer for storing the status
+      ptrdiff_t s;
     public:
-      /// Position of view in view array
-      int i;
-      /// Value
+      /// Initialize with type \a t (either NONE or SEVERAL)
+      Status(StatusType t);
+      /// Copy constructor
+      Status(const Status& s);
+      /// Return status type
+      StatusType type(void) const;
+      /// Check whether status is single and equal to \a a
+      bool single(CTAdvisor& a) const;
+      /// Set status to SINGLE or MULTIPLE depending on \a a
+      void touched(CTAdvisor& a);
+      /// Set status to NONE
+      void none(void);
+      /// Set status to PROPAGATING
+      void propagating(void);
+    };
+    //@}
+    /// \name Support iterators
+    //@{
+    /// Iterator over valid supports
+    class ValidSupports {
+    protected:
+      /// Number of words
+      const unsigned int n_words;
+      /// Maximal value
+      int max;
+      /// Range iterator
+      ViewRanges<View> xr;
+      /// Support iterator
+      const Range* sr;
+      /// The value
       int n;
-
-      /// \name Constructor
-      //@{
-      /// Initialize with position \a i, value \a n, and next entry \a ne
-      WorkEntry(int i, int n, WorkEntry* ne);
-      //@}
-
-      /// \name Linkage access
-      //@{
-      /// Return next work entry
-      WorkEntry* next(void) const;
-      /// Set next work entry
-      void next(WorkEntry* n);
-      //@}
-
-      /// \name Memory management
-      //@{
-      /// Free memory for this element
-      void dispose(Space& home);
-
-      /// Allocate memory from space
-      static void* operator new(size_t s, Space& home);
-      /// No-op (for exceptions)
-      static void operator delete(void* p);
-      /// No-op (use dispose instead)
-      static void operator delete(void* p, Space& home);
-      //@}
-    };
-    /// %Work stack
-    class Work {
-    private:
-      /// Next work entry
-      WorkEntry* we;
+      /// The value's support
+      const BitSetData* s;
     public:
-      /// Initialize as empty
-      Work(void);
-      /// Check whether work stack is empty
-      bool empty(void) const;
-      /// Push new work entry for position \a i and value \a n
-      void push(Space& home, int i, int n);
-      /// Pop current top entry and set position \a i and value \a n
-      void pop(Space& home, int& i, int& n);
+      /// Initialize from initialized propagator
+      ValidSupports(const Compact<View>& p, CTAdvisor& a);
+      /// Initialize during initialization
+      ValidSupports(const TupleSet& ts, int i, View x);
+      /// Move to next supports
+      void operator ++(void);
+      /// Whether there are still supports left
+      bool operator ()(void) const;
+      /// Return supports
+      const BitSetData* supports(void) const;
+      /// Return supported value
+      int val(void) const;
     };
-    /// Work for finding support
-    Work w_support;
-    /// Work for removing values
-    Work w_remove;
-
-    /// Support information
-    SupportEntry** support_data;
+    /// Iterator over lost supports
+    class LostSupports {
+    protected:
+      /// Number of words
+      const unsigned int n_words;
+      /// Range information
+      const Range* r;
+      /// Low value
+      int l;
+      /// High value
+      int h;
+      /// The lost value's support
+      const BitSetData* s;
+    public:
+      /// Initialize iterator for values between \a l and \a h
+      LostSupports(const Compact<View>& p, CTAdvisor& a,
+                   int l, int h);
+      /// Move iterator to next value
+      void operator ++(void);
+      /// Whether iterator is done
+      bool operator ()(void) const;
+      /// Provide access to corresponding supports
+      const BitSetData* supports(void) const;
+    };
+    //@}
+  protected:
     /// Number of unassigned views
     int unassigned;
-
+    /// Number of words in supports
+    const unsigned int n_words;
+    /// Propagator status
+    Status status;
+    /// The tuple set
+    TupleSet ts;
+    /// The advisor council
+    Council<CTAdvisor> c;
     /// Constructor for cloning \a p
-    Incremental(Space& home, Incremental<View>& p);
+    Compact(Space& home, Compact& p);
     /// Constructor for posting
-    Incremental(Home home, ViewArray<View>& x, const TupleSet& t);
-    /// Initialize support
-    void init_support(Space& home);
-    /// Find a next support for view at position \a i and value \a n
-    void find_support(Space& home, Domain dom, int i, int n);
-    /// Add support
-    void add_support(Space& home, Tuple l);
-    /// Remove support for view at position \a i and value \a n
-    void remove_support(Space& home, Tuple l, int i, int n);
-    /// Creat support entry for view at position \a i and value \a n
-    SupportEntry* support(int i, int n);
+    Compact(Home home, ViewArray<View>& x, const TupleSet& ts);
+    /// Find range for \a n
+    const Range* range(CTAdvisor& a, int n);
+    /// Return supports for value \a n
+    const BitSetData* supports(CTAdvisor& a, int n);
   public:
-    /**
-     * \brief Cost function
-     *
-     * If in stage for naive value propagation, the cost is
-     * high quadratic. Otherwise it is high cubic.
-     */
+    /// Delete propagator and return its size
+    size_t dispose(Space& home);
+  };
+
+  /**
+   * \brief Domain consistent extensional propagator
+   *
+   * This propagator implements the compact-table propagation
+   * algorithm based on:
+   *   J. Demeulenaere et. al., Compact-Table: Efficiently
+   *   filtering table constraints with reversible sparse
+   *   bit-sets, CP 2016.
+   *   Pages 207-223, LNCS, Springer, 2016.
+   *
+   * Requires \code #include <gecode/int/extensional.hh> \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View, class Table>
+  class CompactTable : public Compact<View> {    
+  public:
+    typedef typename Compact<View>::ValidSupports ValidSupports;
+    typedef typename Compact<View>::Range Range;
+    typedef typename Compact<View>::CTAdvisor CTAdvisor;
+    typedef typename Compact<View>::StatusType StatusType;
+    typedef typename Compact<View>::Status Status;
+    typedef typename Compact<View>::LostSupports LostSupports;
+
+    using Compact<View>::supports;
+    using Compact<View>::unassigned;
+    using Compact<View>::status;
+    using Compact<View>::c;
+    using Compact<View>::ts;
+
+    /// Current table
+    Table table;
+    /// Constructor for cloning \a p
+    template<class TableProp>
+    CompactTable(Space& home, TableProp& p);
+    /// Constructor for posting
+    CompactTable(Home home, ViewArray<View>& x, const TupleSet& ts);
+  public:
+    /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
     virtual void reschedule(Space& home);
@@ -475,37 +640,22 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home);
-    /// Post propagator for views \a x
-    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& t);
+    /// Post propagator for views \a x and table \a t
+    static ExecStatus post(Home home, ViewArray<View>& x, const TupleSet& ts);
     /// Delete propagator and return its size
     size_t dispose(Space& home);
-  private:
-    /// Advisor for computing support
-    class SupportAdvisor : public Advisor {
-    public:
-      /// Position of view
-      int i;
-      /// Create support advisor for view at position \a i
-      SupportAdvisor(Space& home, Propagator& p, Council<SupportAdvisor>& c,
-                     int i);
-      /// Clone support advisor \a a
-      SupportAdvisor(Space& home, SupportAdvisor& a);
-      /// Dispose advisor
-      void dispose(Space& home, Council<SupportAdvisor>& c);
-    };
-    /// The advisor council
-    Council<SupportAdvisor> ac;
-  public:
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
   };
 
+  /// Post function for compact table propagator
+  template<class View>
+  ExecStatus postcompact(Home home, ViewArray<View>& x, const TupleSet& ts);
+
 }}}
 
-#include <gecode/int/extensional/incremental.hpp>
-
+#include <gecode/int/extensional/compact.hpp>
 
 #endif
 
 // STATISTICS: int-prop
-

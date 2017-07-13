@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
     friend class IntVarImp;
     friend class BoolVarImp;
   private:
-    int _min; ///< Minimum value just pruned
+    int _min; ///< Smallest value just pruned
     int _max; ///< Largest value just pruned
   public:
     /// Create integer delta as providing no information
@@ -70,6 +70,8 @@ namespace Gecode { namespace Int {
     int min(void) const;
     /// Return maximum
     int max(void) const;
+    /// Return width
+    unsigned int width(void) const;
     /// Test whether any domain change has happened
     bool any(void) const;
   };
@@ -379,6 +381,8 @@ namespace Gecode { namespace Int {
     static int min(const Delta& d);
     /// Return maximum value just pruned
     static int max(const Delta& d);
+    /// Return width of values just pruned
+    static unsigned int width(const Delta& d);
     /// Test whether arbitrary values got pruned
     static bool any(const Delta& d);
     //@}
@@ -700,6 +704,8 @@ namespace Gecode { namespace Int {
     static int min(const Delta& d);
     /// Return maximum value just pruned
     static int max(const Delta& d);
+    /// Return width of values just pruned
+    static unsigned int width(const Delta& d);
     /// Test whether arbitrary values got pruned
     static bool any(const Delta& d);
     /// Test whether a variable has been assigned to zero

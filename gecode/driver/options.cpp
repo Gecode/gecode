@@ -281,8 +281,6 @@ namespace Gecode {
           else if (!strncmp("val",a,e))      { b = IPL_VAL; }
           else if (!strncmp("bnd",a,e))      { b = IPL_BND; }
           else if (!strncmp("dom",a,e))      { b = IPL_DOM; }
-          else if (!strncmp("speed",a,e))    { m |= IPL_SPEED; }
-          else if (!strncmp("memory",a,e))   { m |= IPL_MEMORY; }
           else if (!strncmp("basic",a,e))    { m |= IPL_BASIC; }
           else if (!strncmp("advanced",a,e)) { m |= IPL_ADVANCED; }
           else {
@@ -306,7 +304,7 @@ namespace Gecode {
     IplOption::help(void) {
       using namespace std;
       cerr << '\t' << opt
-           << " (def,val,bnd,dom,speed,memory,basic,advanced)" << endl
+           << " (def,val,bnd,dom,basic,advanced)" << endl
            << "\t\tdefault: ";
       switch (vbd(cur)) {
       case IPL_DEF: cerr << "def"; break;
@@ -315,8 +313,6 @@ namespace Gecode {
       case IPL_DOM: cerr << "dom"; break;
       default: GECODE_NEVER;
       }
-      if (cur & IPL_SPEED)    cerr << ",speed";
-      if (cur & IPL_MEMORY)   cerr << ",memory";
       if (cur & IPL_BASIC)    cerr << ",basic";
       if (cur & IPL_ADVANCED) cerr << ",advanced";
       cerr << endl << "\t\t" << exp << endl;

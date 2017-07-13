@@ -230,6 +230,10 @@ namespace Gecode { namespace Int {
   MinusView::max(const Delta& d) const {
     return -x.min(d);
   }
+  forceinline unsigned int
+  MinusView::width(const Delta& d) const {
+    return x.width(d);
+  }
   forceinline bool
   MinusView::any(const Delta& d) const {
     return x.any(d);
