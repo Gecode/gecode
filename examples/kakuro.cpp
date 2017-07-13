@@ -410,7 +410,7 @@ namespace {
     DistinctLinear* e = new DistinctLinear(n,c);
     DFS<DistinctLinear> d(e);
     delete e;
-    TupleSet ts;
+    TupleSet ts(n);
     while (DistinctLinear* s = d.next()) {
       ts.add(s->solution()); delete s;
     }

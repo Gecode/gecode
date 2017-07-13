@@ -106,8 +106,11 @@ namespace {
    */
   void init_bishops(int size) {
     Bishops* prob = new Bishops(size);
-    DFS<Bishops> e(prob); IntArgs ia(size*size);
+    DFS<Bishops> e(prob); 
+    IntArgs ia(size*size);
     delete prob;
+
+    bishops.init(size*size);
 
     while (Bishops* s = e.next()) {
       for (int i = size*size; i--; )

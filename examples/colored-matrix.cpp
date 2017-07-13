@@ -616,15 +616,14 @@ namespace {
     return result;
   }
 
-  TupleSet same_or_0_tuple_set(unsigned int colors)
-  {
-    TupleSet result;
+  TupleSet same_or_0_tuple_set(unsigned int colors) {
+    TupleSet result(3);
     for (unsigned int i = 1; i <= colors; ++i) {
       for (unsigned int j = 1; j <= colors; ++j) {
         if (i == j) {
-          result.add(IntArgs(3, i, j, i));
+          result.add(i, j, i);
         } else {
-          result.add(IntArgs(3, i, j, 0));
+          result.add(i, j, 0);
         }
       }
     }

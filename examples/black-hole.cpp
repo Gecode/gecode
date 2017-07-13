@@ -174,17 +174,16 @@ public:
 
     } else { // opt.propagation() == PROPAGATION_TUPLE_SET)
       // Build table for allowed tuples
-      TupleSet tupleSet;
+      TupleSet ts(2);
       for (int r = 13; r--; )
         for (int s1 = 4; s1--; )
           for (int s2 = 4; s2--; )
-            for (int i = -1; i <= 1; i+=2) {
-              tupleSet.add(IntArgs(2, r+13*s1, (r+i+52+13*s2)%52));
-            }
-      tupleSet.finalize();
+            for (int i = -1; i <= 1; i+=2)
+              ts.add(r+13*s1, (r+i+52+13*s2)%52);
+      ts.finalize();
 
       for (int i = 51; i--; )
-        extensional(*this, IntVarArgs() << x[i] << x[i+1], tupleSet);
+        extensional(*this, IntVarArgs() << x[i] << x[i+1], ts);
     }
 
     // A card must be played before the one under it.
@@ -303,7 +302,7 @@ main(int argc, char* argv[]) {
                "no symmetry breaking");
   opt.symmetry(BlackHole::SYMMETRY_CONDITIONAL,"conditional",
                "break conditional symmetries");
-  opt.propagation(BlackHole::PROPAGATION_DFA);
+  opt.propagation(BlackHole::PROPAGATION_TUPLE_SET);
   opt.propagation(BlackHole::PROPAGATION_REIFIED,
                   "reified", "use reified propagation");
   opt.propagation(BlackHole::PROPAGATION_DFA,
