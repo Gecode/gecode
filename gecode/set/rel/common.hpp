@@ -58,7 +58,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class VX, class VY>
   forceinline bool
-  same(VX x, VY y) {
+  same(VX, VY) {
     return false;
   }
 

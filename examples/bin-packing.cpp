@@ -279,7 +279,7 @@ public:
     return false;
   }
   /// Return choice
-  virtual Gecode::Choice* choice(Space& home) {
+  virtual Gecode::Choice* choice(Space&) {
     assert(!bin[item].assigned());
 
     int n = bin.size(), m = load.size();
@@ -332,7 +332,7 @@ public:
       return new Choice(*this, 2, item, same, n_same);
   }
   /// Return choice
-  virtual const Gecode::Choice* choice(const Space& home, Archive& e) {
+  virtual const Gecode::Choice* choice(const Space&, Archive& e) {
     int alt, item, n_same;
     e >> alt >> item >> n_same;
     Region re;

@@ -166,10 +166,10 @@ namespace Gecode { namespace FlatZinc {
 
 
   forceinline
-  MeritMaxAFC::MeritMaxAFC(Space& home, const IntBoolVarBranch& ibvb)
+  MeritMaxAFC::MeritMaxAFC(Space&, const IntBoolVarBranch& ibvb)
     : iafc(ibvb.intafc()), bafc(ibvb.boolafc()) {}
   forceinline
-  MeritMaxAFC::MeritMaxAFC(Space& home, MeritMaxAFC& m)
+  MeritMaxAFC::MeritMaxAFC(Space&, MeritMaxAFC& m)
     : iafc(m.iafc), bafc(m.bafc) {}
   forceinline double
   MeritMaxAFC::operator ()(Int::IntView x, int) const {
@@ -187,10 +187,10 @@ namespace Gecode { namespace FlatZinc {
 
 
   forceinline
-  MeritMaxAFCSize::MeritMaxAFCSize(Space& home, const IntBoolVarBranch& ibvb)
+  MeritMaxAFCSize::MeritMaxAFCSize(Space&, const IntBoolVarBranch& ibvb)
     : iafc(ibvb.intafc()), bafc(ibvb.boolafc()) {}
   forceinline
-  MeritMaxAFCSize::MeritMaxAFCSize(Space& home, MeritMaxAFCSize& m)
+  MeritMaxAFCSize::MeritMaxAFCSize(Space&, MeritMaxAFCSize& m)
     : iafc(m.iafc), bafc(m.bafc) {}
   forceinline double
   MeritMaxAFCSize::operator ()(Int::IntView x, int) const {
@@ -208,10 +208,10 @@ namespace Gecode { namespace FlatZinc {
 
 
   forceinline
-  MeritMaxAction::MeritMaxAction(Space& home, const IntBoolVarBranch& ibvb)
+  MeritMaxAction::MeritMaxAction(Space&, const IntBoolVarBranch& ibvb)
     : iaction(ibvb.intaction()), baction(ibvb.boolaction()) {}
   forceinline
-  MeritMaxAction::MeritMaxAction(Space& home, MeritMaxAction& m)
+  MeritMaxAction::MeritMaxAction(Space&, MeritMaxAction& m)
     : iaction(m.iaction), baction(m.baction) {}
   forceinline double
   MeritMaxAction::operator ()(Int::IntView, int i) const {
@@ -229,10 +229,10 @@ namespace Gecode { namespace FlatZinc {
 
 
   forceinline
-  MeritMaxActionSize::MeritMaxActionSize(Space& home, const IntBoolVarBranch& ibvb)
+  MeritMaxActionSize::MeritMaxActionSize(Space&, const IntBoolVarBranch& ibvb)
     : iaction(ibvb.intaction()), baction(ibvb.boolaction()) {}
   forceinline
-  MeritMaxActionSize::MeritMaxActionSize(Space& home, MeritMaxActionSize& m)
+  MeritMaxActionSize::MeritMaxActionSize(Space&, MeritMaxActionSize& m)
     : iaction(m.iaction), baction(m.baction) {}
   forceinline double
   MeritMaxActionSize::operator ()(Int::IntView x, int i) const {
@@ -250,10 +250,10 @@ namespace Gecode { namespace FlatZinc {
 
 
   forceinline
-  MeritMaxCHB::MeritMaxCHB(Space& home, const IntBoolVarBranch& ibvb)
+  MeritMaxCHB::MeritMaxCHB(Space&, const IntBoolVarBranch& ibvb)
     : ichb(ibvb.intchb()), bchb(ibvb.boolchb()) {}
   forceinline
-  MeritMaxCHB::MeritMaxCHB(Space& home, MeritMaxCHB& m)
+  MeritMaxCHB::MeritMaxCHB(Space&, MeritMaxCHB& m)
     : ichb(m.ichb), bchb(m.bchb) {}
   forceinline double
   MeritMaxCHB::operator ()(Int::IntView, int i) const {
@@ -271,10 +271,10 @@ namespace Gecode { namespace FlatZinc {
 
 
   forceinline
-  MeritMaxCHBSize::MeritMaxCHBSize(Space& home, const IntBoolVarBranch& ibvb)
+  MeritMaxCHBSize::MeritMaxCHBSize(Space&, const IntBoolVarBranch& ibvb)
     : ichb(ibvb.intchb()), bchb(ibvb.boolchb()) {}
   forceinline
-  MeritMaxCHBSize::MeritMaxCHBSize(Space& home, MeritMaxCHBSize& m)
+  MeritMaxCHBSize::MeritMaxCHBSize(Space&, MeritMaxCHBSize& m)
     : ichb(m.ichb), bchb(m.bchb) {}
   forceinline double
   MeritMaxCHBSize::operator ()(Int::IntView x, int i) const {

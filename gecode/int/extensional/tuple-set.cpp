@@ -165,7 +165,6 @@ namespace Gecode {
         Support::quicksort(tuple, n_tuples, pc);
         // Scan values
         {
-          int min=tuple[0][a];
           int max=tuple[0][a];
           n_vals++; n_ranges++;
           for (int i=1; i<n_tuples; i++) {
@@ -175,7 +174,7 @@ namespace Gecode {
               max=tuple[i][a];
             } else if (max+1 < tuple[i][a]) {
               n_vals++; n_ranges++;
-              min=max=tuple[i][a];
+              max=tuple[i][a];
             } else {
               assert(max == tuple[i][a]);
             }

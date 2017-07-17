@@ -445,7 +445,8 @@ namespace Gecode { namespace Int { namespace Extensional {
         // How many values to remove
         int* nq = r.alloc<int>(x.size());
         unsigned int n_nq = 0U;
-        int last_support;
+        // The initialization is here just to avoid warnings...
+        int last_support = 0;
         for (ValidSupports vs(*this,a); vs(); ++vs)
           if (!table.intersects(vs.supports()))
             nq[n_nq++] = vs.val();
