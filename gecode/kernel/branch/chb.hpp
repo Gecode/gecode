@@ -60,7 +60,7 @@ namespace Gecode {
       double qs;
     };
     /// Object for storing chb information
-    class Storage : public SharedHandle::Object {
+    class GECODE_VTABLE_EXPORT Storage : public SharedHandle::Object {
     public:
       /// Mutex to synchronize globally shared access
       GECODE_KERNEL_EXPORT static Support::Mutex m;

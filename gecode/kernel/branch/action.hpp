@@ -48,7 +48,7 @@ namespace Gecode {
     template<class View>
     class Recorder;
     /// Object for storing action values
-    class Storage : public SharedHandle::Object {
+    class GECODE_VTABLE_EXPORT Storage : public SharedHandle::Object {
     public:
       /// Mutex to synchronize globally shared access
       GECODE_KERNEL_EXPORT static Support::Mutex m;
