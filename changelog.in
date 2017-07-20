@@ -76,6 +76,13 @@ Minor.
 Module: flatzinc
 What:   change
 Rank:   minor
+[DESCRIPTION]
+Make mzn-gecode script use mzn-fzn if minizinc driver is not present.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
 Thanks: Andreas Schutt
 [DESCRIPTION]
 Add support for int_pow predicate.
