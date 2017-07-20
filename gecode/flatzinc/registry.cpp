@@ -462,6 +462,11 @@ namespace Gecode { namespace FlatZinc {
       IntVar x2 = s.arg2IntVar(ce[2]);
       mult(s, x0, x1, x2, s.ann2ipl(ann));
     }
+    void p_int_pow(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      pow(s, x0, ce[1]->getInt(), x2, s.ann2ipl(ann));
+    }    
     void p_int_div(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
@@ -1456,6 +1461,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("int_plus", &p_int_plus);
         registry().add("int_minus", &p_int_minus);
         registry().add("int_times", &p_int_times);
+        registry().add("gecode_int_pow", &p_int_pow);
         registry().add("int_div", &p_int_div);
         registry().add("int_mod", &p_int_mod);
         registry().add("int_min", &p_int_min);
