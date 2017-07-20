@@ -44,4 +44,4 @@ predicate global_cardinality_closed(array[int] of var int: x,
   assert(index_set(cover) = index_set(counts),
       "global_cardinality_closed: " ++
       "cover and counts must have identical index sets",
-    gecode_global_cardinality_closed(x,cover,counts);
+    gecode_global_cardinality_closed(x,cover,counts));

@@ -74,6 +74,14 @@ Minor.
 
 [ENTRY]
 Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Andreas Schutt
+[DESCRIPTION]
+Fix syntax errors in definitions of global cardinality predicates.
+
+[ENTRY]
+Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
