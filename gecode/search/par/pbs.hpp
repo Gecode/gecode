@@ -190,6 +190,7 @@ namespace Gecode { namespace Search { namespace Par {
       assert(i < n_active);
       assert(n_active > 0);
       std::swap(slaves[i],slaves[--n_active]);
+      tostop = true;
     }
     if (b) {
       if (--n_busy == 0)
