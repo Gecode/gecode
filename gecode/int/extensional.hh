@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Initialize during cloning (not used)
     template<unsigned int size>
     SparseBitSet(Space& home, const SmallBitSet<size>& sbs);
-    /// Return the highest active index
+    /// Return the highest active index plus one
     unsigned int width(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
@@ -315,6 +315,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     void nand_with_mask(const BitSetData* b);
     /// Return the number of required bit set words
     unsigned int words(void) const;
+    /// Return the number of required bit set words
+    unsigned int size(void) const;
     /// Get index for the \a i th word
     unsigned int index(unsigned int i) const;
     /// Get the \a i th word
@@ -328,7 +330,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Small bit-set
-  template<unsigned int size>
+  template<unsigned int _size>
   class SmallBitSet {
     template<unsigned int> friend class SmallBitSet;
     template<unsigned int> friend class TinyBitSet;
@@ -351,7 +353,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Indices
     Index idx;
     /// Words
-    BitSetData bits[size];
+    BitSetData bits[_size];
     /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
     void replace_and_decrease(unsigned int i, BitSetData w);
   public:
@@ -373,7 +375,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     unsigned int words(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
-    /// Return the highest active index
+    /// Return the highest active index plus one
     unsigned int width(void) const;
     /// Clear the first \a limit words in \a mask
     void clear_mask(BitSetData* mask) const;
@@ -390,6 +392,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     void nand_with_mask(const BitSetData* b);
     /// Perform "nand" with and the "or" of \a a and \a b
     void nand_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Return the number of required bit set words
+    unsigned int size(void) const;
   };
 
 }}}
@@ -399,13 +403,13 @@ namespace Gecode { namespace Int { namespace Extensional {
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Tiny bit-set
-  template<unsigned int size>
+  template<unsigned int _size>
   class TinyBitSet {
     template<unsigned int> friend class SmallBitSet;
     template<unsigned int> friend class TinyBitSet;
   protected:
     /// Words
-    BitSetData bits[size];
+    BitSetData bits[_size];
   public:
     /// Initialize sparse bit set for a number of words \a n
     TinyBitSet(Space& home, unsigned int n);
@@ -440,6 +444,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     void nand_with_masks(const BitSetData* a, const BitSetData* b);
     /// Return the number of required bit set words
     unsigned int words(void) const;
+    /// Return the total number of words
+    unsigned int size(void) const;
   };
       
 }}}

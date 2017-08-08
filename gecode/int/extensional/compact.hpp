@@ -364,7 +364,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                                          const TupleSet& ts)
     : Compact<View>(home,x,ts), table(home,ts.words()) {
     Region r;
-    BitSetData* mask = r.alloc<BitSetData>(table.words());
+    BitSetData* mask = r.alloc<BitSetData>(table.size());
     // Invalidate tuples
     for (int i = x.size(); i--; ) {
       table.clear_mask(mask);
@@ -548,7 +548,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                                    supports(a,x.max()));
       } else {
         Region r;
-        BitSetData* mask = r.alloc<BitSetData>(table.words());
+        BitSetData* mask = r.alloc<BitSetData>(table.size());
         // Collect all tuples to be kept in a temporary mask
         table.clear_mask(mask);
         for (ValidSupports vs(*this,a); vs(); ++vs)

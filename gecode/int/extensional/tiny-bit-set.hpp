@@ -45,35 +45,35 @@ namespace Gecode { namespace Int { namespace Extensional {
     * Tiny bit-set
     *
     */
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline
-   TinyBitSet<size>::TinyBitSet(Space&, unsigned int n) {
-     assert(n <= size);
+   TinyBitSet<sz>::TinyBitSet(Space&, unsigned int n) {
+     assert(n <= sz);
      /// Set the active bits
      for (unsigned int i=0U; i < n; i++)
        bits[i].init(true);
      /// Clear unused suffix bits
-     for (unsigned int i=n; i < size; i++)
+     for (unsigned int i=n; i < sz; i++)
        bits[i].init(false);
    }
 
-   template<unsigned int size>
-   template<unsigned int largersize>
+   template<unsigned int sz>
+   template<unsigned int largersz>
    forceinline
-   TinyBitSet<size>::TinyBitSet(Space&, const TinyBitSet<largersize>& sbs) {
-     assert(size <= largersize);
+   TinyBitSet<sz>::TinyBitSet(Space&, const TinyBitSet<largersz>& sbs) {
+     assert(sz <= largersz);
      assert(!sbs.empty());
-     for (unsigned int i = size; i--; )
+     for (unsigned int i = sz; i--; )
        bits[i] = sbs.bits[i];
      assert(!empty());
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline
-   TinyBitSet<size>::TinyBitSet(Space&, const SparseBitSet& sbs) {
-     assert(size == sbs.width());
+   TinyBitSet<sz>::TinyBitSet(Space&, const SparseBitSet& sbs) {
+     assert(sz == sbs.width());
      assert(!sbs.empty());
-     for (unsigned int i = size; i--; )
+     for (unsigned int i = sz; i--; )
        bits[i].init(false);
      for (unsigned int i = sbs.words(); i--; ) {
        bits[sbs.index(i)] = sbs.word(i);
@@ -81,13 +81,13 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(!empty());
    }
 
-   template<unsigned int size>
-   template<unsigned int smallsize>
+   template<unsigned int sz>
+   template<unsigned int smallsz>
    forceinline
-   TinyBitSet<size>::TinyBitSet(Space&, const SmallBitSet<smallsize>& bs) {
-     assert(size == bs.width());
+   TinyBitSet<sz>::TinyBitSet(Space&, const SmallBitSet<smallsz>& bs) {
+     assert(sz == bs.width());
      assert(!bs.empty());
-     for (unsigned int i=size; i--; )
+     for (unsigned int i=sz; i--; )
        bits[i].init(false);
      for (unsigned int i = bs.words(); i--; ) {
        bits[bs.index(i)] = bs.word(i);
@@ -95,78 +95,84 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(!empty());
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   TinyBitSet<size>::clear_mask(BitSetData* mask) {
-     for (unsigned int i=size; i--; ) {
+   TinyBitSet<sz>::clear_mask(BitSetData* mask) {
+     for (unsigned int i=sz; i--; ) {
        mask[i].init(false);
        assert(mask[i].none());
      }
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   TinyBitSet<size>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
-     for (unsigned int i=size; i--; )
+   TinyBitSet<sz>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
+     for (unsigned int i=sz; i--; )
        mask[i] = BitSetData::o(mask[i],b[i]);
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    template<bool sparse>
    forceinline void
-   TinyBitSet<size>::intersect_with_mask(const BitSetData* mask) {
-     for (unsigned int i=size; i--; )
+   TinyBitSet<sz>::intersect_with_mask(const BitSetData* mask) {
+     for (unsigned int i=sz; i--; )
        bits[i] = BitSetData::a(bits[i], mask[i]);
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   TinyBitSet<size>::intersect_with_masks(const BitSetData* a, const BitSetData* b) {
-     for (unsigned int i=size; i--; )
+   TinyBitSet<sz>::intersect_with_masks(const BitSetData* a, const BitSetData* b) {
+     for (unsigned int i=sz; i--; )
        bits[i] = BitSetData::a(bits[i], BitSetData::o(a[i],b[i]));
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   TinyBitSet<size>::nand_with_mask(const BitSetData* b) {
-     for (unsigned int i=size; i--; )
+   TinyBitSet<sz>::nand_with_mask(const BitSetData* b) {
+     for (unsigned int i=sz; i--; )
        bits[i] = BitSetData::a(bits[i],~(b[i]));
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline bool
-   TinyBitSet<size>::intersects(const BitSetData* b) {
-     for (unsigned int i=size; i--; )
+   TinyBitSet<sz>::intersects(const BitSetData* b) {
+     for (unsigned int i=sz; i--; )
        if (!BitSetData::a(bits[i],b[i]).none())
          return true;
      return false;
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline bool
-   TinyBitSet<size>::empty(void) const { // Linear complexity...
-     for (unsigned int i=size; i--; )
+   TinyBitSet<sz>::empty(void) const { // Linear complexity...
+     for (unsigned int i=sz; i--; )
        if (!bits[i].none())
          return false;
      return true;
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   TinyBitSet<size>::width(void) const {
+   TinyBitSet<sz>::width(void) const {
      assert(!empty());
      /// Find the index of the last non-zero word
-     for (unsigned int i=size; i--; )
+     for (unsigned int i=sz; i--; )
        if (!bits[i].none())
          return i+1U;
      GECODE_NEVER;
      return 0U;
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   TinyBitSet<size>::words(void) const {
+   TinyBitSet<sz>::words(void) const {
      return width();
+   }
+
+   template<unsigned int sz>
+   forceinline unsigned int
+   TinyBitSet<sz>::size(void) const {
+     return sz;
    }
 
 }}}

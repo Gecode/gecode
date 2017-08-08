@@ -45,17 +45,17 @@ namespace Gecode { namespace Int { namespace Extensional {
     * Indexing for a bit-fiddling bit-set
     *
     */
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   SmallBitSet<size>::Index::index(unsigned int p) const {
-     assert(p < size);
+   SmallBitSet<sz>::Index::index(unsigned int p) const {
+     assert(p < sz);
      unsigned int shift = (p+1U) << 2;
      return (data >> shift) & 15ULL;
    }
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::Index::index(unsigned int p, unsigned int i) {
-     assert((p < size) && (i < 16U));
+   SmallBitSet<sz>::Index::index(unsigned int p, unsigned int i) {
+     assert((p < sz) && (i < 16U));
      unsigned long long int li =
        static_cast<unsigned long long int>(i);
      unsigned int shift = (p+1U) << 2;
@@ -64,15 +64,15 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(index(p) == i);
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   SmallBitSet<size>::Index::limit(void) const {
+   SmallBitSet<sz>::Index::limit(void) const {
      return data & 15ULL;
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::Index::limit(unsigned int i) {
+   SmallBitSet<sz>::Index::limit(unsigned int i) {
      assert(i < 16U);
      data &= ~(15ULL);
      data |= static_cast<unsigned long long int>(i);
@@ -83,21 +83,21 @@ namespace Gecode { namespace Int { namespace Extensional {
     *
     */
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline BitSetData
-   SmallBitSet<size>::word(unsigned int p) const {
+   SmallBitSet<sz>::word(unsigned int p) const {
      return bits[p];
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   SmallBitSet<size>::index(unsigned int p) const {
+   SmallBitSet<sz>::index(unsigned int p) const {
      return idx.index(p);
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   SmallBitSet<size>::width(void) const {
+   SmallBitSet<sz>::width(void) const {
      assert(!empty());
      unsigned int width = index(0);
      /// Find the largest active index
@@ -108,9 +108,9 @@ namespace Gecode { namespace Int { namespace Extensional {
      return width+1U;
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::replace_and_decrease(unsigned int i, BitSetData w) {
+   SmallBitSet<sz>::replace_and_decrease(unsigned int i, BitSetData w) {
      assert(i < idx.limit());
      if (w != bits[i]) {
        bits[i] = w;
@@ -123,16 +123,22 @@ namespace Gecode { namespace Int { namespace Extensional {
      }
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline unsigned int
-   SmallBitSet<size>::words(void) const {
+   SmallBitSet<sz>::words(void) const {
      return idx.limit();
    }
+
+   template<unsigned int sz>
+   forceinline unsigned int
+   SmallBitSet<sz>::size(void) const {
+     return words();
+   }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline
-   SmallBitSet<size>::SmallBitSet(Space&, unsigned int n) {
-     assert(n <= size);
+   SmallBitSet<sz>::SmallBitSet(Space&, unsigned int n) {
+     assert(n <= sz);
      idx.limit(n);
      /// Set the active bits
      for (unsigned int i=0U; i < n; i++) {
@@ -141,28 +147,28 @@ namespace Gecode { namespace Int { namespace Extensional {
        bits[i].init(true);
      }
      /// Clear unused suffix bits
-     for (unsigned int i=n; i < size; i++)
+     for (unsigned int i=n; i < sz; i++)
        bits[i].init(false);
      assert(idx.limit() == n);
    }
 
-   template<unsigned int size>
-   template<unsigned int largersize>
+   template<unsigned int sz>
+   template<unsigned int largersz>
    forceinline
-   SmallBitSet<size>::SmallBitSet(Space&, const SmallBitSet<largersize>& sbs) {
-     assert(size <= largersize);
+   SmallBitSet<sz>::SmallBitSet(Space&, const SmallBitSet<largersz>& sbs) {
+     assert(sz <= largersz);
      assert(sbs.idx.limit() > 0);
      idx.data = sbs.idx.data;
-     for (unsigned int i=size; i--; )
+     for (unsigned int i=sz; i--; )
        bits[i] = sbs.bits[i];
-     assert(idx.limit() <= size);
+     assert(idx.limit() <= sz);
      assert(!empty());
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline
-   SmallBitSet<size>::SmallBitSet(Space&, const SparseBitSet& sbs) {
-     assert(size >= sbs.words());
+   SmallBitSet<sz>::SmallBitSet(Space&, const SparseBitSet& sbs) {
+     assert(sz >= sbs.words());
      idx.limit(sbs.words());
      for (unsigned int i=sbs.words(); i--; ) {
        assert(sbs.index(i) <= 15U);
@@ -173,38 +179,38 @@ namespace Gecode { namespace Int { namespace Extensional {
      assert(!empty());
    }
       
-   template<unsigned int size>
-   template<unsigned int tinysize>
+   template<unsigned int sz>
+   template<unsigned int tinysz>
    forceinline
-   SmallBitSet<size>::SmallBitSet(Space&, const TinyBitSet<tinysize>&) {
+   SmallBitSet<sz>::SmallBitSet(Space&, const TinyBitSet<tinysz>&) {
      GECODE_NEVER;
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline bool
-   SmallBitSet<size>::empty(void) const {
+   SmallBitSet<sz>::empty(void) const {
      return idx.limit() == 0;
    }
    
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::clear_mask(BitSetData* mask) const {
+   SmallBitSet<sz>::clear_mask(BitSetData* mask) const {
      for (unsigned int i = words(); i--; )
        mask[i].init(false);
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
+   SmallBitSet<sz>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
      assert(!empty());
      for (unsigned int i = idx.limit(); i--; )
        mask[i] = BitSetData::o(mask[i],b[idx.index(i)]);
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    template<bool sparse>
    forceinline void
-   SmallBitSet<size>::intersect_with_mask(const BitSetData* mask) {
+   SmallBitSet<sz>::intersect_with_mask(const BitSetData* mask) {
      assert(!empty());
      if (sparse) {
        for (unsigned int i = idx.limit(); i--; ) {
@@ -227,9 +233,9 @@ namespace Gecode { namespace Int { namespace Extensional {
      }
    }
       
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::intersect_with_masks(const BitSetData* a, const BitSetData* b) {
+   SmallBitSet<sz>::intersect_with_masks(const BitSetData* a, const BitSetData* b) {
      assert(!empty());
      for (unsigned int i = idx.limit(); i--; ) {
        assert(!bits[i].none());
@@ -242,18 +248,18 @@ namespace Gecode { namespace Int { namespace Extensional {
               !bits[i].none());
      }
    }
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline bool
-   SmallBitSet<size>::intersects(const BitSetData* b) {
+   SmallBitSet<sz>::intersects(const BitSetData* b) {
      for (unsigned int i = idx.limit(); i--; )
        if (!BitSetData::a(bits[i],b[idx.index(i)]).none())
          return true;
      return false;
    }
 
-   template<unsigned int size>
+   template<unsigned int sz>
    forceinline void
-   SmallBitSet<size>::nand_with_mask(const BitSetData* b) {
+   SmallBitSet<sz>::nand_with_mask(const BitSetData* b) {
      assert(!empty());
      for (unsigned int i = idx.limit(); i--; ) {
        assert(!bits[i].none());

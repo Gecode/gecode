@@ -201,15 +201,15 @@ namespace Gecode { namespace Int { namespace Extensional {
       d->es[i] = sbs.d->es[i];
   }
       
-  template<unsigned int size>
+  template<unsigned int sz>
   forceinline
-  SparseBitSet::SparseBitSet(Space&, const TinyBitSet<size>&) {
+  SparseBitSet::SparseBitSet(Space&, const TinyBitSet<sz>&) {
     GECODE_NEVER;
   }
 
-  template<unsigned int size>
+  template<unsigned int sz>
   forceinline
-  SparseBitSet::SparseBitSet(Space&, const SmallBitSet<size>&) {
+  SparseBitSet::SparseBitSet(Space&, const SmallBitSet<sz>&) {
     GECODE_NEVER;
   }
 
@@ -259,7 +259,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   SparseBitSet::words(void) const {
     return d->limit;
   }
-  
+
+  forceinline unsigned int
+  SparseBitSet::size(void) const {
+    return words();
+  }
+      
   forceinline BitSetData
   SparseBitSet::word(unsigned int i) const {
     return d->word(i);
