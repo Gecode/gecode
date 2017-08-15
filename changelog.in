@@ -73,6 +73,22 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+Author: Matthias Balzer
+[DESCRIPTION]
+Added reified dom-expressions.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+Author: Matthias Balzer
+[DESCRIPTION]
+Added comparisons between integer and set expressions.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   major

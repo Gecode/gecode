@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Matthias Balzer <matthias.balzer@itwm.fraunhofer.de>
  *
  *  Copyright:
  *     Christian Schulte, 2005
+ *     Fraunhofer ITWM, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -72,6 +74,114 @@ namespace Gecode {
   SetRel
   operator ||(const SetExpr& e0, const SetExpr& e1) {
     return SetRel(e0, SRT_DISJ, e1);
+  }
+
+  namespace {
+    /// Boolean expression for IRT relations with SetExpr
+    class SetIRTRel : public BoolExpr::Misc {
+      /// The set expression
+      SetExpr _s;
+      /// The integer expression
+      LinIntExpr _x;
+      /// The integer relation type
+      IntRelType _irt;
+
+    public:
+      /// Constructor
+      SetIRTRel (const SetExpr&, IntRelType, const LinIntExpr&);
+      /// Constrain \a b to be equivalent to the expression (negated if \a neg)
+      virtual void post (Home, BoolVar b, bool neg, IntPropLevel) override;
+    };
+
+    SetIRTRel::SetIRTRel(const SetExpr& s, IntRelType irt, const LinIntExpr& x)
+      : _s(s), _x(x), _irt(irt) {}
+
+    void
+    SetIRTRel::post(Home home, BoolVar b, bool neg, IntPropLevel ipl) {
+      if (b.zero()) {
+        rel(home, _s.post(home), neg ? _irt : Gecode::neg(_irt), _x.post(home, ipl));
+      } else if (b.one()) {
+        rel(home, _s.post(home), neg ? Gecode::neg(_irt) : _irt, _x.post(home, ipl));
+      } else {
+        rel(home, _s.post(home), neg ? Gecode::neg(_irt) : _irt, _x.post(home, ipl), b);
+      }
+    }
+  }
+
+
+  /*
+   * IRT relations with SetExpr
+   *
+   */
+  BoolExpr
+  operator ==(const SetExpr& x, const LinIntExpr& y)
+  {
+    return BoolExpr(new SetIRTRel(x, IRT_EQ, y));
+  }
+  BoolExpr
+  operator ==(const LinIntExpr& x, const SetExpr& y)
+  {
+    return operator ==(y, x);
+  }
+
+  BoolExpr
+  operator !=(const SetExpr& x, const LinIntExpr& y)
+  {
+    return BoolExpr(new SetIRTRel(x, IRT_NQ, y));
+  }
+
+  BoolExpr
+  operator !=(const LinIntExpr& x, const SetExpr& y)
+  {
+    return operator !=(y, x);
+  }
+
+  BoolExpr
+  operator <=(const SetExpr& x, const LinIntExpr& y)
+  {
+    return BoolExpr(new SetIRTRel(x, IRT_LQ, y));
+  }
+
+  BoolExpr
+  operator <=(const LinIntExpr& x, const SetExpr& y)
+  {
+    return operator >=(y, x);
+  }
+
+  BoolExpr
+  operator <(const SetExpr& x, const LinIntExpr& y)
+  {
+    return BoolExpr(new SetIRTRel(x, IRT_LE, y));
+  }
+
+  BoolExpr
+  operator <(const LinIntExpr& x, const SetExpr& y)
+  {
+    return operator >(y, x);
+  }
+
+  BoolExpr
+  operator >=(const SetExpr& x, const LinIntExpr& y)
+  {
+    return BoolExpr(new SetIRTRel(x, IRT_GQ, y));
+  }
+
+  BoolExpr
+  operator >=(const LinIntExpr& x, const SetExpr& y)
+  {
+    return operator <=(y, x);
+  }
+
+  BoolExpr
+  operator >(const SetExpr& x, const LinIntExpr& y)
+  {
+    return BoolExpr(new SetIRTRel(x, IRT_GR, y));
+  }
+
+  BoolExpr
+  operator >(const LinIntExpr& x, const SetExpr& y)
+  {
+    return operator <(y, x);
   }
 
 }

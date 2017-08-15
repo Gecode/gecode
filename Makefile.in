@@ -637,7 +637,7 @@ SETBUILDDIRS	=						\
 
 MMSRC0 = \
 	int-expr.cpp int-rel.cpp int-arith.cpp bool-expr.cpp \
-	set-expr.cpp set-rel.cpp \
+	set-expr.cpp set-rel.cpp dom.cpp \
 	float-expr.cpp float-rel.cpp float-arith.cpp \
 	reg.cpp optimize.cpp exception.cpp
 MMHDR0 = \

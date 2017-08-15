@@ -3,11 +3,13 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
+ *     Matthias Balzer <matthias.balzer@itwm.fraunhofer.de>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Vincent Barichard <Vincent.Barichard@univ-angers.fr>
  *
  *  Copyright:
  *     Christian Schulte, 2004
+ *     Fraunhofer ITWM, 2017
  *     Guido Tack, 2004
  *     Mikael Lagerkvist, 2005
  *     Vincent Barichard, 2012
@@ -1342,6 +1344,133 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT BoolExpr
   operator <<(const BoolExpr&, const BoolExpr&);
 
+  //@}
+
+  /**
+   * \defgroup TaskModelMiniModelReified Reified expressions
+   *
+   * \ingroup TaskModelMiniModel
+   */
+
+  //@{
+  /// \brief Return expression for \f$ x=n\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const IntVar& x, int n);
+  /// \brief Return expression for \f$ l\leq x \leq m\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const IntVar& x, int l, int m);
+  /// \brief Return expression for \f$ x \in s\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const IntVar& x, const IntSet& s);
+
+#ifdef GECODE_HAS_SET_VARS
+  /// \brief Return expression for \f$ x \sim_{rt} \{i\}\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const SetVar& x, SetRelType rt, int i);
+  /// \brief Return expression for \f$ x \sim_{rt} \{i,\dots,j\}\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const SetVar& x, SetRelType rt, int i, int j);
+  /// \brief Return expression for \f$ x \sim_{rt} s\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const SetVar& x, SetRelType rt, const IntSet& s);
+#endif
+
+#ifdef GECODE_HAS_FLOAT_VARS
+  /// \brief Return expression for \f$ x=n\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const FloatVar& x, const FloatVal& n);
+  /// \brief Return expression for \f$ l\leq x \leq u\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  dom(const FloatVar& x, FloatNum l, FloatNum u);
+#endif
+  //@}
+
+  /**
+   * \defgroup TaskModelMiniModelMixed Mixed integer and set expressions
+   *
+   * \ingroup TaskModelMiniModel
+   */
+
+  //@{
+#ifdef GECODE_HAS_SET_VARS
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ i=x\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator ==(const SetExpr& s, const LinIntExpr& x);
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ x=i\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator ==(const LinIntExpr& x, const SetExpr& s);
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator ==(const LinIntExpr&, IntSet) = delete;
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator ==(IntSet, const LinIntExpr&) = delete;
+
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ i\neq x\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator !=(const SetExpr& s, const LinIntExpr& x);
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ x\neq i\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator !=(const LinIntExpr& x, const SetExpr& s);
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator !=(const LinIntExpr&, IntSet) = delete;
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator !=(IntSet, const LinIntExpr&) = delete;
+
+  /// \brief Return expression for \f$|s|\geq 6 \land \forall i\in s:\ i\leq x\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <=(const SetExpr& s, const LinIntExpr& x);
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ x\leq i\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <=(const LinIntExpr& x, const SetExpr& s);
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator <=(const LinIntExpr&, IntSet) = delete;
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator <=(IntSet, const LinIntExpr&) = delete;
+
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ i<x\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <(const SetExpr& s, const LinIntExpr& x);
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ x<i\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator <(const LinIntExpr& x, const SetExpr& s);
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator <(const LinIntExpr&, IntSet) = delete;
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator <(IntSet, const LinIntExpr&) = delete;
+
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ i\geq x\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >=(const SetExpr& s, const LinIntExpr& x);
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ x\geq i\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >=(const LinIntExpr& x, const SetExpr& s);
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator >=(const LinIntExpr&, IntSet) = delete;
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator >=(IntSet, const LinIntExpr&) = delete;
+
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ i>x\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >(const SetExpr& s, const LinIntExpr& x);
+  /// \brief Return expression for \f$|s|\geq 1 \land \forall i\in s:\ x>i\f$
+  GECODE_MINIMODEL_EXPORT BoolExpr
+  operator >(const LinIntExpr& x, const SetExpr& s);
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator >(const LinIntExpr&, IntSet) = delete;
+  /// Prevent comparison with IntSet
+  BoolExpr
+  operator >(IntSet, const LinIntExpr&) = delete;
+#endif
   //@}
 
   /**
