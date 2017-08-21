@@ -73,6 +73,15 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Author: Peter Stuckey
+[DESCRIPTION]
+Perform unsharing even in failed spaces to avoid exceptions in
+later constraint posting.
+
+[ENTRY]
 Module: minimodel
 What:   new
 Rank:   major
