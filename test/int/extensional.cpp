@@ -377,7 +377,22 @@ namespace Test { namespace Int {
        }
 
      };
-     
+
+     ///% Transform a TupleSet into a DFA
+     Gecode::DFA tupleset2dfa(Gecode::TupleSet ts) {
+       using namespace Gecode;
+       REG expression;
+       for (int i = 0; i<ts.tuples(); i++) {
+         REG r;
+         for (int j = 0; j<ts.arity(); j++) {
+           r += REG(ts[i][j]);
+         }
+         expression |= r;
+       }
+       DFA dfa(expression);
+       return dfa;
+     }
+
      /// %Test with tuple set
      class TupleSetBase : public Test {
      public:
@@ -403,24 +418,18 @@ namespace Test { namespace Int {
          IntArgs t3(4,  4, 3, 4, 1);
          IntArgs t4(4,  1, 3, 2, 3);
          IntArgs t5(4,  3, 3, 3, 2);
-         t.add(t1);
-         t.add(t1);
-         t.add(t2);
-         t.add(t2);
-         t.add(t3);
-         t.add(t3);
-         t.add(t4);
-         t.add(t4);
-         t.add(t5);
-         t.add(t5);
-         t.add(t5);
-         t.add(t5);
-         t.add(t5);
-         t.add(t5);
-         t.add(t5);
-         t.add(t5);
-         t.finalize();
+         t.add(t1).add(t1).add(t2).add(t2)
+          .add(t3).add(t3).add(t4).add(t4)
+          .add(t5).add(t5).add(t5).add(t5)
+          .add(t5).add(t5).add(t5).add(t5)
+          .add(t1).add(t1).add(t2).add(t2)
+          .add(t3).add(t3).add(t4).add(t4)
+          .add(t5).add(t5).add(t5).add(t5)
+          .add(t5).add(t5).add(t5).add(t5)
+          .finalize();
 
+         TupleSet ts = TupleSet(t.arity(),tupleset2dfa(t));
+         assert(t == ts);
          extensional(home, x, t, ipl);
        }
      };
@@ -430,12 +439,16 @@ namespace Test { namespace Int {
      protected:
        /// The tuple set to use
        Gecode::TupleSet ts;
+       /// Whether to validate dfa2tupleset
+       bool toDFA;
      public:
        /// Create and register test
        TupleSetTest(const std::string& s,
-                    Gecode::IntSet d0, Gecode::TupleSet ts0)
+                    Gecode::IntSet d0, Gecode::TupleSet ts0, bool td)
          : Test("Extensional::TupleSet::"+s,
-                ts0.arity(),d0,false,Gecode::IPL_DOM), ts(ts0) {}
+                ts0.arity(),d0,false,Gecode::IPL_DOM), ts(ts0) {
+         toDFA = td;
+       }
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          using namespace Gecode;
@@ -453,16 +466,21 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
+
+         if (toDFA) {
+           TupleSet t = TupleSet(ts.arity(),tupleset2dfa(ts));
+           assert(ts == t);
+         }
          extensional(home, x, ts, ipl);
        }
      };
 
-     class RandomTupleSetTest : TupleSetTest {
+     class RandomTupleSetTest : public TupleSetTest {
      public:
        /// Create and register test
        RandomTupleSetTest(const std::string& s,
-                    Gecode::IntSet d0, Gecode::TupleSet ts0)
-         : TupleSetTest(s,d0,ts0) {
+                          Gecode::IntSet d0, Gecode::TupleSet ts0)
+         : TupleSetTest(s,d0,ts0,false) {
          testsearch = false;
        }
        /// Create and register initial assignment
@@ -580,8 +598,9 @@ namespace Test { namespace Int {
          }
          ts.finalize();
          assert(ts.tuples() == size);
-         /// Create and register test
-         (void) new TupleSetTest(std::to_string(size),IntSet(0,4),ts);
+         // Create and register test
+         (void) new TupleSetTest(std::to_string(size),IntSet(0,4),ts,
+                                 size <= 128);
        }
      };
 
@@ -615,24 +634,24 @@ namespace Test { namespace Int {
              .add(2, 5, 1, 5).add(4, 3, 5, 1)
              .add(1, 5, 2, 5).add(5, 3, 3, 2)
              .finalize();
-           (void) new TupleSetTest("A",IntSet(0,6),ts);
+           (void) new TupleSetTest("A",IntSet(0,6),ts,true);
          }
          {
            TupleSet ts(4);
            ts.finalize();
-           (void) new TupleSetTest("Empty",IntSet(1,2),ts);
+           (void) new TupleSetTest("Empty",IntSet(1,2),ts,true);
          }
          {
            TupleSet ts(4);
            for (int n=1024*16; n--; )
              ts.add(1,2,3,4);
            ts.finalize();
-           (void) new TupleSetTest("Assigned",IntSet(1,4),ts);
+           (void) new TupleSetTest("Assigned",IntSet(1,4),ts,true);
          }
          {
            TupleSet ts(1);
            ts.add(1).add(2).add(3).finalize();
-           (void) new TupleSetTest("Single",IntSet(-4,4),ts);
+           (void) new TupleSetTest("Single",IntSet(-4,4),ts,true);
          }
          {
            int m = Gecode::Int::Limits::min;
@@ -641,7 +660,7 @@ namespace Test { namespace Int {
              .add(m+2,m+3,m+0).add(m+2,m+3,m+0)
              .add(m+1,m+2,m+5).add(m+2,m+3,m+0)
              .add(m+3,m+6,m+5).finalize();
-           (void) new TupleSetTest("Min",IntSet(m,m+7),ts);
+           (void) new TupleSetTest("Min",IntSet(m,m+7),ts,true);
          }
          {
            int M = Gecode::Int::Limits::max;
@@ -650,7 +669,7 @@ namespace Test { namespace Int {
              .add(M-2,M-3,M-0).add(M-2,M-3,M-0)
              .add(M-1,M-2,M-5).add(M-2,M-3,M-0)
              .add(M-3,M-6,M-5).finalize();
-           (void) new TupleSetTest("Max",IntSet(M-7,M),ts);
+           (void) new TupleSetTest("Max",IntSet(M-7,M),ts,true);
          }
          {
            int m = Gecode::Int::Limits::min;
@@ -659,9 +678,9 @@ namespace Test { namespace Int {
            ts.add(M-0,m+1,M-2).add(m+4,M-1,M-3)
              .add(m+2,M-3,m+0).add(M-2,M-3,M-0)
              .finalize();
-           (void) new TupleSetTest("Blow",
+           (void) new TupleSetTest("MinMax",
                                    IntSet(IntArgs(6, m,m+1,m+4,M-3,M-2,M)),
-                                   ts);
+                                   ts,true);
          }
          {
            TupleSet ts(7);
@@ -680,8 +699,10 @@ namespace Test { namespace Int {
              (void) new TupleSetTestSize(i);
          }
          {
-           (void) new RandomTupleSetTest("Rand(10,-1,2)", IntSet(-1,2),randomTupleSet(10,-1,2,0.05));
-           (void) new RandomTupleSetTest("Rand(5,-10,10)", IntSet(-10,10),randomTupleSet(5,-10,10,0.05));
+           (void) new RandomTupleSetTest("Rand(10,-1,2)", IntSet(-1,2),
+                                         randomTupleSet(10,-1,2,0.05));
+           (void) new RandomTupleSetTest("Rand(5,-10,10)", IntSet(-10,10),
+                                         randomTupleSet(5,-10,10,0.05));
          }
          {
            TupleSet t(5);
@@ -695,7 +716,7 @@ namespace Test { namespace Int {
            }
            t.add(2,2,4,3,4);
            t.finalize();
-           (void) new TupleSetTest("FewLast",IntSet(1,4),t);
+           (void) new TupleSetTest("FewLast",IntSet(1,4),t,false);
          }
          {
            TupleSet t(4);
@@ -706,7 +727,7 @@ namespace Test { namespace Int {
            }
            t.add(2,-1,3,4);
            t.finalize();
-           (void) new TupleSetTest("FewMiddle",IntSet(-1,6),t);
+           (void) new TupleSetTest("FewMiddle",IntSet(-1,6),t,false);
          }
          {
            TupleSet t(10);
@@ -715,7 +736,7 @@ namespace Test { namespace Int {
              if (Base::rand(100) <= 0.25*100) {
                IntArgs tuple(10);
                tuple[0] = 2;
-               for (int i =9; i--; ) tuple[i] = ass[i];
+               for (int i = 9; i--; ) tuple[i+1] = ass[i];
                t.add(tuple);
              }
              ++ass;

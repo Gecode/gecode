@@ -274,6 +274,183 @@ namespace Gecode {
     return *this;
   }
 
+  TupleSet::TupleSet(int a, const Gecode::DFA& dfa) {
+    /// Edges in layered graph
+    struct Edge {
+      unsigned int i_state; ///< Number of in-state
+      unsigned int o_state; ///< Number of out-state
+    };
+    /// State in layered graph
+    struct State {
+      unsigned int i_deg; ///< In-degree (number of incoming arcs)
+      unsigned int o_deg; ///< Out-degree (number of outgoing arcs)
+      unsigned int n_tuples; ///< Number of tuples
+      int* tuples; ///< The tuples
+    };
+    /// Support for a value
+    struct Support {
+      int val; ///< Supported value
+      unsigned int n_edges; ///< Number of supporting edges
+      Edge* edges; ///< Supporting edges
+    };
+    /// Layer in layered graph
+    struct Layer {
+      State* states; ///< States
+      Support* supports; ///< Supported values
+      unsigned int n_supports; ///< Number of supported values
+    };
+    // Initialize
+    object(new Data(a));
+
+    Region r;
+    // Number of states
+    int max_states = dfa.n_states();
+    // Allocate memory for all layers and states
+    Layer* layers = r.alloc<Layer>(a+1);
+    State* states = r.alloc<State>(max_states*(a+1));
+
+    for (int i=max_states*(a+1); i--; ) {
+      states[i].i_deg = 0U; states[i].o_deg = 0U;
+      states[i].n_tuples = 0U;
+      states[i].tuples = nullptr;
+    }
+    for (int i=a+1; i--; ) {
+      layers[i].states = states + i*max_states;
+      layers[i].n_supports = 0U;
+    }
+
+    // Mark initial state as being reachable
+    layers[0].states[0].i_deg = 1U;
+    layers[0].states[0].n_tuples = 1U;
+    layers[0].states[0].tuples = r.alloc<int>(1U);
+    assert(layers[0].states[0].tuples != nullptr);
+  
+    // Allocate temporary memory for edges and supports
+    Edge* edges = r.alloc<Edge>(dfa.max_degree());
+    Support* supports = r.alloc<Support>(dfa.n_symbols());
+  
+    // Forward pass: accumulate
+    for (int i=0; i<a; i++) {
+      unsigned int n_supports=0;
+      for (DFA::Symbols s(dfa); s(); ++s) {
+        unsigned int n_edges=0;
+        for (DFA::Transitions t(dfa,s.val()); t(); ++t) {
+          if (layers[i].states[t.i_state()].i_deg != 0) {
+            // Create edge
+            edges[n_edges].i_state = t.i_state();
+            edges[n_edges].o_state = t.o_state();
+            n_edges++;
+            // Adjust degrees
+            layers[i].states[t.i_state()].o_deg++;
+            layers[i+1].states[t.o_state()].i_deg++;
+            // Adjust number of tuples
+            layers[i+1].states[t.o_state()].n_tuples
+              += layers[i].states[t.i_state()].n_tuples;
+          }
+          assert(n_edges <= dfa.max_degree());
+        }
+        // Found a support for the value
+        if (n_edges > 0U) {
+          Support& support = supports[n_supports++];
+          support.val = s.val();
+          support.n_edges = n_edges;
+          support.edges = Heap::copy(r.alloc<Edge>(n_edges),edges,n_edges);
+        }
+      }
+      // Create supports
+      if (n_supports > 0U) {
+        layers[i].supports =
+          Heap::copy(r.alloc<Support>(n_supports),supports,n_supports);
+        layers[i].n_supports = n_supports;
+      } else {
+        finalize();
+        return;
+      }
+    }
+
+    // Mark final states as being reachable
+    for (int s = dfa.final_fst(); s < dfa.final_lst(); s++) {
+      if (layers[a].states[s].i_deg != 0U)
+        layers[a].states[s].o_deg = 1U;
+    }
+
+    // Backward pass: validate
+    for (int i=a; i--; ) {
+      for (unsigned int j = layers[i].n_supports; j--; ) {
+        Support& s = layers[i].supports[j];
+        for (unsigned int k = s.n_edges; k--; ) {
+          unsigned int i_state = s.edges[k].i_state;
+          unsigned int o_state = s.edges[k].o_state;
+          // State is unreachable
+          if (layers[i+1].states[o_state].o_deg == 0U) {
+            // Adjust degree
+            --layers[i+1].states[o_state].i_deg;
+            --layers[i].states[i_state].o_deg;
+            // Remove edge
+            assert(s.n_edges > 0U);
+            s.edges[k] = s.edges[--s.n_edges];
+          }
+        }
+        // Lost support
+        if (s.n_edges == 0U)
+          layers[i].supports[j] = layers[i].supports[--layers[i].n_supports];
+      }
+      if (layers[i].n_supports == 0U) {
+        finalize();
+        return;
+      }
+    }
+
+    // Generate tuples
+    for (int i=0; i<a; i++) {
+      for (unsigned int j = layers[i].n_supports; j--; ) {
+        Support& s = layers[i].supports[j];
+        for (unsigned int k = s.n_edges; k--; ) {
+          unsigned int i_state = s.edges[k].i_state;
+          unsigned int o_state = s.edges[k].o_state;
+          // Allocate memory for tuples if not done
+          if (layers[i+1].states[o_state].tuples == nullptr) {
+            unsigned int n_tuples = layers[i+1].states[o_state].n_tuples;
+            layers[i+1].states[o_state].tuples = r.alloc<int>((i+1)*n_tuples);
+            layers[i+1].states[o_state].n_tuples = 0;
+          }
+          unsigned int n = layers[i+1].states[o_state].n_tuples;
+          // Write tuples
+          for (unsigned int t=0; t < layers[i].states[i_state].n_tuples; t++) {
+            // Copy the first i number of digits from the previous layer
+            Heap::copy(&layers[i+1].states[o_state].tuples[n*(i+1)+t*(i+1)],
+                       &layers[i].states[i_state].tuples[t*i], i);
+            // Write the last digit
+            layers[i+1].states[o_state].tuples[n*(i+1)+t*(i+1)+i] = s.val;
+          }
+          layers[i+1].states[o_state].n_tuples
+            += layers[i].states[i_state].n_tuples;
+        }
+      }
+    }
+
+    // Add tuples to tuple set
+    for (int s = dfa.final_fst(); s < dfa.final_lst(); s++) {
+      for (unsigned int i=0; i<layers[a].states[s].n_tuples; i++) {
+        int* tuple = &layers[a].states[s].tuples[i*a];
+        add(IntArgs(a,tuple));
+      }
+    }
+  
+    finalize();
+  } 
+
+  bool
+  TupleSet::operator ==(const TupleSet& t) const {
+    if ((tuples() != t.tuples()) || (arity() != t.arity()))
+      return false;
+    for (int i=tuples(); i--; )
+      for (int j=arity(); j--; )
+        if ((*this)[i][j] != t[i][j])
+          return false;
+    return true;
+  }
+
   void
   TupleSet::_add(const IntArgs& t) {
     if (!*this)

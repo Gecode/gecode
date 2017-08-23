@@ -74,9 +74,18 @@ Minor.
 
 [ENTRY]
 Module: int
+What:   new
+Rank:   major
+Author: Linnea Ingmar
+[DESCRIPTION]
+Tuple sets can be initialized from DFAs (and hence regular
+expressions).
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   minor
-Author: Peter Stuckey
+Thanks: Peter Stuckey
 [DESCRIPTION]
 Perform unsharing even in failed spaces to avoid exceptions in
 later constraint posting.
@@ -95,7 +104,7 @@ What:   new
 Rank:   major
 Author: Matthias Balzer
 [DESCRIPTION]
-Added comparisons between integer and set expressions.
+Added relations between integer and set expressions.
 
 [ENTRY]
 Module: flatzinc
@@ -158,7 +167,12 @@ What:   changed
 Rank:   major
 Author: Linnea Ingmar
 [DESCRIPTION]
-Replaced extensional implementation by a single implementation based on the compact-table propagator described in: J. Demeulenaere et. al., Compact-Table: Efficiently filtering table constraints with reversible sparse bit-sets, CP 2016. Pages 207-223, LNCS, Springer, 2016. The extensional propagator runs up to ten times faster than the old implementations.
+Replaced extensional implementation by a single implementation
+based on the compact-table propagator described in:
+J. Demeulenaere et. al., Compact-Table: Efficiently filtering
+table constraints with reversible sparse bit-sets, CP 2016. Pages
+207-223, LNCS, Springer, 2016. The extensional propagator runs up
+to ten times faster than the old implementations.
 
 [ENTRY]
 Module: kernel

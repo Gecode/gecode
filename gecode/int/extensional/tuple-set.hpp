@@ -177,6 +177,10 @@ namespace Gecode {
     return *static_cast<Data*>(object());
   }
 
+  forceinline bool
+  TupleSet::operator !=(const TupleSet& t) const {
+    return !(*this == t);
+  }
   forceinline int
   TupleSet::arity(void) const {
     return raw().arity;

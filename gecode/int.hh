@@ -2014,7 +2014,6 @@ namespace Gecode {
    * A %DFA can be defined by a regular expression, for regular expressions
    * see the module MiniModel.
    */
-  //@{
 
   /**
    * \brief Deterministic finite automaton (%DFA)
@@ -2022,6 +2021,8 @@ namespace Gecode {
    * After initialization, the start state is always zero.
    * The final states are contiguous ranging from the first to the
    * last final state.
+   *
+   * \ingroup TaskModelIntExt
    */
   class DFA : public SharedHandle {
   private:
@@ -2116,39 +2117,19 @@ namespace Gecode {
     int symbol_max(void) const;
   };
 
-  /**
-   * \brief Post domain consistent propagator for extensional constraint described by a DFA
-   *
-   * The elements of \a x must be a word of the language described by
-   * the DFA \a d.
-   *
-   * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply. If shared occurences of variables
-   * are required, unshare should be used.
-   */
-  GECODE_INT_EXPORT void
-  extensional(Home home, const IntVarArgs& x, DFA d,
-              IntPropLevel ipl=IPL_DEF);
+}
 
-  /**
-   * \brief Post domain consistent propagator for extensional constraint described by a DFA
-   *
-   * The elements of \a x must be a word of the language described by
-   * the DFA \a d.
-   *
-   * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply. If shared occurences of variables
-   * are required, unshare should be used.
-   */
-  GECODE_INT_EXPORT void
-  extensional(Home home, const BoolVarArgs& x, DFA d,
-              IntPropLevel ipl=IPL_DEF);
+#include <gecode/int/extensional/dfa.hpp>
+
+namespace Gecode {
 
   /** \brief Class represeting a set of tuples.
    *
    * A TupleSet is used for storing an extensional representation of a
    * constraint. After a TupleSet is finalized, no more tuples may be
    * added to it.
+   *
+   * \ingroup TaskModelIntExt
    */
   class TupleSet : public SharedHandle {
   public:
@@ -2251,6 +2232,8 @@ namespace Gecode {
     GECODE_INT_EXPORT
     void _add(const IntArgs& t);
   public:
+    /// \name Initialization
+    //@{
     /// Construct an unitialized tuple set
     TupleSet(void);
     /// Initialize for a tuple set with arity \a a
@@ -2265,20 +2248,33 @@ namespace Gecode {
     /// Assignment operator
     GECODE_INT_EXPORT
     TupleSet& operator =(const TupleSet& t);
-
+    /// Initialize with DFA \a dfa for arity \a a
+    GECODE_INT_EXPORT
+    TupleSet(int a, const DFA& dfa);
     /// Test whether tuple set has been initialized
     operator bool(void) const;
+    /// Test whether tuple set is equal to \a t
+    GECODE_INT_EXPORT
+    bool operator ==(const TupleSet& t) const;
+    /// Test whether tuple set is different from \a t
+    bool operator !=(const TupleSet& t) const;
+    //@}
 
+    /// \name Addition and finalization
+    //@{
     /// Add tuple \a t to tuple set
     TupleSet& add(const IntArgs& t);
     /// Add tuple with elements \a n, ... to tuple set
     GECODE_INT_EXPORT
     TupleSet& add(int n, ...);
-
-    /// Finalize tuple set
-    void finalize(void);
     /// Is tuple set finalized
     bool finalized(void) const;
+    /// Finalize tuple set
+    void finalize(void);
+    //@}
+
+    /// \name Tuple access
+    //@{
     /// Arity of tuple set
     int arity(void) const;
     /// Number of tuples
@@ -2291,11 +2287,14 @@ namespace Gecode {
     int min(void) const;
     /// Return maximal value in all tuples
     int max(void) const;
+    //@}
+
+    /// \name Range access and iteration
+    //@{
     /// Return first range for position \a i
     const Range* fst(int i) const;
     /// Return last range for position \a i
     const Range* lst(int i) const;
-
     /// Iterator over ranges
     class Ranges {
     protected:
@@ -2306,13 +2305,13 @@ namespace Gecode {
     public:
       /// \name Constructors and initialization
       //@{
-      /// Initialize for variable \a i
+      /// Initialize for column \a i
       Ranges(const TupleSet& ts, int i);
       //@}
 
       /// \name Iteration control
       //@{
-      /// Test whether iterator is still at a range or done
+      /// Test whether iterator is still at a range
       bool operator ()(void) const;
       /// Move iterator to next range (if possible)
       void operator ++(void);
@@ -2328,7 +2327,46 @@ namespace Gecode {
       unsigned int width(void) const;
       //@}
     };
+    //@}
   };
+
+}
+
+#include <gecode/int/extensional/tuple-set.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Post domain consistent propagator for extensional constraint described by a DFA
+   *
+   * The elements of \a x must be a word of the language described by
+   * the DFA \a d.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same unassigned variable multiply. If shared occurences of variables
+   * are required, unshare should be used.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, const IntVarArgs& x, DFA d,
+              IntPropLevel ipl=IPL_DEF);
+
+  /**
+   * \brief Post domain consistent propagator for extensional constraint described by a DFA
+   *
+   * The elements of \a x must be a word of the language described by
+   * the DFA \a d.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same unassigned variable multiply. If shared occurences of variables
+   * are required, unshare should be used.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  GECODE_INT_EXPORT void
+  extensional(Home home, const BoolVarArgs& x, DFA d,
+              IntPropLevel ipl=IPL_DEF);
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
@@ -2337,6 +2375,8 @@ namespace Gecode {
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
    *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
@@ -2349,16 +2389,13 @@ namespace Gecode {
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
    *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
               IntPropLevel ipl=IPL_DEF);
-  //@}
-
 }
-
-#include <gecode/int/extensional/dfa.hpp>
-#include <gecode/int/extensional/tuple-set.hpp>
 
 namespace Gecode {
 
