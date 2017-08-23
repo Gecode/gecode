@@ -160,54 +160,48 @@ namespace Gecode {
    *
    */
   BoolExpr
-  dom(const IntVar& x, int n)
-  {
+  dom(const IntVar& x, int n) {
     return BoolExpr(new DomExpr<IntVar, int>(x, n));
   }
 
   BoolExpr
-  dom(const IntVar& x, int l, int u)
-  {
+  dom(const IntVar& x, int l, int u) {
     return BoolExpr(new DomExpr<IntVar, int, int>(x, l, u));
   }
 
   BoolExpr
-  dom(const IntVar& x, const IntSet& s)
-  {
+  dom(const IntVar& x, const IntSet& s) {
     return BoolExpr(new DomExpr<IntVar, IntSet>(x, s));
   }
 
 #ifdef GECODE_HAS_SET_VARS
   BoolExpr
-  dom(const SetVar& x, SetRelType rt, int i)
-  {
+  dom(const SetVar& x, SetRelType rt, int i) {
     return BoolExpr(new DomExpr<SetVar, SetRelType, int>(x, rt, i));
   }
 
   BoolExpr
-  dom(const SetVar& x, SetRelType rt, int i, int j)
-  {
+  dom(const SetVar& x, SetRelType rt, int i, int j) {
     return BoolExpr(new DomExpr<SetVar, SetRelType, int, int>(x, rt, i, j));
   }
 
   BoolExpr
-  dom(const SetVar& x, SetRelType rt, const IntSet& s)
-  {
+  dom(const SetVar& x, SetRelType rt, const IntSet& s) {
     return BoolExpr(new DomExpr<SetVar, SetRelType, IntSet>(x, rt, s));
   }
 #endif
 
 #ifdef GECODE_HAS_FLOAT_VARS
   BoolExpr
-  dom(const FloatVar& x, const FloatVal& n)
-  {
+  dom(const FloatVar& x, const FloatVal& n) {
     return BoolExpr(new DomExpr<FloatVar, FloatVal>(x, n));
   }
 
   BoolExpr
-  dom(const FloatVar& x, FloatNum l, FloatNum u)
-  {
+  dom(const FloatVar& x, FloatNum l, FloatNum u) {
     return BoolExpr(new DomExpr<FloatVar, FloatNum, FloatNum>(x, l, u));
   }
 #endif
 }
+
+// STATISTICS: minimodel-any

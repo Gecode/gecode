@@ -114,73 +114,61 @@ namespace Gecode {
    *
    */
   BoolExpr
-  operator ==(const SetExpr& x, const LinIntExpr& y)
-  {
+  operator ==(const SetExpr& x, const LinIntExpr& y) {
     return BoolExpr(new SetIRTRel(x, IRT_EQ, y));
   }
   BoolExpr
-  operator ==(const LinIntExpr& x, const SetExpr& y)
-  {
+  operator ==(const LinIntExpr& x, const SetExpr& y) {
     return operator ==(y, x);
   }
 
   BoolExpr
-  operator !=(const SetExpr& x, const LinIntExpr& y)
-  {
+  operator !=(const SetExpr& x, const LinIntExpr& y) {
     return BoolExpr(new SetIRTRel(x, IRT_NQ, y));
   }
 
   BoolExpr
-  operator !=(const LinIntExpr& x, const SetExpr& y)
-  {
+  operator !=(const LinIntExpr& x, const SetExpr& y) {
     return operator !=(y, x);
   }
 
   BoolExpr
-  operator <=(const SetExpr& x, const LinIntExpr& y)
-  {
+  operator <=(const SetExpr& x, const LinIntExpr& y) {
     return BoolExpr(new SetIRTRel(x, IRT_LQ, y));
   }
 
   BoolExpr
-  operator <=(const LinIntExpr& x, const SetExpr& y)
-  {
+  operator <=(const LinIntExpr& x, const SetExpr& y) {
     return operator >=(y, x);
   }
 
   BoolExpr
-  operator <(const SetExpr& x, const LinIntExpr& y)
-  {
+  operator <(const SetExpr& x, const LinIntExpr& y) {
     return BoolExpr(new SetIRTRel(x, IRT_LE, y));
   }
 
   BoolExpr
-  operator <(const LinIntExpr& x, const SetExpr& y)
-  {
+  operator <(const LinIntExpr& x, const SetExpr& y) {
     return operator >(y, x);
   }
 
   BoolExpr
-  operator >=(const SetExpr& x, const LinIntExpr& y)
-  {
+  operator >=(const SetExpr& x, const LinIntExpr& y) {
     return BoolExpr(new SetIRTRel(x, IRT_GQ, y));
   }
 
   BoolExpr
-  operator >=(const LinIntExpr& x, const SetExpr& y)
-  {
+  operator >=(const LinIntExpr& x, const SetExpr& y) {
     return operator <=(y, x);
   }
 
   BoolExpr
-  operator >(const SetExpr& x, const LinIntExpr& y)
-  {
+  operator >(const SetExpr& x, const LinIntExpr& y) {
     return BoolExpr(new SetIRTRel(x, IRT_GR, y));
   }
 
   BoolExpr
-  operator >(const LinIntExpr& x, const SetExpr& y)
-  {
+  operator >(const LinIntExpr& x, const SetExpr& y) {
     return operator <(y, x);
   }
 
