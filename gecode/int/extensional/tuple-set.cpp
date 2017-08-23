@@ -1,10 +1,12 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Linnea Ingmar <linnea.ingmar@hotmail.com>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Linnea Ingmar, 2017
  *     Mikael Lagerkvist, 2007
  *     Christian Schulte, 2017
  *
