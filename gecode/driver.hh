@@ -804,18 +804,6 @@ namespace Gecode {
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
    */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MinimizeSpace> >
-    MinimizeScript;
-  /**
-   * \brief Base-class for scripts for finding solution of highest integer cost
-   * \ingroup TaskDriverScript
-   */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MaximizeSpace> >
-    MaximizeScript;
-  /**
-   * \brief Base-class for scripts for finding solution of lowest integer cost
-   * \ingroup TaskDriverScript
-   */
   typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMinimizeSpace> >
     IntMinimizeScript;
   /**

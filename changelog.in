@@ -73,6 +73,22 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: driver
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed the deprecated classes MinimizeScript and MaximizeScript
+(use IntMinimizeScript and IntMaximizeScript instead).
+
+[ENTRY]
+Module: minimodel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed the deprecated classes MinimizeSpace and MaximizeSpace
+(use IntMinimizeSpace and IntMaximizeSpace instead).
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   major

@@ -2363,18 +2363,6 @@ namespace Gecode {
     virtual IntVar cost(void) const = 0;
   };
 
-  /**
-   * \brief Class for minimizing integer cost
-   * \deprecated Use IntMinimizeSpace instead.
-   */
-  typedef IntMinimizeSpace MinimizeSpace;
-  /**
-   * \brief Class for maximizing integer cost
-   * \deprecated Use IntMaximizeSpace instead.
-   */
-  typedef IntMaximizeSpace MaximizeSpace;
-
-
 #ifdef GECODE_HAS_FLOAT_VARS
 
   /**
