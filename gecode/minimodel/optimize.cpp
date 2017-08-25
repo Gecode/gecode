@@ -59,6 +59,32 @@ namespace Gecode {
   }
 
 
+  void
+  IntLexMinimizeSpace::constrain(const Space& _best) {
+    const IntLexMinimizeSpace* best =
+      dynamic_cast<const IntLexMinimizeSpace*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("IntLexMinimizeSpace::constrain");
+    IntVarArgs cx(cost()), bx(best->cost());
+    IntArgs bn(bx.size());
+    for (int i=bn.size(); i--; )
+      bn[i] = bx[i].val();
+    rel(*this, cx, IRT_LE, bn);
+  }
+
+  void
+  IntLexMaximizeSpace::constrain(const Space& _best) {
+    const IntLexMaximizeSpace* best =
+      dynamic_cast<const IntLexMaximizeSpace*>(&_best);
+    if (best == NULL)
+      throw DynamicCastFailed("IntLexMaximizeSpace::constrain");
+    IntVarArgs cx(cost()), bx(best->cost());
+    IntArgs bn(bx.size());
+    for (int i=bn.size(); i--; )
+      bn[i] = bx[i].val();
+    rel(*this, cx, IRT_GR, bn);
+  }
+
 #ifdef GECODE_HAS_FLOAT_VARS
 
   void

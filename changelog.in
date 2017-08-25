@@ -74,6 +74,24 @@ Minor.
 
 [ENTRY]
 Module: driver
+What:   new
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Added IntLexMinimizeScript and IntLexMaximizeScript for
+lexicographic optimization.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Added IntLexMinimizeSpace and IntLexMaximizeSpace for
+lexicographic optimization.
+
+[ENTRY]
+Module: driver
 What:   removed
 Rank:   minor
 [DESCRIPTION]

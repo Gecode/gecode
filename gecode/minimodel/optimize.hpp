@@ -53,6 +53,22 @@ namespace Gecode {
     : Space(s) {}
 
 
+  forceinline
+  IntLexMinimizeSpace::IntLexMinimizeSpace(void) {}
+
+  forceinline
+  IntLexMinimizeSpace::IntLexMinimizeSpace(IntLexMinimizeSpace& s)
+    : Space(s) {}
+
+
+  forceinline
+  IntLexMaximizeSpace::IntLexMaximizeSpace(void) {}
+
+  forceinline
+  IntLexMaximizeSpace::IntLexMaximizeSpace(IntLexMaximizeSpace& s)
+    : Space(s) {}
+
+
 #ifdef GECODE_HAS_FLOAT_VARS
 
   forceinline

@@ -2363,6 +2363,40 @@ namespace Gecode {
     virtual IntVar cost(void) const = 0;
   };
 
+  /**
+   * \brief Class for lexicographically minimizing integer costs
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  class GECODE_VTABLE_EXPORT IntLexMinimizeSpace : public Space {
+  public:
+    /// Default constructor
+    IntLexMinimizeSpace(void);
+    /// Constructor for cloning
+    IntLexMinimizeSpace(IntLexMinimizeSpace& s);
+    /// Member function constraining according to decreasing costs
+    GECODE_MINIMODEL_EXPORT
+    virtual void constrain(const Space& best);
+    /// Return variables with current costs
+    virtual IntVarArgs cost(void) const = 0;
+  };
+
+  /**
+   * \brief Class for lexicographically maximizing integer costs
+   * \ingroup TaskModelMiniModelOptimize
+   */
+  class GECODE_VTABLE_EXPORT IntLexMaximizeSpace : public Space {
+  public:
+    /// Default constructor
+    IntLexMaximizeSpace(void);
+    /// Constructor for cloning
+    IntLexMaximizeSpace(IntLexMaximizeSpace& s);
+    /// Member function constraining according to increasing costs
+    GECODE_MINIMODEL_EXPORT
+    virtual void constrain(const Space& best);
+    /// Return variables with current costs
+    virtual IntVarArgs cost(void) const = 0;
+  };
+
 #ifdef GECODE_HAS_FLOAT_VARS
 
   /**

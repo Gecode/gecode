@@ -800,6 +800,7 @@ namespace Gecode {
    */
   typedef Driver::ScriptBase<Driver::IgnoreStepOption<Space> >
     Script;
+
   /**
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
@@ -812,6 +813,19 @@ namespace Gecode {
    */
   typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace> >
     IntMaximizeScript;
+
+  /**
+   * \brief Base-class for scripts for finding solution of lexically lowest integer costs
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMinimizeSpace> >
+    IntLexMinimizeScript;
+  /**
+   * \brief Base-class for scripts for finding solution of lexically highest integer costs
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMaximizeSpace> >
+    IntLexMaximizeScript;
 
 #ifdef GECODE_HAS_FLOAT_VARS
 
