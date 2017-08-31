@@ -78,7 +78,7 @@ namespace Gecode { namespace Set { namespace Convex {
       Region r;
       LubRanges<SetView> ubRangeIt(x1);
       Iter::Ranges::Cache ubRangeItC(r,ubRangeIt);
-      for (;ubRangeItC();++ubRangeItC){
+      for (;ubRangeItC();++ubRangeItC) {
         if (ubRangeItC.width() < cardMin
             || ubRangeItC.min() > minElement //No need to test for empty lb.
             || ubRangeItC.max() < maxElement

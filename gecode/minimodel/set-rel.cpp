@@ -77,6 +77,7 @@ namespace Gecode {
   }
 
   namespace {
+
     /// Boolean expression for IRT relations with SetExpr
     class SetIRTRel : public BoolExpr::Misc {
       /// The set expression
@@ -85,12 +86,11 @@ namespace Gecode {
       LinIntExpr _x;
       /// The integer relation type
       IntRelType _irt;
-
     public:
       /// Constructor
-      SetIRTRel (const SetExpr&, IntRelType, const LinIntExpr&);
+      SetIRTRel(const SetExpr&, IntRelType, const LinIntExpr&);
       /// Constrain \a b to be equivalent to the expression (negated if \a neg)
-      virtual void post (Home, BoolVar b, bool neg, IntPropLevel) override;
+      virtual void post(Home, BoolVar b, bool neg, IntPropLevel) override;
     };
 
     SetIRTRel::SetIRTRel(const SetExpr& s, IntRelType irt, const LinIntExpr& x)
@@ -99,11 +99,14 @@ namespace Gecode {
     void
     SetIRTRel::post(Home home, BoolVar b, bool neg, IntPropLevel ipl) {
       if (b.zero()) {
-        rel(home, _s.post(home), neg ? _irt : Gecode::neg(_irt), _x.post(home, ipl));
+        rel(home, _s.post(home), neg ? _irt : Gecode::neg(_irt),
+            _x.post(home, ipl));
       } else if (b.one()) {
-        rel(home, _s.post(home), neg ? Gecode::neg(_irt) : _irt, _x.post(home, ipl));
+        rel(home, _s.post(home), neg ? Gecode::neg(_irt) : _irt, 
+            _x.post(home, ipl));
       } else {
-        rel(home, _s.post(home), neg ? Gecode::neg(_irt) : _irt, _x.post(home, ipl), b);
+        rel(home, _s.post(home), neg ? Gecode::neg(_irt) : _irt,
+            _x.post(home, ipl), b);
       }
     }
   }

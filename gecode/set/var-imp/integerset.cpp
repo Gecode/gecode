@@ -69,7 +69,7 @@ namespace Gecode { namespace Set {
     RangeList* c = fst();
 
     while (c != NULL) {
-      if (c->max() >= mi-1){
+      if (c->max() >= mi-1) {
         if (c->min() > ma+1) {  //in a hole before c
           _size+=(ma-mi+1);
           d._glbMin = mi;
@@ -121,7 +121,7 @@ namespace Gecode { namespace Set {
           RangeList* oldCNext = c->next();
           assert(oldCNext!=NULL); //q would have stayed c if c was last.
           c->next(q->next());
-          if (q->next()==NULL){
+          if (q->next()==NULL) {
             assert(q==lst());
             lst(c);
           }
@@ -218,7 +218,7 @@ namespace Gecode { namespace Set {
     RangeList* c = fst();
     d._lubMin = Limits::max+1;
     while (c != NULL) {
-      if (c->max() >= mi){
+      if (c->max() >= mi) {
         if (c->min() > ma) { return result; } //in a hole
 
         if (c->min()<mi && c->max() > ma) {  //Range split:
@@ -253,7 +253,7 @@ namespace Gecode { namespace Set {
           d._lubMin = c->min();
           _size-=c->width();
           RangeList *cend = c;
-          while ((cend->next()!=NULL) && (cend->next()->max()<=ma)){
+          while ((cend->next()!=NULL) && (cend->next()->max()<=ma)) {
             cend = cend->next();
             _size-=cend->width();
           }

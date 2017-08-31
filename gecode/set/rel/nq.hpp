@@ -127,10 +127,10 @@ namespace Gecode { namespace Set { namespace Rel {
     //in the 1 unknown left case.
     GlbRanges<View0> xi1(x0);
     LubRanges<ConstSetView> yi1(y);
-    if (!Iter::Ranges::subset(xi1,yi1)){ return home.ES_SUBSUMED(*this); }
+    if (!Iter::Ranges::subset(xi1,yi1)) { return home.ES_SUBSUMED(*this); }
     LubRanges<View0> xi2(x0);
     GlbRanges<ConstSetView> yi2(y);
-    if (!Iter::Ranges::subset(yi2,xi2)){ return home.ES_SUBSUMED(*this); }
+    if (!Iter::Ranges::subset(yi2,xi2)) { return home.ES_SUBSUMED(*this); }
     // from here, we know y\subseteq lub(x) and glb(x)\subseteq y
 
     if (x0.lubSize() == y.cardMin() && x0.lubSize() > 0) {

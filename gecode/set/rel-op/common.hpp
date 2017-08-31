@@ -201,7 +201,7 @@ namespace Set { namespace RelOp {
     // Xi.card <=y.cardMax
     unsigned int cardMaxSum=unionOfDets.size();
     bool maxValid = true;
-    for (int i=xsize; i--; ){
+    for (int i=xsize; i--; ) {
       cardMaxSum+=x[i].cardMax();
       if (cardMaxSum < x[i].cardMax()) { maxValid = false; } //overflow
       GECODE_ME_CHECK_MODIFIED(modified, y.cardMin(home,x[i].cardMin()) );
@@ -252,7 +252,7 @@ namespace Set { namespace RelOp {
       GLBndSet* rightUnion =
         static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
       new (&rightUnion[xsize-1]) GLBndSet(home);
-      for (int i=xsize-1;i--;){
+      for (int i=xsize-1;i--;) {
         BndSetRanges prev(rightUnion[i+1]);
         LubRanges<View0> prevX(x[i+1]);
         Iter::Ranges::Union< BndSetRanges,LubRanges<View0> >

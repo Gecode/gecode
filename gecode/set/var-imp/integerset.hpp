@@ -190,7 +190,7 @@ namespace Gecode { namespace Set {
 
     ++ri;
 
-    while (ri()){
+    while (ri()) {
       RangeList *n = new (home) RangeList(ri.min(),ri.max(),NULL);
       l->next(n);
       l=n;
@@ -212,8 +212,8 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  BndSet::become(Space& home, const BndSet& that){
-    if (fst()!=NULL){
+  BndSet::become(Space& home, const BndSet& that) {
+    if (fst()!=NULL) {
       assert(lst()!=NULL);
       assert(fst()!= that.fst());
       fst()->dispose(home,lst());

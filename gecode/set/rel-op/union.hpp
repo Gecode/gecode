@@ -295,7 +295,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       } while (modified);
 
-      for(int i=0;i<x.size();i++){
+      for(int i=0;i<x.size();i++) {
         //Do not reverse! Eats away the end of the array!
         while (i<x.size() && x[i].assigned()) {
           GlbRanges<View0> det(x[i]);

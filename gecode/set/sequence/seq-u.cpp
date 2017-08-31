@@ -61,7 +61,7 @@ namespace Gecode { namespace Set { namespace Sequence {
                           SetView& y) {
     Region r;
     GlbRanges<SetView>* XLBs = r.alloc<GlbRanges<SetView> >(x.size());
-    for (int i=x.size(); i--; ){
+    for (int i=x.size(); i--; ) {
       GlbRanges<SetView> lb(x[i]);
       XLBs[i]=lb;
     }

@@ -127,37 +127,37 @@ namespace Gecode { namespace Set {
   }
 
   forceinline ModEvent
-  SetView::include (Space& home, int from, int to) {
+  SetView::include(Space& home, int from, int to) {
     return x->include(home,from,to);
   }
 
   forceinline ModEvent
-  SetView::include (Space& home, int n) {
+  SetView::include(Space& home, int n) {
     return x->include(home,n);
   }
 
   forceinline ModEvent
-  SetView::exclude (Space& home, int n) {
+  SetView::exclude(Space& home, int n) {
     return x->exclude(home, n);
   }
 
   forceinline ModEvent
-  SetView::intersect (Space& home, int from, int to) {
+  SetView::intersect(Space& home, int from, int to) {
     return x->intersect(home,from,to);
   }
 
   forceinline ModEvent
-  SetView::intersect (Space& home, int n) {
+  SetView::intersect(Space& home, int n) {
     return x->intersect(home,n);
   }
 
   template<class I> ModEvent
-  SetView::includeI (Space& home, I& iter) {
+  SetView::includeI(Space& home, I& iter) {
     return x->includeI(home, iter);
   }
 
   forceinline ModEvent
-  SetView::exclude (Space& home, int from, int to) {
+  SetView::exclude(Space& home, int from, int to) {
     return x->exclude(home,from,to);
   }
   template<class I> ModEvent
@@ -176,25 +176,35 @@ namespace Gecode { namespace Set {
    */
 
   forceinline ModEvent
-  SetView::modevent(const Delta& d) { return SetVarImp::modevent(d); }
+  SetView::modevent(const Delta& d) {
+    return SetVarImp::modevent(d);
+  }
 
   forceinline int
-  SetView::glbMin(const Delta& d) const { return SetVarImp::glbMin(d); }
-
+  SetView::glbMin(const Delta& d) const {
+    return SetVarImp::glbMin(d);
+  }
   forceinline int
-  SetView::glbMax(const Delta& d) const { return SetVarImp::glbMax(d); }
-
+  SetView::glbMax(const Delta& d) const {
+    return SetVarImp::glbMax(d);
+  }
   forceinline bool
-  SetView::glbAny(const Delta& d) const { return SetVarImp::glbAny(d); }
+  SetView::glbAny(const Delta& d) const {
+    return SetVarImp::glbAny(d);
+  }
 
   forceinline int
-  SetView::lubMin(const Delta& d) const { return SetVarImp::lubMin(d); }
-
+  SetView::lubMin(const Delta& d) const {
+    return SetVarImp::lubMin(d);
+  }
   forceinline int
-  SetView::lubMax(const Delta& d) const { return SetVarImp::lubMax(d); }
-
+  SetView::lubMax(const Delta& d) const {
+    return SetVarImp::lubMax(d);
+  }
   forceinline bool
-  SetView::lubAny(const Delta& d) const { return SetVarImp::lubAny(d); }
+  SetView::lubAny(const Delta& d) const {
+    return SetVarImp::lubAny(d);
+  }
 
 
   /**
