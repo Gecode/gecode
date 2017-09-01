@@ -49,7 +49,7 @@ namespace Gecode { namespace FlatZinc {
 
 
   bool
-  IntBoolBrancherBase::status(const Space& home) const {
+  IntBoolBrancherBase::status(const Space&) const {
     if (start < x.size()) {
       for (int i=start; i < x.size(); i++)
         if (!x[i].assigned()) {

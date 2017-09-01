@@ -69,19 +69,19 @@ namespace Gecode { namespace Int { namespace Unshare {
         y[i]=*x[i]=IntVar(home,x[0]->min(),x[0]->max());
       if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
         ExecStatus es = Rel::NaryEqDom<IntView>::post(home,y);
-        assert(es == ES_OK);
+        (void) es; assert(es == ES_OK);
       } else {
         ExecStatus es = Rel::NaryEqBnd<IntView>::post(home,y);
-        assert(es == ES_OK);
+        (void) es; assert(es == ES_OK);
       }
     } else if (n == 2) {
       *x[1]=IntVar(home,x[0]->min(),x[0]->max());
       if ((ipl == IPL_DOM) || (ipl == IPL_DEF)) {
         ExecStatus es = Rel::EqDom<IntView,IntView>::post(home,*x[0],*x[1]);
-        assert(es == ES_OK);
+        (void) es; assert(es == ES_OK);
       } else {
         ExecStatus es = Rel::EqBnd<IntView,IntView>::post(home,*x[0],*x[1]);
-        assert(es == ES_OK);
+        (void) es; assert(es == ES_OK);
       }
     }
   }
@@ -98,11 +98,11 @@ namespace Gecode { namespace Int { namespace Unshare {
       for (int i=1; i<n; i++)
         y[i]=*x[i]=BoolVar(home,0,1);
       ExecStatus es = Bool::NaryEq<BoolView>::post(home,y);
-      assert(es == ES_OK);
+      (void) es; assert(es == ES_OK);
     } else if (n == 2) {
       *x[1] = BoolVar(home,0,1);
       ExecStatus es = Bool::Eq<BoolView,BoolView>::post(home,*x[0],*x[1]);
-      assert(es == ES_OK);
+      (void) es; assert(es == ES_OK);
     }
   }
 
