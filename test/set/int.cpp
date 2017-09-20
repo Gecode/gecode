@@ -355,8 +355,7 @@ namespace Test { namespace Set {
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
                         Reify r) {
         assert((x.size() == 1) && (y.size() == 1));
-        //        if (Base::rand(2) != 0) {
-        if (true) {
+        if ((r.mode() != Gecode::RM_EQV) || (Base::rand(2) != 0)) {
           if (!swapped)
             Gecode::rel(home, x[0], irt, y[0], r);
           else
@@ -364,142 +363,34 @@ namespace Test { namespace Set {
         } else if (swapped) {
           switch (irt) {
           case Gecode::IRT_EQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (y[0] == x[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (y[0] == x[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (y[0] == x[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (y[0] == x[0]) == r.var()); break;
           case Gecode::IRT_NQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (y[0] != x[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (y[0] != x[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (y[0] != x[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (y[0] != x[0]) == r.var()); break;
           case Gecode::IRT_LE:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (y[0] < x[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (y[0] < x[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (y[0] < x[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (y[0] < x[0]) == r.var()); break;
           case Gecode::IRT_LQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (y[0] <= x[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (y[0] <= x[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (y[0] <= x[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (y[0] <= x[0]) == r.var()); break;
           case Gecode::IRT_GR:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (y[0] > x[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (y[0] > x[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (y[0] > x[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (y[0] > x[0]) == r.var()); break;
           case Gecode::IRT_GQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (y[0] >= x[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (y[0] >= x[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (y[0] >= x[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
-            default: GECODE_NEVER;
+            Gecode::rel(home, (y[0] >= x[0]) == r.var()); break;
+          default: GECODE_NEVER;
           }
         } else {
           switch (irt) {
           case Gecode::IRT_EQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (x[0] == y[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (x[0] == y[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (x[0] == y[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (x[0] == y[0]) == r.var()); break;
           case Gecode::IRT_NQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (x[0] != y[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (x[0] != y[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (x[0] != y[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (x[0] != y[0]) == r.var()); break;
           case Gecode::IRT_LE:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (x[0] < y[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (x[0] < y[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (x[0] < y[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (x[0] < y[0]) == r.var()); break;
           case Gecode::IRT_LQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (x[0] <= y[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (x[0] <= y[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (x[0] <= y[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (x[0] <= y[0]) == r.var()); break;
           case Gecode::IRT_GR:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (x[0] > y[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (x[0] > y[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (x[0] > y[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
+            Gecode::rel(home, (x[0] > y[0]) == r.var()); break;
           case Gecode::IRT_GQ:
-            switch (r.mode()) {
-            case Gecode::RM_EQV:
-              Gecode::rel(home, (x[0] >= y[0]) == r.var()); break;
-            case Gecode::RM_IMP:
-              Gecode::rel(home, (x[0] >= y[0]) << r.var()); break;
-            case Gecode::RM_PMI:
-              Gecode::rel(home, (x[0] >= y[0]) >> r.var()); break;
-            default: GECODE_NEVER;
-            }
-            break;
-            default: GECODE_NEVER;
+            Gecode::rel(home, (x[0] >= y[0]) == r.var()); break;
+          default: GECODE_NEVER;
           }
         }
       }
