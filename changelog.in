@@ -189,7 +189,7 @@ Removed IPL_SPEED and IPL_MEMORY as they are not any longer needed.
 
 [ENTRY]
 Module: int
-What:   changed
+What:   change
 Rank:   major
 [DESCRIPTION]
 Re-implemented tuple sets for simplicity and ease of use. Please
@@ -197,7 +197,7 @@ see MPG for details.
 
 [ENTRY]
 Module: int
-What:   changed
+What:   change
 Rank:   major
 Author: Linnea Ingmar
 [DESCRIPTION]
