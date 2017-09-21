@@ -73,6 +73,13 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add redefinition of disjunctive_strict in terms of cumulative.
+
+[ENTRY]
 Module: driver
 What:   new
 Rank:   major
