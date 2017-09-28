@@ -73,6 +73,14 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: float
+What:   bug
+Rank:   major
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Linear constraints now check properly for numerical overflow.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor

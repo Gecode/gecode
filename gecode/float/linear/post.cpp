@@ -64,6 +64,17 @@ namespace Gecode { namespace Float { namespace Linear {
     u = max;
   }
 
+  forceinline bool
+  overflow(Term* t, int n, FloatVal c) {
+    FloatVal est = c;
+    for (int i=n; i--; )
+      est += t[i].a * t[i].x.domain();
+    FloatNum min = est.min();
+    FloatNum max = est.max();
+    return ((min < Limits::min) || (min > Limits::max) ||
+            (max < Limits::min) || (max > Limits::max));
+  }
+
   /// Sort linear terms by view
   class TermLess {
   public:
@@ -118,7 +129,7 @@ namespace Gecode { namespace Float { namespace Linear {
         t[i]=t[--n];
       }
 
-    if ((c < Limits::min) || (c > Limits::max))
+    if ((c < Limits::min) || (c > Limits::max) || overflow(t, n, c))
       throw OutOfLimits("Float::linear");
 
     /*
