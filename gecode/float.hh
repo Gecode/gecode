@@ -1265,6 +1265,13 @@ namespace Gecode {
    * \ingroup TaskModelFloat
    */
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} c\f$
+   *
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
@@ -1272,17 +1279,38 @@ namespace Gecode {
          FloatRelType frt, FloatVal c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\f$
    * \ingroup TaskModelFloatLI
+   *
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
          FloatRelType frt, FloatVar y);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} c\right)\equiv r\f$
+   *
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
          FloatRelType frt, FloatVal c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\right)\equiv r\f$
+   *
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
@@ -1290,8 +1318,14 @@ namespace Gecode {
          FloatRelType frt, FloatVar y, Reify r);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\f$
    *
-   *  Throws an exception of type Float::ArgumentSizeMismatch, if
-   *  \a a and \a x are of different size.
+   * \li Throws an exception of type Float::ArgumentSizeMismatch, if
+   *     \a a and \a x are of different size.
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *  
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
@@ -1299,8 +1333,15 @@ namespace Gecode {
          FloatRelType frt, FloatVal c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
    *
-   *  Throws an exception of type Float::ArgumentSizeMismatch, if
-   *  \a a and \a x are of different size.
+   *
+   * \li Throws an exception of type Float::ArgumentSizeMismatch, if
+   *     \a a and \a x are of different size.
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *  
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
@@ -1308,8 +1349,15 @@ namespace Gecode {
          FloatRelType frt, FloatVar y);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} c\right)\equiv r\f$
    *
-   *  Throws an exception of type Float::ArgumentSizeMismatch, if
-   *  \a a and \a x are of different size.
+   *
+   * \li Throws an exception of type Float::ArgumentSizeMismatch, if
+   *     \a a and \a x are of different size.
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *  
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void
@@ -1317,8 +1365,15 @@ namespace Gecode {
          FloatRelType frt, FloatVal c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
    *
-   *  Throws an exception of type Float::ArgumentSizeMismatch, if
-   *  \a a and \a x are of different size.
+   *
+   * \li Throws an exception of type Float::ArgumentSizeMismatch, if
+   *     \a a and \a x are of different size.
+   * \li Throws an exception of type Float::OutOfLimits, if the variables,
+   *     coefficients, or \a c exceed the limits as defined in Float::Limits.
+   * \li Throws an exception of type Float::ValueMixedSign, if a
+   *     coefficient has mixed signs (that is, the lower bound is strictly
+   *     negative and the upper bound is strictly positive).
+   *  
    * \ingroup TaskModelFloatLI
    */
   GECODE_FLOAT_EXPORT void

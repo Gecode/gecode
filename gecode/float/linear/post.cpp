@@ -123,11 +123,14 @@ namespace Gecode { namespace Float { namespace Linear {
   dopost(Home home, Term* t, int n, FloatRelType frt, FloatVal c) {
     Limits::check(c,"Float::linear");
 
-    for (int i=n; i--; )
+    for (int i=n; i--; ) {
+      if ((t[i].a.min() < 0.0) && (t[i].a.max() > 0.0))
+        throw ValueMixedSign("Float::linear[coefficient]");
       if (t[i].x.assigned()) {
         c -= t[i].a * t[i].x.val();
         t[i]=t[--n];
       }
+    }
 
     if ((c < Limits::min) || (c > Limits::max) || overflow(t, n, c))
       throw OutOfLimits("Float::linear");

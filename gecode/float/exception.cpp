@@ -44,6 +44,9 @@ namespace Gecode { namespace Float {
   OutOfLimits::OutOfLimits(const char* l)
     : Exception(l,"Number out of limits") {}
 
+  ValueMixedSign::ValueMixedSign(const char* l)
+    : Exception(l,"Value with mixed sign not allowed") {}
+
   VariableEmptyDomain::VariableEmptyDomain(const char* l)
     : Exception(l,"Attempt to create variable with empty domain") {}
 

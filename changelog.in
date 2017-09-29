@@ -75,6 +75,15 @@ Minor.
 [ENTRY]
 Module: float
 What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Linear constraints now check whether coefficients have mixed
+signs and throw an exception if yes.
+
+[ENTRY]
+Module: float
+What:   bug
 Rank:   major
 Thanks: Matthias Balzer
 [DESCRIPTION]
