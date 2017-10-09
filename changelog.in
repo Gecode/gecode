@@ -73,6 +73,18 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+When posting a simple linear constraint (only two variables with
+unit coefficients) with default integer propagation level, a
+domain consistent propagator is posted. Now a domain consistent
+propagator is always posted if the right-hand side constant is
+zero and otherwise if the computations required can be done with
+normal integers.
+
+[ENTRY]
 Module: float
 What:   bug
 Rank:   minor
