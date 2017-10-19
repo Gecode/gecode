@@ -58,44 +58,35 @@ namespace Gecode { namespace Int { namespace Extensional {
   template<class OldIndexType>
   forceinline
   BitSet<IndexType>::BitSet(Space& home,
-                            const BitSet<OldIndexType>& sbs)
-    : _limit(sbs._limit),
+                            const BitSet<OldIndexType>& bs)
+    : _limit(bs._limit),
       index(home.alloc<IndexType>(_limit)),
       bits(home.alloc<BitSetData>(_limit)) {
     assert(_limit > 0U);
     for (IndexType i = _limit; i--; ) {
-      bits[i] = sbs.bits[i];
-      index[i] = sbs.index[i];
+      bits[i] = bs.bits[i];
+      index[i] = bs.index[i];
     }
   }
   
-  /*
-  template<class IndexType>
-  template<unsigned int size>
-  forceinline
-  BitSet<IndexType>::BitSet(Space& home, const TinyBitSet<size>& sbs) {
-    GECODE_NEVER;
-  }
-  */
-
   template<class IndexType>
   forceinline
-  BitSet<IndexType>::BitSet(Space& home, const TinyBitSet<1U>& sbs) {
+  BitSet<IndexType>::BitSet(Space&, const TinyBitSet<1U>&) {
     GECODE_NEVER;
   }
   template<class IndexType>
   forceinline
-  BitSet<IndexType>::BitSet(Space& home, const TinyBitSet<2U>& sbs) {
+  BitSet<IndexType>::BitSet(Space&, const TinyBitSet<2U>&) {
     GECODE_NEVER;
   }
   template<class IndexType>
   forceinline
-  BitSet<IndexType>::BitSet(Space& home, const TinyBitSet<3U>& sbs) {
+  BitSet<IndexType>::BitSet(Space&, const TinyBitSet<3U>&) {
     GECODE_NEVER;
   }
   template<class IndexType>
   forceinline
-  BitSet<IndexType>::BitSet(Space& home, const TinyBitSet<4U>& sbs) {
+  BitSet<IndexType>::BitSet(Space&, const TinyBitSet<4U>&) {
     GECODE_NEVER;
   }
 
@@ -127,8 +118,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   
   template<class IndexType>
   forceinline void
-  BitSet<IndexType>::add_to_mask(const BitSetData* b,
-                                 BitSetData* mask) const {
+  BitSet<IndexType>::add_to_mask(const BitSetData* b, BitSetData* mask) const {
     assert(_limit > 0U);
     for (IndexType i = _limit; i--; )
       mask[i] = BitSetData::o(mask[i],b[index[i]]);

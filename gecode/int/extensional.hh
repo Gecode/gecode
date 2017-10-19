@@ -254,20 +254,15 @@ namespace Gecode { namespace Int { namespace Extensional {
     BitSet(Space& home, unsigned int n);
     /// Initialize during cloning
     template<class OldIndexType>
-    BitSet(Space& home, const BitSet<OldIndexType>& sbs);
-    /*
+    BitSet(Space& home, const BitSet<OldIndexType>& bs);
     /// Initialize during cloning (unused)
-    template<unsigned int size>
-    BitSet(Space& home, const TinyBitSet<size>& sbs);
-    */
+    BitSet(Space& home, const TinyBitSet<1U>& tbs);
     /// Initialize during cloning (unused)
-    BitSet(Space& home, const TinyBitSet<1U>& sbs);
+    BitSet(Space& home, const TinyBitSet<2U>& tbs);
     /// Initialize during cloning (unused)
-    BitSet(Space& home, const TinyBitSet<2U>& sbs);
+    BitSet(Space& home, const TinyBitSet<3U>& tbs);
     /// Initialize during cloning (unused)
-    BitSet(Space& home, const TinyBitSet<3U>& sbs);
-    /// Initialize during cloning (unused)
-    BitSet(Space& home, const TinyBitSet<4U>& sbs);
+    BitSet(Space& home, const TinyBitSet<4U>& tbs);
     /// Get the limit
     unsigned int limit(void) const;
     /// Check whether the set is empty
@@ -311,7 +306,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     TinyBitSet(Space& home, unsigned int n);
     /// Initialize during cloning
     template<unsigned int largersize>
-    TinyBitSet(Space& home, const TinyBitSet<largersize>& sbs);
+    TinyBitSet(Space& home, const TinyBitSet<largersize>& tbs);
     /// Initialize during cloning
     template<class IndexType>
     TinyBitSet(Space& home, const BitSet<IndexType>& bs);
