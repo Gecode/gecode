@@ -371,9 +371,7 @@ INTHDR0 = \
 	linear/bool-int.hpp linear/bool-view.hpp linear/bool-scale.hpp \
 	extensional/dfa.hpp extensional/layered-graph.hpp \
 	extensional/tuple-set.hpp extensional/compact.hpp \
-	extensional/tiny-bit-set.hpp \
-	extensional/small-bit-set.hpp \
-	extensional/sparse-bit-set.hpp \
+	extensional/tiny-bit-set.hpp extensional/bit-set.hpp \
 	rel/eq.hpp rel/lex.hpp rel/lq-le.hpp rel/nq.hpp \
 	sorted/matching.hpp sorted/narrowing.hpp \
 	sorted/order.hpp sorted/propagate.hpp sorted/sortsup.hpp \

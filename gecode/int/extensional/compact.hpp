@@ -40,6 +40,7 @@
  */
 
 #include <algorithm>
+#include <type_traits>
 
 namespace Gecode { namespace Int { namespace Extensional {
       
@@ -321,41 +322,51 @@ namespace Gecode { namespace Int { namespace Extensional {
   Actor*
   CompactTable<View,Table>::copy(Space& home) {
     assert((table.words() > 0U) && (table.width() >= table.words()));
-    if (table.words() < 16U) {
-      unsigned int width = table.width();
-      if (width <= 16U) {
-        if (width == 1U) {
-          return new (home) CompactTable<View,TinyBitSet<1U>>(home,*this);
-        } else if (width == 2U) {
-          return new (home) CompactTable<View,TinyBitSet<2U>>(home,*this);
-        } else {
-          switch (table.words()) {
-          case 1U:
-            return new (home) CompactTable<View,SmallBitSet<1U>>(home,*this);
-          case 2U:
-            return new (home) CompactTable<View,SmallBitSet<2U>>(home,*this);
-          case 3U:
-            return new (home) CompactTable<View,SmallBitSet<3U>>(home,*this);
-          case 4U:
-            return new (home) CompactTable<View,SmallBitSet<4U>>(home,*this);
-          case 5U: case 6U:
-            return new (home) CompactTable<View,SmallBitSet<6U>>(home,*this);
-          case 7U: case 8U: case 9U:
-            return new (home) CompactTable<View,SmallBitSet<9U>>(home,*this);
-          case 10U: case 11U: case 12U:
-            return new (home) CompactTable<View,SmallBitSet<12U>>(home,*this);
-          case 13U: case 14U: case 15U:
-            return new (home) CompactTable<View,SmallBitSet<15U>>(home,*this);
-          case 0U:
-          default:
-            GECODE_NEVER; break;
-          }
-          GECODE_NEVER;
-          return nullptr;
-        }
+    if (table.words() <= 4U) {
+      switch (table.width()) {
+      case 0U:
+        GECODE_NEVER; break;
+      case 1U:
+        return new (home) CompactTable<View,TinyBitSet<1U>>(home,*this);
+      case 2U:
+        return new (home) CompactTable<View,TinyBitSet<2U>>(home,*this);
+      case 3U:
+        return new (home) CompactTable<View,TinyBitSet<3U>>(home,*this);
+      case 4U:
+        return new (home) CompactTable<View,TinyBitSet<4U>>(home,*this);
+      default:
+        break;
       }
     }
-    return new (home) CompactTable<View,SparseBitSet>(home,*this);
+    if (std::is_same<Table,BitSet<unsigned char>>::value) {
+      goto copy_char;
+    } else if (std::is_same<Table,BitSet<unsigned short int>>::value) {
+      switch (Gecode::Support::u_type(table.words())) {
+      case Gecode::Support::IT_CHAR:
+        goto copy_char;
+      case Gecode::Support::IT_SHRT:
+        goto copy_short;
+      case Gecode::Support::IT_INT:
+      default:
+        GECODE_NEVER;
+      }
+    } else {
+      switch (Gecode::Support::u_type(table.words())) {
+      case Gecode::Support::IT_CHAR:
+        goto copy_char;
+      case Gecode::Support::IT_SHRT:
+        goto copy_short;
+      case Gecode::Support::IT_INT:
+        return new (home) CompactTable<View,BitSet<unsigned int>>(home,*this);
+      default: GECODE_NEVER;
+      }
+      GECODE_NEVER;
+      return nullptr;
+    }
+  copy_char:
+    return new (home) CompactTable<View,BitSet<unsigned char>>(home,*this);
+  copy_short:
+    return new (home) CompactTable<View,BitSet<unsigned short int>>(home,*this);
   }
 
   template<class View,class Table>
@@ -587,19 +598,19 @@ namespace Gecode { namespace Int { namespace Extensional {
     case 2U:
       return CompactTable<View,TinyBitSet<2U>>::post(home,x,ts);
     case 3U:
-      return CompactTable<View,SmallBitSet<3U>>::post(home,x,ts);
+      return CompactTable<View,TinyBitSet<3U>>::post(home,x,ts);
     case 4U:
-      return CompactTable<View,SmallBitSet<4U>>::post(home,x,ts);
-    case 5U: case 6U:
-      return CompactTable<View,SmallBitSet<6U>>::post(home,x,ts);
-    case 7U: case 8U: case 9U:
-      return CompactTable<View,SmallBitSet<9U>>::post(home,x,ts);
-    case 10U: case 11U: case 12U:
-      return CompactTable<View,SmallBitSet<12U>>::post(home,x,ts);
-    case 13U: case 14U: case 15U:
-      return CompactTable<View,SmallBitSet<15U>>::post(home,x,ts);
+      return CompactTable<View,TinyBitSet<4U>>::post(home,x,ts);
     default:
-      return CompactTable<View,SparseBitSet>::post(home,x,ts);
+      switch (Gecode::Support::u_type(ts.words())) {
+      case Gecode::Support::IT_CHAR:
+        return CompactTable<View,BitSet<unsigned char>>::post(home,x,ts);
+      case Gecode::Support::IT_SHRT:
+        return CompactTable<View,BitSet<unsigned short int>>::post(home,x,ts);
+      case Gecode::Support::IT_INT:
+        return CompactTable<View,BitSet<unsigned int>>::post(home,x,ts);
+      default: GECODE_NEVER;
+      }
     }
     GECODE_NEVER;
     return ES_OK;

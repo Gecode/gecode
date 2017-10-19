@@ -234,148 +234,45 @@ namespace Gecode { namespace Int { namespace Extensional {
    * Forward declarations
    */
   template<unsigned int size> class TinyBitSet;
-  template<unsigned int size> class SmallBitSet;
 
-  /// Sparse bit-set
-  class SparseBitSet {
-  protected:
-    /// Entry for two words
-    class Entry {
-    public:
-      /// Data
-      BitSetData bits[2];
-      /// Indices of the data
-      unsigned int index[2];
-    public:
-      /// Get number of entries needed for \a n words
-      static unsigned int data(unsigned int n);
-    };
-    /// Data in a sparse bit set
-    class Data {
-    public:
-      /// Limit
-      unsigned int limit;
-      /// Entries
-      Entry es[1];
-      /// Allocate for \a n entries
-      static Data* allocate(Space& home, unsigned int n);
-      /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
-      void replace_and_decrease(unsigned int i, BitSetData w);
-      /// Get index for the \a i th word
-      unsigned int index(unsigned int i) const;
-      /// Get the \a i th word
-      BitSetData word(unsigned int i) const;
-      /// Return the highest active index
-      unsigned int width(void) const;
-      /// Initialize with \a n words
-      void init(unsigned int n);
-      /// Clear the first \a limit words in \a mask
-      void clear_mask(BitSetData* mask);
-      /// Add \b to \a mask
-      void add_to_mask(const BitSetData* b, BitSetData* mask) const;
-      /// Intersect with \a mask, sparse mask if \a sparse is true
-      template<bool sparse>
-      void intersect_with_mask(const BitSetData* mask);
-      /// Intersect with the "or" of \a and \a b
-      void intersect_with_masks(const BitSetData* a, const BitSetData* b);
-      /// Check if \a has a non-empty intersection with the set
-      bool intersects(const BitSetData* b);
-      /// Perform "nand" with \a b
-      void nand_with_mask(const BitSetData* b);
-    };
-    /// Pointer to the actual data
-    Data* d;
-  public:
-    /// Initialize sparse bit set for a number of words \a n
-    SparseBitSet(Space& home, unsigned int n);
-    /// Initialize during cloning
-    SparseBitSet(Space& home, const SparseBitSet& sbs);
-    /// Initialize during cloning (not used)
-    template<unsigned int size>
-    SparseBitSet(Space& home, const TinyBitSet<size>& tbs);
-    /// Initialize during cloning (not used)
-    template<unsigned int size>
-    SparseBitSet(Space& home, const SmallBitSet<size>& sbs);
-    /// Return the highest active index plus one
-    unsigned int width(void) const;
-    /// Check whether the set is empty
-    bool empty(void) const;
-    /// Clear the first \a limit words in \a mask
-    void clear_mask(BitSetData* mask);
-    /// Add \b to \a mask
-    void add_to_mask(const BitSetData* b, BitSetData* mask) const;
-    /// Intersect with \a mask, sparse mask if \a sparse is true
-    template<bool sparse>
-    void intersect_with_mask(const BitSetData* mask);
-    /// Intersect with the "or" of \a and \a b
-    void intersect_with_masks(const BitSetData* a, const BitSetData* b);
-    /// Check if \a has a non-empty intersection with the set
-    bool intersects(const BitSetData* b);
-    /// Perform "nand" with \a b
-    void nand_with_mask(const BitSetData* b);
-    /// Return the number of required bit set words
-    unsigned int words(void) const;
-    /// Return the number of required bit set words
-    unsigned int size(void) const;
-    /// Get index for the \a i th word
-    unsigned int index(unsigned int i) const;
-    /// Get the \a i th word
-    BitSetData word(unsigned int i) const;
-  };
-
-}}}
-
-#include <gecode/int/extensional/sparse-bit-set.hpp>
-
-namespace Gecode { namespace Int { namespace Extensional {
-
-  /// Small bit-set
-  template<unsigned int _size>
-  class SmallBitSet {
-    template<unsigned int> friend class SmallBitSet;
+  /// Bit-set
+  template<class IndexType>
+  class BitSet {
+    template<class> friend class BitSet;
     template<unsigned int> friend class TinyBitSet;
   protected:
-    /// Class for stoing limit and index information
-    class Index {
-    public:
-      /// Stored data
-      unsigned long long int data;
-    public:
-      /// Access index for the word at position \a p
-      unsigned int index(unsigned int p) const;
-      /// Set the index for the word at position \a p to \a i
-      void index(unsigned int p, unsigned int i);
-      /// Access the limit
-      unsigned int limit(void) const;
-      /// Set the limit to \a i
-      void limit(unsigned int i);
-    };
+    /// Limit
+    IndexType _limit;
     /// Indices
-    Index idx;
+    IndexType* index;
     /// Words
-    BitSetData bits[_size];
+    BitSetData* bits;
     /// Replace the \a i th word with \a w, decrease \a limit if \a w is zero
-    void replace_and_decrease(unsigned int i, BitSetData w);
+    void replace_and_decrease(IndexType i, BitSetData w);
   public:
-    /// Initialize sparse bit set for a number of supports \a n
-    SmallBitSet(Space& home, unsigned int n);
+    /// Initialize bit set for a number of words \a n
+    BitSet(Space& home, unsigned int n);
     /// Initialize during cloning
-    SmallBitSet(Space& home, const SparseBitSet& sbs);
-    /// Initialize during cloning
-    template<unsigned int largersize>
-    SmallBitSet(Space& home, const SmallBitSet<largersize>& sbs);
-    /// Initialize during cloning (not used)
-    template<unsigned int tinysize>
-    SmallBitSet(Space& home, const TinyBitSet<tinysize>& tbs);
-    /// Get the word at position \a p
-    BitSetData word(unsigned int p) const;
-    /// Get the index for the word at position \a p
-    unsigned int index(unsigned int p) const;
-    /// Return the number of required bit set words
-    unsigned int words(void) const;
+    template<class OldIndexType>
+    BitSet(Space& home, const BitSet<OldIndexType>& sbs);
+    /*
+    /// Initialize during cloning (unused)
+    template<unsigned int size>
+    BitSet(Space& home, const TinyBitSet<size>& sbs);
+    */
+    /// Initialize during cloning (unused)
+    BitSet(Space& home, const TinyBitSet<1U>& sbs);
+    /// Initialize during cloning (unused)
+    BitSet(Space& home, const TinyBitSet<2U>& sbs);
+    /// Initialize during cloning (unused)
+    BitSet(Space& home, const TinyBitSet<3U>& sbs);
+    /// Initialize during cloning (unused)
+    BitSet(Space& home, const TinyBitSet<4U>& sbs);
+    /// Get the limit
+    unsigned int limit(void) const;
     /// Check whether the set is empty
     bool empty(void) const;
-    /// Return the highest active index plus one
+    /// Return the highest active index
     unsigned int width(void) const;
     /// Clear the first \a limit words in \a mask
     void clear_mask(BitSetData* mask) const;
@@ -387,25 +284,24 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Intersect with the "or" of \a and \a b
     void intersect_with_masks(const BitSetData* a, const BitSetData* b);
     /// Check if \a has a non-empty intersection with the set
-    bool intersects(const BitSetData* b);
+    bool intersects(const BitSetData* b) const;
     /// Perform "nand" with \a b
     void nand_with_mask(const BitSetData* b);
-    /// Perform "nand" with and the "or" of \a a and \a b
-    void nand_with_masks(const BitSetData* a, const BitSetData* b);
+    /// Return the number of required bit set words
+    unsigned int words(void) const;
     /// Return the number of required bit set words
     unsigned int size(void) const;
   };
 
 }}}
 
-#include <gecode/int/extensional/small-bit-set.hpp>
+#include <gecode/int/extensional/bit-set.hpp>
 
 namespace Gecode { namespace Int { namespace Extensional {
 
   /// Tiny bit-set
   template<unsigned int _size>
   class TinyBitSet {
-    template<unsigned int> friend class SmallBitSet;
     template<unsigned int> friend class TinyBitSet;
   protected:
     /// Words
@@ -417,10 +313,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     template<unsigned int largersize>
     TinyBitSet(Space& home, const TinyBitSet<largersize>& sbs);
     /// Initialize during cloning
-    TinyBitSet(Space& home, const SparseBitSet& bs);
-    /// Initialize during cloning
-    template <unsigned int smallsize>
-    TinyBitSet(Space& home, const SmallBitSet<smallsize>& bs);
+    template<class IndexType>
+    TinyBitSet(Space& home, const BitSet<IndexType>& bs);
     /// Get the limit
     int limit(void) const;
     /// Check whether the set is empty

@@ -69,28 +69,15 @@ namespace Gecode { namespace Int { namespace Extensional {
    }
       
    template<unsigned int sz>
+   template<class IndexType>
    forceinline
-   TinyBitSet<sz>::TinyBitSet(Space&, const SparseBitSet& sbs) {
+   TinyBitSet<sz>::TinyBitSet(Space&, const BitSet<IndexType>& sbs) {
      assert(sz == sbs.width());
      assert(!sbs.empty());
      for (unsigned int i = sz; i--; )
        bits[i].init(false);
      for (unsigned int i = sbs.words(); i--; ) {
-       bits[sbs.index(i)] = sbs.word(i);
-     }
-     assert(!empty());
-   }
-
-   template<unsigned int sz>
-   template<unsigned int smallsz>
-   forceinline
-   TinyBitSet<sz>::TinyBitSet(Space&, const SmallBitSet<smallsz>& bs) {
-     assert(sz == bs.width());
-     assert(!bs.empty());
-     for (unsigned int i=sz; i--; )
-       bits[i].init(false);
-     for (unsigned int i = bs.words(); i--; ) {
-       bits[bs.index(i)] = bs.word(i);
+       bits[sbs.index[i]] = sbs.bits[i];
      }
      assert(!empty());
    }
