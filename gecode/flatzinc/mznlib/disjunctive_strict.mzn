@@ -1,3 +1,5 @@
+include "cumulative.mzn";
+
 predicate disjunctive_strict(array[int] of var int: s,
                              array[int] of var int: d) =
     assert(index_set(s) == index_set(d),
