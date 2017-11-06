@@ -619,7 +619,8 @@ namespace Gecode {
 #ifdef GECODE_HAS_CPPROFILER
       ,
       _profiler_id("cpprofiler-id", "use this execution id with CP-profiler", 0),
-      _profiler_port("cpprofiler-port", "connect to CP-profiler on this port", 6565),
+      _profiler_port("cpprofiler-port", "connect to CP-profiler on this port",
+                     Search::Config::cpprofiler_port),
       _profiler_info("cpprofiler-info", "send solution information to CP-profiler", false) 
 #endif
   {

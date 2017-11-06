@@ -131,6 +131,9 @@ namespace Gecode { namespace Search {
 
     /// Depth limit for no-good generation during search
     const unsigned int nogoods_limit = 128;
+
+    /// Default port for CPProfiler
+    const unsigned int cpprofiler_port = 6565U;
   }
 
 }}
@@ -442,7 +445,7 @@ namespace Gecode {
   public:
     /// Initialize
     CPProfilerSearchTracer(int eid, std::string name,
-                           unsigned int port,
+                           unsigned int port = Search::Config::cpprofiler_port,
                            const GetInfo* pgi = nullptr);
     /// The search engine initializes
     virtual void init(void);
