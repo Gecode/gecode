@@ -214,6 +214,19 @@ namespace Gecode { namespace Driver {
 
 #endif
 
+#ifdef GECODE_HAS_CPPROFILER
+
+  /// Class to send solution information to CPProfiler for a script
+  template<class BaseSpace>
+  class ScriptGetInfo : public CPProfilerSearchTracer::GetInfo {
+  public:
+    /// Initialize
+    ScriptGetInfo(void);
+    /// Return info for a space (which must be a script)
+    virtual std::string getInfo(const Space& home) const;
+  };
+  
+#endif
 
   template<class BaseSpace>
   forceinline
@@ -247,6 +260,23 @@ namespace Gecode { namespace Driver {
       return ofs;
     }
   }
+
+#ifdef GECODE_HAS_CPPROFILER
+
+  template<class BaseSpace>
+  ScriptGetInfo<BaseSpace>::ScriptGetInfo(void) {}
+
+  template<class BaseSpace>
+  std::string
+  ScriptGetInfo<BaseSpace>::getInfo(const Space& home) const {
+    std::stringstream ss;
+    if (const ScriptBase<BaseSpace>* sb
+        = dynamic_cast<const ScriptBase<BaseSpace>*>(&home))
+      sb->print(ss);
+    return ss.str();
+  }
+  
+#endif
 
 
   /**
@@ -287,6 +317,8 @@ namespace Gecode { namespace Driver {
     ostream& s_out = select_ostream(o.out_file(), sol_file);
     ostream& l_out = select_ostream(o.log_file(), log_file);
 
+    Search::Options so;
+
     try {
       switch (o.mode()) {
       case SM_GIST:
@@ -313,9 +345,23 @@ namespace Gecode { namespace Driver {
           (void) GistEngine<Engine<Script> >::explore(s, opt);
         }
         break;
-        // If Gist is not available, fall through
+        // If Gist is not available, goto solution
+#else
+        goto solution;
+#endif
+      case SM_CPPROFILER:
+#ifdef GECODE_HAS_CPPROFILER
+        {
+          CPProfilerSearchTracer::GetInfo* getInfo = nullptr;
+          if (o.profiler_info())
+            getInfo = new ScriptGetInfo<BaseSpace>;
+          so.tracer = new CPProfilerSearchTracer
+            (o.profiler_id(), o.name(), o.profiler_port(), getInfo);
+        }
+        /* FALL THROUGH */
 #endif
       case SM_SOLUTION:
+      solution:
         {
           l_out << o.name() << endl;
           Support::Timer t;
@@ -325,7 +371,6 @@ namespace Gecode { namespace Driver {
             s = new Script(o);
           unsigned int n_p = PropagatorGroup::all.size(*s);
           unsigned int n_b = BrancherGroup::all.size(*s);
-          Search::Options so;
           so.threads = o.threads();
           so.c_d     = o.c_d();
           so.a_d     = o.a_d();
@@ -337,7 +382,6 @@ namespace Gecode { namespace Driver {
           so.cutoff  = createCutoff(o);
           so.clone   = false;
           so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
-          so.tracer  = o.search_tracer();
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
           {
@@ -410,6 +454,7 @@ namespace Gecode { namespace Driver {
                   << endl;
           }
           delete so.stop;
+          delete so.tracer;
         }
         break;
       case SM_STAT:
@@ -422,7 +467,7 @@ namespace Gecode { namespace Driver {
             s = new Script(o);
           unsigned int n_p = PropagatorGroup::all.size(*s);
           unsigned int n_b = BrancherGroup::all.size(*s);
-          Search::Options so;
+
           so.clone   = false;
           so.threads = o.threads();
           so.assets  = o.assets();
@@ -434,7 +479,6 @@ namespace Gecode { namespace Driver {
                                             o.interrupt());
           so.cutoff  = createCutoff(o);
           so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
-          so.tracer  = o.search_tracer();
           if (o.interrupt())
             CombinedStop::installCtrlHandler(true);
           {
@@ -495,7 +539,6 @@ namespace Gecode { namespace Driver {
                                                 false);
               so.cutoff  = createCutoff(o);
               so.nogoods_limit = o.nogoods() ? o.nogoods_limit() : 0U;
-              so.tracer  = o.search_tracer();
               {
                 Meta<Script,Engine> e(s1,so);
                 do {

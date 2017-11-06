@@ -58,6 +58,9 @@
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
 
+/* Whether support for CPProfiler is available */
+#undef GECODE_HAS_CPPROFILER
+
 /* Whether GNU hash_map is available */
 #undef GECODE_HAS_GNU_HASH_MAP
 

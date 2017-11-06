@@ -13465,7 +13465,7 @@ namespace {
 inline
 FileSizeOptions::FileSizeOptions(const char* s)
   : Gecode::SizeOptions(s),
-    _file("-file","file name of dictionary") {
+    _file("file","file name of dictionary") {
   add(_file);
 }
 inline const char*

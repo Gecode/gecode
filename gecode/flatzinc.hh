@@ -256,39 +256,57 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
       Gecode::Driver::BoolOption        _stat;       ///< Emit statistics
       Gecode::Driver::StringValueOption _output;     ///< Output file
+
+#ifdef GECODE_HAS_CPPROFILER
+
+      Gecode::Driver::IntOption         _profiler_id; ///< Use this execution id for the CP-profiler
+      Gecode::Driver::UnsignedIntOption _profiler_port; ///< Connect to this port
+      Gecode::Driver::BoolOption        _profiler_info; ///< Whether solution information should be sent to the CP-profiler
+
+#endif
+
       //@}
   public:
     /// Constructor
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
-      _solutions("-n","number of solutions (0 = all, -1 = one/best)",-1),
-      _allSolutions("-a", "return all solutions (equal to -n 0)"),
-      _threads("-p","number of threads (0 = #processing units)",
+      _solutions("n","number of solutions (0 = all, -1 = one/best)",-1),
+      _allSolutions("a", "return all solutions (equal to -n 0)"),
+      _threads("p","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
-      _free("-f", "free search, no need to follow search-specification"),
-      _decay("-decay","decay factor",0.99),
-      _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
-      _a_d("-a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
-      _node("-node","node cutoff (0 = none, solution mode)"),
-      _fail("-fail","failure cutoff (0 = none, solution mode)"),
-      _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
-      _seed("-r","random seed",0),
-      _restart("-restart","restart sequence type",RM_NONE),
-      _r_base("-restart-base","base for geometric restart sequence",1.5),
-      _r_scale("-restart-scale","scale factor for restart sequence",250),
-      _nogoods("-nogoods","whether to use no-goods from restarts",false),
-      _nogoods_limit("-nogoods-limit","depth limit for no-good extraction",
+      _free("f", "free search, no need to follow search-specification"),
+      _decay("decay","decay factor",0.99),
+      _c_d("c-d","recomputation commit distance",Gecode::Search::Config::c_d),
+      _a_d("a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
+      _node("node","node cutoff (0 = none, solution mode)"),
+      _fail("fail","failure cutoff (0 = none, solution mode)"),
+      _time("time","time (in ms) cutoff (0 = none, solution mode)"),
+      _seed("r","random seed",0),
+      _restart("restart","restart sequence type",RM_NONE),
+      _r_base("restart-base","base for geometric restart sequence",1.5),
+      _r_scale("restart-scale","scale factor for restart sequence",250),
+      _nogoods("nogoods","whether to use no-goods from restarts",false),
+      _nogoods_limit("nogoods-limit","depth limit for no-good extraction",
                      Search::Config::nogoods_limit),
-      _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
+      _interrupt("interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
-      _step("-step","step distance for float optimization",0.0),
-      _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
-      _stat("-s","emit statistics"),
-      _output("-o","file to send output to") {
+      _step("step","step distance for float optimization",0.0),
+      _mode("mode","how to execute script",Gecode::SM_SOLUTION),
+      _stat("s","emit statistics"),
+      _output("o","file to send output to")
 
+#ifdef GECODE_HAS_CPPROFILER
+      ,
+      _profiler_id("cpprofiler-id", "use this execution id with cpprofiler", 0),
+      _profiler_port("cpprofiler-port", "connect to cpprofiler on this port", 6565),
+      _profiler_info("cpprofiler-info", "send solution information to cpprofiler", false)
+
+#endif
+    {
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
+      _mode.add(Gecode::SM_CPPROFILER, "cpprofiler");
       _restart.add(RM_NONE,"none");
       _restart.add(RM_CONSTANT,"constant");
       _restart.add(RM_LINEAR,"linear");
@@ -306,6 +324,11 @@ namespace Gecode { namespace FlatZinc {
       add(_nogoods); add(_nogoods_limit);
       add(_mode); add(_stat);
       add(_output);
+#ifdef GECODE_HAS_CPPROFILER
+      add(_profiler_id);
+      add(_profiler_port);
+      add(_profiler_info);
+#endif
     }
 
     void parse(int& argc, char* argv[]) {
@@ -336,6 +359,7 @@ namespace Gecode { namespace FlatZinc {
     int seed(void) const { return _seed.value(); }
     double step(void) const { return _step.value(); }
     const char* output(void) const { return _output.value(); }
+
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());
     }
@@ -349,6 +373,14 @@ namespace Gecode { namespace FlatZinc {
     bool nogoods(void) const { return _nogoods.value(); }
     unsigned int nogoods_limit(void) const { return _nogoods_limit.value(); }
     bool interrupt(void) const { return _interrupt.value(); }
+
+#ifdef GECODE_HAS_CPPROFILER
+
+    int profiler_id(void) const { return _profiler_id.value(); }
+    unsigned int profiler_port(void) const { return _profiler_port.value(); }
+    bool profiler_info(void) const { return _profiler_info.value(); }
+
+#endif
 
     void allSolutions(bool b) { _allSolutions.value(b); }
   };
@@ -515,7 +547,10 @@ namespace Gecode { namespace FlatZinc {
 
     /// Produce output on \a out using \a p
     void print(std::ostream& out, const Printer& p) const;
-
+#ifdef GECODE_HAS_CPPROFILER
+    /// Get string representing the domains of variables (for cpprofiler)
+    std::string getDomains(const Printer& p) const;
+#endif
     /// Compare this space with space \a s and print the differences on
     /// \a out
     void compare(const Space& s, std::ostream& out) const;

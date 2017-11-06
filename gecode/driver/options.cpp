@@ -61,6 +61,16 @@ namespace Gecode {
       return d;
     }
 
+    char*
+    BaseOption::stredup(const char* s) {
+      if (s == NULL)
+        return NULL;
+      char* d = heap.alloc<char>(static_cast<unsigned long int>(strlen(s)+2));
+      d[0] = '-';
+      (void) strcpy(d+1,s);
+      return d;
+    }
+
     void
     BaseOption::strdel(const char* s) {
       if (s == NULL)
@@ -70,10 +80,20 @@ namespace Gecode {
 
     char*
     BaseOption::argument(int argc, char* argv[]) const {
-      if ((argc < 2) || strcmp(argv[1],opt))
+      if (argc < 2)
+        return NULL;
+      const char* s = argv[1];
+      if (s[0] == '-') {
+        s++;
+        if (s[0] == '-')
+          s++;
+      } else {
+        return NULL;
+      }
+      if (strcmp(s,eopt))
         return NULL;
       if (argc == 2) {
-        std::cerr << "Missing argument for option \"" << opt << "\""
+        std::cerr << "Missing argument for option \"" << iopt << "\""
                   << std::endl;
         exit(EXIT_FAILURE);
       }
@@ -81,10 +101,11 @@ namespace Gecode {
     }
 
     BaseOption::BaseOption(const char* o, const char* e)
-      : opt(strdup(o)), exp(strdup(e)) {}
+      : eopt(strdup(o)), iopt(stredup(o)), exp(strdup(e)) {}
 
     BaseOption::~BaseOption(void) {
-      strdel(opt);
+      strdel(eopt);
+      strdel(iopt);
       strdel(exp);
     }
 
@@ -107,7 +128,7 @@ namespace Gecode {
     }
     void
     StringValueOption::help(void) {
-      std::cerr << '\t' << opt << " (string) default: "
+      std::cerr << '\t' << iopt << " (string) default: "
                 << ((cur == NULL) ? "NONE" : cur) << std::endl
                 << "\t\t" << exp << std::endl;
     }
@@ -140,7 +161,7 @@ namespace Gecode {
             return 2;
           }
         std::cerr << "Wrong argument \"" << a
-                  << "\" for option \"" << opt << "\""
+                  << "\" for option \"" << iopt << "\""
                   << std::endl;
         exit(EXIT_FAILURE);
       }
@@ -150,7 +171,7 @@ namespace Gecode {
     StringOption::help(void) {
       if (fst == NULL)
         return;
-      std::cerr << '\t' << opt << " (";
+      std::cerr << '\t' << iopt << " (";
       const char* d = NULL;
       for (Value* v = fst; v != NULL; v = v->next) {
         std::cerr << v->opt << ((v->next != NULL) ? ", " : "");
@@ -189,7 +210,7 @@ namespace Gecode {
 
     void
     IntOption::help(void) {
-      std::cerr << '\t' << opt << " (int) default: " << cur << std::endl
+      std::cerr << '\t' << iopt << " (int) default: " << cur << std::endl
                 << "\t\t" << exp << std::endl;
     }
 
@@ -205,7 +226,7 @@ namespace Gecode {
 
     void
     UnsignedIntOption::help(void) {
-      std::cerr << '\t' << opt << " (unsigned int) default: "
+      std::cerr << '\t' << iopt << " (unsigned int) default: "
                 << cur << std::endl
                 << "\t\t" << exp << std::endl;
     }
@@ -223,14 +244,24 @@ namespace Gecode {
     void
     DoubleOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt << " (double) default: " << cur << endl
+      cerr << '\t' << iopt << " (double) default: " << cur << endl
            << "\t\t" << exp << endl;
     }
 
 
     int
     BoolOption::parse(int argc, char* argv[]) {
-      if ((argc < 2) || strcmp(argv[1],opt))
+      if (argc < 2)
+        return 0;
+      const char* s = argv[1];
+      if (s[0] == '-') {
+        s++;
+        if (s[0] == '-')
+          s++;
+      } else {
+        return 0;
+      }
+      if (strcmp(s,eopt))
         return 0;
       if (argc == 2) {
         // Option without argument
@@ -253,7 +284,7 @@ namespace Gecode {
     void
     BoolOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt << " (optional: false, 0, true, 1) default: "
+      cerr << '\t' << iopt << " (optional: false, 0, true, 1) default: "
            << (cur ? "true" : "false") << endl
            << "\t\t" << exp << endl;
     }
@@ -263,7 +294,7 @@ namespace Gecode {
      *
      */
     IplOption::IplOption(IntPropLevel ipl)
-      : BaseOption("-ipl","integer propagation level (comma-separated list)"),
+      : BaseOption("ipl","integer propagation level (comma-separated list)"),
         cur(ipl) {}
 
     int
@@ -285,7 +316,7 @@ namespace Gecode {
           else if (!strncmp("advanced",a,e)) { m |= IPL_ADVANCED; }
           else {
             std::cerr << "Wrong argument \"" << a
-                      << "\" for option \"" << opt << "\""
+                      << "\" for option \"" << iopt << "\""
                       << std::endl;
             exit(EXIT_FAILURE);
           }
@@ -303,7 +334,7 @@ namespace Gecode {
     void
     IplOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt
+      cerr << '\t' << iopt
            << " (def,val,bnd,dom,basic,advanced)" << endl
            << "\t\tdefault: ";
       switch (vbd(cur)) {
@@ -324,7 +355,7 @@ namespace Gecode {
      *
      */
     TraceOption::TraceOption(int f)
-      : BaseOption("-trace","trace flags (comma-separated list)"),
+      : BaseOption("trace","trace flags (comma-separated list)"),
         cur(f) {}
 
     int
@@ -364,7 +395,7 @@ namespace Gecode {
                                                        TE_COMMIT); }
           else {
             std::cerr << "Wrong argument \"" << a
-                      << "\" for option \"" << opt << "\""
+                      << "\" for option \"" << iopt << "\""
                       << std::endl;
             exit(EXIT_FAILURE);
           }
@@ -381,7 +412,7 @@ namespace Gecode {
     void
     TraceOption::help(void) {
       using namespace std;
-      cerr << '\t' << opt
+      cerr << '\t' << iopt
            << " (init,prune,fix,fail,done,propagate,commit,none,all,variable,general)"
            << " default: ";
       if (cur == 0) {
@@ -430,49 +461,6 @@ namespace Gecode {
         }
       }
       cerr << endl << "\t\t" << exp << endl;
-    }
-
-
-    /*
-     * Search trace option
-     *
-     */
-    SearchTraceOption::SearchTraceOption(void)
-      : BaseOption("-search-tracer","search tracer (none, std)"),
-        cur(nullptr) {}
-
-    int
-    SearchTraceOption::parse(int argc, char* argv[]) {
-      if (char* a = argument(argc,argv)) {
-        if (!strcmp(a,"none") || !strcmp(a,"0")) {
-          cur = nullptr;
-          return 2;
-        } else if (!strcmp(a,"std")) {
-          cur = &StdSearchTracer::def;;
-          return 2;
-        } else {
-          std::cerr << "Wrong argument \"" << a
-                    << "\" for option \"" << opt << "\""
-                    << std::endl;
-          exit(EXIT_FAILURE);
-        }
-      }
-      return 0;
-    }
-
-    void
-    SearchTraceOption::help(void) {
-      using namespace std;
-      cerr << '\t' << opt
-           << " (none,std) default: ";
-      if (cur == nullptr) {
-        cerr << "none";
-      } else if (cur == &StdSearchTracer::def) {
-        cerr << "std";
-      } else {
-        cerr << "user defined";
-      }
-      cerr << endl;
     }
 
 
@@ -537,6 +525,13 @@ namespace Gecode {
 #else
     std::cerr << "disabled";
 #endif
+    std::cerr << std::endl
+              << " - CPProfiler support: ";
+#ifdef GECODE_HAS_CPPROFILER
+    std::cerr << "enabled";
+#else
+    std::cerr << "disabled";
+#endif
     std::cerr << std::endl << std::endl
               << "Options for " << name() << ":" << std::endl
               << "\t-help, --help, -?" << std::endl
@@ -577,56 +572,63 @@ namespace Gecode {
   Options::Options(const char* n)
     : BaseOptions(n),
 
-      _model("-model","model variants"),
-      _symmetry("-symmetry","symmetry variants"),
-      _propagation("-propagation","propagation variants"),
-      _branching("-branching","branching variants"),
-      _decay("-decay","decay factor",1.0),
-      _seed("-seed","random number generator seed",1U),
-      _step("-step","step distance for float optimization",0.0),
+      _model("model","model variants"),
+      _symmetry("symmetry","symmetry variants"),
+      _propagation("propagation","propagation variants"),
+      _branching("branching","branching variants"),
+      _decay("decay","decay factor",1.0),
+      _seed("seed","random number generator seed",1U),
+      _step("step","step distance for float optimization",0.0),
 
-      _search("-search","search engine variants"),
-      _solutions("-solutions","number of solutions (0 = all)",1),
-      _threads("-threads","number of threads (0 = #processing units)",
+      _search("search","search engine variants"),
+      _solutions("solutions","number of solutions (0 = all)",1),
+      _threads("threads","number of threads (0 = #processing units)",
                Search::Config::threads),
-      _c_d("-c-d","recomputation commit distance",Search::Config::c_d),
-      _a_d("-a-d","recomputation adaptation distance",Search::Config::a_d),
-      _d_l("-d-l","discrepancy limit for LDS",Search::Config::d_l),
-      _node("-node","node cutoff (0 = none, solution mode)"),
-      _fail("-fail","failure cutoff (0 = none, solution mode)"),
-      _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
-      _assets("-assets","#portfolio assets (#engines)",0),
-      _slice("-slice","portfolio slice (in #failures)",Search::Config::slice),
-      _restart("-restart","restart sequence type",RM_NONE),
-      _r_base("-restart-base","base for geometric restart sequence",
+      _c_d("c-d","recomputation commit distance",Search::Config::c_d),
+      _a_d("a-d","recomputation adaptation distance",Search::Config::a_d),
+      _d_l("d-l","discrepancy limit for LDS",Search::Config::d_l),
+      _node("node","node cutoff (0 = none, solution mode)"),
+      _fail("fail","failure cutoff (0 = none, solution mode)"),
+      _time("time","time (in ms) cutoff (0 = none, solution mode)"),
+      _assets("assets","#portfolio assets (#engines)",0),
+      _slice("slice","portfolio slice (in #failures)",Search::Config::slice),
+      _restart("restart","restart sequence type",RM_NONE),
+      _r_base("restart-base","base for geometric restart sequence",
               Search::Config::base),
-      _r_scale("-restart-scale","scale factor for restart sequence",
+      _r_scale("restart-scale","scale factor for restart sequence",
                Search::Config::slice),
-      _nogoods("-nogoods","whether to use no-goods from restarts",false),
-      _nogoods_limit("-nogoods-limit","depth limit for no-good extraction",
+      _nogoods("nogoods","whether to use no-goods from restarts",false),
+      _nogoods_limit("nogoods-limit","depth limit for no-good extraction",
                      Search::Config::nogoods_limit),
-      _relax("-relax","probability for relaxing variable", 0.0),
-      _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
+      _relax("relax","probability for relaxing variable", 0.0),
+      _interrupt("interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
 
-      _mode("-mode","how to execute script",SM_SOLUTION),
-      _samples("-samples","how many samples (time mode)",1),
-      _iterations("-iterations","iterations per sample (time mode)",1),
-      _print_last("-print-last",
+      _mode("mode","how to execute script",SM_SOLUTION),
+      _samples("samples","how many samples (time mode)",1),
+      _iterations("iterations","iterations per sample (time mode)",1),
+      _print_last("print-last",
                   "whether to only print the last solution (solution mode)",
                   false),
-      _out_file("-file-sol", "where to print solutions "
+      _out_file("file-sol", "where to print solutions "
                 "(supports stdout, stdlog, stderr)","stdout"),
-      _log_file("-file-stat", "where to print statistics "
+      _log_file("file-stat", "where to print statistics "
                 "(supports stdout, stdlog, stderr)","stdout"),
-      _trace(0),
-      _search_tracer()
+      _trace(0)
+
+#ifdef GECODE_HAS_CPPROFILER
+      ,
+      _profiler_id("cpprofiler-id", "use this execution id with CP-profiler", 0),
+      _profiler_port("cpprofiler-port", "connect to CP-profiler on this port", 6565),
+      _profiler_info("cpprofiler-info", "send solution information to CP-profiler", false) 
+#endif
   {
 
-    _mode.add(SM_SOLUTION, "solution");
-    _mode.add(SM_TIME, "time");
-    _mode.add(SM_STAT, "stat");
-    _mode.add(SM_GIST, "gist");
+    _mode.add(SM_SOLUTION,   "solution");
+    _mode.add(SM_TIME,       "time");
+    _mode.add(SM_STAT,       "stat");
+    _mode.add(SM_GIST,       "gist");
+    _mode.add(SM_CPPROFILER, "cpprofiler");
 
     _restart.add(RM_NONE,"none");
     _restart.add(RM_CONSTANT,"constant");
@@ -644,7 +646,12 @@ namespace Gecode {
     add(_nogoods); add(_nogoods_limit);
     add(_relax);
     add(_mode); add(_iterations); add(_samples); add(_print_last);
-    add(_out_file); add(_log_file); add(_trace); add(_search_tracer);
+    add(_out_file); add(_log_file); add(_trace);
+#ifdef GECODE_HAS_CPPROFILER
+    add(_profiler_id);
+    add(_profiler_port);
+    add(_profiler_info);
+#endif
   }
 
 

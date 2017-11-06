@@ -4,8 +4,14 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Kevin Leo <kevin.leo@monash.edu>
+ *     Maxim Shishmarev <maxim.shishmarev@monash.edu>
+ * 
  *  Copyright:
+ *     Kevin Leo, 2017
  *     Christian Schulte, 2002
+ *     Maxim Shishmarev, 2017
  *     Guido Tack, 2004
  *
  *  Last modified:
@@ -390,6 +396,71 @@ namespace Gecode {
 
 #include <gecode/search/tracer.hpp>
 #include <gecode/search/trace-recorder.hpp>
+
+#ifdef GECODE_HAS_CPPROFILER
+
+namespace Gecode {
+
+  /// Code that is specific to the CPProfiler
+  namespace CPProfiler {}
+
+}
+
+namespace Gecode { namespace CPProfiler {
+
+  /// The actual connector to the CPProfiler
+  class Connector;
+
+}}
+
+namespace Gecode {
+
+  /// Class to record search trace info for CPProfiler
+  class GECODE_SEARCH_EXPORT CPProfilerSearchTracer : public SearchTracer {
+  public:
+    /// Class to send solution information to CPProfiler
+    class GECODE_SEARCH_EXPORT GetInfo : public HeapAllocated {
+    public:
+      /// Initialize
+      GetInfo(void);
+      /// Return info for a space
+      virtual std::string getInfo(const Space& home) const = 0;
+      /// Delete
+      virtual ~GetInfo(void);
+    };
+  private:
+    /// Connector to connect to running instnace of CPProfiler
+    CPProfiler::Connector* connector;
+    /// Execution id to be displayed by CPProfiler
+    int execution_id;
+    /// Name of script being traced
+    std::string name;
+    /// Number of the current restart
+    int restart;
+    /// Send solution information to CPProfiler
+    const GetInfo* pgi;
+  public:
+    /// Initialize
+    CPProfilerSearchTracer(int eid, std::string name,
+                           unsigned int port,
+                           const GetInfo* pgi = nullptr);
+    /// The search engine initializes
+    virtual void init(void);
+    /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
+    virtual void round(unsigned int eid);
+    /// The engine skips an edge
+    virtual void skip(const EdgeInfo& ei);
+    /// The engine creates a new node with information \a ei and \a ni
+    virtual void node(const EdgeInfo& ei, const NodeInfo& ni);
+    /// All workers are done
+    virtual void done(void);
+    /// Delete
+    virtual ~CPProfilerSearchTracer(void);
+  };
+
+}
+
+#endif
 
 namespace Gecode { namespace Search {
 

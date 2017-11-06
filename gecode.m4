@@ -1393,6 +1393,31 @@ AC_DEFUN([AC_GECODE_GIST],
   fi
 ])
 
+dnl Macro:
+dnl   AC_GECODE_CPPROFILER
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-cpprofiler
+dnl   for compiling with support for the CPProfiler.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+dnl   Christian Schulte <schulte@gecode.org>
+AC_DEFUN([AC_GECODE_CPPROFILER],
+  [
+  AC_ARG_ENABLE([cpprofiler],
+    AC_HELP_STRING([--enable-cpprofiler],
+      [build with support for CPProfiler @<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to build with support for CPProfiler)
+  if test "${enable_cpprofiler:-no}" = "yes"; then
+    AC_MSG_RESULT(yes)
+    AC_SUBST(enable_cpprofiler, yes)
+    AC_DEFINE([GECODE_HAS_CPPROFILER],[],[Whether CPProfiler support available])
+  else
+    AC_MSG_RESULT(no)
+  fi
+])
+
 AC_DEFUN([AC_GECODE_USER_SUFFIX],
   [
   AC_ARG_WITH([lib-prefix],

@@ -160,19 +160,6 @@ namespace Gecode {
       return cur;
     }
 
-    /*
-     * Search trace option
-     *
-     */
-    inline void
-    SearchTraceOption::value(SearchTracer* t) {
-      cur = t;
-    }
-    inline SearchTracer*
-    SearchTraceOption::value(void) const {
-      return cur;
-    }
-
   }
 
   /*
@@ -522,15 +509,38 @@ namespace Gecode {
     return _trace.value();
   }
 
+#ifdef GECODE_HAS_CPPROFILER
+
+  /*
+   * Profiler options
+   *
+   */
   inline void
-  Options::search_tracer(SearchTracer* t) {
-    _search_tracer.value(t);
+  Options::profiler_id(int i) {
+    _profiler_id.value(i);
+  }
+  inline int
+  Options::profiler_id(void) const {
+    return _profiler_id.value();
+  }
+  inline void
+  Options::profiler_port(unsigned int p) {
+    _profiler_port.value(p);
+  }
+  inline unsigned int
+  Options::profiler_port(void) const {
+    return _profiler_port.value();
+  }
+  inline void
+  Options::profiler_info(bool b) {
+    _profiler_info.value(b);
+  }
+  inline bool
+  Options::profiler_info(void) const {
+    return _profiler_info.value();
   }
 
-  inline SearchTracer*
-  Options::search_tracer(void) const {
-    return _search_tracer.value();
-  }
+#endif
 
 #ifdef GECODE_HAS_GIST
   forceinline

@@ -258,7 +258,8 @@ SEARCHSRC0 = \
 	stop options cutoff engine \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
-	rbs pbs sebs nogoods exception tracer
+	rbs pbs sebs nogoods exception tracer \
+	cpprofiler/tracer
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \
 	support.hh worker.hh exception.hpp engine.hpp base.hpp \
@@ -271,7 +272,8 @@ SEARCHHDR0 = \
 	par/dfs.hh par/dfs.hpp par/bab.hh par/bab.hpp \
 	par/pbs.hh par/pbs.hpp \
 	dfs.hpp bab.hpp lds.hpp rbs.hpp pbs.hpp \
-	relax.hh tracer.hpp trace-recorder.hpp
+	relax.hh tracer.hpp trace-recorder.hpp \
+	cpprofiler/message.hpp cpprofiler/connector.hpp
 
 SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%.cpp)
 SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
@@ -303,7 +305,7 @@ export LINKSEARCH       =
 export SEARCHRES	=
 export SEARCHRC		=
 endif
-SEARCHBUILDDIRS = search search/seq search/par
+SEARCHBUILDDIRS = search search/seq search/par search/cpprofiler
 
 
 #

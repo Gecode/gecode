@@ -69,7 +69,7 @@ namespace {
     /// Initialize options for example with name \a s
     QCPOptions(const char* s)
     : InstanceOptions(s),
-      _tbf("-tbf", "tie-breaking factor",0.0) {
+      _tbf("tbf", "tie-breaking factor",0.0) {
       // Add options
       add(_tbf);
     }

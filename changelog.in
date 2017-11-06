@@ -73,6 +73,33 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   major
+Author: Kevin Leo, Maxim Shishmarev
+[DESCRIPTION]
+Added experimental support for the CPProfiler, see MPG for
+details. This is only enabled, if Gecode has been configured with
+the option --enable-cpprofiler.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   major
+[DESCRIPTION]
+A new mode "-mode cpprofiler" and several command-line arguments
+-cpprofiler-* have been added to connect Gecode to the
+CPProfiler. For more details, see MPG.
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   major
+[DESCRIPTION]
+No hyphen must be given for a command line switch and both "-"
+and "--" are automatically added.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

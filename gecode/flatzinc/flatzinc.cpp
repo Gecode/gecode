@@ -1652,7 +1652,6 @@ namespace Gecode { namespace FlatZinc {
 
 #endif
 
-
   template<template<class> class Engine>
   void
   FlatZincSpace::runEngine(std::ostream& out, const Printer& p,
@@ -1663,6 +1662,83 @@ namespace Gecode { namespace FlatZinc {
       runMeta<Engine,RBS>(out,p,opt,t_total);
     }
   }
+
+#ifdef GECODE_HAS_CPPROFILER
+
+  class FlatZincGetInfo : public CPProfilerSearchTracer::GetInfo {
+  public:
+    const Printer& p;
+    FlatZincGetInfo(const Printer& printer) : p(printer) {}
+    virtual std::string
+    getInfo(const Space& space) const {
+      std::stringstream ss;
+      if (const FlatZincSpace* fz_space = dynamic_cast<const FlatZincSpace*>(&space)) {
+        ss << "{domains = \"";
+        ss << fz_space->getDomains(p);
+        ss << "\"}";
+      }
+      return ss.str();
+    }
+    ~FlatZincGetInfo(void) {};
+  };
+
+  void printIntVar(std::ostream& os, const std::string name, const Int::IntView& x) {
+    os << "var ";
+    if (x.assigned()) {
+      os << "int: " << name << " = " << x.val() << ";";
+    } else if (x.range()) {
+      os << x.min() << ".." << x.max() << ": " << name << ";";
+    } else {
+      os << "array_union([";
+      Gecode::Int::ViewRanges<Int::IntView> r(x);
+      while (true) {
+        os << r.min() << ".." << r.max();
+        ++r;
+        if (!r()) break;
+        os << ',';
+      }
+      os << "]): " << name << ";";
+    }
+    os << "\n";
+  }
+  void printBoolVar(std::ostream& os, const std::string name, const BoolVar& b) {
+    os << "var bool: " << name;
+    if(b.assigned())
+      os << " = " << (b.val() ? "true" : "false");
+    os << ";\n";
+  }
+#ifdef GECODE_HAS_FLOAT_VARS
+  void printFloatVar(std::ostream& os, const std::string name, const Float::FloatView& f) {
+    os << "var ";
+    if(f.assigned())
+      os << "float: " << name << " = " << f.med() << ";";
+    else
+      os << f.min() << ".." << f.max() << ": " << name << ";";
+    os << "\n";
+  }
+#endif
+  std::string FlatZincSpace::getDomains(const Printer& p) const {
+    std::ostringstream oss;
+
+    for (int i = 0; i < iv.size(); i++)
+      printIntVar(oss, p.intVarName(i), iv[i]);
+
+    for (int i = 0; i < bv.size(); i++)
+      printBoolVar(oss, p.boolVarName(i), bv[i]);
+
+#ifdef GECODE_HAS_FLOAT_VARS
+    for (int i = 0; i < fv.size(); i++)
+      printFloatVar(oss, p.floatVarName(i), fv[i]);
+#endif
+#ifdef GECODE_HAS_SET_VARS
+    for (int i = 0; i < sv.size(); i++)
+      oss << "var " << sv[i] << ": " << p.setVarName(i) << ";" << std::endl;
+#endif
+
+    return oss.str();
+  }
+
+#endif
 
   template<template<class> class Engine,
            template<class,template<class> class> class Meta>
@@ -1689,6 +1765,20 @@ namespace Gecode { namespace FlatZinc {
                                           true);
     o.c_d = opt.c_d();
     o.a_d = opt.a_d();
+
+#ifdef GECODE_HAS_CPPROFILER
+
+    if (opt.mode() == SM_CPPROFILER) {
+      FlatZincGetInfo* getInfo = nullptr;
+      if (opt.profiler_info())
+        getInfo = new FlatZincGetInfo(p);
+      o.tracer = new CPProfilerSearchTracer(opt.profiler_id(),
+                                            opt.name(), opt.profiler_port(),
+                                            getInfo);
+    }
+
+#endif
+
 #ifdef GECODE_HAS_FLOAT_VARS
     step = opt.step();
 #endif
@@ -1754,6 +1844,7 @@ namespace Gecode { namespace FlatZinc {
            << endl;
     }
     delete o.stop;
+    delete o.tracer;
   }
 
 #ifdef GECODE_HAS_QT

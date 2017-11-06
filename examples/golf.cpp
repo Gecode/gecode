@@ -55,9 +55,9 @@ public:
   /// Constructor
   GolfOptions(void)
     : Options("Golf"),
-      _w("-w","number of weeks",9),
-      _g("-g","number of groups",8),
-      _s("-s","number of players per group",4) {
+      _w("w","number of weeks",9),
+      _g("g","number of groups",8),
+      _s("s","number of players per group",4) {
     add(_w);
     add(_g);
     add(_s);

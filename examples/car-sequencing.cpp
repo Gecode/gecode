@@ -66,7 +66,7 @@ namespace {
     /// Initialize options for example with name \a s
     CarOptions(const char* s)
       : SizeOptions(s),
-        _maxstall("-maxstall", "Maximum numbere of stalls", 30)
+        _maxstall("maxstall", "Maximum numbere of stalls", 30)
     {
       // Add options
       add(_maxstall);

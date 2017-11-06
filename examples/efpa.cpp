@@ -59,11 +59,11 @@ public:
   EFPAOptions(const char* s,
               int v0 = 5, int q0 = 3, int lambda0 = 2, int d0 = 4)
     : Options(s),
-      _v("-v", "number of sequences",                        v0     ),
-      _q("-q", "number of symbols",                          q0     ),
-      _l("-l", "sets of symbols per sequence (lambda)",      lambda0),
-      _d("-d", "Hamming distance between sequences",         d0     ),
-      _permutation("-permutation", "use permutation constraints if d=4",
+      _v("v", "number of sequences",                        v0     ),
+      _q("q", "number of symbols",                          q0     ),
+      _l("l", "sets of symbols per sequence (lambda)",      lambda0),
+      _d("d", "Hamming distance between sequences",         d0     ),
+      _permutation("permutation", "use permutation constraints if d=4",
                    false)
   {
     // Add options

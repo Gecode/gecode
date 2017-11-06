@@ -61,9 +61,9 @@ public:
   HammingOptions(const char* s, unsigned int bits0,
                  unsigned int distance0, unsigned int size0)
   : Options(s),
-    _bits("-bits","word size in bits",bits0),
-    _distance("-distance","minimum distance",distance0),
-    _size("-size","number of symbols",size0) {
+    _bits("bits","word size in bits",bits0),
+    _distance("distance","minimum distance",distance0),
+    _size("size","number of symbols",size0) {
     add(_bits); add(_distance); add(_size);
   }
 
