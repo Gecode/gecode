@@ -109,7 +109,7 @@ namespace Gecode {
     int alt = 0;
     int alts = 0;
 
-    CPProfiler::NodeStatus ns;
+    CPProfiler::NodeStatus ns = CPProfiler::NodeStatus::FAILED;
     switch(ni.type()) {
     case NodeType::SOLVED:
       ns = CPProfiler::NodeStatus::SOLVED;
@@ -121,6 +121,8 @@ namespace Gecode {
     case NodeType::FAILED:
       ns = CPProfiler::NodeStatus::FAILED;
       break;
+    default:
+      GECODE_NEVER;
     }
 
     std::string label;
