@@ -73,6 +73,13 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Bitsets now use 64 bit integers on 64 bit architectures.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major

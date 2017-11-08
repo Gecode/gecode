@@ -662,9 +662,12 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_GECODE_CHECK_CXXFLAG(-ggdb,
      AC_GECODE_ADD_TO_COMPILERFLAGS(-ggdb),
      AC_GECODE_CHECK_COMPILERFLAG(-g))
-  AC_CHECK_FUNC([__builtin_ffsl],
-    [AC_DEFINE([GECODE_HAS_BUILTIN_FFSL],[],
-      [whether __builtin_ffsl is available])])
+  AC_CHECK_FUNC([__builtin_ffsll],
+    [AC_DEFINE([GECODE_HAS_BUILTIN_FFSLL],[],
+      [whether __builtin_ffsll is available])])
+  AC_CHECK_FUNC([__builtin_popcountll],
+    [AC_DEFINE([GECODE_HAS_BUILTIN_POPCOUNTLL],[],
+      [whether __builtin_popcountll is available])])
 
   AC_SUBST(docdir, "${datadir}/doc/gecode")
 

@@ -7667,10 +7667,17 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-  ac_fn_cxx_check_func "$LINENO" "__builtin_ffsl" "ac_cv_func___builtin_ffsl"
-if test "x$ac_cv_func___builtin_ffsl" = xyes; then :
+  ac_fn_cxx_check_func "$LINENO" "__builtin_ffsll" "ac_cv_func___builtin_ffsll"
+if test "x$ac_cv_func___builtin_ffsll" = xyes; then :
 
-$as_echo "#define GECODE_HAS_BUILTIN_FFSL /**/" >>confdefs.h
+$as_echo "#define GECODE_HAS_BUILTIN_FFSLL /**/" >>confdefs.h
+
+fi
+
+  ac_fn_cxx_check_func "$LINENO" "__builtin_popcountll" "ac_cv_func___builtin_popcountll"
+if test "x$ac_cv_func___builtin_popcountll" = xyes; then :
+
+$as_echo "#define GECODE_HAS_BUILTIN_POPCOUNTLL /**/" >>confdefs.h
 
 fi
 
@@ -10636,10 +10643,17 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
    fi
 
-  ac_fn_cxx_check_func "$LINENO" "__builtin_ffsl" "ac_cv_func___builtin_ffsl"
-if test "x$ac_cv_func___builtin_ffsl" = xyes; then :
+  ac_fn_cxx_check_func "$LINENO" "__builtin_ffsll" "ac_cv_func___builtin_ffsll"
+if test "x$ac_cv_func___builtin_ffsll" = xyes; then :
 
-$as_echo "#define GECODE_HAS_BUILTIN_FFSL /**/" >>confdefs.h
+$as_echo "#define GECODE_HAS_BUILTIN_FFSLL /**/" >>confdefs.h
+
+fi
+
+  ac_fn_cxx_check_func "$LINENO" "__builtin_popcountll" "ac_cv_func___builtin_popcountll"
+if test "x$ac_cv_func___builtin_popcountll" = xyes; then :
+
+$as_echo "#define GECODE_HAS_BUILTIN_POPCOUNTLL /**/" >>confdefs.h
 
 fi
 

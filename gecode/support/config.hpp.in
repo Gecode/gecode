@@ -49,8 +49,11 @@
 /* Whether gcc understands visibility attributes */
 #undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
-/* whether __builtin_ffsl is available */
-#undef GECODE_HAS_BUILTIN_FFSL
+/* whether __builtin_ffsll is available */
+#undef GECODE_HAS_BUILTIN_FFSLL
+
+/* whether __builtin_popcountll is available */
+#undef GECODE_HAS_BUILTIN_POPCOUNTLL
 
 /* Whether to build FLOAT variables */
 #undef GECODE_HAS_FLOAT_VARS
