@@ -950,8 +950,19 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
       IntArgs cover = s.arg2intargs(ce[1]);
       IntVarArgs iv1 = s.arg2intvarargs(ce[2]);
-      unshare(s, iv0);
-      count(s, iv0, iv1, cover, s.ann2ipl(ann));
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (ipl==IPL_DEF)
+        ipl=IPL_BND;
+      if (ipl==IPL_DOM) {
+        IntVarArgs allvars = iv0+iv1;
+        unshare(s, allvars);
+        count(s, allvars.slice(0,1,iv0.size()),
+                 allvars.slice(iv0.size(),1,iv1.size()),
+                 cover, ipl);
+      } else {
+        unshare(s, iv0);
+        count(s, iv0, iv1, cover, ipl);
+      }
     }
 
     void p_global_cardinality_low_up(FlatZincSpace& s, const ConExpr& ce,
@@ -979,7 +990,10 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       unshare(s, x);
-      count(s, x, y, cover, s.ann2ipl(ann));
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (ipl==IPL_DEF)
+        ipl=IPL_BND;
+      count(s, x, y, cover, ipl);
     }
 
     void p_global_cardinality_low_up_closed(FlatZincSpace& s,
@@ -994,7 +1008,10 @@ namespace Gecode { namespace FlatZinc {
       for (int i=cover.size(); i--;)
         y[i] = IntSet(lbound[i],ubound[i]);
       unshare(s, x);
-      count(s, x, y, cover, s.ann2ipl(ann));
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (ipl==IPL_DEF)
+        ipl=IPL_BND;
+      count(s, x, y, cover, ipl);
     }
 
     void p_minimum(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {

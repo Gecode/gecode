@@ -73,6 +73,14 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Change default propagation level to bounds propagation for global
+cardinality constraints.
+
+[ENTRY]
 Module: support
 What:   change
 Rank:   minor
