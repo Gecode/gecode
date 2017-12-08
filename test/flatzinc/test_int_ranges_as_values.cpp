@@ -52,8 +52,8 @@ var bool: b :: output_var;\n\
 constraint set_in_reif(a, 1..2, b);\n\
 solve satisfy;\n\
 ",
-"a = 1;\n\
-b = true;\n\
+"a = 3;\n\
+b = false;\n\
 ----------\n\
 ");
       }
