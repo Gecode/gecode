@@ -41,11 +41,15 @@ namespace Gecode { namespace Search { namespace Seq {
 
   bool
   PortfolioStop::stop(const Statistics& s, const Options& o) {
+    if ((so != NULL) && so->stop(s,o)) {
+      ssi->done = false;
+      return true;
+    }
     if (s.fail >= ssi->l) {
       ssi->done = true;
       return true;
     }
-    return (so != NULL) && so->stop(s,o);
+    return false;
   }
 
 }}}

@@ -73,6 +73,13 @@ Date: whenever
 Minor.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+A sequential portfolio ignored stop objects in certain cases.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor
