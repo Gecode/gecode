@@ -50,6 +50,25 @@
 #include <string>
 #include <sstream>
 #include <limits>
+#include <unordered_set>
+
+
+namespace std {
+  template<> struct hash<Gecode::TupleSet> {
+    static void cmb(size_t& seed, size_t h) {
+      seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+    size_t operator()(const Gecode::TupleSet& x) const {
+      size_t seed = x.tuples();
+      cmb(seed, x.arity());
+      for (int i=x.tuples(); i--; )
+        for (int j=x.arity(); j--; )
+          cmb(seed, x[i][j]);
+      return seed;
+    }
+  };
+}
+
 using namespace std;
 
 namespace Gecode { namespace FlatZinc {
@@ -719,9 +738,17 @@ namespace Gecode { namespace FlatZinc {
 
 #endif
 
+  class FlatZincSpaceInitData {
+  public:
+    typedef std::unordered_set<TupleSet> TupleSetSet;
+    TupleSetSet tupleSetSet;
+    
+    FlatZincSpaceInitData(void) {}
+  };
+
   FlatZincSpace::FlatZincSpace(FlatZincSpace& f)
-    : Space(f), 
-      _random(f._random),
+    : Space(f),
+      _initData(NULL), _random(f._random),
       _solveAnnotations(NULL), iv_boolalias(NULL),
 #ifdef GECODE_HAS_FLOAT_VARS
       step(f.step),
@@ -792,7 +819,8 @@ namespace Gecode { namespace FlatZinc {
     }
 
   FlatZincSpace::FlatZincSpace(Rnd& random)
-  : intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
+  :  _initData(new FlatZincSpaceInitData),
+    intVarCount(-1), boolVarCount(-1), floatVarCount(-1), setVarCount(-1),
     _optVar(-1), _optVarIsInt(true), _lns(0), _lnsInitialSolution(0),
     _random(random),
     _solveAnnotations(NULL), needAuxVars(true) {
@@ -1547,6 +1575,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   FlatZincSpace::~FlatZincSpace(void) {
+    delete _initData;
     delete _solveAnnotations;
   }
 
@@ -2049,6 +2078,33 @@ namespace Gecode { namespace FlatZinc {
     for (int i=a->a.size(); i--;)
       ia[i+offset] = a->a[i]->getInt();
     return ia;
+  }
+  TupleSet
+  FlatZincSpace::arg2tupleset(AST::Node* arg, int noOfVars) {
+    AST::Array* a = arg->getArray();
+    int noOfTuples = a->a.size() == 0 ? 0 : (a->a.size()/noOfVars);
+
+    // Build TupleSet
+    TupleSet ts(noOfVars);
+    for (int i=0; i<noOfTuples; i++) {
+      IntArgs t(noOfVars);
+      for (int j=0; j<noOfVars; j++) {
+        t[j] = a->a[i*noOfVars+j]->getInt();
+      }
+      ts.add(t);
+    }
+    ts.finalize();
+
+    if (_initData) {
+      FlatZincSpaceInitData::TupleSetSet::iterator it = _initData->tupleSetSet.find(ts);
+      if (it != _initData->tupleSetSet.end()) {
+        return *it;
+      }
+      _initData->tupleSetSet.insert(ts);
+    }
+    
+    
+    return ts;
   }
   IntArgs
   FlatZincSpace::arg2boolargs(AST::Node* arg, int offset) {

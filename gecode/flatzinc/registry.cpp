@@ -1140,19 +1140,7 @@ namespace Gecode { namespace FlatZinc {
     void
     p_table_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
-      IntArgs tuples = s.arg2intargs(ce[1]);
-      int noOfVars   = x.size();
-      int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
-      // Build TupleSet
-      TupleSet ts(noOfVars);
-      for (int i=0; i<noOfTuples; i++) {
-        IntArgs t(noOfVars);
-        for (int j=0; j<x.size(); j++) {
-          t[j] = tuples[i*noOfVars+j];
-        }
-        ts.add(t);
-      }
-      ts.finalize();
+      TupleSet ts = s.arg2tupleset(ce[1],x.size());
       extensional(s,x,ts,s.ann2ipl(ann));
     }
     

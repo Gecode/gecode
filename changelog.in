@@ -84,6 +84,13 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Share tables for extensional (table) constraints.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Change default propagation level to bounds propagation for global
 cardinality constraints.
 

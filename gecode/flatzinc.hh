@@ -413,6 +413,8 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   extern Rnd defrnd;
 
+  class FlatZincSpaceInitData;
+
   /**
    * \brief A space that can be initialized with a %FlatZinc model
    *
@@ -425,6 +427,8 @@ namespace Gecode { namespace FlatZinc {
       MAX  //< Solve as maximization problem
     };
   protected:
+    /// Initialisation data (only used for posting constraints)
+    FlatZincSpaceInitData* _initData;
     /// Number of integer variables
     int intVarCount;
     /// Number of Boolean variables
@@ -622,6 +626,8 @@ namespace Gecode { namespace FlatZinc {
     BoolVar arg2BoolVar(AST::Node* n);
     /// Convert \a n to IntVar
     IntVar arg2IntVar(AST::Node* n);
+    /// Convert \a n to TupleSet
+    TupleSet arg2tupleset(AST::Node* n, int noOfVars);
     /// Check if \a b is array of Booleans (or has a single integer)
     bool isBoolArray(AST::Node* b, int& singleInt);
 #ifdef GECODE_HAS_SET_VARS
