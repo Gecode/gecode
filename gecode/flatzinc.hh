@@ -612,8 +612,12 @@ namespace Gecode { namespace FlatZinc {
     //@{
     /// Convert \a arg (array of integers) to IntArgs
     IntArgs arg2intargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg (array of integers) to IntSharedArray
+    IntSharedArray arg2intsharedarray(AST::Node* arg, int offset = 0);
     /// Convert \a arg (array of Booleans) to IntArgs
     IntArgs arg2boolargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg (array of integers) to IntSharedArray
+    IntSharedArray arg2boolsharedarray(AST::Node* arg, int offset = 0);
     /// Convert \a n to IntSet
     IntSet arg2intset(AST::Node* n);
     /// Convert \a arg to IntSetArgs
@@ -647,6 +651,8 @@ namespace Gecode { namespace FlatZinc {
 #endif
     /// Convert \a ann to integer propagation level
     IntPropLevel ann2ipl(AST::Node* ann);
+    /// Share DFA \a a if possible
+    DFA getSharedDFA(DFA& a);
     //@}
   };
 

@@ -485,6 +485,35 @@ namespace Gecode {
     heap.free<Transition>(trans,n_trans);
   }
 
+  bool
+  DFA::operator ==(const DFA& d) const {
+    if (n_states() != d.n_states())
+      return false;
+    if (n_transitions() != d.n_transitions())
+      return false;
+    if (n_symbols() != d.n_symbols())
+      return false;
+    if (max_degree() != d.max_degree())
+      return false;
+    if (final_fst() != d.final_fst())
+      return false;
+    if (final_lst() != d.final_lst())
+      return false;
+    DFA::Transitions me(*this);
+    DFA::Transitions they(d);
+    while (me()) {
+      if (me.i_state() != they.i_state())
+        return false;
+      if (me.symbol() != they.symbol())
+        return false;
+      if (me.o_state() != they.o_state())
+        return false;
+      ++me;
+      ++they;
+    }
+    return true;
+  }
+
   void
   DFA::DFAI::fill(void) {
     // Compute smallest logarithm larger than n_symbols

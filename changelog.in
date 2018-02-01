@@ -84,7 +84,8 @@ Module: flatzinc
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Share tables for extensional (table) constraints.
+Share tables for extensional (table) constraints, DFAs for regular
+constraints, and arrays of constants for element constraints.
 
 [ENTRY]
 Module: flatzinc

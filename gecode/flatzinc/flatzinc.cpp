@@ -54,16 +54,42 @@
 
 
 namespace std {
+  void cmb_hash(size_t& seed, size_t h) {
+    seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+  }
   template<> struct hash<Gecode::TupleSet> {
-    static void cmb(size_t& seed, size_t h) {
-      seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
     size_t operator()(const Gecode::TupleSet& x) const {
       size_t seed = x.tuples();
-      cmb(seed, x.arity());
+      cmb_hash(seed, x.arity());
       for (int i=x.tuples(); i--; )
         for (int j=x.arity(); j--; )
-          cmb(seed, x[i][j]);
+          cmb_hash(seed, x[i][j]);
+      return seed;
+    }
+  };
+  template<> struct hash<Gecode::SharedArray<int> > {
+    size_t operator()(const Gecode::SharedArray<int>& x) const {
+      size_t seed = x.size();
+      for (int i=x.size(); i--; )
+        cmb_hash(seed, x[i]);
+      return seed;
+    }
+  };
+  template<> struct hash<Gecode::DFA> {
+    size_t operator()(const Gecode::DFA& d) const {
+      size_t seed = d.n_states();
+      cmb_hash(seed, d.n_transitions());
+      cmb_hash(seed, d.n_symbols());
+      cmb_hash(seed, d.max_degree());
+      cmb_hash(seed, d.final_fst());
+      cmb_hash(seed, d.final_lst());
+      Gecode::DFA::Transitions t(d);
+      while (t()) {
+        cmb_hash(seed, t.i_state());
+        cmb_hash(seed, t.symbol());
+        cmb_hash(seed, t.o_state());
+        ++t;
+      }
       return seed;
     }
   };
@@ -742,6 +768,12 @@ namespace Gecode { namespace FlatZinc {
   public:
     typedef std::unordered_set<TupleSet> TupleSetSet;
     TupleSetSet tupleSetSet;
+
+    typedef std::unordered_set<SharedArray<int> > IntSharedArraySet;
+    IntSharedArraySet intSharedArraySet;
+
+    typedef std::unordered_set<DFA> DFASet;
+    DFASet dfaSet;
     
     FlatZincSpaceInitData(void) {}
   };
@@ -2106,6 +2138,22 @@ namespace Gecode { namespace FlatZinc {
     
     return ts;
   }
+  IntSharedArray
+  FlatZincSpace::arg2intsharedarray(AST::Node* arg, int offset) {
+    IntArgs ia(arg2intargs(arg,offset));
+    SharedArray<int> sia(ia);
+    if (_initData) {
+      FlatZincSpaceInitData::IntSharedArraySet::iterator it = _initData->intSharedArraySet.find(sia);
+      if (it != _initData->intSharedArraySet.end()) {
+        std::cerr << "return shared\n";
+        return *it;
+      }
+      _initData->intSharedArraySet.insert(sia);
+    }
+    std::cerr << "return new\n";
+    
+    return sia;
+  }
   IntArgs
   FlatZincSpace::arg2boolargs(AST::Node* arg, int offset) {
     AST::Array* a = arg->getArray();
@@ -2115,6 +2163,20 @@ namespace Gecode { namespace FlatZinc {
     for (int i=a->a.size(); i--;)
       ia[i+offset] = a->a[i]->getBool();
     return ia;
+  }
+  IntSharedArray
+  FlatZincSpace::arg2boolsharedarray(AST::Node* arg, int offset) {
+    IntArgs ia(arg2boolargs(arg,offset));
+    SharedArray<int> sia(ia);
+    if (_initData) {
+      FlatZincSpaceInitData::IntSharedArraySet::iterator it = _initData->intSharedArraySet.find(sia);
+      if (it != _initData->intSharedArraySet.end()) {
+        return *it;
+      }
+      _initData->intSharedArraySet.insert(sia);
+    }
+    
+    return sia;
   }
   IntSet
   FlatZincSpace::arg2intset(AST::Node* n) {
@@ -2321,6 +2383,17 @@ namespace Gecode { namespace FlatZinc {
     return IPL_DEF;
   }
 
+  DFA
+  FlatZincSpace::getSharedDFA(DFA& a) {
+    if (_initData) {
+      FlatZincSpaceInitData::DFASet::iterator it = _initData->dfaSet.find(a);
+      if (it != _initData->dfaSet.end()) {
+        return *it;
+      }
+      _initData->dfaSet.insert(a);
+    }
+    return a;
+  }
 
   void
   Printer::init(AST::Array* output) {

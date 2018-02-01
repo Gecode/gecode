@@ -703,8 +703,8 @@ namespace Gecode { namespace FlatZinc {
       IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntArgs ia = s.arg2intargs(ce[1], 1);
-        element(s, ia, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+        IntSharedArray sia = s.arg2intsharedarray(ce[1], 1);
+        element(s, sia, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       } else {
         IntVarArgs iv = s.arg2intvarargs(ce[1], 1);
         element(s, iv, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
@@ -723,8 +723,8 @@ namespace Gecode { namespace FlatZinc {
       IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntArgs ia = s.arg2boolargs(ce[1], 1);
-        element(s, ia, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
+        IntSharedArray sia = s.arg2boolsharedarray(ce[1], 1);
+        element(s, sia, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
       } else {
         BoolVarArgs iv = s.arg2boolvarargs(ce[1], 1);
         element(s, iv, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
@@ -1082,7 +1082,7 @@ namespace Gecode { namespace FlatZinc {
       DFA dfa(q0,t,f);
       free(f);
       unshare(s, iv);
-      extensional(s, iv, dfa, s.ann2ipl(ann));
+      extensional(s, iv, s.getSharedDFA(dfa), s.ann2ipl(ann));
     }
 
     void

@@ -2099,6 +2099,9 @@ namespace Gecode {
     DFA(int s, Transition t[], int f[], bool minimize=true);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
+    /// Test if DFA is equal to to \a d
+    GECODE_INT_EXPORT
+    bool operator ==(const DFA& d) const;
     /// Return the number of states
     int n_states(void) const;
     /// Return the number of transitions
