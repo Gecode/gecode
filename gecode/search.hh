@@ -822,13 +822,13 @@ namespace Gecode {
    */
   template<class T>
   T* lds(T* s, const Search::Options& o=Search::Options::def);
-  
+
   /// Return a limited discrepancy search engine builder
   template<class T>
   SEB lds(const Search::Options& o=Search::Options::def);
 
 }
- 
+
 #include <gecode/search/lds.hpp>
 
 namespace Gecode {

@@ -289,9 +289,9 @@ namespace Gecode { namespace Int { namespace Rel {
   template<class View>
   void
   LexNq<View>::reschedule(Space& home) {
-    x0.reschedule(home,*this,PC_INT_VAL); 
+    x0.reschedule(home,*this,PC_INT_VAL);
     y0.reschedule(home,*this,PC_INT_VAL);
-    x1.reschedule(home,*this,PC_INT_VAL); 
+    x1.reschedule(home,*this,PC_INT_VAL);
     y1.reschedule(home,*this,PC_INT_VAL);
   }
 

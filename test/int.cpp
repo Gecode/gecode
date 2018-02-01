@@ -398,7 +398,7 @@ namespace Test { namespace Int {
       if (opt.log)
         olog << ind(3) << "Failure on disabled copy" << std::endl;
       return false;
-    }      
+    }
     for (int i=x.size(); i--; ) {
       if (x[i].size() != c.x[i].size()) {
         if (opt.log)

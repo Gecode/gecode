@@ -45,13 +45,13 @@ namespace Gecode { namespace Search {
 
   /// Relax variables in \a x from solution \a sx with probability \a p
   template<class VarArgs, class Post>
-  forceinline void 
+  forceinline void
   relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r,
         double p, Post& post);
 
 
   template<class VarArgs, class Post>
-  forceinline void 
+  forceinline void
   relax(Home home, const VarArgs& x, const VarArgs& sx, Rnd r,
         double p, Post& post) {
     if (home.failed())
@@ -61,7 +61,7 @@ namespace Gecode { namespace Search {
     Support::BitSet<Region> ax(reg, static_cast<int>(x.size()));
     // Select randomly with probability p to relax value
     for (int i=x.size(); i--; )
-      if (r(UINT_MAX) >= 
+      if (r(UINT_MAX) >=
           static_cast<unsigned int>(p * static_cast<double>(UINT_MAX)))
         ax.set(static_cast<unsigned int>(i));
     if (ax.all())

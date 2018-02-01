@@ -43,8 +43,8 @@
 #include <gecode/search/support.hh>
 
 namespace Gecode { namespace Search {
-    
-  Engine* 
+
+  Engine*
   lds(Space* s, const Options& o) {
     return new Sequential::LDS(s,o);
   }

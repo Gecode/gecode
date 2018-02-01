@@ -267,7 +267,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   ExecStatus
-  UnionN<View0,View1>::propagate(Space& home, const ModEventDelta& med) {    
+  UnionN<View0,View1>::propagate(Space& home, const ModEventDelta& med) {
     ModEvent me0 = View0::me(med);
     ModEvent me1 = View1::me(med);
     bool ubevent = Rel::testSetEventUB(me0, me1);
@@ -304,7 +304,7 @@ namespace Gecode { namespace Set { namespace RelOp {
           modified = true;
         }
       }
-      
+
     } while (modified);
     // When we run out of variables, make a final check and disolve:
     if (x.size()==0) {

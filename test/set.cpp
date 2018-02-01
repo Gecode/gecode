@@ -372,7 +372,7 @@ namespace Test { namespace Set {
   bool
   SetTestSpace::same(SetTestSpace& c) {
     if (opt.log)
-      olog << ind(3) << "Testing whether enabled space is the same" 
+      olog << ind(3) << "Testing whether enabled space is the same"
            << std::endl;
     bool f = failed();
     bool cf = c.failed();
@@ -395,7 +395,7 @@ namespace Test { namespace Set {
     if (reified && (r.var().size() != c.r.var().size()))
       return false;
     if (opt.log)
-      olog << ind(3) << "Finished testing whether enabled space is the same" 
+      olog << ind(3) << "Finished testing whether enabled space is the same"
            << std::endl;
     return true;
   }

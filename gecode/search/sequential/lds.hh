@@ -99,15 +99,15 @@ namespace Gecode { namespace Search { namespace Sequential {
   class LDS : public Engine {
   protected:
     /// Search options
-    Options opt; 
+    Options opt;
     /// The probe engine
-    Probe e;           
+    Probe e;
     /// Root node for problem
-    Space* root;        
+    Space* root;
     /// Current discrepancy
-    unsigned int d;       
+    unsigned int d;
     /// Solution found for current discrepancy
-    bool no_solution; 
+    bool no_solution;
   public:
     /// Initialize for space \a s with options \a o
     LDS(Space* s, const Options& o);

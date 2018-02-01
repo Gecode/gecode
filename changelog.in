@@ -68,7 +68,7 @@
 
 [RELEASE]
 Version: 5.0.0
-Date: 2016-10-31
+Date: 2016-10-25
 [DESCRIPTION]
 
 This release adds a number of new features and fixes many bugs
@@ -329,7 +329,7 @@ Rank:   major
 [DESCRIPTION]
 Added support for tracing propagation, please see MPG for details.
 
-ENTRY]
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   major

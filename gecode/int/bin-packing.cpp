@@ -151,7 +151,7 @@ namespace Gecode {
             cg.edge(i,j);
         }
       }
-      
+
       if (cg.post() == ES_FAILED)
         home.fail();
 

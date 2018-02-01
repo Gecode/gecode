@@ -61,7 +61,7 @@ namespace Gecode { namespace Set {
 
 namespace Gecode {
 
-  void 
+  void
   relax(Home home, const SetVarArgs& x, const SetVarArgs& sx,
         Rnd r, double p) {
     if (x.size() != sx.size())

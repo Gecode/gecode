@@ -202,7 +202,7 @@ namespace Gecode { namespace Driver {
       (void) Gist::dfs(root, opt);
     }
   };
-  
+
   /// Specialization for BAB
   template<typename S>
   class GistEngine<BAB<S> > {

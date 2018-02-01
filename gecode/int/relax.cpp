@@ -65,7 +65,7 @@ namespace Gecode { namespace Int {
 
 namespace Gecode {
 
-  void 
+  void
   relax(Home home, const IntVarArgs& x, const IntVarArgs& sx,
         Rnd r, double p) {
     if (x.size() != sx.size())
@@ -76,7 +76,7 @@ namespace Gecode {
     Search::relax<IntVarArgs,Int::Relax>(home,x,sx,r,p,ir);
   }
 
-  void 
+  void
   relax(Home home, const BoolVarArgs& x, const BoolVarArgs& sx,
         Rnd r, double p) {
     if (x.size() != sx.size())
