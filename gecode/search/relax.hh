@@ -58,7 +58,7 @@ namespace Gecode { namespace Search {
       return;
     Region reg(home);
     // Which variables to assign
-    Support::BitSet<Region> ax(reg, static_cast<int>(x.size()));
+    Support::BitSet<Region> ax(reg, static_cast<unsigned int>(x.size()));
     // Select randomly with probability p to relax value
     for (int i=x.size(); i--; )
       if (r(UINT_MAX) >=

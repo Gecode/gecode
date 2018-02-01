@@ -56,14 +56,16 @@ namespace Gecode { namespace Int { namespace Exec {
   class When : public UnaryPropagator<BoolView,PC_BOOL_VAL> {
   protected:
     using UnaryPropagator<BoolView,PC_BOOL_VAL>::x0;
-    /// Then function pointer
-    void (*t)(Space&);
+    /// Then function
+    SharedData<std::function<void(Space& home)>> t;
     /// Else function pointer
-    void (*e)(Space&);
+    SharedData<std::function<void(Space& home)>> e;
     /// Constructor for cloning \a p
     When(Space& home, bool share, When& p);
     /// Constructor for creation
-    When(Home home, BoolView x, void (*t0)(Space&), void (*e0)(Space&));
+    When(Home home, BoolView x,
+         std::function<void(Space& home)> t,
+         std::function<void(Space& home)> e);
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
@@ -72,9 +74,12 @@ namespace Gecode { namespace Int { namespace Exec {
     GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
-    GECODE_INT_EXPORT
     static ExecStatus post(Home home, BoolView x,
-                           void (*t)(Space&), void (*e)(Space&));
+                           std::function<void(Space& home)> t,
+                           std::function<void(Space& home)> e);
+    /// Dispose propagator
+    GECODE_INT_EXPORT
+    virtual size_t dispose(Space& home);
   };
 
 }}}

@@ -39,9 +39,9 @@
 
 namespace Gecode {
 
-  const Activity Activity::def;
+  const Action Action::def;
 
-  Activity::Activity(const Activity& a)
+  Action::Action(const Action& a)
     : storage(a.storage) {
     if (storage != NULL) {
       acquire();
@@ -50,8 +50,8 @@ namespace Gecode {
     }
   }
 
-  Activity&
-  Activity::operator =(const Activity& a) {
+  Action&
+  Action::operator =(const Action& a) {
     if (storage != a.storage) {
       if (storage != NULL) {
         bool done;
@@ -71,7 +71,7 @@ namespace Gecode {
     return *this;
   }
 
-  Activity::~Activity(void) {
+  Action::~Action(void) {
     if (storage == NULL)
       return;
     bool done;
@@ -83,36 +83,28 @@ namespace Gecode {
   }
 
   void
-  Activity::update(Space&, bool, Activity& a) {
-    const_cast<Activity&>(a).acquire();
+  Action::update(Space&, bool, Action& a) {
+    const_cast<Action&>(a).acquire();
     storage = a.storage;
     storage->use_cnt++;
-    const_cast<Activity&>(a).release();
+    const_cast<Action&>(a).release();
   }
 
   void
-  Activity::set(Space&, double a) {
-    acquire();
-    for (int i=storage->n; i--; )
-      storage->a[i] = a;
-    release();
-  }
-
-  void
-  Activity::decay(Space&, double d) {
+  Action::decay(Space&, double d) {
     if ((d < 0.0) || (d > 1.0))
-      throw IllegalDecay("Activity");
+      throw IllegalDecay("Action");
     acquire();
-    storage->d = d;
+    storage->invd = 1.0 / d;
     release();
   }
 
   double
-  Activity::decay(const Space&) const {
+  Action::decay(const Space&) const {
     double d;
-    const_cast<Activity*>(this)->acquire();
-    d = storage->d;
-    const_cast<Activity*>(this)->release();
+    const_cast<Action*>(this)->acquire();
+    d = 1.0 / storage->invd;
+    const_cast<Action*>(this)->release();
     return d;
   }
 

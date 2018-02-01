@@ -70,7 +70,7 @@ namespace Gecode { namespace Float { namespace Branch {
   class MeritMin : public MeritBase<FloatView,double> {
   public:
     /// Constructor for initialization
-    MeritMin(Space& home, const VarBranch& vb);
+    MeritMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritMin(Space& home, bool shared, MeritMin& m);
     /// Return minimum as merit for view \a x at position \a i
@@ -86,7 +86,7 @@ namespace Gecode { namespace Float { namespace Branch {
   class MeritMax : public MeritBase<FloatView,double> {
   public:
     /// Constructor for initialization
-    MeritMax(Space& home, const VarBranch& vb);
+    MeritMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritMax(Space& home, bool shared, MeritMax& m);
     /// Return maximum as merit for view \a x at position \a i
@@ -102,7 +102,7 @@ namespace Gecode { namespace Float { namespace Branch {
   class MeritSize : public MeritBase<FloatView,double> {
   public:
     /// Constructor for initialization
-    MeritSize(Space& home, const VarBranch& vb);
+    MeritSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritSize(Space& home, bool shared, MeritSize& m);
     /// Return size as merit for view \a x at position \a i
@@ -110,7 +110,7 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over degree
+   * \brief Merit class for degree over size
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatViewSel
@@ -118,15 +118,15 @@ namespace Gecode { namespace Float { namespace Branch {
   class MeritDegreeSize : public MeritBase<FloatView,double> {
   public:
     /// Constructor for initialization
-    MeritDegreeSize(Space& home, const VarBranch& vb);
+    MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritDegreeSize(Space& home, bool shared, MeritDegreeSize& m);
-    /// Return size over degree as merit for view \a x at position \a i
+    /// Return degree over size as merit for view \a x at position \a i
     double operator ()(const Space& home, FloatView x, int i);
   };
 
   /**
-   * \brief Merit class for size over afc
+   * \brief Merit class for AFC over size
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatViewSel
@@ -137,10 +137,10 @@ namespace Gecode { namespace Float { namespace Branch {
     AFC afc;
   public:
     /// Constructor for initialization
-    MeritAFCSize(Space& home, const VarBranch& vb);
+    MeritAFCSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritAFCSize(Space& home, bool shared, MeritAFCSize& m);
-    /// Return size over AFC as merit for view \a x at position \a i
+    /// Return AFC over size as merit for view \a x at position \a i
     double operator ()(const Space& home, FloatView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
@@ -149,21 +149,44 @@ namespace Gecode { namespace Float { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over activity
+   * \brief Merit class for action over size
    *
    * Requires \code #include <gecode/float/branch.hh> \endcode
    * \ingroup FuncFloatViewSel
    */
-  class MeritActivitySize : public MeritBase<FloatView,double> {
+  class MeritActionSize : public MeritBase<FloatView,double> {
   protected:
-    /// Activity information
-    Activity activity;
+    /// Action information
+    Action action;
   public:
     /// Constructor for initialization
-    MeritActivitySize(Space& home, const VarBranch& vb);
+    MeritActionSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritActivitySize(Space& home, bool shared, MeritActivitySize& m);
-    /// Return size over activity as merit for view \a x at position \a i
+    MeritActionSize(Space& home, bool shared, MeritActionSize& m);
+    /// Return action over size as merit for view \a x at position \a i
+    double operator ()(const Space& home, FloatView x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
+  /**
+   * \brief Merit class for CHB Q-score over size
+   *
+   * Requires \code #include <gecode/float/branch.hh> \endcode
+   * \ingroup FuncFloatViewSel
+   */
+  class MeritCHBSize : public MeritBase<FloatView,double> {
+  protected:
+    /// CHB information
+    CHB chb;
+  public:
+    /// Constructor for initialization
+    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+    /// Constructor for cloning
+    MeritCHBSize(Space& home, bool shared, MeritCHBSize& m);
+    /// Return CHB Q-score over size as merit for view \a x at position \a i
     double operator ()(const Space& home, FloatView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
@@ -206,7 +229,7 @@ namespace Gecode { namespace Float { namespace Branch {
   class ValSelLq : public ValSel<FloatView,FloatNumBranch> {
   public:
     /// Constructor for initialization
-    ValSelLq(Space& home, const ValBranch& vb);
+    ValSelLq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelLq(Space& home, bool shared, ValSelLq& vs);
     /// Return value of view \a x at position \a i
@@ -222,7 +245,7 @@ namespace Gecode { namespace Float { namespace Branch {
   class ValSelGq : public ValSel<FloatView,FloatNumBranch> {
   public:
     /// Constructor for initialization
-    ValSelGq(Space& home, const ValBranch& vb);
+    ValSelGq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelGq(Space& home, bool shared, ValSelGq& vs);
     /// Return value of view \a x at position \a i
@@ -241,7 +264,7 @@ namespace Gecode { namespace Float { namespace Branch {
     Rnd r;
   public:
     /// Constructor for initialization
-    ValSelRnd(Space& home, const ValBranch& vb);
+    ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
     /// Return value of view \a x at position \a i
@@ -279,7 +302,7 @@ namespace Gecode { namespace Float { namespace Branch {
   class ValCommitLqGq  : public ValCommit<FloatView,FloatVal> {
   public:
     /// Constructor for initialization
-    ValCommitLqGq(Space& home, const ValBranch& vb);
+    ValCommitLqGq(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a

@@ -76,40 +76,13 @@ namespace Gecode { namespace FlatZinc {
 
   namespace {
 
-    inline IntRelType
-    swap(IntRelType irt) {
-      switch (irt) {
-      case IRT_LQ: return IRT_GQ;
-      case IRT_LE: return IRT_GR;
-      case IRT_GQ: return IRT_LQ;
-      case IRT_GR: return IRT_LE;
-      default:     return irt;
-      }
-    }
-
-    inline IntRelType
-    neg(IntRelType irt) {
-      switch (irt) {
-      case IRT_EQ: return IRT_NQ;
-      case IRT_NQ: return IRT_EQ;
-      case IRT_LQ: return IRT_GR;
-      case IRT_LE: return IRT_GQ;
-      case IRT_GQ: return IRT_LE;
-      case IRT_GR:
-      default:
-        assert(irt == IRT_GR);
-      }
-      return IRT_LQ;
-    }
-
-
-
     void p_distinct(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs va = s.arg2intvarargs(ce[0]);
       IntPropLevel ipl = s.ann2ipl(ann);
       unshare(s, va);
       distinct(s, va, ipl == IPL_DEF ? IPL_BND : ipl);
     }
+
     void p_distinctOffset(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs va = s.arg2intvarargs(ce[1]);
       unshare(s, va);
@@ -1547,8 +1520,8 @@ namespace Gecode { namespace FlatZinc {
         registry().add("at_least_int", &p_at_least);
         registry().add("at_most_int", &p_at_most);
         registry().add("gecode_bin_packing_load", &p_bin_packing_load);
-        registry().add("global_cardinality", &p_global_cardinality);
-        registry().add("global_cardinality_closed",
+        registry().add("gecode_global_cardinality", &p_global_cardinality);
+        registry().add("gecode_global_cardinality_closed",
           &p_global_cardinality_closed);
         registry().add("global_cardinality_low_up",
           &p_global_cardinality_low_up);
@@ -1559,15 +1532,15 @@ namespace Gecode { namespace FlatZinc {
         registry().add("gecode_minimum_arg_int", &p_minimum_arg);
         registry().add("gecode_maximum_arg_int", &p_maximum_arg);
         registry().add("array_int_maximum", &p_maximum);
-        registry().add("regular", &p_regular);
+        registry().add("gecode_regular", &p_regular);
         registry().add("sort", &p_sort);
         registry().add("inverse_offsets", &p_inverse_offsets);
         registry().add("increasing_int", &p_increasing_int);
         registry().add("increasing_bool", &p_increasing_bool);
         registry().add("decreasing_int", &p_decreasing_int);
         registry().add("decreasing_bool", &p_decreasing_bool);
-        registry().add("table_int", &p_table_int);
-        registry().add("table_bool", &p_table_bool);
+        registry().add("gecode_table_int", &p_table_int);
+        registry().add("gecode_table_bool", &p_table_bool);
         registry().add("cumulatives", &p_cumulatives);
         registry().add("gecode_among_seq_int", &p_among_seq_int);
         registry().add("gecode_among_seq_bool", &p_among_seq_bool);

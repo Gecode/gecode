@@ -43,11 +43,11 @@ namespace Gecode {
 
   forceinline
   SetValBranch::SetValBranch(Select s0, Rnd r)
-    : ValBranch(r), s(s0) {}
+    : ValBranch<SetVar>(r), s(s0) {}
 
   forceinline
-  SetValBranch::SetValBranch(VoidFunction v, VoidFunction c)
-    : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
+  SetValBranch::SetValBranch(SetBranchVal v, SetBranchCommit c)
+    : ValBranch<SetVar>(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline SetValBranch::Select
   SetValBranch::select(void) const {
@@ -97,8 +97,7 @@ namespace Gecode {
 
   inline SetValBranch
   SET_VAL(SetBranchVal v, SetBranchCommit c) {
-    return SetValBranch(function_cast<VoidFunction>(v),
-                        function_cast<VoidFunction>(c));
+    return SetValBranch(v,c);
   }
 
 }

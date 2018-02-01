@@ -43,11 +43,11 @@ namespace Gecode {
 
   forceinline
   IntAssign::IntAssign(Rnd r)
-    : ValBranch(r), s(SEL_RND) {}
+    : ValBranch<IntVar>(r), s(SEL_RND) {}
 
   forceinline
-  IntAssign::IntAssign(VoidFunction v, VoidFunction c)
-    : ValBranch(v,c), s(SEL_VAL_COMMIT) {}
+  IntAssign::IntAssign(IntBranchVal v, IntBranchCommit c)
+    : ValBranch<IntVar>(v,c), s(SEL_VAL_COMMIT) {}
 
   forceinline IntAssign::Select
   IntAssign::select(void) const {
@@ -77,14 +77,47 @@ namespace Gecode {
 
   inline IntAssign
   INT_ASSIGN(IntBranchVal v, IntBranchCommit c) {
-    return IntAssign(function_cast<VoidFunction>(v),
-                     function_cast<VoidFunction>(c));
+    return IntAssign(v,c);
   }
 
-  inline IntAssign
-  INT_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
-    return IntAssign(function_cast<VoidFunction>(v),
-                     function_cast<VoidFunction>(c));
+
+
+  forceinline
+  BoolAssign::BoolAssign(Select s0)
+    : s(s0) {}
+
+  forceinline
+  BoolAssign::BoolAssign(Rnd r)
+    : ValBranch<BoolVar>(r), s(SEL_RND) {}
+
+  forceinline
+  BoolAssign::BoolAssign(BoolBranchVal v, BoolBranchCommit c)
+    : ValBranch<BoolVar>(v,c), s(SEL_VAL_COMMIT) {}
+
+  forceinline BoolAssign::Select
+  BoolAssign::select(void) const {
+    return s;
+  }
+
+
+  inline BoolAssign
+  BOOL_ASSIGN_MIN(void) {
+    return BoolAssign(BoolAssign::SEL_MIN);
+  }
+
+  inline BoolAssign
+  BOOL_ASSIGN_MAX(void) {
+    return BoolAssign(BoolAssign::SEL_MAX);
+  }
+
+  inline BoolAssign
+  BOOL_ASSIGN_RND(Rnd r) {
+    return BoolAssign(r);
+  }
+
+  inline BoolAssign
+  BOOL_ASSIGN(BoolBranchVal v, BoolBranchCommit c) {
+    return BoolAssign(v,c);
   }
 
 }

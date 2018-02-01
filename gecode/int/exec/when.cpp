@@ -39,20 +39,6 @@
 
 namespace Gecode { namespace Int { namespace Exec {
 
-  ExecStatus
-  When::post(Home home, BoolView x, void (*t)(Space&), void (*e)(Space&)) {
-    if (x.zero() && (e != NULL)) {
-      e(home);
-      return home.failed() ? ES_FAILED : ES_OK;
-    } else if (x.zero() && (t != NULL)) {
-      t(home);
-      return home.failed() ? ES_FAILED : ES_OK;
-    } else {
-      (void) new (home) When(home,x,t,e);
-      return ES_OK;
-    }
-  }
-
   Actor*
   When::copy(Space& home, bool share) {
     return new (home) When(home,share,*this);
@@ -60,16 +46,27 @@ namespace Gecode { namespace Int { namespace Exec {
 
   ExecStatus
   When::propagate(Space& home, const ModEventDelta&) {
-    if (x0.zero() && (e != NULL)) {
-      e(home);
-    } else if (t != NULL) {
+    if (x0.zero()) {
+      GECODE_VALID_FUNCTION(e());
+      e()(home);
+    } else {
       assert(x0.one());
-      t(home);
+      GECODE_VALID_FUNCTION(t());
+      t()(home);
     }
-    if (home.failed()) return ES_FAILED;
+    if (home.failed())
+      return ES_FAILED;
     return home.ES_SUBSUMED(*this);
   }
 
+  size_t
+  When::dispose(Space& home) {
+    home.ignore(*this,AP_DISPOSE);
+    t.~SharedData<std::function<void(Space& home)>>();
+    e.~SharedData<std::function<void(Space& home)>>();
+    (void) UnaryPropagator<BoolView,PC_BOOL_VAL>::dispose(home);
+    return sizeof(*this);
+  }
 
 }}}
 

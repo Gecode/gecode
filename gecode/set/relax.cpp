@@ -50,9 +50,10 @@ namespace Gecode { namespace Set {
   forceinline ExecStatus
   Relax::operator ()(Home home, SetVar x, SetVar sx) {
     SetView xv(x);
-    SetVarGlbRanges l(xv);
+    SetView sxv(sx);
+    SetVarGlbRanges l(sxv);
     GECODE_ME_CHECK(xv.includeI(home, l));
-    SetVarLubRanges u(xv);
+    SetVarLubRanges u(sxv);
     GECODE_ME_CHECK(xv.intersectI(home, u));
     return ES_OK;
   }

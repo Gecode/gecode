@@ -49,10 +49,15 @@ namespace Test { namespace Set {
      //@{
      /// Simple test for wait (set variables)
      class Wait : public SetTest {
+     protected:
+       /// Whether to use std::function
+       bool sf;
      public:
        /// Create and register test
-       Wait(int n)
-         : SetTest("Wait::"+str(n),n,Gecode::IntSet(0,n),false) {}
+       Wait(int n, bool sf0)
+         : SetTest("Wait::"+str(n)+"::"+
+                   (sf0 ? "std::function" : "funptr"),n,
+                   Gecode::IntSet(0,n),false), sf(sf0) {}
        /// Check whether \a x is solution
        virtual bool solution(const SetAssignment& x) const {
          (void) x;
@@ -61,10 +66,20 @@ namespace Test { namespace Set {
        /// Post wait on \a x
        virtual void post(Gecode::Space& home, Gecode::SetVarArray& x,
                          Gecode::IntVarArray&) {
-         if (x.size() > 1)
-           Gecode::wait(home, x, &c);
-         else
-           Gecode::wait(home, x[0], &c);
+         using namespace Gecode;
+         auto f = static_cast<std::function<void(Space&)>>
+           ([](Space& home) { c(home); });
+         if (x.size() > 1) {
+           if (sf)
+             Gecode::wait(home, x, f);
+           else
+             Gecode::wait(home, x, &c);
+         } else {
+           if (sf)
+             Gecode::wait(home, x[0], f);
+           else
+             Gecode::wait(home, x[0], &c);
+         }
        }
        /// Continuation to be executed
        static void c(Gecode::Space& _home) {
@@ -75,7 +90,8 @@ namespace Test { namespace Set {
        }
      };
 
-     Wait w1(1), w2(2);
+     Wait w1t(1,true), w2t(2,true);
+     Wait w1f(1,false), w2f(2,false);
 
      //@}
 

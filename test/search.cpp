@@ -784,7 +784,7 @@ namespace Test {
           }
         // Portfolio-based search using SEBs
         for (unsigned int mt=1; mt<=3; mt += 2)
-          for (unsigned int st=1; st<=2; st++) {
+          for (unsigned int st=1; st<=8; st++) {
             (void) new SEBPBS<HasSolutions>("BAB",true,mt,st);
             (void) new SEBPBS<FailImmediate>("BAB",true,mt,st);
             (void) new SEBPBS<SolveImmediate>("BAB",true,mt,st);

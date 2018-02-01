@@ -114,6 +114,13 @@ namespace Gecode {
     IllegalDecay(const char* l);
   };
 
+  /// %Exception: invalid function
+  class GECODE_KERNEL_EXPORT InvalidFunction : public Exception {
+  public:
+    /// Initialize with location \a l
+    InvalidFunction(const char* l);
+  };
+
   /// %Exception: uninitialized AFC
   class GECODE_KERNEL_EXPORT UninitializedAFC : public Exception {
   public:
@@ -121,11 +128,18 @@ namespace Gecode {
     UninitializedAFC(const char* l);
   };
 
-  /// %Exception: uninitialized activity
-  class GECODE_KERNEL_EXPORT UninitializedActivity : public Exception {
+  /// %Exception: uninitialized action
+  class GECODE_KERNEL_EXPORT UninitializedAction : public Exception {
   public:
     /// Initialize with location \a l
-    UninitializedActivity(const char* l);
+    UninitializedAction(const char* l);
+  };
+
+  /// %Exception: uninitialized action
+  class GECODE_KERNEL_EXPORT UninitializedCHB : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedCHB(const char* l);
   };
 
   /// %Exception: uninitialized random number generator
@@ -135,18 +149,11 @@ namespace Gecode {
     UninitializedRnd(const char* l);
   };
 
-  /// %Exception: AFC has wrong arity
-  class GECODE_KERNEL_EXPORT AFCWrongArity : public Exception {
+  /// %Exception: action has wrong arity
+  class GECODE_KERNEL_EXPORT MoreThanOneTracer : public Exception {
   public:
     /// Initialize with location \a l
-    AFCWrongArity(const char* l);
-  };
-
-  /// %Exception: activity has wrong arity
-  class GECODE_KERNEL_EXPORT ActivityWrongArity : public Exception {
-  public:
-    /// Initialize with location \a l
-    ActivityWrongArity(const char* l);
+    MoreThanOneTracer(const char* l);
   };
 
   //@}

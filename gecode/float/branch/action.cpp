@@ -35,18 +35,21 @@
  *
  */
 
+#include <gecode/float.hh>
+
 namespace Gecode {
 
-  forceinline
-  FloatActivity::FloatActivity(void) {}
+  FloatAction::FloatAction(Home home, const FloatVarArgs& x, double d,
+                           FloatBranchMerit bm) {
+    ViewArray<Float::FloatView> y(home,x);
+    Action::init(home,y,d,bm);
+  }
 
-  forceinline
-  FloatActivity::FloatActivity(const FloatActivity& a)
-    : Activity(a) {}
-
-  forceinline FloatActivity&
-  FloatActivity::operator =(const FloatActivity& a) {
-    return static_cast<FloatActivity&>(Activity::operator =(a));
+  void
+  FloatAction::init(Home home, const FloatVarArgs& x, double d,
+                    FloatBranchMerit bm) {
+    ViewArray<Float::FloatView> y(home,x);
+    Action::init(home,y,d,bm);
   }
 
 }

@@ -133,7 +133,7 @@ public:
       Symmetries s;
       s << rows_interchange(p);
       s << columns_interchange(p);
-      branch(*this, _p, INT_VAR_NONE(), INT_VAL_MIN(), s);
+      branch(*this, _p, BOOL_VAR_NONE(), BOOL_VAL_MIN(), s);
     } else {
       if (opt.symmetry() == SYMMETRY_LEX) {
         for (int i=1; i<opt.v; i++)
@@ -141,7 +141,7 @@ public:
         for (int j=1; j<opt.b; j++)
           rel(*this, p.col(j-1), IRT_GQ, p.col(j));
       }
-      branch(*this, _p, INT_VAR_NONE(), INT_VAL_MIN());
+      branch(*this, _p, BOOL_VAR_NONE(), BOOL_VAL_MIN());
     }
 
   }

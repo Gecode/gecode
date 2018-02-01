@@ -218,12 +218,16 @@ namespace Gecode {
   class LocalObject;
   class Advisor;
   class AFC;
+  class Choice;
   class Brancher;
   class Group;
   class PropagatorGroup;
   class BrancherGroup;
   class PostInfo;
-  class ExecInfo;
+  class ViewTraceInfo;
+  class PropagateTraceInfo;
+  class CommitTraceInfo;
+  class TraceRecorder;
 
   template<class A> class Council;
   template<class A> class Advisors;
@@ -389,6 +393,12 @@ namespace Gecode {
      * Returns false if an advisor has failed.
      */
     bool advise(Space& home, ModEvent me, Delta& d);
+  private:
+    /// Run advisors to be run on failure
+    void _fail(Space& home);
+  protected:
+    /// Run advisors to be run on failure and returns ME_GEN_FAILED
+    ModEvent fail(Space& home);
 #ifdef GECODE_HAS_VAR_DISPOSE
     /// Return reference to variables (dispose)
     static VarImp<VIC>* vars_d(Space& home);
@@ -418,25 +428,19 @@ namespace Gecode {
      */
     void subscribe(Space& home, Propagator& p, PropCond pc,
                    bool assigned, ModEvent me, bool schedule);
-    /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
-     *
-     * If the variable is assigned, \a assigned must be true.
-     *
-     */
-    void cancel(Space& home, Propagator& p, PropCond pc,
-                bool assigned);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
+    void cancel(Space& home, Propagator& p, PropCond pc);
     /** \brief Subscribe advisor \a a to variable
      *
      * The advisor \a a is only subscribed if \a assigned is false.
      *
-     */
-    void subscribe(Space& home, Advisor& a, bool assigned);
-    /** \brief Cancel subscription of advisor \a a
-     *
-     * If the variable is assigned, \a assigned must be true.
+     * If \a fail is true, the advisor \a a is also run when a variable
+     * operation triggers failure. This feature is undocumented.
      *
      */
-    void cancel(Space& home, Advisor& a, bool assigned);
+    void subscribe(Space& home, Advisor& a, bool assigned, bool fail);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space& home, Advisor& a, bool fail);
 
     /**
      * \brief Return degree (number of subscribed propagators and advisors)
@@ -451,7 +455,7 @@ namespace Gecode {
      * Note that the accumulated failure count of a variable implementation
      * is not available during cloning.
      */
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
 
     /// \name Cloning variables
@@ -629,7 +633,17 @@ namespace Gecode {
      * is only monotonic on assignments.
      *
      */
-    AP_WEAKLY  = (1 << 1)
+    AP_WEAKLY = (1 << 1),
+    /**
+     * A propagator is in fact implementing a view trace recorder.
+     *
+     */
+    AP_VIEW_TRACE = (1 << 2),
+    /**
+     * A propagator is in fact implementing a trace recorder.
+     *
+     */
+    AP_TRACE = (1 << 3)
   };
 
 
@@ -728,7 +742,9 @@ namespace Gecode {
     friend class Home;
     friend class Propagator;
     friend class Brancher;
-    friend class ExecInfo;
+    friend class ViewTraceInfo;
+    friend class PropagateTraceInfo;
+    friend class CommitTraceInfo;
   protected:
     /// Fake id for group of all actors
     static const unsigned int GROUPID_ALL = 0U;
@@ -777,7 +793,8 @@ namespace Gecode {
    */
   class PropagatorGroup : public Group {
     friend class Propagator;
-    friend class ExecInfo;
+    friend class ViewTraceInfo;
+    friend class PropagateTraceInfo;
   protected:
     /// Initialize with group id \a gid
     PropagatorGroup(unsigned int gid);
@@ -952,9 +969,9 @@ namespace Gecode {
   };
 
   /**
-   * \brief Execution information
+   * \brief View trace information
    */
-  class ExecInfo {
+  class ViewTraceInfo {
     friend class Space;
     friend class PostInfo;
   public:
@@ -1006,6 +1023,69 @@ namespace Gecode {
   };
 
   /**
+   * \brief Propagate trace information
+   */
+  class PropagateTraceInfo {
+    friend class Space;
+  public:
+    /// Propagator status
+    enum Status {
+      FIX,     ///< Propagator computed fixpoint
+      NOFIX,   ///< Propagator did not compute fixpoint
+      FAILED,  ///< Propagator failed
+      SUBSUMED ///< Propagator is subsumed
+    };
+  protected:
+    /// Propagator id
+    unsigned int i;
+    /// Propagator group
+    PropagatorGroup g;
+    /// Propagator
+    const Propagator* p;
+    /// Status
+    Status s;
+    /// Initialize
+    PropagateTraceInfo(unsigned int i, PropagatorGroup g,
+                       const Propagator* p, Status s);
+  public:
+    /// Return propagator identifier
+    unsigned int id(void) const;
+    /// Return propagator group
+    PropagatorGroup group(void) const;
+    /// Return pointer to non-subsumed propagator
+    const Propagator* propagator(void) const;
+    /// Return propagator status
+    Status status(void) const;
+  };
+
+  /**
+   * \brief Commit trace information
+   */
+  class CommitTraceInfo {
+    friend class Space;
+  protected:
+    /// Brancher
+    const Brancher& b;
+    /// Choice
+    const Choice& c;
+    /// Alternative
+    unsigned int a;
+    /// Initialize
+    CommitTraceInfo(const Brancher& b, const Choice& c, unsigned int a);
+  public:
+    /// Return brancher identifier
+    unsigned int id(void) const;
+    /// Return brancher group
+    BrancherGroup group(void) const;
+    /// Return brancher
+    const Brancher& brancher(void) const;
+    /// Return choice
+    const Choice& choice(void) const;
+    /// Return alternative
+    unsigned int alternative(void) const;
+  };
+ 
+ /**
    * \brief Base-class for propagators
    * \ingroup TaskActor
    */
@@ -1016,6 +1096,7 @@ namespace Gecode {
     friend class Advisor;
     template<class A> friend class Council;
     friend class SubscribedPropagators;
+    friend class PropagatorGroup;
   private:
     union {
       /// A set of modification events (used during propagation)
@@ -1031,6 +1112,10 @@ namespace Gecode {
     static Propagator* cast(ActorLink* al);
     /// Static cast for a non-null pointer (to give a hint to optimizer)
     static const Propagator* cast(const ActorLink* al);
+    /// Disable propagator
+    void disable(Space& home);
+    /// Enable propagator
+    void enable(Space& home);
   protected:
     /// Constructor for posting
     Propagator(Home home);
@@ -1124,11 +1209,14 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Run advisor \a a to be run on failure in failed space
+    GECODE_KERNEL_EXPORT
+    virtual void advise(Space& home, Advisor& a);
     //@}
     /// \name Information
     //@{
     /// Return the accumlated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
     /// \name Id and group support
     //@{
@@ -1140,12 +1228,6 @@ namespace Gecode {
     void group(PropagatorGroup g);
     /// Whether propagator is currently disabled
     bool disabled(void) const;
-    /// Kill propagator
-    void kill(Space& home);
-    /// Disable propagator
-    void disable(void);
-    /// Enable propagator
-    void enable(void);
     //@}
   };
 
@@ -1230,8 +1312,8 @@ namespace Gecode {
     Advisor(Space& home, Propagator& p, Council<A>& c);
     /// Copying constructor
     Advisor(Space& home, bool share, Advisor& a);
-    /// Provide access to execution information
-    const ExecInfo& operator ()(const Space& home) const;
+    /// Provide access to view trace information
+    const ViewTraceInfo& operator ()(const Space& home) const;
 
     /// \name Memory management
     //@{
@@ -1430,8 +1512,6 @@ namespace Gecode {
      * Prints an explanation of the alternative \a a of choice \a c
      * on the stream \a o.
      *
-     * The default function prints nothing.
-     *
      */
     GECODE_KERNEL_EXPORT
     virtual void print(const Space& home, const Choice& c, unsigned int a,
@@ -1445,8 +1525,6 @@ namespace Gecode {
     BrancherGroup group(void) const;
     /// Add brancher to group \a g
     void group(BrancherGroup g);
-    /// Kill brancher
-    void kill(Space& home);
     //@}
   };
 
@@ -1621,8 +1699,6 @@ namespace Gecode {
   public:
     /// Number of propagator executions
     unsigned long int propagate;
-    /// Whether a weakly monotonic propagator might have been executed
-    bool wmp;
     /// Initialize
     StatusStatistics(void);
     /// Reset information
@@ -1691,7 +1767,7 @@ namespace Gecode {
     SharedMemory* sm;
     /// Performs memory management for space
     MemoryManager mm;
-    /// Global AFC information
+    /// Global propagator information
     GPI gpi;
     /// Doubly linked list of all propagators
     ActorLink pl;
@@ -1730,6 +1806,15 @@ namespace Gecode {
     /// Reserved brancher id (never created)
     static const unsigned reserved_bid = 0U;
 
+    /// Number of bits for status control
+    static const unsigned int sc_bits = 2;
+    /// No special features activated
+    static const unsigned int sc_fast = 0;
+    /// Disabled propagators are supported
+    static const unsigned int sc_disabled = 1;
+    /// Tracing is supported
+    static const unsigned int sc_trace = 2;
+
     union {
       /// Data only available during propagation or branching
       struct {
@@ -1748,12 +1833,17 @@ namespace Gecode {
         ActorLink* active;
         /// Scheduled propagators according to cost
         ActorLink queue[PropCost::AC_MAX+1];
-        /// Id of next brancher to be created
-        unsigned int bid;
+        /**
+         * \brief Id of next brancher to be created plus status control
+         *
+         * The last two bits are reserved for status control.
+         *
+         */
+        unsigned int bid_sc;
         /// Number of subscriptions
         unsigned int n_sub;
-        /// Execution information
-        ExecInfo ei;
+        /// View trace information
+        ViewTraceInfo vti;
       } p;
       /// Data available only during copying
       struct {
@@ -1787,33 +1877,15 @@ namespace Gecode {
     void update(ActorLink** sub);
     //@}
 
+    /// Find trace recorder if exists
+    TraceRecorder* findtr(void);
+
     /// First actor for forced disposal
     Actor** d_fst;
     /// Current actor for forced disposal
     Actor** d_cur;
     /// Last actor for forced disposal
     Actor** d_lst;
-
-    /**
-     * \brief Number of weakly monotonic propagators and AFC flag
-     *
-     * The least significant bit encodes whether AFC information
-     * must be collected, the remaining bits encode counting for
-     * weakly monotonic propagators as follows. If zero, none
-     * exists. If one, then none exists right now but there has
-     * been one since the last fixpoint computed. Otherwise, it
-     * gives the number of weakly monotoning propagators minus
-     * one.
-     */
-    unsigned int _wmp_afc;
-    /// %Set that AFC information must be recorded
-    void afc_enable(void);
-    /// Whether AFC information must be recorded
-    bool afc_enabled(void) const;
-    /// %Set number of wmp propagators to \a n
-    void wmp(unsigned int n);
-    /// Return number of wmp propagators
-    unsigned int wmp(void) const;
 
     /// Used for default argument
     GECODE_KERNEL_EXPORT static StatusStatistics unused_status;
@@ -1913,6 +1985,23 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     void _trycommit(const Choice& c, unsigned int a);
+
+    /**
+     * \brief Notice that an actor must be disposed
+     *
+     * Note that \a a might be a marked pointer where the mark
+     * indicates that \a a is a trace recorder.
+     */
+    GECODE_KERNEL_EXPORT
+    void ap_notice_dispose(Actor* a, bool d);
+    /**
+     * \brief Ignore that an actor must be disposed
+     *
+     * Note that \a a might be a marked pointer where the mark
+     * indicates that \a a is a trace recorder.
+     */
+    GECODE_KERNEL_EXPORT
+    void ap_ignore_dispose(Actor* a, bool d);
 
   public:
     /**
@@ -2592,13 +2681,9 @@ namespace Gecode {
     /// \name Low-level support for AFC
     //@{
     /// %Set AFC decay factor to \a d
-    GECODE_KERNEL_EXPORT
     void afc_decay(double d);
     /// Return AFC decay factor
     double afc_decay(void) const;
-    /// Reset AFC to \a a
-    GECODE_KERNEL_EXPORT
-    void afc_set(double a);
     //@}
 
   private:
@@ -3233,23 +3318,6 @@ namespace Gecode {
   }
 
   forceinline void
-  Space::afc_enable(void) {
-    _wmp_afc |= 1U;
-  }
-  forceinline bool
-  Space::afc_enabled(void) const {
-    return (_wmp_afc & 1U) != 0U;
-  }
-  forceinline void
-  Space::wmp(unsigned int n) {
-    _wmp_afc = (_wmp_afc & 1U) | (n << 1);
-  }
-  forceinline unsigned int
-  Space::wmp(void) const {
-    return _wmp_afc >> 1U;
-  }
-
-  forceinline void
   Home::notice(Actor& a, ActorProperty p, bool duplicate) {
     s.notice(a,p,duplicate);
   }
@@ -3275,6 +3343,11 @@ namespace Gecode {
   forceinline double
   Space::afc_decay(void) const {
     return gpi.decay();
+  }
+
+  forceinline void
+  Space::afc_decay(double d) {
+    gpi.decay(d);
   }
 
   forceinline size_t
@@ -3330,42 +3403,42 @@ namespace Gecode {
   }
 
   /*
-   * Execution information
+   * View trace information
    *
    */
   forceinline void
-  ExecInfo::propagator(Propagator& p) {
+  ViewTraceInfo::propagator(Propagator& p) {
     who = reinterpret_cast<ptrdiff_t>(&p) | PROPAGATOR;
   }
   forceinline void
-  ExecInfo::brancher(Brancher& b) {
+  ViewTraceInfo::brancher(Brancher& b) {
     who = reinterpret_cast<ptrdiff_t>(&b) | BRANCHER;
   }
   forceinline void
-  ExecInfo::post(PropagatorGroup g) {
+  ViewTraceInfo::post(PropagatorGroup g) {
     who = (g.id() << 2) | POST;
   }
   forceinline void
-  ExecInfo::other(void) {
+  ViewTraceInfo::other(void) {
     who = OTHER;
   }
-  forceinline ExecInfo::What
-  ExecInfo::what(void) const {
+  forceinline ViewTraceInfo::What
+  ViewTraceInfo::what(void) const {
     return static_cast<What>(who & 3);
   }
   forceinline const Propagator&
-  ExecInfo::propagator(void) const {
+  ViewTraceInfo::propagator(void) const {
     assert(what() == PROPAGATOR);
     // Because PROPAGATOR == 0
     return *reinterpret_cast<Propagator*>(who);
   }
   forceinline const Brancher&
-  ExecInfo::brancher(void) const {
+  ViewTraceInfo::brancher(void) const {
     assert(what() == BRANCHER);
     return *reinterpret_cast<Brancher*>(who & ~3);
   }
   forceinline PropagatorGroup
-  ExecInfo::post(void) const {
+  ViewTraceInfo::post(void) const {
     assert(what() == POST);
     return PropagatorGroup(static_cast<unsigned int>(who >> 2));
   }
@@ -3375,11 +3448,66 @@ namespace Gecode {
    */
   forceinline
   PostInfo::PostInfo(Home home) : h(home) {
-    h.pc.p.ei.post(home.propagatorgroup());
+    h.pc.p.vti.post(home.propagatorgroup());
   }
   forceinline
   PostInfo::~PostInfo(void) {
-    h.pc.p.ei.other();
+    h.pc.p.vti.other();
+  }
+
+  /*
+   * Propagate trace information
+   *
+   */
+  forceinline
+  PropagateTraceInfo::PropagateTraceInfo(unsigned int i0, PropagatorGroup g0,
+                                         const Propagator* p0, Status s0)
+    : i(i0), g(g0), p(p0), s(s0) {}
+  forceinline unsigned int
+  PropagateTraceInfo::id(void) const {
+    return i;
+  }
+  forceinline PropagatorGroup
+  PropagateTraceInfo::group(void) const {
+    return g;
+  }
+  forceinline const Propagator*
+  PropagateTraceInfo::propagator(void) const {
+    return p;
+  }
+  forceinline PropagateTraceInfo::Status
+  PropagateTraceInfo::status(void) const {
+    return s;
+  }
+
+
+  /*
+   * Commit trace information
+   *
+   */
+  forceinline
+  CommitTraceInfo::CommitTraceInfo(const Brancher& b0, const Choice& c0,
+                                   unsigned int a0)
+    : b(b0), c(c0), a(a0) {}
+  forceinline unsigned int
+  CommitTraceInfo::id(void) const {
+    return b.id();
+  }
+  forceinline BrancherGroup
+  CommitTraceInfo::group(void) const {
+    return b.group();
+  }
+  forceinline const Brancher&
+  CommitTraceInfo::brancher(void) const {
+    return b;
+  }
+  forceinline const Choice&
+  CommitTraceInfo::choice(void) const {
+    return c;
+  }
+  forceinline unsigned int
+  CommitTraceInfo::alternative(void) const {
+    return a;
   }
 
 
@@ -3414,12 +3542,14 @@ namespace Gecode {
   }
 
   forceinline void
-  Propagator::disable(void) {
-    gpi_disabled = Support::mark(gpi_disabled);
+  Propagator::disable(Space& home) {
+    home.pc.p.bid_sc |= Space::sc_disabled;
+    gpi_disabled = Support::fmark(gpi_disabled);
   }
 
   forceinline void
-  Propagator::enable(void) {
+  Propagator::enable(Space& home) {
+    (void) home;
     gpi_disabled = Support::funmark(gpi_disabled);
   }
 
@@ -3455,8 +3585,8 @@ namespace Gecode {
   }
 
   forceinline double
-  Propagator::afc(const Space& home) const {
-    return const_cast<Space&>(home).gpi.afc(const_cast<Propagator&>(*this).gpi());
+  Propagator::afc(void) const {
+    return const_cast<Propagator&>(*this).gpi().afc;
   }
 
   forceinline unsigned int
@@ -3523,18 +3653,20 @@ namespace Gecode {
   }
 
   forceinline
-  Brancher::Brancher(Home home) :
-    bid(static_cast<Space&>(home).pc.p.bid++),
-    gid(home.branchergroup().gid) {
-    if (static_cast<Space&>(home).pc.p.bid == 0U)
+  Brancher::Brancher(Home _home) :
+    gid(_home.branchergroup().gid) {
+    Space& home = static_cast<Space&>(_home);
+    bid = home.pc.p.bid_sc >> Space::sc_bits;
+    home.pc.p.bid_sc += (1 << Space::sc_bits);
+    if ((home.pc.p.bid_sc >> Space::sc_bits) == 0U)
       throw TooManyBranchers("Brancher::Brancher");
     // If no brancher available, make it the first one
-    if (static_cast<Space&>(home).b_status == &static_cast<Space&>(home).bl) {
-      static_cast<Space&>(home).b_status = this;
-      if (static_cast<Space&>(home).b_commit == &static_cast<Space&>(home).bl)
-        static_cast<Space&>(home).b_commit = this;
+    if (home.b_status == &static_cast<Space&>(home).bl) {
+      home.b_status = this;
+      if (home.b_commit == &static_cast<Space&>(home).bl)
+        home.b_commit = this;
     }
-    static_cast<Space&>(home).bl.tail(this);
+    home.bl.tail(this);
   }
 
   forceinline
@@ -3789,9 +3921,9 @@ namespace Gecode {
       next(n->next());
   }
 
-  forceinline const ExecInfo&
+  forceinline const ViewTraceInfo&
   Advisor::operator ()(const Space& home) const {
-    return home.pc.p.ei;
+    return home.pc.p.vti;
   }
 
   template<class A>
@@ -3974,6 +4106,50 @@ namespace Gecode {
             (pc.p.active > &pc.p.queue[PropCost::AC_MAX+1]));
   }
 
+  forceinline TraceRecorder*
+  Space::findtr(void) {
+    TraceRecorder* tr = NULL;
+    for (Actor** a=d_fst; a<d_cur; a++)
+      if (Support::marked(*a) &&
+          !static_cast<Propagator*>(Support::unmark(*a))->disabled()) {
+        tr = static_cast<TraceRecorder*>(Support::unmark(*a));
+        std::swap(*d_fst,*a);
+        break;
+      }
+    return tr;
+  }
+
+  forceinline void
+  Space::notice(Actor& a, ActorProperty p, bool d) {
+    if (p & AP_DISPOSE) {
+      ap_notice_dispose(&a,d);
+    }
+    if (p & AP_VIEW_TRACE) {
+      pc.p.bid_sc |= sc_trace;
+    }
+    if (p & AP_TRACE) {
+      pc.p.bid_sc |= sc_trace;
+      if (findtr())
+        throw MoreThanOneTracer("Space::notice");
+      ap_notice_dispose(static_cast<Actor*>(Support::fmark(&a)),d);
+    }
+    // Currently unused
+    if (p & AP_WEAKLY) {}
+  }
+
+  forceinline void
+  Space::ignore(Actor& a, ActorProperty p, bool d) {
+    // Check wether array has already been discarded as space
+    // deletion is already in progress
+    if ((p & AP_DISPOSE) && (d_fst != NULL))
+      ap_ignore_dispose(&a,d);
+    if (p & AP_VIEW_TRACE) {}
+    if ((p & AP_TRACE) && (d_fst != NULL))
+      ap_ignore_dispose(static_cast<Actor*>(Support::fmark(&a)),d);
+    // Currently unused
+    if (p & AP_WEAKLY) {}
+  }
+
 
 
   /*
@@ -4035,14 +4211,14 @@ namespace Gecode {
 
   template<class VIC>
   forceinline double
-  VarImp<VIC>::afc(const Space& home) const {
+  VarImp<VIC>::afc(void) const {
     double d = 0.0;
     // Count the afc of each propagator
     {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actor(0);
       ActorLink** e = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
       while (a < e) {
-        d += Propagator::cast(*a)->afc(home); a++;
+        d += Propagator::cast(*a)->afc(); a++;
       }
     }
     // Count the afc of each advisor's propagator
@@ -4050,7 +4226,9 @@ namespace Gecode {
       ActorLink** a = const_cast<VarImp<VIC>*>(this)->actorNonZero(pc_max+1);
       ActorLink** e = const_cast<VarImp<VIC>*>(this)->b.base+entries;
       while (a < e) {
-        d += Advisor::cast(*a)->propagator().afc(home); a++;
+        d += Advisor::cast(static_cast<ActorLink*>(Support::funmark(*a)))
+          ->propagator().afc();
+        a++;
       }
     }
     return d;
@@ -4169,6 +4347,35 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
+  VarImp<VIC>::resize(Space& home) {
+    if (b.base == NULL) {
+      assert((free_and_bits >> free_bits) == 0);
+      // Create fresh dependency array with four entries
+      free_and_bits += 4 << free_bits;
+      b.base = home.alloc<ActorLink*>(4);
+      for (int i=0; i<pc_max+1; i++)
+        u.idx[i] = 0;
+    } else {
+      // Resize dependency array
+      unsigned int n = degree();
+      // Find out whether the area is most likely in the special area
+      // reserved for subscriptions. If yes, just resize mildly otherwise
+      // more agressively
+      ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
+      unsigned int m =
+        ((s <= b.base) && (b.base < s+home.pc.p.n_sub)) ?
+        (n+4) : ((n+1)*3>>1);
+      ActorLink** prop = home.alloc<ActorLink*>(m);
+      free_and_bits += (m-n) << free_bits;
+      // Copy entries
+      Heap::copy<ActorLink*>(prop, b.base, n);
+      home.free<ActorLink*>(b.base,n);
+      b.base = prop;
+    }
+  }
+
+  template<class VIC>
+  forceinline void
   VarImp<VIC>::enter(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
     // Count one new subscription
@@ -4203,6 +4410,7 @@ namespace Gecode {
   template<class VIC>
   forceinline void
   VarImp<VIC>::enter(Space& home, Advisor* a) {
+    // Note that a might be a marked pointer
     // Count one new subscription
     home.pc.p.n_sub += 1;
     if ((free_and_bits >> free_bits) == 0)
@@ -4215,36 +4423,7 @@ namespace Gecode {
   }
 
   template<class VIC>
-  void
-  VarImp<VIC>::resize(Space& home) {
-    if (b.base == NULL) {
-      assert((free_and_bits >> free_bits) == 0);
-      // Create fresh dependency array with four entries
-      free_and_bits += 4 << free_bits;
-      b.base = home.alloc<ActorLink*>(4);
-      for (int i=0; i<pc_max+1; i++)
-        u.idx[i] = 0;
-    } else {
-      // Resize dependency array
-      unsigned int n = degree();
-      // Find out whether the area is most likely in the special area
-      // reserved for subscriptions. If yes, just resize mildly otherwise
-      // more agressively
-      ActorLink** s = static_cast<ActorLink**>(home.mm.subscriptions());
-      unsigned int m =
-        ((s <= b.base) && (b.base < s+home.pc.p.n_sub)) ?
-        (n+4) : ((n+1)*3>>1);
-      ActorLink** prop = home.alloc<ActorLink*>(m);
-      free_and_bits += (m-n) << free_bits;
-      // Copy entries
-      Heap::copy<ActorLink*>(prop, b.base, n);
-      home.free<ActorLink*>(b.base,n);
-      b.base = prop;
-    }
-  }
-
-  template<class VIC>
-  void
+  forceinline void
   VarImp<VIC>::subscribe(Space& home, Propagator& p, PropCond pc,
                          bool assigned, ModEvent me, bool schedule) {
     if (assigned) {
@@ -4261,13 +4440,15 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned) {
-    if (!assigned)
-      enter(home,&a);
+  VarImp<VIC>::subscribe(Space& home, Advisor& a, bool assigned, bool fail) {
+    if (!assigned) {
+      Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
+      enter(home,ma);
+    }
   }
 
   template<class VIC>
-  void
+  forceinline void
   VarImp<VIC>::reschedule(Space& home, Propagator& p, PropCond pc,
                           bool assigned, ModEvent me) {
     if (assigned)
@@ -4277,7 +4458,7 @@ namespace Gecode {
   }
 
   template<class VIC>
-  forceinline void
+  void
   VarImp<VIC>::remove(Space& home, Propagator* p, PropCond pc) {
     assert(pc <= pc_max);
     ActorLink* a = ActorLink::cast(p);
@@ -4309,7 +4490,15 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
+  VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc) {
+    if (b.base != NULL)
+      remove(home,&p,pc);
+  }
+
+  template<class VIC>
+  void
   VarImp<VIC>::remove(Space& home, Advisor* a) {
+    // Note that a might be a marked pointer
     // Find actor in dependency array
     ActorLink** f = actorNonZero(pc_max+1);
 #ifdef GECODE_AUDIT
@@ -4331,16 +4520,11 @@ namespace Gecode {
 
   template<class VIC>
   forceinline void
-  VarImp<VIC>::cancel(Space& home, Propagator& p, PropCond pc, bool assigned) {
-    if (!assigned)
-      remove(home,&p,pc);
-  }
-
-  template<class VIC>
-  forceinline void
-  VarImp<VIC>::cancel(Space& home, Advisor& a, bool assigned) {
-    if (!assigned)
-      remove(home,&a);
+  VarImp<VIC>::cancel(Space& home, Advisor& a, bool fail) {
+    if (b.base != NULL) {
+      Advisor* ma = static_cast<Advisor*>(Support::ptrjoin(&a,fail ? 1 : 0));
+      remove(home,ma);
+    }
   }
 
   template<class VIC>
@@ -4348,12 +4532,16 @@ namespace Gecode {
   VarImp<VIC>::cancel(Space& home) {
     unsigned int n_sub = degree();
     home.pc.p.n_sub -= n_sub;
-    unsigned int n = (free_and_bits >> VIC::free_bits) + n_sub;
+    unsigned int n = (free_and_bits >> free_bits) + n_sub;
     home.free<ActorLink*>(b.base,n);
     // Must be NULL such that cloning works
     b.base = NULL;
     // Must be 0 such that degree works
     entries = 0;
+    // Must be NULL such that afc works
+    for (PropCond pc=1; pc<pc_max+2; pc++)
+      idx(pc) = 0;
+    free_and_bits &= (1 << free_bits) - 1;
   }
 
   template<class VIC>
@@ -4373,15 +4561,14 @@ namespace Gecode {
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
     do {
-      Advisor* a = Advisor::cast(*la);
+      Advisor* a = Advisor::cast
+        (static_cast<ActorLink*>(Support::funmark(*la)));
       assert(!a->disposed());
       Propagator& p = a->propagator();
       switch (p.advise(home,*a,d)) {
       case ES_FIX:
         break;
       case ES_FAILED:
-        if (home.afc_enabled())
-          home.gpi.fail(p.gpi());
         return false;
       case ES_NOFIX:
         schedule(home,p,me);
@@ -4398,6 +4585,39 @@ namespace Gecode {
   }
 
   template<class VIC>
+  void
+  VarImp<VIC>::_fail(Space& home) {
+    /*
+     * An advisor that is executed might remove itself due to subsumption.
+     * As entries are removed from front to back, the advisors must
+     * be iterated in forward direction.
+     */
+    ActorLink** la = actorNonZero(pc_max+1);
+    ActorLink** le = b.base+entries;
+    if (la == le)
+      return;
+    // An advisor that is run, might be removed during execution.
+    // As removal is done from the back the advisors have to be executed
+    // in inverse order.
+    do {
+      if (Support::marked(*la)) {
+        Advisor* a = Advisor::cast(static_cast<ActorLink*>
+                                   (Support::unmark(*la)));
+        assert(!a->disposed());
+        Propagator& p = a->propagator();
+        p.advise(home,*a);
+      }
+    } while (++la < le);
+  }
+
+  template<class VIC>
+  ModEvent
+  VarImp<VIC>::fail(Space& home) {
+    _fail(home); 
+    return ME_GEN_FAILED;
+  }
+
+  template<class VIC>
   forceinline void
   VarImp<VIC>::update(VarImp<VIC>* x, ActorLink**& sub) {
     // this refers to the variable to be updated (clone)
@@ -4408,25 +4628,71 @@ namespace Gecode {
     if (pc_max > 0 && sizeof(ActorLink**) > sizeof(unsigned int))
       x->u.idx[1] = u.idx[1];
 
+    unsigned int np =
+      static_cast<unsigned int>(x->actorNonZero(pc_max+1) - x->actor(0));
+    unsigned int na = 
+      static_cast<unsigned int >(x->b.base + x->entries - 
+                                 x->actorNonZero(pc_max+1));
+    unsigned int n  = na + np;
+    assert(n == x->degree());
+
     ActorLink** f = x->b.base;
-    unsigned int n = x->degree();
     ActorLink** t = sub;
+
     sub += n;
     b.base = t;
-    // Set subscriptions using actor forwarding pointers
-    while (n >= 4) {
-      n -= 4;
-      t[0]=f[0]->prev(); t[1]=f[1]->prev();
-      t[2]=f[2]->prev(); t[3]=f[3]->prev();
-      t += 4; f += 4;
+    // Process propagator subscriptions
+    while (np >= 4) {
+      ActorLink* p3 = f[3]->prev();
+      ActorLink* p0 = f[0]->prev();
+      ActorLink* p1 = f[1]->prev();
+      ActorLink* p2 = f[2]->prev(); 
+      t[0] = p0; t[1] = p1; t[2] = p2; t[3] = p3;
+      np -= 4; t += 4; f += 4;
     }
-    if (n >= 2) {
-      n -= 2;
-      t[0]=f[0]->prev(); t[1]=f[1]->prev();
-      t += 2; f += 2;
+    if (np >= 2) {
+      ActorLink* p0 = f[0]->prev();
+      ActorLink* p1 = f[1]->prev();
+      t[0] = p0; t[1] = p1;
+      np -= 2; t += 2; f += 2;
     }
-    if (n > 0) {
-      t[0]=f[0]->prev();
+    if (np > 0) {
+      ActorLink* p0 = f[0]->prev();
+      t[0] = p0;
+      t += 1; f += 1;
+    }
+    // Process advisor subscriptions
+    while (na >= 4) {
+      ptrdiff_t m0, m1, m2, m3;
+      ActorLink* p3 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[3],m3))->prev();
+      ActorLink* p0 = 
+        static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
+      ActorLink* p1 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
+      ActorLink* p2 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[2],m2))->prev();
+      t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
+      t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1,m1));
+      t[2] = static_cast<ActorLink*>(Support::ptrjoin(p2,m2));
+      t[3] = static_cast<ActorLink*>(Support::ptrjoin(p3,m3));
+      na -= 4; t += 4; f += 4;
+    }
+    if (na >= 2) {
+      ptrdiff_t m0, m1;
+      ActorLink* p0 = 
+        static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
+      ActorLink* p1 =
+        static_cast<ActorLink*>(Support::ptrsplit(f[1],m1))->prev();
+      t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
+      t[1] = static_cast<ActorLink*>(Support::ptrjoin(p1,m1));
+      na -= 2; t += 2; f += 2;
+    }
+    if (na > 0) {
+      ptrdiff_t m0;
+      ActorLink* p0 = 
+        static_cast<ActorLink*>(Support::ptrsplit(f[0],m0))->prev();
+      t[0] = static_cast<ActorLink*>(Support::ptrjoin(p0,m0));
     }
   }
 
@@ -4468,7 +4734,6 @@ namespace Gecode {
   forceinline void
   StatusStatistics::reset(void) {
     propagate = 0;
-    wmp = false;
   }
   forceinline
   StatusStatistics::StatusStatistics(void) {
@@ -4477,7 +4742,6 @@ namespace Gecode {
   forceinline StatusStatistics&
   StatusStatistics::operator +=(const StatusStatistics& s) {
     propagate += s.propagate;
-    wmp |= s.wmp;
     return *this;
   }
   forceinline StatusStatistics

@@ -587,15 +587,18 @@ namespace Gecode { namespace Set {
      * not scheduled for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space& home, Propagator& p, PropCond pc);
+    GECODE_SET_EXPORT void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Re-schedule propagator \a p with propagation condition \a pc
-    void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to variable
-    void subscribe(Space& home, Advisor& a);
-    /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    GECODE_SET_EXPORT void reschedule(Space& home, Propagator& p, PropCond pc);
+    /** \brief Subscribe advisor \a a to variable
+     *
+     * The advisor \a a is only subscribed if \a assigned is false.
+     *
+     * If \a fail is true, the advisor \a a is also run when a variable
+     * operation triggers failure. This feature is undocumented.
+     *
+     */
+    GECODE_SET_EXPORT void subscribe(Space& home, Advisor& a, bool fail);
     //@}
 
   private:

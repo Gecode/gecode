@@ -49,11 +49,13 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
+    /// Corresponding variable type
+    typedef typename View::VarType Var;
     /// Value type
     typedef _Val Val;
   public:
     /// Constructor for initialization
-    ValSel(Space& home, const ValBranch& vb);
+    ValSel(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSel(Space& home, bool shared, ValSel<View,Val>& vs);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -67,25 +69,29 @@ namespace Gecode {
   class ValSelFunction :
     public ValSel<View,
                   typename BranchTraits<typename View::VarType>::ValType> {
+    using typename ValSel<View,
+                          typename BranchTraits<typename View::VarType>::ValType>::Var;
   public:
     /// The corresponding value type
     typedef typename ValSel<View,
                             typename BranchTraits<typename View::VarType>
                               ::ValType>::Val Val;
-    /// The corresponding variable type
-    typedef typename View::VarType Var;
     /// The corresponding value function
     typedef typename BranchTraits<Var>::Val ValFunction;
   protected:
     /// The user-defined value function
-    ValFunction v;
+    SharedData<ValFunction> v;
   public:
     /// Constructor for initialization
-    ValSelFunction(Space& home, const ValBranch& vb);
+    ValSelFunction(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelFunction(Space& home, bool shared, ValSelFunction<View>& vs);
     /// Return user-defined value of view \a x at position \a i
     Val val(const Space& home, View x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Delete value selection
+    void dispose(Space& home);
   };
   //@}
 
@@ -93,7 +99,7 @@ namespace Gecode {
   // Baseclass value selection
   template<class View, class Val>
   forceinline
-  ValSel<View,Val>::ValSel(Space&, const ValBranch&) {}
+  ValSel<View,Val>::ValSel(Space&, const ValBranch<Var>&) {}
   template<class View, class Val>
   forceinline
   ValSel<View,Val>::ValSel(Space&, bool, ValSel<View,Val>&) {}
@@ -110,19 +116,34 @@ namespace Gecode {
   // User-defined value selection
   template<class View>
   forceinline
-  ValSelFunction<View>::ValSelFunction(Space& home, const ValBranch& vb)
-    : ValSel<View,Val>(home,vb),
-      v(function_cast<ValFunction>(vb.val())) {}
+  ValSelFunction<View>::ValSelFunction(Space& home, const ValBranch<Var>& vb)
+    : ValSel<View,Val>(home,vb), v(vb.val()) {
+    if (!v())
+      throw InvalidFunction("ValSelFunction::ValSelFunction");
+  }
   template<class View>
   forceinline
   ValSelFunction<View>::ValSelFunction(Space& home, bool shared,
                                        ValSelFunction<View>& vs)
-    : ValSel<View,Val>(home,shared,vs), v(vs.v) {}
+    : ValSel<View,Val>(home,shared,vs) {
+    v.update(home,shared,vs.v);
+  }
   template<class View>
   forceinline typename ValSelFunction<View>::Val
   ValSelFunction<View>::val(const Space& home, View x, int i) {
     typename View::VarType y(x.varimp());
-    return v(home,y,i);
+    GECODE_VALID_FUNCTION(v());
+    return v()(home,y,i);
+  }
+  template<class View>
+  forceinline bool
+  ValSelFunction<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  ValSelFunction<View>::dispose(Space&) {
+    v.~SharedData<ValFunction>();
   }
 
 }

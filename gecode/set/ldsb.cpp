@@ -142,7 +142,8 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
-         SetBranchFilter bf, SetVarValPrint vvp) {
+         SetBranchFilter bf,
+         SetVarValPrint vvp) {
     using namespace Set;
     if (home.failed()) return;
     vars.expand(home,x);
@@ -166,7 +167,7 @@ namespace Gecode {
       array[i] = createSetSym(home, syms[i], variableMap);
     }
 
-    LDSBSetBrancher<SetView,1,int,2>::post
+    postldsbsetbrancher<SetView,1,int,2>
       (home,xv,vs,Branch::valselcommit(home,vals),array,n,bf,vvp);
   }
 
@@ -174,7 +175,8 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,
-         SetBranchFilter bf, SetVarValPrint vvp) {
+         SetBranchFilter bf,
+         SetVarValPrint vvp) {
     using namespace Set;
     if (home.failed()) return;
     vars.a.expand(home,x);
@@ -214,19 +216,19 @@ namespace Gecode {
         ViewSel<SetView>* vs[2] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b)
         };
-        LDSBSetBrancher<SetView,2,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        postldsbsetbrancher<SetView,2,int,2>(home,xv,vs,vsc,array,n,bf,vvp);
       } else if (vars.d.select() == SetVarBranch::SEL_NONE) {
         ViewSel<SetView>* vs[3] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c)
         };
-        LDSBSetBrancher<SetView,3,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        postldsbsetbrancher<SetView,3,int,2>(home,xv,vs,vsc,array,n,bf,vvp);
       } else {
         ViewSel<SetView>* vs[4] = {
           Branch::viewsel(home,vars.a),Branch::viewsel(home,vars.b),
           Branch::viewsel(home,vars.c),Branch::viewsel(home,vars.d)
         };
-        LDSBSetBrancher<SetView,4,int,2>::post(home,xv,vs,vsc,array,n,bf,vvp);
+        postldsbsetbrancher<SetView,4,int,2>(home,xv,vs,vsc,array,n,bf,vvp);
       }
     }
   }

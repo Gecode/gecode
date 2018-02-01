@@ -121,7 +121,7 @@ public:
   Sat(const SatOptions& opt)
     : Script(opt) {
     parseDIMACS(opt.filename.c_str());
-    branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
+    branch(*this, x, BOOL_VAR_AFC_MAX(), BOOL_VAL_MIN());
   }
 
   /// Constructor for cloning

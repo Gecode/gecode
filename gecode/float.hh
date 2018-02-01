@@ -46,6 +46,8 @@
 #include <cfloat>
 #include <iostream>
 
+#include <functional>
+
 #include <gecode/kernel.hh>
 #include <gecode/int.hh>
 
@@ -1141,6 +1143,14 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   rel(Home home, const FloatVarArgs& x, FloatRelType frt, FloatVar y);
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   *
+   * \ingroup TaskModelFloatRelFloat
+   */
+  GECODE_FLOAT_EXPORT void
+  ite(Home home, BoolVar b, FloatVar x, FloatVar y, FloatVar z);
 
 }
 
@@ -1259,7 +1269,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c);
+         FloatRelType frt, FloatVal c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\f$
    * \ingroup TaskModelFloatLI
    */
@@ -1271,7 +1281,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c, Reify r);
+         FloatRelType frt, FloatVal c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_{frt} y\right)\equiv r\f$
    * \ingroup TaskModelFloatLI
    */
@@ -1286,7 +1296,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c);
+         FloatRelType frt, FloatVal c);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\f$
    *
    *  Throws an exception of type Float::ArgumentSizeMismatch, if
@@ -1304,7 +1314,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   linear(Home home, const FloatValArgs& a, const FloatVarArgs& x,
-         FloatRelType frt, FloatNum c, Reify r);
+         FloatRelType frt, FloatVal c, Reify r);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_{frt} y\right)\equiv r\f$
    *
    *  Throws an exception of type Float::ArgumentSizeMismatch, if
@@ -1325,16 +1335,21 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   channel(Home home, FloatVar x0, IntVar x1);
   /// Post propagator for channeling a float and an integer variable \f$ x_0 = x_1\f$
-  GECODE_FLOAT_EXPORT void
+  void
   channel(Home home, IntVar x0, FloatVar x1);
   /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
   GECODE_FLOAT_EXPORT void
   channel(Home home, FloatVar x0, BoolVar x1);
   /// Post propagator for channeling a float and a Boolean variable \f$ x_0 = x_1\f$
-  GECODE_FLOAT_EXPORT void
+  void
   channel(Home home, BoolVar x0, FloatVar x1);
   //@}
 
+}
+
+#include <gecode/float/channel.hpp>
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelFloatExec Synchronized execution
@@ -1346,10 +1361,10 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_FLOAT_EXPORT void
-  wait(Home home, FloatVar x, void (*c)(Space& home));
+  wait(Home home, FloatVar x, std::function<void(Space& home)> c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_FLOAT_EXPORT void
-  wait(Home home, const FloatVarArgs& x, void (*c)(Space& home));
+  wait(Home home, const FloatVarArgs& x, std::function<void(Space& home)> c);
   //@}
 
 }
@@ -1369,7 +1384,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef bool (*FloatBranchFilter)(const Space& home, FloatVar x, int i);
+  typedef std::function<bool(const Space& home, FloatVar x, int i)>
+    FloatBranchFilter;
 
   /**
    * \brief Branch merit function type for float variables
@@ -1381,7 +1397,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef double (*FloatBranchMerit)(const Space& home, FloatVar x, int i);
+  typedef std::function<double(const Space& home, FloatVar x, int i)>
+    FloatBranchMerit;
 
   /**
    * \brief Value description class for branching
@@ -1406,7 +1423,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef FloatNumBranch (*FloatBranchVal)(const Space& home, FloatVar x, int i);
+  typedef std::function<FloatNumBranch(const Space& home, FloatVar x, int i)>
+    FloatBranchVal;
 
   /**
    * \brief Branch commit function type for float variables
@@ -1419,8 +1437,9 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  typedef void (*FloatBranchCommit)(Space& home, unsigned int a,
-                                    FloatVar x, int i, FloatNumBranch nl);
+  typedef std::function<void(Space& home, unsigned int a,
+                             FloatVar x, int i, FloatNumBranch nl)>
+    FloatBranchCommit;
 
 }
 
@@ -1466,62 +1485,113 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \brief Recording activities for float variables
+   * \brief Recording actions for float variables
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatActivity : public Activity {
+  class FloatAction : public Action {
   public:
     /**
      * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init or the assignment operator.
+     * yet initialized action storage is init or the assignment operator.
      *
      */
-    FloatActivity(void);
+    FloatAction(void);
     /// Copy constructor
-    FloatActivity(const FloatActivity& a);
+    FloatAction(const FloatAction& a);
     /// Assignment operator
-    FloatActivity& operator =(const FloatActivity& a);
+    FloatAction& operator =(const FloatAction& a);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
-     * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      */
     GECODE_FLOAT_EXPORT
-    FloatActivity(Home home, const FloatVarArgs& x, double d=1.0,
-                  FloatBranchMerit bm=NULL);
+    FloatAction(Home home, const FloatVarArgs& x, double d=1.0,
+                  FloatBranchMerit bm=nullptr);
     /**
      * \brief Initialize for float variables \a x with decay factor \a d
      *
-     * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
+     * action storage has been constructed with the default constructor.
      *
      */
     GECODE_FLOAT_EXPORT void
     init(Home home, const FloatVarArgs& x, double d=1.0,
-         FloatBranchMerit bm=NULL);
+         FloatBranchMerit bm=nullptr);
   };
 
 }
 
-#include <gecode/float/branch/activity.hpp>
+#include <gecode/float/branch/action.hpp>
 
 namespace Gecode {
 
-  /// Function type for explaining branching alternatives for set variables
-  typedef void (*FloatVarValPrint)(const Space &home, const Brancher& b,
-                                   unsigned int a,
-                                   FloatVar x, int i, const FloatNumBranch& n,
-                                   std::ostream& o);
+  /**
+   * \brief Recording CHB for float variables
+   *
+   * \ingroup TaskModelFloatBranch
+   */
+  class FloatCHB : public CHB {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized CHB storage is init or the assignment operator.
+     *
+     */
+    FloatCHB(void);
+    /// Copy constructor
+    FloatCHB(const FloatCHB& chb);
+    /// Assignment operator
+    FloatCHB& operator =(const FloatCHB& chb);
+   /**
+     * \brief Initialize for float variables \a x
+     *
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_FLOAT_EXPORT
+    FloatCHB(Home home, const FloatVarArgs& x, FloatBranchMerit bm=nullptr);
+   /**
+     * \brief Initialize for float variables \a x
+     *
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     * This member function can only be used once and only if the
+     * action storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_FLOAT_EXPORT void
+    init(Home home, const FloatVarArgs& x, FloatBranchMerit bm=nullptr);
+  };
+
+}
+
+#include <gecode/float/branch/chb.hpp>
+
+namespace Gecode {
+
+  /// Function type for explaining branching alternatives for float variables
+  typedef std::function<void(const Space &home, const Brancher& b,
+                             unsigned int a,
+                             FloatVar x, int i, const FloatNumBranch& n,
+                             std::ostream& o)>
+    FloatVarValPrint;
 
 }
 
@@ -1532,7 +1602,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatVarBranch : public VarBranch {
+  class FloatVarBranch : public VarBranch<FloatVar> {
   public:
     /// Which variable selection
     enum Select {
@@ -1544,8 +1614,10 @@ namespace Gecode {
       SEL_DEGREE_MAX,      ///< With largest degree
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
-      SEL_ACTIVITY_MIN,    ///< With lowest activity
-      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_ACTION_MIN,      ///< With lowest action
+      SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MIN,         ///< With lowest CHB Q-score
+      SEL_CHB_MAX,         ///< With highest CHB Q-score
       SEL_MIN_MIN,         ///< With smallest min
       SEL_MIN_MAX,         ///< With largest min
       SEL_MAX_MIN,         ///< With smallest max
@@ -1556,8 +1628,10 @@ namespace Gecode {
       SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
-      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
-      SEL_ACTIVITY_SIZE_MAX  ///< With largest activity divided by domain size
+      SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
+      SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
+      SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
+      SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1572,14 +1646,16 @@ namespace Gecode {
     /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
     FloatVarBranch(Select s, double, BranchTbl t);
     /// Initialize with selection strategy \a s, AFC \a a, and tie-break limit function \a t
-    FloatVarBranch(Select s, AFC a, BranchTbl t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    FloatVarBranch(Select s, Activity a, BranchTbl t);
+    FloatVarBranch(Select s, FloatAFC a, BranchTbl t);
+    /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
+    FloatVarBranch(Select s, FloatAction a, BranchTbl t);
+    /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
+    FloatVarBranch(Select s, FloatCHB c, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
-    FloatVarBranch(Select s, VoidFunction mf, BranchTbl t);
+    FloatVarBranch(Select s, FloatBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or activity
+    /// Expand AFC, action, and CHB
     void expand(Home home, const FloatVarArgs& x);
   };
 
@@ -1594,61 +1670,77 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   FloatVarBranch FLOAT_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  FloatVarBranch FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with highest merit according to branch merit function \a bm
-  FloatVarBranch FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with smallest degree
-  FloatVarBranch FLOAT_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_DEGREE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree
-  FloatVarBranch FLOAT_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_DEGREE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count with decay factor \a d
-  FloatVarBranch FLOAT_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count
-  FloatVarBranch FLOAT_VAR_AFC_MIN(FloatAFC a, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_MIN(FloatAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count with decay factor \a d
-  FloatVarBranch FLOAT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count
-  FloatVarBranch FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MIN(FloatActivity a, BranchTbl tbl=NULL);
-  /// Select variable with highest activity with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with highest activity
-  FloatVarBranch FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_MAX(FloatAFC a, BranchTbl tbl=nullptr);
+  /// Select variable with lowest action with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with lowest action
+  FloatVarBranch FLOAT_VAR_ACTION_MIN(FloatAction a, BranchTbl tbl=nullptr);
+  /// Select variable with highest action with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with highest action
+  FloatVarBranch FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl=nullptr);
+  /// Select variable with lowest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MIN(BranchTbl tbl=nullptr);
+  /// Select variable with lowest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MIN(FloatCHB a, BranchTbl tbl=nullptr);
+  /// Select variable with highest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MAX(BranchTbl tbl=nullptr);
+  /// Select variable with highest CHB Q-score
+  FloatVarBranch FLOAT_VAR_CHB_MAX(FloatCHB a, BranchTbl tbl=nullptr);
   /// Select variable with smallest min
-  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_MIN_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest min
-  FloatVarBranch FLOAT_VAR_MIN_MAX(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_MIN_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest max
-  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_MAX_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest max
-  FloatVarBranch FLOAT_VAR_MAX_MAX(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_MAX_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest domain size
-  FloatVarBranch FLOAT_VAR_SIZE_MIN(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest domain size
-  FloatVarBranch FLOAT_VAR_SIZE_MAX(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest degree divided by domain size
-  FloatVarBranch FLOAT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree divided by domain size
-  FloatVarBranch FLOAT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smalllest accumulated failure count  divided by domain size with decay factor \a d
-  FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size
-  FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(FloatAFC a, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MIN(FloatAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count  divided by domain size with decay factor \a d
-  FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size
-  FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(FloatAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MIN(FloatActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size with decay factor \a d
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size
-  FloatVarBranch FLOAT_VAR_ACTIVITY_SIZE_MAX(FloatActivity a, BranchTbl tbl=NULL);
+  FloatVarBranch FLOAT_VAR_AFC_SIZE_MAX(FloatAFC a, BranchTbl tbl=nullptr);
+  /// Select variable with smallest action divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with smallest action divided by domain size
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MIN(FloatAction a, BranchTbl tbl=nullptr);
+  /// Select variable with largest action divided by domain size with decay factor \a d
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with largest action divided by domain size
+  FloatVarBranch FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl=nullptr);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(BranchTbl tbl=nullptr);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MIN(FloatCHB c, BranchTbl tbl=nullptr);
+  /// Select variable with largest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl=nullptr);
+  /// Select variable with largest CHB Q-score divided by domain size
+  FloatVarBranch FLOAT_VAR_CHB_SIZE_MAX(FloatCHB a, BranchTbl tbl=nullptr);
   //@}
 
 }
@@ -1662,7 +1754,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatValBranch : public ValBranch {
+  class FloatValBranch : public ValBranch<FloatVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1680,7 +1772,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     FloatValBranch(Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    FloatValBranch(VoidFunction v, VoidFunction c);
+    FloatValBranch(FloatBranchVal v, FloatBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1702,7 +1794,7 @@ namespace Gecode {
    * \a x must be less or equal than the value \a n for the first
    * alternative and that \a x must be greater or equal than \a n otherwise.
    */
-  FloatValBranch FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c=NULL);
+  FloatValBranch FLOAT_VAL(FloatBranchVal v, FloatBranchCommit c=nullptr);
   //@}
 
 }
@@ -1716,7 +1808,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelFloatBranch
    */
-  class FloatAssign : public ValBranch {
+  class FloatAssign : public ValBranch<FloatVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1734,7 +1826,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     FloatAssign(Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    FloatAssign(VoidFunction v, VoidFunction c);
+    FloatAssign(FloatBranchVal v, FloatBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1755,7 +1847,7 @@ namespace Gecode {
    * The default commit function posts the constraint that the float variable
    * \a x must be less or equal than the value \a n.
    */
-  FloatAssign FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c=NULL);
+  FloatAssign FLOAT_ASSIGN(FloatBranchVal v, FloatBranchCommit c=nullptr);
   //@}
 
 }
@@ -1772,8 +1864,8 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          FloatVarBranch vars, FloatValBranch vals,
-         FloatBranchFilter bf=NULL,
-         FloatVarValPrint vvp=NULL);
+         FloatBranchFilter bf=nullptr,
+         FloatVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -1782,8 +1874,8 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   branch(Home home, const FloatVarArgs& x,
          TieBreak<FloatVarBranch> vars, FloatValBranch vals,
-         FloatBranchFilter bf=NULL,
-         FloatVarValPrint vvp=NULL);
+         FloatBranchFilter bf=nullptr,
+         FloatVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
    *
@@ -1791,7 +1883,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   branch(Home home, FloatVar x, FloatValBranch vals,
-         FloatVarValPrint vvp=NULL);
+         FloatVarValPrint vvp=nullptr);
 
   /**
    * \brief Assign all \a x with value selection \a vals
@@ -1800,8 +1892,8 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   assign(Home home, const FloatVarArgs& x, FloatAssign vals,
-         FloatBranchFilter fbf=NULL,
-         FloatVarValPrint vvp=NULL);
+         FloatBranchFilter bf=nullptr,
+         FloatVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
    *
@@ -1809,7 +1901,7 @@ namespace Gecode {
    */
   GECODE_FLOAT_EXPORT void
   assign(Home home, FloatVar x, FloatAssign vals,
-         FloatVarValPrint vvp=NULL);
+         FloatVarValPrint vvp=nullptr);
   //@}
 
 }
@@ -1890,12 +1982,12 @@ namespace Gecode {
    * \brief Tracer for float variables
    * \ingroup TaskFloatTrace
    */
-  typedef Tracer<Float::FloatView> FloatTracer;
+  typedef ViewTracer<Float::FloatView> FloatTracer;
   /**
-   * \brief TraceRecorder for float variables
+   * \brief Trace recorder for float variables
    * \ingroup TaskFloatTrace
    */
-  typedef TraceRecorder<Float::FloatView> FloatTraceRecorder;
+  typedef ViewTraceRecorder<Float::FloatView> FloatTraceRecorder;
 
   /**
    * \brief Standard float variable tracer
@@ -1912,9 +2004,11 @@ namespace Gecode {
     virtual void init(const Space& home, const FloatTraceRecorder& t);
     /// Print prune information
     virtual void prune(const Space& home, const FloatTraceRecorder& t,
-                       const ExecInfo& ei, int i, FloatTraceDelta& d);
+                       const ViewTraceInfo& vti, int i, FloatTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const FloatTraceRecorder& t);
+    /// Print failure information
+    virtual void fail(const Space& home, const FloatTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const FloatTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -1929,7 +2023,7 @@ namespace Gecode {
   GECODE_FLOAT_EXPORT void
   trace(Home home, const FloatVarArgs& x,
         TraceFilter tf,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         FloatTracer& t = StdFloatTracer::def);
   /**
    * \brief Create a tracer for float variables
@@ -1937,7 +2031,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const FloatVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         FloatTracer& t = StdFloatTracer::def);
 
 }

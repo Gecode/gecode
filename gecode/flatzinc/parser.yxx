@@ -651,8 +651,8 @@ vardecl_item:
       FZ_VAR int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $5->hasAtom("output_var");
-        bool funcDep = $5->hasAtom("is_defined_var");
+        bool print = $5 != NULL && $5->hasAtom("output_var");
+        bool funcDep = $5 != NULL && $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_iv(pp->intvars.size())),
           "Duplicate symbol");
@@ -683,8 +683,8 @@ vardecl_item:
     | FZ_VAR bool_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $5->hasAtom("output_var");
-        bool funcDep = $5->hasAtom("is_defined_var");
+        bool print = $5 != NULL && $5->hasAtom("output_var");
+        bool funcDep = $5 != NULL && $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_bv(pp->boolvars.size())),
           "Duplicate symbol");
@@ -715,8 +715,8 @@ vardecl_item:
     | FZ_VAR float_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $5->hasAtom("output_var");
-        bool funcDep = $5->hasAtom("is_defined_var");
+        bool print = $5 != NULL && $5->hasAtom("output_var");
+        bool funcDep = $5 != NULL && $5->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($4, se_fv(pp->floatvars.size())),
           "Duplicate symbol");
@@ -754,8 +754,8 @@ vardecl_item:
     | FZ_VAR FZ_SET FZ_OF int_ti_expr_tail ':' var_par_id annotations non_array_expr_opt
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $7->hasAtom("output_var");
-        bool funcDep = $7->hasAtom("is_defined_var");
+        bool print = $7 != NULL && $7->hasAtom("output_var");
+        bool funcDep = $7 != NULL && $7->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put($6, se_sv(pp->setvars.size())),
           "Duplicate symbol");
@@ -830,7 +830,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = $12->hasCall("output_array");
+          bool print = $12 != NULL && $12->hasCall("output_array");
           vector<int> vars($5);
           if (!pp->hadError) {
             if ($13()) {
@@ -898,7 +898,7 @@ vardecl_item:
         var_par_id annotations vardecl_bool_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $12->hasCall("output_array");
+        bool print = $12 != NULL && $12->hasCall("output_array");
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars($5);
@@ -967,7 +967,7 @@ vardecl_item:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = $12->hasCall("output_array");
+          bool print = $12 != NULL && $12->hasCall("output_array");
           vector<int> vars($5);
           if (!pp->hadError) {
             if ($13()) {
@@ -1035,7 +1035,7 @@ vardecl_item:
         var_par_id annotations vardecl_set_var_array_init
       {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = $14->hasCall("output_array");
+        bool print = $14 != NULL && $14->hasCall("output_array");
         yyassert(pp, $3==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars($5);

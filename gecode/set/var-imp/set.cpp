@@ -77,7 +77,7 @@ namespace Gecode { namespace Set {
         glb.become(home, lub);
         glb.card(glb.size());
         lub.card(glb.size());
-        return ME_SET_FAILED;
+        return fail(home);
       }
       me = ME_SET_CLUB;
     }
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set {
         glb.become(home, lub);
         glb.card(glb.size());
         lub.card(glb.size());
-        return ME_SET_FAILED;
+        return fail(home);
       }
       me = ME_SET_CGLB;
     }
@@ -135,6 +135,25 @@ namespace Gecode { namespace Set {
   SetVarImp::perform_copy(Space& home, bool share) {
     return new (home) SetVarImp(home,share,*this);
   }
+
+  /*
+   * Dependencies
+   *
+   */
+  void
+  SetVarImp::subscribe(Space& home, Propagator& p, PropCond pc,
+                       bool schedule) {
+    SetVarImpBase::subscribe(home,p,pc,assigned(),schedule);
+  }
+  void
+  SetVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+    SetVarImpBase::subscribe(home,a,assigned(),fail);
+  }
+  void
+  SetVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
+    SetVarImpBase::reschedule(home,p,pc,assigned());
+  }
+
 
 }}
 

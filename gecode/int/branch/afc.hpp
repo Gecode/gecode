@@ -54,18 +54,32 @@ namespace Gecode {
     AFC::init(home,x,d);
   }
 
-  forceinline
-  IntAFC::IntAFC(Home home, const BoolVarArgs& x, double d) {
-    AFC::init(home,x,d);
-  }
-
   forceinline void
   IntAFC::init(Home home, const IntVarArgs& x, double d) {
     AFC::init(home,x,d);
   }
 
+
+
+  forceinline
+  BoolAFC::BoolAFC(void) {}
+
+  forceinline
+  BoolAFC::BoolAFC(const BoolAFC& a)
+    : AFC(a) {}
+
+  forceinline BoolAFC&
+  BoolAFC::operator =(const BoolAFC& a) {
+    return static_cast<BoolAFC&>(AFC::operator =(a));
+  }
+
+  forceinline
+  BoolAFC::BoolAFC(Home home, const BoolVarArgs& x, double d) {
+    AFC::init(home,x,d);
+  }
+
   forceinline void
-  IntAFC::init(Home home, const BoolVarArgs& x, double d) {
+  BoolAFC::init(Home home, const BoolVarArgs& x, double d) {
     AFC::init(home,x,d);
   }
 

@@ -39,42 +39,44 @@
 
 namespace Gecode { namespace Set { namespace Rel {
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   forceinline
-  ReSubset<View0,View1,rm>::ReSubset(Home home, View0 y0,
-                                     View1 y1, Gecode::Int::BoolView y2)
-    : Propagator(home), x0(y0), x1(y1), b(y2) {
+  ReSubset<View0,View1,CtrlView,rm>::ReSubset(Home home, View0 y0,
+                                              View1 y1, CtrlView b0)
+    : Propagator(home), x0(y0), x1(y1), b(b0) {
     b.subscribe(home,*this, Gecode::Int::PC_INT_VAL);
     x0.subscribe(home,*this, PC_SET_ANY);
     x1.subscribe(home,*this, PC_SET_ANY);
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   forceinline
-  ReSubset<View0,View1,rm>::ReSubset(Space& home, bool share, ReSubset& p)
+  ReSubset<View0,View1,CtrlView,rm>::ReSubset(Space& home, bool share, 
+                                              ReSubset& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     b.update(home,share,p.b);
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   PropCost
-  ReSubset<View0,View1,rm>::cost(const Space&, const ModEventDelta&) const {
+  ReSubset<View0,View1,CtrlView,rm>::cost(const Space&,
+                                          const ModEventDelta&) const {
     return PropCost::ternary(PropCost::LO);
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   void
-  ReSubset<View0,View1,rm>::reschedule(Space& home) {
+  ReSubset<View0,View1,CtrlView,rm>::reschedule(Space& home) {
     b.reschedule(home,*this, Gecode::Int::PC_INT_VAL);
     x0.reschedule(home,*this, PC_SET_ANY);
     x1.reschedule(home,*this, PC_SET_ANY);
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   forceinline size_t
-  ReSubset<View0,View1,rm>::dispose(Space& home) {
+  ReSubset<View0,View1,CtrlView,rm>::dispose(Space& home) {
     b.cancel(home,*this, Gecode::Int::PC_INT_VAL);
     x0.cancel(home,*this, PC_SET_ANY);
     x1.cancel(home,*this, PC_SET_ANY);
@@ -82,23 +84,24 @@ namespace Gecode { namespace Set { namespace Rel {
     return sizeof(*this);
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReSubset<View0,View1,rm>::post(Home home, View0 x0, View1 x1,
-                              Gecode::Int::BoolView b) {
-    (void) new (home) ReSubset<View0,View1,rm>(home,x0,x1,b);
+  ReSubset<View0,View1,CtrlView,rm>::post(Home home, View0 x0, View1 x1,
+                                          CtrlView b) {
+    (void) new (home) ReSubset<View0,View1,CtrlView,rm>(home,x0,x1,b);
     return ES_OK;
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   Actor*
-  ReSubset<View0,View1,rm>::copy(Space& home, bool share) {
-    return new (home) ReSubset<View0,View1,rm>(home,share,*this);
+  ReSubset<View0,View1,CtrlView,rm>::copy(Space& home, bool share) {
+    return new (home) ReSubset<View0,View1,CtrlView,rm>(home,share,*this);
   }
 
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   ExecStatus
-  ReSubset<View0,View1,rm>::propagate(Space& home, const ModEventDelta&) {
+  ReSubset<View0,View1,CtrlView,rm>::propagate(Space& home,
+                                               const ModEventDelta&) {
     if (b.one()) {
       if (rm == RM_PMI)
         return home.ES_SUBSUMED(*this);

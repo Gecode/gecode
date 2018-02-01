@@ -38,10 +38,6 @@
  */
 
 #include <gecode/float/arithmetic.hh>
-#ifdef GECODE_HAS_MPFR
-#include <gecode/float/transcendental.hh>
-#include <gecode/float/trigonometric.hh>
-#endif
 
 namespace Gecode {
 
@@ -137,113 +133,6 @@ namespace Gecode {
     GECODE_POST;
     GECODE_ES_FAIL(
       (Arithmetic::Div<FloatView,FloatView,FloatView>::post(home,x0,x1,x2)));
-  }
-
-#ifdef GECODE_HAS_MPFR
-  void
-  exp(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>::post(home,x0,x1)));
-  }
-
-  void
-  log(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Exp<FloatView,FloatView>
-      ::post(home,x1,x0)));
-  }
-
-  void
-  log(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
-      ::post(home,base,x1,x0)));
-  }
-
-  void
-  pow(Home home, FloatNum base, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Transcendental::Pow<FloatView,FloatView>
-      ::post(home,base,x0,x1)));
-  }
-
-  void
-  asin(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::ASin<FloatView,FloatView>::post(home,x0,x1)));
-  }
-
-  void
-  sin(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::Sin<FloatView,FloatView>::post(home,x0,x1)));
-  }
-
-  void
-  acos(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::ACos<FloatView,FloatView>::post(home,x0,x1)));
-  }
-
-  void
-  cos(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::Cos<FloatView,FloatView>::post(home,x0,x1)));
-  }
-
-  void
-  atan(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::ATan<FloatView,FloatView>::post(home,x0,x1)));
-  }
-
-  void
-  tan(Home home, FloatVar x0, FloatVar x1) {
-    using namespace Float;
-    GECODE_POST;
-    GECODE_ES_FAIL((Trigonometric::Tan<FloatView,FloatView>::post(home,x0,x1)));
-  }
-#endif
-
-  void
-  channel(Home home, FloatVar x0, IntVar x1) {
-    using namespace Float;
-    using namespace Int;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x0,x1)));
-  }
-
-  void
-  channel(Home home, IntVar x0, FloatVar x1) {
-    using namespace Float;
-    using namespace Int;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,IntView>::post(home,x1,x0)));
-  }
-
-  void
-  channel(Home home, FloatVar x0, BoolVar x1) {
-    using namespace Float;
-    using namespace Int;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,BoolView>::post(home,x0,x1)));
-  }
-
-  void
-  channel(Home home, BoolVar x0, FloatVar x1) {
-    using namespace Float;
-    using namespace Int;
-    GECODE_POST;
-    GECODE_ES_FAIL((Arithmetic::Channel<FloatView,BoolView>::post(home,x1,x0)));
   }
 
 }

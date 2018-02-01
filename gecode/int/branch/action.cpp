@@ -39,30 +39,31 @@
 
 namespace Gecode {
 
-  IntActivity::IntActivity(Home home, const IntVarArgs& x, double d,
-                           IntBranchMerit bm) {
+  IntAction::IntAction(Home home, const IntVarArgs& x, double d,
+                       IntBranchMerit bm) {
     ViewArray<Int::IntView> y(home,x);
-    Activity::init(home,y,d,bm);
-  }
-
-  IntActivity::IntActivity(Home home, const BoolVarArgs& x, double d,
-                           BoolBranchMerit bm) {
-    ViewArray<Int::BoolView> y(home,x);
-    Activity::init(home,y,d,bm);
+    Action::init(home,y,d,bm);
   }
 
   void
-  IntActivity::init(Home home, const IntVarArgs& x, double d,
-                    IntBranchMerit bm) {
+  IntAction::init(Home home, const IntVarArgs& x, double d,
+                  IntBranchMerit bm) {
     ViewArray<Int::IntView> y(home,x);
-    Activity::init(home,y,d,bm);
+    Action::init(home,y,d,bm);
+  }
+
+
+  BoolAction::BoolAction(Home home, const BoolVarArgs& x, double d,
+                         BoolBranchMerit bm) {
+    ViewArray<Int::BoolView> y(home,x);
+    Action::init(home,y,d,bm);
   }
 
   void
-  IntActivity::init(Home home, const BoolVarArgs& x, double d,
-                    BoolBranchMerit bm) {
+  BoolAction::init(Home home, const BoolVarArgs& x, double d,
+                   BoolBranchMerit bm) {
     ViewArray<Int::BoolView> y(home,x);
-    Activity::init(home,y,d,bm);
+    Action::init(home,y,d,bm);
   }
 
 }

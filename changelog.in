@@ -67,10 +67,404 @@
 #
 
 [RELEASE]
+Version: 5.1.0
+Date: 2017-04-18
+[DESCRIPTION]
+This is a rather major release, fixing a number of bugs and
+adding quite a number of new features. Some of the features
+require changes to your models. 
+
+In more detail: extended tracing so that all propagator
+executions and commit operations can be traced; renamed activity
+to action to avoid confusion with activity in SAT (and fixed that
+action information is also recorded during failure); added CHB
+(conflict-history based branching) heuristic; optimized AFC; all
+functions taken as arguments by Gecode are now based on
+std::function-types; instead of branching with INT_VAR_* and
+INT_VAL_* for Boolean variables, BOOL_VAR_* and BOOL_VAL_* must
+be used. There are a number of additional changes, so you might
+want to read the whole changelog.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Some FlatZinc constraints were not guarded with assertions, which could make
+Gecode crash on incorrect models.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   major
+[DESCRIPTION]
+The right-hand side of a linear constraint was a number rather
+than a value (FloatNum rather than FloatVal) leading to rounding
+errors.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed crashes in sequential and parallel portfolios using
+parallel or restart-based best solution search engines as assets.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Trace recorders have been renamed to variable (or view) trace
+recorders. New trace recorders have been added that can trace
+all propagate and commit operations. See MPG for details.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Tracing now also records failure-events, see MPG for details.
+
+[ENTRY]
+Module: int
+What:   changed
+Rank:   minor
+Thanks:	Conrad Drescher
+[DESCRIPTION]
+When posting a simple linear constraint (only two variables with
+unit coefficients) with default integer propagation level, a
+domain consistent propagator is posted.
+
+[ENTRY]
+Module: int
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+The integer value selections INT_VAL_NEAR_MIN(),
+INT_VAL_NEAR_MAX(), INT_VAL_NEAR_INC(), and INT_VAL_NEAR_DEC()
+have been removed. It is much better to use LNS (large
+neighbourhood search), see MPG for details.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added reified versions of relation constraints between a set and
+an integer variable.
+
+[ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The Social golfers example now includes a model variant that uses
+integer distinct for ensuring all player-pairs are distinct.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Replaced initialized() function by operator bool() for RND,
+Action, AFC, CHB.
+
+[ENTRY]
+Module:	set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added reified cardinality() constraint.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Disabled propagators can be disabled again (convenience).
+
+[ENTRY]
+Module:	other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Gecode requires now at least the Microsoft Visual Studio 2013 compiler.
+
+[ENTRY]
+Module:	kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching.
+
+[ENTRY]
+Module:	int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching. See MPG for details.
+
+[ENTRY]
+Module:	set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching. See MPG for details.
+
+[ENTRY]
+Module:	float
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added support for CHB (conflict-history based branching)
+heuristic for branching. See MPG for details.
+
+[ENTRY]
+Module:	kernel
+What:   changed
+Rank:   minor
+[DESCRIPTION]
+Do not count number of weakly monotonic propagators, nobody used
+it anyway.
+
+[ENTRY]
+Module:	kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Computing the afc for an assigned variable would crash.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Reimplemented the infrastructure to record AFC, much simpler and
+much faster.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	set
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Renamed Activity to Action to avoid confusion with activity in SAT.
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variable implementations are not allowed to return a failed
+modification event directly (such as in return ME_INT_FAILED;),
+they need to call the function fail() instead (such as in return
+fail(home);).
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Activity for branching was not counted when propagation lead to a
+failed space, this is done now. The activity of a variable is now
+by default initialized to 1. That makes activity actually
+useful...
+
+[ENTRY]
+Module:	kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Variable implementations do not need to define cancel()
+functions, the kernel provides generic implementations (this only
+matters for users implementing their own variables). Also cleaned
+up some inlining mess which reduces object code size by around
+10%.
+
+[ENTRY]
+Module:	kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+In certain situations the AFC could be incremented twice (could
+only have occured for linear constraints with Boolean variables
+and sequence constraints).
+
+[ENTRY]
+Module:	int
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, filter, print) can now be of std::function type.
+
+[ENTRY]
+Module:	set
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, filter, print) can now be of std::function type.
+
+[ENTRY]
+Module:	float
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, filter, print) can now be of std::function type.
+
+[ENTRY]
+Module:	kernel
+What:   changed
+Rank:   major
+[DESCRIPTION]
+All branching functions (merit, value, commit, tie-breaking
+limit, filter, print) can now be of std::function type.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Branching on Boolean variables now requires to use BOOL_VAR_...()
+and BOOL_VAL_...() functions instead of the INT_... variants.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Functions passed to wait() and when() can now be of std::function type.
+
+[ENTRY]
+Module: float
+What:   change
+Rank:   major
+[DESCRIPTION]
+Functions passed to wait() can now be of std::function type.
+
+[ENTRY]
+Module: set
+What:   change
+Rank:   major
+[DESCRIPTION]
+Functions passed to wait() can now be of std::function type.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Add assertions to regular constraint definition to avoid posting with
+invalid arguments.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: David Hotham
+[DESCRIPTION]
+Fix parser to work with newer versions of GCC compiler.
+
+[ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added an abstraction RunJobs for executing several jobs in
+parallel (not officially supported).
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) also for float
+variables.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) also for set
+variables.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added if-then-else constraint (called ite) also for Boolean
+variables.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Relations between arrays now support also a mix between integer
+(or Boolean) variable array and integer array.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Enable C++11 standard on compilers that need an explicit switch. Can be
+switched off using --disable-cpp11 during configuration.
+
+
+[RELEASE]
 Version: 5.0.0
 Date: 2016-10-25
 [DESCRIPTION]
-
 This release adds a number of new features and fixes many bugs
 (some rather serious), so it is recommended to switch as soon as
 possible to this release. Some highlights are: re-added limited
@@ -269,7 +663,7 @@ What:   change
 Rank:   minor
 Thanks: Mirko Rahn
 [DESCRIPTION]
-Do not use local classes as this would requite C++-11.
+Do not use local classes as this would require C++-11.
 
 [ENTRY]
 Module: int
@@ -484,7 +878,7 @@ What:   bug
 Rank:   minor
 Thanks: Joseph Scott
 [DESCRIPTION]
-Fix printing of regular expressions.
+Fixed printing of regular expressions.
 
 [ENTRY]
 Module: int

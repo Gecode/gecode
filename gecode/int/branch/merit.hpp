@@ -40,7 +40,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Minimum merit
   template<class View>
   forceinline
-  MeritMin<View>::MeritMin(Space& home, const VarBranch& vb)
+  MeritMin<View>::MeritMin(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Maximum merit
   template<class View>
   forceinline
-  MeritMax<View>::MeritMax(Space& home, const VarBranch& vb)
+  MeritMax<View>::MeritMax(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,int>(home,vb) {}
   template<class View>
   forceinline
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Size merit
   template<class View>
   forceinline
-  MeritSize<View>::MeritSize(Space& home, const VarBranch& vb)
+  MeritSize<View>::MeritSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Degree over size merit
   template<class View>
   forceinline
-  MeritDegreeSize<View>::MeritDegreeSize(Space& home, const VarBranch& vb)
+  MeritDegreeSize<View>::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,double>(home,vb) {}
   template<class View>
   forceinline
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // AFC over size merit
   template<class View>
   forceinline
-  MeritAFCSize<View>::MeritAFCSize(Space& home, const VarBranch& vb)
+  MeritAFCSize<View>::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,double>(home,vb), afc(vb.afc()) {}
   template<class View>
   forceinline
@@ -111,8 +111,8 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   template<class View>
   forceinline double
-  MeritAFCSize<View>::operator ()(const Space& home, View x, int) {
-    return x.afc(home) / static_cast<double>(x.size());
+  MeritAFCSize<View>::operator ()(const Space&, View x, int) {
+    return x.afc() / static_cast<double>(x.size());
   }
   template<class View>
   forceinline bool
@@ -125,39 +125,68 @@ namespace Gecode { namespace Int { namespace Branch {
     afc.~AFC();
   }
 
-  // Activity over size merit
+  // Action over size merit
   template<class View>
   forceinline
-  MeritActivitySize<View>::MeritActivitySize(Space& home,
-                                             const VarBranch& vb)
-    : MeritBase<View,double>(home,vb), activity(vb.activity()) {}
+  MeritActionSize<View>::MeritActionSize(Space& home,
+                                         const VarBranch<Var>& vb)
+    : MeritBase<View,double>(home,vb), action(vb.action()) {}
   template<class View>
   forceinline
-  MeritActivitySize<View>::MeritActivitySize(Space& home, bool shared,
-                                             MeritActivitySize& m)
+  MeritActionSize<View>::MeritActionSize(Space& home, bool shared,
+                                         MeritActionSize& m)
     : MeritBase<View,double>(home,shared,m) {
-    activity.update(home, shared, m.activity);
+    action.update(home, shared, m.action);
   }
   template<class View>
   forceinline double
-  MeritActivitySize<View>::operator ()(const Space&, View x, int i) {
-    return activity[i] / static_cast<double>(x.size());
+  MeritActionSize<View>::operator ()(const Space&, View x, int i) {
+    return action[i] / static_cast<double>(x.size());
   }
   template<class View>
   forceinline bool
-  MeritActivitySize<View>::notice(void) const {
+  MeritActionSize<View>::notice(void) const {
     return true;
   }
   template<class View>
   forceinline void
-  MeritActivitySize<View>::dispose(Space&) {
-    activity.~Activity();
+  MeritActionSize<View>::dispose(Space&) {
+    action.~Action();
+  }
+
+  // CHB over size merit
+  template<class View>
+  forceinline
+  MeritCHBSize<View>::MeritCHBSize(Space& home,
+                                   const VarBranch<Var>& vb)
+    : MeritBase<View,double>(home,vb), chb(vb.chb()) {}
+  template<class View>
+  forceinline
+  MeritCHBSize<View>::MeritCHBSize(Space& home, bool shared,
+                                   MeritCHBSize& m)
+    : MeritBase<View,double>(home,shared,m) {
+    chb.update(home, shared, m.chb);
+  }
+  template<class View>
+  forceinline double
+  MeritCHBSize<View>::operator ()(const Space&, View x, int i) {
+    return chb[i] / static_cast<double>(x.size());
+  }
+  template<class View>
+  forceinline bool
+  MeritCHBSize<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  MeritCHBSize<View>::dispose(Space&) {
+    chb.~CHB();
   }
 
   // Minimum regret merit
   template<class View>
   forceinline
-  MeritRegretMin<View>::MeritRegretMin(Space& home, const VarBranch& vb)
+  MeritRegretMin<View>::MeritRegretMin(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline
@@ -172,7 +201,7 @@ namespace Gecode { namespace Int { namespace Branch {
   // Maximum regret merit
   template<class View>
   forceinline
-  MeritRegretMax<View>::MeritRegretMax(Space& home, const VarBranch& vb)
+  MeritRegretMax<View>::MeritRegretMax(Space& home, const VarBranch<Var>& vb)
     : MeritBase<View,unsigned int>(home,vb) {}
   template<class View>
   forceinline

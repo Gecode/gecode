@@ -341,18 +341,31 @@ namespace Gecode {
           while ((*c != ',') && (*c != 0))
             c++;
           unsigned int e = static_cast<unsigned int>(c-a);
-          if      (!strncmp("init",a,e))    { cur |= TE_INIT; }
-          else if (!strncmp("prune",a,e))   { cur |= TE_PRUNE; }
-          else if (!strncmp("fix",a,e))     { cur |= TE_FIX; }
-          else if (!strncmp("done",a,e))    { cur |= TE_DONE ; }
+          if      (!strncmp("init",a,e))      { cur |= TE_INIT; }
+          else if (!strncmp("prune",a,e))     { cur |= TE_PRUNE; }
+          else if (!strncmp("fix",a,e))       { cur |= TE_FIX; }
+          else if (!strncmp("fail",a,e))      { cur |= TE_FAIL; }
+          else if (!strncmp("done",a,e))      { cur |= TE_DONE ; }
+          else if (!strncmp("propagate",a,e)) { cur |= TE_PROPAGATE; }
+          else if (!strncmp("commit",a,e))    { cur |= TE_COMMIT; }
           else if (!strncmp("none",a,e) ||
                    !strncmp("false",a,e) ||
-                   !strncmp("0",a,e))       { cur = 0; }
+                   !strncmp("0",a,e))         { cur = 0; }
           else if (!strncmp("all",a,e) ||
-                   !strncmp("1",a,e))       { cur = (TE_INIT |
-                                                     TE_PRUNE |
-                                                     TE_FIX |
-                                                     TE_DONE); }
+                   !strncmp("1",a,e))         { cur = (TE_INIT |
+                                                       TE_PRUNE |
+                                                       TE_FIX |
+                                                       TE_FAIL |
+                                                       TE_DONE |
+                                                       TE_PROPAGATE |
+                                                       TE_COMMIT); }
+          else if (!strncmp("variable",a,e))  { cur = (TE_INIT |
+                                                       TE_PRUNE |
+                                                       TE_FIX |
+                                                       TE_FAIL |
+                                                       TE_DONE); }
+          else if (!strncmp("general",a,e))   { cur = (TE_PROPAGATE |
+                                                       TE_COMMIT); }
           else {
             std::cerr << "Wrong argument \"" << a
                       << "\" for option \"" << opt << "\""
@@ -373,12 +386,17 @@ namespace Gecode {
     TraceOption::help(void) {
       using namespace std;
       cerr << '\t' << opt
-           << " (init,prune,fix,done,none,all)"
+           << " (init,prune,fix,fail,done,propagate,commit,none,all,variable,general)"
            << " default: ";
       if (cur == 0) {
         cerr << "none";
-      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE)) {
+      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE |
+                         TE_PROPAGATE | TE_COMMIT)) {
         cerr << "all";
+      } else if (cur == (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE)) {
+        cerr << "variable";
+      } else if (cur == (TE_PROPAGATE | TE_COMMIT)) {
+        cerr << "general";
       } else {
         int f = cur;
         if ((f & TE_INIT) != 0) {
@@ -396,8 +414,23 @@ namespace Gecode {
           f -= TE_FIX;
           if (f != 0) cerr << ',';
         }
+        if ((f & TE_FAIL) != 0) {
+          cerr << "fail";
+          f -= TE_FAIL;
+          if (f != 0) cerr << ',';
+        }
         if ((f & TE_DONE) != 0) {
           cerr << "done";
+          f -= TE_DONE;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TE_PROPAGATE) != 0) {
+          cerr << "propagate";
+          f -= TE_PROPAGATE;
+          if (f != 0) cerr << ',';
+        }
+        if ((f & TE_COMMIT) != 0) {
+          cerr << "commit";
         }
       }
       cerr << endl << "\t\t" << exp << endl;

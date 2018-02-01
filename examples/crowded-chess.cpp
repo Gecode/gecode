@@ -92,8 +92,7 @@ namespace {
       // Forced bishop placement from crowded chess model
       rel(*this, kb(n-1,   0), IRT_EQ, 1);
       rel(*this, kb(n-1, n-1), IRT_EQ, 1);
-      branch(*this, k,
-             tiebreak(INT_VAR_DEGREE_MAX(),INT_VAR_SIZE_MIN()), INT_VAL_MAX());
+      branch(*this, k, BOOL_VAR_DEGREE_MAX(), BOOL_VAL_MAX());
     }
     Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
       k.update(*this, share, s.k);

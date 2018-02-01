@@ -37,11 +37,12 @@
  *
  */
 
+#include <cmath>
+
 namespace Gecode { namespace Float { namespace Arithmetic {
 
-#include <cmath>
   /*
-   * Bounds consistent min operator
+   * Bounds consistent min propagator
    *
    */
   template<class A, class B, class C>
@@ -89,7 +90,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   }
 
   /*
-   * Bounds consistent max operator
+   * Bounds consistent max propagator
    *
    */
 
@@ -238,46 +239,6 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   ExecStatus
   NaryMax<View>::propagate(Space& home, const ModEventDelta&) {
     return prop_nary_max(home,*this,x,y,PC_FLOAT_BND);
-  }
-
-
-  /*
-   * Bounds consistent interger part operator
-   *
-   */
-
-  template<class A, class B>
-  forceinline
-  Channel<A,B>::Channel(Home home, A x0, B x1)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,Int::PC_INT_BND>(home,x0,x1) {}
-
-  template<class A, class B>
-  forceinline
-  Channel<A,B>::Channel(Space& home, bool share, Channel<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,Int::PC_INT_BND>(home,share,p) {}
-
-  template<class A, class B>
-  Actor*
-  Channel<A,B>::copy(Space& home, bool share) {
-    return new (home) Channel<A,B>(home,share,*this);
-  }
-
-  template<class A, class B>
-  ExecStatus
-  Channel<A,B>::post(Home home, A x0, B x1) {
-    GECODE_ME_CHECK(x0.eq(home,FloatVal(Int::Limits::min,
-                                        Int::Limits::max)));
-    (void) new (home) Channel<A,B>(home,x0,x1);
-    return ES_OK;
-  }
-
-  template<class A, class B>
-  ExecStatus
-  Channel<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.gq(home,static_cast<int>(std::ceil(x0.min()))));
-    GECODE_ME_CHECK(x1.lq(home,static_cast<int>(std::floor(x0.max()))));
-    GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(),x1.max())));
-    return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
 }}}

@@ -48,6 +48,8 @@
 #include <gecode/int.hh>
 #include <gecode/iter.hh>
 
+#include <functional>
+
 /*
  * Configure linking
  *
@@ -746,15 +748,28 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Home home, IntVar x, SetRelType rt, SetVar s, Reify r);
 
-  /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_r x\f$
+  /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_{rt} x\f$
   GECODE_SET_EXPORT void
-  rel(Home home, SetVar s, IntRelType r, IntVar x);
+  rel(Home home, SetVar s, IntRelType rt, IntVar x);
 
-  /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ x \sim_r i\f$
+  /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\f$
+  void
+  rel(Home home, IntVar x, IntRelType rt, SetVar s);
+
+  /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ i \sim_{rt} x\right)\equiv r\f$
   GECODE_SET_EXPORT void
-  rel(Home home, IntVar x, IntRelType r, SetVar s);
+  rel(Home home, SetVar s, IntRelType rt, IntVar x, Reify r);
 
+  /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\right)\f\equiv r$
+  void
+  rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r);
   //@}
+
+}
+
+#include <gecode/set/int.hpp>
+
+namespace Gecode {
 
   /**
    * \defgroup TaskModelSetRelOp Set operation/relation constraints
@@ -808,6 +823,13 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
       const IntSet& z);
+
+  /** \brief Post propagator for if-then-else constraint
+   *
+   * Posts propagator for \f$ z = b ? x : y \f$
+   */
+  GECODE_SET_EXPORT void
+  ite(Home home, BoolVar b, SetVar x, SetVar y, SetVar z);
 
   //@}
 
@@ -901,6 +923,10 @@ namespace Gecode {
   /// Post propagator for \f$ |s|=x \f$
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar s, IntVar x);
+
+  /// Post reified propagator for \f$ |s|=x \equiv r\f$
+  GECODE_SET_EXPORT void
+  cardinality(Home home, SetVar s, IntVar x, Reify r);
 
   /**
    * \brief Post propagator for \f$y = \mathrm{weight}(x)\f$
@@ -1075,10 +1101,11 @@ namespace Gecode {
   //@{
   /// Execute \a c when \a x becomes assigned
   GECODE_SET_EXPORT void
-  wait(Home home, SetVar x, void (*c)(Space& home));
+  wait(Home home, SetVar x, std::function<void(Space& home)> c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_SET_EXPORT void
-  wait(Home home, const SetVarArgs& x, void (*c)(Space& home));
+  wait(Home home, const SetVarArgs& x,
+       std::function<void(Space& home)> c);
   //@}
 
 }
@@ -1098,8 +1125,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef bool (*SetBranchFilter)(const Space& home, SetVar x, int i);
-
+  typedef std::function<bool(const Space& home, SetVar x, int i)>
+    SetBranchFilter;
   /**
    * \brief Branch merit function type for set variables
    *
@@ -1110,7 +1137,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef double (*SetBranchMerit)(const Space& home, SetVar x, int i);
+  typedef std::function<double(const Space& home, SetVar x, int i)>
+    SetBranchMerit;
 
   /**
    * \brief Branch value function type for set variables
@@ -1122,7 +1150,8 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef int (*SetBranchVal)(const Space& home, SetVar x, int i);
+  typedef std::function<int(const Space& home, SetVar x, int i)>
+    SetBranchVal;
 
   /**
    * \brief Branch commit function type for set variables
@@ -1135,8 +1164,9 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  typedef void (*SetBranchCommit)(Space& home, unsigned int a,
-                                  SetVar x, int i, int n);
+  typedef std::function<void(Space& home, unsigned int a,
+                             SetVar x, int i, int n)>
+    SetBranchCommit;
 
 }
 
@@ -1183,62 +1213,113 @@ namespace Gecode {
 
 
   /**
-   * \brief Recording activities for set variables
+   * \brief Recording actions for set variables
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetActivity : public Activity {
+  class SetAction : public Action {
   public:
     /**
      * \brief Construct as not yet initialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init or the assignment operator.
+     * yet initialized action storage is init or the assignment operator.
      *
      */
-    SetActivity(void);
+    SetAction(void);
     /// Copy constructor
-    SetActivity(const SetActivity& a);
+    SetAction(const SetAction& a);
     /// Assignment operator
-    SetActivity& operator =(const SetActivity& a);
+    SetAction& operator =(const SetAction& a);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
-     * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      */
     GECODE_SET_EXPORT
-    SetActivity(Home home, const SetVarArgs& x, double d=1.0,
-                SetBranchMerit bm=NULL);
+    SetAction(Home home, const SetVarArgs& x, double d=1.0,
+                SetBranchMerit bm=nullptr);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
-     * If the branch merit function \a bm is different from NULL, the
-     * activity for each variable is initialized with the merit returned
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
      * by \a bm.
      *
      * This member function can only be used once and only if the
-     * activity storage has been constructed with the default constructor.
+     * action storage has been constructed with the default constructor.
      *
      */
     GECODE_SET_EXPORT void
     init(Home home, const SetVarArgs& x, double d=1.0,
-         SetBranchMerit bm=NULL);
+         SetBranchMerit bm=nullptr);
   };
 
 }
 
-#include <gecode/set/branch/activity.hpp>
+#include <gecode/set/branch/action.hpp>
+
+namespace Gecode {
+
+  /**
+   * \brief Recording CHB for set variables
+   *
+   * \ingroup TaskModelSetBranch
+   */
+  class SetCHB : public CHB {
+  public:
+    /**
+     * \brief Construct as not yet initialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized CHB storage is init or the assignment operator.
+     *
+     */
+    SetCHB(void);
+    /// Copy constructor
+    SetCHB(const SetCHB& chb);
+    /// Assignment operator
+    SetCHB& operator =(const SetCHB& chb);
+   /**
+     * \brief Initialize for set variables \a x
+     *
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     */
+    GECODE_SET_EXPORT
+    SetCHB(Home home, const SetVarArgs& x, SetBranchMerit bm=nullptr);
+   /**
+     * \brief Initialize for set variables \a x
+     *
+     * If the branch merit function \a bm is different from nullptr, the
+     * action for each variable is initialized with the merit returned
+     * by \a bm.
+     *
+     * This member function can only be used once and only if the
+     * action storage has been constructed with the default constructor.
+     *
+     */
+    GECODE_SET_EXPORT void
+    init(Home home, const SetVarArgs& x, SetBranchMerit bm=nullptr);
+  };
+
+}
+
+#include <gecode/set/branch/chb.hpp>
 
 namespace Gecode {
 
   /// Function type for printing branching alternatives for set variables
-  typedef void (*SetVarValPrint)(const Space &home, const Brancher& b,
-                                 unsigned int a,
-                                 SetVar x, int i, const int& n,
-                                 std::ostream& o);
+  typedef std::function<void(const Space &home, const Brancher& b,
+                             unsigned int a,
+                             SetVar x, int i, const int& n,
+                             std::ostream& o)>
+    SetVarValPrint;
 
 }
 
@@ -1249,7 +1330,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetVarBranch : public VarBranch {
+  class SetVarBranch : public VarBranch<SetVar> {
   public:
     /// Which variable selection
     enum Select {
@@ -1261,8 +1342,10 @@ namespace Gecode {
       SEL_DEGREE_MAX,      ///< With largest degree
       SEL_AFC_MIN,         ///< With smallest accumulated failure count
       SEL_AFC_MAX,         ///< With largest accumulated failure count
-      SEL_ACTIVITY_MIN,    ///< With lowest activity
-      SEL_ACTIVITY_MAX,    ///< With highest activity
+      SEL_ACTION_MIN,      ///< With lowest action
+      SEL_ACTION_MAX,      ///< With highest action
+      SEL_CHB_MIN,         ///< With lowest CHB Q-score
+      SEL_CHB_MAX,         ///< With highest CHB Q-score
       SEL_MIN_MIN,         ///< With smallest minimum unknown element
       SEL_MIN_MAX,         ///< With largest minimum unknown element
       SEL_MAX_MIN,         ///< With smallest maximum unknown element
@@ -1273,8 +1356,10 @@ namespace Gecode {
       SEL_DEGREE_SIZE_MAX, ///< With largest degree divided by domain size
       SEL_AFC_SIZE_MIN,    ///< With smallest accumulated failure count divided by domain size
       SEL_AFC_SIZE_MAX,    ///< With largest accumulated failure count divided by domain size
-      SEL_ACTIVITY_SIZE_MIN, ///< With smallest activity divided by domain size
-      SEL_ACTIVITY_SIZE_MAX  ///< With largest activity divided by domain size
+      SEL_ACTION_SIZE_MIN, ///< With smallest action divided by domain size
+      SEL_ACTION_SIZE_MAX, ///< With largest action divided by domain size
+      SEL_CHB_SIZE_MIN,    ///< With smallest CHB Q-score divided by domain size
+      SEL_CHB_SIZE_MAX     ///< With largest CHB Q-score divided by domain size
     };
   protected:
     /// Which variable to select
@@ -1289,14 +1374,16 @@ namespace Gecode {
     /// Initialize with selection strategy \a s, decay factor \a d, and tie-break limit function \a t
     SetVarBranch(Select s, double d, BranchTbl t);
     /// Initialize with selection strategy \a s, afc \a a, and tie-break limit function \a t
-    SetVarBranch(Select s, AFC a, BranchTbl t);
-    /// Initialize with selection strategy \a s, activity \a a, and tie-break limit function \a t
-    SetVarBranch(Select s, Activity a, BranchTbl t);
+    SetVarBranch(Select s, SetAFC a, BranchTbl t);
+    /// Initialize with selection strategy \a s, action \a a, and tie-break limit function \a t
+    SetVarBranch(Select s, SetAction a, BranchTbl t);
+    /// Initialize with selection strategy \a s, CHB \a c, and tie-break limit function \a t
+    SetVarBranch(Select s, SetCHB c, BranchTbl t);
     /// Initialize with selection strategy \a s, branch merit function \a mf, and tie-break limit function \a t
-    SetVarBranch(Select s, VoidFunction mf, BranchTbl t);
+    SetVarBranch(Select s, SetBranchMerit mf, BranchTbl t);
     /// Return selection strategy
     Select select(void) const;
-    /// Expand decay factor into AFC or activity
+    /// Expand AFC, action, and CHB
     void expand(Home home, const SetVarArgs& x);
   };
 
@@ -1310,61 +1397,77 @@ namespace Gecode {
   /// Select random variable (uniform distribution, for tie breaking)
   SetVarBranch SET_VAR_RND(Rnd r);
   /// Select variable with least merit according to branch merit function \a bm
-  SetVarBranch SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MERIT_MIN(SetBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with highest merit according to branch merit function \a bm
-  SetVarBranch SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MERIT_MAX(SetBranchMerit bm, BranchTbl tbl=nullptr);
   /// Select variable with smallest degree
-  SetVarBranch SET_VAR_DEGREE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree
-  SetVarBranch SET_VAR_DEGREE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count with decay factor \a d
-  SetVarBranch SET_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count
-  SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MIN(SetAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count with decay factor \a d
-  SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count
-  SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with lowest activity
-  SetVarBranch SET_VAR_ACTIVITY_MIN(SetActivity a, BranchTbl tbl=NULL);
-  /// Select variable with highest activity with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with highest activity
-  SetVarBranch SET_VAR_ACTIVITY_MAX(SetActivity a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_MAX(SetAFC a, BranchTbl tbl=nullptr);
+  /// Select variable with lowest action with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_MIN(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with lowest action
+  SetVarBranch SET_VAR_ACTION_MIN(SetAction a, BranchTbl tbl=nullptr);
+  /// Select variable with highest action with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_MAX(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with highest action
+  SetVarBranch SET_VAR_ACTION_MAX(SetAction a, BranchTbl tbl=nullptr);
+  /// Select variable with lowest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MIN(BranchTbl tbl=nullptr);
+  /// Select variable with lowest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MIN(SetCHB c, BranchTbl tbl=nullptr);
+  /// Select variable with highest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MAX(BranchTbl tbl=nullptr);
+  /// Select variable with highest CHB Q-score
+  SetVarBranch SET_VAR_CHB_MAX(SetCHB c, BranchTbl tbl=nullptr);
   /// Select variable with smallest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MIN_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest minimum unknown element
-  SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MIN_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MAX_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest maximum unknown element
-  SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_MAX_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest unknown set
-  SetVarBranch SET_VAR_SIZE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest  unknown set
-  SetVarBranch SET_VAR_SIZE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest degree divided by domain size
-  SetVarBranch SET_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_SIZE_MIN(BranchTbl tbl=nullptr);
   /// Select variable with largest degree divided by domain size
-  SetVarBranch SET_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_DEGREE_SIZE_MAX(BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with smallest accumulated failure count divided by domain size
-  SetVarBranch SET_VAR_AFC_SIZE_MIN(SetAFC a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MIN(SetAFC a, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
   /// Select variable with largest accumulated failure count divided by domain size
-  SetVarBranch SET_VAR_AFC_SIZE_MAX(SetAFC a, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MIN(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with smallest activity divided by domain size
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MIN(SetActivity a, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size with decay factor \a d
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MAX(double d=1.0, BranchTbl tbl=NULL);
-  /// Select variable with largest activity divided by domain size
-  SetVarBranch SET_VAR_ACTIVITY_SIZE_MAX(SetActivity a, BranchTbl tbl=NULL);
+  SetVarBranch SET_VAR_AFC_SIZE_MAX(SetAFC a, BranchTbl tbl=nullptr);
+  /// Select variable with smallest action divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_SIZE_MIN(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with smallest action divided by domain size
+  SetVarBranch SET_VAR_ACTION_SIZE_MIN(SetAction a, BranchTbl tbl=nullptr);
+  /// Select variable with largest action divided by domain size with decay factor \a d
+  SetVarBranch SET_VAR_ACTION_SIZE_MAX(double d=1.0, BranchTbl tbl=nullptr);
+  /// Select variable with largest action divided by domain size
+  SetVarBranch SET_VAR_ACTION_SIZE_MAX(SetAction a, BranchTbl tbl=nullptr);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MIN(BranchTbl tbl=nullptr);
+  /// Select variable with smallest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MIN(SetCHB c, BranchTbl tbl=nullptr);
+  /// Select variable with largest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MAX(BranchTbl tbl=nullptr);
+  /// Select variable with largest CHB Q-score divided by domain size
+  SetVarBranch SET_VAR_CHB_SIZE_MAX(SetCHB c, BranchTbl tbl=nullptr);
   //@}
 
 }
@@ -1378,7 +1481,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetValBranch : public ValBranch {
+  class SetValBranch : public ValBranch<SetVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1401,7 +1504,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     SetValBranch(Select s, Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    SetValBranch(VoidFunction v, VoidFunction c);
+    SetValBranch(SetBranchVal v, SetBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1434,7 +1537,7 @@ namespace Gecode {
    * must be included in the set variable \a x for the first alternative,
    * and that \a n must be excluded from \a x otherwise.
    */
-  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=NULL);
+  SetValBranch SET_VAL(SetBranchVal v, SetBranchCommit c=nullptr);
   //@}
 
 }
@@ -1448,7 +1551,7 @@ namespace Gecode {
    *
    * \ingroup TaskModelSetBranch
    */
-  class SetAssign : public ValBranch {
+  class SetAssign : public ValBranch<SetVar> {
   public:
     /// Which value selection
     enum Select {
@@ -1471,7 +1574,7 @@ namespace Gecode {
     /// Initialize with random number generator \a r
     SetAssign(Select s, Rnd r);
     /// Initialize with value function \a f and commit function \a c
-    SetAssign(VoidFunction v, VoidFunction c);
+    SetAssign(SetBranchVal v, SetBranchCommit c);
     /// Return selection strategy
     Select select(void) const;
   };
@@ -1503,7 +1606,7 @@ namespace Gecode {
    * The default commit function posts the constraint that the value \a n
    * must be included in the set variable \a x.
    */
-  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=NULL);
+  SetAssign SET_ASSIGN(SetBranchVal v, SetBranchCommit c=nullptr);
   //@}
 
 }
@@ -1520,8 +1623,8 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
-         SetBranchFilter bf=NULL,
-         SetVarValPrint vvp=NULL);
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a vars and value selection \a vals
    *
@@ -1530,8 +1633,8 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
-         SetBranchFilter bf=NULL,
-         SetVarValPrint vvp=NULL);
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with value selection \a vals
    *
@@ -1539,7 +1642,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   branch(Home home, SetVar x, SetValBranch vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Assign all \a x with value selection \a vals
    *
@@ -1547,8 +1650,8 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   assign(Home home, const SetVarArgs& x, SetAssign vals,
-         SetBranchFilter bf=NULL,
-         SetVarValPrint vvp=NULL);
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Assign \a x with value selection \a vals
    *
@@ -1556,7 +1659,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   assign(Home home, SetVar x, SetAssign vals,
-         SetVarValPrint vvp=NULL);
+         SetVarValPrint vvp=nullptr);
 
 }
 
@@ -1581,8 +1684,8 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          SetVarBranch vars, SetValBranch vals,
          const Symmetries& syms,
-         SetBranchFilter bf=NULL,
-         SetVarValPrint vvp=NULL);
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
   /**
    * \brief Branch over \a x with tie-breaking variable selection \a
    * vars and value selection \a vals with symmetry breaking
@@ -1593,8 +1696,8 @@ namespace Gecode {
   branch(Home home, const SetVarArgs& x,
          TieBreak<SetVarBranch> vars, SetValBranch vals,
          const Symmetries& syms,
-         SetBranchFilter bf=NULL,
-         SetVarValPrint vvp=NULL);
+         SetBranchFilter bf=nullptr,
+         SetVarValPrint vvp=nullptr);
 }
 
 namespace Gecode {
@@ -1703,12 +1806,12 @@ namespace Gecode {
    * \brief Tracer for set variables
    * \ingroup TaskSetTrace
    */
-  typedef Tracer<Set::SetView> SetTracer;
+  typedef ViewTracer<Set::SetView> SetTracer;
   /**
-   * \brief TraceRecorder for set variables
+   * \brief Trace recorder for set variables
    * \ingroup TaskSetTrace
    */
-  typedef TraceRecorder<Set::SetView> SetTraceRecorder;
+  typedef ViewTraceRecorder<Set::SetView> SetTraceRecorder;
 
   /**
    * \brief Standard set variable tracer
@@ -1725,9 +1828,11 @@ namespace Gecode {
     virtual void init(const Space& home, const SetTraceRecorder& t);
     /// Print prune information
     virtual void prune(const Space& home, const SetTraceRecorder& t,
-                       const ExecInfo& ei, int i, SetTraceDelta& d);
+                       const ViewTraceInfo& vti, int i, SetTraceDelta& d);
     /// Print fixpoint information
     virtual void fix(const Space& home, const SetTraceRecorder& t);
+    /// Print failure information
+    virtual void fail(const Space& home, const SetTraceRecorder& t);
     /// Print that trace recorder is done
     virtual void done(const Space& home, const SetTraceRecorder& t);
     /// Default tracer (printing to std::cerr)
@@ -1742,7 +1847,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   trace(Home home, const SetVarArgs& x,
         TraceFilter tf,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         SetTracer& t = StdSetTracer::def);
   /**
    * \brief Create a tracer for set variables
@@ -1750,7 +1855,7 @@ namespace Gecode {
    */
   void
   trace(Home home, const SetVarArgs& x,
-        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_DONE),
+        int te = (TE_INIT | TE_PRUNE | TE_FIX | TE_FAIL | TE_DONE),
         SetTracer& t = StdSetTracer::def);
 
 }

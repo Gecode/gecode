@@ -243,13 +243,13 @@ namespace Gecode { namespace Int { namespace Count {
   forceinline ExecStatus
   post_false(Home home, ViewArray<VX>& x, VX y) {
     for (int i = x.size(); i--; )
-      GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x[i],y));
+      GECODE_ES_CHECK((Rel::Nq<VX,VX>::post(home,x[i],y)));
     return ES_OK;
   }
   template<class VX>
   forceinline ExecStatus
   post_false(Home home, VX x, VX y) {
-    return Rel::Nq<VX>::post(home,x,y);
+    return Rel::Nq<VX,VX>::post(home,x,y);
   }
 
   template<class VX>

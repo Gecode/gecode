@@ -188,9 +188,9 @@ namespace Gecode { namespace Set { namespace Channel {
             ++inter;
           }
 
-          int i=xs_size-1;
-          for (int j=to; j>=from;j--,i--) {
-            GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].eq(home,j));
+          int k=xs_size-1;
+          for (int j=to; j>=from;j--,k--) {
+            GECODE_ME_CHECK_MODIFIED(loopFlag, xs[k].eq(home,j));
           }
         }
       }

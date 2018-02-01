@@ -43,7 +43,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Minimum merit
   forceinline
-  MeritMin::MeritMin(Space& home, const VarBranch& vb)
+  MeritMin::MeritMin(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritMin::MeritMin(Space& home, bool shared, MeritMin& m)
@@ -55,7 +55,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Maximum merit
   forceinline
-  MeritMax::MeritMax(Space& home, const VarBranch& vb)
+  MeritMax::MeritMax(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritMax::MeritMax(Space& home, bool shared, MeritMax& m)
@@ -67,7 +67,7 @@ namespace Gecode { namespace Float { namespace Branch {
 
   // Size merit
   forceinline
-  MeritSize::MeritSize(Space& home, const VarBranch& vb)
+  MeritSize::MeritSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritSize::MeritSize(Space& home, bool shared, MeritSize& m)
@@ -77,9 +77,9 @@ namespace Gecode { namespace Float { namespace Branch {
     return x.size();
   }
 
-  // Size over degree merit
+  // Degree over size merit
   forceinline
-  MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch& vb)
+  MeritDegreeSize::MeritDegreeSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb) {}
   forceinline
   MeritDegreeSize::MeritDegreeSize(Space& home, bool shared,
@@ -90,9 +90,9 @@ namespace Gecode { namespace Float { namespace Branch {
     return x.size() / static_cast<double>(x.degree());
   }
 
-  // Size over AFC merit
+  // AFC over size merit
   forceinline
-  MeritAFCSize::MeritAFCSize(Space& home, const VarBranch& vb)
+  MeritAFCSize::MeritAFCSize(Space& home, const VarBranch<Var>& vb)
     : MeritBase<FloatView,double>(home,vb), afc(vb.afc()) {}
   forceinline
   MeritAFCSize::MeritAFCSize(Space& home, bool shared, MeritAFCSize& m)
@@ -100,8 +100,8 @@ namespace Gecode { namespace Float { namespace Branch {
     afc.update(home,shared,m.afc);
   }
   forceinline double
-  MeritAFCSize::operator ()(const Space& home, FloatView x, int) {
-    return x.size() / x.afc(home);
+  MeritAFCSize::operator ()(const Space&, FloatView x, int) {
+    return x.afc() / static_cast<double>(x.size());
   }
   forceinline bool
   MeritAFCSize::notice(void) const {
@@ -112,28 +112,53 @@ namespace Gecode { namespace Float { namespace Branch {
     afc.~AFC();
   }
 
-  // Size over activity merit
+  // Action over size merit
   forceinline
-  MeritActivitySize::MeritActivitySize(Space& home,
-                                       const VarBranch& vb)
-    : MeritBase<FloatView,double>(home,vb), activity(vb.activity()) {}
+  MeritActionSize::MeritActionSize(Space& home,
+                                   const VarBranch<Var>& vb)
+    : MeritBase<FloatView,double>(home,vb), action(vb.action()) {}
   forceinline
-  MeritActivitySize::MeritActivitySize(Space& home, bool shared,
-                                       MeritActivitySize& m)
+  MeritActionSize::MeritActionSize(Space& home, bool shared,
+                                   MeritActionSize& m)
     : MeritBase<FloatView,double>(home,shared,m) {
-    activity.update(home, shared, m.activity);
+    action.update(home, shared, m.action);
   }
   forceinline double
-  MeritActivitySize::operator ()(const Space&, FloatView x, int i) {
-    return activity[i] / static_cast<double>(x.size());
+  MeritActionSize::operator ()(const Space&, FloatView x, int i) {
+    return action[i] / static_cast<double>(x.size());
   }
   forceinline bool
-  MeritActivitySize::notice(void) const {
+  MeritActionSize::notice(void) const {
     return true;
   }
   forceinline void
-  MeritActivitySize::dispose(Space&) {
-    activity.~Activity();
+  MeritActionSize::dispose(Space&) {
+    action.~Action();
+  }
+
+
+  // CHB Q-score over size merit
+  forceinline
+  MeritCHBSize::MeritCHBSize(Space& home,
+                             const VarBranch<Var>& vb)
+    : MeritBase<FloatView,double>(home,vb), chb(vb.chb()) {}
+  forceinline
+  MeritCHBSize::MeritCHBSize(Space& home, bool shared,
+                             MeritCHBSize& m)
+    : MeritBase<FloatView,double>(home,shared,m) {
+    chb.update(home, shared, m.chb);
+  }
+  forceinline double
+  MeritCHBSize::operator ()(const Space&, FloatView x, int i) {
+    return chb[i] / static_cast<double>(x.size());
+  }
+  forceinline bool
+  MeritCHBSize::notice(void) const {
+    return true;
+  }
+  forceinline void
+  MeritCHBSize::dispose(Space&) {
+    chb.~CHB();
   }
 
 }}}

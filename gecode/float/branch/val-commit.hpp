@@ -42,7 +42,7 @@
 namespace Gecode { namespace Float { namespace Branch {
 
   forceinline
-  ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch& vb)
+  ValCommitLqGq::ValCommitLqGq(Space& home, const ValBranch<Var>& vb)
     : ValCommit<FloatView,FloatVal>(home,vb) {}
   forceinline
   ValCommitLqGq::ValCommitLqGq(Space& home, bool shared, ValCommitLqGq& vc)

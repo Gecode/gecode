@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2012
+ *     Christian Schulte, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,21 +35,18 @@
  *
  */
 
-#include <gecode/set.hh>
-
 namespace Gecode {
 
-  SetActivity::SetActivity(Home home, const SetVarArgs& x, double d,
-                           SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    Activity::init(home,y,d,bm);
-  }
+  forceinline
+  SetCHB::SetCHB(void) {}
 
-  void
-  SetActivity::init(Home home, const SetVarArgs& x, double d,
-                    SetBranchMerit bm) {
-    ViewArray<Set::SetView> y(home,x);
-    Activity::init(home,y,d,bm);
+  forceinline
+  SetCHB::SetCHB(const SetCHB& chb)
+    : CHB(chb) {}
+
+  forceinline SetCHB&
+  SetCHB::operator =(const SetCHB& chb) {
+    return static_cast<SetCHB&>(CHB::operator =(chb));
   }
 
 }

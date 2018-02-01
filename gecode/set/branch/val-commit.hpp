@@ -44,7 +44,7 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   forceinline
-  ValCommitInc::ValCommitInc(Space& home, const ValBranch& vb)
+  ValCommitInc::ValCommitInc(Space& home, const ValBranch<Var>& vb)
     : ValCommit<SetView,int>(home,vb) {}
   forceinline
   ValCommitInc::ValCommitInc(Space& home, bool shared, ValCommitInc& vc)
@@ -68,7 +68,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline
-  ValCommitExc::ValCommitExc(Space& home, const ValBranch& vb)
+  ValCommitExc::ValCommitExc(Space& home, const ValBranch<Var>& vb)
     : ValCommit<SetView,int>(home,vb) {}
   forceinline
   ValCommitExc::ValCommitExc(Space& home, bool shared, ValCommitExc& vc)

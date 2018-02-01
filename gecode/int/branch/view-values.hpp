@@ -91,45 +91,53 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   forceinline
-  ViewValuesBrancher<n,min>::
+  ViewValuesBrancher<n,min,Filter,Print>::
   ViewValuesBrancher(Home home, ViewArray<IntView>& x,
                      ViewSel<IntView>* vs[n],
-                     BranchFilter bf, IntVarValPrint vvp0)
-    : ViewBrancher<IntView,n>(home,x,vs,bf), vvp(vvp0) {}
-
-  template<int n, bool min>
-  void
-  ViewValuesBrancher<n,min>::post(Home home, ViewArray<IntView>& x,
-                                  ViewSel<IntView>* vs[n],
-                                  BranchFilter bf, IntVarValPrint vvp) {
-    (void) new (home) ViewValuesBrancher<n,min>(home,x,vs,bf,vvp);
+                     IntBranchFilter bf,
+                     IntVarValPrint vvp)
+    : ViewBrancher<IntView,Filter,n>(home,x,vs,bf), p(vvp) {
+    if (p.notice())
+      home.notice(*this,AP_DISPOSE,true);
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
+  forceinline void
+  ViewValuesBrancher<n,min,Filter,Print>::post(Home home, 
+                                               ViewArray<IntView>& x,
+                                               ViewSel<IntView>* vs[n],
+                                               IntBranchFilter bf,
+                                               IntVarValPrint vvp) {
+    (void) new (home) ViewValuesBrancher<n,min,Filter,Print>(home,x,vs,bf,vvp);
+  }
+
+  template<int n, bool min, class Filter, class Print>
   forceinline
-  ViewValuesBrancher<n,min>::
+  ViewValuesBrancher<n,min,Filter,Print>::
   ViewValuesBrancher(Space& home, bool shared, ViewValuesBrancher& b)
-    : ViewBrancher<IntView,n>(home,shared,b), vvp(b.vvp) {}
+    : ViewBrancher<IntView,Filter,n>(home,shared,b), p(home,shared,b.p) {}
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   Actor*
-  ViewValuesBrancher<n,min>::copy(Space& home, bool shared) {
-    return new (home) ViewValuesBrancher<n,min>(home,shared,*this);
+  ViewValuesBrancher<n,min,Filter,Print>::copy(Space& home, bool shared) {
+    return new (home) ViewValuesBrancher<n,min,Filter,Print>
+      (home,shared,*this);
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   const Choice*
-  ViewValuesBrancher<n,min>::choice(Space& home) {
-    Pos p = ViewBrancher<IntView,n>::pos(home);
+  ViewValuesBrancher<n,min,Filter,Print>::choice(Space& home) {
+    Pos p = ViewBrancher<IntView,Filter,n>::pos(home);
     return new PosValuesChoice(*this,p,
-                               ViewBrancher<IntView,n>::view(p));
+                               ViewBrancher<IntView,Filter,n>::view(p));
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   const Choice*
-  ViewValuesBrancher<n,min>::choice(const Space& home, Archive& e) {
+  ViewValuesBrancher<n,min,Filter,Print>::choice
+  (const Space& home, Archive& e) {
     (void) home;
     int p;
     unsigned int a;
@@ -137,42 +145,83 @@ namespace Gecode { namespace Int { namespace Branch {
     return new PosValuesChoice(*this,a,p,e);
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   ExecStatus
-  ViewValuesBrancher<n,min>::commit(Space& home, const Choice& c,
-                                    unsigned int a) {
+  ViewValuesBrancher<n,min,Filter,Print>::commit(Space& home, const Choice& c,
+                                                 unsigned int a) {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
-    IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
+    IntView x(ViewBrancher<IntView,Filter,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     return me_failed(x.eq(home,pvc.val(b))) ? ES_FAILED : ES_OK;
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   NGL*
-  ViewValuesBrancher<n,min>::ngl(Space& home, const Choice& c,
-                                 unsigned int a) const {
+  ViewValuesBrancher<n,min,Filter,Print>::ngl(Space& home, const Choice& c,
+                                              unsigned int a) const {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
-    IntView x(ViewBrancher<IntView,n>::view(pvc.pos()));
+    IntView x(ViewBrancher<IntView,Filter,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     return new (home) EqNGL<IntView>(home,x,pvc.val(b));
   }
 
-  template<int n, bool min>
+  template<int n, bool min, class Filter, class Print>
   void
-  ViewValuesBrancher<n,min>::print(const Space& home, const Choice& c,
-                                   unsigned int a, std::ostream& o) const {
+  ViewValuesBrancher<n,min,Filter,Print>::print(const Space& home,
+                                                const Choice& c,
+                                                unsigned int a, 
+                                                std::ostream& o) const {
     const PosValuesChoice& pvc
       = static_cast<const PosValuesChoice&>(c);
-    IntVar x(ViewBrancher<IntView,n>::view(pvc.pos()).varimp());
+    IntView x(ViewBrancher<IntView,Filter,n>::view(pvc.pos()));
     unsigned int b = min ? a : (pvc.alternatives() - 1 - a);
     int nn = pvc.val(b);
-    if (vvp != NULL)
-      vvp(home,*this,a,x,pvc.pos().pos,nn,o);
+    if (p)
+      p(home,*this,a,x,pvc.pos().pos,nn,o);
     else
       o << "var[" << pvc.pos().pos << "] = " << nn;
   }
+
+  template<int n, bool min, class Filter, class Print>
+  forceinline size_t
+  ViewValuesBrancher<n,min,Filter,Print>::dispose(Space& home) {
+    if (p.notice())
+      home.ignore(*this,AP_DISPOSE,true);
+    (void) ViewBrancher<IntView,Filter,n>::dispose(home);
+    return sizeof(ViewValuesBrancher<n,min,Filter,Print>);
+  }
+
+  template<int n, bool min>
+  forceinline void
+  postviewvaluesbrancher(Home home, ViewArray<IntView>& x,
+                         ViewSel<IntView>* vs[n],
+                         IntBranchFilter bf,
+                         IntVarValPrint vvp) {
+    if (bf) {
+      if (vvp) {
+        ViewValuesBrancher<n,min,BrancherFilter<IntView>,
+          BrancherPrint<IntView,int> >
+          ::post(home,x,vs,bf,vvp);
+      } else {
+        ViewValuesBrancher<n,min,BrancherFilter<IntView>,
+          BrancherNoPrint<IntView,int> >
+          ::post(home,x,vs,bf,vvp);
+      }
+    } else {
+      if (vvp) {
+        ViewValuesBrancher<n,min,BrancherNoFilter<IntView>,
+          BrancherPrint<IntView,int> >
+          ::post(home,x,vs,bf,vvp);
+      } else {
+        ViewValuesBrancher<n,min,BrancherNoFilter<IntView>,
+          BrancherNoPrint<IntView,int> >
+          ::post(home,x,vs,bf,vvp);
+      }
+    }
+  }
+
 
 }}}
 

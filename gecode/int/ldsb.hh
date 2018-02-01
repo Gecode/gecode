@@ -333,10 +333,11 @@ namespace Gecode { namespace Int { namespace LDSB {
    * \a View) and value (of type \a Val).
    *
    */
-  template<class View, int n, class Val, unsigned int a>
-  class LDSBBrancher : public ViewValBrancher<View,n,Val,a> {
-    typedef typename ViewBrancher<View,n>::BranchFilter BranchFilter;
+  template<class View, int n, class Val, unsigned int a,
+           class Filter, class Print>
+  class LDSBBrancher : public ViewValBrancher<View,n,Val,a,Filter,Print> {
   public:
+    using typename ViewValBrancher<View,n,Val,a,Filter,Print>::Var;
     /// Array of symmetry implementations
     SymmetryImp<View>** _syms;
     /// Number of symmetry implementations
@@ -344,12 +345,6 @@ namespace Gecode { namespace Int { namespace LDSB {
     // Position of variable that last choice was created for
     int _prevPos;
   protected:
-    /// Function type for printing variable and value selection
-    typedef void (*VarValPrint)(const Space& home, const Brancher& b,
-                                unsigned int alt,
-                                typename View::VarType x, int i,
-                                const Val& m,
-                                std::ostream& o);
     /// Constructor for cloning \a b
     LDSBBrancher(Space& home, bool share, LDSBBrancher& b);
     /// Constructor for creation
@@ -358,8 +353,8 @@ namespace Gecode { namespace Int { namespace LDSB {
                  ViewSel<View>* vs[n],
                  ValSelCommitBase<View,Val>* vsc,
                  SymmetryImp<View>** syms, int nsyms,
-                 BranchFilter bf,
-                 VarValPrint vvp);
+                 BranchFilter<Var> bf,
+                 VarValPrint<Var,Val> vvp);
   public:
     /// Return choice
     virtual const Choice* choice(Space& home);
@@ -378,9 +373,19 @@ namespace Gecode { namespace Int { namespace LDSB {
                      ValSelCommitBase<View,Val>* vsc,
                      SymmetryImp<View>** syms,
                      int nsyms,
-                     BranchFilter bf,
-                     VarValPrint vvp);
+                     BranchFilter<Var> bf,
+                     VarValPrint<Var,Val> vvp);
   };
+
+  /// Post LDSB brancher
+  template<class View, int n, class Val, unsigned int a>
+  void postldsbbrancher(Home home,
+                        ViewArray<View>& x,
+                        ViewSel<View>* vs[n],
+                        ValSelCommitBase<View,Val>* vsc,
+                        SymmetryImp<View>** syms, int nsyms,
+                        BranchFilter<typename View::VarType> bf,
+                        VarValPrint<typename View::VarType,Val> vvp);
 
   /// Exclude value \v from variable view \x
   template<class View>

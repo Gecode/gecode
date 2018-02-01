@@ -60,6 +60,24 @@ namespace Gecode { namespace Int {
     return notify(home,ME_BOOL_VAL,d);
   }
 
+  void
+  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond,
+                        bool schedule) {
+    // Subscription can be used with integer propagation conditions,
+    // which must be remapped to the single Boolean propagation condition.
+    BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),schedule);
+  }
+
+  void
+  BoolVarImp::reschedule(Space& home, Propagator& p, PropCond) {
+    BoolVarImpBase::reschedule(home,p,PC_BOOL_VAL,assigned());
+  }
+
+  void
+  BoolVarImp::subscribe(Space& home, Advisor& a, bool fail) {
+    BoolVarImpBase::subscribe(home,a,assigned(),fail);
+  }
+
 }}
 
 // STATISTICS: int-var

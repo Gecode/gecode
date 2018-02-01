@@ -135,7 +135,7 @@ namespace Gecode { namespace Float {
 
   forceinline ModEvent
   FloatVarImp::gq(Space& home, FloatNum n) {
-    if (n > dom.max())  return ME_FLOAT_FAILED;
+    if (n > dom.max())  return fail(home);
     if ((n <= dom.min()) || assigned()) return ME_FLOAT_NONE;
     FloatDelta d(dom.min(),n);
     ModEvent me = ME_FLOAT_BND;
@@ -147,7 +147,7 @@ namespace Gecode { namespace Float {
   }
   forceinline ModEvent
   FloatVarImp::gq(Space& home, const FloatVal& n) {
-    if (n.min() > dom.max())  return ME_FLOAT_FAILED;
+    if (n.min() > dom.max())  return fail(home);
     if ((n.min() <= dom.min()) || assigned()) return ME_FLOAT_NONE;
     FloatDelta d(dom.min(),n.min());
     ModEvent me = ME_FLOAT_BND;
@@ -161,7 +161,7 @@ namespace Gecode { namespace Float {
 
   forceinline ModEvent
   FloatVarImp::lq(Space& home, FloatNum n) {
-    if (n < dom.min())  return ME_FLOAT_FAILED;
+    if (n < dom.min())  return fail(home);
     if ((n >= dom.max()) || assigned()) return ME_FLOAT_NONE;
     FloatDelta d(n,dom.max());
     ModEvent me = ME_FLOAT_BND;
@@ -173,7 +173,7 @@ namespace Gecode { namespace Float {
   }
   forceinline ModEvent
   FloatVarImp::lq(Space& home, const FloatVal& n) {
-    if (n.max() < dom.min())  return ME_FLOAT_FAILED;
+    if (n.max() < dom.min())  return fail(home);
     if ((n.max() >= dom.max()) || assigned()) return ME_FLOAT_NONE;
     FloatDelta d(n.max(),dom.max());
     ModEvent me = ME_FLOAT_BND;
@@ -188,7 +188,7 @@ namespace Gecode { namespace Float {
   forceinline ModEvent
   FloatVarImp::eq(Space& home, FloatNum n) {
     if (!dom.in(n))
-      return ME_FLOAT_FAILED;
+      return fail(home);
     if (assigned())
       return ME_FLOAT_NONE;
     FloatDelta d;
@@ -198,7 +198,7 @@ namespace Gecode { namespace Float {
   forceinline ModEvent
   FloatVarImp::eq(Space& home, const FloatVal& n) {
     if (!overlap(dom,n))
-      return ME_FLOAT_FAILED;
+      return fail(home);
     if (assigned() || subset(dom,n))
       return ME_FLOAT_NONE;
     FloatDelta d;
@@ -226,32 +226,6 @@ namespace Gecode { namespace Float {
   forceinline FloatVarImp*
   FloatVarImp::perform_copy(Space& home, bool share) {
     return new (home) FloatVarImp(home, share, *this);
-  }
-
-  /*
-   * Dependencies
-   *
-   */
-  forceinline void
-  FloatVarImp::subscribe(Space& home, Propagator& p, PropCond pc, bool schedule) {
-    FloatVarImpBase::subscribe(home,p,pc,assigned(),schedule);
-  }
-  forceinline void
-  FloatVarImp::cancel(Space& home, Propagator& p, PropCond pc) {
-    FloatVarImpBase::cancel(home,p,pc,assigned());
-  }
-
-  forceinline void
-  FloatVarImp::reschedule(Space& home, Propagator& p, PropCond pc) {
-    FloatVarImpBase::reschedule(home,p,pc,assigned());
-  }
-  forceinline void
-  FloatVarImp::subscribe(Space& home, Advisor& a) {
-    FloatVarImpBase::subscribe(home,a,assigned());
-  }
-  forceinline void
-  FloatVarImp::cancel(Space& home, Advisor& a) {
-    FloatVarImpBase::cancel(home,a,assigned());
   }
 
   forceinline ModEventDelta

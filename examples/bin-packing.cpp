@@ -272,6 +272,7 @@ public:
   virtual size_t dispose(Space& home) {
     home.ignore(*this,AP_DISPOSE);
     size.~IntSharedArray();
+    (void) Brancher::dispose(home);
     return sizeof(*this);
   }
   /// Check status of brancher, return true if alternatives left

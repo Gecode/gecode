@@ -145,6 +145,13 @@
 #include <gecode/support/timer.hpp>
 #include <gecode/support/hw-rnd.hpp>
 
+/*
+ * Miscellaneous
+ *
+ */
+
+#include <gecode/support/run-jobs.hpp>
+
 #endif
 
 // STATISTICS: support-any

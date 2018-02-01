@@ -1984,8 +1984,8 @@ yyreduce:
 #line 652 "gecode/flatzinc/parser.yxx" /* yacc.c:1646  */
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
+        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put((yyvsp[-2].sValue), se_iv(pp->intvars.size())),
           "Duplicate symbol");
@@ -2020,8 +2020,8 @@ yyreduce:
 #line 684 "gecode/flatzinc/parser.yxx" /* yacc.c:1646  */
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
+        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put((yyvsp[-2].sValue), se_bv(pp->boolvars.size())),
           "Duplicate symbol");
@@ -2056,8 +2056,8 @@ yyreduce:
 #line 716 "gecode/flatzinc/parser.yxx" /* yacc.c:1646  */
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
+        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put((yyvsp[-2].sValue), se_fv(pp->floatvars.size())),
           "Duplicate symbol");
@@ -2099,8 +2099,8 @@ yyreduce:
 #line 755 "gecode/flatzinc/parser.yxx" /* yacc.c:1646  */
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec)->hasAtom("output_var");
-        bool funcDep = (yyvsp[-1].argVec)->hasAtom("is_defined_var");
+        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("output_var");
+        bool funcDep = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasAtom("is_defined_var");
         yyassert(pp,
           pp->symbols.put((yyvsp[-2].sValue), se_sv(pp->setvars.size())),
           "Duplicate symbol");
@@ -2194,7 +2194,7 @@ yyreduce:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[-10].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = (yyvsp[-1].argVec)->hasCall("output_array");
+          bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
           vector<int> vars((yyvsp[-8].iValue));
           if (!pp->hadError) {
             if ((yyvsp[0].oVarSpecVec)()) {
@@ -2265,7 +2265,7 @@ yyreduce:
 #line 899 "gecode/flatzinc/parser.yxx" /* yacc.c:1646  */
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec)->hasCall("output_array");
+        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
         yyassert(pp, (yyvsp[-10].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars((yyvsp[-8].iValue));
@@ -2336,7 +2336,7 @@ yyreduce:
         ParserState* pp = static_cast<ParserState*>(parm);
         yyassert(pp, (yyvsp[-10].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
-          bool print = (yyvsp[-1].argVec)->hasCall("output_array");
+          bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
           vector<int> vars((yyvsp[-8].iValue));
           if (!pp->hadError) {
             if ((yyvsp[0].oVarSpecVec)()) {
@@ -2407,7 +2407,7 @@ yyreduce:
 #line 1036 "gecode/flatzinc/parser.yxx" /* yacc.c:1646  */
     {
         ParserState* pp = static_cast<ParserState*>(parm);
-        bool print = (yyvsp[-1].argVec)->hasCall("output_array");
+        bool print = (yyvsp[-1].argVec) != NULL && (yyvsp[-1].argVec)->hasCall("output_array");
         yyassert(pp, (yyvsp[-12].iValue)==1, "Arrays must start at 1");
         if (!pp->hadError) {
           vector<int> vars((yyvsp[-10].iValue));

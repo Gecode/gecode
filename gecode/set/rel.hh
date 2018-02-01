@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include <gecode/set/rel.hh> \endcode
    * \ingroup FuncSetProp
    */
-  template<class View0, class View1, ReifyMode rm>
+  template<class View0, class View1, class CtrlView, ReifyMode rm>
   class ReSubset : public Propagator {
   protected:
     /// Variable view
@@ -119,11 +119,11 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Variable view
     View1 x1;
     /// Boolean control view
-    Gecode::Int::BoolView b;
+    CtrlView b;
     /// Constructor for cloning \a p
     ReSubset(Space& home, bool share, ReSubset& p);
     /// Constructor for posting
-    ReSubset(Home home, View0 x0, View1 x1, Gecode::Int::BoolView b);
+    ReSubset(Home home, View0 x0, View1 x1, CtrlView b);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space& home, bool share);
@@ -137,7 +137,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$
     static ExecStatus post(Home home, View0 x, View1 y,
-                           Gecode::Int::BoolView b);
+                           CtrlView b);
   };
 
   /**

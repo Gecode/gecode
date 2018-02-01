@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace NValues {
   template<class VY>
   forceinline ExecStatus
   IntBase<VY>::prune_upper(Space& home, Graph& g) {
-    if (!g.initialized()) {
+    if (!g) {
       g.init(home,vs,x);
     } else {
       g.purge();

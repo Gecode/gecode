@@ -504,7 +504,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (b.zero()) {
       if (rm == RM_IMP)
         return ES_OK;
-      return Nq<View>::post(home,x0,x1);
+      return Nq<View,View>::post(home,x0,x1);
     }
     if (!same(x0,x1)) {
       (void) new (home) ReEqDom(home,x0,x1,b);
@@ -537,7 +537,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (b.zero()) {
       if (rm == RM_IMP)
         return home.ES_SUBSUMED(*this);
-      GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
+      GECODE_REWRITE(*this,(Nq<View,View>::post(home(*this),x0,x1)));
     }
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
@@ -578,7 +578,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (b.zero()) {
       if (rm == RM_IMP)
         return ES_OK;
-      return Nq<View>::post(home,x0,x1);
+      return Nq<View,View>::post(home,x0,x1);
     }
     if (!same(x0,x1)) {
       (void) new (home) ReEqBnd(home,x0,x1,b);
@@ -611,7 +611,7 @@ namespace Gecode { namespace Int { namespace Rel {
     if (b.zero()) {
       if (rm == RM_IMP)
         return home.ES_SUBSUMED(*this);
-      GECODE_REWRITE(*this,Nq<View>::post(home(*this),x0,x1));
+      GECODE_REWRITE(*this,(Nq<View,View>::post(home(*this),x0,x1)));
     }
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:

@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template<class View>
   forceinline bool
   DomCtrl<View>::available(void) {
-    return g.initialized();
+    return g;
   }
 
   template<class View>

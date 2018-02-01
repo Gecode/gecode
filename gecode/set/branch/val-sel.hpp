@@ -44,7 +44,7 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   forceinline
-  ValSelMin::ValSelMin(Space& home, const ValBranch& vb)
+  ValSelMin::ValSelMin(Space& home, const ValBranch<Var>& vb)
     : ValSel<SetView,int>(home,vb) {}
   forceinline
   ValSelMin::ValSelMin(Space& home, bool shared, ValSelMin& vs)
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline
-  ValSelMax::ValSelMax(Space& home, const ValBranch& vb)
+  ValSelMax::ValSelMax(Space& home, const ValBranch<Var>& vb)
     : ValSel<SetView,int>(home,vb) {}
   forceinline
   ValSelMax::ValSelMax(Space& home, bool shared, ValSelMax& vs)
@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline
-  ValSelMed::ValSelMed(Space& home, const ValBranch& vb)
+  ValSelMed::ValSelMed(Space& home, const ValBranch<Var>& vb)
     : ValSel<SetView,int>(home,vb) {}
   forceinline
   ValSelMed::ValSelMed(Space& home, bool shared, ValSelMed& vs)
@@ -94,7 +94,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline
-  ValSelRnd::ValSelRnd(Space& home, const ValBranch& vb)
+  ValSelRnd::ValSelRnd(Space& home, const ValBranch<Var>& vb)
     : ValSel<SetView,int>(home,vb), r(vb.rnd()) {}
   forceinline
   ValSelRnd::ValSelRnd(Space& home, bool shared, ValSelRnd& vs)

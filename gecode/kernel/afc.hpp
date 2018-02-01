@@ -52,7 +52,7 @@ namespace Gecode {
      * \brief Construct as not yet intialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init and the assignment operator.
+     * yet initialized AFC storage is init and the assignment operator.
      *
      */
     AFC(void);
@@ -67,14 +67,12 @@ namespace Gecode {
     template<class Var>
     void init(Home home, const VarArgArray<Var>& x, double d);
     /// Test whether already initialized
-    bool initialized(void) const;
-    /// Set AFC information to \a a
-    void set(Space& home, double a=1.0);
+    operator bool(void) const;
     /// Default (empty) AFC information
     GECODE_KERNEL_EXPORT static const AFC def;
     //@}
 
-    /// \name Update and delete activity information
+    /// \name Update and delete AFC information
     //@{
     /// Updating during cloning
     void update(Space& home, bool share, AFC& a);
@@ -119,8 +117,8 @@ namespace Gecode {
   forceinline
   AFC::AFC(void) : n(-1) {}
 
-  forceinline bool
-  AFC::initialized(void) const {
+  forceinline
+  AFC::operator bool(void) const {
     return n >= 0;
   }
 
@@ -163,11 +161,6 @@ namespace Gecode {
     if ((d < 0.0) || (d > 1.0))
       throw IllegalDecay("AFC");
     home.afc_decay(d);
-  }
-
-  forceinline void
-  AFC::set(Space& home, double a) {
-    home.afc_set(a);
   }
 
   forceinline double

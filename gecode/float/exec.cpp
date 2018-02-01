@@ -41,13 +41,13 @@
 namespace Gecode {
 
   void
-  wait(Home home, FloatVar x, void (*c)(Space& home)) {
+  wait(Home home, FloatVar x, std::function<void(Space& home)> c) {
     GECODE_POST;
     GECODE_ES_FAIL(Kernel::UnaryWait<Float::FloatView>::post(home,x,c));
   }
 
   void
-  wait(Home home, const FloatVarArgs& x, void (*c)(Space& home)) {
+  wait(Home home, const FloatVarArgs& x, std::function<void(Space& home)> c) {
     GECODE_POST;
     ViewArray<Float::FloatView> xv(home,x);
     GECODE_ES_FAIL(Kernel::NaryWait<Float::FloatView>::post(home,xv,c));

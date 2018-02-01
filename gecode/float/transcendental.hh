@@ -38,8 +38,6 @@
 #ifndef __GECODE_FLOAT_TRANSCENDENTAL_HH__
 #define __GECODE_FLOAT_TRANSCENDENTAL_HH__
 
-#ifdef GECODE_HAS_MPFR
-
 #include <gecode/float.hh>
 
 /**
@@ -108,7 +106,6 @@ namespace Gecode { namespace Float { namespace Transcendental {
 }}}
 
 #include <gecode/float/transcendental/exp-log.hpp>
-#endif
 
 #endif
 

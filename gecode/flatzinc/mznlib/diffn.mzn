@@ -41,4 +41,9 @@ predicate diffn(array[int] of var int: x,
                 array[int] of var int: y,
                 array[int] of var int: dx,
                 array[int] of var int: dy) =
-    gecode_nooverlap(x,dx,y,dy);
+    assert(
+        index_set(x) = index_set(y)  /\
+        index_set(x) = index_set(dx) /\
+        index_set(x) = index_set(dy),
+        "diffn: index set mismatch",
+    gecode_nooverlap(x,dx,y,dy));

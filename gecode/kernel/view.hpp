@@ -53,7 +53,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return accumulated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     /// Return whether this view is derived from a VarImpView
     static bool varderived(void);
     /// Return dummy variable implementation of view
@@ -90,10 +90,14 @@ namespace Gecode {
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to view
+     *
+     * If \a fail is true, run the advisor also on failure. This
+     * feature is undocumented.
+     */
+    void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail=false);
     //@}
 
     /// \name Delta information for advisors
@@ -141,7 +145,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return accumulated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
 
     /// \name Domain tests
@@ -174,10 +178,14 @@ namespace Gecode {
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to view
+     *
+     * If \a fail is true, run the advisor also on failure. This
+     * feature is undocumented.
+     */
+    void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail=false);
     //@}
 
     /// \name Delta information for advisors
@@ -236,7 +244,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     /// Return accumulated failure count
-    double afc(const Space& home) const;
+    double afc(void) const;
     //@}
 
     /// \name Domain tests
@@ -269,10 +277,14 @@ namespace Gecode {
     void cancel(Space& home, Propagator& p, PropCond pc);
     /// Re-schedule propagator \a p with propagation condition \a pc
     void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to view
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to view
+     *
+     * If \a fail is true, run the advisor also on failure. This
+     * feature is undocumented.
+     */
+    void subscribe(Space& home, Advisor& a, bool fail=false);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail=false);
     //@}
 
     /// \name Delta information for advisors
@@ -356,7 +368,7 @@ namespace Gecode {
   }
   template<class View>
   forceinline double
-  ConstView<View>::afc(const Space&) const {
+  ConstView<View>::afc(void) const {
     return 0.0;
   }
   template<class View>
@@ -392,11 +404,11 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  ConstView<View>::subscribe(Space&, Advisor&) {
+  ConstView<View>::subscribe(Space&, Advisor&, bool) {
   }
   template<class View>
   forceinline void
-  ConstView<View>::cancel(Space&, Advisor&) {
+  ConstView<View>::cancel(Space&, Advisor&, bool) {
   }
   template<class View>
   forceinline void
@@ -458,8 +470,8 @@ namespace Gecode {
   }
   template<class Var>
   forceinline double
-  VarImpView<Var>::afc(const Space& home) const {
-    return x->afc(home);
+  VarImpView<Var>::afc(void) const {
+    return x->afc();
   }
   template<class Var>
   forceinline bool
@@ -484,13 +496,13 @@ namespace Gecode {
   }
   template<class Var>
   forceinline void
-  VarImpView<Var>::subscribe(Space& home, Advisor& a) {
-    x->subscribe(home,a);
+  VarImpView<Var>::subscribe(Space& home, Advisor& a, bool fail) {
+    x->subscribe(home,a,fail);
   }
   template<class Var>
   forceinline void
-  VarImpView<Var>::cancel(Space& home, Advisor& a) {
-    x->cancel(home,a);
+  VarImpView<Var>::cancel(Space& home, Advisor& a, bool fail) {
+    x->cancel(home,a,fail);
   }
   template<class Var>
   forceinline void
@@ -557,8 +569,8 @@ namespace Gecode {
   }
   template<class View>
   forceinline double
-  DerivedView<View>::afc(const Space& home) const {
-    return x.afc(home);
+  DerivedView<View>::afc(void) const {
+    return x.afc();
   }
   template<class View>
   forceinline bool
@@ -600,13 +612,13 @@ namespace Gecode {
   }
   template<class View>
   forceinline void
-  DerivedView<View>::subscribe(Space& home, Advisor& a) {
-    x.subscribe(home,a);
+  DerivedView<View>::subscribe(Space& home, Advisor& a, bool fail) {
+    x.subscribe(home,a,fail);
   }
   template<class View>
   forceinline void
-  DerivedView<View>::cancel(Space& home, Advisor& a) {
-    x.cancel(home,a);
+  DerivedView<View>::cancel(Space& home, Advisor& a, bool fail) {
+    x.cancel(home,a,fail);
   }
   template<class View>
   forceinline ModEvent

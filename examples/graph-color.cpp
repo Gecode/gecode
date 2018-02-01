@@ -328,10 +328,10 @@ public:
   /// Branching to use for model
   enum {
     BRANCH_DEGREE,         ///< Choose variable with largest degree
-    BRANCH_SIZE,           ///< Choose variable with smallest size
-    BRANCH_SIZE_DEGREE,    ///< Choose variable with smallest size/degree
-    BRANCH_SIZE_AFC,       ///< Choose variable with smallest size/afc
-    BRANCH_SIZE_ACTIVITY,  ///< Choose variable with smallest size/activity
+    BRANCH_SIZE,           ///< Choose variablee with smallest size
+    BRANCH_DEGREE_SIZE,    ///< Choose variable with largest degree/size
+    BRANCH_AFC_SIZE,       ///< Choose variable with largest afc/size
+    BRANCH_ACTION_SIZE  ///< Choose variable with smallest size/action
   };
   /// Symmetry variants
   enum {
@@ -360,55 +360,54 @@ public:
       if (opt.model() == MODEL_CLIQUE)
         rel(*this, m, IRT_GQ, n-1);
     }
-    /// Branching on the number of colors
+    // Branching on the number of colors
     branch(*this, m, INT_VAL_MIN());
     if (opt.symmetry() == SYMMETRY_NONE) {
-       /// Branching without symmetry breaking
-       switch (opt.branching()) {
-          case BRANCH_SIZE:
-             branch(*this, v, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
-             break;
-          case BRANCH_DEGREE:
-             branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX(),INT_VAR_SIZE_MIN()),
-                   INT_VAL_MIN());
-             break;
-          case BRANCH_SIZE_DEGREE:
-             branch(*this, v, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_MIN());
-             break;
-          case BRANCH_SIZE_AFC:
-             branch(*this, v, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
-             break;
-          case BRANCH_SIZE_ACTIVITY:
-             branch(*this, v, INT_VAR_ACTIVITY_SIZE_MAX(opt.decay()), INT_VAL_MIN());
-             break;
-          default:
-             break;
-       }
+      // Branching without symmetry breaking
+      switch (opt.branching()) {
+      case BRANCH_SIZE:
+        branch(*this, v, INT_VAR_SIZE_MIN(), INT_VAL_MIN());
+        break;
+      case BRANCH_DEGREE:
+        branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX(),INT_VAR_SIZE_MIN()),
+               INT_VAL_MIN());
+        break;
+      case BRANCH_DEGREE_SIZE:
+        branch(*this, v, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_MIN());
+        break;
+      case BRANCH_AFC_SIZE:
+        branch(*this, v, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+        break;
+      case BRANCH_ACTION_SIZE:
+        branch(*this, v, INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_MIN());
+        break;
+      }
     } else { // opt.symmetry() == SYMMETRY_LDSB
-       /// Branching while considering value symmetry breaking
-       /// (every permutation of color values gives equivalent solutions)
-       Symmetries syms;
-       syms << ValueSymmetry(IntArgs::create(g.n_v,0));
-       switch (opt.branching()) {
-          case BRANCH_SIZE:
-             branch(*this, v, INT_VAR_SIZE_MIN(), INT_VAL_MIN(), syms);
-             break;
-          case BRANCH_DEGREE:
-             branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX(),INT_VAR_SIZE_MIN()),
-                   INT_VAL_MIN(), syms);
-             break;
-          case BRANCH_SIZE_DEGREE:
-             branch(*this, v, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_MIN(), syms);
-             break;
-          case BRANCH_SIZE_AFC:
-             branch(*this, v, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(), syms);
-             break;
-          case BRANCH_SIZE_ACTIVITY:
-             branch(*this, v, INT_VAR_ACTIVITY_SIZE_MAX(opt.decay()), INT_VAL_MIN(), syms);
-             break;
-          default:
-             break;
-       }
+      // Branching while considering value symmetry breaking
+      // (every permutation of color values gives equivalent solutions)
+      Symmetries syms;
+      syms << ValueSymmetry(IntArgs::create(g.n_v,0));
+      switch (opt.branching()) {
+      case BRANCH_SIZE:
+        branch(*this, v, INT_VAR_SIZE_MIN(), INT_VAL_MIN(), syms);
+        break;
+      case BRANCH_DEGREE:
+        branch(*this, v, tiebreak(INT_VAR_DEGREE_MAX(),
+                                  INT_VAR_SIZE_MIN()),
+               INT_VAL_MIN(), syms);
+        break;
+      case BRANCH_DEGREE_SIZE:
+        branch(*this, v, INT_VAR_DEGREE_SIZE_MAX(), INT_VAL_MIN(), syms);
+        break;
+      case BRANCH_AFC_SIZE:
+        branch(*this, v, INT_VAR_AFC_SIZE_MAX(opt.decay()),
+               INT_VAL_MIN(), syms);
+        break;
+      case BRANCH_ACTION_SIZE:
+        branch(*this, v, INT_VAR_ACTION_SIZE_MAX(opt.decay()),
+               INT_VAL_MIN(), syms);
+        break;
+      }
     }
   }
   /// Cost function
@@ -447,22 +446,26 @@ int
 main(int argc, char* argv[]) {
   SizeOptions opt("GraphColor");
   opt.ipl(IPL_DOM);
-  opt.iterations(20);
   opt.solutions(0);
+
   opt.model(GraphColor::MODEL_NONE);
   opt.model(GraphColor::MODEL_NONE, "none",
             "no lower bound");
   opt.model(GraphColor::MODEL_CLIQUE, "clique",
             "use maximal clique size as lower bound");
+
   opt.branching(GraphColor::BRANCH_DEGREE);
-  opt.branching(GraphColor::BRANCH_DEGREE, "degree");
-  opt.branching(GraphColor::BRANCH_SIZE, "size");
-  opt.branching(GraphColor::BRANCH_SIZE_DEGREE, "sizedegree");
-  opt.branching(GraphColor::BRANCH_SIZE_AFC, "sizeafc");
-  opt.branching(GraphColor::BRANCH_SIZE_ACTIVITY, "sizeact");
+  opt.branching(GraphColor::BRANCH_DEGREE,      "degree");
+  opt.branching(GraphColor::BRANCH_SIZE,        "size");
+  opt.branching(GraphColor::BRANCH_DEGREE_SIZE, "degree-size");
+  opt.branching(GraphColor::BRANCH_AFC_SIZE,    "afc-size");
+  opt.branching(GraphColor::BRANCH_ACTION_SIZE, "action-size");
+
   opt.symmetry(GraphColor::SYMMETRY_NONE);
-  opt.symmetry(GraphColor::SYMMETRY_NONE,"none");
-  opt.symmetry(GraphColor::SYMMETRY_LDSB,"ldsb","use value symmetry breaking");
+  opt.symmetry(GraphColor::SYMMETRY_NONE, "none");
+  opt.symmetry(GraphColor::SYMMETRY_LDSB, "ldsb",
+               "use value symmetry breaking");
+
   opt.parse(argc,argv);
   Script::run<GraphColor,BAB,SizeOptions>(opt);
   return 0;

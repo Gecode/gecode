@@ -39,31 +39,35 @@ namespace Gecode {
 
   forceinline
   FloatVarBranch::FloatVarBranch(void)
-    : VarBranch(NULL), s(SEL_NONE) {}
+    : s(SEL_NONE) {}
 
   forceinline
   FloatVarBranch::FloatVarBranch(Select s0, BranchTbl t)
-    : VarBranch(t), s(s0) {}
+    : VarBranch<FloatVar>(t), s(s0) {}
 
   forceinline
   FloatVarBranch::FloatVarBranch(Rnd r)
-    : VarBranch(r), s(SEL_RND) {}
+    : VarBranch<FloatVar>(r), s(SEL_RND) {}
 
   forceinline
   FloatVarBranch::FloatVarBranch(Select s0, double d, BranchTbl t)
-    : VarBranch(d,t), s(s0) {}
+    : VarBranch<FloatVar>(d,t), s(s0) {}
 
   forceinline
-  FloatVarBranch::FloatVarBranch(Select s0, AFC a, BranchTbl t)
-    : VarBranch(a,t), s(s0) {}
+  FloatVarBranch::FloatVarBranch(Select s0, FloatAFC a, BranchTbl t)
+    : VarBranch<FloatVar>(a,t), s(s0) {}
 
   forceinline
-  FloatVarBranch::FloatVarBranch(Select s0, Activity a, BranchTbl t)
-    : VarBranch(a,t), s(s0) {}
+  FloatVarBranch::FloatVarBranch(Select s0, FloatAction a, BranchTbl t)
+    : VarBranch<FloatVar>(a,t), s(s0) {}
 
   forceinline
-  FloatVarBranch::FloatVarBranch(Select s0, VoidFunction mf, BranchTbl t)
-    : VarBranch(mf,t), s(s0) {}
+  FloatVarBranch::FloatVarBranch(Select s0, FloatCHB c, BranchTbl t)
+    : VarBranch<FloatVar>(c,t), s(s0) {}
+
+  forceinline
+  FloatVarBranch::FloatVarBranch(Select s0, FloatBranchMerit mf, BranchTbl t)
+    : VarBranch<FloatVar>(mf,t), s(s0) {}
 
   forceinline FloatVarBranch::Select
   FloatVarBranch::select(void) const {
@@ -75,13 +79,18 @@ namespace Gecode {
     switch (select()) {
     case SEL_AFC_MIN: case SEL_AFC_MAX:
     case SEL_AFC_SIZE_MIN: case SEL_AFC_SIZE_MAX:
-      if (!_afc.initialized())
+      if (!_afc)
         _afc = FloatAFC(home,x,decay());
       break;
-    case SEL_ACTIVITY_MIN: case SEL_ACTIVITY_MAX:
-    case SEL_ACTIVITY_SIZE_MIN: case SEL_ACTIVITY_SIZE_MAX:
-      if (!_act.initialized())
-        _act = FloatActivity(home,x,decay());
+    case SEL_ACTION_MIN: case SEL_ACTION_MAX:
+    case SEL_ACTION_SIZE_MIN: case SEL_ACTION_SIZE_MAX:
+      if (!_act)
+        _act = FloatAction(home,x,decay());
+      break;
+    case SEL_CHB_MIN: case SEL_CHB_MAX:
+    case SEL_CHB_SIZE_MIN: case SEL_CHB_SIZE_MAX:
+      if (!_chb)
+        _chb = FloatCHB(home,x);
       break;
     default: ;
     }
@@ -90,19 +99,17 @@ namespace Gecode {
 
   inline FloatVarBranch
   FLOAT_VAR_NONE(void) {
-    return FloatVarBranch(FloatVarBranch::SEL_NONE,NULL);
+    return FloatVarBranch(FloatVarBranch::SEL_NONE,nullptr);
   }
 
   inline FloatVarBranch
   FLOAT_VAR_MERIT_MIN(FloatBranchMerit bm, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN,
-                          function_cast<VoidFunction>(bm),tbl);
+    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MIN,bm,tbl);
   }
 
   inline FloatVarBranch
   FLOAT_VAR_MERIT_MAX(FloatBranchMerit bm, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX,
-                          function_cast<VoidFunction>(bm),tbl);
+    return FloatVarBranch(FloatVarBranch::SEL_MERIT_MAX,bm,tbl);
   }
 
   inline FloatVarBranch
@@ -141,23 +148,43 @@ namespace Gecode {
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_MIN(double d, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_MIN,d,tbl);
+  FLOAT_VAR_ACTION_MIN(double d, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_MIN,d,tbl);
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_MIN(FloatActivity a, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_MIN,a,tbl);
+  FLOAT_VAR_ACTION_MIN(FloatAction a, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_MIN,a,tbl);
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_MAX(double d, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_MAX,d,tbl);
+  FLOAT_VAR_ACTION_MAX(double d, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX,d,tbl);
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_MAX(FloatActivity a, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_MAX,a,tbl);
+  FLOAT_VAR_ACTION_MAX(FloatAction a, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_MAX,a,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MIN(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MIN(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MIN,c,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MAX(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_MAX(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_MAX,c,tbl);
   }
 
   inline FloatVarBranch
@@ -221,23 +248,43 @@ namespace Gecode {
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_SIZE_MIN(double d, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_SIZE_MIN,d,tbl);
+  FLOAT_VAR_ACTION_SIZE_MIN(double d, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MIN,d,tbl);
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_SIZE_MIN(FloatActivity a, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_SIZE_MIN,a,tbl);
+  FLOAT_VAR_ACTION_SIZE_MIN(FloatAction a, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MIN,a,tbl);
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_SIZE_MAX(double d, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_SIZE_MAX,d,tbl);
+  FLOAT_VAR_ACTION_SIZE_MAX(double d, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX,d,tbl);
   }
 
   inline FloatVarBranch
-  FLOAT_VAR_ACTIVITY_SIZE_MAX(FloatActivity a, BranchTbl tbl) {
-    return FloatVarBranch(FloatVarBranch::SEL_ACTIVITY_SIZE_MAX,a,tbl);
+  FLOAT_VAR_ACTION_SIZE_MAX(FloatAction a, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_ACTION_SIZE_MAX,a,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MIN(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MIN(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MIN,c,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MAX(BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX,tbl);
+  }
+
+  inline FloatVarBranch
+  FLOAT_VAR_CHB_SIZE_MAX(FloatCHB c, BranchTbl tbl) {
+    return FloatVarBranch(FloatVarBranch::SEL_CHB_SIZE_MAX,c,tbl);
   }
 
 }

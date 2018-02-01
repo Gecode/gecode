@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2012
+ *     Christian Schulte, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,47 +35,68 @@
  *
  */
 
+#include <cfloat>
+
 namespace Gecode {
 
   /**
-   * \brief Class for activity management
+   * \brief Class for CHB management
+   *
+   * The idea is taken from: Exponential Recency Weighted Average
+   * Branching Heuristic for SAT Solvers, Jia Hui Liang, Vijay Ganesh,
+   * Pascal Poupart, Krzysztof Czarnecki, AAAI 2016, pages 3434-3440.
    *
    */
-  class Activity {
+  class CHB {
   protected:
     template<class View>
     class Recorder;
-    /// Object for storing activity values
+    /// View information
+    class Info {
+    public:
+      /// Last failure
+      unsigned long long int lf;
+      /// Q-score
+      double qs;
+    };
+    /// Object for storing chb information
     class Storage : public HeapAllocated {
     public:
       /// Mutex to synchronize globally shared access
       Support::Mutex m;
       /// How many references exist for this object
       unsigned int use_cnt;
-      /// Activity values
-      double* a;
-      /// Number of activity values
+      /// Number of chb values
       int n;
-      /// Decay factor
-      double d;
-      /// Allocate activity values
+      /// CHB information
+      Info* chb;
+      /// Number of failures
+      unsigned long long int nf;
+      /// Alpha value
+      double alpha;
+      /// Allocate CHB info
       template<class View>
-      Storage(Home home, ViewArray<View>& x, double d,
+      Storage(Home home, ViewArray<View>& x,
               typename BranchTraits<typename View::VarType>::Merit bm);
       /// Delete object
       ~Storage(void);
+      /// Bump failure count and alpha
+      void bump(void);
+      /// Update chb information at position \a i
+      void update(int i, bool failed);
     };
-
     /// Pointer to storage object
     Storage* storage;
-    /// Update activity value at position \a i
+    /// Update chb value at position \a i
     void update(int i);
-    /// Decay activity value at position \a i
-    void decay(int i);
     /// Acquire mutex
     void acquire(void);
     /// Release mutex
     void release(void);
+    /// Bump failure count and alpha
+    void bump(void);
+    /// Update chb information at position \a i
+    void update(int i, bool failed);
   public:
     /// \name Constructors and initialization
     //@{
@@ -83,65 +104,52 @@ namespace Gecode {
      * \brief Construct as not yet intialized
      *
      * The only member functions that can be used on a constructed but not
-     * yet initialized activity storage is init and the assignment operator.
+     * yet initialized chb storage is init and the assignment operator.
      *
      */
-    Activity(void);
+    CHB(void);
     /// Copy constructor
     GECODE_KERNEL_EXPORT
-    Activity(const Activity& a);
+    CHB(const CHB& a);
     /// Assignment operator
     GECODE_KERNEL_EXPORT
-    Activity& operator =(const Activity& a);
-    /// Initialize for views \a x and decay factor \a d and activity as defined by \a bm
+    CHB& operator =(const CHB& a);
+    /// Initialize for views \a x and Q-score as defined by \a bm
     template<class View>
-    Activity(Home home, ViewArray<View>& x, double d,
-             typename BranchTraits<typename View::VarType>::Merit bm);
-    /// Initialize for views \a x and decay factor \a d and activity as defined by \a bm
+    CHB(Home home, ViewArray<View>& x,
+        typename BranchTraits<typename View::VarType>::Merit bm);
+    /// Initialize for views \a x and Q-score as defined by \a bm
     template<class View>
-    void init(Home home, ViewArray<View>& x, double d,
-             typename BranchTraits<typename View::VarType>::Merit bm);
+    void init(Home home, ViewArray<View>& x,
+              typename BranchTraits<typename View::VarType>::Merit bm);
     /// Test whether already initialized
-    bool initialized(void) const;
-    /// Set activity to \a a
-    GECODE_KERNEL_EXPORT
-    void set(Space& home, double a=0.0);
-    /// Default (empty) activity information
-    GECODE_KERNEL_EXPORT static const Activity def;
+    operator bool(void) const;
+    /// Default (empty) chb information
+    GECODE_KERNEL_EXPORT static const CHB def;
     //@}
 
-    /// \name Update and delete activity information
+    /// \name Update and delete chb information
     //@{
     /// Updating during cloning
     GECODE_KERNEL_EXPORT
-    void update(Space& home, bool share, Activity& a);
+    void update(Space& home, bool share, CHB& a);
     /// Destructor
     GECODE_KERNEL_EXPORT
-    ~Activity(void);
+    ~CHB(void);
     //@}
 
     /// \name Information access
     //@{
-    /// Return activity value at position \a i
+    /// Return chb value at position \a i
     double operator [](int i) const;
-    /// Return number of activity values
+    /// Return number of chb values
     int size(void) const;
-    //@}
-
-    /// \name Decay factor for aging
-    //@{
-    /// Set decay factor to \a d
-    GECODE_KERNEL_EXPORT
-    void decay(Space& home, double d);
-    /// Return decay factor
-    GECODE_KERNEL_EXPORT
-    double decay(const Space& home) const;
     //@}
   };
 
-  /// Propagator for recording activity information
+  /// Propagator for recording chb information
   template<class View>
-  class Activity::Recorder : public NaryPropagator<View,PC_GEN_NONE> {
+  class CHB::Recorder : public NaryPropagator<View,PC_GEN_NONE> {
   protected:
     using NaryPropagator<View,PC_GEN_NONE>::x;
     /// Advisor with index and change information
@@ -163,15 +171,15 @@ namespace Gecode {
       /// Get index of view
       int idx(void) const;
     };
-    /// Access to activity information
-    Activity a;
+    /// Access to chb information
+    CHB chb;
     /// The advisor council
     Council<Idx> c;
     /// Constructor for cloning \a p
     Recorder(Space& home, bool share, Recorder<View>& p);
   public:
     /// Constructor for creation
-    Recorder(Home home, ViewArray<View>& x, Activity& a);
+    Recorder(Home home, ViewArray<View>& x, CHB& chb);
     /// Copy propagator during cloning
     virtual Propagator* copy(Space& home, bool share);
     /// Cost function (record so that propagator runs last)
@@ -180,183 +188,201 @@ namespace Gecode {
     virtual void reschedule(Space& home);
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
+    /// Give advice to propagator when \a home has failed
+    virtual void advise(Space& home, Advisor& a);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Delete propagator and return its size
     virtual size_t dispose(Space& home);
-    /// Post activity recorder propagator
-    static ExecStatus post(Home home, ViewArray<View>& x, Activity& a);
+    /// Post chb recorder propagator
+    static ExecStatus post(Home home, ViewArray<View>& x, CHB& chb);
   };
 
   /**
-   * \brief Print activity values enclosed in curly brackets
-   * \relates Activity
+   * \brief Print chb values enclosed in curly brackets
+   * \relates CHB
    */
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
-             const Activity& a);
+             const CHB& a);
 
 
   /*
-   * Advisor for activity recorder
+   * Advisor for chb recorder
    *
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
-                                     Council<Idx>& c, int i)
+  CHB::Recorder<View>::Idx::Idx(Space& home, Propagator& p,
+                                Council<Idx>& c, int i)
     : Advisor(home,p,c), _info(i << 1) {}
   template<class View>
   forceinline
-  Activity::Recorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
+  CHB::Recorder<View>::Idx::Idx(Space& home, bool share, Idx& a)
     : Advisor(home,share,a), _info(a._info) {
   }
   template<class View>
   forceinline void
-  Activity::Recorder<View>::Idx::mark(void) {
+  CHB::Recorder<View>::Idx::mark(void) {
     _info |= 1;
   }
   template<class View>
-  forceinline void
-  Activity::Recorder<View>::Idx::unmark(void) {
-    _info &= ~1;
-  }
-  template<class View>
   forceinline bool
-  Activity::Recorder<View>::Idx::marked(void) const {
+  CHB::Recorder<View>::Idx::marked(void) const {
     return (_info & 1) != 0;
   }
   template<class View>
+  forceinline void
+  CHB::Recorder<View>::Idx::unmark(void) {
+    assert(marked());
+    _info -= 1;
+  }
+  template<class View>
   forceinline int
-  Activity::Recorder<View>::Idx::idx(void) const {
+  CHB::Recorder<View>::Idx::idx(void) const {
     return _info >> 1;
   }
 
 
-
   /*
-   * Posting of activity recorder propagator
+   * Posting of chb recorder propagator
    *
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Recorder(Home home, ViewArray<View>& x,
-                                     Activity& a0)
-    : NaryPropagator<View,PC_GEN_NONE>(home,x), a(a0), c(home) {
+  CHB::Recorder<View>::Recorder(Home home, ViewArray<View>& x,
+                                CHB& chb0)
+    : NaryPropagator<View,PC_GEN_NONE>(home,x), chb(chb0), c(home) {
     home.notice(*this,AP_DISPOSE);
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-        x[i].subscribe(home,*new (home) Idx(home,*this,c,i));
+        x[i].subscribe(home,*new (home) Idx(home,*this,c,i), true);
   }
 
   template<class View>
   forceinline ExecStatus
-  Activity::Recorder<View>::post(Home home, ViewArray<View>& x,
-                                 Activity& a) {
-    (void) new (home) Recorder<View>(home,x,a);
+  CHB::Recorder<View>::post(Home home, ViewArray<View>& x, CHB& chb) {
+    (void) new (home) Recorder<View>(home,x,chb);
     return ES_OK;
   }
 
 
   /*
-   * Activity value storage
+   * CHB value storage
    *
    */
   template<class View>
   forceinline
-  Activity::Storage::Storage(Home home, ViewArray<View>& x, double d0,
-                             typename
-                             BranchTraits<typename View::VarType>::Merit bm)
-    : use_cnt(1), a(heap.alloc<double>(x.size())), n(x.size()), d(d0) {
-    if (bm != NULL)
+  CHB::Storage::Storage(Home home, ViewArray<View>& x,
+                        typename 
+                        BranchTraits<typename View::VarType>::Merit bm)
+    : use_cnt(1), n(x.size()), chb(heap.alloc<Info>(x.size())),
+      nf(0U), alpha(Kernel::Config::chb_alpha_init) {
+    if (bm) {
       for (int i=n; i--; ) {
         typename View::VarType xi(x[i].varimp());
-        a[i] = bm(home,xi,i);
+        chb[i].lf = 0U;
+        chb[i].qs = bm(home,xi,i);
       }
-    else
-      for (int i=n; i--; )
-        a[i] = 0.0;
+    } else {
+      for (int i=n; i--; ) {
+        chb[i].lf = 0U;
+        chb[i].qs = Kernel::Config::chb_qscore_init;
+      }
+    }
+  }
+  forceinline void
+  CHB::Storage::bump(void) {
+    nf++;
+    if (alpha > Kernel::Config::chb_alpha_limit) {
+      alpha -= Kernel::Config::chb_alpha_decrement;
+    }
+  }
+  forceinline void
+  CHB::Storage::update(int i, bool failed) {
+    if (failed) {
+      chb[i].lf = nf;
+      double reward = 1.0 / (nf - chb[i].lf + 1);
+      chb[i].qs = (1.0 - alpha) * chb[i].qs + alpha * reward;
+    } else {
+      double reward = 0.9 / (nf - chb[i].lf + 1);
+      chb[i].qs = (1.0 - alpha) * chb[i].qs + alpha * reward;
+    }
   }
   forceinline
-  Activity::Storage::~Storage(void) {
-    heap.free<double>(a,n);
+  CHB::Storage::~Storage(void) {
+    heap.free<Info>(chb,n);
   }
 
 
   /*
-   * Activity
+   * CHB
    *
    */
 
-  forceinline void
-  Activity::update(int i) {
-    assert(storage != NULL);
-    assert((i >= 0) && (i < storage->n));
-    storage->a[i] += 1.0;
-  }
-  forceinline void
-  Activity::decay(int i) {
-    assert(storage != NULL);
-    assert((i >= 0) && (i < storage->n));
-    storage->a[i] *= storage->d;
-  }
   forceinline double
-  Activity::operator [](int i) const {
-    assert(storage != NULL);
+  CHB::operator [](int i) const {
     assert((i >= 0) && (i < storage->n));
-    return storage->a[i];
+    return storage->chb[i].qs;
   }
   forceinline int
-  Activity::size(void) const {
+  CHB::size(void) const {
     return storage->n;
   }
   forceinline void
-  Activity::acquire(void) {
+  CHB::acquire(void) {
     storage->m.acquire();
   }
   forceinline void
-  Activity::release(void) {
+  CHB::release(void) {
     storage->m.release();
   }
-
+  forceinline void
+  CHB::bump(void) {
+    storage->bump();
+  }
+  forceinline void
+  CHB::update(int i, bool failed) {
+    storage->update(i,failed);
+  }
 
   forceinline
-  Activity::Activity(void) : storage(NULL) {}
+  CHB::CHB(void) : storage(NULL) {}
 
-  forceinline bool
-  Activity::initialized(void) const {
+  forceinline
+  CHB::operator bool(void) const {
     return storage != NULL;
   }
 
   template<class View>
   forceinline
-  Activity::Activity(Home home, ViewArray<View>& x, double d,
-                     typename BranchTraits<typename View::VarType>::Merit bm) {
+  CHB::CHB(Home home, ViewArray<View>& x,
+           typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(storage == NULL);
-    storage = new Storage(home,x,d,bm);
+    storage = new Storage(home,x,bm);
     (void) Recorder<View>::post(home,x,*this);
   }
   template<class View>
   forceinline void
-  Activity::init(Home home, ViewArray<View>& x, double d,
-                 typename BranchTraits<typename View::VarType>::Merit bm) {
+  CHB::init(Home home, ViewArray<View>& x,
+            typename BranchTraits<typename View::VarType>::Merit bm) {
     assert(storage == NULL);
-    storage = new Storage(home,x,d,bm);
+    storage = new Storage(home,x,bm);
     (void) Recorder<View>::post(home,x,*this);
   }
 
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os,
-              const Activity& a) {
+              const CHB& chb) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     s << '{';
-    if (a.size() > 0) {
-      s << a[0];
-      for (int i=1; i<a.size(); i++)
-        s << ", " << a[i];
+    if (chb.size() > 0) {
+      s << chb[0];
+      for (int i=1; i<chb.size(); i++)
+        s << ", " << chb[i];
     }
     s << '}';
     return os << s.str();
@@ -364,33 +390,32 @@ namespace Gecode {
 
 
   /*
-   * Propagation for activity recorder
+   * Propagation for chb recorder
    *
    */
   template<class View>
   forceinline
-  Activity::Recorder<View>::Recorder(Space& home, bool share,
-                                     Recorder<View>& p)
+  CHB::Recorder<View>::Recorder(Space& home, bool share, Recorder<View>& p)
     : NaryPropagator<View,PC_GEN_NONE>(home,share,p) {
-    a.update(home, share, p.a);
+    chb.update(home, share, p.chb);
     c.update(home, share, p.c);
   }
 
   template<class View>
   Propagator*
-  Activity::Recorder<View>::copy(Space& home, bool share) {
+  CHB::Recorder<View>::copy(Space& home, bool share) {
     return new (home) Recorder<View>(home, share, *this);
   }
 
   template<class View>
   inline size_t
-  Activity::Recorder<View>::dispose(Space& home) {
-    // Delete access to activity information
+  CHB::Recorder<View>::dispose(Space& home) {
+    // Delete access to chb information
     home.ignore(*this,AP_DISPOSE);
-    a.~Activity();
+    chb.~CHB();
     // Cancel remaining advisors
     for (Advisors<Idx> as(c); as(); ++as)
-      x[as.advisor().idx()].cancel(home,as.advisor());
+      x[as.advisor().idx()].cancel(home,as.advisor(),true);
     c.dispose(home);
     (void) NaryPropagator<View,PC_GEN_NONE>::dispose(home);
     return sizeof(*this);
@@ -398,43 +423,60 @@ namespace Gecode {
 
   template<class View>
   PropCost
-  Activity::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
+  CHB::Recorder<View>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::record();
   }
 
   template<class View>
   void
-  Activity::Recorder<View>::reschedule(Space& home) {
+  CHB::Recorder<View>::reschedule(Space& home) {
     View::schedule(home,*this,ME_GEN_ASSIGNED);
   }
 
   template<class View>
   ExecStatus
-  Activity::Recorder<View>::advise(Space&, Advisor& a, const Delta&) {
+  CHB::Recorder<View>::advise(Space&, Advisor& a, const Delta&) {
     static_cast<Idx&>(a).mark();
     return ES_NOFIX;
   }
 
   template<class View>
+  void
+  CHB::Recorder<View>::advise(Space&, Advisor& a) {
+    static_cast<Idx&>(a).mark();
+  }
+
+  template<class View>
   ExecStatus
-  Activity::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
-    // Lock activity information
-    a.acquire();
-    for (Advisors<Idx> as(c); as(); ++as) {
-      int i = as.advisor().idx();
-      if (as.advisor().marked()) {
-        as.advisor().unmark();
-        a.update(i);
-        if (x[i].assigned())
-          as.advisor().dispose(home,c);
-      } else {
-        assert(!x[i].assigned());
-        a.decay(i);
+  CHB::Recorder<View>::propagate(Space& home, const ModEventDelta&) {
+    // Lock chb information
+    chb.acquire();
+    if (home.failed()) {
+      chb.bump();
+      for (Advisors<Idx> as(c); as(); ++as) {
+        int i = as.advisor().idx();
+        if (as.advisor().marked()) {
+          as.advisor().unmark();
+          chb.update(i,true);
+          if (x[i].assigned())
+            as.advisor().dispose(home,c);
+        }
+      }
+    } else {
+      for (Advisors<Idx> as(c); as(); ++as) {
+        int i = as.advisor().idx();
+        if (as.advisor().marked()) {
+          as.advisor().unmark();
+          chb.update(i,false);
+          if (x[i].assigned())
+            as.advisor().dispose(home,c);
+        }
       }
     }
-    a.release();
+    chb.release();
     return c.empty() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
+
 
 }
 

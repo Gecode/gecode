@@ -100,4 +100,4 @@ namespace Gecode { namespace Set {
 
 }}
 
-// STATISTICS: set-other
+// STATISTICS: set-trace

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2012
+ *     Christian Schulte, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -37,18 +37,12 @@
 
 namespace Gecode {
 
-  forceinline
-  IntActivity::IntActivity(void) {}
-
-  forceinline
-  IntActivity::IntActivity(const IntActivity& a)
-    : Activity(a) {}
-
-  forceinline IntActivity&
-  IntActivity::operator =(const IntActivity& a) {
-    return static_cast<IntActivity&>(Activity::operator =(a));
+  forceinline void
+  channel(Home home, IntVar x0, BoolVar x1,
+          IntPropLevel ipl) {
+    channel(home,x1,x0,ipl);
   }
 
 }
 
-// STATISTICS: int-branch
+// STATISTICS: int-post

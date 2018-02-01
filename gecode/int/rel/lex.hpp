@@ -40,45 +40,45 @@ namespace Gecode { namespace Int { namespace Rel {
   /*
    * Lexical order propagator
    */
-  template<class View>
+  template<class VX, class VY>
   inline
-  LexLqLe<View>::LexLqLe(Home home,
-                         ViewArray<View>& x0, ViewArray<View>& y0, bool s)
+  LexLqLe<VX,VY>::LexLqLe(Home home,
+                          ViewArray<VX>& x0, ViewArray<VY>& y0, bool s)
     : Propagator(home), x(x0), y(y0), strict(s) {
     x.subscribe(home, *this, PC_INT_BND);
     y.subscribe(home, *this, PC_INT_BND);
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline
-  LexLqLe<View>::LexLqLe(Space& home, bool share, LexLqLe<View>& p)
+  LexLqLe<VX,VY>::LexLqLe(Space& home, bool share, LexLqLe<VX,VY>& p)
     : Propagator(home,share,p), strict(p.strict) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
   }
 
-  template<class View>
+  template<class VX, class VY>
   Actor*
-  LexLqLe<View>::copy(Space& home, bool share) {
-    return new (home) LexLqLe<View>(home,share,*this);
+  LexLqLe<VX,VY>::copy(Space& home, bool share) {
+    return new (home) LexLqLe<VX,VY>(home,share,*this);
   }
 
-  template<class View>
+  template<class VX, class VY>
   PropCost
-  LexLqLe<View>::cost(const Space&, const ModEventDelta&) const {
+  LexLqLe<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO, x.size());
   }
 
-  template<class View>
+  template<class VX, class VY>
   void
-  LexLqLe<View>::reschedule(Space& home) {
+  LexLqLe<VX,VY>::reschedule(Space& home) {
     x.reschedule(home,*this,PC_INT_BND);
     y.reschedule(home,*this,PC_INT_BND);
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline size_t
-  LexLqLe<View>::dispose(Space& home) {
+  LexLqLe<VX,VY>::dispose(Space& home) {
     assert(!home.failed());
     x.cancel(home,*this,PC_INT_BND);
     y.cancel(home,*this,PC_INT_BND);
@@ -86,9 +86,9 @@ namespace Gecode { namespace Int { namespace Rel {
     return sizeof(*this);
   }
 
-  template<class View>
+  template<class VX, class VY>
   ExecStatus
-  LexLqLe<View>::propagate(Space& home, const ModEventDelta&) {
+  LexLqLe<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     /*
      * State 1
      *
@@ -235,15 +235,15 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_FIX;
 
   rewrite_le:
-    GECODE_REWRITE(*this,Le<View>::post(home(*this),x[0],y[0]));
+    GECODE_REWRITE(*this,(Le<VX,VY>::post(home(*this),x[0],y[0])));
   rewrite_lq:
-    GECODE_REWRITE(*this,Lq<View>::post(home(*this),x[0],y[0]));
+    GECODE_REWRITE(*this,(Lq<VX,VY>::post(home(*this),x[0],y[0])));
   }
 
-  template<class View>
+  template<class VX, class VY>
   ExecStatus
-  LexLqLe<View>::post(Home home,
-                      ViewArray<View>& x, ViewArray<View>& y, bool strict) {
+  LexLqLe<VX,VY>::post(Home home,
+                      ViewArray<VX>& x, ViewArray<VY>& y, bool strict) {
     if (x.size() < y.size()) {
       y.size(x.size()); strict=false;
     } else if (x.size() > y.size()) {
@@ -253,11 +253,11 @@ namespace Gecode { namespace Int { namespace Rel {
       return strict ? ES_FAILED : ES_OK;
     if (x.size() == 1) {
       if (strict)
-        return Le<View>::post(home,x[0],y[0]);
+        return Le<VX,VY>::post(home,x[0],y[0]);
       else
-        return Lq<View>::post(home,x[0],y[0]);
+        return Lq<VX,VY>::post(home,x[0],y[0]);
     }
-    (void) new (home) LexLqLe<View>(home,x,y,strict);
+    (void) new (home) LexLqLe<VX,VY>(home,x,y,strict);
     return ES_OK;
   }
 
@@ -265,9 +265,9 @@ namespace Gecode { namespace Int { namespace Rel {
   /*
    * Lexical disequality propagator
    */
-  template<class View>
+  template<class VX, class VY>
   forceinline
-  LexNq<View>::LexNq(Home home, ViewArray<View>& xv, ViewArray<View>& yv)
+  LexNq<VX,VY>::LexNq(Home home, ViewArray<VX>& xv, ViewArray<VY>& yv)
     : Propagator(home),
       x0(xv[xv.size()-2]), y0(yv[xv.size()-2]),
       x1(xv[xv.size()-1]), y1(yv[xv.size()-1]),
@@ -280,34 +280,34 @@ namespace Gecode { namespace Int { namespace Rel {
     x1.subscribe(home,*this,PC_INT_VAL); y1.subscribe(home,*this,PC_INT_VAL);
   }
 
-  template<class View>
+  template<class VX, class VY>
   PropCost
-  LexNq<View>::cost(const Space&, const ModEventDelta&) const {
+  LexNq<VX,VY>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::binary(PropCost::HI);
   }
 
-  template<class View>
+  template<class VX, class VY>
   void
-  LexNq<View>::reschedule(Space& home) {
+  LexNq<VX,VY>::reschedule(Space& home) {
     x0.reschedule(home,*this,PC_INT_VAL);
     y0.reschedule(home,*this,PC_INT_VAL);
     x1.reschedule(home,*this,PC_INT_VAL);
     y1.reschedule(home,*this,PC_INT_VAL);
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline
-  LexNq<View>::LexNq(Space& home, bool share, LexNq<View>& p)
+  LexNq<VX,VY>::LexNq(Space& home, bool share, LexNq<VX,VY>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0); y0.update(home,share,p.y0);
     x1.update(home,share,p.x1); y1.update(home,share,p.y1);
     x.update(home,share,p.x); y.update(home,share,p.y);
   }
 
-  template<class View>
+  template<class VX, class VY>
   Actor*
-  LexNq<View>::copy(Space& home, bool share) {
-       int n = x.size();
+  LexNq<VX,VY>::copy(Space& home, bool share) {
+    int n = x.size();
     if (n > 0) {
       // Eliminate all equal views and keep one disequal pair
       for (int i=n; i--; )
@@ -328,12 +328,12 @@ namespace Gecode { namespace Int { namespace Rel {
     done:
       x.size(n); y.size(n);
     }
-    return new (home) LexNq<View>(home,share,*this);
+    return new (home) LexNq<VX,VY>(home,share,*this);
   }
 
-  template<class View>
+  template<class VX, class VY>
   inline ExecStatus
-  LexNq<View>::post(Home home, ViewArray<View>& x, ViewArray<View>& y) {
+  LexNq<VX,VY>::post(Home home, ViewArray<VX>& x, ViewArray<VY>& y) {
     if (x.size() != y.size())
       return ES_OK;
     int n = x.size();
@@ -361,24 +361,24 @@ namespace Gecode { namespace Int { namespace Rel {
     if (n == 0)
       return ES_FAILED;
     if (n == 1)
-      return Nq<View>::post(home,x[0],y[0]);
-    (void) new (home) LexNq(home,x,y);
+      return Nq<VX,VY>::post(home,x[0],y[0]);
+    (void) new (home) LexNq<VX,VY>(home,x,y);
     return ES_OK;
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline size_t
-  LexNq<View>::dispose(Space& home) {
+  LexNq<VX,VY>::dispose(Space& home) {
     x0.cancel(home,*this,PC_INT_VAL); y0.cancel(home,*this,PC_INT_VAL);
     x1.cancel(home,*this,PC_INT_VAL); y1.cancel(home,*this,PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class View>
+  template<class VX, class VY>
   forceinline ExecStatus
-  LexNq<View>::resubscribe(Space& home,
-                           RelTest rt, View& x0, View& y0, View x1, View y1) {
+  LexNq<VX,VY>::resubscribe(Space& home,
+                            RelTest rt, VX& x0, VY& y0, VX x1, VY y1) {
     if (rt == RT_TRUE) {
       assert(x0.assigned() && y0.assigned());
       assert(x0.val() == y0.val());
@@ -403,14 +403,14 @@ namespace Gecode { namespace Int { namespace Rel {
           GECODE_NEVER;
         }
       // No more views to subscribe to left
-      GECODE_REWRITE(*this,Nq<View>::post(home(*this),x1,y1));
+      GECODE_REWRITE(*this,(Nq<VX,VY>::post(home(*this),x1,y1)));
     }
     return ES_FIX;
   }
 
-  template<class View>
+  template<class VX, class VY>
   ExecStatus
-  LexNq<View>::propagate(Space& home, const ModEventDelta&) {
+  LexNq<VX,VY>::propagate(Space& home, const ModEventDelta&) {
     RelTest rt0 = rtest_eq_dom(x0,y0);
     if (rt0 == RT_FALSE)
       return home.ES_SUBSUMED(*this);

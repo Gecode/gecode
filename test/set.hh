@@ -242,6 +242,8 @@ namespace Test {
       void post(void);
       /// Compute a fixpoint and check for failure
       bool failed(void);
+      /// Check for subsumption if \a b is true
+      bool subsumed(bool b);
       /// Perform set tell operation on \a x[i]
       void rel(int i, Gecode::SetRelType srt, const Gecode::IntSet& is);
       /// Perform cardinality tell operation on \a x[i]
@@ -305,6 +307,8 @@ namespace Test {
     protected:
       /// Whether to perform full tests for disabled propagators
       bool disabled;
+      /// Whether to check for subsumption
+      bool testsubsumed;
     public:
       /**
        * \brief Constructor
@@ -316,7 +320,7 @@ namespace Test {
       SetTest(const std::string& s,
               int a, const Gecode::IntSet& d, bool r=false, int w=0)
         : Base("Set::"+s), arity(a), lub(d), reified(r), withInt(w),
-          disabled(true) {}
+          disabled(true), testsubsumed(true) {}
       /// Check for solution
       virtual bool solution(const SetAssignment&) const = 0;
       /// Post propagator

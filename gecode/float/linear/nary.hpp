@@ -82,50 +82,6 @@ namespace Gecode { namespace Float { namespace Linear {
   }
 
 
-  /*
-   * Computing bounds
-   *
-   */
-//  template<class View>
-//  void
-//  bounds_p(Rounding& r, ModEventDelta med, ViewArray<View>& x, FloatVal& c, FloatNum& sl, FloatNum& su) {
-//    int n = x.size();
-//    if (FloatView::me(med) == ME_FLOAT_VAL) {
-//      for (int i = n; i--; ) {
-//        if (x[i].assigned()) {
-//          c -= x[i].val(); x[i] = x[--n];
-//        } else {
-//          sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
-//        }
-//      }
-//      x.size(n);
-//    } else {
-//      for (int i = n; i--; ) {
-//        sl = r.sub_up(sl,x[i].min()); su = r.sub_down(su,x[i].max());
-//      }
-//    }
-//  }
-//
-//  template<class View>
-//  void
-//  bounds_n(Rounding& r, ModEventDelta med, ViewArray<View>& y, FloatVal& c, FloatNum& sl, FloatNum& su) {
-//    int n = y.size();
-//    if (FloatView::me(med) == ME_FLOAT_VAL) {
-//      for (int i = n; i--; ) {
-//        if (y[i].assigned()) {
-//          c += y[i].val(); y[i] = y[--n];
-//        } else {
-//          sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
-//        }
-//      }
-//      y.size(n);
-//    } else {
-//      for (int i = n; i--; ) {
-//        sl = r.add_up(sl,y[i].max()); su = r.add_down(su,y[i].min());
-//      }
-//    }
-//  }
-
   template<class View>
   void
   eliminate_p(ModEventDelta med, ViewArray<View>& x, FloatVal& c) {

@@ -60,15 +60,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       assert(x[max].idx == y.val());
       if (tiebreak)
         for (int i=0; i<max; i++)
-          GECODE_ES_CHECK(Rel::Le<VA>::post(home,
-                                            x[i].view,x[max].view));
+          GECODE_ES_CHECK((Rel::Le<VA,VA>::post(home,
+                                                x[i].view,x[max].view)));
       else
         for (int i=0; i<max; i++)
-          GECODE_ES_CHECK(Rel::Lq<VA>::post(home,
-                                            x[i].view,x[max].view));
+          GECODE_ES_CHECK((Rel::Lq<VA,VA>::post(home,
+                                                x[i].view,x[max].view)));
       for (int i=max+1; i<x.size(); i++)
-        GECODE_ES_CHECK(Rel::Lq<VA>::post(home,
-                                          x[i].view,x[max].view));
+        GECODE_ES_CHECK((Rel::Lq<VA,VA>::post(home,
+                                              x[i].view,x[max].view)));
     } else {
       (void) new (home) ArgMax<VA,VB,tiebreak>(home,x,y);
     }
@@ -185,15 +185,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       assert(x[max].idx == y.val());
       if (tiebreak)
         for (int i=0; i<max; i++)
-          GECODE_ES_CHECK(Rel::Le<VA>::post(home(*this),
-                                            x[i].view,x[max].view));
+          GECODE_ES_CHECK((Rel::Le<VA,VA>::post(home(*this),
+                                                x[i].view,x[max].view)));
       else
         for (int i=0; i<max; i++)
-          GECODE_ES_CHECK(Rel::Lq<VA>::post(home(*this),
-                                            x[i].view,x[max].view));
+          GECODE_ES_CHECK((Rel::Lq<VA,VA>::post(home(*this),
+                                               x[i].view,x[max].view)));
       for (int i=max+1; i<x.size(); i++)
-        GECODE_ES_CHECK(Rel::Lq<VA>::post(home(*this),
-                                          x[i].view,x[max].view));
+        GECODE_ES_CHECK((Rel::Lq<VA,VA>::post(home(*this),
+                                              x[i].view,x[max].view)));
       return home.ES_SUBSUMED(*this);
     }
 

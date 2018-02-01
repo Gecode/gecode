@@ -56,9 +56,7 @@ namespace Gecode {
    */
   Actor* Actor::sentinel;
 
-  Actor::~Actor(void) {
-    assert(false);
-  }
+  Actor::~Actor(void) {}
 
 
   /*
@@ -67,8 +65,12 @@ namespace Gecode {
    */
   ExecStatus
   Propagator::advise(Space&, Advisor&, const Delta&) {
-    assert(false);
+    GECODE_NEVER;
     return ES_FAILED;
+  }
+  void
+  Propagator::advise(Space&, Advisor&) {
+    GECODE_NEVER;
   }
 
 
@@ -109,8 +111,7 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void)
-    : sm(new SharedMemory), mm(sm), _wmp_afc(0U) {
+  Space::Space(void) : sm(new SharedMemory), mm(sm) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -126,68 +127,55 @@ namespace Gecode {
     // Initialize propagator queues
     for (int i=0; i<=PropCost::AC_MAX; i++)
       pc.p.queue[i].init();
-    pc.p.bid = reserved_bid+1;
-    pc.p.n_sub = 0;
+    pc.p.bid_sc = (reserved_bid+1) << sc_bits;
+    pc.p.n_sub  = 0;
   }
 
   void
-  Space::notice(Actor& a, ActorProperty p, bool duplicate) {
-    if (p & AP_DISPOSE) {
-      if (duplicate && (d_fst != NULL)) {
-        for (Actor** f = d_fst; f < d_cur; f++)
-          if (&a == *f)
-            return;
-      }
-      if (d_cur == d_lst) {
-        // Resize
-        if (d_fst == NULL) {
-          // Create new array
-          d_fst = alloc<Actor*>(4);
-          d_cur = d_fst;
-          d_lst = d_fst+4;
-        } else {
-          // Resize existing array
-          unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
-          assert(n != 0);
-          d_fst = realloc<Actor*>(d_fst,n,2*n);
-          d_cur = d_fst+n;
-          d_lst = d_fst+2*n;
-        }
-      }
-      *(d_cur++) = &a;
-    } else if (p & AP_WEAKLY) {
-      if (wmp() == 0)
-        wmp(2);
-      else
-        wmp(wmp()+1);
-    }
-  }
-
-  void
-  Space::ignore(Actor& a, ActorProperty p, bool duplicate) {
-    if (p & AP_DISPOSE) {
-      // Check wether array has already been discarded as space
-      // deletion is already in progress
-      if (d_fst == NULL)
-        return;
-      Actor** f = d_fst;
-      if (duplicate) {
-        while (f < d_cur)
-          if (&a == *f)
-            break;
-          else
-            f++;
-        if (f == d_cur)
+  Space::ap_notice_dispose(Actor* a, bool duplicate) {
+    // Note that a might be a marked pointer!
+    if (duplicate && (d_fst != NULL)) {
+      for (Actor** f = d_fst; f < d_cur; f++)
+        if (a == *f)
           return;
-      } else {
-        while (&a != *f)
-          f++;
-      }
-      *f = *(--d_cur);
-    } else if (p & AP_WEAKLY) {
-      assert(wmp() > 1U);
-      wmp(wmp()-1);
     }
+    if (d_cur == d_lst) {
+      // Resize
+      if (d_fst == NULL) {
+        // Create new array
+        d_fst = alloc<Actor*>(4);
+        d_cur = d_fst;
+        d_lst = d_fst+4;
+      } else {
+        // Resize existing array
+        unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
+        assert(n != 0);
+        d_fst = realloc<Actor*>(d_fst,n,2*n);
+        d_cur = d_fst+n;
+        d_lst = d_fst+2*n;
+      }
+    }
+    *(d_cur++) = a;
+  }
+
+  void
+  Space::ap_ignore_dispose(Actor* a, bool duplicate) {
+    // Note that a might be a marked pointer!
+    assert(d_fst != NULL);
+    Actor** f = d_fst;
+    if (duplicate) {
+      while (f < d_cur)
+        if (a == *f)
+          break;
+        else
+          f++;
+      if (f == d_cur)
+        return;
+    } else {
+      while (a != *f)
+        f++;
+    }
+    *f = *(--d_cur);
   }
 
   void
@@ -206,7 +194,9 @@ namespace Gecode {
       // So that d_unforce knows that deletion is in progress
       d_fst = NULL;
       while (a < e) {
-        (void) (*a)->dispose(*this);
+        // Ignore entries for tracers
+        if (!Support::marked(*a))
+          (void) (*a)->dispose(*this);
         a++;
       }
     }
@@ -232,83 +222,223 @@ namespace Gecode {
 
   SpaceStatus
   Space::status(StatusStatistics& stat) {
-    SpaceStatus s = SS_FAILED;
     // Check whether space is failed
     if (failed())
-      goto exit;
+      return SS_FAILED;
     assert(pc.p.active <= &pc.p.queue[PropCost::AC_MAX+1]);
+    Propagator* p;
     // Check whether space is stable but not failed
     if (pc.p.active >= &pc.p.queue[0]) {
-      Propagator* p;
       ModEventDelta med_o;
-      goto unstable;
-    execute:
-      stat.propagate++;
-      if (p->disabled())
-        goto put_into_idle;
-      pc.p.ei.propagator(*p);
-      // Keep old modification event delta
-      med_o = p->u.med;
-      // Clear med but leave propagator in queue
-      p->u.med = 0;
-      switch (p->propagate(*this,med_o)) {
-      case ES_FAILED:
-        // Count failure
-        if (afc_enabled())
-          gpi.fail(p->gpi());
-        // Mark as failed
-        fail(); s = SS_FAILED; goto exit;
-      case ES_NOFIX:
-        // Find next, if possible
-        if (p->u.med != 0) {
-        unstable:
-          // There is at least one propagator in a queue
+      if ((pc.p.bid_sc & ((1 << sc_bits) - 1)) == 0) {
+        // No support for disabled propagators and tracing
+        // Check whether space is stable but not failed
+        goto f_unstable;
+      f_execute:
+        stat.propagate++;
+        // Keep old modification event delta
+        med_o = p->u.med;
+        // Clear med but leave propagator in queue
+        p->u.med = 0;
+        switch (p->propagate(*this,med_o)) {
+        case ES_FAILED:
+          goto failed;
+        case ES_NOFIX:
+          // Find next, if possible
+          if (p->u.med != 0) {
+          f_unstable:
+            // There is at least one propagator in a queue
+            do {
+              assert(pc.p.active >= &pc.p.queue[0]);
+              // First propagator or link back to queue
+              ActorLink* fst = pc.p.active->next();
+              if (pc.p.active != fst) {
+                p = Propagator::cast(fst);
+                goto f_execute;
+              }
+              pc.p.active--;
+            } while (true);
+            GECODE_NEVER;
+          }
+          // Fall through
+        case ES_FIX:
+          // Clear med
+          p->u.med = 0;
+          // Put into idle queue
+          p->unlink(); pl.head(p);
+        f_stable_or_unstable:
+          // There might be a propagator in the queue
           do {
             assert(pc.p.active >= &pc.p.queue[0]);
             // First propagator or link back to queue
             ActorLink* fst = pc.p.active->next();
             if (pc.p.active != fst) {
               p = Propagator::cast(fst);
-              goto execute;
+              goto f_execute;
             }
-            pc.p.active--;
-          } while (true);
+          } while (--pc.p.active >= &pc.p.queue[0]);
+          assert(pc.p.active < &pc.p.queue[0]);
+          goto f_stable;
+        case __ES_SUBSUMED:
+          p->unlink(); rfree(p,p->u.size);
+          goto f_stable_or_unstable;
+        case __ES_PARTIAL:
+          // Schedule propagator with specified propagator events
+          assert(p->u.med != 0);
+          enqueue(p);
+          goto f_unstable;
+        default:
           GECODE_NEVER;
         }
-        // Fall through
-      case ES_FIX:
-      put_into_idle:
-        // Clear med
+      f_stable: ;
+      } else if ((pc.p.bid_sc & ((1 << sc_bits) - 1)) == sc_disabled) {
+        // Support for disabled propagators
+        goto d_unstable;
+      d_execute:
+        stat.propagate++;
+        if (p->disabled())
+          goto d_put_into_idle;
+        // Keep old modification event delta
+        med_o = p->u.med;
+        // Clear med but leave propagator in queue
         p->u.med = 0;
-        // Put into idle queue
-        p->unlink(); pl.head(p);
-      stable_or_unstable:
-        // There might be a propagator in the queue
-        do {
-          assert(pc.p.active >= &pc.p.queue[0]);
-          // First propagator or link back to queue
-          ActorLink* fst = pc.p.active->next();
-          if (pc.p.active != fst) {
-            p = Propagator::cast(fst);
-            goto execute;
+        switch (p->propagate(*this,med_o)) {
+        case ES_FAILED:
+          goto failed;
+        case ES_NOFIX:
+          // Find next, if possible
+          if (p->u.med != 0) {
+          d_unstable:
+            // There is at least one propagator in a queue
+            do {
+              assert(pc.p.active >= &pc.p.queue[0]);
+              // First propagator or link back to queue
+              ActorLink* fst = pc.p.active->next();
+              if (pc.p.active != fst) {
+                p = Propagator::cast(fst);
+                goto d_execute;
+              }
+              pc.p.active--;
+            } while (true);
+            GECODE_NEVER;
           }
-        } while (--pc.p.active >= &pc.p.queue[0]);
-        assert(pc.p.active < &pc.p.queue[0]);
-        goto stable;
-      case __ES_SUBSUMED:
-        p->unlink(); rfree(p,p->u.size);
-        goto stable_or_unstable;
-      case __ES_PARTIAL:
-        // Schedule propagator with specified propagator events
-        assert(p->u.med != 0);
-        enqueue(p);
-        goto unstable;
-      default:
-        GECODE_NEVER;
+          // Fall through
+        case ES_FIX:
+        d_put_into_idle:
+          // Clear med
+          p->u.med = 0;
+          // Put into idle queue
+          p->unlink(); pl.head(p);
+        d_stable_or_unstable:
+          // There might be a propagator in the queue
+          do {
+            assert(pc.p.active >= &pc.p.queue[0]);
+            // First propagator or link back to queue
+            ActorLink* fst = pc.p.active->next();
+            if (pc.p.active != fst) {
+              p = Propagator::cast(fst);
+              goto d_execute;
+            }
+          } while (--pc.p.active >= &pc.p.queue[0]);
+          assert(pc.p.active < &pc.p.queue[0]);
+          goto d_stable;
+        case __ES_SUBSUMED:
+          p->unlink(); rfree(p,p->u.size);
+          goto d_stable_or_unstable;
+        case __ES_PARTIAL:
+          // Schedule propagator with specified propagator events
+          assert(p->u.med != 0);
+          enqueue(p);
+          goto d_unstable;
+        default:
+          GECODE_NEVER;
+        }
+      d_stable: ;
+      } else {
+        // Support disabled propagators and tracing
+        // Find a non-disabled tracer recorder (possibly null)
+        TraceRecorder* tr = findtr();
+
+#define GECODE_STATUS_TRACE(q,s) \
+  if ((tr != NULL) && (tr->events() & TE_PROPAGATE) && \
+      (tr->filter()(p->group()))) {                    \
+    PropagateTraceInfo pti(p->id(),p->group(),q,       \
+                           PropagateTraceInfo::s);     \
+    tr->tracer()._propagate(*this,pti);                \
+  }
+
+        goto t_unstable;
+      t_execute:
+        stat.propagate++;
+        if (p->disabled())
+          goto t_put_into_idle;
+        pc.p.vti.propagator(*p);
+        // Keep old modification event delta
+        med_o = p->u.med;
+        // Clear med but leave propagator in queue
+        p->u.med = 0;
+        switch (p->propagate(*this,med_o)) {
+        case ES_FAILED:
+          GECODE_STATUS_TRACE(p,FAILED);
+          goto failed;
+        case ES_NOFIX:
+          // Find next, if possible
+          if (p->u.med != 0) {
+            GECODE_STATUS_TRACE(p,NOFIX);
+          t_unstable:
+            // There is at least one propagator in a queue
+            do {
+              assert(pc.p.active >= &pc.p.queue[0]);
+              // First propagator or link back to queue
+              ActorLink* fst = pc.p.active->next();
+              if (pc.p.active != fst) {
+                p = Propagator::cast(fst);
+                goto t_execute;
+              }
+              pc.p.active--;
+            } while (true);
+            GECODE_NEVER;
+          }
+          // Fall through
+        case ES_FIX:
+          GECODE_STATUS_TRACE(p,FIX);
+        t_put_into_idle:
+          // Clear med
+          p->u.med = 0;
+          // Put into idle queue
+          p->unlink(); pl.head(p);
+        t_stable_or_unstable:
+          // There might be a propagator in the queue
+          do {
+            assert(pc.p.active >= &pc.p.queue[0]);
+            // First propagator or link back to queue
+            ActorLink* fst = pc.p.active->next();
+            if (pc.p.active != fst) {
+              p = Propagator::cast(fst);
+              goto t_execute;
+            }
+          } while (--pc.p.active >= &pc.p.queue[0]);
+          assert(pc.p.active < &pc.p.queue[0]);
+          goto t_stable;
+        case __ES_SUBSUMED:
+          GECODE_STATUS_TRACE(NULL,SUBSUMED);
+          p->unlink(); rfree(p,p->u.size);
+          goto t_stable_or_unstable;
+        case __ES_PARTIAL:
+          GECODE_STATUS_TRACE(p,NOFIX);
+          // Schedule propagator with specified propagator events
+          assert(p->u.med != 0);
+          enqueue(p);
+          goto t_unstable;
+        default:
+          GECODE_NEVER;
+        }
+      t_stable:
+        pc.p.vti.other();
+#undef GECODE_STATUS_TRACE
       }
     }
-  stable:
-    pc.p.ei.other();
+
     /*
      * Find the next brancher that has still alternatives left
      *
@@ -335,18 +465,37 @@ namespace Gecode {
     while (b_status != Brancher::cast(&bl))
       if (b_status->status(*this)) {
         // Brancher still has choices to generate
-        s = SS_BRANCH; goto exit;
+        return SS_BRANCH;
       } else {
         // Brancher is exhausted
         b_status = Brancher::cast(b_status->next());
       }
     // No brancher with alternatives left, space is solved
-    s = SS_SOLVED;
-  exit:
-    stat.wmp = (wmp() > 0U);
-    if (wmp() == 1U)
-      wmp(0U);
-    return s;
+    return SS_SOLVED;
+
+    // Process failure
+  failed:
+    // Count failure
+    gpi.fail(p->gpi());
+    // Mark as failed
+    fail();
+    // Propagate top priority propagators
+    ActorLink* e = &pc.p.queue[PropCost::AC_RECORD];
+    for (ActorLink* a = e->next(); a != e; a = a->next()) {
+      Propagator* top = Propagator::cast(a);
+      // Keep old modification event delta
+      ModEventDelta top_med_o = top->u.med;
+      // Clear med but leave propagator in queue
+      top->u.med = 0;
+      switch (top->propagate(*this,top_med_o)) {
+      case ES_FIX:
+      case __ES_SUBSUMED:
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    }
+    return SS_FAILED;
   }
 
 
@@ -403,11 +552,22 @@ namespace Gecode {
       return;
     if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
-      pc.p.ei.brancher(*b);
-      ExecStatus es = b->commit(*this,c,a);
-      pc.p.ei.other();
-      if (es == ES_FAILED)
-        fail();
+      if (pc.p.bid_sc & sc_trace) {
+        TraceRecorder* tr = findtr();
+        if ((tr != NULL) && (tr->events() & TE_COMMIT) &&
+            tr->filter()(b->group())) {
+          CommitTraceInfo cti(*b,c,a);
+          tr->tracer()._commit(*this,cti);
+        }
+        pc.p.vti.brancher(*b);
+        ExecStatus es = b->commit(*this,c,a);
+        pc.p.vti.other();
+        if (es == ES_FAILED)
+          fail();
+      } else {
+        if (b->commit(*this,c,a) == ES_FAILED)
+          fail();
+      }
     } else {
       // There is no matching brancher!
       throw SpaceNoBrancher("Space::commit");
@@ -422,11 +582,22 @@ namespace Gecode {
       return;
     if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
-      pc.p.ei.brancher(*b);
-      ExecStatus es = b->commit(*this,c,a);
-      pc.p.ei.other();
-      if (es == ES_FAILED)
-        fail();
+      if (pc.p.bid_sc & sc_trace) {
+        TraceRecorder* tr = findtr();
+        if ((tr != NULL) && (tr->events() & TE_COMMIT) &&
+            tr->filter()(b->group())) {
+          CommitTraceInfo cti(*b,c,a);
+          tr->tracer()._commit(*this,cti);
+        }
+        pc.p.vti.brancher(*b);
+        ExecStatus es = b->commit(*this,c,a);
+        pc.p.vti.other();
+        if (es == ES_FAILED)
+          fail();
+      } else {
+        if (b->commit(*this,c,a) == ES_FAILED)
+          fail();
+      }
     }
   }
 
@@ -487,8 +658,7 @@ namespace Gecode {
     : sm(s.sm->copy(share)),
       mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       gpi(s.gpi),
-      d_fst(&Actor::sentinel),
-      _wmp_afc(s._wmp_afc) {
+      d_fst(&Actor::sentinel) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -564,8 +734,11 @@ namespace Gecode {
         c->d_cur = c->d_fst;
         c->d_lst = c->d_fst+n+1;
         for (Actor** d_fst_iter = d_fst; d_fst_iter != d_cur; d_fst_iter++) {
-          if ((*d_fst_iter)->prev())
-            *(c->d_cur++) = Actor::cast((*d_fst_iter)->prev());
+          ptrdiff_t m;
+          Actor* a = static_cast<Actor*>(Support::ptrsplit(*d_fst_iter,m));
+          if (a->prev())
+            *(c->d_cur++) = Actor::cast(static_cast<ActorLink*>
+                                        (Support::ptrjoin(a->prev(),m)));
         }
       }
     }
@@ -622,8 +795,8 @@ namespace Gecode {
     for (int i=0; i<=PropCost::AC_MAX; i++)
       c->pc.p.queue[i].init();
     // Copy propagation only data
-    c->pc.p.n_sub = pc.p.n_sub;
-    c->pc.p.bid = pc.p.bid;
+    c->pc.p.n_sub  = pc.p.n_sub;
+    c->pc.p.bid_sc = pc.p.bid_sc;
 
     if (!share_info) {
       // Re-allocate afc information
@@ -637,7 +810,7 @@ namespace Gecode {
       }
     }
     // Reset execution information
-    c->pc.p.ei.other(); pc.p.ei.other();
+    c->pc.p.vti.other(); pc.p.vti.other();
 
     return c;
   }
@@ -681,24 +854,6 @@ namespace Gecode {
   Choice::archive(Archive& e) const {
     e << id();
   }
-
-  void
-  Space::afc_decay(double d) {
-    afc_enable();
-    // Commit outstanding decay operations
-    if (gpi.decay() != 1.0)
-      for (Propagators p(*this); p(); ++p)
-        (void) gpi.afc(p.propagator().gpi());
-    gpi.decay(d);
-  }
-
-  void
-  Space::afc_set(double a) {
-    afc_enable();
-    for (Propagators p(*this); p(); ++p)
-      gpi.set(p.propagator().gpi(),a);
-  }
-
 
   bool
   NGL::notice(void) const {
@@ -788,7 +943,7 @@ namespace Gecode {
       return;
     for (Space::Propagators ps(home); ps(); ++ps)
       if (in(ps.propagator().group()))
-        ps.propagator().disable();
+        ps.propagator().disable(home);
   }
 
   void
@@ -801,14 +956,14 @@ namespace Gecode {
         Propagator& p = ps.propagator();
         ++ps;
         if (in(p.group())) {
-          p.enable();
+          p.enable(home);
           p.reschedule(home);
         }
       }
     } else {
       for (Space::Propagators ps(home); ps(); ++ps)
         if (in(ps.propagator().group()))
-          ps.propagator().enable();
+          ps.propagator().enable(home);
     }
   }
 

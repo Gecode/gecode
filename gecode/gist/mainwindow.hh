@@ -66,8 +66,6 @@ namespace Gecode { namespace Gist {
     Support::Timer searchTimer;
     /// Status bar label for maximum depth indicator
     QLabel* depthLabel;
-    /// Status bar label for weakly monotonic propagator indicator
-    QLabel* wmpLabel;
     /// Status bar label for number of solutions
     QLabel* solvedLabel;
     /// Status bar label for number of failures

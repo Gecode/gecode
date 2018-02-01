@@ -49,7 +49,7 @@ namespace Gecode { namespace Float { namespace Branch {
     case FloatValBranch::SEL_SPLIT_RND:
       return new (home) ValSelCommit<ValSelRnd,ValCommitLqGq>(home,fvb);
     case FloatValBranch::SEL_VAL_COMMIT:
-      if (fvb.commit() == NULL) {
+      if (!fvb.commit()) {
         return new (home)
           ValSelCommit<ValSelFunction<FloatView>,ValCommitLqGq>(home,fvb);
       } else {
@@ -71,7 +71,7 @@ namespace Gecode { namespace Float { namespace Branch {
     case FloatAssign::SEL_RND:
       return new (home) ValSelCommit<ValSelRnd,ValCommitLqGq>(home,fa);
     case FloatAssign::SEL_VAL_COMMIT:
-      if (fa.commit() == NULL) {
+      if (!fa.commit()) {
         return new (home)
           ValSelCommit<ValSelFunction<FloatView>,ValCommitLqGq>(home,fa);
       } else {

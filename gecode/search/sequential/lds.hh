@@ -269,7 +269,7 @@ namespace Gecode { namespace Search { namespace Sequential {
             Space* cc = cur->clone();
             Node sn(cc,ch,d_a-1);
             ds.push(sn);
-            stack_depth(ds.entries());
+            stack_depth(static_cast<unsigned long int>(ds.entries()));
             cur->commit(*ch,d_a);
             d -= d_a;
           } else {

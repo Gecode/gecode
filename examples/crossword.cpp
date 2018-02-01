@@ -78,9 +78,15 @@ protected:
 public:
   /// Branching to use for model
   enum {
-    BRANCH_WORDS,      ///< Branch on the words
-    BRANCH_LETTERS,    ///< Branch on the letters
-    BRANCH_LETTERS_ALL ///< Branch on the letters (try all values)
+    BRANCH_WORDS_AFC,          ///< Branch on the words
+    BRANCH_LETTERS_AFC,        ///< Branch on the letters
+    BRANCH_LETTERS_AFC_ALL,    ///< Branch on the letters (try all values)
+    BRANCH_WORDS_ACTION,       ///< Branch on the words
+    BRANCH_LETTERS_ACTION,     ///< Branch on the letters
+    BRANCH_LETTERS_ACTION_ALL, ///< Branch on the letters (try all values)
+    BRANCH_WORDS_CHB,          ///< Branch on the words
+    BRANCH_LETTERS_CHB,        ///< Branch on the letters
+    BRANCH_LETTERS_CHB_ALL     ///< Branch on the letters (try all values)
   };
   /// Actual model
   Crossword(const SizeOptions& opt)
@@ -143,23 +149,59 @@ public:
       }
     }
     switch (opt.branching()) {
-    case BRANCH_WORDS:
+    case BRANCH_WORDS_AFC:
       // Branch by assigning words
       branch(*this, allwords,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(),
-             NULL, &printwords);
+             nullptr, &printwords);
       break;
-    case BRANCH_LETTERS:
+    case BRANCH_LETTERS_AFC:
       // Branch by assigning letters
       branch(*this, letters,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
-             NULL, &printletters);
+             nullptr, &printletters);
       break;
-    case BRANCH_LETTERS_ALL:
+    case BRANCH_LETTERS_AFC_ALL:
       // Branch by assigning letters (try all letters)
       branch(*this, letters,
              INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
-             NULL, &printletters);
+             nullptr, &printletters);
+      break;
+    case BRANCH_WORDS_ACTION:
+      // Branch by assigning words
+      branch(*this, allwords,
+             INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN(),
+             nullptr, &printwords);
+      break;
+    case BRANCH_LETTERS_ACTION:
+      // Branch by assigning letters
+      branch(*this, letters,
+             INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VAL_MIN(),
+             nullptr, &printletters);
+      break;
+    case BRANCH_LETTERS_ACTION_ALL:
+      // Branch by assigning letters (try all letters)
+      branch(*this, letters,
+             INT_VAR_ACTION_SIZE_MAX(opt.decay()), INT_VALUES_MIN(),
+             nullptr, &printletters);
+      break;
+    case BRANCH_WORDS_CHB:
+      // Branch by assigning words
+      branch(*this, allwords,
+             INT_VAR_CHB_SIZE_MAX(), INT_VAL_SPLIT_MIN(),
+             nullptr, &printwords);
+      break;
+    case BRANCH_LETTERS_CHB:
+      // Branch by assigning letters
+      branch(*this, letters,
+             INT_VAR_CHB_SIZE_MAX(), INT_VAL_MIN(),
+             nullptr, &printletters);
+      break;
+    case BRANCH_LETTERS_CHB_ALL:
+      // Branch by assigning letters (try all letters)
+      branch(*this, letters,
+             INT_VAR_CHB_SIZE_MAX(), INT_VALUES_MIN(),
+             nullptr, &printletters);
       break;
     }
   }
@@ -167,21 +209,21 @@ public:
   static void printletters(const Space& home, const Brancher&,
                            unsigned int a,
                            IntVar, int i, const int& n,
-                           std::ostream& o) {
+                           std::ostream& os) {
     const Crossword& c = static_cast<const Crossword&>(home);
     int x = i % c.w, y = i / c.w;
-    o << "letters[" << x << "," << y << "] "
-      << ((a == 0) ? "=" : "!=") << " "
-      << static_cast<char>(n);
+    os << "letters[" << x << "," << y << "] "
+       << ((a == 0) ? "=" : "!=") << " "
+       << static_cast<char>(n);
   }
   /// Print brancher information when branching on words
   static void printwords(const Space&, const Brancher&,
                          unsigned int a,
                          IntVar, int i, const int& n,
-                         std::ostream& o) {
-    o << "allwords[" << i << "] "
-      << ((a == 0) ? "<=" : ">") << " "
-      << n;
+                         std::ostream& os) {
+    os << "allwords[" << i << "] "
+       << ((a == 0) ? "<=" : ">") << " "
+       << n;
   }
   /// Do not perform a restart when a solution is found
   bool master(const MetaInfo& mi) {
@@ -225,17 +267,32 @@ public:
 
 
 /** \brief Main-function
- *  \relates WordSquare
+ *  \relates Crossword
  */
 int
 main(int argc, char* argv[]) {
   FileSizeOptions opt("Crossword");
   opt.size(10);
   opt.ipl(IPL_VAL);
-  opt.branching(Crossword::BRANCH_WORDS);
-  opt.branching(Crossword::BRANCH_WORDS, "words");
-  opt.branching(Crossword::BRANCH_LETTERS, "letters");
-  opt.branching(Crossword::BRANCH_LETTERS_ALL, "letters-all");
+  opt.branching(Crossword::BRANCH_LETTERS_AFC);
+  opt.branching(Crossword::BRANCH_WORDS_AFC,
+                "words-afc");
+  opt.branching(Crossword::BRANCH_LETTERS_AFC,
+                "letters-afc");
+  opt.branching(Crossword::BRANCH_LETTERS_AFC_ALL,
+                "letters-afc-all");
+  opt.branching(Crossword::BRANCH_WORDS_ACTION,
+                "words-action");
+  opt.branching(Crossword::BRANCH_LETTERS_ACTION,
+                "letters-action");
+  opt.branching(Crossword::BRANCH_LETTERS_ACTION_ALL,
+                "letters-action-all");
+  opt.branching(Crossword::BRANCH_WORDS_CHB,
+                "words-chb");
+  opt.branching(Crossword::BRANCH_LETTERS_CHB,
+                "letters-chb");
+  opt.branching(Crossword::BRANCH_LETTERS_CHB_ALL,
+                "letters-chb-all");
   opt.parse(argc,argv);
   dict.init(opt.file());
   if (opt.size() >= n_grids) {

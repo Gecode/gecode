@@ -38,17 +38,30 @@
 namespace Gecode {
 
   forceinline
-  SetActivity::SetActivity(void) {}
+  IntAction::IntAction(void) {}
 
   forceinline
-  SetActivity::SetActivity(const SetActivity& a)
-    : Activity(a) {}
+  IntAction::IntAction(const IntAction& a)
+    : Action(a) {}
 
-  forceinline SetActivity&
-  SetActivity::operator =(const SetActivity& a) {
-    return static_cast<SetActivity&>(Activity::operator =(a));
+  forceinline IntAction&
+  IntAction::operator =(const IntAction& a) {
+    return static_cast<IntAction&>(Action::operator =(a));
+  }
+
+
+  forceinline
+  BoolAction::BoolAction(void) {}
+
+  forceinline
+  BoolAction::BoolAction(const BoolAction& a)
+    : Action(a) {}
+
+  forceinline BoolAction&
+  BoolAction::operator =(const BoolAction& a) {
+    return static_cast<BoolAction&>(Action::operator =(a));
   }
 
 }
 
-// STATISTICS: set-branch
+// STATISTICS: int-branch

@@ -81,6 +81,25 @@
 #endif
 
 /**
+ * \def GECODE_VALID_FUNCTION
+ * \brief Assert that a function is valid
+ *
+ * This is preferred over assert as it is used for optimization,
+ * if supported by a compiler (for example, Microsoft Visual C++).
+ *
+ */
+
+#if defined(_MSC_VER) && defined(NDEBUG)
+
+#define GECODE_VALID_FUNCTION(f) __assume(static_cast<bool>(f));
+
+#else
+
+#define GECODE_VALID_FUNCTION(f) assert(static_cast<bool>(f));
+
+#endif
+
+/**
  * \def GECODE_ASSUME
  * \brief Assert certain property
  *

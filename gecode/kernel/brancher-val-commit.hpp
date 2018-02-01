@@ -49,11 +49,13 @@ namespace Gecode {
   public:
     /// View type
     typedef _View View;
+    /// Corresponding variable type
+    typedef typename View::VarType Var;
     /// Value type
     typedef _Val Val;
   public:
     /// Constructor for initialization
-    ValCommit(Space& home, const ValBranch& vb);
+    ValCommit(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommit(Space& home, bool shared, ValCommit<View,Val>& vs);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -77,10 +79,10 @@ namespace Gecode {
     typedef typename BranchTraits<Var>::Commit CommitFunction;
   protected:
     /// The user-defined commit function
-    CommitFunction c;
+    SharedData<CommitFunction> c;
   public:
     /// Constructor for initialization
-    ValCommitFunction(Space& home, const ValBranch& vb);
+    ValCommitFunction(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning during copying
     ValCommitFunction(Space& home, bool shared, ValCommitFunction& vc);
     /// Perform user-defined commit
@@ -90,13 +92,17 @@ namespace Gecode {
     /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
     void print(const Space& home, unsigned int a, View x, int i,
                const Val& n, std::ostream& o) const;
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Delete value commit
+    void dispose(Space& home);
   };
   //@}
 
   // Baseclass for value commit
   template<class View, class Val>
   forceinline
-  ValCommit<View,Val>::ValCommit(Space&, const ValBranch&) {}
+  ValCommit<View,Val>::ValCommit(Space&, const ValBranch<Var>&) {}
   template<class View, class Val>
   forceinline
   ValCommit<View,Val>::ValCommit(Space&, bool, ValCommit<View,Val>&) {}
@@ -114,20 +120,25 @@ namespace Gecode {
   template<class View>
   forceinline
   ValCommitFunction<View>::ValCommitFunction(Space& home,
-                                             const ValBranch& vb)
-    : ValCommit<View,Val>(home,vb),
-      c(function_cast<CommitFunction>(vb.commit())) {}
+                                             const ValBranch<Var>& vb)
+    : ValCommit<View,Val>(home,vb), c(vb.commit()) {
+    if (!c())
+      throw InvalidFunction("ValCommitFunction::ValCommitFunction");
+  }
   template<class View>
   forceinline
   ValCommitFunction<View>::ValCommitFunction(Space& home, bool shared,
                                              ValCommitFunction<View>& vc)
-    : ValCommit<View,Val>(home,shared,vc), c(vc.c) {}
+    : ValCommit<View,Val>(home,shared,vc) {
+    c.update(home,shared,vc.c);
+  }
   template<class View>
   forceinline ModEvent
   ValCommitFunction<View>::commit(Space& home, unsigned int a, View x, int i,
                                   Val n) {
     typename View::VarType y(x.varimp());
-    c(home,a,y,i,n);
+    GECODE_VALID_FUNCTION(c());
+    c()(home,a,y,i,n);
     return home.failed() ? ES_FAILED : ES_OK;
   }
   template<class View>
@@ -141,6 +152,16 @@ namespace Gecode {
                                  View, int i, const Val&,
                                  std::ostream& o) const {
     o << "var[" << i << "] is user-defined.";
+  }
+  template<class View>
+  forceinline bool
+  ValCommitFunction<View>::notice(void) const {
+    return true;
+  }
+  template<class View>
+  forceinline void
+  ValCommitFunction<View>::dispose(Space&) {
+    c.~SharedData<CommitFunction>();
   }
 
 }

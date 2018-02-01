@@ -90,7 +90,7 @@ namespace Gecode { namespace Search { namespace Meta {
         // The engine found a solution
         restart = true;
         delete last;
-        last = n->clone();
+        last = n->clone(shared_data);
         return n;
       } else if ( (!complete && !e->stopped()) ||
                   (e->stopped() && stop->enginestopped()) ) {
@@ -135,7 +135,7 @@ namespace Gecode { namespace Search { namespace Meta {
         return;
       }
     }
-    last = b.clone();
+    last = b.clone(shared_data);
     master->constrain(b);
     e->constrain(b);
   }

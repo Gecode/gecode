@@ -47,6 +47,10 @@
 #include <cstring>
 #include <cassert>
 
+#include <cfloat>
+
+#include <functional>
+
 #include <gecode/support.hh>
 
 /*
@@ -90,6 +94,27 @@
  * directly in the Gecode namespace.
  *
  */
+
+namespace Gecode {
+
+  /// Kernel configuration parameters
+  namespace Kernel { namespace Config {
+    /// Rescale factor for action and afc values
+    const double rescale = 1e-50;
+    /// Rescale action and afc values when larger than this
+    const double rescale_limit = DBL_MAX * rescale;
+
+    /// Initial value for alpha in CHB
+    const double chb_alpha_init = 0.4;
+    /// Limit for decreasing alpha in CHB
+    const double chb_alpha_limit = 0.06;
+    /// Alpha decrement in CHB
+    const double chb_alpha_decrement = 1e-6;
+    /// Initial value for Q-score in CHB
+    const double chb_qscore_init = 0.05;
+  }}
+
+}
 
 /*
  * General exceptions and kernel exceptions
@@ -153,12 +178,13 @@
 
 
 /*
- * Arrays
+ * Arrays and other data
  *
  */
 
 #include <gecode/kernel/array.hpp>
 #include <gecode/kernel/shared-array.hpp>
+#include <gecode/kernel/shared-data.hpp>
 
 
 /*
@@ -198,7 +224,7 @@ namespace Gecode {
   //@{
   /// Call the function \a f (with the current space as argument) for branching
   GECODE_KERNEL_EXPORT void
-  branch(Home home, void (*f)(Space& home));
+  branch(Home home, std::function<void(Space& home)> f);
   //@}
 
 }
@@ -208,12 +234,15 @@ namespace Gecode {
 #include <gecode/kernel/advisor.hpp>
 #include <gecode/kernel/afc.hpp>
 #include <gecode/kernel/branch-traits.hpp>
-#include <gecode/kernel/activity.hpp>
+#include <gecode/kernel/chb.hpp>
+#include <gecode/kernel/action.hpp>
 #include <gecode/kernel/branch-var.hpp>
 #include <gecode/kernel/branch-tiebreak.hpp>
 #include <gecode/kernel/branch-val.hpp>
 #include <gecode/kernel/brancher-merit.hpp>
+#include <gecode/kernel/brancher-filter.hpp>
 #include <gecode/kernel/brancher-view-sel.hpp>
+#include <gecode/kernel/brancher-print.hpp>
 #include <gecode/kernel/brancher-view.hpp>
 #include <gecode/kernel/brancher-val-sel.hpp>
 #include <gecode/kernel/brancher-val-commit.hpp>
@@ -238,7 +267,30 @@ namespace Gecode {
 #include <gecode/kernel/trace-filter.hpp>
 #include <gecode/kernel/tracer.hpp>
 #include <gecode/kernel/trace-recorder.hpp>
+#include <gecode/kernel/trace-print.hpp>
 
+namespace Gecode {
+
+  /**
+   * \brief Create tracer
+   * \ingroup TaskTrace
+   */
+  GECODE_KERNEL_EXPORT void
+  trace(Home home, TraceFilter tf,
+        int te = (TE_PROPAGATE | TE_COMMIT),
+        Tracer& t = StdTracer::def);
+  /**
+   * \brief Create tracer
+   * \ingroup TaskTrace
+   */
+  void
+  trace(Home home,
+        int te = (TE_PROPAGATE | TE_COMMIT),
+        Tracer& t = StdTracer::def);
+
+}
+
+#include <gecode/kernel/trace.hpp>
 
 /*
  * Allocator support
@@ -246,14 +298,6 @@ namespace Gecode {
  */
 
 #include <gecode/kernel/allocators.hpp>
-
-
-/*
- * Printing support
- *
- */
-
-#include <gecode/kernel/print.hpp>
 
 
 #endif

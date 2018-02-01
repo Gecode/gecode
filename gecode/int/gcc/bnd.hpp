@@ -696,8 +696,8 @@ namespace Gecode { namespace Int { namespace GCC {
     MinIdx<Card> min_idx;
     Support::quicksort<Card, MinIdx<Card> >(&k[0], k.size(), min_idx);
 
-    if (!lps.initialized()) {
-      assert (!ups.initialized());
+    if (!lps) {
+      assert(!ups);
       lps.init(home, k, false);
       ups.init(home, k, true);
     } else if (Card::propagate) {

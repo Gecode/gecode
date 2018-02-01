@@ -273,8 +273,8 @@
 #endif
 //
 // last known and checked version is 1600 (VC10, aka 2010):
-// Changed to VC14, aka 2015
-#if (_MSC_VER > 1900)
+// Changed to VC15, aka 2017
+#if (_MSC_VER > 2000)
 #  if defined(GECODE_BOOST_ASSERT_CONFIG)
 #     error "Unknown compiler version - please run the configure tests and report the results"
 #  else

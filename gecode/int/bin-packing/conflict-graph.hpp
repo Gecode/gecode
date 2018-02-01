@@ -237,7 +237,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       if (max.c > bins)
         return ES_FAILED;
     }
-    return Rel::Nq<IntView>::post(home,b[i],b[j]);
+    return Rel::Nq<IntView,IntView>::post(home,b[i],b[j]);
   }
 
   forceinline ExecStatus

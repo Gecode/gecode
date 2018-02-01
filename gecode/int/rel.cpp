@@ -42,10 +42,9 @@
 
 namespace Gecode {
 
-  using namespace Int;
-
   void
   rel(Home home, IntVar x0, IntRelType irt, int n, IntPropLevel) {
+    using namespace Int;
     Limits::check(n,"Int::rel");
     GECODE_POST;
     IntView x(x0);
@@ -62,6 +61,7 @@ namespace Gecode {
 
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, int n, IntPropLevel) {
+    using namespace Int;
     Limits::check(n,"Int::rel");
     GECODE_POST;
     switch (irt) {
@@ -102,6 +102,7 @@ namespace Gecode {
 
   void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1, IntPropLevel ipl) {
+    using namespace Int;
     GECODE_POST;
     switch (irt) {
     case IRT_EQ:
@@ -112,15 +113,15 @@ namespace Gecode {
       }
       break;
     case IRT_NQ:
-      GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,x0,x1)); break;
+      GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,x0,x1))); break;
     case IRT_GQ:
       std::swap(x0,x1); // Fall through
     case IRT_LQ:
-      GECODE_ES_FAIL(Rel::Lq<IntView>::post(home,x0,x1)); break;
+      GECODE_ES_FAIL((Rel::Lq<IntView,IntView>::post(home,x0,x1))); break;
     case IRT_GR:
       std::swap(x0,x1); // Fall through
     case IRT_LE:
-      GECODE_ES_FAIL(Rel::Le<IntView>::post(home,x0,x1)); break;
+      GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,x0,x1))); break;
     default:
       throw UnknownRelation("Int::rel");
     }
@@ -129,6 +130,7 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, IntVar y,
       IntPropLevel ipl) {
+    using namespace Int;
     GECODE_POST;
     switch (irt) {
     case IRT_EQ:
@@ -146,27 +148,27 @@ namespace Gecode {
       break;
     case IRT_NQ:
       for (int i=x.size(); i--; ) {
-        GECODE_ES_FAIL(Rel::Nq<IntView>::post(home,x[i],y));
+        GECODE_ES_FAIL((Rel::Nq<IntView,IntView>::post(home,x[i],y)));
       }
       break;
     case IRT_GQ:
       for (int i=x.size(); i--; ) {
-        GECODE_ES_FAIL(Rel::Lq<IntView>::post(home,y,x[i]));
+        GECODE_ES_FAIL((Rel::Lq<IntView,IntView>::post(home,y,x[i])));
       }
       break;
     case IRT_LQ:
       for (int i=x.size(); i--; ) {
-        GECODE_ES_FAIL(Rel::Lq<IntView>::post(home,x[i],y));
+        GECODE_ES_FAIL((Rel::Lq<IntView,IntView>::post(home,x[i],y)));
       }
       break;
     case IRT_GR:
       for (int i=x.size(); i--; ) {
-        GECODE_ES_FAIL(Rel::Le<IntView>::post(home,y,x[i]));
+        GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,y,x[i])));
       }
       break;
     case IRT_LE:
       for (int i=x.size(); i--; ) {
-        GECODE_ES_FAIL(Rel::Le<IntView>::post(home,x[i],y));
+        GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,x[i],y)));
       }
       break;
     default:
@@ -178,6 +180,7 @@ namespace Gecode {
   void
   rel(Home home, IntVar x0, IntRelType irt, IntVar x1, Reify r,
       IntPropLevel ipl) {
+    using namespace Int;
     GECODE_POST;
     switch (irt) {
     case IRT_EQ:
@@ -302,6 +305,7 @@ namespace Gecode {
   void
   rel(Home home, IntVar x, IntRelType irt, int n, Reify r,
       IntPropLevel ipl) {
+    using namespace Int;
     Limits::check(n,"Int::rel");
     GECODE_POST;
     switch (irt) {
@@ -427,6 +431,7 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt,
       IntPropLevel ipl) {
+    using namespace Int;
     GECODE_POST;
     if ((irt != IRT_NQ) && (x.size() < 2))
       return;
@@ -467,7 +472,7 @@ namespace Gecode {
         GECODE_ES_FAIL((Rel::NaryLqLe<IntView,1>::post(home,y)));
       }
       for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(Rel::Le<IntView>::post(home,x[i+1],x[i]));
+        GECODE_ES_FAIL((Rel::Le<IntView,IntView>::post(home,x[i+1],x[i])));
       break;
     case IRT_GQ:
       {
@@ -485,31 +490,36 @@ namespace Gecode {
   void
   rel(Home home, const IntVarArgs& x, IntRelType irt, const IntVarArgs& y,
       IntPropLevel ipl) {
+    using namespace Int;
     GECODE_POST;
 
     switch (irt) {
     case IRT_GR:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,yv,xv,true));
+        GECODE_ES_FAIL((Rel::LexLqLe<IntView,IntView>
+                        ::post(home,yv,xv,true)));
       }
       break;
     case IRT_LE:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,xv,yv,true));
+        GECODE_ES_FAIL((Rel::LexLqLe<IntView,IntView>
+                        ::post(home,xv,yv,true)));
       }
       break;
     case IRT_GQ:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,yv,xv,false));
+        GECODE_ES_FAIL((Rel::LexLqLe<IntView,IntView>
+                        ::post(home,yv,xv,false)));
       }
       break;
     case IRT_LQ:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexLqLe<IntView>::post(home,xv,yv,false));
+        GECODE_ES_FAIL((Rel::LexLqLe<IntView,IntView>
+                        ::post(home,xv,yv,false)));
       }
       break;
     case IRT_EQ:
@@ -529,12 +539,94 @@ namespace Gecode {
     case IRT_NQ:
       {
         ViewArray<IntView> xv(home,x), yv(home,y);
-        GECODE_ES_FAIL(Rel::LexNq<IntView>::post(home,xv,yv));
+        GECODE_ES_FAIL((Rel::LexNq<IntView,IntView>
+                        ::post(home,xv,yv)));
       }
       break;
     default:
       throw UnknownRelation("Int::rel");
     }
+  }
+
+  namespace {
+
+    /// Return view array
+    ViewArray<Int::ConstIntView>
+    viewarray(Space& home, const IntArgs& x) {
+      ViewArray<Int::ConstIntView> xv(home, x.size());
+      for (int i = x.size(); i--; ) {
+        Int::Limits::check(x[i],"Int::rel");
+        xv[i] = Int::ConstIntView(x[i]);
+      }
+      return xv;
+    }
+
+  }
+
+  void
+  rel(Home home, const IntVarArgs& x, IntRelType irt, const IntArgs& y,
+      IntPropLevel) {
+    using namespace Int;
+    GECODE_POST;
+
+    switch (irt) {
+    case IRT_GR:
+      {
+        ViewArray<IntView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView,IntView>
+                        ::post(home,yv,xv,true)));
+      }
+      break;
+    case IRT_LE:
+      {
+        ViewArray<IntView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<IntView,ConstIntView>
+                        ::post(home,xv,yv,true)));
+      }
+      break;
+    case IRT_GQ:
+      {
+        ViewArray<IntView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<ConstIntView,IntView>
+                        ::post(home,yv,xv,false)));
+      }
+      break;
+    case IRT_LQ:
+      {
+        ViewArray<IntView> xv(home,x);
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexLqLe<IntView,ConstIntView>
+                        ::post(home,xv,yv,false)));
+      }
+      break;
+    case IRT_EQ:
+      if (x.size() != y.size()) {
+        home.fail();
+      } else {
+        for (int i=x.size(); i--; )
+          GECODE_ME_FAIL(IntView(x[i]).eq(home,y[i]));
+      }
+      break;
+    case IRT_NQ:
+      {
+        ViewArray<IntView> xv(home,x); 
+        ViewArray<ConstIntView> yv(viewarray(home,y));
+        GECODE_ES_FAIL((Rel::LexNq<IntView,ConstIntView>
+                        ::post(home,xv,yv)));
+      }
+      break;
+    default:
+      throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
+  rel(Home home, const IntArgs& x, IntRelType irt, const IntVarArgs& y,
+      IntPropLevel ipl) {
+    rel(home,y,irt,x,ipl);
   }
 
 }

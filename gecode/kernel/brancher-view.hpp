@@ -75,28 +75,28 @@ namespace Gecode {
    * Defined for views of type \a View and \a n view selectors for
    * tie-breaking.
    */
-  template<class View, int n>
+  template<class View, class Filter, int n>
   class ViewBrancher : public Brancher {
   protected:
-    /// The branch filter that corresponds to the var type
-    typedef typename BranchTraits<typename View::VarType>::Filter BranchFilter;
+    /// The corresponding variable
+    typedef typename View::VarType Var;
     /// Views to branch on
     ViewArray<View> x;
     /// Unassigned views start at x[start]
     mutable int start;
     /// View selection objects
     ViewSel<View>* vs[n];
-    /// Branch filter function
-    BranchFilter bf;
+    /// Filter function
+    Filter f;
     /// Return position information
     Pos pos(Space& home);
     /// Return view according to position information \a p
     View view(const Pos& p) const;
     /// Constructor for cloning \a b
-    ViewBrancher(Space& home, bool shared, ViewBrancher<View,n>& b);
+    ViewBrancher(Space& home, bool shared, ViewBrancher<View,Filter,n>& b);
     /// Constructor for creation
-    ViewBrancher(Home home, ViewArray<View>& x,
-                 ViewSel<View>* vs[n], BranchFilter bf);
+    ViewBrancher(Home home, ViewArray<View>& x, ViewSel<View>* vs[n],
+                 BranchFilter<Var> bf);
   public:
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
@@ -135,57 +135,64 @@ namespace Gecode {
     e << _pos.pos;
   }
 
-  template<class View, int n>
+  template<class View, class Filter, int n>
   forceinline
-  ViewBrancher<View,n>::ViewBrancher(Home home, ViewArray<View>& x0,
-                                     ViewSel<View>* vs0[n], BranchFilter bf0)
-    : Brancher(home), x(x0), start(0), bf(bf0) {
+  ViewBrancher<View,Filter,n>::ViewBrancher(Home home, ViewArray<View>& x0,
+                                            ViewSel<View>* vs0[n],
+                                            BranchFilter<Var> bf)
+    : Brancher(home), x(x0), start(0), f(bf) {
     for (int i=0; i<n; i++)
       vs[i] = vs0[i];
     for (int i=0; i<n; i++)
-      if (vs[i]->notice()) {
-        home.notice(*this,AP_DISPOSE);
+      if (f.notice() || vs[i]->notice()) {
+        home.notice(*this,AP_DISPOSE,true);
         break;
       }
   }
 
-  template<class View, int n>
+  template<class View, class Filter, int n>
   forceinline
-  ViewBrancher<View,n>::ViewBrancher(Space& home, bool shared,
-                                     ViewBrancher<View,n>& vb)
-    : Brancher(home,shared,vb), start(vb.start), bf(vb.bf) {
+  ViewBrancher<View,Filter,n>::ViewBrancher(Space& home, bool shared,
+                                            ViewBrancher<View,Filter,n>& vb)
+    : Brancher(home,shared,vb), start(vb.start),
+      f(home,shared,vb.f) {
     x.update(home,shared,vb.x);
     for (int i=0; i<n; i++)
       vs[i] = vb.vs[i]->copy(home,shared);
   }
 
-  template<class View, int n>
+  template<class View, class Filter, int n>
   bool
-  ViewBrancher<View,n>::status(const Space& home) const {
-    if (bf == NULL) {
-      for (int i=start; i < x.size(); i++)
-        if (!x[i].assigned()) {
-          start = i;
-          return true;
-        }
-    } else {
-      for (int i=start; i < x.size(); i++) {
-        typename View::VarType y(x[i].varimp());
-        if (!x[i].assigned() && bf(home,y,i)) {
-          start = i;
-          return true;
-        }
+  ViewBrancher<View,Filter,n>::status(const Space& home) const {
+    for (int i=start; i < x.size(); i++)
+      if (!x[i].assigned() && f(home,x[i],i)) {
+        start = i;
+        return true;
       }
-    }
     return false;
   }
 
-  template<class View, int n>
+  template<class View, class Filter, int n>
   inline Pos
-  ViewBrancher<View,n>::pos(Space& home) {
+  ViewBrancher<View,Filter,n>::pos(Space& home) {
     assert(!x[start].assigned());
     int s;
-    if (bf == NULL) {
+    if (f) {
+      if (n == 1) {
+        s = vs[0]->select(home,x,start,f);
+      } else {
+        Region r(home);
+        int* ties = r.alloc<int>(x.size()-start+1);
+        int n_ties;
+        vs[0]->ties(home,x,start,ties,n_ties,f);
+        for (int i=1; (i < n-1) && (n_ties > 1); i++)
+          vs[i]->brk(home,x,ties,n_ties);
+        if (n_ties > 1)
+          s = vs[n-1]->select(home,x,ties,n_ties);
+        else
+          s = ties[0];
+      }
+    } else {
       if (n == 1) {
         s = vs[0]->select(home,x,start);
       } else {
@@ -200,44 +207,29 @@ namespace Gecode {
         else
           s = ties[0];
       }
-    } else {
-      if (n == 1) {
-        s = vs[0]->select(home,x,start,bf);
-      } else {
-        Region r(home);
-        int* ties = r.alloc<int>(x.size()-start+1);
-        int n_ties;
-        vs[0]->ties(home,x,start,ties,n_ties,bf);
-        for (int i=1; (i < n-1) && (n_ties > 1); i++)
-          vs[i]->brk(home,x,ties,n_ties);
-        if (n_ties > 1)
-          s = vs[n-1]->select(home,x,ties,n_ties);
-        else
-          s = ties[0];
-      }
     }
     Pos p(s);
     return p;
   }
 
-  template<class View, int n>
+  template<class View, class Filter, int n>
   forceinline View
-  ViewBrancher<View,n>::view(const Pos& p) const {
+  ViewBrancher<View,Filter,n>::view(const Pos& p) const {
     return x[p.pos];
   }
 
-  template<class View, int n>
+  template<class View, class Filter, int n>
   forceinline size_t
-  ViewBrancher<View,n>::dispose(Space& home) {
+  ViewBrancher<View,Filter,n>::dispose(Space& home) {
     for (int i=0; i<n; i++)
-      if (vs[i]->notice()) {
+      if (f.notice() || vs[i]->notice()) {
         home.ignore(*this,AP_DISPOSE,true);
         break;
       }
     for (int i=0; i<n; i++)
       vs[i]->dispose(home);
     (void) Brancher::dispose(home);
-    return sizeof(ViewBrancher<View,n>);
+    return sizeof(ViewBrancher<View,Filter,n>);
   }
 
 }

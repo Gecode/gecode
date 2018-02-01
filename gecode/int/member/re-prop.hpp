@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Member {
         ValSet::Ranges vsr(vs);
         GECODE_ME_CHECK(y.minus_r(home,vsr,false));
         for (int i=x.size(); i--; )
-          GECODE_ES_CHECK(Rel::Nq<View>::post(Home(home),x[i],y));
+          GECODE_ES_CHECK((Rel::Nq<View,View>::post(Home(home),x[i],y)));
       }
       return home.ES_SUBSUMED(*this);
     }

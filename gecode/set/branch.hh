@@ -74,7 +74,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class MeritMin : public MeritBase<SetView,int> {
   public:
     /// Constructor for initialization
-    MeritMin(Space& home, const VarBranch& vb);
+    MeritMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritMin(Space& home, bool shared, MeritMin& m);
     /// Return minimum as merit for view \a x at position \a i
@@ -90,7 +90,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class MeritMax : public MeritBase<SetView,int> {
   public:
     /// Constructor for initialization
-    MeritMax(Space& home, const VarBranch& vb);
+    MeritMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritMax(Space& home, bool shared, MeritMax& m);
     /// Return maximum as merit for view \a x at position \a i
@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class MeritSize : public MeritBase<SetView,unsigned int> {
   public:
     /// Constructor for initialization
-    MeritSize(Space& home, const VarBranch& vb);
+    MeritSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritSize(Space& home, bool shared, MeritSize& m);
     /// Return size as merit for view \a x at position \a i
@@ -114,7 +114,7 @@ namespace Gecode { namespace Set { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over degree
+   * \brief Merit class for degree over size
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
@@ -122,15 +122,15 @@ namespace Gecode { namespace Set { namespace Branch {
   class MeritDegreeSize : public MeritBase<SetView,double> {
   public:
     /// Constructor for initialization
-    MeritDegreeSize(Space& home, const VarBranch& vb);
+    MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritDegreeSize(Space& home, bool shared, MeritDegreeSize& m);
-    /// Return size over degree as merit for view \a x at position \a i
+    /// Return degree over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
   };
 
   /**
-   * \brief Merit class for size over afc
+   * \brief Merit class for AFC over size
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
@@ -141,10 +141,10 @@ namespace Gecode { namespace Set { namespace Branch {
     AFC afc;
   public:
     /// Constructor for initialization
-    MeritAFCSize(Space& home, const VarBranch& vb);
+    MeritAFCSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
     MeritAFCSize(Space& home, bool shared, MeritAFCSize& m);
-    /// Return size over AFC as merit for view \a x at position \a i
+    /// Return AFC over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
@@ -153,21 +153,44 @@ namespace Gecode { namespace Set { namespace Branch {
   };
 
   /**
-   * \brief Merit class for size over activity
+   * \brief Merit class for action over size
    *
    * Requires \code #include <gecode/set/branch.hh> \endcode
    * \ingroup FuncSetViewSel
    */
-  class MeritActivitySize : public MeritBase<SetView,double> {
+  class MeritActionSize : public MeritBase<SetView,double> {
   protected:
-    /// Activity information
-    Activity activity;
+    /// Action information
+    Action action;
   public:
     /// Constructor for initialization
-    MeritActivitySize(Space& home, const VarBranch& vb);
+    MeritActionSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritActivitySize(Space& home, bool shared, MeritActivitySize& m);
-    /// Return size over activity as merit for view \a x at position \a i
+    MeritActionSize(Space& home, bool shared, MeritActionSize& m);
+    /// Return action over size as merit for view \a x at position \a i
+    double operator ()(const Space& home, SetView x, int i);
+    /// Whether dispose must always be called (that is, notice is needed)
+    bool notice(void) const;
+    /// Dispose view selection
+    void dispose(Space& home);
+  };
+
+  /**
+   * \brief Merit class for CHB Q-score over size
+   *
+   * Requires \code #include <gecode/set/branch.hh> \endcode
+   * \ingroup FuncSetViewSel
+   */
+  class MeritCHBSize : public MeritBase<SetView,double> {
+  protected:
+    /// CHB information
+    CHB chb;
+  public:
+    /// Constructor for initialization
+    MeritCHBSize(Space& home, const VarBranch<Var>& vb);
+    /// Constructor for cloning
+    MeritCHBSize(Space& home, bool shared, MeritCHBSize& m);
+    /// Return CHB Q-score over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
     bool notice(void) const;
@@ -210,7 +233,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValSelMin : public ValSel<SetView,int> {
   public:
     /// Constructor for initialization
-    ValSelMin(Space& home, const ValBranch& vb);
+    ValSelMin(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelMin(Space& home, bool shared, ValSelMin& vs);
     /// Return value of view \a x at position \a i
@@ -226,7 +249,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValSelMax : public ValSel<SetView,int> {
   public:
     /// Constructor for initialization
-    ValSelMax(Space& home, const ValBranch& vb);
+    ValSelMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelMax(Space& home, bool shared, ValSelMax& vs);
     /// Return value of view \a x at position \a i
@@ -242,7 +265,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValSelMed : public ValSel<SetView,int> {
   public:
     /// Constructor for initialization
-    ValSelMed(Space& home, const ValBranch& vb);
+    ValSelMed(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelMed(Space& home, bool shared, ValSelMed& vs);
     /// Return value of view \a x at position \a i
@@ -261,7 +284,7 @@ namespace Gecode { namespace Set { namespace Branch {
     Rnd r;
   public:
     /// Constructor for initialization
-    ValSelRnd(Space& home, const ValBranch& vb);
+    ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
     /// Return value of view \a x at position \a i
@@ -341,7 +364,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValCommitInc : public ValCommit<SetView,int> {
   public:
     /// Constructor for initialization
-    ValCommitInc(Space& home, const ValBranch& vb);
+    ValCommitInc(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitInc(Space& home, bool shared, ValCommitInc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
@@ -362,7 +385,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValCommitExc : public ValCommit<SetView,int> {
   public:
     /// Constructor for initialization
-    ValCommitExc(Space& home, const ValBranch& vb);
+    ValCommitExc(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
     ValCommitExc(Space& home, bool shared, ValCommitExc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a

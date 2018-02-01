@@ -90,7 +90,7 @@ namespace Gecode {
     /// Return a random integer from the interval [0..n)
     unsigned int operator ()(unsigned int n);
     /// Test whether generator has been properly initialized
-    bool initialized(void) const;
+    operator bool(void) const;
   };
 
   forceinline unsigned int
@@ -103,8 +103,8 @@ namespace Gecode {
     IMP* i = static_cast<IMP*>(object());
     return i->rg(n);
   }
-  forceinline bool
-  Rnd::initialized(void) const {
+  forceinline
+  Rnd::operator bool(void) const {
     return object() != NULL;
   }
 

@@ -200,37 +200,37 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::gq(Space& home, int n) {
     if (n <= 0) return ME_INT_NONE;
-    if (n > 1)  return ME_INT_FAILED;
+    if (n > 1)  return fail(home);
     return one(home);
   }
   forceinline ModEvent
   BoolVarImp::gq(Space& home, long long int n) {
     if (n <= 0) return ME_INT_NONE;
-    if (n > 1)  return ME_INT_FAILED;
+    if (n > 1)  return fail(home);
     return one(home);
   }
 
   forceinline ModEvent
   BoolVarImp::lq(Space& home, int n) {
-    if (n < 0)  return ME_INT_FAILED;
+    if (n < 0)  return fail(home);
     if (n >= 1) return ME_INT_NONE;
     return zero(home);
   }
   forceinline ModEvent
   BoolVarImp::lq(Space& home, long long int n) {
-    if (n < 0)  return ME_INT_FAILED;
+    if (n < 0)  return fail(home);
     if (n >= 1) return ME_INT_NONE;
     return zero(home);
   }
 
   forceinline ModEvent
   BoolVarImp::eq(Space& home, int n) {
-    if ((n < 0) || (n > 1)) return ME_INT_FAILED;
+    if ((n < 0) || (n > 1)) return fail(home);
     return (n == 0) ? zero(home): one(home);
   }
   forceinline ModEvent
   BoolVarImp::eq(Space& home, long long int n) {
-    if ((n < 0) || (n > 1)) return ME_INT_FAILED;
+    if ((n < 0) || (n > 1)) return fail(home);
     return (n == 0) ? zero(home): one(home);
   }
 
@@ -276,7 +276,7 @@ namespace Gecode { namespace Int {
   BoolVarImp::narrow_r(Space& home, I& i, bool) {
     // Is new domain empty?
     if (!i())
-      return ME_INT_FAILED;
+      return fail(home);
     assert((i.min() == 0) || (i.min() == 1));
     assert((i.max() == 0) || (i.max() == 1));
     if (i.max() == 0) {
@@ -300,7 +300,7 @@ namespace Gecode { namespace Int {
       ++i;
     // Is new domain empty?
     if (!i() || (i.min() > 1))
-      return ME_INT_FAILED;
+      return fail(home);
     assert(i.min() <= 1);
     if (i.min() == 1)
       return one(home);
@@ -324,14 +324,14 @@ namespace Gecode { namespace Int {
     if (i.max() == 0)
       return one(home);
     assert((i.min() <= 0) && (i.max() >= 1));
-    return ME_INT_FAILED;
+    return fail(home);
   }
 
   template<class I>
   forceinline ModEvent
   BoolVarImp::narrow_v(Space& home, I& i, bool) {
     if (!i())
-      return ME_INT_FAILED;
+      return fail(home);
     if (!none())
       return ME_INT_NONE;
     if (i.val() == 0) {
@@ -352,7 +352,7 @@ namespace Gecode { namespace Int {
     while (i() && (i.val() < 0))
       ++i;
     if (!i() || (i.val() > 1))
-      return ME_INT_FAILED;
+      return fail(home);
     if (i.val() == 0) {
       do {
         ++i;
@@ -378,7 +378,7 @@ namespace Gecode { namespace Int {
       } while (i() && (i.val() == 0));
       if (!i() || (i.val() > 1))
         return one(home);
-      return ME_INT_FAILED;
+      return fail(home);
     } else {
       assert(i.val() == 1);
       return zero(home);
@@ -392,35 +392,19 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  BoolVarImp::subscribe(Space& home, Propagator& p, PropCond,
-                        bool schedule) {
-    // Subscription can be used with integer propagation conditions,
-    // which must be remapped to the single Boolean propagation condition.
-    BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),schedule);
-  }
-  forceinline void
   BoolVarImp::cancel(Space& home, Propagator& p, PropCond) {
-    BoolVarImpBase::cancel(home,p,PC_BOOL_VAL,assigned());
+    BoolVarImpBase::cancel(home,p,PC_BOOL_VAL);
   }
 
   forceinline void
-  BoolVarImp::subscribe(Space& home, Advisor& a) {
-    BoolVarImpBase::subscribe(home,a,assigned());
-  }
-  forceinline void
-  BoolVarImp::cancel(Space& home, Advisor& a) {
-    BoolVarImpBase::cancel(home,a,assigned());
+  BoolVarImp::cancel(Space& home, Advisor& a, bool fail) {
+    BoolVarImpBase::cancel(home,a,fail);
   }
 
   forceinline void
   BoolVarImp::schedule(Space& home, Propagator& p, ModEvent me) {
     if (me == ME_GEN_ASSIGNED)
       BoolVarImpBase::schedule(home,p,me);
-  }
-
-  forceinline void
-  BoolVarImp::reschedule(Space& home, Propagator& p, PropCond) {
-    BoolVarImpBase::reschedule(home,p,PC_BOOL_VAL,assigned());
   }
 
   forceinline ModEventDelta

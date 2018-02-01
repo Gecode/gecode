@@ -70,4 +70,4 @@ namespace Gecode { namespace Int {
 
 }}
 
-// STATISTICS: int-other
+// STATISTICS: int-trace

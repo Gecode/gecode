@@ -342,15 +342,18 @@ namespace Gecode { namespace Int {
      * subscriptions during propagation).
      *
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space& home, Propagator& p, PropCond pc);
+    GECODE_INT_EXPORT void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /// Re-schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to variable
-    void subscribe(Space& home, Advisor& a);
-    /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    GECODE_INT_EXPORT void reschedule(Space& home, Propagator& p, PropCond pc);
+    /** \brief Subscribe advisor \a a to variable
+     *
+     * The advisor \a a is only subscribed if \a assigned is false.
+     *
+     * If \a fail is true, the advisor \a a is also run when a variable
+     * operation triggers failure. This feature is undocumented.
+     *
+     */
+    GECODE_INT_EXPORT void subscribe(Space& home, Advisor& a, bool fail);
     //@}
 
     /// \name Variable implementation-dependent propagator support
@@ -652,7 +655,7 @@ namespace Gecode { namespace Int {
      * The propagation condition \a pc can be a propagation condition
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
-    void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
+    GECODE_INT_EXPORT void subscribe(Space& home, Propagator& p, PropCond pc, bool schedule=true);
     /**
      * \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
@@ -660,10 +663,17 @@ namespace Gecode { namespace Int {
      * for integer variables, which will be mapped to PC_BOOL_VAL.
      */
     void cancel(Space& home, Propagator& p, PropCond pc);
-    /// Subscribe advisor \a a to variable
-    void subscribe(Space& home, Advisor& a);
+    /** \brief Subscribe advisor \a a to variable
+     *
+     * The advisor \a a is only subscribed if \a assigned is false.
+     *
+     * If \a fail is true, the advisor \a a is also run when a variable
+     * operation triggers failure. This feature is undocumented.
+     *
+     */
+    GECODE_INT_EXPORT void subscribe(Space& home, Advisor& a, bool fail);
     /// Cancel subscription of advisor \a a
-    void cancel(Space& home, Advisor& a);
+    void cancel(Space& home, Advisor& a, bool fail);
     //@}
 
     /// \name Variable implementation-dependent propagator support
@@ -677,7 +687,7 @@ namespace Gecode { namespace Int {
      */
     static void schedule(Space& home, Propagator& p, ModEvent me);
     /// Re-schedule propagator \a p
-    void reschedule(Space& home, Propagator& p, PropCond pc);
+    GECODE_INT_EXPORT void reschedule(Space& home, Propagator& p, PropCond pc);
     /// Translate modification event \a me to modification event delta for view
     static ModEventDelta med(ModEvent me);
     //@}
