@@ -284,6 +284,29 @@ namespace Gecode {
     return os << st.str();
   }
 
+  forceinline bool
+  DFA::operator ==(const DFA& d) const {
+    if (n_states() != d.n_states())
+      return false;
+    if (n_transitions() != d.n_transitions())
+      return false;
+    if (n_symbols() != d.n_symbols())
+      return false;
+    if (max_degree() != d.max_degree())
+      return false;
+    if (final_fst() != d.final_fst())
+      return false;
+    if (final_lst() != d.final_lst())
+      return false;
+    return equal(d);
+  }
+
+  forceinline bool
+  DFA::operator !=(const DFA& d) const {
+    return !(*this == d);
+  }
+
+
 }
 
 

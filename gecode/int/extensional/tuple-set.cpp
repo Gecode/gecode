@@ -443,9 +443,11 @@ namespace Gecode {
   } 
 
   bool
-  TupleSet::operator ==(const TupleSet& t) const {
-    if ((tuples() != t.tuples()) || (arity() != t.arity()))
-      return false;
+  TupleSet::equal(const TupleSet& t) const {
+    assert(tuples() != t.tuples());
+    assert(arity() != t.arity());
+    assert(min() != t.min());
+    assert(max() != t.max());
     for (int i=tuples(); i--; )
       for (int j=arity(); j--; )
         if ((*this)[i][j] != t[i][j])

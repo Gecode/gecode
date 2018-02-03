@@ -178,6 +178,19 @@ namespace Gecode {
   }
 
   forceinline bool
+  TupleSet::operator ==(const TupleSet& t) const {
+    if (tuples() != t.tuples())
+      return false;
+    if (arity() != t.arity())
+      return false;
+    if (min() != t.min())
+      return false;
+    if (max() != t.max())
+      return false;
+    return equal(t);
+  }
+
+  forceinline bool
   TupleSet::operator !=(const TupleSet& t) const {
     return !(*this == t);
   }

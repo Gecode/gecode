@@ -2028,6 +2028,9 @@ namespace Gecode {
   private:
     /// Implementation of DFA
     class DFAI;
+    /// Test whether DFA is equal to \a d
+    GECODE_INT_EXPORT
+    bool equal(const DFA& d) const;
   public:
     /// Specification of a %DFA transition
     class Transition {
@@ -2099,9 +2102,11 @@ namespace Gecode {
     DFA(int s, Transition t[], int f[], bool minimize=true);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
-    /// Test if DFA is equal to to \a d
+    /// Test whether DFA is equal to \a d
     GECODE_INT_EXPORT
     bool operator ==(const DFA& d) const;
+    /// Test whether DFA is not equal to \a d
+    bool operator !=(const DFA& d) const;
     /// Return the number of states
     int n_states(void) const;
     /// Return the number of transitions
@@ -2234,6 +2239,9 @@ namespace Gecode {
     /// Add tuple \a t to tuple set
     GECODE_INT_EXPORT
     void _add(const IntArgs& t);
+    /// Test whether tuple set is equal to \a t
+    GECODE_INT_EXPORT
+    bool equal(const TupleSet& t) const;
   public:
     /// \name Initialization
     //@{
@@ -2257,7 +2265,6 @@ namespace Gecode {
     /// Test whether tuple set has been initialized
     operator bool(void) const;
     /// Test whether tuple set is equal to \a t
-    GECODE_INT_EXPORT
     bool operator ==(const TupleSet& t) const;
     /// Test whether tuple set is different from \a t
     bool operator !=(const TupleSet& t) const;

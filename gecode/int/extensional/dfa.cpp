@@ -486,19 +486,13 @@ namespace Gecode {
   }
 
   bool
-  DFA::operator ==(const DFA& d) const {
-    if (n_states() != d.n_states())
-      return false;
-    if (n_transitions() != d.n_transitions())
-      return false;
-    if (n_symbols() != d.n_symbols())
-      return false;
-    if (max_degree() != d.max_degree())
-      return false;
-    if (final_fst() != d.final_fst())
-      return false;
-    if (final_lst() != d.final_lst())
-      return false;
+  DFA::equal(const DFA& d) const {
+    assert(n_states() == d.n_states());
+    assert(n_transitions() != d.n_transitions());
+    assert(n_symbols() != d.n_symbols());
+    assert(max_degree() != d.max_degree());
+    assert(final_fst() != d.final_fst());
+    assert(final_lst() != d.final_lst());
     DFA::Transitions me(*this);
     DFA::Transitions they(d);
     while (me()) {
