@@ -100,7 +100,7 @@ Module: support
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Bitsets now use 64 bit integers on 64 bit architectures.
+Bitsets now use 64 bit integers on all 64 bit architectures.
 
 [ENTRY]
 Module: search
@@ -147,8 +147,8 @@ What:   bug
 Rank:   minor
 Thanks: Matthias Balzer
 [DESCRIPTION]
-Linear constraints now check whether coefficients have mixed
-signs and throw an exception if yes.
+Linear constraints now check whether constant coefficients have
+mixed signs (include zero) and throw an exception if yes.
 
 [ENTRY]
 Module: float
@@ -374,7 +374,7 @@ information between spaces is shared or not.
 [ENTRY]
 Module: int
 What:   bug
-Rank:   minor
+Rank:   major
 Thanks: Conrad Drescher
 [DESCRIPTION]
 The bounds propagator for abs is now bounds consistent.
@@ -488,7 +488,8 @@ Module: driver
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-The -slice commandline option is not ignored any longer.
+The -slice commandline option for sequential portfolios is not
+ignored any longer.
 
 
 [RELEASE]
