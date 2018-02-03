@@ -2145,12 +2145,10 @@ namespace Gecode { namespace FlatZinc {
     if (_initData) {
       FlatZincSpaceInitData::IntSharedArraySet::iterator it = _initData->intSharedArraySet.find(sia);
       if (it != _initData->intSharedArraySet.end()) {
-        std::cerr << "return shared\n";
         return *it;
       }
       _initData->intSharedArraySet.insert(sia);
     }
-    std::cerr << "return new\n";
     
     return sia;
   }
