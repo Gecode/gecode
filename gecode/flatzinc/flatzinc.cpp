@@ -54,48 +54,37 @@
 
 
 namespace std {
-  void cmb_hash(size_t& seed, size_t h) {
-    seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-  }
-  template<> struct hash<Gecode::TupleSet> {
-    size_t operator()(const Gecode::TupleSet& x) const {
-      size_t seed = x.tuples();
-      cmb_hash(seed, x.arity());
-      for (int i=x.tuples(); i--; )
-        for (int j=x.arity(); j--; )
-          cmb_hash(seed, x[i][j]);
-      return seed;
-    }
-  };
-  template<> struct hash<Gecode::SharedArray<int> > {
-    size_t operator()(const Gecode::SharedArray<int>& x) const {
-      size_t seed = x.size();
-      for (int i=x.size(); i--; )
-        cmb_hash(seed, x[i]);
-      return seed;
-    }
-  };
-  template<> struct hash<Gecode::DFA> {
-    size_t operator()(const Gecode::DFA& d) const {
-      size_t seed = d.n_states();
-      cmb_hash(seed, d.n_transitions());
-      cmb_hash(seed, d.n_symbols());
-      cmb_hash(seed, d.max_degree());
-      cmb_hash(seed, d.final_fst());
-      cmb_hash(seed, d.final_lst());
-      Gecode::DFA::Transitions t(d);
-      while (t()) {
-        cmb_hash(seed, t.i_state());
-        cmb_hash(seed, t.symbol());
-        cmb_hash(seed, t.o_state());
-        ++t;
-      }
-      return seed;
-    }
-  };
-}
 
-using namespace std;
+  /// Hashing for tuple sets
+  template<> struct hash<Gecode::TupleSet> {
+    /// Return hash key for \a x
+    forceinline size_t
+    operator()(const Gecode::TupleSet& x) const {
+      return x.hash();
+    }
+  };
+
+  /// Hashing for tuple sets
+  template<> struct hash<Gecode::SharedArray<int> > {
+    /// Return hash key for \a x
+    forceinline size_t
+    operator()(const Gecode::SharedArray<int>& x) const {
+      size_t seed = static_cast<size_t>(x.size());
+      for (int i=x.size(); i--; )
+        Gecode::cmb_hash(seed, x[i]);
+      return seed;
+    }
+  };
+
+  /// Hashing for DFAs
+  template<> struct hash<Gecode::DFA> {
+    /// Return hash key for \a d
+    forceinline size_t operator()(const Gecode::DFA& d) const {
+      return d.hash();
+    }
+  };
+
+}
 
 namespace Gecode { namespace FlatZinc {
 
@@ -279,15 +268,16 @@ namespace Gecode { namespace FlatZinc {
   class BranchInformationO : public SharedHandle::Object {
   private:
     struct BI {
-      string r0;
-      string r1;
-      vector<string> n;
+      std::string r0;
+      std::string r1;
+      std::vector<std::string> n;
       BI(void) : r0(""), r1(""), n(0) {}
-      BI(const string& r00, const string& r10, const vector<string>& n0)
+      BI(const std::string& r00, const std::string& r10,
+         const std::vector<std::string>& n0)
         : r0(r00), r1(r10), n(n0) {}
     };
-    vector<BI> v;
-    BranchInformationO(vector<BI> v0) : v(v0) {}
+    std::vector<BI> v;
+    BranchInformationO(std::vector<BI> v0) : v(v0) {}
   public:
     BranchInformationO(void) {}
     virtual ~BranchInformationO(void) {}
@@ -296,22 +286,22 @@ namespace Gecode { namespace FlatZinc {
     }
     /// Add new brancher information
     void add(BrancherGroup bg,
-             const string& rel0,
-             const string& rel1,
-             const vector<string>& n) {
+             const std::string& rel0,
+             const std::string& rel1,
+             const std::vector<std::string>& n) {
       v.resize(std::max(static_cast<unsigned int>(v.size()),bg.id()+1));
       v[bg.id()] = BI(rel0,rel1,n);
     }
     /// Output branch information
     void print(const Brancher& b,
-               unsigned int a, int i, int n, ostream& o) const {
+               unsigned int a, int i, int n, std::ostream& o) const {
       const BI& bi = v[b.group().id()];
       o << bi.n[i] << " " << (a==0 ? bi.r0 : bi.r1) << " " << n;
     }
 #ifdef GECODE_HAS_FLOAT_VARS
     void print(const Brancher& b,
                unsigned int a, int i, const FloatNumBranch& nl,
-               ostream& o) const {
+               std::ostream& o) const {
       const BI& bi = v[b.group().id()];
       o << bi.n[i] << " "
         << (((a == 0) == nl.l) ? "<=" : ">=") << nl.n;
@@ -766,15 +756,22 @@ namespace Gecode { namespace FlatZinc {
 
   class FlatZincSpaceInitData {
   public:
+    /// Hash table of tuple sets
     typedef std::unordered_set<TupleSet> TupleSetSet;
+    /// Hash table of tuple sets
     TupleSetSet tupleSetSet;
 
+    /// Hash table of shared integer arrays
     typedef std::unordered_set<SharedArray<int> > IntSharedArraySet;
+    /// Hash table of shared integer arrays
     IntSharedArraySet intSharedArraySet;
 
+    /// Hash table of DFAs
     typedef std::unordered_set<DFA> DFASet;
+    /// Hash table of DFAs
     DFASet dfaSet;
     
+    /// Initialize
     FlatZincSpaceInitData(void) {}
   };
 
@@ -1137,7 +1134,7 @@ namespace Gecode { namespace FlatZinc {
             if (vars->a[i]->isInt())
               k--;
           IntVarArgs va(k);
-          vector<string> names;
+          std::vector<std::string> names;
           k=0;
           for (unsigned int i=0; i<vars->a.size(); i++) {
             if (vars->a[i]->isInt())
@@ -1184,7 +1181,7 @@ namespace Gecode { namespace FlatZinc {
               k--;
           BoolVarArgs va(k);
           k=0;
-          vector<string> names;
+          std::vector<std::string> names;
           for (unsigned int i=0; i<vars->a.size(); i++) {
             if (vars->a[i]->isBool())
               continue;
@@ -1227,7 +1224,7 @@ namespace Gecode { namespace FlatZinc {
               k--;
           SetVarArgs va(k);
           k=0;
-          vector<string> names;
+          std::vector<std::string> names;
           for (unsigned int i=0; i<vars->a.size(); i++) {
             if (vars->a[i]->isSet())
               continue;
@@ -1291,7 +1288,7 @@ namespace Gecode { namespace FlatZinc {
               k--;
           FloatVarArgs va(k);
           k=0;
-          vector<string> names;
+          std::vector<std::string> names;
           for (unsigned int i=0; i<vars->a.size(); i++) {
             if (vars->a[i]->isFloat())
               continue;
@@ -2829,20 +2826,20 @@ namespace Gecode { namespace FlatZinc {
     }
 
     IntVarArgs iva(iv_new.size());
-    for (map<int,int>::iterator i=iv_new.begin(); i != iv_new.end(); ++i) {
+    for (std::map<int,int>::iterator i=iv_new.begin(); i != iv_new.end(); ++i) {
       iva[(*i).second] = iv[(*i).first];
     }
     iv = IntVarArray(home, iva);
 
     BoolVarArgs bva(bv_new.size());
-    for (map<int,int>::iterator i=bv_new.begin(); i != bv_new.end(); ++i) {
+    for (std::map<int,int>::iterator i=bv_new.begin(); i != bv_new.end(); ++i) {
       bva[(*i).second] = bv[(*i).first];
     }
     bv = BoolVarArray(home, bva);
 
 #ifdef GECODE_HAS_SET_VARS
     SetVarArgs sva(sv_new.size());
-    for (map<int,int>::iterator i=sv_new.begin(); i != sv_new.end(); ++i) {
+    for (std::map<int,int>::iterator i=sv_new.begin(); i != sv_new.end(); ++i) {
       sva[(*i).second] = sv[(*i).first];
     }
     sv = SetVarArray(home, sva);
@@ -2850,7 +2847,7 @@ namespace Gecode { namespace FlatZinc {
 
 #ifdef GECODE_HAS_FLOAT_VARS
     FloatVarArgs fva(fv_new.size());
-    for (map<int,int>::iterator i=fv_new.begin(); i != fv_new.end(); ++i) {
+    for (std::map<int,int>::iterator i=fv_new.begin(); i != fv_new.end(); ++i) {
       fva[(*i).second] = fv[(*i).first];
     }
     fv = FloatVarArray(home, fva);

@@ -138,11 +138,16 @@ namespace Gecode {
       }
       assert(j <= n_tuples);
       n_tuples=j;
+      // Initialize hash key
+      key = static_cast<size_t>(n_tuples);
+      cmb_hash(key, arity);
       // Copy into now possibly smaller area
       int* new_td = heap.alloc<int>(n_tuples*arity);
       for (int t=n_tuples; t--; ) {
-        for (int a=arity; a--; )
+        for (int a=arity; a--; ) {
           new_td[t*arity+a] = tuple[t][a];
+          cmb_hash(key,tuple[t][a]);
+        }
         tuple[t] = new_td + t*arity;
       }
       heap.rfree(td);

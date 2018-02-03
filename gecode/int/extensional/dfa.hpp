@@ -57,6 +57,8 @@ namespace Gecode {
     int final_fst;
     /// Last final state
     int final_lst;
+    /// Hash key
+    size_t key;
     /// The transitions
     Transition* trans;
     /// Specification of transition range
@@ -71,7 +73,7 @@ namespace Gecode {
     /// Size of table (as binary logarithm)
     int n_log;
     /// Fill hash table
-    GECODE_INT_EXPORT void fill(void);
+    void fill(void);
     /// Initialize automaton implementation with \a nt transitions
     DFAI(int nt);
     /// Initialize automaton implementation as empty
@@ -89,6 +91,44 @@ namespace Gecode {
     if (n_trans > 0)
       heap.rfree(trans);
     heap.rfree(table);
+  }
+
+  forceinline void
+  DFA::DFAI::fill(void) {
+    key = static_cast<size_t>(n_states);
+    cmb_hash(key, n_trans);
+    cmb_hash(key, n_symbols);
+    cmb_hash(key, final_fst);
+    cmb_hash(key, final_lst);
+    // Compute smallest logarithm larger than n_symbols
+    n_log = 1;
+    while (n_symbols >= static_cast<unsigned int>(1<<n_log))
+      n_log++;
+    // Allocate memory
+    table = heap.alloc<HashEntry>(1<<n_log);
+    // Initialize table
+    for (int i=(1<<n_log); i--; )
+      table[i].fst = table[i].lst = NULL;
+    int mask = (1 << n_log) - 1;
+    // Enter transitions to table
+    for (int i = 0; i<n_trans; ) {
+      cmb_hash(key, trans[i].i_state);
+      cmb_hash(key, trans[i].symbol);
+      cmb_hash(key, trans[i].o_state);
+      int s = trans[i].symbol;
+      Transition* fst = &trans[i];
+      i++;
+      while ((i<n_trans) && (trans[i].symbol == s))
+        i++;
+      Transition* lst = &trans[i];
+      // Enter with linear collision resolution
+      int p = s & mask;
+      while (table[p].fst != NULL)
+        p = (p+1) & mask;
+      table[p].symbol = s;
+      table[p].fst    = fst;
+      table[p].lst    = lst;
+    }
   }
 
   forceinline
@@ -147,6 +187,12 @@ namespace Gecode {
     const DFAI* d = static_cast<DFAI*>(object());
     return ((d != NULL) && (d->n_trans > 0)) ?
       d->trans[d->n_trans-1].symbol : Int::Limits::max;
+  }
+
+  forceinline size_t
+  DFA::hash(void) const {
+    const DFAI* d = static_cast<DFAI*>(object());
+    return (d != NULL) ? d->key : 0;
   }
 
 

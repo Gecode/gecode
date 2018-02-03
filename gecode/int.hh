@@ -2123,6 +2123,8 @@ namespace Gecode {
     int symbol_min(void) const;
     /// Return largest symbol in DFA
     int symbol_max(void) const;
+    /// Return hash key
+    size_t hash(void) const;
   };
 
 }
@@ -2194,6 +2196,8 @@ namespace Gecode {
       int min;
       /// Largest value
       int max;
+      /// Hash key
+      size_t key;
       /// Tuple data
       int* td;
       /// Value data
@@ -2297,6 +2301,8 @@ namespace Gecode {
     int min(void) const;
     /// Return maximal value in all tuples
     int max(void) const;
+    /// Return hash key
+    size_t hash(void) const;
     //@}
 
     /// \name Range access and iteration

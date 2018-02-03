@@ -147,7 +147,7 @@ SUPPORTSRC0 = \
 	thread/thread thread/windows thread/pthreads \
 	hw-rnd
 SUPPORTHDR0 = \
-	block-allocator cast dynamic-array \
+	block-allocator cast hash dynamic-array \
 	dynamic-stack exception allocator heap \
 	macros random sort static-stack \
 	marked-pointer int-type auto-link \

@@ -65,7 +65,7 @@ namespace Gecode {
   TupleSet::Data::Data(int a) 
     : arity(a), n_words(0U), // To be initialized in finalize
       n_tuples(0), n_free(n_initial_free),
-      min(Int::Limits::max), max(Int::Limits::min),
+      min(Int::Limits::max), max(Int::Limits::min), key(0),
       td(heap.alloc<int>(n_initial_free * a)),
       vd(heap.alloc<ValueData>(a)),
       range(nullptr), support(nullptr) {
@@ -178,19 +178,6 @@ namespace Gecode {
   }
 
   forceinline bool
-  TupleSet::operator ==(const TupleSet& t) const {
-    if (tuples() != t.tuples())
-      return false;
-    if (arity() != t.arity())
-      return false;
-    if (min() != t.min())
-      return false;
-    if (max() != t.max())
-      return false;
-    return equal(t);
-  }
-
-  forceinline bool
   TupleSet::operator !=(const TupleSet& t) const {
     return !(*this == t);
   }
@@ -225,6 +212,24 @@ namespace Gecode {
   forceinline const TupleSet::Range*
   TupleSet::lst(int i) const {
     return data().lst(i);
+  }
+
+  forceinline bool
+  TupleSet::operator ==(const TupleSet& t) const {
+    if (tuples() != t.tuples())
+      return false;
+    if (arity() != t.arity())
+      return false;
+    if (min() != t.min())
+      return false;
+    if (max() != t.max())
+      return false;
+    return equal(t);
+  }
+
+  forceinline size_t
+  TupleSet::hash(void) const {
+    return data().key;
   }
 
 
