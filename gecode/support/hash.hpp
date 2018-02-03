@@ -1,9 +1,11 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
+ *     Christian Schulte, 2018
  *     Guido Tack, 2018
  *
  *  Last modified:
