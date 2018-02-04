@@ -154,8 +154,6 @@ namespace Gecode { namespace Int { namespace NValues {
     void disjoint(Space& home, Region& r, int*& dis, int& n_dis);
     /// Eliminate subsumed views (all values included in the value set \a vs)
     void eliminate(Space& home);
-    /// Return a size estimate based on the union of all values
-    int size(Space& home) const;
     /// Propagate that all views must take values from value set
     ExecStatus all_in_valset(Space& home);
     /**

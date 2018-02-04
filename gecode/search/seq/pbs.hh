@@ -36,7 +36,7 @@
  */
 
 #ifndef __GECODE_SEARCH_SEQ_PBS_HH__
-#define __GECODE_SEARCH_SEQU_PBS_HH__
+#define __GECODE_SEARCH_SEQ_PBS_HH__
 
 #include <gecode/search.hh>
 
