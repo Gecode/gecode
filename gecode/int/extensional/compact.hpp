@@ -341,7 +341,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (std::is_same<Table,BitSet<unsigned char>>::value) {
       goto copy_char;
     } else if (std::is_same<Table,BitSet<unsigned short int>>::value) {
-      switch (Gecode::Support::u_type(table.words())) {
+      switch (Gecode::Support::u_type(table.width())) {
       case Gecode::Support::IT_CHAR:
         goto copy_char;
       case Gecode::Support::IT_SHRT:
@@ -351,7 +351,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         GECODE_NEVER;
       }
     } else {
-      switch (Gecode::Support::u_type(table.words())) {
+      switch (Gecode::Support::u_type(table.width())) {
       case Gecode::Support::IT_CHAR:
         goto copy_char;
       case Gecode::Support::IT_SHRT:
