@@ -1869,12 +1869,12 @@ namespace Gecode { namespace FlatZinc {
     }
     if (!se.stopped()) {
       if (sol) {
-        out << "==========" << endl;
+        out << "==========" << std::endl;
       } else {
-        out << "=====UNSATISFIABLE=====" << endl;
+        out << "=====UNSATISFIABLE=====" << std::endl;
       }
     } else if (!sol) {
-        out << "=====UNKNOWN=====" << endl;
+        out << "=====UNKNOWN=====" << std::endl;
     }
     delete sol;
     stopped:
@@ -1882,24 +1882,24 @@ namespace Gecode { namespace FlatZinc {
       Driver::CombinedStop::installCtrlHandler(false);
     if (opt.mode() == SM_STAT) {
       Gecode::Search::Statistics stat = se.statistics();
-      out << endl
+      out << std::endl
            << "%%  runtime:       ";
       Driver::stop(t_total,out);
-      out << endl
+      out << std::endl
            << "%%  solvetime:     ";
       Driver::stop(t_solve,out);
-      out << endl
+      out << std::endl
            << "%%  solutions:     "
-           << std::abs(noOfSolutions - findSol) << endl
+           << std::abs(noOfSolutions - findSol) << std::endl
            << "%%  variables:     "
-           << (intVarCount + boolVarCount + setVarCount) << endl
-           << "%%  propagators:   " << n_p << endl
-           << "%%  propagations:  " << sstat.propagate+stat.propagate << endl
-           << "%%  nodes:         " << stat.node << endl
-           << "%%  failures:      " << stat.fail << endl
-           << "%%  restarts:      " << stat.restart << endl
-           << "%%  peak depth:    " << stat.depth << endl
-           << endl;
+           << (intVarCount + boolVarCount + setVarCount) << std::endl
+           << "%%  propagators:   " << n_p << std::endl
+           << "%%  propagations:  " << sstat.propagate+stat.propagate << std::endl
+           << "%%  nodes:         " << stat.node << std::endl
+           << "%%  failures:      " << stat.fail << std::endl
+           << "%%  restarts:      " << stat.restart << std::endl
+           << "%%  peak depth:    " << stat.depth << std::endl
+           << std::endl;
     }
     delete o.stop;
     delete o.tracer;
