@@ -139,7 +139,7 @@ namespace Gecode {
       assert(j <= n_tuples);
       n_tuples=j;
       // Initialize hash key
-      key = static_cast<size_t>(n_tuples);
+      key = static_cast<std::size_t>(n_tuples);
       cmb_hash(key, arity);
       // Copy into now possibly smaller area
       int* new_td = heap.alloc<int>(n_tuples*arity);

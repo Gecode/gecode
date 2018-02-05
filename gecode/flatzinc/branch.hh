@@ -288,6 +288,8 @@ namespace Gecode { namespace FlatZinc {
     /// Check status of brancher, return true if alternatives left
     virtual bool status(const Space& home) const;
     /// Return choice
+    virtual const Choice* choice(Space& home) = 0;
+    /// Return choice
     virtual const Choice* choice(const Space& home, Archive& e);
     /// Perform commit for choice \a c and alternative \a b
     virtual ExecStatus commit(Space& home, const Choice& c, unsigned int b);

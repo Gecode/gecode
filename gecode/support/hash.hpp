@@ -40,25 +40,25 @@
 namespace Gecode {
 
   /// Combine hash value \a h into \a seed
-  void cmb_hash(size_t& seed, size_t h);
+  void cmb_hash(std::size_t& seed, std::size_t h);
   /// Combine hash value \a h into \a seed
-  void cmb_hash(size_t& seed, int h);
+  void cmb_hash(std::size_t& seed, int h);
   /// Combine hash value \a h into \a seed
-  void cmb_hash(size_t& seed, unsigned int h);
+  void cmb_hash(std::size_t& seed, unsigned int h);
 
 
   forceinline void
-  cmb_hash(size_t& seed, size_t h) {
+  cmb_hash(std::size_t& seed, size_t h) {
     seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   }
 
   forceinline void
-  cmb_hash(size_t& seed, int h) {
+  cmb_hash(std::size_t& seed, int h) {
     cmb_hash(seed, static_cast<size_t>(h));
   }
 
   forceinline void
-  cmb_hash(size_t& seed, unsigned int h) {
+  cmb_hash(std::size_t& seed, unsigned int h) {
     cmb_hash(seed, static_cast<size_t>(h));
   }
 

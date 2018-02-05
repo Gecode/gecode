@@ -227,7 +227,7 @@ namespace Gecode {
     return equal(t);
   }
 
-  forceinline size_t
+  forceinline std::size_t
   TupleSet::hash(void) const {
     return data().key;
   }

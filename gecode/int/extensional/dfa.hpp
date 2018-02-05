@@ -58,7 +58,7 @@ namespace Gecode {
     /// Last final state
     int final_lst;
     /// Hash key
-    size_t key;
+    std::size_t key;
     /// The transitions
     Transition* trans;
     /// Specification of transition range
@@ -95,7 +95,7 @@ namespace Gecode {
 
   forceinline void
   DFA::DFAI::fill(void) {
-    key = static_cast<size_t>(n_states);
+    key = static_cast<std::size_t>(n_states);
     cmb_hash(key, n_trans);
     cmb_hash(key, n_symbols);
     cmb_hash(key, final_fst);
@@ -189,7 +189,7 @@ namespace Gecode {
       d->trans[d->n_trans-1].symbol : Int::Limits::max;
   }
 
-  forceinline size_t
+  forceinline std::size_t
   DFA::hash(void) const {
     const DFAI* d = static_cast<DFAI*>(object());
     return (d != NULL) ? d->key : 0;

@@ -13477,7 +13477,7 @@ FileSizeOptions::file(void) const {
 inline
 Dictionary::Dictionary(void)
   : max_len(0), n_all_words(0), chunk(NULL) {
-  for (int i=max_len; i--; ) {
+  for (unsigned int i=max_len; i--; ) {
     n_words[i]=0; s_words[i]=NULL;
   }
 }
