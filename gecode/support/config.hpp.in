@@ -115,6 +115,9 @@
 /* Whether we have Mac OS threads */
 #undef GECODE_THREADS_OSX
 
+/* Whether we have Mac OS threads (new version) */
+#undef GECODE_THREADS_OSX_UNFAIR
+
 /* Whether we have posix threads */
 #undef GECODE_THREADS_PTHREADS
 

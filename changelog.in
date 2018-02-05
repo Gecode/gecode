@@ -82,6 +82,14 @@ extensional constraints using tuple sets, and support for tracing
 search engines.
 
 [ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Replace deprecated OSSpinLock with os_unfair_lock on newer versions
+of macOS.
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   major

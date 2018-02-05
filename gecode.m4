@@ -1467,17 +1467,19 @@ AC_DEFUN([AC_GECODE_THREADS],[
     [AC_DEFINE(GECODE_THREADS_PTHREADS,1,[Whether we have posix threads])
      AC_GECODE_ADD_TO_COMPILERFLAGS([-pthread])
      AC_GECODE_ADD_TO_DLLFLAGS([-pthread])
-     AC_CHECK_HEADER([libkern/OSAtomic.h],
-     [AC_DEFINE(GECODE_THREADS_OSX,1,[Whether we have Mac OS threads])],
-      AC_MSG_CHECKING([for spin locks])
-       AC_TRY_COMPILE([#include <pthread.h>],
-         [pthread_spinlock_t t;],
-         [AC_MSG_RESULT(yes)
-          AC_DEFINE(GECODE_THREADS_PTHREADS_SPINLOCK,1,Whether we have posix spinlocks)],
-  [AC_MSG_RESULT(no)]
-       )
-     )
-    ],
+     AC_CHECK_HEADER([os/lock.h],
+       [AC_DEFINE(GECODE_THREADS_OSX_UNFAIR,1,[Whether we have Mac OS threads (new version)])],
+        AC_CHECK_HEADER([libkern/OSAtomic.h],
+        [AC_DEFINE(GECODE_THREADS_OSX,1,[Whether we have Mac OS threads])],
+         AC_MSG_CHECKING([for spin locks])
+          AC_TRY_COMPILE([#include <pthread.h>],
+            [pthread_spinlock_t t;],
+            [AC_MSG_RESULT(yes)
+             AC_DEFINE(GECODE_THREADS_PTHREADS_SPINLOCK,1,Whether we have posix spinlocks)],
+            [AC_MSG_RESULT(no)]
+          )
+        )
+     )],
     [AC_CHECK_HEADER(windows.h,
       [AC_DEFINE(GECODE_THREADS_WINDOWS,1,[Whether we have windows threads])])]
     )

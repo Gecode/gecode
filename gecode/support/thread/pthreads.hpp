@@ -98,6 +98,30 @@ namespace Gecode { namespace Support {
 
 #endif
 
+#ifdef GECODE_THREADS_OSX_UNFAIR
+
+  /*
+   * FastMutex
+   */
+  forceinline
+  FastMutex::FastMutex(void) {}
+  forceinline void
+  FastMutex::acquire(void) {
+    os_unfair_lock_lock(&lck);
+  }
+  forceinline bool
+  FastMutex::tryacquire(void) {
+    return os_unfair_lock_trylock(&lck);
+  }
+  forceinline void
+  FastMutex::release(void) {
+    os_unfair_lock_unlock(&lck);
+  }
+  forceinline
+  FastMutex::~FastMutex(void) {}
+
+#endif
+
 #ifdef GECODE_THREADS_PTHREADS_SPINLOCK
 
   /*
