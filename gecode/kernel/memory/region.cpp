@@ -80,7 +80,10 @@ namespace Gecode {
     m.release();
   }
 
-  Region::Pool Region::pool;
+  Region::Pool& Region::pool(void) {
+    static Region::Pool _p;
+    return _p;
+  }
 
   void*
   Region::heap_alloc(size_t s) {

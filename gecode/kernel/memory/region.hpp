@@ -92,7 +92,7 @@ namespace Gecode {
       ~Pool(void);
     };
     /// Just use a single static pool for heap chunks
-    GECODE_KERNEL_EXPORT static Pool pool;
+    GECODE_KERNEL_EXPORT Pool& pool();
     /// Heap information data structure
     class HeapInfo {
     public:
@@ -348,7 +348,7 @@ namespace Gecode {
 
   forceinline
   Region::Region(void)
-    : chunk(pool.chunk()), hi(0) {}
+    : chunk(pool().chunk()), hi(0) {}
 
   forceinline void
   Region::free(void) {
@@ -369,7 +369,7 @@ namespace Gecode {
 
   forceinline
   Region::~Region(void) {
-    pool.chunk(chunk);
+    pool().chunk(chunk);
     if (hi != NULL)
       heap_free();
   }
