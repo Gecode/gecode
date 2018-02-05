@@ -650,3 +650,21 @@ preferences such as speed, memory, basic, or advanced. Please
 consult MPG for details.
 
 */
+
+/**
+ * \page PageHowToChange_6 How to Change from %Gecode 5.1.0 to %Gecode 6.0.0
+ *
+
+As %Gecode 6.0.0 is a major revision, you will have to change
+programs that are written for %Gecode 5.1.0. The big change is
+that the Boolean argument "share" during cloning is not any
+longer needed. That means you have to remove the argument from
+both the definition of and the calls to the following functions,
+where this applies to pretty much all objects used by Gecode such
+as spaces, scripts (that means your models), propagators,
+branchers, variables, views, and so on:
+ - in constructors used during cloning, and
+ - in copy functions used during cloning, and
+ - in update functions used during cloning.
+
+*/

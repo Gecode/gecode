@@ -68,9 +68,18 @@
 
 [RELEASE]
 Version: 6.0.0
-Date: whenever
+Date: 2018-02-06
 [DESCRIPTION]
-Minor.
+This major release fixes many bugs, adds quite some new
+functionality, and changes how cloning works (most likely the
+biggest change we ever did to %Gecode): the Boolean share argument
+is not any longer needed (see how to change your programs in
+\ref PageHowToChange_6 "How to Change to Gecode 6.0.0").  The added
+functionality includes experimental support for the CPProfiler,
+classes for lexicographic optimization (where the cost is defined
+by an array of variables), a new much faster implementation of
+extensional constraints using tuple sets, and support for tracing
+search engines.
 
 [ENTRY]
 Module: search
