@@ -102,7 +102,9 @@ namespace Gecode { namespace Search { namespace Seq {
   template<class Tracer>
   forceinline void
   Probe<Tracer>::init(Space* s) {
-    cur = s; d = 0U; exhausted = true; tracer.ei()->invalidate();
+    cur = s; d = 0U; exhausted = true;
+    if (tracer)
+      tracer.ei()->invalidate();
   }
 
   template<class Tracer>
@@ -112,7 +114,9 @@ namespace Gecode { namespace Search { namespace Seq {
     delete cur;
     while (!ds.empty())
       delete ds.pop().space();
-    cur = s; d = d0; exhausted = true; tracer.ei()->invalidate();
+    cur = s; d = d0; exhausted = true;
+    if (tracer)
+      tracer.ei()->invalidate();
     Worker::reset(0);
   }
 
