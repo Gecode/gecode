@@ -571,7 +571,7 @@ namespace Test {
               break;
             f.limit(f.limit()+2);
           }
-          return n == 0;
+          return n >= 0;
         }
       }
     };
@@ -646,7 +646,7 @@ namespace Test {
               break;
             f.limit(f.limit()+2);
           }
-          return n == 0;
+          return n >= 0;
         }
       }
     };
