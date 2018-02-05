@@ -361,7 +361,9 @@ namespace Gecode { namespace Driver {
         /* FALL THROUGH */
 #endif
       case SM_SOLUTION:
+#ifndef GECODE_HAS_GIST
       solution:
+#endif
         {
           l_out << o.name() << endl;
           Support::Timer t;
