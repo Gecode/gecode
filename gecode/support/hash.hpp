@@ -54,12 +54,12 @@ namespace Gecode {
 
   forceinline void
   cmb_hash(std::size_t& seed, int h) {
-    cmb_hash(seed, static_cast<size_t>(h));
+    cmb_hash(seed, static_cast<std::size_t>(h));
   }
 
   forceinline void
   cmb_hash(std::size_t& seed, unsigned int h) {
-    cmb_hash(seed, static_cast<size_t>(h));
+    cmb_hash(seed, static_cast<std::size_t>(h));
   }
 
 }
