@@ -488,11 +488,10 @@ namespace Gecode {
   bool
   DFA::equal(const DFA& d) const {
     assert(n_states() == d.n_states());
-    assert(n_transitions() != d.n_transitions());
-    assert(n_symbols() != d.n_symbols());
-    assert(max_degree() != d.max_degree());
-    assert(final_fst() != d.final_fst());
-    assert(final_lst() != d.final_lst());
+    assert(n_transitions() == d.n_transitions());
+    assert(n_symbols() == d.n_symbols());
+    assert(final_fst() == d.final_fst());
+    assert(final_lst() == d.final_lst());
     DFA::Transitions me(*this);
     DFA::Transitions they(d);
     while (me()) {
