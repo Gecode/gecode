@@ -48,7 +48,7 @@ namespace Gecode {
 
 
   forceinline void
-  cmb_hash(std::size_t& seed, size_t h) {
+  cmb_hash(std::size_t& seed, std::size_t h) {
     seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   }
 
