@@ -68,7 +68,7 @@
 
 [RELEASE]
 Version: 6.0.0
-Date: 2018-02-06
+Date: 2018-02-07
 [DESCRIPTION]
 This major release fixes many bugs, adds quite some new
 functionality, and changes how cloning works (most likely the
