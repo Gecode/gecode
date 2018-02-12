@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
     int n = x.size();
 
-    Region r(home);
+    Region r;
     int* tau = r.alloc<int>(n);
     int* phi = r.alloc<int>(n);
     int* phiprime = r.alloc<int>(n);
@@ -189,7 +189,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     // if bounds have changed we have to recreate sigma to restore
     // optimized dropping of variables
 
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     bool subsumed   = true;
     bool array_subs = false;
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     for(int i = n; i--; )
       sinfo[i].left=sinfo[i].right=sinfo[i].rightmost=sinfo[i].leftmost= i;
 
-    computesccs(home,x,y,phi,sinfo,scclist);
+    computesccs(x,y,phi,sinfo,scclist);
 
     /*
      * STEP 5:
@@ -340,13 +340,13 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   forceinline Sorted<View,Perm>::
-  Sorted(Space& home, bool share, Sorted<View,Perm>& p):
-    Propagator(home, share, p),
+  Sorted(Space& home, Sorted<View,Perm>& p):
+    Propagator(home, p),
     reachable(p.reachable) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    z.update(home, share, p.z);
-    w.update(home, share, p.w);
+    x.update(home, p.x);
+    y.update(home, p.y);
+    z.update(home, p.z);
+    w.update(home, p.w);
   }
 
   template<class View, bool Perm>
@@ -372,8 +372,8 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   template<class View, bool Perm>
-  Actor* Sorted<View,Perm>::copy(Space& home, bool share) {
-    return new (home) Sorted<View,Perm>(home, share, *this);
+  Actor* Sorted<View,Perm>::copy(Space& home) {
+    return new (home) Sorted<View,Perm>(home, *this);
   }
 
   template<class View, bool Perm>
@@ -407,7 +407,7 @@ namespace Gecode { namespace Int { namespace Sorted {
       return ES_FAILED;
 
     // create sigma sorting
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     bool noperm_bc = false;
     if (!array_assigned<View,Perm>
@@ -417,7 +417,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (array_subs)
       return home.ES_SUBSUMED(*this);
 
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     // in this case check_subsumptions is guaranteed to find
     // the xs ordered by sigma
@@ -521,7 +521,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     if (!normalize(home, y, x, nofix))
       return ES_FAILED;
 
-    Region r(home);
+    Region r;
     int* tau = r.alloc<int>(n);
     if (match_fixed) {
       // sorting is determined
@@ -553,7 +553,7 @@ namespace Gecode { namespace Int { namespace Sorted {
     noperm_bc  = false;
 
     // creating sorting anew
-    sort_sigma<View,Perm>(home,x,z);
+    sort_sigma<View,Perm>(x,z);
 
     if (Perm) {
       for (int i = 0; i < x.size() - 1; i++) {

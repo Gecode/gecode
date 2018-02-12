@@ -47,8 +47,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   Actor*
-  EqIte::copy(Space& home, bool share) {
-    return new (home) EqIte(home,share,*this);
+  EqIte::copy(Space& home) {
+    return new (home) EqIte(home,*this);
   }
 
   ExecStatus

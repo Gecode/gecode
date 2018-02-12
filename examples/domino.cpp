@@ -209,14 +209,14 @@ public:
     os << std::endl;
   }
   /// Constructor for cloning \a s
-  Domino(bool share, Domino& s) :
-    Script(share,s), spec(s.spec), width(s.width), height(s.height) {
-      x.update(*this, share, s.x);
+  Domino(Domino& s) :
+    Script(s), spec(s.spec), width(s.width), height(s.height) {
+      x.update(*this, s.x);
   }
   /// Copy space during cloning
   virtual Space*
-  copy(bool share) {
-    return new Domino(share,*this);
+  copy(void) {
+    return new Domino(*this);
   }
 
 };

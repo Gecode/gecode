@@ -54,17 +54,17 @@ namespace Test {
       /// Constructor for creation
       TestSpace(void) : x(*this,0,10), y(*this,0,10) {}
       /// Constructor for cloning \a s
-      TestSpace(bool share, TestSpace& s) : Space(share,s) {
-        x.update(*this,share,s.x);
-        y.update(*this,share,s.y);
+      TestSpace(TestSpace& s) : Space(s) {
+        x.update(*this,s.x);
+        y.update(*this,s.y);
       }
       /// Post arbitrary propagator
       void post(void) {
         Gecode::rel(*this, x, Gecode::IRT_LE, y);
       }
       /// Copy during cloning
-      virtual Space* copy(bool share) {
-        return new TestSpace(share,*this);
+      virtual Space* copy(void) {
+        return new TestSpace(*this);
       }
     };
     /// How many test operations to be performed
@@ -111,7 +111,7 @@ namespace Test {
             }
             int j = space(s);
             (void) s[j]->status();
-            s[i] = static_cast<TestSpace*>(s[j]->clone(true,rand(5) != 0));
+            s[i] = static_cast<TestSpace*>(s[j]->clone());
             n_s++;
           }
           break;

@@ -40,8 +40,8 @@
 namespace Gecode { namespace Int { namespace Exec {
 
   Actor*
-  When::copy(Space& home, bool share) {
-    return new (home) When(home,share,*this);
+  When::copy(Space& home) {
+    return new (home) When(home,*this);
   }
 
   ExecStatus

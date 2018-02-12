@@ -52,7 +52,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// %Ranges for array
     class Range {
     public:
-      int min; int max;
+      int min; ///< Minimum value
+      int max; ///< Maximum value
     };
   protected:
     /// Array for ranges

@@ -57,14 +57,13 @@ namespace Gecode { namespace Set { namespace Element {
   template<class SView, class RView>
   forceinline
   ElementUnionConst<SView,RView>::
-  ElementUnionConst(Space& home, bool share,
-                     ElementUnionConst<SView,RView>& p)
-    : Propagator(home,share,p), n_iv(p.n_iv) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
+  ElementUnionConst(Space& home, ElementUnionConst<SView,RView>& p)
+    : Propagator(home,p), n_iv(p.n_iv) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
     iv=home.alloc<IntSet>(n_iv);
     for (unsigned int i=n_iv; i--;)
-      iv[i].update(home,share,p.iv[i]);
+      iv[i]=p.iv[i];
   }
 
   template<class SView, class RView>
@@ -111,14 +110,14 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   Actor*
-  ElementUnionConst<SView,RView>::copy(Space& home, bool share) {
-    return new (home) ElementUnionConst<SView,RView>(home,share,*this);
+  ElementUnionConst<SView,RView>::copy(Space& home) {
+    return new (home) ElementUnionConst<SView,RView>(home,*this);
   }
 
   template<class SView, class RView>
   ExecStatus
   ElementUnionConst<SView,RView>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
 
     bool* stillSelected = r.alloc<bool>(n_iv);
 

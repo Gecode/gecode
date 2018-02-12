@@ -52,19 +52,19 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B, class C>
   forceinline
-  Min<A,B,C>::Min(Space& home, bool share, Min<A,B,C>& p)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,share,p) {}
+  Min<A,B,C>::Min(Space& home, Min<A,B,C>& p)
+    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B, class C>
   forceinline
-  Min<A,B,C>::Min(Space& home, bool share, Propagator& p,
+  Min<A,B,C>::Min(Space& home, Propagator& p,
                   A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,share,p,x0,x1,x2) {}
+    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p,x0,x1,x2) {}
 
   template<class A, class B, class C>
   Actor*
-  Min<A,B,C>::copy(Space& home, bool share) {
-    return new (home) Min<A,B,C>(home,share,*this);
+  Min<A,B,C>::copy(Space& home) {
+    return new (home) Min<A,B,C>(home,*this);
   }
 
   template<class A, class B, class C>
@@ -101,19 +101,19 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B, class C>
   forceinline
-  Max<A,B,C>::Max(Space& home, bool share, Max<A,B,C>& p)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,share,p) {}
+  Max<A,B,C>::Max(Space& home, Max<A,B,C>& p)
+    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B, class C>
   forceinline
-  Max<A,B,C>::Max(Space& home, bool share, Propagator& p,
+  Max<A,B,C>::Max(Space& home, Propagator& p,
                   A x0, B x1, C x2)
-    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,share,p,x0,x1,x2) {}
+    : MixTernaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND,C,PC_FLOAT_BND>(home,p,x0,x1,x2) {}
 
   template<class A, class B, class C>
   Actor*
-  Max<A,B,C>::copy(Space& home, bool share) {
-    return new (home) Max<A,B,C>(home,share,*this);
+  Max<A,B,C>::copy(Space& home) {
+    return new (home) Max<A,B,C>(home,*this);
   }
 
   template<class A, class B, class C>
@@ -152,7 +152,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   ExecStatus
   NaryMax<View>::post(Home home, ViewArray<View>& x, View y) {
     assert(x.size() > 0);
-    x.unique(home);
+    x.unique();
     if (x.size() == 1)
       return Rel::Eq<View,View>::post(home,x[0],y);
     if (x.size() == 2)
@@ -165,7 +165,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
     }
     GECODE_ME_CHECK(y.gq(home,l));
     GECODE_ME_CHECK(y.lq(home,u));
-    if (x.same(home,y)) {
+    if (x.same(y)) {
       // Check whether y occurs in x
       for (int i=x.size(); i--; )
         GECODE_ES_CHECK((Rel::Lq<View>::post(home,x[i],y)));
@@ -177,17 +177,17 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class View>
   forceinline
-  NaryMax<View>::NaryMax(Space& home, bool share, NaryMax<View>& p)
-    : NaryOnePropagator<View,PC_FLOAT_BND>(home,share,p) {}
+  NaryMax<View>::NaryMax(Space& home, NaryMax<View>& p)
+    : NaryOnePropagator<View,PC_FLOAT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  NaryMax<View>::copy(Space& home, bool share) {
+  NaryMax<View>::copy(Space& home) {
     if (x.size() == 1)
-      return new (home) Rel::Eq<View,View>(home,share,*this,x[0],y);
+      return new (home) Rel::Eq<View,View>(home,*this,x[0],y);
     if (x.size() == 2)
-      return new (home) Max<View,View,View>(home,share,*this,x[0],x[1],y);
-    return new (home) NaryMax<View>(home,share,*this);
+      return new (home) Max<View,View,View>(home,*this,x[0],x[1],y);
+    return new (home) NaryMax<View>(home,*this);
   }
 
   /// Status of propagation for nary max

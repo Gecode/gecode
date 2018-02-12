@@ -36,7 +36,6 @@
  */
 
 #include <gecode/int/exec.hh>
-#include <gecode/kernel/wait.hh>
 
 namespace Gecode {
 
@@ -44,14 +43,14 @@ namespace Gecode {
   wait(Home home, IntVar x, std::function<void(Space& home)> c,
        IntPropLevel) {
     GECODE_POST;
-    GECODE_ES_FAIL(Kernel::UnaryWait<Int::IntView>::post(home,x,c));
+    GECODE_ES_FAIL(UnaryWait<Int::IntView>::post(home,x,c));
   }
 
   void
   wait(Home home, BoolVar x, std::function<void(Space& home)> c,
        IntPropLevel) {
     GECODE_POST;
-    GECODE_ES_FAIL(Kernel::UnaryWait<Int::BoolView>::post(home,x,c));
+    GECODE_ES_FAIL(UnaryWait<Int::BoolView>::post(home,x,c));
   }
 
   void
@@ -59,7 +58,7 @@ namespace Gecode {
        IntPropLevel) {
     GECODE_POST;
     ViewArray<Int::IntView> xv(home,x);
-    GECODE_ES_FAIL(Kernel::NaryWait<Int::IntView>::post(home,xv,c));
+    GECODE_ES_FAIL(NaryWait<Int::IntView>::post(home,xv,c));
   }
 
   void
@@ -67,7 +66,7 @@ namespace Gecode {
        IntPropLevel) {
     GECODE_POST;
     ViewArray<Int::BoolView> xv(home,x);
-    GECODE_ES_FAIL(Kernel::NaryWait<Int::BoolView>::post(home,xv,c));
+    GECODE_ES_FAIL(NaryWait<Int::BoolView>::post(home,xv,c));
   }
 
 

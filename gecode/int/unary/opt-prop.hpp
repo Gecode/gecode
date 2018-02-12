@@ -46,9 +46,8 @@ namespace Gecode { namespace Int { namespace Unary {
 
   template<class OptTask, class PL>
   forceinline
-  OptProp<OptTask,PL>::OptProp(Space& home, bool shared,
-                               OptProp<OptTask,PL>& p)
-    : TaskProp<OptTask,PL>(home,shared,p) {}
+  OptProp<OptTask,PL>::OptProp(Space& home, OptProp<OptTask,PL>& p)
+    : TaskProp<OptTask,PL>(home,p) {}
 
   template<class OptTask, class PL>
   ExecStatus
@@ -73,8 +72,8 @@ namespace Gecode { namespace Int { namespace Unary {
 
   template<class OptTask, class PL>
   Actor*
-  OptProp<OptTask,PL>::copy(Space& home, bool share) {
-    return new (home) OptProp<OptTask,PL>(home,share,*this);
+  OptProp<OptTask,PL>::copy(Space& home) {
+    return new (home) OptProp<OptTask,PL>(home,*this);
   }
 
   template<class OptTask, class PL>

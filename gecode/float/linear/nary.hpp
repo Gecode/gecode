@@ -53,10 +53,10 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class P, class N, PropCond pc>
   forceinline
-  Lin<P,N,pc>::Lin(Space& home, bool share, Lin<P,N,pc>& p)
-    : Propagator(home,share,p), c(p.c) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  Lin<P,N,pc>::Lin(Space& home, Lin<P,N,pc>& p)
+    : Propagator(home,p), c(p.c) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class P, class N, PropCond pc>
@@ -137,13 +137,13 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class P, class N>
   forceinline
-  Eq<P,N>::Eq(Space& home, bool share, Eq<P,N>& p)
-    : Lin<P,N,PC_FLOAT_BND>(home,share,p) {}
+  Eq<P,N>::Eq(Space& home, Eq<P,N>& p)
+    : Lin<P,N,PC_FLOAT_BND>(home,p) {}
 
   template<class P, class N>
   Actor*
-  Eq<P,N>::copy(Space& home, bool share) {
-    return new (home) Eq<P,N>(home,share,*this);
+  Eq<P,N>::copy(Space& home) {
+    return new (home) Eq<P,N>(home,*this);
   }
 
   template<class P, class N>
@@ -266,13 +266,13 @@ namespace Gecode { namespace Float { namespace Linear {
 
   template<class P, class N>
   forceinline
-  Lq<P,N>::Lq(Space& home, bool share, Lq<P,N>& p)
-    : Lin<P,N,PC_FLOAT_BND>(home,share,p) {}
+  Lq<P,N>::Lq(Space& home, Lq<P,N>& p)
+    : Lin<P,N,PC_FLOAT_BND>(home,p) {}
 
   template<class P, class N>
   Actor*
-  Lq<P,N>::copy(Space& home, bool share) {
-    return new (home) Lq<P,N>(home,share,*this);
+  Lq<P,N>::copy(Space& home) {
+    return new (home) Lq<P,N>(home,*this);
   }
 
   template<class P, class N>

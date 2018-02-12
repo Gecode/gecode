@@ -90,7 +90,7 @@ namespace Gecode { namespace Int {
   ModEvent
   IntVarImp::lq_full(Space& home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
-    IntDelta d(m+1,dom.max());
+    int old_max = dom.max();
     ModEvent me = ME_INT_BND;
     if (range()) { // Is already range...
       dom.max(m);
@@ -117,13 +117,14 @@ namespace Gecode { namespace Int {
         c->next(n,NULL); lst(c);
       }
     }
+    IntDelta d(dom.max()+1,old_max);
     return notify(home,me,d);
   }
 
   ModEvent
   IntVarImp::gq_full(Space& home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
-    IntDelta d(dom.min(),m-1);
+    int old_min = dom.min();
     ModEvent me = ME_INT_BND;
     if (range()) { // Is already range...
       dom.min(m);
@@ -150,6 +151,7 @@ namespace Gecode { namespace Int {
         c->prev(p,NULL); fst(c);
       }
     }
+    IntDelta d(old_min,dom.min()-1);
     return notify(home,me,d);
   }
 
@@ -316,8 +318,8 @@ namespace Gecode { namespace Int {
    */
 
   forceinline
-  IntVarImp::IntVarImp(Space& home, bool share, IntVarImp& x)
-    : IntVarImpBase(home,share,x), dom(x.dom.min(),x.dom.max()) {
+  IntVarImp::IntVarImp(Space& home, IntVarImp& x)
+    : IntVarImpBase(home,x), dom(x.dom.min(),x.dom.max()) {
     holes = x.holes;
     if (holes) {
       int m = 1;
@@ -352,8 +354,8 @@ namespace Gecode { namespace Int {
   }
 
   IntVarImp*
-  IntVarImp::perform_copy(Space& home, bool share) {
-    return new (home) IntVarImp(home,share,*this);
+  IntVarImp::perform_copy(Space& home) {
+    return new (home) IntVarImp(home,*this);
   }
 
   /*

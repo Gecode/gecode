@@ -200,9 +200,9 @@ namespace Test {
       TestSpace(int n, Gecode::FloatVal& d, Gecode::FloatNum s, Test* t,
                 Gecode::ReifyMode rm);
       /// Constructor for cloning \a s
-      TestSpace(bool share, TestSpace& s);
+      TestSpace(TestSpace& s);
       /// Copy space during cloning
-      virtual Gecode::Space* copy(bool share);
+      virtual Gecode::Space* copy(void);
       /// Add constraints to skip solutions to the \a a assignment
       virtual void dropUntil(const Assignment& a);
       /// Test whether all variables are assigned

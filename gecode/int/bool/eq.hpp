@@ -44,19 +44,19 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  Eq<BVA,BVB>::Eq(Space& home, bool share, Eq<BVA,BVB>& p)
-    : BoolBinary<BVA,BVB>(home,share,p) {}
+  Eq<BVA,BVB>::Eq(Space& home, Eq<BVA,BVB>& p)
+    : BoolBinary<BVA,BVB>(home,p) {}
 
   template<class BVA, class BVB>
   forceinline
-  Eq<BVA,BVB>::Eq(Space& home, bool share, Propagator& p,
+  Eq<BVA,BVB>::Eq(Space& home, Propagator& p,
                   BVA b0, BVB b1)
-    : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
+    : BoolBinary<BVA,BVB>(home,p,b0,b1) {}
 
   template<class BVA, class BVB>
   Actor*
-  Eq<BVA,BVB>::copy(Space& home, bool share) {
-    return new (home) Eq<BVA,BVB>(home,share,*this);
+  Eq<BVA,BVB>::copy(Space& home) {
+    return new (home) Eq<BVA,BVB>(home,*this);
   }
 
   template<class BVA, class BVB>
@@ -121,19 +121,19 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  NaryEq<BV>::NaryEq(Space& home, bool share, NaryEq<BV>& p)
-    : NaryPropagator<BV,PC_BOOL_VAL>(home,share,p) {}
+  NaryEq<BV>::NaryEq(Space& home, NaryEq<BV>& p)
+    : NaryPropagator<BV,PC_BOOL_VAL>(home,p) {}
 
   template<class BV>
   Actor*
-  NaryEq<BV>::copy(Space& home, bool share) {
-    return new (home) NaryEq<BV>(home,share,*this);
+  NaryEq<BV>::copy(Space& home) {
+    return new (home) NaryEq<BV>(home,*this);
   }
 
   template<class BV>
   inline ExecStatus
   NaryEq<BV>::post(Home home, ViewArray<BV>& x) {
-    x.unique(home);
+    x.unique();
     int n = x.size();
     if (n < 2)
       return ES_OK;

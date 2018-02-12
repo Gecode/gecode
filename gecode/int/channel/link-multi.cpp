@@ -83,8 +83,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
 
   Actor*
-  LinkMulti::copy(Space& home, bool share) {
-    return new (home) LinkMulti(home,share,*this);
+  LinkMulti::copy(Space& home) {
+    return new (home) LinkMulti(home,*this);
   }
 
   forceinline size_t

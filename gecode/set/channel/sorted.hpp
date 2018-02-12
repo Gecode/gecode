@@ -58,10 +58,10 @@ namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   forceinline
-  ChannelSorted<View>::ChannelSorted(Space& home, bool share, ChannelSorted& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    xs.update(home,share,p.xs);
+  ChannelSorted<View>::ChannelSorted(Space& home, ChannelSorted& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    xs.update(home,p.xs);
   }
 
   template<class View>
@@ -107,8 +107,8 @@ namespace Gecode { namespace Set { namespace Channel {
 
   template<class View>
   Actor*
-  ChannelSorted<View>::copy(Space& home, bool share) {
-    return new (home) ChannelSorted(home,share,*this);
+  ChannelSorted<View>::copy(Space& home) {
+    return new (home) ChannelSorted(home,*this);
   }
 
   template<class View>

@@ -1029,6 +1029,7 @@ PREDEFINED             = "GECODE_SET_EXPORT=" \
                          "GECODE_HAS_SET_VARS=1" \
                          "GECODE_HAS_FLOAT_VARS=1" \
                          "GECODE_HAS_GIST=1" \
+                         "GECODE_HAS_CPPROFILER=1" \
                          "GECODE_THREADS_PTHREADS=1" \
                          "GECODE_HAS_THREADS=1" \
                          "GECODE_HAS_MPFR=1" \

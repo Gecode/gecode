@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace GCC {
   postSideConstraints(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
     CardLess<Card> cl;
     Support::quicksort(&k[0], k.size(), cl);
-    Region r(home);
+    Region r;
 
     {
       int smin = 0;
@@ -139,9 +139,9 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class Card>
   inline bool
-  isDistinct(Home home, ViewArray<IntView>& x, ViewArray<Card>& k) {
+  isDistinct(ViewArray<IntView>& x, ViewArray<Card>& k) {
     if (Card::propagate) {
-      Region r(home);
+      Region r;
       ViewRanges<IntView>* xrange = r.alloc<ViewRanges<IntView> >(x.size());
       for (int i = x.size(); i--; ){
         ViewRanges<IntView> iter(x[i]);

@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
   edgefinding(Space& home, int c, TaskViewArray<TaskView>& t) {
     sort<TaskView,STO_LCT,false>(t);
 
-    Region r(home);
+    Region r;
 
     ///////////////////////
     // Detection

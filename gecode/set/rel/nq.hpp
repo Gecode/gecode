@@ -50,13 +50,15 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  Distinct<View0,View1>::Distinct(Space& home, bool share, Distinct& p)
+  Distinct<View0,View1>::Distinct(Space& home, Distinct& p)
     : MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
-        (home,share,p) {}
+        (home,p) {}
 
   template<class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::post(Home home, View0 x, View1 y) {
+    if (same(x,y))
+      return ES_FAILED;
     if (x.assigned()) {
       GlbRanges<View0> xr(x);
       IntSet xs(xr);
@@ -75,8 +77,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1>
   Actor*
-  Distinct<View0,View1>::copy(Space& home, bool share) {
-    return new (home) Distinct<View0,View1>(home,share,*this);
+  Distinct<View0,View1>::copy(Space& home) {
+    return new (home) Distinct<View0,View1>(home,*this);
   }
 
   template<class View0, class View1>
@@ -105,8 +107,8 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0>
   Actor*
-  DistinctDoit<View0>::copy(Space& home, bool share) {
-    return new (home) DistinctDoit<View0>(home,share,*this);
+  DistinctDoit<View0>::copy(Space& home) {
+    return new (home) DistinctDoit<View0>(home,*this);
   }
 
   template<class View0>
@@ -125,10 +127,10 @@ namespace Gecode { namespace Set { namespace Rel {
     //in the 1 unknown left case.
     GlbRanges<View0> xi1(x0);
     LubRanges<ConstSetView> yi1(y);
-    if (!Iter::Ranges::subset(xi1,yi1)){ return home.ES_SUBSUMED(*this); }
+    if (!Iter::Ranges::subset(xi1,yi1)) { return home.ES_SUBSUMED(*this); }
     LubRanges<View0> xi2(x0);
     GlbRanges<ConstSetView> yi2(y);
-    if (!Iter::Ranges::subset(yi2,xi2)){ return home.ES_SUBSUMED(*this); }
+    if (!Iter::Ranges::subset(yi2,xi2)) { return home.ES_SUBSUMED(*this); }
     // from here, we know y\subseteq lub(x) and glb(x)\subseteq y
 
     if (x0.lubSize() == y.cardMin() && x0.lubSize() > 0) {
@@ -149,10 +151,9 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0>
   forceinline
-  DistinctDoit<View0>::DistinctDoit(Space& home, bool share,
-                                    DistinctDoit<View0>& p)
-    : UnaryPropagator<View0, PC_SET_ANY>(home,share,p) {
-    y.update(home,share,p.y);
+  DistinctDoit<View0>::DistinctDoit(Space& home, DistinctDoit<View0>& p)
+    : UnaryPropagator<View0, PC_SET_ANY>(home,p) {
+    y.update(home,p.y);
   }
 
 }}}

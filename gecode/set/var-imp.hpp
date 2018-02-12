@@ -442,7 +442,7 @@ namespace Gecode { namespace Set {
 
   protected:
     /// Constructor for cloning \a x
-    SetVarImp(Space& home, bool share, SetVarImp& x);
+    SetVarImp(Space& home, SetVarImp& x);
   public:
     /// \name Constructors and initialization
     //@{
@@ -603,13 +603,13 @@ namespace Gecode { namespace Set {
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_SET_EXPORT SetVarImp* perform_copy(Space& home, bool share);
+    GECODE_SET_EXPORT SetVarImp* perform_copy(Space& home);
 
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    SetVarImp* copy(Space& home, bool share);
+    SetVarImp* copy(Space& home);
     //@}
 
     /// \name Delta information for advisors

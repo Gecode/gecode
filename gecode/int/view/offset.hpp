@@ -237,6 +237,10 @@ namespace Gecode { namespace Int {
   OffsetView::max(const Delta& d) const {
     return x.max(d)+c;
   }
+  forceinline unsigned int
+  OffsetView::width(const Delta& d) const {
+    return x.width(d);
+  }
   forceinline bool
   OffsetView::any(const Delta& d) const {
     return x.any(d);
@@ -249,8 +253,8 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  OffsetView::update(Space& home, bool share, OffsetView& y) {
-    DerivedView<IntView>::update(home,share,y);
+  OffsetView::update(Space& home, OffsetView& y) {
+    DerivedView<IntView>::update(home,y);
     c=y.c;
   }
 

@@ -118,16 +118,16 @@ public:
   }
 
   /// Constructor for cloning \a s
-  DominatingQueens(bool share, DominatingQueens& s)
-    : IntMinimizeScript(share,s), n(s.n) {
-    b.update(*this, share, s.b);
-    q.update(*this, share, s.q);
+  DominatingQueens(DominatingQueens& s)
+    : IntMinimizeScript(s), n(s.n) {
+    b.update(*this, s.b);
+    q.update(*this, s.q);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new DominatingQueens(share,*this);
+  copy(void) {
+    return new DominatingQueens(*this);
   }
 
   /// Print solution

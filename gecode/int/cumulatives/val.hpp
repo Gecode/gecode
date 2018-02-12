@@ -80,15 +80,14 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template<class ViewM, class ViewP, class ViewU, class View>
   forceinline
-  Val<ViewM,ViewP,ViewU,View>::Val(Space& home, bool share,
+  Val<ViewM,ViewP,ViewU,View>::Val(Space& home,
                                    Val<ViewM,ViewP,ViewU,View>& vp)
-    : Propagator(home,share,vp), at_most(vp.at_most) {
-    m.update(home,share,vp.m);
-    s.update(home, share, vp.s);
-    p.update(home, share, vp.p);
-    e.update(home, share, vp.e);
-    u.update(home, share, vp.u);
-    c.update(home, share, vp.c);
+    : Propagator(home,vp), c(vp.c), at_most(vp.at_most) {
+    m.update(home,vp.m);
+    s.update(home, vp.s);
+    p.update(home, vp.p);
+    e.update(home, vp.e);
+    u.update(home, vp.u);
   }
 
   template<class ViewM, class ViewP, class ViewU, class View>
@@ -125,8 +124,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template<class ViewM, class ViewP, class ViewU, class View>
   Actor*
-  Val<ViewM,ViewP,ViewU,View>::copy(Space& home, bool share) {
-    return new (home) Val<ViewM,ViewP,ViewU,View>(home,share,*this);
+  Val<ViewM,ViewP,ViewU,View>::copy(Space& home) {
+    return new (home) Val<ViewM,ViewP,ViewU,View>(home,*this);
   }
 
   /// Types of events for the sweep-line
@@ -284,7 +283,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
         break;
       }
     // Propagate information for machine r
-    Region region(home);
+    Region region;
     Event *events = region.alloc<Event>(s.size()*8);
     int  events_size;
     int *prune_tasks = region.alloc<int>(s.size());

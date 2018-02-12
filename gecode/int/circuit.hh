@@ -66,7 +66,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Offset transformation
     Offset o;
     /// Constructor for cloning \a p
-    Base(Space& home, bool share, Base& p);
+    Base(Space& home, Base& p);
     /// Constructor for posting
     Base(Home home, ViewArray<View>& x, Offset& o);
     /// Check whether the view value graph is strongly connected
@@ -97,12 +97,12 @@ namespace Gecode { namespace Int { namespace Circuit {
     using Base<View,Offset>::path;
     using Base<View,Offset>::o;
     /// Constructor for cloning \a p
-    Val(Space& home, bool share, Val& p);
+    Val(Space& home, Val& p);
     /// Constructor for posting
     Val(Home home, ViewArray<View>& x, Offset& o);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (returns high linear)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -132,12 +132,12 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Propagation controller for propagating distinct
     Int::Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Dom(Space& home, bool share, Dom& p);
+    Dom(Space& home, Dom& p);
     /// Constructor for posting
     Dom(Home home, ViewArray<View>& x, Offset& o);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *

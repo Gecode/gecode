@@ -256,39 +256,57 @@ namespace Gecode { namespace FlatZinc {
       Gecode::Driver::StringOption      _mode;       ///< Script mode to run
       Gecode::Driver::BoolOption        _stat;       ///< Emit statistics
       Gecode::Driver::StringValueOption _output;     ///< Output file
+
+#ifdef GECODE_HAS_CPPROFILER
+
+      Gecode::Driver::IntOption         _profiler_id; ///< Use this execution id for the CP-profiler
+      Gecode::Driver::UnsignedIntOption _profiler_port; ///< Connect to this port
+      Gecode::Driver::BoolOption        _profiler_info; ///< Whether solution information should be sent to the CP-profiler
+
+#endif
+
       //@}
   public:
     /// Constructor
     FlatZincOptions(const char* s)
     : Gecode::BaseOptions(s),
-      _solutions("-n","number of solutions (0 = all, -1 = one/best)",-1),
-      _allSolutions("-a", "return all solutions (equal to -n 0)"),
-      _threads("-p","number of threads (0 = #processing units)",
+      _solutions("n","number of solutions (0 = all, -1 = one/best)",-1),
+      _allSolutions("a", "return all solutions (equal to -n 0)"),
+      _threads("p","number of threads (0 = #processing units)",
                Gecode::Search::Config::threads),
-      _free("-f", "free search, no need to follow search-specification"),
-      _decay("-decay","decay factor",0.99),
-      _c_d("-c-d","recomputation commit distance",Gecode::Search::Config::c_d),
-      _a_d("-a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
-      _node("-node","node cutoff (0 = none, solution mode)"),
-      _fail("-fail","failure cutoff (0 = none, solution mode)"),
-      _time("-time","time (in ms) cutoff (0 = none, solution mode)"),
-      _seed("-r","random seed",0),
-      _restart("-restart","restart sequence type",RM_NONE),
-      _r_base("-restart-base","base for geometric restart sequence",1.5),
-      _r_scale("-restart-scale","scale factor for restart sequence",250),
-      _nogoods("-nogoods","whether to use no-goods from restarts",false),
-      _nogoods_limit("-nogoods-limit","depth limit for no-good extraction",
+      _free("f", "free search, no need to follow search-specification"),
+      _decay("decay","decay factor",0.99),
+      _c_d("c-d","recomputation commit distance",Gecode::Search::Config::c_d),
+      _a_d("a-d","recomputation adaption distance",Gecode::Search::Config::a_d),
+      _node("node","node cutoff (0 = none, solution mode)"),
+      _fail("fail","failure cutoff (0 = none, solution mode)"),
+      _time("time","time (in ms) cutoff (0 = none, solution mode)"),
+      _seed("r","random seed",0),
+      _restart("restart","restart sequence type",RM_NONE),
+      _r_base("restart-base","base for geometric restart sequence",1.5),
+      _r_scale("restart-scale","scale factor for restart sequence",250),
+      _nogoods("nogoods","whether to use no-goods from restarts",false),
+      _nogoods_limit("nogoods-limit","depth limit for no-good extraction",
                      Search::Config::nogoods_limit),
-      _interrupt("-interrupt","whether to catch Ctrl-C (true) or not (false)",
+      _interrupt("interrupt","whether to catch Ctrl-C (true) or not (false)",
                  true),
-      _step("-step","step distance for float optimization",0.0),
-      _mode("-mode","how to execute script",Gecode::SM_SOLUTION),
-      _stat("-s","emit statistics"),
-      _output("-o","file to send output to") {
+      _step("step","step distance for float optimization",0.0),
+      _mode("mode","how to execute script",Gecode::SM_SOLUTION),
+      _stat("s","emit statistics"),
+      _output("o","file to send output to")
 
+#ifdef GECODE_HAS_CPPROFILER
+      ,
+      _profiler_id("cpprofiler-id", "use this execution id with cpprofiler", 0),
+      _profiler_port("cpprofiler-port", "connect to cpprofiler on this port", 6565),
+      _profiler_info("cpprofiler-info", "send solution information to cpprofiler", false)
+
+#endif
+    {
       _mode.add(Gecode::SM_SOLUTION, "solution");
       _mode.add(Gecode::SM_STAT, "stat");
       _mode.add(Gecode::SM_GIST, "gist");
+      _mode.add(Gecode::SM_CPPROFILER, "cpprofiler");
       _restart.add(RM_NONE,"none");
       _restart.add(RM_CONSTANT,"constant");
       _restart.add(RM_LINEAR,"linear");
@@ -306,6 +324,11 @@ namespace Gecode { namespace FlatZinc {
       add(_nogoods); add(_nogoods_limit);
       add(_mode); add(_stat);
       add(_output);
+#ifdef GECODE_HAS_CPPROFILER
+      add(_profiler_id);
+      add(_profiler_port);
+      add(_profiler_info);
+#endif
     }
 
     void parse(int& argc, char* argv[]) {
@@ -336,6 +359,7 @@ namespace Gecode { namespace FlatZinc {
     int seed(void) const { return _seed.value(); }
     double step(void) const { return _step.value(); }
     const char* output(void) const { return _output.value(); }
+
     Gecode::ScriptMode mode(void) const {
       return static_cast<Gecode::ScriptMode>(_mode.value());
     }
@@ -349,6 +373,14 @@ namespace Gecode { namespace FlatZinc {
     bool nogoods(void) const { return _nogoods.value(); }
     unsigned int nogoods_limit(void) const { return _nogoods_limit.value(); }
     bool interrupt(void) const { return _interrupt.value(); }
+
+#ifdef GECODE_HAS_CPPROFILER
+
+    int profiler_id(void) const { return _profiler_id.value(); }
+    unsigned int profiler_port(void) const { return _profiler_port.value(); }
+    bool profiler_info(void) const { return _profiler_info.value(); }
+
+#endif
 
     void allSolutions(bool b) { _allSolutions.value(b); }
   };
@@ -377,22 +409,11 @@ namespace Gecode { namespace FlatZinc {
 #endif
   };
 
- /**
-  * \brief A thread-safe random number generator
-  *
-  */
- class GECODE_FLATZINC_EXPORT FznRnd {
- protected:
-   /// The actual random number generator
-   Gecode::Support::RandomGenerator random;
-   /// A mutex for the random number generator
-   Gecode::Support::Mutex mutex;
- public:
-   /// Constructor
-   FznRnd(unsigned int s=1);
-   /// Returns a random integer from the interval [0..n)
-   unsigned int operator ()(unsigned int n);
- };
+  /// Uninitialized default random number generator
+  GECODE_FLATZINC_EXPORT
+  extern Rnd defrnd;
+
+  class FlatZincSpaceInitData;
 
   /**
    * \brief A space that can be initialized with a %FlatZinc model
@@ -406,6 +427,8 @@ namespace Gecode { namespace FlatZinc {
       MAX  //< Solve as maximization problem
     };
   protected:
+    /// Initialisation data (only used for posting constraints)
+    FlatZincSpaceInitData* _initData;
     /// Number of integer variables
     int intVarCount;
     /// Number of Boolean variables
@@ -430,13 +453,13 @@ namespace Gecode { namespace FlatZinc {
     IntSharedArray _lnsInitialSolution;
 
     /// Random number generator
-    FznRnd* _random;
+    Rnd _random;
 
     /// Annotations on the solve item
     AST::Array* _solveAnnotations;
 
     /// Copy constructor
-    FlatZincSpace(bool share, FlatZincSpace&);
+    FlatZincSpace(FlatZincSpace&);
   private:
     /// Run the search engine
     template<template<class> class Engine>
@@ -491,7 +514,7 @@ namespace Gecode { namespace FlatZinc {
     /// Whether the introduced variables still need to be copied
     bool needAuxVars;
     /// Construct empty space
-    FlatZincSpace(FznRnd* random = NULL);
+    FlatZincSpace(Rnd& random = defrnd);
 
     /// Destructor
     ~FlatZincSpace(void);
@@ -528,7 +551,10 @@ namespace Gecode { namespace FlatZinc {
 
     /// Produce output on \a out using \a p
     void print(std::ostream& out, const Printer& p) const;
-
+#ifdef GECODE_HAS_CPPROFILER
+    /// Get string representing the domains of variables (for cpprofiler)
+    std::string getDomains(const Printer& p) const;
+#endif
     /// Compare this space with space \a s and print the differences on
     /// \a out
     void compare(const Space& s, std::ostream& out) const;
@@ -578,7 +604,7 @@ namespace Gecode { namespace FlatZinc {
     /// Implement optimization
     virtual void constrain(const Space& s);
     /// Copy function
-    virtual Gecode::Space* copy(bool share);
+    virtual Gecode::Space* copy(void);
     /// Slave function for restarts
     virtual bool slave(const MetaInfo& mi);
 
@@ -586,8 +612,12 @@ namespace Gecode { namespace FlatZinc {
     //@{
     /// Convert \a arg (array of integers) to IntArgs
     IntArgs arg2intargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg (array of integers) to IntSharedArray
+    IntSharedArray arg2intsharedarray(AST::Node* arg, int offset = 0);
     /// Convert \a arg (array of Booleans) to IntArgs
     IntArgs arg2boolargs(AST::Node* arg, int offset = 0);
+    /// Convert \a arg (array of integers) to IntSharedArray
+    IntSharedArray arg2boolsharedarray(AST::Node* arg, int offset = 0);
     /// Convert \a n to IntSet
     IntSet arg2intset(AST::Node* n);
     /// Convert \a arg to IntSetArgs
@@ -600,6 +630,8 @@ namespace Gecode { namespace FlatZinc {
     BoolVar arg2BoolVar(AST::Node* n);
     /// Convert \a n to IntVar
     IntVar arg2IntVar(AST::Node* n);
+    /// Convert \a n to TupleSet
+    TupleSet arg2tupleset(AST::Node* n, int noOfVars);
     /// Check if \a b is array of Booleans (or has a single integer)
     bool isBoolArray(AST::Node* b, int& singleInt);
 #ifdef GECODE_HAS_SET_VARS
@@ -619,6 +651,8 @@ namespace Gecode { namespace FlatZinc {
 #endif
     /// Convert \a ann to integer propagation level
     IntPropLevel ann2ipl(AST::Node* ann);
+    /// Share DFA \a a if possible
+    DFA getSharedDFA(DFA& a);
     //@}
   };
 
@@ -640,7 +674,7 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(const std::string& fileName,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL, FznRnd* rnd=NULL);
+                       FlatZincSpace* fzs=NULL, Rnd& rnd=defrnd);
 
   /**
    * \brief Parse FlatZinc from \a is into \a fzs and return it.
@@ -650,7 +684,7 @@ namespace Gecode { namespace FlatZinc {
   GECODE_FLATZINC_EXPORT
   FlatZincSpace* parse(std::istream& is,
                        Printer& p, std::ostream& err = std::cerr,
-                       FlatZincSpace* fzs=NULL, FznRnd* rnd=NULL);
+                       FlatZincSpace* fzs=NULL, Rnd& rnd=defrnd);
 
 }}
 

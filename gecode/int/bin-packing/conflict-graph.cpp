@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace BinPacking {
       } else {
         ++i; ++n;
 
-        Region reg(home);
+        Region reg;
 
         // Found i.val() to be in i - n
 

@@ -40,11 +40,11 @@ namespace Gecode { namespace Int { namespace Unary {
   // Overload checking for mandatory tasks
   template<class ManTask>
   ExecStatus
-  overload(Space& home, TaskArray<ManTask>& t) {
+  overload(TaskArray<ManTask>& t) {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
 
-    Region r(home);
+    Region r;
     OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,f);
 
     for (int i=0; i<f.size(); i++) {
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Unary {
     TaskViewArray<typename TaskTraits<OptTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<OptTask>::TaskViewFwd,STO_LCT,true>(f);
 
-    Region r(home);
+    Region r;
     OmegaLambdaTree<typename TaskTraits<OptTask>::TaskViewFwd> ol(r,f,false);
 
     bool to_purge = false;

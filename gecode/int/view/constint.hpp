@@ -219,6 +219,10 @@ namespace Gecode { namespace Int {
   ConstIntView::max(const Delta&) const {
     return 0;
   }
+  forceinline unsigned int
+  ConstIntView::width(const Delta&) const {
+    return 1U;
+  }
   forceinline bool
   ConstIntView::any(const Delta&) const {
     return true;
@@ -231,8 +235,8 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  ConstIntView::update(Space& home, bool share, ConstIntView& y) {
-    ConstView<IntView>::update(home,share,y);
+  ConstIntView::update(Space& home, ConstIntView& y) {
+    ConstView<IntView>::update(home,y);
     x = y.x;
   }
 

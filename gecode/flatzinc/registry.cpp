@@ -72,6 +72,7 @@ namespace Gecode { namespace FlatZinc {
   void
   Registry::add(const std::string& id, poster p) {
     r[id] = p;
+    r["gecode_" + id] = p;
   }
 
   namespace {
@@ -462,6 +463,11 @@ namespace Gecode { namespace FlatZinc {
       IntVar x2 = s.arg2IntVar(ce[2]);
       mult(s, x0, x1, x2, s.ann2ipl(ann));
     }
+    void p_int_pow(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
+      IntVar x0 = s.arg2IntVar(ce[0]);
+      IntVar x2 = s.arg2IntVar(ce[2]);
+      pow(s, x0, ce[1]->getInt(), x2, s.ann2ipl(ann));
+    }    
     void p_int_div(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVar x0 = s.arg2IntVar(ce[0]);
       IntVar x1 = s.arg2IntVar(ce[1]);
@@ -697,8 +703,8 @@ namespace Gecode { namespace FlatZinc {
       IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntArgs ia = s.arg2intargs(ce[1], 1);
-        element(s, ia, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
+        IntSharedArray sia = s.arg2intsharedarray(ce[1], 1);
+        element(s, sia, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
       } else {
         IntVarArgs iv = s.arg2intvarargs(ce[1], 1);
         element(s, iv, selector, s.arg2IntVar(ce[2]), s.ann2ipl(ann));
@@ -717,8 +723,8 @@ namespace Gecode { namespace FlatZinc {
       IntVar selector = s.arg2IntVar(ce[0]);
       rel(s, selector > 0);
       if (isConstant) {
-        IntArgs ia = s.arg2boolargs(ce[1], 1);
-        element(s, ia, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
+        IntSharedArray sia = s.arg2boolsharedarray(ce[1], 1);
+        element(s, sia, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
       } else {
         BoolVarArgs iv = s.arg2boolvarargs(ce[1], 1);
         element(s, iv, selector, s.arg2BoolVar(ce[2]), s.ann2ipl(ann));
@@ -909,7 +915,7 @@ namespace Gecode { namespace FlatZinc {
       IntArgs cover = s.arg2intargs(ce[1]);
       IntVarArgs iv1 = s.arg2intvarargs(ce[2]);
 
-      Region re(s);
+      Region re;
       IntSet cover_s(cover);
       IntSetRanges cover_r(cover_s);
       IntVarRanges* iv0_ri = re.alloc<IntVarRanges>(iv0.size());
@@ -944,8 +950,19 @@ namespace Gecode { namespace FlatZinc {
       IntVarArgs iv0 = s.arg2intvarargs(ce[0]);
       IntArgs cover = s.arg2intargs(ce[1]);
       IntVarArgs iv1 = s.arg2intvarargs(ce[2]);
-      unshare(s, iv0);
-      count(s, iv0, iv1, cover, s.ann2ipl(ann));
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (ipl==IPL_DEF)
+        ipl=IPL_BND;
+      if (ipl==IPL_DOM) {
+        IntVarArgs allvars = iv0+iv1;
+        unshare(s, allvars);
+        count(s, allvars.slice(0,1,iv0.size()),
+                 allvars.slice(iv0.size(),1,iv1.size()),
+                 cover, ipl);
+      } else {
+        unshare(s, iv0);
+        count(s, iv0, iv1, cover, ipl);
+      }
     }
 
     void p_global_cardinality_low_up(FlatZincSpace& s, const ConExpr& ce,
@@ -960,7 +977,7 @@ namespace Gecode { namespace FlatZinc {
         y[i] = IntSet(lbound[i],ubound[i]);
 
       IntSet cover_s(cover);
-      Region re(s);
+      Region re;
       IntVarRanges* xrs = re.alloc<IntVarRanges>(x.size());
       for (int i=x.size(); i--;)
         xrs[i].init(x[i]);
@@ -973,7 +990,10 @@ namespace Gecode { namespace FlatZinc {
         }
       }
       unshare(s, x);
-      count(s, x, y, cover, s.ann2ipl(ann));
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (ipl==IPL_DEF)
+        ipl=IPL_BND;
+      count(s, x, y, cover, ipl);
     }
 
     void p_global_cardinality_low_up_closed(FlatZincSpace& s,
@@ -988,7 +1008,10 @@ namespace Gecode { namespace FlatZinc {
       for (int i=cover.size(); i--;)
         y[i] = IntSet(lbound[i],ubound[i]);
       unshare(s, x);
-      count(s, x, y, cover, s.ann2ipl(ann));
+      IntPropLevel ipl = s.ann2ipl(ann);
+      if (ipl==IPL_DEF)
+        ipl=IPL_BND;
+      count(s, x, y, cover, ipl);
     }
 
     void p_minimum(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
@@ -1026,7 +1049,7 @@ namespace Gecode { namespace FlatZinc {
         }
       }
 
-      Region re(s);
+      Region re;
       DFA::Transition* t = re.alloc<DFA::Transition>(noOfTrans+1);
       noOfTrans = 0;
       for (int i=1; i<=q; i++) {
@@ -1045,12 +1068,12 @@ namespace Gecode { namespace FlatZinc {
       AST::SetLit* sl = ce[5]->getSet();
       int* f;
       if (sl->interval) {
-        f = static_cast<int*>(malloc(sizeof(int)*(sl->max-sl->min+2)));
+        f = static_cast<int*>(heap.ralloc(sizeof(int)*(sl->max-sl->min+2)));
         for (int i=sl->min; i<=sl->max; i++)
           f[i-sl->min] = i;
         f[sl->max-sl->min+1] = -1;
       } else {
-        f = static_cast<int*>(malloc(sizeof(int)*(sl->s.size()+1)));
+        f = static_cast<int*>(heap.ralloc(sizeof(int)*(sl->s.size()+1)));
         for (int j=sl->s.size(); j--; )
           f[j] = sl->s[j];
         f[sl->s.size()] = -1;
@@ -1059,7 +1082,7 @@ namespace Gecode { namespace FlatZinc {
       DFA dfa(q0,t,f);
       free(f);
       unshare(s, iv);
-      extensional(s, iv, dfa, s.ann2ipl(ann));
+      extensional(s, iv, s.getSharedDFA(dfa), s.ann2ipl(ann));
     }
 
     void
@@ -1117,27 +1140,17 @@ namespace Gecode { namespace FlatZinc {
     void
     p_table_int(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       IntVarArgs x = s.arg2intvarargs(ce[0]);
-      IntArgs tuples = s.arg2intargs(ce[1]);
-      int noOfVars   = x.size();
-      int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
-      TupleSet ts;
-      for (int i=0; i<noOfTuples; i++) {
-        IntArgs t(noOfVars);
-        for (int j=0; j<x.size(); j++) {
-          t[j] = tuples[i*noOfVars+j];
-        }
-        ts.add(t);
-      }
-      ts.finalize();
+      TupleSet ts = s.arg2tupleset(ce[1],x.size());
       extensional(s,x,ts,s.ann2ipl(ann));
     }
+    
     void
     p_table_bool(FlatZincSpace& s, const ConExpr& ce, AST::Node* ann) {
       BoolVarArgs x = s.arg2boolvarargs(ce[0]);
       IntArgs tuples = s.arg2boolargs(ce[1]);
       int noOfVars   = x.size();
       int noOfTuples = tuples.size() == 0 ? 0 : (tuples.size()/noOfVars);
-      TupleSet ts;
+      TupleSet ts(noOfVars);
       for (int i=0; i<noOfTuples; i++) {
         IntArgs t(noOfVars);
         for (int j=0; j<x.size(); j++) {
@@ -1454,6 +1467,7 @@ namespace Gecode { namespace FlatZinc {
         registry().add("int_plus", &p_int_plus);
         registry().add("int_minus", &p_int_minus);
         registry().add("int_times", &p_int_times);
+        registry().add("gecode_int_pow", &p_int_pow);
         registry().add("int_div", &p_int_div);
         registry().add("int_mod", &p_int_mod);
         registry().add("int_min", &p_int_min);

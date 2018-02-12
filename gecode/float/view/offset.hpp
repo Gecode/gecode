@@ -175,8 +175,8 @@ namespace Gecode { namespace Float {
    *
    */
   forceinline void
-  OffsetView::update(Space& home, bool share, OffsetView& y) {
-    DerivedView<FloatView>::update(home,share,y);
+  OffsetView::update(Space& home, OffsetView& y) {
+    DerivedView<FloatView>::update(home,y);
     c=y.c;
   }
 

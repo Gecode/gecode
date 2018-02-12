@@ -143,8 +143,8 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
 
   template<class View>
   forceinline void
-  Graph<View>::scc(Space& home) {
-    Region r(home);
+  Graph<View>::scc(void) {
+    Region r;
 
     Support::StaticStack<Node<View>*,Region> scc(r,n_val+n_view);
     Support::StaticStack<Node<View>*,Region> visit(r,n_val+n_view);

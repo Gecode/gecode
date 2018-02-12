@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace NValues {
     }
 
     // Match the real view nodes, if possible
-    Region r(home);
+    Region r;
     ViewNodeStack m(r,n_view);
     for (int i = x.size(); i--; )
       if (match(m,view[i]))
@@ -91,9 +91,9 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   forceinline void
-  Graph::sync(Space& home) {
+  Graph::sync(void) {
     using namespace ViewValGraph;
-    Region r(home);
+    Region r;
 
     // Whether to rematch
     bool rematch = false;
@@ -152,9 +152,9 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   forceinline bool
-  Graph::mark(Space& home) {
+  Graph::mark(void) {
     using namespace ViewValGraph;
-    Region r(home);
+    Region r;
 
     int n_view_visited = 0;
     {
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace NValues {
     }
 
     if (n_view_visited < n_view) {
-      scc(home);
+      scc();
       return true;
     } else {
       return false;

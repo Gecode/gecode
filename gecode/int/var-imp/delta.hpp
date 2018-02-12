@@ -54,6 +54,10 @@ namespace Gecode { namespace Int {
   IntDelta::max(void) const {
     return _max;
   }
+  forceinline unsigned int
+  IntDelta::width(void) const {
+    return static_cast<unsigned int>(_max - _min + 1);
+  }
   forceinline bool
   IntDelta::any(void) const {
     return _min > _max;

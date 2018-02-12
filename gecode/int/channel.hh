@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// View and information for both \a x and \a y
     Info* xy;
     /// Constructor for cloning \a p
-    Base(Space& home, bool share, Base<Info,Offset,pc>& p);
+    Base(Space& home, Base<Info,Offset,pc>& p);
     /// Constructor for posting
     Base(Home home, int n, Info* xy, Offset& ox, Offset& oy);
   public:
@@ -106,12 +106,12 @@ namespace Gecode { namespace Int { namespace Channel {
     using Base<ValInfo<View>,Offset,PC_INT_VAL>::ox;
     using Base<ValInfo<View>,Offset,PC_INT_VAL>::oy;
     /// Constructor for cloning \a p
-    Val(Space& home, bool share, Val& p);
+    Val(Space& home, Val& p);
     /// Constructor for posting
     Val(Home home, int n, ValInfo<View>* xy, Offset& ox, Offset& oy);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for channeling
@@ -145,12 +145,12 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Dom(Space& home, bool share, Dom& p);
+    Dom(Space& home, Dom& p);
     /// Constructor for posting
     Dom(Home home, int n, DomInfo<View,Offset>* xy, Offset& ox, Offset& oy);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -178,12 +178,12 @@ namespace Gecode { namespace Int { namespace Channel {
     using MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>::x1;
 
     /// Constructor for cloning \a p
-    LinkSingle(Space& home, bool share, LinkSingle& p);
+    LinkSingle(Space& home, LinkSingle& p);
     /// Constructor for posting
     LinkSingle(Home home, BoolView x0, IntView x1);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as low unary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Perform propagation
@@ -216,13 +216,13 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Offset value
     int o;
     /// Constructor for cloning \a p
-    LinkMulti(Space& home, bool share, LinkMulti& p);
+    LinkMulti(Space& home, LinkMulti& p);
     /// Constructor for posting
     LinkMulti(Home home, ViewArray<BoolView>& x, IntView y, int o0);
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (low unary if \a y is assigned, low linear otherwise)
     GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;

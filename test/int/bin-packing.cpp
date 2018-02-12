@@ -258,7 +258,7 @@ namespace Test { namespace Int {
         // Constructor
         TestSpace(void) {}
         // Copy function
-        virtual Gecode::Space* copy(bool) {
+        virtual Gecode::Space* copy(void) {
           return NULL;
         }
       };
@@ -299,7 +299,7 @@ namespace Test { namespace Int {
           delete home;
           return false;
         }
-        if (clique.size() != mc.size()) {
+        if (static_cast<unsigned int>(clique.size()) != mc.size()) {
           delete home;
           return false;
         }

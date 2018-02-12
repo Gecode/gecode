@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 #include "test/set.hh"
 
 using namespace Gecode;
@@ -168,7 +170,19 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         assert(x.size() == 1);
-        Gecode::dom(home, x[0], srt, is, r);
+        if (Base::rand(2) != 0) {
+          Gecode::dom(home, x[0], srt, is, r);
+        } else {
+           switch (r.mode()) {
+           case Gecode::RM_EQV:
+             Gecode::rel(home, Gecode::dom(x[0], srt, is) == r.var()); break;
+           case Gecode::RM_IMP:
+             Gecode::rel(home, Gecode::dom(x[0], srt, is) << r.var()); break;
+           case Gecode::RM_PMI:
+             Gecode::rel(home, Gecode::dom(x[0], srt, is) >> r.var()); break;
+           default: GECODE_NEVER;
+           }
+        }
       }
     };
 
@@ -249,7 +263,19 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         assert(x.size() == 1);
-        Gecode::dom(home, x[0], srt, -3, -1, r);
+        if (Base::rand(2) != 0) {
+          Gecode::dom(home, x[0], srt, -3, -1, r);
+        } else {
+           switch (r.mode()) {
+           case Gecode::RM_EQV:
+             Gecode::rel(home, Gecode::dom(x[0], srt, -3, -1) == r.var()); break;
+           case Gecode::RM_IMP:
+             Gecode::rel(home, Gecode::dom(x[0], srt, -3, -1) << r.var()); break;
+           case Gecode::RM_PMI:
+             Gecode::rel(home, Gecode::dom(x[0], srt, -3, -1) >> r.var()); break;
+           default: GECODE_NEVER;
+           }
+        }
       }
     };
 
@@ -332,7 +358,19 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a b
       virtual void post(Space& home, SetVarArray& x, IntVarArray&, Reify r) {
         assert(x.size() == 1);
-        Gecode::dom(home, x[0], srt, -3, r);
+        if (Base::rand(2) != 0) {
+          Gecode::dom(home, x[0], srt, -3, r);
+        } else {
+           switch (r.mode()) {
+           case Gecode::RM_EQV:
+             Gecode::rel(home, Gecode::dom(x[0], srt, -3) == r.var()); break;
+           case Gecode::RM_IMP:
+             Gecode::rel(home, Gecode::dom(x[0], srt, -3) << r.var()); break;
+           case Gecode::RM_PMI:
+             Gecode::rel(home, Gecode::dom(x[0], srt, -3) >> r.var()); break;
+           default: GECODE_NEVER;
+           }
+        }
       }
     };
 

@@ -54,11 +54,11 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, class CtrlView, ReifyMode rm>
   forceinline
-  ReEq<View0,View1,CtrlView,rm>::ReEq(Space& home, bool share, ReEq& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    b.update(home,share,p.b);
+  ReEq<View0,View1,CtrlView,rm>::ReEq(Space& home, ReEq& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    b.update(home,p.b);
   }
 
   template<class View0, class View1, class CtrlView, ReifyMode rm>
@@ -89,14 +89,18 @@ namespace Gecode { namespace Set { namespace Rel {
   ExecStatus
   ReEq<View0,View1,CtrlView,rm>::post(Home home, View0 x0, View1 x1,
                                       CtrlView b) {
-    (void) new (home) ReEq<View0,View1,CtrlView,rm>(home,x0,x1,b);
+    if (!same(x0,x1)) {
+      (void) new (home) ReEq<View0,View1,CtrlView,rm>(home,x0,x1,b);
+    } else if (rm != RM_IMP) {
+      GECODE_ME_CHECK(b.one(home));
+    }
     return ES_OK;
   }
 
   template<class View0, class View1, class CtrlView, ReifyMode rm>
   Actor*
-  ReEq<View0,View1,CtrlView,rm>::copy(Space& home, bool share) {
-    return new (home) ReEq<View0,View1,CtrlView,rm>(home,share,*this);
+  ReEq<View0,View1,CtrlView,rm>::copy(Space& home) {
+    return new (home) ReEq<View0,View1,CtrlView,rm>(home,*this);
   }
 
   template<class View0, class View1, class CtrlView, ReifyMode rm>

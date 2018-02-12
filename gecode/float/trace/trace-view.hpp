@@ -47,7 +47,7 @@ namespace Gecode { namespace Float {
     /// Update duplicated view from view \a y and delta \a d
     void prune(Space& home, FloatView y, const Delta& d);
     /// Update during cloning
-    void update(Space& home, bool share, FloatTraceView x);
+    void update(Space& home, FloatTraceView x);
     /// Return slack of \a x
     static FloatNum slack(FloatView x);
   };
@@ -59,7 +59,7 @@ namespace Gecode { namespace Float {
   forceinline void
   FloatTraceView::prune(Space&, FloatView, const Delta&) {}
   forceinline void
-  FloatTraceView::update(Space&, bool, FloatTraceView) {}
+  FloatTraceView::update(Space&, FloatTraceView) {}
   forceinline FloatNum
   FloatTraceView::slack(FloatView x) {
     return x.size();

@@ -73,10 +73,10 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Constructor for posting
     Val(Home home, ViewArray<IntView>& x, ViewArray<Card>& k);
     /// Constructor for cloning \a p
-    Val(Space& home, bool share, Val<Card>& p);
+    Val(Space& home, Val<Card>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost funtion returning high linear
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool skip_lbc;
     /// Constructor for cloning \a p
-    Bnd(Space& home, bool share, Bnd<Card>& p);
+    Bnd(Space& home, Bnd<Card>& p);
 
     /// Prune cardinality variables with 0 maximum occurrence
     ExecStatus pruneCards(Space& home);
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Bnd(Home home, ViewArray<IntView>&, ViewArray<Card>&, bool, bool);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost funtion
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -241,12 +241,12 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool card_fixed;
     /// Constructor for cloning \a p
-    Dom(Space& home, bool share, Dom<Card>& p);
+    Dom(Space& home, Dom<Card>& p);
     /// Constructor for posting
     Dom(Home home, ViewArray<IntView>&, ViewArray<Card>&, bool);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function

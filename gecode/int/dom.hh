@@ -66,12 +66,12 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Maximum of range
     int max;
     /// Constructor for cloning \a p
-    ReRange(Space& home, bool share, ReRange& p);
+    ReRange(Space& home, ReRange& p);
     /// Constructor for creation
     ReRange(Home home, View x, int min, int max, BoolView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
@@ -93,12 +93,12 @@ namespace Gecode { namespace Int { namespace Dom {
     /// %Domain
     IntSet is;
     /// Constructor for cloning \a p
-    ReIntSet(Space& home, bool share, ReIntSet& p);
+    ReIntSet(Space& home, ReIntSet& p);
     /// Constructor for creation
     ReIntSet(Home home, View x, const IntSet& s, BoolView b);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$

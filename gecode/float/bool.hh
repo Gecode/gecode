@@ -61,7 +61,7 @@ namespace Gecode { namespace Float { namespace Bool {
     /// Views
     View x0, x1, x2;
     /// Constructor for cloning \a p
-    Ite(Space& home, bool share, Ite& p);
+    Ite(Space& home, Ite& p);
     /// Constructor for creation
     Ite(Home home, Int::BoolView b, View x0, View x1, View x2);
   public:
@@ -70,7 +70,7 @@ namespace Gecode { namespace Float { namespace Bool {
     /// Schedule function
     virtual void reschedule(Space& home);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post if-then-else propagator

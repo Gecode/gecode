@@ -67,6 +67,449 @@
 #
 
 [RELEASE]
+Version: 6.0.0
+Date: 2018-02-07
+[DESCRIPTION]
+This major release fixes many bugs, adds quite some new
+functionality, and changes how cloning works (most likely the
+biggest change we ever did to %Gecode): the Boolean share argument
+is not any longer needed (see how to change your programs in
+\ref PageHowToChange_6 "How to Change to Gecode 6.0.0").  The added
+functionality includes experimental support for the CPProfiler,
+classes for lexicographic optimization (where the cost is defined
+by an array of variables), a new much faster implementation of
+extensional constraints using tuple sets, and support for tracing
+search engines.
+
+[ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Replace deprecated OSSpinLock with os_unfair_lock on newer versions
+of macOS.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+A sequential portfolio ignored stop objects in certain cases.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Share tables for extensional (table) constraints, DFAs for regular
+constraints, and arrays of constants for element constraints.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Change default propagation level to bounds propagation for global
+cardinality constraints.
+
+[ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Bitsets now use 64 bit integers on all 64 bit architectures.
+
+[ENTRY]
+Module: search
+What:   new
+Rank:   major
+Author: Kevin Leo, Maxim Shishmarev
+[DESCRIPTION]
+Added experimental support for the CPProfiler, see MPG for
+details. This is only enabled, if Gecode has been configured with
+the option --enable-cpprofiler.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   major
+[DESCRIPTION]
+A new mode "-mode cpprofiler" and several command-line arguments
+-cpprofiler-* have been added to connect Gecode to the
+CPProfiler. For more details, see MPG.
+
+[ENTRY]
+Module: driver
+What:   change
+Rank:   major
+[DESCRIPTION]
+No hyphen must be given for a command line switch and both "-"
+and "--" are automatically added.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+When posting a simple linear constraint (only two variables with
+unit coefficients) with default integer propagation level, a
+domain consistent propagator is posted. Now a domain consistent
+propagator is always posted if the right-hand side constant is
+zero and otherwise if the computations required can be done with
+normal integers.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Linear constraints now check whether constant coefficients have
+mixed signs (include zero) and throw an exception if yes.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   major
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Linear constraints now check properly for numerical overflow.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add redefinition of disjunctive_strict in terms of cumulative.
+
+[ENTRY]
+Module: driver
+What:   new
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Added IntLexMinimizeScript and IntLexMaximizeScript for
+lexicographic optimization.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+Thanks:	Roberto Castañeda Lozano
+[DESCRIPTION]
+Added IntLexMinimizeSpace and IntLexMaximizeSpace for
+lexicographic optimization.
+
+[ENTRY]
+Module: driver
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed the deprecated classes MinimizeScript and MaximizeScript
+(use IntMinimizeScript and IntMaximizeScript instead).
+
+[ENTRY]
+Module: minimodel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Removed the deprecated classes MinimizeSpace and MaximizeSpace
+(use IntMinimizeSpace and IntMaximizeSpace instead).
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+Author: Linnea Ingmar
+[DESCRIPTION]
+Tuple sets can be initialized from DFAs (and hence regular
+expressions).
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Peter Stuckey
+[DESCRIPTION]
+Perform unsharing even in failed spaces to avoid exceptions in
+later constraint posting.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+Author: Matthias Balzer
+[DESCRIPTION]
+Added reified dom-expressions.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   major
+Author: Matthias Balzer
+[DESCRIPTION]
+Added relations between integer and set expressions.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   major
+Thanks: Andreas Schutt
+[DESCRIPTION]
+Fix syntax errors in definitions of global cardinality predicates.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Make mzn-gecode script use mzn-fzn if minizinc driver is not present.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+Thanks: Andreas Schutt
+[DESCRIPTION]
+Add support for int_pow predicate.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Changed accuracy of delta information for integer views (now, all
+values between new and old lower/upper bound are reported as
+being discarded).
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Tuple sets used for Boolean variables are allowed to contain only
+zeros and ones as values.
+
+[ENTRY]
+Module: int
+What:   removed
+Rank:   major
+[DESCRIPTION]
+Removed IPL_SPEED and IPL_MEMORY as they are not any longer needed.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Re-implemented tuple sets for simplicity and ease of use. Please
+see MPG for details.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+Author: Linnea Ingmar
+[DESCRIPTION]
+Replaced extensional implementation by a single implementation
+based on the compact-table propagator described in:
+J. Demeulenaere et. al., Compact-Table: Efficiently filtering
+table constraints with reversible sparse bit-sets, CP 2016. Pages
+207-223, LNCS, Springer, 2016. The extensional propagator runs up
+to ten times faster than the old implementations.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed virtual method table overwrite bug for Action and CHB.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed double deletion bug in parallel portfolio-based search.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks:	Massimo Morara
+[DESCRIPTION]
+Fixed printing of group information for tracing.
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+Thanks:	Massimo Morara
+[DESCRIPTION]
+Fixed printing of group information for tracing.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks:	Massimo Morara
+[DESCRIPTION]
+Fixed printing of group information for tracing.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: float
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Now it can be controlled by an Boolean argument whether AFC
+information between spaces is shared or not.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+Thanks: Conrad Drescher
+[DESCRIPTION]
+The bounds propagator for abs is now bounds consistent.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   minor
+Thanks: Conrad Drescher
+[DESCRIPTION]
+Added checks to avoid posting set relation propagators in case
+their variables are in fact the same.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a potential memory leak for restart-based search when the
+root space was failed.
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Choices do not need to implement a size function.
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   major
+Thanks: Maxim Shishmarev
+[DESCRIPTION]
+Added support for tracing search engines.
+
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Andreas Schutt
+[DESCRIPTION]
+Fixed declarations of table_int and table_bool constraints.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Shared handles and objects used to implement most shared data
+structures in Gecode are thread safe now. In most cases they are
+lock free.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The Boolean share argument during cloning is not any longer needed.
+
+[ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+During unsharing of AFC information also the propagator
+identifiers were changed.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The unsharing of AFC information during cloning is not any longer
+needed as it happens automatically when a new AFC object is
+created.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Regions can be freed without destroying them. Consult MPG for
+details.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Regions are now created independently of a space and the policy
+using several regions simultaneously has changed. Consult MPG for
+details.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a race condition in portfolio-based search.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   major
+[DESCRIPTION]
+For Boolean variables, an initialized BoolCHB in branching was ignored.
+
+[ENTRY]
+Module: driver
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The -slice commandline option for sequential portfolios is not
+ignored any longer.
+
+
+[RELEASE]
 Version: 5.1.0
 Date: 2017-04-18
 [DESCRIPTION]
@@ -92,6 +535,14 @@ Rank:   minor
 [DESCRIPTION]
 Some FlatZinc constraints were not guarded with assertions, which could make
 Gecode crash on incorrect models.
+
+[ENTRY]
+Module: kernel
+What:   removed
+Rank:   minor
+[DESCRIPTION]
+Choices do not need to implement a size() member function (unused
+since years).
 
 [ENTRY]
 Module: float

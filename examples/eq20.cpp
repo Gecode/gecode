@@ -93,13 +93,13 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Eq20(bool share, Eq20& s) : Script(share,s) {
-    x.update(*this, share, s.x);
+  Eq20(Eq20& s) : Script(s) {
+    x.update(*this, s.x);
   }
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new Eq20(share,*this);
+  copy(void) {
+    return new Eq20(*this);
   }
   /// Print solution
   virtual void

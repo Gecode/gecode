@@ -137,14 +137,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View, PropCond pc>
   forceinline
-  MultZeroOne<View,pc>::MultZeroOne(Space& home, bool share,
-                                    MultZeroOne<View,pc>& p)
-    : BinaryPropagator<View,pc>(home,share,p) {}
+  MultZeroOne<View,pc>::MultZeroOne(Space& home, MultZeroOne<View,pc>& p)
+    : BinaryPropagator<View,pc>(home,p) {}
 
   template<class View, PropCond pc>
   Actor*
-  MultZeroOne<View,pc>::copy(Space& home, bool share) {
-    return new (home) MultZeroOne<View,pc>(home,share,*this);
+  MultZeroOne<View,pc>::copy(Space& home) {
+    return new (home) MultZeroOne<View,pc>(home,*this);
   }
 
   template<class View, PropCond pc>
@@ -228,15 +227,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class VC>
   forceinline
-  MultPlusBnd<VA,VB,VC>::MultPlusBnd(Space& home, bool share,
-                                     MultPlusBnd<VA,VB,VC>& p)
+  MultPlusBnd<VA,VB,VC>::MultPlusBnd(Space& home, MultPlusBnd<VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
-  (home,share,p) {}
+  (home,p) {}
 
   template<class VA, class VB, class VC>
   Actor*
-  MultPlusBnd<VA,VB,VC>::copy(Space& home, bool share) {
-    return new (home) MultPlusBnd<VA,VB,VC>(home,share,*this);
+  MultPlusBnd<VA,VB,VC>::copy(Space& home) {
+    return new (home) MultPlusBnd<VA,VB,VC>(home,*this);
   }
 
   template<class VA, class VB, class VC>
@@ -266,8 +264,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     : TernaryPropagator<IntView,PC_INT_BND>(home,x0,x1,x2) {}
 
   forceinline
-  MultBnd::MultBnd(Space& home, bool share, MultBnd& p)
-    : TernaryPropagator<IntView,PC_INT_BND>(home,share,p) {}
+  MultBnd::MultBnd(Space& home, MultBnd& p)
+    : TernaryPropagator<IntView,PC_INT_BND>(home,p) {}
 
   /*
    * Positive domain consistent multiplication
@@ -276,7 +274,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template<class View>
   forceinline ExecStatus
   prop_mult_dom(Space& home, Propagator& p, View x0, View x1, View x2) {
-    Region r(home);
+    Region r;
     SupportValues<View,Region> s0(r,x0), s1(r,x1), s2(r,x2);
     while (s0()) {
       while (s1()) {
@@ -301,15 +299,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class VC>
   forceinline
-  MultPlusDom<VA,VB,VC>::MultPlusDom(Space& home, bool share,
-                                         MultPlusDom<VA,VB,VC>& p)
+  MultPlusDom<VA,VB,VC>::MultPlusDom(Space& home, MultPlusDom<VA,VB,VC>& p)
     : MixTernaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM,VC,PC_INT_DOM>
-      (home,share,p) {}
+      (home,p) {}
 
   template<class VA, class VB, class VC>
   Actor*
-  MultPlusDom<VA,VB,VC>::copy(Space& home, bool share) {
-    return new (home) MultPlusDom<VA,VB,VC>(home,share,*this);
+  MultPlusDom<VA,VB,VC>::copy(Space& home) {
+    return new (home) MultPlusDom<VA,VB,VC>(home,*this);
   }
 
   template<class VA, class VB, class VC>
@@ -354,8 +351,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     : TernaryPropagator<IntView,PC_INT_DOM>(home,x0,x1,x2) {}
 
   forceinline
-  MultDom::MultDom(Space& home, bool share, MultDom& p)
-    : TernaryPropagator<IntView,PC_INT_DOM>(home,share,p) {}
+  MultDom::MultDom(Space& home, MultDom& p)
+    : TernaryPropagator<IntView,PC_INT_DOM>(home,p) {}
 
 }}}
 

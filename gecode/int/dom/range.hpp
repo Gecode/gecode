@@ -77,14 +77,14 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template<class View, ReifyMode rm>
   forceinline
-  ReRange<View,rm>::ReRange(Space& home, bool share, ReRange& p)
-    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p),
+  ReRange<View,rm>::ReRange(Space& home, ReRange& p)
+    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,p),
       min(p.min), max(p.max) {}
 
   template<class View, ReifyMode rm>
   Actor*
-  ReRange<View,rm>::copy(Space& home, bool share) {
-    return new (home) ReRange<View,rm>(home,share,*this);
+  ReRange<View,rm>::copy(Space& home) {
+    return new (home) ReRange<View,rm>(home,*this);
   }
 
   template<class View, ReifyMode rm>

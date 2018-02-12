@@ -82,15 +82,14 @@ namespace Gecode { namespace Int { namespace Dom {
 
   template<class View, ReifyMode rm>
   forceinline
-  ReIntSet<View,rm>::ReIntSet(Space& home, bool share, ReIntSet& p)
-    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p) {
-    is.update(home,share,p.is);
+  ReIntSet<View,rm>::ReIntSet(Space& home, ReIntSet& p)
+    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,p), is(p.is) {
   }
 
   template<class View, ReifyMode rm>
   Actor*
-  ReIntSet<View,rm>::copy(Space& home, bool share) {
-    return new (home) ReIntSet(home,share,*this);
+  ReIntSet<View,rm>::copy(Space& home) {
+    return new (home) ReIntSet(home,*this);
   }
 
   template<class View, ReifyMode rm>

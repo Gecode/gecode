@@ -288,6 +288,35 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
 
+    // Check this special case here, as there can be no overflow
+    if ((n == 2) && is_unit &&
+        ((vbd(ipl) == IPL_DOM) || (vbd(ipl) == IPL_DEF)) &&
+        (irt == IRT_EQ) && (d == 0)) {
+      switch (n_p) {
+      case 2: {
+        IntView x(t_p[0].x);
+        MinusView y(t_p[1].x);
+        GECODE_ES_FAIL((Rel::EqDom<IntView,MinusView>::post(home,x,y)));
+        break;
+      }
+      case 1: {
+        IntView x(t_p[0].x);
+        IntView y(t_n[0].x);
+        GECODE_ES_FAIL((Rel::EqDom<IntView,IntView>::post(home,x,y)));
+        break;
+      }
+      case 0: {
+        IntView x(t_n[0].x);
+        MinusView y(t_n[1].x);
+        GECODE_ES_FAIL((Rel::EqDom<IntView,MinusView>::post(home,x,y)));
+        break;
+      }
+      default:
+        GECODE_NEVER;
+      }
+      return;
+    }
+
     bool is_ip = precision(t_p,n_p,t_n,n_n,d);
 
     if (is_unit && is_ip &&
@@ -323,58 +352,28 @@ namespace Gecode { namespace Int { namespace Linear {
           (irt == IRT_EQ)) {
         // Binary domain-consistent equality
         c = static_cast<int>(d);
-        if (c == 0) {
-          switch (n_p) {
-          case 2: {
-            IntView x(t_p[0].x);
-            MinusView y(t_p[1].x);
-            GECODE_ES_FAIL(
-              (Rel::EqDom<IntView,MinusView>::post(home,x,y)));
-            break;
-          }
-          case 1: {
-            IntView x(t_p[0].x);
-            IntView y(t_n[0].x);
-            GECODE_ES_FAIL(
-              (Rel::EqDom<IntView,IntView>::post(home,x,y)));
-            break;
-          }
-          case 0: {
-            IntView x(t_n[0].x);
-            MinusView y(t_n[1].x);
-            GECODE_ES_FAIL(
-              (Rel::EqDom<IntView,MinusView>::post(home,x,y)));
-            break;
-          }
-          default:
-            GECODE_NEVER;
-          }
-        } else {
-          switch (n_p) {
-          case 2: {
-            MinusView x(t_p[0].x);
-            OffsetView y(t_p[1].x, -c);
-            GECODE_ES_FAIL(
-              (Rel::EqDom<MinusView,OffsetView>::post(home,x,y)));
-            break;
-          }
-          case 1: {
-            IntView x(t_p[0].x);
-            OffsetView y(t_n[0].x, c);
-            GECODE_ES_FAIL(
-              (Rel::EqDom<IntView,OffsetView>::post(home,x,y)));
-            break;
-          }
-          case 0: {
-            MinusView x(t_n[0].x);
-            OffsetView y(t_n[1].x, c);
-            GECODE_ES_FAIL(
-              (Rel::EqDom<MinusView,OffsetView>::post(home,x,y)));
-            break;
-          }
-          default:
-            GECODE_NEVER;
-          }
+        assert(c != 0);
+        switch (n_p) {
+        case 2: {
+          MinusView x(t_p[0].x);
+          OffsetView y(t_p[1].x, -c);
+          GECODE_ES_FAIL((Rel::EqDom<MinusView,OffsetView>::post(home,x,y)));
+          break;
+        }
+        case 1: {
+          IntView x(t_p[0].x);
+          OffsetView y(t_n[0].x, c);
+          GECODE_ES_FAIL((Rel::EqDom<IntView,OffsetView>::post(home,x,y)));
+          break;
+        }
+        case 0: {
+          MinusView x(t_n[0].x);
+          OffsetView y(t_n[1].x, c);
+          GECODE_ES_FAIL((Rel::EqDom<MinusView,OffsetView>::post(home,x,y)));
+          break;
+        }
+        default:
+          GECODE_NEVER;
         }
       } else {
         // Arbitrary coefficients with integer precision

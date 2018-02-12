@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   forceinline
   PartitionN<View0,View1>::PartitionN(Home home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
-    shared = x.shared(home) || viewarrayshared(home,x,y);
+    shared = x.shared() || viewarrayshared(x,y);
   }
 
   template<class View0, class View1>
@@ -60,23 +60,23 @@ namespace Gecode { namespace Set { namespace RelOp {
   PartitionN<View0,View1>::PartitionN(Home home, ViewArray<View0>& x,
                                       const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
-    shared = x.shared(home) || viewarrayshared(home,x,y);
+    shared = x.shared() || viewarrayshared(x,y);
     IntSetRanges rz(z);
     unionOfDets.includeI(home, rz);
   }
 
   template<class View0, class View1>
   forceinline
-  PartitionN<View0,View1>::PartitionN(Space& home, bool share, PartitionN& p)
-    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
+  PartitionN<View0,View1>::PartitionN(Space& home, PartitionN& p)
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p),
       shared(p.shared) {
     unionOfDets.update(home,p.unionOfDets);
   }
 
   template<class View0, class View1>
   Actor*
-  PartitionN<View0,View1>::copy(Space& home, bool share) {
-    return new (home) PartitionN(home,share,*this);
+  PartitionN<View0,View1>::copy(Space& home) {
+    return new (home) PartitionN(home,*this);
   }
 
   template<class View0, class View1>
@@ -138,7 +138,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     } while (modified);
 
     //removing assigned sets from x, accumulating the value:
-    for(int i=0;i<x.size();i++){
+    for(int i=0;i<x.size();i++) {
       //Do not reverse! Eats away the end of the array!
       while (i<x.size() && x[i].assigned()) {
         GlbRanges<View0> det(x[i]);

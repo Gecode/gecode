@@ -385,13 +385,13 @@ namespace {
       branch(*this, x, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
     }
     /// Constructor for cloning \a s
-    DistinctLinear(bool share, DistinctLinear& s) : Space(share,s) {
-      x.update(*this, share, s.x);
+    DistinctLinear(DistinctLinear& s) : Space(s) {
+      x.update(*this, s.x);
     }
     /// Perform copying during cloning
     virtual Space*
-    copy(bool share) {
-      return new DistinctLinear(share,*this);
+    copy(void) {
+      return new DistinctLinear(*this);
     }
     /// Return a solution
     IntArgs solution(void) const {
@@ -410,7 +410,7 @@ namespace {
     DistinctLinear* e = new DistinctLinear(n,c);
     DFS<DistinctLinear> d(e);
     delete e;
-    TupleSet ts;
+    TupleSet ts(n);
     while (DistinctLinear* s = d.next()) {
       ts.add(s->solution()); delete s;
     }
@@ -578,13 +578,13 @@ public:
     branch(*this, f, INT_VAR_AFC_SIZE_MAX(opt.decay()), INT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a s
-  Kakuro(bool share, Kakuro& s) : Script(share,s), w(s.w), h(s.h) {
-    f.update(*this, share, s.f);
+  Kakuro(Kakuro& s) : Script(s), w(s.w), h(s.h) {
+    f.update(*this, s.f);
   }
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new Kakuro(share,*this);
+  copy(void) {
+    return new Kakuro(*this);
   }
   /// Print solution
   virtual void

@@ -354,10 +354,45 @@ namespace Test { namespace Set {
       /// Post reified constraint on \a x for \a r
       virtual void post(Space& home, SetVarArray& x, IntVarArray& y,
                         Reify r) {
-        if (!swapped)
-          Gecode::rel(home, x[0], irt, y[0], r);
-        else
-          Gecode::rel(home, y[0], irt, x[0], r);
+        assert((x.size() == 1) && (y.size() == 1));
+        if ((r.mode() != Gecode::RM_EQV) || (Base::rand(2) != 0)) {
+          if (!swapped)
+            Gecode::rel(home, x[0], irt, y[0], r);
+          else
+            Gecode::rel(home, y[0], irt, x[0], r);
+        } else if (swapped) {
+          switch (irt) {
+          case Gecode::IRT_EQ:
+            Gecode::rel(home, (y[0] == x[0]) == r.var()); break;
+          case Gecode::IRT_NQ:
+            Gecode::rel(home, (y[0] != x[0]) == r.var()); break;
+          case Gecode::IRT_LE:
+            Gecode::rel(home, (y[0] < x[0]) == r.var()); break;
+          case Gecode::IRT_LQ:
+            Gecode::rel(home, (y[0] <= x[0]) == r.var()); break;
+          case Gecode::IRT_GR:
+            Gecode::rel(home, (y[0] > x[0]) == r.var()); break;
+          case Gecode::IRT_GQ:
+            Gecode::rel(home, (y[0] >= x[0]) == r.var()); break;
+          default: GECODE_NEVER;
+          }
+        } else {
+          switch (irt) {
+          case Gecode::IRT_EQ:
+            Gecode::rel(home, (x[0] == y[0]) == r.var()); break;
+          case Gecode::IRT_NQ:
+            Gecode::rel(home, (x[0] != y[0]) == r.var()); break;
+          case Gecode::IRT_LE:
+            Gecode::rel(home, (x[0] < y[0]) == r.var()); break;
+          case Gecode::IRT_LQ:
+            Gecode::rel(home, (x[0] <= y[0]) == r.var()); break;
+          case Gecode::IRT_GR:
+            Gecode::rel(home, (x[0] > y[0]) == r.var()); break;
+          case Gecode::IRT_GQ:
+            Gecode::rel(home, (x[0] >= y[0]) == r.var()); break;
+          default: GECODE_NEVER;
+          }
+        }
       }
     };
     IntRel _intrel_eq(Gecode::IRT_EQ,false);

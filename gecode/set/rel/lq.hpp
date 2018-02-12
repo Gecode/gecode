@@ -321,22 +321,24 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template<class View0, class View1, bool strict>
   forceinline
-  Lq<View0,View1,strict>::Lq(Space& home, bool share, Lq& p)
-    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p) {}
+  Lq<View0,View1,strict>::Lq(Space& home, Lq& p)
+    : MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p) {}
 
   template<class View0, class View1, bool strict>
   ExecStatus
   Lq<View0,View1,strict>::post(Home home, View0 x, View1 y) {
     if (strict)
       GECODE_ME_CHECK(y.cardMin(home,1));
+    if (same(x,y))
+      return strict ? ES_FAILED : ES_OK;
     (void) new (home) Lq(home,x,y);
     return ES_OK;
   }
 
   template<class View0, class View1, bool strict>
   Actor*
-  Lq<View0,View1,strict>::copy(Space& home, bool share) {
-    return new (home) Lq(home,share,*this);
+  Lq<View0,View1,strict>::copy(Space& home) {
+    return new (home) Lq(home,*this);
   }
 
   template<class View0, class View1, bool strict>
@@ -357,7 +359,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     bool assigned = x0.assigned() && x1.assigned();
 
-    Region re(home);
+    Region re;
     CharacteristicSets cs(re,x0,x1);
 
     /*

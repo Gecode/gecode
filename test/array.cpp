@@ -184,9 +184,9 @@ namespace Test {
   class TestSpace : public Gecode::Space {
   public:
     TestSpace(void) : Space() {}
-    TestSpace(bool share, TestSpace& s) : Space(share,s) {}
-    virtual Space* copy(bool share) {
-      return new TestSpace(share,*this);
+    TestSpace(TestSpace& s) : Space(s) {}
+    virtual Space* copy(void) {
+      return new TestSpace(*this);
     }
   };
 

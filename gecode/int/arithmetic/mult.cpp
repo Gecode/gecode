@@ -44,8 +44,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
   Actor*
-  MultBnd::copy(Space& home, bool share) {
-    return new (home) MultBnd(home,share,*this);
+  MultBnd::copy(Space& home) {
+    return new (home) MultBnd(home,*this);
   }
 
   ExecStatus
@@ -198,8 +198,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
   Actor*
-  MultDom::copy(Space& home, bool share) {
-    return new (home) MultDom(home,share,*this);
+  MultDom::copy(Space& home) {
+    return new (home) MultDom(home,*this);
   }
 
   PropCost

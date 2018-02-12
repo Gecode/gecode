@@ -161,6 +161,10 @@ namespace Gecode { namespace Int {
   BoolVarImp::max(const Delta& d) {
     return static_cast<const IntDelta&>(d).min();
   }
+  forceinline unsigned int
+  BoolVarImp::width(const Delta& d) {
+    return static_cast<const IntDelta&>(d).width();
+  }
   forceinline bool
   BoolVarImp::any(const Delta&) {
     return false;
@@ -252,10 +256,10 @@ namespace Gecode { namespace Int {
    */
 
   forceinline
-  BoolVarImp::BoolVarImp(Space& home, bool share, BoolVarImp& x)
-    : BoolVarImpBase(home,share,x) {}
+  BoolVarImp::BoolVarImp(Space& home, BoolVarImp& x)
+    : BoolVarImpBase(home,x) {}
   forceinline BoolVarImp*
-  BoolVarImp::copy(Space& home, bool share) {
+  BoolVarImp::copy(Space& home) {
     if (copied())
       return static_cast<BoolVarImp*>(forward());
     else if (zero())
@@ -263,7 +267,7 @@ namespace Gecode { namespace Int {
     else if (one())
       return &s_one;
     else
-      return new (home) BoolVarImp(home,share,*this);
+      return new (home) BoolVarImp(home,*this);
   }
 
 

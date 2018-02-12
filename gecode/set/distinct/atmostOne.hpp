@@ -47,8 +47,8 @@ namespace Gecode { namespace Set { namespace Distinct {
     : NaryPropagator<SetView, PC_SET_ANY>(home,x), c(_c) {}
 
   forceinline
-  AtmostOne::AtmostOne(Space& home, bool share, AtmostOne& p)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,share,p), c(p.c) {}
+  AtmostOne::AtmostOne(Space& home, AtmostOne& p)
+    : NaryPropagator<SetView, PC_SET_ANY>(home,p), c(p.c) {}
 
   forceinline ExecStatus
   AtmostOne::post(Home home, ViewArray<SetView> x, unsigned int c) {

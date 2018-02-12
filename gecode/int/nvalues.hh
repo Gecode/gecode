@@ -109,13 +109,13 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Initialize graph including values in \a vs
     void init(Space& home, const ValSet& vs, const ViewArray<IntView>& x);
     /// Synchronize graph with new view domains
-    void sync(Space& home);
+    void sync(void);
     /*
      * \brief Mark all edges used that can appear in some maximal matching
      *
      * Return true, if any edge can be in fact pruned.
      */
-    bool mark(Space& home);
+    bool mark(void);
     /// Prune all values corresponding to unused edges
     ExecStatus prune(Space& home);
   };
@@ -143,7 +143,7 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     IntBase(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    IntBase(Space& home, bool share, IntBase<VY>& p);
+    IntBase(Space& home, IntBase<VY>& p);
     /// Add values of assigned views to value set
     void add(Space& home);
     /**
@@ -154,8 +154,6 @@ namespace Gecode { namespace Int { namespace NValues {
     void disjoint(Space& home, Region& r, int*& dis, int& n_dis);
     /// Eliminate subsumed views (all values included in the value set \a vs)
     void eliminate(Space& home);
-    /// Return a size estimate based on the union of all values
-    int size(Space& home) const;
     /// Propagate that all views must take values from value set
     ExecStatus all_in_valset(Space& home);
     /**
@@ -203,10 +201,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     EqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    EqInt(Space& home, bool share, EqInt<VY>& p);
+    EqInt(Space& home, EqInt<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}=y\f$
@@ -235,10 +233,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     LqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    LqInt(Space& home, bool share, LqInt<VY>& p);
+    LqInt(Space& home, LqInt<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\leq y\f$
@@ -270,10 +268,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     GqInt(Home home, ValSet& vs, ViewArray<IntView>& x, VY y);
     /// Constructor for cloning \a p
-    GqInt(Space& home, bool share, GqInt<VY>& p);
+    GqInt(Space& home, GqInt<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Propagator* copy(Space& home, bool share);
+    virtual Propagator* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$\#\{x_0,\ldots,x_{|x|-1}\}\geq y\f$
@@ -311,7 +309,7 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     BoolBase(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    BoolBase(Space& home, bool share, BoolBase<VY>& p);
+    BoolBase(Space& home, BoolBase<VY>& p);
   public:
     /// Give advice to propagator
     virtual ExecStatus advise(Space& home, Advisor& a, const Delta& d);
@@ -340,10 +338,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     EqBool(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    EqBool(Space& home, bool share, EqBool<VY>& p);
+    EqBool(Space& home, EqBool<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -372,10 +370,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     LqBool(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    LqBool(Space& home, bool share, LqBool<VY>& p);
+    LqBool(Space& home, LqBool<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**
@@ -404,10 +402,10 @@ namespace Gecode { namespace Int { namespace NValues {
     /// Constructor for posting
     GqBool(Home home, int status, ViewArray<BoolView>& x, VY y);
     /// Constructor for cloning \a p
-    GqBool(Space& home, bool share, GqBool<VY>& p);
+    GqBool(Space& home, GqBool<VY>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /**

@@ -49,13 +49,13 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   forceinline
-  Lq<BV>::Lq(Space& home, bool share, Lq<BV>& p)
-    : BoolBinary<BV,BV>(home,share,p) {}
+  Lq<BV>::Lq(Space& home, Lq<BV>& p)
+    : BoolBinary<BV,BV>(home,p) {}
 
   template<class BV>
   Actor*
-  Lq<BV>::copy(Space& home, bool share) {
-    return new (home) Lq<BV>(home,share,*this);
+  Lq<BV>::copy(Space& home) {
+    return new (home) Lq<BV>(home,*this);
   }
 
   template<class BV>
@@ -119,16 +119,16 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX>
   forceinline
-  NaryLq<VX>::NaryLq(Space& home, bool share, NaryLq<VX>& p)
-    : NaryPropagator<VX,PC_BOOL_NONE>(home,share,p),
+  NaryLq<VX>::NaryLq(Space& home, NaryLq<VX>& p)
+    : NaryPropagator<VX,PC_BOOL_NONE>(home,p),
       run(false), n_zero(0), n_one(0) {
-    c.update(home,share,p.c);
+    c.update(home,p.c);
   }
 
   template<class VX>
   Actor*
-  NaryLq<VX>::copy(Space& home, bool share) {
-    return new (home) NaryLq<VX>(home,share,*this);
+  NaryLq<VX>::copy(Space& home) {
+    return new (home) NaryLq<VX>(home,*this);
   }
 
   template<class VX>

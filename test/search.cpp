@@ -78,7 +78,7 @@ namespace Test {
       /// Constructor for space creation
       TestSpace(void) {}
       /// Constructor for cloning \a s
-      TestSpace(bool share, TestSpace& s) : Space(share,s) {}
+      TestSpace(TestSpace& s) : Space(s) {}
       /// Return number of solutions
       virtual int solutions(void) const = 0;
       /// Verify that this is best solution
@@ -107,12 +107,12 @@ namespace Test {
         rel(*this, x[0], IRT_EQ, 1);
       }
       /// Constructor for cloning \a s
-      FailImmediate(bool share, FailImmediate& s) : TestSpace(share,s) {
-        x.update(*this, share, s.x);
+      FailImmediate(FailImmediate& s) : TestSpace(s) {
+        x.update(*this, s.x);
       }
       /// Copy during cloning
-      virtual Space* copy(bool share) {
-        return new FailImmediate(share,*this);
+      virtual Space* copy(void) {
+        return new FailImmediate(*this);
       }
       /// Add constraint for next better solution
       virtual void constrain(const Space&) {
@@ -141,12 +141,12 @@ namespace Test {
                      HowToConstrain=HTC_NONE)
         : x(*this,1,0,0) {}
       /// Constructor for cloning \a s
-      SolveImmediate(bool share, SolveImmediate& s) : TestSpace(share,s) {
-        x.update(*this, share, s.x);
+      SolveImmediate(SolveImmediate& s) : TestSpace(s) {
+        x.update(*this, s.x);
       }
       /// Copy during cloning
-      virtual Space* copy(bool share) {
-        return new SolveImmediate(share,*this);
+      virtual Space* copy(void) {
+        return new SolveImmediate(*this);
       }
       /// Add constraint for next better solution
       virtual void constrain(const Space&) {
@@ -203,14 +203,14 @@ namespace Test {
         IntVarArgs x3(2); x3[0]=x[4]; x3[1]=x[5]; branch(x3, htb3);
       }
       /// Constructor for cloning \a s
-      HasSolutions(bool share, HasSolutions& s)
-        : TestSpace(share,s),
+      HasSolutions(HasSolutions& s)
+        : TestSpace(s),
           htb1(s.htb1), htb2(s.htb2), htb3(s.htb3), htc(s.htc) {
-        x.update(*this, share, s.x);
+        x.update(*this, s.x);
       }
       /// Copy during cloning
-      virtual Space* copy(bool share) {
-        return new HasSolutions(share,*this);
+      virtual Space* copy(void) {
+        return new HasSolutions(*this);
       }
       /// Add constraint for next better solution
       virtual void constrain(const Space& _s) {
@@ -571,7 +571,7 @@ namespace Test {
               break;
             f.limit(f.limit()+2);
           }
-          return n == 0;
+          return n >= 0;
         }
       }
     };
@@ -646,7 +646,7 @@ namespace Test {
               break;
             f.limit(f.limit()+2);
           }
-          return n == 0;
+          return n >= 0;
         }
       }
     };

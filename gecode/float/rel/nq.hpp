@@ -64,13 +64,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View0, class View1>
   forceinline
-  Nq<View0,View1>::Nq(Space& home, bool share, Nq<View0,View1>& p)
-    : MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>(home,share,p) {}
+  Nq<View0,View1>::Nq(Space& home, Nq<View0,View1>& p)
+    : MixBinaryPropagator<View0,PC_FLOAT_VAL,View1,PC_FLOAT_VAL>(home,p) {}
 
   template<class View0, class View1>
   Actor*
-  Nq<View0,View1>::copy(Space& home, bool share) {
-    return new (home) Nq<View0,View1>(home,share,*this);
+  Nq<View0,View1>::copy(Space& home) {
+    return new (home) Nq<View0,View1>(home,*this);
   }
 
   template<class View0, class View1>
@@ -105,13 +105,13 @@ namespace Gecode { namespace Float { namespace Rel {
 
   template<class View>
   forceinline
-  NqFloat<View>::NqFloat(Space& home, bool share, NqFloat<View>& p)
-    : UnaryPropagator<View,PC_FLOAT_VAL>(home,share,p), c(p.c) {}
+  NqFloat<View>::NqFloat(Space& home, NqFloat<View>& p)
+    : UnaryPropagator<View,PC_FLOAT_VAL>(home,p), c(p.c) {}
 
   template<class View>
   Actor*
-  NqFloat<View>::copy(Space& home, bool share) {
-    return new (home) NqFloat<View>(home,share,*this);
+  NqFloat<View>::copy(Space& home) {
+    return new (home) NqFloat<View>(home,*this);
   }
 
   template<class View>

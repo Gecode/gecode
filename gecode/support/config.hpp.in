@@ -49,14 +49,20 @@
 /* Whether gcc understands visibility attributes */
 #undef GECODE_GCC_HAS_CLASS_VISIBILITY
 
-/* whether __builtin_ffsl is available */
-#undef GECODE_HAS_BUILTIN_FFSL
+/* whether __builtin_ffsll is available */
+#undef GECODE_HAS_BUILTIN_FFSLL
+
+/* whether __builtin_popcountll is available */
+#undef GECODE_HAS_BUILTIN_POPCOUNTLL
 
 /* Whether to build FLOAT variables */
 #undef GECODE_HAS_FLOAT_VARS
 
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
+
+/* Whether support for CPProfiler is available */
+#undef GECODE_HAS_CPPROFILER
 
 /* Whether GNU hash_map is available */
 #undef GECODE_HAS_GNU_HASH_MAP
@@ -108,6 +114,9 @@
 
 /* Whether we have Mac OS threads */
 #undef GECODE_THREADS_OSX
+
+/* Whether we have Mac OS threads (new version) */
+#undef GECODE_THREADS_OSX_UNFAIR
 
 /* Whether we have posix threads */
 #undef GECODE_THREADS_PTHREADS

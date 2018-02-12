@@ -148,13 +148,13 @@ namespace Gecode { namespace Int {
 
   template<class View>
   forceinline void
-  IdxViewArray<View>::update(Space& home, bool share, IdxViewArray<View>& a) {
+  IdxViewArray<View>::update(Space& home, IdxViewArray<View>& a) {
     n = a.size();
     if (n>0) {
       xs = IdxView<View>::allocate(home,n);
       for (int i=n; i--; ) {
         xs[i].idx = a[i].idx;
-        xs[i].view.update(home,share,a[i].view);
+        xs[i].view.update(home,a[i].view);
       }
     }
   }

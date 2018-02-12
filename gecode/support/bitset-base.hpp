@@ -4,9 +4,11 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Contributing authors:
+ *     Linnea Ingmar <linnea.ingmar@hotmail.com>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Linnea Ingmar, 2017
  *     Mikael Lagerkvist, 2007
  *     Christian Schulte, 2007
  *
@@ -47,11 +49,13 @@
 
 #if defined(_M_IX86)
 #pragma intrinsic(_BitScanForward)
+#pragma intrinsic(__popcnt)
 #define GECODE_SUPPORT_MSVC_32
 #endif
 
 #if defined(_M_X64) || defined(_M_IA64)
 #pragma intrinsic(_BitScanForward64)
+#pragma intrinsic(__popcnt64)
 #define GECODE_SUPPORT_MSVC_64
 #endif
 
@@ -65,19 +69,19 @@ namespace Gecode { namespace Support {
   class BitSetData {
     friend class RawBitSetBase;
   protected:
-#ifdef GECODE_SUPPORT_MSVC_64
-    /// Basetype for bits
-    typedef unsigned __int64 Base;
-#else
+#if defined(GECODE_SUPPORT_MSVC_32)
     /// Basetype for bits
     typedef unsigned long int Base;
+#else
+    /// Basetype for bits
+    typedef unsigned long long int Base;
 #endif
     /// The bits
     Base bits;
+  public:
     /// Bits per base
     static const unsigned int bpb =
       static_cast<unsigned int>(CHAR_BIT * sizeof(Base));
-  public:
     /// Initialize with all bits set if \a setbits
     void init(bool setbits=false);
     /// Get number of data elements for \a s bits
@@ -100,6 +104,12 @@ namespace Gecode { namespace Support {
     bool none(void) const;
     /// Whether no bits from bit 0 to bit \a i are set
     bool none(unsigned int i) const;
+    /// Return the number of bits set
+    unsigned int ones(void) const;
+    /// Return the number of bits not set
+    unsigned int zeroes(void) const;
+    /// Check whether exactly one bit is set
+    bool one(void) const;
     /// Perform "and" with \a a
     void a(BitSetData a);
     /// Perform "and" with \a a for bits 0 to \a i
@@ -112,6 +122,12 @@ namespace Gecode { namespace Support {
     void o(BitSetData a, unsigned int i);
     /// Return "or" of \a a and \a b
     static BitSetData o(BitSetData a, BitSetData b);
+    /// Check if bits are the same as for \a a
+    bool operator ==(BitSetData a) const;
+    /// Check if bits are not the same as for \a a
+    bool operator !=(BitSetData a) const;
+    /// Invert all bits in \a b
+    BitSetData operator ~(void) const;
   };
 
   /// Status of a bitset
@@ -267,9 +283,9 @@ namespace Gecode { namespace Support {
     unsigned long int p;
     _BitScanForward64(&p,bits >> i);
     return static_cast<unsigned int>(p)+i;
-#elif defined(GECODE_HAS_BUILTIN_FFSL)
-    if ((bpb == 32) || (bpb == 64)) {
-      int p = __builtin_ffsl(bits >> i);
+#elif defined(GECODE_HAS_BUILTIN_FFSLL)
+    if (bpb == 64) {
+      int p = __builtin_ffsll(bits >> i);
       assert(p > 0);
       return static_cast<unsigned int>(p-1)+i;
     }
@@ -295,6 +311,39 @@ namespace Gecode { namespace Support {
   BitSetData::none(unsigned int i) const {
     const Base mask = (static_cast<Base>(1U) << i) - static_cast<Base>(1U);
     return (bits & mask) == static_cast<Base>(0U);
+  }
+
+  forceinline unsigned int
+  BitSetData::ones(void) const {
+#if defined(GECODE_SUPPORT_MSVC_32)
+    assert(bpb == 32);
+    return static_cast<unsigned int>(__popcnt(bits));
+#elif defined(GECODE_SUPPORT_MSVC_64)
+    assert(bpb == 64);
+    return static_cast<unsigned int>(__popcnt64(bits));
+#elif defined(GECODE_HAS_BUILTIN_POPCOUNTLL)
+    if (bpb == 64)
+      return static_cast<unsigned int>(__builtin_popcountll(bits));
+#else
+    const unsigned long long int m1 = 0x5555555555555555;
+    const unsigned long long int m2 = 0x3333333333333333;
+    const unsigned long long int m4 = 0x0f0f0f0f0f0f0f0f;
+    unsigned long long int b = bits;
+    b -= (b >> 1) & m1;
+    b = (b & m2) + ((b >> 2) & m2);
+    b = (b + (b >> 4)) & m4;
+    b += b >>  8; b += b >> 16; b += b >> 32;
+    return static_cast<unsigned int>(b & 0x7f);
+#endif
+  }
+  forceinline unsigned int
+  BitSetData::zeroes(void) const {
+    return bpb - ones();
+  }
+  forceinline bool
+  BitSetData::one(void) const {
+    return (bits & (bits - static_cast<Base>(1U))) ==
+      static_cast<Base>(0U);
   }
 
   forceinline void
@@ -327,6 +376,21 @@ namespace Gecode { namespace Support {
     BitSetData ab;
     ab.bits = a.bits | b.bits;
     return ab;
+  }
+
+  forceinline BitSetData
+  BitSetData::operator ~(void) const {
+    BitSetData iv;
+    iv.bits = ~bits;
+    return iv;
+  }
+  forceinline bool
+  BitSetData::operator ==(BitSetData a) const {
+    return bits == a.bits;
+  }
+  forceinline bool
+  BitSetData::operator !=(BitSetData a) const {
+    return bits != a.bits;
   }
 
 
@@ -573,4 +637,3 @@ namespace Gecode { namespace Support {
 #endif
 
 // STATISTICS: support-any
-

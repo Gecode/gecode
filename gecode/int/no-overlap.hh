@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     ExecStatus nooverlap(Space& home, FixDim& d);
 
     /// Update dimension during cloning
-    void update(Space& home, bool share, FixDim& d);
+    void update(Space& home, FixDim& d);
 
     /// Subscribe propagator \a p to dimension
     void subscribe(Space& home, Propagator& p);
@@ -127,7 +127,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     ExecStatus nooverlap(Space& home, FlexDim& d);
 
     /// Update dimension during cloning
-    void update(Space& home, bool share, FlexDim& d);
+    void update(Space& home, FlexDim& d);
 
     /// Subscribe propagator \a p to dimension
     void subscribe(Space& home, Propagator& p);
@@ -178,7 +178,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     ExecStatus nooverlap(Space& home, ManBox<Dim,n>& b);
 
     /// Update box during cloning
-    void update(Space& home, bool share, ManBox<Dim,n>& r);
+    void update(Space& home, ManBox<Dim,n>& r);
 
     /// Subscribe propagator \a p to box
     void subscribe(Space& home, Propagator& p);
@@ -211,7 +211,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     ExecStatus exclude(Space& home);
 
     /// Update box during cloning
-    void update(Space& home, bool share, OptBox<Dim,n>& r);
+    void update(Space& home, OptBox<Dim,n>& r);
 
     /// Subscribe propagator \a p to box
     void subscribe(Space& home, Propagator& p);
@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Constructor for posting with \a n mandatory boxes
     Base(Home home, Box* b, int n);
     /// Constructor for cloning \a p with \a m boxes
-    Base(Space& home, bool share, Base<Box>& p, int m);
+    Base(Space& home, Base<Box>& p, int m);
     /**
      * \brief Partition \a n boxes \a b starting at position \a i
      *
@@ -275,14 +275,14 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Constructor for posting
     ManProp(Home home, Box* b, int n);
     /// Constructor for cloning \a p
-    ManProp(Space& home, bool share, ManProp<Box>& p);
+    ManProp(Space& home, ManProp<Box>& p);
   public:
     /// Post propagator for boxes \a b
     static ExecStatus post(Home home, Box* b, int n);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Destructor
     virtual size_t dispose(Space& home);
   };
@@ -304,14 +304,14 @@ namespace Gecode { namespace Int { namespace NoOverlap {
     /// Constructor for posting
     OptProp(Home home, Box* b, int n, int m);
     /// Constructor for cloning \a p
-    OptProp(Space& home, bool share, OptProp<Box>& p);
+    OptProp(Space& home, OptProp<Box>& p);
   public:
     /// Post propagator for boxes \a b
     static ExecStatus post(Home home, Box* b, int n);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Destructor
     virtual size_t dispose(Space& home);
   };

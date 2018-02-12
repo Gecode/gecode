@@ -40,13 +40,13 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   forceinline
-  LinkSingle::LinkSingle(Space& home, bool share, LinkSingle& p)
+  LinkSingle::LinkSingle(Space& home, LinkSingle& p)
     : MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
-  (home,share,p) {}
+  (home,p) {}
 
   Actor*
-  LinkSingle::copy(Space& home, bool share) {
-    return new (home) LinkSingle(home,share,*this);
+  LinkSingle::copy(Space& home) {
+    return new (home) LinkSingle(home,*this);
   }
 
   PropCost

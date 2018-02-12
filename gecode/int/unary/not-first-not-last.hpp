@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Unary {
   notlast(Space& home, TaskViewArray<ManTaskView>& t) {
     sort<ManTaskView,STO_LCT,true>(t);
 
-    Region r(home);
+    Region r;
 
     OmegaTree<ManTaskView> o(r,t);
     TaskViewIter<ManTaskView,STO_LST,true> q(r,t);
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Unary {
   notlast(Space& home, Propagator& p, TaskViewArray<OptTaskView>& t) {
     sort<OptTaskView,STO_LCT,true>(t);
 
-    Region r(home);
+    Region r;
 
     OmegaTree<OptTaskView> o(r,t);
     ManTaskViewIter<OptTaskView,STO_LST,true> q(r,t);

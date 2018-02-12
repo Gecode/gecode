@@ -59,11 +59,11 @@ public:
   EFPAOptions(const char* s,
               int v0 = 5, int q0 = 3, int lambda0 = 2, int d0 = 4)
     : Options(s),
-      _v("-v", "number of sequences",                        v0     ),
-      _q("-q", "number of symbols",                          q0     ),
-      _l("-l", "sets of symbols per sequence (lambda)",      lambda0),
-      _d("-d", "Hamming distance between sequences",         d0     ),
-      _permutation("-permutation", "use permutation constraints if d=4",
+      _v("v", "number of sequences",                        v0     ),
+      _q("q", "number of symbols",                          q0     ),
+      _l("l", "sets of symbols per sequence (lambda)",      lambda0),
+      _d("d", "Hamming distance between sequences",         d0     ),
+      _permutation("permutation", "use permutation constraints if d=4",
                    false)
   {
     // Add options
@@ -289,8 +289,8 @@ public:
   }
 
   /// Constructor for cloning \a s
-  EFPA(bool share, EFPA& s)
-    : Script(share,s),
+  EFPA(EFPA& s)
+    : Script(s),
       v(s.v),
       q(s.q),
       l(s.l),
@@ -298,13 +298,13 @@ public:
       n(s.n),
       nseqpair(s.nseqpair)
   {
-    c.update(*this, share, s.c);
-    diff.update(*this, share, s.diff);
+    c.update(*this, s.c);
+    diff.update(*this, s.diff);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new EFPA(share,*this);
+  copy(void) {
+    return new EFPA(*this);
   }
 };
 

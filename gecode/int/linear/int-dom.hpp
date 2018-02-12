@@ -372,13 +372,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class View>
   forceinline
-  DomEq<Val,View>::DomEq(Space& home, bool share, DomEq<Val,View>& p)
-    : Lin<Val,View,View,PC_INT_DOM>(home,share,p) {}
+  DomEq<Val,View>::DomEq(Space& home, DomEq<Val,View>& p)
+    : Lin<Val,View,View,PC_INT_DOM>(home,p) {}
 
   template<class Val, class View>
   Actor*
-  DomEq<Val,View>::copy(Space& home, bool share) {
-    return new (home) DomEq<Val,View>(home,share,*this);
+  DomEq<Val,View>::copy(Space& home) {
+    return new (home) DomEq<Val,View>(home,*this);
   }
 
   template<class Val, class View>
@@ -405,7 +405,7 @@ namespace Gecode { namespace Int { namespace Linear {
     int n = x.size();
     int m = y.size();
 
-    Region r(home);
+    Region r;
     // Create support-base iterators
     PosSupportIter<Val>* xp = r.alloc<PosSupportIter<Val> >(n);
     NegSupportIter<Val>* yp = r.alloc<NegSupportIter<Val> >(m);

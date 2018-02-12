@@ -50,13 +50,13 @@ namespace Gecode {
   }
 
   forceinline
-  FloatAFC::FloatAFC(Home home, const FloatVarArgs& x, double d) {
-    AFC::init(home,x,d);
+  FloatAFC::FloatAFC(Home home, const FloatVarArgs& x, double d, bool share) {
+    AFC::init(home,x,d,share);
   }
 
   forceinline void
-  FloatAFC::init(Home home, const FloatVarArgs& x, double d) {
-    AFC::init(home,x,d);
+  FloatAFC::init(Home home, const FloatVarArgs& x, double d, bool share) {
+    AFC::init(home,x,d,share);
   }
 
 }

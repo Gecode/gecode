@@ -85,12 +85,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline
-  LinBoolInt<VX>::LinBoolInt(Space& home, bool share, LinBoolInt<VX>& p)
-    : Propagator(home,share,p), n_as(p.n_as), n_hs(n_as) {
+  LinBoolInt<VX>::LinBoolInt(Space& home, LinBoolInt<VX>& p)
+    : Propagator(home,p), n_as(p.n_as), n_hs(n_as) {
     p.normalize();
     c=p.c;
-    co.update(home,share,p.co);
-    x.update(home,share,p.x);
+    co.update(home,p.co);
+    x.update(home,p.x);
   }
 
   template<class VX>
@@ -121,13 +121,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline
-  GqBoolInt<VX>::GqBoolInt(Space& home, bool share, GqBoolInt<VX>& p)
-    : LinBoolInt<VX>(home,share,p) {}
+  GqBoolInt<VX>::GqBoolInt(Space& home, GqBoolInt<VX>& p)
+    : LinBoolInt<VX>(home,p) {}
 
   template<class VX>
   Actor*
-  GqBoolInt<VX>::copy(Space& home, bool share) {
-    return new (home) GqBoolInt<VX>(home,share,*this);
+  GqBoolInt<VX>::copy(Space& home) {
+    return new (home) GqBoolInt<VX>(home,*this);
   }
 
   template<class VX>
@@ -244,13 +244,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline
-  EqBoolInt<VX>::EqBoolInt(Space& home, bool share, EqBoolInt<VX>& p)
-    : LinBoolInt<VX>(home,share,p) {}
+  EqBoolInt<VX>::EqBoolInt(Space& home, EqBoolInt<VX>& p)
+    : LinBoolInt<VX>(home,p) {}
 
   template<class VX>
   Actor*
-  EqBoolInt<VX>::copy(Space& home, bool share) {
-    return new (home) EqBoolInt<VX>(home,share,*this);
+  EqBoolInt<VX>::copy(Space& home) {
+    return new (home) EqBoolInt<VX>(home,*this);
   }
 
   template<class VX>
@@ -376,8 +376,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   forceinline
-  NqBoolInt<VX>::NqBoolInt(Space& home, bool share, NqBoolInt<VX>& p)
-    : BinaryPropagator<VX,PC_INT_VAL>(home,share,p), x(home,p.x.size()) {
+  NqBoolInt<VX>::NqBoolInt(Space& home, NqBoolInt<VX>& p)
+    : BinaryPropagator<VX,PC_INT_VAL>(home,p), x(home,p.x.size()) {
     // Eliminate all zeros and ones in original and update
     int n = p.x.size();
     int p_c = p.c;
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (p.x[i].one()) {
         n--; p_c--; p.x[i]=p.x[n]; x[i]=x[n];
       } else {
-        x[i].update(home,share,p.x[i]);
+        x[i].update(home,p.x[i]);
       }
     c = p_c; p.c = p_c;
     x.size(n); p.x.size(n);
@@ -422,8 +422,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX>
   Actor*
-  NqBoolInt<VX>::copy(Space& home, bool share) {
-    return new (home) NqBoolInt<VX>(home,share,*this);
+  NqBoolInt<VX>::copy(Space& home) {
+    return new (home) NqBoolInt<VX>(home,*this);
   }
 
   template<class VX>
@@ -519,13 +519,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB>
   forceinline
-  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, bool share,
-                                    ReLinBoolInt<VX,VB>& p)
-    : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
+  ReLinBoolInt<VX,VB>::ReLinBoolInt(Space& home, ReLinBoolInt<VX,VB>& p)
+    : Propagator(home,p), n_s(p.n_s), c(p.c) {
     p.normalize();
-    co.update(home,share,p.co);
-    x.update(home,share,p.x);
-    b.update(home,share,p.b);
+    co.update(home,p.co);
+    x.update(home,p.x);
+    b.update(home,p.b);
   }
 
   template<class VX, class VB>
@@ -581,14 +580,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, bool share,
-                                     ReGqBoolInt<VX,VB,rm>& p)
-    : ReLinBoolInt<VX,VB>(home,share,p) {}
+  ReGqBoolInt<VX,VB,rm>::ReGqBoolInt(Space& home, ReGqBoolInt<VX,VB,rm>& p)
+    : ReLinBoolInt<VX,VB>(home,p) {}
 
   template<class VX, class VB, ReifyMode rm>
   Actor*
-  ReGqBoolInt<VX,VB,rm>::copy(Space& home, bool share) {
-    return new (home) ReGqBoolInt<VX,VB,rm>(home,share,*this);
+  ReGqBoolInt<VX,VB,rm>::copy(Space& home) {
+    return new (home) ReGqBoolInt<VX,VB,rm>(home,*this);
   }
 
   template<class VX, class VB, ReifyMode rm>
@@ -691,14 +689,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class VX, class VB, ReifyMode rm>
   forceinline
-  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, bool share,
-                                     ReEqBoolInt<VX,VB,rm>& p)
-    : ReLinBoolInt<VX,VB>(home,share,p) {}
+  ReEqBoolInt<VX,VB,rm>::ReEqBoolInt(Space& home, ReEqBoolInt<VX,VB,rm>& p)
+    : ReLinBoolInt<VX,VB>(home,p) {}
 
   template<class VX, class VB, ReifyMode rm>
   Actor*
-  ReEqBoolInt<VX,VB,rm>::copy(Space& home, bool share) {
-    return new (home) ReEqBoolInt<VX,VB,rm>(home,share,*this);
+  ReEqBoolInt<VX,VB,rm>::copy(Space& home) {
+    return new (home) ReEqBoolInt<VX,VB,rm>(home,*this);
   }
 
   template<class VX, class VB, ReifyMode rm>

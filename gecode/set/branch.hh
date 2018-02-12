@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritMin(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritMin(Space& home, bool shared, MeritMin& m);
+    MeritMin(Space& home, MeritMin& m);
     /// Return minimum as merit for view \a x at position \a i
     int operator ()(const Space& home, SetView x, int i);
   };
@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritMax(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritMax(Space& home, bool shared, MeritMax& m);
+    MeritMax(Space& home, MeritMax& m);
     /// Return maximum as merit for view \a x at position \a i
     int operator ()(const Space& home, SetView x, int i);
   };
@@ -108,7 +108,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritSize(Space& home, bool shared, MeritSize& m);
+    MeritSize(Space& home, MeritSize& m);
     /// Return size as merit for view \a x at position \a i
     unsigned int operator ()(const Space& home, SetView x, int i);
   };
@@ -124,7 +124,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritDegreeSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritDegreeSize(Space& home, bool shared, MeritDegreeSize& m);
+    MeritDegreeSize(Space& home, MeritDegreeSize& m);
     /// Return degree over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
   };
@@ -143,7 +143,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritAFCSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritAFCSize(Space& home, bool shared, MeritAFCSize& m);
+    MeritAFCSize(Space& home, MeritAFCSize& m);
     /// Return AFC over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritActionSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritActionSize(Space& home, bool shared, MeritActionSize& m);
+    MeritActionSize(Space& home, MeritActionSize& m);
     /// Return action over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -189,7 +189,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     MeritCHBSize(Space& home, const VarBranch<Var>& vb);
     /// Constructor for cloning
-    MeritCHBSize(Space& home, bool shared, MeritCHBSize& m);
+    MeritCHBSize(Space& home, MeritCHBSize& m);
     /// Return CHB Q-score over size as merit for view \a x at position \a i
     double operator ()(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -235,7 +235,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValSelMin(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValSelMin(Space& home, bool shared, ValSelMin& vs);
+    ValSelMin(Space& home, ValSelMin& vs);
     /// Return value of view \a x at position \a i
     int val(const Space& home, SetView x, int i);
   };
@@ -251,7 +251,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValSelMax(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValSelMax(Space& home, bool shared, ValSelMax& vs);
+    ValSelMax(Space& home, ValSelMax& vs);
     /// Return value of view \a x at position \a i
     int val(const Space& home, SetView x, int i);
   };
@@ -267,7 +267,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValSelMed(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValSelMed(Space& home, bool shared, ValSelMed& vs);
+    ValSelMed(Space& home, ValSelMed& vs);
     /// Return value of view \a x at position \a i
     int val(const Space& home, SetView x, int i);
   };
@@ -286,7 +286,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValSelRnd(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValSelRnd(Space& home, bool shared, ValSelRnd& vs);
+    ValSelRnd(Space& home, ValSelRnd& vs);
     /// Return value of view \a x at position \a i
     int val(const Space& home, SetView x, int i);
     /// Whether dispose must always be called (that is, notice is needed)
@@ -307,7 +307,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for creation
     IncNGL(Space& home, SetView x, int n);
     /// Constructor for cloning \a ngl
-    IncNGL(Space& home, bool share, IncNGL& ngl);
+    IncNGL(Space& home, IncNGL& ngl);
     /// Test the status of the no-good literal
     GECODE_SET_EXPORT
     virtual NGL::Status status(const Space& home) const;
@@ -316,7 +316,7 @@ namespace Gecode { namespace Set { namespace Branch {
     virtual ExecStatus prune(Space& home);
     /// Create copy
     GECODE_SET_EXPORT
-    virtual NGL* copy(Space& home, bool share);
+    virtual NGL* copy(Space& home);
   };
 
   /// No-good literal for exclusion
@@ -325,7 +325,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for creation
     ExcNGL(Space& home, SetView x, int n);
     /// Constructor for cloning \a ngl
-    ExcNGL(Space& home, bool share, ExcNGL& ngl);
+    ExcNGL(Space& home, ExcNGL& ngl);
     /// Test the status of the no-good literal
     GECODE_SET_EXPORT
     virtual NGL::Status status(const Space& home) const;
@@ -334,7 +334,7 @@ namespace Gecode { namespace Set { namespace Branch {
     virtual ExecStatus prune(Space& home);
     /// Create copy
     GECODE_SET_EXPORT
-    virtual NGL* copy(Space& home, bool share);
+    virtual NGL* copy(Space& home);
   };
 
 }}}
@@ -366,7 +366,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValCommitInc(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValCommitInc(Space& home, bool shared, ValCommitInc& vc);
+    ValCommitInc(Space& home, ValCommitInc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
     /// Create no-good literal for alternative \a a
@@ -387,7 +387,7 @@ namespace Gecode { namespace Set { namespace Branch {
     /// Constructor for initialization
     ValCommitExc(Space& home, const ValBranch<Var>& vb);
     /// Constructor for cloning
-    ValCommitExc(Space& home, bool shared, ValCommitExc& vc);
+    ValCommitExc(Space& home, ValCommitExc& vc);
     /// Commit view \a x at position \a i to value \a n for alternative \a a
     ModEvent commit(Space& home, unsigned int a, SetView x, int i, int n);
     /// Create no-good literal for alternative \a a

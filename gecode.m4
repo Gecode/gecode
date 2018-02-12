@@ -662,9 +662,12 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_GECODE_CHECK_CXXFLAG(-ggdb,
      AC_GECODE_ADD_TO_COMPILERFLAGS(-ggdb),
      AC_GECODE_CHECK_COMPILERFLAG(-g))
-  AC_CHECK_FUNC([__builtin_ffsl],
-    [AC_DEFINE([GECODE_HAS_BUILTIN_FFSL],[],
-      [whether __builtin_ffsl is available])])
+  AC_CHECK_FUNC([__builtin_ffsll],
+    [AC_DEFINE([GECODE_HAS_BUILTIN_FFSLL],[],
+      [whether __builtin_ffsll is available])])
+  AC_CHECK_FUNC([__builtin_popcountll],
+    [AC_DEFINE([GECODE_HAS_BUILTIN_POPCOUNTLL],[],
+      [whether __builtin_popcountll is available])])
 
   AC_SUBST(docdir, "${datadir}/doc/gecode")
 
@@ -1393,6 +1396,31 @@ AC_DEFUN([AC_GECODE_GIST],
   fi
 ])
 
+dnl Macro:
+dnl   AC_GECODE_CPPROFILER
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-cpprofiler
+dnl   for compiling with support for the CPProfiler.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+dnl   Christian Schulte <schulte@gecode.org>
+AC_DEFUN([AC_GECODE_CPPROFILER],
+  [
+  AC_ARG_ENABLE([cpprofiler],
+    AC_HELP_STRING([--enable-cpprofiler],
+      [build with support for CPProfiler @<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to build with support for CPProfiler)
+  if test "${enable_cpprofiler:-no}" = "yes"; then
+    AC_MSG_RESULT(yes)
+    AC_SUBST(enable_cpprofiler, yes)
+    AC_DEFINE([GECODE_HAS_CPPROFILER],[],[Whether CPProfiler support available])
+  else
+    AC_MSG_RESULT(no)
+  fi
+])
+
 AC_DEFUN([AC_GECODE_USER_SUFFIX],
   [
   AC_ARG_WITH([lib-prefix],
@@ -1439,17 +1467,19 @@ AC_DEFUN([AC_GECODE_THREADS],[
     [AC_DEFINE(GECODE_THREADS_PTHREADS,1,[Whether we have posix threads])
      AC_GECODE_ADD_TO_COMPILERFLAGS([-pthread])
      AC_GECODE_ADD_TO_DLLFLAGS([-pthread])
-     AC_CHECK_HEADER([libkern/OSAtomic.h],
-     [AC_DEFINE(GECODE_THREADS_OSX,1,[Whether we have Mac OS threads])],
-      AC_MSG_CHECKING([for spin locks])
-       AC_TRY_COMPILE([#include <pthread.h>],
-         [pthread_spinlock_t t;],
-         [AC_MSG_RESULT(yes)
-          AC_DEFINE(GECODE_THREADS_PTHREADS_SPINLOCK,1,Whether we have posix spinlocks)],
-  [AC_MSG_RESULT(no)]
-       )
-     )
-    ],
+     AC_CHECK_HEADER([os/lock.h],
+       [AC_DEFINE(GECODE_THREADS_OSX_UNFAIR,1,[Whether we have Mac OS threads (new version)])],
+        AC_CHECK_HEADER([libkern/OSAtomic.h],
+        [AC_DEFINE(GECODE_THREADS_OSX,1,[Whether we have Mac OS threads])],
+         AC_MSG_CHECKING([for spin locks])
+          AC_TRY_COMPILE([#include <pthread.h>],
+            [pthread_spinlock_t t;],
+            [AC_MSG_RESULT(yes)
+             AC_DEFINE(GECODE_THREADS_PTHREADS_SPINLOCK,1,Whether we have posix spinlocks)],
+            [AC_MSG_RESULT(no)]
+          )
+        )
+     )],
     [AC_CHECK_HEADER(windows.h,
       [AC_DEFINE(GECODE_THREADS_WINDOWS,1,[Whether we have windows threads])])]
     )

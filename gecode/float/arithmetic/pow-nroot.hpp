@@ -85,13 +85,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B>
   forceinline
-  Pow<A,B>::Pow(Space& home, bool share, Pow<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p), m_n(p.m_n) {}
+  Pow<A,B>::Pow(Space& home, Pow<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p), m_n(p.m_n) {}
 
   template<class A, class B>
   Actor*
-  Pow<A,B>::copy(Space& home, bool share) {
-    return new (home) Pow<A,B>(home,share,*this);
+  Pow<A,B>::copy(Space& home) {
+    return new (home) Pow<A,B>(home,*this);
   }
 
   template<class A, class B>
@@ -144,13 +144,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
 
   template<class A, class B>
   forceinline
-  NthRoot<A,B>::NthRoot(Space& home, bool share, NthRoot<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p), m_n(p.m_n) {}
+  NthRoot<A,B>::NthRoot(Space& home, NthRoot<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p), m_n(p.m_n) {}
 
   template<class A, class B>
   Actor*
-  NthRoot<A,B>::copy(Space& home, bool share) {
-    return new (home) NthRoot<A,B>(home,share,*this);
+  NthRoot<A,B>::copy(Space& home) {
+    return new (home) NthRoot<A,B>(home,*this);
   }
 
   template<class A, class B>

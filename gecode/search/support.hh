@@ -44,7 +44,7 @@ namespace Gecode { namespace Search {
 
   /// Clone space \a s dependening on options \a o
   forceinline Space*
-  snapshot(Space* s, const Options& o, bool share=true);
+  snapshot(Space* s, const Options& o);
 
   /// Virtualize a worker to an engine
   template<class Worker>
@@ -72,8 +72,8 @@ namespace Gecode { namespace Search {
 
 
   forceinline Space*
-  snapshot(Space* s, const Options& o, bool share) {
-    return o.clone ? s->clone(share) : s;
+  snapshot(Space* s, const Options& o) {
+    return o.clone ? s->clone() : s;
   }
 
 

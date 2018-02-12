@@ -68,19 +68,19 @@ namespace Gecode { namespace Int { namespace NoOverlap {
 
   template<class Box>
   forceinline
-  OptProp<Box>::OptProp(Space& home, bool shared, OptProp<Box>& p)
-    : Base<Box>(home, shared, p, p.n + p.m), m(p.m) {}
+  OptProp<Box>::OptProp(Space& home, OptProp<Box>& p)
+    : Base<Box>(home, p, p.n + p.m), m(p.m) {}
 
   template<class Box>
   Actor*
-  OptProp<Box>::copy(Space& home, bool share) {
-    return new (home) OptProp<Box>(home,share,*this);
+  OptProp<Box>::copy(Space& home) {
+    return new (home) OptProp<Box>(home,*this);
   }
 
   template<class Box>
   ExecStatus
   OptProp<Box>::propagate(Space& home, const ModEventDelta& med) {
-    Region r(home);
+    Region r;
 
     if (BoolView::me(med) == ME_BOOL_VAL) {
       // Eliminate excluded boxes

@@ -56,7 +56,7 @@ namespace Gecode { namespace Int {
     friend class IntVarImp;
     friend class BoolVarImp;
   private:
-    int _min; ///< Minimum value just pruned
+    int _min; ///< Smallest value just pruned
     int _max; ///< Largest value just pruned
   public:
     /// Create integer delta as providing no information
@@ -70,6 +70,8 @@ namespace Gecode { namespace Int {
     int min(void) const;
     /// Return maximum
     int max(void) const;
+    /// Return width
+    unsigned int width(void) const;
     /// Test whether any domain change has happened
     bool any(void) const;
   };
@@ -203,7 +205,7 @@ namespace Gecode { namespace Int {
 
   protected:
     /// Constructor for cloning \a x
-    IntVarImp(Space& home, bool share, IntVarImp& x);
+    IntVarImp(Space& home, IntVarImp& x);
   public:
     /// Initialize with range domain
     IntVarImp(Space& home, int min, int max);
@@ -365,12 +367,12 @@ namespace Gecode { namespace Int {
 
   private:
     /// Return copy of not-yet copied variable
-    GECODE_INT_EXPORT IntVarImp* perform_copy(Space& home, bool share);
+    GECODE_INT_EXPORT IntVarImp* perform_copy(Space& home);
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    IntVarImp* copy(Space& home, bool share);
+    IntVarImp* copy(Space& home);
     //@}
 
     /// \name Delta information for advisors
@@ -379,6 +381,8 @@ namespace Gecode { namespace Int {
     static int min(const Delta& d);
     /// Return maximum value just pruned
     static int max(const Delta& d);
+    /// Return width of values just pruned
+    static unsigned int width(const Delta& d);
     /// Test whether arbitrary values got pruned
     static bool any(const Delta& d);
     //@}
@@ -506,7 +510,7 @@ namespace Gecode { namespace Int {
     GECODE_INT_EXPORT static BoolVarImp s_zero;
 
     /// Constructor for cloning \a x
-    BoolVarImp(Space& home, bool share, BoolVarImp& x);
+    BoolVarImp(Space& home, BoolVarImp& x);
     /// Initialize static instance assigned to \a n
     BoolVarImp(int n);
   public:
@@ -700,6 +704,8 @@ namespace Gecode { namespace Int {
     static int min(const Delta& d);
     /// Return maximum value just pruned
     static int max(const Delta& d);
+    /// Return width of values just pruned
+    static unsigned int width(const Delta& d);
     /// Test whether arbitrary values got pruned
     static bool any(const Delta& d);
     /// Test whether a variable has been assigned to zero
@@ -711,7 +717,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Return copy of this variable
-    BoolVarImp* copy(Space& home, bool share);
+    BoolVarImp* copy(Space& home);
     //@}
 
   };

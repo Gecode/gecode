@@ -163,15 +163,15 @@ public:
   }
 
   /// Constructor for cloning \a s
-  BIBD(bool share, BIBD& s)
-    : Script(share,s), opt(s.opt) {
-    _p.update(*this,share,s._p);
+  BIBD(BIBD& s)
+    : Script(s), opt(s.opt) {
+    _p.update(*this, s._p);
   }
 
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new BIBD(share,*this);
+  copy(void) {
+    return new BIBD(*this);
   }
 
 };

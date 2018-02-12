@@ -66,7 +66,7 @@ namespace {
     /// Initialize options for example with name \a s
     CarOptions(const char* s)
       : SizeOptions(s),
-        _maxstall("-maxstall", "Maximum numbere of stalls", 30)
+        _maxstall("maxstall", "Maximum numbere of stalls", 30)
     {
       // Add options
       add(_maxstall);
@@ -105,15 +105,15 @@ namespace {
     int val;
 
     /// Constructor for cloning \a p
-    PushToEnd(Space& home, bool share, PushToEnd& p);
+    PushToEnd(Space& home, PushToEnd& p);
     /// Constructor for posting
     PushToEnd(Space& home, ViewArray<View>& x0, View y0, int val0);
   public:
     /// Constructor for rewriting \a p during cloning
-    PushToEnd(Space& home, bool share, Propagator& p,
+    PushToEnd(Space& home, Propagator& p,
               ViewArray<View>& x0, View y0, int val0);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator
@@ -137,19 +137,19 @@ namespace {
 
   template <class View>
   inline
-  PushToEnd<View>::PushToEnd(Space& home, bool share, PushToEnd<View>& p)
-    : NaryOnePropagator<View,Int::PC_INT_BND>(home,share,p), val(p.val) {}
+  PushToEnd<View>::PushToEnd(Space& home, PushToEnd<View>& p)
+    : NaryOnePropagator<View,Int::PC_INT_BND>(home,p), val(p.val) {}
 
   template <class View>
   inline
-  PushToEnd<View>::PushToEnd(Space& home, bool share, Propagator& p,
+  PushToEnd<View>::PushToEnd(Space& home, Propagator& p,
                              ViewArray<View>& x0, View y0, int val0)
-  : NaryOnePropagator<View,Int::PC_INT_BND>(home,share,p,x0,y0), val(val0) {}
+  : NaryOnePropagator<View,Int::PC_INT_BND>(home,p,x0,y0), val(val0) {}
 
   template <class View>
   Actor*
-  PushToEnd<View>::copy(Space& home, bool share) {
-    return new (home) PushToEnd<View>(home,share,*this);
+  PushToEnd<View>::copy(Space& home) {
+    return new (home) PushToEnd<View>(home,*this);
   }
 
   template <class View>
@@ -398,8 +398,8 @@ public:
   }
 
   /// Constructor for cloning \a s
-  CarSequencing(bool share, CarSequencing& cs)
-    : Script(share,cs),
+  CarSequencing(CarSequencing& cs)
+    : Script(cs),
       problem(cs.problem),
       ncars(cs.ncars),
       noptions(cs.noptions),
@@ -408,14 +408,14 @@ public:
       stallval(cs.stallval),
       endval(cs.endval)
   {
-    nstall.update(*this, share, cs.nstall);
-    nend.update(*this, share, cs.nend);
-    s.update(*this, share, cs.s);
+    nstall.update(*this, cs.nstall);
+    nend.update(*this, cs.nend);
+    s.update(*this, cs.s);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new CarSequencing(share,*this);
+  copy(void) {
+    return new CarSequencing(*this);
   }
 };
 

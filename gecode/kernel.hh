@@ -126,13 +126,14 @@ namespace Gecode {
 
 
 /*
- * Basic kernel services
+ * Basic kernel services and memory management
  *
  */
 
-#include <gecode/kernel/memory-config.hpp>
-#include <gecode/kernel/memory-manager.hpp>
-
+#include <gecode/kernel/shared-object.hpp>
+#include <gecode/kernel/memory/config.hpp>
+#include <gecode/kernel/memory/manager.hpp>
+#include <gecode/kernel/memory/region.hpp>
 
 /*
  * Macros for checking failure
@@ -149,16 +150,10 @@ namespace Gecode {
 
 #include <gecode/kernel/archive.hpp>
 #include <gecode/kernel/gpi.hpp>
+#include <gecode/kernel/shared-space-data.hpp>
 #include <gecode/kernel/core.hpp>
 #include <gecode/kernel/modevent.hpp>
 #include <gecode/kernel/range-list.hpp>
-
-/*
- * Region memory management
- *
- */
-
-#include <gecode/kernel/region.hpp>
 
 
 /*
@@ -182,21 +177,25 @@ namespace Gecode {
  *
  */
 
-#include <gecode/kernel/array.hpp>
-#include <gecode/kernel/shared-array.hpp>
-#include <gecode/kernel/shared-data.hpp>
+#include <gecode/kernel/data/array.hpp>
+#include <gecode/kernel/data/shared-array.hpp>
+#include <gecode/kernel/data/shared-data.hpp>
+#include <gecode/kernel/data/rnd.hpp>
 
 
 /*
- * Random number generator (for branching)
+ * Common propagator patterns
  *
  */
 
-#include <gecode/kernel/rnd.hpp>
+#include <gecode/kernel/propagator/pattern.hpp>
+#include <gecode/kernel/propagator/subscribed.hpp>
+#include <gecode/kernel/propagator/advisor.hpp>
+#include <gecode/kernel/propagator/wait.hpp>
 
 
 /*
- * Common propagator and branching patterns
+ * Abstractions for branching
  *
  */
 
@@ -229,25 +228,22 @@ namespace Gecode {
 
 }
 
-#include <gecode/kernel/propagator.hpp>
-#include <gecode/kernel/subscribed-propagators.hpp>
-#include <gecode/kernel/advisor.hpp>
-#include <gecode/kernel/afc.hpp>
-#include <gecode/kernel/branch-traits.hpp>
-#include <gecode/kernel/chb.hpp>
-#include <gecode/kernel/action.hpp>
-#include <gecode/kernel/branch-var.hpp>
-#include <gecode/kernel/branch-tiebreak.hpp>
-#include <gecode/kernel/branch-val.hpp>
-#include <gecode/kernel/brancher-merit.hpp>
-#include <gecode/kernel/brancher-filter.hpp>
-#include <gecode/kernel/brancher-view-sel.hpp>
-#include <gecode/kernel/brancher-print.hpp>
-#include <gecode/kernel/brancher-view.hpp>
-#include <gecode/kernel/brancher-val-sel.hpp>
-#include <gecode/kernel/brancher-val-commit.hpp>
-#include <gecode/kernel/brancher-val-sel-commit.hpp>
-#include <gecode/kernel/brancher-view-val.hpp>
+#include <gecode/kernel/branch/traits.hpp>
+#include <gecode/kernel/branch/action.hpp>
+#include <gecode/kernel/branch/afc.hpp>
+#include <gecode/kernel/branch/chb.hpp>
+#include <gecode/kernel/branch/var.hpp>
+#include <gecode/kernel/branch/val.hpp>
+#include <gecode/kernel/branch/tiebreak.hpp>
+#include <gecode/kernel/branch/merit.hpp>
+#include <gecode/kernel/branch/filter.hpp>
+#include <gecode/kernel/branch/view-sel.hpp>
+#include <gecode/kernel/branch/print.hpp>
+#include <gecode/kernel/branch/view.hpp>
+#include <gecode/kernel/branch/val-sel.hpp>
+#include <gecode/kernel/branch/val-commit.hpp>
+#include <gecode/kernel/branch/val-sel-commit.hpp>
+#include <gecode/kernel/branch/view-val.hpp>
 
 
 /*
@@ -263,11 +259,11 @@ namespace Gecode {
  *
  */
 
-#include <gecode/kernel/trace-traits.hpp>
-#include <gecode/kernel/trace-filter.hpp>
-#include <gecode/kernel/tracer.hpp>
-#include <gecode/kernel/trace-recorder.hpp>
-#include <gecode/kernel/trace-print.hpp>
+#include <gecode/kernel/trace/traits.hpp>
+#include <gecode/kernel/trace/filter.hpp>
+#include <gecode/kernel/trace/tracer.hpp>
+#include <gecode/kernel/trace/recorder.hpp>
+#include <gecode/kernel/trace/print.hpp>
 
 namespace Gecode {
 
@@ -290,14 +286,14 @@ namespace Gecode {
 
 }
 
-#include <gecode/kernel/trace.hpp>
+#include <gecode/kernel/trace/general.hpp>
 
 /*
  * Allocator support
  *
  */
 
-#include <gecode/kernel/allocators.hpp>
+#include <gecode/kernel/memory/allocators.hpp>
 
 
 #endif

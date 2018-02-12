@@ -47,15 +47,6 @@ namespace Gecode {
     return o;
   }
 
-  SharedHandle::Object*
-  IntSet::IntSetObject::copy(void) const {
-    IntSetObject* o = allocate(n);
-    o->size = size;
-    for (int i=n; i--; )
-      o->r[i]=r[i];
-    return o;
-  }
-
   bool
   IntSet::IntSetObject::in(int n) const {
     int l = 0;

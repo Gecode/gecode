@@ -246,6 +246,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -397,6 +399,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -549,6 +553,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -556,7 +562,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, OffsetView& y);
+    void update(Space& home, OffsetView& y);
     //@}
   };
 
@@ -741,6 +747,8 @@ namespace Gecode { namespace Int {
     Val min(const Delta& d) const;
     /// Return maximum value just pruned
     Val max(const Delta& d) const;
+    /// Return width of values just pruned
+    UnsVal width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -748,7 +756,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ScaleView<Val,UnsVal>& y);
+    void update(Space& home, ScaleView<Val,UnsVal>& y);
     //@}
   };
 
@@ -918,6 +926,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -925,7 +935,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ConstIntView& y);
+    void update(Space& home, ConstIntView& y);
     //@}
   };
 
@@ -1069,6 +1079,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -1235,6 +1247,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     //@}
@@ -1252,7 +1266,7 @@ namespace Gecode { namespace Int {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, CachedView<View>& y);
+    void update(Space& home, CachedView<View>& y);
     //@}
   };
 
@@ -1467,6 +1481,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     /// Test whether a view has been assigned to zero
@@ -1564,6 +1580,8 @@ namespace Gecode { namespace Int {
     int min(const Delta& d) const;
     /// Return maximum value just pruned
     int max(const Delta& d) const;
+    /// Return width of values just pruned
+    unsigned int width(const Delta& d) const;
     /// Test whether arbitrary values got pruned
     bool any(const Delta& d) const;
     /// Test whether a view has been assigned to zero

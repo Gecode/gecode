@@ -63,13 +63,13 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
   template<class A, class B>
   forceinline
-  ASin<A,B>::ASin(Space& home, bool share, ASin<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  ASin<A,B>::ASin(Space& home, ASin<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  ASin<A,B>::copy(Space& home, bool share) {
-    return new (home) ASin<A,B>(home,share,*this);
+  ASin<A,B>::copy(Space& home) {
+    return new (home) ASin<A,B>(home,*this);
   }
 
   template<class A, class B>
@@ -114,13 +114,13 @@ namespace Gecode { namespace Float { namespace Trigonometric {
 
   template<class A, class B>
   forceinline
-  ACos<A,B>::ACos(Space& home, bool share, ACos<A,B>& p)
-    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,share,p) {}
+  ACos<A,B>::ACos(Space& home, ACos<A,B>& p)
+    : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,p) {}
 
   template<class A, class B>
   Actor*
-  ACos<A,B>::copy(Space& home, bool share) {
-    return new (home) ACos<A,B>(home,share,*this);
+  ACos<A,B>::copy(Space& home) {
+    return new (home) ACos<A,B>(home,*this);
   }
 
   template<class A, class B>

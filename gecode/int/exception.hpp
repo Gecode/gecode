@@ -129,11 +129,25 @@ namespace Gecode { namespace Int {
     ValOfUnassignedVar(const char* l);
   };
 
+  /// %Exception: uninitialized tuple set
+  class GECODE_INT_EXPORT UninitializedTupleSet : public Exception {
+  public:
+    /// Initialize with location \a l
+    UninitializedTupleSet(const char* l);
+  };
+
   /// %Exception: Tuple set not yet finalized
   class GECODE_INT_EXPORT NotYetFinalized : public Exception {
   public:
     /// Initialize with location \a l
     NotYetFinalized(const char* l);
+  };
+
+  /// %Exception: Tuple set already finalized
+  class GECODE_INT_EXPORT AlreadyFinalized : public Exception {
+  public:
+    /// Initialize with location \a l
+    AlreadyFinalized(const char* l);
   };
 
   /// %Exception: Variable in symmetry not branched on

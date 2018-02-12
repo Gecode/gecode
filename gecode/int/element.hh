@@ -176,12 +176,12 @@ namespace Gecode { namespace Int { namespace Element {
     static ExecStatus assigned_val(Space& home, IntSharedArray& c,
                                    V0 x0, V1 x1);
     /// Constructor for cloning \a p
-    Int(Space& home, bool shared, Int& p);
+    Int(Space& home, Int& p);
     /// Constructor for creation
     Int(Home home, IntSharedArray& i, V0 x0, V1 x1);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as high binary)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// View for result
     VC x1;
     /// Constructor for cloning \a p
-    View(Space& home, bool share, View& p);
+    View(Space& home, View& p);
     /// Constructor for creation
     View(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
@@ -240,12 +240,12 @@ namespace Gecode { namespace Int { namespace Element {
     using View<VA,VB,VC,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    ViewBnd(Space& home, bool share, ViewBnd& p);
+    ViewBnd(Space& home, ViewBnd& p);
     /// Constructor for creation
     ViewBnd(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
@@ -270,12 +270,12 @@ namespace Gecode { namespace Int { namespace Element {
     using View<VA,VB,VC,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    ViewDom(Space& home, bool share, ViewDom& p);
+    ViewDom(Space& home, ViewDom& p);
     /// Constructor for creation
     ViewDom(Home home, IdxViewArray<VA>& iv, VB x0, VC x1);
   public:
     /// Perform copying during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /**
      * \brief Cost function
      *
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Width
     int w;
     /// Constructor for cloning \a p
-    Pair(Space& home, bool share, Pair& p);
+    Pair(Space& home, Pair& p);
   public:
     /// Constructor for posting
     Pair(Home home, IntView x0, IntView x1, IntView x2, int w);
@@ -315,7 +315,7 @@ namespace Gecode { namespace Int { namespace Element {
     static ExecStatus post(Home home, IntView x0, IntView x1, IntView x2,
                            int w, int h);
     /// Copy propagator during cloning
-    GECODE_INT_EXPORT virtual Actor* copy(Space& home, bool share);
+    GECODE_INT_EXPORT virtual Actor* copy(Space& home);
     /// Perform propagation
     GECODE_INT_EXPORT virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
   };

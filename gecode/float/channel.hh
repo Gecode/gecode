@@ -66,12 +66,12 @@ namespace Gecode { namespace Float { namespace Channel {
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,Gecode::Int::PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Channel(Space& home, bool share, Channel& p);
+    Channel(Space& home, Channel& p);
     /// Constructor for creation
     Channel(Home home, A x0, B x1);
   public:
     /// Create copy during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ int(x_0) = x_1\f$

@@ -53,6 +53,13 @@ namespace Gecode { namespace Float {
     OutOfLimits(const char* l);
   };
 
+  /// %Exception: Value with mixed sign
+  class GECODE_FLOAT_EXPORT ValueMixedSign : public Exception {
+  public:
+    /// Initialize with location \a l
+    ValueMixedSign(const char* l);
+  };
+
   /// %Exception: %Variable created with empty domain
   class GECODE_FLOAT_EXPORT VariableEmptyDomain : public Exception {
   public:

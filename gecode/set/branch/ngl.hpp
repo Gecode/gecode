@@ -41,15 +41,15 @@ namespace Gecode { namespace Set { namespace Branch {
   IncNGL::IncNGL(Space& home, SetView x, int n)
     : ViewValNGL<SetView,int,PC_SET_ANY>(home,x,n) {}
   forceinline
-  IncNGL::IncNGL(Space& home, bool share, IncNGL& ngl)
-    : ViewValNGL<SetView,int,PC_SET_ANY>(home,share,ngl) {}
+  IncNGL::IncNGL(Space& home, IncNGL& ngl)
+    : ViewValNGL<SetView,int,PC_SET_ANY>(home,ngl) {}
 
   forceinline
   ExcNGL::ExcNGL(Space& home, SetView x, int n)
     : ViewValNGL<SetView,int,PC_SET_ANY>(home,x,n) {}
   forceinline
-  ExcNGL::ExcNGL(Space& home, bool share, ExcNGL& ngl)
-    : ViewValNGL<SetView,int,PC_SET_ANY>(home,share,ngl) {}
+  ExcNGL::ExcNGL(Space& home, ExcNGL& ngl)
+    : ViewValNGL<SetView,int,PC_SET_ANY>(home,ngl) {}
 
 }}}
 

@@ -40,7 +40,7 @@ predicate table_int(array[int] of var int: x, array[int, int] of int: t) =
     assert (index_set_2of2(t) == index_set(x),
         "The second dimension of the table must equal the number of variables "
             ++ "in the first argument",
-        gecode_table_int(x,t);
+        gecode_table_int(x,t));
 
 predicate table_int_reif(array[int] of var int: x, array[int, int] of int: t,
                          var bool: b) =

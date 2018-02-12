@@ -54,13 +54,13 @@ namespace Gecode { namespace Set { namespace Distinct {
    */
 
   Actor*
-  AtmostOne::copy(Space& home, bool share) {
-    return new (home) AtmostOne(home,share,*this);
+  AtmostOne::copy(Space& home) {
+    return new (home) AtmostOne(home,*this);
   }
 
   ExecStatus
   AtmostOne::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
     LubRanges<SetView>* lubs = r.alloc<LubRanges<SetView> >(x.size());
     for (int i = x.size(); i--; ) {
       lubs[i].init(x[i]);

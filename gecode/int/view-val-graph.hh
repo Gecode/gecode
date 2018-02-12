@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace ViewValGraph {
     /// Find a matching for node \a x
     bool match(ViewNodeStack& m, ViewNode<View>* x);
     /// Compute the strongly connected components
-    void scc(Space& home);
+    void scc(void);
   public:
     /// Construct graph as not yet initialized
     Graph(void);

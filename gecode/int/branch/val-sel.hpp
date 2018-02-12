@@ -43,8 +43,8 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
-  ValSelMin<View>::ValSelMin(Space& home, bool shared, ValSelMin& vs)
-    : ValSel<View,int>(home,shared,vs) {}
+  ValSelMin<View>::ValSelMin(Space& home, ValSelMin& vs)
+    : ValSel<View,int>(home,vs) {}
   template<class View>
   forceinline int
   ValSelMin<View>::val(const Space&, View x, int) {
@@ -57,8 +57,8 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
-  ValSelMax<View>::ValSelMax(Space& home, bool shared, ValSelMax& vs)
-    : ValSel<View,int>(home,shared,vs) {}
+  ValSelMax<View>::ValSelMax(Space& home, ValSelMax& vs)
+    : ValSel<View,int>(home,vs) {}
   template<class View>
   forceinline int
   ValSelMax<View>::val(const Space&, View x, int) {
@@ -71,8 +71,8 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
-  ValSelMed<View>::ValSelMed(Space& home, bool shared, ValSelMed& vs)
-    : ValSel<View,int>(home,shared,vs) {}
+  ValSelMed<View>::ValSelMed(Space& home, ValSelMed& vs)
+    : ValSel<View,int>(home,vs) {}
   template<class View>
   forceinline int
   ValSelMed<View>::val(const Space&, View x, int) {
@@ -85,8 +85,8 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,vb) {}
   template<class View>
   forceinline
-  ValSelAvg<View>::ValSelAvg(Space& home, bool shared, ValSelAvg& vs)
-    : ValSel<View,int>(home,shared,vs) {}
+  ValSelAvg<View>::ValSelAvg(Space& home, ValSelAvg& vs)
+    : ValSel<View,int>(home,vs) {}
   template<class View>
   forceinline int
   ValSelAvg<View>::val(const Space&, View x, int) {
@@ -99,9 +99,8 @@ namespace Gecode { namespace Int { namespace Branch {
     : ValSel<View,int>(home,vb), r(vb.rnd()) {}
   template<class View>
   forceinline
-  ValSelRnd<View>::ValSelRnd(Space& home, bool shared, ValSelRnd& vs)
-    : ValSel<View,int>(home,shared,vs) {
-    r.update(home,shared,vs.r);
+  ValSelRnd<View>::ValSelRnd(Space& home, ValSelRnd& vs)
+    : ValSel<View,int>(home,vs), r(vs.r) {
   }
   template<class View>
   forceinline int
@@ -130,8 +129,8 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSelRangeMin::ValSelRangeMin(Space& home, const ValBranch<IntVar>& vb)
     : ValSel<IntView,int>(home,vb) {}
   forceinline
-  ValSelRangeMin::ValSelRangeMin(Space& home, bool shared, ValSelRangeMin& vs)
-    : ValSel<IntView,int>(home,shared,vs) {}
+  ValSelRangeMin::ValSelRangeMin(Space& home, ValSelRangeMin& vs)
+    : ValSel<IntView,int>(home,vs) {}
   forceinline int
   ValSelRangeMin::val(const Space&, IntView x, int) {
     if (x.range()) {
@@ -146,8 +145,8 @@ namespace Gecode { namespace Int { namespace Branch {
   ValSelRangeMax::ValSelRangeMax(Space& home, const ValBranch<IntVar>& vb)
     : ValSel<IntView,int>(home,vb) {}
   forceinline
-  ValSelRangeMax::ValSelRangeMax(Space& home, bool shared, ValSelRangeMax& vs)
-    : ValSel<IntView,int>(home,shared,vs) {}
+  ValSelRangeMax::ValSelRangeMax(Space& home, ValSelRangeMax& vs)
+    : ValSel<IntView,int>(home,vs) {}
   forceinline int
   ValSelRangeMax::val(const Space&, IntView x, int) {
     if (x.range()) {

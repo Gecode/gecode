@@ -54,18 +54,6 @@ namespace Test {
      * \ingroup TaskTest
      */
 
-    /// Fake space for creation of regions
-    class FakeSpace : public Gecode::Space {
-    public:
-      /// Faked constructor
-      FakeSpace(void) {}
-      /// Faked copy function
-      virtual Gecode::Space* copy(bool share) {
-        (void) share;
-        return NULL;
-      }
-    };
-
     /**
      * \defgroup TaskTestSetSupport General set test support
      * \ingroup TaskTestSet
@@ -235,9 +223,9 @@ namespace Test {
       SetTestSpace(int n, Gecode::IntSet& d0, int i, SetTest* t,
                    Gecode::ReifyMode rm, bool log=true);
       /// Constructor for cloning \a s
-      SetTestSpace(bool share, SetTestSpace& s);
+      SetTestSpace(SetTestSpace& s);
       /// Copy space during cloning
-      virtual Gecode::Space* copy(bool share);
+      virtual Gecode::Space* copy(void);
       /// Post propagator
       void post(void);
       /// Compute a fixpoint and check for failure

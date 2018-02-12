@@ -80,13 +80,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class V0, class V1>
   forceinline
-  Lq<V0,V1>::Lq(Space& home, bool share, Lq<V0,V1>& p)
-    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,share,p) {}
+  Lq<V0,V1>::Lq(Space& home, Lq<V0,V1>& p)
+    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,p) {}
 
   template<class V0, class V1>
   Actor*
-  Lq<V0,V1>::copy(Space& home, bool share) {
-    return new (home) Lq<V0,V1>(home,share,*this);
+  Lq<V0,V1>::copy(Space& home) {
+    return new (home) Lq<V0,V1>(home,*this);
   }
 
   template<class V0, class V1>
@@ -148,13 +148,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class V0, class V1>
   forceinline
-  Le<V0,V1>::Le(Space& home, bool share, Le<V0,V1>& p)
-    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,share,p) {}
+  Le<V0,V1>::Le(Space& home, Le<V0,V1>& p)
+    : MixBinaryPropagator<V0,PC_INT_BND,V1,PC_INT_BND>(home,p) {}
 
   template<class V0, class V1>
   Actor*
-  Le<V0,V1>::copy(Space& home, bool share) {
-    return new (home) Le<V0,V1>(home,share,*this);
+  Le<V0,V1>::copy(Space& home) {
+    return new (home) Le<V0,V1>(home,*this);
   }
 
   template<class V0, class V1>
@@ -180,8 +180,8 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, int o>
   forceinline
-  NaryLqLe<View,o>::Index::Index(Space& home, bool share, Index& a)
-    : Advisor(home,share,a), i(a.i) {}
+  NaryLqLe<View,o>::Index::Index(Space& home, Index& a)
+    : Advisor(home,a), i(a.i) {}
 
 
 
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Rel {
   NaryLqLe<View,o>::post(Home home, ViewArray<View>& x) {
     assert((o == 0) || (o == 1));
     // Check for sharing
-    if (x.same(home)) {
+    if (x.same()) {
       if (o == 1)
         return ES_FAILED;
       /*
@@ -327,18 +327,18 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, int o>
   forceinline
-  NaryLqLe<View,o>::NaryLqLe(Space& home, bool share, NaryLqLe<View,o>& p)
-    : NaryPropagator<View,PC_INT_NONE>(home,share,p),
+  NaryLqLe<View,o>::NaryLqLe(Space& home, NaryLqLe<View,o>& p)
+    : NaryPropagator<View,PC_INT_NONE>(home,p),
       pos(NULL), run(false), n_subsumed(p.n_subsumed) {
     assert(p.pos == NULL);
-    c.update(home, share, p.c);
+    c.update(home, p.c);
   }
 
   template<class View, int o>
   Actor*
-  NaryLqLe<View,o>::copy(Space& home, bool share) {
+  NaryLqLe<View,o>::copy(Space& home) {
     if (n_subsumed > n_threshold) {
-      Region r(home);
+      Region r;
       // Record for which views there is an advisor
       Support::BitSet<Region> a(r,static_cast<unsigned int>(x.size()));
       for (Advisors<Index> as(c); as(); ++as)
@@ -357,7 +357,7 @@ namespace Gecode { namespace Int { namespace Rel {
 
       n_subsumed = 0;
     }
-    return new (home) NaryLqLe<View,o>(home,share,*this);
+    return new (home) NaryLqLe<View,o>(home,*this);
   }
 
   template<class View, int o>
@@ -499,13 +499,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReLq<View,CtrlView,rm>::ReLq(Space& home, bool share, ReLq& p)
-    : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,share,p) {}
+  ReLq<View,CtrlView,rm>::ReLq(Space& home, ReLq& p)
+    : ReBinaryPropagator<View,PC_INT_BND,CtrlView>(home,p) {}
 
   template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReLq<View,CtrlView,rm>::copy(Space& home, bool share) {
-    return new (home) ReLq<View,CtrlView,rm>(home,share,*this);
+  ReLq<View,CtrlView,rm>::copy(Space& home) {
+    return new (home) ReLq<View,CtrlView,rm>(home,*this);
   }
 
   template<class View, class CtrlView, ReifyMode rm>
@@ -576,13 +576,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View, class CtrlView, ReifyMode rm>
   forceinline
-  ReLqInt<View,CtrlView,rm>::ReLqInt(Space& home, bool share, ReLqInt& p)
-    : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,share,p), c(p.c) {}
+  ReLqInt<View,CtrlView,rm>::ReLqInt(Space& home, ReLqInt& p)
+    : ReUnaryPropagator<View,PC_INT_BND,CtrlView>(home,p), c(p.c) {}
 
   template<class View, class CtrlView, ReifyMode rm>
   Actor*
-  ReLqInt<View,CtrlView,rm>::copy(Space& home, bool share) {
-    return new (home) ReLqInt<View,CtrlView,rm>(home,share,*this);
+  ReLqInt<View,CtrlView,rm>::copy(Space& home) {
+    return new (home) ReLqInt<View,CtrlView,rm>(home,*this);
   }
 
   template<class View, class CtrlView, ReifyMode rm>

@@ -118,8 +118,8 @@ namespace Gecode { namespace Set {
    */
 
   forceinline
-  SetVarImp::SetVarImp(Space& home, bool share, SetVarImp& x)
-    : SetVarImpBase(home,share,x) {
+  SetVarImp::SetVarImp(Space& home, SetVarImp& x)
+    : SetVarImpBase(home,x) {
     lub.update(home, x.lub);
     glb.card(x.cardMin());
     lub.card(x.cardMax());
@@ -132,8 +132,8 @@ namespace Gecode { namespace Set {
 
 
   SetVarImp*
-  SetVarImp::perform_copy(Space& home, bool share) {
-    return new (home) SetVarImp(home,share,*this);
+  SetVarImp::perform_copy(Space& home) {
+    return new (home) SetVarImp(home,*this);
   }
 
   /*

@@ -72,10 +72,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for posting
     Val(Home home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    Val(Space& home, bool share, Val<View>& p);
+    Val(Space& home, Val<View>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space& home, bool share);
+    virtual Actor*     copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for view array \a x
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for posting
     Bnd(Home home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    Bnd(Space& home, bool share, Bnd<View>& p);
+    Bnd(Space& home, Bnd<View>& p);
   public:
     /// Post propagator for view array \a x
     static ExecStatus post(Home home, ViewArray<View>& x);
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Schedule function
     virtual void reschedule(Space& home);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Destructor
     virtual size_t dispose(Space& home);
   };
@@ -199,11 +199,11 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Initialize graph
     ExecStatus init(Space& home, ViewArray<View>& x);
     /// Mark edges in graph, return true if pruning is at all possible
-    bool mark(Space& home);
+    bool mark(void);
     /// Prune unmarked edges, \a assigned is true if a view got assigned
     ExecStatus prune(Space& home, bool& assigned);
     /// Synchronize graph with new view domains
-    bool sync(Space& home);
+    bool sync(void);
   };
 
   /**
@@ -229,7 +229,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Initialize view-value graph for views \a x
     ExecStatus init(Space& home, ViewArray<View>& x);
     /// Synchronize available view-value graph
-    ExecStatus sync(Space& home);
+    ExecStatus sync(void);
     /// Perform propagation, \a assigned is true if a view gets assigned
     ExecStatus propagate(Space& home, bool& assigned);
   };
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Propagation controller
     DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Dom(Space& home, bool share, Dom<View>& p);
+    Dom(Space& home, Dom<View>& p);
     /// Constructor for posting
     Dom(Home home, ViewArray<View>& x);
   public:
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Distinct {
      */
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Post propagator for views \a x
     static ExecStatus post(Home home, ViewArray<View>& x);
   };
@@ -289,14 +289,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     using TernaryPropagator<View,PC_INT_DOM>::x2;
 
     /// Constructor for cloning \a p
-    TerDom(Space& home, bool share, TerDom<View>& p);
+    TerDom(Space& home, TerDom<View>& p);
     /// Constructor for posting
     TerDom(Home home, View x0, View x1, View x2);
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Post propagator for views \a x
     static  ExecStatus post(Home home, View x0, View x1, View x2);
   };
@@ -316,13 +316,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// The integer constant
     int c0, c1;
     /// Constructor for cloning \a p
-    EqIte(Space& home, bool share, EqIte& p);
+    EqIte(Space& home, EqIte& p);
     /// Constructor for creation
     EqIte(Home home, IntView x0, IntView x1, int c0, int c1);
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as high ternary)
     GECODE_INT_EXPORT
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;

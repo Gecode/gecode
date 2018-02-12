@@ -453,8 +453,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * that do not longer belong to the graph associated with the current
      * variable domains.
      */
-    ExecStatus sync(Space& home,
-                    ViewArray<IntView>& x, ViewArray<Card>& k);
+    ExecStatus sync(ViewArray<IntView>& x, ViewArray<Card>& k);
     /// Remove edges that do not belong to any maximal matching
     template<BC>
     ExecStatus narrow(Space& home,
@@ -467,21 +466,21 @@ namespace Gecode { namespace Int { namespace GCC {
      *    k[i].min()\f$
      */
     template<BC>
-    ExecStatus maximum_matching(Space& home);
+    ExecStatus maximum_matching(void);
 
     /// Compute possible free alternating paths in the graph
     template<BC>
-    void free_alternating_paths(Space& home);
+    void free_alternating_paths(void);
     /// Compute possible strongly connected components of the graph
     template<BC>
-    void strongly_connected_components(Space& home);
+    void strongly_connected_components(void);
     /**
      * \brief Test whether the current maximal matching on the graph
      * can be augmented by an alternating path starting and ending with
      * a free node.
      */
     template<BC>
-    bool augmenting_path(Space& home, Node*);
+    bool augmenting_path(Node*);
 
   protected:
     /**
@@ -1144,11 +1143,103 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
+        template<class Card> template<BC bc>
+  forceinline bool
+  VarValGraph<Card>::augmenting_path(Node* v) {
+    Region r;
+    NodeStack ns(r,n_node);
+    BitSet visited(r,static_cast<unsigned int>(n_node));
+    Edge** start = r.alloc<Edge*>(n_node);
+
+    // keep track of the nodes that have already been visited
+    Node* sn = v;
+
+    // mark the start partition
+    bool sp = sn->type();
+
+    // nodes in sp only follow free edges
+    // nodes in V - sp only follow matched edges
+
+    for (int i = n_node; i--; )
+      if (i >= n_var) {
+        vals[i-n_var]->inedge(NULL);
+        start[i] = vals[i-n_var]->first();
+      } else {
+        vars[i]->inedge(NULL);
+        start[i] = vars[i]->first();
+      }
+
+    v->inedge(NULL);
+    ns.push(v);
+    visited.set(static_cast<unsigned int>(v->index()));
+    while (!ns.empty()) {
+      Node* vv = ns.top();
+      Edge* e = NULL;
+      if (vv->type() == sp) {
+        e = start[vv->index()];
+        while ((e != NULL) && e->matched(bc))
+          e = e->next(vv->type());
+      } else {
+        e = start[vv->index()];
+        while ((e != NULL) && !e->matched(bc))
+          e = e->next(vv->type());
+        start[vv->index()] = e;
+      }
+      if (e != NULL) {
+        start[vv->index()] = e->next(vv->type());
+        Node* w = e->getMate(vv->type());
+        if (!visited.get(static_cast<unsigned int>(w->index()))) {
+          // unexplored path
+          bool m = w->type() ?
+            static_cast<ValNode*>(w)->matched(bc) :
+            static_cast<VarNode*>(w)->matched(bc);
+          if (!m && w->type() != sp) {
+            if (vv->inedge() != NULL) {
+              // augmenting path of length l > 1
+              e->match(bc);
+              break;
+            } else {
+              // augmenting path of length l = 1
+              e->match(bc);
+              ns.pop();
+              return true;
+            }
+          } else {
+            w->inedge(e);
+            visited.set(static_cast<unsigned int>(w->index()));
+            // find matching edge m incident with w
+            ns.push(w);
+          }
+        }
+      } else {
+        // tried all outgoing edges without finding an augmenting path
+        ns.pop();
+      }
+    }
+
+    bool pathfound = !ns.empty();
+
+    while (!ns.empty()) {
+      Node* t = ns.pop();
+      if (t != sn) {
+        Edge* in = t->inedge();
+        if (t->type() != sp) {
+          in->match(bc);
+        } else if (!sp) {
+          in->unmatch(bc,!sp);
+        } else {
+          in->unmatch(bc);
+        }
+      }
+    }
+    return pathfound;
+  }
+
+
   template<class Card>
   inline ExecStatus
-  VarValGraph<Card>::sync(Space& home,
-                          ViewArray<IntView>& x, ViewArray<Card>& k) {
-    Region r(home);
+  VarValGraph<Card>::sync(ViewArray<IntView>& x, ViewArray<Card>& k) {
+    Region r;
     // A node can be pushed twice (once when checking cardinality and later again)
     NodeStack re(r,2*n_node);
 
@@ -1309,12 +1400,12 @@ namespace Gecode { namespace Int { namespace GCC {
       if (!n->removed()) {
         if (!n->type()) {
           VarNode* vrn = static_cast<VarNode*>(n);
-          if (!vrn->matched(UBC) && !augmenting_path<UBC>(home,vrn))
+          if (!vrn->matched(UBC) && !augmenting_path<UBC>(vrn))
             return ES_FAILED;
         } else {
           ValNode* vln = static_cast<ValNode*>(n);
           while (!vln->matched(LBC))
-            if (!augmenting_path<LBC>(home,vln))
+            if (!augmenting_path<LBC>(vln))
               return ES_FAILED;
         }
       }
@@ -1417,101 +1508,9 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
-  template<class Card> template<BC bc>
-  forceinline bool
-  VarValGraph<Card>::augmenting_path(Space& home, Node* v) {
-    Region r(home);
-    NodeStack ns(r,n_node);
-    BitSet visited(r,static_cast<unsigned int>(n_node));
-    Edge** start = r.alloc<Edge*>(n_node);
-
-    // keep track of the nodes that have already been visited
-    Node* sn = v;
-
-    // mark the start partition
-    bool sp = sn->type();
-
-    // nodes in sp only follow free edges
-    // nodes in V - sp only follow matched edges
-
-    for (int i = n_node; i--; )
-      if (i >= n_var) {
-        vals[i-n_var]->inedge(NULL);
-        start[i] = vals[i-n_var]->first();
-      } else {
-        vars[i]->inedge(NULL);
-        start[i] = vars[i]->first();
-      }
-
-    v->inedge(NULL);
-    ns.push(v);
-    visited.set(static_cast<unsigned int>(v->index()));
-    while (!ns.empty()) {
-      Node* vv = ns.top();
-      Edge* e = NULL;
-      if (vv->type() == sp) {
-        e = start[vv->index()];
-        while ((e != NULL) && e->matched(bc))
-          e = e->next(vv->type());
-      } else {
-        e = start[vv->index()];
-        while ((e != NULL) && !e->matched(bc))
-          e = e->next(vv->type());
-        start[vv->index()] = e;
-      }
-      if (e != NULL) {
-        start[vv->index()] = e->next(vv->type());
-        Node* w = e->getMate(vv->type());
-        if (!visited.get(static_cast<unsigned int>(w->index()))) {
-          // unexplored path
-          bool m = w->type() ?
-            static_cast<ValNode*>(w)->matched(bc) :
-            static_cast<VarNode*>(w)->matched(bc);
-          if (!m && w->type() != sp) {
-            if (vv->inedge() != NULL) {
-              // augmenting path of length l > 1
-              e->match(bc);
-              break;
-            } else {
-              // augmenting path of length l = 1
-              e->match(bc);
-              ns.pop();
-              return true;
-            }
-          } else {
-            w->inedge(e);
-            visited.set(static_cast<unsigned int>(w->index()));
-            // find matching edge m incident with w
-            ns.push(w);
-          }
-        }
-      } else {
-        // tried all outgoing edges without finding an augmenting path
-        ns.pop();
-      }
-    }
-
-    bool pathfound = !ns.empty();
-
-    while (!ns.empty()) {
-      Node* t = ns.pop();
-      if (t != sn) {
-        Edge* in = t->inedge();
-        if (t->type() != sp) {
-          in->match(bc);
-        } else if (!sp) {
-          in->unmatch(bc,!sp);
-        } else {
-          in->unmatch(bc);
-        }
-      }
-    }
-    return pathfound;
-  }
-
   template<class Card>  template<BC bc>
   inline ExecStatus
-  VarValGraph<Card>::maximum_matching(Space& home) {
+  VarValGraph<Card>::maximum_matching(void) {
     int card_match = 0;
     // find an intial matching in O(n*d)
     // greedy algorithm
@@ -1521,7 +1520,7 @@ namespace Gecode { namespace Int { namespace GCC {
           e->match(bc); card_match++;
         }
 
-    Region r(home);
+    Region r;
     switch (bc) {
     case LBC:
       if (card_match < sum_min) {
@@ -1535,7 +1534,7 @@ namespace Gecode { namespace Int { namespace GCC {
         while (!free.empty()) {
           ValNode* v = free.pop();
           while (!v->matched(LBC))
-            if (augmenting_path<LBC>(home,v))
+            if (augmenting_path<LBC>(v))
               card_match++;
             else
               break;
@@ -1557,7 +1556,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
         while (!free.empty()) {
           VarNode* v = free.pop();
-          if (!v->matched(UBC) && augmenting_path<UBC>(home,v))
+          if (!v->matched(UBC) && augmenting_path<UBC>(v))
             card_match++;
         }
 
@@ -1575,8 +1574,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card> template<BC bc>
   forceinline void
-  VarValGraph<Card>::free_alternating_paths(Space& home) {
-    Region r(home);
+  VarValGraph<Card>::free_alternating_paths(void) {
+    Region r;
     NodeStack ns(r,n_node);
     BitSet visited(r,static_cast<unsigned int>(n_node));
 
@@ -1745,8 +1744,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card> template<BC bc>
   forceinline void
-  VarValGraph<Card>::strongly_connected_components(Space& home) {
-    Region r(home);
+  VarValGraph<Card>::strongly_connected_components(void) {
+    Region r;
     BitSet inscc(r,static_cast<unsigned int>(n_node));
     BitSet in_unfinished(r,static_cast<unsigned int>(n_node));
     int* dfsnum = r.alloc<int>(n_node);

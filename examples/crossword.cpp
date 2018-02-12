@@ -76,6 +76,11 @@ protected:
   /// Letters for grid
   IntVarArray letters;
 public:
+  /// Which model to use
+  enum {
+    MODEL_ELEMENT, ///< Use element constraints per letter
+    MODEL_TUPLESET ///< Use one tuple-set per word
+  };
   /// Branching to use for model
   enum {
     BRANCH_WORDS_AFC,          ///< Branch on the words
@@ -111,42 +116,95 @@ public:
     // Array of all words
     IntVarArgs allwords;
 
-    // While words of length w_l to process
-    while (int w_l=*g++) {
-      // Number of words of that length in the dictionary
-      int n_w = dict.words(w_l);
-      // Number of words of that length in the puzzle
-      int n=*g++;
+    switch (opt.model()) {
+    case MODEL_ELEMENT:
+      // While words of length w_l to process
+      while (int w_l=*g++) {
+        // Number of words of that length in the dictionary
+        int n_w = dict.words(w_l);
+        // Number of words of that length in the puzzle
+        int n=*g++;
+        
+        if (n > n_w) {
+          fail();
+        } else {
+          // Array of all words of length w_l
+          IntVarArgs words(*this,n,0,n_w-1);
+          allwords << words;
+          
+          // All words of same length must be different
+          distinct(*this, words, opt.ipl());
+          
+          for (int d=0; d<w_l; d++) {
+            // Array that maps words to a letter at a certain position (shared among all element constraints)
+            IntSharedArray w2l(n_w);
+            // Initialize word to letter map
+            for (int i=n_w; i--; )
+              w2l[i] = dict.word(w_l,i)[d];
+            // Link word to letter variable
+            for (int i=0; i<n; i++) {
+              // Get (x,y) coordinate where word begins
+              int x=g[3*i+0], y=g[3*i+1];
+              // Whether word is horizontal
+              bool h=(g[3*i+2] == 0);
+              // Constrain the letters to the words' letters
+              element(*this, w2l, words[i], h ? ml(x+d,y) : ml(x,y+d));
+            }
+          }
+          // Skip word coordinates
+          g += 3*n;
+        }
+      }
+      break;
+    case MODEL_TUPLESET:
+      // While words of length w_l to process
+      while (int w_l=*g++) {
+        // Number of words of that length in the dictionary
+        int n_w = dict.words(w_l);
+        // Number of words of that length in the puzzle
+        int n=*g++;
+        
+        if (n > n_w) {
+          fail();
+        } else {
+          // Setup tuple-set
+          TupleSet ts(w_l+1);
+          IntArgs w(w_l+1);
+          for (int i=0; i<n_w; i++) {
+            for (int d=0; d<w_l; d++)
+              w[d] = dict.word(w_l,i)[d];
+            w[w_l]=i;
+            ts.add(w);
+          }
+          ts.finalize();
 
-      if (n > n_w) {
-        fail();
-      } else {
-        // Array of all words of length w_l
-        IntVarArgs words(*this,n,0,n_w-1);
-        allwords << words;
-
-        // All words of same length must be different
-        distinct(*this, words, opt.ipl());
-
-        for (int d=0; d<w_l; d++) {
-          // Array that maps words to a letter at a certain position (shared among all element constraints)
-          IntSharedArray w2l(n_w);
-          // Initialize word to letter map
-          for (int i=n_w; i--; )
-            w2l[i] = dict.word(w_l,i)[d];
-          // Link word to letter variable
+          // Array of all words of length w_l
+          IntVarArgs words(*this,n,0,n_w-1);
+          allwords << words;
+          
+          // All words of same length must be different
+          distinct(*this, words, opt.ipl());
+          
+          // Constraint all words in puzzle
           for (int i=0; i<n; i++) {
             // Get (x,y) coordinate where word begins
-            int x=g[3*i+0], y=g[3*i+1];
+            int x=*g++, y=*g++;
             // Whether word is horizontal
-            bool h=(g[3*i+2] == 0);
-            // Constrain the letters to the words' letters
-            element(*this, w2l, words[i], h ? ml(x+d,y) : ml(x,y+d));
+            bool h=(*g++ == 0);
+            // Letters in word plus word number
+            IntVarArgs w(w_l+1); w[w_l]=words[i];
+            if (h)
+              for (int d=0; d<w_l; d++)
+                w[d] = ml(x+d,y);
+            else
+              for (int d=0; d<w_l; d++)
+                w[d] = ml(x,y+d);
+            // Constrain word
+            extensional(*this, w, ts);
           }
         }
-        // Skip word coordinates
-        g += 3*n;
       }
+      break;
     }
     switch (opt.branching()) {
     case BRANCH_WORDS_AFC:
@@ -235,14 +293,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Crossword(bool share, Crossword& s)
-    : Script(share,s), w(s.w), h(s.h) {
-    letters.update(*this, share, s.letters);
+  Crossword(Crossword& s)
+    : Script(s), w(s.w), h(s.h) {
+    letters.update(*this, s.letters);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Crossword(share,*this);
+  copy(void) {
+    return new Crossword(*this);
   }
   /// Print solution
   virtual void
@@ -274,6 +332,9 @@ main(int argc, char* argv[]) {
   FileSizeOptions opt("Crossword");
   opt.size(10);
   opt.ipl(IPL_VAL);
+  opt.model(Crossword::MODEL_ELEMENT);
+  opt.model(Crossword::MODEL_ELEMENT,"element");
+  opt.model(Crossword::MODEL_TUPLESET,"tuple-set");
   opt.branching(Crossword::BRANCH_LETTERS_AFC);
   opt.branching(Crossword::BRANCH_WORDS_AFC,
                 "words-afc");

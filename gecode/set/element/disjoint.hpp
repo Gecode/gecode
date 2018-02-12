@@ -52,11 +52,11 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   forceinline
-  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home, bool share,
+  ElementDisjoint<SView,RView>::ElementDisjoint(Space& home,
                                                 ElementDisjoint& p)
-    : Propagator(home,share,p) {
-    x1.update(home,share,p.x1);
-    iv.update(home,share,p.iv);
+    : Propagator(home,p) {
+    x1.update(home,p.x1);
+    iv.update(home,p.iv);
   }
 
   template<class SView, class RView>
@@ -97,8 +97,8 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class SView, class RView>
   Actor*
-  ElementDisjoint<SView,RView>::copy(Space& home, bool share) {
-    return new (home) ElementDisjoint(home,share,*this);
+  ElementDisjoint<SView,RView>::copy(Space& home) {
+    return new (home) ElementDisjoint(home,*this);
   }
 
   template<class SView, class RView>
@@ -106,7 +106,7 @@ namespace Gecode { namespace Set { namespace Element {
   ElementDisjoint<SView,RView>::propagate(Space& home, const ModEventDelta&) {
     int n = iv.size();
 
-    Region r(home);
+    Region r;
 
     bool fix_flag = false;
     do {

@@ -97,15 +97,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class Ops>
   forceinline
-  PowPlusBnd<VA,VB,Ops>::PowPlusBnd(Space& home, bool share,
-                                    PowPlusBnd<VA,VB,Ops>& p)
-    : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p),
+  PowPlusBnd<VA,VB,Ops>::PowPlusBnd(Space& home, PowPlusBnd<VA,VB,Ops>& p)
+    : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,p),
       ops(p.ops) {}
 
   template<class VA, class VB, class Ops>
   Actor*
-  PowPlusBnd<VA,VB,Ops>::copy(Space& home, bool share) {
-    return new (home) PowPlusBnd<VA,VB,Ops>(home,share,*this);
+  PowPlusBnd<VA,VB,Ops>::copy(Space& home) {
+    return new (home) PowPlusBnd<VA,VB,Ops>(home,*this);
   }
 
   template<class VA, class VB, class Ops>
@@ -212,14 +211,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops>
   forceinline
-  PowBnd<Ops>::PowBnd(Space& home, bool share, PowBnd<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_BND>(home,share,p),
+  PowBnd<Ops>::PowBnd(Space& home, PowBnd<Ops>& p)
+    : BinaryPropagator<IntView,PC_INT_BND>(home,p),
       ops(p.ops) {}
 
   template<class Ops>
   Actor*
-  PowBnd<Ops>::copy(Space& home, bool share) {
-    return new (home) PowBnd<Ops>(home,share,*this);
+  PowBnd<Ops>::copy(Space& home) {
+    return new (home) PowBnd<Ops>(home,*this);
   }
 
   template<class Ops>
@@ -327,15 +326,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, class Ops>
   forceinline
-  PowPlusDom<VA,VB,Ops>::PowPlusDom(Space& home, bool share,
-                                    PowPlusDom<VA,VB,Ops>& p)
-    : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,share,p),
+  PowPlusDom<VA,VB,Ops>::PowPlusDom(Space& home, PowPlusDom<VA,VB,Ops>& p)
+    : MixBinaryPropagator<VA,PC_INT_DOM,VB,PC_INT_DOM>(home,p),
       ops(p.ops) {}
 
   template<class VA, class VB, class Ops>
   Actor*
-  PowPlusDom<VA,VB,Ops>::copy(Space& home, bool share) {
-    return new (home) PowPlusDom<VA,VB,Ops>(home,share,*this);
+  PowPlusDom<VA,VB,Ops>::copy(Space& home) {
+    return new (home) PowPlusDom<VA,VB,Ops>(home,*this);
   }
 
   template<class VA, class VB, class Ops>
@@ -450,14 +448,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class Ops>
   forceinline
-  PowDom<Ops>::PowDom(Space& home, bool share, PowDom<Ops>& p)
-    : BinaryPropagator<IntView,PC_INT_DOM>(home,share,p),
+  PowDom<Ops>::PowDom(Space& home, PowDom<Ops>& p)
+    : BinaryPropagator<IntView,PC_INT_DOM>(home,p),
       ops(p.ops) {}
 
   template<class Ops>
   Actor*
-  PowDom<Ops>::copy(Space& home, bool share) {
-    return new (home) PowDom<Ops>(home,share,*this);
+  PowDom<Ops>::copy(Space& home) {
+    return new (home) PowDom<Ops>(home,*this);
   }
 
   template<class Ops>
@@ -496,7 +494,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return home.ES_NOFIX_PARTIAL(*this,IntView::med(ME_INT_DOM));
     }
 
-    Region r(home);
+    Region r;
     if (ops.even()) {
       ViewValues<IntView> i(x0), j(x0);
       using namespace Iter::Values;

@@ -43,12 +43,12 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewValNGL<View,int,PC_INT_VAL>(home,x,n) {}
   template<class View>
   forceinline
-  EqNGL<View>::EqNGL(Space& home, bool share, EqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_VAL>(home,share,ngl) {}
+  EqNGL<View>::EqNGL(Space& home, EqNGL& ngl)
+    : ViewValNGL<View,int,PC_INT_VAL>(home,ngl) {}
   template<class View>
   NGL*
-  EqNGL<View>::copy(Space& home, bool share) {
-    return new (home) EqNGL<View>(home,share,*this);
+  EqNGL<View>::copy(Space& home) {
+    return new (home) EqNGL<View>(home,*this);
   }
   template<class View>
   NGL::Status
@@ -71,12 +71,12 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewValNGL<View,int,PC_INT_DOM>(home,x,n) {}
   template<class View>
   forceinline
-  NqNGL<View>::NqNGL(Space& home, bool share, NqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_DOM>(home,share,ngl) {}
+  NqNGL<View>::NqNGL(Space& home, NqNGL& ngl)
+    : ViewValNGL<View,int,PC_INT_DOM>(home,ngl) {}
   template<class View>
   NGL*
-  NqNGL<View>::copy(Space& home, bool share) {
-    return new (home) NqNGL<View>(home,share,*this);
+  NqNGL<View>::copy(Space& home) {
+    return new (home) NqNGL<View>(home,*this);
   }
   template<class View>
   NGL::Status
@@ -99,12 +99,12 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewValNGL<View,int,PC_INT_BND>(home,x,n) {}
   template<class View>
   forceinline
-  LqNGL<View>::LqNGL(Space& home, bool share, LqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_BND>(home,share,ngl) {}
+  LqNGL<View>::LqNGL(Space& home, LqNGL& ngl)
+    : ViewValNGL<View,int,PC_INT_BND>(home,ngl) {}
   template<class View>
   NGL*
-  LqNGL<View>::copy(Space& home, bool share) {
-    return new (home) LqNGL<View>(home,share,*this);
+  LqNGL<View>::copy(Space& home) {
+    return new (home) LqNGL<View>(home,*this);
   }
   template<class View>
   NGL::Status
@@ -129,12 +129,12 @@ namespace Gecode { namespace Int { namespace Branch {
     : ViewValNGL<View,int,PC_INT_BND>(home,x,n) {}
   template<class View>
   forceinline
-  GqNGL<View>::GqNGL(Space& home, bool share, GqNGL& ngl)
-    : ViewValNGL<View,int,PC_INT_BND>(home,share,ngl) {}
+  GqNGL<View>::GqNGL(Space& home, GqNGL& ngl)
+    : ViewValNGL<View,int,PC_INT_BND>(home,ngl) {}
   template<class View>
   NGL*
-  GqNGL<View>::copy(Space& home, bool share) {
-    return new (home) GqNGL<View>(home,share,*this);
+  GqNGL<View>::copy(Space& home) {
+    return new (home) GqNGL<View>(home,*this);
   }
   template<class View>
   NGL::Status

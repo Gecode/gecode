@@ -130,16 +130,16 @@ public:
   }
 
   /// Constructor for cloning \a s
-  OrthoLatinSquare(bool share, OrthoLatinSquare& s)
-    : Script(share,s), n(s.n) {
-      x1.update(*this, share, s.x1);
-      x2.update(*this, share, s.x2);
+  OrthoLatinSquare(OrthoLatinSquare& s)
+    : Script(s), n(s.n) {
+      x1.update(*this, s.x1);
+      x2.update(*this, s.x2);
   }
 
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new OrthoLatinSquare(share,*this);
+  copy(void) {
+    return new OrthoLatinSquare(*this);
   }
   /// Print solution
   virtual void

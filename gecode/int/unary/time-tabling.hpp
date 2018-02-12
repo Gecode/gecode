@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class Task>
   ExecStatus
   timetabling(Space& home, Propagator& p, TaskArray<Task>& t) {
-    Region r(home);
+    Region r;
 
     bool assigned;
     if (Event* e = Event::events(r,t,assigned)) {

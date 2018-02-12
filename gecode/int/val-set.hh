@@ -73,7 +73,7 @@ namespace Gecode { namespace Int {
     template<class View>
     bool subset(View x) const;
     /// Update value set during cloning
-    void update(Space& home, bool share, ValSet& vs);
+    void update(Space& home, ValSet& vs);
     /// Flush entries
     void flush(void);
     /// Dispose value set

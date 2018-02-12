@@ -509,6 +509,39 @@ namespace Gecode {
     return _trace.value();
   }
 
+#ifdef GECODE_HAS_CPPROFILER
+
+  /*
+   * Profiler options
+   *
+   */
+  inline void
+  Options::profiler_id(int i) {
+    _profiler_id.value(i);
+  }
+  inline int
+  Options::profiler_id(void) const {
+    return _profiler_id.value();
+  }
+  inline void
+  Options::profiler_port(unsigned int p) {
+    _profiler_port.value(p);
+  }
+  inline unsigned int
+  Options::profiler_port(void) const {
+    return _profiler_port.value();
+  }
+  inline void
+  Options::profiler_info(bool b) {
+    _profiler_info.value(b);
+  }
+  inline bool
+  Options::profiler_info(void) const {
+    return _profiler_info.value();
+  }
+
+#endif
+
 #ifdef GECODE_HAS_GIST
   forceinline
   Options::_I::_I(void) : _click(heap,1), n_click(0),

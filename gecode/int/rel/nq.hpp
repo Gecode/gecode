@@ -65,13 +65,13 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class V0, class V1>
   forceinline
-  Nq<V0,V1>::Nq(Space& home, bool share, Nq<V0,V1>& p)
-    : MixBinaryPropagator<V0,PC_INT_VAL,V1,PC_INT_VAL>(home,share,p) {}
+  Nq<V0,V1>::Nq(Space& home, Nq<V0,V1>& p)
+    : MixBinaryPropagator<V0,PC_INT_VAL,V1,PC_INT_VAL>(home,p) {}
 
   template<class V0, class V1>
   Actor*
-  Nq<V0,V1>::copy(Space& home, bool share) {
-    return new (home) Nq<V0,V1>(home,share,*this);
+  Nq<V0,V1>::copy(Space& home) {
+    return new (home) Nq<V0,V1>(home,*this);
   }
 
   template<class V0, class V1>
@@ -108,19 +108,19 @@ namespace Gecode { namespace Int { namespace Rel {
 
   template<class View>
   forceinline
-  NaryNq<View>::NaryNq(Space& home, bool share, NaryNq<View>& p)
-    : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
+  NaryNq<View>::NaryNq(Space& home, NaryNq<View>& p)
+    : NaryPropagator<View,PC_INT_VAL>(home,p) {}
 
   template<class View>
   Actor*
-  NaryNq<View>::copy(Space& home, bool share) {
-    return new (home) NaryNq<View>(home,share,*this);
+  NaryNq<View>::copy(Space& home) {
+    return new (home) NaryNq<View>(home,*this);
   }
 
   template<class View>
   inline ExecStatus
   NaryNq<View>::post(Home home, ViewArray<View>& x) {
-    x.unique(home);
+    x.unique();
     // Try to find an assigned view
     int n = x.size();
     if (n <= 1)

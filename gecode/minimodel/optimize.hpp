@@ -41,16 +41,32 @@ namespace Gecode {
   IntMinimizeSpace::IntMinimizeSpace(void) {}
 
   forceinline
-  IntMinimizeSpace::IntMinimizeSpace(bool share, IntMinimizeSpace& s)
-    : Space(share,s) {}
+  IntMinimizeSpace::IntMinimizeSpace(IntMinimizeSpace& s)
+    : Space(s) {}
 
 
   forceinline
   IntMaximizeSpace::IntMaximizeSpace(void) {}
 
   forceinline
-  IntMaximizeSpace::IntMaximizeSpace(bool share, IntMaximizeSpace& s)
-    : Space(share,s) {}
+  IntMaximizeSpace::IntMaximizeSpace(IntMaximizeSpace& s)
+    : Space(s) {}
+
+
+  forceinline
+  IntLexMinimizeSpace::IntLexMinimizeSpace(void) {}
+
+  forceinline
+  IntLexMinimizeSpace::IntLexMinimizeSpace(IntLexMinimizeSpace& s)
+    : Space(s) {}
+
+
+  forceinline
+  IntLexMaximizeSpace::IntLexMaximizeSpace(void) {}
+
+  forceinline
+  IntLexMaximizeSpace::IntLexMaximizeSpace(IntLexMaximizeSpace& s)
+    : Space(s) {}
 
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -60,9 +76,8 @@ namespace Gecode {
     : step(s) {}
 
   forceinline
-  FloatMinimizeSpace::FloatMinimizeSpace(bool share,
-                                         FloatMinimizeSpace& s)
-    : Space(share,s), step(s.step) {}
+  FloatMinimizeSpace::FloatMinimizeSpace(FloatMinimizeSpace& s)
+    : Space(s), step(s.step) {}
 
 
   forceinline
@@ -70,9 +85,8 @@ namespace Gecode {
     : step(s) {}
 
   forceinline
-  FloatMaximizeSpace::FloatMaximizeSpace(bool share,
-                                         FloatMaximizeSpace& s)
-    : Space(share,s), step(s.step) {}
+  FloatMaximizeSpace::FloatMaximizeSpace(FloatMaximizeSpace& s)
+    : Space(s), step(s.step) {}
 
 #endif
 

@@ -68,7 +68,11 @@ const int c_supply[n_stores][n_warehouses] = {
   {47, 65, 55, 71, 95}
 };
 
-
+/// Model variants
+enum {
+  MODEL_SUMCOST, ///< Use sum as total cost
+  MODEL_LEXCOST  ///< Use lexicographic cost
+};
 
 /**
  * \brief %Example: Locating warehouses
@@ -96,7 +100,8 @@ const int c_supply[n_stores][n_warehouses] = {
  * \ingroup Example
  *
  */
-class Warehouses : public IntMinimizeScript {
+template<class Script>
+class Warehouses : public Script {
 protected:
   /// Which warehouse supplies a store
   IntVarArray supplier;
@@ -104,12 +109,10 @@ protected:
   BoolVarArray open;
   /// Cost of a store
   IntVarArray c_store;
-  /// Total cost
-  IntVar c_total;
 public:
   /// Actual model
   Warehouses(const Options& opt)
-    : IntMinimizeScript(opt),
+    : Script(opt),
       supplier(*this, n_stores, 0, n_warehouses-1),
       open(*this, n_warehouses, 0, 1),
       c_store(*this, n_stores) {
@@ -132,31 +135,43 @@ public:
       count(*this, supplier, c, IPL_DOM);
     }
 
-    // Compute total cost
-    c_total = expr(*this, c_fixed*sum(open) + sum(c_store));
-
     // Branch with largest minimum regret on store cost
     branch(*this, c_store, INT_VAR_REGRET_MIN_MAX(), INT_VAL_MIN());
-
     // Branch by assigning a supplier to each store
     branch(*this, supplier, INT_VAR_NONE(), INT_VAL_MIN());
+  }
+  /// Constructor for cloning \a s
+  Warehouses(Warehouses& s) : Script(s) {
+    supplier.update(*this, s.supplier);
+    open.update(*this, s.open);
+    c_store.update(*this, s.c_store);
+  }
+};
+
+
+/// Model with cost defined as sum
+class SumCostWarehouses : public Warehouses<IntMinimizeScript> {
+protected:
+  /// Total cost
+  IntVar c_total;
+public:
+  /// Actual model
+  SumCostWarehouses(const Options& opt)
+    : Warehouses<IntMinimizeScript>(opt) {
+    // Compute total cost
+    c_total = expr(*this, c_fixed*sum(open) + sum(c_store));
   }
   /// Return solution cost
   virtual IntVar cost(void) const {
     return c_total;
   }
   /// Constructor for cloning \a s
-  Warehouses(bool share, Warehouses& s) : IntMinimizeScript(share,s) {
-    supplier.update(*this, share, s.supplier);
-    open.update(*this, share, s.open);
-    c_store.update(*this, share, s.c_store);
-    c_total.update(*this, share, s.c_total);
+  SumCostWarehouses(SumCostWarehouses& s) : Warehouses<IntMinimizeScript>(s) {
+    c_total.update(*this, s.c_total);
   }
-
   /// Copy during cloning
-  virtual Space*
-  copy(bool share) {
-    return new Warehouses(share,*this);
+  virtual Space* copy(void) {
+    return new SumCostWarehouses(*this);
   }
   /// Print solution
   virtual void
@@ -169,16 +184,69 @@ public:
   }
 };
 
+
+/// Model with cost defined lexicographically
+class LexCostWarehouses : public Warehouses<IntLexMinimizeScript> {
+protected:
+  /// Cost for open warehouses
+  IntVar c_open;
+  /// Cost for stores
+  IntVar c_stores;
+public:
+  /// Actual model
+  LexCostWarehouses(const Options& opt)
+    : Warehouses<IntLexMinimizeScript>(opt) {
+    // Compute costs
+    c_open = expr(*this, sum(open));
+    c_stores = expr(*this, sum(c_store));
+  }
+  /// Return solution cost
+  virtual IntVarArgs cost(void) const {
+    IntVarArgs c(2);
+    c[0] = c_open; c[1] = c_stores; 
+    return c;
+  }
+  /// Constructor for cloning \a s
+  LexCostWarehouses(LexCostWarehouses& s)
+    : Warehouses<IntLexMinimizeScript>(s) {
+    c_open.update(*this, s.c_open);
+    c_stores.update(*this, s.c_stores);
+  }
+  /// Copy during cloning
+  virtual Space* copy(void) {
+    return new LexCostWarehouses(*this);
+  }
+  /// Print solution
+  virtual void
+  print(std::ostream& os) const {
+    os << "\tSupplier:        " << supplier << std::endl
+       << "\tOpen warehouses: " << open << std::endl
+       << "\tOpen cost:       " << c_open << std::endl
+       << "\tStores cost:     " << c_stores << std::endl
+       << std::endl;
+  }
+};
+
 /** \brief Main-function
  *  \relates Warehouses
  */
 int
 main(int argc, char* argv[]) {
   Options opt("Warehouses");
+  opt.model(MODEL_SUMCOST);
+  opt.model(MODEL_SUMCOST, "sum", "use sum of costs");
+  opt.model(MODEL_LEXCOST, "lex", "use lexicographic cost");
   opt.solutions(0);
   opt.iterations(10);
   opt.parse(argc,argv);
-  IntMinimizeScript::run<Warehouses,BAB,Options>(opt);
+  switch (opt.model()) {
+  case MODEL_SUMCOST:    
+    IntMinimizeScript::run<SumCostWarehouses,BAB,Options>(opt);
+    break;
+  case MODEL_LEXCOST:    
+    IntLexMinimizeScript::run<LexCostWarehouses,BAB,Options>(opt);
+    break;
+  }
   return 0;
 }
 

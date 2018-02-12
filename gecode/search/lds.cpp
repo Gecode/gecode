@@ -39,14 +39,18 @@
  */
 
 #include <gecode/search.hh>
-#include <gecode/search/sequential/lds.hh>
 #include <gecode/search/support.hh>
+
+#include <gecode/search/seq/lds.hh>
 
 namespace Gecode { namespace Search {
 
   Engine*
-  lds(Space* s, const Options& o) {
-    return new Sequential::LDS(s,o);
+  ldsengine(Space* s, const Options& o) {
+    if (o.tracer)
+      return new Seq::LDS<EdgeTraceRecorder>(s,o);
+    else
+      return new Seq::LDS<NoTraceRecorder>(s,o);
   }
 
 }}

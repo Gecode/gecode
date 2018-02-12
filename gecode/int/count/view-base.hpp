@@ -51,11 +51,11 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ>
   forceinline
-  ViewBase<VX,VY,VZ>::ViewBase(Space& home, bool share, ViewBase<VX,VY,VZ>& p)
-    : Propagator(home,share,p), c(p.c) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
-    z.update(home,share,p.z);
+  ViewBase<VX,VY,VZ>::ViewBase(Space& home, ViewBase<VX,VY,VZ>& p)
+    : Propagator(home,p), c(p.c) {
+    x.update(home,p.x);
+    update(y,home,p.y);
+    z.update(home,p.z);
   }
 
   template<class VX, class VY, class VZ>

@@ -57,8 +57,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   Actor*
-  Intersection<View0,View1,View2>::copy(Space& home, bool share) {
-    return new (home) Intersection(home,share,*this);
+  Intersection<View0,View1,View2>::copy(Space& home) {
+    return new (home) Intersection(home,*this);
   }
 
   template<class View0, class View1, class View2>
@@ -194,10 +194,10 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   forceinline
-  Intersection<View0,View1,View2>::Intersection(Space& home, bool share,
+  Intersection<View0,View1,View2>::Intersection(Space& home,
                                              Intersection<View0,View1,View2>& p)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                             View2,PC_SET_ANY>(home,share,p) {}
+                             View2,PC_SET_ANY>(home,p) {}
 
   /*
    * "Nary intersection" propagator
@@ -210,7 +210,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                             View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
-    shared = x.shared(home) || viewarrayshared(home,x,y);
+    shared = x.shared() || viewarrayshared(x,y);
   }
 
   template<class View0, class View1>
@@ -219,16 +219,16 @@ namespace Gecode { namespace Set { namespace RelOp {
                                             const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
-    shared = x.shared(home) || viewarrayshared(home,x,y);
+    shared = x.shared() || viewarrayshared(x,y);
     IntSetRanges rz(z);
     intOfDets.intersectI(home, rz);
   }
 
   template<class View0, class View1>
   forceinline
-  IntersectionN<View0,View1>::IntersectionN(Space& home, bool share,
+  IntersectionN<View0,View1>::IntersectionN(Space& home,
                                             IntersectionN& p)
-    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,p),
       shared(p.shared),
       intOfDets() {
     intOfDets.update(home, p.intOfDets);
@@ -262,8 +262,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1>
   Actor*
-  IntersectionN<View0,View1>::copy(Space& home, bool share) {
-    return new (home) IntersectionN<View0,View1>(home,share,*this);
+  IntersectionN<View0,View1>::copy(Space& home) {
+    return new (home) IntersectionN<View0,View1>(home,*this);
   }
 
   template<class View0, class View1>
@@ -291,7 +291,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       }
       {
-        Region r(home);
+        Region r;
         GlbRanges<View0>* xLBs = r.alloc<GlbRanges<View0> >(xsize);
         LubRanges<View0>* xUBs = r.alloc<LubRanges<View0> >(xsize);
         for (int i = xsize; i--; ) {
@@ -321,7 +321,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
-        Region r(home);
+        Region r;
         GLBndSet* rightSet =
           static_cast<GLBndSet*>(r.ralloc(sizeof(GLBndSet)*xsize));
         new (&rightSet[xsize-1]) GLBndSet(home);
@@ -356,7 +356,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
 
 
-      for(int i=0;i<x.size();i++){
+      for(int i=0;i<x.size();i++) {
         //Do not reverse! Eats away the end of the array!
         while (i<x.size() && x[i].assigned()) {
           GlbRanges<View0> det(x[i]);

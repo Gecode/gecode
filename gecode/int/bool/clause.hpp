@@ -60,15 +60,15 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  ClauseTrue<VX,VY>::ClauseTrue(Space& home, bool share, ClauseTrue<VX,VY>& p)
-    : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>(home,share,p) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  ClauseTrue<VX,VY>::ClauseTrue(Space& home, ClauseTrue<VX,VY>& p)
+    : MixBinaryPropagator<VX,PC_BOOL_VAL,VY,PC_BOOL_VAL>(home,p) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class VX, class VY>
   Actor*
-  ClauseTrue<VX,VY>::copy(Space& home, bool share) {
+  ClauseTrue<VX,VY>::copy(Space& home) {
     {
       int n = x.size();
       if (n > 0) {
@@ -100,9 +100,9 @@ namespace Gecode { namespace Int { namespace Bool {
       }
     }
     if ((x.size() == 0) && (y.size() == 0))
-      return new (home) BinOrTrue<VX,VY>(home,share,*this,x0,x1);
+      return new (home) BinOrTrue<VX,VY>(home,*this,x0,x1);
     else
-      return new (home) ClauseTrue<VX,VY>(home,share,*this);
+      return new (home) ClauseTrue<VX,VY>(home,*this);
   }
 
   template<class VX, class VY>
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOrTrue<VX>::post(home,x);
     if ((x.size() == 1) && (y.size() == 1)) {
       return BinOrTrue<VX,VY>::post(home,x[0],y[0]);
-    } else if (!x.shared(home,y)) {
+    } else if (!x.shared(y)) {
       (void) new (home) ClauseTrue(home,x,y);
     }
     return ES_OK;
@@ -200,8 +200,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  Clause<VX,VY>::Tagged::Tagged(Space& home, bool share, Tagged& a)
-    : Advisor(home,share,a), x(a.x) {}
+  Clause<VX,VY>::Tagged::Tagged(Space& home, Tagged& a)
+    : Advisor(home,a), x(a.x) {}
 
   template<class VX, class VY>
   forceinline
@@ -215,12 +215,12 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   forceinline
-  Clause<VX,VY>::Clause(Space& home, bool share, Clause<VX,VY>& p)
-    : Propagator(home,share,p), n_zero(p.n_zero) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
-    z.update(home,share,p.z);
-    c.update(home,share,p.c);
+  Clause<VX,VY>::Clause(Space& home, Clause<VX,VY>& p)
+    : Propagator(home,p), n_zero(p.n_zero) {
+    x.update(home,p.x);
+    y.update(home,p.y);
+    z.update(home,p.z);
+    c.update(home,p.c);
   }
 
   template<class VX>
@@ -239,16 +239,16 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class VX, class VY>
   Actor*
-  Clause<VX,VY>::copy(Space& home, bool share) {
+  Clause<VX,VY>::copy(Space& home) {
     eliminate_zero(x,n_zero);
     eliminate_zero(y,n_zero);
-    return new (home) Clause<VX,VY>(home,share,*this);
+    return new (home) Clause<VX,VY>(home,*this);
   }
 
   template<class VX, class VY>
   inline ExecStatus
   Clause<VX,VY>::post(Home home, ViewArray<VX>& x, ViewArray<VY>& y, VX z) {
-    assert(!x.shared(home) && !y.shared(home));
+    assert(!x.shared() && !y.shared());
     if (z.one())
       return ClauseTrue<VX,VY>::post(home,x,y);
     if (z.zero()) {
@@ -278,7 +278,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOr<VX,VX>::post(home,x,z);
     if ((x.size() == 1) && (y.size() == 1)) {
       return Or<VX,VY,VX>::post(home,x[0],y[0],z);
-    } else if (x.shared(home,y)) {
+    } else if (x.shared(y)) {
       GECODE_ME_CHECK(z.one_none(home));
     } else {
       (void) new (home) Clause<VX,VY>(home,x,y,z);

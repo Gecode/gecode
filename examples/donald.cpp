@@ -98,13 +98,13 @@ public:
     branch(*this, le, INT_VAR_SIZE_MIN(), INT_VAL_MAX());
   }
   /// Constructor for cloning \a s
-  Donald(bool share, Donald& s) : Script(share,s) {
-    le.update(*this, share, s.le);
+  Donald(Donald& s) : Script(s) {
+    le.update(*this, s.le);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Donald(share,*this);
+  copy(void) {
+    return new Donald(*this);
   }
   /// Print solution
   virtual void

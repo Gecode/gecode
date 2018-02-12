@@ -96,10 +96,11 @@ namespace Gecode {
    * \ingroup TaskDriverCmd
    */
   enum ScriptMode {
-    SM_SOLUTION, ///< Print solution and some statistics
-    SM_TIME,     ///< Measure average runtime
-    SM_STAT,     ///< Print statistics for script
-    SM_GIST      ///< Run script in Gist
+    SM_SOLUTION,  ///< Print solution and some statistics
+    SM_TIME,      ///< Measure average runtime
+    SM_STAT,      ///< Print statistics for script
+    SM_GIST,      ///< Run script in Gist
+    SM_CPPROFILER ///< Run script with CP-profiler
   };
 
   /**
@@ -124,9 +125,10 @@ namespace Gecode {
     class GECODE_DRIVER_EXPORT BaseOption {
       friend class Gecode::BaseOptions;
     protected:
-      const char* opt;  ///< String for option (including hyphen)
-      const char* exp;  ///< Short explanation
-      BaseOption* next; ///< Next option
+      const char* eopt;  ///< String for option (excluding hyphen)
+      const char* iopt;  ///< String for option (including hyphen)
+      const char* exp;   ///< Short explanation
+      BaseOption* next;  ///< Next option
       /// Check for option and return its argument
       char* argument(int argc, char* argv[]) const;
     public:
@@ -140,6 +142,8 @@ namespace Gecode {
       virtual ~BaseOption(void);
       /// Create heap-allocated copy of string \a s
       static char* strdup(const char* s);
+      /// Create heap-allocated copy of string \a s with hyphen added
+      static char* stredup(const char* s);
       /// Delete heap-allocated copy of string \a s
       static void strdel(const char* s);
     };
@@ -401,13 +405,20 @@ namespace Gecode {
 
     /// \name Execution options
     //@{
-    Driver::StringOption      _mode;       ///< Script mode to run
-    Driver::UnsignedIntOption _samples;    ///< How many samples
-    Driver::UnsignedIntOption _iterations; ///< How many iterations per sample
-    Driver::BoolOption        _print_last; ///< Print only last solution found
-    Driver::StringValueOption _out_file;   ///< Where to print solutions
-    Driver::StringValueOption _log_file;   ///< Where to print statistics
-    Driver::TraceOption       _trace;      ///< Trace flags for tracing
+    Driver::StringOption      _mode;          ///< Script mode to run
+    Driver::UnsignedIntOption _samples;       ///< How many samples
+    Driver::UnsignedIntOption _iterations;    ///< How many iterations per sample
+    Driver::BoolOption        _print_last;    ///< Print only last solution found
+    Driver::StringValueOption _out_file;      ///< Where to print solutions
+    Driver::StringValueOption _log_file;      ///< Where to print statistics
+    Driver::TraceOption       _trace;         ///< Trace flags for tracing
+
+#ifdef GECODE_HAS_CPPROFILER
+    Driver::IntOption         _profiler_id;   ///< Use this execution id for the CP-profiler
+    Driver::UnsignedIntOption _profiler_port; ///< Connect to this port
+    Driver::BoolOption        _profiler_info; ///< Whether solution information should be sent to the CPProfiler
+#endif
+
     //@}
 
   public:
@@ -596,6 +607,21 @@ namespace Gecode {
     void trace(int f);
     /// Return trace flags
     int trace(void) const;
+
+#ifdef GECODE_HAS_CPPROFILER
+    /// Set profiler execution identifier
+    void profiler_id(int i);
+    /// Return profiler execution id
+    int profiler_id(void) const;
+    /// Set profiler port
+    void profiler_port(unsigned int p);
+    /// Return profiler execution id
+    unsigned int profiler_port(void) const;
+    /// Whether solution info should be sent to profiler
+    void profiler_info(bool b);
+    /// Return whether solution info should be sent to profiler
+    bool profiler_info(void) const;
+#endif
     //@}
 
 #ifdef GECODE_HAS_GIST
@@ -641,6 +667,10 @@ namespace Gecode {
     } inspect;
 #endif
   };
+
+}
+
+namespace Gecode {
 
   /**
    * \brief %Options for scripts with additional size parameter
@@ -705,7 +735,7 @@ namespace Gecode { namespace Driver {
     /// Constructor
     ScriptBase(const Options& opt);
     /// Constructor used for cloning
-    ScriptBase(bool share, ScriptBase& e);
+    ScriptBase(ScriptBase& e);
     /// Print a solution to \a os
     virtual void print(std::ostream& os) const;
     /// Compare with \a s
@@ -727,8 +757,6 @@ namespace Gecode { namespace Driver {
     template<class Script, template<class> class Engine, class Options,
              template<class, template<class> class> class Meta>
     static void runMeta(const Options& opt, Script* s);
-    /// Catch wrong definitions of copy constructor
-    explicit ScriptBase(ScriptBase& e);
   };
 
 #ifdef GECODE_HAS_FLOAT_VARS
@@ -741,8 +769,8 @@ namespace Gecode { namespace Driver {
     ExtractStepOption(const Options& opt)
       : BaseSpace(opt.step()) {}
     /// Constructor used for cloning
-    ExtractStepOption(bool share, BaseSpace& e)
-      : BaseSpace(share,e) {}
+    ExtractStepOption(BaseSpace& e)
+      : BaseSpace(e) {}
   };
 
 #endif
@@ -754,10 +782,9 @@ namespace Gecode { namespace Driver {
     /// Constructor
     IgnoreStepOption(const Options&) {}
     /// Constructor used for cloning
-    IgnoreStepOption(bool share, BaseSpace& e)
-      : BaseSpace(share,e) {}
+    IgnoreStepOption(BaseSpace& e)
+      : BaseSpace(e) {}
   };
-
 
 }}
 
@@ -776,18 +803,7 @@ namespace Gecode {
    */
   typedef Driver::ScriptBase<Driver::IgnoreStepOption<Space> >
     Script;
-  /**
-   * \brief Base-class for scripts for finding solution of lowest integer cost
-   * \ingroup TaskDriverScript
-   */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MinimizeSpace> >
-    MinimizeScript;
-  /**
-   * \brief Base-class for scripts for finding solution of highest integer cost
-   * \ingroup TaskDriverScript
-   */
-  typedef Driver::ScriptBase<Driver::IgnoreStepOption<MaximizeSpace> >
-    MaximizeScript;
+
   /**
    * \brief Base-class for scripts for finding solution of lowest integer cost
    * \ingroup TaskDriverScript
@@ -800,6 +816,19 @@ namespace Gecode {
    */
   typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntMaximizeSpace> >
     IntMaximizeScript;
+
+  /**
+   * \brief Base-class for scripts for finding solution of lexically lowest integer costs
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMinimizeSpace> >
+    IntLexMinimizeScript;
+  /**
+   * \brief Base-class for scripts for finding solution of lexically highest integer costs
+   * \ingroup TaskDriverScript
+   */
+  typedef Driver::ScriptBase<Driver::IgnoreStepOption<IntLexMaximizeSpace> >
+    IntLexMaximizeScript;
 
 #ifdef GECODE_HAS_FLOAT_VARS
 

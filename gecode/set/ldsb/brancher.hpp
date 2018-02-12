@@ -71,9 +71,9 @@ namespace Gecode { namespace Set { namespace LDSB {
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>
   LDSBSetBrancher<View,n,Val,a,Filter,Print>::
-  LDSBSetBrancher(Space& home, bool shared,
+  LDSBSetBrancher(Space& home,
                   LDSBSetBrancher<View,n,Val,a,Filter,Print>& b)
-    : LDSBBrancher<View,n,Val,a,Filter,Print>(home,shared,b),
+    : LDSBBrancher<View,n,Val,a,Filter,Print>(home,b),
       _prevPos(b._prevPos),
       _nNonValueSymmetries(b._nNonValueSymmetries),
       _nValueSymmetries(b._nValueSymmetries),
@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace LDSB {
       _copiedSyms = home.alloc<ValueSymmetryImp<View>*>(_nCopiedSyms);
       for (int i = 0 ; i < _nCopiedSyms ; i++)
         _copiedSyms[i] = static_cast<ValueSymmetryImp<View>*>(
-          b._copiedSyms[i]->copy(home, shared));
+          b._copiedSyms[i]->copy(home));
     } else {
       _copiedSyms = NULL;
     }
@@ -172,7 +172,7 @@ namespace Gecode { namespace Set { namespace LDSB {
           ValueSymmetryImp<View>* vsi =
             static_cast<ValueSymmetryImp<View>*>(this->_syms[j]);
           _copiedSyms[i] =
-            static_cast<ValueSymmetryImp<View>*>(vsi->copy(home, false));
+            static_cast<ValueSymmetryImp<View>*>(vsi->copy(home));
           i++;
         }
       }
@@ -248,9 +248,9 @@ namespace Gecode { namespace Set { namespace LDSB {
   template<class View, int n, class Val, unsigned int a,
            class Filter, class Print>
   Actor*
-  LDSBSetBrancher<View,n,Val,a,Filter,Print>::copy(Space& home, bool shared) {
+  LDSBSetBrancher<View,n,Val,a,Filter,Print>::copy(Space& home) {
     return new (home) LDSBSetBrancher<View,n,Val,a,Filter,Print>
-      (home,shared,*this);
+      (home,*this);
   }
 
   template<class View, int n, class Val, unsigned int a,

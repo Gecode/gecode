@@ -43,9 +43,8 @@ namespace Gecode { namespace Search {
       threads(Config::threads),
       c_d(Config::c_d), a_d(Config::a_d),
       d_l(Config::d_l),
-      share_rbs(true), share_pbs(false),
       assets(0), slice(Config::slice), nogoods_limit(0),
-      stop(NULL), cutoff(NULL) {}
+      stop(nullptr), cutoff(nullptr), tracer(nullptr) {}
 
 }}
 

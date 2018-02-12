@@ -4,8 +4,14 @@
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Kevin Leo <kevin.leo@monash.edu>
+ *     Maxim Shishmarev <maxim.shishmarev@monash.edu>
+ * 
  *  Copyright:
+ *     Kevin Leo, 2017
  *     Christian Schulte, 2002
+ *     Maxim Shishmarev, 2017
  *     Guido Tack, 2004
  *
  *  Last modified:
@@ -125,6 +131,9 @@ namespace Gecode { namespace Search {
 
     /// Depth limit for no-good generation during search
     const unsigned int nogoods_limit = 128;
+
+    /// Default port for CPProfiler
+    const unsigned int cpprofiler_port = 6565U;
   }
 
 }}
@@ -162,6 +171,299 @@ namespace Gecode { namespace Search {
 }}
 
 #include <gecode/search/statistics.hpp>
+
+namespace Gecode { namespace Search {
+
+  class WrapTraceRecorder;
+  class TraceRecorder;
+  class EdgeTraceRecorder;
+
+}}
+
+#include <string>
+#include <sstream>
+
+namespace Gecode {
+
+  /// Support for tracing search
+  class SearchTracer {
+    friend class Search::WrapTraceRecorder;
+    friend class Search::TraceRecorder;
+    friend class Search::EdgeTraceRecorder;
+  public:
+    /// Which type of engine
+    enum EngineType {
+      DFS = 0, ///< Engine is a DFS engine
+      BAB = 1, ///< Engine is a BAB engine
+      LDS = 2, ///< Engine is a LDS engine
+      RBS = 3, ///< Engine is a RBS engine
+      PBS = 4, ///< Engine is a PBS engine
+      AOE = 5  ///< Unspecified engine (any other engine)
+    };
+    /// Information about an engine
+    class EngineInfo {
+    protected:
+      /// The engine type
+      EngineType _type;
+      /// First worker or engine
+      unsigned int _fst;
+      /// Last worker or engine
+      unsigned int _lst;
+    public:
+      /// Do not initialize
+      EngineInfo(void);
+      /// Initialize
+      EngineInfo(EngineType et, unsigned int fst, unsigned int lst);
+      /// \name Engine type information
+      //@{
+      /// Return engine type
+      EngineType type(void) const;
+      /// Return whether engine is a meta engine
+      bool meta(void) const;
+      //@}
+      /// \name Information for basic (non-meta) engines
+      //@{
+      /// Return id of first worker
+      unsigned int wfst(void) const;
+      /// Return id of last worker plus one
+      unsigned int wlst(void) const;
+      /// Return number of workers
+      unsigned int workers(void) const;
+      //@}
+      /// \name Information for meta engines
+      //@{
+      /// Return id of first engine
+      unsigned int efst(void) const;
+      /// Return id of last engine
+      unsigned int elst(void) const;
+      /// Return number of engines
+      unsigned int engines(void) const;
+      //@}
+    };
+    /// Edge information
+    class EdgeInfo {
+    protected:
+      /// The parent worker id  (edge does not exist if UINT_MAX)
+      unsigned int _wid;
+      /// The parent node id
+      unsigned int _nid;
+      /// Number of alternative
+      unsigned int _a;
+      /// String corresponding to alternative
+      std::string _s;
+    public:
+      /// Initialize
+      void init(unsigned int wid, unsigned int nid, unsigned int a);
+      /// Initialize
+      void init(unsigned int wid, unsigned int nid, unsigned int a,
+                const Space& s, const Choice & c);
+      /// Invalidate edge information (for stealing)
+      void invalidate(void);
+      /// Initialize as non existing
+      EdgeInfo(void);
+      /// Initialize
+      EdgeInfo(unsigned int wid, unsigned int nid, unsigned int a);
+      /// Test whether edge actually exists
+      operator bool(void) const;
+      /// Return parent worker id
+      unsigned int wid(void) const;
+      /// Return parent node id
+      unsigned int nid(void) const;
+      /// Return number of alternative
+      unsigned int alternative(void) const;
+      /// Return string for alternative
+      std::string string(void) const;
+    };
+    /// Node type
+    enum NodeType {
+      SOLVED  = 0, /// A solution node
+      FAILED  = 1, /// A failed node
+      BRANCH  = 2  /// A branch node
+    };
+    /// Node information
+    class NodeInfo {
+    protected:
+      /// The node type
+      NodeType _nt;
+      /// The worker id
+      unsigned int _wid;
+      /// The node id
+      unsigned int _nid;
+      /// The corresponding space
+      const Space& _s;
+      /// The corresponding choice (nullptr if type is not BRANCH)
+      const Choice* _c;
+    public:
+      /// Initialize node info
+      NodeInfo(NodeType nt,
+               unsigned int wid, unsigned int nid,
+               const Space& s, const Choice* c = nullptr);
+      /// Return node type
+      NodeType type(void) const;
+      /// Return worker id
+      unsigned int wid(void) const;
+      /// Return node id
+      unsigned int nid(void) const;
+      /// Return corresponding space
+      const Space& space(void) const;
+      /// Return corresponding choice
+      const Choice& choice(void) const;
+    };
+  private:
+    /// Mutex for serialized access
+    Support::Mutex m;
+    /// Number of pending engine and workers calls
+    unsigned int pending;
+    /// Number of engines
+    unsigned int n_e;
+    /// Number of workers
+    unsigned int n_w;
+    /// Number of active workers (for termination)
+    unsigned int n_active;
+    /// The engines
+    Support::DynamicArray<EngineInfo,Heap> es;
+    /// Mapping of workers to engines
+    Support::DynamicArray<unsigned int,Heap> w2e;
+    /// Register new engine
+    void engine(EngineType t, unsigned int n);
+    /// Register new worker
+    void worker(unsigned int& wid, unsigned int& eid);
+    /// Deregister a worker
+    void worker(void);
+    /// \name Unsynchronized internal calls
+    //{@
+    /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
+    void _round(unsigned int eid);
+    /// The engine skips an edge
+    void _skip(const EdgeInfo& ei);
+    /// The engine creates a new node with information \a ei and \a ni
+    void _node(const EdgeInfo& ei, const NodeInfo& ni);
+    //@}
+  public:
+    /// Initialize
+    SearchTracer(void);
+    /// \name Engine information
+    //@{
+    /// Return number of workers
+    unsigned int workers(void) const;
+    /// Return number of engines
+    unsigned int engines(void) const;
+    /// Provide access to engine with id \a eid
+    const EngineInfo& engine(unsigned int eid) const;
+    /// Return the engine id of a worker with id \a wid
+    unsigned int eid(unsigned int wid) const;
+    //@}
+    /// \name Trace event functions
+    //@{
+    /// The search engine initializes
+    virtual void init(void) = 0;
+    /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
+    virtual void round(unsigned int eid) = 0;
+    /// The engine skips an edge
+    virtual void skip(const EdgeInfo& ei) = 0;
+    /// The engine creates a new node with information \a ei and \a ni
+    virtual void node(const EdgeInfo& ei, const NodeInfo& ni) = 0;
+    /// All workers are done
+    virtual void done(void) = 0;
+    //@}
+    /// Delete
+    virtual ~SearchTracer(void);
+  };
+
+  class GECODE_SEARCH_EXPORT StdSearchTracer : public SearchTracer {
+  protected:
+    /// Output stream to use
+    std::ostream& os;
+    /// Map engine type to string
+    static const char* t2s[EngineType::AOE + 1];
+  public:
+    /// Initialize  with output stream \a os
+    StdSearchTracer(std::ostream& os = std::cerr);
+    /// The search engine initializes
+    virtual void init(void);
+    /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
+    virtual void round(unsigned int eid);
+    /// The engine skips an edge
+    virtual void skip(const EdgeInfo& ei);
+    /// The engine creates a new node with information \a ei and \a ni
+    virtual void node(const EdgeInfo& ei, const NodeInfo& ni);
+    /// All workers are done
+    virtual void done(void);
+    /// Delete
+    virtual ~StdSearchTracer(void);
+    /// Default tracer (printing to std::cerr)
+    static StdSearchTracer def;
+  };
+
+}
+
+#include <gecode/search/tracer.hpp>
+#include <gecode/search/trace-recorder.hpp>
+
+#ifdef GECODE_HAS_CPPROFILER
+
+namespace Gecode {
+
+  /// Code that is specific to the CPProfiler
+  namespace CPProfiler {}
+
+}
+
+namespace Gecode { namespace CPProfiler {
+
+  /// The actual connector to the CPProfiler
+  class Connector;
+
+}}
+
+namespace Gecode {
+
+  /// Class to record search trace info for CPProfiler
+  class GECODE_SEARCH_EXPORT CPProfilerSearchTracer : public SearchTracer {
+  public:
+    /// Class to send solution information to CPProfiler
+    class GECODE_SEARCH_EXPORT GetInfo : public HeapAllocated {
+    public:
+      /// Initialize
+      GetInfo(void);
+      /// Return info for a space
+      virtual std::string getInfo(const Space& home) const = 0;
+      /// Delete
+      virtual ~GetInfo(void);
+    };
+  private:
+    /// Connector to connect to running instnace of CPProfiler
+    CPProfiler::Connector* connector;
+    /// Execution id to be displayed by CPProfiler
+    int execution_id;
+    /// Name of script being traced
+    std::string name;
+    /// Number of the current restart
+    int restart;
+    /// Send solution information to CPProfiler
+    const GetInfo* pgi;
+  public:
+    /// Initialize
+    CPProfilerSearchTracer(int eid, std::string name,
+                           unsigned int port = Search::Config::cpprofiler_port,
+                           const GetInfo* pgi = nullptr);
+    /// The search engine initializes
+    virtual void init(void);
+    /// The engine with id \a eid goes to a next round (restart or next iteration in LDS)
+    virtual void round(unsigned int eid);
+    /// The engine skips an edge
+    virtual void skip(const EdgeInfo& ei);
+    /// The engine creates a new node with information \a ei and \a ni
+    virtual void node(const EdgeInfo& ei, const NodeInfo& ni);
+    /// All workers are done
+    virtual void done(void);
+    /// Delete
+    virtual ~CPProfilerSearchTracer(void);
+  };
+
+}
+
+#endif
 
 namespace Gecode { namespace Search {
 
@@ -455,10 +757,6 @@ namespace Gecode { namespace Search {
       unsigned int a_d;
       /// Discrepancy limit (for LDS)
       unsigned int d_l;
-      /// Whether to share AFC information between restarts
-      bool share_rbs;
-      /// Whether to share AFC information among assets in a portfolio
-      bool share_pbs;
       /// Number of assets (engines) in a portfolio
       unsigned int assets;
       /// Size of a slice in a portfolio (in number of failures)
@@ -469,6 +767,8 @@ namespace Gecode { namespace Search {
       Stop* stop;
       /// Cutoff for restart-based search
       Cutoff* cutoff;
+      /// Tracer object for tracing search
+      SearchTracer* tracer;
       /// Default options
       GECODE_SEARCH_EXPORT static const Options def;
       /// Initialize with default values

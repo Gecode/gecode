@@ -46,13 +46,13 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  GqBool<VY>::GqBool(Space& home, bool share, GqBool<VY>& p)
-    : BoolBase<VY>(home,share,p) {}
+  GqBool<VY>::GqBool(Space& home, GqBool<VY>& p)
+    : BoolBase<VY>(home,p) {}
 
   template<class VY>
   Actor*
-  GqBool<VY>::copy(Space& home, bool share) {
-    return new (home) GqBool<VY>(home,share,*this);
+  GqBool<VY>::copy(Space& home) {
+    return new (home) GqBool<VY>(home,*this);
   }
 
   template<class VY>
@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace NValues {
       return ES_OK;
     }
 
-    x.unique(home);
+    x.unique();
 
     if (x.size() == 1) {
       GECODE_ME_CHECK(y.lq(home,1));

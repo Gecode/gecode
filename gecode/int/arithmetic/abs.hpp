@@ -73,9 +73,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x0.max() <= 0)
       GECODE_REWRITE(p,(Eq<MinusView,View>::post(home(p),MinusView(x0),x1)));
 
+
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),-x0.min())));
-    GECODE_ME_CHECK(x0.lq(home,x1.max()));
     GECODE_ME_CHECK(x0.gq(home,-x1.max()));
+    GECODE_ME_CHECK(x0.lq(home,x1.max()));
+    if (x1.min() > 0) {
+      if (-x1.min() < x0.min()) {
+        GECODE_ME_CHECK(x0.gq(home,x1.min()));
+      } else if (x0.max() < x1.min()) {
+        GECODE_ME_CHECK(x0.lq(home,-x1.min()));
+      }
+    }
     return ES_NOFIX;
   }
 
@@ -108,13 +116,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  AbsBnd<View>::AbsBnd(Space& home, bool share, AbsBnd<View>& p)
-    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+  AbsBnd<View>::AbsBnd(Space& home, AbsBnd<View>& p)
+    : BinaryPropagator<View,PC_INT_BND>(home,p) {}
 
   template<class View>
   Actor*
-  AbsBnd<View>::copy(Space& home,bool share) {
-    return new (home) AbsBnd<View>(home,share,*this);
+  AbsBnd<View>::copy(Space& home) {
+    return new (home) AbsBnd<View>(home,*this);
   }
 
   template<class View>
@@ -163,13 +171,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class View>
   forceinline
-  AbsDom<View>::AbsDom(Space& home, bool share, AbsDom<View>& p)
-    : BinaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+  AbsDom<View>::AbsDom(Space& home, AbsDom<View>& p)
+    : BinaryPropagator<View,PC_INT_DOM>(home,p) {}
 
   template<class View>
   Actor*
-  AbsDom<View>::copy(Space& home,bool share) {
-    return new (home) AbsDom<View>(home,share,*this);
+  AbsDom<View>::copy(Space& home) {
+    return new (home) AbsDom<View>(home,*this);
   }
 
   template<class View>
@@ -190,7 +198,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return home.ES_NOFIX_PARTIAL(*this,View::med(ME_INT_DOM));
     }
 
-    Region r(home);
+    Region r;
 
     {
       ViewRanges<View> i(x0), j(x0);

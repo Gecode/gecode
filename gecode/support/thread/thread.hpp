@@ -75,7 +75,7 @@ namespace Gecode { namespace Support {
     Gecode::heap.rfree(p);
   }
 
-#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_OSX_UNFAIR) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
 
   /*
    * Fast mutexes

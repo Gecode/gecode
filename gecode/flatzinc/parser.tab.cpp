@@ -423,7 +423,7 @@ AST::Node* arrayOutput(AST::Call* ann) {
 namespace Gecode { namespace FlatZinc {
 
   FlatZincSpace* parse(const std::string& filename, Printer& p, std::ostream& err,
-                       FlatZincSpace* fzs, FznRnd* rnd) {
+                       FlatZincSpace* fzs, Rnd& rnd) {
 #ifdef HAVE_MMAP
     int fd;
     char* data;
@@ -473,7 +473,7 @@ namespace Gecode { namespace FlatZinc {
   }
 
   FlatZincSpace* parse(std::istream& is, Printer& p, std::ostream& err,
-                       FlatZincSpace* fzs, FznRnd* rnd) {
+                       FlatZincSpace* fzs, Rnd& rnd) {
     std::string s = string(istreambuf_iterator<char>(is),
                            istreambuf_iterator<char>());
 

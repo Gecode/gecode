@@ -47,7 +47,7 @@ namespace Gecode {
              const IntVarArgs& b, const IntArgs& s,
              IntPropLevel) {
     using namespace Int;
-    if (l.same(home,b))
+    if (l.same(b))
       throw ArgumentSame("Int::binpacking");
     if (b.size() != s.size())
       throw ArgumentSizeMismatch("Int::binpacking");
@@ -73,7 +73,7 @@ namespace Gecode {
              IntPropLevel) {
     using namespace Int;
 
-    if (l.same(home,b))
+    if (l.same(b))
       throw ArgumentSame("Int::binpacking");
 
     // The number of items
@@ -124,7 +124,7 @@ namespace Gecode {
     // Clique Finding and distinct posting
     {
       // First construct the conflict graph
-      Region r(home);
+      Region r;
       BinPacking::ConflictGraph cg(home,r,b,m);
 
       for (int i=0; i<n-1; i++) {

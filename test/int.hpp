@@ -169,8 +169,8 @@ namespace Test { namespace Int {
              int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
     : Base(p+s), arity(a), dom(d),
-      reified(r), rms((1 << Gecode::RM_EQV) ||
-                      (1 << Gecode::RM_IMP) ||
+      reified(r), rms((1 << Gecode::RM_EQV) |
+                      (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
@@ -180,8 +180,8 @@ namespace Test { namespace Int {
              int a, const Gecode::IntSet& d, bool r,
              Gecode::IntPropLevel i)
     : Base("Int::"+s), arity(a), dom(d),
-      reified(r), rms((1 << Gecode::RM_EQV) ||
-                      (1 << Gecode::RM_IMP) ||
+      reified(r), rms((1 << Gecode::RM_EQV) |
+                      (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
@@ -191,8 +191,8 @@ namespace Test { namespace Int {
              int a, int min, int max, bool r,
              Gecode::IntPropLevel i)
     : Base(p+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) ||
-                      (1 << Gecode::RM_IMP) ||
+      reified(r), rms((1 << Gecode::RM_EQV) |
+                      (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
@@ -201,8 +201,8 @@ namespace Test { namespace Int {
   Test::Test(const std::string& s,
              int a, int min, int max, bool r, Gecode::IntPropLevel i)
     : Base("Int::"+s), arity(a), dom(min,max),
-      reified(r), rms((1 << Gecode::RM_EQV) ||
-                      (1 << Gecode::RM_IMP) ||
+      reified(r), rms((1 << Gecode::RM_EQV) |
+                      (1 << Gecode::RM_IMP) |
                       (1 << Gecode::RM_PMI)),
       ipl(i), contest(ipl == Gecode::IPL_DOM ? CTL_DOMAIN : CTL_NONE),
       testsearch(true), testfix(true) {}
@@ -218,8 +218,6 @@ namespace Test { namespace Int {
     case IPL_DOM: s << "Dom"; break;
     default: s << "Def"; break;
     }
-    if (ipl & IPL_SPEED) s << "+S";
-    if (ipl & IPL_MEMORY) s << "+M";
     if (ipl & IPL_BASIC) s << "+B";
     if (ipl & IPL_ADVANCED) s << "+A";
     return s.str();

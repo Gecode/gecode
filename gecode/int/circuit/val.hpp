@@ -48,13 +48,13 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template<class View, class Offset>
   forceinline
-  Val<View,Offset>::Val(Space& home, bool share, Val<View,Offset>& p)
-    : Base<View,Offset>(home,share,p) {}
+  Val<View,Offset>::Val(Space& home, Val<View,Offset>& p)
+    : Base<View,Offset>(home,p) {}
 
   template<class View, class Offset>
   Actor*
-  Val<View,Offset>::copy(Space& home, bool share) {
-    return new (home) Val<View,Offset>(home,share,*this);
+  Val<View,Offset>::copy(Space& home) {
+    return new (home) Val<View,Offset>(home,*this);
   }
 
   template<class View, class Offset>

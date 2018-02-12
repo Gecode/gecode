@@ -46,9 +46,9 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View, bool Perm>
   inline void
-  sort_sigma(Space& home, ViewArray<View>& x, ViewArray<View>& z) {
+  sort_sigma(ViewArray<View>& x, ViewArray<View>& z) {
     if (Perm) {
-      Region r(home);
+      Region r;
       ViewPair<View>* xz = r.alloc<ViewPair<View> >(x.size());
       for (int i=x.size(); i--; ) {
         xz[i].x=x[i]; xz[i].z=z[i];

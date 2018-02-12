@@ -90,13 +90,13 @@ public:
   }
 
   /// Constructor for cloning \a e
-  MagicSequence(bool share, MagicSequence& e) : Script(share,e), n(e.n) {
-    s.update(*this, share, e.s);
+  MagicSequence(MagicSequence& e) : Script(e), n(e.n) {
+    s.update(*this, e.s);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new MagicSequence(share,*this);
+  copy(void) {
+    return new MagicSequence(*this);
   }
   /// Print sequence
   virtual

@@ -125,14 +125,14 @@ public:
   }
 
   /// Constructor for cloning
-  Sat(bool share, Sat& s) : Script(share,s) {
-    x.update(*this, share, s.x);
+  Sat(Sat& s) : Script(s) {
+    x.update(*this, s.x);
   }
 
   /// Perform copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new Sat(share,*this);
+  copy(void) {
+    return new Sat(*this);
   }
 
   /// Print solution

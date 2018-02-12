@@ -48,10 +48,9 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   template<class ManTask, class Cap, class PL>
   forceinline
-  ManProp<ManTask,Cap,PL>::ManProp(Space& home, bool shared,
-                                   ManProp<ManTask,Cap,PL>& p)
-    : TaskProp<ManTask,PL>(home,shared,p) {
-    c.update(home,shared,p.c);
+  ManProp<ManTask,Cap,PL>::ManProp(Space& home, ManProp<ManTask,Cap,PL>& p)
+    : TaskProp<ManTask,PL>(home,p) {
+    c.update(home,p.c);
   }
 
   template<class ManTask, class Cap, class PL>
@@ -81,8 +80,8 @@ namespace Gecode { namespace Int { namespace Cumulative {
 
   template<class ManTask, class Cap, class PL>
   Actor*
-  ManProp<ManTask,Cap,PL>::copy(Space& home, bool share) {
-    return new (home) ManProp<ManTask,Cap,PL>(home,share,*this);
+  ManProp<ManTask,Cap,PL>::copy(Space& home) {
+    return new (home) ManProp<ManTask,Cap,PL>(home,*this);
   }
 
   template<class ManTask, class Cap, class PL>

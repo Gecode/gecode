@@ -671,9 +671,7 @@ namespace Gecode {
    * \ingroup TaskModelSet
    *
    */
-
   //@{
-
   /// Propagates \f$ x \sim_r \{i\}\f$
   GECODE_SET_EXPORT void
   dom(Home home, SetVar x, SetRelType r, int i);
@@ -721,45 +719,34 @@ namespace Gecode {
    * \ingroup TaskModelSet
    *
    */
-
   //@{
-
   /// Post propagator for \f$ x \sim_r y\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetRelType r, SetVar y);
-
   /// Post propagator for \f$ (x \sim_{rt} y) \equiv r\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetRelType rt, SetVar y, Reify r);
-
   /// Post propagator for \f$ s \sim_r \{x\}\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar s, SetRelType r, IntVar x);
-
   /// Post propagator for \f$ \{x\} \sim_r s\f$
   GECODE_SET_EXPORT void
   rel(Home home, IntVar x, SetRelType r, SetVar s);
-
   /// Post propagator for \f$ (s \sim_{rt} \{x\}) \equiv r\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar s, SetRelType rt, IntVar x, Reify r);
-
   /// Post propagator for \f$ (\{x\} \sim_{rt} s) \equiv r \f$
   GECODE_SET_EXPORT void
   rel(Home home, IntVar x, SetRelType rt, SetVar s, Reify r);
-
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ i \sim_{rt} x\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar s, IntRelType rt, IntVar x);
-
   /// Post propagator for \f$|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\f$
   void
   rel(Home home, IntVar x, IntRelType rt, SetVar s);
-
   /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ i \sim_{rt} x\right)\equiv r\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar s, IntRelType rt, IntVar x, Reify r);
-
   /// Post reified propagator for \f$\left(|s|\geq 1 \land \forall i\in s:\ x \sim_{rt} i\right)\f\equiv r$
   void
   rel(Home home, IntVar x, IntRelType rt, SetVar s, Reify r);
@@ -776,61 +763,48 @@ namespace Gecode {
    * \ingroup TaskModelSet
    *
    */
-
   //@{
-
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetOpType op, SetVar y, SetRelType r, SetVar z);
-
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetOpType op, const SetVarArgs& x, SetVar y);
-
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x \diamond_{\mathit{op}} z\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y);
-
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x \diamond_{\mathit{op}} z\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y);
-
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
   GECODE_SET_EXPORT void
   rel(Home home, SetOpType op, const IntVarArgs& x, SetVar y);
-
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
   rel(Home home, const IntSet& x, SetOpType op, SetVar y,
       SetRelType r, SetVar z);
-
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetOpType op, const IntSet& y,
       SetRelType r, SetVar z);
-
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetOpType op, SetVar y,
       SetRelType r, const IntSet& z);
-
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
   rel(Home home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
       const IntSet& z);
-
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
   rel(Home home, SetVar x, SetOpType op, const IntSet& y, SetRelType r,
       const IntSet& z);
-
   /** \brief Post propagator for if-then-else constraint
    *
    * Posts propagator for \f$ z = b ? x : y \f$
    */
   GECODE_SET_EXPORT void
   ite(Home home, BoolVar b, SetVar x, SetVar y, SetVar z);
-
   //@}
 
 
@@ -840,16 +814,14 @@ namespace Gecode {
    *
    */
   //@{
-
   /// Post propagator that propagates that \a x is convex
   GECODE_SET_EXPORT void
   convex(Home home, SetVar x);
-
   /// Post propagator that propagates that \a y is the convex hull of \a x
   GECODE_SET_EXPORT void
   convex(Home home, SetVar x, SetVar y);
-
   //@}
+
 
   /**
    * \defgroup TaskModelSetSequence Sequence constraints
@@ -857,16 +829,14 @@ namespace Gecode {
    *
    */
   //@{
-
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
   GECODE_SET_EXPORT void
   sequence(Home home, const SetVarArgs& x);
-
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$
   GECODE_SET_EXPORT void
   sequence(Home home, const SetVarArgs& y, SetVar x);
-
   //@}
+
 
   /**
    * \defgroup TaskModelSetDistinct Distinctness constraints
@@ -874,12 +844,9 @@ namespace Gecode {
    *
    */
   //@{
-
-
   /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
   GECODE_SET_EXPORT void
   atmostOne(Home home, const SetVarArgs& x, unsigned int c);
-
   //@}
 
   /**
@@ -887,47 +854,46 @@ namespace Gecode {
    * \ingroup TaskModelSet
    *
    */
-
-  //@{
-
-  /** \brief Post propagator that propagates that \a x is the
-   *  minimal element of \a s, and that \a s is not empty */
+  /** \brief Post propagator that \a x is the minimal element of \a s and that \a s is not empty
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   min(Home home, SetVar s, IntVar x);
-
-  /** \brief Post propagator that propagates that \a x is not the
-   *  minimal element of \a s */
+  /** \brief Post propagator that \a x is not the minimal element of \a s
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   notMin(Home home, SetVar s, IntVar x);
-
-  /** \brief Post reified propagator for \a b iff \a x is the
-   *  minimal element of \a s */
+  /** \brief Post reified propagator for \a b iff \a x is the minimal element of \a s 
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   min(Home home, SetVar s, IntVar x, Reify r);
-
-  /** \brief Post propagator that propagates that \a x is the
-   *  maximal element of \a s, and that \a s is not empty */
+  /** \brief Post propagator that \a x is the maximal element of \a s and that \a s is not empty
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   max(Home home, SetVar s, IntVar x);
-
-  /** \brief Post propagator that propagates that \a x is not the
-   *  maximal element of \a s */
+  /** \brief Post propagator that \a x is not the maximal element of \a s
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   notMax(Home home, SetVar s, IntVar x);
-
-  /** \brief Post reified propagator for \a b iff \a x is the
-   *  maximal element of \a s */
+  /** \brief Post reified propagator for \a b iff \a x is the maximal element of \a s 
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   max(Home home, SetVar s, IntVar x, Reify r);
-
-  /// Post propagator for \f$ |s|=x \f$
+  /** \brief Post propagator for \f$ |s|=x \f$
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar s, IntVar x);
-
-  /// Post reified propagator for \f$ |s|=x \equiv r\f$
+  /** \brief Post reified propagator for \f$ |s|=x \equiv r\f$
+   * \ingroup TaskModelSetConnect
+   */
   GECODE_SET_EXPORT void
   cardinality(Home home, SetVar s, IntVar x, Reify r);
-
   /**
    * \brief Post propagator for \f$y = \mathrm{weight}(x)\f$
    *
@@ -937,38 +903,34 @@ namespace Gecode {
    * The upper bound of \a x is constrained to contain only elements from
    * \a elements. The weight of a set is the sum of the weights of its
    * elements.
+   *
+   * \ingroup TaskModelSetConnect
    */
   GECODE_SET_EXPORT void
   weights(Home home, IntSharedArray elements, IntSharedArray weights,
           SetVar x, IntVar y);
 
-  //@}
 
   /**
    * \defgroup TaskModelSetChannel Channel constraints
    * \ingroup TaskModelSet
    *
    */
-
   //@{
-
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
   channel(Home home, const IntVarArgs& x,const SetVarArgs& y);
-
   /// Post propagator for \f$\{x_0,\dots,x_{n-1}\}=y\f$ and \f$x_i<x_{i+1}\f$
   GECODE_SET_EXPORT void
   channelSorted(Home home, const IntVarArgs& x, SetVar y);
-
   /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
   GECODE_SET_EXPORT void
   channel(Home home, const BoolVarArgs& x, SetVar y);
-
   /// Post propagator for \f$j\in x_i \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
   channel(Home home, const SetVarArgs& x, const SetVarArgs& y);
-
   //@}
+
 
   /**
    * \defgroup TaskModelSetPrecede Value precedence constraints over set variables
@@ -989,6 +951,7 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   precede(Home home, const SetVarArgs& x, const IntArgs& c);
 
+
   /**
    * \defgroup TaskModelSetElement Element constraints
    * \ingroup TaskModelSet
@@ -1000,9 +963,7 @@ namespace Gecode {
    * Set element constraints are closely related to the ::element constraint
    * on integer variables.
    */
-
   //@{
-
   /**
    * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
@@ -1015,7 +976,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   element(Home home, SetOpType op, const SetVarArgs& x, SetVar y, SetVar z,
     const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
-
   /**
    * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle \{x_0\},\dots,\{x_{n-1}\}\rangle[y] \f$
    *
@@ -1028,7 +988,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   element(Home home, SetOpType op, const IntVarArgs& x, SetVar y, SetVar z,
           const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
-
   /**
    * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
@@ -1041,7 +1000,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   element(Home home, SetOpType op, const IntSetArgs& x, SetVar y, SetVar z,
           const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
-
   /**
    * \brief Post propagator for \f$ z=\diamond_{\mathit{op}}\langle \{x_0\},\dots,\{x_{n-1}\}\rangle[y] \f$
    *
@@ -1054,7 +1012,6 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   element(Home home, SetOpType op, const IntArgs& x, SetVar y, SetVar z,
           const IntSet& u = IntSet(Set::Limits::min,Set::Limits::max));
-
   /**
    * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$
    *
@@ -1062,7 +1019,6 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   element(Home home, const SetVarArgs& x, IntVar y, SetVar z);
-
   /**
    * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y] \f$
    *
@@ -1070,7 +1026,6 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   element(Home home, const IntSetArgs& s, IntVar y, SetVar z);
-
   /** \brief Post propagator for \f$ a_{x+w\cdot y}=z\f$
    *
    * Throws an exception of type Set::ArgumentSizeMismatch, if
@@ -1089,6 +1044,7 @@ namespace Gecode {
           IntVar x, int w, IntVar y, int h, SetVar z);
   //@}
 
+
   /**
    * \defgroup TaskModelSetExec Synchronized execution
    * \ingroup TaskModelSet
@@ -1104,11 +1060,11 @@ namespace Gecode {
   wait(Home home, SetVar x, std::function<void(Space& home)> c);
   /// Execute \a c when all variables in \a x become assigned
   GECODE_SET_EXPORT void
-  wait(Home home, const SetVarArgs& x,
-       std::function<void(Space& home)> c);
+  wait(Home home, const SetVarArgs& x, std::function<void(Space& home)> c);
   //@}
 
 }
+
 
 namespace Gecode {
 
@@ -1193,16 +1149,25 @@ namespace Gecode {
     SetAFC(const SetAFC& a);
     /// Assignment operator
     SetAFC& operator =(const SetAFC& a);
-    /// Initialize for set variables \a x with decay factor \a d
-    SetAFC(Home home, const SetVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for set variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
+    SetAFC(Home home, const SetVarArgs& x, double d=1.0, bool share=true);
     /**
      * \brief Initialize for set variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * AFC storage has been constructed with the default constructor.
      *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
      */
-    void init(Home home, const SetVarArgs& x, double d=1.0);
+    void init(Home home, const SetVarArgs& x, double d=1.0, bool share=true);
   };
 
 }

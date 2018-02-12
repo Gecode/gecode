@@ -1,10 +1,12 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Linnea Ingmar <linnea.ingmar@hotmail.com>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Linnea Ingmar, 2017
  *     Mikael Lagerkvist, 2007
  *     Christian Schulte, 2004
  *
@@ -45,7 +47,7 @@ namespace Gecode {
   extensional(Home home, const IntVarArgs& x, DFA dfa,
               IntPropLevel) {
     using namespace Int;
-    if (x.same(home))
+    if (x.same())
       throw ArgumentSame("Int::extensional");
     GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
@@ -55,7 +57,7 @@ namespace Gecode {
   extensional(Home home, const BoolVarArgs& x, DFA dfa,
               IntPropLevel) {
     using namespace Int;
-    if (x.same(home))
+    if (x.same())
       throw ArgumentSame("Int::extensional");
     GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
@@ -63,7 +65,7 @@ namespace Gecode {
 
   void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
-              IntPropLevel ipl) {
+              IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
@@ -80,28 +82,19 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<IntView> xv(home,x);
-    if (ipl & IPL_MEMORY) {
-      if (x.same(home)) {
-        GECODE_ES_FAIL((Extensional::Basic<IntView,true>
-                             ::post(home,xv,t)));
-      } else {
-        GECODE_ES_FAIL((Extensional::Basic<IntView,false>
-                             ::post(home,xv,t)));
-      }
-    } else {
-      GECODE_ES_FAIL((Extensional::Incremental<IntView>
-                           ::post(home,xv,t)));
-    }
+    GECODE_ES_FAIL(Extensional::postcompact<IntView>(home,xv,t));
   }
 
   void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
-              IntPropLevel ipl) {
+              IntPropLevel) {
     using namespace Int;
     if (!t.finalized())
       throw NotYetFinalized("Int::extensional");
     if (t.arity() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
+    if ((t.min() < 0) || (t.max() > 1))
+      throw NotZeroOne("Int::extensional");
     GECODE_POST;
 
     if (t.tuples()==0) {
@@ -113,18 +106,7 @@ namespace Gecode {
 
     // Construct view array
     ViewArray<BoolView> xv(home,x);
-    if (ipl & IPL_MEMORY) {
-      if (x.same(home)) {
-        GECODE_ES_FAIL((Extensional::Basic<BoolView,true>
-                             ::post(home,xv,t)));
-      } else {
-        GECODE_ES_FAIL((Extensional::Basic<BoolView,false>
-                             ::post(home,xv,t)));
-      }
-    } else {
-      GECODE_ES_FAIL((Extensional::Incremental<BoolView>
-                           ::post(home,xv,t)));
-    }
+    GECODE_ES_FAIL(Extensional::postcompact<BoolView>(home,xv,t));
   }
 
 }

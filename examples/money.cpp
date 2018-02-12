@@ -107,13 +107,13 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Money(bool share, Money& s) : Script(share,s) {
-    le.update(*this, share, s.le);
+  Money(Money& s) : Script(s) {
+    le.update(*this, s.le);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Money(share,*this);
+  copy(void) {
+    return new Money(*this);
   }
 };
 

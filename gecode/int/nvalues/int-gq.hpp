@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace NValues {
       return ES_OK;
     }
 
-    x.unique(home);
+    x.unique();
 
     if (x.size() == 1) {
       GECODE_ME_CHECK(y.lq(home,1));
@@ -94,13 +94,13 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  GqInt<VY>::GqInt(Space& home, bool share, GqInt<VY>& p)
-    : IntBase<VY>(home, share, p) {}
+  GqInt<VY>::GqInt(Space& home, GqInt<VY>& p)
+    : IntBase<VY>(home, p) {}
 
   template<class VY>
   Propagator*
-  GqInt<VY>::copy(Space& home, bool share) {
-    return new (home) GqInt<VY>(home, share, *this);
+  GqInt<VY>::copy(Space& home) {
+    return new (home) GqInt<VY>(home, *this);
   }
 
   template<class VY>

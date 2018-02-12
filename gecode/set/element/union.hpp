@@ -53,11 +53,11 @@ namespace Gecode { namespace Set { namespace Element {
   template<class View, class View0, class View1>
   forceinline
   ElementUnion<View,View0,View1>::
-  ElementUnion(Space& home, bool share, ElementUnion<View,View0,View1>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    iv.update(home,share,p.iv);
+  ElementUnion(Space& home, ElementUnion<View,View0,View1>& p)
+    : Propagator(home,p) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    iv.update(home,p.iv);
   }
 
   template<class View, class View0, class View1>
@@ -104,14 +104,14 @@ namespace Gecode { namespace Set { namespace Element {
 
   template<class View, class View0, class View1>
   Actor*
-  ElementUnion<View,View0,View1>::copy(Space& home, bool share) {
-    return new (home) ElementUnion<View,View0,View1>(home,share,*this);
+  ElementUnion<View,View0,View1>::copy(Space& home) {
+    return new (home) ElementUnion<View,View0,View1>(home,*this);
   }
 
   template<class View, class View0, class View1>
   ExecStatus
   ElementUnion<View,View0,View1>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
     int n = iv.size();
 
     bool loopVar;

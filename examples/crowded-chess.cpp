@@ -94,11 +94,11 @@ namespace {
       rel(*this, kb(n-1, n-1), IRT_EQ, 1);
       branch(*this, k, BOOL_VAR_DEGREE_MAX(), BOOL_VAL_MAX());
     }
-    Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
-      k.update(*this, share, s.k);
+    Bishops(Bishops& s) : Space(s), n(s.n) {
+      k.update(*this, s.k);
     }
-    virtual Space* copy(bool share) {
-      return new Bishops(share,*this);
+    virtual Space* copy(void) {
+      return new Bishops(*this);
     }
   };
   /** \brief Initialize bishops
@@ -106,8 +106,11 @@ namespace {
    */
   void init_bishops(int size) {
     Bishops* prob = new Bishops(size);
-    DFS<Bishops> e(prob); IntArgs ia(size*size);
+    DFS<Bishops> e(prob); 
+    IntArgs ia(size*size);
     delete prob;
+
+    bishops.init(size*size);
 
     while (Bishops* s = e.next()) {
       for (int i = size*size; i--; )
@@ -341,18 +344,18 @@ public:
   }
 
   /// Constructor for cloning e
-  CrowdedChess(bool share, CrowdedChess& e)
-    : Script(share,e), n(e.n) {
-    s.update(*this, share, e.s);
-    queens.update(*this, share, e.queens);
-    rooks.update(*this, share, e.rooks);
-    knights.update(*this, share, e.knights);
+  CrowdedChess(CrowdedChess& e)
+    : Script(e), n(e.n) {
+    s.update(*this, e.s);
+    queens.update(*this, e.queens);
+    rooks.update(*this, e.rooks);
+    knights.update(*this, e.knights);
   }
 
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new CrowdedChess(share,*this);
+  copy(void) {
+    return new CrowdedChess(*this);
   }
 
   /// Print solution

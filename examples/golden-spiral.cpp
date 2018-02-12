@@ -100,13 +100,13 @@ public:
     branch(*this,theta,FLOAT_VAL_SPLIT_MIN());
   }
   /// Constructor for cloning \a p
-  GoldenSpiral(bool share, GoldenSpiral& p)
-    : FloatMaximizeScript(share,p) {
-    f.update(*this,share,p.f);
+  GoldenSpiral(GoldenSpiral& p)
+    : FloatMaximizeScript(p) {
+    f.update(*this, p.f);
   }
   /// Copy during cloning
-  virtual Space* copy(bool share) {
-    return new GoldenSpiral(share,*this);
+  virtual Space* copy(void) {
+    return new GoldenSpiral(*this);
   }
   /// Cost function
   virtual FloatVar cost(void) const {

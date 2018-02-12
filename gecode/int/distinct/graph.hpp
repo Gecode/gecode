@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     for (int i=n_view; i--; )
       view[i] = new (home) ViewNode<View>(x[i]);
 
-    Region r(home);
+    Region r;
 
     if (static_cast<unsigned int>(n_view)*4 >= width) {
       // Values are dense: use a mapping
@@ -113,9 +113,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline bool
-  Graph<View>::sync(Space& home) {
+  Graph<View>::sync(void) {
     using namespace ViewValGraph;
-    Region r(home);
+    Region r;
     // Stack for view nodes to be rematched
     typename ViewValGraph::Graph<View>::ViewNodeStack re(r,n_view);
     // Synchronize nodes
@@ -175,10 +175,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline bool
-  Graph<View>::mark(Space& home) {
+  Graph<View>::mark(void) {
     using namespace ViewValGraph;
 
-    Region r(home);
+    Region r;
 
     int n_view_visited = 0;
     {
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     // If all view nodes have been visited, also all edges are used!
     if (n_view_visited < n_view) {
-      scc(home);
+      scc();
       return true;
     } else {
       return false;

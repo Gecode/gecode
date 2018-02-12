@@ -445,32 +445,32 @@ public:
   }
 
   /// Constructor for cloning \a s
-  ColoredMatrix(bool share, ColoredMatrix& s)
-    : IntMinimizeScript(share,s), opt(s.opt),
+  ColoredMatrix(ColoredMatrix& s)
+    : IntMinimizeScript(s), opt(s.opt),
       height(s.height), width(s.width), colors(s.colors) {
-    x.update(*this, share, s.x);
-    max_color.update(*this, share, s.max_color);
+    x.update(*this, s.x);
+    max_color.update(*this, s.max_color);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new ColoredMatrix(share,*this);
+  copy(void) {
+    return new ColoredMatrix(*this);
   }
 };
 
 ColoredMatrixOptions::ColoredMatrixOptions(const char* n)
   : Options(n),
-    _height("-height", "Height of matrix", 8),
-    _width("-width", "Width of matrix", 8),
-    _size("-size", "If different from 0, used as both width and height", 0),
-    _colors("-colors", "Maximum number of colors", 4),
-    _not_all_equal("-not-all-equal", "How to implement the not all equals constraint (used in corners model)",
+    _height("height", "Height of matrix", 8),
+    _width("width", "Width of matrix", 8),
+    _size("size", "If different from 0, used as both width and height", 0),
+    _colors("colors", "Maximum number of colors", 4),
+    _not_all_equal("not-all-equal", "How to implement the not all equals constraint (used in corners model)",
                    ColoredMatrix::NOT_ALL_EQUAL_NQ),
-    _same_or_0("-same-or-0", "How to implement the same or 0 constraint (used in the decomposed no monochrome rectangle constraint)",
+    _same_or_0("same-or-0", "How to implement the same or 0 constraint (used in the decomposed no monochrome rectangle constraint)",
                ColoredMatrix::SAME_OR_0_DFA),
-    _distinct_except_0("-distinct-except-0", "How to implement the distinct except 0 constraint (used in the decomposed no monochrome rectangle constraint)",
+    _distinct_except_0("distinct-except-0", "How to implement the distinct except 0 constraint (used in the decomposed no monochrome rectangle constraint)",
                        ColoredMatrix::DISTINCT_EXCEPT_0_DFA),
-    _no_monochrome_rectangle("-no-monochrome-rectangle", "How to implement no monochrome rectangle (used in the rows model)",
+    _no_monochrome_rectangle("no-monochrome-rectangle", "How to implement no monochrome rectangle (used in the rows model)",
                              ColoredMatrix::NO_MONOCHROME_DFA)
 {
   add(_height);
@@ -616,15 +616,14 @@ namespace {
     return result;
   }
 
-  TupleSet same_or_0_tuple_set(unsigned int colors)
-  {
-    TupleSet result;
+  TupleSet same_or_0_tuple_set(unsigned int colors) {
+    TupleSet result(3);
     for (unsigned int i = 1; i <= colors; ++i) {
       for (unsigned int j = 1; j <= colors; ++j) {
         if (i == j) {
-          result.add(IntArgs(3, i, j, i));
+          result.add(i, j, i);
         } else {
-          result.add(IntArgs(3, i, j, 0));
+          result.add(i, j, 0);
         }
       }
     }

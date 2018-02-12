@@ -68,6 +68,12 @@
 
 #endif
 
+#ifdef GECODE_THREADS_OSX_UNFAIR
+
+#include <os/lock.h>
+
+#endif
+
 #endif
 
 /**
@@ -136,7 +142,7 @@ namespace Gecode { namespace Support {
 
 #ifdef GECODE_THREADS_PTHREADS
 
-#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_OSX_UNFAIR) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
 
   /**
    * \brief A fast mutex for mutual exclausion among several threads
@@ -157,6 +163,9 @@ namespace Gecode { namespace Support {
 #ifdef GECODE_THREADS_OSX
     /// The OSX spin lock
     OSSpinLock lck;
+#elif defined(GECODE_THREADS_OSX_UNFAIR)
+    /// The OSX spin lock
+    os_unfair_lock lck;
 #else
     /// The Pthread spinlock
     pthread_spinlock_t p_s;

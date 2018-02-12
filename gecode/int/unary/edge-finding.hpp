@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Unary {
   template<class TaskView>
   forceinline ExecStatus
   edgefinding(Space& home, TaskViewArray<TaskView>& t) {
-    Region r(home);
+    Region r;
 
     OmegaLambdaTree<TaskView> ol(r,t);
     TaskViewIter<TaskView,STO_LCT,false> q(r,t);

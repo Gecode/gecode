@@ -174,15 +174,15 @@ public:
   }
 
   /// Constructor for cloning \a l
-  LangfordNumber(bool share, LangfordNumber& l)
-    : Script(share, l), k(l.k), n(l.n) {
-    y.update(*this, share, l.y);
+  LangfordNumber(LangfordNumber& l)
+    : Script(l), k(l.k), n(l.n) {
+    y.update(*this, l.y);
 
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new LangfordNumber(share, *this);
+  copy(void) {
+    return new LangfordNumber(*this);
   }
 };
 

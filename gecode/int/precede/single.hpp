@@ -56,8 +56,8 @@ namespace Gecode { namespace Int { namespace Precede {
 
   template<class View>
   forceinline
-  Single<View>::Index::Index(Space& home, bool share, Index& a)
-    : Advisor(home,share,a), i(a.i) {}
+  Single<View>::Index::Index(Space& home, Index& a)
+    : Advisor(home,a), i(a.i) {}
 
 
   template<class View>
@@ -129,15 +129,15 @@ namespace Gecode { namespace Int { namespace Precede {
 
   template<class View>
   forceinline
-  Single<View>::Single(Space& home, bool share, Single& p)
-    : NaryPropagator<View,PC_INT_NONE>(home, share, p),
+  Single<View>::Single(Space& home, Single& p)
+    : NaryPropagator<View,PC_INT_NONE>(home, p),
       s(p.s), t(p.t),
       alpha(p.alpha), beta(p.beta), gamma(p.gamma) {
-    c.update(home, share, p.c);
+    c.update(home, p.c);
   }
   template<class View>
   Propagator*
-  Single<View>::copy(Space& home, bool share) {
+  Single<View>::copy(Space& home) {
     // Try to eliminate assigned views at the beginning
     if (alpha > 0) {
       int i = 0;
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Precede {
         i--;
       x.drop_lst(i);
     }
-    return new (home) Single<View>(home, share, *this);
+    return new (home) Single<View>(home, *this);
   }
 
 

@@ -69,7 +69,7 @@ namespace {
     /// Initialize options for example with name \a s
     QCPOptions(const char* s)
     : InstanceOptions(s),
-      _tbf("-tbf", "tie-breaking factor",0.0) {
+      _tbf("tbf", "tie-breaking factor",0.0) {
       // Add options
       add(_tbf);
     }
@@ -242,14 +242,14 @@ public:
     return true;
   }
   /// Constructor for cloning \a s
-  QCP(bool share, QCP& s)
-    : Script(share,s), opt(s.opt), spec(s.spec) {
-    e.update(*this, share, s.e);
+  QCP(QCP& s)
+    : Script(s), opt(s.opt), spec(s.spec) {
+    e.update(*this, s.e);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new QCP(share,*this);
+  copy(void) {
+    return new QCP(*this);
   }
   /// Print solution
   virtual void

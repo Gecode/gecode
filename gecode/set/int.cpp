@@ -230,19 +230,19 @@ namespace Gecode {
   }
 
   void
-  min(Home home, SetVar s, IntVar x){
+  min(Home home, SetVar s, IntVar x) {
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::MinElement<Set::SetView>::post(home,s,x));
   }
 
   void
-  notMin(Home home, SetVar s, IntVar x){
+  notMin(Home home, SetVar s, IntVar x) {
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::NotMinElement<Set::SetView>::post(home,s,x));
   }
 
   void
-  min(Home home, SetVar s, IntVar x, Reify r){
+  min(Home home, SetVar s, IntVar x, Reify r) {
     GECODE_POST;
     switch (r.mode()) {
     case RM_EQV:
@@ -262,19 +262,19 @@ namespace Gecode {
   }
 
   void
-  max(Home home, SetVar s, IntVar x){
+  max(Home home, SetVar s, IntVar x) {
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::MaxElement<Set::SetView>::post(home,s,x));
   }
 
   void
-  notMax(Home home, SetVar s, IntVar x){
+  notMax(Home home, SetVar s, IntVar x) {
     GECODE_POST;
     GECODE_ES_FAIL(Set::Int::NotMaxElement<Set::SetView>::post(home,s,x));
   }
 
   void
-  max(Home home, SetVar s, IntVar x, Reify r){
+  max(Home home, SetVar s, IntVar x, Reify r) {
     GECODE_POST;
     switch (r.mode()) {
     case RM_EQV:

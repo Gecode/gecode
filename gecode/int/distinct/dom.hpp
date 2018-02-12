@@ -61,8 +61,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   forceinline
-  Dom<View>::Dom(Space& home, bool share, Dom<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+  Dom<View>::Dom(Space& home, Dom<View>& p)
+    : NaryPropagator<View,PC_INT_DOM>(home,p) {}
 
   template<class View>
   PropCost
@@ -75,8 +75,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template<class View>
   Actor*
-  Dom<View>::copy(Space& home, bool share) {
-    return new (home) Dom<View>(home,share,*this);
+  Dom<View>::copy(Space& home) {
+    return new (home) Dom<View>(home,*this);
   }
 
   template<class View>
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_REWRITE(*this,TerDom<View>::post(home(*this),x[0],x[1],x[2]));
 
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync(home));
+      GECODE_ES_CHECK(dc.sync());
     } else {
       GECODE_ES_CHECK(dc.init(home,x));
     }

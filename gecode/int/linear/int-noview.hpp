@@ -224,15 +224,9 @@ namespace Gecode {
 
     /// \name Cloning
     //@{
-    /**
-     * \brief Update array to be a clone of array \a a
-     *
-     * If \a share is true, sharing is retained for all shared
-     * data structures. Otherwise, for each of them an independent
-     * copy is created.
-     */
-    void update(Space&, bool share, ViewArray<Int::Linear::NoView>& a) {
-      (void) share; (void) a;
+    /// Update array to be a clone of array \a a
+    void update(Space& home, ViewArray<Int::Linear::NoView>& a) {
+      (void) home; (void) a;
     }
     //@}
 

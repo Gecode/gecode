@@ -180,8 +180,8 @@ namespace Gecode { namespace Float {
    *
    */
   forceinline void
-  ScaleView::update(Space& home, bool share, ScaleView& y) {
-    DerivedView<FloatView>::update(home,share,y);
+  ScaleView::update(Space& home, ScaleView& y) {
+    DerivedView<FloatView>::update(home,y);
     a=y.a;
   }
 

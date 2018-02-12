@@ -84,14 +84,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Grocery(bool share, Grocery& s) : Script(share,s) {
-    abcd.update(*this, share, s.abcd);
+  Grocery(Grocery& s) : Script(s) {
+    abcd.update(*this, s.abcd);
   }
 
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Grocery(share,*this);
+  copy(void) {
+    return new Grocery(*this);
   }
 
   /// Print solution

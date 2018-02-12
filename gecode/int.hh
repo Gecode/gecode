@@ -190,8 +190,6 @@ namespace Gecode {
       Range* r;
       /// Allocate object with \a m elements
       GECODE_INT_EXPORT static IntSetObject* allocate(int m);
-      /// Return copy of object
-      GECODE_INT_EXPORT SharedHandle::Object* copy(void) const;
       /// Check whether \a n is included in the set
       GECODE_INT_EXPORT bool in(int n) const;
       /// Delete object
@@ -958,20 +956,14 @@ namespace Gecode {
     IPL_VAL = 1, ///< Value propagation
     IPL_BND = 2, ///< Bounds propagation
     IPL_DOM = 3, ///< Domain propagation
-    /// Preferences: prefer speed or memory
-    IPL_SPEED = 4,  ///< Prefer speed
-    IPL_MEMORY = 8, ///< Prefer to save memory
     /// Options: basic versus advanced propagation
-    IPL_BASIC = 16,    ///< Use basic propagation algorithm
-    IPL_ADVANCED = 32, ///< Use advanced propagation algorithm
+    IPL_BASIC = 4,    ///< Use basic propagation algorithm
+    IPL_ADVANCED = 8, ///< Use advanced propagation algorithm
     IPL_BASIC_ADVANCED = IPL_BASIC | IPL_ADVANCED ///< Use both
   };
 
   /// Extract value, bounds, or domain propagation from propagation level
   IntPropLevel vbd(IntPropLevel ipl);
-
-  /// Extract speed or memory from propagation level
-  IntPropLevel sm(IntPropLevel ipl);
 
   /// Extract basic or advanced from propagation level
   IntPropLevel ba(IntPropLevel ipl);
@@ -2022,7 +2014,6 @@ namespace Gecode {
    * A %DFA can be defined by a regular expression, for regular expressions
    * see the module MiniModel.
    */
-  //@{
 
   /**
    * \brief Deterministic finite automaton (%DFA)
@@ -2030,11 +2021,16 @@ namespace Gecode {
    * After initialization, the start state is always zero.
    * The final states are contiguous ranging from the first to the
    * last final state.
+   *
+   * \ingroup TaskModelIntExt
    */
   class DFA : public SharedHandle {
   private:
     /// Implementation of DFA
     class DFAI;
+    /// Test whether DFA is equal to \a d
+    GECODE_INT_EXPORT
+    bool equal(const DFA& d) const;
   public:
     /// Specification of a %DFA transition
     class Transition {
@@ -2043,7 +2039,7 @@ namespace Gecode {
       int symbol;  ///< symbol
       int o_state; ///< output state
       /// Default constructor
-      Transition();
+      Transition(void);
       /// Initialize members
       Transition(int i_state0, int symbol0, int o_state0);
     };
@@ -2106,6 +2102,11 @@ namespace Gecode {
     DFA(int s, Transition t[], int f[], bool minimize=true);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
+    /// Test whether DFA is equal to \a d
+    GECODE_INT_EXPORT
+    bool operator ==(const DFA& d) const;
+    /// Test whether DFA is not equal to \a d
+    bool operator !=(const DFA& d) const;
     /// Return the number of states
     int n_states(void) const;
     /// Return the number of transitions
@@ -2122,7 +2123,234 @@ namespace Gecode {
     int symbol_min(void) const;
     /// Return largest symbol in DFA
     int symbol_max(void) const;
+    /// Return hash key
+    std::size_t hash(void) const;
   };
+
+}
+
+#include <gecode/int/extensional/dfa.hpp>
+
+namespace Gecode {
+
+  /** \brief Class represeting a set of tuples.
+   *
+   * A TupleSet is used for storing an extensional representation of a
+   * constraint. After a TupleSet is finalized, no more tuples may be
+   * added to it.
+   *
+   * \ingroup TaskModelIntExt
+   */
+  class TupleSet : public SharedHandle {
+  public:
+    /** \brief Type of a tuple
+     *
+     * The arity of the tuple is left implicit.
+     */
+    typedef int* Tuple;
+    /// Import bit set data type
+    typedef Gecode::Support::BitSetData BitSetData;
+    /// Range information
+    class Range {
+    public:
+      /// Minimum value
+      int min;
+      /// Maximum value
+      int max;
+      /// Begin of supports
+      BitSetData* s;
+      /// Return the width
+      unsigned int width(void) const;
+      /// Return the supports for value \a n
+      const BitSetData* supports(unsigned int n_words, int n) const;
+    };
+  protected:
+    /// Data about values in the table
+    class ValueData {
+    public:
+      /// Number of ranges
+      unsigned int n;
+      /// Ranges
+      Range* r;
+      /// Find start range for value \a n
+      unsigned int start(int n) const;
+    };
+    /**
+     * \brief Data stored for a Table
+     *
+     */
+    class GECODE_VTABLE_EXPORT Data : public SharedHandle::Object {
+    protected:
+      /// Initial number of free tuples
+      static const int n_initial_free = 1024;
+    public:
+      /// Arity
+      int arity;
+      /// Number of words for support
+      unsigned int n_words;
+      /// Number of Tuples
+      int n_tuples;
+      /// Number of free tuple entries of arity
+      int n_free;
+      /// Smallest value
+      int min;
+      /// Largest value
+      int max;
+      /// Hash key
+      std::size_t key;
+      /// Tuple data
+      int* td;
+      /// Value data
+      ValueData* vd;
+      /// Pointer to all ranges
+      Range* range;
+      /// Pointer to all support data
+      BitSetData* support;
+
+      /// Return newly added tuple
+      Tuple add(void);
+      /// Return tuple with number \a i
+      Tuple get(int i) const;
+      /// Set bit \a n in bitset data \a d
+      static void set(BitSetData* d, unsigned int n);
+      /// Get bit \a n in bitset data \a d
+      static bool get(const BitSetData* d, unsigned int n);
+      /// Map tuple address to index
+      unsigned int tuple2idx(Tuple t) const;
+      /// Return first range for position \a i
+      const Range* fst(int i) const;
+      /// Return last range for position \a i
+      const Range* lst(int i) const;
+      /// Finalize datastructure (disallows additions of more Tuples)
+      GECODE_INT_EXPORT
+      void finalize(void);
+      /// Resize tuple data
+      GECODE_INT_EXPORT
+      void resize(void);
+      /// Is datastructure finalized
+      bool finalized(void) const;
+      /// Initialize as empty tuple set with arity \a a
+      Data(int a);
+      /// Delete implementation
+      GECODE_INT_EXPORT
+      virtual ~Data(void);
+    };
+
+    /// Get data (must be initialized and finalized)
+    Data& data(void) const;
+    /// Get raw data (must be initialized)
+    Data& raw(void) const;
+    /// Add tuple \a t to tuple set
+    GECODE_INT_EXPORT
+    void _add(const IntArgs& t);
+    /// Test whether tuple set is equal to \a t
+    GECODE_INT_EXPORT
+    bool equal(const TupleSet& t) const;
+  public:
+    /// \name Initialization
+    //@{
+    /// Construct an unitialized tuple set
+    TupleSet(void);
+    /// Initialize for a tuple set with arity \a a
+    GECODE_INT_EXPORT
+    TupleSet(int a);
+    /// Initialize an uninitialized tuple set
+    GECODE_INT_EXPORT
+    void init(int a);
+    /// Initialize by TupleSet \a t (tuple set is shared)
+    GECODE_INT_EXPORT
+    TupleSet(const TupleSet& t);
+    /// Assignment operator
+    GECODE_INT_EXPORT
+    TupleSet& operator =(const TupleSet& t);
+    /// Initialize with DFA \a dfa for arity \a a
+    GECODE_INT_EXPORT
+    TupleSet(int a, const DFA& dfa);
+    /// Test whether tuple set has been initialized
+    operator bool(void) const;
+    /// Test whether tuple set is equal to \a t
+    bool operator ==(const TupleSet& t) const;
+    /// Test whether tuple set is different from \a t
+    bool operator !=(const TupleSet& t) const;
+    //@}
+
+    /// \name Addition and finalization
+    //@{
+    /// Add tuple \a t to tuple set
+    TupleSet& add(const IntArgs& t);
+    /// Add tuple with elements \a n, ... to tuple set
+    GECODE_INT_EXPORT
+    TupleSet& add(int n, ...);
+    /// Is tuple set finalized
+    bool finalized(void) const;
+    /// Finalize tuple set
+    void finalize(void);
+    //@}
+
+    /// \name Tuple access
+    //@{
+    /// Arity of tuple set
+    int arity(void) const;
+    /// Number of tuples
+    int tuples(void) const;
+    /// Return number of required bit set words
+    unsigned int words(void) const;
+    /// Get tuple \a i
+    Tuple operator [](int i) const;
+    /// Return minimal value in all tuples
+    int min(void) const;
+    /// Return maximal value in all tuples
+    int max(void) const;
+    /// Return hash key
+    std::size_t hash(void) const;
+    //@}
+
+    /// \name Range access and iteration
+    //@{
+    /// Return first range for position \a i
+    const Range* fst(int i) const;
+    /// Return last range for position \a i
+    const Range* lst(int i) const;
+    /// Iterator over ranges
+    class Ranges {
+    protected:
+      /// Current range
+      const Range* c;
+      /// Last range
+      const Range* l;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Initialize for column \a i
+      Ranges(const TupleSet& ts, int i);
+      //@}
+
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a range
+      bool operator ()(void) const;
+      /// Move iterator to next range (if possible)
+      void operator ++(void);
+      //@}
+
+      /// \name %Range access
+      //@{
+      /// Return smallest value of range
+      int min(void) const;
+      /// Return largest value of range
+      int max(void) const;
+      /// Return width of range (distance between minimum and maximum)
+      unsigned int width(void) const;
+      //@}
+    };
+    //@}
+  };
+
+}
+
+#include <gecode/int/extensional/tuple-set.hpp>
+
+namespace Gecode {
 
   /**
    * \brief Post domain consistent propagator for extensional constraint described by a DFA
@@ -2133,6 +2361,8 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSame, if \a x contains
    * the same unassigned variable multiply. If shared occurences of variables
    * are required, unshare should be used.
+   *
+   * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, DFA d,
@@ -2147,115 +2377,22 @@ namespace Gecode {
    * Throws an exception of type Int::ArgumentSame, if \a x contains
    * the same unassigned variable multiply. If shared occurences of variables
    * are required, unshare should be used.
+   *
+   * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, DFA d,
               IntPropLevel ipl=IPL_DEF);
 
-  /** \brief Class represeting a set of tuples.
-   *
-   * A TupleSet is used for storing an extensional representation of a
-   * constraint. After a TupleSet is finalized, no more tuples may be
-   * added to it.
-   */
-  class TupleSet : public SharedHandle {
-  public:
-    /** \brief Type of a tuple
-     *
-     * The arity of the tuple is left implicit.
-     */
-    typedef int* Tuple;
-
-    /**
-     * \brief Data stored for a Table
-     *
-     */
-    class GECODE_VTABLE_EXPORT TupleSetI
-      : public SharedHandle::Object {
-    public:
-      /// Arity
-      int arity;
-      /// Number of Tuples
-      int size;
-      /// Tuples index
-      Tuple** tuples;
-      /// Tuple index data
-      Tuple* tuple_data;
-      /// Tuples data
-      int* data;
-      /// Excess storage
-      int excess;
-      /// Minimum and maximum in domain-values
-      int min, max;
-      /// Domain size
-      unsigned int domsize;
-      /// Initial last structure
-      Tuple** last;
-      /// Pointer to nullptr-pointer
-      Tuple* nullpointer;
-
-      /// Add Tuple. Assumes that arity matches.
-      template<class T>
-      void add(T t);
-      /// Finalize datastructure (disallows additions of more Tuples)
-      GECODE_INT_EXPORT void finalize(void);
-      /// Resize data cache
-      GECODE_INT_EXPORT void resize(void);
-      /// Is datastructure finalized
-      bool finalized(void) const;
-      /// Initialize as empty tuple set
-      TupleSetI(void);
-      /// Delete  implementation
-      GECODE_INT_EXPORT virtual ~TupleSetI(void);
-      /// Create a copy
-      GECODE_INT_EXPORT virtual SharedHandle::Object* copy(void) const;
-    };
-
-    /// Get implementation
-    TupleSetI* implementation(void);
-
-    /// Construct empty tuple set
-    TupleSet(void);
-    /// Initialize by TupleSet \a d (tuple set is shared)
-    TupleSet(const TupleSet& d);
-
-    /// Add tuple to tuple set
-    void add(const IntArgs& tuple);
-    /// Finalize tuple set
-    void finalize(void);
-    /// Is tuple set finalized
-    bool finalized(void) const;
-    /// Arity of tuple set
-    int arity(void) const;
-    /// Number of tuples
-    int tuples(void) const;
-    /// Get tuple i
-    Tuple operator [](int i) const;
-    /// Minimum domain element
-    int min(void) const;
-    /// Maximum domain element
-    int max(void) const;
-  };
-
   /** \brief Post propagator for \f$x\in t\f$.
    *
-   * \li Supports implementations optimized for speed (with propagation
-   *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
-   *     consumption (with propagation level \a ipl or-ed with
-   *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
    *     set \a t has not been finalized.
    *
-   * \warning If the domains for the \f$x_i\f$ are not dense and
-   * have similar bounds, lots of memory will be wasted (memory
-   * consumption is in \f$
-   * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the basic algorithm (\a epk = \a EPK_MEMORY) and additionally \f$
-   * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the incremental algorithm (\a epk = \a EPK_SPEED).
+   * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const IntVarArgs& x, const TupleSet& t,
@@ -2263,25 +2400,18 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x\in t\f$.
    *
-   * \li Supports implementations optimized for speed (with propagation
-   *     level \a ipl or-ed with \a IPL_SPEED, default) and memory
-   *     consumption (with propagation level \a ipl or-ed with
-   *     \a IPL_MEMORY).
    * \li Supports domain consistency (\a ipl = IPL_DOM, default) only.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a t are of different size.
    * \li Throws an exception of type Int::NotYetFinalized, if the tuple
    *     set \a t has not been finalized.
+   *
+   * \ingroup TaskModelIntExt
    */
   GECODE_INT_EXPORT void
   extensional(Home home, const BoolVarArgs& x, const TupleSet& t,
               IntPropLevel ipl=IPL_DEF);
-  //@}
-
 }
-
-#include <gecode/int/extensional/dfa.hpp>
-#include <gecode/int/extensional/tuple-set.hpp>
 
 namespace Gecode {
 
@@ -3954,16 +4084,25 @@ namespace Gecode {
     IntAFC(const IntAFC& a);
     /// Assignment operator
     IntAFC& operator =(const IntAFC& a);
-    /// Initialize for integer variables \a x with decay factor \a d
-    IntAFC(Home home, const IntVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for integer variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
+    IntAFC(Home home, const IntVarArgs& x, double d=1.0, bool share=true);
     /**
      * \brief Initialize for integer variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * AFC storage has been constructed with the default constructor.
      *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
      */
-    void init(Home home, const IntVarArgs& x, double d=1.0);
+    void init(Home home, const IntVarArgs& x, double d=1.0, bool share=true);
   };
 
   /**
@@ -3985,16 +4124,25 @@ namespace Gecode {
     BoolAFC(const BoolAFC& a);
     /// Assignment operator
     BoolAFC& operator =(const BoolAFC& a);
-    /// Initialize for Boolean variables \a x with decay factor \a d
-    BoolAFC(Home home, const BoolVarArgs& x, double d=1.0);
+    /**
+     * \brief Initialize for Boolean variables \a x and decay factor \a d
+     *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
+     */
+    BoolAFC(Home home, const BoolVarArgs& x, double d=1.0, bool share=true);
     /**
      * \brief Initialize for Boolean variables \a x with decay factor \a d
      *
      * This member function can only be used once and only if the
      * AFC storage has been constructed with the default constructor.
      *
+     * If several AFC objects are created for a space or its clones,
+     * the AFC values are shared between spaces. If the values should
+     * not be shared, \a share should be false.
      */
-    void init(Home home, const BoolVarArgs& x, double d=1.0);
+    void init(Home home, const BoolVarArgs& x, double d=1.0, bool share=true);
   };
 
 }

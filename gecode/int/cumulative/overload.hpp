@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Cumulative {
     TaskViewArray<typename TaskTraits<ManTask>::TaskViewFwd> f(t);
     sort<typename TaskTraits<ManTask>::TaskViewFwd,STO_LCT,true>(f);
 
-    Region r(home);
+    Region r;
     OmegaTree<typename TaskTraits<ManTask>::TaskViewFwd> o(r,c,f);
 
     for (int i=0; i<f.size(); i++) {

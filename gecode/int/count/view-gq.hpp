@@ -58,14 +58,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template<class VX, class VY, class VZ, bool shr, bool dom>
   forceinline
-  GqView<VX,VY,VZ,shr,dom>::GqView(Space& home, bool share,
-                                   GqView<VX,VY,VZ,shr,dom>& p)
-    : ViewBase<VX,VY,VZ>(home,share,p) {}
+  GqView<VX,VY,VZ,shr,dom>::GqView(Space& home, GqView<VX,VY,VZ,shr,dom>& p)
+    : ViewBase<VX,VY,VZ>(home,p) {}
 
   template<class VX, class VY, class VZ, bool shr, bool dom>
   Actor*
-  GqView<VX,VY,VZ,shr,dom>::copy(Space& home, bool share) {
-    return new (home) GqView<VX,VY,VZ,shr,dom>(home,share,*this);
+  GqView<VX,VY,VZ,shr,dom>::copy(Space& home) {
+    return new (home) GqView<VX,VY,VZ,shr,dom>(home,*this);
   }
 
   template<class VX, class VY, class VZ, bool shr, bool dom>

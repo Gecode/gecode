@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Exec {
     /// Else function pointer
     SharedData<std::function<void(Space& home)>> e;
     /// Constructor for cloning \a p
-    When(Space& home, bool share, When& p);
+    When(Space& home, When& p);
     /// Constructor for creation
     When(Home home, BoolView x,
          std::function<void(Space& home)> t,
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Exec {
   public:
     /// Copy propagator during cloning
     GECODE_INT_EXPORT
-    virtual Actor* copy(Space& home, bool share);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     GECODE_INT_EXPORT
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);

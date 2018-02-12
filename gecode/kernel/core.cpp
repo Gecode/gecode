@@ -103,6 +103,7 @@ namespace Gecode {
    * Space: Misc
    *
    */
+
   StatusStatistics Space::unused_status;
   CloneStatistics Space::unused_clone;
   CommitStatistics Space::unused_commit;
@@ -111,7 +112,7 @@ namespace Gecode {
   VarImpDisposerBase* Space::vd[AllVarConf::idx_d];
 #endif
 
-  Space::Space(void) : sm(new SharedMemory), mm(sm) {
+  Space::Space(void) : mm(ssd.data().sm) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -178,12 +179,6 @@ namespace Gecode {
     *f = *(--d_cur);
   }
 
-  void
-  Space::flush(void) {
-    // Flush malloc cache
-    sm->flush();
-  }
-
   Space::~Space(void) {
     // Mark space as failed
     fail();
@@ -207,10 +202,7 @@ namespace Gecode {
         vd[i]->dispose(*this, _vars_d[i]);
 #endif
     // Release memory from memory manager
-    mm.release(sm);
-    // Release shared memory
-    if (sm->release())
-      delete sm;
+    mm.release(ssd.data().sm);
   }
 
 
@@ -219,6 +211,19 @@ namespace Gecode {
    * Space: propagation
    *
    */
+
+  TraceRecorder*
+  Space::findtracerecorder(void) {
+    for (Actor** a=d_fst; a<d_cur; a++) {
+      Propagator* p = Propagator::cast(*a);
+      if (!p->disabled())
+        if (TraceRecorder* tr = dynamic_cast<TraceRecorder*>(p)) {
+          std::swap(*d_fst,*a);
+          return tr;
+        }
+    }
+    return nullptr;
+  }
 
   SpaceStatus
   Space::status(StatusStatistics& stat) {
@@ -357,7 +362,7 @@ namespace Gecode {
       } else {
         // Support disabled propagators and tracing
         // Find a non-disabled tracer recorder (possibly null)
-        TraceRecorder* tr = findtr();
+        TraceRecorder* tr = findtracerecorder();
 
 #define GECODE_STATUS_TRACE(q,s) \
   if ((tr != NULL) && (tr->events() & TE_PROPAGATE) && \
@@ -476,7 +481,7 @@ namespace Gecode {
     // Process failure
   failed:
     // Count failure
-    gpi.fail(p->gpi());
+    ssd.data().gpi.fail(p->gpi());
     // Mark as failed
     fail();
     // Propagate top priority propagators
@@ -553,7 +558,7 @@ namespace Gecode {
     if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
-        TraceRecorder* tr = findtr();
+        TraceRecorder* tr = findtracerecorder();
         if ((tr != NULL) && (tr->events() & TE_COMMIT) &&
             tr->filter()(b->group())) {
           CommitTraceInfo cti(*b,c,a);
@@ -583,7 +588,7 @@ namespace Gecode {
     if (Brancher* b = brancher(c.bid)) {
       // There is a matching brancher
       if (pc.p.bid_sc & sc_trace) {
-        TraceRecorder* tr = findtr();
+        TraceRecorder* tr = findtracerecorder();
         if ((tr != NULL) && (tr->events() & TE_COMMIT) &&
             tr->filter()(b->group())) {
           CommitTraceInfo cti(*b,c,a);
@@ -654,10 +659,9 @@ namespace Gecode {
    *    variables is updated and their forwarding information is reset.
    *
    */
-  Space::Space(bool share, Space& s)
-    : sm(s.sm->copy(share)),
-      mm(sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
-      gpi(s.gpi),
+  Space::Space(Space& s)
+    : ssd(s.ssd),
+      mm(ssd.data().sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
       d_fst(&Actor::sentinel) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
@@ -666,14 +670,13 @@ namespace Gecode {
     for (int i=0; i<AllVarConf::idx_c; i++)
       pc.c.vars_u[i] = NULL;
     pc.c.vars_noidx = NULL;
-    pc.c.shared = NULL;
     pc.c.local = NULL;
     // Copy all propagators
     {
       ActorLink* p = &pl;
       ActorLink* e = &s.pl;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(*this,share);
+        Actor* c = Actor::cast(a)->copy(*this);
         // Link copied actor
         p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
         // Note that forwarding is done in the constructors
@@ -687,7 +690,7 @@ namespace Gecode {
       ActorLink* p = &bl;
       ActorLink* e = &s.bl;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
-        Actor* c = Actor::cast(a)->copy(*this,share);
+        Actor* c = Actor::cast(a)->copy(*this);
         // Link copied actor
         p->next(ActorLink::cast(c)); ActorLink::cast(c)->prev(p);
         // Note that forwarding is done in the constructors
@@ -710,14 +713,14 @@ namespace Gecode {
   }
 
   Space*
-  Space::_clone(bool share_data, bool share_info) {
+  Space::_clone(void) {
     if (failed())
       throw SpaceFailed("Space::clone");
     if (!stable())
       throw SpaceNotStable("Space::clone");
 
     // Copy all data structures (which in turn will invoke the constructor)
-    Space* c = copy(share_data);
+    Space* c = copy();
 
     if (c->d_fst != &Actor::sentinel)
       throw SpaceNotCloned("Space::clone");
@@ -782,10 +785,6 @@ namespace Gecode {
       }
     }
 
-    // Reset links for shared objects
-    for (SharedHandle::Object* s = c->pc.c.shared; s != NULL; s = s->next)
-      s->fwd = NULL;
-
     // Reset links for local objects
     for (ActorLink* l = c->pc.c.local; l != NULL; l = l->next())
       l->prev(NULL);
@@ -798,17 +797,6 @@ namespace Gecode {
     c->pc.p.n_sub  = pc.p.n_sub;
     c->pc.p.bid_sc = pc.p.bid_sc;
 
-    if (!share_info) {
-      // Re-allocate afc information
-      for (ActorLink* c_a = c->pl.next(); c_a != &c->pl; c_a = c_a->next()) {
-        Propagator* p = Propagator::cast(c_a);
-        GPI::Info* gpi = c->gpi.allocate(p->gpi().gid);
-        if (p->disabled())
-          p->gpi_disabled = Support::mark(gpi);
-        else
-          p->gpi_disabled = gpi;
-      }
-    }
     // Reset execution information
     c->pc.p.vti.other(); pc.p.vti.other();
 
@@ -844,8 +832,23 @@ namespace Gecode {
 
 
   void
-  LocalObject::fwdcopy(Space& home, bool share) {
-    ActorLink::cast(this)->prev(copy(home,share));
+  Space::afc_unshare(void) {
+    if (ssd.data().gpi.unshare()) {
+      for (Propagators ps(*this); ps(); ++ps) {
+        Propagator& p = ps.propagator();
+        Kernel::GPI::Info* gpi
+          = ssd.data().gpi.allocate(p.gpi().pid,p.gpi().gid);
+        if (p.disabled())
+          p.gpi_disabled = Support::mark(gpi);
+        else
+          p.gpi_disabled = gpi;
+      }
+    }
+  }
+
+  void
+  LocalObject::fwdcopy(Space& home) {
+    ActorLink::cast(this)->prev(copy(home));
     next(home.pc.c.local);
     home.pc.c.local = this;
   }

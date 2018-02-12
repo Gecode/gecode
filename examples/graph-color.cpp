@@ -415,14 +415,14 @@ public:
     return m;
   }
   /// Constructor for cloning \a s
-  GraphColor(bool share, GraphColor& s) : IntMinimizeScript(share,s), g(s.g) {
-    v.update(*this, share, s.v);
-    m.update(*this, share, s.m);
+  GraphColor(GraphColor& s) : IntMinimizeScript(s), g(s.g) {
+    v.update(*this, s.v);
+    m.update(*this, s.m);
   }
   /// Copying during cloning
   virtual Space*
-  copy(bool share) {
-    return new GraphColor(share,*this);
+  copy(void) {
+    return new GraphColor(*this);
   }
   /// Print the solution
   virtual void

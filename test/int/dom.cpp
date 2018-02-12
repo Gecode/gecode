@@ -35,6 +35,8 @@
  *
  */
 
+#include <gecode/minimodel.hh>
+
 #include "test/int.hh"
 
 namespace Test { namespace Int {
@@ -72,7 +74,19 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 1);
-         Gecode::dom(home, x[0], -2, r);
+         if (Base::rand(2) != 0) {
+           Gecode::dom(home, x[0], -2, r);
+         } else {
+           switch (r.mode()) {
+           case Gecode::RM_EQV:
+             Gecode::rel(home, Gecode::dom(x[0], -2) == r.var()); break;
+           case Gecode::RM_IMP:
+             Gecode::rel(home, Gecode::dom(x[0], -2) << r.var()); break;
+           case Gecode::RM_PMI:
+             Gecode::rel(home, Gecode::dom(x[0], -2) >> r.var()); break;
+           default: GECODE_NEVER;
+           }
+         }
        }
      };
 
@@ -102,7 +116,19 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 1);
-         Gecode::dom(home, x[0], -2, 2, r);
+         if (Base::rand(2) != 0) {
+           Gecode::dom(home, x[0], -2, 2, r);
+         } else {
+           switch (r.mode()) {
+           case Gecode::RM_EQV:
+             Gecode::rel(home, Gecode::dom(x[0], -2, 2) == r.var()); break;
+           case Gecode::RM_IMP:
+             Gecode::rel(home, Gecode::dom(x[0], -2, 2) << r.var()); break;
+           case Gecode::RM_PMI:
+             Gecode::rel(home, Gecode::dom(x[0], -2, 2) >> r.var()); break;
+           default: GECODE_NEVER;
+           }
+         }
        }
      };
 
@@ -160,7 +186,19 @@ namespace Test { namespace Int {
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x,
                          Gecode::Reify r) {
          assert(x.size() == 1);
-         Gecode::dom(home, x[0], d, r);
+         if (Base::rand(2) != 0) {
+           Gecode::dom(home, x[0], d, r);
+         } else {
+           switch (r.mode()) {
+           case Gecode::RM_EQV:
+             Gecode::rel(home, Gecode::dom(x[0], d) == r.var()); break;
+           case Gecode::RM_IMP:
+             Gecode::rel(home, Gecode::dom(x[0], d) << r.var()); break;
+           case Gecode::RM_PMI:
+             Gecode::rel(home, Gecode::dom(x[0], d) >> r.var()); break;
+           default: GECODE_NEVER;
+           }
+         }
        }
      };
 

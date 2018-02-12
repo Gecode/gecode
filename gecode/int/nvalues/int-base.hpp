@@ -47,9 +47,9 @@ namespace Gecode { namespace Int { namespace NValues {
 
   template<class VY>
   forceinline
-  IntBase<VY>::IntBase(Space& home, bool share, IntBase<VY>& p)
-    : MixNaryOnePropagator<IntView,PC_INT_DOM,VY,PC_INT_BND>(home, share, p) {
-    vs.update(home, share, p.vs);
+  IntBase<VY>::IntBase(Space& home, IntBase<VY>& p)
+    : MixNaryOnePropagator<IntView,PC_INT_DOM,VY,PC_INT_BND>(home, p) {
+    vs.update(home, p.vs);
   }
 
   template<class VY>
@@ -120,27 +120,6 @@ namespace Gecode { namespace Int { namespace NValues {
   }
 
   template<class VY>
-  int
-  IntBase<VY>::size(Space& home) const {
-    Region r(home);
-    assert(x.size() > 0);
-    ValSet::Ranges vsr(vs);
-    ViewRanges<IntView> xr(x[x.size()-1]);
-    Iter::Ranges::NaryUnion u(r,vsr,xr);
-    for (int i=x.size()-1; i--; ) {
-      ViewRanges<IntView> xir(x[i]);
-      u |= xir;
-    }
-    unsigned int s = Iter::Ranges::size(u);
-
-    // To avoid overflow
-    if (static_cast<unsigned int>(x.size()+vs.size()) < s)
-      return x.size() + vs.size();
-    else
-      return static_cast<int>(s);
-  }
-
-  template<class VY>
   ExecStatus
   IntBase<VY>::all_in_valset(Space& home) {
     for (int i=x.size(); i--; ) {
@@ -158,7 +137,7 @@ namespace Gecode { namespace Int { namespace NValues {
     // At least one more value will be needed
     GECODE_ME_CHECK(y.gq(home,vs.size() + 1));
 
-    Region r(home);
+    Region r;
 
     // Only one additional value is allowed
     if (y.max() == vs.size() + 1) {
@@ -325,7 +304,7 @@ namespace Gecode { namespace Int { namespace NValues {
       g.init(home,vs,x);
     } else {
       g.purge();
-      g.sync(home);
+      g.sync();
     }
     GECODE_ME_CHECK(y.lq(home, g.size()));
     if (y.min() == g.size()) {
@@ -338,7 +317,7 @@ namespace Gecode { namespace Int { namespace NValues {
         }
         GECODE_REWRITE(*this,Distinct::Dom<IntView>::post(home(*this),x));
       }
-      if (g.mark(home))
+      if (g.mark())
         GECODE_ES_CHECK(g.prune(home));
     }
     return ES_OK;

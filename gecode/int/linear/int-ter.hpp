@@ -52,22 +52,21 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C, PropCond pc>
   forceinline
-  LinTer<Val,A,B,C,pc>::LinTer(Space& home, bool share,
-                               LinTer<Val,A,B,C,pc>& p)
-    : Propagator(home,share,p), c(p.c) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
+  LinTer<Val,A,B,C,pc>::LinTer(Space& home, LinTer<Val,A,B,C,pc>& p)
+    : Propagator(home,p), c(p.c) {
+    x0.update(home,p.x0);
+    x1.update(home,p.x1);
+    x2.update(home,p.x2);
   }
 
   template<class Val, class A, class B, class C, PropCond pc>
   forceinline
-  LinTer<Val,A,B,C,pc>::LinTer(Space& home, bool share, Propagator& p,
+  LinTer<Val,A,B,C,pc>::LinTer(Space& home, Propagator& p,
                                A y0, B y1, C y2, Val c0)
-    : Propagator(home,share,p), c(c0) {
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
-    x2.update(home,share,y2);
+    : Propagator(home,p), c(c0) {
+    x0.update(home,y0);
+    x1.update(home,y1);
+    x2.update(home,y2);
   }
 
   template<class Val, class A, class B, class C, PropCond pc>
@@ -114,19 +113,19 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C>
   forceinline
-  EqTer<Val,A,B,C>::EqTer(Space& home, bool share, EqTer<Val,A,B,C>& p)
-    : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p) {}
+  EqTer<Val,A,B,C>::EqTer(Space& home, EqTer<Val,A,B,C>& p)
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,p) {}
 
   template<class Val, class A, class B, class C>
   forceinline
-  EqTer<Val,A,B,C>::EqTer(Space& home, bool share, Propagator& p,
+  EqTer<Val,A,B,C>::EqTer(Space& home, Propagator& p,
                           A x0, B x1, C x2, Val c)
-    : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p,x0,x1,x2,c) {}
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,p,x0,x1,x2,c) {}
 
   template<class Val, class A, class B, class C>
   Actor*
-  EqTer<Val,A,B,C>::copy(Space& home, bool share) {
-    return new (home) EqTer<Val,A,B,C>(home,share,*this);
+  EqTer<Val,A,B,C>::copy(Space& home) {
+    return new (home) EqTer<Val,A,B,C>(home,*this);
   }
 
   /// Describe which view has been modified how
@@ -193,20 +192,20 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C>
   forceinline
-  NqTer<Val,A,B,C>::NqTer(Space& home, bool share, NqTer<Val,A,B,C>& p)
-    : LinTer<Val,A,B,C,PC_INT_VAL>(home,share,p) {}
+  NqTer<Val,A,B,C>::NqTer(Space& home, NqTer<Val,A,B,C>& p)
+    : LinTer<Val,A,B,C,PC_INT_VAL>(home,p) {}
 
   template<class Val, class A, class B, class C>
   Actor*
-  NqTer<Val,A,B,C>::copy(Space& home, bool share) {
-    return new (home) NqTer<Val,A,B,C>(home,share,*this);
+  NqTer<Val,A,B,C>::copy(Space& home) {
+    return new (home) NqTer<Val,A,B,C>(home,*this);
   }
 
   template<class Val, class A, class B, class C>
   forceinline
-  NqTer<Val,A,B,C>::NqTer(Space& home, bool share, Propagator& p,
+  NqTer<Val,A,B,C>::NqTer(Space& home, Propagator& p,
                           A x0, B x1, C x2, Val c)
-    : LinTer<Val,A,B,C,PC_INT_VAL>(home,share,p,x0,x1,x2,c) {}
+    : LinTer<Val,A,B,C,PC_INT_VAL>(home,p,x0,x1,x2,c) {}
 
 
   template<class Val, class A, class B, class C>
@@ -249,21 +248,21 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class Val, class A, class B, class C>
   forceinline
-  LqTer<Val,A,B,C>::LqTer(Space& home, bool share, LqTer<Val,A,B,C>& p)
-    : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p) {}
+  LqTer<Val,A,B,C>::LqTer(Space& home, LqTer<Val,A,B,C>& p)
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,p) {}
 
   template<class Val, class A, class B, class C>
   Actor*
-  LqTer<Val,A,B,C>::copy(Space& home, bool share) {
-    return new (home) LqTer<Val,A,B,C>(home,share,*this);
+  LqTer<Val,A,B,C>::copy(Space& home) {
+    return new (home) LqTer<Val,A,B,C>(home,*this);
   }
 
 
   template<class Val, class A, class B, class C>
   forceinline
-  LqTer<Val,A,B,C>::LqTer(Space& home, bool share, Propagator& p,
+  LqTer<Val,A,B,C>::LqTer(Space& home, Propagator& p,
                           A x0, B x1, C x2, Val c)
-    : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p,x0,x1,x2,c) {}
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,p,x0,x1,x2,c) {}
 
   template<class Val, class A, class B, class C>
   ExecStatus

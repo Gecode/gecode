@@ -56,7 +56,7 @@ namespace Gecode { namespace Set {
     /// Update duplicated view from view \a y and delta \a d
     void prune(Space& home, SetView y, const Delta& d);
     /// Update during cloning
-    void update(Space& home, bool share, SetTraceView x);
+    void update(Space& home, SetTraceView x);
     /// Return slack for \a x
     static unsigned long long int slack(SetView x);
   };
@@ -86,7 +86,7 @@ namespace Gecode { namespace Set {
     RangeList::overwrite(home,_lub,lubi);
   }
   forceinline void
-  SetTraceView::update(Space& home, bool, SetTraceView x) {
+  SetTraceView::update(Space& home, SetTraceView x) {
     Iter::Ranges::RangeList glbi(x._glb);
     RangeList::copy(home,_glb,glbi);
     Iter::Ranges::RangeList lubi(x._lub);

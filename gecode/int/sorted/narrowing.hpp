@@ -55,12 +55,12 @@ namespace Gecode { namespace Int { namespace Sorted {
 
   template<class View>
   inline void
-  computesccs(Space& home, ViewArray<View>& x, ViewArray<View>& y,
+  computesccs(ViewArray<View>& x, ViewArray<View>& y,
               int phi[], SccComponent sinfo[], int scclist[]) {
 
     // number of sccs is bounded by xs (number of x-nodes)
     int xs = x.size();
-    Region r(home);
+    Region r;
     Support::StaticStack<int,Region> cs(r,xs);
 
     //select an y node from the graph

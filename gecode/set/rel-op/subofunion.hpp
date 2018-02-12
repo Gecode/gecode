@@ -45,8 +45,8 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template<class View0, class View1, class View2>
   Actor*
-  SubOfUnion<View0,View1,View2>::copy(Space& home, bool share) {
-    return new (home) SubOfUnion(home,share,*this);
+  SubOfUnion<View0,View1,View2>::copy(Space& home) {
+    return new (home) SubOfUnion(home,*this);
   }
 
   template<class View0, class View1, class View2>
@@ -150,9 +150,9 @@ namespace Gecode { namespace Set { namespace RelOp {
   template<class View0, class View1, class View2>
   forceinline
   SubOfUnion<View0,View1,View2>::SubOfUnion
-  (Space& home, bool share, SubOfUnion<View0,View1,View2>& p)
+  (Space& home, SubOfUnion<View0,View1,View2>& p)
     : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-                             View2,PC_SET_ANY>(home,share,p) {}
+                             View2,PC_SET_ANY>(home,p) {}
 
   template<class View0, class View1, class View2>
   ExecStatus SubOfUnion<View0,View1,View2>::post

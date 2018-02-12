@@ -123,7 +123,7 @@ public:
       os << '\t';
       for (int w = 0; w < size; ++w) {
         int v = mineField(spec, size, h, w);
-        if ( v != -1)
+        if (v != -1)
           os << v << " ";
         else if (pos(h,w).val() == 1)
           os << "* ";
@@ -136,14 +136,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  MineSweeper(bool share, MineSweeper& s) :
-    Script(share,s), spec(s.spec), size(s.size) {
-    b.update(*this, share, s.b);
+  MineSweeper(MineSweeper& s) :
+    Script(s), spec(s.spec), size(s.size) {
+    b.update(*this, s.b);
   }
   /// Copy space during cloning
   virtual Space*
-  copy(bool share) {
-    return new MineSweeper(share,*this);
+  copy(void) {
+    return new MineSweeper(*this);
   }
 
 };

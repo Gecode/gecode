@@ -65,12 +65,12 @@ namespace Gecode { namespace Set { namespace Int {
     using MixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
-    MinElement(Space& home, bool share,MinElement& p);
+    MinElement(Space& home, MinElement& p);
     /// Constructor for posting
     MinElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the minimal element of \a s
@@ -93,12 +93,12 @@ namespace Gecode { namespace Set { namespace Int {
     using MixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x1;
     /// Constructor for cloning \a p
-    NotMinElement(Space& home, bool share,NotMinElement& p);
+    NotMinElement(Space& home, NotMinElement& p);
     /// Constructor for posting
     NotMinElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is not the minimal element of \a s
@@ -123,13 +123,13 @@ namespace Gecode { namespace Set { namespace Int {
     using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::b;
     /// Constructor for cloning \a p
-    ReMinElement(Space& home, bool share,ReMinElement& p);
+    ReMinElement(Space& home, ReMinElement& p);
     /// Constructor for posting
     ReMinElement(Home home, View, Gecode::Int::IntView,
                  Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post reified propagator for \a b iff \a x is the minimal element of \a s
@@ -152,12 +152,12 @@ namespace Gecode { namespace Set { namespace Int {
     using MixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
-    MaxElement(Space& home, bool share,MaxElement& p);
+    MaxElement(Space& home, MaxElement& p);
     /// Constructor for posting
     MaxElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is the largest element of \a s
@@ -180,12 +180,12 @@ namespace Gecode { namespace Set { namespace Int {
     using MixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM>::x1;
     /// Constructor for cloning \a p
-    NotMaxElement(Space& home, bool share,NotMaxElement& p);
+    NotMaxElement(Space& home, NotMaxElement& p);
     /// Constructor for posting
     NotMaxElement(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \a x is not the largest element of \a s
@@ -210,12 +210,12 @@ namespace Gecode { namespace Set { namespace Int {
     using Gecode::Int::ReMixBinaryPropagator<View,PC_SET_ANY,
       Gecode::Int::IntView,Gecode::Int::PC_INT_DOM,Gecode::Int::BoolView>::b;
     /// Constructor for cloning \a p
-    ReMaxElement(Space& home, bool share,ReMaxElement& p);
+    ReMaxElement(Space& home, ReMaxElement& p);
     /// Constructor for posting
     ReMaxElement(Home home, View, Gecode::Int::IntView, Gecode::Int::BoolView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post reified propagator for \a b iff \a x is the largest element of \a s
@@ -239,12 +239,12 @@ namespace Gecode { namespace Set { namespace Int {
     using MixBinaryPropagator<View,PC_SET_CARD,
       Gecode::Int::IntView,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
-    Card(Space& home, bool share,Card& p);
+    Card(Space& home, Card& p);
     /// Constructor for posting
     Card(Home home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Perform propagation
     virtual ExecStatus propagate(Space& home, const ModEventDelta& med);
     /// Post propagator for \f$ |s|=x \f$
@@ -271,13 +271,13 @@ namespace Gecode { namespace Set { namespace Int {
     Gecode::Int::IntView y;
 
     /// Constructor for cloning \a p
-    Weights(Space& home, bool share,Weights& p);
+    Weights(Space& home, Weights& p);
     /// Constructor for posting
     Weights(Home home, const SharedArray<int>&, const SharedArray<int>&,
             View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
-    virtual Actor* copy(Space& home,bool);
+    virtual Actor* copy(Space& home);
     /// Cost function (defined as PC_LINEAR_LO)
     virtual PropCost cost(const Space& home, const ModEventDelta& med) const;
     /// Schedule function

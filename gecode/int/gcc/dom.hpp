@@ -80,11 +80,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   forceinline
-  Dom<Card>::Dom(Space& home, bool share, Dom<Card>& p)
-    : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    k.update(home, share, p.k);
+  Dom<Card>::Dom(Space& home, Dom<Card>& p)
+    : Propagator(home, p), vvg(NULL), card_fixed(p.card_fixed) {
+    x.update(home, p.x);
+    y.update(home, p.y);
+    k.update(home, p.k);
   }
 
   template<class Card>
@@ -98,8 +98,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card>
   Actor*
-  Dom<Card>::copy(Space& home, bool share) {
-    return new (home) Dom<Card>(home, share, *this);
+  Dom<Card>::copy(Space& home) {
+    return new (home) Dom<Card>(home, *this);
   }
 
   template<class Card>
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card>
   ExecStatus
   Dom<Card>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
 
     int* count = r.alloc<int>(k.size());
     for (int i = k.size(); i--; )
@@ -196,24 +196,24 @@ namespace Gecode { namespace Int { namespace GCC {
 
       vvg = new (home) VarValGraph<Card>(home, x, k, smin, smax);
       GECODE_ES_CHECK(vvg->min_require(home,x,k));
-      GECODE_ES_CHECK(vvg->template maximum_matching<UBC>(home));
+      GECODE_ES_CHECK(vvg->template maximum_matching<UBC>());
       if (!card_fixed)
-        GECODE_ES_CHECK(vvg->template maximum_matching<LBC>(home));
+        GECODE_ES_CHECK(vvg->template maximum_matching<LBC>());
     } else {
-      GECODE_ES_CHECK(vvg->sync(home,x,k));
+      GECODE_ES_CHECK(vvg->sync(x,k));
     }
 
-    vvg->template free_alternating_paths<UBC>(home);
-    vvg->template strongly_connected_components<UBC>(home);
+    vvg->template free_alternating_paths<UBC>();
+    vvg->template strongly_connected_components<UBC>();
 
     GECODE_ES_CHECK(vvg->template narrow<UBC>(home,x,k));
 
     if (!card_fixed) {
       if (Card::propagate)
-        GECODE_ES_CHECK(vvg->sync(home,x,k));
+        GECODE_ES_CHECK(vvg->sync(x,k));
 
-      vvg->template free_alternating_paths<LBC>(home);
-      vvg->template strongly_connected_components<LBC>(home);
+      vvg->template free_alternating_paths<LBC>();
+      vvg->template strongly_connected_components<LBC>();
 
       GECODE_ES_CHECK(vvg->template narrow<LBC>(home,x,k));
     }
@@ -304,7 +304,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   ViewArray<IntView>& x, ViewArray<Card>& k) {
     GECODE_ES_CHECK((postSideConstraints<Card>(home,x,k)));
 
-    if (isDistinct<Card>(home, x, k))
+    if (isDistinct<Card>(x,k))
       return Distinct::Dom<IntView>::post(home,x);
 
     bool cardfix = true;

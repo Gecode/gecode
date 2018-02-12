@@ -47,7 +47,7 @@ namespace Gecode {
   StdSetTracer::init(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::init(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 100.00% (" << t.slack().initial() << " values)"
        << std::endl;
   }
@@ -57,7 +57,7 @@ namespace Gecode {
                       const ViewTraceInfo& vti, int i, SetTraceDelta& d) {
     os << "trace<Set>::prune(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << "): [" << i << "] = " << t[i] << " + {";
     {
       SetTraceDelta::Glb glb(d.glb());
@@ -89,7 +89,7 @@ namespace Gecode {
   StdSetTracer::fix(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::fix(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -107,7 +107,7 @@ namespace Gecode {
   StdSetTracer::fail(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::fail(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: ";
     double sl_i = static_cast<double>(t.slack().initial());
     double sl_p = static_cast<double>(t.slack().previous());
@@ -125,7 +125,7 @@ namespace Gecode {
   StdSetTracer::done(const Space&, const SetTraceRecorder& t) {
     os << "trace<Set>::done(id:" << t.id();
     if (t.group().in())
-      os << ",g:";t.group().id();
+      os << ",g:" << t.group().id();
     os << ") slack: 0%" << std::endl;
   }
 

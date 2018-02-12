@@ -48,13 +48,13 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   template<class View, class Offset>
   forceinline
-  Dom<View,Offset>::Dom(Space& home, bool share, Dom<View,Offset>& p)
-    : Base<View,Offset>(home,share,p) {}
+  Dom<View,Offset>::Dom(Space& home, Dom<View,Offset>& p)
+    : Base<View,Offset>(home,p) {}
 
   template<class View, class Offset>
   Actor*
-  Dom<View,Offset>::copy(Space& home, bool share) {
-    return new (home) Dom<View,Offset>(home,share,*this);
+  Dom<View,Offset>::copy(Space& home) {
+    return new (home) Dom<View,Offset>(home,*this);
   }
 
   template<class View, class Offset>
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
 
     if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync(home));
+      GECODE_ES_CHECK(dc.sync());
     } else {
       GECODE_ES_CHECK(dc.init(home,y));
     }

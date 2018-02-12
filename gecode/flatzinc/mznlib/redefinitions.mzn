@@ -81,3 +81,15 @@ predicate array_float_element(var int: b, array[int] of float: as, var float: c)
 predicate array_var_float_element(var int: b, array[int] of var float: as, var float: c) =
     b in index_set(as) /\
     forall(d in index_set(as))( b = d -> as[d] = c );
+
+predicate gecode_int_pow(var int: x, int: y, var int: z);
+
+predicate int_pow(var int: x, var int: y, var int: z) =
+    if is_fixed(y) then gecode_int_pow(x,fix(y),z)
+    else let {
+        array[lb(y)..ub(y)] of var int: pow_x = array1d(lb(y)..ub(y),
+          [if y=i then x else 0 endif | i in lb(y)..ub(y)]);
+        array[lb(y)..ub(y)] of var int: pow_table = array1d(lb(y)..ub(y),
+          [pow(pow_x[i],i) | i in lb(y)..ub(y)]);
+    } in z=pow_table[y]
+    endif;

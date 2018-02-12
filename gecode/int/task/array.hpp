@@ -109,10 +109,10 @@ namespace Gecode { namespace Int {
 
   template<class Task>
   forceinline void
-  TaskArray<Task>::update(Space& home, bool share, TaskArray& a) {
+  TaskArray<Task>::update(Space& home, TaskArray& a) {
     n=a.n; t=home.alloc<Task>(n);
     for (int i=n; i--; )
-      t[i].update(home,share,a.t[i]);
+      t[i].update(home,a.t[i]);
   }
 
 

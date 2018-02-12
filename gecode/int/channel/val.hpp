@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Initialize
     void init(View x, int n);
     /// Update during cloning
-    void update(Space& home, bool share, ValInfo<View>& vi);
+    void update(Space& home, ValInfo<View>& vi);
     /// Check whether propagation for assignment is to be done
     bool doval(void) const;
     /// Check whether propagation for domain is to be done
@@ -76,8 +76,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class View>
   forceinline void
-  ValInfo<View>::update(Space& home, bool share, ValInfo<View>& vi) {
-    view.update(home,share,vi.view); a = vi.a;
+  ValInfo<View>::update(Space& home, ValInfo<View>& vi) {
+    view.update(home,vi.view); a = vi.a;
   }
 
   template<class View>
@@ -189,20 +189,19 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template<class View, class Offset, bool shared>
   forceinline
-  Val<View,Offset,shared>::Val(Space& home, bool share,
-                               Val<View,Offset,shared>& p)
-    : Base<ValInfo<View>,Offset,PC_INT_VAL>(home,share,p) {}
+  Val<View,Offset,shared>::Val(Space& home, Val<View,Offset,shared>& p)
+    : Base<ValInfo<View>,Offset,PC_INT_VAL>(home,p) {}
 
   template<class View, class Offset, bool shared>
   Actor*
-  Val<View,Offset,shared>::copy(Space& home, bool share) {
-    return new (home) Val<View,Offset,shared>(home,share,*this);
+  Val<View,Offset,shared>::copy(Space& home) {
+    return new (home) Val<View,Offset,shared>(home,*this);
   }
 
   template<class View, class Offset, bool shared>
   ExecStatus
   Val<View,Offset,shared>::propagate(Space& home, const ModEventDelta&) {
-    Region r(home);
+    Region r;
     ProcessStack xa(r,n);
     ProcessStack ya(r,n);
 

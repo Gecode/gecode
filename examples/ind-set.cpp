@@ -105,14 +105,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  IndSet(bool share, IndSet& s) : IntMaximizeScript(share,s), g(s.g) {
-    v.update(*this, share, s.v);
-    k.update(*this, share, s.k);
+  IndSet(IndSet& s) : IntMaximizeScript(s), g(s.g) {
+    v.update(*this, s.v);
+    k.update(*this, s.k);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new IndSet(share,*this);
+  copy(void) {
+    return new IndSet(*this);
   }
   /// Print solution
   virtual void

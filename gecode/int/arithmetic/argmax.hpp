@@ -77,23 +77,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   template<class VA, class VB, bool tiebreak>
   forceinline
-  ArgMax<VA,VB,tiebreak>::ArgMax(Space& home, bool share,
-                                        ArgMax<VA,VB,tiebreak>& p)
-    : Propagator(home,share,p) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
+  ArgMax<VA,VB,tiebreak>::ArgMax(Space& home, ArgMax<VA,VB,tiebreak>& p)
+    : Propagator(home,p) {
+    x.update(home,p.x);
+    y.update(home,p.y);
   }
 
   template<class VA, class VB, bool tiebreak>
   Actor*
-  ArgMax<VA,VB,tiebreak>::copy(Space& home, bool share) {
-    return new (home) ArgMax<VA,VB,tiebreak>(home,share,*this);
+  ArgMax<VA,VB,tiebreak>::copy(Space& home) {
+    return new (home) ArgMax<VA,VB,tiebreak>(home,*this);
   }
 
   template<class VA, class VB, bool tiebreak>
   PropCost
-  ArgMax<VA,VB,tiebreak>::cost(const Space&,
-                                      const ModEventDelta&) const {
+  ArgMax<VA,VB,tiebreak>::cost(const Space&, const ModEventDelta&) const {
     return PropCost::linear(PropCost::LO,x.size()+1);
   }
 
@@ -126,7 +124,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     // Eliminate elements from x and y that are too small
     {
-      Region r(home);
+      Region r;
 
       // Values to delete from y
       int* d=r.alloc<int>(y.size());

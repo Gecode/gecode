@@ -284,7 +284,7 @@ namespace Gecode { namespace Set {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, ConstSetView& y);
+    void update(Space& home, ConstSetView& y);
     //@}
 
     /// \name Delta information for advisors
@@ -1080,7 +1080,7 @@ namespace Gecode { namespace Set {
     /// \name Cloning
     //@{
     /// Update this view to be a clone of view \a y
-    void update(Space& home, bool share, CachedView<View>& y);
+    void update(Space& home, CachedView<View>& y);
     //@}
   };
 

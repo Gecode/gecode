@@ -35,7 +35,11 @@
 #
 #
 
-
 prefix=@prefix@
 datarootdir=@datarootdir@
-FLATZINC_CMD=fzn-gecode minizinc -I @datadir@/gecode/mznlib "$@"
+if command -v minizinc >/dev/null 2>&1; then
+    MZN_CMD=minizinc
+else
+    MZN_CMD=mzn-fzn
+fi
+FLATZINC_CMD=fzn-gecode $MZN_CMD -I @datadir@/gecode/mznlib "$@"

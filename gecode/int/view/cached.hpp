@@ -253,6 +253,11 @@ namespace Gecode { namespace Int {
     return x.max(d);
   }
   template<class View>
+  forceinline unsigned int
+  CachedView<View>::width(const Delta& d) const {
+    return x.width(d);
+  }
+  template<class View>
   forceinline bool
   CachedView<View>::any(const Delta& d) const {
     return x.any(d);
@@ -266,8 +271,8 @@ namespace Gecode { namespace Int {
    */
   template<class View>
   void
-  CachedView<View>::update(Space& home, bool share, CachedView<View>& y) {
-    DerivedView<View>::update(home,share,y);
+  CachedView<View>::update(Space& home, CachedView<View>& y) {
+    DerivedView<View>::update(home,y);
     if (y._firstRange) {
       _firstRange = new (home) RangeList(y._firstRange->min(),
                                          y._firstRange->max(),NULL);

@@ -97,10 +97,34 @@ namespace Test { namespace Int {
        }
      };
 
+     /// %Test for unsharing in failed spaces
+     class Failed : public Test {
+     public:
+       /// Create and register test
+       Failed(void)
+         : Test("Unshare::Failed",1,-1,1) {}
+       /// %Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         home.fail();
+         IntVarArgs y(2);
+         y[0]=x[0]; y[1]=x[0];
+         unshare(home, y);
+         REG r(1);
+         extensional(home, y, r);
+       }
+     };
+
      Int i_bnd(Gecode::IPL_BND);
      Int i_dom(Gecode::IPL_DOM);
 
      Bool b;
+
+     Failed f;
      //@}
 
    }

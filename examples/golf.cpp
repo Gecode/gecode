@@ -55,9 +55,9 @@ public:
   /// Constructor
   GolfOptions(void)
     : Options("Golf"),
-      _w("-w","number of weeks",9),
-      _g("-g","number of groups",8),
-      _s("-s","number of players per group",4) {
+      _w("w","number of weeks",9),
+      _g("g","number of groups",8),
+      _s("s","number of players per group",4) {
     add(_w);
     add(_g);
     add(_s);
@@ -105,7 +105,8 @@ public:
   Golf(const GolfOptions& opt)
     : Script(opt),
       g(opt.g()), s(opt.s()), w(opt.w()),
-      groups(*this,g*w,IntSet::empty,0,g*s-1,s,s) {
+      groups(*this,g*w,IntSet::empty,0,g*s-1,
+             static_cast<unsigned int>(s),static_cast<unsigned int>(s)) {
     Matrix<SetVarArray> schedule(groups,g,w);
 
     // Groups in one week must be disjoint
@@ -124,13 +125,11 @@ public:
       // Set up table mapping from pairs (p1,p2) (where p1<p2) of players to
       // unique integer identifiers
       int playerCount = g * s;
-      TupleSet ts;
+      TupleSet ts(3);
       int pairCount=0;
-      for (int p1=0; p1<playerCount-1; ++p1) {
-        for (int p2=p1+1; p2<playerCount; ++p2) {
-          ts.add(IntArgs(3,  p1, p2, pairCount++));
-        }
-      }
+      for (int p1=0; p1<playerCount-1; p1++)
+        for (int p2=p1+1; p2<playerCount; p2++)
+          ts.add(p1, p2, pairCount++);
       ts.finalize();
 
       // Collect pairs of golfers into pairs
@@ -214,13 +213,13 @@ public:
   }
 
   /// Constructor for copying \a s
-  Golf(bool share, Golf& s) : Script(share,s), g(s.g), s(s.s), w(s.w) {
-    groups.update(*this, share, s.groups);
+  Golf(Golf& s) : Script(s), g(s.g), s(s.s), w(s.w) {
+    groups.update(*this, s.groups);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new Golf(share,*this);
+  copy(void) {
+    return new Golf(*this);
   }
 };
 

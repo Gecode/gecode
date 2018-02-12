@@ -102,6 +102,7 @@
 #include <gecode/support/macros.hpp>
 #include <gecode/support/exception.hpp>
 #include <gecode/support/cast.hpp>
+#include <gecode/support/hash.hpp>
 #include <gecode/support/thread.hpp>
 #include <gecode/support/allocator.hpp>
 #include <gecode/support/heap.hpp>
@@ -141,6 +142,8 @@
 #endif
 
 #include <gecode/support/thread/thread.hpp>
+
+#include <gecode/support/ref-count.hpp>
 
 #include <gecode/support/timer.hpp>
 #include <gecode/support/hw-rnd.hpp>

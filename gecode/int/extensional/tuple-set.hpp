@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Mikael Lagerkvist, 2007
+ *     Christian Schulte, 2017
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -39,150 +41,251 @@
 
 namespace Gecode {
 
+  /*
+   * Ranges
+   *
+   */
+  forceinline unsigned int
+  TupleSet::Range::width(void) const {
+    return static_cast<unsigned int>(max - min + 1);
+  }
+
+  forceinline const TupleSet::BitSetData*
+  TupleSet::Range::supports(unsigned int n_words, int n) const {
+    assert((min <= n) && (n <= max));
+    return s + n_words * static_cast<unsigned int>(n - min);
+  }
+
+  
+  /*
+   * Tuple set data
+   *
+   */
+  forceinline
+  TupleSet::Data::Data(int a) 
+    : arity(a), n_words(0U), // To be initialized in finalize
+      n_tuples(0), n_free(n_initial_free),
+      min(Int::Limits::max), max(Int::Limits::min), key(0),
+      td(heap.alloc<int>(n_initial_free * a)),
+      vd(heap.alloc<ValueData>(a)),
+      range(nullptr), support(nullptr) {
+  }
+  
   forceinline bool
-  TupleSet::TupleSetI::finalized(void) const {
-    assert(((excess == -1) && (domsize > 0)) ||
-           ((excess != -1) && (domsize == 0)));
-    return excess == -1;
+  TupleSet::Data::finalized(void) const {
+    return n_free < 0;
   }
 
-  forceinline
-  TupleSet::TupleSetI::TupleSetI(void)
-    : arity(-1),
-      size(0),
-      tuples(NULL),
-      tuple_data(NULL),
-      data(NULL),
-      excess(0),
-      min(Int::Limits::max),
-      max(Int::Limits::min),
-      domsize(0),
-      last(NULL),
-      nullpointer(NULL)
-  {}
+  forceinline TupleSet::Tuple
+  TupleSet::Data::add(void) {
+    if (n_free == 0)
+      resize();
+    assert(n_free > 0);
+    n_free--;
+    Tuple t = td + n_tuples*arity;
+    n_tuples++;
+    return t;
+  }
 
+  forceinline TupleSet::Tuple
+  TupleSet::Data::get(int i) const {
+    assert((i >= 0) && (i < n_tuples));
+    return td + i*arity;
+  }
 
-  template<class T>
-  void
-  TupleSet::TupleSetI::add(T t) {
-    assert(arity  != -1); // Arity has been set
-    assert(excess != -1); // Tuples may still be added
-    if (excess == 0) resize();
-    assert(excess >= 0);
-    --excess;
-    int end = size*arity;
-    for (int i = arity; i--; ) {
-      data[end+i] = t[i];
-      if (t[i] < min) min = t[i];
-      if (t[i] > max) max = t[i];
+  forceinline unsigned int
+  TupleSet::ValueData::start(int k) const {
+    if (n > 1U) {
+      unsigned int l=0U, h=n-1U;
+      while (true) {
+        assert(l<=h);
+        unsigned int m = l + ((h-l) >> 1);
+        if (k < r[m].min)
+          h=m-1U;
+        else if (k > r[m].max)
+          l=m+1U;
+        else
+          return m;
+      }
+      GECODE_NEVER;
+    } else {
+      return 0U;
     }
-    ++size;
+  }
+
+  forceinline void
+  TupleSet::Data::set(BitSetData* d, unsigned int i) {
+    d[i / BitSetData::bpb].set(i % BitSetData::bpb);
+  }
+
+  forceinline bool
+  TupleSet::Data::get(const BitSetData* d, unsigned int i) {
+    return d[i / BitSetData::bpb].get(i % BitSetData::bpb);
+  }
+
+  forceinline unsigned int
+  TupleSet::Data::tuple2idx(Tuple t) const {
+    return static_cast<unsigned int>((t - td) / static_cast<unsigned int>(arity));
+  }
+
+  forceinline const TupleSet::Range*
+  TupleSet::Data::fst(int i) const {
+    return &vd[i].r[0];
+  }
+  forceinline const TupleSet::Range*
+  TupleSet::Data::lst(int i) const {
+    return &vd[i].r[vd[i].n-1U];
+  }
+
+  
+  /*
+   * Tuple set
+   *
+   */
+  forceinline TupleSet&
+  TupleSet::add(const IntArgs& t) {
+    _add(t); return *this;
   }
 
   forceinline
-  TupleSet::TupleSet(void) {
-  }
+  TupleSet::TupleSet(void) {}
 
   forceinline
-  TupleSet::TupleSet(const TupleSet& ts)
-    : SharedHandle(ts) {}
-
-  forceinline TupleSet::TupleSetI*
-  TupleSet::implementation(void) {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    return imp;
-  }
-
-  inline void
-  TupleSet::add(const IntArgs& tuple) {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    if (imp == NULL) {
-      imp = new TupleSetI;
-      object(imp);
-    }
-    assert(imp->arity == -1 ||
-           imp->arity == tuple.size());
-    imp->arity = tuple.size();
-    imp->add(tuple);
+  TupleSet::operator bool(void) const {
+    return object() != nullptr;
   }
 
   forceinline void
   TupleSet::finalize(void) {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    if (imp == NULL) {
-      imp = new TupleSetI;
-      imp->arity = 0;
-      imp->excess = -1;
-      imp->domsize = 1;
-      imp->size = 1;
-      object(imp);
-    }
-    if (!imp->finalized()) {
-      imp->finalize();
-    }
+    Data* d = static_cast<Data*>(object());
+    if (!d->finalized())
+      d->finalize();
   }
 
   forceinline bool
   TupleSet::finalized(void) const {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    return imp->finalized();
+    return static_cast<Data*>(object())->finalized();
   }
 
+  forceinline TupleSet::Data&
+  TupleSet::data(void) const {
+    assert(finalized());
+    return *static_cast<Data*>(object());
+  }
+  forceinline TupleSet::Data&
+  TupleSet::raw(void) const {
+    return *static_cast<Data*>(object());
+  }
+
+  forceinline bool
+  TupleSet::operator !=(const TupleSet& t) const {
+    return !(*this == t);
+  }
   forceinline int
   TupleSet::arity(void) const {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    assert(imp->arity != -1);
-    return imp->arity;
+    return raw().arity;
   }
   forceinline int
   TupleSet::tuples(void) const {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    assert(imp->finalized());
-    return imp->size-1;
+    return raw().n_tuples;
   }
-  forceinline TupleSet::Tuple
-  TupleSet::operator [](int i) const {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    assert(imp->finalized());
-    return imp->data + i*imp->arity;
+  forceinline unsigned int
+  TupleSet::words(void) const {
+    return data().n_words;
   }
   forceinline int
   TupleSet::min(void) const {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    assert(imp->finalized());
-    return imp->min;
+    return data().min;
   }
   forceinline int
   TupleSet::max(void) const {
-    TupleSetI* imp = static_cast<TupleSetI*>(object());
-    assert(imp);
-    assert(imp->finalized());
-    return imp->max;
+    return data().max;
+  }
+  forceinline TupleSet::Tuple
+  TupleSet::operator [](int i) const {
+    return data().get(i);
+  }
+  forceinline const TupleSet::Range*
+  TupleSet::fst(int i) const {
+    return data().fst(i);
+  }
+  forceinline const TupleSet::Range*
+  TupleSet::lst(int i) const {
+    return data().lst(i);
+  }
+
+  forceinline bool
+  TupleSet::operator ==(const TupleSet& t) const {
+    if (tuples() != t.tuples())
+      return false;
+    if (arity() != t.arity())
+      return false;
+    if (min() != t.min())
+      return false;
+    if (max() != t.max())
+      return false;
+    return equal(t);
+  }
+
+  forceinline std::size_t
+  TupleSet::hash(void) const {
+    return data().key;
   }
 
 
-  template<class Char, class Traits, class T>
+  template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const TupleSet& ts) {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
-    s << "Number of tuples: " << ts.tuples() << std::endl
-      << "Tuples:" << std::endl;
-    for (int i = 0; i < ts.tuples(); ++i) {
-      s << '\t';
-      for (int j = 0; j < ts.arity(); ++j) {
-        s.width(3);
-        s << " " << ts[i][j];
-      }
-      s << std::endl;
+    s << "Number of tuples: " << ts.tuples() 
+      << " (number of words: " << ts.words() << " with " 
+      << Support::BitSetData::bpb << " bits)" << std::endl;
+    for (int a=0; a < ts.arity(); a++) {
+      unsigned int size = 0U;
+      for (const TupleSet::Range* c=ts.fst(a); c<=ts.lst(a); c++)
+        size += c->width();
+      s << "\t[" << a << "] size: " << size
+        << ", width: " 
+        << static_cast<unsigned int>(ts.lst(a)->max - ts.fst(a)->min + 1)
+        << ", ranges: "
+        << (ts.lst(a) - ts.fst(a) + 1U)
+        << std::endl;
     }
     return os << s.str();
+  }
+
+
+  /*
+   * Range iterator
+   *
+   */
+  forceinline
+  TupleSet::Ranges::Ranges(const TupleSet& ts, int i) {
+    c = &(ts.data().vd[i].r[0]);
+    l = c + ts.data().vd[i].n;
+  }
+
+  forceinline bool
+  TupleSet::Ranges::operator ()(void) const {
+    return c<l;
+  }
+  forceinline void
+  TupleSet::Ranges::operator ++(void) {
+    c++;
+  }
+
+  forceinline int
+  TupleSet::Ranges::min(void) const {
+    return c->min;
+  }
+  forceinline int
+  TupleSet::Ranges::max(void) const {
+    return c->max;
+  }
+  forceinline unsigned int
+  TupleSet::Ranges::width(void) const {
+    return c->width();
   }
 
 }

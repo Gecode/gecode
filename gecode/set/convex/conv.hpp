@@ -53,8 +53,8 @@ namespace Gecode { namespace Set { namespace Convex {
     : UnaryPropagator<SetView, PC_SET_ANY>(home,x) {}
 
   forceinline
-  Convex::Convex(Space& home, bool share, Convex& p)
-    : UnaryPropagator<SetView, PC_SET_ANY>(home,share,p) {}
+  Convex::Convex(Space& home, Convex& p)
+    : UnaryPropagator<SetView, PC_SET_ANY>(home,p) {}
 
   forceinline ExecStatus
   Convex::post(Home home, SetView x) {

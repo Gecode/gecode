@@ -116,14 +116,14 @@ public:
     }
   }
   /// Constructor for cloning \a s
-  WordSquare(bool share, WordSquare& s)
-    : Script(share,s), w_l(s.w_l) {
-    letters.update(*this, share, s.letters);
+  WordSquare(WordSquare& s)
+    : Script(s), w_l(s.w_l) {
+    letters.update(*this, s.letters);
   }
   /// Copy during cloning
   virtual Space*
-  copy(bool share) {
-    return new WordSquare(share,*this);
+  copy(void) {
+    return new WordSquare(*this);
   }
   /// Print solution
   virtual void

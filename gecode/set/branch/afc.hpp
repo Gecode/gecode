@@ -50,13 +50,13 @@ namespace Gecode {
   }
 
   forceinline
-  SetAFC::SetAFC(Home home, const SetVarArgs& x, double d) {
-    AFC::init(home,x,d);
+  SetAFC::SetAFC(Home home, const SetVarArgs& x, double d, bool share) {
+    AFC::init(home,x,d,share);
   }
 
   forceinline void
-  SetAFC::init(Home home, const SetVarArgs& x, double d) {
-    AFC::init(home,x,d);
+  SetAFC::init(Home home, const SetVarArgs& x, double d, bool share) {
+    AFC::init(home,x,d,share);
   }
 
 }

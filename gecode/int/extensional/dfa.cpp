@@ -485,48 +485,26 @@ namespace Gecode {
     heap.free<Transition>(trans,n_trans);
   }
 
-  SharedHandle::Object*
-  DFA::DFAI::copy(void) const {
-    DFAI* d = new DFAI(n_trans);
-    d->n_states   = n_states;
-    d->n_symbols  = n_symbols;
-    d->n_trans    = n_trans;
-    d->max_degree = max_degree;
-    d->final_fst  = final_fst;
-    d->final_lst  = final_lst;
-    heap.copy<Transition>(&d->trans[0], &trans[0], n_trans);
-    d->fill();
-    return d;
-  }
-
-  void
-  DFA::DFAI::fill(void) {
-    // Compute smallest logarithm larger than n_symbols
-    n_log = 1;
-    while (n_symbols >= static_cast<unsigned int>(1<<n_log))
-      n_log++;
-    // Allocate memory
-    table = heap.alloc<HashEntry>(1<<n_log);
-    // Initialize table
-    for (int i=(1<<n_log); i--; )
-      table[i].fst = table[i].lst = NULL;
-    int mask = (1 << n_log) - 1;
-    // Enter transitions to table
-    for (int i = 0; i<n_trans; ) {
-      int s = trans[i].symbol;
-      Transition* fst = &trans[i];
-      i++;
-      while ((i<n_trans) && (trans[i].symbol == s))
-        i++;
-      Transition* lst = &trans[i];
-      // Enter with linear collision resolution
-      int p = s & mask;
-      while (table[p].fst != NULL)
-        p = (p+1) & mask;
-      table[p].symbol = s;
-      table[p].fst    = fst;
-      table[p].lst    = lst;
+  bool
+  DFA::equal(const DFA& d) const {
+    assert(n_states() == d.n_states());
+    assert(n_transitions() == d.n_transitions());
+    assert(n_symbols() == d.n_symbols());
+    assert(final_fst() == d.final_fst());
+    assert(final_lst() == d.final_lst());
+    DFA::Transitions me(*this);
+    DFA::Transitions they(d);
+    while (me()) {
+      if (me.i_state() != they.i_state())
+        return false;
+      if (me.symbol() != they.symbol())
+        return false;
+      if (me.o_state() != they.o_state())
+        return false;
+      ++me;
+      ++they;
     }
+    return true;
   }
 
 }

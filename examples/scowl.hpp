@@ -13465,7 +13465,7 @@ namespace {
 inline
 FileSizeOptions::FileSizeOptions(const char* s)
   : Gecode::SizeOptions(s),
-    _file("-file","file name of dictionary") {
+    _file("file","file name of dictionary") {
   add(_file);
 }
 inline const char*
@@ -13477,7 +13477,7 @@ FileSizeOptions::file(void) const {
 inline
 Dictionary::Dictionary(void)
   : max_len(0), n_all_words(0), chunk(NULL) {
-  for (int i=max_len; i--; ) {
+  for (unsigned int i=max_len; i--; ) {
     n_words[i]=0; s_words[i]=NULL;
   }
 }
