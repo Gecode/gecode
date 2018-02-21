@@ -190,8 +190,7 @@ namespace Gecode { namespace Search { namespace Par {
         engine().ack_terminate();
         // Wait until termination can proceed
         engine().wait_terminate();
-        // Terminate thread
-        engine().terminated();
+        // Thread will be terminated by returning from run
         return;
       case C_RESET:
         // Acknowledge reset request

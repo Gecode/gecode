@@ -61,8 +61,12 @@ namespace Gecode { namespace Support {
         m.release();
         assert(e != NULL);
         e->run();
-        if (e->todelete())
+        if (e->todelete()) {
+          Terminator* t = e->terminator();
           delete e;
+          if (t)
+            t->terminated();
+        }
       }
       // Put into idle stack
       Thread::m()->acquire();

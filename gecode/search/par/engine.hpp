@@ -231,8 +231,6 @@ namespace Gecode { namespace Search { namespace Par {
     // Now all threads are terminated!
   }
 
-
-
   /*
    * Engine: reset control
    */
@@ -349,6 +347,12 @@ namespace Gecode { namespace Search { namespace Par {
     }
     GECODE_NEVER;
     return NULL;
+  }
+
+  template<class Tracer>
+  Support::Terminator* 
+  Engine<Tracer>::Worker::terminator(void) const {
+    return &_engine;
   }
 
   /*
