@@ -104,11 +104,13 @@ namespace Gecode { namespace Support {
    */
   class Mutex {
   private:
-#ifdef GECODE_THREADS_WINDOWS
+#if defined(GECODE_THREADS_WINDOWS)
     /// Use a simple but more efficient critical section on Windows
     CRITICAL_SECTION w_cs;
-#endif
-#ifdef GECODE_THREADS_PTHREADS
+#elif defined(GECODE_THREADS_OSX_UNFAIR)
+    /// Use unfair lock on macOS
+    os_unfair_lock lck;
+#elif defined(GECODE_THREADS_PTHREADS)
     /// The Pthread mutex
     pthread_mutex_t p_m;
 #endif
@@ -134,15 +136,11 @@ namespace Gecode { namespace Support {
     void operator=(const Mutex&) {}
   };
 
-#if defined(GECODE_THREADS_WINDOWS) || !defined(GECODE_THREADS_PTHREADS)
+#if defined(GECODE_THREADS_WINDOWS) || defined(GECODE_THREADS_OSX_UNFAIR) || !defined(GECODE_THREADS_PTHREADS_SPINLOCK)
 
   typedef Mutex FastMutex;
 
-#endif
-
-#ifdef GECODE_THREADS_PTHREADS
-
-#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_OSX_UNFAIR) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+#else
 
   /**
    * \brief A fast mutex for mutual exclausion among several threads
@@ -191,12 +189,6 @@ namespace Gecode { namespace Support {
     /// A mutex cannot be assigned
     void operator=(const FastMutex&) {}
   };
-
-#else
-
-  typedef Mutex FastMutex;
-
-#endif
 
 #endif
 
