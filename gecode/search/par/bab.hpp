@@ -165,7 +165,9 @@ namespace Gecode { namespace Search { namespace Par {
         mark = 0;
         if (best != NULL)
           cur->constrain(*best);
+        Statistics t = *this;
         Search::Worker::reset(r_d);
+        (*this) += t;
         m.release();
         return;
       }

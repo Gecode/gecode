@@ -136,7 +136,9 @@ namespace Gecode { namespace Search { namespace Par {
         path.ngdl(0);
         d = 0;
         cur = s;
+        Statistics t = *this;
         Search::Worker::reset(r_d);
+        (*this) += t;
         m.release();
         return;
       }
