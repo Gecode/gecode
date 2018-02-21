@@ -113,6 +113,8 @@ namespace Gecode { namespace Support {
 #elif defined(GECODE_THREADS_PTHREADS)
     /// The Pthread mutex
     pthread_mutex_t p_m;
+#else
+#error No suitable mutex implementation found
 #endif
   public:
     /// Initialize mutex
@@ -136,7 +138,7 @@ namespace Gecode { namespace Support {
     void operator=(const Mutex&) {}
   };
 
-#if defined(GECODE_THREADS_WINDOWS) || defined(GECODE_THREADS_OSX_UNFAIR) || !defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+#ifndef GECODE_THREADS_PTHREADS_SPINLOCK
 
   typedef Mutex FastMutex;
 
@@ -158,16 +160,8 @@ namespace Gecode { namespace Support {
    */
   class FastMutex {
   private:
-#ifdef GECODE_THREADS_OSX
-    /// The OSX spin lock
-    OSSpinLock lck;
-#elif defined(GECODE_THREADS_OSX_UNFAIR)
-    /// The OSX spin lock
-    os_unfair_lock lck;
-#else
     /// The Pthread spinlock
     pthread_spinlock_t p_s;
-#endif
   public:
     /// Initialize mutex
     FastMutex(void);

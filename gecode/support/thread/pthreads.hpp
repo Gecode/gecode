@@ -45,25 +45,25 @@ namespace Gecode { namespace Support {
 
 #ifdef GECODE_THREADS_OSX_UNFAIR
 
- /*
+  /*
   * Mutex
   */
- forceinline
- Mutex::Mutex(void) : lck(OS_UNFAIR_LOCK_INIT)  {}
- forceinline void
- Mutex::acquire(void) {
-   os_unfair_lock_lock(&lck);
- }
- forceinline bool
- Mutex::tryacquire(void) {
-   return os_unfair_lock_trylock(&lck);
- }
- forceinline void
- Mutex::release(void) {
-   os_unfair_lock_unlock(&lck);
- }
- forceinline
- Mutex::~Mutex(void) {}
+  forceinline
+  Mutex::Mutex(void) : lck(OS_UNFAIR_LOCK_INIT)  {}
+  forceinline void
+  Mutex::acquire(void) {
+    os_unfair_lock_lock(&lck);
+  }
+  forceinline bool
+  Mutex::tryacquire(void) {
+    return os_unfair_lock_trylock(&lck);
+  }
+  forceinline void
+  Mutex::release(void) {
+    os_unfair_lock_unlock(&lck);
+  }
+  forceinline
+  Mutex::~Mutex(void) {}
 
 #else
 
