@@ -71,7 +71,7 @@ namespace Gecode { namespace Kernel {
       HeapChunk* hc;
     } heap;
     /// A mutex for access
-    GECODE_KERNEL_EXPORT static Support::Mutex m;
+    GECODE_KERNEL_EXPORT static Support::Mutex& m(void);
   public:
     /// Initialize
     SharedMemory(void);
@@ -200,7 +200,7 @@ namespace Gecode { namespace Kernel {
 
   forceinline HeapChunk*
   SharedMemory::alloc(size_t s, size_t l) {
-    m.acquire();
+    m().acquire();
     while ((heap.hc != NULL) && (heap.hc->size < l)) {
       heap.n_hc--;
       HeapChunk* hc = heap.hc;
@@ -217,19 +217,19 @@ namespace Gecode { namespace Kernel {
       hc = heap.hc;
       heap.hc = static_cast<HeapChunk*>(hc->next);
     }
-    m.release();
+    m().release();
     return hc;
   }
   forceinline void
   SharedMemory::free(HeapChunk* hc) {
-    m.acquire();
+    m().acquire();
     if (heap.n_hc == MemoryConfig::n_hc_cache) {
       Gecode::heap.rfree(hc);
     } else {
       heap.n_hc++;
       hc->next = heap.hc; heap.hc = hc;
     }
-    m.release();
+    m().release();
   }
 
 

@@ -165,7 +165,9 @@ namespace Gecode { namespace Search { namespace Par {
         mark = 0;
         if (best != NULL)
           cur->constrain(*best);
+        Statistics t = *this;
         Search::Worker::reset(r_d);
+        (*this) += t;
         m.release();
         return;
       }
@@ -240,8 +242,7 @@ namespace Gecode { namespace Search { namespace Par {
         engine().ack_terminate();
         // Wait until termination can proceed
         engine().wait_terminate();
-        // Terminate thread
-        engine().terminated();
+        // Thread will be terminated by returning from run
         return;
       case C_RESET:
         // Acknowledge reset request
