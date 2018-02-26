@@ -68,7 +68,7 @@
 
 [RELEASE]
 Version: 6.0.0
-Date: 2018-02-07
+Date: 2018-02-´23
 [DESCRIPTION]
 This major release fixes many bugs, adds quite some new
 functionality, and changes how cloning works (most likely the
@@ -79,6 +79,21 @@ functionality includes experimental support for the CPProfiler,
 classes for lexicographic optimization (where the cost is defined
 by an array of variables), a new much faster implementation of
 extensional constraints using tuple sets, and support for tracing
+search engines.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The statistics for parallel search engines was wrong.
+
+[ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed several race conditions during the termination of parallel
 search engines.
 
 [ENTRY]

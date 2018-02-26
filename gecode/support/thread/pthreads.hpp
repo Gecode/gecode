@@ -43,6 +43,30 @@
 
 namespace Gecode { namespace Support {
 
+#ifdef GECODE_THREADS_OSX_UNFAIR
+
+  /*
+  * Mutex
+  */
+  forceinline
+  Mutex::Mutex(void) : lck(OS_UNFAIR_LOCK_INIT)  {}
+  forceinline void
+  Mutex::acquire(void) {
+    os_unfair_lock_lock(&lck);
+  }
+  forceinline bool
+  Mutex::tryacquire(void) {
+    return os_unfair_lock_trylock(&lck);
+  }
+  forceinline void
+  Mutex::release(void) {
+    os_unfair_lock_unlock(&lck);
+  }
+  forceinline
+  Mutex::~Mutex(void) {}
+
+#else
+
   /*
    * Mutex
    */
@@ -73,55 +97,8 @@ namespace Gecode { namespace Support {
       std::terminate();
     }
   }
-
-#ifdef GECODE_THREADS_OSX
-
-  /*
-   * FastMutex
-   */
-  forceinline
-  FastMutex::FastMutex(void) : lck(OS_SPINLOCK_INIT) {}
-  forceinline void
-  FastMutex::acquire(void) {
-    OSSpinLockLock(&lck);
-  }
-  forceinline bool
-  FastMutex::tryacquire(void) {
-    return OSSpinLockTry(&lck);
-  }
-  forceinline void
-  FastMutex::release(void) {
-    OSSpinLockUnlock(&lck);
-  }
-  forceinline
-  FastMutex::~FastMutex(void) {}
-
 #endif
-
-#ifdef GECODE_THREADS_OSX_UNFAIR
-
-  /*
-   * FastMutex
-   */
-  forceinline
-  FastMutex::FastMutex(void) {}
-  forceinline void
-  FastMutex::acquire(void) {
-    os_unfair_lock_lock(&lck);
-  }
-  forceinline bool
-  FastMutex::tryacquire(void) {
-    return os_unfair_lock_trylock(&lck);
-  }
-  forceinline void
-  FastMutex::release(void) {
-    os_unfair_lock_unlock(&lck);
-  }
-  forceinline
-  FastMutex::~FastMutex(void) {}
-
-#endif
-
+  
 #ifdef GECODE_THREADS_PTHREADS_SPINLOCK
 
   /*

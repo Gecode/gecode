@@ -92,7 +92,7 @@ namespace Gecode {
       ~Pool(void);
     };
     /// Just use a single static pool for heap chunks
-    GECODE_KERNEL_EXPORT Pool& pool();
+    GECODE_KERNEL_EXPORT static Pool& pool();
     /// Heap information data structure
     class HeapInfo {
     public:

@@ -104,13 +104,17 @@ namespace Gecode { namespace Support {
    */
   class Mutex {
   private:
-#ifdef GECODE_THREADS_WINDOWS
+#if defined(GECODE_THREADS_WINDOWS)
     /// Use a simple but more efficient critical section on Windows
     CRITICAL_SECTION w_cs;
-#endif
-#ifdef GECODE_THREADS_PTHREADS
+#elif defined(GECODE_THREADS_OSX_UNFAIR)
+    /// Use unfair lock on macOS
+    os_unfair_lock lck;
+#elif defined(GECODE_THREADS_PTHREADS)
     /// The Pthread mutex
     pthread_mutex_t p_m;
+#else
+#error No suitable mutex implementation found
 #endif
   public:
     /// Initialize mutex
@@ -134,15 +138,11 @@ namespace Gecode { namespace Support {
     void operator=(const Mutex&) {}
   };
 
-#if defined(GECODE_THREADS_WINDOWS) || !defined(GECODE_THREADS_PTHREADS)
+#ifndef GECODE_THREADS_PTHREADS_SPINLOCK
 
   typedef Mutex FastMutex;
 
-#endif
-
-#ifdef GECODE_THREADS_PTHREADS
-
-#if defined(GECODE_THREADS_OSX) || defined(GECODE_THREADS_OSX_UNFAIR) || defined(GECODE_THREADS_PTHREADS_SPINLOCK)
+#else
 
   /**
    * \brief A fast mutex for mutual exclausion among several threads
@@ -160,16 +160,8 @@ namespace Gecode { namespace Support {
    */
   class FastMutex {
   private:
-#ifdef GECODE_THREADS_OSX
-    /// The OSX spin lock
-    OSSpinLock lck;
-#elif defined(GECODE_THREADS_OSX_UNFAIR)
-    /// The OSX spin lock
-    os_unfair_lock lck;
-#else
     /// The Pthread spinlock
     pthread_spinlock_t p_s;
-#endif
   public:
     /// Initialize mutex
     FastMutex(void);
@@ -191,12 +183,6 @@ namespace Gecode { namespace Support {
     /// A mutex cannot be assigned
     void operator=(const FastMutex&) {}
   };
-
-#else
-
-  typedef Mutex FastMutex;
-
-#endif
 
 #endif
 
@@ -260,6 +246,20 @@ namespace Gecode { namespace Support {
   };
 
   /**
+   * \brief An interface for objects that can be called after a
+   *        thread has terminated (after running the thread's destructor)
+   *
+   * \ingroup FuncSupportThread
+   */
+  class Terminator {
+  public:
+    /// Destructor
+    virtual ~Terminator() {}
+    /// The function that is called when the thread has terminated
+    virtual void terminated(void) = 0;
+  };
+
+  /**
    * \brief An interface for objects that can be run by a thread
    *
    * \ingroup FuncSupportThread
@@ -275,6 +275,8 @@ namespace Gecode { namespace Support {
     void todelete(bool d);
     /// Return whether to be deleted upon termination
     bool todelete(void) const;
+    /// Return terminator object
+    virtual Terminator* terminator(void) const { return NULL; }
     /// The function that is executed when the thread starts
     virtual void run(void) = 0;
     /// Destructor

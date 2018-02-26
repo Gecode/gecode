@@ -47,7 +47,7 @@ namespace Gecode { namespace Search { namespace Par {
 
   /// %Parallel depth-first search engine
   template<class Tracer>
-  class Engine : public Search::Engine {
+  class Engine : public Search::Engine, public Support::Terminator {
   protected:
     /// %Parallel depth-first search worker
     class Worker : public Search::Worker, public Support::Runnable {
@@ -80,6 +80,8 @@ namespace Gecode { namespace Search { namespace Par {
       NoGoods& nogoods(void);
       /// Destructor
       virtual ~Worker(void);
+      /// Terminator (engine)
+      virtual Support::Terminator* terminator(void) const;
     };
     /// Search options
     Options _opt;
@@ -133,7 +135,7 @@ namespace Gecode { namespace Search { namespace Par {
     /// For worker to acknowledge termination command
     void ack_terminate(void);
     /// For worker to register termination
-    void terminated(void);
+    virtual void terminated(void);
     /// For worker to wait until termination is legal
     void wait_terminate(void);
     /// For engine to peform thread termination

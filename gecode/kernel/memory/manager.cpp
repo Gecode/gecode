@@ -39,7 +39,10 @@
 
 namespace Gecode { namespace Kernel {
 
-  Support::Mutex SharedMemory::m;
+  Support::Mutex& SharedMemory::m(void) {
+    static Support::Mutex _m;
+    return _m;
+  }
 
   void
   MemoryManager::alloc_refill(SharedMemory& sm, size_t sz) {
