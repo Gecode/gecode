@@ -88,8 +88,8 @@ namespace std {
 
 namespace Gecode { namespace FlatZinc {
 
-  // Unitialized default random number generator
-  Rnd defrnd;
+  // Default random number generator
+  Rnd defrnd(0);
 
   /**
    * \brief Branching on the introduced variables

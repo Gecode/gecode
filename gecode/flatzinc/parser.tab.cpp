@@ -444,7 +444,7 @@ namespace Gecode { namespace FlatZinc {
     }
 
     if (fzs == NULL) {
-      fzs = new FlatZincSpace();
+      fzs = new FlatZincSpace(rnd);
     }
     ParserState pp(data, sbuf.st_size, err, fzs);
 #else
