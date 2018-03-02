@@ -1396,6 +1396,31 @@ AC_DEFUN([AC_GECODE_GIST],
   fi
 ])
 
+dnl
+dnl Macro:
+dnl   AC_GECODE_CBS
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-cbs
+dnl   for compiling with support for counting-based search.
+dnl
+dnl Authors:
+dnl   Samuel Gagnon <samuel.gagnon92@gmail.com>
+AC_DEFUN([AC_GECODE_CBS],
+  [
+  AC_ARG_ENABLE([cbs],
+    AC_HELP_STRING([--enable-cbs],
+      [build with support for counting-based search @<:@default=no@:>@]))
+  AC_MSG_CHECKING(whether to build with support for cbs)
+  if test "${enable_cbs:-no}" = "yes"; then
+    AC_MSG_RESULT(yes)
+    AC_SUBST(enable_cbs, yes)
+    AC_DEFINE([GECODE_HAS_CBS],[],[Whether counting-based search support available])
+  else
+    AC_MSG_RESULT(no)
+  fi
+])
+
 dnl Macro:
 dnl   AC_GECODE_CPPROFILER
 dnl
