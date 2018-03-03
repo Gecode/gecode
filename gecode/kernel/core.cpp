@@ -113,6 +113,9 @@ namespace Gecode {
 #endif
 
   Space::Space(void) : mm(ssd.data().sm) {
+#ifdef GECODE_HAS_CBS
+    var_id_counter = 0;
+#endif
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
       _vars_d[i] = NULL;
@@ -662,6 +665,9 @@ namespace Gecode {
   Space::Space(Space& s)
     : ssd(s.ssd),
       mm(ssd.data().sm,s.mm,s.pc.p.n_sub*sizeof(Propagator**)),
+#ifdef GECODE_HAS_CBS
+      var_id_counter(s.var_id_counter),
+#endif
       d_fst(&Actor::sentinel) {
 #ifdef GECODE_HAS_VAR_DISPOSE
     for (int i=0; i<AllVarConf::idx_d; i++)
