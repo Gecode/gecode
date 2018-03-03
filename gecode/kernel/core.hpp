@@ -255,6 +255,10 @@ namespace Gecode {
     unsigned int free_and_bits;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = VIC::pc_max;
+#ifdef GECODE_HAS_CBS
+    /// Unique id for variable
+    const unsigned var_id;
+#endif
 
     union {
       /**
@@ -335,6 +339,11 @@ namespace Gecode {
     VarImp(Space& home);
     /// Creation of static instances
     VarImp(void);
+
+#ifdef GECODE_HAS_CBS
+    /// Return variable id
+    unsigned int id(void) const;
+#endif
 
     /// \name Dependencies
     //@{
@@ -1688,6 +1697,10 @@ namespace Gecode {
     Kernel::SharedSpaceData ssd;
     /// Performs memory management for space
     Kernel::MemoryManager mm;
+#ifdef GECODE_HAS_CBS
+    /// Global counter for variable ids
+    unsigned int var_id_counter;
+#endif
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -3988,7 +4001,12 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space&) {
+  VarImp<VIC>::VarImp(
+#ifdef GECODE_HAS_CBS
+  Space& home) : var_id(++home.var_id_counter) {
+#else
+  Space&) {
+#endif
     b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
@@ -3997,12 +4015,24 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(void) {
+  VarImp<VIC>::VarImp(void)
+#ifdef GECODE_HAS_CBS
+  : var_id(0)
+#endif
+  {
     b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
   }
+
+#ifdef GECODE_HAS_CBS
+  template<class VIC>
+  forceinline unsigned int
+  VarImp<VIC>::id(void) const {
+    return var_id;
+  }
+#endif
 
   template<class VIC>
   forceinline unsigned int
@@ -4090,7 +4120,11 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space& home, VarImp<VIC>& x) {
+  VarImp<VIC>::VarImp(Space& home, VarImp<VIC>& x)
+#ifdef GECODE_HAS_CBS
+  : var_id(x.var_id)
+#endif
+  {
     VarImpBase** reg;
     free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
     if (x.b.base == NULL) {
