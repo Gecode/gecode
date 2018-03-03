@@ -70,6 +70,12 @@ namespace Gecode { namespace Int {
   IntView::val(void) const {
     return x->val();
   }
+#ifdef GECODE_HAS_CBS
+  forceinline int
+  IntView::baseval(int val) const {
+    return val;
+  }
+#endif
 
   forceinline unsigned int
   IntView::size(void) const {

@@ -150,6 +150,10 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    int baseval(int val) const;
+#endif
 
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
@@ -297,6 +301,10 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    int baseval(int val) const;
+#endif
 
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
@@ -451,6 +459,10 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    int baseval(int val) const;
+#endif
 
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
@@ -700,6 +712,10 @@ namespace Gecode { namespace Int {
     Val med(void) const;
     /// Return assigned value (only if assigned)
     Val val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    Val baseval(Val val) const;
+#endif
 
     /// Return size (cardinality) of domain
     UnsVal size(void) const;
@@ -1145,6 +1161,10 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    int baseval(int val) const;
+#endif
 
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
@@ -1364,6 +1384,10 @@ namespace Gecode { namespace Int {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    int baseval(int val) const;
+#endif
 
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
@@ -1572,6 +1596,10 @@ namespace Gecode { namespace Int {
     int max(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return reverse transformation of value according to view
+    int baseval(int val) const;
+#endif
     //@}
 
     /// \name Delta information for advisors

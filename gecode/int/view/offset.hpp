@@ -76,6 +76,12 @@ namespace Gecode { namespace Int {
   OffsetView::val(void) const {
     return x.val()+c;
   }
+#ifdef GECODE_HAS_CBS
+  forceinline int
+  OffsetView::baseval(int val) const {
+    return val-c;
+  }
+#endif
 
   forceinline unsigned int
   OffsetView::width(void) const {
