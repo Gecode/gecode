@@ -74,6 +74,12 @@ namespace Gecode { namespace Int {
   BoolView::val(void) const {
     return x->val();
   }
+#ifdef GECODE_HAS_CBS
+  forceinline int
+  BoolView::baseval(int val) const {
+    return val;
+  }
+#endif
 
   forceinline unsigned int
   BoolView::size(void) const {

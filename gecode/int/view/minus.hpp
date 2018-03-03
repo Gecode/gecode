@@ -64,6 +64,12 @@ namespace Gecode { namespace Int {
   MinusView::val(void) const {
     return -x.val();
   }
+#ifdef GECODE_HAS_CBS
+  forceinline int
+  MinusView::baseval(int val) const {
+    return -val;
+  }
+#endif
 
   forceinline unsigned int
   MinusView::width(void) const {
