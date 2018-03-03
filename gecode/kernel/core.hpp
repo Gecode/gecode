@@ -1151,6 +1151,35 @@ namespace Gecode {
     /// Return the accumlated failure count
     double afc(void) const;
     //@}
+#ifdef GECODE_HAS_CBS
+    /// \name Marginal distribution
+    //@{
+    /**
+     * \brief Solution distribution
+     *
+     * Computes the marginal distribution for every variable and value in the
+     * propagator. A callback is used to transmit each result.
+     */
+    /// Signature for function transmitting marginal distributions
+    typedef std::function<void(unsigned int prop_id, unsigned int var_id,
+                               int val, double dens)> SendMarginal;
+    virtual void solndistrib(Space& home, SendMarginal send) const;
+    /**
+     * \brief Sum of variable cardinalities
+     *
+     * TODO: This method can be removed if there's a generic way to access
+     * variables in a propagator. Please contact <samuel.gagnon92@gmail.com>
+     *
+     * \param size   Sum of variable cardinalities
+     * \param size_b Sum of variable cardinalities for subset involved
+     *               in branching decisions
+     */
+    /// Signature for function testing if variables are candidates to branching decisions
+    typedef std::function<bool(unsigned int var_id)> InDecision;
+    virtual void domainsizesum(InDecision in, unsigned int& size,
+                               unsigned int& size_b) const;
+    //@}
+#endif
     /// \name Id and group support
     //@{
     /// Return propagator id
@@ -3420,6 +3449,18 @@ namespace Gecode {
   Propagator::afc(void) const {
     return const_cast<Propagator&>(*this).gpi().afc;
   }
+
+#ifdef GECODE_HAS_CBS
+  forceinline void
+  Propagator::solndistrib(Space&, SendMarginal) const {}
+
+  forceinline void
+  Propagator::domainsizesum(InDecision, unsigned int& size,
+                                  unsigned int& size_b) const {
+    size = 0;
+    size_b = 0;
+  }
+#endif
 
   forceinline unsigned int
   Propagator::id(void) const {
