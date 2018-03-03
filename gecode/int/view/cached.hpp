@@ -75,6 +75,13 @@ namespace Gecode { namespace Int {
   CachedView<View>::val(void) const {
     return x.val();
   }
+#ifdef GECODE_HAS_CBS
+  template<class View>
+  forceinline int
+  CachedView<View>::baseval(int val) const {
+    return val;
+  }
+#endif
 
   template<class View>
   forceinline unsigned int
