@@ -152,6 +152,21 @@ namespace Gecode { namespace Int { namespace Distinct {
   Val<View>::Val(Space& home, Val<View>& p)
     : NaryPropagator<View,PC_INT_VAL>(home,p) {}
 
+#ifdef GECODE_HAS_CBS
+  template<class View>
+  void
+  Val<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
+    cbsdistinct(home,this->id(),x,send);
+  }
+
+  template<class View>
+  void
+  Val<View>::domainsizesum(Propagator::InDecision in, unsigned int& size,
+                           unsigned int& size_b) const {
+    cbssize(x,in,size,size_b);
+  }
+#endif
+
   template<class View>
   Actor*
   Val<View>::copy(Space& home) {
