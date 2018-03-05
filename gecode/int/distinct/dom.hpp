@@ -75,6 +75,22 @@ namespace Gecode { namespace Int { namespace Distinct {
     return new (home) Dom<View>(home,*this);
   }
 
+#ifdef GECODE_HAS_CBS
+  template<class View>
+  void
+  Dom<View>::solndistrib(Space& home, Propagator::SendMarginal send) const {
+    cbsdistinct(home,this->id(),x,send);
+  }
+
+  template<class View>
+  void
+  Dom<View>::domainsizesum(Propagator::InDecision in, unsigned int& size,
+                           unsigned int& size_b) const {
+    cbssize(x,in,size,size_b);
+  }
+#endif
+
+
   template<class View>
   ExecStatus
   Dom<View>::propagate(Space& home, const ModEventDelta& med) {
