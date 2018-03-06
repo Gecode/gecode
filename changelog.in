@@ -66,6 +66,16 @@
 #    optional section in the html page.
 #
 
+[ENTRY]
+Module: flatzinc
+What:   bug
+Rank:   minor
+Thanks: Jip J. Dekker
+[DESCRIPTION]
+Fixed the initialisation of the random number generator for the
+FlatZinc executable. This fix ensures the generator is always
+initialised.
+
 [RELEASE]
 Version: 6.0.0
 Date: 2018-02-´23
