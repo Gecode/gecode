@@ -368,8 +368,13 @@ namespace Gecode { namespace FlatZinc {
     RestartMode restart(void) const {
       return static_cast<RestartMode>(_restart.value());
     }
+    void restart(RestartMode rm) {
+      _restart.value(rm);
+    }
     double restart_base(void) const { return _r_base.value(); }
+    void restart_base(double d) { _r_base.value(d); }
     unsigned int restart_scale(void) const { return _r_scale.value(); }
+    void restart_scale(int i) { _r_scale.value(i); }
     bool nogoods(void) const { return _nogoods.value(); }
     unsigned int nogoods_limit(void) const { return _nogoods_limit.value(); }
     bool interrupt(void) const { return _interrupt.value(); }
@@ -591,8 +596,7 @@ namespace Gecode { namespace FlatZinc {
      *
      */
     void createBranchers(Printer& p, AST::Node* ann,
-                         int seed, double decay,
-                         bool ignoreUnknown,
+                         FlatZincOptions& opt, bool ignoreUnknown,
                          std::ostream& err = std::cerr);
 
     /// Return the solve item annotations

@@ -1038,10 +1038,11 @@ namespace Gecode { namespace FlatZinc {
   }
 
   void
-  FlatZincSpace::createBranchers(Printer&p, AST::Node* ann, int seed,
-                                 double decay,
+  FlatZincSpace::createBranchers(Printer&p, AST::Node* ann, FlatZincOptions& opt,
                                  bool ignoreUnknown,
                                  std::ostream& err) {
+    int seed = opt.seed();
+    double decay = opt.decay();
     Rnd rnd(static_cast<unsigned int>(seed));
     TieBreak<IntVarBranch> def_int_varsel = INT_VAR_AFC_SIZE_MAX(0.99);
     IntBoolVarBranch def_intbool_varsel = INTBOOL_VAR_AFC_SIZE_MAX(0.99);
@@ -1092,7 +1093,27 @@ namespace Gecode { namespace FlatZinc {
       }
 
       for (unsigned int i=0; i<flatAnn.size(); i++) {
-        if (flatAnn[i]->isCall("relax_and_reconstruct")) {
+        if (flatAnn[i]->isCall("restart_geometric")) {
+          AST::Call* call = flatAnn[i]->getCall("restart_geometric");
+          opt.restart(RM_GEOMETRIC);
+          AST::Array* args = call->getArgs(2);
+          opt.restart_base(args->a[0]->getFloat());
+          opt.restart_scale(args->a[1]->getInt());
+        } else if (flatAnn[i]->isCall("restart_luby")) {
+          AST::Call* call = flatAnn[i]->getCall("restart_luby");
+          opt.restart(RM_LUBY);
+          opt.restart_scale(call->args->getInt());
+        } else if (flatAnn[i]->isCall("restart_linear")) {
+          AST::Call* call = flatAnn[i]->getCall("restart_linear");
+          opt.restart(RM_LINEAR);
+          opt.restart_scale(call->args->getInt());
+        } else if (flatAnn[i]->isCall("restart_constant")) {
+          AST::Call* call = flatAnn[i]->getCall("restart_constant");
+          opt.restart(RM_CONSTANT);
+          opt.restart_scale(call->args->getInt());
+        } else if (flatAnn[i]->isCall("restart_none")) {
+          opt.restart(RM_NONE);
+        } else if (flatAnn[i]->isCall("relax_and_reconstruct")) {
           if (_lns != 0)
             throw FlatZinc::Error("FlatZinc",
             "Only one relax_and_reconstruct annotation allowed");

@@ -67,6 +67,19 @@
 #
 
 [RELEASE]
+Version: 6.0.1
+Date: TBD
+[DESCRIPTION]
+Changes
+
+[ENTRY]
+Module: flatzinc
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Add support for annotations to control restart strategy.
+
+[RELEASE]
 Version: 6.0.0
 Date: 2018-02-´23
 [DESCRIPTION]
