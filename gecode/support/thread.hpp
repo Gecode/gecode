@@ -62,15 +62,10 @@
 
 #include <pthread.h>
 
-#ifdef GECODE_THREADS_OSX
-
-#include <libkern/OSAtomic.h>
-
-#endif
-
 #ifdef GECODE_THREADS_OSX_UNFAIR
 
 #include <os/lock.h>
+#include <libkern/OSAtomic.h>
 
 #endif
 
