@@ -108,8 +108,14 @@ namespace Gecode { namespace Support {
     /// Use a simple but more efficient critical section on Windows
     CRITICAL_SECTION w_cs;
 #elif defined(GECODE_THREADS_OSX_UNFAIR)
-    /// Use unfair lock on macOS
-    os_unfair_lock lck;
+    /// Use unfair lock on macOS if available, OSSpinLock on older macOS
+    union {
+      os_unfair_lock unfair_lck;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+      OSSpinLock spin_lck;
+#pragma clang diagnostic pop
+    } u;
 #elif defined(GECODE_THREADS_PTHREADS)
     /// The Pthread mutex
     pthread_mutex_t p_m;

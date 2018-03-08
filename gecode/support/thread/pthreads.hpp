@@ -45,25 +45,44 @@ namespace Gecode { namespace Support {
 
 #ifdef GECODE_THREADS_OSX_UNFAIR
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   /*
   * Mutex
   */
   forceinline
-  Mutex::Mutex(void) : lck(OS_UNFAIR_LOCK_INIT)  {}
+  Mutex::Mutex(void) {
+    if (&os_unfair_lock_lock != NULL)
+      u.unfair_lck = OS_UNFAIR_LOCK_INIT;
+    else
+      u.spin_lck = OS_SPINLOCK_INIT;
+  }
   forceinline void
   Mutex::acquire(void) {
-    os_unfair_lock_lock(&lck);
+    if (&os_unfair_lock_lock != NULL) {
+      os_unfair_lock_lock(&u.unfair_lck);
+    } else {
+      OSSpinLockLock(&u.spin_lck);
+    }
   }
   forceinline bool
   Mutex::tryacquire(void) {
-    return os_unfair_lock_trylock(&lck);
+    if (&os_unfair_lock_trylock != NULL)
+      return os_unfair_lock_trylock(&u.unfair_lck);
+    else
+      return OSSpinLockTry(&u.spin_lck);
   }
   forceinline void
   Mutex::release(void) {
-    os_unfair_lock_unlock(&lck);
+    if (&os_unfair_lock_unlock != NULL)
+      os_unfair_lock_unlock(&u.unfair_lck);
+    else
+      OSSpinLockUnlock(&u.spin_lck);
   }
   forceinline
   Mutex::~Mutex(void) {}
+
+#pragma clang diagnostic pop
 
 #else
 

@@ -73,6 +73,14 @@ Date: TBD
 Changes
 
 [ENTRY]
+Module: support
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Detect is os_unfair_lock is available at runtime, in order to be able
+to support older versions of macOS in the same binaries.
+
+[ENTRY]
 Module: flatzinc
 What:   change
 Rank:   minor
