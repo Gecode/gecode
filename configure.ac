@@ -6,8 +6,12 @@ dnl
 dnl Main authors:
 dnl   Guido Tack <tack@gecode.org>
 dnl
+dnl Contributing authors:
+dnl   Samuel Gagnon <samuel.gagnon92@gmail.com>
+dnl
 dnl Copyright:
 dnl   Guido Tack, 2004, 2005
+dnl   Samuel Gagnon, 2018
 dnl
 dnl Last modified:
 dnl   $Date$
@@ -286,6 +290,7 @@ dnl ------------------------------------------------------------------
 AC_GECODE_MPFR
 AC_GECODE_QT
 AC_GECODE_GIST
+AC_GECODE_CBS
 AC_GECODE_CPPROFILER
 AC_GECODE_FLEXBISON
 AC_FUNC_MMAP
