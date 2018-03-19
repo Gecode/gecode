@@ -7,12 +7,14 @@
  *
  *  Contributing authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
  *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2003
  *     Mikael Lagerkvist, 2006
  *     LOGIS, s.r.o., 2009
+ *     Samuel Gagnon, 2018
  *
  *  Bugfixes provided by:
  *     Alexander Samoilov <alexander_samoilov@yahoo.com>
@@ -1166,9 +1168,6 @@ namespace Gecode {
     virtual void solndistrib(Space& home, SendMarginal send) const;
     /**
      * \brief Sum of variable cardinalities
-     *
-     * TODO: This method can be removed if there's a generic way to access
-     * variables in a propagator. Please contact <samuel.gagnon92@gmail.com>
      *
      * \param size   Sum of variable cardinalities
      * \param size_b Sum of variable cardinalities for subset involved
@@ -4042,11 +4041,13 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(
+  VarImp<VIC>::VarImp(Space& home)
 #ifdef GECODE_HAS_CBS
-  Space& home) : var_id(++home.var_id_counter) {
-#else
-  Space&) {
+  : var_id(++home.var_id_counter)
+#endif
+  {
+#ifndef GECODE_HAS_CBS
+    (void) home;
 #endif
     b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
