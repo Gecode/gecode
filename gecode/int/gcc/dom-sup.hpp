@@ -1341,9 +1341,10 @@ namespace Gecode { namespace Int { namespace GCC {
           Edge*  mlb = vrn->get_match(LBC);
           Edge** p   = vrn->adj();
           Edge*  e   = *p;
+          GECODE_ASSUME(e != NULL);
           do {
             // search the edge that has to be deleted
-            while (e != NULL && (e->getVal()->val < xiter.val())) {
+            while ((e != NULL) && (e->getVal()->val < xiter.val())) {
               // Skip edge
               e->getVal()->noe--;
               vrn->noe--;
@@ -1352,6 +1353,7 @@ namespace Gecode { namespace Int { namespace GCC {
               e = e ->next();
               *p = e;
             }
+            GECODE_ASSUME(e != NULL);
 
             assert(xiter.val() == e->getVal()->val);
 
@@ -1363,7 +1365,7 @@ namespace Gecode { namespace Int { namespace GCC {
             e = e->next();
           } while (xiter());
           *p = NULL;
-          while (e) {
+          while (e != NULL) {
             e->getVar()->noe--;
             e->getVal()->noe--;
             e->del_edge();
