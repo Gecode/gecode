@@ -167,13 +167,15 @@ namespace Gecode { namespace Set { namespace LDSB {
         if (_nCopiedSyms > 0) home.free(_copiedSyms, _nCopiedSyms);
         _nCopiedSyms = _nValueSymmetries;
         _copiedSyms = home.alloc<ValueSymmetryImp<View>*>(_nCopiedSyms);
-        int i = 0;
-        for (int j = _nNonValueSymmetries ; j < this->_nsyms ; j++) {
-          ValueSymmetryImp<View>* vsi =
-            static_cast<ValueSymmetryImp<View>*>(this->_syms[j]);
-          _copiedSyms[i] =
-            static_cast<ValueSymmetryImp<View>*>(vsi->copy(home));
-          i++;
+        {
+          int i = 0;
+          for (int j = _nNonValueSymmetries ; j < this->_nsyms ; j++) {
+            ValueSymmetryImp<View>* vsi =
+              static_cast<ValueSymmetryImp<View>*>(this->_syms[j]);
+            _copiedSyms[i] =
+              static_cast<ValueSymmetryImp<View>*>(vsi->copy(home));
+            i++;
+          }
         }
       }
     }

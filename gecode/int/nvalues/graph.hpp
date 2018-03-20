@@ -108,6 +108,7 @@ namespace Gecode { namespace Int { namespace NValues {
           Edge<IntView>*  m = x->matched() ? x->edge_fst() : NULL;
           Edge<IntView>** p = x->val_edges_ref();
           Edge<IntView>*  e = *p;
+          GECODE_ASSUME(e != NULL);
           do {
             while (e->val(x)->val() < rx.min()) {
               // Skip edge
