@@ -9,10 +9,6 @@
  *  Bugfixes provided by:
  *     Olof Sivertsson <olsi0767@student.uu.se>
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

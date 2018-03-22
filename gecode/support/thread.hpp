@@ -9,10 +9,6 @@
  *  Bugfixes provided by:
  *     David Rijsman <david.rijsman@quintiq.com>
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

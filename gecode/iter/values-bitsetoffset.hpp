@@ -9,10 +9,6 @@
  *  Converted into offset version:
  *     Christopher Mears <chris.mears@monash.edu>
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

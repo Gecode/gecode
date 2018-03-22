@@ -10,10 +10,6 @@
  *     Christian Schulte, 2008
  *     Matthias Balzer, 2016
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

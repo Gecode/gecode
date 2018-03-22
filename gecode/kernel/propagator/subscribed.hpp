@@ -6,10 +6,10 @@
  *  Copyright:
  *     Christian Schulte, 2016
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
  *  "Software"), to deal in the Software without restriction, including

@@ -6,10 +6,6 @@
 #  Copyright:
 #     Christian Schulte, 2010
 #
-#  Last modified:
-#     $Date$ by $Author$
-#     $Revision$
-#
 #  This file is part of Gecode, the generic constraint
 #  development environment:
 #     http://www.gecode.org
@@ -128,7 +124,7 @@ for ($f=0; $f<$n_srcfiles; $f++) {
   $incopyright = 0;
   while ($l = <SRCFILE>) {
     if ($incopyright) {
-      if ($l =~ /\*.*Last modified:/) {
+      if ($l =~ /\*.*part of Gecode, the/) {
 	$incopyright = 0;
       } elsif ($l =~ /\*\s*(.*), [0-9]+/) {
 	$authors{$1} = 1;
