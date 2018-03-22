@@ -331,18 +331,12 @@ namespace Gecode { namespace Set { namespace Element {
       }
     }
 
-    bool allAssigned = true;
-    for (int i=iv.size(); i--;) {
-      if (!iv[i].view.assigned()) {
-        allAssigned = false;
-        break;
-      }
-    }
-    if (x1.assigned() && x0.assigned() && allAssigned) {
-      return home.ES_SUBSUMED(*this);
-    }
-
-    return ES_FIX;
+    for (int i=iv.size(); i--;)
+      if (!iv[i].view.assigned())
+        return ES_FIX;
+    if (!x1.assigned() || !x0.assigned())
+      return ES_FIX;
+    return home.ES_SUBSUMED(*this);
   }
 
 }}}

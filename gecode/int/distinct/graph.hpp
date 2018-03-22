@@ -121,6 +121,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     // Synchronize nodes
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
+      GECODE_ASSUME(x != NULL);
       if (x->view().assigned()) {
         x->edge_fst()->val(x)->matching(NULL);
         for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
@@ -131,6 +132,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         Edge<View>*  m = x->edge_fst();      // Matching edge
         Edge<View>** p = x->val_edges_ref();
         Edge<View>*  e = *p;
+        GECODE_ASSUME(e != NULL);
         do {
           while (e->val(x)->val() < rx.min()) {
             // Skip edge

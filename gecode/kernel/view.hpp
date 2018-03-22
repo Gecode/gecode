@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+ *
  *  Copyright:
  *     Christian Schulte, 2005
+ *     Samuel Gagnon, 2018
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -58,6 +62,10 @@ namespace Gecode {
     static bool varderived(void);
     /// Return dummy variable implementation of view
     VarImpType* varimp(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return dummy id
+    unsigned int id(void) const;
+#endif
     //@}
 
     /// \name Domain tests
@@ -146,6 +154,10 @@ namespace Gecode {
     unsigned int degree(void) const;
     /// Return accumulated failure count
     double afc(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return id of implementation of view
+    unsigned int id(void) const;
+#endif
     //@}
 
     /// \name Domain tests
@@ -245,6 +257,10 @@ namespace Gecode {
     unsigned int degree(void) const;
     /// Return accumulated failure count
     double afc(void) const;
+#ifdef GECODE_HAS_CBS
+    /// Return id of implementation of view
+    unsigned int id(void) const;
+#endif
     //@}
 
     /// \name Domain tests
@@ -381,6 +397,13 @@ namespace Gecode {
   ConstView<View>::varimp(void) const {
     return NULL;
   }
+#ifdef GECODE_HAS_CBS
+  template<class View>
+  forceinline unsigned int
+  ConstView<View>::id(void) const {
+    return 0;
+  }
+#endif
   template<class View>
   forceinline bool
   ConstView<View>::assigned(void) const {
@@ -473,6 +496,13 @@ namespace Gecode {
   VarImpView<Var>::afc(void) const {
     return x->afc();
   }
+#ifdef GECODE_HAS_CBS
+  template<class Var>
+  forceinline unsigned int
+  VarImpView<Var>::id(void) const {
+    return x->id();
+  }
+#endif
   template<class Var>
   forceinline bool
   VarImpView<Var>::assigned(void) const {
@@ -572,6 +602,13 @@ namespace Gecode {
   DerivedView<View>::afc(void) const {
     return x.afc();
   }
+#ifdef GECODE_HAS_CBS
+  template<class View>
+  forceinline unsigned int
+  DerivedView<View>::id(void) const {
+    return x.id();
+  }
+#endif
   template<class View>
   forceinline bool
   DerivedView<View>::assigned(void) const {

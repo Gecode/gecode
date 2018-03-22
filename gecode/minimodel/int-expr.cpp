@@ -509,9 +509,9 @@ namespace Gecode {
 
   void
   LinIntExpr::Node::fill(Home home, IntPropLevel ipl,
-                      Int::Linear::Term<Int::IntView>*& ti,
-                      Int::Linear::Term<Int::BoolView>*& tb,
-                      long long int m, long long int& d) const {
+                         Int::Linear::Term<Int::IntView>*& ti,
+                         Int::Linear::Term<Int::BoolView>*& tb,
+                         long long int m, long long int& d) const {
     switch (this->t) {
     case NT_CONST:
       Int::Limits::check(m*c,"MiniModel::LinIntExpr");
@@ -894,14 +894,9 @@ namespace Gecode {
   }
   LinIntExpr
   sum(const IntArgs& args) {
-    int i, sum = 0;
-    const int size = args.size();
-
-    for (i = 0 ; i < size ; ++i)
-    {
+    int sum = 0;
+    for (int i = 0; i<args.size(); i++)
       sum += args[i];
-    }
-
     return LinIntExpr(sum);
   }
 

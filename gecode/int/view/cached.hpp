@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+ *
  *  Copyright:
  *     Guido Tack, 2011
+ *     Samuel Gagnon, 2018
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -75,6 +79,13 @@ namespace Gecode { namespace Int {
   CachedView<View>::val(void) const {
     return x.val();
   }
+#ifdef GECODE_HAS_CBS
+  template<class View>
+  forceinline int
+  CachedView<View>::baseval(int val) const {
+    return val;
+  }
+#endif
 
   template<class View>
   forceinline unsigned int

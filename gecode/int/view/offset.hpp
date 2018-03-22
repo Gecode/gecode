@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+ *
  *  Copyright:
  *     Christian Schulte, 2002
+ *     Samuel Gagnon, 2018
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -76,6 +80,12 @@ namespace Gecode { namespace Int {
   OffsetView::val(void) const {
     return x.val()+c;
   }
+#ifdef GECODE_HAS_CBS
+  forceinline int
+  OffsetView::baseval(int val) const {
+    return val-c;
+  }
+#endif
 
   forceinline unsigned int
   OffsetView::width(void) const {

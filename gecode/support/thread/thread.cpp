@@ -57,6 +57,7 @@ namespace Gecode { namespace Support {
       {
         Runnable* e;
         m.acquire();
+        GECODE_ASSUME(r != NULL);
         e=r; r=NULL;
         m.release();
         assert(e != NULL);

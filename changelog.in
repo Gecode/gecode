@@ -9416,3 +9416,17 @@ Date:		2005-12-06
 [DESCRIPTION]
 Initial release.
 
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+Thanks: Gilles Pesant and Samuel Gagnon
+[DESCRIPTION]
+Introduction of a basic structure for supporting counting-based
+search as described in:
+S. Gagnon, G. Pesant, Accelerating Counting-Based Search, CPAIOR 2018.
+This is only enabled if Gecode has been compiled with the option
+--enable-cbs.
+[MORE]
+A branching option will be added to compatible examples as
+counting algorithms are added to constraints.
