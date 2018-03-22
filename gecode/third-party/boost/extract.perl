@@ -5,10 +5,6 @@
 #  Copyright:
 #     Christian Schulte, 2005
 #
-#  Last modified:
-#     $Date: 2008-09-03 14:14:11 +0200 (Wed, 03 Sep 2008) $ by $Author: tack $
-#     $Revision: 7787 $
-#
 #  This file is part of Gecode, the generic constraint
 #  development environment:
 #     http://www.gecode.org

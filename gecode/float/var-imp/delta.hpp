@@ -13,10 +13,6 @@
  *     Christian Schulte, 2010
  *     Vincent Barichard, 2012
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

@@ -9,11 +9,6 @@ dnl Copyright:
 dnl   Guido Tack, 2004, 2005
 dnl   Samuel Gagnon, 2018
 dnl
-dnl Last modified:
-dnl   $Date$
-dnl   by $Author$
-dnl   $Revision$
-dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
 dnl   http://www.gecode.org

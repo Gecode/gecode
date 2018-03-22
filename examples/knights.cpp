@@ -8,10 +8,6 @@
  *     Mikael Lagerkvist, 2008
  *     Christian Schulte, 2001
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

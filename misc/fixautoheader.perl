@@ -8,10 +8,6 @@ print <<EOF
  *  Copyright:
  *     Guido Tack, 2008
  *
- *  Last modified:
- *     \$Date: 2008-08-22 11:36:11 +0200 (Fr, 22 Aug 2008) \$ by \$Author: tack \$
- *     \$Revision: 7678 \$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org

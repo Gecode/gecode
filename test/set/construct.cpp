@@ -6,10 +6,6 @@
  *  Copyright:
  *     Guido Tack, 2008
  *
- *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
- *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org
