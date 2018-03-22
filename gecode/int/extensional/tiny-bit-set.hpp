@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Extensional {
    template<unsigned int largersz>
    forceinline
    TinyBitSet<sz>::TinyBitSet(Space&, const TinyBitSet<largersz>& sbs) {
-     assert(sz <= largersz);
+     GECODE_ASSUME(sz <= largersz);
      assert(!sbs.empty());
      for (unsigned int i = sz; i--; )
        bits[i] = sbs.bits[i];

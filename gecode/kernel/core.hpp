@@ -7,12 +7,14 @@
  *
  *  Contributing authors:
  *     Filip Konvicka <filip.konvicka@logis.cz>
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
  *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2003
  *     Mikael Lagerkvist, 2006
  *     LOGIS, s.r.o., 2009
+ *     Samuel Gagnon, 2018
  *
  *  Bugfixes provided by:
  *     Alexander Samoilov <alexander_samoilov@yahoo.com>
@@ -255,6 +257,10 @@ namespace Gecode {
     unsigned int free_and_bits;
     /// Maximal propagation condition
     static const Gecode::PropCond pc_max = VIC::pc_max;
+#ifdef GECODE_HAS_CBS
+    /// Unique id for variable
+    const unsigned var_id;
+#endif
 
     union {
       /**
@@ -335,6 +341,11 @@ namespace Gecode {
     VarImp(Space& home);
     /// Creation of static instances
     VarImp(void);
+
+#ifdef GECODE_HAS_CBS
+    /// Return variable id
+    unsigned int id(void) const;
+#endif
 
     /// \name Dependencies
     //@{
@@ -1142,6 +1153,32 @@ namespace Gecode {
     /// Return the accumlated failure count
     double afc(void) const;
     //@}
+#ifdef GECODE_HAS_CBS
+    /// \name Marginal distribution
+    //@{
+    /**
+     * \brief Solution distribution
+     *
+     * Computes the marginal distribution for every variable and value in the
+     * propagator. A callback is used to transmit each result.
+     */
+    /// Signature for function transmitting marginal distributions
+    typedef std::function<void(unsigned int prop_id, unsigned int var_id,
+                               int val, double dens)> SendMarginal;
+    virtual void solndistrib(Space& home, SendMarginal send) const;
+    /**
+     * \brief Sum of variable cardinalities
+     *
+     * \param size   Sum of variable cardinalities
+     * \param size_b Sum of variable cardinalities for subset involved
+     *               in branching decisions
+     */
+    /// Signature for function testing if variables are candidates to branching decisions
+    typedef std::function<bool(unsigned int var_id)> InDecision;
+    virtual void domainsizesum(InDecision in, unsigned int& size,
+                               unsigned int& size_b) const;
+    //@}
+#endif
     /// \name Id and group support
     //@{
     /// Return propagator id
@@ -1688,6 +1725,10 @@ namespace Gecode {
     Kernel::SharedSpaceData ssd;
     /// Performs memory management for space
     Kernel::MemoryManager mm;
+#ifdef GECODE_HAS_CBS
+    /// Global counter for variable ids
+    unsigned int var_id_counter;
+#endif
     /// Doubly linked list of all propagators
     ActorLink pl;
     /// Doubly linked list of all branchers
@@ -3408,6 +3449,18 @@ namespace Gecode {
     return const_cast<Propagator&>(*this).gpi().afc;
   }
 
+#ifdef GECODE_HAS_CBS
+  forceinline void
+  Propagator::solndistrib(Space&, SendMarginal) const {}
+
+  forceinline void
+  Propagator::domainsizesum(InDecision, unsigned int& size,
+                                  unsigned int& size_b) const {
+    size = 0;
+    size_b = 0;
+  }
+#endif
+
   forceinline unsigned int
   Propagator::id(void) const {
     return const_cast<Propagator&>(*this).gpi().pid;
@@ -3988,7 +4041,14 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space&) {
+  VarImp<VIC>::VarImp(Space& home)
+#ifdef GECODE_HAS_CBS
+  : var_id(++home.var_id_counter)
+#endif
+  {
+#ifndef GECODE_HAS_CBS
+    (void) home;
+#endif
     b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
@@ -3997,12 +4057,24 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(void) {
+  VarImp<VIC>::VarImp(void)
+#ifdef GECODE_HAS_CBS
+  : var_id(0)
+#endif
+  {
     b.base = NULL; entries = 0;
     for (PropCond pc=1; pc<pc_max+2; pc++)
       idx(pc) = 0;
     free_and_bits = 0;
   }
+
+#ifdef GECODE_HAS_CBS
+  template<class VIC>
+  forceinline unsigned int
+  VarImp<VIC>::id(void) const {
+    return var_id;
+  }
+#endif
 
   template<class VIC>
   forceinline unsigned int
@@ -4090,7 +4162,11 @@ namespace Gecode {
 
   template<class VIC>
   forceinline
-  VarImp<VIC>::VarImp(Space& home, VarImp<VIC>& x) {
+  VarImp<VIC>::VarImp(Space& home, VarImp<VIC>& x)
+#ifdef GECODE_HAS_CBS
+  : var_id(x.var_id)
+#endif
+  {
     VarImpBase** reg;
     free_and_bits = x.free_and_bits & ((1 << free_bits) - 1);
     if (x.b.base == NULL) {

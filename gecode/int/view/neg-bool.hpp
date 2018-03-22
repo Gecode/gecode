@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+ *
  *  Copyright:
  *     Christian Schulte, 2008
+ *     Samuel Gagnon, 2018
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -114,6 +118,12 @@ namespace Gecode { namespace Int {
   NegBoolView::val(void) const {
     return 1-x.val();
   }
+#ifdef GECODE_HAS_CBS
+  forceinline int
+  NegBoolView::baseval(int val) const {
+    return 1-val;
+  }
+#endif
 
 
   /*

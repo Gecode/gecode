@@ -3,8 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Samuel Gagnon <samuel.gagnon92@gmail.com>
+ *
  *  Copyright:
  *     Christian Schulte, 2002
+ *     Samuel Gagnon, 2018
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -85,6 +89,13 @@ namespace Gecode { namespace Int {
   ScaleView<Val,UnsVal>::val(void) const {
     return static_cast<Val>(x.val()) * a;
   }
+#ifdef GECODE_HAS_CBS
+  template<class Val, class UnsVal>
+  forceinline Val
+  ScaleView<Val,UnsVal>::baseval(Val val) const {
+    return val / a;
+  }
+#endif
 
   template<class Val, class UnsVal>
   forceinline UnsVal

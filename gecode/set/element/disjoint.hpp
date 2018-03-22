@@ -313,16 +313,12 @@ namespace Gecode { namespace Set { namespace Element {
       }
     } while (fix_flag);
 
-    bool allAssigned = true;
     for (int i=iv.size(); i--;)
-      if (!iv[i].view.assigned()) {
-        allAssigned = false;
-        break;
-      }
+      if (!iv[i].view.assigned())
+        return ES_FIX;
     if (!x1.assigned())
-      allAssigned = false;
-
-    return allAssigned ? home.ES_SUBSUMED(*this) : ES_FIX;
+      return ES_FIX;
+    return home.ES_SUBSUMED(*this);
   }
 
 
