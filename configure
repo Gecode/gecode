@@ -643,6 +643,7 @@ HAVEBISON
 HAVE_FLEXBISON
 HAVEFLEX
 enable_cpprofiler
+enable_cbs
 enable_gist
 enable_qt
 QTLIBS
@@ -822,6 +823,7 @@ with_mpfr_include
 with_mpfr_lib
 enable_qt
 enable_gist
+enable_cbs
 enable_cpprofiler
 enable_driver
 enable_flatzinc
@@ -1482,6 +1484,8 @@ Optional Features:
   --enable-qt             build with Qt support, requires at least Qt 4.3
                           [default=yes]
   --enable-gist           build Gecode Interactive Search Tool [default=yes]
+  --enable-cbs            build with support for counting-based search
+                          [default=no]
   --enable-cpprofiler     build with support for CPProfiler [default=no]
   --enable-driver         build script commandline driver library
                           [default=yes]
@@ -2691,6 +2695,8 @@ GECODE_FLATZINC_VERSION=${ac_gecode_flatzincversion}
 
 
 # Test for platform specific behaviour of arithmetic
+
+
 
 
 
@@ -12458,6 +12464,27 @@ $as_echo "yes" >&6; }
 
 
 $as_echo "#define GECODE_HAS_GIST /**/" >>confdefs.h
+
+  else
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+  fi
+
+
+  # Check whether --enable-cbs was given.
+if test "${enable_cbs+set}" = set; then :
+  enableval=$enable_cbs;
+fi
+
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to build with support for cbs" >&5
+$as_echo_n "checking whether to build with support for cbs... " >&6; }
+  if test "${enable_cbs:-no}" = "yes"; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+    enable_cbs=yes
+
+
+$as_echo "#define GECODE_HAS_CBS /**/" >>confdefs.h
 
   else
     { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
