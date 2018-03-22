@@ -126,7 +126,7 @@ for ($f=0; $f<$n_srcfiles; $f++) {
     if ($incopyright) {
       if ($l =~ /\*.*part of Gecode, the/) {
 	$incopyright = 0;
-      } elsif ($l =~ /\*\s*(.*), [0-9]+/) {
+      } elsif ($l =~ /\*\s*([^,]*)(, [0-9]+)+/) {
 	$authors{$1} = 1;
       }
     } elsif ($l =~ /\*.*Copyright:/) {
