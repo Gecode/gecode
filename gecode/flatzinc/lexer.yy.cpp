@@ -630,7 +630,7 @@ static const flex_int32_t yy_rule_can_match_eol[57] =
  *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
-#line 44 "./gecode/flatzinc/lexer.lxx"
+#line 40 "./gecode/flatzinc/lexer.lxx"
 #if defined __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -664,8 +664,8 @@ bool parseInt(const char* text, int& value) {
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner);
 #define YY_INPUT(buf, result, max_size) \
   result = yy_input_proc(buf, max_size, yyscanner);
-#line 671 "gecode/flatzinc/lexer.yy.cpp"
-#line 672 "gecode/flatzinc/lexer.yy.cpp"
+#line 667 "gecode/flatzinc/lexer.yy.cpp"
+#line 668 "gecode/flatzinc/lexer.yy.cpp"
 
 #define INITIAL 0
 
@@ -939,10 +939,10 @@ YY_DECL
 		}
 
 	{
-#line 79 "./gecode/flatzinc/lexer.lxx"
+#line 75 "./gecode/flatzinc/lexer.lxx"
 
 
-#line 949 "gecode/flatzinc/lexer.yy.cpp"
+#line 945 "gecode/flatzinc/lexer.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1014,32 +1014,32 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 81 "./gecode/flatzinc/lexer.lxx"
+#line 77 "./gecode/flatzinc/lexer.lxx"
 { /*yylineno++;*/ /* ignore EOL */ }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 82 "./gecode/flatzinc/lexer.lxx"
+#line 78 "./gecode/flatzinc/lexer.lxx"
 { /* ignore whitespace */ }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 83 "./gecode/flatzinc/lexer.lxx"
+#line 79 "./gecode/flatzinc/lexer.lxx"
 { /* ignore comments */ }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 85 "./gecode/flatzinc/lexer.lxx"
+#line 81 "./gecode/flatzinc/lexer.lxx"
 { yylval->iValue = 1; return FZ_BOOL_LIT; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 86 "./gecode/flatzinc/lexer.lxx"
+#line 82 "./gecode/flatzinc/lexer.lxx"
 { yylval->iValue = 0; return FZ_BOOL_LIT; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 87 "./gecode/flatzinc/lexer.lxx"
+#line 83 "./gecode/flatzinc/lexer.lxx"
 { if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
@@ -1048,7 +1048,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 92 "./gecode/flatzinc/lexer.lxx"
+#line 88 "./gecode/flatzinc/lexer.lxx"
 {  if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
@@ -1057,7 +1057,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 97 "./gecode/flatzinc/lexer.lxx"
+#line 93 "./gecode/flatzinc/lexer.lxx"
 { if (parseInt(yytext,yylval->iValue))
                       return FZ_INT_LIT;
                     else
@@ -1066,235 +1066,235 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 102 "./gecode/flatzinc/lexer.lxx"
+#line 98 "./gecode/flatzinc/lexer.lxx"
 { yylval->dValue = strtod(yytext,NULL);
                     return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 104 "./gecode/flatzinc/lexer.lxx"
+#line 100 "./gecode/flatzinc/lexer.lxx"
 { yylval->dValue = strtod(yytext,NULL);
                                    return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 106 "./gecode/flatzinc/lexer.lxx"
+#line 102 "./gecode/flatzinc/lexer.lxx"
 { yylval->dValue = strtod(yytext,NULL);
                            return FZ_FLOAT_LIT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 108 "./gecode/flatzinc/lexer.lxx"
+#line 104 "./gecode/flatzinc/lexer.lxx"
 { return *yytext; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 109 "./gecode/flatzinc/lexer.lxx"
+#line 105 "./gecode/flatzinc/lexer.lxx"
 { return FZ_DOTDOT; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 110 "./gecode/flatzinc/lexer.lxx"
+#line 106 "./gecode/flatzinc/lexer.lxx"
 { return FZ_COLONCOLON; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 111 "./gecode/flatzinc/lexer.lxx"
+#line 107 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ANNOTATION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 112 "./gecode/flatzinc/lexer.lxx"
+#line 108 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ANY; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 113 "./gecode/flatzinc/lexer.lxx"
+#line 109 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ARRAY; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 114 "./gecode/flatzinc/lexer.lxx"
+#line 110 "./gecode/flatzinc/lexer.lxx"
 { return FZ_BOOL; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 115 "./gecode/flatzinc/lexer.lxx"
+#line 111 "./gecode/flatzinc/lexer.lxx"
 { return FZ_CASE; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 116 "./gecode/flatzinc/lexer.lxx"
+#line 112 "./gecode/flatzinc/lexer.lxx"
 { return FZ_CONSTRAINT; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 117 "./gecode/flatzinc/lexer.lxx"
+#line 113 "./gecode/flatzinc/lexer.lxx"
 { return FZ_DEFAULT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 118 "./gecode/flatzinc/lexer.lxx"
+#line 114 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ELSE; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 119 "./gecode/flatzinc/lexer.lxx"
+#line 115 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ELSEIF; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 120 "./gecode/flatzinc/lexer.lxx"
+#line 116 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ENDIF; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 121 "./gecode/flatzinc/lexer.lxx"
+#line 117 "./gecode/flatzinc/lexer.lxx"
 { return FZ_ENUM; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 122 "./gecode/flatzinc/lexer.lxx"
+#line 118 "./gecode/flatzinc/lexer.lxx"
 { return FZ_FLOAT; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 123 "./gecode/flatzinc/lexer.lxx"
+#line 119 "./gecode/flatzinc/lexer.lxx"
 { return FZ_FUNCTION; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 124 "./gecode/flatzinc/lexer.lxx"
+#line 120 "./gecode/flatzinc/lexer.lxx"
 { return FZ_IF; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 125 "./gecode/flatzinc/lexer.lxx"
+#line 121 "./gecode/flatzinc/lexer.lxx"
 { return FZ_INCLUDE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 126 "./gecode/flatzinc/lexer.lxx"
+#line 122 "./gecode/flatzinc/lexer.lxx"
 { return FZ_INT; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 127 "./gecode/flatzinc/lexer.lxx"
+#line 123 "./gecode/flatzinc/lexer.lxx"
 { return FZ_LET; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 128 "./gecode/flatzinc/lexer.lxx"
+#line 124 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = false; return FZ_MAXIMIZE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 129 "./gecode/flatzinc/lexer.lxx"
+#line 125 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = true; return FZ_MINIMIZE; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 130 "./gecode/flatzinc/lexer.lxx"
+#line 126 "./gecode/flatzinc/lexer.lxx"
 { return FZ_OF; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 131 "./gecode/flatzinc/lexer.lxx"
+#line 127 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SATISFY; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 132 "./gecode/flatzinc/lexer.lxx"
+#line 128 "./gecode/flatzinc/lexer.lxx"
 { return FZ_OUTPUT; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 133 "./gecode/flatzinc/lexer.lxx"
+#line 129 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = false; return FZ_PAR; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 134 "./gecode/flatzinc/lexer.lxx"
+#line 130 "./gecode/flatzinc/lexer.lxx"
 { return FZ_PREDICATE; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 135 "./gecode/flatzinc/lexer.lxx"
+#line 131 "./gecode/flatzinc/lexer.lxx"
 { return FZ_RECORD; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 136 "./gecode/flatzinc/lexer.lxx"
+#line 132 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SET; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 137 "./gecode/flatzinc/lexer.lxx"
+#line 133 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SHOWCOND; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 138 "./gecode/flatzinc/lexer.lxx"
+#line 134 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SHOW; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 139 "./gecode/flatzinc/lexer.lxx"
+#line 135 "./gecode/flatzinc/lexer.lxx"
 { return FZ_SOLVE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 140 "./gecode/flatzinc/lexer.lxx"
+#line 136 "./gecode/flatzinc/lexer.lxx"
 { return FZ_STRING; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 141 "./gecode/flatzinc/lexer.lxx"
+#line 137 "./gecode/flatzinc/lexer.lxx"
 { return FZ_TEST; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 142 "./gecode/flatzinc/lexer.lxx"
+#line 138 "./gecode/flatzinc/lexer.lxx"
 { return FZ_THEN; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 143 "./gecode/flatzinc/lexer.lxx"
+#line 139 "./gecode/flatzinc/lexer.lxx"
 { return FZ_TUPLE; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 144 "./gecode/flatzinc/lexer.lxx"
+#line 140 "./gecode/flatzinc/lexer.lxx"
 { return FZ_TYPE; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 145 "./gecode/flatzinc/lexer.lxx"
+#line 141 "./gecode/flatzinc/lexer.lxx"
 { yylval->bValue = true; return FZ_VAR; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 146 "./gecode/flatzinc/lexer.lxx"
+#line 142 "./gecode/flatzinc/lexer.lxx"
 { return FZ_VARIANT_RECORD; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 147 "./gecode/flatzinc/lexer.lxx"
+#line 143 "./gecode/flatzinc/lexer.lxx"
 { return FZ_WHERE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 148 "./gecode/flatzinc/lexer.lxx"
+#line 144 "./gecode/flatzinc/lexer.lxx"
 { yylval->sValue = strdup(yytext); return FZ_ID; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 149 "./gecode/flatzinc/lexer.lxx"
+#line 145 "./gecode/flatzinc/lexer.lxx"
 { yylval->sValue = strdup(yytext); return FZ_U_ID; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 150 "./gecode/flatzinc/lexer.lxx"
+#line 146 "./gecode/flatzinc/lexer.lxx"
 {
                     yylval->sValue = strdup(yytext+1);
                     yylval->sValue[strlen(yytext)-2] = 0;
@@ -1302,15 +1302,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 154 "./gecode/flatzinc/lexer.lxx"
+#line 150 "./gecode/flatzinc/lexer.lxx"
 { yyerror("Unknown character"); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 155 "./gecode/flatzinc/lexer.lxx"
+#line 151 "./gecode/flatzinc/lexer.lxx"
 ECHO;
 	YY_BREAK
-#line 1317 "gecode/flatzinc/lexer.yy.cpp"
+#line 1313 "gecode/flatzinc/lexer.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2502,7 +2502,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 155 "./gecode/flatzinc/lexer.lxx"
+#line 151 "./gecode/flatzinc/lexer.lxx"
 
 int yy_input_proc(char* buf, int size, yyscan_t yyscanner) {
   Gecode::FlatZinc::ParserState* parm =
