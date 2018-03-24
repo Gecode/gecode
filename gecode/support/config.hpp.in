@@ -30,6 +30,9 @@
  *
  */
 
+/* Whether to build with default memory allocator */
+#undef GECODE_ALLOCATOR
+
 /* Whether to include audit code */
 #undef GECODE_AUDIT
 
@@ -51,14 +54,17 @@
 /* whether __builtin_popcountll is available */
 #undef GECODE_HAS_BUILTIN_POPCOUNTLL
 
+/* Whether counting-based search support available */
+#undef GECODE_HAS_CBS
+
+/* Whether CPProfiler support available */
+#undef GECODE_HAS_CPPROFILER
+
 /* Whether to build FLOAT variables */
 #undef GECODE_HAS_FLOAT_VARS
 
 /* Whether Gist is available */
 #undef GECODE_HAS_GIST
-
-/* Whether support for CPProfiler is available */
-#undef GECODE_HAS_CPPROFILER
 
 /* Whether GNU hash_map is available */
 #undef GECODE_HAS_GNU_HASH_MAP
@@ -89,9 +95,6 @@
 
 /* Heap memory alignment */
 #undef GECODE_MEMORY_ALIGNMENT
-
-/* Whether to use default memory allocator */
-#undef GECODE_ALLOCATOR
 
 /* How to check allocation size */
 #undef GECODE_MSIZE
