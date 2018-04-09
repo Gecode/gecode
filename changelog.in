@@ -69,6 +69,14 @@ Date: TBD
 Changes
 
 [ENTRY]
+Module: support
+What:   bug
+Rank:   minor
+Thanks: Kari Pahula
+[DESCRIPTION]
+Fixed compilation problem on 32 bit platforms.
+
+[ENTRY]
 Module: flatzinc
 What:   bug
 Rank:   minor

@@ -36,26 +36,14 @@
 namespace Gecode {
 
   /// Combine hash value \a h into \a seed
-  void cmb_hash(std::size_t& seed, std::size_t h);
-  /// Combine hash value \a h into \a seed
-  void cmb_hash(std::size_t& seed, int h);
-  /// Combine hash value \a h into \a seed
-  void cmb_hash(std::size_t& seed, unsigned int h);
+  template<class T>
+  void cmb_hash(std::size_t& seed, const T h);
 
-
+  template<class T>
   forceinline void
-  cmb_hash(std::size_t& seed, std::size_t h) {
-    seed ^= h + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-  }
-
-  forceinline void
-  cmb_hash(std::size_t& seed, int h) {
-    cmb_hash(seed, static_cast<std::size_t>(h));
-  }
-
-  forceinline void
-  cmb_hash(std::size_t& seed, unsigned int h) {
-    cmb_hash(seed, static_cast<std::size_t>(h));
+  cmb_hash(std::size_t& seed, const T h) {
+    seed ^= static_cast<std::size_t>(h) 
+      + 0x9e3779b9 + (seed << 6) + (seed >> 2);
   }
 
 }
