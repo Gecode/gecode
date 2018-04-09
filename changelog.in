@@ -69,6 +69,14 @@ Date: TBD
 Changes
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Thanks: Matthias Balzer
+[DESCRIPTION]
+Fixed strict inequalities for Float relations.
+
+[ENTRY]
 Module: support
 What:   bug
 Rank:   minor

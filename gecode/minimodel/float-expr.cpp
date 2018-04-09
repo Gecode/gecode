@@ -157,7 +157,9 @@ namespace Gecode {
     } else if (n->t==NT_SUB && n->r->t==NT_NONLIN && n->l==NULL) {
       switch (frt) {
       case FRT_LQ: frt=FRT_GQ; break;
+      case FRT_LE: frt=FRT_GR; break;
       case FRT_GQ: frt=FRT_LQ; break;
+      case FRT_GR: frt=FRT_LE; break;
       default: break;
       }
       n->r->sum.ne->post(home,frt,n->c);
