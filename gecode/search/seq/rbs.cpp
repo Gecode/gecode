@@ -91,6 +91,8 @@ namespace Gecode { namespace Search { namespace Seq {
                   (e->stopped() && stop->enginestopped()) ) {
         // The engine must perform a true restart
         // The number of the restart has been incremented in the stop object
+        if (!complete && !e->stopped())
+          stop->m_stat.restart++;
         sslr = 0;
         NoGoods& ng = e->nogoods();
         ng.ng(0);
