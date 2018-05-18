@@ -46,9 +46,9 @@ namespace Gecode { namespace Float {
     std::basic_ostringstream<Char,Traits> s;
     s.copyfmt(os); s.width(0);
     if (x.assigned()) {
-      s << x.med();
+      s << "[[" << x.med() << "]]";
     } else {
-      s << '[' << x.min() << ".." << x.max() << ']';
+      s << "[[" << x.min() << ".." << x.max() << "]]";
     }
     return os << s.str();
   }

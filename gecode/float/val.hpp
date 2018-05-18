@@ -358,7 +358,7 @@ namespace Gecode {
   template<class Char, class Traits>
   std::basic_ostream<Char,Traits>&
   operator <<(std::basic_ostream<Char,Traits>& os, const FloatVal& x) {
-    return os << x.x;
+    return os << '[' << x.min() << ".." << x.max() << ']';
   }
 
   forceinline FloatVal
