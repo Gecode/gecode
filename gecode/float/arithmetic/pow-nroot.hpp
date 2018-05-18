@@ -59,8 +59,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       return ES_OK;
     }
 
-    if ((n % 2) == 0)
-    {
+    if ((n % 2) == 0) {
       if (x0.min() >= 0)
         GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),n)));
       else if (x0.max() <= 0)
@@ -72,8 +71,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
                                   -nroot(x1.domain(),n)
                               )
                         ));
-    } else
+    } else {
       GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),n)));
+    }
 
     if (!x0.assigned()) (void) new (home) Pow<A,B>(home,x0,x1,n);
     return ES_OK;
@@ -101,8 +101,7 @@ namespace Gecode { namespace Float { namespace Arithmetic {
       return home.ES_SUBSUMED(*this);
     }
 
-    if ((m_n % 2) == 0)
-    {
+    if ((m_n % 2) == 0) {
       if (x0.min() >= 0)
         GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),m_n)));
       else if (x0.max() <= 0)
@@ -114,8 +113,9 @@ namespace Gecode { namespace Float { namespace Arithmetic {
                                   -nroot(x1.domain(),m_n)
                               )
                         ));
-    } else
+    } else {
       GECODE_ME_CHECK(x0.eq(home,nroot(x1.domain(),m_n)));
+    }
     return x0.assigned() ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
