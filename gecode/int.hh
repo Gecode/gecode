@@ -49,6 +49,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <functional>
 #include <utility>
 #include <initializer_list>
@@ -5172,6 +5173,58 @@ namespace Gecode {
          const Symmetries& syms,
          BoolBranchFilter bf=nullptr,
          BoolVarValPrint vvp=nullptr);
+
+#ifdef GECODE_HAS_CBS
+
+  /**
+   * \brief Branch over \a x using counting-based search
+   *
+   * Branches on the <variable, value> pair that has the the highest solution
+   * density across all active propagators. Computing solution density is
+   * currently supported for the following propagators:
+   *
+   *   - Gecode::Int::Distinct::Val
+   *   - Gecode::Int::Distinct::Bnd
+   *   - Gecode::Int::Distinct::Dom
+   *   - More to come...
+   *
+   * If the space does not contain any of the preceding propagators, this
+   * brancher won't be able to make any branching choices. For more details,
+   * please see the documentation in MPG, section ?.
+   *
+   * To use this brancher, Gecode needs to be compiled with --enable-cbs.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  cbsbranch(Home home, const IntVarArgs& x);
+
+
+  /**
+   * \brief Branch over \a x using counting-based search
+   *
+   * Branches on the <variable, value> pair that has the the highest solution
+   * density across all active propagators. Computing solution density is
+   * currently supported for the following propagators:
+   *
+   *   - Gecode::Int::Distinct::Val
+   *   - Gecode::Int::Distinct::Bnd
+   *   - Gecode::Int::Distinct::Dom
+   *   - More to come...
+   *
+   * If the space does not contain any of the preceding propagators, this
+   * brancher won't be able to make any branching choices. For more details,
+   * please see the documentation in MPG, section ?.
+   *
+   * To use this brancher, Gecode needs to be compiled with --enable-cbs.
+   *
+   * \ingroup TaskModelIntBranch
+   */
+  GECODE_INT_EXPORT void
+  cbsbranch(Home home, const BoolVarArgs& x);
+
+#endif
+
 }
 
 namespace Gecode {
