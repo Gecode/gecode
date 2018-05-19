@@ -672,6 +672,123 @@ namespace Gecode { namespace Int { namespace Branch {
 
 #include <gecode/int/branch/view-values.hpp>
 
+#ifdef GECODE_HAS_CBS
+
+namespace Gecode { namespace Int { namespace Branch {
+
+  /**
+   * \brief %Brancher using counting-based search
+   *
+   *
+   */
+  template<class View>
+  class CBSBrancher : public Brancher {
+  private:
+    /// Views to branch on
+    ViewArray<View> x;
+
+    /**
+     * \brief Map of variable ids to positions in \a x
+     *
+     * Once created, this mapping doesn't need to be updated. Because of this,
+     * we can share a handle of the map across all instances of CBSBrancher in
+     * all spaces.
+     */
+    class VarIdToPos : public SharedHandle {
+    protected:
+      class VarIdToPosO : public SharedHandle::Object {
+      public:
+        /// The map we want to share
+        std::unordered_map<unsigned int, unsigned int> _varIdToPos;
+      public:
+        /// Default constructur
+        VarIdToPosO() = default;
+        /// Copy constructor
+        VarIdToPosO(const VarIdToPosO& o) = default;
+      };
+    public:
+      /// Default constructor
+      VarIdToPos() = default;
+      /// Allocation of the shared handle
+      void init();
+      /// Tests if a variable id is in the map
+      bool isIn(unsigned int var_id) const;
+      /// Returns the position of the variable id in \a x
+      int operator[](unsigned int var_id) const;
+      /// Inserts a new position for a variable id
+      void insert(unsigned int var_id, unsigned int pos);
+    } varIdToPos;
+
+    /**
+     * \brief Propagator information for counting-based search
+     *
+     * Keeps the best branching choice for each propagators (i.e. variable and
+     * value with highest solution density). We also keep \a domsum to know
+     * wether we need to recompute solution densities for the given propagator
+     * when computing a new branching choice.
+     */
+    struct PropInfo {
+      /// Sum of variable cardinalities
+      unsigned int domsum;
+      /// Variable with the highest solution density
+      unsigned int var_id;
+      /// Value with highest solution density
+      int val;
+      /// Density of the above <var_id, val> pair
+      double dens;
+      /// Flag for deleting propagator if unvisited when branching
+      bool visited;
+    };
+
+    /**
+     * \brief Map of propagator ids to PropInfo
+     *
+     * Any active propagator that:
+     *
+     *   - shares a variable with \a x
+     *   - has a counting algorithm (i.e. overloads solndistrib)
+     *
+     * will have an entry in this map.
+     */
+    std::unordered_map<unsigned int, PropInfo,
+                       std::hash<unsigned int>,
+                       std::equal_to<unsigned int>,
+                       space_allocator<std::pair<const unsigned int, PropInfo>>>
+    logProp;
+
+  public:
+    /// Constructor for creation
+    CBSBrancher(Home home, ViewArray<View>& x0);
+    /// Constructor for cloning \a b
+    CBSBrancher(Space& home, CBSBrancher& b);
+    /// Post brancher
+    static void post(Home home, ViewArray<View>& x);
+    /// Copy brancher during cloning
+    virtual Actor* copy(Space& home);
+    /// Delete brancher and return its size
+    virtual size_t dispose(Space& home);
+    /// Check status of brancher, return true if alternatives left
+    virtual bool status(const Space& home) const;
+    /// Return choice
+    virtual const Choice* choice(Space& home);
+    /// Return choice
+    virtual const Choice* choice(const Space&, Archive& e);
+    /// Commit choice \a c for alternative \a a
+    virtual ExecStatus commit(Space& home, const Choice& c, unsigned int a);
+    /// Print on \a o the alternative \a with view \a x at position \a i and value \a n
+    virtual void print(const Space& home, const Choice& c, unsigned int a,
+                       std::ostream& o) const;
+  private:
+    /// Returns wether a variable is in \a x or not
+    bool inbrancher(unsigned int varId) const;
+  };
+
+}}}
+
+#include <gecode/int/branch/cbs.hpp>
+
+#endif
+
 #endif
 
 // STATISTICS: int-branch

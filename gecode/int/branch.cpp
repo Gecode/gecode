@@ -252,6 +252,26 @@ namespace Gecode {
     assign(home, xv, ba, nullptr, vvp);
   }
 
+#ifdef GECODE_HAS_CBS
+
+  void
+  cbsbranch(Home home, const IntVarArgs& x) {
+    using namespace Int;
+    if (home.failed()) return;
+    ViewArray<IntView> y(home,x);
+    Branch::CBSBrancher<IntView>::post(home,y);
+  }
+
+  void
+  cbsbranch(Home home, const BoolVarArgs& x) {
+    using namespace Int;
+    if (home.failed()) return;
+    ViewArray<BoolView> y(home,x);
+    Branch::CBSBrancher<BoolView>::post(home,y);
+  }
+
+#endif
+
 }
 
 // STATISTICS: int-post
