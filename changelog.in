@@ -71,6 +71,15 @@ Changes
 [ENTRY]
 Module: float
 What:   change
+Rank:   major
+Thanks:	Kurt Van Den Branden
+[DESCRIPTION]
+All constraints over float variables now constrain their
+variables when being posted to avoid overflow.
+
+[ENTRY]
+Module: float
+What:   change
 Rank:   minor
 [DESCRIPTION]
 The interval for a float value is now printed between "[" and

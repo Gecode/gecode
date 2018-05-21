@@ -51,6 +51,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     } else {
       GECODE_ME_CHECK(x0.gq(home,-1.0));
       GECODE_ME_CHECK(x0.lq(home,1.0));
+      GECODE_ME_CHECK(x1.eq(home,asin(x0.domain())));
+      GECODE_ME_CHECK(x0.eq(home,sin(x1.domain())));
       (void) new (home) ASin<A,B>(home,x0,x1);
     }
     return ES_OK;
@@ -102,6 +104,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
     } else {
       GECODE_ME_CHECK(x0.gq(home,-1.0));
       GECODE_ME_CHECK(x0.lq(home,1.0));
+      GECODE_ME_CHECK(x1.eq(home,acos(x0.domain())));
+      GECODE_ME_CHECK(x0.eq(home,cos(x1.domain())));
       (void) new (home) ACos<A,B>(home,x0,x1);
     }
     return ES_OK;
