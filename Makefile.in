@@ -1818,7 +1818,7 @@ DOCSRC_NOTGENERATED = \
 	misc/doxygen/back.png misc/doxygen/footer.html \
 	misc/doxygen/gecode-logo-100.png \
 	misc/doxygen/stylesheet.css \
-	misc/genlicense.perl misc/genstatistics.perl misc/getrevision.perl \
+	misc/genlicense.perl misc/genstatistics.perl \
 	misc/genchangelog.perl
 DOCSRC = $(DOCSRC_NOTGENERATED:%=$(top_srcdir)/%) \
 	doxygen.conf.use header.html \
