@@ -1,0 +1,666 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2005
+ *     Guido Tack, 2005
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+/*
+ * No code, just contains the group definitions of the
+ * Doxygen-generated documentation
+ */
+
+#define GECODE_DOXYGEN_WORKAROUNDS 1
+
+/**
+ * \defgroup Task Functionality by programming task
+ */
+
+/**
+ * \defgroup TaskModel Programming models
+ * \ingroup Task
+ */
+
+/**
+ * \defgroup TaskModelScript Setting up scripts
+ *
+ * Scripts (or models) are programmed by inheriting from the class
+ * Gecode::Space. For many examples see \ref Example.
+ *
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelInt Using integer variables and constraints
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelIntVars Integer variables
+ * \ingroup TaskModelInt
+ */
+
+/**
+ * \defgroup TaskModelSearch Search engines
+ *
+ * Defines search engines. All search engines (but Gecode::LDS, where
+ * it is not needed) support recomputation. The behaviour of recomputation
+ * is controlled by a passing a search option object (see the class 
+ * Gecode::Search::Options).
+ *
+ * Requires \code #include <gecode/search.hh> \endcode
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskGist Gist: the Gecode Interactive Search Tool
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelSet Using integer set variables and constraints
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelSetVars Set variables
+ * \ingroup TaskModelSet
+ */
+
+/**
+ * \defgroup TaskModelFloat Using float variables and constraints
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelFloatVars Float variables
+ * \ingroup TaskModelSet
+ */
+
+/**
+ * \defgroup TaskModelMiniModel Direct modeling support
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskDriver Script commandline driver
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskGroup Propagator and brancher groups
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskTrace Tracing constraint propagation
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskSearch Programming search engines
+ * \ingroup Task
+ */
+
+/**
+ * \defgroup TaskActor Programming actors
+ * \ingroup Task
+ */
+
+/**
+ * \defgroup TaskActorInt Programming integer actors
+ * \ingroup TaskActor
+ */
+
+/**
+ * \defgroup TaskActorSet Programming set actors
+ * \ingroup TaskActor
+ */
+
+/**
+ * \defgroup TaskActorFloat Programming float actors
+ * \ingroup TaskActor
+ */
+
+/**
+ * \defgroup TaskVar Programming variables
+ * \ingroup Task
+ */
+
+/**
+ * \defgroup TaskVarView Programming views for variables
+ * \ingroup TaskVar
+ */
+
+/**
+ * \defgroup TaskTest Testing
+ * \ingroup Task
+ */
+
+/**
+ * \defgroup Func Common functionality
+ */
+
+/**
+ * \defgroup FuncMem Memory management
+ * \ingroup Func
+ */
+
+/**
+ * \defgroup FuncThrow Gecode exceptions
+ * \ingroup Func
+ */
+
+/**
+ * \defgroup FuncSupport Support algorithms and datastructures
+ *
+ * These are some common datastructures used in the implementation of
+ * %Gecode. Maybe they can be also useful to others.
+ *
+ * In order to use them, one needs to include the appropriate header-file
+ * as described in the class and function documentation.
+ * \ingroup Func
+ */
+
+/**
+ * \defgroup FuncIter Range and value iterators
+ *
+ * Both range and value iterators have a rather simple interface
+ * for controlling iteration (which deviates from what you might be
+ * used to from other iterators).
+ *
+ * The application operator (if \c i is an iterator, it is invoked by \c i() )
+ * tests whether an iterator has not yet reached
+ * its end (in this case, \c true is returned). The prefix
+ * increment operator (if \c i is an iterator, this is invoked as \c ++i)
+ * moves the iterator to the next element (either next value or next range).
+ *
+ * Value iterators provide access to the value by the member function
+ * \c val(). Range iterators provide access to the smallest, largest, and
+ * width of the current range by \c min(), \c max(), and \c width()
+ * respectively.
+ *
+ * Requires \code #include <gecode/iter.hh> \endcode
+ * \ingroup Func
+ */
+
+/**
+ * \defgroup FuncIterRanges Range iterators
+ *
+ * A range iterator provides incremental access to a sequence of increasing
+ * ranges.
+ *
+ * Requires \code #include <gecode/iter.hh> \endcode
+ * \ingroup FuncIter
+ */
+
+/**
+ * \defgroup FuncIterRangesVirt Range iterators with virtual member functions
+ *
+ * A range iterator provides incremental access to a sequence of increasing
+ * ranges. Iterators with virtual member functions have to be used when
+ * they are combined dynamically, and the actual types hence cannot be
+ * specified as template arguments.
+ *
+ * Requires \code #include <gecode/iter.hh> \endcode
+ * \ingroup FuncIterRanges
+ */
+
+/**
+ * \defgroup FuncIterValues Value iterators
+ *
+ * A value iterator provides incremental access to a sequence of increasing
+ * values.
+ *
+ * Requires \code #include <gecode/iter.hh> \endcode
+ * \ingroup FuncIter
+ */
+
+/**
+ * \defgroup FuncIterValuesVirt Value iterators with virtual member functions
+ *
+ * A value iterator provides incremental access to a sequence of increasing
+ * values. Iterators with virtual member functions have to be used when
+ * they are combined dynamically, and the actual types hence cannot be
+ * specified as template arguments.
+ *
+ * Requires \code #include <gecode/iter.hh> \endcode
+ * \ingroup FuncIterValues
+ */
+
+/**
+ * \defgroup Other Other available functionality
+ *
+ */
+
+/**
+ * \defgroup FuncKernelProp Generic propagators
+ *
+ * This module contains a description of all predefined generic
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncIntProp Integer propagators
+ *
+ * This module contains a description of all predefined integer
+ * propagators. They can be reused, for example, for rewriting
+ * newly defined integer propagators into already available
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncSetProp Set propagators
+ *
+ * This module contains a description of all predefined finite set
+ * propagators. They can be reused, for example, for rewriting
+ * newly defined finite set propagators into already available
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncFloatProp Float propagators
+ *
+ * This module contains a description of all predefined float
+ * propagators. They can be reused, for example, for rewriting
+ * newly defined float propagators into already available
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup Example Example scripts (models)
+ *
+ * All scripts are compiled into simple standalone programs. All
+ * programs understand the several generic and problem-specific
+ * commandline options. An overview of the options is available
+ * by invoking the standalone programs with the <code>-help</code>
+ * commandline option.
+ *
+ */
+
+/*
+ * Collect some definitions for which no reasonable place exists
+ *
+ */
+
+/**
+ * \namespace Gecode::Support
+ * \brief %Support algorithms and datastructures
+ */
+
+/**
+ * \namespace Gecode::Kernel
+ * \brief %Kernel functionality
+ */
+
+/**
+ * \namespace Gecode::Search
+ * \brief %Search engines
+ */
+
+/**
+ * \mainpage %Gecode Reference Documentation
+ *
+ * This document provides reference information about
+ * <A HREF="http://www.gecode.org">%Gecode</A>.
+ * The documentation is structured into three major groups:
+ * getting started, common programming tasks, and
+ * available functionality.
+ *
+ * This document corresponds to %Gecode version @VERSION@, please consult
+ * the changelog for \ref SectionChangeList "recent changes".
+ *
+ * \section SecStart Getting started
+ *
+ * For your fist steps with %Gecode, including detailed instructions on
+ * installing the library and compiling against it, please refer to the
+ * document <A HREF="http://www.gecode.org/doc-latest/MPG.pdf">Modeling and
+ * Programming with Gecode</A>.
+ *
+ * You may also want to have a look at our \ref PageNotation as well as
+ * our \ref Example.
+ *
+ * \section SecByTask Programming tasks
+ *
+ * Documentation is available for the following tasks:
+ *  - \ref TaskModel
+ *  - \ref TaskSearch
+ *  - \ref TaskActor "Programming propagators and branchers"
+ *  - \ref TaskVar
+ *  - \ref TaskTest
+ *
+ * \section SecByFunc Available functionality
+ *
+ * The most important functionality is:
+ *  - \ref FuncMem
+ *  - \ref FuncThrow
+ *
+ * The complete functionality can be found \ref Func "here".
+ *
+ * The part \ref Other documents existing propagators, variable
+ * implementations, and so on which serves as documentation of examples.
+ *
+ * \section SecIndex List and index content
+ *
+ * Additionally, the documentation also features the following parts:
+ *  - \ref PageLic
+ *  - \ref PageChange
+ *
+ * The following lists and indices are available
+ *  - \ref PageCodeStat
+ *  - <a class="el" href="modules.html">List of all modules</a>
+ *  - <a class="el" href="annotated.html">List of all classes including brief documentation</a>
+ *  - <a class="el" href="namespaces.html">List of all namespaces including brief documentation</a>
+ *  - <a class="el" href="files.html">List of all files</a>
+ *  - <a class="el" href="hierarchy.html">Class hierarchy</a>
+ *  - <a class="el" href="classes.html">Alphabetical class index</a>
+ *  - <a class="el" href="namespacemembers.html">Namespace members</a>
+ *  - <a class="el" href="functions.html">Class members</a>
+ *  - <a class="el" href="globals.html">File members</a>
+ */
+
+/**
+ * \page PageNotation Notational conventions
+ *
+ * Throughout this reference documentation we use some notational conventions
+ * designed to keep the documentation concise yet understandable. Please
+ * read the following carefully.
+ *
+ * \section NotationArray Array notation
+ *
+ * We allow ourselves to refer to the \f$i\f$-th element of an array \f$x\f$
+ * by \f$x_i\f$. The size of an array \f$x\f$ (either provided by a member
+ * function \c %size() or clear from context) is denoted \f$|x|\f$.
+ *
+ * \section NotationHome The home space
+ *
+ * Many functions and member functions take an argument \a home of
+ * type \c Space&. The home space serves as manager to many
+ * operations used by variables, views, propagators, spaces, and so
+ * on. It provides
+ * services such as failure management, propagation control,
+ * memory management, and so on. To keep the documentation concise
+ * the home space is not documented for functions
+ * and member functions.
+ *
+ * \section NotationShare Sharing in update and copy
+ *
+ * In member functions that either copy or update an object during
+ * cloning, an argument \a share of type \c bool is available. This
+ * Boolean value controls whether during cloning the data structure at
+ * hand will be shared among the newly created cloned space and the original
+ * or whether two independent copies are created. Some functions (such
+ * as \c copy for spaces (Gecode::Space) or \c copy for propagators
+ * (Gecode::Propagator) also feature this argument. Here it is used
+ * to pass on the Boolean value to other datastructures used inside spaces
+ * or propagators.
+ *
+ * The actual value the \a share argument has is defined by the search
+ * engine: when a search engine uses the \a clone member function of
+ * a space it decides whether sharing is to be used in the cloning of
+ * the space or not. If the search engine is single-threaded, it will
+ * use full sharing (\a share will be true). Only if the search engine
+ * uses concurrency or parallelism with more than a single thread,
+ * it will pass false as value. This means that by not sharing data structures
+ * among spaces which are to be used in different threads, all parts of
+ * %Gecode but the actual search engine do not need to provide concurrency
+ * control.
+ *
+ * As examples for data structures which are sensitive to sharing, consider
+ * Gecode::SharedArray, Gecode::IntSet, and Gecode::DFA.
+ */
+
+/**
+ * \page PageHowToChange_2 How to Change from %Gecode 1.3.1 to %Gecode 2.0.x
+ *
+
+As %Gecode 2.0.0 is a major revision of %Gecode, your programs that are written
+for %Gecode 1.3.1 are likely to require some modifications before they work
+again. All modifications are straightforward, though.
+
+This short summary shows how to adapt your models and linker invocation, for
+changes to propagator implementations, etc, please consult the changelog.
+
+\section SecChange2IntBool IntVar and BoolVar
+
+Boolean variables (BoolVar) are not any longer integer variables
+(IntVar). The same holds for variable arrays (BoolVarArray,
+IntVarArray). So, you can not mix Boolean and integer variables
+in the same array (use two different arrays) and you can not cast
+between them. If you want to link the value of a BoolVar to the
+value of an IntVar you have to use a \ref TaskModelIntChannel
+"channel constraint".  Posting constraints remains unchanged, as
+all constraints offer two overloaded versions (one for IntVar,
+one for BoolVar).
+
+\section SecChange2Regular Regular constraint
+
+The regular constraint has been renamed to extensional (after
+all, it is an extensionally specified constraint). The old name
+is still available in the MiniModel module.
+
+If you want to use regular expressions, you have to add
+   \code #include <gecode/int/minimodel.hh> \endcode
+to your file as they moved to the MiniModel module.
+
+\section SecChange2Bool Boolean constraints
+
+In order to make the interface to Boolean constraints more
+regular and similar to set constraints, Boolean constraints are
+available as rel constraints. That is, instead of
+   \code bool_and(home, x, y, z); \endcode
+you have to write
+   \code rel(home, x, BOT_AND, y, z); \endcode
+Likewise, for arrays you have to write
+   \code rel(home, BOT_AND, x, y); \endcode
+instead of
+   \code bool_and(home, x, y); \endcode
+More information is available \ref TaskModelIntRelBool "here".
+
+\section SecChange2Branching Branching
+
+Values and types for selecting how to branch have been made uniform.
+Replace BVAL_* by INT_VAL_*, BVAR_* by INT_VAR_*, and so on.
+
+\section SecChange2GCC Global cardinality constraint
+
+The interface for the global cardinality constraint has been
+simplified.  The constraint is now called count. Please check the
+documentation for \ref TaskModelIntCount "details".
+
+\section SecChange2Sorted Sortedness constraint
+
+The sortedness constraint has been renamed to sorted.
+
+\section SecChange2Linking Linking
+
+Some generic functionality has been put into its own library (\code
+libgecodesupport \endcode on Unix systems, \code GecodeSupport.dll \endcode on
+Windows). You have to link against this library now.
+
+*/
+
+/**
+ * \page PageHowToChange_3 How to Change from %Gecode 2.2.2 to %Gecode 3.0.0
+ *
+
+As %Gecode 3.0.0 is a major revision, your programs that
+are written for %Gecode 2.2.2 are likely to require some
+modifications before they work again. All modifications are
+straightforward, though.
+
+This short summary shows how to adapt your models, for changes to
+propagator implementations, etc, please consult the changelog.
+
+\section SecChange3Param Passing parameters
+
+Now everything is passed as reference (Space, Propagator,
+ModEventDelta, Advisor, Branching, and BranchingDesc).
+
+The reason for this massive change is to be more C++ compliant
+and make the interfaces more consistent (at some places things were passed as
+references and at other places as pointers, for no obvious and
+explainable reason). Routines that create objects rather than
+pass them (such as copy, clone, or description) still return a
+pointer to an object (so that it can actually be deleted!).
+
+You will have to rewrite your models and other programs using
+%Gecode. For models this is easy enough:
+ - Replace "(Space* home" by "(Space& home".
+ - Replace "home->" by "home.".
+ - Replace "(this" by "(*this".
+ .
+That should do the trick for 99% of the models.
+
+For the other changes, just lookout for the changes in types and
+that "this" becomes "*this" now.
+
+
+\section SecChange3Set Set constrains
+
+Element and convexity constraints on set variables have a more
+uniform interface, and the match constrained has been renamed to
+channel.
+
+The values for variable and value selection for branching have
+been made consistent and extended.
+The following values have been renamed:
+ - SET_VAR_MIN_CARD -> SET_VAR_SIZE_MIN
+ - SET_VAR_MAX_CARD -> SET_VAR_SIZE_MAX
+ - SET_VAR_MIN_UNKNOWN_ELEM -> SET_VAR_MIN_MIN
+ - SET_VAR_MAX_UNKNOWN_ELEM -> SET_VAR_MAX_MAX
+ - SET_VAL_MIN -> SET_VAL_MIN_INC
+ - SET_VAL_MAX -> SET_VAL_MAX_INC
+ .
+Tie-breaking and random selection is now supported.
+
+\section SecChange3Files Naming scheme for files
+
+All files with extension .cc have been renamed to .cpp, and .icc
+has become .hpp. This avoids conflicts as .icc is typically used
+for other file types. All include directives are now specified
+using <...> notation instead of "...", so that %Gecode headers do
+not clutter the include namespace of a client program.
+
+\section SecChange3 Constrain method for best solution search
+
+The constrain method used for best solution search must be
+virtual and takes an argument of type const Space& rather than
+Space* as argument.
+
+*/
+
+/**
+ * \page PageHowToChange_4 How to Change from %Gecode 3.7.3 to %Gecode 4.0.0
+ *
+
+As %Gecode 4.0.0 is a major revision, your programs that
+are written for %Gecode 3.7.3 are likely to require some
+modifications before they work again.
+
+\section SecChange4NewBranch Changed branching parameters
+
+The pre-defined variable-value branchings have been extended
+considerably and hence some changes are required.
+
+In order to change, you have to add () to all variants of
+INT_VAR, INT_VAL, INT_ASSIGN, SET_VAR, SET_VAL, and
+SET_ASSIGN. For example, INT_VAR_MIN_MIN becomes the function
+call INT_VAR_MIN_MIN() and INT_VAL_MIN becomes the function
+call INT_VAL_MIN(). Some of these functions expect additional
+arguments and can take also optional arguments (this replaces the
+VarBranchOptions and ValBranchOptions). Please read MPG for
+details.
+
+\section SecChange4SizeBranch Branchings treat SIZE differently
+
+Variable selection for branching used the quotient of size
+divided by degree, accumulated failure count, or activity.
+Now the inverse is used. That is, for example, it is not any longer
+INT_VAR_SIZE_DEGREE_MIN() but INT_VAR_DEGREE_SIZE_MAX() (that is,
+largest degree divided by size).
+
+That looks like an annoying change but is in fact essential: the
+strategies using accumulated failure count and activity now could
+have run into division by zero issues. And just changing the
+implementation is not good enough because the values of these
+measures can now be exposed during tie-breaking.
+
+
+/**
+ * \page PageHowToChange_5 How to Change from %Gecode 4.4.0 to %Gecode 5.0.0
+ *
+
+As %Gecode 5.0.0 is a major revision, your programs that
+are written for %Gecode 4.4.0 are likely to require some
+modifications, yet very few, before they work again.
+
+\section SecChange5Handle Removed Brancher Handles
+
+Brancher handles have been removed as they can be expressed
+easily by brancher groups, please consult MPG for details.
+
+\section SecChange5IPL New Integer Propagation Levels
+
+The concept of integer consistency level "IntConLevel" has been
+replaced by integer propagation level "IntPropLevel". In most cases
+it should be sufficient to:
+ - search and replace ICL_ by IPL_.
+ - search and replace IntConLevel by IntPropLevel.
+ - use the commandline option -ipl rather than -icl.
+
+Integer propagation levels are more expressive than integer
+consistency levels. They can also express other propagation
+preferences such as speed, memory, basic, or advanced. Please
+consult MPG for details.
+
+*/
+
+/**
+ * \page PageHowToChange_6 How to Change from %Gecode 5.1.0 to %Gecode 6.0.0
+ *
+
+As %Gecode 6.0.0 is a major revision, you will have to change
+programs that are written for %Gecode 5.1.0. The big change is
+that the Boolean argument "share" during cloning is not any
+longer needed. That means you have to remove the argument from
+both the definition of and the calls to the following functions,
+where this applies to pretty much all objects used by Gecode such
+as spaces, scripts (that means your models), propagators,
+branchers, variables, views, and so on:
+ - in constructors used during cloning, and
+ - in copy functions used during cloning, and
+ - in update functions used during cloning.
+
+*/
