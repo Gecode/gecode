@@ -69,6 +69,22 @@ Date: TBD
 Changes
 
 [ENTRY]
+Module: float
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The interval for a float value is now printed between "[" and
+"]", whereas the interval for a float variable is printed between
+"[[" and "]]".
+
+[ENTRY]
+Module: float
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Float values could not be printed.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor
