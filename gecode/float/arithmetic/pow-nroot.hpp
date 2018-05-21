@@ -134,6 +134,8 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   NthRoot<A,B>::post(Home home, A x0, B x1, int n) {
     if (n == 0) return ES_FAILED;
     GECODE_ME_CHECK(x0.gq(home,0.0));
+    GECODE_ME_CHECK(x1.eq(home,nroot(x0.domain(),n)));
+    GECODE_ME_CHECK(x0.eq(home,pow(x1.domain(),n)));
     (void) new (home) NthRoot<A,B>(home,x0,x1,n);
     return ES_OK;
   }

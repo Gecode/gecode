@@ -56,6 +56,9 @@ namespace Gecode { namespace Float { namespace Channel {
   Channel<A,B>::post(Home home, A x0, B x1) {
     GECODE_ME_CHECK(x0.eq(home,FloatVal(Int::Limits::min,
                                         Int::Limits::max)));
+    GECODE_ME_CHECK(x1.gq(home,static_cast<int>(std::ceil(x0.min()))));
+    GECODE_ME_CHECK(x1.lq(home,static_cast<int>(std::floor(x0.max()))));
+    GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(),x1.max())));
     (void) new (home) Channel<A,B>(home,x0,x1);
     return ES_OK;
   }

@@ -51,7 +51,10 @@ namespace Gecode { namespace Float { namespace Transcendental {
     } else {
       GECODE_ME_CHECK(x1.gq(home,0.0));
     }
-
+    GECODE_ME_CHECK(x1.eq(home,exp(x0.domain())));
+    if (x1.max() == 0.0)
+      return ES_FAILED;
+    GECODE_ME_CHECK(x0.eq(home,log(x1.domain())));
     (void) new (home) Exp<A,B>(home,x0,x1);
     return ES_OK;
   }
@@ -98,6 +101,10 @@ namespace Gecode { namespace Float { namespace Transcendental {
       GECODE_ME_CHECK(x0.eq(home,0.0));
     } else {
       GECODE_ME_CHECK(x1.gq(home,0.0));
+      if (x1.max() == 0.0)
+        return ES_FAILED;
+      GECODE_ME_CHECK(x0.eq(home,log(x1.domain())/log(base)));
+      GECODE_ME_CHECK(x1.eq(home,exp(x0.domain()*log(base))));
       (void) new (home) Pow<A,B>(home,base,x0,x1);
     }
     return ES_OK;

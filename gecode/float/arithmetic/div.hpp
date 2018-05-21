@@ -58,6 +58,8 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B, class C>
   ExecStatus
   Div<A,B,C>::post(Home home, A x0, B x1, C x2) {
+    GECODE_ME_CHECK(x2.eq(home,x0.domain() / x1.domain()));
+    GECODE_ME_CHECK(x0.eq(home,x2.domain() * x1.domain()));
     (void) new (home) Div<A,B,C>(home,x0,x1,x2);
     return ES_OK;
   }

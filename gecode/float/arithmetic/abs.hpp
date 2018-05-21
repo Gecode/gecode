@@ -45,6 +45,13 @@ namespace Gecode { namespace Float { namespace Arithmetic {
   template<class A, class B>
   ExecStatus
   Abs<A,B>::post(Home home, A x0, B x1) {
+    GECODE_ME_CHECK(x1.eq(home,abs(x0.val())));
+    if (x0.min() >= 0)
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(x1.min(), x1.max())));
+    else if (x0.max() <= 0)
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), -x1.min())));
+    else
+      GECODE_ME_CHECK(x0.eq(home,FloatVal(-x1.max(), x1.max())));
     (void) new (home) Abs<A,B>(home,x0,x1);
     return ES_OK;
   }

@@ -116,6 +116,26 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
    */
 
   template<class A, class B>
+  ExecStatus
+  Sin<A,B>::dopropagate(Space& home, A x0, B x1) {
+    GECODE_ME_CHECK(x1.eq(home,sin(x0.val())));
+    Rounding r;
+    int n_min = 2*static_cast<int>(r.div_up(x0.min(), pi_twice_upper()));
+    int n_max = 2*static_cast<int>(r.div_up(x0.max(), pi_twice_upper()));
+    if (x0.min() < 0) n_min-=2;
+    if (x0.max() < 0) n_max-=2;
+    FloatNum iv_min = r.sub_down(x0.min(),r.mul_down(n_min, pi_upper()));
+    FloatNum iv_max = r.sub_up  (x0.max(),r.mul_down(n_max, pi_upper()));
+    aSinProject(r,x1,iv_min,iv_max,n_min,n_max);
+    FloatNum n_iv_min = r.add_down(iv_min,r.mul_down(n_min, pi_upper()));
+    FloatNum n_iv_max = r.add_up  (iv_max,r.mul_down(n_max, pi_upper()));
+    if (n_iv_min > n_iv_max) return ES_FAILED;
+    GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max)));
+    GECODE_ME_CHECK(x1.eq(home,sin(x0.val()))); // Redo sin because with x0 reduction, sin may be more accurate
+    return ES_OK;
+  }
+
+  template<class A, class B>
   forceinline
   Sin<A,B>::Sin(Home home, A x0, B x1)
     : MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>(home,x0,x1) {}
@@ -128,6 +148,7 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
     } else {
       GECODE_ME_CHECK(x1.gq(home,-1.0));
       GECODE_ME_CHECK(x1.lq(home,1.0));
+      GECODE_ES_CHECK(dopropagate(home,x0,x1));
       (void) new (home) Sin<A,B>(home,x0,x1);
     }
 
@@ -149,20 +170,7 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
   template<class A, class B>
   ExecStatus
   Sin<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,sin(x0.val())));
-    Rounding r;
-    int n_min = 2*static_cast<int>(r.div_up(x0.min(), pi_twice_upper()));
-    int n_max = 2*static_cast<int>(r.div_up(x0.max(), pi_twice_upper()));
-    if (x0.min() < 0) n_min-=2;
-    if (x0.max() < 0) n_max-=2;
-    FloatNum iv_min = r.sub_down(x0.min(),r.mul_down(n_min, pi_upper()));
-    FloatNum iv_max = r.sub_up  (x0.max(),r.mul_down(n_max, pi_upper()));
-    aSinProject(r,x1,iv_min,iv_max,n_min,n_max);
-    FloatNum n_iv_min = r.add_down(iv_min,r.mul_down(n_min, pi_upper()));
-    FloatNum n_iv_max = r.add_up  (iv_max,r.mul_down(n_max, pi_upper()));
-    if (n_iv_min > n_iv_max) return ES_FAILED;
-    GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max)));
-    GECODE_ME_CHECK(x1.eq(home,sin(x0.val()))); // Redo sin because with x0 reduction, sin may be more accurate
+    GECODE_ES_CHECK(dopropagate(home,x0,x1));
     return (x0.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 
@@ -170,6 +178,27 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
    * Bounds consistent cosinus operator
    *
    */
+
+  template<class A, class B>
+  ExecStatus
+  Cos<A,B>::dopropagate(Space& home, A x0, B x1) {
+    GECODE_ME_CHECK(x1.eq(home,cos(x0.val())));
+    Rounding r;
+    FloatVal x0Trans = x0.val() + FloatVal::pi_half();
+    int n_min = 2*static_cast<int>(r.div_up(x0Trans.min(), pi_twice_upper()));
+    int n_max = 2*static_cast<int>(r.div_up(x0Trans.max(), pi_twice_upper()));
+    if (x0Trans.min() < 0) n_min-=2;
+    if (x0Trans.max() < 0) n_max-=2;
+    FloatNum iv_min = r.sub_down(x0Trans.min(),r.mul_down(n_min, pi_upper()));
+    FloatNum iv_max = r.sub_up  (x0Trans.max(),r.mul_down(n_max, pi_upper()));
+    aSinProject(r,x1,iv_min,iv_max,n_min,n_max);
+    FloatNum n_iv_min = r.add_down(iv_min,r.mul_down(n_min, pi_upper()));
+    FloatNum n_iv_max = r.add_up  (iv_max,r.mul_down(n_max, pi_upper()));
+    if (n_iv_min > n_iv_max) return ES_FAILED;
+    GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max) - FloatVal::pi_half()));
+    GECODE_ME_CHECK(x1.eq(home,cos(x0.val()))); // Redo sin because with x0 reduction, sin may be more accurate
+    return ES_OK;
+  }
 
   template<class A, class B>
   forceinline
@@ -190,6 +219,7 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
     } else {
       GECODE_ME_CHECK(x1.gq(home,-1.0));
       GECODE_ME_CHECK(x1.lq(home,1.0));
+      GECODE_ES_CHECK(dopropagate(home,x0,x1));
       (void) new (home) Cos<A,B>(home,x0,x1);
     }
     return ES_OK;
@@ -210,21 +240,7 @@ void aSinProject(Rounding& r, const V& aSinIv, FloatNum& iv_min, FloatNum& iv_ma
   template<class A, class B>
   ExecStatus
   Cos<A,B>::propagate(Space& home, const ModEventDelta&) {
-    GECODE_ME_CHECK(x1.eq(home,cos(x0.val())));
-    Rounding r;
-    FloatVal x0Trans = x0.val() + FloatVal::pi_half();
-    int n_min = 2*static_cast<int>(r.div_up(x0Trans.min(), pi_twice_upper()));
-    int n_max = 2*static_cast<int>(r.div_up(x0Trans.max(), pi_twice_upper()));
-    if (x0Trans.min() < 0) n_min-=2;
-    if (x0Trans.max() < 0) n_max-=2;
-    FloatNum iv_min = r.sub_down(x0Trans.min(),r.mul_down(n_min, pi_upper()));
-    FloatNum iv_max = r.sub_up  (x0Trans.max(),r.mul_down(n_max, pi_upper()));
-    aSinProject(r,x1,iv_min,iv_max,n_min,n_max);
-    FloatNum n_iv_min = r.add_down(iv_min,r.mul_down(n_min, pi_upper()));
-    FloatNum n_iv_max = r.add_up  (iv_max,r.mul_down(n_max, pi_upper()));
-    if (n_iv_min > n_iv_max) return ES_FAILED;
-    GECODE_ME_CHECK(x0.eq(home,FloatVal(n_iv_min,n_iv_max) - FloatVal::pi_half()));
-    GECODE_ME_CHECK(x1.eq(home,cos(x0.val()))); // Redo sin because with x0 reduction, sin may be more accurate
+    GECODE_ES_CHECK(dopropagate(home,x0,x1));
     return (x0.assigned()) ? home.ES_SUBSUMED(*this) : ES_FIX;
   }
 

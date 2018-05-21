@@ -55,7 +55,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-
+    /// Perform actual propagation
+    static ExecStatus dopropagate(Space& home, A x0, B x1);
     /// Constructor for cloning \a p
     Sin(Space& home, Sin& p);
     /// Constructor for creation
@@ -83,7 +84,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-
+    /// Perform actual propagation
+    static ExecStatus dopropagate(Space& home, A x0, B x1);
     /// Constructor for cloning \a p
     Cos(Space& home, Cos& p);
     /// Constructor for creation
@@ -165,7 +167,8 @@ namespace Gecode { namespace Float { namespace Trigonometric {
   protected:
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x0;
     using MixBinaryPropagator<A,PC_FLOAT_BND,B,PC_FLOAT_BND>::x1;
-
+    /// Perform actual propagation
+    static ExecStatus dopropagate(Space& home, A x0, B x1);
     /// Constructor for cloning \a p
     Tan(Space& home, Tan& p);
     /// Constructor for creation
