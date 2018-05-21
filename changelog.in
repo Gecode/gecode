@@ -64,9 +64,11 @@
 
 [RELEASE]
 Version: 6.0.1
-Date: TBD
+Date: 2018-05-21
 [DESCRIPTION]
-Changes
+Contains a number of small fixes and one large fix for float
+variables (basically, minimodel using float variables would
+always lead to overflow and hence throw an exception).
 
 [ENTRY]
 Module: float
