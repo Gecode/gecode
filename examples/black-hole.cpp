@@ -175,7 +175,7 @@ public:
         for (int s1 = 4; s1--; )
           for (int s2 = 4; s2--; )
             for (int i = -1; i <= 1; i+=2)
-              ts.add(r+13*s1, (r+i+52+13*s2)%52);
+              ts.add({r+13*s1, (r+i+52+13*s2)%52});
       ts.finalize();
 
       for (int i = 51; i--; )

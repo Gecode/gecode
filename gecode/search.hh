@@ -1016,9 +1016,6 @@ namespace Gecode {
     SEBs(InputIterator first, InputIterator last);
     /// Initialize from primitive argument array \a a (copy elements)
     SEBs(const PrimArgArray<SEB>& a);
-    /// Allocate array with \a n elements and initialize with \a b0, ...
-    GECODE_SEARCH_EXPORT
-    SEBs(int n, SEB b0, ...);
     //@}
   };
 
