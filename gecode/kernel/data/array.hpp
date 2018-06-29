@@ -38,10 +38,12 @@
  */
 
 #include <cstdarg>
+
 #include <iostream>
 #include <iterator>
 #include <vector>
 #include <sstream>
+#include <initializer_list>
 
 namespace Gecode {
 
@@ -575,6 +577,8 @@ namespace Gecode {
     const ArgArrayBase<T>& operator =(const ArgArrayBase<T>& a);
     /// Initialize from vector \a a
     ArgArrayBase(const std::vector<T>& a);
+    /// Initialize from initializer list \a a
+    ArgArrayBase(std::initializer_list<T> a);
     /// Initialize from InputIterator \a begin and \a end
     template<class InputIterator>
     ArgArrayBase(InputIterator first, InputIterator last);
@@ -675,6 +679,8 @@ namespace Gecode {
     PrimArgArray(const PrimArgArray<T>& a);
     /// Initialize from vector \a a
     PrimArgArray(const std::vector<T>& a);
+    /// Initialize from initializer list \a a
+    PrimArgArray(std::initializer_list<T> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
     PrimArgArray(InputIterator first, InputIterator last);
@@ -760,6 +766,8 @@ namespace Gecode {
     ArgArray(const ArgArray<T>& a);
     /// Initialize from vector \a a
     ArgArray(const std::vector<T>& a);
+    /// Initialize from initializer list \a a
+    ArgArray(std::initializer_list<T> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
     ArgArray(InputIterator first, InputIterator last);
@@ -847,6 +855,8 @@ namespace Gecode {
     VarArgArray(const VarArray<Var>& a);
     /// Initialize from vector \a a
     VarArgArray(const std::vector<Var>& a);
+    /// Initialize from initializer list \a a
+    VarArgArray(std::initializer_list<Var> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
     VarArgArray(InputIterator first, InputIterator last);
@@ -1628,6 +1638,16 @@ namespace Gecode {
   }
 
   template<class T>
+  inline
+  ArgArrayBase<T>::ArgArrayBase(std::initializer_list<T> aa)
+    : n(static_cast<int>(aa.size())),
+      capacity(n < onstack_size ? onstack_size : n), a(allocate(n)) {
+    int i=0;
+    for (const T& x : aa)
+      a[i++]=x;
+  }
+
+  template<class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
     if (capacity > onstack_size)
@@ -1827,6 +1847,11 @@ namespace Gecode {
     : ArgArrayBase<T>(aa) {}
 
   template<class T>
+  forceinline
+  PrimArgArray<T>::PrimArgArray(std::initializer_list<T> aa)
+    : ArgArrayBase<T>(aa) {}
+
+  template<class T>
   template<class InputIterator>
   forceinline
   PrimArgArray<T>::PrimArgArray(InputIterator first, InputIterator last)
@@ -1909,6 +1934,11 @@ namespace Gecode {
     : ArgArrayBase<T>(aa) {}
 
   template<class T>
+  forceinline
+  ArgArray<T>::ArgArray(std::initializer_list<T> aa)
+    : ArgArrayBase<T>(aa) {}
+
+  template<class T>
   template<class InputIterator>
   forceinline
   ArgArray<T>::ArgArray(InputIterator first, InputIterator last)
@@ -1982,6 +2012,11 @@ namespace Gecode {
   template<class Var>
   forceinline
   VarArgArray<Var>::VarArgArray(const std::vector<Var>& aa)
+    : ArgArrayBase<Var>(aa) {}
+
+  template<class Var>
+  forceinline
+  VarArgArray<Var>::VarArgArray(std::initializer_list<Var> aa)
     : ArgArrayBase<Var>(aa) {}
 
   template<class Var>

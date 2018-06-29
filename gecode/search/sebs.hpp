@@ -45,6 +45,10 @@ namespace Gecode {
   SEBs::SEBs(const std::vector<SEB>& x)
     : PrimArgArray<SEB>(x) {}
 
+  forceinline
+  SEBs::SEBs(std::initializer_list<SEB> x)
+    : PrimArgArray<SEB>(x) {}
+
   template<class InputIterator>
   forceinline
   SEBs::SEBs(InputIterator first, InputIterator last)
