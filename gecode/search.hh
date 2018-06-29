@@ -42,6 +42,8 @@
 #ifndef __GECODE_SEARCH_HH__
 #define __GECODE_SEARCH_HH__
 
+#include <initializer_list>
+
 #include <gecode/kernel.hh>
 
 /*
@@ -1007,6 +1009,8 @@ namespace Gecode {
     explicit SEBs(int n);
     /// Allocate array and copy elements from \a x
     SEBs(const std::vector<SEB>& x);
+    /// Allocate array with and initialize with \a x
+    SEBs(std::initializer_list<SEB> x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     SEBs(InputIterator first, InputIterator last);

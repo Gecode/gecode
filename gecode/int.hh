@@ -46,11 +46,11 @@
 
 #include <climits>
 #include <cfloat>
+
 #include <iostream>
-
 #include <vector>
-
 #include <functional>
+#include <initializer_list>
 
 #include <gecode/kernel.hh>
 #include <gecode/search.hh>
@@ -2239,6 +2239,9 @@ namespace Gecode {
     /// Add tuple \a t to tuple set
     GECODE_INT_EXPORT
     void _add(const IntArgs& t);
+    /// Add initialzer list \a t to tuple set
+    GECODE_INT_EXPORT
+    void _add(std::initializer_list<int> t); 
     /// Test whether tuple set is equal to \a t
     GECODE_INT_EXPORT
     bool equal(const TupleSet& t) const;
@@ -2274,6 +2277,8 @@ namespace Gecode {
     //@{
     /// Add tuple \a t to tuple set
     TupleSet& add(const IntArgs& t);
+    /// Add initialzer list \a t to tuple set
+    TupleSet& add(std::initializer_list<int> t); 
     /// Add tuple with elements \a n, ... to tuple set
     GECODE_INT_EXPORT
     TupleSet& add(int n, ...);

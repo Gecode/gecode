@@ -143,6 +143,11 @@ namespace Gecode {
     _add(t); return *this;
   }
 
+  forceinline TupleSet&
+  TupleSet::add(std::initializer_list<int> t) {
+    _add(t); return *this;
+  }
+
   forceinline
   TupleSet::TupleSet(void) {}
 
