@@ -37,7 +37,6 @@
  *
  */
 
-#include <cstdarg>
 #include <iostream>
 #include <sstream>
 

@@ -81,8 +81,7 @@ public:
     };
     // Post equation constraints
     for (int i = e_n; i--; ) {
-      IntArgs c(x_n, eqs[i][1],eqs[i][2],eqs[i][3],eqs[i][4],
-                     eqs[i][5],eqs[i][6],eqs[i][7]);
+      IntArgs c(x_n, &eqs[i][1]);
       linear(*this, c, x, IRT_EQ, eqs[i][0], opt.ipl());
     }
     branch(*this, x, INT_VAR_NONE(), INT_VAL_MIN());
