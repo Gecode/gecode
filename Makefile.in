@@ -254,7 +254,7 @@ SEARCHSRC0 = \
 	stop options cutoff engine \
 	dfs bab lds \
 	seq/rbs seq/dead seq/pbs par/pbs \
-	rbs pbs sebs nogoods exception tracer \
+	rbs pbs nogoods exception tracer \
 	cpprofiler/tracer
 SEARCHHDR0 = \
 	statistics.hpp stop.hpp options.hpp cutoff.hpp \

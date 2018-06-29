@@ -37,8 +37,6 @@
  *
  */
 
-#include <cstdarg>
-
 #include <iostream>
 #include <iterator>
 #include <vector>
@@ -671,8 +669,6 @@ namespace Gecode {
     PrimArgArray(void);
     /// Allocate array with \a n elements
     explicit PrimArgArray(int n);
-    /// Allocate array with \a n elements and initialize with \a e0, ...
-    PrimArgArray(int n, T e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     PrimArgArray(int n, const T* e);
     /// Initialize from primitive argument array \a a (copy elements)
@@ -1817,17 +1813,6 @@ namespace Gecode {
   template<class T>
   forceinline
   PrimArgArray<T>::PrimArgArray(int n) : ArgArrayBase<T>(n) {}
-
-  template<class T>
-  PrimArgArray<T>::PrimArgArray(int n, T a0, ...)
-    : ArgArrayBase<T>(n) {
-    va_list args;
-    va_start(args, a0);
-    a[0] = a0;
-    for (int i = 1; i < n; i++)
-      a[i] = va_arg(args,T);
-    va_end(args);
-  }
 
   template<class T>
   PrimArgArray<T>::PrimArgArray(int n, const T* a0)

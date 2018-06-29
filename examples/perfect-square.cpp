@@ -242,7 +242,7 @@ public:
         for (int i = n; i--; ) {
           m[i]=0; dh[i]=s[i];
         }
-        IntArgs limit(1, w);
+        IntArgs limit({w});
         {
           // x-direction
           IntVarArgs e(n);

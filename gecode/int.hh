@@ -613,12 +613,11 @@ namespace Gecode {
     IntArgs(const SharedArray<int>& x);
     /// Allocate array and copy elements from \a x
     IntArgs(const std::vector<int>& x);
+    /// Allocate array and copy elements from \a x
+    IntArgs(std::initializer_list<int> x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     IntArgs(InputIterator first, InputIterator last);
-    /// Allocate array with \a n elements and initialize with \a e0, ...
-    GECODE_INT_EXPORT
-    IntArgs(int n, int e0, ...);
     /// Allocate array with \a n elements and initialize with elements from array \a e
     IntArgs(int n, const int* e);
     /// Initialize from primitive argument array \a a (copy elements)
@@ -2279,9 +2278,6 @@ namespace Gecode {
     TupleSet& add(const IntArgs& t);
     /// Add initialzer list \a t to tuple set
     TupleSet& add(std::initializer_list<int> t); 
-    /// Add tuple with elements \a n, ... to tuple set
-    GECODE_INT_EXPORT
-    TupleSet& add(int n, ...);
     /// Is tuple set finalized
     bool finalized(void) const;
     /// Finalize tuple set
