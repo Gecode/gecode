@@ -151,7 +151,7 @@ public:
     rel(*this, _cost == beamtime*(rd.m*rd.n+1)+K);
 
     // First branch over beamtime and N
-    IntVarArgs ba(1); ba[0] = beamtime;
+    IntVarArgs ba({beamtime});
     branch(*this, ba, INT_VAR_NONE(), INT_VAL_MIN());
     branch(*this, N, INT_VAR_NONE(), INT_VAL_SPLIT_MIN());
 

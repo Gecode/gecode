@@ -166,10 +166,8 @@ public:
                 valids |= REG(pos+width+1) + REG(pos);
             }
           }
-          IntVarArgs piece(2);
-          piece[0] = p1[dominoCount];
-          piece[1] = p2[dominoCount];
-          extensional(*this, piece, valids);
+          extensional(*this, IntVarArgs({p1[dominoCount],p2[dominoCount]}),
+                      valids);
 
 
           // Link the current piece to the array where its
