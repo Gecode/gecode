@@ -63,6 +63,19 @@
 #
 
 [RELEASE]
+Version: 6.1.0
+Date: 2018-??-??
+[DESCRIPTION]
+More C++-11
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+What?
+
+[RELEASE]
 Version: 6.0.1
 Date: 2018-05-21
 [DESCRIPTION]
