@@ -292,7 +292,7 @@ namespace Test { namespace Int {
        /// Create and register test
        MatrixIntIntVarXY(void)
          : Test("Element::Matrix::Int::IntVar::XY",3,0,5,false),
-           tm(6, 0,1,2,3,4,5) {}
+           tm({0,1,2,3,4,5}) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
@@ -320,7 +320,7 @@ namespace Test { namespace Int {
        /// Create and register test
        MatrixIntIntVarXX(void)
          : Test("Element::Matrix::Int::IntVar::XX",2,0,3,false),
-           tm(4, 0,1,2,3) {}
+           tm({0,1,2,3}) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
@@ -348,7 +348,7 @@ namespace Test { namespace Int {
        /// Create and register test
        MatrixIntBoolVarXY(void)
          : Test("Element::Matrix::Int::BoolVar::XY",3,0,3,false),
-           tm(4, 0,1,1,0) {}
+           tm({0,1,1,0}) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[1], result: x[2]
@@ -376,7 +376,7 @@ namespace Test { namespace Int {
        /// Create and register test
        MatrixIntBoolVarXX(void)
          : Test("Element::Matrix::Int::BoolVar::XX",2,0,3,false),
-           tm(4, 0,1,1,0) {}
+           tm({0,1,1,0}) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
          // x-coordinate: x[0], y-coordinate: x[0], result: x[1]
@@ -529,15 +529,15 @@ namespace Test { namespace Int {
        /// Perform creation and registration
        Create(void) {
          using namespace Gecode;
-         IntArgs ic1(5, -1,1,-3,3,-4);
-         IntArgs ic2(8, -1,1,-1,1,-1,1,0,0);
-         IntArgs ic3(1, -1);
-         IntArgs ic4(7, 0,-1,2,-2,4,-3,6);
-         IntArgs ic5(6, 0,0,1,2,3,4);
+         IntArgs ic1({-1,1,-3,3,-4});
+         IntArgs ic2({-1,1,-1,1,-1,1,0,0});
+         IntArgs ic3({-1});
+         IntArgs ic4({0,-1,2,-2,4,-3,6});
+         IntArgs ic5({0,0,1,2,3,4});
 
-         IntArgs bc1(5, 0,1,1,0,1);
-         IntArgs bc2(8, 1,1,0,1,0,1,0,0);
-         IntArgs bc3(1, 1);
+         IntArgs bc1({0,1,1,0,1});
+         IntArgs bc2({1,1,0,1,0,1,0,0});
+         IntArgs bc3({1});
 
          (void) new IntIntVar("A",ic1,-8,8);
          (void) new IntIntVar("B",ic2,-8,8);

@@ -490,17 +490,17 @@ namespace Test { namespace Int {
       /// Perform creation and registration
       Create(void) {
         using namespace Gecode;
-        IntArgs p1(4, 1,1,1,1);
-        IntArgs p2(4, 2,2,2,2);
-        IntArgs p3(4, 4,3,3,5);
-        IntArgs p4(4, 4,0,3,5);
-        IntArgs p5(3, 1,1,1);
+        IntArgs p1({1,1,1,1});
+        IntArgs p2({2,2,2,2});
+        IntArgs p3({4,3,3,5});
+        IntArgs p4({4,0,3,5});
+        IntArgs p5({1,1,1});
 
-        IntArgs u1(4, 1,1,1,1);
-        IntArgs u2(4, 2,2,2,2);
-        IntArgs u3(4, 2,3,4,5);
-        IntArgs u4(4, 2,3,0,5);
-        IntArgs u5(3, 1,3,2);
+        IntArgs u1({1,1,1,1});
+        IntArgs u2({2,2,2,2});
+        IntArgs u3({2,3,4,5});
+        IntArgs u4({2,3,0,5});
+        IntArgs u5({1,3,2});
 
         for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
           // Regression test: check correct detection of disjunctive case

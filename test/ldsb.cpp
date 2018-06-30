@@ -261,7 +261,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, IntVarArray& xs) {
       Symmetries syms;
-      IntArgs indices(4, 0,1,2,3);
+      IntArgs indices({0,1,2,3});
       syms << VariableSymmetry(xs, indices);
       distinct(home, xs);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
@@ -270,7 +270,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -295,7 +295,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -312,7 +312,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, IntVarArray& xs) {
       Symmetries syms;
-      IntArgs indices(4, 0,1,2,3);
+      IntArgs indices({0,1,2,3});
       syms << VariableSymmetry(xs);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), syms);
     }
@@ -320,41 +320,41 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,0,0,0));
-      expected.push_back(IntArgs(4, 0,0,0,1));
-      expected.push_back(IntArgs(4, 0,0,0,2));
-      expected.push_back(IntArgs(4, 0,0,0,3));
-      expected.push_back(IntArgs(4, 0,0,1,1));
-      expected.push_back(IntArgs(4, 0,0,1,2));
-      expected.push_back(IntArgs(4, 0,0,1,3));
-      expected.push_back(IntArgs(4, 0,0,2,2));
-      expected.push_back(IntArgs(4, 0,0,2,3));
-      expected.push_back(IntArgs(4, 0,0,3,3));
-      expected.push_back(IntArgs(4, 0,1,1,1));
-      expected.push_back(IntArgs(4, 0,1,1,2));
-      expected.push_back(IntArgs(4, 0,1,1,3));
-      expected.push_back(IntArgs(4, 0,1,2,2));
-      expected.push_back(IntArgs(4, 0,1,2,3));
-      expected.push_back(IntArgs(4, 0,1,3,3));
-      expected.push_back(IntArgs(4, 0,2,2,2));
-      expected.push_back(IntArgs(4, 0,2,2,3));
-      expected.push_back(IntArgs(4, 0,2,3,3));
-      expected.push_back(IntArgs(4, 0,3,3,3));
-      expected.push_back(IntArgs(4, 1,1,1,1));
-      expected.push_back(IntArgs(4, 1,1,1,2));
-      expected.push_back(IntArgs(4, 1,1,1,3));
-      expected.push_back(IntArgs(4, 1,1,2,2));
-      expected.push_back(IntArgs(4, 1,1,2,3));
-      expected.push_back(IntArgs(4, 1,1,3,3));
-      expected.push_back(IntArgs(4, 1,2,2,2));
-      expected.push_back(IntArgs(4, 1,2,2,3));
-      expected.push_back(IntArgs(4, 1,2,3,3));
-      expected.push_back(IntArgs(4, 1,3,3,3));
-      expected.push_back(IntArgs(4, 2,2,2,2));
-      expected.push_back(IntArgs(4, 2,2,2,3));
-      expected.push_back(IntArgs(4, 2,2,3,3));
-      expected.push_back(IntArgs(4, 2,3,3,3));
-      expected.push_back(IntArgs(4, 3,3,3,3));
+      expected.push_back(IntArgs({0,0,0,0}));
+      expected.push_back(IntArgs({0,0,0,1}));
+      expected.push_back(IntArgs({0,0,0,2}));
+      expected.push_back(IntArgs({0,0,0,3}));
+      expected.push_back(IntArgs({0,0,1,1}));
+      expected.push_back(IntArgs({0,0,1,2}));
+      expected.push_back(IntArgs({0,0,1,3}));
+      expected.push_back(IntArgs({0,0,2,2}));
+      expected.push_back(IntArgs({0,0,2,3}));
+      expected.push_back(IntArgs({0,0,3,3}));
+      expected.push_back(IntArgs({0,1,1,1}));
+      expected.push_back(IntArgs({0,1,1,2}));
+      expected.push_back(IntArgs({0,1,1,3}));
+      expected.push_back(IntArgs({0,1,2,2}));
+      expected.push_back(IntArgs({0,1,2,3}));
+      expected.push_back(IntArgs({0,1,3,3}));
+      expected.push_back(IntArgs({0,2,2,2}));
+      expected.push_back(IntArgs({0,2,2,3}));
+      expected.push_back(IntArgs({0,2,3,3}));
+      expected.push_back(IntArgs({0,3,3,3}));
+      expected.push_back(IntArgs({1,1,1,1}));
+      expected.push_back(IntArgs({1,1,1,2}));
+      expected.push_back(IntArgs({1,1,1,3}));
+      expected.push_back(IntArgs({1,1,2,2}));
+      expected.push_back(IntArgs({1,1,2,3}));
+      expected.push_back(IntArgs({1,1,3,3}));
+      expected.push_back(IntArgs({1,2,2,2}));
+      expected.push_back(IntArgs({1,2,2,3}));
+      expected.push_back(IntArgs({1,2,3,3}));
+      expected.push_back(IntArgs({1,3,3,3}));
+      expected.push_back(IntArgs({2,2,2,2}));
+      expected.push_back(IntArgs({2,2,2,3}));
+      expected.push_back(IntArgs({2,2,3,3}));
+      expected.push_back(IntArgs({2,3,3,3}));
+      expected.push_back(IntArgs({3,3,3,3}));
       return expected;
     }
   };
@@ -379,18 +379,18 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
-      expected.push_back(IntArgs(4, 0,1,3,2));
-      expected.push_back(IntArgs(4, 0,2,1,3));
-      expected.push_back(IntArgs(4, 0,2,3,1));
-      expected.push_back(IntArgs(4, 0,3,1,2));
-      expected.push_back(IntArgs(4, 0,3,2,1));
-      expected.push_back(IntArgs(4, 1,2,0,3));
-      expected.push_back(IntArgs(4, 1,2,3,0));
-      expected.push_back(IntArgs(4, 1,3,0,2));
-      expected.push_back(IntArgs(4, 1,3,2,0));
-      expected.push_back(IntArgs(4, 2,3,0,1));
-      expected.push_back(IntArgs(4, 2,3,1,0));
+      expected.push_back(IntArgs({0,1,2,3}));
+      expected.push_back(IntArgs({0,1,3,2}));
+      expected.push_back(IntArgs({0,2,1,3}));
+      expected.push_back(IntArgs({0,2,3,1}));
+      expected.push_back(IntArgs({0,3,1,2}));
+      expected.push_back(IntArgs({0,3,2,1}));
+      expected.push_back(IntArgs({1,2,0,3}));
+      expected.push_back(IntArgs({1,2,3,0}));
+      expected.push_back(IntArgs({1,3,0,2}));
+      expected.push_back(IntArgs({1,3,2,0}));
+      expected.push_back(IntArgs({2,3,0,1}));
+      expected.push_back(IntArgs({2,3,1,0}));
       return expected;
     }
   };
@@ -417,12 +417,12 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(3, 0,1,2));
-      expected.push_back(IntArgs(3, 0,2,1));
-      expected.push_back(IntArgs(3, 1,0,2));
-      expected.push_back(IntArgs(3, 1,2,0));
-      expected.push_back(IntArgs(3, 2,0,1));
-      expected.push_back(IntArgs(3, 2,1,0));
+      expected.push_back(IntArgs({0,1,2}));
+      expected.push_back(IntArgs({0,2,1}));
+      expected.push_back(IntArgs({1,0,2}));
+      expected.push_back(IntArgs({1,2,0}));
+      expected.push_back(IntArgs({2,0,1}));
+      expected.push_back(IntArgs({2,1,0}));
       return expected;
     }
   };
@@ -449,12 +449,12 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
-      expected.push_back(IntArgs(4, 0,2,1,3));
-      expected.push_back(IntArgs(4, 0,3,1,2));
-      expected.push_back(IntArgs(4, 1,2,0,3));
-      expected.push_back(IntArgs(4, 1,3,0,2));
-      expected.push_back(IntArgs(4, 2,3,0,1));
+      expected.push_back(IntArgs({0,1,2,3}));
+      expected.push_back(IntArgs({0,2,1,3}));
+      expected.push_back(IntArgs({0,3,1,2}));
+      expected.push_back(IntArgs({1,2,0,3}));
+      expected.push_back(IntArgs({1,3,0,2}));
+      expected.push_back(IntArgs({2,3,0,1}));
       return expected;
     }
   };
@@ -479,32 +479,32 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(6, 0,0, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 1,0));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 1,0, 1,0));
-      expected.push_back(IntArgs(6, 0,0, 1,0, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 1,0, 1,0, 1,0));
-      expected.push_back(IntArgs(6, 1,0, 1,0, 1,1));
-      expected.push_back(IntArgs(6, 1,0, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 1,1, 1,1, 1,1));
+      expected.push_back(IntArgs({0,0, 0,0, 0,0}));
+      expected.push_back(IntArgs({0,0, 0,0, 0,1}));
+      expected.push_back(IntArgs({0,0, 0,0, 1,0}));
+      expected.push_back(IntArgs({0,0, 0,0, 1,1}));
+      expected.push_back(IntArgs({0,0, 0,1, 0,0}));
+      expected.push_back(IntArgs({0,0, 0,1, 0,1}));
+      expected.push_back(IntArgs({0,0, 0,1, 1,0}));
+      expected.push_back(IntArgs({0,0, 0,1, 1,1}));
+      expected.push_back(IntArgs({0,0, 1,0, 1,0}));
+      expected.push_back(IntArgs({0,0, 1,0, 1,1}));
+      expected.push_back(IntArgs({0,0, 1,1, 1,1}));
+      expected.push_back(IntArgs({0,1, 0,0, 0,0}));
+      expected.push_back(IntArgs({0,1, 0,0, 0,1}));
+      expected.push_back(IntArgs({0,1, 0,0, 1,0}));
+      expected.push_back(IntArgs({0,1, 0,0, 1,1}));
+      expected.push_back(IntArgs({0,1, 0,1, 0,0}));
+      expected.push_back(IntArgs({0,1, 0,1, 0,1}));
+      expected.push_back(IntArgs({0,1, 0,1, 1,0}));
+      expected.push_back(IntArgs({0,1, 0,1, 1,1}));
+      expected.push_back(IntArgs({0,1, 1,0, 1,0}));
+      expected.push_back(IntArgs({0,1, 1,0, 1,1}));
+      expected.push_back(IntArgs({0,1, 1,1, 1,1}));
+      expected.push_back(IntArgs({1,0, 1,0, 1,0}));
+      expected.push_back(IntArgs({1,0, 1,0, 1,1}));
+      expected.push_back(IntArgs({1,0, 1,1, 1,1}));
+      expected.push_back(IntArgs({1,1, 1,1, 1,1}));
       return expected;
     }
   };
@@ -529,42 +529,42 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(6, 0,0, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 1,1, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 1,1, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 1,1, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 1,1, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 1,1, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 1,1, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 1,1, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 1,1, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 1,1, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 1,1, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 1,1, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 1,1, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 1,1, 1,1, 0,0));
-      expected.push_back(IntArgs(6, 1,1, 1,1, 0,1));
-      expected.push_back(IntArgs(6, 1,1, 1,1, 1,1));
+      expected.push_back(IntArgs({0,0, 0,0, 0,0}));
+      expected.push_back(IntArgs({0,0, 0,0, 0,1}));
+      expected.push_back(IntArgs({0,0, 0,0, 1,1}));
+      expected.push_back(IntArgs({0,0, 0,1, 0,0}));
+      expected.push_back(IntArgs({0,0, 0,1, 0,1}));
+      expected.push_back(IntArgs({0,0, 0,1, 1,0}));
+      expected.push_back(IntArgs({0,0, 0,1, 1,1}));
+      expected.push_back(IntArgs({0,0, 1,1, 0,0}));
+      expected.push_back(IntArgs({0,0, 1,1, 0,1}));
+      expected.push_back(IntArgs({0,0, 1,1, 1,1}));
+      expected.push_back(IntArgs({0,1, 0,0, 0,0}));
+      expected.push_back(IntArgs({0,1, 0,0, 0,1}));
+      expected.push_back(IntArgs({0,1, 0,0, 1,0}));
+      expected.push_back(IntArgs({0,1, 0,0, 1,1}));
+      expected.push_back(IntArgs({0,1, 0,1, 0,0}));
+      expected.push_back(IntArgs({0,1, 0,1, 0,1}));
+      expected.push_back(IntArgs({0,1, 0,1, 1,0}));
+      expected.push_back(IntArgs({0,1, 0,1, 1,1}));
+      expected.push_back(IntArgs({0,1, 1,0, 0,0}));
+      expected.push_back(IntArgs({0,1, 1,0, 0,1}));
+      expected.push_back(IntArgs({0,1, 1,0, 1,0}));
+      expected.push_back(IntArgs({0,1, 1,0, 1,1}));
+      expected.push_back(IntArgs({0,1, 1,1, 0,0}));
+      expected.push_back(IntArgs({0,1, 1,1, 0,1}));
+      expected.push_back(IntArgs({0,1, 1,1, 1,0}));
+      expected.push_back(IntArgs({0,1, 1,1, 1,1}));
+      expected.push_back(IntArgs({1,1, 0,0, 0,0}));
+      expected.push_back(IntArgs({1,1, 0,0, 0,1}));
+      expected.push_back(IntArgs({1,1, 0,0, 1,1}));
+      expected.push_back(IntArgs({1,1, 0,1, 0,0}));
+      expected.push_back(IntArgs({1,1, 0,1, 0,1}));
+      expected.push_back(IntArgs({1,1, 0,1, 1,0}));
+      expected.push_back(IntArgs({1,1, 0,1, 1,1}));
+      expected.push_back(IntArgs({1,1, 1,1, 0,0}));
+      expected.push_back(IntArgs({1,1, 1,1, 0,1}));
+      expected.push_back(IntArgs({1,1, 1,1, 1,1}));
       return expected;
     }
   };
@@ -590,26 +590,26 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(6, 0,0, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 0,0, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 0,0, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 0,0, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 0,0));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 0,1));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 0,1, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 1,0));
-      expected.push_back(IntArgs(6, 0,1, 1,0, 1,1));
-      expected.push_back(IntArgs(6, 0,1, 1,1, 1,1));
-      expected.push_back(IntArgs(6, 1,1, 1,1, 1,1));
+      expected.push_back(IntArgs({0,0, 0,0, 0,0}));
+      expected.push_back(IntArgs({0,0, 0,0, 0,1}));
+      expected.push_back(IntArgs({0,0, 0,0, 1,1}));
+      expected.push_back(IntArgs({0,0, 0,1, 0,0}));
+      expected.push_back(IntArgs({0,0, 0,1, 0,1}));
+      expected.push_back(IntArgs({0,0, 0,1, 1,0}));
+      expected.push_back(IntArgs({0,0, 0,1, 1,1}));
+      expected.push_back(IntArgs({0,0, 1,1, 1,1}));
+      expected.push_back(IntArgs({0,1, 0,0, 0,0}));
+      expected.push_back(IntArgs({0,1, 0,0, 0,1}));
+      expected.push_back(IntArgs({0,1, 0,0, 1,0}));
+      expected.push_back(IntArgs({0,1, 0,0, 1,1}));
+      expected.push_back(IntArgs({0,1, 0,1, 0,0}));
+      expected.push_back(IntArgs({0,1, 0,1, 0,1}));
+      expected.push_back(IntArgs({0,1, 0,1, 1,0}));
+      expected.push_back(IntArgs({0,1, 0,1, 1,1}));
+      expected.push_back(IntArgs({0,1, 1,0, 1,0}));
+      expected.push_back(IntArgs({0,1, 1,0, 1,1}));
+      expected.push_back(IntArgs({0,1, 1,1, 1,1}));
+      expected.push_back(IntArgs({1,1, 1,1, 1,1}));
       return expected;
     }
   };
@@ -634,17 +634,17 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0, 0, 0, 0));
-      expected.push_back(IntArgs(4, 0, 0, 0, 1));
-      expected.push_back(IntArgs(4, 0, 0, 1, 0));
-      expected.push_back(IntArgs(4, 0, 0, 1, 1));
-      expected.push_back(IntArgs(4, 0, 1, 0, 0));
-      expected.push_back(IntArgs(4, 0, 1, 0, 1));
-      expected.push_back(IntArgs(4, 0, 1, 1, 0));
-      expected.push_back(IntArgs(4, 0, 1, 1, 1));
-      expected.push_back(IntArgs(4, 1, 0, 0, 1));
-      expected.push_back(IntArgs(4, 1, 0, 1, 1));
-      expected.push_back(IntArgs(4, 1, 1, 1, 1));
+      expected.push_back(IntArgs({0, 0, 0, 0}));
+      expected.push_back(IntArgs({0, 0, 0, 1}));
+      expected.push_back(IntArgs({0, 0, 1, 0}));
+      expected.push_back(IntArgs({0, 0, 1, 1}));
+      expected.push_back(IntArgs({0, 1, 0, 0}));
+      expected.push_back(IntArgs({0, 1, 0, 1}));
+      expected.push_back(IntArgs({0, 1, 1, 0}));
+      expected.push_back(IntArgs({0, 1, 1, 1}));
+      expected.push_back(IntArgs({1, 0, 0, 1}));
+      expected.push_back(IntArgs({1, 0, 1, 1}));
+      expected.push_back(IntArgs({1, 1, 1, 1}));
       return expected;
     }
   };
@@ -676,30 +676,30 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(12, 0,0,3, 1,0,2, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,0,3, 1,0,2, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,0,3, 1,1,1, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,0,3, 1,1,1, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,0,3, 1,2,0, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,0,3, 1,2,0, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,0,2, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,0,2, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,1,1, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,1,1, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,2,0, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,2,0, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,2,1, 1,0,2, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,2,1, 1,0,2, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,2,1, 1,1,1, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,2,1, 1,1,1, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,2,1, 1,2,0, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,2,1, 1,2,0, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,3,0, 1,0,2, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,3,0, 1,0,2, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,3,0, 1,1,1, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,3,0, 1,1,1, 2,1,0, 3,0,0));
-      expected.push_back(IntArgs(12, 0,3,0, 1,2,0, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,3,0, 1,2,0, 2,1,0, 3,0,0));
+      expected.push_back(IntArgs({0,0,3, 1,0,2, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,0,3, 1,0,2, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,0,3, 1,1,1, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,0,3, 1,1,1, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,0,3, 1,2,0, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,0,3, 1,2,0, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,0,2, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,0,2, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,1,1, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,1,1, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,2,0, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,2,0, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,2,1, 1,0,2, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,2,1, 1,0,2, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,2,1, 1,1,1, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,2,1, 1,1,1, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,2,1, 1,2,0, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,2,1, 1,2,0, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,3,0, 1,0,2, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,3,0, 1,0,2, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,3,0, 1,1,1, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,3,0, 1,1,1, 2,1,0, 3,0,0}));
+      expected.push_back(IntArgs({0,3,0, 1,2,0, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,3,0, 1,2,0, 2,1,0, 3,0,0}));
       return expected;
     }
   };
@@ -744,10 +744,10 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(12, 0,0,3, 1,0,2, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,0,3, 1,1,1, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,0,2, 2,0,1, 3,0,0));
-      expected.push_back(IntArgs(12, 0,1,2, 1,1,1, 2,0,1, 3,0,0));
+      expected.push_back(IntArgs({0,0,3, 1,0,2, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,0,3, 1,1,1, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,0,2, 2,0,1, 3,0,0}));
+      expected.push_back(IntArgs({0,1,2, 1,1,1, 2,0,1, 3,0,0}));
       return expected;
     }
   };
@@ -765,7 +765,7 @@ namespace Test { namespace LDSB {
     static void setup(Home home, IntVarArray& xs) {
       rel(home, xs[0] + xs[1] == 6);
       // Values 0,1,2 are symmetric with 6,5,4.
-      IntArgs values(6, 0,1,2, 6,5,4);
+      IntArgs values({0,1,2, 6,5,4});
       Symmetries s;
       s << ValueSequenceSymmetry(values, 3);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
@@ -774,10 +774,10 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(2, 0,6));
-      expected.push_back(IntArgs(2, 1,5));
-      expected.push_back(IntArgs(2, 2,4));
-      expected.push_back(IntArgs(2, 3,3));
+      expected.push_back(IntArgs({0,6}));
+      expected.push_back(IntArgs({1,5}));
+      expected.push_back(IntArgs({2,4}));
+      expected.push_back(IntArgs({3,3}));
       return expected;
     }
   };
@@ -794,14 +794,14 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, IntVarArray& xs) {
       TupleSet tuples(3);
-      tuples.add(1,1,1).add(4,4,4).add(7,7,7)
-            .add(0,1,5).add(0,1,8).add(3,4,2)
-            .add(3,4,8).add(6,7,2).add(6,7,5)
-            .finalize();
+      tuples.add({1,1,1}).add({4,4,4}).add({7,7,7})
+        .add({0,1,5}).add({0,1,8}).add({3,4,2})
+        .add({3,4,8}).add({6,7,2}).add({6,7,5})
+        .finalize();
       extensional(home, xs, tuples);
 
       // Values 0,1,2 are symmetric with 3,4,5, and with 6,7,8.
-      IntArgs values(9, 0,1,2, 3,4,5, 6,7,8);
+      IntArgs values({0,1,2, 3,4,5, 6,7,8});
       Symmetries s;
       s << ValueSequenceSymmetry(values, 3);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
@@ -810,8 +810,8 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(3, 0,1,5));
-      expected.push_back(IntArgs(3, 1,1,1));
+      expected.push_back(IntArgs({0,1,5}));
+      expected.push_back(IntArgs({1,1,1}));
       return expected;
     }
   };
@@ -837,10 +837,10 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(2, 3,3));
-      expected.push_back(IntArgs(2, 2,4));
-      expected.push_back(IntArgs(2, 1,5));
-      expected.push_back(IntArgs(2, 0,6));
+      expected.push_back(IntArgs({3,3}));
+      expected.push_back(IntArgs({2,4}));
+      expected.push_back(IntArgs({1,5}));
+      expected.push_back(IntArgs({0,6}));
       return expected;
     }
   };
@@ -858,7 +858,7 @@ namespace Test { namespace LDSB {
     static void setup(Home home, IntVarArray& xs) {
       distinct(home, xs);
       Symmetries s;
-      IntArgs indices(4, 0,1,2,3);
+      IntArgs indices({0,1,2,3});
       s << ValueSymmetry(indices);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
@@ -866,7 +866,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -891,7 +891,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -916,7 +916,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 3,2,1,0));
+      expected.push_back(IntArgs({3,2,1,0}));
       return expected;
     }
   };
@@ -933,7 +933,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, IntVarArray& xs) {
       Symmetries s;
-      IntArgs indices(4, 0,1,2,3);
+      IntArgs indices({0,1,2,3});
       s << ValueSymmetry(indices);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
@@ -941,21 +941,21 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,0,0,0));
-      expected.push_back(IntArgs(4, 0,0,0,1));
-      expected.push_back(IntArgs(4, 0,0,1,0));
-      expected.push_back(IntArgs(4, 0,0,1,1));
-      expected.push_back(IntArgs(4, 0,0,1,2));
-      expected.push_back(IntArgs(4, 0,1,0,0));
-      expected.push_back(IntArgs(4, 0,1,0,1));
-      expected.push_back(IntArgs(4, 0,1,0,2));
-      expected.push_back(IntArgs(4, 0,1,1,0));
-      expected.push_back(IntArgs(4, 0,1,1,1));
-      expected.push_back(IntArgs(4, 0,1,1,2));
-      expected.push_back(IntArgs(4, 0,1,2,0));
-      expected.push_back(IntArgs(4, 0,1,2,1));
-      expected.push_back(IntArgs(4, 0,1,2,2));
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,0,0,0}));
+      expected.push_back(IntArgs({0,0,0,1}));
+      expected.push_back(IntArgs({0,0,1,0}));
+      expected.push_back(IntArgs({0,0,1,1}));
+      expected.push_back(IntArgs({0,0,1,2}));
+      expected.push_back(IntArgs({0,1,0,0}));
+      expected.push_back(IntArgs({0,1,0,1}));
+      expected.push_back(IntArgs({0,1,0,2}));
+      expected.push_back(IntArgs({0,1,1,0}));
+      expected.push_back(IntArgs({0,1,1,1}));
+      expected.push_back(IntArgs({0,1,1,2}));
+      expected.push_back(IntArgs({0,1,2,0}));
+      expected.push_back(IntArgs({0,1,2,1}));
+      expected.push_back(IntArgs({0,1,2,2}));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -979,21 +979,21 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,0,0,0));
-      expected.push_back(IntArgs(4, 0,0,0,1));
-      expected.push_back(IntArgs(4, 0,0,1,0));
-      expected.push_back(IntArgs(4, 0,0,1,1));
-      expected.push_back(IntArgs(4, 0,0,1,2));
-      expected.push_back(IntArgs(4, 0,1,0,0));
-      expected.push_back(IntArgs(4, 0,1,0,1));
-      expected.push_back(IntArgs(4, 0,1,0,2));
-      expected.push_back(IntArgs(4, 0,1,1,0));
-      expected.push_back(IntArgs(4, 0,1,1,1));
-      expected.push_back(IntArgs(4, 0,1,1,2));
-      expected.push_back(IntArgs(4, 0,1,2,0));
-      expected.push_back(IntArgs(4, 0,1,2,1));
-      expected.push_back(IntArgs(4, 0,1,2,2));
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,0,0,0}));
+      expected.push_back(IntArgs({0,0,0,1}));
+      expected.push_back(IntArgs({0,0,1,0}));
+      expected.push_back(IntArgs({0,0,1,1}));
+      expected.push_back(IntArgs({0,0,1,2}));
+      expected.push_back(IntArgs({0,1,0,0}));
+      expected.push_back(IntArgs({0,1,0,1}));
+      expected.push_back(IntArgs({0,1,0,2}));
+      expected.push_back(IntArgs({0,1,1,0}));
+      expected.push_back(IntArgs({0,1,1,1}));
+      expected.push_back(IntArgs({0,1,1,2}));
+      expected.push_back(IntArgs({0,1,2,0}));
+      expected.push_back(IntArgs({0,1,2,1}));
+      expected.push_back(IntArgs({0,1,2,2}));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -1011,7 +1011,7 @@ namespace Test { namespace LDSB {
     static void setup(Home home, IntVarArray& xs) {
       distinct(home, xs);
       Symmetries s;
-      IntArgs indices(2, 0,1);
+      IntArgs indices({0,1});
       s << ValueSymmetry(indices);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
@@ -1019,18 +1019,18 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
-      expected.push_back(IntArgs(4, 0,1,3,2));
-      expected.push_back(IntArgs(4, 0,2,1,3));
-      expected.push_back(IntArgs(4, 0,2,3,1));
-      expected.push_back(IntArgs(4, 0,3,1,2));
-      expected.push_back(IntArgs(4, 0,3,2,1));
-      expected.push_back(IntArgs(4, 2,0,1,3));
-      expected.push_back(IntArgs(4, 2,0,3,1));
-      expected.push_back(IntArgs(4, 2,3,0,1));
-      expected.push_back(IntArgs(4, 3,0,1,2));
-      expected.push_back(IntArgs(4, 3,0,2,1));
-      expected.push_back(IntArgs(4, 3,2,0,1));
+      expected.push_back(IntArgs({0,1,2,3}));
+      expected.push_back(IntArgs({0,1,3,2}));
+      expected.push_back(IntArgs({0,2,1,3}));
+      expected.push_back(IntArgs({0,2,3,1}));
+      expected.push_back(IntArgs({0,3,1,2}));
+      expected.push_back(IntArgs({0,3,2,1}));
+      expected.push_back(IntArgs({2,0,1,3}));
+      expected.push_back(IntArgs({2,0,3,1}));
+      expected.push_back(IntArgs({2,3,0,1}));
+      expected.push_back(IntArgs({3,0,1,2}));
+      expected.push_back(IntArgs({3,0,2,1}));
+      expected.push_back(IntArgs({3,2,0,1}));
       return expected;
     }
   };
@@ -1048,7 +1048,7 @@ namespace Test { namespace LDSB {
     static void setup(Home home, IntVarArray& xs) {
       distinct(home, xs);
       Symmetries s;
-      IntArgs indices(1, 0);
+      IntArgs indices({0});
       s << ValueSymmetry(indices);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
     }
@@ -1056,12 +1056,12 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(3, 0,1,2));
-      expected.push_back(IntArgs(3, 0,2,1));
-      expected.push_back(IntArgs(3, 1,0,2));
-      expected.push_back(IntArgs(3, 1,2,0));
-      expected.push_back(IntArgs(3, 2,0,1));
-      expected.push_back(IntArgs(3, 2,1,0));
+      expected.push_back(IntArgs({0,1,2}));
+      expected.push_back(IntArgs({0,2,1}));
+      expected.push_back(IntArgs({1,0,2}));
+      expected.push_back(IntArgs({1,2,0}));
+      expected.push_back(IntArgs({2,0,1}));
+      expected.push_back(IntArgs({2,1,0}));
       return expected;
     }
   };
@@ -1079,8 +1079,8 @@ namespace Test { namespace LDSB {
     static void setup(Home home, IntVarArray& xs) {
       distinct(home, xs);
       Symmetries s;
-      IntArgs indices0(2, 0,1);
-      IntArgs indices1(2, 2,3);
+      IntArgs indices0({0,1});
+      IntArgs indices1({2,3});
       s << ValueSymmetry(indices0);
       s << ValueSymmetry(indices1);
       branch(home, xs, INT_VAR_NONE(), INT_VAL_MIN(), s);
@@ -1089,12 +1089,12 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
-      expected.push_back(IntArgs(4, 0,2,1,3));
-      expected.push_back(IntArgs(4, 0,2,3,1));
-      expected.push_back(IntArgs(4, 2,0,1,3));
-      expected.push_back(IntArgs(4, 2,0,3,1));
-      expected.push_back(IntArgs(4, 2,3,0,1));
+      expected.push_back(IntArgs({0,1,2,3}));
+      expected.push_back(IntArgs({0,2,1,3}));
+      expected.push_back(IntArgs({0,2,3,1}));
+      expected.push_back(IntArgs({2,0,1,3}));
+      expected.push_back(IntArgs({2,0,3,1}));
+      expected.push_back(IntArgs({2,3,0,1}));
       return expected;
     }
   };
@@ -1119,14 +1119,14 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,0,0,0));
-      expected.push_back(IntArgs(4, 0,0,0,1));
-      expected.push_back(IntArgs(4, 0,0,1,1));
-      expected.push_back(IntArgs(4, 0,0,1,2));
-      expected.push_back(IntArgs(4, 0,1,1,1));
-      expected.push_back(IntArgs(4, 0,1,1,2));
-      expected.push_back(IntArgs(4, 0,1,2,2));  // This solution is symmetric to the previous one.
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,0,0,0}));
+      expected.push_back(IntArgs({0,0,0,1}));
+      expected.push_back(IntArgs({0,0,1,1}));
+      expected.push_back(IntArgs({0,0,1,2}));
+      expected.push_back(IntArgs({0,1,1,1}));
+      expected.push_back(IntArgs({0,1,1,2}));
+      expected.push_back(IntArgs({0,1,2,2}));  // This solution is symmetric to the previous one.
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };
@@ -1167,10 +1167,10 @@ namespace Test { namespace LDSB {
       static std::vector<IntArgs> expectedSolutions(void) {
         static std::vector<IntArgs> expected;
         expected.clear();
-        expected.push_back(IntArgs(16, 1,2,3,4, 2,1,4,3, 3,4,1,2, 4,3,2,1));
-        expected.push_back(IntArgs(16, 1,2,3,4, 2,1,4,3, 3,4,2,1, 4,3,1,2));
-        expected.push_back(IntArgs(16, 1,2,3,4, 2,3,4,1, 3,4,1,2, 4,1,2,3));
-        expected.push_back(IntArgs(16, 1,2,3,4, 2,4,1,3, 3,1,4,2, 4,3,2,1));
+        expected.push_back(IntArgs({1,2,3,4, 2,1,4,3, 3,4,1,2, 4,3,2,1}));
+        expected.push_back(IntArgs({1,2,3,4, 2,1,4,3, 3,4,2,1, 4,3,1,2}));
+        expected.push_back(IntArgs({1,2,3,4, 2,3,4,1, 3,4,1,2, 4,1,2,3}));
+        expected.push_back(IntArgs({1,2,3,4, 2,4,1,3, 3,1,4,2, 4,3,2,1}));
         return expected;
       }
     };
@@ -1227,7 +1227,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, IntVarArray& xs) {
       TupleSet t(2);
-      t.add(0,0).add(1,1).finalize();
+      t.add({0,0}).add({1,1}).finalize();
       IntVarArgs va;
       va << xs[0] << xs[2];
       extensional(home, va, t);
@@ -1239,8 +1239,8 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,0,0,0));
-      expected.push_back(IntArgs(4, 0,0,0,1));
+      expected.push_back(IntArgs({0,0,0,0}));
+      expected.push_back(IntArgs({0,0,0,1}));
 
       // This is the solution that will be found if recomputation is
       // not handled.  After branching on x[0]=0, we try x[1]=0.  When
@@ -1251,13 +1251,13 @@ namespace Test { namespace LDSB {
       // it doesn't, we don't use the symmetry and we find a solution
       // where x[3]=0.
 
-      // expected.push_back(IntArgs(4, 0,1,0,0));
+      // expected.push_back(IntArgs({0,1,0,0}));
 
-      expected.push_back(IntArgs(4, 0,1,0,1));
+      expected.push_back(IntArgs({0,1,0,1}));
 
-      expected.push_back(IntArgs(4, 1,0,1,0));
-      expected.push_back(IntArgs(4, 1,0,1,1));
-      expected.push_back(IntArgs(4, 1,1,1,1));
+      expected.push_back(IntArgs({1,0,1,0}));
+      expected.push_back(IntArgs({1,0,1,1}));
+      expected.push_back(IntArgs({1,1,1,1}));
       return expected;
     }
   };
@@ -1280,7 +1280,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, IntVarArray& xs) {
       Symmetries syms;
-      IntArgs indices(4, 0,1,2,3);
+      IntArgs indices({0,1,2,3});
       syms << VariableSymmetry(xs, indices);
       distinct(home, xs);
       // This redundant constraint is to trick the variable
@@ -1298,7 +1298,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 3,2,0,1));
+      expected.push_back(IntArgs({3,2,0,1}));
       return expected;
     }
   };
@@ -1387,7 +1387,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, SetVarArray& xs) {
       Symmetries syms;
-      syms << ValueSymmetry(IntArgs(2, 0,1));
+      syms << ValueSymmetry(IntArgs({0,1}));
       branch(home, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
     }
     /// Compute list of expected solutions
@@ -1426,7 +1426,7 @@ namespace Test { namespace LDSB {
     /// Setup problem constraints and symmetries
     static void setup(Home home, SetVarArray& xs) {
       Symmetries syms;
-      syms << ValueSymmetry(IntArgs(4, 1,2,3,4));
+      syms << ValueSymmetry(IntArgs({1,2,3,4}));
       for (int i = 0 ; i < 3 ; i++)
         cardinality(home, xs[i], 1, 1);
       branch(home, xs, SET_VAR_NONE(), SET_VAL_MIN_INC(), syms);
@@ -1547,10 +1547,10 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(6, 0,1,2,3,4,5));
-      expected.push_back(IntArgs(6, 0,1,2,4,5,6));
-      expected.push_back(IntArgs(6, 0,1,2,5,4,3));
-      expected.push_back(IntArgs(6, 0,1,2,6,5,4));
+      expected.push_back(IntArgs({0,1,2,3,4,5}));
+      expected.push_back(IntArgs({0,1,2,4,5,6}));
+      expected.push_back(IntArgs({0,1,2,5,4,3}));
+      expected.push_back(IntArgs({0,1,2,6,5,4}));
       return expected;
     }
   };
@@ -1574,14 +1574,14 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(2, 0,0));
-      expected.push_back(IntArgs(2, 0,1));
-      expected.push_back(IntArgs(2, 0,2));
-      expected.push_back(IntArgs(2, 0,3));
-      expected.push_back(IntArgs(2, 1,0));
-      expected.push_back(IntArgs(2, 1,1));
-      expected.push_back(IntArgs(2, 1,2));
-      expected.push_back(IntArgs(2, 1,3));
+      expected.push_back(IntArgs({0,0}));
+      expected.push_back(IntArgs({0,1}));
+      expected.push_back(IntArgs({0,2}));
+      expected.push_back(IntArgs({0,3}));
+      expected.push_back(IntArgs({1,0}));
+      expected.push_back(IntArgs({1,1}));
+      expected.push_back(IntArgs({1,2}));
+      expected.push_back(IntArgs({1,3}));
       return expected;
     }
   };
@@ -1607,7 +1607,7 @@ namespace Test { namespace LDSB {
     static std::vector<IntArgs> expectedSolutions(void) {
       static std::vector<IntArgs> expected;
       expected.clear();
-      expected.push_back(IntArgs(4, 0,1,2,3));
+      expected.push_back(IntArgs({0,1,2,3}));
       return expected;
     }
   };

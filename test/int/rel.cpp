@@ -446,7 +446,7 @@ namespace Test { namespace Int {
          : Test("Rel::Int::Array::Int::"+str(irt0),3,-2,2), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         Gecode::IntArgs y(3, 0,0,0);
+         Gecode::IntArgs y({0,0,0});
          int n=x.size();
          for (int i=0; i<n; i++)
            if (x[i] != y[i])
@@ -459,7 +459,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         IntArgs y(3, 0,0,0);
+         IntArgs y({0,0,0});
          rel(home, x, irt, y);
        }
      };
@@ -547,7 +547,7 @@ namespace Test { namespace Int {
          : Test("Rel::Bool::Array::Int::"+str(irt0),5,0,1), irt(irt0) {}
        /// %Test whether \a x is solution
        virtual bool solution(const Assignment& x) const {
-         Gecode::IntArgs y(5, 0,0,1,0,0);
+         Gecode::IntArgs y({0,0,1,0,0});
          for (int i=0; i<5; i++)
            if (x[i] != y[i])
              return cmp(x[i],irt,y[i]);
@@ -559,7 +559,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         Gecode::IntArgs z(5, 0,0,1,0,0);
+         Gecode::IntArgs z({0,0,1,0,0});
          int n=x.size();
          BoolVarArgs y(n);
          for (int i=0; i<n; i++)
