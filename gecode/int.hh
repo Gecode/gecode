@@ -622,7 +622,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing integer arguments
-  class IntArgs : public PrimArgArray<int> {
+  class IntArgs : public ArgArray<int> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -642,7 +642,7 @@ namespace Gecode {
     /// Allocate array with \a n elements and initialize with elements from array \a e
     IntArgs(int n, const int* e);
     /// Initialize from primitive argument array \a a (copy elements)
-    IntArgs(const PrimArgArray<int>& a);
+    IntArgs(const ArgArray<int>& a);
 
     /// Allocate array with \a n elements such that for all \f$0\leq i<n: x_i=\text{start}+i\cdot\text{inc}\f$
     static IntArgs create(int n, int start, int inc=1);
@@ -1008,11 +1008,11 @@ namespace Gecode {
    *
    * \ingroup TaskModelInt
    */
-  typedef PrimArgArray<TaskType> TaskTypeArgs;
+  typedef ArgArray<TaskType> TaskTypeArgs;
 
   /// Traits of %TaskTypeArgs
   template<>
-  class ArrayTraits<PrimArgArray<TaskType> > {
+  class ArrayTraits<ArgArray<TaskType> > {
   public:
     typedef TaskTypeArgs StorageType;
     typedef TaskType     ValueType;

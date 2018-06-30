@@ -999,7 +999,7 @@ namespace Gecode {
 namespace Gecode {
 
   /// Passing search engine builder arguments
-  class SEBs : public PrimArgArray<SEB> {
+  class SEBs : public ArgArray<SEB> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -1015,7 +1015,7 @@ namespace Gecode {
     template<class InputIterator>
     SEBs(InputIterator first, InputIterator last);
     /// Initialize from primitive argument array \a a (copy elements)
-    SEBs(const PrimArgArray<SEB>& a);
+    SEBs(const ArgArray<SEB>& a);
     //@}
   };
 
