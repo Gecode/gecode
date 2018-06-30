@@ -499,6 +499,8 @@ namespace Gecode {
     SetVarArgs(const VarArray<SetVar>& a);
     /// Initialize from vector \a a
     SetVarArgs(const std::vector<SetVar>& a);
+    /// Initialize from list \a a
+    SetVarArgs(std::initializer_list<SetVar> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
     SetVarArgs(InputIterator first, InputIterator last);

@@ -959,6 +959,8 @@ namespace Gecode {
     FloatValArgs(const SharedArray<FloatVal>& x);
     /// Allocate array and copy elements from \a x
     FloatValArgs(const std::vector<FloatVal>& x);
+    /// Allocate array and copy elements from \a x
+    FloatValArgs(std::initializer_list<FloatVal> x);
     /// Allocate array and copy elements from \a first to \a last
     template<class InputIterator>
     FloatValArgs(InputIterator first, InputIterator last);
@@ -979,19 +981,20 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    FloatVarArgs(void) {}
+    FloatVarArgs(void);
     /// Allocate array with \a n elements
-    explicit FloatVarArgs(int n) : VarArgArray<FloatVar>(n) {}
+    explicit FloatVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    FloatVarArgs(const FloatVarArgs& a) : VarArgArray<FloatVar>(a) {}
+    FloatVarArgs(const FloatVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    FloatVarArgs(const VarArray<FloatVar>& a) : VarArgArray<FloatVar>(a) {}
+    FloatVarArgs(const VarArray<FloatVar>& a);
     /// Initialize from vector \a a
-    FloatVarArgs(const std::vector<FloatVar>& a) : VarArgArray<FloatVar>(a) {}
+    FloatVarArgs(const std::vector<FloatVar>& a);
+    /// Initialize from list \a a
+    FloatVarArgs(std::initializer_list<FloatVar> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    FloatVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<FloatVar>(first,last) {}
+    FloatVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Initialize array with \a n new variables
      *
