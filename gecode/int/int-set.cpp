@@ -116,25 +116,53 @@ namespace Gecode {
 
   void
   IntSet::init(const int r[], int n) {
-    Range* dr = heap.alloc<Range>(n);
+    assert(n > 0);
+    Region reg;
+    Range* dr = reg.alloc<Range>(n);
     for (int i=n; i--; ) {
       dr[i].min=r[i]; dr[i].max=r[i];
     }
     normalize(&dr[0],n);
-    heap.free(dr,n);
   }
 
   void
   IntSet::init(const int r[][2], int n) {
-    Range* dr = heap.alloc<Range>(n);
+    assert(n > 0);
+    Region reg;
+    Range* dr = reg.alloc<Range>(n);
     int j = 0;
     for (int i=n; i--; )
       if (r[i][0] <= r[i][1]) {
         dr[j].min=r[i][0]; dr[j].max=r[i][1]; j++;
       }
     normalize(&dr[0],j);
-    heap.free(dr,n);
   }
+
+  IntSet::IntSet(std::initializer_list<int> r) {
+    int n = static_cast<int>(r.size());
+    assert(n > 0);
+    Region reg;
+    Range* dr = reg.alloc<Range>(n);
+    int j=0;
+    for (int k : r) {
+      dr[j].min=dr[j].max=k; j++;
+    }
+    normalize(&dr[0],j);
+  }
+
+  IntSet::IntSet(std::initializer_list<std::pair<int,int>> r) {
+    int n = static_cast<int>(r.size());
+    assert(n > 0);
+    Region reg;
+    Range* dr = reg.alloc<Range>(n);
+    int j=0;
+    for (const std::pair<int,int>& k : r) 
+      if (k.first <= k.second) {
+        dr[j].min=k.first; dr[j].max=k.second; j++;
+      }
+    normalize(&dr[0],j);
+  }
+
 
   void
   IntSet::init(int n, int m) {
