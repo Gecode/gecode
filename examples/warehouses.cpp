@@ -198,9 +198,7 @@ public:
   }
   /// Return solution cost
   virtual IntVarArgs cost(void) const {
-    IntVarArgs c(2);
-    c[0] = c_open; c[1] = c_stores; 
-    return c;
+    return {c_open, c_stores};
   }
   /// Constructor for cloning \a s
   LexCostWarehouses(LexCostWarehouses& s)
