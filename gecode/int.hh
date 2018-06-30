@@ -634,19 +634,20 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    IntVarArgs(void) {}
+    IntVarArgs(void);
     /// Allocate array with \a n elements
-    explicit IntVarArgs(int n) : VarArgArray<IntVar>(n) {}
+    explicit IntVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    IntVarArgs(const IntVarArgs& a) : VarArgArray<IntVar>(a) {}
+    IntVarArgs(const IntVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    IntVarArgs(const VarArray<IntVar>& a) : VarArgArray<IntVar>(a) {}
-    /// Initialize from vector \a a
-    IntVarArgs(const std::vector<IntVar>& a) : VarArgArray<IntVar>(a) {}
+    IntVarArgs(const VarArray<IntVar>& a);
+    /// Initialize from \a a
+    IntVarArgs(const std::vector<IntVar>& a);
+    /// Initialize from \a a
+    IntVarArgs(std::initializer_list<IntVar> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    IntVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<IntVar>(first,last) {}
+    IntVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Initialize array with \a n new variables
      *
@@ -675,6 +676,7 @@ namespace Gecode {
     IntVarArgs(Space& home, int n, const IntSet& s);
     //@}
   };
+
   /** \brief Passing Boolean variables
    *
    * We could have used a simple typedef instead, but doxygen cannot
@@ -688,20 +690,20 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Allocate empty array
-    BoolVarArgs(void) {}
+    BoolVarArgs(void);
     /// Allocate array with \a n elements
-    explicit BoolVarArgs(int n) : VarArgArray<BoolVar>(n) {}
+    explicit BoolVarArgs(int n);
     /// Initialize from variable argument array \a a (copy elements)
-    BoolVarArgs(const BoolVarArgs& a) : VarArgArray<BoolVar>(a) {}
+    BoolVarArgs(const BoolVarArgs& a);
     /// Initialize from variable array \a a (copy elements)
-    BoolVarArgs(const VarArray<BoolVar>& a)
-     : VarArgArray<BoolVar>(a) {}
-    /// Initialize from vector \a a
-    BoolVarArgs(const std::vector<BoolVar>& a) : VarArgArray<BoolVar>(a) {}
+    BoolVarArgs(const VarArray<BoolVar>& a);
+    /// Initialize from \a a
+    BoolVarArgs(const std::vector<BoolVar>& a);
+    /// Initialize from \a a
+    BoolVarArgs(std::initializer_list<BoolVar> a);
     /// Initialize from InputIterator \a first and \a last
     template<class InputIterator>
-    BoolVarArgs(InputIterator first, InputIterator last)
-    : VarArgArray<BoolVar>(first,last) {}
+    BoolVarArgs(InputIterator first, InputIterator last);
     /**
      * \brief Initialize array with \a n new variables
      *
@@ -2238,9 +2240,6 @@ namespace Gecode {
     /// Add tuple \a t to tuple set
     GECODE_INT_EXPORT
     void _add(const IntArgs& t);
-    /// Add initialzer list \a t to tuple set
-    GECODE_INT_EXPORT
-    void _add(std::initializer_list<int> t); 
     /// Test whether tuple set is equal to \a t
     GECODE_INT_EXPORT
     bool equal(const TupleSet& t) const;
@@ -2276,8 +2275,6 @@ namespace Gecode {
     //@{
     /// Add tuple \a t to tuple set
     TupleSet& add(const IntArgs& t);
-    /// Add initialzer list \a t to tuple set
-    TupleSet& add(std::initializer_list<int> t); 
     /// Is tuple set finalized
     bool finalized(void) const;
     /// Finalize tuple set
