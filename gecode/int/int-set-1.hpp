@@ -54,7 +54,8 @@ namespace Gecode {
   public:
     /// Initialize \a s with iterator \a i
     static void init(IntSet& s, I& i) {
-      Support::DynamicArray<IntSet::Range,Heap> d(heap);
+      Region reg;
+      Support::DynamicArray<IntSet::Range,Region> d(reg);
       int n=0;
       unsigned int size = 0;
       while (i()) {
@@ -94,12 +95,43 @@ namespace Gecode {
 
   forceinline
   IntSet::IntSet(const int r[][2], int n) {
-    init(r,n);
+    if (n > 0)
+      init(r,n);
   }
 
   forceinline
   IntSet::IntSet(const int r[], int n) {
-    init(r,n);
+    if (n > 0)
+      init(r,n);
+  }
+
+  template<>
+  inline
+  IntSet::IntSet(const std::vector<int>& r) {
+    int n = static_cast<int>(r.size());
+    if (n > 0) {
+      Region reg;
+      Range* dr = reg.alloc<Range>(n);
+      for (int i=n; i--; )
+        dr[i].min=dr[i].max=r[i];
+      normalize(&dr[0],n);
+    }
+  }
+
+  template<>
+  inline
+  IntSet::IntSet(const std::vector<std::pair<int,int>>& r) {
+    int n = static_cast<int>(r.size());
+    if (n > 0) {
+      Region reg;
+      Range* dr = reg.alloc<Range>(n);
+      int j=0;
+      for (int i=n; i--; ) 
+        if (r[i].first <= r[i].second) {
+          dr[j].min=r[i].first; dr[j].max=r[i].second; j++;
+        }
+      normalize(&dr[0],j);
+    }
   }
 
   forceinline
@@ -156,12 +188,13 @@ namespace Gecode {
   forceinline unsigned int
   IntSet::size(void) const {
     IntSetObject* o = static_cast<IntSetObject*>(object());
-    return (o == NULL) ? 0 : o->size;
+    return (o == NULL) ? 0U : o->size;
   }
 
   forceinline unsigned int
   IntSet::width(void) const {
-    return static_cast<unsigned int>(max()-min()+1);
+    IntSetObject* o = static_cast<IntSetObject*>(object());
+    return (o == NULL) ? 0U : static_cast<unsigned int>(max()-min()+1);
   }
 
 
