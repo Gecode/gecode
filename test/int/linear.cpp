@@ -271,7 +271,7 @@ namespace Test { namespace Int {
            const int dv3[] = {0,1500000000};
            IntSet d3(dv3,2);
 
-           IntArgs a1(1, 0);
+           IntArgs a1({0});
 
            for (IntRelTypes irts; irts(); ++irts) {
              (void) new IntInt("11",d1,a1,irts.irt(),0);
@@ -289,6 +289,7 @@ namespace Test { namespace Int {
            const int av3[5] = {1,-1,-1,1,-1};
            const int av4[5] = {2,3,5,7,11};
            const int av5[5] = {-2,3,-5,7,-11};
+
 
            for (int i=1; i<=5; i++) {
              IntArgs a2(i, av2);
@@ -339,7 +340,7 @@ namespace Test { namespace Int {
            const int av2[10] = {
              -1,-1,-1,-1,-1,-1,-1,-1,-1,-1
            };
-
+           
            for (int i=1; i<=10; i += 3) {
              IntArgs a1(i, av1);
              IntArgs a2(i, av2);
@@ -350,9 +351,9 @@ namespace Test { namespace Int {
                }
            }
 
-           IntArgs a3(5, 1,2,3,4,5);
-           IntArgs a4(5, -1,-2,-3,-4,-5);
-           IntArgs a5(5, -1,-2,1,2,4);
+           IntArgs a3({1,2,3,4,5});
+           IntArgs a4({-1,-2,-3,-4,-5});
+           IntArgs a5({-1,-2,1,2,4});
 
            for (IntRelTypes irts; irts(); ++irts) {
              for (int c=0; c<=16; c++) {
@@ -372,10 +373,10 @@ namespace Test { namespace Int {
              }
            }
 
-           IntArgs a6(4, 1,2,3,4);
-           IntArgs a7(4, -1,-2,-3,-4);
-           IntArgs a8(4, -1,-2,1,2);
-           IntArgs a9(6, -1,-2,1,2,-3,3);
+           IntArgs a6({1,2,3,4});
+           IntArgs a7({-1,-2,-3,-4});
+           IntArgs a8({-1,-2,1,2});
+           IntArgs a9({-1,-2,1,2,-3,3});
 
            for (IntRelTypes irts; irts(); ++irts) {
              (void) new BoolVar("6",0,10,a6,irts.irt());

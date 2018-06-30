@@ -169,7 +169,7 @@ namespace Test { namespace Int {
        }
      };
 
-     Gecode::IntArgs ints(4, 1,0,3,2);
+     Gecode::IntArgs ints({1,0,3,2});
 
      /// %Test number of several equal integers equal to integer
      class IntArrayInt : public Test {

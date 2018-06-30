@@ -226,7 +226,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         IntArgs m(ntasks), l(1, limit);
+         IntArgs m(ntasks), l({limit});
          IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
          for (int i = 0; i < ntasks; ++i) {
            int p = i*4;

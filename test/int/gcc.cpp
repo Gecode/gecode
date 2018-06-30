@@ -133,7 +133,7 @@ namespace Test { namespace Int {
        }
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
-         Gecode::IntArgs values(2, 1,2);
+         Gecode::IntArgs values({1,2});
          Gecode::count(home, x, Gecode::IntSet(2,2), values, ipl);
        }
      };
@@ -161,7 +161,7 @@ namespace Test { namespace Int {
        /// Post constraint on \a x
        virtual void post(Gecode::Space& home, Gecode::IntVarArray& x) {
          using namespace Gecode;
-         IntArgs values(2, 1,2);
+         IntArgs values({1,2});
          Gecode::IntSet fixed;
          if (!hole) {
            fixed = IntSet(0,2);

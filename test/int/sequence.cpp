@@ -128,7 +128,7 @@ namespace Test { namespace Int {
          IntSet b(1,1);
          IntSet c(2,2);
          IntSet d(0,1);
-         IntArgs ie(2, 0,2);
+         IntArgs ie({0,2});
          IntSet e(ie);
 
          (void) new SequenceBoolTest("A",a,3,2,2,6);

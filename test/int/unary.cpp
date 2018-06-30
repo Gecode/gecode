@@ -260,12 +260,12 @@ namespace Test { namespace Int { namespace Unary {
     /// Perform creation and registration
     Create(void) {
       using namespace Gecode;
-      IntArgs p1(4, 2,2,2,2);
-      IntArgs p10(5, 2,2,0,2,2);
-      IntArgs p2(4, 4,3,3,5);
-      IntArgs p20(6, 4,0,3,3,0,5);
-      IntArgs p3(6, 4,2,9,3,7,5);
-      IntArgs p30(8, 4,0,2,9,3,7,5,0);
+      IntArgs p1({2,2,2,2});
+      IntArgs p10({2,2,0,2,2});
+      IntArgs p2({4,3,3,5});
+      IntArgs p20({4,0,3,3,0,5});
+      IntArgs p3({4,2,9,3,7,5});
+      IntArgs p30({4,0,2,9,3,7,5,0});
 
       for (IntPropBasicAdvanced ipba; ipba(); ++ipba) {
         (void) new ManFixPUnary(p1,0,ipba.ipl());

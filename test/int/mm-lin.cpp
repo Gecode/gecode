@@ -206,7 +206,7 @@ namespace Test { namespace Int {
            {
              IntVar x = Gecode::expr(home,eval(l_lis,l_reg));
              IntVar y = Gecode::expr(home,eval(r_lis,r_reg));
-             IntArgs a(2, 1,-1);
+             IntArgs a({1,-1});
              IntVarArgs xy(2); xy[0]=x; xy[1]=y;
              Gecode::rel(home, 0 == sum(a,xy));
            }
@@ -305,7 +305,7 @@ namespace Test { namespace Int {
            {
              IntVar x = Gecode::expr(home,eval(l_lis,l_reg));
              IntVar y = Gecode::expr(home,eval(r_lis,r_reg));
-             IntArgs a(2, -2,2);
+             IntArgs a({-2,2});
              IntVarArgs xy(2); xy[0]=x; xy[1]=y;
              Gecode::rel(home, 0 == sum(a,xy));
            }
