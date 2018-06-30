@@ -39,33 +39,38 @@ namespace Gecode {
    */
 
   forceinline
-  IntArgs::IntArgs(void) : PrimArgArray<int>(0) {}
+  IntArgs::IntArgs(void) : ArgArray<int>(0) {}
 
   forceinline
-  IntArgs::IntArgs(int n) : PrimArgArray<int>(n) {}
+  IntArgs::IntArgs(int n) : ArgArray<int>(n) {}
 
   forceinline
   IntArgs::IntArgs(const SharedArray<int>& x)
-    : PrimArgArray<int>(x.size()) {
+    : ArgArray<int>(x.size()) {
     for (int i=x.size(); i--;)
       a[i] = x[i];
   }
+
   forceinline
   IntArgs::IntArgs(const std::vector<int>& x)
-    : PrimArgArray<int>(x) {}
+    : ArgArray<int>(x) {}
+
   forceinline
   IntArgs::IntArgs(std::initializer_list<int> x)
-    : PrimArgArray<int>(x) {}
+    : ArgArray<int>(x) {}
+
   template<class InputIterator>
   forceinline
   IntArgs::IntArgs(InputIterator first, InputIterator last)
-    : PrimArgArray<int>(first,last) {}
+    : ArgArray<int>(first,last) {}
 
   forceinline
-  IntArgs::IntArgs(int n, const int* e) : PrimArgArray<int>(n, e) {}
+  IntArgs::IntArgs(int n, const int* e)
+    : ArgArray<int>(n, e) {}
 
   forceinline
-  IntArgs::IntArgs(const PrimArgArray<int>& a) : PrimArgArray<int>(a) {}
+  IntArgs::IntArgs(const ArgArray<int>& a)
+    : ArgArray<int>(a) {}
 
   forceinline IntArgs
   IntArgs::create(int n, int start, int inc) {
