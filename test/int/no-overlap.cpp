@@ -262,10 +262,10 @@ namespace Test { namespace Int {
       Create(void) {
         using namespace Gecode;
 
-        IntArgs s1(3, 2,1,1);
-        IntArgs s2(4, 1,2,3,4);
-        IntArgs s3(4, 4,3,2,1);
-        IntArgs s4(4, 1,1,1,1);
+        IntArgs s1({2,1,1});
+        IntArgs s2({1,2,3,4});
+        IntArgs s3({4,3,2,1});
+        IntArgs s4({1,1,1,1});
 
         for (int m=2; m<3; m++) {
           (void) new Int2(m, s1, s1);

@@ -100,9 +100,9 @@ namespace Test { namespace Int {
      Single _a(2, 3);
      Single _b(1, 4);
 
-     Multi _c(Gecode::IntArgs(3, 1,2,3));
-     Multi _d(Gecode::IntArgs(3, 3,2,1));
-     Multi _e(Gecode::IntArgs(4, 4,2,3,1));
+     Multi _c(Gecode::IntArgs({1,2,3}));
+     Multi _d(Gecode::IntArgs({3,2,1}));
+     Multi _e(Gecode::IntArgs({4,2,3,1}));
 
    }
 

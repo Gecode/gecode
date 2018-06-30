@@ -68,7 +68,7 @@ namespace Test { namespace Int {
        }
      };
 
-     Gecode::IntArgs i(4, 1,2,3,4);
+     Gecode::IntArgs i({1,2,3,4});
      Basic b1(3);
      Basic b2(i);
      //@}

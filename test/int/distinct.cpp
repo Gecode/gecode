@@ -291,15 +291,15 @@ namespace Test { namespace Int {
      Offset bnd_os(d,Gecode::IPL_BND);
      Offset val_os(d,Gecode::IPL_VAL);
 
-     Gecode::IntArgs v1(4, Gecode::Int::Limits::min+4,
-                           0,1,
-                           Gecode::Int::Limits::max);
-     Gecode::IntArgs v2(4, Gecode::Int::Limits::min,
-                           0,1,
-                           Gecode::Int::Limits::max-4);
-     Gecode::IntArgs v3(4, 0,1,2,3);
-     Gecode::IntArgs v4(3, 0,1,2);
-     Gecode::IntArgs v5(2, 0,1);
+     Gecode::IntArgs v1({Gecode::Int::Limits::min+4,
+                         0,1,
+                         Gecode::Int::Limits::max});
+     Gecode::IntArgs v2({Gecode::Int::Limits::min,
+                         0,1,
+                         Gecode::Int::Limits::max-4});
+     Gecode::IntArgs v3({0,1,2,3});
+     Gecode::IntArgs v4({0,1,2});
+     Gecode::IntArgs v5({0,1});
 
      Optional od1(v1,Gecode::IPL_DOM);
      Optional ob1(v1,Gecode::IPL_BND);
