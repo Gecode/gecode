@@ -75,6 +75,65 @@ namespace Gecode {
     return r;
   }
 
+
+  forceinline
+  IntVarArgs::IntVarArgs(void) {}
+
+  forceinline
+  IntVarArgs::IntVarArgs(int n)
+    : VarArgArray<IntVar>(n) {}
+
+  forceinline
+  IntVarArgs::IntVarArgs(const IntVarArgs& a)
+    : VarArgArray<IntVar>(a) {}
+
+  forceinline
+  IntVarArgs::IntVarArgs(const VarArray<IntVar>& a)
+    : VarArgArray<IntVar>(a) {}
+
+  forceinline
+  IntVarArgs::IntVarArgs(const std::vector<IntVar>& a)
+    : VarArgArray<IntVar>(a) {}
+
+  forceinline
+  IntVarArgs::IntVarArgs(std::initializer_list<IntVar> a)
+    : VarArgArray<IntVar>(a) {}
+
+  template<class InputIterator>
+  forceinline
+  IntVarArgs::IntVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<IntVar>(first,last) {}
+
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(void) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(int n)
+    : VarArgArray<BoolVar>(n) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(const BoolVarArgs& a)
+    : VarArgArray<BoolVar>(a) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(const VarArray<BoolVar>& a)
+    : VarArgArray<BoolVar>(a) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(const std::vector<BoolVar>& a)
+    : VarArgArray<BoolVar>(a) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(std::initializer_list<BoolVar> a)
+    : VarArgArray<BoolVar>(a) {}
+
+  template<class InputIterator>
+  forceinline
+  BoolVarArgs::BoolVarArgs(InputIterator first, InputIterator last)
+    : VarArgArray<BoolVar>(first,last) {}
+
+
   forceinline
   IntVarArray::IntVarArray(void) {}
 
