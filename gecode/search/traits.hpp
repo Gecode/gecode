@@ -38,7 +38,7 @@ namespace Gecode {
 
   /// Traits of %SEBs
   template<>
-  class ArrayTraits<PrimArgArray<SEB> > {
+  class ArrayTraits<ArgArray<SEB> > {
   public:
     typedef SEBs StorageType;
     typedef SEB  ValueType;
