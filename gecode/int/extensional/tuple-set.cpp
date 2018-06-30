@@ -469,20 +469,6 @@ namespace Gecode {
       a[i]=t[i];
   }
 
-  void
-  TupleSet::_add(std::initializer_list<int> t) {
-    if (!*this)
-      throw Int::UninitializedTupleSet("TupleSet::add()");
-    if (raw().finalized())
-      throw Int::AlreadyFinalized("TupleSet::add()");
-    if (t.size() != raw().arity)
-      throw Int::ArgumentSizeMismatch("TupleSet::add()");
-    Tuple a = raw().add();
-    int i=0;
-    for (int n : t)
-      a[i++]=n;
-  }
-
 }
 
 // STATISTICS: int-prop
