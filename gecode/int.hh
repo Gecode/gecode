@@ -2101,6 +2101,19 @@ namespace Gecode {
       /// Return current symbol
       int val(void) const;
     };
+    /**
+     * \brief Initialize DFA
+     *
+     * - Start state is given by \a s.
+     * - %Transitions are described by \a t, where the last element
+     *   must have -1 as value for \c i_state.
+     * - Final states are given by \a f, where the last final element
+     *   must be -1.
+     * - Minimizes the DFA, if \a minimize is true.
+     * - Note that the transitions must be deterministic.
+     */
+    GECODE_INT_EXPORT
+    void init(int s, Transition t[], int f[], bool minimize=true);
   public:
     friend class Transitions;
     /// Initialize for DFA accepting the empty word
@@ -2118,6 +2131,18 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     DFA(int s, Transition t[], int f[], bool minimize=true);
+    /**
+     * \brief Initialize DFA
+     *
+     * - Start state is given by \a s.
+     * - %Transitions are described by \a t.
+     * - Final states are given by \a f.
+     * - Minimizes the DFA, if \a minimize is true.
+     * - Note that the transitions must be deterministic.
+     */
+    GECODE_INT_EXPORT
+    DFA(int s, std::initializer_list<Transition> t,
+        std::initializer_list<int> f, bool minimize=true);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
     /// Test whether DFA is equal to \a d

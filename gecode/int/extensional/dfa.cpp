@@ -148,7 +148,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 namespace Gecode {
 
-  DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
+  void
+  DFA::init(int start, Transition t_spec[], int f_spec[], bool minimize) {
     using namespace Int;
     using namespace Extensional;
     // Compute number of states and transitions
@@ -479,6 +480,32 @@ namespace Gecode {
     heap.free<int>(re,n_states);
     heap.free<int>(state,n_states);
     heap.free<Transition>(trans,n_trans);
+  }
+
+  DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
+    init(start,t_spec,f_spec,minimize);
+  }
+
+  DFA::DFA(int start, std::initializer_list<Transition> tl,
+           std::initializer_list<int> fl, bool minimize) {
+    Region reg;
+    int nt = static_cast<int>(tl.size());
+    int nf = static_cast<int>(fl.size());
+    Transition* ts = reg.alloc<Transition>(nt + 1);
+    {
+      int i=0;
+      for (const Transition& t : tl)
+        ts[i++] = t;
+      ts[nt].i_state = -1;
+    }
+    int* fs = reg.alloc<int>(nf + 1);
+    {
+      int i=0;
+      for (const int& f : fl)
+        fs[i++] = f;
+      fs[nf] = -1;
+    }
+    init(start,ts,fs,minimize);
   }
 
   bool
