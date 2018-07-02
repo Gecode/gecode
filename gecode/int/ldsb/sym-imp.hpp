@@ -224,7 +224,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   ArgArray<Literal>
   VariableSequenceSymmetryImp<View>
   ::symmetric(Literal l, const ViewArray<View>& x) const {
-    Support::DynamicStack<Literal, Heap> s(heap);
+    Region region;
+    Support::DynamicStack<Literal,Region> s(region);
     if (l._variable < (int)lookup_size) {
       int posIt = lookup[l._variable];
       if (posIt == -1) {

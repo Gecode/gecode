@@ -119,7 +119,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   ValueSequenceSymmetryImp<Int::IntView>
   ::symmetric(Literal l, const ViewArray<IntView>& x) const {
     (void) x;
-    Support::DynamicStack<Literal, Heap> s(heap);
+    Region region;
+    Support::DynamicStack<Literal,Region> s(region);
     std::pair<int,int> location = findVar(values, n_values, seq_size, l._value);
     if (location.first == -1) return dynamicStackToArgArray(s);
     unsigned int seqNum = location.first;
@@ -139,7 +140,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   ValueSequenceSymmetryImp<BoolView>
   ::symmetric(Literal l, const ViewArray<BoolView>& x) const {
     (void) x;
-    Support::DynamicStack<Literal, Heap> s(heap);
+    Region region;
+    Support::DynamicStack<Literal,Region> s(region);
     std::pair<int,int> location = findVar(values, n_values, seq_size, l._value);
     if (location.first == -1) return dynamicStackToArgArray(s);
     unsigned int seqNum = location.first;
