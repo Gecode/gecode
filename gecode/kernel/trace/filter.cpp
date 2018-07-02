@@ -157,7 +157,8 @@ namespace Gecode {
 
   void
   TraceFilter::TFO::fill(TFE::Node* n) {
-    Support::DynamicStack<StackFrame,Heap> next(heap);
+    Region region;
+    Support::DynamicStack<StackFrame,Region> next(region);
     int i=0;
     next.push(StackFrame(n,false));
     do {

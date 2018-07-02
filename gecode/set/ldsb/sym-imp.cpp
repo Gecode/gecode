@@ -95,7 +95,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   ArgArray<Literal>
   VariableSequenceSymmetryImp<Set::SetView>
   ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
-    Support::DynamicStack<Literal, Heap> s(heap);
+    Region region;
+    Support::DynamicStack<Literal,Region> s(region);
     if (l._variable < (int)lookup_size) {
       int posIt = lookup[l._variable];
       if (posIt == -1) {
@@ -138,7 +139,8 @@ namespace Gecode { namespace Int { namespace LDSB {
   ValueSequenceSymmetryImp<Set::SetView>
   ::symmetric(Literal l, const ViewArray<Set::SetView>& x) const {
     (void) x;
-    Support::DynamicStack<Literal, Heap> s(heap);
+    Region region;
+    Support::DynamicStack<Literal,Region> s(region);
     std::pair<int,int> location = findVar(values, n_values, seq_size, l._value);
     if (location.first == -1) return dynamicStackToArgArray(s);
     unsigned int seqNum = location.first;
