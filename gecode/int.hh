@@ -189,6 +189,8 @@ namespace Gecode {
       GECODE_INT_EXPORT static IntSetObject* allocate(int m);
       /// Check whether \a n is included in the set
       GECODE_INT_EXPORT bool in(int n) const;
+      /// Perform equality test on ranges
+      GECODE_INT_EXPORT bool equal(const IntSetObject& so) const; 
       /// Delete object
       GECODE_INT_EXPORT virtual ~IntSetObject(void);
     };
@@ -272,6 +274,14 @@ namespace Gecode {
     int min(void) const;
     /// Return maximum of entire set
     int max(void) const;
+    //@}
+
+    /// \name Equality tests
+    //@{
+    /// Return whether \a s is equal
+    bool operator ==(const IntSet& s) const;
+    /// Return whether \a s is not equal
+    bool operator !=(const IntSet& s) const;
     //@}
 
     /// \name Predefined value
