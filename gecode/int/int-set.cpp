@@ -63,6 +63,15 @@ namespace Gecode {
     return false;
   }
 
+  bool
+  IntSet::IntSetObject::equal(const IntSetObject& iso) const {
+    assert((size == iso.size) || (n == iso.n));
+    for (int i=n; i--; )
+      if ((r[i].min != iso.r[i].min) || (r[i].max != iso.r[i].max))
+        return false;
+    return true;
+  }
+
   IntSet::IntSetObject::~IntSetObject(void) {
     heap.free<Range>(r,n);
   }
