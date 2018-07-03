@@ -197,6 +197,24 @@ namespace Gecode {
     return (o == NULL) ? 0U : static_cast<unsigned int>(max()-min()+1);
   }
 
+  forceinline bool
+  IntSet::operator ==(const IntSet& s) const {
+    IntSetObject* o1 = static_cast<IntSetObject*>(object());
+    IntSetObject* o2 = static_cast<IntSetObject*>(s.object());
+    if (o1 == o2)
+      return true;
+    if ((o1 == nullptr) || (o2 == nullptr))
+      return false;
+    if ((o1->size != o2->size) || (o1->n != o2->n))
+      return false;
+    return o1->equal(*o2);
+  }
+
+  forceinline bool
+  IntSet::operator !=(const IntSet& s) const {
+    return !(*this == s);
+  }
+
 
   /*
    * Range iterator for integer sets
