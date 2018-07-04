@@ -45,7 +45,7 @@ namespace Gecode {
   template<class View0, class View1>
   forceinline bool
   viewarrayshared(const ViewArray<View0>& va, const View1& y) {
-    return va.shared(y);
+    return shared(va,y);
   }
 
   template<>

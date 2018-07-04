@@ -767,7 +767,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class VX, class VY>
   inline ExecStatus
   NaryOr<VX,VY>::post(Home home, ViewArray<VX>& x, VY y) {
-    assert(!x.shared());
+    assert(!shared(x));
     if (y.one())
       return NaryOrTrue<VX>::post(home,x);
     if (y.zero()) {
