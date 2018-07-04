@@ -112,7 +112,7 @@ namespace Gecode {
     using namespace Int;
     if (x.size() == 0)
       throw TooFewArguments("Int::argmax");
-    if (x.same(y))
+    if (same(x,y))
       throw ArgumentSame("Int::argmax");
     GECODE_POST;
     // Constrain y properly
@@ -139,7 +139,7 @@ namespace Gecode {
     Limits::nonnegative(o,"Int::argmax");
     if (x.size() == 0)
       throw TooFewArguments("Int::argmax");
-    if (x.same(y))
+    if (same(x,y))
       throw ArgumentSame("Int::argmax");
     GECODE_POST;
     // Constrain y properly
@@ -165,7 +165,7 @@ namespace Gecode {
     using namespace Int;
     if (x.size() == 0)
       throw TooFewArguments("Int::argmin");
-    if (x.same(y))
+    if (same(x,y))
       throw ArgumentSame("Int::argmin");
     GECODE_POST;
     // Constrain y properly
@@ -192,7 +192,7 @@ namespace Gecode {
     Limits::nonnegative(o,"Int::argmin");
     if (x.size() == 0)
       throw TooFewArguments("Int::argmin");
-    if (x.same(y))
+    if (same(x,y))
       throw ArgumentSame("Int::argmin");
     GECODE_POST;
     // Constrain y properly

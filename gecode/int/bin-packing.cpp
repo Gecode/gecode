@@ -43,7 +43,7 @@ namespace Gecode {
              const IntVarArgs& b, const IntArgs& s,
              IntPropLevel) {
     using namespace Int;
-    if (l.same(b))
+    if (same(l,b))
       throw ArgumentSame("Int::binpacking");
     if (b.size() != s.size())
       throw ArgumentSizeMismatch("Int::binpacking");
@@ -69,7 +69,7 @@ namespace Gecode {
              IntPropLevel) {
     using namespace Int;
 
-    if (l.same(b))
+    if (same(l,b))
       throw ArgumentSame("Int::binpacking");
 
     // The number of items

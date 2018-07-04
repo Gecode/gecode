@@ -46,7 +46,7 @@ namespace Gecode {
     int n = x.size();
     if (n != y.size())
       throw ArgumentSizeMismatch("Int::channel");
-    if (x.same() || y.same())
+    if (same(x) || same(y))
       throw ArgumentSame("Int::channel");
     Limits::check(xoff,"Int::channel");
     Limits::check(yoff,"Int::channel");
@@ -72,7 +72,7 @@ namespace Gecode {
           di[n+xoff].init(y0, n+xoff);
         }
         NoOffset<IntView> noff;
-        if (x.same(y)) {
+        if (same(x,y)) {
           GECODE_ES_FAIL((Dom<IntView,NoOffset<IntView>,true>
             ::post(home,n+xoff,di,noff,noff)));
         } else {
@@ -93,7 +93,7 @@ namespace Gecode {
           vi[n+xoff].init(y0, n+xoff);
         }
         NoOffset<IntView> noff;
-        if (x.same(y)) {
+        if (same(x,y)) {
           GECODE_ES_FAIL((Val<IntView,NoOffset<IntView>,true>
             ::post(home,n+xoff,vi,noff,noff)));
         } else {
@@ -111,7 +111,7 @@ namespace Gecode {
         }
         Offset ox(-xoff);
         Offset oy(-yoff);
-        if (x.same(y)) {
+        if (same(x,y)) {
           GECODE_ES_FAIL((Dom<IntView,Offset,true>
                           ::post(home,n,di,ox,oy)));
         } else {
@@ -127,7 +127,7 @@ namespace Gecode {
         }
         Offset ox(-xoff);
         Offset oy(-yoff);
-        if (x.same(y)) {
+        if (same(x,y)) {
           GECODE_ES_FAIL((Val<IntView,Offset,true>
                           ::post(home,n,vi,ox,oy)));
         } else {
@@ -155,7 +155,7 @@ namespace Gecode {
   channel(Home home, const BoolVarArgs& x, IntVar y, int o,
           IntPropLevel) {
     using namespace Int;
-    if (x.same())
+    if (same(x))
       throw ArgumentSame("Int::channel");
     Limits::check(o,"Int::channel");
     GECODE_POST;
