@@ -206,7 +206,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                             View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
-    shared = x.shared() || viewarrayshared(x,y);
+    shared = Gecode::shared(x) || viewarrayshared(x,y);
   }
 
   template<class View0, class View1>
@@ -215,7 +215,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                             const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
-    shared = x.shared() || viewarrayshared(x,y);
+    shared = Gecode::shared(x) || viewarrayshared(x,y);
     IntSetRanges rz(z);
     intOfDets.intersectI(home, rz);
   }

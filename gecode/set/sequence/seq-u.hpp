@@ -63,7 +63,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     case 1:
       return Rel::Eq<SetView,SetView>::post(home, x[0], y);
     default:
-      if (x.shared() || x.shared(y))
+      if (shared(x) || shared(x,y))
         return ES_FAILED;
       (void) new (home) SeqU(home,x,y);
       return ES_OK;
