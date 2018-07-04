@@ -43,7 +43,7 @@ namespace Gecode {
   extensional(Home home, const IntVarArgs& x, DFA dfa,
               IntPropLevel) {
     using namespace Int;
-    if (x.same())
+    if (same(x))
       throw ArgumentSame("Int::extensional");
     GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
@@ -53,7 +53,7 @@ namespace Gecode {
   extensional(Home home, const BoolVarArgs& x, DFA dfa,
               IntPropLevel) {
     using namespace Int;
-    if (x.same())
+    if (same(x))
       throw ArgumentSame("Int::extensional");
     GECODE_POST;
     GECODE_ES_FAIL(Extensional::post_lgp(home,x,dfa));
