@@ -43,6 +43,14 @@
 #include <sstream>
 #include <initializer_list>
 
+namespace Gecode { namespace Kernel {
+
+  /// Check whether \a p has duplicates among its \a n elements (changes \a p)
+  GECODE_KERNEL_EXPORT
+  bool duplicates(void** p, int n);
+
+}}
+
 namespace Gecode {
 
   template<class Var> class VarArray;
@@ -289,7 +297,7 @@ namespace Gecode {
         for (int i=n; i--; )
           x[i]=a[i];
       } else {
-        x = NULL;
+        x = nullptr;
       }
     }
     /**
@@ -307,7 +315,7 @@ namespace Gecode {
         for (int i=n; i--; )
           x[i]=a[i];
       } else {
-        x = NULL;
+        x = nullptr;
       }
     }
     //@}
@@ -859,14 +867,14 @@ namespace Gecode {
 
   template<class Var>
   forceinline
-  VarArray<Var>::VarArray(void) : n(0), x(NULL) {}
+  VarArray<Var>::VarArray(void) : n(0), x(nullptr) {}
 
   template<class Var>
   forceinline
   VarArray<Var>::VarArray(Space& home, int n0)
     : n(n0) {
     // Allocate from space
-    x = (n>0) ? home.alloc<Var>(n) : NULL;
+    x = (n>0) ? home.alloc<Var>(n) : nullptr;
   }
 
   template<class Var>
@@ -978,7 +986,7 @@ namespace Gecode {
       for (int i = n; i--;)
         x[i].update(home, a.x[i]);
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 
@@ -994,7 +1002,7 @@ namespace Gecode {
   template<class Var>
   forceinline void*
   VarArray<Var>::operator new(size_t) throw() {
-    return NULL;
+    return nullptr;
   }
 
   template<class Var>
@@ -1062,19 +1070,19 @@ namespace Gecode {
 
   template<class View>
   forceinline
-  ViewArray<View>::ViewArray(void) : n(0), x(NULL) {}
+  ViewArray<View>::ViewArray(void) : n(0), x(nullptr) {}
 
   template<class View>
   forceinline
   ViewArray<View>::ViewArray(Space& home, int n0)
     : n(n0) {
-    x = (n>0) ? home.alloc<View>(n) : NULL;
+    x = (n>0) ? home.alloc<View>(n) : nullptr;
   }
   template<class View>
   forceinline
   ViewArray<View>::ViewArray(Region& r, int n0)
     : n(n0) {
-    x = (n>0) ? r.alloc<View>(n) : NULL;
+    x = (n>0) ? r.alloc<View>(n) : nullptr;
   }
 
   template<class View>
@@ -1085,7 +1093,7 @@ namespace Gecode {
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
   template<class View>
@@ -1096,7 +1104,7 @@ namespace Gecode {
       for (int i = n; i--; )
         x[i] = a[i];
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 
@@ -1293,7 +1301,7 @@ namespace Gecode {
       for (int i = n; i--; )
         x[i].update(home, y.x[i]);
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 
@@ -1421,26 +1429,22 @@ namespace Gecode {
     if (n < 2)
       return false;
     Region r;
-    View* y = r.alloc<View>(n);
-    for (int i = n; i--; )
-      y[i] = x[i];
-    sort(y,n);
-    for (int i = n-1; i--; )
-      if (!y[i].assigned() && __shared(y[i+1],y[i])) {
-        r.free<View>(y,n);
-        return true;
-      }
-    r.free<View>(y,n);
-    return false;
+    void** xvi = r.alloc<void*>(size());
+    int j=0;
+    for (int i=size(); i--; )
+      if (!x[i].assigned() && (x[i].varimp() != nullptr))
+        xvi[j++] = x[i].varimp();
+    return (j > 2) && Kernel::duplicates(xvi,j);
   }
 
   template<class View> template<class ViewY>
   bool
   ViewArray<View>::shared(const ViewY& y) const {
-    if (y.assigned())
+    if (y.assigned() || (y.varimp() == nullptr))
       return false;
     for (int i = n; i--; )
-      if (!x[i].assigned() && __shared(x[i],y))
+      if (!x[i].assigned() && (x[i].varimp() != nullptr) &&
+          (x[i].varimp() == y.varimp()))
         return true;
     return false;
   }
@@ -1448,41 +1452,24 @@ namespace Gecode {
   template<class View> template<class ViewY>
   bool
   ViewArray<View>::shared(const ViewArray<ViewY>& y) const {
-    if ((size() < 1) || (y.size() < 1))
+    if ((size() == 1) || (y.size() == 1))
       return false;
     Region r;
-    View* xs = r.alloc<View>(size());
+    void** xy = r.alloc<void*>(size() + y.size());
+    int j=0;
     for (int i=size(); i--; )
-      xs[i] = x[i];
-    ViewLess<View> xvl;
-    Support::quicksort<View,ViewLess<View>>(xs,size(),xvl);
-    ViewY* ys = r.alloc<ViewY>(y.size());
-    for (int j=y.size(); j--; )
-      ys[j] = y[j];
-    ViewLess<ViewY> yvl;
-    Support::quicksort<ViewY,ViewLess<ViewY>>(ys,y.size(),yvl);
-    {
-      int i=0, j=0;
-      while ((i < size()) && (j < y.size()))
-        if (!x[i].assigned() && __shared(x[i],y[j])) {
-          r.free<View>(xs,size());
-          r.free<ViewY>(ys,y.size());
-          return true;
-        } else if (before(x[i],y[j])) {
-          i++;
-        } else {
-          j++;
-        }
-    }
-    r.free<View>(xs,size());
-    r.free<ViewY>(ys,y.size());
-    return false;
+      if (!x[i].assigned() && (x[i].varimp() != nullptr))
+        xy[j++] = x[i].varimp();
+    for (int i=y.size(); i--; )
+      if (!y[i].assigned() && (y[i].varimp() != nullptr))
+        xy[j++] = y[i].varimp();
+    return (j > 2) && Kernel::duplicates(xy,j);
   }
 
   template<class View>
   forceinline void*
   ViewArray<View>::operator new(size_t) throw() {
-    return NULL;
+    return nullptr;
   }
 
   template<class View>
@@ -1913,18 +1900,12 @@ namespace Gecode {
     if (n < 2)
       return false;
     Region r;
-    Var* y = r.alloc<Var>(n);
+    void** y = r.alloc<void*>(n);
+    int j=0;
     for (int i = n; i--; )
-      y[i] = a[i];
-    VarLess vl;
-    Support::quicksort<Var,VarLess>(y,n,vl);
-    for (int i = n-1; i--; )
-      if (!y[i].assigned() && (y[i+1].varimp() == y[i].varimp())) {
-        r.free<Var>(y,n);
-        return true;
-      }
-    r.free<Var>(y,n);
-    return false;
+      if (!a[i].assigned())
+        y[j++] = a[i].varimp();
+    return (j > 1) && Kernel::duplicates(y,j);
   }
 
   template<class Var>
@@ -1934,20 +1915,15 @@ namespace Gecode {
     if (m < 2)
       return false;
     Region r;
-    Var* z = r.alloc<Var>(m);
+    void** z = r.alloc<void*>(m);
+    int j=0;
     for (int i = n; i--; )
-      z[i] = a[i];
+      if (!a[i].assigned())
+        z[j++] = a[i].varimp();
     for (int i = y.n; i--; )
-      z[i+n] = y.a[i];
-    VarLess vl;
-    Support::quicksort<Var,VarLess>(z,m,vl);
-    for (int i = m-1; i--; )
-      if (!z[i].assigned() && (z[i+1].varimp() == z[i].varimp())) {
-        r.free<Var>(z,m);
-        return true;
-      }
-    r.free<Var>(z,m);
-    return false;
+      if (!y.a[i].assigned())
+        z[j++] = y.a[i].varimp();
+    return (j > 1) && Kernel::duplicates(z,j);
   }
 
   template<class Var>
@@ -1980,7 +1956,7 @@ namespace Gecode {
       for (int i=n; i--;)
         x[i] = a[i];
     } else {
-      x = NULL;
+      x = nullptr;
     }
   }
 

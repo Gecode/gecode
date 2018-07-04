@@ -194,7 +194,8 @@ KERNELSRC0 = \
 	data/rnd \
 	branch/action branch/afc branch/chb branch/function \
 	memory/manager memory/region \
-	trace/recorder trace/filter trace/tracer trace/general
+	trace/recorder trace/filter trace/tracer trace/general \
+	data/array
 
 KERNELHDR0 = \
 	archive core exception macros modevent gpi \
