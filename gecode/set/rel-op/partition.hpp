@@ -48,7 +48,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   forceinline
   PartitionN<View0,View1>::PartitionN(Home home, ViewArray<View0>& x, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
-    shared = x.shared() || viewarrayshared(x,y);
+    shared = Gecode::shared(x) || viewarrayshared(x,y);
   }
 
   template<class View0, class View1>
@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   PartitionN<View0,View1>::PartitionN(Home home, ViewArray<View0>& x,
                                       const IntSet& z, View1 y)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
-    shared = x.shared() || viewarrayshared(x,y);
+    shared = Gecode::shared(x) || viewarrayshared(x,y);
     IntSetRanges rz(z);
     unionOfDets.includeI(home, rz);
   }

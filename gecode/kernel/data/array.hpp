@@ -227,7 +227,6 @@ namespace Gecode {
    * views with which propagators and branchers compute.
    * \ingroup TaskActor
    */
-
   template<class View>
   class ViewArray {
   private:
@@ -469,35 +468,45 @@ namespace Gecode {
     /// Remove all duplicate views from array (changes element order)
     void unique(void);
     //@}
-
-    /// \name View sharing
-    //@{
-    /**
-     * \brief Test whether array contains shared views
-     *
-     * Note that assigned views are ignored.
-     */
-    bool shared(void) const;
-    /**
-     * \brief Test whether array contains a view being shared with \a y
-     *
-     * Note that assigned views are ignored.
-     */
-    template<class ViewY>
-    bool shared(const ViewY& y) const;
-    /**
-     * \brief Test whether array together with array \a y contains shared views
-     *
-     * Note that assigned views are ignored.
-     */
-    template<class ViewY>
-    bool shared(const ViewArray<ViewY>& y) const;
-    //@}
-
   private:
     static void* operator new(size_t) throw();
     static void  operator delete(void*,size_t);
   };
+
+
+  /**
+   * \brief Test whether array \a x together with array \a y contains shared views
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class ViewX, class ViewY>
+  bool shared(ViewArray<ViewX> x, ViewArray<ViewY> y);
+  /**
+   * \brief Test whether array \a x contains a view shared with \a y
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class ViewX, class ViewY>
+  bool shared(ViewArray<ViewX> x, ViewY y);
+  /**
+   * \brief Test whether array \a y contains a view shared with \a x
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class ViewX, class ViewY>
+  bool shared(ViewX x, ViewArray<ViewY> y);
+  /**
+   * \brief Test whether array \a x contains shared views
+   *
+   * Note that assigned views are ignored.
+   * \relates ViewArray
+   */
+  template<class View>
+  bool shared(ViewArray<View> x);
+
 
   /**
    * \brief Base-class for argument arrays
@@ -1424,49 +1433,6 @@ namespace Gecode {
   }
 
   template<class View>
-  bool
-  ViewArray<View>::shared(void) const {
-    if (n < 2)
-      return false;
-    Region r;
-    void** xvi = r.alloc<void*>(size());
-    int j=0;
-    for (int i=size(); i--; )
-      if (!x[i].assigned() && (x[i].varimp() != nullptr))
-        xvi[j++] = x[i].varimp();
-    return (j > 2) && Kernel::duplicates(xvi,j);
-  }
-
-  template<class View> template<class ViewY>
-  bool
-  ViewArray<View>::shared(const ViewY& y) const {
-    if (y.assigned() || (y.varimp() == nullptr))
-      return false;
-    for (int i = n; i--; )
-      if (!x[i].assigned() && (x[i].varimp() != nullptr) &&
-          (x[i].varimp() == y.varimp()))
-        return true;
-    return false;
-  }
-
-  template<class View> template<class ViewY>
-  bool
-  ViewArray<View>::shared(const ViewArray<ViewY>& y) const {
-    if ((size() == 1) || (y.size() == 1))
-      return false;
-    Region r;
-    void** xy = r.alloc<void*>(size() + y.size());
-    int j=0;
-    for (int i=size(); i--; )
-      if (!x[i].assigned() && (x[i].varimp() != nullptr))
-        xy[j++] = x[i].varimp();
-    for (int i=y.size(); i--; )
-      if (!y[i].assigned() && (y[i].varimp() != nullptr))
-        xy[j++] = y[i].varimp();
-    return (j > 2) && Kernel::duplicates(xy,j);
-  }
-
-  template<class View>
   forceinline void*
   ViewArray<View>::operator new(size_t) throw() {
     return nullptr;
@@ -1476,6 +1442,61 @@ namespace Gecode {
   forceinline void
   ViewArray<View>::operator delete(void*,size_t) {
   }
+
+
+  /*
+   * Sharing for view arrays
+   *
+   */
+  template<class ViewX, class ViewY>
+  inline bool
+  shared(ViewArray<ViewX> x, ViewArray<ViewY> y) {
+    if ((x.size() == 1) || (y.size() == 1))
+      return false;
+    Region r;
+    void** xy = r.alloc<void*>(x.size() + y.size());
+    int j=0;
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned() && (x[i].varimp() != nullptr))
+        xy[j++] = x[i].varimp();
+    for (int i=y.size(); i--; )
+      if (!y[i].assigned() && (y[i].varimp() != nullptr))
+        xy[j++] = y[i].varimp();
+    return (j > 2) && Kernel::duplicates(xy,j);
+  }
+
+  template<class ViewX, class ViewY>
+  inline bool
+  shared(ViewArray<ViewX> x, ViewY y) {
+    if (y.assigned() || (y.varimp() == nullptr))
+      return false;
+    for (int i = x.size(); i--; )
+      if (!x[i].assigned() && (x[i].varimp() != nullptr) &&
+          (x[i].varimp() == y.varimp()))
+        return true;
+    return false;
+  }
+
+  template<class ViewX, class ViewY>
+  forceinline bool
+  shared(ViewX x, ViewArray<ViewY> y) {
+    return shared(y,x);
+  }
+
+  template<class View>
+  inline bool
+  shared(ViewArray<View> x) {
+    if (x.size() < 2)
+      return false;
+    Region r;
+    void** xvi = r.alloc<void*>(x.size());
+    int j=0;
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned() && (x[i].varimp() != nullptr))
+        xvi[j++] = x[i].varimp();
+    return (j > 2) && Kernel::duplicates(xvi,j);
+  }
+
 
 
   /*
