@@ -49,6 +49,10 @@ namespace Gecode { namespace Kernel {
   GECODE_KERNEL_EXPORT
   bool duplicates(void** p, int n);
 
+  /// Check whether \a p has common elements with \a q
+  GECODE_KERNEL_EXPORT
+  bool duplicates(void** p, int n, void** q, int m);
+
 }}
 
 namespace Gecode {
@@ -812,29 +816,42 @@ namespace Gecode {
     friend
     typename ArrayTraits<VarArgArray<Var>>::ArgsType
     operator + <>(const Var& x, const VarArgArray<Var>& y);
-
-    /// \name Variable equality
-    //@{
-    /**
-     * \brief Test whether array contains same variable multiply
-     *
-     * Note that assigned variables are ignored.
-     */
-    bool same(void) const;
-    /**
-     * \brief Test whether array contains variable \a y
-     *
-     * Note that assigned variables are ignored.
-     */
-    bool same(const Var& y) const;
-    /**
-     * \brief Test whether all elements from array and \a y contains same variable multiply
-     *
-     * Note that assigned variables are ignored.
-     */
-    bool same(const VarArgArray<Var>& y) const;
-    //@}
   };
+
+
+  /**
+   * \brief Test whether array \a x together with array \a y contains at least one variable being the same
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(VarArgArray<Var> x, VarArgArray<Var> y);
+  /**
+   * \brief Test whether array \a x contains variable \a y
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(VarArgArray<Var> x, Var y);
+  /**
+   * \brief Test whether array \a y contains variable \a x
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(Var x, VarArgArray<Var> y);
+  /**
+   * \brief Test whether array \a x contains a variable multiply
+   *
+   * Note that assigned variables are ignored.
+   * \relates VarArgArray
+   */
+  template<class Var>
+  bool same(VarArgArray<Var> x);
+
 
   /**
    * \brief Print array elements enclosed in curly brackets
@@ -1449,30 +1466,35 @@ namespace Gecode {
    *
    */
   template<class ViewX, class ViewY>
-  inline bool
+  bool
   shared(ViewArray<ViewX> x, ViewArray<ViewY> y) {
-    if ((x.size() == 1) || (y.size() == 1))
+    if ((x.size() == 0) || (y.size() == 0))
       return false;
     Region r;
-    void** xy = r.alloc<void*>(x.size() + y.size());
+    void** px = r.alloc<void*>(x.size());
     int j=0;
     for (int i=x.size(); i--; )
-      if (!x[i].assigned() && (x[i].varimp() != nullptr))
-        xy[j++] = x[i].varimp();
+      if (!x[i].assigned() && x[i].varimp())
+        px[j++] = x[i].varimp();
+    if (j == 0)
+      return false;
+    void** py = r.alloc<void*>(y.size());
+    int k=0;
     for (int i=y.size(); i--; )
-      if (!y[i].assigned() && (y[i].varimp() != nullptr))
-        xy[j++] = y[i].varimp();
-    return (j > 2) && Kernel::duplicates(xy,j);
+      if (!y[i].assigned() && y[i].varimp())
+        py[k++] = y[i].varimp();
+    if (k == 0)
+      return false;
+    return Kernel::duplicates(px,j,py,k);
   }
 
   template<class ViewX, class ViewY>
-  inline bool
+  bool
   shared(ViewArray<ViewX> x, ViewY y) {
-    if (y.assigned() || (y.varimp() == nullptr))
+    if (y.assigned() || !y.varimp())
       return false;
     for (int i = x.size(); i--; )
-      if (!x[i].assigned() && (x[i].varimp() != nullptr) &&
-          (x[i].varimp() == y.varimp()))
+      if (!x[i].assigned() && x[i].varimp() && (x[i].varimp() == y.varimp()))
         return true;
     return false;
   }
@@ -1484,17 +1506,17 @@ namespace Gecode {
   }
 
   template<class View>
-  inline bool
+  bool
   shared(ViewArray<View> x) {
     if (x.size() < 2)
       return false;
     Region r;
-    void** xvi = r.alloc<void*>(x.size());
+    void** px = r.alloc<void*>(x.size());
     int j=0;
     for (int i=x.size(); i--; )
-      if (!x[i].assigned() && (x[i].varimp() != nullptr))
-        xvi[j++] = x[i].varimp();
-    return (j > 2) && Kernel::duplicates(xvi,j);
+      if (!x[i].assigned() && x[i].varimp())
+        px[j++] = x[i].varimp();
+    return (j > 2) && Kernel::duplicates(px,j);
   }
 
 
@@ -1915,51 +1937,64 @@ namespace Gecode {
     return true;
   }
 
+
+  /*
+   * Checking for multiple occurences of the same variable
+   *
+   */
   template<class Var>
   bool
-  VarArgArray<Var>::same(void) const {
-    if (n < 2)
+  same(VarArgArray<Var> x, VarArgArray<Var> y) {
+    if ((x.size() == 0) || (y.size() == 0))
       return false;
     Region r;
-    void** y = r.alloc<void*>(n);
+    void** px = r.alloc<void*>(x.size());
     int j=0;
-    for (int i = n; i--; )
-      if (!a[i].assigned())
-        y[j++] = a[i].varimp();
-    return (j > 1) && Kernel::duplicates(y,j);
+    for (int i = x.size(); i--; )
+      if (!x[i].assigned())
+        px[j++] = x[i].varimp();
+    if (j == 0)
+      return false;
+    void** py = r.alloc<void*>(y.size());
+    int k=0;
+    for (int i = y.size(); i--; )
+      if (!y[i].assigned())
+        py[k++] = y[i].varimp();
+    if (k == 0)
+      return false;
+    return Kernel::duplicates(px,j,py,k);
   }
 
   template<class Var>
   bool
-  VarArgArray<Var>::same(const VarArgArray<Var>& y) const {
-    int m = n + y.n;
-    if (m < 2)
-      return false;
-    Region r;
-    void** z = r.alloc<void*>(m);
-    int j=0;
-    for (int i = n; i--; )
-      if (!a[i].assigned())
-        z[j++] = a[i].varimp();
-    for (int i = y.n; i--; )
-      if (!y.a[i].assigned())
-        z[j++] = y.a[i].varimp();
-    return (j > 1) && Kernel::duplicates(z,j);
-  }
-
-  template<class Var>
-  bool
-  VarArgArray<Var>::same(const Var& y) const {
+  same(VarArgArray<Var> x, Var y) {
     if (y.assigned())
       return false;
-    for (int i = n; i--; )
-      if (a[i].varimp() == y.varimp())
+    for (int i = x.size(); i--; )
+      if (x[i].varimp() == y.varimp())
         return true;
     return false;
   }
 
+  template<class Var>
+  forceinline bool
+  same(Var x, VarArgArray<Var> y) {
+    return same(y,x);
+  }
 
-
+  template<class Var>
+  bool
+  same(VarArgArray<Var> x) {
+    if (x.size() < 2)
+      return false;
+    Region r;
+    void** px = r.alloc<void*>(x.size());
+    int j=0;
+    for (int i = x.size(); i--; )
+      if (!x[i].assigned())
+        px[j++] = x[i].varimp();
+    return (j > 1) && Kernel::duplicates(px,j);
+  }
 
 
 

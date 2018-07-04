@@ -41,7 +41,7 @@ namespace Gecode {
     using namespace Int;
     if ((x.size() != y.size()) || (x.size() != z.size()))
       throw ArgumentSizeMismatch("Int::Sorted");
-    if (x.same(y) || x.same(z) || y.same(z))
+    if (same(x,y) || same(x,z) || same(y,z))
       throw ArgumentSame("Int::Sorted");
 
     GECODE_POST;
@@ -60,7 +60,7 @@ namespace Gecode {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::Sorted");
-    if (x.same(y))
+    if (same(x,y))
       throw ArgumentSame("Int::Sorted");
 
     GECODE_POST;
