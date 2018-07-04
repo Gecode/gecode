@@ -69,6 +69,15 @@ Date: 2018-??-??
 More C++-11
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The SharedArray class now has an equality operator. This fixes
+a problem in the FlatZinc interpreter, which is keeping a hash
+set of arrays that relies on the equality test.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   major
