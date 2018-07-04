@@ -136,6 +136,9 @@ namespace Gecode {
     /// Return number of elements
     int size(void) const;
 
+    /// Test equality with \a sa
+    bool operator ==(const SharedArray<T>& sa) const;
+
     /// \name Array iteration
     //@{
     /// Return an iterator at the beginning of the array
@@ -267,6 +270,20 @@ namespace Gecode {
   SharedArray<T>::operator [](int i) const {
     assert(object() != NULL);
     return (*static_cast<SAO*>(object()))[i];
+  }
+
+  template<class T>
+  inline bool
+  SharedArray<T>::operator ==(const SharedArray<T>& sa) const {
+    if (size() != sa.size())
+      return false;
+    if (object()==sa.object())
+      return true;
+    for (int i=0; i<size(); i++) {
+      if ((*this)[i] != sa[i])
+        return false;
+    }
+    return true;
   }
 
   template<class T>

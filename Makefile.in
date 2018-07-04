@@ -1166,6 +1166,7 @@ FLATZINCTESTSRC0 = \
   test/flatzinc/queen_cp2.cpp \
   test/flatzinc/queen_ip.cpp \
   test/flatzinc/radiation.cpp \
+  test/flatzinc/shared_array_element.cpp \
   test/flatzinc/simple_sat.cpp \
   test/flatzinc/singHoist2.cpp \
   test/flatzinc/sudoku.cpp \
